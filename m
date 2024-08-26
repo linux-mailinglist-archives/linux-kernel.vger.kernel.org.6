@@ -1,180 +1,249 @@
-Return-Path: <linux-kernel+bounces-301417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DFF995F059
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:03:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 907AE95F05B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:04:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0C5A283A14
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:03:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 480B4284B3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:04:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E14516EC19;
-	Mon, 26 Aug 2024 12:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30C516F0EB;
+	Mon, 26 Aug 2024 12:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="l6iJXWjC"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=noa-labs.com header.i=@noa-labs.com header.b="OjKD+kf9"
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E00F78C73
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1950C158D79
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724673815; cv=none; b=QKwodJyeS+NIVbwFu+u/oFKZ2a7ygOmv3mq8tNfLCXwgT2bltBeMbWgbpbQZBYPbSeHX0BzJSmA09+/EK1quptVaVUSqVPCD83yRgd56QWvWoh2DfabweFM/2IGkuidyT8903C1XcojnQR/SGhTDls2bG5EdPBikpkZJgG5Adjs=
+	t=1724673837; cv=none; b=qKFqwbF//TI8NEoXDJ4UUc/J76p29ovx2Ujiv/zVtAbB9hkZbDssqf6gpT/xBFPyJgltusZ+ylYfZmKo4m49YseFAsm8nJENKpY0E+90FMSi8wB7qU1ZMlK1lT4S6LI+4nh1MbZf2B/I8CPo8JSgt9hQCXUa/0AMQx3s67u7aAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724673815; c=relaxed/simple;
-	bh=snM5Rm0gMzlD08AvqsH0+c3YOt73h0syTAjhL8mg4zU=;
+	s=arc-20240116; t=1724673837; c=relaxed/simple;
+	bh=AdKKjBw0DdjcO03+Gfffep72LbSKw0s4dQV6oZNLrf0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MeipZ4vRaJbKgHR9nqAZrpi5dAQUfc5C5B0G5/UG5SQmxV+NfGU7TdOP/4MOSxgtv5/RUX5auDrvDT45bov821ClOUJOf9yYiCcbRgBzeZSg/s2M+8EarDDF9PCFBXLJOvXzHeHhzn+J4Je6dBIXOtEBWBnrbocFSW/Hjezhc1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=l6iJXWjC; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 95C433F67D
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:03:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1724673809;
-	bh=ajfaokdeZHRMyKn6mvHqNgguJUu0Q4E54DToJ/+4STQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=l6iJXWjC15i57Dy0NGNJVULqcbC34v2Jx983q8ssp0iwHzcXrM9g5K5Yyj0vhvCVT
-	 pZESuBQpya1mVE7PMbMkoG3pLXndp9TxLEQhT9lBAvNgzSUrhyPvSOQKyNz5IG5nlE
-	 q2VYGWVoOqkrD2h0l4ItlXNCK1OkzjDpUSBbm+JsmCSXqXJeoH+3wxUR315B3Gw6xT
-	 zY4VepLC3O9eqWFSvwnGKo9Za+C/519nsT4daXZZcztBlzO1Vs5JdSoB023MKwetcY
-	 5K537UObarwAierriG9ZB4YqlOZSvHEX+lGsWCoTUMtD3drvD5bTv1q073IdIkrlGE
-	 8LgMviDbDHYfQ==
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2d3bd8a0bd4so4762542a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 05:03:29 -0700 (PDT)
+	 To:Cc:Content-Type; b=BJL2lFi+KY7tmJTzbOg+VbK7Q7H3q1BdLj+8NFbETYol40VGn6H7ubfFMumGthjYG7f2BTd9J+MoIp+BEIrinoxLR1zjKCFq2r71+1/LVnSvPzKGZeKdsu6HJNtGv6OmwTl/YD3j7ZoAv2JYgtTDMy/F/7+fhapH8YuWx43wKLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=noa-labs.com; spf=pass smtp.mailfrom=noa-labs.com; dkim=pass (1024-bit key) header.d=noa-labs.com header.i=@noa-labs.com header.b=OjKD+kf9; arc=none smtp.client-ip=209.85.160.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=noa-labs.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=noa-labs.com
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-2701a521f63so3392555fac.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 05:03:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=noa-labs.com; s=google; t=1724673832; x=1725278632; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oTtYynZLm2SbFEN9z92QLFpQbSCk9t7wWnmClZpFWoE=;
+        b=OjKD+kf9UGJUK7CAj7Hu88IhZkxv3v2cqysg0hF+eoa8ZMod2i+Shef30cGG3so2mV
+         dnTpff8RNWXGRkc9wbspwPXCjzvqat/JArw4zjXhwmBYg3skOzLFZHtO/C+8I+30/DvF
+         N2VbCUHNpmQU5OMLCCOGaSUAqisPfsQQ0wY7o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724673808; x=1725278608;
+        d=1e100.net; s=20230601; t=1724673832; x=1725278632;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ajfaokdeZHRMyKn6mvHqNgguJUu0Q4E54DToJ/+4STQ=;
-        b=NxVs8ODVnesOM1lDffhAkCpJ9OYLMH6+G1mQscFAyn+PBfClIigPT8z+kG97DCl//X
-         315BAbtSCEOv1EvRIrU3JJcwOJHC2dkBpkNaxZ4E1P66m/jhSELvfdU//QqLVFhM4Bni
-         OBQcPXLmMuwDi4SbFhyHpykbtQXsBy6zfSQbbbmRtTJ26QIACJTv0ZJ2AfHCZKws9Kvs
-         Nzc5ZYZrupB9m3p4+LENvOAKruwkS9no9V9vzZqO2u888180QpDTiIOo5jBHeJszLl/z
-         WsA5ovbtDdAP803m4OCwMcVfdzSVWZcoWAvNu5pliBJIDmzoWkCODR4Sff8+jMa0Tb9i
-         f4bg==
-X-Forwarded-Encrypted: i=1; AJvYcCViJhwu2Nf5axfBywVvz7XF5R2UCdYcsRLJ8Su0/oFpIaQueGawtvmJDsCjuhhx3heU3LRUscFxHEC4Vtg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkgDxYfY2nkldCPxgJSpaHMdr1COBRd5r5iaALGvp7peo7mKa1
-	rVD+CsLc+3/8vVXKm1d63CoOrZRWiuk0GQl7BatwKJTFZMTayCHxQ4t8si+hxhfO+tBCJ9CzRZU
-	x3txxiwO9RMrshlICp1UOMD4oEoiYPYaT9ROcUTIiENTVWTKQclFgVLeBYKG/1axb3ejkiLno+I
-	1qsIB/+p6TUGIswSzslhKUO3eBK7EKrm8TP5hh1/cCcGUCdM2w4u1V
-X-Received: by 2002:a17:90b:3144:b0:2d3:c8ed:f0be with SMTP id 98e67ed59e1d1-2d646d0ae37mr8318610a91.28.1724673807977;
-        Mon, 26 Aug 2024 05:03:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFxdSvdFt9fVbKAhweGqLpVEbbex/kMjEPiDlJ1rpZiXNZAj2f5L37oaVUXyQSovQsgnz8J0WOkVwo6b700X+g=
-X-Received: by 2002:a17:90b:3144:b0:2d3:c8ed:f0be with SMTP id
- 98e67ed59e1d1-2d646d0ae37mr8318575a91.28.1724673807557; Mon, 26 Aug 2024
- 05:03:27 -0700 (PDT)
+        bh=oTtYynZLm2SbFEN9z92QLFpQbSCk9t7wWnmClZpFWoE=;
+        b=MPt2Z8mFlW7X9iVJkdugNKd3EQrY/DT+zMMZkuut52p123rXNZmpQDDDL0FoHVCm+E
+         1GHTeCQA5dNvOPIAgWUZ+llwGKWnseh423EW1Qg8it9FPzOt2I2MjWbjTLJfxfY93VvB
+         imhqTeyzdw6UzqeEx8Pd8anpz/3NXyu+JI/fe7jiSKGe/HV3r9X35Uy18DTU0EEbuo6O
+         zMLRh+mZh4XZ4NtYGKC4Nr5In0OCRxNTgn1NSgJQ9igg91d6UfxeNsSdrmY4uJ+cQOPD
+         qtjeXaIy7eQZclb/m8RbGJDT/CT01YRzlZf7BanrE16yCCDMpPB9ayvivfEPpruusVJ1
+         nKYw==
+X-Forwarded-Encrypted: i=1; AJvYcCWCWYGSaQWw0+hK3E/gIF4DlejOrLZJSZ8iJq1M1M676n8L39IPITecQFdje/mmbZV7Jnov1xEpJRQn/0E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO4pnvS/q91n22KQ/IGFUFp+spBntUf5vjb0bipDWLJMrzmDQa
+	9YEPwtOoildllGm/3MjbhL3bZSmWguP6pj9dz6co/q7GcwS4LHs7zlP5MAjISc0kQPmiDLs6xAu
+	3iXbJLhOsmrWIfqN1nD6JQ2MWpB7meENIgGKlVg==
+X-Google-Smtp-Source: AGHT+IFrNumdULsnEPR04kBNU8XMjX8bG9XSVfDlwM/zGpHmPKGcSfOV8lPe2vGJr0OSfW68l7jPhnVF9tH+ZD4Q1Vc=
+X-Received: by 2002:a05:6870:d0c7:b0:260:f9ee:9700 with SMTP id
+ 586e51a60fabf-273e652019emr11521313fac.30.1724673831904; Mon, 26 Aug 2024
+ 05:03:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240712062411.35732-1-kai.heng.feng@canonical.com> <6685e124-4a7d-44bb-80a9-fc5fa51269a9@amd.com>
-In-Reply-To: <6685e124-4a7d-44bb-80a9-fc5fa51269a9@amd.com>
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Date: Mon, 26 Aug 2024 20:03:15 +0800
-Message-ID: <CAAd53p5d6=m9MzC5pRS8HJSP54tiTxMBLR-Nd=fE2Tf2Sf+mpQ@mail.gmail.com>
-Subject: Re: [PATCH] PCI/PM: Put devices to low power state on shutdown
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: bhelgaas@google.com, mika.westerberg@linux.intel.com, 
-	linux-pci@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20240821110856.22552-1-pavel@noa-labs.com> <2b7a1c4ee1d6e78f166d545b31f4fd3fbd252e26.camel@mediatek.com>
+ <CAG-pW8EgBE4RwhcFtMXEuFtG56JJSyvOjG5+q71zG6pJyo05hg@mail.gmail.com> <CABBYNZJL6qkOPE6UuKz+=03KTUNF4091iR=1j4e2P+Wf2c+oWg@mail.gmail.com>
+In-Reply-To: <CABBYNZJL6qkOPE6UuKz+=03KTUNF4091iR=1j4e2P+Wf2c+oWg@mail.gmail.com>
+From: Pavel Nikulin <pavel@noa-labs.com>
+Date: Mon, 26 Aug 2024 16:03:44 +0400
+Message-ID: <CAG-pW8HB=jE-g1b5cy1AnwkmzHP_ckw0HtM+r_Lfsu8eOZpzkw@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: btusb: Add Realtek MT7925 support ID 0x13d3:0x3608
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: =?UTF-8?B?Q2hyaXMgTHUgKOmZuOeomuazkyk=?= <Chris.Lu@mediatek.com>, 
+	"marcel@holtmann.org" <marcel@holtmann.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
+	=?UTF-8?B?RGVyZW4gV3UgKOatpuW+t+S7gSk=?= <Deren.Wu@mediatek.com>, 
+	"linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>, 
+	"johan.hedberg@gmail.com" <johan.hedberg@gmail.com>, =?UTF-8?B?U3RldmUgTGVlICjmnY7oppboqqAp?= <steve.lee@mediatek.com>, 
+	Sean Wang <Sean.Wang@mediatek.com>, =?UTF-8?B?QWFyb24gSG91ICjkvq/kv4rku7Ap?= <Aaron.Hou@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 23, 2024 at 3:28=E2=80=AFAM Mario Limonciello
-<mario.limonciello@amd.com> wrote:
->
-> On 7/12/2024 01:24, Kai-Heng Feng wrote:
-> > Some laptops wake up after poweroff when HP Thunderbolt Dock G4 is
-> > connected.
-> >
-> > The following error message can be found during shutdown:
-> > pcieport 0000:00:1d.0: AER: Correctable error message received from 000=
-0:09:04.0
-> > pcieport 0000:09:04.0: PCIe Bus Error: severity=3DCorrectable, type=3DD=
-ata Link Layer, (Receiver ID)
-> > pcieport 0000:09:04.0:   device [8086:0b26] error status/mask=3D0000008=
-0/00002000
-> > pcieport 0000:09:04.0:    [ 7] BadDLLP
-> >
-> > Calling aer_remove() during shutdown can quiesce the error message,
-> > however the spurious wakeup still happens.
-> >
-> > The issue won't happen if the device is in D3 before system shutdown, s=
-o
-> > putting device to low power state before shutdown to solve the issue.
-> >
-> > I don't have a sniffer so this is purely guesswork, however I believe
-> > putting device to low power state it's the right thing to do.
->
-> KH,
->
-> I did testing with your patch along with a few others, and found that it
-> does the best job to put a majority of devices into a low power state
-> properly.
->
-> I have the details of what happens at S5 outlined on this Gist:
-> https://gist.github.com/superm1/f8f81e52f5b1d55b64493fdaec38e31c
->
-> * KH column is this patch.
-> * ML column is
-> https://lore.kernel.org/linux-usb/43594a1c-c0dd-4ae1-b2c4-f5198e3fe951@am=
-d.com/T/#m03d0b36f86fb4722009b24a8ee547011128db80b
-> * FS column is 0fab972eef49 being applied again
->
-> I also have power testing data from an OEM's system that shows that it
-> improves things well enough that a previously failing energy star
-> certification is now passing.
+Yes, just replace realtek with mediatek, and indicate that it fixes
+https://bugzilla.kernel.org/show_bug.cgi?id=3D219182
 
-Thanks a lot for the testing.
 
-Bjorn, do you think this patch is in good form to get included in next -rc1=
-?
+Pavel Nikulin
+Senior Engineer
++971 52 386 6738
+pavel@noa-labs.com
 
-Kai-Heng
 
+
+On Fri, Aug 23, 2024 at 1:42=E2=80=AFAM Luiz Augusto von Dentz
+<luiz.dentz@gmail.com> wrote:
 >
-> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
-> Tested-by: Mario Limonciello <mario.limonciello@amd.com>
+> Hi Pavel,
+>
+> On Thu, Aug 22, 2024 at 5:09=E2=80=AFPM Pavel Nikulin <pavel@noa-labs.com=
+> wrote:
+> >
+> > Oh my, how I missed that.
+> >
+> > I think a commit can be undone, and the same patch with a correct
+> > commit message submitted again. Somebody with access will have to
+> > revert it.
+>
+> I will do that once I rebase for the next pull request, it is just a
+> matter of doing s/Realtek/Mediatek?
 >
 > >
-> > Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D219036
-> > Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> > ---
-> >   drivers/pci/pci-driver.c | 8 ++++++++
-> >   1 file changed, 8 insertions(+)
+> > Pavel Nikulin
+> > Senior Engineer
+> > +971 52 386 6738
+> > pavel@noa-labs.com
 > >
-> > diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-> > index af2996d0d17f..4c6f66f3eb54 100644
-> > --- a/drivers/pci/pci-driver.c
-> > +++ b/drivers/pci/pci-driver.c
-> > @@ -510,6 +510,14 @@ static void pci_device_shutdown(struct device *dev=
-)
-> >       if (drv && drv->shutdown)
-> >               drv->shutdown(pci_dev);
 > >
-> > +     /*
-> > +      * If driver already changed device's power state, it can mean th=
-e
-> > +      * wakeup setting is in place, or a workaround is used. Hence kee=
-p it
-> > +      * as is.
-> > +      */
-> > +     if (!kexec_in_progress && pci_dev->current_state =3D=3D PCI_D0)
-> > +             pci_prepare_to_sleep(pci_dev);
-> > +
-> >       /*
-> >        * If this is a kexec reboot, turn off Bus Master bit on the
-> >        * device to tell it to not continue to do DMA. Don't touch
+> >
+> > On Thu, Aug 22, 2024 at 9:54=E2=80=AFAM Chris Lu (=E9=99=B8=E7=A8=9A=E6=
+=B3=93) <Chris.Lu@mediatek.com> wrote:
+> > >
+> > > Hi Luiz and Pavel,
+> > >
+> > > I think these is something wrong to the title and content of this
+> > > patch. MT7925 is an connectivity IC from Mediatek rather than Realtek=
+.
+> > >
+> > > Although this patch has been accpeted and merged to the next tree, I'=
+m
+> > > wondering if the typo can still be fixed? I'm afraid that such error
+> > > could cause some misunderstanding to users.
+> > >
+> > > Thanks a lot!
+> > >
+> > > BRs,
+> > > Chris
+> > >
+> > > On Wed, 2024-08-21 at 15:08 +0400, Pavel Nikulin wrote:
+> > > > Add the support ID (0x13d3, 0x3608) to usb_device_id table for
+> > > > Realtek MT7925B14L found on AW-EM637 WiFi+BT modules in 2024 Asus
+> > > > laptops.
+> > > >
+> > > > The device info from /sys/kernel/debug/usb/devices as below.
+> > > >
+> > > > T:  Bus=3D03 Lev=3D01 Prnt=3D01 Port=3D00 Cnt=3D01 Dev#=3D  2 Spd=
+=3D480  MxCh=3D 0
+> > > > D:  Ver=3D 2.10 Cls=3Def(misc ) Sub=3D02 Prot=3D01 MxPS=3D64 #Cfgs=
+=3D  1
+> > > > P:  Vendor=3D13d3 ProdID=3D3608 Rev=3D 1.00
+> > > > S:  Manufacturer=3DMediaTek Inc.
+> > > > S:  Product=3DWireless_Device
+> > > > S:  SerialNumber=3D000000000
+> > > > C:* #Ifs=3D 3 Cfg#=3D 1 Atr=3De0 MxPwr=3D100mA
+> > > > A:  FirstIf#=3D 0 IfCount=3D 3 Cls=3De0(wlcon) Sub=3D01 Prot=3D01
+> > > > I:* If#=3D 0 Alt=3D 0 #EPs=3D 3 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 =
+Driver=3Dbtusb
+> > > > E:  Ad=3D81(I) Atr=3D03(Int.) MxPS=3D  16 Ivl=3D125us
+> > > > E:  Ad=3D82(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+> > > > E:  Ad=3D02(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+> > > > I:* If#=3D 1 Alt=3D 0 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 =
+Driver=3Dbtusb
+> > > > E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D   0 Ivl=3D1ms
+> > > > E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D   0 Ivl=3D1ms
+> > > > I:  If#=3D 1 Alt=3D 1 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 =
+Driver=3Dbtusb
+> > > > E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D   9 Ivl=3D1ms
+> > > > E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D   9 Ivl=3D1ms
+> > > > I:  If#=3D 1 Alt=3D 2 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 =
+Driver=3Dbtusb
+> > > > E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  17 Ivl=3D1ms
+> > > > E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  17 Ivl=3D1ms
+> > > > I:  If#=3D 1 Alt=3D 3 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 =
+Driver=3Dbtusb
+> > > > E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  25 Ivl=3D1ms
+> > > > E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  25 Ivl=3D1ms
+> > > > I:  If#=3D 1 Alt=3D 4 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 =
+Driver=3Dbtusb
+> > > > E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  33 Ivl=3D1ms
+> > > > E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  33 Ivl=3D1ms
+> > > > I:  If#=3D 1 Alt=3D 5 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 =
+Driver=3Dbtusb
+> > > > E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  49 Ivl=3D1ms
+> > > > E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  49 Ivl=3D1ms
+> > > > I:  If#=3D 1 Alt=3D 6 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 =
+Driver=3Dbtusb
+> > > > E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  63 Ivl=3D1ms
+> > > > E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  63 Ivl=3D1ms
+> > > > I:  If#=3D 2 Alt=3D 0 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 =
+Driver=3Dbtusb
+> > > > E:  Ad=3D8a(I) Atr=3D03(Int.) MxPS=3D  64 Ivl=3D125us
+> > > > E:  Ad=3D0a(O) Atr=3D03(Int.) MxPS=3D  64 Ivl=3D125us
+> > > > I:* If#=3D 2 Alt=3D 1 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 =
+Driver=3Dbtusb
+> > > > E:  Ad=3D8a(I) Atr=3D03(Int.) MxPS=3D 512 Ivl=3D125us
+> > > > E:  Ad=3D0a(O) Atr=3D03(Int.) MxPS=3D 512 Ivl=3D125us
+> > > >
+> > > > Signed-off-by: Pavel Nikulin <pavel@noa-labs.com>
+> > > > ---
+> > > >  drivers/bluetooth/btusb.c | 2 ++
+> > > >  1 file changed, 2 insertions(+)
+> > > >
+> > > > diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> > > > index bb698ca98..df0d2e4ab 100644
+> > > > --- a/drivers/bluetooth/btusb.c
+> > > > +++ b/drivers/bluetooth/btusb.c
+> > > > @@ -627,6 +627,8 @@ static const struct usb_device_id quirks_table[=
+]
+> > > > =3D {
+> > > >       BTUSB_WIDEBAND_SPE
+> > > > ECH },
+> > > >  { USB_DEVICE(0x13d3, 0x3604), .driver_info =3D BTUSB_MEDIATEK |
+> > > >       BTUSB_WIDEBAND_SPE
+> > > > ECH },
+> > > > +{ USB_DEVICE(0x13d3, 0x3608), .driver_info =3D BTUSB_MEDIATEK |
+> > > > +     BTUSB_WIDEBAND_SPE
+> > > > ECH },
+> > > >
+> > > >  /* Additional Realtek 8723AE Bluetooth devices */
+> > > >  { USB_DEVICE(0x0930, 0x021d), .driver_info =3D BTUSB_REALTEK },
+> > >
+> > > ************* MEDIATEK Confidentiality Notice ********************
+> > > The information contained in this e-mail message (including any
+> > > attachments) may be confidential, proprietary, privileged, or otherwi=
+se
+> > > exempt from disclosure under applicable laws. It is intended to be
+> > > conveyed only to the designated recipient(s). Any use, dissemination,
+> > > distribution, printing, retaining or copying of this e-mail (includin=
+g its
+> > > attachments) by unintended recipient(s) is strictly prohibited and ma=
+y
+> > > be unlawful. If you are not an intended recipient of this e-mail, or =
+believe
+> > > that you have received this e-mail in error, please notify the sender
+> > > immediately (by replying to this e-mail), delete any and all copies o=
+f
+> > > this e-mail (including any attachments) from your system, and do not
+> > > disclose the content of this e-mail to any other person. Thank you!
 >
+>
+>
+> --
+> Luiz Augusto von Dentz
 
