@@ -1,145 +1,119 @@
-Return-Path: <linux-kernel+bounces-301809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 208BB95F5E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:03:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8CA895F5BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:59:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84942B220CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:03:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7356728305A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F991993B9;
-	Mon, 26 Aug 2024 16:00:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40F9194A64;
+	Mon, 26 Aug 2024 15:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NCQv2c+7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="L5ipoKjn"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0106D194C93;
-	Mon, 26 Aug 2024 15:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A2F194A42
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 15:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724688000; cv=none; b=B9Vwyp2nBsWz6pBLPeMitQ4IpltovSewvZ4F0H59nQ8WnFwvXWvaykpwctYgi7lIiexxQNVAsxjF7aCtqDIsu6I/vR9+V4FcaxoFipttVq5zjRCGC/HzQCTWkjnu0XyBQbfBN+878rQkt4blXRXcrCm1fe2vzHxzG7TrxdmSIZk=
+	t=1724687967; cv=none; b=Zr4Lu6j+hy7tZju9WXFGHJniZDey0CjYAAxn+YvcHf7Cd2adGbPl/Lz2jaJwKTAdqtlRWjr2JY7UzlWn+w/RDqrx0ArILGRJWFwQiIhpAE6838Z+2R2dS/e+jYT6XtbENLYsmmgixTffv56b9wgLpleOxWb3or7Od6LX0QbXWOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724688000; c=relaxed/simple;
-	bh=uXwOMuW/G6+0zgv9AO6yFx2u+jhvgs/z/nmI3LCIdrI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ITgUEHQDsdwgFnL6DnGBHixbu60ANEwylm+LR1kRY1q3nPmWRaGOlpoJxh7BXPBacFo2461IWjWBlfOFFI7BJ4oDFNhxdjjdpoa1xbwMN3qMJphHuYcVMNj9pJ74ECP0rO1exxCox4SDgYgT0iID9oZCUfWx/1lSqouyLCvuHB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NCQv2c+7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18A3EC4DDF5;
-	Mon, 26 Aug 2024 15:59:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724687998;
-	bh=uXwOMuW/G6+0zgv9AO6yFx2u+jhvgs/z/nmI3LCIdrI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=NCQv2c+75NLKvvlJljjrgPhKlzE913e+xVN6CRDrorAjVlZ8A9twCDYPPR/NwXKel
-	 h5zg0ZufxzNQo6OfRkyQCXP4ozypzxeoonWUYp/LEcMIXfYpnj7LGYX3OkryXt5+mm
-	 GS2pJLk/4zpomBglykC3W/FiKE5lbBvXwhOgVil6klcVxucGy0K3oPEB3DbCDo5e4k
-	 JdsasE1II/vsKheEaMR74WYK+qqZ3eoHYrarInupZAq1WHVo+h67B5nuzZu41oD7ae
-	 1QRRECRMJI2pMuUG6EKFg9mMx/rMcLfV5LV5V8/ZoGEAXMK2vOeFPc56aF23PbVSiP
-	 cEWWG5Bqwghpg==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Mon, 26 Aug 2024 17:59:09 +0200
-Subject: [PATCH net 10/15] mptcp: pm: fix ID 0 endp usage after multiple
- re-creations
+	s=arc-20240116; t=1724687967; c=relaxed/simple;
+	bh=qY9heMDGehPfNX3k14ciptmMDUnARQZuzI0AJR4IPTk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KDIRYgU5eR5ksXYFCy5wdL+rzXv/Zn9oUqS7Tg3kqme78mZ241atz1xe1iaijiQVOQ8k6UpajmXaJei41PR0SpHeIgvj8mSo0Z1pLxH8+ODkxIomyyiC/vLLWzYCkHc26OqHhJW2/S3iK9xt3gE6jfzXbZ9nTJhTBeI3Vx+szGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=L5ipoKjn; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e0875f1e9edso4289256276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:59:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1724687963; x=1725292763; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yZFAHSIlyg8F4S4S4k7aYiqj8SkSv6YUioWraLbkEhw=;
+        b=L5ipoKjnOPIqEguN/ZYiLc1Ae7zSJ051YlnZlgq0ORK4l0sW4cerTUmt5Yn2o4G9fT
+         EPDA8feHNBt8eWNLdW6mW5vPihT9ARWhOcy5yAexiJ953x3MXYU5BjN5PgJR3+COt2/n
+         BqZ7QqjL79HqEEQs3udQANGnB2BhEzLXNgljA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724687963; x=1725292763;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yZFAHSIlyg8F4S4S4k7aYiqj8SkSv6YUioWraLbkEhw=;
+        b=dZDYrBBrAioY0sNWGphu5FTS4jZJW3UsToJ3GZjwpomawoBukMbmXb0xG7Fohb7jwA
+         tWn2gWbqt+9dXlMdfUIBrzmH+RUuYZdKdhBYvCAQ5hzIS5j0ZpO6OdDKE7qO9IDFuZZm
+         g/SsNmQqr3aLwl7/Q5rvV/j6SdPzWvFGmO2/jfkYV+64g1GqbodXK/jDfz7Ic4I6Ufag
+         rHc3C2yTkzDWInes0AMn7MRUQ9sg+93viFCZunpK3S72tjl9ykeJxhab/cGYRzRkVeol
+         dxEhubomqZnj1aTZ8C+GsKnmnPkwwU/uK4LmnQ4SZgwndDDOKglfxTvZuq2ESatYjB8L
+         RP4g==
+X-Forwarded-Encrypted: i=1; AJvYcCXjzoMcfTm+R+3KVisowN8PBd+PZdZCmt5FjI8959PGPU6e1PCydjQ8lDQXzJR8qD/LO8GKyZy90jWHedI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIQEqKwB1NKw3IbvwmjTomcsvsdqFKzrmpRWgmLvcn0cgyMnLZ
+	wa6N5MOp2qQNxUXmXVjKimtcXC8BGSksylgmNmE2RESUpUbbVKgks26i6G6mA23qByad11qAtcA
+	jEmn1AcilAhQ287FuZ0ws9HTPDTfXRyzPmk/c8Q==
+X-Google-Smtp-Source: AGHT+IHsSuPdqP9FiVH+9II/uBOhPXT+6+GarwXIQkTUesIn15cg/W3dSvKyA6YG2bPAM30jpn/lhCOm2enB6Mf0YFk=
+X-Received: by 2002:a05:6902:1b89:b0:e11:54e9:879b with SMTP id
+ 3f1490d57ef6-e17a85d02b0mr11434177276.24.1724687963392; Mon, 26 Aug 2024
+ 08:59:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240826-net-mptcp-more-pm-fix-v1-10-8cd6c87d1d6d@kernel.org>
-References: <20240826-net-mptcp-more-pm-fix-v1-0-8cd6c87d1d6d@kernel.org>
-In-Reply-To: <20240826-net-mptcp-more-pm-fix-v1-0-8cd6c87d1d6d@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
- Florian Westphal <fw@strlen.de>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, 
- =?utf-8?q?Ar=C4=B1n=C3=A7_=C3=9CNAL?= <arinc.unal@arinc9.com>, 
- syzbot+455d38ecd5f655fc45cf@syzkaller.appspotmail.com, 
- stable@vger.kernel.org
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2308; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=uXwOMuW/G6+0zgv9AO6yFx2u+jhvgs/z/nmI3LCIdrI=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBmzKZW0d11ZBJN4Z+IvERhVx9LuJbaku85sDvf0
- Wft/3oZzlOJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZsymVgAKCRD2t4JPQmmg
- c7h9EADYErk8pH+Gu/yqt8tfd6Bj/yopVphZBiIurDOCNJcz5JHzSaiisIoyFHNEmbgcWyCtXVL
- JUk6LANUIWRwB4WrVjzsDdTTceCT7+VXyKbtC74yj71lAm/8d8/GE+wN4VLzh50CUHoYYjUJ7cH
- CvkwQVeAj+i0fMzqV+OpATd87TZamPOj7upNBycclNHwz6EPscfx0mzQ7hlSWHUwC3PdCm7rPem
- XPrv5/kZZY4PBOilDXWvBJOrTAs8n0fxWWXFKKJEjfU2l0FzyAdlPv9dbymLSQdThFFgqVJFPOa
- aDIj3n3eUTLzZeSSeI2FJ54eZqfoU+smNN7yC8hOu2R/+fnvu7T9Qo00J1W+hSVgCKuY/g6qPQa
- QkbSSwjbor/KC//PWKzXkOy5ARc1SQSSbWzNTicplcuxOkO7taZAXbaYb/Wy/tpJeWMux5ElOik
- clcLa4JAkwMCc5N2QrfZLh0lBxqmF6213xW3xHPCp87TMtM6t0zt2eLZzHw4UwwmgpXDoOazj2N
- nehfJaSSyQ/BVQdZyKBIETfB2cuIIl9Az0zkYT+IxMjC7kgIYBVo+LSBBx/SvLaEZJU78OyIcAm
- 44Z7AA3M7vj3nhFMyB75m87GWFSlZmYJN4EKfKEDIBgIbhOSgn/ado/Y1WhBorwJA/v7bAtJxay
- XwhVCeqMWAFG6Pg==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+References: <20240722101443.10768-1-feilv@asrmicro.com> <CAOQ4uxhP03BHK8gDmeySxkacGvy9BToZkb5nTgaegWxJPAuG8A@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhP03BHK8gDmeySxkacGvy9BToZkb5nTgaegWxJPAuG8A@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 26 Aug 2024 17:59:10 +0200
+Message-ID: <CAJfpegtPOgowkK5EHxNZnuHDo9AZTbF2-zxMc99rvWL44rdMXQ@mail.gmail.com>
+Subject: Re: [PATCH V2] ovl: fsync after metadata copy-up via mount option "fsync=strict"
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Fei Lv <feilv@asrmicro.com>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lianghuxu@asrmicro.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-'local_addr_used' and 'add_addr_accepted' are decremented for addresses
-not related to the initial subflow (ID0), because the source and
-destination addresses of the initial subflows are known from the
-beginning: they don't count as "additional local address being used" or
-"ADD_ADDR being accepted".
+On Mon, 22 Jul 2024 at 15:56, Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> On Mon, Jul 22, 2024 at 1:14=E2=80=AFPM Fei Lv <feilv@asrmicro.com> wrote=
+:
+> >
+> > For upper filesystem which does not enforce ordering on storing of
+> > metadata changes(e.g. ubifs), when overlayfs file is modified for
+> > the first time, copy up will create a copy of the lower file and
+> > its parent directories in the upper layer. Permission lost of the
+> > new upper parent directory was observed during power-cut stress test.
+> >
+> > Fix by adding new mount opion "fsync=3Dstrict", make sure data/metadata=
+ of
+> > copied up directory written to disk before renaming from tmp to final
+> > destination.
+> >
+> > Signed-off-by: Fei Lv <feilv@asrmicro.com>
+>
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+>
+> but I'd also like to wait for an ACK from Miklos on this feature.
 
-It is then required not to increment them when the entrypoint used by
-the initial subflow is removed and re-added during a connection. Without
-this modification, this entrypoint cannot be removed and re-added more
-than once.
+I'm okay with this.  I'm a little confused about sync=3Dstrict mode,
+since most copy ups will have vfs_fsync() called twice.  Is this what
+we want, or could this be consolidated into a single fsync?
 
-Reported-by: Arınç ÜNAL <arinc.unal@arinc9.com>
-Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/512
-Fixes: 3ad14f54bd74 ("mptcp: more accurate MPC endpoint tracking")
-Reported-by: syzbot+455d38ecd5f655fc45cf@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/00000000000049861306209237f4@google.com
-Cc: stable@vger.kernel.org
-Tested-by: Arınç ÜNAL <arinc.unal@arinc9.com>
-Reviewed-by: Mat Martineau <martineau@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- net/mptcp/pm_netlink.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Also is it worth optimizing away the fsync on the directory in cases
+the filesystem is well behaved?  Maybe we should just move the
+vfs_fsync() call into ovl_copy_up_metadata() and omit the complexity
+related to the additional mount option?
 
-diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
-index 90b7c8b45027..591ae2ffb4dd 100644
---- a/net/mptcp/pm_netlink.c
-+++ b/net/mptcp/pm_netlink.c
-@@ -615,12 +615,13 @@ static void mptcp_pm_create_subflow_or_signal_addr(struct mptcp_sock *msk)
- 
- 		fullmesh = !!(local.flags & MPTCP_PM_ADDR_FLAG_FULLMESH);
- 
--		msk->pm.local_addr_used++;
- 		__clear_bit(local.addr.id, msk->pm.id_avail_bitmap);
- 
- 		/* Special case for ID0: set the correct ID */
- 		if (local.addr.id == msk->mpc_endpoint_id)
- 			local.addr.id = 0;
-+		else /* local_addr_used is not decr for ID 0 */
-+			msk->pm.local_addr_used++;
- 
- 		nr = fill_remote_addresses_vec(msk, &local.addr, fullmesh, addrs);
- 		if (nr == 0)
-@@ -750,7 +751,9 @@ static void mptcp_pm_nl_add_addr_received(struct mptcp_sock *msk)
- 	spin_lock_bh(&msk->pm.lock);
- 
- 	if (sf_created) {
--		msk->pm.add_addr_accepted++;
-+		/* add_addr_accepted is not decr for ID 0 */
-+		if (remote.id)
-+			msk->pm.add_addr_accepted++;
- 		if (msk->pm.add_addr_accepted >= add_addr_accept_max ||
- 		    msk->pm.subflows >= subflows_max)
- 			WRITE_ONCE(msk->pm.accept_addr, false);
+To me it feels that it shouldn't matter in terms of performance, but
+if reports of performance regressions come in, we can still make this
+optional.
 
--- 
-2.45.2
-
+Thanks,
+Miklos
 
