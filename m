@@ -1,346 +1,212 @@
-Return-Path: <linux-kernel+bounces-301008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E02495EB82
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:13:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4A0F95EB80
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:12:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FE201F214FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:13:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E91DC1C2159B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA9C13BAE4;
-	Mon, 26 Aug 2024 08:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D9B13A896;
+	Mon, 26 Aug 2024 08:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SVDE35Cj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="fx2lPC1b"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011060.outbound.protection.outlook.com [52.101.70.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4DF13AD3F;
-	Mon, 26 Aug 2024 08:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724659971; cv=none; b=npSpMevM02TizRkXUMnMSGED5H83JbYX7CrYuO0GJZ9kwAm85X8LhpqMIZHFlPRnAXARBBUAzWC+zXJdM3oSFLlB9yonvwh5EqbIA9gzEF6gLPFc+cbl1mx7wJD8T8iVWBu8dhisSgvXISKpp8hZPIxve2omTjoBq7dIxQx49lM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724659971; c=relaxed/simple;
-	bh=GJX8WMOWMde/kMse+6fBcih9AFB2KaEoktYH4eL1+BA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R/1rpeFYNNHotIL6LZdGn4qPqLMam+Ul4Bzs9Elv+iULMM3EA3GmYbPQ0qNSJ87nlPL5h6crVl/a2tPClghspt/AfxH5Lp7PVmxh4Qvysk5Qv4uVTIzUB15LA7Cr3iNyXhsuIDogvOyHfuaLNV67ONX/4+qUQlVQNfMMge6T6h4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SVDE35Cj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75CC1C8CDC1;
-	Mon, 26 Aug 2024 08:12:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724659970;
-	bh=GJX8WMOWMde/kMse+6fBcih9AFB2KaEoktYH4eL1+BA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SVDE35Cjmxr+/k2lBwT0mCM/tQSt4AuGzZgpMcyv8Shf9SYBF7nhdme/Ll1iQQWA+
-	 puftrSTyIixn36Wj4DWynLOF35Mf9qaeHI+QTh79ynJc5YPUNMpGlowGZMGgxtNWMA
-	 Q2zq3ANCYyBARU5UdNjuHzs53JS8jQG79whJ5IBQr3xKp4oyGf/XdX/NbSmt+tpMDA
-	 +Vi+v2e7qvO0f4fH8Td8hza6DMlH5p/Uw292IyYHS5wvPnYWeTbg7YK5ULNR22Wfh4
-	 OB3y8lLOY6Ko7ycvHnx1Tdess462qragDPDLXbVak9PHsZdzuDO8KDe21RVM/jLlKV
-	 YpudVOMX4+/MQ==
-Message-ID: <cad20aa4-43a9-4754-b1e8-290ce0beb64d@kernel.org>
-Date: Mon, 26 Aug 2024 10:12:39 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB1E4A28;
+	Mon, 26 Aug 2024 08:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724659968; cv=fail; b=bCqj//lyWpGrNMg1pzjsrkTaQjzMQqsdZJTu370hlabA9BwjP9P3RvzR+vc3tCJ47ElxqPnASfLo4NCJoSxWbRlqKpfrZVzc8FLyYvNo7BA+8t4ZhQ7V6zHbQgX4qfoXf17jrgDpqo6ZbahJoa3yg2GsjEV5G6hThhewxkK7A54=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724659968; c=relaxed/simple;
+	bh=cfU3BsDgGYtsXpC/NxsYKfp4eyk4XsSmBLJRAwVxfcM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=XS13EpNF/pdWbALaacDQOTlMxQHfndYPPQwKfFaH1F+nyDaKYb9/PDZnmEc+4g8Y+wP5XxEAKMEqljZ8ItsDcLPOX2fB+UwXWGNij/M3zm9wM118hryaqCQvn+U5M9QJ9OAWRLvCTduwyLMTEyi7KXup0vsrvjp1sUHkZsEz1QM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=fx2lPC1b; arc=fail smtp.client-ip=52.101.70.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NloO7Xn++zQzG1HW1l75SKkUS0jtddYeZWNBz4bXLYUgn64zmP+x3IRF1/V16ywETbMtB3qlnNaih15BsIWLrrqi5u/lbWBvzq3hfO0Vr0pGhqivqwx7VtJ7EysQ6IkVEVSYiHQVRK7F8DvAnEyswbrz0QbV8+FIJWtZTNv2EnBvFoXlNaXHZyV93e9YMRA0YdSB3vKE21RMmmnTX5ocsrSbK2LyWgVled5z1Nq3M7O6js4AVJFcRDcVYBr6M0LXucMTgPmRoYLKNMbNmbF7N+7myND0KQ09ay0vTaNIHs3r7dbP4vkVVz0/kqraN1+hGPL6pbDeD+mG0On6z/xGWg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cfU3BsDgGYtsXpC/NxsYKfp4eyk4XsSmBLJRAwVxfcM=;
+ b=MRDElWqSAT3NeqqB0YVlxOLDizNGlGACM/hWn5GxcEz+l1YwBxMPmh93RfHS85xM8lC4y5tYo7InVMTE7n1atCl4pSU2uJ7zI34ZWTzH/tOFGEpHfyD24s4bGR8qTzgCa62UdBT4WmMS8AQvR1jSarwWKk869VlssqIdsK1/3ZbxbhBsp0MAzVD6pfHUwi5qjBYC1TMwScTCQS1oP/s0JeyUi/bawsbMn+Chv9yyk/Z6XL381ms4Qn2rP08/53o00hog4XbXB0MGLA3BrvVz6y9fOBVeZ3rbzt+NQBhptnX2zKOM8+5fXgzTcrRc62/IT4LhTuhjfn90HkCn0CqXqQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cfU3BsDgGYtsXpC/NxsYKfp4eyk4XsSmBLJRAwVxfcM=;
+ b=fx2lPC1bfid0nJ2ki8sArMb44+fR+YRLHgjck2+7Al9livpCpprVroe0lljP3lMH3XKK24fxWRDGPRHAzZ7fOjuvLlo03mYHmyfOXfe3R7a9tmDj4tUjZ0QdFc4cQJC8Kib0IjilMonQTPNjnNC+qqFcJ0SPNZH5HutA7ZaPbK97VcvcT1ESo+XeNFOmBVrw9abJ9vwfTOy9nR19rgA/ieNW9XV241uXs3F1SNocXLsAQVaEKsb4FbMxz7hDokE+lrl6fz2NW1KBJ2p4AHOa66UsN2HXOe4emBibbyR9IU06I2TZZHgtww1ToEhK3I3pInhQJpBx5hG8CIC9X6OGMg==
+Received: from PA4PR04MB9638.eurprd04.prod.outlook.com (2603:10a6:102:273::20)
+ by AM0PR04MB7108.eurprd04.prod.outlook.com (2603:10a6:208:19e::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Mon, 26 Aug
+ 2024 08:12:43 +0000
+Received: from PA4PR04MB9638.eurprd04.prod.outlook.com
+ ([fe80::f950:3bb6:6848:2257]) by PA4PR04MB9638.eurprd04.prod.outlook.com
+ ([fe80::f950:3bb6:6848:2257%5]) with mapi id 15.20.7875.019; Mon, 26 Aug 2024
+ 08:12:43 +0000
+From: David Lin <yu-hao.lin@nxp.com>
+To: Francesco Dolcini <francesco@dolcini.it>
+CC: Sascha Hauer <s.hauer@pengutronix.de>, Calvin Owens <calvin@wbinvd.org>,
+	Brian Norris <briannorris@chromium.org>, Kalle Valo <kvalo@kernel.org>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: RE: [EXT] [RFC PATCH 0/4] mwifiex: add support for iw61x
+Thread-Topic: [EXT] [RFC PATCH 0/4] mwifiex: add support for iw61x
+Thread-Index: AQHa94lYwasmKIL7I0OVdvDE0AaRyrI5K4CAgAAD8oCAAAAlMA==
+Date: Mon, 26 Aug 2024 08:12:43 +0000
+Message-ID:
+ <PA4PR04MB9638751DE1EE81BFDD601FC2D18B2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+References: <20240826072648.167004-1-s.hauer@pengutronix.de>
+ <PA4PR04MB96381DEE1E9DC0A8F05C7695D18B2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+ <Zsw4M0oYZI_JdeAu@gaggiata.pivistrello.it>
+In-Reply-To: <Zsw4M0oYZI_JdeAu@gaggiata.pivistrello.it>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PA4PR04MB9638:EE_|AM0PR04MB7108:EE_
+x-ms-office365-filtering-correlation-id: e1c6fc3a-fc43-4f33-6f66-08dcc5a6dc76
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?GMEIpsMo6pRtahMOW/StOnh7aEh4vCfAHbprJGCV5e3yIdhfomNwvfRse7ye?=
+ =?us-ascii?Q?YGCceqmegW4sr2b8n+rbKUVUkimbM5+auOFf2ecZwXQZHzM2zcKpKoE53pTT?=
+ =?us-ascii?Q?uFxiQKvqlR0dy8ZqByTN1yLfdC1J9qM6Juke7F1b5x9nWU6zJCAPI/fiC+lq?=
+ =?us-ascii?Q?WFLvgg9pxKkw1jqIdCySzY5XftB/NPV1stip58rTiDTEa30UMDgq8aVe+qXb?=
+ =?us-ascii?Q?S2YHQf2pyOTexyd1nxik13UHVnRaOw12yB+xgGR39RMIcbxu43Fzp60Z778n?=
+ =?us-ascii?Q?QiiLBUgSwkExpRnS8k25HXNc6VzMZr2yp4Kifrt8bCBKUPyR7rmAku1fMggm?=
+ =?us-ascii?Q?HGJEniUPzxWXty0B90k/ZnLjQhxtUtVQPaeoc87RoZDJABgfCEVr9p+8FcGA?=
+ =?us-ascii?Q?wId85WaAHKDCe3z7hJAkQgWy+gqXrYRFlp4zoZnQO9qIAVFDcO4GSzD2Xa5Q?=
+ =?us-ascii?Q?DURxxoPhIzX4Qvumcoa6d2lInkg2atXdYeG+rHyjn8wR6O+CUzSxfpVg6GvO?=
+ =?us-ascii?Q?/d3/U2KL2Zkyp9ciQVg5gR/WjSPNuenXualJk7mF+VmpsBpBefAbFzGa2FqD?=
+ =?us-ascii?Q?CvpHp8DAnB7DhJ2tvQ3AKwWIzK9Uf3/Rti3GsxTo5ArrZIOqju0IIe24t2tu?=
+ =?us-ascii?Q?1tVPps7KTypwuhLvMkTgk9HmDExPeCcU1/XeqWRgfSJo29a7BtDpEYxnFm1T?=
+ =?us-ascii?Q?dVcWaQs26i2N9MRw2yg22kA5LUdKS91frlBXvT5ih9y/tyLiDIOfyUW5fnkp?=
+ =?us-ascii?Q?20TAqoGLpsaMm2+KbuXwhitQ8QjxwGcu8szD3LRRPCzVmiEJJRjgYLHwuxB4?=
+ =?us-ascii?Q?k2EJbXtDhlabnNCQ0NS9dEm1uL78giY3LPOuT05cP25MNDzDEaghaSIg8mMr?=
+ =?us-ascii?Q?qDLL26KLAX+Z2w2dsPOxkP+o7HjoVdcWHucPz/KTJi1FieNnNUOLxVc0tKeu?=
+ =?us-ascii?Q?xpm7JiGiO6MqGi/AXkzIYaYiqLbTONa9sl1Ei/S0jMzESWUkFWcvZLQyDSam?=
+ =?us-ascii?Q?AkiYgWRV1dbSyV0mSW1pIy9Dcp6T7OhO+lnKEASgJRuQ04DY0PhJA/BJ7ig7?=
+ =?us-ascii?Q?He60SgB3ZwxdHONBsS8nSQm8QzaQn24d6QuSWkrxtiur237ZxP9aI8DYL8YH?=
+ =?us-ascii?Q?jneBc6vJJi80I3k1HxipkqokIVa8EHCv10OBtE1f3igVJGmrvlCvlMxGN3NO?=
+ =?us-ascii?Q?PeHKrzwd2T4umJLSHKR6PxJlv9o5iAOR2yDlB9d8iOQhqQtWTmfhP8C4Lmtx?=
+ =?us-ascii?Q?q+XUzOxhszVehZ5TfLpS22KlZr8cpynstH5yaPayxhc2o2wtvdn8JXY4dQP5?=
+ =?us-ascii?Q?St5D2gsHOzxoUYesJ9vGU05PEGwyZOHN1r43e3hR0SeFIHBzeTZ1oTgpvT/f?=
+ =?us-ascii?Q?AGHkJVf6sSLcZTfjY1Ksw/O42JPnKU1xkjtMmzSNpc5v0iVWjA=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9638.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?0DbtTxnSaFApyWQMukhgANDC/9xcK20whF4LsW3nKASW0dan5+O91cRssTCv?=
+ =?us-ascii?Q?5Fqnmz+nlSH0M7b8lIiuYEkCAdKNIWToR/uvwhVFzaDGIMygi0W81PnCnUc8?=
+ =?us-ascii?Q?rKL0LkwJQO3AZEN7hnHJKCGnDO5MJD3DnAJNR1R7p/nmahtVLl9benOpG5dt?=
+ =?us-ascii?Q?gnGeOyohnCKjXCgVvjx8nfrb5BBaBMM8OcGmUVKh84sM9rfBFt6jYVW1PcYZ?=
+ =?us-ascii?Q?+YWXPef2w728gAb5rDjD4u6U7ojExDw6K2IOXaXs2nnrCHPsVvVKiRzp6gg9?=
+ =?us-ascii?Q?66WwX7JDqOCuevQMt5TyhjvkqY17OmRVIAR6Ky77nGYDNOs848L3ugFhUvSW?=
+ =?us-ascii?Q?+uiXA/DYtP8JSrQQ1oIuTrXn382XOo9Wf9/pzc2MAZjvELPjm+oA9wEGZ69y?=
+ =?us-ascii?Q?V8M1E+avcvqyB8bL4InmOMubeNrnH1Y/7a3C3grWSYbSo7sm+H/RCg2Mj4as?=
+ =?us-ascii?Q?d5ywYqatF0TH/PcAbLXfxHikAff1gD9BUOgVmJXwBPz6qcvWQGx89tWy7gPO?=
+ =?us-ascii?Q?h5fxc6xpIgT8mMofI6uypez665yBrSmbngGalbJYiHSnkZ+wgGaReY2/UdtQ?=
+ =?us-ascii?Q?kllzFBEOh3AKxvjBBfJauA8M5sM+PGoMGA5i82IxvB8v7iwXgq/WSUvaYJMC?=
+ =?us-ascii?Q?VkyfiP9gzsbCaEwUjYgSrA7bl+JY5929eQO1e/1ZV28ItgTETfFnlkLRvUl3?=
+ =?us-ascii?Q?NE9GDta7Dpd8syAgoEkwheKIVq2Dz0NNHHT6qV4khxGRxiuzIbl/IPmL6h1D?=
+ =?us-ascii?Q?OfF/ydaubC3t27BQIwf4fe743VolIvlzxGie6eDq+H3k7YoEEqTS4M9yr2ER?=
+ =?us-ascii?Q?HE9JX0RQyLkqNYZ9IJODPSagUDP/qcOfBsFPYWaaD07Rj4tzwcL5d6YRrMxW?=
+ =?us-ascii?Q?xdq+sBTYQOHeLFIQzUmwkS9CUgG/vli8SvP6Cq7e/uqCT7TgUcKDwInEdLln?=
+ =?us-ascii?Q?aMa2UwVXfXSrRGnDO8/BI+f2J96A4JKquNVII1WoOatpna2KT9UuUyYpqBFP?=
+ =?us-ascii?Q?uHIUhAhBBUqcflasvIyy25kfPYQFFiGNlvJKH2xj4DfIy4I4NZAiqXD9yv2P?=
+ =?us-ascii?Q?ufN4lsR8jz8PgzX1axFflz5Z2E+OFt490Bha1znVO+93XraE09go3IuN0gk+?=
+ =?us-ascii?Q?k44qSenan8ho3KWKEzV9gDcpnjCcbB8ySXcc8vE4eWZCMBem08O/F7EuDRQp?=
+ =?us-ascii?Q?7p68tXu6OQti2aUPdPhLre2dHoR23nhb7KDRuVQhvYv6z27uuDOzAyUDTsJL?=
+ =?us-ascii?Q?HqZ014uxDkE9ujcasG+n9wRc79uoAmYsaNZRdiDFBGafPEW1TvnneeV+Iu3B?=
+ =?us-ascii?Q?RN+NRQa/32Ogh7ZNqW7pq8e+MNw+tTfJud5QUPE0fH2+5Iu15fjHyL0kpQi4?=
+ =?us-ascii?Q?FGqFGjYruTHkHEvSYapeYk+P7By4vKleax7wCO/oTSZqbpw9Le1VJj3oKpBI?=
+ =?us-ascii?Q?Omh2E+5RrNl+BvT4fszTFcXptTsCzL6z2tA4CfpT6CuBIIAQwqFINOVqZYSQ?=
+ =?us-ascii?Q?v+XBesTCIcaBez9WORK1Gr05Dgn6EoY6UVxzCpX6SmLdSrprWuFPmeLlLUm4?=
+ =?us-ascii?Q?o3Hl6oS36eFw+/azjzD2Wyp1QedE3CyPvOI3MIGe?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] dt-bindings: display: ti: Add schema for AM625
- OLDI Transmitter
-To: Aradhya Bhatia <aradhya.bhatia@linux.dev>,
- Aradhya Bhatia <a-bhatia1@ti.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Jyri Sarha <jyri.sarha@iki.fi>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: DRI Development List <dri-devel@lists.freedesktop.org>,
- Devicetree List <devicetree@vger.kernel.org>,
- Linux Kernel List <linux-kernel@vger.kernel.org>, Nishanth Menon
- <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
- Francesco Dolcini <francesco@dolcini.it>,
- Alexander Sverdlin <alexander.sverdlin@siemens.com>,
- Randolph Sapp <rs@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
- Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
-References: <20240716084248.1393666-1-a-bhatia1@ti.com>
- <20240716084248.1393666-3-a-bhatia1@ti.com>
- <0144d9b4-e830-44b0-95cd-4d49d5051155@kernel.org>
- <2c1afef7-fed9-4685-bf07-b9f3d44a0077@linux.dev>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <2c1afef7-fed9-4685-bf07-b9f3d44a0077@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9638.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e1c6fc3a-fc43-4f33-6f66-08dcc5a6dc76
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Aug 2024 08:12:43.3576
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: FzoB8nZNrNyi6Z/6MFYqCxF1Tw2264iBjWEmzh13c294sa3xgCVrXTGiFN19fVSv27D+n+iM44eHcaqdxfN/XA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7108
 
-On 26/08/2024 07:47, Aradhya Bhatia wrote:
-> Hi Krzysztof,
-> 
-> Thank you for the reviewing the patches.
-> 
-> 
-> On 7/21/24 21:06, Krzysztof Kozlowski wrote:
->> On 16/07/2024 10:42, Aradhya Bhatia wrote:
->>> The OLDI (transmitters) TXes do not have registers of their own, and are
->>> dependent on the source video-ports from the DSS to provide
->>> configuration data. This hardware doesn't directly sit on the internal
->>> bus of the SoC, but does so via the DSS. Hence, the OLDI TXes are
->>> supposed to be child nodes under the DSS, and not independent devices.
->>>
->>> Two of the OLDI TXes can function in tandem to output dual-link OLDI
->>> output, or cloned single-link outputs. In these cases, one OLDI will be
->>> the primary OLDI, and the other one, a companion.
->>>
->>> The OLDI functionality is further supported by a system-control module,
->>> which contains a few registers to control OLDI IO power and
->>> characteristics.
->>>
->>> Add devicetree binding schema for AM625 OLDI TXes.
->>>
->>> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
->>> ---
->>>  .../bindings/display/ti/ti,am625-oldi.yaml    | 153 ++++++++++++++++++
->>>  MAINTAINERS                                   |   1 +
->>>  2 files changed, 154 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml b/Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
->>> new file mode 100644
->>> index 000000000000..0a96e600bc0b
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
->>> @@ -0,0 +1,153 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/display/ti/ti,am625-oldi.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Texas Instruments AM625 OLDI Transmitter
->>> +
->>> +maintainers:
->>> +  - Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
->>> +  - Aradhya Bhatia <a-bhatia1@ti.com>
->>> +
->>> +description: |
->>
->> Do not need '|' unless you need to preserve formatting.
-> 
-> Okay!
-> 
->>
->>> +  The AM625 TI Keystone OpenLDI transmitter (OLDI TX) supports serialized RGB
->>> +  pixel data transmission between host and flat panel display over LVDS (Low
->>> +  Voltage Differential Sampling) interface. The OLDI TX consists of 7-to-1 data
->>> +  serializers, and 4-data and 1-clock LVDS outputs. It supports the LVDS output
->>> +  formats "jeida-18", "jeida-24" and "vesa-18", and can accept 24-bit RGB or
->>> +  padded and un-padded 18-bit RGB bus formats as input.
->>> +
->>> +properties:
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>
->> How does it even work without compatible? How is this schema selected?
->> If by part of your next patch, then this is not a proper split - this
->> patch itself is noop. Squash the patches.
->>
-> 
-> Yes, it is supposed to be picked like the next patch does it. I can
-> squash these both.
-> 
->>> +  clocks:
->>> +    maxItems: 1
->>> +    description: serial clock input for the OLDI transmitters
->>> +
->>> +  clock-names:
->>> +    const: s_clk
->>
->> Drop _clk or name it correctly.
-> 
-> Alright!
-> 
->>
->>> +
->>> +  ti,companion-oldi:
->>> +    $ref: /schemas/types.yaml#/definitions/phandle
->>> +    description:
->>> +      phandle to companion OLDI transmitter. This property is mandatory for the
->>> +      primarty OLDI TX if the OLDI TXes are expected to work either in dual-lvds
->>> +      mode or in clone mode. This property should point to the secondary OLDI
->>> +      TX.
->>> +
->>> +  ti,secondary-oldi:
->>> +    type: boolean
->>> +    description: Boolean property to mark an OLDI TX as secondary node.
->>
->> Why? Lack companion tells it, doesn't it?
-> 
-> A lack of companion doesn't mean secondary-OLDI automatically, actually.
-> 
-> There is also a possible configuration where 2 OLDI TXes could be
-> individually connected to 2 different sources => 2x single Link
-> configuration. The OLDI TXes would then work independently.
+> From: Francesco Dolcini <francesco@dolcini.it>
+> Sent: Monday, August 26, 2024 4:09 PM
+> To: David Lin <yu-hao.lin@nxp.com>
+> Cc: Sascha Hauer <s.hauer@pengutronix.de>; Francesco Dolcini
+> <francesco@dolcini.it>; Calvin Owens <calvin@wbinvd.org>; Brian Norris
+> <briannorris@chromium.org>; Kalle Valo <kvalo@kernel.org>;
+> linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
+> kernel@pengutronix.de
+> Subject: Re: [EXT] [RFC PATCH 0/4] mwifiex: add support for iw61x
+>=20
+> Caution: This is an external email. Please take care when clicking links =
+or
+> opening attachments. When in doubt, report the message using the 'Report
+> this email' button
+>=20
+>=20
+> On Mon, Aug 26, 2024 at 07:57:39AM +0000, David Lin wrote:
+> > > From: Sascha Hauer <s.hauer@pengutronix.de>
+> > > Sent: Monday, August 26, 2024 3:27 PM
+> > > To: Francesco Dolcini <francesco@dolcini.it>
+> > > Cc: Calvin Owens <calvin@wbinvd.org>; Brian Norris
+> > > <briannorris@chromium.org>; Kalle Valo <kvalo@kernel.org>; David Lin
+> > > <yu-hao.lin@nxp.com>; linux-wireless@vger.kernel.org;
+> > > linux-kernel@vger.kernel.org; kernel@pengutronix.de; Sascha Hauer
+> > > <s.hauer@pengutronix.de>
+> > > Subject: [EXT] [RFC PATCH 0/4] mwifiex: add support for iw61x
+> > >
+> > > This series adds support for the iw61x chips to the mwifiex driver.
+> > > There are a few things to address, hence the RFC status. See the
+> > > commit messages for details. The series is based on wireless-next/mai=
+n.
+> ...
+> > Did you test STA or AP mode on DFS channel?
+>=20
+> From what I know even IW416 is not working correctly on DFS channels.
+>=20
+> Francesco
 
-You are responding for something month old. I am not in the context anymore.
+Yes. AP DFS mode has issue when radar detection happened. Patch to fix this=
+ issue will
+be submitted later.
 
-Probably you miss proper graphs here, not such property.
+However, if AP DFS mode without radar detection, it can work. But if VDLL p=
+orting is not correct,
+command timeout will happen when AP DFS mode is running.
 
-> 
->>
->>> +
->>> +  ti,oldi-io-ctrl:
->>> +    $ref: /schemas/types.yaml#/definitions/phandle
->>> +    description:
->>> +      phandle to syscon device node mapping OLDI IO_CTRL registers found in the
->>> +      control MMR region. This property is needed for OLDI interface to work.
->>
->> "This property is needed for OLDI interface to work." tells nothing.
->> Everything is needed for everything to work. Be specific.
->>
-> 
-> Yes! Will fix this.
-> 
->>> +
->>> +  ports:
->>> +    $ref: /schemas/graph.yaml#/properties/ports
->>> +
->>> +    properties:
->>> +      port@0:
->>> +        $ref: /schemas/graph.yaml#/properties/port
->>> +        description: Parallel RGB input port
->>> +
->>> +      port@1:
->>> +        $ref: /schemas/graph.yaml#/properties/port
->>> +        description: LVDS output port
->>> +
->>> +    required:
->>> +      - port@0
->>> +      - port@1
->>> +
->>> +allOf:
->>> +  - if:
->>> +      properties:
->>> +        ti,secondary-oldi: true
->>
->> This does not work... Test your schema.
->>
-> 
-> I tested again just now. At least the schema check didn't report any
-> error. I used the v2024.05 dtschema too.
+Another way is try to use client mode to connect to external AP running on =
+DFS channel.
 
-No, test your condition. Come with DTS with exercises this if. You will
-see this DOES NOT WORK. This is just no-op, does not perform any useful
-work. So test the code that it actually performs what you want it to do.
-
-> 
-> This github gist[0] captures all details of this test.
-> 
-> Could you instead please elaborate what maybe wrong here, and I will try
-> to fix that.
-
-Look at example-schema or any of my talks with useful references.
-
-> 
-> 
->>> +    then:
->>> +      properties:
->>> +        ti,companion-oldi: false
->>> +        ti,oldi-io-ctrl: false
->>> +        clocks: false
->>> +        clock-names: false
->>> +
->>> +    else:
->>> +      required:
->>> +        - ti,oldi-io-ctrl
->>> +        - clocks
->>> +        - clock-names
->>> +
->>> +required:
->>> +  - reg
->>> +  - ports
->>> +
->>> +additionalProperties: false
->>> +
->>> +examples:
->>> +  - |
->>> +    #include <dt-bindings/soc/ti,sci_pm_domain.h>
->>> +
->>> +    oldi_txes {
->>
->> No underscores in node names.
->>
->> Node names should be generic. See also an explanation and list of
->> examples (not exhaustive) in DT specification:
->> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-> 
-> Right. Will make the name generic.
-> 
->>
->>
->>> +        #address-cells = <1>;
->>> +        #size-cells = <0>;
->>> +        oldi: oldi@0 {
->> What is the "reg" for?
-> 
-> The reg is for indexing purposes so that the driver can distinguish
-> between which OLDI TX is under question. Since, the syscon controller
-> has different power control registers and bits for different OLDIs - its
-> important for the driver to be able to tell one from another.
-
-Again, not sure, not in context. Patch is not even in the inbox anymore.
-
-Best regards,
-Krzysztof
+David
 
 
