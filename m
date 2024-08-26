@@ -1,260 +1,148 @@
-Return-Path: <linux-kernel+bounces-301910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF9B495F740
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:57:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E923595F741
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:58:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FE7F1C21488
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:57:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 742C1B20DBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25D48197A9A;
-	Mon, 26 Aug 2024 16:57:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB8E197A97;
+	Mon, 26 Aug 2024 16:58:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PPdZ/DVa"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2041.outbound.protection.outlook.com [40.107.237.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="O0aELbgw"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41860197A6C;
-	Mon, 26 Aug 2024 16:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724691449; cv=fail; b=dtms7Y3hxt2cvcHfurd3hMk068yMedoCEdN6gjukgy6rSOnq0mS8zuljeUe4yBpe7ux2w6v41a3DHPGkTRJZrwHbRrecO3EJThht7fUd0c8+Oq0hT2z1FjfW1g/YzAASpHELD863VDZTA0KWJSdRYL/DyDC9BojcZ1ldL4L58T8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724691449; c=relaxed/simple;
-	bh=cjjvS/ky4OZAsL51zn7iXNKxi/IDYHDuSeV24HjcFDg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=jVANFAJrtJPgqiRwn6l2h8B+B9skJS3aiZL11Cg8yl6ATz1p39SeGLuo+TfMu9kZMb0qSDDPIvkFO79GuEYavAcXka+nD7bGRnyIU5W3PJxcQmD8xAEUM/zy8CZ2VhPVssG3m++8NSfWB+/ueIhHPG356nWwi0ah/qLfdHLBqPA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PPdZ/DVa; arc=fail smtp.client-ip=40.107.237.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=n94pij+m+KT2W2C+voXDA+BDiKeoX01WylGJth057lPV92JdKEyFTMZtO6EvDFgDE/yIy4DdspSIuvrCPO8pyMGaxi7SJ7rYuu/tW9OIB9Ky232J3coI3MKh4cqXJmFTV/zFECo3WJj5MxaEHWUf0o7pkzqyHGf4a+ecaxGxs0vCQsoHuJ1vmnit9cJcpoxUG48Fbb0QZ0w4s4Pm8pxhMT3KDxdmITI/LZ68aroDAmzcC+iMVo6LSeU7ZFXwS1ZTYvW5diplXebp6wOOiGbSo31pHQ97E5fUjnDY74gZyqn/2w6RdGez/kILvp6DGSkDVLVEKzgQRDvnh/ic7JcOfQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CVGV7PKEjTLXS8YxI0bvLBbKZ5o4Q2Jp1NKzV0Duksk=;
- b=hpA2pWSFMtd8zhoA/8azUus8vI8pv66gHLW7RDGAoIpUeEognwR6x5o4GdAw9NRKBVECSyXvQS70ttp6eBo0NawEgrnPLcWuYuQBC5KOxHS/1VCZYaMlXfWN4eEiVaqU19dlMQeG5Ro386pLtKkk0DvkuVNyaGBlvcvEnc38aLyg1l9HV07JMbMc4sdaLtVPF3aj6zt8q3ElzQz4gtB/w2HWCxM31iaSnUHwjbKIASsjVfZra9R9KYcBNBktQQl0pSlufgSq8M+9FtdYYGK7y/MHlnYTwrbKnn9W1ubzEiFE3l4Xh6YK0CMlEMigOXRssWgMaAnsrxpEX0lP4Xbr8Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CVGV7PKEjTLXS8YxI0bvLBbKZ5o4Q2Jp1NKzV0Duksk=;
- b=PPdZ/DVaqMvBdzja2sQrtI62TM7VvDzfwM1ji29a8w3IxcGB/Uwmmz5/t7P/iYiZgUhrkzeSN9zojxy+1ACtw9tfI7Trai6O2a6ytlsJoMiT8/JTttUnvrCvF72kX4NkPJzDywYhoQfXFNf4XZtqvoe09SlQJZMQj/BCUTh+jWs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by CY8PR12MB7538.namprd12.prod.outlook.com (2603:10b6:930:95::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Mon, 26 Aug
- 2024 16:57:24 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7875.016; Mon, 26 Aug 2024
- 16:57:23 +0000
-Message-ID: <1396eead-b584-4b36-b9b2-18ef783cfdbf@amd.com>
-Date: Mon, 26 Aug 2024 11:57:20 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/4] drm/amd/display: Add support for minimum backlight
- quirk
-To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>,
- linux-doc@vger.kernel.org, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
- <linux@weissschuh.net>, Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
- Matt Hartley <matt.hartley@gmail.com>, Kieran Levin <ktl@framework.net>,
- Hans de Goede <hdegoede@redhat.com>,
- Jani Nikula <jani.nikula@linux.intel.com>, Xinhui Pan <Xinhui.Pan@amd.com>,
- Jonathan Corbet <corbet@lwn.net>
-References: <20240824-amdgpu-min-backlight-quirk-v6-0-1ed776a17fb3@weissschuh.net>
- <20240824-amdgpu-min-backlight-quirk-v6-2-1ed776a17fb3@weissschuh.net>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20240824-amdgpu-min-backlight-quirk-v6-2-1ed776a17fb3@weissschuh.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SA1P222CA0020.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:22c::21) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CA6194AEB
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 16:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724691521; cv=none; b=DiY+zYO3guJTIGDZVM1oxlE2/SxtBwFmgKH4cmf6Q/68HMr6XjFj6O5J4jBtRFqYCP91CgDhoy6BpKF0KrA5EvnEPlMWAiiE+Dw25DeXbN9SnMC3ne+A8miu7WPiKn0BKv2foi6hPe1kZAqhudsN/+e+m+iBuQ/VMeW90/HsVbI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724691521; c=relaxed/simple;
+	bh=y3TaPpdNJQOQWX3KXvoGdOCh5EFz/w/FwE4Yn9mHTwY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J7VjUt6ZCGCbJXlgr6HacCdZ/GYQ2KVMCVKRZ69Zyq3/n6y8i8l9Pa6EOr9+peVSyR+qFL7UnNindKRmN0Y3ROJsIgL6Ic51YgxoZF9R5vm2wY9ovTHWhk809C+9JI6oNQjDTyRiuwW6izwpufCk5YonFzP7Z5sLjtSHB5rIqXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=O0aELbgw; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-39d30f0f831so14477355ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:58:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1724691518; x=1725296318; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lhXfyj2KvujK2JosxSUi62CACNBRQWFA93L81bGY5QM=;
+        b=O0aELbgwAueumz5BAQ5GdCXjXvqv7EZ+dkCPavlua2PZhrESFAqm/aLkYINwZuxwul
+         DuikgR9PPbKtE8suHxCVgS/hPK7VJtzfmf55CyDErrAD4WCwEoyotZFnP2+iqHhaxaxb
+         THtmrRzu5apKfl2bP1hCaW3ZE28yR93MDyc0wECKeu+oi3qUP3VZZrNhMWRSmCQ2ZFvk
+         JWJJqhtdFBQ5nSaWrPFPTQ3QTMmwkHhiyZD52BeKcff3wTK3Ur8pFONezIvj7TPSoICg
+         SbQkc+Yl2P8IRoau3mgY8ilXUmbyJtvp+LSCwrPkUb/3kbv3htxpV5po7d9fbHGvsDBE
+         RwtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724691518; x=1725296318;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lhXfyj2KvujK2JosxSUi62CACNBRQWFA93L81bGY5QM=;
+        b=QIq4DoTZ1JM7qO0wQGQ4Pp/WVpb3H9lJiX2g+bmhHdQlVUj9G5j8LFJavAzr+UQixq
+         hPvpaWp825cXZzEGcQP+WfDtVz6JfZnLoQMLny4ltQn5WS0hAn/1rqnUA3GHE3JVdKjv
+         q3z2NHMtoF+3B5IyDnyws/LimrF8Vw3qEToCxJAE79IVshoJz8DCQPxSvslVQsoBVjQw
+         0dZVR5WyI/uHtRaAsu2wqMpOet4Ba4tWQObSazdH4FJ2QUjvMjW2gfSIBrWoW2TJl08d
+         lHA46CXFfrhBpSaRGaWDrUhXL3EQYNEGEPaXqbUzQ+bKd6CMUx2aBHvR2uH2TkSjZ25e
+         +4aw==
+X-Forwarded-Encrypted: i=1; AJvYcCWpcuLxcLfPpCI6d1VxQj7uvzDO0fBvImsMqmemmGMxcWAPcwcVnJ3jbhx5poTDQ5JRq4EIOfq5Tu1NZTw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyevEAljudB/00SKnsspK2wmzC7lixT0Fm++gfHr9VK7w6FRN8A
+	5yPx3RVap5UTkihCwTX6+EVzwbMCZ9PMZ/Ist/2SZ1SSIL3kP3lERRc0M+BWT/wKGiFu/puyXJN
+	sqQSpmRWDpbeNYSIDyAtErdhriYyEFle+eCO38g==
+X-Google-Smtp-Source: AGHT+IH4bICu5Y2Tz+c4eaKlhmDoXJzs6Lw7o9SzL4rNxEFKuKRRO791TsZARgRDm/pcGEbgtFsnpTsWbDhZmJahDBg=
+X-Received: by 2002:a05:6e02:1a68:b0:39b:25dc:7bd6 with SMTP id
+ e9e14a558f8ab-39e3c976b3bmr120851375ab.4.1724691518066; Mon, 26 Aug 2024
+ 09:58:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|CY8PR12MB7538:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5b54998b-c482-45af-b24b-08dcc5f02831
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cFZiTFNQTHlaQ3I2RmJHUGVpcEtCcTVLWHE1YVhydHc4Z1d2a2pvTXkyVnZp?=
- =?utf-8?B?SDg5RElyUEZTZytBV0hqVE1sVVZoRm4rSmdJT0RqWmsrNHBMZzVGb0d4T1Mw?=
- =?utf-8?B?ZytYMmNCcE5TOWhYMTF2T2Npa1NUbXJDMmFWU3VmRFdhSUFyWlZsamRVeEFx?=
- =?utf-8?B?eExxMWpwaCtVcm9kS0IwUmtxbHJmYm41VFhrWXZLSWNQT1I1SWxVaHFhQUN4?=
- =?utf-8?B?YnlrYzl1cnIzZjBwbTRLUlAxb2YxS2VVN1c0NW84dEN1RVZ6cnJFTjZnU2tw?=
- =?utf-8?B?dWQ2U3pNK3lIM3FhM0FDV0ljSHg4Q1duQmtLZmE4TTVGbkpmRUtlSmRlSWF0?=
- =?utf-8?B?SjVXWEMyVkYyeTVCaWJqNlVMWFdLMU9yNmdnZUZHNnUvZm1iTXorZ3pKNmFv?=
- =?utf-8?B?dnRtKzBNR0NZcXZ1R2J6ZituN1pnQk5QNDlOQys0TE5aQWxaMXVFMEhWZElO?=
- =?utf-8?B?U0lxT1kzaTJSallkbXJVcDVSVmNWUVVUZHRRSExubFZFNFlBYjNoSzlNRFFw?=
- =?utf-8?B?KzlrcG1wR2JRaXVpYlpuREJGVzVkRzJ3YmQ4cGtFMEc2OUlKMFlUdm1BcVFv?=
- =?utf-8?B?TlhtVkt4Z3l4ZUNqU2xlaUtIWkZ6dm9MaW5sYmFIdjNkanFodmwvTG9YeC85?=
- =?utf-8?B?dUc4elBjNHIwOGtaZUVtMU1jSnpMZVRvT1Btcjl5alRvNU5WYzlmMzhSUnZ5?=
- =?utf-8?B?U2w5UDNWTlpQMjhRU1FrOThVa3YwdjE2UnJ2RUdPcTVFcVRya3RiMUttcS9L?=
- =?utf-8?B?azlDaEl1Sm5BaEF0dm5CTmZUQ3BMZGVRTFBKbmxKQXU2NFcraG9VZ0JlSGpO?=
- =?utf-8?B?NGhEb3d4ZWxNVm9IUzRiZ2FWYkFxMkIwODErZitMSGExSnZIc1FmY0RmSVFS?=
- =?utf-8?B?WkNnZnZhMEVMTVgrdXF0WWwrVGlPR1dKQmpFYVlzek9WcUZNNW8wRUN3ZElD?=
- =?utf-8?B?R1ZCSUtIekxKMDJMc0Q4TW92U0tYU1dQU2JDQlVTb1lkU01LRGdibkJleFc1?=
- =?utf-8?B?Vmh1cVVwOUorcUtlQ1dJbXRrbUNPVTEvQ0Q4cnUvTTBKTldBem0zaTBGcGlu?=
- =?utf-8?B?WnJ4RDZuaENmanRPRHdyVHFhdDFRajlrNFAzRmdqNTVrQU1VTWdxQXNENG5s?=
- =?utf-8?B?Zkp5eFZwb2ZuTmdvMSt2dEYvNXlXdWVuanhMUFhLRURaQ3M4eE1sREpwMUxy?=
- =?utf-8?B?VkZObW83MmsvSlVBeTBicnk4NUtFQ0U2U2dObExtalE2WUx2Zm1yUjFYV2JO?=
- =?utf-8?B?ODlpYkt5MUhnWHZVSUU1ZWRMQUY5Zi9KRDQ1R2RlWkwrczhpV3RJa25OakUr?=
- =?utf-8?B?N0hseEFCaEZRTGNkN0RWejI3TzNhWldhZ3RSZnZJeDl4MVRFZThTcEFGUTNM?=
- =?utf-8?B?QUhUc3NldC96LzlnaHhUNmp4YUVIRjIzMmNNNGRpN0MwMUxBc0N1TkxtUHd5?=
- =?utf-8?B?bjFNNFBRS3BTRDBMVWkwbTJUTWdWRnVqZ3VkV1RpSTZxUUFUeTlpN256N3BM?=
- =?utf-8?B?VnZWWDcvcy9rbnd3bERHZFVQYXdPYmhlcVNmYjNqYjhCYnN5cm5VNUZwTm54?=
- =?utf-8?B?a1E2SkZUNXZ3amRSYi94MUZLakNPeThZb2w1ODFtb1dxNmVhNGVZQWZub3BB?=
- =?utf-8?B?am1NaGRVMXFHRndBYmdFRG02OWJZYUtkQkpYYXhkM3pwNGVhQnBsaG41V0s2?=
- =?utf-8?B?cEdTbGRuaWdteWN1TFNyWktvZW5KZnNuTU5uNTU3S3R5Z0hFTmxmODc5bWxD?=
- =?utf-8?B?czhFS0xjcTJPa1oxYk5NYXlSUUFGRGRFbXRMOWRTNjhMeGd5TGpLeWlQUVFL?=
- =?utf-8?B?dlJNbmsxKzJ1NENNWXNodz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Y01ad2JOUWl5VW9OV1hHUDFXUkhoaE5xMXkrZFo1UnN6dlhCekJobXRLUE9x?=
- =?utf-8?B?cmw5QllYSWdEZlBvZFhzcWVkWjljN2gwUE1VdzdJT3ZpOGVuS2hWV2l3cENx?=
- =?utf-8?B?eUNqUkNFSUp2NlIxQndrRS92WXNjamhYTHZjUlpEaEpnV1ZBRXFwaU91c2t1?=
- =?utf-8?B?YWcwck5MTFQrbVB4ejRFOTZXYzdHV3pQZXczWURCYmN5Y2F4YlFqMVFaMlFY?=
- =?utf-8?B?UzZvb3pGTVM4NWhsbVJoSjF6a2FIU2pSRENYYmJ2L2cycnlpU203UXBQSkM2?=
- =?utf-8?B?dStyMFJINmkrRGFpV3laaWFsOXpRczVITVR2ZWRFQldkZjhxZk1nMkxpSEFQ?=
- =?utf-8?B?NmRvOGNTa2Y1T2V5eFZqWStVMmgwZm5VYkpXdDV0eWQxa3FnWlR1aU5yOTM1?=
- =?utf-8?B?ejVMUnJUdDF2M0VDZWMyZjdRQWFLUEY2K3B3dHNlUTN3TkdHOE1iMFozaXAw?=
- =?utf-8?B?WGc5N2JkbVBQanV4SWNiS1hiQ1ZnOENIOUlhSGx2bUgvMGVSb054MStIU2kr?=
- =?utf-8?B?Z0hLdUIxQUVEc3Z2V3pzOGU0aVR6aDVXOHljVHNhcHlOKzFTRUR0THFTbVZM?=
- =?utf-8?B?OXdTd3d2akNRaUxRd2IvSDVkalc4bXpLdlBWd3RJNWQveWRIS3dCTWx2ck1s?=
- =?utf-8?B?Z3MxVEVHb3d6Y2RJbkZ3em1ZdFFjNUEyMWhlbVV3czNDSyt2aC9vOHFFeElk?=
- =?utf-8?B?bitrNUtsd3RTbVo3YjRwM3FQdWZDalcvUVFCdnpmOW83dUZiRndpRi9QR3hr?=
- =?utf-8?B?REpNYTVzWHNNSDN1WjJmU0ozVVBXV2pQVUhnak5EaHB1V2s4ejV2dXdVWGk0?=
- =?utf-8?B?UTZTQ25UcCtlU2tNaG0xR1dTL3EwQU1BMnBqUzFOUDBVbXA5SzdFNUVJT3Ew?=
- =?utf-8?B?c05QaWU1aXhtQ0ZaYVhtRysrQS82WVZ4UjBvamRnTVg5TUlyU3ZnSW9sU3E5?=
- =?utf-8?B?azdjNGxId0MwZTBMSlp4SmU3S0FEVENHWUdURmdlYmNaWi9TYmg0dTNabmdl?=
- =?utf-8?B?cGxUVHFXa29TK0Vvb09BUERpaHpwQlBUMGdvc1A0U0JnbVVFbW5Na0ViNWVj?=
- =?utf-8?B?UE52KzcvRituMGIvZml3T0gwbnFNRVNSYkJaUWJNYS80VDlrQTlzQlEzcVFD?=
- =?utf-8?B?cjdyb0FjZzBsRm9NTmxtM1FNRHU2Qm1WUyswVDBqRU1vS3NRR2hiNmI2ckdD?=
- =?utf-8?B?c0ZQN0x2TTUzY0dHd2VJRWxNZklvTy8vb0hGWlJzelJyU1NDSDZBMElNN0JP?=
- =?utf-8?B?NkkvT3FjeVkvcGxyTCsvQmhEQ29GbXdNcWxmSFdqTjZPbG4yTVk0dmkyS2s5?=
- =?utf-8?B?aGxXV1lXazQwZ1lCaXI0WFhCUkoxcnF4dnZPSWRkNURHTjZSNEJJczI4RXVW?=
- =?utf-8?B?QzRpbE5DQ2pjR05IMkExc3FPK2tpVCtsZ1FjRERZVm5iRzVyQUF6UnFtT0pR?=
- =?utf-8?B?TFJtMk93aWFYZW1JYmhacjdDaDZhc1ArSkl4KzRmcW1BTU9wZ3NFMXZUaHFY?=
- =?utf-8?B?TzAybWtSSVZ6Rng1cjMrSVZRUmNKMWtvdmxCTjREaFVjVTlKN3Q3V2lacUFO?=
- =?utf-8?B?WmhqcWlVUnhCOXhVejVOakY2cWdxMWVBZWd0VThjbHhTbi9VbHVwY29Jdmht?=
- =?utf-8?B?NGNOOU05b0d1MnVZb0drMWo0NWR1bERvODJPVEN1NXBCZmphQWduQlBKUVNn?=
- =?utf-8?B?UkowSHJ1cVo0VDU4V2hleXI3WVZheVlLQTMxYk05MW5lcnNFMzRBeUZTMFBv?=
- =?utf-8?B?ZGNJWWptUXBZOFkyU2R6YnY5RGNrWkZNOXhYMUN2dVBDM2NJWGdNTWVSaVlj?=
- =?utf-8?B?bDNCTzNvS1NYWDJWTUNLOHQ0ZHVTVGFMSUNNblNzZW5mc08xUWY4bkxSZjh3?=
- =?utf-8?B?ZFlrQ1RIZGdQRG9CVjVlenJobVJjS1hVckNPTHJkV2hFME4yUTN0RStPcm9n?=
- =?utf-8?B?UVBMQ0VDVFdLM2lNZ3dIY2Z3STcrMHFlOEs2a2VFUDRVV1VVUDBES0drQ2pX?=
- =?utf-8?B?SVUwWUVrT21SY2NqekdtTGdPL0JzM25nUFY2ZzNieU1OTmNaK0xhRFpLdGtl?=
- =?utf-8?B?VjEray9KclpHT0VmSzY4bkl3MUNUN2dLZWRWSGFiZ0FhdCtKU2pxbW16WnEw?=
- =?utf-8?Q?HR1DtU8CDofWRFoiLK8jXr7yN?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b54998b-c482-45af-b24b-08dcc5f02831
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 16:57:23.8881
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GtefSaH9m/oMzquSOcKB47ZjzNfeiZSv0SF12x7+gpbvXHJ3jV6IfgD+HZ0xkQ1/1Z7vWRifY40NzI7vb5FBPA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7538
+References: <20240826165210.124696-1-alexghiti@rivosinc.com>
+In-Reply-To: <20240826165210.124696-1-alexghiti@rivosinc.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Mon, 26 Aug 2024 22:28:24 +0530
+Message-ID: <CAAhSdy2WxN54ee0xWa=CZJvW6insfh_4Q_HBp4o+T-djLOFP1w@mail.gmail.com>
+Subject: Re: [PATCH -fixes] drivers: perf: Fix smp_processor_id() use in
+ preemptible code
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Atish Patra <atishp@atishpatra.org>, Will Deacon <will@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Nam Cao <namcao@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/24/2024 13:33, Thomas Weißschuh wrote:
-> Not all platforms provide the full range of PWM backlight capabilities
-> supported by the hardware through ATIF.
-> Use the generic drm panel minimum backlight quirk infrastructure to
-> override the capabilities where necessary.
-> 
-> Testing the backlight quirk together with the "panel_power_savings"
-> sysfs file has not shown any negative impact.
-> One quirk seems to be that 0% at panel_power_savings=0 seems to be
-> slightly darker than at panel_power_savings=4.
+On Mon, Aug 26, 2024 at 10:22=E2=80=AFPM Alexandre Ghiti <alexghiti@rivosin=
+c.com> wrote:
+>
+> As reported in [1], the use of smp_processor_id() in
+> pmu_sbi_device_probe() must be protected by disabling the preemption, so
+> simple use get_cpu()/put_cpu() instead.
+>
+> Reported-by: Nam Cao <namcao@linutronix.de>
+> Closes: https://lore.kernel.org/linux-riscv/20240820074925.ReMKUPP3@linut=
+ronix.de/ [1]
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
-Thanks; This is the kind of thing I was worried about.
+LGTM.
 
-Harry, Leo,
+Reviewed-by: Anup Patel <anup@brainfault.org>
 
-Is that expected?  I wonder if we need to internally turn off panel 
-power savings in display code when brightness falls a threshold (12 IIRC 
-was the real "minimum" advertised in the table?).
+Regards,
+Anup
 
-> 
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> Tested-by: Dustin L. Howett <dustin@howett.net>
-> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
 > ---
->   drivers/gpu/drm/amd/amdgpu/Kconfig                |  1 +
->   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 10 ++++++++++
->   2 files changed, 11 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/Kconfig b/drivers/gpu/drm/amd/amdgpu/Kconfig
-> index 0051fb1b437f..655c10aef2e3 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/Kconfig
-> +++ b/drivers/gpu/drm/amd/amdgpu/Kconfig
-> @@ -23,6 +23,7 @@ config DRM_AMDGPU
->   	select DRM_BUDDY
->   	select DRM_SUBALLOC_HELPER
->   	select DRM_EXEC
-> +	select DRM_PANEL_BACKLIGHT_QUIRKS
->   	# amdgpu depends on ACPI_VIDEO when ACPI is enabled, for select to work
->   	# ACPI_VIDEO's dependencies must also be selected.
->   	select INPUT if ACPI
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> index 983a977632ff..056960ea335c 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> @@ -93,6 +93,7 @@
->   #include <drm/drm_fourcc.h>
->   #include <drm/drm_edid.h>
->   #include <drm/drm_eld.h>
-> +#include <drm/drm_utils.h>
->   #include <drm/drm_vblank.h>
->   #include <drm/drm_audio_component.h>
->   #include <drm/drm_gem_atomic_helper.h>
-> @@ -3333,6 +3334,8 @@ static void update_connector_ext_caps(struct amdgpu_dm_connector *aconnector)
->   	struct drm_connector *conn_base;
->   	struct amdgpu_device *adev;
->   	struct drm_luminance_range_info *luminance_range;
-> +	const struct drm_edid *drm_edid;
-> +	int min_input_signal_override;
->   
->   	if (aconnector->bl_idx == -1 ||
->   	    aconnector->dc_link->connector_signal != SIGNAL_TYPE_EDP)
-> @@ -3367,6 +3370,13 @@ static void update_connector_ext_caps(struct amdgpu_dm_connector *aconnector)
->   		caps->aux_min_input_signal = 0;
->   		caps->aux_max_input_signal = 512;
->   	}
+>  drivers/perf/riscv_pmu_sbi.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.c
+> index 31a17a56eb3b..25b1b699b3e2 100644
+> --- a/drivers/perf/riscv_pmu_sbi.c
+> +++ b/drivers/perf/riscv_pmu_sbi.c
+> @@ -1373,11 +1373,15 @@ static int pmu_sbi_device_probe(struct platform_d=
+evice *pdev)
+>
+>         /* SBI PMU Snapsphot is only available in SBI v2.0 */
+>         if (sbi_v2_available) {
+> +               int cpu;
 > +
-> +	drm_edid = drm_edid_alloc(aconnector->edid,
-> +				  EDID_LENGTH * (aconnector->edid->extensions + 1));
-> +	min_input_signal_override = drm_get_panel_min_brightness_quirk(drm_edid);
-> +	drm_edid_free(drm_edid);
-> +	if (min_input_signal_override >= 0)
-> +		caps->min_input_signal = min_input_signal_override;
->   }
->   
->   void amdgpu_dm_update_connector_after_detect(
-> 
-
+>                 ret =3D pmu_sbi_snapshot_alloc(pmu);
+>                 if (ret)
+>                         goto out_unregister;
+>
+> -               ret =3D pmu_sbi_snapshot_setup(pmu, smp_processor_id());
+> +               cpu =3D get_cpu();
+> +
+> +               ret =3D pmu_sbi_snapshot_setup(pmu, cpu);
+>                 if (ret) {
+>                         /* Snapshot is an optional feature. Continue if n=
+ot available */
+>                         pmu_sbi_snapshot_free(pmu);
+> @@ -1391,6 +1395,7 @@ static int pmu_sbi_device_probe(struct platform_dev=
+ice *pdev)
+>                          */
+>                         static_branch_enable(&sbi_pmu_snapshot_available)=
+;
+>                 }
+> +               put_cpu();
+>         }
+>
+>         register_sysctl("kernel", sbi_pmu_sysctl_table);
+> --
+> 2.39.2
+>
 
