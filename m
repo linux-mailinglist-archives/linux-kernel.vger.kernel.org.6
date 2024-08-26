@@ -1,219 +1,116 @@
-Return-Path: <linux-kernel+bounces-301530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A187095F229
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:55:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEF6395F22B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C33371C22FB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:55:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B84128406F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BBE194A60;
-	Mon, 26 Aug 2024 12:52:22 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C1D17ADF7;
+	Mon, 26 Aug 2024 12:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gPDi8x4R"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AEA17C987
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB35155A34;
+	Mon, 26 Aug 2024 12:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724676741; cv=none; b=D8uEsRnIBbQcOIKzGdreZVDkblMw7bZfaGvgwAKZj4ojQeK7lo6aQAQ+Pm93L+STlHb+dmn65jZDCYLcxKvC9NOuI4+pCfzXKIZNWbeHkGrYtH47/72vMLWkY4pNHFe9WN0KfrisgvVbw5a4KgoWbOcmwojP09iX2QaNM0F/290=
+	t=1724676800; cv=none; b=EBc/1mfiA6YWqGorLVx/pidDexXjxbWGuWAVaV30JMyeGbERz5Uens6ta8HQnI4yAyEg9XtXtlsHLWJwoK3uAJBPUO1e9UOUK3X220jiPJxomCCND9F7OgY433itS091VbaYy2sgyeoCXphKm8JR94M4Xf3rgDliFDWbs///FQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724676741; c=relaxed/simple;
-	bh=iewPIKWwxjnmmShXWzD5eMbFV7rnrhci/Hk0xB9wvw8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ks4WNbAb5PscsqFyfkTKZI3kJRIIOt20BFhUpBZhiMqk1u5+Oc+CZFGaE680HLd7TAKkbe9UvsO7TFBr8QRnYscW7FSxHT/j5TdVlQa1mSqKt0PZis4bpI+y/pw3C7Ph96W47m/xxkthyIFYhL1NCmTP4elkVUFhtK3KGsFV+kE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d2dee9722so52514085ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 05:52:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724676739; x=1725281539;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yhLXBV41EvVRxq0pyiOc1zrWFwcXv7kRA5fXB2u90mg=;
-        b=p8CJitfNsY9oPbciYdNuqj/hOBN/6WwJee5JyBtYpg4dUOtRlC/Cf6y3mBSGQuNj/Y
-         8PYBROvHqedvbsLm0EPC0JibNGcjeWGUh85kOPUBzoEfOsKDKTV5cyihrd/aEEp7H7VO
-         q7qqBhzicnrIykbPtjvMcO3jOtk+icmQZKKngFM9GiL/nsyHFpo235dgXYwm4EjN1H1p
-         +xstyEsEmoJO1Iz5hrMoz/5cVhqGAObSmtYQDz+6kHS4gFdi5eiRw4E+pcQUdD8PzyrJ
-         geEhzRuimesqe3YyigclvQiyAVBdzDd6MB0qV6pLuZi5z8PGjd9RTpop7knRzakxyTeJ
-         KDEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXyeAiiiibw2p51XCsrAHHt31zKa/dLAOK1A1P7IX+HOSu0fnTtwjRPfShNS6qZ9POhn2q+teZgrnZLq2Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUSIF3INy6HocHcNif9ZXPWP+nPqEaqyLksEVyC4q+ToN/8sHD
-	DaAgZRyieMeA+djmj1jtnCmnBNen/uo/gYk9l/pL8hjRj9OoQDPCM1NBUFu+/M4GEU1JBDWnJPk
-	p4+6aXWwOn3v/f+kssarH14Ga9SLxUtyTyCbDrm9HBZ+I9hBz1n8zOpM=
-X-Google-Smtp-Source: AGHT+IHJ39gp+EnjPi6uHTN0u9WeqDEqRBpSQB3idE7i4A9GHa4RS6R179Kowo9wzYygVvoiKtBfMht1Xh+SpdxWXecCN+aJE2p9
+	s=arc-20240116; t=1724676800; c=relaxed/simple;
+	bh=04xmOMmXQPrgpBFe2TznVHzIEYdUVgvj/wFaYOAv5YE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aiMNNooQwL279amHhN9BxrIwQGAJI0Lnu7OQdLr+yzeUXg5IHwsq2qsp1UvvvceevJE8O/q/dFJcXH7iwvrvfAlp2oIpBGOa0Q5RP1OkgKh3ANVb6FeWuTGnljiwVrsf3ATeDSHrphOWmIrQNLbDy5AWZjBAw/aCdDU3PIo6Vnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gPDi8x4R; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724676798; x=1756212798;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=04xmOMmXQPrgpBFe2TznVHzIEYdUVgvj/wFaYOAv5YE=;
+  b=gPDi8x4RZdFN2kT/p3bE9J8xfaSIRPyqdgShLDlXknt4ihi6UiZWpI9x
+   y41xRwfOpkn7TzkQi22bFwjxOUHdIR+7PuWCfmpu+GliPo2+rW12eM46F
+   kzBW6i0iB/Vp6tzg0mqujNj0k6CXK/wdAFiLdyqAQ5m3j8Bjj85j2WwY+
+   QZojHs3oq3iLh1H4U/+k9VQs/JY3y3VuoCRNEHEAbwOhw6/vlnBoP+kDh
+   q6EoaSOnhvrD3Y4VYGv1RzHhEAOF3JBrE6bwn1lkwgfnh+P4Bz/3uUueS
+   GbfmT2Iel5cq0orSF/w6MvlOZV6aA7wuMHNsxKB9SLYGxQSQSiWlF5afA
+   g==;
+X-CSE-ConnectionGUID: j/z9EEdMQrm9lbVU0XY+4Q==
+X-CSE-MsgGUID: 1I0umgA3SYamDVxTPCxYdA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23274181"
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="23274181"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 05:53:17 -0700
+X-CSE-ConnectionGUID: I9LrvHmvQ020Neukqdrwzw==
+X-CSE-MsgGUID: 4wiBbbcxRkCCOXEDPsRWPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="67401317"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa005.jf.intel.com with ESMTP; 26 Aug 2024 05:53:14 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 7B5D6502; Mon, 26 Aug 2024 15:53:12 +0300 (EEST)
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-coco@lists.linux.dev,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Sean Christopherson <seanjc@google.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] x86/tdx: Fix data leak in mmio_read()
+Date: Mon, 26 Aug 2024 15:53:04 +0300
+Message-ID: <20240826125304.1566719-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d9c:b0:39d:300f:e911 with SMTP id
- e9e14a558f8ab-39e3c98359cmr9506465ab.2.1724676739248; Mon, 26 Aug 2024
- 05:52:19 -0700 (PDT)
-Date: Mon, 26 Aug 2024 05:52:19 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000654086062095987d@google.com>
-Subject: [syzbot] [bpf?] [trace?] WARNING in bpf_get_stack_raw_tp
-From: syzbot <syzbot+ce35de20ed6652f60652@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
-	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	martin.lau@linux.dev, mathieu.desnoyers@efficios.com, 
-	mattbobrowski@google.com, mhiramat@kernel.org, netdev@vger.kernel.org, 
-	rostedt@goodmis.org, sdf@fomichev.me, song@kernel.org, 
-	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+The mmio_read() function makes a TDVMCALL to retrieve MMIO data for an
+address from the VMM.
 
-syzbot found the following issue on:
+Sean noticed that mmio_read() unintentionally exposes the value of an
+initialized variable on the stack to the VMM.
 
-HEAD commit:    872cf28b8df9 Merge tag 'platform-drivers-x86-v6.11-4' of g..
-git tree:       bpf
-console output: https://syzkaller.appspot.com/x/log.txt?x=1628ae09980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=df2f0ed7e30a639d
-dashboard link: https://syzkaller.appspot.com/bug?extid=ce35de20ed6652f60652
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1439fbf5980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14b5382b980000
+Do not send the original value of *val to the VMM.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/72b6e311a539/disk-872cf28b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0c44549e5bb0/vmlinux-872cf28b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/fb02c268f118/bzImage-872cf28b.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ce35de20ed6652f60652@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5229 at kernel/trace/bpf_trace.c:1917 get_bpf_raw_tp_regs kernel/trace/bpf_trace.c:1917 [inline]
-WARNING: CPU: 0 PID: 5229 at kernel/trace/bpf_trace.c:1917 ____bpf_get_stack_raw_tp kernel/trace/bpf_trace.c:1990 [inline]
-WARNING: CPU: 0 PID: 5229 at kernel/trace/bpf_trace.c:1917 bpf_get_stack_raw_tp+0x1c9/0x240 kernel/trace/bpf_trace.c:1987
-Modules linked in:
-CPU: 0 UID: 0 PID: 5229 Comm: syz-executor357 Not tainted 6.11.0-rc4-syzkaller-g872cf28b8df9 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:get_bpf_raw_tp_regs kernel/trace/bpf_trace.c:1917 [inline]
-RIP: 0010:____bpf_get_stack_raw_tp kernel/trace/bpf_trace.c:1990 [inline]
-RIP: 0010:bpf_get_stack_raw_tp+0x1c9/0x240 kernel/trace/bpf_trace.c:1987
-Code: 6d ee 1e 00 65 ff 0d 96 86 64 7e 4c 63 f0 4c 89 f0 48 83 c4 18 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc e8 88 ad f4 ff 90 <0f> 0b 90 65 ff 0d 6d 86 64 7e 49 c7 c6 f0 ff ff ff eb d1 44 89 e9
-RSP: 0018:ffffc900020de6f0 EFLAGS: 00010293
-RAX: ffffffff819eddb8 RBX: 0000000000000003 RCX: ffff88807dae0000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000fffffffc
-RBP: ffffc900020de730 R08: ffffffff819edc87 R09: 1ffffffff26e6708
-R10: dffffc0000000000 R11: ffffffffa0001c68 R12: ffff8880b9236238
-R13: 0000000000000902 R14: 0000000000000000 R15: ffffc900020de748
-FS:  0000555580bbc380(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f7721d2f110 CR3: 000000002f1be000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bpf_prog_e6cf5f9c69743609+0x42/0x46
- bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
- __bpf_prog_run include/linux/filter.h:691 [inline]
- bpf_prog_run include/linux/filter.h:698 [inline]
- __bpf_trace_run kernel/trace/bpf_trace.c:2406 [inline]
- bpf_trace_run4+0x334/0x590 kernel/trace/bpf_trace.c:2449
- __traceiter_mmap_lock_acquire_returned+0x93/0xf0 include/trace/events/mmap_lock.h:52
- trace_mmap_lock_acquire_returned include/trace/events/mmap_lock.h:52 [inline]
- __mmap_lock_do_trace_acquire_returned+0x286/0x2f0 mm/mmap_lock.c:102
- __mmap_lock_trace_acquire_returned include/linux/mmap_lock.h:36 [inline]
- mmap_read_trylock include/linux/mmap_lock.h:164 [inline]
- stack_map_get_build_id_offset+0x9af/0x9d0 kernel/bpf/stackmap.c:141
- __bpf_get_stack+0x4ad/0x5a0 kernel/bpf/stackmap.c:449
- ____bpf_get_stack_raw_tp kernel/trace/bpf_trace.c:1997 [inline]
- bpf_get_stack_raw_tp+0x1a3/0x240 kernel/trace/bpf_trace.c:1987
- bpf_prog_e6cf5f9c69743609+0x42/0x46
- bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
- __bpf_prog_run include/linux/filter.h:691 [inline]
- bpf_prog_run include/linux/filter.h:698 [inline]
- __bpf_trace_run kernel/trace/bpf_trace.c:2406 [inline]
- bpf_trace_run4+0x334/0x590 kernel/trace/bpf_trace.c:2449
- __traceiter_mmap_lock_acquire_returned+0x93/0xf0 include/trace/events/mmap_lock.h:52
- trace_mmap_lock_acquire_returned include/trace/events/mmap_lock.h:52 [inline]
- __mmap_lock_do_trace_acquire_returned+0x286/0x2f0 mm/mmap_lock.c:102
- __mmap_lock_trace_acquire_returned include/linux/mmap_lock.h:36 [inline]
- mmap_read_trylock include/linux/mmap_lock.h:164 [inline]
- stack_map_get_build_id_offset+0x9af/0x9d0 kernel/bpf/stackmap.c:141
- __bpf_get_stack+0x4ad/0x5a0 kernel/bpf/stackmap.c:449
- ____bpf_get_stack_raw_tp kernel/trace/bpf_trace.c:1997 [inline]
- bpf_get_stack_raw_tp+0x1a3/0x240 kernel/trace/bpf_trace.c:1987
- bpf_prog_e6cf5f9c69743609+0x42/0x46
- bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
- __bpf_prog_run include/linux/filter.h:691 [inline]
- bpf_prog_run include/linux/filter.h:698 [inline]
- __bpf_trace_run kernel/trace/bpf_trace.c:2406 [inline]
- bpf_trace_run4+0x334/0x590 kernel/trace/bpf_trace.c:2449
- __traceiter_mmap_lock_acquire_returned+0x93/0xf0 include/trace/events/mmap_lock.h:52
- trace_mmap_lock_acquire_returned include/trace/events/mmap_lock.h:52 [inline]
- __mmap_lock_do_trace_acquire_returned+0x286/0x2f0 mm/mmap_lock.c:102
- __mmap_lock_trace_acquire_returned include/linux/mmap_lock.h:36 [inline]
- mmap_read_trylock include/linux/mmap_lock.h:164 [inline]
- stack_map_get_build_id_offset+0x9af/0x9d0 kernel/bpf/stackmap.c:141
- __bpf_get_stack+0x4ad/0x5a0 kernel/bpf/stackmap.c:449
- ____bpf_get_stack_raw_tp kernel/trace/bpf_trace.c:1997 [inline]
- bpf_get_stack_raw_tp+0x1a3/0x240 kernel/trace/bpf_trace.c:1987
- bpf_prog_e6cf5f9c69743609+0x42/0x46
- bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
- __bpf_prog_run include/linux/filter.h:691 [inline]
- bpf_prog_run include/linux/filter.h:698 [inline]
- __bpf_trace_run kernel/trace/bpf_trace.c:2406 [inline]
- bpf_trace_run4+0x334/0x590 kernel/trace/bpf_trace.c:2449
- __traceiter_mmap_lock_acquire_returned+0x93/0xf0 include/trace/events/mmap_lock.h:52
- trace_mmap_lock_acquire_returned include/trace/events/mmap_lock.h:52 [inline]
- __mmap_lock_do_trace_acquire_returned+0x286/0x2f0 mm/mmap_lock.c:102
- __mmap_lock_trace_acquire_returned include/linux/mmap_lock.h:36 [inline]
- mmap_read_lock include/linux/mmap_lock.h:145 [inline]
- acct_collect+0x804/0x830 kernel/acct.c:563
- do_exit+0x93e/0x27f0 kernel/exit.c:861
- do_group_exit+0x207/0x2c0 kernel/exit.c:1031
- __do_sys_exit_group kernel/exit.c:1042 [inline]
- __se_sys_exit_group kernel/exit.c:1040 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1040
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7721cb3389
-Code: 90 49 c7 c0 b8 ff ff ff be e7 00 00 00 ba 3c 00 00 00 eb 12 0f 1f 44 00 00 89 d0 0f 05 48 3d 00 f0 ff ff 77 1c f4 89 f0 0f 05 <48> 3d 00 f0 ff ff 76 e7 f7 d8 64 41 89 00 eb df 0f 1f 80 00 00 00
-RSP: 002b:00007fff639ca6c8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f7721cb3389
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 00007f7721d2e2b0 R08: ffffffffffffffb8 R09: 0000000080bbd610
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f7721d2e2b0
-R13: 0000000000000000 R14: 00007f7721d2ed00 R15: 00007f7721c845c0
- </TASK>
-
-
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Reported-by: Sean Christopherson <seanjc@google.com>
+Fixes: 31d58c4e557d ("x86/tdx: Handle in-kernel MMIO")
+Cc: stable@vger.kernel.org # v5.19+
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ arch/x86/coco/tdx/tdx.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
+index 078e2bac2553..da8b66dce0da 100644
+--- a/arch/x86/coco/tdx/tdx.c
++++ b/arch/x86/coco/tdx/tdx.c
+@@ -389,7 +389,6 @@ static bool mmio_read(int size, unsigned long addr, unsigned long *val)
+ 		.r12 = size,
+ 		.r13 = EPT_READ,
+ 		.r14 = addr,
+-		.r15 = *val,
+ 	};
+ 
+ 	if (__tdx_hypercall(&args))
+-- 
+2.43.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
