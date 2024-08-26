@@ -1,97 +1,108 @@
-Return-Path: <linux-kernel+bounces-301622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C404D95F353
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:55:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9420595F340
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 012551C21990
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:55:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47A481F224A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBEBF188583;
-	Mon, 26 Aug 2024 13:55:10 +0000 (UTC)
-Received: from forward203d.mail.yandex.net (forward203d.mail.yandex.net [178.154.239.218])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4351865E8;
+	Mon, 26 Aug 2024 13:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yq7SRW9E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E58F3D71;
-	Mon, 26 Aug 2024 13:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D3B1E871;
+	Mon, 26 Aug 2024 13:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724680510; cv=none; b=AMyEmqwgqtTfLtFJoREZhZfRp+iSMbJfyBKceHPmEn+i1qVH6RXQ3b/KRuSWo3EhZl94KpYYtcoWyrRhW9vK2VKxA01Uih71q1sHOUstSFsEb4Cw2S4xwb4n/0Ww0WLmgIbgmBQZy/sbAOtetkowfIKOa+Tud41s4Vw9o4hA18A=
+	t=1724680235; cv=none; b=HOx6+vDKw4LQVzTjySfqqppJUx2824h2i83da+uDXIR2eMxosK8JPra9q4C1OZg/MPI/JofJ2LzdYJb7ICM2mUsYX+X7tkZrj5x9oPpvd3rvD8Vzhuc/nr4NTLJwTR+IkfaEf23m4FomDVh+PK0WnDf5U6+Zd+0xJV5/43xYAcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724680510; c=relaxed/simple;
-	bh=C42m+jPwh32KPCsnO0oyfF4dYvxrQhak5pCgtDH4W8I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PEbfzSun05qYbIFhyyAoH7YxfRlnZoHdPR4224+GpgAP5uzO+wlGv+jVy9dSqEG/889+jvPtoy9fB7iG8+/OBZFfw1t6Mi1FXM36c96FrVF9fDayiAoPf2prbqlL2s7OV4lZkalp7ogpgHTmfAOg7LwBz7RYNVQKagFDwnmZwnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=travitia.xyz; spf=none smtp.mailfrom=travitia.xyz; arc=none smtp.client-ip=178.154.239.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=travitia.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=travitia.xyz
-Received: from forward103d.mail.yandex.net (forward103d.mail.yandex.net [IPv6:2a02:6b8:c41:1300:1:45:d181:d103])
-	by forward203d.mail.yandex.net (Yandex) with ESMTPS id 4F08862BFD;
-	Mon, 26 Aug 2024 16:49:48 +0300 (MSK)
-Received: from mail-nwsmtp-smtp-production-main-35.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-35.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:24a4:0:640:473f:0])
-	by forward103d.mail.yandex.net (Yandex) with ESMTPS id A329760024;
-	Mon, 26 Aug 2024 16:49:40 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-35.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id UnTqJJ0oEKo0-cU9hcZFx;
-	Mon, 26 Aug 2024 16:49:39 +0300
-X-Yandex-Fwd: 1
-Authentication-Results: mail-nwsmtp-smtp-production-main-35.klg.yp-c.yandex.net; dkim=pass
-From: Jens Reidel <adrian@travitia.xyz>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: alsa-devel@alsa-project.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@mainlining.org,
-	Jens Reidel <adrian@travitia.xyz>
-Subject: [PATCH 1/1] ASoC: qcom: sm8250: enable primary mi2s
-Date: Mon, 26 Aug 2024 15:49:20 +0200
-Message-ID: <20240826134920.55148-2-adrian@travitia.xyz>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240826134920.55148-1-adrian@travitia.xyz>
-References: <20240826134920.55148-1-adrian@travitia.xyz>
+	s=arc-20240116; t=1724680235; c=relaxed/simple;
+	bh=048956Hz69VplOQW8TIX6foE8BvnSSaO5WdBcuYMZ9g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NpiOFLhP3N2Sibcz6qWX8NpwhYTSPIuxRGSxslXeX5pRNaUdRnYxFKdbSFYFMTsoGRNM8aGrLOQKx+BgudRetKqIEzjv5HYvTdMiO/JSDbR39EHJdrbi41bGSXUsj0/iJhBmqrcajisVptX0dcm68oEIchNXCUDj52WPBl+e2+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yq7SRW9E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60EB2C52FC7;
+	Mon, 26 Aug 2024 13:50:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724680233;
+	bh=048956Hz69VplOQW8TIX6foE8BvnSSaO5WdBcuYMZ9g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Yq7SRW9EcBKoGIL2P95KHrhwnlkRvqgFlUzzr7DM5u2r8244vaOSdNZoG61bFoRPC
+	 hrCZSE8Z1s8q0BUMss7PMJBTmO6jig0fesc7seDjQJcFnbXkH7/hRgAcdfajxNonON
+	 HQhStcPhBtU8xNQtw5FMsidSRS8rcPSVBcTDtZwi1+0KdW6JM3CWHWT5G84uLqm1uo
+	 nSqr0V6p6R8Wkaxrr2WH3z4+YezLnmB07/i/n1CZTTWoVW2JdVuM1AsnePmYPMueBf
+	 WlVVrIB4mkWIa8MSDfgkFI2+6dQUG6OUuJzn61wXo715pzHqIHtYWzI0Uwl9gX18BI
+	 hBj3/0WedhfUg==
+Date: Mon, 26 Aug 2024 08:50:31 -0500
+From: Rob Herring <robh@kernel.org>
+To: Alexey Romanov <avromanov@salutedevices.com>
+Cc: neil.armstrong@linaro.org, clabbe@baylibre.com,
+	herbert@gondor.apana.org.au, davem@davemloft.net,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	khilman@baylibre.com, jbrunet@baylibre.com,
+	martin.blumenstingl@googlemail.com, vadim.fedorenko@linux.dev,
+	linux-crypto@vger.kernel.org, linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@salutedevices.com
+Subject: Re: [PATCH v9 19/23] arch: arm64: dts: meson: gxl: correct crypto
+ node definition
+Message-ID: <20240826135031.GA55751-robh@kernel.org>
+References: <20240820145623.3500864-1-avromanov@salutedevices.com>
+ <20240820145623.3500864-20-avromanov@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820145623.3500864-20-avromanov@salutedevices.com>
 
-When using primary mi2s on sm8250-compatible SoCs, the correct clock
-needs to get enabled to be able to use the mi2s interface.
+On Tue, Aug 20, 2024 at 05:56:19PM +0300, Alexey Romanov wrote:
+> GXL and newer SoC's uses the DMA engine (not blkmv) for crypto HW.
+> Crypto HW doesn't actually use the blkmv clk. At RTL level, crypto
+> engine is hard weired to clk81 (CLKID_CLK81). And remove clock-names
+> field: according to the new dt-binding, it is no longer required.
 
-Signed-off-by: Jens Reidel <adrian@travitia.xyz>
----
- sound/soc/qcom/sm8250.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Subject should be "arm64: dts: amlogic: ...". IIRC, Amlogic stuff has 
+moved away from using "meson".
 
-diff --git a/sound/soc/qcom/sm8250.c b/sound/soc/qcom/sm8250.c
-index a15dafb99b33..274bab28209a 100644
---- a/sound/soc/qcom/sm8250.c
-+++ b/sound/soc/qcom/sm8250.c
-@@ -55,6 +55,14 @@ static int sm8250_snd_startup(struct snd_pcm_substream *substream)
- 	struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
- 
- 	switch (cpu_dai->id) {
-+	case PRIMARY_MI2S_RX:
-+		codec_dai_fmt |= SND_SOC_DAIFMT_NB_NF | SND_SOC_DAIFMT_I2S;
-+		snd_soc_dai_set_sysclk(cpu_dai,
-+			Q6AFE_LPASS_CLK_ID_PRI_MI2S_IBIT,
-+			MI2S_BCLK_RATE, SNDRV_PCM_STREAM_PLAYBACK);
-+		snd_soc_dai_set_fmt(cpu_dai, fmt);
-+		snd_soc_dai_set_fmt(codec_dai, codec_dai_fmt);
-+		break;
- 	case TERTIARY_MI2S_RX:
- 		codec_dai_fmt |= SND_SOC_DAIFMT_NB_NF | SND_SOC_DAIFMT_I2S;
- 		snd_soc_dai_set_sysclk(cpu_dai,
--- 
-2.46.0
-
+> 
+> Also, GXL crypto IP isn't to seconnd interrput line. So we must
+> remove it from dt-bindings.
+> 
+> Fixes: c4a0457eb858 ("ARM64: dts: amlogic: adds crypto hardware node")
+> Signed-off-by: Alexey Romanov <avromanov@salutedevices.com>
+> ---
+>  arch/arm64/boot/dts/amlogic/meson-gxl.dtsi | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+> index 17bcfa4702e1..c29d5b81ce67 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+> @@ -68,10 +68,8 @@ acodec: audio-controller@c8832000 {
+>  		crypto: crypto@c883e000 {
+>  			compatible = "amlogic,gxl-crypto";
+>  			reg = <0x0 0xc883e000 0x0 0x36>;
+> -			interrupts = <GIC_SPI 188 IRQ_TYPE_EDGE_RISING>,
+> -				     <GIC_SPI 189 IRQ_TYPE_EDGE_RISING>;
+> -			clocks = <&clkc CLKID_BLKMV>;
+> -			clock-names = "blkmv";
+> +			interrupts = <GIC_SPI 188 IRQ_TYPE_EDGE_RISING>;
+> +			clocks = <&clkc CLKID_CLK81>;
+>  			status = "okay";
+>  		};
+>  	};
+> -- 
+> 2.34.1
+> 
 
