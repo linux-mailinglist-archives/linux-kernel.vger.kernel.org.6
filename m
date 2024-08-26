@@ -1,59 +1,65 @@
-Return-Path: <linux-kernel+bounces-301554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7871E95F274
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:11:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2732395F27B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:12:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C5BF1C21A6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:11:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CE221C218DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF5217C987;
-	Mon, 26 Aug 2024 13:11:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE83E17C9AD;
+	Mon, 26 Aug 2024 13:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KBNA5jyA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kcRs0Up6"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F145414A617;
-	Mon, 26 Aug 2024 13:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A7713C695;
+	Mon, 26 Aug 2024 13:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724677869; cv=none; b=tfqz6PIKVtRNNMNUIOWgGHTdrXoPkZfLLKEoszZqYMNpaCQk6SiWpwzKGJhSvUCuVQlVt27P87LgeJT98DmmluqS7IWQ+ck/mea9gAyn1pBDwVH/Pzf/pbivbnItM+IwRhh/EnaNpHrXkZxUMSa+N6OjUFbGXre8ikcLg8Hz6Qo=
+	t=1724677921; cv=none; b=FY3D3ucbfs4TZNJujs/oPNK0aCes3vBImZdTEt0HqwaMp5rLzSuStmRWgW8VRLNw+MSoZjnIO8VtbQF21xLSE5Nea2FCZw7dFC6xyMFQLwUdZ7vMxquqCZlvPQVLzVI1NhsKyqEFJBZSgdMCt+PVQVBNO4qDrhboOTkSsUzgVDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724677869; c=relaxed/simple;
-	bh=0ppJbQ1K1Yzftc2Bz5hjnDOj8PGFXrJ4oVr1tSmFbdU=;
+	s=arc-20240116; t=1724677921; c=relaxed/simple;
+	bh=ivF/jbpHiVz5xnl0u7eRNCvvm7IVCf7GHqjOdoyEiJ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c4fwR3gMHTu3mHdgu0mqlBXGVQe92UyRC1I6iG9aImdGDuhit5s3R798G5BYGi7RrgMfkZnU9/DRqAhPLB4iREGplGvOzUeDmUPrmYIsefA9fKGsJrVxP8uVWQvmrPdkeQDYl6YuEUTwzmyJEge8XZocpxxzcDWwJJtW9Sa3KGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KBNA5jyA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2099FC5829B;
-	Mon, 26 Aug 2024 13:11:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724677868;
-	bh=0ppJbQ1K1Yzftc2Bz5hjnDOj8PGFXrJ4oVr1tSmFbdU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KBNA5jyAmqsMXesEJ/Jh3EpPV+JzcdC0kcca7j2q62fd1uzq94IftMuLFOk+oC0B2
-	 W5+Sma+TJhKIwPof6m0DL3zc8x9LFW8j4QhdvNWsvZVidANj92hVN03Y5fpsfz5J9a
-	 ksE6zvb1rfAtnXeEcnM3oeBdCEsANtmLOGbh0UEw=
-Date: Mon, 26 Aug 2024 15:11:05 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Harry Austen <hpausten@protonmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-	Dave Ertman <david.m.ertman@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 7/9] uio: add Xilinx user clock monitor support
-Message-ID: <2024082655-cubicle-flashily-6ab3@gregkh>
-References: <20240826123602.1872-1-hpausten@protonmail.com>
- <20240826123602.1872-8-hpausten@protonmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FYu5O0bMaTDpm3cnYDh1waqo05FxFKSXgiwr8Al9X6jdK0yV9SFDEuHYl4sEttcq+WxGeS+lpG/WMQoyO/vilwKNINcZE7Aacxw6s//I6JypqwkMY9lqHaJ7m/O2AucAxlw8Ap4+jUqAAxp18YwBLrUeIvZ8kpLmR2N4+2+ok8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kcRs0Up6; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=CnEqIrJf/5Uvl3Jm/q/BrEQtwg9oxHJd/L725YJbtSg=; b=kcRs0Up6Cpe13NcGd7CsxcTXEg
+	wfUx33ph4ytvCOW5PBAgqcDvh4o1EGSJoK5TGxQCgPNeuG/v3D6JkU/rF2hdYZcbDhu6XmX0Y461C
+	LZZ8BwGkStTknZyAzOa9dQgtUckbdxeGFNrcU3twnz5o7iteGmZ3xjv70tJkt3u7oT/lbuXQlLbzO
+	oSF3vL64NTiTdj3Z70gPw8W2W86zGz3Rd9OF/5fwwtq68NRPdXcEq+NKFk1zhI15jjtzu+HtZn8pt
+	H5KbjDahvkUiYuDiMfOr8HwTsFriXnImrEp4FssGplhuGTpXTswtIQPfYPK+il474iHx5lr1OO8mC
+	ZMNhtxgw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1siZVT-0000000FQMj-2njG;
+	Mon, 26 Aug 2024 13:11:39 +0000
+Date: Mon, 26 Aug 2024 14:11:39 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>, jack@suse.cz,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <Zsx_C0QuecO1C0dB@casper.infradead.org>
+References: <20240826085347.1152675-1-mhocko@kernel.org>
+ <20240826085347.1152675-2-mhocko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,47 +68,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240826123602.1872-8-hpausten@protonmail.com>
+In-Reply-To: <20240826085347.1152675-2-mhocko@kernel.org>
 
-On Mon, Aug 26, 2024 at 12:38:36PM +0000, Harry Austen wrote:
-> Xilinx clocking wizard IP core supports monitoring of up to four
-> optional user clock inputs, with a corresponding interrupt for
-> notification in change of clock state (stop, underrun, overrun or
-> glitch). Give userspace access to this monitor logic through use of the
-> UIO framework.
-> 
-> Implemented as an auxiliary_driver to avoid introducing UIO dependency
-> to the main clock driver.
-> 
-> Signed-off-by: Harry Austen <hpausten@protonmail.com>
-> ---
->  drivers/uio/Kconfig            |  8 ++++
->  drivers/uio/Makefile           |  1 +
->  drivers/uio/uio_xlnx_clk_mon.c | 71 ++++++++++++++++++++++++++++++++++
->  3 files changed, 80 insertions(+)
->  create mode 100644 drivers/uio/uio_xlnx_clk_mon.c
-> 
-> diff --git a/drivers/uio/Kconfig b/drivers/uio/Kconfig
-> index b060dcd7c6350..ca8a53de26a67 100644
-> --- a/drivers/uio/Kconfig
-> +++ b/drivers/uio/Kconfig
-> @@ -164,4 +164,12 @@ config UIO_DFL
->  	    opae-sdk/tools/libopaeuio/
+On Mon, Aug 26, 2024 at 10:47:12AM +0200, Michal Hocko wrote:
+> @@ -258,12 +258,10 @@ static struct bch_inode_info *__bch2_new_inode(struct bch_fs *c)
+>   */
+>  static struct bch_inode_info *bch2_new_inode(struct btree_trans *trans)
+>  {
+> -	struct bch_inode_info *inode =
+> -		memalloc_flags_do(PF_MEMALLOC_NORECLAIM|PF_MEMALLOC_NOWARN,
+> -				  __bch2_new_inode(trans->c));
+> +	struct bch_inode_info *inode = __bch2_new_inode(trans->c, GFP_NOWARN | GFP_NOWAIT);
+
+GFP_NOWAIT include GFP_NOWARN these days (since 16f5dfbc851b)
+
+> +++ b/fs/inode.c
+> @@ -153,7 +153,7 @@ static int no_open(struct inode *inode, struct file *file)
+>   * These are initializations that need to be done on every inode
+>   * allocation as the fields are not initialised by slab allocation.
+>   */
+> -int inode_init_always(struct super_block *sb, struct inode *inode)
+> +int inode_init_always(struct super_block *sb, struct inode *inode, gfp_t gfp)
+
+Did you send the right version of this patch?  There should be a "_gfp"
+appended to this function name.
+
+> +++ b/include/linux/fs.h
+> @@ -3027,7 +3027,12 @@ extern loff_t default_llseek(struct file *file, loff_t offset, int whence);
 >  
->  	  If you compile this as a module, it will be called uio_dfl.
-> +
-> +config UIO_XLNX_CLK_MON
-> +	tristate "Xilinx user clock monitor support"
-> +	depends on COMMON_CLK_XLNX_CLKWZRD
-> +	help
-> +	  Userspace I/O interface to the user clock monitor logic within the
-> +	  Xilinx Clocking Wizard IP core.
+>  extern loff_t vfs_llseek(struct file *file, loff_t offset, int whence);
+>  
+> -extern int inode_init_always(struct super_block *, struct inode *);
+> +extern int inode_init_always_gfp(struct super_block *, struct inode *, gfp_t);
 
-Why do you want a UIO api for a clock device?  What userspace code is
-going to access the hardware this way?  Why not use the normal
-kernel/user apis instead?
+You can drop the "extern" while you're changing this line.
 
-thanks,
-
-greg k-h
+> +static inline int inode_init_always(struct super_block *sb, struct inode *inode)
+> +{
+> +	return inode_init_always_gfp(sb, inode, GFP_NOFS);
+> +}
 
