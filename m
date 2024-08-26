@@ -1,50 +1,78 @@
-Return-Path: <linux-kernel+bounces-301546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2E9495F25C
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:07:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD65695F278
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:11:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFD93281D20
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:07:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83D591F21F7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E0A17BEB7;
-	Mon, 26 Aug 2024 13:07:12 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB1F183CDA;
+	Mon, 26 Aug 2024 13:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="sfkBm7uM"
+Received: from out203-205-221-153.mail.qq.com (out203-205-221-153.mail.qq.com [203.205.221.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64215176AC7;
-	Mon, 26 Aug 2024 13:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 253FF17A5BE;
+	Mon, 26 Aug 2024 13:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724677632; cv=none; b=H8IyApUveV/34OWP8YHe2eE2C0dA4/RBpX6BLxDZyW584iW1Bm0HyTaq/83snS2drHVAa2mCWSFDpwaSl6NbUcpSAB9MgcRRo14oEt4Xw/K/Udz/MsdfZXDo4kbfI7nL4rPOePgXNNLxMbg3KC7NS6+gJFGGVzi82Xmeqsh/gNw=
+	t=1724677885; cv=none; b=TJfHCHKawzfgQedPdY2NScRRJmNhZuusorop4PSJu87rrQdhqJAVTj4NK/yB83YpEcZI0uSXDrQ0u12nJwIa3bNTzywTTJamWEhMG4NNwXa1SpaowOldQqq1IyGuyEybcLV8BrGK0FonT3+YRIh3ZhaaJTlZ2d/wa0O+mlxlFJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724677632; c=relaxed/simple;
-	bh=u2GU0B7E0+MJoDtNYBcEJmfsGvNZQLNwW+EI0SzgLdQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lvTyMDbUFSoLy5GWDSrdIrdDY0/4t96/ChZxbzhwqfGJSoUbSluL8Ro4Td8c1rwIuBoprhNOKnUoHY+VsHetgAFWj/3czzdalK+p9xeeSOazLeIbtb3doX8+NE88mX69UtP1ZrYqhRMEmap2EBYACJxrVdVYBzUjehYbaWRyyxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WsrYD4BKSz2CnZX;
-	Mon, 26 Aug 2024 21:06:56 +0800 (CST)
-Received: from kwepemd100024.china.huawei.com (unknown [7.221.188.41])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6ED001A0170;
-	Mon, 26 Aug 2024 21:07:05 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by kwepemd100024.china.huawei.com
- (7.221.188.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 26 Aug
- 2024 21:07:04 +0800
-From: yangyun <yangyun50@huawei.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lixiaokeng@huawei.com>
-Subject: [PATCH] fuse: remove useless IOCB_DIRECT in fuse_direct_read/write_iter
-Date: Mon, 26 Aug 2024 21:06:12 +0800
-Message-ID: <20240826130612.2641750-1-yangyun50@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1724677885; c=relaxed/simple;
+	bh=p+GbYbWQASurqlY7OYug50PXJM/cMAlqIzI5g9Kq4O0=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=IbCCS2ls8nDBzjFxMn91L44vdrotX/IsfW2O96GpMAQxmxb4qEu1VO+UhbF6BrWiyywyLmomB/GoCy7MKJ7u2o9DSDnHdRhwoxSBDzQNuvU4LaEVlynyaADhROtRh5MKxsa7PNWtpAA4zORSkB3UBF5ONHwsiMQeMCxxAcdIfbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=sfkBm7uM; arc=none smtp.client-ip=203.205.221.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1724677579; bh=2dPCyKhe8fcDZouwEAfvRfw2hnv3gQDexPZBNCHJStI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=sfkBm7uM+CeLJwZUhyuvHwygt7j21D9QERFTpbGNTKfNDy9qezEXMjo8ExNlwJTDd
+	 u6bZfCo59/MHhisQ7r77+I2VlmSXnFSr3ToncJwPr5hVWzyb3/MVeSa2U/gRTjt8aX
+	 2oumKYlH+/47bUkB+tumydp9Vn+jzFE/gG8l2fOY=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
+	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
+	id 19004E2A; Mon, 26 Aug 2024 21:06:16 +0800
+X-QQ-mid: xmsmtpt1724677576toqo2nv2x
+Message-ID: <tencent_5CE6CD937FE377496123A8A454F77F977805@qq.com>
+X-QQ-XMAILINFO: OOWntbL6xj1693je7TqSVsqgZ6HX1JYPOgr+uKMjY8688GwqIrS6HlSypBHO+l
+	 1Hkh0Rr6MZJ04KQC84P0EEzB+6iZ3/yRyWV/TmuapOhVO4ZC0GXTLzhls93iRDI7wTtVea+sUtDf
+	 dj+KUA8FJyeiDgLzihU19mQCozhJPob1MC9az+Eg7qqOBpyLQ9ljoOEDRArK12P2t5vrhKnge3CM
+	 NnIni72TnQJwTuLeqEvzmgy2ZrcwF4dl/6Iu2/96km/K55CNRzlqmEBnU9WbcLiRGYzRwlji94q4
+	 GVcXpesRJHalMAStk2XHsifurMYAawaTQ0vFI0D3sR/VpJYkybyDVyiO3eecmaertSf7+kACD83A
+	 lxW8JZmqsUqwk0O5I8u9ZEERKntbNhlNTrtV/l4qJCKfnPqP9Cve0O2WYrQz63WmENiTA5jyT9LL
+	 i9lsbz2ZxHClt08Ug+fmvsLk7ZQjTUlHKqZ5c37uEhMUkGzf4v2P9ELt2Say2FFLQDv81nlzXMkN
+	 BACkEycIrTPCpNu2N/kbLUriYQJqMK2/KsQ7NkAMSss1WWfiA+KyiTMLTVNVpTY8Vj/HTljaNNYv
+	 mj/BUJYkYsUJC83UurVeLzxP3D6yJOycGLyFBF/eELx81CFRM+fRBQrIW3YIDvCm5h2RHdGj7eV7
+	 bqw4nocwJaPHXcfx8EJlVXsnYH0Vu59sK+4+HhC7gZJ0soQhq3iZvPU31hSLkPWxWAOth4zKdyML
+	 E0nGuUWkCOrdRn3z6EPvCl/7OhMGOD/RD1shy1yKfYVjbQlzpChxJx9ssgGnTNL9RuhwK/jsI2fI
+	 3E4Ok4M+NS60hglIpUkAaEuZJ/h1xB3sLXlilonOKTZCjMi6F+fynENLAL2Pi76RZy24BNqpOUEU
+	 jVQMC1jbsW3cSNC73w3E23y2AGqSJEPJGdwhDIK3RfvPPLncDp7vZO+PWCMOd2nZPl2Em5k6rqAl
+	 E+36uFcP5Ine0WLltPaddIs5xN96ogZvHJtDRtRjDxKQ589+pO0PNxa2C/g+CPtvhg+uLZWUkaLr
+	 uPQ9h6g2rMUGpYX30EcEL8QJewAQk=
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: kvalo@kernel.org
+Cc: eadavis@qq.com,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org,
+	syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH V2] wifi: ath6kl: Replace ath6kl_usb_submit_ctrl_in with usb_control_msg_recv
+Date: Mon, 26 Aug 2024 21:06:16 +0800
+X-OQ-MSGID: <20240826130615.2712119-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <87seurfr3r.fsf@kernel.org>
+References: <87seurfr3r.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,59 +80,22 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd100024.china.huawei.com (7.221.188.41)
 
-Commit 23c94e1cdcbf ("fuse: Switch to using async direct IO
-for FOPEN_DIRECT_IO") gave the async direct IO code path in the
-fuse_direct_read_iter() and fuse_direct_write_iter(). But since
-these two functions are only called under FOPEN_DIRECT_IO is set,
-it seems that we can also use the async direct IO even the flag
-IOCB_DIRECT is not set to enjoy the async direct IO method. Also
-move the definition of fuse_io_priv to where it is used in fuse_
-direct_write_iter.
+On Mon, 26 Aug 2024 14:42:00 +0300, Kalle Valo wrote:
+> > ath6kl_usb_submit_ctrl_in() did not take into account the situation where
+> > the length of the data read from the device is not equal to the len, and
+> > such missing judgments will result in subsequent code using incorrect data.
+> >
+> > usb_control_msg_recv() handles the abnormal length of the returned data,
+> > so using it directly can fix this warning.
+> >
+> > Reported-by: syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com
+> > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> 
+> Did you test this on real ath6kl hardware?
+I don't have ath6kl hardware, I have only tested it on a virtual machine.
 
-Signed-off-by: yangyun <yangyun50@huawei.com>
----
- fs/fuse/file.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index f39456c65ed7..03809ecc23ec 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -1649,7 +1649,7 @@ static ssize_t fuse_direct_read_iter(struct kiocb *iocb, struct iov_iter *to)
- {
- 	ssize_t res;
- 
--	if (!is_sync_kiocb(iocb) && iocb->ki_flags & IOCB_DIRECT) {
-+	if (!is_sync_kiocb(iocb)) {
- 		res = fuse_direct_IO(iocb, to);
- 	} else {
- 		struct fuse_io_priv io = FUSE_IO_PRIV_SYNC(iocb);
-@@ -1663,7 +1663,6 @@ static ssize_t fuse_direct_read_iter(struct kiocb *iocb, struct iov_iter *to)
- static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
- {
- 	struct inode *inode = file_inode(iocb->ki_filp);
--	struct fuse_io_priv io = FUSE_IO_PRIV_SYNC(iocb);
- 	ssize_t res;
- 	bool exclusive;
- 
-@@ -1671,9 +1670,11 @@ static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	res = generic_write_checks(iocb, from);
- 	if (res > 0) {
- 		task_io_account_write(res);
--		if (!is_sync_kiocb(iocb) && iocb->ki_flags & IOCB_DIRECT) {
-+		if (!is_sync_kiocb(iocb)) {
- 			res = fuse_direct_IO(iocb, from);
- 		} else {
-+			struct fuse_io_priv io = FUSE_IO_PRIV_SYNC(iocb);
-+
- 			res = fuse_direct_io(&io, from, &iocb->ki_pos,
- 					     FUSE_DIO_WRITE);
- 			fuse_write_update_attr(inode, iocb->ki_pos, res);
--- 
-2.33.0
+BR,
+Edward
 
 
