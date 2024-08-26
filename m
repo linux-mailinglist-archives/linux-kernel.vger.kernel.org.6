@@ -1,118 +1,119 @@
-Return-Path: <linux-kernel+bounces-302391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9595C95FDB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:08:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF4B095FDA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96FA11C2206B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:08:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B70BE1C2243F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92E61991D0;
-	Mon, 26 Aug 2024 23:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8796519A28F;
+	Mon, 26 Aug 2024 23:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=cristian.ciocaltea@collabora.com header.b="dxjrqrgx"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FZKEdDZ7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C7919DF49;
-	Mon, 26 Aug 2024 23:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724713669; cv=pass; b=LjMEw+KdvrgygZKaRr6czfg23y89C5zE/kcXnlh1M6+o6MN83t3XztPtlgELcn7TQB3KqlWMu2hLQrF56gmE1d8/0sxgKmeztanLbgOnM6pxztJnmoQQH7py2KSSq+zdrVSlghnNqCLG0FBfPbRekdyqBc+iAiR0RH4RFmYTsf0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724713669; c=relaxed/simple;
-	bh=1UOqS2Dxo8iR9T9B1fLDBZrWdN8+C3Mh5hkvpGIoXa4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PzRxgQRGfgiV9FmQqqm+9fo+uKGJCpr8/Kq5RimjUjsWl5gMszfq5Ob4asdc6zKVY7dRTrdkTvc31Yfnm94RKriBkannOttVwsqF87Nn2B5xVC0oYqGvNVU8dMNNAmCmypK1/kE01zgGlHzgVOnPEzfjkbHEmUyBxVih4WMEYGI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=cristian.ciocaltea@collabora.com header.b=dxjrqrgx; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: kernel@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724713656; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=OfCkRUbsQEvxat4XQIRYlqToGp1J39wm44+qv757qhoqwcYbgRp/78pJDX8QmoKCuGvikH+2/vLFnwcuzOtJZDirIepIUUDGLHhuEqITmQNC9wFXduPvAV6Vz42BUyCvVdNeHd/hkb5U4EWeNhqZdiFJXSO9ld4AjepNrzdTPYo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724713656; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=NHu1lK8y+binnoeFm6Jqz7QKNR4uii4rwsRkUGw9AYA=; 
-	b=bnPqshmOmixHJEb8ZwFs6G26TG23cqtodWiR4t9xzfJ9/w9vc6zC5y0ErnzBmZyk4PfNBFNZ//YSpLr+PqNH3g+8zCMs9/Xw0aoXwVXGy1tcBm0hqhbjBkeuSYb4IfrHLnocg1kaVoKZAW8hDZHCbh9gspYPcUyWVCee7QKRahU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=cristian.ciocaltea@collabora.com;
-	dmarc=pass header.from=<cristian.ciocaltea@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724713656;
-	s=zohomail; d=collabora.com; i=cristian.ciocaltea@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=NHu1lK8y+binnoeFm6Jqz7QKNR4uii4rwsRkUGw9AYA=;
-	b=dxjrqrgxfBkiwvtotSEIuDHcmhzBwlyMSZGtEqVWTCdCtlNGQ+uqQdqbjIB58mUe
-	j5oFonSe++1fdsJ2JIYfkk5lBcWdrqoqt4uYtBVksIKwlvenQXIk1mCa70DxtFhSLJP
-	XzjKV+/rptReYLZS8tFjgQq9jLDNNbeybvi18oDU=
-Received: by mx.zohomail.com with SMTPS id 1724713654812611.7088986874687;
-	Mon, 26 Aug 2024 16:07:34 -0700 (PDT)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Tue, 27 Aug 2024 02:06:51 +0300
-Subject: [PATCH 2/2] arm64: dts: rockchip: Fix compatibles for RK3588
- VO{0,1}_GRF
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35BAE487A5;
+	Mon, 26 Aug 2024 23:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724713247; cv=none; b=CsPHOWdW10TWyG6Ay1lmqDQKMTtyEv6yFF4O/rfs9lwpiiLVJmeZMcZlksltuN2mstXY8yB/9BTpZYtyNYq9BIomqLGXCnrQFYqKFU5Als7DWvG9tu36CSb1F6PNwbkBeJcerisUKIfBqEeqCwWmIfd3pqGxHksiKOAdUAhFjfI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724713247; c=relaxed/simple;
+	bh=rsW3FuTSU9Hd0/Ixqri1uU9UjBMBX0oRwPSLiLLbOss=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CwyVVogj2VtMh+66Amj61eMVB7bVefrpXlw6nDEgBdLSgw4/+vmlweUFbSf+1UdjzLJpDaQgbaLQbiMe7xC9QMdhjQSgyBPgXqPGYp/BAIvfEa80lDgLFjHiqlJUR9jQb28TTKgy2en5ksFpAKzWkHGLWkDeDpbMsGUVz9rUXjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FZKEdDZ7; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724713246; x=1756249246;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rsW3FuTSU9Hd0/Ixqri1uU9UjBMBX0oRwPSLiLLbOss=;
+  b=FZKEdDZ7bKIVxEzVYX0bNDTzVxwL4Wuq/3Qw5axvrAMNwtrqR1Ndx6gR
+   aMMOlaKEcGiRGTsIOW0V9vO59+lNYdPJBaj5lf9AUlNeC8epF4pi3uU6X
+   ZFtNSk+cdY3KLotkcUqjuznl5ZCJCkmz4ttSZZ+IIqEaHiUlcNVpqt4qI
+   5vBGfByShpXqilfTNKjuXrSS/e3BjF650a2TvnyYd3Cjz+QmO6go+qTa+
+   0vgqAiBPYVtE0J2W3dA94oZXg68weldUM3qhub2cTOc0Eh/zhhmoOvVu7
+   7Rvjh8zjKFbvmksaxyFPriuJbOnDdpGaAM6ExJ5LT3O2iG1zxpm/PKgW+
+   g==;
+X-CSE-ConnectionGUID: H1RdixpURNy13sd7WzYyAA==
+X-CSE-MsgGUID: NByRm+TETtGgjltalqQcKQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23047280"
+X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
+   d="scan'208";a="23047280"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 16:00:46 -0700
+X-CSE-ConnectionGUID: 45HimrjyQhqOeQ2kHp3hLg==
+X-CSE-MsgGUID: gXJDuSo7SB6UOk1KYgOYOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
+   d="scan'208";a="93454540"
+Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 16:00:45 -0700
+Date: Mon, 26 Aug 2024 16:07:42 -0700
+From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: x86 Maintainers <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	Linux PM <linux-pm@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ricardo Neri <ricardo.neri@intel.com>,
+	Tim Chen <tim.c.chen@intel.com>
+Subject: Re: [PATCH v2 3/3] cpufreq: intel_pstate: Set asymmetric CPU
+ capacity on hybrid systems
+Message-ID: <20240826230742.GA7773@ranerica-svr.sc.intel.com>
+References: <4941491.31r3eYUQgx@rjwysocki.net>
+ <3311190.44csPzL39Z@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240827-rk3588-vo-grf-compat-v1-2-d4a18acf951a@collabora.com>
-References: <20240827-rk3588-vo-grf-compat-v1-0-d4a18acf951a@collabora.com>
-In-Reply-To: <20240827-rk3588-vo-grf-compat-v1-0-d4a18acf951a@collabora.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Conor Dooley <conor@kernel.org>
-X-Mailer: b4 0.14.1
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3311190.44csPzL39Z@rjwysocki.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-RK3588 VO0 and VO1 GRFs are not identical (though quite similar in terms
-of layout) and, therefore, incorrectly shared the compatible string.
+On Mon, Aug 12, 2024 at 02:44:30PM +0200, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+[...]
+> @@ -3143,6 +3341,20 @@ static int intel_pstate_register_driver(
+>  
+>  	global.min_perf_pct = min_perf_pct_min();
+>  
+> +	/*
+> +	 * On hybrid systems, use asym capacity instead of ITMT, but because
+> +	 * the capacity of SMT threads is not deterministic even approximately,
+> +	 * do not do that when SMT is in use.
+> +	 */
+> +	if (hwp_is_hybrid && !sched_smt_active() &&
+> +	    arch_enable_hybrid_capacity_scale()) {
+> +		sched_clear_itmt_support();
+> +
+> +		hybrid_init_cpu_scaling();
+> +
+> +		arch_rebuild_sched_domains();
 
-Since the related binding document has been updated to use dedicated
-strings, update the compatibles for vo{0,1}_grf DT nodes accordingly.
+sched_clear_itmt_support() also calls arch_rebuild_sched_domains(). The
+latter is also called earlier via sched_set_itmt_support(), totaling 3
+calls, two of which are wasted.
 
-Additionally, for consistency, set the full region size (16KB) for
-VO1_GRF.
+Perhaps at minimum hybrid_init_cpu_scaling() can be before
+sched_clear_itmt_support(). The changes made by these two functions will
+be picked up in a single call of arch_rebuild_sched_domains().
 
-Reported-by: Conor Dooley <conor@kernel.org>
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
----
- arch/arm64/boot/dts/rockchip/rk3588-base.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-index b6e4df180f0b..ee99166ebd46 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-@@ -582,14 +582,14 @@ vop_grf: syscon@fd5a4000 {
- 	};
- 
- 	vo0_grf: syscon@fd5a6000 {
--		compatible = "rockchip,rk3588-vo-grf", "syscon";
-+		compatible = "rockchip,rk3588-vo0-grf", "syscon";
- 		reg = <0x0 0xfd5a6000 0x0 0x2000>;
- 		clocks = <&cru PCLK_VO0GRF>;
- 	};
- 
- 	vo1_grf: syscon@fd5a8000 {
--		compatible = "rockchip,rk3588-vo-grf", "syscon";
--		reg = <0x0 0xfd5a8000 0x0 0x100>;
-+		compatible = "rockchip,rk3588-vo1-grf", "syscon";
-+		reg = <0x0 0xfd5a8000 0x0 0x4000>;
- 		clocks = <&cru PCLK_VO1GRF>;
- 	};
- 
-
--- 
-2.46.0
-
+Moreover, ITMT can be not enabled at all if so we wish. By the time
+intel_pstate_set_itmt_prio() is called, the value of hwp_is_hybrid is
+already known.
 
