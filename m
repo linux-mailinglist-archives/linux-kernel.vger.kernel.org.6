@@ -1,112 +1,161 @@
-Return-Path: <linux-kernel+bounces-300866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5451895E9C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:59:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F0D695E9CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:59:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F213C1F21443
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 06:59:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2FB11F21A1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 06:59:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D723012F5B3;
-	Mon, 26 Aug 2024 06:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9384F215;
+	Mon, 26 Aug 2024 06:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dgi0iHWv"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hBhFWRw1"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E653482D7F
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 06:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C64B8289E
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 06:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724655489; cv=none; b=t/0D5LXXzk8kFCzqmSFidfG0zo+Skx9lO32wdPdpatzBEBSY8arfMmaQtb7d5ciBO2tgJf0Z2ZextfZe2UF85cmTTsnNzAEbVnvaVSc3S7Vjl0WNDTGgHnwr3EUanMcNb/2m39vppyPsFXqMHjkZ+hMCqyQBNmQEnsczSvxoQi8=
+	t=1724655564; cv=none; b=ShTKMS46hG9Q4Cci1YWuJgSsag+kOMeOhnpdviAsk3mPtDWMAlyaiN3bGFdFDsHnEXR8Il/JM+ksXf2bXuTYaQke3giMhfa9hfu2rhI4NMt2/4iOf1vbYMoZJTHlnhKd2LvSIn8G6lA/CBBmmVmEbiMl/bCkmM85PTWZ5yVDnac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724655489; c=relaxed/simple;
-	bh=A7bmaOp8eNBMv4uH0Zm5ptUQ9zszU0WrOJ/3GUsMV2g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aBdqANzrhaltZ5gumCpZUxC/1dQffKgJvNDCDcSE+8GI++330XKo+z7Gre5kV29UvaiWYZ/i7qVkx0qvLFojS8IhxKpddZbf1gtEh+41BanYs6jVUcChmgmVk5UISAxplMf5h73GlUdlQwcUHTf01LvMy1IZ73NPWVflPMNhJ5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dgi0iHWv; arc=none smtp.client-ip=209.85.128.45
+	s=arc-20240116; t=1724655564; c=relaxed/simple;
+	bh=mJLirSJWzeg4h8aXB0WVH5kVs9qnKGSO8rbuVUCKC4Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=onJ14PkEOZVZqFiW8qqzVfGqeTnbBn76xy54nEKIR7o2FXwsLWxBVR6YVWsMgvvHqiU9g6lXOB2k5kgW9VG975F2M3WLsNYXPWBm9PCDyp7k2mPjePhCREvKU/sb8NsqOWXp0t/TjWQ33iPZe24E0+3VWDD7Dt+XsGf+A1tpWOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hBhFWRw1; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42808a69a93so6067655e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 23:58:05 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-428e09ee91eso4896245e9.3
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 23:59:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724655484; x=1725260284; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0OXqDaFYDX6eij+aloMnDmAMQebwmuADwVGxp987uiM=;
-        b=Dgi0iHWvH0UTKz46ai2FezP0i79LOQXFKapckQZQ/ZannyXOyvRFp5feDtDPnqMyIs
-         jeJbXq1Q3D0O8nsp3E/WJwN0VdzPZEvjbUMHdtIjF4xn7cNivSl11S1oi5eDA1ejy0kp
-         tkJqfOQeWgZ72Irn5ZGHwvyzc8J+u8+cdrmXdlatTX4gheoMuR81kxq7uZPGODYwyRN9
-         n10KDzp+nT2eifkqIUYaITjue1mS6PJ0NyOmPQDEf2RMhYW0/PBZIpctDZdWUDZXKfmQ
-         S8TESAHg7VctCrr3YK7D2wHME96YXLqTn5N0N+MWGRSHP8Eurg5SWV8cAgYyA1B5RtbU
-         Dd1A==
+        d=linaro.org; s=google; t=1724655561; x=1725260361; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZXC8LPaGlFKAb1lVhb8Na89DQ1wSRPlOox9E5ezA6WU=;
+        b=hBhFWRw1ux9w6LyayUEJAmOiYyAMnhdGPldSCQFh3ah+jvQo9OYEOwxlKYXUPtVkLj
+         lfMj7VYHTgj9CHB6oSirlDfQXL0+xf+KD6JxURWojXDnCJhjFPDa5GY4HYcrI/gafBd7
+         x7Hlj9HNQ2G2IEmvXeTA+jthMkR2xaGli8K6GkQsCE40MtsPytcJrE9zID1reys0J8nT
+         pp59MdRjLRS7pj8+LicYTYHM9vQ9cIDE4xP7WACz8WEVVDofV1siulkRi4E6dBwOmiRU
+         MMr/KJ7IIUrLFRcORkt4xjEXGb1xm+2jWzDeDepCgu0gq9m/5zf1lm20CaYdNFvnrxJt
+         u0kQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724655484; x=1725260284;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1724655561; x=1725260361;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0OXqDaFYDX6eij+aloMnDmAMQebwmuADwVGxp987uiM=;
-        b=OvgzpmlLUxWXLOCPTTKA1on3hDskTG9SIn1eAykDfyA4bu/RJqYKYmKXXwYXBjKnq/
-         xXniXYgWlaphgM8KmxQxlFcbHxYVWUtoLjLoM1SzKhOo89mzWvUdDcjgaZhMQ8jnLh8S
-         m8naUrY5AzQ4JQCZtohMnPb4FBklwVk0+jSdcrpBnZykkazuvi0LB1v9B3JOayobZxQ7
-         zTQZ5U5GOWbXL+gktI4orMDsyi1mm2jnqfsXsOnNyjGigM00MRHV06L9/XuWFflc6jey
-         5NBIHQ+L+FDmhBnrlKtmq6HtibTBBm11L48UuRDFjL3fQZCrlcgop26BgSwgf6dv8/2F
-         qSzw==
-X-Forwarded-Encrypted: i=1; AJvYcCWuqBB8VqTjFYfQMU/RVaDZF0MR2BNK0Nwuz1SWyqJBaKIhRTVf+ua4tawtSKz+MJ2aVrElbAfteSWem/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTfZuSNo53Zoy4P8/z17GxHUgKuWu3sZbavsUiTe4GtZu/hEZ0
-	s5uslvl1oQvW6tEBJszRPKaG45pFK6sfl52FyfXj3HzSINpnLoaqD0GCjxEyDnM=
-X-Google-Smtp-Source: AGHT+IFuULnHBEvkm2VCfjR+BDd62hko+Z8tOCO/X7WhUVbPXPSXioD35Fd79n2jACqzxLmzIVeImA==
-X-Received: by 2002:a05:600c:4445:b0:425:7ac6:96f9 with SMTP id 5b1f17b1804b1-42acc8a55f3mr40559515e9.0.1724655484056;
-        Sun, 25 Aug 2024 23:58:04 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42abed8b91dsm181368305e9.10.2024.08.25.23.58.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Aug 2024 23:58:03 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] clk: bcm: bcm53573: fix OF node leak in init
-Date: Mon, 26 Aug 2024 08:58:01 +0200
-Message-ID: <20240826065801.17081-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+        bh=ZXC8LPaGlFKAb1lVhb8Na89DQ1wSRPlOox9E5ezA6WU=;
+        b=qpCdSN0/O0nDndST05VIOtPA1hdmWfcbL4yPlYqnvNBMOS0nMyx6ac1MjMRQ3S7wn1
+         bhyMC3Z38PHK4JP5lSE8THfvmyOfY4Gmd1vGL0LkgDkBPJrobIISsEYJ8tPS/qgWRHyj
+         xgxD6KQQrJYxutOXiZdSmAY7HagsMtDB4wWKaBz3mu5v4NdG3rDyjKgHSo33Wjks6m1C
+         lKJDPnyaXToAM3Aqudf+EHd/bghUnVFeclm9Mpf0/LUV0HKQ7umN9T56e+0B6GHsuH5T
+         JZuqZYa96X8XXGEgTAPwFC1DUc7lYJum0Wo9VIJGz0xA+BDAwpU6Fk/QfsdN1AdzeESG
+         dFng==
+X-Forwarded-Encrypted: i=1; AJvYcCXWeYxC5x56A4DxJkbNEhIPdBcTVdK2gQJjf2BAJxqDr6V4X3znFUIKgzJO5tXHfJV37ZPBqelrycOk7to=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvkCgMEfdyAToZHlXJMfVaRXZ++fx09pb8wt4JvKpyZXj9v/Kb
+	KNoH+MCYHkDTSguv09oo37NZObCQbldYil4oRLKfB1fQ3xVJG/bh0kfGBkwnGX8=
+X-Google-Smtp-Source: AGHT+IE+npQyzlIhtY9p1H5I6YfZb8gMIw1B9G+EDUhrVf2mwH77kiroEH+GVACuESM/uiF8DXQg+w==
+X-Received: by 2002:a05:600c:3b8b:b0:426:67e0:3aa with SMTP id 5b1f17b1804b1-42acc8d50f1mr39288345e9.1.1724655560609;
+        Sun, 25 Aug 2024 23:59:20 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.222.82])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac51860e8sm142360175e9.48.2024.08.25.23.59.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 25 Aug 2024 23:59:20 -0700 (PDT)
+Message-ID: <391cc2f7-4a88-4565-8653-e46bd77e28f8@linaro.org>
+Date: Mon, 26 Aug 2024 08:59:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] rtc: at91sam9: fix OF node leak in probe() error path
+To: Markus Elfring <Markus.Elfring@web.de>, linux-rtc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Arnd Bergmann <arnd@arndb.de>, Boris Brezillon <bbrezillon@kernel.org>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, Johan Hovold <johan@kernel.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <20240825183103.102904-1-krzysztof.kozlowski@linaro.org>
+ <675f1e34-784f-44d2-9774-2652b919eecd@web.de>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <675f1e34-784f-44d2-9774-2652b919eecd@web.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Driver code is leaking OF node reference from of_get_parent() in
-bcm53573_ilp_init().  Usage of of_get_parent() is not needed in the
-first place, because the parent node will not be freed while we are
-processing given node (triggered by CLK_OF_DECLARE()).  Thus fix the
-leak by accessing parent directly, instead of of_get_parent().
+On 25/08/2024 21:35, Markus Elfring wrote:
+>> Driver is leaking an OF node reference obtained from
+>> of_parse_phandle_with_fixed_args().
+> 
+> Is there a need to improve such a change description another bit?
+> 
+> + Imperative mood
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/clk/bcm/clk-bcm53573-ilp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I have enough of your stupid emails.
 
-diff --git a/drivers/clk/bcm/clk-bcm53573-ilp.c b/drivers/clk/bcm/clk-bcm53573-ilp.c
-index 84f2af736ee8..83ef41d618be 100644
---- a/drivers/clk/bcm/clk-bcm53573-ilp.c
-+++ b/drivers/clk/bcm/clk-bcm53573-ilp.c
-@@ -112,7 +112,7 @@ static void bcm53573_ilp_init(struct device_node *np)
- 		goto err_free_ilp;
- 	}
- 
--	ilp->regmap = syscon_node_to_regmap(of_get_parent(np));
-+	ilp->regmap = syscon_node_to_regmap(np->parent);
- 	if (IS_ERR(ilp->regmap)) {
- 		err = PTR_ERR(ilp->regmap);
- 		goto err_free_ilp;
--- 
-2.43.0
+Commit msg is fine.
+
+> 
+> + Tags like “Fixes” and “Cc”
+
+Read the patch.
+
+PLONK.
+
+Best regards,
+Krzysztof
 
 
