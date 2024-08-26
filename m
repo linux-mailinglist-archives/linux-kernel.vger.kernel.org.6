@@ -1,162 +1,156 @@
-Return-Path: <linux-kernel+bounces-301219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D0D895EDE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:00:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F359295EDEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 702981C21738
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:00:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 321031C216B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A4D14830D;
-	Mon, 26 Aug 2024 10:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DNz97goA"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966F1148850;
+	Mon, 26 Aug 2024 10:00:09 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0C4146D6F;
-	Mon, 26 Aug 2024 10:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFA7148316;
+	Mon, 26 Aug 2024 10:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724666405; cv=none; b=pxax3MT+UAFhKa63VQSVmjgbRfmw92RBI0yBecz/rKA4q4PWpPCAT3vsMfdjZhYjAA/z6J4AQObvw/Arxj9L7dpgZTZS2xB+XDVbQoWOHUxuvisu96d3LgHLPQcD49zaFf7xWkpxTVBVcyLNLJwftSvbYpc1s+no0VaLy304I1Y=
+	t=1724666409; cv=none; b=DYySPwe9fbyQpEgiFNfvOQb4dYCbLMe+EbN3VfKrqC78BG2plOySqIYj70AExHwxqZMzyRlFuDhB2boNn/ettt19LGZDAp9daBe4tv6d90b/SH6BE5osK18VRy4oo47KUM/avP35+ruQwrll/NEHNqeQNA05iq/CDhmrdRPVFPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724666405; c=relaxed/simple;
-	bh=H1gNBBAhMfSVZg5l3P5whjBb1DwypNUyP7q+iCqtEic=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ePuFuEWs7M9zjV1N98veJF4e8oBQf+ISnXBFYFjN43mDQ0+Kg3icOwnxWsfnYXAm3y/EgjKkEPxbDtRHRwoF6mvSV57Ab1tgozkgeYD812eMCLkQOP8FqibDwpK4uswx2+XGuRV+fonm7BC3OZPAax4/WQAVLZ++rRE7AGRVP8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DNz97goA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B9AEC51406;
-	Mon, 26 Aug 2024 10:00:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724666405;
-	bh=H1gNBBAhMfSVZg5l3P5whjBb1DwypNUyP7q+iCqtEic=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DNz97goArRKajiUSlAKrRRaoClpMoTnOt8x/+hX8n82Zo6PjgfYEMxbcyBeFxGttI
-	 CEwIWjIh/uktlZ96ssxyQdPAbqYzMx2pm7830eQQGW5y9fAvDh187Roy78l9f0tfsk
-	 wxdujRN6IJajlLDH8sgaKYO26v4j63QLeBdheFlb6k9Dc4hEIVbbNjWmSLv+ylyckc
-	 7xfcn20wqrrnGBVfNKX8TzmlVIXawkP+lxwiG/o1Ah5E6rSVi46pbc2lZcj7+a+Ugp
-	 X6HJFLHNJkeBibmf3NHBbwtfrht3qOVZV8qJ7KdzRic0u7plQjNv/sAmaUKQhnogJR
-	 1e2jBf3Jv6k4w==
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5d5c8c1006eso3065633eaf.3;
-        Mon, 26 Aug 2024 03:00:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU4JzbqtglOlRZckje9UO4ThmfDSmem7AOHdH9f27o8NJ2eYH5fyi3AjJQyWFGSzH2vLTIAvdQWLKEY@vger.kernel.org, AJvYcCVxLvu6ySicTJwsOWj2Il/DGYHaNo6orHsxsLQYZokEs4ELaEcFPHvWLDCpkIJca2xDsqUY7ayT8YStXKQp@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIHjGpplhOFW3cZI8UVhhn/UFX9UfNHaakh3Qe4J5Gi1NUKkMe
-	EDGKVOAqnWttp+lOvC5NTa9fWUXTkiOsa3SlKFuIt+Ja/AT3n9pzIsXtWvDL5QHo2nQdB6Wj2ww
-	ivwmhUxNcjBBWCcKG/V+iLVgPEZQ=
-X-Google-Smtp-Source: AGHT+IE/OB3jlh4F+GyGtLPrVPwvZucEs/pMxOW+5WBT9V6UxnSH23wxYVwVZbDNTz/44qsbbGiYgj4B49GU+4egfGQ=
-X-Received: by 2002:a05:6871:29b:b0:270:4dbb:195a with SMTP id
- 586e51a60fabf-273e6476a16mr11161053fac.15.1724666404545; Mon, 26 Aug 2024
- 03:00:04 -0700 (PDT)
+	s=arc-20240116; t=1724666409; c=relaxed/simple;
+	bh=DbkPxyn548cggFykDNg5a3YB22zz+j3MIZKKt0agUMM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dJuPn+PAMQ4iImjcMYgOuxnFlxZu5n2V/NgdsXLTTRanLUP/wRgJn4qOq0qk1V6S78uQUjXnkyYGyHTf2zOSUHSGVlkozN2sHCv5lyd1nEDpQ+VnfsmiIEAv6JZJU7VCMjl4Fdh1vJ4BG1hlxQU9WRUo9v4uqwgkreA2xpirCbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABF28C51400;
+	Mon, 26 Aug 2024 10:00:01 +0000 (UTC)
+Date: Mon, 26 Aug 2024 13:00:09 +0300
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	Yury Khrustalev <yury.khrustalev@arm.com>,
+	Wilco Dijkstra <wilco.dijkstra@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v11 25/39] arm64/signal: Expose GCS state in signal frames
+Message-ID: <ZsxSKVAOHQq12YfB@arm.com>
+References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
+ <20240822-arm64-gcs-v11-25-41b81947ecb5@kernel.org>
+ <ZshYTyNbveD7WMyJ@arm.com>
+ <ZshjmuYcejbhaSBg@finisterre.sirena.org.uk>
+ <Zsixz6Y9xWxqaQaV@arm.com>
+ <ZskGqU8BSvR01W30@finisterre.sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812054647.1194716-1-jiaqing.zhao@linux.intel.com>
- <20240812054647.1194716-2-jiaqing.zhao@linux.intel.com> <CAJZ5v0hPtvVRM=Te2oPzCvE3tOy_rXYGJwaoQOfNc71z+pmkvA@mail.gmail.com>
- <f2fd62f7-3fe3-4bea-8c9e-6343d2cce8b7@linux.intel.com>
-In-Reply-To: <f2fd62f7-3fe3-4bea-8c9e-6343d2cce8b7@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 26 Aug 2024 11:59:51 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gBk+vVKd1zXN7+4fX_-T-enmGMT=BD5R8CU_1C+xdQDw@mail.gmail.com>
-Message-ID: <CAJZ5v0gBk+vVKd1zXN7+4fX_-T-enmGMT=BD5R8CU_1C+xdQDw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] ACPICA: Detect FACS in reduced hardware build
-To: Jiaqing Zhao <jiaqing.zhao@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Robert Moore <robert.moore@intel.com>, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
-	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZskGqU8BSvR01W30@finisterre.sirena.org.uk>
+X-TUID: eW4byJ2kTpsL
 
-On Mon, Aug 26, 2024 at 3:10=E2=80=AFAM Jiaqing Zhao
-<jiaqing.zhao@linux.intel.com> wrote:
->
-> On 2024-08-20 22:55, Rafael J. Wysocki wrote:
-> > On Mon, Aug 12, 2024 at 7:47=E2=80=AFAM Jiaqing Zhao
-> > <jiaqing.zhao@linux.intel.com> wrote:
-> >>
-> >> According to Section 5.2.10 of ACPI Specification, FACS is optional
-> >> in reduced hardware model. Enable the detection for "Hardware-reduced
-> >> ACPI support only" build (CONFIG_ACPI_REDUCED_HARDWARE_ONLY=3Dy) also.
-> >>
-> >> Link: https://github.com/acpica/acpica/commit/ee53ed6b5452612bb44af542=
-b68d605f8b2b1104
-> >> Signed-off-by: Jiaqing Zhao <jiaqing.zhao@linux.intel.com>
-> >> ---
-> >>  drivers/acpi/acpica/acglobal.h |  6 +-----
-> >>  drivers/acpi/acpica/tbutils.c  |  5 +----
-> >>  drivers/acpi/acpica/utxfinit.c | 24 ++++++++++++------------
-> >>  include/acpi/acconfig.h        |  1 -
-> >>  4 files changed, 14 insertions(+), 22 deletions(-)
-> >>
-> >> diff --git a/drivers/acpi/acpica/acglobal.h b/drivers/acpi/acpica/acgl=
-obal.h
-> >> index f4c90fc99be2..309ce8efb4f6 100644
-> >> --- a/drivers/acpi/acpica/acglobal.h
-> >> +++ b/drivers/acpi/acpica/acglobal.h
-> >> @@ -29,11 +29,7 @@ ACPI_INIT_GLOBAL(u32, acpi_gbl_dsdt_index, ACPI_INV=
-ALID_TABLE_INDEX);
-> >>  ACPI_INIT_GLOBAL(u32, acpi_gbl_facs_index, ACPI_INVALID_TABLE_INDEX);
-> >>  ACPI_INIT_GLOBAL(u32, acpi_gbl_xfacs_index, ACPI_INVALID_TABLE_INDEX)=
-;
-> >>  ACPI_INIT_GLOBAL(u32, acpi_gbl_fadt_index, ACPI_INVALID_TABLE_INDEX);
-> >> -
-> >> -#if (!ACPI_REDUCED_HARDWARE)
-> >> -ACPI_GLOBAL(struct acpi_table_facs *, acpi_gbl_FACS);
-> >> -
-> >> -#endif                         /* !ACPI_REDUCED_HARDWARE */
-> >> +ACPI_INIT_GLOBAL(struct acpi_table_facs *, acpi_gbl_FACS, NULL);
-> >>
-> >>  /* These addresses are calculated from the FADT Event Block addresses=
- */
-> >>
-> >> diff --git a/drivers/acpi/acpica/tbutils.c b/drivers/acpi/acpica/tbuti=
-ls.c
-> >> index 15fa68a5ea6e..356700349b45 100644
-> >> --- a/drivers/acpi/acpica/tbutils.c
-> >> +++ b/drivers/acpi/acpica/tbutils.c
-> >> @@ -18,7 +18,6 @@ ACPI_MODULE_NAME("tbutils")
-> >>  static acpi_physical_address
-> >>  acpi_tb_get_root_table_entry(u8 *table_entry, u32 table_entry_size);
-> >>
-> >> -#if (!ACPI_REDUCED_HARDWARE)
-> >>  /********************************************************************=
-***********
-> >>   *
-> >>   * FUNCTION:    acpi_tb_initialize_facs
-> >> @@ -37,8 +36,7 @@ acpi_status acpi_tb_initialize_facs(void)
-> >>         struct acpi_table_facs *facs;
-> >>
-> >>         if (acpi_gbl_FADT.Xfacs &&
-> >> -                  (!acpi_gbl_FADT.facs
-> >> -                   || !acpi_gbl_use32_bit_facs_addresses)) {
-> >> +           (!acpi_gbl_FADT.facs || !acpi_gbl_use32_bit_facs_addresses=
-)) {
-> >>                 (void)acpi_get_table_by_index(acpi_gbl_xfacs_index,
-> >>                                               ACPI_CAST_INDIRECT_PTR(s=
-truct
-> >>                                                                      a=
-cpi_table_header,
-> >
-> > I'm not sure how this change is related to the rest of the patch.
-> >
-> > It doesn't appear to be present in the original commit pointed to by
-> > the Link tag.
->
-> This change here is just indention fix, in original acpica, the indention=
- is just fine.
->
-> Shall I remove this change?
+On Fri, Aug 23, 2024 at 11:01:13PM +0100, Mark Brown wrote:
+> On Fri, Aug 23, 2024 at 04:59:11PM +0100, Catalin Marinas wrote:
+> > On Fri, Aug 23, 2024 at 11:25:30AM +0100, Mark Brown wrote:
+> 
+> > > We could store either the cap token or the interrupted GCSPR_EL0 (the
+> > > address below the cap token).  It felt more joined up to go with the cap
+> > > token since notionally signal return is consuming the cap token but
+> > > either way would work, we could just add an offset when looking at the
+> > > pointer.
+> 
+> > In a hypothetical sigaltshadowstack() scenario, would the cap go on the
+> > new signal shadow stack or on the old one? I assume on the new one but
+> > in sigcontext we'd save the original GCSPR_EL0. In such hypothetical
+> > case, the original GCSPR_EL0 would not need 8 subtracted.
+> 
+> I would have put the token on the old stack since that's what we'd be
+> returning to.
 
-Yes, please.
+After some more spec reading, your approach makes sense as it matches
+the GCSSS[12] instructions where the outgoing, rather than incoming,
+shadow stack is capped. So all good I think. However, a bit more below
+on the restore order (it's ok but a bit confusing).
 
-If you send a Linux counterpart of an ACPICA change, it should not
-contain any changes in addition to what was there in the original
-ACPICA commit.
+> This raises interesting questions about what happens if
+> the reason for the signal is that we just overflowed the normal stack
+> (which are among the issues that have got in the way of working out if
+> or how we do something with sigaltshadowstack).
 
-Thanks!
+That's not that different from the classic case where we get an error
+trying to setup the frame. signal_setup_done() handles it by forcing a
+SIGSEGV. I'd say we do the same here.
+
+> I'm not clear what the
+> purpose of the token would be on the new stack, the token basically says
+> "this is somewhere we can sigreturn to", that's not the case for the
+> alternative stack.
+
+Yeah, I thought we have to somehow mark the top of the stack with this
+token. But looking at the architecture stack switching, it caps the
+outgoing stack (in our case this would be the interrupted one). So
+that's settled.
+
+On the patch itself, I think there are some small inconsistencies on how
+it reads the GCSPR_EL0: preserve_gcs_context() does a
+gcs_preserve_current_state() and subsequently reads the value from the
+thread structure. A bit later, gcs_signal_entry() goes for the sysreg
+directly. I don't think that's a problem even if the thread gets
+preempted but it would be nice to be consistent. Maybe leave the
+gcs_preserve_current_state() only a context switch thing. Would it work
+if we don't touch the thread structure at all in the signal code? We
+wouldn't deliver a signal in the middle of the switch_to() code. So any
+value we write in thread struct would be overridden at the next switch.
+
+If GCS is disabled for a guest, we save the GCSPR_EL0 with the cap size
+subtracted but there's no cap written. In restore_gcs_context() it
+doesn't look like we add the cap size back when writing GCSPR_EL0. If
+GCS is enabled, we do consume the cap and add 8 but otherwise it looks
+that we keep decreasing GCSPR_EL0. I think we should always subtract the
+cap size if GCS is enabled. This could could do with some refactoring as
+I find it hard to follow (not sure exactly how, maybe just comments will
+do).
+
+I'd also keep a single write to GCSPR_EL0 on the return path but I'm ok
+with two if we need to cope with GCS being disabled but the GCSPR_EL0
+still being saved/restored.
+
+Another aspect for gcs_restore_signal(), I think it makes more sense for
+the cap to be consumed _after_ restoring the sigcontext since this has
+the actual gcspr_el0 where we stored the cap and represents the original
+stack. If we'll get an alternative shadow stack, current GCSPR_EL0 on
+sigreturn points to that alternative shadow stack rather than the
+original one. That's what confused me when reviewing the patch and I
+thought the cap goes to the top of the signal stack.
+
+-- 
+Catalin
 
