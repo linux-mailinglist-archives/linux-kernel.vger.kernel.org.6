@@ -1,111 +1,140 @@
-Return-Path: <linux-kernel+bounces-301282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1364995EEA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:39:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 961AE95EE9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:39:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2EF4281439
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:39:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12E38B222E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C44F14F9EE;
-	Mon, 26 Aug 2024 10:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gkiZhvBw"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CCC14AD1A;
+	Mon, 26 Aug 2024 10:39:29 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888E81482F5;
-	Mon, 26 Aug 2024 10:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F09B1482F5;
+	Mon, 26 Aug 2024 10:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724668773; cv=none; b=QGZnm36w9eIpbZEobEB04qFIVQCF1SqZNhs1uZN6Gzq6EbINJzfuZDOU/I8OtamD53a7YZbEFDruWzUEPj5m+MU/SAvAFQpTkj7ann9LNXYJWa7sQAckDUyklwOZGcZ/85psoDP16VB8REu6goCVojijUxK9yNfpttvC4GyD7+4=
+	t=1724668769; cv=none; b=lj4H1hLpMeF6qg+haDvAR0ACx5eBada/p1MALoTrMZSuM33ECkoLVo/8vS6f0jVN4jrrdZka4xhQnE0T1KeouT50GSFXtII86hRx1gR41pi/SB2hNKTr5CSIFYZUluDVe1K+hRJ60XtmuyuEJfgd+RAy+QzLEIepspcEAI0Znro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724668773; c=relaxed/simple;
-	bh=XRP9ptxcp4RHccwjimQEmcR5oeQA+tiTpwdn1oRh0oA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ofpl419k66Ugfv4ZZMzOcpsRSpUHekka43Ac77B48YiQRdXZRTUTjHrGyaZdB1jAXcXLO4W1jft6GLl9xZ/dpB2mvzj/vWkyOyx8AtUn7TqBTb84IE1B5iP6Aw+aB5E1DFjScpn988v4cqbMzH+jTfynwo1LuxJpEmm9Ipu9rlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gkiZhvBw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 575F6C51403;
-	Mon, 26 Aug 2024 10:39:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724668773;
-	bh=XRP9ptxcp4RHccwjimQEmcR5oeQA+tiTpwdn1oRh0oA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gkiZhvBwQzuDfgvFZXexTOSgVArqmnwlwHN2s6mlH6hnjtxGyvRXDOVsYyzovPw4O
-	 G0TDGs7c6DRi3L2i5U3Q47h9PPV7WhbB8wEmy4kTh2MONLSSCJjR7bHG8Icx8pyFqe
-	 H4xD2iHNKvkBo0JROQHKBvNaDN9T96d7j8KGHNZCR6yAZQ+AmkrAf3L0Og6uQjfLce
-	 VPWKV3lXAZFiVDXl2Trk5PuPoWMogAq4efQ5f2wTEzme3wK2cttEVBw750lKsvraK0
-	 dXGsB/3zjAxobFYRkkyqTzWeGAnmPK3TbO1rLinf0fciH5OR7yPAq7gxRRd2mXHMuI
-	 Be7XK7D58WHsw==
-Date: Mon, 26 Aug 2024 11:39:20 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Albrieux <jonathan.albrieux@gmail.com>,
- Gwendal Grignou <gwendal@chromium.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux@mainlining.org
-Subject: Re: [PATCH v4 1/4] iio: magnetometer: ak8975: Relax failure on
- unknown id
-Message-ID: <20240826113920.092d9ec7@jic23-huawei>
-In-Reply-To: <Zsje0_gd41N1P0eE@black.fi.intel.com>
-References: <20240819-ak09918-v4-0-f0734d14cfb9@mainlining.org>
-	<20240819-ak09918-v4-1-f0734d14cfb9@mainlining.org>
-	<20240823193203.7772a6b0@jic23-huawei>
-	<Zsje0_gd41N1P0eE@black.fi.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724668769; c=relaxed/simple;
+	bh=U9bvkumoTyJR0RM6t0kMNduBceu+3QaVBv+RAnpVeY4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XNOyXqrOWkpiFB7lU7RiUnNM+K9WMybVMRD04REpUtPU2RX6t7jStd0FTWo0sq1PKwYL8s8PCpy5JwbAxPJ1QQOcauzIKLfhOfptjl19hz6m6ALw1v3P3fqv4xXYhOKA5DyUsWJ36e9nBkEw7Dc1UTa9XXnL8ypVAnDjJKnuY0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 744F9C51401;
+	Mon, 26 Aug 2024 10:39:24 +0000 (UTC)
+Date: Mon, 26 Aug 2024 13:39:32 +0300
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>
+Subject: Re: [PATCH v5 14/19] arm64: Enforce bounce buffers for realm DMA
+Message-ID: <ZsxbZMxOIP795qPM@arm.com>
+References: <20240819131924.372366-1-steven.price@arm.com>
+ <20240819131924.372366-15-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819131924.372366-15-steven.price@arm.com>
 
-On Fri, 23 Aug 2024 22:11:15 +0300
-Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+On Mon, Aug 19, 2024 at 02:19:19PM +0100, Steven Price wrote:
+> Within a realm guest it's not possible for a device emulated by the VMM
+> to access arbitrary guest memory. So force the use of bounce buffers to
+> ensure that the memory the emulated devices are accessing is in memory
+> which is explicitly shared with the host.
+> 
+> This adds a call to swiotlb_update_mem_attributes() which calls
+> set_memory_decrypted() to ensure the bounce buffer memory is shared with
+> the host. For non-realm guests or hosts this is a no-op.
+> 
+> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+> v3: Simplify mem_init() by using a 'flags' variable.
+> ---
+>  arch/arm64/kernel/rsi.c |  1 +
+>  arch/arm64/mm/init.c    | 10 +++++++++-
+>  2 files changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/kernel/rsi.c b/arch/arm64/kernel/rsi.c
+> index 5c2c977a50fb..69d8d9791c65 100644
+> --- a/arch/arm64/kernel/rsi.c
+> +++ b/arch/arm64/kernel/rsi.c
+> @@ -6,6 +6,7 @@
+>  #include <linux/jump_label.h>
+>  #include <linux/memblock.h>
+>  #include <linux/psci.h>
+> +#include <linux/swiotlb.h>
+>  
+>  #include <asm/io.h>
+>  #include <asm/rsi.h>
+> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+> index 9b5ab6818f7f..1d595b63da71 100644
+> --- a/arch/arm64/mm/init.c
+> +++ b/arch/arm64/mm/init.c
+> @@ -41,6 +41,7 @@
+>  #include <asm/kvm_host.h>
+>  #include <asm/memory.h>
+>  #include <asm/numa.h>
+> +#include <asm/rsi.h>
+>  #include <asm/sections.h>
+>  #include <asm/setup.h>
+>  #include <linux/sizes.h>
+> @@ -369,8 +370,14 @@ void __init bootmem_init(void)
+>   */
+>  void __init mem_init(void)
+>  {
+> +	unsigned int flags = SWIOTLB_VERBOSE;
+>  	bool swiotlb = max_pfn > PFN_DOWN(arm64_dma_phys_limit);
+>  
+> +	if (is_realm_world()) {
+> +		swiotlb = true;
+> +		flags |= SWIOTLB_FORCE;
+> +	}
+> +
+>  	if (IS_ENABLED(CONFIG_DMA_BOUNCE_UNALIGNED_KMALLOC) && !swiotlb) {
+>  		/*
+>  		 * If no bouncing needed for ZONE_DMA, reduce the swiotlb
+> @@ -382,7 +389,8 @@ void __init mem_init(void)
+>  		swiotlb = true;
+>  	}
+>  
+> -	swiotlb_init(swiotlb, SWIOTLB_VERBOSE);
+> +	swiotlb_init(swiotlb, flags);
+> +	swiotlb_update_mem_attributes();
 
-> On Fri, Aug 23, 2024 at 07:32:03PM +0100, Jonathan Cameron wrote:
-> > On Mon, 19 Aug 2024 00:29:39 +0200
-> > Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas.czeman@mainlining.org> wrote: =
-=20
->=20
-> ...
->=20
-> > > +	/* Let driver to probe on unknown id for support more register =20
-> > Comment style wrong, I'll fix it up.
-> >=20
-> > With that tweak applied to the togreg branch of iio.git
-> >=20
-> > Thanks,
-> >=20
-> > Jonathan
-> >=20
-> >  =20
-> > > +	 * compatible variants.
-> > > +	 */ =20
->=20
-> There is another one also wrong.
->=20
-> +	[AK09918] =3D {
-> +		/* ak09918 is register compatible with ak09912 this is for avoid
-> +		 * unknown id messages.
-> +		 */
->=20
->=20
+IIRC Will mentioned on a previous version of this series: what do we do
+with the kmalloc() minalign bouncing (or other bouncing)? I think this
+would only work if the device is shared.
 
-I think unrelated to this series, but nice to cleanup.
-Patches welcome :) Or it I get bored, I might do a scrub of the full subsys=
-tem
-to get everything in the same style and not provide incorrect choices to
-cut and paste.
+I'm more and more inclined to only support shared devices with this
+series (no dev assignment) and make it a strict dependence on RMM 1.0.
+Running it in a different configuration with private devices will fall
+apart. With this condition, the patch looks fine:
 
-Jonathan
-
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 
