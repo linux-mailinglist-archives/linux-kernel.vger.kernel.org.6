@@ -1,177 +1,227 @@
-Return-Path: <linux-kernel+bounces-301024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0BA195EBAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:20:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7580C95EB89
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:14:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F019B23D60
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:20:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA98AB2291F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3318613DDB6;
-	Mon, 26 Aug 2024 08:19:53 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B083513A3F3;
+	Mon, 26 Aug 2024 08:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hWWCWAFk"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EF213AD32;
-	Mon, 26 Aug 2024 08:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BEA2745F4;
+	Mon, 26 Aug 2024 08:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724660392; cv=none; b=Sc+f9j3NQp4DIJIFPMJqLD+lYbkPEX8TPwc55G1bj0Ioh/wQbO6hJjtBrUukvulICMo0zYCHnzSd6U4ZlibZObptTEouKMBc7HBp6M5p7tfTKFvG/q+H9kiqcG59KA8Je4dxGF9culvk9jfVdK5z16Yl+yYaFnTURkKlQTKBvLs=
+	t=1724660040; cv=none; b=lk7DIUQYD2bokINJqUv+vNcY/UBv1rfGTrOmr2H8pkKPFHtYLeUQrOMb+XV54URyXrShJ7rNCgxe7RwCuAS0J2Qe54k8v/l0NvKA/lI2F4AxsF/XtJsUVtOjMvJGKdhwDmInrMJB0UU5yUByWyGPD264g5ZgTeqKPzJOdsJp2xE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724660392; c=relaxed/simple;
-	bh=F+wiOa1xJ5byy/9/D8k7IsrxLfbEmRvl6NV+7VLQxHY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=R3YU/oJLv1JNsJ1Rc+O8rhXM4pjsuYjOIO583YwBhlyIziX1TqUihqd4b1SnnQz+w4B44X2gQbnjE5wamZvIgtSFhPNDhToNVEhGu3ocp9tTb09ykRo38Quj17WAWrfj9q+BvNtaw+R6yYo+NSlHxYlW9Sy/U5Wl2WwoX2Y6H+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Wsk4M0Xzbz69Lg;
-	Mon, 26 Aug 2024 16:14:59 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id 844DB140258;
-	Mon, 26 Aug 2024 16:19:46 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 26 Aug 2024 16:19:45 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>
-CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
-	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <shaojijie@huawei.com>,
-	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
-	<libaihan@huawei.com>, <andrew@lunn.ch>, <jdamato@fastly.com>,
-	<horms@kernel.org>, <jonathan.cameron@huawei.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH V4 net-next 00/11] Add support of HIBMCGE Ethernet Driver
-Date: Mon, 26 Aug 2024 16:12:47 +0800
-Message-ID: <20240826081258.1881385-1-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
+	s=arc-20240116; t=1724660040; c=relaxed/simple;
+	bh=8OYMuhmZ8qAZW5PPqtyvvVb7qhA3xMlLBoIX0Yp8NGw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P/LOQ5Hsa5Kmi6CeO42reEZ4C4AYCXff0GEm93z0BG3yeEGHxlZf4SD4OvGdqIgnGrdjWIWfQ3eppCPTVo9aWfD4KnrxJPl51AQBNLr3B7TdL00ONf/wBYeGk4SdMrzs+U4WpPWDpYEJhSKSL9NWY/WyGbuXdgwU7+upqT0p+Q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hWWCWAFk; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47PELtoj009250;
+	Mon, 26 Aug 2024 08:13:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version:content-type
+	:content-transfer-encoding; s=pp1; bh=O1iQLz2pYTyt9Kii5Zr1p4XfYF
+	hxs1hC8sEBcVkRC0Y=; b=hWWCWAFk1ItNm1CGWcRdWoGdB56hqm30/Yho19l/9s
+	KjU1TYfYi0EBRjTgc1DRhuwbtznX1lKwR5RTJUjy5a45uA5pl+SStvzeds9dpgtc
+	bCytALS8wuSxMxfvoThdZ2yZoCUwhDW53Dcjc1yMDoCruaUEwjBWhLyAIZIf30pq
+	TUz3Ph7eSsTRikNlX7ZGN44tkdYw2KVHM1yjgomhO7OtX7n7l7hMngIpxAvNIU17
+	KoG/eJUOIkewaxIXlmZRhfrI8TAkfMZ6f8vIl5ftpB7k0A0LPT6cinTxFb/XTL+I
+	MoelrTfj7p/QanIDwMLdxNS6BaCN6e5i6UOO+kyCzGKw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 417gr35s7w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 Aug 2024 08:13:37 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47Q8DaXX000646;
+	Mon, 26 Aug 2024 08:13:37 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 417gr35s7u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 Aug 2024 08:13:36 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47Q4rdV9027960;
+	Mon, 26 Aug 2024 08:13:35 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 417ubmw1ve-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 Aug 2024 08:13:35 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47Q8DPFk54460918
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 26 Aug 2024 08:13:27 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 75CAE2004D;
+	Mon, 26 Aug 2024 08:13:25 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CC0C520040;
+	Mon, 26 Aug 2024 08:13:22 +0000 (GMT)
+Received: from li-80eaad4c-2afd-11b2-a85c-af8123d033e3.in.ibm.com (unknown [9.199.156.78])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 26 Aug 2024 08:13:22 +0000 (GMT)
+From: "Nysal Jan K.A." <nysal@linux.ibm.com>
+To: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>
+Cc: "Nysal Jan K.A." <nysal@linux.ibm.com>, stable@vger.kernel.org,
+        Geetika Moolchandani <geetika@linux.ibm.com>,
+        Vaishnavi Bhat <vaish123@in.ibm.com>,
+        Jijo Varghese <vargjijo@in.ibm.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Naveen N Rao <naveen@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] powerpc/qspinlock: Fix deadlock in MCS queue
+Date: Mon, 26 Aug 2024 13:42:48 +0530
+Message-ID: <20240826081251.744325-1-nysal@linux.ibm.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemm000007.china.huawei.com (7.193.23.189)
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Qs9CwdLn9GG5joS3jClLeOfaG9fV77_K
+X-Proofpoint-ORIG-GUID: rOefFmJFp5CCftxSjp0akaSOkCDmx2t-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-26_05,2024-08-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
+ bulkscore=0 mlxscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0
+ impostorscore=0 priorityscore=1501 mlxlogscore=534 spamscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408260064
 
-This patch set adds the support of Hisilicon BMC Gigabit Ethernet Driver.
+If an interrupt occurs in queued_spin_lock_slowpath() after we increment
+qnodesp->count and before node->lock is initialized, another CPU might
+see stale lock values in get_tail_qnode(). If the stale lock value happens
+to match the lock on that CPU, then we write to the "next" pointer of
+the wrong qnode. This causes a deadlock as the former CPU, once it becomes
+the head of the MCS queue, will spin indefinitely until it's "next" pointer
+is set by its successor in the queue. This results in lockups similar to
+the following.
 
-This patch set includes basic Rx/Tx functionality. It also includes
-the registration and interrupt codes.
+   watchdog: CPU 15 Hard LOCKUP
+   ......
+   NIP [c0000000000b78f4] queued_spin_lock_slowpath+0x1184/0x1490
+   LR [c000000001037c5c] _raw_spin_lock+0x6c/0x90
+   Call Trace:
+    0xc000002cfffa3bf0 (unreliable)
+    _raw_spin_lock+0x6c/0x90
+    raw_spin_rq_lock_nested.part.135+0x4c/0xd0
+    sched_ttwu_pending+0x60/0x1f0
+    __flush_smp_call_function_queue+0x1dc/0x670
+    smp_ipi_demux_relaxed+0xa4/0x100
+    xive_muxed_ipi_action+0x20/0x40
+    __handle_irq_event_percpu+0x80/0x240
+    handle_irq_event_percpu+0x2c/0x80
+    handle_percpu_irq+0x84/0xd0
+    generic_handle_irq+0x54/0x80
+    __do_irq+0xac/0x210
+    __do_IRQ+0x74/0xd0
+    0x0
+    do_IRQ+0x8c/0x170
+    hardware_interrupt_common_virt+0x29c/0x2a0
+   --- interrupt: 500 at queued_spin_lock_slowpath+0x4b8/0x1490
+   ......
+   NIP [c0000000000b6c28] queued_spin_lock_slowpath+0x4b8/0x1490
+   LR [c000000001037c5c] _raw_spin_lock+0x6c/0x90
+   --- interrupt: 500
+    0xc0000029c1a41d00 (unreliable)
+    _raw_spin_lock+0x6c/0x90
+    futex_wake+0x100/0x260
+    do_futex+0x21c/0x2a0
+    sys_futex+0x98/0x270
+    system_call_exception+0x14c/0x2f0
+    system_call_vectored_common+0x15c/0x2ec
 
-This work provides the initial support to the HIBMCGE and
-would incrementally add features or enhancements.
+The following code flow illustrates how the deadlock occurs:
 
+        CPU0                                   CPU1
+        ----                                   ----
+  spin_lock_irqsave(A)                          |
+  spin_unlock_irqrestore(A)                     |
+    spin_lock(B)                                |
+         |                                      |
+         ▼                                      |
+   id = qnodesp->count++;                       |
+  (Note that nodes[0].lock == A)                |
+         |                                      |
+         ▼                                      |
+      Interrupt                                 |
+  (happens before "nodes[0].lock = B")          |
+         |                                      |
+         ▼                                      |
+  spin_lock_irqsave(A)                          |
+         |                                      |
+         ▼                                      |
+   id = qnodesp->count++                        |
+   nodes[1].lock = A                            |
+         |                                      |
+         ▼                                      |
+  Tail of MCS queue                             |
+         |                             spin_lock_irqsave(A)
+         ▼                                      |
+  Head of MCS queue                             ▼
+         |                             CPU0 is previous tail
+         ▼                                      |
+   Spin indefinitely                            ▼
+  (until "nodes[1].next != NULL")      prev = get_tail_qnode(A, CPU0)
+                                                |
+                                                ▼
+                                       prev == &qnodes[CPU0].nodes[0]
+                                     (as qnodes[CPU0].nodes[0].lock == A)
+                                                |
+                                                ▼
+                                       WRITE_ONCE(prev->next, node)
+                                                |
+                                                ▼
+                                        Spin indefinitely
+                                     (until nodes[0].locked == 1)
+
+Thanks to Saket Kumar Bhaskar for help with recreating the issue
+
+Fixes: 84990b169557 ("powerpc/qspinlock: add mcs queueing for contended waiters")
+Cc: stable@vger.kernel.org # v6.2+
+Reported-by: Geetika Moolchandani <geetika@linux.ibm.com>
+Reported-by: Vaishnavi Bhat <vaish123@in.ibm.com>
+Reported-by: Jijo Varghese <vargjijo@in.ibm.com>
+Signed-off-by: Nysal Jan K.A. <nysal@linux.ibm.com>
 ---
-ChangeLog:
-v3 -> v4:
-  - Delete INITED_STATE in priv, suggested by Andrew.
-  - Delete unnecessary defensive code in hbg_phy_start()
-    and hbg_phy_stop(), suggested by Andrew.
-  v3: https://lore.kernel.org/all/20240822093334.1687011-1-shaojijie@huawei.com/
-v2 -> v3:
-  - Add "select PHYLIB" in Kconfig, reported by Jakub.
-  - Use ndo_validate_addr() instead of is_valid_ether_addr()
-    in dev_set_mac_address(), suggested by Jakub and Andrew.
-  v2: https://lore.kernel.org/all/20240820140154.137876-1-shaojijie@huawei.com/
-v1 -> v2:
-  - fix build errors reported by kernel test robot <lkp@intel.com>
-    Closes: https://lore.kernel.org/oe-kbuild-all/202408192219.zrGff7n1-lkp@intel.com/
-    Closes: https://lore.kernel.org/oe-kbuild-all/202408200026.q20EuSHC-lkp@intel.com/
-  v1: https://lore.kernel.org/all/20240819071229.2489506-1-shaojijie@huawei.com/
-RFC v2 -> v1:
-  - Use FIELD_PREP/FIELD_GET instead of union, suggested by Andrew.
-  - Delete unnecessary defensive code, suggested by Andrew.
-  - A few other minor changes.
-  RFC v2: https://lore.kernel.org/all/20240813135640.1694993-1-shaojijie@huawei.com/
-RFC v1 -> RFC v2:
-  - Replace linkmode_copy() with phy_remove_link_mode() to
-    simplify the PHY configuration process, suggested by Andrew.
-  - Delete hbg_get_link_status() from the scheduled task, suggested by Andrew.
-  - Delete validation for mtu in hbg_net_change_mtu(), suggested by Andrew.
-  - Delete validation for mac address in hbg_net_set_mac_address(),
-    suggested by Andrew.
-  - Use napi_complete_done() to simplify the process, suggested by Joe Damato.
-  - Use ethtool_op_get_link(), phy_ethtool_get_link_ksettings(),
-    and phy_ethtool_set_link_ksettings() to simplify the code, suggested by Andrew.
-  - Add the null pointer check on the return value of pcim_iomap_table(),
-    suggested by Jonathan.
-  - Add the check on the return value of phy_connect_direct(),
-    suggested by Jonathan.
-  - Adjusted the layout to place the fields and register definitions
-    in one place, suggested by Jonathan.
-  - Replace request_irq with devm_request_irq, suggested by Jonathan.
-  - Replace BIT_MASK() with BIT(), suggested by Jonathan.
-  - Introduce irq_handle in struct hbg_irq_info in advance to reduce code changes,
-    suggested by Jonathan.
-  - Delete workqueue for this patch set, suggested by Jonathan.
-  - Support to compile this driver on all arch in Kconfig,
-    suggested by Andrew and Jonathan.
-  - Add a patch to add is_valid_ether_addr check in dev_set_mac_address,
-    suggested by Andrew.
-  - Use macro instead of inline to fix the warning about compile-time constant
-    in FIELD_PREP(), reported by Simon Horman.
-  - A few other minor changes.
-  RFC v1: https://lore.kernel.org/all/20240731094245.1967834-1-shaojijie@huawei.com/
----
+ arch/powerpc/lib/qspinlock.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Jijie Shao (11):
-  net: hibmcge: Add pci table supported in this module
-  net: hibmcge: Add read/write registers supported through the bar space
-  net: hibmcge: Add mdio and hardware configuration supported in this
-    module
-  net: hibmcge: Add interrupt supported in this module
-  net: hibmcge: Implement some .ndo functions
-  net: hibmcge: Implement .ndo_start_xmit function
-  net: hibmcge: Implement rx_poll function to receive packets
-  net: hibmcge: Implement some ethtool_ops functions
-  net: hibmcge: Add a Makefile and update Kconfig for hibmcge
-  net: hibmcge: Add maintainer for hibmcge
-  net: add ndo_validate_addr check in dev_set_mac_address
-
- MAINTAINERS                                   |   7 +
- drivers/net/ethernet/hisilicon/Kconfig        |  16 +-
- drivers/net/ethernet/hisilicon/Makefile       |   1 +
- .../net/ethernet/hisilicon/hibmcge/Makefile   |  10 +
- .../ethernet/hisilicon/hibmcge/hbg_common.h   | 136 ++++++
- .../ethernet/hisilicon/hibmcge/hbg_ethtool.c  |  17 +
- .../ethernet/hisilicon/hibmcge/hbg_ethtool.h  |  11 +
- .../net/ethernet/hisilicon/hibmcge/hbg_hw.c   | 285 ++++++++++++
- .../net/ethernet/hisilicon/hibmcge/hbg_hw.h   |  57 +++
- .../net/ethernet/hisilicon/hibmcge/hbg_irq.c  | 124 +++++
- .../net/ethernet/hisilicon/hibmcge/hbg_irq.h  |  11 +
- .../net/ethernet/hisilicon/hibmcge/hbg_main.c | 240 ++++++++++
- .../net/ethernet/hisilicon/hibmcge/hbg_mdio.c | 245 ++++++++++
- .../net/ethernet/hisilicon/hibmcge/hbg_mdio.h |  12 +
- .../net/ethernet/hisilicon/hibmcge/hbg_reg.h  | 143 ++++++
- .../net/ethernet/hisilicon/hibmcge/hbg_txrx.c | 429 ++++++++++++++++++
- .../net/ethernet/hisilicon/hibmcge/hbg_txrx.h |  37 ++
- net/core/dev.c                                |   5 +
- 18 files changed, 1785 insertions(+), 1 deletion(-)
- create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/Makefile
- create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_common.h
- create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c
- create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.h
- create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
- create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.h
- create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.c
- create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.h
- create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
- create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.c
- create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.h
- create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_reg.h
- create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c
- create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.h
-
+diff --git a/arch/powerpc/lib/qspinlock.c b/arch/powerpc/lib/qspinlock.c
+index 5de4dd549f6e..59861c665cef 100644
+--- a/arch/powerpc/lib/qspinlock.c
++++ b/arch/powerpc/lib/qspinlock.c
+@@ -697,6 +697,12 @@ static __always_inline void queued_spin_lock_mcs_queue(struct qspinlock *lock, b
+ 	}
+ 
+ release:
++	/*
++	 * Clear the lock, as another CPU might see stale values if an
++	 * interrupt occurs after we increment qnodesp->count but before
++	 * node->lock is initialized
++	 */
++	node->lock = NULL;
+ 	qnodesp->count--; /* release the node */
+ }
+ 
 -- 
-2.33.0
+2.46.0
 
 
