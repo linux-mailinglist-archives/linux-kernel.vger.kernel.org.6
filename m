@@ -1,87 +1,143 @@
-Return-Path: <linux-kernel+bounces-301864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5122995F6A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:32:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E17BA95F6DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D34F281D1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:32:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C7FA282BE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92800194AF4;
-	Mon, 26 Aug 2024 16:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A9F1990C9;
+	Mon, 26 Aug 2024 16:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eN6AzQiu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="hZDdeeg5"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C3C1865E7;
-	Mon, 26 Aug 2024 16:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334D65476B;
+	Mon, 26 Aug 2024 16:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724689938; cv=none; b=Q1Vivi+SI8QPTFPIgee0Yp2VwJQZtRhFYI+PuGJwRXL0ruVoBC+cpAAmQ2CWcDw6+uPCwFntWKBL6fEgSr6sag42AMAKbAMJpw9xTMSpKZ3My4YUywmQD4Wp9cNoSkrcYwhNQWR09lC5jsb+ymprnufcdOPZNteu+HjdCtJMw4Y=
+	t=1724690365; cv=none; b=iIW9PYKOyUNWlKg6ka/wFEYkWfNcEnB57KePa0Uq6QfrLPYzBJc+8OBQ3FpOdGR/TQqFS77G4Kb/ym7nI6kYcYUalAvYApTEcbvHArXijHo2Wi1kDc0nbPAwJxUFB0PpqzpMQYrnUTIXEpe3goJOJDe3HadhoyanWOf27KXmPpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724689938; c=relaxed/simple;
-	bh=CuRZPNcAg/KhTuJ7w3AXF0CuthcPOrzqmzpzn6hzOYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V/VLFYXBZpw8R6NwYB94qP+M5FO7cXUCG0zQVxVQjWmOYjxRw2oVDfnJajRbKbVITNua5yTPvzCNSxugv50uVxHzEP+z3DBeZ6qoSmkQRdCFLwmZ9sfvGjJHK73/eQULDlJtWOLLVidI7+nhMsXolsbOjxa1d+ba5pRMVUIryGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eN6AzQiu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17D78C52FC1;
-	Mon, 26 Aug 2024 16:32:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724689938;
-	bh=CuRZPNcAg/KhTuJ7w3AXF0CuthcPOrzqmzpzn6hzOYE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eN6AzQiuMdLSoW/3F9+Kzt5KSH89VVoAwGX8FyZ0s9dQfScSoCdW3p0Xn/z8dpAVH
-	 3zTCHs0lY+KUT9ieqQ+V5lVCTwZNHuE87P+5RQTD1qXNI7ckI0ERu3Ytkgy0GD5tYh
-	 4W5ITXd3z+qbQ4B32jqfAQTouEfv9iPddJR1PgwIuoiw3hZ4PACH4yyn0a5JtxA3Ge
-	 VnlOro3CtNRo5cVHH+mUcPPU/fyHyc7+vAWEv21ZXFl3zG5uWnoYsVszOoCluHNlHM
-	 +Uw7QDpT7EQefBEYOqmU0inTJmdwtZ3aJfIFHV63ui9cxUDQ4KIm9A2iPfzO3baTGQ
-	 2MLkypeCd6nuQ==
-Date: Mon, 26 Aug 2024 09:32:17 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- Russell King <linux@armlinux.org.uk>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, kernel@pengutronix.de, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v3 1/3] phy: open_alliance_helpers: Add defines
- for link quality metrics
-Message-ID: <20240826093217.3e076b5c@kernel.org>
-In-Reply-To: <20240822115939.1387015-2-o.rempel@pengutronix.de>
-References: <20240822115939.1387015-1-o.rempel@pengutronix.de>
-	<20240822115939.1387015-2-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1724690365; c=relaxed/simple;
+	bh=c06AXLQtSCDEtudeOfQinE8psYkbBOM3p1kMOn0vIh4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QlDNziLQfaZ5rbBoSyjzqRHcXUcXYRZ7UfM+7FkAYUpxP975iZanhWlKqmCjwsKzE7DAn39ru2/a+FbPMQqeViKRJTWaAhPqqt2kCCoRAOEEIr1ikc5VD+lzGfJPbz5+a6xJ5lMr3WSoVziQQl7ZpBdm385Qpd6NLk0Mp6WIyJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=hZDdeeg5 reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id f92a6affd5e871ed; Mon, 26 Aug 2024 18:39:21 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id A8DED921952;
+	Mon, 26 Aug 2024 18:39:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1724690361;
+	bh=c06AXLQtSCDEtudeOfQinE8psYkbBOM3p1kMOn0vIh4=;
+	h=From:Subject:Date;
+	b=hZDdeeg5AFPGnvKAL9WJ7VhS1jvXYbnI8GfoSy6HQlojFiIGDGQ+BGSoAQrkMMwf4
+	 DtNxgg7bTHU8qYCOY8PI4dmFIMkSQNkdk55rg65kLopqUKVWGJ4oVIVGEU5LcmNoR5
+	 cSBKnnAloQwxCwQhYeNX+aQJPyZGKf+ZCsCYbLtGVY9ZnKe+H0znaJz+2m1KR4Taor
+	 XhbvaL1B+rUmb8PB503w4jpToNh8A1RbHo+WZ8xCgjiQFo3yN435ZGuWIqmdMfpHEK
+	 zegoGGSwy41JgpDq9KPTFch/tZ8MZWGnc5boQNedRCRI/OjN1/OvOtvwDlUSKoRG8b
+	 i5pnBlU/pSjzA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
+ Huisong Li <lihuisong@huawei.com>
+Subject:
+ [PATCH v1 3/4] thermal: core: Check passive delay in monitor_thermal_zone()
+Date: Mon, 26 Aug 2024 18:32:36 +0200
+Message-ID: <2004353.PYKUYFuaPT@rjwysocki.net>
+In-Reply-To: <2979211.e9J7NaK4W3@rjwysocki.net>
+References: <2979211.e9J7NaK4W3@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddvkedguddtvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegoufhprghmkfhpucdlfedttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucfuphgrmhfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeeipdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdp
+ rhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtoheprhhuihdriihhrghnghesihhnthgvlhdrtghomhdprhgtphhtthhopehlihhhuhhishhonhhgsehhuhgrfigvihdrtghomh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=12 Fuz1=12 Fuz2=12
 
-On Thu, 22 Aug 2024 13:59:37 +0200 Oleksij Rempel wrote:
-> Introduce a set of defines for link quality (LQ) related metrics in the
-> Open Alliance helpers. These metrics include:
-> 
-> - `oa_lq_lfl_esd_event_count`: Number of ESD events detected by the Link
->   Failures and Losses (LFL).
-> - `oa_lq_link_training_time`: Time required to establish a link.
-> - `oa_lq_remote_receiver_time`: Time required until the remote receiver
->   signals that it is locked.
-> - `oa_lq_local_receiver_time`: Time required until the local receiver is
->   locked.
-> - `oa_lq_lfl_link_loss_count`: Number of link losses.
-> - `oa_lq_lfl_link_failure_count`: Number of link failures that do not
->   cause a link loss.
-> 
-> These standardized defines will be used by PHY drivers to report these
-> statistics.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-If these are defined by a standard why not report them as structured
-data? Like we report ethtool_eth_mac_stats, ethtool_eth_ctrl_stats,
-ethtool_rmon_stats etc.?
+The only case in which thermal_zone_device_set_polling() is called
+with its second argument equal to zero is when passive cooling is
+under way and passive_delay_jiffies is 0, which only happens when
+the given thermal zone is not polled at all.
+
+If monitor_thermal_zone() is modified to check passive_delay_jiffies
+directly, the check of the thermal_zone_device_set_polling() second
+argument against 0 can be dropped and a passive_delay check can be
+dropped from thermal_zone_device_register_with_trips(), so change the
+code accordingly.
+
+No intentional functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/thermal/thermal_core.c |   16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
+
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -323,11 +323,6 @@ static void thermal_zone_broken_disable(
+ static void thermal_zone_device_set_polling(struct thermal_zone_device *tz,
+ 					    unsigned long delay)
+ {
+-	if (!delay) {
+-		cancel_delayed_work(&tz->poll_queue);
+-		return;
+-	}
+-
+ 	if (delay > HZ)
+ 		delay = round_jiffies_relative(delay);
+ 
+@@ -364,7 +359,7 @@ static void thermal_zone_recheck(struct
+ 
+ static void monitor_thermal_zone(struct thermal_zone_device *tz)
+ {
+-	if (tz->passive > 0)
++	if (tz->passive > 0 && tz->passive_delay_jiffies)
+ 		thermal_zone_device_set_polling(tz, tz->passive_delay_jiffies);
+ 	else if (tz->polling_delay_jiffies)
+ 		thermal_zone_device_set_polling(tz, tz->polling_delay_jiffies);
+@@ -1411,13 +1406,8 @@ thermal_zone_device_register_with_trips(
+ 	if (num_trips > 0 && !trips)
+ 		return ERR_PTR(-EINVAL);
+ 
+-	if (polling_delay) {
+-		if (passive_delay > polling_delay)
+-			return ERR_PTR(-EINVAL);
+-
+-		if (!passive_delay)
+-			passive_delay = polling_delay;
+-	}
++	if (polling_delay && passive_delay > polling_delay)
++		return ERR_PTR(-EINVAL);
+ 
+ 	if (!thermal_class)
+ 		return ERR_PTR(-ENODEV);
+
+
+
 
