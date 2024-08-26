@@ -1,130 +1,122 @@
-Return-Path: <linux-kernel+bounces-302125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 444B795FA35
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:58:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA71795FA39
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01B0E284320
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:58:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68E7C284E9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DFA919995D;
-	Mon, 26 Aug 2024 19:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21BA199FA7;
+	Mon, 26 Aug 2024 19:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="LQzkH7Up"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="osEZQ6Dx";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5z9EY5he"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0328120D
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559311991B8;
+	Mon, 26 Aug 2024 19:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724702293; cv=none; b=kP+f/ekQRQ+Q+CMBy4xLasdOz4g24B/QIa6/yD+O2urbA9YZc+Flom8JohV9AX1RCI16U+EvrywYlwV6P1vtgS841pvu//BPEoEpZbGmcbB1K+h1l7hrUtMUJvzfFDAKrO3fYXHJUQmUIfr8AKTcmmjT9ECVIRl/ivU8j8g/Btw=
+	t=1724702314; cv=none; b=Q49zbjDczEDkIIUqMqH1LtsYETNdb5fIgnPgs565ItiPUYOOjdz+gYBdftL/QOg9foxxPbnvG9+zS2SzxVDVVZRJlSaah7YSuVPUmUzxuP91a/RLSyiMkDiKER36HW3blpzfUhq9Weio0xLiKGorlq7QhQ5ASkcRy4p3YbALwLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724702293; c=relaxed/simple;
-	bh=bNvj7bgWyh7vEonATRHC/EAvCzNu3EdpeAkNK3jCDPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bD/JANAPeVb0vMj51IF9w0PW4HiWkOczr+D0B2UM16ec/ypawzqcgVxFkKIQTede+5IiZkZOv79HWGT8bkj7n+xM+vz94vszAC1Xp7GuVOgU2TiyRcxkQDJw090Ifh2pj5dct9IsWxQrapKRN4NsWgBNJ+TDelQoIMvAxEPG7ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=LQzkH7Up; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5bef295a429so5537539a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:58:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724702290; x=1725307090; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xh14Sdlc2n6IxKjJ6RlYGRrhImnkQmnSBBa6O3qnYnE=;
-        b=LQzkH7Upij0y1HqegxuGUK1QLMUWfJVj8+d7e4sbpJ11wRS3aEGYebhtTv8xdVmd9H
-         u9LsUDqHC9Ym6/FawQYakWubVnIPyUZ2w8t6C59/1jGUmYHRUNDuSzpIO4DhUgFCeKdn
-         ZiCANADj9F7DGAP4hDWJq8M/m2rw67ouoAzBasyVZQYmiqHr/jhsk/W6IIr8/hUdi0Dn
-         7+QlDZ93wy9Ee0X/C8CjJo1ofTeIogYYMVBgySy8/bUb9b5hNDW1EZnE+/PIbSzxnuWI
-         s8eSw5ndhSg841aFTDhEEavBqiZnKLXYCTFgYtcQnEfEk/+Gg3UMz7JFHMcue4N7cL0r
-         Bd2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724702290; x=1725307090;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xh14Sdlc2n6IxKjJ6RlYGRrhImnkQmnSBBa6O3qnYnE=;
-        b=ldTNmWdqltseWu3OU1kp3hFV+q6yVvS/Pys3WO5nZzg3PhEQMfHPtMpuoxWVy5tukP
-         IH9giJjSbF/TdhsIXZJIe0a+foPwNMqS+mM9NLOgqBgvCA+KsOo7I4+TwrxLaIPRh8HS
-         HlERMgKgVfneFUQGITTTpc8MT7c51UuZCjaLRDC0mYKTweO3JKZgTpmiOrU5o0wj3VQ7
-         /XeMDn2kXd/cd5VwGWfD+E+q/7NLjvONHQlnIPeTApblbbSlvMQp8ld1Bf0UMyuixMPK
-         bu9TUu+2Tsk/xscLaXizQZnJ1bUeMo416fbKL6edk/te0ChE7fZxiMeWALRhH0bSeozT
-         Pjtw==
-X-Forwarded-Encrypted: i=1; AJvYcCVakaf+HR9eMGiTpYUTv0oEPt6cDjdF/tX5bga91a2pCUHxiv5Vel0owmXLf7LCdINqva/8HW4rK4t/xBk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKp4RSfH5UHFp0qwFEptVGF9bPmihtQ3G+mCpQNQ/XjNiI6OEw
-	PSHnIE7ToxHFW6JPnjAH/Mw27yMo5zj2i5VYqSw40VoJQ6MowY1BWkq3hgsPrTc=
-X-Google-Smtp-Source: AGHT+IEqLDw4bnaGQwfVtxUnt5R+nT/cvXOLGueUtNtCDMXl1cKCg9G27paLPy3+tFp8unGIxIOggQ==
-X-Received: by 2002:a17:907:2d8e:b0:a86:83f9:bc1f with SMTP id a640c23a62f3a-a86a54de2cdmr683406666b.61.1724702289954;
-        Mon, 26 Aug 2024 12:58:09 -0700 (PDT)
-Received: from localhost (109-81-92-122.rct.o2.cz. [109.81.92.122])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e582d896sm13574466b.131.2024.08.26.12.58.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 12:58:09 -0700 (PDT)
-Date: Mon, 26 Aug 2024 21:58:08 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
-	jack@suse.cz, Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <ZszeUAMgGkGNz8H9@tiehlicka>
-References: <20240826085347.1152675-1-mhocko@kernel.org>
- <20240826085347.1152675-2-mhocko@kernel.org>
- <egma4j7om4jcrxwpks6odx6wu2jc5q3qdboncwsja32mo4oe7r@qmiviwad32lm>
+	s=arc-20240116; t=1724702314; c=relaxed/simple;
+	bh=BmuMNqwzgvM7DKlY+zSNGaTo20tKq6d6hmRvkEARdVs=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=BsdHiy7TVDFyhKQ2ltC+rKTXTQwG68Zky/e+rCtNR8xOXIwXfH2rMUnKObua2pY2XWHu7QXHBG77NVcwEm3Tt15N86xS0eZo7Eos5MaqaPou3vgOmxX//NI0THiaxJOWZW1Gk/mfS5cJdHfgccBOfDH5uQx68mGjTyLGuZq0Xxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=osEZQ6Dx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5z9EY5he; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 26 Aug 2024 19:58:29 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724702310;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=DhhgRwj2YRc5cVJ8j9t533aTKEzCg9IQSYgbyaJf6XA=;
+	b=osEZQ6DxudUJi1NJke3YB4t3s9rNktg1Qqs3ZG6jWTqTXRlqpscVBNgo6uONIlmHOUkpw9
+	IJTexCoVa7gnbBwy3DMvwO31UNsMUmL+yM+hhK+UFxrRTb4rJmaKpbc8s/1nqOaqwgmiQ0
+	pUa5CmYuCx1yZPW8Dcq3ivpu7aOb7ixOL9qh+BLLUGojIkNk/IxsNgKbHkIacwb+JpZKS+
+	LfwhiPeFa8stzrW/GV/zmObR9U/skTtqX0PT18FAo/bqJcTHYyBjW4TjYJgCxNmlr4ZqtM
+	9eKaVQHQPyw4s9EqveR8t0yeQ95Msnpls6FseSBtLYqcipNVv3Hgo6Pm/+tHsA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724702310;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=DhhgRwj2YRc5cVJ8j9t533aTKEzCg9IQSYgbyaJf6XA=;
+	b=5z9EY5heL9eC2JskpQRc6YuWRg04g1lynqGoDAqf7Eqm6tSNMZpiNmq6NRreN4deGlYswP
+	1BNhux1R8nLL9gAA==
+From: "tip-bot2 for Kirill A. Shutemov" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/tdx: Fix data leak in mmio_read()
+Cc: Sean Christopherson <seanjc@google.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, stable@vger.kernel.org,
+ x86@kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <egma4j7om4jcrxwpks6odx6wu2jc5q3qdboncwsja32mo4oe7r@qmiviwad32lm>
+Message-ID: <172470230968.2215.7634345902680513698.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon 26-08-24 15:39:47, Kent Overstreet wrote:
-> On Mon, Aug 26, 2024 at 10:47:12AM GMT, Michal Hocko wrote:
-> > From: Michal Hocko <mhocko@suse.com>
-> > 
-> > bch2_new_inode relies on PF_MEMALLOC_NORECLAIM to try to allocate a new
-> > inode to achieve GFP_NOWAIT semantic while holding locks. If this
-> > allocation fails it will drop locks and use GFP_NOFS allocation context.
-> > 
-> > We would like to drop PF_MEMALLOC_NORECLAIM because it is really
-> > dangerous to use if the caller doesn't control the full call chain with
-> > this flag set. E.g. if any of the function down the chain needed
-> > GFP_NOFAIL request the PF_MEMALLOC_NORECLAIM would override this and
-> > cause unexpected failure.
-> > 
-> > While this is not the case in this particular case using the scoped gfp
-> > semantic is not really needed bacause we can easily pus the allocation
-> > context down the chain without too much clutter.
-> 
-> yeah, eesh, nack.
+The following commit has been merged into the x86/urgent branch of tip:
 
-Sure, you can NAK this but then deal with the lack of the PF flag by
-other means. We have made it clear that PF_MEMALLOC_NORECLAIM is not we
-are going to support at the MM level. 
+Commit-ID:     b6fb565a2d15277896583d471b21bc14a0c99661
+Gitweb:        https://git.kernel.org/tip/b6fb565a2d15277896583d471b21bc14a0c99661
+Author:        Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+AuthorDate:    Mon, 26 Aug 2024 15:53:04 +03:00
+Committer:     Dave Hansen <dave.hansen@linux.intel.com>
+CommitterDate: Mon, 26 Aug 2024 12:45:19 -07:00
 
-I have done your homework and shown that it is really easy
-to use gfp flags directly. The net result is passing gfp flag down to
-two functions. Sure part of it is ugglier by having several different
-callbacks implementing it but still manageable. Without too much churn.
+x86/tdx: Fix data leak in mmio_read()
 
-So do whatever you like in the bcache code but do not rely on something
-that is unsupported by the MM layer which you have sneaked in without an
-agreement.
+The mmio_read() function makes a TDVMCALL to retrieve MMIO data for an
+address from the VMM.
 
--- 
-Michal Hocko
-SUSE Labs
+Sean noticed that mmio_read() unintentionally exposes the value of an
+initialized variable (val) on the stack to the VMM.
+
+This variable is only needed as an output value. It did not need to be
+passed to the VMM in the first place.
+
+Do not send the original value of *val to the VMM.
+
+[ dhansen: clarify what 'val' is used for. ]
+
+Fixes: 31d58c4e557d ("x86/tdx: Handle in-kernel MMIO")
+Reported-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc:stable@vger.kernel.org
+Link: https://lore.kernel.org/all/20240826125304.1566719-1-kirill.shutemov%40linux.intel.com
+---
+ arch/x86/coco/tdx/tdx.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
+index 078e2ba..da8b66d 100644
+--- a/arch/x86/coco/tdx/tdx.c
++++ b/arch/x86/coco/tdx/tdx.c
+@@ -389,7 +389,6 @@ static bool mmio_read(int size, unsigned long addr, unsigned long *val)
+ 		.r12 = size,
+ 		.r13 = EPT_READ,
+ 		.r14 = addr,
+-		.r15 = *val,
+ 	};
+ 
+ 	if (__tdx_hypercall(&args))
 
