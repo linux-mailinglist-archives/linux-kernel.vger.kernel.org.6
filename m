@@ -1,99 +1,147 @@
-Return-Path: <linux-kernel+bounces-301123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6123895EC9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:03:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4202B95EC9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:04:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 117E2280DB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:03:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8DC31F21EA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBB113E033;
-	Mon, 26 Aug 2024 09:02:57 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD10C13AD3F;
+	Mon, 26 Aug 2024 09:04:15 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4D013AD22
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E35481741
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724662977; cv=none; b=T4ClQa+MnT8IEyVeS2Wo9FqFuqNNaw1XXSiI1kMZiman2WepbnOput5XPi7XwFaw3dRcjuL7Y6X7lzffmLjJcflglbf4VaJw2TghkllrSMOdMr47IZHdLV1Jd5XlhvjcEJzH/8DCvH6Lk2dcJhvKyVea924b70lCViO/9MRK4lE=
+	t=1724663055; cv=none; b=E1BLiHXWB7OnCoEr9U3DgzRbynDlNPMZGZ3Gp3r5JY3mb0tsiCH0dhb0aMhCTTxEHbWOuf0AFjFqUoAYfmZ1kYCdW2KNK4WzaSLdxxeiOnKSzyjX1rDIetwTWI8GDg17imYNrmUGUFnGbIM6wwVK7unu9b7XVocsMR4I1l7+IPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724662977; c=relaxed/simple;
-	bh=QGvof0Rw99PI8XpAFNAPY4o/L3KC7BAhCkWXawdqiOY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=mQRbwpBc05PWumBtx+dduxaZCEBhc2HUUjmnhMrDwP+5+sScDV8muhhuHkzXn+yvgud2I+m2dIc2fbDK0eFjPjGEsiVg4vefNZRdbvY2WnXOxiEO1xpsQBT1Qqb4bIvJSF6LqNaKz+y0yEZWNLS15iK353ndoi4rN0jBlsw2M8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d2ced7e8eso42038675ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 02:02:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724662975; x=1725267775;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xK+km/Nfi+Ke0Omx2P0pSP6qNE9tca+bC1fqshUE+Lg=;
-        b=L0UL3FHfZdx6X1AoghqHnZqKx4procm6ufZTS8ewv+uWAB/QlQjH90ynIeO30aqG2R
-         5ygkXWzMj8HIlgr9cwgwEQ9C69F/bphuEy0nCuH+jyWFhimzQWE9MAWOhV/MKPBlSnbr
-         AmEmT8s6xg9EK7eNaxgJr6RHFLygQBJ+y82v/5mV6Tny5exgw2NQ+k3VrnpPYmW0FcQv
-         rMQMGx0uJgGbFpjvEmRCZ6hz9IBcxXDN82eosyaxV9trji07/nhFR9elyNvX2dJjMiJh
-         xZT4xVJZXtj3mIls0YRMF4p/RzGz6B9qusLSHM4z+hahk88jmr6BEh2SX3WDttSP8ws0
-         D4Ww==
-X-Gm-Message-State: AOJu0YwXOLenIC2UHU5gC8YPDdoaLEcS4RlgIXjWdGwd/tbryF+XWXQl
-	PPb3uVLQ8zQ6CmlBblFsxpPtVpSvav8HBwzahiZvhGYQ8jeEVqRZeHU6bPL66hRC3G1jlpmsaGI
-	GyxE4Ix+j1lr4yiPm6fSNolDaRnHU0RGtrrxEuaXFUmwcAk88d/UMwk4=
-X-Google-Smtp-Source: AGHT+IGHkifQ/nGGNU1Nx2lfWIC/ApmmEYyTEm0fnWq0i4CKLq592y2F8V7JU0/4udBSwcbIFMEwOcbYHYfP6Wp8/CKv1fY0nlvV
+	s=arc-20240116; t=1724663055; c=relaxed/simple;
+	bh=X6oTBQ18A8CVtTZSU27ASfOb98LdqIea2rftawhxxwg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LulbLkSQdE+Y3p+Y5QEZcJQNNePJO8V+webI/7MDE7vGw9yUrRjpfMUy9bv1VM7uptrUX/gQjnWxub+ZhibOXZ6gmVeBW/lEQeY7zhPHS+ngxpDNCoU6tiaBaASMGX/w+VJdts4d4cv50RwMuhjzUe3nIDbycJcA7kV9KbRPjFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wsl7D27nYzpTZH;
+	Mon, 26 Aug 2024 17:02:32 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 28A361401F0;
+	Mon, 26 Aug 2024 17:04:11 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 26 Aug 2024 17:04:09 +0800
+Message-ID: <ab3c09e7-43cc-b946-0f7c-44ea7f4111f2@huawei.com>
+Date: Mon, 26 Aug 2024 17:04:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d19:b0:397:9426:e7fc with SMTP id
- e9e14a558f8ab-39e3c8d2ad1mr8552585ab.0.1724662975264; Mon, 26 Aug 2024
- 02:02:55 -0700 (PDT)
-Date: Mon, 26 Aug 2024 02:02:55 -0700
-In-Reply-To: <000000000000ab44fc06203f0d28@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ff8b0d06209263b3@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [jfs?] KASAN: slab-use-after-free Read in lmLogInit
-From: syzbot <syzbot+d16facb00df3f446511c@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH -next 1/5] drm/rockchip: Use
+ for_each_child_of_node_scoped()
+Content-Language: en-US
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+CC: <hjc@rock-chips.com>, <heiko@sntech.de>, <andy.yan@rock-chips.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<dri-devel@lists.freedesktop.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<krzk@kernel.org>, <jic23@kernel.org>
+References: <20240823092053.3170445-1-ruanjinjie@huawei.com>
+ <20240823092053.3170445-2-ruanjinjie@huawei.com>
+ <20240823123203.00002aac@Huawei.com>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <20240823123203.00002aac@Huawei.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
 
-***
 
-Subject: Re: [syzbot] [jfs?] KASAN: slab-use-after-free Read in lmLogInit
-Author: lizhi.xu@windriver.com
+On 2024/8/23 19:32, Jonathan Cameron wrote:
+> On Fri, 23 Aug 2024 17:20:49 +0800
+> Jinjie Ruan <ruanjinjie@huawei.com> wrote:
+> 
+>> Avoids the need for manual cleanup of_node_put() in early exits
+>> from the loop.
+>>
+>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> 
+> There is more to do here, and looking at the code, I'm far from
+> sure it isn't releasing references it never had.
+> 
+>> ---
+>>  drivers/gpu/drm/rockchip/rockchip_lvds.c | 8 +++-----
+>>  1 file changed, 3 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/rockchip/rockchip_lvds.c b/drivers/gpu/drm/rockchip/rockchip_lvds.c
+>> index 9a01aa450741..f5b3f18794dd 100644
+>> --- a/drivers/gpu/drm/rockchip/rockchip_lvds.c
+>> +++ b/drivers/gpu/drm/rockchip/rockchip_lvds.c
+>> @@ -548,7 +548,7 @@ static int rockchip_lvds_bind(struct device *dev, struct device *master,
+>>  	struct drm_encoder *encoder;
+>>  	struct drm_connector *connector;
+>>  	struct device_node *remote = NULL;
+>> -	struct device_node  *port, *endpoint;
+> 
+> Odd extra space before *port in original. Clean that up whilst here.
+> 
+> 
+>> +	struct device_node  *port;
+> 
+> Use __free(device_node) for *port as well.
+> 
+> So where the current asignment is.
+> 	struct device_node *port = of_graph_get_port_by_id(dev->of_node, 1);
+> 
+>>  	int ret = 0, child_count = 0;
+>>  	const char *name;
+>>  	u32 endpoint_id = 0;
+>> @@ -560,15 +560,13 @@ static int rockchip_lvds_bind(struct device *dev, struct device *master,
+>>  			      "can't found port point, please init lvds panel port!\n");
+>>  		return -EINVAL;
+>>  	}
+>> -	for_each_child_of_node(port, endpoint) {
+>> +	for_each_child_of_node_scoped(port, endpoint) {
+>>  		child_count++;
+>>  		of_property_read_u32(endpoint, "reg", &endpoint_id);
+>>  		ret = drm_of_find_panel_or_bridge(dev->of_node, 1, endpoint_id,
+>>  						  &lvds->panel, &lvds->bridge);
+>> -		if (!ret) {
+>> -			of_node_put(endpoint);
+>> +		if (!ret)
+>>  			break;
+> 
+> This then can simply be
+> 			return dev_err_probe(dev, ret,
+> 					     "failed to find pannel and bridge node\n");
+>> -		}
 
-blk dev max sector is 0
+Thank you! I'll resend and cleanup them.
 
-#syz test: upstream df6cbc62cc9b
-
-diff --git a/fs/jfs/jfs_logmgr.c b/fs/jfs/jfs_logmgr.c
-index 9609349e92e5..14404780f38d 100644
---- a/fs/jfs/jfs_logmgr.c
-+++ b/fs/jfs/jfs_logmgr.c
-@@ -1163,6 +1163,15 @@ static int open_inline_log(struct super_block *sb)
- 
- 	set_bit(log_INLINELOG, &log->flag);
- 	log->bdev_file = sb->s_bdev_file;
-+	printk("sb: %p, sb t: %s, sbf: %p, bdev1: %p, sbdev: %p, %s\n",
-+		sb, sb->s_type->name, sb->s_bdev_file, file_bdev(sb->s_bdev_file), sb->s_bdev, __func__);
-+
-+	if (!bdev_nr_sectors(file_bdev(sb->s_bdev_file))) {
-+		kfree(log);
-+		jfs_warn("open_inline_log: block device max sector is 0");
-+		return -EINVAL;
-+	}
-+
- 	log->base = addressPXD(&JFS_SBI(sb)->logpxd);
- 	log->size = lengthPXD(&JFS_SBI(sb)->logpxd) >>
- 	    (L2LOGPSIZE - sb->s_blocksize_bits);
+> 
+> Various other paths become direct returns as well.
+> 
+>>  	}
+> 
+> The later code with remote looks suspect as not obvious who got the reference that
+> is being put but assuming that is correct, it's another possible place for __free based
+> cleanup.
+> 
+> 
+>>  	if (!child_count) {
+>>  		DRM_DEV_ERROR(dev, "lvds port does not have any children\n");
+> 
 
