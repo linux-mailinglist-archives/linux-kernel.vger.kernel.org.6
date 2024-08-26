@@ -1,351 +1,143 @@
-Return-Path: <linux-kernel+bounces-300752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63DDD95E7EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:30:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61FDA95E7ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8865B1C20D30
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:30:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ADC61F2162E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704407407A;
-	Mon, 26 Aug 2024 05:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF8B7404B;
+	Mon, 26 Aug 2024 05:31:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="SjXYmLFJ"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663AC38DC7
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 05:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ICk5FQ1b"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1879F2E400;
+	Mon, 26 Aug 2024 05:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724650246; cv=none; b=OIQWghZ2Rct07zrYGE+AqvxRHxRW/SwCzcy1p8QWfZbfrJ/1NiNtp7U/bq43KFuSamfCUaYCU5kh5ILhPysU6zOru9LzNORyc3oYGpEGMOLRbccnURch9SLrtrIFQ15L3UxOXwqjUEFBwnKrW5CSQerlvR0wgqfuLBFVUlxUZHI=
+	t=1724650306; cv=none; b=qcohycAHuNoP0uJK0rIGszHDIqRhxysD6+yeBSXgFTrvAzj2i2XExnNwgqWbhm9HS1NzfpkuJhj8tqsdVx+VOB8ZW9sHcNDrolaylpus8TX8RWtQECj1X1G9juk0Tzu7usZq6CBY0Mq3Q/PMdmzNZc2lz8gD0y+wgabnQNbrDaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724650246; c=relaxed/simple;
-	bh=icpU9qsDi3NYQE9qZQUdP4k5gbHdgxAn0vSXV4NYH1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g14DS3+K308c8Y4nM6jtStHMfB80zKIF2YPZPIGw0J8VMU9whmm8elHGTO7Q5wFHdW884Ary7WXmCsBcRV1hLdbZzDoguJNSdpbTIIZQ0SDZ/xT10xP/clbiqz4GKsXQuZ1tPWdGrHqnAbMltJlgS7eOsojYjJ6aNDlmj9BjFYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=SjXYmLFJ; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7c1324be8easo3330270a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 22:30:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=wbinvd.org; s=wbinvd; t=1724650243; x=1725255043; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eZAj8uvOya4HiP9l/CwQjSu7HVrLT1SErQUOAVQqfwI=;
-        b=SjXYmLFJkKU/G4lU6HkWCElHXchI67pkV+IeneoH3zq+dUTsWjSmRd7gfzfY83spP3
-         ZHhynlvKFUfiInJr7nsvSsceJRCchcirxxA11aVteRBnadlawgId72Tw44/IY8bzjcrA
-         tCgD8n97EDQLiDF/BkOjYRvatahsuwTQ033MSXgI24BdSU674u2g0y/kJb4JRjFQL9p0
-         APipsCZsZphOk7+LAwBROeDrjkdChfYmtGQ4OvZg2p3Q3MIupOVNjX4eAkttIVoTfelG
-         WHHWzH+kuJU09r5vo3+6n0g4v8FHI9UBamckD1qTRmdOwsVgsLkBw6gnTChRXllJvLnX
-         OZzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724650243; x=1725255043;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eZAj8uvOya4HiP9l/CwQjSu7HVrLT1SErQUOAVQqfwI=;
-        b=I0uxXgSTobKN+FIYNkCCOxgyOtXl+BVNpraAL0cfLvwdAGWvgBVeBDF/Rbey2mduTv
-         VviiBKc3pTVvWB8IZAfBFOc6cHRnvMcbc7HHRsbKDKJM8d12iZnf/CJfhPg5v2XB6eHj
-         HR0n1JpawEv44OsR0SAn93/K98lzL8ktYaKprWGX27e2o3AKT/T9+oE3Xj0Y8TKEL57K
-         40qCQmbFd6WiabkGI+vOZBb4fKbsrbYUrzoFxshGwt+FLZmzHnFS+EyrKDdLpEqY65PW
-         Wb35nYiFVz/Zi1p1bnhwGp0iJcrc9yxJAw3USx9nSYx7EokBKOJ8j1DHTequTuBhqvq2
-         unUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWktULG9RkuRZ/0Zo96XHxU1ZVsVvgGYMaVRE9LC+l1Ye8CRFDDdHAU6pL0Rbq3q9ylixHTg1B6y49GSkA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGA+igAMqYLJv/Ruam+YfxNa0YSDMPabHPr0xZNcEpTTmSJL3f
-	cbrJXZT+TwWGJ8BJipyq8rhmHWi5xnaQlGJ6Toa9O9ea2GmTnt/lk0oiZCMhxbk=
-X-Google-Smtp-Source: AGHT+IFAfwY4jvMEw8vz45CKvkOATgMuexpgWgiFUN1H3XwTB6sTI0W3NQ8BP2OTYWCHmTL88+Ydxg==
-X-Received: by 2002:a17:90a:eb11:b0:2d3:ad41:4d7a with SMTP id 98e67ed59e1d1-2d644777e33mr15300789a91.4.1724650243307;
-        Sun, 25 Aug 2024 22:30:43 -0700 (PDT)
-Received: from mozart.vkv.me (192-184-160-110.fiber.dynamic.sonic.net. [192.184.160.110])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d613af1884sm8736728a91.43.2024.08.25.22.30.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Aug 2024 22:30:42 -0700 (PDT)
-Date: Sun, 25 Aug 2024 22:30:40 -0700
-From: Calvin Owens <calvin@wbinvd.org>
-To: David Lin <yu-hao.lin@nxp.com>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kvalo@kernel.org" <kvalo@kernel.org>,
-	"johannes@sipsolutions.net" <johannes@sipsolutions.net>,
-	"briannorris@chromium.org" <briannorris@chromium.org>,
-	"francesco@dolcini.it" <francesco@dolcini.it>,
-	Pete Hsieh <tsung-hsien.hsieh@nxp.com>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, calvin@wbinvd.org
-Subject: Re: [EXT] Re: [PATCH v2 00/43] wifi: nxpwifi: create nxpwifi to
- support iw61x
-Message-ID: <ZswTABUwME3pliKW@mozart.vkv.me>
-References: <20240809094533.1660-1-yu-hao.lin@nxp.com>
- <Zsc1efkBHDXdZtfJ@pengutronix.de>
- <ZsuWExGZyY8Tvu6s@mozart.vkv.me>
- <PA4PR04MB96384BCB4093D621C43B047ED18B2@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <ZsvtQCXxNJHh_DWS@mozart.vkv.me>
- <PA4PR04MB96386AB354F886DCB899F02AD18B2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1724650306; c=relaxed/simple;
+	bh=Wl6iQ9exmLvbfbEZipfqq2w+vo7s4TZ/fP2e7N1r6/U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g66EzN9fNtHezYQHM7MrV4hp2OmnmOrxibexg62Rv5N+WFGHOlXzaWPQ6EbfWerfaj+te7mI91Y74d4V26DKB6j3O5Ci1VL/55gxJq2Ekwt167Leplqih+C4L40b/fKJ+J78ugARRQzfElZntHtav2D+nI3JF/1yOwlnWU9UKWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ICk5FQ1b; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.95.75.183] (unknown [167.220.238.215])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 36B1820B7165;
+	Sun, 25 Aug 2024 22:31:42 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 36B1820B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1724650304;
+	bh=Pz7/mxA+dgmB3ZGl3+LDfNGWOqZQC0Nmel5YIM0XAbA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ICk5FQ1bYFieyUcf6RoA98ssS8Rp/OF8fQLtPgCWCDsI0qIuTczTR59ptSAW1bwH+
+	 qEgwDJmk4VRiG2sLupyCwo5q5V8z9BxCC+ScMCsdBG1ZPVZM3chz07f+UQkmY+gGgI
+	 QtMyMVMAYS3bTdhGwA5eRy5yvIrU1XvbDkVPq3cQ=
+Message-ID: <a447911b-ef12-46de-ba01-13105e34b8fe@linux.microsoft.com>
+Date: Mon, 26 Aug 2024 11:01:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <PA4PR04MB96386AB354F886DCB899F02AD18B2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] Drivers: hv: vmbus: Fix rescind handling in
+ uio_hv_generic
+To: Michael Kelley <mhklinux@outlook.com>,
+ "K . Y . Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Stephen Hemminger <stephen@networkplumber.org>
+Cc: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Saurabh Sengar <ssengar@linux.microsoft.com>
+References: <20240822110912.13735-1-namjain@linux.microsoft.com>
+ <20240822110912.13735-3-namjain@linux.microsoft.com>
+ <SN6PR02MB4157FB898345A1A8B88D1F4DD48A2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB4157FB898345A1A8B88D1F4DD48A2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Monday 08/26 at 02:56 +0000, David Lin wrote:
-> > From: Calvin Owens <calvin@wbinvd.org>
-> > Sent: Monday, August 26, 2024 10:50 AM
-> > To: David Lin <yu-hao.lin@nxp.com>
-> > Cc: Sascha Hauer <s.hauer@pengutronix.de>; linux-wireless@vger.kernel.org;
-> > linux-kernel@vger.kernel.org; kvalo@kernel.org; johannes@sipsolutions.net;
-> > briannorris@chromium.org; francesco@dolcini.it; Pete Hsieh
-> > <tsung-hsien.hsieh@nxp.com>; kernel@pengutronix.de
-> > Subject: Re: [EXT] Re: [PATCH v2 00/43] wifi: nxpwifi: create nxpwifi to support
-> > iw61x
-> > 
-> > Caution: This is an external email. Please take care when clicking links or
-> > opening attachments. When in doubt, report the message using the 'Report
-> > this email' button
-> > 
-> > 
-> > On Monday 08/26 at 02:33 +0000, David Lin wrote:
-> > > > From: Calvin Owens <calvin@wbinvd.org>
-> > > > Sent: Monday, August 26, 2024 4:38 AM
-> > > > To: Sascha Hauer <s.hauer@pengutronix.de>
-> > > > Cc: David Lin <yu-hao.lin@nxp.com>; linux-wireless@vger.kernel.org;
-> > > > linux-kernel@vger.kernel.org; kvalo@kernel.org;
-> > > > johannes@sipsolutions.net; briannorris@chromium.org;
-> > > > francesco@dolcini.it; Pete Hsieh <tsung-hsien.hsieh@nxp.com>;
-> > > > kernel@pengutronix.de; calvin@wbinvd.org
-> > > > Subject: [EXT] Re: [PATCH v2 00/43] wifi: nxpwifi: create nxpwifi to
-> > > > support iw61x
-> > > >
-> > > > Caution: This is an external email. Please take care when clicking
-> > > > links or opening attachments. When in doubt, report the message
-> > > > using the 'Report this email' button
-> > > >
-> > > >
-> > > > On Thursday 08/22 at 14:56 +0200, Sascha Hauer wrote:
-> > > > > On Fri, Aug 09, 2024 at 05:44:50PM +0800, David Lin wrote:
-> > > > > > This series adds support for IW61x which is a new family of
-> > > > > > 2.4/5 GHz dual-band 1x1 Wi-Fi 6, Bluetooth/Bluetooth Low Energy
-> > > > > > 5.2 and
-> > > > > > 15.4 tri-radio single chip by NXP. These devices support
-> > > > > > 20/40/80MHz single spatial stream in both STA and AP mode.
-> > > > > > Communication to the IW61x is done via SDIO interface
-> > > > > >
-> > > > > > This driver is a derivative of existing Mwifiex [1] and based on
-> > > > > > similar full-MAC architecture [2]. It has been tested with
-> > > > > > i.MX8M Mini evaluation kits in both AP and STA mode.
-> > > > > >
-> > > > > > All code passes sparse and checkpatch
-> > > > > >
-> > > > > > Data sheet (require registration):
-> > > > > > https://ww/
-> > > > > > w.nxp.com%2Fproducts%2Fwireless-connectivity%2Fwi-fi-plus-blueto
-> > > > > > oth-
-> > > > > >
-> > > >
-> > &data=05%7C02%7Cyu-hao.lin%40nxp.com%7Cff25728795724a618a5208dcc5
-> > > > 45c
-> > > > > >
-> > > >
-> > 5fd%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C63860215067862
-> > > > 3224%
-> > > > > >
-> > > >
-> > 7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJB
-> > > > TiI6
-> > > > > >
-> > > >
-> > Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=U0Cej8ysBD%2Fg1Sa4Ia
-> > > > Ph63Ot
-> > > > > > iTcemadiCfMINYM%2BRL4%3D&reserved=0
-> > > > > > plus-802-15-4/2-4-5-ghz-dual-band-1x1-wi-fi-6-802-11ax-plus-blue
-> > > > > > toot
-> > > > > > h-5-
-> > > > > > 4-plus-802-15-4-tri-radio-solution:IW612
-> > > > > >
-> > > > > > Known gaps to be addressed in the following patches,
-> > > > > >   - Enable 11ax capabilities. This initial patch support up to 11ac.
-> > > > > >   - Support DFS channel. This initial patch doesn't support DFS channel
-> > in
-> > > > > >     both AP/STA mode.
-> > > > > >
-> > > > > > This patch is presented as a request for comment with the
-> > > > > > intention of being made into a patch after initial feedbacks are
-> > > > > > addressed
-> > > > > >
-> > > > > > [1] We had considered adding IW61x to mwifiex driver, however due to
-> > > > > >     FW architecture, host command interface and supported features
-> > are
-> > > > > >     significantly different, we have to create the new nxpwifi driver.
-> > > > > >     Subsequent NXP chipsets will be added and sustained in this
-> > > > > > new
-> > > > driver.
-> > > > >
-> > > > > I added IW61x support to the mwifiex driver and besides the VDLL
-> > > > > handling which must be added I didn't notice any differences.
-> > > > > There might be other differences, but I doubt that these can't be
-> > > > > integrated into the mwifiex driver.
-> > > >
-> > > > Hi Sascha,
-> > > >
-> > > > I'd also love to see this patchset, if you're able to share it. I
-> > > > can test on an
-> > > > IW612 if that's helpful at all.
-> > > >
-> > > > > Honestly I don't think adding a new driver is a good ideai, given
-> > > > > how big wifi drivers are and how limited the review bandwidth is.
-> > > > >
-> > > > > What we'll end up with is that we'll receive the same patches for
-> > > > > both drivers, or worse, only for one driver while the other stays
-> > unpatched.
-> > > >
-> > > > I have some concrete experience with "in-tree driver forks" like this:
-> > > > a pair of SCSI drivers named mpt2sas and mpt3sas.
-> > > >
-> > > > The latter was created as a near copy of the former:
-> > > >
-> > > >
-> > > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgi
-> > > >
-> > t.kernel%2F&data=05%7C02%7Cyu-hao.lin%40nxp.com%7C582c3c0573b74f83
-> > 42
-> > > >
-> > 3408dcc579bc4a%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C638
-> > 60237
-> > > >
-> > 3871805816%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoi
-> > V2luM
-> > > >
-> > zIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=bLjsRTRsR%2
-> > BTtA
-> > > > jUIVDY396ZF%2BIkwwUFhAubTCin3IVk%3D&reserved=0
-> > >
-> > > .org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Ftorvalds%2Flinux.git%2Fco
-> > m
-> > > >
-> > mit%2F%3Fid%3Df92363d12359&data=05%7C02%7Cyu-hao.lin%40nxp.com%7
-> > > >
-> > Cff25728795724a618a5208dcc545c5fd%7C686ea1d3bc2b4c6fa92cd99c5c3016
-> > > >
-> > 35%7C0%7C0%7C638602150678637352%7CUnknown%7CTWFpbGZsb3d8eyJW
-> > > >
-> > IjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0
-> > > >
-> > %7C%7C%7C&sdata=mzrLLqJNee7vIdV47j8xVSU%2FByjh%2FnNKnRsx1nw3yNo
-> > > > %3D&reserved=0
-> > > >
-> > > > The result was *exactly* what you forsee happening here: both
-> > > > drivers were constantly missing fixes from the other, and they were
-> > > > just subtly different enough that it wasn't simple to "port" patches
-> > > > from one to the other. It was a frustrating experience for everybody
-> > > > involved. I think their git histories prove your point, I'd
-> > > > encourage everyone with a horse in this race to take a look at them.
-> > > >
-> > > > It took three years to finally unify them:
-> > > >
-> > > >
-> > > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgi
-> > > >
-> > t.kernel%2F&data=05%7C02%7Cyu-hao.lin%40nxp.com%7C582c3c0573b74f83
-> > 42
-> > > >
-> > 3408dcc579bc4a%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C638
-> > 60237
-> > > >
-> > 3871815005%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoi
-> > V2luM
-> > > >
-> > zIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=RfY6N6WWXI
-> > n0gZP
-> > > > SBoRySz5eeU8WkFH2HvFHLVNgu3Q%3D&reserved=0
-> > >
-> > > .org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Ftorvalds%2Flinux.git%2Fco
-> > m
-> > > >
-> > mit%2F%3Fid%3Dc84b06a48c4d&data=05%7C02%7Cyu-hao.lin%40nxp.com%7
-> > > >
-> > Cff25728795724a618a5208dcc545c5fd%7C686ea1d3bc2b4c6fa92cd99c5c3016
-> > > >
-> > 35%7C0%7C0%7C638602150678649431%7CUnknown%7CTWFpbGZsb3d8eyJW
-> > > >
-> > IjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0
-> > > >
-> > %7C%7C%7C&sdata=UGjDfngO1POWuydIfmOL%2BR%2BqJ1BoDQW6NboQUV
-> > > > q2Xh8%3D&reserved=0
-> > > >
-> > > > I doubt anyone would disagree that wifi drivers are much more
-> > > > complex than SCSI drivers. It would be strictly *worse* here, and
-> > > > the path to unifying them strictly longer.
-> > > >
-> > > > Thanks,
-> > > > Calvin
-> > > >
-> > >
-> > > I think Nxpwifi will support NXP new WiFi chips and Mwifiex will support
-> > existed NXP WiFi chips.
-> > 
-> > Hi David,
-> > 
-> > I understand that. I don't think that really changes anything: there will still be
-> > many future patches which need to be applied to both, because the bug being
-> > fixed existed before the fork. As the forked driver diverges, that will only
-> > become more difficult and error prone.
-> > 
-> > Thanks,
-> > Calvin
-> > 
+
+
+On 8/25/2024 8:27 AM, Michael Kelley wrote:
+> From: Naman Jain <namjain@linux.microsoft.com> Sent: Thursday, August 22, 2024 4:09 AM
+>>
+>> Rescind offer handling relies on rescind callbacks for some of the
+>> resources cleanup, if they are registered. It does not unregister
+>> vmbus device for the primary channel closure, when callback is
+>> registered.
+>> Add logic to unregister vmbus for the primary channel in rescind callback
+>> to ensure channel removal and relid release, and to ensure rescind flag
+>> is false when driver probe happens again.
+>>
+>> Fixes: ca3cda6fcf1e ("uio_hv_generic: add rescind support")
+>> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+>> ---
+>>   drivers/hv/vmbus_drv.c       | 1 +
+>>   drivers/uio/uio_hv_generic.c | 7 +++++++
+>>   2 files changed, 8 insertions(+)
+>>
+>> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+>> index c857dc3975be..4bae382a3eb4 100644
+>> --- a/drivers/hv/vmbus_drv.c
+>> +++ b/drivers/hv/vmbus_drv.c
+>> @@ -1952,6 +1952,7 @@ void vmbus_device_unregister(struct hv_device
+>> *device_obj)
+>>   	 */
+>>   	device_unregister(&device_obj->device);
+>>   }
+>> +EXPORT_SYMBOL_GPL(vmbus_device_unregister);
+>>
+>>   #ifdef CONFIG_ACPI
+>>   /*
+>> diff --git a/drivers/uio/uio_hv_generic.c b/drivers/uio/uio_hv_generic.c
+>> index c99890c16d29..ea26c0b460d6 100644
+>> --- a/drivers/uio/uio_hv_generic.c
+>> +++ b/drivers/uio/uio_hv_generic.c
+>> @@ -121,6 +121,13 @@ static void hv_uio_rescind(struct vmbus_channel *channel)
+>>
+>>   	/* Wake up reader */
+>>   	uio_event_notify(&pdata->info);
+>> +
+>> +	/*
+>> +	 * With rescind callback registered, rescind path will not unregister the device
+>> +	 * when the primary channel is rescinded. Without it, next onoffer msg does not come.
+>> +	 */
+>> +	if (!channel->primary_channel)
+>> +		vmbus_device_unregister(channel->device_obj);
 > 
-> Nxpwifi is not only a fork from Mwifiex. Especially after we modified Nxpwifi
-> based on the comments from Johannes.
-
-I understand you've done real work here. But at the same time, nearly
-1/3rd of the changeset against the original driver is renaming things:
-
-    {0}[calvin ~/linux/drivers/net/wireless/nxp/nxpwifi] tar cf ~/nxpwifi-v2.tar .
-    {0}[calvin ~/linux/drivers/net/wireless/nxp/nxpwifi] cd ../../marvell/mwifiex
-    {0}[calvin ~/linux/drivers/net/wireless/marvell/mwifiex] tar xf ~/nxpwifi-v2.tar
-    {0}[calvin ~/linux/drivers/net/wireless/marvell/mwifiex] git add *
-    {0}[calvin ~/linux/drivers/net/wireless/marvell/mwifiex] git diff --cached --shortstat
-     42 files changed, 13878 insertions(+), 14274 deletions(-)
-    {0}[calvin ~/linux/drivers/net/wireless/marvell/mwifiex] sed -i 's/nxpwifi/mwifiex/g' *
-    {0}[calvin ~/linux/drivers/net/wireless/marvell/mwifiex] sed -i 's/NXPWIFI/MWIFIEX/g' *
-    {0}[calvin ~/linux/drivers/net/wireless/marvell/mwifiex] git add *
-    {0}[calvin ~/linux/drivers/net/wireless/marvell/mwifiex] git diff --cached --shortstat
-     42 files changed, 9940 insertions(+), 10336 deletions(-)
-    {0}[calvin ~/linux/drivers/net/wireless/marvell/mwifiex] cat * | wc -l
-    45591
-
-I'd consider that a fork. For those following at home, I pushed a branch
-to github with nxpwifi v2 applied as a single patchbomb to mwifiex, with
-the renames backed out:
-
-    https://github.com/jcalvinowens/linux/tree/work/nxpwifi-on-mwifiex-no-renames
-
-For my own selfish part, I agree with Sascha: I'd prefer to see that
-changeset as patches against the existing driver, because I know from
-experience that having a community built around one driver will enable
-me to deliver better results for my users, and will make it easier for
-me to contribute when I find bugs to fix.
-
-But this is just one random opinion, I'm not who you need to convince :)
-
-Thanks,
-Calvin
-
-> I think the real bugs fixes of Mwifiex will become less frequently.
-> We can monitor these patches and apply them from Mwifiex to Nxpwifi.
->
-> If we fix issues of Nxpwifi which is also related to Mwifiex, we will
-> submit patches back to Mwifiex.
->
-> Thanks,
-> David 
+> When the rescind callback is *not* set, vmbus_onoffer_rescind() makes the
+> call to vmbus_device_unregister(). But it does so bracketed with get_device()/
+> put_device(). Your code here does not do the bracketing. Is there a reason for
+> the difference? Frankly, I'm not sure why vmbus_onoffer_rescind() does the
+> bracketing, and I can't definitively say if it is really needed. So I guess I'm
+> just asking if you know. :-)
 > 
+> Michael
+> 
+>>   }
+>>
+>>   /* ysfs API to allow mmap of the ring buffers
+>> --
+>> 2.34.1
+>>
+
+IMHO, we have already NULL checked channel->device_obj and other couple 
+of things to make sure we are safe to clean this up. At other places as 
+well, I don't see the use of put and get device. So I think its not 
+required. I am open to suggestions.
+
+Regards,
+Naman
 
