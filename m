@@ -1,246 +1,178 @@
-Return-Path: <linux-kernel+bounces-301787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE9BD95F590
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:51:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45A7C95F599
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03E631C21707
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:51:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 686721C21C0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBDC194136;
-	Mon, 26 Aug 2024 15:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84FA45B69E;
+	Mon, 26 Aug 2024 15:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eu86juEb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e3FIzBZv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0CD4F215;
-	Mon, 26 Aug 2024 15:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CB4194124
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 15:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724687505; cv=none; b=njyRHWEk/+Mm7W/DrEwhue4QeGZS3mQo5nfaalel72z7TUDGXYYPYM7zTGyP+dy0uin3biDl4x2s8gHWytpF5ykt0X3H06J1U7+/iFJ4VOUCyWP/jGfMxnm052FeSMTPNgryyOYnpfdpFcbeG+pN4Aq2P2dQiGy3eQ47/fpzAFw=
+	t=1724687529; cv=none; b=qu1Yxf0W43dA54ojb08aliM0xPVISi3frMvINiAJ5atdP/v2w1u04J8Fs2CQ2q34zNnu0Fx7EvJ3IvPzlIUlO4Ny6/2Aw1vH70lcivtQcVm5YsET7+E2Jtg6UoptU5I+DNwCnU5KOCtFc9D5f6vMIuMsQige2kmUxHh+1wifVfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724687505; c=relaxed/simple;
-	bh=39MAFBC0ARo13JZKV+5ijTkxKLlQ4ap97jwXtmDSqZE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T8FoU9EgOpdAwMcd5Ixls/ehs4A6/gz8cMjdK/nE5PiY822qNfcEwSdqu0qU4RKLJ9Xh968GBJS3U3rtGCYtZBwRek+359atGp/c7mKvL6gir1UK3PEz9IAFyFaYBw1IuFSmEUgpuj453cSCnVLuK+dA/u8ig7JdWzTOmVtcqrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eu86juEb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCEC7C4FF75;
-	Mon, 26 Aug 2024 15:51:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724687505;
-	bh=39MAFBC0ARo13JZKV+5ijTkxKLlQ4ap97jwXtmDSqZE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eu86juEbryBdB4uXclh2OM+ro70t8X9jdy+48GEErbb1rkGe7j2HFEX4ByrOB3QmQ
-	 6ZkS7kb5DVuywzKFKbtCnuQVW673q0xXKl6H7jmyDZYZYnNXBeiO4Kc32HDnxHbft+
-	 XUq8leoSpzK+gUX5MydYUgINQcI34O8vGXhcE3C1BT7d0yMBYDwtX5tbCtDQkwk/Z+
-	 bpqw8ShYh+1fzHML9KCg5v/h0R8zF3zHi3L+A9JjhB6ieigGGuTFzM3N98bSaCAv1/
-	 YbA0D6+LQTSvLAuDjK5u9Q5NduxjNRJnNrrPEUOKwpo2VeKOv2zNG4MYRDnGKfUqZx
-	 vRD1ajmaUHLZA==
-Message-ID: <62edecf4-6fc6-4aff-bd42-4fac171f5093@kernel.org>
-Date: Mon, 26 Aug 2024 17:51:37 +0200
+	s=arc-20240116; t=1724687529; c=relaxed/simple;
+	bh=Dwazc+e0kXeS2xTQ712+0BIKFANt7k7hBlcLvCAFWPU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hCPzmVfJIL/QnfNi++gyL2izzw2wUv9805Yo8CqpWABkQ1omo8LDAcK8P9pQSBVWsOMGl210p2RSwfvkVQBoHlcdY+Kr8VjX9UE6QgqLQUxi4Xi7nF/yOoMRdo3slYm2HdtIMPsxoU4MG0tf5zeZjRL1Gqh/MHAx62fYGfghWbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e3FIzBZv; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724687526;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Dwazc+e0kXeS2xTQ712+0BIKFANt7k7hBlcLvCAFWPU=;
+	b=e3FIzBZv0Hz32L1TuWGAEqcXh08IH0x7Lx5jYTzEncSKtvkEHFz/C8+6Qv9ZDgaKJXX6dV
+	DPNVfAIFDexax9KOZNnjrhRSuck18vVR2tiODw3gCeoRaDGftiQSTnnw6/isBH2mvkQsjE
+	/DjFLCEo3GPWtDMgObc1wTfG3WUS+xM=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-550-3r_nDNHKMbyVTN27MQTIPw-1; Mon, 26 Aug 2024 11:52:05 -0400
+X-MC-Unique: 3r_nDNHKMbyVTN27MQTIPw-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37187b43662so2442505f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:52:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724687524; x=1725292324;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Dwazc+e0kXeS2xTQ712+0BIKFANt7k7hBlcLvCAFWPU=;
+        b=CwfCPTvL1lOARYq65Yrx74ww75M4LGrOxiaul3hHEdx6fDfkLer4hiuVXuDTZJ0Rjx
+         e1iFqkjkPO6FuV+PiamEOhcZyLuW9ADE1sXaHXTLVETx0wnRY8NFmaZtUsAqOE3zn52g
+         GGZkj5A2/+iJ3FQFmqriKQ8IBrDEKPOBeganBde8Dc3OadWFhgRSsnVfI8VOF3zTAJx3
+         oR9+lHsIyAV0TofprqeErdKnZe9gDm1CmHvSXgeMJ+ycAF6M+4S+sM2p53JAvVjfWJIr
+         BvK0zvXdo9OB5aw8dKMoGDvkqYoffdZV0RTRjwGnDFMS5mhCR+wThkmTKtd8j3Fag5FL
+         YZeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8arDmtE4Izmtw+5WfkagMcj4O6w6CFm0qB2zVWiQ0AV01paJQJ7zn0l18iYC1ahJN+kntntaEO3dofTo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4wWmD5huYTBwMH8bb9uXyLG8aIYbc7iuDw9PTM5q00nBH9NEZ
+	QrnhcBfGf8fwLK8Y0w8V0gP6pbPMto0001hLyg4hVPZGXQZFPS/F0cRUQK2ui215XY7nyMZlFYK
+	snB5j5nlmhr1E2Db5DUT7rpns4IenZxHloJv5IX7Yo9nFWeOFfBxb/Zdm9mTS9w==
+X-Received: by 2002:adf:e44b:0:b0:360:7c4b:58c3 with SMTP id ffacd0b85a97d-3748c835e08mr49205f8f.54.1724687524280;
+        Mon, 26 Aug 2024 08:52:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGxAzHOXHhnfnYaxqHhgL/uz7vF7Nw5k64KjkexckDk+9QWCj+MHZcvnBNc7cGqudRMU7r7fA==
+X-Received: by 2002:adf:e44b:0:b0:360:7c4b:58c3 with SMTP id ffacd0b85a97d-3748c835e08mr49174f8f.54.1724687523730;
+        Mon, 26 Aug 2024 08:52:03 -0700 (PDT)
+Received: from dhcp-64-164.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730814602asm11021638f8f.44.2024.08.26.08.52.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 08:52:02 -0700 (PDT)
+Message-ID: <f2d6345a8a684f62035108d74938ec0b2e162019.camel@redhat.com>
+Subject: Re: [PATCH v3 5/9] ethernet: cavium: Replace deprecated PCI
+ functions
+From: Philipp Stanner <pstanner@redhat.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Andy Shevchenko <andy@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+ Jens Axboe <axboe@kernel.dk>, Wu Hao <hao.wu@intel.com>, Tom Rix
+ <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>, Xu Yilun
+ <yilun.xu@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz
+ Golaszewski <brgl@bgdev.pl>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,  Paolo
+ Abeni <pabeni@redhat.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, Alvaro
+ Karsz <alvaro.karsz@solid-run.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ Eugenio =?ISO-8859-1?Q?P=E9rez?= <eperezma@redhat.com>, Richard Cochran
+ <richardcochran@gmail.com>, Mark Brown <broonie@kernel.org>, David Lechner
+ <dlechner@baylibre.com>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
+ <u.kleine-koenig@pengutronix.de>, Damien Le Moal <dlemoal@kernel.org>, 
+ Hannes Reinecke <hare@suse.de>, Chaitanya Kulkarni <kch@nvidia.com>,
+ linux-doc@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org,  linux-fpga@vger.kernel.org,
+ linux-gpio@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org,  linux-pci@vger.kernel.org,
+ virtualization@lists.linux.dev
+Date: Mon, 26 Aug 2024 17:52:00 +0200
+In-Reply-To: <CAHp75VfKS_PWer2hEH8x0qgBUEPx05p8BA=c0UirAWjg0SaLeA@mail.gmail.com>
+References: <20240822134744.44919-1-pstanner@redhat.com>
+	 <20240822134744.44919-6-pstanner@redhat.com>
+	 <ZsdO2q8uD829hP-X@smile.fi.intel.com>
+	 <ad6af1c4194873e803df65dc4d595f8e4b26cb33.camel@redhat.com>
+	 <CAHp75VfKS_PWer2hEH8x0qgBUEPx05p8BA=c0UirAWjg0SaLeA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: dt-bindings: cirrus,cs4271: Convert to dtschema
-To: nikita.shubin@maquefel.me, David Rhodes <david.rhodes@cirrus.com>,
- Richard Fitzgerald <rf@opensource.cirrus.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Cc: linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240826-cs4271-yaml-v1-1-dad3f0b041ef@maquefel.me>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240826-cs4271-yaml-v1-1-dad3f0b041ef@maquefel.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 26/08/2024 11:53, Nikita Shubin via B4 Relay wrote:
-> From: Nikita Shubin <nikita.shubin@maquefel.me>
-> 
-> Convert the Cirrus Logic CS4271 audio CODEC bindings to DT schema.
-> 
-> Cc: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-> Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
-> Link: https://lore.kernel.org/all/20240715-ep93xx-v11-0-4e924efda795@maquefel.me
+On Mon, 2024-08-26 at 18:41 +0300, Andy Shevchenko wrote:
+> On Mon, Aug 26, 2024 at 5:51=E2=80=AFPM Philipp Stanner <pstanner@redhat.=
+com>
+> wrote:
+> > On Thu, 2024-08-22 at 17:44 +0300, Andy Shevchenko wrote:
+> > > On Thu, Aug 22, 2024 at 03:47:37PM +0200, Philipp Stanner wrote:
+>=20
+> ...
+>=20
+> > > > -=C2=A0=C2=A0 err =3D pcim_iomap_regions(pdev, 1 << PCI_PTP_BAR_NO,
+> > > > pci_name(pdev));
+> > > > -=C2=A0=C2=A0 if (err)
+> > > > +=C2=A0=C2=A0 clock->reg_base =3D pcim_iomap_region(pdev, PCI_PTP_B=
+AR_NO,
+> > > > pci_name(pdev));
+> > > > +=C2=A0=C2=A0 if (IS_ERR(clock->reg_base)) {
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =
+=3D PTR_ERR(clock->reg_base);
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+goto error_free;
+> > > > -
+> > > > -=C2=A0=C2=A0 clock->reg_base =3D pcim_iomap_table(pdev)[PCI_PTP_BA=
+R_NO];
+> > > > +=C2=A0=C2=A0 }
+> > >=20
+> > > Perhaps
+> > >=20
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock->reg_base =3D pcim_iomap_region(=
+pdev, PCI_PTP_BAR_NO,
+> > > pci_name(pdev));
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D PTR_ERR_OR_ZERO(clock->reg_bas=
+e);
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err)
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 goto error_free;
+> > >=20
+> > > This will make your patch smaller and neater.
+> > >=20
+> > > P.S. Do you use --histogram diff algo when preparing patches?
+> >=20
+> > So far not.
+> > Should one do that?
+>=20
+> Id doesn't alter your code, it's in addition to what I suggested, but
+> as Linus shared that there is no reason to avoid using --histogram
+> not
+> only in Linux kernel, but in general as it produces more
+> human-readable diff:s.
 
-I think Link goes above your SoB. Your Sob must be the last tag from you.
+If the Boss says so, one can surely do that \o/
 
-> ---
-> This is complementary patch to ep93xx DT conversion series.
-
-...
-
-> +
-> +title: Cirrus Logic CS4271 audio CODEC
-> +
-> +maintainers:
-> +  - Alexander Sverdlin <alexander.sverdlin@gmail.com>
-> +  - Nikita Shubin <nikita.shubin@maquefel.me>
-> +
-> +description:
-> +  The CS4271 is a stereo audio codec. This driver supports both the I2C
-> +  and the SPI bus.
-
-Drop references to driver. You can say that device supports
-configuration over I2C and SPI.
-
-> +
-> +allOf:
-> +  - $ref: dai-common.yaml#
-> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: cirrus,cs4271
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  spi-cpha: true
-> +
-> +  spi-cpol: true
-> +
-> +  '#sound-dai-cells':
-> +    const: 0
-
-None of these three were present in original binding.
-
-> +
-> +  reset-gpio:
-
-If it bases on cs4270, look there - there is no "gpio", but "gpios".
-Mention changes in commit msg.
+Though if it has 0 disadvantages I'd propose proposing to the git-devs
+to make it the default.
 
 
-> +    description:
-> +      This pin will be deasserted before communication to the codec starts.
-> +    maxItems: 1
-> +
-> +  va-supply:
-> +    description: Analog power supply.
-> +
-> +  vd-supply:
-> +    description: Digital power supply.
-> +
-> +  vl-supply:
-> +    description: Serial Control Port power supply.
-> +
-> +  port:
-> +    $ref: audio-graph-port.yaml#
-> +    unevaluatedProperties: false
+P.
 
-This wasn't present in original binding and nothing in commit msg
-explained changes from pure conversion. Explain them in commit msg.
-
-> +
-> +  cirrus,amuteb-eq-bmutec:
-> +    description:
-> +      When given, the Codec's AMUTEB=BMUTEC flag is enabled.
-> +    type: boolean
-> +
-> +  cirrus,enable-soft-reset:
-> +    description: |
-> +      The CS4271 requires its LRCLK and MCLK to be stable before its RESET
-> +      line is de-asserted. That also means that clocks cannot be changed
-> +      without putting the chip back into hardware reset, which also requires
-> +      a complete re-initialization of all registers.
-> +
-> +      One (undocumented) workaround is to assert and de-assert the PDN bit
-> +      in the MODE2 register. This workaround can be enabled with this DT
-> +      property.
-> +
-> +      Note that this is not needed in case the clocks are stable
-> +      throughout the entire runtime of the codec.
-> +    type: boolean
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    spi {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        cs4271: codec@0 {
-
-Drop unused label.
-
-> +            compatible = "cirrus,cs4271";
-> +            reg = <0>;
-> +            reset-gpio = <&gpio0 1 0>;
-
-Use defines for flags.
-
-Also, make the example complete. You  miss many properties.
-
-> +        };
-> +    };
-> +
-> +...
-> \ No newline at end of file
-
-This needs to be always fixed before posting.
-
-
-
-Best regards,
-Krzysztof
+>=20
 
 
