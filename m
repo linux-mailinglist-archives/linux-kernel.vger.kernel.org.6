@@ -1,154 +1,92 @@
-Return-Path: <linux-kernel+bounces-302091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F6995F9B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:29:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E13FC95F9B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B61DB1C21F60
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:29:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74AFEB2114A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03DB9199253;
-	Mon, 26 Aug 2024 19:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C547F79945;
+	Mon, 26 Aug 2024 19:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ai2HhIRK"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="L1MdCpJO"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6351991CA;
-	Mon, 26 Aug 2024 19:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D319198E6C
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724700549; cv=none; b=h1uaBLD4bPpcsFmdNglCBYr93QISu3wOW2BVoRFB+LUP9QyE4ktlt75a3gjdFoKXR5h9stDQmfOh9pzRfCznUfRDLrE8jDD+jMtflLjCpquB0jXfckH8s2e55MP2dqWOUWTi3r0WVdgg+XyPMVoQfjrHonneEicS9HqWuij6A8k=
+	t=1724700612; cv=none; b=LgKP/4IxYkZWLehbx9RxX1Sfln6QLQ0/GPiFl1cj4WBo8OQsTzz6G9EyqybiQZXZzMmsOpmwlg+pW6uWb/A31tur66dZGCxNm0K8Q9uPkoH4ECBXS2rcgIgUkdxiRgbJ2en+ezaTmbG5KFc8Jq/NfhVt3tHTFItlwHW53HHWOAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724700549; c=relaxed/simple;
-	bh=qzjw56VHpF1Hz1kmMdSmdxvPkhrxPV8tcnNAei8IWYI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=deRk0XVfduvWWN7dJ3IyAksjxe4fqMGS8E9S0+nju82/I4V/UiEVWNPmR0jDIgE2QPUrbsPEQVg/NuhFwvMaTG8jHt8uHmGxo27jwtrg6tTJVz7MTvSkmHCTz+AuOibG57RzILGEtRenDiOfo5QImX50y9wMu6AyzSsJ+eYuAcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ai2HhIRK; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7cd8803fe0aso3178707a12.0;
-        Mon, 26 Aug 2024 12:29:07 -0700 (PDT)
+	s=arc-20240116; t=1724700612; c=relaxed/simple;
+	bh=hcRvwF87oztYXFmspwLvuXVmC1FGdlbdFo9ufr4Pf2U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=caibBuaqe3uXgSM5jh6g459nSX4OoWuGATREUEwwva7Y1jbXXXrPN3zfmBxr//5kpe7L4dwgCloi2GVMYVuZHxKoU4KrIbxn6lgDUSxY6sXEfdRZt0VnKDtUZ5dJs7TdcYwJGeZmvtEllaEo+WLCJBWe/CHnu9VAji97WfJC48c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=L1MdCpJO; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e1161ee54f7so4967855276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:30:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724700547; x=1725305347; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QMwN6ORMriLuuuHsKwbn4hdZecy/CTM/5XoamAdu1eY=;
-        b=ai2HhIRKNuT+C+8P3W8knK+pTMhYVbigJJeFM58q3B9U/yXjUa1Rhm3HlkgLuW42Ox
-         gbOGyTcmXN9GZ+EceQdPLJuVGQ9/p4hnRyhgiWAUppNoNGY73xdjzlUMpI/DpBhPoSTc
-         7egAbk4pBa9y1cpZEODtY1EzlrazLWtFCALEiXlNI1h2I+WYEM4q/Ng5oxxG2RVmXiti
-         hplf2VMOQyJuAXkHyugeASVUOe7ElkAvjS+Tv2+CcYsH5/XbWDY15xLUe5W1X/ZA5da8
-         fgE49CLGpUzZnY+TQeom6rTeiBCYv+oj4EJTfid1OIP42Kk/Dp5Bc28QuvWPdwFOkmVR
-         lpcw==
+        d=szeredi.hu; s=google; t=1724700609; x=1725305409; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hcRvwF87oztYXFmspwLvuXVmC1FGdlbdFo9ufr4Pf2U=;
+        b=L1MdCpJOr+SAZfVyN6Bw8R9asLhnPzW2fHnOV/QyaxtOj1y7Kav8gj0pQHgPoCH8bG
+         3imho5EzNu4EAq/EHehBKBTfSlkioWL4jvOo4VLwoNtslIZ4jKDu8Vn7eMkD0OFvgEbz
+         dAeYXJl+TxsgzEvBs+5Gn52hAW0EBcSse+++0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724700547; x=1725305347;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1724700609; x=1725305409;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QMwN6ORMriLuuuHsKwbn4hdZecy/CTM/5XoamAdu1eY=;
-        b=L1D3i6gSgcUFalhBYcflGDmI5L/gXdQgoRrbGEB0EiQqUD6fM+56KjxBwKB27uLibh
-         22ARDw65TaHOOikisGHHz8A46gfMxty8EQBMaugX7ux2OEO9dnVcN6kRF5/+hU/pREYs
-         CQHonpBWcxBwENZgbQQmmx43ATO+t7vG9y0XKStsM40r1siIaChspTyYlrRi3Oz2oUnk
-         WiCIHh7vP9xRJbjtRbZnKvBDztIMsPIwUO43JNb13G3CMvG07nDW/lQEaFtsm1vXivX9
-         fboyb2+Ug+nxxWlXw61G0hTtD7P8Z3Mt8l7nr+02e55sJwQ5x+m/ZMrYIgPpTzVlXsLZ
-         aNRg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBuJt4T5jEGMAxRU3diT0Gq/ycpPThR/T6ueh14FV/kWF5d1EufgBcFQt1s3tyncZpY/FdOJRAoL+o9SI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycEm+xFdumvBQaXWBIYrZeFSk33pTp0xbyhH4yYU5PR7GiJqfz
-	t1LJAus/8UzudmSeuUyloR7cmoe2feB3+tetjr7CZ58iOCXNrZmxEMg2bw==
-X-Google-Smtp-Source: AGHT+IGZBOQq4LU1i0WoA3ZjY6B8iOi/TvBihPp0Io6yp9XMO/kpo1VPn6S3z6ICZjKda/p31c5zmQ==
-X-Received: by 2002:a17:90b:3804:b0:2c8:53be:fa21 with SMTP id 98e67ed59e1d1-2d646d382b4mr13607741a91.34.1724700546719;
-        Mon, 26 Aug 2024 12:29:06 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d5eb913460sm12540972a91.21.2024.08.26.12.29.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 12:29:06 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux@armlinux.org.uk,
-	linux-kernel@vger.kernel.org,
-	o.rempel@pengutronix.de,
-	p.zabel@pengutronix.de
-Subject: [PATCHv4 net-next] net: ag71xx: get reset control using devm api
-Date: Mon, 26 Aug 2024 12:28:45 -0700
-Message-ID: <20240826192904.100181-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.46.0
+        bh=hcRvwF87oztYXFmspwLvuXVmC1FGdlbdFo9ufr4Pf2U=;
+        b=Ly4ZooetpamvBLAesP9RtSYQQl7eQh6Z++YDvx0P967sBDUQq7OyOQWGPOf8rQZzog
+         HOLu3heQT+3krxl0bzHZumVkA9Ho096bQh+H50e/FHLEiMgYtB+fiBZEBCTOA7DBmoxg
+         kaqgaU48Zkz5pymZiBySMUAJtVt3bLyayg5SK67+z0X+Z1/cKTsm/tde8L4lQHUp011e
+         vrTX0V7p7XcExpuB/LS0sFxTNlJTlMo7Un4mbGoMfnXnIz5/YZ7bKazGR240R94ecY/a
+         BGZ3Sw0xfyGWBRAIDmjcOBZCWYPOq1nvXqqLGLIK8tjCwSnPKlnzBa6rl4E/qIWn6j3O
+         1n2w==
+X-Forwarded-Encrypted: i=1; AJvYcCU+xlQ6shLin7WrIuqVwdc16qHfrUvokxfb4SjW0WHt16HlzkE/D+nEuw5xh1YcRVOtCOlskLxQFK1jDzE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFC/TwKErrtmEJ2J2GIDjyciFzvX+8TYh/CkykPqQWNorSFNhp
+	F+fuec9X6Eek/eh97DB6G1QMLUKpZSxKpFRZeQtlt6KYqZJ/PMQILLTJeVGDr1JFXW1rc/+2yt5
+	pOQAbm9cH1kuWfAB0QZhDHVm+6LrwjhD+Hd2HPq+HXShZ6JwZ
+X-Google-Smtp-Source: AGHT+IH9OKCoXZU4ZY1OpV22CH8LZbAk8o4r/ypIvORd7W0PJgSWCSqUslpmBTkJiaMOKHPlHpoLfy4bG+SLPynCflA=
+X-Received: by 2002:a05:6902:dc9:b0:e13:e9ca:7bcc with SMTP id
+ 3f1490d57ef6-e17a8680788mr10420377276.54.1724700608979; Mon, 26 Aug 2024
+ 12:30:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240823085146.4017230-1-yangyun50@huawei.com>
+In-Reply-To: <20240823085146.4017230-1-yangyun50@huawei.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 26 Aug 2024 21:29:57 +0200
+Message-ID: <CAJfpegu-nd9Oa+eeNKbzqtMJOgoFHgxO3fVr=2qt_WZv2EU3-w@mail.gmail.com>
+Subject: Re: [PATCH] fuse: fix memory leak in fuse_create_open
+To: yangyun <yangyun50@huawei.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	lixiaokeng@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 
-Currently, the of variant is missing reset_control_put in error paths.
-The devm variant does not require it.
+On Fri, 23 Aug 2024 at 10:52, yangyun <yangyun50@huawei.com> wrote:
+>
+> The memory of struct fuse_file is allocated but not freed
+> when get_create_ext return error.
+>
+> Fixes: 3e2b6fdbdc9a ("fuse: send security context of inode on file")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: yangyun <yangyun50@huawei.com>
 
-Allows removing mdio_reset from the struct as it is not used outside the
-function.
+Thanks, applied.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- v2: don't call after ag71xx_mdio_probe. Already done.
- v3: use devm instead.
- v4: resend
- drivers/net/ethernet/atheros/ag71xx.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
-index 89cd001b385f..d81aa0ccd572 100644
---- a/drivers/net/ethernet/atheros/ag71xx.c
-+++ b/drivers/net/ethernet/atheros/ag71xx.c
-@@ -379,7 +379,6 @@ struct ag71xx {
- 	u32 fifodata[3];
- 	int mac_idx;
- 
--	struct reset_control *mdio_reset;
- 	struct clk *clk_mdio;
- };
- 
-@@ -683,6 +682,7 @@ static int ag71xx_mdio_probe(struct ag71xx *ag)
- 	struct device *dev = &ag->pdev->dev;
- 	struct net_device *ndev = ag->ndev;
- 	static struct mii_bus *mii_bus;
-+	struct reset_control *mdio_reset;
- 	struct device_node *np, *mnp;
- 	int err;
- 
-@@ -698,10 +698,10 @@ static int ag71xx_mdio_probe(struct ag71xx *ag)
- 	if (!mii_bus)
- 		return -ENOMEM;
- 
--	ag->mdio_reset = of_reset_control_get_exclusive(np, "mdio");
--	if (IS_ERR(ag->mdio_reset)) {
-+	mdio_reset = devm_reset_control_get_exclusive(dev, "mdio");
-+	if (IS_ERR(mdio_reset)) {
- 		netif_err(ag, probe, ndev, "Failed to get reset mdio.\n");
--		return PTR_ERR(ag->mdio_reset);
-+		return PTR_ERR(mdio_reset);
- 	}
- 
- 	mii_bus->name = "ag71xx_mdio";
-@@ -712,10 +712,10 @@ static int ag71xx_mdio_probe(struct ag71xx *ag)
- 	mii_bus->parent = dev;
- 	snprintf(mii_bus->id, MII_BUS_ID_SIZE, "%s.%d", np->name, ag->mac_idx);
- 
--	if (!IS_ERR(ag->mdio_reset)) {
--		reset_control_assert(ag->mdio_reset);
-+	if (!IS_ERR(mdio_reset)) {
-+		reset_control_assert(mdio_reset);
- 		msleep(100);
--		reset_control_deassert(ag->mdio_reset);
-+		reset_control_deassert(mdio_reset);
- 		msleep(200);
- 	}
- 
--- 
-2.46.0
-
+Miklos
 
