@@ -1,231 +1,131 @@
-Return-Path: <linux-kernel+bounces-302131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEEB495FA4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:03:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB80B95FA52
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 664BE282F59
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:03:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 965AF2846A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64EF19A296;
-	Mon, 26 Aug 2024 20:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30FD199EA3;
+	Mon, 26 Aug 2024 20:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Q1SkOqg/"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZHacH0Pi"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4E9199E98
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 20:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D271D14AD0C;
+	Mon, 26 Aug 2024 20:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724702587; cv=none; b=CcJbGHWyXl6Sg1qUR0j9hshM6b2JzgyaPQEKFUCen32zlm50aMH3qK8vm1LtRvgFV5uMHiSo+CMbONpj7N9tOTByR1N7Rsq7LHOPa+RCO/hFlc3zcrcSGOnYKMAnOdnEcY8AQ39qzzY+L/B91uXiin6YC493AUDlLjgewtnlsfo=
+	t=1724702632; cv=none; b=nBzb5T4ok6n0jSKX83J9vaS6IxX+vaJ3ZCyNMa8GGcqvHIWMQh05ul1vQgcCbZAniSjF2gqdHiKNlbLkLRFuVzNCGECJAoMdtjD5blc+cz/S/BsgqM4K8JR5CgLaSHW+D3aSGktmIOnOROKHIOgTZdC+59qSYg2p0EbCHagx0gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724702587; c=relaxed/simple;
-	bh=g5xOaai0fgTbYlUKqLFRHlFw5MNLDbz9WCMjdzLGo3Q=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=chhM4RmnoMkTdU3oWp3ZX6BKGAhoPLICG+Ygf7pNf19d0AsbZhY7lJHYv0WgBMmIVz8ojkWrz3zZPbfIykeMcX2nVc18VpeCw2LH6RCuVNG3fAytfpLf0ViGvARhOq9HI/oNH2v2buskodKCwr6bWqN3KC3o3jN+z+z/iJLNJFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Q1SkOqg/; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5becdf7d36aso5230541a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 13:03:05 -0700 (PDT)
+	s=arc-20240116; t=1724702632; c=relaxed/simple;
+	bh=SJ74gEwTuALUMMJ4yxY4RwKZXzLKiT2GaQEX/jOvqNQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TYwgD8n+CLJSLeBd3W4g6TTFTYAqbA4u2jlOKIYKhDB8/LlKEX5lVktjUBrZc41gaFOLHVKhksaSNNQip4WfQT134mXEA5NSeezIi3netDvVxza+WIVQEXOcXedeqQm/kUAtbGXA1TDmfO3sg29hpProApgErdTAY+pCWEfRK9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZHacH0Pi; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2d3ba497224so497809a91.0;
+        Mon, 26 Aug 2024 13:03:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724702584; x=1725307384; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:date:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VApVdDfxKyIda0Fc340q9PZEeoaKy91HY6fQC9GFL0U=;
-        b=Q1SkOqg/iPU9Fa6gnkjlcaGewZkWbNJZulREbKAONKaBqfdeBSHESx46Si+roYQwKc
-         wSwRmavWe2pSINYwNiD1rhTJp9VfNhkdp0gFy1y8sxmp3uHzNbHB1fU7uR3leFYG4WBq
-         Pq0lQcHaA952ynFfejUsFrrgS/0Num1IbS1jtO0klPEnqHu9ok5Elh39LRMImxTi9U9q
-         osYAJExt2jS7qwxqRm1huXY7DO4pCQ0KJiCfEGkVzZDBg/o8zXujlIRe/XeDZpDbqazr
-         uwtM6LFIeCONkSeG59m6TtTktvJnYP1KUoGm38XCmFMAVJ3Kj9Mtb/DYnH9o1Exwdlrj
-         B3YA==
+        d=gmail.com; s=20230601; t=1724702630; x=1725307430; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3ObXozr3BJ6v7ZqhdBN9DFf0iC+TTqCIr3HMlLGbcJk=;
+        b=ZHacH0PihmMIll6qVLlS490wf8hvxRI/Y+5gQDBa8zCnZsnaW5Xdo3aTNk1Qq66n85
+         JBGnUQgsSjGJQG19Nsjd7KOhjPZr0mdG2FlJjVS5Zr51deyUCLtDDb06Tn96fD1HPYMW
+         CZsnNwJP+2lsgD2SSR7JaWBhTjbALyG2cKIcaLZ3FTxql8+H7wdrS0NmnGvOSnc6U5Bf
+         bqQfkC+5NHuQ2sTqAENwZUE6sjtk3GlgYeMjYRGytPW61CqEsxwCC/NG34TUUaz9Yzhd
+         lubmd9Y+o4M0r1gLTq9Shz8qNz2oJmnlPr09FPaZS91SKjJp3gVWiZgAJEKTzgHegsUy
+         qFNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724702584; x=1725307384;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VApVdDfxKyIda0Fc340q9PZEeoaKy91HY6fQC9GFL0U=;
-        b=Uaa39ul+3QAyKd+40zF3Hw5I9SZokLwZlufXI1bwwjYhFFO9d+85z3BPQnHo9qpTHz
-         EwP02dZVpxIklijAL1nFzJgsltv6mBpyKUXV7YP3ismBQK56f99U+mp8M/AylgOG/OS9
-         hSP6TmKWmkCfoBsp058xOAWIG/YZrxL+ridfaXqO+ZMcbHJhpK3qxDKQmS4JMVde+s7L
-         XTBmhZ0mvWM6AG/o79AcWKw9ocAQgJbLOAf81/UdscUw+VgqVlLE4yZKH9PzgmD2tGcI
-         L/CuR5XqZswaI/Dqp586UMTS+b4VDqKmBY2Ctkto7x2duRGDVUKz/mBth+w8Xs/kHmFy
-         yFWA==
-X-Forwarded-Encrypted: i=1; AJvYcCXTAzmEd1jk0+pTA2JM4W+DOa+mYtQ9VMCLxJr0WgWlKU+XgzGESjcA0leZjKE/pDdLIMCUI1lfaqPeIXE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt8UIlwyVRVe3AJKET2ao7ynn+FTtfWj+ixXAr/fOKJp4YQQYF
-	lesj85CAwK5cyfs2x/HWMLLyGjbx40RgoJXVcriifzEKMWG33NBla1+aG+DVQZk=
-X-Google-Smtp-Source: AGHT+IEJun9KfUteMfL59uNTGUHEpSrl0T1D6SDZ8OvEGiIZBnAyJPah0ll1ZtxJIi9VNurPdw/FLQ==
-X-Received: by 2002:a05:6402:40c5:b0:5be:dc90:d13f with SMTP id 4fb4d7f45d1cf-5c08915b944mr8842242a12.5.1724702583173;
-        Mon, 26 Aug 2024 13:03:03 -0700 (PDT)
-Received: from localhost ([87.13.33.30])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb1f62bcsm137523a12.35.2024.08.26.13.03.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 13:03:02 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Mon, 26 Aug 2024 22:03:09 +0200
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 10/11] net: macb: Add support for RP1's MACB variant
-Message-ID: <ZszffZoaK7WRRdjc@apocalypse>
-Mail-Followup-To: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <775000dfb3a35bc691010072942253cb022750e1.1724159867.git.andrea.porta@suse.com>
- <c0b904d8-073d-47ec-9466-28ae3a212dac@broadcom.com>
+        d=1e100.net; s=20230601; t=1724702630; x=1725307430;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3ObXozr3BJ6v7ZqhdBN9DFf0iC+TTqCIr3HMlLGbcJk=;
+        b=h9pfxTa45e3u9BJBb0l3+hM2KIsA3ttpWRVOvK23nwL4UNpIeqTW3cOW5WT40KxZUb
+         OLvB2i5n3zx2yD+W89T4IYoLXlLRoaWWdXlq5H9kTWver0tJu9o60e8dmvbDtaLyJeWs
+         ZcfHkbc4AZ+QBqlFdJAs93YQ/WddCev3q1v0xrEf4Q3aT1UTByT1wm/ih/3bzlkcwqQO
+         hR08X6zfWmuHSH3hd/rQR0hi6fLLBzEGoJqaszWk85inE1jK/A1+Ofb7GDqrnA8KqtR8
+         S7sdHeEoF0+WsPit94WJz94sSQckNYbXhSOiYNuFoni9oY9Ye/A1eQtTohvu1o/4Stom
+         NGAg==
+X-Forwarded-Encrypted: i=1; AJvYcCXzgxsfnSd7z8J5md/j9y2zzvAVjbc+/mq7UFuvftKOWrxB9BddYLa9eNuy2MF9KnG0NuS8nGKVxXSkVJo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSf+cflGG3b6rwIjvl2JfGlLsEdzq5SfIRrqNVxT7He4m4mady
+	gbwQkCmK74W5LFeunDET2V0Apoiqjqvc+rx1/LfHe6GcqtlMh53N3hFMYVSOQwnCdtaDYDlYfzJ
+	2R0Dn/ZyujY2iFFrQ/CtnWWN6nIaS5D/Qa5Y=
+X-Google-Smtp-Source: AGHT+IF06Qa5kKCgDuixFMP84Oud7TdmALiwNRboY94oox6pPnz2S6FVPKSATudfOFNYzfDRJrY+uZXQgkOB1Cm46Gw=
+X-Received: by 2002:a17:90b:188b:b0:2d3:c488:fa6b with SMTP id
+ 98e67ed59e1d1-2d646d8b377mr7653756a91.5.1724702630001; Mon, 26 Aug 2024
+ 13:03:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c0b904d8-073d-47ec-9466-28ae3a212dac@broadcom.com>
+References: <20240825221806.253575-1-simeddon@gmail.com>
+In-Reply-To: <20240825221806.253575-1-simeddon@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 26 Aug 2024 22:03:37 +0200
+Message-ID: <CANiq72ns_Awo3HD+P-hHrAOHQemRirtp3Zvei9OYgfLf8eWncw@mail.gmail.com>
+Subject: Re: [PATCH] scripts/checkpatch.pl: check for non-permalinks to Zulip
+To: Siddharth Menon <simeddon@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kernel-mentees@lists.linuxfoundation.org, apw@canonical.com, 
+	joe@perches.com, ojeda@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Florian,
+On Mon, Aug 26, 2024 at 12:18=E2=80=AFAM Siddharth Menon <simeddon@gmail.co=
+m> wrote:
+>
+> Zulip links to https://rust-for-linux.zulipchat.com can break in
+> case of renaming the topic or channel if they are not a message
+> links (which are permalinks).
 
-On 10:01 Wed 21 Aug     , Florian Fainelli wrote:
-> On 8/20/24 07:36, Andrea della Porta wrote:
-> > RaspberryPi RP1 contains Cadence's MACB core. Implement the
-> > changes to be able to operate the customization in the RP1.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> 
-> You are doing a lot of things, all at once, and you should consider
-> extracting your change into a smaller subset with bug fixes first:
-> 
-> - one commit which writes to the RBQPH the upper 32-bits of the RX ring DMA
-> address, that looks like a bug fix
-> 
-> - one commit which retriggers a buffer read, even though that appears to be
-> RP1 specific maybe, if not, then this is also a bug fix
-> 
-> - one commit that adds support for macb_shutdown() to kill DMA operations
-> 
-> - one commit which adds support for a configurable PHY reset line + delay
-> specified in milli seconds
-> 
-> - one commit which adds support for controling the interrupt coalescing
-> settings
-> 
-> And then you can add all of the RP1 specific bits like the AXI bridge
-> configuration.
-> 
-> [snip]
-> 
-> > @@ -1228,6 +1246,7 @@ struct macb_queue {
-> >   	dma_addr_t		tx_ring_dma;
-> >   	struct work_struct	tx_error_task;
-> >   	bool			txubr_pending;
-> > +	bool			tx_pending;
-> >   	struct napi_struct	napi_tx;
-> >   	dma_addr_t		rx_ring_dma;
-> > @@ -1293,9 +1312,15 @@ struct macb {
-> >   	u32			caps;
-> >   	unsigned int		dma_burst_length;
-> > +	u8			aw2w_max_pipe;
-> > +	u8			ar2r_max_pipe;
-> > +	bool			use_aw2b_fill;
-> >   	phy_interface_t		phy_interface;
-> > +	struct gpio_desc	*phy_reset_gpio;
-> > +	int			phy_reset_ms;
-> 
-> The delay cannot be negative, so this needs to be unsigned int.
-> 
-> > +
-> >   	/* AT91RM9200 transmit queue (1 on wire + 1 queued) */
-> >   	struct macb_tx_skb	rm9200_txq[2];
-> >   	unsigned int		max_tx_length;
-> > diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-> > index 11665be3a22c..5eb5be6c96fc 100644
-> > --- a/drivers/net/ethernet/cadence/macb_main.c
-> > +++ b/drivers/net/ethernet/cadence/macb_main.c
-> > @@ -41,6 +41,9 @@
-> >   #include <linux/inetdevice.h>
-> >   #include "macb.h"
-> > +static unsigned int txdelay = 35;
-> > +module_param(txdelay, uint, 0644);
-> > +
-> >   /* This structure is only used for MACB on SiFive FU540 devices */
-> >   struct sifive_fu540_macb_mgmt {
-> >   	void __iomem *reg;
-> > @@ -334,7 +337,7 @@ static int macb_mdio_wait_for_idle(struct macb *bp)
-> >   	u32 val;
-> >   	return readx_poll_timeout(MACB_READ_NSR, bp, val, val & MACB_BIT(IDLE),
-> > -				  1, MACB_MDIO_TIMEOUT);
-> > +				  100, MACB_MDIO_TIMEOUT);
-> 
-> Why do we need to increase how frequently we poll?
+a message -> message
 
-Thanks for your feedback, I will save all your precious suggestions for a future patch that
-will enable the macb ethernet.
-As stated in the cover letter, right now this specific patch is not intended to be upstreamed
-as is but it's just here for testing purposes, hence its 'raw' state.
-For sure the ethernet contained in RP1 will be one of the first device I will try to bring
-upstream, so I'll apply your comments there. Maybe the next time I will also add a better
-explanation about the state of a specific patch in the commit comment itself, and not only
-in the cover letter, just to be more explicit.
+> If a non-permanent zulip link is referenced emit a warning and
+> directs to the zulip documentation.
 
-Many thanks,
-Andrea 
+emit -> , then emit
+directs -> direct the user
+zulip -> Zulip
 
-> -- 
-> Florian
-> 
+> permanent links are of the format:
+> https://.../#narrow/stream/x/topic/x/near/<numerical_id>
+
+permanent -> Permanent
+
+> Reported-by: ojeda@kernel.org
+> Closes: https://github.com/Rust-for-Linux/linux/issues/110
+
+Sorry, I copy-pasted a template we use for "good first issues" and I
+should have not mentioned these two tags, because it is not a bug.
+They should be `Suggested-by` and `Link` instead. Also, please use the
+standard format "Full Name <email>".
+
+In addition, the link should be to #1104, not #110, i.e.
+https://github.com/Rust-for-Linux/linux/issues/1104
+
+> +                            "Use permanent Zulip links when possible - s=
+ee https://chat.zulip.org/api/construct-narrow#narrows-that-use-ids\n" . $h=
+erecurr);
+
+Hmm... That link seems a bit too technical.
+
+Perhaps it would be easiest to give an example here (like in the
+commit message) if there are no better docs about this.
+
+Thanks!
+
+Cheers,
+Miguel
 
