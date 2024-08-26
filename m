@@ -1,38 +1,38 @@
-Return-Path: <linux-kernel+bounces-301113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1772D95EC85
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:57:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9091795EC88
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C80872810BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:57:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4279D281BF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261A71422B8;
-	Mon, 26 Aug 2024 08:57:41 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F1C145B01;
+	Mon, 26 Aug 2024 08:57:42 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7879C13D63E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E3B13D532;
 	Mon, 26 Aug 2024 08:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724662660; cv=none; b=POMK3/btQBPPvVXE4zo9qprCposqbfdwlw7vgPqqt/2h+fu52yjm4AFY5UKgW/fMUEIrH2xdsHxxA1P3cc25j4mcWHH3s7tCLsSRD+iKe7ioK6zYSsasPKNQhqk+3vrXdEtW/0rgbiGZhhnaxkYfMPbNl8EtsX/Tee6GKHftcGA=
+	t=1724662661; cv=none; b=RHUMfSjgdPjN4W8T+Z5TWGO+YrhSQRfc3gzdivAZPlkjMxJmGqEXKyd1AV3rOzItwhCap4YucascyUby2m9RIqO7fjeIRe2tT+/cCPPV3R4TX16qzQDXITOuac3ReCnXalN60EdUVN47C1LlrMHX01P8sR5sFhjH3uNUHiA1iZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724662660; c=relaxed/simple;
-	bh=pZGOERsvhHa8WHbFHYy/SccQjvulZF6Isev0LBjxEqU=;
+	s=arc-20240116; t=1724662661; c=relaxed/simple;
+	bh=z1HFNNdFqZGfGNDw6EeA7y8hXdBijGmmkHWO4/tSfe8=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t1Ndqe5MblfI8XaM0//4hbLRL8bobPUFQxV9jeqiri6ywXM+RyGc8eEOXzck+qXUvLSgr/EXJAkRsGKAdubdcSadx1wVqJ5+kmORdEpbWYEKf0y14RHWDVz/Lq54k442OhudaRDLVHDPrhmHOgyJEqzsr+tm+wG0+J5KO6bhfsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+	 MIME-Version:Content-Type; b=HVCfok830YvKiWNfyXQvLrBcsJrdj0xkFZ3WM96kD28S6Jp2yYT+arXiUi3gpmawnaezYwpgR/hdgQAcU3RGUvYTmjVZXu2jw7nptziBXrVLG9vYUIbsAlZdKe+YVkh1MP920nyrxEZ2tfSRfmT7RgvAw+5KKw3fgYf4LUA3P2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wsl0f1txGzpVjH;
-	Mon, 26 Aug 2024 16:56:50 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Wsl1L6bxLz1S8ww;
+	Mon, 26 Aug 2024 16:57:26 +0800 (CST)
 Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
-	by mail.maildlp.com (Postfix) with ESMTPS id 01D5D14037E;
+	by mail.maildlp.com (Postfix) with ESMTPS id 296BC140120;
 	Mon, 26 Aug 2024 16:57:36 +0800 (CST)
 Received: from huawei.com (10.67.174.77) by dggpemm500020.china.huawei.com
  (7.185.36.49) with Microsoft SMTP Server (version=TLS1_2,
@@ -48,9 +48,9 @@ CC: <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
 	<kai.vehmanen@linux.intel.com>, <liaochen4@huawei.com>,
 	<u.kleine-koenig@pengutronix.de>, <andy.shevchenko@gmail.com>,
 	<kuninori.morimoto.gx@renesas.com>, <robh@kernel.org>
-Subject: [PATCH -next 3/4] ASoC: tda7419: fix module autoloading
-Date: Mon, 26 Aug 2024 08:49:23 +0000
-Message-ID: <20240826084924.368387-4-liaochen4@huawei.com>
+Subject: [PATCH -next 4/4] ASoC: fix module autoloading
+Date: Mon, 26 Aug 2024 08:49:24 +0000
+Message-ID: <20240826084924.368387-5-liaochen4@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240826084924.368387-1-liaochen4@huawei.com>
 References: <20240826084924.368387-1-liaochen4@huawei.com>
@@ -70,20 +70,20 @@ based on the alias from of_device_id table.
 
 Signed-off-by: Liao Chen <liaochen4@huawei.com>
 ---
- sound/soc/codecs/tda7419.c | 1 +
+ sound/soc/codecs/chv3-codec.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/codecs/tda7419.c b/sound/soc/codecs/tda7419.c
-index 386b99c8023b..7d6fcba9986e 100644
---- a/sound/soc/codecs/tda7419.c
-+++ b/sound/soc/codecs/tda7419.c
-@@ -623,6 +623,7 @@ static const struct of_device_id tda7419_of_match[] = {
- 	{ .compatible = "st,tda7419" },
- 	{ },
+diff --git a/sound/soc/codecs/chv3-codec.c b/sound/soc/codecs/chv3-codec.c
+index ab99effa6874..40020500b1fe 100644
+--- a/sound/soc/codecs/chv3-codec.c
++++ b/sound/soc/codecs/chv3-codec.c
+@@ -26,6 +26,7 @@ static const struct of_device_id chv3_codec_of_match[] = {
+ 	{ .compatible = "google,chv3-codec", },
+ 	{ }
  };
-+MODULE_DEVICE_TABLE(of, tda7419_of_match);
++MODULE_DEVICE_TABLE(of, chv3_codec_of_match);
  
- static struct i2c_driver tda7419_driver = {
+ static struct platform_driver chv3_codec_platform_driver = {
  	.driver = {
 -- 
 2.34.1
