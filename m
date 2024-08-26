@@ -1,166 +1,155 @@
-Return-Path: <linux-kernel+bounces-301210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96BB195EDC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:54:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D288095EDC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:55:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB2E31C2157E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:54:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F5F51F21554
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69880146A6C;
-	Mon, 26 Aug 2024 09:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49481465AE;
+	Mon, 26 Aug 2024 09:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HrDhllmh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PZlBbLZx"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE61F145B39;
-	Mon, 26 Aug 2024 09:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96EAC145B1F
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724666042; cv=none; b=GwY07sU+TY7cYSmHsPqOpGzCbDdAKaKu+I6xREpi7S72HTbUaZsitWIA3MsbjLCB7+tETOi18vppDOfx1IwESH8nO7NSuuCtWlYl/kL+vy0KM7Lgr6PFa4HIYCAuswrMlNoQA6Mm7gIDpR/7ZPhdti45aCdemCFWUZczXE/WVWI=
+	t=1724666129; cv=none; b=UaShpMpvoE39G+/eYeRp1ICKvqyHnmqUq0HkQZoqEdgFWoBHuyccYEGVwCn1kR2l8EdXlTfa/0+W4zhEUGy8j99u+RRDMjXdt10WNabU7mneb9YF42JDgJUCKu3gllQLie478pSCQ23lt+hZpwIH3PwlkogQc85B4U9TefOXCaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724666042; c=relaxed/simple;
-	bh=vcYdnQgyCRay33ToVuzJbo8c+h90tN2Lwg3BJDUr05I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rImnKq5dzsiuZ6ehFCJT1+WoFABrA56AG8o33Z8kWrXApMM6vozdknL01LPqOy2R5GOIEUxeF5UgNQx+RoATHDh9GsBdNiMwPzt7RQDSoxappCg9zejWsFe/bp5ivajF759H7CIUAfsiYvpe/Rn+S2ylUe/wFtUVauJ6YieqZKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HrDhllmh; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724666040; x=1756202040;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vcYdnQgyCRay33ToVuzJbo8c+h90tN2Lwg3BJDUr05I=;
-  b=HrDhllmhAcd+BMObqsqqZn/tzxz97/yzvr7f8uD3PFZh04KOXuGVHwEW
-   fSV3okNtubrh9GhO64UkWGLnVtXKFeT+NC4wwR6tSzGWcAc0UT7OuQ09A
-   qs31MI96+w1c1BzvCFzngY/UHlaMB4TPBE/AWLc3weoay1OozbqsEw6aY
-   khDcN4G3NkKcf1UF+ZYTy2uwgiXfr5Z78jgqrByY4RsqiwlqAa6PnaDDA
-   iBiUdIwLoZoc3R5X+95ZXB6hEKznvFsDG79a00J4Ks4lYKg/MS3T3hq3x
-   /s7chvY60SRvYObNWANmS6PdAZXhyHQwU8qQtNXjrJdyAoLCA0WnS6HlG
-   w==;
-X-CSE-ConnectionGUID: 3FTmYfuqS16tibRFs4Zq7g==
-X-CSE-MsgGUID: Gd1qVGoyT0GIkq6g9B9O1Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="48467951"
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="48467951"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 02:53:59 -0700
-X-CSE-ConnectionGUID: UmlrG8MtTlybU7QDnnFdgA==
-X-CSE-MsgGUID: uey+g6LCQp2NzzOVcPT78w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="93193023"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 26 Aug 2024 02:53:53 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1siWQ2-000Gql-0l;
-	Mon, 26 Aug 2024 09:53:50 +0000
-Date: Mon, 26 Aug 2024 17:53:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>, Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 07/17] mm: Define VM_DROPPABLE for powerpc/32
-Message-ID: <202408261757.D4gOewE9-lkp@intel.com>
-References: <315e3a268b165b6edad7dcb723b0d8a506a56c4e.1724309198.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1724666129; c=relaxed/simple;
+	bh=5j3I46k6ptwrT5KLfjuvRJi02PLBHAdj9fxSvDP75Io=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=iQK3Armv4I3BaCjycfc3UJmRcypfwTOpraVfnVaIr5L1JSc6oRnEW7kR8HLnZOx8UzIzqod9v1Wb83Wz0mTLMxvQsdr0pa1rVupz2lUyruRJtg3zdUNYIX35/3DaoNripm1hiI7/1naoLvpu3x9loI+YxkVDIigv/Ua7Z6hiK8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PZlBbLZx; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37193ef72a4so2448772f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 02:55:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724666126; x=1725270926; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VK7ceKk9+QuKgFb+l7lbOmbbJTuc/8ZMI5BdFql0QbQ=;
+        b=PZlBbLZxOX3gpM73VWcHaM6ZQ0dCrvBmshz9RzkGx1oxPQbtj7Tss75dyAa0gaImxc
+         7fafDjKPTVF9LYCncGZdxcXVYC/+pdWvjfOHyxShQCdcc+qPf7r3iWTqyh7AR7719A4v
+         cCARfs2EfSRdIMl7D7xYNy0/50ovtWLbl5W5HjSOcuGsjKxskVGyHWgb2D3kaQOkER5b
+         FaM2yNOs8XoF1iKJvDAEq2DJVw/R7Ur9sQtjH7hz/6mKIyIomnHQSDKTXJ92nFq8nZcC
+         EnAVidgpBbU2HqV+fCuQYsWDFdDDOVm0lFpT5P2pGwE7sb36pn4pt0oXJHOX82yVQS60
+         SICA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724666126; x=1725270926;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VK7ceKk9+QuKgFb+l7lbOmbbJTuc/8ZMI5BdFql0QbQ=;
+        b=SQ/Q2cIPkNWbZJdyxFyjMCmpKBY2IerTJ1MRH4+q4pRE0UxVJCA4iPy+f+oaW9qMI0
+         mfvDGvCkuM/RKEofi8t4f9qJIKseNx6qaoRL0Gfbj5WTOi39J7ly373DJwrA1GSmDJlW
+         IRPKo0rntV5TberYaZbVZRUpNBA54dXDO1oWCNsGA/4EdmhP005lqp7MXzG/eA1E1axs
+         yJdC0zPOx8LQYMb+9VtqMiBC8aipHEkLlPNhyROCXOlLv7n9p35CfF0NQwZ9ZaO+YYBt
+         qLbWLyzkP8uMdqzblmjwPEYre+CadMOniTuT08RWxGFunagPxI8Vxom7R1OH0g3vZcaH
+         siRg==
+X-Gm-Message-State: AOJu0Ywflf7HhhY3beukVVfKIjK215YI4vFiQFqK6fFNBLSed2MAnrZ3
+	mnt7MCAjSc+8DpcL5be8A9BObquU2zqvXxUXLKtIs7rFKCHarXjBEqMYHTf3mok=
+X-Google-Smtp-Source: AGHT+IFreUR3/E7uHdXTquMSkJpFO/dW71VumcJUcTwCvc9tqzIioKTR8C4yLeHdVUzlxat4VoCD7g==
+X-Received: by 2002:adf:a209:0:b0:367:8f29:f7b6 with SMTP id ffacd0b85a97d-37311919579mr5512128f8f.51.1724666125502;
+        Mon, 26 Aug 2024 02:55:25 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:7355:c4a4:da66:6d71? ([2a01:e0a:982:cbb0:7355:c4a4:da66:6d71])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac51860e8sm147572485e9.48.2024.08.26.02.55.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 02:55:25 -0700 (PDT)
+Message-ID: <c6fa1da6-c244-4fe8-9ef1-dd2c9b76f2f9@linaro.org>
+Date: Mon, 26 Aug 2024 11:55:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <315e3a268b165b6edad7dcb723b0d8a506a56c4e.1724309198.git.christophe.leroy@csgroup.eu>
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 0/2] clk: qcom: gcc-sm8550: Fix shared clk parking
+ breakage
+To: Stephen Boyd <swboyd@chromium.org>, Bjorn Andersson
+ <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ patches@lists.linux.dev, linux-clk@vger.kernel.org,
+ Amit Pundir <amit.pundir@linaro.org>, Taniya Das <quic_tdas@quicinc.com>
+References: <20240819233628.2074654-1-swboyd@chromium.org>
+ <d03d5425-bd7c-4c20-a54e-5708ffd059e0@linaro.org>
+ <CAE-0n52=kQzEx76D5AmZfui_X0jqejQ+ENz+VQunY_ovph65Hw@mail.gmail.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <CAE-0n52=kQzEx76D5AmZfui_X0jqejQ+ENz+VQunY_ovph65Hw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Christophe,
+On 23/08/2024 22:33, Stephen Boyd wrote:
+> Quoting neil.armstrong@linaro.org (2024-08-21 08:44:00)
+>> Hi,
+>>
+>> On 20/08/2024 01:36, Stephen Boyd wrote:
+>>> Amit Pundir reported[1] that a recent commit 01a0a6cc8cfd ("clk: qcom:
+>>> Park shared RCGs upon registration") broke USB and audio on sm8550-hdk.
+>>> These two patches fix the issue by skipping the parking bit of the
+>>> shared RCGs for devices that can't run so slow.
+>>>
+>>> [1] https://lore.kernel.org/CAMi1Hd1KQBE4kKUdAn8E5FV+BiKzuv+8FoyWQrrTHPDoYTuhgA@mail.gmail.com/
+>>>
+>>> Stephen Boyd (2):
+>>>     clk: qcom: gcc-sm8550: Don't use parking clk_ops for QUPs
+>>>     clk: qcom: gcc-sm8550: Don't park the USB RCG at registration time
+>>>
+>>>    drivers/clk/qcom/clk-rcg.h    |  1 +
+>>>    drivers/clk/qcom/clk-rcg2.c   | 30 +++++++++++++++++++
+>>>    drivers/clk/qcom/gcc-sm8550.c | 54 +++++++++++++++++------------------
+>>>    3 files changed, 58 insertions(+), 27 deletions(-)
+>>>
+>>>
+>>> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+>>
+>> I'm pretty sure sm8450 & sm8650 (and probably other SoCs) could be also affected, could you check ?
+> 
+> Does someone have the hardware to test? It looks like sm8450 isn't using
+> the shared ops, but sm8650 is, likely incorrectly.
 
-kernel test robot noticed the following build warnings:
+I can't reproduce the uart issue on 8650, I'll try moving some dependencies (CLK, ICC, ..) as modules.
 
-[auto build test WARNING on powerpc/next]
-[also build test WARNING on powerpc/fixes shuah-kselftest/next shuah-kselftest/fixes crng-random/master linus/master v6.11-rc5 next-20240823]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Bryan reproduced it on X1, and he posted a patch.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Christophe-Leroy/asm-generic-unaligned-h-Extract-common-header-for-vDSO/20240826-103525
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git next
-patch link:    https://lore.kernel.org/r/315e3a268b165b6edad7dcb723b0d8a506a56c4e.1724309198.git.christophe.leroy%40csgroup.eu
-patch subject: [PATCH v2 07/17] mm: Define VM_DROPPABLE for powerpc/32
-config: x86_64-buildonly-randconfig-002-20240826 (https://download.01.org/0day-ci/archive/20240826/202408261757.D4gOewE9-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240826/202408261757.D4gOewE9-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408261757.D4gOewE9-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from include/trace/events/page_ref.h:11,
-                    from mm/debug_page_ref.c:6:
->> include/trace/events/mmflags.h:168:5: warning: "VM_DROPPABLE" is not defined, evaluates to 0 [-Wundef]
-     168 | #if VM_DROPPABLE != VM_NONE
-         |     ^~~~~~~~~~~~
->> include/trace/events/mmflags.h:168:21: warning: "VM_NONE" is not defined, evaluates to 0 [-Wundef]
-     168 | #if VM_DROPPABLE != VM_NONE
-         |                     ^~~~~~~
-   In file included from include/trace/events/page_ref.h:11,
-                    from include/trace/define_trace.h:95,
-                    from include/trace/events/page_ref.h:135:
->> include/trace/events/mmflags.h:168:5: warning: "VM_DROPPABLE" is not defined, evaluates to 0 [-Wundef]
-     168 | #if VM_DROPPABLE != VM_NONE
-         |     ^~~~~~~~~~~~
->> include/trace/events/mmflags.h:168:21: warning: "VM_NONE" is not defined, evaluates to 0 [-Wundef]
-     168 | #if VM_DROPPABLE != VM_NONE
-         |                     ^~~~~~~
-   In file included from include/trace/events/page_ref.h:11,
-                    from include/trace/trace_events.h:94,
-                    from include/trace/define_trace.h:102:
->> include/trace/events/mmflags.h:169: warning: "IF_HAVE_VM_DROPPABLE" redefined
-     169 | # define IF_HAVE_VM_DROPPABLE(flag, name) {flag, name},
-         | 
-   include/trace/events/mmflags.h:171: note: this is the location of the previous definition
-     171 | # define IF_HAVE_VM_DROPPABLE(flag, name)
-         | 
-
-
-vim +/VM_DROPPABLE +168 include/trace/events/mmflags.h
-
-   167	
- > 168	#if VM_DROPPABLE != VM_NONE
- > 169	# define IF_HAVE_VM_DROPPABLE(flag, name) {flag, name},
-   170	#else
-   171	# define IF_HAVE_VM_DROPPABLE(flag, name)
-   172	#endif
-   173	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Neil
 
