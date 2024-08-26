@@ -1,142 +1,145 @@
-Return-Path: <linux-kernel+bounces-301549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85EF895F268
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:09:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39B3595F26B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8AAC1C21BBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:09:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9B88282C99
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:09:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9E317C985;
-	Mon, 26 Aug 2024 13:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBF717BECB;
+	Mon, 26 Aug 2024 13:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jW2kLdfk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zzurg8pP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D084810F7;
-	Mon, 26 Aug 2024 13:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D9A17BEC1
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 13:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724677734; cv=none; b=UqTWmQ043gk8GrIAlG0VMUgEZh6doHBgiuvN4uTXCISg400vFnRvASymP4eAw8l2JeYR7M9kpvyoApCpdE2jtBqyCNeZ6ZWXS7D0tBTkfW2nHRGm9VidrXJ0On18l4apPHTplRXBDHpXCRsDiMPC4oLbE6Y7TgLNZ9MCSVabJz0=
+	t=1724677761; cv=none; b=EpRGuV/I8bBAVwvYxrQaWXoF+Hz9BcIfpg97iXu4M5ExWFLODoxUhynpf9fLSO7XINal4o6Y4QmhCGg6UP1nHHFiCUUZX4566qSqLC9XDWpZTSMfmRYR+/0EN8EEXxICkg9Bg835hizZQHdcaYx9nbB1u6xeB6H13o7MIguAsnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724677734; c=relaxed/simple;
-	bh=BRONPixzBL0ZszZpb2xwZFsJg5ZB3SZbawc7G5yzV58=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sRGZ/U+j2jq5wBnbfzwdkmW6cm7dT73xmgHnQgycxZDqphko3pxI4F2mgmVMM3ZoGrpV3DFSpHYVBDOMtz75fqvWJqkmiHGhLyKAbFVjm6nK5gFiioX5uQ+Xm41IYBSVpcLJxYikD2U3BmOxNWpEz9eybSS6vorw8ZX3oLRh2Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jW2kLdfk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C6AAC56890;
-	Mon, 26 Aug 2024 13:08:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724677733;
-	bh=BRONPixzBL0ZszZpb2xwZFsJg5ZB3SZbawc7G5yzV58=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jW2kLdfk+I4ftnJrw0QXlqy0m0RbtkcKqstKGg9L0LO15XukG4H2837ido4aW1/7b
-	 1QzNh/4RZBwzRJBxqY5LeSmqhT2M6BVwzuY2BXjYRFtBL+bRlmnWLs+JUwiNL5mrKW
-	 xPprQHb1eJWlgwG+IRLJKB+CheIJKWQ6tx7dadhd7uhvdySh43ozmc6varjD9/16sO
-	 hRuJb7LL87s/oE52O65CVi/dLuRwvrzdZucfBPsO8ZpJeIi8ftxNqYGhSjUOg2hdi5
-	 EJ79JRHTCfDaPr2axXLEyCOWEX+WBJn7sgeznyW07INKQaUsg6NxKbodAPYU2fGu8J
-	 yAoMtZx3MrJ1A==
-Date: Mon, 26 Aug 2024 15:08:45 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
-	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
-	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Olga Kornievskaia <okorniev@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, Jonathan Corbet <corbet@lwn.net>, Tom Haynes <loghyr@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 5/7] fs: add an ATTR_CTIME_DLG flag
-Message-ID: <20240826-glasdach-zaudern-ee3d4761973c@brauner>
-References: <20240826-delstid-v2-0-e8ab5c0e39cc@kernel.org>
- <20240826-delstid-v2-5-e8ab5c0e39cc@kernel.org>
+	s=arc-20240116; t=1724677761; c=relaxed/simple;
+	bh=krS2VaBppneILM7gfTnfx3OVkr1ELQSKXTwWYy1xhHk=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=XOcnBf0Xk2nOQAxX+ovQG0nDK//zk/bciDdMSE8tUq5r4d2WgpYZVykNciqCnElOnnR6wyb/FyhVdNtsO0jAD+xiMh/hbOPxfnzhPnD637ESSid7+fp4CVgwSOycnsqu50tUfULu54ejGuMjzKa/icFSr26Yyc88GcnO7BlrGaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zzurg8pP; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724677761; x=1756213761;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=krS2VaBppneILM7gfTnfx3OVkr1ELQSKXTwWYy1xhHk=;
+  b=Zzurg8pPFz8Wky8wa5bWjdiJC3rMjkGbUlHp0yIH6tzjB2WB02/NAtcX
+   2DIaESX4LQUnOt1YR8Hg7LCnI9q8RAh9AUYbgV1qT4uVbCV4iXGeC44AQ
+   cU0uy9pTVwbPf0InNLuVbR1qeu+00p4WNyU5KzU+Md4YAzfVqGDt61Atw
+   cwXXuWEUkGbj9jAz/ch3giDaeGUK5H6pd9hzToZwrHM98Ngb8+sutZuvw
+   fwdr3qMRhO/pvqrmHG8KDMN75quZ5WOiDRBrgI8h1vRGF4f/YFQJPjVrz
+   VYgd8rPpawp/U5QxGU2r5J5eA3SvNNzPB1qAxVLrgXKhdGaJms/mIsvy4
+   Q==;
+X-CSE-ConnectionGUID: M6TbEXm9TKalz+d5843Xgw==
+X-CSE-MsgGUID: Wd9QOBXrSUmPGRCVs1lMyQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23279050"
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="23279050"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 06:09:20 -0700
+X-CSE-ConnectionGUID: H9y2qJELRqC22Fs7EA7Qvg==
+X-CSE-MsgGUID: D+EWo81qTsqNgvuS/BZTzw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="62476930"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.238.251]) ([10.124.238.251])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 06:09:17 -0700
+Message-ID: <242056a5-9d16-415a-9913-0add5b050f47@linux.intel.com>
+Date: Mon, 26 Aug 2024 21:09:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240826-delstid-v2-5-e8ab5c0e39cc@kernel.org>
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Minwoo Im <minwoo.im@samsung.com>,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ Joel Granados <j.granados@samsung.com>, Klaus Jensen <k.jensen@samsung.com>
+Subject: Re: [PATCH RFC PREVIEW 1/6] iommu/vt-d: Separate page request queue
+ from SVM
+To: Klaus Jensen <its@irrelevant.dk>, David Woodhouse <dwmw2@infradead.org>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Kevin Tian <kevin.tian@intel.com>
+References: <20240826-iopf-for-all-v1-0-59174e6a7528@samsung.com>
+ <20240826-iopf-for-all-v1-1-59174e6a7528@samsung.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240826-iopf-for-all-v1-1-59174e6a7528@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 26, 2024 at 08:46:15AM GMT, Jeff Layton wrote:
-> When updating the ctime on an inode for a setattr with a multigrain
-> filesystem, we usually want to take the latest time we can get for the
-> ctime. The exception to this rule is when there is a nfsd write
-> delegation and the server is proxying timestamps from the client.
+On 2024/8/26 19:40, Klaus Jensen wrote:
+> From: Joel Granados<j.granados@samsung.com>
 > 
-> When nfsd gets a CB_GETATTR response, we want to update the timestamp
-> value in the inode to the values that the client is tracking. The client
-> doesn't send a ctime value (since that's always determined by the
-> exported filesystem), but it does send a mtime value. In the case where
-> it does, then we may also need to update the ctime to a value
-> commensurate with that.
+> IO page faults are no longer dependent on CONFIG_INTEL_IOMMU_SVM. Move
+> all Page Request Queue (PRQ) functions that handle prq events to a new
+> file in drivers/iommu/intel/prq.c. The page_req_des struct is made
+> available in drivers/iommu/intel/iommu.h.
 > 
-> Add a ATTR_CTIME_DELEG flag, which tells the underlying setattr
-
-Fwiw: disconnect between commit message and actually used ATTR_CTIME_DLG.
-
-> machinery to respect that value and not to set it to the current time.
+> No functional changes are intended. This is a preparation patch to
+> enable the use of IO page faults outside the SVM and nested use cases.
 > 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> Signed-off-by: Joel Granados<j.granados@samsung.com>
 > ---
-
-Are you set on sending us on a mission to free up ATTR_* bits after
-freeing up FMODE_* bits? ;)
-
-If there's going to be more ATTR_*DELEG* flags that modify the
-behavior when delegation is in effect then we could consider adding
-another unsigned int ia_deleg field to struct iattr so that you can check:
-
-if (ia_valid & ATTR_CTIME) {
-	if (unlikely(iattr->ia_deleg & ATTR_CTIME))
-		// do some special stuff
-	else
-		// do the regular stuff
-}
-
-or some such variant.
-
->  fs/attr.c          | 10 +++++++++-
->  include/linux/fs.h |  1 +
->  2 files changed, 10 insertions(+), 1 deletion(-)
+>   drivers/iommu/intel/Makefile |   2 +-
+>   drivers/iommu/intel/iommu.c  |  18 +--
+>   drivers/iommu/intel/iommu.h  |  40 +++++-
+>   drivers/iommu/intel/prq.c    | 290 ++++++++++++++++++++++++++++++++++++++++
+>   drivers/iommu/intel/svm.c    | 308 -------------------------------------------
+>   5 files changed, 331 insertions(+), 327 deletions(-)
 > 
-> diff --git a/fs/attr.c b/fs/attr.c
-> index 7144b207e715..0eb7b228b94d 100644
-> --- a/fs/attr.c
-> +++ b/fs/attr.c
-> @@ -295,7 +295,15 @@ static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
->  		return;
->  	}
->  
-> -	now = inode_set_ctime_current(inode);
-> +	/*
-> +	 * In the case of an update for a write delegation, we must respect
-> +	 * the value in ia_ctime and not use the current time.
-> +	 */
-> +	if (ia_valid & ATTR_CTIME_DLG)
-> +		inode_set_ctime_to_ts(inode, attr->ia_ctime);
-> +	else
-> +		now = inode_set_ctime_current(inode);
-> +
->  	if (ia_valid & ATTR_ATIME_SET)
->  		inode_set_atime_to_ts(inode, attr->ia_atime);
->  	else if (ia_valid & ATTR_ATIME)
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 7c1da3c687bd..43a802b2cb0d 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -211,6 +211,7 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
->  #define ATTR_TIMES_SET	(1 << 16)
->  #define ATTR_TOUCH	(1 << 17)
->  #define ATTR_DELEG	(1 << 18) /* Delegated attrs (don't break) */
-> +#define ATTR_CTIME_DLG	(1 << 19) /* Delegation in effect */
+> diff --git a/drivers/iommu/intel/Makefile b/drivers/iommu/intel/Makefile
+> index c8beb0281559..d3bb0798092d 100644
+> --- a/drivers/iommu/intel/Makefile
+> +++ b/drivers/iommu/intel/Makefile
+> @@ -1,6 +1,6 @@
+>   # SPDX-License-Identifier: GPL-2.0
+>   obj-$(CONFIG_DMAR_TABLE) += dmar.o
+> -obj-$(CONFIG_INTEL_IOMMU) += iommu.o pasid.o nested.o cache.o
+> +obj-$(CONFIG_INTEL_IOMMU) += iommu.o pasid.o nested.o cache.o prq.o
+>   obj-$(CONFIG_DMAR_TABLE) += trace.o cap_audit.o
+>   obj-$(CONFIG_DMAR_PERF) += perf.o
+>   obj-$(CONFIG_INTEL_IOMMU_DEBUGFS) += debugfs.o
 
-What's the interaction between ATTR_DELEG and ATTR_CTIME_DLG? I think
-that's potentially confusing.
+Thanks for the patch! Now that IOPF is separate from SVA, the Kconfig
+needs to be updated accordingly.
+
+diff --git a/drivers/iommu/intel/Kconfig b/drivers/iommu/intel/Kconfig
+index f52fb39c968e..2888671c9278 100644
+--- a/drivers/iommu/intel/Kconfig
++++ b/drivers/iommu/intel/Kconfig
+@@ -15,6 +15,7 @@ config INTEL_IOMMU
+         select DMA_OPS
+         select IOMMU_API
+         select IOMMU_IOVA
++       select IOMMU_IOPF
+         select IOMMUFD_DRIVER if IOMMUFD
+         select NEED_DMA_MAP_STATE
+         select DMAR_TABLE
+@@ -51,7 +52,6 @@ config INTEL_IOMMU_SVM
+         depends on X86_64
+         select MMU_NOTIFIER
+         select IOMMU_SVA
+-       select IOMMU_IOPF
+         help
+           Shared Virtual Memory (SVM) provides a facility for devices
+           to access DMA resources through process address space by
+
+Thanks,
+baolu
 
