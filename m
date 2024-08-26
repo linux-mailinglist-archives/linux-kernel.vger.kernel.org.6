@@ -1,122 +1,86 @@
-Return-Path: <linux-kernel+bounces-300699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3805C95E753
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:31:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D23195E755
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 682271C21160
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 03:31:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCEFD28029B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 03:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC10339AB;
-	Mon, 26 Aug 2024 03:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lvAD2m4I"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B67374C3;
+	Mon, 26 Aug 2024 03:32:04 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7E0B64A;
-	Mon, 26 Aug 2024 03:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D02B10A0D
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 03:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724643100; cv=none; b=Cm6CF7b/PXhVPQbwiWWuysFF8Fc0K3XIGFlbLRa7V+addS51FMs22zZ0uXQ87Y4xqjFs3THtvpqpV72GfvCTwxPmVlSPs87RQH8On8SEf2JzJT9Xv+5zn4rQNGC4HmU+JvDkw6VB79fSX6BgenUKiEFslsoLvqXC58jvv7Vma50=
+	t=1724643123; cv=none; b=jt7eGAU54ioms+TRkPkW4ciCW2Sqpj3ZAeWzDWXs2SUiT7Oh5Ewq7P7ItXqFSDsvgRH2/xKrLMvG/SgRkZASSwXjX/Qra0j8vBev5tWiRZxqhqI6X1vmIDzyWuurJ9hmw8cp5PHyKLpcHK4MdETODcCdi1P25AmVDJ/fScrZwS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724643100; c=relaxed/simple;
-	bh=hU6ZkN6uaJUG/lvOYKBOrkXIuPlwxW2VXkGjuiD/PKk=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Y/ZxpUb98bEF9CcnZ8WBzG9+SB4p2ulyZTdvUKMwrJzKcx4kFWyKxPe2cDXmVWVd3gAvCyrZGaMtp/JKE0R2kAKTBWcW7y2Xi58C/RqjFtp0nFHUTJyVdGRjKNngAtMqvgxACRyKA4pOQe7wu56TForfFl4VlPKPlXv4PQI3ibk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lvAD2m4I; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2d3e44b4613so2706524a91.3;
-        Sun, 25 Aug 2024 20:31:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724643099; x=1725247899; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hU6ZkN6uaJUG/lvOYKBOrkXIuPlwxW2VXkGjuiD/PKk=;
-        b=lvAD2m4IvFeIKRydrebqQ7IJhOxhO2JL1Ee5vTA0IsmWzKmUnaN4K2OE4K82gMX0tK
-         tRo8Nwr6ccyVeQXFA/eIB4e1LdayDm/rI5a8RqBPRHnSNYqydzHyXYjL1nz2KlEvi6Nv
-         gLJX8H1rvfl5rQ4I6USf4c1mnU4t5Wzs6+Wep9k+GfsBG74k1LWQxihaME+upWr1Kt9n
-         TgyFV+dCKw1VsoHpYfzIA1qq1wsthfM7OOFSc6HMlwSQ6WcEmzN2wNRfn4B7tRs33lv2
-         VCWQ6PEMz6VD0wFMG2MA2nEt0fy8jnq5kdYY3T1zs29XyspdZo4A2FmbMKAwiYdi8T8A
-         XcVw==
+	s=arc-20240116; t=1724643123; c=relaxed/simple;
+	bh=+8yDqNMBMZzrHcXeLinY1P35asbAlrXJIGjPeOuN200=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=o1XHJ6pgSiMZQIbpr3YhmUL71RXVK9nDAKFS2b+wNtD58UWHOIJMrYQjPpi1s2ezpJoA8x9FiRtqo9KPPSqIV8vHa6QhdKw0GHRUmQF5XEkGw83UqU2XYMokVG9eEgZBj5EaDi4q6TfICuiYgwHViOKpSIjSiAsuyPlhpFb4kD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39d2044b532so37045075ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 20:32:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724643099; x=1725247899;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hU6ZkN6uaJUG/lvOYKBOrkXIuPlwxW2VXkGjuiD/PKk=;
-        b=giolMpDV8t9lEeI046PMfaHYKTrlPIo2zNo4oBaEb9Gp/9TXKLj7iYPsZxt/DwXR0L
-         PecoPYtrK5vX9kACylKmFrivbaqlw31z7ZOKsrqFBf/1jh6zXGfp7H7tkhtYVX5SXCS6
-         rdwYa/CpXSrAbg6eUF3yiGsp70kEUOsZh5u3cKdw8GLjeGuwPQi9YFo/pREkNl0850Qb
-         1OcXmRlPD9r3fY2yB1VSPl6gQtvxhG0pMHQnI41t5qxKWTyZoy0976PvPP8XaI+ahSi9
-         lniDuNEGF2y6sYb9mRk+lQo+b1MDK7eooqUFY/QjpDSTkj/5O3TQLmpLAgktZFwR/iGk
-         P1qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVCbN/Pvyl9ZLT0JuirfFy+kqBP+pcAGzM/P1ScsHbZNs2xe1kONQbQJyMFlbk1dq0exgYeM1f/dKB62yE=@vger.kernel.org, AJvYcCWuNP8PnrCKOrcT8k2vCU+TFH8DwEDEYHc61TXRdBEvmDg763QBhnd/4WdsmrlZBZhnIYCeE9Aj/ZkbA4vLHQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZQaKN6a3kYOgeyVfa4KeZkckQCEM5jU/e6IbCb01ey7vaWBQK
-	ZSJdrBQsJOIl9+QmuBVuWfbrKv9aX2dqKgDdayIvHmulSMfrzKcL
-X-Google-Smtp-Source: AGHT+IFE70VUGhRQSKA6yn3oNdAUiOQp0vs1jxBVLACAwoQWLLp1zi3PUyZdMY06clAxdbtyWwyniQ==
-X-Received: by 2002:a17:90a:c718:b0:2c6:ee50:5af4 with SMTP id 98e67ed59e1d1-2d646b9fed9mr8189635a91.6.1724643098667;
-        Sun, 25 Aug 2024 20:31:38 -0700 (PDT)
-Received: from smtpclient.apple ([198.11.178.15])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d5c2e1ad3fsm7922588a91.1.2024.08.25.20.31.35
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 25 Aug 2024 20:31:38 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+        d=1e100.net; s=20230601; t=1724643121; x=1725247921;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lEhT19D3jxJpq5MiRiJj/oy8okfkwj2gpyZ8RiJEPt0=;
+        b=xMJRIrTW+LWAdOrts8u7aiaMzs+pj5corbBmpvCvYo0tSF0CD0bIinuhaGPmwkApbk
+         Pg+vCBWahvoXAzUNNHEdMxp6ETMwP5UZDPIrEUj9HgrQwSdV9uV+u3kXU3eDtd/ODT5+
+         liZ2NHzpTXDIlnDgfXKh6k3TPdS9ekDYBliD/8i6tE4OI+X4eHBTkxZ17kWMAWJlpnCL
+         IHaEG4rsE6y8IcHFqxEXW6XRsjMY9UEhKO5FA2wCj7Gynswtn4TYEc3Mb1ZL4qFPNLGY
+         3okXg1/gTPTtka0ptffSN9ecORhBkKTa/lLbenz5dLo1lHOzANa1/Hsh+FP5hQmx3HwM
+         L1tw==
+X-Gm-Message-State: AOJu0Yx7wSVBgJSPoWOGYePT9LiCTw9KnVYeqZwtEkeMRViVqWEMCXi4
+	SkN6hoOiOgp7HNFkjPQ7J049phahAxcmpUVZdxDrkpWdJi/6I51RWQgZqPT5AqX2tvqcUht4lJW
+	LA8LaRkC89h1FzSdGIKRbyr0cQ7vJ6Bh+UYLee9ULZt6DSSuI15CEVdA=
+X-Google-Smtp-Source: AGHT+IHiw9JvIcRBlho+gRbloDMiQCKk/wa/xrepOgoue6jyiT6C9nIH9czwQetImDPqDlB+uqCnG8Jl8UqlO71ykBhXbPM0BFx9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [PATCH v3 1/2] Introduce klp_ops into klp_func structure
-From: zhang warden <zhangwarden@gmail.com>
-In-Reply-To: <nycvar.YFH.7.76.2408252216300.12664@cbobk.fhfr.pm>
-Date: Mon, 26 Aug 2024 11:31:23 +0800
-Cc: Christoph Hellwig <hch@infradead.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- Miroslav Benes <mbenes@suse.cz>,
- Petr Mladek <pmladek@suse.com>,
- Joe Lawrence <joe.lawrence@redhat.com>,
- live-patching@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <E00E609F-FD3B-45ED-A1AF-84212B60AE68@gmail.com>
-References: <20240822030159.96035-1-zhangwarden@gmail.com>
- <20240822030159.96035-2-zhangwarden@gmail.com>
- <Zsq3g4HE4LWcHHDb@infradead.org>
- <C3B45B71-C7D1-45EB-B749-39514A49C521@gmail.com>
- <nycvar.YFH.7.76.2408252216300.12664@cbobk.fhfr.pm>
-To: Jiri Kosina <jikos@kernel.org>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1446:b0:396:1fc1:7034 with SMTP id
+ e9e14a558f8ab-39e3c8e51b7mr6535885ab.0.1724643121542; Sun, 25 Aug 2024
+ 20:32:01 -0700 (PDT)
+Date: Sun, 25 Aug 2024 20:32:01 -0700
+In-Reply-To: <b0d4c21a-33f4-4e94-83e4-88c9e1f1c468@lkcamp.dev>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009fd09306208dc473@google.com>
+Subject: Re: [syzbot] [ext4?] [ocfs2?] kernel BUG in jbd2_cleanup_journal_tail
+From: syzbot <syzbot+8512f3dbd96253ffbe27@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	vpeixoto@lkcamp.dev
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> On Aug 26, 2024, at 04:17, Jiri Kosina <jikos@kernel.org> wrote:
->=20
-> I believe that Christoph's "Why?" in fact meant "please include the=20
-> rationale for the changes being made (such as the above) in the patch=20=
+Reported-by: syzbot+8512f3dbd96253ffbe27@syzkaller.appspotmail.com
+Tested-by: syzbot+8512f3dbd96253ffbe27@syzkaller.appspotmail.com
 
-> changelog" :)
->=20
-> Thanks,
->=20
-> --=20
-> Jiri Kosina
-> SUSE Labs
->=20
+Tested on:
 
-Hi Kosina.
+commit:         5be63fc1 Linux 6.11-rc5
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17cbfa7b980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8605cd35ddc8ff3c
+dashboard link: https://syzkaller.appspot.com/bug?extid=8512f3dbd96253ffbe27
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13c11d8d980000
 
-OK, the relation on this patch will update into the commit log in next =
-version.
-
-Thanks,
-Wardenjohn.
-
+Note: testing is done by a robot and is best-effort only.
 
