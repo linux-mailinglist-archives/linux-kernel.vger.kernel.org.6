@@ -1,145 +1,294 @@
-Return-Path: <linux-kernel+bounces-301390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79E0695EFF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:40:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05F4F95EFF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:41:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36DCF28146D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:40:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8738C1F220A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633E116EC19;
-	Mon, 26 Aug 2024 11:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2FB415531A;
+	Mon, 26 Aug 2024 11:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O+dZUjqK"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=irrelevant.dk header.i=@irrelevant.dk header.b="FTINSCa0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XDgTdXlD"
+Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E01416C84B
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 11:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336E91482E3
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 11:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724672360; cv=none; b=qZWNMy7iUpHV4Gb53Qs5vxCMzrbH0r82c9pX076J5EnuZ6yCNgh83C2YcOyRSeHxGeEhp325Q0fYqz0SVj3BdMjovXo4hxyoF5LCLigZJFGGcxpnO/bIH3DywGlPoFMTHq3e2qr1p4kWoXTsNQx8w3RgPHOzFEMbyqpANTnT7mg=
+	t=1724672457; cv=none; b=AiFd7MhicBfVpEgCGvX+hjDHaq5Wv4occPmR8ULZiBzcAj/z+TSGVxSnkA783d6nSSwS2hwmKQC4rYguuUvdquCu167v5hR50iVWJYtRtCITKFOevDuv4kBZ+j79KJpjgDgSsaqaEeCFI1/jHZqDOG2ME2Z9JB0zq0tohlERh7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724672360; c=relaxed/simple;
-	bh=Rwh2LwwBpzKTgvRHzVQ3gWwFNixZmyAVwJLMdtAh/0Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b77oFVK02J0gphFAmq3ZYoJ+hCPNZdIKDWoercZEutyVRqAnYCb82OZ2q8v1CKEO4oc9LjdrFOuMjaxAe1D8An3nltgshUQwgJjfYhbL8NXVUbKUYjKPpLmGD6WS2fG719hc0X/FgfOuFBh77ol92Bk6b9qVpGG4/23RdkRNRv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O+dZUjqK; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e1654a42cb8so4166324276.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 04:39:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724672358; x=1725277158; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lj1uhnFdqDXbAdE4f2Y9iYQuc3TxJEK7JxbQMv0Akk4=;
-        b=O+dZUjqKJFA17hOrP3C4AKHUwSiStp9HKQUV7PO3qsuh6AREzSbJiSVLGsPmMHDNEv
-         uuMqKDH0zJc2GwpCn8k1edfe+SR+T1gu9E04GTfqTFjO5O8XMNOh0/km+JzZWoZGX3pY
-         albD8QKQey2uQI8hfS/RMZZnV8tqtfqsdtYS9MgQELDPgk6SMnpvUYNsbsuSffyE4HMH
-         UOjXab1ALUfWH0zwW7VhRw33GxBSDflLh2DzkcMxFIVqOBWw0apklcQrSL+tnAPqymu7
-         pLNhvuUmUWNGhOVTAVlFzwanQtgEApr7JdSZKntH/OVUZUP4r3W6iLTltbXYn6TrRpEe
-         ueUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724672358; x=1725277158;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lj1uhnFdqDXbAdE4f2Y9iYQuc3TxJEK7JxbQMv0Akk4=;
-        b=gfCca2QzkaC97P9mWz/d5q/w9HIZnbIyO6fcNgYzFKvtUhi41ITO+Ujw2zzRUgW3LF
-         U8KILph+J5El290SctvNYjmljGpZmTHpNpnh27QunnZ/X6HB9J8nw7E4uhfQ5D5nwGhA
-         x1SI9TJPF/OmLCp7zvssy7HU788oA3eb2kh7nCWVdOZtbbSGQG4E/EwuD0DN7xVfUCqH
-         p60soS75ispfBJWYPR7rCSiP/M9456cZ9LL88+Pt9mujIhwMSyfYIMaA5d4mBvtQP9n2
-         vncbpPY8EJivztOVmEqpPEPN5PGVMzHCqpBV4L1sWxO/59MocYk4ljm+YtAQdvxIiR1Y
-         e29g==
-X-Gm-Message-State: AOJu0YyLl7zwxhzHWzBFQVaRwgUkKfLk7DHsZV6/O3jse5LBbI5IjdA4
-	AYopopaYg+5XuTIeiQ7xMGnl3Rq812X3povw6HE5NTuinThvtWB9wP0XjE9VQtxut/f1V3TYFG2
-	DGiU5XEodDd5na5Ebdp8OiiQiD8UtlpUegDpPZA==
-X-Google-Smtp-Source: AGHT+IEAA2eR1CF21wxXJhBK6Hja6nGKN6FOH0gS8wg8S5DjXKbEDhtopM9INx+Et4Pz58X0bcnls83hbYMzJRZC6gI=
-X-Received: by 2002:a05:6902:2849:b0:e11:6bbb:d700 with SMTP id
- 3f1490d57ef6-e17a83e2a1emr8932113276.30.1724672358211; Mon, 26 Aug 2024
- 04:39:18 -0700 (PDT)
+	s=arc-20240116; t=1724672457; c=relaxed/simple;
+	bh=AOKCN3pcEInzWzY591sIXcr7L729m4cdv7zQgCLMqQA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RkHA8LBlrQq4IL4loT9kpac0WsiT8MtMcDl1lIUSKCTUeuAYOueD0lcSnpokFYo9RIiI94P9z3+d6Yyf5Q8eGK7Qn6e89jfYd0q2TShAUVomE9XpwhThA7KDcD04Vs8m7KRH8xMpLIa2d1filZFejK0x6PiHPyt6SZFdpJ/vtw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=irrelevant.dk; spf=pass smtp.mailfrom=irrelevant.dk; dkim=pass (2048-bit key) header.d=irrelevant.dk header.i=@irrelevant.dk header.b=FTINSCa0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XDgTdXlD; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=irrelevant.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irrelevant.dk
+Received: from phl-compute-06.internal (phl-compute-06.nyi.internal [10.202.2.46])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 265171151B2B;
+	Mon, 26 Aug 2024 07:40:52 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Mon, 26 Aug 2024 07:40:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=irrelevant.dk;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:message-id:mime-version
+	:reply-to:subject:subject:to:to; s=fm3; t=1724672452; x=
+	1724758852; bh=YILOmF+9Yg51GcabLK1dCq9X7yDH0FEOgB9qW8eVdLw=; b=F
+	TINSCa0zh1zUacnpki6T9s/QxOFuP5t7DZOiaEmTt9hrWXpm9LNqQgFzYv+Sxruu
+	CLn72YVccWrr2HJtwq0AOfVR2HL8oNUubTX2auUzDN2Tqd/z6zpA0Z6USOXSi5To
+	/uHg1ziinWqd0eMPHnYRZ/GRlvSMVwKmUumKsyl38T01c8VQYkFqDFaIItJuIpS/
+	JHOVE+SNRnAE7HUmZLHWFmHGy6fcYrJrn7bbGtgHjRBdfzB/8/xKleCTLEQPQGxD
+	obmXA9I8JAi1FfPjFlZu7+1P/TDi7gDvQaSta3QxaR5G1mMhWzqnY3pW5HIBYsNp
+	nqjU2Rh4QlzcKJOy0VZew==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm1; t=1724672452; x=1724758852; bh=YILOmF+9Yg51G
+	cabLK1dCq9X7yDH0FEOgB9qW8eVdLw=; b=XDgTdXlDVYWDQ8zy4ZzDwuKhuplZg
+	yQQr6OSKzHHbbUCIOrQIsCOqqwyHV7+e/GoeqoZH+nmEA3DwHiPfo0fUKapdrbNC
+	cS/syJlgu76jsXUL/cnJxaru0GkjIsHKPp7aObcueM4hw3foiSbMKAuaHMB8kgo7
+	X+K8VJ6LTvSJ339vhuB3DTtbnLegLoBAtv0zos/kO1Bo8QwKOXOKMtWCu3ZKHRaI
+	sj/hrzPNmY5L5Qog97LdB/gaNApvmH1419QvRN8KdxTOOwGsFaeFI1wnGKlZkANr
+	eORBQ4pUoP6HIyF0EuEpKVyuP5ay0ZT/NWr6gyM2C0Or1dXKiW7fkGdsw==
+X-ME-Sender: <xms:w2nMZumWPQvLdroEdZXEQ5950cqZv_Fz-HY_YTvYXHHkNVTruBG5uQ>
+    <xme:w2nMZl2zkJP7ExVOjt1FJWBqUY4eCdCkdTcfJFZswy_DIQ1-7BQH1PIK6KDwHcAeb
+    Ou1ikc7yZjRJkftRGs>
+X-ME-Received: <xmr:w2nMZspE3swJHWbh-HU12k1yQjjs04SH-E_vXM6q9hsUGnw2aUyXTzdVr4by42pUDqOYRDpgK64r88WEWiL2fw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddvkedggeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhephffufffkgggtgffvvefosehtjeertdertdejnecu
+    hfhrohhmpefmlhgruhhsucflvghnshgvnhcuoehithhssehirhhrvghlvghvrghnthdrug
+    hkqeenucggtffrrghtthgvrhhnpeffteehuefhuedtiedutdduledutdegtdfffedvkedt
+    ieegudfhueffkeekvefhgeenucffohhmrghinhepghhithhhuhgsrdgtohhmpdhgihhtlh
+    grsgdrtghomhdpohhuthgpuggvvhhiugdrphhtnecuvehluhhsthgvrhfuihiivgeptden
+    ucfrrghrrghmpehmrghilhhfrhhomhepihhtshesihhrrhgvlhgvvhgrnhhtrdgukhdpnh
+    gspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehjrdhg
+    rhgrnhgrughoshesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopehkrdhjvghnshgvnh
+    esshgrmhhsuhhnghdrtghomhdprhgtphhtthhopehkvghvihhnrdhtihgrnhesihhnthgv
+    lhdrtghomhdprhgtphhtthhopegufihmfidvsehinhhfrhgruggvrggurdhorhhgpdhrtg
+    hpthhtohepihhomhhmuheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehr
+    ohgsihhnrdhmuhhrphhhhiesrghrmhdrtghomhdprhgtphhtthhopegsrgholhhurdhluh
+    eslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehmihhnfihoohdrihhmsehs
+    rghmshhunhhgrdgtohhmpdhrtghpthhtohepjhhorhhoseeksgihthgvshdrohhrgh
+X-ME-Proxy: <xmx:w2nMZikyjMf3s4nOEeG6TMKzSXiQH2bNVD6m2LraidY3sH3j9YGOeg>
+    <xmx:w2nMZs310fN_iwLTJjMxHrvU55d7fzxqlhoewO6bciEj5CV5ZacJNQ>
+    <xmx:w2nMZptyHlNajwH9MLxrDietWKGOL0nGGKNDYoiM95FbUdHmuLJPlA>
+    <xmx:w2nMZoWfb0I1K1otHze66VoudBy-uQniNqmwaDRb3iKVhol_bJ512g>
+    <xmx:xGnMZiOLhozCJlRNlQ9lMjkOF8jxC6yTDSzuDCNn_iX1D4thx7gFDXed>
+Feedback-ID: idc91472f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 26 Aug 2024 07:40:49 -0400 (EDT)
+From: Klaus Jensen <its@irrelevant.dk>
+Subject: [PATCH RFC PREVIEW 0/6] iommu: enable user space iopfs in
+ non-nested and non-svm cases
+Date: Mon, 26 Aug 2024 13:40:26 +0200
+Message-Id: <20240826-iopf-for-all-v1-0-59174e6a7528@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <232106a8a6a374dee25feea9b94498361568c10b.1724246389.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <232106a8a6a374dee25feea9b94498361568c10b.1724246389.git.christophe.jaillet@wanadoo.fr>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 26 Aug 2024 13:38:42 +0200
-Message-ID: <CAPDyKFr9q=EcDpQApyu-RwXth=ghV07B1Mo70hUZEZRp4vdm=w@mail.gmail.com>
-Subject: Re: [PATCH] mmc: core: Remove struct mmc_context_info
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	linux-mmc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKppzGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDCyNj3cz8gjTdtPwi3cScHF3jJENLA3PT1LRkYyMloJaCotS0zAqwcdF
+ KQW7OILGAINcwT9dwpdjaWgAgz9MbbgAAAA==
+To: David Woodhouse <dwmw2@infradead.org>, 
+ Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, 
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+ Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
+Cc: Minwoo Im <minwoo.im@samsung.com>, linux-kernel@vger.kernel.org, 
+ iommu@lists.linux.dev, Joel Granados <j.granados@samsung.com>, 
+ Klaus Jensen <k.jensen@samsung.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6011; i=k.jensen@samsung.com;
+ h=from:subject:message-id; bh=AOKCN3pcEInzWzY591sIXcr7L729m4cdv7zQgCLMqQA=;
+ b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0o0bkFGdEFaTCtrQTBEQUFvQlRlR3ZNV
+ zFQRGVrQnl5WmlBR2JNYWI3VnNXSW9tY2NWZXlJem9sS2QzUnFICmlCalc0RTlTcU9pQUd2VUww
+ Z3lpN0lrQk13UUFBUW9BSFJZaEJGSW9NNnAxNHR6bW9rZG13RTNocnpGdFR3M3AKQlFKbXpHbSt
+ BQW9KRUUzaHJ6RnRUdzNwQW53SCtnTTIxcEQwT1pEcFkyRStEM0N0NldKNXZwWFNBN3d3c3NoZg
+ o4ZXozaXZ0ZVpXOHZKdnNJeWhQTGtjODV0RTdMeHNJQmhaemN2WDlGOU53dU5YbWRlaklJTytON
+ nZRNDZGUW8wCmQzSnBxR0ZiV1d2b3IwZkNjanp5UGl5SnUwNFdtaklFVlZFbzliNmpoN2JCSDBX
+ dy9LM0YwNUlMZXBaT3hFclEKL01PSDZxaDdjdjk1Y3RNbXpFUk4xQzA3SHQ1ZGFvTTF2WDdoYWU
+ 3QVpiVU91YVlEOXRJdGZzMjlaenEzVmQvawpRWUVzSlhxdnJMTWRtcXJ0b3p4NGtlOTY1K3JaSH
+ AvTXpkczZBL3RHeG9NdzJQMzBkTzljNUtJZEo0ZVdtejI2Ci9vTklCUnU2dVRiUnlWUFVBUVV1Z
+ HlxZnZ1NUlrMXRKV0xaRUxzRjFlOG50TU12UWYxdThmTENWCj1nR0s1Ci0tLS0tRU5EIFBHUCBN
+ RVNTQUdFLS0tLS0K
+X-Developer-Key: i=k.jensen@samsung.com; a=openpgp;
+ fpr=DDCA4D9C9EF931CC3468427263D56FC5E55DA838
 
-On Wed, 21 Aug 2024 at 15:24, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> The 'mmc_context_info' structure is unused.
->
-> It has been introduced in:
->
->   - commit 2220eedfd7ae ("mmc: fix async request mechanism for sequential
->     read scenarios")
->
-> in 2013-02 and its usages have been removed in:
->
->   - commit 126b62700386 ("mmc: core: Remove code no longer needed after the
->     switch to blk-mq")
->   - commit 0fbfd1251830 ("mmc: block: Remove code no longer needed after
->     the switch to blk-mq")
->
-> in 2017-12.
->
-> Now remove this unused structure.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+This is a Request for Comment series that will hopefully generate
+initial feedback on the use of the iommufd_hwpt_replace_device to
+execute non-nested and non-svm user space IOPFs. Our main motivation is
+to enable user-space driver driven device verification with default
+pasid and without nesting nor SVM.
 
-Applied for next, thanks!
+What?
+  * Enable IO page fault handling in user space in a non-nested, non-svm
+    and non-virtualised use case.
+  * Removing the relation between IOPF and INTEL_IOMMU_SVM by allowing
+    the user to (de)select the IOPF code through Kconfig.
+  * Create a new file under iommu/intel (prq.c) that contains all the
+    page request queue related logic and is not under intel/svm.c.
+  * Add the IOMMU_HWPT_FAULT_ID_VALID to the valid flags used to create
+    IOMMU_HWPT_ALLOC allocations.
+  * Create a default (zero) pasid handle and insert it to the pasid
+    array within the dev->iommu_group when replacing the old HWPT with
+    an iopf enabled HWPT.
 
-Kind regards
-Uffe
+Why?
+  The PCI ATS Extended Capability allows peripheral devices to
+  participate in the caching of translations when operating under an
+  IOMMU. Further, the ATS Page Request Interface (PRI) Extension allows
+  devices to handle missing mappings. Currently, PRI is mainly used in
+  the context of Shared Virtual Addressing, requiring support for the
+  Process Address Space Identifier (PASID) capability, but other use
+  cases such as enabling user-space driver driven device verification
+  and reducing memory pinning exists. This patchest sets out to enable
+  these use cases.
 
+Testing?
+  The non-nested/non-svm IOPF interface is exercised by first
+  initializing an iopf enabled ioas and then reading the fault file
+  descriptor. Pseudocode on the iopf initializing and handling is in [3]
+  and [4] (using libvfn).
 
-> ---
-> Compile tested in drivers/mmc/ only
-> ---
->  include/linux/mmc/host.h | 14 --------------
->  1 file changed, 14 deletions(-)
->
-> diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-> index 49470188fca7..545bddfd7e1f 100644
-> --- a/include/linux/mmc/host.h
-> +++ b/include/linux/mmc/host.h
-> @@ -292,20 +292,6 @@ struct mmc_slot {
->         void *handler_priv;
->  };
->
-> -/**
-> - * mmc_context_info - synchronization details for mmc context
-> - * @is_done_rcv                wake up reason was done request
-> - * @is_new_req         wake up reason was new request
-> - * @is_waiting_last_req        mmc context waiting for single running request
-> - * @wait               wait queue
-> - */
-> -struct mmc_context_info {
-> -       bool                    is_done_rcv;
-> -       bool                    is_new_req;
-> -       bool                    is_waiting_last_req;
-> -       wait_queue_head_t       wait;
-> -};
-> -
->  struct regulator;
->  struct mmc_pwrseq;
->
-> --
-> 2.46.0
->
+  Supplementary repositories supporting this patchset:
+    1. A user space library libvfn [1] which is used for testing and
+       verification (see examples/iopf.c), and
+    2. Basic emulation of PCIe ATS/PRI and Intel VT-d PRQ in QEMU [2].
+
+Notes
+  Patches 5/6 are added by Klaus for testing against the QEMU test
+  device (which does not support PASID). They are very much RFC.
+
+Comments and feedback are greatly appreciated
+
+Best
+
+Joel
+
+PS: I'm on PTO, so my answers might be delayed (back September 2nd). But
+    I'll give priority to answer any questions or feedback when I see
+    it.
+
+[1] https://github.com/SamsungDS/libvfn/tree/iommufd-fault-queue
+[2] https://gitlab.com/birkelund/qemu/-/tree/pcie-ats-pri
+
+[3] Initializing
+```
+  int iopf_init(struct iommu_ioas *ioas, const char *bdf)
+  {
+      // open vfio device from bdf
+      int devfd = open('/dev/vfio/devices/VFIO_DEV', O_RDWR);
+
+      struct vfio_device_bind_iommufd bind = {
+          .argsz = sizeof(bind),
+          .flags = 0,
+          .iommufd = __iommufd,
+      };
+      ioctl(devfd, VFIO_DEVICE_BIND_IOMMUFD, &bind);
+
+      struct iommu_ioas *ioas = ioas;
+      struct vfio_device_attach_iommufd_pt attach_data = {
+          .argsz = sizeof(attach_data),
+          .flags = 0,
+          .pt_id = ioas->id,
+      };
+      ioctl(devfd, VFIO_DEVICE_ATTACH_IOMMUFD_PT, &attach_data);
+
+      struct iommu_fault_alloc fault = {
+          .size = sizeof(fault),
+          .flags = 0,
+      };
+      ioctl(__iommufd, IOMMU_FAULT_QUEUE_ALLOC, &fault);
+
+      struct iommu_hwpt_alloc fault_cmd = {
+          .size = sizeof(fault_cmd),
+          .flags = IOMMU_HWPT_FAULT_ID_VALID,
+          .dev_id = bind.out_devid,
+          .pt_id = ioas->id,
+          .data_len = 0,
+          .data_uptr = (uint64_t)NULL,
+          .fault_id = fault.out_fault_id,
+          .__reserved = 0,
+          };
+      ioctl(__iommufd, IOMMU_HWPT_ALLOC, &fault_cmd);
+
+      // This is a re-attach
+      struct vfio_device_attach_iommufd_pt attach = {
+          .argsz = sizeof(attach),
+          .flags = 0,
+          .pt_id = fault_cmd.out_hwpt_id
+      };
+      ioctl(dev_fd, VFIO_DEVICE_ATTACH_IOMMUFD_PT, &attach);
+  }
+```
+
+[4] Handling
+```
+  int handle_iopf(void *vaddr, int len, uint64_t iova) {
+    exec_command(CMD)
+
+    int iopf_fd = fault_cmd.fault_id;
+
+    struct iommu_hwpt_pgfault pgfault = {0};
+    if(read(iopf_fd, &pgfault, sizeof(pgfault)) == 0);
+      return; // no page fault
+
+    ret = iommu_map_vaddr(__iommmufd, vaddr, len, &iova)
+    struct iommu_hwpt_page_response pgfault_response = {
+      .cookie = pgfault.cookie,
+      .code = ret ? IOMMUFD_PAGE_RESP_SUCCESS : IOMMUFD_PAGE_RESP_INVALID,
+    };
+
+    write(iopf_fd, &pgfault_response, sizeof(pgfault_response));
+
+    return;
+  }
+```
+
+Signed-off-by: Joel Granados <j.granados@samsung.com>
+Signed-off-by: Klaus Jensen <k.jensen@samsung.com>
+---
+Joel Granados (4):
+      iommu/vt-d: Separate page request queue from SVM
+      iommu: Make IOMMU_IOPF selectable in Kconfig
+      iommufd: Enable PRI when doing the iommufd_hwpt_alloc
+      iommu: init pasid array while doing domain_replace and iopf is active
+
+Klaus Jensen (2):
+      iommu/vt-d: drop pasid requirement for prq initialization
+      iommu/vt-d: do not require a PASID in page requests
+
+ drivers/iommu/Kconfig                |   2 +-
+ drivers/iommu/intel/Kconfig          |   1 -
+ drivers/iommu/intel/Makefile         |   2 +-
+ drivers/iommu/intel/iommu.c          |  29 ++--
+ drivers/iommu/intel/iommu.h          |  40 ++++-
+ drivers/iommu/intel/prq.c            | 284 ++++++++++++++++++++++++++++++++
+ drivers/iommu/intel/svm.c            | 308 -----------------------------------
+ drivers/iommu/iommu-priv.h           |   3 +
+ drivers/iommu/iommu.c                |  31 ++++
+ drivers/iommu/iommufd/fault.c        |  22 +++
+ drivers/iommu/iommufd/hw_pagetable.c |   3 +-
+ 11 files changed, 389 insertions(+), 336 deletions(-)
+---
+base-commit: 3d5f968a177d468cd13568ef901c5be84d83d32b
+change-id: 20240823-iopf-for-all-3b19075efc32
+
+Best regards,
+-- 
+Klaus Jensen <k.jensen@samsung.com>
+
 
