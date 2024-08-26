@@ -1,81 +1,61 @@
-Return-Path: <linux-kernel+bounces-301619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A93195F345
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:51:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29BF995F343
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:50:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5CE3282852
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:51:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DADD0282460
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF1A1885AB;
-	Mon, 26 Aug 2024 13:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096F81865F8;
+	Mon, 26 Aug 2024 13:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J5hf/Iz/"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qGcLDUmu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878A317C989;
-	Mon, 26 Aug 2024 13:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46875179647;
+	Mon, 26 Aug 2024 13:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724680257; cv=none; b=hHTAMn9yD8bwoaQ1Yuv24Z7CSHHZXz4P1oZi2UONyhmP5CIrWdiCTM396Pfdx0rV5s1D+q8v1Idbfn9+Y690ED6FEA0iEpPCKfhvxTw1XTQSvrfLx56kXIx3YnYfk+GwDFgbywl9tHcFCZRhhfNfT8dsOJUAp/5Mrx7W+ZO0Xwg=
+	t=1724680250; cv=none; b=fySmLf3VVgUjIsYExvorT1fcAxnYYbLmuDnATfO3O6nrXtZsOsBIiRBmBsvrDhaTcaekDqdFyB0olMyiKhil/Z5yxHHnqDX7CsJWJvdiUIAOBHMajgzzoE5UmA3JfkN92zallDjmC8gGh92YHxqoQ8+BW3Czy4v91AizNJirx0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724680257; c=relaxed/simple;
-	bh=Ql3lLhWWb12Nad4uzA4DwuvPl7xpz9d122mTN13lt3M=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UrcPSyRP7MlaNneb54Aj/zKnggEP71MmSi462qacT+Ptvv7450ArDt/kXLaV9iHuekBlNuxiMwTQkFx3C1zImyYG3HMkZfuphlrEwah16VzWuJGjdTqaR3fnCQmYgNSCJIbFO1jEXRelGJsdaZjhryt2k4a7t5DSPuQfZpe/eZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J5hf/Iz/; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3730749ee7aso2604930f8f.2;
-        Mon, 26 Aug 2024 06:50:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724680254; x=1725285054; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jDBC/eNBjytuJW+d+vzOhbTsHCHu3dAH80hQ3xzktl4=;
-        b=J5hf/Iz/Emd7eIZxMIVc/Bn+lt/uptOOKdGMH7ZAZ9xP6VtS9iMURWbFRvxxDEDRyc
-         VndsPlv22SLqRemqSsFFu12zvYBHYoLx9wXGpkpGZg4XTOEi83E7lODUvQ5l1VuZVk23
-         9q8pgDZTkMH3kxTwWEL6pTzE6irG1Dm/Q9KM/5ZwMOCk+7XzQiGTp4p+cY7zdOwOMg2U
-         ddvdBKinYMaiKdLclv+ZiMYOqvic59ux0FBveQmzLg8lYQWXUVA1s04/Ra7abmO2IiQF
-         GjzabGix87DwVqhqv0m6lok1GT1TtO+6/TQ/GB5PPWeEYNJaAn/amlWdj9lue7a3vUXD
-         o15w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724680254; x=1725285054;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jDBC/eNBjytuJW+d+vzOhbTsHCHu3dAH80hQ3xzktl4=;
-        b=iGn0RDFNYdGIIra+yDDoT8oqN6dqWmc6R0pFwNZzYuQDpjn2LDJeNSzvkauTEWkJRp
-         D6nuoJnHjAOAeHnlSNOqV/RQpNmyRwbBf+Chux5Sy+9Kfv2xOun7MNZ25Tx8feAhL/GB
-         qZhtkIZxxbRpnSQS1TlRF4tNFGFPMzDEWr2WTLMfSMCVHuywBsgmZcvSBJoBSS0Nm7n0
-         KZliE+rSdqiFBScfsi+fULm1QhYf6i59kjAVcAKTiKuZTrwBB/XarpdYwl+hEjI7GcOB
-         HO0t9hup3oV74u0hBF3U/2FRT2QnHlK///PaotZm2UFciJ4/avFk7WIEdvR347cSeoCL
-         aMmA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4KPhi0buxjzcUTZ550tYDdL6wkejwUYQu5pEXdXQ8SrjqdAFlZfg/AisR0jcubQ2aC8EE2k5emqLsKVSn@vger.kernel.org, AJvYcCWiEEO0Qq3e/slfSgnteaCy16yaQ5iTVhFXd2zCO0JCIcjZWib406HsaVWGgFLTI5PuJPw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVtg2WBvnC/TwtSUg4CxSaUk0dEMBlVz59qvOvo1TYJiX74qD0
-	5GL7/epSFyh2rz7znIHzsBRgs4cTbcr/P5wMLuClBLOYRaE8c4OAv5bqUS6M
-X-Google-Smtp-Source: AGHT+IFBBsN2W741UbmJpJpXL3MWGUWlu4fnpmjgYMtASN07/tcdSO/uip4kihga7eNBGrmHl6u5Fw==
-X-Received: by 2002:a5d:4f8f:0:b0:371:846d:12b3 with SMTP id ffacd0b85a97d-3731186386amr6967035f8f.28.1724680253535;
-        Mon, 26 Aug 2024 06:50:53 -0700 (PDT)
-Received: from krava ([213.235.133.41])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730813c3d2sm10811517f8f.26.2024.08.26.06.50.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 06:50:53 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Mon, 26 Aug 2024 15:50:39 +0200
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org,
-	mhiramat@kernel.org, peterz@infradead.org, oleg@redhat.com,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] uprobes: turn trace_uprobe's nhit counter to be
- per-CPU one
-Message-ID: <ZsyIL7NAN3AWbgzS@krava>
-References: <20240813203409.3985398-1-andrii@kernel.org>
+	s=arc-20240116; t=1724680250; c=relaxed/simple;
+	bh=3wcKQRoEo8FMvT0tRhB90fjTIKRp8q5ysFETw691w5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JbNLIxQpNqpq/hIsAdEAilbhLdWCY3dYiw+8bh65/ntiRiz39sRIxx5IaEU22oJHw6PFr0cLfuPQrZA2LkCL3vAyYkA0SEK3r5WN36gBx9z5yJXMrpW4jU3ztmove0C8B89JqHXWOa/6K0EBhJhwz3vTuGWFZoBeiAgsBh1waAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qGcLDUmu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3653C52FC7;
+	Mon, 26 Aug 2024 13:50:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724680250;
+	bh=3wcKQRoEo8FMvT0tRhB90fjTIKRp8q5ysFETw691w5Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qGcLDUmuNTlSpIq1qHQpIoPDJNNVelf4oqQrkK+t6xXt1kizdmDaEEkowCPaYli9P
+	 Vgf2ciaBgChFiju1IlLBLSFR4TuPDrxM/BLsgg9iLXhJRuKFFKjqFYfAiJ5chYg5CE
+	 YBwj7CGcQb0z6ZHmcqHstLB/7+dH5UMAi8XLl7t2Qoc1vUpknbDrpRvWc+0FDDwskF
+	 CFXN+W/eDWd4Ec3stRW7oAl0ZJDx4HUMKUJJZtNP7CJRWgRUk2rXFNJK0chrHTIznF
+	 onKo2fEFV3Pp/ANi3YNqrKcxtm4sAh5vpZL9xxXRvVooEEVd8QbRBV/y0wzsz0S9Fz
+	 DgRdpS9QsUEag==
+Date: Mon, 26 Aug 2024 08:50:47 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Alexey Romanov <avromanov@salutedevices.com>
+Cc: robh+dt@kernel.org, linux-crypto@vger.kernel.org, clabbe@baylibre.com,
+	neil.armstrong@linaro.org, jbrunet@baylibre.com,
+	martin.blumenstingl@googlemail.com, linux-kernel@vger.kernel.org,
+	linux-amlogic@lists.infradead.org, vadim.fedorenko@linux.dev,
+	linux-arm-kernel@lists.infradead.org, kernel@salutedevices.com,
+	krzysztof.kozlowski+dt@linaro.org, davem@davemloft.net,
+	conor+dt@kernel.org, herbert@gondor.apana.org.au,
+	devicetree@vger.kernel.org, khilman@baylibre.com
+Subject: Re: [PATCH v9 17/23] dt-bindings: crypto: meson: correct clk and
+ remove second interrupt line
+Message-ID: <172468024695.61392.174903956615697419.robh@kernel.org>
+References: <20240820145623.3500864-1-avromanov@salutedevices.com>
+ <20240820145623.3500864-18-avromanov@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,115 +64,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240813203409.3985398-1-andrii@kernel.org>
+In-Reply-To: <20240820145623.3500864-18-avromanov@salutedevices.com>
 
-On Tue, Aug 13, 2024 at 01:34:09PM -0700, Andrii Nakryiko wrote:
-> trace_uprobe->nhit counter is not incremented atomically, so its value
-> is questionable in when uprobe is hit on multiple CPUs simultaneously.
+
+On Tue, 20 Aug 2024 17:56:17 +0300, Alexey Romanov wrote:
+> GXL and newer SoC's uses the DMA engine (not blkmv) for crypto HW.
+> Crypto HW doesn't actually use the blkmv clk. At RTL level, crypto
+> engine is hard-wired to a clk81 (CLKID_CLK81). Drop clock-names
+> field from schema: name "blkmv" is invalid and "clk81" is confusing
+> and sounds like something global.
 > 
-> Also, doing this shared counter increment across many CPUs causes heavy
-> cache line bouncing, limiting uprobe/uretprobe performance scaling with
-> number of CPUs.
+> Also, GXL crypto IP isn't connected to the second interrupt line.
+> This binding is useless, there are no users of this line.
+> We must remove it from dt-bindings.
 > 
-> Solve both problems by making this a per-CPU counter.
-> 
-> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-
-lgtm, fwiw
-
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-
-jirka
-
+> Fixes: 7f7d115dfb51 ("dt-bindings: crypto: Add DT bindings documentation for amlogic-crypto")
+> Signed-off-by: Alexey Romanov <avromanov@salutedevices.com>
 > ---
->  kernel/trace/trace_uprobe.c | 24 +++++++++++++++++++++---
->  1 file changed, 21 insertions(+), 3 deletions(-)
+>  .../bindings/crypto/amlogic,gxl-crypto.yaml           | 11 ++++-------
+>  1 file changed, 4 insertions(+), 7 deletions(-)
 > 
-> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-> index c98e3b3386ba..c3df411a2684 100644
-> --- a/kernel/trace/trace_uprobe.c
-> +++ b/kernel/trace/trace_uprobe.c
-> @@ -17,6 +17,7 @@
->  #include <linux/string.h>
->  #include <linux/rculist.h>
->  #include <linux/filter.h>
-> +#include <linux/percpu.h>
->  
->  #include "trace_dynevent.h"
->  #include "trace_probe.h"
-> @@ -62,7 +63,7 @@ struct trace_uprobe {
->  	char				*filename;
->  	unsigned long			offset;
->  	unsigned long			ref_ctr_offset;
-> -	unsigned long			nhit;
-> +	unsigned long __percpu		*nhits;
->  	struct trace_probe		tp;
->  };
->  
-> @@ -337,6 +338,12 @@ alloc_trace_uprobe(const char *group, const char *event, int nargs, bool is_ret)
->  	if (!tu)
->  		return ERR_PTR(-ENOMEM);
->  
-> +	tu->nhits = alloc_percpu(unsigned long);
-> +	if (!tu->nhits) {
-> +		ret = -ENOMEM;
-> +		goto error;
-> +	}
-> +
->  	ret = trace_probe_init(&tu->tp, event, group, true, nargs);
->  	if (ret < 0)
->  		goto error;
-> @@ -349,6 +356,7 @@ alloc_trace_uprobe(const char *group, const char *event, int nargs, bool is_ret)
->  	return tu;
->  
->  error:
-> +	free_percpu(tu->nhits);
->  	kfree(tu);
->  
->  	return ERR_PTR(ret);
-> @@ -362,6 +370,7 @@ static void free_trace_uprobe(struct trace_uprobe *tu)
->  	path_put(&tu->path);
->  	trace_probe_cleanup(&tu->tp);
->  	kfree(tu->filename);
-> +	free_percpu(tu->nhits);
->  	kfree(tu);
->  }
->  
-> @@ -815,13 +824,21 @@ static int probes_profile_seq_show(struct seq_file *m, void *v)
->  {
->  	struct dyn_event *ev = v;
->  	struct trace_uprobe *tu;
-> +	unsigned long nhits;
-> +	int cpu;
->  
->  	if (!is_trace_uprobe(ev))
->  		return 0;
->  
->  	tu = to_trace_uprobe(ev);
-> +
-> +	nhits = 0;
-> +	for_each_possible_cpu(cpu) {
-> +		nhits += per_cpu(*tu->nhits, cpu);
-> +	}
-> +
->  	seq_printf(m, "  %s %-44s %15lu\n", tu->filename,
-> -			trace_probe_name(&tu->tp), tu->nhit);
-> +		   trace_probe_name(&tu->tp), nhits);
->  	return 0;
->  }
->  
-> @@ -1512,7 +1529,8 @@ static int uprobe_dispatcher(struct uprobe_consumer *con, struct pt_regs *regs)
->  	int ret = 0;
->  
->  	tu = container_of(con, struct trace_uprobe, consumer);
-> -	tu->nhit++;
-> +
-> +	this_cpu_inc(*tu->nhits);
->  
->  	udd.tu = tu;
->  	udd.bp_addr = instruction_pointer(regs);
-> -- 
-> 2.43.5
-> 
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
