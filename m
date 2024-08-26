@@ -1,61 +1,76 @@
-Return-Path: <linux-kernel+bounces-300660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B6E795E6AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 04:22:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D274A95E6A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 04:21:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34B7428194A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 02:22:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 090521C20BAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 02:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA333BA3F;
-	Mon, 26 Aug 2024 02:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41050BA37;
+	Mon, 26 Aug 2024 02:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tA3ZE4Qu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SfQvVbhq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C08643AAB;
-	Mon, 26 Aug 2024 02:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E3C46BA;
+	Mon, 26 Aug 2024 02:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724638894; cv=none; b=IwAu2plQezAOAA+Sjfin5vhqBRYbvAxi8u+nbYKSeEasKMpUVnqT75RD5BclB2vZdkPpDGTibRm/ivQRoAAZEsN33E1x567vLG6SeRqM1k5iqfzHI+gzIpTByLg+761ug6mi8lriT48oRlDPA2EP1wQtJgnjPd4hjzYS2xAKiac=
+	t=1724638873; cv=none; b=V0wnJSULd9KeY0L8BTjZISycLnxSM94JLYktu1BpIROCDYADDQQCyhmNbv4jTe40aE7LkIcKOPbFs2xIShBe1a5XkeuVbHmuC9h6xYcMAY4bkXgekdgd8czMC5L1Fk+7O4nXkBqaHU6lmlTvLEXJsAS5UXzF5iQ+rOh7ae5Rct8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724638894; c=relaxed/simple;
-	bh=LHRqAegiK4jGGwd1Shwu36MobrsG7kVPV45/+DUPqps=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=A5zf9BZKkv7CbMcmU9u0f/2D8KYx7imiHixbo0kNUobaFQV13LWPCPGbRKVZgyxsBitK+iAgQaTB7vttjMpprdkQCh5CXfXWgvlqXXo465QTXK0NolQtChuEMUWBIoawQvIGhk4iTofQk2fsxuo82TLe4K4uvBIuvc+wZHlNmBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tA3ZE4Qu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFA2BC4DDFD;
-	Mon, 26 Aug 2024 02:21:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724638893;
-	bh=LHRqAegiK4jGGwd1Shwu36MobrsG7kVPV45/+DUPqps=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tA3ZE4Qu4AnGYyKSMxiWxXZTvz9WVXPUbepPafL92ssK6Dse9j+xJDwJ/xN27+kQ7
-	 retxYNoFgy6Mfh++C3MunFdJPMWwdJAnTRugdTKBtbeWX+jIcbLUpX9aAqGMaFeXKY
-	 7hREUrAXAcqJ9i2HbEGjH4e4aaLIVe7ayLfnMh9FR2pOcJnVA9AfUqS3HR9yabB18O
-	 wFa1O+BrpVywLBZv9Fgi49Xm79WZdZoQNrdeje90EvLIYU1HndHxgRb167ifYwRTKk
-	 bh7miHqFLW4VNVLb2AnL9a7H20cvnZr4LKfbQ8v8AltPGtQlJ+0IV7Zz3I3l+axGIE
-	 S3pfIAaYcBH+Q==
-From: SeongJae Park <sj@kernel.org>
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	v9fs@lists.linux.dev,
-	linux-doc@vger.kernel.org,
+	s=arc-20240116; t=1724638873; c=relaxed/simple;
+	bh=6O1qoaTatCZtheGJjV8GMaqY8U/zq7K57iM9RrvLajQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q4RVl0jQmea2a4n2SLaVVPvw+O/wL74pVrK7JiTr+3vE2DwmVXnZV5NyeMNzCsjReqIgEqFhJueCL6vlvZZhFWZe1IdLC9gdWG+zNQHu/kTUbdf7EmuTyt+hI4BTp0XIxv2JClovpFqBjs4YOFQA9XjMlBVDlc5acp3mLTKQrvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SfQvVbhq; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724638872; x=1756174872;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=6O1qoaTatCZtheGJjV8GMaqY8U/zq7K57iM9RrvLajQ=;
+  b=SfQvVbhqbm45GEhlZl4OHslkJ6Xvs7mmUTgQY58m+3OonBGd4EjWzlWo
+   T1y1oWsP1SfO+K8vM+45kpxT5viSsy5eKQ8NfADm983M3mOO/wFeiL4kv
+   We6kqrB5sS6lbk74XLWBfEP1kPVk58kJ9+GQ2mxda7IkgUEFzHmpmP8W/
+   yQAHe42ZCckr+NAtk1BYgRKVuQlf+C270THV0S2rbe+8mP6TPJPHRBujz
+   8MOdTTT8HDUcwDoI+GTqBhFJ7Puyr7SL96X3Fb4jxB5PLnyQB5d5jsfZt
+   c66UEycYYVOkbEaVhQ0afDJ1HnQlQf1LAx+ydEy8iNHaGSZ3sgYOFQGQQ
+   A==;
+X-CSE-ConnectionGUID: 0w1bplJ8TCu48IpS/bsNYA==
+X-CSE-MsgGUID: Ta95WZsgRMSaujT77SzpNw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="23207984"
+X-IronPort-AV: E=Sophos;i="6.10,176,1719903600"; 
+   d="scan'208";a="23207984"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2024 19:21:11 -0700
+X-CSE-ConnectionGUID: GpPeuhT2StGXdD8zl2QUqQ==
+X-CSE-MsgGUID: cfCcZZUXRLCX17sa/by0VA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,176,1719903600"; 
+   d="scan'208";a="62336541"
+Received: from litbin-desktop.sh.intel.com ([10.239.156.93])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2024 19:21:08 -0700
+From: Binbin Wu <binbin.wu@linux.intel.com>
+To: kvm@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] Docs/filesystems/9p: Convert a goo.gl URL to original one
-Date: Sun, 25 Aug 2024 19:21:29 -0700
-Message-Id: <20240826022129.81139-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <ZsvX90dovlI52Ohd@codewreck.org>
-References: 
+Cc: pbonzini@redhat.com,
+	seanjc@google.com,
+	isaku.yamahata@intel.com,
+	rick.p.edgecombe@intel.com,
+	kai.huang@intel.com,
+	yuan.yao@linux.intel.com,
+	xiaoyao.li@intel.com,
+	binbin.wu@linux.intel.com
+Subject: [PATCH v3 0/2] KVM: x86: Check hypercall's exit to userspace generically
+Date: Mon, 26 Aug 2024 10:22:53 +0800
+Message-ID: <20240826022255.361406-1-binbin.wu@linux.intel.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,51 +79,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Mon, 26 Aug 2024 10:18:47 +0900 Dominique Martinet <asmadeus@codewreck.org> wrote:
+Currently in kvm_emulate_hypercall, KVM_HC_MAP_GPA_RANGE is checked
+specifically to decide whether a KVM hypercall needs to exit to userspace
+or not.  Do the check based on the hypercall_exit_enabled field of
+struct kvm_arch.
 
-> SeongJae Park wrote on Sun, Aug 25, 2024 at 06:09:49PM -0700:
-> > Google URL shortner will be unavailable soon[1].  Replace a shortened
-> > URL on 9p.rst with its original one.
-> > 
-> > [1] https://developers.googleblog.com/en/google-url-shortener-links-will-no-longer-be-available/
-> > 
-> > Signed-off-by: SeongJae Park <sj@kernel.org>
-> 
-> Sorry, we (9p maintainers) slacked on this one - there's been a better
-> patch for this one:
-> https://lkml.kernel.org/r/20240725180041.80862-1-linux@treblig.org
-> 
-> The sciweavers link doesn't actually work, so it doesn't make sense to
-> replace as is.
-> (although you could argue that it's probably been broken forever an
-> nobody noticed, so it could just as well be removed...)
+Also use the API user_exit_on_hypercall() to replace the opencode.
 
-No problem.  I agree the other patch is better.
+---
+v3:
+- Rename is_kvm_hc_exit_enabled() to user_exit_on_hypercall(). (Sean)
+- Remove the WARN_ON_ONCE(). (Isaku, Sean)
+- Use BIT(hc_nr) instead of (1 << nr) (Yuan)
+- Added a comment to explain why check the !ret first. (Kai)
+- Add Kai and Isaku's Reviewed-by.
 
-> 
-> There's no patch queued for 9p, so if you (Jonathan) want to take the
-> other patch please feel free to.
-> If it goes through the 9p tree it'll get in the next time we send
-> something as I don't feel the need to send Linus a PR just for this, so
-> that might be a couple of months further down.
+v2:
+- Check the return value of __kvm_emulate_hypercall() before checking
+  hypercall_exit_enabled to avoid an invalid KVM hypercall nr.
+  https://lore.kernel.org/kvm/184d90a8-14a0-494a-9112-365417245911@linux.intel.com/
+- Add a warning if a hypercall nr out of the range of hypercall_exit_enabled
+  can express.
 
-Either ways look good to me.
+Binbin Wu (2):
+  KVM: x86: Check hypercall's exit to userspace generically
+  KVM: x86: Use user_exit_on_hypercall() instead of opencode
 
-> (I don't like patch series where folks are added in Cc on individual
-> patches because it's never clear who is expected to grab the patch in
-> the end...)
-
-Sorry for that.  I thoght lore.kernel.org should help getting the context, but
-I understand no one can convince all.  I'll try to take a different approach if
-I have a chance to send patches to you next time.
+ arch/x86/kvm/svm/sev.c | 4 ++--
+ arch/x86/kvm/x86.c     | 7 ++++---
+ arch/x86/kvm/x86.h     | 4 ++++
+ 3 files changed, 10 insertions(+), 5 deletions(-)
 
 
-Thanks,
-SJ
+base-commit: a1206bc992c3cd3f758a9b46117dfc7e59e8c10f
+-- 
+2.46.0
 
-> 
-> 
-> Thanks,
-> -- 
-> Dominique
 
