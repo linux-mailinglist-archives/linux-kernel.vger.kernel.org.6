@@ -1,179 +1,269 @@
-Return-Path: <linux-kernel+bounces-301738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A043995F4DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:18:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 815E695F4E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:21:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE7EDB21ED0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:18:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43279281F40
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D76A192D64;
-	Mon, 26 Aug 2024 15:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DD41917DB;
+	Mon, 26 Aug 2024 15:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qIzrDari";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+jdpp7Jc";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ObHVm4f1";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Re2NaGOa"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OUeVifWh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891CA1E521;
-	Mon, 26 Aug 2024 15:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E5D1CD25
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 15:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724685480; cv=none; b=Q3KLcIzuRsTDBymFay2vPR7AqM3VPSAULZmbrZ+SQ/2lrhr0+RLXvQXpoC4VjJMzbn0UcgLjnL3/jfuhUGvw5KWPvXJO4a70qhJ+DQKBlp14i8YnoUq/WCAgU60xEYOLaJHv4nZ+/QHXS22L5sR/sQ0LqBGJDmWtMVt2jZC9jRc=
+	t=1724685702; cv=none; b=OZEBxwqLqk5ICOaqTO+Ayd8DtYuQP3VdNzpSY9b9Y96ZVoDudplT4/0lWlgxL9g0H3nKg8DucDmO4ZYcDY1CorEdvy9qSTjU77UXADP5xtLyVwZsvPHLsR7UTj6LXtw824oGR8PazjgA5pNSsC6y+qKoIdr6lLh13DgNF65yAMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724685480; c=relaxed/simple;
-	bh=XtihcyXCzGfTmNlaNr3qIrcl1ckLA3LV7f+knAtlyr8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h6ySDF/QvqvNOih22SRLI/LheIcXqbcov492tnqd3rwvZwEHTF+es14wMnbH2e/0RZscQO2x1KtFclgvEHMSdwgS2U57eBrV5EJGPbwMvGocXCp0p8JFYgxn5VGebo04C1RkBfjUQvBPr+jxRv8Pgj5S7+krpG2+T7Nu4sNt9kI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qIzrDari; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+jdpp7Jc; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ObHVm4f1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Re2NaGOa; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8DF7521AAB;
-	Mon, 26 Aug 2024 15:17:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724685476;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0ydy6K97g8ADqqnkvIpcD7ZuKxLwOWAO/R0K7oZoP0s=;
-	b=qIzrDari45cU0Huec0J3MGIpaljAN81VkWgp1qX4iGyJVWRGxo/JKMFlH1z9tpufosuusa
-	/XlLbyqcIyA1AVDd8C/QT2iXbOjwKzrduuE/emSX3B8IiKHyg7NlK3gk5cDu9G7S3FSRnT
-	3AupjTnFUsV4seK8RQLjkizsofc5470=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724685476;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0ydy6K97g8ADqqnkvIpcD7ZuKxLwOWAO/R0K7oZoP0s=;
-	b=+jdpp7Jc3vZm6hEbFh0MW3WdamooVMjAONomztBxYyDSXTVHQ85NsxKjNafx/G1jhOwWB9
-	VgLvB9nTtY4FiMBw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ObHVm4f1;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Re2NaGOa
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724685475;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0ydy6K97g8ADqqnkvIpcD7ZuKxLwOWAO/R0K7oZoP0s=;
-	b=ObHVm4f1AVx4J3c2G8EqXZSa3wLpxoKH1YNhoaBeGPkAzI6UEj7jzes2FhgSgM+IS/hkZh
-	SdCD5lFcS0bwV/JRacjfCAouW9lhERdJdeJyinjTyzo95LSpf5Lwf/2d7mUIXzXDOVxS33
-	8QOll/jtxVg+6P9mZT09iJN5axFprg8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724685475;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0ydy6K97g8ADqqnkvIpcD7ZuKxLwOWAO/R0K7oZoP0s=;
-	b=Re2NaGOa7t3RVbGPK04vE7slxVb3Xg2zx1QQQkC5KfpnklHG0kMYDpmKHwZs6jOhW8CKV6
-	rqkuU/LSGa5+bTDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 768381398D;
-	Mon, 26 Aug 2024 15:17:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Z4qxHKOczGb8ZwAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Mon, 26 Aug 2024 15:17:55 +0000
-Date: Mon, 26 Aug 2024 17:17:46 +0200
-From: David Sterba <dsterba@suse.cz>
-To: syzbot <syzbot+f88e7f8eca12247510dc@syzkaller.appspotmail.com>
-Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [btrfs?] kernel BUG in can_finish_ordered_extent
-Message-ID: <20240826151746.GP25962@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <000000000000aa486f062080cb5d@google.com>
+	s=arc-20240116; t=1724685702; c=relaxed/simple;
+	bh=tA/MsSfzkj1MqCD3WTlhjukiP7Lt92aU47rj291EsiY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CUCqPgNQIZ5hCnwfWrG8iXqNtADVlX9dZlfa2E4WNq+rlzqBgWD93QvHVVesJQtWRw4LM1L6DfAF5S68E5onBiFKP7H1NmlyD/i0UuYf2t5Mt3SGNRTEmfvjz7fdGOZYRgenNxOuGhmlfaW3CR2eTMQMfQj1AyyLbxvLLgMzyfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OUeVifWh; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724685699;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=xVfhKRaKDm7iJJwFGB1UlcUKzw1fwN0vnWpe4TV7n4c=;
+	b=OUeVifWhxorJ9KXrDH8ObPCYLCUr6GStC0NibWeZkEqTn1itmawvfAH2cJkMqQ6mWm1ydS
+	P7TMGmqNp1PFOpv7v0hjSefa8wXm32FaGhS54AXAu3qRNDE1125P51PSJgytUt+mEv7OQM
+	xXI4wdbTSxri5T9VaM/cTYaUNCRlEpc=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-638-rjrDA-irPSeiW_tbDh9JDQ-1; Mon, 26 Aug 2024 11:21:38 -0400
+X-MC-Unique: rjrDA-irPSeiW_tbDh9JDQ-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-372fe1ba9a6so2971133f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:21:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724685697; x=1725290497;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xVfhKRaKDm7iJJwFGB1UlcUKzw1fwN0vnWpe4TV7n4c=;
+        b=FDrR4vRvyqvflZy7HvUTuXiC8Veb7qHwTpqKRvU2KqROPbnBAEnvUYd0gw3IjLUF+r
+         D1m4qJwnr1hnxWYyO20rL+6hOIOBKhWRARcestTyQF3bCn8zu3Gxi2lhhH/GaF42d6nE
+         SBLOSHsm8kgB0OEu5Z6TjWPg3KhbHZhYA5k7vWSWREsOqzRRraywWz54tSIpJ//p1lIi
+         PpE7ccy40Q7fxaexMbMeysqt52zcO35Ba3msduo387S95otAR3ykSwFOMV+tdGAn+8Lj
+         t+dWHsV0lQ+6Ny6upmF3nGuIyxjAkRYaWyKVdmNSXGSHouBxc20+t3TaOt8vlmPvjWFW
+         P20w==
+X-Gm-Message-State: AOJu0YztAUbnXQ4RtIsVXSJmVLUl+GknmRyQ/JXX03gwwN1Nd6AJmrpw
+	p8P7jz8vrKzqUKPgK/PaKJ/k257Cd/v2IDPlh0lRlkpEDbx1OnzNPFPg5AgPBebv+xRIF646o53
+	ANxNobR/bcgOKDEz/NHN13Xxq9DUIcX7PIqsbXzESCFDkskuxPZCziX8Wc7/2vQ==
+X-Received: by 2002:adf:a419:0:b0:371:8a8e:bf34 with SMTP id ffacd0b85a97d-373118fbbe1mr5277985f8f.62.1724685696620;
+        Mon, 26 Aug 2024 08:21:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGqu679kC3Scr/Ra6Rb2UAlKN2NPsv8B8ucTOfLynfazsHuojuRcC2LVUpZliNcZRCUyAXJew==
+X-Received: by 2002:adf:a419:0:b0:371:8a8e:bf34 with SMTP id ffacd0b85a97d-373118fbbe1mr5277934f8f.62.1724685695655;
+        Mon, 26 Aug 2024 08:21:35 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c737:1900:16b0:8dc:77e:31af? (p200300cbc737190016b008dc077e31af.dip0.t-ipconnect.de. [2003:cb:c737:1900:16b0:8dc:77e:31af])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730815b7e3sm10986513f8f.53.2024.08.26.08.21.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 08:21:34 -0700 (PDT)
+Message-ID: <f318f65d-4198-481c-98a0-00415664614c@redhat.com>
+Date: Mon, 26 Aug 2024 17:21:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000aa486f062080cb5d@google.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: 8DF7521AAB
-X-Spam-Score: -1.71
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-1.71 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=23bc95d9a9b56fa4];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,storage.googleapis.com:url,appspotmail.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:replyto,suse.cz:dkim,twin.jikos.cz:mid];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[f88e7f8eca12247510dc];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/14] mm: pgtable: introduce
+ pte_offset_map_{ro|rw}_nolock()
+To: Qi Zheng <zhengqi.arch@bytedance.com>, hughd@google.com,
+ willy@infradead.org, muchun.song@linux.dev, vbabka@kernel.org,
+ akpm@linux-foundation.org, rppt@kernel.org, vishal.moola@gmail.com,
+ peterx@redhat.com, ryan.roberts@arm.com, christophe.leroy2@cs-soprasteria.com
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
+References: <cover.1724310149.git.zhengqi.arch@bytedance.com>
+ <e866151ccd257ca14a9361ba59f8c3086aa76e4f.1724310149.git.zhengqi.arch@bytedance.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <e866151ccd257ca14a9361ba59f8c3086aa76e4f.1724310149.git.zhengqi.arch@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Aug 25, 2024 at 05:03:25AM -0700, syzbot wrote:
-> Hello,
+On 22.08.24 09:13, Qi Zheng wrote:
+> Currently, the usage of pte_offset_map_nolock() can be divided into the
+> following two cases:
 > 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    c79c85875f1a Add linux-next specific files for 20240823
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=177d1305980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=23bc95d9a9b56fa4
-> dashboard link: https://syzkaller.appspot.com/bug?extid=f88e7f8eca12247510dc
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/8bbbc2af33d9/disk-c79c8587.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/e25f34cd29db/vmlinux-c79c8587.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/1c0f92a7043e/bzImage-c79c8587.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+f88e7f8eca12247510dc@syzkaller.appspotmail.com
-> 
-> assertion failed: folio->mapping, in fs/btrfs/ordered-data.c:344
-> ------------[ cut here ]------------
-> kernel BUG at fs/btrfs/ordered-data.c:344!
+> 1) After acquiring PTL, only read-only operations are performed on the PTE
+>     page. In this case, the RCU lock in pte_offset_map_nolock() will ensure
+>     that the PTE page will not be freed, and there is no need to worry
+>     about whether the pmd entry is modified.
 
-This is probably because of the folio conversion series
-https://lore.kernel.org/linux-btrfs/20240822013714.3278193-1-lizetao1@huawei.com/
+There is also the usage where we don't grab the PTL at all, and only do 
+a racy (read-only) lookup.
 
-that I added to linux-next for testing. I've removed again as there were
-more problems found. I'll keep the report open to see if the crash
-happens again.
+> 
+> 2) After acquiring PTL, the pte or pmd entries may be modified. At this
+>     time, we need to ensure that the pmd entry has not been modified
+>     concurrently.
+> 
+> To more clearing distinguish between these two cases, this commit
+> introduces two new helper functions to replace pte_offset_map_nolock().
+> For 1), just rename it to pte_offset_map_ro_nolock(). For 2), in addition
+> to changing the name to pte_offset_map_rw_nolock(), it also outputs the
+> pmdval when successful. This can help the caller recheck *pmd once the PTL
+> is taken. In some cases, that is, either the mmap_lock for write, or
+> pte_same() check on contents, is also enough to ensure that the pmd entry
+> is stable. But in order to prevent the interface from being abused, we
+> choose to pass in a dummy local variable instead of NULL.
+> 
+> Subsequent commits will convert pte_offset_map_nolock() into the above
+> two functions one by one, and finally completely delete it.
+> 
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+> ---
+>   Documentation/mm/split_page_table_lock.rst |  7 ++++
+>   include/linux/mm.h                         |  5 +++
+>   mm/pgtable-generic.c                       | 43 ++++++++++++++++++++++
+>   3 files changed, 55 insertions(+)
+> 
+> diff --git a/Documentation/mm/split_page_table_lock.rst b/Documentation/mm/split_page_table_lock.rst
+> index e4f6972eb6c04..08d0e706a32db 100644
+> --- a/Documentation/mm/split_page_table_lock.rst
+> +++ b/Documentation/mm/split_page_table_lock.rst
+> @@ -19,6 +19,13 @@ There are helpers to lock/unlock a table and other accessor functions:
+>    - pte_offset_map_nolock()
+>   	maps PTE, returns pointer to PTE with pointer to its PTE table
+>   	lock (not taken), or returns NULL if no PTE table;
+
+What will happen to pte_offset_map_nolock() after this series? Does it 
+still exist or will it become an internal helper?
+
+> + - pte_offset_map_ro_nolock()
+> +	maps PTE, returns pointer to PTE with pointer to its PTE table
+> +	lock (not taken), or returns NULL if no PTE table;
+> + - pte_offset_map_rw_nolock()
+> +	maps PTE, returns pointer to PTE with pointer to its PTE table
+> +	lock (not taken) and the value of its pmd entry, or returns NULL
+> +	if no PTE table;
+
+[...]
+
+> +pte_t *pte_offset_map_rw_nolock(struct mm_struct *mm, pmd_t *pmd,
+> +				unsigned long addr, pmd_t *pmdvalp,
+> +				spinlock_t **ptlp)
+> +{
+> +	pmd_t pmdval;
+> +	pte_t *pte;
+> +
+> +	BUG_ON(!pmdvalp);
+
+As raised, no BUG_ON please. VM_WARN_ON_ONCE() is helpful during early 
+testing and should catch these kind of things.
+
+If someone thinks not requiring a non-NULL pointer is better, please 
+speak up, I'm not married to that idea :)
+
+> +	pte = __pte_offset_map(pmd, addr, &pmdval);
+> +	if (likely(pte))
+> +		*ptlp = pte_lockptr(mm, &pmdval);
+> +	*pmdvalp = pmdval;
+> +	return pte;
+> +}
+> +
+>   /*
+>    * pte_offset_map_lock(mm, pmd, addr, ptlp), and its internal implementation
+>    * __pte_offset_map_lock() below, is usually called with the pmd pointer for
+> @@ -356,6 +383,22 @@ pte_t *pte_offset_map_nolock(struct mm_struct *mm, pmd_t *pmd,
+>    * recheck *pmd once the lock is taken; in practice, no callsite needs that -
+>    * either the mmap_lock for write, or pte_same() check on contents, is enough.
+>    *
+> + * pte_offset_map_ro_nolock(mm, pmd, addr, ptlp), above, is like
+> + * pte_offset_map(); but when successful, it also outputs a pointer to the
+> + * spinlock in ptlp - as pte_offset_map_lock() does, but in this case without
+> + * locking it.  This helps the caller to avoid a later pte_lockptr(mm, *pmd),
+> + * which might by that time act on a changed *pmd: pte_offset_map_ro_nolock()
+> + * provides the correct spinlock pointer for the page table that it returns.
+> + * For readonly case, the caller does not need to recheck *pmd after the lock is
+> + * taken, because the RCU lock will ensure that the PTE page will not be freed. > + *
+> + * pte_offset_map_rw_nolock(mm, pmd, addr, pmdvalp, ptlp), above, is like
+> + * pte_offset_map_ro_nolock(); but when successful, it also outputs the
+> + * pdmval. For cases where pte or pmd entries may be modified, that is, maywrite
+> + * case, this can help the caller recheck *pmd once the lock is taken. In some
+> + * cases, that is, either the mmap_lock for write, or pte_same() check on
+> + * contents, is also enough to ensure that the pmd entry is stable.
+> + *
+>    * Note that free_pgtables(), used after unmapping detached vmas, or when
+>    * exiting the whole mm, does not take page table lock before freeing a page
+>    * table, and may not use RCU at all: "outsiders" like khugepaged should avoid
+
+In general to me a step into the right direction. Likely the 
+documentation could be further clarified in some aspects:
+
+Like that the use of pte_offset_map_ro_nolock() does not allow to easily 
+identify if the page table was replaced in the meantime. Even after 
+grabbing the PTL, we might be looking either at a page table that is 
+still mapped or one that was unmapped and is about to get freed. But for 
+R/O access this is usually sufficient AFAIUK.
+
+Or that "RO" / "RW" expresses the intended semantics, not that the 
+*kmap* will be RO/RW protected.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
