@@ -1,342 +1,318 @@
-Return-Path: <linux-kernel+bounces-302164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2DB895FABE
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:40:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F3EC95FABF
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:44:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AA5C281130
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:40:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D57D1C21CA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A4D198A35;
-	Mon, 26 Aug 2024 20:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C330819A296;
+	Mon, 26 Aug 2024 20:44:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eFN7TNmr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mqo4rYXI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773D318D65C;
-	Mon, 26 Aug 2024 20:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D4718D65C
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 20:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724704795; cv=none; b=tz+54S+k2RrOO7LMYeXdrMDtOaXg8EJRUchdSh88lC8vsvD7F0+PpXb+uddCJFDJ4ewidgf/Y8kO9w+eMeov2M1BRTpVSEVRTWCsAzR6RRFlAntn1fgjfqqhr7wc/8hXdMDX6ZgAM21kIN7Esb7cCA5Bjov8MFQV4grXpvcrLTU=
+	t=1724705041; cv=none; b=PInzSqKQd7KBLV/QXginoTYWZbOnrLMUPIaFKY7Hl/zhoPxpU6UtS1PMU4hrsaK9iBhMefTxpJ9EdXSP39VKVAcIVkYKiRsXamUgoOYDVMPWgvL+WWDDaR4XP93GCaja7lVmhVccfQvWgtRgXeltI37MeeUCMLi94GdsEnEglBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724704795; c=relaxed/simple;
-	bh=ueVOO8RbZQY2FSZBOZSaceKGAJ1QJCEei8KAE0hphNU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qMomDLX1md8mS5+qHvcH7WdSlL+khsJBWGEkqOzRjuCZ9TWdVZVuelR6QTlt9ndaxDP510AFsq6WrGIl4tgrjtth1R8klr50AXa4sy6uyEnyFRHVF+42yOq/9VhlIs5zjmMVHFpg37IanSfufZjUr/lqrnCZf9DnHsjsTHYWJhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eFN7TNmr; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724704793; x=1756240793;
-  h=message-id:subject:from:reply-to:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=ueVOO8RbZQY2FSZBOZSaceKGAJ1QJCEei8KAE0hphNU=;
-  b=eFN7TNmrcY3RHOdnsy60u6OurafdnEU3NqMPStP3Yjfgw6J1PHS7NyaF
-   MDLz41Vi2xvpgLSMNGk6i82RSAHUxk1Ldd3qudPtacKQ3Q05dmN2j6Jq1
-   w+k6SjgM1j4hbIj/KlJ+gl3c80ypFrMpD6vGs+mTRx/Tr2xjZxy0fGeHo
-   yFxQRgYL2R9JM+GwiIiyrOLP93jwsEAfjvDzA52DdY9pJ53UUEvv4SC7w
-   ziwBlo93Vwxk3WaAHgdtThq02m6P9e4D2Bbvy+80VHalmwKBFNHRm0vm3
-   aASkPvAUt7IkvOpLkmexuGY+RwqzuMIN9cLC2qZogL197CIyrPij1zaZP
-   g==;
-X-CSE-ConnectionGUID: 6qusrx8mS12WJv6HWYHIuQ==
-X-CSE-MsgGUID: SkOTDwbqSK+I2fwWModjxA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="45669910"
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="45669910"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 13:39:53 -0700
-X-CSE-ConnectionGUID: YNsmcnObTtCBhboG+EMVaQ==
-X-CSE-MsgGUID: L/3qT+tkTs2PL2iM1ZSm1g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="67529886"
-Received: from dgramcko-desk.amr.corp.intel.com ([10.124.223.43])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 13:39:53 -0700
-Message-ID: <b327d0eababdde3224c6c466ce1819888389a9e3.camel@linux.intel.com>
-Subject: Re: [PATCH] pm-graph: Update directory handling and installation
- process in Makefile
-From: Todd Brandt <todd.e.brandt@linux.intel.com>
-Reply-To: todd.e.brandt@linux.intel.com
-To: Amit Vadhavana <av2082000@gmail.com>, skhan@linuxfoundation.org, 
-	ricardo@marliere.net
-Cc: linux-kernel-mentees@lists.linux.dev, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 26 Aug 2024 13:39:52 -0700
-In-Reply-To: <20240825110620.30109-1-av2082000@gmail.com>
-References: <20240825110620.30109-1-av2082000@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1724705041; c=relaxed/simple;
+	bh=BVO+YR246l/9r0e/byPt8EUyViZMVVysBhWLwpx9cAg=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Uxuu1DpkgA8LoZ2FN79zPEOl5w7VbXRi1gbcGhjm4H/jFifJKnQn0FBI3skQ+phzUz9DX+xjh8RBBqqOUjAsYSaa43lEFnkVhCGs84gURGVxcitNDen3hulxCLbMPQI2R2Ed2gQzf4qqLX5bAFZ/DVIKCOmXnkCeF33l3sYzm2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mqo4rYXI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724705038;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=CqQ/hRiY99K+cUirVhLBuO5vcLt3pG6RmiLI5l4wO5w=;
+	b=Mqo4rYXIXYijh7KUSw04RFVnMJxux3NxzPfiv340sw4vpVOdsPEbfae6VDFiXkN5liH55Q
+	2pbKalotnII8UGNSaS11t0IGlMOkCoXPnp/mguRiy0P9kdxL+sQrG/ZsrfSEcczYgOCqVe
+	GCdfLhVEyETtjkgV9WCcs+gqchepD8E=
+Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
+ [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-342-RukgNo8nMuiUtAowN3n3eQ-1; Mon, 26 Aug 2024 16:43:57 -0400
+X-MC-Unique: RukgNo8nMuiUtAowN3n3eQ-1
+Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-5dcaed3bad8so6337990eaf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 13:43:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724705037; x=1725309837;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CqQ/hRiY99K+cUirVhLBuO5vcLt3pG6RmiLI5l4wO5w=;
+        b=IFow73hMFAhwLqgg++8MDTSBfXAORBzuIMh6Us3On7CIZe5U2wOTiiH74+7ITIki8p
+         eL5M+UYL2jmYz5RfeZQ3XSFmRPdCkbOd+5XLa3fkoZwbK0nl+C1ImCOO4CRnSk1SftGd
+         QK+/jToWOm03Z6BMa6wjjq7HcZsx3F7br42/Zl3pvuLcNgTJERF5UwfBUtRZkHGpJ8dU
+         AERiSGhySE1LxKWOmlLAaQXmsor27Ir4U8yRM0Cw2v0VJv30cuNJskdoLtcQselwU/pa
+         Blg2hZnST2px2DCMrzB8LHAPu5/wI9YxK65OJjgsypGkV65smcEuGNY9b3KNGCxkVvS4
+         x8hA==
+X-Gm-Message-State: AOJu0YzbFGkRHd/YLeDXmxRPbBzNWq7VQBUXP1kpEt8EiDTIrSsIZYgh
+	BpI3BWMvemeChS6ba9Tr5vBCn555X/f7TEuAutHdh6553dRTi0ZZyMdZna+NlTxPNs2l6fXOg2s
+	U3hxuQ130DINOA4bfIE2Lw0z/DzDZp1nGj+vs65WFNq6irINy3EtbRSfBcOJw+Nl0iKRwp7h5By
+	6crEcnwbdq26XkeW569vlKPx21We7ka6yYLoNvGnCvNmE=
+X-Received: by 2002:a05:6358:5f02:b0:1a2:5c3a:f0f4 with SMTP id e5c5f4694b2df-1b5c21404f7mr1432948955d.10.1724705036615;
+        Mon, 26 Aug 2024 13:43:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEyyKMsJpLPMEksW4NYjFhzYiamATxdwSrsf9LyMQ9VEwCSu9KgZAw+ZJQVxwesTLM/WU2jhQ==
+X-Received: by 2002:a05:6358:5f02:b0:1a2:5c3a:f0f4 with SMTP id e5c5f4694b2df-1b5c21404f7mr1432945155d.10.1724705036056;
+        Mon, 26 Aug 2024 13:43:56 -0700 (PDT)
+Received: from x1n.redhat.com (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a67f3fd6c1sm491055185a.121.2024.08.26.13.43.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 13:43:55 -0700 (PDT)
+From: Peter Xu <peterx@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Cc: Gavin Shan <gshan@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	x86@kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alistair Popple <apopple@nvidia.com>,
+	kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Sean Christopherson <seanjc@google.com>,
+	peterx@redhat.com,
+	Oscar Salvador <osalvador@suse.de>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Zi Yan <ziy@nvidia.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	David Hildenbrand <david@redhat.com>,
+	Yan Zhao <yan.y.zhao@intel.com>,
+	Will Deacon <will@kernel.org>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Alex Williamson <alex.williamson@redhat.com>
+Subject: [PATCH v2 00/19] mm: Support huge pfnmaps
+Date: Mon, 26 Aug 2024 16:43:34 -0400
+Message-ID: <20240826204353.2228736-1-peterx@redhat.com>
+X-Mailer: git-send-email 2.45.0
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sun, 2024-08-25 at 16:36 +0530, Amit Vadhavana wrote:
-> - Standardize directory variables to support more flexible
-> installations.
-> - Add copyright and licensing information to the Makefile.
-> - Introduce ".PHONY" declarations to ensure that specific targets are
-> always
-> =C2=A0 executed, regardless of the presence of files with matching names.
-> - Add a help target to provide usage instructions.
->=20
-> Signed-off-by: Amit Vadhavana <av2082000@gmail.com>
-> ---
-> =C2=A0tools/power/pm-graph/Makefile | 111 ++++++++++++++++++++++---------=
--
-> --
-> =C2=A01 file changed, 73 insertions(+), 38 deletions(-)
->=20
-> diff --git a/tools/power/pm-graph/Makefile b/tools/power/pm-
-> graph/Makefile
-> index b5310832c19c..aeddbaf2d4c4 100644
-> --- a/tools/power/pm-graph/Makefile
-> +++ b/tools/power/pm-graph/Makefile
-> @@ -1,51 +1,86 @@
-> =C2=A0# SPDX-License-Identifier: GPL-2.0
-> -PREFIX=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0?=3D /usr
-> -DESTDIR=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0?=3D
-> +#
-> +# Copyright (c) 2013, Intel Corporation.
-> +#
-> +# This program is free software; you can redistribute it and/or
-> modify it
-> +# under the terms and conditions of the GNU General Public License,
-> +# version 2, as published by the Free Software Foundation.
-> +#
-> +# This program is distributed in the hope it will be useful, but
-> WITHOUT
-> +# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-> or
-> +# FITNESS FOR A PARTICULAR PURPOSE.=C2=A0 See the GNU General Public
-> License for
-> +# more details.
-> +#
-> +# Authors:
-> +#=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Todd Brandt <todd.e.brandt@linux.i=
-ntel.com>
-> +
-> +# Prefix to the directories we're installing to
-> +DESTDIR ?=3D
-> +
-> +# Directory definitions. These are default and most probably
-> +# do not need to be changed. Please note that DESTDIR is
-> +# added in front of any of them
-> +
-> +BINDIR ?=3D=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/usr/bin
-> +MANDIR ?=3D=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/usr/share/man
-> +LIBDIR ?=3D=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/usr/lib
-> +
-> +# Toolchain: what tools do we use, and what options do they need:
-> +INSTALL =3D /usr/bin/install
-> +INSTALL_DATA=C2=A0 =3D ${INSTALL} -m 644
-> =C2=A0
-> =C2=A0all:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0@echo "Nothing to build"
-> =C2=A0
-> =C2=A0install : uninstall
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -d=C2=A0 $(DESTDIR)$(P=
-REFIX)/lib/pm-graph
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install sleepgraph.py $(DESTDI=
-R)$(PREFIX)/lib/pm-graph
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install bootgraph.py $(DESTDIR=
-)$(PREFIX)/lib/pm-graph
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -d=C2=A0 $(DESTDIR)$(P=
-REFIX)/lib/pm-graph/config
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -m 644 config/cgskip.t=
-xt $(DESTDIR)$(PREFIX)/lib/pm-
-> graph/config
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -m 644 config/freeze-c=
-allgraph.cfg
-> $(DESTDIR)$(PREFIX)/lib/pm-graph/config
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -m 644 config/freeze.c=
-fg $(DESTDIR)$(PREFIX)/lib/pm-
-> graph/config
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -m 644 config/freeze-d=
-ev.cfg
-> $(DESTDIR)$(PREFIX)/lib/pm-graph/config
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -m 644 config/standby-=
-callgraph.cfg
-> $(DESTDIR)$(PREFIX)/lib/pm-graph/config
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -m 644 config/standby.=
-cfg $(DESTDIR)$(PREFIX)/lib/pm-
-> graph/config
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -m 644 config/standby-=
-dev.cfg
-> $(DESTDIR)$(PREFIX)/lib/pm-graph/config
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -m 644 config/suspend-=
-callgraph.cfg
-> $(DESTDIR)$(PREFIX)/lib/pm-graph/config
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -m 644 config/suspend.=
-cfg $(DESTDIR)$(PREFIX)/lib/pm-
-> graph/config
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -m 644 config/suspend-=
-dev.cfg
-> $(DESTDIR)$(PREFIX)/lib/pm-graph/config
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -m 644 config/suspend-=
-x2-proc.cfg
-> $(DESTDIR)$(PREFIX)/lib/pm-graph/config
-> -
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -d=C2=A0 $(DESTDIR)$(P=
-REFIX)/bin
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ln -s ../lib/pm-graph/bootgrap=
-h.py
-> $(DESTDIR)$(PREFIX)/bin/bootgraph
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ln -s ../lib/pm-graph/sleepgra=
-ph.py
-> $(DESTDIR)$(PREFIX)/bin/sleepgraph
-> -
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -d=C2=A0 $(DESTDIR)$(P=
-REFIX)/share/man/man8
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install bootgraph.8 $(DESTDIR)=
-$(PREFIX)/share/man/man8
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install sleepgraph.8 $(DESTDIR=
-)$(PREFIX)/share/man/man8
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL) -d=C2=A0 $(DESTDIR)=
-$(LIBDIR)/pm-graph
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL) sleepgraph.py $(DES=
-TDIR)$(LIBDIR)/pm-graph
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL) bootgraph.py $(DEST=
-DIR)$(LIBDIR)/pm-graph
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL) -d=C2=A0 $(DESTDIR)=
-$(LIBDIR)/pm-graph/config
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL_DATA) config/cgskip.=
-txt $(DESTDIR)$(LIBDIR)/pm-
-> graph/config
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL_DATA) config/freeze-=
-callgraph.cfg
-> $(DESTDIR)$(LIBDIR)/pm-graph/config
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL_DATA) config/freeze.=
-cfg $(DESTDIR)$(LIBDIR)/pm-
-> graph/config
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL_DATA) config/freeze-=
-dev.cfg $(DESTDIR)$(LIBDIR)/pm-
-> graph/config
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL_DATA) config/standby=
--callgraph.cfg
-> $(DESTDIR)$(LIBDIR)/pm-graph/config
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL_DATA) config/standby=
-.cfg $(DESTDIR)$(LIBDIR)/pm-
-> graph/config
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL_DATA) config/standby=
--dev.cfg
-> $(DESTDIR)$(LIBDIR)/pm-graph/config
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL_DATA) config/suspend=
--callgraph.cfg
-> $(DESTDIR)$(LIBDIR)/pm-graph/config
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL_DATA) config/suspend=
-.cfg $(DESTDIR)$(LIBDIR)/pm-
-> graph/config
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL_DATA) config/suspend=
--dev.cfg
-> $(DESTDIR)$(LIBDIR)/pm-graph/config
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL_DATA) config/suspend=
--x2-proc.cfg
-> $(DESTDIR)$(LIBDIR)/pm-graph/config
-> +
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL) -d=C2=A0 $(DESTDIR)=
-$(BINDIR)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ln -s ../lib/pm-graph/bootgrap=
-h.py
-> $(DESTDIR)$(BINDIR)/bootgraph
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ln -s ../lib/pm-graph/sleepgra=
-ph.py
-> $(DESTDIR)$(BINDIR)/sleepgraph
-> +
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL) -d=C2=A0 $(DESTDIR)=
-$(MANDIR)/man8
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL) bootgraph.8 $(DESTD=
-IR)$(MANDIR)/man8
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL) sleepgraph.8 $(DEST=
-DIR)$(MANDIR)/man8
-> =C2=A0
-> =C2=A0uninstall :
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(PREFIX)/shar=
-e/man/man8/bootgraph.8
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(PREFIX)/shar=
-e/man/man8/sleepgraph.8
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(MANDIR)/man8=
-/bootgraph.8
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(MANDIR)/man8=
-/sleepgraph.8
-> =C2=A0
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(PREFIX)/bin/=
-bootgraph
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(PREFIX)/bin/=
-sleepgraph
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(BINDIR)/boot=
-graph
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(BINDIR)/slee=
-pgraph
-> =C2=A0
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(PREFIX)/lib/=
-pm-graph/config/*
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if [ -d $(DESTDIR)$(PREFIX)/li=
-b/pm-graph/config ] ; then \
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0rmdir $(DESTDIR)$(PREFIX)/lib/pm-graph/config; \
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(LIBDIR)/pm-g=
-raph/config/*
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if [ -d $(DESTDIR)$(LIBDIR)/pm=
--graph/config ] ; then \
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0rmdir $(DESTDIR)$(LIBDIR)/pm-graph/config; \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0fi;
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(PREFIX)/lib/=
-pm-graph/__pycache__/*
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if [ -d $(DESTDIR)$(PREFIX)/li=
-b/pm-graph/__pycache__ ] ; then
-> \
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0rmdir $(DESTDIR)$(PREFIX)/lib/pm-graph/__pycache__; \
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(LIBDIR)/pm-g=
-raph/__pycache__/*
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if [ -d $(DESTDIR)$(LIBDIR)/pm=
--graph/__pycache__ ] ; then \
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0rmdir $(DESTDIR)$(LIBDIR)/pm-graph/__pycache__; \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0fi;
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(PREFIX)/lib/=
-pm-graph/*
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if [ -d $(DESTDIR)$(PREFIX)/li=
-b/pm-graph ] ; then \
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0rmdir $(DESTDIR)$(PREFIX)/lib/pm-graph; \
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(LIBDIR)/pm-g=
-raph/*
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if [ -d $(DESTDIR)$(LIBDIR)/pm=
--graph ] ; then \
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0rmdir $(DESTDIR)$(LIBDIR)/pm-graph; \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0fi;
-> +
-> +help:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0@echo=C2=A0 'Building targets:=
-'
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0@echo=C2=A0 '=C2=A0 all=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Nothin=
-g to build'
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0@echo=C2=A0 '=C2=A0 install=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Install the program and cre=
-ate
-> necessary directories'
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0@echo=C2=A0 '=C2=A0 uninstall=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Remove installed files and
-> directories'
-> +
-> +.PHONY: all install uninstall help
-This does look much nicer, and it's good to use the absolute path of
-install in case the system doesn't have the PATH setup. Thank you for
-cleaning this up!
+v2:
+- Added tags
+- Let folio_walk_start() scan special pmd/pud bits [DavidH]
+- Switch copy_huge_pmd() COW+writable check into a VM_WARN_ON_ONCE()
+- Update commit message to drop mentioning of gup-fast, in patch "mm: Mark
+  special bits for huge pfn mappings when inject" [JasonG]
+- In gup-fast, reorder _special check v.s. _devmap check, so as to make
+  pmd/pud path look the same as pte path [DavidH, JasonG]
+- Enrich comments for follow_pfnmap*() API, emphasize the risk when PFN is
+  used after the end() is invoked, s/-ve/negative/ [JasonG, Sean]
 
-Signed-off-by: Todd Brandt <todd.e.brandt@linux.intel.com>
+Overview
+========
+
+This series is based on mm-unstable, commit b659edec079c of Aug 26th
+latest, with patch "vma remove the unneeded avc bound with non-CoWed folio"
+reverted, as reported broken [0].
+
+This series implements huge pfnmaps support for mm in general.  Huge pfnmap
+allows e.g. VM_PFNMAP vmas to map in either PMD or PUD levels, similar to
+what we do with dax / thp / hugetlb so far to benefit from TLB hits.  Now
+we extend that idea to PFN mappings, e.g. PCI MMIO bars where it can grow
+as large as 8GB or even bigger.
+
+Currently, only x86_64 (1G+2M) and arm64 (2M) are supported.  The last
+patch (from Alex Williamson) will be the first user of huge pfnmap, so as
+to enable vfio-pci driver to fault in huge pfn mappings.
+
+Implementation
+==============
+
+In reality, it's relatively simple to add such support comparing to many
+other types of mappings, because of PFNMAP's specialties when there's no
+vmemmap backing it, so that most of the kernel routines on huge mappings
+should simply already fail for them, like GUPs or old-school follow_page()
+(which is recently rewritten to be folio_walk* APIs by David).
+
+One trick here is that we're still unmature on PUDs in generic paths here
+and there, as DAX is so far the only user.  This patchset will add the 2nd
+user of it.  Hugetlb can be a 3rd user if the hugetlb unification work can
+go on smoothly, but to be discussed later.
+
+The other trick is how to allow gup-fast working for such huge mappings
+even if there's no direct sign of knowing whether it's a normal page or
+MMIO mapping.  This series chose to keep the pte_special solution, so that
+it reuses similar idea on setting a special bit to pfnmap PMDs/PUDs so that
+gup-fast will be able to identify them and fail properly.
+
+Along the way, we'll also notice that the major pgtable pfn walker, aka,
+follow_pte(), will need to retire soon due to the fact that it only works
+with ptes.  A new set of simple API is introduced (follow_pfnmap* API) to
+be able to do whatever follow_pte() can already do, plus that it can also
+process huge pfnmaps now.  Half of this series is about that and converting
+all existing pfnmap walkers to use the new API properly.  Hopefully the new
+API also looks better to avoid exposing e.g. pgtable lock details into the
+callers, so that it can be used in an even more straightforward way.
+
+Here, three more options will be introduced and involved in huge pfnmap:
+
+  - ARCH_SUPPORTS_HUGE_PFNMAP
+
+    Arch developers will need to select this option when huge pfnmap is
+    supported in arch's Kconfig.  After this patchset applied, both x86_64
+    and arm64 will start to enable it by default.
+
+  - ARCH_SUPPORTS_PMD_PFNMAP / ARCH_SUPPORTS_PUD_PFNMAP
+
+    These options are for driver developers to identify whether current
+    arch / config supports huge pfnmaps, making decision on whether it can
+    use the huge pfnmap APIs to inject them.  One can refer to the last
+    vfio-pci patch from Alex on the use of them properly in a device
+    driver.
+
+So after the whole set applied, and if one would enable some dynamic debug
+lines in vfio-pci core files, we should observe things like:
+
+  vfio-pci 0000:00:06.0: vfio_pci_mmap_huge_fault(,order = 9) BAR 0 page offset 0x0: 0x100
+  vfio-pci 0000:00:06.0: vfio_pci_mmap_huge_fault(,order = 9) BAR 0 page offset 0x200: 0x100
+  vfio-pci 0000:00:06.0: vfio_pci_mmap_huge_fault(,order = 9) BAR 0 page offset 0x400: 0x100
+
+In this specific case, it says that vfio-pci faults in PMDs properly for a
+few BAR0 offsets.
+
+Patch Layout
+============
+
+Patch 1:         Introduce the new options mentioned above for huge PFNMAPs
+Patch 2:         A tiny cleanup
+Patch 3-8:       Preparation patches for huge pfnmap (include introduce
+                 special bit for pmd/pud)
+Patch 9-16:      Introduce follow_pfnmap*() API, use it everywhere, and
+                 then drop follow_pte() API
+Patch 17:        Add huge pfnmap support for x86_64
+Patch 18:        Add huge pfnmap support for arm64
+Patch 19:        Add vfio-pci support for all kinds of huge pfnmaps (Alex)
+
+TODO
+====
+
+More architectures / More page sizes
+------------------------------------
+
+Currently only x86_64 (2M+1G) and arm64 (2M) are supported.  There seems to
+have plan to support arm64 1G later on top of this series [2].
+
+Any arch will need to first support THP / THP_1G, then provide a special
+bit in pmds/puds to support huge pfnmaps.
+
+remap_pfn_range() support
+-------------------------
+
+Currently, remap_pfn_range() still only maps PTEs.  With the new option,
+remap_pfn_range() can logically start to inject either PMDs or PUDs when
+the alignment requirements match on the VAs.
+
+When the support is there, it should be able to silently benefit all
+drivers that is using remap_pfn_range() in its mmap() handler on better TLB
+hit rate and overall faster MMIO accesses similar to processor on hugepages.
+
+More driver support
+-------------------
+
+VFIO is so far the only consumer for the huge pfnmaps after this series
+applied.  Besides above remap_pfn_range() generic optimization, device
+driver can also try to optimize its mmap() on a better VA alignment for
+either PMD/PUD sizes.  This may, iiuc, normally require userspace changes,
+as the driver doesn't normally decide the VA to map a bar.  But I don't
+think I know all the drivers to know the full picture.
+
+Tests Done
+==========
+
+- Cross-build tests
+
+- run_vmtests.sh
+
+- Hacked e1000e QEMU with 128MB BAR 0, with some prefault test, mprotect()
+  and fork() tests on the bar mapped
+
+- x86_64 + AMD GPU
+  - Needs Alex's modified QEMU to guarantee proper VA alignment to make
+    sure all pages to be mapped with PUDs
+  - Main BAR (8GB) start to use PUD mappings
+  - Sub BAR (??MBs?) start to use PMD mappings
+  - Performance wise, slight improvement comparing to the old PTE mappings
+
+- aarch64 + NIC
+  - Detached NIC test to make sure driver loads fine with PMD mappings
+
+Credits all go to Alex on help testing the GPU/NIC use cases above.
+
+Comments welcomed, thanks.
+
+[0] https://lore.kernel.org/r/73ad9540-3fb8-4154-9a4f-30a0a2b03d41@lucifer.local
+[1] https://lore.kernel.org/r/20240807194812.819412-1-peterx@redhat.com
+[2] https://lore.kernel.org/r/498e0731-81a4-4f75-95b4-a8ad0bcc7665@huawei.com
+
+Alex Williamson (1):
+  vfio/pci: Implement huge_fault support
+
+Peter Xu (18):
+  mm: Introduce ARCH_SUPPORTS_HUGE_PFNMAP and special bits to pmd/pud
+  mm: Drop is_huge_zero_pud()
+  mm: Mark special bits for huge pfn mappings when inject
+  mm: Allow THP orders for PFNMAPs
+  mm/gup: Detect huge pfnmap entries in gup-fast
+  mm/pagewalk: Check pfnmap for folio_walk_start()
+  mm/fork: Accept huge pfnmap entries
+  mm: Always define pxx_pgprot()
+  mm: New follow_pfnmap API
+  KVM: Use follow_pfnmap API
+  s390/pci_mmio: Use follow_pfnmap API
+  mm/x86/pat: Use the new follow_pfnmap API
+  vfio: Use the new follow_pfnmap API
+  acrn: Use the new follow_pfnmap API
+  mm/access_process_vm: Use the new follow_pfnmap API
+  mm: Remove follow_pte()
+  mm/x86: Support large pfn mappings
+  mm/arm64: Support large pfn mappings
+
+ arch/arm64/Kconfig                  |   1 +
+ arch/arm64/include/asm/pgtable.h    |  30 +++++
+ arch/powerpc/include/asm/pgtable.h  |   1 +
+ arch/s390/include/asm/pgtable.h     |   1 +
+ arch/s390/pci/pci_mmio.c            |  22 ++--
+ arch/sparc/include/asm/pgtable_64.h |   1 +
+ arch/x86/Kconfig                    |   1 +
+ arch/x86/include/asm/pgtable.h      |  80 +++++++-----
+ arch/x86/mm/pat/memtype.c           |  17 ++-
+ drivers/vfio/pci/vfio_pci_core.c    |  60 ++++++---
+ drivers/vfio/vfio_iommu_type1.c     |  16 +--
+ drivers/virt/acrn/mm.c              |  16 +--
+ include/linux/huge_mm.h             |  16 +--
+ include/linux/mm.h                  |  57 ++++++++-
+ include/linux/pgtable.h             |  12 ++
+ mm/Kconfig                          |  13 ++
+ mm/gup.c                            |   6 +
+ mm/huge_memory.c                    |  50 +++++---
+ mm/memory.c                         | 183 ++++++++++++++++++++--------
+ mm/pagewalk.c                       |   4 +-
+ virt/kvm/kvm_main.c                 |  19 ++-
+ 21 files changed, 425 insertions(+), 181 deletions(-)
+
+-- 
+2.45.0
+
 
