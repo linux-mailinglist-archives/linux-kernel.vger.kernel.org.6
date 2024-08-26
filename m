@@ -1,92 +1,108 @@
-Return-Path: <linux-kernel+bounces-301553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0A2695F271
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:10:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7871E95F274
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6F0EB21CE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:10:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C5BF1C21A6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF1B17C987;
-	Mon, 26 Aug 2024 13:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF5217C987;
+	Mon, 26 Aug 2024 13:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lp0r03es"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KBNA5jyA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE45E17ADE3;
-	Mon, 26 Aug 2024 13:10:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F145414A617;
+	Mon, 26 Aug 2024 13:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724677829; cv=none; b=rJSw3AUWZ04HYzPTc+AcTeklkxtqwAh5hBbX3pF5c/gTaWXbTs/3eu3/yDMexMAPblgDXYS3FgPfFs8h1qir2cqZ0g2Hoj5CxIMO1/3/dujzKP3xnTeosUe0nBxmtCwvQeOii6y7DpRkEaeCBru5l+3gmEMW1Qw/08DNPJqP/+o=
+	t=1724677869; cv=none; b=tfqz6PIKVtRNNMNUIOWgGHTdrXoPkZfLLKEoszZqYMNpaCQk6SiWpwzKGJhSvUCuVQlVt27P87LgeJT98DmmluqS7IWQ+ck/mea9gAyn1pBDwVH/Pzf/pbivbnItM+IwRhh/EnaNpHrXkZxUMSa+N6OjUFbGXre8ikcLg8Hz6Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724677829; c=relaxed/simple;
-	bh=xREHIIJEpy2OD2PXTPX2340JM5kQauymL1OSdfIPvKg=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=IK4BOjz+5VW4rvg+6gmWA0QQA0z1FSwhpD8zRH9kXCIK65iE5PNVazfR4JRo/5ivaiCAqb3Wc4D3UDd5BKJW5LLyRb+ZIDao95QHqN2s+aLQfKdfE6bSlUS+MWQ4K2LJL0tQzoilAP6GBMRqp8IasQL1slL/GMfDYx2jw3bWzJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lp0r03es; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72E4DC58281;
-	Mon, 26 Aug 2024 13:10:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724677828;
-	bh=xREHIIJEpy2OD2PXTPX2340JM5kQauymL1OSdfIPvKg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Lp0r03esCYeq4u5R7lzFduvLSmPEwWtljU4D5IMdInfiIAS9cbCUioaRVWnoZd40B
-	 bHiiuZ+Msn1+hqdrtdkchWDe4l0jrmDAXSvhWeuPQMc+9byvfo9UaL3zamRSUSiLKf
-	 483cgWG+hvDxE6apRleEVS9eQPTFD5ud1dvJJLOfr2hTfuPzVPVkoVfXHOiUfI0tOr
-	 6hW4ThPbqqLfUm0rvdOUdrSgrNn/5H7GXPDhV7cwKEHKPfQhzOdsNsHWL/B3VfZXYO
-	 ElXejTAoD4oY5Sr68aaRHJEioyBtfALnwccOY5SweHBfXJGwJI3eE3jhVAH2V9n19s
-	 zlj17rj6Ye9SA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE04A3822D6D;
-	Mon, 26 Aug 2024 13:10:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1724677869; c=relaxed/simple;
+	bh=0ppJbQ1K1Yzftc2Bz5hjnDOj8PGFXrJ4oVr1tSmFbdU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c4fwR3gMHTu3mHdgu0mqlBXGVQe92UyRC1I6iG9aImdGDuhit5s3R798G5BYGi7RrgMfkZnU9/DRqAhPLB4iREGplGvOzUeDmUPrmYIsefA9fKGsJrVxP8uVWQvmrPdkeQDYl6YuEUTwzmyJEge8XZocpxxzcDWwJJtW9Sa3KGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KBNA5jyA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2099FC5829B;
+	Mon, 26 Aug 2024 13:11:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724677868;
+	bh=0ppJbQ1K1Yzftc2Bz5hjnDOj8PGFXrJ4oVr1tSmFbdU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KBNA5jyAmqsMXesEJ/Jh3EpPV+JzcdC0kcca7j2q62fd1uzq94IftMuLFOk+oC0B2
+	 W5+Sma+TJhKIwPof6m0DL3zc8x9LFW8j4QhdvNWsvZVidANj92hVN03Y5fpsfz5J9a
+	 ksE6zvb1rfAtnXeEcnM3oeBdCEsANtmLOGbh0UEw=
+Date: Mon, 26 Aug 2024 15:11:05 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Harry Austen <hpausten@protonmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+	Dave Ertman <david.m.ertman@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 7/9] uio: add Xilinx user clock monitor support
+Message-ID: <2024082655-cubicle-flashily-6ab3@gregkh>
+References: <20240826123602.1872-1-hpausten@protonmail.com>
+ <20240826123602.1872-8-hpausten@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: ftgmac100: Ensure tx descriptor updates are visible
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172467782825.7852.12721685155366652197.git-patchwork-notify@kernel.org>
-Date: Mon, 26 Aug 2024 13:10:28 +0000
-References: <20240822073006.817173-1-jacky_chou@aspeedtech.com>
-In-Reply-To: <20240822073006.817173-1-jacky_chou@aspeedtech.com>
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, u.kleine-koenig@pengutronix.de, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826123602.1872-8-hpausten@protonmail.com>
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Thu, 22 Aug 2024 15:30:06 +0800 you wrote:
-> The driver must ensure TX descriptor updates are visible
-> before updating TX pointer and TX clear pointer.
+On Mon, Aug 26, 2024 at 12:38:36PM +0000, Harry Austen wrote:
+> Xilinx clocking wizard IP core supports monitoring of up to four
+> optional user clock inputs, with a corresponding interrupt for
+> notification in change of clock state (stop, underrun, overrun or
+> glitch). Give userspace access to this monitor logic through use of the
+> UIO framework.
 > 
-> This resolves TX hangs observed on AST2600 when running
-> iperf3.
+> Implemented as an auxiliary_driver to avoid introducing UIO dependency
+> to the main clock driver.
 > 
-> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
+> Signed-off-by: Harry Austen <hpausten@protonmail.com>
+> ---
+>  drivers/uio/Kconfig            |  8 ++++
+>  drivers/uio/Makefile           |  1 +
+>  drivers/uio/uio_xlnx_clk_mon.c | 71 ++++++++++++++++++++++++++++++++++
+>  3 files changed, 80 insertions(+)
+>  create mode 100644 drivers/uio/uio_xlnx_clk_mon.c
 > 
-> [...]
+> diff --git a/drivers/uio/Kconfig b/drivers/uio/Kconfig
+> index b060dcd7c6350..ca8a53de26a67 100644
+> --- a/drivers/uio/Kconfig
+> +++ b/drivers/uio/Kconfig
+> @@ -164,4 +164,12 @@ config UIO_DFL
+>  	    opae-sdk/tools/libopaeuio/
+>  
+>  	  If you compile this as a module, it will be called uio_dfl.
+> +
+> +config UIO_XLNX_CLK_MON
+> +	tristate "Xilinx user clock monitor support"
+> +	depends on COMMON_CLK_XLNX_CLKWZRD
+> +	help
+> +	  Userspace I/O interface to the user clock monitor logic within the
+> +	  Xilinx Clocking Wizard IP core.
 
-Here is the summary with links:
-  - net: ftgmac100: Ensure tx descriptor updates are visible
-    https://git.kernel.org/netdev/net/c/4186c8d9e6af
+Why do you want a UIO api for a clock device?  What userspace code is
+going to access the hardware this way?  Why not use the normal
+kernel/user apis instead?
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+thanks,
 
-
+greg k-h
 
