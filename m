@@ -1,256 +1,144 @@
-Return-Path: <linux-kernel+bounces-301189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F74B95ED7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:38:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F61495ED7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74B241C21FB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:38:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61B9C1C21C50
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D6AD1482E5;
-	Mon, 26 Aug 2024 09:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dGxUByPL"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F731487E3;
+	Mon, 26 Aug 2024 09:37:40 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47E783CA3;
-	Mon, 26 Aug 2024 09:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127E3143C70
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724665058; cv=none; b=hNeIbcxwJZEWVz/Lx4VJeCCr6MwwGKrXM5euOGsodBU4c0ChRlR9eJ7POlls4ft8IQLm8NvUsTHEWNkitS8M0cWnWZ7goXXtPGrCYJQKzczjZXrqlCt7m4VulD3d0maGS022GZhCt1HH6sa9P3P+xFZZyR1HU14Iw5gmrc/FltI=
+	t=1724665059; cv=none; b=rz1hegJ3H+Ivk/kECHbJEPEKk0rt7qOsIpciJcawdqHl09twrxbByXGe7XSJtNW6+8KdPVK1MVtQgldpXPneiwlk9msqLxlTjCbqgQvSDNldiaeT0KFi7T/xohea+GlQRIn1SfjGADTjTxY1e0dtRMEAH1Edr2DhV7Avgg6Srh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724665058; c=relaxed/simple;
-	bh=NsbQu7M4tEss+c6Y2wL0B7gbdyDQWS2Z0nkhMS5KLd4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RVQE+OEQiC3Ijq6LefLdO9F5xQBdNW8Sxz78Jh7cLyOU56NhABw65aiKwl/5FhtKdjfKKmuG86Wz4qGurfCc5CPVSXM/qb/6pMNnNLARX7RK49MQIOxsDjV2I1TN4HV+p+Lwrd+jr9djea4ULq5Kk6uibS0Y0w7CUadhn5Adx24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dGxUByPL; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a86abbd68ffso415610166b.0;
-        Mon, 26 Aug 2024 02:37:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724665055; x=1725269855; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZJcVakD5ss4kZCjtqj+URrNKV2fX2XA/qeyqgDhyBSw=;
-        b=dGxUByPL3qA5hQ05l6PG/3esovqw0CniolNjVr67UB/ldgGcJLuZY1AN8F1jLioPPH
-         l+kDJp40MFGteT3+FwcrVXs/Z8G+TQx2m2i3Cl22bP4CgjPscyevy9DTo2sTm+q324lh
-         FErcMgDM3gwQOrbwYsvFl8s0sFHRwuL539A/mK1hIFAMQZO3ajAreBUBxVOuv3uP58oL
-         HF5DD5dv4T0iBY2FvNS6Wuo0vzyp8WUAFPCCzUtTd894lmYrmBDDJRJcGvwaoEWBXmwy
-         kQCD9/2Ii0SwvYmcAsNB1F2lnl/4ScRcPhHOoxkHkNJspBmhjcGHj2Az3ENxCZt6/rnM
-         IpFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724665055; x=1725269855;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZJcVakD5ss4kZCjtqj+URrNKV2fX2XA/qeyqgDhyBSw=;
-        b=iJiGiEPEQ+w2OX0HpwyzFw6xlN2W9xsSwSxGGtJz8d9/uLp0gxfZKksF4tsHiMEjVg
-         fneYx95Y44HoQEblDgaOIRLZ3RvJfPBu72bgnVD3UeHdyfK+aeCiXHhH/q8GhDnBo4Eh
-         o/Ak30Rw+YzZJ36eFYGS6pvAlfxkYDag3qr9UyNM2uXFHebMogQ4cgKtwfyvI/5ynUaE
-         lWSMyhWEBfrTdDRS9rTgNoonsUAXMrFZD5crAEyWj7UrOsnhsfuq0+4cwrXQIbSRIF2o
-         C3kDG4heE4FJv4KE0y9rm6ppJX5fkvYTzuh0fci199a++OcIBLUrmAfDEHzq6vovYher
-         GzhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVDXnU/0EuJRyhgVa555XnIxYoB6ETE4PAZYVuXkmOj7xUVJmOhFZ1C3x33MPqPPpZ0Lx5F+H49HzJuWQA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyd/1XIB7Fq/8CmlX7uTVHF4xVcTVu/KKKT8ibOGVX0b3pHvoUr
-	SxaURwQp+WQk4r0FDPEPxakkwKQOqhMiKSINeaNvxO/pqnvbYz5x/weP06Ud
-X-Google-Smtp-Source: AGHT+IHzRY/eAHW3N9sVw8x+S0Ogb3NLphxtdQh5WtqVRBDzfsy5Q2/77/ppBWjz1T7Ch+hd3xLDkg==
-X-Received: by 2002:a17:907:2d11:b0:a86:a30f:4b00 with SMTP id a640c23a62f3a-a86a30f4d3fmr1057011866b.27.1724665054146;
-        Mon, 26 Aug 2024 02:37:34 -0700 (PDT)
-Received: from WBEC325.dom.lan ([185.188.71.122])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4360c0sm640254966b.108.2024.08.26.02.37.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 02:37:33 -0700 (PDT)
-From: Pawel Dembicki <paweldembicki@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Pawel Dembicki <paweldembicki@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2] net: phy: vitesse: implement MDI-X configuration in vsc73xx
-Date: Mon, 26 Aug 2024 11:37:10 +0200
-Message-Id: <20240826093710.511837-1-paweldembicki@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724665059; c=relaxed/simple;
+	bh=zbyx3IHFvIHZrVQn/7bcMygv/q2i8BjblbMgub8L0L4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EsgSQgk56GvKgGIf7TawFTVqdrTvwaxBqsey7tJbiRC9kxvcIwfn1YyDR0XixWf1OEwYM9hS3NQDyV2BxCTXIT5p4cnwfoaTR3IkI4n10SDbO7AtucMiqAfvrrvZsP8JsZoBc2HiKseY1ALgNPUeFkS31nPbcrJfKCezgYAC8g0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1siWAC-0000XJ-Ho; Mon, 26 Aug 2024 11:37:28 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sha@pengutronix.de>)
+	id 1siWAB-0039gG-Tx; Mon, 26 Aug 2024 11:37:27 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1siWAB-0071na-2e;
+	Mon, 26 Aug 2024 11:37:27 +0200
+Date: Mon, 26 Aug 2024 11:37:27 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: David Lin <yu-hao.lin@nxp.com>
+Cc: Brian Norris <briannorris@chromium.org>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Kalle Valo <kvalo@kernel.org>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: [EXT] [PATCH 10/31] wifi: mwifiex: fix indention
+Message-ID: <ZsxM198_t04j6OMo@pengutronix.de>
+References: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
+ <20240820-mwifiex-cleanup-v1-10-320d8de4a4b7@pengutronix.de>
+ <PA4PR04MB96382C0635603A51371C0E23D18F2@PA4PR04MB9638.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PA4PR04MB96382C0635603A51371C0E23D18F2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-This commit introduces MDI-X configuration support in vsc73xx phys.
+On Thu, Aug 22, 2024 at 09:36:29AM +0000, David Lin wrote:
+> > From: Sascha Hauer <s.hauer@pengutronix.de>
+> > Sent: Tuesday, August 20, 2024 7:56 PM
+> > To: Brian Norris <briannorris@chromium.org>; Francesco Dolcini
+> > <francesco@dolcini.it>; Kalle Valo <kvalo@kernel.org>
+> > Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > kernel@pengutronix.de; Sascha Hauer <s.hauer@pengutronix.de>
+> > Subject: [EXT] [PATCH 10/31] wifi: mwifiex: fix indention 
+> > 
+> > Align multiline if() under the opening brace.
+> > 
+> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> > ---
+> >  drivers/net/wireless/marvell/mwifiex/wmm.c | 12 ++++++------
+> >  1 file changed, 6 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/net/wireless/marvell/mwifiex/wmm.c
+> > b/drivers/net/wireless/marvell/mwifiex/wmm.c
+> > index bcb61dab7dc86..1b1222c73728f 100644
+> > --- a/drivers/net/wireless/marvell/mwifiex/wmm.c
+> > +++ b/drivers/net/wireless/marvell/mwifiex/wmm.c
+> > @@ -1428,13 +1428,13 @@ mwifiex_dequeue_tx_packet(struct
+> > mwifiex_adapter *adapter)
+> >         }
+> > 
+> >         if (!ptr->is_11n_enabled ||
+> > -               ptr->ba_status ||
+> > -               priv->wps.session_enable) {
+> > +           ptr->ba_status ||
+> > +           priv->wps.session_enable) {
+> >                 if (ptr->is_11n_enabled &&
+> > -                       ptr->ba_status &&
+> > -                       ptr->amsdu_in_ampdu &&
+> > -                       mwifiex_is_amsdu_allowed(priv, tid) &&
+> > -                       mwifiex_is_11n_aggragation_possible(priv, ptr,
+> > +                   ptr->ba_status &&
+> > +                   ptr->amsdu_in_ampdu &&
+> > +                   mwifiex_is_amsdu_allowed(priv, tid) &&
+> > +                   mwifiex_is_11n_aggragation_possible(priv, ptr,
+> > 
+> > adapter->tx_buf_size))
+> >                         mwifiex_11n_aggregate_pkt(priv, ptr, ptr_index);
+> >                         /* ra_list_spinlock has been freed in
+> > 
+> > --
+> > 2.39.2
+> > 
+> 
+> I wonder we still need patch for indent issue here? If so I am sure we
+> will need a bunch of similar patches which I don't think really help
+> improve mwifiex quality
+> 
+> Actually in its successor Nxpwifi (currently under review), we have
+> cleaned up all indent, and checkpatch errors/warnings/checks.
 
-Vsc73xx supports only auto mode or forced MDI.
+BTW you advertised nxpwifi not as a successor to mwifiex, but as the
+driver to be used for new chips. This means we still have to deal with
+the mwifiex driver in the future to support the old chips, so even if
+nxpwifi is merged it still makes sense to clean up mwifiex.
 
-Vsc73xx have auto MDI-X disabled by default in forced speed mode.
-This commit enables it.
+Sascha
 
-Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
-
----
-Changes in v2:
-  - set auto MDI-X by default
-  - 'switch (mdix)' in 'vsc73xx_mdix_set' should be more readable
----
- drivers/net/phy/vitesse.c | 93 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 93 insertions(+)
-
-diff --git a/drivers/net/phy/vitesse.c b/drivers/net/phy/vitesse.c
-index 54eb4e8377c4..2377179de017 100644
---- a/drivers/net/phy/vitesse.c
-+++ b/drivers/net/phy/vitesse.c
-@@ -71,6 +71,19 @@
- #define MII_VSC73XX_DOWNSHIFT_MAX		5
- #define MII_VSC73XX_DOWNSHIFT_INVAL		1
- 
-+/* VSC73XX PHY_BYPASS_CTRL register*/
-+#define MII_VSC73XX_PHY_BYPASS_CTRL		MII_DCOUNTER
-+#define MII_VSC73XX_PBC_TX_DIS			BIT(15)
-+#define MII_VSC73XX_PBC_FOR_SPD_AUTO_MDIX_DIS	BIT(7)
-+#define MII_VSC73XX_PBC_PAIR_SWAP_DIS		BIT(5)
-+#define MII_VSC73XX_PBC_POL_INV_DIS		BIT(4)
-+#define MII_VSC73XX_PBC_PARALLEL_DET_DIS	BIT(3)
-+#define MII_VSC73XX_PBC_AUTO_NP_EXCHANGE_DIS	BIT(1)
-+
-+/* VSC73XX PHY_AUX_CTRL_STAT register */
-+#define MII_VSC73XX_PHY_AUX_CTRL_STAT	MII_NCONFIG
-+#define MII_VSC73XX_PACS_NO_MDI_X_IND	BIT(13)
-+
- /* Vitesse VSC8601 Extended PHY Control Register 1 */
- #define MII_VSC8601_EPHY_CTL		0x17
- #define MII_VSC8601_EPHY_CTL_RGMII_SKEW	(1 << 8)
-@@ -219,6 +232,9 @@ static void vsc73xx_config_init(struct phy_device *phydev)
- 
- 	/* Enable downshift by default */
- 	vsc73xx_set_downshift(phydev, MII_VSC73XX_DOWNSHIFT_MAX);
-+
-+	/* Set Auto MDI-X by default */
-+	phydev->mdix_ctrl = ETH_TP_MDI_AUTO;
- }
- 
- static int vsc738x_config_init(struct phy_device *phydev)
-@@ -319,6 +335,75 @@ static int vsc739x_config_init(struct phy_device *phydev)
- 	return 0;
- }
- 
-+static int vsc73xx_mdix_set(struct phy_device *phydev, u8 mdix)
-+{
-+	int ret;
-+	u16 val;
-+
-+	val = phy_read(phydev, MII_VSC73XX_PHY_BYPASS_CTRL);
-+
-+	switch (mdix) {
-+	case ETH_TP_MDI:
-+		val |= MII_VSC73XX_PBC_FOR_SPD_AUTO_MDIX_DIS |
-+		       MII_VSC73XX_PBC_PAIR_SWAP_DIS |
-+		       MII_VSC73XX_PBC_POL_INV_DIS;
-+		break;
-+	case ETH_TP_MDI_X:
-+		/* When MDI-X auto configuration is disabled, is possible
-+		 * to force only MDI mode. Let's use autoconfig for forced
-+		 * MDIX mode.
-+		 */
-+	case ETH_TP_MDI_AUTO:
-+		val &= ~(MII_VSC73XX_PBC_FOR_SPD_AUTO_MDIX_DIS |
-+			 MII_VSC73XX_PBC_PAIR_SWAP_DIS |
-+			 MII_VSC73XX_PBC_POL_INV_DIS);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	ret = phy_write(phydev, MII_VSC73XX_PHY_BYPASS_CTRL, val);
-+	if (ret)
-+		return ret;
-+
-+	return genphy_restart_aneg(phydev);
-+}
-+
-+static int vsc73xx_config_aneg(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	ret = vsc73xx_mdix_set(phydev, phydev->mdix_ctrl);
-+	if (ret)
-+		return ret;
-+
-+	return genphy_config_aneg(phydev);
-+}
-+
-+static int vsc73xx_mdix_get(struct phy_device *phydev, u8 *mdix)
-+{
-+	u16 reg_val;
-+
-+	reg_val = phy_read(phydev, MII_VSC73XX_PHY_AUX_CTRL_STAT);
-+	if (reg_val & MII_VSC73XX_PACS_NO_MDI_X_IND)
-+		*mdix = ETH_TP_MDI;
-+	else
-+		*mdix = ETH_TP_MDI_X;
-+
-+	return 0;
-+}
-+
-+static int vsc73xx_read_status(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	ret = vsc73xx_mdix_get(phydev, &phydev->mdix);
-+	if (ret < 0)
-+		return ret;
-+
-+	return genphy_read_status(phydev);
-+}
-+
- /* This adds a skew for both TX and RX clocks, so the skew should only be
-  * applied to "rgmii-id" interfaces. It may not work as expected
-  * on "rgmii-txid", "rgmii-rxid" or "rgmii" interfaces.
-@@ -516,6 +601,8 @@ static struct phy_driver vsc82xx_driver[] = {
- 	.phy_id_mask    = 0x000ffff0,
- 	/* PHY_GBIT_FEATURES */
- 	.config_init    = vsc738x_config_init,
-+	.config_aneg    = vsc73xx_config_aneg,
-+	.read_status	= vsc73xx_read_status,
- 	.read_page      = vsc73xx_read_page,
- 	.write_page     = vsc73xx_write_page,
- 	.get_tunable    = vsc73xx_get_tunable,
-@@ -526,6 +613,8 @@ static struct phy_driver vsc82xx_driver[] = {
- 	.phy_id_mask    = 0x000ffff0,
- 	/* PHY_GBIT_FEATURES */
- 	.config_init    = vsc738x_config_init,
-+	.config_aneg    = vsc73xx_config_aneg,
-+	.read_status	= vsc73xx_read_status,
- 	.read_page      = vsc73xx_read_page,
- 	.write_page     = vsc73xx_write_page,
- 	.get_tunable    = vsc73xx_get_tunable,
-@@ -536,6 +625,8 @@ static struct phy_driver vsc82xx_driver[] = {
- 	.phy_id_mask    = 0x000ffff0,
- 	/* PHY_GBIT_FEATURES */
- 	.config_init    = vsc739x_config_init,
-+	.config_aneg    = vsc73xx_config_aneg,
-+	.read_status	= vsc73xx_read_status,
- 	.read_page      = vsc73xx_read_page,
- 	.write_page     = vsc73xx_write_page,
- 	.get_tunable    = vsc73xx_get_tunable,
-@@ -546,6 +637,8 @@ static struct phy_driver vsc82xx_driver[] = {
- 	.phy_id_mask    = 0x000ffff0,
- 	/* PHY_GBIT_FEATURES */
- 	.config_init    = vsc739x_config_init,
-+	.config_aneg    = vsc73xx_config_aneg,
-+	.read_status	= vsc73xx_read_status,
- 	.read_page      = vsc73xx_read_page,
- 	.write_page     = vsc73xx_write_page,
- 	.get_tunable    = vsc73xx_get_tunable,
 -- 
-2.34.1
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
