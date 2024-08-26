@@ -1,257 +1,146 @@
-Return-Path: <linux-kernel+bounces-302015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A309595F8B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:03:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 651B495F8BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AF58282F21
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:03:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1941128213F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BC8E1991A8;
-	Mon, 26 Aug 2024 18:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C13198E78;
+	Mon, 26 Aug 2024 18:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A2cntS6V"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="X8EC1OnI";
+	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="NSIOLCp7"
+Received: from honk.sigxcpu.org (honk.sigxcpu.org [24.134.29.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2880B1553AB;
-	Mon, 26 Aug 2024 18:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724695393; cv=fail; b=lPEVxs3RxlOgb8Tz7wIZ4bywvLVt9hDnDtRePWGLVM1gvIKJmJ81UWwRU6jJh14irmEQ6rUYleSPcWFfsPCkW12qISiNBgoxiizGbR127lOUuAWccCzetPTPN2rx97fCC48TmK/Rav/i2kn76QjHtHDYyvBbPtI7IGTn06afvCc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724695393; c=relaxed/simple;
-	bh=T6eWBkIItJZfMV5pMOkXX5jC/Dfdw3OsC9S6aM1Rm84=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=b48chLtV+Z1Z7Ppc+JNr3ABUCTggGx4C6hZU5yeef58OYXL+6wCwpBnTlGRQAWD7Mi+TSseOOn/pSrohpVKYV8CaJe7cB1qcOPU9Lg6TBgxpmSLn0N5i+XaB/4pQ8CNvFWQ3ILJQ/Sxc/KfgHKbBW2iorDCQOS3b7/5CDobTzQI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A2cntS6V; arc=fail smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724695391; x=1756231391;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=T6eWBkIItJZfMV5pMOkXX5jC/Dfdw3OsC9S6aM1Rm84=;
-  b=A2cntS6Vb5zPMl0P4D7duTeNMNjP/2vqoxUA9U4e8VByvi+gz6cU11nS
-   d9ceN1qrKDQYCfZNjJ7MGX4NLhHN3xiP3Rn84pw6rZol8udFzgsA+YzI9
-   9fQlXanZE6PhfMNkxssfg/MysqS4lR/iHtfc7yZpKVrtee6PmDS4NaFHo
-   GRY9i5o0MVCpDC03c5QgTGiUhllfonSboegMiIYUCR+vBz2y/Aj2BqdGj
-   uC8nv35L4KOuw0dG6xon8HGKVswwHEL4478vcVANalf6ogFaRGxquJST0
-   PM0iR/Zh66tLgchcm9yJeFyuwFwyESWrhDJhmZPh3CQjkFPlQ/xlX+dRP
-   A==;
-X-CSE-ConnectionGUID: yZuaLVbFS/mqHrGlthbixQ==
-X-CSE-MsgGUID: gGofwe6qTqCb8+3giN1+dg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="34292992"
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="34292992"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 11:03:10 -0700
-X-CSE-ConnectionGUID: fAvLPNPlSIazvnhyOlfXcg==
-X-CSE-MsgGUID: SScQB9bvSdeHygEZLPfD2Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="62420561"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 26 Aug 2024 11:03:10 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 26 Aug 2024 11:03:09 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 26 Aug 2024 11:03:09 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.41) by
- edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 26 Aug 2024 11:03:09 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kDjBUZmG5994yHCfGUzr4MULrKL+Bq8DMIuvPJuLu0imzrHp11RM0zEY2RLDDhampkvn7h6gkYji3XC1bx79PIFXT8zMwa1utL9q/iRhz25/xRs77L5FBPpo5H+7f4JdJaOFtFhg2LSK7Tp5LHNFhYNQu4DE3RMVXiGWrUDvOYnqSH66vPx1pA4cGjwvBVLsyqL6XcNmZiRYQWZ7T1rXa8Er3y7dFBVQ2YTfk1fXMSVyxzsugf4Souv8690pkWn4v6ddMNYIJlyMEM+tIQiW+y0aIjf5fOh04kGQ46TjdD+bfNBNh42VADS4MbybxbBsYH6AWJTpv6a1Zm/Uwoy83A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FJvWj9L6h4o+3MnIKdMENOgV+eoIBbTiMJsgTXG/Z5E=;
- b=njPXDYGn68GA/sMkURKpFdn27xAnOnl065n7c8rpF8Co8QtmoGBVLKizFWqYLvhN0PVmA7Fo9a/WCafSh/efqf9s0RoQcrGhePsUQ1iuQ6XTOK9RkP+G99mkCeDv/4zbvWVAV7gm7cKtr6+7WqaqJu7FLheJ7TerH1OmvUff6GN5CQ4m3amNBnMu3E2lJxZCi0hOceI9ClC2IyEMRvi7kuRXlL6MVJKlV9vseg5NDQjsBIcz7293nbygxwpLFc3AqG7q5p5nPXsvGOfJOGpgBuBSqNyYqFBVmWl87Z+4LrxdJk3YHHWIlGZH239jXwULS2RSXyJZMlDqPNEsX6h00w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
- by MN6PR11MB8195.namprd11.prod.outlook.com (2603:10b6:208:47f::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Mon, 26 Aug
- 2024 18:03:07 +0000
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57%6]) with mapi id 15.20.7897.021; Mon, 26 Aug 2024
- 18:03:07 +0000
-Date: Mon, 26 Aug 2024 13:02:59 -0500
-From: Ira Weiny <ira.weiny@intel.com>
-To: Dave Jiang <dave.jiang@intel.com>, <ira.weiny@intel.com>, Fan Ni
-	<fan.ni@samsung.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	"Navneet Singh" <navneet.singh@intel.com>, Chris Mason <clm@fb.com>, Josef
- Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Petr Mladek
-	<pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Rasmus Villemoes
-	<linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>
-CC: Dan Williams <dan.j.williams@intel.com>, Davidlohr Bueso
-	<dave@stgolabs.net>, Alison Schofield <alison.schofield@intel.com>, "Vishal
- Verma" <vishal.l.verma@intel.com>, <linux-btrfs@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>
-Subject: Re: [PATCH v3 23/25] cxl/mem: Trace Dynamic capacity Event Record
-Message-ID: <66ccc353c1203_a4ea2294ba@iweiny-mobl.notmuch>
-References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
- <20240816-dcd-type2-upstream-v3-23-7c9b96cba6d7@intel.com>
- <725ff759-c49c-4f72-b39c-530822963ff6@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <725ff759-c49c-4f72-b39c-530822963ff6@intel.com>
-X-ClientProxiedBy: MW4PR03CA0232.namprd03.prod.outlook.com
- (2603:10b6:303:b9::27) To SA1PR11MB6733.namprd11.prod.outlook.com
- (2603:10b6:806:25c::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488A210E9
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 18:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=24.134.29.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724695450; cv=none; b=roAl7GGnjbhFHh+Jh3AxYaDGg32nTH9B8TYfht+axEZG52o2dTQBrLqdTZBh0JOBx8/SBLcCEn4psKIop9I6PmXw9Zxge+JFsfzvVxx5babDvKf3caH3lE4omCNjwtANbb/0cpRSO4NQXScwIOH6VAAGqCAESb/Gfq0BtMiUhs8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724695450; c=relaxed/simple;
+	bh=w2NohdGsHE7UuVvNyUIet5xboNMEuVw8vNSv42GIyco=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dRxuELOv3uhcwfnM/D88XgMhZGLZsIC9hPTJCzh2Gq4fNMAPgEgNB+b/43CYDMJBf8HSndW633x8zmTzEoaavOBG+enhPvv1TZd35uR2cESiZYP+MHIa5e6v9Ig1iwnzTk8hTdtaxgYFjHatxg4DmRzpdEYCYJlguVfS9/aeW/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org; spf=pass smtp.mailfrom=sigxcpu.org; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=X8EC1OnI; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=NSIOLCp7; arc=none smtp.client-ip=24.134.29.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigxcpu.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
+	t=1724695437; bh=w2NohdGsHE7UuVvNyUIet5xboNMEuVw8vNSv42GIyco=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X8EC1OnIgXRJWvQug5TUsDcfsPT7RGt37xENs5hsudAbQyMn9tomEzbYz4nqOEpGJ
+	 Hl6Odo0Lw7OaDXb5hkesdJP8o1SDto8XXqnUMiI1utcVee3pegwPfyka5ZVGO4XUD0
+	 vTgeH2reDxV7JRtP6V3W0EfKApTjwfBl8PmqqwmHj2g6IE4D0SOTyE3+eG0ly+EWuL
+	 bRywGSLU1dgKyNBjsVqxOc8fBixlSeKB3+HoW/Lwwa7jj3lGkVS7psxJRhEEeD2ecq
+	 1h0AKrg7lcr37vbJiI7y8APqQr33K3+qXr/d8Tes7w2Br1ZMg2VGhd9hRnAo3Yx4IT
+	 DcgrSnTbS3RGw==
+Received: from localhost (localhost [127.0.0.1])
+	by honk.sigxcpu.org (Postfix) with ESMTP id D657CFB03;
+	Mon, 26 Aug 2024 20:03:57 +0200 (CEST)
+Received: from honk.sigxcpu.org ([127.0.0.1])
+	by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 4KBdoFnrlicg; Mon, 26 Aug 2024 20:03:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
+	t=1724695436; bh=w2NohdGsHE7UuVvNyUIet5xboNMEuVw8vNSv42GIyco=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NSIOLCp7MTG8rtp/EBWKcFDUcrlyU2tAz/6NdG0kXbdW9OcbF2UUKq0Wai9Tk2U4t
+	 k80gjOigWjyqzm1e+joRpaTiF46SC7CCBOs4N7NpgJwtFXBV6s/yAs1AbsZsN8CCbe
+	 2kYK2KANqOTDhfmG2pkKG3vH5fkG0GE8TeTd70O6UV//aBujCCzHo4KSgjSFPqoOJn
+	 BlwP7tsjpev1WOkIDo5TtmfRJ+XAji+2mjJkUsTqKJBMCC1qi7sc8wDW8GTWEYbiSY
+	 CFsjzNNUYgWVnUWTvBFEz60M048C6A8bpGVtUTNqqeon4jXMyjQLr1HLSIcYZnhNWl
+	 OLwRA7GB9Ybuw==
+Date: Mon, 26 Aug 2024 20:03:54 +0200
+From: Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
+To: Abhishek Tamboli <abhishektamboli9@gmail.com>
+Cc: kernel@puri.sm, neil.armstrong@linaro.org,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+	quic_jesszhan@quicinc.com, skhan@linuxfoundation.org,
+	rbmarliere@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/panel: mantix: Transition to multi-context write
+ sequence
+Message-ID: <ZszDipyk1Ey8M0JZ@qwark.sigxcpu.org>
+References: <20240826160328.12685-1-abhishektamboli9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|MN6PR11MB8195:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5314fcab-1477-4d0e-1fdc-08dcc5f9568a
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?XIFRn9nazBrsyFJvImftViwIxKb5nflD4sd9QoGYverkIBJ9xu/rxQBswok2?=
- =?us-ascii?Q?BrBbnzPc8IPhNEK9cwiVnC1X3wwSlgxAilfvKpB1GwhG7X3ubz7kMl3tcnx3?=
- =?us-ascii?Q?yKwjWRxUALOlPKlyOm36ZjgWOwg/bS/aSxbzymiSNE5O1PA674JjSrZDi4E+?=
- =?us-ascii?Q?KbDk65Qt6d1ix/Bdp33q3YeDlgdx3wQkeICTltC+NCSfmZbYXMomL55hO3z0?=
- =?us-ascii?Q?hDWjv2HbwAvEUqfF0qI3TGJmpst9fhHZuxm9kfW3Ag/UsDf7dE+qhdW/IbhQ?=
- =?us-ascii?Q?Vy1CcCFbs2+35OmlqurjUEaad2P0OxPWaZw2W727tnMmJvqdWH0b92WKxqRZ?=
- =?us-ascii?Q?C3I/iqZ4Bus0jzSp8R96s50lZ97V0AmhNWIGi3Jn9Iz9+VMaiioDKmmV9HJd?=
- =?us-ascii?Q?e1HsQabal+dr6TCP/uyiMwEx4DqcWnU5L3E4eUUExyTV3kwShMSN5PryPn2U?=
- =?us-ascii?Q?844d5FUFn51xvceDp3JqTk9DLwmLTRd3SeExMIwMS8iHnf3vwPibCq4gH6wA?=
- =?us-ascii?Q?10C+9ZviMy//9Q/EfkT5CMwzItbNKfw5GQuQdr+AwmuP6HCjWoV65at0bid1?=
- =?us-ascii?Q?5nz9UYWIOgWaEqpmklcohSEOcQFY87ZdTP5fzDSsYi/UWFlH13+9Q5hN/fBy?=
- =?us-ascii?Q?l5g7Hg7AZW+7qFHB7g5RV/AvVWpFZpsv8YHhNTSo4jZypJezEAYaN9PCebXx?=
- =?us-ascii?Q?MiQU0YnBYfNa3LLmqaKk6PqSao/4w78p4IDxk9CjdMxDRHO5TmfMJXiZX+2f?=
- =?us-ascii?Q?eEy9VM3Rwg5YcF4W7+sV1ISBwanqXAXXpOLZEAd5k+5IOT9zeWymJzce5+Q0?=
- =?us-ascii?Q?2ZAV9X2mnXHAQ1vW+U8zGmfGnVjLyhoYB75pvfCMUTWbf+KHw9HuA8U/UT4S?=
- =?us-ascii?Q?wn+OBy5yqmVUHx5fbXcLnVhey84ridFR23ngNIWSW8/LbE3LVGEc0ovYb8ss?=
- =?us-ascii?Q?uhdvK/poAp7tRQlwxM9zCyoNi+rOmw1PrBVuUOYHhvykpENb7BbpsHpT/UbR?=
- =?us-ascii?Q?MOhyRZANUlzBbuL/Ug99/KtuFnr+Zz13UjSoBSQmewFzwwosuRDbfNBdkl7e?=
- =?us-ascii?Q?cl9Bvrhlwwilx7DL2k4k7jOLOYqdR56dTD3JT7ki53QrGemmYHX/Nq6bn9s/?=
- =?us-ascii?Q?btNhyfSFqBNCeJrJuB5R2gv+JZ8bk1Gkxk9Nq6LqrbndSIWg3Om2uy85XhTK?=
- =?us-ascii?Q?uzfEnRfxKM7HrAlMH75PW8g/zyHkvjIE03hjWrNukIb3n2thYOv555VBjOwQ?=
- =?us-ascii?Q?dWgwQO+JtF817gttMaisFQk5Il+dXx5limqvsrTUbdbytq49oAd40S9QlOKx?=
- =?us-ascii?Q?gvnv84im179z/K3U4SCRLJwe/T7zGkIXE/3EBT1wmxFR2Yt6JZg096woTwHU?=
- =?us-ascii?Q?cj5833D/qfPs8t7jiEziJlXObOJg?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?QGTXqQuhBkunn4ZZclyPKJxkZwdaB+qfVpVMOb4Jamo5eQAf4PCPA+SHVg17?=
- =?us-ascii?Q?KjjD0VgjxkD0x/O6r0+CdlSAVJs0u7qngac+aqQAUnVeTWHVWBmwclWoqRdm?=
- =?us-ascii?Q?Uqfw9w65HQtks9C12zB/5hb3W5DaMGkl5QsiuWdSDdxoo2OCOgRrbuqGCvzW?=
- =?us-ascii?Q?RKN0poUwGYUt2RnIybIC6dZL5vTyQT/9jjJCQ28n+hoYk3hP7h8eKHpHvOV0?=
- =?us-ascii?Q?0H8XYUKuAzhthofgSQTPJWwfPxB9RCB5cs7tCcmQweB8RyESOjkVw8iZPug5?=
- =?us-ascii?Q?OCi5jm3t8Vnk/brY9/5oVeBtyOnMVASQbrCip+EVcarCGt9z7A7tsahH5O7e?=
- =?us-ascii?Q?52SVxZERQzUSQiKDT1GfFXOROHdqhzpcNAV2/EFXNGoEVS41FQL2q6crmeY3?=
- =?us-ascii?Q?dfOvU+OnIQ2cOxlLcYtZxBelzeZf8/FJZ5Ugin5QFG9UBYwe/rtvHg8dvViF?=
- =?us-ascii?Q?AwHgibDaONi/yBWGgXzHXVsJ5SX7DJri1ntOX/ihnKm7TRR8UidiSH7jFi4L?=
- =?us-ascii?Q?2mZqkzHe70MgmjB0+Yq6s4/gGAUeZSnIChn7nvI7lP59qj15xNp2IsC/vEgk?=
- =?us-ascii?Q?azD+Koa/pqboe8YdV+kWlhuacecZLug6YpWBJvR1Gl30CL3ytjFJkhG1OoWQ?=
- =?us-ascii?Q?fXFIbDQxnilRMRKDwF7gdjo5j0Ypf9b9/IgSAAIa1gryIBtSQrO2dQ7871S1?=
- =?us-ascii?Q?ETRDcMqW22FINRhhChbd1VTM3uLwxkskhXzFr1y5CWlyJhKXsZQPTG+VI1Uu?=
- =?us-ascii?Q?ApyKQ0wYZ+nnJY9G/bJ+j9UEpddhbF6+nZ+8olKLliJBvw2r2fTjcnNF4jR6?=
- =?us-ascii?Q?jwFKTvEhhFANWGFWq/jt/yzJFTaOkbT7zs9eBngYbcDtqBtHpfCMq71iGjfR?=
- =?us-ascii?Q?wRt5S6irUCPJ4WYktQXboLenBYfflUZguvMtPGVk65kPdkbQoiYzt/9IAzTN?=
- =?us-ascii?Q?Hw8SRLtAQ63deQCweu4MNxCLmIwy1iz7RI0M2UdiWR6v0xH9FIH44Ww070Ec?=
- =?us-ascii?Q?8YJR2P/Dw5yIZQraV3kUNRNCFQ1TCbAHKxdIUSJQn+aPUiaKPfQIpz0NQBUi?=
- =?us-ascii?Q?FKGIb3iEodFlwdSVRYdcIO3GPlVDJD5NPmK4rp/flNbeE8MTfkvA9zSm5tOn?=
- =?us-ascii?Q?Mt5CMKohmHKihKMuaNpwJSbs1FT7R6F7nSgFJqu8mGieNEbHDJOp/Def0YMJ?=
- =?us-ascii?Q?2U+ntebAHPow4yQthuhhsDn4bk2zOcnaZtWQ8nOLkdalHMRgIYqemI/AlZA/?=
- =?us-ascii?Q?jiCBl6ia62Q0Uzx4KlUhKP7XZFh4mD0BQm0m6tCIm+R8iypOe364KRj/HkOZ?=
- =?us-ascii?Q?dmXGnWwcWifFIhUFoCCjQNacGkAWu8ipFdjJ0j6EHsqSFVVcWoNCdQsY31Uq?=
- =?us-ascii?Q?4LJjR7uPKjQWjZbK8lRDR/yAH5xFVN1daCy4MCg+5lkTnNanpEPHGesn4rhc?=
- =?us-ascii?Q?/0zBaglncWvqbtmRUb9ZxnLcWcGlpwr8c4QUTiQsjLR5xZtInpPBiixVSWKx?=
- =?us-ascii?Q?eT34SFXPIiJ/ish/cktKLTEPFRbE5ZXZHDKnCzUxbObieaFSsSDqqvck5CaW?=
- =?us-ascii?Q?F6dJzXp4F+NTymAesbl3F2pZ8kUV/v1UQwm4rd1z?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5314fcab-1477-4d0e-1fdc-08dcc5f9568a
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 18:03:07.1323
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: I5AnUiryUjUimWmj1cUGAMcAb2KT8LDXaAeqm/hVaKi5qlCUFB7P0fQcYuqOhpf+KQyZsnKnZgJl/H5N/QfNng==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR11MB8195
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826160328.12685-1-abhishektamboli9@gmail.com>
 
-Dave Jiang wrote:
-> 
-> 
-> On 8/16/24 7:44 AM, ira.weiny@intel.com wrote:
-> > From: Navneet Singh <navneet.singh@intel.com>
-> > 
-> > CXL rev 3.1 section 8.2.9.2.1 adds the Dynamic Capacity Event Records.
-> > User space can use trace events for debugging of DC capacity changes.
-> > 
-> > Add DC trace points to the trace log.
-> > 
-> > Signed-off-by: Navneet Singh <navneet.singh@intel.com>
-> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> 
-> small nit below
-> 
-> > 
-> > ---
-> > Changes:
-> > [Alison: Update commit message]
-> > ---
-> >  drivers/cxl/core/mbox.c  |  4 +++
-> >  drivers/cxl/core/trace.h | 65 ++++++++++++++++++++++++++++++++++++++++++++++++
-> >  2 files changed, 69 insertions(+)
-> > 
-> > diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
-> > index d43ac8eabf56..8202fc6c111d 100644
-> > --- a/drivers/cxl/core/mbox.c
-> > +++ b/drivers/cxl/core/mbox.c
-> > @@ -977,6 +977,10 @@ static void __cxl_event_trace_record(const struct cxl_memdev *cxlmd,
-> >  		ev_type = CXL_CPER_EVENT_DRAM;
-> >  	else if (uuid_equal(uuid, &CXL_EVENT_MEM_MODULE_UUID))
-> >  		ev_type = CXL_CPER_EVENT_MEM_MODULE;
-> > +	else if (uuid_equal(uuid, &CXL_EVENT_DC_EVENT_UUID)) {
-> > +		trace_cxl_dynamic_capacity(cxlmd, type, &record->event.dcd);
-> > +		return;
-> > +	}
-> >  
-> >  	cxl_event_trace_record(cxlmd, type, ev_type, uuid, &record->event);
-> >  }
-> > diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
-> > index 9167cfba7f59..a3a5269311ee 100644
-> > --- a/drivers/cxl/core/trace.h
-> > +++ b/drivers/cxl/core/trace.h
-> > @@ -731,6 +731,71 @@ TRACE_EVENT(cxl_poison,
-> >  	)
-> >  );
-> >  
-> > +/*
-> > + * DYNAMIC CAPACITY Event Record - DER
-> > + *
-> > + * CXL rev 3.0 section 8.2.9.2.1.5 Table 8-47
-> 
-> Should we just use 3.1 since it's the latest?
+Hi Abhishektamboli,
 
-Yep done.
-Ira
+I think this was already handled in
 
-[snip]
+https://lore.kernel.org/dri-devel/20240820091556.1032726-2-tejasvipin76@gmail.com/
+
+and applied
+
+https://lore.kernel.org/dri-devel/172414629205.2571141.13215409630895562248.b4-ty@linaro.org/#t
+
+Cheers,
+ -- Guido
+
+On Mon, Aug 26, 2024 at 09:33:28PM +0530, Abhishek Tamboli wrote:
+> Replace deprecated 'mipi_dsi_generic_write_seq()' macro
+> to 'mipi_dsi_generic_write_seq_multi()' macro in mantix_init_sequence
+> function.
+> 
+> Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
+> ---
+>  .../gpu/drm/panel/panel-mantix-mlaf057we51.c  | 19 +++++++++++--------
+>  1 file changed, 11 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c b/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c
+> index ea4a6bf6d35b..f276c65cc9bb 100644
+> --- a/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c
+> +++ b/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c
+> @@ -49,22 +49,25 @@ static int mantix_init_sequence(struct mantix *ctx)
+>  {
+>  	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+>  	struct device *dev = ctx->dev;
+> +	struct mipi_dsi_multi_context dsi_ctx = {
+> +		.dsi = dsi
+> +	};
+> 
+>  	/*
+>  	 * Init sequence was supplied by the panel vendor.
+>  	 */
+> -	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A);
+> +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A);
+> 
+> -	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_INT_CANCEL, 0x03);
+> -	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A, 0x03);
+> -	mipi_dsi_generic_write_seq(dsi, 0x80, 0xA9, 0x00);
+> +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, MANTIX_CMD_INT_CANCEL, 0x03);
+> +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A, 0x03);
+> +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0x80, 0xA9, 0x00);
+> 
+> -	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A, 0x09);
+> -	mipi_dsi_generic_write_seq(dsi, 0x80, 0x64, 0x00, 0x64, 0x00, 0x00);
+> +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A, 0x09);
+> +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0x80, 0x64, 0x00, 0x64, 0x00, 0x00);
+>  	msleep(20);
+> 
+> -	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_SPI_FINISH, 0xA5);
+> -	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x00, 0x2F);
+> +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, MANTIX_CMD_SPI_FINISH, 0xA5);
+> +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x00, 0x2F);
+>  	msleep(20);
+> 
+>  	dev_dbg(dev, "Panel init sequence done\n");
+> --
+> 2.34.1
+> 
 
