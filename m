@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-301240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94F7A95EE1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:09:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 898C195EE21
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:09:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B96201C21F3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:09:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 412D9286102
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E101547E7;
-	Mon, 26 Aug 2024 10:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCAE214D290;
+	Mon, 26 Aug 2024 10:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uh/2D57l"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qh8MCo7x"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A4814F9ED
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 10:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AFD153828
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 10:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724666866; cv=none; b=qKH7NJemT+EBedI+8Q9LOo0yacf/k+Nsz/0KDC17kipxPCnyjiKuOxnXf7y54YSX8FcfXPLTMnwoNRQpfohV5rNYvpFPaPJgMA6fTaVS6f3osPD9JpTMn4kl3H+Bad0Z2kdB4a0UOEwYyisNg8XN8A2YnvU+gQhs9V82ipTHIhw=
+	t=1724666868; cv=none; b=r427iz09HXh/DZOStT2piiFsm2PQRG+b0GCd8Hvn23lq7gN1BkHItngnCmcMQuijoK2/eam5dT2c2jMlItRrzFRQkCsZ2K4qHbhnkFXsFgfuQ3vikslaJG8WKxa74GpuZKfDbIHgoyrXwgwGMJ/RO1aZZfoBWn1q0WEw6RsUVQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724666866; c=relaxed/simple;
-	bh=XFJ5tns8gjfvYAtdDyTfcLoPh02DwDwXoBQWVHMfwN4=;
+	s=arc-20240116; t=1724666868; c=relaxed/simple;
+	bh=q84FqGekrYD8KTQs5gy+VU5Crg5qXmyLk1XObeFSfeo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=q/LZEW51gZW00YYjCZ1Tipsi4adPDh9gHXbPPoQMrQshyTYQSlbfUXICpC0mt4fdjc3GeH4Cg0BVkPZcynrfEGvBRP966rYTGB0+ZRYy2NbT5m8WqhwD3ozR0iPXVI1A9shNfUKTu7oJ0iit36hBdpMUyb38XgLvWUB5qtUZszA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Uh/2D57l; arc=none smtp.client-ip=209.85.128.52
+	 In-Reply-To:To:Cc; b=DFue9TvNcphCR3YHNmZwbR9P8xGpyUz+GB+/8MlClFHmITDt/1P34AHJKAyrJgWDAmEQQheZY19nHvIKgrl0YbXecZCqtABDKo1sUNqhW/yBRyFmvzULeqev4GYn6nenrcV1Oo+71xxJWXWaHEPCOZV/R+q7w0ru7+Z58p0PhOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qh8MCo7x; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4281ddd3ae8so1819085e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 03:07:44 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42802ddfaa6so4597075e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 03:07:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724666863; x=1725271663; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1724666864; x=1725271664; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=w76jNQAWt6bAp+W3zUZ22TllXAAFoaq8C3LjT25NtVg=;
-        b=Uh/2D57lpjVLaXlMBrMRqr0FKVwJBE6OUgmHzhBbdqb5pCZMO0yTgDBFrUkEcgeDGc
-         D6UIrhDEz7ABxqRzYIs5F75Lk/QWb5xVLLgyzhUdJBHrvQcAvkviPBLG7DSI677nLk6f
-         1KhS3tDUIsiEjJFDYll0M9wWU+e4R74EFaXcQZ6FH1a+8lhWDIzABuQAv1J4wJ+5q0mD
-         79tmKzP/JreFkgipgMsJ4P7m9KUxjY52ka9Zp6Rnr+KlfaFzeIz1BHbBjO6bershWyDe
-         q/Id3NXmmIMUCfPbrSMVzayK6KZfSzMjPu5YNhmqvJKIWm2qhZPUr+H8FHuahVKfF5bE
-         xEDw==
+        bh=LJH7gzL1aTMd1FSl3D4skxiHp7HFb4KrCiWKLzsaldQ=;
+        b=qh8MCo7x8CUvIVyXB1dEJGWcsfqcfc0bxsJqXdpb2R7Die5QJYlLPLLvisEYIK8/oa
+         l2bXC8os1xco55vukXDZ9UqkP2vimNC+JkmEqvWUqtKoCG3TZr8syVBngdoo5PMnEM3R
+         1dT+UgtbHG3cXQiCale1wxfo2oQzP3+Xn53+CPzI7w7p129gWNii/KT5d25iFjQ5Yuc6
+         NNKgF/uUdaAafjiUyaIiOzjHgBaZNyBpHDxqdsYKPKPRtmfkxYT1i836sGGaDzuY5maT
+         m7ZV5WmcCC+DfsG8GVUAAU4/Xnb4x36VromVI8mBAgGe7JdWIvUNgDB4OrAKlHNtZmXj
+         vVcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724666863; x=1725271663;
+        d=1e100.net; s=20230601; t=1724666864; x=1725271664;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=w76jNQAWt6bAp+W3zUZ22TllXAAFoaq8C3LjT25NtVg=;
-        b=i5DwtIdfVkvZPN8Do2zT5Kf35ktrVt08ewqYWZQxF3HARCUN3BdctKvy5SpJSJz0JS
-         Rdb+MUPtfmxp6izowYTc3sn7HNoYKjJwk2AmF0JknSY2S0Q60uOBrbAwK4sY49Zt+vKY
-         oxQ1QNVF19EmSnmQorPU/LqhD2Rgd/230swD+9DyoUh2Yqhm/Vqoqn+/NctrJwRaZFnR
-         JPhgowGKzTIoqf/h3IhQ4Sol9nIGtf32CwkZPBa5ibWQGKWdJA0poJG5IU+XgV76lkEu
-         1tMbWC1wLQTBAdbYu2PR50lTNDzvGuNc3XFwbrnJTTf+DJY7bcJ9eAkh3sjThkKyAcIR
-         hcGg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8jVPi7jjDRRo8K6pnHOTYkP7QHa+8rFceld5YoPC41ynUAAQ8k3W8SRYDFPFYqEMXkP+sGJ4KPS78ZHU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw99K0KZ8vGhEaFiF0FUt+GK6FFYYR4U9zFydSutT41jCT55Kk1
-	RHaW9xJAIjh7VQvNJDKXVT624LewnOr16J2hbav5lAqKBLftCaVykYWgGS/Esx4=
-X-Google-Smtp-Source: AGHT+IExT3kmRSceNRiJcXglO6EQr+JgRlwbktOceZAKBgocM3t4FdK6T71lQ8U1bTjnR+v/YdTdjA==
-X-Received: by 2002:a05:600c:1d22:b0:426:6fc0:5910 with SMTP id 5b1f17b1804b1-42acc8d4dabmr44531595e9.1.1724666862755;
-        Mon, 26 Aug 2024 03:07:42 -0700 (PDT)
+        bh=LJH7gzL1aTMd1FSl3D4skxiHp7HFb4KrCiWKLzsaldQ=;
+        b=McKwLGaz/KukLhdsI23Mhe3LmFW7kff8/S7CxCGtN724f5X/unWzYt4EjWuGS4leba
+         NqJgwZDi8cj4j2QYEwjnhi6bxXP2TiKSkVy9CYdTNsxa8UtTbhFSG2XvOrGDOUPWE2wo
+         pcbtx27EWUVCBpvgfZ1swHY3MOmqiPOZmlu85VZCT2VzGiHHsiWlZTpxKGo8eYAfG5Fl
+         t5iTUzBBWS18weQTjpoC6xT5P49nlpjextONk9v5JOjcxc4vIkYuplBxB/QFpscxvkiW
+         gQedDY1AleAS+V5FMFnLKVz9E8UGT9FCeWRUiToQcw7qwPV96Q18wlgJnPNtTiQq1Iyc
+         1sHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW+Z6Jg6qxj+8aNfobdWDJbyfQXRX7pP0fG3J6rts3Ds+h8FK79AjDi2drYqCX0vD/5Xn9VkwucE/Ed2nM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXZGOUx4vNt0sRgd5Xtff17XygkFiW7ifXJBIg2JNL2+crKjzS
+	IGaqEo5rNFP3AyNY6w842mbmjln5JxIx8Mx27Ko7SkIP478od0ST5t2PbCnW9LE=
+X-Google-Smtp-Source: AGHT+IE7gdrYrwOwPxXE//4QC856859teFRpRbc14X0LTKkOSDn4Vd45gs5Ik+WW2PRPGPps93azfw==
+X-Received: by 2002:a5d:6d05:0:b0:367:9495:9016 with SMTP id ffacd0b85a97d-373118e9996mr3690028f8f.6.1724666864363;
+        Mon, 26 Aug 2024 03:07:44 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37308110009sm10324821f8f.18.2024.08.26.03.07.41
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37308110009sm10324821f8f.18.2024.08.26.03.07.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 03:07:42 -0700 (PDT)
+        Mon, 26 Aug 2024 03:07:43 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Mon, 26 Aug 2024 12:07:23 +0200
-Subject: [PATCH 07/11] phy: qcom: qmp-pcie-msm8996: Simplify with scoped
- for each OF child loop
+Date: Mon, 26 Aug 2024 12:07:24 +0200
+Subject: [PATCH 08/11] phy: ti: am654-serdes: Use scoped device node
+ handling to simplify error paths
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240826-phy-of-node-scope-v1-7-5b4d82582644@linaro.org>
+Message-Id: <20240826-phy-of-node-scope-v1-8-5b4d82582644@linaro.org>
 References: <20240826-phy-of-node-scope-v1-0-5b4d82582644@linaro.org>
 In-Reply-To: <20240826-phy-of-node-scope-v1-0-5b4d82582644@linaro.org>
 To: Vinod Koul <vkoul@kernel.org>, 
@@ -93,80 +93,139 @@ Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
  linux-arm-msm@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1922;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3499;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=XFJ5tns8gjfvYAtdDyTfcLoPh02DwDwXoBQWVHMfwN4=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmzFPe01E0Dq3KWujpfT2EVykCertsjntcsXBD7
- +xUsNUHtVaJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZsxT3gAKCRDBN2bmhouD
- 14N3D/47LpfmUaVHVAo6X4RPv0WAxp15k+koHvm3j2dUhTy7ZzV4EXYQECCOfFGsB+CPzxwJwc5
- Lg5d7XwJxs9h5sfcDWf5rvgrpSoPqbgPEgMt3ofDnhmXcpelT+lJwgZ9DxZdGMx46xMNr0PIA63
- 1RHnEPF5iJQlH1zjQVUaiUtIoq9H5DtH3i3uF2msnwsgYRl/r11LxSlaBb37HgmubTH0EYr/3aV
- UyG65tricVuY4f7q9XjgSI86CCCoPjiclzQoYKo2Uwrw6e8/kbt6F2TfGwyadrvLyuWdwca9UhY
- NwnzS5Dfc+jtMIm1MG9dX+2Xog9uutXkTRBVyN/JAPUw4COYFxLwvoGdRNFtaK57V96PZF8TduH
- jB74iPXTm5PWTrZQlbhZlAuVbYzjVWL8F6cI62QbCjiJVaZXzJyHlVTCDKTL4a+qKhtQitydsGi
- YymvzTC0L9jX7NsoATfnvbDN5A04ldqhv7gyRHIghP4YZjWk5FGQU4KZC7j3Trdm2SH6aCR6T7G
- jIww5t/cBdwRPzapjcCNHE89Qks4EXKfW8NXS5TysLeSU0okvPw3A9eqJH/YyBqLPBWkmEu06zw
- gciV7L+UwHo++g8M73hfXlCa8sLYeYOySlvoUr+GWhJoZ1IHIl1LMpwU8WGjxFU02xUhUganhfm
- 6E0aoiBNZ6ogpTw==
+ bh=q84FqGekrYD8KTQs5gy+VU5Crg5qXmyLk1XObeFSfeo=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmzFPftx77rNEmy2lKEvE6nmjyeiGM/8vxfHVk3
+ 1Qxt9hxkm6JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZsxT3wAKCRDBN2bmhouD
+ 17VdEACDE8+ajTSInapKgMwIRqo7PrspygrbulFRV7MG7gYQuFB9ZYxJChAIKilDS3tY/vSm+mm
+ zka8Y2ZfUndSHX5z1j9a0k9HqItYyRBcF15JckSJS39yViVxdnO2So3JwRhp9ohH5RcBNLCgWXi
+ oAXJD/xxYm8NoZluxZwpKr/P+e1DxZ/iTxE36qxsdmc0i5K1Lyv2MrhIccKiE5GNghuU21Qlmon
+ pjYkvu95DSOsN4sCjuZ6mLJcHSJqSBMd+nTvI7o5AzdlCw32ewr/agT640du/9fH193lr4/juHX
+ 7I9KUOrV85awMCb205jQ9OkoqUV6T6Z6UjBzZgmfXUjW/AF/fIv4rwgpzTPwQq7FHLWhwmlSmMj
+ O5s0De/VhSO0k8dVIg3Yj8JfcgA1eQ0JiMQFWsD358pPj/Cyx5IPK+rGGImuSWRwtuNVhQg2mDB
+ tE2t9r3u+tYrCEA2qG8TnKtaj6PXKYOnFKzf01e3TWiDxsfmOE8Zrwrqbt2ctFhMNWRiUBPq14v
+ UEnylJsz6b9bx/vDX3iMxSKEspCoL2hXH/uh3PTBa0BxgKi/Wc34u84+oxNf9A2BetAzxMFu3E+
+ e1Ixc5zUX13AWl2KIQKnaC3M6hN8dT8k/BSTRE2enP0v6cWf41IzSjaNnlu4SyqhTbjuV7gKNdX
+ eHb/19T7Mf/oiQg==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Use scoped for_each_available_child_of_node_scoped() when iterating over
-device nodes to make code a bit simpler.
+Obtain the device node reference with scoped/cleanup.h to reduce error
+handling and make the code a bit simpler.
+
+Unlike in other typical of_node_get+syscon_node_to_regmap cases, the
+reference cannot be dropped immediately after syscon_node_to_regmap(),
+because further part of probe() uses it.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/phy/qualcomm/phy-qcom-qmp-pcie-msm8996.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/phy/ti/phy-am654-serdes.c | 50 +++++++++++++--------------------------
+ 1 file changed, 17 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie-msm8996.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie-msm8996.c
-index 5f89e3a3e54f..a7c65cfe31df 100644
---- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie-msm8996.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie-msm8996.c
-@@ -725,7 +725,6 @@ static int qmp_pcie_msm8996_probe(struct platform_device *pdev)
- {
- 	struct qcom_qmp *qmp;
- 	struct device *dev = &pdev->dev;
--	struct device_node *child;
- 	struct phy_provider *phy_provider;
- 	void __iomem *serdes;
- 	const struct qmp_phy_cfg *cfg = NULL;
-@@ -773,13 +772,13 @@ static int qmp_pcie_msm8996_probe(struct platform_device *pdev)
- 		return -ENOMEM;
+diff --git a/drivers/phy/ti/phy-am654-serdes.c b/drivers/phy/ti/phy-am654-serdes.c
+index 673449607c02..3bf3aff4b1c7 100644
+--- a/drivers/phy/ti/phy-am654-serdes.c
++++ b/drivers/phy/ti/phy-am654-serdes.c
+@@ -7,6 +7,7 @@
+  */
  
- 	id = 0;
--	for_each_available_child_of_node(dev->of_node, child) {
-+	for_each_available_child_of_node_scoped(dev->of_node, child) {
- 		/* Create per-lane phy */
- 		ret = qmp_pcie_msm8996_create(dev, child, id, serdes, cfg);
- 		if (ret) {
- 			dev_err(dev, "failed to create lane%d phy, %d\n",
- 				id, ret);
--			goto err_node_put;
-+			return ret;
- 		}
+ #include <dt-bindings/phy/phy.h>
++#include <linux/cleanup.h>
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/delay.h>
+@@ -644,7 +645,6 @@ static int serdes_am654_clk_register(struct serdes_am654 *am654_phy,
+ 	struct device_node *node = am654_phy->of_node;
+ 	struct device *dev = am654_phy->dev;
+ 	struct serdes_am654_clk_mux *mux;
+-	struct device_node *regmap_node;
+ 	const char **parent_names;
+ 	struct clk_init_data *init;
+ 	unsigned int num_parents;
+@@ -652,7 +652,6 @@ static int serdes_am654_clk_register(struct serdes_am654 *am654_phy,
+ 	const __be32 *addr;
+ 	unsigned int reg;
+ 	struct clk *clk;
+-	int ret = 0;
  
- 		/*
-@@ -790,7 +789,7 @@ static int qmp_pcie_msm8996_probe(struct platform_device *pdev)
- 		if (ret) {
- 			dev_err(qmp->dev,
- 				"failed to register pipe clock source\n");
--			goto err_node_put;
-+			return ret;
- 		}
+ 	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
+ 	if (!mux)
+@@ -660,41 +659,30 @@ static int serdes_am654_clk_register(struct serdes_am654 *am654_phy,
  
- 		id++;
-@@ -799,10 +798,6 @@ static int qmp_pcie_msm8996_probe(struct platform_device *pdev)
- 	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+ 	init = &mux->clk_data;
  
- 	return PTR_ERR_OR_ZERO(phy_provider);
--
--err_node_put:
--	of_node_put(child);
+-	regmap_node = of_parse_phandle(node, "ti,serdes-clk", 0);
+-	if (!regmap_node) {
+-		dev_err(dev, "Fail to get serdes-clk node\n");
+-		ret = -ENODEV;
+-		goto out_put_node;
+-	}
++	struct device_node *regmap_node __free(device_node) =
++		of_parse_phandle(node, "ti,serdes-clk", 0);
++	if (!regmap_node)
++		return dev_err_probe(dev, -ENODEV, "Fail to get serdes-clk node\n");
+ 
+ 	regmap = syscon_node_to_regmap(regmap_node->parent);
+-	if (IS_ERR(regmap)) {
+-		dev_err(dev, "Fail to get Syscon regmap\n");
+-		ret = PTR_ERR(regmap);
+-		goto out_put_node;
+-	}
++	if (IS_ERR(regmap))
++		return dev_err_probe(dev, PTR_ERR(regmap),
++				     "Fail to get Syscon regmap\n");
+ 
+ 	num_parents = of_clk_get_parent_count(node);
+-	if (num_parents < 2) {
+-		dev_err(dev, "SERDES clock must have parents\n");
+-		ret = -EINVAL;
+-		goto out_put_node;
+-	}
++	if (num_parents < 2)
++		return dev_err_probe(dev, -EINVAL, "SERDES clock must have parents\n");
+ 
+ 	parent_names = devm_kzalloc(dev, (sizeof(char *) * num_parents),
+ 				    GFP_KERNEL);
+-	if (!parent_names) {
+-		ret = -ENOMEM;
+-		goto out_put_node;
+-	}
++	if (!parent_names)
++		return -ENOMEM;
+ 
+ 	of_clk_parent_fill(node, parent_names, num_parents);
+ 
+ 	addr = of_get_address(regmap_node, 0, NULL, NULL);
+-	if (!addr) {
+-		ret = -EINVAL;
+-		goto out_put_node;
+-	}
++	if (!addr)
++		return -EINVAL;
+ 
+ 	reg = be32_to_cpu(*addr);
+ 
+@@ -710,16 +698,12 @@ static int serdes_am654_clk_register(struct serdes_am654 *am654_phy,
+ 	mux->hw.init = init;
+ 
+ 	clk = devm_clk_register(dev, &mux->hw);
+-	if (IS_ERR(clk)) {
+-		ret = PTR_ERR(clk);
+-		goto out_put_node;
+-	}
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
+ 
+ 	am654_phy->clks[clock_num] = clk;
+ 
+-out_put_node:
+-	of_node_put(regmap_node);
 -	return ret;
++	return 0;
  }
  
- static struct platform_driver qmp_pcie_msm8996_driver = {
+ static const struct of_device_id serdes_am654_id_table[] = {
 
 -- 
 2.43.0
