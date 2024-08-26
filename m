@@ -1,164 +1,110 @@
-Return-Path: <linux-kernel+bounces-301142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9993995ECED
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:17:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F202695ECF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:19:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D56F81F22273
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:17:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE406282077
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C7114374C;
-	Mon, 26 Aug 2024 09:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031DA1448F2;
+	Mon, 26 Aug 2024 09:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QpkolqLj"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gs5VIHMv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3476D8172A
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC14813FD66;
+	Mon, 26 Aug 2024 09:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724663854; cv=none; b=A2s9307ihiyDiA8y+0kx/ymY9Y2FA2pZ2s65WnAxu7rMnEebjH4opToEB5XOk1NsdI0mEom8k/tmWT31OKu7X+eEjlvk6Fx2NaEzt6jWNwt7b4+L0iCHlCmq+z39Lcvj2+OonOGv2J2GbpiA+UgY96SErPem6KOv0B0e0+oyQSg=
+	t=1724663929; cv=none; b=lZCQbtFXyLmFUWDg5yMeFeq+HI3sPH6flIahkNt20CDJNK7A92410BEDCiWjeoouh23xABTLQTzL9MvPNvl280xcVWN+rvXK5kkhACBgZs5f9xjTPgJwEsfo2NnNbzKVwznGBawhDG5t00DKdq4dc4koMdazcPeFDH8ZEBu5GC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724663854; c=relaxed/simple;
-	bh=asCoAs1B6TeLweLBRFsG8LwcXo9p7phRfIJfMNeUiXo=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=h85HRFqGSwWf4H1gNXvjAYJWtLzjWS5WsiAWQS1hB9h4tUBEcnWYGqtvpL1wxkWLr2hs+bBFGLB5KQP0AVOxLaSjLTcyBcpjYDFR5qdKmkFRXIn5QXfK6Ur8dITgTe7K4G+gO3nwEHkpR93klCs6tbPeigg74YonioWZUdLfERA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QpkolqLj; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240826091727epoutp03034afa70a8c23b351e1736c5ec6163bf~vPKHPPpOx0657006570epoutp03b
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:17:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240826091727epoutp03034afa70a8c23b351e1736c5ec6163bf~vPKHPPpOx0657006570epoutp03b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1724663848;
-	bh=HsgEOK+TFX6wt+HKoeqr6ur6faQDmraUby/Snfioctw=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=QpkolqLjozngGmGWciDzQztOWVBRom7ZVrdD7WJ5H5tbY+6T8CgXOkoLWUIuZgCoN
-	 hH5ez+CzqY6aKs0rn/l51RLYfRzG5MDoqjVKjt8QRJcVPY3dkGu0hD8Wn3d4ZZ+hNR
-	 v3K6NE6mgboVuapX/MwNmnnWQB/qQ2+v0t4T4lD4=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-	20240826091727epcas1p34d9645597636831f03915db661976a64~vPKGpftId2876028760epcas1p3m;
-	Mon, 26 Aug 2024 09:17:27 +0000 (GMT)
-Received: from epsmgec1p1.samsung.com (unknown [182.195.36.227]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4WslSQ6zB6z4x9Pr; Mon, 26 Aug
-	2024 09:17:26 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	E5.C1.09623.6284CC66; Mon, 26 Aug 2024 18:17:26 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240826091726epcas1p19797d2dd890feef6f9c4b83e9156341a~vPKFn-Ssp2463524635epcas1p19;
-	Mon, 26 Aug 2024 09:17:26 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240826091726epsmtrp1b73879ec5cd022d94fd160713ed8d77b~vPKFnG9RH2107921079epsmtrp1S;
-	Mon, 26 Aug 2024 09:17:26 +0000 (GMT)
-X-AuditID: b6c32a36-79485a8000002597-b0-66cc4826b65e
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	ED.05.08964.6284CC66; Mon, 26 Aug 2024 18:17:26 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.253.98.171]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240826091725epsmtip15e4c1642950997823fe35a09919eb6fe~vPKFXRirS0411604116epsmtip1L;
-	Mon, 26 Aug 2024 09:17:25 +0000 (GMT)
-From: Seunghwan Baek <sh8267.baek@samsung.com>
-To: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-	ulf.hansson@linaro.org, ritesh.list@gmail.com, quic_asutoshd@quicinc.com,
-	adrian.hunter@intel.com
-Cc: grant.jung@samsung.com, jt77.jang@samsung.com, junwoo80.lee@samsung.com,
-	dh0421.hwang@samsung.com, jangsub.yi@samsung.com, sh043.lee@samsung.com,
-	cw9316.lee@samsung.com, sh8267.baek@samsung.com, wkon.kim@samsung.com,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] mmc : fix for check cqe halt.
-Date: Mon, 26 Aug 2024 18:17:03 +0900
-Message-Id: <20240826091703.14631-1-sh8267.baek@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrCKsWRmVeSWpSXmKPExsWy7bCmga6ax5k0g/O3DSxOPlnDZjHjVBur
-	xb5rJ9ktfv1dz27RsXUyk8WO52fYLXb9bWayuLxrDpvFkf/9jBYLO+ayWBw81cFu0fRnH4vF
-	tTMnWC0WbHzEaHF8bbjF5kvfWBwEPHbOusvusXjPSyaPO9f2sHlM3FPn0bdlFaPH501yAWxR
-	2TYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QGcrKZQl
-	5pQChQISi4uV9O1sivJLS1IVMvKLS2yVUgtScgrMCvSKE3OLS/PS9fJSS6wMDQyMTIEKE7Iz
-	3k6fwFzwiqti7vWrTA2MPzm6GDk5JARMJN5c/sUEYgsJ7GCUWHA4tIuRC8j+xCix69BERgjn
-	G6PE3JOfWWE6el+eY4JI7GWUuLjiCAuE85lR4lXHMkaQKjYBPYlX7YfZQBIiAosYJfb+uMMM
-	4jAL/GSUeH/9IDtIlbCAkcSp9ffBOlgEVCUu7bjNAmLzCthI/OneyQKxT15i9YYDzBD2X3aJ
-	k+9Vuhg5gGwXiQ3rQyHCwhKvjm9hh7ClJF72t0HZxRILN04Cu05CoIVR4vryP4wQCXuJ5tZm
-	NpA5zAKaEut36YOEmQX4JN597WGFGM8r0dEmBFGtKnFqw1aoTmmJ680N0JDwkLg5rQcadrES
-	q54dZZ7AKDMLYegCRsZVjGKpBcW56anFhgVG8JhJzs/dxAhOflpmOxgnvf2gd4iRiYPxEKME
-	B7OSCK/c5ZNpQrwpiZVVqUX58UWlOanFhxhNgUE0kVlKNDkfmH7zSuINTSwNTMyMTCyMLY3N
-	lMR5z1wpSxUSSE8sSc1OTS1ILYLpY+LglGpgWu7vumRryUGbvAzpvI6kjv2ndsfdvrNP0eeJ
-	RnrfouNa+YyCkvusQnflafI49v67Z+h6WDKr8LxH/Pljnumfr0dbcL5KmcroU7izxNfV8D/L
-	opeuQXO4Vnvv2ue02/7vij/3PAQnH776/MGtq3Gyrx/6nzThXNDUIi+obH1lW2hyAfv2JVMc
-	CmdUR3KfntBbusF7T1SifcjDhUZmUx+Jhn0uOd584uvc+o6DZ6O9fxccT1v7acbNj2+f7rro
-	u1/LTod996LNAknhf3dPV026r1gV6HQgVXTV6gqGUxJ2oieVlrnOl0rasdTv4B/1hY3f1JgM
-	dBc8C9y3d6Zu45mkW7zvVey0qmQ3FTl7hJpNUGIpzkg01GIuKk4EACuhMJoHBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrALMWRmVeSWpSXmKPExsWy7bCSnK6ax5k0g+dv2SxOPlnDZjHjVBur
-	xb5rJ9ktfv1dz27RsXUyk8WO52fYLXb9bWayuLxrDpvFkf/9jBYLO+ayWBw81cFu0fRnH4vF
-	tTMnWC0WbHzEaHF8bbjF5kvfWBwEPHbOusvusXjPSyaPO9f2sHlM3FPn0bdlFaPH501yAWxR
-	XDYpqTmZZalF+nYJXBlvp09gLnjFVTH3+lWmBsafHF2MnBwSAiYSvS/PMXUxcnEICexmlDj8
-	6iIjREJa4vGBl0A2B5AtLHH4cDFEzUdGiW9n5jGD1LAJ6Em8aj/MBpIQEVjBKDFz+VRmEIdZ
-	oJVJ4tzWNiaQKmEBI4lT6++DTWURUJW4tOM2C4jNK2Aj8ad7JwvENnmJ1RsOME9g5FnAyLCK
-	UTK1oDg3PbfYsMAwL7Vcrzgxt7g0L10vOT93EyM4ULU0dzBuX/VB7xAjEwfjIUYJDmYlEV65
-	yyfThHhTEiurUovy44tKc1KLDzFKc7AoifOKv+hNERJITyxJzU5NLUgtgskycXBKNTAdZhA1
-	cY/xbc65bJtrPL8rcc06/dXqFw/cU7Ja/NaJJ+LfsyKT6BOuN3K2Vq12kuCtnfTO6pf6ojsn
-	re5e7FAzn9CUfSrZ+oHksmwtjVtWJxZoHi8/925nQTerfcV17qun/5aXBP06sOV28AEBHrWQ
-	WV8Wl1dtO8x+WOD3kuiFvfcS5qfwqcr/ir4+38FYyI85demmh/dkjx9c8G/2xF3lh9rvKV37
-	e/ns+279hSf+fH22g6XnyIdn7XJCpxjbLkxkX7zivfufc3HWSaaL/G0P3lioudFt8dF9Fyrj
-	w/9+D2P7ue3a2uMh1g8vr8udqV/ByRC8bl7WtXPMzWtuXrOyUTrn72lwJeTQ2/KE5V5HJZRY
-	ijMSDbWYi4oTAUSiL0DDAgAA
-X-CMS-MailID: 20240826091726epcas1p19797d2dd890feef6f9c4b83e9156341a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240826091726epcas1p19797d2dd890feef6f9c4b83e9156341a
-References: <CGME20240826091726epcas1p19797d2dd890feef6f9c4b83e9156341a@epcas1p1.samsung.com>
+	s=arc-20240116; t=1724663929; c=relaxed/simple;
+	bh=8siODDACXT+fimTC/2UB/6V4VeORso2YfO6qi6K2GWM=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=afs6z3McbWuimXB49jR/TQfR39D/UKvZ2Tr5Jh3DltWkUeAK1RuppSSsw/FiqvGsyUgjxR6DdN3xBQZVSGOT/7edunrCiarxJymc0P6LJtJVQU0nDO6LX3cCjtXYbTTbhMQv9O3LPplnS187QPlmCsZqLQmQUBwFGcU6NlUCE2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gs5VIHMv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6E4DC4FF01;
+	Mon, 26 Aug 2024 09:18:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724663928;
+	bh=8siODDACXT+fimTC/2UB/6V4VeORso2YfO6qi6K2GWM=;
+	h=Date:From:To:Subject:References:In-Reply-To:From;
+	b=gs5VIHMv8spP85k6bkA+JhcXCek1/3703narVXeBPqZtMt1jtyHyoWE9679L411Oz
+	 I8+vkPjwCkJ+oqW7JJHDZ7adTeUNO9w9ZYY9tY7LeQpb7zmz3D3F9NXS7oBHJGmBc0
+	 0tF0LtV6MOGtqaXVly3GK+32b34WVP5kT4BwLhcw=
+Date: Mon, 26 Aug 2024 11:18:45 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <2024082635-demeanor-yanking-dfc5@gregkh>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
+ <2024082420-secluding-rearrange-fcfd@gregkh>
+ <ZsxF1ZvsrJbmWzQH@apocalypse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZsxF1ZvsrJbmWzQH@apocalypse>
 
-To check if mmc cqe is in halt state, need to check set/clear of CQHCI_HALT
-bit. At this time, we need to check with &, not &&. Therefore, code to
-check whether cqe is in halt state is modified to cqhci_halted, which has
-already been implemented.
+On Mon, Aug 26, 2024 at 11:07:33AM +0200, Andrea della Porta wrote:
+> Hi Greg,
+> 
+> On 09:53 Sat 24 Aug     , Greg Kroah-Hartman wrote:
+> > On Tue, Aug 20, 2024 at 04:36:10PM +0200, Andrea della Porta wrote:
+> > > --- a/include/linux/pci_ids.h
+> > > +++ b/include/linux/pci_ids.h
+> > > @@ -2610,6 +2610,9 @@
+> > >  #define PCI_VENDOR_ID_TEKRAM		0x1de1
+> > >  #define PCI_DEVICE_ID_TEKRAM_DC290	0xdc29
+> > >  
+> > > +#define PCI_VENDOR_ID_RPI		0x1de4
+> > > +#define PCI_DEVICE_ID_RP1_C0		0x0001
+> > 
+> > Minor thing, but please read the top of this file.  As you aren't using
+> > these values anywhere outside of this one driver, there's no need to add
+> > these values to pci_ids.h.  Just keep them local to the .c file itself.
+> >
+> 
+> Thanks, I've read the top part of that file. The reason I've declared those
+> two macroes in pci_ids.h is that I'm using them both in the
+> main driver (rp1-pci.c) and in drivers/pci/quirks.c.
 
-Fixes: 0653300224a6 ("mmc: cqhci: rename cqhci.c to cqhci-core.c")
-Cc: stable@vger.kernel.org
-Signed-off-by: Seunghwan Baek <sh8267.baek@samsung.com>
----
- drivers/mmc/host/cqhci-core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Ah, missed that, sorry, nevermind.
 
-diff --git a/drivers/mmc/host/cqhci-core.c b/drivers/mmc/host/cqhci-core.c
-index c14d7251d0bb..3d5bcb92c78e 100644
---- a/drivers/mmc/host/cqhci-core.c
-+++ b/drivers/mmc/host/cqhci-core.c
-@@ -282,7 +282,7 @@ static void __cqhci_enable(struct cqhci_host *cq_host)
- 
- 	cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
- 
--	if (cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT)
-+	if (cqhci_halted(cq_host))
- 		cqhci_writel(cq_host, 0, CQHCI_CTL);
- 
- 	mmc->cqe_on = true;
-@@ -617,7 +617,7 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 		cqhci_writel(cq_host, 0, CQHCI_CTL);
- 		mmc->cqe_on = true;
- 		pr_debug("%s: cqhci: CQE on\n", mmc_hostname(mmc));
--		if (cqhci_readl(cq_host, CQHCI_CTL) && CQHCI_HALT) {
-+		if (cqhci_halted(cq_host)) {
- 			pr_err("%s: cqhci: CQE failed to exit halt state\n",
- 			       mmc_hostname(mmc));
- 		}
--- 
-2.17.1
-
+greg k-h
 
