@@ -1,103 +1,112 @@
-Return-Path: <linux-kernel+bounces-301174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BBEE95ED4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:33:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D19795ECDE
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C668828275F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:33:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 586A4281CEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4648146D55;
-	Mon, 26 Aug 2024 09:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1D314386B;
+	Mon, 26 Aug 2024 09:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kvAiglF9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="CkrIopJR"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D35145FEE;
-	Mon, 26 Aug 2024 09:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084DB1422D5
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724664784; cv=none; b=LhLakcyv9HMt1a4ny2tazgAzPlmLL+NUn5TXTcsuWOoh7nb1709PJngCNnbRu4nFR9iK50MZzZ/JJxTSVxTJUv2Fgwp6yuOFfUAmcy2p0xF7xoBERAOed1cnmNQisk19FbjY9hyAnp90oxsm1pcDK4vjthlhrZmrn+7DElCXCis=
+	t=1724663765; cv=none; b=VDyJ/bH+rLRgwudEi3D8LaxpR+MNPl26V5V/tuvB1vIir9fYe5EfxjoBJycP3PTWkZ2ZdU8641+FcLYknzyuWFzucsA0ci+llR9Qfi7GHeOtSCk9Xx8L0607FGCuDfz3qLviFPbmh1LRYpdfLB3ghLB0GKksgoNirAjcNoRoYMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724664784; c=relaxed/simple;
-	bh=hLsfUSzR0HEhVpFfdXscTD8zyuZTM22+rpebelyMh1E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YcBD6JdaPmwyCFrbAbgb24tKLBI3Ey6fBEmvaqQklvyMKUzrQEshWkcgLNYJzjaPptH8Nad4rleyEUyBxWBeJ8R6CdHzVZm+2CgsngGaNnzhnWiUOWoaFvI/1bC5I4sH3QQgipYm1egW9zKJ/uOkwJjIpdIBs/xBlRdrbu4KrY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kvAiglF9; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724664783; x=1756200783;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=hLsfUSzR0HEhVpFfdXscTD8zyuZTM22+rpebelyMh1E=;
-  b=kvAiglF94UFmsqyOHS7vasKHowSkNvZxK/UnrCHe3TIw3fNXkIToVxfD
-   9rGHmZFQ6U93hcFycMgjpYVLWKYaOehnnyZF0t46861z2Kdrqoro7IgUP
-   CJR0E7U//1yVodDPUQ6aIOFTe6kmv4bV5VabypUL+1XPcu9yj3QqW9TM7
-   SKZbw/WM8uFKiSVQbLqiie8uVIMizrS4xJYv94SFbdLibz1sSD9K0887Q
-   zFz7uLwVMGVqPVg803w18rdYbMp+VitQZ+Zv1BDcrwszcPcToQkTIepbc
-   bxQ1/iIY6Q8rLDN8f1/ElGV6MtOrYP+d8xba/inzOoO/n4v10w4KuS+BS
-   A==;
-X-CSE-ConnectionGUID: PJwgxjykR6ibOUktBPIWhw==
-X-CSE-MsgGUID: XPr01gcPTHWwEu3+NU2oVQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="25967078"
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="25967078"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 02:33:02 -0700
-X-CSE-ConnectionGUID: GheEIs6PTFaDrqiKV0o3lA==
-X-CSE-MsgGUID: ftyAxPLYSzyC0hc4jGqEmQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="62134683"
-Received: from cpetruta-mobl1.ger.corp.intel.com (HELO [10.245.246.121]) ([10.245.246.121])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 02:32:56 -0700
-Message-ID: <4149884a-7c60-40d8-848b-8876f16d6d7f@linux.intel.com>
-Date: Mon, 26 Aug 2024 11:09:08 +0200
+	s=arc-20240116; t=1724663765; c=relaxed/simple;
+	bh=K0ePHJHSuul5y3bsWp3mOBJT5h0AY8uuwLn8hFDUiq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NSp8PGhaiFGLsVynYn9IyfftzSSpkF5KI8BoqCGhCATyRB8fsH4TwXYTkgMJrYv2PXPuhmExb/jYPAvk3rNdM8a1NoXdYuu9s00C6Rvb7gC5SDnWalOdn/86L6+w0y//6AdiQrKO9EbGQ4FCBrnCSW3QRYZSV+XMDyt/GcFAiBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=CkrIopJR; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=K0eP
+	HJHSuul5y3bsWp3mOBJT5h0AY8uuwLn8hFDUiq0=; b=CkrIopJRG3isFkgYx+Fz
+	VsD8l2djumyu4rOilgyIDdoH/pxoTYTNb4e9WMPfh3F4IBk8lO/JfIqH7tdALopI
+	Ea52mx+S67vDmPwejpnA/SHXErgZGFh7Iq6HIdO+v2ceeGwGP73uZKPGN0AQ5fuv
+	/1wl+WhHPeVBEGqahLKzzEvT2Qr/cquMOB1ovEVaewm8K9smCN/T9tPP+AFMQHmk
+	EOBihaqhlFq7z+sw9rOcxau+QLthYMUQWlcaodq347GXQeerT+pzxg2fxacHtTaS
+	mji0C9rXb7937hFLAcLTSwM2Z/m+JC9a8JyJk1W3W5wKUQZgCZm65fVUGRWNaS2O
+	7w==
+Received: (qmail 1931663 invoked from network); 26 Aug 2024 11:09:20 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Aug 2024 11:09:20 +0200
+X-UD-Smtp-Session: l3s3148p1@R33sepIg7IBehhrU
+Date: Mon, 26 Aug 2024 11:09:19 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Rong Qianfeng <rongqianfeng@vivo.com>
+Cc: biju.das.jz@bp.renesas.com, Andi Shyti <andi.shyti@kernel.org>,
+	Paul Cercueil <paul@crapouillou.net>,
+	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+	opensource.kernel@vivo.com
+Subject: Re: [PATCH v3 2/4] i2c: emev2: drop sclk from struct em_i2c_device
+Message-ID: <ZsxGP6HKQnBuEE7_@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Rong Qianfeng <rongqianfeng@vivo.com>, biju.das.jz@bp.renesas.com,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Paul Cercueil <paul@crapouillou.net>,
+	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+	opensource.kernel@vivo.com
+References: <20240823035116.21590-1-rongqianfeng@vivo.com>
+ <20240823035116.21590-3-rongqianfeng@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v25 31/33] ALSA: usb-audio: Add USB offload route kcontrol
-To: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
- mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
- dmitry.torokhov@gmail.com, corbet@lwn.net, broonie@kernel.org,
- lgirdwood@gmail.com, tiwai@suse.com, krzk+dt@kernel.org,
- Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, robh@kernel.org,
- gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-input@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-doc@vger.kernel.org, alsa-devel@alsa-project.org
-References: <20240823200101.26755-1-quic_wcheng@quicinc.com>
- <20240823200101.26755-32-quic_wcheng@quicinc.com>
-Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <20240823200101.26755-32-quic_wcheng@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="GzVTah3YJcw5sKqN"
+Content-Disposition: inline
+In-Reply-To: <20240823035116.21590-3-rongqianfeng@vivo.com>
 
 
+--GzVTah3YJcw5sKqN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +config SND_USB_OFFLOAD_MIXER
-> +	tristate "Qualcomm USB Audio Offload mixer control"
-> +	help
-> +	 Say Y to enable the Qualcomm USB audio offloading mixer controls.
-> +	 This exposes an USB offload capable kcontrol to signal to
-> +	 applications about which platform sound card can support USB
-> +	 audio offload.  This can potentially be used to fetch further
-> +	 information about the offloading status from the platform sound
-> +	 card.
+On Fri, Aug 23, 2024 at 11:51:14AM +0800, Rong Qianfeng wrote:
+> For no need to save clk pointer, drop sclk from struct em_i2c_device.
+>=20
+> Signed-off-by: Rong Qianfeng <rongqianfeng@vivo.com>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-I would remove reference to Qualcomm for this Kconfig, all the code
-seems generic to me? Probably a left-over from the previous version.
+Should be folded into patch 1 IMO.
 
+
+--GzVTah3YJcw5sKqN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmbMRj8ACgkQFA3kzBSg
+Kbaa4A//QRGxIflqtho+uXF6Bvym6CoHccm4nUUu4tjLRLtWsjsIT2mggNsr4KFW
+UwKinEPvouGc0EXeuq8zlmLiPvps42rhwlMok2yYNcf9+/QjnTe2Xlw2TgwqFpT5
+dXSDQqtF/bnXaE+jWEYESddXMCqiiMZxn81bXKKenYXdUSsYzZFGsQlBhOp33if0
+UlIH+GlJhivzRDVdYTZcdiFTK+hvSvLMRuHYLHst/Dnhko5kRjfxxIry10VOeWuX
+i7bt/0nGQNa5veXnpVhYYhuHRwTCPGifIWMNGErHAJ5t7PWGqf/Ch7m89F+HyiqT
+Qw+KGodk0FI2ebYwQrUXG4PGzV/nxXLc7R/1FtdfxUNm3+IYK9M3Kr34v+u1C9Bm
+ABeL+4CrCoTi6jIHFsICsOGwxfgiFZA5EUK1r60biqqXz+5TrvQte3iv52GctDf8
+SveEzZnkWGLmZr2Ef5ubQ5nCecAVhQ4bt3cUYF+QrvUWAH61X3a0v5yK5w4lPdB6
+Pzan4WfNyeNKn8Xg8RRiyGSsm+pEANO61reyaPn6cp9I6Cl8sqQZJ/HpLLPPI4gF
+l2s8LlpFYryAEUQ2JixIP66fCoMuGm0+W/iHujDvdCsv9Ggy+5xFkPKv05KrtMAh
+W3lp+Cy33PgJ6YdA6x2xt3kZYNlpY3+oWLeEM86Nt05JEaB2eK4=
+=cjT8
+-----END PGP SIGNATURE-----
+
+--GzVTah3YJcw5sKqN--
 
