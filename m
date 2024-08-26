@@ -1,137 +1,88 @@
-Return-Path: <linux-kernel+bounces-301442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B98B95F0E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:13:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C07B95F0EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:13:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22C271F24C9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:13:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF6901C236A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD861865E8;
-	Mon, 26 Aug 2024 12:07:35 +0000 (UTC)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5996C187339;
+	Mon, 26 Aug 2024 12:08:04 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A50F17CA19;
-	Mon, 26 Aug 2024 12:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A7C144306
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724674055; cv=none; b=qww5gwzkhFDn8gar38lETpN7ihyMnb9Y2u/pjMWYGlwqxHYGWzaayj58yhPQv7PM10w3Q798N/y1joikTwjLFBFxbmUdB7Tdd616XrlOHiQy2rH0vTj8YvffY3z2V+h9DlUW4rq1Y3/sTYoWP7vwVFPW9uLH56GMalOy0f1U4Eg=
+	t=1724674083; cv=none; b=Fb5SYZPmAT5mJZgUYd5Lsariiy97qzSmoEfnITDPd3uq8cy5R5cXcD9Ks1ekXrHK1cro7u8zfqw1ijzDV44sW+nCc+nOL9hOoCaecy+DQSGAsVqDbsg2h7Kbvti8F6mGkaTCyQQoJfTiiNzt6TdpSe3sv4eSs9lngozf1h3QkRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724674055; c=relaxed/simple;
-	bh=ZN1huKQyj1+aN3ELMw7liUgHgUzyqPFv5MYHmetXdBQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sx36r1TC25s9v3r+3kjHdsmYFn5fICLjhiNP6qVGCPHRVoGDxYUOLOmhZ33OuTColGos46xkEywoCxIOySGcdLBGVJ7lKSByS1qdXJ6oKzHrUtAispj2PEAAsx9OVIg7kpFpcuAa98+XA4ll96ZIU9TtT91wSyNxrtVF/fSnHD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6b6b9867faaso37685197b3.2;
-        Mon, 26 Aug 2024 05:07:32 -0700 (PDT)
+	s=arc-20240116; t=1724674083; c=relaxed/simple;
+	bh=7H7ZPMsxBIRgLMNNoeMI8qtMILF0jMnKnj12Bq27HP0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=bdj/bWaDrdLwbb+2UTudaUhjBRwRlt6grwbsXv77M2xHVF45bmaA+CG1GThITTpwQi1oCjps83wN4e6HNBi1OY3qfxDDQXMUbur3/NbXQUKH8UUkwUsKyyJDdwIi6p9n6g6ivx7cuPxNghrAqCKx/XTynkyrnXPmmfaeMQ7d2mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39d27488930so43162785ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 05:08:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724674051; x=1725278851;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hn7VEHx9vrgs4Hq6EtDmUtqMaC4WqTV0pNRfHa1NRtk=;
-        b=UN4oUR7BrA0ENifruhi79EVhbcOEW9LEEq4G4rpB1On/xXr6fdScm2AmfIpTBPKOGy
-         q3sJwSR74M22XKwN7lzsZfJubHjurC8zxS9olZsJfaKiG9PNTCVf5THUsLCokrxkhFiN
-         BYigo8uKkFHXkqwqSD2xalQjWKpC0G0wt4ikIdxgXu6ksZSkbLecWoAD4a9/z50oVAg5
-         eujLBImkwJ+r6DMdw1oGhRb9SQ2INLkr9yD37dzioZZ41Ud3JmDCSpXaWNm305WJY0Xw
-         50UHr2G5+hOcdbAATwhID17/EM9TusyjywFNxtR0inwLSZ2mEsK4xorjtx86smnXSfV8
-         9VsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVTM9f25g9aDYZcHhrerxr8xLP5IDLsXxLP0fgC8aQnp+VjrgRoqfwkW/ew/FrN+RvjdMRm2M/45BDTVayMvd/Uam0=@vger.kernel.org, AJvYcCWIj1XeiuvNRTeTi7KehXE/+ztap/ikFpmS+GuonEC5SDbxcrMCrX4YD2cBZDDGEKKJ3je6nJ4zmz+H@vger.kernel.org, AJvYcCXpzWi5Fwksem1TUVZv7/pASYCRuFTr9vUNdIqE2ScJwtW3zeeBWwi5gfdkhp4SFjZxNr7kqjbKvMVq8yOz@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjyEROLw6sWszvoHfRStUh+1KT0yqM36jqwz/J110dCDlvlA/i
-	6GV+McvZQi2M1TsG40ojSmUlgvuARVEeFE2jEdlxXo4LKFkfMmsVjOoqnpc0
-X-Google-Smtp-Source: AGHT+IFb6qSBVAKEHrvNbgVGNVywtmQYzIqxKLofCnoXXnwMUq9QwEAm8dhH+mjmfHm8Ue31FqBqRw==
-X-Received: by 2002:a05:690c:4585:b0:65f:dfd9:b672 with SMTP id 00721157ae682-6c624fb6c9emr89223627b3.11.1724674050987;
-        Mon, 26 Aug 2024 05:07:30 -0700 (PDT)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6c39b007afcsm15038367b3.72.2024.08.26.05.07.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 05:07:30 -0700 (PDT)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6b4432b541aso37261357b3.1;
-        Mon, 26 Aug 2024 05:07:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU43cI0x7B/MAyajAbN85yM6p8A1Y/t3zrjhBckRquGTNSaMmFzhuM0GaejY1ppVRqJuDwRBH8P2NdVUhgiSG3mtOg=@vger.kernel.org, AJvYcCUc+xBvkrIEUXB33tq1AB+Gno7t3mJYZ3p8y++qyyZhxyZpJTQ90oHtNWpBM/hHbrHTGSIoC2aHZfMhM/nP@vger.kernel.org, AJvYcCWMoJOd9hYd8OeW3JXedL1pDzoiCMaQXfuxDSpife8K6Vh1WcCAkT+KKAZHu3+7k/wJa7uIhIA/yPfK@vger.kernel.org
-X-Received: by 2002:a05:690c:6605:b0:6c1:2ea1:c24d with SMTP id
- 00721157ae682-6c6262f5a8fmr130313177b3.26.1724674049961; Mon, 26 Aug 2024
- 05:07:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724674081; x=1725278881;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7wuE1cX6E/LM7OqLE4HWg7L3K0h/Pi1McYvL/zJdmR4=;
+        b=Ibl9eY6qW+Gem6j95KB4vtFStpmY1B/zMrQ5H6Whvh+stbJ627q5uuQOwdapH25Ruz
+         HpBgsEKJkVvAnh6Du+GNEi9L1BeRNnEm1t3Vq5OdAh1qvfmuTZQ/Uf6opdjLgRHXqS3Y
+         5kHiy5EtfUvRYeF3CUw+tAGC+9AYluO9Sqbo9kn6mnZVj/4+IEsqIJ1PvJ42NqlH4ZOo
+         7v717gSXJAwjlXxuYSSsThTqiJ8zXdDinKMjdUZKTKg/Cua4TXXtzVOx6DNc145DbTWY
+         8WUp9VpLbpwgiy9aSSYDWkmZxL5Ofq5MpX/ke2M5V5szzPnA2gLoJGxaWmaQOx4q1+tL
+         QW9g==
+X-Forwarded-Encrypted: i=1; AJvYcCU13rpzD3WIEmtNjYoqPx6x1ngAPpsyND5Xf63vySWmQm98jXXprQm5KBXjQEea+L9Mn8WSGtudiz2ylBE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLrhmHb8eGlddQ57Xz1ry9alj/YJee7EfLfN9OMarLkc+nCqnp
+	IGBn71kb5fZwaULedDyiL9q7Sh3LJYztD227hf7ggsfkB2ZOH65hcz8HcCsx0iaftAs2wUa8g7Q
+	c0eoHhPu9u+c+M3f0hpigWUYwgC+e950ishCXCqJ27EdfMVS1/yJeIvw=
+X-Google-Smtp-Source: AGHT+IFpEhgAp1GvVv0Zg8iV58xhZderM606AbgS39DPBV5pRWlle6onO2rTsGV3Fgn1peEgrDKyRsRZyS18fy4lLhSaMiELYInf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821085644.240009-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240821085644.240009-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240821085644.240009-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 26 Aug 2024 14:07:16 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW2=u8enge6N+A617V+5oNYnNmhw_VFW9qbcX=TEbJKig@mail.gmail.com>
-Message-ID: <CAMuHMdW2=u8enge6N+A617V+5oNYnNmhw_VFW9qbcX=TEbJKig@mail.gmail.com>
-Subject: Re: [PATCH v3 2/8] arm64: dts: renesas: Add initial DTS for RZ/V2H
- GP-EVK board
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Received: by 2002:a05:6e02:1d85:b0:39d:300f:e91c with SMTP id
+ e9e14a558f8ab-39e3ca05649mr6986005ab.5.1724674081523; Mon, 26 Aug 2024
+ 05:08:01 -0700 (PDT)
+Date: Mon, 26 Aug 2024 05:08:01 -0700
+In-Reply-To: <20240826114341.7421-1-djahchankoike@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000fb9922062094f965@google.com>
+Subject: Re: [syzbot] [net?] WARNING: lock held when returning to user space
+ in ethnl_act_cable_test
+From: syzbot <syzbot+c641161e97237326ea74@syzkaller.appspotmail.com>
+To: djahchankoike@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Prabhakar,
+Hello,
 
-On Wed, Aug 21, 2024 at 10:56=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.=
-com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add initial DTS for RZ/V2H GP-EVK board, adding the below support:
-> - Memory
-> - Clock inputs
-> - PINCTRL
-> - SCIF
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Thanks for your patch!
+Reported-by: syzbot+c641161e97237326ea74@syzkaller.appspotmail.com
+Tested-by: syzbot+c641161e97237326ea74@syzkaller.appspotmail.com
 
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-gp-evk.dts
-> @@ -0,0 +1,61 @@
-> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +/*
-> + * Device Tree Source for the RZ/V2H GP-EVK board
-> + *
-> + * Copyright (C) 2024 Renesas Electronics Corp.
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "r9a09g057.dtsi"
-> +
-> +/ {
-> +       model =3D "Renesas GP-EVK Board based on r9a09g057h44";
-> +       compatible =3D "renesas,gp-evk", "renesas,r9a09g057h44", "renesas=
-,r9a09g057";
+Tested on:
 
-Board name/compatible (and thus file name) are still under discussion...
+commit:         18aaa82b net: netlink: Remove the dump_cb_mutex field ..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=10940a29980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=df2f0ed7e30a639d
+dashboard link: https://syzkaller.appspot.com/bug?extid=c641161e97237326ea74
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14b0800d980000
 
-The rest LGTM.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Note: testing is done by a robot and is best-effort only.
 
