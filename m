@@ -1,135 +1,175 @@
-Return-Path: <linux-kernel+bounces-300832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA6B95E904
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:35:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC02A95E909
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:35:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09BED2817F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 06:35:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 625B3281821
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 06:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2A313DB90;
-	Mon, 26 Aug 2024 06:32:38 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15B88289A;
+	Mon, 26 Aug 2024 06:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EjqTPvbC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1D01384B9;
-	Mon, 26 Aug 2024 06:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D143778281
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 06:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724653958; cv=none; b=ubR+U0u3jWO92VDhCWFjjec23sfnLMk+Pj1SQV4P9LPzVB1gT7M5T3VRr1Q62sxFDDTFL+0obzbo9isYAHz9b+n91UHApPq9mB4Gln87fi/Q5BOvh1EaSIJhh7ltLa4epipM4126JIFxDVqMltOitO87lcDQl3YVCNttQm2tpcw=
+	t=1724654073; cv=none; b=Bc+Yb1Cfb6k0+x74xbGSiheHPy62lk18ViHZrVU/NojRGVASFH+aPIJU+eCMPFWndeaG3Y/oDO8t7Ki0VloCT0wuAnKaK8swJuCcIIcl3SU39bw75d205B++sooXsmpW2XS79o/qwLb1knMkKdiLjzZxAlWg68BTglE4/UiV0Jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724653958; c=relaxed/simple;
-	bh=m4AN3m7V0ZCiqHyG9R4++0srIYaDnKXtGRQdkFmLCps=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=k9nUYVi8z9NsMAHlOe8N1mhaii4yrz8KclCmtMxCVTju045cdyzYPAXpL+CxvjpNNdMBnvnOCt22jiA+S4sT51ciOkAbcgo4M0j2JiXpHuye6JHffgXDXkiZjFaZRX8PQjUUz9uBfEn68ux81Ee/qVwnxWyk7M9ibI2SPC3vynQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wsghc2ty5z20mgm;
-	Mon, 26 Aug 2024 14:27:44 +0800 (CST)
-Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
-	by mail.maildlp.com (Postfix) with ESMTPS id 57C3B18002B;
-	Mon, 26 Aug 2024 14:32:31 +0800 (CST)
-Received: from [10.173.127.72] (10.173.127.72) by
- kwepemd200019.china.huawei.com (7.221.188.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 26 Aug 2024 14:32:30 +0800
-Subject: Re: [PATCH v2] codetag: debug: mark codetags for poisoned page as
- empty
-To: Hao Ge <hao.ge@linux.dev>, <akpm@linux-foundation.org>,
-	<surenb@google.com>
-CC: <david@redhat.com>, <kent.overstreet@linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<nao.horiguchi@gmail.com>, <pasha.tatashin@soleen.com>, Hao Ge
-	<gehao@kylinos.cn>, <stable@vger.kernel.org>
-References: <aa6bde95-68e5-4d94-0ce4-c9a1d90fdcdc@linux.dev>
- <20240825163649.33294-1-hao.ge@linux.dev>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <8e052e52-4c8e-279c-bcd4-3c4cd1325bdf@huawei.com>
-Date: Mon, 26 Aug 2024 14:32:29 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1724654073; c=relaxed/simple;
+	bh=2aFmAD47ww83MBl4CWPNhIcUasgdViYhAwKKkS9ZAbM=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=dUk7nWneDweMCqwJKq8NIQb8OKBQZxYhmaAUZ2T3fZPdERZW6jMEIJyDtU4LmKl5fgjjfu8hEha+e4EPtw3WKcPIhS8JadCEyxUOiKhZM6dcxcCUMchyFGJZkYMiAIJIcb1qRnm5UBpUtKttKxk2x2H+To9tukWaK+SwQLS85qE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EjqTPvbC; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724654072; x=1756190072;
+  h=date:from:to:cc:subject:message-id;
+  bh=2aFmAD47ww83MBl4CWPNhIcUasgdViYhAwKKkS9ZAbM=;
+  b=EjqTPvbCy6OBvB5Xi7cz9EMzLBJ+fQEjdKht+fBc2LmMK7I8x9EevJDa
+   A1KkPvvEZM7f5mnQUB7anIz+MQvQZPhN8UkNJxwt69/W33GWuLoV1bHuH
+   YSoMREWNxPO8mATscF5nr3p6B2NO+XPB1OXR9g+DWIHc5poRZ2UZHKaDb
+   k+ZgEgMUDONl+ViqflJplB2Ov44bYRQwbnY6sRmY+cFgL168hhHd8S+b7
+   z8HupcD/aOqpjotjgkY7PXZPIxhLfuoZe2+tTcmUirYXbbcj9vGvw19NW
+   hyTw2ZNuaSYERE2P9tUJ8G2BJqnMp5alynVZBlz9Vy3Kr6m64URTDRF/s
+   A==;
+X-CSE-ConnectionGUID: uJAkKH8YQBy2wxYQOJVh0g==
+X-CSE-MsgGUID: 1o85YSNGRS+aHlTl1Q+7hA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="33623502"
+X-IronPort-AV: E=Sophos;i="6.10,176,1719903600"; 
+   d="scan'208";a="33623502"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2024 23:34:31 -0700
+X-CSE-ConnectionGUID: dvXXEA1LR4WrB1Hb8gUhPA==
+X-CSE-MsgGUID: stU/eRzwT7CLdM6H4cUZOQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,176,1719903600"; 
+   d="scan'208";a="63133066"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 25 Aug 2024 23:34:30 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1siTJ5-000GJB-1r;
+	Mon, 26 Aug 2024 06:34:27 +0000
+Date: Mon, 26 Aug 2024 14:33:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/fred] BUILD SUCCESS
+ fe85ee391966c4cf3bfe1c405314e894c951f521
+Message-ID: <202408261431.st4QT7R8-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20240825163649.33294-1-hao.ge@linux.dev>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd200019.china.huawei.com (7.221.188.193)
 
-On 2024/8/26 0:36, Hao Ge wrote:
-> From: Hao Ge <gehao@kylinos.cn>
-> 
-> When PG_hwpoison pages are freed,they are treated differently in
-> free_pages_prepare() and instead of being released they are isolated.
-> 
-> Page allocation tag counters are decremented at this point since the
-> page is considered not in use. Later on when such pages are released
-> by unpoison_memory(), the allocation tag counters will be decremented
-> again and the following warning gets reported:
-> 
-> [  113.930443][ T3282] ------------[ cut here ]------------
-> [  113.931105][ T3282] alloc_tag was not set
-> [  113.931576][ T3282] WARNING: CPU: 2 PID: 3282 at ./include/linux/alloc_tag.h:130 pgalloc_tag_sub.part.66+0x154/0x164
-> [  113.932866][ T3282] Modules linked in: hwpoison_inject fuse ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack ebtable_nat ebtable_broute ip6table_nat ip6table_man4
-> [  113.941638][ T3282] CPU: 2 UID: 0 PID: 3282 Comm: madvise11 Kdump: loaded Tainted: G        W          6.11.0-rc4-dirty #18
-> [  113.943003][ T3282] Tainted: [W]=WARN
-> [  113.943453][ T3282] Hardware name: QEMU KVM Virtual Machine, BIOS unknown 2/2/2022
-> [  113.944378][ T3282] pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [  113.945319][ T3282] pc : pgalloc_tag_sub.part.66+0x154/0x164
-> [  113.946016][ T3282] lr : pgalloc_tag_sub.part.66+0x154/0x164
-> [  113.946706][ T3282] sp : ffff800087093a10
-> [  113.947197][ T3282] x29: ffff800087093a10 x28: ffff0000d7a9d400 x27: ffff80008249f0a0
-> [  113.948165][ T3282] x26: 0000000000000000 x25: ffff80008249f2b0 x24: 0000000000000000
-> [  113.949134][ T3282] x23: 0000000000000001 x22: 0000000000000001 x21: 0000000000000000
-> [  113.950597][ T3282] x20: ffff0000c08fcad8 x19: ffff80008251e000 x18: ffffffffffffffff
-> [  113.952207][ T3282] x17: 0000000000000000 x16: 0000000000000000 x15: ffff800081746210
-> [  113.953161][ T3282] x14: 0000000000000000 x13: 205d323832335420 x12: 5b5d353031313339
-> [  113.954120][ T3282] x11: ffff800087093500 x10: 000000000000005d x9 : 00000000ffffffd0
-> [  113.955078][ T3282] x8 : 7f7f7f7f7f7f7f7f x7 : ffff80008236ba90 x6 : c0000000ffff7fff
-> [  113.956036][ T3282] x5 : ffff000b34bf4dc8 x4 : ffff8000820aba90 x3 : 0000000000000001
-> [  113.956994][ T3282] x2 : ffff800ab320f000 x1 : 841d1e35ac932e00 x0 : 0000000000000000
-> [  113.957962][ T3282] Call trace:
-> [  113.958350][ T3282]  pgalloc_tag_sub.part.66+0x154/0x164
-> [  113.959000][ T3282]  pgalloc_tag_sub+0x14/0x1c
-> [  113.959539][ T3282]  free_unref_page+0xf4/0x4b8
-> [  113.960096][ T3282]  __folio_put+0xd4/0x120
-> [  113.960614][ T3282]  folio_put+0x24/0x50
-> [  113.961103][ T3282]  unpoison_memory+0x4f0/0x5b0
-> [  113.961678][ T3282]  hwpoison_unpoison+0x30/0x48 [hwpoison_inject]
-> [  113.962436][ T3282]  simple_attr_write_xsigned.isra.34+0xec/0x1cc
-> [  113.963183][ T3282]  simple_attr_write+0x38/0x48
-> [  113.963750][ T3282]  debugfs_attr_write+0x54/0x80
-> [  113.964330][ T3282]  full_proxy_write+0x68/0x98
-> [  113.964880][ T3282]  vfs_write+0xdc/0x4d0
-> [  113.965372][ T3282]  ksys_write+0x78/0x100
-> [  113.965875][ T3282]  __arm64_sys_write+0x24/0x30
-> [  113.966440][ T3282]  invoke_syscall+0x7c/0x104
-> [  113.966984][ T3282]  el0_svc_common.constprop.1+0x88/0x104
-> [  113.967652][ T3282]  do_el0_svc+0x2c/0x38
-> [  113.968893][ T3282]  el0_svc+0x3c/0x1b8
-> [  113.969379][ T3282]  el0t_64_sync_handler+0x98/0xbc
-> [  113.969980][ T3282]  el0t_64_sync+0x19c/0x1a0
-> [  113.970511][ T3282] ---[ end trace 0000000000000000 ]---
-> 
-> To fix this, clear the page tag reference after the page got isolated
-> and accounted for.
-> 
-> Fixes: d224eb0287fb ("codetag: debug: mark codetags for reserved pages as empty")
-> Cc: stable@vger.kernel.org # v6.10
-> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/fred
+branch HEAD: fe85ee391966c4cf3bfe1c405314e894c951f521  x86/entry: Set FRED RSP0 on return to userspace instead of context switch
 
-Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
+elapsed time: 725m
 
-Thanks.
-.
+configs tested: 83
+configs skipped: 130
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                             allnoconfig   gcc-13.2.0
+alpha                            allyesconfig   gcc-13.3.0
+arc                               allnoconfig   gcc-13.2.0
+arc                        nsimosci_defconfig   gcc-12.3.0
+arm                               allnoconfig   gcc-13.2.0
+arm                          ixp4xx_defconfig   gcc-12.3.0
+arm                       netwinder_defconfig   gcc-12.3.0
+arm                           stm32_defconfig   gcc-12.3.0
+arm64                             allnoconfig   gcc-13.2.0
+csky                              allnoconfig   gcc-13.2.0
+i386                             allmodconfig   gcc-12
+i386                              allnoconfig   gcc-12
+i386                             allyesconfig   gcc-12
+i386         buildonly-randconfig-001-20240826   clang-18
+i386         buildonly-randconfig-002-20240826   clang-18
+i386         buildonly-randconfig-002-20240826   gcc-12
+i386         buildonly-randconfig-003-20240826   clang-18
+i386         buildonly-randconfig-004-20240826   clang-18
+i386         buildonly-randconfig-005-20240826   clang-18
+i386         buildonly-randconfig-006-20240826   clang-18
+i386                                defconfig   clang-18
+i386                  randconfig-001-20240826   clang-18
+i386                  randconfig-001-20240826   gcc-12
+i386                  randconfig-002-20240826   clang-18
+i386                  randconfig-002-20240826   gcc-12
+i386                  randconfig-003-20240826   clang-18
+i386                  randconfig-004-20240826   clang-18
+i386                  randconfig-004-20240826   gcc-12
+i386                  randconfig-005-20240826   clang-18
+i386                  randconfig-005-20240826   gcc-12
+i386                  randconfig-006-20240826   clang-18
+i386                  randconfig-011-20240826   clang-18
+i386                  randconfig-011-20240826   gcc-12
+i386                  randconfig-012-20240826   clang-18
+i386                  randconfig-012-20240826   gcc-12
+i386                  randconfig-013-20240826   clang-18
+i386                  randconfig-013-20240826   gcc-12
+i386                  randconfig-014-20240826   clang-18
+i386                  randconfig-014-20240826   gcc-12
+i386                  randconfig-015-20240826   clang-18
+i386                  randconfig-015-20240826   gcc-12
+i386                  randconfig-016-20240826   clang-18
+i386                  randconfig-016-20240826   gcc-12
+loongarch                         allnoconfig   gcc-13.2.0
+m68k                              allnoconfig   gcc-13.2.0
+microblaze                        allnoconfig   gcc-13.2.0
+mips                              allnoconfig   gcc-13.2.0
+mips                      bmips_stb_defconfig   gcc-12.3.0
+nios2                             allnoconfig   gcc-13.2.0
+openrisc                          allnoconfig   gcc-14.1.0
+openrisc                            defconfig   gcc-14.1.0
+parisc                            allnoconfig   gcc-14.1.0
+parisc                              defconfig   gcc-14.1.0
+powerpc                           allnoconfig   gcc-14.1.0
+powerpc                 linkstation_defconfig   gcc-12.3.0
+powerpc                  mpc866_ads_defconfig   gcc-12.3.0
+powerpc                  mpc885_ads_defconfig   gcc-12.3.0
+powerpc                      pcm030_defconfig   gcc-12.3.0
+riscv                             allnoconfig   gcc-14.1.0
+riscv                               defconfig   gcc-14.1.0
+riscv                    nommu_virt_defconfig   gcc-12.3.0
+s390                              allnoconfig   gcc-14.1.0
+s390                                defconfig   gcc-14.1.0
+sh                                allnoconfig   gcc-13.2.0
+sh                                  defconfig   gcc-14.1.0
+sh                      rts7751r2d1_defconfig   gcc-12.3.0
+sh                   rts7751r2dplus_defconfig   gcc-12.3.0
+sh                           se7724_defconfig   gcc-12.3.0
+sh                           sh2007_defconfig   gcc-12.3.0
+sh                             shx3_defconfig   gcc-12.3.0
+sparc64                             defconfig   gcc-14.1.0
+um                               allmodconfig   gcc-13.3.0
+um                                allnoconfig   gcc-14.1.0
+um                               allyesconfig   gcc-13.3.0
+um                                  defconfig   gcc-14.1.0
+um                             i386_defconfig   gcc-14.1.0
+um                           x86_64_defconfig   gcc-14.1.0
+x86_64                           alldefconfig   gcc-12.3.0
+x86_64                            allnoconfig   clang-18
+x86_64                           allyesconfig   clang-18
+x86_64                              defconfig   gcc-11
+x86_64                          rhel-8.3-rust   clang-18
+xtensa                            allnoconfig   gcc-13.2.0
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
