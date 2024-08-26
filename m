@@ -1,135 +1,140 @@
-Return-Path: <linux-kernel+bounces-301402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B025D95F012
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:44:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D310995F015
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:44:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 281ADB22985
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:44:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F5391F239F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857FC155751;
-	Mon, 26 Aug 2024 11:44:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8F115539D;
+	Mon, 26 Aug 2024 11:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="Jg+gnVXN"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dwJcvjwV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2422E154C0A
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 11:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE68154C0E
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 11:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724672662; cv=none; b=HEs6oF0Jb59ll5GFzyPs1WwdAA5v87E8YGG1oqsmSomy72B3G06FwTtHUrlscuq3T6i1uYY1lQUj9Wq+qL6l4+9GpLqhB5NOrVcroiJfOmTkombH4/WqYI8nEb/1BiPrp3/6fZ+kfteZci/TpHxOsLTGGED6oXw6vzhTt9nJDKU=
+	t=1724672683; cv=none; b=ExMi0++lc/2z0zKHh8d/rUuHAHHs3JAxX9Lo6y5/AWMxyEL2xfdMD3JDC+1V9EDeIhN5bjfOkPIkbm2J8Odw6TJb4UMZzucHDpZ3rxCW+xBbRym58wcdtlLvDhBuBQxHqe9tOnHXBspUbtthjLhWklDUGn/QB9UJBblYkJRv5OU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724672662; c=relaxed/simple;
-	bh=Q0WCBQ+YQhJIRNMx8ZqrxOmrXT56oBALfKJQmsCvtjk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mCKfh84uA+0dEKN5DfMDqp6zgvClUgS2CKaUSb4Jn4SUbmRKCY9gY6j9oYdvudSH/5VZnKPzAav74jkHZEGjHAqtbZ55lJFYMW3R4p5qN0VHA5NM5kXHzg7TRZmbxIrTmpuY7J7tyaVAp8dKVaXcqKlKHFZIeZoJcogZWq/J9mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=Jg+gnVXN; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-428e3129851so37589795e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 04:44:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1724672659; x=1725277459; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rjUOttzFKwY2nuZEkD+CwQhqUwBV7ybSocpNKcj+DgY=;
-        b=Jg+gnVXN47c4XZ/bOLnGZ+jCShSixFgRKiR3S10+NjKVG8A3+nen0q0/G27JlnFSsZ
-         paZVCYJRR0pJZEtASFwZMWqjtEN9OfGX1HcXbb/nvHoQytjSMdEr88EqW6VwNcPY8SSN
-         E3W/u8C7vtgf0NeIo/8N9CoCnp9Kq6F+TwH2/gCQ0LhmLIsJFfm0eIL5MGSfHDkMHMDN
-         ZweNRtTmvN+HWVo5syRyXqq+o6J7O+BWpHRF3y4s6XSCW2p65muWqQp9tyzfW45k2w/0
-         AXyim/u8MDr98fCv36vXSI8D8fsCzi96j7BinzFzKhY9djvBoewLVHah8ELlu/UOPaHm
-         dbgA==
+	s=arc-20240116; t=1724672683; c=relaxed/simple;
+	bh=QMoiVkem092bBrW+vcjJE8l/rIxpqA/yoiRitJ8s7MQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Blh3jJ72PutrBgv6ZGoTw2D9hcinrdJisyLCjM/Ij2FNXn5WP2v0lLfRif1HZcuWgZvEztlG+DG29/ikB68ucKmI1gdw9aKUna9IIkQ5CEkSYXpK2OX37Y7G4pE1B9+W+ViehyQBRx0nkkFcyCgQ76MLXBSJsrZ/H8X5TXujGtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dwJcvjwV; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724672680;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RMcvCAYN0TBa/AYjsCCHKi8+uqeaC3C3bN4VRG7FPiI=;
+	b=dwJcvjwV1AST/iHYVf+NQExL0+lx+gCRl7ZMUGWifmRMUhRliKcOi7QT+dMkjldZVMBwA3
+	Yw6wvI0XdS/SfKKGpLtVB0q3EBplmdNsVqyWVLM5L8ST/h68jTl6m9xus0p0l2p5VgmhI8
+	5s8poOoKJ5BW6ScpNiSgNtsLE22aHaY=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-558-vTLaK6D_PdeufhvCJ9KgkA-1; Mon, 26 Aug 2024 07:44:39 -0400
+X-MC-Unique: vTLaK6D_PdeufhvCJ9KgkA-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3718e6956bfso2874584f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 04:44:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724672659; x=1725277459;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rjUOttzFKwY2nuZEkD+CwQhqUwBV7ybSocpNKcj+DgY=;
-        b=C+wZsBzEDx9xLUnRkZ4MQP3KsCtXILqb3psRwPNVCsQj+xKSZ7eoEh/b1J/sdmFfwt
-         1B3cgSyF4FrtioPfZgv7bkQMrnvT10rB1WNvM+k9PM2ONBVcykZzK+uYLluVQ7AblVbY
-         Sr5dW3YBc0fsQBlJidfjq4rfGrmlf8lIlwZYCq5Ly81jhJgHf0fmX7blPGXhj45TwxTn
-         vMbcTz/3EvEhMXSvZ3e8n+nITIKY9ytqrNIU0q6wfufzCfXGl+A9dZtrZagNLi23S1AG
-         GIjh9Wkw+l53cvg958dZgwMgmXZSpVTG+jSjoy1NTNLpdFXRfBqKRwIab25LoGXjdTib
-         wyYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXkZ/2whqpc9kXrzRdJnnXLNFol1yEjfZdY9gPVfTBnV6j+ibyxlQlNnqP7cqKYMDuvG/wDTLKC/71p5M4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi71C7u1knDE05nKnFWrJOX7/SLuT+Byd07FlN42JA7/sVPk7S
-	7iy+NG8v4WaSd2B9soAGnfWUJeHx4hEqRfNqKXLYw3Blp3Gngl7O0wc2wDGj5X8=
-X-Google-Smtp-Source: AGHT+IEmvcGc7wd4ir9DzV0B4XPRNnCMACGg2Jljc1sciB66eE9kAhJjzoAZa61suLeAH/Jsj+VoBg==
-X-Received: by 2002:a05:600c:3b90:b0:426:6ed5:fd5 with SMTP id 5b1f17b1804b1-42acc8d35e0mr64320925e9.6.1724672659114;
-        Mon, 26 Aug 2024 04:44:19 -0700 (PDT)
-Received: from localhost (37-48-50-18.nat.epc.tmcz.cz. [37.48.50.18])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730811044bsm10569394f8f.23.2024.08.26.04.44.15
+        d=1e100.net; s=20230601; t=1724672677; x=1725277477;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RMcvCAYN0TBa/AYjsCCHKi8+uqeaC3C3bN4VRG7FPiI=;
+        b=tMR/9tkws2PbzBEMG+3nb+x8V5LZ+2KYE8DZ1zRmjgLWViQMTBvWS1sRryCmnxLP9g
+         MVevdR2/cZMGe9IfnBeBq4jr9k9ckmivk/1VXQ+wTQZrIbZELVRETqf5Jd2ZdIo5Vbyx
+         G/THMlPggPeRV1DJOVSWf6wpiMP+y90aPGNmD2A0/zxiXa1dJeFNljlSKzYFdAwlhmQe
+         y0NIaVaV5sRgRH+XH/WLqHmHvEpjsR8tQQ8CwsULyeJ4lk09XBILuOdO0j3FG3f8CeaG
+         sxv00DjT4YfxGqXO6ox41Gm9mSjPp0HMsljh2G7MXgDvUUYfhhEynLsAALY3zII/OFu4
+         bPag==
+X-Gm-Message-State: AOJu0YynDqcnFs9/U3yn5H4xGFwHcSu770RrjWUPLSXwxer64yvYaDju
+	irJ60OI7bzdJs1mF8rC/KfshcharfHL31RlRs8gV95ytr62llNaRiNEbDyrJ9IsjVoEMW6oN/G3
+	rnnb1fgWjcos1SL7KOhH16EWttiDw5Ri3vj6RRjH1rZpcXmbptES/aurM4ycvA4gQ3L+AZg==
+X-Received: by 2002:adf:f8ce:0:b0:36b:a404:500b with SMTP id ffacd0b85a97d-373118ecd49mr6807929f8f.51.1724672677576;
+        Mon, 26 Aug 2024 04:44:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IECF7Yhz3U9aDF5Z9hdecPK4g6U9TUuM+pe3fmYCQy8Hv15W+MeDoHJfCmQZoIKXMB0iw/MiQ==
+X-Received: by 2002:adf:f8ce:0:b0:36b:a404:500b with SMTP id ffacd0b85a97d-373118ecd49mr6807910f8f.51.1724672676770;
+        Mon, 26 Aug 2024 04:44:36 -0700 (PDT)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42abef815d2sm186355345e9.24.2024.08.26.04.44.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 04:44:15 -0700 (PDT)
-Date: Mon, 26 Aug 2024 13:44:14 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Yan Zhen <yanzhen@vivo.com>
-Cc: chuck.lever@oracle.com, jlayton@kernel.org, trondmy@kernel.org,
-	anna@kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, neilb@suse.de,
-	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com,
-	linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Subject: Re: [PATCH v2] sunrpc: Fix error checking for d_hash_and_lookup()
-Message-ID: <ZsxqjkYDk1k0EbPn@nanopsycho.orion>
-References: <20240826112509.2368945-1-yanzhen@vivo.com>
+        Mon, 26 Aug 2024 04:44:36 -0700 (PDT)
+From: Valentin Schneider <vschneid@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
+ <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
+ linux-next@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
+In-Reply-To: <20240823074705.GB12053@noisy.programming.kicks-ass.net>
+References: <c28dbc65-7499-41a5-84d0-991843153b1a@paulmck-laptop>
+ <20240823074705.GB12053@noisy.programming.kicks-ass.net>
+Date: Mon, 26 Aug 2024 13:44:35 +0200
+Message-ID: <xhsmho75fo6e4.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826112509.2368945-1-yanzhen@vivo.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Mon, Aug 26, 2024 at 01:25:09PM CEST, yanzhen@vivo.com wrote:
->The d_hash_and_lookup() function returns either an error pointer or NULL.
+On 23/08/24 09:47, Peter Zijlstra wrote:
+> On Wed, Aug 21, 2024 at 02:57:16PM -0700, Paul E. McKenney wrote:
 >
->It might be more appropriate to check error using IS_ERR_OR_NULL().
+>> 2e0199df252a ("sched/fair: Prepare exit/cleanup paths for delayed_dequeu=
+e")
+>>
+>> The preceding commit is very reliable.
+>>
+>> Only instead of (or maybe as well as?) introducing the dequeue_rt_stack()
+>> bug, the 2e0199df252a commit introduced a build bug:
+>>
+>> ------------------------------------------------------------------------
+>>
+>> In file included from kernel/sched/fair.c:54:
+>> kernel/sched/fair.c: In function =E2=80=98switched_from_fair=E2=80=99:
+>> kernel/sched/sched.h:2154:58: error: =E2=80=98__SCHED_FEAT_DELAY_ZERO=E2=
+=80=99 undeclared (first use in this function); did you mean =E2=80=98__SCH=
+ED_FEAT_LATENCY_WARN=E2=80=99?
+>>  2154 | #define sched_feat(x) !!(sysctl_sched_features & (1UL << __SCHED=
+_FEAT_##x))
+>>       |                                                          ^~~~~~~=
+~~~~~~
+>> kernel/sched/fair.c:12878:21: note: in expansion of macro =E2=80=98sched=
+_feat=E2=80=99
+>> 12878 |                 if (sched_feat(DELAY_ZERO) && p->se.vlag > 0)
+>>       |                     ^~~~~~~~~~
+>> kernel/sched/sched.h:2154:58: note: each undeclared identifier is report=
+ed only once for each function it appears in
+>>  2154 | #define sched_feat(x) !!(sysctl_sched_features & (1UL << __SCHED=
+_FEAT_##x))
+>>       |                                                          ^~~~~~~=
+~~~~~~
+>> kernel/sched/fair.c:12878:21: note: in expansion of macro =E2=80=98sched=
+_feat=E2=80=99
+>> 12878 |                 if (sched_feat(DELAY_ZERO) && p->se.vlag > 0)
+>>       |                     ^~~~~~~~~~
+>>
 >
->Fixes: b7ade38165ca ("sunrpc: fixed rollback in rpc_gssd_dummy_populate()")
+> Oh gawd, last minute back-merges :/
+>
+> Does the below help any? That's more or less what it was before Valentin
+> asked me why it was weird like that :-)
+>
 
-That certainly does not look correct.
+Woops...
 
-
->Signed-off-by: Yan Zhen <yanzhen@vivo.com>
->---
->
->Changes in v2:
->- Providing a "fixes" tag blaming the commit.
->
-> net/sunrpc/rpc_pipe.c | 4 ++--
-> 1 file changed, 2 insertions(+), 2 deletions(-)
->
->diff --git a/net/sunrpc/rpc_pipe.c b/net/sunrpc/rpc_pipe.c
->index 910a5d850d04..fd03dd46b1f2 100644
->--- a/net/sunrpc/rpc_pipe.c
->+++ b/net/sunrpc/rpc_pipe.c
->@@ -1306,7 +1306,7 @@ rpc_gssd_dummy_populate(struct dentry *root, struct rpc_pipe *pipe_data)
-> 
-> 	/* We should never get this far if "gssd" doesn't exist */
-> 	gssd_dentry = d_hash_and_lookup(root, &q);
->-	if (!gssd_dentry)
->+	if (IS_ERR_OR_NULL(gssd_dentry))
-> 		return ERR_PTR(-ENOENT);
-> 
-> 	ret = rpc_populate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1, NULL);
->@@ -1318,7 +1318,7 @@ rpc_gssd_dummy_populate(struct dentry *root, struct rpc_pipe *pipe_data)
-> 	q.name = gssd_dummy_clnt_dir[0].name;
-> 	q.len = strlen(gssd_dummy_clnt_dir[0].name);
-> 	clnt_dentry = d_hash_and_lookup(gssd_dentry, &q);
->-	if (!clnt_dentry) {
->+	if (IS_ERR_OR_NULL(clnt_dentry)) {
-> 		__rpc_depopulate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1);
-> 		pipe_dentry = ERR_PTR(-ENOENT);
-> 		goto out;
->-- 
->2.34.1
->
->
 
