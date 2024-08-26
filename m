@@ -1,159 +1,205 @@
-Return-Path: <linux-kernel+bounces-301542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FB4095F24F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:02:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2045595F251
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0AF1283691
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:02:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDEBB1F228F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915AA17C985;
-	Mon, 26 Aug 2024 13:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B91117A5A6;
+	Mon, 26 Aug 2024 13:03:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="GJHAVdBQ"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BYaXbeci"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD98165F0E;
-	Mon, 26 Aug 2024 13:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B911E519;
+	Mon, 26 Aug 2024 13:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724677340; cv=none; b=I2B4ElMmWXr2fBa/fKJ/ntIX+4aDG9GRmlVT6sZubO5+3gGu2mhyRoapLsF/rA+AIAlHRuJQ0MhlQPamGko8u5QELgOBQsSqGhyIia6VGPgj/Uh3CaMG2/1afXxEr2fyqhiNcqtOpmcQTicbjr/klmekHHUsC32LMLaboeQbf8c=
+	t=1724677418; cv=none; b=t9LePRpoWZnWBIRJlslAmKMFTs+BEw4NL71ExF85jaHvhkjGhSWBJy0xtqQeMgshl4dX6Rqozt6PXGLqGDgZx8qwR1c5tDTNIKUd1SKt7L5CUJGmOB1ICiLegXDol0J3UqCeSPR4XLDUMOtCo7pr7axsgmsedJhPIcKN8zHYnP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724677340; c=relaxed/simple;
-	bh=scIlDt3bJxc6xjtCfFWzsD60sMCU7dzjdhlTShv6odY=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=t24OH41UZZpapI/URs+GkhkMbI6dQhZgF+zAGUx7mYs+AmYYruiZcVmhct9TBBpaDKNpZPbDG0ikn/4skcizU+TCW0T1CibHjBXLToUWo3IwY3p3pM72xnBzPk54DqVNZ7VRDlJ1iElB3OYGNJ3KOCGu1Q8fiYD5+QGbQiZcLg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=GJHAVdBQ; arc=none smtp.client-ip=43.163.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1724677321; bh=4MNoqgFAOdi2a+l9olqRlqs76QuNfFgvKzCU8S9eMFE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=GJHAVdBQezJ0uAmC4uDhKKePM7ocwsgnTHzB7nWLQ2bG0LdTggwD0D0T7LJ42wXQ4
-	 X3nWMPRh0J3Zvmv2MMmlnLN4NZWB1frIXCcrEw5xSG7s8DeC84DAh3wo/4oMfm22Dv
-	 /EaXQ6LykA6uTTeHTOKonGBaOmFRt6iLm0Ina1PE=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
-	id 771A2A8; Mon, 26 Aug 2024 21:01:55 +0800
-X-QQ-mid: xmsmtpt1724677318txpb2ic50
-Message-ID: <tencent_6D26CCB3712366696D23AAC446377C576505@qq.com>
-X-QQ-XMAILINFO: OeF1Bg2NKDhoY4We6TlRiMdQPRfowlu1cuonH5uz2sqZ3Ieo5wzXEtAi02xl7E
-	 ID3XGJ6Do7AhjaYuBFmJ0z4EK3O0gXTGtyqkPDQLfjp6fIGnm8lvcaN3VAMTICv4sGmBEPuE01WH
-	 N3xd9q25ObL+n0TSt3OX7dJ2uhCgBX4XowZR8cWYKgCsB8ljOX0XQd6xmB79gfL6qc7ahcAfQdZn
-	 jw+xR7q8xEQdGRK+r89nIlxtGgHPcPzt4uMW2dBwd7Gbj1yy+PLCf54tmPzHfpdR7RqJja6Nkzad
-	 vlLA2RGR0NjK1E/WP2ssGxmdc9iww761mYD/9OkV5DrIlH/CnPcMzzJmrjj94IyHIgy4fOzA5DyL
-	 dAyE7kKIvr8vXUR3BLhQLuHREAdgofzjYh1cA4RtuXRUKUwMZ1xvbGbwgB/RAFfWRxc2blRu4B0U
-	 0shQCR3A94AL/J9ajd25kUhx052DRLYQ+S1AwF6Q3gv4z9+VRJm/k9p2OWAe73N7APz88UcXTLIl
-	 qXmVbuPx7LH0FwJZw+Y+nkdS1TO3gBHybfxyhss3mc0yOYqRRl2H8aKyP7L3OGWabZ+uoWVirt5Z
-	 NSLvGTjvS3qiuwrqjIEhSDivK3Wbs9KtTdsHOvXBkxgGQ/7NdeI4OFhLLxq4r/zXTSs3TIFLKbID
-	 1+dTRkWOKwOkwqgSLhErhO3XTZot8IogGVFr5afuPE3FxYnKiBum1Ccl5hoSro/vRVD5CWF6FQgE
-	 ccCHRNtvSL8uBQR3//pJ9SjumlLnAxlqjAnKDMlGnFlKerK5hgr/CwhkKxXkzumQOAjc19EzPw30
-	 78QI8c/t8/9ckdvbhj14IuwxG2g+zZHYEtGcb0P+zQfU42h0TVYUck55/Cvld318+YFVOZOHHgCE
-	 VbwelnQNiZNa8dvdia9kkRDyyfc7t2SewVlqtsi8/mI+JvJfVallkjNXmUewyBKTlraJY9g7GDVo
-	 UYTFh6Qfost+SsybQikc9CnQPEyvQ7aLUp+gw5SM2NrmPCXLy1eCIYTCHF+hdjXT4yk199Rtuu4h
-	 ecmT0T18h6ujSQLq67SGyifbUTR7gxxDpilrpnGg==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Edward Adam Davis <eadavis@qq.com>
-To: gregkh@linuxfoundation.org
-Cc: eadavis@qq.com,
-	kvalo@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org,
-	sergei.shtylyov@gmail.com,
-	syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH V4 2/2] wifi: ath6kl: remove ath6kl_usb_submit_ctrl_in
-Date: Mon, 26 Aug 2024 21:01:56 +0800
-X-OQ-MSGID: <20240826130154.2706792-4-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240826130154.2706792-3-eadavis@qq.com>
-References: <2024082631-upward-zips-f7b8@gregkh>
- <20240826130154.2706792-3-eadavis@qq.com>
+	s=arc-20240116; t=1724677418; c=relaxed/simple;
+	bh=EXpi6K9uXt7ma/n9zbVeegQjq9nYe85iBidPk9A8j1A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sSCQfLHvaSxu4hUuV/M3Hw1OdrrYrUK4QyUjUjfpnOpRKZBQz8sE5L7FhwQ3S2z4hxluVj3R7fEagsVuW9JXRIGKOyiG3OzA+r50IKO96D+skL/Z6Jd5j8ro2/lXu5vODXMt+wrU3DS8cuvQvKNcex5Sncy701xLHoWO5btA4Ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BYaXbeci; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7a1df0a9281so265620285a.1;
+        Mon, 26 Aug 2024 06:03:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724677416; x=1725282216; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wo8k4P607AhHv2HXwuEF6+EBlZF6/PH1+ohX5pU9hag=;
+        b=BYaXbeciDZlKhB4MYcBIm6gNbfuZ7eMV+3GfvphbiqblljXWuwFBs+y8vkhdMvqSQ8
+         ErMcv7o3u3SvWmYTkWDJ8Hjxd+SX8OZ3GKnriivZ/kpKSZN/9c6cEIrhGTjOlbRK+Xmd
+         APA4fpatE/Tg5PvgRMbYwqIocTc+Jf6dZO995ZauevKX8YyJacjm6LDQ3009Uf3AM+li
+         nlhMtCXcihxf/cLIu9BeBJbGdAZs7/pxCify2BBQa5fNbLXQL3Umnr204LK8/dHIXhf0
+         7TUdwep+JEYd4UACGUwujvKiHRJByzqADdQXSYqL9uhl6yE9ZVRvL4g/roZpAB5AYkOe
+         X6Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724677416; x=1725282216;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wo8k4P607AhHv2HXwuEF6+EBlZF6/PH1+ohX5pU9hag=;
+        b=QjiY0DlcsTvWE8XN4JyPHm/30vUvhmKp4SceQsd29LZZjIsJTLCibe8lC5sAFAZPSM
+         w9+TTYZOk2OlbbKrKB/8Zp6uRvFkrfwcpoxw0e8mHla54NhZf7qyExwUgAsGhsXouVpQ
+         dH8v9WDgKAP7jxcF2ASjRKjnpt/gFXDk85zjxIy7TNsd23gdnStBb74qO01UCGhGKlw9
+         tj4XmmdHvFLdDdhCohwub8P9TV+UYnaJrziX/q32H3fBYjJOGlVq8Ym9S3D1pZi/mhqO
+         L2AgKbqoC8oCI/XpnLAoN7B0Xfbw5R7yFAjmUCyaFXKYOslqWCwZ+7g65VzgX9o7yaPd
+         7A2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVC42emDKS4sykEHgYooxIexH9wSuzAW72AG8SKc2UYVq7JOgNEh41mO1ygIxHuz0ZpiZdFH7qfxZHfOY4nng==@vger.kernel.org, AJvYcCWdDKWYFhX8RKC6FSgsvV1OK7fiFFYGmjQzu/UM6tDhCR/UgzGMQyDaYUyCBVaEtl4vkIFBsUfrrjHZghc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWRqAUY49GsR0vbJKUDNdJ1nPNAqTirNCgxlIciFPNMIg9jZ8J
+	CXGf71t6RGd+l9liMfiWnluLd9DpZuXJJ3+8U0+xBu6RpXxXxJqemdpSpxherjotn/OpvOy5haS
+	+VlDFrYSf/NC0tEeVCFEhc1ibn2/jza69Oas=
+X-Google-Smtp-Source: AGHT+IHvYGlEOqBIQ3+PllW8j7UyCLFssgKZHidNtD64NCCLvHPxO6RliZMd7/8aZe4bhGpB3DTReDi4JZqYKv9Zkds=
+X-Received: by 2002:a05:620a:3724:b0:79d:69b5:aaf7 with SMTP id
+ af79cd13be357-7a6896d184bmr1437103985a.11.1724677415627; Mon, 26 Aug 2024
+ 06:03:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240722101443.10768-1-feilv@asrmicro.com> <CAOQ4uxhP03BHK8gDmeySxkacGvy9BToZkb5nTgaegWxJPAuG8A@mail.gmail.com>
+ <CAOQ4uxgbbadOC_LCYRk-muFKYH3QNVnD+ZEH+si-V1i3En66Bw@mail.gmail.com>
+ <CAOQ4uxiDokEQ0ZET+adP_CpvvTCRRLTcVb9d5mYAmM1q7y2PnQ@mail.gmail.com> <5be64ae3b75e413fa47c9ecb2c4a359a@exch01.asrmicro.com>
+In-Reply-To: <5be64ae3b75e413fa47c9ecb2c4a359a@exch01.asrmicro.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 26 Aug 2024 15:03:24 +0200
+Message-ID: <CAOQ4uxi-9=g6B=8P71gDC3Po1oPiqc0jw8hsEeHWurkgiMRjDw@mail.gmail.com>
+Subject: Re: [PATCH V2] ovl: fsync after metadata copy-up via mount option "fsync=strict"
+To: =?UTF-8?B?THYgRmVp77yI5ZCV6aOe77yJ?= <feilv@asrmicro.com>
+Cc: "miklos@szeredi.hu" <miklos@szeredi.hu>, 
+	"linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	=?UTF-8?B?WHUgTGlhbmdode+8iOW+kOiJr+iZju+8iQ==?= <lianghuxu@asrmicro.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-ath6kl_usb_submit_ctrl_in() did not take into account the situation where
-the length of the data read from the device is not equal to the len, and
-such missing judgments will result in subsequent code using incorrect data.
+On Mon, Aug 26, 2024 at 8:56=E2=80=AFAM Lv Fei=EF=BC=88=E5=90=95=E9=A3=9E=
+=EF=BC=89 <feilv@asrmicro.com> wrote:
+>
+>
+>
+> > =E5=8F=91=E4=BB=B6=E4=BA=BA: Amir Goldstein [mailto:amir73il@gmail.com]
+> > =E5=8F=91=E9=80=81=E6=97=B6=E9=97=B4: 2024=E5=B9=B48=E6=9C=8823=E6=97=
+=A5 19:43
+> > =E6=94=B6=E4=BB=B6=E4=BA=BA: Lv Fei=EF=BC=88=E5=90=95=E9=A3=9E=EF=BC=89=
+ <feilv@asrmicro.com>
+> > =E6=8A=84=E9=80=81: miklos@szeredi.hu; linux-unionfs@vger.kernel.org; l=
+inux-kernel@vger.kernel.org; Xu Lianghu=EF=BC=88=E5=BE=90=E8=89=AF=E8=99=8E=
+=EF=BC=89 <lianghuxu@asrmicro.> com>
+> > =E4=B8=BB=E9=A2=98: Re: [PATCH V2] ovl: fsync after metadata copy-up vi=
+a mount option "fsync=3Dstrict"
+> >
+> > On Fri, Aug 23, 2024 at 11:51=E2=80=AFAM Amir Goldstein <amir73il@gmail=
+.com> wrote:
+> > >
+> > > On Mon, Jul 22, 2024 at 3:56=E2=80=AFPM Amir Goldstein <amir73il@gmai=
+l.com> wrote:
+> > > >
+> > > > On Mon, Jul 22, 2024 at 1:14=E2=80=AFPM Fei Lv <feilv@asrmicro.com>=
+ wrote:
+> > > > >
+> > > > > For upper filesystem which does not enforce ordering on storing o=
+f
+> > > > > metadata changes(e.g. ubifs), when overlayfs file is modified for
+> > > > > the first time, copy up will create a copy of the lower file and
+> > > > > its parent directories in the upper layer. Permission lost of the
+> > > > > new upper parent directory was observed during power-cut stress t=
+est.
+> > > > >
+> > > > > Fix by adding new mount opion "fsync=3Dstrict", make sure
+>
+> There is a typo here, "opion" should be "option", please help correct bef=
+ore merge.
+>
 
-usb_control_msg_recv() handles the abnormal length of the returned data,
-so using it directly.
+No problem, but I am still waiting for Miklos to comment on this option.
 
-Suggested-by: Greg KH <gregkh@linuxfoundation.org>
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- drivers/net/wireless/ath/ath6kl/usb.c | 39 +++------------------------
- 1 file changed, 3 insertions(+), 36 deletions(-)
+> > > > > data/metadata of copied up directory written to disk before
+> > > > > renaming from tmp to final destination.
+> > > > >
+> > > > > Signed-off-by: Fei Lv <feilv@asrmicro.com>
+> > > >
+> > > > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> > > >
+> > > > but I'd also like to wait for an ACK from Miklos on this feature.
+> > > >
+> > > > As for timing, we are in the middle of the merge window for
+> > > > 6.11-rc1, so we have some time before this can be considered for 6.=
+12.
+> > > > I will be on vacation for most of this development cycle, so either
+> > > > Miklos will be able to queue it for 6.12 or I may be able to do nea=
+r
+> > > > the end of the 6.11 cycle.
+> > > >
+> > >
+> > > Miklos,
+> > >
+> > > Please let me know what you think of this approach to handle ubifs up=
+per.
+> > > If you like it, I can queue this up for v6.12.
+> > >
+> > > Thanks,
+> > > Amir.
+> > >
+> > > >
+> > > > > ---
+> > > > > V1 -> V2:
+> > > > >  1. change open flags from "O_LARGEFILE | O_WRONLY" to "O_RDONLY"=
+.
+> > > > >  2. change mount option to "fsync=3Dordered/strict/volatile".
+> > > > >  3. ovl_should_sync_strict() implies ovl_should_sync().
+> > > > >  4. remove redundant ovl_should_sync_strict from ovl_copy_up_meta=
+_inode_data.
+> > > > >  5. update commit log.
+> > > > >  6. update documentation overlayfs.rst.
+> > > > >
+> >
+> > Hi Fei,
+> >
+> > I started to test this patch and it occured to me that we have no test =
+coverage for the "volatile" feature.
+> >
+> > Filesystem durability tests are not easy to write and I know that you t=
+ested your own use case, so I will not ask you to write a regression test a=
+s a condition for merge, but if you are willing to help, it would be very n=
+ice to add this test coverage.
+>
+> OK, I can have a try, need some time to study test suite. This is a new t=
+hing for me.
+>
 
-diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless/ath/ath6kl/usb.c
-index 0458b5a078e1..b1fc66d823b8 100644
---- a/drivers/net/wireless/ath/ath6kl/usb.c
-+++ b/drivers/net/wireless/ath/ath6kl/usb.c
-@@ -901,40 +901,6 @@ static int ath6kl_usb_submit_ctrl_out(struct ath6kl_usb *ar_usb,
- 	return 0;
- }
- 
--static int ath6kl_usb_submit_ctrl_in(struct ath6kl_usb *ar_usb,
--				  u8 req, u16 value, u16 index, void *data,
--				  u32 size)
--{
--	u8 *buf = NULL;
--	int ret;
--
--	if (size > 0) {
--		buf = kmalloc(size, GFP_KERNEL);
--		if (buf == NULL)
--			return -ENOMEM;
--	}
--
--	/* note: if successful returns number of bytes transfered */
--	ret = usb_control_msg(ar_usb->udev,
--				 usb_rcvctrlpipe(ar_usb->udev, 0),
--				 req,
--				 USB_DIR_IN | USB_TYPE_VENDOR |
--				 USB_RECIP_DEVICE, value, index, buf,
--				 size, 2000);
--
--	if (ret < 0) {
--		ath6kl_warn("Failed to read usb control message: %d\n", ret);
--		kfree(buf);
--		return ret;
--	}
--
--	memcpy((u8 *) data, buf, size);
--
--	kfree(buf);
--
--	return 0;
--}
--
- static int ath6kl_usb_ctrl_msg_exchange(struct ath6kl_usb *ar_usb,
- 				     u8 req_val, u8 *req_buf, u32 req_len,
- 				     u8 resp_val, u8 *resp_buf, u32 *resp_len)
-@@ -954,8 +920,9 @@ static int ath6kl_usb_ctrl_msg_exchange(struct ath6kl_usb *ar_usb,
- 	}
- 
- 	/* get response */
--	ret = ath6kl_usb_submit_ctrl_in(ar_usb, resp_val, 0, 0,
--					resp_buf, *resp_len);
-+	ret = usb_control_msg_recv(ar_usb->udev, 0, resp_val,
-+				USB_DIR_IN | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
-+				0, 0, resp_buf, *resp_len, 2000, GFP_KERNEL);
- 
- 	return ret;
- }
--- 
-2.43.0
+Whenever you can.
 
+> >
+> > There is already one overlayfs test in fstests (overlay/078) which test=
+s behavior of overlayfs copy up during power cut (a.k.a shutdown).
+>
+> Do you mean overlay/078 in kernel/git/brauner/xfstests-dev.git ?
+>
+
+Yes overlay/078, but upstream repo is
+git://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
+
+> >
+> > One thing that I do request is that you confirm that you tested that th=
+e legacy "volatile" mount option still works as before.
+>
+> Yes, I tested basic function of "volatile" mount option with this patch.
+>
+
+Thanks,
+Amir.
 
