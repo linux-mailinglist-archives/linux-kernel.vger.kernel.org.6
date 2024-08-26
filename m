@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-301880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EC2E95F6D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:40:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69B1595F6D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:40:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8A1B1F22623
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:40:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C7D21C21EA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83ACB197A98;
-	Mon, 26 Aug 2024 16:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A691198E6F;
+	Mon, 26 Aug 2024 16:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hBpgNaKz"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GVnrGYls"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391B62F870;
-	Mon, 26 Aug 2024 16:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FC42F870;
+	Mon, 26 Aug 2024 16:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724690335; cv=none; b=W2s4+vdwkCx4xktW+h4XnEiDvcADEyjwWnQjwEsUreZf7bfOEeQF8VeynekGrZYZHIQT32OcKdpVRhnAf2qeym2D5vLCz+PnU2sF6qhgOdOoBkZmws/cDft0arlbPXjcn0jH3b4dIqRgEOvbx9NtpglFsQ2uVsF6ViWXML3n2ZY=
+	t=1724690347; cv=none; b=sre0gCN0VMgxsqXyy31YXrn6tW9xQOf98D3RHp8qG08Bxvjx6MRDgMAFrOZlTi35L1eBCpegT0B37XoPFT2iq1oPhwjiWqrqsSGkT5XjNWRagQqRFKUtH0F+tlAlN7gIoE6mVgpTvTiPoaWDQjiqYJ9j0NJ9bIoYEAswt3JQ9OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724690335; c=relaxed/simple;
-	bh=wrmyHvHv2nyWcRmmlY5SaB6oRq7gHzJ3hZhhm8EeiLg=;
+	s=arc-20240116; t=1724690347; c=relaxed/simple;
+	bh=PEZnnBeiNVt3GdRDl4q/XrzlNfMfIl5dQkddY50cuY4=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ptKlCK2ETeRp/ayRF0B9LpYY1EPqm/NllfwoBAND/XiWWEvZcFCpcywRZHhG8LmMXUAzBzA0ppvyjqeIpAbbResS3lgeh/9rkoZ1BqxuwB0kjrI1zEjy4fVjgwmC9t9p+bDXIB6Lqm/l1RMfWaD+G2HMaNOF8OKrX3vWClRz5q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hBpgNaKz; arc=none smtp.client-ip=209.85.208.46
+	 In-Reply-To:Content-Type; b=QoqS4wuJfvyYDQGCrNXaln2IT++N6A0zecIfMFCDnJrYT8mgDEMtm0PjEbecKK8XkYBVmWvjDPfMQSYKgJxwqUbkunRBoh6KrcjF9yYkSEaIO+ZuCDcW3vO2Ke6YIPAozBZ9/TMm3q/k5uUIepCs9m1Lmt0uNHCjxc31os8neqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GVnrGYls; arc=none smtp.client-ip=209.85.167.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5bef259a71fso652241a12.1;
-        Mon, 26 Aug 2024 09:38:53 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53345fe848eso1019518e87.2;
+        Mon, 26 Aug 2024 09:39:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724690332; x=1725295132; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724690344; x=1725295144; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:references
          :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=EZu/jBjd1Q70dpjtoHTLkvik+k0qgpVx09i6KQH3MDg=;
-        b=hBpgNaKzhxfbJXALjb8sXQbGWSjPV8n9YzzhiarcEb+2f6vAiJrb8hguCbKXCZ4mnl
-         E0i/YdGO+6ZOFPdN7IbaceA3AZKvvF4yJz+torQstC/ieiYcseSfbTwdcbvvW+HaTs5o
-         rq4wVmNrON5b7L/rP6oRxrAbUBXNcEDuE/RgKR1AfimmjbPfeJ/bFHK4FSjgptyD0DFv
-         KdBcq0i4tLk8Wy83LjbAriFgjoG1ikVhofAWZj/Yyr7lpTC//jp5v+mR7VZlSJYwWD3a
-         FWg8r4TjYVPzqn45K2pv1r8wNjYTauPMjYU0ZEhB22H3VT1FZS1To0xa/w0t20wnx2v4
-         ODYg==
+        bh=0pQNjRvPbGFwIbtiuAF6ctUFukzjUNsN4+HfbcLCR3o=;
+        b=GVnrGYlsv4MUaluU1+/GpHZVpMgEOZNYW88/ss3dvWnDK3w3RasaFOh7tMtxR3HPca
+         t/nRD24olpCAJYiXQsgG5liqDxa3I03WB7W7sz3eRWAGe6FGG01/10+khjLV5emCsS3M
+         1n406Lg89AHVJfjdWPukHEAQMPfMWP8ygNN/4DyfShhOEmsrhwewitoNORBMwew/Nwf0
+         ilHEXf2pBS0RdRcabsNVTETruE0W/M6cGJAyijj1MH1LnT3LmxU5Trc7tDtJo1UTUsCX
+         uCKRZ9WnpX/AHtGQLXOjTES9bANHSywOyAG5iSQ8b24epjCL+xgdGk1dF5VUIoSNO2g9
+         lyyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724690332; x=1725295132;
+        d=1e100.net; s=20230601; t=1724690344; x=1725295144;
         h=content-transfer-encoding:in-reply-to:content-language:references
          :cc:to:subject:from:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EZu/jBjd1Q70dpjtoHTLkvik+k0qgpVx09i6KQH3MDg=;
-        b=wgmkgE1zcyiHNUtAocq05jGr+B3l/jayezfk5N9/z3UPKaQP52mg6fSc936YyXb5hH
-         P8+NAu+bk/Qs5CNKBTStC4lXD+noOD2hKnNwUqJDGOWeDKJD1UNd4K7f5epaXWLYTlbi
-         /a+BdTKG/oQ+farJHsN9bx8/KeNGCznWVgIyZdQ7YVcFKe3mVtkqzPGDlJdaRzBqa6by
-         /l+KqIMl65ybWaruqUnpmgT5h/yB6FW7AkGlTg2dHRHHiOSJ9KoYOMovhDUmAuO9D8vZ
-         ZNgpdLSzqpdLUFYpFJfFIKcSLICPZlK375EAZ6j2TlHIwvZB74xGRO/q62UbdmKu2MBF
-         iQ9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVgKXmwwA/J4fv65u+06cdocUyPRs9EudPqXrqhyHvFwKpe2kIlVJc7qF2qbn9m/CTwH+MSHqyYR0RMim1/@vger.kernel.org, AJvYcCVo6T4TbyTEnB9wJLk+0ioOIzd7ZHV1wymGrR7z5IDB6Zo7EQAOJrPevylj8bjJ8+EpPaAElyv6S3FA@vger.kernel.org, AJvYcCW15XqY4/SoSV4LgneWVi2L1Rgyynq/bVlNLgeUU20gaRZaqgIwzBqEnfujmA4ch60S9YD5d2kn0tjw@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPhCDum0xXXaHOrx6PbVP3zy//bhjktbkza/NOoN9SBzRbULAj
-	vnZ8FUddQmH8Jsh+RKF0KnePeUvQQ9w7jxrH+QxjvXl2sIZNTNLp
-X-Google-Smtp-Source: AGHT+IF5/mm796lJvJrh2R57EkeRqBcf4GBAINfr26Gtc7NdeyL4EuQ0tSkGoqsTXngxQRCUC4zWNw==
-X-Received: by 2002:a17:907:9724:b0:a7a:9f0f:ab1b with SMTP id a640c23a62f3a-a86a54bb7e9mr373585766b.7.1724690332196;
-        Mon, 26 Aug 2024 09:38:52 -0700 (PDT)
+        bh=0pQNjRvPbGFwIbtiuAF6ctUFukzjUNsN4+HfbcLCR3o=;
+        b=RQKkBSJ8LWRqFqe10VmTAtgwQY1snx8Gz4lMFK9yHlJghLZ5pvaQuBDMMLCVA4/9Dn
+         Hj1J0cfGIJyaB79B3zr+ru1mzHvBML2LlMOGdZouJWHtNa73f76m6f8xBZkzQdNylwgB
+         odZdyClB7I01iidKx8QM34XAir7ufNSC4KHFbaHAz3TX1F+IBmx+/ls5juzNDzzg97UL
+         NqSr+h0r4HM4dqnR1OBvKU4VD6JBmwykuozgGvyHY5ax7qF3Xc+WGEYvukmO7lL964ro
+         QU0BVdZFPykiKJ2NkzAheyrr7mv1YIbLEwzx1qn9I9a6qS9XTVRuF//EGaQtsfRQdXJg
+         OgEg==
+X-Forwarded-Encrypted: i=1; AJvYcCVBu5IiEhgUc6tegKbydk3SB4RuFvclSFHX1HGiXxs/b83Bd9AX4f2YfvcouSF88H+QJ43ZHDSJ6WOj@vger.kernel.org, AJvYcCVL2ZbX3/w1NhCAMxTrLMNtaI5Jb7oJwZes2BaSAJcM5KJJEX4RSW8lxZEJnkmicGOlq7vXgjaP3b6P@vger.kernel.org, AJvYcCXeltbWjG2/3xr8t/dlE1gmRR1DFwvXsQnJ+xZszIsqCbIQ25nryxMI0ddienVF3WZ8ClAFMZ0aH/DILFxX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yypr60gSzIEMoyhJm8sJdvtR3SmRlSjQbyYtTc1a+pSm+OL/SjD
+	kLOKGbYWYFWcODO098iQg88N8xqtVkF+0iy3c+WcppsQwgqhegA+
+X-Google-Smtp-Source: AGHT+IEM7G/1hSJu1S8jVW53HPtYBrabXkywCD2sERfCFLDL6cK0F7718zBUberYt362t0n/nsDo3A==
+X-Received: by 2002:a05:6512:1592:b0:52f:c142:6530 with SMTP id 2adb3069b0e04-534387c4976mr3999893e87.6.1724690343597;
+        Mon, 26 Aug 2024 09:39:03 -0700 (PDT)
 Received: from ?IPV6:2a02:a449:4071:1:32d0:42ff:fe10:6983? ([2a02:a449:4071:1:32d0:42ff:fe10:6983])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4363b5sm684267966b.133.2024.08.26.09.38.51
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f484b51sm696457466b.146.2024.08.26.09.39.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 09:38:51 -0700 (PDT)
-Message-ID: <af141286-7994-4e3f-93e2-6ee4e718ef8a@gmail.com>
-Date: Mon, 26 Aug 2024 18:38:51 +0200
+        Mon, 26 Aug 2024 09:39:03 -0700 (PDT)
+Message-ID: <9fbca2d8-f904-4913-ba05-8715e748a454@gmail.com>
+Date: Mon, 26 Aug 2024 18:39:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,7 +76,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Johan Jonker <jbx6244@gmail.com>
-Subject: [PATCH v1 4/9] clk: rockchip: rk3288: Drop CLK_NR_CLKS usage
+Subject: [PATCH v1 5/9] clk: rockchip: rk3308: Drop CLK_NR_CLKS usage
 To: heiko@sntech.de
 Cc: robh@kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org,
  mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org,
@@ -94,32 +94,32 @@ clock id.
 
 Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 ---
- drivers/clk/rockchip/clk-rk3288.c | 5 ++++-
+ drivers/clk/rockchip/clk-rk3308.c | 5 ++++-
  1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index baa5aebd3277..90d329216064 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -932,6 +932,7 @@ static void __init rk3288_common_init(struct device_node *np,
- 				      enum rk3288_variant soc)
+diff --git a/drivers/clk/rockchip/clk-rk3308.c b/drivers/clk/rockchip/clk-rk3308.c
+index db3396c3e6e9..95a9512a41a3 100644
+--- a/drivers/clk/rockchip/clk-rk3308.c
++++ b/drivers/clk/rockchip/clk-rk3308.c
+@@ -917,6 +917,7 @@ static const char *const rk3308_critical_clocks[] __initconst = {
+ static void __init rk3308_clk_init(struct device_node *np)
  {
  	struct rockchip_clk_provider *ctx;
 +	unsigned long clk_nr_clks;
+ 	void __iomem *reg_base;
 
- 	rk3288_cru_base = of_iomap(np, 0);
- 	if (!rk3288_cru_base) {
-@@ -939,7 +940,9 @@ static void __init rk3288_common_init(struct device_node *np,
+ 	reg_base = of_iomap(np, 0);
+@@ -925,7 +926,9 @@ static void __init rk3308_clk_init(struct device_node *np)
  		return;
  	}
 
--	ctx = rockchip_clk_init(np, rk3288_cru_base, CLK_NR_CLKS);
-+	clk_nr_clks = rockchip_clk_find_max_clk_id(rk3288_clk_branches,
-+						   ARRAY_SIZE(rk3288_clk_branches)) + 1;
-+	ctx = rockchip_clk_init(np, rk3288_cru_base, clk_nr_clks);
+-	ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
++	clk_nr_clks = rockchip_clk_find_max_clk_id(rk3308_clk_branches,
++						   ARRAY_SIZE(rk3308_clk_branches)) + 1;
++	ctx = rockchip_clk_init(np, reg_base, clk_nr_clks);
  	if (IS_ERR(ctx)) {
  		pr_err("%s: rockchip clk init failed\n", __func__);
- 		iounmap(rk3288_cru_base);
+ 		iounmap(reg_base);
 --
 2.39.2
 
