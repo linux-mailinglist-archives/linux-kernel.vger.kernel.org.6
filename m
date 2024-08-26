@@ -1,107 +1,104 @@
-Return-Path: <linux-kernel+bounces-301921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3896395F763
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:05:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B208495F766
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E800C28415C
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:05:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BBF61F22B30
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDCC319882F;
-	Mon, 26 Aug 2024 17:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B213519884B;
+	Mon, 26 Aug 2024 17:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CN8K0ki5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fVabn5F4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB2F143C7D
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 17:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55951946BB;
+	Mon, 26 Aug 2024 17:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724691941; cv=none; b=P76RelH7pstZz2FCt+fs7HhV9h/XxNGidzeoPV36xyOmXPa9pGuPd8zTNmm/g8oXgXblZ442GI1AuBLD3xHhL4KIihKCkIrpwN/Qd9WJkivLkIBBjkxigWd/CGY/v7XdQ6N3KSC+fBJQg57ek6KeDH308DKpjYA0oJcHfmErnCM=
+	t=1724691949; cv=none; b=H1eHZ9uRK2W67t72aGKxKeuzasJ+1vLkLIV/fjmTzpxu7BcJADlE5Ss/xJR619gZ1DsXH1z6WGpcx08rrhryzSI25f+UUTeM+jDzMOT+ncIhsb0edzZAtqX5PlLpN2By/H/geh/DRzHEZafA19r4A/iLUDM6RGApz+UDxFt+G5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724691941; c=relaxed/simple;
-	bh=v1x8qM1JUpd+6H6lGzaQVnYOqnn9LhFyhGDyQJjWVpw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dElFBN0SjVMxbnFkEObbjm/3NWXZpzdM5SBhlkrEmS1lGrLYLQQcb0m9/thigP/UpIiZyudR0m5S73Y+y10f6at2+N7CPtyqF7jxSM4ThAWwfkCXSa93mon0uNcpGQ9eb5FMJnvNDZZnzPEFbRVUQOJlfymbDEvMMDByuz/hw+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CN8K0ki5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724691938;
-	h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:in-reply-to:in-reply-to:  references:references;
-	bh=iFLwdjGWsrz80giJodffzu8y0WaO5ReAP6Vq8OTY0bQ=;
-	b=CN8K0ki5O0euZNew5unopbbfLQZzBiJIN8gBvnXCuiPuXZ1iXqXI3u+y8cfZfrLTOn7VoR
-	QDXo2aJU+NPNx8HyGeQIlEpez6CwGflaYofhi/H1pvjBgm1721++Ga/YiqW/hfNWVHi2vT
-	jU+xPghfpHAoE2z7BAnUlhpUmCrI1Hw=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-614-5vz5HxPKNIq2vA7ptFg9mw-1; Mon,
- 26 Aug 2024 13:05:36 -0400
-X-MC-Unique: 5vz5HxPKNIq2vA7ptFg9mw-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8A9DC1955D47;
-	Mon, 26 Aug 2024 17:05:34 +0000 (UTC)
-Received: from debarbos-thinkpadt14sgen2i.remote.csb (unknown [10.22.65.37])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7B435300019C;
-	Mon, 26 Aug 2024 17:05:32 +0000 (UTC)
-Date: Mon, 26 Aug 2024 13:05:29 -0400
-From: Derek Barbosa <debarbos@redhat.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Petr Mladek <pmladek@suse.com>, pmaldek@suse.com, williams@redhat.com,
-	tglx@linutronix.de, linux-rt-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: test 1: was: Re: A Comparison of printk between upstream and
- linux-rt-devel
-Message-ID: <Zsy12a7DQqu7h4zp@debarbos-thinkpadt14sgen2i.remote.csb>
-Reply-To: debarbos@redhat.com
-References: <ZsdoD6PomBRsB-ow@debarbos-thinkpadt14sgen2i.remote.csb>
- <ZshiIdUFQs4CKW2t@pathway.suse.cz>
- <Zsjd0WUNIU8_kprt@debarbos-thinkpadt14sgen2i.remote.csb>
- <ZsyK-s2D8eqqBrXU@pathway.suse.cz>
- <ZsyVXMqM2SK0aYyV@debarbos-thinkpadt14sgen2i.remote.csb>
- <Zsyafduo2UItzLAK@pathway.suse.cz>
- <871q2b8bou.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1724691949; c=relaxed/simple;
+	bh=VR8cQnd2jkpOlp3yNKb3N7oiXs3ndhhCx6B2YAFwy8I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V1k2QCRWEjQV41CEQUIA5rHrseDyI8biSD8MLYomL4UZFl9nWDeEIdBEbrsqVYGasS7FErt6ZMg229zIrR4iSdSgCxEkM3q2R9N3iNVE/6m73uHxULX5uoUV9WOznsGp5rc3vXDkIoHyI++fdQaILjukmiNaRWodvvRghSqHPY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fVabn5F4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73413C5813D;
+	Mon, 26 Aug 2024 17:05:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724691948;
+	bh=VR8cQnd2jkpOlp3yNKb3N7oiXs3ndhhCx6B2YAFwy8I=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fVabn5F4agEUgnaRRl/G/+oMYkarnLxCCvtUqpXLBgE65cyJl/upInXXVRzhWCile
+	 9DrJ0izSdfgN9r/uXnwQ3KJ7dSS9m0zCSaqZn6lqjoR4+0Ew8pJCeJH3vLLZ9/Hy+f
+	 V4AyftpZC+MWf7qi8Cp986DdrH8Nt36imz7Vl/JjB47kCsTeiMC6iXTLVfp/4BKyli
+	 YYU49IkE2oOLHo+t6AZcwWaJEzcmwfR6/ZyzbzoQZVqN9dd+V54NE1DHTKNOCSBXQ1
+	 wV0cw9qUu+RV0a+G8VLlPWxK5hwogUBOxer6xNHJH92y14PZKg+Axv7eCBFUVNoHjt
+	 JBLZwwKMsv4Gw==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-533462b9428so7777201e87.3;
+        Mon, 26 Aug 2024 10:05:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVQbGEUxAHd0Df8twFJo6SdLQWURXmHltG5gdGjID0v0BwNUn0x7kL8uYpAIYDvBqs2yajmEUzuK0b/27vfOg==@vger.kernel.org, AJvYcCWdST+IVYFddui0fFx0Ug4Yby6Bfnp8GoQv6//f+ptV2hpJ18EWbRC+4eV5KGhQ0mH82j3T8RXcTvHHGRMS@vger.kernel.org, AJvYcCX/azFGiGkm1M8gf+7k7t2qfs2+XV3Xt9SEqyVY7W6fqPldAAcNd4tGmwgMiTuSj0fOyHbQHexY+ZvK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0CslS487lpTNSP2G/UKdGom0HBktA2E6WFoa/x0sdzJNH0Gae
+	GMYMgm5u0CBTmrcoUeHzQzqWwYKhEwlIodOSztIjTLzDslPyAqarxv+RtAJ7aUrNfk1QOop8BBf
+	6R3Z5BG7uQj9gMDMLZ6NEXf1vVw==
+X-Google-Smtp-Source: AGHT+IFePtF/71t/va0mn7s3BHROqldAaZg4KJIDMXGMvV2CV3OEiF7RoqRoXtZli5Rfu1WTZ4RGlmXa1BMmQbL4mv0=
+X-Received: by 2002:a05:6512:3f12:b0:52c:e17c:cd7b with SMTP id
+ 2adb3069b0e04-53438846fd8mr10502133e87.22.1724691946622; Mon, 26 Aug 2024
+ 10:05:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <871q2b8bou.fsf@jogness.linutronix.de>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+References: <20240719-topic-t14s_upstream-v1-0-d7d97fdebb28@linaro.org>
+ <172222551321.175430.17493901039813561000.b4-ty@kernel.org> <CAL_JsqLiGxqDYXTJzYNE=4LN2Cpa+G_LY6C7YAfHRVmz=cfkPg@mail.gmail.com>
+In-Reply-To: <CAL_JsqLiGxqDYXTJzYNE=4LN2Cpa+G_LY6C7YAfHRVmz=cfkPg@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 26 Aug 2024 12:05:32 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+f4K4OO+_PuTJEv=+mgiQnHJKKcwq4SqJzHAuQKGKkjA@mail.gmail.com>
+Message-ID: <CAL_Jsq+f4K4OO+_PuTJEv=+mgiQnHJKKcwq4SqJzHAuQKGKkjA@mail.gmail.com>
+Subject: Re: (subset) [PATCH 0/3] ThinkPad T14s Gen 6 support
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>, 
+	Johan Hovold <johan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 26, 2024 at 07:02:49PM +0206, John Ogness wrote:
-> For the 8250, I would expect the legacy driver (even during "hope and
-> pray" mode) to be fairly reliable.
-> 
-> If this is running in QEMU, you could attach gdb and dump the backtrace
-> for the panic CPU and investigate some state variables. If this is
-> reproducible, it may be worth investigating where/why the legacy
-> printing is choking.
-> 
-> John Ogness
+On Fri, Aug 16, 2024 at 11:30=E2=80=AFAM Rob Herring <robh@kernel.org> wrot=
+e:
+>
+> On Sun, Jul 28, 2024 at 9:58=E2=80=AFPM Bjorn Andersson <andersson@kernel=
+.org> wrote:
+> >
+> >
+> > On Fri, 19 Jul 2024 22:16:35 +0200, Konrad Dybcio wrote:
+> > > As good as the other X1 laptops
+> > >
+> > > See this page for more hw info:
+> > >
+> > > https://www.lenovo.com/us/en/p/laptops/thinkpad/thinkpadt/lenovo-thin=
+kpad-t14s-gen-6-(14-inch-snapdragon)/len101t0099
+> > >
+> > >
+> > > [...]
+> >
+> > Applied, thanks!
+> >
+> > [2/3] firmware: qcom: scm: Allow QSEECOM on ThinkPad T14s
+> >       commit: e6b5a4c3ae3b883cb13be2e1cd9fbf364928173e
+>
+> Now "lenovo,thinkpad-t14s" is listed as undocumented.
 
-Hi John.
+Still an issue in linux-next.
 
-This is not running in QEMU. I installed & booted this kernel directly.
-Considering that this produced a vmcore, I could try my hand at doing a crash
-analysis (with some pointers).
-
-Do you think running this kernel in QEMU would behave any differently than it is
-now?
-
-Best,
-
+Rob
 
