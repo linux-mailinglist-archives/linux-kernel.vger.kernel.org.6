@@ -1,131 +1,147 @@
-Return-Path: <linux-kernel+bounces-301968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E206C95F80F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:27:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF58295F81C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:28:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06A2C1C2235D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:27:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DB5CB207D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0681D198E69;
-	Mon, 26 Aug 2024 17:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kDUPpN3j"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64907198E99;
+	Mon, 26 Aug 2024 17:28:38 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD5B193430;
-	Mon, 26 Aug 2024 17:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BD164A;
+	Mon, 26 Aug 2024 17:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724693235; cv=none; b=Ct7CTQGDr7+DweHUuMUtrdtAtI/xQt8RHpXriWG5ZP6xK+mtYizvmlFPsKLBTIikxczc1tStwh2Zl+G6fpGGRoOEteCblatQnCs7Y9q2OVlgZrUGcK8iumVlHO08VvcfvNVewCQniZ9h+gxGqhAETL1r6Ud6HDbdDmy7ecpAAmk=
+	t=1724693317; cv=none; b=kW0KnR2yGbattM2zbt/D7lrKbmyHY8FKUvUxmEqicafr0YYvqDQCg9D414VzArW5UAoLgcB85yjsB2YIhMBQ9pj5kxMpYsPt5fEWuo2jLrW8xIt6EgAUCDbnx/nhLM6uMzclxBa08s1WtOo7xkusS2z0qgAtqBJpktgAoZiOaWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724693235; c=relaxed/simple;
-	bh=jluxAjnMBBxT+jQgOmGR1cISEr6+r0Kq9+uePRXDtFw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UsEpZBRb9sWJgJGVmSg33qXPlc9g0aQ8ABIyzt+Dg1scY/6tZuC5XHrOXU1TMWN4EYtJQtFFB8D80DCHIGuc0kWaiAUKWJsP05h1YcPvNzr8LNsc2FivGdh71Bbx+k+D8AMrtYhstamL5Nx0FjZF/Ccc+CfGlS4XGjdcchlqO9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kDUPpN3j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1D38C8B7AB;
-	Mon, 26 Aug 2024 17:27:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724693234;
-	bh=jluxAjnMBBxT+jQgOmGR1cISEr6+r0Kq9+uePRXDtFw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=kDUPpN3jbrXyowCZOOalinPlXVxqPjn8erHl96z9m/AtdMy0zk0CdwQ9zOr2VHyLV
-	 CiGYJAHOUTSoaSnELXg2u9Aur53kpzjab2wkHbCRom4xNmlcX6S5Q3pNS4tA8Sd/ke
-	 5QH+6KxT1l8y0lbT5D45PC1Y0c26eCSWD0zlt1lAba23MJ30bikwrMb5xMK2+9gHue
-	 Te0/UytCXEEbpyqLfF51lNNs21wM+da+8NHUXxmYwi4tC7KL+JiO9TJAPQ6MzZm837
-	 3PJULN79YXkBPOOCpwkJE/lsE2k4nzqT0TeArdq5/um04uCBercBoYuYJ4tsMvsWVH
-	 yUe0SvyHYu+qQ==
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-70949118d26so4561966a34.0;
-        Mon, 26 Aug 2024 10:27:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUfQrysJ26iw6HkpGOYtMfY2UMZSAVnWQR937wMvWHJupcrzZdr9kBy0+EyBKXY0+XalBNl2n72zw64@vger.kernel.org, AJvYcCWTBY72DeKlG8bvEY+aSgeTPg+iLMzBI+jE0WZUFxhOth/fKKFNop/s0AA3yr9KXAma7FAf8gDmR6EffDOz@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoZFwCpqRKYHJW/WM1htNcvsgz9YhFWftrF3+fv9fIEBEYGndg
-	LM/5jCL94oYVYGLNwAyilyYUPS6XH2imphrgifnNFLrZ9ofCn67+cTX15xwJozGUO0eLpSYzeth
-	U3T2An3fhewjufK7Lv+gwbXCVMWw=
-X-Google-Smtp-Source: AGHT+IGabP5rUQeDMaKstGBTtOtjVR0sHISWc8glBPAEMT0KYqPbrLLqofcN1Sv1vQiJRcY5fD1HAp0JPlQiNF5N92o=
-X-Received: by 2002:a05:6870:1592:b0:261:7af:719c with SMTP id
- 586e51a60fabf-2775a03604bmr460351fac.35.1724693234145; Mon, 26 Aug 2024
- 10:27:14 -0700 (PDT)
+	s=arc-20240116; t=1724693317; c=relaxed/simple;
+	bh=Ah1MYcJfpVaPDZCj/MgYPfBVJo43ln+VDcKQfM/BWW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=F0vJuB4enMf3kzX5w92GGjgpsS14IY3U78m1dP1LqdjuRTbkrmE7/1p6+62IWa4VSSS9IXuOm/ij9PxvLfDGCDYIOreZRpO9VqbJ8l7adlo09mkcJdQ+bEByMEFVsKuXzHUdV5LrCmwNVmGObV8zg6akptUVLJ+lZkfWB04lDGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0E6AC8B7B5;
+	Mon, 26 Aug 2024 17:28:29 +0000 (UTC)
+Date: Mon, 26 Aug 2024 13:29:09 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Andreas Larsson
+ <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann
+ <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>, Brian Cain
+ <bcain@quicinc.com>, Catalin Marinas <catalin.marinas@arm.com>, Christoph
+ Hellwig <hch@infradead.org>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Dinh Nguyen <dinguyen@kernel.org>, Geert Uytterhoeven
+ <geert@linux-m68k.org>, Guo Ren <guoren@kernel.org>, Helge Deller
+ <deller@gmx.de>, Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar
+ <mingo@redhat.com>, Johannes Berg <johannes@sipsolutions.net>, John Paul
+ Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Kent Overstreet
+ <kent.overstreet@linux.dev>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Luis Chamberlain <mcgrof@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Matt Turner <mattst88@gmail.com>,
+ Max Filippov <jcmvbkbc@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Peter Zijlstra <peterz@infradead.org>,
+ Richard Weinberger <richard@nod.at>, Russell King <linux@armlinux.org.uk>,
+ Song Liu <song@kernel.org>, Stafford Horne <shorne@gmail.com>, Thomas
+ Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner
+ <tglx@linutronix.de>, Uladzislau Rezki <urezki@gmail.com>, Vineet Gupta
+ <vgupta@kernel.org>, Will Deacon <will@kernel.org>, bpf@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+ linux-hexagon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+ linux-mm@kvack.org, linux-modules@vger.kernel.org,
+ linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
+ linux-snps-arc@lists.infradead.org, linux-trace-kernel@vger.kernel.org,
+ linux-um@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ loongarch@lists.linux.dev, sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v2 5/8] ftrace: Add swap_func to ftrace_process_locs()
+Message-ID: <20240826132909.306b08fc@gandalf.local.home>
+In-Reply-To: <20240826065532.2618273-6-rppt@kernel.org>
+References: <20240826065532.2618273-1-rppt@kernel.org>
+	<20240826065532.2618273-6-rppt@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812005929.113499-1-sunilvl@ventanamicro.com>
- <ZrlgVUXC_dCW9ISM@sunil-laptop> <87mskzcnmf.ffs@tglx> <CAJZ5v0imJcU4cwDuZKEvGf93fZm4ea4s2Ocp3Cnfb3+nBQ0-Gg@mail.gmail.com>
- <Zsy3o_N8hvc6GfTp@sunil-laptop>
-In-Reply-To: <Zsy3o_N8hvc6GfTp@sunil-laptop>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 26 Aug 2024 19:27:03 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hxoT9tBjm3xRPU4fHx3MgHfYAx_Vyf4oe2toa3GWAN+Q@mail.gmail.com>
-Message-ID: <CAJZ5v0hxoT9tBjm3xRPU4fHx3MgHfYAx_Vyf4oe2toa3GWAN+Q@mail.gmail.com>
-Subject: Re: [PATCH v8 00/17] RISC-V: ACPI: Add external interrupt controller support
-To: Sunil V L <sunilvl@ventanamicro.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Len Brown <lenb@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Anup Patel <anup@brainfault.org>, 
-	Samuel Holland <samuel.holland@sifive.com>, Robert Moore <robert.moore@intel.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, Haibo Xu <haibo1.xu@intel.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Atish Kumar Patra <atishp@rivosinc.com>, 
-	Drew Fustini <dfustini@tenstorrent.com>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 26, 2024 at 7:22=E2=80=AFPM Sunil V L <sunilvl@ventanamicro.com=
-> wrote:
->
-> On Mon, Aug 26, 2024 at 06:15:18PM +0200, Rafael J. Wysocki wrote:
-> > On Mon, Aug 26, 2024 at 5:25=E2=80=AFPM Thomas Gleixner <tglx@linutroni=
-x.de> wrote:
-> > >
-> > > On Mon, Aug 12 2024 at 06:37, Sunil V. L. wrote:
-> > > > On Mon, Aug 12, 2024 at 06:29:12AM +0530, Sunil V L wrote:
-> > > >> This series adds support for the below ECR approved by ASWG.
-> > > >> 1) MADT - https://drive.google.com/file/d/1oMGPyOD58JaPgMl1pKasT-V=
-KsIKia7zR/view?usp=3Dsharing
-> > > >>
-> > > >> The series primarily enables irqchip drivers for RISC-V ACPI based
-> > > >> platforms.
-> > > >
-> > > > This series has spent quite a bit of time now on the list. As you a=
-re
-> > > > aware, few clarifications like _PIC codes are also done now. There =
-is
-> > > > no major change after you had agreed for the design. So, can this b=
-e
-> > > > considered for the next release please?
-> > >
-> > > Rafael, if you want to take it through the ACPI tree, then for the
-> > > irqchip parts please add:
-> > >
-> > >   Acked-by: Thomas Gleixner <tglx@linutronix.de>
-> >
-> > Yes, I'm going ro do this.
-> >
-> > Thank you!
-> Thanks!
->
-> There will be a conflict in PLIC irqchip driver due to a recent patch [1]=
-.
-> This patch is not in latest RC5 release but in linux-next. I usually base=
- the
-> series on latest RC release. Should I rebase to linux-next in this case
-> and send the next revision of the series resolving the conflict?
+On Mon, 26 Aug 2024 09:55:29 +0300
+Mike Rapoport <rppt@kernel.org> wrote:
 
-No, please don't.
+> From: Song Liu <song@kernel.org>
+> 
+> ftrace_process_locs sorts module mcount, which is inside RO memory. Add a
+> ftrace_swap_func so that archs can use RO-memory-poke function to do the
+> sorting.
 
-That will be resolved at the merge time.
+Can you add the above as a comment above the ftrace_swap_func() function?
 
-> [1] - https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git=
-/commit/?id=3D4d936f10ff80274841537a26d1fbfe9984de0ef9
+Thanks,
 
-Thanks!
+-- Steve
+
+> 
+> Signed-off-by: Song Liu <song@kernel.org>
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> ---
+>  include/linux/ftrace.h |  2 ++
+>  kernel/trace/ftrace.c  | 13 ++++++++++++-
+>  2 files changed, 14 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+> index fd5e84d0ec47..b794dcb7cae8 100644
+> --- a/include/linux/ftrace.h
+> +++ b/include/linux/ftrace.h
+> @@ -1188,4 +1188,6 @@ unsigned long arch_syscall_addr(int nr);
+>  
+>  #endif /* CONFIG_FTRACE_SYSCALLS */
+>  
+> +void ftrace_swap_func(void *a, void *b, int n);
+> +
+>  #endif /* _LINUX_FTRACE_H */
+> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+> index 4c28dd177ca6..9829979f3a46 100644
+> --- a/kernel/trace/ftrace.c
+> +++ b/kernel/trace/ftrace.c
+> @@ -6989,6 +6989,17 @@ static void test_is_sorted(unsigned long *start,
+> unsigned long count) }
+>  #endif
+>  
+> +void __weak ftrace_swap_func(void *a, void *b, int n)
+> +{
+> +	unsigned long t;
+> +
+> +	WARN_ON_ONCE(n != sizeof(t));
+> +
+> +	t = *((unsigned long *)a);
+> +	*(unsigned long *)a = *(unsigned long *)b;
+> +	*(unsigned long *)b = t;
+> +}
+> +
+>  static int ftrace_process_locs(struct module *mod,
+>  			       unsigned long *start,
+>  			       unsigned long *end)
+> @@ -7016,7 +7027,7 @@ static int ftrace_process_locs(struct module *mod,
+>  	 */
+>  	if (!IS_ENABLED(CONFIG_BUILDTIME_MCOUNT_SORT) || mod) {
+>  		sort(start, count, sizeof(*start),
+> -		     ftrace_cmp_ips, NULL);
+> +		     ftrace_cmp_ips, ftrace_swap_func);
+>  	} else {
+>  		test_is_sorted(start, count);
+>  	}
+
 
