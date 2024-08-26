@@ -1,224 +1,73 @@
-Return-Path: <linux-kernel+bounces-301558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4321295F281
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:12:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48C9695F285
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:13:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE27A283CC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:12:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 063E3283C27
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D81F17C9AB;
-	Mon, 26 Aug 2024 13:12:41 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B4A1E871;
+	Mon, 26 Aug 2024 13:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zxlu1qTZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9021E871;
-	Mon, 26 Aug 2024 13:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC8917A5BE;
+	Mon, 26 Aug 2024 13:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724677961; cv=none; b=D/ByZlZ6yE3o5VdUUgnh4FZLfpUpMlZs0nO7NCZ4W0/8Pzuditn0ryu0LtwBUHRj7aml/WJFKlW0SxI/Yrg5hSg6JOl7K9OP4Pb3xlNvOTErR3NpeaxXLoIhtORIJwJq5O8ygiuvUpfMCbZFGrPLbzkvRMt19PFB01Xv7rwCiZQ=
+	t=1724677965; cv=none; b=CNHgqd1J565B2nAYjObFJTeCZIzKLSktyEQHej440zwq39G8GtZHH/Xp14fLhPJJ3waD/853nIP0QGrqAUcMh5CX+Vs6sj/TxMjqjiW3RKDYEUDafocVy02LQeY8DAhMh2EO7qd1/UQmkzhAWnT7Lu0+ZI0lF6wfM8bDw7JsPWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724677961; c=relaxed/simple;
-	bh=1WU1aRbWnpYmm4HjOwhVK+bf9Bpias9xEcOwZh+DoPQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=HHKyoTL2xYJ734MyhF5QXQDMFqAhvUHWVfMsg2BU6utK6iiozrd17kzXehJhkngItv4106nonHaQGV5nzVEI1pElnTK6uiH1GO4zIhwbpJZQa1tn/u3M5TksX6toGT0gWFS9aINzy7UkAZDoufhqmXz3B6Ngobhyi8yzl3WsV5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WsrdM3bBHzfZ39;
-	Mon, 26 Aug 2024 21:10:31 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7613A1800A7;
-	Mon, 26 Aug 2024 21:12:34 +0800 (CST)
-Received: from [10.67.120.168] (10.67.120.168) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 26 Aug 2024 21:12:33 +0800
-Message-ID: <29b2b4a5-7cdb-4e08-3503-02e4d1123a66@hisilicon.com>
-Date: Mon, 26 Aug 2024 21:12:33 +0800
+	s=arc-20240116; t=1724677965; c=relaxed/simple;
+	bh=ALoyF9ulJjuvVQuI6CucHC2wH9xiZ0r0yZsweviQ2zU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pgfcB8NfAW1gDSDxmMNKdpCkOlbZeuxa2SYZJuWd24BqaFMmsclRUbSLRFYSWIT6obDA5msPla7ymPtN5zYP1rfs1hH6GzYK7C3KZ0OJ2UH9SyaTIHJ5qnU6z2LWWYzxcWYpkG82wZjaNfvG4Dz5K3f+76u7EZI/S5O2NZh3OYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zxlu1qTZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83BAEC8CDC3;
+	Mon, 26 Aug 2024 13:12:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724677964;
+	bh=ALoyF9ulJjuvVQuI6CucHC2wH9xiZ0r0yZsweviQ2zU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=zxlu1qTZX2t15uZcs5YzKeyO71kqgUWVS4+RTSJQvbWEZKRMGzQmlAEhg1oDWlkLy
+	 B87mHCaAsf/Tet2A04ZpAC5HsRycVmo3VuBALF9xOqtrgjyuMoJrnxBU6jU8HPYtew
+	 qjP++hG0nzTNpFTr7n1mTSxjcUY1rKZJ8xPpaI3A=
+Date: Mon, 26 Aug 2024 15:12:42 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: kvalo@kernel.org, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org, sergei.shtylyov@gmail.com,
+	syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH V4 1/2] wifi: ath6kl: Replace ath6kl_usb_submit_ctrl_in
+ with usb_control_msg_recv
+Message-ID: <2024082625-quarters-proofread-1e97@gregkh>
+References: <2024082631-upward-zips-f7b8@gregkh>
+ <tencent_A037749680365C4BCC750776D566183C4509@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.0
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-Subject: Re: [PATCH v2 for-next 1/3] RDMA/core: Provide
- rdma_user_mmap_disassociate() to disassociate mmap pages
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: <leon@kernel.org>, <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
-	<linux-kernel@vger.kernel.org>
-References: <20240812125640.1003948-1-huangjunxian6@hisilicon.com>
- <20240812125640.1003948-2-huangjunxian6@hisilicon.com>
- <20240823152501.GB2342875@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20240823152501.GB2342875@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemf100018.china.huawei.com (7.202.181.17)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_A037749680365C4BCC750776D566183C4509@qq.com>
 
-
-
-On 2024/8/23 23:25, Jason Gunthorpe wrote:
-> On Mon, Aug 12, 2024 at 08:56:38PM +0800, Junxian Huang wrote:
->> From: Chengchang Tang <tangchengchang@huawei.com>
->>
->> Provide a new api rdma_user_mmap_disassociate() for drivers to
->> disassociate mmap pages for ucontext.
->>
->> Signed-off-by: Chengchang Tang <tangchengchang@huawei.com>
->> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
->> ---
->>  drivers/infiniband/core/uverbs_main.c | 21 +++++++++++++++++++++
->>  include/rdma/ib_verbs.h               |  1 +
->>  2 files changed, 22 insertions(+)
->>
->> diff --git a/drivers/infiniband/core/uverbs_main.c b/drivers/infiniband/core/uverbs_main.c
->> index bc099287de9a..00dab5bfb78c 100644
->> --- a/drivers/infiniband/core/uverbs_main.c
->> +++ b/drivers/infiniband/core/uverbs_main.c
->> @@ -880,6 +880,27 @@ void uverbs_user_mmap_disassociate(struct ib_uverbs_file *ufile)
->>  	}
->>  }
->>  
->> +/**
->> + * rdma_user_mmap_disassociate() - disassociate the mmap from the ucontext.
->> + *
->> + * @ucontext: associated user context.
->> + *
->> + * This function should be called by drivers that need to disable mmap for
->> + * some ucontexts.
->> + */
->> +void rdma_user_mmap_disassociate(struct ib_ucontext *ucontext)
->> +{
->> +	struct ib_uverbs_file *ufile = ucontext->ufile;
->> +
->> +	/* Racing with uverbs_destroy_ufile_hw */
->> +	if (!down_read_trylock(&ufile->hw_destroy_rwsem))
->> +		return;
+On Mon, Aug 26, 2024 at 08:29:56PM +0800, Edward Adam Davis wrote:
+> ath6kl_usb_submit_ctrl_in() did not take into account the situation where
+> the length of the data read from the device is not equal to the len, and
+> such missing judgments will result in subsequent code using incorrect data.
 > 
-> This is not quite right here, in the other cases lock failure is
-> aborting an operation that is about to start, in this case we are must
-> ensure the zap completed otherwise we break the contract of no mmaps
-> upon return.
-> 
-> So at least this needs to be a naked down_read()
-> 
-> But..
-> 
-> That lock lockdep assertion in uverbs_user_mmap_disassociate() I think
-> was supposed to say the write side is held, which we can't actually
-> get here.
-> 
-> This is because the nasty algorithm works by pulling things off the
-> list, if we don't have a lock then one thread could be working on an
-> item while another thread is unaware which will also break the
-> contract.
-> 
-> You may need to add a dedicated mutex inside
-> uverbs_user_mmap_disassociate() and not try to re-use
-> hw_destroy_rwsem.
-> 
+> usb_control_msg_recv() handles the abnormal length of the returned data,
+> so using it directly can fix this warning.
 
-Thanks for the reply, Jason. Based on your modification in patch #3,
-we plan to change the codes like this (some init and destroy are omitted
-here). We'll re-send as soon as we finish the testings.
+what warning?
 
-diff --git a/drivers/infiniband/core/uverbs.h b/drivers/infiniband/core/uverbs.h
-index 821d93c8f712..05b589aad5ef 100644
---- a/drivers/infiniband/core/uverbs.h
-+++ b/drivers/infiniband/core/uverbs.h
-@@ -160,6 +160,9 @@ struct ib_uverbs_file {
-        struct page *disassociate_page;
-
-        struct xarray           idr;
-+
-+       struct mutex disassociation_lock;
-+       bool disassociated;
- };
-
- struct ib_uverbs_event {
-diff --git a/drivers/infiniband/core/uverbs_main.c b/drivers/infiniband/core/uverbs_main.c
-index 6b4d5a660a2f..6503f9a23211 100644
---- a/drivers/infiniband/core/uverbs_main.c
-+++ b/drivers/infiniband/core/uverbs_main.c
-@@ -722,12 +722,12 @@ static void rdma_umap_open(struct vm_area_struct *vma)
-                return;
-
-        /* We are racing with disassociation */
--       if (!down_read_trylock(&ufile->hw_destroy_rwsem))
-+       if (!mutex_trylock(&ufile->disassociation_lock))
-                goto out_zap;
-        /*
-         * Disassociation already completed, the VMA should already be zapped.
-         */
--       if (!ufile->ucontext)
-+       if (!ufile->ucontext || ufile->disassociated)
-                goto out_unlock;
-
-        priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-@@ -735,11 +735,11 @@ static void rdma_umap_open(struct vm_area_struct *vma)
-                goto out_unlock;
-        rdma_umap_priv_init(priv, vma, opriv->entry);
-
--       up_read(&ufile->hw_destroy_rwsem);
-+       mutex_unlock(&ufile->disassociation_lock);
-        return;
-
- out_unlock:
--       up_read(&ufile->hw_destroy_rwsem);
-+       mutex_unlock(&ufile->disassociation_lock);
- out_zap:
-        /*
-         * We can't allow the VMA to be created with the actual IO pages, that
-@@ -823,6 +823,8 @@ void uverbs_user_mmap_disassociate(struct ib_uverbs_file *ufile)
-        struct rdma_umap_priv *priv, *next_priv;
-
-        lockdep_assert_held(&ufile->hw_destroy_rwsem);
-+       mutex_lock(&ufile->disassociation_lock);
-+       ufile->disassociated = true;
-
-        while (1) {
-                struct mm_struct *mm = NULL;
-@@ -848,8 +850,10 @@ void uverbs_user_mmap_disassociate(struct ib_uverbs_file *ufile)
-                        break;
-                }
-                mutex_unlock(&ufile->umap_lock);
--               if (!mm)
-+               if (!mm) {
-+                       mutex_unlock(&ufile->disassociation_lock);
-                        return;
-+               }
-
-                /*
-                 * The umap_lock is nested under mmap_lock since it used within
-@@ -879,6 +883,8 @@ void uverbs_user_mmap_disassociate(struct ib_uverbs_file *ufile)
-                mmap_read_unlock(mm);
-                mmput(mm);
-        }
-+
-+       mutex_unlock(&ufile->disassociation_lock);
- }
-
- /**
-@@ -897,7 +903,8 @@ void rdma_user_mmap_disassociate(struct ib_device *device)
-        mutex_lock(&uverbs_dev->lists_mutex);
-        list_for_each_entry(ufile, &uverbs_dev->uverbs_file_list, list) {
-                down_read(&ufile->hw_destroy_rwsem);
--               uverbs_user_mmap_disassociate(ufile);
-+               if (ufile->ucontext && !ufile->disassociated)
-+                       uverbs_user_mmap_disassociate(ufile);
-                up_read(&ufile->hw_destroy_rwsem);
-        }
-        mutex_unlock(&uverbs_dev->lists_mutex);
-
-
-> Jason
 
