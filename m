@@ -1,146 +1,105 @@
-Return-Path: <linux-kernel+bounces-300902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFA3A95EA49
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:24:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70B0695EA4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:24:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48E0F285BD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:24:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3CA41C21351
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05FA12BF02;
-	Mon, 26 Aug 2024 07:24:12 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9367722071
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A61B12D773;
+	Mon, 26 Aug 2024 07:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="WRvWNHkl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC75222071;
+	Mon, 26 Aug 2024 07:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724657052; cv=none; b=MExTBSZD1npWRVpX7Z9QASwHkeCU3Z4lbDt8MsCi4KYfnZ17QD6b1jgk9Z7YaAMGQEkEDzdeOGttWIjwzXFIVqsWwbpdXY3ohj4J9FSBNdl59DJjOyJ9YhayDYjYojl36lEtZfZFxvmPLZsWEgFfX/JNvr10hVECQ5maRXkcIjY=
+	t=1724657070; cv=none; b=nxf2Q6cK8XfLrPuY/3WOUsZAtmGzzkqXRnnyArbbRsW/89Cpcxm79NmCgnDu6xynJG0I6rk4Aulwa0wfe0oJtY96dgzvSCjSKYrfmAT9bh+iURoR3Xq7Lf0tISEz6apHyXMn5enu3GpYixrR1WTBckRNSphOp5cGz812emqec+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724657052; c=relaxed/simple;
-	bh=pXnUjiN5uHjOGQbuKJP8gzjW/Sqq7G1PNSAB282MJPs=;
+	s=arc-20240116; t=1724657070; c=relaxed/simple;
+	bh=GtFc7xCyj5PhXPTfXtXpN7lJ60XrHzRvFzuO/ud9I5k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XuA8+odZHdJJqWst/R6vOEAgBZqLr0GMHTyGuE0j9sVEF+KcHhxBnQhDVljIzMHAhqkQg+Rhu4uQKmHwjimrc1ldP90KGwLZKTZBYq/qMgp77R7Qc1NWnB/wBY3PCYDBwhRlaTCuJOenJC/OlOTcjdE40XnEMXCeFEV4Y86Nbhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 05783339;
-	Mon, 26 Aug 2024 00:24:36 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A78673F66E;
-	Mon, 26 Aug 2024 00:24:06 -0700 (PDT)
-Date: Mon, 26 Aug 2024 09:24:00 +0200
-From: Beata Michalska <beata.michalska@arm.com>
-To: Jie Zhan <zhanjie9@hisilicon.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, ionela.voinescu@arm.com,
-	sudeep.holla@arm.com, will@kernel.org, vincent.guittot@linaro.org,
-	vanshikonda@os.amperecomputing.com, sumitg@nvidia.com,
-	yang@os.amperecomputing.com, lihuisong@huawei.com,
-	viresh.kumar@linaro.org, rafael@kernel.org
-Subject: Re: [PATCH v6 0/4] Add support for AArch64 AMUv1-based
- arch_freq_get_on_cpu
-Message-ID: <ZswtkBBieOgA9p-0@arm.com>
-References: <20240603082154.3830591-1-beata.michalska@arm.com>
- <ZowdalL3DfkHtaCg@arm.com>
- <Zo_lN8jdgADwqvor@arm.com>
- <8500d58c-e6c5-04c7-73a0-38d3f77f2cb7@hisilicon.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fdoRz52FjOtdo6sO44cyjTS86HIXhLdAvJSTV0Xn3gkznJgkwRBybmQ2MQXeu+BwtHU6/yHhhFbmJl+4Bsa+48sdmKYweX7C7F4VojbxkxHNY9c39/K+KC4msAo1JIB1bUTKR+3vA8ROUNNAmZCz+djPwjV7w5fL/fV5ZJjmwRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=WRvWNHkl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20AFAC4FDFE;
+	Mon, 26 Aug 2024 07:24:27 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="WRvWNHkl"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1724657065;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4XYrcqllZpLLj+sqSt83ZS4OGpB+ny/dHDpTQVKEcw0=;
+	b=WRvWNHkl3kMGmPVF84AOTFbuLtotKvO5WMOvOcjiQTO5GGt6yxvAvXfJ5NC3ABH4Au/AaH
+	lXGxAvyyPehGMUl9Mc67zHgogobiWleqNKnOoQ+iYXZybbgRN4TFpXcnAnXpsJUY6u7XVU
+	ZC6nTPIX+X1v5ceKtm4RmJaWa03cBCQ=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 9e51e9de (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 26 Aug 2024 07:24:25 +0000 (UTC)
+Date: Mon, 26 Aug 2024 09:24:16 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Shuah Khan <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 03/17] vdso: Add __arch_get_k_vdso_rng_data()
+Message-ID: <ZswtoMbWC3se1su3@zx2c4.com>
+References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
+ <30560b394eaa00fded11fa5bbe5f679c7ffe1714.1724309198.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <8500d58c-e6c5-04c7-73a0-38d3f77f2cb7@hisilicon.com>
+In-Reply-To: <30560b394eaa00fded11fa5bbe5f679c7ffe1714.1724309198.git.christophe.leroy@csgroup.eu>
 
-On Wed, Aug 14, 2024 at 04:05:24PM +0800, Jie Zhan wrote:
+On Thu, Aug 22, 2024 at 09:13:11AM +0200, Christophe Leroy wrote:
+> _vdso_data is specific to x86 and __arch_get_k_vdso_data() is provided
+> so that all architectures can provide the requested pointer.
 > 
-> On 11/07/2024 21:59, Beata Michalska wrote:
-> > Hi Catalin,
-> > 
-> > On Mon, Jul 08, 2024 at 06:10:02PM +0100, Catalin Marinas wrote:
-> > > Hi Beata,
-> > > 
-> > > On Mon, Jun 03, 2024 at 09:21:50AM +0100, Beata Michalska wrote:
-> > > > Introducing arm64 specific version of arch_freq_get_on_cpu, cashing on
-> > > > existing implementation for FIE and AMUv1 support: the frequency scale
-> > > > factor, updated on each sched tick, serves as a base for retrieving
-> > > > the frequency for a given CPU, representing an average frequency
-> > > > reported between the ticks - thus its accuracy is limited.
-> > > > 
-> > > > The changes have been rather lightly (due to some limitations) tested on
-> > > > an FVP model. Note that some small discrepancies have been observed while
-> > > > testing (on the model) and this is currently being investigated, though it
-> > > > should not have any significant impact on the overall results.
-> > > What's the plan with this series? Are you still investigating those
-> > > discrepancies or is it good to go?
-> > > 
-> > Overall it should be good to go with small caveat:
-> > as per discussion [1] we might need to provide new sysfs attribute exposing an
-> > average frequency instead of plugging new code under existing cpuinfo_cur_freq.
-> > This is to avoid messing up with other archs and make a clean distinction on
-> > which attribute provides what information.
-> > As such, the arch_freq_get_on_cpu implementation provided within this series
-> > [PATCH v6 3/4] will most probably be shifted to a new function.
-> > 
-> > Hopefully will be able to send those changes soon.
-> > 
-> > ---
-> > [1] https://lore.kernel.org/all/ZmrB_DqtmVpvG30l@arm.com/
-> > ---
-> > BR
-> > Beata
-> > 
-> > > -- 
-> > > Catalin
-> > > 
-> Hi Beata,
-Hi Jie,
+> Do the same with _vdso_rng_data, provide __arch_get_k_vdso_rng_data()
+> and don't use x86 _vdso_rng_data directly.
 > 
-> I've recently tested this patchset on a Kunpeng system.
-> It works as expected when reading scaling_cur_freq.
-> The frequency samples are much stabler than what cppc_cpufreq returns.
-Thank you for giving it a spin.
-(and apologies for late reply)
+> Until now vdso/vsyscall.h was only included by time/vsyscall.c but now
+> it will also be included in char/random.c, leading to a duplicate
+> declaration of _vdso_data and _vdso_rng_data.
 > 
-> A few minor things.
+> To fix this issue, move declaration in a C file. vma.c looks like the
+> most appropriate candidate. Don't need to replace the definitions in
+> vsyscall.h by declarations as declarations are already in asm/vvar.h
 > 
-> 1. I observed larger errors on idle cpus than busy cpus, though it's just up
-> to 1%.
-> Not sure if this comes from the uncertain time interval between the last
-> tick and entering idle.
-> The shorter averaging interval, the larger error, I supposed.
-All right - will look into it.
-Just for my benefit: that diff is strictly between arch_freq_avg_get_on_cpu
-and cpufreq_driver->get(policy->cpu) ?
-> 
-> 2. In the current implementation, the resolution of frequency would be:
-> max_freq_khz / SCHED_CAPACITY_SCALE
-> This looks a bit unnecessary to me.
-> 
-> It's supposed to get a better resolution if we can do this in
-> arch_freq_get_on_cpu():
-> 
-> freq = delta_cycle_cnt * max_freq_khz / delta_const_cnt
-> 
-> which may require caching both current and previous sets of counts in the
-> per-cpu struct amu_cntr_sample.
-> 
-arch_freq_get_on_cpu relies on the frequency scale factor to derive the average
-frequency. The scale factor is being calculated based on the deltas you have
-mentioned and arch_max_freq_scale which uses SCHED_CAPACITY_SCALE*2 factor to
-accommodate for rather low reference frequencies. arch_freq_get_on_cpu just does
-somewhat reverse computation to that.
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> ---
+> v2: Move x86 DEFINE_VVAR(_vdso_data) and DEFINE_VVAR(_vdso_rng_data) in vma.c
 
----
-BR
-Beata
-> Kind regards,
-> Jie
-> 
+Thanks, this seems sane to me. I'll apply this now to random.git as a
+fix; it should have been done this way before and is going to be a
+headache to coordinate later.
+
+Jason
 
