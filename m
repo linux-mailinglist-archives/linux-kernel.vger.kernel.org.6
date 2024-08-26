@@ -1,96 +1,171 @@
-Return-Path: <linux-kernel+bounces-301632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E57995F36F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:00:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4A4F95F370
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:01:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64056B21EB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:00:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D033D1C21564
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B278183CD3;
-	Mon, 26 Aug 2024 14:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/xs8b/C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4669214AD1A;
+	Mon, 26 Aug 2024 14:01:29 +0000 (UTC)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9DAE372;
-	Mon, 26 Aug 2024 14:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A14B372
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 14:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724680847; cv=none; b=gjhYNaeBPR8GpYp/4Zrwyq2VYhQPRbvgV2kkFwQ+kMZaJocDdcsn+SdtW78MY+nOdU/TG9KLojEovUywelTwgE1lCMNwc5KLNgI/z6d7sdhkR1rkGi8kpG8s6OFC3MZw+/YI5vpo3zMRFumBrO2bOyvEFDsF6jdU54P0Ok2U1Ao=
+	t=1724680888; cv=none; b=BqVXxjaQXLIdaqQQWXmBvAskye2s8ZajNveF+T7w+1CYxM0WKGKoeq6wXOot5qtfCIrcZwzT+p/NsqKQ3U+JEBE8X9kD2wNRzR9S5NcX99QUVjunIrjGgVf7F7FrYeQQFeRCOKpb7fwZWdyoVM9Jh3NuVs5twsFll4fjmHgdhMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724680847; c=relaxed/simple;
-	bh=N6QZc8YM8klksq0nE1lKt6yDYzsUUOHjIINFLCMZQUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TIEtdvYbuh088afgR95p8UkBeTC6/lhkYl00ugURodQ4VLV7zfoWAi5YYoveZpSz0Z4zv08yZdm1uhk/+hEqzQMAXBJOzJm+B6puAfHTi21gTNaw7cJQBpytdyof0+H7bWaWJPcizBepOrQmSUXs3w6oK3bORU2Vo18miizXNgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a/xs8b/C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED2E0C52FC3;
-	Mon, 26 Aug 2024 14:00:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724680846;
-	bh=N6QZc8YM8klksq0nE1lKt6yDYzsUUOHjIINFLCMZQUM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a/xs8b/C1L9CHIrb9yc9EtcYI9Qixbr/BvDfyXHjXTL8woZUoYFLY+1J0vU267ATI
-	 BH1AKAPNDDgC/lqiI/dC20ap9LZTKo9eWGQLiKLDBzZbNECqv0Jo2SykjK8KHp95se
-	 J6AcxKncn/4aQo2+dOo5PqKlhgHyjfbv+RLWWABzQKRD2vAmHGY0uom0Fbw9rsvOXp
-	 aoo/FbIHBSvMrker4TZ/btb64fn3Jju67Y14TR9uwrRZGmt7P72ubDB6M4qKhYqvP4
-	 xCgi1RmrklIMnGp/G50pmlbJuUwckoPtIWoZsmRaGEw5ppxnWEFl0vCionzWvixwf+
-	 Sr0fnsf4GRoZA==
-Date: Mon, 26 Aug 2024 09:00:44 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Sugar Zhang <sugar.zhang@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, kernel@collabora.com,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v6 1/3] dt-bindings: clock, reset: Add support for rk3576
-Message-ID: <172468084271.72163.10961446550304422485.robh@kernel.org>
-References: <20240822194956.918527-1-detlev.casanova@collabora.com>
- <20240822194956.918527-2-detlev.casanova@collabora.com>
+	s=arc-20240116; t=1724680888; c=relaxed/simple;
+	bh=dVGXJ8xfFvQwR9YQcBzFmT6g2qXYJnvyNtTiTEDBouU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M0SWEss/vdo4PYuIGrrI1WOcTT1ekoCyB2bIU98zN2IinF37lBbK8p64vY8Io0JUeo/Gdl5NDUxpj7n5nAHIzcHxTs1RfJGR+Xfv6y+/5aXkSbWa4rwC34/4whSftYwJFeOncfcwESN/U3WSllWT5f8ODfzZqeufGrGLKM6bBwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6c91f9fb0d7so17586947b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:01:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724680884; x=1725285684;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e3+6+zszjG25uKB5YsPuXSVnLU6Olwn6W73A2LlZ3Hg=;
+        b=qonUNBbcyP9VDlCxFsgkWHauxv+4saZ3lydUj6V2B/KVxkpI0b7JuDpjZSYM0ROpX1
+         LyVYbc9Z6TfnjFR5ExgHRIYJ/IE9hCR73Ou+2okWrvy+0BKbgF9MGrtfQ2alPLyIpifc
+         NGiS5ebV3eogP4thNPTQ38wqiFQ0mb9e9T7Ui/Tt4hQPmMpvsScefAwYIzJolI7haZ0W
+         gwAjHnHa1a7Celc60S10SvO6V/azZDOhr/Z12nWzLKE/Z1oxfmh57yy7GnX4P4ak0p4F
+         Od7zdN9MBIF59xMdVwg5BrTGA9sgYiEIywHWbsf3lCPthusLkzdkL8NBSX8oYpJBsrIy
+         Dmhw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQulyZLQIO7isopsl6m+yal8Tt45yhLB9Dktw8gThDLDU4Q2vOUm1+glC6NkXtg9OyYWy0bdOHoUfXn4E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxdbc527zppH19sVeLXikMZnx1DUX5bZnzESzFkAWEwgVLPEuJL
+	eFLklFUSJSF32foPAHjga7+RYPNOnKlqt3xo7EkP04dcND7dz4gGI40tebXa
+X-Google-Smtp-Source: AGHT+IGFmL6P+upyyAXikm7dfoEGQKP0kMdycUVXCnxMB8bDKvyAKVpvapcqeBoTicAxMl+BiBXBvw==
+X-Received: by 2002:a05:690c:60c4:b0:697:7cc0:ce1 with SMTP id 00721157ae682-6c62460327cmr142950467b3.7.1724680883963;
+        Mon, 26 Aug 2024 07:01:23 -0700 (PDT)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6c399cb4f42sm15243507b3.22.2024.08.26.07.01.23
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 07:01:23 -0700 (PDT)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6c0adbbf2eeso35203227b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:01:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUA1lYxQWRTKB1M9hh/TtOyksY0W9IT6N9PV8ZOav8mOWyuxeCfzJtcidyihYi6zoqAeF2IbMjjzEbrwks=@vger.kernel.org
+X-Received: by 2002:a05:690c:f8c:b0:61a:e4ef:51d with SMTP id
+ 00721157ae682-6c6246037a6mr144593157b3.9.1724680882369; Mon, 26 Aug 2024
+ 07:01:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822194956.918527-2-detlev.casanova@collabora.com>
+References: <20240822192543.3359552-1-Liam.Howlett@oracle.com> <20240822192543.3359552-13-Liam.Howlett@oracle.com>
+In-Reply-To: <20240822192543.3359552-13-Liam.Howlett@oracle.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 26 Aug 2024 16:01:10 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW0HuK_26vejYL8nMwULwN8wFWS0-6HH69hOLuHzncwyA@mail.gmail.com>
+Message-ID: <CAMuHMdW0HuK_26vejYL8nMwULwN8wFWS0-6HH69hOLuHzncwyA@mail.gmail.com>
+Subject: Re: [PATCH v7 12/21] mm/vma: Track start and end for munmap in vma_munmap_struct
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Suren Baghdasaryan <surenb@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, sidhartha.kumar@oracle.com, 
+	Bert Karwatzki <spasswolf@web.de>, Jiri Olsa <olsajiri@gmail.com>, Kees Cook <kees@kernel.org>, 
+	"Paul E . McKenney" <paulmck@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi Liam,
+
+On Thu, Aug 22, 2024 at 9:27=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
+> From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+>
+> Set the start and end address for munmap when the prev and next are
+> gathered.  This is needed to avoid incorrect addresses being used during
+> the vms_complete_munmap_vmas() function if the prev/next vma are
+> expanded.
+>
+> Add a new helper vms_complete_pte_clear(), which is needed later and
+> will avoid growing the argument list to unmap_region() beyond the 9 it
+> already has.
+>
+> Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+
+Thanks for your patch, which is now commit ca39aca8db2d78ff ("mm/vma:
+track start and end for munmap in vma_munmap_struct") in next-20240826.
+
+> --- a/mm/vma.h
+> +++ b/mm/vma.h
+> @@ -38,6 +38,8 @@ struct vma_munmap_struct {
+>         struct list_head *uf;           /* Userfaultfd list_head */
+>         unsigned long start;            /* Aligned start addr (inclusive)=
+ */
+>         unsigned long end;              /* Aligned end addr (exclusive) *=
+/
+> +       unsigned long unmap_start;      /* Unmap PTE start */
+> +       unsigned long unmap_end;        /* Unmap PTE end */
+>         int vma_count;                  /* Number of vmas that will be re=
+moved */
+>         unsigned long nr_pages;         /* Number of pages being removed =
+*/
+>         unsigned long locked_vm;        /* Number of locked pages */
+> @@ -108,6 +110,8 @@ static inline void init_vma_munmap(struct vma_munmap_=
+struct *vms,
+>         vms->vma_count =3D 0;
+>         vms->nr_pages =3D vms->locked_vm =3D vms->nr_accounted =3D 0;
+>         vms->exec_vm =3D vms->stack_vm =3D vms->data_vm =3D 0;
+> +       vms->unmap_start =3D FIRST_USER_ADDRESS;
+> +       vms->unmap_end =3D USER_PGTABLES_CEILING;
+
+noreply@ellerman.id.au reported build failures for m5272c3_defconfig
+http://kisskb.ellerman.id.au/kisskb/buildresult/15224802/
+
+$ make ARCH=3Dm68k m5272c3_defconfig mm/filemap.o
+In file included from mm/internal.h:22,
+                 from mm/filemap.c:52:
+mm/vma.h: In function =E2=80=98init_vma_munmap=E2=80=99:
+mm/vma.h:113:21: error: =E2=80=98FIRST_USER_ADDRESS=E2=80=99 undeclared (fi=
+rst use in
+this function)
+  113 |  vms->unmap_start =3D FIRST_USER_ADDRESS;
+      |                     ^~~~~~~~~~~~~~~~~~
+mm/vma.h:113:21: note: each undeclared identifier is reported only
+once for each function it appears in
+mm/vma.h:114:19: error: =E2=80=98USER_PGTABLES_CEILING=E2=80=99 undeclared =
+(first use
+in this function)
+  114 |  vms->unmap_end =3D USER_PGTABLES_CEILING;
+      |                   ^~~~~~~~~~~~~~~~~~~~~
+
+Both are defined in include/linux/pgtable.h inside #ifdef CONFIG_MMU,
+so they are not available on nommu.
 
 
-On Thu, 22 Aug 2024 15:49:32 -0400, Detlev Casanova wrote:
-> Add clock and reset ID defines for rk3576.
-> 
-> Compared to the downstream bindings written by Elaine, this uses
-> continous gapless IDs starting at 0. Thus all numbers are
-> different between downstream and upstream, but names are kept
-> exactly the same.
-> 
-> Also add documentation for the rk3576 CRU core.
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> Signed-off-by: Sugar Zhang <sugar.zhang@rock-chips.com>
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> ---
->  .../bindings/clock/rockchip,rk3576-cru.yaml   |  56 ++
->  .../dt-bindings/clock/rockchip,rk3576-cru.h   | 592 ++++++++++++++++++
->  .../dt-bindings/reset/rockchip,rk3576-cru.h   | 564 +++++++++++++++++
->  3 files changed, 1212 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.yaml
->  create mode 100644 include/dt-bindings/clock/rockchip,rk3576-cru.h
->  create mode 100644 include/dt-bindings/reset/rockchip,rk3576-cru.h
-> 
+>  }
+>
+>  int vms_gather_munmap_vmas(struct vma_munmap_struct *vms,
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Gr{oetje,eeting}s,
 
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
