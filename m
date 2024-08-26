@@ -1,175 +1,221 @@
-Return-Path: <linux-kernel+bounces-301279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 738AD95EE95
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:38:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 154F095EE9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0237F1F22BD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:38:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C9D0B21DDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A147A14A62F;
-	Mon, 26 Aug 2024 10:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dHXHaC6M"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CCB914A639;
+	Mon, 26 Aug 2024 10:38:34 +0000 (UTC)
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8092E414;
-	Mon, 26 Aug 2024 10:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD264149DE8;
+	Mon, 26 Aug 2024 10:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724668693; cv=none; b=n5ppe3rtQ4uXLzVR+R1F475pwHyyl8HO66nz07+AS29Y8ukPIZ+1c8kIHb+65gpApIMrk9oCxj3qkoR/sAJ97+oYW1l3VK60cvFKLVZL2MSXJqUhxxvitfGsZ5ZbHLpLYPtr8znRF+6ebzhDIu0P2Co3UjCiC+ZLHjQdtQFfxqc=
+	t=1724668713; cv=none; b=YTKvWOape0nUW9pUirUHocXWB8pZs1mGW1rzsJLHnoA+mbzWHTNYrMwST2WRfwgRoS5XyExD0vssFzv/aBq780CL3Zmmd5qMmeyo+F4Nql8AA8cEppqsTpL6At3LP4lrPrlDBgDyVy90I29oSpJQfxzaazeevjzsDPDKMv7a0dE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724668693; c=relaxed/simple;
-	bh=ERmA+CQJNVBk28DwXjuku6KyoJl+p00nopizk4PpeYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X2WRHAmtvFcDMiCl90u+UgcIwGHL7+zvpOjXnm569AJfx021sGfW1eNvUTlIE1SZM9+Cf+1VhRWiLmksh+CVu0Di/bcyx+AXMDWLdL5w2aySaQnd/xLXYbCWJk0lWZu9xMFpD68M21QrFqD/cFfPZDOzvLW686MNTaD5wlpF2E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dHXHaC6M; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724668692; x=1756204692;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ERmA+CQJNVBk28DwXjuku6KyoJl+p00nopizk4PpeYE=;
-  b=dHXHaC6MHE/5P73jawzIC28AWh2WKLqgrHLxOnAvyef5hrQF2VqvJ8iL
-   /16Cvxyxn2SDa7KC2fK8vD56KIbv44U8/z6dXgjoqeFjroynSP/b9szts
-   rP3yuHw48bk4Un5ZJ9dgGgnNbIV8gKdRLsJv7WjwADI9t/RFPb8wb/jo0
-   hglZ82wdE9o8Og6aACLBQJ5lSCHVJmtaYq8iMQgxLhuc9nubOsJ3k3Cip
-   6VwQ05fhOkRmlis7bDkmkC0evFWYyC/Iy1wN+NZBfyjVIVi71mm0EGHSL
-   6DgywLgJqVA93yO6sLFmJFALET8gID4U+3ct1cHTxTh7c1lo6lj5yRUJf
-   g==;
-X-CSE-ConnectionGUID: Pql3PzoGTD+wo6orhdHfTw==
-X-CSE-MsgGUID: erOMMxKlSgiNLeroYOFTeg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="22670088"
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="22670088"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 03:38:11 -0700
-X-CSE-ConnectionGUID: xDE6/mNfTlStamQ231jlHw==
-X-CSE-MsgGUID: qETryUhjTlmdnzut8dKMMA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="66643611"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 03:38:08 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1siX6q-00000001pog-41CB;
-	Mon, 26 Aug 2024 13:38:04 +0300
-Date: Mon, 26 Aug 2024 13:38:04 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ryan Chen <ryan_chen@aspeedtech.com>
-Cc: "brendan.higgins@linux.dev" <brendan.higgins@linux.dev>,
-	"benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-	"joel@jms.id.au" <joel@jms.id.au>,
-	"andi.shyti@kernel.org" <andi.shyti@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v13 2/3] i2c: aspeed: support AST2600 i2c new register
- mode driver
-Message-ID: <ZsxbDK25mJ0sjcQy@smile.fi.intel.com>
-References: <20240819092850.1590758-1-ryan_chen@aspeedtech.com>
- <20240819092850.1590758-3-ryan_chen@aspeedtech.com>
- <ZsNT7LPZ7-szrgBJ@smile.fi.intel.com>
- <OS8PR06MB7541EE5BA5B400445FE0295EF28E2@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <ZsXVU2qy0GIANFrc@smile.fi.intel.com>
- <OS8PR06MB7541945591A62B956DA28AD9F28F2@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <Zsc9_UddBybdnM1Z@smile.fi.intel.com>
- <OS8PR06MB75419F3E3A222AE941DE3007F2882@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <ZsiWp5ENQ0BeBjMn@smile.fi.intel.com>
- <OS8PR06MB7541A23130F469357B7FE5F4F28B2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+	s=arc-20240116; t=1724668713; c=relaxed/simple;
+	bh=4HSgci5ey3CyoU67SNEojALGsTeyRLPQkiqz2Puqyhc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ro/vX9x7sYbBqnrpEmDHHAYN1qTV0n1zELHNm2rH77qLsNGal1zPE1Mdlv6sLsVHpWjp26WDwAQCVFVsGlkSmc0Jf5xzzCp4rJvUzQHGEwXt+VKOiL6bIvvXgrveSYteHc5tluDqZ8hfVU0+sFDZuMEyXbsgfhpyhVEb3W7d9vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e116a5c3922so3926517276.1;
+        Mon, 26 Aug 2024 03:38:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724668709; x=1725273509;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nw/YPnfipNGWgqwK6wJ71IWbvCY63Sc9TUnNDiXF3a8=;
+        b=P0Y/uwiUNg9yPJwZ5WNoPIZKj0lfRqOnkaHQLOOaM8A9mUUBXMU8LhiVRoKaT7St24
+         xc5xSdLAIr/nLO5PBLSNBClWJ3PUqeJ+w/tTYIdMcCVlnV4uYQ2xWHoSujsWQnjUHfxQ
+         iKjh+VHS1vWe8gb7Fgfds2DV5PY3aawzt3wNsExNEbxz0I+XN2UFlTFc99AvshA5eZmP
+         LPSZJIRBf2837Z8FWB3kCnClY07VWLPN1YL8kaQy7UXL/vHV+T5RPvslxtZ4TEr+zc44
+         B+TURiEPKzLvKHckl7sDOCEmJmLEGKpMi8A5HKSYtJVuwyQn1dVXMgKSRnzTBtSLD505
+         KI4A==
+X-Forwarded-Encrypted: i=1; AJvYcCU0Y4x3CkMi4exTD7i/diBevsTr8Glg7bFulWqG9Pz/bJvj19Ols6HozJakDXn0lW2vtVJSXEwoB0jT@vger.kernel.org, AJvYcCWnolFofEMiXPcWlw0Ekb1fEfjrIaCC1ED4MQBsN3VK/yhMB+psTdFGGK5sHtSRvdWuO8mt9UI6av3cPrvmSx1Pk74=@vger.kernel.org, AJvYcCXv7aKlSidJ/RKZLHy+UaeIAjjBC43b5XWqdBlC8BPrC5KlGQhq8OxISSWLwMfnDKile9r2bwIbIOCcjW4A@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQ+2Bt98fFnmaAKEQJTgwIfXtVsU3WIAbBWzymbHJ9MPdjsd/d
+	QOzmrxQyhGmJxfvnzLz9G+5Mrt5iUoOfQr9KVDNvzeJ9093jCvw1sCUFISCz
+X-Google-Smtp-Source: AGHT+IFkjFGBO93hDyawQ7tkpvkCjyeLURSbSwo+AZD65d2GMOJ23RcVYmTxoKlO64GF+JFUI3jJMQ==
+X-Received: by 2002:a05:6902:1892:b0:e16:5343:ba60 with SMTP id 3f1490d57ef6-e17a8684fa6mr10398675276.43.1724668708673;
+        Mon, 26 Aug 2024 03:38:28 -0700 (PDT)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e178e680b1asm1913588276.58.2024.08.26.03.38.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 03:38:28 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6c0e22218d0so43354207b3.0;
+        Mon, 26 Aug 2024 03:38:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWV9S61aCd4u8Otk8LHBLvaxRF39O4CVbifSkGpApc+W4s1IuIuZLjbgwe1pWput2JVJ5U/WtVz1ZTJeLmtFc4n0NI=@vger.kernel.org, AJvYcCXubAeMdQjqQIlIwpCsTVnKlMkTgjSjspB1HVRzIFfzfKP+BXQuCmltuUfv6dQ6p3yNgd3L4v3wMFAf@vger.kernel.org, AJvYcCXwR6L/ebCSHm7yr1PrVi3E+HwxBYpEIlLnmMJd8PpN3R6RPVUi4vumsJTlunIf2lNoOgdnMKAeCfBIe6HN@vger.kernel.org
+X-Received: by 2002:a05:690c:1d:b0:64a:e7ec:f3d with SMTP id
+ 00721157ae682-6c62576b7f7mr122879587b3.18.1724668707476; Mon, 26 Aug 2024
+ 03:38:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <OS8PR06MB7541A23130F469357B7FE5F4F28B2@OS8PR06MB7541.apcprd06.prod.outlook.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240821085644.240009-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240821085644.240009-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240821085644.240009-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 26 Aug 2024 12:38:15 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWC0sgF48Thdg95zyPn04XJv1H+ZScXZrUfzcp8v738ag@mail.gmail.com>
+Message-ID: <CAMuHMdWC0sgF48Thdg95zyPn04XJv1H+ZScXZrUfzcp8v738ag@mail.gmail.com>
+Subject: Re: [PATCH v3 1/8] arm64: dts: renesas: Add initial SoC DTSI for
+ RZ/V2H(P) SoC
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 26, 2024 at 07:50:24AM +0000, Ryan Chen wrote:
-> > On Fri, Aug 23, 2024 at 06:23:54AM +0000, Ryan Chen wrote:
-> > > > On Thu, Aug 22, 2024 at 02:24:26AM +0000, Ryan Chen wrote:
-> > > > > > On Wed, Aug 21, 2024 at 06:43:01AM +0000, Ryan Chen wrote:
-> > > > > > > > On Mon, Aug 19, 2024 at 05:28:49PM +0800, Ryan Chen wrote:
+Hi Prabhakar,
 
-...
+On Wed, Aug 21, 2024 at 10:56=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.=
+com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add initial SoC DTSI for Renesas RZ/V2H(P) ("R9A09G057") SoC, below are
+> the list of blocks added:
+> - EXT CLKs
+> - 4X CA55
+> - SCIF
+> - PFC
+> - CPG
+> - SYS
+> - GIC
+> - ARMv8 Timer
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v2->v3
+> - Updated GIC node to match with the coding-style of DTS
 
-> > > > > > > > > +	if (i2c_bus->mode == BUFF_MODE) {
-> > > > > > > > > +		i2c_bus->buf_base =
-> > > > > > > > devm_platform_get_and_ioremap_resource(pdev, 1, &res);
-> > > > > > > > > +		if (!IS_ERR_OR_NULL(i2c_bus->buf_base))
-> > > > > > > > > +			i2c_bus->buf_size = resource_size(res) / 2;
-> > > > > > > > > +		else
-> > > > > > > > > +			i2c_bus->mode = BYTE_MODE;
-> > > > > > > >
-> > > > > > > > What's wrong with positive conditional? And is it even
-> > > > > > > > possible to have NULL here?
-> > > > > > > >
-> > > > > > > Yes, if dtsi fill not following yaml example have reg 1, that
-> > > > > > > will failure at buffer
-> > > > > > mode.
-> > > > > > > And I can swith to byte mode.
-> > > > > > >
-> > > > > > > reg = <0x80 0x80>, <0xc00 0x20>;
-> > > > > >
-> > > > > > I was asking about if (!IS_ERR_OR_NULL(...)) line:
-> > > > > > 1) Why 'if (!foo) {} else {}' instead of 'if (foo) {} else {}'?
-> > > > > I will update to following.
-> > > > > 		if (IS_ERR(i2c_bus->buf_base))
-> > > > > 			i2c_bus->mode = BYTE_MODE;
-> > > > > 		else
-> > > > > 			i2c_bus->buf_size = resource_size(res) / 2;
-> > > > >
-> > > > > > 2) Why _NULL?
-> > > > > 	If dtsi file is claim only 1 reg offset. reg = <0x80 0x80>; that
-> > > > > will goto byte
-> > > > mode.
-> > > > > 	reg = <0x80 0x80>, <0xc00 0x20>; can support buffer mode.
-> > > > > 	due to 2nd is buffer register offset.
-> > > >
-> > > > I have asked why IS_ERR_OR_NULL() and not IS_ERR().
-> > > >
-> > > OH, I will doing by this.
-> > > 		if (IS_ERR_OR_NULL(i2c_bus->buf_base))
-> > 
-> > The question about _NULL remains unanswered...
-> Sorry, I may not catch your point.
-> So, Do you mean I should passive coding by following?
+Thanks for the update!
 
-No. I already mentioned that in one of the previous mails.
-Why do you use IS_ERR_OR_NULL() and not IS_ERR()?
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+> @@ -0,0 +1,165 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +/*
+> + * Device Tree Source for the RZ/V2H(P) SoC
+> + *
+> + * Copyright (C) 2024 Renesas Electronics Corp.
+> + */
+> +
+> +#include <dt-bindings/clock/renesas,r9a09g057-cpg.h>
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +/ {
+> +       compatible =3D "renesas,r9a09g057";
+> +       #address-cells =3D <2>;
+> +       #size-cells =3D <2>;
+> +
+> +       audio_extal_clk: audio-clk {
+> +               compatible =3D "fixed-clock";
+> +               #clock-cells =3D <0>;
+> +               /* This value must be overridden by the board */
+> +               clock-frequency =3D <0>;
+> +       };
+> +
+> +       rtxin_clk: rtxin-clk {
+> +               compatible =3D "fixed-clock";
+> +               #clock-cells =3D <0>;
+> +               /* This value must be overridden by the board */
+> +               clock-frequency =3D <0>;
+> +       };
+> +
+> +       qextal_clk: qextal-clk {
+> +               compatible =3D "fixed-clock";
+> +               #clock-cells =3D <0>;
+> +               /* This value must be overridden by the board */
+> +               clock-frequency =3D <0>;
+> +       };
 
-You should understand your code better than me :-)
+Please use alphabetical sort order (by nodename).
 
-> If (i2c_bus->buf_base > 0)
-> 	i2c_bus->buf_size = resource_size(res) / 2;
-> else
->     i2c_bus->mode = BYTE_MODE;
-> 
-> > > 			i2c_bus->mode = BYTE_MODE;
-> > > 		else
-> > > 			i2c_bus->buf_size = resource_size(res) / 2;
+> +       soc: soc {
+> +               compatible =3D "simple-bus";
+> +               interrupt-parent =3D <&gic>;
+> +               #address-cells =3D <2>;
+> +               #size-cells =3D <2>;
+> +               ranges;
+> +
+> +               pinctrl: pinctrl@10410000 {
+> +                       compatible =3D "renesas,r9a09g057-pinctrl";
+> +                       reg =3D <0 0x10410000 0 0x10000>;
+> +                       clocks =3D <&cpg CPG_CORE R9A09G057_IOTOP_0_SHCLK=
+>;
+> +                       gpio-controller;
+> +                       #gpio-cells =3D <2>;
+> +                       gpio-ranges =3D <&pinctrl 0 0 96>;
+> +                       #interrupt-cells =3D <2>;
+> +                       interrupt-controller;
+> +                       power-domains =3D <&cpg>;
+> +                       resets =3D <&cpg 165>, <&cpg 166>;
 
--- 
-With Best Regards,
-Andy Shevchenko
+Please use hexadecimal reset numbers, cfr. the description in the DT
+bindings. E.g. IOTOP_0_RESETN =3D CPG_RST_10 bit 5 =3D> 0xa5.
 
+This comment applies to all resets in this series.
 
+> +               };
+
+> +               scif: serial@11c01400 {
+> +                       compatible =3D "renesas,scif-r9a09g057";
+> +                       reg =3D <0 0x11c01400 0 0x400>;
+> +                       interrupts =3D <GIC_SPI 529 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 532 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 533 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 530 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 534 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 531 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 535 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 536 IRQ_TYPE_EDGE_RISING>,
+> +                                    <GIC_SPI 537 IRQ_TYPE_EDGE_RISING>;
+> +                       interrupt-names =3D "eri", "rxi", "txi", "bri", "=
+dri",
+> +                                         "tei", "tei-dri", "rxi-edge", "=
+txi-edge";
+> +                       clocks =3D <&cpg CPG_MOD 143>;
+
+Please use hexadecimal module clock numbers, cfr. the description in
+the DT bindings. E.g. CGC_SCIF_0_clk_pck =3D CPG_CLKON_8 bit 15 =3D> 0x8f.
+
+This comment applies to all module clocks in this series.
+
+> +                       clock-names =3D "fck";
+> +                       power-domains =3D <&cpg>;
+> +                       resets =3D <&cpg 149>;
+> +                       status =3D "disabled";
+> +               };
+
+The rest LGTM.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
