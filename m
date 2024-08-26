@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-302022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD79C95F8D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:11:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAE2895F8D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:11:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 746822816CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:11:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDBE91C21BF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2FB199EAF;
-	Mon, 26 Aug 2024 18:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5E619A296;
+	Mon, 26 Aug 2024 18:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KCGCPDw3"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rz3j1+uq"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11EB6199947
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 18:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A891991A5
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 18:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724695845; cv=none; b=K52dp8/zmuI5U3d+VIPs3lk9M5EeDmL/ffPXVDOCtj0q9GKoBNz+6BvFlR0mv2PqP7pgX/7MkyPBURJW8rnzdnFycBiF3ukotvCQb2GfvprZXiBwpGg4xIRpnMX3o586RXrOdHGbzbzyRXZM/ydHE4b9sfkyvRo5w1S0R0I2PQQ=
+	t=1724695847; cv=none; b=D4ymNGZfczNIPpBJHFprwWz31T7UunfKlLbMdYUeFPyGfsQbZPZ7dFCXCBn9iiTBjoVMnv6vGvuwpxhOjpnJhSAd7DXKiZMXHEnhhJM7nGF8UIgXlv0eUzxYAZq/CeHCNfh6NbFfPZNC3cMpkduA6NpVdMQeixxRn4+bzSvLrdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724695845; c=relaxed/simple;
-	bh=FO1VXGTWQHpXO3EAROfO+xp8yabUrYztbCIjZhc5uis=;
+	s=arc-20240116; t=1724695847; c=relaxed/simple;
+	bh=JrQE7ukktaa5BDLBoKiOsnJovijkjtIWFE5krqqkKVE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=IcVFV3Z5Axd4XWJ+MP/WR+lzZJzAHJ7nVH1LYMDd3gqCMCYMOGq++V2XIFWHIQVyJPMrych9v/G/utvbZcV48gfkhEnAbeLohiRbCjgYW9uUj7vuVnwmeYVSRIeXACo8pQfA7JSmWj3I3hxG5XodvZXNKm5EKJBw6StC9QYD5qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--manojvishy.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KCGCPDw3; arc=none smtp.client-ip=209.85.219.201
+	 To:Cc:Content-Type; b=Tgiujx3gpLoIPqP900AqICumFgPpt6uSk5Zq5mfErwm8uEpEfM1r6DJmvcNfLC6n7sM/NUD1fMMtpqMqKgFZA1V9QRopnxmu1/XtAQCOL21AxDhjhgIDfrLAdNNE58nThc+2fCzZCe6j4Vf3+U5fZ/60vvWim2sqnlSO89JVOUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--manojvishy.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Rz3j1+uq; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--manojvishy.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e0353b731b8so7749504276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 11:10:43 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-69a0536b23aso87469587b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 11:10:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724695843; x=1725300643; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1724695845; x=1725300645; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LM6a0WurRs0VygQLA1YyzraSEK90YN51nb0L2VXwcYQ=;
-        b=KCGCPDw3Ry563vsSoFVmploj8FNfLI0t6HqDkyH7gvPmq2teWYjA0hJ0ZJBE7Pmd8z
-         uhBncbXlJAo0fR0J3ui1FeygboW+1JKdfiPTMCMnW8Uy+5KKY/9JpYkyFylJaLGAZKLi
-         4t6ItBLpTGYksK2jugdRAAIbTzfxihM4kCatBELqJ1x4uS4LAz+DV8y+P8CNx5AsJboo
-         0qZxLynlXp2HRUqKof1CwCRJfUeSj0aq1LKvvVVSGLdITdpKxOlEbzV5lEPuE+BeHufA
-         vzyF1z5iT7EzSJSwPZnZxxpCjOpAJd/rR2TtzLoVYyEt+/R18Icda3I9zQAOAt06PoHG
-         kGCw==
+        bh=+2F7nz3UMUAFR15Vkm7j1Cul/J99ot3Q3o9XowrrRt8=;
+        b=Rz3j1+uqPMoFRq4sk43F4vFZbCegQmFAX0wYQhsUBPfmquNb9KItrZW2jqiiB3mHiC
+         vDHWDL8PLthkRHJamvWPoxDyQKmKz2j1TUBxdYYiUWE5ZYg1VK4HxK9hDArSXyLeVwx+
+         FeYh7CRdLisAoesJhissb9PJiomdAYuY5KuM79HFlExtlR9H2+MURBJDCTc0y2AMJW+s
+         EebAulaWyUft7PjXDehzFGNtCjcnSI0axQiDx2TFqKOlJwFnYuYWUFYOT7CsSSIXc86f
+         F5fkL5vTADWR/3Cm+o8DC05IriOE5f/pgiMO1XtcJh6/FnE/+OTjUz63tryz9xYl3xW+
+         07Ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724695843; x=1725300643;
+        d=1e100.net; s=20230601; t=1724695845; x=1725300645;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LM6a0WurRs0VygQLA1YyzraSEK90YN51nb0L2VXwcYQ=;
-        b=Lp5c77YfLym7sFmlWq30JnMLl4/6nsEig0IMlyz1AEvpVGh2OW/R+Oa6hqSBevrK6F
-         L4V6Ebu553nV8wJbdlGBaDjDc8dje1SpUg+xVs6zGhL1/K8ZcyEMqrmt/okcuxvUxgdS
-         PzXpr/dJX9eGVa6hFZQYaDupy2RCSQCItdYysGXoSCB4Gggp//MWYBvq7a/C874PwBrH
-         3ccv8kWOSj8Oqt/nApziY4E8Itsl1MTe73BiHFlmkua9LDPXVboFFlkgrTXLwUKjdK7k
-         hpnk8T4bzVaU8jIZR/hBISeCamKAfDzO2AwGHX2D2GOjlrKVqVRiGhwZ8SrbDFMuqUlz
-         3gdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUaOYDcPH70r+XbDqaaBjf5Ec1RLIqbeFzs2SLFWA70Df+Kj8u6wL1O8nQmt3ZUydLDwuABjg9OjtWXdMA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI34TrBZAWoBwB4Hkydl4HWgcpf0U1thV81Sh0CoA6bWVYUZ+t
-	IpZuaVDz/xzoA496DyBKX/kiqXIV1/cj/mnxaEnzkIoOspuhHUcJNV1vWhvK2lhwAIGs2qkPjJi
-	yBqdP3Z2X8dMfaO6d0A==
-X-Google-Smtp-Source: AGHT+IF6Ly19WKd+JcS6CcJwheQlRT65UDI0KdLySp4FklnSjsvLt63ejTCLnUizmDoAvkVv4ljTcp6I2KahJvls
+        bh=+2F7nz3UMUAFR15Vkm7j1Cul/J99ot3Q3o9XowrrRt8=;
+        b=EHMisSA3KXdEpW0jJf5JRZftHOpPTPqZmn5wCc/vti7iMwtX/a9jqbsPjeSZhndyWD
+         pW2MwiWAKLwpQlcn/bRrjOEFdsemvieiT9/cZ4MtAhaY0IaO+BZuismsxzEAZfddzDIT
+         Pdzi6QsIEpJivJlIXRlRn1QrQwAwHZlXolPLxYGcBlg/Ilg13aFNOrcycfKSJTCYbcJ9
+         3gZvVUrfdEIqjcArHKfUUJTXQmWOUjp3pzNQ0YFZiVuf/0Sa5Ypl/gJybLox4jmxQ+cs
+         5wneLglvIInyUQRFoPZVeOAhi4cp8OBcudCgNUlh9BflnWpxN92mdzFpdo/sYth4AyMb
+         MVUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVv8W+E9g59GWPWsO+MnER3NqjbyuU73bxwb5VC4yg59X/q376o73h6FGRrvHIoZu8URsPfJ60PFPF+ucc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPrrBJr7neqwEpNogyeMjmoyFdb9v84rMAtVm7i8EE/WRaoGwG
+	d0NzI6l3Hd575M05T3ZKn1mOmecF4BBC9UliAkkbsdNT3ezFw9Vva2jyukahECEZaAB9Fr5HA7N
+	XRTXqhKvjI8xguhmY0w==
+X-Google-Smtp-Source: AGHT+IH1ALkhd6H0T9zDYc5JDKk/4XNxqMfJlwCfIvNtsnq/kvN4ZDenJppUZ+Y9eW49jxiGQRirEW+rHE7gLg3t
 X-Received: from manojvishy.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:413f])
- (user=manojvishy job=sendgmr) by 2002:a5b:24d:0:b0:e0b:f69b:da0a with SMTP id
- 3f1490d57ef6-e17a865b595mr19562276.12.1724695842941; Mon, 26 Aug 2024
- 11:10:42 -0700 (PDT)
-Date: Mon, 26 Aug 2024 18:10:31 +0000
+ (user=manojvishy job=sendgmr) by 2002:a05:690c:6e09:b0:6b2:7ff8:ca3 with SMTP
+ id 00721157ae682-6cfbaf3a1c9mr97067b3.4.1724695845308; Mon, 26 Aug 2024
+ 11:10:45 -0700 (PDT)
+Date: Mon, 26 Aug 2024 18:10:32 +0000
 In-Reply-To: <20240826181032.3042222-1-manojvishy@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,118 +73,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240826181032.3042222-1-manojvishy@google.com>
 X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
-Message-ID: <20240826181032.3042222-4-manojvishy@google.com>
-Subject: [[PATCH v2 iwl-next] v2 3/4] idpf: convert workqueues to unbound
+Message-ID: <20240826181032.3042222-5-manojvishy@google.com>
+Subject: [[PATCH v2 iwl-next] v2 4/4] idpf: add more info during virtchnl
+ transaction time out
 From: Manoj Vishwanathan <manojvishy@google.com>
 To: Tony Nguyen <anthony.l.nguyen@intel.com>, 
 	Przemek Kitszel <przemyslaw.kitszel@intel.com>, "David S. Miller" <davem@davemloft.net>, 
 	Eric Dumazet <edumazet@google.com>, intel-wired-lan@lists.osuosl.org
 Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	google-lan-reviews@googlegroups.com, Marco Leogrande <leogrande@google.com>, 
+	google-lan-reviews@googlegroups.com, 
 	Manoj Vishwanathan <manojvishy@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-From: Marco Leogrande <leogrande@google.com>
+Add more information related to the transaction like cookie, vc_op,
+salt when transaction times out and include similar information
+when transaction salt does not match.
 
-When a workqueue is created with `WQ_UNBOUND`, its work items are
-served by special worker-pools, whose host workers are not bound to
-any specific CPU. In the default configuration (i.e. when
-`queue_delayed_work` and friends do not specify which CPU to run the
-work item on), `WQ_UNBOUND` allows the work item to be executed on any
-CPU in the same node of the CPU it was enqueued on. While this
-solution potentially sacrifices locality, it avoids contention with
-other processes that might dominate the CPU time of the processor the
-work item was scheduled on.
+Info output for transaction timeout:
+-------------------
+(op:5015 cookie:45fe vc_op:5015 salt:45 timeout:60000ms)
+-------------------
 
-This is not just a theoretical problem: in a praticular scenario
-misconfigured process was hogging most of the time from CPU0, leaving
-less than 0.5% of its CPU time to the kworker. The IDPF workqueues
-that were using the kworker on CPU0 suffered large completion delays
-as a result, causing performance degradation, timeouts and eventual
-system crash.
-
-Tested:
-
-* I have also run a manual test to gauge the performance
-  improvement. The test consists of an antagonist process
-  (`./stress --cpu 2`) consuming as much of CPU 0 as possible. This
-  process is run under `taskset 01` to bind it to CPU0, and its
-  priority is changed with `chrt -pQ 9900 10000 ${pid}` and
-  `renice -n -20 ${pid}` after start.
-
-  Then, the IDPF driver is forced to prefer CPU0 by editing all calls
-  to `queue_delayed_work`, `mod_delayed_work`, etc... to use CPU 0.
-
-  Finally, `ktraces` for the workqueue events are collected.
-
-  Without the current patch, the antagonist process can force
-  arbitrary delays between `workqueue_queue_work` and
-  `workqueue_execute_start`, that in my tests were as high as
-  `30ms`. With the current patch applied, the workqueue can be
-  migrated to another unloaded CPU in the same node, and, keeping
-  everything else equal, the maximum delay I could see was `6us`.
-
-Fixes: 0fe45467a1041 (idpf: add create vport and netdev configuration)
-Signed-off-by: Marco Leogrande <leogrande@google.com>
 Signed-off-by: Manoj Vishwanathan <manojvishy@google.com>
 ---
- drivers/net/ethernet/intel/idpf/idpf_main.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/intel/idpf/idpf_virtchnl.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/idpf/idpf_main.c b/drivers/net/ethernet/intel/idpf/idpf_main.c
-index db476b3314c8..dfd56fc5ff65 100644
---- a/drivers/net/ethernet/intel/idpf/idpf_main.c
-+++ b/drivers/net/ethernet/intel/idpf/idpf_main.c
-@@ -174,7 +174,8 @@ static int idpf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	pci_set_master(pdev);
- 	pci_set_drvdata(pdev, adapter);
- 
--	adapter->init_wq = alloc_workqueue("%s-%s-init", 0, 0,
-+	adapter->init_wq = alloc_workqueue("%s-%s-init",
-+					   WQ_UNBOUND | WQ_MEM_RECLAIM, 0,
- 					   dev_driver_string(dev),
- 					   dev_name(dev));
- 	if (!adapter->init_wq) {
-@@ -183,7 +184,8 @@ static int idpf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 		goto err_free;
+diff --git a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+index 30eec674d594..d8294f31fdf9 100644
+--- a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
++++ b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+@@ -517,8 +517,9 @@ static ssize_t idpf_vc_xn_exec(struct idpf_adapter *adapter,
+ 		retval = -ENXIO;
+ 		goto only_unlock;
+ 	case IDPF_VC_XN_WAITING:
+-		dev_notice_ratelimited(&adapter->pdev->dev, "Transaction timed-out (op %d, %dms)\n",
+-				       params->vc_op, params->timeout_ms);
++		dev_notice_ratelimited(&adapter->pdev->dev,
++				"Transaction timed-out (op:%d cookie:%04x vc_op:%d salt:%02x timeout:%dms)\n",
++				params->vc_op, cookie, xn->vc_op, xn->salt, params->timeout_ms);
+ 		retval = -ETIME;
+ 		break;
+ 	case IDPF_VC_XN_COMPLETED_SUCCESS:
+@@ -615,8 +616,8 @@ idpf_vc_xn_forward_reply(struct idpf_adapter *adapter,
+ 	idpf_vc_xn_lock(xn);
+ 	salt = FIELD_GET(IDPF_VC_XN_SALT_M, msg_info);
+ 	if (xn->salt != salt) {
+-		dev_err_ratelimited(&adapter->pdev->dev, "Transaction salt does not match (%02x != %02x)\n",
+-				    xn->salt, salt);
++		dev_err_ratelimited(&adapter->pdev->dev, "Transaction salt does not match (exp:%d@%02x(%d) != got:%d@%02x)\n",
++				xn->vc_op, xn->salt, xn->state, ctlq_msg->cookie.mbx.chnl_opcode, salt);
+ 		idpf_vc_xn_unlock(xn);
+ 		return -EINVAL;
  	}
- 
--	adapter->serv_wq = alloc_workqueue("%s-%s-service", 0, 0,
-+	adapter->serv_wq = alloc_workqueue("%s-%s-service",
-+					   WQ_UNBOUND | WQ_MEM_RECLAIM, 0,
- 					   dev_driver_string(dev),
- 					   dev_name(dev));
- 	if (!adapter->serv_wq) {
-@@ -192,7 +194,8 @@ static int idpf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 		goto err_serv_wq_alloc;
- 	}
- 
--	adapter->mbx_wq = alloc_workqueue("%s-%s-mbx", 0, 0,
-+	adapter->mbx_wq = alloc_workqueue("%s-%s-mbx",
-+					  WQ_UNBOUND | WQ_MEM_RECLAIM, 0,
- 					  dev_driver_string(dev),
- 					  dev_name(dev));
- 	if (!adapter->mbx_wq) {
-@@ -201,7 +204,8 @@ static int idpf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 		goto err_mbx_wq_alloc;
- 	}
- 
--	adapter->stats_wq = alloc_workqueue("%s-%s-stats", 0, 0,
-+	adapter->stats_wq = alloc_workqueue("%s-%s-stats",
-+					    WQ_UNBOUND | WQ_MEM_RECLAIM, 0,
- 					    dev_driver_string(dev),
- 					    dev_name(dev));
- 	if (!adapter->stats_wq) {
-@@ -210,7 +214,8 @@ static int idpf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 		goto err_stats_wq_alloc;
- 	}
- 
--	adapter->vc_event_wq = alloc_workqueue("%s-%s-vc_event", 0, 0,
-+	adapter->vc_event_wq = alloc_workqueue("%s-%s-vc_event",
-+					       WQ_UNBOUND | WQ_MEM_RECLAIM, 0,
- 					       dev_driver_string(dev),
- 					       dev_name(dev));
- 	if (!adapter->vc_event_wq) {
 -- 
 2.46.0.295.g3b9ea8a38a-goog
 
