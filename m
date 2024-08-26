@@ -1,136 +1,110 @@
-Return-Path: <linux-kernel+bounces-302308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F64595FC6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:08:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D08D095FC71
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 894351C22869
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:08:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E6AF1C227ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25AE319D074;
-	Mon, 26 Aug 2024 22:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464D119CD16;
+	Mon, 26 Aug 2024 22:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A7MsA1xR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hEEwDleI"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A1B19342A;
-	Mon, 26 Aug 2024 22:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB32811E2;
+	Mon, 26 Aug 2024 22:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724710116; cv=none; b=N6o/bDs7yRNzgwdbCdPSoFdoBo60wTs4W6diInrjbaE5OIbZ0gvBhnN24M+9oI9c1+W3TdbLFT72uuY7m/ID3CYNh6a2bBQmicsFsMCmtlAu8T1wkgqDVcVapOBIxWH8Ql13R9IiQQ/prTfXOIAeDP+LDWCcD0fhDgphrvml3K0=
+	t=1724710180; cv=none; b=CKic6W5xGyB7Yv6Lp1/pmpLPqenT5LzdP9T8CHkXoK0NBI8qmrye1+QJITJbMA3/M/dyRzvnlDwTQoa6goKBCsUAY5LzYGAjeCg7dTHMnoaOoT25rFokcHohA0BPSHeY6cXThOz8zfVa7vNaCD4KyBOO9Kv18Z+4ee432uT3ASw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724710116; c=relaxed/simple;
-	bh=MTJqgXRrpWsKtfxj39yoPmid/iW6hxkvaquXtjAl2hE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LOT1qMKuYkpH/dF+Zldztto0ZxgWLMajVnQAZk0YEDOJkEVT+SNtAddLxwHTQl9VPT51c6v6kLZjWRDelvgzqG/H+mU/eF9oZ5M5ubFNbEnDLuSu3BxEbiJbOpbb/QYy5nohJK2NM/qXAdVBDiXABC+oZvFjwANeZ3dLtOid+VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A7MsA1xR; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724710114; x=1756246114;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=MTJqgXRrpWsKtfxj39yoPmid/iW6hxkvaquXtjAl2hE=;
-  b=A7MsA1xRrd1Hx9RxV/NwrVuxYTlcA0awSsWnk4npQIbV15YbAc0heCaq
-   my5mawcImlkQ7WdPaJVfhBo/mJ24zuszSGr38yYEg0KSbb7612CnhXZj1
-   FEudWT/G/WEZjsj3p7jI5A1eQtFxa7zn7fIBZrv317vK8S40bN+Jzln3S
-   dgNwvHa+4T/IFIT3JKkpANFVmylfnKoeID1JiPiL+t+rSHUpQcbmdbhCR
-   TGbe6U5CxOEcMewfaQDMv32eHtwIFWpw1GE1Z3d2ScTtwlg3nnfCPe2e9
-   DeewG/+0mZ4UVq1mtl3BhWsIEqKfzXLDqBtmRI/ZMAyREz/qLxP/iAcRg
-   g==;
-X-CSE-ConnectionGUID: ks4BfuX5Tyq3A4kBqbx6XQ==
-X-CSE-MsgGUID: UFDcbn3gQn2aGYwETd16+g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="40663726"
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="40663726"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 15:08:34 -0700
-X-CSE-ConnectionGUID: 4JVCmYgVQcu+R5/RgJWewA==
-X-CSE-MsgGUID: 8eEoDP5SRC2x05sHFey3mQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="62816508"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 26 Aug 2024 15:08:31 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sihsz-000Hdm-0a;
-	Mon, 26 Aug 2024 22:08:29 +0000
-Date: Tue, 27 Aug 2024 06:07:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ahmed Ehab <bottaawesome633@gmail.com>, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	linux-ext4@vger.kernel.org, syzkaller@googlegroups.com
-Subject: Re: [PATCH v6 2/2] locking/lockdep: Test no new string literal is
- created in lockdep_set_subclass()
-Message-ID: <202408270559.rym5UAv9-lkp@intel.com>
-References: <20240824221031.7751-2-bottaawesome633@gmail.com>
+	s=arc-20240116; t=1724710180; c=relaxed/simple;
+	bh=iXUMEO2LJ7lEeyDkYRfdM/Mdx7Nx6xnj0tYf8DxvM5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U2qn7VVCY6oGQvYOpu87mD5FV2tBPigY85OcmdbOuhfEGwsA6R6s1j/fojYhgPOU9WxdiguAhNChVu99zG6OaHCf2f+cdRCEU6nX7Px3E1i4x5AJFF2oCgk83N4pKBKtMxHiHZsvgPSqL/iFcsAJGIqL0vv6hZftnkF/inkQ9pY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=hEEwDleI; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1724710167;
+	bh=2KgYkzXzRg/IqZY0KZ2sPiIGCzH6DP+9PjoysDaqX24=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hEEwDleId2skf3U50DRN/qOzMPwAkVzpKb71cELrArXSZCdFEUEIvtbKdT9WFLe4G
+	 6mFqJ4Hj7Opk3oVdCMAr0EHTpwl7ezK5pK3RoDM0tfqWGMW9Qj01xcmgb3soRD8HE1
+	 QxZG+tDjgiPQAdzUrsRnpOG1laMVLrXCG0NCx8WV4lMUD6Otp4RWO5Vmg/Q60i4how
+	 49IkoIaQ7XkRTBshyLpGymrZf5iLq17ps9jX4EgsIbocYJ1U7xKtVTT07uO20kBiCa
+	 cBlO27Y/C7GAPEUWOKcdl2oyV8USWDYYGME5ad5S2WBY38Zt8nEGnCabgVAhuXhn4C
+	 2cf6rdUQrReQQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wt4bB3qZFz4wnt;
+	Tue, 27 Aug 2024 08:09:26 +1000 (AEST)
+Date: Tue, 27 Aug 2024 08:09:25 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Peter
+ Zijlstra <peterz@infradead.org>, Chen Yufan <chenyufan@vivo.com>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <20240827080925.32a7aec4@canb.auug.org.au>
+In-Reply-To: <8734mremla.ffs@tglx>
+References: <20240826130137.631e5e31@canb.auug.org.au>
+	<8734mremla.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240824221031.7751-2-bottaawesome633@gmail.com>
+Content-Type: multipart/signed; boundary="Sig_/8sNs2mys+T2Xx6iogQD+6Y8";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi Ahmed,
+--Sig_/8sNs2mys+T2Xx6iogQD+6Y8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-kernel test robot noticed the following build errors:
+Hi Thomas,
 
-[auto build test ERROR on tip/locking/core]
-[also build test ERROR on tip/master arm-perf/for-next/perf linus/master tip/auto-latest v6.11-rc5 next-20240826]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On Mon, 26 Aug 2024 10:04:49 +0200 Thomas Gleixner <tglx@linutronix.de> wro=
+te:
+>
+> On Mon, Aug 26 2024 at 13:01, Stephen Rothwell wrote:
+> > kernel/time/timekeeping.c: In function 'timekeeping_check_update':
+> > include/linux/typecheck.h:12:25: error: comparison of distinct pointer =
+types lacks a cast [-Werror]
+> >    12 |         (void)(&__dummy =3D=3D &__dummy2); \ =20
+>=20
+> Offending commit has been removed.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ahmed-Ehab/locking-lockdep-Test-no-new-string-literal-is-created-in-lockdep_set_subclass/20240826-145215
-base:   tip/locking/core
-patch link:    https://lore.kernel.org/r/20240824221031.7751-2-bottaawesome633%40gmail.com
-patch subject: [PATCH v6 2/2] locking/lockdep: Test no new string literal is created in lockdep_set_subclass()
-config: i386-buildonly-randconfig-003-20240827 (https://download.01.org/0day-ci/archive/20240827/202408270559.rym5UAv9-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408270559.rym5UAv9-lkp@intel.com/reproduce)
+That commit is still in the tip tree this morning.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408270559.rym5UAv9-lkp@intel.com/
+--=20
+Cheers,
+Stephen Rothwell
 
-All errors (new ones prefixed by >>):
+--Sig_/8sNs2mys+T2Xx6iogQD+6Y8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-   lib/locking-selftest.c: In function 'lock_class_subclass_X1':
->> lib/locking-selftest.c:2715:60: error: 'struct rw_semaphore' has no member named 'dep_map'
-    2715 |         const char *name_before_setting_subclass = rwsem_X1.dep_map.name;
-         |                                                            ^
-   lib/locking-selftest.c:2719:47: error: 'struct rw_semaphore' has no member named 'dep_map'
-    2719 |         name_after_setting_subclass = rwsem_X1.dep_map.name;
-         |                                               ^
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbM/RUACgkQAVBC80lX
+0GyC3Af/bpg3Tyrp2CRavuZoNbubG9BegJwy4CV6SzIOr2dUYh1AkGsa7HM/hpzL
+yJsN4oo7B7Jj9+XF/mIPV9ijY3PcUKPn7JX8JiZdTRGSSTa8rbGzVcfkac/QCCOT
+DP6o/4dtbGVYgCFd4rNVOUUZ+veOfBPtQdVSQ2j+R4s/4bPTypyPHW8aTNIXe8AL
+i3FhMnDF9ntMJ+03Ku2P0XwrC1FZK/gM9r/u9FFGp+824oejctzPsFly1Q4Sf7HW
+VQBvRtduo5q0Ps+SNCOHU1T2mJrTRrB4Qe6Tyx8x8urh7Z300wuFxy9+9BBLnA2B
+9kcHNacsVsFOXbA+jfIswOATZ0smJg==
+=fGdh
+-----END PGP SIGNATURE-----
 
-vim +2715 lib/locking-selftest.c
-
-  2712	
-  2713	static void lock_class_subclass_X1(void)
-  2714	{
-> 2715		const char *name_before_setting_subclass = rwsem_X1.dep_map.name;
-  2716		const char *name_after_setting_subclass;
-  2717	
-  2718		lockdep_set_subclass(&rwsem_X1, 1);
-  2719		name_after_setting_subclass = rwsem_X1.dep_map.name;
-  2720		DEBUG_LOCKS_WARN_ON(name_before_setting_subclass != name_after_setting_subclass);
-  2721	}
-  2722	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--Sig_/8sNs2mys+T2Xx6iogQD+6Y8--
 
