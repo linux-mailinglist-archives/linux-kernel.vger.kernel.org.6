@@ -1,88 +1,141 @@
-Return-Path: <linux-kernel+bounces-302310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 292A595FC73
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:10:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5768C95FC74
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:10:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE61A2850C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:10:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07F1A1F211C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F1919CD0F;
-	Mon, 26 Aug 2024 22:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7805B19D07E;
+	Mon, 26 Aug 2024 22:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="A4BiUbdQ"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+0CbOeR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F376811E2;
-	Mon, 26 Aug 2024 22:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5FD199E9E;
+	Mon, 26 Aug 2024 22:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724710233; cv=none; b=Ih/JpqNsfgKBxYiF+8ZTO+o4b2xaMnla+NGpVZsVhgXCEKbPDWN3+07JHIHqwOrXMUHH1JH7XCQyBGAvbCmZlEdjE3oDSRBjzwn64xIBgrke8swlMTzLSeSa5hnntsrT3yioU4Miz1lw9CY4BDhObOCMqB+L7IbtmEOgFdFFyHg=
+	t=1724710247; cv=none; b=DxesvccCN4g+J5kmN4mADnlpjPTA9Pa6RUeW0iS6KMkgtDjEqEA/DNPFtNrJm63MataO8mZXGaLNzUuYdyUwyacIA05d2dKI6xv0vTR4BOIEpa/8hf7l2qsceMaJpa9zp72LWaZFra5kHT2atBaCJHterCTkniDI5W09NBD7SMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724710233; c=relaxed/simple;
-	bh=+fhME1anNiXFk9cxwp5HDp73kiuOhd3OZWYnm6kJPZM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=h5dRJsouKIDwUQ1yj/j1jxEl0uKpVCNVgKV17cQNP7BV7Y/bg7qXJuGVCqYi8XNnVDAb8nBHNrxZgXvN4xg+8DjvAt+DO4lzZxL8Yk6zB/BLhmBDlReJK3HcoSg9XN2cT1/ri9dBryeTaSoxqz53wVcYNI3Xm3wUPV8zYZHOxxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=A4BiUbdQ; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 2E1B642D39
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1724710230; bh=bfUnONFBgHJRpBjL0TK+9yVaRb23+Uddx47+9YN6HUU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=A4BiUbdQotp8Y4IrP97JHP4ZmNl79ktngT3xiZU0VbSDyogi4fXDo8BXhFxb+MU8M
-	 pKB+XV5NU9h1opNWmlgyFqi2lJReBBdpptrQZ7AT/ZGH65vZgc+GHjSrSSr2CejGXQ
-	 Cv8LjP6V/OM/Y46zCOHfPhwmJwgCvrighzhfQuaCqw26fk0fgGuiYGzZqH9HE9HCwP
-	 MR7W8Tma+rw1+yAVBO3GY3gFF5JZ/lwxtlShWdzhmoC9gYzy06qOCS3c8drRQtz50f
-	 E3DOVwYyhiyQUcv1A8MuTqL51TZqd11P0Sv9uqjr8aVL4D1Ct/nhuXRjQoJPNDNYxU
-	 OHaLc2AYtn4hQ==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 2E1B642D39;
-	Mon, 26 Aug 2024 22:10:30 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Jani Nikula <jani.nikula@intel.com>, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-Cc: jani.nikula@intel.com, Joe Perches <joe@perches.com>
-Subject: Re: [PATCH 1/2] get_maintainer: add --bug option to print bug
- reporting info
-In-Reply-To: <20240815113450.3397499-1-jani.nikula@intel.com>
-References: <20240815113450.3397499-1-jani.nikula@intel.com>
-Date: Mon, 26 Aug 2024 16:10:29 -0600
-Message-ID: <87h6b75416.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1724710247; c=relaxed/simple;
+	bh=JkfxekS+W466Brz06l8M63jsU2+f+MeKbbTPTtcrgp8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bNXWM2P36evTZ28mxiZ90KD+mCeqhs5COJ+QSJYT8eC8ILq0wlDlakJ3efTB+QdlvdnJIwlTSo+5eWvW26QRs0i9wKfiKKCuHKscBcKm7aWtPA/fMK7XZae5kbCnbvNjm+JgKOSety0L4Kl811OPBzYnPb0KI/D+TseN2F+XYMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U+0CbOeR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88243C8B7BC;
+	Mon, 26 Aug 2024 22:10:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724710247;
+	bh=JkfxekS+W466Brz06l8M63jsU2+f+MeKbbTPTtcrgp8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=U+0CbOeRSvMXFXyRClSB82HVXfyMGN4uVSGrjfWhc4oESuNvIolfPym3mCe1885f0
+	 Nfzq1SmgHAT2VM39YyYiPBw6nhOhL4NLO3vAZR6vUXT5h7M2elRoHwjukQ90o///MA
+	 TKnP0ndvcGgktqo3fXMz5AZaFeOPfwVS0B4tdkvqR1XEa/P74bLaImQgJsGDcW3xTc
+	 3QiYNZ0UbCpnMajPeTlFwvmq/mgKNF4TUpoQ5nsW+NrDI4oCmksmc2vwOljaO1JLCP
+	 vcHaQOmUid1vo2KO3oYCkpqVLeKEFQ2zk/rPsxQWL6N009FwtZL3EqdNlLEfMKBq4K
+	 hrbJ296aczX6A==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Stephane Eranian <eranian@google.com>
+Subject: [PATCH 0/4] perf bpf-filter: Add cgroup filter term (v1)
+Date: Mon, 26 Aug 2024 15:10:41 -0700
+Message-ID: <20240826221045.1202305-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Jani Nikula <jani.nikula@intel.com> writes:
+Hello,
 
-> For example Documentation/adming-guide/bug-hunting.rst suggest using
-> get_maintainer.pl to get a list of maintainers and mailing lists to
-> report bugs to, while a number of subsystems and drivers explicitly use
-> the "B:" MAINTAINERS entry to direct bug reports at issue trackers
-> instead of mailing lists and people.
->
-> Add the --bug option to get_maintainer.pl to print the bug reporting
-> URIs, if any.
->
-> Cc: Joe Perches <joe@perches.com>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
-> ---
->  scripts/get_maintainer.pl | 17 +++++++++++++++--
->  1 file changed, 15 insertions(+), 2 deletions(-)
+I'm adding a new 'cgroup' filter term in the filter expression so that
+it can be used in the BPF.
 
-I've applied both patches, thanks.
+The cgroup filter takes a pathname and allows either '==' or '!='
+operators only.  The requires '--all-cgroups' option so it can see the
+cgroup_id in the sample data.  Actually BPF programs can get the
+cgroup of the current task without looking sample data, but I added it
+for consistency with other fields.
 
-jon
+  $ sudo perf record --synth=cgroup -e cycles --filter 'cgroup > /' -a true
+  perf_bpf_filter: cgroup accepts '==' or '!=' only
+
+   Usage: perf record [<options>] [<command>]
+      or: perf record [<options>] -- <command> [<options>]
+
+          --filter <filter>
+                            event filter
+
+  $ sudo perf record -e cycles --filter 'cgroup == /' \
+      -a --synth=cgroup -o- sleep 1 | perf report -i- -s cgroup
+  Error: cycles event does not have PERF_SAMPLE_CGROUP
+   Hint: please add --all-cgroups option to perf record
+  Failed to process filter entries
+  failed to set filter "BPF" on event cycles with 2 (No such file or directory)
+  incompatible file format (rerun with -v to learn more)
+
+On the filter syntax, it used to reject arbitrary strings.  But it
+needs to handle strings because of the cgroup paths.  For now, the bpf
+filter parser will reject strings if it's not used for cgroups.
+
+For now, it only supports the exact matching of target cgroups.  So
+specifying the root cgroup ("/") will match tasks in the root cgroup
+directly (not in the descendants).
+
+  $ sudo perf record --all-cgroups -e cycles --filter 'cgroup == /' \
+      -a --synth=cgroup -o- sleep 1 | perf report -i- -s cgroup
+  ...
+  #
+  # Total Lost Samples: 0
+  #
+  # Samples: 621  of event 'cycles'
+  # Event count (approx.): 108101281
+  #
+  # Overhead  Cgroup
+  # ........  ......
+  #
+     100.00%  /
+  
+  
+
+Thanks,
+Namhyung
+
+
+Namhyung Kim (4):
+  perf report: Fix segfault when 'sym' sort key is not used
+  perf bpf-filter: Add build dependency to header files
+  perf bpf-filter: Support filtering on cgroups
+  perf test: Add perf record cgroup filtering test
+
+ tools/perf/tests/shell/record_bpf_filter.sh  | 39 ++++++++++++++++++--
+ tools/perf/util/Build                        |  4 +-
+ tools/perf/util/bpf-filter.c                 |  1 +
+ tools/perf/util/bpf-filter.l                 | 28 +++++++++++---
+ tools/perf/util/bpf-filter.y                 | 28 +++++++++++++-
+ tools/perf/util/bpf_skel/sample-filter.h     |  2 +-
+ tools/perf/util/bpf_skel/sample_filter.bpf.c |  4 +-
+ tools/perf/util/bpf_skel/vmlinux/vmlinux.h   |  1 +
+ tools/perf/util/hist.c                       |  2 +-
+ 9 files changed, 94 insertions(+), 15 deletions(-)
+
+-- 
+2.46.0.295.g3b9ea8a38a-goog
+
 
