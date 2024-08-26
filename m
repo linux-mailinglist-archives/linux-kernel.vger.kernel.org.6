@@ -1,191 +1,189 @@
-Return-Path: <linux-kernel+bounces-301736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C4D395F4D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:16:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF53C95F4DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:17:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52B73282ED5
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:16:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63E201F24C25
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C8318FC85;
-	Mon, 26 Aug 2024 15:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2625518E057;
+	Mon, 26 Aug 2024 15:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hpOjmIu1"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nUZ8Tqge"
+Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C27E8F7D;
-	Mon, 26 Aug 2024 15:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001D64A21
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 15:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724685358; cv=none; b=ZbGQCvwv+65WO2AjAhjz6eSdQzKpIyEtUIgqAgEA7C8TssQglKRQ5SiyOcu5zdxtfGdUlJUUMLa0y8zGFmEdF+lRVxNqBGStEImzaKxTi6yCoby45it16ssuSV+lYYIVIwOyMArA6n2H8Jy1HKjhqTJt7J04CFOa3F8gWRXAcsk=
+	t=1724685463; cv=none; b=Nmg5xLW72umAsWkk6kVUwyb3Akd9/hjJXRPQBnJ3W/UBl72bFfQGO6aUh2jQX1O4GX6OPKAXYy+NegklRyLGzpwsWDXA2Lszy03ckBHAkFTYsAhXpIn5V1bta+QytExndT5OXr54tk1ttFoqLyshi8UUAxmDWCGrHhi/vpkfLuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724685358; c=relaxed/simple;
-	bh=FStfZ1tceaR1OGM8qLxqU4pfVOzY30JSrOD58lZiKOs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=F/JVQ6ZsL1WebJNkGnB3NIIoFY2C7U8ls7tH7Hua3pgoo8amWuttkzdw+sTqoDur9fAtytdZ4xyedPk74oWYLet0Go0HW+71VHpIreq4z5J8c68cU9d0UnCsgEby4WdMkJry/s331Pi+UvFzcBotQ2iOrN5bKM4TnaadFDKZ8CI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hpOjmIu1; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7143185edf2so3697169b3a.0;
-        Mon, 26 Aug 2024 08:15:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724685356; x=1725290156; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=nBDbTISgteYXuVD5DLXqenFwN8KqmSC7xTXYy1AikEM=;
-        b=hpOjmIu1jQRr6/9jneEmRTEgiP46OG1klyByRU/X6ytgBjLGu4j9LkInr7Ry3Js6mg
-         n/rsG0aN4MnyCsmBDaRmJ28jfVlM8deNkGklTc/MbESvF1Lv0h3Ygrp1Uan576aqq7z7
-         qIFw1F6uo4d8pc5vIus7BNwB/mGCfRhZcbiKi2H6L60MFbGFIcG9Tu5awPVPEHqArbAX
-         IxGO/I474fiLaMEnhSP5DSdPsUJd67V67CTxengsKlQYTwe9Kf1wToASczrls25g8Lr1
-         /JiIB8jbfQ7vriWuPg19DZPyygoRrNBQtEXcaBtVa+BQvPCtqCb9g/5d/Qe8qSbbfvi4
-         Ymrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724685356; x=1725290156;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nBDbTISgteYXuVD5DLXqenFwN8KqmSC7xTXYy1AikEM=;
-        b=QJPEHWlQAUR5veBUvu5qQJ1M96ODKYhGfaM5ZAArG3UYLG8T/SpTR8ErVg6oPbQ5Iu
-         3Dsq7Sb+mxnFevDjAVE2Jdvk0OPFQgz0kBVouYsNdHThYGUqJudS8BXsIOEasOttbpi4
-         zrmz3ogpIGYNFfo4nK+QfA925jvM76WEv4uno6aBgWwibNQvUiZ91BnOHtg6Af/KGvEZ
-         rtcYmey1FiR7pqMKR+u514zdTxUMbDsnSmXUiWTQiYflITCxtbnwshmPcWguE0E4hpJI
-         24QpKdSeT64a/cctt/4QVcPW890lUo/ZOrAbcPGQjKXhuHt5xCq3dsQMwUyAMEeWF+aT
-         xQnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVB+WCwFjfQ28rOmlOkJRUUSmTWJ7V7B0U1XqbOcC0qqhVozqCGxXnA9kV5SvXNJ33gnSb+ozQt/XP9tM0=@vger.kernel.org, AJvYcCWMW/BjUcNN1uXP3vK1f90tgZrEauo/lQ6xacKqpW2Fsz+ZZfVz/nv4I3gLa7ylP8nm0DjxPOSZwZyQ9KO3mjM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpRmtqYm5uZNdWQ/8nuP7MJ2cVpyL3iWQbWodJkFMIUyp7ea6v
-	FvzIK2+2Ma3z7u4qPV4CInv0g0L8vzKE0mtY4kbTFLo55chpl25gQjCqGg==
-X-Google-Smtp-Source: AGHT+IEh+/+XeumKWAjz05voMllH+iLhNQVDhET8wdOto21E6IKLt+RdnoqO+NhsXA7lfPt9Z2p1jA==
-X-Received: by 2002:a05:6a21:9688:b0:1c4:6be3:f571 with SMTP id adf61e73a8af0-1cc8b5d8f81mr12301097637.39.1724685356248;
-        Mon, 26 Aug 2024 08:15:56 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-714343405f6sm7117710b3a.186.2024.08.26.08.15.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 08:15:55 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <124070dc-77ed-4854-9322-9cc9a4c54b57@roeck-us.net>
-Date: Mon, 26 Aug 2024 08:15:54 -0700
+	s=arc-20240116; t=1724685463; c=relaxed/simple;
+	bh=nRauhVKh45/vq/mv/wqGX61q2RWDnVLGljVmUAqW3II=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BM3sJYpAARE6fGz89MypfUzk3xFbXAdaC5nsW757fqd+uOUQ9Gqi0y0q/n7IgR0w6ZFY0/LLdb9Rn+T2i5vwtxDbMvIKV6iuX4SPHgcJ1GoR7/r0XcYYaTqIcrZPUHZ/zc7S4DuvpnXydq29MrW+xjoC3PbB7RkhVX9tEp8qz04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nUZ8Tqge; arc=none smtp.client-ip=91.218.175.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 26 Aug 2024 11:17:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724685458;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9YtD32tFififGdoGftpJ5ellvDbDlP+SOcGXRnKQFoI=;
+	b=nUZ8TqgeJeLGU+shP/s8yVL3SrjMKx6dW0A3ARprfHlC3JM2Um5d0RkixW/Z0Do1xhrl09
+	7VuqqrgnmRi0CNY6OEij11WdEJah5fEMgcArlw9hGkEssdbMMJVo5JWpMD8oMtY50aQOim
+	nwEvZZASJGsQLWHUUaSJpwdXhwgB9+k=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, vbabka@suse.cz, 
+	roman.gushchin@linux.dev, 42.hyeyoo@gmail.com, akpm@linux-foundation.org, cl@linux.com, 
+	mhocko@kernel.org, urezki@gmail.com, neeraj.upadhyay@kernel.org
+Subject: Re: [PATCH 6/9] rcu: rcu_pending
+Message-ID: <4zkfyn2shwot2zxiahn7zt7k2gpnoavyrldzzwo23qqxr6fvfh@xqlz4vehkln5>
+References: <20240819165939.745801-1-kent.overstreet@linux.dev>
+ <20240819165939.745801-7-kent.overstreet@linux.dev>
+ <adc8b09e-5f66-44de-845b-e615069c2e20@paulmck-laptop>
+ <yfhctftdn4itupt735u7dnu2zt2aarm3lzvmyf6bs7hkv4radc@ndw4nsinxhqx>
+ <f7266ab4-aa29-4cbc-a63e-fa582e266864@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] iTCO_wdt: ignore NMI_NOW bit on register comparison
-From: Guenter Roeck <linux@roeck-us.net>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>,
- Oleksandr Ocheretnyi <oocheret@cisco.com>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Jean Delvare
- <jdelvare@suse.de>, Wolfram Sang <wsa@kernel.org>,
- linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
- xe-linux-external@cisco.com
-References: <20240826075303.3964392-1-oocheret@cisco.com>
- <20240826111811.GP1532424@black.fi.intel.com>
- <7fda0a60-e34e-4853-bb4b-2c29c0806754@roeck-us.net>
-Content-Language: en-US
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <7fda0a60-e34e-4853-bb4b-2c29c0806754@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f7266ab4-aa29-4cbc-a63e-fa582e266864@paulmck-laptop>
+X-Migadu-Flow: FLOW_OUT
 
-On 8/26/24 08:12, Guenter Roeck wrote:
-> On 8/26/24 04:18, Mika Westerberg wrote:
->> Hi,
->>
->> On Mon, Aug 26, 2024 at 12:53:01AM -0700, Oleksandr Ocheretnyi wrote:
->>> Commit da23b6faa8bf ("watchdog: iTCO: Add support for Cannon Lake
->>> PCH iTCO") does not ignore NMI_NOW bit on write operation to TCO1_CNT
->>> register what causes unexpected NMIs due to NMI_NOW bit inversion
->>> during regular crashkernel's workflow with following logs:
->>>
->>> iTCO_vendor_support: vendor-support=0
->>> iTCO_wdt iTCO_wdt: unable to reset NO_REBOOT flag, device
->>>                                              disabled by hardware/BIOS
->>>
->>> This change clears NMI_NOW bit in the TCO1_CNT register to have no
->>> effect on NMI_NOW bit inversion what can cause NMI immediately.
->>>
->>> Fixes: da23b6faa8bf ("watchdog: iTCO: Add support for Cannon Lake PCH iTCO")
->>> Signed-off-by: Oleksandr Ocheretnyi <oocheret@cisco.com>
->>> ---
->>>   drivers/watchdog/iTCO_wdt.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/watchdog/iTCO_wdt.c b/drivers/watchdog/iTCO_wdt.c
->>> index 264857d314da..679c115ef7d3 100644
->>> --- a/drivers/watchdog/iTCO_wdt.c
->>> +++ b/drivers/watchdog/iTCO_wdt.c
->>> @@ -224,7 +224,7 @@ static int update_no_reboot_bit_cnt(void *priv, bool set)
->>>           val |= BIT(0);
->>>       else
->>>           val &= ~BIT(0);
->>> -    outw(val, TCO1_CNT(p));
->>> +    outw(val & ~BIT(8), TCO1_CNT(p));
->>
->> I suggest adding some #define for the magical number 8 so that it is
->> easier for anyone looking at this driver to figure out what it is doing.
->>
->> Otherwise looks good to me, thanks!
->>
+On Mon, Aug 26, 2024 at 07:44:12AM GMT, Paul E. McKenney wrote:
+> I have gotten requests for a variant of SRCU that dispenses with the
+> read-side memory barriers, which would allow you to dispense with RCU.
+> Maybe an srcu_read_lock_lite() and srcu_read_unlock_lite(), similar to
+> the _nmisafe() variants.  There is always a price, and in this case the
+> price would be that srcu_read_lock_lite() and srcu_read_unlock_lite()
+> be restricted to code regions where RCU is watching.  But from what I
+> know, fs code must already abide by that restriction.
 > 
-> Not really; it appears to be hiding a change in code which is supposed to do
-> something different (it is supposed to set or clear the no_reboot bit),
-> with no explanation whatsoever. That warrants a comment in the code.
-> Also, I would prefer
->      val = inw(TCO1_CNT(p)) & ~BIT(8);
+> Would that help?
+
+I don't think that helps here, but that is something I'd be interested
+in.
+
+What I would like for this is:
+ - a single #define for RCU_NR_OLDSTATES for both RCU and SRCU
+
+ - a way of getting the current RCU gp sequence number without a
+   function call, since we hit that on every single enqueue(). One of my
+   development versions added a function to RCU and SRCU for getting a
+   pointer to the internal sequence number, which we'd call at init
+   time; this lets us skip the function call and a branch. 
+
+Another thing that might make the code a bit easier to reason about is
+if rcu_read_lock() also worked as an srcu_read_lock() - is something the
+SRCU variant you're talking about previously would provide?
+
+In my current version of the code, we call __get_state_synchronize_rcu()
+after we've disabled interrupts; we know the rcu gp seq isn't going to
+tick while we're in the critical path. But this doesn't apply if it's
+for SRCU, and I don't want to add if (src) srcu_read_lock() branches to
+it.
+
+Not at all essential, the races that result from this are harmless, but
+if we e.g. decide it's worthwhile to only kick off a gp if it hasn't
+ticked (i.e. only kick rcu if we're still on seq of the object being
+enqueued) it'd be nice.
+
+> > On the enqueue side, which is the fastpath, this uses a cursor - we're
+> > not walking the radix tree every time.
+> > 
+> > On the processing side, where we're kfree_bulk()ing entire radix tree
+> > nodes, the radix tree is going to have better cache locality than a list
+> > of pages.
 > 
+> Interesting.  What testing or analysis did you do in the course of
+> arriving at this conclusion?  In the meantime I will assume that the
+> analysis involves your radix-tree nodes being more than one page in size.
 
-On top of that, I fail to understand "on register comparison" in the subject.
-What register comparison ?
+No, the radix tree nodes are 512 bytes; that's been sufficient in my
+testing.
 
-Guenter
+(also, please don't refer to PAGE_SIZE outside of mm/ code without a
+_good_ reason; that's something we've been trying to clean up.)
 
+I'll try to post some performance numbers when I have some time.
+
+> It might or might not be reasonable, depending on what is going on in the
+> rest of the system.  The current kfree_rcu() code can run the system out
+> of full pages, but it won't impede other code allocating smaller blocks
+> of memory.  We could easily change it to allocate individual rcu_head
+> structures, but doing so would not necessarily be a win in OOM conditions,
+> again, depending on what else is going on.
+
+As long as the thread calling kvfree_rcu_mightsleep() can block without
+blocking memory reclaim it'll be safe. We might want to tweak the GFP
+flags so to tell the allocator "don't try too hard, bail out so we can
+check if the gp has expired".
+
+> I took a quick look at __rcu_pending_enqueue() and my eyes are still
+> bleeding.  Concatenating linked list of pages is way simpler, way faster,
+> and way more robust.
+
+Funny, I had the same thoughts trying to read your code... :)
+
+But, most of __rcu_pending_enqueue() is slowpaths; the fastpath is just
+
+	objs = get_object_radix(p, seq); /* lookup seq in p->objs */
+
+        *objs->cursor++ = ptr ?: head;                                                                                                       
+        /* zero cursor if we hit the end of a radix tree node: */                                                                            
+        if (!(((ulong) objs->cursor) & (GENRADIX_NODE_SIZE - 1)))                                                                            
+                objs->cursor = NULL;                                                                                                         
+        start_gp = !objs->nr;                                                                                                                
+        objs->nr++;
+
+So I think the performance concerns are moot, and for robustness -
+memory allocation failure always turns into "use the linked lists of
+objects", which works similarly to the old code.
+
+> > But yes, using it for call_rcu() would need more performance
+> > justification. I haven't seen workloads where call_rcu() performance
+> > particularly matters, so it's not something I'm pushing for - I included
+> > that because it's minimal code and other people might know of workloads
+> > where we do want it.
+> 
+> Plus, unlike kfree_rcu() post-grace-period handling, call_rcu() callback
+> functions usually access the memory block passed to them, which means
+> that they are incurring that per-element cache miss in any case.
+
+True. But this would allow us to prefetch those objects (several
+iterations in advance).
+
+> > > > Ideally we would be getting a callback every time a grace period
+> > > > completes for which we have objects, but that would require multiple
+> > > > rcu_heads in flight, and since the number of gp sequence numbers with
+> > > > uncompleted callbacks is not bounded, we can't do that yet.
+> > > 
+> > > Doesn't the call from __rcu_pending_enqueue() to process_finished_items()
+> > > serve this purpose?  After all, the case that causes trouble is the one
+> > > where lots of things are being very frequently queued.
+> > 
+> > No, because that's unpredictable, and we don't process pending items in
+> > enqueue() unless we know we can sleep (i.e., we don't do it if the
+> > caller is latency sensitive).
+> 
+> It is possible to do this in an extremely lightweight fashion in the
+> common case.
+
+Just processing a few items? hmm, would we want to though, when
+otherwise we'd be calling kfree_bulk()? I think icache locality means
+we'd generally prefer not to.
 
