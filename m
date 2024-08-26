@@ -1,160 +1,161 @@
-Return-Path: <linux-kernel+bounces-301873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 854DB95F6BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:37:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF80B95F6BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:38:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A84AF1C21923
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:37:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5F20B20C50
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C30198A0B;
-	Mon, 26 Aug 2024 16:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA96195385;
+	Mon, 26 Aug 2024 16:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="vnVa717q"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="kxbYTWBz"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F8A1953BA
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 16:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDDF8143C7D;
+	Mon, 26 Aug 2024 16:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724690220; cv=none; b=Pdq9pyNTxVSgXATmpXP5AwROd3Mtrunqe5nuI2z1RiDZ9ES65/reUOs3Ty3tBSK3ZEjS9/jYgvupxlPapbHROxjDxrhBHXLxqKVq40pE5r2z0rLBxaYm41zdQMBjBUqbB3EeE73NjAx7scojseYWtU674oGu3sgossUMPJEW9d4=
+	t=1724690249; cv=none; b=XWf1z89q10arTJWUKkUxb20OlDZxSwUIgRFR5h+pX24l+FU6Hoogiuqv79HQfmALuVcc3yw4Z31BH7Qi0rhKkA5Ath+I7i8u6moGM0y92Kko9jFvrrK4XYvylisoMs8TS5wPtm4GVd6zs0/n8qSnmwW9CELG9Ql1s8+tvDhPfGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724690220; c=relaxed/simple;
-	bh=/8JFLNWM/SAveIiHQ+Qz3OxCPpwk7H3LTUQkZXSioLI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ywcg4SgCE5RscIqiiaw3jTq/d3gfutYdG1hAefdd4gk0JK+uQ6q2lyecm4wgdA7n1d7B7nhdxghbA+eCXOI7ASeU8u24UVapSRfyVmWJqGyYn/lpJlhMxt7Mp0z4IBVuhlsOOjll8UEC+LoLOIPrtk/3kLPr6IgtBQte9drmi4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=vnVa717q; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7140ff4b1e9so3571414b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:36:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1724690219; x=1725295019; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t9IZbphD4s+T0TTG0K3sRw/t0vq8ENy625o4Izgt1nw=;
-        b=vnVa717q8+7IlLaqcRnVj/kaP72TlXKu6cz/Z/kxi3XQxw+w6QLvNYO12VFzargeLJ
-         21Fi/fzHdUH6L+OgntCTmjvDIiDYWlZyuKoDAEeVjZtJNX++LmPqiKjpstoIIgewaBOL
-         A0aJAMnY25FG0Cdp9ah1/w3gEbR5M0Fzo+GjNOmSi8JVsu7tCz4DmlAeQFr6R8bpe3ss
-         ybuDArzpn6pG2WBukPaf2WY3tIgM/U83yMnOluNCQ4r/9WlfACvrhgb85OOep/iTCC8a
-         eEBxRD8dZT87qFC9SJH45D5kDgQ/7Vk55u6guUelxnvrZNgna8RVBrjhUPPE3lzU6lI7
-         ljHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724690219; x=1725295019;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t9IZbphD4s+T0TTG0K3sRw/t0vq8ENy625o4Izgt1nw=;
-        b=CpNSOSKCsouR3DjOS/VOB2YMqiv5TV1cs0neUbCya1qrojsWQ0y+zNqMVCBxpSvIA6
-         r2j0AKPc9ah0BS/fGsc69ZnLzMhAFnqad1hElXM+GNhDHPI0TkbqUuISrEj9D52OGw7O
-         c+Ut0in5TbEB94gViCULOhL2vxA5/Sl2Sj9XrHAarPwi3ETCDJOiNNIoNS4qR8CYQVAz
-         abEEdDkUILrNlVMiGpXGJbZAKIOnVI2C8Anpu8uuy35Canm8SZ06dN5KAeyU4HKpcRAl
-         yr3SMLN2JmEPP22MqElu4kd6DFsRlBcHBjBLMTJ/DZpFDPh6ydoFrSBhUheFGievzzMO
-         vFaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKgtMdAP2dTOFv4X2VxE3WDuXhSrooS3guZzxAYpLtO8q1zCmpWmse7amG4cIDZH4a5GHrkS2v+YXe+vg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj/7ad6ZhjGWWaMNzS2PvgwzXZkbtpjdwihOTnbdFTaoqW3nnh
-	ThEytuTS6tcRiV0k+JOKD/CLX0b1VqIpudqOhsoFHuuRgG/TfN4W07CevtkhPV4=
-X-Google-Smtp-Source: AGHT+IG9S6oOIHruoTcjy62dAwScwy++NKf5ocrr2BTJ3qmhr+nv5kpfhPnFgduK13TqKhl9HxaO5Q==
-X-Received: by 2002:a05:6a00:928f:b0:70d:2a4d:2edc with SMTP id d2e1a72fcca58-715c0093c51mr270187b3a.20.1724690218578;
-        Mon, 26 Aug 2024 09:36:58 -0700 (PDT)
-Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143434052dsm7174708b3a.217.2024.08.26.09.36.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 09:36:57 -0700 (PDT)
-From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Mon, 26 Aug 2024 09:36:47 -0700
-Subject: [PATCH 3/3] riscv: mm: Do not restrict mmap address based on hint
+	s=arc-20240116; t=1724690249; c=relaxed/simple;
+	bh=7YZKPwCtQxcL4xgnfnjvMt8lmgcWeXktoVDEPvRCGb4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j5Z66PE1J0jvwtmEuHKFqIRmz18hivEkW0Ztk4AkTSl/tPuIOhIQs0alEZx1OjP+4i5Jvd7/VyjQnOIwmYltiir8ZzDP5YWFO04D9PdM8JiGTgsSANrPmZ9p2yN0fCSEdnIdkqvL0y9j5GzCt3G8geJLZwcXabsfNDnFv2epZNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=kxbYTWBz; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id e4d1ef758a5236b4; Mon, 26 Aug 2024 18:37:25 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 7E119921952;
+	Mon, 26 Aug 2024 18:37:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1724690245;
+	bh=7YZKPwCtQxcL4xgnfnjvMt8lmgcWeXktoVDEPvRCGb4=;
+	h=From:Subject:Date;
+	b=kxbYTWBzzEOnfQ5iRA02urCV+HL3RrCNSldCKtYTh38kjmczu9V4sl3uFIOQOId6n
+	 VJe6fj5eoI4sRt2fYr9z64Ct7fg+OAyGu6zK2/2Yjq785uUNRThGk7dgPB54kUGzFx
+	 CA/lFis87rDBUp6Zap0vv4TdcqjeBKVCkxF+HB+4AMehkpZqfW0WDPKY9iy9QDReDa
+	 3pL87zzabqkdMQRrQ2A9WFSPoWJQVNlWTooVZXibTUwWQUGceVJyM8Fc7I0G0CGDGT
+	 xO9ICfDIreF4+8+8I288/rLoOSS0MikY7nCGOmIWQpkWuPsA4aK1cgCxlTghxfLa3R
+	 U8C9NMQF463Wg==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
+ Huisong Li <lihuisong@huawei.com>
+Subject: [PATCH v1 4/4] thermal: core: Drop thermal_zone_device_is_enabled()
+Date: Mon, 26 Aug 2024 18:37:16 +0200
+Message-ID: <9353673.CDJkKcVGEf@rjwysocki.net>
+In-Reply-To: <2979211.e9J7NaK4W3@rjwysocki.net>
+References: <2979211.e9J7NaK4W3@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240826-riscv_mmap-v1-3-cd8962afe47f@rivosinc.com>
-References: <20240826-riscv_mmap-v1-0-cd8962afe47f@rivosinc.com>
-In-Reply-To: <20240826-riscv_mmap-v1-0-cd8962afe47f@rivosinc.com>
-To: Jonathan Corbet <corbet@lwn.net>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Shuah Khan <shuah@kernel.org>, Yangyu Chen <cyy@cyyself.name>, 
- Levi Zim <rsworktech@outlook.com>, Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>, 
- linux-kselftest@vger.kernel.org, Charlie Jenkins <charlie@rivosinc.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2033; i=charlie@rivosinc.com;
- h=from:subject:message-id; bh=/8JFLNWM/SAveIiHQ+Qz3OxCPpwk7H3LTUQkZXSioLI=;
- b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ9qZ9coObJpTnjRVFj/xm7Xmcv6zBqnVkoL5zVbvk2tmR
- B4+/FSjo5SFQYyDQVZMkYXnWgNz6x39sqOiZRNg5rAygQxh4OIUgIlsP8jw3+fF7qYfrbr93FJN
- Uz64q878fDCj/xlbXeq3iT8LLv4PrmL4Z2WSvmDLzd6Q4hUNgkc+LszzemO1XEnr3Mr4eRsDYrT
- 6uQE=
-X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
- fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddvkedguddtudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegoufhprghmkfhpucdlfedttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucfuphgrmhfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeeipdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdp
+ rhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtoheprhhuihdriihhrghnghesihhnthgvlhdrtghomhdprhgtphhtthhopehlihhhuhhishhonhhgsehhuhgrfigvihdrtghomh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
 
-The hint address should not forcefully restrict the addresses returned
-by mmap as this causes mmap to report ENOMEM when there is memory still
-available.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-Fixes: b5b4287accd7 ("riscv: mm: Use hint address in mmap if available")
-Fixes: add2cc6b6515 ("RISC-V: mm: Restrict address space for sv39,sv48,sv57")
-Closes: https://lore.kernel.org/linux-kernel/ZbxTNjQPFKBatMq+@ghost/T/#mccb1890466bf5a488c9ce7441e57e42271895765
+There are only two callers of thermal_zone_device_is_enabled()
+and one of them call is under the zone lock and the other one uses
+lockdep_assert_held() on that lock.  Thus the lockdep_assert_held()
+in thermal_zone_device_is_enabled() is redundant and it could be
+dropped, but then the function would merely become a wrapper around
+a simple tz->mode check that is more convenient to do directly.
+
+Accordingly, drop thermal_zone_device_is_enabled() altogether and update
+its callers to check tz->mode directly as appropriate.
+
+While at it, combine the tz->mode and tz->suspended checks in
+__thermal_zone_device_update() because they are of a similar category
+and if any of them evaluates to "true", the outcome is the same.
+
+No intentinal functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- arch/riscv/include/asm/processor.h | 26 ++------------------------
- 1 file changed, 2 insertions(+), 24 deletions(-)
+ drivers/thermal/thermal_core.c  |   12 +-----------
+ drivers/thermal/thermal_core.h  |    3 ---
+ drivers/thermal/thermal_sysfs.c |    2 +-
+ 3 files changed, 2 insertions(+), 15 deletions(-)
 
-diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/asm/processor.h
-index 8702b8721a27..efa1b3519b23 100644
---- a/arch/riscv/include/asm/processor.h
-+++ b/arch/riscv/include/asm/processor.h
-@@ -14,36 +14,14 @@
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -547,10 +547,7 @@ void __thermal_zone_device_update(struct
+ 	int low = -INT_MAX, high = INT_MAX;
+ 	int temp, ret;
  
- #include <asm/ptrace.h>
+-	if (tz->suspended)
+-		return;
+-
+-	if (!thermal_zone_device_is_enabled(tz))
++	if (tz->suspended || tz->mode != THERMAL_DEVICE_ENABLED)
+ 		return;
  
--/*
-- * addr is a hint to the maximum userspace address that mmap should provide, so
-- * this macro needs to return the largest address space available so that
-- * mmap_end < addr, being mmap_end the top of that address space.
-- * See Documentation/arch/riscv/vm-layout.rst for more details.
-- */
- #define arch_get_mmap_end(addr, len, flags)			\
- ({								\
--	unsigned long mmap_end;					\
--	typeof(addr) _addr = (addr);				\
--	if ((_addr) == 0 || is_compat_task() ||			\
--	    ((_addr + len) > BIT(VA_BITS - 1)))			\
--		mmap_end = STACK_TOP_MAX;			\
--	else							\
--		mmap_end = (_addr + len);			\
--	mmap_end;						\
-+	STACK_TOP_MAX;						\
- })
+ 	ret = __thermal_zone_get_temp(tz, &temp);
+@@ -652,13 +649,6 @@ int thermal_zone_device_disable(struct t
+ }
+ EXPORT_SYMBOL_GPL(thermal_zone_device_disable);
  
- #define arch_get_mmap_base(addr, base)				\
- ({								\
--	unsigned long mmap_base;				\
--	typeof(addr) _addr = (addr);				\
--	typeof(base) _base = (base);				\
--	unsigned long rnd_gap = DEFAULT_MAP_WINDOW - (_base);	\
--	if ((_addr) == 0 || is_compat_task() || 		\
--	    ((_addr + len) > BIT(VA_BITS - 1)))			\
--		mmap_base = (_base);				\
--	else							\
--		mmap_base = (_addr + len) - rnd_gap;		\
--	mmap_base;						\
-+	base;							\
- })
+-int thermal_zone_device_is_enabled(struct thermal_zone_device *tz)
+-{
+-	lockdep_assert_held(&tz->lock);
+-
+-	return tz->mode == THERMAL_DEVICE_ENABLED;
+-}
+-
+ static bool thermal_zone_is_present(struct thermal_zone_device *tz)
+ {
+ 	return !list_empty(&tz->node);
+Index: linux-pm/drivers/thermal/thermal_core.h
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.h
++++ linux-pm/drivers/thermal/thermal_core.h
+@@ -284,7 +284,4 @@ thermal_cooling_device_stats_update(stru
+ 				    unsigned long new_state) {}
+ #endif /* CONFIG_THERMAL_STATISTICS */
  
- #ifdef CONFIG_64BIT
+-/* device tree support */
+-int thermal_zone_device_is_enabled(struct thermal_zone_device *tz);
+-
+ #endif /* __THERMAL_CORE_H__ */
+Index: linux-pm/drivers/thermal/thermal_sysfs.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_sysfs.c
++++ linux-pm/drivers/thermal/thermal_sysfs.c
+@@ -53,7 +53,7 @@ mode_show(struct device *dev, struct dev
+ 	int enabled;
+ 
+ 	mutex_lock(&tz->lock);
+-	enabled = thermal_zone_device_is_enabled(tz);
++	enabled = tz->mode == THERMAL_DEVICE_ENABLED;
+ 	mutex_unlock(&tz->lock);
+ 
+ 	return sprintf(buf, "%s\n", enabled ? "enabled" : "disabled");
 
--- 
-2.45.0
+
 
 
