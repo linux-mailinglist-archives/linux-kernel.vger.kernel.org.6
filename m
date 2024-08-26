@@ -1,189 +1,118 @@
-Return-Path: <linux-kernel+bounces-301130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07F5995ECC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:10:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5979C95ECCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EF211F21730
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:10:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 173B628173C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A53413F01A;
-	Mon, 26 Aug 2024 09:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D5C1422D5;
+	Mon, 26 Aug 2024 09:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aUn68kUK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dOLcHLDX"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A67684A4D;
-	Mon, 26 Aug 2024 09:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B594513E8AE;
+	Mon, 26 Aug 2024 09:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724663420; cv=none; b=UAGQvspTAUMX4QClihNKq7K9OY60S+Et5lB9JBNkjVWF/+rFOZmD8BlTlpffCcfw0+0RLEaW4uZeItwQDFjMnYcQx1IPtsH38N6JJlyu+yR56HtqYS3kxtzcMOkcqOgrjNoxknUvsfJe/Tv1pqgj7OAqe6TRfrhD9U6sXyCKQCc=
+	t=1724663469; cv=none; b=TxPiaP374DL9nH5IkSvai+re9yGK9yefojt+byfjzKJRsDpvjpImqKfAshusAbc4lQJh4OeRya/T+YQyiKUanWgXUYfDUPriu0bHeyMCyxirD0TN+xl6uBUWPjl6Pyeo1Eb8VV9zhyu/fvVbivFKS12BLWwrOMcMAcDpLsAzAcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724663420; c=relaxed/simple;
-	bh=2cv7ty4MNkVJoRAIsHo474qKehjbZ52h5f/tEaptmgQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JVSazDvHLSs49qcYzZlVLZcN7dX2IhiWZijzHM3d9LtXWoGaT/93dE7MLrwdMSEaAmtP1XsaO2h2iawyPMALKDPcFAExdJyNyxXWVKnleavUuYiXnckXGzeQH5k2v51Q4DRRF5+OS5jLfFwytBOygT6kHuoov0zPLyLGAri51hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aUn68kUK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B344C8CDC1;
-	Mon, 26 Aug 2024 09:10:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724663419;
-	bh=2cv7ty4MNkVJoRAIsHo474qKehjbZ52h5f/tEaptmgQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aUn68kUKaBqUp7KqTQn4FprqpYIlUQDE4JXIQpvH/5V67LwKPtxz9cbQe3ZY1DRNg
-	 DkCa1+NsJMdL3pEo3W8ET+Swn5OfU7Qoz02okiXyol2rQrPXusiQatpTPoQG7ujAQ4
-	 miqc829bu3UM56Bn7jO24CqvNBRrN7cKJTF0AZOOyYOaRz6QTNJcebu32LOLyfSLE2
-	 41jSpjdTJFpv83kr+QLx/EbOEqhfqM4VVihkjTgoHzWpS1D2Jn6MiQZPygEb3gFhqc
-	 Wc9vXO0qGJZ4hz4P84eVcduaI7AN1ihlN/m0o6+ZzNaTGb/K3DFZARBnSjCwUAtJ93
-	 jzDuLVANQsNBg==
-Date: Mon, 26 Aug 2024 11:10:15 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Jann Horn <jannh@google.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>,
-	Russ Weight <russ.weight@linux.dev>,
-	Danilo Krummrich <dakr@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] firmware_loader: Block path traversal
-Message-ID: <ZsxGd6KRzS8i11zZ@pollux>
-References: <20240823-firmware-traversal-v2-1-880082882709@google.com>
+	s=arc-20240116; t=1724663469; c=relaxed/simple;
+	bh=osgeusSx4GMJxp/t7wx6EBDl80pQpkt0CyJex63a4G4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WSdV/h4PHRVanmwRKGKWD5FYFnz1wE0xCiiEL10Xb40SFoEhjaMIzjgcGuvxhVFXqYbczaKhERIQ0384PWB0FUGDn2xwOIVdn5Gb1yWOlUFuxGyd+FunTqKk+D1dmYfTnVx5gr2QIHNPPCll2oJjmmCx6KZxAUohdxSI0Eg+HYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dOLcHLDX; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47Q8MMgI005670;
+	Mon, 26 Aug 2024 09:10:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	LS/3cGDb7+1BUz2GYeaQp6bq4z88l4LIdIGsRFQNIug=; b=dOLcHLDXPqcwfkkU
+	X+zYdZrNn0lpK1JHw8WG0JQr2o6zTlzTa3Sn5IT0f/Ent3xJ+94LEBdRVc2/ejqJ
+	LMEHjTUA3C01zwaPEyvPv6K0IyGKrTj55ZpWy4DrxIrtRevhL9Hn2gA7d2vR6aHe
+	UzH3GL9LJS3igpAtfOcv8IeaUTqS+hzoNBeTn/w3n1XgRQ8Zty1FE121AkjRst3t
+	EQ7DoAU4/1CqV22OfBcCd8HzjYJPy/K82ZRI/8zShztnbudX19Ql4AudJiSgn7zw
+	RCv898VcZXx8w5RUUoMhfOpyQ+rtF5UzgyZnR53fqj6Ryc4TrhFq/t84LlLjCapv
+	qsIpgw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4179anu4p8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 Aug 2024 09:10:45 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47Q9Ai6S008720
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 Aug 2024 09:10:44 GMT
+Received: from [10.214.66.253] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 26 Aug
+ 2024 02:10:39 -0700
+Message-ID: <bac11c82-9794-47bc-92cc-2442578053d2@quicinc.com>
+Date: Mon, 26 Aug 2024 14:40:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240823-firmware-traversal-v2-1-880082882709@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 6/6] iommu/arm-smmu: add support for PRR bit setup
+To: kernel test robot <lkp@intel.com>, <robdclark@gmail.com>,
+        <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+        <jgg@ziepe.ca>, <jsnitsel@redhat.com>, <robh@kernel.org>,
+        <krzysztof.kozlowski@linaro.org>, <quic_c_gdjako@quicinc.com>,
+        <dmitry.baryshkov@linaro.org>, <konrad.dybcio@linaro.org>
+CC: <oe-kbuild-all@lists.linux.dev>, <iommu@lists.linux.dev>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240816174259.2056829-7-quic_bibekkum@quicinc.com>
+ <202408230612.1DU9cuSx-lkp@intel.com>
+Content-Language: en-US
+From: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+In-Reply-To: <202408230612.1DU9cuSx-lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: zv5rMMGkxV0KEbz3D6rgKwEoLB9UnE_E
+X-Proofpoint-ORIG-GUID: zv5rMMGkxV0KEbz3D6rgKwEoLB9UnE_E
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-26_06,2024-08-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
+ phishscore=0 suspectscore=0 mlxlogscore=825 clxscore=1011 malwarescore=0
+ bulkscore=0 lowpriorityscore=0 spamscore=0 mlxscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408260072
 
-On Fri, Aug 23, 2024 at 08:38:55PM +0200, Jann Horn wrote:
-> Most firmware names are hardcoded strings, or are constructed from fairly
-> constrained format strings where the dynamic parts are just some hex
-> numbers or such.
-> 
-> However, there are a couple codepaths in the kernel where firmware file
-> names contain string components that are passed through from a device or
-> semi-privileged userspace; the ones I could find (not counting interfaces
-> that require root privileges) are:
-> 
->  - lpfc_sli4_request_firmware_update() seems to construct the firmware
->    filename from "ModelName", a string that was previously parsed out of
->    some descriptor ("Vital Product Data") in lpfc_fill_vpd()
->  - nfp_net_fw_find() seems to construct a firmware filename from a model
->    name coming from nfp_hwinfo_lookup(pf->hwinfo, "nffw.partno"), which I
->    think parses some descriptor that was read from the device.
->    (But this case likely isn't exploitable because the format string looks
->    like "netronome/nic_%s", and there shouldn't be any *folders* starting
->    with "netronome/nic_". The previous case was different because there,
->    the "%s" is *at the start* of the format string.)
->  - module_flash_fw_schedule() is reachable from the
->    ETHTOOL_MSG_MODULE_FW_FLASH_ACT netlink command, which is marked as
->    GENL_UNS_ADMIN_PERM (meaning CAP_NET_ADMIN inside a user namespace is
->    enough to pass the privilege check), and takes a userspace-provided
->    firmware name.
->    (But I think to reach this case, you need to have CAP_NET_ADMIN over a
->    network namespace that a special kind of ethernet device is mapped into,
->    so I think this is not a viable attack path in practice.)
-> 
-> Fix it by rejecting any firmware names containing ".." path components.
-> 
-> For what it's worth, I went looking and haven't found any USB device
-> drivers that use the firmware loader dangerously.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: abb139e75c2c ("firmware: teach the kernel to load firmware files directly from the filesystem")
-> Signed-off-by: Jann Horn <jannh@google.com>
-> ---
-> Changes in v2:
-> - describe fix in commit message (dakr)
-> - write check more clearly and with comment in separate helper (dakr)
-> - document new restriction in comment above request_firmware() (dakr)
-> - warn when new restriction is triggered
-> - Link to v1: https://lore.kernel.org/r/20240820-firmware-traversal-v1-1-8699ffaa9276@google.com
-> ---
->  drivers/base/firmware_loader/main.c | 41 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
-> 
-> diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-> index a03ee4b11134..dd47ce9a761f 100644
-> --- a/drivers/base/firmware_loader/main.c
-> +++ b/drivers/base/firmware_loader/main.c
-> @@ -849,6 +849,37 @@ static void fw_log_firmware_info(const struct firmware *fw, const char *name,
->  {}
->  #endif
->  
-> +/*
-> + * Reject firmware file names with ".." path components.
-> + * There are drivers that construct firmware file names from device-supplied
-> + * strings, and we don't want some device to be able to tell us "I would like to
-> + * be sent my firmware from ../../../etc/shadow, please".
-> + *
-> + * Search for ".." surrounded by either '/' or start/end of string.
-> + *
-> + * This intentionally only looks at the firmware name, not at the firmware base
-> + * directory or at symlink contents.
-> + */
-> +static bool name_contains_dotdot(const char *name)
-> +{
-> +	size_t name_len = strlen(name);
-> +	size_t i;
-> +
-> +	if (name_len < 2)
-> +		return false;
-> +	for (i = 0; i < name_len - 1; i++) {
-> +		/* do we see a ".." sequence? */
-> +		if (name[i] != '.' || name[i+1] != '.')
-> +			continue;
-> +
-> +		/* is it a path component? */
-> +		if ((i == 0 || name[i-1] == '/') &&
-> +		    (i == name_len - 2 || name[i+2] == '/'))
-> +			return true;
-> +	}
-> +	return false;
-> +}
-> +
->  /* called from request_firmware() and request_firmware_work_func() */
->  static int
->  _request_firmware(const struct firmware **firmware_p, const char *name,
-> @@ -869,6 +900,14 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
->  		goto out;
->  	}
->  
-> +	if (name_contains_dotdot(name)) {
-> +		dev_warn(device,
-> +			 "Firmware load for '%s' refused, path contains '..' component",
-> +			 name);
 
-I think you're missing '\n' here.
 
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
->  	ret = _request_firmware_prepare(&fw, name, device, buf, size,
->  					offset, opt_flags);
->  	if (ret <= 0) /* error or already assigned */
-> @@ -946,6 +985,8 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
->   *      @name will be used as $FIRMWARE in the uevent environment and
->   *      should be distinctive enough not to be confused with any other
->   *      firmware image for this or any other device.
-> + *	It must not contain any ".." path components - "foo/bar..bin" is
-> + *	allowed, but "foo/../bar.bin" is not.
->   *
->   *	Caller must hold the reference count of @device.
->   *
-> 
-> ---
-> base-commit: b0da640826ba3b6506b4996a6b23a429235e6923
-> change-id: 20240820-firmware-traversal-6df8501b0fe4
-> -- 
-> Jann Horn <jannh@google.com>
-> 
+On 8/23/2024 4:07 AM, kernel test robot wrote:
+>>> drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c:266:41: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+>       266 |                                         (void *)smmu->ioaddr + ARM_SMMU_GFX_PRR_CFG_LADDR);
+>           |                                         ^
+>     arch/arm/include/asm/io.h:282:75: note: in definition of macro 'writel_relaxed'
+>       282 | #define writel_relaxed(v,c)     __raw_writel((__force u32) cpu_to_le32(v),c)
+>           |                                                                           ^
+>     drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c:269:41: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+>       269 |                                         (void *)smmu->ioaddr + ARM_SMMU_GFX_PRR_CFG_UADDR);
+>           |                                         ^
+>     arch/arm/include/asm/io.h:282:75: note: in definition of macro 'writel_relaxed'
+>       282 | #define writel_relaxed(v,c)     __raw_writel((__force u32) cpu_to_le32(v),c)
+
+This is fixed already in v13, but got missed in v14.
+I'll take care of this in the next version.
+
+regards,
+Bibek
 
