@@ -1,161 +1,87 @@
-Return-Path: <linux-kernel+bounces-301525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E3F395F21D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:54:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A7B95F220
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:54:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 597FE2852E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:54:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FDE62857B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2A218FDB4;
-	Mon, 26 Aug 2024 12:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a885E9PO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DD3F192B80;
+	Mon, 26 Aug 2024 12:51:05 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E2918D634;
-	Mon, 26 Aug 2024 12:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A82817D8A6
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724676617; cv=none; b=GTX7v64nUoFO+vIEurNN1trD7GfF0xcASqaQug+ixuJ+MWrsyuEk88dAGyf1nUYa/buqRKdqQNn/shSbW4RC32hKAXFnb8NimLPzTq/e1sOBijdPK6H3bkZgbDAuAiuq7cyuO4uSXcSQ0pKIb4+eBVsdW9LjfnPlFqQ9cwTMuYQ=
+	t=1724676664; cv=none; b=rOeLLeWx4GHlbNQ5nR3QiFglLkR34XTHhV4UNQXFDfJJGL16+FM81/vLWF89OMq+VbDjbKItFIbu8hHemJ8AFYiYiXra0uSDDE5DprNBDHjSkfkHvuxASknbHW8T7f3QYXNQdJ0hu0aFDuJScQZuHnshEyX4aQQY5pYfLl+LR1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724676617; c=relaxed/simple;
-	bh=jaLAOBhtQ23Mxe3I8x/MN/JlMJPGuatZ77ZZrAQldNg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NTBy0KSo9uKztRjc8ZkYjbdimunS9e/mVJiBr4c2g7eNiQEx3bsC8uLYIyeIye0Yq4OTl8RmZBeiiTUia1Z4RDt97dVycpY85X9OofNwPUUc8HoPr8uxZfD3YtclSYapfKEOCPyk7JcDVtAMoQCucQRRcXJrq5XROY+ke2dGcs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a885E9PO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BD4FC4FEF0;
-	Mon, 26 Aug 2024 12:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724676617;
-	bh=jaLAOBhtQ23Mxe3I8x/MN/JlMJPGuatZ77ZZrAQldNg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=a885E9PO5/hRZXeEGgslQY+EDoX/O7FfWd3FojTlTnNRKOh8NDCIi29xdiaS26xMl
-	 mwuT3T0KvkTctv4Ie97HhG0o0Q8addN+9nUHnKCdlFyrTr5nRDErmt7DKOn/CKuR3j
-	 M00MGiYW6brXZanYH/m4ayXgq/6h9O6SFBIHW4F9Zozj2dc7/cAS1Ony4UU+hLc9B7
-	 cI1lGRRRiaFJAgC+UJxDraWZOTh9NhLMfYaUcS6BxyLZ/SILQ8xvKwwf6qIbXKcfDG
-	 RE3+3vpK+nRJuwiRcprwmHfSAojJKbtIHvQEP/rgXrSZWBmySOTULyM4R4CrtCQr0U
-	 HBTdO2CqGqaDQ==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 26 Aug 2024 08:50:13 -0400
-Subject: [PATCH 3/3] nfsd: add more nfsd_cb tracepoints
+	s=arc-20240116; t=1724676664; c=relaxed/simple;
+	bh=9Nx9LIURt4LnIWuSY6OPnsB314ytV4DJ1MlUoyliyJA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=UTuT0LYi6EkPXftHJ9gRDpjOFHp46idwapKaApoBWsegdaDbKKyJEKkgjkoysL+f3knyYCLATBPZRdqBfPtjzueTWphB7Y0Mu6RbzTmC3FQdhe9gs1x2pkobrswQW226mNydqkIR2+IlSgVekCg18FOcYH91K2zEnsvg5YLQYF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-827878b991aso297918039f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 05:51:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724676662; x=1725281462;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KYnoaanpvMXV9kNlXY7LMLhVONeO68nM0oD1lPFY/+A=;
+        b=KQU+pDQl33nnoUSfiE2a3Np3s3svrYm7gJ/RsACM8kt1hJxQiOCfwUr5VaBjbU5TSs
+         hcEX7h75NBsFkQexY8imeu1rvsy673UueIE6OtPcyu+X7N1hZ8SJQfukD8ZaqcHFaQD6
+         GXmaQk6RCH3c9YQIUnEA9tfzmg1i8Z6NT7lNxLHoaWFX8FkUWMXKGTYWcaE2KlkSG36U
+         mEEDrXk1a8jOpJe/+ztgIJXuKkQd8uh5LMKPFERSPheEsockFQMECo4AILOwVEcm6UTv
+         3pID68QSjTaRfc0uDn0QwHbCVydYwd3hEfDB69zqZTSAWYkgY+0EAeWGHpYapVIkqC4H
+         eweQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWgrJ+aw4/lllrvlLNTZBw3rn2UFEFYusKZ9S9BCFYNYYlpeNfVaW/9RDVfx7kbW/Ve6nxhqOxQQWsCPTU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3jdhjkND2YEy/uGiK/2jPaRuia6/4lwBNmnwXzYT1TEwXuiMO
+	4dBvTrH6a0fWvW5yNGEhG5QhUDakA6ddL0RYLpvdOEgo4YT9LZ1xpougU2nREFT34+pkBekCwnZ
+	V7L/SqdFJ8jzB1GhlwUmKwbx6kCJiwFp4JnThbZPOa4SeN+WXtlifVC4=
+X-Google-Smtp-Source: AGHT+IHHPRRK3xkPo8Q6JVELC7xochAGuGB6tcgZ0v1D5/TmGDLl2MPCQZmx/5EQfNRtmX3STmg41qi7aUGa7WRWYew8gTzioOHk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240826-nfsd-cb-v1-3-82d3a4e5913b@kernel.org>
-References: <20240826-nfsd-cb-v1-0-82d3a4e5913b@kernel.org>
-In-Reply-To: <20240826-nfsd-cb-v1-0-82d3a4e5913b@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
- Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2718; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=jaLAOBhtQ23Mxe3I8x/MN/JlMJPGuatZ77ZZrAQldNg=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmzHoF16TD2KYxszyHQmgDLZBUYzkUDutv3Ob5K
- tZyEL16IEqJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZsx6BQAKCRAADmhBGVaC
- FRaSEADW56ICHIlY78FVgCn9+Gd7SNdTLWiTBoVwBKC6wjO5h/47vSH+/9GbzLCIC15zm4yaWNa
- 2ir9V0jfa6yOoeThPRthiOcsVoZfSlFdFr6P4+9d9IuocU4q6b0X6BI7FOZDatB9gFFdtAk1dCO
- 8ZvMSLt9eXMO0VJP9xW0AeAdxSXfwUzBvmKKCHqdhDV9Ad0cOgSViU4D+CrV/JdxK2mRgzX95EL
- HePzP5opDfTHU3MwPXn9V3sWOGZoxfjdPiBKQ7Ol9fODcV+kRQYEM2tzbGk5/jUm5Ifs4gb2eMU
- 6Ibl4426ReGmDO0B/EM04/AApKpdDb8wd8NpZ9PPTpXxiVOgp0rkrAUQJyL00FscHRL/mEWs+fV
- pUBr+KtCabujItFSTMBuNHfNhvSD/SykYULr1w5vWl6RQHLdb3jp/2gIPRJw9lfS7lJDcJdb99f
- yjyZxWirjQnQUgZ3HCfuBjJ+pjO9k+1J++yE+L4Umze08V29Mp7PZyc8nMQS+WNc3sRryhAGryz
- DsNG1OrMAMzr4QlRlBhR1hm5pCkW7ryeYgW/n9Vc0yvflnYxZUDDZTJft+KoidqMBT3IEpnt+OK
- HYdCUvnQpF4zBwLsa+kuf8ZzapyF7n4ppSDKao3UC0kmr/v8EKdx04zoGE+uZ7PFALzgqlTPFO+
- uNpxPwHCQzlYOsQ==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+X-Received: by 2002:a05:6e02:1d01:b0:381:c14:70cf with SMTP id
+ e9e14a558f8ab-39e3c975718mr9333295ab.1.1724676662388; Mon, 26 Aug 2024
+ 05:51:02 -0700 (PDT)
+Date: Mon, 26 Aug 2024 05:51:02 -0700
+In-Reply-To: <20240826122629.89698-1-djahchankoike@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d08d130620959354@google.com>
+Subject: Re: [syzbot] [net?] WARNING in ethnl_req_get_phydev
+From: syzbot <syzbot+ec369e6d58e210135f71@syzkaller.appspotmail.com>
+To: djahchankoike@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add some tracepoints in the callback client RPC operations. Also
-add a tracepoint to nfsd4_cb_getattr_done.
+Hello,
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/nfsd/nfs4callback.c | 5 +++++
- fs/nfsd/nfs4state.c    | 3 +++
- fs/nfsd/trace.h        | 4 ++++
- 3 files changed, 12 insertions(+)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callback.c
-index dee9477cc5b5..b5b3ab9d719a 100644
---- a/fs/nfsd/nfs4callback.c
-+++ b/fs/nfsd/nfs4callback.c
-@@ -1223,6 +1223,7 @@ static void nfsd4_cb_prepare(struct rpc_task *task, void *calldata)
- 	 * cb_seq_status is only set in decode_cb_sequence4res,
- 	 * and so will remain 1 if an rpc level failure occurs.
- 	 */
-+	trace_nfsd_cb_rpc_prepare(clp);
- 	cb->cb_seq_status = 1;
- 	cb->cb_status = 0;
- 	if (minorversion && !nfsd41_cb_get_slot(cb, task))
-@@ -1329,6 +1330,8 @@ static void nfsd4_cb_done(struct rpc_task *task, void *calldata)
- 	struct nfsd4_callback *cb = calldata;
- 	struct nfs4_client *clp = cb->cb_clp;
- 
-+	trace_nfsd_cb_rpc_done(clp);
-+
- 	if (!nfsd4_cb_sequence_done(task, cb))
- 		return;
- 
-@@ -1360,6 +1363,8 @@ static void nfsd4_cb_release(void *calldata)
- {
- 	struct nfsd4_callback *cb = calldata;
- 
-+	trace_nfsd_cb_rpc_release(cb->cb_clp);
-+
- 	if (cb->cb_need_restart)
- 		nfsd4_queue_cb(cb);
- 	else
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index 2843f623163d..918d15fb76b2 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -3057,7 +3057,10 @@ nfsd4_cb_getattr_done(struct nfsd4_callback *cb, struct rpc_task *task)
- {
- 	struct nfs4_cb_fattr *ncf =
- 			container_of(cb, struct nfs4_cb_fattr, ncf_getattr);
-+	struct nfs4_delegation *dp =
-+			container_of(ncf, struct nfs4_delegation, dl_cb_fattr);
- 
-+	trace_nfsd_cb_getattr_done(&dp->dl_stid.sc_stateid, task);
- 	ncf->ncf_cb_status = task->tk_status;
- 	switch (task->tk_status) {
- 	case -NFS4ERR_DELAY:
-diff --git a/fs/nfsd/trace.h b/fs/nfsd/trace.h
-index 476f278e7115..592bf759b85b 100644
---- a/fs/nfsd/trace.h
-+++ b/fs/nfsd/trace.h
-@@ -1486,6 +1486,9 @@ DEFINE_NFSD_CB_EVENT(new_state);
- DEFINE_NFSD_CB_EVENT(probe);
- DEFINE_NFSD_CB_EVENT(lost);
- DEFINE_NFSD_CB_EVENT(shutdown);
-+DEFINE_NFSD_CB_EVENT(rpc_prepare);
-+DEFINE_NFSD_CB_EVENT(rpc_done);
-+DEFINE_NFSD_CB_EVENT(rpc_release);
- 
- TRACE_DEFINE_ENUM(RPC_AUTH_NULL);
- TRACE_DEFINE_ENUM(RPC_AUTH_UNIX);
-@@ -1845,6 +1848,7 @@ DEFINE_NFSD_CB_DONE_EVENT(nfsd_cb_recall_done);
- DEFINE_NFSD_CB_DONE_EVENT(nfsd_cb_notify_lock_done);
- DEFINE_NFSD_CB_DONE_EVENT(nfsd_cb_layout_done);
- DEFINE_NFSD_CB_DONE_EVENT(nfsd_cb_offload_done);
-+DEFINE_NFSD_CB_DONE_EVENT(nfsd_cb_getattr_done);
- 
- TRACE_EVENT(nfsd_cb_recall_any_done,
- 	TP_PROTO(
+Reported-by: syzbot+ec369e6d58e210135f71@syzkaller.appspotmail.com
+Tested-by: syzbot+ec369e6d58e210135f71@syzkaller.appspotmail.com
 
--- 
-2.46.0
+Tested on:
 
+commit:         18aaa82b net: netlink: Remove the dump_cb_mutex field ..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=13a6c22b980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=df2f0ed7e30a639d
+dashboard link: https://syzkaller.appspot.com/bug?extid=ec369e6d58e210135f71
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17a2f639980000
+
+Note: testing is done by a robot and is best-effort only.
 
