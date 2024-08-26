@@ -1,153 +1,139 @@
-Return-Path: <linux-kernel+bounces-300989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D429095EB49
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:04:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDD3495EB4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B96A1C2183D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:04:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FE561F24807
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A571149E0B;
-	Mon, 26 Aug 2024 07:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LifRwjG1"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F38213BC3F;
+	Mon, 26 Aug 2024 08:01:22 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA04D149C4D;
-	Mon, 26 Aug 2024 07:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E521543ABD;
+	Mon, 26 Aug 2024 08:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724659178; cv=none; b=ZWsX+C9N9zg5EtuIgqlg5XIG+ZaZXlKAWZ5k1Z7GiKZgnKsqr7poHnz7Hs+cd/ljMBMOcSzkNIe6AwJEDI8MAnVW1mfibvLD22quBxkDzQV0tdUCrR2cT+Y/dI+QeRJuGQNIayPNACSWzEnlVfUQKob3N2Ru+XHOoj3h00ERWdI=
+	t=1724659281; cv=none; b=Dy4iz3T/+vMaCMnsOwE1EgBqhxLQ6FcJ1BtrKtHKYzhcXzBa8pwgPuT5sCCri8ujxFI1vARsjf3/8hhnpynKse0kYfYpOIbXz4eHv1JwgfLrdGfzXgFakl27hQYKKvrEn/t6QYOWkUKJbtyqL1oIu4HgnzQorGObmncH/9YZ+W4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724659178; c=relaxed/simple;
-	bh=bKLx07E3At82l8mxbSMBOfdYPZjc3j4ZfRSnnqQX+Wc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=sRE3ecMjdkhcalMa4Z/PMx8MAmHt0o4xSg/0TLKBRU5GZJYGS40EjilRC5RG+cAlbd6g0bUXGCEDzU3IRReDFY7x1HwTgoCwTwTUnFEpuWBhETWog7ZZ2Kuazz7Ea5luX4xW5tg8Iz4eq0+XH7HEdFQQ2ieEbDcmYcqNs13Gv64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=LifRwjG1; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1724659172;
-	bh=f4Vb3ruv/FflFaQ84MQ50HLvQj/1umtpah/iZx3jxOE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=LifRwjG1o9JYqN0B/Wo1BRa6j3D8mx2AyBjn0U/As7cKhYKOdGzxqYLHeQZ+xx2ax
-	 NeIQYhx6VxLZVwNDfeoXXXfy4x5AZGBCBuNWQNoNCD3rDz4AiMnGV/4Cl/WT+qBYWk
-	 r7h///bB+RGm78V2lU+zQHlWHaSSWUCqQ4kdE3lVfvd8BMJWEnA6WJ/t/7XThAJIgN
-	 bewJ+NEDctBLhJVaLdInrCAZofhkTeBqGAylqWDov2BRfPhQqn28XzIONoQDEa5A45
-	 vHsiV62t/ZR5j9Gyq+WyKcE1f8znhFcu2Iuior5m0bW/rrd0lm6KgvxXS1q6So4h+C
-	 aE3TpgDjJOt9A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WsjkW4dM2z4x1V;
-	Mon, 26 Aug 2024 17:59:31 +1000 (AEST)
-Date: Mon, 26 Aug 2024 17:59:31 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Pankaj Raghav <p.raghav@samsung.com>,
-	Dave Chinner <dchinner@redhat.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Matthew  Wilcox (Oracle) <willy"@infradead.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: boot warning after merge of the vfs-brauner tree
-Message-ID: <20240826175931.1989f99e@canb.auug.org.au>
+	s=arc-20240116; t=1724659281; c=relaxed/simple;
+	bh=24hc1MaXwK1dPf3z/uHEmN69vbP/XiOk2Xd0i6mLAHI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LBoUIW9JADty1AqilwhQ+YqIbQVgMNuoKwxIPdY0U6p5AnUEB9pvkrTo06vbXhEXxQZ0SQknfAL4KZ0aOCybBZ98pacAzgRHzsYblt6oYf8p8dOb7r1+D/VeUeDuXk5wK6k00ru8L4BJTPRA6UoXlsVDssc5mY8af0pvF+WKdzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WsjmY6zrTz9sRr;
+	Mon, 26 Aug 2024 10:01:17 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id PYRaK4kN_GHj; Mon, 26 Aug 2024 10:01:17 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WsjmY5zwMz9sRk;
+	Mon, 26 Aug 2024 10:01:17 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id BA4DC8B76C;
+	Mon, 26 Aug 2024 10:01:17 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id GaRqVOGsRqIK; Mon, 26 Aug 2024 10:01:17 +0200 (CEST)
+Received: from [172.25.230.108] (unknown [172.25.230.108])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3CB668B763;
+	Mon, 26 Aug 2024 10:01:17 +0200 (CEST)
+Message-ID: <7d58be73-a8e5-4ec7-bbdc-238b0c25c77b@csgroup.eu>
+Date: Mon, 26 Aug 2024 10:01:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/eFOibwsiHTxbRCFF.J1bhf2";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/17] vdso: Change getrandom's generation to unsigned
+ long
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
+ <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
+ Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+ Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, Shuah Khan
+ <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
+ <525b48eb79978ddba2d1b8ee23b27bd6c5b0b4ee.1724309198.git.christophe.leroy@csgroup.eu>
+ <Zswzu1l3xO99KN3I@zx2c4.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <Zswzu1l3xO99KN3I@zx2c4.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
---Sig_/eFOibwsiHTxbRCFF.J1bhf2
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-After merging the vfs-brauner tree, today's linux-next boot test (powerpc
-pseries_le_defconfig) produced this warning:
+Le 26/08/2024 à 09:50, Jason A. Donenfeld a écrit :
+> On Thu, Aug 22, 2024 at 09:13:14AM +0200, Christophe Leroy wrote:
+>> Performing SMP atomic operations on u64 fails on powerpc32.
+>>
+>> Random driver generation is handled as unsigned long not u64,
+>> see for instance base_cnrg or struct crng.
+>>
+>> Use the same type for vDSO's getrandom as it gets copied
+>> from the above. This is also in line with the local
+>> current_generation which is already an unsigned long.
+> 
+> This isn't going to work when 32-bit userspace tries to access a 64-bit
+> kernel.
+> 
+> I had "fixed" this with a vdso_kernel_ulong type way back in an earlier
+> version: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Flkml%2F20240528122352.2485958-5-Jason%40zx2c4.com%2F%23Z31include%3Avdso%3Atypes.h&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C41747dd989164267c1cc08dcc5a3c424%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638602554376441761%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=Tf9ShSN6aOOFZ1HymAmHhj0xhQ6BUtHJX95t50gsp9k%3D&reserved=0
+> 
+> But tglx pointed out in that thread that this actually isn't necessary:
+> 
+> | All of this is pointless because if a 32-bit application runs on a
+> | 64-bit kernel it has to use the 64-bit 'generation'. So why on earth do
+> | we need magic here for a 32-bit kernel?
+> |
+> | Just use u64 for both and spare all this voodoo. We're seriously not
+> | "optimizing" for 32-bit kernels.
+> |
+> | All what happens on a 32-bit kernel is that the RNG will store the
+> | unsigned long (32bit) generation into a 64bit variable:
+> |
+> | 	smp_store_release(&_vdso_rng_data.generation, next_gen + 1);
+> |
+> | As the upper 32bit are always zero, there is no issue vs. load store
+> | tearing at all. So there is zero benefit for this aside of slightly
+> | "better" user space code when running on a 32-bit kernel. Who cares?
+> 
+> So I just got rid of it and used a u64 as he suggested.
+> 
+> However, there's also an additional reason why it's not worth churning
+> further over this - because VM_DROPPABLE is 64-bit only (due to flags in
+> vma bits), likely so is vDSO getrandom() for the time being. So I think
+> it makes more sense to retool this series to be ppc64, and then if you
+> really really want 32-bit and can convince folks it matters, then all of
+> these parts (for example, here, the fact that the smp helper doesn't
+> want to tear) can be fixed up in a separate series.
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 1 at arch/powerpc/mm/pageattr.c:97 change_memory_attr+=
-0xbc/0x150
-Modules linked in:
-CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-rc5-06731-g66e0882f=
-ba22 #1
-Hardware name: IBM pSeries (emulated by qemu) POWER8 (architected) 0x4d0200=
- 0xf000004 of:SLOF,HEAD pSeries
-NIP:  c00000000008a1ac LR: c00000000008a14c CTR: 0000000000000000
-REGS: c0000000049b7930 TRAP: 0700   Not tainted  (6.11.0-rc5-06731-g66e0882=
-fba22)
-MSR:  8000000002029033 <SF,VEC,EE,ME,IR,DR,RI,LE>  CR: 84000482  XER: 00000=
-000
-CFAR: c00000000008a218 IRQMASK: 0=20
-GPR00: c00000000008a14c c0000000049b7bd0 c00000000167b100 0000000000000000=
-=20
-GPR04: 0000000000000001 0000000000000000 0000000000000200 c000000002b10878=
-=20
-GPR08: 000000007da60000 c007ffffffffffff ffffffffffffffff 0000000084000482=
-=20
-GPR12: 0000000000000180 c000000002b90000 c00000000001110c 0000000000000000=
-=20
-GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000=
-=20
-GPR20: 0000000000000000 0000000000000000 0000000000000000 c000000001562288=
-=20
-GPR24: c000000002003e6c c000000001632418 000000000000018c c0000000020c1058=
-=20
-GPR28: 0000000000000000 0000000000000000 c000000006330000 0000000000000001=
-=20
-NIP [c00000000008a1ac] change_memory_attr+0xbc/0x150
-LR [c00000000008a14c] change_memory_attr+0x5c/0x150
-Call Trace:
-[c0000000049b7bd0] [000000000000018c] 0x18c (unreliable)
-[c0000000049b7c10] [c00000000206bf70] iomap_dio_init+0x64/0x88
-[c0000000049b7c30] [c000000000010d98] do_one_initcall+0x80/0x2f8
-[c0000000049b7d00] [c000000002005c9c] kernel_init_freeable+0x32c/0x520
-[c0000000049b7de0] [c000000000011138] kernel_init+0x34/0x26c
-[c0000000049b7e50] [c00000000000debc] ret_from_kernel_user_thread+0x14/0x1c
---- interrupt: 0 at 0x0
-Code: 60000000 e8010050 eba10028 7c6307b4 ebc10030 38210040 ebe1fff8 7c0803=
-a6 4e800020 7bc92720 2c29000c 41820058 <0fe00000> 4800002c 60000000 6000000=
-0=20
----[ end trace 0000000000000000 ]---
+So yes I really really want it on ppc32 because this is the only type of 
+boards I have and this is really were we need getrandom() to be 
+optimised, indeed ppc64 was sherry-on-the-cake in my series, I just 
+added it because it was easy to do after doing ppc32.
 
-Bisected to commit
-
-  d940b3b7b76b ("iomap: fix iomap_dio_zero() for fs bs > system page size")
-
-I have reverted commit
-
-  9b0ebbc72358 ("Merge patch series "enable bs > ps in XFS"")
-
-for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/eFOibwsiHTxbRCFF.J1bhf2
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbMNeMACgkQAVBC80lX
-0GxEdQf/R1yIPtc12LuyoonK0zKvGPJRxslB88jntuhop9Pk891xvOU8nOi0+9Th
-YkMkE9lOYuIlx9O31t6kFtd92YgCGmaRwsQ9CSnETYulJx1m2e5OcBo2h8BEuvvD
-V9etU0RGGkuJlamTpDiKYKuDpe3QiwBH7M5PgcpSuiXfTGnVChO4Y6hixE5+u8bU
-J8D/mm5HmtZ5bk5uMwv+WL5pw55P+IDtBCrLveShdOGAKr+OcqxSOUo3hJKNnS02
-tiwWebuO/MHL7cUui9C8KL9Tc360Ee4JKPLny072KyUDHsX1N5SeMYjtEkAyTUdR
-ib4aoP4D43BDmXTXRoArm/Xf7GL8mw==
-=B4mt
------END PGP SIGNATURE-----
-
---Sig_/eFOibwsiHTxbRCFF.J1bhf2--
+Christophe
 
