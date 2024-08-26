@@ -1,78 +1,62 @@
-Return-Path: <linux-kernel+bounces-301387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69CEA95EFEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:39:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA39295EFA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 827041C2183B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:39:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0945D1C20E95
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F79415572A;
-	Mon, 26 Aug 2024 11:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="KZuydqM3"
-Received: from out203-205-221-164.mail.qq.com (out203-205-221-164.mail.qq.com [203.205.221.164])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA4A15444D;
+	Mon, 26 Aug 2024 11:22:05 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064D41487EB;
-	Mon, 26 Aug 2024 11:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.164
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E39B66C;
+	Mon, 26 Aug 2024 11:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724672348; cv=none; b=nPudaCdp90XzYbXaF0Tx9fXrCu6+w/sSvRx7VrQuoYOuAFaXV8oWVwedERE8xxaxKXSjy0Cok70vUZMYlKQVaiA2RqwNS+Ee99UF81oHZaenXotci9NpYqdgHoRYmbjRu0NGo/ItYbOvAbBurxKSOY8+2ITg0xavMWPBgotZipk=
+	t=1724671324; cv=none; b=B9EhovX4nDbGY3Gwdxg75o29CGdezKpbDXnqXnTytK98AW6Fx1yrP7fHGA+tCK0iwgnGqrjg9kUh8zww5lqJDcbsDvHJywvefqayRLdRqShKuo5OJiFP3aFMyNq/tpv8EZ2w59eBdqj4xOnY3X3Gu/pBn0RGWBRt7FimqU6B++o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724672348; c=relaxed/simple;
-	bh=E9rYvDBmtX2kTyV8AGiczH2r9nepy7yRTbxdWTOmWFw=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=PgihnfELtq9jkPG5vCp5lzLE/j8H8eQTOtFRMP+4yuycbQm4bubOcsTGWN+Zzimq6z0JTb6g9yHcVH/ts226wRD4hMaxVDP1bmNe24s3RCSwHhl9Lo9KU081DvWRYQGsVw4VRfBmriQlCD4bCRxHX6V4XSWcD8/lrTPEpYipZ+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=KZuydqM3; arc=none smtp.client-ip=203.205.221.164
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1724672338; bh=wsl3YrLaOjovnNCIjsBbtpVNQi+hrP2bmg/zUf5XtxY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=KZuydqM3iPKp+uI8XRLpcrDfOCK7V6aBDrckVDn5g9VPA6BslRjRDF5V2eTgW4mQN
-	 g9Np924SJ1sk7TnPdQD8n/lsAG2UIOmyewvSFr2BwP0ISkn93qdXglLbTe80HsPMi5
-	 c6JoTBa1dXY5997oDKeoa3jwXEmgyjI9ccwkVSfY=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
-	id 4CA9427D; Mon, 26 Aug 2024 19:19:10 +0800
-X-QQ-mid: xmsmtpt1724671150tfknzi5pi
-Message-ID: <tencent_AAA2EDEACE4478EA6C9C2CA96E8095DCE80A@qq.com>
-X-QQ-XMAILINFO: MyirvGjpKb1jfQte9tgmmBStTXdNzkkWprxDThbE76o3E1Mdlm5xztf1z9OgKs
-	 PM/RdTwqfYO6f+zp1+uoskPubotRqljuP7V7cDJMgXk0ZMlfQUgGsahssWs8uGypzY10TIr7Grai
-	 46Uzm651nuf8+Swbj42DjWLJ05UuFAOIHi9T5KSfwpLJSAE+ZvchymyBfhOuUxM3TbQbAvI4o6HC
-	 4Tm9iQuTqUcLoH5w78Op9nGU1jXmPBo/jP8kDzg38zI76VrJb7bMQWSEzX3WUG4hLbaShe1R1IFN
-	 B14TM4WwQ9i3n6ODI4gow75BMXqE8zV8FDDEXMHbcy+1bBgvT5VIoXjw37BNr7uJSTSbgZpS1k/a
-	 AKniX9U/9sXWA8GPgJJlJ7leMoa0pYrHm9a2fyjX33kSO7EVvDcd3Qy4uZtLb6eysycZcRjN9g2w
-	 xy5JcGOyUtPY0aCpY7WJY/62fhJJfWsMOTJjO0SLFlK9WYfCuTYAl4dTcUtYkxR30m7CzPFieBQj
-	 ag954X7REWdWnNSxXzreIJ7kGpaJeXZSXbgb8Ntk9cLxn164zmHl1axlc1EqsSCq+6MuVfFfuMHP
-	 qe8grOJ9A5wRi9wwvESEF/T4803dFCgM/ZP8i7Zd4rKN8CRrPSMfPt6TylQsH8odh7/YTFSOTTrx
-	 MR+it877zpn6VRUcPnVxyPLhqgmmw6qRGlp36vNIZPejYyUj5id+hPO0SJE7eV6uZsfKIkZ+6O+G
-	 tE9ZiRp9iHDUVgsVHaanQ/4w8/T+/XxJk+iNTieDNLJh8JESb16ynY4kyvgqTjSZJ8lLrAnvTWs4
-	 oFWhmSsFFcSTjPxudeQ+JMs65cQAzDCoZ/pbklO2BbygCivQ70XNDKT4iHJHDjaGmZn5OyuVyp3P
-	 8lb4c7NSnad/iPIazoq/3/MU2mhaxjq0WCodOPZbz3dQWmSfouIoaYC/A8qTXe766SFxgHAkHJNV
-	 SpT3kO/kC28ZNO/AZBlT3/IZMWktz575eYJZVj7nUBuPvyjql/AXRznF5gz+ge
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Edward Adam Davis <eadavis@qq.com>
-To: eadavis@qq.com
-Cc: gregkh@linuxfoundation.org,
-	kvalo@kernel.org,
+	s=arc-20240116; t=1724671324; c=relaxed/simple;
+	bh=9Mcm07rBqfuT8tea4RySSWqB1/PjWBvd0/M5LrdbZqs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PXDXvCZr4Z9+iJDv1TDTuqBg00ScEopUryZUGke8cDyf4/uM4HpsXLsvDCfgcB3faSPSbkLfmofZEaES4Qdfc8Nc/lSRu8/m/TNoIGQMWqn1f6u31RiLyUzZmR2mVrEejLVIVGt7fl2AZnSBihvPWDuFYEhzYjqHR6Ig08SRWcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WspCr26k0z4f3jR6;
+	Mon, 26 Aug 2024 19:21:44 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id BBC801A0C12;
+	Mon, 26 Aug 2024 19:21:58 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgBHboRUZcxmYWMSCw--.22588S4;
+	Mon, 26 Aug 2024 19:21:58 +0800 (CST)
+From: libaokun@huaweicloud.com
+To: netfs@lists.linux.dev,
+	dhowells@redhat.com,
+	jlayton@kernel.org
+Cc: hsiangkao@linux.alibaba.com,
+	jefflexu@linux.alibaba.com,
+	linux-erofs@lists.ozlabs.org,
+	brauner@kernel.org,
+	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org,
-	sergei.shtylyov@gmail.com,
-	syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH V3] wifi: ath6kl: Replace ath6kl_usb_submit_ctrl_in with usb_control_msg_recv
-Date: Mon, 26 Aug 2024 19:19:09 +0800
-X-OQ-MSGID: <20240826111909.2608973-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <tencent_2C2C336C9E441B294BB21B6A2558BA34BB08@qq.com>
-References: <tencent_2C2C336C9E441B294BB21B6A2558BA34BB08@qq.com>
+	libaokun@huaweicloud.com,
+	yangerkun@huawei.com,
+	houtao1@huawei.com,
+	yukuai3@huawei.com,
+	wozizhi@huawei.com,
+	Baokun Li <libaokun1@huawei.com>,
+	stable@kernel.org
+Subject: [PATCH] fscache: delete fscache_cookie_lru_timer when fscache exits to avoid UAF
+Date: Mon, 26 Aug 2024 19:20:56 +0800
+Message-Id: <20240826112056.2458299-1-libaokun@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,42 +64,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBHboRUZcxmYWMSCw--.22588S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7Aw1UWrWxKrW8WF13ZFWUJwb_yoW8Kr43pr
+	ZIk34xAr4kX34jqF4rXa1UXw18ZF9rK3WUXws7Ar47A3y7Xr1UJr1Iyw45tFy7G34jyrWI
+	yF13tw13K34UJaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9E14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI4
+	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
+	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjx
+	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20E
+	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
+	AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbTGQDUUUUU==
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAQAHBWbMPH8P-wAAsa
 
-ath6kl_usb_submit_ctrl_in() did not take into account the situation where
-the length of the data read from the device is not equal to the len, and
-such missing judgments will result in subsequent code using incorrect data.
+From: Baokun Li <libaokun1@huawei.com>
 
-usb_control_msg_recv() handles the abnormal length of the returned data,
-so using it directly can fix this warning.
+The fscache_cookie_lru_timer is initialized when the fscache module
+is inserted, but is not deleted when the fscache module is removed.
+If timer_reduce() is called before removing the fscache module,
+the fscache_cookie_lru_timer will be added to the timer list of
+the current cpu. Afterwards, a use-after-free will be triggered
+in the softIRQ after removing the fscache module, as follows:
 
-Reported-by: syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+==================================================================
+BUG: unable to handle page fault for address: fffffbfff803c9e9
+ PF: supervisor read access in kernel mode
+ PF: error_code(0x0000) - not-present page
+PGD 21ffea067 P4D 21ffea067 PUD 21ffe6067 PMD 110a7c067 PTE 0
+Oops: Oops: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Tainted: G W 6.11.0-rc3 #855
+Tainted: [W]=WARN
+RIP: 0010:__run_timer_base.part.0+0x254/0x8a0
+Call Trace:
+ <IRQ>
+ tmigr_handle_remote_up+0x627/0x810
+ __walk_groups.isra.0+0x47/0x140
+ tmigr_handle_remote+0x1fa/0x2f0
+ handle_softirqs+0x180/0x590
+ irq_exit_rcu+0x84/0xb0
+ sysvec_apic_timer_interrupt+0x6e/0x90
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20
+RIP: 0010:default_idle+0xf/0x20
+ default_idle_call+0x38/0x60
+ do_idle+0x2b5/0x300
+ cpu_startup_entry+0x54/0x60
+ start_secondary+0x20d/0x280
+ common_startup_64+0x13e/0x148
+ </TASK>
+Modules linked in: [last unloaded: netfs]
+==================================================================
+
+Therefore delete fscache_cookie_lru_timer when removing the fscahe module.
+
+Fixes: 12bb21a29c19 ("fscache: Implement cookie user counting and resource pinning")
+Cc: stable@kernel.org
+Signed-off-by: Baokun Li <libaokun1@huawei.com>
 ---
-V2 -> V3: Adjust indentation style
+ fs/netfs/fscache_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- drivers/net/wireless/ath/ath6kl/usb.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless/ath/ath6kl/usb.c
-index 5220809841a6..5b1ce4f9ed54 100644
---- a/drivers/net/wireless/ath/ath6kl/usb.c
-+++ b/drivers/net/wireless/ath/ath6kl/usb.c
-@@ -1027,9 +1027,11 @@ static int ath6kl_usb_bmi_read(struct ath6kl *ar, u8 *buf, u32 len)
- 	int ret;
+diff --git a/fs/netfs/fscache_main.c b/fs/netfs/fscache_main.c
+index 42e98bb523e3..49849005eb7c 100644
+--- a/fs/netfs/fscache_main.c
++++ b/fs/netfs/fscache_main.c
+@@ -103,6 +103,7 @@ void __exit fscache_exit(void)
  
- 	/* get response */
--	ret = ath6kl_usb_submit_ctrl_in(ar_usb,
--					ATH6KL_USB_CONTROL_REQ_RECV_BMI_RESP,
--					0, 0, buf, len);
-+	ret = usb_control_msg_recv(ar_usb->udev, 0,
-+				ATH6KL_USB_CONTROL_REQ_RECV_BMI_RESP,
-+				USB_DIR_IN | USB_TYPE_VENDOR |
-+				USB_RECIP_DEVICE, 0, 0, buf, len, 2000,
-+				GFP_KERNEL);
- 	if (ret) {
- 		ath6kl_err("Unable to read the bmi data from the device: %d\n",
- 			   ret);
+ 	kmem_cache_destroy(fscache_cookie_jar);
+ 	fscache_proc_cleanup();
++	timer_shutdown_sync(&fscache_cookie_lru_timer);
+ 	destroy_workqueue(fscache_wq);
+ 	pr_notice("FS-Cache unloaded\n");
+ }
 -- 
-2.43.0
+2.39.2
 
 
