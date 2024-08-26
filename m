@@ -1,61 +1,75 @@
-Return-Path: <linux-kernel+bounces-302106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50F1D95F9E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:43:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3918D95F9E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:44:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D9B4280A1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:43:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BB1B1C2234F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5D71993A9;
-	Mon, 26 Aug 2024 19:43:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7D0199392;
+	Mon, 26 Aug 2024 19:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Dc1AOO/q"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E3zV4pjP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFED11991D5
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3B979945;
+	Mon, 26 Aug 2024 19:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724701387; cv=none; b=Ss7DSE39P9uwvvNIcjhEx/4RVo90QfR2+oH6PL7oIBMGK2DwIPFQtbvG9EMc1iMpqZp4hTMVESMztpX6fiI9gZ+SZaNM3iHnKbL34tH6+hGBB/030BaDwZ+V769nmuP2g3mC75v3eZTWB6+H9STpblr1ckidRp0nkLv55TykI+o=
+	t=1724701460; cv=none; b=Q45CNj5yIplZ5ETy1vje2Vq1NWBEDrs8+EytsvO3j6WyXuP0IZrS4tefeBh++O1XrhyNMyr2trqBzBaLkszmsZAIFJ4k6ZP6hV1I76UDTKJ4vQaPP9+FYVan0XIuSFedR5HcT8eaS+DkHlq4wc8BKxmTyASqxB4Go4nQoFJX+Kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724701387; c=relaxed/simple;
-	bh=j0XA0dwEhOG2x7CuCx33e8PmSFEXJYbNGaWVBiSjOu0=;
+	s=arc-20240116; t=1724701460; c=relaxed/simple;
+	bh=2eUyGbCsKmgFJ6viLd9Ww9XjzPKJxE7/qmedy+QVTBE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NmK1jfwTwTcmPMkk593CImF4fFgOunPvqfH5h6qJkBL3TJNO4WzST8argtOz+Eu0TcYBAPSGidjrn4n5liNbp5ud/dGtyuITQD7Osammjb9JI+CP9xCKmTXYBo6hpQNknDDk6sWyuwIhyFja4wTzZrpX32HU2U2nFgfG+l97nz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Dc1AOO/q; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 26 Aug 2024 15:42:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724701383;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2ZkPXD2IYKOfAOOldbpX3VURfwiKgu7CQydh9Ux0uo8=;
-	b=Dc1AOO/qri2M8aPstAypVWRa+KJNmbPOTYol3+KKZhRV/wbhP6yTLSnGSpij/VarO3cI8P
-	WIB78ZPkpJV2r3XMn4fhNj0JXkqjdV9xZQCW7GogWWDs1lM9E34n0Y1ubTtI8PeVLInCxj
-	B24jIisCjGpZFYA+w0YUTrIaALfKue0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Michal Hocko <mhocko@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
-	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <rwqusvtkwzbr2pc2hwmt2lkpffzivrlaw3xfrnrqxze6wmpsex@s3eavvieveld>
-References: <20240826085347.1152675-1-mhocko@kernel.org>
- <20240826085347.1152675-2-mhocko@kernel.org>
- <egma4j7om4jcrxwpks6odx6wu2jc5q3qdboncwsja32mo4oe7r@qmiviwad32lm>
- <Zszado75SnObVKG5@casper.infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ACxlopIXjCLr6Fu9ZWF3v86i3N8zWrXGfo+A4re1YZXy0FLgLYVKUVS6QisRzgVghq1DDzgm/HbMzdmniujkF3n2zseB3OuOyhrYCtFxj5elxecNzVj6JLzV6rL9pAF5ff5sq8lJ2psVMAoO+WM3m/pjjpRp+EJchxH0sPRg0zU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E3zV4pjP; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724701459; x=1756237459;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2eUyGbCsKmgFJ6viLd9Ww9XjzPKJxE7/qmedy+QVTBE=;
+  b=E3zV4pjPyRLuyQJxpTXx0p9McEFSIdu378/J0SuizGaC7EJeNUYMVA6Q
+   qjwZ7e7rQkZchuYgvlAkboKraje+cO7b+lmbbZjbWsNr3cegmW0ZNTabi
+   6mXv1l9cxGDnDE522fXYIa4WaLHyegA8Cw1YkdqvZFTnpESk81fvVKdJh
+   SNgkMBpkr1OnekpM/sju9jWZ/YPe/D+8YinRzEUVdxoyyq7wcHP0K8zLM
+   IESdcr4a4zsm9N7wxdXLotOTFzuW0rGQHjhSrMXJ/uVS5IU0KOaJMwwdH
+   pTgHWk5w8ZYce9x/w9dkJvbwMNBWDWeVeYLDmpzN4zgAbbo0TXHLsodQs
+   Q==;
+X-CSE-ConnectionGUID: psPvii0SRU6edWeXomcFZw==
+X-CSE-MsgGUID: isMw7JwYRaScpaYAu9BGng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="33714050"
+X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
+   d="scan'208";a="33714050"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 12:44:18 -0700
+X-CSE-ConnectionGUID: gG41QWJiQg2RZLKhhQaUAA==
+X-CSE-MsgGUID: LMQiLHIjSqinWvyCMB9jLg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
+   d="scan'208";a="62580560"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa009.jf.intel.com with ESMTP; 26 Aug 2024 12:44:17 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 461CB444; Mon, 26 Aug 2024 22:44:14 +0300 (EEST)
+Date: Mon, 26 Aug 2024 22:44:14 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
+	Sean Christopherson <seanjc@google.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] x86/tdx: Fix data leak in mmio_read()
+Message-ID: <zz4zxwnmvtcaadlu743s7wcmc4weblvzyy5cpoy7qberd3ckoj@ovsehcctbewb>
+References: <20240826125304.1566719-1-kirill.shutemov@linux.intel.com>
+ <7401a060-884a-4e7f-9d87-10f5c5ac754d@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,25 +78,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zszado75SnObVKG5@casper.infradead.org>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <7401a060-884a-4e7f-9d87-10f5c5ac754d@intel.com>
 
-On Mon, Aug 26, 2024 at 08:41:42PM GMT, Matthew Wilcox wrote:
-> On Mon, Aug 26, 2024 at 03:39:47PM -0400, Kent Overstreet wrote:
-> > Given the amount of plumbing required here, it's clear that passing gfp
-> > flags is the less safe way of doing it, and this really does belong in
-> > the allocation context.
+On Mon, Aug 26, 2024 at 09:41:49AM -0700, Dave Hansen wrote:
+> On 8/26/24 05:53, Kirill A. Shutemov wrote:
+> > The mmio_read() function makes a TDVMCALL to retrieve MMIO data for an
+> > address from the VMM.
 > > 
-> > Failure to pass gfp flags correctly (which we know is something that
-> > happens today, e.g. vmalloc -> pte allocation) means you're introducing
-> > a deadlock.
+> > Sean noticed that mmio_read() unintentionally exposes the value of an
+> > initialized variable on the stack to the VMM.
+> > 
+> > Do not send the original value of *val to the VMM.
 > 
-> The problem with vmalloc is that the page table allocation _doesn't_
-> take a GFP parameter.
+> The key to this is that 'val' is only used for the _return_ value, right?
 
-yeah, I know. I posted patches to plumb it through, which were nacked by
-Linus.
+Correct.
 
-And we're trying to get away from passing gfp flags directly, are we
-not? I just don't buy the GFP_NOFAIL unsafety argument.
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
