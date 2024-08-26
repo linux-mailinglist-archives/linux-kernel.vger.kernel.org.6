@@ -1,112 +1,189 @@
-Return-Path: <linux-kernel+bounces-301138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D19795ECDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:16:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07F5995ECC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 586A4281CEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:16:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EF211F21730
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1D314386B;
-	Mon, 26 Aug 2024 09:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A53413F01A;
+	Mon, 26 Aug 2024 09:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="CkrIopJR"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aUn68kUK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084DB1422D5
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A67684A4D;
+	Mon, 26 Aug 2024 09:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724663765; cv=none; b=VDyJ/bH+rLRgwudEi3D8LaxpR+MNPl26V5V/tuvB1vIir9fYe5EfxjoBJycP3PTWkZ2ZdU8641+FcLYknzyuWFzucsA0ci+llR9Qfi7GHeOtSCk9Xx8L0607FGCuDfz3qLviFPbmh1LRYpdfLB3ghLB0GKksgoNirAjcNoRoYMg=
+	t=1724663420; cv=none; b=UAGQvspTAUMX4QClihNKq7K9OY60S+Et5lB9JBNkjVWF/+rFOZmD8BlTlpffCcfw0+0RLEaW4uZeItwQDFjMnYcQx1IPtsH38N6JJlyu+yR56HtqYS3kxtzcMOkcqOgrjNoxknUvsfJe/Tv1pqgj7OAqe6TRfrhD9U6sXyCKQCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724663765; c=relaxed/simple;
-	bh=K0ePHJHSuul5y3bsWp3mOBJT5h0AY8uuwLn8hFDUiq0=;
+	s=arc-20240116; t=1724663420; c=relaxed/simple;
+	bh=2cv7ty4MNkVJoRAIsHo474qKehjbZ52h5f/tEaptmgQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NSp8PGhaiFGLsVynYn9IyfftzSSpkF5KI8BoqCGhCATyRB8fsH4TwXYTkgMJrYv2PXPuhmExb/jYPAvk3rNdM8a1NoXdYuu9s00C6Rvb7gC5SDnWalOdn/86L6+w0y//6AdiQrKO9EbGQ4FCBrnCSW3QRYZSV+XMDyt/GcFAiBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=CkrIopJR; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=K0eP
-	HJHSuul5y3bsWp3mOBJT5h0AY8uuwLn8hFDUiq0=; b=CkrIopJRG3isFkgYx+Fz
-	VsD8l2djumyu4rOilgyIDdoH/pxoTYTNb4e9WMPfh3F4IBk8lO/JfIqH7tdALopI
-	Ea52mx+S67vDmPwejpnA/SHXErgZGFh7Iq6HIdO+v2ceeGwGP73uZKPGN0AQ5fuv
-	/1wl+WhHPeVBEGqahLKzzEvT2Qr/cquMOB1ovEVaewm8K9smCN/T9tPP+AFMQHmk
-	EOBihaqhlFq7z+sw9rOcxau+QLthYMUQWlcaodq347GXQeerT+pzxg2fxacHtTaS
-	mji0C9rXb7937hFLAcLTSwM2Z/m+JC9a8JyJk1W3W5wKUQZgCZm65fVUGRWNaS2O
-	7w==
-Received: (qmail 1931663 invoked from network); 26 Aug 2024 11:09:20 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Aug 2024 11:09:20 +0200
-X-UD-Smtp-Session: l3s3148p1@R33sepIg7IBehhrU
-Date: Mon, 26 Aug 2024 11:09:19 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Rong Qianfeng <rongqianfeng@vivo.com>
-Cc: biju.das.jz@bp.renesas.com, Andi Shyti <andi.shyti@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH v3 2/4] i2c: emev2: drop sclk from struct em_i2c_device
-Message-ID: <ZsxGP6HKQnBuEE7_@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Rong Qianfeng <rongqianfeng@vivo.com>, biju.das.jz@bp.renesas.com,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-	opensource.kernel@vivo.com
-References: <20240823035116.21590-1-rongqianfeng@vivo.com>
- <20240823035116.21590-3-rongqianfeng@vivo.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JVSazDvHLSs49qcYzZlVLZcN7dX2IhiWZijzHM3d9LtXWoGaT/93dE7MLrwdMSEaAmtP1XsaO2h2iawyPMALKDPcFAExdJyNyxXWVKnleavUuYiXnckXGzeQH5k2v51Q4DRRF5+OS5jLfFwytBOygT6kHuoov0zPLyLGAri51hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aUn68kUK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B344C8CDC1;
+	Mon, 26 Aug 2024 09:10:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724663419;
+	bh=2cv7ty4MNkVJoRAIsHo474qKehjbZ52h5f/tEaptmgQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aUn68kUKaBqUp7KqTQn4FprqpYIlUQDE4JXIQpvH/5V67LwKPtxz9cbQe3ZY1DRNg
+	 DkCa1+NsJMdL3pEo3W8ET+Swn5OfU7Qoz02okiXyol2rQrPXusiQatpTPoQG7ujAQ4
+	 miqc829bu3UM56Bn7jO24CqvNBRrN7cKJTF0AZOOyYOaRz6QTNJcebu32LOLyfSLE2
+	 41jSpjdTJFpv83kr+QLx/EbOEqhfqM4VVihkjTgoHzWpS1D2Jn6MiQZPygEb3gFhqc
+	 Wc9vXO0qGJZ4hz4P84eVcduaI7AN1ihlN/m0o6+ZzNaTGb/K3DFZARBnSjCwUAtJ93
+	 jzDuLVANQsNBg==
+Date: Mon, 26 Aug 2024 11:10:15 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Jann Horn <jannh@google.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>,
+	Russ Weight <russ.weight@linux.dev>,
+	Danilo Krummrich <dakr@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] firmware_loader: Block path traversal
+Message-ID: <ZsxGd6KRzS8i11zZ@pollux>
+References: <20240823-firmware-traversal-v2-1-880082882709@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="GzVTah3YJcw5sKqN"
-Content-Disposition: inline
-In-Reply-To: <20240823035116.21590-3-rongqianfeng@vivo.com>
-
-
---GzVTah3YJcw5sKqN
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240823-firmware-traversal-v2-1-880082882709@google.com>
 
-On Fri, Aug 23, 2024 at 11:51:14AM +0800, Rong Qianfeng wrote:
-> For no need to save clk pointer, drop sclk from struct em_i2c_device.
->=20
-> Signed-off-by: Rong Qianfeng <rongqianfeng@vivo.com>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+On Fri, Aug 23, 2024 at 08:38:55PM +0200, Jann Horn wrote:
+> Most firmware names are hardcoded strings, or are constructed from fairly
+> constrained format strings where the dynamic parts are just some hex
+> numbers or such.
+> 
+> However, there are a couple codepaths in the kernel where firmware file
+> names contain string components that are passed through from a device or
+> semi-privileged userspace; the ones I could find (not counting interfaces
+> that require root privileges) are:
+> 
+>  - lpfc_sli4_request_firmware_update() seems to construct the firmware
+>    filename from "ModelName", a string that was previously parsed out of
+>    some descriptor ("Vital Product Data") in lpfc_fill_vpd()
+>  - nfp_net_fw_find() seems to construct a firmware filename from a model
+>    name coming from nfp_hwinfo_lookup(pf->hwinfo, "nffw.partno"), which I
+>    think parses some descriptor that was read from the device.
+>    (But this case likely isn't exploitable because the format string looks
+>    like "netronome/nic_%s", and there shouldn't be any *folders* starting
+>    with "netronome/nic_". The previous case was different because there,
+>    the "%s" is *at the start* of the format string.)
+>  - module_flash_fw_schedule() is reachable from the
+>    ETHTOOL_MSG_MODULE_FW_FLASH_ACT netlink command, which is marked as
+>    GENL_UNS_ADMIN_PERM (meaning CAP_NET_ADMIN inside a user namespace is
+>    enough to pass the privilege check), and takes a userspace-provided
+>    firmware name.
+>    (But I think to reach this case, you need to have CAP_NET_ADMIN over a
+>    network namespace that a special kind of ethernet device is mapped into,
+>    so I think this is not a viable attack path in practice.)
+> 
+> Fix it by rejecting any firmware names containing ".." path components.
+> 
+> For what it's worth, I went looking and haven't found any USB device
+> drivers that use the firmware loader dangerously.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: abb139e75c2c ("firmware: teach the kernel to load firmware files directly from the filesystem")
+> Signed-off-by: Jann Horn <jannh@google.com>
+> ---
+> Changes in v2:
+> - describe fix in commit message (dakr)
+> - write check more clearly and with comment in separate helper (dakr)
+> - document new restriction in comment above request_firmware() (dakr)
+> - warn when new restriction is triggered
+> - Link to v1: https://lore.kernel.org/r/20240820-firmware-traversal-v1-1-8699ffaa9276@google.com
+> ---
+>  drivers/base/firmware_loader/main.c | 41 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+> 
+> diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+> index a03ee4b11134..dd47ce9a761f 100644
+> --- a/drivers/base/firmware_loader/main.c
+> +++ b/drivers/base/firmware_loader/main.c
+> @@ -849,6 +849,37 @@ static void fw_log_firmware_info(const struct firmware *fw, const char *name,
+>  {}
+>  #endif
+>  
+> +/*
+> + * Reject firmware file names with ".." path components.
+> + * There are drivers that construct firmware file names from device-supplied
+> + * strings, and we don't want some device to be able to tell us "I would like to
+> + * be sent my firmware from ../../../etc/shadow, please".
+> + *
+> + * Search for ".." surrounded by either '/' or start/end of string.
+> + *
+> + * This intentionally only looks at the firmware name, not at the firmware base
+> + * directory or at symlink contents.
+> + */
+> +static bool name_contains_dotdot(const char *name)
+> +{
+> +	size_t name_len = strlen(name);
+> +	size_t i;
+> +
+> +	if (name_len < 2)
+> +		return false;
+> +	for (i = 0; i < name_len - 1; i++) {
+> +		/* do we see a ".." sequence? */
+> +		if (name[i] != '.' || name[i+1] != '.')
+> +			continue;
+> +
+> +		/* is it a path component? */
+> +		if ((i == 0 || name[i-1] == '/') &&
+> +		    (i == name_len - 2 || name[i+2] == '/'))
+> +			return true;
+> +	}
+> +	return false;
+> +}
+> +
+>  /* called from request_firmware() and request_firmware_work_func() */
+>  static int
+>  _request_firmware(const struct firmware **firmware_p, const char *name,
+> @@ -869,6 +900,14 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
+>  		goto out;
+>  	}
+>  
+> +	if (name_contains_dotdot(name)) {
+> +		dev_warn(device,
+> +			 "Firmware load for '%s' refused, path contains '..' component",
+> +			 name);
 
-Should be folded into patch 1 IMO.
+I think you're missing '\n' here.
 
-
---GzVTah3YJcw5sKqN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmbMRj8ACgkQFA3kzBSg
-Kbaa4A//QRGxIflqtho+uXF6Bvym6CoHccm4nUUu4tjLRLtWsjsIT2mggNsr4KFW
-UwKinEPvouGc0EXeuq8zlmLiPvps42rhwlMok2yYNcf9+/QjnTe2Xlw2TgwqFpT5
-dXSDQqtF/bnXaE+jWEYESddXMCqiiMZxn81bXKKenYXdUSsYzZFGsQlBhOp33if0
-UlIH+GlJhivzRDVdYTZcdiFTK+hvSvLMRuHYLHst/Dnhko5kRjfxxIry10VOeWuX
-i7bt/0nGQNa5veXnpVhYYhuHRwTCPGifIWMNGErHAJ5t7PWGqf/Ch7m89F+HyiqT
-Qw+KGodk0FI2ebYwQrUXG4PGzV/nxXLc7R/1FtdfxUNm3+IYK9M3Kr34v+u1C9Bm
-ABeL+4CrCoTi6jIHFsICsOGwxfgiFZA5EUK1r60biqqXz+5TrvQte3iv52GctDf8
-SveEzZnkWGLmZr2Ef5ubQ5nCecAVhQ4bt3cUYF+QrvUWAH61X3a0v5yK5w4lPdB6
-Pzan4WfNyeNKn8Xg8RRiyGSsm+pEANO61reyaPn6cp9I6Cl8sqQZJ/HpLLPPI4gF
-l2s8LlpFYryAEUQ2JixIP66fCoMuGm0+W/iHujDvdCsv9Ggy+5xFkPKv05KrtMAh
-W3lp+Cy33PgJ6YdA6x2xt3kZYNlpY3+oWLeEM86Nt05JEaB2eK4=
-=cjT8
------END PGP SIGNATURE-----
-
---GzVTah3YJcw5sKqN--
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+>  	ret = _request_firmware_prepare(&fw, name, device, buf, size,
+>  					offset, opt_flags);
+>  	if (ret <= 0) /* error or already assigned */
+> @@ -946,6 +985,8 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
+>   *      @name will be used as $FIRMWARE in the uevent environment and
+>   *      should be distinctive enough not to be confused with any other
+>   *      firmware image for this or any other device.
+> + *	It must not contain any ".." path components - "foo/bar..bin" is
+> + *	allowed, but "foo/../bar.bin" is not.
+>   *
+>   *	Caller must hold the reference count of @device.
+>   *
+> 
+> ---
+> base-commit: b0da640826ba3b6506b4996a6b23a429235e6923
+> change-id: 20240820-firmware-traversal-6df8501b0fe4
+> -- 
+> Jann Horn <jannh@google.com>
+> 
 
