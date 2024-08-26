@@ -1,77 +1,83 @@
-Return-Path: <linux-kernel+bounces-302332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A799395FCB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:27:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91A6095FCBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:27:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6356D2836F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:27:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0273AB20E38
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3805919D896;
-	Mon, 26 Aug 2024 22:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1781619DF42;
+	Mon, 26 Aug 2024 22:27:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QDJbzEGR"
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KdKHPEhe"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E1619CD1D
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 22:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA9819D8B5
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 22:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724711243; cv=none; b=R+88VENxTbHuey7RQ7SZHHuCs7m6rUKx0zLZ25+2QYHAnnp+0lLBibh3WX2diiBGG3dTti7D2H2MZVYj7J4YEgslnrXP+ECBW03oMT83m8pi+E4Z9XGmHNGiz/Zm08p7jkNJfxF1ldmEbNKaEae/T5HYtE2Gr5WNwWCWHIx8Rco=
+	t=1724711248; cv=none; b=B1BA48ejgHvELLMSjqapNorCL6OOdWoHLAXxPEVw/YGSZ2IsphXi6Xocf+UBz0Qrq5azd46YictwOA8nUG/VPvTyUrTFEYUwA/Tv0vPDha8OSWerhuGdpj3UjWsHERQQU6BVdzYrkGrr8QPL0qyq0Q+3Aqj6H3T07G74wjBXLyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724711243; c=relaxed/simple;
-	bh=7knaidMnlelJb7eQ1hfz+yPYhdm4IjSTzrkXIedXWEA=;
+	s=arc-20240116; t=1724711248; c=relaxed/simple;
+	bh=tWBI1CEvcAyhociJ69GxLrZa7hka3+t0jWXGhE06iv8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XDfytYat28ZrwSwv1/jCWLOQERJ6iUAXkL5nvDk/urc957hVsn5vWIumHERhldkSd3CwkD6yQgJOZwhhn43P8fGhnelTW0H9lRiMmvSLQt53lwM3t+6FR41NeVOkCvpQIb0AYFkzDG7EM9LtUNA4A0/55IIbbuAKTsZ9zMz5FR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QDJbzEGR; arc=none smtp.client-ip=209.85.160.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-27032e6dbf2so3199255fac.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 15:27:21 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=eo6ZF8ybgO9wEVu7P1rpNIPzPEovWJoetDt94mswdwAtfPsVfUr5PAWLmQqtlSuKVro9Lir5APb7QjY2x4sNQ2dDeTOkaxzAKAqVR62rdfAgfpPZz14OkxCUjLAKG4J+2Ru/bKz4tla7f7W/Kzn7VTe5t5RPqPtmZhg2wFSU3B0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KdKHPEhe; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-714226888dfso4375768b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 15:27:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724711241; x=1725316041; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1724711246; x=1725316046; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TSaDBvyq/bFcO3OcsC5ci/zFSviUd1t2kxCPPZcFB+8=;
-        b=QDJbzEGRfUIkge9/E+fpTfpBRRZWgnA9rNab97DhRMaPhjeXKd4YUea6mNere7Wj/Y
-         02z5hChMEPSguKTjhdQBCbhDsK88s9avRBiuqc2+33Ku9mQSqEjiJ+CRSXchku8NOuMI
-         LSbCW6GjufziFy9zvDGEvh8ETihsJZeU45GHE=
+        bh=6efL/F1kuzyqYczbG3K6fnVaN6D4LGghnY70VHvVZ5o=;
+        b=KdKHPEhed1wfJECckm6wP831qbjDBGQoQqMdnCKQF3VoSf8k8fKpHeDtibNm0M0N+6
+         k6Ni9Cc1dZEc86+L17oDO+jXgzjAmMshot8ZucZfe7w7QpMcXt+Zs0/pQaXHK2ANhan/
+         XFXom/jy7U/TJAXydK+WZLSXlkQfwfK+9Ych4WTw0GGQyKwSIWEps9QwCzZM6a2iayv1
+         Yvf1ZW1h8FhXwOYydlhuOWAFDETWIyulurLgLbKh4gIuj7+FJpiUj1/vRADrI5C8sjGG
+         4AIcr9epl2S7WHnlhuLlnvcDsc/qGBAbM+as9yJm5Es7BMLIXHMwRbDSyFbkB1bm+E5z
+         Yx+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724711241; x=1725316041;
+        d=1e100.net; s=20230601; t=1724711246; x=1725316046;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TSaDBvyq/bFcO3OcsC5ci/zFSviUd1t2kxCPPZcFB+8=;
-        b=M9vW37hibjnjvSdDg4N0lrV+52ODFGp0zAlzi0l8K96ePBjz/9vuMOKNW10TY11zpM
-         W02zj9mpwdWMNbCgGU9l/HkK9d5RABmXcAn3sqDKrcI9II8ImaUakXpU3kSb8MQRSmIh
-         81mmSvalnJEDMDkc3MY3icU/6Rbiclk5zE3SK35BW5ZCPD1tLod7IFum5gzV3WNwLGjT
-         6M0yE+BZrqfXI0p+jF3vMt5lFxD2n74GiDCEBzVjRKuAXTjrX5537Y3snu0Bnru3hf8M
-         nMWQze5Xmheju+Qwqwql9Ir1xb1bEPlHEY5bIrDtbCROLVZpWt7hgau/TrX2OMJ/duRf
-         ecsw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+fFs9O7VOWof6wOYS6KrI147bQmXqlZV4om+HuVJzKnuWRfPKg5ETWg2OXVGCmTIsX9LvtCyjE8BevGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyADM7gUG9D4IqSuTdzGclFkmYSw8BAaWyg0Wz2uQTnsshpcMvg
-	2K7KNqasCu59HNuQeuV+evwcEFIFz0iarr4m5B++1/57Bq3u+f2KNaHCEfWOtw==
-X-Google-Smtp-Source: AGHT+IFUHF3HtJhxNyKdeJjkwJ+tECgitLmEFbmHNSQGwUUS7HccdzeehXGx7JgW5MXroG3lwlDQqQ==
-X-Received: by 2002:a05:6870:2108:b0:260:df8a:52bf with SMTP id 586e51a60fabf-273e64697eamr11748626fac.2.1724711240763;
-        Mon, 26 Aug 2024 15:27:20 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:7e40:430b:848a:1da6])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-7cd9acddb57sm8107858a12.54.2024.08.26.15.27.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 15:27:20 -0700 (PDT)
-Date: Mon, 26 Aug 2024 15:27:18 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Jon Lin <jon.lin@rock-chips.com>
-Cc: broonie@kernel.org, linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org, heiko@sntech.de,
-	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
-Subject: Re: [PATCH] spi: rockchip: Avoid redundant clock disable in pm
- operation
-Message-ID: <Zs0BRsNdZdI69aXM@google.com>
-References: <20240825035422.900370-1-jon.lin@rock-chips.com>
+        bh=6efL/F1kuzyqYczbG3K6fnVaN6D4LGghnY70VHvVZ5o=;
+        b=uL706FnXcnEMtV/b9b0DvsGeBuLcvdPRbM4F/zVg41PNQCCNU/biMVAGmS257GveYG
+         5DPUXKKQBJQ/FwRYcFruND3Y0PKb6RVrQUfwNgi0W4ogPWD0DGKFcwDB+uMieECAtj3J
+         wGYM99Qv9BJhRl7U67YGwFDRkvPIjZd1tGPF8j3aYlSwomO/e7wOscJBBDRdQm+zjCX7
+         /gABZooMAmgtRUzEzX5xBEbRUGNdXnzllYIefFBS8M2eebdqIkyBJQtuMuB+vr3n8PKf
+         ffZ9lcTtPNOzJ2tlehRy7svMN6+BY18aCZFpH+BPTjU3bVrXCUACYYQfMhJIEHa2OPqJ
+         9zAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0RpQUvHAxU3QyAOusEF8ApzHxn9J0ekQe+Q7921nwsACqD+arTVQ8Lna3pxnsLidEP7EFS4T4NcGG0N8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuU2U1Cngu06ocUmW0TtjdUsarUgnLH2brzzIvvbvi1mLd0MMT
+	d69b0sMakSDLJ0txC/wnn2CXOTeKclIN02u/9S9SukmKHp8wkp0agXLIwtI3/A==
+X-Google-Smtp-Source: AGHT+IFXBXnPx9KUJPgGCZuBF2pi6WskFdoQLOqLbWTVKDqZHz2/7M/H+7VpUWRwf7chThrTS0I+iw==
+X-Received: by 2002:a05:6a00:2e29:b0:70d:1b17:3c5e with SMTP id d2e1a72fcca58-71445758d3cmr11996200b3a.6.1724711245654;
+        Mon, 26 Aug 2024 15:27:25 -0700 (PDT)
+Received: from google.com (176.13.105.34.bc.googleusercontent.com. [34.105.13.176])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ad55fe9sm7994982a12.60.2024.08.26.15.27.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 15:27:24 -0700 (PDT)
+Date: Mon, 26 Aug 2024 22:27:20 +0000
+From: Mingwei Zhang <mizhang@google.com>
+To: Colton Lewis <coltonlewis@google.com>
+Cc: kvm@vger.kernel.org, Jinrong Liang <ljr.kernel@gmail.com>,
+	Jim Mattson <jmattson@google.com>,
+	Aaron Lewis <aaronlewis@google.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/6] KVM: x86: selftests: Define AMD PMU CPUID leaves
+Message-ID: <Zs0BSCb_Khyxg08x@google.com>
+References: <20240813164244.751597-1-coltonlewis@google.com>
+ <20240813164244.751597-3-coltonlewis@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,77 +86,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240825035422.900370-1-jon.lin@rock-chips.com>
+In-Reply-To: <20240813164244.751597-3-coltonlewis@google.com>
 
-(NB: I have several nearly identical copies of this email. I'm replying
-to the latest one I see.)
-
-Hi Jon,
-
-On Sun, Aug 25, 2024 at 11:54:22AM +0800, Jon Lin wrote:
-> Fix WARN_ON:
-> [   22.869352][ T1885] clk_spi0 already unprepared
-> [   22.869379][ T1885] WARNING: CPU: 3 PID: 1885 at drivers/clk/clk.c:813 clk_core_unprepare+0xbc4
-> [   22.869380][ T1885] Modules linked in: bcmdhd dhd_static_buf
-> [   22.869391][ T1885] CPU: 3 PID: 1885 Comm: Binder:355_2 Tainted: G        W         5.10.66 #59
-> [   22.869393][ T1885] Hardware name: Rockchip RK3588 EVB1 LP4 V10 Board (DT)
-> [   22.869397][ T1885] pstate: 60400009 (nZCv daif +PAN -UAO -TCO BTYPE=--)
-> [   22.869401][ T1885] pc : clk_core_unprepare+0xbc/0x214
-> [   22.869404][ T1885] lr : clk_core_unprepare+0xbc/0x214
-
-I appreciate the snippet of a WARNING trace, but I'd also appreciate
-some actual explanation of what the problem is, and why you're solving
-it this way.
-
-> Fixes: e882575efc77 ("spi: rockchip: Suspend and resume the bus during NOIRQ_SYSTEM_SLEEP_PM ops")
-> Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
+On Tue, Aug 13, 2024, Colton Lewis wrote:
+> This defined the CPUID calls to determine what extensions and
+> properties are available. AMD reference manual names listed below.
+> 
+> * PerfCtrExtCore (six core counters instead of four)
+> * PerfCtrExtNB (four counters for northbridge events)
+> * PerfCtrExtL2I (four counters for L2 cache events)
+> * PerfMonV2 (support for registers to control multiple
+>   counters with a single register write)
+> * LbrAndPmcFreeze (support for freezing last branch recorded stack on
+>   performance counter overflow)
+> * NumPerfCtrCore (number of core counters)
+> * NumPerfCtrNB (number of northbridge counters)
+> 
+> Signed-off-by: Colton Lewis <coltonlewis@google.com>
 > ---
+>  tools/testing/selftests/kvm/include/x86_64/processor.h | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
->  drivers/spi/spi-rockchip.c | 57 +++++++++++++++++---------------------
->  1 file changed, 26 insertions(+), 31 deletions(-)
+> diff --git a/tools/testing/selftests/kvm/include/x86_64/processor.h b/tools/testing/selftests/kvm/include/x86_64/processor.h
+> index a0c1440017bb..9d87b5f8974f 100644
+> --- a/tools/testing/selftests/kvm/include/x86_64/processor.h
+> +++ b/tools/testing/selftests/kvm/include/x86_64/processor.h
+> @@ -183,6 +183,9 @@ struct kvm_x86_cpu_feature {
+>  #define	X86_FEATURE_GBPAGES		KVM_X86_CPU_FEATURE(0x80000001, 0, EDX, 26)
+>  #define	X86_FEATURE_RDTSCP		KVM_X86_CPU_FEATURE(0x80000001, 0, EDX, 27)
+>  #define	X86_FEATURE_LM			KVM_X86_CPU_FEATURE(0x80000001, 0, EDX, 29)
+> +#define	X86_FEATURE_PERF_CTR_EXT_CORE	KVM_X86_CPU_FEATURE(0x80000001, 0, ECX, 23)
+> +#define	X86_FEATURE_PERF_CTR_EXT_NB	KVM_X86_CPU_FEATURE(0x80000001, 0, ECX, 24)
+> +#define	X86_FEATURE_PERF_CTR_EXT_L2I	KVM_X86_CPU_FEATURE(0x80000001, 0, ECX, 28)
+
+You won't be testing Northbridge counters and L2I counters, so these two
+could be optional to the patch.
+>  #define	X86_FEATURE_INVTSC		KVM_X86_CPU_FEATURE(0x80000007, 0, EDX, 8)
+>  #define	X86_FEATURE_RDPRU		KVM_X86_CPU_FEATURE(0x80000008, 0, EBX, 4)
+>  #define	X86_FEATURE_AMD_IBPB		KVM_X86_CPU_FEATURE(0x80000008, 0, EBX, 12)
+> @@ -195,6 +198,8 @@ struct kvm_x86_cpu_feature {
+>  #define	X86_FEATURE_VGIF		KVM_X86_CPU_FEATURE(0x8000000A, 0, EDX, 16)
+>  #define X86_FEATURE_SEV			KVM_X86_CPU_FEATURE(0x8000001F, 0, EAX, 1)
+>  #define X86_FEATURE_SEV_ES		KVM_X86_CPU_FEATURE(0x8000001F, 0, EAX, 3)
+> +#define	X86_FEATURE_PERF_MON_V2		KVM_X86_CPU_FEATURE(0x80000022, 0, EAX, 0)
+
+Let's use X86_FEATURE_PERFMON_V2 instead.
+
+> +#define	X86_FEATURE_PERF_LBR_PMC_FREEZE	KVM_X86_CPU_FEATURE(0x80000022, 0, EAX, 2)
+
+You don't use this feature, do you? If not, this can be optional for the
+patch.
+>  
+>  /*
+>   * KVM defined paravirt features.
+> @@ -281,6 +286,8 @@ struct kvm_x86_cpu_property {
+>  #define X86_PROPERTY_GUEST_MAX_PHY_ADDR		KVM_X86_CPU_PROPERTY(0x80000008, 0, EAX, 16, 23)
+>  #define X86_PROPERTY_SEV_C_BIT			KVM_X86_CPU_PROPERTY(0x8000001F, 0, EBX, 0, 5)
+>  #define X86_PROPERTY_PHYS_ADDR_REDUCTION	KVM_X86_CPU_PROPERTY(0x8000001F, 0, EBX, 6, 11)
+> +#define X86_PROPERTY_NUM_PERF_CTR_CORE		KVM_X86_CPU_PROPERTY(0x80000022, 0, EBX, 0, 3)
+> +#define X86_PROPERTY_NUM_PERF_CTR_NB		KVM_X86_CPU_PROPERTY(0x80000022, 0, EBX, 10, 15)
+>  
+
+ditto.
+>  #define X86_PROPERTY_MAX_CENTAUR_LEAF		KVM_X86_CPU_PROPERTY(0xC0000000, 0, EAX, 0, 31)
+>  
+> -- 
+> 2.46.0.76.ge559c4bf1a-goog
 > 
-> diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
-> index e1ecd96c7858..043a7739c330 100644
-> --- a/drivers/spi/spi-rockchip.c
-> +++ b/drivers/spi/spi-rockchip.c
-
-> +#ifdef CONFIG_PM_SLEEP
-> +static int rockchip_spi_suspend(struct device *dev)
->  {
-> +	int ret;
->  	struct spi_controller *ctlr = dev_get_drvdata(dev);
-> -	struct rockchip_spi *rs = spi_controller_get_devdata(ctlr);
->  
-> -	clk_disable_unprepare(rs->spiclk);
-> -	clk_disable_unprepare(rs->apb_pclk);
-> +	ret = spi_controller_suspend(ctlr);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* Avoid redundant clock disable */
-> +	if (!pm_runtime_status_suspended(dev))
-> +		rockchip_spi_runtime_suspend(dev);
-
-It seems like you'd really be served well by
-pm_runtime_force_{suspend,resume}() here, and in fact, that's what this
-driver used to use before the breaking change (commit
-e882575efc77). Why aren't you just going back to using it? (This is the
-kind of thing I might expect in your commit message -- reasoning as to
-why you're doing what you're doing.)
-
-And in fact, I already submitted a patch that resolves the above problem
-and does exactly that:
-
-https://lore.kernel.org/all/20240823214235.1718769-1-briannorris@chromium.org/
-[PATCH] spi: rockchip: Resolve unbalanced runtime PM / system PM handling
-
-Do you see any problem with it?
-
-Thanks,
-Brian
-
-> +	pinctrl_pm_select_sleep_state(dev);
->  
->  	return 0;
->  }
 
