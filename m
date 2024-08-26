@@ -1,105 +1,93 @@
-Return-Path: <linux-kernel+bounces-300981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEB6B95EB37
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:02:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFF7495EAA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:38:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 503A6B23BE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:02:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A7B91F211F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E9A144307;
-	Mon, 26 Aug 2024 07:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4BA13A27D;
+	Mon, 26 Aug 2024 07:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="kcrnipcX"
-Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="X2EiMjdR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D4813EFF3;
-	Mon, 26 Aug 2024 07:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3FB17FD;
+	Mon, 26 Aug 2024 07:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724658839; cv=none; b=HpxE+pImZeQ4R2uol0XBBaje2HiAVNhCCzX7XYsN/AeED553J1g3i4vCxG+uJ0Ns7UyZeMt3ZEr/ixIZJI6QEXvWnp6Z+s859IaGPXhO8CD/4Cpk2tTM5k1Prd0uiApipuUloUDnEm4qMdMxwOpKAvAi8URjS4OsZyBOs1cogRE=
+	t=1724657889; cv=none; b=B2tD3wy414OUV3LEXx2rW82H0dNOJnBGc9kbFlgDsGmb3XUIA4Pos8IBoURdtLjTtrxrTNbaQKcmeUjxt+/eLi07tyeQO9zjsV4QxgcGZRnZA6oJnmygw31YakJFVJmrbktkksajOU9qDb4IVyFj5HlzH8apM+xyPnfJz9ZPkv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724658839; c=relaxed/simple;
-	bh=/upxQZ7Sx8UT5zkENbL8iXck0iH/AKtTxcQdjNMMuxs=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=UNrTEOsyvqapH1XFV9oSeVEtBgtsutPjo/Uz3Y9sZvaAIaJrXyITWkBnianfrY/dDO9y7E0kKaTGc+xxuy7RQOlBuwcWZVSv4/bOFpqOnUgu6R/1Y52VwgabpqtzVRNWgSUL4Q99DN+VlnwnnruDl857sTJk1jIgt8ImCdjEpzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=kcrnipcX; arc=none smtp.client-ip=203.205.221.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1724658834; bh=oCAK+AeRh+UjThNu95QJgjgOIPjcluclamZIa6pai4o=;
-	h=From:To:Cc:Subject:Date;
-	b=kcrnipcX4ZCC0+OlfaazIvO4NSALB6mGr5SaljwhW72ElfNocCKWaGHhiIkjsBYZP
-	 2Anv4Z/B7u7FvbJf6rOkPQb+nK5FHNQ3ulT8pJyQc7Yu8NgmEV2xKKWJHtc7QzDjFn
-	 wnRD3RQ+L4a5kD1YOfbJwJbMyVoYE2Va1AOp12qk=
-Received: from localhost.localdomain ([112.64.14.141])
-	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
-	id 8FA126AE; Mon, 26 Aug 2024 15:35:58 +0800
-X-QQ-mid: xmsmtpt1724657758txumro6zf
-Message-ID: <tencent_155F5603C098FE823F48F8918122C3783107@qq.com>
-X-QQ-XMAILINFO: N/WmRbclY25GhqgeDlXWbzugTdURPWbmQLWpGhtZoceyG/DPYJABgOhjVL5BRs
-	 NWW33nwbEa5uJ1huxF/3MrYdsB79DzwSWNZUf1kTzD4O7AwFoVhlXjsIjkt8Re4y4ghVs5iBNQuI
-	 J5GsSFCAELHghpXKXuUBmfOBqo2zBdI0TUJ6VaSkxwZzPh/56i3mZ3r7Taky+KJPYvMzhKVB/FYA
-	 drbyFfCxG9VPc1f+wnpUPdPxCgGnMKMJxnMkblJ7/YzDnff3BsGs4NTc+KdHb6x96MjDT4BxBtIU
-	 ob+eUFlKTW6NF/DNHp9f78rzub/JBVltOkwYHzW3GnVihd6PingYNFAmFD+1KkIS41Y2E2Purce2
-	 pQTzd8SzWQcw2I+Gv+AJWGTVpbQ8MpZFW3DmuS9iTfOxGIBwiqX/LvSc4lkdHnexeD9V3G4WnYJT
-	 ef7kwYAVLfkFodrerU8OhVjxAgZesYsInGmz/q743NC0U4ejSdL66mbtUqgssFiY6DXS7M4Cxk1z
-	 AyUzjfEdTrso8nXq5mLzQPNtIKcclFJl2BOynvDuqdT3fO1k2dGLi2HxZDW2dagn3dv0dK7ZAOBB
-	 Vo5kYtYZgo+UOlLM07jnkoeZ0N7zm70NucijyH86Gn/3Wu5bxkAukHj4jGFFMCSOVVav41ynewjn
-	 RWbLx7jeDNz8CZsircQnG95LDY9KsxyKKq2i9TiiwShMBDMhCVEdT/dBd6IQwbbKEvqz+8P9Caac
-	 ATBnQTMEjlHau6f4OJzFIE/sw3Ixcv48Rs7/j/8i8IOH3V0kbHXVz8dHB8Bs5xc2ztnUVJg3IbeN
-	 wQmrZfjPI97J2ceMFEpIasQdcDjkyZ3MFaCotQcn35MZFiCzyLPHLxut/9s/RmF7llrqxqyfWXFy
-	 VanrdLuqAkr32pPFfWAofuS0MQdlINKBXeq9Vnre3KUmqU5ThpGWDqGlN5IVNzIiBckFhuoaKxz0
-	 EyPCJoqEvUAe1+ceaUP+reFYxsmpAWl/GGIIrHLdaDCc2mvkXblDAlFLsdPANe
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: jiping huang <huangjiping95@qq.com>
-To: davem@davemloft.net,
-	dsahern@kernel.org,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jiping huang <huangjiping95@qq.com>
-Subject: [PATCH] net: Remove a local variable with the same name as the parameter.
-Date: Mon, 26 Aug 2024 15:35:51 +0800
-X-OQ-MSGID: <20240826073551.2212-1-huangjiping95@qq.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724657889; c=relaxed/simple;
+	bh=4jZlQqYT2iwt/kKk0Wu5PT3lXHwZbBnEEz9RFA5Jo+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BX/cojmXkUrlwkFC7vlXtWwaODzmJlsxuB+7gkog6yNWl7aqJnayttx5w35+tQ3Tt402qq56crU0Z2FsqiTK13DIuWX0b4s4lP94HnIpp/JiCpc1gHC8thF9VHdJoW5im18Iolm9IahvHkwgUCVSr00g4blKX0uuP1gcxe1v448=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=X2EiMjdR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07A2AC8CDC1;
+	Mon, 26 Aug 2024 07:38:06 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="X2EiMjdR"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1724657885;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jumxgHXVZw5b27vJZV1Xc81w+BGEUEBT++1X+y17eXM=;
+	b=X2EiMjdR3EdNxjI3x1bQOgJRdF//Juq/iK+blRCB6mkEKShZv2DdzDb5T6sJ0CSgr8DTrO
+	CHOW8X2DqZjtE1ZGFBTwT3XueIppy4bMGI92dBoD+xkYb3vIpgFmTKlgdb8V1tfoLKBvtF
+	hY0i04RI9PjGE4L3q01XhoKRLDN13cI=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 6957f791 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 26 Aug 2024 07:38:05 +0000 (UTC)
+Date: Mon, 26 Aug 2024 09:37:56 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Shuah Khan <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 16/17] selftests: vdso: Make VDSO function call more
+ generic
+Message-ID: <Zsww1IgALClDUf8g@zx2c4.com>
+References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
+ <bd05c8faee64972a9e01f9497d1870dc267a55f4.1724309198.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <bd05c8faee64972a9e01f9497d1870dc267a55f4.1724309198.git.christophe.leroy@csgroup.eu>
 
-There is no need to use an additional local avariable to get rtmsg.flags,
-and this variable has the same name as the function argument.
-
-Signed-off-by: jiping huang <huangjiping95@qq.com>
-
-diff --git a/net/ipv4/fib_semantics.c b/net/ipv4/fib_semantics.c
-index f669da98d11d..0d69267c9971 100644
---- a/net/ipv4/fib_semantics.c
-+++ b/net/ipv4/fib_semantics.c
-@@ -1830,12 +1830,10 @@ int fib_dump_info(struct sk_buff *skb, u32 portid, u32 seq, int event,
+On Thu, Aug 22, 2024 at 09:13:24AM +0200, Christophe Leroy wrote:
+> On powerpc, a call to a VDSO function is not a standard C function
+> call. Unlike x86 that returns a negated error code in case of an
+> error, powerpc sets CR[SO] and returns the error code as a
+> positive value.
+> 
+> So use a macro called VDSO_CALL() which takes a pointer to the
+> function to call, the number of arguments and the arguments.
  
- 	if (nhs == 1) {
- 		const struct fib_nh_common *nhc = fib_info_nhc(fi, 0);
--		unsigned char flags = 0;
- 
--		if (fib_nexthop_info(skb, nhc, AF_INET, &flags, false) < 0)
-+		if (fib_nexthop_info(skb, nhc, AF_INET, &rtm->rtm_flags, false) < 0)
- 			goto nla_put_failure;
- 
--		rtm->rtm_flags = flags;
- #ifdef CONFIG_IP_ROUTE_CLASSID
- 		if (nhc->nhc_family == AF_INET) {
- 			struct fib_nh *nh;
--- 
-2.34.1
-
+You'll probably want to move to VDSO_CALL() for the whole test suite,
+not just the getrandom one, right?
 
