@@ -1,173 +1,120 @@
-Return-Path: <linux-kernel+bounces-301532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF11695F22D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:55:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B2EA95F233
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:56:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53F5A284755
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:55:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCB8D2849EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3733417BEB6;
-	Mon, 26 Aug 2024 12:53:23 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CEF31862B9;
+	Mon, 26 Aug 2024 12:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Dvis41ie"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28BE28366;
-	Mon, 26 Aug 2024 12:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6352C172798;
+	Mon, 26 Aug 2024 12:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724676802; cv=none; b=DjIKpjJz71qURL0fmdgIBf2Oz30q2b0m5WYuwULGvj0k9Rjjb3FHbntRaDVOo6Izlsg/Tb315MqnBRJWP2NZJj72W9lRQmKe18jrVILcpNpuqREaE7NihATZvTflgbWIbYGFOurB2bY04yTbn1+J9BeoKpY+SOVVJh2x6ddSwtA=
+	t=1724676881; cv=none; b=YIMpNnV1eoHHu7B6vJKAQrBJJ81hKmh9ebS3sOLRZ9C/FuoNYAxgoFKlybez9gRwMJVMNEdzJAhCUkClTYOOurPnMBuXzvI/b5F6O0ANHpKessnqywcW4mxkPe/+avAR3erS6+20WyV8SG73WbPk943Mtui45f2krh5i99pbthI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724676802; c=relaxed/simple;
-	bh=xcGbVNISfES7CZKICkbUNJVyNdU6CJ14L3t19uNG0P8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lxbCB+QPXtLI+KUxhvIN8Wr8Q8ViGATQm2YwsJHjyScGe0PqKSnfGZciFN2KyU3hB6VrSa5XGewRwfiIyBUwpk51v3sVE5vuaBPFcF8shc+UveoiigM9txKaMZwRCOPNx2BusDa07YMeBRqwMRZDv9lYjrJwq8pm7rgzBiib1hA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WsrFG2hJpz4f3kpl;
-	Mon, 26 Aug 2024 20:53:06 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 3F0A31A07B6;
-	Mon, 26 Aug 2024 20:53:16 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP3 (Coremail) with SMTP id _Ch0CgCX+ri6esxmB0u6Cg--.12158S2;
-	Mon, 26 Aug 2024 20:53:16 +0800 (CST)
-Message-ID: <153a238e-7b85-4334-9108-e665bcb233eb@huaweicloud.com>
-Date: Mon, 26 Aug 2024 20:53:14 +0800
+	s=arc-20240116; t=1724676881; c=relaxed/simple;
+	bh=v88WBWfZpCdGdGKjwhtcFxY3n1G9uCQbsZZkbJ7RUPw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kL3pPtgJGD5Jg4hu7wnZVTizqmlym6kIHNWHbTqPvD6ouZxwgUs03JFrEDB5cqLRUXgBaiR9O8Sqp1WiZIQYm1XTpj6nDWPO3szF5IMkU5x3CUPnvbftyoCE6u0ei6TnTaghe3gTjXcT5y7ne1RU6fLgWDtrp/CzxhjA6pCKTxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Dvis41ie; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=CRtm2k1gp7t1K52GzLSjl2RYWVeceIa4paPrEJiXqdM=; b=Dvis41ieXGf3GZmZ8nlqU2mofv
+	iqJgs/BcD5SiPsKrAUZm4LXcg9kuZI9klJoXzzSdrYrvtRV5DPwOSjH7LL2MGVZ3nARZri8snLsq6
+	QPBwElAWuI/7JDeN8AX3tKKfPrY2vSeqCyFlAQA34yTSVhW+dFHpNA8ZJYypuiVCt8WA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1siZEu-005i0i-Ff; Mon, 26 Aug 2024 14:54:32 +0200
+Date: Mon, 26 Aug 2024 14:54:32 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Imran Shaik <quic_imrashai@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Ajit Pandey <quic_ajipan@quicinc.com>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] clk: qcom: Add support for Global Clock
+ Controller on QCS8300
+Message-ID: <049ee7d3-9379-4c8f-88ed-7aec03ad3367@lunn.ch>
+References: <20240822-qcs8300-gcc-v2-0-b310dfa70ad8@quicinc.com>
+ <20240822-qcs8300-gcc-v2-2-b310dfa70ad8@quicinc.com>
+ <bf5b7607-a8fc-49e3-8cf7-8ef4b30ba542@lunn.ch>
+ <01c5178e-58fe-4c45-a82e-d0b6b6789645@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 -next 10/11] cgroup/cpuset: guard cpuset-v1 code under
- CONFIG_CPUSETS_V1
-To: Waiman Long <longman@redhat.com>, tj@kernel.org, lizefan.x@bytedance.com,
- hannes@cmpxchg.org, mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240823100110.472120-1-chenridong@huawei.com>
- <20240823100110.472120-11-chenridong@huawei.com>
- <de64f686-fccb-4d33-99d8-b8b44dc534fa@redhat.com>
- <bcbaeb36-ad90-47a0-b832-86eadefd3e6a@huaweicloud.com>
- <8aec8306-18aa-44af-81ba-dbb6ca9dcca0@redhat.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <8aec8306-18aa-44af-81ba-dbb6ca9dcca0@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgCX+ri6esxmB0u6Cg--.12158S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWryrJFyDCrWrXFy3Xw43Wrg_yoWrGrW3p3
-	Z7GFyUCrWkJr1xGrWSqw4DAFyrtw48J3W7Jr17JFyUXw12yF1qvr1DXrn0gr1DJr4rGr4U
-	tFZ3uw4a9r1UJrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <01c5178e-58fe-4c45-a82e-d0b6b6789645@quicinc.com>
 
+On Mon, Aug 26, 2024 at 04:25:39PM +0530, Imran Shaik wrote:
+> 
+> 
+> On 8/23/2024 1:29 AM, Andrew Lunn wrote:
+> > > +static int gcc_qcs8300_probe(struct platform_device *pdev)
+> > > +{
+> > > +	struct regmap *regmap;
+> > > +	int ret;
+> > > +
+> > > +	regmap = qcom_cc_map(pdev, &gcc_qcs8300_desc);
+> > > +	if (IS_ERR(regmap))
+> > > +		return PTR_ERR(regmap);
+> > > +
+> > > +	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
+> > > +				       ARRAY_SIZE(gcc_dfs_clocks));
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	/* Keep some clocks always enabled */
+> > 
+> > Sorry, but you need to explain why. Why cannot the camera driver
+> > enable these clocks when it loads? Why cannot the display driver
+> > enable these clocks when it loads.
+> > 
+> 
+> These clocks are recommended to be kept always ON as per the HW design and
+> also exposing clock structures and marking them critical in the kernel would
+> lead to redundant code. Based on previous discussions with clock
+> maintainers, it is recommended to keep such clocks enabled at probe and not
+> model them. This approach is consistently followed for all other targets as
+> well.
 
+I don't see why it would add redundant code. It is a few lines of code
+in the driver, which every driver using clocks has. If you really
+don't want the clock turned off because it is unused, you can use
+CLK_IGNORE_UNUSED, along with a comment explaining why.
 
-On 2024/8/26 10:18, Waiman Long wrote:
-> On 8/25/24 21:34, Chen Ridong wrote:
->>
->>
->> On 2024/8/26 1:25, Waiman Long wrote:
->>> On 8/23/24 06:01, Chen Ridong wrote:
->>>> This patch introduces CONFIG_CPUSETS_V1 and guard cpuset-v1 code under
->>>> CONFIG_CPUSETS_V1. The default value of CONFIG_CPUSETS_V1 is N, so that
->>>> user who adopted v2 don't have 'pay' for cpuset v1.
->>>> Besides, to make code succinct, rename 
->>>> '__cpuset_memory_pressure_bump()'
->>>> to 'cpuset_memory_pressure_bump()', and expose it to the world, which
->>>> takes place of the old mocro 'cpuset_memory_pressure_bump'.
->>>>
->>>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->>>> ---
->>>>   include/linux/cpuset.h          |  8 +-------
->>>>   init/Kconfig                    | 13 +++++++++++++
->>>>   kernel/cgroup/Makefile          |  3 ++-
->>>>   kernel/cgroup/cpuset-internal.h | 15 +++++++++++++++
->>>>   kernel/cgroup/cpuset-v1.c       | 10 ++++++----
->>>>   kernel/cgroup/cpuset.c          |  2 ++
->>>>   6 files changed, 39 insertions(+), 12 deletions(-)
->>>>
->>>> diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
->>>> index 2a6981eeebf8..f91f1f61f482 100644
->>>> --- a/include/linux/cpuset.h
->>>> +++ b/include/linux/cpuset.h
->>>> @@ -99,13 +99,7 @@ static inline bool cpuset_zone_allowed(struct 
->>>> zone *z, gfp_t gfp_mask)
->>>>   extern int cpuset_mems_allowed_intersects(const struct task_struct 
->>>> *tsk1,
->>>>                         const struct task_struct *tsk2);
->>>> -#define cpuset_memory_pressure_bump()                 \
->>>> -    do {                            \
->>>> -        if (cpuset_memory_pressure_enabled)        \
->>>> -            __cpuset_memory_pressure_bump();    \
->>>> -    } while (0)
->>>> -extern int cpuset_memory_pressure_enabled;
->>>> -extern void __cpuset_memory_pressure_bump(void);
->>>> +extern void cpuset_memory_pressure_bump(void);
->>>>   extern void cpuset_task_status_allowed(struct seq_file *m,
->>>>                       struct task_struct *task);
->>>
->>> As you are introducing a new CONFIG_CPUSET_V1 kconfig option, you can 
->>> use it to eliminate a useless function call if cgroup v1 isn't 
->>> enabled. Not just this function, all the v1 specific functions should 
->>> have a !CONFIG_CPUSET_V1 version that can be optimized out.
->>>
->>> Cheers,
->>> Longman
->>>
->>>
->> Hi, Longman, currently, we have only added one place to manage all the 
->> functions whose are empty if !CONFIG_CPUSET_V1 is not defined , and 
->> the caller does not need to care about using cpuset v1 or v2, which 
->> makes it succinct.
->>
->> However, we have to add !CONFIG_CPUSET_V1 to many places to avoid 
->> useless function calls. I am not opposed to do this if you thick it 'a 
->> better implementation.
-> 
-> You don't need to touch any files that use these cgroup v1 only 
-> functions. You only need to add some #ifdef code in the cpuset.h header 
-> file like
-> 
-> #ifdef CONFIG_CPUSET_V1
-> extern void cpuset_memory_pressure_bump(void);
-> #else
-> static inline void cpuset_memory_pressure_bump(void) { }
-> #endif
-> 
-> BTW, try not to introduce unnecessary performance regression. The reason 
-> cpuset_memory_pressure_bump() is a macro is to avoid a function call if 
-> cpuset_memory_pressure_enabled isn't set which is most likely case. It 
-> is cheaper to read a variable than do a function call.
-> 
-> Cheers,
-> Longman
-> 
-> 
-> 
-> 
-Thank you for your patience, I just misunderstood.
-I will do it in v2.
+What i was actually guessing is that you don't actually have open
+drivers for these hardware blocks, just a blob running in user
+space. As such, it cannot turn the clocks on. If that is the case, i
+would much prefer you are honest about this, and document it.
 
-Best regards,
-Ridong
-
+	Andrew
 
