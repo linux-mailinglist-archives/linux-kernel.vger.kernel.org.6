@@ -1,176 +1,153 @@
-Return-Path: <linux-kernel+bounces-300988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B004E95EB47
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:04:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D429095EB49
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:04:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07ACEB23EC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:04:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B96A1C2183D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75875148850;
-	Mon, 26 Aug 2024 07:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A571149E0B;
+	Mon, 26 Aug 2024 07:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="Fv2niWjd"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LifRwjG1"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FC513AD22
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA04D149C4D;
+	Mon, 26 Aug 2024 07:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724659165; cv=none; b=HDkPQfxPrpD5gX0fn5bnkPPQvdOr3ZQa4P30abmsBZbUUVizdRNmaTNl6YstjPZ9xeBum09D5zf8YfxApmct1R7WUiicaw0CfkRgkEPg9euLt5dCFgOkyzwb7zmDRviJkCbdlmf7ocmG6tQCaZDdOP7ObQgXnrgT066yGNAHTqg=
+	t=1724659178; cv=none; b=ZWsX+C9N9zg5EtuIgqlg5XIG+ZaZXlKAWZ5k1Z7GiKZgnKsqr7poHnz7Hs+cd/ljMBMOcSzkNIe6AwJEDI8MAnVW1mfibvLD22quBxkDzQV0tdUCrR2cT+Y/dI+QeRJuGQNIayPNACSWzEnlVfUQKob3N2Ru+XHOoj3h00ERWdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724659165; c=relaxed/simple;
-	bh=TwwCG1O/BTtho9CI6PmPRJiYQaq2et7h8vIt7s5RcX8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QsU2pJQ0WA9aJwSKnEcfh5MUq7qBbXceDA540E1Y0FDvf53oK4AlTRu0etCqkAmiLJB8NCEUybklkv/WXZAn/WZbMn0pZreaf3dsNOJiy1XTbYNbEDEhd6PdZg8zxxGQqtKH7J8jDnDMG9sSANdOD8D/h2zRXGnKTlQAbVDEP58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk; spf=pass smtp.mailfrom=rasmusvillemoes.dk; dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=Fv2niWjd; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rasmusvillemoes.dk
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5334fdabefbso3620669e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 00:59:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google; t=1724659162; x=1725263962; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:user-agent:message-id:date
-         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V2hgwRmta5vM0mozRmIDBR0h1uowbLIQCJHdIg3QS8M=;
-        b=Fv2niWjdm8tkYiUMf5dsX2xksXETCtY/RXdKBSIDH7gZwON9daclEGGfmOykGMVhXJ
-         Mlv7almea8DerILsyORtEJhBZZZwV/56TbS9pp+ftNXyQVdQ9p49HmTrCvcoEZy5hxCE
-         K6aaq4AMVUYZDSDe4r9CFxeSU+yFFBEPMVyjE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724659162; x=1725263962;
-        h=content-transfer-encoding:mime-version:user-agent:message-id:date
-         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=V2hgwRmta5vM0mozRmIDBR0h1uowbLIQCJHdIg3QS8M=;
-        b=eUcVNm7UyxWm/gQlz0+cUbYsiUQHHNHfx3wFGJbYxVid8sYiUgxq7rSmscsm3OIQnt
-         x2ti805iiOT7ztykc8x/dGCxJ959dofu/2Ty7ihS50hRIFm4dl56fPsD7xDEV356LrDN
-         f65uAIgrqTvaWncs2MJKdYJ8qmUufiiHfRcNJLdb3tjFKIVRgKgCJvSQhvUZ7N0IK14Q
-         yHx5Eaud68+dL5LDzTvHG6+6A5ONcBpJd6WI/Z0Q/1wshhuOoBCQGELUTk9goITaNtHx
-         hdnb/uPoseuOsDIFT/kmaSQFMSrI+RxVJ8H2/JW0gsbtFka2Q1eKJ0S5KtYpX6hIOWgl
-         LHGw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFuE4l5RpgRUStrbEAmw/51sQTfg6ffuedRNtu1Qm9Xn9ldCZ9F/8kmMf09DVPj4O/qwEhdCFFwJh2GOA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMz7uqiDD/ykld1CvOk1/b8Wq9xwCk+4wW5iMSzCoqf5vSUKkw
-	vYzorklgQoGojt4DfnU67bAOJwwNJBqc6RR02FL1aQPiOhfzVx3XXYDr5c0f8No=
-X-Google-Smtp-Source: AGHT+IEeTyQw+xuzUzvD+dXczs6daRR4gze16Sc+7M/BWDbSDW1pNlYvqgudmE3/tBexko8/9sgT2Q==
-X-Received: by 2002:a05:6512:33ce:b0:533:4108:a49e with SMTP id 2adb3069b0e04-53438719a02mr3152188e87.29.1724659161041;
-        Mon, 26 Aug 2024 00:59:21 -0700 (PDT)
-Received: from localhost ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea5d635sm1369164e87.193.2024.08.26.00.59.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 00:59:20 -0700 (PDT)
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To: Jann Horn <jannh@google.com>
-Cc: Danilo Krummrich <dakr@kernel.org>,  Luis Chamberlain
- <mcgrof@kernel.org>,  Russ Weight <russ.weight@linux.dev>,  Danilo
- Krummrich <dakr@redhat.com>,  Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki" <rafael@kernel.org>,
-  linux-kernel@vger.kernel.org,  stable@vger.kernel.org
-Subject: Re: [PATCH v2] firmware_loader: Block path traversal
-In-Reply-To: <CAG48ez3A=NZ9GqkQv9U6871ciNc+Yy=AvPfm3UgeXfMyh=0+oQ@mail.gmail.com>
-	(Jann Horn's message of "Sat, 24 Aug 2024 03:34:20 +0200")
-References: <20240823-firmware-traversal-v2-1-880082882709@google.com>
-	<Zskp364_oYM4T8BQ@pollux>
-	<CAG48ez3A=NZ9GqkQv9U6871ciNc+Yy=AvPfm3UgeXfMyh=0+oQ@mail.gmail.com>
-Date: Mon, 26 Aug 2024 09:59:23 +0200
-Message-ID: <87seurd89w.fsf@prevas.dk>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1724659178; c=relaxed/simple;
+	bh=bKLx07E3At82l8mxbSMBOfdYPZjc3j4ZfRSnnqQX+Wc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=sRE3ecMjdkhcalMa4Z/PMx8MAmHt0o4xSg/0TLKBRU5GZJYGS40EjilRC5RG+cAlbd6g0bUXGCEDzU3IRReDFY7x1HwTgoCwTwTUnFEpuWBhETWog7ZZ2Kuazz7Ea5luX4xW5tg8Iz4eq0+XH7HEdFQQ2ieEbDcmYcqNs13Gv64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=LifRwjG1; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1724659172;
+	bh=f4Vb3ruv/FflFaQ84MQ50HLvQj/1umtpah/iZx3jxOE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=LifRwjG1o9JYqN0B/Wo1BRa6j3D8mx2AyBjn0U/As7cKhYKOdGzxqYLHeQZ+xx2ax
+	 NeIQYhx6VxLZVwNDfeoXXXfy4x5AZGBCBuNWQNoNCD3rDz4AiMnGV/4Cl/WT+qBYWk
+	 r7h///bB+RGm78V2lU+zQHlWHaSSWUCqQ4kdE3lVfvd8BMJWEnA6WJ/t/7XThAJIgN
+	 bewJ+NEDctBLhJVaLdInrCAZofhkTeBqGAylqWDov2BRfPhQqn28XzIONoQDEa5A45
+	 vHsiV62t/ZR5j9Gyq+WyKcE1f8znhFcu2Iuior5m0bW/rrd0lm6KgvxXS1q6So4h+C
+	 aE3TpgDjJOt9A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WsjkW4dM2z4x1V;
+	Mon, 26 Aug 2024 17:59:31 +1000 (AEST)
+Date: Mon, 26 Aug 2024 17:59:31 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Pankaj Raghav <p.raghav@samsung.com>,
+	Dave Chinner <dchinner@redhat.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Matthew  Wilcox (Oracle) <willy"@infradead.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: boot warning after merge of the vfs-brauner tree
+Message-ID: <20240826175931.1989f99e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; boundary="Sig_/eFOibwsiHTxbRCFF.J1bhf2";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/eFOibwsiHTxbRCFF.J1bhf2
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Jann Horn <jannh@google.com> writes:
+Hi all,
 
-> On Sat, Aug 24, 2024 at 2:31=E2=80=AFAM Danilo Krummrich <dakr@kernel.org=
-> wrote:
->> On Fri, Aug 23, 2024 at 08:38:55PM +0200, Jann Horn wrote:
->> > Fix it by rejecting any firmware names containing ".." path components.
-> [...]
->> > +/*
->> > + * Reject firmware file names with ".." path components.
->> > + * There are drivers that construct firmware file names from device-s=
-upplied
->> > + * strings, and we don't want some device to be able to tell us "I wo=
-uld like to
->> > + * be sent my firmware from ../../../etc/shadow, please".
->> > + *
->> > + * Search for ".." surrounded by either '/' or start/end of string.
->> > + *
->> > + * This intentionally only looks at the firmware name, not at the fir=
-mware base
->> > + * directory or at symlink contents.
->> > + */
->> > +static bool name_contains_dotdot(const char *name)
->> > +{
->> > +     size_t name_len =3D strlen(name);
->> > +     size_t i;
->> > +
->> > +     if (name_len < 2)
->> > +             return false;
->> > +     for (i =3D 0; i < name_len - 1; i++) {
->> > +             /* do we see a ".." sequence? */
->> > +             if (name[i] !=3D '.' || name[i+1] !=3D '.')
->> > +                     continue;
->> > +
->> > +             /* is it a path component? */
->> > +             if ((i =3D=3D 0 || name[i-1] =3D=3D '/') &&
->> > +                 (i =3D=3D name_len - 2 || name[i+2] =3D=3D '/'))
->> > +                     return true;
->> > +     }
->> > +     return false;
->> > +}
->>
->> Why do you open code it, instead of using strstr() and strncmp() like yo=
-u did
->> in v1? I think your approach from v1 read way better.
->
-> The code in v1 was kinda sloppy - it was probably good enough for this
-> check, but not good enough to put in a function called
-> name_contains_dotdot() that is documented to exactly search for any
-> ".." components.
->
-> Basically, the precise regex we have to search for is something like
-> /(^|/)\.\.($|/)/
->
-> To implement that by searching for substrings like in v1, we'd have to
-> search for each possible combination of the capture groups in the
-> regex, which gives the following four (pow(2,2)) patterns:
->
-> <start>..<end>
-> <start>../
-> /..<end>
-> /../
->
-> So written like in v1, that'd look something like:
->
-> if (strcmp(name, "..") =3D=3D 0 || strncmp(name, "../", 3) =3D=3D 0 ||
-> strstr(name, "/../") !=3D NULL || (name_len >=3D 3 &&
-> strcmp(name+name_len-3, "/..") =3D=3D 0)))
->   return true;
->
-> Compared to that, I prefer the code I wrote in v2, since it is less
-> repetitive. But if you want, I can change it to the expression I wrote
-> just now.
+After merging the vfs-brauner tree, today's linux-next boot test (powerpc
+pseries_le_defconfig) produced this warning:
 
-Maybe
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 1 at arch/powerpc/mm/pageattr.c:97 change_memory_attr+=
+0xbc/0x150
+Modules linked in:
+CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-rc5-06731-g66e0882f=
+ba22 #1
+Hardware name: IBM pSeries (emulated by qemu) POWER8 (architected) 0x4d0200=
+ 0xf000004 of:SLOF,HEAD pSeries
+NIP:  c00000000008a1ac LR: c00000000008a14c CTR: 0000000000000000
+REGS: c0000000049b7930 TRAP: 0700   Not tainted  (6.11.0-rc5-06731-g66e0882=
+fba22)
+MSR:  8000000002029033 <SF,VEC,EE,ME,IR,DR,RI,LE>  CR: 84000482  XER: 00000=
+000
+CFAR: c00000000008a218 IRQMASK: 0=20
+GPR00: c00000000008a14c c0000000049b7bd0 c00000000167b100 0000000000000000=
+=20
+GPR04: 0000000000000001 0000000000000000 0000000000000200 c000000002b10878=
+=20
+GPR08: 000000007da60000 c007ffffffffffff ffffffffffffffff 0000000084000482=
+=20
+GPR12: 0000000000000180 c000000002b90000 c00000000001110c 0000000000000000=
+=20
+GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+=20
+GPR20: 0000000000000000 0000000000000000 0000000000000000 c000000001562288=
+=20
+GPR24: c000000002003e6c c000000001632418 000000000000018c c0000000020c1058=
+=20
+GPR28: 0000000000000000 0000000000000000 c000000006330000 0000000000000001=
+=20
+NIP [c00000000008a1ac] change_memory_attr+0xbc/0x150
+LR [c00000000008a14c] change_memory_attr+0x5c/0x150
+Call Trace:
+[c0000000049b7bd0] [000000000000018c] 0x18c (unreliable)
+[c0000000049b7c10] [c00000000206bf70] iomap_dio_init+0x64/0x88
+[c0000000049b7c30] [c000000000010d98] do_one_initcall+0x80/0x2f8
+[c0000000049b7d00] [c000000002005c9c] kernel_init_freeable+0x32c/0x520
+[c0000000049b7de0] [c000000000011138] kernel_init+0x34/0x26c
+[c0000000049b7e50] [c00000000000debc] ret_from_kernel_user_thread+0x14/0x1c
+--- interrupt: 0 at 0x0
+Code: 60000000 e8010050 eba10028 7c6307b4 ebc10030 38210040 ebe1fff8 7c0803=
+a6 4e800020 7bc92720 2c29000c 41820058 <0fe00000> 4800002c 60000000 6000000=
+0=20
+---[ end trace 0000000000000000 ]---
 
-	for (p =3D s; (q =3D strstr(p, "..")) !=3D NULL; p =3D q+2) {
-		if ((q =3D=3D s || q[-1] =3D=3D '/') &&
-		    (q[2] =3D=3D '\0' || q[2] =3D=3D '/'))
-			return true;
-	}
-        return false;
+Bisected to commit
 
-?
+  d940b3b7b76b ("iomap: fix iomap_dio_zero() for fs bs > system page size")
 
-Rasmus
+I have reverted commit
+
+  9b0ebbc72358 ("Merge patch series "enable bs > ps in XFS"")
+
+for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/eFOibwsiHTxbRCFF.J1bhf2
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbMNeMACgkQAVBC80lX
+0GxEdQf/R1yIPtc12LuyoonK0zKvGPJRxslB88jntuhop9Pk891xvOU8nOi0+9Th
+YkMkE9lOYuIlx9O31t6kFtd92YgCGmaRwsQ9CSnETYulJx1m2e5OcBo2h8BEuvvD
+V9etU0RGGkuJlamTpDiKYKuDpe3QiwBH7M5PgcpSuiXfTGnVChO4Y6hixE5+u8bU
+J8D/mm5HmtZ5bk5uMwv+WL5pw55P+IDtBCrLveShdOGAKr+OcqxSOUo3hJKNnS02
+tiwWebuO/MHL7cUui9C8KL9Tc360Ee4JKPLny072KyUDHsX1N5SeMYjtEkAyTUdR
+ib4aoP4D43BDmXTXRoArm/Xf7GL8mw==
+=B4mt
+-----END PGP SIGNATURE-----
+
+--Sig_/eFOibwsiHTxbRCFF.J1bhf2--
 
