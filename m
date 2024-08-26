@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-302178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55BF695FADD
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:47:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16A4895FADF
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12B462878CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:47:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1FDD1F24006
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079C21A00D0;
-	Mon, 26 Aug 2024 20:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA911A00ED;
+	Mon, 26 Aug 2024 20:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HxcAdmuP"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ROlX2I7U"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CAC19F48D
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 20:44:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138551A00D1
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 20:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724705065; cv=none; b=oIjDtQ7aKyS2N51TJPpYc7nzjaebL9E2jgrI2cEL+pzNfxLG614h6D0XKdPFg5KMuqwjZqtE3vZlG0wvYQZ30K/pRIm+6ZwqdHmArXMUqNneBxTZutEOkUJ4Mgnio9Q1FPONOaagRsDyhLp5ChmcjIe9oBYcWpk+eEdNYeWMXUE=
+	t=1724705067; cv=none; b=aHkMNnybE71Nv1iqleMykHsscnlw0SD4qN57+lvkzTIAc+ApPXhJYBrQeVDwGk0hiAXkN9gZXXDkMVnw4+PV36lHrwBoqhEqPyzSelp/YXF62a2eajqZ7N57PkA2lBxCYSbjXxHDsK6ey4R9lL6zMLelGNsxHHXT53GD0c+VH8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724705065; c=relaxed/simple;
-	bh=tylq1muqjeOnFYCjzZOC/g07tmHzw2/ZVGGdJsJupkM=;
+	s=arc-20240116; t=1724705067; c=relaxed/simple;
+	bh=BQuf5gTrb+LFvvLLmklTnMaR8Ti7tRzNRxtQXaWJ5ko=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CTMYJkHQKispQu96h+TlYs2yuTFhs0RnOSnQ9BHHkJ7m/FydfRd237Wrt5B4Ormf2YpWgNv6+wLLhzTBfPlQeyyrkfyD6nbaoIU6AUybcpHccd754qNSq4MANEqagRV49fvu7amI/ThyyjN1WKCgdA/xOaYV1yIrPpxR9RAHmoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HxcAdmuP; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=JlE7I70UTiR8msX2u0CahdHProLEtj28gGggDRw8L6yID4yDUYaDh07bxBzN2+j51tRW7L6bc6bgjiB/qu8sfrbZ42qHI7LbjwuEKIey5Wl6eTnOIeCppqOJtHl0bYsTXQoBysU3P5agasYV8zLl1eAlqdkHOf3QIGFO6mQYosc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ROlX2I7U; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724705063;
+	s=mimecast20190719; t=1724705065;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=moprxbUn5M7+L+63SZwwyqeq4iL0OHeeIJZbsfnkOho=;
-	b=HxcAdmuPLoLk68HBgsFHMBqHzb3/HG0/m9q/YAKsQa2mSWy7hp18G1FsjSvE5iTW+OqvlS
-	VMCq2Hv4UindeGb2QaUSEYKR4MrkG7UGBoHZBp3BSQXMi5rfSn2cms1lsBhXDtijYD5deA
-	pvNZk1YZMrPOqcXq3j3aIVjCF6tY9kw=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=HLBqit68L/U2mdwYaFkydFK3txHa+LkmL8n2YTQXnnw=;
+	b=ROlX2I7Uk0h0z/EbbmrjDDC5L29amroUx7hw0sQuUWaJcsejLWRGRU00SYIbG5ySa8JXjC
+	uqyVHAHgbUauLWAMse/7JAyxacnpa+tFTp2wyIVzB9I3jgPPt6i+dEz79NV8nepxwu/3Cm
+	oJ3OMld4i7C3pSc++uPKF+BlKbQ9V3o=
+Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
+ [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-408-Wob4E6cPPrKtuoz43f_vBA-1; Mon, 26 Aug 2024 16:44:21 -0400
-X-MC-Unique: Wob4E6cPPrKtuoz43f_vBA-1
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7a1d4335cceso884882085a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 13:44:21 -0700 (PDT)
+ us-mta-658-2Rh4yhghMe2FmPIezQmz3A-1; Mon, 26 Aug 2024 16:44:23 -0400
+X-MC-Unique: 2Rh4yhghMe2FmPIezQmz3A-1
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-6643016423fso96108047b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 13:44:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724705061; x=1725309861;
+        d=1e100.net; s=20230601; t=1724705063; x=1725309863;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=moprxbUn5M7+L+63SZwwyqeq4iL0OHeeIJZbsfnkOho=;
-        b=ffX0qyfr+EYXxbDy37iwFOhMIiv5H1AephRWUHT1mY1WpDrvuhH2vCyJpMsh9GYb1y
-         z98cDLYPh0EyQ4AHLfkVMwXydrhPbC+dIVJFLOSaxn8RWp7NoIJDZ1j/pm5wjowm+/kz
-         cIxGUs2sFOzt+LfVJP/WbTNKoX1Mct9H3YmjiLUBii6pID8WbQDl5vurhYde2foGbbnI
-         Fqc8+1Y13yYiYTxsXR+1aP6MBV9joInYLpdQP9ES1dzhE6eW7hExIm4pZLtPDanptjJ1
-         W6cQRBpGE22z+qLWhS56wxQzt1ZKSp8RKRPCxBp0gIUgmdOAtsChxSgRMa1LrHDgOGIS
-         oAYQ==
-X-Gm-Message-State: AOJu0YyM9kGFZpiuEagdqFsFwhYbWTClsusftMagGoBiOi3eZL6hLprz
-	yN4vcdWhTmuYbvVM9vMCT4VUA/OxJZ714CG5WNrRaKxRtYcLSHn+Nnm4GY4fIWeuIj3s/LD0i2J
-	TEu+ppUJ7nRWVKzoJ5XxTfYUSUBxthoWFUuNWNsfG7WGjRZ+HmkSIh4wfYNeOACGLqbfaw2BinT
-	OeRp+39NmDJVQdGt8RSo4lMQRJ58QTSlmtiClwpPd98wE=
-X-Received: by 2002:a05:620a:1a92:b0:7a1:e341:d543 with SMTP id af79cd13be357-7a7e4cf3a3fmr158799485a.28.1724705060771;
-        Mon, 26 Aug 2024 13:44:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF8L+Naz3FkxDynSQ3yMse2qHglqFkf4LqBPi/5cD3sQEuFfYs6yWPMbT2Qk9XtpK98A+7trg==
-X-Received: by 2002:a05:620a:1a92:b0:7a1:e341:d543 with SMTP id af79cd13be357-7a7e4cf3a3fmr158793685a.28.1724705060390;
-        Mon, 26 Aug 2024 13:44:20 -0700 (PDT)
+        bh=HLBqit68L/U2mdwYaFkydFK3txHa+LkmL8n2YTQXnnw=;
+        b=HMlr6j/52tp66i3aMRgsC36P4O7LHk23fxzf7OT52NznTKJGhUVmAkkZjkzHvmX7IN
+         xvXjpbwNtZKMxtMnWFhsPklSyrzrOiKxifq0OZQbSu1afrTE8csYMPqgfEFHrnlWYwAe
+         OE2+PHoJRrPKREJrriperHslBqFrrLstvFO18gqjJ7nmKM3vAuvX4dqNNujAcrccIsyR
+         iilHMYknzC+0ioEyAcCWqFZvt7bilXQKwKDcVg7SS9T3lESNsWP/sZe2u07o4QTlDxWW
+         o5A6SZ/i7oP62DfSAio/X4V8t7bODPxh8NZFUPp369uBPZscdmy0Y7Xv9+oXTn79kQMB
+         E/uQ==
+X-Gm-Message-State: AOJu0Yx2fTiRmIfDDFXhOH44XXb382Au7LuMgATU7pFY4EbA2LwIXmiJ
+	/p0I8c2t3v6gUlD0LfW69JS4QNce4ia5W/NqYXcVcgkZ6X4gRVK6fmsqt0RFtVkGnBIFj+5dTZB
+	EA8McMv2sl5pQb8Th62O95yrX9O5ZlxtSU9AdCwgH3RvizTFm0Q8bHfTNaEcD9bfoKzUxtxSDlV
+	aHHzOBEEFEw6X13OgwjBpWpPSzT6gN3n7vslspomd1ZGI=
+X-Received: by 2002:a05:690c:39b:b0:62f:aaaa:187a with SMTP id 00721157ae682-6c625a4cc55mr151107117b3.14.1724705062820;
+        Mon, 26 Aug 2024 13:44:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGeaoJv/EbB8r7mSzacjacGidgTJuNMUQKi5I30qkj93MEO5BseX564RMMiUfXmELj5ALvNSw==
+X-Received: by 2002:a05:690c:39b:b0:62f:aaaa:187a with SMTP id 00721157ae682-6c625a4cc55mr151106717b3.14.1724705062426;
+        Mon, 26 Aug 2024 13:44:22 -0700 (PDT)
 Received: from x1n.redhat.com (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a67f3fd6c1sm491055185a.121.2024.08.26.13.44.18
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a67f3fd6c1sm491055185a.121.2024.08.26.13.44.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 13:44:19 -0700 (PDT)
+        Mon, 26 Aug 2024 13:44:21 -0700 (PDT)
 From: Peter Xu <peterx@redhat.com>
 To: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
@@ -98,9 +98,9 @@ Cc: Gavin Shan <gshan@redhat.com>,
 	Will Deacon <will@kernel.org>,
 	Kefeng Wang <wangkefeng.wang@huawei.com>,
 	Alex Williamson <alex.williamson@redhat.com>
-Subject: [PATCH v2 12/19] mm/x86/pat: Use the new follow_pfnmap API
-Date: Mon, 26 Aug 2024 16:43:46 -0400
-Message-ID: <20240826204353.2228736-13-peterx@redhat.com>
+Subject: [PATCH v2 13/19] vfio: Use the new follow_pfnmap API
+Date: Mon, 26 Aug 2024 16:43:47 -0400
+Message-ID: <20240826204353.2228736-14-peterx@redhat.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240826204353.2228736-1-peterx@redhat.com>
 References: <20240826204353.2228736-1-peterx@redhat.com>
@@ -114,49 +114,54 @@ Content-Transfer-Encoding: 8bit
 
 Use the new API that can understand huge pfn mappings.
 
-Cc: x86@kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Alex Williamson <alex.williamson@redhat.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- arch/x86/mm/pat/memtype.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+ drivers/vfio/vfio_iommu_type1.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/mm/pat/memtype.c b/arch/x86/mm/pat/memtype.c
-index 1fa0bf6ed295..f73b5ce270b3 100644
---- a/arch/x86/mm/pat/memtype.c
-+++ b/arch/x86/mm/pat/memtype.c
-@@ -951,23 +951,20 @@ static void free_pfn_range(u64 paddr, unsigned long size)
- static int follow_phys(struct vm_area_struct *vma, unsigned long *prot,
- 		resource_size_t *phys)
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index 0960699e7554..bf391b40e576 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -513,12 +513,10 @@ static int follow_fault_pfn(struct vm_area_struct *vma, struct mm_struct *mm,
+ 			    unsigned long vaddr, unsigned long *pfn,
+ 			    bool write_fault)
  {
--	pte_t *ptep, pte;
+-	pte_t *ptep;
+-	pte_t pte;
 -	spinlock_t *ptl;
-+	struct follow_pfnmap_args args = { .vma = vma, .address = vma->vm_start };
++	struct follow_pfnmap_args args = { .vma = vma, .address = vaddr };
+ 	int ret;
  
--	if (follow_pte(vma, vma->vm_start, &ptep, &ptl))
-+	if (follow_pfnmap_start(&args))
- 		return -EINVAL;
+-	ret = follow_pte(vma, vaddr, &ptep, &ptl);
++	ret = follow_pfnmap_start(&args);
+ 	if (ret) {
+ 		bool unlocked = false;
+ 
+@@ -532,19 +530,17 @@ static int follow_fault_pfn(struct vm_area_struct *vma, struct mm_struct *mm,
+ 		if (ret)
+ 			return ret;
+ 
+-		ret = follow_pte(vma, vaddr, &ptep, &ptl);
++		ret = follow_pfnmap_start(&args);
+ 		if (ret)
+ 			return ret;
+ 	}
  
 -	pte = ptep_get(ptep);
 -
- 	/* Never return PFNs of anon folios in COW mappings. */
--	if (vm_normal_folio(vma, vma->vm_start, pte)) {
--		pte_unmap_unlock(ptep, ptl);
-+	if (!args.special) {
-+		follow_pfnmap_end(&args);
- 		return -EINVAL;
- 	}
+-	if (write_fault && !pte_write(pte))
++	if (write_fault && !args.writable)
+ 		ret = -EFAULT;
+ 	else
+-		*pfn = pte_pfn(pte);
++		*pfn = args.pfn;
  
--	*prot = pgprot_val(pte_pgprot(pte));
--	*phys = (resource_size_t)pte_pfn(pte) << PAGE_SHIFT;
 -	pte_unmap_unlock(ptep, ptl);
-+	*prot = pgprot_val(args.pgprot);
-+	*phys = (resource_size_t)args.pfn << PAGE_SHIFT;
 +	follow_pfnmap_end(&args);
- 	return 0;
+ 	return ret;
  }
  
 -- 
