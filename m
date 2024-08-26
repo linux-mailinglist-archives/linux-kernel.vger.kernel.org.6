@@ -1,722 +1,266 @@
-Return-Path: <linux-kernel+bounces-301131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B3E95ECC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:10:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F46C95ECCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:11:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FB421F21448
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:10:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35BBD281C2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E341422B8;
-	Mon, 26 Aug 2024 09:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327AB13AD22;
+	Mon, 26 Aug 2024 09:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZjY3mfHN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="q7hLIsIL"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2089.outbound.protection.outlook.com [40.107.223.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBDD13BACC;
-	Mon, 26 Aug 2024 09:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724663440; cv=none; b=A/QJkEcuPbu4tntvsvvhD1ObNsLQ8z+IwLLhUKJuFlYKD9DizPIpKdcdrqSLxuGyqObSp54TzE3tjjCdsQ8vS8lAVSRKmsQlPxUd/xrOB4ucd0OoQ/VanCNQRjGymBsN1Xk5ZpOuRau77i+hET+RSr1mUf0+cTUMtimNBZMMUqA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724663440; c=relaxed/simple;
-	bh=ubU4SP5/UrB7mcpISJ52zNIckboVT0Fj8XYbs/4GPzQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CpwUPjSxH0xDjgvrwTBFD3f/1lK6Ni1o2mBOaB7jE1WwmCn1BhQ+YfZeNRQQ2Qs4N5fZ86B7p6IAuFhWERjZeswnDecj+N6LgDVMkvrxh0bvH9m2CgSctp3BsYeBd1XEqwufQOov24/Kvu+SkYJI6EHBno4nLEeviKApuyspcvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZjY3mfHN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAB79C8CDC1;
-	Mon, 26 Aug 2024 09:10:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724663440;
-	bh=ubU4SP5/UrB7mcpISJ52zNIckboVT0Fj8XYbs/4GPzQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZjY3mfHNQ3M01Ay4ODdAUqJbGwq9IIN3DBE6SJZ4TP73eKOHk+u7YH1pY3TWjyPJ3
-	 YHSzlaMvg+IVF7Gr86Qt600YPm6qj9XUilQGb8vHyshYzVnmzprfG32SMVwCyXFgJS
-	 TXPz3asQqsJxmkdsPtjFKzAW4sNFmT4HRl6hf0GeMm9AyQB+ZmAuJBKitssF1ZeE85
-	 xx5a9fyehwpr89cSpn44lGVxVNwEiyz+z7k3HSPfHKdZQ0xLMsneMTjgQxGtQ1yPts
-	 IzUg9Or7iIbzWR68fJHVsjrqLeJjTlwNW8ahIaY8NYjt25BZ1NxLRvFWq+DaVgjuJT
-	 FmUhjsMZ+EOFw==
-Message-ID: <fd18295c-6544-4da6-aab0-6d6b9c12581a@kernel.org>
-Date: Mon, 26 Aug 2024 11:10:32 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7DD13E033
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724663492; cv=fail; b=jtTB3CojZplOdyB0LgSxQ/TGl9lXOdp47wDGLDpoiVKrqdepkGNCXdNkX/SNq5m6Y4fezVdYngrGxzuvWZHh6lCR1QfBgH2N9HErHPQWgGOZyKX+WRjDrXK0oCMvtJSMhLIEUtsn8dZQTOTflAvblof8kdVt6VYoZmKCQw6trxo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724663492; c=relaxed/simple;
+	bh=GYN2ulYMbmHdUBX27Jtzg9DzWk6LDTI1ZyKnBBj5nPE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=sp43qn89yQo2NIKMc7I0U1qki2K0/jhryJ0OFmrkJDtxNnRbdqoFUnDt/z9IdmN4kZU/TjRmepwNuZ7kxD7btwTgXPOVmTIBZv2gDl3LQYgqUyG73p6fUA9BRDJICC6V/+WdtZWNhi8eiZZzf4+Qii0nrjJqoifL83FaKrw+Owg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=q7hLIsIL; arc=fail smtp.client-ip=40.107.223.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=isiYbVG1t1RB2qfm9lUhlek4lolbpdIyo+o9IJ7TMAMncnR0gUySr2R6xsy6Oq6t11HzK0xR9pwwdHXfZlUXsHstmkw6jX60ny/zjnUBh+c64+wxgSD0KV9CYIIFw1lvE7yP8kcemGkgk+HHdAeUSUsw2KAbhqwP7noJAjG4xufbzEKrXFG1pKXa+Zw/Zgp7B/I+ZknmTf+aKQ8UY+GxTBJrp3WI+SL0TxrBPdsSt6zaoNX4epwGhQxpJNCaFZOtSO/pxJFPv1UEB+HSe6hA5+iwF5oUfFb5Kmhwu7QeM8gSHHuJRWueSXiSoxFSbQAHqelgZ4/lx9d4XGdJnEDicQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=T4yGqf0Og3CqY0/J2EvjjnMlgMDvclmrmK+98wDiVPU=;
+ b=iGzjxk9zdegJr5S4SVKNaAPTZk5JmiyhBH1wT6l30Sj9eOuy2pB+DRQf2POnwmSq7U/PtIU/2ESWOGW6wvCilpgySt0sZmGV1Bk3c6t6uEFxd248EexP6eWYT5QbeJx/zM5EdcaR49RwOUCKceXY9wnvi0LoMbES7243TXgEzbKhdO5n0+cOW2PZPxb+OTBBHeusqNH5pdlYjYD3mfyfxNoPu5xFD5mqNjPxWIqJIp2CyFQZLS9PgTqOKrf0n13rFTTj/Rk31l8NzMBgNipAo2fSsPWZGYSV+jOib3BSzaBJjq7cE6URLGoDiC4ucw5+MlKPr5sMCBZmWe5EO7RI+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=T4yGqf0Og3CqY0/J2EvjjnMlgMDvclmrmK+98wDiVPU=;
+ b=q7hLIsILcdZvI73GbvCTMZjspIV4zG04TMXyol5FWmWrxBv7awEggQdq/WIUlk81kLO7b10vN27RZtUX4NJElfGpisHS/KK5fJZPab0mhl9WIThPGhaC57PnO3X/l7f/of0/TLKuC95qYbuQCqZYIf1ZgMdjpPMgh1TxVKr5z5c=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
+ IA0PR12MB7507.namprd12.prod.outlook.com (2603:10b6:208:441::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Mon, 26 Aug
+ 2024 09:11:27 +0000
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5%5]) with mapi id 15.20.7897.021; Mon, 26 Aug 2024
+ 09:11:27 +0000
+Message-ID: <0f80d53f-ea8b-4f16-acf8-aa1c99966dfa@amd.com>
+Date: Mon, 26 Aug 2024 14:41:18 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] iommu/vt-d: Move PCI PASID enablement to probe path
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Baolu Lu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Kevin Tian <kevin.tian@intel.com>, Yi Liu <yi.l.liu@intel.com>,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240816104945.97160-1-baolu.lu@linux.intel.com>
+ <6650ce02-ac85-4cb6-941c-cc7e8b6effc4@amd.com>
+ <92b55591-e106-4366-ba5b-0588af50770f@linux.intel.com>
+ <635b24b7-632d-4046-b82e-6ac6976686c9@amd.com>
+ <0e807eec-ce51-42e2-9290-dc90c4210888@linux.intel.com>
+ <20240819123400.GU3468552@ziepe.ca>
+ <4d9c1513-8062-4594-a06a-c9f179abdaab@linux.intel.com>
+ <72e59734-431e-4eb4-b27c-44eefab3dcb0@amd.com>
+ <20240820135153.GW3468552@ziepe.ca>
+Content-Language: en-US
+From: Vasant Hegde <vasant.hegde@amd.com>
+In-Reply-To: <20240820135153.GW3468552@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0004.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:25::9) To DS7PR12MB6048.namprd12.prod.outlook.com
+ (2603:10b6:8:9f::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] drivers: gpio: siul2-s32g2: add NXP S32G2/S32G3 SoCs
- support
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chester Lin <chester62515@gmail.com>,
- Matthias Brugger <mbrugger@suse.com>,
- Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>,
- Larisa Grigore <larisa.grigore@nxp.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- NXP S32 Linux Team <s32@nxp.com>
-References: <20240826084214.2368673-1-andrei.stefanescu@oss.nxp.com>
- <20240826084214.2368673-3-andrei.stefanescu@oss.nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240826084214.2368673-3-andrei.stefanescu@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|IA0PR12MB7507:EE_
+X-MS-Office365-Filtering-Correlation-Id: 12abc817-4e3b-42f9-8e14-08dcc5af10aa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RUNLRVJIMHJBQ0FXRTVxRzFaUmJjM1A0SExNNDUyZTFYWERPK045c29qUU1h?=
+ =?utf-8?B?ekVIZTA1bFF2bFFIMGh2VmV1My9jVzhYNDlBYmttTHFLdlphaTVoOVBIN0pU?=
+ =?utf-8?B?VUtvYm9laVpueXd3Szh5MWVucGxTMHYvU2REamdubE8wOHYvaFUvd3JCQVNv?=
+ =?utf-8?B?azd5RTJ6cUNRa1JWbWZ5MGRieVpNa2ZSRk5MMUE2dFZWZTlKRi82ajFKd0Vy?=
+ =?utf-8?B?emdpN1FNN0tHUy9aMzd4MTZrL0FrZHZ0QVB5ckJ5eDliV2lXWG03aGp6dWJZ?=
+ =?utf-8?B?bjZwdlJxdFY5U2FkNmF3Nmc1UDdhczVOWExKN3VGOVpxUHBqenQyM2phZ0Rj?=
+ =?utf-8?B?NXptLzQ3NXRmV3RhMTBiV05ZV1BUYTI3a003WXhKeGJYN3c0Ym1POWo0NkJJ?=
+ =?utf-8?B?UDJ2VzdDTVpaVksxYkFRSGI1Q01TVjk5YWhxbkRkWUcvdFl0eXBtUFlBTUwv?=
+ =?utf-8?B?RHF1RVRiWFQ5RGxrSnVSM25ZZ1lwMUhLWkRDYkdOb1d6RDFLcVkrR1l4dGg3?=
+ =?utf-8?B?NzZYRGs1ZFBaN244QnZPLzQzR210V2hOamNWSGlreUhXQmVaS0RnSmNOZ0pl?=
+ =?utf-8?B?aWtuTWRhZEpKQjNyS0R5L0tvanRXL2tadVFXY3RRdFF1dkkzb0h0bW5sSkYx?=
+ =?utf-8?B?UDQ0YVhtVE1OOFNkVm5FWHBwOW41S0YyVFJHWXBvSVBsYzJDS1BJZjJQTHcv?=
+ =?utf-8?B?Y3VRSS9jWWpWNWxrTk1tOHFFZjhIOEhqQVd5TXIwZy9UR1RDVUUrcTZncVdF?=
+ =?utf-8?B?WHVlakJad1A1QVVCOTlXOFpWanAyckRhemNyb1hxY29JcUF0S21jWDZQcTBN?=
+ =?utf-8?B?STFFUE00YUVrMXdTRXJ6dStkNWZmTWc1RUlBT3M5aG91LzdIWDZPUHE4dWRk?=
+ =?utf-8?B?Qitxd2tHYUFTaS9KYkZhemNIc1NTZFNjSHRleDF4eDlXMlRCeVlHdFUzcTRG?=
+ =?utf-8?B?MWliUkREcTc3cTg3K2o2YWlKUXV6SjBrSm1rbkVWU0FOdlVndXJlb3ByNkYv?=
+ =?utf-8?B?SEhKSHFOMzZyK0dVRFpJeEtaSlV5YUdIVmZNUWk0S1doZUZYQVY3eHpmU21i?=
+ =?utf-8?B?YzArWkR0RkdMMnlVMEd2dXRiQ2RadkNDRW1Ld1E5eG9UbENJR28vcG1SWFd5?=
+ =?utf-8?B?bjl4OWpGY05EbkFuTkZidk8rS0RkaTZtNmtITkYrUjFJb1I3a3I3OHVrWmcy?=
+ =?utf-8?B?M21QV0RxSWg3WllXNjFjN205VHNnNHRQTTA0NDNydXZUbHdDc3d5ZVRUVTlC?=
+ =?utf-8?B?dXFON3Z5bWZ2VlFhbmtGcy9qMUFVd3k5dEpmNjlwRkEwYndsdk96ejArSmJ1?=
+ =?utf-8?B?NXB4YkRYR215MmNOWW5talZqRXNCcFlac21sQ1NwdzV1NlcxSVgzSFlra05u?=
+ =?utf-8?B?NGpFaG15YnNDRGtyaW5aRGUxanFqTHE3VlpxWGFnbXRSaXlFQTVma3lkZkFr?=
+ =?utf-8?B?ZkFLTG14bEN3TW5mSXh5ZStNdWh0b3JsNFQ4MU5ybmZLd1Y0cHFySmJxMU82?=
+ =?utf-8?B?SmtWK1IyN3o0RjJNQktodkljL2hNQUZKTTRTdVBXSmFTWllJcmd5RmRaWXdw?=
+ =?utf-8?B?U29LV3FScVlmVVN5SzlsM1RtbGhHYzVLQmFSOGdBRFN6N0lsdmpjVVYxOVQ2?=
+ =?utf-8?B?TUNMbmtycFRNbDJxWFphVTBRMTF6aHpDaEt3NmlTUGZ1c1dHK1NVaXMyWk1j?=
+ =?utf-8?B?bE5MOTJDTGRzOUt4aENlek5palFqdXA0NWlQb1FNM05XR0VXNGQ0VGVWU0pV?=
+ =?utf-8?B?cTBoT2xtcDNLSUtxZ1BvS0tZVHl3NEM4b3FBUnVXZkc0S2RMZkdwL1E2VWFW?=
+ =?utf-8?Q?BZe3G9ttgwU7YjRytCigOsTu66FPJcE1klu0o=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aDhNOVp2NGp0bWZGeU02dE5XU3N0elpVN3BUSjQ5U1ptVXVHZXJhdDlDdzJY?=
+ =?utf-8?B?UHQycW56dEpJZWY1UDBQdTJOSlRnM2RJWlF4T0ttRGNtV2tBYVEvRGFnbjJC?=
+ =?utf-8?B?dEJuOFZmS1pIbUp0R1hMcHpNaG8zNWhJTjcrdUVEQ3BVdURjdFNLTmVOdGcy?=
+ =?utf-8?B?OVR6OEthOGVVSjF5WGtqTjFmOGd4azUvQm5IcTBnQVIwcDJLd0llOGI4MWpU?=
+ =?utf-8?B?YmlJVWtXUVIzejJVNWt2TEdXamNYVlBkeTJBdVN2QXZEL1VRTE5YeFVXSStY?=
+ =?utf-8?B?SjhVT0ZGOVFzSTRQbW5GaVN3dFhVU0ZBem5SY1Z0ME5BOERQWTU2ZlZjVnRI?=
+ =?utf-8?B?TDJ3ZGppUXhGOUNWd0pUZjdmMW9oYkFhbHZ4T0o2UXR4NGl6VkZER3JGM1ZY?=
+ =?utf-8?B?MUVkRVJUU1l0ZllNMm0yVEdhRm9oKzh0RDJQVUR1UlZ0eE1pTVczRHpYMlhk?=
+ =?utf-8?B?N1ZocFlaYk1rdFZ5SGhzVGhjRDcrbzlEbjg2VGZTeG56bTVvZDFHMW5qZzM0?=
+ =?utf-8?B?cXFqaVRDSkU0L3BRNDdpdEw2SWdWQmptTFdhb1FMcGthcHFab3pkK0tndmh5?=
+ =?utf-8?B?YlJIMzl4SG5wd0pTK25EMTdseS83MkhSaEpZL1h2akJYeVNVcjU3dHB2bzFN?=
+ =?utf-8?B?QlgvSUNJaXBNQUd3ZE96NEF4Mi9KUW5qOEhrUnBSQWtFa2xTQi9NVHFqbXRP?=
+ =?utf-8?B?VUFVQUZkbVc3ellwZFBoVmZBd3VSRUM2L1JmZVVoWFJHUkRZS2NJc1RLcG82?=
+ =?utf-8?B?K2FodjlWWjBuUDJaVU94QklFYS9IU3Fabll5ZzViVnJtZWNlRWR5SjQrOTZE?=
+ =?utf-8?B?cDBTTzBlbDU2SWJlRkdWODlYZmZWZlZWV09yMGhQaWZFdlRsWHdadkdNTW4r?=
+ =?utf-8?B?dU4vaStaTGtwZUVKQTlGdVl1SnhOVVd5aVJ0cnJrenVKL2drNFQvV1p1MjFq?=
+ =?utf-8?B?QncwM1VhOFlHZDU3Kzdtb3UxbTA5ZVMzMGRndU0rTlRNb1AzSWJCMFlRQ1VW?=
+ =?utf-8?B?UHpoWENMWHhaRDBkSkxXNGg2Rm1uTnJiRmVtdGErRTZpUzRyRHVSKzlxQ0xE?=
+ =?utf-8?B?NEhjS21pTXZzbmZOTENCTldhNDNMUnRSR2tuK1Yzb0FXdkxVcHB6NGZkVEVy?=
+ =?utf-8?B?dEw2d1piZXZlMUM2dWNxN2MvUEZsK0U0ais1emZ0OUxyYkM3aWZScVlCZXhh?=
+ =?utf-8?B?clBDRk1laFVzWUN5RElwNUlpZjlJdXY3VDRicFZvSTdtUm9qVlJTR1RGU0JF?=
+ =?utf-8?B?NGxGcjEyRUZtVDVYYktzQUdHTVlYbHNGSWtuK1JxVVVBVElwMDBjMnU3SlNj?=
+ =?utf-8?B?OUZPYmk2a1AzeURBYUJEb3o3VVJvWWN1bEcrSHlubmtiSk9FREVuSWYvR3Vs?=
+ =?utf-8?B?bWE4ZE1oYWMxeXg4K3lRVGdLVWZnMXJ1aXliRE1hci9HcnpMWWZjR0JjRW9m?=
+ =?utf-8?B?VmhGVmtGVHk2aFhwUmg0blFWRWV1WU82WE40SGE0ZmVYeEswRGRpUDZzallt?=
+ =?utf-8?B?c0l2dXVzZGxPaDlwckhxSWdlTzhWUEdJS084em90Y3FyaWxRVy9seGI2VHFo?=
+ =?utf-8?B?U1l0N1UwWkF2YWlmUjJYcDREbStNamFVQ2VkRHVXV2pMQ24zSFFiNGZjNzFr?=
+ =?utf-8?B?ZWFxR3d2MVM0ZHJ6MEFyWmNyLzlPZ01STlJ6TUkzVnBvcmdCSFJsSTBTaDA5?=
+ =?utf-8?B?ZEZkV0ZrOU5HSzdaaC81MGxHa1hNdU8raU9rTU1TTmszSVZka1VoYkplb2V4?=
+ =?utf-8?B?eGx2RkUzNExvRVo2OVhSWjljT0RNU3pVcWNCMGtZcmw3TDJTVDN2SytwUkRN?=
+ =?utf-8?B?SVFFcERQMmtYZks0NStDY2x3dTh6YjAxaWZkMHF6cVNsYkNvdmpOdlVPRmtq?=
+ =?utf-8?B?M2o3OUpVUU5VTWZjdGx3bGdCUkQxcVd6YU13ditscjhUS0xsZ09nWXpSaHBn?=
+ =?utf-8?B?MW1RWmYwaExPVGhRNUVFcmgwQ0VHZjBoNjhiSXJENXA5K0dFRVFxVE91UUdY?=
+ =?utf-8?B?WHNNN1lNdG5JcUNjZ2JySzhUNzNKM3d0RURPR2QrbGR3Q09rd2J3MHBERllk?=
+ =?utf-8?B?cVRxbGZXWVFidjNJOFZaQjFDOWxjMTlCa3dXQkU0MjNLL1UrN3JBWWVSUWtm?=
+ =?utf-8?Q?zWP3BY5lohuxoWbpWloIRufZC?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 12abc817-4e3b-42f9-8e14-08dcc5af10aa
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 09:11:27.2199
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2Ti/JUO7PLGA3+XzWoOjf8p9dRpVg4O1+gZlnJfuu8/7aJ1pxkPX8w+eIKRfrKbY32K/BfLXwg9IeZXCJC8mNQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7507
 
-On 26/08/2024 10:42, Andrei Stefanescu wrote:
-> Add the GPIO driver for S32G2/S32G3 SoCs. This driver uses the SIUL2
-> (System Integration Unit Lite2) hardware module. There are two
-> SIUL2 hardware modules present, SIUL2_0(controlling GPIOs 0-101) and
-> SIUL2_1 for the rest.
-> 
-> The GPIOs are not fully contiguous, there are some gaps:
-> - GPIO102 up to GPIO111(inclusive) are invalid
-> - GPIO123 up to GPIO143(inclusive) are invalid
-> 
-> Some GPIOs are input only(i.e. GPI182) though this restriction
-> is not yet enforced in code.
-> 
-> This patch adds basic GPIO functionality(no interrupts, no
-> suspend/resume functions).
-> 
-> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+Jason,
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
 
-> ---
->  drivers/gpio/Kconfig            |   8 +
->  drivers/gpio/Makefile           |   1 +
->  drivers/gpio/gpio-siul2-s32g2.c | 607 ++++++++++++++++++++++++++++++++
->  3 files changed, 616 insertions(+)
->  create mode 100644 drivers/gpio/gpio-siul2-s32g2.c
+On 8/20/2024 7:21 PM, Jason Gunthorpe wrote:
+> On Tue, Aug 20, 2024 at 02:00:08PM +0530, Vasant Hegde wrote:
 > 
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 58f43bcced7c..0c3c94daab0f 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -643,6 +643,14 @@ config GPIO_SIOX
->  	  Say yes here to support SIOX I/O devices. These are units connected
->  	  via a SIOX bus and have a number of fixed-direction I/O lines.
+>>> Some architectures, including VT-d non-scalable mode, doesn't support
+>>> ATS translation and translated requests when it is working in the
+>>> IDENTITY domain mode. 
+> 
+> ARM has a similar issue.
+> 
+> ATS enablement should be done when the domain is attached in those
+> cases.
+> 
+> Arguably you don't want to turn ATS on anyhow for pure IDENTITY with
+> no PASID because it is just pointless.
+> 
+>> In that case, probably PCI ATS still need to be
+>>> disabled when such domain is attached and re-enabled when the domain is
+>>> detached.
+>>
+>> Does it make sense to move both PASID/PRI enablement to probe() path? something
+>> like below :
+> 
+> It makes sense.
+> 
+> I don't see any ordering restriction in the PCI specification.
+> 
+> Notice that PASID does have a specific called out restriction:
+> 
+> 	/*
+> 	 * Note that PASID must be enabled before, and disabled after ATS:
+> 	 * PCI Express Base 4.0r1.0 - 10.5.1.3 ATS Control Register
+> 	 *
+> 	 *   Behavior is undefined if this bit is Set and the value of the PASID
+> 	 *   Enable, Execute Requested Enable, or Privileged Mode Requested bits
+> 	 *   are changed.
+> 	 */
+> 
+>> [I am assuming ops->dev_enable_feat() interface is going away]
+> 
+> Is the plan
 >  
-> +config GPIO_SIUL2_S32G2
-> +        tristate "GPIO driver for S32G2/S32G3"
-> +        depends on OF_GPIO
+>>   - Enable device side PASID/PRI during ops->probe_device()
+> 
+> Yes
+> 
+>>   - In device attach path (ops->attach_dev()), depending on IOMMU, device and
+>> domain capability configure the features like PASID, IOPF and ATS. That means
+>> ATS enablement is still done at attach device path.
+> 
+> From a PCI perspective only ATS can be changed at this point..
+> 
+> The SW construct of IOPF can be changed during domain attachment.
+> 
+> Everything that is PF-only must be setup during probe_device only
+> otherwise SRIOV VFs will be broken insome cases.
 
-depends on ARCH || COMPILE_TEST?
-(at least that's my preference)
-
-> +        help
-> +          This enables support for the SIUL2 GPIOs found on the S32G2/S32G3
-> +          chips. Say yes here to enable the SIUL2 to be used as an GPIO
-> +          controller for S32G2/S32G3 platforms.
-> +
->  config GPIO_SNPS_CREG
->  	bool "Synopsys GPIO via CREG (Control REGisters) driver"
->  	depends on ARC || COMPILE_TEST
-> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-> index 64dd6d9d730d..fb6e770a64b9 100644
-> --- a/drivers/gpio/Makefile
-> +++ b/drivers/gpio/Makefile
-> @@ -149,6 +149,7 @@ obj-$(CONFIG_GPIO_SCH)			+= gpio-sch.o
->  obj-$(CONFIG_GPIO_SIFIVE)		+= gpio-sifive.o
->  obj-$(CONFIG_GPIO_SIM)			+= gpio-sim.o
->  obj-$(CONFIG_GPIO_SIOX)			+= gpio-siox.o
-> +obj-$(CONFIG_GPIO_SIUL2_S32G2)		+= gpio-siul2-s32g2.o
->  obj-$(CONFIG_GPIO_SL28CPLD)		+= gpio-sl28cpld.o
->  obj-$(CONFIG_GPIO_SLOPPY_LOGIC_ANALYZER) += gpio-sloppy-logic-analyzer.o
->  obj-$(CONFIG_GPIO_SODAVILLE)		+= gpio-sodaville.o
-> diff --git a/drivers/gpio/gpio-siul2-s32g2.c b/drivers/gpio/gpio-siul2-s32g2.c
-> new file mode 100644
-> index 000000000000..07df16299237
-> --- /dev/null
-> +++ b/drivers/gpio/gpio-siul2-s32g2.c
-> @@ -0,0 +1,607 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * SIUL2 GPIO support.
-> + *
-> + * Copyright (c) 2016 Freescale Semiconductor, Inc.
-> + * Copyright 2018-2024 NXP
-> +  */
-> +
-> +#include <linux/err.h>
-> +#include <linux/init.h>
-> +#include <linux/io.h>
-> +#include <linux/gpio.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/module.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/pinctrl/consumer.h>
-> +#include <linux/bitmap.h>
-> +#include <linux/regmap.h>
-> +#include <linux/types.h>
-> +
-> +/* PGPDOs are 16bit registers that come in big endian
-> + * order if they are grouped in pairs of two.
-> + *
-> + * For example, the order is PGPDO1, PGPDO0, PGPDO3, PGPDO2...
-> + */
-> +#define SIUL2_PGPDO(N)		(((N) ^ 1) * 2)
-> +#define S32G2_SIUL2_NUM		2
-> +#define S32G2_PADS_DTS_TAG_LEN	(7)
-> +
-> +#define SIUL2_GPIO_16_PAD_SIZE		16
-> +
-> +/**
-> + * struct siul2_device_data  - platform data attached to the compatible.
-> + * @pad_access: access table for I/O pads, consists of S32G2_SIUL2_NUM tables.
-> + * @reset_cnt: reset the pin name counter to zero when switching to SIUL2_1.
-> + */
-> +struct siul2_device_data {
-> +	const struct regmap_access_table **pad_access;
-> +	const bool reset_cnt;
-> +};
-> +
-> +/**
-> + * struct siul2_desc - describes a SIUL2 hw module.
-> + * @pad_access: array of valid I/O pads.
-> + * @opadmap: the regmap of the Parallel GPIO Pad Data Out Register.
-> + * @ipadmap: the regmap of the Parallel GPIO Pad Data In Register.
-> + * @gpio_base: the first GPIO pin.
-> + * @gpio_num: the number of GPIO pins.
-> + */
-> +struct siul2_desc {
-> +	const struct regmap_access_table *pad_access;
-> +	struct regmap *opadmap;
-> +	struct regmap *ipadmap;
-> +	u32 gpio_base;
-> +	u32 gpio_num;
-> +};
-> +
-> +/**
-> + * struct siul2_gpio_dev - describes a group of GPIO pins.
-> + * @platdata: the platform data.
-> + * @siul2: SIUL2_0 and SIUL2_1 modules information.
-> + * @pin_dir_bitmap: the bitmap with pin directions.
-> + * @gc: the GPIO chip.
-> + * @lock: mutual access to bitmaps.
-> + */
-> +struct siul2_gpio_dev {
-> +	const struct siul2_device_data *platdata;
-> +	struct siul2_desc siul2[S32G2_SIUL2_NUM];
-> +	unsigned long *pin_dir_bitmap;
-> +	struct gpio_chip gc;
-> +	raw_spinlock_t lock;
-> +};
-> +
-> +static inline int siul2_get_gpio_pinspec(struct platform_device *pdev,
-> +					 struct of_phandle_args *pinspec,
-> +					 unsigned int range_index)
-> +{
-> +	struct device_node *np = pdev->dev.of_node;
-> +
-> +	return of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3,
-> +						range_index, pinspec);
-
-Where do you drop the ref?
-
-> +}
-> +
-> +static inline struct regmap *siul2_offset_to_regmap(struct siul2_gpio_dev *dev,
-> +						    unsigned int offset,
-> +						    bool input)
-> +{
-> +	struct siul2_desc *siul2;
-> +	size_t i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(dev->siul2); i++) {
-> +		siul2 = &dev->siul2[i];
-> +		if (offset >= siul2->gpio_base &&
-> +		    offset - siul2->gpio_base < siul2->gpio_num)
-> +			return input ? siul2->ipadmap : siul2->opadmap;
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
-> +static inline void siul2_gpio_set_direction(struct siul2_gpio_dev *dev,
-> +					    unsigned int gpio, int dir)
-
-Drop inline from all above. No point.
-
-> +{
-> +	unsigned long flags;
-> +
-> +	raw_spin_lock_irqsave(&dev->lock, flags);
-> +
-> +	if (dir == GPIO_LINE_DIRECTION_IN)
-> +		bitmap_clear(dev->pin_dir_bitmap, gpio, 1);
-> +	else
-> +		bitmap_set(dev->pin_dir_bitmap, gpio, 1);
-> +
-> +	raw_spin_unlock_irqrestore(&dev->lock, flags);
-> +}
-> +
-> +static inline int siul2_get_direction(struct siul2_gpio_dev *dev,
-> +				      unsigned int gpio)
-> +{
-> +	return test_bit(gpio, dev->pin_dir_bitmap) ? GPIO_LINE_DIRECTION_OUT :
-> +						     GPIO_LINE_DIRECTION_IN;
-> +}
-> +
-> +static inline struct siul2_gpio_dev *to_siul2_gpio_dev(struct gpio_chip *chip)
-> +{
-> +	return container_of(chip, struct siul2_gpio_dev, gc);
-> +}
-> +
-> +static int siul2_gpio_dir_in(struct gpio_chip *chip, unsigned int gpio)
-> +{
-> +	struct siul2_gpio_dev *gpio_dev;
-> +	int ret = 0;
-> +
-> +	ret = pinctrl_gpio_direction_input(chip, gpio);
-> +	if (ret)
-> +		return ret;
-> +
-> +	gpio_dev = to_siul2_gpio_dev(chip);
-> +	siul2_gpio_set_direction(gpio_dev, gpio, GPIO_LINE_DIRECTION_IN);
-> +
-> +	return 0;
-> +}
-> +
-> +static int siul2_gpio_get_dir(struct gpio_chip *chip, unsigned int gpio)
-> +{
-> +	return siul2_get_direction(to_siul2_gpio_dev(chip), gpio);
-> +}
-> +
-> +static unsigned int siul2_pin2pad(unsigned int pin)
-> +{
-> +	return pin / SIUL2_GPIO_16_PAD_SIZE;
-> +}
-> +
-> +static u16 siul2_pin2mask(unsigned int pin)
-> +{
-> +	/**
-> +	 * From Reference manual :
-> +	 * PGPDOx[PPDOy] = GPDO(x × 16) + (15 - y)[PDO_(x × 16) + (15 - y)]
-> +	 */
-> +	return BIT(SIUL2_GPIO_16_PAD_SIZE - 1 - pin % SIUL2_GPIO_16_PAD_SIZE);
-> +}
-> +
-> +static inline u32 siul2_get_pad_offset(unsigned int pad)
-> +{
-> +	return SIUL2_PGPDO(pad);
-> +}
-> +
+Makes sense. I will modify AMD driver to enable PRI/PASID in probe() path.
 
 
-...
+> 
+> See
+> https://lore.kernel.org/all/0-v1-0fb4d2ab6770+7e706-ats_vf_jgg@nvidia.com/
+> for this concept applied to ATS.
+> 
+> This means probe_device() has to do:
+> 
+>  - ATS properties 
+>  - PRI
+>  - PASID properties
+> 
+> At a minimum.
+> 
+> It would be nice if the iommu core code did this setup in one place
+> immediately after calling probe_device() but before attaching a
+> domain.
+> 
+> There is no particularly good reason to have this coded in all the
+> iommu drivers.
 
-> +
-> +static struct regmap *common_regmap_init(struct platform_device *pdev,
-> +					 struct regmap_config *conf,
-> +					 const char *name)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct resource *res;
-> +	resource_size_t size;
-> +	void __iomem *base;
-> +
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, name);
-> +	if (!res) {
-> +		dev_err(&pdev->dev, "Failed to get MEM resource: %s\n", name);
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
-> +	base = devm_ioremap_resource(dev, res);
+Yeah. that makes sense. We may have to adjust few things in driver (at least AMD
+driver). But its doable.
 
-There is a wrapper for both calls above, so use it.
-
-> +	if (IS_ERR(base))
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	size = resource_size(res);
-> +	conf->val_bits = conf->reg_stride * 8;
-> +	conf->max_register = size - conf->reg_stride;
-> +	conf->name = name;
-> +	conf->use_raw_spinlock = true;
-> +
-> +	if (conf->cache_type != REGCACHE_NONE)
-> +		conf->num_reg_defaults_raw = size / conf->reg_stride;
-> +
-> +	return devm_regmap_init_mmio(dev, base, conf);
-> +}
-> +
-> +static bool not_writable(__always_unused struct device *dev,
-> +			 __always_unused unsigned int reg)
-> +{
-> +	return false;
-> +}
-> +
-> +static struct regmap *init_padregmap(struct platform_device *pdev,
-> +				     struct siul2_gpio_dev *gpio_dev,
-> +				     int selector, bool input)
-> +{
-> +	const struct siul2_device_data *platdata = gpio_dev->platdata;
-> +	struct regmap_config regmap_conf = siul2_regmap_conf;
-> +	char dts_tag[S32G2_PADS_DTS_TAG_LEN];
-> +	int err;
-> +
-> +	regmap_conf.reg_stride = 2;
-> +
-> +	if (selector != 0 && selector != 1)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	regmap_conf.rd_table = platdata->pad_access[selector];
-> +
-> +	err = snprintf(dts_tag, ARRAY_SIZE(dts_tag),  "%cpads%d",
-> +		       input ? 'i' : 'o', selector);
-> +	if (err < 0)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	if (input) {
-> +		regmap_conf.writeable_reg = not_writable;
-> +		regmap_conf.cache_type = REGCACHE_NONE;
-> +	} else {
-> +		regmap_conf.wr_table = platdata->pad_access[selector];
-> +	}
-> +
-> +	return common_regmap_init(pdev, &regmap_conf, dts_tag);
-> +}
-> +
-> +static int siul2_gpio_pads_init(struct platform_device *pdev,
-> +				struct siul2_gpio_dev *gpio_dev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	size_t i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(gpio_dev->siul2); i++) {
-> +		gpio_dev->siul2[i].opadmap = init_padregmap(pdev, gpio_dev, i,
-> +							    false);
-> +		if (IS_ERR(gpio_dev->siul2[i].opadmap)) {
-> +			dev_err(dev,
-> +				"Failed to initialize opad2%lu regmap config\n",
-> +				i);
-> +			return PTR_ERR(gpio_dev->siul2[i].opadmap);
-> +		}
-> +
-> +		gpio_dev->siul2[i].ipadmap = init_padregmap(pdev, gpio_dev, i,
-> +							    true);
-> +		if (IS_ERR(gpio_dev->siul2[i].ipadmap)) {
-> +			dev_err(dev,
-> +				"Failed to initialize ipad2%lu regmap config\n",
-> +				i);
-> +			return PTR_ERR(gpio_dev->siul2[i].ipadmap);
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int siul2_gen_names(struct device *dev, unsigned int cnt, char **names,
-> +			   char *ch_index, unsigned int *num_index)
-> +{
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < cnt; i++) {
-> +		if (i != 0 && !(*num_index % 16))
-> +			(*ch_index)++;
-> +
-> +		names[i] = devm_kasprintf(dev, GFP_KERNEL, "P%c_%02d",
-> +					  *ch_index, 0xFU & (*num_index)++);
-> +		if (!names[i])
-> +			return -ENOMEM;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int siul2_gpio_remove_reserved_names(struct device *dev,
-> +					    struct siul2_gpio_dev *gpio_dev,
-> +					    char **names)
-> +{
-> +	struct device_node *np = dev->of_node;
-> +	int num_ranges, i, j, ret;
-> +	u32 base_gpio, num_gpio;
-> +
-> +	/* Parse the gpio-reserved-ranges to know which GPIOs to exclude. */
-> +
-> +	num_ranges = of_property_count_u32_elems(dev->of_node,
-> +						 "gpio-reserved-ranges");
-> +
-> +	/* The "gpio-reserved-ranges" is optional. */
-> +	if (num_ranges < 0)
-> +		return 0;
-> +	num_ranges /= 2;
-> +
-> +	for (i = 0; i < num_ranges; i++) {
-> +		ret = of_property_read_u32_index(np, "gpio-reserved-ranges",
-> +						 i * 2, &base_gpio);
-> +		if (ret) {
-> +			dev_err(dev, "Could not parse the start GPIO: %d\n",
-> +				ret);
-> +			return ret;
-> +		}
-> +
-> +		ret = of_property_read_u32_index(np, "gpio-reserved-ranges",
-> +						 i * 2 + 1, &num_gpio);
-> +		if (ret) {
-> +			dev_err(dev, "Could not parse num. GPIOs: %d\n", ret);
-> +			return ret;
-> +		}
-> +
-> +		if (base_gpio + num_gpio > gpio_dev->gc.ngpio) {
-> +			dev_err(dev, "Reserved GPIOs outside of GPIO range\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		/* Remove names set for reserved GPIOs. */
-> +		for (j = base_gpio; j < base_gpio + num_gpio; j++) {
-> +			devm_kfree(dev, names[j]);
-> +			names[j] = NULL;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int siul2_gpio_populate_names(struct device *dev,
-> +				     struct siul2_gpio_dev *gpio_dev)
-> +{
-> +	unsigned int num_index = 0;
-> +	char ch_index = 'A';
-> +	char **names;
-> +	int i, ret;
-> +
-> +	names = devm_kcalloc(dev, gpio_dev->gc.ngpio, sizeof(*names),
-> +			     GFP_KERNEL);
-> +	if (!names)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < S32G2_SIUL2_NUM; i++) {
-> +		ret = siul2_gen_names(dev, gpio_dev->siul2[i].gpio_num,
-> +				      names + gpio_dev->siul2[i].gpio_base,
-> +				      &ch_index, &num_index);
-> +		if (ret) {
-> +			dev_err(dev, "Could not set names for SIUL2_%d GPIOs\n",
-> +				i);
-> +			return ret;
-> +		}
-> +
-> +		if (gpio_dev->platdata->reset_cnt)
-> +			num_index = 0;
-> +
-> +		ch_index++;
-> +	}
-> +
-> +	ret = siul2_gpio_remove_reserved_names(dev, gpio_dev, names);
-> +	if (ret)
-> +		return ret;
-> +
-> +	gpio_dev->gc.names = (const char *const *)names;
-> +
-> +	return 0;
-> +}
-> +
-> +static int siul2_gpio_probe(struct platform_device *pdev)
-> +{
-> +	struct siul2_gpio_dev *gpio_dev;
-> +	struct device *dev = &pdev->dev;
-> +	struct of_phandle_args pinspec;
-> +	struct gpio_chip *gc;
-> +	size_t bitmap_size;
-> +	int ret = 0;
-> +	size_t i;
-> +
-> +	gpio_dev = devm_kzalloc(dev, sizeof(*gpio_dev), GFP_KERNEL);
-> +	if (!gpio_dev)
-> +		return -ENOMEM;
-> +
-> +	gpio_dev->platdata = of_device_get_match_data(dev);
-> +
-> +	for (i = 0; i < S32G2_SIUL2_NUM; i++)
-> +		gpio_dev->siul2[i].pad_access =
-> +			gpio_dev->platdata->pad_access[i];
-> +
-> +	ret = siul2_gpio_pads_init(pdev, gpio_dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	gc = &gpio_dev->gc;
-> +
-> +	platform_set_drvdata(pdev, gpio_dev);
-> +
-> +	raw_spin_lock_init(&gpio_dev->lock);
-
-Why do you use raw spin? Are you sure you need it (some people just
-replace it thinking this will help them in PREEMPT_RT without actually
-thinking if it is needed). IOW, do you have here irqchip anywhere?
-
-> +
-> +	for (i = 0; i < ARRAY_SIZE(gpio_dev->siul2); i++) {
-> +		ret = siul2_get_gpio_pinspec(pdev, &pinspec, i);
-> +		if (ret) {
-> +			dev_err(dev,
-> +				"unable to get pinspec %lu from device tree\n",
-> +				i);
-> +			return -EINVAL;
-> +		}
-> +
-> +		if (pinspec.args_count != 3) {
-> +			dev_err(dev, "Invalid pinspec count: %d\n",
-> +				pinspec.args_count);
-> +			return -EINVAL;
-> +		}
-> +
-> +		gpio_dev->siul2[i].gpio_base = pinspec.args[1];
-> +		gpio_dev->siul2[i].gpio_num = pinspec.args[2];
-> +	}
-> +
-> +	gc->base = -1;
-> +
-> +	/* In some cases, there is a gap between the SIUL GPIOs. */
-> +	gc->ngpio = gpio_dev->siul2[S32G2_SIUL2_NUM - 1].gpio_base +
-> +		    gpio_dev->siul2[S32G2_SIUL2_NUM - 1].gpio_num;
-> +
-> +	ret = siul2_gpio_populate_names(&pdev->dev, gpio_dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	bitmap_size = gc->ngpio * sizeof(*gpio_dev->pin_dir_bitmap);
-> +	gpio_dev->pin_dir_bitmap = devm_bitmap_zalloc(dev, bitmap_size,
-> +						      GFP_KERNEL);
-> +	if (!gpio_dev->pin_dir_bitmap)
-> +		return -ENOMEM;
-> +
-> +	gc->parent = dev;
-> +	gc->label = dev_name(dev);
-> +
-> +	gc->set = siul2_gpio_set;
-> +	gc->get = siul2_gpio_get;
-> +	gc->set_config = siul2_set_config;
-> +	gc->request = siul2_gpio_request;
-> +	gc->free = siul2_gpio_free;
-> +	gc->direction_output = siul2_gpio_dir_out;
-> +	gc->direction_input = siul2_gpio_dir_in;
-> +	gc->get_direction = siul2_gpio_get_dir;
-> +	gc->owner = THIS_MODULE;
-> +
-> +	ret = devm_gpiochip_add_data(dev, gc, gpio_dev);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "unable to add gpiochip\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct regmap_range s32g2_siul20_pad_yes_ranges[] = {
-> +	regmap_reg_range(SIUL2_PGPDO(0), SIUL2_PGPDO(0)),
-> +	regmap_reg_range(SIUL2_PGPDO(1), SIUL2_PGPDO(1)),
-> +	regmap_reg_range(SIUL2_PGPDO(2), SIUL2_PGPDO(2)),
-> +	regmap_reg_range(SIUL2_PGPDO(3), SIUL2_PGPDO(3)),
-> +	regmap_reg_range(SIUL2_PGPDO(4), SIUL2_PGPDO(4)),
-> +	regmap_reg_range(SIUL2_PGPDO(5), SIUL2_PGPDO(5)),
-> +	regmap_reg_range(SIUL2_PGPDO(6), SIUL2_PGPDO(6)),
-> +};
-> +
-> +static const struct regmap_access_table s32g2_siul20_pad_access_table = {
-> +	.yes_ranges	= s32g2_siul20_pad_yes_ranges,
-> +	.n_yes_ranges	= ARRAY_SIZE(s32g2_siul20_pad_yes_ranges),
-> +};
-> +
-> +static const struct regmap_range s32g2_siul21_pad_yes_ranges[] = {
-> +	regmap_reg_range(SIUL2_PGPDO(7), SIUL2_PGPDO(7)),
-> +	regmap_reg_range(SIUL2_PGPDO(9), SIUL2_PGPDO(9)),
-> +	regmap_reg_range(SIUL2_PGPDO(10), SIUL2_PGPDO(10)),
-> +	regmap_reg_range(SIUL2_PGPDO(11), SIUL2_PGPDO(11)),
-> +};
-> +
-> +static const struct regmap_access_table s32g2_siul21_pad_access_table = {
-> +	.yes_ranges	= s32g2_siul21_pad_yes_ranges,
-> +	.n_yes_ranges	= ARRAY_SIZE(s32g2_siul21_pad_yes_ranges),
-> +};
-> +
-> +static const struct regmap_access_table *s32g2_pad_access_table[] = {
-> +	&s32g2_siul20_pad_access_table,
-> +	&s32g2_siul21_pad_access_table
-> +};
-> +
-> +static_assert(ARRAY_SIZE(s32g2_pad_access_table) == S32G2_SIUL2_NUM);
-> +
-> +static const struct siul2_device_data s32g2_device_data = {
-> +	.pad_access	= s32g2_pad_access_table,
-> +	.reset_cnt	= true,
-> +};
-> +
-> +static const struct of_device_id siul2_gpio_dt_ids[] = {
-> +	{ .compatible = "nxp,s32g2-siul2-gpio", .data = &s32g2_device_data },
-
-Why do you have match data? There are no other variants.
-
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, siul2_gpio_dt_ids);
-> +
-> +static struct platform_driver siul2_gpio_driver = {
-> +	.driver			= {
-> +		.name		= "s32g2-siul2-gpio",
-> +		.owner		= THIS_MODULE,
-
-Oh.... It's still dissappointing to see people trying to usptream their
-10 or 15 year old drivers. Drop. Start from NEW DRIVER when writing new
-driver. Not from 10-15 year old downstream driver.
-
-
-
-Best regards,
-Krzysztof
-
+-Vasant
 
