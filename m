@@ -1,110 +1,184 @@
-Return-Path: <linux-kernel+bounces-301937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3E0B95F7BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:15:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D78C95F7C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 579482836D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:15:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B7591C21F6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6B6198A28;
-	Mon, 26 Aug 2024 17:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B33198A19;
+	Mon, 26 Aug 2024 17:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WlM/pQTS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="RdlVNqXD"
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A65319409E;
-	Mon, 26 Aug 2024 17:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAEA51946DA;
+	Mon, 26 Aug 2024 17:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724692502; cv=none; b=Ci/Fl0iq0BvFTva08ytLmmNAVZxhf3AU8wfVIg77pAW3Uv7ULqtWVjkaRHDf5x1UxTJCkf20xl5v3K7zSinaylfM9YawCO8VGr9wTw0r/zxm2s2TVvCbvNpUDIy9X82X0cdXFW5Y/97Mcu7Pwp3niLE4om3LnrlwcdCgbigwvo8=
+	t=1724692511; cv=none; b=Bbm24jVwcYVZWGIWpL8CW0EQiD6EEaF7Wx4Ex4Ul1VXuEOwAQAKcKlLc1CIQvHABZ9CQfiXe15GnbMfYf6coTS69xBvHTgBZDDp67r7tMR88jOO6QmSWAiHePWt/ek6jtZCtF01m8a8mpYCKkBd/aK2MIi8qpuqyyqYaCXAMBOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724692502; c=relaxed/simple;
-	bh=LnIWP7fLaV4chONzOOcBQIguRxPmZAjFOGjrt1sMyHk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mAoaIDN4AFsPBxc+VV54xPqyLLQXoMTmugjox0EWK6awr0TJ1q9/O7N3pCictXOjoNCRTyXod4CzuAHi4uIMk88tltLnRmNHM/yaW+ktGKvgwJB69/vemqOck1Vk8SKwmet9VC9VBQ6vdIonNZXZvgef2Nu7w6jcmvp0wQaQz7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WlM/pQTS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65F11C53760;
-	Mon, 26 Aug 2024 17:15:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724692501;
-	bh=LnIWP7fLaV4chONzOOcBQIguRxPmZAjFOGjrt1sMyHk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WlM/pQTStFRGsqyxF2CKbC3WY1Gr3aaru+duCxx6C+PhRur1UbIeQSBlU2sLB3e0X
-	 D/z9h6E3VMY8kGssdWRL5dhXacCQe5seeXDjJtnSR77AubHfa6diuoyt93MYJRTJ9Q
-	 yjbmkczyd8JIQVWKxiQe2U09VIH1+5aRFSKQJu1LV/9f6i4jD4f/mMn5E82af1e5V4
-	 jOzSyLzNiQNmxtN8E+hTF5HvqL8W3NUYkk2vu+nWwRI7RC/5fLayI+2d2vEv7usIz0
-	 9TKz1WtxedAxKJJlZPT9RDuDgOVLlTzu97Hg7lUac2ywCr2guEOlZupJFC78c0AcCT
-	 j5QmeuvrVE92Q==
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-27012aa4a74so2980609fac.0;
-        Mon, 26 Aug 2024 10:15:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUbazMGr3jsMYTjyDEemzZkF/bh8/PFqdJEsLOL0uiLVNSJ4TPGJXPg904D8z+N6AgPn+A5oGBNw0Kfbmrb@vger.kernel.org, AJvYcCXunv6C0aCr80jHTvcYDngtwHKoSJ+5StJkP1RL8vsLjfPjzBkL2OdFY15rw0DVxJpsdGU7UfP2xQHM@vger.kernel.org
-X-Gm-Message-State: AOJu0YwonqZQU/zeGXmsDC8jVLK+5hLd5Hjs31P9VKxl17O/2HAmoK8M
-	nAmjROfzm9vaYbsvMnNX6lCCSLtFdVfoKRZnGayOgusrIGx1y1c8Pv56qaLu0hlm6LYvRHHT2VV
-	NCRSox1GqCN9tZRbDhpfACwhtiS4=
-X-Google-Smtp-Source: AGHT+IEwWJoPUsHxLU1Hz2XVFDhmnSN1PQEoapvZpSBftJtdEaqK0x09gaNC3gLvWIbrzfjl8Mx4dOAlBjFUvZLAUKQ=
-X-Received: by 2002:a05:6870:c6a2:b0:260:ff24:fb32 with SMTP id
- 586e51a60fabf-273e63d0d32mr12290196fac.1.1724692500682; Mon, 26 Aug 2024
- 10:15:00 -0700 (PDT)
+	s=arc-20240116; t=1724692511; c=relaxed/simple;
+	bh=XO/V8hWz4NH2myBpWtZGoY/SK13uVHnn+BzlOVcF39I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IOXE+WHecr0FPJVLqreKmwKMDm0K/A8evQtFtEqcfUr5OcR1COUZ9RJJlkyNi4AIrq3wjl8Kmwj/Tz/2aLLYRWa+mhqxQCLQXiZjmsLVEWC5FIfQI5T772RvN/uNhIVEf/d5knqjtbIzM/NcEe8TlYk0OSw32sdNcQGjPy5KpeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=RdlVNqXD; arc=none smtp.client-ip=80.12.242.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id idIusKUkBFtEmidIus4Qnh; Mon, 26 Aug 2024 19:15:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1724692500;
+	bh=NoAjW2R+o80sdyLbdCHHBi35GI05J7LD2G0MnQa6MWo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=RdlVNqXDGoIcfOHx16drsR+hMe5aGLy1GFtGLONfa7t0tUPljKNgfBzgYSkDvMuxG
+	 RILfXksBLAaN1wlZokC2GYKU2m7jyMde44Bp4jlaVCfHDS3dL0wqkaLPE8LNCe8oxX
+	 RMPZ1uwuumGbYzi59I0rFTg6NPB6kMWgbgt3Uem/CBHvAfdF9Kd7JfdgsRaKYsgRUi
+	 9vs12BmYVjT3OJ8ewJn+YslnWH5BKNmZRuD3emjhEH87R4tGHUQ4/K64JZCvfR++JG
+	 bDslmHqL+dyHAabDSR3ngKZWBtwfXIFWZ8oQGLAOuSWeHFr0aOLbx6dWkuVW5izlH/
+	 UE29btMe4pKCQ==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 26 Aug 2024 19:15:00 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <bbe06f51-459a-4973-9322-56b3d27427f1@wanadoo.fr>
+Date: Mon, 26 Aug 2024 19:14:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240804123313.16211-1-qasim.majeed20@gmail.com>
-In-Reply-To: <20240804123313.16211-1-qasim.majeed20@gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 26 Aug 2024 19:14:49 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0h72S=9mMWOx=mh+A4jJKHBKX_cEetk1fpi0c9VH_df8g@mail.gmail.com>
-Message-ID: <CAJZ5v0h72S=9mMWOx=mh+A4jJKHBKX_cEetk1fpi0c9VH_df8g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] ACPI: ac: Use strscpy() instead of strcpy().
-To: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] idpf: Slightly simplify memory management in
+ idpf_add_del_mac_filters()
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ Pavan Kumar Linga <pavan.kumar.linga@intel.com>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>
+References: <fa4f19064be084d5e740e625dcf05805c0d71ad0.1724394169.git.christophe.jaillet@wanadoo.fr>
+ <c786a345-9ec4-4e41-8e69-506239db291c@stanley.mountain>
+ <2896a4b2-2297-44cd-b4c7-a4d320298740@intel.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <2896a4b2-2297-44cd-b4c7-a4d320298740@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, Aug 4, 2024 at 2:34=E2=80=AFPM Muhammad Qasim Abdul Majeed
-<qasim.majeed20@gmail.com> wrote:
->
-> Replace strcpy() with strscpy() in the ACPI ac driver.
-> strcpy() has been deprecated because it is generally unsafe, so help to
-> eliminate it from the kernel source.
->
-> Link: https://github.com/KSPP/linux/issues/88
->
-> Signed-off-by: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
-> ---
->  drivers/acpi/ac.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/acpi/ac.c b/drivers/acpi/ac.c
-> index 09a87fa222c7..ad1427a384e4 100644
-> --- a/drivers/acpi/ac.c
-> +++ b/drivers/acpi/ac.c
-> @@ -213,8 +213,8 @@ static int acpi_ac_probe(struct platform_device *pdev=
-)
->                 return -ENOMEM;
->
->         ac->device =3D adev;
-> -       strcpy(acpi_device_name(adev), ACPI_AC_DEVICE_NAME);
-> -       strcpy(acpi_device_class(adev), ACPI_AC_CLASS);
-> +       strscpy(acpi_device_name(adev), ACPI_AC_DEVICE_NAME);
-> +       strscpy(acpi_device_class(adev), ACPI_AC_CLASS);
->
->         platform_set_drvdata(pdev, ac);
->
-> --
+Le 26/08/2024 à 11:15, Przemek Kitszel a écrit :
+> On 8/23/24 11:10, Dan Carpenter wrote:
+>> On Fri, Aug 23, 2024 at 08:23:29AM +0200, Christophe JAILLET wrote:
+>>> In idpf_add_del_mac_filters(), filters are chunked up into multiple
+>>> messages to avoid sending a control queue message buffer that is too 
+>>> large.
+>>>
+>>> Each chunk has up to IDPF_NUM_FILTERS_PER_MSG entries. So except for the
+>>> last iteration which can be smaller, space for exactly
+>>> IDPF_NUM_FILTERS_PER_MSG entries is allocated.
+>>>
+>>> There is no need to free and reallocate a smaller array just for the 
+>>> last
+>>> iteration.
+>>>
+>>> This slightly simplifies the code and avoid an (unlikely) memory 
+>>> allocation
+>>> failure.
+>>>
+> 
+> Thanks, that is indeed an improvement.
+> 
+>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>>> ---
+>>>   drivers/net/ethernet/intel/idpf/idpf_virtchnl.c | 7 +++++--
+>>>   1 file changed, 5 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c 
+>>> b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+>>> index 70986e12da28..b6f4b58e1094 100644
+>>> --- a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+>>> +++ b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+>>> @@ -3669,12 +3669,15 @@ int idpf_add_del_mac_filters(struct 
+>>> idpf_vport *vport,
+>>>           entries_size = sizeof(struct virtchnl2_mac_addr) * 
+>>> num_entries;
+>>>           buf_size = struct_size(ma_list, mac_addr_list, num_entries);
+>>> -        if (!ma_list || num_entries != IDPF_NUM_FILTERS_PER_MSG) {
+>>> -            kfree(ma_list);
+>>> +        if (!ma_list) {
+>>>               ma_list = kzalloc(buf_size, GFP_ATOMIC);
+>>>               if (!ma_list)
+>>>                   return -ENOMEM;
+>>>           } else {
+>>> +            /* ma_list was allocated in the first iteration
+>>> +             * so IDPF_NUM_FILTERS_PER_MSG entries are
+>>> +             * available
+>>> +             */
+>>>               memset(ma_list, 0, buf_size);
+>>>           }
+>>
+>> It would be even nicer to move the ma_list allocation outside the loop:
+>>
+>>          buf_size = struct_size(ma_list, mac_addr_list, 
+>> IDPF_NUM_FILTERS_PER_MSG);
+>>          ma_list = kmalloc(buf_size, GFP_ATOMIC);
+> 
+> good point
+> 
+> I've opened whole function for inspection and it asks for even more,
+> as of now, we allocate an array in atomic context, just to have a copy
+> of some stuff from the spinlock-protected list.
+> 
+> It would be good to have allocation as pointed by Dan prior to iteration
+> and fill it on the fly, sending when new message would not fit plus once
+> at the end. Sending procedure is safe to be called under a spinlock.
 
-Applied as 6.12 material with some subject and changelog edits along
-with patches [2-4/6] and [6/6].
+If I understand correctly, you propose to remove the initial copy in 
+mac_addr and hold &vport_config->mac_filter_list_lock till the end of 
+the function?
 
-Patch [6/6] needs more work (I'll send a reply to it directly).
+That's it?
 
-Thanks!
+There is a wait_for_completion_timeout() in idpf_vc_xn_exec() and the 
+default time-out is IDPF_VC_XN_DEFAULT_TIMEOUT_MSEC	(60 * 1000)
+
+So, should an issue occurs, and the time out run till the end, we could 
+hold the 'mac_filter_list_lock' spinlock for up to 60 seconds?
+Is that ok?
+
+
+And if in asynch update mode, idpf_mac_filter_async_handler() also takes 
+&vport_config->mac_filter_list_lock;. Could we dead-lock?
+
+
+So, I'm not sure to understand what you propose, or the code in 
+idpf_add_del_mac_filters() and co.
+
+> 
+> CCing author; CCing Olek to ask if there are already some refactors that
+> would conflict with this.
+
+I'll way a few days for these feedbacks and send a v2.
+
+CJ
+
+> 
+>>
+>> regards,
+>> dan carpenter
+>>
+> 
+> 
+> 
+
 
