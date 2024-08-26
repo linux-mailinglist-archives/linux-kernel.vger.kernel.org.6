@@ -1,171 +1,209 @@
-Return-Path: <linux-kernel+bounces-301256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A8B95EE41
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:15:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC1D995EE47
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C2FC1F222CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:15:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB4BE2837B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449191474A5;
-	Mon, 26 Aug 2024 10:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD6EA1482ED;
+	Mon, 26 Aug 2024 10:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fZXu2l/y"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="OEI+JDxC"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BD6146D5A;
-	Mon, 26 Aug 2024 10:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BEF6145B1D
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 10:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724667241; cv=none; b=q3KAzgYk7/ssC/OkYKfOz3RrxWtRsVP5gVmW56zvuivpNo9uyAT0rbBGGHQVaKo7zR2xWku4h2cf/ts3urwsza+5fv938Pejx14qq6bm+nEtexN8ItqGqlpbHShTcSGfVMg+gqw4EbTWEn9aq98DD+cGlEe95mArUF+mdw9Ah9A=
+	t=1724667351; cv=none; b=nx6F49oV+4YjyL4Xynaljtln+5Pm9qQn6RzywcY8HiTcTWickzEcXcsPwRkgf6Y58XOYzbjIqm84PHSznkWVBBz5Ea6Lch5YOju/cJMSRUuepi3joWrcubElsGm5QCb0Ewle1aYfP++Pg2gK9VCQ9sYyuDi+XIYIIVB2SIRXLQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724667241; c=relaxed/simple;
-	bh=3OMh0I6YDGa+H54lyN0aZeKV/jasJN3FKzzG5FqwCZc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EKAR5Ih128LkGsnk5Sha8UaPgdC6ulFc4l6Qn8JxgFbXOvoz1KBMNNZczBSE/uq59Yx1wXOplIURVfz8g8TM43YQJdchM3kNeYhPS/ejBi69uh9BXPReA8BEM6ojlgpB2HyZNuNVgGGyqcIsOAi/dDK6kxaf6+uafmYH33bQzHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fZXu2l/y; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724667239; x=1756203239;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3OMh0I6YDGa+H54lyN0aZeKV/jasJN3FKzzG5FqwCZc=;
-  b=fZXu2l/y3+EUsVjdUXllCwg319KvR9Jn3KbszwHRinQTIhzAHJyIlEgI
-   YgIbvlxiqitTpovCoWt918fXmuuaSQHy1e76PABagoztuMWfGodr+2G1m
-   n7ZhiNnHGISIuz26zWvIXx1r2CGqHpIUtjt2Pdy6UYVIZDjkqeMjS3XvK
-   juvRMroOIZ46FPEzMqzx32I45f+YDtb/W3U9qCr+6RCjinXKgnfdemxFb
-   b+6tmFrAmEIPdsoyb5W6vGGGne89BE8WOiQh9spMzU1dJN0P7bCqfGBmg
-   T0gqTT61uCAj1kt5garcXXD5Vb78o3RHVUHA2rnID/22rwHILPaM8GUSh
-   Q==;
-X-CSE-ConnectionGUID: hikeqfFQQAy4Xzi7HpN7hg==
-X-CSE-MsgGUID: LMuIbSs4SimboBXhJfMtOg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="23257018"
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="23257018"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 03:13:58 -0700
-X-CSE-ConnectionGUID: j2hGswy3Tqa//Z8Y2y8Osg==
-X-CSE-MsgGUID: FKbHAQ2HT1Woa5mT7v3qTA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="62437513"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 26 Aug 2024 03:13:53 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1siWjO-000GsF-2m;
-	Mon, 26 Aug 2024 10:13:50 +0000
-Date: Mon, 26 Aug 2024 18:13:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>, Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 07/17] mm: Define VM_DROPPABLE for powerpc/32
-Message-ID: <202408261734.UAvnH7Mv-lkp@intel.com>
-References: <315e3a268b165b6edad7dcb723b0d8a506a56c4e.1724309198.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1724667351; c=relaxed/simple;
+	bh=dqF9qz6t/GVpGmum6vuUYfrUMXNhwX8AG3M4+n1M7ZI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VrReNy9dwApXlU2kmSG+1yxjYm8WUsWk3zhUOZV+8sL17ULxtB1hu8p1AhTq4qXj0OIBQzLzFaACCsILTmdVhqb0WFXO3a4ffXpC/sVl7kDDEjRiWFK89QKG25eJ07GTNvPbkuHZIF5KC7v0mrK2+5nys56RXVKa6+PPOzSQrYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=OEI+JDxC; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f50966c478so10676641fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 03:15:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1724667347; x=1725272147; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nXSb7P5yQsC6ZA7aZwkzK/D+oEX3tz1a/6VEPbOOF1M=;
+        b=OEI+JDxC340hJbyzaELF9aZjkFT4nnaE1jma3SYSKf8FaDgA8sj2hzwybWxynxWA5X
+         MgON+hpgEbKzURuwi8d3MBJ0Kt82nbfI8ZlyoqEmQozz3gmDJAuM64rbD2K3aR77C3AV
+         eROpf5Q0KDSSNQMz4xScqqIHp9FFyA4M/Up6zMLY9HVH0RuZUzVuRa0hsik+ixO52Tyb
+         jetbHtnX/vAHZjZMenomQw3dxEYAAjaz9+PnG4E7GEpg+ZincehP7SFzQyccplWrKTjc
+         1bLx8Tu+9B23afbvzr66tCsDhNQ02DqmhgGeviPjyhL+fxBZ16refNaKBCLPFxI8Ftsz
+         O9Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724667347; x=1725272147;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nXSb7P5yQsC6ZA7aZwkzK/D+oEX3tz1a/6VEPbOOF1M=;
+        b=NvRooGSNZAuUL5r64ipP1Of95uY1vUU4KTxxfEGmOm2iELH4fNQQqjnQG0Umm0jBOA
+         tEZr5knyuKTIBdp/YLdEdF69HvqiTKDMC5+wUpZ1RQTX6WSsv4ijr2zicPApM1WrK/xo
+         +xRZHWuZmAJrYnkIPkX5A1IUr+1m3EnQWAPFpSczbIp0QZxjzQypIWbCPGpd2HTFtXht
+         UrZlLup/hHuUFlBsTtWYffifSYNRcE9VskTkxYag1jsf2KkJc05R/7RALgxlODQ46ucZ
+         iVLPgWtofSlc4ezu6z5CxLaQ23d4J/TaGiIUGhp0jrLWfUd/yx1LtFf0uJoxrT4REHAW
+         YJUw==
+X-Forwarded-Encrypted: i=1; AJvYcCXjLdLcAg2w3CtsYiutvjNQjdya2CP7//KPGMZYsWR1eIioc7B4Sq3Ph3I47bgHiICNS+0aONVpjyV2TIM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVCvPvfGnp6Al8Wd7Dh7XyTbtNilRna0lE5B6+fFFIvZWHxu7K
+	8KSfijNCXjKrFXUaETszGNABO0efhztttme09AWK1Z69RNpQy9k59s1BEVCSCVQ=
+X-Google-Smtp-Source: AGHT+IGnOO+pYmBeCnoRQo4bouYucQfop3nBZsepSSurhHBVuFJ58XyC2lvaGwZIfEzC6OWNRHTbyQ==
+X-Received: by 2002:a05:651c:198b:b0:2f0:1a19:f3f1 with SMTP id 38308e7fff4ca-2f4f48f0feamr66567071fa.7.1724667346682;
+        Mon, 26 Aug 2024 03:15:46 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a3e8f88sm5421649a12.42.2024.08.26.03.15.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 03:15:46 -0700 (PDT)
+Message-ID: <7b16791b-0d7b-49a1-82aa-c4db99ff2bfd@tuxon.dev>
+Date: Mon, 26 Aug 2024 13:15:43 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <315e3a268b165b6edad7dcb723b0d8a506a56c4e.1724309198.git.christophe.leroy@csgroup.eu>
-
-Hi Christophe,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on powerpc/next]
-[also build test WARNING on powerpc/fixes shuah-kselftest/next shuah-kselftest/fixes linus/master v6.11-rc5 next-20240823]
-[cannot apply to crng-random/master]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Christophe-Leroy/asm-generic-unaligned-h-Extract-common-header-for-vDSO/20240826-103525
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git next
-patch link:    https://lore.kernel.org/r/315e3a268b165b6edad7dcb723b0d8a506a56c4e.1724309198.git.christophe.leroy%40csgroup.eu
-patch subject: [PATCH v2 07/17] mm: Define VM_DROPPABLE for powerpc/32
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240826/202408261734.UAvnH7Mv-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240826/202408261734.UAvnH7Mv-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408261734.UAvnH7Mv-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from mm/debug_page_ref.c:6:
-   In file included from include/trace/events/page_ref.h:11:
-   include/trace/events/mmflags.h:168:5: warning: 'VM_DROPPABLE' is not defined, evaluates to 0 [-Wundef]
-     168 | #if VM_DROPPABLE != VM_NONE
-         |     ^
-   include/trace/events/mmflags.h:168:21: warning: 'VM_NONE' is not defined, evaluates to 0 [-Wundef]
-     168 | #if VM_DROPPABLE != VM_NONE
-         |                     ^
-   In file included from mm/debug_page_ref.c:6:
-   In file included from include/trace/events/page_ref.h:135:
-   In file included from include/trace/define_trace.h:95:
-   In file included from include/trace/events/page_ref.h:11:
-   include/trace/events/mmflags.h:168:5: warning: 'VM_DROPPABLE' is not defined, evaluates to 0 [-Wundef]
-     168 | #if VM_DROPPABLE != VM_NONE
-         |     ^
-   include/trace/events/mmflags.h:168:21: warning: 'VM_NONE' is not defined, evaluates to 0 [-Wundef]
-     168 | #if VM_DROPPABLE != VM_NONE
-         |                     ^
-   In file included from mm/debug_page_ref.c:6:
-   In file included from include/trace/events/page_ref.h:135:
-   In file included from include/trace/define_trace.h:102:
-   In file included from include/trace/trace_events.h:94:
-   In file included from include/trace/events/page_ref.h:11:
->> include/trace/events/mmflags.h:169:10: warning: 'IF_HAVE_VM_DROPPABLE' macro redefined [-Wmacro-redefined]
-     169 | # define IF_HAVE_VM_DROPPABLE(flag, name) {flag, name},
-         |          ^
-   include/trace/events/mmflags.h:171:10: note: previous definition is here
-     171 | # define IF_HAVE_VM_DROPPABLE(flag, name)
-         |          ^
-   5 warnings generated.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/16] dt-bindings: soc: renesas: renesas,rzg2l-sysc: Add
+ #reset-cells for RZ/G3S
+Content-Language: en-US
+To: Conor Dooley <conor@kernel.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be,
+ magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com,
+ sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com,
+ biju.das.jz@bp.renesas.com, ulf.hansson@linaro.org,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240822152801.602318-3-claudiu.beznea.uj@bp.renesas.com>
+ <20240822-vanilla-enigmatic-f0b05ecca4b6@spud>
+ <0d8b1322-cf15-4ed9-b958-06516bbb64c7@tuxon.dev>
+ <20240823-plywood-unfixed-d8d8a2d93f14@spud>
+ <5eae2ddb-2a7b-4c1d-a7f7-41fb39058de1@tuxon.dev>
+ <20240823-dilute-juggle-7e2d43b8b630@spud>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20240823-dilute-juggle-7e2d43b8b630@spud>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-vim +/IF_HAVE_VM_DROPPABLE +169 include/trace/events/mmflags.h
 
-7677f7fd8be766 Axel Rasmussen     2021-05-04  167  
-41e2c674b334ed Christophe Leroy   2024-08-22 @168  #if VM_DROPPABLE != VM_NONE
-9651fcedf7b92d Jason A. Donenfeld 2022-12-08 @169  # define IF_HAVE_VM_DROPPABLE(flag, name) {flag, name},
-9651fcedf7b92d Jason A. Donenfeld 2022-12-08  170  #else
-9651fcedf7b92d Jason A. Donenfeld 2022-12-08  171  # define IF_HAVE_VM_DROPPABLE(flag, name)
-9651fcedf7b92d Jason A. Donenfeld 2022-12-08  172  #endif
-9651fcedf7b92d Jason A. Donenfeld 2022-12-08  173  
+On 23.08.2024 19:33, Conor Dooley wrote:
+> On Fri, Aug 23, 2024 at 07:26:42PM +0300, claudiu beznea wrote:
+>> On 23.08.2024 19:18, Conor Dooley wrote:
+>>> On Fri, Aug 23, 2024 at 10:54:06AM +0300, claudiu beznea wrote:
+>>>> Hi, Conor,
+>>>>
+>>>> On 22.08.2024 19:42, Conor Dooley wrote:
+>>>>> On Thu, Aug 22, 2024 at 06:27:47PM +0300, Claudiu wrote:
+>>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>>>
+>>>>>> The RZ/G3S System controller has registers to control signals that need
+>>>>>> to be de-asserted/asserted before/after different SoC areas are power
+>>>>>> on/off. This signals are implemented as reset signals. For this document
+>>>>>> the #reset-cells property.
+>>>>>>
+>>>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>>> ---
+>>>>>>  .../bindings/soc/renesas/renesas,rzg2l-sysc.yaml | 16 ++++++++++++++++
+>>>>>>  1 file changed, 16 insertions(+)
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
+>>>>>> index 4386b2c3fa4d..6b0bb34485d9 100644
+>>>>>> --- a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
+>>>>>> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
+>>>>>> @@ -42,12 +42,28 @@ properties:
+>>>>>>        - const: cm33stbyr_int
+>>>>>>        - const: ca55_deny
+>>>>>>  
+>>>>>> +  "#reset-cells":
+>>>>>> +    const: 1
+>>>>>> +
+>>>>>>  required:
+>>>>>>    - compatible
+>>>>>>    - reg
+>>>>>>  
+>>>>>>  additionalProperties: false
+>>>>>>  
+>>>>>> +allOf:
+>>>>>> +  - if:
+>>>>>> +      properties:
+>>>>>> +        compatible:
+>>>>>> +          contains:
+>>>>>> +            const: renesas,r9a08g045-sysc
+>>>>>> +    then:
+>>>>>> +      required:
+>>>>>> +        - "#reset-cells"
+>>>>>
+>>>>> Given this is new required property on an existing platform, I'd expect
+>>>>> some mention of why it used to be okay to not have this but is now
+>>>>> required. Did firmware or a bootloader stage take things out of reset?
+>>>>
+>>>> On previous SoCs the SYS controller has no support for controlling the
+>>>> signals going to different peripherals (USB, PCIE in case of RZ/G3S).
+>>>> I'll add a note about this on next version.
+>>>
+>>> My initial thought here wasn't about previous SoCs though, it was
+>>> because you didn't add the compatible in this series for /this/ SoC.
+>>
+>> RZ/G3S compatible is already present in this file:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml#n26
+> 
+> I know, first thing I did when I read the original patch was open the
+> file ;)
+> I don't care about the old SoCs, cos you're not applying the property to
+> them, so what's changed between SoCs isn't really relevant. It's a mention
+> of why, on this SoC, it is safe to add new required properties that I want.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+> 
+> AFAIU the answer is that no consumer of the resets existed before, so
+
+That's true.
+
+> there's not some special state there, and I am guessing that the new
+> sysc driver you're adding isn't going to fail to probe if there are no
+> resets, 
+
+That's true.
+
+it just won't register a reset controller?
+
+It will register it but,
+
+the new sysc driver is going to probe only for this SoC (RZ/G3S). On RZ/G3S
+we have 2 resets. These well be registered unconditionally, currently, only
+for RZ/G3S. If there will be no DT users for it then it should be no
+problem, AFAICT.
+
+SYSC variants have common features b/w different SoC variants (one of them
+being chip identification). The feature implemented though reset controller
+in this series is not common but particular to RZ/G3S.
+
+When the SYSC will be extended for other SoCs the reset driver registration
+would have to be adapted to not be registered. At the moment, as the SYC is
+compatible only with RZ/G3S and the reset driver is registered on auxiliary
+bus though SYSC there is no restriction, reset is registered all the time,
+but SYSC is only compatible with RZ/G3S.
+
+> Which is fine, cos all
+> devicetrees that have the new peripherals will have #reset-cells etc.
+> 
+>>> What's worth noting isn't about the prior SoCs, it is about what makes
+>>> it okay for this one.
 
