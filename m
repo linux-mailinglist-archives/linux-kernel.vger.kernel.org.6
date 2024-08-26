@@ -1,393 +1,159 @@
-Return-Path: <linux-kernel+bounces-301516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 730CE95F204
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:52:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0DE295F206
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:52:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29F362851DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:52:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C326285B74
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE20C1991D2;
-	Mon, 26 Aug 2024 12:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E36185935;
+	Mon, 26 Aug 2024 12:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MM/DRcOH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UbmIE/Me"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28DE1946B1;
-	Mon, 26 Aug 2024 12:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6772513D8A2
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724676409; cv=none; b=My4N0gq9HLa+eQJHAQ4nNmy8oaSHhu7v5gKJE11OtTbwUXNWrK5l1cRJoyHYQLOqA90jF9vd41boA2NBINQBsK6OzEXgPoYjE+P2xTIptK7qsNVq5qZTTnorUiinZCuX170HYpMPHa1lWYON4dFJl8fCdRfcePLv11bCawNNbfU=
+	t=1724676486; cv=none; b=UC9XZM0PniZ2PitgPOBtnLyhZn+9sWpAeMYufIzbUkOsKRXGvQS72sPMJGhS110PVXsUnCTnI0oDurJaPmIKpek505AnBSnaz1HPOOIsv4wdcAAz+MJBYuSKxb/t9hRG5bzE2PEoKFXmwJzriEsbEXdrZzEvdauUt8pYJTZ8tmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724676409; c=relaxed/simple;
-	bh=sdSxDYPop03aiNFLgfHj/2yfQDSj1gBVwywHfAg6B1o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WdppgKN2FJZKel8CXUPYlCdjisUtWPk2LebOaN0+MZiUY9pf5gVK51WY84GMYZ6jQLLXBxVfSsAl4WZvg81oO8TNPaY1xkJQnkI0nyTcOfOD47DilDaYa0xiE9Rfcuhg/afRAG7nle0yqm7doC14P/oXe3FLRC1MrYL/sqc4daE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MM/DRcOH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD46FC58280;
-	Mon, 26 Aug 2024 12:46:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724676409;
-	bh=sdSxDYPop03aiNFLgfHj/2yfQDSj1gBVwywHfAg6B1o=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=MM/DRcOHVhyccozR42sW+tha1/xouT3iNeq2N3py09kH+O+3xQzRuv1NLdPAVARTD
-	 kCVS0PHuHpTMttnqOLPbP1xqHj7/07yux28ZVhSagXR8fMzFmCFHvSI3SE5j3izq9g
-	 fKLPpRGKobx5/luNuJ/Pn+sAlCj0RSy6CIUDX8wwKro+dXi96wQKBqXwBQyx26u7jo
-	 LeHGV0YGW8kTwqat4ouN67RqVMFGkeF5WxrN6utgDcOCDBBDzgzcpm0TItWrxBu1qV
-	 qsLIdNFHuIlAqz70K927XvLRG9urBHbMaUS9IcGYMI9e0fLv0BabtnAeLOWX9IXBLe
-	 HZfHuPNunAWGQ==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 26 Aug 2024 08:46:17 -0400
-Subject: [PATCH v2 7/7] nfsd: add support for delegated timestamps
+	s=arc-20240116; t=1724676486; c=relaxed/simple;
+	bh=3cHiwpJ0IGV2rDH7wRv3NTpGnsui1f0iIgctObp5wKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=JCFMeTFEQOlWC/nThJrwAK9+3ahOZP9OgE/oRLxPpzZnhUR92+3LwC/n/SHSlO3ebHIvOe5kEfDS/8VT1Hdf8dfL/bCwZBhXmzQSnQdq3qSbG3HINvtEQj8XU8DT+swBnSZVlR3LK/NuTuqvSa2lZAFHBo0CFcS0u9bzXBf1JLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UbmIE/Me; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724676485; x=1756212485;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=3cHiwpJ0IGV2rDH7wRv3NTpGnsui1f0iIgctObp5wKo=;
+  b=UbmIE/MeihVeNFRVUcuCEbMWjaHb8MwW3+135fXnva0OJI8tLeFdoHoP
+   1dndeCeRzpRfvikm3nlJDMMavNmW5TxMQive5hfGJxWG/bCDOFTc0f9oR
+   ma+rQ7yKZSA+d2aZyLJvHPWbmomqu5x9GoP0EBPWvMIafTkjy7k+eO8r8
+   h66e5Ft7WUcWdAOqRC+h51/4PTLSKQPf7shaIrwJe15/KLBUNkXg7fjTS
+   J00+5rJ3piBIFxipsy7uwBBcYpJ+Qn50P+J2iiXPk8q7MRG9t6iOzD0W8
+   UDu2jnVbW/HSvl3+7pw1yWtKqlE94T5nbbzrlrKSOIPmnzRrQML6+uMzg
+   Q==;
+X-CSE-ConnectionGUID: 3k6aN82RRACvfpWP5B0NuQ==
+X-CSE-MsgGUID: PsFNQ0RnRM2l3JxhgwhlIA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="26976416"
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="26976416"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 05:48:04 -0700
+X-CSE-ConnectionGUID: R1pCx+aiTpK8UOU1ScsIkQ==
+X-CSE-MsgGUID: r3diwDvOTlG5clloy2J6Ew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="66830053"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 26 Aug 2024 05:48:02 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1siZ8a-000H5B-2E;
+	Mon, 26 Aug 2024 12:48:00 +0000
+Date: Mon, 26 Aug 2024 20:47:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: fs/bcachefs/disk_accounting.c:136:5-8: Unneeded variable: "ret".
+ Return "0" on line 184
+Message-ID: <202408262018.bWsiI6Oz-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240826-delstid-v2-7-e8ab5c0e39cc@kernel.org>
-References: <20240826-delstid-v2-0-e8ab5c0e39cc@kernel.org>
-In-Reply-To: <20240826-delstid-v2-0-e8ab5c0e39cc@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
- Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, 
- Anna Schumaker <anna@kernel.org>, Olga Kornievskaia <okorniev@redhat.com>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: Tom Haynes <loghyr@gmail.com>, linux-kernel@vger.kernel.org, 
- linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-doc@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10947; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=sdSxDYPop03aiNFLgfHj/2yfQDSj1gBVwywHfAg6B1o=;
- b=kA0DAAgBAA5oQRlWghUByyZiAGbMeSug9QeeVoMDQuldltO9W/S4C1aDARH0wCQ3weeXI15Ln
- 4kCMwQAAQgAHRYhBEvA17JEcbKhhOr10wAOaEEZVoIVBQJmzHkrAAoJEAAOaEEZVoIVuvQP/Axo
- OhT2KVqh+hY9uz7rG0VEs3br0zXvhJaCpCY1KXwASLj+Z3FST+gtB6pCktI5uGYSPjiNYgQn4WS
- hHdyKuQhZ15/axQslfqcY7uWJsVyKds2rkc/W08onS9C5y9hCrN92O9L5RNCAtKVE4h7jcC/Pqj
- yJ1eUasJg1fYbJiUJHoHgsy9Irqj3L//6GQ48GffEmlyOXqR8jo3SOYr8+VkU7etTK3NKz4DPfh
- rbIFddtEmIul4z1sgerZuuYhgdygsTRfY5flIihWp8AmilAN5qc817NK80sBgvwJkeRXSMdNC1Y
- e/t9ag8g0TRH5FgX2n/eaFPzQbLuFlXFCH4O3QYtkZrYm/qd0w3+kh40XzKwOt02Nia2rUVtsKv
- BFnfLX42zkcpTUvZkjngnP0skk0KVs1Ios21uSkXrCyJG+nD+PYKgUPDWDjI19D4wjH5WCNiBuw
- iHNhSIKnMHumcsyP7ZwkfRd5sHtbhaTUlndX3rviW3jBkPGZcdcLzV7zVNJnx31w5CjnOpxXtJg
- amRdRhKCf6LQKiZcBJAw60FUiJ0Eh0QB+Ex0jJTKaEBcoAw/RZWdO3k9ZHURPxpop7VJwxYm+ot
- j2JKrIr41Md409i/RQjUFyEwDQj/ziNmZq0cOiIBTseoxgxByhWjCGvsiZ1UbV1jnbAdj3FJ5PT
- OzJRC
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Add support for the delegated timestamps on write delegations. This
-allows the server to proxy timestamps from the delegation holder to
-other clients that are doing GETATTRs vs. the same inode.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   5be63fc19fcaa4c236b307420483578a56986a37
+commit: 077e47372309dcbe3a150754ea9c6f15cc838d6b bcachefs: bch2_accounting_invalid()
+date:   2 weeks ago
+config: i386-randconfig-053-20240826 (https://download.01.org/0day-ci/archive/20240826/202408262018.bWsiI6Oz-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
 
-Add a new flag to nfs4_delegation for indicating that the client can
-provide timestamps in the CB_GETATTR response. Set that when the client
-sets the appropriate flag in the open request.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408262018.bWsiI6Oz-lkp@intel.com/
 
-Add timespec64 fields to nfs4_cb_fattr and decode the timestamps into
-those. Vet those timestamps according to the delstid spec and update
-the inode attrs if necessary.
+cocci warnings: (new ones prefixed by >>)
+>> fs/bcachefs/disk_accounting.c:136:5-8: Unneeded variable: "ret". Return "0" on line 184
 
-For multigrain timestamps, ensure that we accept the client's version of
-the ctime instead of updating to the latest clock as we normally would.
-That should be fine since the client holds a delegation, and nothing
-else will be making changes.
+vim +136 fs/bcachefs/disk_accounting.c
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/nfsd/nfs4callback.c | 42 +++++++++++++++++++++---
- fs/nfsd/nfs4state.c    | 86 ++++++++++++++++++++++++++++++++++++++++++++++----
- fs/nfsd/nfs4xdr.c      |  1 +
- fs/nfsd/nfsd.h         |  3 +-
- fs/nfsd/state.h        |  3 ++
- fs/nfsd/xdr4cb.h       | 10 ++++--
- 6 files changed, 130 insertions(+), 15 deletions(-)
-
-diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callback.c
-index 988232086589..d5004790f2b1 100644
---- a/fs/nfsd/nfs4callback.c
-+++ b/fs/nfsd/nfs4callback.c
-@@ -93,12 +93,35 @@ static int decode_cb_fattr4(struct xdr_stream *xdr, uint32_t *bitmap,
- {
- 	fattr->ncf_cb_change = 0;
- 	fattr->ncf_cb_fsize = 0;
-+	fattr->ncf_cb_atime.tv_sec = 0;
-+	fattr->ncf_cb_atime.tv_nsec = 0;
-+	fattr->ncf_cb_mtime.tv_sec = 0;
-+	fattr->ncf_cb_mtime.tv_nsec = 0;
-+
- 	if (bitmap[0] & FATTR4_WORD0_CHANGE)
- 		if (xdr_stream_decode_u64(xdr, &fattr->ncf_cb_change) < 0)
- 			return -NFSERR_BAD_XDR;
- 	if (bitmap[0] & FATTR4_WORD0_SIZE)
- 		if (xdr_stream_decode_u64(xdr, &fattr->ncf_cb_fsize) < 0)
- 			return -NFSERR_BAD_XDR;
-+	if (bitmap[2] & FATTR4_WORD2_TIME_DELEG_ACCESS) {
-+		fattr4_time_deleg_access access;
-+
-+		if (!xdrgen_decode_fattr4_time_deleg_access(xdr, &access))
-+			return -NFSERR_BAD_XDR;
-+		fattr->ncf_cb_atime.tv_sec = access.seconds;
-+		fattr->ncf_cb_atime.tv_nsec = access.nseconds;
-+
-+	}
-+	if (bitmap[2] & FATTR4_WORD2_TIME_DELEG_MODIFY) {
-+		fattr4_time_deleg_modify modify;
-+
-+		if (!xdrgen_decode_fattr4_time_deleg_modify(xdr, &modify))
-+			return -NFSERR_BAD_XDR;
-+		fattr->ncf_cb_mtime.tv_sec = modify.seconds;
-+		fattr->ncf_cb_mtime.tv_nsec = modify.nseconds;
-+
-+	}
- 	return 0;
- }
- 
-@@ -364,13 +387,18 @@ encode_cb_getattr4args(struct xdr_stream *xdr, struct nfs4_cb_compound_hdr *hdr,
- 	struct nfs4_delegation *dp =
- 		container_of(fattr, struct nfs4_delegation, dl_cb_fattr);
- 	struct knfsd_fh *fh = &dp->dl_stid.sc_file->fi_fhandle;
--	u32 bmap[1];
-+	u32 bmap[3];
-+	u32 bmap_size = 1;
- 
- 	bmap[0] = FATTR4_WORD0_CHANGE | FATTR4_WORD0_SIZE;
--
-+	if (dp->dl_deleg_ts) {
-+		bmap[1] = 0;
-+		bmap[2] = FATTR4_WORD2_TIME_DELEG_ACCESS | FATTR4_WORD2_TIME_DELEG_MODIFY;
-+		bmap_size = 3;
-+	}
- 	encode_nfs_cb_opnum4(xdr, OP_CB_GETATTR);
- 	encode_nfs_fh4(xdr, fh);
--	encode_bitmap4(xdr, bmap, ARRAY_SIZE(bmap));
-+	encode_bitmap4(xdr, bmap, bmap_size);
- 	hdr->nops++;
- }
- 
-@@ -595,7 +623,7 @@ static int nfs4_xdr_dec_cb_getattr(struct rpc_rqst *rqstp,
- 	struct nfs4_cb_compound_hdr hdr;
- 	int status;
- 	u32 bitmap[3] = {0};
--	u32 attrlen;
-+	u32 attrlen, maxlen;
- 	struct nfs4_cb_fattr *ncf =
- 		container_of(cb, struct nfs4_cb_fattr, ncf_getattr);
- 
-@@ -614,7 +642,11 @@ static int nfs4_xdr_dec_cb_getattr(struct rpc_rqst *rqstp,
- 		return -NFSERR_BAD_XDR;
- 	if (xdr_stream_decode_u32(xdr, &attrlen) < 0)
- 		return -NFSERR_BAD_XDR;
--	if (attrlen > (sizeof(ncf->ncf_cb_change) + sizeof(ncf->ncf_cb_fsize)))
-+	maxlen = sizeof(ncf->ncf_cb_change) + sizeof(ncf->ncf_cb_fsize);
-+	if (bitmap[2] != 0)
-+		maxlen += (sizeof(ncf->ncf_cb_mtime.tv_sec) +
-+			   sizeof(ncf->ncf_cb_mtime.tv_nsec)) * 2;
-+	if (attrlen > maxlen)
- 		return -NFSERR_BAD_XDR;
- 	status = decode_cb_fattr4(xdr, bitmap, ncf);
- 	return status;
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index f353aeb4cc0a..ea63c4f0ef0a 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -5975,6 +5975,8 @@ nfs4_open_delegation(struct nfsd4_open *open, struct nfs4_ol_stateid *stp,
- 
- 	memcpy(&open->op_delegate_stateid, &dp->dl_stid.sc_stateid, sizeof(dp->dl_stid.sc_stateid));
- 
-+	if (open->op_deleg_want & NFS4_SHARE_WANT_DELEG_TIMESTAMPS)
-+		dp->dl_deleg_ts = true;
- 	if (open->op_share_access & NFS4_SHARE_ACCESS_WRITE) {
- 		open->op_delegate_type = NFS4_OPEN_DELEGATE_WRITE;
- 		trace_nfsd_deleg_write(&dp->dl_stid.sc_stateid);
-@@ -8819,6 +8821,83 @@ nfsd4_get_writestateid(struct nfsd4_compound_state *cstate,
- 	get_stateid(cstate, &u->write.wr_stateid);
- }
- 
-+/**
-+ * set_cb_time - vet and set the timespec for a cb_getattr update
-+ * @cb: timestamp from the CB_GETATTR response
-+ * @orig: original timestamp in the inode
-+ * @now: current time
-+ *
-+ * Given a timestamp in a CB_GETATTR response, check it against the
-+ * current timestamp in the inode and the current time. Returns true
-+ * if the inode's timestamp needs to be updated, and false otherwise.
-+ * @cb may also be changed if the timestamp needs to be clamped.
-+ */
-+static bool set_cb_time(struct timespec64 *cb, const struct timespec64 *orig,
-+			const struct timespec64 *now)
-+{
-+
-+	/*
-+	 * "When the time presented is before the original time, then the
-+	 *  update is ignored." Also no need to update if there is no change.
-+	 */
-+	if (timespec64_compare(cb, orig) <= 0)
-+		return false;
-+
-+	/*
-+	 * "When the time presented is in the future, the server can either
-+	 *  clamp the new time to the current time, or it may
-+	 *  return NFS4ERR_DELAY to the client, allowing it to retry."
-+	 */
-+	if (timespec64_compare(cb, now) > 0) {
-+		/* clamp it */
-+		*cb = *now;
-+	}
-+
-+	return true;
-+}
-+
-+static int cb_getattr_update_times(struct dentry *dentry, struct nfs4_delegation *dp)
-+{
-+	struct timespec64 now = current_time(d_inode(dentry));
-+	struct nfs4_cb_fattr *ncf = &dp->dl_cb_fattr;
-+	struct inode *inode = d_inode(dentry);
-+	struct iattr attrs = { };
-+	int ret;
-+
-+	if (dp->dl_deleg_ts) {
-+		struct timespec64 atime = inode_get_atime(inode);
-+		struct timespec64 mtime = inode_get_mtime(inode);
-+
-+		attrs.ia_atime = ncf->ncf_cb_atime;
-+		attrs.ia_mtime = ncf->ncf_cb_mtime;
-+
-+		if (set_cb_time(&attrs.ia_atime, &atime, &now))
-+			attrs.ia_valid |= ATTR_ATIME | ATTR_ATIME_SET;
-+
-+		if (set_cb_time(&attrs.ia_mtime, &mtime, &now)) {
-+			struct timespec64 ctime = inode_get_ctime(inode);
-+
-+			attrs.ia_valid |= ATTR_MTIME | ATTR_MTIME_SET;
-+			if (timespec64_compare(&attrs.ia_mtime, &ctime) > 0) {
-+				attrs.ia_valid |= ATTR_CTIME | ATTR_CTIME_DLG;
-+				attrs.ia_ctime = attrs.ia_mtime;
-+			}
-+		}
-+	} else {
-+		attrs.ia_valid |= ATTR_MTIME | ATTR_CTIME;
-+		attrs.ia_mtime = attrs.ia_ctime = now;
-+	}
-+
-+	if (!attrs.ia_valid)
-+		return 0;
-+
-+	attrs.ia_valid |= ATTR_DELEG;
-+	inode_lock(inode);
-+	ret = notify_change(&nop_mnt_idmap, dentry, &attrs, NULL);
-+	inode_unlock(inode);
-+	return ret;
-+}
-+
- /**
-  * nfsd4_deleg_getattr_conflict - Recall if GETATTR causes conflict
-  * @rqstp: RPC transaction context
-@@ -8846,7 +8925,6 @@ nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp, struct dentry *dentry,
- 	struct file_lock_context *ctx;
- 	struct nfs4_cb_fattr *ncf;
- 	struct file_lease *fl;
--	struct iattr attrs;
- 
- 	*modified = false;
- 	ctx = locks_inode_context(inode);
-@@ -8905,11 +8983,7 @@ nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp, struct dentry *dentry,
- 				 * not update the file's metadata with the client's
- 				 * modified size
- 				 */
--				attrs.ia_mtime = attrs.ia_ctime = current_time(inode);
--				attrs.ia_valid = ATTR_MTIME | ATTR_CTIME | ATTR_DELEG;
--				inode_lock(inode);
--				err = notify_change(&nop_mnt_idmap, dentry, &attrs, NULL);
--				inode_unlock(inode);
-+				err = cb_getattr_update_times(dentry, dp);
- 				if (err) {
- 					nfs4_put_stid(&dp->dl_stid);
- 					return nfserrno(err);
-diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-index 8266f910d847..c79f7402bc30 100644
---- a/fs/nfsd/nfs4xdr.c
-+++ b/fs/nfsd/nfs4xdr.c
-@@ -3411,6 +3411,7 @@ static __be32 nfsd4_encode_fattr4_xattr_support(struct xdr_stream *xdr,
- #define NFSD_OA_SHARE_ACCESS_WANT	(BIT(OPEN_ARGS_SHARE_ACCESS_WANT_ANY_DELEG)		| \
- 					 BIT(OPEN_ARGS_SHARE_ACCESS_WANT_NO_DELEG)		| \
- 					 BIT(OPEN_ARGS_SHARE_ACCESS_WANT_CANCEL)		| \
-+					 BIT(OPEN_ARGS_SHARE_ACCESS_WANT_DELEG_TIMESTAMPS)	| \
- 					 BIT(OPEN_ARGS_SHARE_ACCESS_WANT_OPEN_XOR_DELEGATION))
- 
- #define NFSD_OA_OPEN_CLAIM	(BIT(OPEN_ARGS_OPEN_CLAIM_NULL)		| \
-diff --git a/fs/nfsd/nfsd.h b/fs/nfsd/nfsd.h
-index c98fb104ba7d..2d89b82e5453 100644
---- a/fs/nfsd/nfsd.h
-+++ b/fs/nfsd/nfsd.h
-@@ -421,7 +421,8 @@ enum {
-  | FATTR4_WORD1_TIME_DELTA      | FATTR4_WORD1_TIME_METADATA   | FATTR4_WORD1_TIME_CREATE      \
-  | FATTR4_WORD1_TIME_MODIFY     | FATTR4_WORD1_TIME_MODIFY_SET | FATTR4_WORD1_MOUNTED_ON_FILEID)
- 
--#define NFSD4_SUPPORTED_ATTRS_WORD2 0
-+#define NFSD4_SUPPORTED_ATTRS_WORD2 (FATTR4_WORD2_TIME_DELEG_MODIFY | \
-+				     FATTR4_WORD2_TIME_DELEG_ACCESS)
- 
- /* 4.1 */
- #ifdef CONFIG_NFSD_PNFS
-diff --git a/fs/nfsd/state.h b/fs/nfsd/state.h
-index 65691457d9ba..b2ffb7d36721 100644
---- a/fs/nfsd/state.h
-+++ b/fs/nfsd/state.h
-@@ -141,6 +141,8 @@ struct nfs4_cb_fattr {
- 	/* from CB_GETATTR reply */
- 	u64 ncf_cb_change;
- 	u64 ncf_cb_fsize;
-+	struct timespec64 ncf_cb_mtime;
-+	struct timespec64 ncf_cb_atime;
- 
- 	unsigned long ncf_cb_flags;
- 	bool ncf_file_modified;
-@@ -184,6 +186,7 @@ struct nfs4_delegation {
- 	int			dl_retries;
- 	struct nfsd4_callback	dl_recall;
- 	bool			dl_recalled;
-+	bool			dl_deleg_ts;
- 
- 	/* for CB_GETATTR */
- 	struct nfs4_cb_fattr    dl_cb_fattr;
-diff --git a/fs/nfsd/xdr4cb.h b/fs/nfsd/xdr4cb.h
-index e8b00309c449..f1a315cd31b7 100644
---- a/fs/nfsd/xdr4cb.h
-+++ b/fs/nfsd/xdr4cb.h
-@@ -59,16 +59,20 @@
-  * 1: CB_GETATTR opcode (32-bit)
-  * N: file_handle
-  * 1: number of entry in attribute array (32-bit)
-- * 1: entry 0 in attribute array (32-bit)
-+ * 3: entry 0-2 in attribute array (32-bit * 3)
-  */
- #define NFS4_enc_cb_getattr_sz		(cb_compound_enc_hdr_sz +       \
- 					cb_sequence_enc_sz +            \
--					1 + enc_nfs4_fh_sz + 1 + 1)
-+					1 + enc_nfs4_fh_sz + 1 + 3)
- /*
-  * 4: fattr_bitmap_maxsz
-  * 1: attribute array len
-  * 2: change attr (64-bit)
-  * 2: size (64-bit)
-+ * 2: atime.seconds (64-bit)
-+ * 1: atime.nanoseconds (32-bit)
-+ * 2: mtime.seconds (64-bit)
-+ * 1: mtime.nanoseconds (32-bit)
-  */
- #define NFS4_dec_cb_getattr_sz		(cb_compound_dec_hdr_sz  +      \
--			cb_sequence_dec_sz + 4 + 1 + 2 + 2 + op_dec_sz)
-+			cb_sequence_dec_sz + 4 + 1 + 2 + 2 + 2 + 1 + 2 + 1 + op_dec_sz)
+   128	
+   129	int bch2_accounting_invalid(struct bch_fs *c, struct bkey_s_c k,
+   130				    enum bch_validate_flags flags,
+   131				    struct printbuf *err)
+   132	{
+   133		struct disk_accounting_pos acc_k;
+   134		bpos_to_disk_accounting_pos(&acc_k, k.k->p);
+   135		void *end = &acc_k + 1;
+ > 136		int ret = 0;
+   137	
+   138		switch (acc_k.type) {
+   139		case BCH_DISK_ACCOUNTING_nr_inodes:
+   140			end = field_end(acc_k, nr_inodes);
+   141			break;
+   142		case BCH_DISK_ACCOUNTING_persistent_reserved:
+   143			end = field_end(acc_k, persistent_reserved);
+   144			break;
+   145		case BCH_DISK_ACCOUNTING_replicas:
+   146			bkey_fsck_err_on(!acc_k.replicas.nr_devs,
+   147					 c, err, accounting_key_replicas_nr_devs_0,
+   148					 "accounting key replicas entry with nr_devs=0");
+   149	
+   150			bkey_fsck_err_on(acc_k.replicas.nr_required > acc_k.replicas.nr_devs ||
+   151					 (acc_k.replicas.nr_required > 1 &&
+   152					  acc_k.replicas.nr_required == acc_k.replicas.nr_devs),
+   153					 c, err, accounting_key_replicas_nr_required_bad,
+   154					 "accounting key replicas entry with bad nr_required");
+   155	
+   156			for (unsigned i = 0; i + 1 < acc_k.replicas.nr_devs; i++)
+   157				bkey_fsck_err_on(acc_k.replicas.devs[i] > acc_k.replicas.devs[i + 1],
+   158						 c, err, accounting_key_replicas_devs_unsorted,
+   159						 "accounting key replicas entry with unsorted devs");
+   160	
+   161			end = (void *) &acc_k.replicas + replicas_entry_bytes(&acc_k.replicas);
+   162			break;
+   163		case BCH_DISK_ACCOUNTING_dev_data_type:
+   164			end = field_end(acc_k, dev_data_type);
+   165			break;
+   166		case BCH_DISK_ACCOUNTING_compression:
+   167			end = field_end(acc_k, compression);
+   168			break;
+   169		case BCH_DISK_ACCOUNTING_snapshot:
+   170			end = field_end(acc_k, snapshot);
+   171			break;
+   172		case BCH_DISK_ACCOUNTING_btree:
+   173			end = field_end(acc_k, btree);
+   174			break;
+   175		case BCH_DISK_ACCOUNTING_rebalance_work:
+   176			end = field_end(acc_k, rebalance_work);
+   177			break;
+   178		}
+   179	
+   180		bkey_fsck_err_on(!is_zero(end, (void *) (&acc_k + 1)),
+   181				 c, err, accounting_key_junk_at_end,
+   182				 "junk at end of accounting key");
+   183	fsck_err:
+ > 184		return ret;
+   185	}
+   186	
 
 -- 
-2.46.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
