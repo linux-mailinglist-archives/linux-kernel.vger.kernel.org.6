@@ -1,132 +1,262 @@
-Return-Path: <linux-kernel+bounces-302054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB0AF95F939
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:52:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 305B495F93E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28FE61C2206E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:52:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 552441C21DD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:53:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D499F8248C;
-	Mon, 26 Aug 2024 18:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F5E1991A9;
+	Mon, 26 Aug 2024 18:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DDTKZBEP"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="TDIuSUNO"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC8A768FD
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 18:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112CC768FD
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 18:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724698373; cv=none; b=g1MeQ/xvtPdgh6TYYplGR7vfjoV4h7o8WH14QUkjgGw08bCIUPZ1nMhoBFIwFGfXvxU7e3ZReojdwkQ9dMEID1OIrMyzhGJ5pHoSvbi6yxFS3Ili9MtBYQNrllETUWUjkKNVnvR/m555dkmVoiNm7rAw3jyZC/KjWd/2MdlW2Ro=
+	t=1724698408; cv=none; b=nl4FeGW3lHnho0Z7DkfZum/h+KFXrZMP2klTpD68TkB231HOdxUTSPo6mUxuUnH35WV9IE+Mzm61QwkuUDIWUdwUXN5+QaRB9OUF2NNgGKLXWUFnuT/ZNTDyr5XdDym6fW+9z1lVvYKHU7Jnf4t9tHJegMLXAMndMhTI1Vk0wUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724698373; c=relaxed/simple;
-	bh=vzEkV0fc1prvK5DIabDiJ0kU3ZJOr9l9vPx3nu33+Eg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dAJOFa/eYyHgf3ao4C4SjW4OV9aMXte+0X5M5ki9EZz3NghgLCGwXcO31bVvKx9GS2e1zZhawHEt+u0WlOPH/N1Ev/IJbJmu//z0dqifT4/FjJC+LZ4r3uxBvZG06wzCEBAQ1BJroN6XiGnDD96FBy384hRtL2bsXZ5EwQV1Jzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DDTKZBEP; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-201fba05363so36237335ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 11:52:51 -0700 (PDT)
+	s=arc-20240116; t=1724698408; c=relaxed/simple;
+	bh=t5/zB9BSuAxB1nO7r8cDk3j0lFCwrqEuE/UDhsWupEY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CxnUnRor0oRKEO6HnFerWIAumbXFzh3+v2+h1H8LY0OznvxEwy12PVRrZnvuPl7K8S0l8uEewQ4ratZhHnvTmfIKlVsZMbL/47Z4kBBjwEb/deOwBCdfXhxkAtZLUUcVHknFFhYqdaA6K1rk+fvSa9llJqROIy6C6DHDu6knl0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=TDIuSUNO; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2d60f48a2ccso3840649a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 11:53:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724698371; x=1725303171; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pwJGUsNOEwsmpVGk46dDj18VF13y1ysRC97a7FWC1j4=;
-        b=DDTKZBEPPn/HuljQPpBhM219IBOI0LQ4O8h0Ineb5meoJvwHo24f4KK5YB5FU0U94p
-         qmnhrYIb1kd0ylkJ/W87fwXoNr/nBKwZtS3bIOaCNGlO1VJXIqRL32fygcW0GBx67Ygd
-         2HAjmoBwSb5G1bVF50J94WUvDfdxZZMzUNM0M4bnESD1jwD8QU/ikTPs3iSKcnARIJod
-         lTyo8SF1kFKFuB5hKW1ugXtT80wl22pPCgpmdMhfv8c2BPIB4OGXbhpfdNYoWL0mfwwW
-         0LhtfrYRCLfO35CsMPZNbW2tLV+4AcrDL6MOfBaInaX9PjHvzEP6v0gVp1XuoF7UcgDn
-         /Z6w==
+        d=broadcom.com; s=google; t=1724698405; x=1725303205; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1vPKu5kyckfAGlfhdEVa0KBQG1dFiWf+7mfGcbWhMwU=;
+        b=TDIuSUNOfyOit8WB54kDWtsUGgQ/c5QN6dJlmL33s+nJf+RCtsq3AZF8L5H10jmmAs
+         vANrP2xEVKuScRe8s+yzMKO5uLTa0x2ALyYRkci4+h9693zO+ynQ5xxUlDSjemntqkEN
+         HISsOl/gRqgT4cffY7aee5ZzKezTlP1yS+Kfk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724698371; x=1725303171;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pwJGUsNOEwsmpVGk46dDj18VF13y1ysRC97a7FWC1j4=;
-        b=fiS0ZFbnPu24ub/8HEtzmtyKS0b0CEbdXtzVh1UhA2/hqII6piJ9eQ9X9a09f3zRfv
-         0GxCW7ZuOvGoLIpXsYCJMcNF57DvxD2R0jMh1Uv1KmzCIGzF1BKUnA1HNXWGAplP9nYV
-         uhr13IdofSuoIRjqR5/erVOFH6NXDm5nK8yrX8lFwHHkD8QvWG3TCoJQGTgHAXG0ZjJp
-         ndy4lquhlV55vT/yHDVRij4fc5ByLeWcGOuTWhQpE6+Amdr7AIaBPb7NA2GyshKG7RH2
-         DbspGlnlg3szYlxCeZVvup9IZUCIDQMhP15UIiZWWjKeqsIRLWu7TAY88IywKutFi00f
-         4XGw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDqWt3kOcjg5FqxAECtvcBZSSHbpPiA0bDIUS3fnU45tTd/NU6FBaGUuQM8QlIHw9NyFKmTy40isinhns=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCwv7wg+huuQ4xcFjzY+/yhcDI3GiXgo5mKbGNOhe9IjqlWpjO
-	WMIDW9YqQvld/X/EvqOJcwUWMxRSz2i+WoZxBIYKyZj8YovG6+s1
-X-Google-Smtp-Source: AGHT+IEBe1CP2CQogtHDQSIjYX1OcTMmHdfgt55Gdb3pgGa/ZsEDgfcBfduS/zyNGyKqwEcpY3TGXA==
-X-Received: by 2002:a17:903:11c7:b0:202:4d05:a24a with SMTP id d9443c01a7336-204df13ee41mr5432255ad.16.1724698371124;
-        Mon, 26 Aug 2024 11:52:51 -0700 (PDT)
-Received: from masingh-thinkpad.. ([49.207.52.55])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-203859ef0fdsm70377565ad.248.2024.08.26.11.52.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 11:52:50 -0700 (PDT)
-From: Manisha Singh <masingh.linux@gmail.com>
-To: florian.c.schilhabel@googlemail.com,
-	gregkh@linuxfoundation.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Manisha Singh <masingh.linux@gmail.com>
-Subject: [PATCH] staging: rtl8712: Fix style issues in rtl871x_io.c
-Date: Tue, 27 Aug 2024 00:22:13 +0530
-Message-ID: <20240826185213.9445-2-masingh.linux@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1724698405; x=1725303205;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1vPKu5kyckfAGlfhdEVa0KBQG1dFiWf+7mfGcbWhMwU=;
+        b=rFfBPi4OepfcKiqB52GAy9gG66xnCcW6P7wHFFI7uMFRHzpynSBbStlEgdb+lm+dMd
+         cj3DVANEIcuIansQjiJqzG/MVD8KjGzw1uqovg29qtwHiPt/4HTMm6iNAv6wnrQeqyqW
+         ASWo9Nsk/EB8wZo7g42clk8Rab7WszzTach+ZJQAd3zYc0tC9MOuzfNc8nYrbqqSh5H7
+         LtIPM1KyEynEi3HjgPApIBYN2rhIuvddpkG3ahvICenAOUsfYKc3WedvBiBJ1HXGpXGo
+         BycvrD7KEs0YDi9z9WYgnBx3zOp11AdxevvbB3cWnDtY3Nk+ZWfw8U9wbW/c/UD/jikB
+         hCOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUdLbS6Gv5/g4Y62GUrtsHjBsuRW8sfqJPsNcD6uaWhWMnNlL0wTSDShE/y8rLfjrdVfgMmX5BJ17ktLg0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqfUuAQbeW+yDXrGZfKzQvh7b8pNUnI4iPWQBgb8c1dOhI3MO5
+	yzAkR0omq2veHDsDcATEDgyhy86j0Pv8Rjt/zxa9ypNLBa5kXJhF/t1G7iG0OK/ueUw8oLSWhQC
+	UzYLNHTQGWvIueWyhJ9LPX2Ho2JkHk9fE6mx9
+X-Google-Smtp-Source: AGHT+IELe1qaUfmRGw8MR4uzHkXLikT+gDWeyOsCy/CEzW9EyaONPESoDrYYg0teDP/A3SCH2C2SXGzEd9PBAnpho8g=
+X-Received: by 2002:a17:90a:8983:b0:2cb:4f14:2a70 with SMTP id
+ 98e67ed59e1d1-2d646d2483amr11893442a91.30.1724698405175; Mon, 26 Aug 2024
+ 11:53:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240814221818.2612484-1-jitendra.vegiraju@broadcom.com>
+ <20240814221818.2612484-4-jitendra.vegiraju@broadcom.com> <vxpwwstbvbruaafcatq5zyi257hf25x5levct3y7s7ympcsqvh@b6wmfkd4cxfy>
+In-Reply-To: <vxpwwstbvbruaafcatq5zyi257hf25x5levct3y7s7ympcsqvh@b6wmfkd4cxfy>
+From: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
+Date: Mon, 26 Aug 2024 11:53:13 -0700
+Message-ID: <CAMdnO-LDw0OZRfBWmh_4AEYuwbq6dmnh=W3PZwRe1766Ys2huA@mail.gmail.com>
+Subject: Re: [net-next v4 3/5] net: stmmac: Integrate dw25gmac into stmmac
+ hwif handling
+To: Serge Semin <fancer.lancer@gmail.com>
+Cc: netdev@vger.kernel.org, alexandre.torgue@foss.st.com, joabreu@synopsys.com, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	mcoquelin.stm32@gmail.com, bcm-kernel-feedback-list@broadcom.com, 
+	richardcochran@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
+	hawk@kernel.org, john.fastabend@gmail.com, rmk+kernel@armlinux.org.uk, 
+	ahalaney@redhat.com, xiaolei.wang@windriver.com, rohan.g.thomas@intel.com, 
+	Jianheng.Zhang@synopsys.com, linux-kernel@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org, andrew@lunn.ch, 
+	linux@armlinux.org.uk, horms@kernel.org, florian.fainelli@broadcom.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch addresses style issues reported by checkpatch.pl in
-drivers/staging/rtl8712/rtl871x_io.c:
+Hi Serge(y)
+Thank you for reviewing the patch.
 
-1. Avoid Multiple Assignments: The original line had multiple
-   assignments in a single statement. This is generally discouraged
-   for clarity and maintainability. The code has been refactored to
-   use separate statements for each assignment.
+On Fri, Aug 23, 2024 at 6:49=E2=80=AFAM Serge Semin <fancer.lancer@gmail.co=
+m> wrote:
+>
+> Hi Jitendra
+>
+> On Wed, Aug 14, 2024 at 03:18:16PM -0700, jitendra.vegiraju@broadcom.com =
+wrote:
+> > From: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
+> >
+> > Integrate dw25gmac support into stmmac hardware interface handling.
+> > Added a new entry to the stmmac_hw table in hwif.c.
+> > Define new macros DW25GMAC_CORE_4_00 and DW25GMAC_ID to identify 25GMAC
+> > device.
+> > Since BCM8958x is an early adaptor device, the synopsis_id reported in =
+HW
+> > is 0x32 and device_id is DWXGMAC_ID. Provide override support by defini=
+ng
+> > synopsys_dev_id member in struct stmmac_priv so that driver specific se=
+tup
+> > functions can override the hardware reported values.
+> >
+> > Signed-off-by: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
+> > ---
+> >  drivers/net/ethernet/stmicro/stmmac/common.h |  2 ++
+> >  drivers/net/ethernet/stmicro/stmmac/hwif.c   | 25 ++++++++++++++++++--
+> >  drivers/net/ethernet/stmicro/stmmac/stmmac.h |  1 +
+> >  3 files changed, 26 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net=
+/ethernet/stmicro/stmmac/common.h
+> > index 684489156dce..46edbe73a124 100644
+> > --- a/drivers/net/ethernet/stmicro/stmmac/common.h
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/common.h
+> > @@ -38,9 +38,11 @@
+> >  #define DWXGMAC_CORE_2_10    0x21
+> >  #define DWXGMAC_CORE_2_20    0x22
+> >  #define DWXLGMAC_CORE_2_00   0x20
+> > +#define DW25GMAC_CORE_4_00   0x40
+> >
+> >  /* Device ID */
+> >  #define DWXGMAC_ID           0x76
+> > +#define DW25GMAC_ID          0x55
+> >  #define DWXLGMAC_ID          0x27
+> >
+> >  #define STMMAC_CHAN0 0       /* Always supported and default for all c=
+hips */
+> > diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.c b/drivers/net/e=
+thernet/stmicro/stmmac/hwif.c
+> > index 29367105df54..97e5594ddcda 100644
+> > --- a/drivers/net/ethernet/stmicro/stmmac/hwif.c
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/hwif.c
+> > @@ -278,6 +278,27 @@ static const struct stmmac_hwif_entry {
+> >               .est =3D &dwmac510_est_ops,
+> >               .setup =3D dwxlgmac2_setup,
+> >               .quirks =3D stmmac_dwxlgmac_quirks,
+>
+> > +     }, {
+> > +             .gmac =3D false,
+> > +             .gmac4 =3D false,
+> > +             .xgmac =3D true,
+> > +             .min_id =3D DW25GMAC_CORE_4_00,
+> > +             .dev_id =3D DW25GMAC_ID,
+> > +             .regs =3D {
+> > +                     .ptp_off =3D PTP_XGMAC_OFFSET,
+> > +                     .mmc_off =3D MMC_XGMAC_OFFSET,
+> > +                     .est_off =3D EST_XGMAC_OFFSET,
+> > +             },
+> > +             .desc =3D &dwxgmac210_desc_ops,
+> > +             .dma =3D &dw25gmac400_dma_ops,
+> > +             .mac =3D &dwxgmac210_ops,
+> > +             .hwtimestamp =3D &stmmac_ptp,
+> > +             .mode =3D NULL,
+> > +             .tc =3D &dwmac510_tc_ops,
+> > +             .mmc =3D &dwxgmac_mmc_ops,
+> > +             .est =3D &dwmac510_est_ops,
+> > +             .setup =3D dwxgmac2_setup,
+> > +             .quirks =3D NULL,
+> >       },
+>
+> This can be replaced with just:
+>
+> +       }, {
+> +               .gmac =3D false,
+> +               .gmac4 =3D false,
+> +               .xgmac =3D true,
+> +               .min_id =3D DW25GMAC_CORE_4_00,
+> +               .dev_id =3D DWXGMAC_ID, /* Early DW 25GMAC IP-core had XG=
+MAC ID */
+> +               .regs =3D {
+> +                       .ptp_off =3D PTP_XGMAC_OFFSET,
+> +                       .mmc_off =3D MMC_XGMAC_OFFSET,
+> +                       .est_off =3D EST_XGMAC_OFFSET,
+> +               },
+> +               .desc =3D &dwxgmac210_desc_ops,
+> +               .dma =3D &dw25gmac400_dma_ops,
+> +               .mac =3D &dwxgmac210_ops,
+> +               .hwtimestamp =3D &stmmac_ptp,
+> +               .mode =3D NULL,
+> +               .tc =3D &dwmac510_tc_ops,
+> +               .mmc =3D &dwxgmac_mmc_ops,
+> +               .est =3D &dwmac510_est_ops,
+> +               .setup =3D dw25gmac_setup,
+> +               .quirks =3D NULL,
+>         }
+>
+> and you won't need to pre-define the setup() method in the
+> glue driver. Instead you can define a new dw25xgmac_setup() method in
+> the dwxgmac2_core.c as it's done for the DW XGMAC/LXGMAC IP-cores.
+>
+> Note if your device is capable to work with up to 10Gbps speed, then
+> just set the plat_stmmacenet_data::max_speed field to SPEED_10000.
+> Alternatively if you really need to specify the exact MAC
+> capabilities, then you can implement what Russell suggested here
+> sometime ago:
+> https://lore.kernel.org/netdev/Zf3ifH%2FCjyHtmXE3@shell.armlinux.org.uk/
+>
+I like your suggestion to add one stmmac_hw[] array entry (entry_a) for thi=
+s
+"early release" DW25GMAC IP and another entry (entry_b) for final DW25MAC
+IP, in the process eliminate the need for a new member variable in struct
+stmmac_priv.
 
-2. Prefer `sizeof(*pintf_hdl->pintfpriv)` Over
-   `sizeof(struct intf_priv)`: Updated the memory allocation call to
-   use `sizeof(*pintf_hdl->pintfpriv)` instead of
-   `sizeof(struct intf_priv)`. This is considered better practice as it
-   automatically adjusts if the type of `pintf_hdl->pintfpriv` changes,
-   reducing the risk of mismatches and improving maintainability.
+However, I would like to bring to your attention that this device requires
+special handling for both synopsys_id and dev_id.
+This device is reporting 0x32 for synopsys_id and 0x76(XGMAC) for dev_id.
+The final 25GMAC spec will have 0x40 for synopsys_id and 0x55(25GMAC) for
+dev_id.
 
-Changes made:
-- Replaced the original line with two separate lines for allocation and
-  assignment.
-- Updated `kmalloc` to use `sizeof(*pintf_hdl->pintfpriv)` for the
-  allocation size.
+So, in order to avoid falsely qualifying other XGMAC devices with
+synopsis_id >=3D0x32 as DW25GMAC, I am thinking we will have to overwrite t=
+he
+synopsys_id to 0x40 (DW25GMAC_CORE_4_00) in glue driver using existing
+glue driver override mechanism.
 
-These changes improve code readability and maintain consistency with
-coding standards.
+We can implement dw25gmac_setup() in dwxgmac2_core.c for generic 25GMAC
+case. But, this glue driver will have to rely on its own setup function
+to override the synopsys_id as DW25GMAC_CORE_4_00.
 
-Signed-off-by: Manisha Singh <masingh.linux@gmail.com>
----
- drivers/staging/rtl8712/rtl871x_io.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Do you think it looks reasonable?
+If yes, do you want me to add the generic 25GMAC stmmac_hw[] entry
+("entry_b") now or when
+such a device becomes available for testing?
 
-diff --git a/drivers/staging/rtl8712/rtl871x_io.c b/drivers/staging/rtl8712/rtl871x_io.c
-index 6789a4c98564..b81e9b06725c 100644
---- a/drivers/staging/rtl8712/rtl871x_io.c
-+++ b/drivers/staging/rtl8712/rtl871x_io.c
-@@ -48,8 +48,8 @@ static uint _init_intf_hdl(struct _adapter *padapter,
- 	set_intf_funs = &(r8712_usb_set_intf_funs);
- 	set_intf_ops = &r8712_usb_set_intf_ops;
- 	init_intf_priv = &r8712_usb_init_intf_priv;
--	pintf_priv = pintf_hdl->pintfpriv = kmalloc(sizeof(struct intf_priv),
--						    GFP_ATOMIC);
-+	pintf_priv = kmalloc(sizeof(*pintf_hdl->pintfpriv), GFP_ATOMIC);
-+	pintf_hdl->pintfpriv = pintf_priv;
- 	if (!pintf_priv)
- 		goto _init_intf_hdl_fail;
- 	pintf_hdl->adapter = (u8 *)padapter;
--- 
-2.43.0
+> If you also have a DW 25GMAC-based device with 0x55 device ID, then
+> just add another stmmac_hw[] array entry.
+>
 
+> >  };
+> >
+> >       int hw_cap_support;
+> >       int synopsys_id;
+>
+> > +     int synopsys_dev_id;
+>
+> With the suggestion above implemented you won't need this.
+
+Got it. Thanks.
+
+>
+> -Serge(y)
+>
+> >       u32 msg_enable;
+> >       int wolopts;
+> >       int wol_irq;
+> > --
+> > 2.34.1
+> >
 
