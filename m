@@ -1,125 +1,190 @@
-Return-Path: <linux-kernel+bounces-302864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EC2596046A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:30:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE9B396046D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:30:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BE27B22595
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:30:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 965DF28235E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F06156F28;
-	Tue, 27 Aug 2024 08:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CDE119885D;
+	Tue, 27 Aug 2024 08:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dgKgZQe9"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LP35UPxJ"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDE3131182
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BC715B541
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724747428; cv=none; b=BeCWPzjmD/kq6JFuxbpT6FNVhLafTaTcuvoxcBgej53rSqa3I7AYIHuVRRbwyzsNXg8/Mu4vEy5TxafLltwh/44DYbW53VF9nOVkbCPC0rctL7DIw4y0OPgG6oIFO/dV4b3YKv1oZhYbNYn+lkQtpbLGQmVEl02flbcI9eAfqH4=
+	t=1724747439; cv=none; b=YYVDdVwl+dMUCqY+pk+BGPv+la9yWMmwJBIr76c4osxi+tw6kTXOT9Xhy3P8GwPQYGBCBNv8lK+v4kvLuXDNW5hFEZegx/TOM9pLpWgtCXcAMTvVGOdlWkLZdC2GIrGh3uUPe9x/EHIUtBFyU2jAkTwI3BfVRCrbpeiOiBkAVqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724747428; c=relaxed/simple;
-	bh=/ybs2KnV3+jGgzd+z7IQzZDEcwA6FR9efiI7qbXcTBA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FuFZykcdtcQbSVraw1ZXlkBf0id95Xta9p8WyxexoyTU+aUSKImFXGXrjiUnULDR0VYhP3MKSiVehD7v8GYSnn9zq8FJvB92016V8Xsd1ruImyQTZADemgc4xbIGJ2kQIsX0+ZNsVd8Gp1SsgngJWk7ty58bdPXoYt2mm1/7yLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dgKgZQe9; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71431524f33so4387014b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 01:30:27 -0700 (PDT)
+	s=arc-20240116; t=1724747439; c=relaxed/simple;
+	bh=cvZH7fUYaeL9wrWckMOUxPYywvVUJJ7wNoFeMasAFh0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DQTCtqlKT1Cw8npMs/r5ShPxwg6kKk9fu4f3N6Fo8p61gKcSqyFY4eEwC3yEbDYYHDVesAOWXfACEY8+EB7aIZurHIFRkJPmFyhGNe95bVf1zHMYRwo4zdrQbG7PwTBPTDmZ8tWof6LlZflcEC8ohBWlKaC9a6TCPh549kz0G5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LP35UPxJ; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-201fba05363so41728735ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 01:30:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724747426; x=1725352226; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZEyn9jUT2FpyLYAjHKFMVWeuGnjVkiqgrAa0Pe7cY0I=;
-        b=dgKgZQe9htOVuTI1X6WNu9yyaM9Wy5ErCNH37RNE7ciCN/Cwr8McstJJN4lCahUAHW
-         O6HfLURtlBrpf5Y+2D/tAR8pfh+V3B8TifVO8zQDKSBHufogxnp74YE8OpxWnn4/e/Zg
-         3uf+/3inIt2EfHmLb1qef2PggBi6FKovJ0yis=
+        d=linaro.org; s=google; t=1724747437; x=1725352237; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4PG1MKybPmHFMME9V8dY/+bhiqIyDMUmzSsge0xRow8=;
+        b=LP35UPxJv4rW/rUKGq8i9eSrncCMGUrPMnYRXC9hxS3/RES3YtV8CLglw7Gu2L7MJR
+         A6HsySUrhV14sXRGcycYZ+CGulmKWDnfQPD3MnI4YLcjxfV9zGZ2gVKpwkg81G3wKdjo
+         QaomjzMXg0quQtSLpAIcwtoY3zKEJzMCkt1gIp/hue7IOi2E4cW+gAFo7LlrQhMFk9CN
+         Nh+QNspArm7XtKtKF7FqHmtn1GT0uXO4FFrbKIIgJdEO1jCvYd6RkezvXuIoNNJxc+3d
+         r7QB/tBmiXKKSxDX3bUI4kXp6TBJjtiAl72o12BwSIpiTnW48Oni9GMNEnnNwyO7f3PH
+         T/Rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724747426; x=1725352226;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZEyn9jUT2FpyLYAjHKFMVWeuGnjVkiqgrAa0Pe7cY0I=;
-        b=UcxfBVp8Tm1J3INbKayXHzi0+R1+l+iI6GvkdqXkOYV3KZNYAwvHbkKcLNzu/N2Aw4
-         OkhL8BkDrG/MGRtVVWL2147LOukOluWrsVYD4ZG0xFo4MbXXpcuBzuuRjtq/dS/JAhLX
-         M1Xun9dlpg7avKiuzw11pjoIj6yKrVcmWqiy0+sd6MLnDWq6gCbEyb/ibed61XaE7Uki
-         lU/J5sAd9mt2zg8JnY6wUETlQ6Q7sznAbtuDaZWLFfSBsX4qfTOfakLDLTlRLXzBTdCf
-         y14mQa5GwJGFZySsbQpSum7esMrG+s9i2zs0A1U1ldv18ECGxQbKOiUuyzcK2ZkpMMjD
-         C4qA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfU/cx3I3lzjpKquPdt6KDQJ2nvUwCGht8fDk0haxsVJ/ZHsWnMocMMu0dnomhA58fxe+1iGGMK4sP09c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yweq8THvmgebJeL20RaT4eHB0+orcanw70J0YIsnQy6IczsXVXO
-	l209YEbOgjVzfegis+r8Y6gA1aFqifh1dBDBiDu2Kb2BVNCpa5uRRdP2yAhISgOcsl9//gD086o
-	=
-X-Google-Smtp-Source: AGHT+IHLxDiKzVtQ+/lkOIiIpV2lHVc1jZlqCUmbhyI2hlryaxYSval91OKZZd7SBCdl1tsUGdTkXQ==
-X-Received: by 2002:a05:6a20:2d0c:b0:1ca:cbf5:593 with SMTP id adf61e73a8af0-1ccc086bc46mr2567946637.20.1724747426441;
-        Tue, 27 Aug 2024 01:30:26 -0700 (PDT)
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com. [209.85.215.170])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d613a5c550sm11462060a91.30.2024.08.27.01.30.24
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 01:30:25 -0700 (PDT)
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7d1fa104851so1421947a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 01:30:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUgVCy0bFaiE8ZbbUbEwYNc5EtSVzMiDDQ08XXljq9URKDYFAT+8+XS9xEjSpII3fA7WzOTSkwCu1Vvwb8=@vger.kernel.org
-X-Received: by 2002:a17:90b:4a42:b0:2c9:6d8:d823 with SMTP id
- 98e67ed59e1d1-2d8257c5a7bmr2583148a91.1.1724747424097; Tue, 27 Aug 2024
- 01:30:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724747437; x=1725352237;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4PG1MKybPmHFMME9V8dY/+bhiqIyDMUmzSsge0xRow8=;
+        b=NLDINL2XEgxYF5hEtUMXIaAxnRTpIZ/0e1l1L3P9ixt+/SQ9AvQjZmlgfE2Xj867pG
+         KQfmqpFKChHOYzwmryQYdazD2XddjJFmTwJ20qOh720bCLGtu2erwvWpWy9jyBYwLcaC
+         lmQA36z/ekdwhouWBMbmfkIQ4+lX1GaD2KCXngTI9DMqQJZezQI3Uuqw0c1SmrAtUrVk
+         UxIFGJMWbGUKQSk7lhsW7SyTIQ/QFD8yTpGAbAk1Dt5yDMkMFAaujt0WMoDOfsfm0rRn
+         h8UGgr0ShLgXVTEUUywDnLbpiOyb+dcDU1GqgV9ebaHmKTvnVyHjjlONxY0OVk8DI21Q
+         H7rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVG/X1wjZlsy2GBE9Devzdmphqa+apYcbtIsh0DqLxB01bOCIaVQpWT7EqA2+DXJSueFV0lVyflUGjS2t4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVmNWqjjfEkU65F1VLHn3J5OD/cqBVEZhk2yC0brXmBoJu+hGf
+	vVNq2ihCI24Mlku9pkgyBoj3ljfAhLr80OEEdWKWkrIb0jRdIYOGctxrMuh6tg==
+X-Google-Smtp-Source: AGHT+IHduWJQyUiCIAY3p1Zf9ALxilUWiklFzc/QeC53bqPhevbARPCSsJCvuo+QiSMorgPzFKWzHg==
+X-Received: by 2002:a17:903:11c3:b0:1fd:67c2:f975 with SMTP id d9443c01a7336-204df46c2bamr23997865ad.29.1724747437246;
+        Tue, 27 Aug 2024 01:30:37 -0700 (PDT)
+Received: from thinkpad ([117.213.96.164])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-203855df8d0sm78923245ad.130.2024.08.27.01.30.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 01:30:36 -0700 (PDT)
+Date: Tue, 27 Aug 2024 14:00:31 +0530
+From: "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>
+To: Mank Wang <mank.wang@netprisma.us>
+Cc: "duke_xinanwen@163.com" <duke_xinanwen@163.com>,
+	"loic.poulain@linaro.org" <loic.poulain@linaro.org>,
+	"quic_qianyu@quicinc.com" <quic_qianyu@quicinc.com>,
+	"mhi@lists.linux.dev" <mhi@lists.linux.dev>,
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2] bus: mhi: host: pci_generic: Add support for
+ Netprisma LCUR57 and FCUN69
+Message-ID: <20240827083031.pmo4627wizsnp2pf@thinkpad>
+References: <PH7PR22MB30386647BE2D813B502226CF81942@PH7PR22MB3038.namprd22.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240823094839.3142472-1-yuehaibing@huawei.com>
-In-Reply-To: <20240823094839.3142472-1-yuehaibing@huawei.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 27 Aug 2024 10:30:10 +0200
-X-Gmail-Original-Message-ID: <CANiDSCtKMyRoTt7-DVGeKqjh-0R_xB7G7qAAFfCPNcSV-DOnTQ@mail.gmail.com>
-Message-ID: <CANiDSCtKMyRoTt7-DVGeKqjh-0R_xB7G7qAAFfCPNcSV-DOnTQ@mail.gmail.com>
-Subject: Re: [PATCH -next] media: siano: Remove unused declarations
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: mchehab@kernel.org, hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PH7PR22MB30386647BE2D813B502226CF81942@PH7PR22MB3038.namprd22.prod.outlook.com>
 
-On Fri, 23 Aug 2024 at 11:51, Yue Haibing <yuehaibing@huawei.com> wrote:
->
-> There is no caller and implementation in tree, so can remove them.
->
-Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+On Tue, Aug 27, 2024 at 01:58:33AM +0000, Mank Wang wrote:
+> Add Netprisma LCUR57 and FCUN69 hardware revision:
+> 
+> LCUR57:
+> 02:00.0 Unassigned class [ff00]: Device 203e:1000
+> 	Subsystem: Device 203e:1000
+> 
+> FCUN69:
+> 02:00.0 Unassigned class [ff00]: Device 203e:1001
+> 	Subsystem: Device 203e:1001
+> 
+> Both of these modules create IP interfaces through MBIM.
+> And these modules can be checked for successful recognition through the
+> following command:
+> $ mmcli -L
+>     /org/freedesktop/ModemManager1/Modem/0 [NetPrisma] LCUR57-WWD
+> 
+> $ mmcli -L
+>     /org/freedesktop/ModemManager1/Modem/0 [NetPrisma] FCUN69-WWD
+> 
+> Signed-off-by: Mank Wang <mank.wang@netprisma.us>
+
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
+> 
 > ---
->  drivers/media/common/siano/smscoreapi.h | 6 ------
->  1 file changed, 6 deletions(-)
->
-> diff --git a/drivers/media/common/siano/smscoreapi.h b/drivers/media/common/siano/smscoreapi.h
-> index 3c15082ce0e3..d945a2d6d624 100644
-> --- a/drivers/media/common/siano/smscoreapi.h
-> +++ b/drivers/media/common/siano/smscoreapi.h
-> @@ -1115,12 +1115,6 @@ extern int smsclient_sendrequest(struct smscore_client_t *client,
->  extern void smscore_onresponse(struct smscore_device_t *coredev,
->                                struct smscore_buffer_t *cb);
->
-> -extern int smscore_get_common_buffer_size(struct smscore_device_t *coredev);
-> -extern int smscore_map_common_buffer(struct smscore_device_t *coredev,
-> -                                     struct vm_area_struct *vma);
-> -extern int smscore_send_fw_file(struct smscore_device_t *coredev,
-> -                               u8 *ufwbuf, int size);
-> -
->  extern
->  struct smscore_buffer_t *smscore_getbuffer(struct smscore_device_t *coredev);
->  extern void smscore_putbuffer(struct smscore_device_t *coredev,
-> --
+> V1 -> V2:
+> 1.Add comments to provide testing methods and IP interface creation methods.
+> 2.Remove unnecessary comments.
+> 
+> Signed-off-by: Mank Wang <mank.wang@netprisma.us>
+> ---
+>  drivers/bus/mhi/host/pci_generic.c | 27 +++++++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+> 
+> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+> index 14a11880bcea..2c44aab8695a 100644
+> --- a/drivers/bus/mhi/host/pci_generic.c
+> +++ b/drivers/bus/mhi/host/pci_generic.c
+> @@ -26,6 +26,7 @@
+>  /* PCI VID definitions */
+>  #define PCI_VENDOR_ID_THALES	0x1269
+>  #define PCI_VENDOR_ID_QUECTEL	0x1eac
+> +#define PCI_VENDOR_ID_NETPRISMA	0x203e
+>  
+>  #define MHI_EDL_DB			91
+>  #define MHI_EDL_COOKIE			0xEDEDEDED
+> @@ -680,6 +681,26 @@ static const struct mhi_pci_dev_info mhi_telit_fn990_info = {
+>  	.mru_default = 32768,
+>  };
+>  
+> +static const struct mhi_pci_dev_info mhi_netprisma_lcur57_info = {
+> +	.name = "netprisma-lcur57",
+> +	.edl = "qcom/prog_firehose_sdx24.mbn",
+> +	.config = &modem_quectel_em1xx_config,
+> +	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+> +	.dma_data_width = 32,
+> +	.mru_default = 32768,
+> +	.sideband_wake = true,
+> +};
+> +
+> +static const struct mhi_pci_dev_info mhi_netprisma_fcun69_info = {
+> +	.name = "netprisma-fcun69",
+> +	.edl = "qcom/prog_firehose_sdx6x.elf",
+> +	.config = &modem_quectel_em1xx_config,
+> +	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+> +	.dma_data_width = 32,
+> +	.mru_default = 32768,
+> +	.sideband_wake = true,
+> +};
+> +
+>  /* Keep the list sorted based on the PID. New VID should be added as the last entry */
+>  static const struct pci_device_id mhi_pci_id_table[] = {
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_QCOM, 0x0304),
+> @@ -778,6 +799,12 @@ static const struct pci_device_id mhi_pci_id_table[] = {
+>  	/* T99W175 (sdx55), HP variant */
+>  	{ PCI_DEVICE(0x03f0, 0x0a6c),
+>  		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w175_info },
+> +	/* NETPRISMA LCUR57 (SDX24) */
+> +	{ PCI_DEVICE(PCI_VENDOR_ID_NETPRISMA, 0x1000),
+> +		.driver_data = (kernel_ulong_t) &mhi_netprisma_lcur57_info },
+> +	/* NETPRISMA FCUN69 (SDX6X) */
+> +	{ PCI_DEVICE(PCI_VENDOR_ID_NETPRISMA, 0x1001),
+> +		.driver_data = (kernel_ulong_t) &mhi_netprisma_fcun69_info },
+>  	{  }
+>  };
+>  MODULE_DEVICE_TABLE(pci, mhi_pci_id_table);
+> -- 
 > 2.34.1
->
+> 
+
 
 
 -- 
-Ricardo Ribalda
+மணிவண்ணன் சதாசிவம்
 
