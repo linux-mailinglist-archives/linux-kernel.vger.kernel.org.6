@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-302585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4B2696008E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:54:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D09960091
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:55:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 715032835E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:53:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B028B21C0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84052131182;
-	Tue, 27 Aug 2024 04:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77AE3629E4;
+	Tue, 27 Aug 2024 04:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="idGTov+o"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="D3bQb5c6"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296E580C1C
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 04:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC02246BA;
+	Tue, 27 Aug 2024 04:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724734426; cv=none; b=NvfjCAMhb7SgOmsUHF3PwIof+tPfhGJrMsqwi4jTkJdMomyROpwYDj7kVxLQXrgy2m6iLyWuPg1d0THfEVA1Z8AQ8fye3eEgcEUn7iWka3o484hcsP34BI3JvC/hnVi1H8lTqmHCT0rPRDAFtSEuQu70d2KAdn0GuKm/+Med0Y0=
+	t=1724734497; cv=none; b=gk8Pa+plqyD9yNkLbnvWZKOOcILNA4x3fn7oNSKQZzR5S8crt4j0fqU4oOr/sWN807VliXylgnkf3xq5EQlqVKwJVlDRybAT/S/PYhMeDYapH6HfTLYZvtR8CJirQBoxr7gXaMph6e3JwM1i2E5jNOvHUzMQhhVwV7sBsZSZ3CM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724734426; c=relaxed/simple;
-	bh=kOPzyvAC8aNU/3TnytzRlYYlzPt98C/Ead2vtFcmScE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=MoHuFe3YUjDVKjOcRer4RNa0H3dUIxucD1HKs9v1zCYpWiZxzWhY7qOIYbwyXo+c8bGDsw7o8nexOMqyZ/dEki6DJJXowJmNPYNKItdxvjWdNSyVZNLd3hSg/6Lu1esn5yJb8Yjt0CXkBLykgXQzd4ocfy2xd/jpt3eOiLXpsko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=idGTov+o; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37196786139so3136049f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 21:53:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724734423; x=1725339223; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=3iys++LOfj8pdlpHxM42IssXw2bmawf0GVi7L3mAqks=;
-        b=idGTov+o+Slt35FXUXr+hE+KDN8lDJ4j6xKgjuL4NhzRjk0PeJw2AyDq73Kh8z2VZI
-         owwABX5dXKda1rbCBvDIoYvB5KMvwmoBoyf3ErNdgtCuW2Kj9skXnk+4OcTkrMcP1S9e
-         LNm9WqA5SP/SRx9xBrvY4QliBdfoVn5Th4e5iDnmpK+/6kwgyHxKyOtSJ70HRpwey+XT
-         172Mh8hQMRH/8vj76qFidaMalT9mKGzMoHVxx5BswQCErT8aGJW7J3miYtPyq4//v15O
-         WQsRkfjDsBfVgHqpmSTm6tRedJ4K0tcdZMAgadCmV4doJ46LRuUMeZg7R2Xu+RrdUVVU
-         Sz/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724734423; x=1725339223;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3iys++LOfj8pdlpHxM42IssXw2bmawf0GVi7L3mAqks=;
-        b=iRmLaj4ishq/88w8pJZRiNEVb0v2YfZSjGMSNKmEExVRBKqJNR8+WOw4N5apiE5tWp
-         BIq9yvdT5MGoVm4H8FkwDUujtxJnB0e52KVI7ymDq246QErA36u2pBAu61/7aNLnFMVk
-         BScLzEzuZvf/khW0CrwH+269Ni+svb9I61njGABpQZpk3kU4qzSHQMhpCM+tg5l0qWPD
-         aM8rv8OYsyQrC6ae+PVq2K3VBnFirtD+W1xW12+aReI3UVy/YZdmThT6I3jU2bCWYrgT
-         yWAvx2jMOwir/foTKKTuGdWYzRVOmsN27jGEWZTm7Wxa5tIYyg0EjLkNHmqgJLKfUk0t
-         J7/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVUpGHl/p38B3BWvE3r9x9aYZjAcakhhfvAj70cHqsvEGJNOExZhHqsCLfibcc2tuULlGG3Ho1Wo/GnVxE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF6zwI9PVUnjdf1ng47QsPcrZ3dEJzDx+/BKa43jCVf6h+LCI6
-	QqRVaGUlLhlexQ2cVvQXIU8s/A9Go+ZzCuZUYtry0uI+Kzkwb4Pc
-X-Google-Smtp-Source: AGHT+IHR/GMdTc2p0xuThLBO00V+v2Q/g2fhDIepwtZKNWzPVuBEf6annKsOoOHLRYpxdS4XtEs2DA==
-X-Received: by 2002:adf:f991:0:b0:34d:ae98:4e7 with SMTP id ffacd0b85a97d-373118e35b3mr7063180f8f.41.1724734423283;
-        Mon, 26 Aug 2024 21:53:43 -0700 (PDT)
-Received: from [192.168.0.104] (p57ba2f9b.dip0.t-ipconnect.de. [87.186.47.155])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e5878434sm58442966b.165.2024.08.26.21.53.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 21:53:43 -0700 (PDT)
-Message-ID: <397a0f83-19d8-4af6-beb2-76d50ecf0b33@gmail.com>
-Date: Tue, 27 Aug 2024 06:53:42 +0200
+	s=arc-20240116; t=1724734497; c=relaxed/simple;
+	bh=LTRjkNWpPIJV+y1DqNWSjY3HaokQAegTXhNwvzVcyOA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YjItmrjn/u2Clm8jvqhw0LqlWq40pkq/jViOnGp3NU7FnDvzkpG+98d3OVCyuetFJJ0iDWKXu9kV7MhXzMtPVaa95FF7YJv1iIH/IkHdUmgv3E0Wmq9Vg3ZOqjA3h+b7iOV/OLgfE1JVD4p0VyXg0MeOVurynKI5yZUUC0ku0Ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=D3bQb5c6; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47R4siaS009374;
+	Mon, 26 Aug 2024 23:54:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724734484;
+	bh=Ey+E+1b4RzgL6/GdPYzmE944PKZywYIjd3t1l/eIaUI=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=D3bQb5c68aUg5JsomvUgF/4MfuEHcKT/DPmKJIVJykPSXx6pklM107CEmJEAa0pje
+	 keyerlBVueUcIM8GLsAfSAwGwil1nwHyAsMKo+Cdah+FgtbVMFPoZiDHcaPwKkAe+t
+	 /SD9zUWqj2KhaebMDymHwiuvrAGL6ZgyRL64kHiQ=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47R4siEA050447
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 26 Aug 2024 23:54:44 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 26
+ Aug 2024 23:54:44 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 26 Aug 2024 23:54:44 -0500
+Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47R4sd0m030791;
+	Mon, 26 Aug 2024 23:54:40 -0500
+Message-ID: <2beb4f12-c485-4af5-86ef-a481f6f7ecae@ti.com>
+Date: Tue, 27 Aug 2024 10:24:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,46 +64,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] staging: rtl8192e: Fix parenthesis alignment in
- rtl_core.c:325
-To: Gabriel Tassinari <gabrieldtassinari@gmail.com>,
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ~lkcamp/patches@lists.sr.ht
-References: <20240826214853.21003-1-gabrieldtassinari@gmail.com>
+Subject: Re: [PATCH v4 1/7] arm64: dts: ti: k3-j7200-som-p0: Change timer
+ nodes status to reserved
+To: Krzysztof Kozlowski <krzk@kernel.org>, <nm@ti.com>, <vigneshr@ti.com>,
+        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <u-kumar1@ti.com>, <tony@atomide.com>, <bb@ti.com>, <d-gole@ti.com>,
+        <afd@ti.com>, <hnagalla@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240826104821.1516344-1-b-padhi@ti.com>
+ <20240826104821.1516344-2-b-padhi@ti.com>
+ <276ee20c-beeb-4607-b435-11bfd188ccef@kernel.org>
+ <e7aa7d45-8d5f-4f5f-bba4-b9e0f77d8a6a@kernel.org>
 Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <20240826214853.21003-1-gabrieldtassinari@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+In-Reply-To: <e7aa7d45-8d5f-4f5f-bba4-b9e0f77d8a6a@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-
-On 8/26/24 23:48, Gabriel Tassinari wrote:
-> fix parenthesis alignment in _rtl92e_qos_handle_probe_response to
-> silence checkpatch warning:
-> 
-> CHECK: Alignment should match open parenthesis
-> 
-> Signed-off-by: Gabriel Tassinari <gabrieldtassinari@gmail.com>
-> ---
-> v3: Adjust the indentation by adding one space
-> v2: Include the modified file in commit message
-> ---
->   drivers/staging/rtl8192e/rtl8192e/rtl_core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-> index ad21263e725f..75192041008d 100644
-> --- a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-> +++ b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-> @@ -322,7 +322,7 @@ static int _rtl92e_qos_handle_probe_response(struct r8192_priv *priv,
->   
->   	if (network->flags & NETWORK_HAS_QOS_MASK) {
->   		if (active_network &&
-> -				(network->flags & NETWORK_HAS_QOS_PARAMETERS))
-> +		    (network->flags & NETWORK_HAS_QOS_PARAMETERS))
->   			network->qos_data.active = network->qos_data.supported;
->   
->   		if ((network->qos_data.active == 1) && (active_network == 1) &&
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
 
-Tested-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+On 26/08/24 18:07, Krzysztof Kozlowski wrote:
+> On 26/08/2024 12:54, Krzysztof Kozlowski wrote:
+>> On 26/08/2024 12:48, Beleswar Padhi wrote:
+>>> The remoteproc firmware of R5F in the MAIN voltage domain use timers.
+>>> Therefore, change the status of the timer nodes to "reserved" to avoid
+>>> any clash. Usage is described as below:
+>>>
+>>> 	+===================+==========================+
+>>> 	|  Remoteproc node  |        Timer Node        |
+>>> 	+===================+==========================+
+>>> 	| main_r5fss0_core0 | main_timer0, main_timer2 |
+>>> 	+-------------------+--------------------------+
+>>> 	| main_r5fss0_core1 | main_timer1              |
+>>> 	+-------------------+--------------------------+
+>>>
+>>> Fixes: c8a28ed4837c ("arm64: dts: ti: k3-j7200: Add general purpose timers")
+>>> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+>> You keep sending the same. Where is the changelog? Why so many same
+>> patchsets? Why so many resends without changes?
+> OK, now cover letter came and I see the changelog. Some hickup on mail
+> servers.
+
+
+I understand the mistake. From next time, will mention changelogs in 
+patches as well as cover letter.
+
+>
+> Best regards,
+> Krzysztof
+>
 
