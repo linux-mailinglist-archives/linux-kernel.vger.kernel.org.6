@@ -1,114 +1,155 @@
-Return-Path: <linux-kernel+bounces-303169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE594960874
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:21:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71B3496088F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BD10284489
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:21:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 273421F23960
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE29219FA72;
-	Tue, 27 Aug 2024 11:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF8119F499;
+	Tue, 27 Aug 2024 11:27:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="XXBB7A6z"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SAxEbDJC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C856619EED8;
-	Tue, 27 Aug 2024 11:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B612919EEC0
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724757682; cv=none; b=BqDG3ZKZTv9wyKWvG3plRG/R/9rHUrPF0a0jVVhmGalbMpqoWMF+JmhU/8Kqub71hN4TfGEhVZnFh5u2578iVV9w52fADwxe7v2GTSol/y1XuDnbu5pNroUApiMo9OPoru8474JTxxCNE84AG4ZW3c4UdvfmfPX05yqw9btCEBc=
+	t=1724758029; cv=none; b=Yuyh0mTH5ogoCVEVOdYMA03Y0Ro63+ikoLTwQ4UI9FkXN5Jnhgm9m5iS85nMIbMum3fy0FGigoCO0zuV5NVaUBq+ymHTc2SL5Maadv4zSohb7U50DxZbFPVsu6YEQeYmn3fSTImihZ7rDowqkNJxsY+/t2XEr0W9/2eJZft7RD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724757682; c=relaxed/simple;
-	bh=jWPWjj/QHeIOYfp+cU6ccjLZvWK9LQKjVbvraTonCe0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ruyNWVgRu+vxNOcFs/9B9sRPRj/DLr3VNpy2MT3UjIa/eVC3gObFFAWJick0kksT4AhpiX3cHUDIv9LgvCqKLaD8CDrmPG94+9av4Tmmytrq8AvgZoA750Fn8kjXVItVW80AAdum3f4nu55q2+Aum4xVuCLu4Eg6jGqmb8VXRz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=XXBB7A6z; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=yDxLqgwteaSZePjmW3+flmjAobg0eTLuPPhZim1kmZA=; b=XXBB7A6zsvYdQLmrtTL5cjKH4+
-	o7nFXQ+RcxH/TYawgNqYmAmFxT+yQf9lgKHF+p2IqljkPII8baGMoM0fq8L3C/ktR50tAqmAPlYAB
-	Nl5kSLd8yHbacHqh81V0Tm6FkhjmpDnup6plOzzLu0u8Jk6bad5FgHOC8vUOnK0FETXuTrfAd1ehf
-	a+I1tCTCMF7wUgW12HbaIM7Dlp0KLBNgpJFw/DnuoRo0/9rxbD4SWNBaP+rLqrfwnG5+EODc6kwR9
-	Umoyf3Vv+EI/Ndl74PXdrdJhhFIXcWSzjFfJizANa+NHugoqUJAcwomOKz/Z9ewOzseO7WH6n4p4m
-	b/wyneqQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:58266)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1siuFn-0006rq-1T;
-	Tue, 27 Aug 2024 12:20:51 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1siuFg-0003OM-1i;
-	Tue, 27 Aug 2024 12:20:44 +0100
-Date: Tue, 27 Aug 2024 12:20:44 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Yangtao Li <frank.li@vivo.com>
-Cc: clement.leger@bootlin.com, andrew@lunn.ch, f.fainelli@gmail.com,
-	olteanv@gmail.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, ulli.kroll@googlemail.com,
-	linus.walleij@linaro.org, marcin.s.wojtas@gmail.com,
-	alexandre.torgue@foss.st.com, joabreu@synopsys.com,
-	mcoquelin.stm32@gmail.com, hkallweit1@gmail.com,
-	u.kleine-koenig@pengutronix.de, jacob.e.keller@intel.com,
-	justinstitt@google.com, sd@queasysnail.net, horms@kernel.org,
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [net-next v3 1/9] net: stmmac: dwmac-intel-plat: Convert to
- devm_clk_get_enabled()
-Message-ID: <Zs22jHBb1ztHbXDq@shell.armlinux.org.uk>
-References: <20240827095712.2672820-1-frank.li@vivo.com>
- <20240827095712.2672820-2-frank.li@vivo.com>
+	s=arc-20240116; t=1724758029; c=relaxed/simple;
+	bh=UnQ4bzcS+gFG0H7WmGJ7tOO/jaQPpRteSKoLaUg1bMM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Az351T9xRvgIPA9Lbal0b/GSkWXkI5DadQMO7DpIt7F1XIp6+4Hjnshng6Lqb+kIoGvlFJr+KdzAhTF0ALC0wbQr9YFw9tIP+V3xYE2sQ9lwqBHTqZcW2WxwVQofHnd2G2eI9wyJUsGDWsswWSfzaXZJo0aqlV400LCd/XgpXWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SAxEbDJC; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724758027; x=1756294027;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=UnQ4bzcS+gFG0H7WmGJ7tOO/jaQPpRteSKoLaUg1bMM=;
+  b=SAxEbDJC5gKAAWZRTuRrABed8uuqKneZv+MPzIuNfI8SMExIRFQU6O91
+   4Kaua6g1f9U4ZElel2Uv7jnaf9cJ4gQk/DYCm32Xi2wb2b9XDlq31i9zP
+   Vtupz1vXgr+PpzCgDojHQTkfw/4OG1LmXlJ/JN7rbN3EqHUB3uVQPeDLN
+   y89vyBWLJJFAp6kBb4+eEIJuSuHiIRlKkdPgs/48+FT2fGVslD9Gtpnd+
+   wu0KU6RiQOqPapNqC28S9wlIZ2TSw16nXx4gbcv8tSwxnsgpoNDfMgkFz
+   0VAV7ioK2X/b+58wcIIpvcckbuxRT0udrRHE3P1f2Pbgu1znHsDCyZN16
+   g==;
+X-CSE-ConnectionGUID: ZYfM+JgLSTyvZUs5yy0+wA==
+X-CSE-MsgGUID: 4LE3qTYMQ1uYF1cd8qdJNA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="40699074"
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="40699074"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 04:27:07 -0700
+X-CSE-ConnectionGUID: /ep0O2LQQIm2reksQ7VY1g==
+X-CSE-MsgGUID: l0AJ8tEDShuGjYiJYEJ7dQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="67703794"
+Received: from chenyu-dev.sh.intel.com ([10.239.62.107])
+  by orviesa005.jf.intel.com with ESMTP; 27 Aug 2024 04:27:03 -0700
+From: Chen Yu <yu.c.chen@intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>,
+	Mickael Salaun <mic@digikod.net>,
+	Tejun Heo <tj@kernel.org>,
+	David Gow <davidgow@google.com>,
+	Andreas Gruenbacher <agruenba@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Chen Yu <yu.c.chen@intel.com>
+Subject: [PATCH v2] kthread: fix task state in kthread worker if being frozen
+Date: Tue, 27 Aug 2024 19:23:08 +0800
+Message-Id: <20240827112308.181081-1-yu.c.chen@intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827095712.2672820-2-frank.li@vivo.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 27, 2024 at 03:57:04AM -0600, Yangtao Li wrote:
->  	ret = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
-> -	if (ret) {
-> -		clk_disable_unprepare(dwmac->tx_clk);
-> +	if (ret)
->  		return ret;
-> -	}
->  
->  	return 0;
+When analyzing a kernel waring message, Peter pointed out that there is a race
+condition when the kworker is being frozen and falls into try_to_freeze() with
+TASK_INTERRUPTIBLE, which could trigger a might_sleep() warning in try_to_freeze().
+Although the root cause is not related to freeze()[1], it is still worthy to fix
+this issue ahead.
 
-Please head off the next "cleanup" patch that someone has to review,
-which will be to convert this to:
+One possible race scenario:
 
-	return stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
+        CPU 0                                           CPU 1
+        -----                                           -----
 
-When doing cleanups, don't _create_ new opportunities for cleanups.
-Always try to write the best replacement code. This reduces the
-burden on reviewers - and we need the burden on reviewers to be
-minimised because there's relatively few of them compared to the
-number of people generating patches.
+        // kthread_worker_fn
+        set_current_state(TASK_INTERRUPTIBLE);
+                                                       suspend_freeze_processes()
+                                                         freeze_processes
+                                                           static_branch_inc(&freezer_active);
+                                                         freeze_kernel_threads
+                                                           pm_nosig_freezing = true;
+        if (work) { //false
+          __set_current_state(TASK_RUNNING);
 
+        } else if (!freezing(current)) //false, been frozen
+
+                      freezing():
+                      if (static_branch_unlikely(&freezer_active))
+                        if (pm_nosig_freezing)
+                          return true;
+          schedule()
+	}
+
+        // state is still TASK_INTERRUPTIBLE
+        try_to_freeze()
+          might_sleep() <--- warning
+
+Fix this by explicitly set the TASK_RUNNING before entering
+try_to_freeze().
+
+Link: https://lore.kernel.org/lkml/Zs2ZoAcUsZMX2B%2FI@chenyu5-mobl2/ [1]
+Fixes: b56c0d8937e6 ("kthread: implement kthread_worker")
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+---
+v1->v2: Describe the race condition in commit log and
+        refined the code. (Andrew Morton)
+---
+ kernel/kthread.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/kthread.c b/kernel/kthread.c
+index f7be976ff88a..db4ceb0f503c 100644
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -845,8 +845,16 @@ int kthread_worker_fn(void *worker_ptr)
+ 		 * event only cares about the address.
+ 		 */
+ 		trace_sched_kthread_work_execute_end(work, func);
+-	} else if (!freezing(current))
++	} else if (!freezing(current)) {
+ 		schedule();
++	} else {
++		/*
++		 * Handle the case where the current remains
++		 * TASK_INTERRUPTIBLE. try_to_freeze() expects
++		 * the current to be TASK_RUNNING.
++		 */
++		__set_current_state(TASK_RUNNING);
++	}
+ 
+ 	try_to_freeze();
+ 	cond_resched();
 -- 
-*** please note that I probably will only be occasionally responsive
-*** for an unknown period of time due to recent eye surgery making
-*** reading quite difficult.
+2.25.1
 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
