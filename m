@@ -1,157 +1,143 @@
-Return-Path: <linux-kernel+bounces-302906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFBCF9604D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:49:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02F6C9604D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:48:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0B6D1C225E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:49:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 365701C20E41
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92DF719DF48;
-	Tue, 27 Aug 2024 08:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4150D199926;
+	Tue, 27 Aug 2024 08:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iCrobTB1"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="P7JnW5fk";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yDHclUla"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82A819925F
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C5F194AEF;
+	Tue, 27 Aug 2024 08:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724748494; cv=none; b=JgDw+DYY3ei0eZT20GVDxRoXUKKrcslN0qZqpe/mrAU75aGoVTJkdyqWc/Wqnkj3BIvy0VmQ1CsjoaBjLDDg8mV7Nxa5wVPYFQyj7NzD55BBtjIAvUKENm2egQzaEXlylLioKLo1wS5mWXhoSJN7yVyCAD5xCJ6ndpMr0Zx+KyQ=
+	t=1724748492; cv=none; b=gwW3dAqE5miQh3sdQhvVmgmx7ZX43As76ULDCFjvrzIoAwvvVmdqGMk39uXHjq1IEbXhSn7C1MM4lfY+urJhZSpD+xFmvdCN3piwM97COWubwrPJDPnVxzmey2YTnj/0ZMC/tMJTIV5rAWFj3Brg7y5Fb5Gudqaxv6H8OtjiGuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724748494; c=relaxed/simple;
-	bh=lyUq6uzIFLGApAFk8uAkLlzZWO6fwqnEeSVsD5zPCLw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z+34FUQKaMDM7U+Dp/UGZ8qqRSQXaShH7c+UpgFLPxLRQmaGIiXePhIlWQHejRUXEbpeSZBW0CGjes2wRkLCANSSeqfwvNZBYwJRzgwRqjWjP9i15/O8aJvAzZfB97dqRGf+Pvqzyhn8uGlZ1Ea7219BeFMuCj5J5w5Zt64H02E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iCrobTB1; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f3fea6a0a9so46145921fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 01:48:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724748491; x=1725353291; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8kDKIOwTEd6w8yb+ASnRf9bhshqBEl1pUBH6pCnSK/I=;
-        b=iCrobTB13dkqj/f9stErm9mYjzqkf0OdzoLqfGbEB82b1BDSZFXOMRqAgGFC74gioY
-         ydZ9bRerVQRqUNo60OO2ODSA46p+XUye2j8ckJxjbpc7QnCI23gg7n2+yGI8X37P0A1A
-         beM89RrgzzR4wOkU01fYWm/GOlsjIR3OQwU4xl6K/6WBSJcr9z/2X/013V/kMw8Qxyw6
-         PYFR6Yycx1GHGAaZre8nle5OzpISyUNKHqya0aeYKx7zyOm9Pu8MrhFponaQcP3bzxMx
-         TqZVclTjaFBRCFGbZtmLeUOds/FYTU7tvUMwLeOC2QAxbKetPelyKT1r3XO8NTGoz/aQ
-         Ja2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724748491; x=1725353291;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8kDKIOwTEd6w8yb+ASnRf9bhshqBEl1pUBH6pCnSK/I=;
-        b=naEsq3t5mpfNMGPqdlWctYF1bieU1T64cRnluyBSTgF/a2rOHvYTiGODwRzmMefwP2
-         uARNubRCrI88+lGTo0vAB6nkYtSQ8KDDHQqw6jWETmbpU+I6CKv48GQ3hhuE5PhMhIb1
-         GPjzDCmCBtqzk/i6R3PtzqQkx/rKBK5kVqpDS4ApcOBGzLK7UFmqgJhfwClb+JlATiCk
-         OPQsY6XvEY9JrMIaQymUGusDzVkP7ZFCgtr8DgRtXXFj+0lXfwd8Zyh1CEe/XHqO2OVS
-         qnLaUb4iURegr5rBJRxjzG20rQCR3bf1o5To9XRsjqquOO3y29aHscY72+zEEpkwRX9x
-         tVag==
-X-Forwarded-Encrypted: i=1; AJvYcCUlft7eC3JX0EhB1dElUWJwV8PLZGhgKww3D3/ScShjBWnI778/GyA/w01OkeNpjY+iPSdZWK/E/1EWj+c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxxDTeI+K6Cc6Qoht3iMbJ3I/mrcmdQuh+yn4qLmJDVX1F5De4
-	u1b0ZLHY3iy7V3kthu0MddYtCMGDEQOmNu5EcEL3xy5Zu8vN70rm4LNeCwca3gyEBsHYgaBy7ok
-	r3frUbh+PPWpysqFY0V91rGK4t88=
-X-Google-Smtp-Source: AGHT+IHfzEjvAa6juUPHsEOAGjLWPcwPUMqsodqfndjPZiVuX++xmoBVqhxYgl03omfSpxoIUvlKwJD7cx+EtDranMw=
-X-Received: by 2002:a05:651c:b0a:b0:2ef:1c05:6907 with SMTP id
- 38308e7fff4ca-2f514b7a52bmr8112801fa.5.1724748490547; Tue, 27 Aug 2024
- 01:48:10 -0700 (PDT)
+	s=arc-20240116; t=1724748492; c=relaxed/simple;
+	bh=TwDf773hXhfsiYVvV+dls2u7pbgcM7zdEocdZh2VUzM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=gW0fDDuq6dsczzXl6kEh68ZlYOGzlktu45nCCvZKFhHnmNEAgIWPdi6+vUeFOhQQnmGKYxBQ2eBPnlRaz+7LTzCPYLYA6jPluMuuUBxpP1NWNwRFJZs1cumV/Ba8jNn//zd0XeCXZwND84+VX2ziNQX0lMnCD6/4mJSkfoO951A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=P7JnW5fk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yDHclUla; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 27 Aug 2024 08:48:05 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724748486;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+9m7zAe/oM8NIYedLT9hEyQfOwjL4BIqPbJsnLJv+Bc=;
+	b=P7JnW5fkM+2LHwb6kDXdptcVVMiWOv2CkVTKDAkQ+NG0r6YerCYj9AKC6lEw62cCV+nw7o
+	2r/cxO/EUnWY6eA3VrAD67baxW2x6cyMkB5SsFm3Fzlc+c4SDIyo5Ru9HMxJGntASeRatA
+	W3ovQAxR/z6CNEvZO9jydY2ovPyvjQcsqMS5mG+TTbrkWAvaJzF+NzUTAGjrsl90JEOdDY
+	m1ESH1J23OYq+PJL+TmSLDsRP+19AcppdlPgRkxA9TGuJdgBT1AZoUZmZlHCFH78u/KaY+
+	Guu2iWqVPOvWF7St4RpF5Cr9Q5eNifegi2iXNurnoLawLKcNXCJQ1zN/JH0neQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724748486;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+9m7zAe/oM8NIYedLT9hEyQfOwjL4BIqPbJsnLJv+Bc=;
+	b=yDHclUlawN3VbE0zKpfq4Xfp/XlJAjNBZWeT7wBA1ZJrObYz4a5a0xbOVVTNGsiGu/OpA6
+	eS7QftGg2nLG8ADA==
+From: "tip-bot2 for Nikunj A Dadhania" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/sev] virt: sev-guest: Ensure the SNP guest messages do not
+ exceed a page
+Cc: Tom Lendacky <thomas.lendacky@amd.com>, Nikunj A Dadhania <nikunj@amd.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240731150811.156771-5-nikunj@amd.com>
+References: <20240731150811.156771-5-nikunj@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYuFDon59=Nw6WCdgp0FanZ1oE3dCkoq71EK0Bxe6Jhe_g@mail.gmail.com>
- <CA+G9fYtd1Hw9YLpceUAwwC+UytVQVXOET4gmGT9jiCgHa+WexQ@mail.gmail.com>
- <CAMgjq7Bz0DY+rY0XgCoH7-Q=uHLdo3omi8kUr4ePDweNyofsbQ@mail.gmail.com>
- <20240819220548.d8f1ea5cf504cfd8feb5780e@linux-foundation.org> <CACePvbVJab1QNv35jepKYVdXV1Brnn=sTwBx7Vs5fr-93jDQvQ@mail.gmail.com>
-In-Reply-To: <CACePvbVJab1QNv35jepKYVdXV1Brnn=sTwBx7Vs5fr-93jDQvQ@mail.gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Tue, 27 Aug 2024 16:47:54 +0800
-Message-ID: <CAMgjq7A7k7FvZM=cGXiz9q9YuQD4iH5H_Og4wY0ENSgHiVdDYg@mail.gmail.com>
-Subject: Re: gcc-8: mm/swapfile.c:863:40: error: array subscript 1 is above
- array bounds of 'struct list_head[1]' [-Werror=array-bounds]
-To: Chris Li <chrisl@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, linux-mm <linux-mm@kvack.org>, 
-	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, Barry Song <21cnbao@gmail.com>, 
-	"Huang, Ying" <ying.huang@intel.com>, Hugh Dickins <hughd@google.com>, 
-	Kalesh Singh <kaleshsingh@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <172474848574.2215.3184921045455646454.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 20, 2024 at 4:51=E2=80=AFPM Chris Li <chrisl@kernel.org> wrote:
->
-> On Mon, Aug 19, 2024 at 10:05=E2=80=AFPM Andrew Morton
-> <akpm@linux-foundation.org> wrote:
-> >
-> > On Mon, 19 Aug 2024 19:44:25 +0800 Kairui Song <ryncsn@gmail.com> wrote=
-:
-> >
-> > > --- a/mm/swapfile.c
-> > > +++ b/mm/swapfile.c
-> > > @@ -836,7 +836,7 @@ static unsigned long cluster_alloc_swap_entry(str=
-uct swap_info_struct *si, int o
-> > >               goto done;
-> > >
-> > >       /* Order 0 stealing from higher order */
-> > > -     for (int o =3D 1; o < PMD_ORDER; o++) {
-> > > +     for (int o =3D 1; o < SWAP_NR_ORDERS; o++) {
-> > >               /*
-> > >                * Clusters here have at least one usable slots and can=
-'t fail order 0
-> > >                * allocation, but reclaim may drop si->lock and race w=
-ith another user.
-> >
-> > OK, I got that landed in the right place, but...
-> >
-> > The definition of `o' within the for statement isn't typical kernel
-> > style - I'm surprised we didn't get a warning for this - maybe things
-> > have changed when I wasn't looking.
->
-> Noted.
->
-> I did use the checkpatch.pl and fixed all the warnings before I sent
-> the patch out.
-> The checkpatch.pl script did not complain about this. Sure I can stay
-> away from it.
-> BTW, I did  a search on the kernel tree:
-> $ rg 'for \(int' | wc -l
-> 970
-> $
-> It seems pretty common in the kernel tree now.
+The following commit has been merged into the x86/sev branch of tip:
 
-Might be off topic from the issue...
+Commit-ID:     2b9ac0b84c2cae91bbaceab62df4de6d503421ec
+Gitweb:        https://git.kernel.org/tip/2b9ac0b84c2cae91bbaceab62df4de6d503421ec
+Author:        Nikunj A Dadhania <nikunj@amd.com>
+AuthorDate:    Wed, 31 Jul 2024 20:37:55 +05:30
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Tue, 27 Aug 2024 10:35:38 +02:00
 
-I believe this issue it's not an upstream problem nowadays after
-e8c07082a810 ("Kbuild: move to -std=3Dgnu11"), I did notice a GCC error
-after backporting these commits to an older kernel which still used
-c89, but for upstream this should be OK?
+virt: sev-guest: Ensure the SNP guest messages do not exceed a page
 
->
-> >
-> > Also, this code makes no attempt to honor our "The preferred limit on
-> > the length of a single line is 80 columns" objective.  There's just no
-> > reason for comment blocks to violate this.
->
-> I was wondering why the checkpatch.pl did not catch this, is there any
-> config for checkpatch.pl I should apply?
->
-> I typically invoke:
->
-> ./scripts/checkpatch.pl -g HEAD
+Currently, struct snp_guest_msg includes a message header (96 bytes) and
+a payload (4000 bytes). There is an implicit assumption here that the
+SNP message header will always be 96 bytes, and with that assumption the
+payload array size has been set to 4000 bytes - a magic number. If any
+new member is added to the SNP message header, the SNP guest message
+will span more than a page.
 
-I found checkpatch.pl stopped checking for 80 columns limit after
-commit bdc48fa11e46 ("checkpatch/coding-style: deprecate 80-column
-warning") 4 years ago. But the 80 column limit seems still preferred?
+Instead of using a magic number for the payload, declare struct
+snp_guest_msg in a way that payload plus the message header do not
+exceed a page.
+
+  [ bp: Massage. ]
+
+Suggested-by: Tom Lendacky <thomas.lendacky@amd.com>
+Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/r/20240731150811.156771-5-nikunj@amd.com
+---
+ arch/x86/include/asm/sev.h              | 2 +-
+ drivers/virt/coco/sev-guest/sev-guest.c | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
+index 79bbe2b..ee34ab0 100644
+--- a/arch/x86/include/asm/sev.h
++++ b/arch/x86/include/asm/sev.h
+@@ -164,7 +164,7 @@ struct snp_guest_msg_hdr {
+ 
+ struct snp_guest_msg {
+ 	struct snp_guest_msg_hdr hdr;
+-	u8 payload[4000];
++	u8 payload[PAGE_SIZE - sizeof(struct snp_guest_msg_hdr)];
+ } __packed;
+ 
+ struct sev_guest_platform_data {
+diff --git a/drivers/virt/coco/sev-guest/sev-guest.c b/drivers/virt/coco/sev-guest/sev-guest.c
+index 3b76cbf..89754b0 100644
+--- a/drivers/virt/coco/sev-guest/sev-guest.c
++++ b/drivers/virt/coco/sev-guest/sev-guest.c
+@@ -1092,6 +1092,8 @@ static int __init sev_guest_probe(struct platform_device *pdev)
+ 	void __iomem *mapping;
+ 	int ret;
+ 
++	BUILD_BUG_ON(sizeof(struct snp_guest_msg) > PAGE_SIZE);
++
+ 	if (!cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
+ 		return -ENODEV;
+ 
 
