@@ -1,170 +1,233 @@
-Return-Path: <linux-kernel+bounces-303647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 013769612F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:37:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B45B9612FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 263E21C21328
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:37:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4467CB256FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128E51C6F65;
-	Tue, 27 Aug 2024 15:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481B71C6F7C;
+	Tue, 27 Aug 2024 15:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OfIqNxiH"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P0KE2Ohb"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D942C1C68A6;
-	Tue, 27 Aug 2024 15:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37591C1723;
+	Tue, 27 Aug 2024 15:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724773012; cv=none; b=FufXIbCx/b75BMZbG1Pz2mW9TPaSViFmWtWHXku6hFQI2F8I/wizxpFMikWve7hui4sy3TVgspr9s4gK/Nm+BNScJ1dBKJYFjFXRgTa+y0rq996Gus9w81V18+S9Rv2/6AmGRBKjZa1V6ir3vjft9H735DRnJhr0DY7VS0muurA=
+	t=1724772995; cv=none; b=XuylMp94dKG/bUF2Fj5qVIyaYpMjATtsesgwteOvYdvV5PKrLxD6pB3F7R4TGtLnUbAGD6BhtOOUbzoKpPBWpg9R2krA30U8xNm+WUt2uARtqWa2rJSRU7i+cUBgrfMhZe+NKzFmKJwEJ2/cJyX97AgFbtgs3l65ZFv0ZPbHCB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724773012; c=relaxed/simple;
-	bh=SP/Hfb5YP0Drgap/qxkesUFZQc5ljyFnrfZprrfkE4w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nQX7BaKkNOyRfHNlTXDsqwj211Utbk4cakff/rGh6c+MPQTYN/pWdPxPsm4VcZxv8k733PDcvOpdFms1GwQlqufVJaDQI2NOKNwIpDFbrpx3xF6TQjAdjuk7QXDaw8WbYPaZX9aLAfJTBawgR5bsr7ICYIH9D1r+ZUXEI2VVhF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OfIqNxiH; arc=none smtp.client-ip=209.85.160.170
+	s=arc-20240116; t=1724772995; c=relaxed/simple;
+	bh=KYrMAoJCt+EV7WoaEnKxjVrsnUTS3xitiFfMxJQdzHo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FUVjGCZGedfIkIxeZAS+PXCIz7zeh1jpa0E38aPH09waB30shGjoFB5HULF2p+Tnoi9eP00FV35Ub+ukDLcs5LUjrVqYsloFFF2pVvoNAmxqQpc/Oq/T01s6qXchkjw0IhpiN4ACtlZ0T6sz7VVj6zkGtR9dbGw8ZiysNcssyZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P0KE2Ohb; arc=none smtp.client-ip=209.85.210.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-45007373217so54424981cf.0;
-        Tue, 27 Aug 2024 08:36:50 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-715c160e231so1006078b3a.0;
+        Tue, 27 Aug 2024 08:36:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724773010; x=1725377810; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ps7NzLxUjACH4h/42KdNrk0yLnll4rrI6Xt4mw8QvM8=;
-        b=OfIqNxiHUFCq/VlbRlOOJtPAsdoZUY4Z4AZatMkffj2+TXqG40KzTZWwG0wDRXOoTU
-         vJGd7Zn7jKLdlkfQwPP0KO3A+lPF8TPX4KlO7IYwVabOIUDhsVQpQrnOngZwR3eYYpRH
-         1aoTEi/q0AT0Z92OnzHAm9IuO+uF9CGi+ghv3cNWnlNym86wIDuLnOQ6BAr1y5xv4e7f
-         hgT/1nlj2ShFhdh8lraImWZcwMUvdGhERpSZMGcdv/cCfgKin99VhlQmcd+aNxtXJezK
-         630Qb7e/4rMO6NF0rQq95+tx6vrMDlx7vKkZFAzQIQ6H5APzRxLhNQVyY3a5Vbl4RUV5
-         E0QQ==
+        d=gmail.com; s=20230601; t=1724772993; x=1725377793; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=i06m+lajlNBP6LGt0oGGIooKzG4I9XsfXSKSmv9z5Nk=;
+        b=P0KE2Ohb7LIvafcZLCw2FjbHH40MaXONqjohJRicSXYTWfBVixY6bjmYhp6qJD3XDS
+         npn+r4/nh4jqdyIsVBm2oiisSFeTs2kBisEzgdih5EAXUPjANCmaykb1KWyoFOJwnm9e
+         LM1qU5tekIaOb8Gjn6F6+Ak2eDGZUkq90iUxWXcohMelj23QUowtGGYon110f52DECDU
+         T7kVCuZXHMNfEJdo986iJSCO1d5SXMT5HYBrQLrC42QDRqk3Osb+BddYsRiHzdt7KlXR
+         PJYj/nHuteO4GBj9UtWu1LEr7l3Wc5FWGVwDaTNLGMhKK7pDCkgA0XajeWeoc6NCY1rC
+         nCyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724773010; x=1725377810;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ps7NzLxUjACH4h/42KdNrk0yLnll4rrI6Xt4mw8QvM8=;
-        b=KoBL3nMNkhwH0hG4Lme9joMdT3H+DnoaK2yZNSlmw/pWAIfJ7PQgUkNbldzBtm6Bc9
-         bQcOpEtcbc6Vd1vb8zHD6Iw5c5E0OGxhlAnFVbRVOywHOwNzqfzaUOwMIi11GURv+MkQ
-         qkDrNpMVywkA2IwIraN/ZAdbxuaDxT5REjvMtBGfcmvg5ls0sWTkTW9sR7WEshrt6Nkg
-         iDKa8n+tBqhr58EAZ5+3pvGjlnRv5cNXJqXkmrFKGHvzk1FqVkA0Hm7Ql5jwRnPqCFbo
-         diOx8Fa7Sc3C284yFHm9qCollTvbCLokKkViKWr3bxbU13IoxaviWG2z+c8wtcOezQs2
-         5OJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbJQ1BLJY9rb1PWqd7oaz8ZUZ9Vr8FVOJqh1SpstMQJwggWxlPerfW1IPWChY368/IY3dUiM47QaesZIiT7RIiaHM=@vger.kernel.org, AJvYcCV1f3XKriXalBsW1iTrCkQRfEfeWSdEvxoUyVDXUXFBZG3iDQgZLig67XvkmGVmdHT4Pg2aFgMT1faKcHvQ@vger.kernel.org, AJvYcCVp8aAKK4tU3+ExxJm2y/WGBKa5IiImNnm2A3u03z1lmyWv4sTHAEAQsOVN/7sDZRqQG3Snyv6EGN4m@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5ofSuKneAirRLpJVn6GprhVi4AqxDtrWkJ0XZmzp10KSkRP7S
-	hcS5kzpbkmTbMHMsCH/gXI+NPv3ZnUYK/4oi28rSelzzskHBk5kEtdfdWvoaSklxyQYEdslRpVm
-	BQN5P0+I0b4+ESafS8O7FzSu7yYAjzw==
-X-Google-Smtp-Source: AGHT+IEWuHNQtUbcd+wK8yyWcQn1WgLVVifyQ39JiGJxTL6QT+BG4r5nonk9fu+bvD6/iY+IOnLjgHKFEvK8scM0Sy4=
-X-Received: by 2002:a05:622a:20e:b0:44f:e11c:b0d8 with SMTP id
- d75a77b69052e-4565ff987bdmr55397961cf.7.1724773009665; Tue, 27 Aug 2024
- 08:36:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724772993; x=1725377793;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i06m+lajlNBP6LGt0oGGIooKzG4I9XsfXSKSmv9z5Nk=;
+        b=wR0Y+j51IgYEkCSDdJ9IU1SKWYav2nSzLB+zzAmtCBX34p+YFpi5ejII/n8H6w1GJV
+         rgUE01V5ie8Lq/fEFMDsrtLbkBuhPUILw9u2pnnd3D6asAspT/oLUUovWk0A9YtiBNWn
+         1Dq1DigFBuOv164z64jHbzzhPJawwfIOlUj6iy4geXx55/1b3qJbKvoXzEpmD4mqd+J1
+         us8G/SMwBUqZmKhgisNB+a7ot+dgqzO2+k2djvIUsI+NN7TX9i9FIh0jSvKSPMJLdTjg
+         JAJzRI+mmQRPsXSzBqvHLMTkawIwEc/cuTxux/wAn2A4KiVoEJkVYK5MYtOxJT0E3Nbb
+         3keg==
+X-Forwarded-Encrypted: i=1; AJvYcCU4Vc4IovNcCR7m9hK+Y6KvaLtninO5G1HuXV5oT6kkU0PUI1//playbWrhDYK20GNQHPVBkvJ2b7/CdiE=@vger.kernel.org, AJvYcCUy30W66Xz7rpEiZ4Fkn1uFA3XpkNVdaa1+RtHKrDTI0SasJC+RHM/d3XIy4KNwaIN0pd/Yxe+6GWNn4w==@vger.kernel.org, AJvYcCVdo6Igs1jLpYHN9iSALvOUkPVeMWeNiGLsh81VxgB+5i5ZskY9ppXtBs/LwqataFtwNXi6fhKFsb/PBkk4@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMsGnzqeJHmED2c2KQg7phUbpkLK2AEodhSqYRAk3PCkI7YmzW
+	7U2ev7H66Me8mrTu4ooeeGYfEtLQQ0JrNRRbwWY8Un+WMgr6n98F
+X-Google-Smtp-Source: AGHT+IEvQGwNNvRjt/gQ3MweAjTwx8USmVtCznICoy0IzZHOhyJB9kgCfh6r6IN+M3mCARs4NX/0eA==
+X-Received: by 2002:a05:6a21:3406:b0:1c4:2134:dd54 with SMTP id adf61e73a8af0-1cc8a079e5cmr15672790637.45.1724772992904;
+        Tue, 27 Aug 2024 08:36:32 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:fce4:8959:e48d:980c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715c49aa23dsm1267675b3a.5.2024.08.27.08.36.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 08:36:32 -0700 (PDT)
+Date: Tue, 27 Aug 2024 08:36:29 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: "Rob Herring (Arm)" <robh@kernel.org>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-input@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] input: tegra: Use of_property_read_variable_u32_array()
+ and of_property_present()
+Message-ID: <Zs3yfc1pJDkAwhzc@google.com>
+References: <20240731201407.1838385-6-robh@kernel.org>
+ <zyzygwdfncus7nhnu6sgbc2wzjpih3dntgdogorg3it4vc7r6v@aufrf6kwqun3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821085644.240009-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240821085644.240009-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUYYPj6JD-aLkriYB59OnHir_ec=xLo7fUbASggKetfpw@mail.gmail.com>
-In-Reply-To: <CAMuHMdUYYPj6JD-aLkriYB59OnHir_ec=xLo7fUbASggKetfpw@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 27 Aug 2024 16:36:22 +0100
-Message-ID: <CA+V-a8sgsu=Tdyg1pCSs+cZfbb38j0ASXH1FWzSO_+gQLNV0Lw@mail.gmail.com>
-Subject: Re: [PATCH v3 3/8] arm64: dts: renesas: r9a09g057: Add OSTM0-OSTM7 nodes
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <zyzygwdfncus7nhnu6sgbc2wzjpih3dntgdogorg3it4vc7r6v@aufrf6kwqun3>
 
-Hi Geert,
-
-Thank you for the review.
-
-On Mon, Aug 26, 2024 at 1:14=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Wed, Aug 21, 2024 at 10:56=E2=80=AFAM Prabhakar <prabhakar.csengg@gmai=
-l.com> wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add OSTM0-OSTM7 nodes to RZ/V2H(P) ("R9A09G057") SoC DTSI.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Tue, Aug 27, 2024 at 04:23:48PM +0200, Thierry Reding wrote:
+> On Wed, Jul 31, 2024 at 02:14:01PM GMT, Rob Herring (Arm) wrote:
+> > There's no need to get the length of an DT array property before
+> > parsing the array. of_property_read_variable_u32_array() takes a
+> > minimum and maximum length and returns the actual length (or error
+> > code).
+> > 
+> > This is part of a larger effort to remove callers of of_get_property()
+> > and similar functions. of_get_property() leaks the DT property data
+> > pointer which is a problem for dynamically allocated nodes which may
+> > be freed.
 > > ---
-> > v2->v3
-> > - Grouped the OSTM nodes
->
-> Thanks for the update!
->
-> > --- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-> > @@ -121,6 +121,86 @@ sys: system-controller@10430000 {
-> >                         status =3D "disabled";
-> >                 };
-> >
-> > +               ostm0: timer@11800000 {
-> > +                       compatible =3D "renesas,r9a09g057-ostm", "renes=
-as,ostm";
-> > +                       reg =3D <0x0 0x11800000 0x0 0x1000>;
-> > +                       interrupts =3D <GIC_SPI 17 IRQ_TYPE_EDGE_RISING=
->;
-> > +                       clocks =3D <&cpg CPG_MOD 67>;
-> > +                       resets =3D <&cpg 109>;
-> > +                       power-domains =3D <&cpg>;
-> > +                       status =3D "disabled";
-> > +               };
+> >  drivers/input/keyboard/tegra-kbc.c | 72 +++++++++++-------------------
+> >  1 file changed, 27 insertions(+), 45 deletions(-)
+> > 
+> > diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
+> > index a1765ed8c825..53f39fc155ea 100644
+> > --- a/drivers/input/keyboard/tegra-kbc.c
+> > +++ b/drivers/input/keyboard/tegra-kbc.c
+> > @@ -491,12 +491,10 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
+> >  	struct device_node *np = kbc->dev->of_node;
+> >  	u32 prop;
+> >  	int i;
+> > -	u32 num_rows = 0;
+> > -	u32 num_cols = 0;
+> > +	int num_rows;
+> > +	int num_cols;
+> >  	u32 cols_cfg[KBC_MAX_GPIO];
+> >  	u32 rows_cfg[KBC_MAX_GPIO];
+> > -	int proplen;
+> > -	int ret;
+> >  
+> >  	if (!of_property_read_u32(np, "nvidia,debounce-delay-ms", &prop))
+> >  		kbc->debounce_cnt = prop;
+> > @@ -510,56 +508,23 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
+> >  	    of_property_read_bool(np, "nvidia,wakeup-source")) /* legacy */
+> >  		kbc->wakeup = true;
+> >  
+> > -	if (!of_get_property(np, "nvidia,kbc-row-pins", &proplen)) {
+> > -		dev_err(kbc->dev, "property nvidia,kbc-row-pins not found\n");
+> > -		return -ENOENT;
+> > -	}
+> > -	num_rows = proplen / sizeof(u32);
+> > -
+> > -	if (!of_get_property(np, "nvidia,kbc-col-pins", &proplen)) {
+> > -		dev_err(kbc->dev, "property nvidia,kbc-col-pins not found\n");
+> > -		return -ENOENT;
+> > -	}
+> > -	num_cols = proplen / sizeof(u32);
+> > -
+> > -	if (num_rows > kbc->hw_support->max_rows) {
+> > -		dev_err(kbc->dev,
+> > -			"Number of rows is more than supported by hardware\n");
+> > -		return -EINVAL;
+> > -	}
+> > -
+> > -	if (num_cols > kbc->hw_support->max_columns) {
+> > -		dev_err(kbc->dev,
+> > -			"Number of cols is more than supported by hardware\n");
+> > -		return -EINVAL;
+> > -	}
+> > -
+> > -	if (!of_get_property(np, "linux,keymap", &proplen)) {
+> > +	if (!of_property_present(np, "linux,keymap")) {
+> >  		dev_err(kbc->dev, "property linux,keymap not found\n");
+> >  		return -ENOENT;
+> >  	}
+> >  
+> > -	if (!num_rows || !num_cols || ((num_rows + num_cols) > KBC_MAX_GPIO)) {
+> > -		dev_err(kbc->dev,
+> > -			"keypad rows/columns not properly specified\n");
+> > -		return -EINVAL;
+> > -	}
+> > -
+> >  	/* Set all pins as non-configured */
+> >  	for (i = 0; i < kbc->num_rows_and_columns; i++)
+> >  		kbc->pin_cfg[i].type = PIN_CFG_IGNORE;
+> >  
+> > -	ret = of_property_read_u32_array(np, "nvidia,kbc-row-pins",
+> > -				rows_cfg, num_rows);
+> > -	if (ret < 0) {
+> > +	num_rows = of_property_read_variable_u32_array(np, "nvidia,kbc-row-pins",
+> > +				rows_cfg, 1, KBC_MAX_GPIO);
+> > +	if (num_rows < 0) {
+> >  		dev_err(kbc->dev, "Rows configurations are not proper\n");
+> > -		return -EINVAL;
+> > -	}
+> > -
+> > -	ret = of_property_read_u32_array(np, "nvidia,kbc-col-pins",
+> > -				cols_cfg, num_cols);
+> > -	if (ret < 0) {
+> > -		dev_err(kbc->dev, "Cols configurations are not proper\n");
+> > +		return num_rows;
+> > +	} else if (num_rows > kbc->hw_support->max_rows) {
+> > +		dev_err(kbc->dev,
+> > +			"Number of rows is more than supported by hardware\n");
+> >  		return -EINVAL;
+> >  	}
+> >  
+> > @@ -568,11 +533,28 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
+> >  		kbc->pin_cfg[rows_cfg[i]].num = i;
+> >  	}
+> >  
+> > +	num_cols = of_property_read_variable_u32_array(np, "nvidia,kbc-col-pins",
+> > +				cols_cfg, 1, KBC_MAX_GPIO);
+> > +	if (num_cols < 0) {
+> > +		dev_err(kbc->dev, "Cols configurations are not proper\n");
+> > +		return num_cols;
+> > +	} else if (num_cols > kbc->hw_support->max_columns) {
+> > +		dev_err(kbc->dev,
+> > +			"Number of cols is more than supported by hardware\n");
+> > +		return -EINVAL;
+> > +	}
 > > +
-> > +               ostm1: timer@11801000 {
-> > +                       compatible =3D "renesas,r9a09g057-ostm", "renes=
-as,ostm";
-> > +                       reg =3D <0x0 0x11801000 0x0 0x1000>;
-> > +                       interrupts =3D <GIC_SPI 18 IRQ_TYPE_EDGE_RISING=
->;
-> > +                       clocks =3D <&cpg CPG_MOD 68>;
-> > +                       resets =3D <&cpg 110>;
-> > +                       power-domains =3D <&cpg>;
-> > +                       status =3D "disabled";
-> > +               };
-> > +
-> > +               ostm4: timer@12c00000 {
->
-> Usually we sort the instances within a group by instance number, i.e.
->
->     ostm0: timer@11800000 {
->     ostm1: timer@11801000 {
->     ostm2: timer@14000000 {
->     ostm3: timer@14001000 {
->     ostm4: timer@12c00000 {
->     ostm5: timer@12c01000 {
->     ostm6: timer@12c02000 {
->     ostm7: timer@12c03000 {
->
-> See e.g. the scif nodes in arch/arm64/boot/dts/renesas/r8a77951.dtsi:
->
->     scif0: serial@e6e60000 {
->     scif1: serial@e6e68000 {
->     scif2: serial@e6e88000 {
->     scif3: serial@e6c50000 {
->     scif4: serial@e6c40000 {
->     scif5: serial@e6f30000 {
->
-> scif3 and scif4 have lower base addresses than scif0.
->
-OK, I'll update the nodes based on the instance number.
+> >  	for (i = 0; i < num_cols; i++) {
+> >  		kbc->pin_cfg[cols_cfg[i]].type = PIN_CFG_COL;
+> >  		kbc->pin_cfg[cols_cfg[i]].num = i;
+> >  	}
+> >  
+> > +	if (!num_rows || !num_cols || ((num_rows + num_cols) > KBC_MAX_GPIO)) {
+> > +		dev_err(kbc->dev,
+> > +			"keypad rows/columns not properly specified\n");
+> > +		return -EINVAL;
+> > +	}
+> 
+> Previously we wouldn't try to initialize the columns when the
+> rows/columns were invalid, so this block could move before the last for
+> loop above.
+> 
+> But it doesn't really matter given that these are exceptions and really
+> shouldn't happen, so:
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
 
-Cheers,
-Prabhakar
+I don't quite like of_property_read_variable_u32_array() because it is
+OF-specific. device_property_count_u32() will return the number of
+elements in an array. But I guess this driver will only be used on an OF
+system... 
+
+Applied, thank you.
+
+-- 
+Dmitry
 
