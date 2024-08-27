@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-302566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C85C6960068
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:44:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 054FA960066
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:43:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECC971C219AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:44:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34BFC1C2189E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60C513D291;
-	Tue, 27 Aug 2024 04:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF44B6EB5C;
+	Tue, 27 Aug 2024 04:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jW2TK+0F";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D6xIT9O1"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1PSLr6ji";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BRULf9li"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D914EB5E
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 04:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D58554648
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 04:43:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724733818; cv=none; b=M5e4I2rgN3AnUU3krm226jXmVgOcJV7lU2XXbG++ps4yjIbg5bLwjzfCko+RnVkfRBOrHkO2aIK4NRul/GcAgw6bw0A0StuqC1vMP1n2oyde3Xiq47HdO0x2thchfffwW+jwdJO0s8KTJnFOEfbLFv8o1hyjOmjVS+tqMFTwk7E=
+	t=1724733818; cv=none; b=sUSyrF2hmX2eHJ2zRAqM8YEsQahc9+lAr/HRPG1TYaJTnLqXxXIQHssgidHfKiu6gavozZFBXGhhYHFey7T7KbZrWO0/x2zrzRI/Ih70Snqkww+5X5gQVB9JrvZlQxWRNYg2z3HKwCcKDsKv0Bo2TZVeOSPbuu9c+Aic7tyC90I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724733818; c=relaxed/simple;
-	bh=uYu4mQMFuI8yeG9XvXlfOKjSdd3b0lBbmmwodCwqC2k=;
+	bh=WxJn38aQwzgVssvSr9SkazK1C6E06LBK31hfQqtQBiE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JrFN/2snkqOSwuXaZs+QAu6hDwQm+K6/dPkn+nlsAtwjPF+e2WUjR2F3yfGLIKmWbIxdBm7Qm3Fe550KbQmh8IqnCmtTBawNRh+VFrHi69escKjM69zBTpPo3hAJAZ+c0ae/QTFVGDmCgBEOzNc8bxjogUj+CRXS4pw23tOBYnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jW2TK+0F; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D6xIT9O1; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=uenkWgXngf5GxYlGEMZo0FErUIt5TKGeArUt2Pt7ALxr9iXvKzLjNA89ucsLaP9A+C5bsWKJb53JIXl2X06q8YoWLh2lm2HQ4YcaEUx9TE7dX6se38hN/6KEBbqx0LEpq01RWq2hz7lYsV1UMPm7H5STNtrZDM4OFeFy9r+twR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1PSLr6ji; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BRULf9li; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: John Ogness <john.ogness@linutronix.de>
@@ -38,30 +38,29 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Yf4jbljXWY8PAPTbbDHBJy4C3txbuHDOpF+lqNl4ktA=;
-	b=jW2TK+0FRq5XXsLNJbp1didRdjDUrRmDEp3DoeD0ykDmMg2JkfFa3PJK13wOguxiM3I3vQ
-	nueQ+naKQwOq8xke4iVbN7/FGbVXemcwjluq6euMp11v3qAZu2y01mQPdXmGE0lWHd57aw
-	A/+tlkbSCGIO5Ve+HszWdegT0FfCkrg+hHlnXWRn/5+vts5p1qcoWwOwaLzwEPoBZ5az87
-	/YmVIaIo86jfFZYXZl8odlGJ7BqfQQ6TaflnMxxlL1av8A1NVdfsqvqt8kRolh+jpLiApP
-	th8YiP13MRrY72/TbaKiP4a5BSqQPo/fuSHSwJlXX9DycGF0/MioJUBM13OYuQ==
+	bh=J912AwN71BiOtVlEylsZ3qn7Oo+IxLpwqnkVptIsJ08=;
+	b=1PSLr6jiNFs3S/tun844IZrN3cBlnbijOvQpF2KFGnD7IJQWq2CrH1hqs38/UYUmMKZy9Q
+	NKMEVF+iU5ge78jp8lO7xchsde621nG8NWerGA2gC6wgJ0YElroEyzKE5PZ7LB7XKXHZO5
+	d8Qvf2wwuSyvND2lFaiLrLQHPDAoSxzbjzyCFbHZMr5A+rVnVT4+To3r4XpIxq3udNN8H5
+	KCUAWDB0Bg1OXmuczmppJJhyRUn0eoR0XHRFSX+pkl1QrD+LYJSS+T3bYJDDeuDY57bFQz
+	1cGlySssPv/BkGIIjzjst71xZXlXb9jsGYL6z6Bev3kHj/PYgKtmfpjQE/TUCw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1724733814;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Yf4jbljXWY8PAPTbbDHBJy4C3txbuHDOpF+lqNl4ktA=;
-	b=D6xIT9O1Zta8ss+J8ltHJzNlZnX1xVF9U3Q6XwOTjmWZ06RhoKNQIxY5+6zcAsTsXfYQEj
-	47d5HnbHLOBSQoDQ==
+	bh=J912AwN71BiOtVlEylsZ3qn7Oo+IxLpwqnkVptIsJ08=;
+	b=BRULf9lix9z0aTjTh2pxjzZFyKfjCXmu6DhpHXz6e406EoUZrvSqGgb0ii7T6TQ7B9rHzu
+	8P7bjg/aBAn6KSDg==
 To: Petr Mladek <pmladek@suse.com>
 Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
 	Steven Rostedt <rostedt@goodmis.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH printk v4 01/17] printk: nbcon: Add function for printers to reacquire ownership
-Date: Tue, 27 Aug 2024 06:49:17 +0206
-Message-Id: <20240827044333.88596-2-john.ogness@linutronix.de>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH printk v4 02/17] printk: Fail pr_flush() if before SYSTEM_SCHEDULING
+Date: Tue, 27 Aug 2024 06:49:18 +0206
+Message-Id: <20240827044333.88596-3-john.ogness@linutronix.de>
 In-Reply-To: <20240827044333.88596-1-john.ogness@linutronix.de>
 References: <20240827044333.88596-1-john.ogness@linutronix.de>
 Precedence: bulk
@@ -72,187 +71,78 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since ownership can be lost at any time due to handover or
-takeover, a printing context _must_ be prepared to back out
-immediately and carefully. However, there are scenarios where
-the printing context must reacquire ownership in order to
-finalize or revert hardware changes.
+A follow-up change adds pr_flush() to console unregistration.
+However, with boot consoles unregistration can happen very
+early if there are also regular consoles registering as well.
+In this case the pr_flush() is not important because all
+consoles are flushed when checking the initial console sequence
+number.
 
-One such example is when interrupts are disabled during
-printing. No other context will automagically re-enable the
-interrupts. For this case, the disabling context _must_
-reacquire nbcon ownership so that it can re-enable the
-interrupts.
+Allow pr_flush() to fail if @system_state has not yet reached
+SYSTEM_SCHEDULING. This avoids might_sleep() and msleep()
+explosions that would otherwise occur:
 
-Provide nbcon_reacquire_nobuf() for exactly this purpose. It
-allows a printing context to reacquire ownership using the same
-priority as its previous ownership.
+[    0.436739][    T0] printk: legacy console [ttyS0] enabled
+[    0.439820][    T0] printk: legacy bootconsole [earlyser0] disabled
+[    0.446822][    T0] BUG: scheduling while atomic: swapper/0/0/0x00000002
+[    0.450491][    T0] 1 lock held by swapper/0/0:
+[    0.457897][    T0]  #0: ffffffff82ae5f88 (console_mutex){+.+.}-{4:4}, at: console_list_lock+0x20/0x70
+[    0.463141][    T0] Modules linked in:
+[    0.465307][    T0] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.10.0-rc1+ #372
+[    0.469394][    T0] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-2 04/01/2014
+[    0.474402][    T0] Call Trace:
+[    0.476246][    T0]  <TASK>
+[    0.481473][    T0]  dump_stack_lvl+0x93/0xb0
+[    0.483949][    T0]  dump_stack+0x10/0x20
+[    0.486256][    T0]  __schedule_bug+0x68/0x90
+[    0.488753][    T0]  __schedule+0xb9b/0xd80
+[    0.491179][    T0]  ? lock_release+0xb5/0x270
+[    0.493732][    T0]  schedule+0x43/0x170
+[    0.495998][    T0]  schedule_timeout+0xc5/0x1e0
+[    0.498634][    T0]  ? __pfx_process_timeout+0x10/0x10
+[    0.501522][    T0]  ? msleep+0x13/0x50
+[    0.503728][    T0]  msleep+0x3c/0x50
+[    0.505847][    T0]  __pr_flush.constprop.0.isra.0+0x56/0x500
+[    0.509050][    T0]  ? _printk+0x58/0x80
+[    0.511332][    T0]  ? lock_is_held_type+0x9c/0x110
+[    0.514106][    T0]  unregister_console_locked+0xe1/0x450
+[    0.517144][    T0]  register_console+0x509/0x620
+[    0.519827][    T0]  ? __pfx_univ8250_console_init+0x10/0x10
+[    0.523042][    T0]  univ8250_console_init+0x24/0x40
+[    0.525845][    T0]  console_init+0x43/0x210
+[    0.528280][    T0]  start_kernel+0x493/0x980
+[    0.530773][    T0]  x86_64_start_reservations+0x18/0x30
+[    0.533755][    T0]  x86_64_start_kernel+0xae/0xc0
+[    0.536473][    T0]  common_startup_64+0x12c/0x138
+[    0.539210][    T0]  </TASK>
 
-Note that after a successful reacquire the printing context
-will have no output buffer because that has been lost. This
-function cannot be used to resume printing.
+And then the kernel goes into an infinite loop complaining about:
+
+1. releasing a pinned lock
+2. unpinning an unpinned lock
+3. bad: scheduling from the idle thread!
+4. goto 1
 
 Signed-off-by: John Ogness <john.ogness@linutronix.de>
 ---
- include/linux/console.h |  6 ++++
- kernel/printk/nbcon.c   | 74 +++++++++++++++++++++++++++++++++++++----
- 2 files changed, 73 insertions(+), 7 deletions(-)
+ kernel/printk/printk.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/include/linux/console.h b/include/linux/console.h
-index 9a13f91b0c43..88050d30a9cc 100644
---- a/include/linux/console.h
-+++ b/include/linux/console.h
-@@ -366,6 +366,10 @@ struct console {
- 	 *
- 	 * The callback should allow the takeover whenever it is safe. It
- 	 * increases the chance to see messages when the system is in trouble.
-+	 * If the driver must reacquire ownership in order to finalize or
-+	 * revert hardware changes, nbcon_reacquire_nobuf() can be used.
-+	 * However, on reacquire the buffer content is no longer available. A
-+	 * reacquire cannot be used to resume printing.
- 	 *
- 	 * The callback can be called from any context (including NMI).
- 	 * Therefore it must avoid usage of any locking and instead rely
-@@ -558,12 +562,14 @@ extern void nbcon_cpu_emergency_exit(void);
- extern bool nbcon_can_proceed(struct nbcon_write_context *wctxt);
- extern bool nbcon_enter_unsafe(struct nbcon_write_context *wctxt);
- extern bool nbcon_exit_unsafe(struct nbcon_write_context *wctxt);
-+extern void nbcon_reacquire_nobuf(struct nbcon_write_context *wctxt);
- #else
- static inline void nbcon_cpu_emergency_enter(void) { }
- static inline void nbcon_cpu_emergency_exit(void) { }
- static inline bool nbcon_can_proceed(struct nbcon_write_context *wctxt) { return false; }
- static inline bool nbcon_enter_unsafe(struct nbcon_write_context *wctxt) { return false; }
- static inline bool nbcon_exit_unsafe(struct nbcon_write_context *wctxt) { return false; }
-+static inline void nbcon_reacquire_nobuf(struct nbcon_write_context *wctxt) { }
- #endif
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 6accd1704e73..acf668001096 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -3991,6 +3991,10 @@ static bool __pr_flush(struct console *con, int timeout_ms, bool reset_on_progre
+ 	u64 diff;
+ 	u64 seq;
  
- extern int console_set_on_cmdline;
-diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
-index 92ac5c590927..d1c640e7e645 100644
---- a/kernel/printk/nbcon.c
-+++ b/kernel/printk/nbcon.c
-@@ -830,6 +830,19 @@ static bool __nbcon_context_update_unsafe(struct nbcon_context *ctxt, bool unsaf
- 	return nbcon_context_can_proceed(ctxt, &cur);
- }
- 
-+static void nbcon_write_context_set_buf(struct nbcon_write_context *wctxt,
-+					char *buf, unsigned int len)
-+{
-+	struct nbcon_context *ctxt = &ACCESS_PRIVATE(wctxt, ctxt);
-+	struct console *con = ctxt->console;
-+	struct nbcon_state cur;
-+
-+	wctxt->outbuf = buf;
-+	wctxt->len = len;
-+	nbcon_state_read(con, &cur);
-+	wctxt->unsafe_takeover = cur.unsafe_takeover;
-+}
-+
- /**
-  * nbcon_enter_unsafe - Enter an unsafe region in the driver
-  * @wctxt:	The write context that was handed to the write function
-@@ -845,8 +858,12 @@ static bool __nbcon_context_update_unsafe(struct nbcon_context *ctxt, bool unsaf
- bool nbcon_enter_unsafe(struct nbcon_write_context *wctxt)
- {
- 	struct nbcon_context *ctxt = &ACCESS_PRIVATE(wctxt, ctxt);
-+	bool is_owner;
- 
--	return nbcon_context_enter_unsafe(ctxt);
-+	is_owner = nbcon_context_enter_unsafe(ctxt);
-+	if (!is_owner)
-+		nbcon_write_context_set_buf(wctxt, NULL, 0);
-+	return is_owner;
- }
- EXPORT_SYMBOL_GPL(nbcon_enter_unsafe);
- 
-@@ -865,11 +882,43 @@ EXPORT_SYMBOL_GPL(nbcon_enter_unsafe);
- bool nbcon_exit_unsafe(struct nbcon_write_context *wctxt)
- {
- 	struct nbcon_context *ctxt = &ACCESS_PRIVATE(wctxt, ctxt);
-+	bool ret;
- 
--	return nbcon_context_exit_unsafe(ctxt);
-+	ret = nbcon_context_exit_unsafe(ctxt);
-+	if (!ret)
-+		nbcon_write_context_set_buf(wctxt, NULL, 0);
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(nbcon_exit_unsafe);
- 
-+/**
-+ * nbcon_reacquire_nobuf - Reacquire a console after losing ownership
-+ *				while printing
-+ * @wctxt:	The write context that was handed to the write callback
-+ *
-+ * Since ownership can be lost at any time due to handover or takeover, a
-+ * printing context _must_ be prepared to back out immediately and
-+ * carefully. However, there are scenarios where the printing context must
-+ * reacquire ownership in order to finalize or revert hardware changes.
-+ *
-+ * This function allows a printing context to reacquire ownership using the
-+ * same priority as its previous ownership.
-+ *
-+ * Note that after a successful reacquire the printing context will have no
-+ * output buffer because that has been lost. This function cannot be used to
-+ * resume printing.
-+ */
-+void nbcon_reacquire_nobuf(struct nbcon_write_context *wctxt)
-+{
-+	struct nbcon_context *ctxt = &ACCESS_PRIVATE(wctxt, ctxt);
-+
-+	while (!nbcon_context_try_acquire(ctxt))
-+		cpu_relax();
-+
-+	nbcon_write_context_set_buf(wctxt, NULL, 0);
-+}
-+EXPORT_SYMBOL_GPL(nbcon_reacquire_nobuf);
-+
- /**
-  * nbcon_emit_next_record - Emit a record in the acquired context
-  * @wctxt:	The write context that will be handed to the write function
-@@ -895,7 +944,6 @@ static bool nbcon_emit_next_record(struct nbcon_write_context *wctxt)
- 		.pbufs = ctxt->pbufs,
- 	};
- 	unsigned long con_dropped;
--	struct nbcon_state cur;
- 	unsigned long dropped;
- 
- 	/*
-@@ -930,10 +978,7 @@ static bool nbcon_emit_next_record(struct nbcon_write_context *wctxt)
- 		goto update_con;
- 
- 	/* Initialize the write context for driver callbacks. */
--	wctxt->outbuf = &pmsg.pbufs->outbuf[0];
--	wctxt->len = pmsg.outbuf_len;
--	nbcon_state_read(con, &cur);
--	wctxt->unsafe_takeover = cur.unsafe_takeover;
-+	nbcon_write_context_set_buf(wctxt, &pmsg.pbufs->outbuf[0], pmsg.outbuf_len);
- 
- 	if (con->write_atomic) {
- 		con->write_atomic(con, wctxt);
-@@ -947,6 +992,21 @@ static bool nbcon_emit_next_record(struct nbcon_write_context *wctxt)
- 		return false;
- 	}
- 
-+	if (!wctxt->outbuf) {
-+		/*
-+		 * Ownership was lost and reacquired by the driver. Handle it
-+		 * as if ownership was lost.
-+		 */
-+		nbcon_context_release(ctxt);
++	/* Sorry, pr_flush() will not work this early. */
++	if (system_state < SYSTEM_SCHEDULING)
 +		return false;
-+	}
 +
-+	/*
-+	 * Ownership may have been lost but _not_ reacquired by the driver.
-+	 * This case is detected and handled when entering unsafe to update
-+	 * dropped/seq values.
-+	 */
-+
- 	/*
- 	 * Since any dropped message was successfully output, reset the
- 	 * dropped count for the console.
+ 	might_sleep();
+ 
+ 	seq = prb_next_reserve_seq(prb);
 -- 
 2.39.2
 
