@@ -1,78 +1,73 @@
-Return-Path: <linux-kernel+bounces-303960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C8079617A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:04:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18C9B9617AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7FB5B2147E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:04:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4937B1C210E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BB21D2796;
-	Tue, 27 Aug 2024 19:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBE41D31B3;
+	Tue, 27 Aug 2024 19:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bpkp72ik"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="m8DRmV6k"
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2DA132132
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 19:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB31D1D2F6E
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 19:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724785480; cv=none; b=QuzEgxP6xnE0xUVuJHao/DV5iOC70hmmGubRSmIlmmC6HUfB44yZkFouVNp6Jiir5goUkHhm9CpsQ/A3I9eE8HKnorHtoKjdizBI+NOOGOHGBSn7MWGKUno0C5WpDgfwJo0eBI1E2RuFOCVbsGMHMQ57YGE5AHJL5Nzho0PWPt8=
+	t=1724785549; cv=none; b=h1iAoI7m47dKDksiE6jpnjEOI1DnHiawPqZ2cWmCv0mK363+QCu6x3l5/awLT2CO7ktIFwtSC11XBWP5JsdbjZCqfhe0r50LUnBYwstbz4NYH1FvjawGQH1hBtp/zxT4luKi4oD4fd8U6LsmrZXnis0wWzU1vmaHOVIyFDJNXIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724785480; c=relaxed/simple;
-	bh=xB+tRyst4h/JkZ6zWo+HspsZwigVOpyOfVR2Meo+9zo=;
+	s=arc-20240116; t=1724785549; c=relaxed/simple;
+	bh=g2qfOyzD7mj2ctfLhV+IRVqjYo+8o4pLyGoAVHj2xpA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VYh7kpdnYRK9yReBeKIhOmjx3Hid4XTqdSI8iPrGNrLtMBWk/GClqLKjk2uLs+5exkobBlaDArjOXOSWkFC3iMqFW7ICuHf/+0gCHSYgvoAG0uuLN+RdFtcwYNqC4hK1+yVoy7uM1GyupyLh+jN8eZjmWibPyFi9U0E2BT5x41I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bpkp72ik; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724785477;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HkWCAaDqu2XZmQMkoLU93xiUV6PoV/L38xqUed5LNOs=;
-	b=Bpkp72ikXTdmmgpP2Pdo238sWRgFj4sHQe3o8RJWL84c/z+reS/6LlsFZr7/lJmV/J/xU5
-	ZcZwzdG0KM3+cSiS7UQL8RAQhSB4f4uG8AQHfsR1g1UimHMRTdREfj8TN9BBmC1mwWdvyj
-	z+pOvYYR1VryTXa/vdEKbK/dR/xZdFc=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-569-j11tp4xJMN6UD1__FEUnlQ-1; Tue, 27 Aug 2024 15:04:29 -0400
-X-MC-Unique: j11tp4xJMN6UD1__FEUnlQ-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42817980766so53332925e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:04:28 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=ORyF8Elt+NZadO7JiPTuF2uaRy7uPUMNSFAzJYrVgrJwEMF3nHA6F9jW9q2NV9eHwH3kby0Kx5e8h+618MRLyHMc/ff0TC5BncmtIqWy2GGEURBiT97q6w8Q131Na2VDL3mX/LK0mSOP8uFIBvVhKpqUW44kzqKKmKKdm6QEeJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=m8DRmV6k; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-824c85e414bso203763539f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:05:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1724785547; x=1725390347; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QPgtDg58q+McBQLoCDhB6dvqAm4lTGOJk5NvB5IqS60=;
+        b=m8DRmV6kaV1LHryNqCjrFMqRFIqAEjBnmdg7YxEaaSJL6COGd7idy6QlK8B5XOMnZ+
+         +JHVI9G8Hx+/5XfWjo+kcF44wcjk8694+405egBeivCPcBCsriCbbyqv5oFpTl4p469C
+         pkj5I9dDzMSMSV+GE6/f6sFBzSQy+ypfkcJ6H0YayDDrLGi2uxGQRGJiNvDTXRRoWgwa
+         Yw8uwpJI2ry0OvWu64xckonkv45AJwI4gayaoOaqSWiZ0kSo84bI5Tb2/UR3qf3W2uAw
+         FdAosR/idbDqsnvCgZNVgSHCrrrG7j1RghXNxGf63FD4vD9C6OFY6ypa/WgvmtDHU3w/
+         jqeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724785463; x=1725390263;
+        d=1e100.net; s=20230601; t=1724785547; x=1725390347;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HkWCAaDqu2XZmQMkoLU93xiUV6PoV/L38xqUed5LNOs=;
-        b=OPUOl64PyT+nzzSfek0eJzZLQN5Eyu/9sikTTZPnEAqUovZhdcSsjGfwAWggZyhlKL
-         2p+6HITTaDQ0Zr0VRf+1dk+VHmvYW0nTwDqJVFW2PVbX6ilJq7huu9o94CFVaZ+400Ge
-         jEJVA1p6H8J8ELDz1Se82pNASb5KK1xlktvVKHDRpYDh/HVO9gOp3jbzTCpX0QiGctMh
-         vw8SxAk+yHQ5TWUBc7+WxFrQ1RCXOXpEOE/3O6CCVPsjAUDg+laf8h8zGXztktdKXa5s
-         suDrVXTRc/+y+MwMqmdJOou/Z5oNO8HlYW+PMdWs+pm1R3JLaPr0mhPWxTGBq0skJgK3
-         JO7A==
-X-Gm-Message-State: AOJu0Yx2iwVu5rx5/gIy52wEVptiy3xm44dnnW7TfAfBdC8CV5CAPQEY
-	uUfCk6jtpzlXeGScK58s4EhyC4EmXOcA8zH1U9ucJrCvP5O8Np78bBTGIerMEjHJkG6FGb1KTvu
-	wCDW/HksBW+xqurQBV8OsEFXoMKRPxfLoueH1C0wqBvK11dI6DB7zW4huHCsghw==
-X-Received: by 2002:a05:6000:400f:b0:371:8f19:bff5 with SMTP id ffacd0b85a97d-37311857877mr11933153f8f.3.1724785463433;
-        Tue, 27 Aug 2024 12:04:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF1i/xHwfH62KeEf74CXSi1HrJpaaxieMRJplttOqZqnN5NHZ0E2WbImpYcSF+/j2WB6c89uQ==
-X-Received: by 2002:a05:6000:400f:b0:371:8f19:bff5 with SMTP id ffacd0b85a97d-37311857877mr11933128f8f.3.1724785462851;
-        Tue, 27 Aug 2024 12:04:22 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb20a5a4sm1305368a12.42.2024.08.27.12.04.21
+        bh=QPgtDg58q+McBQLoCDhB6dvqAm4lTGOJk5NvB5IqS60=;
+        b=f3VM4E35bP8HKhGcDIEqm/lEwTU+Mep789ftBMG2QWIeLNvZn11j8pcCquXizuC+ZW
+         VY9pALYZzMIp0yCK1U/nDKIxuZiy6eqjaWbZ8Ctjxm10BEzBdtdP7Y2bgMc4nd53pZFR
+         4kx8Ccoife/TiEN2g9FIj2YqY2Pz6GOipRCh2z8fSvQHgt3wjJ3hatv4a5UeUxHOIp5D
+         f+23xQyEDsWpV5JSi+3vPysvJctmbtv5Y8nE32ntmBHJJPDHMKqA25i/qDqCnplqtLj0
+         k4mQjaEefSt7y6LMvYdO8JHaJ9AuqrLgHxaBp1NEb7tU36VQhKIc0xpEKdWGVpF4yeoB
+         Qc3g==
+X-Forwarded-Encrypted: i=1; AJvYcCX5hVMBa1fDdHSyEgNpRe7TtFzHQyug+COrkXjpgdKbQu2S6lWxpbbo7yixpwHvpCbZA8XBCGJ3I0viUa8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6fT18dTvVKpANCBYgF4xJpNzEc/Zn8KvqbNgdI8YqnQpCkAvY
+	H6FVFcVz3pnh3c4H6Trhr52Vdj0rH/igK53sFiJWvYOlJbZZcPT99WGFqCq/BCk=
+X-Google-Smtp-Source: AGHT+IEuujl/9dEsZ4FQ8JuKJxuoRbbHy6rNrvvhcf00pWo8FSAo3yeLetJirxmhnMEDUTEhU7xR4w==
+X-Received: by 2002:a05:6602:13c8:b0:824:d752:986 with SMTP id ca18e2360f4ac-82787387f9amr1917557439f.16.1724785546835;
+        Tue, 27 Aug 2024 12:05:46 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ce70f20255sm2724543173.3.2024.08.27.12.05.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 12:04:22 -0700 (PDT)
-Message-ID: <a0bfd438-6d18-4334-aa79-b35aed43f3c7@redhat.com>
-Date: Tue, 27 Aug 2024 21:04:20 +0200
+        Tue, 27 Aug 2024 12:05:46 -0700 (PDT)
+Message-ID: <c7acca0d-586f-41c0-a542-6b698305f17a@kernel.dk>
+Date: Tue, 27 Aug 2024 13:05:43 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,168 +75,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] platform/x86:dell-laptop: Add knobs to change
- battery charge settings
-To: Andres Salomon <dilinger@queued.net>
-Cc: linux-kernel@vger.kernel.org, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
- <linux@weissschuh.net>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
- platform-driver-x86@vger.kernel.org, Matthew Garrett <mjg59@srcf.ucam.org>,
- Sebastian Reichel <sre@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- linux-pm@vger.kernel.org, Dell.Client.Kernel@dell.com
-References: <20240820033005.09e03af1@5400>
- <04d48a7c-cad1-4490-bbcd-ceb332c740bd@redhat.com>
- <20240827142408.0748911f@5400>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240827142408.0748911f@5400>
+Subject: Re: [PATCH v4 3/7] block: mtip32xx: Replace deprecated PCI functions
+To: Philipp Stanner <pstanner@redhat.com>, Wu Hao <hao.wu@intel.com>,
+ Tom Rix <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>,
+ Xu Yilun <yilun.xu@intel.com>, Andy Shevchenko <andy@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Alvaro Karsz <alvaro.karsz@solid-run.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Richard Cochran <richardcochran@gmail.com>,
+ Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>,
+ Keith Busch <kbusch@kernel.org>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fpga@vger.kernel.org, linux-gpio@vger.kernel.org,
+ netdev@vger.kernel.org, linux-pci@vger.kernel.org,
+ virtualization@lists.linux.dev
+References: <20240827185616.45094-1-pstanner@redhat.com>
+ <20240827185616.45094-4-pstanner@redhat.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240827185616.45094-4-pstanner@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On 8/27/24 8:24 PM, Andres Salomon wrote:
-> On Mon, 26 Aug 2024 16:44:35 +0200
-> Hans de Goede <hdegoede@redhat.com> wrote:
+On 8/27/24 12:56 PM, Philipp Stanner wrote:
+> pcim_iomap_regions() and pcim_iomap_table() have been deprecated by the
+> PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
+> pcim_iomap_table(), pcim_iomap_regions_request_all()").
 > 
->> Hi Andres,
->>
->> On 8/20/24 9:30 AM, Andres Salomon wrote:
-> [...]
->>> +
->>> +static ssize_t charge_type_show(struct device *dev,
->>> +		struct device_attribute *attr,
->>> +		char *buf)
->>> +{
->>> +	ssize_t count = 0;
->>> +	int i;
->>> +
->>> +	for (i = 0; i < ARRAY_SIZE(battery_modes); i++) {
->>> +		bool active;
->>> +
->>> +		if (!(battery_supported_modes & BIT(i)))
->>> +			continue;
->>> +
->>> +		active = dell_battery_mode_is_active(battery_modes[i].token);
->>> +		count += sysfs_emit_at(buf, count, active ? "[%s] " : "%s ",
->>> +				battery_modes[i].label);
->>> +	}  
->>
->> If you look at the way how charge_type is shown by the power_supply_sysfs.c
->> file which is used for power-supply drivers which directly register
->> a power-supply themselves rather then extending an existing driver, this
->> is not the correct format.
->>
->> drivers/power/supply/power_supply_sysfs.c
->>
->> lists charge_type as:
->>
->>         POWER_SUPPLY_ENUM_ATTR(CHARGE_TYPE),
->>
->> and ENUM type properties use the following for show() :
->>
->> 	default:
->> 		if (ps_attr->text_values_len > 0 &&
->> 				value.intval < ps_attr->text_values_len && value.intval >= 0) {
->> 			ret = sysfs_emit(buf, "%s\n", ps_attr->text_values[value.intval]);
->> 		} else {
->> 			ret = sysfs_emit(buf, "%d\n", value.intval);
->> 		}
->> 	}
->>
->> with in this case text_values pointing to:
->>
->> static const char * const POWER_SUPPLY_CHARGE_TYPE_TEXT[] = {
->> 	[POWER_SUPPLY_CHARGE_TYPE_UNKNOWN]	= "Unknown",
->> 	[POWER_SUPPLY_CHARGE_TYPE_NONE]		= "N/A",
->> 	[POWER_SUPPLY_CHARGE_TYPE_TRICKLE]	= "Trickle",
->> 	[POWER_SUPPLY_CHARGE_TYPE_FAST]		= "Fast",
->> 	[POWER_SUPPLY_CHARGE_TYPE_STANDARD]	= "Standard",
->> 	[POWER_SUPPLY_CHARGE_TYPE_ADAPTIVE]	= "Adaptive",
->> 	[POWER_SUPPLY_CHARGE_TYPE_CUSTOM]	= "Custom",
->> 	[POWER_SUPPLY_CHARGE_TYPE_LONGLIFE]	= "Long Life",
->> 	[POWER_SUPPLY_CHARGE_TYPE_BYPASS]	= "Bypass",
->> };
->>
->> So value.intval will be within the expected range hitting:
->>
->> 			ret = sysfs_emit(buf, "%s\n", ps_attr->text_values[value.intval]);
->>
->> IOW instead of outputting something like this:
->>
->> Fast [Standard] Long Life
->>
->> which is what your show() function does it outputs only
->> the active value as a string, e.g.:
->>
->> Standard
->>
->> Yes not being able to see the supported values is annoying I actually
->> wrote an email about that earlier today:
->>
->> https://lore.kernel.org/linux-pm/49993a42-aa91-46bf-acef-4a089db4c2db@redhat.com/
->>
->> but we need to make sure that the output is consistent between drivers otherwise
->> userspace can never know how to use the API, so for charge_type the dell
->> driver should only output the active type, not all the options.
+> In mtip32xx, these functions can easily be replaced by their respective
+> successors, pcim_request_region() and pcim_iomap(). Moreover, the
+> driver's calls to pcim_iounmap_regions() in probe()'s error path and in
+> remove() are not necessary. Cleanup can be performed by PCI devres
+> automatically.
 > 
-> So should I just wait to make any changes until you hear back in that
-> thread?
-
-Yes that might be best.
-
-> I'm not overly excited about changing it to use the current
-> charge_type API, given that the only way to get a list of modes that the
-> hardware supports is to try setting them all and seeing what fails.
+> Replace pcim_iomap_regions() and pcim_iomap_table().
 > 
-> I suppose another option is to rename it to charge_types in the dell
-> driver under the assumption that your proposed charge_types API (or
-> something like it) will be added..
+> Remove the calls to pcim_iounmap_regions().
 
-Right, if we get a favorable reaction to my charge_types suggestion
-then we can go ahead with the dell-laptop changes using charge_types
-instead of charge_type. I was already thinking along those lines
-myself too.
+Looks fine to me - since it depends on other trees, feel free to take it
+through those:
 
-So if my RFC gets a favorable response lets do that.
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
 
-In that case you don't even need to send a new version just
-renaming charge_type to charge_types is something which I can do
-while merging this.
-
->> This reminds me that there was a patch-series to allow battery extension drivers
->> like this one to actually use the power-supply core code for show()/store()
->> Thomas IIRC that series was done by you ?  What is the status of that ?
->>
->> Also looking at the userspace API parts of this again I wonder
->> if mapping  BAT_PRI_AC_MODE_TOKEN -> "Trickle" is the right thing do
->> maybe "Long Life" would be a better match ?  That depends on what the option
->> actually does under the hood I guess. Is this known ?
->>
-> 
-> I originally thought to use Long Life rather than Trickle. We discussed
-> it here:
-> 
-> https://lore.kernel.org/linux-pm/5cfe4c42-a003-4668-8c3a-f18fb6b7fba6@gmx.de/
-> 
-> Based on the existing documentation and the fact that the wilco driver
-> already mapped it, it was decided to stick with the existing precedent
-> of using Trickle.
-
-Ok, I was just wondering if this was discussed already, since it was
-lets stick with "Trickle".
-
-> That said, Armin at first suggested creating a new "Primarily AC" entry.
-> That's personally my favorite option, though I understand if we don't
-> have to have 50 CHARGE_TYPE entries that just slightly different
-> variations. :)
-
-Right.
-
-Regards,
-
-Hans
-
-
+-- 
+Jens Axboe
 
 
