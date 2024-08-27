@@ -1,225 +1,193 @@
-Return-Path: <linux-kernel+bounces-303477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 737F6960C93
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:52:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3015D960CC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:58:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CA811C22DE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:52:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E6BEB29CB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014311BA270;
-	Tue, 27 Aug 2024 13:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fWUGcp8Z"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2065.outbound.protection.outlook.com [40.107.237.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5792D1C4629;
+	Tue, 27 Aug 2024 13:52:27 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796991C2DB6
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 13:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724766741; cv=fail; b=ELjps/miLTyplNntw7KT3gB+rXDHqFHVcjFHf9sk8pqoURF+xwAC7hrjqgc74CBYbCaTEGBs6h6f2rldzrWy1aJVSx3Fy0LL8nps+B7QIADLU+7p6YytSvo5yNHz7JqmmIGEffGp3AraBy4JDnhRm13mXe03SYmYyJhijCuttaA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724766741; c=relaxed/simple;
-	bh=nQgxRkewCw3tsVw0Ahd9n3IHg/2EVKcYxh+BYg5n0sc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=gqrvxxmevQGlKFgLCOgovZnEYpXArwlSTJBNDdKnJRaitkuy1ai5LEQPC42+Rh3AyG77dzWC/WoRLJskzBfJexAUbgj55gGCua1V5ydMc0PrfLhviFA6P9WXSEqCXoXggt/gJbmSuCE8df22FtBJNAuvdXZ7WC/rrlPcLhLH9Z0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fWUGcp8Z; arc=fail smtp.client-ip=40.107.237.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lDc5uDJgH80mPn+2JD1HMSZEePipmbmNADS2+rDue6ChclQHv0Beyez+OSuYhDXD1bz5hLfKFdfLocCKxYpbshlXSLMSYNk3ZWzAyH4jni7uuHULcmFSjmsqC4dNoQvhZAWRwJA9rMMFF1C09anoSAyZ8URdqxwB+KcL3hrR2AU252YmeQwe/8A7uzJrJzHsBI9bjwNUp4PhtNgnRYCyAkk39obsNvC4bZ3v9iUDIvyYMfoYPKiUTKuFgVIA3VbktxsmEUSF0sVtanBukOJ+Qzc45KaUabrn1GZ3mSaBc03ojmjjEYVwuP6qZJWRTwNEyxh//+8JPpH+hwaWulQQ3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VKy9vNXy+hJkYv5JGkBECxuDJzQgVSzKuNLctBRsA7A=;
- b=hiY8o/hiu3lSX0bbc1rTKKnr1dc+litSBwFgeYNrwNi6MkTyvHPiwSiMG5Z4jRLoLhb9niPOq7ChoyqeADkkRf12+ZHVMZhlq71GmPQdlIG04hmPz4FNr88hoM7ducn2zNpWZNzOtx+qKMRbM0h+UGtceKW9h+flZDUmV47bmKFyd5dV7DO3p54nB0WunqEu8hUWAeJdTFvEhqC5sk4opV86nyk1WisyqJLK3iIcu8xtlD0VIV+QN0p87ZJo21BAugfKKB6owEzYM51ldsdu2td0/JpPP6sDXwKppjNcDGcfBeiJqx8qWoMZEN+wRQ/WQpjE6JOxkML8fb3bTaMqRw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VKy9vNXy+hJkYv5JGkBECxuDJzQgVSzKuNLctBRsA7A=;
- b=fWUGcp8ZThGLUEZ51weEmFgju65RjY0J8gPGDWG4MMj8uuj36+YHwqfUXycSsMd1bR0sXIgXdfL5F4v5rfYad5ZciKlhkzpgum+++hAnr9eFxG/jGVWa0LWupJodpmRtySBzlJ6vQmzKW1XyIJXcq9DRUUzku+uJv3aM5pbgn8s=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
- by LV8PR12MB9262.namprd12.prod.outlook.com (2603:10b6:408:1e7::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.26; Tue, 27 Aug
- 2024 13:52:17 +0000
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.7897.021; Tue, 27 Aug 2024
- 13:52:17 +0000
-Message-ID: <be6e5ab6-8b43-1a3f-39a6-b4aa5e0523ac@amd.com>
-Date: Tue, 27 Aug 2024 08:52:20 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] x86/mm/sme: fix the kdump kernel breakage on SME system
- when CONFIG_IMA_KEXEC=y
-To: Baoquan He <bhe@redhat.com>
-Cc: linux-kernel@vger.kernel.org, noodles@fb.com, x86@kernel.org,
- lijiang@redhat.com, dyoung@redhat.com, kexec@lists.infradead.org
-References: <20240826024457.22423-1-bhe@redhat.com>
- <35e40987-1541-cbbe-6b16-1ddadc2c4c35@amd.com>
- <Zs1FrZVuZK14Je7z@MiWiFi-R3L-srv>
-Content-Language: en-US
-From: Tom Lendacky <thomas.lendacky@amd.com>
-In-Reply-To: <Zs1FrZVuZK14Je7z@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MN2PR17CA0020.namprd17.prod.outlook.com
- (2603:10b6:208:15e::33) To DM4PR12MB5070.namprd12.prod.outlook.com
- (2603:10b6:5:389::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A5C1C460C;
+	Tue, 27 Aug 2024 13:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724766746; cv=none; b=bXeDd54ccV8F9EVU0zQmnztw88R5Kk+Fe7AJhV6ufklcex2OaST6XxZzsruEzuyUqqs4AnTUAj1q6bnO07poE+0hKZ65bVt/14HYnfk6+0PvVdQ1tqbj1kJYa6HeaFUnYFjRZqK40D2KO+Ai+i0fsAbXanQX2dVH0GcTX1VaFUQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724766746; c=relaxed/simple;
+	bh=QtBWaqTGdUAGgNmIlwBBGUsERV466m5iQc0yT2aplFE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NeM3QNxhc7yWTofKyW9f6/1v0Ib8mW9M9LNt9Ct4G/lfR4ybx6rKW4XWTZH37Igc/taJeDxa85hSU6O/Z/Vzs1et1TDdXgkl533VSamA3OTzvB5GQYqjNbyQF+OGP/S/jA2Uk02wYseyavMU6nz+1o976r1+j82sTMMjW8fEPXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WtTWB1vtLz9sPd;
+	Tue, 27 Aug 2024 15:52:22 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id eYDrvO0daCfp; Tue, 27 Aug 2024 15:52:22 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WtTWB0wK1z9rvV;
+	Tue, 27 Aug 2024 15:52:22 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 0BE968B787;
+	Tue, 27 Aug 2024 15:52:22 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id WM9csDU1aTaJ; Tue, 27 Aug 2024 15:52:21 +0200 (CEST)
+Received: from [192.168.233.149] (unknown [192.168.233.149])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6FC368B77C;
+	Tue, 27 Aug 2024 15:52:21 +0200 (CEST)
+Message-ID: <df354c7e-e93b-4697-a373-c68c72c73adf@csgroup.eu>
+Date: Tue, 27 Aug 2024 15:52:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|LV8PR12MB9262:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7d3b6464-889f-43c5-70cc-08dcc69f76d1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VUxmWk9HYjZNbkJUWHpBeGYzZ0s1UWU3TE9DTFFTNU83OGtLSFdiWUZkS1hJ?=
- =?utf-8?B?UkN4RnVReTIzWEZqU3Iyano3K0NSdUlxTzdGVkFuZVRCR2w3aURad3ZiRC9R?=
- =?utf-8?B?Q3pybnF0UWVtTmdhMEIvZFZGcWlxQmVKL3NtMEszTjBvcjVwaE1SaHQzOFlV?=
- =?utf-8?B?L1RRQ0wvYmYwUW5ERStpOW9sb0tlQkFhc0IvZHBKdXVQY2hoVm1VOTFhQlZx?=
- =?utf-8?B?K2pjaVV2emE4dXJtTmpYVWVTZHBXOGhXTU9SMGRkQ2diSWMrbzdiRjgyZklU?=
- =?utf-8?B?cysxUXg0cjJqZGVTcUN1TVlkYmt6Q3hFdWpNbzE3MVJ6RWt6cWlOK1pOZzQ1?=
- =?utf-8?B?Ym83dmsxVlVmWW5JQzcvek9vd3NKSk9HbWpkS1JvcWZYbTBDd3FKMkJyUkxZ?=
- =?utf-8?B?KzVhd2R4SzZsZCtyVVU4dXl0KzF4dEZzOXZGb1A3dGJCTGRwUVRaQ1F6dS9r?=
- =?utf-8?B?K0VGMWZSV1crb2VOcHRRYnU5cE9TSmZaYzIxalBPOXZDRitKOERRS3FGUXVZ?=
- =?utf-8?B?eEFZRHh1b3A0QzZUek1DdDZncEhad0hXSFRRR1lVN3ZoME5TcGx1WnQyOGQv?=
- =?utf-8?B?Z05hdFppRWtpVzM3QXR4SmZJQU5Jc3pPVmVVeTVKYk13ajJFMU0xUHg4dTRS?=
- =?utf-8?B?Szd5MStUS2V1NFhYV3RwSnZrTzJBZUdVemV0SUQ2VjlQYU1PbXV2OU52dXd2?=
- =?utf-8?B?T21HVXBEOC9RSThxVUwyY0gyM2ozNjEyb2VhakZqdksyZTVxSjBlUFh3eEtJ?=
- =?utf-8?B?b1F4QjRyR0dKWGltdy9zQUM5ZzFwd09yYzdJUUgrWHNHak1TY0toR1NxeG1N?=
- =?utf-8?B?U3lTME80cUdMa3dkVWRVdnU0dVp0cjdOZEVGWHVNNHgwRGEwMk5CQUJaYXM2?=
- =?utf-8?B?N2QxSXdMdnp6TllRSnNEdloyVGFZSno2TmFBNUIwWkptWlVRTEYydUlHUGxq?=
- =?utf-8?B?WmRaL0gzcFFTc21lY3J6b2RzcjBuMFRSQTg3djFsWVBxbE9KbHh0UWZkYUs0?=
- =?utf-8?B?MzZnNjBhVHB0am91Tyt2aGxUaGlJN0FLZWxLL2RTVmFzNWxOYTY5L2djbkZZ?=
- =?utf-8?B?NmxWYmVNRDNOcjZiOTJtdzk4bytyWlpTT0ZHU3JNOTQ5VUIwK2kvcVlaYmpO?=
- =?utf-8?B?c0JhK29NSHZlb0lpeVVrcTYycmRyVTVQZFJ3R0ZwZ05nLzJ1MVZDMHdrQW82?=
- =?utf-8?B?a00wZ2EraHVRSmM0S0JPaDhyN0JqRk51U1d1dHMxa0piSkg1UkN1OEpuZElm?=
- =?utf-8?B?SzU4cGh4dWtSZGN5eVUyWXpMVURPKzdNbm1aZC9mdUFaYlBMNHJkWm14R0pJ?=
- =?utf-8?B?S0pKelpoV1JxVnI0MUdCNlFBT2ZvR0JyYTFwdEtlbGx4REpxWVlkaUFMdmk1?=
- =?utf-8?B?RDU5TFNpbUhsakFzS2VMZWo3TDJJdzc1TnBtc0FMN1dBb0J0Z1ErVncrRDBR?=
- =?utf-8?B?K29uOWFtTERVaFR4R05mdkZaaTRiSGtlaGMwNmN5M1kzTUlBU3F0RjFkc1ph?=
- =?utf-8?B?bHNhUldrTjB1VGJTa0RCdUtpTTlhbWt0WHYvNHZCMm9jRlZYOHIrUTNuaTJY?=
- =?utf-8?B?THUzTVhHV0tSYmtycUh0SzQ0VEF5NFN6alkwOXBRb25scTJ1NUZEVHVWOTlO?=
- =?utf-8?B?cGZmZ29NTmlqRnNXejg1QzNTckVUOHhIMTBJMGRwbHRENEVnZnF3WmhhV1Uz?=
- =?utf-8?B?UEdjZGZJRFg3SzRMMFNkcWJTYU1jcGN0UUdTeVdWU2dzZFdFNG1Ma2RvT3Mv?=
- =?utf-8?B?WmJjbUhhNGprYzlJaGdoTjVvc1EzQ3NPdHRQTW8rZVgzZWJSNVQ0T3R0d1N6?=
- =?utf-8?B?dEpVaUNNalNQaHE5ck1UZz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dkJxYTZTM3hxay9OZWNZV0dCbXREKzR2V01ZRHhWVlNaZ01PSUtvM0R0eUxp?=
- =?utf-8?B?SUVMQisrMGNvTW1nQzBOZmw2TndUMHVpT0VxdHI5T2FwUTVaaUg0bWtpQVow?=
- =?utf-8?B?dkhpME43RzBLOGZnTmpNT2FCRzN6YnhpOFcxcjE5V3ZVb0Y1aXRjYnNUdGQ3?=
- =?utf-8?B?bGFXNkd3OUlxZkNPak5WVEc1VW03a3lIT2hQQnFMdU40am91eWp5ZHBtbng1?=
- =?utf-8?B?bFc1Y1Z5WmhPeVZmQjl3N0YwVXpKOFVEUFR4SVNhUjgzMUUxMldQZGo0Q2hK?=
- =?utf-8?B?L0FZVWhjRWdqMVRiZ3JzcnRRSEJHa3hlOTNIdHovQWhhNHpuZGhJQnJ6Qjl3?=
- =?utf-8?B?ejVUenBsdGJsM3F5MytLNHhUVVVOREdIeStKTkNGYSt5YTVhWlJ1YnB0Z3NP?=
- =?utf-8?B?d1h6b3B0aW1mWHQ4ZkdrRnl2MlRESTJaQm5iWVVONnhPWEg3WSs0eTZ5UjVU?=
- =?utf-8?B?RVNVU0I5NTBXMlhmTDFUWFZiSjBSL2RCemJvbE1nUUw2ckQ5TnFqbnRNWDdB?=
- =?utf-8?B?MlV6QTJTcVBsWVZNSDF2WE5KNS9nM3BFcXlyUjQyUy9iK0tmRmUzZjBrTlFR?=
- =?utf-8?B?QzlGcG9ocXA5V3gvdXdjcUdwT25ZNkdwc2hlclAvQzBmSDRLOFB6YmR2OXNa?=
- =?utf-8?B?SXZXaDhJUWdOa3pZdlllZFpVQVorVFlzSFhnNVhTMGl0WS9aWEovK21XZExI?=
- =?utf-8?B?VDEzZTRWbmVicEFNNnUyR3RIZ05BVUszU1JqbTlNY3ZYUFp5NUhaWkh2aFFi?=
- =?utf-8?B?VDh0eUVPN0ZFOHh0eDRkaTE5cnF5alhMcFVJcDArTUc4UE5acmxZbGNzdGdz?=
- =?utf-8?B?ZDljR2pHcFI2V0c2NlB0cXlMRkd4NFJ1R1NrYXU1NHkxWGlESVhhT2NUZ3RG?=
- =?utf-8?B?SUxIU3hFZ1RRQi9Fbm5VemVCRC9PVmRSSWh4ekZ6bnNUVzlZN0dZcmVsWlJR?=
- =?utf-8?B?b0w3dG1ESmMwWFBuVDN5Q3RyVFRUNEsyb1lMNTBpdTdEeUo3b0RqUFFnZnE4?=
- =?utf-8?B?VkhXTHpMWFVpMFFvQW85SjIxOURzdXQyMWhCYUpOQVB2eENEREpWTFAwTmY1?=
- =?utf-8?B?RXZYdXVSV21GaWs0OTdsVmpOTUtZWE5qQnNoWS8wRW5NZFlEYm1wUmQ2dXha?=
- =?utf-8?B?ZzNDMHE1WnlObTNRY1hUcDZvNm9oRmw5a25yNndIVm56Qkk2UnE1ZTJ0THJp?=
- =?utf-8?B?Y3U1cC8xS0RFSE9rSFNmdzJCVGFXSHF6MmQwSlpKM3I3eVIxWHd2NXBLV3Nt?=
- =?utf-8?B?emlFVERBbVdLL2oyalFQWmMzOStUUnhwZzFmRFpRR0ZXVEk3RnhOdi9pZlJO?=
- =?utf-8?B?cXM3Tkc4Z252Qkhqd0xwTW9qL3B5aDNvdWU4RHdHb0tLZGtXSTNDZytpSnJC?=
- =?utf-8?B?eGdMVlFVd3l6bDdmWTNpeW1DaHFTdmNVL1pFOXhTZVdmclQ0ZWo1Qnl0bXBx?=
- =?utf-8?B?OXp5ZEtxN3hNdjIyUTRJWU9Vb3d2UEtHMG1BUmhtZzF0RElZblppZlFyY1RP?=
- =?utf-8?B?MmRXczBTd05WZzJCeHJhbDdjUm9qazU4UVFKVVlQQVh4Z1dQMnUxaW5Xek14?=
- =?utf-8?B?bFFLeUtkRmRtUUZWcGNSdGFFMGhJbHRGVS9vSzJvQlhhTWRPcklhN1VsU2lV?=
- =?utf-8?B?REEwcEpRVk9PNTIwcnZqcEJ6Zmw1RS8vRkxGMU5KaFRmenQ2aGN3WUVPMWpt?=
- =?utf-8?B?dWlDdFpBYlNZMWR6MFdPVkdXTXIvYnlsLzBMdlpPZ1lOYUt2aGJtTGRqQ0FF?=
- =?utf-8?B?USsxNWovTlU5cEZCME5TRmgzRHNZcFc2R1Rxc09HUmhFWk9DVGU3bG9yU3JU?=
- =?utf-8?B?SEVvL1l2Y3JsM1dDL01wNXp0NGxvZkxZMGdHeUVXcFV2RlFGVE1hcUM3R2VC?=
- =?utf-8?B?M2dqWkM4MXh2WDc5SzVKZll3U1N0UllGczBwbTFlTEp2OWVEbnNXYWRQd29q?=
- =?utf-8?B?N3BMUFJwQTZGMWYxaWRxb3hYdWQyTmZVbllXNjNDTTAzUnE5a1JYdFVjd1pi?=
- =?utf-8?B?WVUyaEN0dUt0TDFEcytFTlJKbHBtVkg2dWhmUVhveGZGZmhMZHhsajZsaWZo?=
- =?utf-8?B?Qjh2L0crWTlGZUFCdkNCYmlVZ253a2xFN3llQnBTdE9BV212UjAzMFZ5ZTdi?=
- =?utf-8?Q?SAhBDzrBum7mWg9imaYi8zXQV?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7d3b6464-889f-43c5-70cc-08dcc69f76d1
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 13:52:17.6965
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7eS9+ITmYGGLqROMR5Y5ksevbldVs4gStwPVrKWfm5ORbl1X5HacEBVexKE3BhMGKjodZ4FMd+wQGRuV8vErNg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9262
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] aarch64: vdso: Wire up getrandom() vDSO implementation
+To: Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+ "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+ linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-arch@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Eric Biggers <ebiggers@kernel.org>
+References: <20240826181059.111536-1-adhemerval.zanella@linaro.org>
+ <ZszlGPqfrULzi3KG@zx2c4.com>
+ <fd3cd385-131a-43b2-8ce9-05547a4f2d1d@linaro.org>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <fd3cd385-131a-43b2-8ce9-05547a4f2d1d@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 8/26/24 22:19, Baoquan He wrote:
-> On 08/26/24 at 09:24am, Tom Lendacky wrote:
->> On 8/25/24 21:44, Baoquan He wrote:
->>> Recently, it's reported that kdump kernel is broken during bootup on
->>> SME system when CONFIG_IMA_KEXEC=y. When debugging, I noticed this
->>> can be traced back to commit ("b69a2afd5afc x86/kexec: Carry forward
->>> IMA measurement log on kexec"). Just nobody ever tested it on SME
->>> system when enabling CONFIG_IMA_KEXEC.
->>>
->>>
->>> Here fix the code bug to make kexec/kdump kernel boot up successfully.
->>>
->>> Fixes: 8f716c9b5feb ("x86/mm: Add support to access boot related data in the clear")
+
+
+Le 27/08/2024 à 15:17, Adhemerval Zanella Netto a écrit :
+> [Vous ne recevez pas souvent de courriers de adhemerval.zanella@linaro.org. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+> 
+> On 26/08/24 17:27, Jason A. Donenfeld wrote:
+>> Hi Adhemerval,
 >>
->> The check that was modified was added by:
->> 	b3c72fc9a78e ("x86/boot: Introduce setup_indirect")
+>> Thanks for posting this! Exciting to have it here.
 >>
->> The SETUP_INDIRECT patches seem to be the issue here.
+>> Just some small nits for now:
+>>
+>> On Mon, Aug 26, 2024 at 06:10:40PM +0000, Adhemerval Zanella wrote:
+>>> +static __always_inline ssize_t getrandom_syscall(void *buffer, size_t len, unsigned int flags)
+>>> +{
+>>> +    register long int x8 asm ("x8") = __NR_getrandom;
+>>> +    register long int x0 asm ("x0") = (long int) buffer;
+>>> +    register long int x1 asm ("x1") = (long int) len;
+>>> +    register long int x2 asm ("x2") = (long int) flags;
+>>
+>> Usually it's written just as `long` or `unsigned long`, and likewise
+>> with the cast. Also, no space after the cast.
 > 
-> Hmm, I didn't check it carefully, thanks for addding this info. While
-> after checking commit b3c72fc9a78e, I feel the adding code was trying to
-> fix your original early_memremap_is_setup_data(). Even though
-> SETUP_INDIRECT type of setup_data has been added, the original
-> early_memremap_is_setup_data() only check the starting address and
-> the content of struct setup_data, that's obviously wrong.
-
-IIRC, when this function was created, the value of "len" in setup_data
-included the length of "data", so the calculation was correct. Everything
-was contiguous in a setup_data element.
-
-> 
-> arch/x86/include/uapi/asm/setup_data.h:
-> /* extensible setup data list node */
-> struct setup_data {
->         __u64 next;
->         __u32 type;
->         __u32 len;
->         __u8 data[];
-> };
-> 
-> As you can see, the zero-length will embed the carried data which is
-> actually expected and adjacent to its carrier, the struct setup_data.
-
-Right, and "len" is the length of that data. So paddr + len goes to the
-end of the overall setup_data.
-
-Thanks,
-Tom
-
+> Ack.
 > 
 >>
+>>> +#define __VDSO_RND_DATA_OFFSET  480
+>>
+>> This is the size of the data currently there?
+> 
+> Yes, I used the same strategy x86 did.
+> 
+>>
+>>>   #include <asm/page.h>
+>>>   #include <asm/vdso.h>
+>>>   #include <asm-generic/vmlinux.lds.h>
+>>> +#include <vdso/datapage.h>
+>>> +#include <asm/vdso/vsyscall.h>
+>>
+>> Possible to keep the asm/ together?
+> 
+> Ack.
+> 
+>>
+>>> + * ARM64 ChaCha20 implementation meant for vDSO.  Produces a given positive
+>>> + * number of blocks of output with nonnce 0, taking an input key and 8-bytes
+>>
+>> nonnce -> nonce
+> 
+> Ack.
+> 
+>>
+>>> -ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
+>>> +ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/ -e s/aarch64.*/arm64/)
+>>>   SODIUM := $(shell pkg-config --libs libsodium 2>/dev/null)
+>>>
+>>>   TEST_GEN_PROGS := vdso_test_gettimeofday
+>>> @@ -11,7 +11,7 @@ ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
+>>>   TEST_GEN_PROGS += vdso_standalone_test_x86
+>>>   endif
+>>>   TEST_GEN_PROGS += vdso_test_correctness
+>>> -ifeq ($(uname_M),x86_64)
+>>> +ifeq ($(uname_M), $(filter x86_64 aarch64, $(uname_M)))
+>>>   TEST_GEN_PROGS += vdso_test_getrandom
+>>>   ifneq ($(SODIUM),)
+>>>   TEST_GEN_PROGS += vdso_test_chacha
+>>
+>> You'll need to add the symlink to get the chacha selftest running:
+>>
+>>    $ ln -s ../../../arch/arm64/kernel/vdso tools/arch/arm64/vdso
+>>    $ git add tools/arch/arm64/vdso
+>>
+>> Also, can you confirm that the chacha selftest runs and works?
+> 
+> Yes, last time I has to built it manually since the Makefile machinery seem
+> to be broken even on x86_64.  In a Ubuntu vm I have:
+> 
+> tools/testing/selftests/vDSO$ make
+>    CC       vdso_test_gettimeofday
+>    CC       vdso_test_getcpu
+>    CC       vdso_test_abi
+>    CC       vdso_test_clock_getres
+>    CC       vdso_standalone_test_x86
+>    CC       vdso_test_correctness
+>    CC       vdso_test_getrandom
+>    CC       vdso_test_chacha
+> In file included from /home/azanella/Projects/linux/linux-git/include/linux/limits.h:7,
+>                   from /usr/include/x86_64-linux-gnu/bits/local_lim.h:38,
+>                   from /usr/include/x86_64-linux-gnu/bits/posix1_lim.h:161,
+>                   from /usr/include/limits.h:195,
+>                   from /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h:205,
+>                   from /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h:7,
+>                   from /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h:34,
+>                   from /usr/include/sodium/export.h:7,
+>                   from /usr/include/sodium/crypto_stream_chacha20.h:14,
+>                   from vdso_test_chacha.c:6:
+> /usr/include/x86_64-linux-gnu/bits/xopen_lim.h:99:6: error: missing binary operator before token "("
+>     99 | # if INT_MAX == 32767
+>        |      ^~~~~~~
+> /usr/include/x86_64-linux-gnu/bits/xopen_lim.h:102:7: error: missing binary operator before token "("
+>    102 | #  if INT_MAX == 2147483647
+>        |       ^~~~~~~
+> /usr/include/x86_64-linux-gnu/bits/xopen_lim.h:126:6: error: missing binary operator before token "("
+>    126 | # if LONG_MAX == 2147483647
+>        |      ^~~~~~~~
+> make: *** [../lib.mk:222: /home/azanella/Projects/linux/linux-git/tools/testing/selftests/vDSO/vdso_test_chacha] Error 1
+> 
+> 
+> I will try to figure out to be build it correctly, but I think it would be
+> better to vgetrandom-chacha.S with a different rule.
+
+Hi, can you try with the following commit : 
+https://git.kernel.org/pub/scm/linux/kernel/git/crng/random.git/commit/?id=e1af61334ade39a9af3031b7189f9acb419648a4
+
+Thanks
+Christophe
 
