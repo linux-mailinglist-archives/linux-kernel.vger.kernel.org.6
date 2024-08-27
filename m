@@ -1,194 +1,162 @@
-Return-Path: <linux-kernel+bounces-303992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48712961820
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:41:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B6719617F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:27:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B01AB2236E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:41:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DAAA1C23339
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7290D1D31AD;
-	Tue, 27 Aug 2024 19:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553F41D318E;
+	Tue, 27 Aug 2024 19:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ItVeWiRs"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="ammnqpY1"
+Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FDD1132132;
-	Tue, 27 Aug 2024 19:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421E31CFEDC
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 19:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724787685; cv=none; b=V8+KG4UZaOG1QzY+pvtgu/uWeEs3CFZ0gmGH0slleFIAx3HkV2Ib/UiGf1SIx6MoIjnvepE+HmU6lzxF6P9ITviEKy5NI3MYwWA/jH/93+VtDw7f8QSG178Epu6Pt6gxUoj0cA4FDt9QKBmAG2TXpfS8ikBbqcaNTcIp0REHBv8=
+	t=1724786826; cv=none; b=hm7ey5SeqBJB7spe3gk5lJeMiaIc6QJLOdq7PkYXtM7l3kR52ygdirRPfYJ2XOsa9I2nhYxFH6JzBhb0uaP7pGQ+9QDEyWVrvjksaQS5R8QxuhL9BLjlje+Ev5HSdEG+daC/fvO3j8zdto9Y5iQctls2LMRoym7U4rhBupPojus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724787685; c=relaxed/simple;
-	bh=wqslitYbqJSi0KPH7mB4ZICiE8Ld7szan6LtjNILLAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ToK+HVYV9UcdDfkUoUb0S0CULOlM+zA0PZP84zb00yWi2IORedi0JVz0hSbyntbdb1ovkzpBxNqDqyYY1StfKZW2f3WYaJSaCptnRB6XThQxAI3yKwcs1fGZa6LOgxPNG5G/tnb2Bd4qR/zd5ySvWgGLOqIXhtdsgzPiKWrRCHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ItVeWiRs; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6bf6beda038so33074086d6.2;
-        Tue, 27 Aug 2024 12:41:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724787683; x=1725392483; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=eHjyJb8GPp/6HfUjUQSJWFTlvgIcHY5RFMvohVM8PdQ=;
-        b=ItVeWiRsxFqJps0sLTU8WO1emlveL/YMD4JH3L6HloWnBi+VWylUzTPwNR8hh1oHgS
-         GO7Ge/uPnhSbXhnqDbqxGGBtXiZ73KnhI5GgKrk+7T7TsaP8SdKsvYMQWlkMjjoY3tpN
-         k2m577BS/ZI+gcUeO8/Yu66lWhTHpKH5OGg5RLwAszj6oM6Zry8kuolU63iJFJRCye7q
-         DwzgSXQwxUHRBCN7Zxwx7D5STg2c3wt4gLVUMMkxFtCrzuauyrPX5jllV5QaNiXoTqwb
-         TB4xniWDzkMIRxkVbGd/gTOtnTQxO9m9oO5/l4Wp+spJmwhUzSvzdvGVO+bdi5aENki9
-         a3og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724787683; x=1725392483;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eHjyJb8GPp/6HfUjUQSJWFTlvgIcHY5RFMvohVM8PdQ=;
-        b=PgFxF6xZST+QxYyLddoKZ4BmeyRpnh6QGKVYqlwUiBq8EP6iu6in3QAqJ0sm8pug7C
-         uhRALedst4KsrHKqFvyC//+uh4PMiWLYYtDcV99POkABYyZDl4hqXzwjghPEA/v5HXZn
-         IKgqgpr4JsCZeiuEUETXjSofZmzXh+wqTkF6fHFKfmqtsI+dR/643nS+i+3Vz4VEDXCG
-         B9Qmp26o3177ZLPxFe1nBib9M/SYQ41+XzJngd+PNPNGKClNXKrwKQiPGs3k5+NARAct
-         HdMKLE/+M37Xb2lZXuQKfLGvko7JJmP/kIAlU4DcF3CH7i6odnXYJlBtmZpJG460agLh
-         DJhA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsUaQCcCnQum7IQb41xwDohcMAj2xGpmuebIBbAEcDhbw+5R1Bv++2dKa3v0Cd53KEeRzQ4KgDDNitOUc=@vger.kernel.org, AJvYcCW4Elw1BHzb1ZCNmCd8FGuBFXgzFnVU1YL7PG4AygT9oikb3yJzwcnbqA6EAsIpS2wtkWgQuwCjMD1PCSDEOEQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1C1jXc7ImogHjP3sCkIWF7XY+0kl0QkYPi1t37iQ4WRTWEdUR
-	eXf3B6KjdynvGqI3tFuizd6QG+guse88veL4bdAzwZErHQXytMqh
-X-Google-Smtp-Source: AGHT+IFiH/nKvl+KXqLzz46m2teZMGkmO+BsRECC14GZfUubMw2oaB/F9FKPc+3KOqo9Y26CHuMkcA==
-X-Received: by 2002:a05:6214:5a02:b0:6c1:6add:d26e with SMTP id 6a1803df08f44-6c16dc24ec2mr163281156d6.11.1724787682991;
-        Tue, 27 Aug 2024 12:41:22 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c162db09a7sm59110026d6.95.2024.08.27.12.41.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 12:41:22 -0700 (PDT)
-Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 3AB69120006C;
-	Tue, 27 Aug 2024 15:21:55 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Tue, 27 Aug 2024 15:21:55 -0400
-X-ME-Sender: <xms:UyfOZspMhrQfEasSV4WnsXGLmVopKIn0FJ_PzOmWXCEjJm5FgnD4Bw>
-    <xme:UyfOZipKWsQs_UMuHpZW8gqX96vX374LcHNeKmU87ZnGazTCd5uojFQeIzqvahYE2
-    7TmdAE8IcT1lI9RTg>
-X-ME-Received: <xmr:UyfOZhOoK3twaXbRgHdh14Bs8qsnO8IEWpjQGMtgnjJumRKL7yJhJ0eK84o>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeftddgudefhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
-    jeenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
-    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeejhfeikeekffejgeegueevffdtgeefudet
-    leegjeelvdffteeihfelfeehvdegkeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhu
-    nhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqdduje
-    ejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdr
-    nhgrmhgvpdhnsggprhgtphhtthhopedvhedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
-    htohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhhitggvrhihhhhl
-    sehgohhoghhlvgdrtghomhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthht
-    ohepfigvughsohhnrghfsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrg
-    hrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmhgr
-    ihhlrdgtohhmpdhrtghpthhtohepsggvnhhnohdrlhhoshhsihhnsehprhhothhonhdrmh
-    gvpdhrtghpthhtoheprgdrhhhinhgusghorhhgsehsrghmshhunhhgrdgtohhm
-X-ME-Proxy: <xmx:UyfOZj4O_1qg_AwDnKl9q3Vmz39t0EpY7o70O6-0GR0wfIQl0KkCkg>
-    <xmx:UyfOZr6I0AbLza2gZfkROY25KtMNiwq_uJs0hr02NclPH5yyiGJzfg>
-    <xmx:UyfOZjiJs5UwTdbscLb4y30wLhu2LhP7g9TqPNHskg1m_M2YHpKZSA>
-    <xmx:UyfOZl5O94y98_PzcWc-ZKi_h1gD_dRLLiTZBEOSmvuMMfXQScqZIA>
-    <xmx:UyfOZuKeDQFinft13_RHdv38erQGsKtDniPj9Ic8m7jxcouqs363a2Sy>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 27 Aug 2024 15:21:54 -0400 (EDT)
-Date: Tue, 27 Aug 2024 12:21:31 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, ojeda@kernel.org,
-	alex.gaynor@gmail.com, wedsonaf@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, akpm@linux-foundation.org,
-	daniel.almeida@collabora.com, faith.ekstrand@collabora.com,
-	boris.brezillon@collabora.com, lina@asahilina.net,
-	mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com,
-	jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com,
-	lyude@redhat.com, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 09/26] rust: alloc: implement kernel `Box`
-Message-ID: <Zs4nO1zsOI5eF1vv@boqun-archlinux>
-References: <20240816001216.26575-1-dakr@kernel.org>
- <20240816001216.26575-10-dakr@kernel.org>
- <CAH5fLggUzUuiVuKOYmvo1fAcXGpsHUiRKx6DTg2cgkMe2YcF4g@mail.gmail.com>
- <ZsS1njIt0Mp9pWok@pollux>
+	s=arc-20240116; t=1724786826; c=relaxed/simple;
+	bh=mxj3TsiD3sfGe1HxG9X61aMNFlQRwWdk1FPkE3ozNRw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TU8x9LJWCgfmi1nVPELGBe7h8z3blZX2dBq/nz3WZlc7v5zwJ3fn0V8OCnnTY0znn35G4UkGCQXaSLX0Wxp/q4NotqGNMoq0fVm2WSdBxB85ti3ptyob9OL+1GJt6kzc9EkCBqdy6vFZJ2mHdDtDz6jvmoseyCWhaPra+WZk9dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=ammnqpY1; arc=none smtp.client-ip=35.89.44.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6005a.ext.cloudfilter.net ([10.0.30.201])
+	by cmsmtp with ESMTPS
+	id iv2GsbcBLVpzpj1ons4ZGT; Tue, 27 Aug 2024 19:25:29 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id j1omsRdTSRBkMj1omshROd; Tue, 27 Aug 2024 19:25:29 +0000
+X-Authority-Analysis: v=2.4 cv=CbPD56rl c=1 sm=1 tr=0 ts=66ce2829
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
+ a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=7T7KSl7uo7wA:10
+ a=cOUt0ba47Qy8L9BmtKEA:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=8xv0a0awLlFOIkKNP/kzkxKfLITwaLOKFUsw8WiXk2g=; b=ammnqpY1D4Owcnx6/x/0fKQl3z
+	7ey4Dk0JjmBBUf3iMqKG1AjhOGV9Q6BR9lu0KFd0LHGk1GCExI8+7flSdIN8PVDazZFlfL47sWmYM
+	HskIlwXw3sY/HvI3yro9Ia4jUePAnX6NFROAQ+8ExP4JNM5cLGxDSgZQEvZvn91o7Zb5Hc+h0FLTT
+	X59UJpc1rbekPNHi87hUFmTRISxJxIpc74DcH3ODhIbgCihrIhFeN2O0TLRjB2zjFSk1G+xBb6wuW
+	yy6JcAUFH488J1PQ92CbQvoo7e6YT/lztzWWYDEDuDjIlM1k4NiQ/9Jldm1ijBi0b6Uwtv6RJhDL3
+	L+V6ONQQ==;
+Received: from [201.172.173.139] (port=55200 helo=[192.168.15.5])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1sj1ok-002mCT-2O;
+	Tue, 27 Aug 2024 14:25:26 -0500
+Message-ID: <37a70b40-0952-4a87-b583-8915a2206a11@embeddedor.com>
+Date: Tue, 27 Aug 2024 13:25:22 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZsS1njIt0Mp9pWok@pollux>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] wifi: radiotap: Avoid
+ -Wflex-array-member-not-at-end warnings
+To: Johannes Berg <johannes@sipsolutions.net>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, Kalle Valo
+ <kvalo@kernel.org>, Stanislav Yakovlev <stas.yakovlev@gmail.com>,
+ Ajay Singh <ajay.kathat@microchip.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+ libertas-dev@lists.infradead.org, netdev@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <ZrJmjM4izqDqwIrc@cute>
+ <6ae3908c182664496784b1f1a86dd5bfd72fbc62.camel@sipsolutions.net>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <6ae3908c182664496784b1f1a86dd5bfd72fbc62.camel@sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.173.139
+X-Source-L: No
+X-Exim-ID: 1sj1ok-002mCT-2O
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.5]) [201.172.173.139]:55200
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 15
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfMg8NlHMJtFsPNA1mWnZJQrIX5WhZblhv19hioXdQv6N6BWWTBorK4V6zhuXCCUViuk/f80QcMH+hi0N8ew3oPYnz42Kl0LUBHbpf1d33GaTodzQl4vt
+ KAtaAcVNt0SkGguhD7cw3Z9nFIetCxW/nBfgHrNxEaMFTrMMUHuJ735fjualVLXQP/9v905PSLSqTUtsy4R6G3sbVunD4nFlDE0FaZ/ogx3JoR0RU7HXZmAg
 
-On Tue, Aug 20, 2024 at 05:26:22PM +0200, Danilo Krummrich wrote:
-> On Tue, Aug 20, 2024 at 11:47:45AM +0200, Alice Ryhl wrote:
-> > On Fri, Aug 16, 2024 at 2:13 AM Danilo Krummrich <dakr@kernel.org> wrote:
-> > >
-> > > `Box` provides the simplest way to allocate memory for a generic type
-> > > with one of the kernel's allocators, e.g. `Kmalloc`, `Vmalloc` or
-> > > `KVmalloc`.
-> > >
-> > > In contrast to Rust's `Box` type, the kernel `Box` type considers the
-> > > kernel's GFP flags for all appropriate functions, always reports
-> > > allocation failures through `Result<_, AllocError>` and remains
-> > > independent from unstable features.
-> > >
-> > > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> > 
-> > Overall looks good to me, but I have a question:
-> > 
-> > > +impl<T: 'static, A> ForeignOwnable for Box<T, A>
-> > > +where
-> > > +    A: Allocator,
-> > > +{
-> > > +    type Borrowed<'a> = &'a T;
-> > > +    type BorrowedMut<'a> = &'a mut T;
-> > > [..]
-> > > +    unsafe fn borrow_mut<'a>(ptr: *const core::ffi::c_void) -> &'a mut T {
-> > > +        // SAFETY: The safety requirements of this method ensure that the pointer is valid and that
-> > > +        // nothing else will access the value for the duration of 'a.
-> > > +        unsafe { &mut *ptr.cast_mut().cast() }
-> > > +    }
-> > 
-> > Where does this come from? It looks like you've based the series on
-> > top of [1], but I dropped that patch a long time ago, and I don't see
-> > it in rust-dev anymore.
+
+
+On 27/08/24 02:22, Johannes Berg wrote:
+> On Tue, 2024-08-06 at 12:08 -0600, Gustavo A. R. Silva wrote:
+>>
+>> +++ b/include/net/ieee80211_radiotap.h
+>> @@ -24,31 +24,36 @@
+>>    * struct ieee80211_radiotap_header - base radiotap header
+>>    */
+>>   struct ieee80211_radiotap_header {
+>> -	/**
+>> -	 * @it_version: radiotap version, always 0
+>> -	 */
+>> -	uint8_t it_version;
+>> -
+>> -	/**
+>> -	 * @it_pad: padding (or alignment)
+>> -	 */
+>> -	uint8_t it_pad;
+>> -
+>> -	/**
+>> -	 * @it_len: overall radiotap header length
+>> -	 */
+>> -	__le16 it_len;
+>> -
+>> -	/**
+>> -	 * @it_present: (first) present word
+>> -	 */
+>> -	__le32 it_present;
+>> +	/* New members MUST be added within the __struct_group() macro below. */
 > 
-> I comes from me rebasing onto rust-dev. When Boqun asked me to resolve the merge
-> conflicts a few days ago, this patch was in rust-dev. I think it disappeared two
-> days ago or so.
+> There cannot be new members without breaking interop with the radiotap
+> spec, that comment isn't really useful ;-)
+
+Ah yes; the comment is not meant to be an invitation to add members to
+the struct just for the sake of it. It's there to indicate where they
+should be added if needed.
+
 > 
-> @Bonqun: Need to me to rebase again?
+>> +	__struct_group(ieee80211_radiotap_header_hdr, hdr, __packed,
 > 
-
-No need to rebase for this. I've already applied your series on
-rust-dev. The background of carrying `borrow_mut` is because it was
-simple to do, and so I carried it as the best effort, now with more
-`ForeignOwnable` ipmls, I think it's better if we just drop it, and
-re-introduce if needed.
-
-Sorry for a bit out-of-sync on this one.
-
-Regards,
-Boqun
-
-> - Danilo
+> And also, "header header" sounds odd to me really. The header of the
+> header? What's what?
 > 
-> > 
-> > Alice
-> > 
-> > [1]: https://lore.kernel.org/all/20230710074642.683831-1-aliceryhl@google.com/
-> > 
+> I think perhaps better to call this ieee80211_radiotap_hdr_fixed or so?
+
+Sounds good to me. :)
+
+Thanks for the feedback!
+--
+Gustavo
+
 
