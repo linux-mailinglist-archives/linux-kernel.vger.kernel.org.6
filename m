@@ -1,227 +1,100 @@
-Return-Path: <linux-kernel+bounces-303141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39DAA9607FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:56:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B4BD9607FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:57:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F7881C22B31
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:56:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9BE8283927
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1743219EEBF;
-	Tue, 27 Aug 2024 10:56:02 +0000 (UTC)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2786519EEA2;
+	Tue, 27 Aug 2024 10:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MwIIb6fI"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A6719DF41;
-	Tue, 27 Aug 2024 10:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17D44C634;
+	Tue, 27 Aug 2024 10:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724756161; cv=none; b=BotMzRWZQAV/Jg59Chp5aZGzW253NG3yibIRrgELeXFOlD81EaMX8gsWLvQwXofOEAbWLOH5QpQF4NWymkcrJI3mWdbSOmrEo/tePvwCTsUDLKZw2/42I4pPQuUcAba7FV1282jSg1GrEg3IHyKT+TkOnwjDi5kHPyP65u9N93Y=
+	t=1724756214; cv=none; b=F/xiFuPUUAQ7nOEpXv8H7z0dQ3X+iCpBbfplsgS6crplez/l648i6cYquv30maUIl2RGDBtohHiRPQL0tgqcD+ntOLOS4NGg2/Eu3qwpl2HXESDHYBnI4MXO5rF1lQgNGqkpO4sjpgLc0mOh3VKQVp5zL9dZok5O/9MfmKER03Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724756161; c=relaxed/simple;
-	bh=4oBV8H5bs6V7KC17pgVHrSStgbbQbPBeJsp1/aceqNY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ruEkyWte2thgqMZwajCIjcHmtl8Y6hW1OzI607zhQCIPISSReE8/8TBiM9aPXXMsVWbalfx/gr9QvMVrjBMea3lNmbCM7AnSwFZSJ1u4gp46k0F3oOfX1lJWuTKj4T2eqIFPBKqgUlH8AHaWp+J/RKheGOUOJZC6vMNb1SUxz2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6b8d96aa4c3so45161427b3.1;
-        Tue, 27 Aug 2024 03:55:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724756155; x=1725360955;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qo2NMwoxAQ1U2hSpFIW4sKP1B7w0umymouG5LJGc8hU=;
-        b=tMX1Dw9Z+zGNWhjGgBlnTjrOPMMDgNMxkP9EzaABEGB56zn7GkHHBi608bXtY0Fgjk
-         lTy2ejwiwnxctC7LgOtg2Ez9ynnKIkagkTxqT53e7yyc3EC6EfxM4ogPrnp24ngpaIZD
-         0Kuy0CfI4eAtlfWfRcT+cff/fpEDkPMBKpbMs6Av3mClyLL/ln31IGTLYF9eDxblPAi3
-         XPk5gT8+x5p6e2S11kOi0a/Wjljw0ly2ORNSxVh2jNYFCpkrpN2XS7knuXkzFapmdt5N
-         wiSw28JjTwQ7c6PudlVqoFQi/AcjHOMeMs10jJ3J24/1IiZgjKiYXaRuNQ6fuDvrIzyE
-         hv5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVEUYa5weDMTeSTBtJOzQJhrckP/E3G+Jhy93zh5fe/2lu5xAlHgpmS/Rhdbpl8xeHCadxF/hxmhTE=@vger.kernel.org, AJvYcCW/O4EY5BhYPz7EqTc31DfojVqrcKQzkOY7QFJNWvdsuXoQV+8e5ON+Jjtg5J5QyBvJXKBCxICatr0aoub9VnXpuDA=@vger.kernel.org, AJvYcCXevh5vIM4l/N1wILi26zRB0VfCRj5rOTWJ9+i8JCCTtcTqQOQqekuVdeqAxYof3zeK+uApMlN42+ttl3WH@vger.kernel.org, AJvYcCXjyiu2msfh1AXmpdACrjZx+ehysfpAHrqTL3Gk0oouOMr1XE2prmui7X17UkhP6YHRxYLeTF+ljL2Ea/bN@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCNLc2MLekUBkrs1kRjbny8AEcOO6Ria0UohKkgPnEvw8gy2TS
-	XfdJ56LwPfjZfF++mQvDay+6Ux5xItp829lIsUaNFvvSYv5zIamDBY00HOxh
-X-Google-Smtp-Source: AGHT+IETCHIGK0mw721enGSsiHio9F34nf8fMRrHd76WZv69hnIg/7XiAuB9jHfhRho4v3uBI4sk8Q==
-X-Received: by 2002:a05:690c:f82:b0:62c:e6c0:e887 with SMTP id 00721157ae682-6cfb950a938mr29761547b3.9.1724756155382;
-        Tue, 27 Aug 2024 03:55:55 -0700 (PDT)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6c39de3e7d9sm18617947b3.128.2024.08.27.03.55.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 03:55:54 -0700 (PDT)
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e1633202008so5249104276.2;
-        Tue, 27 Aug 2024 03:55:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU1z0Udm9zoeM3IQOFyeenSQLYJpx2yx7cgvGb8yfeCoV5llNKY7CICZ6g8BCN/rfW4IHGuw+6p7YhZs0pdpHgX77M=@vger.kernel.org, AJvYcCUEzwgKCk1MaYoaZHfqkp9EhLlUj/iK4dB5HIfFlhr9/poZyCajC6rUZq2SJWdaCTTL0RG+PTqKDdqmZJK7@vger.kernel.org, AJvYcCVFj/7SgI2UFAFEDYQm1Vnt9diD2heqtr5UMpg5SFfgis85Lj3tyL1+zqJqTookxbwh0sOoPLW54j/jobd7@vger.kernel.org, AJvYcCVHBPjzhh7j36So4wkZIBIl9XOeoQU9SlsgMYz9mCk4gU81vWRbnG3X/V6bK/qE+U+R2HIHt+nJQPg=@vger.kernel.org
-X-Received: by 2002:a05:690c:9e:b0:6b2:28c3:b706 with SMTP id
- 00721157ae682-6cfbb6fe00dmr29288707b3.34.1724756154320; Tue, 27 Aug 2024
- 03:55:54 -0700 (PDT)
+	s=arc-20240116; t=1724756214; c=relaxed/simple;
+	bh=kmByGUxRLjtDmL6ii3M4Lc4Jsk9eCJRrJIEKQ7ZxJG0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VB1OJDpE+zOD4o3kopzTLj4rTLj/gky1gTplV+M/e8ORVlS7NrcSCV1AAqg9IT5zba8R+ojPhizs1tk3m3zgyrktrdV6NraQGAj/Iq02HTOkVYr44PUUNwu8Vj74vdNT6+yMsgJvFEUeJLkkUy5pzqCrVxWVP95BPeoA8p5t2oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=MwIIb6fI; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47RAukLa116282;
+	Tue, 27 Aug 2024 05:56:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724756206;
+	bh=u810Jo3KAM2PYpKB1sOJ4JvATsEjVyj69RK1x8nzlfw=;
+	h=From:To:CC:Subject:Date;
+	b=MwIIb6fI7FAj1QCp5rCb8BTmXfIZho7xLDmtEdFKdBMyQNvAvqfw+RdicDoiEOZd6
+	 CuQZDj406wel/Wh1bfC8i9pfYuAUTK9GUr2xC/Qb0Oww4fQzoPWREAV8FHrV9Z17Ot
+	 8nsin8eih3+KPE67ejLC4pEl2W6Qk5bKUXLtQldg=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47RAukDF006731
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 27 Aug 2024 05:56:46 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 27
+ Aug 2024 05:56:45 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 27 Aug 2024 05:56:45 -0500
+Received: from localhost (a0498981-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.68.216])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47RAujYi051303;
+	Tue, 27 Aug 2024 05:56:45 -0500
+From: Bhavya Kapoor <b-kapoor@ti.com>
+To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <conor+dt@kernel.org>,
+        <krzk+dt@kernel.org>, <robh@kernel.org>, <kristo@kernel.org>,
+        <b-kapoor@ti.com>, <jm@ti.com>, <vigneshr@ti.com>, <nm@ti.com>
+Subject: [PATCH v2 0/2] Add support for multiple can instances as well as describe main_uart5
+Date: Tue, 27 Aug 2024 16:26:42 +0530
+Message-ID: <20240827105644.575862-1-b-kapoor@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240823-cleanup-h-guard-pm-domain-v1-0-8320722eaf39@linaro.org>
- <20240823-cleanup-h-guard-pm-domain-v1-9-8320722eaf39@linaro.org>
- <CAMuHMdV0R0+u1eCiUOHhL5w-wzge9KhgyumJSd28oF9kQmnx_Q@mail.gmail.com>
- <a48f1a0b-0e20-4782-bf6b-c430da9ae391@linaro.org> <58f5d332-2f2a-4607-9662-e71fd23b1316@linaro.org>
-In-Reply-To: <58f5d332-2f2a-4607-9662-e71fd23b1316@linaro.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 27 Aug 2024 12:55:40 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUQ5AD1QoO5F1nAy+GJoGtbi2ztKfK=2buU1MNeO8etJw@mail.gmail.com>
-Message-ID: <CAMuHMdUQ5AD1QoO5F1nAy+GJoGtbi2ztKfK=2buU1MNeO8etJw@mail.gmail.com>
-Subject: Re: [PATCH 09/10] pmdomain: renesas: rcar-gen4-sysc: Use scoped
- device node handling to simplify error paths
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Krzysztof,
+This series adds support for multiple can instances present on J722S
+EVM as well as describe the main_uart5 for J722S EVM.
 
-On Tue, Aug 27, 2024 at 11:39=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
-> On 27/08/2024 11:33, Krzysztof Kozlowski wrote:
-> > On 27/08/2024 09:48, Geert Uytterhoeven wrote:
-> >> On Fri, Aug 23, 2024 at 2:51=E2=80=AFPM Krzysztof Kozlowski
-> >> <krzysztof.kozlowski@linaro.org> wrote:
-> >>> Obtain the device node reference with scoped/cleanup.h to reduce erro=
-r
-> >>> handling and make the code a bit simpler.
-> >>>
-> >>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> >>
-> >> Thanks for your patch!
-> >>
-> >>> --- a/drivers/pmdomain/renesas/rcar-gen4-sysc.c
-> >>> +++ b/drivers/pmdomain/renesas/rcar-gen4-sysc.c
-> >>> @@ -303,12 +304,12 @@ static int __init rcar_gen4_sysc_pd_init(void)
-> >>>         const struct rcar_gen4_sysc_info *info;
-> >>>         const struct of_device_id *match;
-> >>>         struct rcar_gen4_pm_domains *domains;
-> >>> -       struct device_node *np;
-> >>>         void __iomem *base;
-> >>>         unsigned int i;
-> >>>         int error;
-> >>>
-> >>> -       np =3D of_find_matching_node_and_match(NULL, rcar_gen4_sysc_m=
-atches, &match);
-> >>> +       struct device_node *np __free(device_node) =3D
-> >>> +               of_find_matching_node_and_match(NULL, rcar_gen4_sysc_=
-matches, &match);
-> >>
-> >> This breaks the declarations/blank-line/code structure, so please move
-> >> this up.
-> >
-> > What do you mean "declaration structure"? That's the way how variables
+CAN instances 0 and 1 in the mcu domain and 0 in the main domain are
+brought on the evm through headers J5, J8 and J10 respectively. Thus,
+add their respective transceiver's 0, 1 and 2 dt nodes as well as
+add the required pinmux to add support for these CAN instances.
 
-First a block with declarations, then a blank line, followed by the actual =
-code
-(yeah, the pre-C99 style ;-)
+Describe main_uart5 in device tree for completeness, adding the pinmux
+and mark it as reserved since system firmware uses it in J722S EVM for
+trace data.
 
-> > with constructors are expected to be declared - within the code.
+Rebased to : next-20240827
 
-When it matters.
+Bhavya Kapoor (2):
+  arm64: dts: ti: k3-j722s-evm: Add support for multiple CAN instances
+  arm64: dts: ti: k3-j722s-evm: Describe main_uart5
 
-> Continuing thoughts, so you prefer:
->
->         struct rcar_gen4_pm_domains *domains;
->         void __iomem *base;
->         struct device_node *np __free(device_node) =3D
->                 of_find_matching_node_and_match(NULL, rcar_gen4_sysc_matc=
-hes, &match);
->
-> (assuming I will put it at the end of declarations).
->
-> Are you sure this is more readable? It's really long line so it
-> obfuscates a bit the declarations. The point of the scoped assignment is =
-that
-> you declare it at point of need/first use.
+ arch/arm64/boot/dts/ti/k3-j722s-evm.dts | 89 +++++++++++++++++++++++++
+ 1 file changed, 89 insertions(+)
 
-You're missing reverse Christmas tree order...
+-- 
+2.34.1
 
-> >> If you insist on keeping assignment to and validation of np together,
-> >> the line should be split in declaration and assignment.
-> >
-> > No, that would be inconsistent with cleanup/constructor coding style.
-> > Maybe this is something new, so let me bring previous discussions:
-
-[...]
-
-> > and finally it will reach documentation (although it focuses on
-
-Oh, "finally" as in not yet upstream ;-)
-
-> > unwinding process to be specific - "When the unwind order ..."):
-> > https://lore.kernel.org/all/171175585714.2192972.12661675876300167762.s=
-tgit@dwillia2-xfh.jf.intel.com/
-
-"When the unwind order matters..."
-
-So it's perfectly fine to have:
-
-    static int __init rcar_gen4_sysc_pd_init(void)
-    {
-            struct device_node *np __free(device_node) =3D NULL;
-            struct rcar_gen4_pm_domains *domains;
-            const struct rcar_gen4_sysc_info *info;
-            const struct of_device_id *match;
-            void __iomem *base;
-            unsigned int i;
-            int error;
-
-            np =3D of_find_matching_node_and_match(NULL,
-rcar_gen4_sysc_matches, &match);
-            if (!np)
-                    return -ENODEV;
-
-            ...
-    }
-
-But my first suggestion:
-
-    static int __init rcar_gen4_sysc_pd_init(void)
-    {
-            struct device_node *np __free(device_node) =3D
-                    of_find_matching_node_and_match(NULL,
-rcar_gen4_sysc_matches, &match);
-            struct rcar_gen4_pm_domains *domains;
-            const struct rcar_gen4_sysc_info *info;
-            const struct of_device_id *match;
-            void __iomem *base;
-            unsigned int i;
-            int error;
-
-            if (!np)
-                    return -ENODEV;
-
-            ...
-    }
-
-is safer w.r.t. to future modification.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
