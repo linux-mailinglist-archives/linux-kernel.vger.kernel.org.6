@@ -1,84 +1,57 @@
-Return-Path: <linux-kernel+bounces-302690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D377B9601ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:38:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D2999601F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:38:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00CC8B2307D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:38:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B001F1C22019
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B160176AD8;
-	Tue, 27 Aug 2024 06:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F677192599;
+	Tue, 27 Aug 2024 06:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pVN0ORfH"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="qflEZINF"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20681155303;
-	Tue, 27 Aug 2024 06:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53BC7156665
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724740624; cv=none; b=eoCBhXnumuIqozlrlvYHMHJtxkqslqos36wGFaHS+0TfGkoJpuySxLoUkS4joJpx2jDo6JHmw1eUeJDZDR2fBT42G+l1r/kVP2bPR7tbso472rIP2zerp50/+nWLAXbQcCRc0zHv30Wogge91E6+rIfbPVVTjUMW41zf+nnHE2Q=
+	t=1724740626; cv=none; b=tNemst7lwszYicSaXr4Gs9dPb7On2sL3McgLok2PNct8N/mhJ6elX3aI6netZGyy7j7HJnt5IX11AZGGNk4jY2+XnFfcMWPuiwkF6sQXFHDI9ODbMpeB3FDuodTPlyDBsUl8h/bSjoNkBqEizmJOPQFdmUc7L3+jkugbAuGSQ9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724740624; c=relaxed/simple;
-	bh=9L9M2yZqzc5xLvPves2tKFCMnMSRG+agF/XJau1Hna8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EtUv8Vk7ypIsYyxWoTEmtgXRs81kxOsykJel5tbH3irKiVqj0HtwdJcQrJzhqBrlHL+nziyzbH/JZ7R9TOQLhgy3jKqkaWQ2iAY4Hz1mH6tInRpFIWxkMn1GeUTLREykS+hI4YCNnHyTdejdDUTUoC2dJnB5N6T2Bzf31Yr2eJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pVN0ORfH; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47QJGSko028158;
-	Tue, 27 Aug 2024 06:36:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=QDEMLhiG+OJ
-	uyuKMY5EIrlLdihz623LVdNQWa8fMfdw=; b=pVN0ORfHo6cFGks2a6k5ca3MVol
-	71pYjnbW4M2RAV+0JVIxeSdxgDy4VWwXra7Gh3+TQ0Tv4CvAo3S3NdbkupTLN5Ji
-	BeKVQm5ngYr267BdpiQO6PM+1Nk2QvGy8WOPJluZ3XF61ndqz2lMg+e5BLCxA7Km
-	7TWyFFkzNHP5o+5BpNOUxj1lxvEgpDDt0+6ngC3D7Df5WbV/s70+EpZz1I4KD+L5
-	tPTNIWMuW/MBXaiNaYjgYyJj2ojJntQ8epXVtcC0ftWbti5ivHmmhWf1IaYbQuTb
-	CvgEGqTKkJBzruzG+pKorxju1lIuG0lUquXyeY8KcB4R2+gbfBbwfLkm9CA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 417973nyt8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 Aug 2024 06:36:54 +0000 (GMT)
-Received: from pps.filterd (NALASPPMTA04.qualcomm.com [127.0.0.1])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 47R6Xq44019749;
-	Tue, 27 Aug 2024 06:36:52 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by NALASPPMTA04.qualcomm.com (PPS) with ESMTPS id 4198va8jks-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 Aug 2024 06:36:52 +0000
-Received: from NALASPPMTA04.qualcomm.com (NALASPPMTA04.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47R6aq0x026429;
-	Tue, 27 Aug 2024 06:36:52 GMT
-Received: from hu-devc-lv-u22-c.qualcomm.com (hu-qianyu-lv.qualcomm.com [10.81.25.114])
-	by NALASPPMTA04.qualcomm.com (PPS) with ESMTPS id 47R6aq4r026424
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 Aug 2024 06:36:52 +0000
-Received: by hu-devc-lv-u22-c.qualcomm.com (Postfix, from userid 4098150)
-	id 7C38764E; Mon, 26 Aug 2024 23:36:52 -0700 (PDT)
-From: Qiang Yu <quic_qianyu@quicinc.com>
-To: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org,
-        robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
-        quic_devipriy@quicinc.com
-Cc: dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
-        neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, Qiang Yu <quic_qianyu@quicinc.com>
-Subject: [PATCH 8/8] PCI: qcom: Add support to PCIe slot power supplies
-Date: Mon, 26 Aug 2024 23:36:31 -0700
-Message-Id: <20240827063631.3932971-9-quic_qianyu@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240827063631.3932971-1-quic_qianyu@quicinc.com>
-References: <20240827063631.3932971-1-quic_qianyu@quicinc.com>
+	s=arc-20240116; t=1724740626; c=relaxed/simple;
+	bh=Jz2DYN4GgoIl2xhz48zN+es66+xV+eZBkJuLfa5mYl0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s8Nenag2TGufu3Kjk7uuOZlS6mHfV4I/MQp/G+tHc3oviNc4A5GeViLeD8gjiINZxCy9Qpuw1PAmKcH0gCKoq9Ges2FsguSSTXwpXohdhSbK9O1hN+NI+A7RMxwAQ8jRwXkQAVI3eqyn6bryevDT+7I/msUo77I+y+D2AbaF07M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=qflEZINF; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1724740622;
+	bh=YtXQ1b+AHiYzvhi9lLvKVXsirFFKMPBoc0aah+APMNA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=qflEZINFFfc4eT24aWEhVpuHbI/WjUWgY8ltXDApgzjEKIQy+hyXdvq1CArIIMwm5
+	 HV1g45slwrWEZp5juzWB5k33zoQTfDxkalHD12d7shDFEaqvnlWOzUWXmHGldfqk0h
+	 O5JP0P3s77f+AY1XcKlQGajmQVwauD8AGvhiPVBmzQX/TMxE6Ly0sy5UWYJAP29FoS
+	 aMjUOh2T0oOlVCYF0/tO4A0TlVKMZy2+XlRhZg+81DFoUZzLqUnJNB7gR/+WW94llE
+	 6qtjqLGvehe9Zn+CG+8hW3/S0A+W2Dg/x65qi2twHMvyu+eCQ8xVUmkoP+rbY2c7Xf
+	 6dTvq0giv5fzQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WtHrt4Chxz4wnx;
+	Tue, 27 Aug 2024 16:37:02 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: <linuxppc-dev@lists.ozlabs.org>
+Cc: <linux-kernel@vger.kernel.org>
+Subject: [PATCH] MAINTAINERS: powerpc: Add Maddy
+Date: Tue, 27 Aug 2024 16:36:51 +1000
+Message-ID: <20240827063651.28985-1-mpe@ellerman.id.au>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,138 +59,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: WMzAFl9W03rEZh-ulVVLpjuIjCPk6IKm
-X-Proofpoint-GUID: WMzAFl9W03rEZh-ulVVLpjuIjCPk6IKm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-27_04,2024-08-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- impostorscore=0 mlxlogscore=999 adultscore=0 lowpriorityscore=0 mlxscore=0
- phishscore=0 malwarescore=0 bulkscore=0 spamscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408270048
 
-On platform x1e80100 QCP, PCIe3 is a standard x8 form factor. Hence, add
-support to use 3.3v, 3.3v aux and 12v regulators.
+Maddy will be helping out with upstream maintenance, add him as a
+reviewer.
 
-Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 ---
- drivers/pci/controller/dwc/pcie-qcom.c | 52 +++++++++++++++++++++++++-
- 1 file changed, 50 insertions(+), 2 deletions(-)
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index 6f953e32d990..59fb415dfeeb 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -248,6 +248,8 @@ struct qcom_pcie_cfg {
- 	bool no_l0s;
- };
- 
-+#define QCOM_PCIE_SLOT_MAX_SUPPLIES			3
-+
- struct qcom_pcie {
- 	struct dw_pcie *pci;
- 	void __iomem *parf;			/* DT parf */
-@@ -260,6 +262,7 @@ struct qcom_pcie {
- 	struct icc_path *icc_cpu;
- 	const struct qcom_pcie_cfg *cfg;
- 	struct dentry *debugfs;
-+	struct regulator_bulk_data slot_supplies[QCOM_PCIE_SLOT_MAX_SUPPLIES];
- 	bool suspended;
- 	bool use_pm_opp;
- };
-@@ -1174,6 +1177,41 @@ static int qcom_pcie_link_up(struct dw_pcie *pci)
- 	return !!(val & PCI_EXP_LNKSTA_DLLLA);
- }
- 
-+static int qcom_pcie_enable_slot_supplies(struct qcom_pcie *pcie)
-+{
-+	struct dw_pcie *pci = pcie->pci;
-+	int ret;
-+
-+	ret = regulator_bulk_enable(ARRAY_SIZE(pcie->slot_supplies),
-+				    pcie->slot_supplies);
-+	if (ret < 0)
-+		dev_err(pci->dev, "Failed to enable slot regulators\n");
-+
-+	return ret;
-+}
-+
-+static void qcom_pcie_disable_slot_supplies(struct qcom_pcie *pcie)
-+{
-+	regulator_bulk_disable(ARRAY_SIZE(pcie->slot_supplies),
-+			       pcie->slot_supplies);
-+}
-+
-+static int qcom_pcie_get_slot_supplies(struct qcom_pcie *pcie)
-+{
-+	struct dw_pcie *pci = pcie->pci;
-+	int ret;
-+
-+	pcie->slot_supplies[0].supply = "vpcie12v";
-+	pcie->slot_supplies[1].supply = "vpcie3v3";
-+	pcie->slot_supplies[2].supply = "vpcie3v3aux";
-+	ret = devm_regulator_bulk_get(pci->dev, ARRAY_SIZE(pcie->slot_supplies),
-+				      pcie->slot_supplies);
-+	if (ret < 0)
-+		dev_err(pci->dev, "Failed to get slot regulators\n");
-+
-+	return ret;
-+}
-+
- static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-@@ -1182,10 +1220,14 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
- 
- 	qcom_ep_reset_assert(pcie);
- 
--	ret = pcie->cfg->ops->init(pcie);
-+	ret = qcom_pcie_enable_slot_supplies(pcie);
- 	if (ret)
- 		return ret;
- 
-+	ret = pcie->cfg->ops->init(pcie);
-+	if (ret)
-+		goto err_disable_slot;
-+
- 	ret = phy_set_mode_ext(pcie->phy, PHY_MODE_PCIE, PHY_MODE_PCIE_RC);
- 	if (ret)
- 		goto err_deinit;
-@@ -1216,7 +1258,8 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
- 	phy_power_off(pcie->phy);
- err_deinit:
- 	pcie->cfg->ops->deinit(pcie);
--
-+err_disable_slot:
-+	qcom_pcie_disable_slot_supplies(pcie);
- 	return ret;
- }
- 
-@@ -1228,6 +1271,7 @@ static void qcom_pcie_host_deinit(struct dw_pcie_rp *pp)
- 	qcom_ep_reset_assert(pcie);
- 	phy_power_off(pcie->phy);
- 	pcie->cfg->ops->deinit(pcie);
-+	qcom_pcie_disable_slot_supplies(pcie);
- }
- 
- static void qcom_pcie_host_post_init(struct dw_pcie_rp *pp)
-@@ -1602,6 +1646,10 @@ static int qcom_pcie_probe(struct platform_device *pdev)
- 			goto err_pm_runtime_put;
- 	}
- 
-+	ret = qcom_pcie_get_slot_supplies(pcie);
-+	if (ret)
-+		goto err_pm_runtime_put;
-+
- 	ret = pcie->cfg->ops->get_resources(pcie);
- 	if (ret)
- 		goto err_pm_runtime_put;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 878dcd23b331..0ee724dcc05a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12912,6 +12912,7 @@ M:	Michael Ellerman <mpe@ellerman.id.au>
+ R:	Nicholas Piggin <npiggin@gmail.com>
+ R:	Christophe Leroy <christophe.leroy@csgroup.eu>
+ R:	Naveen N Rao <naveen@kernel.org>
++R:	Madhavan Srinivasan <maddy@linux.ibm.com>
+ L:	linuxppc-dev@lists.ozlabs.org
+ S:	Supported
+ W:	https://github.com/linuxppc/wiki/wiki
 -- 
-2.34.1
+2.46.0
 
 
