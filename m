@@ -1,234 +1,119 @@
-Return-Path: <linux-kernel+bounces-303696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE2FD9613DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:19:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47D8B9613DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:20:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 950CF284A31
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:19:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD9ACB21EBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D2D1C9EC9;
-	Tue, 27 Aug 2024 16:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A789F1CB14E;
+	Tue, 27 Aug 2024 16:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pAbvqgIf"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2075.outbound.protection.outlook.com [40.107.95.75])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kMTKuI5r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7941C579D;
-	Tue, 27 Aug 2024 16:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724775545; cv=fail; b=HS/j7toR8m9/qkVdiQpa9ouTsMC3d4Xn3Um/JzCyZYrVDmKDaRB9TtjjI/MWiObBOWwRjtBNVHzVs5Z/qEOkTPn1xTmYYpDwfrkuDZW6vQ8hRi8uCVrsovkxM2iqk8t7wom08shWfYywduwadtX97qWrOni8NHjwofVFWH8m3n0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724775545; c=relaxed/simple;
-	bh=WMvRAxXXmqgDzK5FhWRep/h4qth55ZT+2wejfwb3bGQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V+VszRNMKL53zUY2k8Qxdv/VW2EZ6TXfZFYt0n5j8JFtX3WZ+zv5xxo7Jam3O0i8z3BD3Di6ecQX1NkN3aHZe9TjEvwueh6LQwfphIFCxRXKET5davuodGeBuEWHDihWPMCB8FpwRUTo7rUee0Ka+tToixWpVFHE/oGUGeMGCzE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pAbvqgIf; arc=fail smtp.client-ip=40.107.95.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kMn+vMaDjc/6n0OjnBmu7A/bLxlrMSfAfCeByDiHHv3b1yQNaU4Wyzea/061j7dzJTvNQ/6g2KG7g1fSqrsRsK0292cWc20Bw0XRFEKxWhu0EfwFPB9ypjm5H+UtuH1gcKIjXKFINcEgjib7iINfbXgp9cvA/75W/BRwlncsVd/kGGuSDhSUmeMArfgsMAlhe3gJVP43NfNj3voOT/94IIT9unYOVvBexMilsoCHG9oSEuCLqzFIFu4w01snfXBW/yeGtYaZzT/v4LmfYCoQ85EpatjD6NrAKVECVkc7IeRLgdrkxz84GQ374OV6xrVZqPAgjq9PrsAJEbI9g9XViA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rrmKXSzm6G/0wLyeLOVNYeJPtw/J96eBqyhVaem5ziY=;
- b=AUJ/2CinYFhLpt+EWMivoKH731EppxHP0CryXS02dOBAaPwdxq4WL50Gig2U9jAJ35plYdsC8i/9dFzbge5VnAvJk4MgbAy+IlOWULwpeQ4uGn1E8SjN6F0DaG1keRz45jk4qLoTyiTF5ZtEfGCwrveTnc3H26JAdj0OEJ9Yas2zUpYev5JMrgiAFvltC4iJ5hkFMfuL1sw9KEpM/ne01IPIzcXDWGF98UtugrEXvfMsYn/JVq0i2KrWLDkcJ3uDaCjm2T3YVjtfjXEclPSfhl73mhfrBXUw+RbsJL4pOUSO/Pm0C02CRjUykGfp05euDMzvHPBKT2WQPVc6rC5Y/g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rrmKXSzm6G/0wLyeLOVNYeJPtw/J96eBqyhVaem5ziY=;
- b=pAbvqgIf88YaKk/VGP1eUFD3Hsvq+cLT6sMENaL7vGPYCY6Pkxu5BkwajdftSUvGRN/g8VrT29KGiJsfKlqawLp5fR4u2QC71pHP6T54MzXnTRVk6riFP+tFv8a7bxLwO68iDfgb1jDYPxfvaEyfVcbIMVHQuuEqIsMuueP1h8Xql17pz5hFTC8vRg7jgy0qoXRrDHaNc7E271wZ8t4WJ6YEDHyKZzrEFVOzLhZmaK47zojtWgj+MgZtVHywp43ic19p/hXEBkdLTolK45kmPVZ/wBYZjA5bXvlRKoA30gtsB+XdmpJKClrBRsnu14d7cjkOdZUWGlDPudeq0ENfkw==
-Received: from SJ0PR03CA0250.namprd03.prod.outlook.com (2603:10b6:a03:3a0::15)
- by DS0PR12MB7703.namprd12.prod.outlook.com (2603:10b6:8:130::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.26; Tue, 27 Aug
- 2024 16:18:55 +0000
-Received: from SJ5PEPF000001D0.namprd05.prod.outlook.com
- (2603:10b6:a03:3a0:cafe::94) by SJ0PR03CA0250.outlook.office365.com
- (2603:10b6:a03:3a0::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24 via Frontend
- Transport; Tue, 27 Aug 2024 16:18:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- SJ5PEPF000001D0.mail.protection.outlook.com (10.167.242.52) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7918.13 via Frontend Transport; Tue, 27 Aug 2024 16:18:55 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 27 Aug
- 2024 09:18:47 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 27 Aug 2024 09:18:46 -0700
-Received: from Asurada-Nvidia (10.127.8.13) by mail.nvidia.com
- (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Tue, 27 Aug 2024 09:18:46 -0700
-Date: Tue, 27 Aug 2024 09:18:44 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
-CC: <joro@8bytes.org>, <jgg@nvidia.com>, <thierry.reding@gmail.com>,
-	<vdumpa@nvidia.com>, <jonathanh@nvidia.com>, <linux-kernel@vger.kernel.org>,
-	<iommu@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v13 06/10] iommu/arm-smmu-v3: Add
- acpi_smmu_acpi_probe_model for impl
-Message-ID: <Zs38ZK3XERYMgXmC@Asurada-Nvidia>
-References: <cover.1724453781.git.nicolinc@nvidia.com>
- <8a2629bb98cabb1be72b32c120bb5ed0114b21bc.1724453781.git.nicolinc@nvidia.com>
- <20240827130233.GF4772@willie-the-truck>
- <3256d9ce-2c10-4cdd-b4c4-358f2c30a9a3@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA79E2E62C;
+	Tue, 27 Aug 2024 16:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724775637; cv=none; b=GZxhrO6O4B3HQc5neJXD3ZIhGFrAUpMUv7N7P2CyQRGszyYa0AldIjpWpaOSXd5/cpM1vPz5Ov9PHKSovF/0ozhfurTHVvXqmlduU9dzGqE2+t8kNKoTH4j5tPlCWAaZqCmOCpfeogLYNmNeoP1pkHxxaovyM11F+XOKkLJej1w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724775637; c=relaxed/simple;
+	bh=Nq+N2JRm3qs/YfyiIeI6nh9WFZTDcrLh7AvXtVujdoc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=REAu5QdJibJAnuWAPKUxz2xwVDl6BGXttgLQ+sybbqU1SlchzHMvkoPrqYKHJWsOefVth2U7RdfA8m8ef9qBJSwr2jF9155cqfby1y5Xb054o9OOCuJO0u28GghGfcQaLka3Kh2RvrhzZ/pO+L9np1TQgutKB3KZ//FJhJoAXBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kMTKuI5r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CAB4C5818E;
+	Tue, 27 Aug 2024 16:20:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724775636;
+	bh=Nq+N2JRm3qs/YfyiIeI6nh9WFZTDcrLh7AvXtVujdoc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=kMTKuI5rfdZ7S/J978dFx/vEVmxDYHpINBaSPMCrIlVb15gdSLENBvbIDc1bqVGMv
+	 uhev6qlAyNA+RqfXkZihFS4wf63LI0MZUMP8yRL0V+0Uyf108AmHRyh4PwP3GGT2lP
+	 qGviXwLk9n1XV20/5uupk7bLBAkB+aW3maMGy7KDuu1dIxSfRQLVtu5XOXIMJc04Lg
+	 yItklsEHDP+v6nftf63HtbRXg5qaQB1wXMTiGFwWEGoOMjni3xbOLgQCpx5mygys64
+	 KyJDBEuKGeloEihQul1Db2k6hAG0kNAGzxEFhYqz4e6DnntH46T1yhq5l5aFAJKoQl
+	 XR7hIjmWVQruw==
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-270263932d5so4031620fac.2;
+        Tue, 27 Aug 2024 09:20:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVbH8jf079KnUi5wrbLHsHERFOO7jd8mvOfOuzQfyHICoMQ5IgruaBgJehUMN7EYXOBtHwq92sn3aqrVY5Z@vger.kernel.org, AJvYcCWyT0sWSNzjwe0mxpyb1oTYBYmqiXIyE3rvxCoSdIziGBAXKgM6SKu7j6f7IkEFy6HjHJiGlD14Go4h@vger.kernel.org
+X-Gm-Message-State: AOJu0YzN7U4lGHglrK2x5PrTiX5v8rxjSGfLnK+8nFTcZhsVdyiGCkwF
+	UJJeSH1HOuqWkYl/n3BMT3KyR7qIhe5hzvzb/YKZ3bgvLN7npb/ecn9iUScWz+MdPXkblGXgCAv
+	ToqJoiq4hmjVIiK4Z8gLuCxgzErs=
+X-Google-Smtp-Source: AGHT+IEcevmf56HaHFi76opfMbCV8B1aBMG9slI81zTpqBsgMvZDsrfuxYvsyZ6B/GpsYTnUSrI2yl5r0i6NGyBQDqc=
+X-Received: by 2002:a05:6870:82a1:b0:270:735:96e with SMTP id
+ 586e51a60fabf-273e6465ed4mr15637051fac.12.1724775635797; Tue, 27 Aug 2024
+ 09:20:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <3256d9ce-2c10-4cdd-b4c4-358f2c30a9a3@arm.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D0:EE_|DS0PR12MB7703:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6ff164ad-f2af-4724-44f5-08dcc6b3f2e7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?IChl+v2xKOK7LK89CTKl7DrUcXxHcQd4+4X/JBXfI+A8CF2jvmNYUnyJfo/5?=
- =?us-ascii?Q?MsdKQoGu63qpweI4KIChfGlJ9zJE7S23v980Qs6zNbPHVq9LBSn0snFI4Xk+?=
- =?us-ascii?Q?dBFkCDH/QCsK/AU0t8Sydk4dkVnyB8xgF26i4011uQvUiNOpf1Jh1AlNVjCP?=
- =?us-ascii?Q?5a1pB8+Vg57ry92hkc3W5A2QkCCEATtOrTTDWNielEmxU/2rIFg6tb9jnIuY?=
- =?us-ascii?Q?H7MEQPhfYmKQKGY/WVdF2nQh1wrfRfOU84SQhhEEf9Gl6Lu75Gunn93rzW9w?=
- =?us-ascii?Q?v7D4x+0NtISIjGXPHSkGV261OBNLpbY/KY2/cywoOh+GLtlrcgfprOutBRvq?=
- =?us-ascii?Q?5lMoRv/HWBp5zYcqs9ew1Ap1CcvjEdghQ3cmkezDjyFHhI3zTG2OOpYhPLmr?=
- =?us-ascii?Q?DUK2J9McIU2zgms1lt55VjuKlWM5AqJIm3BMgNi0ZEf4G4eu/Z6hPWiyxUwA?=
- =?us-ascii?Q?zpc4rti1UvlmKFAx3dBIgDsuytSantOyzygLxx8uddX3zwtmr5Ahaic2Oeqk?=
- =?us-ascii?Q?YFXcx7VjZECAzwIwZJcFU+gr27SJYdG1aV+eZqt2XGqXGr5E55aH09e0Deij?=
- =?us-ascii?Q?ZwjTLdSzrcCbiIE9cmkKBU41XXebXUiOrdUnfWDcDSs8A7AQsLzBHqhnG+HJ?=
- =?us-ascii?Q?hSouinxLN5HN7hb7xrb77WDCKEXFb6sBggGu13AasD8FVwU9RL89tkJbWqkI?=
- =?us-ascii?Q?4Tsxn0cgfv9NnfOk9r7NB2f6AxFO4+XpE9Y0CQxRki1OZ9B4VNX0UEGb97Yu?=
- =?us-ascii?Q?Zc4vRVHZAIhUpxBNwhnnyvB/JXhuHoVQWK6fwmORCqkK3KfwogNkVYqL/wcY?=
- =?us-ascii?Q?A/GC8SN5eKw+k/1uCA1GOXxItzSO3w1u9lsYjLJ98EF8iDfpxWGJJ9wIeARg?=
- =?us-ascii?Q?yAs3gWto+mqcCquhDQs/3INAWO2B6HhoJz72sOokH9JVZZ2Fluez14hgCrEA?=
- =?us-ascii?Q?Ozbhr0WFAn90ncS4yGlBoNb4BEPFZh1tFibpa3NpFcWY0GyJzdcPWPHlZqs/?=
- =?us-ascii?Q?PWcOMnCIRCfFD1LS9JaO4DWPFYi2XSBhR/VeWnO+YAR8Sj2hBNaLdV4rWRXi?=
- =?us-ascii?Q?+PPoqrVQPyr8a5K66cZTvsg4+9JLMygDIqIoF1jyFAbdIG2nZTJqgBVD7Tmy?=
- =?us-ascii?Q?YC63fqQaGNiDfdXp0KwavGqa1UY88tHlZejNezWz2vDrzoMZKa19dAHCCUyU?=
- =?us-ascii?Q?JuaJQz0BlLX0LgnyhS2hM9DXFIi4uH2fo2AyfCunABi/2NxdTv7kDt7mJKMU?=
- =?us-ascii?Q?HfkybtdiBh3yLxlunNBan1dob/dMjhFFYWOEOPx8Dkgi0+YMHVS5RikaFptZ?=
- =?us-ascii?Q?hJBnbbgMcGI0fCb+5B7pPsv8/zLcn5NZXY5soOTGqU2qAKJ3covJoiucLOGM?=
- =?us-ascii?Q?Kjc9nLUZ2dYbiE0ic/Mf/9BxnQaCcfABwVeTqWKUk1Bu4qvzcVWVtGy7J6uf?=
- =?us-ascii?Q?F1DmAXqfr2nWVpvowl7LGICRpeXimUoa?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 16:18:55.6143
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ff164ad-f2af-4724-44f5-08dcc6b3f2e7
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001D0.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7703
+References: <20240812005929.113499-1-sunilvl@ventanamicro.com>
+ <ZrlgVUXC_dCW9ISM@sunil-laptop> <87mskzcnmf.ffs@tglx> <CAJZ5v0imJcU4cwDuZKEvGf93fZm4ea4s2Ocp3Cnfb3+nBQ0-Gg@mail.gmail.com>
+ <Zsy3o_N8hvc6GfTp@sunil-laptop> <CAJZ5v0hxoT9tBjm3xRPU4fHx3MgHfYAx_Vyf4oe2toa3GWAN+Q@mail.gmail.com>
+ <87jzg3c7bz.ffs@tglx>
+In-Reply-To: <87jzg3c7bz.ffs@tglx>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 27 Aug 2024 18:20:24 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iMpaxBevgPWmD2Ym_JG1ChkjzVFf22fV7Xw8-ssg9+Ag@mail.gmail.com>
+Message-ID: <CAJZ5v0iMpaxBevgPWmD2Ym_JG1ChkjzVFf22fV7Xw8-ssg9+Ag@mail.gmail.com>
+Subject: Re: [PATCH v8 00/17] RISC-V: ACPI: Add external interrupt controller support
+To: Thomas Gleixner <tglx@linutronix.de>, Sunil V L <sunilvl@ventanamicro.com>
+Cc: Will Deacon <will@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Len Brown <lenb@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Anup Patel <anup@brainfault.org>, 
+	Samuel Holland <samuel.holland@sifive.com>, Robert Moore <robert.moore@intel.com>, 
+	Conor Dooley <conor.dooley@microchip.com>, Haibo Xu <haibo1.xu@intel.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Atish Kumar Patra <atishp@rivosinc.com>, 
+	Drew Fustini <dfustini@tenstorrent.com>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 27, 2024 at 04:57:48PM +0100, Robin Murphy wrote:
-> > > @@ -4341,18 +4341,28 @@ static int arm_smmu_device_hw_probe(struct arm_smmu_device *smmu)
-> > >   }
-> > > 
-> > >   #ifdef CONFIG_ACPI
-> > > -static void acpi_smmu_get_options(u32 model, struct arm_smmu_device *smmu)
-> > > +static int acpi_smmu_iort_probe_model(struct acpi_iort_node *node,
-> > > +                                  struct arm_smmu_device *smmu)
-> > >   {
-> > > -    switch (model) {
-> > > +    struct acpi_iort_smmu_v3 *iort_smmu =
-> > > +            (struct acpi_iort_smmu_v3 *)node->node_data;
-> > > +
-> > > +    switch (iort_smmu->model) {
-> > >      case ACPI_IORT_SMMU_V3_CAVIUM_CN99XX:
-> > >              smmu->options |= ARM_SMMU_OPT_PAGE0_REGS_ONLY;
-> > >              break;
-> > >      case ACPI_IORT_SMMU_V3_HISILICON_HI161X:
-> > >              smmu->options |= ARM_SMMU_OPT_SKIP_PREFETCH;
-> > >              break;
-> > > +    case ACPI_IORT_SMMU_V3_GENERIC:
-> > > +            break;
-> > > +    default:
-> > > +            dev_err(smmu->dev, "Unknown/unsupported IORT model!\n");
-> > > +            return -ENXIO;
-> > 
-> > We probably don't want this 'default' case, otherwise the driver will
-> > need to be updated every time there's a new model.
-> 
-> ...although the intent is very strongly that there should never be any
-> new models, because by now hardware should really not be failing to
-> implement SMMU_IIDR correctly. In some ways, having this might help
-> further discourage people from abusing the mechanism and making random
-> stuff up in their firmware :/
+On Mon, Aug 26, 2024 at 11:22=E2=80=AFPM Thomas Gleixner <tglx@linutronix.d=
+e> wrote:
+>
+> On Mon, Aug 26 2024 at 19:27, Rafael J. Wysocki wrote:
+> > On Mon, Aug 26, 2024 at 7:22=E2=80=AFPM Sunil V L <sunilvl@ventanamicro=
+.com> wrote:
+> >> There will be a conflict in PLIC irqchip driver due to a recent patch =
+[1].
+> >> This patch is not in latest RC5 release but in linux-next. I usually b=
+ase the
+> >> series on latest RC release. Should I rebase to linux-next in this cas=
+e
+> >> and send the next revision of the series resolving the conflict?
+> >
+> > No, please don't.
+> >
+> > That will be resolved at the merge time.
+>
+> Alternatively you can pull
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-urgent-20=
+24-08-25
+>
+> which I'm about to send to Linus latest tomorrow morning. That contains
+> the conflicting change.
 
-I don't have a strong feeling about this, though Robin's point was
-my intention here.
+So I've applied the series on top of the above.
 
-Apart from this "default case", I typo-ed the function name in the
-patch subject and commit message. Also, there's a missed kdoc line
-in struct tegra241_cmdqv (PATCH-8).
+This included a full-swing rebase of the last patch, which I hope I've
+done correctly, but Sunil please see
 
-So, I prepared a v14:
-https://github.com/nicolinc/iommufd/commits/vcmdq_in_kernel-v14
-v14 changelog (attaching git-diff at the EOM):
- * Rebased on Will's for-joerg/arm-smmu/updates
- * Added a missed kdoc for "dev" in struct tegra241_cmdqv
- * Dropped the default case in acpi_smmu_iort_probe_model()
-   (did this before seeing Robin's mail here.)
+https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/commit/=
+?h=3Dbleeding-edge&id=3D5d1b549883c1bba331c419e491fda9bb934ea202
 
-Let's see what makes the best for you, Will.
+and let me know.
 
-Thanks
-Nicolin
-
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index 8b1437240ce5..f23245012681 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -4356,9 +4356,6 @@ static int acpi_smmu_iort_probe_model(struct acpi_iort_node *node,
- 		break;
- 	case ACPI_IORT_SMMU_V3_GENERIC:
- 		break;
--	default:
--		dev_err(smmu->dev, "Unknown/unsupported IORT model!\n");
--		return -ENXIO;
- 	}
- 
- 	dev_notice(smmu->dev, "option mask 0x%x\n", smmu->options);
-diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-index b794a4dcbce1..5ac3032ee6dd 100644
---- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-@@ -160,6 +160,7 @@ struct tegra241_vintf {
- /**
-  * struct tegra241_cmdqv - CMDQ-V for SMMUv3
-  * @smmu: SMMUv3 device
-+ * @dev: CMDQV device
-  * @base: MMIO base address
-  * @irq: IRQ number
-  * @num_vintfs: Total number of VINTFs
+Thanks!
 
