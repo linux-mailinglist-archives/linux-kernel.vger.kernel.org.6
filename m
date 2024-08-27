@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-303257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 041A39609CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:17:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15B189609CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 294691C22A41
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:17:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC4401F23902
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36BD1A2540;
-	Tue, 27 Aug 2024 12:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3811A257A;
+	Tue, 27 Aug 2024 12:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zxAvnFYS"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mm8esafK"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FAD61A08D6
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68CB1A0B1D
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724761009; cv=none; b=KWuHIFnTiKTEO2+D4BQQGPMVI7daZJRWrT9zlnwTDP1OodWiXgdzGrc6tWgirJcEpsPyO6Mc+TVjcQwxfdovx0CD+xG7Ff+a8F2ADXWP4w1wqOfm2Qu4ygBPZSdQuKy+wVr5Xthf6MdDxBgY1R+aT4vbxHTiOjntiIxjOmRHEdY=
+	t=1724761009; cv=none; b=CEAKN3VXOv9gAUC+E14b3dDp3d6BE4ZF8tayyEGQ+rIVEo0quuPRYBvJzeEJAABAzS1ugiRWB8Qu2lyx+bUvg4cmU7vq/E+6MsOk6KWzSO94Db0alWoCUDImKNvRP0I9JXmwg9pOCYRgODINhApvBmoO16wccG5N9iNjiCdxFhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724761009; c=relaxed/simple;
-	bh=hstF5/sh5Y44tbVwg/VS7Ydbd2LlFd78AAQ6zy+kvSo=;
+	bh=fh++pr6DseDriPGw/XL6T3D4J5hVJAqGwUEf6s/87qA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eZHG5fXsPiw8P4tWLyM83Wt3Aos2XBwV2MapHT/XuBrhmIxR2CRsCwT5kWZtV14vb9OVTsDvkzq7vaAwNFnjpDEigcoioExhfkOF1P6JK2OTJiA/qm+KDDrD3rsCwoWdWllDN2EIqT5R4nklhANad5fFuVE69ASHvFkKmFm0hG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zxAvnFYS; arc=none smtp.client-ip=209.85.128.52
+	 MIME-Version:Content-Type; b=D+4+sPARPNSkEl5LPAik/D/HDh7dYKdWYvPFDWHv7VGHHQvGXKH8saqqQW0nOitLWZ5jNJstlcWbJTiTXRgpJXSD2cY4uzhsCEuahPrPCASnyGmWyJ/pKpnRl2SrD18aOcH6C9Y/t8o/s+NsZLw/LVNeAHH9AUl8OySJaqnFXvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mm8esafK; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4280772333eso7866725e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 05:16:45 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4280692835dso7839365e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 05:16:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724761004; x=1725365804; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1724761006; x=1725365806; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fnEbZFJ44c29HA1TxWo0cIEU8ZZqNT1LBIsiqX+Pjlo=;
-        b=zxAvnFYSrLKX9zcezHkIuglv8qyDhVkn6ryKWCeF80JOgEUhgtQhuhDZZ4gNkoBQiy
-         UUWzo9lKxplj8vxRX0F4ufbBdtSIW5qboFJ0FjPx7wd4oEGMHiqrSfywm7KyM+zE/1n1
-         fQhSIcdL4akF36H2B+3PcVX86cunJ2PqA3Yg6Tnvn1DCud6VGSLBwmdasTxT0PRJcIgc
-         VQlvREHcGd2V1etidLpNszHx1ukPkd7f6YPseG8tOObXB3fq9wVpWjdHLnV2rwVpcABO
-         YZHNG3ufczOi51VFxoiSnLzuGqdxIstWzKWAsMKe7ZuzvyDjcbz6evza7FfyuOPH9aLp
-         O/2w==
+        bh=pWeHlEO/WuzCnmFaEcHTY/lmEdw14txMtMS79yRBfng=;
+        b=mm8esafKyKQdKBD6NrpiEtmOFSox0kuhwBuwUYIAVJ63J5ZUcj8chEYF56m7WioW9z
+         5QHA26NbgIaV4Bg1hGrJsC9sWo8IVguBEh50HogJgo8uoQIOH5OxZf35Ef+nVxsaXcQW
+         K+7pDG0spsXnPKHHM7snqRheLwqF08GI9EZ9M/rm36cbZxLQ82rE0UjmmDDIf3pJjJIr
+         v7GLbEy4riGvpfy3BOSWLTXelfnZD8dRBpU6S5rEw3j4KG5hqc0EarFm7ygwSILCjasL
+         CbMhApJgwb6evOUUBnGNuAvKEMK/GpSoDmG4BK8C3jzg3fJcX2WIBSEs11NKQo827eN7
+         nT0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724761004; x=1725365804;
+        d=1e100.net; s=20230601; t=1724761006; x=1725365806;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fnEbZFJ44c29HA1TxWo0cIEU8ZZqNT1LBIsiqX+Pjlo=;
-        b=KD+3Lz0NE4qgJ8AOrwrbPA2Xejmez11rakP3FcdTzEFQDsl42GMCAWZ75k71KFFrh2
-         7pjNmFAgFzuw3P+PcVnu0d8S2GxwtJEckNFWGQeI/tVaIA3zYeAqMI5yTsxLRAjGMoCb
-         aulX4OvV1zgfwYibWtjAmbhLjh0rUQjEMotSHatZx4vvSVYbJJpyo7YKb2Sa8EuzOuIW
-         zT0efsC9iQxfp8qCBoudDoU0txKMR9bDPFU+0jwHnh1FG7KF4xOVIbueGVhn27BLItw+
-         08pftq0rKqso4vdpVMkiA3mpH4Ks6pZ2siDyq+2biZzPDOEPBixuvZX83uA81JydNW7D
-         TznA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9VAqYZsgVm+zvqeabRyshMODjgtNjqYD6vcuCXf8GSE2ZZL4ApKiz7LEPAzYPiZpg0uUD+p9CGcIfXvw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNcowekvCfZouGPU8KSdo4VKmN+bICXWMg0hbQ0+wAV+2h1dQF
-	z6ylCEFn5fPCCMmNKlaVXee2S0jmnZ6wmKB/N1XM96vqsRHpo5FiDnD5nxzgpSs=
-X-Google-Smtp-Source: AGHT+IF4No28LsKRWaN0NTlD6PDhR1XvnFF1olqMjPVqMhBmdTAToVMw4YfhoMTTHeg+gG+PbElOjQ==
-X-Received: by 2002:a05:600c:5118:b0:425:6dfa:c005 with SMTP id 5b1f17b1804b1-42acc8dca6dmr58251725e9.2.1724761004329;
-        Tue, 27 Aug 2024 05:16:44 -0700 (PDT)
+        bh=pWeHlEO/WuzCnmFaEcHTY/lmEdw14txMtMS79yRBfng=;
+        b=wuZgTh2SzhhcqD1O/CV8HGU0jWoWHCtefYTv1EKRGn+l2+4ZYECShNW2/rY6VonWF3
+         BqpmeRXjZJ8kark9UMmbmjh6lmBhMQf7wts8JCoBT7wHody4GBH3ophvDwhLg7u35/sF
+         ujTyqA/BA7g/kFR29ieMAeAPHfOO0sErWjtrv5oZeKNvZBfZqsb6kPOXxydp+t0WECMV
+         RTs2U7t4/KbwSuXZRh+4AelXTEjfhCuRG0O/ipTYJTyGKcwsPRTZHDUB+NypYsCNgVZM
+         FG/UQM65r2FRkipyLMBq+wEtP2Fyi8ufvIloAUoW276r2q7tvUyiXGwHLQiEy3KFYZws
+         54AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSwYj8FCnw7uuo4VzoDtrv0EIwtxFZUGVr3PYXLvUxSigwKhhEl7JZ2Z2hnRgNnhRRG4q0N0TFpAhbFSo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkqwwxhJpm5sygBvN7yIXa+MSEmkelz++IHSPjTvskHb6udBr5
+	t0kqBDM6RtBPEkXCMaCshMZqjmrFd0mPJrlZ2u+BG1fGiWlSR3akEHHxhuFoPDc=
+X-Google-Smtp-Source: AGHT+IGs50FU1NZeLXeQdejwqyPEjAYGIdxGh4vlRpAAy2j8iphQ1MPOJ8W0ne050IZOs+MAWd4N9Q==
+X-Received: by 2002:a05:6000:154f:b0:371:730c:b0 with SMTP id ffacd0b85a97d-373118b5e0amr5517784f8f.5.1724761005990;
+        Tue, 27 Aug 2024 05:16:45 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730815b7e3sm12998658f8f.53.2024.08.27.05.16.42
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730815b7e3sm12998658f8f.53.2024.08.27.05.16.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 05:16:43 -0700 (PDT)
+        Tue, 27 Aug 2024 05:16:45 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Olof Johansson <olof@lixom.net>,
 	Arnd Bergmann <arnd@arndb.de>,
@@ -78,9 +78,9 @@ Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 2/3] arm64: dts: samsung: dt for v6.12
-Date: Tue, 27 Aug 2024 14:16:34 +0200
-Message-ID: <20240827121638.29707-2-krzysztof.kozlowski@linaro.org>
+Subject: [GIT PULL 3/3] ARM: samsung: soc/mach for v6.12
+Date: Tue, 27 Aug 2024 14:16:35 +0200
+Message-ID: <20240827121638.29707-3-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240827121638.29707-1-krzysztof.kozlowski@linaro.org>
 References: <20240827121638.29707-1-krzysztof.kozlowski@linaro.org>
@@ -90,6 +90,7 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
@@ -98,60 +99,35 @@ The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-6.12
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-6.12
 
-for you to fetch changes up to 4d06000979cda26e914552d486e5364248025fcd:
+for you to fetch changes up to 3c8966403dae49d3402011441f3c813787a40b4e:
 
-  arm64: dts: exynosautov920: add initial CMU clock nodes in ExynosAuto v920 (2024-08-23 09:20:52 +0200)
-
-----------------------------------------------------------------
-Samsung DTS ARM64 changes for v6.12
-
-1. Exynos7885: Correct amount of RAM on Samsung Galaxy A8.
-2. ExynosAutov9: Add new DPUM clock controller and DPUM IOMMU (SysMMU).
-3. ExynosAutov920: Add initial (incomplete) clock controllers: TOP and
-   PERIC0 controllers.
-4. Google GS101: Add reboot and poweroff support.
-5. Add binding headers with clock IDs for several devices, used by the
-   DTS.
+  ARM: s3c: remove unused s3c2410_cpu_suspend() declaration (2024-08-19 21:54:23 +0200)
 
 ----------------------------------------------------------------
-David Virag (4):
-      arm64: dts: exynos: exynos7885-jackpotlte: Correct RAM amount to 4GB
-      dt-bindings: clock: exynos7885: Fix duplicated binding
-      dt-bindings: clock: exynos7885: Add CMU_TOP PLL MUX indices
-      dt-bindings: clock: exynos7885: Add indices for USB clocks
+Samsung mach/soc changes for v6.12
 
-Krzysztof Kozlowski (2):
-      Merge branch 'for-v6.12/clk-dt-bindings' into next/dt64
-      Merge branch 'for-v6.12/clk-dt-bindings' into next/dt64
+1. Few ARM32 machine code cleanups,
+2. Add dedicated maintainer entry for ARM64 Exynos850 DTS and driver
+   code.
 
-Kwanghoon Son (3):
-      dt-bindings: clock: exynosautov9: add dpum clock
-      arm64: dts: exynosautov9: add dpum clock DT nodes
-      arm64: dts: exynosautov9: Add dpum SysMMU
-
-Peter Griffin (1):
-      arm64: dts: exynos: gs101: add syscon-poweroff and syscon-reboot nodes
+----------------------------------------------------------------
+Gaosheng Cui (3):
+      ARM: s3c: Remove unused s3c_init_uart_irqs() declaration
+      ARM: s3c: remove unused declarations for s3c6400
+      ARM: s3c: remove unused s3c2410_cpu_suspend() declaration
 
 Sam Protsenko (1):
-      dt-bindings: clock: exynos850: Add TMU clock
+      MAINTAINERS: Add entry for Samsung Exynos850 SoC
 
-Sunyeal Hong (2):
-      dt-bindings: clock: add ExynosAuto v920 SoC CMU bindings
-      arm64: dts: exynosautov920: add initial CMU clock nodes in ExynosAuto v920
+Uwe Kleine-König (1):
+      ARM: s3c: Drop explicit initialization of struct i2c_device_id::driver_data to 0
 
- .../bindings/clock/samsung,exynosautov9-clock.yaml |  19 ++
- .../clock/samsung,exynosautov920-clock.yaml        | 162 +++++++++++++++++
- .../boot/dts/exynos/exynos7885-jackpotlte.dts      |   2 +-
- arch/arm64/boot/dts/exynos/exynosautov9.dtsi       |  46 +++++
- arch/arm64/boot/dts/exynos/exynosautov920.dtsi     |  40 +++--
- arch/arm64/boot/dts/exynos/google/gs101.dtsi       |  15 ++
- include/dt-bindings/clock/exynos7885.h             |  32 ++--
- include/dt-bindings/clock/exynos850.h              |   1 +
- include/dt-bindings/clock/samsung,exynosautov9.h   |  11 ++
- include/dt-bindings/clock/samsung,exynosautov920.h | 191 +++++++++++++++++++++
- 10 files changed, 494 insertions(+), 25 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
- create mode 100644 include/dt-bindings/clock/samsung,exynosautov920.h
+ MAINTAINERS                              | 10 ++++++++++
+ arch/arm/mach-s3c/irq-uart-s3c64xx.h     |  2 --
+ arch/arm/mach-s3c/mach-crag6410-module.c |  2 +-
+ arch/arm/mach-s3c/pm.h                   |  2 --
+ arch/arm/mach-s3c/s3c64xx.h              | 11 -----------
+ 5 files changed, 11 insertions(+), 16 deletions(-)
 
