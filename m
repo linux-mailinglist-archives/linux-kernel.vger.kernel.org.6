@@ -1,261 +1,134 @@
-Return-Path: <linux-kernel+bounces-302470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10A9C95FF15
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:29:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D494F95FEEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:18:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FFEB1F22E93
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 02:29:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BF54282F16
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 02:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D85134B2;
-	Tue, 27 Aug 2024 02:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A702D268;
+	Tue, 27 Aug 2024 02:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=digi.com header.i=@digi.com header.b="R3B+Ozve"
-Received: from outbound-ip24b.ess.barracuda.com (outbound-ip24b.ess.barracuda.com [209.222.82.221])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U7lD3CZQ"
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F342101E6;
-	Tue, 27 Aug 2024 02:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.221
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724725789; cv=fail; b=ryf1+o3MNXLhRoafuN4APvgAgVM2b21U/j/UWyaKwe2zbKIekfKWjRCs65+UNQV7V69rWRy+p/9VXsfnba8BdH4ykOadpu/hPdxr5mtNSrUIhREHqQ+Xa2uhV6ROr5vZGvctWXC11tuq9xvZ3rw1lw4Zqlen6SIOwsuxt5lrMPM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724725789; c=relaxed/simple;
-	bh=xtdk4JF4F24AFvS/ldnPHzI7k08XtThbLs42wpDS6Sg=;
-	h=Date:From:To:cc:Subject:Message-ID:Content-Type:MIME-Version; b=l6Kvef73l9Tn41/zOZdDWweOHsyNxB8wyxhT6WTBRTsLvIoG7ND/ab64ZaaKbqufv2mklh6UVeE1bCeBEWMrEqTQCDqhmeY/kLYmYiwbmd+ZEBDKI5RikgdEOmKhrB4KQPWQ7zd7TKb08d1nrR70yaakfkhhumHEsJlgfAsDt3M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digi.com; spf=pass smtp.mailfrom=digi.com; dkim=pass (2048-bit key) header.d=digi.com header.i=@digi.com header.b=R3B+Ozve; arc=fail smtp.client-ip=209.222.82.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digi.com
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2046.outbound.protection.outlook.com [104.47.70.46]) by mx-outbound-ea22-15.us-east-2b.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Tue, 27 Aug 2024 02:29:44 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=egAzxOel6FT5YUpRWgSa52Ne5Aunn+HyxN3NUcvKkNAUd0rcvz5JJwmqaZ2q2o5ubGgTruJVWyIAhZ/yaWNte9YNX/kdZSxEXPW7PYLTG/cOn43qXX09n0Rb8yzPcPQjskJ+GZuVx0wXfsWKu0xfleKS6Ad2G6nVEF8ddYQoOWUjLEYquGy64TwcHORf0jj68vjjokyRpnfY7KXFBIKnZiEGpzo7hnvSxjl0r6PZSdDpJJh9/tcHPZLFN/jTg3Muf/A3RiaD3IlUSnej8oOw2efjXv/IDX4a4b+QjT7ZbV1cfEnYg74BymcId0lBa/R39bk8pB3RiDeCSkdbuH/6WQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IqhynpYRRE7X2CET7lJCGsJUE9ItoKxdurxCcIj66m4=;
- b=uiyrXipZeVxY6qWv3ozsUv/evqdvNSsc3lEmFgZ7PsOPMJoMh3qBG6VtVQyDEeLocMh4DM2SIwqOubeLhYcE7AqshyIWFhTVqhJ0bZ98g3W9Dfzqmf6s0TjKuR1DbBli1wmsm55a9gVL1Xy1NNO4OhwQYu4jtQ4Mm3qBB16LH+/rlSUczLs5o1CGMRIVPXVQpUjva/WeJUbYIhcHFxUhWpV+kqHg0vM11ApBXmNxLZ42Lnz/E35PgJxjcyt4hxpeQeHeu4Yhg46KCEpYO6Ln0MGwgM2jxrCzKTSiyN1abRXS1NM/yeZEblQ828QkzStYeMwvXcxaNLUHR3Pn9fQ0EA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=digi.com; dmarc=pass action=none header.from=digi.com;
- dkim=pass header.d=digi.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digi.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IqhynpYRRE7X2CET7lJCGsJUE9ItoKxdurxCcIj66m4=;
- b=R3B+Ozve9Ewqnb1gzbIklBvXhoanjWjRIAh37hraK6i6UfauFQ3rSfhf+2xQ9abuQhEX5T3BOl70tsKD9l9E/PnBFo/YldtblprV7bTQrvIKRSW8//BsWSq2LI4/17uwrNv5qXHXYSme7Uno/CUWuQB1Dl+Y2N+kES1DpJt0jPApmUmr/pFIQE9KGdId11ZItH9Tin6EUP7sCupmvnqA4KU3JbS5ib74kpqpLdy5uaL/PxGfbH7fDER9HNdnPk7NIHYKX3loZMX2NVu0Ovjahbkxo0mazNjxJ6JBuKKXz1z3d6bhQmNrETDAhiEue5PrIHR3W7GMLNwtVRe7o8HDRg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=digi.com;
-Received: from DS0PR10MB6918.namprd10.prod.outlook.com (2603:10b6:8:136::8) by
- DS0PR10MB7432.namprd10.prod.outlook.com (2603:10b6:8:155::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7918.14; Tue, 27 Aug 2024 02:15:15 +0000
-Received: from DS0PR10MB6918.namprd10.prod.outlook.com
- ([fe80::3697:c0ef:caee:24ae]) by DS0PR10MB6918.namprd10.prod.outlook.com
- ([fe80::3697:c0ef:caee:24ae%5]) with mapi id 15.20.7918.006; Tue, 27 Aug 2024
- 02:15:15 +0000
-Date: Tue, 27 Aug 2024 12:15:08 +1000 (AEST)
-From: David Leonard <David.Leonard@digi.com>
-To: linux-arm-kernel@lists.infradead.org
-cc: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-    Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-    Pengutronix Kernel Team <kernel@pengutronix.de>, 
-    Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-    Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-    Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
-    devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] dt-bindings: pinctrl: Add fsl,ls1046a-pinctrl yaml
- file
-Message-ID: <b17a0414-8503-950e-a133-e5a1b1cab8c4@digi.com>
-Organization: Opengear Digi
-Content-Type: text/plain; format=flowed; charset=US-ASCII
-X-ClientProxiedBy: SY5PR01CA0033.ausprd01.prod.outlook.com
- (2603:10c6:10:1f8::10) To DS0PR10MB6918.namprd10.prod.outlook.com
- (2603:10b6:8:136::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762002CA9
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 02:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724725113; cv=none; b=hIJYcKLNHsd/NFUFTJSRy4PAl3Wbry1hjBf2JhOP2ZvXFM51cr3nNpcIVlqg02193u+A6uwCl3qmbgxqbn1PwZIkxIzB5A7ClHsJ1fOquWcgB3qVhKkzZK/UxE3PfKXWHrty/ZMr0+t2GJxvyqk/29j0G1NNeMS5q0EIzGC/Uzk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724725113; c=relaxed/simple;
+	bh=siwGY23HicvLdKsR6KM27bLimkfR2eAsbuCl3IO9Kxs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PIF0u/L8IiokgS4BhIA7+JP7R1SWFhRbON++l0VTvRcFAGvXPqDoilkGuaCFfMEFeZgVSlm7vyxt+vY60QVDX5A9G7MSKBxuKqddQvJeNurO2+LvFhzZmQ4vKYDokMnQNxmO6nBQXB4n0DyINYnhE8DR9vewMQjwABWR50SiRxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U7lD3CZQ; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-4fce9f16f83so1538044e0c.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:18:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724725110; x=1725329910; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=siwGY23HicvLdKsR6KM27bLimkfR2eAsbuCl3IO9Kxs=;
+        b=U7lD3CZQPEiybe7+gRflpCGg8uNFF4vSiQIyS6p8OgxWYScEY9L7TryrIz+faeDJrn
+         QCcVzDVvEFQmfvgL2AjR47IQ8j8qBO+xxa3/pfswLqMlJVAQUDPBH0OPxpVdYeOcXFUx
+         h1rSIBCV95PgxBjgJ5tLNrvfl+WoBhpC9PRxBARWN2FGeIiI43WrTN8iflcACF/Om8WC
+         ajFh67jNwWPOnIA6j6BNCmyw+OkeSD153yeFsweoTu/6elDQCA1coFzvGAjKFip8Rncr
+         D1gYat7eKphVjx4qOVq4io1JHZyRvik80LYZdYumapIcBsBE3KYJDXBaL1fz7lL59oe7
+         kRKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724725110; x=1725329910;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=siwGY23HicvLdKsR6KM27bLimkfR2eAsbuCl3IO9Kxs=;
+        b=NGW5elvDIn83i5JZL/Nn9TPhxmnOGy5Mpww6i+DBBKJaGQYRJz2IWpzy+edsEfHyBv
+         FAzPXwI3OJ5okU82chtQRfkXEVu2Za4zQl6HouJcJKpzaRVZ/JkJRC/cRdfKowfKHQpJ
+         QudsifD9dPVIr7EHO85rbuHt2YwWO04aapfnSiBwVd+qZvShISPsKvVtvoRJ/cocrZnF
+         miQXVGIkgBXcogzhP1QetbY0o6tFdfFOJnVVyqm9sYExqp+3R38lhIrJLF1g69i/RWMc
+         /yAzm5y3QPdGLvUpfXDUcZTcVxODfl24hZJkwDoXpDfluh0i3zfYKe33Gz7p9e1SXrdI
+         vWYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbLd9B+vc1I5asHveOJ7IKgMFCEd5E3g2e47fi/gVHX6tFya/RXmaOcvO50TPWAvv3487m1aMouiQlczM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxh9tv6u3yEZU4VoIiK+hCXP/2C0DGsFC74QhHX78fjsApgwDm2
+	pyT+JN2LGyh8p27dybYPAjghxqCtNGzgGWfFQ+MA2lmJMixHQV9W6Wi74uafk7qhh7jd2Dk1Iwe
+	tGkWCXXW8L2OHQbdnWe55qtd6GBw=
+X-Google-Smtp-Source: AGHT+IFfU6dexOxTYKGD0IqP4V6YvktCXOJAeKUjoJ/4ETcAySvDOxI/AIKRNHHl4Dk1+gNo98G5yZ6BK2o0fJhXGSE=
+X-Received: by 2002:a05:6122:c9c:b0:4d3:3846:73bb with SMTP id
+ 71dfb90a1353d-4fd1a734ddcmr15194320e0c.7.1724725110178; Mon, 26 Aug 2024
+ 19:18:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR10MB6918:EE_|DS0PR10MB7432:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7c46372e-ed22-454f-dc30-08dcc63e170a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?dXn9oCNJou5j9E1oEoMGwDuwAQpPTEQFbb9HD/Xkbs+SZZ/vzHyco9fGWaVq?=
- =?us-ascii?Q?sCcTSMAiuTjjxmNKp0x+3YIGlsR1WEE2l7he0G7HFKn+Grnk1pGiC9ppO4Pn?=
- =?us-ascii?Q?Bp/afv6PWOSyxzeE7+x6MujyC6BHlkoub20ymtRFHATTyc8sCadE0zBTJ18B?=
- =?us-ascii?Q?3kZjgmvHzWtN6MzokjU2CeScmnHfmhnHu8zppEBv2NxvjBlYV0Z6iVTjc4ai?=
- =?us-ascii?Q?GeMG2vEu7HAyP8zYl2o075wqed+ZDG9fZbUIX67Ler12xByZlELrKqYGzGsj?=
- =?us-ascii?Q?1YpAdEYBaXJF0zlAyB1Z1poI3Ew1SGj+l0LiTMx2vwZC806N5psHIMEkerfP?=
- =?us-ascii?Q?Vjn5hckNCUR1ZZH0zVrpAPyFzfSIIOu78YB6DD4neK6GKSQv/ORoyu3lf6ux?=
- =?us-ascii?Q?BuhLxNuT8VEHFUA8cqDy9qzkq2BO8F8QrUvdotdqtR6o59vXQE4N6YhaRqK8?=
- =?us-ascii?Q?uWpVJguaKcHccw51+loz2Fr7nJorF6zQ1zyYMbAB5FevMWbaLUJI14GBi5Yh?=
- =?us-ascii?Q?t9q3dtWIJ+SJZAUxr5qf9Hb6zgLjUXKmueWRAJS+44clRHU4kXoOq0aFyZGP?=
- =?us-ascii?Q?aguj6d+sKKc8lnhLZkN5ZfFgUdBs6pHJj2Q2k4ircXIJvaPsr0J0QDVhUJuc?=
- =?us-ascii?Q?taT9nG7FFPCiQ5Y7ngn64lrrk5q74NPIJI92LXxeWcocgPqf2lcib/WOYuAR?=
- =?us-ascii?Q?900NJMIqB1hgYaSYQ+/o+sm3aWLQsAaxyfV5eYDC0kKvbQGLOjXu93d28fuM?=
- =?us-ascii?Q?Ai40zigKC8WoQb1098JEHhgkX3ZL6mZIQ1s+oeiypYm2C9mXmwEkXmR6wLuG?=
- =?us-ascii?Q?gI4CNOQ3O4qWX92klqehaBGSqVdJga1KKQjDkHfN9/mk9781AXJibtngacxW?=
- =?us-ascii?Q?eT+OJhlOkfagn/q8dp8ww8B3LcUvtx13K9AiIt9ID9/q5ddyVEGHREdDbhtr?=
- =?us-ascii?Q?9r5HxKRA8l2lZfTg+FI6gItkT2FlCmNY3EwMaTHCc7VZSkMGP1mqoorgeUSy?=
- =?us-ascii?Q?U/MOFytWZS4i1kUtT27pBj2MHcC+EHxtPEnT0FQ4gBnk0fl/opf/scViGO6H?=
- =?us-ascii?Q?I/kHy6s8vte1i/rNRjyP7jILira/bUnvOKDX2zNlW38nugLcQiziYonIl2uH?=
- =?us-ascii?Q?/kkl9r39aKLEX8DclnrxoNaUNOY8yXa7CVibf8L5V5Ym+OissSZLOXbVVjTs?=
- =?us-ascii?Q?i/hyfKAuP6+2x+tcttytq0f+TP4JIvNcahhOGg2dE4xSi1k9dQO7HJctdd+9?=
- =?us-ascii?Q?DrGVrGRR5Y0GeHqPK0tkd74Js5c/bZc/zOgF1IyHu90RFhGP04TXzYJlGQLj?=
- =?us-ascii?Q?Smw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB6918.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?QLQSmktRHl+VXls7ApzILvIUNnSruT9jeDIOWpzQGpJSgFgAaY7Ifoe2XfGz?=
- =?us-ascii?Q?7bQMmmNwPyeIDIhGglW6h6d5aEjYCRqahoISpZl7PUdFtBhk+svoTCj3MMNo?=
- =?us-ascii?Q?eF6LRA5f6E52NBrg4OaVq4v+v2ovTDRfiwN6V8a1QvK+FbZJ29LlhKFMJN98?=
- =?us-ascii?Q?VTSNNhSeUFGmuBePoVphwwAq2hgoeltNvXSErDECHlDnmeau7RkVnantm5ml?=
- =?us-ascii?Q?knJRZnJuPATI/IUSYGKO6A+7odSRLviKmlqoOnqAycBnUiopcHTFPYzO9vov?=
- =?us-ascii?Q?LHtkp7EX/x/XNO0miPnv2Ij2B9hun3mXIT32s6PuL3dZPBB/zubvrbS5DuJu?=
- =?us-ascii?Q?Pr1/6Khmj2cXxcvqSJSLBE5wuMFQ3cbRAgrYlZhiySfDVI3GfvJbmywxaAGM?=
- =?us-ascii?Q?Gmt//gIoFpzhrJxzpWnwuj6pJak8O5iTPNApnX+b3d9fQrgUgz0x3zWK/+yx?=
- =?us-ascii?Q?BiTBoJuqFlFcvqkecX7KoFm22j1T+3mZjgXwIuIeCh5fV4+mHFClxwNZ98Eh?=
- =?us-ascii?Q?VcfA3rbe9bzOSLhOrs93FMYcXW9Zyaw+2JjBGzKDMlx9YCErTuD9wrkQwo7a?=
- =?us-ascii?Q?tVodXq5APiaLcT+dUabRxhjZsHcijgEBUAFZxgMRk/zfXrAJibAN1edfePHO?=
- =?us-ascii?Q?4Y7xbZ6ApLhJP2YIP6wmnyCfrqhB0sywQR2ksoS2JUBcTdW3BVA9Hy8AtbVO?=
- =?us-ascii?Q?FiCZ8UafZa2iCfFCyPp+T8AdVog0ElJxcBJy4plgNLzUOfV/LVXnW30rOA8k?=
- =?us-ascii?Q?J04KQfunom+dB5DbCBcfvc+U34Qd2dzdkFArcAvI1nXruRb6i+PwLr3fAQsD?=
- =?us-ascii?Q?VnZT9oBcArm7r3bvwVcqAse2iWstxdvpwtWMx1vNFrkDAC/JWtR0gvcpISff?=
- =?us-ascii?Q?T7nLPoXjfORxTit48Zb0klv470oADg/+GgUCakDk7PW9RAldvCKHu6drn6RF?=
- =?us-ascii?Q?kcqEFKc7MvylpG6sczD8N9ALDT7yD1Fe9vqYQHX269wjLTLp7EAsTj9cPxBP?=
- =?us-ascii?Q?Ter5P+n9biGo7F5F2WvsHp+7BWR6h+Bz1MUGusJlvZDs8HtcZFItL2fmO3xV?=
- =?us-ascii?Q?xwshdbUl6EfmFbZ5xNPEwrJJ1EEQWpxl2/xwCUUzsIiL6yAt431XXpzOSR5b?=
- =?us-ascii?Q?9dHAJLxyt5CPlihESNatCC5rFzAuubfTqwMWYkCKpQQlR2JFzjSzseXPJdpj?=
- =?us-ascii?Q?B8+mQyAUmMa7Rc3qQmnCSppbAbMmNCP+3y3zLvKl4eek1oBszQFRkV0ynzGX?=
- =?us-ascii?Q?CCpJABVrPnQgihAJTEHSdYQJBRXA7XuFvcesMjHuxJH7pVivl7JOI/mRjOBC?=
- =?us-ascii?Q?TwlT2Xeg/I1VMIOuPgcsfcGHX3v4UARCc6WDrTmCucqjGmlHIX8j4brqwNt4?=
- =?us-ascii?Q?cq6jzwus9IMRfukl9bbKxE2NwTpRzT1ZTX/8pBNKApnCWjhmue35nGFvzbuy?=
- =?us-ascii?Q?LfUeAr1+wNaHCsDyIPUcVLrM9WPsoL5r9TvHdsZubO25OAZRkhuHn+Q0AoRn?=
- =?us-ascii?Q?ysOVkfzRYj7118BfNM5tNEwmUifsjBadpijPMKY5CPmKF/3aYXGuHIisfKko?=
- =?us-ascii?Q?qGtD4vwTy+jK/yZ9M0lVZnfpsZm5HBBt2XqDqqj8FJWe+4zBeKXbehzdcDDq?=
- =?us-ascii?Q?fC/VQ2PlfpbAnkE5eCGOllZCwhCXTDeb5QqJmvDaZV6Q?=
-X-OriginatorOrg: digi.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7c46372e-ed22-454f-dc30-08dcc63e170a
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB6918.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 02:15:15.7520
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: abb4cdb7-1b7e-483e-a143-7ebfd1184b9e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vuWVDiLrfnjO/vbzzALPdPFLgRImapE8fr91590mzD+n9fg73sxIAlCjoHthOK/ujFVbbmAfYIsFf2kJAVuDjg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7432
-X-BESS-ID: 1724725784-105647-3844-79406-1
-X-BESS-VER: 2019.3_20240823.2007
-X-BESS-Apparent-Source-IP: 104.47.70.46
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkZGxmZAVgZQMNkkzdwkxdLE2N
-	jC3NIgOSnR0jTFKC3R2NLQ0NjI0jBZqTYWAIH8GeFBAAAA
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.258621 [from 
-	cloudscan20-225.us-east-2b.ess.aws.cudaops.com]
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------
-	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS112744 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status:1
+References: <f29f64e29c08427b95e3df30a5770056@honor.com> <ZsXho27uAbQ5rEgS@tiehlicka>
+ <CAGsJ_4zgQ0MBV-yucc0-7BcDgjMMdCUDWK330mrd7SS4ej6Q8Q@mail.gmail.com>
+ <CAJuCfpE7qsbFPseGzcBp27uNDhwtKLypKiPnqebE5=T8WDTyEQ@mail.gmail.com>
+ <CA+EESO7BuywqjM9pk3KbgdfsYJerpU1-5d9AN20mBjA6e_97UQ@mail.gmail.com> <20240827021351.iq6i7zkwm32xili3@oppo.com>
+In-Reply-To: <20240827021351.iq6i7zkwm32xili3@oppo.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 27 Aug 2024 14:18:18 +1200
+Message-ID: <CAGsJ_4wUrm1Q7Oxb5BHC2ypyf4wAH+UO9KYhCUwsEbhkcc7QGg@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: add lazyfree folio to lru tail
+To: Hailong Liu <hailong.liu@oppo.com>
+Cc: Lokesh Gidra <lokeshgidra@google.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Nicolas Geoffray <ngeoffray@google.com>, Michal Hocko <mhocko@suse.com>, gaoxu <gaoxu2@honor.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Shaohua Li <shli@fb.com>, 
+	yipengxiang <yipengxiang@honor.com>, fengbaopeng <fengbaopeng@honor.com>, 
+	Kalesh Singh <kaleshsingh@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Aug 27, 2024 at 2:13=E2=80=AFPM Hailong Liu <hailong.liu@oppo.com> =
+wrote:
+>
+> On Mon, 26. Aug 09:37, Lokesh Gidra wrote:
+> >
+> > IMHO, within LRU_INACTIVE_FILE, MADV_FREE'ed pages should be
+> > prioritized for reclamation over file ones.
+>
+>
+> > >
+> > > Adding Lokesh.
+> > > Lokesh, could you please comment on the reasoning behind the above
+> > > mentioned change?
+> >
+> > Adding Nicolas as well, in case he wants to add something.
+> IMHO, lruvec_add_folio is enough. if lruvec_add_folio_tail why not use
+> MADV_DONTNEED instead? In MM the reclaim policy prefer to reclaim file ca=
+che, if
+> MADV_FREE'd pages directly add to the tail, they might be reclaimed insta=
+ntly.
+> Also the benefit of workingset_refault_file cannot be convinced for me.
 
-Add a binding schema and examples for the LS1046A's pinctrl function.
+My understanding is that MADV_DONTNEED will immediately free the memory,
+whereas MADV_FREE will release memory only under memory pressure. If
+memory pressure is low, the anonymous memory may still be gotten back
+without causing page faults. This might be what Lokesh is aiming to achieve=
+.
 
-Signed-off-by: David Leonard <David.Leonard@digi.com>
----
-  .../bindings/pinctrl/fsl,ls1046a-pinctrl.yaml | 74 +++++++++++++++++++
-  1 file changed, 74 insertions(+)
-  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,ls1046a-pinctrl.yaml
+>
+> So we should know the reasons and the benefits of the changes. page fault=
+s or ?
+> > >
+> > > >
+> > > > >
+> > > > > --
+> > > > > Michal Hocko
+> > > > > SUSE Labs
+> > > > >
+> > > >
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,ls1046a-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,ls1046a-pinctrl.yaml
-new file mode 100644
-index 000000000000..3d49e42d33e8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/fsl,ls1046a-pinctrl.yaml
-@@ -0,0 +1,74 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/fsl,ls1046a-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NXP QorIQ LS1046A pin multiplexing
-+
-+maintainers:
-+  - David.Leonard@digi.com
-+
-+description: >
-+  Bindings for LS1046A pinmux control.
-+
-+properties:
-+  compatible:
-+    const: fsl,ls1046a-pinctrl
-+
-+  reg:
-+    description: >
-+      Specifies the base address of SCFG_RCWPMUXCR0
-+    maxItems: 2
-+
-+  big-endian:
-+    description: >
-+      If present, the register is implemented in big endian mode.
-+    type: boolean
-+
-+patternProperties:
-+  '^pinctrl-':
-+    type: object
-+    $ref: pinmux-node.yaml#
-+    unevaluatedProperties: false
-+
-+    properties:
-+      function:
-+        enum: [ i2c, gpio, evt, usb, ftm ]
-+
-+      groups:
-+        items:
-+          enum: [ L4, M4, M3, N3 ]
-+
-+allOf:
-+  - $ref: pinctrl.yaml#
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    pinmux: pinmux@157040c {
-+      compatible = "fsl,ls1046a-pinctrl";
-+      reg = <0 0x157040c 0 4>;
-+      big-endian;
-+      pinctrl_i2c2: pinctrl-i2c2 {
-+        groups = "L4", "M4";
-+        function = "i2c";
-+      };
-+      pinctrl_i2c2_gpio: pinctrl-i2c2-gpio3 {
-+        groups = "L4", "M4";
-+        function = "gpio";
-+      };
-+      pinctrl_i2c3: pinctrl-i2c3 {
-+        groups = "M3", "N3";
-+        function = "i2c";
-+      };
-+      pinctrl_i2c3_gpio: pinctrl-i2c3-gpio {
-+        groups = "M3", "N3";
-+        function = "gpio";
-+      };
-+    };
--- 
-2.43.0
-
+Thanks
+Barry
 
