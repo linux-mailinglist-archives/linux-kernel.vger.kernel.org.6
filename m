@@ -1,93 +1,156 @@
-Return-Path: <linux-kernel+bounces-302451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DFB995FEAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:03:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F142295FECC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11A9C282CA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 02:03:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99F0F1F22029
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 02:04:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EEED10A1E;
-	Tue, 27 Aug 2024 02:03:38 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08A7DDAB;
+	Tue, 27 Aug 2024 02:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Id1wfntd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26AEA1854;
-	Tue, 27 Aug 2024 02:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734F5D515
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 02:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724724217; cv=none; b=ZvevYAyRwuEzEyVZ1h0dIVL4QxHXmfAYcpVAEHL7NXYAUYNsbHTGuZypi7L50PqDyc4LFDzXFlXEFApL0Oe36/MAQMXBRJRaMFS+5dN/ckLKxpLhkaitKAwQBwRII7TZCze16vxLZj/Gs7Ehi5FTK8NhszljlkaqddlhnlE6a/s=
+	t=1724724259; cv=none; b=C+D23qkltzvs8+ehlnQtgc1ABUohdLJuUtxFpY8V4A0Nzg+7HbT295ycsEaC+iZXXHnbZdbE2QgY7M39hpKTCrGGYrQ8Wn+7fAai44Ed7ZnqLPvKYKAYTlz3TAYcxdjDnRVTx+U2uov5yXOAZLZnGpVMHPIZX2Zw1hpf7iMxrbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724724217; c=relaxed/simple;
-	bh=+Lw+5WYJJxM1tmEOAqj+YhhvBRg1BYVaNNNg1e1GHmw=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=KwBpqDC4jJYoxFEEsEFG5RrwkP4MyyOaysXthM5AQYFciKxebcAiGqRgolaougzP+IBX2/hLRYrU2oQTKBSC1Fo/lJqb1XR7JQbucl+UMLR58/6XCbkFlTrmWzzudEN1Q5irPPYGREodMUUtVb9ZBEAupQ9Fas13PRXNOmqVPtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Wt9n601DVz1S97D;
-	Tue, 27 Aug 2024 10:03:21 +0800 (CST)
-Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2077C140136;
-	Tue, 27 Aug 2024 10:03:32 +0800 (CST)
-Received: from [10.174.178.75] (10.174.178.75) by
- kwepemh100016.china.huawei.com (7.202.181.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 27 Aug 2024 10:03:29 +0800
-Subject: Re: [PATCH -next 00/15] sysctl: move sysctls from vm_table into its
- own files
-To: Kees Cook <kees@kernel.org>
-References: <20240826120449.1666461-1-yukaixiong@huawei.com>
- <202408261256.ACC5E323B2@keescook>
-CC: <akpm@linux-foundation.org>, <mcgrof@kernel.org>,
-	<ysato@users.sourceforge.jp>, <dalias@libc.org>,
-	<glaubitz@physik.fu-berlin.de>, <luto@kernel.org>, <tglx@linutronix.de>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
-	<viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
-	<j.granados@samsung.com>, <willy@infradead.org>, <Liam.Howlett@oracle.com>,
-	<vbabka@suse.cz>, <lorenzo.stoakes@oracle.com>, <trondmy@kernel.org>,
-	<anna@kernel.org>, <chuck.lever@oracle.com>, <jlayton@kernel.org>,
-	<neilb@suse.de>, <okorniev@redhat.com>, <Dai.Ngo@oracle.com>,
-	<tom@talpey.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <paul@paul-moore.com>,
-	<jmorris@namei.org>, <linux-sh@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, <wangkefeng.wang@huawei.com>
-From: yukaixiong <yukaixiong@huawei.com>
-Message-ID: <99407b2b-25db-d559-cded-babf34381a5e@huawei.com>
-Date: Tue, 27 Aug 2024 10:03:28 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1724724259; c=relaxed/simple;
+	bh=swaa5zYl6o+vIR+x0tmOoO5wF06p/pSj7OJ8IiW3bAU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HsI3u9x2sB1y3aThxM3mzpYoix+Ag4Tsqo3BcCB80KAb4Ryo5mrZiXpCx97If5ZEc/to0xON/CYiDDDKkKSjmUhb3miJJJikMUNwPY+MWTisLwh915QcEZxo0odtZhIBVSL5pXUJm5jF5HLGmHR6XV9IeiTvqBORWBtWdgTTXno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Id1wfntd; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724724256;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xm6HzpS7UlYIAXiVXt9nj1Lc28PYtI0g7QjUz7c0dEA=;
+	b=Id1wfntdQL6ZyLX1TzBEuv6GGKymnjLMmUoWppcTp8byA4XSSGfWg+rJMCjCZ5eBEL2JCI
+	Nt3kud7eq2ZQYE8RFwewQVh5q7BGQnI34gjgkeL8guYqQX+g5WXIai52E4N0Ze/sTqKw0/
+	u0vxKglKlJrDfYsp9SzSfc0ELqQ/6zs=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-103-Z__wiJqnMJiRKpKk-504Kw-1; Mon, 26 Aug 2024 22:04:15 -0400
+X-MC-Unique: Z__wiJqnMJiRKpKk-504Kw-1
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2d6421b8bf9so3926579a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:04:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724724254; x=1725329054;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xm6HzpS7UlYIAXiVXt9nj1Lc28PYtI0g7QjUz7c0dEA=;
+        b=iLhdT7tTLHfS04KcX02qc2PNDb4cwOAraJZloWsEEetN/TI4GmQJO6U8cIWLUhD/vu
+         XA8PlyjA5CqjbWfyApaDsEKlJHpECiTo4hIMpg4gUUTiqV9IycL4kKpyiPklJRM9d4VI
+         1CTJuehGl69PyEnZ1DirkIpM8Vgb3vEWs2qK+zAoy0kaXVF2yH648FZqJjKFU9xu3Ypg
+         X/pDk++BnNAV5r8a1B0WEQPZu+i/cCxOP7HPGUOohaYCQg+mGlZigXN0b1brUEVjbx2n
+         sNeybh2eVjboYl1R2U9q0jT04fiF8gQqrXg+n7Ktpf/3q3zYGXTr2fsZ0iHPpopc/ePw
+         auZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUassF8z+sinCwQYdzQ2hz6T1PBkB8rKL8+cORr2Dirbb4jMIOHjHRJVA7MREe1fr4W4D/l9FtXLVHMJzY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXKl5diiqWTLCVdRpDoqoZtQjRkVvCkeEvAVxtkEMrOTvwLLUi
+	An5OVX0P/+CtdTnK8TruK6bxQW1d3mU1t3YHvBlvNhl8gEtpYeChoA+TUPgnlB5ZQnSrE7VRJpe
+	TFVxCH+XJEyoUSX9wu5Iz2IT3QWjWFJpwLmb64zde1dHWhqnMHqG1oe+bKVmVddPXWGxlW8sjv0
+	LSgPjWIMwLT4+WlDYulXoix7OLR6XWmulavFYT
+X-Received: by 2002:a17:90b:4a46:b0:2d3:ce76:4af2 with SMTP id 98e67ed59e1d1-2d8258125d5mr1626207a91.18.1724724254162;
+        Mon, 26 Aug 2024 19:04:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEtAMqps7U0xYEX+Wmp+vbiju0Pr+o74vzRd/75xZsN+NnAH2VQA/vUI9rjXQkYWiSphld5fdo8Pn1F56iVa1c=
+X-Received: by 2002:a17:90b:4a46:b0:2d3:ce76:4af2 with SMTP id
+ 98e67ed59e1d1-2d8258125d5mr1626181a91.18.1724724253585; Mon, 26 Aug 2024
+ 19:04:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <202408261256.ACC5E323B2@keescook>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggpeml500022.china.huawei.com (7.185.36.66) To
- kwepemh100016.china.huawei.com (7.202.181.102)
+References: <33feec1a-2c5d-46eb-8d66-baa802130d7f@digitalocean.com>
+ <afcbf041-7613-48e6-8088-9d52edd907ff@nvidia.com> <fd8ad1d9-81a0-4155-abf5-627ef08afa9e@lunn.ch>
+ <24dbecec-d114-4150-87df-33dfbacaec54@nvidia.com>
+In-Reply-To: <24dbecec-d114-4150-87df-33dfbacaec54@nvidia.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 27 Aug 2024 10:03:59 +0800
+Message-ID: <CACGkMEsKSUs77biUTF14vENM+AfrLUOHMVe4nitd9CQ-obXuCA@mail.gmail.com>
+Subject: Re: [RFC] Why is set_config not supported in mlx5_vnet?
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Carlos Bilbao <cbilbao@digitalocean.com>, mst@redhat.com, 
+	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, eperezma@redhat.com, 
+	sashal@kernel.org, yuehaibing@huawei.com, steven.sistare@oracle.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 2024/8/27 3:57, Kees Cook wrote:
-> On Mon, Aug 26, 2024 at 08:04:34PM +0800, Kaixiong Yu wrote:
->> This patch series moves sysctls of vm_table in kernel/sysctl.c to
->> places where they actually belong, and do some related code clean-ups.
->> After this patch series, all sysctls in vm_table have been moved into its
->> own files, meanwhile, delete vm_table.
-> This is really nice! Thanks for doing this migration. I sent a note
-> about the "fs: dcache: ..." patch that I don't think will be a problem.
+On Tue, Aug 27, 2024 at 12:11=E2=80=AFAM Dragos Tatulea <dtatulea@nvidia.co=
+m> wrote:
 >
-> Reviewed-by: Kees Cook <kees@kernel.org>
 >
-Thanks for your review !:-) Looking forward to future opportunities for 
-further discussion and collaboration.
+> On 26.08.24 16:24, Andrew Lunn wrote:
+> > On Mon, Aug 26, 2024 at 11:06:09AM +0200, Dragos Tatulea wrote:
+> >>
+> >>
+> >> On 23.08.24 18:54, Carlos Bilbao wrote:
+> >>> Hello,
+> >>>
+> >>> I'm debugging my vDPA setup, and when using ioctl to retrieve the
+> >>> configuration, I noticed that it's running in half duplex mode:
+> >>>
+> >>> Configuration data (24 bytes):
+> >>>   MAC address: (Mac address)
+> >>>   Status: 0x0001
+> >>>   Max virtqueue pairs: 8
+> >>>   MTU: 1500
+> >>>   Speed: 0 Mb
+> >>>   Duplex: Half Duplex
+> >>>   RSS max key size: 0
+> >>>   RSS max indirection table length: 0
+> >>>   Supported hash types: 0x00000000
+> >>>
+> >>> I believe this might be contributing to the underperformance of vDPA.
+> >> mlx5_vdpa vDPA devicess currently do not support the VIRTIO_NET_F_SPEE=
+D_DUPLEX
+> >> feature which reports speed and duplex. You can check the state on the
+> >> PF.
+> >
+> > Then it should probably report DUPLEX_UNKNOWN.
+> >
+> > The speed of 0 also suggests SPEED_UNKNOWN is not being returned. So
+> > this just looks buggy in general.
+> >
+> The virtio spec doesn't mention what those values should be when
+> VIRTIO_NET_F_SPEED_DUPLEX is not supported.
+>
+> Jason, should vdpa_dev_net_config_fill() initialize the speed/duplex
+> fields to SPEED/DUPLEX_UNKNOWN instead of 0?
+
+Spec said
+
+"""
+The following two fields, speed and duplex, only exist if
+VIRTIO_NET_F_SPEED_DUPLEX is set.
+"""
+
+So my understanding is that it is undefined behaviour, and those
+fields seems useless before feature negotiation. For safety, it might
+be better to initialize them as UNKOWN.
+
+Thanks
+
+
+>
+> Thanks,
+> Dragos
+>
+
 
