@@ -1,127 +1,117 @@
-Return-Path: <linux-kernel+bounces-302651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD26960175
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:20:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 839209601A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:29:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A43F28239F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:20:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FE9F283519
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:29:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43F2146590;
-	Tue, 27 Aug 2024 06:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cyR7S/d5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F5014F9FB;
+	Tue, 27 Aug 2024 06:29:03 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEA0145B0C;
-	Tue, 27 Aug 2024 06:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C70146D68;
+	Tue, 27 Aug 2024 06:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724739605; cv=none; b=sjIjz+RtFs8QNG29P4CyqGno5GdimKucdBRx1f1JlrmTyAi179jVupepf86BVCUQl0lyEejmEzdGyBQ5yLyVP0FLWRxvbfmMhM+MQ5z+mM/noMoiG6Gb75ovt8wMfo8Ax6ML7NgmK5O4RdKYTG8UjoOktYoa/w8YyQP2A1XNaTc=
+	t=1724740143; cv=none; b=bellF7eQJ7nWiaEhH4AGWScBUqU9ZzON1m0dEWm6av6FNMuLZgu/ntYNTzghMA3ojCCHS+XPjVtlCo2s/ndTwfO7SWmW7/gWyk/f20FqRSHUJPkXzecU2ObYOhm+QXkpkj880KHCB1X3pEiL4HUNWRUHS+MSGNA0cueZF2RlTYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724739605; c=relaxed/simple;
-	bh=+9tzJfq/xzY8EG6tCU+fWeZg1GtXDz0Y7NOhuziouaA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XrBGlrzMoeQCUdHNUl8B7RAG4ROh7J8W8CGs7NMVvOVj2W4nR5cUlOwXbr2Qy5emez9qSDZGBDS3rSqzAMXBI6au2iHvFbTZyPbx48JKrpXMqrz/CO7Q+jfJU8f8tkB5zwemjfF/z9PkC1CTwZkvsauJjF2R0yRXECA//xjYfTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cyR7S/d5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD9ADC8B7AA;
-	Tue, 27 Aug 2024 06:20:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724739604;
-	bh=+9tzJfq/xzY8EG6tCU+fWeZg1GtXDz0Y7NOhuziouaA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cyR7S/d5hISBltml6fCxQnyQqzG1LMOvpPmqODDYlOKdkz207XDv28xdwXagzCGor
-	 trS0+RL+4s4/uKAEQWYv1IWG7zF8d9Eft34pFZ/FHVs+NIu4qpaTmGXAkAUHqrMEmp
-	 86MHymCguw0hgNWYyMJ6AwpHkx7fMQ+hs9TMNaxr+Ku8FrBwmakNWbHI4h+OsSfo7E
-	 CZOQOg+Kj06PUzPNzbqJ2oJuolf/jMXiF6e4XUGxBQQ58ofwQZg/c0DOteLZFBAJMn
-	 9kv+MYeSxWAEfIDOrnf5sPCIJIx6KyKTeRr4oUAv6oNtFIm2Fsm2KZ1YFs+6EnNuwt
-	 JbVDVFgEtvXYQ==
-Date: Tue, 27 Aug 2024 08:20:01 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: David Leonard <David.Leonard@digi.com>
-Cc: linux-arm-kernel@lists.infradead.org, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] dt-bindings: pinctrl: Add fsl,ls1046a-pinctrl yaml
- file
-Message-ID: <5js7324jqsp65kp4s4erm4rx3bms2u4otbqbsne3bldolzzq6f@wrqc4rfwaxly>
-References: <b17a0414-8503-950e-a133-e5a1b1cab8c4@digi.com>
+	s=arc-20240116; t=1724740143; c=relaxed/simple;
+	bh=NqJqmcTcq+7y4he0nh5cqPcFccxFcRxwn+lMDOyvFdI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JipfSiHKTiDl0EOWtO3SzvGbgNH8lcNzPWG8enCwrMwfxtRxiP3sNuGZqsGM3R9o0hsv8+2chWaF4LGHQWkK/mHp7dCyB0f2izOGib+nXpdlZ6yBGDpEJdIHx9NBAy9KZQqeFz+ydL/YiGA3NGnSSQi2cIw3WXAXGXyMtrBeCIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4WtHgM13ZTz1S77s;
+	Tue, 27 Aug 2024 14:28:47 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8237D1A016C;
+	Tue, 27 Aug 2024 14:28:57 +0800 (CST)
+Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 27 Aug
+ 2024 14:28:56 +0800
+From: Chen Ridong <chenridong@huawei.com>
+To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
+	<longman@redhat.com>, <adityakali@google.com>, <sergeh@kernel.org>,
+	<mkoutny@suse.com>
+CC: <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 -next 00/12] cgroup:cpuset:separate legacy cgroup v1 code and put under config option
+Date: Tue, 27 Aug 2024 06:20:59 +0000
+Message-ID: <20240827062111.580296-1-chenridong@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b17a0414-8503-950e-a133-e5a1b1cab8c4@digi.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-On Tue, Aug 27, 2024 at 12:15:08PM +1000, David Leonard wrote:
-> 
+Cgroups v2 have been around for a while and many users have fully adopted
+them, so they never use cgroups v1 features and functionality. Yet they
+have to "pay" for the cgroup v1 support anyway:
+1) the kernel binary contains an unused cgroup v1 code,
+2) some code paths have additional checks which are not needed,
+3) some common structures like task_struct and mem_cgroup contain unused
+   cgroup v1-specific members.
 
-Why do you keep sending emails one-by-one?
+Cgroup memory controller has already separated legacy code to
+memory-v1.c. So it is time to do the same thing for cpuset controller.
 
-Fix your threading.
+This patchset aims to do:
+1) moving cgroup v1-specific cpuset code to the new cpuset-v1.c file,
+2) putting definitions shared by cpuset.c and cpuset-v1.c into the
+   cpuset-internal.h header,
+3) introducing the CONFIG_CPUSETS_V1 config option, turned off by default,
+4) making cpuset-v1.c to compile only if CONFIG_CPUSETS_V1 is set.
 
-All previous comments apply.
+---
+V3:
+- Delete blank line at the end of file.
+- Rename some generic functions name with cpuset_/cpuset1_ prefix.
 
-> Add a binding schema and examples for the LS1046A's pinctrl function.
-> 
-> Signed-off-by: David Leonard <David.Leonard@digi.com>
-> ---
->  .../bindings/pinctrl/fsl,ls1046a-pinctrl.yaml | 74 +++++++++++++++++++
->  1 file changed, 74 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,ls1046a-pinctrl.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,ls1046a-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,ls1046a-pinctrl.yaml
-> new file mode 100644
-> index 000000000000..3d49e42d33e8
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/fsl,ls1046a-pinctrl.yaml
-> @@ -0,0 +1,74 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pinctrl/fsl,ls1046a-pinctrl.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP QorIQ LS1046A pin multiplexing
-> +
-> +maintainers:
-> +  - David.Leonard@digi.com
-> +
-> +description: >
-> +  Bindings for LS1046A pinmux control.
-> +
-> +properties:
-> +  compatible:
-> +    const: fsl,ls1046a-pinctrl
-> +
-> +  reg:
-> +    description: >
+V2:
+- Update to base on the latest cgroup/for-6.12.
+- Add CONFIG_CPUSETS_V1 for cpuset_memory_pressure_bump.
 
-Drop >, actually entire description... insteasd list and describe the
-items.
+Chen Ridong (12):
+  cgroup/cpuset: introduce cpuset-v1.c
+  cgroup/cpuset: move common code to cpuset-internal.h
+  cgroup/cpuset: move memory_pressure to cpuset-v1.c
+  cgroup/cpuset: move relax_domain_level to cpuset-v1.c
+  cgroup/cpuset: move memory_spread to cpuset-v1.c
+  cgroup/cpuset: add callback_lock helper
+  cgroup/cpuset: move legacy hotplug update to cpuset-v1.c
+  cgroup/cpuset: move validate_change_legacy to cpuset-v1.c
+  cgroup/cpuset: move v1 interfaces to cpuset-v1.c
+  cgroup/cpuset: rename functions shared between v1 and v2
+  cgroup/cpuset: guard cpuset-v1 code under CONFIG_CPUSETS_V1
+  cgroup/cpuset: add sefltest for cpuset v1
 
-> +      Specifies the base address of SCFG_RCWPMUXCR0
-> +    maxItems: 2
-> +
-> +  big-endian:
-> +    description: >
+ MAINTAINERS                                   |   3 +
+ include/linux/cpuset.h                        |   4 +
+ init/Kconfig                                  |  13 +
+ kernel/cgroup/Makefile                        |   1 +
+ kernel/cgroup/cpuset-internal.h               | 304 ++++++
+ kernel/cgroup/cpuset-v1.c                     | 562 +++++++++++
+ kernel/cgroup/cpuset.c                        | 908 +-----------------
+ .../selftests/cgroup/test_cpuset_v1_base.sh   |  77 ++
+ 8 files changed, 1013 insertions(+), 859 deletions(-)
+ create mode 100644 kernel/cgroup/cpuset-internal.h
+ create mode 100644 kernel/cgroup/cpuset-v1.c
+ create mode 100755 tools/testing/selftests/cgroup/test_cpuset_v1_base.sh
 
-Drop >
-
-all other comments also apply.
-
-Best regards,
-Krzysztof
+-- 
+2.34.1
 
 
