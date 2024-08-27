@@ -1,112 +1,268 @@
-Return-Path: <linux-kernel+bounces-303672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8E6496136F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:58:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB20996137A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:01:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 959692840C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:58:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EC051F244DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF491C93B9;
-	Tue, 27 Aug 2024 15:57:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92DD11C5792;
-	Tue, 27 Aug 2024 15:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE111C9DC2;
+	Tue, 27 Aug 2024 16:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QSVAmCPv"
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1D91C232B;
+	Tue, 27 Aug 2024 16:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724774278; cv=none; b=HuSyMtOkHf/+xpRNXjda2er4KuP6KCFW3EhY7SoBe5zj3KHgfY8LaKi9N1OelcWV0zEyOsTbolsvdHM6f9Sw4URqa9lVBa1KIICNXtZ+JsmaakoWvAnRVbzRshoooHHLxstN4rycAFEEaK12v5arpAwRfMVaeyjstAsbcKNdaHg=
+	t=1724774449; cv=none; b=DJLkk1stl6Uje/VEj6PY66dSf72kdfs6lduj67eYCamdgI/4PTWXHntL1lldId0IG9ht/E3pP1+ZNEf/XAD8ci7wjywPJlWlS5Nurfy0ZvMh5SDkqLoRLGgEfV3JeezIkR6PCrSgl9THIEiyQX1xV3tv+4y60iCE57MUsoLAaB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724774278; c=relaxed/simple;
-	bh=Hv5EEocGMjGU1RLGkQFcoi/uMmMZh5Os9cCyNijklnY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=omhm4IcFrhm3p7t9ck529+AtbYvpw9m+NmQ3lP9hSl8/9QGzVePEynon47dtE8W/i2P1F2tQGXCNtyOOiIc+oSWQ8yjgy/Wl2YlypgT5AlCtmwjdefbiZGtSc4d2wCRITP32G1HFam8sWaYg+WpbJM0b/WdHUCetn23y8eH+ErA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 211F8DA7;
-	Tue, 27 Aug 2024 08:58:22 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A0B283F762;
-	Tue, 27 Aug 2024 08:57:54 -0700 (PDT)
-Message-ID: <3256d9ce-2c10-4cdd-b4c4-358f2c30a9a3@arm.com>
-Date: Tue, 27 Aug 2024 16:57:48 +0100
+	s=arc-20240116; t=1724774449; c=relaxed/simple;
+	bh=evURTedKlFz4k1JNkwqeMUdQoBnzg2SGga+NmDTOp4M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dqLJkABv2Te6E1+OiEtj/c4wEveAk5zFW+htLZJYxkJ9KKf5uumWExwtXKNqoo5PwJNFTun48QS7eSgJ4VaQTtb5Cr7OJoyoPrrd8V1wO1sAnSBZ0n622fLlhBr327uaIz6jgk2D3pYfode/BlXguWW3iYZ61H5mZA+bReGXLBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QSVAmCPv; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-829e86cb467so81119539f.1;
+        Tue, 27 Aug 2024 09:00:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724774446; x=1725379246; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fKLMWrg6g9OU+cV8ThfWWZDxMIrdaGFl7c8JSKNiFKQ=;
+        b=QSVAmCPvcEgPULzRvd7+eJR0Oj48QCMgsJvGt69+csLUULzL4sN9KX3oS72FpRGfw3
+         wf5TOJhV7m5AEAZ5gpMEl5vEK3qLnHUiwBalMmAY3j34sJE3GlXn+2kQAqq/eDvuw0Aa
+         GhE0XWQlIi5KXPnP9aV7yII65AOwXlJTcr8LHz283mofOrerfka5q17WoSIo9Iy/Ibwy
+         yYI3jup1JYtqe/rRf0601NM906Kwh92lEGmo1R0oVo+mfXWNfQFyD+5OFwRM90c0e02O
+         aJHXecxxuCZmctPUF94Eu2QLEAUCQQsfSoHgbuPQvuLVaXOA5kje0QHtycBbZJSKCHQt
+         ISQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724774446; x=1725379246;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fKLMWrg6g9OU+cV8ThfWWZDxMIrdaGFl7c8JSKNiFKQ=;
+        b=AIq+nS0SXcZMISoVgcZWT8xmneNTMiZ/1dJXUxtu9RjYt2TAFDOa40NGcibOlnQTi2
+         dI+ZYyoatQ2G2LyE7gnuuGwZMYYTGEWa8kyRNPydPwJH2+d3dgykmBpYyX/6ZX/EOO1P
+         ecBhSppseZ9E1bhcbYU3kfEnOALtR6xwVUwaeka/DQ9Dak5zG/Wb7+rKQN2n6++0Ie3X
+         wc054OrQJgjHzJ/IN04SPglbPp1PpHNYK+ng0jxC0hkMSF3GWKHdTCTVnyEMjJ76LrAI
+         WckH69aJWvfp0CnxhQGXx0tUTH07sHaI1Xf5bsQSnBcmL/uNAy/8DZLhgr3ZAcw72fom
+         MxFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvmblVrj1zPWvIOM2F1YL5lOBVu7mPsEcxuOSBWKRJTbGnd3QKrshaLIBDSi/dlmI4IVeamcc5iaOs5kE=@vger.kernel.org, AJvYcCX2CFStguanK6/g7rwWI1ZpAQX8btT0hQ1xegAp1Zll4go2CQOTY1vzpbEUtC40iAAjcEecbYsy@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZl+6GNRslMV2M+1Pu0HNPOlecgOy+r3jZ+3MXSG36ECqnvBTW
+	+ORNkgJBIURy9WV5h0LW88oELC+LauGZcxuqMG7FqriPvBxWR3UtmQZeUdrM9rLPPAgmMHeJMwP
+	HyOaKlt/lbr9aLZlqprCKqqzZ+Kc=
+X-Google-Smtp-Source: AGHT+IEXbBzBotSspCNr329ppunAPqBGFxziRxfGF+s9zT3UuNt8tn9xzLCMG8+eOSmv8TOYSl7rZYAUpWO6AbxuoKU=
+X-Received: by 2002:a05:6602:6421:b0:824:d5ff:6a55 with SMTP id
+ ca18e2360f4ac-829f132a1a3mr381013839f.16.1724774446130; Tue, 27 Aug 2024
+ 09:00:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 06/10] iommu/arm-smmu-v3: Add
- acpi_smmu_acpi_probe_model for impl
-To: Will Deacon <will@kernel.org>, Nicolin Chen <nicolinc@nvidia.com>
-Cc: joro@8bytes.org, jgg@nvidia.com, thierry.reding@gmail.com,
- vdumpa@nvidia.com, jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
- iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-tegra@vger.kernel.org
-References: <cover.1724453781.git.nicolinc@nvidia.com>
- <8a2629bb98cabb1be72b32c120bb5ed0114b21bc.1724453781.git.nicolinc@nvidia.com>
- <20240827130233.GF4772@willie-the-truck>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240827130233.GF4772@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240826124021.2635705-1-linyunsheng@huawei.com> <20240826124021.2635705-8-linyunsheng@huawei.com>
+In-Reply-To: <20240826124021.2635705-8-linyunsheng@huawei.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Tue, 27 Aug 2024 09:00:08 -0700
+Message-ID: <CAKgT0UcD7BqqQiEzuZUh9CEy4=pPHqWHwD5NGNtckk3HFx2DNw@mail.gmail.com>
+Subject: Re: [PATCH net-next v15 07/13] mm: page_frag: some minor refactoring
+ before adding new API
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 27/08/2024 2:02 pm, Will Deacon wrote:
-> On Fri, Aug 23, 2024 at 05:10:40PM -0700, Nicolin Chen wrote:
->> For model-specific implementation, repurpose the acpi_smmu_get_options()
->> to a wider acpi_smmu_acpi_probe_model(). A new model can add to the list
->> in this new function.
->>
->> Suggested-by: Will Deacon <will@kernel.org>
->> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
->> ---
->>   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 18 +++++++++++++-----
->>   1 file changed, 13 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
->> index afdb8a76a72a..ceb31d63f79b 100644
->> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
->> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
->> @@ -4341,18 +4341,28 @@ static int arm_smmu_device_hw_probe(struct arm_smmu_device *smmu)
->>   }
->>   
->>   #ifdef CONFIG_ACPI
->> -static void acpi_smmu_get_options(u32 model, struct arm_smmu_device *smmu)
->> +static int acpi_smmu_iort_probe_model(struct acpi_iort_node *node,
->> +				      struct arm_smmu_device *smmu)
->>   {
->> -	switch (model) {
->> +	struct acpi_iort_smmu_v3 *iort_smmu =
->> +		(struct acpi_iort_smmu_v3 *)node->node_data;
->> +
->> +	switch (iort_smmu->model) {
->>   	case ACPI_IORT_SMMU_V3_CAVIUM_CN99XX:
->>   		smmu->options |= ARM_SMMU_OPT_PAGE0_REGS_ONLY;
->>   		break;
->>   	case ACPI_IORT_SMMU_V3_HISILICON_HI161X:
->>   		smmu->options |= ARM_SMMU_OPT_SKIP_PREFETCH;
->>   		break;
->> +	case ACPI_IORT_SMMU_V3_GENERIC:
->> +		break;
->> +	default:
->> +		dev_err(smmu->dev, "Unknown/unsupported IORT model!\n");
->> +		return -ENXIO;
-> 
-> We probably don't want this 'default' case, otherwise the driver will
-> need to be updated every time there's a new model.
+On Mon, Aug 26, 2024 at 5:46=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.co=
+m> wrote:
+>
+> Refactor common codes from __page_frag_alloc_va_align() to
+> __page_frag_cache_prepare() and __page_frag_cache_commit(),
+> so that the new API can make use of them.
+>
+> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> ---
+>  include/linux/page_frag_cache.h | 51 +++++++++++++++++++++++++++++++--
+>  mm/page_frag_cache.c            | 20 ++++++-------
+>  2 files changed, 59 insertions(+), 12 deletions(-)
+>
+> diff --git a/include/linux/page_frag_cache.h b/include/linux/page_frag_ca=
+che.h
+> index 372d6ed7e20a..2cc18a525936 100644
+> --- a/include/linux/page_frag_cache.h
+> +++ b/include/linux/page_frag_cache.h
+> @@ -7,6 +7,7 @@
+>  #include <linux/build_bug.h>
+>  #include <linux/log2.h>
+>  #include <linux/mm.h>
+> +#include <linux/mmdebug.h>
+>  #include <linux/mm_types_task.h>
+>  #include <linux/types.h>
+>
+> @@ -75,8 +76,54 @@ static inline unsigned int page_frag_cache_page_size(u=
+nsigned long encoded_page)
+>
+>  void page_frag_cache_drain(struct page_frag_cache *nc);
+>  void __page_frag_cache_drain(struct page *page, unsigned int count);
+> -void *__page_frag_alloc_align(struct page_frag_cache *nc, unsigned int f=
+ragsz,
+> -                             gfp_t gfp_mask, unsigned int align_mask);
+> +void *__page_frag_cache_prepare(struct page_frag_cache *nc, unsigned int=
+ fragsz,
+> +                               struct page_frag *pfrag, gfp_t gfp_mask,
+> +                               unsigned int align_mask);
+> +
+> +static inline void __page_frag_cache_commit(struct page_frag_cache *nc,
+> +                                           struct page_frag *pfrag, bool=
+ referenced,
+> +                                           unsigned int used_sz)
+> +{
+> +       if (referenced) {
+> +               VM_BUG_ON(!nc->pagecnt_bias);
+> +               nc->pagecnt_bias--;
+> +       }
+> +
+> +       VM_BUG_ON(used_sz > pfrag->size);
+> +       VM_BUG_ON(pfrag->page !=3D page_frag_encoded_page_ptr(nc->encoded=
+_page));
+> +
+> +       /* nc->offset is not reset when reusing an old page, so do not ch=
+eck for the
+> +        * first fragment.
+> +        * Committed offset might be bigger than the current offset due t=
+o alignment
+> +        */
 
-...although the intent is very strongly that there should never be any 
-new models, because by now hardware should really not be failing to 
-implement SMMU_IIDR correctly. In some ways, having this might help 
-further discourage people from abusing the mechanism and making random 
-stuff up in their firmware :/
+nc->offset should be reset when you are allocating a new page. I would
+suggest making that change as you should be able to verify that the
+fragment you are working with contains the frag you are working with.
+The page and offset should essentially be equal.
 
-Cheers,
-Robin.
+> +       VM_BUG_ON(pfrag->offset && nc->offset > pfrag->offset);
+> +       VM_BUG_ON(pfrag->offset &&
+> +                 pfrag->offset + pfrag->size > page_frag_cache_page_size=
+(nc->encoded_page));
+> +
+> +       pfrag->size =3D used_sz;
+> +
+> +       /* Calculate true size for the fragment due to alignment, nc->off=
+set is not
+> +        * reset for the first fragment when reusing an old page.
+> +        */
+> +       pfrag->size +=3D pfrag->offset ? (pfrag->offset - nc->offset) : 0=
+;
+
+The pfrag->size should be the truesize already. You should have stored
+it as fragsz so that all you really need to do is push the offset
+forward by pfrag->size.
+
+> +
+> +       nc->offset =3D pfrag->offset + used_sz;
+> +}
+> +
+
+I think this function might be better to keep in the .c file versus
+having it in the header file.
+
+...
+
+> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
+> index 228cff9a4cdb..bba59c87d478 100644
+> --- a/mm/page_frag_cache.c
+> +++ b/mm/page_frag_cache.c
+> @@ -67,16 +67,14 @@ void __page_frag_cache_drain(struct page *page, unsig=
+ned int count)
+>  }
+>  EXPORT_SYMBOL(__page_frag_cache_drain);
+>
+> -void *__page_frag_alloc_align(struct page_frag_cache *nc,
+> -                             unsigned int fragsz, gfp_t gfp_mask,
+> -                             unsigned int align_mask)
+> +void *__page_frag_cache_prepare(struct page_frag_cache *nc, unsigned int=
+ fragsz,
+> +                               struct page_frag *pfrag, gfp_t gfp_mask,
+> +                               unsigned int align_mask)
+>  {
+>         unsigned long encoded_page =3D nc->encoded_page;
+>         unsigned int size, offset;
+
+The 3 changes below can all be dropped. They are unnecessary
+optimizations of the unlikely path.
+
+>         struct page *page;
+>
+> -       size =3D page_frag_cache_page_size(encoded_page);
+> -
+>         if (unlikely(!encoded_page)) {
+>  refill:
+>                 page =3D __page_frag_cache_refill(nc, gfp_mask);
+> @@ -94,6 +92,9 @@ void *__page_frag_alloc_align(struct page_frag_cache *n=
+c,
+>                 /* reset page count bias and offset to start of new frag =
+*/
+>                 nc->pagecnt_bias =3D PAGE_FRAG_CACHE_MAX_SIZE + 1;
+>                 nc->offset =3D 0;
+
+Your code above said that offset wasn't reset. But it looks like it is
+reset here isn't it?
+
+> +       } else {
+> +               size =3D page_frag_cache_page_size(encoded_page);
+> +               page =3D page_frag_encoded_page_ptr(encoded_page);
+>         }
+>
+>         offset =3D __ALIGN_KERNEL_MASK(nc->offset, ~align_mask);
+> @@ -111,8 +112,6 @@ void *__page_frag_alloc_align(struct page_frag_cache =
+*nc,
+>                         return NULL;
+>                 }
+>
+> -               page =3D page_frag_encoded_page_ptr(encoded_page);
+> -
+>                 if (!page_ref_sub_and_test(page, nc->pagecnt_bias))
+>                         goto refill;
+>
+
+These 3 changes to move the size and page are unnecessary
+optimization. I would recommend just dropping them and leave the code
+as is as you are just optimizing for unlikely paths.
+
+> @@ -130,12 +129,13 @@ void *__page_frag_alloc_align(struct page_frag_cach=
+e *nc,
+>                 offset =3D 0;
+>         }
+>
+> -       nc->pagecnt_bias--;
+> -       nc->offset =3D offset + fragsz;
+> +       pfrag->page =3D page;
+> +       pfrag->offset =3D offset;
+> +       pfrag->size =3D size - offset;
+
+Why are you subtracting the offset from the size? Shouldn't this just be fr=
+agsz?
+
+>
+>         return page_frag_encoded_page_address(encoded_page) + offset;
+>  }
+> -EXPORT_SYMBOL(__page_frag_alloc_align);
+> +EXPORT_SYMBOL(__page_frag_cache_prepare);
+>
+>  /*
+>   * Frees a page fragment allocated out of either a compound or order 0 p=
+age.
+> --
+> 2.33.0
+>
 
