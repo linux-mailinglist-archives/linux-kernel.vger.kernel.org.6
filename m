@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-303374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FE47960B4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:08:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2489D960B50
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:08:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C22EB22429
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:08:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA84F284314
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:08:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364AB1BDA8A;
-	Tue, 27 Aug 2024 13:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A621BF7FA;
+	Tue, 27 Aug 2024 13:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b4N00M7f"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lCWStOBy"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07971BD013;
-	Tue, 27 Aug 2024 13:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A1B1BDA86;
+	Tue, 27 Aug 2024 13:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724764079; cv=none; b=uMnFgYdQA1jFc3YxqbHMRBv/ebzUKf58LjVovj2vivqubsmDSG1AQCxwVTC/4OTY/FJclx/SgEhy0wvIEfm2tJF2/Y0pRABbKvKXgIa89qkv3MPqn0dGqhGL4gq6fPF+r0etRbLRDLEKq7Q0y10IreBWkl5pPdf18NBm/qCWIjs=
+	t=1724764081; cv=none; b=S28EJxM4LJctoe3x4wS4qDA0qJLTqEyCiSfKv2gNev4wciu5EY1NZ50QAbJjBJ+xxzNcMKaKgXauFki7H9hp3+Ic5TuYSFZwlzZuMfm3NwZ3xNj6XwXwEt9qClhu+Cqfe/Nvn7IKWk3JuSd/GDee0wiw+gV27Gk8zsUf68Upghg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724764079; c=relaxed/simple;
-	bh=CG9df6F+03dKHnVkxP0n+YhDuVOghFDYTIJ+MPKHnM0=;
+	s=arc-20240116; t=1724764081; c=relaxed/simple;
+	bh=BNF7KxV5nkbzub+I8LNYCT9nsHBpi/XN8kK/Yk07yxo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N3U42nl00aexMf6wWt1wxk8yhmZCC4LedknyEsSjEMxAz4VQUNQ5H0ClDvc+6JHVFnPGwAhtD/yvj3SPAkjqJevFWclfmuECRtTuzncREw4ocbx/7S2HUXd1LR1oUpjyJDGznHIVRIIaqZIdD0Z9ZiwnZ4KEHwugsRPZQpU8gSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b4N00M7f; arc=none smtp.client-ip=192.198.163.15
+	 MIME-Version; b=CaPVcTNd6ornKo+cJbTU6qZPUL238HdFPQNp34iFYst3uhMc+hhOI+QsmjKnnYV2qXNrwnCA5b4XyELCr5o66SAGrXdv/o34Xria3ocdY4eWVjE/ajOifHzdc6B1U+drD9Bvue7ZEFBHomnUTdd61AECcvQCRBp0QKZgLHxC7Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lCWStOBy; arc=none smtp.client-ip=192.198.163.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724764077; x=1756300077;
+  t=1724764080; x=1756300080;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=CG9df6F+03dKHnVkxP0n+YhDuVOghFDYTIJ+MPKHnM0=;
-  b=b4N00M7f8L6LtXuYqxULQuO8Ieysfk7ivYqCijS9VxuRNmsRah9qARbj
-   FqOLf9l4kN19y5Xeu5pm12QhZzKJWF+K21C2mPMpEuzMcfeCVLg7FVZjd
-   C4TP/DyoH45yT6sLzUC1MKs81gngqUYmc3dprLNKlhTY40279lZYZlzQc
-   RKb4Ja9Vkg9+q4eWzUMLJYwlK41jvvnyL6FrAv0pi5W9ALziutpM9/yEv
-   uUgYOAamc5KVnm6rKoArBmh8qvI35bLwBbGTyG36y+5WpB6kEqo8DN1Ff
-   5UBL7xKZoNHkKWUSRzPtDztVGs8fOM+49nllLnfentgnaIutbSIR1Yc+u
+  bh=BNF7KxV5nkbzub+I8LNYCT9nsHBpi/XN8kK/Yk07yxo=;
+  b=lCWStOBy7JXLh2bOkS/KrKp64U/poenhEkAV3V58VZJ2Tqt5enmHLWHL
+   lo3ic3zBxS5dZhL0PTCoiTuWqhH5AsBFGYY4ix6I9xRGOl4ipaTLZ8Nhg
+   IPyTB744gUmrN0lanqF8FWMGCFwIk7UeMcxZjH3Ry7/eU+E7IUzT03UzG
+   22XutAG7wL9Y/6ZlQCPISYgQyocI62hnG6B9uThT9fqD3+I8bMD23nuui
+   nUnHY6XBsYkmGos8RY7h4e9kNcjT2xiINKABH7PUbdFQRybP7Y3fHwQT9
+   708nfVXWvJnoG6rW+Qf174j7ZYSdobGM/wa/yW2QmejF2FCZZv9o+A/DF
    w==;
-X-CSE-ConnectionGUID: v0YjE4ttSgK67NEQhpE/7Q==
-X-CSE-MsgGUID: XU394XLfTbG5UNpBfhD6KA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23400490"
+X-CSE-ConnectionGUID: TEUB4LvQRymElUVk5mNn8Q==
+X-CSE-MsgGUID: G10LkpmrRWebMnm0Jfly4A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23400513"
 X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="23400490"
+   d="scan'208";a="23400513"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 06:07:57 -0700
-X-CSE-ConnectionGUID: 2MoZLlhQQVCP/LRPXwO/GQ==
-X-CSE-MsgGUID: bP289pjGRsSCSp7vcl8HNg==
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 06:07:59 -0700
+X-CSE-ConnectionGUID: g686dQhJTiG7+rhUK7l4CQ==
+X-CSE-MsgGUID: 7rnuVrJzTs+ASiCI9FErTA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="67551934"
+   d="scan'208";a="67551945"
 Received: from anmitta2-mobl4.gar.corp.intel.com (HELO yungchua-desk.intel.com) ([10.247.118.39])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 06:07:56 -0700
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 06:07:58 -0700
 From: Bard Liao <yung-chuan.liao@linux.intel.com>
 To: linux-sound@vger.kernel.org,
 	vkoul@kernel.org
@@ -64,9 +64,9 @@ Cc: vinod.koul@linaro.org,
 	linux-kernel@vger.kernel.org,
 	pierre-louis.bossart@linux.intel.com,
 	bard.liao@intel.com
-Subject: [PATCH 01/14] soundwire: mipi_disco: add MIPI-specific property_read_bool() helpers
-Date: Tue, 27 Aug 2024 21:06:54 +0800
-Message-ID: <20240827130707.298477-2-yung-chuan.liao@linux.intel.com>
+Subject: [PATCH 02/14] soundwire: optimize sdw_stream_runtime memory layout
+Date: Tue, 27 Aug 2024 21:06:55 +0800
+Message-ID: <20240827130707.298477-3-yung-chuan.liao@linux.intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240827130707.298477-1-yung-chuan.liao@linux.intel.com>
 References: <20240827130707.298477-1-yung-chuan.liao@linux.intel.com>
@@ -80,167 +80,89 @@ Content-Transfer-Encoding: 8bit
 
 From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-The existing device/fwnode_property_read_bool() helpers only check if
-the property is present.
+pahole suggestion: swap position of 'm_rt_count'
 
-The MIPI DisCo for SoundWire specification allows properties to be
-exposed with a value of 'false'. Using the standard helpers to
-retrieve the MIPI-defined properties causes all kinds of logical
-inversions leading to loss of functionality - such as jack detection
-in clock-stop mode broken when the device properties are read in
-Realtek codec drivers.
+before: pahole -C sdw_stream_runtime drivers/soundwire/soundwire-bus.ko
+struct sdw_stream_runtime {
+	const char  *              name;                 /*     0     8 */
+	struct sdw_stream_params   params;               /*     8    12 */
+	enum sdw_stream_state      state;                /*    20     4 */
+	enum sdw_stream_type       type;                 /*    24     4 */
 
-This patch adds new MIPI/SoundWire helpers which first check if the
-property is present, and then return the actual value extracted from
-platform firmware.
+	/* XXX 4 bytes hole, try to pack */
 
-Modifying the default property handling was considered as a possible
-solution, but it could lead to other types of logical inversions
-breaking 'working' setups. Andy Shevchenko also pointed out that DT
-keeps values in the BE32 format, it's probably best to avoid
-endianness complications.
+	struct list_head           master_list;          /*    32    16 */
+	int                        m_rt_count;           /*    48     4 */
 
-The path of least resistance was chosen, with MIPI-specific helpers
-which can be tested and with no side effects outside of the SoundWire
-subsystem.
+	/* size: 56, cachelines: 1, members: 6 */
+	/* sum members: 48, holes: 1, sum holes: 4 */
+	/* padding: 4 */
+	/* last cacheline: 56 bytes */
+};
 
-Closes: https://github.com/thesofproject/linux/issues/5129
+after: pahole --reorganize -C sdw_stream_runtime drivers/soundwire/soundwire-bus.ko
+struct sdw_stream_runtime {
+	const char  *              name;                 /*     0     8 */
+	struct sdw_stream_params   params;               /*     8    12 */
+	enum sdw_stream_state      state;                /*    20     4 */
+	enum sdw_stream_type       type;                 /*    24     4 */
+	int                        m_rt_count;           /*    28     4 */
+	struct list_head           master_list;          /*    32    16 */
+
+	/* size: 48, cachelines: 1, members: 6 */
+	/* last cacheline: 48 bytes */
+};   /* saved 8 bytes! */
+
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
 ---
- drivers/soundwire/mipi_disco.c | 50 ++++++++++++++++++++++++----------
- 1 file changed, 35 insertions(+), 15 deletions(-)
+ include/linux/soundwire/sdw.h | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/soundwire/mipi_disco.c b/drivers/soundwire/mipi_disco.c
-index e5d9df26d4dc..fdab3d4a1379 100644
---- a/drivers/soundwire/mipi_disco.c
-+++ b/drivers/soundwire/mipi_disco.c
-@@ -23,6 +23,26 @@
- #include <linux/soundwire/sdw.h>
- #include "bus.h"
+diff --git a/include/linux/soundwire/sdw.h b/include/linux/soundwire/sdw.h
+index 5e0dd47a0412..a4fa45132030 100644
+--- a/include/linux/soundwire/sdw.h
++++ b/include/linux/soundwire/sdw.h
+@@ -820,15 +820,15 @@ struct sdw_master_port_ops {
+ struct sdw_msg;
  
-+static bool mipi_fwnode_property_read_bool(const struct fwnode_handle *fwnode,
-+					   const char *propname)
-+{
-+	int ret;
-+	u8 val;
-+
-+	if (!fwnode_property_present(fwnode, propname))
-+		return false;
-+	ret = fwnode_property_read_u8_array(fwnode, propname, &val, 1);
-+	if (ret < 0)
-+		return false;
-+	return !!val;
-+}
-+
-+static bool mipi_device_property_read_bool(const struct device *dev,
-+					   const char *propname)
-+{
-+	return mipi_fwnode_property_read_bool(dev_fwnode(dev), propname);
-+}
-+
  /**
-  * sdw_master_read_prop() - Read Master properties
-  * @bus: SDW bus instance
-@@ -48,11 +68,11 @@ int sdw_master_read_prop(struct sdw_bus *bus)
- 		return -EIO;
- 	}
+- * struct sdw_defer - SDW deffered message
+- * @length: message length
++ * struct sdw_defer - SDW deferred message
+  * @complete: message completion
+  * @msg: SDW message
++ * @length: message length
+  */
+ struct sdw_defer {
++	struct sdw_msg *msg;
+ 	int length;
+ 	struct completion complete;
+-	struct sdw_msg *msg;
+ };
  
--	if (fwnode_property_read_bool(link,
-+	if (mipi_fwnode_property_read_bool(link,
- 				      "mipi-sdw-clock-stop-mode0-supported"))
- 		prop->clk_stop_modes |= BIT(SDW_CLK_STOP_MODE0);
+ /**
+@@ -1010,18 +1010,18 @@ struct sdw_stream_params {
+  * @params: Stream parameters
+  * @state: Current state of the stream
+  * @type: Stream type PCM or PDM
++ * @m_rt_count: Count of Master runtime(s) in this stream
+  * @master_list: List of Master runtime(s) in this stream.
+  * master_list can contain only one m_rt per Master instance
+  * for a stream
+- * @m_rt_count: Count of Master runtime(s) in this stream
+  */
+ struct sdw_stream_runtime {
+ 	const char *name;
+ 	struct sdw_stream_params params;
+ 	enum sdw_stream_state state;
+ 	enum sdw_stream_type type;
+-	struct list_head master_list;
+ 	int m_rt_count;
++	struct list_head master_list;
+ };
  
--	if (fwnode_property_read_bool(link,
-+	if (mipi_fwnode_property_read_bool(link,
- 				      "mipi-sdw-clock-stop-mode1-supported"))
- 		prop->clk_stop_modes |= BIT(SDW_CLK_STOP_MODE1);
- 
-@@ -114,7 +134,7 @@ int sdw_master_read_prop(struct sdw_bus *bus)
- 	fwnode_property_read_u32(link, "mipi-sdw-default-frame-col-size",
- 				 &prop->default_col);
- 
--	prop->dynamic_frame =  fwnode_property_read_bool(link,
-+	prop->dynamic_frame =  mipi_fwnode_property_read_bool(link,
- 			"mipi-sdw-dynamic-frame-shape");
- 
- 	fwnode_property_read_u32(link, "mipi-sdw-command-error-threshold",
-@@ -153,13 +173,13 @@ static int sdw_slave_read_dp0(struct sdw_slave *slave,
- 				dp0->words, dp0->num_words);
- 	}
- 
--	dp0->BRA_flow_controlled = fwnode_property_read_bool(port,
-+	dp0->BRA_flow_controlled = mipi_fwnode_property_read_bool(port,
- 				"mipi-sdw-bra-flow-controlled");
- 
--	dp0->simple_ch_prep_sm = fwnode_property_read_bool(port,
-+	dp0->simple_ch_prep_sm = mipi_fwnode_property_read_bool(port,
- 				"mipi-sdw-simplified-channel-prepare-sm");
- 
--	dp0->imp_def_interrupts = fwnode_property_read_bool(port,
-+	dp0->imp_def_interrupts = mipi_fwnode_property_read_bool(port,
- 				"mipi-sdw-imp-def-dp0-interrupts-supported");
- 
- 	return 0;
-@@ -220,7 +240,7 @@ static int sdw_slave_read_dpn(struct sdw_slave *slave,
- 					 "mipi-sdw-max-grouping-supported",
- 					 &dpn[i].max_grouping);
- 
--		dpn[i].simple_ch_prep_sm = fwnode_property_read_bool(node,
-+		dpn[i].simple_ch_prep_sm = mipi_fwnode_property_read_bool(node,
- 				"mipi-sdw-simplified-channelprepare-sm");
- 
- 		fwnode_property_read_u32(node,
-@@ -278,7 +298,7 @@ static int sdw_slave_read_dpn(struct sdw_slave *slave,
- 		fwnode_property_read_u32(node, "mipi-sdw-max-async-buffer",
- 					 &dpn[i].max_async_buffer);
- 
--		dpn[i].block_pack_mode = fwnode_property_read_bool(node,
-+		dpn[i].block_pack_mode = mipi_fwnode_property_read_bool(node,
- 				"mipi-sdw-block-packing-mode");
- 
- 		fwnode_property_read_u32(node, "mipi-sdw-port-encoding-type",
-@@ -308,19 +328,19 @@ int sdw_slave_read_prop(struct sdw_slave *slave)
- 	device_property_read_u32(dev, "mipi-sdw-sw-interface-revision",
- 				 &prop->mipi_revision);
- 
--	prop->wake_capable = device_property_read_bool(dev,
-+	prop->wake_capable = mipi_device_property_read_bool(dev,
- 				"mipi-sdw-wake-up-unavailable");
- 	prop->wake_capable = !prop->wake_capable;
- 
--	prop->test_mode_capable = device_property_read_bool(dev,
-+	prop->test_mode_capable = mipi_device_property_read_bool(dev,
- 				"mipi-sdw-test-mode-supported");
- 
- 	prop->clk_stop_mode1 = false;
--	if (device_property_read_bool(dev,
-+	if (mipi_device_property_read_bool(dev,
- 				"mipi-sdw-clock-stop-mode1-supported"))
- 		prop->clk_stop_mode1 = true;
- 
--	prop->simple_clk_stop_capable = device_property_read_bool(dev,
-+	prop->simple_clk_stop_capable = mipi_device_property_read_bool(dev,
- 			"mipi-sdw-simplified-clockstopprepare-sm-supported");
- 
- 	device_property_read_u32(dev, "mipi-sdw-clockstopprepare-timeout",
-@@ -333,13 +353,13 @@ int sdw_slave_read_prop(struct sdw_slave *slave)
- 			"mipi-sdw-clockstopprepare-hard-reset-behavior",
- 			&prop->reset_behave);
- 
--	prop->high_PHY_capable = device_property_read_bool(dev,
-+	prop->high_PHY_capable = mipi_device_property_read_bool(dev,
- 			"mipi-sdw-highPHY-capable");
- 
--	prop->paging_support = device_property_read_bool(dev,
-+	prop->paging_support = mipi_device_property_read_bool(dev,
- 			"mipi-sdw-paging-support");
- 
--	prop->bank_delay_support = device_property_read_bool(dev,
-+	prop->bank_delay_support = mipi_device_property_read_bool(dev,
- 			"mipi-sdw-bank-delay-support");
- 
- 	device_property_read_u32(dev,
+ struct sdw_stream_runtime *sdw_alloc_stream(const char *stream_name);
 -- 
 2.43.0
 
