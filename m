@@ -1,159 +1,141 @@
-Return-Path: <linux-kernel+bounces-303396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F3A960B85
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:14:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B42AD960B79
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:13:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04258B25A7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:14:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6EFC1C22A04
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57271C3F24;
-	Tue, 27 Aug 2024 13:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729201BD505;
+	Tue, 27 Aug 2024 13:10:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="kePo+yvf"
-Received: from smtpcmd0987.aruba.it (smtpcmd0987.aruba.it [62.149.156.87])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="We6EHxD7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8881BFE01
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 13:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.156.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3BC1BA875;
+	Tue, 27 Aug 2024 13:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724764350; cv=none; b=tD2IgBRoHXFI6ktsrunOFTKhg2bntpdKhMJjsk1dtTyr8PKPx7v9wkrJQ+Shejl7ESduESd3Ay+//z9srYV6m46fjjMWiT6cY/WAB4UxWeelOiingf5gAcybhyTMcGr52VNX4jwy/pGWRwH2Ko30Uf4/ZinzbXUI/9HDzgRgX+8=
+	t=1724764213; cv=none; b=rOxGaP1oSBKh+S4MXjzDrM3XMhZO2fRzv/01VZrRPl6i52wSaNfLGEliTfjnias1GtHMT9Nc6E2eUUhIZe/K+xE1sLc32GM99p9xe3y6YjXSRWMvWk7zBL8YrcWrXiSPi1YGmOgYlapFKVhQwVavu2hDV6CxjX9iDgukvut3smE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724764350; c=relaxed/simple;
-	bh=FZ9EdpASgQDQw2I7w/OIDjomodkMadaDVqA//AQdHFA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tHTos940h4EUCPk2vDvHNWl011QZZ3h3yttZ7U7gMt7Yt8cBXwWFZtUIl53FdO5C8tXDXCg7qxKGYesQ6Zeqq54RVY4My7IeKl5eTBenidHcEWdlKYjjxPK/jFfGzHDUqyDR25mVPZHUfhkEPyRbdB7234s/QpO33hBt3EoAuGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b=kePo+yvf; arc=none smtp.client-ip=62.149.156.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
-Received: from [192.168.1.58] ([79.0.204.227])
-	by Aruba Outgoing Smtp  with ESMTPSA
-	id ivwhsEWU7cvwVivwisevbv; Tue, 27 Aug 2024 15:09:17 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-	t=1724764157; bh=FZ9EdpASgQDQw2I7w/OIDjomodkMadaDVqA//AQdHFA=;
-	h=Date:MIME-Version:Subject:To:From:Content-Type;
-	b=kePo+yvfR7O0OeidKzu+YE0VwBqglOYHxYZKz2+46VCsnQFlkeuWw/h+cuddvvHsK
-	 dqNFkY+sFcwUWhehKHPE9qVTQmDBXnvrD/ECEDSCDdr6IVr7SkCWXDTDi2nwJlT31f
-	 6yPUEmMkMbeOiP3acSdzi60OojvADiYFeK5N3EOG+XnZgG+aXAsrPsASip+PL3e/Cg
-	 xBq+txbCkKg7O8t81NyUedmSOINMV6aG+ViD9wifxz0afURneGneu7DHt4uwRgTO3t
-	 OAvkcLsrMNm8vCiq+2bsK34oeLc0osXVZnGq3Qujijgj+CyyJmq6wD7aBxlfM/fVSe
-	 newzoBzCuKhfA==
-Message-ID: <801c7a93-667b-4c23-9493-4cbe979847a2@enneenne.com>
-Date: Tue, 27 Aug 2024 15:09:15 +0200
+	s=arc-20240116; t=1724764213; c=relaxed/simple;
+	bh=2huZQ9X3XwSEo8LeL5E6EMGsFsv20dAkqIQdgKsmyfY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UZ4Lnky6fT1/Znx01p5OYo+RbnHGgAhyFOIuQBOL7x9ErZGp8xtK6qmCHFIsoGArqkVAFlIyF3N9r2BpviuEH/2jGxEGwziyS7iOFECCI9EZ0Amc8+iCDv70EcQiEtjkEu1aI2mTC6+g0VCsUamKjXyh1t/vvth3RG+Pxy12s6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=We6EHxD7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92EE9C61047;
+	Tue, 27 Aug 2024 13:10:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724764213;
+	bh=2huZQ9X3XwSEo8LeL5E6EMGsFsv20dAkqIQdgKsmyfY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=We6EHxD7WtHu+7vU4VpLYXWAPrJWszHtp0QDTBeln/dC5Doa9HUg+Uc41tS6mRX+h
+	 x82DeaG92201rsMH7L1vdBFRQgJ28+IHO4Qgt1SGgdXC+mu5ezwybSQhbYCZQ+e94M
+	 apFgl6Y52xqq4vcCOnVMwNjnnfA7301fbuwMlFhY=
+Date: Tue, 27 Aug 2024 15:10:10 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: David Hunter <david.hunter.linux@gmail.com>
+Cc: seanjc@google.com, dave.hansen@linux.intel.com, hpa@zytor.com,
+	javier.carrasco.cruz@gmail.com, jmattson@google.com,
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	lirongqing@baidu.com, pbonzini@redhat.com, pshier@google.com,
+	shuah@kernel.org, stable@vger.kernel.org, x86@kernel.org,
+	Haitao Shan <hshan@google.com>
+Subject: Re: [PATCH 6.1.y 2/2 V2] KVM: x86: Fix lapic timer interrupt lost
+ after loading a snapshot.
+Message-ID: <2024082759-theatrics-sulk-85f2@gregkh>
+References: <ZsSiQkQVSz0DarYC@google.com>
+ <20240826221336.14023-1-david.hunter.linux@gmail.com>
+ <20240826221336.14023-3-david.hunter.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 2/3] Documentation: driver-api: pps: Add Intel Timed
- I/O PPS generator
-To: Greg KH <gregkh@linuxfoundation.org>, subramanian.mohan@intel.com
-Cc: tglx@linutronix.de, corbet@lwn.net, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, andriy.shevchenko@linux.intel.com,
- eddie.dong@intel.com, christopher.s.hall@intel.com, pandith.n@intel.com,
- thejesh.reddy.t.r@intel.com, david.zage@intel.com,
- srinivasan.chinnadurai@intel.com
-References: <20240823070109.27815-1-subramanian.mohan@intel.com>
- <20240823070109.27815-3-subramanian.mohan@intel.com>
- <2024082456-kitchen-astride-7892@gregkh>
-From: Rodolfo Giometti <giometti@enneenne.com>
-Content-Language: en-US
-In-Reply-To: <2024082456-kitchen-astride-7892@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfCxSOsKTWK/QqMUreYQRbcEbpjB4JvIEZ8LKm8HLFEP8QYO+CiHRklqJ6DR+Bi/+50wcfKJjl1w/LffkdK8iVJcfO9jneACUgOkjsZNPW9Y/1lmCMnak
- lUiaT6cmtLnHIztcHDkBib+bb9+blU5PknSq6n+Of/8X3Asw+OtqzMuY/K6xo05CbZ1GgJyuLDyFxt0HAFKMkGMrk0HngzoAFyWlK1XD/RucXSuRFAhiwnW1
- YZrDx6bal/FTcOVsKhMhPhU0mAdrWdy2VrjTq7Dq51IzzFvjMy/rqKL/9qvh47UTFl+RNi3lUi5EU8xzdQAysUsV0ir2LLgdcAzCVQ7GvNDmmwbgGaMSbBJg
- nK99s7tZ+0tnGGC6qrH4kbhv0Vf9ZsOawCKlFrczlnhhJwQtUoiFprXFAPTcifWbt63rr+BwozkgMKgvAgNB13kcpcD/AQqiNHgLPdlYu9p7c8Yc0MXEojA/
- mzQFydziZYO8F/lfZcDAhiJanqp/Q3WX2RRQAzQKrBuJZ0ULEmzywkYG/ETCqXwmWjAVcyp/rGgRKNF2g6A6l8mNpTUMsw5s6X3NUA9Ze8pdg8VFQnHXLa7b
- QGPeunlkJaejwV8YFwceRv16PMqvHKUZ3DjWqBfjJ+EhqHSjIE/Z8+BRsXyzRMhkjDo=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826221336.14023-3-david.hunter.linux@gmail.com>
 
-On 24/08/24 04:21, Greg KH wrote:
-> On Fri, Aug 23, 2024 at 12:31:07PM +0530, subramanian.mohan@intel.com wrote:
->> From: Subramanian Mohan <subramanian.mohan@intel.com>
->>
->> Add Intel Timed I/O PPS usage instructions.
->>
->> Co-developed-by: Pandith N <pandith.n@intel.com>
->> Signed-off-by: Pandith N <pandith.n@intel.com>
->> Signed-off-by: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
->> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->> Acked-by: Rodolfo Giometti <giometti@enneenne.com>
->> Signed-off-by: Subramanian Mohan <subramanian.mohan@intel.com>
->> ---
->>   Documentation/driver-api/pps.rst | 24 ++++++++++++++++++++++++
->>   1 file changed, 24 insertions(+)
->>
->> diff --git a/Documentation/driver-api/pps.rst b/Documentation/driver-api/pps.rst
->> index 78dded03e5d8..75f7b094f963 100644
->> --- a/Documentation/driver-api/pps.rst
->> +++ b/Documentation/driver-api/pps.rst
->> @@ -246,3 +246,27 @@ delay between assert and clear edge as small as possible to reduce system
->>   latencies. But if it is too small slave won't be able to capture clear edge
->>   transition. The default of 30us should be good enough in most situations.
->>   The delay can be selected using 'delay' pps_gen_parport module parameter.
->> +
->> +
->> +Intel Timed I/O PPS signal generator
->> +------------------------------------
->> +
->> +Intel Timed I/O is a high precision device, present on 2019 and newer Intel
->> +CPUs, that can generate PPS signals.
->> +
->> +Timed I/O and system time are both driven by same hardware clock. The signal
->> +is generated with a precision of ~20 nanoseconds. The generated PPS signal
->> +is used to synchronize an external device with system clock. For example,
->> +it can be used to share your clock with a device that receives PPS signal,
->> +generated by Timed I/O device. There are dedicated Timed I/O pins to deliver
->> +the PPS signal to an external device.
->> +
->> +Usage of Intel Timed I/O as PPS generator:
->> +
->> +Start generating PPS signal::
->> +
->> +        $echo 1 > /sys/devices/platform/INTCxxxx\:00/enable
->> +
->> +Stop generating PPS signal::
->> +
->> +        $echo 0 > /sys/devices/platform/INTCxxxx\:00/enable
+On Mon, Aug 26, 2024 at 06:13:36PM -0400, David Hunter wrote:
 > 
-> As I mentioned on the sysfs documentation, why isn't this just a generic
-> pps class attribute instead?  Why did you make it
-> only-this-one-special-driver type of thing?
+> [ Upstream Commit 9cfec6d097c607e36199cf0cfbb8cf5acbd8e9b2]
 
-This is an Original Sin when PPS generators were introduced. :-(
+This is already in the 6.1.66 release, so do you want it applied again?
 
-In 2011 a patch from Alexander Gordeev <lasaine@lvk.cs.msu.su> (which introduced 
-the "parallel port PPS signal generator") was committed in the main kernel.
+> From: Haitao Shan <hshan@google.com>
+> Date:   Tue Sep 12 16:55:45 2023 -0700 
+> 
+> When running android emulator (which is based on QEMU 2.12) on
+> certain Intel hosts with kernel version 6.3-rc1 or above, guest
+> will freeze after loading a snapshot. This is almost 100%
+> reproducible. By default, the android emulator will use snapshot
+> to speed up the next launching of the same android guest. So
+> this breaks the android emulator badly.
+> 
+> I tested QEMU 8.0.4 from Debian 12 with an Ubuntu 22.04 guest by
+> running command "loadvm" after "savevm". The same issue is
+> observed. At the same time, none of our AMD platforms is impacted.
+> More experiments show that loading the KVM module with
+> "enable_apicv=false" can workaround it.
+> 
+> The issue started to show up after commit 8e6ed96cdd50 ("KVM: x86:
+> fire timer when it is migrated and expired, and in oneshot mode").
+> However, as is pointed out by Sean Christopherson, it is introduced
+> by commit 967235d32032 ("KVM: vmx: clear pending interrupts on
+> KVM_SET_LAPIC"). commit 8e6ed96cdd50 ("KVM: x86: fire timer when
+> it is migrated and expired, and in oneshot mode") just makes it
+> easier to hit the issue.
+> 
+> Having both commits, the oneshot lapic timer gets fired immediately
+> inside the KVM_SET_LAPIC call when loading the snapshot. On Intel
+> platforms with APIC virtualization and posted interrupt processing,
+> this eventually leads to setting the corresponding PIR bit. However,
+> the whole PIR bits get cleared later in the same KVM_SET_LAPIC call
+> by apicv_post_state_restore. This leads to timer interrupt lost.
+> 
+> The fix is to move vmx_apicv_post_state_restore to the beginning of
+> the KVM_SET_LAPIC call and rename to vmx_apicv_pre_state_restore.
+> What vmx_apicv_post_state_restore does is actually clearing any
+> former apicv state and this behavior is more suitable to carry out
+> in the beginning.
+> 
+> Fixes: 967235d32032 ("KVM: vmx: clear pending interrupts on KVM_SET_LAPIC")
+> Cc: stable@vger.kernel.org
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Haitao Shan <hshan@google.com>
+> Link: https://lore.kernel.org/r/20230913000215.478387-1-hshan@google.com
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> 
+> (Cherry-Picked from commit 9cfec6d097c607e36199cf0cfbb8cf5acbd8e9b2)
+> Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
+> ---
+>  arch/x86/kvm/vmx/vmx.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 87abf4eebf8a..4040075bbd5a 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -8203,6 +8203,7 @@ static struct kvm_x86_ops vmx_x86_ops __initdata = {
+>  	.load_eoi_exitmap = vmx_load_eoi_exitmap,
+>  	.apicv_pre_state_restore = vmx_apicv_pre_state_restore,
+>  	.check_apicv_inhibit_reasons = vmx_check_apicv_inhibit_reasons,
+> +	.required_apicv_inhibits = VMX_REQUIRED_APICV_INHIBITS,
+>  	.hwapic_irr_update = vmx_hwapic_irr_update,
+>  	.hwapic_isr_update = vmx_hwapic_isr_update,
+>  	.guest_apic_has_interrupt = vmx_guest_apic_has_interrupt,
 
-At the time it was something exotic and doing a PPS generator interface for it 
-was not considered (since it actually has no controlling inputs), but now 
-several Ethernet cards have such PPS generator functionalities, and they are 
-enabled in a per-driver way or via the PTP API.
+Wait, this is just one hunk?  This feels wrong, you didn't say why you
+modfied this from the original commit, or backport, what was wrong with
+that?
 
-This code is a pure PPS generator and it cannot use any other way to enable such 
-functionality than the one above since the PPS layer misses a proper 
-implementation for PPS generator.
+thanks,
 
-If you are willing to stop the inclusion due this fact maybe its time to add 
-such PPS generators interface... on the other hand, if you agree for inclusion 
-we can do this job as soon as the code has been included, in order to fix this 
-anomalous status.
-
-Ciao,
-
-Rodolfo
-
--- 
-GNU/Linux Solutions                  e-mail: giometti@enneenne.com
-Linux Device Driver                          giometti@linux.it
-Embedded Systems                     phone:  +39 349 2432127
-UNIX programming
-
+greg k-h
 
