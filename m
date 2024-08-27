@@ -1,50 +1,64 @@
-Return-Path: <linux-kernel+bounces-302413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 985DF95FE02
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 02:31:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A57695FE07
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 02:41:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C28071C21951
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:31:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD0641F2230C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42BC3523A;
-	Tue, 27 Aug 2024 00:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799B64C83;
+	Tue, 27 Aug 2024 00:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="fC+j5kuJ"
-Received: from pv50p00im-ztdg10021101.me.com (pv50p00im-ztdg10021101.me.com [17.58.6.44])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gqmXZAJb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B977FD
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 00:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6CD7FD;
+	Tue, 27 Aug 2024 00:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724718694; cv=none; b=f0ffeP+rSEICT3uSIexZlvO2KXqUp5VA1oI6CwppN2foAYZrsy10EFUJSjePh2Mhyv2PFXLWhrwoVwahJdfoEuwpzX+cnEgion8mu2aeVY6SNaMB8l8mMp0EbZ6hZ8V09FEsudX2IU+8B1YLBSRlzvm5TZjxpo+5PHZBJiKRYE4=
+	t=1724719287; cv=none; b=JzBl/59Pq+J+lfh/5UTEQ3fjrLbG6zSgpyrHuspN4inTmtFJ3yZ43ywGt4NXnONE4Jv5dNxjEilw2dlCJoerRTIOYMXfWF4YgTQ09gB/0TWS74Qi/Vs04JgeTUDZZDFH9k7zn5ebntfOZj3HYqfwxA4LW6GdCqQig3m6+ezxuSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724718694; c=relaxed/simple;
-	bh=4VIDHqRXh3PESI2LCOsW2DIpa0VAkMNyrz55gYWykF4=;
+	s=arc-20240116; t=1724719287; c=relaxed/simple;
+	bh=FtiZIXTnx8W3ur7htDZPrgO9irIpW2/Llct8hHGHFcM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gq0DOLwFoR7wDgyPZytWzRprSXfwMPOZn6xhp0buW1uVNLSMlHJF2Cy3BF2b1g8D/LYlaobwnqfjrUutwkZsv3PpBpV6dubucDVnc4+TOjHHcWClxL3qAhL9DhfpUq53zSP2KYOQvoLGT2J2M33EcwXx8MQv3wSOH1qfT6jddO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=fC+j5kuJ; arc=none smtp.client-ip=17.58.6.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1724718692;
-	bh=R/Gak0ae/0miDysKWUlT3iOsg97pfNCUk+k54qa5SlU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=fC+j5kuJ2vwr35j/O0gOUXlrL7qDQrGketa1fJ4UxmW3eIuimR04Q93yUOtk7mdKA
-	 6Vk0u8I0+qbJYifKi0Wkc5mRwqULDMe8DeDcVoI6vzqDEOv8BlVXN+QlEWHUPoLBCA
-	 FATgc6bRjjesJ0QNRMvaAP91wJBD/MrF4bOit/7FZF8ap91GvboaBRtsEaVXkcMfhr
-	 ng17QVqOeKqE8Vn/s097dVQ+S8RFZZzoHkDsAl2GqUzeZYKy+ecfYlnvR47KFkFxHd
-	 ZeDeYYY2p7dWIVETafmDe2CkNFac77osYt6UOpAn2lqEM0bT2Pxeh+jDCfTALG314b
-	 I9Lg4rgMwecug==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10021101.me.com (Postfix) with ESMTPSA id 54B42D002A4;
-	Tue, 27 Aug 2024 00:31:21 +0000 (UTC)
-Message-ID: <a5e921a1-1ceb-4b58-af02-17eed131c24a@icloud.com>
-Date: Tue, 27 Aug 2024 08:31:17 +0800
+	 In-Reply-To:Content-Type; b=h6kVJk/zfQIm5F2tR2tGepfmX1P43cKdjmZ7uGccH0USefqWkTpJomRrUNL5781i0o65x4E1ZpXuVJE/CckjgiyzVlyH8nW2uh18+e0Je2vP08tun4IuVIC12zQMj+32Bf+xJ5rEm+dtNm4BGj9QmIGr3M51kv4Yhfjiekqv7o4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gqmXZAJb; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724719286; x=1756255286;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=FtiZIXTnx8W3ur7htDZPrgO9irIpW2/Llct8hHGHFcM=;
+  b=gqmXZAJbNxNX09Dlc0BG5IewgDgG6yi0o/LpZXxVcAAKzo0NnS1UJ/0T
+   sJGWDKuB9dKCFfwh7u4WjdBTKm4SsTPwpz2MgYOhPUdpFCLSa13I6Y/tb
+   OITCxM1o8oWdF25PPAYgw5ZUQuRvJSj/M8OGOvh9oI0X/7uAHQDUVnCth
+   uHVnmwpSNYsu/tYAAmvWbaFkODbKcRa5shkwyDgXaBOfoysBEfAJpiKzc
+   gF5Jg3OOjvvu1MjtozK/AAw/LyCqcmyLFAytJdIRQQogcBrNeaivJZkXY
+   F/gQPumb2pbKzXYnqZVqJIpE7CeQ3rFq0x5BAR1fzSfdeGD3F2rC8pS47
+   Q==;
+X-CSE-ConnectionGUID: COklUwzBSIC7gcQIatV3XQ==
+X-CSE-MsgGUID: bdmWSPH3RPuXCPEzOKtQGQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23353643"
+X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
+   d="scan'208";a="23353643"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 17:41:25 -0700
+X-CSE-ConnectionGUID: +D1UxytOQv6r6VJn28XUeQ==
+X-CSE-MsgGUID: Uqfs88qySn6MXYcBif9VEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
+   d="scan'208";a="66834875"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 17:41:22 -0700
+Message-ID: <38cf9a8f-97cb-41a4-aac2-4c9f61a90dd7@linux.intel.com>
+Date: Tue, 27 Aug 2024 08:41:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,139 +66,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] cxl/region: Find free cxl decoder by
- device_for_each_child()
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Davidlohr Bueso
- <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Takashi Sakamoto <o-takashi@sakamocchi.jp>, Timur Tabi <timur@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
- netdev@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20240824-const_dfc_prepare-v3-0-32127ea32bba@quicinc.com>
- <20240824-const_dfc_prepare-v3-2-32127ea32bba@quicinc.com>
+Subject: Re: [Patch v5 06/18] x86: pmu: Add asserts to warn inconsistent fixed
+ events and counters
+To: Jim Mattson <jmattson@google.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Mingwei Zhang <mizhang@google.com>,
+ Xiong Zhang <xiong.y.zhang@intel.com>, Zhenyu Wang
+ <zhenyuw@linux.intel.com>, Like Xu <like.xu.linux@gmail.com>,
+ Jinrong Liang <cloudliang@tencent.com>, Dapeng Mi <dapeng1.mi@intel.com>
+References: <20240703095712.64202-1-dapeng1.mi@linux.intel.com>
+ <20240703095712.64202-7-dapeng1.mi@linux.intel.com>
+ <CALMp9eSEuA70itad7oQUo=Ak6MVJYLo4kG4zJwEXkiUG6MgdnA@mail.gmail.com>
+ <cea61aab-3feb-4008-adb9-2f2645589714@linux.intel.com>
+ <CALMp9eT2pc0qDaySuyNcHr5+tO4gfvrqmYo=a3Ay-0=rfhiksg@mail.gmail.com>
 Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <20240824-const_dfc_prepare-v3-2-32127ea32bba@quicinc.com>
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <CALMp9eT2pc0qDaySuyNcHr5+tO4gfvrqmYo=a3Ay-0=rfhiksg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: THkkK4MD2_XG40znL9Tnka8Q45xPxWZw
-X-Proofpoint-ORIG-GUID: THkkK4MD2_XG40znL9Tnka8Q45xPxWZw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-26_18,2024-08-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 spamscore=0
- mlxlogscore=999 clxscore=1015 bulkscore=0 suspectscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2408270002
+Content-Transfer-Encoding: 8bit
 
-On 2024/8/24 17:07, Zijun Hu wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
-> 
-> To prepare for constifying the following old driver core API:
-> 
-> struct device *device_find_child(struct device *dev, void *data,
-> 		int (*match)(struct device *dev, void *data));
-> to new:
-> struct device *device_find_child(struct device *dev, const void *data,
-> 		int (*match)(struct device *dev, const void *data));
-> 
-> The new API does not allow its match function (*match)() to modify
-> caller's match data @*data, but match_free_decoder() as the old API's
-> match function indeed modifies relevant match data, so it is not suitable
-> for the new API any more, solved by using device_for_each_child() to
-> implement relevant finding free cxl decoder function.
-> 
-> Suggested-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> ---
->  drivers/cxl/core/region.c | 30 ++++++++++++++++++++++++------
->  1 file changed, 24 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 21ad5f242875..c2068e90bf2f 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -794,10 +794,15 @@ static size_t show_targetN(struct cxl_region *cxlr, char *buf, int pos)
->  	return rc;
->  }
->  
-> +struct cxld_match_data {
-> +	int id;
-> +	struct device *target_device;
-> +};
-> +
->  static int match_free_decoder(struct device *dev, void *data)
->  {
-> +	struct cxld_match_data *match_data = data;
->  	struct cxl_decoder *cxld;
-> -	int *id = data;
->  
->  	if (!is_switch_decoder(dev))
->  		return 0;
-> @@ -805,17 +810,31 @@ static int match_free_decoder(struct device *dev, void *data)
->  	cxld = to_cxl_decoder(dev);
->  
->  	/* enforce ordered allocation */
-> -	if (cxld->id != *id)
-> +	if (cxld->id != match_data->id)
->  		return 0;
->  
-> -	if (!cxld->region)
-> +	if (!cxld->region) {
-> +		match_data->target_device = get_device(dev);
 
-get_device() must != NULL since @dev != NULL for the function parameter
-of both device_for_each_child() and device_find_child().
+On 8/27/2024 2:36 AM, Jim Mattson wrote:
+> On Sun, Aug 25, 2024 at 11:56 PM Mi, Dapeng <dapeng1.mi@linux.intel.com> wrote:
+>>
+>> On 8/23/2024 2:22 AM, Jim Mattson wrote:
+>>> On Tue, Jul 2, 2024 at 7:12 PM Dapeng Mi <dapeng1.mi@linux.intel.com> wrote:
+>>>> Current PMU code deosn't check whether PMU fixed counter number is
+>>>> larger than pre-defined fixed events. If so, it would cause memory
+>>>> access out of range.
+>>>>
+>>>> So add assert to warn this invalid case.
+>>>>
+>>>> Reviewed-by: Mingwei Zhang <mizhang@google.com>
+>>>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>>>> ---
+>>>>  x86/pmu.c | 10 ++++++++--
+>>>>  1 file changed, 8 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/x86/pmu.c b/x86/pmu.c
+>>>> index b4de2680..3e0bf3a2 100644
+>>>> --- a/x86/pmu.c
+>>>> +++ b/x86/pmu.c
+>>>> @@ -113,8 +113,12 @@ static struct pmu_event* get_counter_event(pmu_counter_t *cnt)
+>>>>                 for (i = 0; i < gp_events_size; i++)
+>>>>                         if (gp_events[i].unit_sel == (cnt->config & 0xffff))
+>>>>                                 return &gp_events[i];
+>>>> -       } else
+>>>> -               return &fixed_events[cnt->ctr - MSR_CORE_PERF_FIXED_CTR0];
+>>>> +       } else {
+>>>> +               unsigned int idx = cnt->ctr - MSR_CORE_PERF_FIXED_CTR0;
+>>>> +
+>>>> +               assert(idx < ARRAY_SIZE(fixed_events));
+>>> Won't this assertion result in a failure on bare metal, for CPUs
+>>> supporting fixed counter 3?
+>> Yes, this is intended use. Currently KVM vPMU still doesn't support fixed
+>> counter 3. If it's supported in KVM vPMU one day but forget to add
+>> corresponding support in this pmu test, this assert would remind this.
+> These tests are supposed to run (and pass) on bare metal. Hence, they
+> should not be dependent on a non-architectural quirk of the KVM
+> implementation.
+>
+> Perhaps a warning would serve as a reminder?
 
-so this change's logic is same as previous existing logic.
+Sounds reasonable. Would change to a warning. Thanks.
 
->  		return 1;
-> +	}
->  
-> -	(*id)++;
-> +	match_data->id++;
->  
->  	return 0;
->  }
->  
-> +/* NOTE: need to drop the reference with put_device() after use. */
-> +static struct device *find_free_decoder(struct device *parent)
-> +{
-> +	struct cxld_match_data match_data = {
-> +		.id = 0,
-> +		.target_device = NULL,
-> +	};
-> +
-> +	device_for_each_child(parent, &match_data, match_free_decoder);
-> +	return match_data.target_device;
-> +}
-> +
->  static int match_auto_decoder(struct device *dev, void *data)
->  {
->  	struct cxl_region_params *p = data;
-> @@ -840,7 +859,6 @@ cxl_region_find_decoder(struct cxl_port *port,
->  			struct cxl_region *cxlr)
->  {
->  	struct device *dev;
-> -	int id = 0;
->  
->  	if (port == cxled_to_port(cxled))
->  		return &cxled->cxld;
-> @@ -849,7 +867,7 @@ cxl_region_find_decoder(struct cxl_port *port,
->  		dev = device_find_child(&port->dev, &cxlr->params,
->  					match_auto_decoder);
->  	else
-> -		dev = device_find_child(&port->dev, &id, match_free_decoder);
-> +		dev = find_free_decoder(&port->dev);
->  	if (!dev)
->  		return NULL;
->  	/*
-> 
 
+>
+>>>> +               return &fixed_events[idx];
+>>>> +       }
+>>>>
+>>>>         return (void*)0;
+>>>>  }
+>>>> @@ -740,6 +744,8 @@ int main(int ac, char **av)
+>>>>         printf("Fixed counters:      %d\n", pmu.nr_fixed_counters);
+>>>>         printf("Fixed counter width: %d\n", pmu.fixed_counter_width);
+>>>>
+>>>> +       assert(pmu.nr_fixed_counters <= ARRAY_SIZE(fixed_events));
+>>>> +
+>>> And this one as well?
+>>>
+>>>>         apic_write(APIC_LVTPC, PMI_VECTOR);
+>>>>
+>>>>         check_counters();
+>>>> --
+>>>> 2.40.1
+>>>>
 
