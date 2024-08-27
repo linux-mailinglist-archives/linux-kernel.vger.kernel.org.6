@@ -1,145 +1,82 @@
-Return-Path: <linux-kernel+bounces-302837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23DD8960405
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:09:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 220C59603E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D65D92838AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:09:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EF27B22607
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44368189917;
-	Tue, 27 Aug 2024 08:08:32 +0000 (UTC)
-Received: from out198-6.us.a.mail.aliyun.com (out198-6.us.a.mail.aliyun.com [47.90.198.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C5718BC2D;
+	Tue, 27 Aug 2024 08:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="TORGCs/7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CDB1EA90;
-	Tue, 27 Aug 2024 08:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B951158D79;
+	Tue, 27 Aug 2024 08:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724746111; cv=none; b=k4NK51SXoEMXJYJyEdg3yN43Sma9vNsDkkSCw4l8icR7XSG/iV6SciB3S0ToFE0zfSri/AQF0wYsVg1uVtbAuamRoM+SVIeGZOLPcs7108xhH2fnlxlaZ9F1LS11pJ5ngw/amkC37+j2XOU7qzAiO0tzkp9M1pDsmVnWZI2ccGk=
+	t=1724745822; cv=none; b=aRBa4b+e9E8xi7PZsTUhAbPJAWjc7QNeqMrXC6drNqZY18CT080ZRYn6sZkGNTR367SA3qdbez58fwr6uwOYBnNe+b/6GhbYhyEu6NrqGhblgo0++OGuTCESOV67Hi9mVFQ3YxG29DKwEyyWfC8ZOslbhf23JxWdWQkWKfXM5+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724746111; c=relaxed/simple;
-	bh=gTFTfF6n925J8myKa6tcmyHBgVTz3ksgT5RIHT1Cu84=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HazDfsrbZ/sTet9hlm7j2kV4SPBBpOaat3bXJR+jHW1C/qLVMwheJzNLSu8Bp7m4zML/7d7RUsbq8bZ6sv08TFTcitu28hPs9DOAAwH4S0OrP3zEUBPqT/QcUyajf72AMvpziY6XXDTPbGBTMR1nvElasy6WkWJPzQNVIUpE5D0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com; spf=pass smtp.mailfrom=awinic.com; arc=none smtp.client-ip=47.90.198.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=awinic.com
-Received: from awinic..(mailfrom:wangshuaijie@awinic.com fp:SMTPD_---.Z3WL9h-_1724745762)
-          by smtp.aliyun-inc.com;
-          Tue, 27 Aug 2024 16:02:44 +0800
-From: wangshuaijie@awinic.com
-To: jic23@kernel.org,
-	lars@metafoo.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	kees@kernel.org,
-	gustavoars@kernel.org,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Cc: wangshuaijie@awinic.com,
-	liweilei@awinic.com,
-	kangjiajun@awinic.com,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH V9 1/2] dt-bindings: iio: aw96103: Add bindings for aw96103/aw96105 sensor
-Date: Tue, 27 Aug 2024 08:02:28 +0000
-Message-ID: <20240827080229.1431784-2-wangshuaijie@awinic.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20240827080229.1431784-1-wangshuaijie@awinic.com>
-References: <20240827080229.1431784-1-wangshuaijie@awinic.com>
+	s=arc-20240116; t=1724745822; c=relaxed/simple;
+	bh=Uzmm5ymz9Kdo8U5i2J3vApJuNWGqBvcBgCCp8LWSRoY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t/KzGZQNmLwux6u3PiYOMEJv3XoG/RDHTxO/w8KxOL3gZS63/xrjrwefWnxcztOnauUG82ZGXfDjbx+eVt/9jj+ncmrLnpQTo08nKGubi19NhJDkRsCoY37hyASWdLEzXer11a0BVn5k7jOizn/K2hZuw5mjU1YAGqduM9C2KlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=TORGCs/7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63334C8B7A1;
+	Tue, 27 Aug 2024 08:03:40 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="TORGCs/7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1724745819;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Uzmm5ymz9Kdo8U5i2J3vApJuNWGqBvcBgCCp8LWSRoY=;
+	b=TORGCs/7gC4HKVFIs54oJJTrqMS5kY0+3ykih9Z6ThQoVZ/vsLyrzOfeVn51GHXKBfwtZ6
+	RiqDIBoNb31ZAgvJXn8l41ee5CELTUFr+Z73k3I/SEWAyJsyL6vaP2Hs4QqHw88LtYnJby
+	synNMhSoaRx1O1AKVH96EVx8KYIEMkE=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 4fa0e2f2 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Tue, 27 Aug 2024 08:03:38 +0000 (UTC)
+Date: Tue, 27 Aug 2024 10:03:32 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Theodore Ts'o <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
+	Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH 4/4] random: vDSO: don't use 64 bits atomics on 32 bits
+ architectures
+Message-ID: <Zs2IVIQwZ-8fQGZ4@zx2c4.com>
+References: <cover.1724743492.git.christophe.leroy@csgroup.eu>
+ <30806cb8d7e0b95dcfb9f81a4583759faa1d8f31.1724743492.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <30806cb8d7e0b95dcfb9f81a4583759faa1d8f31.1724743492.git.christophe.leroy@csgroup.eu>
 
-From: shuaijie wang <wangshuaijie@awinic.com>
+On Tue, Aug 27, 2024 at 09:31:50AM +0200, Christophe Leroy wrote:
+> Performing SMP atomic operations on u64 fails on powerpc32:
 
-Add device tree bindings for aw96103/aw96105 proximity sensor.
+Thanks for this, and nice catch on the vDSO side checking on big endian.
+I've applied this, fixing up the commit message and the comment,
+maintaining the reverse christmas tree in getrandom.c, and adding tglx's
+suggested-by tag.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: shuaijie wang <wangshuaijie@awinic.com>
----
- .../iio/proximity/awinic,aw96103.yaml         | 61 +++++++++++++++++++
- 1 file changed, 61 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/proximity/awinic,aw96103.yaml
-
-diff --git a/Documentation/devicetree/bindings/iio/proximity/awinic,aw96103.yaml b/Documentation/devicetree/bindings/iio/proximity/awinic,aw96103.yaml
-new file mode 100644
-index 000000000000..7a83ceced11c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/proximity/awinic,aw96103.yaml
-@@ -0,0 +1,61 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/iio/proximity/awinic,aw96103.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Awinic's AW96103 capacitive proximity sensor and similar
-+
-+maintainers:
-+  - Wang Shuaijie <wangshuaijie@awinic.com>
-+
-+description: |
-+  Awinic's AW96103/AW96105 proximity sensor.
-+  The specific absorption rate (SAR) is a metric that measures
-+  the degree of absorption of electromagnetic radiation emitted by
-+  wireless devices, such as mobile phones and tablets, by human tissue.
-+  In mobile phone applications, the proximity sensor is primarily
-+  used to detect the proximity of the human body to the phone. When the
-+  phone approaches the human body, it will actively reduce the transmit
-+  power of the antenna to keep the SAR within a safe range. Therefore,
-+  we also refer to the proximity sensor as a SAR sensor.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - awinic,aw96103
-+      - awinic,aw96105
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    description:
-+      Generated by the device to announce that a close/far
-+      proximity event has happened.
-+    maxItems: 1
-+
-+  vcc-supply: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - vcc-supply
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        proximity@12 {
-+            compatible = "awinic,aw96103";
-+            reg = <0x12>;
-+            interrupt-parent = <&gpio>;
-+            interrupts = <23 IRQ_TYPE_EDGE_FALLING>;
-+            vcc-supply = <&pp1800_prox>;
-+        };
-+    };
--- 
-2.45.1
-
+Jason
 
