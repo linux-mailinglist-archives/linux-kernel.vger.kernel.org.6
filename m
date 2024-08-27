@@ -1,176 +1,122 @@
-Return-Path: <linux-kernel+bounces-304031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07FEF9618E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 22:57:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B3659618EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:01:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B30A91F250BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:57:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6C9C283C62
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6EF1D362C;
-	Tue, 27 Aug 2024 20:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D381D3634;
+	Tue, 27 Aug 2024 21:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iw6KriBK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VPFQVQOG"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4849156C5E;
-	Tue, 27 Aug 2024 20:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5DF197A7A;
+	Tue, 27 Aug 2024 21:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724792263; cv=none; b=obydQ6xewHaVUWS9GviUl6jgOoG+cYFfr5PAD2arV4M0QS+xkGAWYoyJoKv9+8HCH3kLA2tOWPM4f1diINJ9sRXeH1hkjoi+Ik61QKPtSTb+iv/GkS9ZfbEXbjf9tm6x3DIfPr0y+IbrPo1SgdC9YfSvfPS4sNXqZbBtfG2Vzbk=
+	t=1724792486; cv=none; b=mzuGwofE2s/Ps3Wfs6fDRQQSyTLfGkWu/Rta3/GCcokndqxK72woD1KHSUWPdJJov0qPAGCQassOEWojfnwQhheEi1pOPPUt6ppqKunhj9PjKqAWbwmA0n8/OELFNcvgh+H7a4f4cAk5G23QBI3Vw+V2bQk1dgqWEnC/EPyQvCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724792263; c=relaxed/simple;
-	bh=yNq+UV5QXdzpPG/cCfNH7K6qA+YGYMwalmuc/EvXlaI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fm9RWc+FkCK20BfAI3nYXhPm9/sJ37GdDqdRO2/v7NKV0TGNv6LyR2K2ljJKdLf79GT3AgcmIVf4X43ONin5zexDq/F86cULuqz7Ebx/XRUk2g3fozqVFHFejNzwHd37V8IJzNfZzWdyyMjZUX1dxh+GgqHq9sqbJluPieXJ5As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iw6KriBK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57CB1C32786;
-	Tue, 27 Aug 2024 20:57:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724792263;
-	bh=yNq+UV5QXdzpPG/cCfNH7K6qA+YGYMwalmuc/EvXlaI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Iw6KriBK2UVm/GDFK1L0lUCUwxNQcXM0/uWyqJ+9SY4fJVcw61H2kFlwLYPPCQ9tl
-	 mXzpn7c7APzWCzsdU47ArpmpmtdBb75g/L+v66mPPBy+TMQHlf72hEhfnLwrej83JC
-	 jP8krL+/oFaMBovp47t/Z7rEOWJD1w2TL+ewk78A0kDBET1gGw7ts8o9wvdUk3VOvw
-	 5YDzpq+46LtpX1OxNWqgoiCQlSrialSHKqo/8llgm3Ja+68eO7gl0qui9sywLFrr5Z
-	 ZHOLjZhMDEBwxDapAbDuQE7QTRvJTV6YvD/NRTAJIsZkq4h5kuKOS8qFNjPUEu6bDb
-	 4cXW9zxoqdcxA==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5343eeb4973so6144056e87.2;
-        Tue, 27 Aug 2024 13:57:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVKOrRSgOqQFB4VYUd7bKX/rU/WFkHXQHzvBTVA9s+muutK8Sk6UkaFEnwXXXWoSFlBD3llfFMEdGYRJ8pf@vger.kernel.org, AJvYcCWV3KoP8hagk34HY+TWsKm9HWN/HgAzaWugXNxhVxUh8E/HZeXPXCSmZbdAes3VwTaq7udgD4A/Kd7o@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiI9UIqGH9jlFz8Ur2ETwN+P/7Dcw5Cn8ijYSKD8VR3xv+PxB8
-	zH+QhIRRZJOJ0R0WRYuWolZX03t7GMcEuqnRH4LLhGqcZnpuaqTPyRqmXzhlBs7Uve9zVm1K3vE
-	9HaxgIrZdPmyQZDwij7HaQEgg0g==
-X-Google-Smtp-Source: AGHT+IGAtcL/w3n9cuEBlninSQcAue9QLhZV/y4afpmNCuFpGUB9BZV/wPoyUiE7ooIU6Y4Wv+NggU8fdP9Pppnmu2A=
-X-Received: by 2002:a05:6512:3e19:b0:532:fb9e:a175 with SMTP id
- 2adb3069b0e04-5343883d5e7mr15565231e87.6.1724792261652; Tue, 27 Aug 2024
- 13:57:41 -0700 (PDT)
+	s=arc-20240116; t=1724792486; c=relaxed/simple;
+	bh=usWNg3YCPNSMfYd3cIsqzqUm/OvMLGLPE61i3N326PM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BwFMZylZPFlH+u6EJZddaqKGufoRW8bnXIBB6M/dVViJmiP1p4YCzZpwtLJes2pH61XetquKMfsfXg3IQuaVXQHeKroWLkKh4/FrzooiUTZ9+eMisQ0mTA/l8odWj5Bz0mInQB7/H9AIquZWHPziQXTbuP7qfnHdx4qXFLliZws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VPFQVQOG; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c09fd20eddso3117657a12.3;
+        Tue, 27 Aug 2024 14:01:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724792482; x=1725397282; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6mF59s4e9GQ30bjpcbJxfb6SjZW26Gx1uj0s1ti4M5I=;
+        b=VPFQVQOGRgo0lqaHe7w6cohYsKHnrOLy/QslfFaLPSwfH4va05UsyCd1Pr+IujD7W/
+         sFTVs8tQ8/ha4df8QBIIJ+RmYrEedF0mSnw216+P0UPMe/dkI+kWUZ5dPDK4nxh+zinv
+         8rl0DNitPQjYpb+9VUnEUVjLkMceykJo7488gEqBTvAkmK7SMXhw7e1YkODHTAQc/Avd
+         LU5TWA2VSmSF8m4hpxsnYQ0C/wxQWcUCtWmo5/WFW0FgKLE4GEHzVjuyyJ2wlYXzcNik
+         RWHwh6OI90OIoEaYXBrijzaO7zXTp/XTDaW1ct5Qh1osFbnnXqIMb6RO/NvaiOT5pXzw
+         xI5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724792482; x=1725397282;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6mF59s4e9GQ30bjpcbJxfb6SjZW26Gx1uj0s1ti4M5I=;
+        b=Iuo7sO0W1S4Vh/FxF6zLgVVM1drjqalzQ96M221oE/qGAV84I9Zg6GJQHpvjzszW4s
+         oRVUMYHbT2A7yzMBeFETKFmM2vEoZfF3Fbf/K3Xm5oj9Q1cile31ArXasmQPsalc0YNO
+         NSa6lAZdGNENypcxgGgPsU1e+iJaI0QyblrU017VJgY3PDby1YemuRMMH+oVMGSRP258
+         SL5w9i4CyOio//nS/SQfkwISCtRUIpyqC3S3XwbR0u+z9lgzx5ob0OG+MtAiC6BI6CBv
+         j2lx5mKbgFwzI1QCjGGAtoF2J9xjLd/JdKiUSCBSOXA2OLMT3DKStpRIIjn72/Ysqr5b
+         dBUA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwEbXYnImssNQjQbe1bsYaWmYVqUAP8r9kdu+rqV72+07c9czrqXISzU39IQZ2+vwQJsViZYDBFJID/NU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXm4UIN/8wm/M4I1cXLSMrTiS1Hll9Szndj1FTCrRYbfI5BLK9
+	/R1/m4lZjGR+8Y6f91kA6mrgJjJVRJrQ/Mg2TVBf1chwhY0bay0/hr0EofuQfrA=
+X-Google-Smtp-Source: AGHT+IHeAYIq8ZK2b9C5inDMUKXAqiguCU5CEk35GI/I03s053vBBofOZLle6SADgKilXe/GFeohOA==
+X-Received: by 2002:a05:6402:1ecb:b0:5bf:8f3:7869 with SMTP id 4fb4d7f45d1cf-5c0ba2b8b7emr2727653a12.21.1724792481486;
+        Tue, 27 Aug 2024 14:01:21 -0700 (PDT)
+Received: from cleve-worktop. (85-193-33-82.rib.o2.cz. [85.193.33.82])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb1c3114sm1405835a12.13.2024.08.27.14.01.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 14:01:21 -0700 (PDT)
+From: =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
+Subject: [PATCH v2 0/3] Fix regulators and assign them on NanoPi NEO Plus2
+Date: Tue, 27 Aug 2024 23:00:42 +0200
+Message-Id: <20240827-nanopi-neo-plus2-regfix-v2-0-497684ec82c7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240826124802.1552738-1-masahiroy@kernel.org>
- <20240827155158.GA3940418-robh@kernel.org> <CAK7LNARAr9r6pzFzONQnNfFsbFFf_NpE39HBdmVHMBEGe1-nfQ@mail.gmail.com>
-In-Reply-To: <CAK7LNARAr9r6pzFzONQnNfFsbFFf_NpE39HBdmVHMBEGe1-nfQ@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 27 Aug 2024 15:57:29 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKRkMBMP6Bjm-_R7aRb5or_hTefi0CovFjBk0Z-OMLVkQ@mail.gmail.com>
-Message-ID: <CAL_JsqKRkMBMP6Bjm-_R7aRb5or_hTefi0CovFjBk0Z-OMLVkQ@mail.gmail.com>
-Subject: Re: [PATCH] of: move empty_root and unittest data DTBs to
- .init.rodata section
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAHo+zmYC/03MQQqDMBCF4auUWXeKCVFLV71H6WKMEx3QJCStF
+ MS7N9ZNl/+D962QOQlnuJ1WSLxIluBL6PMJ7Eh+YJS+NOhKm+qqW/TkQxT0HDBO76wx8eDkg11
+ TKdVYVtoSlHdMXOaf/HiWdinM+BoT079nsDO43w+2qAcaJexwxkWhwtbWru3JmJrcfZhJposNM
+ 2zbF65nCeW/AAAA
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724792480; l=806;
+ i=cleverline1mc@gmail.com; s=20240824; h=from:subject:message-id;
+ bh=usWNg3YCPNSMfYd3cIsqzqUm/OvMLGLPE61i3N326PM=;
+ b=zxoLESLLq24R3sH7xZvnxDTPC8MqEWSAzHNx/zAj1mXEbGLtRE4nQnz+MmEA4+ixlxw333hPa
+ WI+S+UoeoChC7utoYf9tHcOJeQ1xTiSN01kiF1O5DZfUnIGfThWSjqE
+X-Developer-Key: i=cleverline1mc@gmail.com; a=ed25519;
+ pk=CQifx5FUgTQKAoj5VCYrwYHi235AkXQ5yT1P6gkaBxM=
 
-On Tue, Aug 27, 2024 at 12:32=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.=
-org> wrote:
->
-> On Wed, Aug 28, 2024 at 12:52=E2=80=AFAM Rob Herring <robh@kernel.org> wr=
-ote:
-> >
-> > On Mon, Aug 26, 2024 at 09:48:01PM +0900, Masahiro Yamada wrote:
-> > > Some architectures can embed DTB(s) in vmlinux. Most of them expect a
-> > > single DTB in the .dtb.init.rodata section.
-> > >
-> > > For example, RISC-V previously allowed embedding multiple DTBs in
-> > > vmlinux, but only the first DTB in the .dtb.init.rodata section was
-> > > used. Which DTB was used was unpredictable, as it depended on the lin=
-k
-> > > order (i.e., the order in Makefile).
-> > >
-> > > Commit 2672031b20f6 ("riscv: dts: Move BUILTIN_DTB_SOURCE to common
-> > > Kconfig") changed the Makefiles to ensure only one DTB is embedded.
-> > >
-> > > However, commit 7b937cc243e5 ("of: Create of_root if no dtb provided =
-by
-> > > firmware") introduced another DTB into the .dtb.init.rodata section.
-> > >
-> > > Since then, the symbol dump (sorted by address) for ARCH=3Driscv
-> > > nommu_k210_defconfig is as follows:
-> > >
-> > >     00000000801290e0 D __dtb_k210_generic_begin
-> > >     00000000801290e0 D __dtb_start
-> > >     000000008012b571 D __dtb_k210_generic_end
-> > >     000000008012b580 D __dtb_empty_root_begin
-> > >     000000008012b5c8 D __dtb_empty_root_end
-> > >     000000008012b5e0 D __dtb_end
-> > >
-> > > The .dtb.init.rodata section now contains the following two DTB files=
-:
-> > >
-> > >     arch/riscv/boot/dts/canaan/k210_generic.dtb
-> > >     drivers/of/empty_root.dtb
-> > >
-> > > This is not an immediate problem because the boot code picks up the
-> > > first DTB. The second one, empty_root.dtb is just ignored.
-> > >
-> > > However, as mentioned above, it is fragile to rely on the link order,
-> > > as future Makefile changes may break the behavior.
-> > >
-> > > The cmd_wrap_S_dtb rule in scripts/Makefile.lib is used for embedding=
- a
-> > > DTB into the .dtb.init.rodata, so that the arch boot code can find it=
- by
-> > > the __dtb_start symbol.
-> > >
-> > > empty_root.dtb is looked up by its own symbol, so it does not need to
-> > > be located in the .dtb.init.rodata. It can be moved to the .init.roda=
-ta
-> > > section.
-> > >
-> > > When CONFIG_OF_UNITTEST is enabled, more unittest DTBOs are embedded =
-in
-> > > the .dtb.init.rodata section. These are also looked up by name and fo=
-r
-> > > generic purposes, so they can be moved to the .init.rodata section as
-> > > well.
-> > >
-> > > I added a wrapper source file, drivers/of/empty_root_dtb.S, because t=
-his
-> > > is the only wrapper used in driver/of/Makefile. I moved the rule for
-> > > generating *.dtbo.S to drivers/of/unittest-data/Makefile because it i=
-s
-> > > not used anywhere else.
-> >
-> > That is likely to change. We've had fixup overlays (fixup an old dt
-> > to a new binding) added into the kernel from time to time. There were 2=
-,
-> > but they've been removed. However, I just recently suggested adding som=
-e
-> > new ones[1].
->
->
-> Heh, surprising.
->
-> Will something like commit 841281fe52a7 come back?
+Many thanks for your feedback, especially from André Przywara,
+I learned a lot from you and your kind words motivated me to do a follow-up.
+Regulators should correspond to reality (schematics).
+Proper regulators were added for pio and r_pio.
+Added missing regulator for mmc2.
 
-Yeah, I expect the QCom DWC3 stuff is going to have N overlays for N SoCs.
+Signed-off-by: Kryštof Černý <cleverline1mc@gmail.com>
+---
+Kryštof Černý (3):
+      Fix NanoPi NEO Plus2 regulators
+      Use regulators for pio on NanoPi NEO Plus2
+      Add vqmmc-supply on NanoPi NEO Plus2
 
-> > It seems we need a named section when we access the dtb by variable
-> > name and an unnamed or boot dt section for the one boot dtb.
->
->
-> built-in boot dtb --> stay in .dtb.init.rodata
->                       (arch boot code does not know the DTB name)
->
-> drivers and drivers/of/  --> can be moved to .init.rodata section
->                              because look-up by name is possible.
+ .../dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts   | 38 ++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+---
+base-commit: 6f923748057a4f6aa187e0d5b22990d633a48d12
+change-id: 20240827-nanopi-neo-plus2-regfix-b60116ce12ca
 
-Right.
+Best regards,
+-- 
+Kryštof Černý <cleverline1mc@gmail.com>
 
-> So, do you want to keep the build rule in scripts/Makefile.lib,
-> but for a different section?
-
-Yes.
-
-Rob
 
