@@ -1,130 +1,117 @@
-Return-Path: <linux-kernel+bounces-303226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09B31960946
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:49:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C6F9960947
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:49:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77DC2B2352A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:49:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDD9A28559B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B631A072D;
-	Tue, 27 Aug 2024 11:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SvllLxzg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7F31A01C6;
+	Tue, 27 Aug 2024 11:49:44 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0D5199926;
-	Tue, 27 Aug 2024 11:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D1019FA72
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724759371; cv=none; b=lJVLtC0R4DF4c7r1tOhCcx19E7YKkKVfC8HBRstJ75ClJUPE9/mshqrU2nUSwNzmx8jl081gcfMg2dQ9yOSoBffsSUpDmZJWuDt2nG6MS81NOWCkvxvMLlsYSwms1l8+Y+r5q3jjwyCwkEnNRNT4QqoaAcRX9o7OMnck3IMBe6U=
+	t=1724759383; cv=none; b=NfZx+L9OF8JBgN4dCPUKHt7E9cvthuUqxNRilAQR4DUM0BUPZMS5ZflSw57Alq5feNwX1jjRQkIJPDh7q3mjnwh4SE9251rNNmfrM9rexosJHU8xYjd+u3haI6dl9/nPLeLaboecDK3QuS40IgsD/mzMcMKbw2KXovjd6RB9kq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724759371; c=relaxed/simple;
-	bh=q8fat2cHBmCFbst/4767sxbNMOrAnZzY/bgzJE0Z8ZU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fvtyBn9w2rDUws19up/+K3OtREAw6ZA1vi0WPILljqpbGcJHFvXJCsM/YF/xE5SRCHX9Q3LTeMDssHWwvHBCzfLcUC5gq9DZUJ70tSnrAggZinEoO5ZqLISHNmoJCVyftMbxU3ZWJBrljkgZ0Mo92EoAVs4nSpdUhZMaNKNVAPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SvllLxzg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9A0DC4D04D;
-	Tue, 27 Aug 2024 11:49:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724759370;
-	bh=q8fat2cHBmCFbst/4767sxbNMOrAnZzY/bgzJE0Z8ZU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=SvllLxzg08LQfpUpPIVkUuqR/vUIVc4CzE55y0mTVYTpYMPiXfMNS9F8vE1IPfGbj
-	 jSkyal5Tht/D/jNNImeTsXJZk5X/CmLweNHMkdG86WLGmo1atThW48c6h4R+g0YaGN
-	 V1hv0qUaQq7So1vomuqFahVLcVuROj3LCtM3yF77NmxCDml5GIODxtWAlyY/WLjdWL
-	 TEexoytpzg9AEkA9UzEbMww/qGWDgNfxl4Q9lpf6okFbscX3dwot3hB5kVPnPHDV8r
-	 YmEA6R1lANeghi9WLcAmLZb84bBQ4EgB7t/cGlv/HqbNuMS5JerB3oWz5OAdCyvj4G
-	 BzaSwHH1q56yA==
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-70944d76a04so3816525a34.0;
-        Tue, 27 Aug 2024 04:49:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUmVsS6fNOLB3ghb5buLhLFNcVbLjz1PJnpeCWEfVAh/dhMVM3PKYLZv9rwmwugV7EKP2ehB189p7OA8gQ=@vger.kernel.org, AJvYcCWEC4y+V7PbPj4c+gAJhbGtOS7rhdtsNFWYBAS+8b2Z3kUtI6WJV4M+dMJQta8oFIAYKtjkhxpLSmg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkJCSpwTcsAPTqRa69z8hzyFoi5bg/cxzMu9p656NjT4AKsWAq
-	FtPMaSSNMCRDhAwWf90kWUiDrpqAoUkv+Tt0rZOS3/dX5V7Y5mWXJMU7Wu2wBEmJs2gVDZEETwV
-	3oWc7b/bt1oYno2l0h2RObvSCHGU=
-X-Google-Smtp-Source: AGHT+IE36XhiYJ2H724axgI4XwB6FfmDGnCfm2PQ028NCZUMo3q753Wj2wjuyDMs5VwFtDOxS+I14wbr7vjD1wb700g=
-X-Received: by 2002:a05:6830:2112:b0:703:6b11:33a4 with SMTP id
- 46e09a7af769-70f47ac60fbmr989902a34.9.1724759370153; Tue, 27 Aug 2024
- 04:49:30 -0700 (PDT)
+	s=arc-20240116; t=1724759383; c=relaxed/simple;
+	bh=1DUq9db1Jy9He7xAyDBzVZ6wPPF9ecElwigntJHa7BE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JoorkMfPDAMjje1yaqrVon8pHb17tfRyh+Rem5cO3YtY8vZLZzSLWJA+EN8DyLfSOmWbIVYo/xTTXtcXVoc7m6ZcCtQSlq1TT7dz4tnVMOxWUB2wbxzrO/so1Fnk8VmdhPImdkeuNTmanDafpUCVLtlaF+VmUfYuerw7hlohvt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WtQnN3wKSz1j7C9;
+	Tue, 27 Aug 2024 19:49:28 +0800 (CST)
+Received: from kwepemm600004.china.huawei.com (unknown [7.193.23.242])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6DA04180019;
+	Tue, 27 Aug 2024 19:49:38 +0800 (CST)
+Received: from [10.67.121.59] (10.67.121.59) by kwepemm600004.china.huawei.com
+ (7.193.23.242) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 27 Aug
+ 2024 19:49:37 +0800
+Message-ID: <7b2ce01f-da18-d809-6fa1-2ad40982a9a3@huawei.com>
+Date: Tue, 27 Aug 2024 19:49:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4941491.31r3eYUQgx@rjwysocki.net> <3311190.44csPzL39Z@rjwysocki.net>
- <20240826230742.GA7773@ranerica-svr.sc.intel.com>
-In-Reply-To: <20240826230742.GA7773@ranerica-svr.sc.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 27 Aug 2024 13:49:18 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hiNxLsX2ExT8QphkTev4-i++4xo4CuG3rVkLqTZsiBgA@mail.gmail.com>
-Message-ID: <CAJZ5v0hiNxLsX2ExT8QphkTev4-i++4xo4CuG3rVkLqTZsiBgA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] cpufreq: intel_pstate: Set asymmetric CPU capacity
- on hybrid systems
-To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, x86 Maintainers <x86@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Ricardo Neri <ricardo.neri@intel.com>, Tim Chen <tim.c.chen@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v2 0/6] Add some features and bugfix for kunpeng_hccs
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+CC: <xuwei5@hisilicon.com>, <linux-kernel@vger.kernel.org>, <soc@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <krzk@kernel.org>,
+	<wanghuiqiang@huawei.com>, <liuyonglong@huawei.com>
+References: <20240718071134.31155-1-lihuisong@huawei.com>
+ <20240823031059.32579-1-lihuisong@huawei.com>
+ <20240823100211.00002b9d@Huawei.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <20240823100211.00002b9d@Huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemm600004.china.huawei.com (7.193.23.242)
 
-On Tue, Aug 27, 2024 at 1:00=E2=80=AFAM Ricardo Neri
-<ricardo.neri-calderon@linux.intel.com> wrote:
+
+在 2024/8/23 17:02, Jonathan Cameron 写道:
+> On Fri, 23 Aug 2024 11:10:53 +0800
+> Huisong Li <lihuisong@huawei.com> wrote:
 >
-> On Mon, Aug 12, 2024 at 02:44:30PM +0200, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> [...]
-> > @@ -3143,6 +3341,20 @@ static int intel_pstate_register_driver(
-> >
-> >       global.min_perf_pct =3D min_perf_pct_min();
-> >
-> > +     /*
-> > +      * On hybrid systems, use asym capacity instead of ITMT, but beca=
-use
-> > +      * the capacity of SMT threads is not deterministic even approxim=
-ately,
-> > +      * do not do that when SMT is in use.
-> > +      */
-> > +     if (hwp_is_hybrid && !sched_smt_active() &&
-> > +         arch_enable_hybrid_capacity_scale()) {
-> > +             sched_clear_itmt_support();
-> > +
-> > +             hybrid_init_cpu_scaling();
-> > +
-> > +             arch_rebuild_sched_domains();
+>> This series are intended to support the low power feature for specified
+>> HCCS and add used HCCS types sysfs. In addition, fix some bugfix and
+>> enhance some codes.
+> Quick process thing.  Don't send a v2 like this in reply to v1
+> (for most kernel subsystems anyway, maybe there are some that request
+> this?).
 >
-> sched_clear_itmt_support() also calls arch_rebuild_sched_domains(). The
-> latter is also called earlier via sched_set_itmt_support(), totaling 3
-> calls, two of which are wasted.
-
-Not necessarily two because arch_enable_hybrid_capacity_scale() may
-return "false".
-
-But you have a point.
-
-> Perhaps at minimum hybrid_init_cpu_scaling() can be before
-> sched_clear_itmt_support().
-
-It can.
-
-I'll send a new version of the patch with this change.
-
-> The changes made by these two functions will
-> be picked up in a single call of arch_rebuild_sched_domains().
+> Most people still review in email clients and they often start at latest
+> and work back until they run out of time.  Thus a reply to an earlier
+> thread is not read!
+Got it. Thanks for suggestion.
 >
-> Moreover, ITMT can be not enabled at all if so we wish. By the time
-> intel_pstate_set_itmt_prio() is called, the value of hwp_is_hybrid is
-> already known.
-
-But at that time it is not known whether or not
-arch_enable_hybrid_capacity_scale() will succeed.
-
-Thanks!
+> Jonathan
+>
+>> ---
+>>   v2:
+>>    - remove "this patch" words in commit log suggested by Krzyszto.
+>>    - use for_each_set_bit to replace the cycle scanning all HCCS IP.
+>>    - add a patch to rename the 'lane_mode' to 'max_lane_num' to make it
+>>      easy to see.
+>>    - add doc description into the code patch.
+>>    - rename the name of the low power interface.
+>>    - adjust the increasing and decreasing lane interface description.
+>>    - do not create available_inc_dec_lane_types when no HCCS type support
+>>      low power.
+>> ---
+>>
+>> Huisong Li (6):
+>>    soc: hisilicon: kunpeng_hccs: Fix a PCC typo
+>>    soc: hisilicon: kunpeng_hccs: Return failure on having not die or port
+>>      information
+>>    soc: hisilicon: kunpeng_hccs: Add the check for base address and size
+>>      of shared memory
+>>    soc: hisilicon: kunpeng_hccs: Fix the 'lane_mode' field name in port
+>>      info structure to 'max_lane_num'
+>>    soc: hisilicon: kunpeng_hccs: Add used HCCS types sysfs
+>>    soc: hisilicon: kunpeng_hccs: Support low power feature for the
+>>      specified HCCS type
+>>
+>>   .../sysfs-devices-platform-kunpeng_hccs       |  45 ++
+>>   drivers/soc/hisilicon/Kconfig                 |   7 +-
+>>   drivers/soc/hisilicon/kunpeng_hccs.c          | 516 +++++++++++++++++-
+>>   drivers/soc/hisilicon/kunpeng_hccs.h          |  33 +-
+>>   4 files changed, 582 insertions(+), 19 deletions(-)
+>>
+> .
 
