@@ -1,214 +1,251 @@
-Return-Path: <linux-kernel+bounces-304128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E59AF961AC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 01:46:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2CE4961AC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 01:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 754CF1F246BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:46:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33EC41F247E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09CE71D4166;
-	Tue, 27 Aug 2024 23:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D721D47AA;
+	Tue, 27 Aug 2024 23:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J4F6Jope"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ah1SfT4x"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59AC019644B
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 23:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724802368; cv=none; b=A19RBaJACO920onfcp0wo0i/kbHfLeHKm/VZhZQriCl5RWu1qyIAqK2JnbOdLFGVB4CeOpjNo1sWbv7Kg8Eq0hjNv3bRrk+en0nSRuoEYKqdVImrRIpGHDH4JAv2PukRMJBpUBD931d1QVizq9GrAQRj78rGYeElNHyp4mDX9Zc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724802368; c=relaxed/simple;
-	bh=BCStCKZHy7XhhvRovzEvUgG5bJ4qds3fjlr8qdOvdw8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=o3d1gaF00rA18oQf0FJ5lAvft8jgpSANfQO/qIjsrdqc6p7ydDYcB1LVNylwHVV3PGc5YW1S0hDK2AMxqh64kGS0hxOfPjOtZMV8MZ2l9ayZvpk/eJCxQq32JkgJQ9rqXlaoQyP9ESEG9jEJc1Re54dV4eEbBGrIKlIraA+CqEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J4F6Jope; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42807cb6afdso13155e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 16:46:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724802364; x=1725407164; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=P/bhdeLl4wjFcvXRY+t77VD96S0BQmh9pkR/u2jVN4o=;
-        b=J4F6Jopenr0Zf4OY7zB2ZHgSIvLc/CalPGijOigg+sBjLpxl7U5ppmWtB1x+Ye/S3v
-         mh5NpvZ0/K4tiyOHm8kJGh6WszI2fvY2Y3jsaCYVKwbs90QxWaS+2wzSN2qI2Lwt6QW1
-         zYU0XvdquTVHQwg9KTooemnKnaJD2McZhf40bvHmaOEcXX8681KbqGyjacrAxytf3ZiQ
-         GlvT7CczQGrrYaiuPh7pktP/efxNlkY3uBjt4tS+ttMya97j8t05uKdVLIIvzRQSw1+W
-         BGvwUwaYlrRazroYE7X2AHt4wVP6Cnb4DPXlm0vRiZ7Z+RHfy/b/1qYh0uO/nlkfZK/s
-         to/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724802364; x=1725407164;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=P/bhdeLl4wjFcvXRY+t77VD96S0BQmh9pkR/u2jVN4o=;
-        b=meNY7qjPD6s3pOhVFDj3Zr42f1Mx9ML2kT4BZhECcI8LtHeeTj+hGTTy1a+4rNUpzP
-         8v8vebT0n4KSSnCl0/WnKQtFs3iSzBZf7atBnuQvaxHQk+aID0HWM/dFnVVZEW/EVY6B
-         kWWEA4PR8EsZF0ceBzUmbS4aUgPrL2AeBQFgZdj18NgI11B6/ImeVcGabBkHioK1Ud/q
-         UUHEx4KA4xVpiHGYDSk9XVaa4Qq4Ze4a1s78eeWWL1+ePm0pXhn1Eqyt8evR87FgS0eh
-         JUrgzzUplM2Iv/CD8Zb4eUxhJdElMZShlBC45iY4juDpeqBak7rKFDpebHzIXHJ4B9ef
-         uZ3A==
-X-Forwarded-Encrypted: i=1; AJvYcCUR17AJfhk+If5ZzZGNSrXLs7F/PK66lu9EgefSRYjUic/s4Qu9jIlJ2uHDMCYfzllx0ZYQ0SfJKXoXLnM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP79KFuC5S8rRX50wPz72VJkCAiSNsF8EVy2MzrTvB63TCK0FZ
-	pHp6+TrCkzOfvVrJhLckwwsaeClu662iHG8yKIA63hytGOA4QxgCHkYyY+6luA==
-X-Google-Smtp-Source: AGHT+IFk0QFmBGLj5M8q6u4k9jStQ0/9cIQ1NJUijWXEZ6oLKnApCw8ahWvtZO9eM5vZ5WeSya5yYg==
-X-Received: by 2002:a05:600c:1e20:b0:426:68ce:c97a with SMTP id 5b1f17b1804b1-42ba50d0ba9mr274535e9.7.1724802362841;
-        Tue, 27 Aug 2024 16:46:02 -0700 (PDT)
-Received: from localhost ([2a00:79e0:9d:4:a372:5f0f:af:83bc])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-373081ffb58sm14266703f8f.79.2024.08.27.16.46.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 16:46:02 -0700 (PDT)
-From: Jann Horn <jannh@google.com>
-Date: Wed, 28 Aug 2024 01:45:48 +0200
-Subject: [PATCH v3] firmware_loader: Block path traversal
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02991A0B00;
+	Tue, 27 Aug 2024 23:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724802395; cv=fail; b=i51o/KIo8xRZmKdLtKIID4o94cfjKN0+okbGQXrLsyYyS1f6Up6bLqGrw0tYAfZJWlUB6alKbRj3v1p+D9fD0ttMApElo9FdSdcCmAT3HbcBNEJVkTadXpU95SHgtEpnjM1STN5Z7vBTqnbvm5sBFiyjN+ln5LuwIcr6+YBYu0Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724802395; c=relaxed/simple;
+	bh=Dt+Rh2Sk82HYtJ6JabUB6sXYdiufka8VdmeKGMGdD/Y=;
+	h=Message-ID:Date:Subject:From:To:CC:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=JraOu+S1sgr1mo7xykvWlFEZmNHtvw9uvA7c3rPwtagpXs/Jn5uTrCuJeAMDQJsVsRlrKR//7jkBUOZgMEgo9f3RTLp8vCmaMn83Y2LUmvvjZ1fvhWzkoTXfTm689ZbE3gl7NNI0U4wC9V7Nh1gqFp+IfbVudqmfmOGaXRGvggk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ah1SfT4x; arc=fail smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724802394; x=1756338394;
+  h=message-id:date:subject:from:to:cc:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Dt+Rh2Sk82HYtJ6JabUB6sXYdiufka8VdmeKGMGdD/Y=;
+  b=Ah1SfT4xPxhMdOBmG1FLGrB5Rn8kKvjPVy4Uis5BmSzPYe/K+S1PKBRX
+   G9yFaWWyggI3VlIIiO3fGpn+rj8q48hbX6rnP0v1tHgN3hm5E+5u8rR/1
+   Ro3HXBvnJRGIGiND+fHEAipZkOprZ+GO0y4CDEANdmnHAbz4OigqvUFrW
+   DO8asbbZ/dQ1RybT8igWEltx5rHPVrNrFIHzpsqTxYEhcg4bCinfxf/rH
+   Md2ntTB5H7TWH45XAS6UBlxHArdxEj2JPMnR/TxxfLVdjHZ9S/IaeaAbA
+   oYauQY/WeSpbzJrBop5N+uRIqUiJ0V5N4ksTt0HU3Jw36LZOfwWU1LH78
+   Q==;
+X-CSE-ConnectionGUID: 7J9WJpg1QYKRwva9G+mQ1A==
+X-CSE-MsgGUID: YRQqAK2kS9GhaeGXHnIfzQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="34466672"
+X-IronPort-AV: E=Sophos;i="6.10,181,1719903600"; 
+   d="scan'208";a="34466672"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 16:46:34 -0700
+X-CSE-ConnectionGUID: QOiOl0BASi+Rp4FaBUqwrA==
+X-CSE-MsgGUID: QKqPQexER9GIyFYXRwDMDw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,181,1719903600"; 
+   d="scan'208";a="67895498"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 27 Aug 2024 16:46:34 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 27 Aug 2024 16:46:33 -0700
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 27 Aug 2024 16:46:32 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 27 Aug 2024 16:46:32 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.173)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 27 Aug 2024 16:46:32 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EKNoI9yVZXOS+nizTZ5xtk1tFK5QtvtUmZrlvWl+ml6x+V20+VN/GfL6hEQ5ZMTI2KCFjWi8jpGI97yDAubUbtRLyrrAN1QjRJ7gvrI2IzKFjJXbyJJL0Oc5qvjmixWf83aSmioKgb3evcopgbARTjrV0ROOipJrlqNYPxvapNE+1W/M1gNH2a8s54jdkwNb3sMaFniGr+zeoNT+RIjPWeFb32ZnBgOnX9tyL+Y0KpFlHfg0gt6+T3uoXpgUxn0ce3HS+Q5W5LwQHlGfl9FFWkptP+Cv0QrtIm+gaHzNaRBO/D3dEuzRwEjEjlWVgc7ky4zacOie4ExHvPCtfQOIKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=63wZduFObTnBxiFDhqyKhFKrJggSAK3BsgRjxzHq8Do=;
+ b=kvCLhfsqsfL2P6j2WfKX3IWJ1JBT0jFL5ChUVNotnO98cFc1tz3A+WYQ2mJtHp1XVr72aXaWwJrmb9aqZORqn4P7avvrIk38XFuGUv8vj70iNksgQcSqmTc3PLJZM/9bTqmUQIM1C+x2xvVN+Fo4dROyJKnDL5f3YxscZ8Xr2GIHufR5m39JatabfLYxfuip/Iod+n3vukM82vvtTIEMSdZePyK5CngSFindnlq7YaZ/QtWfB5kvH8YNCtZFmLNtKwyoq9WjxMqkj61GP9PD8oj6G88muMCjOftjOmdPG8M1/A8OUCEu4/d42ulxgG8DdMd+HY4L5BJ+miFdFg5e6A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
+ by CO1PR11MB5012.namprd11.prod.outlook.com (2603:10b6:303:90::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.26; Tue, 27 Aug
+ 2024 23:46:29 +0000
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b%7]) with mapi id 15.20.7897.021; Tue, 27 Aug 2024
+ 23:46:29 +0000
+Message-ID: <ff491ab3-7423-4c70-b496-cda679e143d2@intel.com>
+Date: Wed, 28 Aug 2024 11:46:17 +1200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 10/16] x86/sgx: Implement async reclamation for cgroup
+From: "Huang, Kai" <kai.huang@intel.com>
+To: "chenridong@huawei.com" <chenridong@huawei.com>,
+	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+	"cgroups@vger.kernel.org" <cgroups@vger.kernel.org>, "mkoutny@suse.com"
+	<mkoutny@suse.com>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "haitao.huang@linux.intel.com"
+	<haitao.huang@linux.intel.com>, "tim.c.chen@linux.intel.com"
+	<tim.c.chen@linux.intel.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "mingo@redhat.com" <mingo@redhat.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "tj@kernel.org" <tj@kernel.org>,
+	"jarkko@kernel.org" <jarkko@kernel.org>, "Mehta, Sohil"
+	<sohil.mehta@intel.com>, "hpa@zytor.com" <hpa@zytor.com>, "bp@alien8.de"
+	<bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>
+CC: "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
+	"seanjc@google.com" <seanjc@google.com>, "anakrish@microsoft.com"
+	<anakrish@microsoft.com>, "Zhang, Bo" <zhanb@microsoft.com>,
+	"kristen@linux.intel.com" <kristen@linux.intel.com>, "yangjie@microsoft.com"
+	<yangjie@microsoft.com>, "Li, Zhiquan1" <zhiquan1.li@intel.com>,
+	"chrisyan@microsoft.com" <chrisyan@microsoft.com>
+References: <20240821015404.6038-1-haitao.huang@linux.intel.com>
+ <20240821015404.6038-11-haitao.huang@linux.intel.com>
+ <93b68e3bf58c78d5a2b941cd2331b838c7824625.camel@intel.com>
+Content-Language: en-US
+In-Reply-To: <93b68e3bf58c78d5a2b941cd2331b838c7824625.camel@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR05CA0077.namprd05.prod.outlook.com
+ (2603:10b6:a03:e0::18) To BL1PR11MB5978.namprd11.prod.outlook.com
+ (2603:10b6:208:385::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240828-firmware-traversal-v3-1-c76529c63b5f@google.com>
-X-B4-Tracking: v=1; b=H4sIACxlzmYC/33NwQ6CMAyA4VchOzvTDYTNk+9hPEzoYAkw0pGpI
- by7g5MmxuPfpl8XFpAcBnbOFkYYXXB+TJEfMlZ3ZmyRuyY1kyALUBK4dTQ8DCGfyUSkYHpeNla
- dQNzBYsHS4URo3XNHr7fUnQuzp9f+I4pt+peLgguuSq2tNUbLqry03rc9Hms/sM2L8tPIfxpyM
- xSkvVKyAv1lrOv6BmVpqhT5AAAA
-To: Luis Chamberlain <mcgrof@kernel.org>, 
- Russ Weight <russ.weight@linux.dev>, Danilo Krummrich <dakr@redhat.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Danilo Krummrich <dakr@kernel.org>, Jann Horn <jannh@google.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724802358; l=5059;
- i=jannh@google.com; s=20240730; h=from:subject:message-id;
- bh=BCStCKZHy7XhhvRovzEvUgG5bJ4qds3fjlr8qdOvdw8=;
- b=M/HEQjTjC/U763WxcVOSLNY1vqtkzq6Q2MlgFskc+dZkVMGksyYS5Yem86xit5EiUlDuQD2NI
- pw80ckdChqVB81vrHq4p+8FvWfIuN3unDnbl4a69FJ0X+fSpTy7tzsD
-X-Developer-Key: i=jannh@google.com; a=ed25519;
- pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR11MB5978:EE_|CO1PR11MB5012:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1183b063-0440-4706-3b6d-08dcc6f278df
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?V0pJYlpHQkFwT3Q4ZTFLNGF2d2w3aFFiNjh2cGIwZDdSWm9OZWk1N1F0Z0xM?=
+ =?utf-8?B?Z2l5Tlp5MVh1UDlVcDJBam1kaVFkSkRMcEFkbFhxeVpYdzZKN1dCdE9aeWhU?=
+ =?utf-8?B?ME5UTDRMZU9QRGtvaEQzS2pVR21xMStzVVhDSjc3eEpLanFWSUd1ZElIMysv?=
+ =?utf-8?B?d3NQb3pXaTFCR0dnK0xmVW84WVVxQkdzQy9MMndaSXJTdnEvbU9NcTR2c1Nq?=
+ =?utf-8?B?YjV4aW9BdENTeGhDd09XK0tBcmJBYS9VTkZ5cHJ6dmRqSTd0SHdDSlFyMWNB?=
+ =?utf-8?B?WDZaNXp2Qks1SDFyb25aczhxWFBTWCtOZXAzWTRpVnByZkZWemlDOEdqN3gy?=
+ =?utf-8?B?NFhZS2FDZmxjUmhlcUptblhxVzFFVnROQUdXaG02cDlRNEJ3NkZnbEpTNHds?=
+ =?utf-8?B?NXNLVTZRMVFzbGUzVHRxT2kxTEYveDBtRmJHNlhDUEpUNmUxaVJuT3pLcUwr?=
+ =?utf-8?B?dG1INWk0ZFdsRXVNUExUWkhDeFB5M282bS9HZWR6UWE2OWlNUGJsZWZZQUxJ?=
+ =?utf-8?B?dVJEUWZQc25vcFRZZ0MwTE5vMWZ4b1UvQk50alBwSXNDa2d6RTlzWjdBbGho?=
+ =?utf-8?B?dGsrSFFsMGFpdk40eWE5QnFVeFFJdkJQVWp4L2RsTUlMUUNIV21RMVBEWkZn?=
+ =?utf-8?B?Q0NJNUZLSHZtc0J0T3o3VVVheldsT0tKSzBaK2E0RFFBTnFrVzJKTmZqS3kr?=
+ =?utf-8?B?LzRQT214VXZUYzB3RXB0UzlkcEVmUWlUU2Yya0x5TW9jYTdBKzlTejdyQ2ZS?=
+ =?utf-8?B?eFczNHh2WTc3YVhHQ2tMZmR0RjZSdEFRUGZZOERqQ2hMUldMdjdjNHl4c2Nw?=
+ =?utf-8?B?Yk9udmdWcGI4bUtoTlIxenliZWNMMUVnbUF0UVR6OVhyT0JXNHFMblo4cDJR?=
+ =?utf-8?B?KzNwbENQNUtzeHVuTGxFdWJuRTA1K2NFR1c4dTNuTTRLanZTc0wxNDZPTzNx?=
+ =?utf-8?B?TlQ0VzFUdkFIT2VxZjFjVDZMRlNUdmx3OGVTdjEyOXpRZXF0ZDBzRWNuSi9o?=
+ =?utf-8?B?bTFoSDVFYWZ1b29OTHNxbVhETjg4a2FvTG5pWjAzVUZPSnBXa3ltQmRuOWk0?=
+ =?utf-8?B?SGdHdEpUV2EwOEsxRUMzQkdHQXc5S0d5ck1OM0gxTThIbnFPL21uV0F4cVhQ?=
+ =?utf-8?B?K2M4aHNWNlJnZUJaRjIwUkR5aDZ6VFpwVEVkWDN2SU54MXZ4OXNTU3JpZzNN?=
+ =?utf-8?B?bURCVHZoUDFRRzdMNzd2dUMzamM1ZHYzT3duQ0Nobzc4L281MUlkOUNDckVS?=
+ =?utf-8?B?VXJsNzNYYXN0YlZob2FlVU5XR2w3WVhONVpLbGtQdCtweFNjOU1vVW5qck9j?=
+ =?utf-8?B?d0lwNWpwbUJaejViM2VQMU5OWTZBdVNQV3NXVjNIekVpRDRvZk5yTmxoVmlD?=
+ =?utf-8?B?ZnpEd0EraXNpZ2pKcy9xOWVuVWtURWtCSEJIa3NYb3NscTk0RjFnVHhvWmgz?=
+ =?utf-8?B?cWFFZGRUYTV5OGZwZ0Q3RG9Eb0x1bnYwZm9USnF4bXdaSnhTMmp4b1FSZWVH?=
+ =?utf-8?B?aDNyTlkrNW1pT1dBQVB3N05MaUVXenJSaVVoeWJMZkRmM0E2ZFJ5aVRpUWYx?=
+ =?utf-8?B?ZHJIbm0rQWFMTVF4TWdjMStyRHFhbGYrUzN6THk3VWhOVVZ4Ujc0NEIxWDBz?=
+ =?utf-8?B?YnlnTXNwTUZhOEJCNWhGR2NyU1hLaTlFV3dhV3BvVmhEODhSNkg4S3VOM2dK?=
+ =?utf-8?B?MnpRc29CMzlvbFpVTEN5WWwrZDJ5WGFKcHY0S0JWK3FMdUhIZTMvQkdCWUZD?=
+ =?utf-8?B?VHZhV3hjSGMxd3dOTi9HK2JkL21WYkFhT0JxTnBZY04zTStnSE5JOWtWRS90?=
+ =?utf-8?B?bDZQNitlSlRJUWd6aGtmZz09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?K0JOOGhoU3BDT2IxSnQwWlFuZUo2SHhlL3dqSHg3VGlOeVZ0cTNtNW1ZQWRZ?=
+ =?utf-8?B?QWVPd2IydzN1N1k1V0NXb0Q4dnhQN3FaZjBubDFLNS9DUzI0Yk96WTBMc3FE?=
+ =?utf-8?B?alp0L3VrbXdyazVWRVBPR3ROQi84UXpDTHozNDBRbTRxVmpnUnZRVHVEanlW?=
+ =?utf-8?B?cXNqaGF1ZUNFZ1RNUUpJWlZuVVovVWRtZTR3VG9QMUNmdXE5VmhpTVp1a2R5?=
+ =?utf-8?B?T3BGaGJseCtBd3RYcmx4ZGRlN0lrZHVYOFQ5dDhpdDdGWFBPYXZBQ0NoaWpE?=
+ =?utf-8?B?eFpUWWhJR0YxTHVOamZ4Nk5DbS9EWnpvdFBPRXRhNituV0MwWXZ3R2IzS1NS?=
+ =?utf-8?B?aGt6Rm1aQmc3algyUjRRUjJLQlhuTFRnQVF1ZG9Ub0k0ckM5bmpDUlVhOWpC?=
+ =?utf-8?B?YXBQdy9nRVpLQVpnNjd6NFNQdnFIMTBmSmNNTVAvVzQraEx1c1Rua29HK1Q3?=
+ =?utf-8?B?cTR2ZEgxZ3NBK0RkaGs2WVp5MzRybE8wcFoxN3pxM0FkVWxGNTNTa1RvbVlW?=
+ =?utf-8?B?RnJuV2xvMEZjc3VOZUhyWFZialF6UEVzT1VycXlKWnFVNXcvMEw3dkMwZysw?=
+ =?utf-8?B?NzlTdnAwQjdXdHJlOW5PWnZFOTFyOTQ1VXZ2UEtlWGZmMm4rbUpNZ1FMS29Q?=
+ =?utf-8?B?d3hwSVMrWE1wcXRMbU9DSXdUOVNNV0JWWGQ1T0s1UmJwL3BXa0JOblZCNjZP?=
+ =?utf-8?B?cU80NDdlZThmbWR5VzdmSjE4K3YvOWw0dkYvMlhsNUUrWmczTHJaUkU3S0pP?=
+ =?utf-8?B?V3RDZVVkZUNhejlvM0xBK0kyRGpxZWMvK3RqeHhISXVBUnA0a1VlakZwMys4?=
+ =?utf-8?B?dmY1cjZKNDJQSDZySVRoR3JudHVzUWhZTlpNeWJUTzB1VEVvMjZRU0daQ3Vm?=
+ =?utf-8?B?TUVPc0wyWFhzQ1pmUENORUUxZXZDS0FpN3A4VFVQV2k1ZGVRNW13UTUzV0Jk?=
+ =?utf-8?B?WVdpa2xoRXpzaTgyTklMTkU0aUM4bm0xNWtNSzEyU2x2aHVzR0k1THlaaVlM?=
+ =?utf-8?B?K3BRU0s5K1RrOGFlb2Z0NnpDekdpdFFIRWNPSGJsazQ2UkNrVzIzbEE1TXJF?=
+ =?utf-8?B?OUxaaXkxQndwRjJtaStrOEdZZlZrTGdrK2NZa0FlL04veTVGYjNtM2ErNlZL?=
+ =?utf-8?B?ZDFDOHY4ODRmbFpRbVVkbmkyeG15czd2bDRnMXM4ZVRkSzRHalliSzJEbU5O?=
+ =?utf-8?B?K2J5WXhpRnhyeFE4UmlsSzEwSXJzWlJQaVFxR3dGblEza1pRWS9QK3pPQjBl?=
+ =?utf-8?B?QWE5MXM3dGJSdjVQMVZ1ZlptTFFHaTZ0M1VJditpMVBIcUtNTllxWmZQQ1NY?=
+ =?utf-8?B?aXlxYTFPQkZLU3g5VWtDMitDVXVtVVZuRFRqY2ZOdFVyRmxUWklBQUpLaGlk?=
+ =?utf-8?B?aDgwQ0ZiZTZ4M291bW9rVTRsb0h5OStjR1owbkZKeWJ0aThEbzhiRXlnbXNu?=
+ =?utf-8?B?UkxJN1NPMmdqWEFHMWdZT3dkSDNhYWJIZWxzUmlub0IzMURPR3VSa2R4NGNL?=
+ =?utf-8?B?dHhGdC85SWFNU05BeXF2a1l6dzJyaVJKbGNPMDJsTG1LdkttRFlRMVM1c3ZN?=
+ =?utf-8?B?T0p2RVRxQ01UcGhFNmlsWmJBcEZUWnplNXJvNUk5Mlh3aGZLN3dlR1IwczFO?=
+ =?utf-8?B?cUtKWFAwKzdrYjRMTlQ0YkN2UGJIT0lSdVhtNDRZNjdEWWxDYkVnUDBGUSsx?=
+ =?utf-8?B?RGhKSC9jcXNBZnpjbHlUc01pZHh0QWFXRkJGaER5Z1JFUDJIV2t3emJiS3dE?=
+ =?utf-8?B?S0xlN3o5WHc2UG1HTjhxUklRY2ZEUGs1SDdvdGt3WU1obTRZRko5VmhHYjhx?=
+ =?utf-8?B?WDI5bEltK0xSTVdqOUl2ZTZxK3pYMnJtV0cxdUlPRXA0Rm8xbEVkQXk4WG8z?=
+ =?utf-8?B?UHBBRk9ZZFR4c0NEUW56ZjlBRWQwaFRTSGFqK3lLRlBkVS9PYkk1eXJ6K296?=
+ =?utf-8?B?Ty9nQWZjendPZkZvN21TZmRpS2JnNUNBeHByUXVVNkJMN0lNQ2JqWVZ4b2tx?=
+ =?utf-8?B?QXlFUkNMOFN1a21rODFjZjNyVDBwaFBKbEtaa29UZXlhUnVEL1NMcitQNjJE?=
+ =?utf-8?B?RnlveEFMbGJSTjZBOHlpYlRhQ0NJT1hzc2orQy90UkE2VThGVWlsMGtEM3kw?=
+ =?utf-8?Q?wtpFR4gLMjPTihxjCNwp2hgqj?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1183b063-0440-4706-3b6d-08dcc6f278df
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 23:46:29.3779
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uhQycxvDvrpOeF/yw6YsDU+5G00pc7t+UdQstl+ZXkF/aGuGnBRJhWbgDDzdaNG0k2SKuaSFkeU0IhsOh5CtfA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5012
+X-OriginatorOrg: intel.com
 
-Most firmware names are hardcoded strings, or are constructed from fairly
-constrained format strings where the dynamic parts are just some hex
-numbers or such.
 
-However, there are a couple codepaths in the kernel where firmware file
-names contain string components that are passed through from a device or
-semi-privileged userspace; the ones I could find (not counting interfaces
-that require root privileges) are:
 
- - lpfc_sli4_request_firmware_update() seems to construct the firmware
-   filename from "ModelName", a string that was previously parsed out of
-   some descriptor ("Vital Product Data") in lpfc_fill_vpd()
- - nfp_net_fw_find() seems to construct a firmware filename from a model
-   name coming from nfp_hwinfo_lookup(pf->hwinfo, "nffw.partno"), which I
-   think parses some descriptor that was read from the device.
-   (But this case likely isn't exploitable because the format string looks
-   like "netronome/nic_%s", and there shouldn't be any *folders* starting
-   with "netronome/nic_". The previous case was different because there,
-   the "%s" is *at the start* of the format string.)
- - module_flash_fw_schedule() is reachable from the
-   ETHTOOL_MSG_MODULE_FW_FLASH_ACT netlink command, which is marked as
-   GENL_UNS_ADMIN_PERM (meaning CAP_NET_ADMIN inside a user namespace is
-   enough to pass the privilege check), and takes a userspace-provided
-   firmware name.
-   (But I think to reach this case, you need to have CAP_NET_ADMIN over a
-   network namespace that a special kind of ethernet device is mapped into,
-   so I think this is not a viable attack path in practice.)
+On 27/08/2024 10:22 pm, Huang, Kai wrote:
+> On Tue, 2024-08-20 at 18:53 -0700, Haitao Huang wrote:
+>> +/**
+>> + * Only called during init to unwind what's done in sgx_cgroup_init()
+>> + */
+>> +void __init sgx_cgroup_deinit(void)
+>> +{
+>> +	destroy_workqueue(sgx_cg_wq);
+>> +}
+>> +
+> 
+> Ditto:
+> 
+> arch/x86/kernel/cpu/sgx/epc_cgroup.c:412: warning: This comment starts with
+> '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-
+> doc.rst
+>   * Only called during init to unwind what's done in sgx_cgroup_init()
 
-Fix it by rejecting any firmware names containing ".." path components.
+With this fixed, and things mentioned in ..
 
-For what it's worth, I went looking and haven't found any USB device
-drivers that use the firmware loader dangerously.
+https://lore.kernel.org/lkml/D3QWEFR2E2BZ.187FVXI3QQU9U@kernel.org/T/#md5267379c3787d436d3297295fe4da587522444c
 
-Cc: stable@vger.kernel.org
-Reviewed-by: Danilo Krummrich <dakr@kernel.org>
-Fixes: abb139e75c2c ("firmware: teach the kernel to load firmware files directly from the filesystem")
-Signed-off-by: Jann Horn <jannh@google.com>
----
-Changes in v3:
-- replace name_contains_dotdot implementation (Danilo)
-- add missing \n in log format string (Danilo)
-- Link to v2: https://lore.kernel.org/r/20240823-firmware-traversal-v2-1-880082882709@google.com
+.. done:
 
-Changes in v2:
-- describe fix in commit message (dakr)
-- write check more clearly and with comment in separate helper (dakr)
-- document new restriction in comment above request_firmware() (dakr)
-- warn when new restriction is triggered
-- Link to v1: https://lore.kernel.org/r/20240820-firmware-traversal-v1-1-8699ffaa9276@google.com
----
- drivers/base/firmware_loader/main.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
-
-diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-index a03ee4b11134..324a9a3c087a 100644
---- a/drivers/base/firmware_loader/main.c
-+++ b/drivers/base/firmware_loader/main.c
-@@ -849,6 +849,26 @@ static void fw_log_firmware_info(const struct firmware *fw, const char *name,
- {}
- #endif
- 
-+/*
-+ * Reject firmware file names with ".." path components.
-+ * There are drivers that construct firmware file names from device-supplied
-+ * strings, and we don't want some device to be able to tell us "I would like to
-+ * be sent my firmware from ../../../etc/shadow, please".
-+ *
-+ * Search for ".." surrounded by either '/' or start/end of string.
-+ *
-+ * This intentionally only looks at the firmware name, not at the firmware base
-+ * directory or at symlink contents.
-+ */
-+static bool name_contains_dotdot(const char *name)
-+{
-+	size_t name_len = strlen(name);
-+
-+	return strcmp(name, "..") == 0 || strncmp(name, "../", 3) == 0 ||
-+	       strstr(name, "/../") != NULL ||
-+	       (name_len >= 3 && strcmp(name+name_len-3, "/..") == 0);
-+}
-+
- /* called from request_firmware() and request_firmware_work_func() */
- static int
- _request_firmware(const struct firmware **firmware_p, const char *name,
-@@ -869,6 +889,14 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
- 		goto out;
- 	}
- 
-+	if (name_contains_dotdot(name)) {
-+		dev_warn(device,
-+			 "Firmware load for '%s' refused, path contains '..' component\n",
-+			 name);
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
- 	ret = _request_firmware_prepare(&fw, name, device, buf, size,
- 					offset, opt_flags);
- 	if (ret <= 0) /* error or already assigned */
-@@ -946,6 +974,8 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
-  *      @name will be used as $FIRMWARE in the uevent environment and
-  *      should be distinctive enough not to be confused with any other
-  *      firmware image for this or any other device.
-+ *	It must not contain any ".." path components - "foo/bar..bin" is
-+ *	allowed, but "foo/../bar.bin" is not.
-  *
-  *	Caller must hold the reference count of @device.
-  *
-
----
-base-commit: b0da640826ba3b6506b4996a6b23a429235e6923
-change-id: 20240820-firmware-traversal-6df8501b0fe4
--- 
-Jann Horn <jannh@google.com>
-
+Reviewed-by: Kai Huang <kai.huang@intel.com>
 
