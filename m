@@ -1,95 +1,217 @@
-Return-Path: <linux-kernel+bounces-302726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64C4D960292
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:57:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB06A960296
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 908921C20AD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:57:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C8C2B227A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0101547C5;
-	Tue, 27 Aug 2024 06:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B364814B07E;
+	Tue, 27 Aug 2024 06:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KTESJBOJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vMWSWPjU";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AJnLOK7P";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vMWSWPjU";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AJnLOK7P"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284C4148FE1;
-	Tue, 27 Aug 2024 06:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2904714A4F5
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724741823; cv=none; b=bDqcuJz9HI/vxXOtqQJyOsp44rqEwfRY2mPQsvijEvFWqNfZZi/0lJtYGgcZ3Qh+E2io82FpDHi2SuHhcZ7P5fh530mkrxo0josHmq8iwd+kOiMiyIIvo0XLgJ8cw0gH5QQqg3a9tq0mDwODhkCY2T3ZpzTSNq3YTuOe+Q8N/qM=
+	t=1724741839; cv=none; b=coBwx2A+q1k1TxbbiqWuplU+PbdMILokfRumhMc4TXKmR13WBV5X9GzSyh6Dv24ChSyzbxmVPlEfbPWfjC5jpgZ6TY13Lw0s8tC1rZKIJxz2SmpdR3zDnt2lhlGDBuHb3KZS0BUnLh/nY9/yPLqnoRBF68mo4JcErwKYnEBCs4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724741823; c=relaxed/simple;
-	bh=EdNPQchORoPessX+G6mk84EUoaM5/m/oPh6e5kb7gTE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MgUG1dDTq5bjaVQ02uza2BMzwGrGeTa/niQ9S90vVN3dBfZ/KMfXqiNSDbzBQRoX/FW2jDR/J2V81mNY4KHa1e1E1yIgwvfClCcIidOovXNqreFs4k0KFHr3ETusgNmT88Ym1H+QqxjwTZ9QoIpT+wUxG83uUEuwBdx3+0LYjeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KTESJBOJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86145C4FE00;
-	Tue, 27 Aug 2024 06:57:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724741822;
-	bh=EdNPQchORoPessX+G6mk84EUoaM5/m/oPh6e5kb7gTE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KTESJBOJHBJEU4kUtEaMVsXM4ZBCg3UIH/tGJfMQ4NhjxUuY2D2Vm9HftMhnXAhjm
-	 TgJ4U/J06eLspxES147RRkrPxEzWAYRLDXoo0gt0a7fVLMJdQSSuJCic+wEB7biHLn
-	 mG1w5o649gC7sxY99zIO0ONvc9Yb7AvyU+cm6lQ3x0MZik9cj3HQkYpIJEf/B4sGHQ
-	 aQE4EFUMg/qIX8QQrk3JnIhblFjxWci2n7fNLhqnhvLJa+ZYGav2SHM6bNWu+CrVs0
-	 HncDqZPeDQcP9MI+RwiFgvFXXyQwkIoRJzZmUNBEK99nE6L44Rzjb5ropUxxyMuCNk
-	 S1/0xPQ+Qnimg==
-Date: Tue, 27 Aug 2024 08:56:58 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, kernel@collabora.com, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Conor Dooley <conor@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: soc: rockchip: Fix compatibles for
- RK3588 VO{0,1}_GRF
-Message-ID: <5c5juu2ug5wmtzcokvwav2vls2f43ryom6mjrqc27uytscax6d@hj4qfezdrf7u>
-References: <20240827-rk3588-vo-grf-compat-v1-0-d4a18acf951a@collabora.com>
- <20240827-rk3588-vo-grf-compat-v1-1-d4a18acf951a@collabora.com>
+	s=arc-20240116; t=1724741839; c=relaxed/simple;
+	bh=Qtqx9ivwOy8pBZp/NXsGRrxv8y56JSp+4Xoxr9x7ODw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dWXduen4iCxVJTAiI8pzIFUPheZNrDpY2x3nhRZX6NIvL+SaU7GG7+bwecPlW8rwCatOyaBx1UScoOQoty2nsq2aH/KShJiWab04q1yzfVvWSfLLx9dnk049ooKq11RilfGCv07Af0UQLA6whwBzN+CbcCA1lO/DNDqe6qyDcTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vMWSWPjU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AJnLOK7P; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vMWSWPjU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AJnLOK7P; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2F85821AFB;
+	Tue, 27 Aug 2024 06:57:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724741836; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=hYBWBuGQGVoIMqDsVDjCgCorhqQl1NYnS/tP5hD7rWo=;
+	b=vMWSWPjUvjGgC2rOZ2synym9zQ+jABAmUnujcYRwm8InRbXrp5dfjFZaNx4gbF3G+7sELU
+	T4faF7f0t9VBsOLBaNVzi5RN3RmzJ54VOaSYFWt1MjcAvFAZTEQgYTiHYYor1VtJxaeSDT
+	PN6HjBzFqFsAhdIW7N5tdv1WuHbzj2U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724741836;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=hYBWBuGQGVoIMqDsVDjCgCorhqQl1NYnS/tP5hD7rWo=;
+	b=AJnLOK7P/jbX7yB3Mf2jyP4k37pdU90wmElAGGic9Id0GJ0kEWpq3LPXwNWtIwVP6K/S0U
+	JP0c/t4JPOylTSCw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724741836; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=hYBWBuGQGVoIMqDsVDjCgCorhqQl1NYnS/tP5hD7rWo=;
+	b=vMWSWPjUvjGgC2rOZ2synym9zQ+jABAmUnujcYRwm8InRbXrp5dfjFZaNx4gbF3G+7sELU
+	T4faF7f0t9VBsOLBaNVzi5RN3RmzJ54VOaSYFWt1MjcAvFAZTEQgYTiHYYor1VtJxaeSDT
+	PN6HjBzFqFsAhdIW7N5tdv1WuHbzj2U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724741836;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=hYBWBuGQGVoIMqDsVDjCgCorhqQl1NYnS/tP5hD7rWo=;
+	b=AJnLOK7P/jbX7yB3Mf2jyP4k37pdU90wmElAGGic9Id0GJ0kEWpq3LPXwNWtIwVP6K/S0U
+	JP0c/t4JPOylTSCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AA81C13724;
+	Tue, 27 Aug 2024 06:57:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cSBYKMt4zWZycAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Tue, 27 Aug 2024 06:57:15 +0000
+Message-ID: <c9c9e482-f80c-4158-8dc4-695f8e0c62cd@suse.de>
+Date: Tue, 27 Aug 2024 08:57:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240827-rk3588-vo-grf-compat-v1-1-d4a18acf951a@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm: Fix kerneldoc for "Returns" section
+To: Andi Shyti <andi.shyti@linux.intel.com>,
+ renjun wang <renjunw0@foxmail.com>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
+ daniel@ffwll.ch, jani.nikula@linux.intel.com,
+ joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+ tursulin@ursulin.net, lyude@redhat.com, imre.deak@intel.com,
+ Wayne.Lin@amd.com, ville.syrjala@linux.intel.com, vidya.srinivas@intel.com,
+ jouni.hogander@intel.com, janusz.krzysztofik@linux.intel.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org
+References: <tencent_37A873672B5CD20DECAF99DEDAC5E45C3106@qq.com>
+ <Zsz9pwQ3m9zHrjo-@ashyti-mobl2.lan>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <Zsz9pwQ3m9zHrjo-@ashyti-mobl2.lan>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[foxmail.com,gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[linux.intel.com,foxmail.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux.intel.com,kernel.org,gmail.com,ffwll.ch,intel.com,ursulin.net,redhat.com,amd.com,lists.freedesktop.org,vger.kernel.org];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, Aug 27, 2024 at 02:06:50AM +0300, Cristian Ciocaltea wrote:
-> According to RK3588 TRM, VO0_GRF and VO1_GRF have a similar layout, but
-> definitely not an identical one, therefore sharing the compatible is not
-> really justified.
-> 
-> Since currently there is no user of this, hence no ABI break, let's fix
-> it by providing dedicated strings.
-> 
-> Reported-by: Conor Dooley <conor@kernel.org>
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
->  Documentation/devicetree/bindings/soc/rockchip/grf.yaml | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/rockchip/grf.yaml b/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
-> index 78c6d5b64138..8fd539125f4a 100644
-> --- a/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
-> +++ b/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
-> @@ -31,7 +31,8 @@ properties:
->                - rockchip,rk3588-pcie3-pipe-grf
->                - rockchip,rk3588-usb-grf
->                - rockchip,rk3588-usbdpphy-grf
-> -              - rockchip,rk3588-vo-grf
+Hi
 
-You should deprecate the old one instead (deprecated: true).
+Am 27.08.24 um 00:11 schrieb Andi Shyti:
+> Hi Renjun,
+>
+> On Sat, Aug 24, 2024 at 04:36:34PM +0800, renjun wang wrote:
+>> The blank line between title "Returns:" and detail description is not
+>> allowed, otherwise the title will goes under the description block in
+>> generated .html file after running `make htmldocs`.
+>>
+>> There are a few examples for current kerneldoc:
+>> https://www.kernel.org/doc/html/latest/gpu/drm-kms.html#c.drm_crtc_commit_wait
+>> https://www.kernel.org/doc/html/latest/gpu/drm-kms.html#c.drm_atomic_get_crtc_state
+>> https://www.kernel.org/doc/html/latest/gpu/i915.html#c.i915_vma_pin_fence
+>>
+>> Signed-off-by: renjun wang <renjunw0@foxmail.com>
+>> ---
+>>   drivers/gpu/drm/display/drm_dp_mst_topology.c | 4 ----
+>>   drivers/gpu/drm/drm_atomic.c                  | 6 ------
+>>   drivers/gpu/drm/drm_atomic_helper.c           | 2 --
+>>   drivers/gpu/drm/drm_file.c                    | 7 -------
+>>   drivers/gpu/drm/drm_gem.c                     | 7 ++-----
+>>   drivers/gpu/drm/drm_modes.c                   | 1 -
+>>   drivers/gpu/drm/drm_rect.c                    | 1 -
+>>   drivers/gpu/drm/drm_vblank.c                  | 2 --
+>>   drivers/gpu/drm/i915/gem/i915_gem_object.h    | 1 -
+>>   drivers/gpu/drm/i915/gt/intel_ggtt_fencing.c  | 1 -
+>>   drivers/gpu/drm/i915/i915_vma.h               | 1 -
+>>   11 files changed, 2 insertions(+), 31 deletions(-)
+> next time, please, split the series so that each component goes
+> to the right branch.
 
-Best regards,
-Krzysztof
+My fault. Apologies if I crossed a line by just merging it into 
+drm-misc. It's just doc syntax, so I didn't think it was a big deal.
+
+Best regards
+Thomas
+
+>
+> Andi
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
