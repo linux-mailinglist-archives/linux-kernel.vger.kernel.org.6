@@ -1,228 +1,190 @@
-Return-Path: <linux-kernel+bounces-302920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB4A5960509
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:00:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C2F096050A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:00:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D185A1C2270A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:00:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51C8F1C22269
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576E7199E98;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9ED199E9A;
 	Tue, 27 Aug 2024 09:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nCG95Urz"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2079.outbound.protection.outlook.com [40.107.102.79])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b+fC9L8Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D8A13B293;
-	Tue, 27 Aug 2024 09:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724749243; cv=fail; b=NEPFYN/LQ3HyRJDk3CvOfOIonoOPxbSda2Kmq5x7W4KnaP5ZhNL5z90AL5q5fU4zulkSQx7g2JxrDF0GXePVDTSyBclANJTmT+ptTSievRs/hxIQqZ2kiR4vXIfsJ0EnSDy4u+lTqdP1ak/5A5LOMCZcg7hV3dojT873ufBbQc8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957221946B8;
+	Tue, 27 Aug 2024 09:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724749243; cv=none; b=W6XYhku4uLnuUO6RVrDp7vypTVRtoekFwT61Zp+5mj1WajfrVtf55b9MLA1r7Gp0OZB2R7VpWwQ9NxchbDYxpu709/LY5DPd5vS7OGiA2j0vfBHZV3NnRmmm3svfzl0Q4Iz/uLXmQEB3MoQiXKOH2CYDZydkPzYdvdqmi2UVgsY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724749243; c=relaxed/simple;
-	bh=jfjQUIUabuVC/dgTdaAqJgU+IXL109kvp1poADEPDXg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=raUUcN2X0kkK50ZadW9EJKcpCderliSsPozZK0lcV+bxn0MGst9TkUFziGA6cf20MEB5mpd2zdk5/xnC1ge6tM8LA/2ZCIRhcTT/KXpRW3Tk+MmuUOhpkOjLM2w05MTE1ph+gCrSjm/n38bP97DFhnhHGEt5KyaEVvtaJY7SNPk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nCG95Urz; arc=fail smtp.client-ip=40.107.102.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jwlzRj/syuMiUIedrspa/wy4315AXAEetiwiIllPpGxX3kJ+JKyIW8dh+kLbJV0VUQm4ck7vxTrSBcIrU+Y5plhgrlEQySUDNVx05izG5yIJSMs7dFErXahcE7YT36D+ifG9fVxsGCr/q4PISpWVXy/gAnojUfGy7eNER2LXwlgpXeJI+y8DVl0LB1wqx+kgoviW+fdF8IcRKKK9TCLNf96a/0TdywR6yapA8KUPnZP1FA/5tdukfS2y5cN6D2WyfEFYWm/74FxJHwOjxIqRXQlQFnivRcwO2G3VEliD5fHgq21N7tziOCEaCb6WgaSpGqNPy51gJoZRdtOSQV0ozA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MjdgceC0vYgnp7EUFKuGucQPn7F+NQjuBaz2+u5qhFw=;
- b=rpepR5mkp5RMWFBC958S+57WY9s7KhcCnoFZdwjUkCMQsHqYv0yMtDLkLbYyjM6Vmw8YuRYLIt+VtyxGYA7oqki//dtma1iqVUSoBlnLfRRyCtuOpBZs0HazcCbZgPuylKBODB/Ig9CsM2zdX+lohqOjI6d9txqZiiesBkqMpcdtoMLCA5nzXahmjLWVW1JlSvC4/Rz/q6gVhwUY5PTlWBNS6Re+1F5ge46NGqXu6xNvP8iN6QWROkMX6to7bBkwg2BDFkujXtBJZUdXfdyJi05SqWpiotBzC4+Mk2AZ88DUjU+NO02cAvkkO6zpZTJFuXqZ6xn8HsHhN8HcnwjnHQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MjdgceC0vYgnp7EUFKuGucQPn7F+NQjuBaz2+u5qhFw=;
- b=nCG95UrzehUvd3jJXAsj1f8YMQPPDGO2tgrIcETFHF8tcwxacxz+yVuRwKPopTbV7ichA7kpbCTZozNmFhFaQ25CmghmKXi164nRMP7gtkj9CS4LT4RNDBXddWyW3+62knqVNWd0heqbTfdCZKnF0sED3aBiCexiqfQQSLa4NbM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by PH7PR12MB7017.namprd12.prod.outlook.com (2603:10b6:510:1b7::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Tue, 27 Aug
- 2024 09:00:38 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.7897.021; Tue, 27 Aug 2024
- 09:00:38 +0000
-Message-ID: <9ba7f944-52d1-4937-80c7-a03bc0c5b1d5@amd.com>
-Date: Tue, 27 Aug 2024 11:00:32 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/sched: Fix UB pointer dereference
-To: Danilo Krummrich <dakr@kernel.org>, Philipp Stanner <pstanner@redhat.com>
-Cc: Luben Tuikov <ltuikov89@gmail.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20240827074521.12828-2-pstanner@redhat.com>
- <c443e90d-6907-4a02-bab4-c1943f021a8c@kernel.org>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <c443e90d-6907-4a02-bab4-c1943f021a8c@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR3P281CA0145.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:95::8) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	bh=AEcuwlJtGCkKrbiEX6+IN0+L3Xu+OVNM8HVvUWcOQtU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fTDR0X8kAIFZ7v/MFl8Kq/0txjgyAGsQGP7PNsFk+cG5VtqF0x4yjOkAq4HZUiM3r2gRL6Mvb1XZhltHV3kkLah6p+C5In5Bh4ry0VIalOfbqYHk1Lu+7ru+Ur8k5XxeM4+1NgEIbsy3bSsg9FDuTNF/G3PwXYh2XeVJTYfuZvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b+fC9L8Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50E32C8B7AF;
+	Tue, 27 Aug 2024 09:00:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724749243;
+	bh=AEcuwlJtGCkKrbiEX6+IN0+L3Xu+OVNM8HVvUWcOQtU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=b+fC9L8Y0EMc0FkTnF3mcSyITji41+WVWi+blTqXieN++x7oxKNdUMSiMA0BdKf8H
+	 HZtgskyYeFZFgySbJNLkMnfPFrAziAWA4LprXLEiIhrNF12EHCBVPSHD9b2BSTEfNz
+	 gYlSli1LlXPeczkaZobrQ1XPTVRs30DHtCWX9u/VAqKiS03iJaeXnE99J77XgJmllm
+	 uJqyTomK1VsqzcgGDYGJuXOXY00ZWGYK6l0TJEBRsr53IcNzvYKzegyteRltq9pGNR
+	 sXZASdAbsM+taPZuqgf5A79nTxsOorM9nDL+RzelkvXliCO7UT1yi2/SHfEsXaisVt
+	 REc6giFhiqLqw==
+Message-ID: <737edb34-688d-4800-bb50-2374ac94ac75@kernel.org>
+Date: Tue, 27 Aug 2024 11:00:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|PH7PR12MB7017:EE_
-X-MS-Office365-Filtering-Correlation-Id: ab83b8bf-f446-45be-be16-08dcc676b8a6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R0o4TTZkZlY2RmFmc0hwUnVPQTVaWi8ycDVGMFVXZC9UMWJ5T2VrOHJNbG1r?=
- =?utf-8?B?MFBSQ0RUeVJyS2tGTGxCeEVWakpJWWZuczc0endjb1ZhSmQ4WEdtRG9lbGc2?=
- =?utf-8?B?RHdselY3V3Fwdy9hSXhOWFFGS3NKYzY3cWg4bGpwc2ZBNERQR3N4L09iNVhu?=
- =?utf-8?B?cEYwVDg0di9ydU9rQzVMQW9xbGtWMGRvN0g3WXJFRklURUtVSE9vcHhJMXNk?=
- =?utf-8?B?bUJ6b3Q2c1B2akZPWHFBUkRxdnBFRHZYOXE1d2l6cENzNUpzdnRDdkRUV09H?=
- =?utf-8?B?Z3gwYk8weElseHQySXlGYmNvenBGM3VwQ3RSZVdIL3hCL3NPcFFUbHBaeGRJ?=
- =?utf-8?B?VFNEUGJZU3UrWkYybFJHZ1B2c0J1dWJCd3J4cW4wZmlnUzZCS3pzdUtDL1Vm?=
- =?utf-8?B?Z0M1OG5ZYUcxdCtXcmxXMDJYbzBsUDlkV0FPay93bEVBRDgwUmg1Q0orOFlB?=
- =?utf-8?B?em9UdiswU3JRMThvWldyRm1uc2E0VndOaEQyd2NuRkRYYjV4ZnEzU3k0eXRT?=
- =?utf-8?B?dmZVd3lKemViTE5NMk5zL2NTZ0hKQmRQN29CZ1h6YnV5RHZMUFg2ZVNqNkdJ?=
- =?utf-8?B?VlYzUE5FSmhqc3pCcUtudEc4UFFnUWJ4bVBxMTE3TzJ5dWdIOGp5RzY2Ylg5?=
- =?utf-8?B?RS9XVXNFZXhabnY4KytJaW05TGJhdlJndm9URUFBZnBVQVFWcS9SSTRMZTFm?=
- =?utf-8?B?QkFPM2crb1dzaEhaZHlpQy85ODI2azVJK25RUXFQbndxUHhHdkovTEZlOWdq?=
- =?utf-8?B?Y3pBSXNoMTVBc2pNYmVzelVta0lsekdVRWRBTDZsczhwdUtOaDdpc3BkODNP?=
- =?utf-8?B?c3N3dEZsTEtDY2Y4TG9LZExKRlJ1SWhrSnhBMGxYOHFhZTE0WFN2eVBVS0Rt?=
- =?utf-8?B?RGU0TEtZTGpVeVZOU01aUEVZY0JPZi9wZVVMU2J1R2NjeGRlWG9GOVdwTDBJ?=
- =?utf-8?B?ZEpvd3kvTjNreTIyaHd5d2dEb2w4ZXZLZ2NsZ1Q2ZGhHMXJmVGhxVTZXNzdH?=
- =?utf-8?B?RWY5ZVpIV3VibExTVkY1cmtTdXBQU2pSbXVsRmhna1dRcnVQR1VrSnVSVFBu?=
- =?utf-8?B?S2NJMU1nUTJwbkROei9kNjVlVFFoZm5xNmE2bEMvOHVsY2JFWXU0M242SVV6?=
- =?utf-8?B?WUYydGhBcWVtL01kbkl2Y1R5QVFZMGh0SllQUUVnUmluR0FvUTVYbDIwWlRB?=
- =?utf-8?B?M3ZBRVpNY1BJQmYxYkoyYU82a2cwR3h1Mk5STWVYYmxreUNGajE5MEM2TFRY?=
- =?utf-8?B?Q1g3SVhNYXFGV1RZSVoxMEdDMzR5Z01DZWgwYWNFOE95T1FmUHpRQmV0Ykxn?=
- =?utf-8?B?TXFzY0RaMTdVR1lqUUdmdUlxd0M1WFd6cjFmbDFLUDJKUExpaHUwSU5BeEFm?=
- =?utf-8?B?RytmMEFUOXkyMnRmYVdSK2FRcWQ2Nmw5bWN1MUgyK0VHK0gvKy9GZEVPRE02?=
- =?utf-8?B?ZThQM1BJTDl0VS80dk9VTzNrZyt5djM4L0ZtTFNjTE9YNXRTbHNtdWdocXgx?=
- =?utf-8?B?WFFWQ24zalp3eXFIVDVEa0lINzZOd1NjVmNucTh5c0theUlyc0oxSGZoWFpR?=
- =?utf-8?B?bGJvZ2JJQXNWNUxEOW93ZUVINHB4eXVQZ25LSFAyTGRWRjkwRng4Qk9sZmEv?=
- =?utf-8?B?UFcxREhNUkVEdmhxVWtUUi9UMWpQQW9XNlVjR2ZMaitVbHo0bk0yTlRtRE5u?=
- =?utf-8?B?dHpXY2Vkb2hUaGZ1OHlkbWNDTXR3d3h2ZkI0NjE4ZVcyamh6L0pSRGxXVG1y?=
- =?utf-8?B?cnlLTUFPdlhHTE1xcklaWFJrQ2JCK09VMjVwakpPU2JFOHRldUJIZXhid1Fz?=
- =?utf-8?Q?yGKY+ybzJsYJ0E66YyakYouT29tPfhAJAGsGY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TVNtUEY4UUJBa2VnWlowZHNmc3ZHVDZvWGJFdy9uUS91N1hEZWJGWEtHcUNP?=
- =?utf-8?B?ZUorVzFkcld0aERramRSRGh3aERqWkR0M2NhRmN4dXJDNTM5WXhWV2FkYVBo?=
- =?utf-8?B?UVQxaGdqdlZmWGR1a0dDaFdJREpxR1lTejZuYkVheTBGemlra1l4dnJBdGY4?=
- =?utf-8?B?RUxWT2RyV0ZrQmFza29oSnRwaVkySnFta1hIU0gxYVN6OC85bkZQSnpDTW9N?=
- =?utf-8?B?STRiMUZrTm83Vy9GcCtlOVBsdDRUbVVXNGs5d0JqRVpxM1QzUHBIcGYreWY2?=
- =?utf-8?B?Ykk3NFFyWVBLMkVxcWdCM0pXZ3ZRK2ZaamFKNzlYdHR5QmwxY1ZMWUNiSDhX?=
- =?utf-8?B?d0NJdVhyQVU0UUZKSUJCTUNIeXNBZzVROUd5RXRJV3pMM2lMWkpFTzRMZllo?=
- =?utf-8?B?ODZrMzJoMTJVZHpHbW9aUVNwbEVjcUVPNU9iL25rbEh0ZlpnelFVNEV1R0VH?=
- =?utf-8?B?QzFXelFwSmI0enp1ZGdqR3Q4T3Z3UGVnZGhWTEoyQmdDSkdYS1dWeDg2M2kw?=
- =?utf-8?B?VFl3TXpGamNuUTRtS21BZ0VFVmhwK2NQRW90LzNsS2FMbndHcDBvT2hUSDA2?=
- =?utf-8?B?V0o2aDc5WXdGSnp0VFJaeERpaHkraE1CYllST3k0ZHQrL0JRVzl6aTJ2SGhD?=
- =?utf-8?B?ZjFrS0JBekFSUCtwQ011S3d6YkFnekFkTGkrcjhmRVhIdUdqM0xJN3hxQkh5?=
- =?utf-8?B?SGJ4UVNCTmU0dXRGMS84cnNyLzJVL2lDUnczcTRKSWd2bDF2SGdYeHNDRUh3?=
- =?utf-8?B?Y0FPTmpuV1VSckdXeUxMRFEybmZ0cTJXeU1GT2ROVG1LSk5zbVMrVnZUcGdL?=
- =?utf-8?B?WkdvVDhTVkQ5NjA4MVFqZmJhdHpIb0NRV3VBaGlDS0w0KzJpVVV0MlB6L2U0?=
- =?utf-8?B?SGF4Q2dLOC9sdlQvamRScGY2djNhSlBzMkRoUjI5MmdRNUlzLy9yTkdpVThJ?=
- =?utf-8?B?Smo2K3d1WDcyYWtWWHRNSGNWcmlqTFpISXVxL1k4T1FBc0ZjaWZUY1pWSkFH?=
- =?utf-8?B?Y3Q2SFF3akw2Z2ZwNVlwQ1FLTHBtR2hkSjVYVC9qUmVYb2pqTjZBaFh0ZENo?=
- =?utf-8?B?c1lreHlxemZXcXc5ZjM5NU1YNmUxQnF5ek5YcE90UDRxbXMrd3A0dXYwUFh4?=
- =?utf-8?B?WW1qUjBLWEZmRHd5Sm9jdStFUlpXb2U0dktUODg5K1c4TGU4TjVhWk16elZy?=
- =?utf-8?B?WE1mTXhMSGYwRStJenFRY1l2U2IyWXYwNTZqZEVKUDUyMHAreFMwY0g4c1E1?=
- =?utf-8?B?QjNTUW9oSkFlMFF5YUh5bWxUNG1laGcvaWNuVzFXVjdsSDU2Y20rL3RhUGtj?=
- =?utf-8?B?YmlmN0dtQkFKeG9qeWpjcjM1RU9kb2JpSjdCRFpCaFVlVDZCSzRKekZXK3F5?=
- =?utf-8?B?d0p3OVVjdXJKZkVKSVFsOEJXNHFXUGJJWE9VODRpSnNrVC9URXh5ckpTYkNN?=
- =?utf-8?B?Tkw4Wk82SHY4cVFHcVRERllaQTBicnVuc3VIanBieG1Jamt4bDNZRHc2QkI5?=
- =?utf-8?B?NHNQY0srVUwyaWY5M1RmSGNsV1FoRm5seTlhWWRiSFA2allUeEhNRkVVOHph?=
- =?utf-8?B?VVVSanlVSVE0YS82Sjc3QXVpaEVlLzNFazhwNnVFV2JNakJMa3Bkc1R5L3Z3?=
- =?utf-8?B?SzRhV1dMVTZ3MUZvczlFUzRmV3BsVTZyOTJGS2FWT3d1SmNMQnpMbkYrc21D?=
- =?utf-8?B?Z1Q3bEg5VHBpM0JFVHR5RkZoVCtQNkkwYXNZU1RoRlFoTVMySlk3U25EZDg3?=
- =?utf-8?B?eHNDNExlYk44TTBmVDhaNmZ0OXBlcVdtc0hxSVRUSDAwV2I5US85R0VmQmcw?=
- =?utf-8?B?TnZiTUNSM3U5RVY5eng3SHdiaTVmb3ZLMU1LblFUdndIWGFERXVwVHVXTGJj?=
- =?utf-8?B?Ym0wdFg1Ui9lRHgrUU9uRDBINXBiQVV2VVJFSzUwakZuSVRZeHhyUUt6VklL?=
- =?utf-8?B?eG1sYWNwVGlrRGZnRVg2SmZWWE05dXpxM25oNERuSGlaOFlLa1NJKzdZcnQ0?=
- =?utf-8?B?OFhXR1VEMSt1TW5pcWdDSFNaTVQwZHlKV3NVVk9KM3g1MmtuMlEvWVRaYXJr?=
- =?utf-8?B?U3M5NHpvcWFkb1A1L2hwdUtsN1h3UXdDdTRnQUlSenZBWHJzUjB0eUhMSDRy?=
- =?utf-8?Q?kc90=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ab83b8bf-f446-45be-be16-08dcc676b8a6
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 09:00:38.7071
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mY+XPnrx/fOWZyzSg+JoZzMQua3nLfss2KI6gp5/CfQaCVDKk1fBeCSBbP9QptiY
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7017
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dts: nxp: mxs: Update device tree description for LWE
+ imx28 based devices
+To: Lukasz Majewski <lukma@denx.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240827084255.2120864-1-lukma@denx.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240827084255.2120864-1-lukma@denx.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Am 27.08.24 um 10:39 schrieb Danilo Krummrich:
-> On 8/27/24 9:45 AM, Philipp Stanner wrote:
->> In drm_sched_job_init(), commit 56e449603f0a ("drm/sched: Convert the
->> GPU scheduler to variable number of run-queues") implemented a call to
->> drm_err(), which uses the job's scheduler pointer as a parameter.
->> job->sched, however, is not yet valid as it gets set by
->> drm_sched_job_arm(), which is always called after drm_sched_job_init().
->>
->> Since the scheduler code has no control over how the API-User has
->> allocated or set 'job', the pointer's dereference is undefined behavior.
->>
->> Fix the UB by replacing drm_err() with pr_err().
->>
->> Cc: <stable@vger.kernel.org>    # 6.7+
->> Fixes: 56e449603f0a ("drm/sched: Convert the GPU scheduler to 
->> variable number of run-queues")
->> Reported-by: Danilo Krummrich <dakr@redhat.com>
->> Closes: 
->> https://lore.kernel.org/lkml/20231108022716.15250-1-dakr@redhat.com/
->> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
->> ---
->>   drivers/gpu/drm/scheduler/sched_main.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/scheduler/sched_main.c 
->> b/drivers/gpu/drm/scheduler/sched_main.c
->> index 7e90c9f95611..356c30fa24a8 100644
->> --- a/drivers/gpu/drm/scheduler/sched_main.c
->> +++ b/drivers/gpu/drm/scheduler/sched_main.c
->> @@ -797,7 +797,7 @@ int drm_sched_job_init(struct drm_sched_job *job,
->>            * or worse--a blank screen--leave a trail in the
->>            * logs, so this can be debugged easier.
->>            */
->> -        drm_err(job->sched, "%s: entity has no rq!\n", __func__);
->> +        pr_err("*ERROR* %s: entity has no rq!\n", __func__);
->
-> I don't think the "*ERROR*" string is necessary, it's pr_err() already.
+On 27/08/2024 10:42, Lukasz Majewski wrote:
+> The description for imx28 based devices needs to be updated after some
+> further development.
 
-Good point. I will remove that and also add a comment why drm_err won't 
-work here before pushing it to drm-misc-fixes.
+Everything is an update, please be specific in commit subject and message.
 
-Thanks,
-Christian.
+> 
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> ---
+>  arch/arm/boot/dts/nxp/mxs/imx28-lwe.dtsi | 38 +++++++++---------------
+>  1 file changed, 14 insertions(+), 24 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-lwe.dtsi b/arch/arm/boot/dts/nxp/mxs/imx28-lwe.dtsi
+> index 69fcb0dde940..6fa1f3e25b08 100644
+> --- a/arch/arm/boot/dts/nxp/mxs/imx28-lwe.dtsi
+> +++ b/arch/arm/boot/dts/nxp/mxs/imx28-lwe.dtsi
+> @@ -55,23 +55,6 @@ &i2c0 {
+>  	status = "okay";
+>  };
+>  
+> -&saif0 {
+> -	pinctrl-names = "default";
+> -	pinctrl-0 = <&saif0_pins_a>;
+> -	#sound-dai-cells = <0>;
+> -	assigned-clocks = <&clks 53>;
+> -	assigned-clock-rates = <12000000>;
+> -	status = "okay";
+> -};
+> -
+> -&saif1 {
+> -	pinctrl-names = "default";
+> -	pinctrl-0 = <&saif1_pins_a>;
+> -	fsl,saif-master = <&saif0>;
+> -	#sound-dai-cells = <0>;
+> -	status = "okay";
+> -};
+> -
+>  &spi3_pins_a {
+>  	fsl,pinmux-ids = <
+>  		MX28_PAD_AUART2_RX__SSP3_D4
+> @@ -109,7 +92,7 @@ &ssp3 {
+>  
+>  	flash@0 {
+>  		compatible = "jedec,spi-nor";
+> -		spi-max-frequency = <40000000>;
+> +		spi-max-frequency = <20000000>;
+>  		reg = <0>;
+>  
+>  		partitions {
+> @@ -133,14 +116,21 @@ partition@90000 {
+>  				reg = <0x90000 0x10000>;
+>  			};
+>  
+> -			partition@100000 {
+> -				label = "kernel";
+> -				reg = <0x100000 0x400000>;
+> +			partition@3 {
 
->
-> Otherwise,
->
-> Acked-by: Danilo Krummrich <dakr@kernel.org>
->
->>           return -ENOENT;
->>       }
+This does not look right. It is neither explained in commit msg, nor
+matching reg.
+
+It does not look like you tested the DTS against bindings. Please run
+`make dtbs_check W=1` (see
+Documentation/devicetree/bindings/writing-schema.rst or
+https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+for instructions).
+
+> +				label = "rescue";
+> +				reg = <0xA0000 0xF40000>;
+
+Lowercase hex
+
+> +			};
+> +
+
+Best regards,
+Krzysztof
 
 
