@@ -1,165 +1,105 @@
-Return-Path: <linux-kernel+bounces-302725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12203960290
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:57:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1156896028F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:57:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4F232836EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:57:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AFD9B21798
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:57:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2DC149DF4;
-	Tue, 27 Aug 2024 06:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7534214A0B7;
+	Tue, 27 Aug 2024 06:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L/mXZwQ4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ig33DW6l"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B67712F5B1
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069593A1C4;
+	Tue, 27 Aug 2024 06:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724741822; cv=none; b=r3mSbk2LLgTjMTd8b1JALQm+pjZrlq6QCJpPVcfk1bLyayCRWPiu2M++22Xhg5C5ZN34HZ95yNrOoxnQgFqgsHnw0tqaKoPva762fVaP8oHe6dO+gzh39j07hmrhTQUv8S3I+4WVBYtbon9BDIXmylWj9wZR4dt9XNgS34lePgY=
+	t=1724741812; cv=none; b=UMU7iRL5tChg63o/wstXoDUIgp1FyWzmknpQ9k3XFftEoKULGnONOTcdszI1IiMsJ0bCjsSglRa3vS5uG8WyU4ygNCEsj5kEQJQkNKrhTsCKxu4smFYyGcaYBnMneLgjT1QoJd4+CUBEGzsjP+iH+TCwPtyHN+Zzxb1lHyUzpZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724741822; c=relaxed/simple;
-	bh=ezhnBn+svLypWWak/HUTqxPGsQXmRMP/Q4mzTULYzAc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=auq3iCKcqU2lLkiHsnN7m+cPI/PGmYrxiQqvntnyMQhWUSO5hEmTVjjYamKiwmw0NsaS8FKsw41pwfTbxDaYNJzmtjfBlRSNbhmRwduxTlh+hv07vW2P7A0/2WFddvR/umKH8Z2tqUqr53ToXeaXjYJeHzSzGHSCfBevMqkdX0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L/mXZwQ4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E149C4FDFE;
-	Tue, 27 Aug 2024 06:57:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724741822;
-	bh=ezhnBn+svLypWWak/HUTqxPGsQXmRMP/Q4mzTULYzAc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=L/mXZwQ47kWxN4a+CjbnQ7NtOVz3VaodLK8eirEzAz04dIUTv38Q6osnaPtdJxEmo
-	 rQgpgJbrn/ULTtWkt6wE1TdnPEKiy2OOncGJaulLl+o1e9nwL2uNp46zIdweeDYISg
-	 S1/sUFPEYYY3JlATY4c4SWTYLdfNd5Ly78NlxKSopuPNazQMJhHtxvQ65Fv+Z3tca+
-	 2BsHgo+SycewF4C5IzR6eScYbFolbzEem9mzBHFzJRlifI/w9i50dYxCiRtIlvltM8
-	 QAU0idAsoGAzP/gerWl/sHxl0AQnidIw+fvwqW8UjlRvdZd8GN0ZACPY4qz3kR6nTr
-	 0dRITXVTDOQkA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1siq8S-0077T8-5S;
-	Tue, 27 Aug 2024 07:57:00 +0100
-From: Marc Zyngier <maz@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Kunkun Jiang <jiangkunkun@huawei.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v2] genirq: Get rid of global lock in irq_do_set_affinity()
-Date: Tue, 27 Aug 2024 07:56:36 +0100
-Message-Id: <20240827065636.3904806-1-maz@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1724741812; c=relaxed/simple;
+	bh=Sklu6BQa8UIa90kmTIVCwReorljZq3qBpyW5hyOb22w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GbVTMHJXabMLaUjnd9SZKNtIH/PZ1UrxVZPhHxYrLyZjXNSfEp8p2NQiWkQU8qocgSIuSIm8iU154WG24h2ppvUJ8qp3RBCNLJ4KLWJC1Qwqi9zFi3vVpe31QLs4C/fu1mL436Rn400q2CAfWIYFV8GF9G9JboyFIGVQCzvb5EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ig33DW6l; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724741811; x=1756277811;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Sklu6BQa8UIa90kmTIVCwReorljZq3qBpyW5hyOb22w=;
+  b=Ig33DW6l3j23tbGHl5ItSUTdoMo23aGxrnjNVnlRH4YwpPQmMGfDJXMv
+   wUzcyfRd/XncAzFm3qwuAD6ddPIfv7BkNwfdpOSs0WRYcLtDuj4Jj3N2C
+   NTJ9kM19KcHbU1oawVX2UnK5h0Dm9nu/vVHBRghfYgFduOyx0jZXAi/QL
+   bIZ0getxLYCfPcgMmR4RwOusR/zP9/u6fOWXIm3fmTeOwwWGeFbLEFJoy
+   wb0XmxS0gfOGmSMbAAO5wSWxRh9S91Jc4GmNUs0XaT0LPpbt6q5MmdLvf
+   nhhyMGDRH4P7AH+pa7kW+Z/4GXJWOGHq/IA8JJKMcY1w+lHqwdyGDi0em
+   w==;
+X-CSE-ConnectionGUID: jt4iycggTtqKtNrd7cnqOA==
+X-CSE-MsgGUID: sv73TVFLSGWsjaUBAMVk2w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="34573124"
+X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
+   d="scan'208";a="34573124"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 23:56:50 -0700
+X-CSE-ConnectionGUID: 0P7D2cfaRf+Y9QsLSErGNw==
+X-CSE-MsgGUID: 41A4pYjXTk+03/YEG0sVKA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
+   d="scan'208";a="100266482"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 23:56:48 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 08DD811F965;
+	Tue, 27 Aug 2024 09:56:45 +0300 (EEST)
+Date: Tue, 27 Aug 2024 06:56:44 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Max Staudt <mstaudt@chromium.org>
+Cc: Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ricardo Ribalda <ribalda@chromium.org>
+Subject: Re: Fixing IPU3 IMGU warnings due to extraneous calls to s_stream()
+Message-ID: <Zs14rHA2lGQibhRX@kekkonen.localdomain>
+References: <20240620145820.3910239-1-mstaudt@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, jiangkunkun@huawei.com, tglx@linutronix.de
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240620145820.3910239-1-mstaudt@chromium.org>
 
-Kunkun Jiang reports that for a workload involving the simultaneous
-startup of a large number of VMs (for a total of about 200 vcpus),
-a lot of CPU time gets spent on spinning on the tmp_mask_lock that
-exists as a static raw spinlock in irq_do_set_affinity(). This lock
-protects a global cpumask (tmp_mask) that is used as a temporary
-variable to compute the resulting affinity.
+Hi Max,
 
-While this is triggered by KVM issuing a irq_set_affinity() call
-each time a vcpu is about to execute, it is obvious that having
-a single global resource is not very scalable, and that we could
-do something better.
+On Thu, Jun 20, 2024 at 11:45:40PM +0900, Max Staudt wrote:
+> Dear IPU3 driver maintainers,
+> 
+> The Intel IPU3 IMGU driver no longer shuts down cleanly since v6.7,
+> because vb2 now complains if s_stream() is called multiple times on
+> the same object:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=009905ec50433259c05f474251000b040098564e
+> 
+> This series attempts to fix this, but needs a review from someone more
+> intimate with IPU3 and its driver. Could you please have a look at this?
 
-Since a cpumask can be a fairly large structure on systems with
-a high core count, a stack allocation is not really appropriate.
-Instead, turn the global cpumask into a per-CPU variable, removing
-the need for locking altogether as we are not preemptible at this
-point.
+Thanks for the patches. They seem good to me, I've taken them to my tree
+(devel branch).
 
-Reported-by: Kunkun Jiang <jiangkunkun@huawei.com>
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
----
-
-Notes:
-    v2: Move the per-CPU data outside of irq_do_set_affinity() so that
-        it doesn't break with weak per-CPU requirements.
-
- kernel/irq/manage.c | 21 +++++++++------------
- 1 file changed, 9 insertions(+), 12 deletions(-)
-
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index dd53298ef1a5..3c3fd2b2498c 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -218,21 +218,20 @@ static void irq_validate_effective_affinity(struct irq_data *data)
- static inline void irq_validate_effective_affinity(struct irq_data *data) { }
- #endif
- 
-+static DEFINE_PER_CPU(struct cpumask, __tmp_mask);
-+
- int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
- 			bool force)
- {
- 	struct irq_desc *desc = irq_data_to_desc(data);
- 	struct irq_chip *chip = irq_data_get_irq_chip(data);
-+	struct cpumask *tmp_mask = this_cpu_ptr(&__tmp_mask);
- 	const struct cpumask  *prog_mask;
- 	int ret;
- 
--	static DEFINE_RAW_SPINLOCK(tmp_mask_lock);
--	static struct cpumask tmp_mask;
--
- 	if (!chip || !chip->irq_set_affinity)
- 		return -EINVAL;
- 
--	raw_spin_lock(&tmp_mask_lock);
- 	/*
- 	 * If this is a managed interrupt and housekeeping is enabled on
- 	 * it check whether the requested affinity mask intersects with
-@@ -258,11 +257,11 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
- 
- 		hk_mask = housekeeping_cpumask(HK_TYPE_MANAGED_IRQ);
- 
--		cpumask_and(&tmp_mask, mask, hk_mask);
--		if (!cpumask_intersects(&tmp_mask, cpu_online_mask))
-+		cpumask_and(tmp_mask, mask, hk_mask);
-+		if (!cpumask_intersects(tmp_mask, cpu_online_mask))
- 			prog_mask = mask;
- 		else
--			prog_mask = &tmp_mask;
-+			prog_mask = tmp_mask;
- 	} else {
- 		prog_mask = mask;
- 	}
-@@ -272,16 +271,14 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
- 	 * unless we are being asked to force the affinity (in which
- 	 * case we do as we are told).
- 	 */
--	cpumask_and(&tmp_mask, prog_mask, cpu_online_mask);
--	if (!force && !cpumask_empty(&tmp_mask))
--		ret = chip->irq_set_affinity(data, &tmp_mask, force);
-+	cpumask_and(tmp_mask, prog_mask, cpu_online_mask);
-+	if (!force && !cpumask_empty(tmp_mask))
-+		ret = chip->irq_set_affinity(data, tmp_mask, force);
- 	else if (force)
- 		ret = chip->irq_set_affinity(data, mask, force);
- 	else
- 		ret = -EINVAL;
- 
--	raw_spin_unlock(&tmp_mask_lock);
--
- 	switch (ret) {
- 	case IRQ_SET_MASK_OK:
- 	case IRQ_SET_MASK_OK_DONE:
 -- 
-2.39.2
+Kind regards,
 
+Sakari Ailus
 
