@@ -1,187 +1,111 @@
-Return-Path: <linux-kernel+bounces-303246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72EBA96097C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:02:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A03969609BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B46C286BFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:02:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C2C0282FDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F5B1A0AE6;
-	Tue, 27 Aug 2024 12:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oa/I9+Mx";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U3idW99Q"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A22F1A08DD;
+	Tue, 27 Aug 2024 12:10:21 +0000 (UTC)
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2E71A01C4;
-	Tue, 27 Aug 2024 12:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D5919EEBF;
+	Tue, 27 Aug 2024 12:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724760158; cv=none; b=Zu4eMDKGjeYFK4Iwf6Y2aAUPcD4LIfMCoMHcPusRuLaHhyfwHlrOZXt7mVE2qDM6Pb1T7SJxk7Ji+7FrqKhlNYloJA9cC4hr2YTo3FyaAxio54IP9nB161xG7e1jgpRXrJMKiXgOzUToYCdGBHpIQy6biNK2GXEFEfCQ9zuSafc=
+	t=1724760621; cv=none; b=cnWaghk9owj8EWsaWUUbWDpNZzM4ddXefQ3QStYdYQbLJxxRGRrhc4TErUUlb5bA8LLFwcBeqKUq47zZtqSHfdFR9tEIVLAYuDAEMgRxy86dsMDyf4AD7yAQmGNtN2e/KOEzcs0dQ3h7EwUhzPT5x50zIZvhNfPS/HH9mx9JS50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724760158; c=relaxed/simple;
-	bh=4I98SlbNG6iN9Y5851enoMRbrc8v7J1YBlToWju6b+4=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=ZBwVlARIykODgMLzBMXtrX9yESKtgouzqVxdp/+Ixax9rfZ1EPsaF7keu+FIqxA/P9BI1dqRReF9xWvy9vxspAufHsfRnD7k7o0xpHeDewSIkh1chNHRFGO8R7vGER3EMmWCw10qZOtfSarITjACnuv8aPRPpZNx4b3icHTm6iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oa/I9+Mx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U3idW99Q; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 27 Aug 2024 12:02:34 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724760155;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nciwL1u0rp8c+nVNiZ8C9oNrnummWZpwLgNIL7epbNk=;
-	b=oa/I9+Mx81UiIIiAi6bbvvRfuNsSuu3cfo3ETkFAWhVIz9LBj8kXTGO3IHg83Cw4EcsVQK
-	xROcFXGegAIeEBIfmMqH6gB7307wQLig2pqzGaQNYugQaZnEgZiTSj2maxljc6R9Kz9kuf
-	KasnhF16i/akZ31xkZ5YDA/nGfZvOwRQFIFiTCMeNq4j0dCnUcV9qRoJtTWEk9UVV2h0ep
-	OKKiOslPK4ajHYHT8OMxMb6RzLxlvp3OwuxGjtT5aUSrHov30EKbZmTHRwWSq0WZ0QVdv2
-	TBLB5XOsg+iH5lAhXD/c58H1da5GVLu/ZkdDNlv2+TmTfpojraSaoof9RcgsIw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724760155;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nciwL1u0rp8c+nVNiZ8C9oNrnummWZpwLgNIL7epbNk=;
-	b=U3idW99Qz3d2Ka3HxzfxTFPKx8Tl76NHVj55ZqmzFHUVQg4IbbLKqs0ghhOY9djfz27zZB
-	etjAfgZt7fN5DiAQ==
-From: "tip-bot2 for Marc Zyngier" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: irq/core] genirq: Get rid of global lock in irq_do_set_affinity()
-Cc: Kunkun Jiang <jiangkunkun@huawei.com>,
- Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <maz@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240826080618.3886694-1-maz@kernel.org>
-References: <20240826080618.3886694-1-maz@kernel.org>
+	s=arc-20240116; t=1724760621; c=relaxed/simple;
+	bh=F33G64sSxOt+QVRxT0KFzMzo62bODyeLCi2VwOq8QO8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LU+uF12GC41PjdLloqrC8qmhK5wV8YcQgPVvXA+Gl80tp/j5gL3JrMHRONViA5ZroNsiDM96YckT2g8vwyYYDV+yaNToEWSTYUBAZ02ynNHv+be034qxTiHetAz0BxlLXo1a2KPvgG9TH01G1NuGnCARmElGJ9etqfp37x312rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2705d31a35cso4768311fac.0;
+        Tue, 27 Aug 2024 05:10:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724760618; x=1725365418;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+1y6MVpUHGHncGeq7J2eB1au+7eWBsmfRUGHQOxkYTA=;
+        b=c1GB/tem0Y5jdx09sUm58WR7bbV7vommzd+4bf4m5gXGrGXO8b2xBp9f9zDrriQP4T
+         rA06V0MMw6OcdaBNDEoyanrC1qb0P7otx75XJzV3FH7P5mE+hR0uwszwav7wFQs4RgXO
+         9o39AlhFH33Oq9ThrWcVcIJz9DKx4JMbyANJNyTqEMYsZLwpuLG1qtl/UPuwyGy1IIH9
+         EjAPTa5K010QDcUb7t0CQM4nqf3/4xJZXsDyxFMm13sGVemLZeyOlD1nDZiIDBUpOpCl
+         RJn1GGNELPbHKHxDmvouHiLfNtO3S3zk/1NktHjPVZzKq242y2MC8QTw4uoObkOnmGp3
+         D4nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUyuLxy31YYEA/VTkkBbES+VovJjKZtRYI3MMTYFPLNirQaKGnQK/X1o0feKM2nkGKNMwYSII3ZX/wnuBw=@vger.kernel.org, AJvYcCW66k8RlmFppqSs6t80zMwiXrcYT4sqNgNhIR4YFpu1YMM9UtvKKR0nBjco3L6WmCksSPFB+pEw@vger.kernel.org, AJvYcCWMXrk2G3llLCapnyOLaWew72WDQiHaMHE5UxZC0FkNY37b02awKVQ8RH2z0FX/538kqucqiEvdluR1fNumjWoyUss=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymrB2lKtYoZ3MbyOtEuahRyTZC2j2UYnuoIscg4xszoiltYZD4
+	U8GU3e5K8TlQL7XWdBZp1eUwztGxwq2FhlSMukVZYpTHpEox4U3a6+PLWfkm
+X-Google-Smtp-Source: AGHT+IHXOjW1T7FUoLXgthnxuIveKpp8XF28luyoV++xiBr/G2MFTnsaCYHQH357nBQzpDRLVDZ6cw==
+X-Received: by 2002:a05:6870:8323:b0:270:205a:4070 with SMTP id 586e51a60fabf-27759e15d10mr3031917fac.14.1724760618265;
+        Tue, 27 Aug 2024 05:10:18 -0700 (PDT)
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com. [209.85.167.182])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-273cea229bdsm3042850fac.26.2024.08.27.05.10.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 05:10:18 -0700 (PDT)
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3db145c8010so337542b6e.3;
+        Tue, 27 Aug 2024 05:10:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW+3JRP9xjCzi/0Ruw0HA7G2IMgFzjw962CruG1qULYHSBShZ6g39cnNrvCZkfi0gJEjN2xKmj3@vger.kernel.org, AJvYcCX5pBUAkpS/+qfBy6PTqiYoQOZlunF2oFhA79UeIaWnG1SgvTw/cPasy3Bm7pwgG9PIz3n/5kPJhUwg2I9Zcbp2/7s=@vger.kernel.org, AJvYcCXTGfUKxzjrHmgO8lu/ZPPcyRXUdSUB8s2tP9V5h5RoQ77hgud4GiEVwhQZjbdvAb7RhbRbnxPREatzSkQ=@vger.kernel.org
+X-Received: by 2002:a05:690c:ed2:b0:64b:52e8:4ae3 with SMTP id
+ 00721157ae682-6cfb950a4e6mr28198917b3.3.1724760235154; Tue, 27 Aug 2024
+ 05:03:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172476015469.2215.1516167821717273436.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20240827095712.2672820-1-frank.li@vivo.com> <20240827095712.2672820-6-frank.li@vivo.com>
+In-Reply-To: <20240827095712.2672820-6-frank.li@vivo.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 27 Aug 2024 14:03:42 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX2NxBqBxkSXo8pnsDk2BMgrunwNhtb75g-17KOZ7RSEQ@mail.gmail.com>
+Message-ID: <CAMuHMdX2NxBqBxkSXo8pnsDk2BMgrunwNhtb75g-17KOZ7RSEQ@mail.gmail.com>
+Subject: Re: [net-next v3 5/9] net: dsa: rzn1_a5psw: Convert to devm_clk_get_enabled()
+To: Yangtao Li <frank.li@vivo.com>
+Cc: clement.leger@bootlin.com, andrew@lunn.ch, f.fainelli@gmail.com, 
+	olteanv@gmail.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, ulli.kroll@googlemail.com, linus.walleij@linaro.org, 
+	marcin.s.wojtas@gmail.com, linux@armlinux.org.uk, 
+	alexandre.torgue@foss.st.com, joabreu@synopsys.com, mcoquelin.stm32@gmail.com, 
+	hkallweit1@gmail.com, u.kleine-koenig@pengutronix.de, 
+	jacob.e.keller@intel.com, justinstitt@google.com, sd@queasysnail.net, 
+	horms@kernel.org, linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the irq/core branch of tip:
+On Tue, Aug 27, 2024 at 11:44=E2=80=AFAM Yangtao Li <frank.li@vivo.com> wro=
+te:
+> Convert devm_clk_get(), clk_prepare_enable() to a single
+> call to devm_clk_get_enabled(), as this is exactly
+> what this function does.
+>
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
 
-Commit-ID:     64b6d1d7a84538de34c22a6fc92a7dcc2b196b64
-Gitweb:        https://git.kernel.org/tip/64b6d1d7a84538de34c22a6fc92a7dcc2b196b64
-Author:        Marc Zyngier <maz@kernel.org>
-AuthorDate:    Mon, 26 Aug 2024 09:06:18 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 27 Aug 2024 13:54:15 +02:00
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-genirq: Get rid of global lock in irq_do_set_affinity()
+Gr{oetje,eeting}s,
 
-Kunkun Jiang reports that for a workload involving the simultaneous startup
-of a large number of VMs (for a total of about 200 vcpus), a lot of CPU
-time gets spent on spinning on the tmp_mask_lock that exists as a static
-raw spinlock in irq_do_set_affinity(). This lock protects a global cpumask
-(tmp_mask) that is used as a temporary variable to compute the resulting
-affinity.
+                        Geert
 
-While this is triggered by KVM issuing a irq_set_affinity() call each time
-a vcpu is about to execute, it is obvious that having a single global
-resource is not very scalable.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Since a cpumask can be a fairly large structure on systems with a high core
-count, a stack allocation is not really appropriate.  Instead, turn the
-global cpumask into a per-CPU variable, removing the need for locking
-altogether as the code is executed with preemption and interrupts disabled.
-
-[ tglx: Moved the per CPU variable declaration outside of the function ]
-
-Reported-by: Kunkun Jiang <jiangkunkun@huawei.com>
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Kunkun Jiang <jiangkunkun@huawei.com>
-Link: https://lore.kernel.org/all/20240826080618.3886694-1-maz@kernel.org
-Link: https://lore.kernel.org/all/a7fc58e4-64c2-77fc-c1dc-f5eb78dbbb01@huawei.com
----
- kernel/irq/manage.c | 21 +++++++++------------
- 1 file changed, 9 insertions(+), 12 deletions(-)
-
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index dd53298..f0803d6 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -218,21 +218,20 @@ static void irq_validate_effective_affinity(struct irq_data *data)
- static inline void irq_validate_effective_affinity(struct irq_data *data) { }
- #endif
- 
-+static DEFINE_PER_CPU(struct cpumask, __tmp_mask);
-+
- int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
- 			bool force)
- {
-+	struct cpumask *tmp_mask = this_cpu_ptr(&__tmp_mask);
- 	struct irq_desc *desc = irq_data_to_desc(data);
- 	struct irq_chip *chip = irq_data_get_irq_chip(data);
- 	const struct cpumask  *prog_mask;
- 	int ret;
- 
--	static DEFINE_RAW_SPINLOCK(tmp_mask_lock);
--	static struct cpumask tmp_mask;
--
- 	if (!chip || !chip->irq_set_affinity)
- 		return -EINVAL;
- 
--	raw_spin_lock(&tmp_mask_lock);
- 	/*
- 	 * If this is a managed interrupt and housekeeping is enabled on
- 	 * it check whether the requested affinity mask intersects with
-@@ -258,11 +257,11 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
- 
- 		hk_mask = housekeeping_cpumask(HK_TYPE_MANAGED_IRQ);
- 
--		cpumask_and(&tmp_mask, mask, hk_mask);
--		if (!cpumask_intersects(&tmp_mask, cpu_online_mask))
-+		cpumask_and(tmp_mask, mask, hk_mask);
-+		if (!cpumask_intersects(tmp_mask, cpu_online_mask))
- 			prog_mask = mask;
- 		else
--			prog_mask = &tmp_mask;
-+			prog_mask = tmp_mask;
- 	} else {
- 		prog_mask = mask;
- 	}
-@@ -272,16 +271,14 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
- 	 * unless we are being asked to force the affinity (in which
- 	 * case we do as we are told).
- 	 */
--	cpumask_and(&tmp_mask, prog_mask, cpu_online_mask);
--	if (!force && !cpumask_empty(&tmp_mask))
--		ret = chip->irq_set_affinity(data, &tmp_mask, force);
-+	cpumask_and(tmp_mask, prog_mask, cpu_online_mask);
-+	if (!force && !cpumask_empty(tmp_mask))
-+		ret = chip->irq_set_affinity(data, tmp_mask, force);
- 	else if (force)
- 		ret = chip->irq_set_affinity(data, mask, force);
- 	else
- 		ret = -EINVAL;
- 
--	raw_spin_unlock(&tmp_mask_lock);
--
- 	switch (ret) {
- 	case IRQ_SET_MASK_OK:
- 	case IRQ_SET_MASK_OK_DONE:
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
