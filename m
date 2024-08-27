@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-303381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8EDB960B60
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:09:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8ACA960B61
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E70A1F220FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:09:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C35161C22DBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D7A1C4601;
-	Tue, 27 Aug 2024 13:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EEC1BD51F;
+	Tue, 27 Aug 2024 13:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nZCOcbX3"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cf0ndb6l"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3111BD51F;
-	Tue, 27 Aug 2024 13:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DD01BFE06;
+	Tue, 27 Aug 2024 13:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724764096; cv=none; b=VfNW68BA8ut49CF7cSMP52m/4+qD1E2VTdCKxIceBjztMwkCwAAO/Q49WKu2jjPeiUxILrP6kMd6mpeiM/XUi8P42dspyt6LRnYMuMu3Qgp050nR5CWhpXylW0Xw7Qe24MTIvotHzBLhcxWeWOEKn1yw5ejeJTC0a5cWnHLYhlA=
+	t=1724764098; cv=none; b=E5lXeUkB1t29UDo1vCr+7jNQak/BcdRtgHwHeB8mc1a4LWsABaDwqHHSSP7E+CAjiljWeb6QBeddFyEEeGEGazkxfeE6wenw/9UG6xsXm7OcXMWmkNskKdgCVBMjNJitzAD27DpDOpormS34JG6jzkVpDxS1eaY0Gn37j6Apb4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724764096; c=relaxed/simple;
-	bh=scaVtywZM8FRzxJE7xGyoly1lnhP22/2qGmw6jgkdxg=;
+	s=arc-20240116; t=1724764098; c=relaxed/simple;
+	bh=AYWLBb8Keyuw2fUFmizNHQwBmBNVP35YDuFTaDlBHz4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=h93fSNcFh99fRmVHUG3kYl/lfbdBRNoSlq8WjY0cuCXU8XPJpZxXNVftIFPri3udEVUPLiBE0Tco8ASuK7cVQiZsnmsH7wajmrBQKzdO/Ox5KI+heau1EAgMflXV5y9WRMRBld+RsWZzGVlpc/oCExvyu+p9uJf7sdKqQ0QNpps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nZCOcbX3; arc=none smtp.client-ip=192.198.163.15
+	 MIME-Version; b=o1vmUwk2EDrRZJGi6ZHPZZUDupytKMUpHVjwQMr/TzKVUpx3F0obxXup+dit/kblzUIChOBWYNcqfLBHb/pB7Kf6pDp7tjqyxeeFocFHdEnkr+WWX30uUV1OK5a5ZtRXEyCLtIXzETBpaqjCuFGfVEqatXNQGTqKMncJmuZvTVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cf0ndb6l; arc=none smtp.client-ip=192.198.163.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724764095; x=1756300095;
+  t=1724764097; x=1756300097;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=scaVtywZM8FRzxJE7xGyoly1lnhP22/2qGmw6jgkdxg=;
-  b=nZCOcbX34cZ9QZBsk8hvRAzsNbiJx4MkmeIJcLfTqBvlDzUZpfmmLnQT
-   Z5QrloeAnJkdaGNZ4pWQv4lQaXe0Q4eeK5bu2F81XNKTFIAzxuFaZaE+Z
-   fkyvsVWQGzVP6ncXqRl2QzT9i86Zh4yITWyn221xvv03fxYIYSa77mwcU
-   BTE8haGRzlsahLvzyAwksY6wKVkym5yzhI3vjqmndXOTbhBFRI61rHtNY
-   hbyZgsstCcL4Za8DZW/ATWXnfazyXJ+saB4Pchyao3+P0lj8RIY8XX4kv
-   GlomQliWvmjM7bpH61mKKq20iWwHJ4Tn9RohcBcRRwERaNxFTOZYv7RcN
-   g==;
-X-CSE-ConnectionGUID: uIhLvMnVSgOhSksnw8gLAQ==
-X-CSE-MsgGUID: cngoMHcHR0+9O67xTZi/Tw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23400595"
+  bh=AYWLBb8Keyuw2fUFmizNHQwBmBNVP35YDuFTaDlBHz4=;
+  b=Cf0ndb6lsD6HVD9wOf9FYs/RBhCt2vi6StldmZiSm1xDwIrbesVmCtTG
+   TEQ/w/7/16Yri70KGksN6h/YX2kRWLtWqfay+5vieyCurPQMNSW0udgT7
+   LX6qZKys1XXtU7REsFATyQVQDfkRRXaBmWoP9ozOeWobBSoZKCsaLw5CX
+   sti3YdzGXCmAkuW66o33v7BsjRWKAj7IwnDGR/ensUkFFNYWbfrEbdzQh
+   eMStuhfVpLCJF/L0ANqY7/rwhEfg0/MCLHBD6PtEMoYT4vZYhmTpHGy7T
+   IWKMS3g0ecfZr2mHRZKMzEYBsyeM47N2c7ePHqf69GEl1NLLyyTmd0um+
+   w==;
+X-CSE-ConnectionGUID: XoMRec5DSBeFDNQSwLTjqg==
+X-CSE-MsgGUID: cSmtC9BXQLaHF+xhbPo5QA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23400609"
 X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="23400595"
+   d="scan'208";a="23400609"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 06:08:14 -0700
-X-CSE-ConnectionGUID: LxqvbIUjS+OANqY50uZCZw==
-X-CSE-MsgGUID: wnSwDm6hRVSlqxCY2wgzvQ==
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 06:08:17 -0700
+X-CSE-ConnectionGUID: YNJvfGldR/qc9divoPI22g==
+X-CSE-MsgGUID: V0DIbfS7RW24PJ/uPSHF6Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="67551983"
+   d="scan'208";a="67552021"
 Received: from anmitta2-mobl4.gar.corp.intel.com (HELO yungchua-desk.intel.com) ([10.247.118.39])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 06:08:13 -0700
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 06:08:15 -0700
 From: Bard Liao <yung-chuan.liao@linux.intel.com>
 To: linux-sound@vger.kernel.org,
 	vkoul@kernel.org
@@ -64,9 +64,9 @@ Cc: vinod.koul@linaro.org,
 	linux-kernel@vger.kernel.org,
 	pierre-louis.bossart@linux.intel.com,
 	bard.liao@intel.com
-Subject: [PATCH 08/14] soundwire: mipi-disco: remove DPn audio-modes
-Date: Tue, 27 Aug 2024 21:07:01 +0800
-Message-ID: <20240827130707.298477-9-yung-chuan.liao@linux.intel.com>
+Subject: [PATCH 09/14] soundwire: mipi-disco: add error handling for property array read
+Date: Tue, 27 Aug 2024 21:07:02 +0800
+Message-ID: <20240827130707.298477-10-yung-chuan.liao@linux.intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240827130707.298477-1-yung-chuan.liao@linux.intel.com>
 References: <20240827130707.298477-1-yung-chuan.liao@linux.intel.com>
@@ -80,85 +80,133 @@ Content-Transfer-Encoding: 8bit
 
 From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-The concept of DPn audio-modes was never used by anyone, and was
-removed from the DisCo for SoundWire 2.0 specification.
+The existing code assumes that there are no possible errors when using
+fwnode_property_read_u32_array(), because fwnode_property_count_u32()
+reads this array to determine its number of elements. We need to also
+protect the second read to be completely bullet-proof.
 
-Remove the definitions and TODO.
-
+Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
 ---
- drivers/soundwire/mipi_disco.c |  2 --
- include/linux/soundwire/sdw.h  | 34 ----------------------------------
- 2 files changed, 36 deletions(-)
+ drivers/soundwire/mipi_disco.c | 32 ++++++++++++++++++++++++--------
+ 1 file changed, 24 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/soundwire/mipi_disco.c b/drivers/soundwire/mipi_disco.c
-index fdab3d4a1379..79cf8212f97a 100644
+index 79cf8212f97a..99253f4c9a38 100644
 --- a/drivers/soundwire/mipi_disco.c
 +++ b/drivers/soundwire/mipi_disco.c
-@@ -304,8 +304,6 @@ static int sdw_slave_read_dpn(struct sdw_slave *slave,
- 		fwnode_property_read_u32(node, "mipi-sdw-port-encoding-type",
- 					 &dpn[i].port_encoding);
+@@ -52,7 +52,9 @@ int sdw_master_read_prop(struct sdw_bus *bus)
+ 	struct sdw_master_prop *prop = &bus->prop;
+ 	struct fwnode_handle *link;
+ 	char name[32];
+-	int nval, i;
++	int nval;
++	int ret;
++	int i;
  
--		/* TODO: Read audio mode */
--
- 		fwnode_handle_put(node);
+ 	device_property_read_u32(bus->dev,
+ 				 "mipi-sdw-sw-interface-revision",
+@@ -91,9 +93,11 @@ int sdw_master_read_prop(struct sdw_bus *bus)
+ 			return -ENOMEM;
+ 		}
  
- 		i++;
-diff --git a/include/linux/soundwire/sdw.h b/include/linux/soundwire/sdw.h
-index cc0afb8af333..66feaa79ecfc 100644
---- a/include/linux/soundwire/sdw.h
-+++ b/include/linux/soundwire/sdw.h
-@@ -254,41 +254,8 @@ struct sdw_dp0_prop {
- 	bool imp_def_interrupts;
- };
+-		fwnode_property_read_u32_array(link,
++		ret = fwnode_property_read_u32_array(link,
+ 				"mipi-sdw-clock-frequencies-supported",
+ 				prop->clk_freq, prop->num_clk_freq);
++		if (ret < 0)
++			return ret;
+ 	}
  
--/**
-- * struct sdw_dpn_audio_mode - Audio mode properties for DPn
-- * @bus_min_freq: Minimum bus frequency, in Hz
-- * @bus_max_freq: Maximum bus frequency, in Hz
-- * @bus_num_freq: Number of discrete frequencies supported
-- * @bus_freq: Discrete bus frequencies, in Hz
-- * @min_freq: Minimum sampling frequency, in Hz
-- * @max_freq: Maximum sampling bus frequency, in Hz
-- * @num_freq: Number of discrete sampling frequency supported
-- * @freq: Discrete sampling frequencies, in Hz
-- * @prep_ch_behave: Specifies the dependencies between Channel Prepare
-- * sequence and bus clock configuration
-- * If 0, Channel Prepare can happen at any Bus clock rate
-- * If 1, Channel Prepare sequence shall happen only after Bus clock is
-- * changed to a frequency supported by this mode or compatible modes
-- * described by the next field
-- * @glitchless: Bitmap describing possible glitchless transitions from this
-- * Audio Mode to other Audio Modes
-- */
--struct sdw_dpn_audio_mode {
--	u32 bus_min_freq;
--	u32 bus_max_freq;
--	u32 bus_num_freq;
--	u32 *bus_freq;
--	u32 max_freq;
--	u32 min_freq;
--	u32 num_freq;
--	u32 *freq;
--	u32 prep_ch_behave;
--	u32 glitchless;
--};
--
- /**
-  * struct sdw_dpn_prop - Data Port DPn properties
-- * @audio_modes: Audio modes supported
-  * @num: port number
-  * @max_word: Maximum number of bits in a Payload Channel Sample, 1 to 64
-  * (inclusive)
-@@ -318,7 +285,6 @@ struct sdw_dpn_audio_mode {
-  * machine
-  */
- struct sdw_dpn_prop {
--	struct sdw_dpn_audio_mode *audio_modes;
- 	u32 num;
- 	u32 max_word;
- 	u32 min_word;
+ 	/*
+@@ -119,10 +123,12 @@ int sdw_master_read_prop(struct sdw_bus *bus)
+ 			return -ENOMEM;
+ 		}
+ 
+-		fwnode_property_read_u32_array(link,
++		ret = fwnode_property_read_u32_array(link,
+ 					       "mipi-sdw-supported-clock-gears",
+ 					       prop->clk_gears,
+ 					       prop->num_clk_gears);
++		if (ret < 0)
++			return ret;
+ 	}
+ 
+ 	fwnode_property_read_u32(link, "mipi-sdw-default-frame-rate",
+@@ -151,6 +157,7 @@ static int sdw_slave_read_dp0(struct sdw_slave *slave,
+ 			      struct sdw_dp0_prop *dp0)
+ {
+ 	int nval;
++	int ret;
+ 
+ 	fwnode_property_read_u32(port, "mipi-sdw-port-max-wordlength",
+ 				 &dp0->max_word);
+@@ -168,9 +175,11 @@ static int sdw_slave_read_dp0(struct sdw_slave *slave,
+ 		if (!dp0->words)
+ 			return -ENOMEM;
+ 
+-		fwnode_property_read_u32_array(port,
++		ret = fwnode_property_read_u32_array(port,
+ 				"mipi-sdw-port-wordlength-configs",
+ 				dp0->words, dp0->num_words);
++		if (ret < 0)
++			return ret;
+ 	}
+ 
+ 	dp0->BRA_flow_controlled = mipi_fwnode_property_read_bool(port,
+@@ -191,9 +200,10 @@ static int sdw_slave_read_dpn(struct sdw_slave *slave,
+ {
+ 	struct fwnode_handle *node;
+ 	u32 bit, i = 0;
+-	int nval;
+ 	unsigned long addr;
+ 	char name[40];
++	int nval;
++	int ret;
+ 
+ 	addr = ports;
+ 	/* valid ports are 1 to 14 so apply mask */
+@@ -228,9 +238,11 @@ static int sdw_slave_read_dpn(struct sdw_slave *slave,
+ 				return -ENOMEM;
+ 			}
+ 
+-			fwnode_property_read_u32_array(node,
++			ret = fwnode_property_read_u32_array(node,
+ 					"mipi-sdw-port-wordlength-configs",
+ 					dpn[i].words, dpn[i].num_words);
++			if (ret < 0)
++				return ret;
+ 		}
+ 
+ 		fwnode_property_read_u32(node, "mipi-sdw-data-port-type",
+@@ -269,9 +281,11 @@ static int sdw_slave_read_dpn(struct sdw_slave *slave,
+ 				return -ENOMEM;
+ 			}
+ 
+-			fwnode_property_read_u32_array(node,
++			ret = fwnode_property_read_u32_array(node,
+ 					"mipi-sdw-channel-number-list",
+ 					dpn[i].channels, dpn[i].num_channels);
++			if (ret < 0)
++				return ret;
+ 		}
+ 
+ 		nval = fwnode_property_count_u32(node, "mipi-sdw-channel-combination-list");
+@@ -286,10 +300,12 @@ static int sdw_slave_read_dpn(struct sdw_slave *slave,
+ 				return -ENOMEM;
+ 			}
+ 
+-			fwnode_property_read_u32_array(node,
++			ret = fwnode_property_read_u32_array(node,
+ 					"mipi-sdw-channel-combination-list",
+ 					dpn[i].ch_combinations,
+ 					dpn[i].num_ch_combinations);
++			if (ret < 0)
++				return ret;
+ 		}
+ 
+ 		fwnode_property_read_u32(node,
 -- 
 2.43.0
 
