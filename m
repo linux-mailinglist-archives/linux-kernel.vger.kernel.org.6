@@ -1,114 +1,227 @@
-Return-Path: <linux-kernel+bounces-303230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 769E4960956
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:54:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCCD4960959
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:54:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EEB11F21BB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:54:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 422A41F2385A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC4E1A0720;
-	Tue, 27 Aug 2024 11:53:53 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7A11A073F;
+	Tue, 27 Aug 2024 11:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="zOzev3E+"
+Received: from pv50p00im-ztdg10011901.me.com (pv50p00im-ztdg10011901.me.com [17.58.6.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA42819D88C;
-	Tue, 27 Aug 2024 11:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4B319EED8
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724759633; cv=none; b=Lb/dit7IRkreODSXUYeG5SFrlxfRxxiIg9+rv5rBAjlwgAicdaPPUDwzblwe1dPsI6iK/Y6EsMF5EfDUytjYQRkRpWHW+RwuaYusL0IcRtAumxnyIjpmJJKPcHabA0z/QG6S/8d04uO/AKX6ADFXM2w+zEQ7w6qceeD7H4RDoDI=
+	t=1724759651; cv=none; b=kD+6nvmVJc3ChCS7hof3CZIKvd+823llJhOrYLQZ8VdDlK+qfPcLhVnvEKxj8aHVFuDTc5smwoOs5i+S9qGXjn8KtCvoGgUorjSVeU6lHF9IfcZ78xbQOOo9SPGe9SEMapNh8zeAUo7N+lD8BB3ve5O9LDhEDavwua2WsA61PXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724759633; c=relaxed/simple;
-	bh=lBb3SIgc7twpOvalF/i3YUyRfTYDizDSmWrUoI2E8do=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZeOYPSW2E2UtGuC+pJTZ1r7OQR+lkr2ck6YMbfbyCS79X3+hi/PvyluR2ojvv9NFgV60eYP4Jm5UYzIIhBa7zwPvk0CHT9PEd6jSQb9riD0gUaFZbWNYDH1OvcqUZAVCY5f6rR72OMYFEBuoEDaA523YTV9qtkJbSo2AbmYTW0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WtQrP4kdQzpStZ;
-	Tue, 27 Aug 2024 19:52:05 +0800 (CST)
-Received: from kwepemd100024.china.huawei.com (unknown [7.221.188.41])
-	by mail.maildlp.com (Postfix) with ESMTPS id 399E0140202;
-	Tue, 27 Aug 2024 19:53:46 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by kwepemd100024.china.huawei.com
- (7.221.188.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 27 Aug
- 2024 19:53:45 +0800
-From: yangyun <yangyun50@huawei.com>
-To: <jefflexu@linux.alibaba.com>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lixiaokeng@huawei.com>, <miklos@szeredi.hu>, <yangyun50@huawei.com>
-Subject: Re: [PATCH] fuse: remove useless IOCB_DIRECT in fuse_direct_read/write_iter
-Date: Tue, 27 Aug 2024 19:52:52 +0800
-Message-ID: <20240827115252.3481395-1-yangyun50@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <efc65503-15fd-4f8d-a6c4-b3bacb7481cb@linux.alibaba.com>
-References: <efc65503-15fd-4f8d-a6c4-b3bacb7481cb@linux.alibaba.com>
+	s=arc-20240116; t=1724759651; c=relaxed/simple;
+	bh=nEi8II45wAmL1f5XTIWsbyTtcx8NX0c09t6x4DVix6A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=duYOuYw6YcjqIKItxGMh6Lw21G5J8sDp/SL0fds1g0tc2teof3UA7Zxpf3xPedlb8C/dWb8Q6E8xyZ3i4B7P/tR1b7E96cAcZL4UFSYCS9P4+3PhPGY03lwPHa4L0U+XM55AroWBx8QTRISz9iuVMmbVMeYoPCNx31s4p8uM0nA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=zOzev3E+; arc=none smtp.client-ip=17.58.6.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1724759649;
+	bh=OYrHNLwmvHe2oa0rD8JJuTUs4ODsC2IJMqoKI314ldc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	b=zOzev3E+mosk3j16HL4HiEHL5WWqXUvHyj+nqVG/LPaaLQZRkO/seWBBb5BOOhchn
+	 O8MU75aMMqEEYO85vpySf8LxFn8N/b43eXisXvYRgH+QJU/0WExah46MmVzN9K1X48
+	 eb9NV60IlxYNaiRXPck10Ma9wo4ObI2DfJaQTEShk6Qjyvv9/tzEh9bdetfRkGQYIT
+	 EfFwSR4zeMoBe+zKTu4R0r+LCH8Cdr/Re0/DjjHX3XqpDbrjnHxBnASU5tAPwoQmhS
+	 Eeo37doe9R1qcHVXLWqFnTGzz3zUx8F64fmjjPetf/zgqiLHxrM5+Ny6OsdkusmJUN
+	 Pg5Rzlw8tC8gg==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10011901.me.com (Postfix) with ESMTPSA id DDCA83A008D;
+	Tue, 27 Aug 2024 11:53:59 +0000 (UTC)
+Message-ID: <cdfc6f98-1aa0-4cb5-bd7d-93256552c39b@icloud.com>
+Date: Tue, 27 Aug 2024 19:53:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd100024.china.huawei.com (7.221.188.41)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] cxl/region: Find free cxl decoder by
+ device_for_each_child()
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Davidlohr Bueso
+ <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Takashi Sakamoto <o-takashi@sakamocchi.jp>, Timur Tabi <timur@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+ netdev@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20240824-const_dfc_prepare-v3-0-32127ea32bba@quicinc.com>
+ <20240824-const_dfc_prepare-v3-2-32127ea32bba@quicinc.com>
+ <20240827123006.00004527@Huawei.com>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <20240827123006.00004527@Huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: zXSu555QJvhB-nSvhZ59A5Eowv9iK99L
+X-Proofpoint-GUID: zXSu555QJvhB-nSvhZ59A5Eowv9iK99L
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-27_06,2024-08-27_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
+ clxscore=1015 adultscore=0 suspectscore=0 bulkscore=0 phishscore=0
+ spamscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2408270087
 
-On Tue, Aug 27, 2024 at 04:30:04PM +0800, Jingbo Xu wrote:
-> Hi Miklos,
+On 2024/8/27 19:30, Jonathan Cameron wrote:
+> On Sat, 24 Aug 2024 17:07:44 +0800
+> Zijun Hu <zijun_hu@icloud.com> wrote:
 > 
-> On 8/27/24 3:12 AM, Miklos Szeredi wrote:
-> > On Mon, 26 Aug 2024 at 15:07, yangyun <yangyun50@huawei.com> wrote:
-> >>
-> >> Commit 23c94e1cdcbf ("fuse: Switch to using async direct IO
-> >> for FOPEN_DIRECT_IO") gave the async direct IO code path in the
-> >> fuse_direct_read_iter() and fuse_direct_write_iter(). But since
-> >> these two functions are only called under FOPEN_DIRECT_IO is set,
-> >> it seems that we can also use the async direct IO even the flag
-> >> IOCB_DIRECT is not set to enjoy the async direct IO method. Also
-> >> move the definition of fuse_io_priv to where it is used in fuse_
-> >> direct_write_iter.
-> > 
-> > I'm interested in the motivation for this patch.
-> > 
-> > There's a minor risk of regressions when introducing such a behavior
-> > change, so there should also be a strong supporting argument, which
-> > seems to be missing in this case.
-> > 
+>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>>
+>> To prepare for constifying the following old driver core API:
+>>
+>> struct device *device_find_child(struct device *dev, void *data,
+>> 		int (*match)(struct device *dev, void *data));
+>> to new:
+>> struct device *device_find_child(struct device *dev, const void *data,
+>> 		int (*match)(struct device *dev, const void *data));
+>>
+>> The new API does not allow its match function (*match)() to modify
+>> caller's match data @*data, but match_free_decoder() as the old API's
+>> match function indeed modifies relevant match data, so it is not suitable
+>> for the new API any more, solved by using device_for_each_child() to
+>> implement relevant finding free cxl decoder function.
+>>
+>> Suggested-by: Ira Weiny <ira.weiny@intel.com>
+>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> This seems to functionally do the same as before.
 > 
-> 
-> I'm not sure what yangyun's use case is, but we indeed also observed a
-> potential performance optimization for FOPEN_DIRECT_IO path.  When the
-> buffer IO is submitted to a file flagged with FOPEN_DIRECT_IO, the code
-> path is like:
-> 
-> fuse_direct_read_iter
->   __fuse_direct_read
->     fuse_direct_io
->       # split the request to multiple fuse requests according to
->       # max_read and max_pages constraint, for each split request:
->         fuse_send_read
->           fuse_simple_request
-> 
-> When the size of the user requested IO is greater than max_read and
-> max_pages constraint, it's split into multiple requests and these split
-> requests can not be sent to the fuse server until the previous split
-> request *completes* (since fuse_simple_request()), even when the user
-> request is submitted from async IO e.g. io-uring.
 
-The same use case. Your explanation is more explicit.
+yes, this change have the same logic as previous existing logic.
 
-And I just don't know why commit 23c94e1cdcbf ("fuse: Switch to using async 
-direct IO for FOPEN_DIRECT_IO") adds the check of IOCB_DIRECT flag when using 
-async direct_io. It seems unnessary.
-
+> I'm not sure I like the original code though so a comment inline.
 > 
-> -- 
-> Thanks,
-> Jingbo
+>> ---
+>>  drivers/cxl/core/region.c | 30 ++++++++++++++++++++++++------
+>>  1 file changed, 24 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+>> index 21ad5f242875..c2068e90bf2f 100644
+>> --- a/drivers/cxl/core/region.c
+>> +++ b/drivers/cxl/core/region.c
+>> @@ -794,10 +794,15 @@ static size_t show_targetN(struct cxl_region *cxlr, char *buf, int pos)
+>>  	return rc;
+>>  }
+>>  
+>> +struct cxld_match_data {
+>> +	int id;
+>> +	struct device *target_device;
+>> +};
+>> +
+>>  static int match_free_decoder(struct device *dev, void *data)
+>>  {
+>> +	struct cxld_match_data *match_data = data;
+>>  	struct cxl_decoder *cxld;
+>> -	int *id = data;
+>>  
+>>  	if (!is_switch_decoder(dev))
+>>  		return 0;
+>> @@ -805,17 +810,31 @@ static int match_free_decoder(struct device *dev, void *data)
+>>  	cxld = to_cxl_decoder(dev);
+>>  
+>>  	/* enforce ordered allocation */
+>> -	if (cxld->id != *id)
+>> +	if (cxld->id != match_data->id)
+> 
+> Why do we carry on in this case?
+> Conditions are:
+> 1. Start match_data->id == 0
+> 2. First pass cxld->id == 0 (all good) or
+>    cxld->id == 1 say (and we skip until we match
+>    on cxld->id == 0 (perhaps on the second child if they are
+>    ordered (1, 0, 2) etc. 
+> 
+> If we skipped and then matched on second child but it was
+> already in use (so region set), we will increment match_data->id to 1
+> but never find that as it was the one we skipped.
+> 
+> So this can only work if the children are ordered.
+> So if that's the case and the line above is just a sanity check
+> on that, it should be noisier (so an error print) and might
+> as well fail as if it doesn't match all bets are off.
+> 
+
+it seems Ira Weiny also has some concerns related to previous existing
+logic as following:
+
+https://lore.kernel.org/all/66c4a136d9764_2ddc2429435@iweiny-mobl.notmuch/
+"Also for those working on CXL I'm questioning the use of ID here and
+the dependence on the id's being added to the parent in order.  Is that
+a guarantee?"
+
+perhaps, create a new dedicated thread to discuss original design.
+
+> Jonathan
+>  
+>>  		return 0;
+>>  
+>> -	if (!cxld->region)
+>> +	if (!cxld->region) {
+>> +		match_data->target_device = get_device(dev);
+>>  		return 1;
+>> +	}
+>>  
+>> -	(*id)++;
+>> +	match_data->id++;
+>>  
+>>  	return 0;
+>>  }
+>>  
+>> +/* NOTE: need to drop the reference with put_device() after use. */
+>> +static struct device *find_free_decoder(struct device *parent)
+>> +{
+>> +	struct cxld_match_data match_data = {
+>> +		.id = 0,
+>> +		.target_device = NULL,
+>> +	};
+>> +
+>> +	device_for_each_child(parent, &match_data, match_free_decoder);
+>> +	return match_data.target_device;
+>> +}
+>> +
+>>  static int match_auto_decoder(struct device *dev, void *data)
+>>  {
+>>  	struct cxl_region_params *p = data;
+>> @@ -840,7 +859,6 @@ cxl_region_find_decoder(struct cxl_port *port,
+>>  			struct cxl_region *cxlr)
+>>  {
+>>  	struct device *dev;
+>> -	int id = 0;
+>>  
+>>  	if (port == cxled_to_port(cxled))
+>>  		return &cxled->cxld;
+>> @@ -849,7 +867,7 @@ cxl_region_find_decoder(struct cxl_port *port,
+>>  		dev = device_find_child(&port->dev, &cxlr->params,
+>>  					match_auto_decoder);
+>>  	else
+>> -		dev = device_find_child(&port->dev, &id, match_free_decoder);
+>> +		dev = find_free_decoder(&port->dev);
+>>  	if (!dev)
+>>  		return NULL;
+>>  	/*
+>>
+> 
+
 
