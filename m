@@ -1,183 +1,151 @@
-Return-Path: <linux-kernel+bounces-303137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 417EA9607EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:54:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96A2F9607ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E091F1F236A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:54:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F1301F236AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0046419EEA1;
-	Tue, 27 Aug 2024 10:53:56 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9514C634;
+	Tue, 27 Aug 2024 10:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BBbMK35P"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A0C4C634;
-	Tue, 27 Aug 2024 10:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B3619EEB0
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 10:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724756035; cv=none; b=EAjTBX55aua3iU5bdz94Wl6a0JiH8v/tn6vd6F5Zbnns46+5F+89N4RqOl7cFnyfpSeNHTBInLP9lizcXZysqAj0jvctjWEy4c3zkHAxxa/sT3rTev5Qj63o0YHpWKoSzmTmgL/xdR6pW3Uqrq0J1CmygaOnSsa4dIEdhN1GEC8=
+	t=1724756043; cv=none; b=r3uK8NMXGQRQ5Q0BKsa9TgAfNO4y15zBeIa6J7yFeTbGkhMMdktUctQW3ALEeVAHOSFPdpr7TZZQeDq02AzVN23c9vygxKdfW+Hy8xLEGshXTrf/ckpCBTAhNlJHQ4Oo8/07cgGuozDiOw035cJwPRfzgoPrJiDkFpjdpC9hBrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724756035; c=relaxed/simple;
-	bh=s8W6qCwP1dfOxsBwXIaTpsIJ8nG5fLwW/vsZ9t46X/c=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dpK+H/Gh16YwNPK6yDSw+BMWCxatPYy9qpV4u0th/uBnPXTB6CmHpYcQ3SJj/MC41pP6jvI2zRHCDFXNy3cmlWG08gPG9/tEuXVeexZU5UxFMfh8WT4fV0pmSEQtdZjTl+3S/pCA+cuzsTEKskiWYh7QyzP+X3JB01wAYK79nNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WtPSd1cR5z6J7LP;
-	Tue, 27 Aug 2024 18:49:53 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 265CA140A71;
-	Tue, 27 Aug 2024 18:53:51 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 27 Aug
- 2024 11:53:50 +0100
-Date: Tue, 27 Aug 2024 11:53:49 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Yangtao Li <frank.li@vivo.com>
-CC: <clement.leger@bootlin.com>, <andrew@lunn.ch>, <f.fainelli@gmail.com>,
-	<olteanv@gmail.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <ulli.kroll@googlemail.com>,
-	<linus.walleij@linaro.org>, <marcin.s.wojtas@gmail.com>,
-	<linux@armlinux.org.uk>, <alexandre.torgue@foss.st.com>,
-	<joabreu@synopsys.com>, <mcoquelin.stm32@gmail.com>, <hkallweit1@gmail.com>,
-	<u.kleine-koenig@pengutronix.de>, <jacob.e.keller@intel.com>,
-	<justinstitt@google.com>, <sd@queasysnail.net>, <horms@kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-stm32@st-md-mailman.stormreply.com>, Maxime Chevallier
-	<maxime.chevallier@bootlin.com>
-Subject: Re: [net-next v3 3/9] net: ethernet: cortina: Convert to
- devm_clk_get_enabled()
-Message-ID: <20240827115349.00002f77@Huawei.com>
-In-Reply-To: <20240827095712.2672820-4-frank.li@vivo.com>
-References: <20240827095712.2672820-1-frank.li@vivo.com>
-	<20240827095712.2672820-4-frank.li@vivo.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724756043; c=relaxed/simple;
+	bh=OIj58p9z7PV/B67T6gypj3fNfOS7T78tyJTwBuw4LCo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ijEp/vx9Kng/D9WIxpzE6yFoEXOEmQotV/YonOYotfZBBJVs5XrE5vDGd/+IhOJUQETgTtMR157PdF3vUydvBytUMOZr8VQfT+b4GgphZz3Gs3DKKZeOBtmsB2c6+/cK9oXHsZSthfiEPAPd3oZXjrhF5239drW5OuZx6JbAnL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BBbMK35P; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a86abbd68ffso624507866b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 03:54:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724756040; x=1725360840; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=e2+li/AcO6Ae1QDTZoYlXn07+RgNIMHrKujTKXnZVo0=;
+        b=BBbMK35PkxYByELaBa1CGWfW9sUlRE+9B/LnbIXN5AWLvxMQK3BPMntBo/VmTs6oAH
+         gxARpSAkgitHumIzpyyV+CyGwoqj7/GUj2UZZ+xYIAJd3MpLfzkBEWDofKBM/MQASu1M
+         0/ngdfKRABPBHK2PSF3rcS26Wx/SrAKSJXfg4C3ne27pYq5NG3/lfE7oR1Js3//bw+60
+         OKSOFAVcWhF7gIMKySc2rSwI4VTA6cEJAfBDxvH82U2FFUKUirUMSzj7Db2cfyweXy4Y
+         BdEsabvVW3cINJr7TBmikcbY1j0yzNyc7iZzNpC9a1m1oolv9kDUSM2uAn6xyCUv5wBZ
+         uy9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724756040; x=1725360840;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e2+li/AcO6Ae1QDTZoYlXn07+RgNIMHrKujTKXnZVo0=;
+        b=MEoDfLoTiyjuqgghgRXd40P/gVqdk8LysUZgFNaPMFVPmdMdEAROhGJRJahj9EzBH2
+         u8I/ppqu2dAFOJydoqoijU5nroKH47gknEYyttYOQgA1+SYR0zpbs0kFH93lbvmmGhGI
+         NQCFAqRmGqxDc/Yvw8Z8qixu5ebEMAjEGcXHpO44NV77UAzN6X2MswVNkLYM/9wQ9AQL
+         tQPdXFWMYDkOXrHz6gQW9a8gyj8qnzIxq7SBJJQ/YWFvPsfgBQpBvTNBCBNBrHfEpVjP
+         ou0CApmRpHNr7hSIiwfDSGpP0e+1Okbf/SKJs+844DvExBtZCZsbAS2kEGL9+o6gZPyG
+         EI9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVYxMxxwLEU1mw7FWp2rGNaptdO3hzXp84rtp75+jtMZklh6w+Fa+cLh73Qaoq6hTtx/vDEcvhtwAYPVCA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKfz18ofmh/zZCIlHxNTcKOMCsyw9yUp0olP6XXlE8qdLvCzgx
+	JbL13gEAtIJTWb82BuMnCrifuc2E4XInchKfbv5g7UT1vb+H67/5ynEm6Op0PpU=
+X-Google-Smtp-Source: AGHT+IEjFrTYI+AqR+e7VmGfKsN/nVI/pn6+NZveY9Op2DOsbXHXpZ55OtFZDF3A7ozw2wnssRp8JA==
+X-Received: by 2002:a17:907:94d0:b0:a6e:f869:d718 with SMTP id a640c23a62f3a-a86e29be930mr257003266b.21.1724756039983;
+        Tue, 27 Aug 2024 03:53:59 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e58a57f1sm93454166b.187.2024.08.27.03.53.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 03:53:59 -0700 (PDT)
+Date: Tue, 27 Aug 2024 13:53:55 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs changes for 6.11, v2
+Message-ID: <d0da8ba5-e73e-454a-bbd7-a4e11886ea8b@stanley.mountain>
+References: <73rweeabpoypzqwyxa7hld7tnkskkaotuo3jjfxnpgn6gg47ly@admkywnz4fsp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <73rweeabpoypzqwyxa7hld7tnkskkaotuo3jjfxnpgn6gg47ly@admkywnz4fsp>
 
-On Tue, 27 Aug 2024 03:57:06 -0600
-Yangtao Li <frank.li@vivo.com> wrote:
+On Thu, Jul 19, 2024 at 06:36:50PM -0400, Kent Overstreet wrote:
+>       bcachefs: Unlock trans when waiting for user input in fsck
 
-> Convert devm_clk_get(), clk_prepare_enable() to a single
-> call to devm_clk_get_enabled(), as this is exactly
-> what this function does.
-> 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Hello Kent Overstreet,
 
-I don't like the mixing of devm and non devm here.
-Maybe better to use a devm_add_action_or_reset()
-for geth_cleanup_freeq() as well.
+ommit 889fb3dc5d6f ("bcachefs: Unlock trans when waiting for user
+input in fsck") from May 29, 2024 (linux-next), leads to the
+following (UNPUBLISHED) Smatch static checker warning:
 
+fs/bcachefs/error.c:129 bch2_fsck_ask_yn() error: double unlocked 'trans' (orig line 113)
 
-> ---
-> v3:
-> -move the local clock variables, keep lines longest to shortest
-> 
->  drivers/net/ethernet/cortina/gemini.c | 25 ++++++++-----------------
->  1 file changed, 8 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/cortina/gemini.c b/drivers/net/ethernet/cortina/gemini.c
-> index 73e1c71c5092..5c86987c6fdf 100644
-> --- a/drivers/net/ethernet/cortina/gemini.c
-> +++ b/drivers/net/ethernet/cortina/gemini.c
-> @@ -109,7 +109,6 @@ struct gemini_ethernet_port {
->  	struct device *dev;
->  	void __iomem *dma_base;
->  	void __iomem *gmac_base;
-> -	struct clk *pclk;
->  	struct reset_control *reset;
->  	int irq;
->  	__le32 mac_addr[3];
-> @@ -2326,7 +2325,6 @@ static void gemini_port_remove(struct gemini_ethernet_port *port)
->  		phy_disconnect(port->netdev->phydev);
->  		unregister_netdev(port->netdev);
->  	}
-> -	clk_disable_unprepare(port->pclk);
->  	geth_cleanup_freeq(port->geth);
->  }
->  
-> @@ -2401,6 +2399,7 @@ static int gemini_ethernet_port_probe(struct platform_device *pdev)
->  	struct gemini_ethernet *geth;
->  	struct net_device *netdev;
->  	struct device *parent;
-> +	struct clk *pclk;
->  	u8 mac[ETH_ALEN];
->  	unsigned int id;
->  	int irq;
-> @@ -2453,14 +2452,11 @@ static int gemini_ethernet_port_probe(struct platform_device *pdev)
->  	port->irq = irq;
->  
->  	/* Clock the port */
-> -	port->pclk = devm_clk_get(dev, "PCLK");
-> -	if (IS_ERR(port->pclk)) {
-> +	pclk = devm_clk_get_enabled(dev, "PCLK");
-> +	if (IS_ERR(pclk)) {
->  		dev_err(dev, "no PCLK\n");
-> -		return PTR_ERR(port->pclk);
-> +		return PTR_ERR(pclk);
->  	}
-> -	ret = clk_prepare_enable(port->pclk);
-> -	if (ret)
-> -		return ret;
->  
->  	/* Maybe there is a nice ethernet address we should use */
->  	gemini_port_save_mac_addr(port);
-> @@ -2469,8 +2465,7 @@ static int gemini_ethernet_port_probe(struct platform_device *pdev)
->  	port->reset = devm_reset_control_get_exclusive(dev, NULL);
->  	if (IS_ERR(port->reset)) {
->  		dev_err(dev, "no reset\n");
-> -		ret = PTR_ERR(port->reset);
-> -		goto unprepare;
-> +		return PTR_ERR(port->reset);
->  	}
->  	reset_control_reset(port->reset);
->  	usleep_range(100, 500);
-> @@ -2532,24 +2527,20 @@ static int gemini_ethernet_port_probe(struct platform_device *pdev)
->  					port_names[port->id],
->  					port);
->  	if (ret)
-> -		goto unprepare;
-> +		return ret;
->  
->  	ret = gmac_setup_phy(netdev);
->  	if (ret) {
->  		netdev_err(netdev,
->  			   "PHY init failed\n");
-> -		goto unprepare;
-> +		return ret;
->  	}
->  
->  	ret = register_netdev(netdev);
->  	if (ret)
-> -		goto unprepare;
-> +		return ret;
->  
->  	return 0;
-> -
-> -unprepare:
-> -	clk_disable_unprepare(port->pclk);
-> -	return ret;
->  }
->  
->  static void gemini_ethernet_port_remove(struct platform_device *pdev)
+fs/bcachefs/error.c
+   102  static enum ask_yn bch2_fsck_ask_yn(struct bch_fs *c, struct btree_trans *trans)
+   103  {
+   104          struct stdio_redirect *stdio = c->stdio;
+   105  
+   106          if (c->stdio_filter && c->stdio_filter != current)
+   107                  stdio = NULL;
+   108  
+   109          if (!stdio)
+   110                  return YN_NO;
+   111  
+   112          if (trans)
+   113                  bch2_trans_unlock(trans);
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^
+Unlock
 
+   114  
+   115          unsigned long unlock_long_at = trans ? jiffies + HZ * 2 : 0;
+   116          darray_char line = {};
+   117          int ret;
+   118  
+   119          do {
+   120                  unsigned long t;
+   121                  bch2_print(c, " (y,n, or Y,N for all errors of this type) ");
+   122  rewait:
+   123                  t = unlock_long_at
+   124                          ? max_t(long, unlock_long_at - jiffies, 0)
+   125                          : MAX_SCHEDULE_TIMEOUT;
+   126  
+   127                  int r = bch2_stdio_redirect_readline_timeout(stdio, &line, t);
+   128                  if (r == -ETIME) {
+   129                          bch2_trans_unlock_long(trans);
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Double unlock
+
+   130                          unlock_long_at = 0;
+   131                          goto rewait;
+   132                  }
+   133  
+   134                  if (r < 0) {
+   135                          ret = YN_NO;
+   136                          break;
+   137                  }
+   138  
+   139                  darray_last(line) = '\0';
+   140          } while ((ret = parse_yn_response(line.data)) < 0);
+   141  
+   142          darray_exit(&line);
+   143          return ret;
+   144  }
+
+regards,
+dan carpenter
 
