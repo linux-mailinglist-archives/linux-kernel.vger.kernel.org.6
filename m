@@ -1,78 +1,127 @@
-Return-Path: <linux-kernel+bounces-302602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ADF49600C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:05:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 761B49600D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:06:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5853C283367
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:05:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03444B21D48
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA756EB7C;
-	Tue, 27 Aug 2024 05:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76FE680054;
+	Tue, 27 Aug 2024 05:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="he2QB7YF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UO5f3t0u"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB04017993;
-	Tue, 27 Aug 2024 05:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8EF4C92;
+	Tue, 27 Aug 2024 05:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724735096; cv=none; b=uI24jZu9WReTlwWwWweSv3cc1Jfz3DZXMG8VrgeHVcdJPd7r7yz7+ajyxZCMaP+nSr/0xoDZ/UTz1CWDcWcvPCgtxsKTSuDbV9zJBDJ2X2VCqYSifwClogW2ppQsZcfns9Gqjkm6Uj9iEoA1VoyrWWdC7YnFSZZS04MM0Shrs/Y=
+	t=1724735194; cv=none; b=I0Qx0Cukw9k5gjycqt0pDpkbG96mmKzefuiHIv4bRCCqFSek5lydeXVbOAjbqynfpC5wakZfLlCf/RCf/Qt0vX67D7Z29y1Z8UkTYbKODO7Cqm5Jmbt+tCVT7DKekxWlpaxw8tjJGhEQk54AsigoafiT3QqP+y0BRbkO0XS/CaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724735096; c=relaxed/simple;
-	bh=OAoazsHHRUAwHCFhxU0/ouvkTEj3ign4cLLYWrYhs7w=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=OapaGuZDhyFYk4wbvZ09o4oUmMybOxXLFv3yxn0Q4oHiFb3F3EGMFCoXnxfLz64FhMcuseugoFwThXNWXuIl61UpvwYJTZcxm81kwMPyUhe027TPQ2+opVDtzxBSFh6NyIySi9xNwmdQ956kEq4IQBkf0Jw+snvnkoSIAALFpL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=he2QB7YF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4FDEC581A9;
-	Tue, 27 Aug 2024 05:04:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724735096;
-	bh=OAoazsHHRUAwHCFhxU0/ouvkTEj3ign4cLLYWrYhs7w=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=he2QB7YFgpG0eAJdk2oJAoHK8vGADspf9IjQ741GBiUQUEYTBpG2OIl3cij0Yoauz
-	 W6cXr5kC0p3I89uztndUwFzzGJSGAJg+9U8NZn5HZB1gyAu4a7CYlVIRoLjgPfCDc0
-	 pwNgNjcFnxjl1XLIt0wsjVUZa8fLPER+BCtsRF8xxUgdb2HDr9mJCodTJgyDBVZ11P
-	 eLrJdIrLAeFO7rQNRoqNExZ8ieiwUA2ovkpUEaISydn4f2PcRRnrEbbp9/jgXXUlgJ
-	 o3H27mvb0C0PmhM8hM2S3owhQuIqN6Ip5AjH0Yf2NcbniPvK3CU1BCjDIA4ts4fjLM
-	 JQN2NP4/W6W2A==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF183806660;
-	Tue, 27 Aug 2024 05:04:57 +0000 (UTC)
-Subject: Re: [GIT PULL] vfs fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240826-vfs-fixes-3028447211c8@brauner>
-References: <20240826-vfs-fixes-3028447211c8@brauner>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240826-vfs-fixes-3028447211c8@brauner>
-X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.11-rc6.fixes
-X-PR-Tracked-Commit-Id: e00e99ba6c6b8e5239e75cd6684a6827d93c39a2
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 3e9bff3bbe1355805de919f688bef4baefbfd436
-Message-Id: <172473509653.215084.12774581314349161488.pr-tracker-bot@kernel.org>
-Date: Tue, 27 Aug 2024 05:04:56 +0000
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1724735194; c=relaxed/simple;
+	bh=XwbMjVHH0AuUfCI+3AJDGCet6dUgI5476UcxqTp0KMg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=S4ELdlImT7kMo2PfcjxvuQ83PWebf5XFyXaIJmhq+DOz31N1k2tWKHJmqH+qvYUWgJGjzxO7O+b0qCKjFkHQ45olkkJESIX0aiW7QSYobDc7p6/aGsb/sYms/IQD03Sm6olm893PYnQl5jO0lmaNU/60ukrXikcU0afu5wEUcqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UO5f3t0u; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47QJGUPl011881;
+	Tue, 27 Aug 2024 05:06:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	vYNxu/gCy9eu9jcsYYy++tNXVX/yq9NX8B9cUSJp5As=; b=UO5f3t0ujVxQTz6G
+	RAQBepUYVyp/2Ib4egMV1Eqdzso96ghHZSqtHXh5jHwpTeS/AIC9Cb9c11KsCudZ
+	Cv28iJ/VT+x7kH0TkBE2V3qHA6T/A7QBCVkh47qpv9g7uC+Uo1c5vDWnt3HmxyQ6
+	IKgIjust8042vlXwOvdGiro7Epp3RMxvzBhuM1WKxbasp3DblB7MqLgx4wINHevx
+	vKQ/sQhi7mJZVCTTSabdIn+XYO9tA6qRw0bxdl7ecg9x6AyWML0myFKWFpyo/oxv
+	ht4ooEPMzqbD8alB4x8n2bvWIocjYWdvw6hScw9f/z7wQ+ifDLjP5GJAQiB9GuRC
+	HfqV7g==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4179a1wnmt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 Aug 2024 05:06:13 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47R56Cr7018336
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 Aug 2024 05:06:12 GMT
+Received: from [10.216.58.121] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 26 Aug
+ 2024 22:06:08 -0700
+Message-ID: <9881058a-5897-4f01-a5ed-7ae6c58b0906@quicinc.com>
+Date: Tue, 27 Aug 2024 10:36:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] scsi: ufs: ufs-qcom: Apply DELAY_AFTER_LPM quirk for
+ Toshiba devices
+To: Bart Van Assche <bvanassche@acm.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        "James E.J. Bottomley"
+	<James.Bottomley@HansenPartnership.com>,
+        "Martin K. Petersen"
+	<martin.petersen@oracle.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_cang@quicinc.com>,
+        <quic_nguyenb@quicinc.com>, <quic_nitirawa@quicinc.com>,
+        <quic_bhaskarv@quicinc.com>, <quic_narepall@quicinc.com>,
+        <quic_rampraka@quicinc.com>
+References: <20240820123756.24590-1-quic_mapa@quicinc.com>
+ <20240820123756.24590-4-quic_mapa@quicinc.com>
+ <7527d15c-9318-47f7-99f8-028c865a698b@acm.org>
+Content-Language: en-US
+From: MANISH PANDEY <quic_mapa@quicinc.com>
+In-Reply-To: <7527d15c-9318-47f7-99f8-028c865a698b@acm.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: efXMBKb3sXKBN7Yb7LSCd8ejDfCe7uCV
+X-Proofpoint-ORIG-GUID: efXMBKb3sXKBN7Yb7LSCd8ejDfCe7uCV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-27_03,2024-08-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
+ phishscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0 mlxlogscore=709
+ spamscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408270035
 
-The pull request you sent on Mon, 26 Aug 2024 17:25:04 +0200:
 
-> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.11-rc6.fixes
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/3e9bff3bbe1355805de919f688bef4baefbfd436
+On 8/21/2024 3:05 AM, Bart Van Assche wrote:
+> On 8/20/24 5:37 AM, Manish Pandey wrote:
+>> +    { .wmanufacturerid = UFS_VENDOR_TOSHIBA,
+>> +      .model = UFS_ANY_MODEL,
+>> +      .quirk = UFS_DEVICE_QUIRK_DELAY_AFTER_LPM },
+> 
+> Isn't three patches a bit much for these changes? I think all three
+> patches can be combined into a single patch without making it harder for
+> reviewers to understand what is going on.
+> 
+> Thanks,
+> 
+> Bart.
+> 
+> 
 
-Thank you!
+Thanks Bart for quick review.
+I will merge all 3 changes to a single change in next patch set [V2].
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Regards
+Manish
 
