@@ -1,117 +1,152 @@
-Return-Path: <linux-kernel+bounces-303328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C2BD960AC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:45:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A764960AE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:48:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49B9D283C06
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:45:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FA411F23DF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C768B1BCA18;
-	Tue, 27 Aug 2024 12:45:17 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FC11BC09D;
+	Tue, 27 Aug 2024 12:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gVkBjnY/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4BA1A01C4;
-	Tue, 27 Aug 2024 12:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A9319EED8;
+	Tue, 27 Aug 2024 12:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724762717; cv=none; b=P9fVN25oCADAW0yzGsFf3raFKQKccpLOqDWnDqPQkPp0/RTgQhEmqUEGKGi8e4qO1lD1eaKBcQ5iLsBinpavG0kcE/hWI7U8vpZPgMoLVEjL0s4v8xcyCDWp2S3ORGuGYpmvWQ6uilt2AFIn5xCm212FgEbWdy7+VhGJ8NHXU0I=
+	t=1724762841; cv=none; b=K2azyzuLdb9rrbWO5gp/E3g1sh9D7Sm9KE9lix5rXa3j71gmC78l3OoQYstB/Y/BSxoPU1dUHBv8RnyJIkM6LC92MpM9wNe6pHvg/Ow/w23G6VBWjMMzxvUjyX/M85LJpd557lBqg76ngYHRzsfej9X2S5oprSpcCRl98gqKYc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724762717; c=relaxed/simple;
-	bh=ayBM3X9Waua/pT1URpHpdU3JoUSS/LRmAK2G4r7r43s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uu7VgIpx7TKpRpt5IJDYsZZf83edmKrIprNNYr5x/bF5wNQXwphfGAKVTeWrMMB/Yi8eF86MDUGjupQGgbfdUKebd0kIHBrquOOZxYSJBCn4uSFjdLD9BW4V0p07uw5yL/Xb9fUBFBcLx02hBBqbGpHtJLcJFnfhx/qhk5b+Ob8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WtS1S6gV1z4f3kKt;
-	Tue, 27 Aug 2024 20:45:00 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id D5B8E1A1322;
-	Tue, 27 Aug 2024 20:45:10 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.67.175.61])
-	by APP4 (Coremail) with SMTP id gCh0CgDX_oRPys1mVyF3Cw--.61313S2;
-	Tue, 27 Aug 2024 20:45:09 +0800 (CST)
-From: Zheng Yejian <zhengyejian@huaweicloud.com>
-To: rostedt@goodmis.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	mathieu.desnoyers@efficios.com,
-	mhiramat@kernel.org,
-	zhengyejian@huaweicloud.com
-Subject: [PATCH v2] tracing: Avoid possible softlockup in tracing_iter_reset()
-Date: Tue, 27 Aug 2024 20:46:54 +0800
-Message-Id: <20240827124654.3817443-1-zhengyejian@huaweicloud.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240827075241.5cd652ae@rorschach.local.home>
-References: <20240827075241.5cd652ae@rorschach.local.home>
+	s=arc-20240116; t=1724762841; c=relaxed/simple;
+	bh=0sd4Bxi4i+Qdbg9yXamzmuyf7Qb4bpTqEafzYbKvJsI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pmjNKAXMx7Cv/vv+7rAnYiWvdkpzBI9umNboqM1oHhLfU2w+oKNMrINSagRZRurR0MDoOz7U0rbWADTLn4eYWJAbH32FrDLV5VQErSfLQ2+/DFEBabeopbEuUiALz6V3QxKQ2eeiXGq0ZI/gzsAy//C4ji1ulFS7c7oWcOWlDwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gVkBjnY/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4D95C4FF6C;
+	Tue, 27 Aug 2024 12:47:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724762841;
+	bh=0sd4Bxi4i+Qdbg9yXamzmuyf7Qb4bpTqEafzYbKvJsI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gVkBjnY/oeu8AgEk02EVcnU5S8GN0oumlt+4m7TRZhdmSV8uPefA8DTHJlfh2hnII
+	 emruP8nvobs6vGPIlnumQlUxv5jeHtilssMFg/FcYpK3L34OdHb3GuNc6d8zMCiR1x
+	 ztHzMM6AZ2mU4DbkuyF+2ptpwhTamm1k5bgrPEIPppCoSmKdLkvn6BHEoRa7t1at3j
+	 JPa92QFnBlRTtlVcIE1l6C4xiCswLG2aGwC03TxyQjifuCaK79U1ECxrYE3BYPbpfR
+	 mxgCAm2jqAJ/V13Hprh6eH+M9CHP5BE5CWFeWoev1a6DW/mDftHvplqC5xPi46hQm7
+	 EyDKFB1KAiI4Q==
+Date: Tue, 27 Aug 2024 13:47:15 +0100
+From: Will Deacon <will@kernel.org>
+To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+Cc: robdclark@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
+	jgg@ziepe.ca, jsnitsel@redhat.com, robh@kernel.org,
+	krzysztof.kozlowski@linaro.org, quic_c_gdjako@quicinc.com,
+	dmitry.baryshkov@linaro.org, konrad.dybcio@linaro.org,
+	iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v14 5/6] iommu/arm-smmu: add ACTLR data and support for
+ SC7280
+Message-ID: <20240827124714.GB4772@willie-the-truck>
+References: <20240816174259.2056829-1-quic_bibekkum@quicinc.com>
+ <20240816174259.2056829-6-quic_bibekkum@quicinc.com>
+ <20240823155918.GD525@willie-the-truck>
+ <3ae75a75-1717-40b6-9149-bc3673d520d6@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDX_oRPys1mVyF3Cw--.61313S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tw45Zw43XFyDCr48Zw4UXFb_yoW8Gry8pF
-	43XrWDKw47Ww45t397CF1fuF9rZ395tFy7GFWDCw4rZF9rCF13XrZ2gF4aqF47ZrZ3KryS
-	yrZ2kw4qg34jvFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
-	JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUehL0UU
-	UUU
-X-CM-SenderInfo: x2kh0w51hmxt3q6k3tpzhluzxrxghudrp/
+In-Reply-To: <3ae75a75-1717-40b6-9149-bc3673d520d6@quicinc.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-In __tracing_open(), when max latency tracers took place on the cpu,
-the time start of its buffer would be updated, then event entries with
-timestamps being earlier than start of the buffer would be skipped
-(see tracing_iter_reset()).
+On Mon, Aug 26, 2024 at 04:33:24PM +0530, Bibek Kumar Patro wrote:
+> 
+> 
+> On 8/23/2024 9:29 PM, Will Deacon wrote:
+> > On Fri, Aug 16, 2024 at 11:12:58PM +0530, Bibek Kumar Patro wrote:
+> > > Add ACTLR data table for SC7280 along with support for
+> > > same including SC7280 specific implementation operations.
+> > > 
+> > > Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+> > > ---
+> > >   drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 58 +++++++++++++++++++++-
+> > >   1 file changed, 57 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> > > index dc143b250704..a776c7906c76 100644
+> > > --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> > > +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> > > @@ -31,6 +31,55 @@
+> > >   #define PREFETCH_MODERATE	(2 << PREFETCH_SHIFT)
+> > >   #define PREFETCH_DEEP		(3 << PREFETCH_SHIFT)
+> > > 
+> > > +static const struct actlr_config sc7280_apps_actlr_cfg[] = {
+> > > +	{ 0x0800, 0x04e0, PREFETCH_DEFAULT | CMTLB },
+> > > +	{ 0x0900, 0x0402, PREFETCH_SHALLOW | CPRE | CMTLB },
+> > > +	{ 0x0901, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+> > > +	{ 0x0d01, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+> > > +	{ 0x1181, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> > > +	{ 0x1182, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> > > +	{ 0x1183, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> > > +	{ 0x1184, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> > > +	{ 0x1185, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> > > +	{ 0x1186, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> > > +	{ 0x1187, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> > > +	{ 0x1188, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> > > +	{ 0x1189, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> > > +	{ 0x118b, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> > > +	{ 0x118c, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> > > +	{ 0x118d, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> > > +	{ 0x118e, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> > > +	{ 0x118f, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> > > +	{ 0x2000, 0x0020, PREFETCH_DEFAULT | CMTLB },
+> > > +	{ 0x2040, 0x0000, PREFETCH_DEFAULT | CMTLB },
+> > > +	{ 0x2062, 0x0000, PREFETCH_DEFAULT | CMTLB },
+> > > +	{ 0x2080, 0x0020, PREFETCH_DEFAULT | CMTLB },
+> > > +	{ 0x20c0, 0x0020, PREFETCH_DEFAULT | CMTLB },
+> > > +	{ 0x2100, 0x0020, PREFETCH_DEFAULT | CMTLB },
+> > > +	{ 0x2140, 0x0000, PREFETCH_DEFAULT | CMTLB },
+> > > +	{ 0x2180, 0x0020, PREFETCH_SHALLOW | CPRE | CMTLB },
+> > > +	{ 0x2181, 0x0004, PREFETCH_SHALLOW | CPRE | CMTLB },
+> > > +	{ 0x2183, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+> > > +	{ 0x2184, 0x0020, PREFETCH_SHALLOW | CPRE | CMTLB },
+> > > +	{ 0x2187, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+> > > +};
+> > > +
+> > > +static const struct actlr_config sc7280_gfx_actlr_cfg[] = {
+> > > +	{ 0x0000, 0x07ff, PREFETCH_DEEP | CPRE | CMTLB },
+> > > +};
+> > 
+> > It's Will "stuck record" Deacon here again to say that I don't think
+> > this data belongs in the driver.
+> > 
+> 
+> Hi Will,
+> 
+> It will be difficult to reach a consensus here, with Robin and the DT folks
+> okay to keep it in the driver, while you believe it doesn't belong there.
+> 
+> Robin, Rob, could you please share your thoughts on concluding the placement
+> of this prefetch data?
+> 
+> As discussed earlier [1], the prefetch value for each client doesn’t define
+> the hardware topology and is implementation-defined register writes used by
+> the software driver.
 
-Softlockup will occur if the kernel is non-preemptible and too many
-entries were skipped in the loop that reset every cpu buffer, so add
-cond_resched() to avoid it.
+It does reflect the hardware topology though, doesn't it? Those magic hex
+masks above refer to stream ids, so the table is hard-coding the prefetch
+values for particular matches. If I run on a different SoC configuration
+with the same table, then the prefetch settings will be applied to the
+wrong devices. How is that not hardware topology?
 
-Suggested-by: Steven Rostedt <rostedt@goodmis.org>
-Signed-off-by: Zheng Yejian <zhengyejian@huaweicloud.com>
----
- kernel/trace/trace.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-v2:
-  - Change to add cond_resched() in tracing_iter_reset()
-    Link: https://lore.kernel.org/all/20240826103522.390faa85@gandalf.local.home/
-  - Update commit title and add suggested-by tag
-
-v1: https://lore.kernel.org/all/20240824030343.3218618-1-zhengyejian@huaweicloud.com/
-
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index ebe7ce2f5f4a..edf6bc817aa1 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -3958,6 +3958,8 @@ void tracing_iter_reset(struct trace_iterator *iter, int cpu)
- 			break;
- 		entries++;
- 		ring_buffer_iter_advance(buf_iter);
-+		/* This could be a big loop */
-+		cond_resched();
- 	}
- 
- 	per_cpu_ptr(iter->array_buffer->data, cpu)->skipped_entries = entries;
--- 
-2.25.1
-
+WIll
 
