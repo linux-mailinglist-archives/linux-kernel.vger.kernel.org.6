@@ -1,107 +1,170 @@
-Return-Path: <linux-kernel+bounces-303668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E89961362
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:55:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29241961366
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:55:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04AD32844EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:55:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D9821F23E09
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19AE71C9446;
-	Tue, 27 Aug 2024 15:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA571CC142;
+	Tue, 27 Aug 2024 15:55:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="aig0Wy5w"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="Yr2QCciq"
+Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8AB81A0711
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 15:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0BA1C93B6;
+	Tue, 27 Aug 2024 15:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724774136; cv=none; b=cztXTHo9Uit4alSosr5u4YW3lkOv8jUNXmDFE9Dgdj7K3bJ7xuvyfJ3KVtW6tIVKHtO6ESvr1q3p3iwGeV724Xek2gGaEfx5UFM4hGuqeztneGmzfbNVOxBazi2BDd6fO/8uTRHToseeD7VWbNSTNjvG7h1Een3LrtdK9KVvRyU=
+	t=1724774149; cv=none; b=K0hMV99yFzuo2GVH8J750K372+n6EedjcI2ABie2mPEFp7Pzg0E+z7iT2wYe9SXeoWTAojCil6162Hq0oT+TexOJI3W4ezaAhUZ3kx3xvy5NLQ28BJbXHz6/0hUU7r8JPjq5r5iU/qVHCjLwpPpFaEhIRDmnflgL28xswY8+IUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724774136; c=relaxed/simple;
-	bh=r2ehhlPWxM7rm9BtaSU8wJLR7j5JUwtomsjowwIznsQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Je0oW0dnNzvyL0Zu7/XDUHYbH8SfTkPzDSxlqGfeq+L6vE8QAjV/9eymK34zavfSfBx57S8QprUQeoHCvnjG4+UQ4vV5/YHakrI8AQN43gC+tMKAJCVG+63yyR4/VCTBtETHKmcS0ZsoGygTQ9WXZQTlIscAMLcB+cnx80ZpSxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=aig0Wy5w; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1724774084; x=1725378884; i=markus.elfring@web.de;
-	bh=r2ehhlPWxM7rm9BtaSU8wJLR7j5JUwtomsjowwIznsQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=aig0Wy5wfjT3HBvOySCyv507JK9UmdDKV/qI5j9PShurqlSJ+/zLM7wylw2TzNVk
-	 Zr87n2nFSt3YC1bi4DvB5dWnpStibOCMbAr1WydCMAwSD8hIdI3uh6CzQHxnNnAKB
-	 wqo+vgwuXqWP/JsqwqcTkWi+0Qy9YUkoR5CDPtygsSv3G7oFPHTMJ7pfjJPdaZeuX
-	 2b5RRczFfjIspFtlgq6B4CZYlgBNwta7JCJ9vRXG7AsRn47fFi7cQgmEcXD8h/R5A
-	 dcvxN+4ueQzgmASSZGNSlq93D42sStbKVxTja6oaXtLa8DmzRumQ4g/De5v3cRmTo
-	 hSmBCPMx98lQtbd3qg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MiMEM-1sDSvy0sys-00f6mp; Tue, 27
- Aug 2024 17:54:44 +0200
-Message-ID: <384bc620-b7fd-4594-bf24-b1b7b26a59df@web.de>
-Date: Tue, 27 Aug 2024 17:54:33 +0200
+	s=arc-20240116; t=1724774149; c=relaxed/simple;
+	bh=cBO2FyArKD0hhv02lTcB1TMtG8oLlZwbkjkc6NN/N60=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YYjX67ChNJjIq4r8CpgdOavmCsUNXe/1fMCqJVft1564gU0o9pRRxjOuisXIFiulKaOfjvGfx6W1CyeWeEqPp738BN9sAg3MfAPvaCM0NOavUdOkKgmC/MaqV99wliihruHaxX4yHb/KTr+kSAOS1YyD3FsuXRfKaD/PsaApQsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=Yr2QCciq; arc=none smtp.client-ip=37.205.15.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
+Received: from mordecai.tesarici.cz (unknown [213.235.133.103])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by bee.tesarici.cz (Postfix) with ESMTPSA id BB8E91F64C8;
+	Tue, 27 Aug 2024 17:55:41 +0200 (CEST)
+Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
+	t=1724774142; bh=Kgt1rDhB3tqHgknqxyoONMHMo+OxvdM/AzWNdimoAOE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Yr2QCciqpjJLdknVeRsD7PsgDs/BjCz1fzFb54yBUI3dAxCIH/yC8BaQmC7/rIZta
+	 R4kjf3UbLQCx1HLrAE4H2MgHezkcmPDFZQZ9nmLAlnCgcG7tHoQyc+4tzcXxmxeGY7
+	 trJ1BuKWBR09O0Y0zhR9kjieTqui1PosnMmSEtljfZmWeWRlO47Ec6PMVNuitXt+Tm
+	 ZbHUJnds5/jNYa0TE/npvMr4Rh6uHf2OuRT36H8OkM3E45X4PNypdTIftik36Eqlf5
+	 UAsu0FwczQ62eO0gD/RQm/Whj1+48funVWiYx6oo8oGD4OY2icw65WKNjg03OqWYJY
+	 hzHJcftv+yBNQ==
+Date: Tue, 27 Aug 2024 17:55:36 +0200
+From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: "mhkelley58@gmail.com" <mhkelley58@gmail.com>, "kbusch@kernel.org"
+ <kbusch@kernel.org>, "axboe@kernel.dk" <axboe@kernel.dk>,
+ "sagi@grimberg.me" <sagi@grimberg.me>,
+ "James.Bottomley@HansenPartnership.com"
+ <James.Bottomley@HansenPartnership.com>, "martin.petersen@oracle.com"
+ <martin.petersen@oracle.com>, "kys@microsoft.com" <kys@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>, "wei.liu@kernel.org"
+ <wei.liu@kernel.org>, "decui@microsoft.com" <decui@microsoft.com>,
+ "robin.murphy@arm.com" <robin.murphy@arm.com>, "hch@lst.de" <hch@lst.de>,
+ "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+ "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>
+Subject: Re: [RFC 1/7] swiotlb: Introduce swiotlb throttling
+Message-ID: <20240827175536.004785f3@mordecai.tesarici.cz>
+In-Reply-To: <SN6PR02MB4157AE3FA2E0D2227CC94CC0D4882@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20240822183718.1234-1-mhklinux@outlook.com>
+	<20240822183718.1234-2-mhklinux@outlook.com>
+	<20240823094101.07ba5e0f@meshulam.tesarici.cz>
+	<SN6PR02MB4157AE3FA2E0D2227CC94CC0D4882@SN6PR02MB4157.namprd02.prod.outlook.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Yan Zhen <yanzhen@vivo.com>, linux-mm@kvack.org,
- opensource.kernel@vivo.com, Andrew Morton <akpm@linux-foundation.org>,
- Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>,
- Joonsoo Kim <iamjoonsoo.kim@lge.com>, Pekka Enberg <penberg@kernel.org>,
- Vlastimil Babka <vbabka@suse.cz>
-Cc: LKML <linux-kernel@vger.kernel.org>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- Roman Gushchin <roman.gushchin@linux.dev>
-References: <20240822022704.1195439-1-yanzhen@vivo.com>
-Subject: Re: [PATCH] mm: slab: use kmem_cache_free() to free
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240822022704.1195439-1-yanzhen@vivo.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:L0ek6BSdON0AhkDR/E/gtYOUBRqewVTxZcnW5vTD5Hr2jTJms7Y
- JQ7bdjt0U4h6EWmVAGMN//gg47zsUPykv/H+7nLd/GObC0ioUWgro5CW0vf3xT9FpEG/vxj
- 0r3B4BIYDE82dX8C6vakpTLzcs9nA6HO7sVxTzfj44SquSehSz8qcjSftsC7jbEYRQCrhAI
- g7NbyiLl6SVQufAF033aw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:+wNNN+mN7v4=;L53yq0uGKQB4Z8xQkugghFXd7c9
- 3LOeobKeKDOGxiApgglN+X0/XK4SSeh3oGalFKJ9fuFVS1Bq63390QWvmyEoF+T+4fMVb0gT/
- uu+x22p13QYMJ/4vd5wHzNdBSGuTg7hbJe8G7mN6eWXxfS505uomfQ5bAhyPIKM6iBetjyhJ9
- acnjj1eHUNZA9Sd3kxzDSAtpzF+jmmKAo5lWR5sRBZqV8IfmHKoQ3aaSHTPbJvfj1znDbU++/
- dqeMjXAN/Byy+KD6aEDvwKh7rrPtOyMF2t5pL9oTzDE6F2DCS53dZI5Uyxplc7xX2EyA9JcRb
- hT7Z+6cKNRk8tD7XFemDLtPJokMJPq7vy/YyJXEkuvOj5vTq4FwGdL0UkFcl9Ic6s4qieCzDw
- 90ofwYPh7hCzWITPURNKaHWQXAcnHyTT2rPTx91E5EyVFOvhSdavob9sJqwLwFs0PcG+cOFGV
- D9YdcEpCWnRH1t5PDWGCHJt2sVbRGxdNKiKhHVGWis+pdK9rGFxPznc1eXMtvt2871AvsuLCf
- CuxcZZNl7tvW79YIHKybLv7EouzhFpm4TiG1pUiczJYhSIn1Slxb5rkGaKW/K4EDjGCYC05kZ
- zzb/IZwW0/I1zDwq9E5m2Tdh8K9PG8iJRwbCwkGOsPLkMAb7DDWAdusMtylpAIly4nMgltIba
- LkPOCKdgS48p94Vi9T4+RCg/ZgbI4uvA610JsAWlDZov9j5yvk0v9KuMU1tGbsxpbLJSIOs1f
- RdRhmOdbWVzYLa8SK+CwJib7NE+7uWl9LrLcWQjq0XJQjB+9RmGH/nI0gNnB9yXdRAP5oTFsu
- S39qat2R/ifNUqtNsbSyUd7g==
 
-> The kmem_cache_alloc() is typically used to free memory allocated throug=
-h
-> the kernel memory cache (slab allocator).
+On Fri, 23 Aug 2024 20:41:15 +0000
+Michael Kelley <mhklinux@outlook.com> wrote:
 
-I find this wording confusing.
+> From: Petr Tesa=C5=99=C3=ADk <petr@tesarici.cz> Sent: Friday, August 23, =
+2024 12:41 AM
+> >=20
+> > On Thu, 22 Aug 2024 11:37:12 -0700
+> > mhkelley58@gmail.com wrote:
+>[...]
+> > > @@ -71,12 +72,15 @@
+> > >   *		from each index.
+> > >   * @pad_slots:	Number of preceding padding slots. Valid only in the =
+first
+> > >   *		allocated non-padding slot.
+> > > + * @throttled:  Boolean indicating the slot is used by a request tha=
+t was
+> > > + *		throttled. Valid only in the first allocated non-padding slot.
+> > >   */
+> > >  struct io_tlb_slot {
+> > >  	phys_addr_t orig_addr;
+> > >  	size_t alloc_size;
+> > >  	unsigned short list;
+> > > -	unsigned short pad_slots;
+> > > +	u8 pad_slots;
+> > > +	u8 throttled; =20
+> >=20
+> > I'm not sure this flag is needed for each slot.
+> >=20
+> > SWIOTLB mappings should be throttled when the total SWIOTLB usage is
+> > above a threshold. Conversely, it can be unthrottled when the total
+> > usage goes below a threshold, and it should not matter if that happens
+> > due to an unmap of the exact buffer which previously pushed the usage
+> > over the edge, or due to an unmap of any other unrelated buffer. =20
+>=20
+> I think I understand what you are proposing. But I don't see a way
+> to make it work without adding global synchronization beyond
+> the current atomic counter for the number of uI'm sed slabs. At a minimum
+> we would need a global spin lock instead of the atomic counter. The spin
+> lock would protect the (non-atomic) slab count along with some other
+> accounting, and that's more global references. As described in the
+> cover letter, I was trying to avoid doing that.
 
+I have thought about this for a few days. And I'm still not convinced.
+You have made it clear in multiple places that the threshold is a soft
+limit, and there are many ways the SWIOTLB utilization may exceed the
+threshold. In fact I'm not even 100% sure that an atomic counter is
+needed, because the check is racy anyway. Another task may increase
+(or decrease) the counter between atomic_long_read(&mem->total_used)
+and a subsequent down(&mem->throttle_sem).
 
-> Using kmem_cache_free() for deallocation may be more reasonable.
+I consider it a feature, not a flaw, because the real important checks
+happen later while searching for free slots, and those are protected
+with a spinlock.
 
-Will =E2=80=9Cimperative mood=E2=80=9D become more desirable here?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.11-rc5#n94
+> If you can see how to do what you propose with just the current
+> atomic counter, please describe.
 
-Regards,
-Markus
+I think I'm certainly missing something obvious, but let me open the
+discussion to improve my understanding of the matter.
+
+Suppose we don't protect the slab count with anything. What is the
+worst possible outcome? IIUC the worst scenario is that multiple tasks
+unmap swiotlb buffers simultaneously and all of them believe that their
+action made the total usage go below the low threshold, so all of them
+try to release the semaphore.
+
+That's obviously not good, but AFAICS all that's needed is a
+test_and_clear_bit() on a per-io_tlb_mem throttled flag just before
+calling up(). Since up() would acquire the semaphore's spinlock, and
+there's only one semaphore per io_tlb_mem, adding an atomic flag doesn't
+look like too much overhead to me, especially if it ends up in the same
+cache line as the semaphore.
+
+Besides, this all happens only in the slow path, i.e. only after the
+current utilization has just dropped below the low threshold, not if
+the utilization was already below the threshold before freeing up some
+slots.
+
+I have briefly considered subtracting the low threshold as initial bias
+from mem->total_used and using atomic_long_add_negative() to avoid the
+need for an extra throttled flag, but at this point I'm not sure it can
+be implemented without any races. We can try to figure out the details
+if it sounds like a good idea.
+
+Petr T
 
