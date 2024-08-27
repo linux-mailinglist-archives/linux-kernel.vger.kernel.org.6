@@ -1,153 +1,170 @@
-Return-Path: <linux-kernel+bounces-302777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08452960329
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:33:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58269960325
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CAA21C22130
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:33:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF6941F21C87
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F581946B0;
-	Tue, 27 Aug 2024 07:32:20 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968091885A9;
+	Tue, 27 Aug 2024 07:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RWecI8em"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B64156257;
-	Tue, 27 Aug 2024 07:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006C915F3FB;
+	Tue, 27 Aug 2024 07:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724743940; cv=none; b=EKmve1bA8k4EPAjVtm14jiv5kr6ssxHcwQSO92TaCAYlmJonqXoAzWQ/bTb1QOkgUfzoaHkkW6g4/scSpSoREaAwNp9Xi7fA0NhYQpCC/zYX/H4Y8COXoc3To8+Eb62OhsQq7JBiyfpUyBf08z+wTXhkvTznsyGst2sQYVhqKrQ=
+	t=1724743934; cv=none; b=EoS62Hy+CdoEMK4nhwsFLbc0fs9Ry/BS85MyVZdgRmNfp4qnZDY4cgo9v1parGsHM4sCnpHVMCnlRJp8VZss9Ik5oyRfarJmkOiXqxpvx9nFwi4HUOXJRs5VLInR+esx9WEc9zhFJobUaLe5WZP9uQoLyWKbDVPEl7v8uhv20FE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724743940; c=relaxed/simple;
-	bh=SyzZtI1+NQ+PNQRnqfr3VckHD6Z85j1Q1O6oyqTDKHY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gecxXBn7+B8Uc9PvDzJtyo3HH7dnmi92kkk8fFS4YFWEW12QOFFJqQN31GlWd+Je3Yae49K2/d8CDH1Q3xGsO89FD3ktb+YsBmoJhe3yox9QZ4lESbjD1KCHHXU/JIM9bVNj9W6JYTguxa9Lh3nR46TbCczY9eq7ThGOakkiguM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WtK4R2g5Jz9sRy;
-	Tue, 27 Aug 2024 09:32:07 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id V7bo799OOrQp; Tue, 27 Aug 2024 09:32:07 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WtK4Q3lVyz9rvV;
-	Tue, 27 Aug 2024 09:32:06 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 69D9D8B763;
-	Tue, 27 Aug 2024 09:32:06 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id Iq2bPXf9vqy9; Tue, 27 Aug 2024 09:32:06 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (PO19727.IDSI0.si.c-s.fr [192.168.233.149])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id C22318B77C;
-	Tue, 27 Aug 2024 09:32:05 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: "Theodore Ts'o" <tytso@mit.edu>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arch@vger.kernel.org
-Subject: [PATCH 3/4] random: vDSO: Clean header inclusion in getrandom
-Date: Tue, 27 Aug 2024 09:31:49 +0200
-Message-ID: <8a025e72484467cd34412b20e8638a5982c1867e.1724743492.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <cover.1724743492.git.christophe.leroy@csgroup.eu>
-References: <cover.1724743492.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1724743934; c=relaxed/simple;
+	bh=P7VU/LvqmMEP1GwP1fQvV+wBdODNG9bamDwAzwXEW+Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ahxZyh6MJTbwFyLGwFlYuEwXqxtqStPwgCVceY6ES2PnvSQUUj0/1ggCbpHWxf9PH/yOR6YsWJEnp4U5JE/2yWlg3Ftxi1JtcSm/W/akqiLx2rF4fMJq8Mj5UaIroaZEOJemF690LkxN5nxHPBEhaOd8VGqRefr0fJWgiEGFISU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RWecI8em; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47QJGdVG007432;
+	Tue, 27 Aug 2024 07:32:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=nElXkCErwF6ts+y13xoxV4
+	F7aJQ10k6QU65Zdv4oGhE=; b=RWecI8emWzWpZuHGo8tkRU1vGXNUFKyuUo1kZ/
+	xAP5GVCVsIMKoP7xcTFWRf05A6Sf+hJTx4aSMpC+YH+upwQ7myK/pJE7I5cxmW8C
+	TDn5QsyF6qNIJaHZ9Q1mCxyxA5HJ8khi88ubiKTrtLE+3AEl+JNpWOKo7cvwwdHr
+	VF9iwmPcviunbP6SDgb5RZkQyzLERMT8IXoHBKqDq4dutIpbxJGDTlpuD25sbRt9
+	Z74WEIPtj4vs3ks7ZwMpCkQJVZCWNi+nLkbgK8S+39V5XDoHGq/s2vAHfxDrB/gU
+	VwP7k7F0tb9/ixXSEKdOGwazoziMmcwsCsKHycvzvxQrs04Q==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 417976x30a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 Aug 2024 07:32:09 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47R7W8xm022322
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 Aug 2024 07:32:08 GMT
+Received: from hu-prashk-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 27 Aug 2024 00:32:06 -0700
+From: Prashanth K <quic_prashk@quicinc.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thinh Nguyen
+	<Thinh.Nguyen@synopsys.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        Prashanth K
+	<quic_prashk@quicinc.com>, <stable@vger.kernel.org>
+Subject: [PATCH v4] usb: dwc3: Avoid waking up gadget during startxfer
+Date: Tue, 27 Aug 2024 13:01:50 +0530
+Message-ID: <20240827073150.3275944-1-quic_prashk@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724743908; l=2330; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=SyzZtI1+NQ+PNQRnqfr3VckHD6Z85j1Q1O6oyqTDKHY=; b=fSIKr6vEkPCdi8p5zjOImaiMT45fp/h6J0kyMRtTL2z1rmbefSRzhSk4X/1AAHcjDaSyMezbM dK4az5CEdO+CxwxlaFX6vEeo1nTBA2z6W7DA3ar177N5fbvEiNhjFzS
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: uz9tGICLeOG9szQRM3lA8NEiLAVSg2Zz
+X-Proofpoint-GUID: uz9tGICLeOG9szQRM3lA8NEiLAVSg2Zz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-27_04,2024-08-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ mlxlogscore=723 malwarescore=0 clxscore=1015 impostorscore=0 adultscore=0
+ priorityscore=1501 bulkscore=0 mlxscore=0 suspectscore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408270056
 
-Building a VDSO32 on a 64 bits kernel is problematic when some
-system headers are included. See commit 8c59ab839f52 ("lib/vdso:
-Enable common headers") for more details.
+When operating in High-Speed, it is observed that DSTS[USBLNKST] doesn't
+update link state immediately after receiving the wakeup interrupt. Since
+wakeup event handler calls the resume callbacks, there is a chance that
+function drivers can perform an ep queue, which in turn tries to perform
+remote wakeup from send_gadget_ep_cmd(STARTXFER). This happens because
+DSTS[[21:18] wasn't updated to U0 yet, it's observed that the latency of
+DSTS can be in order of milli-seconds. Hence avoid calling gadget_wakeup
+during startxfer to prevent unnecessarily issuing remote wakeup to host.
 
-Minimise the amount of headers by moving needed items into
-dedicated common headers.
-
-Removing linux/time64.h leads to missing 'struct timespec64' in
-x86's asm/pvclock.h. Add a forward declaration of that struct in
-that file.
-
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Fixes: c36d8e947a56 ("usb: dwc3: gadget: put link to U0 before Start Transfer")
+Cc: <stable@vger.kernel.org>
+Suggested-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Signed-off-by: Prashanth K <quic_prashk@quicinc.com>
 ---
-v3: Split PAGE_SIZE/PAGE_MASK subject in another patch and explained the forward declaration of 'struct timespec64' in commit message.
----
- arch/x86/include/asm/pvclock.h | 1 +
- include/vdso/helpers.h         | 1 +
- lib/vdso/getrandom.c           | 8 +++-----
- 3 files changed, 5 insertions(+), 5 deletions(-)
+v4: Rewording the comment in function definition.
+v3: Added notes on top the function definition.
+v2: Refactored the patch as suggested in v1 discussion.
 
-diff --git a/arch/x86/include/asm/pvclock.h b/arch/x86/include/asm/pvclock.h
-index 0c92db84469d..6e4f8fae3ce9 100644
---- a/arch/x86/include/asm/pvclock.h
-+++ b/arch/x86/include/asm/pvclock.h
-@@ -5,6 +5,7 @@
- #include <asm/clocksource.h>
- #include <asm/pvclock-abi.h>
- 
-+struct timespec64;
- /* some helper functions for xen and kvm pv clock sources */
- u64 pvclock_clocksource_read(struct pvclock_vcpu_time_info *src);
- u64 pvclock_clocksource_read_nowd(struct pvclock_vcpu_time_info *src);
-diff --git a/include/vdso/helpers.h b/include/vdso/helpers.h
-index 73501149439d..3ddb03bb05cb 100644
---- a/include/vdso/helpers.h
-+++ b/include/vdso/helpers.h
-@@ -4,6 +4,7 @@
- 
- #ifndef __ASSEMBLY__
- 
-+#include <asm/barrier.h>
- #include <vdso/datapage.h>
- 
- static __always_inline u32 vdso_read_begin(const struct vdso_data *vd)
-diff --git a/lib/vdso/getrandom.c b/lib/vdso/getrandom.c
-index 5874e3072bfe..5d79663b026b 100644
---- a/lib/vdso/getrandom.c
-+++ b/lib/vdso/getrandom.c
-@@ -4,15 +4,13 @@
+ drivers/usb/dwc3/gadget.c | 38 ++++++++++++++------------------------
+ 1 file changed, 14 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index 89fc690fdf34..ea583d24aa37 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -287,6 +287,20 @@ static int __dwc3_gadget_wakeup(struct dwc3 *dwc, bool async);
+  *
+  * Caller should handle locking. This function will issue @cmd with given
+  * @params to @dep and wait for its completion.
++ *
++ * According to databook, while issuing StartXfer command if the link is in L1/L2/U3,
++ * then the command may not complete and timeout, hence software must bring the link
++ * back to ON state by performing remote wakeup. However, since issuing a command in
++ * USB2 speeds requires the clearing of GUSB2PHYCFG.SUSPENDUSB2, which turns on the
++ * signal required to complete the given command (usually within 50us). This should
++ * happen within the command timeout set by driver. Hence we don't expect to trigger
++ * a remote wakeup from here; instead it should be done by wakeup ops.
++ *
++ * Special note: If wakeup ops is triggered for remote wakeup, care should be taken
++ * if StartXfer command needs to be sent soon after. The wakeup ops is asynchronous
++ * and the link state may not transition to ON state yet. And after receiving wakeup
++ * event, device would no longer be in U3, and any link transition afterwards needs
++ * to be adressed with wakeup ops.
   */
+ int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned int cmd,
+ 		struct dwc3_gadget_ep_cmd_params *params)
+@@ -327,30 +341,6 @@ int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned int cmd,
+ 			dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(0), reg);
+ 	}
  
- #include <linux/array_size.h>
--#include <linux/cache.h>
--#include <linux/kernel.h>
--#include <linux/time64.h>
-+#include <linux/minmax.h>
- #include <vdso/datapage.h>
- #include <vdso/getrandom.h>
-+#include <vdso/unaligned.h>
- #include <asm/vdso/getrandom.h>
--#include <asm/vdso/vsyscall.h>
--#include <asm/unaligned.h>
- #include <uapi/linux/mman.h>
-+#include <uapi/linux/random.h>
- 
- #define MEMCPY_AND_ZERO_SRC(type, dst, src, len) do {				\
- 	while (len >= sizeof(type)) {						\
+-	if (DWC3_DEPCMD_CMD(cmd) == DWC3_DEPCMD_STARTTRANSFER) {
+-		int link_state;
+-
+-		/*
+-		 * Initiate remote wakeup if the link state is in U3 when
+-		 * operating in SS/SSP or L1/L2 when operating in HS/FS. If the
+-		 * link state is in U1/U2, no remote wakeup is needed. The Start
+-		 * Transfer command will initiate the link recovery.
+-		 */
+-		link_state = dwc3_gadget_get_link_state(dwc);
+-		switch (link_state) {
+-		case DWC3_LINK_STATE_U2:
+-			if (dwc->gadget->speed >= USB_SPEED_SUPER)
+-				break;
+-
+-			fallthrough;
+-		case DWC3_LINK_STATE_U3:
+-			ret = __dwc3_gadget_wakeup(dwc, false);
+-			dev_WARN_ONCE(dwc->dev, ret, "wakeup failed --> %d\n",
+-					ret);
+-			break;
+-		}
+-	}
+-
+ 	/*
+ 	 * For some commands such as Update Transfer command, DEPCMDPARn
+ 	 * registers are reserved. Since the driver often sends Update Transfer
 -- 
-2.44.0
+2.25.1
 
 
