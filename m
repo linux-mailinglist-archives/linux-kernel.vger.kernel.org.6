@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-304034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6C849618F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:02:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC7A59618EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:01:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42666B224D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:01:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99CCC283CA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7241D4161;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598D71D415D;
 	Tue, 27 Aug 2024 21:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rqt3zNZv"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LSbW/oxx"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5DF1D363B;
-	Tue, 27 Aug 2024 21:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C0B1D363A;
+	Tue, 27 Aug 2024 21:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724792488; cv=none; b=JQdguhDRUApXEDRz0/RLRVC4IcdGYtc+dJON36XXqgenOPaipFsZZgaIZG5ldnLFxiEXNHzzLRybxXSAFo9ezvUNm17lhEHbJtaJs7ExEaq+ZrLJ9mSArOQv2tudmTSgB4FicYffIs2B8gekdQmLQMffOLl4UZi+ax76EHPcuDg=
+	t=1724792488; cv=none; b=QlB7lckYfCXMcqM2tdiWvZc9I3BmFfWNf50zxlcmfv/QlIhOY2szL5MoHin3b2cTWhD37kpncF1CTplstxzl1b4svCdNQObVJcBXfakSzRZIfCCuPvhz51DR/mPdvmUlF+w7DPHi8ThXlJNrZuYt3ylALbmfk+I9rR6qBwjYtkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724792488; c=relaxed/simple;
-	bh=RNhLy3kONeDz/+IGq0BW6Nukk5PX4HbKNZTyiChMq2M=;
+	bh=ZUQNvjzepWA4pCK8RLWIXzlmS349ucRwrxxaYBZS3Do=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=u6etgfwtW0tg+83uLwhUebdasvWG605YU9eH0VW4q7IPUOGXmqhpPsB9shX7U+3XfplriEYuO+vsIUJWdj7MU2YWTa6A+cOnBxOqVnh7AG9Cj7YCO25eO1QNPormUdg4YUMax1O1ED2TB5XBHIxR/aYKs+Ek/qVpN6nEqGYQTg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rqt3zNZv; arc=none smtp.client-ip=209.85.208.173
+	 In-Reply-To:To:Cc; b=UCUddjInOg20OfSM+TZJ8/391PvzbOHrDRNzxLACVmmLO0p8jUNt64C+N1nM+nquISyBGeDJMHJpFv4sPEmVVDaQutekVHDxuXBVwxFLVr0vvB9htWU+v5onG34z/cWIRqq7awDFLmKMPlsN4dYikevpnfePHyCbq3Didw2S8oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LSbW/oxx; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f4f2868783so55431531fa.2;
-        Tue, 27 Aug 2024 14:01:24 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5334c018913so5727716e87.0;
+        Tue, 27 Aug 2024 14:01:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724792483; x=1725397283; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724792485; x=1725397285; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=oxD/2bn0T/dFXzCPoiChAlaQk6ipCE9icGUJFuoXA1Q=;
-        b=Rqt3zNZvqDYP8pKxKsWk4zP8m++mnZgb3+wrAu+jM3pdxsJAqpzARmKbGSspneBb1Z
-         DRNdYAs0wvcN50YAyNZ8hiZWoofptZ3tvHEBXmZ+hH22gKnQXi6v0G7AxHoP+OzIql98
-         XNCQfP0cuu+LxGFrzhCOFmSeOXkvGR923doSx1nt/u9gtSYpHHJtCB/7g/G8GglP5px+
-         evEEGbbICl/aXODhz4BeTIJiwkC/FhJxxAEtqIPgIK13mYgZxyBcoHMxm0M2s/NR20+J
-         ejqSTRxp1L0BgznK0QlsJJLACT04cbM/jNNArK5cPX3qkjeQRNlbH2A9n8VG1bmnzLuE
-         zxow==
+        bh=557eQ0nrkCY+/ANVkKP3VQXQ7163oT4FiuaAuauOfKc=;
+        b=LSbW/oxxKGfHF5ZV6yAZN3qWQfZBTr2DKmnwnmqQ/Ocp6Fmda81hiKMmtoR52ZAPb5
+         TIbcBQ9s38JChrDaCSVjiSOUZDullkabtL5OEx5egSyNxRe/Kw4piZFFbcrI0TjLTA4N
+         D0qANFDQygN3g5DjT9U9mUc5ZBF7TYnsnAlTamieXrdOnTkjpp9NebkobQsithPeYnu1
+         uNGxpwQb1h1UpSmC9VaBc39vi8IH1BNzeIXpitk5MSx1Bx/aIgH8r0u9WYyfX3jd7OyH
+         seHe/fy5xIVEotQfoIaDw0y1swzGau5W5wsxxtldRiFEr+eSBgSJlSrbeDEbO8+k8XtM
+         PDVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724792483; x=1725397283;
+        d=1e100.net; s=20230601; t=1724792485; x=1725397285;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oxD/2bn0T/dFXzCPoiChAlaQk6ipCE9icGUJFuoXA1Q=;
-        b=QgSZkmy0I58A3N5CNJ0p+BAJDjjWITfx6masactRPjvzocCScs7k8XLrZE2jaMQ+LG
-         jsrvX3SL2D5IYbCF/sNpKQ3AlR1tkQNSyQDDlPTVx6a+g1/mld4dnRquDaEPKELVsiBc
-         aFo30AsuDbByW5RkyiWBp2aAbijZryc7ERkScMI442g5uEfAaocTEjuI0YmLOAkImAr+
-         egyJhJIOAsO+UuM0A+WJ9p44cHsz8YbFX1/QvyEwGout5CxWvvsklhpFEY8NfR60zi7q
-         Vk5Xaaq1Qt/D5pKiFv+IVvie5pl3/xhPuTCidVU+MLrhpYfp2GMDOOV9RdtdCmg0F6h4
-         6iMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVGLBzIck8mY8rKzKqpcqjs5+zzBuXNTii1GSuMDh+GVHWYjAS139w0juItc04sSs3969Ez29OUKUh7dl4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywu4SjH9QOx+eiCzylV6jU/Vs7JY2wS0LOnyDVb4mNT8tm79nN7
-	EX+RBkNYDI8cOSm8QwdlFH0cbW0qD0xzU4jjo4bHZnHiSHEpyuX6/Xw3EjMabKI=
-X-Google-Smtp-Source: AGHT+IHMIJqq+qMc5SFSWqS83HaQQxSJIoBoIh0xhJc6PI4T9xwpLUgf2R1siupu5MnfzMii4vuZpQ==
-X-Received: by 2002:a2e:612:0:b0:2f3:ad82:53fd with SMTP id 38308e7fff4ca-2f514a44f48mr23852671fa.28.1724792482231;
-        Tue, 27 Aug 2024 14:01:22 -0700 (PDT)
+        bh=557eQ0nrkCY+/ANVkKP3VQXQ7163oT4FiuaAuauOfKc=;
+        b=Cc7UoEy8b/jUvvN3pg1fscTLsVATCxjotIYiVZknzpxM3cNz6DdfdqcCtIpcqMf550
+         bleVPaf6/vdc4XbhuFBvk87eUXnYD1VAgBbdDYgHB5u3WN8GLNnUt4AsU7c96mCOxa9g
+         cb4zLiAiqJehrYIFWuBE6o/nDjJyG/He8IDSkLHAtbt7Z5J/dr0a+IDIMT5jD9snNmJe
+         1PaiM+G4pQ41jhSt652KxUyS+/kgikQ7uHted0gELH66EucrYHjx3+YPl4YMb+gjJoHC
+         nkIirsajvVMWzEIEAJLggD/pzvDozrugn45FTIRMRYl4QPfiTKXrGcD+MCocYjncvDhq
+         DVGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUY/xawb3/jRGKC2roczxsP9voRTxpZ2VL3NX20BBr66aKNkOLWsiQ1TXEMi6Oa71hdLlAHLAAdfU011js=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZcKaQkelfgjNjNIq8BE+/h9MfM4TxY/aVR9xAWijdErEbp12o
+	2WqudE8CEWVWf0jL4Z0EE+w6PBZ3Qcw8L9PuNrWel/BFPjanzHR4n7XDvVxLouQ=
+X-Google-Smtp-Source: AGHT+IElOZVXVj/FlEZ3fbmtBkOLSrsihpcHyRreC5BIEGKSLXXKFN04zZD8UqjwCA5j+FE4FKXBkA==
+X-Received: by 2002:a05:6512:3da9:b0:52e:f950:31f5 with SMTP id 2adb3069b0e04-53438832e67mr10098468e87.18.1724792484028;
+        Tue, 27 Aug 2024 14:01:24 -0700 (PDT)
 Received: from cleve-worktop. (85-193-33-82.rib.o2.cz. [85.193.33.82])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb1c3114sm1405835a12.13.2024.08.27.14.01.21
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb1c3114sm1405835a12.13.2024.08.27.14.01.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 14:01:21 -0700 (PDT)
+        Tue, 27 Aug 2024 14:01:22 -0700 (PDT)
 From: =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
-Date: Tue, 27 Aug 2024 23:00:43 +0200
-Subject: [PATCH v2 1/3] Fix NanoPi NEO Plus2 regulators
+Date: Tue, 27 Aug 2024 23:00:44 +0200
+Subject: [PATCH v2 2/3] Use regulators for pio on NanoPi NEO Plus2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240827-nanopi-neo-plus2-regfix-v2-1-497684ec82c7@gmail.com>
+Message-Id: <20240827-nanopi-neo-plus2-regfix-v2-2-497684ec82c7@gmail.com>
 References: <20240827-nanopi-neo-plus2-regfix-v2-0-497684ec82c7@gmail.com>
 In-Reply-To: <20240827-nanopi-neo-plus2-regfix-v2-0-497684ec82c7@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -88,75 +88,44 @@ Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
  =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724792480; l=2036;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724792480; l=958;
  i=cleverline1mc@gmail.com; s=20240824; h=from:subject:message-id;
- bh=RNhLy3kONeDz/+IGq0BW6Nukk5PX4HbKNZTyiChMq2M=;
- b=9/Mx2+cAHE81RhNqFvprgXDsszsk21dvPoYTZw5zCCYnSpD3rhc7njBnEaHii6djEqcV1725u
- 5hpQHzHHVJxARzZQUiinsjRclqW3BCgVK6jlV19RzVEPptPlcYZu1vJ
+ bh=ZUQNvjzepWA4pCK8RLWIXzlmS349ucRwrxxaYBZS3Do=;
+ b=OhH9WG6Wv6Z7PRWzl1EICmfw7GOLJF8ftG+PLNKrN978hxBL+u9qLUob7ALa9BomlnNZ/FhFT
+ BEERtDUuzqqBHX0a/5HrQR62Z6mGP4Wyw9rbExnS+yHEhGYtAGdeoVt
 X-Developer-Key: i=cleverline1mc@gmail.com; a=ed25519;
  pk=CQifx5FUgTQKAoj5VCYrwYHi235AkXQ5yT1P6gkaBxM=
 
-Added the main board 5 V supply regulator,
-a 2.5 V supply regulator for GMAC PHY IO and correct vin-supply elements.
+Pin controllers pio and r_pio will have proper regulators assigned.
 
 Signed-off-by: Kryštof Černý <cleverline1mc@gmail.com>
 ---
- .../dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts   | 25 ++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts
-index b69032c44557..dee4cd82636b 100644
+index dee4cd82636b..526443bb736c 100644
 --- a/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts
 +++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts
-@@ -45,16 +45,40 @@ reg_gmac_3v3: gmac-3v3 {
- 		startup-delay-us = <100000>;
- 		enable-active-high;
- 		gpio = <&pio 3 6 GPIO_ACTIVE_HIGH>;
-+		vin-supply = <&reg_vcc3v3>;
-+	};
+@@ -171,6 +171,18 @@ &ohci3 {
+ 	status = "okay";
+ };
+ 
++&pio {
++	vcc-pa-supply = <&reg_vcc3v3>;
++	vcc-pc-supply = <&reg_vcc3v3>;
++	vcc-pd-supply = <&reg_gmac_2v5>;
++	vcc-pf-supply = <&reg_vcc3v3>;
++	vcc-pg-supply = <&reg_vcc3v3>;
++};
 +
-+	reg_gmac_2v5: gmac-2v5 {
-+		/* 2V5 supply for GMAC PHY IO */
-+		compatible = "regulator-fixed";
-+		regulator-name = "gmac-2v5";
-+		regulator-min-microvolt = <2500000>;
-+		regulator-max-microvolt = <2500000>;
-+		regulator-always-on;
-+		vin-supply = <&reg_vcc3v3>;
-+	};
++&r_pio {
++	vcc-pl-supply = <&reg_vcc3v3>;
++};
 +
-+	reg_vcc5v: regulator-vcc5v {
-+		/* board 5V supply from micro USB or pin headers */
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc-5v";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
- 	};
- 
- 	reg_vcc3v3: vcc3v3 {
-+		/* board 3V3 supply by SY8089A */
- 		compatible = "regulator-fixed";
- 		regulator-name = "vcc3v3";
- 		regulator-min-microvolt = <3300000>;
- 		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+		vin-supply = <&reg_vcc5v>;
- 	};
- 
- 	vdd_cpux: gpio-regulator {
-+		/* cpu voltage regulator MP2143DJ */
- 		compatible = "regulator-gpio";
- 		regulator-name = "vdd-cpux";
- 		regulator-type = "voltage";
-@@ -66,6 +90,7 @@ vdd_cpux: gpio-regulator {
- 		gpios = <&r_pio 0 6 GPIO_ACTIVE_HIGH>;
- 		gpios-states = <0x1>;
- 		states = <1100000 0>, <1300000 1>;
-+		vin-supply = <&reg_vcc5v>;
- 	};
- 
- 	wifi_pwrseq: pwrseq {
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pa_pins>;
 
 -- 
 2.39.2
