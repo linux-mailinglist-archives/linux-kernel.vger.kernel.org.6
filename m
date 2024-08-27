@@ -1,153 +1,169 @@
-Return-Path: <linux-kernel+bounces-303661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1286961336
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:48:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E1B6961337
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:48:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AA311F24493
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:48:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0AFB1C22B68
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08411C9458;
-	Tue, 27 Aug 2024 15:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0641C93AF;
+	Tue, 27 Aug 2024 15:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H4BQcrQb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="eaheeqm4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99281C6F55
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 15:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B1B18030
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 15:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724773675; cv=none; b=kflDAgE+/e0qI/9V5x28TvzqCqeFzeBjFOhRjiCJjb+KSEHPic2UkDNqqtUUoGiJs5Jaz53ORpIR6ObIwrsclO788xKKsEv7J5xS3t1fwlnlz44Q3O7DI81Ev//FT3gqhtB1V1isvg/3dIu/3xzzm/+zrF3FefEFDmpJltUlcd8=
+	t=1724773712; cv=none; b=YRfv294aLURBP8cGGuUWQK+bBp6aOBMOttNAg42vE6Bq+mETACRXf4BmyyUGz8jTV2X8kuMigmAX6G5XCL7bHqhilQavtX4S+vhxJYWMR0w313wTI0dFRGsWDWSPL1IwkfLwlU9J4A/pKskfku1wquK6uCHVZFHQETCEEYDXoyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724773675; c=relaxed/simple;
-	bh=mX7nfHXld2mBFsl25w8MwO1IRuyNcp/OiOqnPdEVX/U=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=nFC4Tipxw3GNu0O7Cd4J72vj02MyH7azmC/Fi9mFILOtP8RU6SD51Bjs++F8J9Ke1bM86uoWqeRgwHIA2HUD/J+kVeO7FlF28uEeU5pPjJ+TjX210OKG6k0eTIXEYq+JO6xG7Hlysjs6b3kjxlIQLporwO4+n8bFrNhydnQiTPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H4BQcrQb; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724773672;
+	s=arc-20240116; t=1724773712; c=relaxed/simple;
+	bh=Vp0AZ+t6kr8pqTpizz6K99uV7tEk4ZOh+ZvuVD4rOKU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gwJ7x8Jku9lD+p4qeCyFweCPjOY0biQL9tBbob7ehRqc3ctIUZUm5DFoK/bnsfzV1Er/Fs7Ofx2KA7vtANW60zmpBt+r+CK1DRib7HsPYOZ43UUFDfus//Sr3DBA8adB03hWSJoqsHZ4mHzQ9FdqhF1b6yxxZ+9hiW06lnMRo8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=eaheeqm4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9D56C567F1;
+	Tue, 27 Aug 2024 15:48:31 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="eaheeqm4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1724773710;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=DWBRfGjoLyD8v0ummSlyJMhm9Y7pJVqza2oUVXSgR2s=;
-	b=H4BQcrQbv+7JgbCQGlr1URlMRTble6QQC4XB0YwFZDnjOhqCwalKufrZuhgM7ptnwd61wS
-	9Eu3Uc091/26CWYSOKkgQivAJqrqGm0rWFYmzXyh4KmQ4em/lO7EmsouOS965A3ZrSvzab
-	jAmDPXXuuJ6rlawtZO2XumPWs7wuyZ8=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-400-cxr-aK1BMeO3_XGtL99SmQ-1; Tue,
- 27 Aug 2024 11:47:46 -0400
-X-MC-Unique: cxr-aK1BMeO3_XGtL99SmQ-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8F84D1955F56;
-	Tue, 27 Aug 2024 15:47:44 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 67F811955F1B;
-	Tue, 27 Aug 2024 15:47:41 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Steve French <stfrench@microsoft.com>
-cc: dhowells@redhat.com, Paulo Alcantara <pc@manguebit.com>,
-    Shyam Prasad N <nspmangalore@gmail.com>,
-    Rohith Surabattula <rohiths.msft@gmail.com>,
-    Matthew Wilcox <willy@infradead.org>,
-    Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org,
-    linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH] cifs: Fix copy offload to flush destination region
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1nhRiHmsP1t2/YPpWHGZbuqpWC7k4mUdfGGkxiGcHZ4=;
+	b=eaheeqm4Le+i/vktlEe4tws/hI09jrpwlKI5MWFgY5eW4Mq6ywtyInWnznSG2upZLZM7DF
+	vCVKlx7R/9wc5tbHbUWnw1UJqQy8IFkbBDMoNxw6hv09qMdVJn+dMplJRNv1xK4Vcszktd
+	42tRsNGppJ/G3ZVbDgvIZr/74Rbi7oE=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 313edcc7 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Tue, 27 Aug 2024 15:48:29 +0000 (UTC)
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Subject: [PATCH v2] random: vDSO: move prototype of arch chacha function to vdso/getrandom.h
+Date: Tue, 27 Aug 2024 17:47:54 +0200
+Message-ID: <20240827154822.3330270-1-Jason@zx2c4.com>
+In-Reply-To: <20240827151828.3326600-1-Jason@zx2c4.com>
+References: <20240827151828.3326600-1-Jason@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <861651.1724773660.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 27 Aug 2024 16:47:40 +0100
-Message-ID: <861652.1724773660@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Transfer-Encoding: 8bit
 
-    =
+Having the prototype for __arch_chacha20_blocks_nostack in
+arch/x86/include/asm/vdso/getrandom.h meant that the prototype and large
+doc comment were cloned by every architecture, which has been causing
+unnecessary churn. Instead move it into include/vdso/getrandom.h, where
+it can be shared by all archs implementing it.
 
-Fix cifs_file_copychunk_range() to flush the destination region before
-invalidating it to avoid potential loss of data should the copy fail, in
-whole or in part, in some way.
+As a side bonus, this then lets us use that prototype in the
+vdso_test_chacha self test, to ensure that it matches the source, and
+indeed doing so turned up some inconsistencies, which are rectified
+here.
 
-Fixes: 7b2404a886f8 ("cifs: Fix flushing, invalidation and file size with =
-copy_file_range()")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <stfrench@microsoft.com>
-cc: Paulo Alcantara <pc@manguebit.com>
-cc: Shyam Prasad N <nspmangalore@gmail.com>
-cc: Rohith Surabattula <rohiths.msft@gmail.com>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: linux-cifs@vger.kernel.org
-cc: linux-mm@kvack.org
-cc: linux-fsdevel@vger.kernel.org
+Suggested-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
 ---
- fs/smb/client/cifsfs.c |   21 ++++-----------------
- 1 file changed, 4 insertions(+), 17 deletions(-)
+ arch/x86/include/asm/vdso/getrandom.h           | 13 -------------
+ include/vdso/getrandom.h                        | 13 +++++++++++++
+ tools/testing/selftests/vDSO/vdso_test_chacha.c | 10 +++++++---
+ 3 files changed, 20 insertions(+), 16 deletions(-)
 
-diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-index d89485235425..2a2523c93944 100644
---- a/fs/smb/client/cifsfs.c
-+++ b/fs/smb/client/cifsfs.c
-@@ -1341,7 +1341,6 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
- 	struct cifsFileInfo *smb_file_target;
- 	struct cifs_tcon *src_tcon;
- 	struct cifs_tcon *target_tcon;
--	unsigned long long destend, fstart, fend;
- 	ssize_t rc;
- =
-
- 	cifs_dbg(FYI, "copychunk range\n");
-@@ -1391,25 +1390,13 @@ ssize_t cifs_file_copychunk_range(unsigned int xid=
-,
- 			goto unlock;
- 	}
- =
-
--	destend =3D destoff + len - 1;
+diff --git a/arch/x86/include/asm/vdso/getrandom.h b/arch/x86/include/asm/vdso/getrandom.h
+index b96e674cafde..ff5334ad32a0 100644
+--- a/arch/x86/include/asm/vdso/getrandom.h
++++ b/arch/x86/include/asm/vdso/getrandom.h
+@@ -37,19 +37,6 @@ static __always_inline const struct vdso_rng_data *__arch_get_vdso_rng_data(void
+ 	return &__vdso_rng_data;
+ }
+ 
+-/**
+- * __arch_chacha20_blocks_nostack - Generate ChaCha20 stream without using the stack.
+- * @dst_bytes:	Destination buffer to hold @nblocks * 64 bytes of output.
+- * @key:	32-byte input key.
+- * @counter:	8-byte counter, read on input and updated on return.
+- * @nblocks:	Number of blocks to generate.
+- *
+- * Generates a given positive number of blocks of ChaCha20 output with nonce=0, and does not write
+- * to any stack or memory outside of the parameters passed to it, in order to mitigate stack data
+- * leaking into forked child processes.
+- */
+-extern void __arch_chacha20_blocks_nostack(u8 *dst_bytes, const u32 *key, u32 *counter, size_t nblocks);
 -
--	/* Flush the folios at either end of the destination range to prevent
--	 * accidental loss of dirty data outside of the range.
-+	/* Flush and invalidate all the folios in the destination region.  If
-+	 * the copy was successful, then some of the flush is extra overhead,
-+	 * but we need to allow for the copy failing in some way (eg. ENOSPC).
- 	 */
--	fstart =3D destoff;
--	fend =3D destend;
--
--	rc =3D cifs_flush_folio(target_inode, destoff, &fstart, &fend, true);
-+	rc =3D filemap_invalidate_inode(target_inode, true, destoff, destoff + l=
-en - 1);
- 	if (rc)
- 		goto unlock;
--	rc =3D cifs_flush_folio(target_inode, destend, &fstart, &fend, false);
--	if (rc)
--		goto unlock;
--	if (fend > target_cifsi->netfs.zero_point)
--		target_cifsi->netfs.zero_point =3D fend + 1;
--
--	/* Discard all the folios that overlap the destination region. */
--	truncate_inode_pages_range(&target_inode->i_data, fstart, fend);
- =
-
- 	fscache_invalidate(cifs_inode_cookie(target_inode), NULL,
- 			   i_size_read(target_inode), 0);
+ #endif /* !__ASSEMBLY__ */
+ 
+ #endif /* __ASM_VDSO_GETRANDOM_H */
+diff --git a/include/vdso/getrandom.h b/include/vdso/getrandom.h
+index a8b7c14b0ae0..4cf02e678f5e 100644
+--- a/include/vdso/getrandom.h
++++ b/include/vdso/getrandom.h
+@@ -43,4 +43,17 @@ struct vgetrandom_state {
+ 	bool 			in_use;
+ };
+ 
++/**
++ * __arch_chacha20_blocks_nostack - Generate ChaCha20 stream without using the stack.
++ * @dst_bytes:	Destination buffer to hold @nblocks * 64 bytes of output.
++ * @key:	32-byte input key.
++ * @counter:	8-byte counter, read on input and updated on return.
++ * @nblocks:	Number of blocks to generate.
++ *
++ * Generates a given positive number of blocks of ChaCha20 output with nonce=0, and does not write
++ * to any stack or memory outside of the parameters passed to it, in order to mitigate stack data
++ * leaking into forked child processes.
++ */
++extern void __arch_chacha20_blocks_nostack(u8 *dst_bytes, const u32 *key, u32 *counter, size_t nblocks);
++
+ #endif /* _VDSO_GETRANDOM_H */
+diff --git a/tools/testing/selftests/vDSO/vdso_test_chacha.c b/tools/testing/selftests/vDSO/vdso_test_chacha.c
+index e38f44e5f803..ca5639d02969 100644
+--- a/tools/testing/selftests/vDSO/vdso_test_chacha.c
++++ b/tools/testing/selftests/vDSO/vdso_test_chacha.c
+@@ -7,16 +7,20 @@
+ #include <sys/random.h>
+ #include <string.h>
+ #include <stdint.h>
++#include <stdbool.h>
+ #include "../kselftest.h"
+ 
+-extern void __arch_chacha20_blocks_nostack(uint8_t *dst_bytes, const uint8_t *key, uint32_t *counter, size_t nblocks);
++typedef uint8_t u8;
++typedef uint32_t u32;
++typedef uint64_t u64;
++#include <vdso/getrandom.h>
+ 
+ int main(int argc, char *argv[])
+ {
+ 	enum { TRIALS = 1000, BLOCKS = 128, BLOCK_SIZE = 64 };
+ 	static const uint8_t nonce[8] = { 0 };
+ 	uint32_t counter[2];
+-	uint8_t key[32];
++	uint32_t key[8];
+ 	uint8_t output1[BLOCK_SIZE * BLOCKS], output2[BLOCK_SIZE * BLOCKS];
+ 
+ 	ksft_print_header();
+@@ -27,7 +31,7 @@ int main(int argc, char *argv[])
+ 			printf("getrandom() failed!\n");
+ 			return KSFT_SKIP;
+ 		}
+-		crypto_stream_chacha20(output1, sizeof(output1), nonce, key);
++		crypto_stream_chacha20(output1, sizeof(output1), nonce, (uint8_t *)key);
+ 		for (unsigned int split = 0; split < BLOCKS; ++split) {
+ 			memset(output2, 'X', sizeof(output2));
+ 			memset(counter, 0, sizeof(counter));
+-- 
+2.46.0
 
 
