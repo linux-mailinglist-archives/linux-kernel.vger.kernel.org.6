@@ -1,66 +1,68 @@
-Return-Path: <linux-kernel+bounces-303027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42E5C96065C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:56:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF26596065D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B388FB225BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:56:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A7191F2230E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07ED819D8BE;
-	Tue, 27 Aug 2024 09:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D9119DF8D;
+	Tue, 27 Aug 2024 09:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YqNNa0GW"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gsPIRQpT"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2371946CC
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D2419D067
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724752560; cv=none; b=D1AA8mtJnRbBVsqMbjQka1L1cx3R4qqAVQvz073rLdxSMgxv2+J86N7lTsEg1vo2XYeKk3cEdPlwJXyjHJsYEhsBxGmGHgUm29U3/ivoYfjfiStsbykX+wGmrSg1YbL3j+ok5/G2cJagZZxli9C3TXsCIdNzD7oOUu17JsxDWN0=
+	t=1724752562; cv=none; b=pQTYebv2CM3mMJWuWx1zA54ynMHboCMUcMs/upiQ1CBUKtAbZDe9vTyPDkUgbH1oKP2jNvkpt5LN29dbTpB+3qe/RQzAA/merK43D6g2dORTf9PgIhYYTDHVKR+njZJWf8hoojDsq+uKyucsPkgbw+JhfwCAfKWp50KauJY2VHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724752560; c=relaxed/simple;
-	bh=MjpQniktbmYtRpCcY6D3oyiCiHTmkm4NYiFQkRISeBQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CZyuXaqtVutMQOOVx19Pi1b2h0oCu8NCs1yI24LkQOqUOzAy+bgKkW+815W/f8eTQKm1XIcEJLP9ziGlxDUqtM5eiTzDQniR8QQQx6fr6myx3rN4D4xS5zmtV37GpncSPcdJfMWj+SK6rgJB8Dlng77M1Z9vp0+daXZQDkMjZw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YqNNa0GW; arc=none smtp.client-ip=209.85.210.179
+	s=arc-20240116; t=1724752562; c=relaxed/simple;
+	bh=CaKmYffiLj5wjYYPSwbMvdyiljpXahIOuxC/bopPWgU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ohj94mW+ntN4/9tjsKndD4m+3iLgNUPvan9a4LvGCriQk2TLqnBE3eLrMVLm7Xds7xLidwnkPD3DkIEQm8PEthenXvNzz/VL/0MytpuWKHoxv0Mm4oDrkqVE+zctT1fStc6NuvXIheNR6VBrdPDC2GJY+QM+MD3t6H1pqVd3B2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gsPIRQpT; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71430e7eaf8so4166488b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 02:55:58 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-201e64607a5so37481945ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 02:56:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724752558; x=1725357358; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dWyWMS4bQMMjiZgqIsOGZj62aUV29JVjiV75aLUP6TU=;
-        b=YqNNa0GWDOVmZZyCsoOTYZ+RE+NEq824K0U36TosTXwn1VbKQSOmLstwVNwlxryxOX
-         FMD5rhnPfWrpBFINgimZbB7dU59RL5pMhLBa5MRLobocUK2nZdNmHRW8QgQ2lJU0QxbZ
-         7A+a8nboWDIG4lwSC0+piosHWLLnYSTU+4Jxc=
+        d=chromium.org; s=google; t=1724752560; x=1725357360; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ulSL1wDh1UXX6pfgOa+SdSJMLV52Cd+y6JQhndrl4/Y=;
+        b=gsPIRQpTDUKLCuLP9FlANzcTzarF6Y2q7h4hgtiRECZC3IEllhG3/e33ikPJ3XpEfk
+         1VzUMJBbZfPfMzOhPN4XaOm1igAIjsdmwQCrNZkW9IXORE2ONtXfia30FBcx3RdcJA0x
+         RuNaaAxNU/buQaIRcTLtPyBzJwoK0ob+CFtts=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724752558; x=1725357358;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dWyWMS4bQMMjiZgqIsOGZj62aUV29JVjiV75aLUP6TU=;
-        b=EKgpZMAcqjIPSO3edATd5/hmXTJI5R1U4VgCOVIRBWoIg7gMoUdWmc4jl8MY8lc/TH
-         sV/vW/Su2U8KFrYS7FyU6IPVGybqNc2EpLc55fG+JBBAxDFBN5mISgC6+1gwnmEy7kyn
-         w1c3i+As38Lg3rXhH+15bfx2tCnQ2Y8A+vFL7KwvKU08ut36zk2xMKImw/vsj3VxanOB
-         HanxXyfVHwPMi7ZH0GteobqveTx+3yh+VQYFVhMS2J99ufQTCYhgqyxvSKZmAz/I0GcT
-         NIvMQ0T7TU79uHnBsr+67dCc+5ajvTO0v5wu+ANpbr++wfTe74pQbAx7/AWa1zO8XTh0
-         9utA==
-X-Forwarded-Encrypted: i=1; AJvYcCUo3oBt7lWcRRtrP7AMigRK+PvnIG6DqQucPs3aRpzzSmvQsvy2lg8P2g7eMtmTZR20hUFfLnQ6IgAmxas=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfQ0o621BDEO/g67v6Ms2qJcvoCuw67wtxxsVNL/igtKpYQbpL
-	MAJ786UadFEBp2NeDuiessovmI0yZdUzTOALozhQ+SIuYJWFhCizYYlmnpIywQ==
-X-Google-Smtp-Source: AGHT+IFBa9yFqwsm5uIj/y9e11VaShl5P9Ev1jbWDxZFp5m1LYz5F7uzySdXCkaqXIfI+yemICeHWA==
-X-Received: by 2002:a05:6a21:8cc5:b0:1ca:cd6d:3a26 with SMTP id adf61e73a8af0-1cc89dbad3dmr12347890637.27.1724752557986;
-        Tue, 27 Aug 2024 02:55:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724752560; x=1725357360;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ulSL1wDh1UXX6pfgOa+SdSJMLV52Cd+y6JQhndrl4/Y=;
+        b=uK4GiT6E4Dbm5lLyySamSwyyxK2/vh/LI0AGMMuGYFMTEb1xM1xn//aHxE1+ZOuOjr
+         rhcBG2G7BxzFm00kznWNVeA0jRF6KV41333Cpiyx9n/3deZaw3yHydic9H286jQ9q7Vn
+         lZtcPWbIrTkqj7WNDbfrK/AfBHhsIV5Drbp3QS/j3UCGBHuyjWcTvj3H0JhfFmi3weWj
+         1jVjB8NL3LX41kaqFpTQRnRPLQI5tOVr1yKbp5/fQnM5MpdI09Cx6XspkaHC4+BQKg1x
+         6mJ0JIrRb5FDWng73EQRFkFYWlQTEuLF/K74SiWxNEhu5gEN27lne3OpfIOUB8auPWg5
+         hzog==
+X-Forwarded-Encrypted: i=1; AJvYcCUJBfEOHqfhBf/TtORn7A7MsZWT1EGvPmnvUdjILG/EOCec3iHRGbPx6pJH09ankxnb+WYpaGCnaDk+CfA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwS/V9P03D5YuJShms6zJuL3juZlcghyVI+TWeIrpXrEWWZW14w
+	uVeVoAoAhMJqf3wXsixHJjjMSaczN4/6rILeYOjyCxVax9aAx4PP4FC8X1izvg==
+X-Google-Smtp-Source: AGHT+IHG3kC3TvoiL564c2nCrzUqffudLVZMezuiycIsHxkJQk5Y8znjAyFMUcZ+3HMMg+b6baVggA==
+X-Received: by 2002:a17:903:41d1:b0:202:54a5:deaf with SMTP id d9443c01a7336-2039e4fbd80mr184597195ad.57.1724752559745;
+        Tue, 27 Aug 2024 02:55:59 -0700 (PDT)
 Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:3102:657e:87f4:c646])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038560c2basm80006775ad.222.2024.08.27.02.55.56
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038560c2basm80006775ad.222.2024.08.27.02.55.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 02:55:57 -0700 (PDT)
+        Tue, 27 Aug 2024 02:55:59 -0700 (PDT)
 From: Chen-Yu Tsai <wenst@chromium.org>
 To: Mark Brown <broonie@kernel.org>,
 	Liam Girdwood <lgirdwood@gmail.com>
@@ -68,10 +70,12 @@ Cc: Chen-Yu Tsai <wenst@chromium.org>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 0/8] regulator: kerneldoc section fixes
-Date: Tue, 27 Aug 2024 17:55:40 +0800
-Message-ID: <20240827095550.675018-1-wenst@chromium.org>
+Subject: [PATCH 1/8] regulator: core: Fix short description for _regulator_check_status_enabled()
+Date: Tue, 27 Aug 2024 17:55:41 +0800
+Message-ID: <20240827095550.675018-2-wenst@chromium.org>
 X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
+In-Reply-To: <20240827095550.675018-1-wenst@chromium.org>
+References: <20240827095550.675018-1-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,45 +84,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
+kernel-doc complains that _regulator_check_status_enabled() is missing a
+short description.
 
-Here are a bunch of kerneldoc fixes for the regulator core. This sort of
-came as a request from Andy to not move code that already had warnings
-without fixing said warnings. So here I'm fixing them first.
+Since the current description is already quite short, just trim it a bit
+more and use it as the short description.
 
-The bulk of the fixes are in the regulator core and OF code, but I also
-fixed up a few bits in common code that were missing "Return" sections.
-These are purely kerneldoc fixes and don't touch any actual code. I left
-the devres code and helpers alone for now.
+Fixes: f7d7ad42a9dc ("regulator: Allow regulators to verify enabled during enable()")
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+ drivers/regulator/core.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Please merge if possible. I will rebase my I2C OF component prober
-series [1] on top of them.
-
-Thanks
-ChenYu
-
-[1] https://lore.kernel.org/all/20240822092006.3134096-1-wenst@chromium.org/
-
-
-Chen-Yu Tsai (8):
-  regulator: core: Fix short description for
-    _regulator_check_status_enabled()
-  regulator: core: Fix regulator_is_supported_voltage() kerneldoc return
-    value
-  regulator: core: Fix incorrectly formatted kerneldoc "Return" sections
-  regulator: core: Add missing kerneldoc Return sections
-  regulator: of: Fix incorrectly formatted kerneldoc "Return" sections
-  regulator: fixed: Fix incorrectly formatted kerneldoc "Return" section
-  regulator: fixed-helper: Add missing "Return" kerneldoc section
-  regulator: irq_helpers: Add missing "Return" kerneldoc section
-
- drivers/regulator/core.c         | 175 ++++++++++++++++++++++---------
- drivers/regulator/fixed-helper.c |   2 +
- drivers/regulator/fixed.c        |   6 +-
- drivers/regulator/irq_helpers.c  |   4 +
- drivers/regulator/of_regulator.c |  14 +--
- 5 files changed, 141 insertions(+), 60 deletions(-)
-
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 9029de5395ee..763048d6f1ed 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -2707,10 +2707,8 @@ static void _regulator_delay_helper(unsigned int delay)
+ }
+ 
+ /**
+- * _regulator_check_status_enabled
+- *
+- * A helper function to check if the regulator status can be interpreted
+- * as 'regulator is enabled'.
++ * _regulator_check_status_enabled - check if regulator status can be
++ *				     interpreted as "regulator is enabled"
+  * @rdev: the regulator device to check
+  *
+  * Return:
 -- 
 2.46.0.295.g3b9ea8a38a-goog
 
