@@ -1,45 +1,54 @@
-Return-Path: <linux-kernel+bounces-303508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 350A9960D18
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:07:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8474D960D23
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAC7F1F23C10
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:07:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6B591C23069
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70F41C6F7F;
-	Tue, 27 Aug 2024 14:06:08 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12581C4EEA;
+	Tue, 27 Aug 2024 14:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b="rmQu0rt7"
+Received: from dispatch1-us1.ppe-hosted.com (dispatch1-us1.ppe-hosted.com [67.231.154.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD85C1C460A;
-	Tue, 27 Aug 2024 14:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14EF73466;
+	Tue, 27 Aug 2024 14:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.154.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724767567; cv=none; b=jPSV3pCdyuaOtMu8yxX8XYUpDRrqY9L0zR0PbAqj13QhbcM8nHvkZTz1PqhjXnyEE9oH54HloiwxRNEyKdvEa1oimaEbEkPRhdABf7r8KAWU5/0wvEwJOj6gBSyxztVmCgTZpKIWyHlzk4MI8XrsDoOWwQ4Of4j8gNiPigiPWvs=
+	t=1724767636; cv=none; b=nfECdMzfHrI37mapv8ahcc7SNpAATFqhvrE0jIW36MTuYcRWY2KDFJ0mnrb6Ouxq07bXZ1ScSzJmc6OYt/cQNTmoXNmLCZd5Wk/lLUF3x86D1MzNWbsjFJ6yWG4uYv0c2ngIVpvukqvJpGLvredwKMKA2e6u7mvyRIhxywHUHIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724767567; c=relaxed/simple;
-	bh=OCzY6libtAYWj2Rsuw8HRR4vnRYae4owpnFV22vCy5Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QdSU4yoU3GqnYLeFT3tIyv9TWqXf2T/4EcLRtp3vIYLmTpNFuSWLX2iTRC47SWTgECva/YjzexAs+G36B4b8+9ihZOfnj3S1S7Dw0ub8jomYFBZuIKvFWAGx9JYGxAPYgZdv/f4pVoHblJ3yCPSUa/s3GYR7Mz/xb4DTB/OftZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4WtTpV3scVz1S976;
-	Tue, 27 Aug 2024 22:05:38 +0800 (CST)
-Received: from kwepemf100007.china.huawei.com (unknown [7.202.181.221])
-	by mail.maildlp.com (Postfix) with ESMTPS id 505AF140259;
-	Tue, 27 Aug 2024 22:05:49 +0800 (CST)
-Received: from [10.67.109.184] (10.67.109.184) by
- kwepemf100007.china.huawei.com (7.202.181.221) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 27 Aug 2024 22:05:48 +0800
-Message-ID: <f1dd704e-dfbd-496b-9466-83efe38c5287@huawei.com>
-Date: Tue, 27 Aug 2024 22:05:47 +0800
+	s=arc-20240116; t=1724767636; c=relaxed/simple;
+	bh=BvTWNfqaZi3sKno+OEdrssKIAJOJKR8uvoVVAM/Y/EM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FqUXTScx20gwUpSfJCF2KY+OV0Aktj3GnJwPursgYK+HVM6cFxIIwrCJAJ/kvxuKl1InbTdkwycjmvohl/mBYXJIhaGzw4NfEethM+QMjXflFdaOLnO4+dbBAJ8KCb24gOEtk66HGvJXfjJ8x8MomjXAd9n6rrbpKYCnzfmmTS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com; spf=pass smtp.mailfrom=candelatech.com; dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b=rmQu0rt7; arc=none smtp.client-ip=67.231.154.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=candelatech.com
+X-Virus-Scanned: Proofpoint Essentials engine
+Received: from mail3.candelatech.com (mail.candelatech.com [208.74.158.173])
+	by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTP id 1761B80067;
+	Tue, 27 Aug 2024 14:07:05 +0000 (UTC)
+Received: from [192.168.1.23] (unknown [98.97.32.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by mail3.candelatech.com (Postfix) with ESMTPSA id 684C213C2B0;
+	Tue, 27 Aug 2024 07:07:02 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail3.candelatech.com 684C213C2B0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=candelatech.com;
+	s=default; t=1724767622;
+	bh=BvTWNfqaZi3sKno+OEdrssKIAJOJKR8uvoVVAM/Y/EM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rmQu0rt7ur9cDJlmIx0aS4/5muESJeFtgMmOadc/n5BAxnlW/OhB8KnJhMisu7dDs
+	 sNyzRJ45eMTTc1dWUK4k8IPQhiHr2w7BYdc3H0e7xII4MDfMwsLT3Eg+HLfDsMedGD
+	 JwxEFJPSRF+PPQPI8HDXs1JX72OMxGtFxrWTXKGo=
+Message-ID: <c6b03c0c-7730-46fc-80d3-0c5d8dea4534@candelatech.com>
+Date: Tue, 27 Aug 2024 07:07:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,46 +56,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v1 1/2] selftests/bpf: Update "vmtest.sh" for
- cross-compile arm64 on x86_64 host.
-Content-Language: en-US
-To: Lin Yikai <yikai.lin@vivo.com>
-CC: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
-	<daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
-	<martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
-	<song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
-	<john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav Fomichev
-	<sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, Nick Terrell
-	<terrelln@fb.com>, <bpf@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <opensource.kernel@vivo.com>
-References: <20240827133959.1269178-1-yikai.lin@vivo.com>
- <20240827133959.1269178-2-yikai.lin@vivo.com>
-From: Pu Lehui <pulehui@huawei.com>
-In-Reply-To: <20240827133959.1269178-2-yikai.lin@vivo.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [PATCH] wifi: iwlwifi: acpi/dsm: cache error retcode for
+ iwl_acpi_get_dsm
+To: Kalle Valo <kvalo@kernel.org>, David Wang <00107082@163.com>
+Cc: miriam.rachel.korenblit@intel.com, johannes.berg@intel.com,
+ gregory.greenman@intel.com, pagadala.yesu.anjaneyulu@intel.com,
+ dan.carpenter@linaro.org, daniel.gabay@intel.com,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240827005114.4950-1-00107082@163.com>
+ <871q2afplp.fsf@kernel.org>
+Content-Language: en-MW
+From: Ben Greear <greearb@candelatech.com>
+Organization: Candela Technologies
+In-Reply-To: <871q2afplp.fsf@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemf100007.china.huawei.com (7.202.181.221)
+X-MDID: 1724767627-EBOlna--rhvL
+X-MDID-O:
+ us5;at1;1724767627;EBOlna--rhvL;<greearb@candelatech.com>;6bc33b0a102533f075ec50fd94efbfef
 
-
-On 2024/8/27 21:39, Lin Yikai wrote:
-> Identify "$CROSS_COMPILE" to enable vm_test for cross-compile situation.
-> Additionally, use "-cpu cortex-a57" flag to accommodate the majority of QEMU CPU lists,
-> avoiding using "-cpu host," which can cause qemu_system_aarch64 start failure on x86_64 host.
+On 8/26/24 23:26, Kalle Valo wrote:
+> David Wang <00107082@163.com> writes:
 > 
-> Signed-off-by: Lin Yikai <yikai.lin@vivo.com>
-> ---
->   tools/testing/selftests/bpf/README.rst | 12 ++++++++-
->   tools/testing/selftests/bpf/vmtest.sh  | 37 +++++++++++++++++++++-----
->   2 files changed, 42 insertions(+), 7 deletions(-)
+>> On some HW, acpi _DSM query would failed for iwlwifi device
+>> and everytime when network is reactiaved (boot,
+>> suspend/resume, manually restart network, etc.),
+>> bunch of kernel warning shows up together:
+>>    ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
+>>    ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
+>>    ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
+>>    ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
+>>    ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
+>>    ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
+>>    ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
+>>    ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
+>> since iwlwifi would make 8 acpi/dsm queries for lari config.
+>> But for iwlwifi, it is safe to cache the _DSM errors,
+>> since it is not possible to correct it without upgrading BIOS.
+>> With this patch, those kernel warnings would only show up once when
+>> booting the system and unnecessary acpi/dsm queries are avoid.
+>>
+>> Signed-off-by: David Wang <00107082@163.com>
+>> ---
+>>   drivers/net/wireless/intel/iwlwifi/fw/acpi.c | 7 +++++++
+>>   1 file changed, 7 insertions(+)
+>>
+>> diff --git a/drivers/net/wireless/intel/iwlwifi/fw/acpi.c b/drivers/net/wireless/intel/iwlwifi/fw/acpi.c
+>> index 79774c8c7ff4..3f98f522daac 100644
+>> --- a/drivers/net/wireless/intel/iwlwifi/fw/acpi.c
+>> +++ b/drivers/net/wireless/intel/iwlwifi/fw/acpi.c
+>> @@ -30,6 +30,8 @@ static const size_t acpi_dsm_size[DSM_FUNC_NUM_FUNCS] = {
+>>   	[DSM_FUNC_ENABLE_11BE] =		sizeof(u32),
+>>   };
+>>   
+>> +static int acpi_dsm_func_retcode[DSM_FUNC_NUM_FUNCS] = {0};
+>> +
+>>   static int iwl_acpi_get_handle(struct device *dev, acpi_string method,
+>>   			       acpi_handle *ret_handle)
+>>   {
+>> @@ -169,6 +171,10 @@ int iwl_acpi_get_dsm(struct iwl_fw_runtime *fwrt,
+>>   	if (WARN_ON(func >= ARRAY_SIZE(acpi_dsm_size)))
+>>   		return -EINVAL;
+>>   
+>> +	/* If HW return an error once, do not bother try again. */
+>> +	if (acpi_dsm_func_retcode[func])
+>> +		return acpi_dsm_func_retcode[func];
 > 
-Hi Yikai,
+> Static variables are usually avoided because they are problematic if
+> there are multiple iwlwifi devices on the same host. Should the error
+> message be just removed entirely?
 
-Your patch reminds me of a previous commit [0], which was able to 
-support running vmtest in cross platform for all arch.
+In this particular case, probably static would be best since it would not
+be helpful to see the duplicated errors for each individual interface anyway?
 
-Link: 
-https://lore.kernel.org/all/20240328124916.293173-2-pulehui@huaweicloud.com/ 
-[0]
+But also, I'm fine with just making the warning go away entirely.
+
+Thanks,
+Ben
+
+-- 
+Ben Greear <greearb@candelatech.com>
+Candela Technologies Inc  http://www.candelatech.com
+
 
