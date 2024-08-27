@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-302959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85FF1960588
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:27:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3E9D96058A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:27:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C8B61F236C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:27:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81D162829D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B889319DFB6;
-	Tue, 27 Aug 2024 09:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0974719E7EB;
+	Tue, 27 Aug 2024 09:27:05 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD6E19D880
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D8D19D892
 	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724750824; cv=none; b=d9DUsAwjp6PFzH44SMAV+G92CNFjDm/kb82Lp7tF+/PsE7Z6udBIQZxYJkJS2+i8MJ2Z84ugH5PuuUmP7aqudDfr3HInokV4F/n2DEeQla7mB0RN9oFD2ArMJCxXDV6qAJXJ/uKaWz9doNF3vp1WRnmB0vjV4kdm9aJE7helefI=
+	t=1724750824; cv=none; b=pfBvaRoEfDCpPY0JE01CI7G6AHl/ZFsFoUh51PzHONIPPeJN/PX/aq1ZybfC6eIXxHpvnbfnz0UNi27XzwOizy6zmBwi8b5OebCSL3aHxOkKcS49UqlzmOR9bD5yD4jk+SvHYHj7vgkdhjpBNEVn6zPnNa8wPfFfiUMzOrNv9rU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724750824; c=relaxed/simple;
-	bh=jUK1kJgfhcwf8nhkQ4JSyJF9SwO8DOZ1x0fWmhdFtvw=;
+	bh=TKiJo5+xBSU6Jnu3/wyofZzugr39xRcvGRJWKdE3S1Q=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=QdzSXD+hOzgsYvjsloeuLjDjdKsyKKLc7bzW5UbHZUwR3xU8W5XQSALE23yvsTkpCcz7vrdida0vvH8TPSIo5IwX9Laz2SiZK/GBYBUwPw4WoV7scDcy/5hLujv9u+s6b34hnnFA2RoaXQuUXZ7yRvV9sZNU5Pa199PWPU2EWGw=
+	 Content-Type; b=PRdyDiwsrXVT3oRf4Njco47tLjmzBpdWyIuhm3JBq2R0UK+268ZnTE+jfaa7waBGZxP51sia8EzFxXUivAnkvIlrbRij6zDzQu7omtIziTO1X054HDKdiNUx37/zPYVbMt+xCHM347CkBZyqOLi8kdbn2LPKGCnISrobZatWjpI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5BE3C8B7B7;
-	Tue, 27 Aug 2024 09:27:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EA19C8B7BC;
+	Tue, 27 Aug 2024 09:27:04 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1sisUM-00000004SLF-244v;
+	id 1sisUM-00000004SLl-2kAi;
 	Tue, 27 Aug 2024 05:27:46 -0400
-Message-ID: <20240827092746.359657809@goodmis.org>
+Message-ID: <20240827092746.514052482@goodmis.org>
 User-Agent: quilt/0.68
-Date: Tue, 27 Aug 2024 05:27:18 -0400
+Date: Tue, 27 Aug 2024 05:27:19 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
@@ -42,7 +42,7 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>,
  Vincent Donnefort <vdonnefort@google.com>
-Subject: [for-next][PATCH 2/8] ring-buffer: Add magic and struct size to boot up meta data
+Subject: [for-next][PATCH 3/8] ring-buffer: Align meta-page to sub-buffers for improved TLB usage
 References: <20240827092716.515115830@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -52,63 +52,124 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-From: Steven Rostedt <rostedt@goodmis.org>
+From: Vincent Donnefort <vdonnefort@google.com>
 
-Add a magic number as well as save the struct size of the ring_buffer_meta
-structure in the meta data to also use as validation. Updating the magic
-number could be used to force a invalidation between kernel versions, and
-saving the structure size is also a good method to make sure the content
-is what is expected.
+Previously, the mapped ring-buffer layout caused misalignment between
+the meta-page and sub-buffers when the sub-buffer size was not a
+multiple of PAGE_SIZE. This prevented hardware with larger TLB entries
+from utilizing them effectively.
 
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Vincent Donnefort <vdonnefort@google.com>
-Link: https://lore.kernel.org/20240815115032.0c197b32@rorschach.local.home
+Add a padding with the zero-page between the meta-page and sub-buffers.
+Also update the ring-buffer map_test to verify that padding.
+
+Link: https://lore.kernel.org/20240628104611.1443542-1-vdonnefort@google.com
+Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/ring_buffer.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ kernel/trace/ring_buffer.c                    | 33 +++++++++++--------
+ .../testing/selftests/ring-buffer/map_test.c  | 14 ++++++++
+ 2 files changed, 34 insertions(+), 13 deletions(-)
 
 diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index b16f301b8a93..c3a5e6cbb940 100644
+index c3a5e6cbb940..77dc0b25140e 100644
 --- a/kernel/trace/ring_buffer.c
 +++ b/kernel/trace/ring_buffer.c
-@@ -44,7 +44,11 @@
+@@ -6852,10 +6852,10 @@ static void rb_setup_ids_meta_page(struct ring_buffer_per_cpu *cpu_buffer,
+ 	/* install subbuf ID to kern VA translation */
+ 	cpu_buffer->subbuf_ids = subbuf_ids;
  
- static void update_pages_handler(struct work_struct *work);
+-	meta->meta_page_size = PAGE_SIZE;
+ 	meta->meta_struct_len = sizeof(*meta);
+ 	meta->nr_subbufs = nr_subbufs;
+ 	meta->subbuf_size = cpu_buffer->buffer->subbuf_size + BUF_PAGE_HDR_SIZE;
++	meta->meta_page_size = meta->subbuf_size;
  
-+#define RING_BUFFER_META_MAGIC	0xBADFEED
+ 	rb_update_meta_page(cpu_buffer);
+ }
+@@ -6949,6 +6949,12 @@ static int __rb_map_vma(struct ring_buffer_per_cpu *cpu_buffer,
+ 	    !(vma->vm_flags & VM_MAYSHARE))
+ 		return -EPERM;
+ 
++	subbuf_order = cpu_buffer->buffer->subbuf_order;
++	subbuf_pages = 1 << subbuf_order;
 +
- struct ring_buffer_meta {
-+	int		magic;
-+	int		struct_size;
- 	unsigned long	text_addr;
- 	unsigned long	data_addr;
- 	unsigned long	first_buffer;
-@@ -1627,6 +1631,13 @@ static bool rb_meta_valid(struct ring_buffer_meta *meta, int cpu,
- 	unsigned long buffers_end;
- 	int i;
++	if (subbuf_order && pgoff % subbuf_pages)
++		return -EINVAL;
++
+ 	/*
+ 	 * Make sure the mapping cannot become writable later. Also tell the VM
+ 	 * to not touch these pages (VM_DONTCOPY | VM_DONTEXPAND).
+@@ -6958,11 +6964,8 @@ static int __rb_map_vma(struct ring_buffer_per_cpu *cpu_buffer,
  
-+	/* Check the meta magic and meta struct size */
-+	if (meta->magic != RING_BUFFER_META_MAGIC ||
-+	    meta->struct_size != sizeof(*meta)) {
-+		pr_info("Ring buffer boot meta[%d] mismatch of magic or struct size\n", cpu);
-+		return false;
+ 	lockdep_assert_held(&cpu_buffer->mapping_lock);
+ 
+-	subbuf_order = cpu_buffer->buffer->subbuf_order;
+-	subbuf_pages = 1 << subbuf_order;
+-
+ 	nr_subbufs = cpu_buffer->nr_pages + 1; /* + reader-subbuf */
+-	nr_pages = ((nr_subbufs) << subbuf_order) - pgoff + 1; /* + meta-page */
++	nr_pages = ((nr_subbufs + 1) << subbuf_order) - pgoff; /* + meta-page */
+ 
+ 	nr_vma_pages = vma_pages(vma);
+ 	if (!nr_vma_pages || nr_vma_pages > nr_pages)
+@@ -6975,20 +6978,24 @@ static int __rb_map_vma(struct ring_buffer_per_cpu *cpu_buffer,
+ 		return -ENOMEM;
+ 
+ 	if (!pgoff) {
++		unsigned long meta_page_padding;
++
+ 		pages[p++] = virt_to_page(cpu_buffer->meta_page);
+ 
+ 		/*
+-		 * TODO: Align sub-buffers on their size, once
+-		 * vm_insert_pages() supports the zero-page.
++		 * Pad with the zero-page to align the meta-page with the
++		 * sub-buffers.
+ 		 */
+-	} else {
+-		/* Skip the meta-page */
+-		pgoff--;
++		meta_page_padding = subbuf_pages - 1;
++		while (meta_page_padding-- && p < nr_pages) {
++			unsigned long __maybe_unused zero_addr =
++				vma->vm_start + (PAGE_SIZE * p);
+ 
+-		if (pgoff % subbuf_pages) {
+-			err = -EINVAL;
+-			goto out;
++			pages[p++] = ZERO_PAGE(zero_addr);
+ 		}
++	} else {
++		/* Skip the meta-page */
++		pgoff -= subbuf_pages;
+ 
+ 		s += pgoff / subbuf_pages;
+ 	}
+diff --git a/tools/testing/selftests/ring-buffer/map_test.c b/tools/testing/selftests/ring-buffer/map_test.c
+index a9006fa7097e..4bb0192e43f3 100644
+--- a/tools/testing/selftests/ring-buffer/map_test.c
++++ b/tools/testing/selftests/ring-buffer/map_test.c
+@@ -228,6 +228,20 @@ TEST_F(map, data_mmap)
+ 	data = mmap(NULL, data_len, PROT_READ, MAP_SHARED,
+ 		    desc->cpu_fd, meta_len);
+ 	ASSERT_EQ(data, MAP_FAILED);
++
++	/* Verify meta-page padding */
++	if (desc->meta->meta_page_size > getpagesize()) {
++		void *addr;
++
++		data_len = desc->meta->meta_page_size;
++		data = mmap(NULL, data_len,
++			    PROT_READ, MAP_SHARED, desc->cpu_fd, 0);
++		ASSERT_NE(data, MAP_FAILED);
++
++		addr = (void *)((unsigned long)data + getpagesize());
++		ASSERT_EQ(*((int *)addr), 0);
++		munmap(data, data_len);
 +	}
-+
- 	/* The subbuffer's size and number of subbuffers must match */
- 	if (meta->subbuf_size != subbuf_size ||
- 	    meta->nr_subbufs != nr_pages + 1) {
-@@ -1858,6 +1869,9 @@ static void rb_range_meta_init(struct trace_buffer *buffer, int nr_pages)
+ }
  
- 		memset(meta, 0, next_meta - (void *)meta);
- 
-+		meta->magic = RING_BUFFER_META_MAGIC;
-+		meta->struct_size = sizeof(*meta);
-+
- 		meta->nr_subbufs = nr_pages + 1;
- 		meta->subbuf_size = PAGE_SIZE;
- 
+ FIXTURE(snapshot) {
 -- 
 2.43.0
 
