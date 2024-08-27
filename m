@@ -1,61 +1,76 @@
-Return-Path: <linux-kernel+bounces-303801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 775DB961538
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:14:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1C81961540
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CEF91F241A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:14:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50F821F24A02
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19BE11CF296;
-	Tue, 27 Aug 2024 17:13:58 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119041CF2B7;
+	Tue, 27 Aug 2024 17:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="IOyeCNlF"
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D431197A7C
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 17:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724778837; cv=none; b=evdXVVxTllFonJ1IblnmLI4b/rsNfjbNUsclN+68aYt1d57OzmiVKAKvQXiWXofYsILPHOT3g5wimD7Vt5GdBi/bixOgBHCcevACw7hU8YCNu8FVej/bAXCnQGzVTjWszpkhTXjlcxpFBDzRItWvD/XK0jm8llkRaxB7tTtJ0MQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724778837; c=relaxed/simple;
-	bh=VTHNMJuIWalwgU2VfUrTvqwD0q/dzKXGq/joqrcZ2ZQ=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D18045025;
+	Tue, 27 Aug 2024 17:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724778901; cv=pass; b=iXtTYJzrEBOjTRSLkbjVrw7w0P8/KnqHtoprkGSYKjVQH8z2WFirZpvmBcJr2Lcs6EtiumFzliW+XTPl+ctNUNcFmAdABrX9Kt5hy4TnsHSAtBfv/CLOn7hDpVXQ2eZ9PqFetdAg99ecnNfPI3Puit0yXf++FJR7SOO3pEEbWNc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724778901; c=relaxed/simple;
+	bh=nayKPb4tLGx+umAD8NxLT+uZpxft3WYUb0z4jMU2gkI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iw4IUdInuuCvioC2bl/iJUa5j3CemFlWI+kAV+/Vppqj/mrDuR66m//rAUVnRGd7uJdtPMzV2IEKqmJcfd8Arn/qPOgPp24KBwb453bUgNd62AAVG3NQFO4sUf2ElKSN94euE+ud6oye5jBrAFKEKdtXKat9V/iAlqg+ox2akRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1sizlJ-0006U8-Bs; Tue, 27 Aug 2024 19:13:45 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1sizlE-003TxI-T5; Tue, 27 Aug 2024 19:13:40 +0200
-Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1sizlE-0091ks-2W;
-	Tue, 27 Aug 2024 19:13:40 +0200
-Date: Tue, 27 Aug 2024 19:13:40 +0200
-From: Michael Grzeschik <mgr@pengutronix.de>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: andrzej.p@collabora.com, asmadeus@codewreck.org, corbet@lwn.net,
-	ericvh@kernel.org, gregkh@linuxfoundation.org,
-	kernel@pengutronix.de, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux_oss@crudebyte.com, lucho@ionkov.net, v9fs@lists.linux.dev
-Subject: Re: [PATCH v10 1/3] usb: gadget: function: move u_f.h to
- include/linux/usb/func_utils.h
-Message-ID: <Zs4JRPR9CKWX_hWb@pengutronix.de>
-References: <20240116-ml-topic-u9p-v10-0-a85fdeac2c52@pengutronix.de>
- <20240116-ml-topic-u9p-v10-1-a85fdeac2c52@pengutronix.de>
- <1a5d3a68-56e5-4084-b86c-e60542cbbb98@wanadoo.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UVBY5EQid5JTk/K6zZq92ev1aQy33v+WlMjtInwuOsvQ9E4k89VQsB2yVaagvW/0VBQVf6g804Fzx7bH3Tuw61aCFXs7DcmGamRxJOZjaUVKuZv9UEqWbA+FfVsU5fS45dsN2EkUyIHlvqpLxq7S1H7/4fL9yugGVZ2n71sZp/g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=IOyeCNlF; arc=pass smtp.client-ip=136.143.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1724778870; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=RD5obJxn3/mi7CqGbJBbze69xs+VqGmrHcf4q7XaTSXkF4X6MnSQFLGYH4RaIB3cJlYESqu8ktWvMzaNWpYI9UirRDaEFmk6+ZWPjSXIaoVOg7pcAzJ4f//IjFYakyICxx2ovaQhtl1i2EucFM5apf3TmQZTrAm1dhmij22eJQ8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724778870; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=cDDjGl/Gppuk2pcPpuTmcg+ibp8EJtADXjamce7oskU=; 
+	b=VaT+lBBpLu9Ilgw5e0nqlupwp14Zq/wTqfxZS7G6M2K3c/9XFwPCSIz/48tZUbgSdUJeqcQqmY53GuwSLo2VazebgCuYn5hXcd9b0APexCN/4f3tD8M77Lje5b6kvPz9Rlk52+hO5ATTprEhEwm+J+xPbhOtnNhIeE+rbVlTVDc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724778870;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=cDDjGl/Gppuk2pcPpuTmcg+ibp8EJtADXjamce7oskU=;
+	b=IOyeCNlFKMbn+APGykPNwHCtBZ+EEu9/D3CQJ+3fnO3c/A5jqvZKuMu9N5dh15QA
+	cd2x7Agw/cVdlz1BQ6p5vkKlq5FL66p9HEykAvK/AUytRGow5dqNJJMPQ0zj3seG0Cd
+	ujLsATJrd4lHa6of8hX8uM73OBdWA+dpbpYeT9eg=
+Received: by mx.zohomail.com with SMTPS id 1724778869440810.5604485911801;
+	Tue, 27 Aug 2024 10:14:29 -0700 (PDT)
+Received: by mercury (Postfix, from userid 1000)
+	id B5A3F10604BD; Tue, 27 Aug 2024 19:14:24 +0200 (CEST)
+Date: Tue, 27 Aug 2024 19:14:24 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Artur Weber <aweber.kernel@gmail.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	~postmarketos/upstreaming@lists.sr.ht, Henrik Grimler <henrik@grimler.se>, 
+	Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>, Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
+Subject: Re: [PATCH v4 04/10] power: supply: max77693: Set charge current
+ limits during init
+Message-ID: <ek7w5yd2kvmk7qnu3v776dckyjyvdmfahebqbvzfyckwi2szwz@ytcuz22io2cs>
+References: <20240816-max77693-charger-extcon-v4-0-050a0a9bfea0@gmail.com>
+ <20240816-max77693-charger-extcon-v4-4-050a0a9bfea0@gmail.com>
+ <9dbaacdb-5f9c-48d4-a56a-a19ca8809344@kernel.org>
+ <021f5a99-bbee-4d4c-b36e-49339030b869@gmail.com>
+ <f91048f3-2a97-493f-a35c-0e8f184d77d6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,100 +78,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="0j5NiQ+wIVM5a7qk"
+	protocol="application/pgp-signature"; boundary="otsejtyezulrljul"
 Content-Disposition: inline
-In-Reply-To: <1a5d3a68-56e5-4084-b86c-e60542cbbb98@wanadoo.fr>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mgr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <f91048f3-2a97-493f-a35c-0e8f184d77d6@kernel.org>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/224.322.35
+X-ZohoMailClient: External
 
 
---0j5NiQ+wIVM5a7qk
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
+--otsejtyezulrljul
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 27, 2024 at 06:46:39PM +0200, Christophe JAILLET wrote:
->Le 26/08/2024 =E0 23:47, Michael Grzeschik a =E9crit=A0:
->>We move the func_utils.h header to include/linux/usb to be
->>able to compile function drivers outside of the
->>drivers/usb/gadget/function directory.
->>
->>Signed-off-by: Michael Grzeschik <m.grzeschik-bIcnvbaLZ9MEGnE8C9+IrQ@publ=
-ic.gmane.org>
->>
->>---
->>v9 -> v10:
->>   - respect alphabetical order
->>   - correctly changed filename in func_utils.h itself
->>
->
->...
->
->>index e313c3b8dcb19..e7b69e3145c07 100644
->>--- a/drivers/usb/gadget/u_f.h
->>+++ b/include/linux/usb/func_utils.h
->>@@ -1,6 +1,6 @@
->>  // SPDX-License-Identifier: GPL-2.0
->>  /*
->>- * u_f.h
->>+ * func_utils.h
->>   *
->>   * Utility definitions for USB functions
->>   *
->>
->
->Maybe the include guard could be updated as-well?
->
->By include guard I mean:
->
->	#ifndef __U_F_H__
->	#define __U_F_H__
->	...
->	#endif /* __U_F_H__ */
->
->s/__U_F_H__/_FUNC_UTILS_H_/ or something like that.
->
->CJ
->
+Hi,
 
-Doh! I missed that but will spin another round!
+On Fri, Aug 16, 2024 at 05:40:37PM GMT, Krzysztof Kozlowski wrote:
+> On 16/08/2024 16:25, Artur Weber wrote:
+> >=20
+> >=20
+> > On 16.08.2024 11:54, Krzysztof Kozlowski wrote:
+> >> On 16/08/2024 10:19, Artur Weber wrote:
+> >>> @@ -732,6 +794,15 @@ static int max77693_charger_probe(struct platfor=
+m_device *pdev)
+> >>>   	chg->dev =3D &pdev->dev;
+> >>>   	chg->max77693 =3D max77693;
+> >>>  =20
+> >>> +	psy_cfg.drv_data =3D chg;
+> >>> +
+> >>> +	chg->charger =3D devm_power_supply_register(&pdev->dev,
+> >>> +						  &max77693_charger_desc,
+> >>> +						  &psy_cfg);
+> >>> +	if (IS_ERR(chg->charger))
+> >>> +		return dev_err_probe(&pdev->dev, PTR_ERR(chg->charger),
+> >>> +				     "failed: power supply register\n");
+> >>
+> >> This code move is not explained in the commit msg. At least I could not
+> >> find it. Please explain why you need it in the commit msg.
+> >=20
+> > This is done because the call to power_supply_get_battery_info in
+> > max77693_dt_init requires chg->charger to be set. (I was considering
+> > putting this in the commit message, can't remember why I didn't do it.
+> > I'll add it in the next version.)
+>=20
+> I think that's wrong. Power supply is being available to the system
+> before it is being configured.
 
-Thanks,
-Michael
+It's a known limitation of the power_supply_get_battery_info API.
+I think it would be best to add an register_init() hook to struct
+power_supply_desc, which would be called from __power_supply_register()
+directly before it calls device_add(). At that point the power_supply
+struct is initialized far enough for getting the battery info, but not
+yet exposed to the remaining system.
 
+As a nice side effect the register writes happen after checking the
+supplies, so the registers are not written if the probe errors out
+with a probe defer anyways.
 
+Greetings,
 
---=20
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+-- Sebastian
 
---0j5NiQ+wIVM5a7qk
+--otsejtyezulrljul
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAmbOCUEACgkQC+njFXoe
-LGQiCxAAlPehYXviL/Tao53N3ObBQa9mJ0Oiw7j+6/nmmk1A1NbOz/92pmKZLxxp
-a+l8k4VKNf7mUW3FaszDXabIpq9844Qoh7SqrtBvVA+a6mcggDBuJbGQfVKnAB7n
-asBnF0InhhXRkhCmpELmrTOIaPt8Q4TTTZXWRRTEvPxQ2rh/5VbpErQ4OwT6Wy/o
-P2HH/9s467xfmcEEuy8uKLuAOXuTiTKCCPtwqxoO4x6zw2N4j2hgH79VzzZb95kv
-+c+AaZrHQb+jQ9maDliIqyEHbhCBfgS0IKVLFH6scwooL1TLNIcMKRg7fZorOvBp
-s+imoVuNZV9fSXT5JdENSM5gDkqyTj9vJTleW7/JAEZ7G/mbRuIqe23Sj9LoA910
-iWXtmnvR2atikD3gUlJE9DwrFG9SK0aQp9ac7pcn72MWaKk0asAsNoXD59aYQRrw
-rZSrG1TWNt8RHnD6wpP0NfqxQDtimXqUSateAxQa9cMqN981C887dNDjrC5468WB
-rtqKo1r3YPT+qyhOxNahLp775nRCujzvmS+DIZa5knjkwP25KBMNanGMnRjjPnz5
-/wsBhYP7u+BRKtaAJDxXhmOOq3klBi25T2N5ET3GGDGFkhUkGxTzUAIIrrxlENmF
-pvFLTqOyhKFa5hjrq4RbOk+Hp5YgFiyC2Z/GsROkf7wjSDOah68=
-=vBTo
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmbOCW0ACgkQ2O7X88g7
++pqWrQ/+PyPFHFkRut+MAJpYMoQdpY6HbFaVc/wPgERw1U5QaIeg7WiG236dBjqR
+2nmNa/vHaTXfVJRBSPEVP3G+Q0CLgMec8Gw5wNZ2rBi6rBQ3EoWK/YOBHnh6/xD8
+zsuSAmjRmgPrS295odE4JRxJV/6FR7keyuBBBXvEdZIk33tZjTlGtpgaVq8ab8iL
+ZeUOk4xw4B6r1z0kjaNdlImI/iOK/Jd8/les45cXNem2bVWZ6GphezC+VFNqL+ia
++EnVwEcRMiIJjekED3nN415fB1rIPsY0jyFWuEN1fdSH9+WF8tyBSGls9Efi87Uo
+p8BvvK7xAs4mPjVcsE5nwqiduI+Twjg/B/uxm/D49UoMr0p4Tg/53dNUnuuC0WRU
+pRNdnHMA2JuwkBBfOEnJ4txjuXAYsb9Kl2QW82tgHJqBDRR/HSGxJK+zd2+JNDz0
+Iu1Lx8kKoZyw4zPmr/O6soxgeMPbXMsb/ZB1R4iLLMyTu8EJR8GqjnvIgAQrGTqw
+j0Sg774CJ9mutvGwObNFwcvWc898a6k9Km5tCbIsitoc5ZU3sfoIMpgiNWo2dRQD
+20V+peZeIGmNKbhPHAroLvvY4wZ7ul83WT4wjyD7Pke6IhDV5cjihsnlAIhgQqup
+mT9xWJfUJfB3IpFG04uYHkvAry1+Du+C1LPzXv0v5xkimZHcMf4=
+=r5xS
 -----END PGP SIGNATURE-----
 
---0j5NiQ+wIVM5a7qk--
+--otsejtyezulrljul--
 
