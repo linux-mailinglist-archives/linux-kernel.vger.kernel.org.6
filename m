@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel+bounces-302652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3004596017A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:22:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1712396017C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B3B81C21FBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:22:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C25D0281D27
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1EE13FD83;
-	Tue, 27 Aug 2024 06:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7D433999;
+	Tue, 27 Aug 2024 06:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jx31adr2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IWY2ZMWE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3F254648
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8417344C
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724739767; cv=none; b=Une7gm9/oRiNr2dGnak+88k5Cp9y09r3eUGTYwoHqxqAQIC4ie75G5kFX78bsuB+xvNBxOsHzJ7cKbWQ7XhXVGT3TSo4oXVdpYJANuhRlKTIqePAG9Szes3p+O0splMQvzz5NY7ZTot7H+J2ni2no15RxRf7y4mtbMqQWcTzbeY=
+	t=1724739781; cv=none; b=Os/RZ8dwk/gYrTqY3/eqoV/+8hYdiXFT9yGH0PJlIqKgsBVZ6LD06ju3+Xd+79kFCtDdicfa8FqJ/FT79NETa7J5adiZ1eL04w1wY7ZIPqngo++CNHZ/5DU4PFM2SajycZ3BLDu2pXo51Ie0QSEWK/+HMmMGsw46Q467eMP/cd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724739767; c=relaxed/simple;
-	bh=JlI+TELUdd7s6FPujobr2Ezax9MfoTnBaxSFowSiAa4=;
+	s=arc-20240116; t=1724739781; c=relaxed/simple;
+	bh=crLZWaA9tZqOl38BcFty53sZrr+x1AvDPHZt3AoUpsQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KydU8GjpTv1pPrzLuxfG4+zP9VmE4b5XAhdFjYaBOGwZ8OaB4V1EciBghlmcIWxRJuSudX9k87UE3tC27whLhJWgDxgS8pSIsGQ21wXPNRJP0mjLu+rx5oRwUAOt9zmJMhXDrK8HJKmgNs/kQit2C6JxUwZBDfwnQoxYszh45r8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jx31adr2; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724739764;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EnUXRhsOmY1WUumG5iPOdpGy9YuwRoJOmvxNn5A0R3s=;
-	b=Jx31adr28HRj5EtdYk90QCh0W4LAihacuYKxH3YcCBXNB0vm3MHxdw+nH5kLvf+rYNUIwp
-	18EYWQmzQBJehpdze9f5bKAur21mrWmRoyw3NS3di+5TVWLmCNquKkxzvCzhz7bryrxwbe
-	Ria+Mmt+MqvYPUSiCgmldyKRJghiJt0=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-190-t7YesfeCNKOOuuMJdnOrxQ-1; Tue,
- 27 Aug 2024 02:22:39 -0400
-X-MC-Unique: t7YesfeCNKOOuuMJdnOrxQ-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6C07E19560B1;
-	Tue, 27 Aug 2024 06:22:36 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.42])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C25D219560A3;
-	Tue, 27 Aug 2024 06:22:33 +0000 (UTC)
-Date: Tue, 27 Aug 2024 14:22:28 +0800
-From: Baoquan He <bhe@redhat.com>
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Dave Vasilevsky <dave@vasilevsky.ca>, linuxppc-dev@lists.ozlabs.org,
-	linux-sh@vger.kernel.org, mpe@ellerman.id.au,
-	kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Reimar =?iso-8859-1?Q?D=F6ffinger?= <Reimar.Doeffinger@gmx.de>
-Subject: Re: [PATCH] crash: Default to CRASH_DUMP=n when support for it is
- unlikely
-Message-ID: <Zs1wpHxfTcwKr517@MiWiFi-R3L-srv>
-References: <20240823125156.104775-1-dave@vasilevsky.ca>
- <CAMuHMdVYNhFJ+qBDP3_fi9oeHsgOL0vqPe1YqE18+M8n1onssw@mail.gmail.com>
- <09c29a3c4879d4ce5d8b97fd60d8ba5e38bed979.camel@physik.fu-berlin.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rlmG0pIjEw3tLRTnKzOf2WhJnca5r973O56SYhoxIiOc4e6zRh1MYKLaUteZ/76wWwfg/r16RjBHdQW6X8bwTJKYuEN2aB2MbU1DJIx1EwxR7OtYLCqQuEWw1GSFEsO1THyf6hsVlAHEXKb9+N/EnO5LBVaG0oA2EKLkfTsCXio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IWY2ZMWE; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724739780; x=1756275780;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=crLZWaA9tZqOl38BcFty53sZrr+x1AvDPHZt3AoUpsQ=;
+  b=IWY2ZMWE7cfzW+GSPsWpbHf+0ASM1jQWVtbiP7ztWPOQWt1mGBfoFBAU
+   heS5pnBfvkUVZIJkdNc8NlpIpSyuNsFJv6AFUI5M0b6s3Bj/OGwegrlAI
+   J5i93fL4rLO6hjKkPLgYPA9i7b8c0sZDbTRNL4bzIHcWj/t+jO/LRpxru
+   xO3nrXBPdjTXzQKCEpIl0RpSCUU+fTLTINCKhau/z7MB8C5g7f9tqL/PW
+   JOCRZp+Pmb8ptt/Capw0IZthxIPfzhuqb2eLVzdNfBIEvGzu6QA/p3l+r
+   mDjhH68oUPzrLtrDIfO/t+ETLkKvUdzJi3uY0ZdqbZOlmNeFAejqDZRzp
+   A==;
+X-CSE-ConnectionGUID: 0xTyklW/Rp2XcaKk595+cg==
+X-CSE-MsgGUID: miCvyTU+Q7WGgv6wlxTPTg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="33821571"
+X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
+   d="scan'208";a="33821571"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 23:22:59 -0700
+X-CSE-ConnectionGUID: a/B4SlHAT02wldopP2ouyg==
+X-CSE-MsgGUID: dLnN+ZzRR1OiuSHPdBSuFg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
+   d="scan'208";a="62589118"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 26 Aug 2024 23:22:58 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sipbT-000I8E-2K;
+	Tue, 27 Aug 2024 06:22:55 +0000
+Date: Tue, 27 Aug 2024 14:22:31 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jeff Xie <jeff.xie@linux.dev>, tglx@linutronix.de
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	xiehuan09@gmail.com, Jeff Xie <jeff.xie@linux.dev>
+Subject: Re: [PATCH v2] genirq: procfs: Make smp_affinity read-only for
+ interrupts that userspace can't set
+Message-ID: <202408271311.szIyk0et-lkp@intel.com>
+References: <20240825131911.107119-1-jeff.xie@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,39 +78,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <09c29a3c4879d4ce5d8b97fd60d8ba5e38bed979.camel@physik.fu-berlin.de>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <20240825131911.107119-1-jeff.xie@linux.dev>
 
-On 08/23/24 at 08:16pm, John Paul Adrian Glaubitz wrote:
-> Hi Geert,
-> 
-> On Fri, 2024-08-23 at 15:13 +0200, Geert Uytterhoeven wrote:
-> > IMHO CRASH_DUMP should just default to n, like most kernel options, as
-> > it enables non-trivial extra functionality: the kernel source tree has
-> > more than 100 locations that check if CONFIG_CRASH_DUMP is enabled.
-> 
-> I guess we should then revert that part of Baoquan's original patch.
-> 
-> > What is so special about CRASH_DUMP, that it should be enabled by
-> > default?
-> 
-> Let's ask Baoquan who made the original change to enable CRASH_DUMP by default.
+Hi Jeff,
 
-Sorry for late reply.
+kernel test robot noticed the following build warnings:
 
-It's me who enabled it by default when I clean up the messy Kconfig items
-related to kexec/kdump. Before the clean up, CONFIG_CRASH_DUMP only
-controlled a very small file including sevearl functions and macro
-definitions. But kernel codes took CRASH_DUMP as switch of kdump.
+[auto build test WARNING on tip/irq/core]
+[also build test WARNING on linus/master v6.11-rc5 next-20240826]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-About why it's enabled by default, as Michael has explained in another
-thread, distros usualy needs to enable it by default because vmcore
-dumping is a very important feature on servers, even guest instances. 
-Even though kdump codes are enabled to built in, not providing
-crashkernel= value won't make vmcore dumping take effect, it won't cost
-system resources in that case.
+url:    https://github.com/intel-lab-lkp/linux/commits/Jeff-Xie/genirq-procfs-Make-smp_affinity-read-only-for-interrupts-that-userspace-can-t-set/20240826-153926
+base:   tip/irq/core
+patch link:    https://lore.kernel.org/r/20240825131911.107119-1-jeff.xie%40linux.dev
+patch subject: [PATCH v2] genirq: procfs: Make smp_affinity read-only for interrupts that userspace can't set
+config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20240827/202408271311.szIyk0et-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408271311.szIyk0et-lkp@intel.com/reproduce)
 
-Thanks
-Baoquan
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408271311.szIyk0et-lkp@intel.com/
 
+All warnings (new ones prefixed by >>):
+
+   kernel/irq/proc.c: In function 'register_irq_proc':
+>> kernel/irq/proc.c:343:17: warning: unused variable 'umode' [-Wunused-variable]
+     343 |         umode_t umode = S_IRUGO;
+         |                 ^~~~~
+
+
+vim +/umode +343 kernel/irq/proc.c
+
+   337	
+   338	void register_irq_proc(unsigned int irq, struct irq_desc *desc)
+   339	{
+   340		static DEFINE_MUTEX(register_lock);
+   341		void __maybe_unused *irqp = (void *)(unsigned long) irq;
+   342		char name [MAX_NAMELEN];
+ > 343		umode_t umode = S_IRUGO;
+   344	
+   345		if (!root_irq_dir || (desc->irq_data.chip == &no_irq_chip))
+   346			return;
+   347	
+   348		/*
+   349		 * irq directories are registered only when a handler is
+   350		 * added, not when the descriptor is created, so multiple
+   351		 * tasks might try to register at the same time.
+   352		 */
+   353		mutex_lock(&register_lock);
+   354	
+   355		if (desc->dir)
+   356			goto out_unlock;
+   357	
+   358		sprintf(name, "%d", irq);
+   359	
+   360		/* create /proc/irq/1234 */
+   361		desc->dir = proc_mkdir(name, root_irq_dir);
+   362		if (!desc->dir)
+   363			goto out_unlock;
+   364	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
