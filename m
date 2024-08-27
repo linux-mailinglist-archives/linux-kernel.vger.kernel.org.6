@@ -1,232 +1,179 @@
-Return-Path: <linux-kernel+bounces-303596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2613960FDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:03:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3552960FE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7CC41C23586
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:03:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 737421F239D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB621C9EAF;
-	Tue, 27 Aug 2024 15:02:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7AB1C7B92;
+	Tue, 27 Aug 2024 15:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="jpXYuCEa"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="I0DL/ISZ"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49D91C86FF
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 15:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0BC1C68B1
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 15:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724770932; cv=none; b=qmw0IBVBxGOszOb2i1V51WTPVzicObgUnnQmqIAW039aUZrl8IDZkwhkt6Cd0e5NAzZtgj3MNUg03Ko7zUNkQZRi9IG/M6x+vyIOeHatbHHDBv/wGzuvSSFXfAyDylu89HT5bRoTghczDNZlDEUPyHGyIAbaTddJrsyT2lVpxXw=
+	t=1724770963; cv=none; b=KaYfN20fX+p5oeQm8XrIvVU6xQsUuD7zWbX3cwLAk97oJGiNig05DNtBflWiOhIxQXJ/SPwn1i3pcjKHn30vC8WDSTgtYUF5A1KNlF/1re95nzgiQ9IUlYspUSVsnRz6Gf2oKbB7cReplQe40W0TqNflHF5EIS2oDZPCfIUV7I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724770932; c=relaxed/simple;
-	bh=IFJgwMMBQAepiR9Zi+ANoAhwQDy/WXTKO+hYFcxwYqM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WzKwDLB5yeOTx0MuEnqL0uQuSnsENWonS2LWGOHnbvzaNM1eoI1cJ9+oW8aOG+eVldXyMz5SnaAqiy3rSgT2dE1c7jAUZFhnndMX9Joh6CG64gVqupUTJAl96MDb9dwdvO3DlmBJrfMsKNypY/iRR+OGjtiuQvpQyPGkEclrcm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=jpXYuCEa; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id C46153F62B
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 15:02:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1724770927;
-	bh=2P+kxQuaxtYEyNIEJy9bWFJkdnavlhUTk0CuwFAwO4w=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version;
-	b=jpXYuCEaAkbCWCsKXUWYaERh0jugBpkoNsynBu9Kf0eea2OIJbCF3oPG+N3FXQdVG
-	 IGwR7XfPaUoTG9LVMrLK6GDQeUl9TV/LzGlrnMAjAQArJiM1/6fvbFtPsG5hoAKM5N
-	 IhYZZPoXZ3vVqXhUvHRHXNanESr2XGXecdHi0ze+u3QO+BDhk8HAnsXO/emikj9dKn
-	 4BF14D8Rqz8DAUoAfoPIJ4OswzxvwFdNSJw4ssFhHOxZt1xpppfha/aMD6Wo0SJFc1
-	 aU91c4QYtW+jbWsL38FFt8NpblJqiL3be1/AkHpNsXqboNuabUOL1Z2NsLyKgoGL8z
-	 v3xmfqim0FlAQ==
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-70eebcab33aso5184787b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:02:07 -0700 (PDT)
+	s=arc-20240116; t=1724770963; c=relaxed/simple;
+	bh=mQZ97ZNvzRncqKcm9pTIsuBADoggR2DR7S+QK/RHBys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I9RQ+pymuneQW/Hpkq59P5OWKP4q0n8/42GVX8NyUaAOSQXN8GOO/xlBqIdI8Wt4zpK0GbqZgy5iI287SMldRKeBnVNi52tk1uPvPyx61ou4sxRjwnjqwSAz/3PTuEXTf7BQhCQ7SXsu1e389fIaScx+VRHsZbLh0hNeupCqVMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=I0DL/ISZ; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5bed83488b3so6515965a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:02:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724770959; x=1725375759; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yFL51re5mKGiWTbXsiX4IVZzXWb4fz8WW1qyOQEt1vE=;
+        b=I0DL/ISZgrU44DK86eL3Y9oolyOMZe4sPuUxANK57Zt6GLn1l1mAfw1uD/aaUMVAD3
+         52svBYTZC4N9O0PMeeEZ4gqIuUqsCuLFx9zZ558W5uH5hHb3ywEs0wmpoR0dbi2w0fbH
+         2pgRKSWnOkM5EtFGJr9+C69XCEpvC3pNRdx0sEDfkk5jeFZlLR1xIopC8+kvkVlX3d7b
+         Qyy5IWxj+90qdzlvZkYN9KIZat/khICFZTSHNtFHXQ9VfKGSEVfWtyRp/x/aqUBTonBO
+         pMEsFDCYUNPr9iLmOLhQv2ZwZsVplis+TDn6MfK75RpbF7XD2mJD75SrAPP0Xixh9wx+
+         SUlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724770925; x=1725375725;
-        h=mime-version:user-agent:content-transfer-encoding:organization
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2P+kxQuaxtYEyNIEJy9bWFJkdnavlhUTk0CuwFAwO4w=;
-        b=KmpweaHKooeDGB1+7YjTwMmQJMbLyd0wgpvDsIzDx1xokh9VcPBtM+eVgrUTQpfZ6T
-         I4MtYCThsizOJaRC4fxYg14XnmvXJlty6L4I3/AdqqD8Nmt4mkaAAnKVIeRQZo1eCo0o
-         nFLdfslOYA9rOHbNwBGhlqy6Z3Iwl06xMuBcjCegVs8PgTU0Mg8FWi/3OaoB+w1op3uI
-         RHV5Mz0uU0cb/5Vge4HrrN/bHvavbXCH1zJ5rknjh7p1KCb4T85GBIl8ZGBKjFEdpr6s
-         Kpdlr9vE+2faIkniHm0OfKjIQnQuxF3lZbWLudqMS/bBdukR/7GK92cyy4a9bbIRCi56
-         i6hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXRHLTZ8/YcpRyzoMM2sTzCT7MZtH+ekvvveTYOnPlBXLtHNAsecwwvxbnQgVFQag06xgxWr2javQNT+EI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7Q/SYk2uXxRQ/VXbJgGzuVjSE/1tbztF7vM86+V69mCZktXdt
-	odd1en7uBxup8ZVbeA9j3J6WURZ/15eGOAGNhBd60MBfBR4S7UhVf3D0OwftS6Wha8tI2X/UyBW
-	O/SfbSYBaVCOmAYR7itfjMPqoSorT47k0kWzWyVe77AODrDP/Ra70T20KSzZC0p0cvBLqqbPH3w
-	aERaFfbg/a4Glu
-X-Received: by 2002:a05:6a00:1ad1:b0:70d:33b3:2d7f with SMTP id d2e1a72fcca58-714458938c8mr16205137b3a.26.1724770925424;
-        Tue, 27 Aug 2024 08:02:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFI8lTF1ZBJUDeALtcEVWbx6fWOzsswhP6jDP8l7b2/0KT1Mh1E2vOICYN29ZeYQNn5ju5YlA==
-X-Received: by 2002:a05:6a00:1ad1:b0:70d:33b3:2d7f with SMTP id d2e1a72fcca58-714458938c8mr16205091b3a.26.1724770924997;
-        Tue, 27 Aug 2024 08:02:04 -0700 (PDT)
-Received: from ?IPv6:2001:1284:f502:1ed0:3614:22f:7b0b:19c1? ([2001:1284:f502:1ed0:3614:22f:7b0b:19c1])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143430020fsm8984983b3a.146.2024.08.27.08.02.00
+        d=1e100.net; s=20230601; t=1724770959; x=1725375759;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yFL51re5mKGiWTbXsiX4IVZzXWb4fz8WW1qyOQEt1vE=;
+        b=NjhE2oZX3MKoA8Vna0fzItVvoouJzv6oiFe8GXZBFq8v6iw9krLEfYiMejWV/qPOhA
+         +nSJuHlKUYvvYQJiugy+P2wJEZKGjAs2uSvPv1XzBVAqdDUjx8JPvyWh/9Z+0PO4vp1e
+         tSsmZhmnCavj5Z2RmcViYJeTK+NiiVcoJWqLpkmNpWsz09KMO+Wz5KLHlTk0IERiaY0v
+         VJBvH5oFbT6hFMuEZCGvifBVVp4UAqnDPGWERKSHg0cFzPb+ncZjtaHnrd67mX61t+Zu
+         L5G2AIZTPrWQn/lVHRpazVQJ5A8wUa/YC7gpZU5560En2Ekd978zghV0q1A8fTjiOP8T
+         T7yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUa9wYZLG9I433IRDpimZ32MYtIDegm+ZYUW6mUe68jn/ykRUCll+KeyvziHZReOhu0cmvluBeNwaM1MM0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDtc7R6AOoSU8D1+Hqs6f3Y2hLOUcKgzIjk37mxrlAqAZz7cQ8
+	RBpPeAO+F1E1y5SO8ZNj0diViOMaFRvs2Npe5grnbpCEGHaB0bsWc3xS8op8fLY=
+X-Google-Smtp-Source: AGHT+IGo2EhMX5Npq1n9OFLM4+D9y+dMp43956Cyj2PTcbfZH9XfB8jNzxAc58L1TFmqOcaYqJP0Tg==
+X-Received: by 2002:a17:907:c7e6:b0:a86:82da:2c3c with SMTP id a640c23a62f3a-a86a52c1b34mr916975166b.40.1724770958596;
+        Tue, 27 Aug 2024 08:02:38 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e588ad1asm121362666b.171.2024.08.27.08.02.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 08:02:04 -0700 (PDT)
-Message-ID: <a8aeacdc4afec5855fa4b80f0f5f43e8f7d3b5cb.camel@canonical.com>
-Subject: Re: [PATCH 04/13] Audit: maintain an lsmblob in audit_context
-From: Georgia Garcia <georgia.garcia@canonical.com>
-To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com, 
-	linux-security-module@vger.kernel.org
-Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, 
- john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, 
- stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
- mic@digikod.net
-Date: Tue, 27 Aug 2024 12:01:58 -0300
-In-Reply-To: <20240825190048.13289-5-casey@schaufler-ca.com>
-References: <20240825190048.13289-1-casey@schaufler-ca.com>
-	 <20240825190048.13289-5-casey@schaufler-ca.com>
-Organization: Canonical
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+        Tue, 27 Aug 2024 08:02:37 -0700 (PDT)
+Date: Tue, 27 Aug 2024 17:02:36 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: cve@kernel.org, linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Tao Liu <thomas.liu@ucloud.cn>, Willem de Bruijn <willemb@google.com>
+Subject: Re: CVE-2022-48936: gso: do not skip outer ip header in case of ipip
+ and net_failover
+Message-ID: <z3hh3yrf5wym3obgol6obh3dkmqoc3rwbkj23qcmadf63b47h2@nn2232wngans>
+References: <2024082224-CVE-2022-48936-9302@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zlldsbb7ibsfnogu"
+Content-Disposition: inline
+In-Reply-To: <2024082224-CVE-2022-48936-9302@gregkh>
 
-On Sun, 2024-08-25 at 12:00 -0700, Casey Schaufler wrote:
-> Replace the secid value stored in struct audit_context with a struct
-> lsmblob. Change the code that uses this value to accommodate the
-> change. security_audit_rule_match() expects a lsmblob, so existing
-> scaffolding can be removed. A call to security_secid_to_secctx()
-> is changed to security_lsmblob_to_secctx().  The call to
-> security_ipc_getsecid() is scaffolded.
+
+--zlldsbb7ibsfnogu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Aug 22, 2024 at 11:31:37AM GMT, Greg Kroah-Hartman <gregkh@linuxfou=
+ndation.org> wrote:
+> We encounter a tcp drop issue in our cloud environment. Packet GROed in
+> host forwards to a VM virtio_net nic with net_failover enabled. VM acts
+> as a IPVS LB with ipip encapsulation. The full path like:
+> host gro -> vm virtio_net rx -> net_failover rx -> ipvs fullnat
+>  -> ipip encap -> net_failover tx -> virtio_net tx
 >=20
-> A new function lsmblob_is_set() is introduced to identify whether
-> an lsmblob contains a non-zero value.
+> When net_failover transmits a ipip pkt (gso_type =3D 0x0103, which means
+> SKB_GSO_TCPV4, SKB_GSO_DODGY and SKB_GSO_IPXIP4), there is no gso
+> did because it supports TSO and GSO_IPXIP4. But network_header points to
+> inner ip header.
 >=20
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
->  include/linux/security.h | 13 +++++++++++++
->  kernel/audit.h           |  3 ++-
->  kernel/auditsc.c         | 19 ++++++++-----------
->  3 files changed, 23 insertions(+), 12 deletions(-)
+> Call Trace:
+>  tcp4_gso_segment        ------> return NULL
+>  inet_gso_segment        ------> inner iph, network_header points to
+>  ipip_gso_segment
+>  inet_gso_segment        ------> outer iph
+>  skb_mac_gso_segment
+
+> Afterwards virtio_net transmits the pkt, only inner ip header is modified.
+> And the outer one just keeps unchanged. The pkt will be dropped in remote
+> host.
+
+That may appear like a transient connection issue or permanently
+impossible connection?
+
+> Call Trace:
+>  inet_gso_segment        ------> inner iph, outer iph is skipped
+>  skb_mac_gso_segment
+>  __skb_gso_segment
+>  validate_xmit_skb
+>  validate_xmit_skb_list
+>  sch_direct_xmit
+>  __qdisc_run
+>  __dev_queue_xmit        ------> virtio_net
+>  dev_hard_start_xmit
+>  __dev_queue_xmit        ------> net_failover
+>  ip_finish_output2
+>  ip_output
+>  iptunnel_xmit
+>  ip_tunnel_xmit
+>  ipip_tunnel_xmit        ------> ipip
+>  dev_hard_start_xmit
+>  __dev_queue_xmit
+>  ip_finish_output2
+>  ip_output
+>  ip_forward
+>  ip_rcv
+>  __netif_receive_skb_one_core
+>  netif_receive_skb_internal
+>  napi_gro_receive
+>  receive_buf
+>  virtnet_poll
+>  net_rx_action
 >=20
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 457fafc32fb0..a0b23b6e8734 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -277,6 +277,19 @@ static inline const char *kernel_load_data_id_str(en=
-um kernel_load_data_id id)
->  	return kernel_load_data_str[id];
->  }
-> =20
-> +/**
-> + * lsmblob_is_set - report if there is a value in the lsmblob
-> + * @blob: Pointer to the exported LSM data
-> + *
-> + * Returns true if there is a value set, false otherwise
-> + */
-> +static inline bool lsmblob_is_set(struct lsmblob *blob)
-> +{
-> +	const struct lsmblob empty =3D {};
-> +
-> +	return !!memcmp(blob, &empty, sizeof(*blob));
-> +}
-> +
->  #ifdef CONFIG_SECURITY
-> =20
->  int call_blocking_lsm_notifier(enum lsm_event event, void *data);
-> diff --git a/kernel/audit.h b/kernel/audit.h
-> index a60d2840559e..b1f2de4d4f1e 100644
-> --- a/kernel/audit.h
-> +++ b/kernel/audit.h
-> @@ -11,6 +11,7 @@
-> =20
->  #include <linux/fs.h>
->  #include <linux/audit.h>
-> +#include <linux/security.h>
->  #include <linux/skbuff.h>
->  #include <uapi/linux/mqueue.h>
->  #include <linux/tty.h>
-> @@ -160,7 +161,7 @@ struct audit_context {
->  			kuid_t			uid;
->  			kgid_t			gid;
->  			umode_t			mode;
-> -			u32			osid;
-> +			struct lsmblob		oblob;
->  			int			has_perm;
->  			uid_t			perm_uid;
->  			gid_t			perm_gid;
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index 23adb15cae43..84f6e9356b8f 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -724,9 +724,7 @@ static int audit_filter_rules(struct task_struct *tsk=
-,
->  				/* Find ipc objects that match */
->  				if (!ctx || ctx->type !=3D AUDIT_IPC)
->  					break;
-> -				/* scaffolding */
-> -				blob.scaffold.secid =3D ctx->ipc.osid;
-> -				if (security_audit_rule_match(&blob,
-> +				if (security_audit_rule_match(&ctx->ipc.oblob,
->  							      f->type, f->op,
->  							      f->lsm_rule))
->  					++result;
-> @@ -1394,19 +1392,17 @@ static void show_special(struct audit_context *co=
-ntext, int *call_panic)
->  			audit_log_format(ab, " a%d=3D%lx", i,
->  				context->socketcall.args[i]);
->  		break; }
-> -	case AUDIT_IPC: {
-> -		u32 osid =3D context->ipc.osid;
-> -
-> +	case AUDIT_IPC:
->  		audit_log_format(ab, "ouid=3D%u ogid=3D%u mode=3D%#ho",
->  				 from_kuid(&init_user_ns, context->ipc.uid),
->  				 from_kgid(&init_user_ns, context->ipc.gid),
->  				 context->ipc.mode);
-> -		if (osid) {
-> +		if (lsmblob_is_set(&context->ipc.oblob)) {
->  			char *ctx =3D NULL;
->  			u32 len;
-> =20
-> -			if (security_secid_to_secctx(osid, &ctx, &len)) {
-> -				audit_log_format(ab, " osid=3D%u", osid);
-> +			if (security_lsmblob_to_secctx(&context->ipc.oblob,
-> +						       &ctx, &len)) {
+> The root cause of this issue is specific with the rare combination of
+> SKB_GSO_DODGY and a tunnel device that adds an SKB_GSO_ tunnel option.
+> SKB_GSO_DODGY is set from external virtio_net. We need to reset network
+> header when callbacks.gso_segment() returns NULL.
 
-Is there any reason to stop auditing secid when we fail to get the
-security context?
+Who's in control of these configuration (who can cause this incorrect
+packet being sent)?
 
->  				*call_panic =3D 1;
->  			} else {
->  				audit_log_format(ab, " obj=3D%s", ctx);
-> @@ -1426,7 +1422,7 @@ static void show_special(struct audit_context *cont=
-ext, int *call_panic)
->  				context->ipc.perm_gid,
->  				context->ipc.perm_mode);
->  		}
-> -		break; }
-> +		break;
->  	case AUDIT_MQ_OPEN:
->  		audit_log_format(ab,
->  			"oflag=3D0x%x mode=3D%#ho mq_flags=3D0x%lx mq_maxmsg=3D%ld "
-> @@ -2642,7 +2638,8 @@ void __audit_ipc_obj(struct kern_ipc_perm *ipcp)
->  	context->ipc.gid =3D ipcp->gid;
->  	context->ipc.mode =3D ipcp->mode;
->  	context->ipc.has_perm =3D 0;
-> -	security_ipc_getsecid(ipcp, &context->ipc.osid);
-> +	/* scaffolding */
-> +	security_ipc_getsecid(ipcp, &context->ipc.oblob.scaffold.secid);
->  	context->type =3D AUDIT_IPC;
->  }
-> =20
+> This patch also includes ipv6_gso_segment(), considering SIT, etc.
+>=20
+> The Linux kernel CVE team has assigned CVE-2022-48936 to this issue.
 
+What is the security issue here?
+
+Thanks,
+Michal
+
+--zlldsbb7ibsfnogu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZs3qhwAKCRAt3Wney77B
+SX95AP92dOHL0efG8bDJy1ktpIsxQDIVU8jEI2t2j274FogjIwD+PciDpkAbOYnT
+gLdlbfFPFGsnUaUbMxO4m/8I/pOu8ws=
+=lVo1
+-----END PGP SIGNATURE-----
+
+--zlldsbb7ibsfnogu--
 
