@@ -1,210 +1,147 @@
-Return-Path: <linux-kernel+bounces-303081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB73D96071F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:14:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D338960725
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:17:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B1FF1F24D80
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:14:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 446CF1F26820
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81E41AC8B0;
-	Tue, 27 Aug 2024 10:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83672FB2;
+	Tue, 27 Aug 2024 10:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IKYuc+Al"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EYLbRnGT"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2861A2C2B;
-	Tue, 27 Aug 2024 10:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23DD19DF9A;
+	Tue, 27 Aug 2024 10:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724753197; cv=none; b=RjDVphGkBsJyx1mQZULTyhw4UDPhgxzTxYR863XxAceKcnQ3UDUakypAjY0rbls+rUoxf61/NOwNAKzdEyy18hKnEiA79gtqyZ1tPiVWSzihtOQYFZLQF9G/wIN6VLhzeB7Y0/h5qrYqRNOQBCctp54AGifAHOzp5S0J7mCsaDs=
+	t=1724753236; cv=none; b=g/qDhBb35kmtnRD81QPLXLjPDwcN4QjjTYSk5KolNN/rTMlfdvhtUMD50THYJAp1BdFLJBqLaa+Ct4BiiWcOPxWdObxi6VKPaoBv9KCuCsHHftG8n7RM2nEqug53lR5n/Bwkwgnc3OvkWKl7Mbxxzu3ayI+PALVnDQFasjDFk/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724753197; c=relaxed/simple;
-	bh=Dlq7epyisEHueyh2W/kuxJ5NQRtjMjbGbMDDIMhUmK8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=D8Wtx8QqiiD2ev1DK/487Su7tpC+SbvMuS/nHA/QFApc+WJCXQ0rGsHZtYLbFYrWgbntJYZPDR+sHsbNIwAs4gpWIGObaorfkqquOEJ0Gz4ssc/ETzd7l0fePKP4bzfe64S+SFIidxTPHjR1SjvkP3j5p6HgyIFwWM4af7RXFLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IKYuc+Al; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0CA3BC4FEF7;
-	Tue, 27 Aug 2024 10:06:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724753197;
-	bh=Dlq7epyisEHueyh2W/kuxJ5NQRtjMjbGbMDDIMhUmK8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=IKYuc+Aljoyq3QSogG6oeXww3mIyhyh4QDsZlCl6Xri9k92XrtI/XShZzpl5T52ZG
-	 QeG/9tKrY7Hg6OFPehfLkxd8lBKobFTsI0s7UqGQgPhnXTbhc0BwQySLf9s4zRJXo/
-	 fwArMsH4YU8l8ETuXknjWAq4/cdIegXuOPx6yAyar1DVbF3R6yEaQ2L43lmwJhRGX6
-	 31fdbOYUG4fdSDo0T+bmYNCGB9gmi2sbPsswLfswED91szPFTrOl05n5D+Hn6WukVs
-	 X20j5/KXgdxeAKzWOqveIgSgm47RZXt+El/DNMJdNZI4Djp8qLa6GtTmHd3lXuoGa8
-	 YPO8++qveRX3A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F37FEC54735;
-	Tue, 27 Aug 2024 10:06:36 +0000 (UTC)
-From: Dikshita Agarwal via B4 Relay <devnull+quic_dikshita.quicinc.com@kernel.org>
-Date: Tue, 27 Aug 2024 15:35:54 +0530
-Subject: [PATCH v3 29/29] media: iris: add check to allow sub states
- transitions
+	s=arc-20240116; t=1724753236; c=relaxed/simple;
+	bh=8wYnWhNT07PfewWScnNdFqqcpkmHXshJhSS5aUywgqc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hy/olDKgNVkjHefDUc3hneDCaRHHpv5iGd8O6NAszQUww4Q47ndIS34BgwMz2uPFS4ZHFk5Z5/+leIO4R97KKE8zqvKj/xjAxjTah8RyncmUpApEPSB5noHHNMPNw+3LVeBONJrKLsq560FepwSMZbPkbJhBk3QK115JBka8v5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EYLbRnGT; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47RA6pLc099417;
+	Tue, 27 Aug 2024 05:06:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724753211;
+	bh=qU/Lmzk4lcyCdDfcmmCqkFpz0BEGSIthJ1hZhYq9fnk=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=EYLbRnGT+z6JhcMgCOXwVNWkyuqQlvPMxPOq5DXnSGkB7wghUS0uHPDxcGhpB1w4Z
+	 +xDbj9aHgi9gFO8h0zKocSp47vVJXCm+dTXK4J0WU8OB5DIVFUb/VTMckVV3Um/Bdq
+	 AjnWpOJhaDCPwD7Mqt7Bpnow4yoN42/Nqnv8kA/o=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47RA6pXo048763
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 27 Aug 2024 05:06:51 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 27
+ Aug 2024 05:06:50 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 27 Aug 2024 05:06:50 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47RA6n7x001554;
+	Tue, 27 Aug 2024 05:06:50 -0500
+Date: Tue, 27 Aug 2024 15:36:49 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+CC: Krzysztof Kozlowski <krzk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Santosh
+ Shilimkar <ssantosh@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Rob
+ Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Bao
+ Cheng Su <baocheng.su@siemens.com>,
+        Hua Qian Li <huaqian.li@siemens.com>,
+        Diogo Ivo <diogo.ivo@siemens.com>
+Subject: Re: [PATCH v2 3/6] dt-bindings: PCI: ti,am65: Extend for use with PVU
+Message-ID: <ada462d5-157a-4e11-ba25-d412a2bb678f@ti.com>
+References: <cover.1724709007.git.jan.kiszka@siemens.com>
+ <82ac9e266f6aca42699ec4a3c8f10887789ee6bf.1724709007.git.jan.kiszka@siemens.com>
+ <afyz3i4xihir4fnt4djo45saytz5ubu3wel6munq7cinwcb55m@ohdelne4xf34>
+ <6c28d580-9961-4bac-adcd-1724de68c9fb@siemens.com>
+ <0ca0fc20-421e-4bbc-bcda-9e5c2ea3b1b4@kernel.org>
+ <2bb6b337-d83b-4cbe-aff2-bbd0c7d17c2b@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240827-iris_v3-v3-29-c5fdbbe65e70@quicinc.com>
-References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
-In-Reply-To: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
-To: Vikash Garodia <quic_vgarodia@quicinc.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Dikshita Agarwal <quic_dikshita@quicinc.com>, 
- Vedang Nagar <quic_vnagar@quicinc.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724753191; l=4597;
- i=quic_dikshita@quicinc.com; s=20240826; h=from:subject:message-id;
- bh=2EGrcsprZLpn6qAzmt8V0SRE4y1luktgGIACm9k/2VE=;
- b=7+MuEKA+zwz6gaIbmSjqsqr4G/QiPXTFv4WrtXRxQay//0VRqtWaLeJ4SSxndZZhdVbnsVHHz
- QwATFuYhcllAugnP9VBcyWrTgH7G4fJP4AwyCALfQqXRjnztrPj3L5h
-X-Developer-Key: i=quic_dikshita@quicinc.com; a=ed25519;
- pk=+c7562uu1Y968VTv9z59ch2v3jmlO2Qv3uX7srN3LJY=
-X-Endpoint-Received: by B4 Relay for quic_dikshita@quicinc.com/20240826
- with auth_id=199
-X-Original-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-Reply-To: quic_dikshita@quicinc.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <2bb6b337-d83b-4cbe-aff2-bbd0c7d17c2b@siemens.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-From: Vedang Nagar <quic_vnagar@quicinc.com>
+On Tue, Aug 27, 2024 at 11:32:02AM +0200, Jan Kiszka wrote:
+> On 27.08.24 11:29, Krzysztof Kozlowski wrote:
+> > On 27/08/2024 11:22, Jan Kiszka wrote:
+> >> On 27.08.24 08:37, Krzysztof Kozlowski wrote:
+> >>> On Mon, Aug 26, 2024 at 11:50:04PM +0200, Jan Kiszka wrote:
+> >>>> From: Jan Kiszka <jan.kiszka@siemens.com>
+> >>>>
+> >>>> Describe also the VMAP registers which are needed in order to make use
+> >>>> of the PVU with this PCI host. Furthermore, permit to specify a
+> >>>> restricted DMA pool by phandle.
+> >>>
+> >>> That's an ABI break without explanation why it is necessary.
+> >>>
+> >>
+> >> It is needed in order to support the PVU, as written above.
+> > 
+> > Above say only that you want a new feature and that's not really
+> > suitable explanation for ABI break, because answer to this is: add new
+> > feature without breaking existing users. But maybe there is a bug or
+> > something does not work or never work or there are no users, don't know.
+> > 
+> >>
+> >> Previous versions of this binding likely didn't consider this use case
+> >> and therefore didn't describe all registers associated with the hardware.
+> >>
+> >> BTW, if you see a way to add the required registers without breaking
+> >> more than needed, I'm all ears. At least the kernel driver will continue
+> >> to work with older DTs when you disable PVU support or do not add a DMA
+> >> pool to the DT.
+> > 
+> > If there is no ABI break, because driver still handles correctly old
+> > DTB, then mention it in the commit msg.
+> 
+> Well, this is strictly spoken not a topic for this commit because this
+> one should have no clue about what drivers do with DTs according to this
+> binding. But I can put a hint and go into details in the driver patch.
 
-Based on state machine design, add allow checks to
-transition from one sub-state to another sub-states.
+Based on the Techincal Reference Manual for AM654 and the driver
+implementation in patch 5/6, I think that the following might be one way
+of hinting that ABI won't break:
 
-Signed-off-by: Vedang Nagar <quic_vnagar@quicinc.com>
-Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
----
- .../platform/qcom/iris/iris_hfi_gen1_command.c     | 12 ++++++-
- drivers/media/platform/qcom/iris/iris_state.c      | 42 ++++++++++++++++++++++
- drivers/media/platform/qcom/iris/iris_state.h      |  1 +
- 3 files changed, 54 insertions(+), 1 deletion(-)
+The PVU on the AM65 SoC is capable of restricting DMA from PCIe devices to
+specific regions of host memory. Add the optional property "memory-regions"
+to point to such regions of memory when PVU is used. Since the PVU deals
+with system physical addresses, utilizing the PVU with PCIe devices also
+requires setting up the VMAP registers to map the Requester ID of the
+PCIe device to the CBA Virtual ID, which in turn is mapped to the system
+physical address. Hence, describe the VMAP registers which are optionally
+configured whenever PVU is used for PCIe.
 
-diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
-index 17333768afa2..2f3e40368cce 100644
---- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
-+++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
-@@ -135,6 +135,9 @@ static int iris_hfi_gen1_session_start(struct iris_inst *inst, u32 plane)
- 	if (!V4L2_TYPE_IS_OUTPUT(plane))
- 		return 0;
- 
-+	if (inst->sub_state & IRIS_INST_SUB_LOAD_RESOURCES)
-+		return 0;
-+
- 	reinit_completion(&inst->completion);
- 	iris_hfi_gen1_packet_session_cmd(inst, &packet, HFI_CMD_SESSION_LOAD_RESOURCES);
- 
-@@ -153,7 +156,11 @@ static int iris_hfi_gen1_session_start(struct iris_inst *inst, u32 plane)
- 	if (ret)
- 		return ret;
- 
--	return iris_wait_for_session_response(inst, false);
-+	ret = iris_wait_for_session_response(inst, false);
-+	if (ret)
-+		return ret;
-+
-+	return iris_inst_change_sub_state(inst, 0, IRIS_INST_SUB_LOAD_RESOURCES);
- }
- 
- static int iris_hfi_gen1_session_stop(struct iris_inst *inst, u32 plane)
-@@ -180,6 +187,9 @@ static int iris_hfi_gen1_session_stop(struct iris_inst *inst, u32 plane)
- 		ret = iris_hfi_queue_cmd_write(core, &pkt, pkt.shdr.hdr.size);
- 		if (!ret)
- 			ret = iris_wait_for_session_response(inst, false);
-+
-+		iris_inst_change_sub_state(inst, IRIS_INST_SUB_LOAD_RESOURCES, 0);
-+
- 		iris_helper_buffers_done(inst, V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE,
- 					 VB2_BUF_STATE_ERROR);
- 		iris_helper_buffers_done(inst, V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE,
-diff --git a/drivers/media/platform/qcom/iris/iris_state.c b/drivers/media/platform/qcom/iris/iris_state.c
-index 1c7437bc808b..ab7dc768ef25 100644
---- a/drivers/media/platform/qcom/iris/iris_state.c
-+++ b/drivers/media/platform/qcom/iris/iris_state.c
-@@ -165,6 +165,45 @@ int iris_inst_state_change_streamoff(struct iris_inst *inst, u32 plane)
- 	return iris_inst_change_state(inst, new_state);
- }
- 
-+static int iris_inst_allow_sub_state(struct iris_inst *inst, enum iris_inst_sub_state sub_state)
-+{
-+	if (!sub_state)
-+		return true;
-+
-+	switch (inst->state) {
-+	case IRIS_INST_INIT:
-+		if (sub_state & IRIS_INST_SUB_LOAD_RESOURCES)
-+			return true;
-+		break;
-+	case IRIS_INST_INPUT_STREAMING:
-+		if (sub_state & (IRIS_INST_SUB_FIRST_IPSC | IRIS_INST_SUB_DRC |
-+			IRIS_INST_SUB_DRAIN | IRIS_INST_SUB_INPUT_PAUSE))
-+			return true;
-+		break;
-+	case IRIS_INST_OUTPUT_STREAMING:
-+		if (sub_state & (IRIS_INST_SUB_DRC_LAST |
-+			IRIS_INST_SUB_DRAIN_LAST | IRIS_INST_SUB_OUTPUT_PAUSE))
-+			return true;
-+		break;
-+	case IRIS_INST_STREAMING:
-+		if (sub_state & (IRIS_INST_SUB_DRC | IRIS_INST_SUB_DRAIN |
-+			IRIS_INST_SUB_DRC_LAST | IRIS_INST_SUB_DRAIN_LAST |
-+			IRIS_INST_SUB_INPUT_PAUSE | IRIS_INST_SUB_OUTPUT_PAUSE))
-+			return true;
-+		break;
-+	case IRIS_INST_DEINIT:
-+		if (sub_state & (IRIS_INST_SUB_DRC | IRIS_INST_SUB_DRAIN |
-+			IRIS_INST_SUB_DRC_LAST | IRIS_INST_SUB_DRAIN_LAST |
-+			IRIS_INST_SUB_INPUT_PAUSE | IRIS_INST_SUB_OUTPUT_PAUSE))
-+			return true;
-+		break;
-+	default:
-+		return false;
-+	}
-+
-+	return false;
-+}
-+
- int iris_inst_change_sub_state(struct iris_inst *inst,
- 			       enum iris_inst_sub_state clear_sub_state,
- 			       enum iris_inst_sub_state set_sub_state)
-@@ -184,6 +223,9 @@ int iris_inst_change_sub_state(struct iris_inst *inst,
- 
- 	prev_sub_state = inst->sub_state;
- 
-+	if (!iris_inst_allow_sub_state(inst, set_sub_state))
-+		return -EINVAL;
-+
- 	inst->sub_state |= set_sub_state;
- 	inst->sub_state &= ~clear_sub_state;
- 
-diff --git a/drivers/media/platform/qcom/iris/iris_state.h b/drivers/media/platform/qcom/iris/iris_state.h
-index 9516425fcfa7..f60dc18ca30e 100644
---- a/drivers/media/platform/qcom/iris/iris_state.h
-+++ b/drivers/media/platform/qcom/iris/iris_state.h
-@@ -124,6 +124,7 @@ enum iris_inst_sub_state {
- 	IRIS_INST_SUB_DRAIN_LAST	= BIT(4),
- 	IRIS_INST_SUB_INPUT_PAUSE	= BIT(5),
- 	IRIS_INST_SUB_OUTPUT_PAUSE	= BIT(6),
-+	IRIS_INST_SUB_LOAD_RESOURCES	= BIT(7),
- };
- 
- void iris_change_core_state(struct iris_core *core,
-
--- 
-2.34.1
-
-
+Regards,
+Siddharth.
 
