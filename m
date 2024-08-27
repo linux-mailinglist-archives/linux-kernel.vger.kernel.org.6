@@ -1,314 +1,1124 @@
-Return-Path: <linux-kernel+bounces-302484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F8C195FF4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:46:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EB8995FF4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:46:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C358D1C20D20
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 02:46:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE9981F22FAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 02:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74DE11754B;
-	Tue, 27 Aug 2024 02:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2E41754B;
+	Tue, 27 Aug 2024 02:46:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="hJ3APv+v";
-	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="vyQD9VBo"
-Received: from mx0b-002c1b01.pphosted.com (mx0b-002c1b01.pphosted.com [148.163.155.12])
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="Tel23FvY"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2102.outbound.protection.outlook.com [40.107.255.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE96F11185;
-	Tue, 27 Aug 2024 02:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.155.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B7F38B;
+	Tue, 27 Aug 2024 02:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.102
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724726783; cv=fail; b=s1ss62IaehTfi2QAZrGr+63qQHb04OA3Hf5JH4o4WE2CqR4H5keYtk2Qff+jvT8+v0mU8R4+S6lLQYb423vJJ7T5VyJXoLWShf4MgMFZ9GDvMLtixoQBhydyaY5odR2U2g6lo+GQiE9deQqye/5s4sfVj6bBLpUz7Nfoum4m5B8=
+	t=1724726759; cv=fail; b=R8oyLsfu9qjZqFBUswG3ORMDKLkWKB2JVu/0SaUVvLkkMyPG678Sd8z32E726Zi4Y1Puxo590DKKu0D4bhtlb/Z45K8Gm1k9Fb99K9pdSShHZA5YVREdAd7278nw0L3ncjnXU//zAYtH0egwz+UC7VO1Nsqf6Z3RNB64oti2at8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724726783; c=relaxed/simple;
-	bh=hZcR4dUcD6J347eGsVgkuyDL1iQAfAF2Ox6DbbTIF58=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ERl0yofh9wlqDL7m2Z4ptMau0jaC/Y3Q7No8nH1b1m5n4e6DDSEa5kzD73fzXrUlMfCPA88tPK7xLF4Ggh2HNmivIVgWMuKYnB0q8GniqNtp+TUWFdfQ9TLgp99xs9BF6hjRbErYJfgQdc/T7bKGbfUJssa09s9XHOm07HebpAg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nutanix.com; spf=pass smtp.mailfrom=nutanix.com; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=hJ3APv+v; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=vyQD9VBo; arc=fail smtp.client-ip=148.163.155.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nutanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nutanix.com
-Received: from pps.filterd (m0127843.ppops.net [127.0.0.1])
-	by mx0b-002c1b01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47QItCE8000361;
-	Mon, 26 Aug 2024 19:45:52 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com; h=
-	cc:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	proofpoint20171006; bh=hZcR4dUcD6J347eGsVgkuyDL1iQAfAF2Ox6DbbTIF
-	58=; b=hJ3APv+vUl9Zd2A/i+zWMH3ar4hZnPIyCdpqrX0Q9wAfPrGzPqvMRWoqK
-	j/9VIlaX2G09OI7hXZh1MvRhy0GI66Q3KLI+L4eSD7GfdnHbUGP//c6Dk9A/ogxb
-	LT8nRCafjNUHo4+P4/2VgeuT0CEoduT9D1ixhOXAcQCehTApznpk/tqwgc+0lVrU
-	q2JmOHxcW11nocP9MX+gQGKLaILtladaCF+Da1wX8aVFTHZtoHGHqC+1S6Na15Vd
-	rtLrYxBTxoqCshcj83GxvnAwfHKJnENz8vPWd1uYKzVu9WCRet0xKeEFK0iJb0G4
-	jYbsXSAjZw/MkhS5mHm66DmP/u1mw==
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2041.outbound.protection.outlook.com [104.47.55.41])
-	by mx0b-002c1b01.pphosted.com (PPS) with ESMTPS id 417dmhd13y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 Aug 2024 19:45:52 -0700 (PDT)
+	s=arc-20240116; t=1724726759; c=relaxed/simple;
+	bh=K+Sp0XOqcoW3gbCRA32sAaM0wymhDhKGTI/jfE8pqBI=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=NjjzabdUkcahrRGNOVUyGRslVrTpgfNInaG8UPIiGkDlCH7LNowXH+OZ71kkqxMgKeJ0Qa31vcuUe5lOwWBg5mP8o+vjp339t//4s9If8iNPl+KlAhccYVFYP5uqUvEqhWlitkwQ9S24mTG9Hn6lj7UpLeyeA288+jhR9JzETJ0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=Tel23FvY; arc=fail smtp.client-ip=40.107.255.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ILyG2IhMijvurWctcuY1cpA7qlCUbdCD9PezTRXXlyIA01aL6uo92f9W5JCYl9UotBkqjQyi2vPaDReAQLzpMO+cX4IkijHCMIEnau0tC7ia+UyS629lTPIVJGdnpn54bMdrgIVlWRtiQPkHiZPUH4eRg8HaxXdM5f38323WqBo+OKOrqc8PAvR+XCmoq2XprmYwiRIaDgggfmE06Sr85Ytg4o0/qjKmUIsZ3KqlMRplyMejXnRoCbKe7leM8pxatc9HiwqQwsWPZyp4Iz91tD9My1fzGIfQIHymL0KsEnNs6f0tU1LfC9ztWlcBD6uCORGcjVycCMXpVht1MoigGQ==
+ b=hQMImKEXGSoL62zLeSSEzGpN3HIx9a/uULsigK7FkENiy8oHaRUSYLsfsOU+99VHPOATsHrkyQniysLUET+Za4njkKE4zqIjjkPER6XWcC4DC0ykYc7JaNal3SwSzR69HqzbN/s3ewU/SNoyKIu4rkwmoXPzJeIhYJ8KI9Jl35t3Fs3KEgqYlrX/enBlZNM7/AdPREgr9dEHzyYF4F7aVkUWn4kilePPYYeZjJOUStMmy6KVaFK8zdx3a841KOHPMrKPHkktnclGcg5FIHDDhTl69h3twcL7IeFEOsVHpvsOYL4GSxzCh3tyzc2Ry/RaE4sRQSh8Gol1QwRIJZNVRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hZcR4dUcD6J347eGsVgkuyDL1iQAfAF2Ox6DbbTIF58=;
- b=P7SD5vHq4RmldhITQPkZXBu2Jsu/lEvghRm7EtwW9ejCOd4Hy2+kKrjMOV6P0A9kM9DzqdSzZCRHvrzdaoEZuzf6vvSEL4bKiIqmcohLYZGtREYk4cP1kn5u9AJYIVboC/E0V8AfsQtaETd9JF9Z/jXPiO3hjSyC9G7ioY8KIA9VIPhgZ+RC9IgV6iL44C8h/rlMq2CwFgVg0GYhplK2Ib3OXs+k9JaVIE/1Rd2caevq/eR+LATbfbJ0d8ohlTYpU+QYt9DhKjOn0ZX8drgJnjME3HT7hurO5eB1GdrrYTKTqFGkDPGCOZQrlyc3sDH+vhDcLAXp+x9GV5rRBLhwKQ==
+ bh=28fyUK/mw0AN1HNp7NcnHHKulWQL7eW2LVToReOnyX4=;
+ b=dBvZ7ZSrACYg0w9ot6uK7uaKaEqA/2qCXbkgrE1V+emnr7+qm+jKZeaWkZBaebftrLmi1pvQOFuRh+BXUo6Ns5ctDiY6fWgUCfAcMNXw0SLsXv3LNsl09AAyJJJbcLcSuEmP4lMKklOOb85wLuKUW/gnP699Ng+0kEdK/7geffyKMMAWi5w0MQ28x/c7LxMp0MWwsW6AhbMUPIhkX4aq3yzH3KQ826YkI3GvvXJVxy8UrwVdmw5Wpinzuiwp1ltzJYu7SuiCAurpoUB4Pt9D2/SaUs8Qo1rVRNnxAXSfupasWLJE1ULAmzsDiObroYEEFjgsT4xNrZt1PTnCotFTmg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nutanix.com; dmarc=pass action=none header.from=nutanix.com;
- dkim=pass header.d=nutanix.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com;
- s=selector1;
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hZcR4dUcD6J347eGsVgkuyDL1iQAfAF2Ox6DbbTIF58=;
- b=vyQD9VBoBW+BYAvgEKn2CDz68nxPf/aJwTNanz9LJkYwoEyrI7AnYaEPRXE5vfBPIYLwHUP0711W0DmQzh/5ePEHNXEvg7VXXYbdyH/EjmMp8pSn/VojNr4lytoIDp/M07X86oc/M4isxn6kgd/AgUKdfwC8OR57jaK8TXq4bMVv8gI51/elc4htQdNGCRrSh8/7/eIF1o9YVq9ChQiE4um6wHDhIr/kqT1wjHz0sFtja9txRuyFk0fSq+YOvkSmjyMHWjOZW8IaLv2Dhg6zfeKcZTE6eYhXlovKLjJ0G4cJF+tiMZQy2updUd5vGAUbbktAaxrD6d0RHh2KxMQYrQ==
-Received: from CH0PR02MB8041.namprd02.prod.outlook.com (2603:10b6:610:106::10)
- by CY5PR02MB8920.namprd02.prod.outlook.com (2603:10b6:930:38::10) with
+ bh=28fyUK/mw0AN1HNp7NcnHHKulWQL7eW2LVToReOnyX4=;
+ b=Tel23FvY5IS58BKhXKQ4CZ8L14iuYGmYqgJ6MM+V+Mxgeea7lZSl6LU4SiuJ5NiKGi3UAyQzEBUyM+v9HwylVh1OvXJFx73JPBRe2B9I/y745r2OvmU7QrNywYHt/OhSEMocNuPQIIpJNmhnpdASp/ifRarGoMgJJp3TU8gXRYS0q0vWXinuHxctmZds4BmISRbJFdaZbtTO+9VzGwI6qnDTKVKckuMxwzV6+YlGZmBqw3ve8ZiShLsFzAas3uAJNxSf7KkE7zPTfUdBDNpDEDfF9dVwzaSXIqCvaNPRIyoWrVzTB6E4PdENwi3iquLdAlz9E4gJGUHmHt5eOveCnQ==
+Received: from OSQPR06MB7252.apcprd06.prod.outlook.com (2603:1096:604:29c::6)
+ by JH0PR06MB6917.apcprd06.prod.outlook.com (2603:1096:990:67::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Tue, 27 Aug
- 2024 02:45:47 +0000
-Received: from CH0PR02MB8041.namprd02.prod.outlook.com
- ([fe80::b78d:8753:23a8:cc78]) by CH0PR02MB8041.namprd02.prod.outlook.com
- ([fe80::b78d:8753:23a8:cc78%4]) with mapi id 15.20.7897.021; Tue, 27 Aug 2024
- 02:45:46 +0000
-From: Eiichi Tsukata <eiichi.tsukata@nutanix.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-CC: "peterz@infradead.org" <peterz@infradead.org>,
-        "mingo@redhat.com"
-	<mingo@redhat.com>,
-        "namhyung@kernel.org" <namhyung@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
-        "jolsa@kernel.org" <jolsa@kernel.org>,
-        "irogers@google.com"
-	<irogers@google.com>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "kan.liang@linux.intel.com" <kan.liang@linux.intel.com>,
-        "james.clark@linaro.org" <james.clark@linaro.org>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] perf test: Use -Wp,-U_FORTIFY_SOURCE for tests built with
- -O0
-Thread-Topic: [PATCH] perf test: Use -Wp,-U_FORTIFY_SOURCE for tests built
- with -O0
-Thread-Index: AQHa58iFg0Q+913iDEurf7AueZctN7IZw9OAgB81zYCAAMMogIAAygcA
-Date: Tue, 27 Aug 2024 02:45:46 +0000
-Message-ID: <CB550CF8-B45D-44D8-BDFC-3633DD99AFB0@nutanix.com>
-References: <20240806061749.143072-1-eiichi.tsukata@nutanix.com>
- <4D19AE26-E1B4-44B6-A8C7-639EF2B69317@nutanix.com>
- <C00F1D39-9A12-4D1C-85BD-48A6D7C0290B@nutanix.com> <ZsyUVWXtzBmm-U_q@x1>
-In-Reply-To: <ZsyUVWXtzBmm-U_q@x1>
-Accept-Language: ja-JP, en-US
+ 2024 02:45:49 +0000
+Received: from OSQPR06MB7252.apcprd06.prod.outlook.com
+ ([fe80::814e:819a:7d52:7448]) by OSQPR06MB7252.apcprd06.prod.outlook.com
+ ([fe80::814e:819a:7d52:7448%6]) with mapi id 15.20.7897.021; Tue, 27 Aug 2024
+ 02:45:49 +0000
+From: Billy Tsai <billy_tsai@aspeedtech.com>
+To: Andrew Jeffery <andrew@codeconstruct.com.au>, "linus.walleij@linaro.org"
+	<linus.walleij@linaro.org>, "brgl@bgdev.pl" <brgl@bgdev.pl>,
+	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"joel@jms.id.au" <joel@jms.id.au>, "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+	<linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, BMC-SW <BMC-SW@aspeedtech.com>
+Subject: Re: [PATCH v1 2/2] gpio: Add G7 Aspeed gpio controller driver
+Thread-Topic: [PATCH v1 2/2] gpio: Add G7 Aspeed gpio controller driver
+Thread-Index: AQHa85jW3giFtrQL+EeXEX8rz+LNzbIyfuSAgAbXd+c=
+Date: Tue, 27 Aug 2024 02:45:49 +0000
+Message-ID:
+ <OSQPR06MB7252CBAEBF1DBE2C613F24748B8B2@OSQPR06MB7252.apcprd06.prod.outlook.com>
+References: <20240821070740.2378602-1-billy_tsai@aspeedtech.com>
+	 <20240821070740.2378602-3-billy_tsai@aspeedtech.com>
+ <cf92b3ab4b171e7c7c07cada066dad6323c5dace.camel@codeconstruct.com.au>
+In-Reply-To:
+ <cf92b3ab4b171e7c7c07cada066dad6323c5dace.camel@codeconstruct.com.au>
+Accept-Language: en-US, zh-TW
 Content-Language: en-US
 X-MS-Has-Attach:
 X-MS-TNEF-Correlator:
-x-mailer: Apple Mail (2.3776.700.51)
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH0PR02MB8041:EE_|CY5PR02MB8920:EE_
-x-ms-office365-filtering-correlation-id: 81748160-c1e1-426e-0291-08dcc6425a7b
-x-proofpoint-crosstenant: true
+x-ms-traffictypediagnostic: OSQPR06MB7252:EE_|JH0PR06MB6917:EE_
+x-ms-office365-filtering-correlation-id: 97fa230c-5acf-493d-d3f1-08dcc6425c23
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700018;
+ BCL:0;ARA:13230040|7416014|1800799024|376014|366016|38070700018|921020;
 x-microsoft-antispam-message-info:
- =?utf-8?B?QzlwVGJVdm1INWRZRU1IVFRBRjhVaHhmSGFyVFpRNklSU2tqbXFiVXp0ZHZB?=
- =?utf-8?B?dW5WUVhwU0RDSHM0ZWdLYk4zN2UyN1dQU09pcktLM0pRaC9vNzNJMDlqdEh1?=
- =?utf-8?B?NXZtL0pUL3IvbElNZE1PbE93M3FWWHpZYlpXOXpLQ0pJdGlLdWZLQkJqcE9a?=
- =?utf-8?B?UWFpcm4yaTI3bWhmWEV0TUcwNjg5QnJPcnZGb1V1Ukovb0FkbkNkUWc3UVlo?=
- =?utf-8?B?T3Z4dzJhcEJVL2hjNmEzcDl3M29xOStJMnord2hsK2ZvWVhlNC9Wc2Nya0ZE?=
- =?utf-8?B?aDc4YmJoUnpCUWRnREs5RFpjMXg2aWs4L1ppeDZXMzhCUG5iUWxmUjczK2Zr?=
- =?utf-8?B?eWVNSGFXcHZEeFlyRlNTb2dhYTN1QlZaRTM1SkRLd0h6ZDBjSXJKR1YwNzVs?=
- =?utf-8?B?TjBTU0NGcmQySjFxSm1BeGFaeUpzZUJ1WjVybVJEdDd2WURJQ056c05WVEpx?=
- =?utf-8?B?UEhrbjBkdzV2UTQ5dEJ6bkJrMUVKRXVDU2Y5dHZBcjZDYjBhYzMweFRnbTZU?=
- =?utf-8?B?MzZWcGFWWHA0Rm9uQTdHT3N0QVRGUDRHNVpxOXdSSTFkL1NwRm1TL0tUM0NU?=
- =?utf-8?B?MVRxZWtsd3ZodDV6MEVrK2YvZVJkK2ErYkp6M3oxY1VBaHF2cjlCM25DeTlQ?=
- =?utf-8?B?eXdSaVFjK00wUVdlWkloQklyK3VCcDBMVWlEcGUvOTk1dzlCMi92Nk1wWjB2?=
- =?utf-8?B?QXZqeDNOVWwvSHZGTnVMcTRDa2xPTmI2TTFxSDdoMHI5dWJHKzNWdzBUY3Bp?=
- =?utf-8?B?Z3lJNzNHTE0rc0lIaE45Vjd1UXNjR0NyZzdZSkZETXZId0hPaVNtcE5zSDY0?=
- =?utf-8?B?c0V6MCtSVVVwUXpsbU1CZjk4SHhnaElhZndUZ3pSRkljNEUzMTJtRmxRazBp?=
- =?utf-8?B?ZC80eUJFVzV2RHJCdjNwL0dpVWc2cGo0WUhLOFdmdkx2VDZLL09TT0lGUDJS?=
- =?utf-8?B?WVBpOWJ2Z0c0QnA0NGxoNy8rZlNRMG1kVWZZWjcxeWFQVjEyc1NmY0o1NFFT?=
- =?utf-8?B?b1lPYTYwNlI4Ukc3bXJVMzJWYnhoQkN3ZFl4R3lia2t5WHkwUWVaUW9rb2Fv?=
- =?utf-8?B?S3N4SjZYTnI4SnRqaUpUK3Y4dUZnSjRSM28zZS9NNXp2czR1OUZTTHJkU3kz?=
- =?utf-8?B?bzVPZHBRU3VvcUJQZmZ5azFXNXFDb0dpd014c2VxTkNYNHlLRlFEbS8xbWVi?=
- =?utf-8?B?S1FqcFZkNTIrcnUxWDgzSHVHb3JQRVdDYlBjQWFKTEc5TVVoVzYxZHpLNlNU?=
- =?utf-8?B?bFIxRGh0V1Vra0ZMK041R3BXbzN2blpMN1JnenZ2Mm5xeitVdWtsdWhCWUI5?=
- =?utf-8?B?MFY0NmFxR3FFWGI4ZzJTUFBqMFJGa21Ycm1mcnkyQW1ZZkJFbm1uZEtsbjZ6?=
- =?utf-8?B?b2VQaFRZVVliRFJ0TzBsZXU0bC92Y0xrbTQ5eW5UUm1IZzhsSURZdmlkN3ZV?=
- =?utf-8?B?dzljYjFZUUtFcnF0S2grekNXdkgxWmc5MXgzTm1zYm1LRUhIaFVqYTBXcmxa?=
- =?utf-8?B?c1FJVDJSUkd4YTMvVDV3QjJMalArVkF3b2x4OEJWQ1dGblhIdlZNYTNBUnFK?=
- =?utf-8?B?cXgwWERvN1lGdTlHRWs1MXBPLzNWRWJ3YkJxM2tMckU2WTFrVzdZSWtEeGZp?=
- =?utf-8?B?SWVHdEtNMzNKQXVEU2hMTGRMNVphRE5yNGd2bHc3NnBDU0RLVFpnblFNVzNR?=
- =?utf-8?B?YWpkQk5hOENiNU1uTi9LNzVRdTFHNU9EdzdOeWw4SkkrWTFhK0d1QnMxemhr?=
- =?utf-8?B?alRPNkNLV2xobkFwVEM1cVlsL3lEcnpndCtkdmpVUkZWeWdHb2pvUnBNNEZP?=
- =?utf-8?Q?eUD3PmSkDcAwuEoi9taBIboY/R/UK2ICOVFZ8=3D?=
+ =?Windows-1252?Q?fpSNjwSODAUW7NocjycVbQKXhLbOPac36b6YkjBBCH7K+Fa4aw6/peJh?=
+ =?Windows-1252?Q?RHB33hsBgFf1wZDBYglKPzAQ8zzF9crAWyVfLRRqtjepyil2zhGsf9hh?=
+ =?Windows-1252?Q?zTypdmYXkNZJlQ4isdhOVV3apyVuRoGHYKACb7b8pBDiyuuAqskSa9W6?=
+ =?Windows-1252?Q?EbgTIW36g6fCr6lw1E59yDqCYhH5IaE1FntkS/H11mMrIdlQwvZlZavH?=
+ =?Windows-1252?Q?PwnpQ3xKT+bm73xZxLeR7j3jm1t8Wj/8xGpNpKj0oGj8IoEEY+Fb8Dl8?=
+ =?Windows-1252?Q?+8xpU5jGPJfkCDrCFHXIjJ33avXRUfxcUi/HpgfjQvkSyX5kkCINdctd?=
+ =?Windows-1252?Q?FcI8SjRcfC3F6xUlpVtB7y36VnejWel3whG3FJEMdG9X0jSjt7zlQzcC?=
+ =?Windows-1252?Q?LC9rHQl053Xqp+IHNW8u4T0QscBxDQdTmzDR9XPhGtyNR0BkrqgTvw6B?=
+ =?Windows-1252?Q?k5sFWEwvn8XBMBrKjHj/skIxzRMpir1VOr78tYUyTT99qYM9qmLbMBTS?=
+ =?Windows-1252?Q?8kgh30XvmAVA06pyN6Ndrb+LF4yl6mFBa7o/CRKbgEZewpUxKeN7lGK4?=
+ =?Windows-1252?Q?wAJMO6Owe/hR9vsro2ZgLsVvWA6oJ3UUebczylWGnTUIOk/U6SXwXm/H?=
+ =?Windows-1252?Q?bzcUilCeq4SrE7W5y/H7Jgsj3eCDgAQDB6HhZwAqO809la9V/VwP7z/L?=
+ =?Windows-1252?Q?K7Xp/L74qN8sjOjqVCtO57/W9zbKe85/+bUl+nrPlfFftfFpKyDvIdXb?=
+ =?Windows-1252?Q?NonXllRNSIt9+p/fE3wqyaqn67iQwQb8uAY1ImwDRaMaZFDhJ1aDpMGz?=
+ =?Windows-1252?Q?4fdJW1vwXOzVO7ZPEJRCPaEKVmcRpIbpkqSsh0bYwIZHga0PN7veQIlu?=
+ =?Windows-1252?Q?xwWe2D5BLDruQoaSfj3gzlV1ZgM2Y5uFkoUnujEx42458II6xOZ/YxmX?=
+ =?Windows-1252?Q?keddGhKuDpGACloLDmdxVNxD2LcQgsLP0SoETzCEwab05BI8eOXEW9of?=
+ =?Windows-1252?Q?wAYqAEJW6mpy7Iou+HJ+sK2HE4tKa4AqnASVSsqNx4buZk5ycPZobnD6?=
+ =?Windows-1252?Q?38Y3WpVTxufoM/IFf7WC9oFfTZhtP5Fl4h0vnC9UftTytlrjzvBG+sz9?=
+ =?Windows-1252?Q?iV0RSPxfOk5XO1du0h+jY1iF1mT1+6LlmGlavYJiMNgkXDXqq8oqmRGz?=
+ =?Windows-1252?Q?0ddXS94Js7QagC51ANmbmrljdOLNviQFXLY4lVkMODUJo0QYDZip7hmH?=
+ =?Windows-1252?Q?w7S7dO2WsNJQAecuHztABJQVV5AyVLgbINC6RdJXHdC9i7ObDfVXLR3F?=
+ =?Windows-1252?Q?cHPhMScD4eFq/IJAeW46YzIbcsRSyaob91h+qJaxmCihc35G+wcTbylm?=
+ =?Windows-1252?Q?VfsFeJ673jgaLXqsW3Fikqrrm2tPxImGWsNHUElsuXFFk7iBZxUOgG46?=
+ =?Windows-1252?Q?fHL7NkRk8MT/bLXm4mWlidFocxghP0ptV2JlDcNQXDXIeFEwTc1YZFDP?=
+ =?Windows-1252?Q?XbEI1ZdHKAEB/WKtdE+ws+w0Vg3Twlqf1Qb7vQeghK4G6HFrUto=3D?=
 x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR02MB8041.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700018);DIR:OUT;SFP:1102;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSQPR06MB7252.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016)(38070700018)(921020);DIR:OUT;SFP:1102;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?VkVQeXdmS0xMU2dvNWtzWlpJQ0VHak1ZS2JmQ21vMCtydmxpMkFxaEJpNk9a?=
- =?utf-8?B?aWdkZHhjLzZkTlhxRFZFNWpKbGtlNm5TdDc2NW1CM2F5NTVubzliT0hQVTdT?=
- =?utf-8?B?T0RuMm9ZK0gwd1lKL1FtNFpZVC95NHV2SXlETTlVZXh2L0w4UkR1aXpEYWh5?=
- =?utf-8?B?NlhMSkgza21YdURGK2o4RVZzS1J1TnNlaG9FME43NXRwK05yYW9zTHVwZTJp?=
- =?utf-8?B?anRjc1dBYjFJbUdmb25kcjZqbHFjRDFoTzdQcDZPWW12N0ozNDZiYVdXWVJO?=
- =?utf-8?B?OXVRcWdIRDltY1pLMXlIWUtVRkg0VWxQay8wWDBreTZ4am1ieFdPdDdlc3FP?=
- =?utf-8?B?cGhRb2hTazBZRndLMGZnWDUxNXVkN3VUNUhqYnFiektOVXEyQkpGTktrNXI1?=
- =?utf-8?B?cDdnN1h6NEN2R2NoWFlRSGZpYzNpRmx6OGcwYTBya0ZiOTdjdGdNK28xb2NY?=
- =?utf-8?B?UGFieitYN0c1TERzaWw0UnZiNGhGajlKeSs2U0dBWEI5Mk9wU09ZWW9iZGo3?=
- =?utf-8?B?eDFicGFsRnp4M3prRkIrRmhaSTlmK1dTK2pQektvdFIwV3ZQeDRNV3JWS0N3?=
- =?utf-8?B?c051dFVZczV6RW9uQjQvU05UUVJxKzZGOVV1eFRWY0tnenZJZGc4MnRPMGlN?=
- =?utf-8?B?bGV4N09SQjhUR2M1UzBNa0ZwVGY1ZGpTWXp5ajd3bTNSb2ljU0JQdzdiV2hj?=
- =?utf-8?B?TC9PaTdKTldyejNWcmJQeTB2ZnhGdmRoMnd1MmtOUUlaSXpWdkh1NHhLSUZZ?=
- =?utf-8?B?ekhOTVJpbm9Pb2twVXBCaXpFZDI0bTVyNUlLckhKQVVkMVVGbzhGVkZaU0hC?=
- =?utf-8?B?T0JLaW5qNFpmZUIxS3FTOFplRUlRK2ZCVEVwMUtZZ3RqdFcrL2hJS216VmY1?=
- =?utf-8?B?U1JGTnZsN0kxbG1Wc3VpSnMrVThnemtCZ011S1lITGJNNmNlRjFHMWh2NWdW?=
- =?utf-8?B?ODNoRjJJRzBHZFNQdmM4NkFuVXBXU0VWKzJSWmpNdWVHMytFaEhvUU13TWtv?=
- =?utf-8?B?MDFOWUpJelNGV09xV2tESTFXb2I4dzZlTWVXRnZmQzhhWjdMYTRBZ3h5ejFP?=
- =?utf-8?B?L1NXeitjMXdwcmFHVTVaTEp4V1k2Z0ZDY0J6dVF0azlCME5TclpWaDhlUWQv?=
- =?utf-8?B?dGdUakxjOXVDWWc5RjBKTjFsdjRYOVJqUW1XODAzM1hvdUY2SUYyZ3ZiTzFB?=
- =?utf-8?B?SXdjbU5pY25vVWpVQlRrRjRIQ0QyZ09lZkd1Snd2ZGJHR3Q2N05XaTJvTUpF?=
- =?utf-8?B?ZVYwT0Z1ZmxHZE1kUktJTk5KcHNrT3JNODRSNVBUNkZOSUpaZEpmTXg4RHpw?=
- =?utf-8?B?WFhBYjVEeERON2tDWG44OTkxbjVQZXdLR1V3bVlWaENDLzl3ak5vNHlLaEtW?=
- =?utf-8?B?WVJqeHFwMTZmbkpQR1ZkbzUxZXlabTlSc29SQ1hnUnZHVFlweW1UcnFkeGEy?=
- =?utf-8?B?VVYvbFVOdTB6ZGwxKzFTNUp6WDZkWmpJdmtRVHRwdGZxQkZSUks0dzNDWWZT?=
- =?utf-8?B?aWNzVVR1SmhsbTlKV3RFUGxGaXQrK3oyUnk3ZzJvdnBZckVaQitHWUwzMVI2?=
- =?utf-8?B?bkZPN0VnK1U5WnhqeksvTXp2cmo5a2V5c0phajJzeUx1QTRqMisvREtnMllW?=
- =?utf-8?B?RU9nWDZFWTlzcENubXlzenVmLzNYMEpsakFTWU5ycVAvcERNK09adWduUklI?=
- =?utf-8?B?ODlCTG5YQXlEVWxkenIxanJIbDRDaE1wekFrMmphWEoyVGptQTYyYjlNMm95?=
- =?utf-8?B?V2xFWE1wRTVGdWlXUVFnNzFrRTFTV0U0MDA5VjlKaHlhUXJLRVVmd3NLV2lD?=
- =?utf-8?B?RUwwMkRNZ3ZVT0tvREJMcDEwS2VxaTVDbnRrMGY3MzdlUmYvc3RQK3RBSXNI?=
- =?utf-8?B?YWl5cTFMdTcrZTI3OEdqZDlTWmRVbjhWbDd2VjhDdi84dytnKzBHellURlpo?=
- =?utf-8?B?QloxR0g5bUtIaDZvTm0wc1dEdVgySWpwRFpvanJodlZyMkh4WGZBaDl2ekRo?=
- =?utf-8?B?UWhkMzJwYWJZYkY2bFFpSlVtbVNOd1AyY1JneFQxa2k1Sk8rVVBpam5NQktt?=
- =?utf-8?B?N0tYZkVTZjRjQzJXOXBTU21TZndPMXk0aEU2RDdXQ0ZXYzB2M05Ja0Y3cXJ6?=
- =?utf-8?B?RTYwZE5uL0lCUDhVVm80Q3Rpai8yb0pERUFuUmtRa0hScHV0QzhoTStyUmJv?=
- =?utf-8?B?VEE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <CE83A8C9BCC50C4D8E74CC70B770067F@namprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
+ =?Windows-1252?Q?LMwTan7nNqzQ3z0YpHKEspVC8ZO4kOqkzNVUW6oDnA6X0FRmNfmlyno+?=
+ =?Windows-1252?Q?e2wzTG0tQXVaV+mkk+YYbQOZbxtE5CRczUZ+tqWjJ90jzQyPee8MVRe1?=
+ =?Windows-1252?Q?lnrAYqrepTitwd61OoEzwRZfZzAVAmPp4ukNnyOC/YPBp4SVMTGkDF/Z?=
+ =?Windows-1252?Q?tWV+XMayDx+UtCLoqxS/JokmyDHHFXC63WePxuP8PK5fA0zp9InqNVqA?=
+ =?Windows-1252?Q?g/sBErz5yX9S3BA3sNeUKIr7VizWVoAU217KOeDw19yRzLj/Dd5neg/x?=
+ =?Windows-1252?Q?8Ns/ntaQPdvlknNXObH82QBWMHw2q8+vEHCDz6nBz825Da90pr793L2Z?=
+ =?Windows-1252?Q?MeIU8i03aB6W1o+eOzuDr6W5oY1YXnzugl6xpLaDi1KCvn7ePOo5ssTO?=
+ =?Windows-1252?Q?5Qm3cThKys+eexi9xnJLaeYBicFRayat0cbwVrjtryrluPd0jN6VcRbD?=
+ =?Windows-1252?Q?J1TCU2qMFhmlZBlc2j8N/LpN/Gt3+UydtAoKIOwGFZrhPzH5R/PjsF01?=
+ =?Windows-1252?Q?Zl94MhbIKWDlBrtT9jTR3ZFbd381LVHKx2fvCRHmYsxISQ9I7ctTvcbR?=
+ =?Windows-1252?Q?MdJZfYUjYqe8gOu6YfdenXEan+qkREwEEQEoDkjd37q2LK6a/7sWqDFD?=
+ =?Windows-1252?Q?BWu16Z4GfWccJpQL02yrwWNdCrRHHfb1MV6WcxJGdEbbgM4Nk+6wolJT?=
+ =?Windows-1252?Q?xJVLnWq5k8GRaZqiXMuAAmQvI8rAgRVkGe28JKOFANhkVb3LwcJAlb89?=
+ =?Windows-1252?Q?vRY8SWx9AAFl3MwNPUMEF3ahwwNR+6+sDj3hWrM2Ayc04Vd84tOoVJyq?=
+ =?Windows-1252?Q?Fd/nS8X//4aeiLb/B66VYZU8EPVgo7jG2HGIrB0WSBr1FjKPb6bCINo8?=
+ =?Windows-1252?Q?08GNT6VHTgJYuJIfrDEwdT24KWLARdEjcuUUY05W0SHl5c0hyZb+PHoc?=
+ =?Windows-1252?Q?e0UiXCPDYq0qs+b0B/w1IUGn+u5iX3d6un+Uu0T2o01CLzqC0cf63unN?=
+ =?Windows-1252?Q?uMI56rVP3atw8lyxX3HZTJgauEco4BTr1IaHQmNtMZ2/IvRJkbiORhVy?=
+ =?Windows-1252?Q?bAoKXsMCnzDcc6GOZ8JW8Jm8o4FZq42U9dxa+EeqDJlt7WSVzO2RN8/8?=
+ =?Windows-1252?Q?Ffs/xOcGglwSs0f7v1TzvFSIBzvTVwkpNvLwKsq3/zWesQbkPjyLCVsZ?=
+ =?Windows-1252?Q?w4empBVibEmZ3Y/S5guF7CvNnHmEnEj2EOXBu35xc4VYkuHqiqfqgXcZ?=
+ =?Windows-1252?Q?yT/e+zYVXKQSb54Dn8H8hraRnqHb7C42MDHZy9lH6yVm/QpGSnLcY6LC?=
+ =?Windows-1252?Q?+7Gaw9hRu5aF9iax2J5KKC5YC5sOpHpbecE63MMOqpnsC4zVqS3XvMzP?=
+ =?Windows-1252?Q?pQuocxLOi8hHQ0RpKipZJixVJe2xdJA2zrQt3SJlxZ4W7fNoImHSgP9r?=
+ =?Windows-1252?Q?LJHjQ7AzYwzK0JYg9n2sdxaohwdKwZfS0UASAhhftnwJAityLOaSC310?=
+ =?Windows-1252?Q?oVy6xAw7LzL45RZXv9cuwWctmUPhlA7TtKhL/FY+bqgLyn6Naz3fNbC4?=
+ =?Windows-1252?Q?664QcigEn9d19DxVcBcsdJjsD+gU2DNyZP0oHemq1Cg5cY1g2es2HTl3?=
+ =?Windows-1252?Q?zSMRUiVNCEgPWZCo8ecW1lim29SPjj53BGV3QswTQaDOWBL5hlVmXq5I?=
+ =?Windows-1252?Q?v1CCafZcsycBvXK2bSudbenWFLFWNgRA?=
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nutanix.com
+X-OriginatorOrg: aspeedtech.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR02MB8041.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 81748160-c1e1-426e-0291-08dcc6425a7b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2024 02:45:46.7546
+X-MS-Exchange-CrossTenant-AuthSource: OSQPR06MB7252.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 97fa230c-5acf-493d-d3f1-08dcc6425c23
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2024 02:45:49.5321
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: bb047546-786f-4de1-bd75-24e5b6f79043
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: eoJgRpG6hVk3rdOudRrxf2Wf5a0QNmsQMLXVWoQqli5RyoZZrz04F9ClmrcF57X6tGEBI6nuVrFcXw0/uCBR48DQlzihqRFjshSWBFwb34I=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR02MB8920
-X-Proofpoint-ORIG-GUID: DXu8TKEkj-gIT6ncIl4MYNgEDdSbyrMk
-X-Authority-Analysis: v=2.4 cv=TK4XSEla c=1 sm=1 tr=0 ts=66cd3de0 cx=c_pps a=O5U4z+bWMBJw47+h9fOlNw==:117 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=0034W8JfsZAA:10 a=VwQbUJbxAAAA:8 a=64Cc0HZtAAAA:8
- a=20KFwNOVAAAA:8 a=vTr9H3xdAAAA:8 a=tBumzC45FfrXMkWmbVMA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=14NRyaPF5x3gF6G45PvQ:22 a=7PCjnrUJ-F5voXmZD6jJ:22
-X-Proofpoint-GUID: DXu8TKEkj-gIT6ncIl4MYNgEDdSbyrMk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-27_01,2024-08-26_01,2024-05-17_01
-X-Proofpoint-Spam-Reason: safe
+X-MS-Exchange-CrossTenant-userprincipalname: sr8gkG4Q+SViYjt0/YYdIZKB78mEFHBMA8UwMZ5jAadM5RFaFXZBFgLeK2fXLPi3TBMixujPvK9q4moo/6kpRXvgGuCXIobH9NIDj9PuyH4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6917
 
-DQoNCj4gT24gQXVnIDI2LCAyMDI0LCBhdCAyMzo0MiwgQXJuYWxkbyBDYXJ2YWxobyBkZSBNZWxv
-IDxhY21lQGtlcm5lbC5vcmc+IHdyb3RlOg0KPiANCj4gT24gTW9uLCBBdWcgMjYsIDIwMjQgYXQg
-MDM6MDQ6MTJBTSArMDAwMCwgRWlpY2hpIFRzdWthdGEgd3JvdGU6DQo+PiBQaW5nDQo+IA0KPiBU
-cmllZCwgZGlkbid0IHdvcmssIGNhbiB5b3UgcGxlYXNlIGNoZWNrIG9uIHRoZSB0bXAucGVyZi10
-b29scy1uZXh0Pw0KPiANCg0KSXQgZmFpbGVkIGJlY2F1c2UgInBlcmYtdGVzdC15ICs9IGxhbmRs
-b2NrLm/igJ0gbGluZSB3YXMgYWRkZWQgcmVjZW50bHkuDQpJ4oCZbGwgcmViYXNlIHRoZSBwYXRj
-aCBvbiB0bXAucGVyZi10b29scy1uZXh0IGluIHYyLg0KDQpUaGFua3MNCkVpaWNoaQ0KDQoNCj4g
-4qyiW2FjbWVAdG9vbGJveCBwZXJmLXRvb2xzLW5leHRdJCBiNCBhbSAtY3RzbCAtLWNjLXRyYWls
-ZXJzIDIwMjQwODA2MDYxNzQ5LjE0MzA3Mi0xLWVpaWNoaS50c3VrYXRhQG51dGFuaXguY29tDQo+
-IEdyYWJiaW5nIHRocmVhZCBmcm9tIGxvcmUua2VybmVsLm9yZy9hbGwvMjAyNDA4MDYwNjE3NDku
-MTQzMDcyLTEtZWlpY2hpLnRzdWthdGFAbnV0YW5peC5jb20vdC5tYm94Lmd6DQo+IEFuYWx5emlu
-ZyAzIG1lc3NhZ2VzIGluIHRoZSB0aHJlYWQNCj4gTG9va2luZyBmb3IgYWRkaXRpb25hbCBjb2Rl
-LXJldmlldyB0cmFpbGVycyBvbiBsb3JlLmtlcm5lbC5vcmcNCj4gQ2hlY2tpbmcgYXR0ZXN0YXRp
-b24gb24gYWxsIG1lc3NhZ2VzLCBtYXkgdGFrZSBhIG1vbWVudC4uLg0KPiAtLS0NCj4gIOKckyBb
-UEFUQ0hdIHBlcmYgdGVzdDogVXNlIC1XcCwtVV9GT1JUSUZZX1NPVVJDRSBmb3IgdGVzdHMgYnVp
-bHQgd2l0aCAtTzANCj4gICAgKyBMaW5rOiBodHRwczovL3VybGRlZmVuc2UucHJvb2Zwb2ludC5j
-b20vdjIvdXJsP3U9aHR0cHMtM0FfX2xvcmUua2VybmVsLm9yZ19yXzIwMjQwODA2MDYxNzQ5LjE0
-MzA3Mi0yRDEtMkRlaWljaGkudHN1a2F0YS00MG51dGFuaXguY29tJmQ9RHdJRGFRJmM9czg4M0dw
-VUNPQ2hLT0hpb2NZdEdjZyZyPWR5MDFEcjRMeThtaHZuVWR4MXBaaGhUMWJrcTRoOXo1YVZXdTNw
-YW9adGsmbT1fME9PYlpzbXg2RmpqdWVIWmFmUGpKajhnS3piQnNGY19EZS16OVYtTmxEcUJkUDJK
-WGtWSGV5NFpudmJDNWV0JnM9UncydmUtNFY4eVNDeXk3Qjk5UDZmYzFiaUxBZUZrY2pwY0IyU2pU
-QUFjOCZlPSANCj4gICAgKyBTaWduZWQtb2ZmLWJ5OiBBcm5hbGRvIENhcnZhbGhvIGRlIE1lbG8g
-PGFjbWVAcmVkaGF0LmNvbT4NCj4gIC0tLQ0KPiAg4pyTIFNpZ25lZDogREtJTS9udXRhbml4LmNv
-bQ0KPiAtLS0NCj4gVG90YWwgcGF0Y2hlczogMQ0KPiAtLS0NCj4gTGluazogaHR0cHM6Ly91cmxk
-ZWZlbnNlLnByb29mcG9pbnQuY29tL3YyL3VybD91PWh0dHBzLTNBX19sb3JlLmtlcm5lbC5vcmdf
-cl8yMDI0MDgwNjA2MTc0OS4xNDMwNzItMkQxLTJEZWlpY2hpLnRzdWthdGEtNDBudXRhbml4LmNv
-bSZkPUR3SURhUSZjPXM4ODNHcFVDT0NoS09IaW9jWXRHY2cmcj1keTAxRHI0THk4bWh2blVkeDFw
-WmhoVDFia3E0aDl6NWFWV3UzcGFvWnRrJm09XzBPT2Jac214NkZqanVlSFphZlBqSmo4Z0t6YkJz
-RmNfRGUtejlWLU5sRHFCZFAySlhrVkhleTRabnZiQzVldCZzPVJ3MnZlLTRWOHlTQ3l5N0I5OVA2
-ZmMxYmlMQWVGa2NqcGNCMlNqVEFBYzgmZT0gDQo+IEJhc2U6IG5vdCBzcGVjaWZpZWQNCj4gICAg
-ICAgZ2l0IGFtIC4vMjAyNDA4MDZfZWlpY2hpX3RzdWthdGFfcGVyZl90ZXN0X3VzZV93cF91X2Zv
-cnRpZnlfc291cmNlX2Zvcl90ZXN0c19idWlsdF93aXRoX28wLm1ieA0KPiDirKJbYWNtZUB0b29s
-Ym94IHBlcmYtdG9vbHMtbmV4dF0kICAgICAgICBnaXQgYW0gLi8yMDI0MDgwNl9laWljaGlfdHN1
-a2F0YV9wZXJmX3Rlc3RfdXNlX3dwX3VfZm9ydGlmeV9zb3VyY2VfZm9yX3Rlc3RzX2J1aWx0X3dp
-dGhfbzAubWJ4DQo+IEFwcGx5aW5nOiBwZXJmIHRlc3Q6IFVzZSAtV3AsLVVfRk9SVElGWV9TT1VS
-Q0UgZm9yIHRlc3RzIGJ1aWx0IHdpdGggLU8wDQo+IGVycm9yOiBwYXRjaCBmYWlsZWQ6IHRvb2xz
-L3BlcmYvdGVzdHMvd29ya2xvYWRzL0J1aWxkOjcNCj4gZXJyb3I6IHRvb2xzL3BlcmYvdGVzdHMv
-d29ya2xvYWRzL0J1aWxkOiBwYXRjaCBkb2VzIG5vdCBhcHBseQ0KPiBQYXRjaCBmYWlsZWQgYXQg
-MDAwMSBwZXJmIHRlc3Q6IFVzZSAtV3AsLVVfRk9SVElGWV9TT1VSQ0UgZm9yIHRlc3RzIGJ1aWx0
-IHdpdGggLU8wDQo+IGhpbnQ6IFVzZSAnZ2l0IGFtIC0tc2hvdy1jdXJyZW50LXBhdGNoPWRpZmYn
-IHRvIHNlZSB0aGUgZmFpbGVkIHBhdGNoDQo+IGhpbnQ6IFdoZW4geW91IGhhdmUgcmVzb2x2ZWQg
-dGhpcyBwcm9ibGVtLCBydW4gImdpdCBhbSAtLWNvbnRpbnVlIi4NCj4gaGludDogSWYgeW91IHBy
-ZWZlciB0byBza2lwIHRoaXMgcGF0Y2gsIHJ1biAiZ2l0IGFtIC0tc2tpcCIgaW5zdGVhZC4NCj4g
-aGludDogVG8gcmVzdG9yZSB0aGUgb3JpZ2luYWwgYnJhbmNoIGFuZCBzdG9wIHBhdGNoaW5nLCBy
-dW4gImdpdCBhbSAtLWFib3J0Ii4NCj4gaGludDogRGlzYWJsZSB0aGlzIG1lc3NhZ2Ugd2l0aCAi
-Z2l0IGNvbmZpZyBhZHZpY2UubWVyZ2VDb25mbGljdCBmYWxzZSINCj4g4qyiW2FjbWVAdG9vbGJv
-eCBwZXJmLXRvb2xzLW5leHRdJCBnaXQgYW0gLS1hYm9ydA0KPiDirKJbYWNtZUB0b29sYm94IHBl
-cmYtdG9vbHMtbmV4dF0kDQo+IA0KPj4+IE9uIEF1ZyA2LCAyMDI0LCBhdCAxNToyNywgRWlpY2hp
-IFRzdWthdGEgPGVpaWNoaS50c3VrYXRhQG51dGFuaXguY29tPiB3cm90ZToNCj4+PiANCj4+PiBI
-aSwNCj4+PiANCj4+PiBGWUk6IEZlZG9yYSB1c2VzIOKAnFJQTV9PUFRfRkxBR1PigJ0gIGFzIOKA
-nEVYVFJBX0NGTEFHU+KAnSB0byBidWlsZCBwZXJmLg0KPj4+IGh0dHBzOi8vdXJsZGVmZW5zZS5w
-cm9vZnBvaW50LmNvbS92Mi91cmw/dT1odHRwcy0zQV9fc3JjLmZlZG9yYXByb2plY3Qub3JnX3Jw
-bXNfa2VybmVsX2Jsb2JfcmF3aGlkZV9mX2tlcm5lbC5zcGVjLTIzLTVGMjkwOCZkPUR3SURhUSZj
-PXM4ODNHcFVDT0NoS09IaW9jWXRHY2cmcj1keTAxRHI0THk4bWh2blVkeDFwWmhoVDFia3E0aDl6
-NWFWV3UzcGFvWnRrJm09XzBPT2Jac214NkZqanVlSFphZlBqSmo4Z0t6YkJzRmNfRGUtejlWLU5s
-RHFCZFAySlhrVkhleTRabnZiQzVldCZzPTlFS0Vnb2JrNGxhbUxHekZYOUcwaGZTakptcXZtVTFj
-T2VvSlVHVlhuX2cmZT0gDQo+Pj4gDQo+Pj4gQW5kIG9uIEZlZG9yYTQwLCAgaXQgaGFzIOKAnC1X
-cCwtRF9GT1JUSUZZX1NPVVJDRT0z4oCdLg0KPj4+IA0KPj4+IFtlaWljaGlAdDQ5NSB+XSQgcnBt
-IC0tc2hvd3JjIHwgZ3JlcCBSUE1fT1BUIHwgaGVhZCAtbiAxDQo+Pj4gUlBNX09QVF9GTEFHUz0i
-JXtvcHRmbGFnc30iDQo+Pj4gW2VpaWNoaUB0NDk1IH5dJCBycG0gLS1ldmFsICcle29wdGZsYWdz
-fScNCj4+PiAtTzIgLWZsdG89YXV0byAtZmZhdC1sdG8tb2JqZWN0cyAtZmV4Y2VwdGlvbnMgLWcg
-LWdyZWNvcmQtZ2NjLXN3aXRjaGVzIC1waXBlIC1XYWxsIC1Xbm8tY29tcGxhaW4td3JvbmctbGFu
-ZyAtV2Vycm9yPWZvcm1hdC1zZWN1cml0eSAtV3AsLVVfRk9SVElGWV9TT1VSQ0UsLURfRk9SVElG
-WV9TT1VSQ0U9MyAtV3AsLURfR0xJQkNYWF9BU1NFUlRJT05TIC1zcGVjcz0vdXNyL2xpYi9ycG0v
-cmVkaGF0L3JlZGhhdC1oYXJkZW5lZC1jYzEgLWZzdGFjay1wcm90ZWN0b3Itc3Ryb25nIC1zcGVj
-cz0vdXNyL2xpYi9ycG0vcmVkaGF0L3JlZGhhdC1hbm5vYmluLWNjMSAgLW02NCAtbWFyY2g9eDg2
-LTY0IC1tdHVuZT1nZW5lcmljIC1mYXN5bmNocm9ub3VzLXVud2luZC10YWJsZXMgLWZzdGFjay1j
-bGFzaC1wcm90ZWN0aW9uIC1mY2YtcHJvdGVjdGlvbiAtZm5vLW9taXQtZnJhbWUtcG9pbnRlciAt
-bW9uLW9taXQtbGVhZi1mcmFtZS1wb2ludGVyDQo+Pj4gDQo+Pj4gQmVzdCwNCj4+PiBFaWljaGkN
-Cj4+PiANCj4+Pj4gT24gQXVnIDYsIDIwMjQsIGF0IDE1OjE3LCBFaWljaGkgVHN1a2F0YSA8ZWlp
-Y2hpLnRzdWthdGFAbnV0YW5peC5jb20+IHdyb3RlOg0KPj4+PiANCj4+Pj4gSWYgRVhUUkFfQ0ZM
-QUdTIGhhcyAiLVdwLC1EX0ZPUlRJRllfU09VUkNFPTIiLCB0aGUgYnVpbGQgZmFpbHMgd2l0aDoN
-Cj4+Pj4gDQo+Pj4+IGVycm9yOiAjd2FybmluZyBfRk9SVElGWV9TT1VSQ0UgcmVxdWlyZXMgY29t
-cGlsaW5nIHdpdGggb3B0aW1pemF0aW9uICgtTykgWy1XZXJyb3I9Y3BwXQ0KPj4+PiANCj4+Pj4g
-VXNlICItV3AsLVVfRk9SVElGWV9TT1VSQ0UiIGluc3RlYWQgb2YgIi1VX0ZPUlRJRllfU09VUkNF
-IiBmb3IgdGVzdHMNCj4+Pj4gYnVpbHQgd2l0aCAtTzAuDQo+Pj4+IA0KPj4+PiBTaWduZWQtb2Zm
-LWJ5OiBFaWljaGkgVHN1a2F0YSA8ZWlpY2hpLnRzdWthdGFAbnV0YW5peC5jb20+DQo+Pj4+IC0t
-LQ0KPj4+PiB0b29scy9wZXJmL3Rlc3RzL3dvcmtsb2Fkcy9CdWlsZCB8IDggKysrKy0tLS0NCj4+
-Pj4gMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkNCj4+Pj4g
-DQo+Pj4+IGRpZmYgLS1naXQgYS90b29scy9wZXJmL3Rlc3RzL3dvcmtsb2Fkcy9CdWlsZCBiL3Rv
-b2xzL3BlcmYvdGVzdHMvd29ya2xvYWRzL0J1aWxkDQo+Pj4+IGluZGV4IDQ4YmYwZDNiMGYzZC4u
-ZWMzNmMyMWUzNzVlIDEwMDY0NA0KPj4+PiAtLS0gYS90b29scy9wZXJmL3Rlc3RzL3dvcmtsb2Fk
-cy9CdWlsZA0KPj4+PiArKysgYi90b29scy9wZXJmL3Rlc3RzL3dvcmtsb2Fkcy9CdWlsZA0KPj4+
-PiBAQCAtNyw3ICs3LDcgQEAgcGVyZi10ZXN0LXkgKz0gc3FydGxvb3Aubw0KPj4+PiBwZXJmLXRl
-c3QteSArPSBicnN0YWNrLm8NCj4+Pj4gcGVyZi10ZXN0LXkgKz0gZGF0YXN5bS5vDQo+Pj4+IA0K
-Pj4+PiAtQ0ZMQUdTX3NxcnRsb29wLm8gICAgICAgICA9IC1nIC1PMCAtZm5vLWlubGluZSAtVV9G
-T1JUSUZZX1NPVVJDRQ0KPj4+PiAtQ0ZMQUdTX2xlYWZsb29wLm8gICAgICAgICA9IC1nIC1PMCAt
-Zm5vLWlubGluZSAtZm5vLW9taXQtZnJhbWUtcG9pbnRlciAtVV9GT1JUSUZZX1NPVVJDRQ0KPj4+
-PiAtQ0ZMQUdTX2Jyc3RhY2subyAgICAgICAgICA9IC1nIC1PMCAtZm5vLWlubGluZSAtVV9GT1JU
-SUZZX1NPVVJDRQ0KPj4+PiAtQ0ZMQUdTX2RhdGFzeW0ubyAgICAgICAgICA9IC1nIC1PMCAtZm5v
-LWlubGluZSAtVV9GT1JUSUZZX1NPVVJDRQ0KPj4+PiArQ0ZMQUdTX3NxcnRsb29wLm8gICAgICAg
-ICA9IC1nIC1PMCAtZm5vLWlubGluZSAtV3AsLVVfRk9SVElGWV9TT1VSQ0UNCj4+Pj4gK0NGTEFH
-U19sZWFmbG9vcC5vICAgICAgICAgPSAtZyAtTzAgLWZuby1pbmxpbmUgLWZuby1vbWl0LWZyYW1l
-LXBvaW50ZXIgLVdwLC1VX0ZPUlRJRllfU09VUkNFDQo+Pj4+ICtDRkxBR1NfYnJzdGFjay5vICAg
-ICAgICAgID0gLWcgLU8wIC1mbm8taW5saW5lIC1XcCwtVV9GT1JUSUZZX1NPVVJDRQ0KPj4+PiAr
-Q0ZMQUdTX2RhdGFzeW0ubyAgICAgICAgICA9IC1nIC1PMCAtZm5vLWlubGluZSAtV3AsLVVfRk9S
-VElGWV9TT1VSQ0UNCj4+Pj4gLS0gDQo+Pj4+IDIuNDUuMg0KPj4+PiANCj4+PiANCj4+IA0KDQo=
+=0A=
+Hi Andrew,=0A=
+=0A=
+Thanks for your suggestion. As I understand it, you=92re suggesting that th=
+is driver should share the=0A=
+common parts with aspeed-gpio.c, correct?=0A=
+However, I don=92t think that=92s necessary. You can treat it as a new GPIO=
+ controller because the=0A=
+register layout is quite different from aspeed-gpio.c.=0A=
+If I try to make it common, the driver could become too complex, potentiall=
+y requiring a separate=0A=
+gpio-aspeed-common.c and necessitating changes to the existing aspeed-gpio.=
+c=0A=
+Maybe the discussion of merging aspeed-gpio.c and this driver can be postpo=
+ned until after this one=0A=
+is accepted?=0A=
+=0A=
+For Others, please see the reply inline.=0A=
+=0A=
+Best regards,=0A=
+Billy Tsai=0A=
+=0A=
+> > In the 7th generation of the SoC from Aspeed, the control logic of the=
+=0A=
+> > GPIO controller has been updated to support per-pin control. Each pin n=
+ow=0A=
+> > has its own 32-bit register, allowing for individual control of the pin=
+=92s=0A=
+> > value, direction, interrupt type, and other settings.=0A=
+> >=0A=
+> > Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>=0A=
+> > ---=0A=
+> >  drivers/gpio/Kconfig          |   7 +=0A=
+> >  drivers/gpio/Makefile         |   1 +=0A=
+> >  drivers/gpio/gpio-aspeed-g7.c | 831 ++++++++++++++++++++++++++++++++++=
+=0A=
+> >  3 files changed, 839 insertions(+)=0A=
+> >  create mode 100644 drivers/gpio/gpio-aspeed-g7.c=0A=
+> >=0A=
+> > diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig=0A=
+> > index 58f43bcced7c..93f237429b92 100644=0A=
+> > --- a/drivers/gpio/Kconfig=0A=
+> > +++ b/drivers/gpio/Kconfig=0A=
+> > @@ -172,6 +172,13 @@ config GPIO_ASPEED=0A=
+> >       help=0A=
+> >         Say Y here to support Aspeed AST2400 and AST2500 GPIO controlle=
+rs.=0A=
+> >=0A=
+> > +config GPIO_ASPEED_G7=0A=
+> > +     tristate "Aspeed G7 GPIO support"=0A=
+> > +     depends on (ARCH_ASPEED || COMPILE_TEST) && OF_GPIO=0A=
+> > +     select GPIOLIB_IRQCHIP=0A=
+> > +     help=0A=
+> > +       Say Y here to support Aspeed AST2700 GPIO controllers.=0A=
+> > +=0A=
+> >  config GPIO_ASPEED_SGPIO=0A=
+> >       bool "Aspeed SGPIO support"=0A=
+> >       depends on (ARCH_ASPEED || COMPILE_TEST) && OF_GPIO=0A=
+> > diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile=0A=
+> > index 64dd6d9d730d..e830291761ee 100644=0A=
+> > --- a/drivers/gpio/Makefile=0A=
+> > +++ b/drivers/gpio/Makefile=0A=
+> > @@ -34,6 +34,7 @@ obj-$(CONFIG_GPIO_AMD_FCH)          +=3D gpio-amd-fch=
+.o=0A=
+> >  obj-$(CONFIG_GPIO_AMDPT)             +=3D gpio-amdpt.o=0A=
+> >  obj-$(CONFIG_GPIO_ARIZONA)           +=3D gpio-arizona.o=0A=
+> >  obj-$(CONFIG_GPIO_ASPEED)            +=3D gpio-aspeed.o=0A=
+> > +obj-$(CONFIG_GPIO_ASPEED_G7)         +=3D gpio-aspeed-g7.o=0A=
+> >  obj-$(CONFIG_GPIO_ASPEED_SGPIO)              +=3D gpio-aspeed-sgpio.o=
+=0A=
+> >  obj-$(CONFIG_GPIO_ATH79)             +=3D gpio-ath79.o=0A=
+> >  obj-$(CONFIG_GPIO_BCM_KONA)          +=3D gpio-bcm-kona.o=0A=
+> > diff --git a/drivers/gpio/gpio-aspeed-g7.c b/drivers/gpio/gpio-aspeed-g=
+7.c=0A=
+> > new file mode 100644=0A=
+> > index 000000000000..dbca097de6ea=0A=
+> > --- /dev/null=0A=
+> > +++ b/drivers/gpio/gpio-aspeed-g7.c=0A=
+> > @@ -0,0 +1,831 @@=0A=
+> > +// SPDX-License-Identifier: GPL-2.0-or-later=0A=
+> > +/*=0A=
+> > + * Copyright 2024 Aspeed Technology Inc.=0A=
+> > + *=0A=
+> > + * Billy Tsai <billy_tsai@aspeedtech.com>=0A=
+> > + */=0A=
+> > +=0A=
+> > +#include <linux/clk.h>=0A=
+> > +#include <linux/gpio/aspeed.h>=0A=
+=0A=
+> I think you should either drop this include or rework the existing=0A=
+> implementations so the coprocessor handshake works correctly.=0A=
+=0A=
+The coprocessor handshake will be implemented later, so I will remove the r=
+elated include for now.=0A=
+=0A=
+> > +#include <linux/gpio/driver.h>=0A=
+> > +#include <linux/hashtable.h>=0A=
+> > +#include <linux/init.h>=0A=
+> > +#include <linux/io.h>=0A=
+> > +#include <linux/kernel.h>=0A=
+> > +#include <linux/module.h>=0A=
+> > +#include <linux/pinctrl/consumer.h>=0A=
+> > +#include <linux/platform_device.h>=0A=
+> > +#include <linux/seq_file.h>=0A=
+> > +#include <linux/spinlock.h>=0A=
+> > +#include <linux/string.h>=0A=
+> > +=0A=
+> > +#include <asm/div64.h>=0A=
+> > +=0A=
+> > +#define GPIO_G7_IRQ_STS_BASE 0x100=0A=
+> > +#define GPIO_G7_IRQ_STS_OFFSET(x) (GPIO_G7_IRQ_STS_BASE + (x) * 0x4)=
+=0A=
+> > +#define GPIO_G7_CTRL_REG_BASE 0x180=0A=
+> > +#define GPIO_G7_CTRL_REG_OFFSET(x) (GPIO_G7_CTRL_REG_BASE + (x) * 0x4)=
+=0A=
+> > +#define GPIO_G7_OUT_DATA BIT(0)=0A=
+> > +#define GPIO_G7_DIR BIT(1)=0A=
+> > +#define GPIO_G7_IRQ_EN BIT(2)=0A=
+> > +#define GPIO_G7_IRQ_TYPE0 BIT(3)=0A=
+> > +#define GPIO_G7_IRQ_TYPE1 BIT(4)=0A=
+> > +#define GPIO_G7_IRQ_TYPE2 BIT(5)=0A=
+> > +#define GPIO_G7_RST_TOLERANCE BIT(6)=0A=
+> > +#define GPIO_G7_DEBOUNCE_SEL GENMASK(8, 7)=0A=
+> > +#define GPIO_G7_INPUT_MASK BIT(9)=0A=
+> > +#define GPIO_G7_IRQ_STS BIT(12)=0A=
+> > +#define GPIO_G7_IN_DATA BIT(13)=0A=
+=0A=
+> Can you please add `CTRL` into these field macro names so it's clear=0A=
+> they relate to the control register?=0A=
+=0A=
+Okay.=0A=
+=0A=
+> > +/*=0A=
+> > + * The configuration of the following registers should be determined=
+=0A=
+> > + * outside of the GPIO driver.=0A=
+=0A=
+> Where though?=0A=
+=0A=
+The usage of the following registers hasn=92t been implemented yet, so I wi=
+ll remove them for now.=0A=
+=0A=
+> > + */=0A=
+> > +#define GPIO_G7_PRIVILEGE_W_REG_BASE 0x810=0A=
+> > +#define GPIO_G7_PRIVILEGE_W_REG_OFFSET(x) (GPIO_G7_PRIVILEGE_W_REG_BAS=
+E + ((x) >> 2) * 0x4)=0A=
+> > +#define GPIO_G7_PRIVILEGE_R_REG_BASE 0x910=0A=
+> > +#define GPIO_G7_PRIVILEGE_R_REG_OFFSET(x) (GPIO_G7_PRIVILEGE_R_REG_BAS=
+E + ((x) >> 2) * 0x4)=0A=
+> > +#define GPIO_G7_IRQ_TARGET_REG_BASE 0xA10=0A=
+> > +#define GPIO_G7_IRQ_TARGET_REG_OFFSET(x) (GPIO_G7_IRQ_TARGET_REG_BASE =
++ ((x) >> 2) * 0x4)=0A=
+> > +#define GPIO_G7_IRQ_TO_INTC2_18 BIT(0)=0A=
+> > +#define GPIO_G7_IRQ_TO_INTC2_19 BIT(1)=0A=
+> > +#define GPIO_G7_IRQ_TO_INTC2_20 BIT(2)=0A=
+> > +#define GPIO_G7_IRQ_TO_SIO BIT(3)=0A=
+> > +#define GPIO_G7_IRQ_TARGET_RESET_TOLERANCE BIT(6)=0A=
+> > +#define GPIO_G7_IRQ_TARGET_W_PROTECT BIT(7)=0A=
+> > +=0A=
+> > +static inline u32 field_get(u32 _mask, u32 _val)=0A=
+> > +{=0A=
+> > +     return (((_val) & (_mask)) >> (ffs(_mask) - 1));=0A=
+> > +}=0A=
+> > +=0A=
+> > +static inline u32 field_prep(u32 _mask, u32 _val)=0A=
+> > +{=0A=
+> > +     return (((_val) << (ffs(_mask) - 1)) & (_mask));=0A=
+> > +}=0A=
+=0A=
+> So linux/bitfield.h provides a lot of APIs along these lines, perhaps=0A=
+> use them instead?=0A=
+=0A=
+I will use FIELD_GET and FIELD_PREP to replace them.=0A=
+=0A=
+> > +=0A=
+> > +static inline void ast_write_bits(void __iomem *addr, u32 mask, u32 va=
+l)=0A=
+> > +{=0A=
+> > +     iowrite32((ioread32(addr) & ~(mask)) | field_prep(mask, val), add=
+r);=0A=
+> > +}=0A=
+> > +=0A=
+> > +static inline void ast_clr_bits(void __iomem *addr, u32 mask)=0A=
+> > +{=0A=
+> > +     iowrite32((ioread32(addr) & ~(mask)), addr);=0A=
+> > +}=0A=
+> > +=0A=
+> > +struct aspeed_bank_props {=0A=
+> > +     unsigned int bank;=0A=
+> > +     u32 input;=0A=
+> > +     u32 output;=0A=
+> > +};=0A=
+> > +=0A=
+> > +struct aspeed_gpio_g7_config {=0A=
+> > +     unsigned int nr_gpios;=0A=
+> > +     const struct aspeed_bank_props *props;=0A=
+> > +};=0A=
+> > +=0A=
+> > +/*=0A=
+> > + * @offset_timer: Maps an offset to an @timer_users index, or zero if =
+disabled=0A=
+> > + * @timer_users: Tracks the number of users for each timer=0A=
+> > + *=0A=
+> > + * The @timer_users has four elements but the first element is unused.=
+ This is=0A=
+> > + * to simplify accounting and indexing, as a zero value in @offset_tim=
+er=0A=
+> > + * represents disabled debouncing for the GPIO. Any other value for an=
+ element=0A=
+> > + * of @offset_timer is used as an index into @timer_users. This behavi=
+our of=0A=
+> > + * the zero value aligns with the behaviour of zero built from the tim=
+er=0A=
+> > + * configuration registers (i.e. debouncing is disabled).=0A=
+> > + */=0A=
+> > +struct aspeed_gpio_g7 {=0A=
+> > +     struct gpio_chip chip;=0A=
+> > +     struct device *dev;=0A=
+> > +     raw_spinlock_t lock;=0A=
+> > +     void __iomem *base;=0A=
+> > +     int irq;=0A=
+> > +     const struct aspeed_gpio_g7_config *config;=0A=
+> > +=0A=
+> > +     u8 *offset_timer;=0A=
+> > +     unsigned int timer_users[4];=0A=
+> > +     struct clk *clk;=0A=
+> > +=0A=
+> > +     u32 *dcache;=0A=
+> > +};=0A=
+> > +=0A=
+> > +/*=0A=
+> > + * Note: The "value" register returns the input value sampled on the=
+=0A=
+> > + *       line even when the GPIO is configured as an output. Since=0A=
+> > + *       that input goes through synchronizers, writing, then reading=
+=0A=
+> > + *       back may not return the written value right away.=0A=
+> > + *=0A=
+> > + *       The "rdata" register returns the content of the write latch=
+=0A=
+> > + *       and thus can be used to read back what was last written=0A=
+> > + *       reliably.=0A=
+> > + */=0A=
+> > +=0A=
+> > +static const int debounce_timers[4] =3D { 0x00, 0x04, 0x00, 0x08 };=0A=
+=0A=
+> This is all largely copy/pasted from gpio-aspeed.c. Can we split it out=
+=0A=
+> and share the definitions?=0A=
+=0A=
+Do you mean moving them into the common header file? =0A=
+The structure is fine, but I=92m unsure about the debounce_timers. =0A=
+It=92s a static array, so I don=92t think it needs to be shared with gpio-a=
+speed.c.=0A=
+=0A=
+> > +=0A=
+> > +#define GPIO_BANK(x) ((x) >> 5)=0A=
+> > +#define GPIO_OFFSET(x) ((x) & 0x1f)=0A=
+> > +#define GPIO_BIT(x) BIT(GPIO_OFFSET(x))=0A=
+> > +=0A=
+> > +static inline bool is_bank_props_sentinel(const struct aspeed_bank_pro=
+ps *props)=0A=
+> > +{=0A=
+> > +     return !(props->input || props->output);=0A=
+> > +}=0A=
+> > +=0A=
+> > +static inline const struct aspeed_bank_props *find_bank_props(struct a=
+speed_gpio_g7 *gpio,=0A=
+> > +                                                           unsigned in=
+t offset)=0A=
+> > +{=0A=
+> > +     const struct aspeed_bank_props *props =3D gpio->config->props;=0A=
+> > +=0A=
+> > +     while (!is_bank_props_sentinel(props)) {=0A=
+> > +             if (props->bank =3D=3D GPIO_BANK(offset))=0A=
+> > +                     return props;=0A=
+> > +             props++;=0A=
+> > +     }=0A=
+> > +=0A=
+> > +     return NULL;=0A=
+> > +}=0A=
+> > +=0A=
+> > +static inline bool have_gpio(struct aspeed_gpio_g7 *gpio, unsigned int=
+ offset)=0A=
+> > +{=0A=
+> > +     const struct aspeed_bank_props *props =3D find_bank_props(gpio, o=
+ffset);=0A=
+> > +=0A=
+> > +     if (offset > gpio->chip.ngpio)=0A=
+> > +             return false;=0A=
+> > +=0A=
+> > +     return (!props || ((props->input | props->output) & GPIO_BIT(offs=
+et)));=0A=
+> > +}=0A=
+> > +=0A=
+> > +static inline bool have_input(struct aspeed_gpio_g7 *gpio, unsigned in=
+t offset)=0A=
+> > +{=0A=
+> > +     const struct aspeed_bank_props *props =3D find_bank_props(gpio, o=
+ffset);=0A=
+> > +=0A=
+> > +     return !props || (props->input & GPIO_BIT(offset));=0A=
+> > +}=0A=
+> > +=0A=
+> > +#define have_irq(g, o) have_input((g), (o))=0A=
+> > +#define have_debounce(g, o) have_input((g), (o))=0A=
+> > +=0A=
+> > +static inline bool have_output(struct aspeed_gpio_g7 *gpio, unsigned i=
+nt offset)=0A=
+> > +{=0A=
+> > +     const struct aspeed_bank_props *props =3D find_bank_props(gpio, o=
+ffset);=0A=
+> > +=0A=
+> > +     return !props || (props->output & GPIO_BIT(offset));=0A=
+> > +}=0A=
+> > +=0A=
+=0A=
+> This is all common as well.=0A=
+=0A=
+Moving them into the common header file?=0A=
+=0A=
+> > +static int aspeed_gpio_g7_get(struct gpio_chip *gc, unsigned int offse=
+t)=0A=
+> > +{=0A=
+> > +     struct aspeed_gpio_g7 *gpio =3D gpiochip_get_data(gc);=0A=
+> > +     void __iomem *addr =3D gpio->base + GPIO_G7_CTRL_REG_OFFSET(offse=
+t);=0A=
+> > +=0A=
+> > +     return !!(field_get(GPIO_G7_IN_DATA, ioread32(addr)));=0A=
+> > +}=0A=
+> > +=0A=
+> > +static void __aspeed_gpio_g7_set(struct gpio_chip *gc, unsigned int of=
+fset, int val)=0A=
+> > +{=0A=
+> > +     struct aspeed_gpio_g7 *gpio =3D gpiochip_get_data(gc);=0A=
+> > +     void __iomem *addr =3D gpio->base + GPIO_G7_CTRL_REG_OFFSET(offse=
+t);=0A=
+=0A=
+> The rest of the implementation of this function is broadly the same as=0A=
+> in gpio-aspeed.c. The main difference is accounting for the address to=0A=
+> access and the bit to whack. If we define some callbacks that replace=0A=
+> GPIO_BANK()/to_bank() and GPIO_BIT() that can account for the=0A=
+> differences in register layout, perhaps this could be common?=0A=
+=0A=
+> The trade-off is some complexity vs copy-paste, but there does seem to=0A=
+> be an awful lot of the latter with only minor changes so far.=0A=
+=0A=
+Do you mean I need to create a gpio-aspeed-common.c, define the necessary c=
+ommon APIs,=0A=
+and have gpio-aspeed.c and this driver hook into those APIs? =0A=
+=0A=
+> > +     u32 reg;=0A=
+> > +=0A=
+> > +     reg =3D gpio->dcache[GPIO_BANK(offset)];=0A=
+> > +=0A=
+> > +     if (val)=0A=
+> > +             reg |=3D GPIO_BIT(offset);=0A=
+> > +     else=0A=
+> > +             reg &=3D ~GPIO_BIT(offset);=0A=
+> > +     gpio->dcache[GPIO_BANK(offset)] =3D reg;=0A=
+> > +=0A=
+> > +     ast_write_bits(addr, GPIO_G7_OUT_DATA, val);=0A=
+> > +}=0A=
+> > +=0A=
+> > +static void aspeed_gpio_g7_set(struct gpio_chip *gc, unsigned int offs=
+et, int val)=0A=
+> > +{=0A=
+> > +     struct aspeed_gpio_g7 *gpio =3D gpiochip_get_data(gc);=0A=
+> > +     unsigned long flags;=0A=
+> > +=0A=
+> > +     raw_spin_lock_irqsave(&gpio->lock, flags);=0A=
+> > +=0A=
+> > +     __aspeed_gpio_g7_set(gc, offset, val);=0A=
+> > +=0A=
+> > +     raw_spin_unlock_irqrestore(&gpio->lock, flags);=0A=
+> > +}=0A=
+> > +=0A=
+> > +static int aspeed_gpio_g7_dir_in(struct gpio_chip *gc, unsigned int of=
+fset)=0A=
+> > +{=0A=
+> > +     struct aspeed_gpio_g7 *gpio =3D gpiochip_get_data(gc);=0A=
+> > +     void __iomem *addr =3D gpio->base + GPIO_G7_CTRL_REG_OFFSET(offse=
+t);=0A=
+> > +     unsigned long flags;=0A=
+> > +=0A=
+> > +     if (!have_input(gpio, offset))=0A=
+> > +             return -EOPNOTSUPP;=0A=
+> > +=0A=
+> > +     raw_spin_lock_irqsave(&gpio->lock, flags);=0A=
+> > +=0A=
+> > +     ast_clr_bits(addr, GPIO_G7_DIR);=0A=
+> > +=0A=
+> > +     raw_spin_unlock_irqrestore(&gpio->lock, flags);=0A=
+> > +=0A=
+> > +     return 0;=0A=
+> > +}=0A=
+> > +=0A=
+> > +static int aspeed_gpio_g7_dir_out(struct gpio_chip *gc, unsigned int o=
+ffset, int val)=0A=
+> > +{=0A=
+> > +     struct aspeed_gpio_g7 *gpio =3D gpiochip_get_data(gc);=0A=
+> > +     void __iomem *addr =3D gpio->base + GPIO_G7_CTRL_REG_OFFSET(offse=
+t);=0A=
+> > +     unsigned long flags;=0A=
+> > +=0A=
+> > +     if (!have_output(gpio, offset))=0A=
+> > +             return -EOPNOTSUPP;=0A=
+> > +=0A=
+> > +     raw_spin_lock_irqsave(&gpio->lock, flags);=0A=
+> > +=0A=
+> > +     __aspeed_gpio_g7_set(gc, offset, val);=0A=
+> > +     ast_write_bits(addr, GPIO_G7_DIR, 1);=0A=
+> > +=0A=
+> > +     raw_spin_unlock_irqrestore(&gpio->lock, flags);=0A=
+> > +=0A=
+> > +     return 0;=0A=
+> > +}=0A=
+> > +=0A=
+> > +static int aspeed_gpio_g7_get_direction(struct gpio_chip *gc, unsigned=
+ int offset)=0A=
+> > +{=0A=
+> > +     struct aspeed_gpio_g7 *gpio =3D gpiochip_get_data(gc);=0A=
+> > +     void __iomem *addr =3D gpio->base + GPIO_G7_CTRL_REG_OFFSET(offse=
+t);=0A=
+> > +     unsigned long flags;=0A=
+> > +     u32 val;=0A=
+> > +=0A=
+> > +     if (!have_input(gpio, offset))=0A=
+> > +             return GPIO_LINE_DIRECTION_OUT;=0A=
+> > +=0A=
+> > +     if (!have_output(gpio, offset))=0A=
+> > +             return GPIO_LINE_DIRECTION_IN;=0A=
+> > +=0A=
+> > +     raw_spin_lock_irqsave(&gpio->lock, flags);=0A=
+> > +=0A=
+> > +     val =3D ioread32(addr) & GPIO_G7_DIR;=0A=
+> > +=0A=
+> > +     raw_spin_unlock_irqrestore(&gpio->lock, flags);=0A=
+> > +=0A=
+> > +     return val ? GPIO_LINE_DIRECTION_OUT : GPIO_LINE_DIRECTION_IN;=0A=
+> > +}=0A=
+=0A=
+> On top of handling the differences in the register layout as I=0A=
+> mentioned above, the main difference in these get/set implementations=0A=
+> is dropping the calls through the coprocessor handshake APIs. If you=0A=
+> stub out the implementation of the coprocessor APIs I think it's likely=
+=0A=
+> these can be common. To do that you would need to make them use=0A=
+> callbacks into the SoC-specific driver. To stub out the implementation=0A=
+> you could leave the callback pointer as NULL for now.=0A=
+=0A=
+Same as above?=0A=
+=0A=
+> > +=0A=
+> > +static inline int irqd_to_aspeed_gpio_g7_data(struct irq_data *d, stru=
+ct aspeed_gpio_g7 **gpio,=0A=
+> > +                                           int *offset)=0A=
+> > +{=0A=
+> > +     struct aspeed_gpio_g7 *internal;=0A=
+> > +=0A=
+> > +     *offset =3D irqd_to_hwirq(d);=0A=
+> > +=0A=
+> > +     internal =3D irq_data_get_irq_chip_data(d);=0A=
+> > +=0A=
+> > +     /* This might be a bit of a questionable place to check */=0A=
+> > +     if (!have_irq(internal, *offset))=0A=
+> > +             return -EOPNOTSUPP;=0A=
+> > +=0A=
+> > +     *gpio =3D internal;=0A=
+> > +=0A=
+> > +     return 0;=0A=
+> > +}=0A=
+=0A=
+> You do have different data-types here (struct aspeed_gpio_g7), but=0A=
+> possibly with appropriate struct definitions and use of container_of()=0A=
+> by the caller, this could be common too?=0A=
+=0A=
+> > +=0A=
+> > +static void aspeed_gpio_g7_irq_ack(struct irq_data *d)=0A=
+> > +{=0A=
+> > +     struct aspeed_gpio_g7 *gpio;=0A=
+> > +     unsigned long flags;=0A=
+> > +     void __iomem *addr;=0A=
+> > +     int rc, offset;=0A=
+> > +=0A=
+> > +     rc =3D irqd_to_aspeed_gpio_g7_data(d, &gpio, &offset);=0A=
+> > +     if (rc)=0A=
+> > +             return;=0A=
+> > +=0A=
+> > +     addr =3D gpio->base + GPIO_G7_CTRL_REG_OFFSET(offset);=0A=
+> > +=0A=
+> > +     raw_spin_lock_irqsave(&gpio->lock, flags);=0A=
+> > +=0A=
+> > +     ast_write_bits(addr, GPIO_G7_IRQ_STS, 1);=0A=
+> > +=0A=
+> > +     raw_spin_unlock_irqrestore(&gpio->lock, flags);=0A=
+> > +}=0A=
+> > +=0A=
+> > +static void aspeed_gpio_g7_irq_set_mask(struct irq_data *d, bool set)=
+=0A=
+> > +{=0A=
+> > +     struct aspeed_gpio_g7 *gpio;=0A=
+> > +     unsigned long flags;=0A=
+> > +     void __iomem *addr;=0A=
+> > +     int rc, offset;=0A=
+> > +=0A=
+> > +     rc =3D irqd_to_aspeed_gpio_g7_data(d, &gpio, &offset);=0A=
+> > +     if (rc)=0A=
+> > +             return;=0A=
+> > +=0A=
+> > +     addr =3D gpio->base + GPIO_G7_CTRL_REG_OFFSET(offset);=0A=
+> > +=0A=
+> > +     /* Unmasking the IRQ */=0A=
+> > +     if (set)=0A=
+> > +             gpiochip_enable_irq(&gpio->chip, irqd_to_hwirq(d));=0A=
+> > +=0A=
+> > +     raw_spin_lock_irqsave(&gpio->lock, flags);=0A=
+> > +=0A=
+> > +     if (set)=0A=
+> > +             ast_write_bits(addr, GPIO_G7_IRQ_EN, 1);=0A=
+> > +     else=0A=
+> > +             ast_clr_bits(addr, GPIO_G7_IRQ_EN);=0A=
+> > +=0A=
+> > +     raw_spin_unlock_irqrestore(&gpio->lock, flags);=0A=
+> > +=0A=
+> > +     /* Masking the IRQ */=0A=
+> > +     if (!set)=0A=
+> > +             gpiochip_disable_irq(&gpio->chip, irqd_to_hwirq(d));=0A=
+> > +}=0A=
+> > +=0A=
+> > +static void aspeed_gpio_g7_irq_mask(struct irq_data *d)=0A=
+> > +{=0A=
+> > +     aspeed_gpio_g7_irq_set_mask(d, false);=0A=
+> > +}=0A=
+> > +=0A=
+> > +static void aspeed_gpio_g7_irq_unmask(struct irq_data *d)=0A=
+> > +{=0A=
+> > +     aspeed_gpio_g7_irq_set_mask(d, true);=0A=
+> > +}=0A=
+> > +=0A=
+> > +static int aspeed_gpio_g7_set_type(struct irq_data *d, unsigned int ty=
+pe)=0A=
+> > +{=0A=
+> > +     u32 type0 =3D 0;=0A=
+> > +     u32 type1 =3D 0;=0A=
+> > +     u32 type2 =3D 0;=0A=
+> > +     irq_flow_handler_t handler;=0A=
+> > +     struct aspeed_gpio_g7 *gpio;=0A=
+> > +     unsigned long flags;=0A=
+> > +     void __iomem *addr;=0A=
+> > +     int rc, offset;=0A=
+> > +=0A=
+> > +     rc =3D irqd_to_aspeed_gpio_g7_data(d, &gpio, &offset);=0A=
+> > +     if (rc)=0A=
+> > +             return -EINVAL;=0A=
+> > +     addr =3D gpio->base + GPIO_G7_CTRL_REG_OFFSET(offset);=0A=
+> > +=0A=
+> > +     switch (type & IRQ_TYPE_SENSE_MASK) {=0A=
+> > +     case IRQ_TYPE_EDGE_BOTH:=0A=
+> > +             type2 =3D 1;=0A=
+> > +             fallthrough;=0A=
+> > +     case IRQ_TYPE_EDGE_RISING:=0A=
+> > +             type0 =3D 1;=0A=
+> > +             fallthrough;=0A=
+> > +     case IRQ_TYPE_EDGE_FALLING:=0A=
+> > +             handler =3D handle_edge_irq;=0A=
+> > +             break;=0A=
+> > +     case IRQ_TYPE_LEVEL_HIGH:=0A=
+> > +             type0 |=3D 1;=0A=
+> > +             fallthrough;=0A=
+> > +     case IRQ_TYPE_LEVEL_LOW:=0A=
+> > +             type1 |=3D 1;=0A=
+> > +             handler =3D handle_level_irq;=0A=
+> > +             break;=0A=
+> > +     default:=0A=
+> > +             return -EINVAL;=0A=
+> > +     }=0A=
+> > +=0A=
+> > +     raw_spin_lock_irqsave(&gpio->lock, flags);=0A=
+> > +=0A=
+> > +     ast_write_bits(addr, GPIO_G7_IRQ_TYPE2, type2);=0A=
+> > +     ast_write_bits(addr, GPIO_G7_IRQ_TYPE1, type1);=0A=
+> > +     ast_write_bits(addr, GPIO_G7_IRQ_TYPE0, type0);=0A=
+=0A=
+> Can we write them as a field in the one call? They're all in the same=0A=
+> register, which was not true in the previous controller register=0A=
+> layout.=0A=
+=0A=
+Okay.=0A=
+=0A=
+> > +=0A=
+> > +     raw_spin_unlock_irqrestore(&gpio->lock, flags);=0A=
+> > +=0A=
+> > +     irq_set_handler_locked(d, handler);=0A=
+> > +=0A=
+> > +     return 0;=0A=
+> > +}=0A=
+> > +=0A=
+> > +static void aspeed_gpio_g7_irq_handler(struct irq_desc *desc)=0A=
+> > +{=0A=
+> > +     struct gpio_chip *gc =3D irq_desc_get_handler_data(desc);=0A=
+> > +     struct irq_chip *ic =3D irq_desc_get_chip(desc);=0A=
+> > +     unsigned int i, p, banks;=0A=
+> > +     unsigned long reg;=0A=
+> > +     struct aspeed_gpio_g7 *gpio =3D gpiochip_get_data(gc);=0A=
+> > +     void __iomem *addr;=0A=
+> > +=0A=
+> > +     chained_irq_enter(ic, desc);=0A=
+> > +=0A=
+> > +     banks =3D DIV_ROUND_UP(gpio->chip.ngpio, 32);=0A=
+> > +     for (i =3D 0; i < banks; i++) {=0A=
+> > +             addr =3D gpio->base + GPIO_G7_IRQ_STS_OFFSET(i);=0A=
+> > +=0A=
+> > +             reg =3D ioread32(addr);=0A=
+> > +=0A=
+> > +             for_each_set_bit(p, &reg, 32)=0A=
+> > +                     generic_handle_domain_irq(gc->irq.domain, i * 32 =
++ p);=0A=
+> > +     }=0A=
+> > +=0A=
+> > +     chained_irq_exit(ic, desc);=0A=
+> > +}=0A=
+=0A=
+> The only thing that's different for the IRQ status handling is the=0A=
+> spread of the registers in the layout. In terms of the bits in each=0A=
+> bank's IRQ status register, the layout is the same. By implementing the=
+=0A=
+> means to locate the status register as a callback this code could be=0A=
+> common between the drivers.=0A=
+=0A=
+> > +=0A=
+> > +static void aspeed_init_irq_valid_mask(struct gpio_chip *gc, unsigned =
+long *valid_mask,=0A=
+> > +                                    unsigned int ngpios)=0A=
+> > +{=0A=
+> > +     struct aspeed_gpio_g7 *gpio =3D gpiochip_get_data(gc);=0A=
+> > +     const struct aspeed_bank_props *props =3D gpio->config->props;=0A=
+> > +=0A=
+> > +     while (!is_bank_props_sentinel(props)) {=0A=
+> > +             unsigned int offset;=0A=
+> > +             const unsigned long input =3D props->input;=0A=
+> > +=0A=
+> > +             /* Pretty crummy approach, but similar to GPIO core */=0A=
+> > +             for_each_clear_bit(offset, &input, 32) {=0A=
+> > +                     unsigned int i =3D props->bank * 32 + offset;=0A=
+> > +=0A=
+> > +                     if (i >=3D gpio->chip.ngpio)=0A=
+> > +                             break;=0A=
+> > +=0A=
+> > +                     clear_bit(i, valid_mask);=0A=
+> > +             }=0A=
+> > +=0A=
+> > +             props++;=0A=
+> > +     }=0A=
+> > +}=0A=
+=0A=
+> This is the same except for the change to use `struct aspeed_gpio_g7`?=0A=
+> Can we make this common?=0A=
+=0A=
+> > +=0A=
+> > +static int aspeed_gpio_g7_reset_tolerance(struct gpio_chip *chip, unsi=
+gned int offset, bool enable)=0A=
+> > +{=0A=
+> > +     struct aspeed_gpio_g7 *gpio =3D gpiochip_get_data(chip);=0A=
+> > +     unsigned long flags;=0A=
+> > +     void __iomem *addr;=0A=
+> > +=0A=
+> > +     addr =3D gpio->base + GPIO_G7_CTRL_REG_OFFSET(offset);=0A=
+> > +=0A=
+> > +     raw_spin_lock_irqsave(&gpio->lock, flags);=0A=
+> > +=0A=
+> > +     if (enable)=0A=
+> > +             ast_write_bits(addr, GPIO_G7_RST_TOLERANCE, 1);=0A=
+> > +     else=0A=
+> > +             ast_clr_bits(addr, GPIO_G7_RST_TOLERANCE);=0A=
+> > +=0A=
+> > +     raw_spin_unlock_irqrestore(&gpio->lock, flags);=0A=
+> > +=0A=
+> > +     return 0;=0A=
+> > +}=0A=
+> > +=0A=
+> > +static int aspeed_gpio_g7_request(struct gpio_chip *chip, unsigned int=
+ offset)=0A=
+> > +{=0A=
+> > +     if (!have_gpio(gpiochip_get_data(chip), offset))=0A=
+> > +             return -ENODEV;=0A=
+> > +=0A=
+> > +     return pinctrl_gpio_request(chip->base + offset);=0A=
+=0A=
+> pinctrl_gpio_request() takes the chip and the offset value separately.=0A=
+> It looks like you've developed this patch against an older kernel tree?=
+=0A=
+=0A=
+I will fix it.=0A=
+=0A=
+> > +}=0A=
+> > +=0A=
+> > +static void aspeed_gpio_g7_free(struct gpio_chip *chip, unsigned int o=
+ffset)=0A=
+> > +{=0A=
+> > +     pinctrl_gpio_free(chip->base + offset);=0A=
+=0A=
+> Same as above for pinctrl_gpio_free().=0A=
+=0A=
+I will fix it.=0A=
+=0A=
+> > +}=0A=
+> > +=0A=
+> > +static int usecs_to_cycles(struct aspeed_gpio_g7 *gpio, unsigned long =
+usecs, u32 *cycles)=0A=
+> > +{=0A=
+> > +     u64 rate;=0A=
+> > +     u64 n;=0A=
+> > +     u32 r;=0A=
+> > +=0A=
+> > +     rate =3D clk_get_rate(gpio->clk);=0A=
+> > +     if (!rate)=0A=
+> > +             return -EOPNOTSUPP;=0A=
+> > +=0A=
+> > +     n =3D rate * usecs;=0A=
+> > +     r =3D do_div(n, 1000000);=0A=
+> > +=0A=
+> > +     if (n >=3D U32_MAX)=0A=
+> > +             return -ERANGE;=0A=
+> > +=0A=
+> > +     /* At least as long as the requested time */=0A=
+> > +     *cycles =3D n + (!!r);=0A=
+> > +=0A=
+> > +     return 0;=0A=
+> > +}=0A=
+> > +=0A=
+> > +/* Call under gpio->lock */=0A=
+> > +static int register_allocated_timer(struct aspeed_gpio_g7 *gpio, unsig=
+ned int offset,=0A=
+> > +                                 unsigned int timer)=0A=
+> > +{=0A=
+> > +     if (WARN(gpio->offset_timer[offset] !=3D 0, "Offset %d already al=
+located timer %d\n", offset,=0A=
+> > +              gpio->offset_timer[offset]))=0A=
+> > +             return -EINVAL;=0A=
+> > +=0A=
+> > +     if (WARN(gpio->timer_users[timer] =3D=3D UINT_MAX, "Timer user co=
+unt would overflow\n"))=0A=
+> > +             return -EPERM;=0A=
+> > +=0A=
+> > +     gpio->offset_timer[offset] =3D timer;=0A=
+> > +     gpio->timer_users[timer]++;=0A=
+> > +=0A=
+> > +     return 0;=0A=
+> > +}=0A=
+> > +=0A=
+> > +/* Call under gpio->lock */=0A=
+> > +static int unregister_allocated_timer(struct aspeed_gpio_g7 *gpio, uns=
+igned int offset)=0A=
+> > +{=0A=
+> > +     if (WARN(gpio->offset_timer[offset] =3D=3D 0, "No timer allocated=
+ to offset %d\n", offset))=0A=
+> > +             return -EINVAL;=0A=
+> > +=0A=
+> > +     if (WARN(gpio->timer_users[gpio->offset_timer[offset]] =3D=3D 0,=
+=0A=
+> > +              "No users recorded for timer %d\n", gpio->offset_timer[o=
+ffset]))=0A=
+> > +             return -EINVAL;=0A=
+> > +=0A=
+> > +     gpio->timer_users[gpio->offset_timer[offset]]--;=0A=
+> > +     gpio->offset_timer[offset] =3D 0;=0A=
+> > +=0A=
+> > +     return 0;=0A=
+> > +}=0A=
+> > +=0A=
+> > +/* Call under gpio->lock */=0A=
+> > +static inline bool timer_allocation_registered(struct aspeed_gpio_g7 *=
+gpio, unsigned int offset)=0A=
+> > +{=0A=
+> > +     return gpio->offset_timer[offset] > 0;=0A=
+> > +}=0A=
+=0A=
+> The above functions have all been copy/pasted, can we make them common?=
+=0A=
+=0A=
+> > +=0A=
+> > +static void configure_timer(struct aspeed_gpio_g7 *gpio, unsigned int =
+offset, unsigned int timer)=0A=
+> > +{=0A=
+> > +     void __iomem *addr =3D gpio->base + GPIO_G7_CTRL_REG_OFFSET(offse=
+t);=0A=
+> > +=0A=
+> > +     /* Note: Debounce timer isn't under control of the command=0A=
+> > +      * source registers, so no need to sync with the coprocessor=0A=
+> > +      */=0A=
+> > +     ast_write_bits(addr, GPIO_G7_DEBOUNCE_SEL, timer);=0A=
+> > +}=0A=
+> > +=0A=
+> > +static int enable_debounce(struct gpio_chip *chip, unsigned int offset=
+, unsigned long usecs)=0A=
+> > +{=0A=
+> > +     struct aspeed_gpio_g7 *gpio =3D gpiochip_get_data(chip);=0A=
+> > +     u32 requested_cycles;=0A=
+> > +     unsigned long flags;=0A=
+> > +     int rc;=0A=
+> > +     int i;=0A=
+> > +=0A=
+> > +     if (!gpio->clk)=0A=
+> > +             return -EINVAL;=0A=
+> > +=0A=
+> > +     rc =3D usecs_to_cycles(gpio, usecs, &requested_cycles);=0A=
+> > +     if (rc < 0) {=0A=
+> > +             dev_warn(chip->parent, "Failed to convert %luus to cycles=
+ at %luHz: %d\n", usecs,=0A=
+> > +                      clk_get_rate(gpio->clk), rc);=0A=
+> > +             return rc;=0A=
+> > +     }=0A=
+> > +=0A=
+> > +     raw_spin_lock_irqsave(&gpio->lock, flags);=0A=
+> > +=0A=
+> > +     if (timer_allocation_registered(gpio, offset)) {=0A=
+> > +             rc =3D unregister_allocated_timer(gpio, offset);=0A=
+> > +             if (rc < 0)=0A=
+> > +                     goto out;=0A=
+> > +     }=0A=
+> > +=0A=
+> > +     /* Try to find a timer already configured for the debounce period=
+ */=0A=
+> > +     for (i =3D 1; i < ARRAY_SIZE(debounce_timers); i++) {=0A=
+> > +             u32 cycles;=0A=
+> > +=0A=
+> > +             cycles =3D ioread32(gpio->base + debounce_timers[i]);=0A=
+> > +             if (requested_cycles =3D=3D cycles)=0A=
+> > +                     break;=0A=
+> > +     }=0A=
+> > +=0A=
+> > +     if (i =3D=3D ARRAY_SIZE(debounce_timers)) {=0A=
+> > +             int j;=0A=
+> > +=0A=
+> > +             /*=0A=
+> > +              * As there are no timers configured for the requested de=
+bounce=0A=
+> > +              * period, find an unused timer instead=0A=
+> > +              */=0A=
+> > +             for (j =3D 1; j < ARRAY_SIZE(gpio->timer_users); j++) {=
+=0A=
+> > +                     if (gpio->timer_users[j] =3D=3D 0)=0A=
+> > +                             break;=0A=
+> > +             }=0A=
+> > +=0A=
+> > +             if (j =3D=3D ARRAY_SIZE(gpio->timer_users)) {=0A=
+> > +                     dev_warn(chip->parent,=0A=
+> > +                              "Debounce timers exhausted, cannot debou=
+nce for period %luus\n",=0A=
+> > +                              usecs);=0A=
+> > +=0A=
+> > +                     rc =3D -EPERM;=0A=
+> > +=0A=
+> > +                     /*=0A=
+> > +                      * We already adjusted the accounting to remove @=
+offset=0A=
+> > +                      * as a user of its previous timer, so also confi=
+gure=0A=
+> > +                      * the hardware so @offset has timers disabled fo=
+r=0A=
+> > +                      * consistency.=0A=
+> > +                      */=0A=
+> > +                     configure_timer(gpio, offset, 0);=0A=
+> > +                     goto out;=0A=
+> > +             }=0A=
+> > +=0A=
+> > +             i =3D j;=0A=
+> > +=0A=
+> > +             iowrite32(requested_cycles, gpio->base + debounce_timers[=
+i]);=0A=
+> > +     }=0A=
+> > +=0A=
+> > +     if (WARN(i =3D=3D 0, "Cannot register index of disabled timer\n")=
+) {=0A=
+> > +             rc =3D -EINVAL;=0A=
+> > +             goto out;=0A=
+> > +     }=0A=
+> > +=0A=
+> > +     register_allocated_timer(gpio, offset, i);=0A=
+> > +     configure_timer(gpio, offset, i);=0A=
+> > +=0A=
+> > +out:=0A=
+> > +     raw_spin_unlock_irqrestore(&gpio->lock, flags);=0A=
+> > +=0A=
+> > +     return rc;=0A=
+> > +}=0A=
+> > +=0A=
+> > +static int disable_debounce(struct gpio_chip *chip, unsigned int offse=
+t)=0A=
+> > +{=0A=
+> > +     struct aspeed_gpio_g7 *gpio =3D gpiochip_get_data(chip);=0A=
+> > +     unsigned long flags;=0A=
+> > +     int rc;=0A=
+> > +=0A=
+> > +     raw_spin_lock_irqsave(&gpio->lock, flags);=0A=
+> > +=0A=
+> > +     rc =3D unregister_allocated_timer(gpio, offset);=0A=
+> > +     if (!rc)=0A=
+> > +             configure_timer(gpio, offset, 0);=0A=
+> > +=0A=
+> > +     raw_spin_unlock_irqrestore(&gpio->lock, flags);=0A=
+> > +=0A=
+> > +     return rc;=0A=
+> > +}=0A=
+> > +=0A=
+> > +static int set_debounce(struct gpio_chip *chip, unsigned int offset, u=
+nsigned long usecs)=0A=
+> > +{=0A=
+> > +     struct aspeed_gpio_g7 *gpio =3D gpiochip_get_data(chip);=0A=
+> > +=0A=
+> > +     if (!have_debounce(gpio, offset))=0A=
+> > +             return -EOPNOTSUPP;=0A=
+> > +=0A=
+> > +     if (usecs)=0A=
+> > +             return enable_debounce(chip, offset, usecs);=0A=
+> > +=0A=
+> > +     return disable_debounce(chip, offset);=0A=
+> > +}=0A=
+=0A=
+> These are all copy/pasted, save for changing to `struct=0A=
+> aspeed_gpio_g7`. Can we make them common?=0A=
+=0A=
+> > +=0A=
+> > +static int aspeed_gpio_g7_set_config(struct gpio_chip *chip, unsigned =
+int offset,=0A=
+> > +                                  unsigned long config)=0A=
+> > +{=0A=
+> > +     unsigned long param =3D pinconf_to_config_param(config);=0A=
+> > +     u32 arg =3D pinconf_to_config_argument(config);=0A=
+> > +=0A=
+> > +     if (param =3D=3D PIN_CONFIG_INPUT_DEBOUNCE)=0A=
+> > +             return set_debounce(chip, offset, arg);=0A=
+> > +     else if (param =3D=3D PIN_CONFIG_BIAS_DISABLE || param =3D=3D PIN=
+_CONFIG_BIAS_PULL_DOWN ||=0A=
+> > +              param =3D=3D PIN_CONFIG_DRIVE_STRENGTH)=0A=
+> > +             return pinctrl_gpio_set_config(offset, config);=0A=
+> > +     else if (param =3D=3D PIN_CONFIG_DRIVE_OPEN_DRAIN || param =3D=3D=
+ PIN_CONFIG_DRIVE_OPEN_SOURCE)=0A=
+> > +             /* Return -EOPNOTSUPP to trigger emulation, as per datash=
+eet */=0A=
+> > +             return -EOPNOTSUPP;=0A=
+> > +     else if (param =3D=3D PIN_CONFIG_PERSIST_STATE)=0A=
+> > +             return aspeed_gpio_g7_reset_tolerance(chip, offset, arg);=
+=0A=
+> > +=0A=
+> > +     return -EOPNOTSUPP;=0A=
+> > +}=0A=
+=0A=
+> This is copy/paste, save for the call to=0A=
+> aspeed_gpio_g7_reset_tolerance(). Can we make it common?=
 
