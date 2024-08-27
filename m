@@ -1,169 +1,381 @@
-Return-Path: <linux-kernel+bounces-303133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B3649607D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:50:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0ED29607DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:52:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07D4C282DDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:50:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AEE5283811
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC69D19EEA0;
-	Tue, 27 Aug 2024 10:50:47 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21BA19EEBB;
+	Tue, 27 Aug 2024 10:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YgvZQF4o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FF419753F;
-	Tue, 27 Aug 2024 10:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46BF19753F;
+	Tue, 27 Aug 2024 10:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724755847; cv=none; b=Ug8X6OjR1Jr5wFTJiuoP9gokeN9XPYYWLyQtCIH25LTsegWAhlnzug7HOT9a8p6COQ6TY3EjKo9nYcXYW5cocQXQrilXvdpHMgfdO/hpgX3lL6OywtYPYD7mja1GyUZU/F0IAmT6r9n5hfEnfBXhB7doytJccKx55GfPc93X2Io=
+	t=1724755913; cv=none; b=UrNeq0P95DGeyRxMv/m8jktmVHws2RLrjZ36cFpJ1EIwoU15Ga9UkNwuUDeHN3o6Z2JpbPeG9QMeWFO5udeWpIXehKeXvJ1WoAAQf99h/g7voY4gyK3b8a6sG+NpLsI31sHafSWeeWnMzZWOgkUadbNZmMMjT9YEQspUTYL8pt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724755847; c=relaxed/simple;
-	bh=5cLis9W4yVmYQtrLvICZwQnyHLKxBRZGZVGrAbusI1g=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HUfc1LOafMIBEBjUUBQPnyAgGgZrgqjiV4O3nKXbQLpKMV4tK8/X9Wjwgep4mWU0UX1Rh9+I/0b4b3CVEjIoJQs0AWOlXu0QqwIuIt8jVqocYNQ0F7Fe8niu6S3wOP7Lc1muGGlybbzbIFoGmxd2DEApSWBrtxEp0+e1AqwNEvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WtPPp5lG1z6K98Q;
-	Tue, 27 Aug 2024 18:47:26 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 05E8F140447;
-	Tue, 27 Aug 2024 18:50:42 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 27 Aug
- 2024 11:50:41 +0100
-Date: Tue, 27 Aug 2024 11:50:40 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Yangtao Li <frank.li@vivo.com>
-CC: <clement.leger@bootlin.com>, <andrew@lunn.ch>, <f.fainelli@gmail.com>,
-	<olteanv@gmail.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <ulli.kroll@googlemail.com>,
-	<linus.walleij@linaro.org>, <marcin.s.wojtas@gmail.com>,
-	<linux@armlinux.org.uk>, <alexandre.torgue@foss.st.com>,
-	<joabreu@synopsys.com>, <mcoquelin.stm32@gmail.com>, <hkallweit1@gmail.com>,
-	<u.kleine-koenig@pengutronix.de>, <jacob.e.keller@intel.com>,
-	<justinstitt@google.com>, <sd@queasysnail.net>, <horms@kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-stm32@st-md-mailman.stormreply.com>
-Subject: Re: [net-next v3 4/9] net: mdio: hisi-femac: Convert to
- devm_clk_get_enabled()
-Message-ID: <20240827115040.000017b0@Huawei.com>
-In-Reply-To: <20240827095712.2672820-5-frank.li@vivo.com>
-References: <20240827095712.2672820-1-frank.li@vivo.com>
-	<20240827095712.2672820-5-frank.li@vivo.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724755913; c=relaxed/simple;
+	bh=TeJrDQy3fJuDWSxIq3vLDrsob+bLlaQ3lUK42XDZhl8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QIgy3q9T4RwOJTF+y1393PSi576c/vNLOOB1lflQ8uqmCikYtYaVP1OTkTZepvMaU2boQpNmoDSV+HJHZijp8rkYtBUHrZy7VKM+1l7szBt0J7bWN5nj+RbFnr9VWz031PgDgTlyHzZ8bPBuI76Ma9k1BXh+t5NP96ef1+/IW7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YgvZQF4o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C35F0C8B7C2;
+	Tue, 27 Aug 2024 10:51:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724755912;
+	bh=TeJrDQy3fJuDWSxIq3vLDrsob+bLlaQ3lUK42XDZhl8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YgvZQF4o+FN5DLg12DjaIz+won+L3MaVRP5u8wKHNGzE5Chxr+5rFMP6Iiwu6X/2Z
+	 u2m9zuG9ojvkLDjt2o39VzXvB7ejNNwWVTn8osdkT4pKiXxPFeJVZPu3gRSXF+NmLc
+	 eii51h4Qb/mWAXgFePCz0vfF9f9E57C0TnBXHqVYUFOUY8R20pIO4sZXu66zP5hsFO
+	 jys/Nx+8X9xAXP8LAA7VoGrUefGy/0gh3XvROuEgV4gW1oBW/i+gkjrC0GfGeVktiN
+	 C4PwY0VU/OXllC6Uxy+JpHg4rUX8ngC4IfJf9ysOHXc/VY1jU0CINzlWQhQWsdbdrL
+	 mSi/9miav9jOg==
+Message-ID: <81fd218f-aa0f-4710-b832-cab927bfab9d@kernel.org>
+Date: Tue, 27 Aug 2024 12:51:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/29] media: iris: initialize power resources
+To: quic_dikshita@quicinc.com, Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
+ <20240827-iris_v3-v3-4-c5fdbbe65e70@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240827-iris_v3-v3-4-c5fdbbe65e70@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Tue, 27 Aug 2024 03:57:07 -0600
-Yangtao Li <frank.li@vivo.com> wrote:
-
-> Convert devm_clk_get(), clk_prepare_enable() to a single
-> call to devm_clk_get_enabled(), as this is exactly
-> what this function does.
+On 27/08/2024 12:05, Dikshita Agarwal via B4 Relay wrote:
+> From: Dikshita Agarwal <quic_dikshita@quicinc.com>
 > 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-
-Mixing an matching devm and otherwise can lead to subtle bugs
-and generally makes the code harder to review
-
-I'd also use devm_mdiobus_alloc_size() and devm_mdiobus_register()
-and drop the remove() callback entirely.
-
-I would not take this patch on its own as it causes a reordering
-of cleanup we probably don't want.
-
-As a general rule, single action devm cleanup series (so only using
-one new type) fall into this trap. Much better to look at all the
-improvements in each driver that are enabled by new infrastructure
-rather than doing a single type change series like this one.
-
-Thanks,
-
-Jonathan
-
-
+> Add support for initializing Iris "resources", which are clocks,
+> interconnects, power domains, reset clocks, and clock frequencies
+> used for iris hardware.
+> 
+> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
 > ---
->  drivers/net/mdio/mdio-hisi-femac.c | 18 +++++-------------
->  1 file changed, 5 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/net/mdio/mdio-hisi-femac.c b/drivers/net/mdio/mdio-hisi-femac.c
-> index 6703f626ee83..f6fcb9e11624 100644
-> --- a/drivers/net/mdio/mdio-hisi-femac.c
-> +++ b/drivers/net/mdio/mdio-hisi-femac.c
-> @@ -21,7 +21,6 @@
->  #define BIT_WR_DATA_OFFSET	16
+
+...
+
+> +struct iris_platform_data sm8550_data = {
+> +	.icc_tbl = sm8550_icc_table,
+> +	.icc_tbl_size = ARRAY_SIZE(sm8550_icc_table),
+> +	.clk_rst_tbl = sm8550_clk_reset_table,
+> +	.clk_rst_tbl_size = ARRAY_SIZE(sm8550_clk_reset_table),
+> +	.pmdomain_tbl = sm8550_pmdomain_table,
+> +	.pmdomain_tbl_size = ARRAY_SIZE(sm8550_pmdomain_table),
+> +	.opp_pd_tbl = sm8550_opp_pd_table,
+> +	.opp_pd_tbl_size = ARRAY_SIZE(sm8550_opp_pd_table),
+> +	.clk_tbl = sm8550_clk_table,
+> +	.clk_tbl_size = ARRAY_SIZE(sm8550_clk_table),
+> +};
+> diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
+> index 0a54fdaa1ab5..2616a31224f9 100644
+> --- a/drivers/media/platform/qcom/iris/iris_probe.c
+> +++ b/drivers/media/platform/qcom/iris/iris_probe.c
+> @@ -69,6 +69,19 @@ static int iris_probe(struct platform_device *pdev)
+>  	if (core->irq < 0)
+>  		return core->irq;
 >  
->  struct hisi_femac_mdio_data {
-> -	struct clk *clk;
->  	void __iomem *membase;
->  };
->  
-> @@ -74,6 +73,7 @@ static int hisi_femac_mdio_probe(struct platform_device *pdev)
->  	struct device_node *np = pdev->dev.of_node;
->  	struct mii_bus *bus;
->  	struct hisi_femac_mdio_data *data;
-> +	struct clk *clk;
->  	int ret;
->  
->  	bus = mdiobus_alloc_size(sizeof(*data));
-> @@ -93,26 +93,20 @@ static int hisi_femac_mdio_probe(struct platform_device *pdev)
->  		goto err_out_free_mdiobus;
->  	}
->  
-> -	data->clk = devm_clk_get(&pdev->dev, NULL);
-> -	if (IS_ERR(data->clk)) {
-> -		ret = PTR_ERR(data->clk);
-> +	clk = devm_clk_get_prepared(&pdev->dev, NULL);
-> +	if (IS_ERR(clk)) {
-> +		ret = PTR_ERR(clk);
->  		goto err_out_free_mdiobus;
->  	}
->  
-> -	ret = clk_prepare_enable(data->clk);
-> -	if (ret)
-> -		goto err_out_free_mdiobus;
-> -
->  	ret = of_mdiobus_register(bus, np);
+> +	core->iris_platform_data = of_device_get_match_data(core->dev);
+> +	if (!core->iris_platform_data) {
+> +		ret = -ENODEV;
+> +		dev_err_probe(core->dev, ret, "init platform failed\n");
+
+That's not even possible. I would suggest dropping entire if. But if yoi
+insist, then without this weird redundant code. return -EINVAL.
+
+> +		return ret;
+> +	}
+> +
+> +	ret = iris_init_resources(core);
+> +	if (ret) {
+> +		dev_err_probe(core->dev, ret, "init resource failed\n");
+> +		return ret;
+
+How many same errors are you printing? Not mentioning that syntax of
+dev_errp_rpboe is different...
+
+
+> +	}
+> +
+>  	ret = v4l2_device_register(dev, &core->v4l2_dev);
 >  	if (ret)
-> -		goto err_out_disable_clk;
-> +		goto err_out_free_mdiobus;
->  
->  	platform_set_drvdata(pdev, bus);
->  
->  	return 0;
->  
-> -err_out_disable_clk:
-> -	clk_disable_unprepare(data->clk);
->  err_out_free_mdiobus:
->  	mdiobus_free(bus);
->  	return ret;
-> @@ -121,10 +115,8 @@ static int hisi_femac_mdio_probe(struct platform_device *pdev)
->  static void hisi_femac_mdio_remove(struct platform_device *pdev)
->  {
->  	struct mii_bus *bus = platform_get_drvdata(pdev);
-> -	struct hisi_femac_mdio_data *data = bus->priv;
->  
->  	mdiobus_unregister(bus);
-> -	clk_disable_unprepare(data->clk);
->  	mdiobus_free(bus);
+>  		return ret;
+> @@ -88,8 +101,14 @@ static int iris_probe(struct platform_device *pdev)
 >  }
 >  
+>  static const struct of_device_id iris_dt_match[] = {
+> -	{ .compatible = "qcom,sm8550-iris", },
+> -	{ .compatible = "qcom,sm8250-venus", },
+> +	{
+> +		.compatible = "qcom,sm8550-iris",
+> +		.data = &sm8550_data,
+> +	},
+> +	{
+> +		.compatible = "qcom,sm8250-venus",
+> +		.data = &sm8250_data,
+
+You just added this. No, please do not add code which is immediatly
+incorrect.
+
+> +	},
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(of, iris_dt_match);
+> diff --git a/drivers/media/platform/qcom/iris/iris_resources.c b/drivers/media/platform/qcom/iris/iris_resources.c
+> new file mode 100644
+> index 000000000000..57c6f9f3449b
+> --- /dev/null
+> +++ b/drivers/media/platform/qcom/iris/iris_resources.c
+> @@ -0,0 +1,171 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/interconnect.h>
+> +#include <linux/pm_domain.h>
+> +#include <linux/pm_opp.h>
+> +#include <linux/reset.h>
+> +
+> +#include "iris_core.h"
+> +#include "iris_resources.h"
+> +
+> +static int iris_init_icc(struct iris_core *core)
+> +{
+> +	const struct icc_info *icc_tbl;
+> +	u32 ret, i = 0;
+> +
+> +	icc_tbl = core->iris_platform_data->icc_tbl;
+> +
+> +	core->icc_count = core->iris_platform_data->icc_tbl_size;
+> +	core->icc_tbl = devm_kzalloc(core->dev,
+> +				     sizeof(struct icc_bulk_data) * core->icc_count,
+> +				     GFP_KERNEL);
+> +	if (!core->icc_tbl)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < core->icc_count; i++) {
+> +		core->icc_tbl[i].name = icc_tbl[i].name;
+> +		core->icc_tbl[i].avg_bw = icc_tbl[i].bw_min_kbps;
+> +		core->icc_tbl[i].peak_bw = 0;
+> +	}
+> +
+> +	ret = devm_of_icc_bulk_get(core->dev, core->icc_count, core->icc_tbl);
+> +	if (ret)
+> +		dev_err(core->dev, "failed to get interconnect paths, NoC will stay unconfigured!\n");
+> +
+> +	return ret;
+> +}
+> +
+> +static int iris_pd_get(struct iris_core *core)
+> +{
+> +	int ret;
+> +
+> +	struct dev_pm_domain_attach_data iris_pd_data = {
+> +		.pd_names = core->iris_platform_data->pmdomain_tbl,
+> +		.num_pd_names = core->iris_platform_data->pmdomain_tbl_size,
+> +		.pd_flags = PD_FLAG_NO_DEV_LINK,
+> +	};
+> +
+> +	ret = devm_pm_domain_attach_list(core->dev, &iris_pd_data, &core->pmdomain_tbl);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +static int iris_opp_pd_get(struct iris_core *core)
+> +{
+> +	int ret;
+> +
+> +	struct dev_pm_domain_attach_data iris_opp_pd_data = {
+> +		.pd_names = core->iris_platform_data->opp_pd_tbl,
+> +		.num_pd_names = core->iris_platform_data->opp_pd_tbl_size,
+> +		.pd_flags = PD_FLAG_DEV_LINK_ON,
+> +	};
+> +
+> +	ret = devm_pm_domain_attach_list(core->dev, &iris_opp_pd_data, &core->opp_pmdomain_tbl);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +static int iris_init_power_domains(struct iris_core *core)
+> +{
+> +	const struct platform_clk_data *clk_tbl;
+> +	u32 clk_cnt, i;
+> +	int ret;
+> +
+> +	ret = iris_pd_get(core);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = iris_opp_pd_get(core);
+> +	if (ret)
+> +		return ret;
+> +
+> +	clk_tbl = core->iris_platform_data->clk_tbl;
+> +	clk_cnt = core->iris_platform_data->clk_tbl_size;
+> +
+> +	for (i = 0; i < clk_cnt; i++) {
+> +		if (clk_tbl[i].clk_type == IRIS_HW_CLK) {
+> +			ret = devm_pm_opp_set_clkname(core->dev, clk_tbl[i].clk_name);
+> +			if (ret)
+> +				return ret;
+> +		}
+> +	}
+> +
+> +	ret = devm_pm_opp_of_add_table(core->dev);
+> +	if (ret) {
+> +		dev_err(core->dev, "failed to add opp table\n");
+> +		return ret;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static int iris_init_clocks(struct iris_core *core)
+> +{
+> +	int ret;
+> +
+> +	ret = devm_clk_bulk_get_all(core->dev, &core->clock_tbl);
+> +	if (ret < 0) {
+> +		dev_err(core->dev, "failed to get bulk clock\n");
+
+Syntax is:
+return dev_err_probe(). If this is probe path. Is it?
+
+> +		return ret;
+> +	}
+> +
+> +	core->clk_count = ret;
+> +
+> +	return 0;
+> +}
+> +
+> +static int iris_init_resets(struct iris_core *core)
+> +{
+> +	const char * const *rst_tbl;
+> +	u32 rst_tbl_size;
+> +	u32 i = 0, ret;
+> +
+> +	rst_tbl = core->iris_platform_data->clk_rst_tbl;
+> +	rst_tbl_size = core->iris_platform_data->clk_rst_tbl_size;
+> +
+> +	core->resets = devm_kzalloc(core->dev,
+> +				    sizeof(*core->resets) * rst_tbl_size,
+> +				    GFP_KERNEL);
+> +	if (rst_tbl_size && !core->resets)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < rst_tbl_size; i++)
+> +		core->resets[i].id = rst_tbl[i];
+> +
+> +	ret = devm_reset_control_bulk_get_exclusive(core->dev, rst_tbl_size, core->resets);
+> +	if (ret) {
+> +		dev_err(core->dev, "failed to get resets\n");
+
+Syntax is:
+return dev_err_probe(). If this is probe path. Is it?
+
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +int iris_init_resources(struct iris_core *core)
+> +{
+> +	int ret;
+> +
+> +	ret = iris_init_icc(core);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = iris_init_power_domains(core);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = iris_init_clocks(core);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = iris_init_resets(core);
+> +
+> +	return ret;
+> +}
+
+This should be just part of of main unit file, next to probe. It is
+unusual to see probe parts not next to probe. Sorry, that's wrong.
+
+Best regards,
+Krzysztof
 
 
