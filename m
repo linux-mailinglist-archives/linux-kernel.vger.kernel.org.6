@@ -1,229 +1,219 @@
-Return-Path: <linux-kernel+bounces-304069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7895896199E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:59:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BCAC9619AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 00:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F094D1F21E21
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:59:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 259EE1C22B24
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 22:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329351D4171;
-	Tue, 27 Aug 2024 21:59:04 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52571D4170;
+	Tue, 27 Aug 2024 21:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="WSx0/uZZ"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2045.outbound.protection.outlook.com [40.107.236.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625DA1D365B
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 21:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724795943; cv=none; b=MZ68WGoUMNLb2p8bekaDZS0dqRfz00jDdYztBRGwEnih5KrxpYwwHvrDkr7BfKEHNTLgtkSYsr4+lNzsmaTXqtgl4Aj+O88M6BxgObEQ8aHFoCd7BmJFMVkvDjMCGW82M6zNTr7PQWpUl/AmKQ8kwUGZTNvfejIrZYxgWOkeeWw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724795943; c=relaxed/simple;
-	bh=tWkv+tmBTsHMDebuP3GI88RlQKiZY7ghVItyKRcI20E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gpwyXt228fx5I0+FKhpIRIJ+M9+4eAGycNCGaJo1797sTeeOCHf14QEFnERSrPHx1eDKTWQtF1/6NQORqVfH9I3OpwO1Xy6CIKy6Q4jAiAChGE1pWW5wu0CkcC2UJucES6lyo4Sxs77cbi2K3eZRk+jfxm+d71F6P1yr1yLSaOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1sj4DG-0005ju-Iy; Tue, 27 Aug 2024 23:58:54 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1sj4DF-003Wbc-SP; Tue, 27 Aug 2024 23:58:53 +0200
-Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1sj4DF-0094vM-2V;
-	Tue, 27 Aug 2024 23:58:53 +0200
-Date: Tue, 27 Aug 2024 23:58:53 +0200
-From: Michael Grzeschik <mgr@pengutronix.de>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Daniel Scally <dan.scally@ideasonboard.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Avichal Rakesh <arakesh@google.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 06/10] usb: gadget: uvc: set req_size once when the
- vb2 queue is calculated
-Message-ID: <Zs5MHRMe1b3qDuRJ@pengutronix.de>
-References: <20240403-uvc_request_length_by_interval-v4-0-ca22f334226e@pengutronix.de>
- <20240403-uvc_request_length_by_interval-v4-6-ca22f334226e@pengutronix.de>
- <20240813094110.GE19716@pendragon.ideasonboard.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A801D415A;
+	Tue, 27 Aug 2024 21:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724795992; cv=fail; b=uDbpEpLQN42Xj4FViSdA2NbvqQvoqX4StsxGWMRz93PZF0FU0qFteiyNmc9KZ3bvHlOCaXfS5m/ucgIKwOpzmIK2l55+kcVgH+h1TpqOnHK7vngxmBTPNde9ttu3M7CTCgjeEpUPeMPB5x2co4anyxpau0oC/pq8bztg8tu/IoQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724795992; c=relaxed/simple;
+	bh=EKdJdVl+/au4iJtqr2jdUJ9T5YJvxhViWWZb9Pp4OWs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UrXKDfrNUrdx6onjR+4zcp8kHB8nvoEUG0wb6nXvHu5gZWYt4tjb3bTbBa64E4IurSPQUNQ7s+b+yG76Lvrsjfqf/pguE/nt5CQuUJIQBilYdlcwuI2DH46HQy1t3VrMIFA+DZIacFEiHyTi5V5qYr2FThPL4fLRsjJLMgRR5hA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WSx0/uZZ; arc=fail smtp.client-ip=40.107.236.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZAQRz+Iq6KPjKxCew1FN9xeTC+hz/Bz/WbHf7Cb6jfX+E32h+vjmBYtZ8f2vNqsTLVcmrsDPzSGCH29nnmMjPg3vgTyShCUJV4aKVniAw8zPNXPyJoUuCYAiAs7NcW9dyUD92jdRikR2HMkbdTw6lO+XINHs8aHdaXliHJ1nDheQXxL9A2sV9zJjxw/88mUEf+MupDaftMlHGsdFGn268QqLPVuqPD3rI+b8bndFaDb0LiHbBSvqjLyEKNxpay60/HpsUjraJXg3nsKQcFtD9vErtItaSMK2dJchugxBeWeBILyosidZA0abqsEzxAp0JLAnENWMUFZXooMBjraE2g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fJC7XSKhdd7thNdK+sjbO4AAoN7ITpvePUn2PW8hKgw=;
+ b=YSSjj0nZkgTUoSdj66IbwUO9sVvYXR6kYV4w1LPPRAxC166tNnQSjUyupqq5hY3oHaGy1E/0eh4DlQgaz0OpF4O4IBIXQo8rNA2IrA2IiZ3i1bgHDbK9ZhVhV+O9FJyhVt1hwYe9g5c4uItbC/cM2ZJGWQwUTf4l3OMWdjiXqAQhjKXUk9yyUT7CLVtlwMOakcWlNVhRMD6er+ggiVOlcgx8wZsJwoTVZB53Ti2kmwmiWax+DV0ERgZxC/FWa3k5dJ2Exs0ykAs+2GcqmYZUSP2w/iWTxyXY+h8q+yCfwOyxJgLDOYbx+9+gWGpo80pRxlFRSfoqlCkI7lKJDKAIHw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fJC7XSKhdd7thNdK+sjbO4AAoN7ITpvePUn2PW8hKgw=;
+ b=WSx0/uZZoPtlllankGKYvZXCQanig+uex74C3XGSdvoc5MJD53KvFPfSZoE3ztvicqMHx6ijYQiD8n+8gjiRhMkFR1OT9GqyhuGRe5nRSdUm66Ve1Uzj5VBBaEEu2o25rFUCqLdZEyEAeUhbvkU7OQsRaQFTakTCc1fp2XYLqm4=
+Received: from BN0PR03CA0038.namprd03.prod.outlook.com (2603:10b6:408:e7::13)
+ by CYYPR12MB8752.namprd12.prod.outlook.com (2603:10b6:930:b9::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Tue, 27 Aug
+ 2024 21:59:47 +0000
+Received: from BN3PEPF0000B06B.namprd21.prod.outlook.com
+ (2603:10b6:408:e7:cafe::29) by BN0PR03CA0038.outlook.office365.com
+ (2603:10b6:408:e7::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.20 via Frontend
+ Transport; Tue, 27 Aug 2024 21:59:46 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN3PEPF0000B06B.mail.protection.outlook.com (10.167.243.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7939.2 via Frontend Transport; Tue, 27 Aug 2024 21:59:46 +0000
+Received: from tlendack-t1.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 27 Aug
+ 2024 16:59:45 -0500
+From: Tom Lendacky <thomas.lendacky@amd.com>
+To: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+	<linux-coco@lists.linux.dev>
+CC: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson
+	<seanjc@google.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, "Thomas
+ Gleixner" <tglx@linutronix.de>, Michael Roth <michael.roth@amd.com>, "Ashish
+ Kalra" <ashish.kalra@amd.com>, Joerg Roedel <jroedel@suse.de>, Roy Hopkins
+	<roy.hopkins@suse.com>
+Subject: [RFC PATCH 0/7] KVM: SEV-SNP support for running an SVSM
+Date: Tue, 27 Aug 2024 16:59:24 -0500
+Message-ID: <cover.1724795970.git.thomas.lendacky@amd.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4p2Ycn+XDBv1e9O8"
-Content-Disposition: inline
-In-Reply-To: <20240813094110.GE19716@pendragon.ideasonboard.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mgr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B06B:EE_|CYYPR12MB8752:EE_
+X-MS-Office365-Filtering-Correlation-Id: 906b25ad-0c1f-4872-e912-08dcc6e390c1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|36860700013|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?OEpnBu33TdRZHF2J8nAd6DKlhvrYTGmuscBqi0GkoreMnwpv9TjiTAZgunjL?=
+ =?us-ascii?Q?7zZFkGXLgNGpdy06dCT9KR9W5k5RlO8SnvGHWcUiZT4NUAnRQwLUZqQ+e5dg?=
+ =?us-ascii?Q?h1djG36rih8GRwLv67XKmz11wCV43BxyvqCMMmMmMzOF790VXmlSEOmweBOd?=
+ =?us-ascii?Q?4Vs+aiN345epmstaXpONIeqneffuZlRAmwsYQdBH4ZzTuZ0N/fU5UU5dCRK6?=
+ =?us-ascii?Q?eBOjNydw/biuhMxrOIqXZZpJeDYi3JYXczjqpudoLRk1lG6mw8XOK3//lLAN?=
+ =?us-ascii?Q?PWvnWd24vBB4t9QB8SScmDLDTFcnO5eyN+PKC0jGnx666VgJjucka0+7X9oE?=
+ =?us-ascii?Q?rlAlQ98xqZOPlD6uY54zoOQwGAEPYQTtXzOIObAe8NLBXYca0VLLumvRf58c?=
+ =?us-ascii?Q?ZRkIvo7ko/OzCL1/YI+O+mK2jVG9UbQpWYzfuMBR4V3UWSGAsuFMVQt+WxEA?=
+ =?us-ascii?Q?8/AE3y9esuPLqRHs2ztqHtoDO6agKoGGbeTXel9OPT8SqkPIRc6wFFjo630I?=
+ =?us-ascii?Q?Xo9vegoLobLaHsOmNLmb1VLxgkU+EHXGaMRW5YL3V1M+rlFtqmH2wCQmAj+6?=
+ =?us-ascii?Q?PH36/ms8npmVpPh5CHGsaDYNkdlDAapYuQKNS8y7arhKfsCk2tjCa/lgwM5t?=
+ =?us-ascii?Q?MdXvFJx1wNwmMSySZorvTsEXCeU8cWqklq8N321P4FzWAc6/RVnxLwsJliuG?=
+ =?us-ascii?Q?tOCF6JL5CNuUTtUFs7ENiPhiNzV0If90a014wudP03U5zSe6RDxvlRMQAdAm?=
+ =?us-ascii?Q?M0gjzyV407jsRkCCopi7MqbajRtfHVXDYeusW8OLih0ShEuy+OncVVVGrMSn?=
+ =?us-ascii?Q?flu+7hEenXtsmsgu+XfothXkypR5lD/KZDz/pBg9BqPY7jJe1e6VBN5XqmRd?=
+ =?us-ascii?Q?XgO+Ko+I6r/wuge+B30/67KTgDEdSE8fXniOyw7dNBpwqD9Vff+voPbSFSwB?=
+ =?us-ascii?Q?mzu3rwHSy5AWX3dbpDuLGQM4ZhdKfS9BWo3PH8l/VT3D/zKN8II7zrzlMLu2?=
+ =?us-ascii?Q?ndfV+KsSSIqwwhS98BNPQLloo5qzEUVp/IASlg+IYrTOUusctAp780TBRDmB?=
+ =?us-ascii?Q?aGqnDtvTm+Sn5wD66O1jgupVZIjJ7lq+9ahlJYA4KoF3cC8ID9XLUHXMGnBN?=
+ =?us-ascii?Q?YQcAA9lFFdou5c6HVYWnIqU0k5hJSQsTl1eIHgQ26AGGb0xxaOmu/RK2QPJu?=
+ =?us-ascii?Q?X7Fyk/+CE6BgKtWX6ELxoxVgq5kaNGdD/b8rHTN0TTkZ+GhmKs7YNWe/ZEM5?=
+ =?us-ascii?Q?gw5cH6b8348XQnXNc3UCr+wVkr4Euo9PAkAtE5EQsZzQKscf1wseRkwQpAF5?=
+ =?us-ascii?Q?fNVlfiKLMXwHDI/blNMmszhEaqQyq0lstktt3LZst7cYJDDRgrdlnilcPslX?=
+ =?us-ascii?Q?ZNrYbwwHVO0iE3TgSIbZUcO2+MIpGxaojYaNXk/eTauw9x8l7JGnUl7YWh/0?=
+ =?us-ascii?Q?wjjVR1uFMVC+bJjMphjYMu+zBqtU4t/4?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 21:59:46.7489
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 906b25ad-0c1f-4872-e912-08dcc6e390c1
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B06B.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8752
+
+This series is meant to start the discussion around running a guest with
+a Secure VM Service Module (SVSM) and how to transition a vCPU between
+one VM Privilege Level (VMPL) and another. This is Proof-of-Concept level
+code, so definitely not something looking to be merged.
+
+When running under an SVSM, VMPL switches are needed for validating memory
+and creating vCPU VM Save Area (VMSA) pages. Going forward, different
+services running in the SVSM will require VMPL switching, e.g. a virtual
+TPM service or Alternate Injection support. Therefore VMPL switches need
+to be as fast as possible. The implementation in this series has KVM
+managing the creation of VMPL levels and transitioning between the levels
+without transitioning to the userspace VMM.
+
+Going forward, the userspace VMM may need to be aware of VMPL levels. It
+may be necessary to transition VMPL creation (AP Creation at a specific
+VMPL level) to the userspace VMM. But keeping VMPL switching within KVM
+is highly desired for performance reasons.
+
+This PoC code does have some restrictions. For example, when running with
+Restricted Injection, all injections are blocked as the SVSM is not
+expecting any injections (currently). This allows for a single APIC
+instance for now.
+
+The patches can be further split and the change logs improved, but wanted
+to get this out and get the discussion going.
+
+Implemented in this RFC:
+  - APIC ID list retrieval to allow for only measuring the BSP and
+    allowing the guest to start all of the APs without having to use a
+    broadcast SIPI
+  - vCPU creation at a specific VMPL
+  - vCPU execution at a specific VMPL
+  - Maintain per-VMPL SEV features
+  - Implement minimal Restricted Injection
+    - Blocks all injection when enabled
+  - SVSM support
+     - SNP init flag for SVSM support
+     - Measuring data with specific VMPL permissions
+     - Measuring only the BSP
+
+Things not yet implemented:
+  - APIC instance separation
+  - Restricted Injection support that is multi-VMPL aware
 
 
---4p2Ycn+XDBv1e9O8
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The series is based off of a slightly older kvm next branch:
+  git://git.kernel.org/pub/scm/virt/kvm/kvm.git next
 
-On Tue, Aug 13, 2024 at 12:41:10PM +0300, Laurent Pinchart wrote:
->On Tue, Aug 13, 2024 at 11:09:30AM +0200, Michael Grzeschik wrote:
->> The uvc gadget driver is calculating the req_size on every
->> video_enable/alloc_request and is based on the fixed configfs parameters
->> maxpacket, maxburst and mult.
->>
->> As those parameters can not be changed once the gadget is started and
->> the same calculation is done already early on the
->> vb2_streamon/queue_setup path its save to remove one extra calculation
->> and reuse the calculation from uvc_queue_setup for the allocation step.
->
->Avoiding double calculations is good, but then don't compute the value
->in uvc_queue_setup(). That will also be called multiple times, and its
->timing will be controlled by userspace. Move it to a better location.
+  7c626ce4bae1 ("Linux 6.11-rc3")
 
-I think I was unclear regarding the avoidance of double calculations.
+---
 
-Actually this is the right place to calculate this, since the
-resulting req_size will be dependent on the expected imagesize
-and the frameduration, we have to calculate it in every queue_setup.
+Carlos Bilbao (1):
+  KVM: SVM: Maintain per-VMPL SEV features in kvm_sev_info
 
-Since this patch is an preperation for the next change, I will leave the
-codebase as is but will add the details in the patch description.
+Tom Lendacky (6):
+  KVM: SVM: Implement GET_AP_APIC_IDS NAE event
+  KVM: SEV: Allow for VMPL level specification in AP create
+  KVM: SVM: Invoke a specified VMPL level VMSA for the vCPU
+  KVM: SVM: Prevent injection when restricted injection is active
+  KVM: SVM: Support launching an SVSM with Restricted Injection set
+  KVM: SVM: Support initialization of an SVSM
 
-Michael
+ arch/x86/include/asm/sev-common.h |   7 +
+ arch/x86/include/asm/svm.h        |   9 +
+ arch/x86/include/uapi/asm/kvm.h   |  10 +
+ arch/x86/include/uapi/asm/svm.h   |   3 +
+ arch/x86/kvm/svm/sev.c            | 530 +++++++++++++++++++++++++-----
+ arch/x86/kvm/svm/svm.c            |  25 +-
+ arch/x86/kvm/svm/svm.h            |  71 +++-
+ arch/x86/kvm/x86.c                |   9 +
+ include/uapi/linux/kvm.h          |   3 +
+ 9 files changed, 575 insertions(+), 92 deletions(-)
 
->> Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
->>
->> ---
->> v3 -> v4: -
->> v2 -> v3: -
->> v1 -> v2: -
->> ---
->>  drivers/usb/gadget/function/uvc_queue.c |  2 ++
->>  drivers/usb/gadget/function/uvc_video.c | 15 ++-------------
->>  2 files changed, 4 insertions(+), 13 deletions(-)
->>
->> diff --git a/drivers/usb/gadget/function/uvc_queue.c b/drivers/usb/gadge=
-t/function/uvc_queue.c
->> index 7995dd3fef184..2414d78b031f4 100644
->> --- a/drivers/usb/gadget/function/uvc_queue.c
->> +++ b/drivers/usb/gadget/function/uvc_queue.c
->> @@ -63,6 +63,8 @@ static int uvc_queue_setup(struct vb2_queue *vq,
->>  	 */
->>  	nreq =3D DIV_ROUND_UP(DIV_ROUND_UP(sizes[0], 2), req_size);
->>  	nreq =3D clamp(nreq, 4U, 64U);
->> +
->> +	video->req_size =3D req_size;
->>  	video->uvc_num_requests =3D nreq;
->>
->>  	return 0;
->> diff --git a/drivers/usb/gadget/function/uvc_video.c b/drivers/usb/gadge=
-t/function/uvc_video.c
->> index 259920ae36843..a6786beef91ad 100644
->> --- a/drivers/usb/gadget/function/uvc_video.c
->> +++ b/drivers/usb/gadget/function/uvc_video.c
->> @@ -480,7 +480,6 @@ uvc_video_free_requests(struct uvc_video *video)
->>  	INIT_LIST_HEAD(&video->ureqs);
->>  	INIT_LIST_HEAD(&video->req_free);
->>  	INIT_LIST_HEAD(&video->req_ready);
->> -	video->req_size =3D 0;
->>  	return 0;
->>  }
->>
->> @@ -488,16 +487,9 @@ static int
->>  uvc_video_alloc_requests(struct uvc_video *video)
->>  {
->>  	struct uvc_request *ureq;
->> -	unsigned int req_size;
->>  	unsigned int i;
->>  	int ret =3D -ENOMEM;
->>
->> -	BUG_ON(video->req_size);
->> -
->> -	req_size =3D video->ep->maxpacket
->> -		 * max_t(unsigned int, video->ep->maxburst, 1)
->> -		 * (video->ep->mult);
->> -
->>  	for (i =3D 0; i < video->uvc_num_requests; i++) {
->>  		ureq =3D kzalloc(sizeof(struct uvc_request), GFP_KERNEL);
->>  		if (ureq =3D=3D NULL)
->> @@ -507,7 +499,7 @@ uvc_video_alloc_requests(struct uvc_video *video)
->>
->>  		list_add_tail(&ureq->list, &video->ureqs);
->>
->> -		ureq->req_buffer =3D kmalloc(req_size, GFP_KERNEL);
->> +		ureq->req_buffer =3D kmalloc(video->req_size, GFP_KERNEL);
->>  		if (ureq->req_buffer =3D=3D NULL)
->>  			goto error;
->>
->> @@ -525,12 +517,10 @@ uvc_video_alloc_requests(struct uvc_video *video)
->>  		list_add_tail(&ureq->req->list, &video->req_free);
->>  		/* req_size/PAGE_SIZE + 1 for overruns and + 1 for header */
->>  		sg_alloc_table(&ureq->sgt,
->> -			       DIV_ROUND_UP(req_size - UVCG_REQUEST_HEADER_LEN,
->> +			       DIV_ROUND_UP(video->req_size - UVCG_REQUEST_HEADER_LEN,
->>  					    PAGE_SIZE) + 2, GFP_KERNEL);
->>  	}
->>
->> -	video->req_size =3D req_size;
->> -
->>  	return 0;
->>
->>  error:
->> @@ -663,7 +653,6 @@ uvcg_video_disable(struct uvc_video *video)
->>  	INIT_LIST_HEAD(&video->ureqs);
->>  	INIT_LIST_HEAD(&video->req_free);
->>  	INIT_LIST_HEAD(&video->req_ready);
->> -	video->req_size =3D 0;
->>  	spin_unlock_irqrestore(&video->req_lock, flags);
->>
->>  	/*
->
->--=20
->Regards,
->
->Laurent Pinchart
->
+-- 
+2.43.2
 
---=20
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
---4p2Ycn+XDBv1e9O8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAmbOTBsACgkQC+njFXoe
-LGSw7Q//QsgkF3Fjy683TJZq2W6AU43xuNQm02iVtcjLlJzF5b27wpAjkX2WdBCQ
-NGobf03hWTH47b7is/7mHg0QvXITD3LOtmTK6PipHGTM3JO37uWECD+XOHypYfGc
-WObcnqA5x/j/enoChfj18IdQ76o2rSO5DZcXCRITQzfE9Vz9aLRqDtyseGxL9sEY
-IcSlRCE29EdC3wL7O4DqNLgtxYdFraxqg70pALPu7bEfwpxpF0wACXXS2MxHzyCY
-iYyQcSZvXtPpTZ2FxLdTu2sshx8hySoFgxkdV2O/jea2WpEMw3/NwyDZDtQvQgBv
-P/Ghr/YwMf9fHO0adrFDHnuAQE+wCrz4eYr/IHA8HxZMcdqGFYFTYCZetNwZh2Kr
-D6knFCbQD2OeH6ZKLnKCS1wbzFSGAefE3W8xTGwg/piSDpy4Jc9QgENWTUf/Hiw7
-OxkTzp40FhBOXsslzZO23eBRAqEk9KCTzEbtBh9pvtB8BFMBOT8/KQNYe00CY6KN
-lH3NZS78Xwo6btrbNWspzaxwXn2+Ab230cR1CV+bykCl/M907UrvkeCXlr2BUax1
-vVyVdVyK58AHnwrXDE1pxE7+kE6Mt7rjbX7RtblUQL5L/0ZPCCe03MB2mDTP8o1f
-TEMHVAbomYxPH/u3No5HwcXaUow+dCuXNN+WDPCroGPLLBapF2w=
-=IlZs
------END PGP SIGNATURE-----
-
---4p2Ycn+XDBv1e9O8--
 
