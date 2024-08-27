@@ -1,75 +1,74 @@
-Return-Path: <linux-kernel+bounces-303466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65825960C67
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:42:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1562D960C6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:43:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 760E31C20D52
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:42:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1A402821E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20AD41A00EE;
-	Tue, 27 Aug 2024 13:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBC11C172B;
+	Tue, 27 Aug 2024 13:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NzuaIiii"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="epTVc03+"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC0B1A0730
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 13:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0123019D076
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 13:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724766090; cv=none; b=my91RqzPIx1NB2w1IeKny9dQDlMjrNHuVddRP38cqS78Pp6oUN7gtODyLAFE+A80lIsZOH5lu5FwMmIVMMzaKzMnsNf4JzWRRhluOnqd5OZGh/Jj98J9wW3baDW2uLcbW51d1phY2GkKHBGxzLP7iy7u/K85fQ1uN+bEAyuzKiI=
+	t=1724766198; cv=none; b=WEdcq9GBEH1o9Ww136iHe5+K63ZQLXxL3dYxUZRQwwInkSgidWRIyZata3AjfhkHJhuKGRQ6OtYD4s8STy/eTAcvgsysW2lA72CyyDcjanfxN4z/rd04s3WGzyR67oLrq4kj388U6Kg6sz4r4kKPcR8KR8Me9xaTZacxwPCOKkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724766090; c=relaxed/simple;
-	bh=ix8LKZfnsGqFUBGVDDRoerxkf126xcidECGgW+/Hb7M=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=RUwOaP1TS7XEJOfJAZdWmifDYu/ND54a4JQj6klkb8QYOl2VCQFXbXm6iixz4v1aihrR+8/enl52uKUr6I9Eyd5N+FpT3mLf1mm4VxVMmLTDvDYSsSNTPz+6Bg6dYHmQbIGyz+pKsKOdfpDn0jk8Rzj2dWS84Fi2Wy9xtccvxqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NzuaIiii; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1724766198; c=relaxed/simple;
+	bh=+OhHidtktFf5YZp76+TaLa1IBsJiNY38LfvLPE3Rxkw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oAJ1lEKU7fgBMwTcdL231Gz7OxkitWib2oo409vuJ54EdlV8KIrR3q3K7PPCUUwFih9fscsq2Ypa09xyfKgnDr49kk5pJOK214xAdTB2iQZyQpSm0Pu3vAGLw4tguTTTo4GeiVk4OPpcxif7edjmYZCsc8pXy2HxwTjxx31X5jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=epTVc03+; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-371b015572cso4050362f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:41:26 -0700 (PDT)
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3719419c2aaso176429f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:43:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724766085; x=1725370885; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=P4RFjBAVt+HMiS9KacfdPkSS7eDzKHOHq8ZqvvvxRfA=;
-        b=NzuaIiiiY4PDN3W+D5b+fcd+TE8csOricRyu6AXCBDGg5nHRdMxeokP7SB7V40XJck
-         tlhwloUOEysfOoxCcHCEMPtzLcLsNqnYli438EXk97IoRW7jGaYTFqOUQUoY72vJ99ng
-         AfK4OD9jXUa2dVKEUO4xJUETWVCYjhlSQ6Zmm4/WPICHFmocp1fjRLt1wUONXHNrYgmj
-         jGFT6gtdOq9/FFaqUneNrZDUB6iaHmCWcqOudVgRdS6KgrwU7AA4XnHOgRWkeG7FQ7U7
-         vHCWprNRVseOG1qzumAbQ2Y8xUk3rm3qyaqnM8t3ayzJzFLJJtcYKzJgVGCICbOLqJgy
-         cW5A==
+        d=linaro.org; s=google; t=1724766195; x=1725370995; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=aXqRlOi/4kgWJtXgLS8F5ACtkppRdByA9Aezvb2TYDE=;
+        b=epTVc03+o385e275+NEAZv5furCR4IJCV96sRIFrbuf+ooHRSK4Apu3wJyiKJF+riu
+         9q6MquzpS6fe38UgqgqKI5qa1n8NQEqL1GHubQgXT6zdsc5OSTB4W6cxqagihQa34kqw
+         sS+dMSVO5HVm022AdVz4bnrsPWQxrmieiXNxhJJHKu/Ls1TsKNLAsko3QjnNcHtJO2dN
+         ZIGBx8g+sMJTbob1iJSh5ptHXw+B2RT/D3W1dbLNyRF7huiG/3+1mDmNhvKbNjwXuGop
+         uUrJhfKJ4FkN74uX4j/wvlog67hXHi8XZghbaYiDWuYCx3Gye1tFa4ISrTjF2xVeeTaM
+         UZSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724766085; x=1725370885;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=P4RFjBAVt+HMiS9KacfdPkSS7eDzKHOHq8ZqvvvxRfA=;
-        b=PcFTHsf3hR+ftfm+E3NTwNZ0jmB8Abgc5Zw60nILZUPe5Isu/SSzh2wh8Gt1uMmLG2
-         vDO0hr1ZjWf6L+wGKp57czZ/Ut9hjAZpHlyBs9/ZxbV8oexoKLk+qk7jAI0cKZDWdJLu
-         HYSe69+jET7W+nG9Vmn41xjLRg2V9ByBVvIHerSJ7KZpi8NZK4tV2pqXsjvybGg9+s3m
-         AfI2QOjeNQg5fqHrZbYR++FnvAlNIA/w0Nt4fr61s5YdyJulirZOgpYRjKvNWZuzP4c2
-         LHDN26FJBKtoKw22HXKIVXFBaTvNPcR8VZCvHSufTqDo0tM+BGNHHisrMMKxM0/1rnr1
-         9xgw==
-X-Forwarded-Encrypted: i=1; AJvYcCUhmjj17lJYaNy5+tTYNChZQgMf2YQ8L3S4tioPn0r37kr227Gb38z++43dbSlnht+2vGsVu6Cyss1BOvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQUMNDTcWltcYpJApPN6Hv6/CpVml9lvH1UYOH5isjzvW3oLrO
-	/N8UQ/eMQwgggNQ5rv39Wg2fyFtW1ZxUYgHD65Jmemdn577KvpwnCjykhqNIVf8=
-X-Google-Smtp-Source: AGHT+IFiHaboNQB2/zSWvjuljJidDx/SHEB2xlYotJA/zE9Z+j+T3I+7JtIYh+vNkeU/IihMcv6XFA==
-X-Received: by 2002:a5d:5c87:0:b0:368:4489:8efb with SMTP id ffacd0b85a97d-37489b32395mr3115509f8f.40.1724766084021;
-        Tue, 27 Aug 2024 06:41:24 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:cedc:30f:887e:7717? ([2a01:e0a:982:cbb0:cedc:30f:887e:7717])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730826a3f7sm13104849f8f.112.2024.08.27.06.41.21
+        d=1e100.net; s=20230601; t=1724766195; x=1725370995;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aXqRlOi/4kgWJtXgLS8F5ACtkppRdByA9Aezvb2TYDE=;
+        b=CcE5NMFk8oyBmNQfIopMnhWSpqiskeBdag2YRGu4/ryYvxsJvewq5fjNYFM+6a3lmA
+         urSSqyNFBD/EuhhL6ejMCsOkkHvkIREtSwETuQuwbLYp5ZlgoJAgT8MXbjf874Gb/QDS
+         DulaGalz8lxMFK/Aa3zSv1dMGCAQFBh88ZdXdu9z+01VrYb5Ir4vhCQ5+5F2h0YvntJJ
+         7PJvR/U8S/vqkI79lyntkrtF3ffJG3bUi7pOAsjuXeDuepBTB9aZtqXDqkIVkRbxJutK
+         fH2l50lib35hbZGDhdHplF9XeZu3qKldmjxu3Pb0OsjrtC4DFg+itP9tD+ntp2GQ6vXZ
+         UN3A==
+X-Forwarded-Encrypted: i=1; AJvYcCX1QjuVkw46iEIf+AEMy6M2VfwQx3luCfwxjzMisudDzYgcW0tEWOQ9b5QNqXmXbtLVkbPVod3dEjt+u5k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvE80xLBhAa4gc6hLo3lZBxi2S9m2HVD46TVSVNYnnE348Q4IG
+	ZdI3NNVjXVJ/F9wI7s2e9mvQNHzEcT+LAALknGDfWQCGTdPUh48u6a/MXAC+IHg=
+X-Google-Smtp-Source: AGHT+IFM/T+Y5HHhpm7/Qi5B735avy9oHTmm65ie8uBgbRrjM0tDcNqyvfdg7nm2OwwCeZ3ZY+8Q1Q==
+X-Received: by 2002:a05:6000:178a:b0:360:8490:74d with SMTP id ffacd0b85a97d-373118ce84cmr5368196f8f.5.1724766195201;
+        Tue, 27 Aug 2024 06:43:15 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.222.82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730813c1e3sm13083010f8f.35.2024.08.27.06.43.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 06:41:23 -0700 (PDT)
-Message-ID: <9b116753-9a21-4f9c-b86f-dded20713b53@linaro.org>
-Date: Tue, 27 Aug 2024 15:41:21 +0200
+        Tue, 27 Aug 2024 06:43:14 -0700 (PDT)
+Message-ID: <420178e9-ff55-4c22-b52e-da5af72d096c@linaro.org>
+Date: Tue, 27 Aug 2024 15:43:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,793 +76,132 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v3 00/29] Qualcomm iris video decoder driver
-To: quic_dikshita@quicinc.com, Vikash Garodia <quic_vgarodia@quicinc.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Vedang Nagar <quic_vnagar@quicinc.com>
-References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 0/5] soc: ti: Add and use PVU on K3-AM65 for DMA isolation
+To: Jan Kiszka <jan.kiszka@siemens.com>, Nishanth Menon <nm@ti.com>,
+ Santosh Shilimkar <ssantosh@kernel.org>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Bao Cheng Su <baocheng.su@siemens.com>, Hua Qian Li
+ <huaqian.li@siemens.com>, Diogo Ivo <diogo.ivo@siemens.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+ <kw@linux.com>, linux-pci@vger.kernel.org,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>
+References: <cover.1724694969.git.jan.kiszka@siemens.com>
+ <93da058b-8d72-4f76-9ee7-f6837a1a4a9a@linaro.org>
+ <3dcaee19-3671-4658-a2e7-247e42b85805@siemens.com>
+ <2b368426-a572-4d3c-b991-9532fa828d23@linaro.org>
+ <bac7e1fb-83d0-40de-b789-0a4e469a0b64@siemens.com>
+ <d67019fe-2107-4a8b-8495-4b737afb6e93@linaro.org>
+ <5b09afe0-54c6-4f70-8748-c49918005b7d@siemens.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <5b09afe0-54c6-4f70-8748-c49918005b7d@siemens.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi,
+On 27/08/2024 15:38, Jan Kiszka wrote:
+> On 27.08.24 14:44, Krzysztof Kozlowski wrote:
+>> On 27/08/2024 11:22, Jan Kiszka wrote:
+>>> On 27.08.24 08:35, Krzysztof Kozlowski wrote:
+>>>> On 26/08/2024 21:25, Jan Kiszka wrote:
+>>>>> On 26.08.24 20:53, Krzysztof Kozlowski wrote:
+>>>>>> On 26/08/2024 19:56, Jan Kiszka wrote:
+>>>>>>> Only few of the K3 SoCs have an IOMMU and, thus, can isolate the system
+>>>>>>> against DMA-based attacks of external PCI devices. The AM65 is without
+>>>>>>> an IOMMU, but it comes with something close to it: the Peripheral
+>>>>>>> Virtualization Unit (PVU).
+>>>>>>>
+>>>>>>> The PVU was originally designed to establish static compartments via a
+>>>>>>> hypervisor, isolate those DMA-wise against each other and the host and
+>>>>>>> even allow remapping of guest-physical addresses. But it only provides
+>>>>>>> a static translation region, not page-granular mappings. Thus, it cannot
+>>>>>>> be handled transparently like an IOMMU.
+>>>>>>
+>>>>>> You keep developing on some old kernel. I noticed it on few patchsets
+>>>>>> last days. Please work on mainline.
+>>>>>>
+>>>>>
+>>>>> How did you come to this conclusion? This patch set was written for
+>>>>> mainline, just rebased and tested again over next-20240826 before
+>>>>> sending today.
+>>>>
+>>>> You send it to addresses you CANNOT get from mainline kernel. There is
+>>>> no way mainline kernel get_maintainers.pl produces them.
+>>>>
+>>>
+>>> That is likely due to that I didn't re-run the get_maintainers.pl for
+>>> all areas of changes but rather reused an address list from a slightly
+>>> older posting, sorry.
+>>>
+>>> IOW, your assumption is still not correct when it comes to code.
+>>
+>> Sure, I see results and I am guessing the reason. Keeping the list
+>> static is not the approach you should be using, as seen here. It does
+>> not make even sense, because then you need to keep several lists per
+>> different subsystems or you CC unrelated people (don't). Just use simple
+>> wrapper over git send email, b4 or patman.
+>>
+>> https://github.com/krzk/tools/blob/master/linux/.bash_aliases_linux#L91
+>> ha
+> 
+> Those options are useful, unconditional automated usage of the script is
+> not when you might be targeting multiple subsystems in a series (not
+> that uncommon in our scenarios). That's why shaping/confirming the final
+> list remains a manual step for me. But I'll improve on keeping it updated.
 
-On 27/08/2024 12:05, Dikshita Agarwal via B4 Relay wrote:
-> Introduce support for Qualcomm new video acceleration hardware i.e. IRIS, used
-> for video stream decoding.
-> 
-> Iris is a multi pipe based hardware that offloads video stream decoding from the
-> application processor (AP). It supports H.264 decoding.  The AP communicates
-> with hardware through a well defined protocol, called as host firmware interface
-> (HFI), which provides fine-grained and asynchronous control over individual
-> hardware features.
-> 
-> This driver implements upgraded HFI gen2 to communicate with firmware. It
-> supports SM8550 which is based out of HFI gen 2. It also supports SM8250 which
-> is based out of HFI gen1.
-> 
-> This driver comes with below capabilities:
-> - V4L2 complaint video driver with M2M and STREAMING capability.
-> - Supports H264 decoder.
-> 
-> This driver comes with below features:
-> - Centralized resource management.
-> - Centralized management of core and instance states.
-> - Defines platform specific capabilities and features. As a results, it provides
->    a single point of control to enable/disable a given feature depending on
->    specific platform capabilities.
-> - Handles various video recommended sequences, like DRC, Drain, Seek, EOS.
-> - Implements asynchronous communication with hardware to achieve better
->    experience in low latency usecases.
-> - Output and capture planes are controlled independently. Thereby providing a
->    way to reconfigure individual plane.
-> - Native hardware support of LAST flag which is mandatory to align with port
->    reconfiguration and DRAIN sequence as per V4L guidelines.
-> 
-> Changes since v2:
-> - introduced support for HFI gen1.
-> - deprecated Encoder and HEVC, VP9 codecs.
-> - removed custom vb2 mem ops and used standard framework instead.
-> - added support for mmap streaming mode.
-> - migrated all the buffer APIs to mem2mem helper functions.
-> - registered iris buffer with vb2 framework.
-> - migrated to clk_bulk, reset_bulk and icc_bulk APIs.
-> - used pm_domain_attach/detach_list APIs.
-> - migrated to read/writel and other available helpers for register access
->    instead of custom wrappers.
-> - added documentation for various structures.
-> - addressed many other review comments from v2.
-> 
-> This series depends on [1] & [2]:
-> 
-> [1]: https://patchwork.linuxtv.org/project/linux-media/list/?series=13341 -
-> already applied in next-20240821
-> [2]: https://patchwork.kernel.org/project/linux-clk/patch
-> /20240812134752.28031-1-quic_vnagar@quicinc.com/
-> 
-> Note: A harmless onetime error log "Lucid PLL latch failed. Output may
-> be unstable!" is seen during bootup. It doesn't impact any video usecase
-> and is currently under discussion.
-> 
-> Static tools like checkpatch, smatch, dt_binding_check, sparse and Coccinelle
-> run successfully with this driver.
-> 
-> The result of v4l2-compliance test on SM8550:
-> 
-> v4l2-compliance 1.29.0-5239, 64 bits, 64-bit time_t
-> v4l2-compliance SHA: a1ebb4dad512 2024-08-08 20:00:17
-> 
-> Compliance test for iris_driver device /dev/video0:
-> 
-> Driver Info:
->          Driver name      : iris_driver
->          Card type        : iris_decoder
->          Bus info         : platform:iris_icc
->          Driver version   : 6.11.0
->          Capabilities     : 0x84204000
->                  Video Memory-to-Memory Multiplanar
->                  Streaming
->                  Extended Pix Format
->                  Device Capabilities
->          Device Caps      : 0x04204000
->                  Video Memory-to-Memory Multiplanar
->                  Streaming
->                  Extended Pix Format
->          Detected Stateful Decoder
-> 
-> Required ioctls:
->          test VIDIOC_QUERYCAP: OK
->          test invalid ioctls: OK
-> 
-> Allow for multiple opens:
->          test second /dev/video0 open: OK
->          test VIDIOC_QUERYCAP: OK
->          test VIDIOC_G/S_PRIORITY: OK
->                  fail: ../utils/v4l2-compliance/v4l2-compliance.cpp(763): !ok
->          test for unlimited opens: FAIL
+For that use git send-email identity hack. And anyway it still does not
+apply to patchset here which should have been sent to everyone or SPLIT.
+Putting DTS in the middle is a no-go, because it suggests there is
+depednency and you CANNOT have such dependency.
 
-You are supossed to fix those 2 failures to be compliant.
-
-> 
-> Debug ioctls:
->          test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
->          test VIDIOC_LOG_STATUS: OK (Not Supported)
-> 
-> Input ioctls:
->          test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
->          test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
->          test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
->          test VIDIOC_ENUMAUDIO: OK (Not Supported)
->          test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
->          test VIDIOC_G/S_AUDIO: OK (Not Supported)
->          Inputs: 0 Audio Inputs: 0 Tuners: 0
-> 
-> Output ioctls:
->          test VIDIOC_G/S_MODULATOR: OK (Not Supported)
->          test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
->          test VIDIOC_ENUMAUDOUT: OK (Not Supported)
->          test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
->          test VIDIOC_G/S_AUDOUT: OK (Not Supported)
->          Outputs: 0 Audio Outputs: 0 Modulators: 0
-> 
-> Input/Output configuration ioctls:
->          test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
->          test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
->          test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
->          test VIDIOC_G/S_EDID: OK (Not Supported)
-> 
-> Control ioctls:
->          test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
->          test VIDIOC_QUERYCTRL: OK
->          test VIDIOC_G/S_CTRL: OK
->          test VIDIOC_G/S/TRY_EXT_CTRLS: OK
->          test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
->          test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
->          Standard Controls: 3 Private Controls: 0
-> 
-> Format ioctls:
->          test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
->          test VIDIOC_G/S_PARM: OK (Not Supported)
->          test VIDIOC_G_FBUF: OK (Not Supported)
->          test VIDIOC_G_FMT: OK
->          test VIDIOC_TRY_FMT: OK
->          test VIDIOC_S_FMT: OK
->          test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
->          test Cropping: OK
->          test Composing: OK
->          test Scaling: OK (Not Supported)
-> 
-> Codec ioctls:
->          test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
->          test VIDIOC_G_ENC_INDEX: OK (Not Supported)
->          test VIDIOC_(TRY_)DECODER_CMD: OK
-> 
-> Buffer ioctls:
->          test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
->          test CREATE_BUFS maximum buffers: OK
->          test VIDIOC_REMOVE_BUFS: OK
->          test VIDIOC_EXPBUF: OK (Not Supported)
->          test Requests: OK (Not Supported)
-
-I've been trying to test the driver on QRD8550, and I tried to
-decode a stream with v4l2-ctl and v4l2-compliance using --stream-from-hdr
-and it completely fails:
-
-# v4l2-ctl --verbose --set-fmt-video-out=pixelformat=H264 --set-fmt-video=pixelformat=NV12 --stream-from-hdr=/Big_Buck_Bunny_1080_10s_5MB.264.hdr --stream-count=25 --stream-mmap --stream-to=out.nv12
-VIDIOC_QUERYCAP: ok
-VIDIOC_G_FMT: ok
-VIDIOC_S_FMT: ok
-Format Video Capture Multiplanar:
-	Width/Height      : 384/256
-	Pixel Format      : 'NV12' (Y/UV 4:2:0)
-	Field             : None
-	Number of planes  : 1
-	Flags             :
-	Colorspace        : Default
-	Transfer Function : Default
-	YCbCr/HSV Encoding: Default
-	Quantization      : Default
-	Plane 0           :
-	   Bytes per Line : 384
-	   Size Image     : 147456
-VIDIOC_G_FMT: ok
-VIDIOC_S_FMT: ok
-Format Video Output Multiplanar:
-	Width/Height      : 320/240
-	Pixel Format      : 'H264' (H.264)
-	Field             : None
-	Number of planes  : 1
-	Flags             :
-	Colorspace        : Default
-	Transfer Function : Default
-	YCbCr/HSV Encoding: Default
-	Quantization      : Default
-	Plane 0           :
-	   Bytes per Line : 0
-	   Size Image     : 7077888
-		VIDIOC_REQBUFS returned 0 (Success)
-		VIDIOC_QUERYBUF returned 0 (Success)
-		VIDIOC_QUERYBUF returned 0 (Success)
-		VIDIOC_QUERYBUF returned 0 (Success)
-		VIDIOC_QUERYBUF returned 0 (Success)
-		VIDIOC_G_FMT returned 0 (Success)
-		VIDIOC_QBUF returned 0 (Success)
-		VIDIOC_QBUF returned 0 (Success)
-		VIDIOC_QBUF returned 0 (Success)
-		VIDIOC_QBUF returned 0 (Success)
-		VIDIOC_STREAMON returned 0 (Success)
-
-<then nothing>
-
-and :
-# v4l2-compliance --stream-from-hdr /Big_Buck_Bunny_1080_10s_5MB.264.hdr -s250 -d /dev/video0
-...
-
-v4l2-compliance 1.26.1-5142, 64 bits, 64-bit time_t
-v4l2-compliance SHA: 4aee01a02792 2023-12-12 21:40:38
-
-Compliance test for iris_driver device /dev/video0:
-
-Driver Info:
-	Driver name      : iris_driver
-	Card type        : iris_decoder
-	Bus info         : platform:iris_icc
-	Driver version   : 6.11.0
-	Capabilities     : 0x84204000
-		Video Memory-to-Memory Multiplanar
-		Streaming
-		Extended Pix Format
-		Device Capabilities
-	Device Caps      : 0x04204000
-		Video Memory-to-Memory Multiplanar
-		Streaming
-		Extended Pix Format
-	Detected Stateful Decoder
-...
-
-Test input 0:
-
-Streaming ioctls:
-	test read/write: OK (Not Supported)
-		fail: v4l2-test-buffers.cpp(2848): !thread_streamoff.done
-		fail: v4l2-test-buffers.cpp(2876): testBlockingDQBuf(node, q)
-	test blocking wait: FAIL
-		fail: v4l2-test-buffers.cpp(240): g_field() == V4L2_FIELD_ANY
-		fail: v4l2-test-buffers.cpp(1390): buf.qbuf(node)
-	test MMAP (select): FAIL
-		fail: v4l2-test-buffers.cpp(240): g_field() == V4L2_FIELD_ANY
-		fail: v4l2-test-buffers.cpp(1390): buf.qbuf(node)
-	test MMAP (epoll): FAIL
-	test USERPTR (select): OK (Not Supported)
-	test DMABUF: Cannot test, specify --expbuf-device
-
-Total for iris_driver device /dev/video0: 51, Succeeded: 47, Failed: 4, Warnings: 0
-
-but using ffmpeg seems to work:
-
-# ffmpeg -r 1 -c:v h264_v4l2m2m -i /Big_Buck_Bunny_1080_10s_5MB.264.hdr -pix_fmt nv21 -f rawvideo -y out.nv21
-ffmpeg version 6.1.1 Copyright (c) 2000-2023 the FFmpeg developers
-...
-Input #0, h264, from '/Big_Buck_Bunny_1080_10s_5MB.264.hdr':
-   Duration: N/A, bitrate: N/A
-   Stream #0:0: Video: h264 (High), yuv420p(progressive), 1920x1080 [SAR 1:1 DAR 16:9], 25 fps, 60 tbr, 1200k tbn
-[h264_v4l2m2m @ 0x26b7a540] Using device /dev/video0
-[h264_v4l2m2m @ 0x26b7a540] driver 'iris_driver' on card 'iris_decoder' in mplane mode
-[h264_v4l2m2m @ 0x26b7a540] requesting formats: output=H264/none capture=NV12/yuv420p
-Stream mapping:
-   Stream #0:0 -> #0:0 (h264 (h264_v4l2m2m) -> rawvideo (native))
-Press [q] to stop, [?] for help
-Output #0, rawvideo, to 'out.nv21':
-   Metadata:
-     encoder         : Lavf60.16.100
-   Stream #0:0: Video: rawvideo (NV21 / 0x3132564E), nv21(tv, progressive), 1920x1080 [SAR 1:1 DAR 16:9], q=2-31, 24883 kb/s, 1 fps, 1 tbn
-     Metadata:
-       encoder         : Lavc60.31.102 rawvideo
-[out#0/rawvideo @ 0x26aae650] video:911250kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.000000%
-frame=  300 fps= 95 q=-0.0 Lsize=  911250kB time=00:04:59.00 bitrate=24966.4kbits/s speed=94.7x
-
-I had to set output framerate to 1 otherwise ffmpeg would drop 298 frames:
-frame=    3 fps=0.9 q=-0.0 Lsize=    9112kB time=00:00:00.06 bitrate=1119738.4kbits/s dup=0 drop=298 speed=0.0195x
-
-Could you explain how do you test the driver and which wich stream ?
-
-> 
-> Total for iris_driver device /dev/video0: 47, Succeeded: 46, Failed: 1,
-> Warnings: 0
-> 
-> The result of v4l2-compliance test on SM8250:
-> 
-> v4l2-compliance 1.29.0-5239, 64 bits, 64-bit time_t
-> v4l2-compliance SHA: a1ebb4dad512 2024-08-08 20:00:17
-> 
-> Compliance test for iris_driver device /dev/video0:
-> 
-> Driver Info:
->          Driver name      : iris_driver
->          Card type        : iris_decoder
->          Bus info         : platform:iris_icc
->          Driver version   : 6.11.0
->          Capabilities     : 0x84204000
->                  Video Memory-to-Memory Multiplanar
->                  Streaming
->                  Extended Pix Format
->                  Device Capabilities
->          Device Caps      : 0x04204000
->                  Video Memory-to-Memory Multiplanar
->                  Streaming
->                  Extended Pix Format
->          Detected Stateful Decoder
-> 
-> Required ioctls:
->          test VIDIOC_QUERYCAP: OK
->          test invalid ioctls: OK
-> 
-> Allow for multiple opens:
->          test second /dev/video0 open: OK
->          test VIDIOC_QUERYCAP: OK
->          test VIDIOC_G/S_PRIORITY: OK
->                  fail: ../utils/v4l2-compliance/v4l2-compliance.cpp(763): !ok
->          test for unlimited opens: FAIL
-> 
-> Debug ioctls:
->          test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
->          test VIDIOC_LOG_STATUS: OK (Not Supported)
-> 
-> Input ioctls:
->          test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
->          test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
->          test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
->          test VIDIOC_ENUMAUDIO: OK (Not Supported)
->          test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
->          test VIDIOC_G/S_AUDIO: OK (Not Supported)
->          Inputs: 0 Audio Inputs: 0 Tuners: 0
-> 
-> Output ioctls:
->          test VIDIOC_G/S_MODULATOR: OK (Not Supported)
->          test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
->          test VIDIOC_ENUMAUDOUT: OK (Not Supported)
->          test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
->          test VIDIOC_G/S_AUDOUT: OK (Not Supported)
->          Outputs: 0 Audio Outputs: 0 Modulators: 0
-> 
-> Input/Output configuration ioctls:
->          test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
->          test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
->          test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
->          test VIDIOC_G/S_EDID: OK (Not Supported)
-> 
-> Control ioctls:
->          test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
->          test VIDIOC_QUERYCTRL: OK
->          test VIDIOC_G/S_CTRL: OK
->          test VIDIOC_G/S/TRY_EXT_CTRLS: OK
->          test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
->          test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
->          Standard Controls: 2 Private Controls: 0
-> 
-> Format ioctls:
->          test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
->          test VIDIOC_G/S_PARM: OK (Not Supported)
->          test VIDIOC_G_FBUF: OK (Not Supported)
->          test VIDIOC_G_FMT: OK
->          test VIDIOC_TRY_FMT: OK
->          test VIDIOC_S_FMT: OK
->          test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
->          test Cropping: OK
->          test Composing: OK
->          test Scaling: OK (Not Supported)
-> 
-> Codec ioctls:
->          test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
->          test VIDIOC_G_ENC_INDEX: OK (Not Supported)
->          test VIDIOC_(TRY_)DECODER_CMD: OK
-> 
-> Buffer ioctls:
->          test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
->          test CREATE_BUFS maximum buffers: OK
->          test VIDIOC_REMOVE_BUFS: OK
->          test VIDIOC_EXPBUF: OK (Not Supported)
->          test Requests: OK (Not Supported)
-> 
-> Total for iris_driver device /dev/video0: 47, Succeeded: 46, Failed: 1,
-> Warnings: 0
-> 
-> Fluster score on SM8550:
-> 
-> 77/135 while testing JVT-AVC_V1 with GStreamer-H.264-V4L2-Gst1.0.JVT-AVC_V1.
-> The failing tests are:
-> - 52 test vectors failed due to interlaced clips: Interlaced decoding is
->    not supported in iris driver.
->    Test Vectors:
->          cabac_mot_fld0_full
->          cabac_mot_mbaff0_full
->          cabac_mot_picaff0_full
->          CABREF3_Sand_D
->          CAFI1_SVA_C
->          CAMA1_Sony_C
->          CAMA1_TOSHIBA_B
->          cama1_vtc_c
->          cama2_vtc_b
->          CAMA3_Sand_E
->          cama3_vtc_b
->          CAMACI3_Sony_C
->          CAMANL1_TOSHIBA_B
->          CAMANL2_TOSHIBA_B
->          CAMANL3_Sand_E
->          CAMASL3_Sony_B
->          CAMP_MOT_MBAFF_L30
->          CAMP_MOT_MBAFF_L31
->          CANLMA2_Sony_C
->          CANLMA3_Sony_C
->          CAPA1_TOSHIBA_B
->          CAPAMA3_Sand_F
->          cavlc_mot_fld0_full_B
->          cavlc_mot_mbaff0_full_B
->          cavlc_mot_picaff0_full_B
->          CVCANLMA2_Sony_C
->          CVFI1_Sony_D
->          CVFI1_SVA_C
->          CVFI2_Sony_H
->          CVFI2_SVA_C
->          CVMA1_Sony_D
->          CVMA1_TOSHIBA_B
->          CVMANL1_TOSHIBA_B
->          CVMANL2_TOSHIBA_B
->          CVMAPAQP3_Sony_E
->          CVMAQP2_Sony_G
->          CVMAQP3_Sony_D
->          CVMP_MOT_FLD_L30_B
->          CVNLFI1_Sony_C
->          CVNLFI2_Sony_H
->          CVPA1_TOSHIBA_B
->          FI1_Sony_E
->          MR6_BT_B
->          MR7_BT_B
->          MR8_BT_B
->          MR9_BT_B
->          Sharp_MP_Field_1_B
->          Sharp_MP_Field_2_B
->          Sharp_MP_Field_3_B
->          Sharp_MP_PAFF_1r2
->          Sharp_MP_PAFF_2r
->          CVMP_MOT_FRM_L31_B
-> - 3 test vectors failed due to unsupported bitstream.
->    num_slice_group_minus1 greater than zero is not supported by the hardware.
->    Test Vectors:
->          FM1_BT_B
->          FM1_FT_E
->          FM2_SVA_C
-> - 2 test vectors failed because SP_SLICE type is not supported by the hardware.
->    Test Vectors:
->          SP1_BT_A
->          sp2_bt_b
-> - 1 test vector failed due to unsupported profile:
->    V4L2_MPEG_VIDEO_H264_PROFILE_EXTENDED is being deprecated from sm8550
->    onwards due to hardware issues.
->    Test Vectors:
->          BA3_SVA_C
-> 
-> 23/69 while testing JVT-FR-EXT with GStreamer-H.264-V4L2-Gst1.0.JVT-AVC_V1.
-> The failing tests are:
-> - 21 test vectors failed due to interlaced clips: Interlaced decoding is
->    not supported in iris driver.
->    Test Vectors:
->          brcm_freh4
->          brcm_freh5
->          brcm_freh6
->          brcm_freh10
->          brcm_freh11
->          freh7_b
->          FREXT01_JVC_D
->          FREXT02_JVC_C
->          FRExt2_Panasonic_C
->          FRExt4_Panasonic_B
->          HCAFF1_HHI_B
->          HCAMFF1_HHI_B
->          HCHP3_HHI_A
->          HPCAFL_BRCM_C
->          HPCAFLNL_BRCM_C
->          HVLCFI0_Sony_B
->          HVLCMFF0_Sony_B
->          HVLCPFF0_Sony_B
->          HPCAMAPALQ_BRCM_B
->          HPCVFL_BRCM_A
->          HPCVFLNL_BRCM_A
-> - 2 test vectors failed due to 10bit bitstream: 10bit decoding is not
->    supported in iris driver
->    Test Vectors:
->          FREH10-1
->          FREH10-2
-> - 21 test vectors failed due to unsupported profile:
->    V4L2_MPEG_VIDEO_H264_PROFILE_HIGH_422 is not supported by the hardware.
->    Test Vectors:
->          FREXT1_TANDBERG_A
->          FREXT2_TANDBERG_A
->          FREXT3_TANDBERG_A
->          Hi422FR1_SONY_A
->          Hi422FR2_SONY_A
->          Hi422FR3_SONY_A
->          Hi422FR4_SONY_A
->          Hi422FR6_SONY_A
->          Hi422FR7_SONY_A
->          Hi422FR8_SONY_A
->          Hi422FR9_SONY_A
->          Hi422FR10_SONY_A
->          Hi422FR11_SONY_A
->          Hi422FR12_SONY_A
->          Hi422FR13_SONY_A
->          Hi422FR14_SONY_A
->          Hi422FR15_SONY_A
->          Hi422FREXT16_SONY_A
->          Hi422FREXT17_SONY_A
->          Hi422FREXT18_SONY_A
->          Hi422FREXT19_SONY_A
-> - 2 test vectors failed due to unsupported bitstream.
->    chroma_fmt_idc is equal to 0(monochrome) in the bitstream which is not
->    supported by the hardware.
->    Test Vectors:
->          HPCAMOLQ_BRCM_B
->          HPCVMOLQ_BRCM_B
-> 
-> Fluster score on SM8250:
-> 
-> 78/135 while testing JVT-AVC_V1 with GStreamer-H.264-V4L2-Gst1.0.JVT-AVC_V1.
-> The failing tests are:
-> - 52 test vectors failed due to interlaced clips: Interlaced decoding is not
->    supported in iris driver.
->    Test Vectors:
->          cabac_mot_fld0_full
->          cabac_mot_mbaff0_full
->          cabac_mot_picaff0_full
->          CABREF3_Sand_D
->          CAFI1_SVA_C
->          CAMA1_Sony_C
->          CAMA1_TOSHIBA_B
->          cama1_vtc_c
->          cama2_vtc_b
->          CAMA3_Sand_E
->          cama3_vtc_b
->          CAMACI3_Sony_C
->          CAMANL1_TOSHIBA_B
->          CAMANL2_TOSHIBA_B
->          CAMANL3_Sand_E
->          CAMASL3_Sony_B
->          CAMP_MOT_MBAFF_L30
->          CAMP_MOT_MBAFF_L31
->          CANLMA2_Sony_C
->          CANLMA3_Sony_C
->          CAPA1_TOSHIBA_B
->          CAPAMA3_Sand_F
->          cavlc_mot_fld0_full_B
->          cavlc_mot_mbaff0_full_B
->          cavlc_mot_picaff0_full_B
->          CVCANLMA2_Sony_C
->          CVFI1_Sony_D
->          CVFI1_SVA_C
->          CVFI2_Sony_H
->          CVFI2_SVA_C
->          CVMA1_Sony_D
->          CVMA1_TOSHIBA_B
->          CVMANL1_TOSHIBA_B
->          CVMANL2_TOSHIBA_B
->          CVMAPAQP3_Sony_E
->          CVMAQP2_Sony_G
->          CVMAQP3_Sony_D
->          CVMP_MOT_FLD_L30_B
->          CVNLFI1_Sony_C
->          CVNLFI2_Sony_H
->          CVPA1_TOSHIBA_B
->          FI1_Sony_E
->          MR6_BT_B
->          MR7_BT_B
->          MR8_BT_B
->          MR9_BT_B
->          Sharp_MP_Field_1_B
->          Sharp_MP_Field_2_B
->          Sharp_MP_Field_3_B
->          Sharp_MP_PAFF_1r2
->          Sharp_MP_PAFF_2r
->          CVMP_MOT_FRM_L31_B
-> - 3 test vectors failed due to unsupported bitstream.
->    num_slice_group_minus1 greater than zero is not supported by the hardware.
->    Test Vectors:
->          FM1_BT_B
->          FM1_FT_E
->          FM2_SVA_C
-> - 2 test vectors failed because SP_SLICE type is not supported by the hardware.
->    Test Vectors:
->          SP1_BT_A
->          sp2_bt_b
-> 
-> 23/69 while testing JVT-FR-EXT with GStreamer-H.264-V4L2-Gst1.0.JVT-AVC_V1.
-> The failing tests are:
-> - 21 test vectors failed due to interlaced clips: Interlaced decoding is
->    not supported in iris driver.
->    Test Vectors:
->          brcm_freh4
->          brcm_freh5
->          brcm_freh6
->          brcm_freh10
->          brcm_freh11
->          freh7_b
->          FREXT01_JVC_D
->          FREXT02_JVC_C
->          FRExt2_Panasonic_C
->          FRExt4_Panasonic_B
->          HCAFF1_HHI_B
->          HCAMFF1_HHI_B
->          HCHP3_HHI_A
->          HPCAFL_BRCM_C
->          HPCAFLNL_BRCM_C
->          HVLCFI0_Sony_B
->          HVLCMFF0_Sony_B
->          HVLCPFF0_Sony_B
->          HPCAMAPALQ_BRCM_B
->          HPCVFL_BRCM_A
->          HPCVFLNL_BRCM_A
-> - 2 test vectors failed due to 10bit bitstream: 10bit decoding is not
->    supported in iris driver
->    Test Vectors:
->          FREH10-1
->          FREH10-2
-> - 21 test vectors failed due to unsupported profile:
->    V4L2_MPEG_VIDEO_H264_PROFILE_HIGH_422 is not supported by the hardware.
->    Test Vectors:
->          FREXT1_TANDBERG_A
->          FREXT2_TANDBERG_A
->          FREXT3_TANDBERG_A
->          Hi422FR1_SONY_A
->          Hi422FR2_SONY_A
->          Hi422FR3_SONY_A
->          Hi422FR4_SONY_A
->          Hi422FR6_SONY_A
->          Hi422FR7_SONY_A
->          Hi422FR8_SONY_A
->          Hi422FR9_SONY_A
->          Hi422FR10_SONY_A
->          Hi422FR11_SONY_A
->          Hi422FR12_SONY_A
->          Hi422FR13_SONY_A
->          Hi422FR14_SONY_A
->          Hi422FR15_SONY_A
->          Hi422FREXT16_SONY_A
->          Hi422FREXT17_SONY_A
->          Hi422FREXT18_SONY_A
->          Hi422FREXT19_SONY_A
-> - 2 test vectors failed due to unsupported bitstream.
->    chroma_fmt_idc is equal to 0(monochrome) in the bitstream which is not
->    supported by the hardware.
->    Test Vectors:
->          HPCAMOLQ_BRCM_B
->          HPCVMOLQ_BRCM_B
-> 
-> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> ---
-> Dikshita Agarwal (17):
->        dt-bindings: media: Add sm8550 dt schema
->        media: MAINTAINERS: Add Qualcomm Iris video accelerator driver
->        media: iris: add platform driver for iris video device
->        media: iris: initialize power resources
->        media: iris: implement iris v4l2 file ops
->        media: iris: introduce iris core state management with shared queues
->        media: iris: implement video firmware load/unload
->        media: iris: implement boot sequence of the firmware
->        media: iris: introduce Host firmware interface with necessary hooks
->        media: iris: implement power management
->        media: iris: implement reqbuf ioctl with vb2_queue_setup
->        media: iris: implement vb2 streaming ops
->        media: iris: allocate, initialize and queue internal buffers
->        media: iris: implement vb2 ops for buf_queue and firmware response
->        media: iris: add support for dynamic resolution change
->        media: iris: handle streamoff/on from client in dynamic resolution change
->        media: iris: add support for drain sequence
-> 
-> Vedang Nagar (12):
->        media: iris: implement s_fmt, g_fmt and try_fmt ioctls
->        media: iris: implement g_selection ioctl
->        media: iris: implement enum_fmt and enum_frameintervals ioctls
->        media: iris: implement subscribe_event and unsubscribe_event ioctls
->        media: iris: implement iris v4l2_ctrl_ops and prepare capabilities
->        media: iris: implement query_cap, query_ctrl and query_menu ioctls
->        media: iris: implement set properties to firmware during streamon
->        media: iris: subscribe parameters and properties to firmware for hfi_gen2
->        media: iris: add check whether the video session is supported or not
->        media: iris: implement power scaling for vpu2 and vpu3
->        media: iris: add allow checks for v4l2 ioctls
->        media: iris: add check to allow sub states transitions
-> 
->   .../bindings/media/qcom,sm8550-iris.yaml           |  162 ++++
->   MAINTAINERS                                        |   11 +
->   drivers/media/platform/qcom/Kconfig                |    1 +
->   drivers/media/platform/qcom/Makefile               |    1 +
->   drivers/media/platform/qcom/iris/Kconfig           |   13 +
->   drivers/media/platform/qcom/iris/Makefile          |   27 +
->   drivers/media/platform/qcom/iris/iris_buffer.c     |  599 ++++++++++++
->   drivers/media/platform/qcom/iris/iris_buffer.h     |  117 +++
->   drivers/media/platform/qcom/iris/iris_core.c       |   99 ++
->   drivers/media/platform/qcom/iris/iris_core.h       |  107 +++
->   drivers/media/platform/qcom/iris/iris_ctrls.c      |  296 ++++++
->   drivers/media/platform/qcom/iris/iris_ctrls.h      |   22 +
->   drivers/media/platform/qcom/iris/iris_firmware.c   |  151 +++
->   drivers/media/platform/qcom/iris/iris_firmware.h   |   15 +
->   drivers/media/platform/qcom/iris/iris_hfi_common.c |  222 +++++
->   drivers/media/platform/qcom/iris/iris_hfi_common.h |  155 +++
->   drivers/media/platform/qcom/iris/iris_hfi_gen1.h   |   16 +
->   .../platform/qcom/iris/iris_hfi_gen1_command.c     |  834 ++++++++++++++++
->   .../platform/qcom/iris/iris_hfi_gen1_defines.h     |  448 +++++++++
->   .../platform/qcom/iris/iris_hfi_gen1_response.c    |  658 +++++++++++++
->   drivers/media/platform/qcom/iris/iris_hfi_gen2.h   |   41 +
->   .../platform/qcom/iris/iris_hfi_gen2_command.c     | 1003 ++++++++++++++++++++
->   .../platform/qcom/iris/iris_hfi_gen2_defines.h     |  160 ++++
->   .../platform/qcom/iris/iris_hfi_gen2_packet.c      |  328 +++++++
->   .../platform/qcom/iris/iris_hfi_gen2_packet.h      |  125 +++
->   .../platform/qcom/iris/iris_hfi_gen2_response.c    |  954 +++++++++++++++++++
->   drivers/media/platform/qcom/iris/iris_hfi_queue.c  |  343 +++++++
->   drivers/media/platform/qcom/iris/iris_hfi_queue.h  |  180 ++++
->   drivers/media/platform/qcom/iris/iris_instance.h   |   73 ++
->   .../platform/qcom/iris/iris_platform_common.h      |  195 ++++
->   .../platform/qcom/iris/iris_platform_sm8250.c      |  175 ++++
->   .../platform/qcom/iris/iris_platform_sm8550.c      |  310 ++++++
->   drivers/media/platform/qcom/iris/iris_power.c      |  182 ++++
->   drivers/media/platform/qcom/iris/iris_power.h      |   15 +
->   drivers/media/platform/qcom/iris/iris_probe.c      |  257 +++++
->   drivers/media/platform/qcom/iris/iris_resources.c  |  338 +++++++
->   drivers/media/platform/qcom/iris/iris_resources.h  |   27 +
->   drivers/media/platform/qcom/iris/iris_state.c      |  338 +++++++
->   drivers/media/platform/qcom/iris/iris_state.h      |  153 +++
->   drivers/media/platform/qcom/iris/iris_utils.c      |   96 ++
->   drivers/media/platform/qcom/iris/iris_utils.h      |   50 +
->   drivers/media/platform/qcom/iris/iris_vb2.c        |  353 +++++++
->   drivers/media/platform/qcom/iris/iris_vb2.h        |   17 +
->   drivers/media/platform/qcom/iris/iris_vdec.c       |  693 ++++++++++++++
->   drivers/media/platform/qcom/iris/iris_vdec.h       |   25 +
->   drivers/media/platform/qcom/iris/iris_vidc.c       |  706 ++++++++++++++
->   drivers/media/platform/qcom/iris/iris_vidc.h       |   15 +
->   drivers/media/platform/qcom/iris/iris_vpu2.c       |   39 +
->   drivers/media/platform/qcom/iris/iris_vpu3.c       |  125 +++
->   drivers/media/platform/qcom/iris/iris_vpu_buffer.c |  311 ++++++
->   drivers/media/platform/qcom/iris/iris_vpu_buffer.h |   91 ++
->   drivers/media/platform/qcom/iris/iris_vpu_common.c |  371 ++++++++
->   drivers/media/platform/qcom/iris/iris_vpu_common.h |   28 +
->   .../platform/qcom/iris/iris_vpu_register_defines.h |   17 +
->   54 files changed, 12088 insertions(+)
-> ---
-> base-commit: 31aaa7d95e09892c81df0d7c49ae85640fa4e202
-> change-id: 20240827-iris_v3-4b30e9610e7f
-> 
-> Best regards,
+Best regards,
+Krzysztof
 
 
