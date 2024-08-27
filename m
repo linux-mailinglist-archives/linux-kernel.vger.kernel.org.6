@@ -1,48 +1,72 @@
-Return-Path: <linux-kernel+bounces-302960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3E9D96058A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:27:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AF2096058C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:28:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81D162829D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:27:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 900A81C228C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0974719E7EB;
-	Tue, 27 Aug 2024 09:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85E419F49E;
+	Tue, 27 Aug 2024 09:27:06 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D8D19D892
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02BA19D8A3
 	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724750824; cv=none; b=pfBvaRoEfDCpPY0JE01CI7G6AHl/ZFsFoUh51PzHONIPPeJN/PX/aq1ZybfC6eIXxHpvnbfnz0UNi27XzwOizy6zmBwi8b5OebCSL3aHxOkKcS49UqlzmOR9bD5yD4jk+SvHYHj7vgkdhjpBNEVn6zPnNa8wPfFfiUMzOrNv9rU=
+	t=1724750824; cv=none; b=hL1IuHlRYu88o3XW0eNlhJRQcSRVxx3Y7tj+NBZlD4kX+tlsARB/SlZdJApneOc7f/539DYlbRdPcg+GccBezdoAKMQxB3W+97dovxGDInhPCLC0E/OVk6HCQTc9fXuGveWBgpR67c5g5VRg3IdHE5vQRtabdEfp4vFA+1PzFaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724750824; c=relaxed/simple;
-	bh=TKiJo5+xBSU6Jnu3/wyofZzugr39xRcvGRJWKdE3S1Q=;
+	bh=P39uXxqL/XuG2FOWZ8aa9n/Ih1wfK1hy5FdyUrs+bRI=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=PRdyDiwsrXVT3oRf4Njco47tLjmzBpdWyIuhm3JBq2R0UK+268ZnTE+jfaa7waBGZxP51sia8EzFxXUivAnkvIlrbRij6zDzQu7omtIziTO1X054HDKdiNUx37/zPYVbMt+xCHM347CkBZyqOLi8kdbn2LPKGCnISrobZatWjpI=
+	 Content-Type; b=WHaRvGDMAWgcqA43YldSfNdBOtewJhXu1NosMqlX4JhsPySIAy52KwbeYzd/sebjSqpuwpUzAvu33M6YrQQKNnX131Gm74RebfMQMLn1IBztwT6KyDGDL66QN0G5jHMT5NEFmbowdi9MLOVTSfHxGpwgfoJqcr/hbBxAYob9E/Y=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EA19C8B7BC;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 409A4C8B7BB;
 	Tue, 27 Aug 2024 09:27:04 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1sisUM-00000004SLl-2kAi;
+	id 1sisUM-00000004SMF-3RDw;
 	Tue, 27 Aug 2024 05:27:46 -0400
-Message-ID: <20240827092746.514052482@goodmis.org>
+Message-ID: <20240827092746.676231983@goodmis.org>
 User-Agent: quilt/0.68
-Date: Tue, 27 Aug 2024 05:27:19 -0400
+Date: Tue, 27 Aug 2024 05:27:20 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>,
- Vincent Donnefort <vdonnefort@google.com>
-Subject: [for-next][PATCH 3/8] ring-buffer: Align meta-page to sub-buffers for improved TLB usage
+ Vincent Donnefort <vdonnefort@google.com>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Vineeth Pillai <vineeth@bitbyteword.org>,
+ Beau Belgrave <beaub@linux.microsoft.com>,
+ Alexander Graf <graf@amazon.com>,
+ Baoquan He <bhe@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ David Howells <dhowells@redhat.com>,
+ Mike Rapoport <rppt@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Tony Luck <tony.luck@intel.com>,
+ Guenter Roeck <linux@roeck-us.net>,
+ Ross Zwisler <zwisler@google.com>,
+ Kees Cook <keescook@chromium.org>,
+ Alexander Aring <aahringo@redhat.com>,
+ "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
+ Tomas Glozar <tglozar@redhat.com>,
+ John Kacur <jkacur@redhat.com>,
+ Clark Williams <williams@redhat.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ "Jonathan Corbet" <corbet@lwn.net>
+Subject: [for-next][PATCH 4/8] tracing: Add "traceoff" flag to boot time tracing instances
 References: <20240827092716.515115830@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -52,124 +76,146 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-From: Vincent Donnefort <vdonnefort@google.com>
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Previously, the mapped ring-buffer layout caused misalignment between
-the meta-page and sub-buffers when the sub-buffer size was not a
-multiple of PAGE_SIZE. This prevented hardware with larger TLB entries
-from utilizing them effectively.
+Add a "flags" delimiter (^) to the "trace_instance" kernel command line
+parameter, and add the "traceoff" flag. The format is:
 
-Add a padding with the zero-page between the meta-page and sub-buffers.
-Also update the ring-buffer map_test to verify that padding.
+   trace_instance=<name>[^<flag1>[^<flag2>]][@<memory>][,<events>]
 
-Link: https://lore.kernel.org/20240628104611.1443542-1-vdonnefort@google.com
-Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+The code allows for more than one flag to be added, but currently only
+"traceoff" is done so.
+
+The motivation for this change came from debugging with the persistent
+ring buffer and having trace_printk() writing to it. The trace_printk
+calls are always enabled, and the boot after the crash was having the
+unwanted trace_printks from the current boot inject into the ring buffer
+with the trace_printks of the crash kernel, making the output very
+confusing.
+
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Vincent Donnefort <vdonnefort@google.com>
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vineeth Pillai <vineeth@bitbyteword.org>
+Cc: Beau Belgrave <beaub@linux.microsoft.com>
+Cc: Alexander Graf <graf@amazon.com>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Mike Rapoport <rppt@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Ross Zwisler <zwisler@google.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Alexander Aring <aahringo@redhat.com>
+Cc: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+Cc: Tomas Glozar <tglozar@redhat.com>
+Cc: John Kacur <jkacur@redhat.com>
+Cc: Clark Williams <williams@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Jonathan Corbet" <corbet@lwn.net>
+Link: https://lore.kernel.org/20240823014019.053229958@goodmis.org
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/ring_buffer.c                    | 33 +++++++++++--------
- .../testing/selftests/ring-buffer/map_test.c  | 14 ++++++++
- 2 files changed, 34 insertions(+), 13 deletions(-)
+ .../admin-guide/kernel-parameters.txt         | 17 ++++++++++
+ kernel/trace/trace.c                          | 31 ++++++++++++++++++-
+ 2 files changed, 47 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index c3a5e6cbb940..77dc0b25140e 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -6852,10 +6852,10 @@ static void rb_setup_ids_meta_page(struct ring_buffer_per_cpu *cpu_buffer,
- 	/* install subbuf ID to kern VA translation */
- 	cpu_buffer->subbuf_ids = subbuf_ids;
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 388653448e72..3803f2b7f065 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -6743,6 +6743,15 @@
+ 			the same thing would happen if it was left off). The irq_handler_entry
+ 			event, and all events under the "initcall" system.
  
--	meta->meta_page_size = PAGE_SIZE;
- 	meta->meta_struct_len = sizeof(*meta);
- 	meta->nr_subbufs = nr_subbufs;
- 	meta->subbuf_size = cpu_buffer->buffer->subbuf_size + BUF_PAGE_HDR_SIZE;
-+	meta->meta_page_size = meta->subbuf_size;
- 
- 	rb_update_meta_page(cpu_buffer);
- }
-@@ -6949,6 +6949,12 @@ static int __rb_map_vma(struct ring_buffer_per_cpu *cpu_buffer,
- 	    !(vma->vm_flags & VM_MAYSHARE))
- 		return -EPERM;
- 
-+	subbuf_order = cpu_buffer->buffer->subbuf_order;
-+	subbuf_pages = 1 << subbuf_order;
++			Flags can be added to the instance to modify its behavior when it is
++			created. The flags are separated by '^'. Currently there's only one flag
++			defined, and that's "traceoff", to have the tracing instance tracing
++			disabled after it is created.
 +
-+	if (subbuf_order && pgoff % subbuf_pages)
-+		return -EINVAL;
++				trace_instance=foo^traceoff,sched,irq
 +
- 	/*
- 	 * Make sure the mapping cannot become writable later. Also tell the VM
- 	 * to not touch these pages (VM_DONTCOPY | VM_DONTEXPAND).
-@@ -6958,11 +6964,8 @@ static int __rb_map_vma(struct ring_buffer_per_cpu *cpu_buffer,
- 
- 	lockdep_assert_held(&cpu_buffer->mapping_lock);
- 
--	subbuf_order = cpu_buffer->buffer->subbuf_order;
--	subbuf_pages = 1 << subbuf_order;
--
- 	nr_subbufs = cpu_buffer->nr_pages + 1; /* + reader-subbuf */
--	nr_pages = ((nr_subbufs) << subbuf_order) - pgoff + 1; /* + meta-page */
-+	nr_pages = ((nr_subbufs + 1) << subbuf_order) - pgoff; /* + meta-page */
- 
- 	nr_vma_pages = vma_pages(vma);
- 	if (!nr_vma_pages || nr_vma_pages > nr_pages)
-@@ -6975,20 +6978,24 @@ static int __rb_map_vma(struct ring_buffer_per_cpu *cpu_buffer,
- 		return -ENOMEM;
- 
- 	if (!pgoff) {
-+		unsigned long meta_page_padding;
++			The flags must come before the defined events.
 +
- 		pages[p++] = virt_to_page(cpu_buffer->meta_page);
+ 			If memory has been reserved (see memmap for x86), the instance
+ 			can use that memory:
  
- 		/*
--		 * TODO: Align sub-buffers on their size, once
--		 * vm_insert_pages() supports the zero-page.
-+		 * Pad with the zero-page to align the meta-page with the
-+		 * sub-buffers.
- 		 */
--	} else {
--		/* Skip the meta-page */
--		pgoff--;
-+		meta_page_padding = subbuf_pages - 1;
-+		while (meta_page_padding-- && p < nr_pages) {
-+			unsigned long __maybe_unused zero_addr =
-+				vma->vm_start + (PAGE_SIZE * p);
+@@ -6765,6 +6774,14 @@
+ 			kernel versions where the validator will fail and reset the ring buffer
+ 			if the layout is not the same as the previous kernel.
  
--		if (pgoff % subbuf_pages) {
--			err = -EINVAL;
--			goto out;
-+			pages[p++] = ZERO_PAGE(zero_addr);
++			If the ring buffer is used for persistent bootups and has events enabled,
++			it is recommend to disable tracing so that events from a previous boot do not
++			mix with events of the current boot (unless you are debugging a random crash
++			at boot up).
++
++				reserve_mem=12M:4096:trace trace_instance=boot_map^traceoff@trace,sched,irq
++
++
+ 	trace_options=[option-list]
+ 			[FTRACE] Enable or disable tracer options at boot.
+ 			The option-list is a comma delimited list of options
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 9bcef199ae90..a79eefe84d6b 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -10468,10 +10468,36 @@ __init static void enable_instances(void)
+ 		phys_addr_t start = 0;
+ 		phys_addr_t size = 0;
+ 		unsigned long addr = 0;
++		bool traceoff = false;
++		char *flag_delim;
++		char *addr_delim;
+ 
+ 		tok = strsep(&curr_str, ",");
+-		name = strsep(&tok, "@");
+ 
++		flag_delim = strchr(tok, '^');
++		addr_delim = strchr(tok, '@');
++
++		if (addr_delim)
++			*addr_delim++ = '\0';
++
++		if (flag_delim)
++			*flag_delim++ = '\0';
++
++		name = tok;
++
++		if (flag_delim) {
++			char *flag;
++
++			while ((flag = strsep(&flag_delim, "^"))) {
++				if (strcmp(flag, "traceoff") == 0)
++					traceoff = true;
++				else
++					pr_info("Tracing: Invalid instance flag '%s' for %s\n",
++						flag, name);
++			}
++		}
++
++		tok = addr_delim;
+ 		if (tok && isdigit(*tok)) {
+ 			start = memparse(tok, &tok);
+ 			if (!start) {
+@@ -10519,6 +10545,9 @@ __init static void enable_instances(void)
+ 			continue;
  		}
-+	} else {
-+		/* Skip the meta-page */
-+		pgoff -= subbuf_pages;
  
- 		s += pgoff / subbuf_pages;
- 	}
-diff --git a/tools/testing/selftests/ring-buffer/map_test.c b/tools/testing/selftests/ring-buffer/map_test.c
-index a9006fa7097e..4bb0192e43f3 100644
---- a/tools/testing/selftests/ring-buffer/map_test.c
-+++ b/tools/testing/selftests/ring-buffer/map_test.c
-@@ -228,6 +228,20 @@ TEST_F(map, data_mmap)
- 	data = mmap(NULL, data_len, PROT_READ, MAP_SHARED,
- 		    desc->cpu_fd, meta_len);
- 	ASSERT_EQ(data, MAP_FAILED);
++		if (traceoff)
++			tracer_tracing_off(tr);
 +
-+	/* Verify meta-page padding */
-+	if (desc->meta->meta_page_size > getpagesize()) {
-+		void *addr;
-+
-+		data_len = desc->meta->meta_page_size;
-+		data = mmap(NULL, data_len,
-+			    PROT_READ, MAP_SHARED, desc->cpu_fd, 0);
-+		ASSERT_NE(data, MAP_FAILED);
-+
-+		addr = (void *)((unsigned long)data + getpagesize());
-+		ASSERT_EQ(*((int *)addr), 0);
-+		munmap(data, data_len);
-+	}
- }
- 
- FIXTURE(snapshot) {
+ 		/* Only allow non mapped buffers to be deleted */
+ 		if (!start)
+ 			trace_array_put(tr);
 -- 
 2.43.0
 
