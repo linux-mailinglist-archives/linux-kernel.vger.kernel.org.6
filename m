@@ -1,123 +1,222 @@
-Return-Path: <linux-kernel+bounces-302973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 273629605AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:34:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3D989605AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B89CCB230D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:33:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DB701F24425
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 870BA19D06C;
-	Tue, 27 Aug 2024 09:33:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FAD619D08C;
+	Tue, 27 Aug 2024 09:33:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i5AsPKKG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v2NO6o1o"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53BE1155393
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5367155393
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724751222; cv=none; b=u7rT5NFV0czzpLf1cRbTXCpY7Tl0NSHN9TdTdbfNaXcLlocJjOK4PvHKUVqeDHMG3pIrI01/gAUsPgEmkUZYsq/RANt+Gn7JTZjJp0zQnxIR9rFqyQqhNNkUNmB1oINc8SN+BX/BNm6+xW6WkegriCtvsAnP9aOzbAoaqGP7VqU=
+	t=1724751215; cv=none; b=E3BF4yZCrd/lO+hYuSPCuOQg6pwE6CUWxfsYeogM55i5292+RgZDm3gjA2Lw6Mg7oicy6QiCj8Xhqn1JOte61yr8jp/d21bBg6CPx0ueHT3qDRiph38CXMCNbW3zv9Ju6x0cjPKgJX7B9y3lHXtTL59aM7v+jD6rT1YkMQlutwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724751222; c=relaxed/simple;
-	bh=V7aWxvyu2NNNuOIIPUEc2jOovLlsk3r14oEGvmpUfD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rzrpi8LYReT6GLysdlbaDgoT+cCgdXdy1GXEpUOwUrTpm+4kUeNUN3Hr9k9cBzYLgpq0U7GJPY4eazsLYyiu2LoS6Hw7gEvKPS64nOZ9BJ0I3+zikbtbyIr1FKILykiG0FuUwnBhG9Q9A6aQsYLHCVwWx7IPIZ/fg9pYLVJNKTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i5AsPKKG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724751219;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xioG04ypc2y3mzfncp7R682Hre9B7EvlJbcD2gyIjIg=;
-	b=i5AsPKKGTU6B+5LRos+5MKCDpUMRcek8H+QyiRcb6lL/oMte6kvA6iDLu9zbUYycWH1DB8
-	exvor2Q+Lqlb8SJEIpIcqqKR8+Txdjizx17U9ZXFoeLsq7O6R09UkCg21DwdYddF0hmMG8
-	BLLYIL1d8W7Ckm+YmQnn26312T+cvPI=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-14-EbzGIH8aMEaTI4cZ3J3YLg-1; Tue,
- 27 Aug 2024 05:33:36 -0400
-X-MC-Unique: EbzGIH8aMEaTI4cZ3J3YLg-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B906D1954B05;
-	Tue, 27 Aug 2024 09:33:34 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.42])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 700031956056;
-	Tue, 27 Aug 2024 09:33:32 +0000 (UTC)
-Date: Tue, 27 Aug 2024 17:33:28 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Dave Young <dyoung@redhat.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org,
-	noodles@fb.com, x86@kernel.org, lijiang@redhat.com,
-	kexec@lists.infradead.org
-Subject: Re: [PATCH] x86/mm/sme: fix the kdump kernel breakage on SME system
- when CONFIG_IMA_KEXEC=y
-Message-ID: <Zs2daJ9FHA8vPkPP@MiWiFi-R3L-srv>
-References: <20240826024457.22423-1-bhe@redhat.com>
- <35e40987-1541-cbbe-6b16-1ddadc2c4c35@amd.com>
- <Zs1j31JGB/5EJatz@MiWiFi-R3L-srv>
- <CALu+AoTNtzVGFyG=GLAtT=VEWJG7FNbx6jD_Ye+4ORYXOiMekw@mail.gmail.com>
+	s=arc-20240116; t=1724751215; c=relaxed/simple;
+	bh=EeA7qq3rsJ55dQOeLzkCx2GOeBOL2372aylz0/+ODo0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jj3gscPI88E2m1ShLOgH2RCcYN+6IrYKllaPHXBGYYwWUvMFEGLXS6c/bxbViPAaur0P6MLaVdJfLGfCk3Q3GT0EY9qjdx+921h46GupQHCsGyF0HClFejkg951MJ3zvRYHVjeBGAfCcCm/Uswe3eRzCe211kQA9/dF5IbwJErc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v2NO6o1o; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42803adb420so6668855e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 02:33:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724751212; x=1725356012; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=xhCRE/Dt+PARny9PJYa/9C1D1jCS6Em1dPLj6ri+rj8=;
+        b=v2NO6o1o/UXs9oB1Hk13noVlNwopbn7cdLhRjBtvl7P7c5BeB0bkffBoAmlYcqfBAc
+         NBXzNHxRaKltRpU9ZbkT5nhy4gsEZA7Xi9V9s0aldqR1Cxiv1dg5gvj3YBbetwJLWKf0
+         szYO9UnMKspmkORZ7hcE14pBKa1UFbrPk8TUxSSAHsxzxg4ryJC5r10HE4oqmFG0tl/p
+         hpPr51sByvV5Q1N+5wV0txPKHpyH8m/hbZ8KdgGoQ7VpwRhFk9MP1hGqRDICqNpR50MH
+         yhV3mPMEN+SKcgj1uLMjMj/1ICAa+G4nyI2Gw1PbJaRY6T96H+/4nVcYljZQd0xiB8Os
+         Sbfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724751212; x=1725356012;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xhCRE/Dt+PARny9PJYa/9C1D1jCS6Em1dPLj6ri+rj8=;
+        b=a57YuSgZwIXt507sa8QbHI1ID1cQ4ryLoEBr2JYq0bQ2tJeHAqqqdsLkHmZqeLsJYj
+         Zqwu7o+U+Prw8ATFTiXuRBv9kDh6tVUARCi5yNAdB/foR3Oba6lMuRXP7JwSOYBhP4dQ
+         rbVjH2HUaiPFOWR5Ml4q0j/kwkcgO3ewmDUUYxBrF6Rp37mSW7qox/iM8ZGW3BOuUIwX
+         vFIGGwIU4RAGiVe3a0zykBAuj2n2XQHqD2OrhzGweQgLO/iAbL8Qk+TOMK8e2ieYrjne
+         i3oI3RkBcNZAdubSEMoSdBfrai4Sl+hR5TuAHyNj0BRHZFL6ZD4VqscE6dNbMVpVldFM
+         OVag==
+X-Forwarded-Encrypted: i=1; AJvYcCWKc2Ypigp1NFEoMn7NzMTH8CaRaFuShmfKLQhPVCPu03tqu5DLTq5wUbdQ+aLsWcW1t+ak5ggZdKGxiD8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuozCuk/owbGuFOPXORJrNOniPFU1wKjmwgS8ZErcO8TfXp5Or
+	/A6cK9SeoBCqdM6imDkSolo3+qoIwcK9l8zBireMiG/ibUaF5oqkp5CwhK9KWU8=
+X-Google-Smtp-Source: AGHT+IH63pkESvr8WAGG6Va2kOWPz/dYDrPxiymv32ZbAdx/cvZUiR85ioNyNii7YqJtjoTUp0YkxA==
+X-Received: by 2002:a05:600c:1391:b0:428:f1b4:3466 with SMTP id 5b1f17b1804b1-42acca00571mr54085815e9.3.1724751212175;
+        Tue, 27 Aug 2024 02:33:32 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.222.82])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42abefc626fsm217777435e9.31.2024.08.27.02.33.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 02:33:31 -0700 (PDT)
+Message-ID: <a48f1a0b-0e20-4782-bf6b-c430da9ae391@linaro.org>
+Date: Tue, 27 Aug 2024 11:33:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALu+AoTNtzVGFyG=GLAtT=VEWJG7FNbx6jD_Ye+4ORYXOiMekw@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/10] pmdomain: renesas: rcar-gen4-sysc: Use scoped
+ device node handling to simplify error paths
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20240823-cleanup-h-guard-pm-domain-v1-0-8320722eaf39@linaro.org>
+ <20240823-cleanup-h-guard-pm-domain-v1-9-8320722eaf39@linaro.org>
+ <CAMuHMdV0R0+u1eCiUOHhL5w-wzge9KhgyumJSd28oF9kQmnx_Q@mail.gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <CAMuHMdV0R0+u1eCiUOHhL5w-wzge9KhgyumJSd28oF9kQmnx_Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 08/27/24 at 01:41pm, Dave Young wrote:
-> On Tue, 27 Aug 2024 at 13:28, Baoquan He <bhe@redhat.com> wrote:
-> >
-> > On 08/26/24 at 09:24am, Tom Lendacky wrote:
-> > > On 8/25/24 21:44, Baoquan He wrote:
-......
-> > > > ---
-> > > >  arch/x86/mm/ioremap.c | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-> > > > index aa7d279321ea..7953c4a1d28d 100644
-> > > > --- a/arch/x86/mm/ioremap.c
-> > > > +++ b/arch/x86/mm/ioremap.c
-> > > > @@ -717,7 +717,7 @@ static bool __init early_memremap_is_setup_data(resource_size_t phys_addr,
-> > > >             paddr_next = data->next;
-> > > >             len = data->len;
-> > > >
-> > > > -           if ((phys_addr > paddr) && (phys_addr < (paddr + len))) {
-> > > > +           if ((phys_addr > paddr) && (phys_addr < (paddr + size + len))) {
-> > >
-> > > I don't think this is correct. You are adding the requested size to the
-> > > length of the setup data element. The length is the true length of the
-> > > setup data and should not be increased.
-> >
-> > I talked to Dave, he reminded me that people could mix the passed in
-> > parameter 'size' and the local variable 'size' defined inside the while
-> > loop, not sure which 'size' you are referring to.
-> >
-> Baoquan, you are right, but I think I mistakenly read the code in
-> memremap_is_setup_data instead of early_memremap_is_setup_data.  You
-> can check the memremap_is_setup_data, no "size = sizeof (*data)",  so
-> these two functions could both need fixes.
+On 27/08/2024 09:48, Geert Uytterhoeven wrote:
+> Hi Krzysztof,
+> 
+> On Fri, Aug 23, 2024 at 2:51 PM Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
+>> Obtain the device node reference with scoped/cleanup.h to reduce error
+>> handling and make the code a bit simpler.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> Thanks for your patch!
+> 
+>> --- a/drivers/pmdomain/renesas/rcar-gen4-sysc.c
+>> +++ b/drivers/pmdomain/renesas/rcar-gen4-sysc.c
+>> @@ -303,12 +304,12 @@ static int __init rcar_gen4_sysc_pd_init(void)
+>>         const struct rcar_gen4_sysc_info *info;
+>>         const struct of_device_id *match;
+>>         struct rcar_gen4_pm_domains *domains;
+>> -       struct device_node *np;
+>>         void __iomem *base;
+>>         unsigned int i;
+>>         int error;
+>>
+>> -       np = of_find_matching_node_and_match(NULL, rcar_gen4_sysc_matches, &match);
+>> +       struct device_node *np __free(device_node) =
+>> +               of_find_matching_node_and_match(NULL, rcar_gen4_sysc_matches, &match);
+> 
+> This breaks the declarations/blank-line/code structure, so please move
+> this up.
 
-Agree, memremap_is_setup_data() has the same drawback in code.
+What do you mean "declaration structure"? That's the way how variables
+with constructors are expected to be declared - within the code.
 
 > 
-> Otherwise it would be better to change the function internal variable
-> name, it could cause confusion even if the actual result is correct.
+> If you insist on keeping assignment to and validation of np together,
+> the line should be split in declaration and assignment.
 
-Ok, will consider to change when spinning v2.
+No, that would be inconsistent with cleanup/constructor coding style.
+Maybe this is something new, so let me bring previous discussions:
+
+https://lore.kernel.org/all/CAHk-=wicfvWPuRVDG5R1mZSxD8Xg=-0nLOiHay2T_UJ0yDX42g@mail.gmail.com/
+
+https://lore.kernel.org/all/CAHk-=wgRHiV5VSxtfXA4S6aLUmcQYEuB67u3BJPJPtuESs1JyA@mail.gmail.com/
+
+https://lore.kernel.org/all/CAHk-=whvOGL3aNhtps0YksGtzvaob_bvZpbaTcVEqGwNMxB6xg@mail.gmail.com/
+
+and finally it will reach documentation (although it focuses on
+unwinding process to be specific - "When the unwind order ..."):
+https://lore.kernel.org/all/171175585714.2192972.12661675876300167762.stgit@dwillia2-xfh.jf.intel.com/
+
+> 
+>>         if (!np)
+>>                 return -ENODEV;
+>>
+> 
+>> @@ -369,14 +365,12 @@ static int __init rcar_gen4_sysc_pd_init(void)
+>>                 if (error) {
+>>                         pr_warn("Failed to add PM subdomain %s to parent %u\n",
+>>                                 area->name, area->parent);
+>> -                       goto out_put;
+>> +                       return error;
+>>                 }
+>>         }
+>>
+>>         error = of_genpd_add_provider_onecell(np, &domains->onecell_data);
+>>
+>> -out_put:
+>> -       of_node_put(np);
+>>         return error;
+> 
+> return of_genpd_add_provider_onecell(...);
+
+Ack.
+
+Best regards,
+Krzysztof
 
 
