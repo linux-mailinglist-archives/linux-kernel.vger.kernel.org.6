@@ -1,331 +1,284 @@
-Return-Path: <linux-kernel+bounces-302645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6106960160
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:14:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A6A0960165
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0E0C1C21EA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:14:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDBFE1F2218E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF64C132132;
-	Tue, 27 Aug 2024 06:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mHqx3AXm"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A1E1428F1;
+	Tue, 27 Aug 2024 06:15:56 +0000 (UTC)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D47B674
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A2A6EB7C;
+	Tue, 27 Aug 2024 06:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724739251; cv=none; b=cup48ePICs0xrNIqRHsqCLYc1AMwbUZqCxWrcs4Lqh4tXzNhWUvaM3pr7IkXQt5NDkL2rBKWsLrmuUrlF+gFxXVUbo5aFCKP09C2A0x90CkAcax9wn6wh/ZSnxM5YmKsdH9DYkvn1/djtU7iksOwCeM7HPf8y0Gu7rfDn89s6Bw=
+	t=1724739356; cv=none; b=PGDtp2tVhANL/uniSNpaJ3UDweF3ir5sw87IXOjsrpQkgydcZTNYLTdKDjIyiN2Ac/1QC0K1hkav2DlNBjc/F9w5yNNLXOs7BEsKlEcBHgK/nQ/JRr1p7ZWMbntRELVW9pSD4iN0whvUw/mP6yW+ZTt0aa+MWy7MzzJt2DHIsJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724739251; c=relaxed/simple;
-	bh=caGJqwpOrzYVg0574H/f3e2NHZ1N88BftPRTH/QPqIE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=kK+zsgQrwBaTNwYKYTdzl7GoDmfQpXSgfnbt4WZzH9sWDyHX3zVI3Gm9s8NC4dqwqQV/0CUudQfOMcWVLXRQF72LyARt4RppyBsKGbPuV69ilvcd6B5yBsjfufqvRh0BUgk1qYwnYw51RGB001ndoD+E69QIPc/0JblvvHEwI7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=mHqx3AXm; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240827061406euoutp02b615125548d44100e244306c8480a9b8~vgTTrU4p72313623136euoutp02h
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:14:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240827061406euoutp02b615125548d44100e244306c8480a9b8~vgTTrU4p72313623136euoutp02h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1724739246;
-	bh=JGBPzwwTMl6pXnnc2RUMDho4EM+9AVo3LmnnmIv7I3k=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=mHqx3AXmR2mIUtQ9WjjabfpY2xrhoQU/7MecKbTfEvjK3mQIdKtVKEf6uik9zITe8
-	 8VIXmbTbrtN/69XhuF2w5MKnILtsphBnCmK3TumkW/txKn7gzaZya+3GhrFL2P1GiW
-	 FI4W3QEUNxT5yfwKwQ9Tm/oi7aWezV4M4IEk0nhE=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240827061406eucas1p12f82331796c1d72101fea0e1f0baf0c5~vgTTaA3F63269032690eucas1p1K;
-	Tue, 27 Aug 2024 06:14:06 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id F1.CC.09875.EAE6DC66; Tue, 27
-	Aug 2024 07:14:06 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240827061405eucas1p207b3791fd974434c679bff883f51effa~vgTS7uKAB0163501635eucas1p28;
-	Tue, 27 Aug 2024 06:14:05 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240827061405eusmtrp182bebb49ba4a59113c6566d3fb4a2357~vgTS7BiNx0342903429eusmtrp1U;
-	Tue, 27 Aug 2024 06:14:05 +0000 (GMT)
-X-AuditID: cbfec7f4-11bff70000002693-33-66cd6eae29cc
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id DB.85.08810.DAE6DC66; Tue, 27
-	Aug 2024 07:14:05 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240827061404eusmtip205fbe8a87c3e2236ab0266e253940898~vgTRXpx6c1464414644eusmtip2H;
-	Tue, 27 Aug 2024 06:14:04 +0000 (GMT)
-Message-ID: <f206f46c-0e2a-47a3-84b3-30bb53499f75@samsung.com>
-Date: Tue, 27 Aug 2024 08:14:03 +0200
+	s=arc-20240116; t=1724739356; c=relaxed/simple;
+	bh=D9zUaxCBuzZr6ZxruF4QX5YWqlsKIWT7R0X+I5mbeqo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=UaHm/llzzpRGvRvBFkzZg4KHnNrqmVRxdQBuPR6O/SXfJtc2U3QBholBrmalGk7HoMGtuS4qmi+c96kweIoiO/RaefjiXbj7C7MDKM3BhKY7i3DvTmR/+Au+hXSiTnJNOSrQ6gXAJ0Yj6/FYX4MZrirAE6bTkotnv38yQO9X7lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a86cc0d10aaso237035466b.2;
+        Mon, 26 Aug 2024 23:15:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724739352; x=1725344152;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DvNljt96kZpU7jSZrl60PVpp8KZA3Kt6uHD/i6ntmJg=;
+        b=WLzu8RPa9Sky1L63PIAWpY/YZJxJ8B2aJYkKpi1PpJi4R0NS8FM6rghjJobiKfqZBr
+         2S79z8+ZTvhJ/4TOEL0lRj3zgEyH9yktT77sDnTKsbgr2QLMW7Ws7b8v838Q3l3IXLxc
+         eXhxOInYWqCjBwdR4wZ/wbCBx5+xIehQ5SmJuAaS8HueB2Flk4Tf2RDIFYW7NNknWpqJ
+         xPSCTH8PTWhEGoxoDTOk0pXP6mFTUSBIQFrqfcVnkYPaaLzZvJFzK0DLm96FXPfaW4DI
+         EUMyDQJ5dfGQZT156uTodmD2idst2gTO1gZF1w2i+C3zY4GZ64s931Um4wOCVZYiO0SM
+         fsjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWuUHZhQ4+VW85865c0oxDmcYBpo4nVHwFvJv5HMDQ6RiSa2+rOFvOnVYMYFKQ+C0HFh19TWfr55t9ZGJSZIRUdLJ0KcZP@vger.kernel.org, AJvYcCUzN4nZeObSOQOP/P2s1slAokwVdXjAEne1ZTa5EjKQl5O+b7oI8RPDkTpEdY4cxeWpMVOxEMy3hH9tXP5A@vger.kernel.org, AJvYcCVeQSpxjc9wG1oWDjAUTAZdMZ4cNFHKgCvIfylmNSBD6YwiGYKs4N4FqFheS/ZEl7Io7Vq7XQUhabBOh1rTkA==@vger.kernel.org, AJvYcCXMKj/bPvY4VqNt9HMfBotLw3qbdeF7W/4ei7OXl6uPbq3uPhOTfqvxAuXV1ZO6EHHYnm5Dobn0Cfphw/AcEg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmLErEiSqekyMec6fq9LL3xTZxmyorvmcVfSy6sEgQYmdQXyji
+	NAUUegk0muKx31UnvIDNn2tKN5PS5JoZRWS7XDzUdvpdZKhdH+lA
+X-Google-Smtp-Source: AGHT+IG0Rtb9/QsxoHCkBplulCWks1HbTKU1zgRP3AjIMFphREd2tQE088Sm/ynw7mJupNashM/zQQ==
+X-Received: by 2002:a17:907:6e91:b0:a86:3c01:cf08 with SMTP id a640c23a62f3a-a86a548822fmr1013189966b.47.1724739351769;
+        Mon, 26 Aug 2024 23:15:51 -0700 (PDT)
+Received: from localhost.localdomain (109-81-92-122.rct.o2.cz. [109.81.92.122])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e582d8a3sm66834366b.136.2024.08.26.23.15.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 23:15:51 -0700 (PDT)
+From: Michal Hocko <mhocko@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Yafang Shao <laoar.shao@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	jack@suse.cz,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Michal Hocko <mhocko@suse.com>
+Subject: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Date: Tue, 27 Aug 2024 08:15:43 +0200
+Message-ID: <20240827061543.1235703-1-mhocko@kernel.org>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240826085347.1152675-2-mhocko@kernel.org>
+References: <20240826085347.1152675-2-mhocko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 RESED 1/2] dma: replace zone_dma_bits by
- zone_dma_limit
-To: Baruch Siach <baruch@tkos.co.il>
-Cc: Christoph Hellwig <hch@lst.de>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Robin Murphy
-	<robin.murphy@arm.com>, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-	=?UTF-8?B?UGV0ciBUZXNhxZnDrWs=?= <petr@tesarici.cz>, Ramon Fried
-	<ramon@neureality.ai>, Elad Nachman <enachman@marvell.com>,
-	linux-rockchip@lists.infradead.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <87mskyva7o.fsf@tarshish>
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNKsWRmVeSWpSXmKPExsWy7djP87rr8s6mGfxdzmax4tobFov3y3oY
-	LR4v2sZusXL1USaLX18sLDY9vsZqcXnXHDaLTw/+M1tMWNjMbPH7+z9Wi4VznrNa9L1cw2px
-	8MMTVouWO6YOfB5r5q1h9Ni0qpPNY/OSeo8Xm2cyepyfsZDRY/fNBjaPyQsvMnvM+vmPxWPv
-	3u2MHnMbbjF5fN4kF8AdxWWTkpqTWZZapG+XwJWx7cQKtoJj9hXzth1lbGDcatrFyMEhIWAi
-	sfBzVRcjF4eQwApGib6rs1khnC+MEi3rbjFDOJ8ZJQ5On8bYxcgJ1nF20Rd2iMRyRomnZ3+y
-	QTgfGSXmbJvJDFLFK2An8fxRDyuIzSKgKvFhzmeouKDEyZlPWEBsUQF5ifu3ZrCD2MICARJT
-	nm1iA7FFBFQk/j/fBmYzC1xjltg8wwbCFpe49WQ+E4jNJmAo0fW2iw3kB04BNYmOW7YQJfIS
-	zVtng10tIbCbU+JP9xsmiKtdJNbevM0OYQtLvDq+BcqWkTg9uYcFoqGdUWLB7/tMEM4ERomG
-	57egfraWuHPuF9g2ZgFNifW79CHCjhLL575gggQkn8SNt4IQR/BJTNo2nRkizCvR0SYEUa0m
-	Mev4Ori1By9cYp7AqDQLKVRmIflyFpJ3ZiHsXcDIsopRPLW0ODc9tdgoL7Vcrzgxt7g0L10v
-	OT93EyMw/Z3+d/zLDsblrz7qHWJk4mA8xCjBwawkwit3+WSaEG9KYmVValF+fFFpTmrxIUZp
-	DhYlcV7VFPlUIYH0xJLU7NTUgtQimCwTB6dUA9MmVl/2Le0ZNqXH2CwPum1rkUt7kBh3fOlx
-	nYBFDCbR/2+z3fX8Em0gru0tJfuEz4vTufvdhJjo6gcNHYohKlFtlmuETaPeRLHcFn0kMvlI
-	+LStk4++PjhThkun/vw3TnNzm8K/n1dbxQX97xfwCb8R5rh/UWhkW6nZZb6n9cJcWksTYqZZ
-	OTr/F6otOuuwf9uUK9q8tRNmLNsgkjx/2v0gu/CUdXJvghgLPJpl3zs8e3CuZsqjMxukbgQx
-	LTugmbnvjel57bwWoUeq22xb8ua/ecvYZTixRfmQ6Mob0ZOEg2OT5uhdU0yZ2rflo+j6+f2y
-	AT9OXE3mE3s3N/zlu25O0xn5fatuL/KcWFmapMRSnJFoqMVcVJwIAEd30sTuAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPIsWRmVeSWpSXmKPExsVy+t/xe7pr886mGZzdq2Sx4tobFov3y3oY
-	LR4v2sZusXL1USaLX18sLDY9vsZqcXnXHDaLTw/+M1tMWNjMbPH7+z9Wi4VznrNa9L1cw2px
-	8MMTVouWO6YOfB5r5q1h9Ni0qpPNY/OSeo8Xm2cyepyfsZDRY/fNBjaPyQsvMnvM+vmPxWPv
-	3u2MHnMbbjF5fN4kF8AdpWdTlF9akqqQkV9cYqsUbWhhpGdoaaFnZGKpZ2hsHmtlZKqkb2eT
-	kpqTWZZapG+XoJex7cQKtoJj9hXzth1lbGDcatrFyMkhIWAicXbRF/YuRi4OIYGljBLv9k9j
-	g0jISJyc1sAKYQtL/LnWxQZR9J5RYmbzLUaQBK+AncTzRz1gRSwCqhIf5nxmhogLSpyc+YQF
-	xBYVkJe4f2sGO4gtLOAncf/tVrAFIgIqEv+fbwMbyixwjVmi9ed5qA1LmSTerVoCNpVZQFzi
-	1pP5TCA2m4ChRNdbkDM4ODgF1CQ6btlClJhJdG3tYoSw5SWat85mnsAoNAvJHbOQTJqFpGUW
-	kpYFjCyrGEVSS4tz03OLDfWKE3OLS/PS9ZLzczcxAmN+27Gfm3cwznv1Ue8QIxMH4yFGCQ5m
-	JRFeucsn04R4UxIrq1KL8uOLSnNSiw8xmgIDYyKzlGhyPjDp5JXEG5oZmBqamFkamFqaGSuJ
-	83oWdCQKCaQnlqRmp6YWpBbB9DFxcEo1MG1mfbI+sf0Hg6CQPMPOGfPyPzvO5LNy29oiX7X8
-	/LwdWzjF7sw8Pt+48v2NV/0bVRQafs/5N/3ki/JEZrW5mxS8Fr3e/f426+ZfRcdcZ7yQmZts
-	4DXvwtuXoYUZewz1eowq/Coe31Fjvyq6NemY86EZa7oeFEX88Lgi8DpngsluHVfGjKNLD7P3
-	dJtu3zj7QyVHgfrdhbfkb7f7eN/MNb50oeZVlorZMb9NZ5V1NPoYa3kt3nq7f7s9L9Mqfsdb
-	PiYr8wzhq6oqWk+/TIuvy9dRLtmUKpAb4XGX6bES4+VX+348jE6VWju7ma9x5QmGbaWfmq3+
-	C87uiliVaLQ0qCkv6Kng5Pt1Ewo+ntiuKK3EUpyRaKjFXFScCADv/Nm7ggMAAA==
-X-CMS-MailID: 20240827061405eucas1p207b3791fd974434c679bff883f51effa
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20240811070951eucas1p1dc5315e0d710db13ce28fa0a977c7bc1
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240811070951eucas1p1dc5315e0d710db13ce28fa0a977c7bc1
-References: <cover.1723359916.git.baruch@tkos.co.il>
-	<CGME20240811070951eucas1p1dc5315e0d710db13ce28fa0a977c7bc1@eucas1p1.samsung.com>
-	<17c067618b93e5d71f19c37826d54db4299621a3.1723359916.git.baruch@tkos.co.il>
-	<53d988b1-bdce-422a-ae4e-158f305ad703@samsung.com> <87mskyva7o.fsf@tarshish>
 
-On 27.08.2024 06:52, Baruch Siach wrote:
-> Hi Marek,
->
-> Thanks for your report.
->
-> On Mon, Aug 26 2024, Marek Szyprowski wrote:
->> On 11.08.2024 09:09, Baruch Siach wrote:
->>> From: Catalin Marinas <catalin.marinas@arm.com>
->>>
->>> Hardware DMA limit might not be power of 2. When RAM range starts above
->>> 0, say 4GB, DMA limit of 30 bits should end at 5GB. A single high bit
->>> can not encode this limit.
->>>
->>> Use plain address for DMA zone limit.
->>>
->>> Since DMA zone can now potentially span beyond 4GB physical limit of
->>> DMA32, make sure to use DMA zone for GFP_DMA32 allocations in that case.
->>>
->>> Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
->>> Co-developed-by: Baruch Siach <baruch@tkos.co.il>
->>> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
->>> ---
->> This patch landed recently in linux-next as commit ba0fb44aed47
->> ("dma-mapping: replace zone_dma_bits by zone_dma_limit"). During my
->> tests I found that it introduces the following warning on ARM64/Rockchip
->> based Odroid M1 board (arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts):
-> Does this warning go away if you revert both 3be9b846896d and ba0fb44aed47?
+From: Michal Hocko <mhocko@suse.com>
 
-Yes, linux-next with above mentioned commits reverted works fine.
+bch2_new_inode relies on PF_MEMALLOC_NORECLAIM to try to allocate a new
+inode to achieve GFP_NOWAIT semantic while holding locks. If this
+allocation fails it will drop locks and use GFP_NOFS allocation context.
 
+We would like to drop PF_MEMALLOC_NORECLAIM because it is really
+dangerous to use if the caller doesn't control the full call chain with
+this flag set. E.g. if any of the function down the chain needed
+GFP_NOFAIL request the PF_MEMALLOC_NORECLAIM would override this and
+cause unexpected failure.
 
-> Upstream rockchip DTs have no dma-ranges property. Is that the case for
-> your platform as well?
->
-> Can you share kernel report of DMA zones and swiotlb? On my platform I get:
->
-> [    0.000000] Zone ranges:
-> [    0.000000]   DMA      [mem 0x0000000800000000-0x000000083fffffff]
-> [    0.000000]   DMA32    empty
-> [    0.000000]   Normal   [mem 0x0000000840000000-0x0000000fffffffff]
-> ...
-> [    0.000000] software IO TLB: area num 8.
-> [    0.000000] software IO TLB: mapped [mem 0x000000083be38000-0x000000083fe38000] (64MB)
->
-> What do you get at your end?
+While this is not the case in this particular case using the scoped gfp
+semantic is not really needed bacause we can easily pus the allocation
+context down the chain without too much clutter.
 
-On ba0fb44aed47 I got:
+Acked-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+ fs/bcachefs/fs.c          | 14 ++++++--------
+ fs/inode.c                |  6 +++---
+ include/linux/fs.h        |  7 ++++++-
+ include/linux/lsm_hooks.h |  2 +-
+ include/linux/security.h  |  4 ++--
+ security/security.c       |  8 ++++----
+ 6 files changed, 22 insertions(+), 19 deletions(-)
 
-[    0.000000] NUMA: No NUMA configuration found
-[    0.000000] NUMA: Faking a node at [mem 
-0x0000000000200000-0x00000001ffffffff]
-[    0.000000] NUMA: NODE_DATA [mem 0x1ff7a0600-0x1ff7a2fff]
-[    0.000000] Zone ranges:
-[    0.000000]   DMA      [mem 0x0000000000200000-0x00000001ffffffff]
-[    0.000000]   DMA32    empty
-[    0.000000]   Normal   empty
-[    0.000000] Movable zone start for each node
-[    0.000000] Early memory node ranges
-[    0.000000]   node   0: [mem 0x0000000000200000-0x00000000083fffff]
-[    0.000000]   node   0: [mem 0x0000000009400000-0x00000000efffffff]
-[    0.000000]   node   0: [mem 0x00000001f0000000-0x00000001ffffffff]
-[    0.000000] Initmem setup node 0 [mem 
-0x0000000000200000-0x00000001ffffffff]
-[    0.000000] On node 0, zone DMA: 512 pages in unavailable ranges
-[    0.000000] On node 0, zone DMA: 4096 pages in unavailable ranges
-[    0.000000] cma: Reserved 96 MiB at 0x00000001f0000000 on node -1
+Chancges since v1
+- compile errors fixed 
+- dropped GFP_NOWARN as it is part of GFP_NOWAIT now
 
-...
-
-[    0.000000] software IO TLB: SWIOTLB bounce buffer size adjusted to 3MB
-[    0.000000] software IO TLB: area num 4.
-[    0.000000] software IO TLB: mapped [mem 
-0x00000001fac00000-0x00000001fb000000] (4MB)
-
-On the fa3c109a6d30 (parent commit of the $subject) I got:
-
-[    0.000000] NUMA: No NUMA configuration found
-[    0.000000] NUMA: Faking a node at [mem 
-0x0000000000200000-0x00000001ffffffff]
-[    0.000000] NUMA: NODE_DATA [mem 0x1ff7a0600-0x1ff7a2fff]
-[    0.000000] Zone ranges:
-[    0.000000]   DMA      [mem 0x0000000000200000-0x00000000ffffffff]
-[    0.000000]   DMA32    empty
-[    0.000000]   Normal   [mem 0x0000000100000000-0x00000001ffffffff]
-[    0.000000] Movable zone start for each node
-[    0.000000] Early memory node ranges
-[    0.000000]   node   0: [mem 0x0000000000200000-0x00000000083fffff]
-[    0.000000]   node   0: [mem 0x0000000009400000-0x00000000efffffff]
-[    0.000000]   node   0: [mem 0x00000001f0000000-0x00000001ffffffff]
-[    0.000000] Initmem setup node 0 [mem 
-0x0000000000200000-0x00000001ffffffff]
-[    0.000000] On node 0, zone DMA: 512 pages in unavailable ranges
-[    0.000000] On node 0, zone DMA: 4096 pages in unavailable ranges
-[    0.000000] cma: Reserved 96 MiB at 0x00000000ea000000 on node -1
-
-...
-
-[    0.000000] software IO TLB: area num 4.
-[    0.000000] software IO TLB: mapped [mem 
-0x00000000e6000000-0x00000000ea000000] (64MB)
-
-It looks that for some reasons $subject patch changes the default zone 
-and swiotlb configuration.
-
->> ------------[ cut here ]------------
->> dwmmc_rockchip fe2b0000.mmc: swiotlb addr 0x00000001faf00000+4096
->> overflow (mask ffffffff, bus limit 0).
->> WARNING: CPU: 3 PID: 1 at kernel/dma/swiotlb.c:1594 swiotlb_map+0x2f0/0x308
->> Modules linked in:
->> CPU: 3 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-rc4+ #15278
->> Hardware name: Hardkernel ODROID-M1 (DT)
->> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->> pc : swiotlb_map+0x2f0/0x308
->> lr : swiotlb_map+0x2f0/0x308
->> ...
->> Call trace:
->>    swiotlb_map+0x2f0/0x308
->>    dma_direct_map_sg+0x9c/0x2e4
->>    __dma_map_sg_attrs+0x28/0x94
->>    dma_map_sg_attrs+0x10/0x24
->>    dw_mci_pre_dma_transfer+0xb8/0xf4
->>    dw_mci_pre_req+0x50/0x68
->>    mmc_blk_mq_issue_rq+0x3e0/0x964
->>    mmc_mq_queue_rq+0x118/0x2b4
->>    blk_mq_dispatch_rq_list+0x21c/0x714
->>    __blk_mq_sched_dispatch_requests+0x490/0x58c
->>    blk_mq_sched_dispatch_requests+0x30/0x6c
->>    blk_mq_run_hw_queue+0x284/0x40c
->>    blk_mq_flush_plug_list.part.0+0x190/0x974
->>    blk_mq_flush_plug_list+0x1c/0x2c
->>    __blk_flush_plug+0xe4/0x140
->>    blk_finish_plug+0x38/0x4c
->>    __ext4_get_inode_loc+0x22c/0x654
->>    __ext4_get_inode_loc_noinmem+0x40/0xa8
->>    __ext4_iget+0x154/0xcc0
->>    ext4_get_journal_inode+0x30/0x110
->>    ext4_load_and_init_journal+0x9c/0xaf0
->>    ext4_fill_super+0x1fec/0x2d90
->>    get_tree_bdev+0x140/0x1d8
->>    ext4_get_tree+0x18/0x24
->>    vfs_get_tree+0x28/0xe8
->>    path_mount+0x3e8/0xb7c
->>    init_mount+0x68/0xac
->>    do_mount_root+0x108/0x1dc
->>    mount_root_generic+0x100/0x330
->>    mount_root+0x160/0x2d0
->>    initrd_load+0x1f0/0x2a0
->>    prepare_namespace+0x4c/0x29c
->>    kernel_init_freeable+0x4b4/0x50c
->>    kernel_init+0x20/0x1d8
->>    ret_from_fork+0x10/0x20
->> irq event stamp: 1305682
->> hardirqs last  enabled at (1305681): [<ffff8000800e332c>]
->> console_unlock+0x124/0x130
->> hardirqs last disabled at (1305682): [<ffff80008124e684>] el1_dbg+0x24/0x8c
->> softirqs last  enabled at (1305678): [<ffff80008005be1c>]
->> handle_softirqs+0x4cc/0x4e4
->> softirqs last disabled at (1305665): [<ffff8000800105b0>]
->> __do_softirq+0x14/0x20
->> ---[ end trace 0000000000000000 ]---
->>
->> This "bus limit 0" seems to be a bit suspicious to me as well as the
->> fact that swiotlb is used for the MMC DMA. I will investigate this
->> further tomorrow. The board boots fine though.
-> Looking at the code I guess that bus_dma_limit set to 0 means no bus
-> limit. But dma_mask for your device indicates 32-bit device limit. This
-> can't work with address above 4GB. For some reason DMA code tries to
-> allocate from higher address. This is most likely the reason
-> dma_capable() returns false.
-
-Indeed this looks like a source of the problem:
-
-[    3.123618] Synopsys Designware Multimedia Card Interface Driver
-[    3.139653] dwmmc_rockchip fe2b0000.mmc: IDMAC supports 32-bit 
-address mode.
-[    3.147739] dwmmc_rockchip fe2b0000.mmc: Using internal DMA controller.
-[    3.161659] dwmmc_rockchip fe2b0000.mmc: Version ID is 270a
-[    3.168455] dwmmc_rockchip fe2b0000.mmc: DW MMC controller at irq 
-56,32 bit host data width,256 deep fifo
-[    3.182651] dwmmc_rockchip fe2b0000.mmc: Got CD GPIO
-
-...
-
-[   11.009258] ------------[ cut here ]------------
-[   11.014762] dwmmc_rockchip fe2b0000.mmc: swiotlb addr 
-0x00000001faf00000+4096 overflow (mask ffffffff, bus limit 0).
-
-
-> ...
-
-Best regards
+diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
+index 15fc41e63b6c..d151a2f28d12 100644
+--- a/fs/bcachefs/fs.c
++++ b/fs/bcachefs/fs.c
+@@ -231,9 +231,9 @@ static struct inode *bch2_alloc_inode(struct super_block *sb)
+ 	BUG();
+ }
+ 
+-static struct bch_inode_info *__bch2_new_inode(struct bch_fs *c)
++static struct bch_inode_info *__bch2_new_inode(struct bch_fs *c, gfp_t gfp)
+ {
+-	struct bch_inode_info *inode = kmem_cache_alloc(bch2_inode_cache, GFP_NOFS);
++	struct bch_inode_info *inode = kmem_cache_alloc(bch2_inode_cache, gfp);
+ 	if (!inode)
+ 		return NULL;
+ 
+@@ -245,7 +245,7 @@ static struct bch_inode_info *__bch2_new_inode(struct bch_fs *c)
+ 	mutex_init(&inode->ei_quota_lock);
+ 	memset(&inode->ei_devs_need_flush, 0, sizeof(inode->ei_devs_need_flush));
+ 
+-	if (unlikely(inode_init_always(c->vfs_sb, &inode->v))) {
++	if (unlikely(inode_init_always_gfp(c->vfs_sb, &inode->v, gfp))) {
+ 		kmem_cache_free(bch2_inode_cache, inode);
+ 		return NULL;
+ 	}
+@@ -258,12 +258,10 @@ static struct bch_inode_info *__bch2_new_inode(struct bch_fs *c)
+  */
+ static struct bch_inode_info *bch2_new_inode(struct btree_trans *trans)
+ {
+-	struct bch_inode_info *inode =
+-		memalloc_flags_do(PF_MEMALLOC_NORECLAIM|PF_MEMALLOC_NOWARN,
+-				  __bch2_new_inode(trans->c));
++	struct bch_inode_info *inode = __bch2_new_inode(trans->c, GFP_NOWAIT);
+ 
+ 	if (unlikely(!inode)) {
+-		int ret = drop_locks_do(trans, (inode = __bch2_new_inode(trans->c)) ? 0 : -ENOMEM);
++		int ret = drop_locks_do(trans, (inode = __bch2_new_inode(trans->c, GFP_NOFS)) ? 0 : -ENOMEM);
+ 		if (ret && inode) {
+ 			__destroy_inode(&inode->v);
+ 			kmem_cache_free(bch2_inode_cache, inode);
+@@ -328,7 +326,7 @@ __bch2_create(struct mnt_idmap *idmap,
+ 	if (ret)
+ 		return ERR_PTR(ret);
+ #endif
+-	inode = __bch2_new_inode(c);
++	inode = __bch2_new_inode(c, GFP_NOFS);
+ 	if (unlikely(!inode)) {
+ 		inode = ERR_PTR(-ENOMEM);
+ 		goto err;
+diff --git a/fs/inode.c b/fs/inode.c
+index 86670941884b..a2aabbcffbe4 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -153,7 +153,7 @@ static int no_open(struct inode *inode, struct file *file)
+  * These are initializations that need to be done on every inode
+  * allocation as the fields are not initialised by slab allocation.
+  */
+-int inode_init_always(struct super_block *sb, struct inode *inode)
++int inode_init_always_gfp(struct super_block *sb, struct inode *inode, gfp_t gfp)
+ {
+ 	static const struct inode_operations empty_iops;
+ 	static const struct file_operations no_open_fops = {.open = no_open};
+@@ -230,14 +230,14 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
+ #endif
+ 	inode->i_flctx = NULL;
+ 
+-	if (unlikely(security_inode_alloc(inode)))
++	if (unlikely(security_inode_alloc(inode, gfp)))
+ 		return -ENOMEM;
+ 
+ 	this_cpu_inc(nr_inodes);
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL(inode_init_always);
++EXPORT_SYMBOL(inode_init_always_gfp);
+ 
+ void free_inode_nonrcu(struct inode *inode)
+ {
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index fd34b5755c0b..d46ca71a7855 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3027,7 +3027,12 @@ extern loff_t default_llseek(struct file *file, loff_t offset, int whence);
+ 
+ extern loff_t vfs_llseek(struct file *file, loff_t offset, int whence);
+ 
+-extern int inode_init_always(struct super_block *, struct inode *);
++extern int inode_init_always_gfp(struct super_block *, struct inode *, gfp_t);
++static inline int inode_init_always(struct super_block *sb, struct inode *inode)
++{
++	return inode_init_always_gfp(sb, inode, GFP_NOFS);
++}
++
+ extern void inode_init_once(struct inode *);
+ extern void address_space_init_once(struct address_space *mapping);
+ extern struct inode * igrab(struct inode *);
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index a2ade0ffe9e7..b08472d64765 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -150,6 +150,6 @@ extern struct lsm_info __start_early_lsm_info[], __end_early_lsm_info[];
+ 		__used __section(".early_lsm_info.init")		\
+ 		__aligned(sizeof(unsigned long))
+ 
+-extern int lsm_inode_alloc(struct inode *inode);
++extern int lsm_inode_alloc(struct inode *inode, gfp_t gfp);
+ 
+ #endif /* ! __LINUX_LSM_HOOKS_H */
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 1390f1efb4f0..7c6b9b038a0d 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -336,7 +336,7 @@ int security_dentry_create_files_as(struct dentry *dentry, int mode,
+ 					struct cred *new);
+ int security_path_notify(const struct path *path, u64 mask,
+ 					unsigned int obj_type);
+-int security_inode_alloc(struct inode *inode);
++int security_inode_alloc(struct inode *inode, gfp_t gfp);
+ void security_inode_free(struct inode *inode);
+ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 				 const struct qstr *qstr,
+@@ -769,7 +769,7 @@ static inline int security_path_notify(const struct path *path, u64 mask,
+ 	return 0;
+ }
+ 
+-static inline int security_inode_alloc(struct inode *inode)
++static inline int security_inode_alloc(struct inode *inode, gfp_t gfp)
+ {
+ 	return 0;
+ }
+diff --git a/security/security.c b/security/security.c
+index 8cee5b6c6e6d..3581262da5ee 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -660,14 +660,14 @@ static int lsm_file_alloc(struct file *file)
+  *
+  * Returns 0, or -ENOMEM if memory can't be allocated.
+  */
+-int lsm_inode_alloc(struct inode *inode)
++int lsm_inode_alloc(struct inode *inode, gfp_t gfp)
+ {
+ 	if (!lsm_inode_cache) {
+ 		inode->i_security = NULL;
+ 		return 0;
+ 	}
+ 
+-	inode->i_security = kmem_cache_zalloc(lsm_inode_cache, GFP_NOFS);
++	inode->i_security = kmem_cache_zalloc(lsm_inode_cache, gfp);
+ 	if (inode->i_security == NULL)
+ 		return -ENOMEM;
+ 	return 0;
+@@ -1582,9 +1582,9 @@ int security_path_notify(const struct path *path, u64 mask,
+  *
+  * Return: Return 0 if operation was successful.
+  */
+-int security_inode_alloc(struct inode *inode)
++int security_inode_alloc(struct inode *inode, gfp_t gfp)
+ {
+-	int rc = lsm_inode_alloc(inode);
++	int rc = lsm_inode_alloc(inode, gfp);
+ 
+ 	if (unlikely(rc))
+ 		return rc;
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.46.0
 
 
