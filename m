@@ -1,117 +1,153 @@
-Return-Path: <linux-kernel+bounces-303227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C6F9960947
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:49:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41799960951
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDD9A28559B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:49:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF4D11F2425D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7F31A01C6;
-	Tue, 27 Aug 2024 11:49:44 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80541A071E;
+	Tue, 27 Aug 2024 11:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="IlVEJDit"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D1019FA72
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DADFF158D9C;
+	Tue, 27 Aug 2024 11:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724759383; cv=none; b=NfZx+L9OF8JBgN4dCPUKHt7E9cvthuUqxNRilAQR4DUM0BUPZMS5ZflSw57Alq5feNwX1jjRQkIJPDh7q3mjnwh4SE9251rNNmfrM9rexosJHU8xYjd+u3haI6dl9/nPLeLaboecDK3QuS40IgsD/mzMcMKbw2KXovjd6RB9kq8=
+	t=1724759543; cv=none; b=eL9Dy/mvcrG/kJGjcjmVqPctmiLKIGsUBfokaNzkA3sImLpxH/BRCVL0que40qdRnWbeMj3YxhFfsT8XiybWYI30zJNwYz4OPJSLpspmmUajhIHs0de3HrJFG8JO1mLQenhlo0M78U2c1WEbZaeGl1qoevn5/gSz2ST8uyHo1Ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724759383; c=relaxed/simple;
-	bh=1DUq9db1Jy9He7xAyDBzVZ6wPPF9ecElwigntJHa7BE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JoorkMfPDAMjje1yaqrVon8pHb17tfRyh+Rem5cO3YtY8vZLZzSLWJA+EN8DyLfSOmWbIVYo/xTTXtcXVoc7m6ZcCtQSlq1TT7dz4tnVMOxWUB2wbxzrO/so1Fnk8VmdhPImdkeuNTmanDafpUCVLtlaF+VmUfYuerw7hlohvt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WtQnN3wKSz1j7C9;
-	Tue, 27 Aug 2024 19:49:28 +0800 (CST)
-Received: from kwepemm600004.china.huawei.com (unknown [7.193.23.242])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6DA04180019;
-	Tue, 27 Aug 2024 19:49:38 +0800 (CST)
-Received: from [10.67.121.59] (10.67.121.59) by kwepemm600004.china.huawei.com
- (7.193.23.242) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 27 Aug
- 2024 19:49:37 +0800
-Message-ID: <7b2ce01f-da18-d809-6fa1-2ad40982a9a3@huawei.com>
-Date: Tue, 27 Aug 2024 19:49:37 +0800
+	s=arc-20240116; t=1724759543; c=relaxed/simple;
+	bh=J+qScYQFIhcO3sueINm5ThU7Ol4ugLxkpEe0/BhH8ms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F33fiE6Xden7y01dvhS6NMsG+5Ryx8+ehiQOOOFXMrBEx/2LwiU/n94kNNNWsohb09QYSD1HtQIeuWsKyBiHeSHnD23fBfDzwIBzBeZbseFSNRyrAGZxveC2Hcjc3LWyrnBytDIaciYTgphzIayrd3i8OwHljTDiClm89PO7N3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=IlVEJDit; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8FB5240E01C5;
+	Tue, 27 Aug 2024 11:52:19 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id v9mpIUU2S2BT; Tue, 27 Aug 2024 11:52:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1724759533; bh=LGaw2lZ3cyh+M3lg7t2gKWCCI7xSUNeCGodqRe631Qc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IlVEJDitNaBky6qouSeM/VwXgaGgwp0RSsZrcTVVY8VLk5gGN+KUo4QAfqZNxlwT3
+	 OoX56E68EaHCxifJAwObuqklp1p26eB1uLVof7luuNaQnijTfVp9yzvlCaBZfP+CJb
+	 p+HWu3CvumB0aQOLDOdx/KX0NL4tWHLKuhXWHQCeA/IbSqGnTMENPRWVUzkXSoit5a
+	 XR5eZZlhnotdlBNBQ9N0MHap3BUzxbpDFo7cbWNUpXZJb3CptoEUPTrx/ucGLYERO+
+	 NlHti2RsJVMgfs/7M2EzmUtk9aKfApN0uu8yfONFPL54TSjojvFD7GvLsKWKbJerBb
+	 KjxOvxiy1Tq8yejA4HdawSIULOI9nC1Kl1/n1KlZ80Wf4kLWlxwCfrEUpzShs7KyFf
+	 1xjiA46uMwEsriKO8zBwH5UOWlDw5bmCE+nW7oN6p7v9cXtuj4wTL41Kibb/wpB1PL
+	 ZLHrhJ04M2j/qryUkiUfpIH3liSCKe7daT+fS8X4tbcgaPRTrPx8LJ0CyxKGBbpdDN
+	 H3d2P69smNqMg2aEGlmvBNqOG66cNgJwXtYixtpt1fjh0ydryBcRzHuisu3kOHjozD
+	 4KPLTHll/M0kgKH8mmED5i4pOJLcGj0O0eWL5jrD9VQaid+aRijToT4UFj1c5LLrmS
+	 6jc/teImaiyIbdwxhFi7W5ds=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A970D40E0169;
+	Tue, 27 Aug 2024 11:52:02 +0000 (UTC)
+Date: Tue, 27 Aug 2024 13:51:55 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Ma Ke <make24@iscas.ac.cn>, Tero Kristo <tero.kristo@linux.intel.com>
+Cc: kristo@kernel.org, tony.luck@intel.com, james.morse@arm.com,
+	mchehab@kernel.org, rric@kernel.org, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v5] EDAC/ti: Fix possible null pointer dereference in
+ _emif_get_id()
+Message-ID: <20240827115155.GAZs292_OMQUMgThya@fat_crate.local>
+References: <20240816052021.378832-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v2 0/6] Add some features and bugfix for kunpeng_hccs
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-CC: <xuwei5@hisilicon.com>, <linux-kernel@vger.kernel.org>, <soc@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <krzk@kernel.org>,
-	<wanghuiqiang@huawei.com>, <liuyonglong@huawei.com>
-References: <20240718071134.31155-1-lihuisong@huawei.com>
- <20240823031059.32579-1-lihuisong@huawei.com>
- <20240823100211.00002b9d@Huawei.com>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <20240823100211.00002b9d@Huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemm600004.china.huawei.com (7.193.23.242)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240816052021.378832-1-make24@iscas.ac.cn>
 
++ the driver's maintainer.
 
-在 2024/8/23 17:02, Jonathan Cameron 写道:
-> On Fri, 23 Aug 2024 11:10:53 +0800
-> Huisong Li <lihuisong@huawei.com> wrote:
->
->> This series are intended to support the low power feature for specified
->> HCCS and add used HCCS types sysfs. In addition, fix some bugfix and
->> enhance some codes.
-> Quick process thing.  Don't send a v2 like this in reply to v1
-> (for most kernel subsystems anyway, maybe there are some that request
-> this?).
->
-> Most people still review in email clients and they often start at latest
-> and work back until they run out of time.  Thus a reply to an earlier
-> thread is not read!
-Got it. Thanks for suggestion.
->
-> Jonathan
->
->> ---
->>   v2:
->>    - remove "this patch" words in commit log suggested by Krzyszto.
->>    - use for_each_set_bit to replace the cycle scanning all HCCS IP.
->>    - add a patch to rename the 'lane_mode' to 'max_lane_num' to make it
->>      easy to see.
->>    - add doc description into the code patch.
->>    - rename the name of the low power interface.
->>    - adjust the increasing and decreasing lane interface description.
->>    - do not create available_inc_dec_lane_types when no HCCS type support
->>      low power.
->> ---
->>
->> Huisong Li (6):
->>    soc: hisilicon: kunpeng_hccs: Fix a PCC typo
->>    soc: hisilicon: kunpeng_hccs: Return failure on having not die or port
->>      information
->>    soc: hisilicon: kunpeng_hccs: Add the check for base address and size
->>      of shared memory
->>    soc: hisilicon: kunpeng_hccs: Fix the 'lane_mode' field name in port
->>      info structure to 'max_lane_num'
->>    soc: hisilicon: kunpeng_hccs: Add used HCCS types sysfs
->>    soc: hisilicon: kunpeng_hccs: Support low power feature for the
->>      specified HCCS type
->>
->>   .../sysfs-devices-platform-kunpeng_hccs       |  45 ++
->>   drivers/soc/hisilicon/Kconfig                 |   7 +-
->>   drivers/soc/hisilicon/kunpeng_hccs.c          | 516 +++++++++++++++++-
->>   drivers/soc/hisilicon/kunpeng_hccs.h          |  33 +-
->>   4 files changed, 582 insertions(+), 19 deletions(-)
->>
-> .
+On Fri, Aug 16, 2024 at 01:20:21PM +0800, Ma Ke wrote:
+> In _emif_get_id(), of_get_address() may return NULL which is later
+> dereferenced. Fix this bug by adding NULL check.
+> 
+> Found by code review.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 86a18ee21e5e ("EDAC, ti: Add support for TI keystone and DRA7xx EDAC")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202408160935.A6QFliqt-lkp@intel.com/
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+> Changes in v5:
+> - According to the developer's suggestion, added an inspection of function 
+> of_translate_address(). However, kernel test robot reported a build 
+> warning, so the inspection is removed here, reverting to the modification 
+> solution of patch v3.
+
+I'll drop Reported-by: kernel test robot <lkp@intel.com> since you've returned
+to the previous v3 variant.
+
+Leaving in the rest for reference.
+
+> Changes in v4:
+> - added the check of of_translate_address() as suggestions.
+> Changes in v3:
+> - added the patch operations omitted in PATCH v2 RESEND compared to PATCH 
+> v2. Sorry for my oversight.
+> Changes in v2:
+> - added Cc stable line.
+> ---
+>  drivers/edac/ti_edac.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/edac/ti_edac.c b/drivers/edac/ti_edac.c
+> index 29723c9592f7..6f3da8d99eab 100644
+> --- a/drivers/edac/ti_edac.c
+> +++ b/drivers/edac/ti_edac.c
+> @@ -207,6 +207,9 @@ static int _emif_get_id(struct device_node *node)
+>  	int my_id = 0;
+>  
+>  	addrp = of_get_address(node, 0, NULL, NULL);
+> +	if (!addrp)
+> +		return -EINVAL;
+> +
+>  	my_addr = (u32)of_translate_address(node, addrp);
+>  
+>  	for_each_matching_node(np, ti_edac_of_match) {
+> @@ -214,6 +217,9 @@ static int _emif_get_id(struct device_node *node)
+>  			continue;
+>  
+>  		addrp = of_get_address(np, 0, NULL, NULL);
+> +		if (!addrp)
+> +			return -EINVAL;
+> +
+>  		addr = (u32)of_translate_address(np, addrp);
+>  
+>  		edac_printk(KERN_INFO, EDAC_MOD_NAME,
+> -- 
+> 2.25.1
+> 
+> 
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
