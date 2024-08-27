@@ -1,265 +1,109 @@
-Return-Path: <linux-kernel+bounces-302847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8854496042C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:17:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 440C9960429
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1809D1F23960
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:17:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6C351F23914
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E337C17BEA4;
-	Tue, 27 Aug 2024 08:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Qr/uXIe/"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC90193433;
+	Tue, 27 Aug 2024 08:16:33 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43BDF158D9C
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6958115535A;
+	Tue, 27 Aug 2024 08:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724746619; cv=none; b=LjYyb414YGuIVu467y0dLe2RizyZ8z67w0MXvcwBin2gg8No2DDdUeHTVekIQE186dHxzpdNyxFOWDoVmtQM3Iqp8qEd5g7b1ro/URpco/VIK7dHJZoTU0hEHu90vJm4Ge6Y3vwu769guCJgUWBRzspnKPH3+85bK11NAS4EOKE=
+	t=1724746593; cv=none; b=kFdg/K4A4o0XkqvEt/cDzVxge3qlxdUxZ4Cgs2OSQZ3cCx3MBnP35LeXiZRuRdkFpOUIhsaGcQeDhSnQU3YM0ebDZxi0qy2NjqHnFbYFw+y5tY6Lmb60rd6Pmqr09GV1lkT2gOEB5DKlos5xbA2raqvS/HoXSU5EtmlXRoZB+gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724746619; c=relaxed/simple;
-	bh=MKkm9qMsRUpF3pd9pJZ/la8EY11iBqcRAJwn8afn+uY=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=IzfXrpMI+b5iM1rzKShmQk9n8SMlxWpgVo1ZOty5UiliC0k0yo/QKGvnZv2jhkoIEfnSy4bwjYfe1vt677irCJi5ml/KSzhdPQKFWgVxXlZ+vIa+GXh5GrSdGWBJQo0bWujzKR9AQAIZWvt4/iChtj5YwiJGyV6kGeSVF7N2N9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Qr/uXIe/; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724746614;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cxt+VGDRBTaPSFOGZMDocY40CDrItRmbO7MUtHbwBV0=;
-	b=Qr/uXIe/iLQniybPLcv9BZdRIi008MYoe96+XAqWTckItAZCtpRe3gDHZgg4Chtzb2x+Aw
-	MRsw+MzW2lgUJ/9UAdLjR7OE8kFv249H6pdtTe4wKVVBmR0iKOh84C04uMeL6N0h6HIfwE
-	VVakBlz5wtVKp9eGKsKEiJu6QAqz8LA=
+	s=arc-20240116; t=1724746593; c=relaxed/simple;
+	bh=4e4KFn3X2o9YId0RS3JogVooSFyHhVczdXK2/wJftVs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PLBFYbAymumHr2025HID/RbpHJOrviTp/vgVLPy6LGhdTsb9WNx9A9e0nAc5jYOgXwkDxJv64ZN2GEKTf0SrnpRRO0j7XumHRxGEChoe2Armc8s6n/Wt7GQbQuQ1kelog3YZCLX/vi5Z8zOYrEnc0/UFu315GO5XUBKlfKdzwKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WtL3V5NkGz9sRy;
+	Tue, 27 Aug 2024 10:16:22 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id qOUXLlQcHZNN; Tue, 27 Aug 2024 10:16:22 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WtL3R6BsYz9rvV;
+	Tue, 27 Aug 2024 10:16:19 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id C3B4D8B77B;
+	Tue, 27 Aug 2024 10:16:19 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id nz5gQiZQEV5x; Tue, 27 Aug 2024 10:16:19 +0200 (CEST)
+Received: from [192.168.233.149] (PO19727.IDSI0.si.c-s.fr [192.168.233.149])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 270028B763;
+	Tue, 27 Aug 2024 10:16:19 +0200 (CEST)
+Message-ID: <55a7d3ba-b384-4fb0-8fbb-e05ddf0d1fb8@csgroup.eu>
+Date: Tue, 27 Aug 2024 10:16:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH 4/4] block: fix fix ordering between checking
- QUEUE_FLAG_QUIESCED and adding requests to hctx->dispatch
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <1929CA74-3770-4B5D-B0A5-759911E97815@linux.dev>
-Date: Tue, 27 Aug 2024 16:16:15 +0800
-Cc: Muchun Song <songmuchun@bytedance.com>,
- Jens Axboe <axboe@kernel.dk>,
- "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <D53C1E55-80A4-4F71-B93D-D357F424D2FF@linux.dev>
-References: <20240811101921.4031-1-songmuchun@bytedance.com>
- <20240811101921.4031-5-songmuchun@bytedance.com> <ZshyPVEc9w4sqXJy@fedora>
- <CAMZfGtW-AG9gBD2f=FwNAZqxoFZwoEECbS0+4eurnSoxN5AhRg@mail.gmail.com>
- <45A22FCE-10FA-485C-8624-F1F22086B5E9@linux.dev> <ZsxI6uCbGpQh1XrF@fedora>
- <1929CA74-3770-4B5D-B0A5-759911E97815@linux.dev>
-To: Ming Lei <ming.lei@redhat.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] random: vDSO: Don't use PAGE_SIZE and PAGE_MASK
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Theodore Ts'o <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
+ Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-arch@vger.kernel.org
+References: <cover.1724743492.git.christophe.leroy@csgroup.eu>
+ <b8f8fb6d1d10386c74f2d8826b737a74c60b76b2.1724743492.git.christophe.leroy@csgroup.eu>
+ <Zs2FJku2hM2bp4ik@zx2c4.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <Zs2FJku2hM2bp4ik@zx2c4.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
 
-> On Aug 27, 2024, at 15:24, Muchun Song <muchun.song@linux.dev> wrote:
->=20
->=20
->=20
->> On Aug 26, 2024, at 17:20, Ming Lei <ming.lei@redhat.com> wrote:
->>=20
->> On Mon, Aug 26, 2024 at 03:33:18PM +0800, Muchun Song wrote:
->>>=20
->>>=20
->>>> On Aug 26, 2024, at 15:06, Muchun Song <songmuchun@bytedance.com> =
-wrote:
->>>>=20
->>>> On Fri, Aug 23, 2024 at 7:28=E2=80=AFPM Ming Lei =
-<ming.lei@redhat.com> wrote:
->>>>>=20
->>>>> On Sun, Aug 11, 2024 at 06:19:21 PM +0800, Muchun Song wrote:
->>>>>> Supposing the following scenario.
->>>>>>=20
->>>>>> CPU0                                                              =
-  CPU1
->>>>>>=20
->>>>>> blk_mq_request_issue_directly()                                   =
-  blk_mq_unquiesce_queue()
->>>>>>  if (blk_queue_quiesced())                                        =
-   blk_queue_flag_clear(QUEUE_FLAG_QUIESCED)   3) store
->>>>>>      blk_mq_insert_request()                                      =
-   blk_mq_run_hw_queues()
->>>>>>          /*                                                       =
-       blk_mq_run_hw_queue()
->>>>>>           * Add request to dispatch list or set bitmap of         =
-           if (!blk_mq_hctx_has_pending())     4) load
->>>>>>           * software queue.                  1) store             =
-               return
->>>>>>           */
->>>>>>      blk_mq_run_hw_queue()
->>>>>>          if (blk_queue_quiesced())           2) load
->>>>>>              return
->>>>>>          blk_mq_sched_dispatch_requests()
->>>>>>=20
->>>>>> The full memory barrier should be inserted between 1) and 2), as =
-well as
->>>>>> between 3) and 4) to make sure that either CPU0 sees =
-QUEUE_FLAG_QUIESCED is
->>>>>> cleared or CPU1 sees dispatch list or setting of bitmap of =
-software queue.
->>>>>> Otherwise, either CPU will not re-run the hardware queue causing =
-starvation.
->>>>>=20
->>>>> Memory barrier shouldn't serve as bug fix for two slow code paths.
->>>>>=20
->>>>> One simple fix is to add helper of blk_queue_quiesced_lock(), and
->>>>> call the following check on CPU0:
->>>>>=20
->>>>>      if (blk_queue_quiesced_lock())
->>>>>       blk_mq_run_hw_queue();
->>>>=20
->>>> This only fixes blk_mq_request_issue_directly(), I think anywhere =
-that
->>>> matching this
->>>> pattern (inserting a request to dispatch list and then running the
->>>> hardware queue)
->>>> should be fixed. And I think there are many places which match this
->>>> pattern (E.g.
->>>> blk_mq_submit_bio()). The above graph should be adjusted to the =
-following.
->>>>=20
->>>> CPU0                                        CPU1
->>>>=20
->>>> blk_mq_insert_request()         1) store    =
-blk_mq_unquiesce_queue()
->>>> blk_mq_run_hw_queue()
->>>> blk_queue_flag_clear(QUEUE_FLAG_QUIESCED)       3) store
->>>>  if (blk_queue_quiesced())   2) load         blk_mq_run_hw_queues()
->>>>      return                                      =
-blk_mq_run_hw_queue()
->>>>  blk_mq_sched_dispatch_requests()                    if
->>>> (!blk_mq_hctx_has_pending())     4) load
->>>>                                                          return
->>>=20
->>> Sorry. There is something wrong with my email client. Resend the =
-graph.
->>>=20
->>> CPU0                                        CPU1
->>>=20
->>> blk_mq_insert_request()         1) store    blk_mq_unquiesce_queue()
->>> blk_mq_run_hw_queue()                       =
-blk_queue_flag_clear(QUEUE_FLAG_QUIESCED)       3) store
->>>   if (blk_queue_quiesced())   2) load         blk_mq_run_hw_queues()
->>>       return                                      =
-blk_mq_run_hw_queue()
->>>   blk_mq_sched_dispatch_requests()                    if =
-(!blk_mq_hctx_has_pending())     4) load
->>>                                                           return
->>=20
->> OK.
->>=20
->> The issue shouldn't exist if blk_queue_quiesced() return false in
->> blk_mq_run_hw_queue(), so it is still one race in two slow paths?
->>=20
->> I guess the barrier-less approach should work too, such as:
->>=20
->=20
-> If we prefer barrier-less approach, I think the following solution
-> will work as well, I'll use it in v2. Thanks.
->=20
->>=20
->> diff --git a/block/blk-mq.c b/block/blk-mq.c
->> index e3c3c0c21b55..632261982a77 100644
->> --- a/block/blk-mq.c
->> +++ b/block/blk-mq.c
->> @@ -2202,6 +2202,12 @@ void blk_mq_delay_run_hw_queue(struct =
-blk_mq_hw_ctx *hctx, unsigned long msecs)
->> }
->> EXPORT_SYMBOL(blk_mq_delay_run_hw_queue);
->>=20
->> +static inline bool blk_mq_hw_queue_need_run(struct blk_mq_hw_ctx =
-*hctx)
->> +{
->> + 	return !blk_queue_quiesced(hctx->queue) &&
->> + 		blk_mq_hctx_has_pending(hctx);
->> +}
->> +
->> /**
->> * blk_mq_run_hw_queue - Start to run a hardware queue.
->> * @hctx: Pointer to the hardware queue to run.
->> @@ -2231,11 +2237,19 @@ void blk_mq_run_hw_queue(struct blk_mq_hw_ctx =
-*hctx, bool async)
->> * quiesced.
->> */
->> 	__blk_mq_run_dispatch_ops(hctx->queue, false,
->> - 		need_run =3D !blk_queue_quiesced(hctx->queue) &&
->> - 		blk_mq_hctx_has_pending(hctx));
->> + 		need_run =3D blk_mq_hw_queue_need_run(hctx));
->>=20
->> - 	if (!need_run)
->> - 		return;
->> + 	if (!need_run) {
->> + 		unsigned long flags;
->> +
->> + 		/* sync with unquiesce */
->> + 		spin_lock_irqsave(&hctx->queue->queue_lock, flags);
+Le 27/08/2024 à 09:49, Jason A. Donenfeld a écrit :
+> On Tue, Aug 27, 2024 at 09:31:48AM +0200, Christophe Leroy wrote:
+>> -	ssize_t ret = min_t(size_t, INT_MAX & PAGE_MASK /* = MAX_RW_COUNT */, len);
+>> +	const unsigned long page_size = 1UL << CONFIG_PAGE_SHIFT;
+>> +	const unsigned long page_mask = ~(page_size - 1);
+>> +	ssize_t ret = min_t(size_t, INT_MAX & page_mask /* = MAX_RW_COUNT */, len);
+> 
+> I'm really not a fan of making the code less idiomatic...
 
-After some time thought, I think here we need a big comment to explain
-why we need to sync. Because there are other caller of =
-blk_queue_quiesced()
-which do not need to hold ->queue_lock to sync. Then, I am thinking
-is ->queue_lock really easier to be maintained than mb? For developers,
-we still need to care about this, right? I don't see any obvious =
-benefit.
-And the mb approach seems more efficient than spinlock. Something like:
+Ok, I have another idea, let's give it a try.
 
-	if (!need_run) {
-		/* Add a comment here to explain what's going on here. =
-*/
-		smp_mb();
-		need_run =3D blk_mq_hw_queue_need_run(hctx);
-		if (!need_run)
-			return;
-	}
+> 
+>> An easy solution would be to define PAGE_SIZE and PAGE_MASK in vDSO
+>> when they do not exist already, but this can be misleading.
+> 
+> Why would what tglx and I suggested be misleading? That seems pretty
+> normal... Are you worried they might mismatch somehow? (If so, why?)
 
-I am not objecting to your approach, I want to know if you insist on
-barrier-less approach here. If yes, I'm fine with this approach. I can
-use it in v2.
+All architectures have their own definition, they are all based on 
+CONFIG_PAGE_SHIFT and should give the same value but with some 
+subtleties. The best would be to have an asm-generic definition of 
+PAGE_SIZE and PAGE_MASK that all architectures use, but that's another 
+level of work.
 
-Muhcun,
-Thanks.
+tglx or yourself suggested to put in a one of the vdso headers instead 
+of directly in getrandom.c. This is too fragile because PAGE_SIZE might 
+be absent in that header but arrive in getrandom.c through another header.
 
->> + 		need_run =3D blk_mq_hw_queue_need_run(hctx);
->=20
-> One question here: should we use __blk_mq_run_dispatch_ops()? I saw a =
-comment above.
-> It seems it is safe to call blk_mq_hw_queue_need_run under [s]rcu =
-lock.
->=20
-> Thanks.
->=20
->> + 		spin_unlock_irqrestore(&hctx->queue->queue_lock, flags);
->> +
->> + 		if (!need_run)
->> + 			return;
->> + 	}
->>=20
->> 	if (async || !cpumask_test_cpu(raw_smp_processor_id(), =
-hctx->cpumask)) {
->> 		blk_mq_delay_run_hw_queue(hctx, 0);
->>=20
->>=20
->> thanks,
->> Ming
->=20
->=20
-
+Christophe
 
