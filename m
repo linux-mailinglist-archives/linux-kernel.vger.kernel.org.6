@@ -1,150 +1,119 @@
-Return-Path: <linux-kernel+bounces-303854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1279D961611
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:57:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22E30961612
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B602F284D03
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:57:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FB5C284D71
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA3F1D1F70;
-	Tue, 27 Aug 2024 17:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D2B1D174F;
+	Tue, 27 Aug 2024 17:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r7WCloVo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="PU27pTUz"
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271511D0DC6;
-	Tue, 27 Aug 2024 17:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEFD1D2799
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 17:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724781425; cv=none; b=dv6mcDT0VvpPjZM49F/f8M0k1fSiXHkq6eROuyvTm0Ht00AMqFlAAA/ymqYrcq46EgA0ltGubIluRLtlNBL8xdDHm0pfOmTMULGXWjpPu+LuHTO65DfhNojy373Lz/eUhHeKU089VsUxV5WGdbFvYfcm5zt7W4MEZ9xn7NuGe08=
+	t=1724781429; cv=none; b=H+NMpsWjOm4eG7v1RAbiU9V72wuyR0qQcykDYvGNdDKb6PLsQYSNdKX9b8LDIUXnNH7rbC2TH6IKFWYVrPyqcMKWb3IAuWiB835667lhOjk4B4VpJA7t/ZIosfuVXNx/2eBBVfZXAOnU1soFrwwr75/xnQYeTrTjSdpznTkvYgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724781425; c=relaxed/simple;
-	bh=OptW6RUfILHvbgx1GROy+YCtAO9VnTyYH8If/uUZl9k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NnSNKayBQITvYcg22c3yGSAqxTRC60L+FWXxQGuzRaWhR8oFHCGKPAM/vdPNuqMr6/ORyqtq5+auC5DuX9oJCI0/xz9wW52XZ2eunXoTA2IWHsAleN6VsPHalszU5TABmZTkBJvCSNy8sA55LGsQWynAqGPlQ8VO3UzrApiNfaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r7WCloVo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFF24C8B7A5;
-	Tue, 27 Aug 2024 17:57:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724781424;
-	bh=OptW6RUfILHvbgx1GROy+YCtAO9VnTyYH8If/uUZl9k=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=r7WCloVoYuM9ww7zwA6zTDGNcuy2DT8wtpbwHYllBDwTb6TZBn9p4VtQAlU6UTzBX
-	 dW898KLVdBEgG2AVYmb7Er91/fY4QbZkovmDakzhgCmpfUV3YP3xabc2nu2Ow9gDUq
-	 g3VaoXbrMKfi0haM9wwvX/8halYF+J/nHZL1qIL6CNYqajCWG4YeSJZP4wztnKjrhr
-	 M94cDGWhNfq6VHdxaKrQPZLz3zxij104USu/epHOJfPf5u8IDq3GL4j7VTlSc6bZ4x
-	 sVb/xh5HBqToIzLyzloDJbL3bVF/tJ+6b2VL8yZZ4Y1xtCxkN4dNv8qEKxT2fU5Hbp
-	 Zkr3kPcF/m4rA==
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-268eec6c7c1so4049308fac.3;
-        Tue, 27 Aug 2024 10:57:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUOcWTuBVZDr7UUO5LbFW9EcPTZrQMII8x1t0bdmBfEcb/nyOt4d7A1ixi4+vYCuZjRht4GAN4FJJRR@vger.kernel.org, AJvYcCXEMq/GZQ99aQwJBMjMqJ28DBGX7EeeVu1bh3nZPuSrmwKAujPpoi67aDbdyxoqsBdxUe2Z6w9icBz3Bsxo@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZSehoWyGItfrAB6mQBdtxuw0Q1hMHwHo0lgmVvc7JqWrQ4f6y
-	1xtQKbN1pheAYnRhTAmYOPJHg2GOCkjlJu6kz2uGF5sz9vV00UCHFvw7eFwaUO0chdozGc1ZVh7
-	dDj3cPCSii6gCNBaY1zBykCo7Klk=
-X-Google-Smtp-Source: AGHT+IFu6T80cIoH2IuG57YoKLSfrmXhE5E+Qf/cSlYkLOAMDpJFXXRx8jvbWvu1aUtvkEAiMaN8kHOwbvIrkBuQYBM=
-X-Received: by 2002:a05:6870:b252:b0:270:6ec0:c00 with SMTP id
- 586e51a60fabf-273e64b5c7dmr15986972fac.12.1724781423743; Tue, 27 Aug 2024
- 10:57:03 -0700 (PDT)
+	s=arc-20240116; t=1724781429; c=relaxed/simple;
+	bh=O7hxBDxibZFvTyaGL2dSVDTSdLyyic6Nho1HjwnvqGc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nRnVqKQMhxI4bJm5omtO19tcsmeh1kZGZGeMppovh4AGWCmxGO+ivK8Ct0WdbxQg5SeAJvDybjyEHMqFMbWsJ5/UC5X09nMggjFx6C+7BqwR2qjsNZu/MwqBwolfcspmSJZlxQNm18uzjweSJuHm9T9lcjSxI0sAPo0VTXkfHe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=PU27pTUz; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id ED750100002;
+	Tue, 27 Aug 2024 20:57:05 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru ED750100002
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1724781425;
+	bh=U2ci6JcFVWV1xQ922NnZ/fyC+kd/ELTpXWy2qyn4+ns=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=PU27pTUz9HsVfSkBsPJiMbBaH/NVtquwCVxb9NuEnqHZPn5OmQHuAEBi9vEEjRptm
+	 rppEfSr9sWugoNH3kku8zGNg/TMPQV/f45FlmhfZU1P20k1Vf85mFsTFek5f31eQxD
+	 DhN0k98wIR9BzeabRYx+HE4pKfyCd5kymqzajM6Z8B7HVBKGSezd819w+sw0hJyoAz
+	 DQNGgDm9QCuNNPV2aXVZk3XKxQSYZnme16Mom1FbrkpNEjAgWoUcFeWIZlypqSzUG3
+	 42LHzbOZjC7Onxj0mDqha/xE3/KywK0Q6hXTo9VGVPLuiECdwUK4oJpgaSSrwjAvVU
+	 g4ef3i36zylJg==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Tue, 27 Aug 2024 20:57:05 +0300 (MSK)
+Message-ID: <bb137aef-4ca9-4825-99b7-12f7e17c9550@salutedevices.com>
+Date: Tue, 27 Aug 2024 20:57:04 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812005929.113499-1-sunilvl@ventanamicro.com>
- <ZrlgVUXC_dCW9ISM@sunil-laptop> <87mskzcnmf.ffs@tglx> <CAJZ5v0imJcU4cwDuZKEvGf93fZm4ea4s2Ocp3Cnfb3+nBQ0-Gg@mail.gmail.com>
- <Zsy3o_N8hvc6GfTp@sunil-laptop> <CAJZ5v0hxoT9tBjm3xRPU4fHx3MgHfYAx_Vyf4oe2toa3GWAN+Q@mail.gmail.com>
- <87jzg3c7bz.ffs@tglx> <CAJZ5v0iMpaxBevgPWmD2Ym_JG1ChkjzVFf22fV7Xw8-ssg9+Ag@mail.gmail.com>
- <Zs4HCZH3M9nRXUvu@sunil-laptop> <CAJZ5v0i-8N8VG-D4FRh0qFxt44Ax4TKY_CiFhZxLCzkhQrt0=Q@mail.gmail.com>
- <Zs4NcmM79kMUc7Ol@sunil-laptop>
-In-Reply-To: <Zs4NcmM79kMUc7Ol@sunil-laptop>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 27 Aug 2024 19:56:52 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hRWxNSrx9XPBdsU-mQpDurRJAUmzHtHNkyCTf0Hz1TgQ@mail.gmail.com>
-Message-ID: <CAJZ5v0hRWxNSrx9XPBdsU-mQpDurRJAUmzHtHNkyCTf0Hz1TgQ@mail.gmail.com>
-Subject: Re: [PATCH v8 00/17] RISC-V: ACPI: Add external interrupt controller support
-To: Sunil V L <sunilvl@ventanamicro.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Len Brown <lenb@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Anup Patel <anup@brainfault.org>, 
-	Samuel Holland <samuel.holland@sifive.com>, Robert Moore <robert.moore@intel.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, Haibo Xu <haibo1.xu@intel.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Atish Kumar Patra <atishp@rivosinc.com>, 
-	Drew Fustini <dfustini@tenstorrent.com>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] mtd: spinand: add OTP support
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+	<kernel@salutedevices.com>, Richard Weinberger <richard@nod.at>, "Vignesh
+ Raghavendra" <vigneshr@ti.com>, Mika Westerberg
+	<mika.westerberg@linux.intel.com>, Michael Walle <michael@walle.cc>, "Mark
+ Brown" <broonie@kernel.org>, Chia-Lin Kao <acelan.kao@canonical.com>, "Md
+ Sadre Alam" <quic_mdalam@quicinc.com>, Ezra Buehler
+	<ezra.buehler@husqvarnagroup.com>, Sridharan S N <quic_sridsn@quicinc.com>,
+	Frieder Schrempf <frieder.schrempf@kontron.de>, Alexey Romanov
+	<avromanov@salutedevices.com>
+References: <20240827174920.316756-1-mmkurbanov@salutedevices.com>
+ <20240827174920.316756-3-mmkurbanov@salutedevices.com>
+Content-Language: en-US
+From: Martin Kurbanov <mmkurbanov@salutedevices.com>
+In-Reply-To: <20240827174920.316756-3-mmkurbanov@salutedevices.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
+ p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 187372 [Aug 27 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: mmkurbanov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 27 0.3.27 71302da218a62dcd84ac43314e19b5cc6b38e0b6, {Tracking_arrow_text}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;lore.kernel.org:7.1.1;salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/08/27 07:21:00
+X-KSMG-LinksScanning: Clean, bases: 2024/08/27 07:12:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/08/27 16:21:00 #26445643
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Tue, Aug 27, 2024 at 7:31=E2=80=AFPM Sunil V L <sunilvl@ventanamicro.com=
-> wrote:
->
-> On Tue, Aug 27, 2024 at 07:12:11PM +0200, Rafael J. Wysocki wrote:
-> > On Tue, Aug 27, 2024 at 7:04=E2=80=AFPM Sunil V L <sunilvl@ventanamicro=
-.com> wrote:
-> > >
-> > > On Tue, Aug 27, 2024 at 06:20:24PM +0200, Rafael J. Wysocki wrote:
-> > > > On Mon, Aug 26, 2024 at 11:22=E2=80=AFPM Thomas Gleixner <tglx@linu=
-tronix.de> wrote:
-> > > > >
-> > > > > On Mon, Aug 26 2024 at 19:27, Rafael J. Wysocki wrote:
-> > > > > > On Mon, Aug 26, 2024 at 7:22=E2=80=AFPM Sunil V L <sunilvl@vent=
-anamicro.com> wrote:
-> > > > > >> There will be a conflict in PLIC irqchip driver due to a recen=
-t patch [1].
-> > > > > >> This patch is not in latest RC5 release but in linux-next. I u=
-sually base the
-> > > > > >> series on latest RC release. Should I rebase to linux-next in =
-this case
-> > > > > >> and send the next revision of the series resolving the conflic=
-t?
-> > > > > >
-> > > > > > No, please don't.
-> > > > > >
-> > > > > > That will be resolved at the merge time.
-> > > > >
-> > > > > Alternatively you can pull
-> > > > >
-> > > > >   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-u=
-rgent-2024-08-25
-> > > > >
-> > > > > which I'm about to send to Linus latest tomorrow morning. That co=
-ntains
-> > > > > the conflicting change.
-> > > >
-> > > > So I've applied the series on top of the above.
-> > > >
-> > > Thanks!
-> > >
-> > > > This included a full-swing rebase of the last patch, which I hope I=
-'ve
-> > > > done correctly, but Sunil please see
-> > > >
-> > > Yeah, sorry about that. You have resolved most of the conflicts but f=
-ew
-> > > are missing (which were not obvious anyway). Could you please take be=
-low
-> > > commit and squash?
-> > >
-> > > https://github.com/vlsunil/linux/commit/c85f9d0dc31c0e77916ecdbb45774=
-8c05cf4e75a
-> >
-> > Can you please send me a diff?
-> >
-> Hi Rafael,
->
-> I have sent the diff to you. Hope that is fine.
+Hello, Miquel. Thank you for the review.
+Regarding your question ( https://lore.kernel.org/all/20240717103623.6d6b63be@xps-13/ ):
 
-Squashed and pushed out, please see
+>> +int spinand_otp_read(struct spinand_device *spinand, loff_t from, size_t len,
+>> +		     u8 *buf, size_t *retlen);
+>> +
+>> +int spinand_otp_write(struct spinand_device *spinand, loff_t from, size_t len,
+>> +		      const u8 *buf, size_t *retlen);
+>> +
+> 
+> Why exposing spinand_otp_read and spinand_otp_write ?
 
-https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/commit/=
-?h=3Dbleeding-edge&id=3D9153fdae30867fe5d71f6a15b8a1974d7e801f39
+For the SPI-NAND chips we have (Micron, ESMT, FORESEE), the command
+sequence for reading/writing OTP is the same. I decided to make these
+functions global because other chips probably have similar read/write
+OTP operations as well.
 
-Thanks!
+-- 
+Best Regards,
+Martin Kurbanov
+
 
