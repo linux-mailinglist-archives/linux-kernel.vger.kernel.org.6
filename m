@@ -1,140 +1,139 @@
-Return-Path: <linux-kernel+bounces-303860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A03796166C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:08:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48978961644
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:04:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F6BC2850C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:01:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2DC1B214BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604961D27B1;
-	Tue, 27 Aug 2024 18:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60001D3193;
+	Tue, 27 Aug 2024 18:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nEvUnY+i"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FS5NNftZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43213199BC;
-	Tue, 27 Aug 2024 18:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9996B1D2795
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 18:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724781662; cv=none; b=o0UqxWt0MhA0v1MyFCnfRgOvzlvTNcKw1zuRiQZRfIjYUdxR1jz5noYmwzUnFzhqTtE3r8tmnbFO0A25Kt9L3kGhHNe4pexwNW6+e/qc28QDarqAtgmoHr6DplUlU3WS8paCsEkhQtRHyjVdwU+r/He8+CcWY4ouPs0lg0LdlSg=
+	t=1724781797; cv=none; b=Q2TgFUiHgINWLCcEA8YGu1sw09gyRBkeQX3lQ/lfkjPIHxbd6XqB2XVJ4S0NN5SY+GKdJx8/ESCzqrSo6gM1zBbMFGfCW3yv+gbM2+qlmGXLKNye5z1sCVbC7kA82SzZ98/lRw43Ll1ogedeVsm6NVKz4tvfaUP2Pk8iHqX1Q/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724781662; c=relaxed/simple;
-	bh=Aua7+lcALsAkgaRgTec3cCZqyc5LaTnbXenq8uNXako=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=fk5lapZxX02rPyQsfQrg/F7s81vyAu7jeQgwZNix/r1HvQaJ36Dnvjf3imLjoP520aFLYOYTMdVgNChRSX1CF/wmFzgQ9MAI1rSMuAGPTcHV6NDLNaZvjrGIinOZ5v4My1amTo6a5P1pYakdzXuzH3oFvonw96aTF255V+EHs5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nEvUnY+i; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7cd9e4f550dso1838496a12.0;
-        Tue, 27 Aug 2024 11:01:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724781660; x=1725386460; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WF4VTRtZNd3clMftLMxr7DHg+OlI4KSvYXGAf+Bu+yg=;
-        b=nEvUnY+i5lwlNdvaByUw+rOKOar8RTPWdhgaumC5VRUTF+yi/36KJ6eSyxFeVpXH1Y
-         iujetxLYH7WSer1GREwjKg9GwdGW2Oa1JcaukgnBQSceFPYv7KrhIUNXjYC6KqhnwYIb
-         eAhbGxdJLiyx/pkXI7AXcZX5JMtBozJJss5Dw/sh401ny32IcsApUScKdY/4ZSVQFiyh
-         MlL39JYUYCQp0XAsbGm0x0G801DjFc+KBeCAJjNPXN15dAB+NKHUdBtpu/W/usaKoO/N
-         JafMKWSP1ChN14TKRp2WfI43U7+u8T9R+7KnB/kip3rrRNBQz7ILmeftsAPayy62EYA3
-         fRYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724781660; x=1725386460;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WF4VTRtZNd3clMftLMxr7DHg+OlI4KSvYXGAf+Bu+yg=;
-        b=YMXckEYxdy7XDApAf309a1k8/EMZ0rsQeOtim6u5Y8G11SDJCbFGnJ1hwfV4XveAfL
-         hdFUtZuzpF8g9nwBqB0CMlDJxftsQxitOG/rNq8JENRfo+tRmB2OZNoKZucBDJUeYuvW
-         1Dc8NxatLMkk6W2ikKi6YmEhj/WNcm/WUl+Ms8wn49bjDrXf3E+JaLHVcXynbeSt1sCP
-         vuEXo2YY+N0pWNJsqMz5Y2UgKIbaOOeIbkSbyMIyVd4gCSgXK/7R46nf9PO1MtgM2qag
-         T5tTzaiAgL3b0crtwdH4e72qRGSlCdxOrBVV3KG0Qv2ALDzFhgNOgC/YNjB7esHbIyX2
-         CsOg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0BpZ+7aZcSY/ftgDb9l/j1bnheBDEMUpagVmrcHSsTeOx6iZamgDOuOxcgoHft2s0tUby6CLKkFxlSw==@vger.kernel.org, AJvYcCXKwEHNC+ATlr82aEwphtyDT5Ou5zTdd/eImB5+6t0Hu2nhEHg7KEYnRRpE4ud009X11hX+0UWaTM/TvFR1@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYB2vvv4Vz0LGes+cIgGddNv1suNHVgrwxdYlDTXfy8O0nerhA
-	Qjps7dipqLqQZufZNrmV4P8fPAdeEG284CM6LTQr2uTMVRiR2566
-X-Google-Smtp-Source: AGHT+IE8LnpOrHa2Dd6gdAWN/kM8M6D91dSPSnXXq8Wrs/MmG8w2FcHhVbQRORX1zNnNtBCMUDMWHQ==
-X-Received: by 2002:a05:6a20:9e49:b0:1c2:905c:dc2 with SMTP id adf61e73a8af0-1cc89d6bab9mr14937066637.15.1724781660186;
-        Tue, 27 Aug 2024 11:01:00 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:95c4:e75d:161d:a90])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-714342e440bsm8811619b3a.124.2024.08.27.11.00.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 11:00:59 -0700 (PDT)
-Date: Tue, 27 Aug 2024 11:00:56 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Mattijs Korpershoek <mkorpershoek@baylibre.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH] Input: mt6779-keypad - use devm_clk_get_enabled()
-Message-ID: <Zs4UWGKt3hLjNmoP@google.com>
+	s=arc-20240116; t=1724781797; c=relaxed/simple;
+	bh=CvsA/zhC/97Chjcmlq3gS0bR5udsf69Y4TjGQLAJrSE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=oyVLo4tPz1GMn+K/CKZxBoNlOd90pPXNfQZlSeH+OFhDWLs0hqJ4PYOVZY+/mTpEhAUrUw7VXU/iKGTSCXym18REHsOi9Ua+k8RVkVBWa9y8FggoS2I5YMCUkrZtywhZV5GlIX9Y4eeWcEGKLtUb/4wcqa2/3nV50e/q5XjwShg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FS5NNftZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724781794;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LUKN0kpZX28r3L3pwjaCmvRqCu3JTbKNbIZnDThKW3Q=;
+	b=FS5NNftZMND/nm7rpcw+h3jYsdXWax3hrNIhxvDsAyDiLmzreO4620yWauNXNX0z3/Em+3
+	36p0XSseV7keo2CV7wSVZbi1Q9B63niMittRcXxhBLLCtCuHbfjzZPulaHQCIel6MDk6uW
+	UA46+uBUTv5LCr+SH55lAAO4ZyKZcmA=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-474-vtZYPNwkNImZ-BdRc3ea6A-1; Tue,
+ 27 Aug 2024 14:03:10 -0400
+X-MC-Unique: vtZYPNwkNImZ-BdRc3ea6A-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 18DA21955BEF;
+	Tue, 27 Aug 2024 18:03:03 +0000 (UTC)
+Received: from fs-i40c-03.mgmt.fast.eng.rdu2.dc.redhat.com (fs-i40c-03.mgmt.fast.eng.rdu2.dc.redhat.com [10.6.24.150])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0C9C61955DD6;
+	Tue, 27 Aug 2024 18:02:58 +0000 (UTC)
+From: Alexander Aring <aahringo@redhat.com>
+To: teigland@redhat.com
+Cc: gfs2@lists.linux.dev,
+	song@kernel.org,
+	yukuai3@huawei.com,
+	agruenba@redhat.com,
+	mark@fasheh.com,
+	jlbec@evilplan.org,
+	joseph.qi@linux.alibaba.com,
+	gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-raid@vger.kernel.org,
+	ocfs2-devel@lists.linux.dev,
+	netdev@vger.kernel.org,
+	vvidic@valentin-vidic.from.hr,
+	heming.zhao@suse.com,
+	lucien.xin@gmail.com,
+	paulmck@kernel.org,
+	rcu@vger.kernel.org,
+	juri.lelli@redhat.com,
+	williams@redhat.com,
+	aahringo@redhat.com
+Subject: [RFC 1/7] dlm: fix possible lkb_resource null dereference
+Date: Tue, 27 Aug 2024 14:02:30 -0400
+Message-ID: <20240827180236.316946-2-aahringo@redhat.com>
+In-Reply-To: <20240827180236.316946-1-aahringo@redhat.com>
+References: <20240827180236.316946-1-aahringo@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Switch to using devm_clk_get_enable() helper instead of acquiring the
-clock with devm_clk_get(), enabling it, and defining and installing
-a custom devm action to call clk_disable().
+This patch fixes a possible null pointer dereference when this function is
+called from request_lock() as lkb->lkb_resource is not assigned yet,
+only after validate_lock_args() by calling attach_lkb(). Another issue
+is that a resource name could be a non printable bytearray and we cannot
+assume to be ASCII coded.
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+In this patch we just drop the printout of the resource name, the lkb id
+is enough to make a possible connection to a resource name if this
+exists.
+
+Signed-off-by: Alexander Aring <aahringo@redhat.com>
 ---
- drivers/input/keyboard/mt6779-keypad.c | 18 +-----------------
- 1 file changed, 1 insertion(+), 17 deletions(-)
+ fs/dlm/lock.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/input/keyboard/mt6779-keypad.c b/drivers/input/keyboard/mt6779-keypad.c
-index 19f69d167fbd..c13880103429 100644
---- a/drivers/input/keyboard/mt6779-keypad.c
-+++ b/drivers/input/keyboard/mt6779-keypad.c
-@@ -92,11 +92,6 @@ static irqreturn_t mt6779_keypad_irq_handler(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
+diff --git a/fs/dlm/lock.c b/fs/dlm/lock.c
+index 0e8d2b9bf908..121d2976986b 100644
+--- a/fs/dlm/lock.c
++++ b/fs/dlm/lock.c
+@@ -2861,16 +2861,14 @@ static int validate_lock_args(struct dlm_ls *ls, struct dlm_lkb *lkb,
+ 	case -EINVAL:
+ 		/* annoy the user because dlm usage is wrong */
+ 		WARN_ON(1);
+-		log_error(ls, "%s %d %x %x %x %d %d %s", __func__,
++		log_error(ls, "%s %d %x %x %x %d %d", __func__,
+ 			  rv, lkb->lkb_id, dlm_iflags_val(lkb), args->flags,
+-			  lkb->lkb_status, lkb->lkb_wait_type,
+-			  lkb->lkb_resource->res_name);
++			  lkb->lkb_status, lkb->lkb_wait_type);
+ 		break;
+ 	default:
+-		log_debug(ls, "%s %d %x %x %x %d %d %s", __func__,
++		log_debug(ls, "%s %d %x %x %x %d %d", __func__,
+ 			  rv, lkb->lkb_id, dlm_iflags_val(lkb), args->flags,
+-			  lkb->lkb_status, lkb->lkb_wait_type,
+-			  lkb->lkb_resource->res_name);
++			  lkb->lkb_status, lkb->lkb_wait_type);
+ 		break;
+ 	}
  
--static void mt6779_keypad_clk_disable(void *data)
--{
--	clk_disable_unprepare(data);
--}
--
- static void mt6779_keypad_calc_row_col_single(unsigned int key,
- 					      unsigned int *row,
- 					      unsigned int *col)
-@@ -213,21 +208,10 @@ static int mt6779_keypad_pdrv_probe(struct platform_device *pdev)
- 	regmap_update_bits(keypad->regmap, MTK_KPD_SEL, MTK_KPD_SEL_COL,
- 			   MTK_KPD_SEL_COLMASK(keypad->n_cols));
- 
--	keypad->clk = devm_clk_get(&pdev->dev, "kpd");
-+	keypad->clk = devm_clk_get_enabled(&pdev->dev, "kpd");
- 	if (IS_ERR(keypad->clk))
- 		return PTR_ERR(keypad->clk);
- 
--	error = clk_prepare_enable(keypad->clk);
--	if (error) {
--		dev_err(&pdev->dev, "cannot prepare/enable keypad clock\n");
--		return error;
--	}
--
--	error = devm_add_action_or_reset(&pdev->dev, mt6779_keypad_clk_disable,
--					 keypad->clk);
--	if (error)
--		return error;
--
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0)
- 		return irq;
 -- 
-2.46.0.295.g3b9ea8a38a-goog
+2.43.0
 
-
--- 
-Dmitry
 
