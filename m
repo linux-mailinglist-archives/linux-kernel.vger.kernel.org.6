@@ -1,209 +1,181 @@
-Return-Path: <linux-kernel+bounces-303721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F1B961468
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:42:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F208961475
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:43:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BAB9B2240F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:42:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C37021F21A57
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFA81CEAB9;
-	Tue, 27 Aug 2024 16:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6B71D1F4D;
+	Tue, 27 Aug 2024 16:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eLKezjld"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VPlcZbE3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5F81CDA32
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 16:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092ED1CFEDE;
+	Tue, 27 Aug 2024 16:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724776942; cv=none; b=kDUFP3q78VlTSn9IbGSo+DFbuAYtL1ASrJbO8yBS8iNiRIWVzJdkLcXj9KliSox30P52BGeS4/8cENSITVJphf+xeAecbaHSCdajtO5izAvqLPxMC7StuM2v0chHfeJ3eBh8penA2/namqH/HvMppEN3l9BQlBfHQnwG5mt6Tn8=
+	t=1724776970; cv=none; b=RoFKkEcVZQpXtOJCalPyzp+XOHp06smMnSGw+GDt3uyLuwkZeHxjVVQrur0x4g2rjULpkxqo5G8FD7xUxtO2iuW6Nou+j5gVyvOrDyoH7ZxyRmOaqI5bOMBnmYCjFnXGeaYaLtuG9xHKPdrw3BFEzy/kzLz0h2KaQHYrbwShPQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724776942; c=relaxed/simple;
-	bh=dblZv6eflLdxtbh7B2vk62MHRPPnX4/ZNwWaCOCCmYg=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c2nYHe3Xym13B2Fk8Yi32GpBTSzUsnlCuZ2k1h/klqFPGHpATvWMp5+3nrOOWjuAsObUpwRm7uPPfIjqlE8U/NnuyMAH0rYxj7Q9z1JN63td4QEWCXxIdLVQBDuT9BMTpwwGv8uKDYmwtA5U/pECx9gXnBci8b7CdjS0/FRXUkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eLKezjld; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61C2BC4AF0C;
-	Tue, 27 Aug 2024 16:42:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724776941;
-	bh=dblZv6eflLdxtbh7B2vk62MHRPPnX4/ZNwWaCOCCmYg=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=eLKezjldKhVF77UTs5hiqUDrnviY8ryutGAbsPA6U2d6Z9UCFBO/iV11wHnUHGU1r
-	 nSFn70GLmycW+cTSNUOdr06Om3+ubF++UMg01xw1YgLefk5mUEVPHpYRT5ClxmLQ7J
-	 i82oGE4DitKMtUhAgQX/1zQbggkVQeWIg24HX2I2dsNS0mkD4g+VC6B5un7IdNs5VO
-	 TD/nJ3hiz31N7rxhVN8wj2uNBpFDPcilwO446K84miXK6/EG+9rFTP4Ifj2rUXT7Jf
-	 mvzhXZy6tjAP8RFXsu2Rp47Aw7HAhjC/Az1tvpWEiz2QDXaB5h//cVCOOUxr/xs820
-	 uxfZe2w9YQQ0w==
-Date: Tue, 27 Aug 2024 18:42:18 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
-	Melissa Wen <melissa.srw@gmail.com>, =?utf-8?B?TWHDrXJh?= Canal <mairacanal@riseup.net>, 
-	Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net, 
-	linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com, 
-	thomas.petazzoni@bootlin.com, seanpaul@google.com, nicolejadeyee@google.com
-Subject: Re: [PATCH v2 1/6] drm/vkms: Switch to managed for connector
-Message-ID: <20240827-tactful-delectable-stork-06bded@houat>
-References: <20240827-google-vkms-managed-v2-0-f41104553aeb@bootlin.com>
- <20240827-google-vkms-managed-v2-1-f41104553aeb@bootlin.com>
- <20240827-dynamic-acoustic-guillemot-ddde49@houat>
- <Zs3TeoUwn3iO7oBs@louis-chauvet-laptop>
- <20240827-chubby-tidy-collie-c8ecf7@houat>
- <Zs3r2MK5nZs5TFsy@louis-chauvet-laptop>
+	s=arc-20240116; t=1724776970; c=relaxed/simple;
+	bh=FUn+XXWJl/8CVQEPrZs7NCpIG7c8hlemPC0XE2FjIEI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j9qP/Yr/t6y9keFmjxEoJmvipduHWzJXGEEbEiYQBaUXmaivgZEN81MEOPtL0rWxNElxaamkam/Jfjm1A3k8DlnZsH5CcdFFuP8NbKzI8b4dD+SWnnPJnEGXZ/m9Vo/CM+VvS82MGztZqy8q//fXvKp9tqI9E8rrfmaJyACk9bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VPlcZbE3; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724776969; x=1756312969;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=FUn+XXWJl/8CVQEPrZs7NCpIG7c8hlemPC0XE2FjIEI=;
+  b=VPlcZbE3JXRKSJhru7YvD6WUU3W1WDcjbAc2FZ3FiVZ6n5y0iYKni3hU
+   zp/zsOwvaVaDcNWV7Y4xaBt794mUm7bp9ILuV7DloANkYL4JBS98WCLTX
+   iubQ0JsrJtRYFzj7gpAEfV8IY59cGOtKcy6UN3iHQ4T3RCNQTEt+Dj3OX
+   MikAA0X3nOOYO9UL7LuOMuWxNOniOYdwYmBI5sGGBLWWlu2BKwYh8JFYk
+   K5Az90XT9yqVZAOxY26SFaiQOfN0wO0+ZnAz/tFW15U8di2ja8dMhwHRM
+   xO/tIiUeif3bs+bxcWBY42WnJQm3oDfOk+NUo2I9ZPFamNOx5f7faglUI
+   Q==;
+X-CSE-ConnectionGUID: 0UXo/QN3Txu1k+TejWlwyQ==
+X-CSE-MsgGUID: CQe0+45ATpWXWh54OnSw5A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="23394924"
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="23394924"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 09:42:49 -0700
+X-CSE-ConnectionGUID: p5CE+HKmTjyNEtsGco1r6Q==
+X-CSE-MsgGUID: +p+2BrwtSEqgvv17DBHnUg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="67271729"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 09:42:48 -0700
+Received: from [10.212.83.97] (kliang2-mobl1.ccr.corp.intel.com [10.212.83.97])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id E3E8920CFEDF;
+	Tue, 27 Aug 2024 09:42:46 -0700 (PDT)
+Message-ID: <c5b73b4f-b257-4847-a213-741889d89159@linux.intel.com>
+Date: Tue, 27 Aug 2024 12:42:46 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="llvjkgls46oo654a"
-Content-Disposition: inline
-In-Reply-To: <Zs3r2MK5nZs5TFsy@louis-chauvet-laptop>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] perf/core: Fix incorrect time diff in tick adjust
+ period
+To: Luo Gengkun <luogengkun@huaweicloud.com>, peterz@infradead.org
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+ mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+ irogers@google.com, adrian.hunter@intel.com,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240821134227.577544-1-luogengkun@huaweicloud.com>
+ <20240821134227.577544-3-luogengkun@huaweicloud.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240821134227.577544-3-luogengkun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
---llvjkgls46oo654a
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 27, 2024 at 05:08:08PM GMT, Louis Chauvet wrote:
-> Le 27/08/24 - 16:39, Maxime Ripard a =E9crit :
-> > On Tue, Aug 27, 2024 at 03:24:10PM GMT, Louis Chauvet wrote:
-> > > Le 27/08/24 - 15:15, Maxime Ripard a =E9crit :
-> > > > Hi,
-> > > >=20
-> > > > On Tue, Aug 27, 2024 at 11:57:36AM GMT, Louis Chauvet wrote:
-> > > > > The current VKMS driver uses non-managed function to create conne=
-ctors. It
-> > > > > is not an issue yet, but in order to support multiple devices eas=
-ily,
-> > > > > convert this code to use drm and device managed helpers.
-> > > > >=20
-> > > > > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> > > > > ---
-> > > > >  drivers/gpu/drm/vkms/vkms_drv.h    |  1 -
-> > > > >  drivers/gpu/drm/vkms/vkms_output.c | 22 ++++++++++++----------
-> > > > >  2 files changed, 12 insertions(+), 11 deletions(-)
-> > > > >=20
-> > > > > diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vk=
-ms/vkms_drv.h
-> > > > > index 5e46ea5b96dc..9a3c6c34d1f6 100644
-> > > > > --- a/drivers/gpu/drm/vkms/vkms_drv.h
-> > > > > +++ b/drivers/gpu/drm/vkms/vkms_drv.h
-> > > > > @@ -99,7 +99,6 @@ struct vkms_crtc_state {
-> > > > >  struct vkms_output {
-> > > > >  	struct drm_crtc crtc;
-> > > > >  	struct drm_encoder encoder;
-> > > > > -	struct drm_connector connector;
-> > > > >  	struct drm_writeback_connector wb_connector;
-> > > > >  	struct hrtimer vblank_hrtimer;
-> > > > >  	ktime_t period_ns;
-> > > > > diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm=
-/vkms/vkms_output.c
-> > > > > index 5ce70dd946aa..4fe6b88e8081 100644
-> > > > > --- a/drivers/gpu/drm/vkms/vkms_output.c
-> > > > > +++ b/drivers/gpu/drm/vkms/vkms_output.c
-> > > > > @@ -3,11 +3,11 @@
-> > > > >  #include "vkms_drv.h"
-> > > > >  #include <drm/drm_atomic_helper.h>
-> > > > >  #include <drm/drm_edid.h>
-> > > > > +#include <drm/drm_managed.h>
-> > > > >  #include <drm/drm_probe_helper.h>
-> > > > > =20
-> > > > >  static const struct drm_connector_funcs vkms_connector_funcs =3D=
- {
-> > > > >  	.fill_modes =3D drm_helper_probe_single_connector_modes,
-> > > > > -	.destroy =3D drm_connector_cleanup,
-> > > > >  	.reset =3D drm_atomic_helper_connector_reset,
-> > > > >  	.atomic_duplicate_state =3D drm_atomic_helper_connector_duplica=
-te_state,
-> > > > >  	.atomic_destroy_state =3D drm_atomic_helper_connector_destroy_s=
-tate,
-> > > > > @@ -50,7 +50,7 @@ int vkms_output_init(struct vkms_device *vkmsde=
-v, int index)
-> > > > >  {
-> > > > >  	struct vkms_output *output =3D &vkmsdev->output;
-> > > > >  	struct drm_device *dev =3D &vkmsdev->drm;
-> > > > > -	struct drm_connector *connector =3D &output->connector;
-> > > > > +	struct drm_connector *connector;
-> > > > >  	struct drm_encoder *encoder =3D &output->encoder;
-> > > > >  	struct drm_crtc *crtc =3D &output->crtc;
-> > > > >  	struct vkms_plane *primary, *cursor =3D NULL;
-> > > > > @@ -80,8 +80,15 @@ int vkms_output_init(struct vkms_device *vkmsd=
-ev, int index)
-> > > > >  	if (ret)
-> > > > >  		return ret;
-> > > > > =20
-> > > > > -	ret =3D drm_connector_init(dev, connector, &vkms_connector_func=
-s,
-> > > > > -				 DRM_MODE_CONNECTOR_VIRTUAL);
-> > > > > +	connector =3D drmm_kzalloc(dev, sizeof(*connector), GFP_KERNEL);
-> > > > > +	if (!connector) {
-> > > > > +		DRM_ERROR("Failed to allocate connector\n");
-> > > > > +		ret =3D -ENOMEM;
-> > > > > +		goto err_connector;
-> > > > > +	}
-> > > > > +
-> > > >=20
-> > > > I think it would be worth explaining why you need to move to a sepa=
-rate
-> > > > allocation for the connector now.
-> > > >=20
-> > > > Maxime
-> > >=20
-> > > Hi,
-> > >=20
-> > > This is in preparation for ConfigFS implementation, as the number of=
-=20
-> > > connector/encoders/crtc/planes... will be dynamic, we need to have=20
-> > > separate alloaction.
-> > >=20
-> > > If I add this paragraph in the commit message, is it sufficient?
-> > >=20
-> > > 	A specific allocation for the connector is not strictly necessary=20
-> > > 	at this point, but in order to implement dynamic configuration of=20
-> > > 	VKMS (configFS), it will be easier to have one allocation per=20
-> > > 	connector.
-> > >=20
-> > > (same for encoder & CRTC)
-> >=20
-> > Yeah, that's a good message, but it probably belongs in a separate patch
-> > then.
->=20
-> Can you explain what you mean by "in a separate patch"? I wanted to write=
-=20
-> this paragraph in the commit log.
+On 2024-08-21 9:42 a.m., Luo Gengkun wrote:
+> Perf events has the notion of sampling frequency which is implemented in
+> software by dynamically adjusting the counter period so that samples occur
+> at approximately the target frequency.  Period adjustment is done in 2
+> places:
+>  - when the counter overflows (and a sample is recorded)
+>  - each timer tick, when the event is active
+> The later case is slightly flawed because it assumes that the time since
+> the last timer-tick period adjustment is 1 tick, whereas the event may not
+> have been active (e.g. for a task that is sleeping).
+>
 
-You're doing two things in that patch: converting to drmm like you
-documented in your original commit log, and switching from having the
-connector (encoder, and crtc) from vkms_output to being dynamically
-allocated.
+Do you have a real-world example to demonstrate how bad it is if the
+algorithm doesn't take sleep into account?
 
-Ideally, you should have one patch to switch from being part of
-vkms_output to a dynamic allocation (with the commit log you suggested
-above), and one patch to switch to drmm with your original commit log.
+I'm not sure if introducing such complexity in the critical path is
+worth it.
 
-Maxime
+> Fix by using jiffies to determine the elapsed time in that case.
+> 
+> Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
+> ---
+>  include/linux/perf_event.h |  1 +
+>  kernel/events/core.c       | 11 ++++++++---
+>  2 files changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index 1a8942277dda..d29b7cf971a1 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -265,6 +265,7 @@ struct hw_perf_event {
+>  	 * State for freq target events, see __perf_event_overflow() and
+>  	 * perf_adjust_freq_unthr_context().
+>  	 */
+> +	u64				freq_tick_stamp;
+>  	u64				freq_time_stamp;
+>  	u64				freq_count_stamp;
+>  #endif
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index a9395bbfd4aa..86e80e3ef6ac 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -55,6 +55,7 @@
+>  #include <linux/pgtable.h>
+>  #include <linux/buildid.h>
+>  #include <linux/task_work.h>
+> +#include <linux/jiffies.h>
+>  
+>  #include "internal.h"
+>  
+> @@ -4120,7 +4121,7 @@ static void perf_adjust_freq_unthr_events(struct list_head *event_list)
+>  {
+>  	struct perf_event *event;
+>  	struct hw_perf_event *hwc;
+> -	u64 now, period = TICK_NSEC;
+> +	u64 now, period, tick_stamp;
+>  	s64 delta;
+>  
+>  	list_for_each_entry(event, event_list, active_list) {
+> @@ -4148,6 +4149,10 @@ static void perf_adjust_freq_unthr_events(struct list_head *event_list)
+>  		 */
+>  		event->pmu->stop(event, PERF_EF_UPDATE);
+>  
+> +		tick_stamp = jiffies64_to_nsecs(get_jiffies_64());
 
---llvjkgls46oo654a
-Content-Type: application/pgp-signature; name="signature.asc"
+Seems it only needs to retrieve the time once at the beginning, not for
+each event.
 
------BEGIN PGP SIGNATURE-----
+There is a perf_clock(). It's better to use it for the consistency.
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZs4B5gAKCRAnX84Zoj2+
-dnPhAYCsiGwo2f0xKeDFh5+1CzaV7BYj+tRf4WeFLyOxKaeLtlwG32jh+Sf4iM/1
-PzfMyPEBf1Obpil1qponH5r2XeNnnhSPy5zeRC062AnHFYZjeNnsGyuW7nLkmqlN
-+w82eaN0yw==
-=2SWu
------END PGP SIGNATURE-----
-
---llvjkgls46oo654a--
+Thanks,
+Kan
+> +		period = tick_stamp - hwc->freq_tick_stamp;
+> +		hwc->freq_tick_stamp = tick_stamp;
+> +
+>  		now = local64_read(&event->count);
+>  		delta = now - hwc->freq_count_stamp;
+>  		hwc->freq_count_stamp = now;
+> @@ -4157,9 +4162,9 @@ static void perf_adjust_freq_unthr_events(struct list_head *event_list)
+>  		 * reload only if value has changed
+>  		 * we have stopped the event so tell that
+>  		 * to perf_adjust_period() to avoid stopping it
+> -		 * twice.
+> +		 * twice. And skip if it is the first tick adjust period.
+>  		 */
+> -		if (delta > 0)
+> +		if (delta > 0 && likely(period != tick_stamp))
+>  			perf_adjust_period(event, period, delta, false);>
+>  		event->pmu->start(event, delta > 0 ? PERF_EF_RELOAD : 0);
 
