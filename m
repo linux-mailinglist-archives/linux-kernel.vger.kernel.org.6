@@ -1,196 +1,116 @@
-Return-Path: <linux-kernel+bounces-303732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D9A9961487
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:46:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 409A0961489
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:47:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A1D1B236BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:46:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73BB11C23E0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:47:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6A61D3180;
-	Tue, 27 Aug 2024 16:44:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64061CF28D;
-	Tue, 27 Aug 2024 16:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687091CFEA7;
+	Tue, 27 Aug 2024 16:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RY7eEK/p"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFAB946425
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 16:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724777096; cv=none; b=Us3MiHqwA7KGMOu8r7LCOef0IBT4q4CoLqAah5ZqtpPyUe8eCdm65wy5GRwK3OSHLF1oYKXE+dLYnXrLDBQeACjIw2IIzAMR2/Lyz6Qn2tHabj2Rf9dchOLXl61GDrapdwCRcu7ZocRaFEtQSJYMwuEv83mHaWqkHxme1WdO8Q0=
+	t=1724777132; cv=none; b=Eu7HMDj2AeApSowYiJAgA1SP3PymeVIbfAp4rYb81Z8pfGkCnbfm2UtZGaWjWpe9rIoWNt26FvijR0khW/1xlaqMQnXaw20pJNLY1OfZA5PK6V0LJRWIYnfvdG0XyvhzT0wEC+Pz4Gjl9CMoQbPA2LrkOdZzHGXD+ZkJ5yiPtUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724777096; c=relaxed/simple;
-	bh=BwnfzGeKKodPdb0q9w4EIWZMwjDvuh7tqjkZzZlq4SM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mzASjBB7v7cuPF76D7772rta6QaZI9PboCq/Lsjaw7i5cbSjhy5fUyLsvGbAMqBDRz8kMB5dQWPatsL+iA2z25ZjNM8nd+xYgBnKZs1uLEfm6t95LKa0K/hlg3vJmG/RmUq0VLHHzKooVc50oaA2Y4ONs444CfizYOh6/AbpC3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A622DDA7;
-	Tue, 27 Aug 2024 09:45:20 -0700 (PDT)
-Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 58BC73F762;
-	Tue, 27 Aug 2024 09:44:52 -0700 (PDT)
-From: Leo Yan <leo.yan@arm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	coresight@lists.linaro.org,
-	linux-perf-users@vger.kernel.org
-Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH v1 9/9] perf arm-spe: Dump metadata with version 2
-Date: Tue, 27 Aug 2024 17:44:17 +0100
-Message-Id: <20240827164417.3309560-10-leo.yan@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240827164417.3309560-1-leo.yan@arm.com>
-References: <20240827164417.3309560-1-leo.yan@arm.com>
+	s=arc-20240116; t=1724777132; c=relaxed/simple;
+	bh=13N9rWiQqinjqu5t0FpuSFOBXGf77nou/F+efdv0gD8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fUAfoMYSEo6tn5h1AlN7z8YXhKa4nHXXAAY/LyaGhMLYfAFrpiWLxN0qF7KitO6vB309CysSwHBAsHVsRbjYx7cZ0PtS/XaMWlP43IvdNxrIkOuqV6VjPl5JNFcprV9A0E3begq6E/cyORdWIyds8Z42p4QIfUHEfkt+8Db6pO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RY7eEK/p; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-44fee2bfd28so1721cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:45:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724777130; x=1725381930; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Yg+baRcLpnI1aQ9hlrSp/2fH28bJtbk1x405VvbEiCQ=;
+        b=RY7eEK/pvNkcY/cFL21Qknc+7wcnBa6HbZkqzwy7+P1UfVB8nkzOetBoD5J8WgRv7L
+         tFmmpD+0HEjP3sF9OOXJwBau+MJ+IsnT20s5IUXtg0+40y7ZQ4RMRHg++cE6DZD0v5mA
+         L3eTryIKWPN+V0Pw2SNuqw+q0nRw6frsmP4fuKkmnkF1zuI2r4VAXr8g0X/GsIZEsaPd
+         1nLDwEg0dVCUn1qe4pLMra7q2SdBDqrl4UWtBmgXLD4Z3LSpLjZ4cqvJh6/VaQaGyNBR
+         xYBw/VMQHy5gDNQKhmw7vWOtDJElogiL5MizUTu6+oZwv46sv4PwsqwXYud56y8oVqh5
+         k0Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724777130; x=1725381930;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Yg+baRcLpnI1aQ9hlrSp/2fH28bJtbk1x405VvbEiCQ=;
+        b=WlS1vWnz10HMUViz9s6ijRXDzlhZBUwcmB5/n4DjvWnm2RObQNuGsk8PsnBAzTQGDi
+         NHv9JRkG2NLmKBOawtykTQ2mHaCWIzoz3+J1rr/etng0D02JuSoq1TNsieMeglFkW0J8
+         RVMSTQMigSVOvetAYwvg2VXY4/5AIXkJ5dMjDjGu9mAcxgr6Qlyt7RVQ2R3PLhjNPuia
+         R+Dj1ljaSl5H/mMXeTORm4rvnMBhRkn7TXmR/eos4UzAAIkuQIcJhprK8QnTyZ3P45SX
+         o3Ln8vbXx+FwBb7BzyR3Zl1p3kycE/1a13nRcxbmWQ3rvCEAGZYwyWtVtcmXSuy/jF0U
+         b3Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCUklbe+pBIRrN9jm20P6WmaxGVEoxwAkn13AMyu42N7VPS9IezeYmMCFw47xLA4eCMIFbHPwWrlrxFm05I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWBl+tZ5CN+ojueOxIsracyPK/cJsfKGd9pbRqMTtGSu/QXNes
+	0RhfogzSPbSy23ya4nOVVTLTtG/4fR1znVLveVRpsuPUflIauteDfL2HymbeI80ycYrlIm0Rglc
+	LQ83JXquRAwKLTWAiXZOt+owa38mu6LB2Ytv7
+X-Google-Smtp-Source: AGHT+IESmvxfPWyz8OU6lrsb3/WdN97UClbBtMAbPPLrSZVeS26g2TfKlQrHovYGaH2tJhJuXW9A22yAePy9L6g0reM=
+X-Received: by 2002:a05:622a:298f:b0:453:5b5a:e77c with SMTP id
+ d75a77b69052e-4566168780fmr4067251cf.10.1724777129419; Tue, 27 Aug 2024
+ 09:45:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <20240815173903.4172139-22-samitolvanen@google.com> <2024081603-punctual-hamlet-152e@gregkh>
+In-Reply-To: <2024081603-punctual-hamlet-152e@gregkh>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Tue, 27 Aug 2024 09:44:52 -0700
+Message-ID: <CABCJKufF4xpwGkYu_H-1AH8cEAg2K4umrM07DY_X2j9qORQj=Q@mail.gmail.com>
+Subject: Re: [PATCH v2 01/19] tools: Add gendwarfksyms
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Matthew Maurer <mmaurer@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, 
+	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This commit dumps metadata with version 2. It uses two string arrays
-metadata_hdr_fmts and metadata_per_cpu_fmts as string formats for the
-header and per CPU data respectively, and the arm_spe_print_info()
-function is enhanced to support dumping metadata with the version 2
-format.
+Hi Greg,
 
-After:
+On Fri, Aug 16, 2024 at 12:14=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Thu, Aug 15, 2024 at 05:39:05PM +0000, Sami Tolvanen wrote:
+> > --- /dev/null
+> > +++ b/scripts/gendwarfksyms/dwarf.c
+> > @@ -0,0 +1,87 @@
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+>
+> Sorry, but I have to ask, do you _REALLY_ mean "or later" here and in
+> other places in this series?  If so, great, but I want to be sure, as I
+> know:
+>
+> > + * Copyright (C) 2024 Google LLC
+>
+> Has some issues with the types of licenses that marking will cover.
 
-  0 0 0x4a8 [0x170]: PERF_RECORD_AUXTRACE_INFO type: 4
-  PMU Type           :13
-  Version            :2
-  Num of CPUs        :8
-    CPU #            :0
-    MIDR             :0x410fd801
-    Bound PMU Type   :-1
-    Min Interval     :0
-    Load Data Source :0
-    CPU #            :1
-    MIDR             :0x410fd801
-    Bound PMU Type   :-1
-    Min Interval     :0
-    Load Data Source :0
-    CPU #            :2
-    MIDR             :0x410fd870
-    Bound PMU Type   :13
-    Min Interval     :1024
-    Load Data Source :1
-    CPU #            :3
-    MIDR             :0x410fd870
-    Bound PMU Type   :13
-    Min Interval     :1024
-    Load Data Source :1
-    CPU #            :4
-    MIDR             :0x410fd870
-    Bound PMU Type   :13
-    Min Interval     :1024
-    Load Data Source :1
-    CPU #            :5
-    MIDR             :0x410fd870
-    Bound PMU Type   :13
-    Min Interval     :1024
-    Load Data Source :1
-    CPU #            :6
-    MIDR             :0x410fd850
-    Bound PMU Type   :14
-    Min Interval     :1024
-    Load Data Source :1
-    CPU #            :7
-    MIDR             :0x410fd850
-    Bound PMU Type   :14
-    Min Interval     :1024
-    Load Data Source :1
+Thanks for bringing this up. The license is inherited from the
+genksyms code that's included in this series, but I'll consult with
+our licensing folks and adjust this in v3 for the other parts if
+needed.
 
-Signed-off-by: Leo Yan <leo.yan@arm.com>
----
- tools/perf/util/arm-spe.c | 43 ++++++++++++++++++++++++++++++++++-----
- 1 file changed, 38 insertions(+), 5 deletions(-)
-
-diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
-index 87cf06db765b..be34d4c4306a 100644
---- a/tools/perf/util/arm-spe.c
-+++ b/tools/perf/util/arm-spe.c
-@@ -1067,16 +1067,49 @@ static bool arm_spe_evsel_is_auxtrace(struct perf_session *session __maybe_unuse
- 	return strstarts(evsel->name, ARM_SPE_PMU_NAME);
- }
- 
--static const char * const arm_spe_info_fmts[] = {
--	[ARM_SPE_PMU_TYPE]		= "  PMU Type           %"PRId64"\n",
-+static const char * const metadata_hdr_fmts[] = {
-+	[ARM_SPE_PMU_TYPE]		= "  PMU Type           :%"PRId64"\n",
-+	[ARM_SPE_HEADER_VERSION]	= "  Version            :%"PRId64"\n",
-+	[ARM_SPE_CPU_NUM]		= "  Num of CPUs        :%"PRId64"\n",
- };
- 
--static void arm_spe_print_info(__u64 *arr)
-+static const char * const metadata_per_cpu_fmts[] = {
-+	[ARM_SPE_CPU]			= "    CPU #            :%"PRId64"\n",
-+	[ARM_SPE_CPU_MIDR]		= "    MIDR             :0x%"PRIx64"\n",
-+	[ARM_SPE_CPU_PMU_TYPE]		= "    Bound PMU Type   :%"PRId64"\n",
-+	[ARM_SPE_CAP_MIN_IVAL]		= "    Min Interval     :%"PRId64"\n",
-+	[ARM_SPE_CAP_LDS]		= "    Load Data Source :%"PRId64"\n",
-+};
-+
-+static void arm_spe_print_info(struct arm_spe *spe, __u64 *arr)
- {
-+	unsigned int i, cpu, header_size, cpu_num, per_cpu_size;
-+
- 	if (!dump_trace)
- 		return;
- 
--	fprintf(stdout, arm_spe_info_fmts[ARM_SPE_PMU_TYPE], arr[ARM_SPE_PMU_TYPE]);
-+	if (spe->metadata_ver == 1) {
-+		cpu_num = 0;
-+		header_size = ARM_SPE_AUXTRACE_V1_PRIV_MAX;
-+		per_cpu_size = 0;
-+	} else if (spe->metadata_ver == 2) {
-+		cpu_num = arr[ARM_SPE_CPU_NUM];
-+		header_size = ARM_SPE_AUXTRACE_V2_PRIV_MAX;
-+		per_cpu_size = ARM_SPE_AUXTRACE_V2_PRIV_PER_CPU_MAX;
-+	} else {
-+		pr_err("Cannot support metadata ver: %ld\n", spe->metadata_ver);
-+		return;
-+	}
-+
-+	for (i = 0; i < header_size; i++)
-+		fprintf(stdout, metadata_hdr_fmts[i], arr[i]);
-+
-+	arr += header_size;
-+	for (cpu = 0; cpu < cpu_num; cpu++) {
-+		for (i = 0; i < per_cpu_size; i++)
-+			fprintf(stdout, metadata_per_cpu_fmts[i], arr[i]);
-+		arr += per_cpu_size;
-+	}
- }
- 
- static void arm_spe_set_event_name(struct evlist *evlist, u64 id,
-@@ -1383,7 +1416,7 @@ int arm_spe_process_auxtrace_info(union perf_event *event,
- 	spe->auxtrace.evsel_is_auxtrace = arm_spe_evsel_is_auxtrace;
- 	session->auxtrace = &spe->auxtrace;
- 
--	arm_spe_print_info(&auxtrace_info->priv[0]);
-+	arm_spe_print_info(spe, &auxtrace_info->priv[0]);
- 
- 	if (dump_trace)
- 		return 0;
--- 
-2.34.1
-
+Sami
 
