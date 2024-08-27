@@ -1,176 +1,162 @@
-Return-Path: <linux-kernel+bounces-303817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57C84961566
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:25:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F1796156E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F7C2281EA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:25:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E627A1C22CD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB56A1CFEB7;
-	Tue, 27 Aug 2024 17:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mS1UvprV"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3EA1CFEB7;
+	Tue, 27 Aug 2024 17:28:34 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6EC1925AC;
-	Tue, 27 Aug 2024 17:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05A91BF329
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 17:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724779544; cv=none; b=nfzkWMZUMFWrV+kjFMfqj1LVA4jKcC8rUdHTYJyTHNKOB9xzkLAXTDM1RnPhoIVzEB8eCqhufwvVwSjGFYYrC9EJqYEUMe2Eg/bTTWnvQ7Eks79ZmnOSib1Cya+MFgKzqih+7/IOuSfBj/EaO9YVudswc1mTsika2tmjpo6thSE=
+	t=1724779714; cv=none; b=TPrA88i+cdLe2M5QEySMhazbRf8aIm+7BgoTt9oy/uUvdiK44/rv38wRDblrlUEQssw9gvaKBqEQUV+8K/UuEFoN19VBdbR7glZWMmama8QkwawVq5aILBHQLgz0z05XmwVWrc1Uoy8jqn7ICz8zMHy1c1IGnBMv5CTCAQ35nM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724779544; c=relaxed/simple;
-	bh=l0i2x2J04KlBpLZUKn+lGYk4Y4yNBRD/5ZeIZGZzjP4=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=NfvpcBgZArWhsM7XyfIx7xoiCAZfUw34OQOkUe84vaDWaDDQk/kRvaMJmitfmCvmK6ktDqNQi5IpjCfMORLEK0JxeYX8KSXQB3ZoVcqYNQTp26O685ZeJ0PwoJMd+pXFhGx/5nLoyHqY/4y69jxQoq90Z2HewRS10mUUXbafu3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mS1UvprV; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e1633202008so5670137276.2;
-        Tue, 27 Aug 2024 10:25:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724779541; x=1725384341; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=l0i2x2J04KlBpLZUKn+lGYk4Y4yNBRD/5ZeIZGZzjP4=;
-        b=mS1UvprVI5ewBbVXomvQfoVW//6E2ml51Hc3ciq9O9y5js1JexbKHxtM+ru/+5U+vc
-         5LKjcflYf0vJPGNyQ0I8rK9tzEj+vxgk3aLvsKSr1cfA1HjS/4vZ5DD5+o0cKsRkQoaD
-         KxbqaARJLsiLlif1wt71PgElz/yrzK4m6XMzMZsXNiV3i2XfooQ5LZmYyMhn70VrCgxq
-         WQkd3/7jUjwPhvemeJQ/31EWrUXAysWPF0e3yz5vVTUg5ehNoB4pne8qQO/TrPGQgn9K
-         oPXGtXZW53C7d8zTQxUmfIGSyvlSqDWwmZmHb6LZ+GipUjBErY4IYaR7v2PIVUQJaA5n
-         aI0A==
+	s=arc-20240116; t=1724779714; c=relaxed/simple;
+	bh=wwb8nKB4B/nJax5vJleZPaRNqKCxzZ8UzV46o5Ma/jA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=B88n2+wY4lV9vUVAEuC2H+H4T45W+RHH4Nlxk722+16gIDtYpdZZz+7d2plBmqKJMnfXm1BcHRxw+2/JAIXkxLsqq0PcKvRqfq924pBIhtpdE1rn542AmGCTOEaLXMcdw3Wr+l5qkNSWLng7zhHcth7jj2GlU7pvEEpNLebENUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-829f8b33dc6so82403239f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 10:28:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724779541; x=1725384341;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=l0i2x2J04KlBpLZUKn+lGYk4Y4yNBRD/5ZeIZGZzjP4=;
-        b=CZmPCvAeVJLRMEyfifuQ0iVowWexKwM5OPkTfdf5iizq64oXjFgBm54eYNijpbf54F
-         OTBj7P+oYhZx43w0UZKlR8kPIIf/0zI3X8y2gJu/jo9SRWEA51fGwKyw+VhWP6mNYT+q
-         XT8iyfvBJhjKQIS5WEvEuWYyVQ6leosJ9f1JpvlNKev91Mr71i6etj715CYwGbe2xvLl
-         7BAg4O7hgl542GS+bNwh/FAUt/T3/38d7monEbqrpssI1X59YdybOpAZENMNZxY/mhlP
-         e1avbdbwU/p2Sf8NMczxOOfK3A9ISJairTlwIbSoRoZABLeEEfX3wRx2DzWM2FvmIFZr
-         uXMg==
-X-Forwarded-Encrypted: i=1; AJvYcCWP0Q0IKn41AG6JpyD5r2SgOqPNYRu1Ms1jOVzhpgAKXQr/Dk8Bo0QYUK/axzevHsQoIfWBnSk4EsFMUGA=@vger.kernel.org, AJvYcCXUd1k3FmyYpgk9TZfGfZJYc+6qgWP+vjXpaw+tp/UM6f2sP+lVC1yd9SoyDTk1VFnwHUXm+p/5hvVcumSL8vVa/Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyunxfbZuz/jJKFTeiNBbNQ6v9hu/zJZ1hZ2HzofX+oNcfBcy6
-	IQapEnvP7nerVR0blg4rOpVd0Vbd7ET0YTSWzzagYXpX0BsPDPhUrRak/pSzKRzz28TwF0HCw2a
-	59LW/jXpr7KnujL97Mz8ANHVjy+neB8K/ex4=
-X-Google-Smtp-Source: AGHT+IFsx2KgVmMj8H7ybXIhg6noJiGcK4xumNmnyx1E4HyX4U3BhJVGm30AzZFnzoAYW86PaSgaNvdlpat6VxRVfH0=
-X-Received: by 2002:a05:6902:1b8d:b0:e11:5ff3:2327 with SMTP id
- 3f1490d57ef6-e1a2a7efedcmr3095037276.31.1724779541171; Tue, 27 Aug 2024
- 10:25:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724779710; x=1725384510;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BPdFNQV8hE6NdPUPYNv61RkrsMR/Y2yvk7IMsO/4QFI=;
+        b=H3N6mlhEwUPFRhKUlTylmWpwAo1vgOQkYP6IuPFparlVTMqY6JnEU/XNtTugirpg9s
+         Ljy/jCANhsftAlaKUG5rQsAsDp+XrBCKP56HLFau+ftV3TzFHGnOcMnfUxfilpGSSaes
+         44RYFYR0kbX3iQqKHyuqa2dNOcHHxaVoKPTdQMwFu0YKwHQCJWfTXlGuEOqpCZLchTC2
+         XoNbIJAdrtXJGhP0yeNzQOx3/x50d/wYqwM2yS4Gsdo13X2KyhI3wWgG+HtFTBGZ8Fsk
+         /JQbRBwROTwEnNZhgYp/EzB8zeG+UC7QNPU/ESSCQAle85ZGhevXrWFOACDLNC0LBbwx
+         0P/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUSF73WZAlNWO8seGV/I/2zahh7lUOitlyVuxiAXbkXCn9uN3lxTeiBdloMUxnkAiwLygWvu31GC1gs3/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXgr3ECkmqPGoEbBjoloM0CxWcUAYQwZjZwwonac5OS0yNx7ih
+	jo21Q1k8kUTJhkX2MEV3aJsYtQ7pvsgop6zozHfvOBz+3TPvr76GEh47VhoBDt6bunJIH2wQWhq
+	KPgERQPVC6mv531Cy0u193xiakuzjvjE5sCDLEis2eGeDXsvuSjqERl4=
+X-Google-Smtp-Source: AGHT+IHpwS4ytjJui1CjtnwDOci4hxz8VYMPRH/O+vl+i00LXSDbC9FjUjYFooDbNR7O+NgShgYfWOKjayGOtIWSlxEw1Yeb6VJS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Howard Chu <howardchu95@gmail.com>
-Date: Wed, 28 Aug 2024 01:25:30 +0800
-Message-ID: <CAH0uvohVui=31tMSD=J-qshtsKHg2__4c7XEQWWXa6Ycf0Umaw@mail.gmail.com>
-Subject: [GSoC] perf trace and BTF: Final Report
-To: Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Namhyung Kim <namhyung@kernel.org>, linux-perf-users <linux-perf-users@vger.kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6638:3006:b0:4c0:a8a5:81e9 with SMTP id
+ 8926c6da1cb9f-4ceb528e640mr198948173.3.1724779709881; Tue, 27 Aug 2024
+ 10:28:29 -0700 (PDT)
+Date: Tue, 27 Aug 2024 10:28:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ec6b3f0620ad9124@google.com>
+Subject: [syzbot] [mm?] BUG: unable to handle kernel paging request in mmap_region
+From: syzbot <syzbot+3bca0d9eb36e75bc36ed@syzkaller.appspotmail.com>
+To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
+	syzkaller-bugs@googlegroups.com, vbabka@suse.cz
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hello everyone,
+Hello,
 
-This is the final report for my project "perf trace and BTF".
+syzbot found the following issue on:
 
-This project aims to enhance perf trace by utilizing BTF (BPF Type
-Format) information from the Linux kernel to collect and pretty-print
-system call arguments more effectively. This includes data collection
-and pretty printing of struct pointers, buffers, strings, and enum
-arguments, which we refer to as syscall augmentation.
+HEAD commit:    94ede2a3e913 profiling: remove stale percpu flip buffer va..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=122f6d9d980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8b0cca2f3880513d
+dashboard link: https://syzkaller.appspot.com/bug?extid=3bca0d9eb36e75bc36ed
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-I have completed the goals mentioned above during the GSoC period, and
-test scripts have been created to validate the new features.
-Currently, the patch series for struct, buffer, and string pointers
-augmentation is at v3 and under review.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-One of my mentors, Arnaldo, wants to convert the integer flags to a
-detached BTF object, which is what I=E2=80=99ll be working on after the GSo=
-C
-period. Additionally, I will focus on landing the perf record
---off-cpu patch series, incorporating feedback from my mentors Ian and
-Namhyung on off-cpu v4.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e10dde6d5041/disk-94ede2a3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3bda8d01811d/vmlinux-94ede2a3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/653dc61d9ae6/bzImage-94ede2a3.xz
 
-I would like to express my thanks to my mentors Arnaldo Carvalho de
-Melo, Ian Rogers, and Namhyung Kim. Their important guidance and
-feedback have been invaluable to my work. I am grateful to acme for
-making excellent revisions to my code, to Ian Rogers for organizing
-weekly meetings and offering professional advice, and to Namhyung Kim
-for his crucial insights into key issues and bugs.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3bca0d9eb36e75bc36ed@syzkaller.appspotmail.com
 
-Thank you,
-Howard
+kernel tried to execute NX-protected page - exploit attempt? (uid: 0)
+BUG: unable to handle page fault for address: ffffea000169a5c0
+#PF: supervisor instruction fetch in kernel mode
+#PF: error_code(0x0011) - permissions violation
+PGD 13fff7067 P4D 13fff7067 PUD 13fff6067 PMD 800000013d4001e3 
+Oops: Oops: 0011 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 6910 Comm: syz.0.357 Not tainted 6.11.0-rc1-syzkaller-00043-g94ede2a3e913 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+RIP: 0010:0xffffea000169a5c0
+Code: ad de 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 24 00 24 00 00 00 00 00 ff ff ff fd 01 00 00 00 01 e8 e4 2c 80 88 ff ff <00> 00 00 00 00 f0 ff 00 00 00 00 00 00 00 00 00 22 01 00 00 00 00
+RSP: 0018:ffffc90002e0f8f8 EFLAGS: 00010286
+RAX: 1ffff1100be13426 RBX: ffff88805f09a130 RCX: dffffc0000000000
+RDX: ffff88807f842600 RSI: 0000000000000002 RDI: ffff88805f09a120
+RBP: ffffc90002e0fa30 R08: ffff88802b3aecc7 R09: 1ffff11005675d98
+R10: dffffc0000000000 R11: ffffea000169a5c0 R12: ffff88807f842600
+R13: ffff88805f09a120 R14: ffff88802b3aed50 R15: ffff88802b3aecb8
+FS:  00007f32016ce6c0(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffea000169a5c0 CR3: 000000005af9c000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ mmap_region+0x1891/0x2090 mm/mmap.c:3058
+ do_mmap+0x8f9/0x1010 mm/mmap.c:1468
+ vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:588
+ ksys_mmap_pgoff+0x4f1/0x720 mm/mmap.c:1514
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3200977299
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f32016ce048 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 00007f3200b06058 RCX: 00007f3200977299
+RDX: 0000000000000001 RSI: 0000000000003000 RDI: 0000000020000000
+RBP: 00007f32009e48e6 R08: 0000000000000012 R09: 0000000000000000
+R10: 0000000000000012 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000006e R14: 00007f3200b06058 R15: 00007ffebfee75d8
+ </TASK>
+Modules linked in:
+CR2: ffffea000169a5c0
+---[ end trace 0000000000000000 ]---
+RIP: 0010:0xffffea000169a5c0
+Code: ad de 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 24 00 24 00 00 00 00 00 ff ff ff fd 01 00 00 00 01 e8 e4 2c 80 88 ff ff <00> 00 00 00 00 f0 ff 00 00 00 00 00 00 00 00 00 22 01 00 00 00 00
+RSP: 0018:ffffc90002e0f8f8 EFLAGS: 00010286
+RAX: 1ffff1100be13426 RBX: ffff88805f09a130 RCX: dffffc0000000000
+RDX: ffff88807f842600 RSI: 0000000000000002 RDI: ffff88805f09a120
+RBP: ffffc90002e0fa30 R08: ffff88802b3aecc7 R09: 1ffff11005675d98
+R10: dffffc0000000000 R11: ffffea000169a5c0 R12: ffff88807f842600
+R13: ffff88805f09a120 R14: ffff88802b3aed50 R15: ffff88802b3aecb8
+FS:  00007f32016ce6c0(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffea000169a5c0 CR3: 000000005af9c000 CR4: 0000000000350ef0
+
+
 ---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Patches sent:
-[PATCH v1 0/2] perf trace: Better -p support
-[PATCH v1 1/2] perf trace: Collect data only for certain pids
-[PATCH v1 2/2] perf trace: Use pid to index perf_event in BPF
-Link: https://lore.kernel.org/linux-perf-users/20240827092013.1596-1-howard=
-chu95@gmail.com/
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-perf trace: Enhanced augmentation for pointer arguments
-[PATCH v3 1/8] perf trace: Fix perf trace -p <PID>
-[PATCH v3 2/8] perf trace: Add trace__bpf_sys_enter_beauty_map() to
-prepare for fetching data in BPF
-[PATCH v3 3/8] perf trace: Pass the richer 'struct syscall_arg'
-pointer to trace__btf_scnprintf()
-[PATCH v3 4/8] perf trace: Pretty print struct data
-[PATCH v3 5/8] perf trace: Pretty print buffer data
-[PATCH v3 6/8] perf trace: Collect augmented data using BPF
-[PATCH v3 7/8] perf trace: Add --force-btf for debugging
-[PATCH v3 8/8] perf trace: Add general tests for augmented syscalls
-Link: https://lore.kernel.org/linux-perf-users/20240824163322.60796-1-howar=
-dchu95@gmail.com/
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-perf record --off-cpu: Dump off-cpu samples directly
-[PATCH v4 1/9] perf evsel: Set BPF output to system-wide
-[PATCH v4 2/9] perf record --off-cpu: Add --off-cpu-thresh
-[PATCH v4 3/9] perf record --off-cpu: Parse offcpu-time event
-[PATCH v4 4/9] perf record off-cpu: Dump direct off-cpu samples in BPF
-[PATCH v4 5/9] perf record --off-cpu: Dump total off-cpu time at the end
-[PATCH v4 6/9] perf evsel: Delete unnecessary =3D 0
-[PATCH v4 7/9] perf record --off-cpu: Parse BPF output embedded data
-[PATCH v4 8/9] perf header: Add field 'embed'
-[PATCH v4 9/9] perf test: Add direct off-cpu dumping test
-Link: https://lore.kernel.org/linux-perf-users/20240807153843.3231451-1-how=
-ardchu95@gmail.com/
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Patches merged:
-[PATCH v5 0/8] perf trace: Augment enum arguments with BTF
-[PATCH v5 1/8] perf trace: Fix iteration of syscall ids in syscalltbl->entr=
-ies
-[PATCH v5 2/8] perf trace: BTF-based enum pretty printing for syscall args
-[PATCH v5 3/8] perf trace: Augment non-syscall tracepoints with enum
-arguments with BTF
-[PATCH v5 4/8] perf trace: Filter enum arguments with enum names
-[PATCH v5 5/8] perf test: Add landlock workload
-[PATCH v5 6/8] perf test trace_btf_enum: Add regression test for the
-BTF augmentation of enums in 'perf trace'
-[PATCH v5 7/8] perf trace: Introduce trace__btf_scnprintf()
-[PATCH v5 8/8] perf trace: Remove arg_fmt->is_enum, we can get that
-from the BTF type
-Link: https://lore.kernel.org/linux-perf-users/20240705132059.853205-1-howa=
-rdchu95@gmail.com/
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-[PATCH] perf record: Fix comment misspellings
-Link: https://lore.kernel.org/linux-perf-users/20240425060427.1800663-1-how=
-ardchu95@gmail.com/
-
-Blog posts:
-perf trace: Add support for enum arguments
-Link: https://sberm.cn/blog/perf-trace-enum
-
-How to contribute to perf
-Link: https://sberm.cn/blog/how-to-contrib-perf
+If you want to undo deduplication, reply with:
+#syz undup
 
