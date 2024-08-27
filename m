@@ -1,168 +1,325 @@
-Return-Path: <linux-kernel+bounces-303593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0038A960FC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:02:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 071F7960FCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:02:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73DBA1F218C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:02:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 298361C23691
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C951C6F65;
-	Tue, 27 Aug 2024 15:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270141C6F40;
+	Tue, 27 Aug 2024 15:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KX9H5cus"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="K1UPrr6t"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E5F1C6890;
-	Tue, 27 Aug 2024 15:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F971C5788
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 15:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724770908; cv=none; b=uf38dW9/y5Ib5D9rArEpWRLuZVbSftrtq49xHwlPbHDjTDvILU7YxmI9WGcUhrI1nKlIFZKVOh93LXIFHrQdRZsbeTjWTLAdlovR8ojcpMeaxPrxd8G+H/TkM2YYVd2WE4bhWiTdrtLYbQfIXU4fsRD8g4ZTyFavqRJKDOKsVUc=
+	t=1724770916; cv=none; b=AQgwKPgZBgtmGmHdCCt19i204E6pclPKz9ONWDVJsFhk+8GTp/yw+pe/T8xZoqIYKW8+AC/5gtJoRpR6czJKkYrNM8r8edYXlz0+f3C/bRertWlhrNL3cueu7XSfEHkKPzZLHTRQwQNflEuCsWo8MxFALQZykxU6crffqGwRccg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724770908; c=relaxed/simple;
-	bh=04kzWfhg4OiC07BgSws7MX2zfVTZd9v2ch1ZbqtW5ps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PSFfXoHhPX99kq5Ahn8hh8MK0iooyR4Es4XXYfZLOl7c9RecOljI38MD4fTTzN/Opcs5ekNZ+P2j469k6RtML9rSqB+liBpuoPCDV7YuCcK0xxXOyT5vPeXcrzeTUJxRJ0X9J+8WQN0EkI64bYk39+N6kkwXAlPtJDF/+geDTUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KX9H5cus; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724770906; x=1756306906;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=04kzWfhg4OiC07BgSws7MX2zfVTZd9v2ch1ZbqtW5ps=;
-  b=KX9H5cusryTRHwSHUaC8KS2Zm+6gJT97XM6Kv10F4UCiHiUUFd0Vvy6/
-   RLoIWb7Loq540CCKRqffLg//0zgNT6hls4Trkfu+ctOtQiQ3RFLv6tdXu
-   qin4YKZfeNeBLjJsq0aRLwnU7A8C/oMbH7ruVVOJCaoAo3hD+AhgSbK9W
-   LCPSe/hfm+tj63vLvRfrBFqOZn0xZG0PRrxUL+Edwfb1bokfDqiIWCv8/
-   v+HlZZK+D96BuneR2Gj0WbeYOe0gg/a5jkexPhh2T4WpdIqsAHakPp3D4
-   OsXpKOdHvadxZFZeseLPtMb4MeHZe+3d+PCmERXlcTYZEdWEL86TBGTRy
-   w==;
-X-CSE-ConnectionGUID: 9EWADjsJQfmYKoq8js5mjA==
-X-CSE-MsgGUID: dlbllQ1eT6ymxz4VBA34eQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="23429064"
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="23429064"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 08:01:36 -0700
-X-CSE-ConnectionGUID: k6CJQLvEQUqqBOszqa8vMw==
-X-CSE-MsgGUID: Vgoj9oVMSDqI06rGum72KA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="86087616"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 27 Aug 2024 08:01:34 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sixhL-000J6S-2L;
-	Tue, 27 Aug 2024 15:01:31 +0000
-Date: Tue, 27 Aug 2024 23:01:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH v1 2/2] iio: imu: st_lsm6dsx: Remove useless dev_fwnode()
- calls
-Message-ID: <202408272259.MsdckhWn-lkp@intel.com>
-References: <20240826212344.866928-3-andy.shevchenko@gmail.com>
+	s=arc-20240116; t=1724770916; c=relaxed/simple;
+	bh=ZF9FRAmi2l6lzPGCtV8L/9yzs2x7TjAWAHvZ5JyqUHY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KwcAt01379YUmATfoXiev9bfLZ+lO3Pa66e57yBtcXmNJu/HeWzZbY8z1ffHoI4J5csKM7WSaD8pO+9HyBeZJD/csqZlQmLHsz6IBrZYtWl2urao/eX2D5XWylE0gsfVcIRjQyBjK2PenRKfGGS4fxn7YK1q3JjaKxJxd7nZTfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=K1UPrr6t; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f4f505118fso46913731fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:01:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1724770913; x=1725375713; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=sDlFUC/PnSbw58YBpKLYj7tB3pPD2wAAtnMgQnDsTUo=;
+        b=K1UPrr6tdyC+UhKTe8rzoxZz8047gWmCVpa1zQJRX9SGMzJlzoUXP1+t/AFwGX40lp
+         TmH93cfdrtQw5DfCSEtxDbbPJWrk4L07nKY1JABHzx9d0lIHzQep+AlcI3LZqAKVbqET
+         Sq2lhP0L7fjmh7wkUMo6+zipJ49cBkkiP82C4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724770913; x=1725375713;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sDlFUC/PnSbw58YBpKLYj7tB3pPD2wAAtnMgQnDsTUo=;
+        b=QrD3Ntcqcqx0vynjTlE6f2PerJ6PgNvf9fOn+BVxvpfaCR6U/X9JyeZc7MuVHutVcc
+         dpCbojj6fMzHSP7PGdWIQBgRAn3QR1LGJ0hVXelJQf9LaBRmnCVKvwYVMqP6P3OmjQ9J
+         eqFOwMf0v5bJZhodY4ph5wfLi5Z+jt8UzPL81DmuLriMeVOr5G+y2jvCwh5Hww3zk32G
+         vUyunK7pyrT2qJgn/DiyXqvCYv8jA4L8IDWb2+TefONjZlz8CIlRmYTkvBzfGIcdAxzb
+         52WN3I95TSVONczodbrr63fRdYRFpzWWTILlNxiwUT90v5iuPHsWtLe6/xxRbYjJHEo6
+         T1lw==
+X-Forwarded-Encrypted: i=1; AJvYcCUifdIi4bY7ZOpSY1F/vb299fj+IuKEgy1LzO/w84ZU6rrcSKj2vOQVrMWjSRK6gR3KAMHnPbCbz54B+sM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6vtoqF92KJBeAGKbXE/SQFmKgKXXnYhyZDyv/1Nuxcb+Quc1f
+	GDW4D3NL/b3UOwBkF9MDE/b+GjoUOWUIXDLtnECZXbKlz/fzxBL1UT10k2tObIb6H5rPOlD1t/j
+	BiMXQUKxsWRf5QW77yIIT63yVvJ48cLseRlIr
+X-Google-Smtp-Source: AGHT+IFYvEIBSbU/E9nH7ayxEGCNmkU+Chi28AndaI7JTEQDfzKJ499VWKq3Libwxraw4EmqszPC5e1s0l2UV3yQzAM=
+X-Received: by 2002:a05:6512:1111:b0:52c:8abe:51fb with SMTP id
+ 2adb3069b0e04-5343875582emr8755403e87.10.1724770910565; Tue, 27 Aug 2024
+ 08:01:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826212344.866928-3-andy.shevchenko@gmail.com>
+References: <20240815225731.40276-1-james.quinlan@broadcom.com>
+ <20240815225731.40276-6-james.quinlan@broadcom.com> <1a6d6972-f2db-4d44-b79c-811ba44368f0@suse.de>
+ <CA+-6iNxFotwXW4Cc31daT+KwE_LEdAR=pcpsg_3Ng0ep1vYLBA@mail.gmail.com>
+ <76b528f8-88e2-4954-94cf-7e0933b4ad03@suse.de> <CA+-6iNykVzd1do=dHDVD3_prJkvfRbA2U-DsLFhSA2S48L_A8A@mail.gmail.com>
+ <87b38984-0a54-4773-ba20-3445d9c9c149@suse.de> <CA+-6iNwJZ+OfYaCBBx04-hO1FmpDE36uJWd1jYvaVs_o4iwWqA@mail.gmail.com>
+ <3bb5c6db-11d9-4e65-a581-1a7f6945450a@suse.de> <CA+-6iNy7souF-BZHV1sBk2nx04LwshB=6amnOixfPPza96RmWw@mail.gmail.com>
+ <9b7cff3f-7d22-4bb5-a56e-11d93bd11456@suse.de>
+In-Reply-To: <9b7cff3f-7d22-4bb5-a56e-11d93bd11456@suse.de>
+From: Jim Quinlan <james.quinlan@broadcom.com>
+Date: Tue, 27 Aug 2024 11:01:37 -0400
+Message-ID: <CA+-6iNwAfur96=kftP_pqZDGUoGkb3_rjKnxiGJmL4xxmzTNaA@mail.gmail.com>
+Subject: Re: [PATCH v6 05/13] PCI: brcmstb: Use bridge reset if available
+To: Stanimir Varbanov <svarbanov@suse.de>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
+	Cyril Brulebois <kibi@debian.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, bcm-kernel-feedback-list@broadcom.com, 
+	jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000009cfdf50620ab8512"
 
-Hi Andy,
+--0000000000009cfdf50620ab8512
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-kernel test robot noticed the following build warnings:
+On Tue, Aug 27, 2024 at 8:28=E2=80=AFAM Stanimir Varbanov <svarbanov@suse.d=
+e> wrote:
+>
+> Hi Jim,
+>
+> On 8/26/24 17:17, Jim Quinlan wrote:
+> > On Mon, Aug 26, 2024 at 6:43=E2=80=AFAM Stanimir Varbanov <svarbanov@su=
+se.de> wrote:
+> >>
+> >> Hi Jim,
+> >>
+> >> <cut>
+> >>
+> >>>
+> >>> Hi Stan,
+> >>>
+> >>> Most of the clocks on the STB chips come up active so one does not
+> >>> have to turn them on and off to have the device function.  It helps
+> >>> power savings to do this although I'm not sure it is significant.
+> >>>>
+> >>>>>
+> >>>>> Perhaps you don't see the dependence on the PCIe clocks if the 2712
+> >>>>> does not give the PCIe node a clock property and instead keeps its
+> >>>>> clocks on all of the time.  In that case I would think that your
+> >>>>> solution would be fine.
+> >>>>
+> >>>> What you mean by my solution? The one where avoiding assert of
+> >>>> bridge_reset at link [1] bellow?
+> >>>
+> >>> Yes.
+> >>>>
+> >>>> If so, I still cannot understand the relation between bridge_reset a=
+nd
+> >>>> rescal as the comment mentions:
+> >>>>
+> >>>> "Shutting down this bridge on pcie1 means accesses to rescal block w=
+ill
+> >>>> hang the chip if another RC wants to assert/deassert rescal".
+> >>>
+> >>> I was just describing my observations; this should not be happening.
+> >>> I would say it is a HW bug for the 2712.  I can file a bug against th=
+e
+> >>> 2712 but that will not help us right now.  From what I was told by HW=
+,
+> >>> asserting the PCIe1 bridge reset does not affect the rescal settings,
+> >>> but it does freeze access to the rescal registers, and that is game
+> >>> over for the other PCIe controllers accessing the rescal registers.
+> >>
+> >> Good findings, thank you.
+> >>
+> >> The problem comes from this snippet from brcm_pcie_probe() :
+> >>
+> >>         ret =3D pci_host_probe(bridge);
+> >>         if (!ret && !brcm_pcie_link_up(pcie))
+> >>                 ret =3D -ENODEV;
+> >>
+> >>         if (ret) {
+> >>                 brcm_pcie_remove(pdev);
+> >>                 return ret;
+> >>         }
+> >>
+> >> Even when pci_host_probe() is successful the .probe will fail if there
+> >> are no endpoint devices on this root port bus. This is the case when
+> >> probing pcie1 port which is the one with external connector. Cause the
+> >> probe is failing we call reset_control_rearm(rescal) from
+> >> brcm_pcie_remove(), after that during .probe of pcie2 (the root port
+> >> where RP1 south-bridge is attached) reset_control_reset(rescal) will
+> >> issue rescal reset thus rescal-reset driver will stuck on read/write
+> >> registers.
+> >>
+> >> I think we have to drop this link-up check and allow the probe to fini=
+sh
+> >> successfully. Even that there no PCI devices attached to bus we want t=
+he
+> >> root port to be visible by lspci tool.
+> >
+> > Hi Stan,
+> >
+> > What is gained by having only the root bridge shown by lspci?  We do
+> > not support PCIe hotplug so why have lspci reporting a bridge with no
+> > devices?
+> >
+> > The reason we do this is to save power -- when we see no device we
+> > turn off the clocks, put things in reset (e.g. bridge), and turn off
+> > the regulators.  We have SoCs with multiple controllers  and they
+> > cannot afford to be supplying power to controllers with non-populated
+> > sockets; these may be products that are trying to conform to mandated
+> > energy-mode specifications.
+>
+> I totally agree, although I do not see power consumption significantly
+> increased. Also I checked all other PCI controller drivers and no one
+> else doing this.
 
-[auto build test WARNING on jic23-iio/togreg]
-[also build test WARNING on linus/master v6.11-rc5 next-20240827]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Hi Stan,
+I  see a few drivers use runtime_pm but we  do not; our architecture
+is old and not amenable to that system.  Discounting runtime_pm, we
+seem to be the only controller that uses the .suspend* or .resume*
+methods.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/iio-imu-st_lsm6dsx-Use-iio_read_acpi_mount_matrix-helper/20240827-052617
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/20240826212344.866928-3-andy.shevchenko%40gmail.com
-patch subject: [PATCH v1 2/2] iio: imu: st_lsm6dsx: Remove useless dev_fwnode() calls
-config: arc-randconfig-001-20240827 (https://download.01.org/0day-ci/archive/20240827/202408272259.MsdckhWn-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408272259.MsdckhWn-lkp@intel.com/reproduce)
+I think we are kind of unique in how we turn off/on voltage regulators
+for the endpoint device -- we put the regulator node under the port
+driver DT node.  This is what customers asked for and what made
+customers happy -- they just add a regulator node and ref to the DT we
+provide and they don't have to worry about syncing power for their
+device on their board.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408272259.MsdckhWn-lkp@intel.com/
+There was also a recent patch submission that implemented something
+similar by making the port driver customizable so that it could pick
+up regulators; I don't recall if that ever got accepted.  But if it
+was, we were thinking of switching to it.
 
-All warnings (new ones prefixed by >>):
+Let me ask the HW folks if it is acceptable to leave the bridge reset
+unasserted on remove() or suspend().  Note that if RPi decides to give
+<clocks> and <clock-names>  valid props then problem will still be
+there.
 
-   drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c: In function 'st_lsm6dsx_get_drdy_reg':
->> drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c:2137:62: warning: passing argument 3 of 'device_property_read_u32' makes pointer from integer without a cast [-Wint-conversion]
-    2137 |         if (device_property_read_u32(dev, "st,drdy-int-pin", drdy_pin) < 0) {
-         |                                                              ^~~~~~~~
-         |                                                              |
-         |                                                              int
-   In file included from include/linux/acpi.h:16,
-                    from drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c:76:
-   include/linux/property.h:229:71: note: expected 'u32 *' {aka 'unsigned int *'} but argument is of type 'int'
-     229 |                                            const char *propname, u32 *val)
-         |                                                                  ~~~~~^~~
-   drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c:2137:13: warning: 'drdy_pin' is used uninitialized [-Wuninitialized]
-    2137 |         if (device_property_read_u32(dev, "st,drdy-int-pin", drdy_pin) < 0) {
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c:2135:22: note: 'drdy_pin' was declared here
-    2135 |         int err = 0, drdy_pin;
-         |                      ^~~~~~~~
+Regards,
+Jim Quiinlan
+Broad
 
 
-vim +/device_property_read_u32 +2137 drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
+>
+> >
+> >  This will solve partially the
+> >> issue with accessing rescal reset-controller registers after asserting
+> >> bridge_reset. The other part of the problem will be solved by remove t=
+he
+> >> invocation of reset_control_rearm(rescal) from __brcm_pcie_remove().
+> >> That way only the first probed root port will issue rescal reset and
+> >> every next probe will not try to reset rescal because we do not call
+> >> _rearm(rescal).
+> >
+> > In theory I agree with the above -- it should probably not be invoking
+> > the rearm() when it is being deactivated.  However, I am concerned
+> > about a controller(s) going into s2 suspend/resume or unbind/bind.
+>
+> In fact not calling rearm() from __brcm_pcie_remove() is not enough
+> because the .probe will fail thus rescal reset will loose it's instance
+> and next probed pcie root port will issue rescal reset again.
+>
+> I'd stick with avoiding assert of bridge_reset from brcm_pcie_turn_off()
+> for now, and this will be true only for bcm2712.
+>
+> ~Stan
 
-  2129	
-  2130	static int
-  2131	st_lsm6dsx_get_drdy_reg(struct st_lsm6dsx_hw *hw,
-  2132				const struct st_lsm6dsx_reg **drdy_reg)
-  2133	{
-  2134		struct device *dev = hw->dev;
-  2135		int err = 0, drdy_pin;
-  2136	
-> 2137		if (device_property_read_u32(dev, "st,drdy-int-pin", drdy_pin) < 0) {
-  2138			struct st_sensors_platform_data *pdata;
-  2139	
-  2140			pdata = (struct st_sensors_platform_data *)dev->platform_data;
-  2141			drdy_pin = pdata ? pdata->drdy_int_pin : 1;
-  2142		}
-  2143	
-  2144		switch (drdy_pin) {
-  2145		case 1:
-  2146			hw->irq_routing = &hw->settings->irq_config.irq1_func;
-  2147			*drdy_reg = &hw->settings->irq_config.irq1;
-  2148			break;
-  2149		case 2:
-  2150			hw->irq_routing = &hw->settings->irq_config.irq2_func;
-  2151			*drdy_reg = &hw->settings->irq_config.irq2;
-  2152			break;
-  2153		default:
-  2154			dev_err(hw->dev, "unsupported data ready pin\n");
-  2155			err = -EINVAL;
-  2156			break;
-  2157		}
-  2158	
-  2159		return err;
-  2160	}
-  2161	
+--0000000000009cfdf50620ab8512
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+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
+mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
+uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
+BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
+VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
+z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
+b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
++R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
+AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
+75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
+AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
+AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
+MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCA2JvqfAWaIOEXhdmYkKqXcqppBwqLl
+7P2QoZf2uqKKzjAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA4
+MjcxNTAxNTNaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
+AgEwDQYJKoZIhvcNAQEBBQAEggEACf2oWhSh406CvXOYiRUcERQqMu7025sIbxTA0reDo4gy5LU9
+Zm1Z8Wvu0nARtpZmJOcKOZfReS5KIF3NvOagdcz9c3Mg3sMPPu4p/ZgPYjD3jLKj7I9xa9aMdx9S
+pPIezBIcJCxH/BAtbo832GGavVot3/cpE80+LG7q/EIPPmuotq/NA2NFlUOphyv0sk9zDj4O6nMI
+OuMjZqtkcDiap1ZhiQIWM319wU4ro/MK/XT39U1KyCdycVMCzjdVGrVqjC3js5aF5yqWbN8ZkWNR
+koSiRyUMgYUq5HU6eSoKrCwKTJVg2lopDgeEVmlAeDz1CVC7SzDGr7J/UWrkoFbD0w==
+--0000000000009cfdf50620ab8512--
 
