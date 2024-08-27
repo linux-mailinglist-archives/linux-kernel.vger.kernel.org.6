@@ -1,299 +1,168 @@
-Return-Path: <linux-kernel+bounces-303017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA9BD960637
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:49:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A079960638
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:50:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFBEA1C225CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:49:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 237F81C225CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B4219D89C;
-	Tue, 27 Aug 2024 09:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F6219D075;
+	Tue, 27 Aug 2024 09:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m6efe963"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A2419D08C;
-	Tue, 27 Aug 2024 09:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="DJPz1CDV"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059BD13B588;
+	Tue, 27 Aug 2024 09:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724752166; cv=none; b=GFfLqzTvJoQzyLXBmPEc367kDe2AisS/QpgiqSqd5FOi+WOkKdJVYReZI+A2OKWc8wB2jxrBdzrYqd4hlPTfEXUPdAgxtfXb0dHi+s3XFtA3MlU9O7nkJQimhfXpmaBR6sbFbl3bQOL2Qaw/ZGp1qf1MWHio1YGQMwNe7CpAb7Q=
+	t=1724752212; cv=none; b=usaMZqNyxnZ7vFJcRDyuovFQpN+X3a43RPuB7gs7SjNdPvyi747Bgy5uv3GW9m1zs4wuj5pst6hMCBegkgCHHAOoQ/7LKSlOxecTOqD0KqTBy0cCNJwwdT2zRKM/Hqgb7j8H4S3AY1isnCrIA/COrJPE4dMSAMIlAK2qOCdPP9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724752166; c=relaxed/simple;
-	bh=iNv0wXI/nZ2z5SOuqcqXrsK/xbtmVdJN9dDrdIhkckA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=obtx7yVGRDRSdOe/basVkntHtiFNk23uaivAEQKl6wtaE8ZJfJluKTuX5c3yH021xPg1kQIs81/Eba9MlNVbovSNfKZEgRCkXqbediqEG7HaHt70SMpNMnotS4ZHy8vezFKFrNHSFQ2HKsq0WKB7lpO5Fh+03KWKnGFo+Wug0TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m6efe963; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5BA2EC8B7A0;
-	Tue, 27 Aug 2024 09:49:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724752165;
-	bh=iNv0wXI/nZ2z5SOuqcqXrsK/xbtmVdJN9dDrdIhkckA=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=m6efe963aikBlmBhRqaTVUulhOdaT4cjDm/1j/0YdxqwbMmDmMrDs7/iwT4WFfZ0m
-	 XX/CII9ZXyE2UsDQX0tmAaYdviMiVM7ioj69UrG80UxKottHMzx3aYWb7+miq3TXlx
-	 lmr+eXov3od5Z+s/WxREQOmLLYGWs5Z80MPpX9nPNsSsVdfMrA8WTJ2RKVNeO/atkq
-	 P4xkN5zsY8B4J7nB+xgJsaU2IqZqeR8/Bv9mVl86JH/bpKMU/Pgt3OHMpixQRl9W/0
-	 6Dddej6zkITmhmlNKqQmTgyJN/DL9FnASLjw42MMy/79Hmc48Nu4zleZufD8hx22v2
-	 wp5IHSDNN7jEA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B0F6C5320E;
-	Tue, 27 Aug 2024 09:49:25 +0000 (UTC)
-From: Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>
-Date: Tue, 27 Aug 2024 12:49:18 +0300
-Subject: [PATCH v2] ASoC: dt-bindings: cirrus,cs4271: Convert to dtschema
+	s=arc-20240116; t=1724752212; c=relaxed/simple;
+	bh=3WspzH0ayXuzmye4TMFTA5SKabG1smPbMSDk8Oo6bjk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=O4Nbp+9sMvkdeAmP0MTs3pP6Xt5bsJknnvHZ6Ym6zCd8O92dWpKz4b93w4z5bX8AsoS4Vzd33IcNw24VTn5yBCh20Rs6JX8BpAFbh77mb/8ggfaQo3Bx2cU6/MrTWxp8UqxK/Sqv81qrhCeXJgkMDksakEItJRXYIamltssjZ1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=DJPz1CDV; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=jk20T
+	b3e+CGSiqUnBq3as4wi/rgAW0Z861vyIyF0Keo=; b=DJPz1CDVlYtOeHiUFBWqb
+	V/JEwif7E134kJ+0v/ddSToeJlzvuiN65k0BqwAPcbzTErG4cg2cGMUa0V2wUGqj
+	aKpViXiVm4MBA6us0742b8Lcz2Fgy67m7aoVWINSFN51jowF+szjUdFFSZoiX4dU
+	xTBK7ZriwSMu4HFS6Rm2n0=
+Received: from localhost.localdomain (unknown [111.35.190.113])
+	by gzga-smtp-mta-g2-2 (Coremail) with SMTP id _____wDnTwotoc1mnl1vEA--.38326S4;
+	Tue, 27 Aug 2024 17:49:50 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: kent.overstreet@linux.dev
+Cc: linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [BUG?] bcachefs: keep writing to device when there is no high-level I/O activity.
+Date: Tue, 27 Aug 2024 17:49:33 +0800
+Message-Id: <20240827094933.6363-1-00107082@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240827-cs4271-yaml-v2-1-20b639bd2a0a@maquefel.me>
-X-B4-Tracking: v=1; b=H4sIAB2hzWYC/23MSw7CIBSF4a00dyzm8ohWR+7DdADlYklKW0GJT
- cPexY4d/ic53waJoqcE12aDSNknP081xKGBftDTg5i3tUGgUNiKE+uTEmfOVh1GRrK9oJBojXF
- QH0sk5z+7du9qDz695rjueOa/9b+TOePMaisdGlSc3C3o55scjcdA0JVSvjDanr2oAAAA
-To: David Rhodes <david.rhodes@cirrus.com>, 
- Richard Fitzgerald <rf@opensource.cirrus.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Cc: linux-sound@vger.kernel.org, patches@opensource.cirrus.com, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Nikita Shubin <nikita.shubin@maquefel.me>
-X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724752164; l=6248;
- i=nikita.shubin@maquefel.me; s=20230718; h=from:subject:message-id;
- bh=4hAM2qL86gmfVW6M1IUn1jvplDjSBUff8BfQwZfoSlA=;
- b=F4EY2DVdZyxGiRFpX4+LQPbfC0BRiL2fvywxvUxP0BDwb9NF29/Lbz2oshDfXHqVwbb8hmERjTxN
- BiYqtcioBLMvM5HrHTQEuuKRT0IM87+/iaglQzO7cZFMwBifmI24
-X-Developer-Key: i=nikita.shubin@maquefel.me; a=ed25519;
- pk=vqf5YIUJ7BJv3EJFaNNxWZgGuMgDH6rwufTLflwU9ac=
-X-Endpoint-Received: by B4 Relay for nikita.shubin@maquefel.me/20230718
- with auth_id=65
-X-Original-From: Nikita Shubin <nikita.shubin@maquefel.me>
-Reply-To: nikita.shubin@maquefel.me
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnTwotoc1mnl1vEA--.38326S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxAry7AFy8GryfGr45JF13Jwb_yoWrZw4kpr
+	yfJry7GF4kJryUJFWDCayxtryxGrnxtw1DJryUJ348Crs5Zr1UtF42qFyvqFy5JFy8XFy7
+	XF48Jw15Grn2vr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UDrcfUUUUU=
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0gFIqmWXz+r2hQAAsV
 
-From: Nikita Shubin <nikita.shubin@maquefel.me>
+Hi,
 
-Convert the Cirrus Logic CS4271 audio CODEC bindings to DT schema.
+I was using two partitions on same nvme device to compare filesystem performance,
+and I consistantly observed a strange behavior:
 
-Add missing spi-cpha, spi-cpol, '#sound-dai-cells' and port, as they
-are already being used in the DTS and the driver for this device.
+After 10 minutes fio test with bcachefs on one partition, performance degrade
+significantly for other filesystems on other partition (same device).
 
-Based on Animesh Agarwal cs42xx8 conversion patch.
+	ext4  150M/s --> 143M/s
+	xfs   150M/s --> 134M/s
+	btrfs 127M/s --> 108M/s
 
-Keep the original 'reset-gpio' used in bindings,
-instead of 'reset-gpios' used in cs42xx8.
+Several round tests show the same pattern that bcachefs seems occupy some device resource
+even when there is no high-level I/O.
 
-Cc: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Link: https://lore.kernel.org/all/20240715-ep93xx-v11-0-4e924efda795@maquefel.me
-Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
----
-This is complementary patch to ep93xx DT conversion series.
+I monitor /proc/diskstats, and it confirmed that bcachefs do keep writing the device.
+Following is the time serial samples for "writes_completed" on my bcachefs partition:
 
-Based on "ASoC: dt-bindings: cirrus,cs4270: Convert to dtschema" patch.
+writes_completed @timestamp
+	       0 @1724748233.712
+	       4 @1724748248.712    <--- mkfs
+	       4 @1724748263.712
+	      65 @1724748278.712
+	   25350 @1724748293.712
+	   63839 @1724748308.712    <--- fio started
+  	  352228 @1724748323.712
+	  621350 @1724748338.712
+	  903487 @1724748353.712
+        ...
+	12790311 @1724748863.712
+	13100041 @1724748878.712
+	13419642 @1724748893.712
+	13701685 @1724748908.712    <--- fio done (10minutes)
+	13701769 @1724748923.712    <--- from here, average 5~7writes/second for 2000 seconds
+	13701852 @1724748938.712
+	13701953 @1724748953.712
+	13702032 @1724748968.712
+	13702133 @1724748983.712
+	13702213 @1724748998.712
+	13702265 @1724749013.712
+	13702357 @1724749028.712
+        ...
+	13712984 @1724750858.712
+	13713076 @1724750873.712
+	13713196 @1724750888.712
+	13713299 @1724750903.712
+	13713386 @1724750918.712
+	13713463 @1724750933.712
+	13713501 @1724750948.712   <--- writes stopped here
+	13713501 @1724750963.712
+	13713501 @1724750978.712
+	...
 
-Krzysztof, thank you very much for quick review!
----
-Changes in v2:
-Krzysztof Kozlowski:
-- fix SoB above link
-- replace 'driver' with 'device'
-- mention properties not present in original bindings
-- mention using 'gpio-reset' instead of 'gpios-reset'
-- dropped unused label
-- use defines for gpio bindings
-- newline at end of file
-- Link to v1: https://lore.kernel.org/r/20240826-cs4271-yaml-v1-1-dad3f0b041ef@maquefel.me
----
- .../devicetree/bindings/sound/cirrus,cs4271.yaml   | 101 +++++++++++++++++++++
- Documentation/devicetree/bindings/sound/cs4271.txt |  57 ------------
- 2 files changed, 101 insertions(+), 57 deletions(-)
+Is this behavior expected? 
 
-diff --git a/Documentation/devicetree/bindings/sound/cirrus,cs4271.yaml b/Documentation/devicetree/bindings/sound/cirrus,cs4271.yaml
-new file mode 100644
-index 000000000000..cc5b48ceafa4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/cirrus,cs4271.yaml
-@@ -0,0 +1,101 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/cirrus,cs4271.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Cirrus Logic CS4271 audio CODEC
-+
-+maintainers:
-+  - Alexander Sverdlin <alexander.sverdlin@gmail.com>
-+  - Nikita Shubin <nikita.shubin@maquefel.me>
-+
-+description:
-+  The CS4271 is a stereo audio codec. This device supports both the I2C
-+  and the SPI bus.
-+
-+allOf:
-+  - $ref: dai-common.yaml#
-+  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-+
-+properties:
-+  compatible:
-+    const: cirrus,cs4271
-+
-+  reg:
-+    maxItems: 1
-+
-+  spi-cpha: true
-+
-+  spi-cpol: true
-+
-+  '#sound-dai-cells':
-+    const: 0
-+
-+  reset-gpio:
-+    description:
-+      This pin will be deasserted before communication to the codec starts.
-+    maxItems: 1
-+
-+  va-supply:
-+    description: Analog power supply.
-+
-+  vd-supply:
-+    description: Digital power supply.
-+
-+  vl-supply:
-+    description: Serial Control Port power supply.
-+
-+  port:
-+    $ref: audio-graph-port.yaml#
-+    unevaluatedProperties: false
-+
-+  cirrus,amuteb-eq-bmutec:
-+    description:
-+      When given, the Codec's AMUTEB=BMUTEC flag is enabled.
-+    type: boolean
-+
-+  cirrus,enable-soft-reset:
-+    description: |
-+      The CS4271 requires its LRCLK and MCLK to be stable before its RESET
-+      line is de-asserted. That also means that clocks cannot be changed
-+      without putting the chip back into hardware reset, which also requires
-+      a complete re-initialization of all registers.
-+
-+      One (undocumented) workaround is to assert and de-assert the PDN bit
-+      in the MODE2 register. This workaround can be enabled with this DT
-+      property.
-+
-+      Note that this is not needed in case the clocks are stable
-+      throughout the entire runtime of the codec.
-+    type: boolean
-+
-+required:
-+  - compatible
-+  - reg
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    spi {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        cs4271@0 {
-+            compatible = "cirrus,cs4271";
-+            reg = <0>;
-+            #sound-dai-cells = <0>;
-+            spi-max-frequency = <6000000>;
-+            spi-cpol;
-+            spi-cpha;
-+            reset-gpio = <&gpio0 1 GPIO_ACTIVE_LOW>;
-+            port {
-+                endpoint {
-+                    remote-endpoint = <&i2s_ep>;
-+                };
-+            };
-+        };
-+    };
-+
-+...
-diff --git a/Documentation/devicetree/bindings/sound/cs4271.txt b/Documentation/devicetree/bindings/sound/cs4271.txt
-deleted file mode 100644
-index 6e699ceabacd..000000000000
---- a/Documentation/devicetree/bindings/sound/cs4271.txt
-+++ /dev/null
-@@ -1,57 +0,0 @@
--Cirrus Logic CS4271 DT bindings
--
--This driver supports both the I2C and the SPI bus.
--
--Required properties:
--
-- - compatible: "cirrus,cs4271"
--
--For required properties on SPI, please consult
--Documentation/devicetree/bindings/spi/spi-bus.txt
--
--Required properties on I2C:
--
-- - reg: the i2c address
--
--
--Optional properties:
--
-- - reset-gpio: 	a GPIO spec to define which pin is connected to the chip's
--		!RESET pin
-- - cirrus,amuteb-eq-bmutec:	When given, the Codec's AMUTEB=BMUTEC flag
--				is enabled.
-- - cirrus,enable-soft-reset:
--	The CS4271 requires its LRCLK and MCLK to be stable before its RESET
--	line is de-asserted. That also means that clocks cannot be changed
--	without putting the chip back into hardware reset, which also requires
--	a complete re-initialization of all registers.
--
--	One (undocumented) workaround is to assert and de-assert the PDN bit
--	in the MODE2 register. This workaround can be enabled with this DT
--	property.
--
--	Note that this is not needed in case the clocks are stable
--	throughout the entire runtime of the codec.
--
-- - vd-supply:	Digital power
-- - vl-supply:	Logic power
-- - va-supply:	Analog Power
--
--Examples:
--
--	codec_i2c: cs4271@10 {
--		compatible = "cirrus,cs4271";
--		reg = <0x10>;
--		reset-gpio = <&gpio 23 0>;
--		vd-supply = <&vdd_3v3_reg>;
--		vl-supply = <&vdd_3v3_reg>;
--		va-supply = <&vdd_3v3_reg>;
--	};
--
--	codec_spi: cs4271@0 {
--		compatible = "cirrus,cs4271";
--		reg = <0x0>;
--		reset-gpio = <&gpio 23 0>;
--		spi-max-frequency = <6000000>;
--	};
--
+My test script:
+	set -e
+	for fsa in "btrfs" "ext4" "bcachefs" "xfs"
+	do
+		if [ $fsa == 'ext4' ]; then
+			mkfs -t ext4 -F /dev/nvme0n1p1
+		else
+			mkfs -t $fsa -f /dev/nvme0n1p1
+		fi
+		mount -t $fsa /dev/nvme0n1p1 /disk02/dir1
+		for fsb in "ext4" "bcachefs" "xfs" "btrfs"
+		do
+			if [ $fsb == 'ext4' ]; then
+				mkfs -t ext4 -F /dev/nvme0n1p2
+			else
+				mkfs -t $fsb -f /dev/nvme0n1p2
+			fi
+			mount -t $fsb /dev/nvme0n1p2 /disk02/dir2
 
----
-base-commit: 5be63fc19fcaa4c236b307420483578a56986a37
-change-id: 20240826-cs4271-yaml-e3890230dbbf
+			cd /disk02/dir1 && fio --randrepeat=1 --ioengine=libaio --direct=1 --name=test  --bs=4k --iodepth=64 --size=1G --readwrite=randrw  --runtime=600 --numjobs=8 --time_based=1 --output=/disk02/fio.${fsa}.${fsb}.0
+			sleep 30
+			cd /disk02/dir2 && fio --randrepeat=1 --ioengine=libaio --direct=1 --name=test  --bs=4k --iodepth=64 --size=1G --readwrite=randrw  --runtime=600 --numjobs=8 --time_based=1 --output=/disk02/fio.${fsa}.${fsb}.1
+			sleep 30
+			cd /disk02
+			umount /disk02/dir2
+		done
+		umount /disk02/dir1
+	done
 
-Best regards,
--- 
-Nikita Shubin <nikita.shubin@maquefel.me>
+And here is a report for one round of test matrix:
++----------+-----------------------------+-----------------------------+-----------------------------+-----------------------------+
+|   R|W    |             ext4            |           bcachefs          |             xfs             |            btrfs            |
++----------+-----------------------------+-----------------------------+-----------------------------+-----------------------------+
+|   ext4   |    [ext4]147MB/s|147MB/s    |    [ext4]146MB/s|146MB/s    |    [ext4]150MB/s|150MB/s    |    [ext4]149MB/s|149MB/s    |
+|          |    [ext4]146MB/s|146MB/s    | [bcachefs]72.2MB/s|72.2MB/s |     [xfs]149MB/s|149MB/s    |    [btrfs]132MB/s|132MB/s   |
+| bcachefs | [bcachefs]71.9MB/s|71.9MB/s | [bcachefs]65.1MB/s|65.1MB/s | [bcachefs]69.6MB/s|69.6MB/s | [bcachefs]65.8MB/s|65.8MB/s |
+|          |    [ext4]143MB/s|143MB/s    | [bcachefs]71.5MB/s|71.5MB/s |     [xfs]134MB/s|133MB/s    |    [btrfs]108MB/s|108MB/s   |
+|   xfs    |     [xfs]148MB/s|148MB/s    |     [xfs]147MB/s|147MB/s    |     [xfs]152MB/s|152MB/s    |     [xfs]151MB/s|151MB/s    |
+|          |    [ext4]147MB/s|147MB/s    | [bcachefs]71.3MB/s|71.3MB/s |     [xfs]148MB/s|148MB/s    |    [btrfs]127MB/s|127MB/s   |
+|  btrfs   |    [btrfs]132MB/s|132MB/s   |    [btrfs]112MB/s|111MB/s   |    [btrfs]110MB/s|110MB/s   |    [btrfs]110MB/s|110MB/s   |
+|          |    [ext4]147MB/s|146MB/s    | [bcachefs]69.7MB/s|69.7MB/s |     [xfs]146MB/s|146MB/s    |    [btrfs]125MB/s|125MB/s   |
++----------+-----------------------------+-----------------------------+-----------------------------+-----------------------------+
+(The rows are for the FS on the first partition, and the cols are on the second partition)
 
+The version of bcachefs-tools on my system is 1.9.1.
+(The impact is worse, ext4 dropped to 80M/s, when I was using bcachefs-tools from debian repos which is too *old*,
+and known to cause bcachefs problems. And that is the reason that I do this kind of test.)
+
+
+Thanks
+David
 
 
