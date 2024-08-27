@@ -1,112 +1,120 @@
-Return-Path: <linux-kernel+bounces-303049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0AA396069E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:03:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D1609606A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:04:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EEC51C22254
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:03:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F8991C2294D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F17819CD17;
-	Tue, 27 Aug 2024 10:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0073B19CCED;
+	Tue, 27 Aug 2024 10:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UczegE51"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G7tXtm/J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638FF1758B
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 10:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA6D2FB2;
+	Tue, 27 Aug 2024 10:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724753006; cv=none; b=HlGSi7Fx+kAmPLUwk5qkWHh5tw29CQeboEPghe0MIMBWF2M4UZSt8lD2EG4nFs4XZ0XVuIlApAYZ8UPUXeVFHlSx4yhCuK+7+mipibpy0Y00cig0w496/3v1vIVgwsg898DflWHpzO2MIStxXUpUJCexESV+oTMbUHGbjKzzipY=
+	t=1724753081; cv=none; b=MevtfRjhQ+i+ZaBnHxoW1I1B1BYR6YRxZXt/LHUzSugUg+9U+Z6ibC++V3VULA7JaL2nOSn/UTfo61gaNOyso1pjWMMFgM+wsl8o9IC99xIwI6mbLS97YP/0N1MC4v0hUfMa2rRI4Eju3aVJIEPXGa0JWxIqXw+VQv+UuGfDZso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724753006; c=relaxed/simple;
-	bh=iXIy2MGZMO16gh3hzCW5LPWaQ1Od2aiOtgKYiO9W/Is=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gXAde8W9P93DnTTJl3yqVA5srxaKP7RI8vcrAUUQAHJW9BHAHZHPtzSBNxrrHL6P18WCZxRJl24sfI1XcoMe/rHXMAmX5CpHbySu6HnVot1LsereJ+z9gyhc5SIQuBU4r5+Gyif22MfSfY4AOw2QDeEiWUD5Lo2M+9UDmRPUITs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UczegE51; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724753003;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ePo7LbhktsoCxUNbD8OGtiEOqKS27VH/hUgT/iOtx/g=;
-	b=UczegE5117c4H70EICwzsHGYHVlXi5mpRfg/7RpCD2TkEBDnYyQ6OaAyPeRrLwjzJ02c9w
-	2uC4KMX49zHevz50G4ZwNHIZwcNKyRC+GKZAw2MMyP3r+EzKJLvwjwdJYFO9eSDzGmj42N
-	505PRBz+EkzOPQ3pWE79YElaK7yJz5A=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-539-xphy2D8mPxqAP3lAZvmsUA-1; Tue, 27 Aug 2024 06:03:22 -0400
-X-MC-Unique: xphy2D8mPxqAP3lAZvmsUA-1
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6c175f40282so43271116d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 03:03:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724753001; x=1725357801;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ePo7LbhktsoCxUNbD8OGtiEOqKS27VH/hUgT/iOtx/g=;
-        b=UwMfPZEDXst9FsYkuH7xToYjnvusqOqnkI1+WmXPODvOeYhb8As7eMhP85aXOmgcwI
-         tOipQ+Mn35M1P8khNhh2DJ1zsGdKfmZ3F/vzMcXpSvN//im0S6wgBcHoxayyXJlX3Ud9
-         y4Nul72CuytapaD6zW9bzvDw64Rj7qzK5S3zv1CWI0gZ9PYR1f0uZmnvPI0EUGQTsCT9
-         UGGBcRtcUJhlRVgxnirju1tr9ajZY7uNzgQzrQBJfpIBMR1UxewHnVRykXnQMP5CkhsJ
-         YcXSMXFh+8B+50K39M+dXk2r7yERLQd7hTX/4uu1S1HhVUf+tCIkJeh5SkOETGTO3EZj
-         /i5w==
-X-Forwarded-Encrypted: i=1; AJvYcCVbWUFIjasIzPPw4SLSClH6C5IJfgfKpsir5lXUCRwCKT94g4mIbppbApd3PU3OCszD8iB0rPb+A7MlT9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyFSZ/zYxGOLaLPkSVMcR1flVkOmKA5Si81jvVADKU9TUPwR2r
-	SaSGynWtVOnCEpAb4JxBS9kWpy1M00+84fNJiztVc4WFROvE7B3PbOCFdEOHT7I5YUe928YsXmj
-	FBDbHAlw3w8OxTa9BLcQewBsv7/tYp6ydWsEEsKOtJ8hpGukmAWvU41luCBoQNg==
-X-Received: by 2002:a05:6214:33c9:b0:6b5:e099:4d69 with SMTP id 6a1803df08f44-6c16dc6687bmr156669136d6.26.1724753001577;
-        Tue, 27 Aug 2024 03:03:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEaRoJeLC3RAwa6KhbDHYXuNtUK+CzXSM6BtZhXz/RxTCfBKmYUvq3UUrOeMINPe03dW2zkHg==
-X-Received: by 2002:a05:6214:33c9:b0:6b5:e099:4d69 with SMTP id 6a1803df08f44-6c16dc6687bmr156668846d6.26.1724753001148;
-        Tue, 27 Aug 2024 03:03:21 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c162d4ecb7sm54932126d6.42.2024.08.27.03.03.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 03:03:20 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: paulmck@kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
- sfr@canb.auug.org.au, linux-next@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
-In-Reply-To: <b1824f4a-f5cc-4011-876f-8a73cf752067@paulmck-laptop>
-References: <c28dbc65-7499-41a5-84d0-991843153b1a@paulmck-laptop>
- <20240823074705.GB12053@noisy.programming.kicks-ass.net>
- <xhsmho75fo6e4.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <b1824f4a-f5cc-4011-876f-8a73cf752067@paulmck-laptop>
-Date: Tue, 27 Aug 2024 12:03:17 +0200
-Message-ID: <xhsmhle0inuze.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1724753081; c=relaxed/simple;
+	bh=zfJAOzZN27Amn0QuamIFpL8ZwKJw/PPvyF+8IyGpYIw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N8+UD0A+4N7YpkN4GHBzAiriBPreR4TnPOYrlfeiFLzQ2cGEufYW/QoWQZRr+FWatayPP79UdCHv8z6+q8uRgI40nt78xSzTBmTCgHGXSpPTOcVgznjzY0IY450LwrCoPAOeda4I9M+LkaIDqWfhXbGtG6MkMxDKgwEQ+to5I7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G7tXtm/J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3B27C8B7AC;
+	Tue, 27 Aug 2024 10:04:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724753080;
+	bh=zfJAOzZN27Amn0QuamIFpL8ZwKJw/PPvyF+8IyGpYIw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=G7tXtm/JGcswk7WzftJ5CUcDOEjQJZ0tr1eYw9s3YJj3PCK6XTqBGxqux2qk28Cmo
+	 pl7yyULUURN6XABHXIUa7FVpSM/+6PL/1NNwYzNiSsXRAQ7vtu+lfuLxNmIMmtkOTK
+	 FJvYPZGMmeypdcFabfr/1JqWbtQJpHAp35GqRFzXp7YzPaCDJRlEanpfIwD5X4Mcg5
+	 VgplYS72dmNVX5Ns3AKx3Oi1281vF2qS3IQd9MfhNpu9GudhDS9Tt5DfqlHQLBOv/H
+	 nW0lUiYIiFMvFc3eb7G984VcK0MDxyP619F98kc4hZQHVK+IKEJXeXsEYKgJbLcb4F
+	 c6ZmmCL9karxg==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH] rust: allow `stable_features` lint
+Date: Tue, 27 Aug 2024 12:04:03 +0200
+Message-ID: <20240827100403.376389-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On 26/08/24 09:31, Paul E. McKenney wrote:
-> On Mon, Aug 26, 2024 at 01:44:35PM +0200, Valentin Schneider wrote:
->> 
->> Woops...
->
-> On the other hand, removing that dequeue_task() makes next-20240823
-> pass light testing.
->
-> I have to ask...
->
-> Does it make sense for Valentin to rearrange those commits to fix
-> the two build bugs and remove that dequeue_task(), all in the name of
-> bisectability.  Or is there something subtle here so that only Peter
-> can do this work, shoulder and all?
->
+Support for several Rust compiler versions started in commit 63b27f4a0074
+("rust: start supporting several compiler versions"). Since we currently
+need to use a number of unstable features in the kernel, it is a matter
+of time until one gets stabilized and the `stable_features` lint warns.
 
-I suppose at the very least another pair of eyes on this can't hurt, let me
-get untangled from some other things first and I'll take a jab at it.
+For instance, the `new_uninit` feature may become stable soon, which
+would give us multiple warnings like the following:
 
+    warning: the feature `new_uninit` has been stable since 1.82.0-dev
+    and no longer requires an attribute to enable
+      --> rust/kernel/lib.rs:17:12
+       |
+    17 | #![feature(new_uninit)]
+       |            ^^^^^^^^^^
+       |
+       = note: `#[warn(stable_features)]` on by default
+
+Thus allow the `stable_features` lint to avoid such warnings. This is
+the simplest approach -- we do not have that many cases (and the goal
+is to stop using unstable features anyway) and cleanups can be easily
+done when we decide to update the minimum version.
+
+An alternative would be to conditionally enable them based on the
+compiler version (with the upcoming `RUSTC_VERSION` or maybe with the
+unstable `cfg(version(...))`, but that one apparently will not work for
+the nightly case). However, doing so is more complex and may not work
+well for different nightlies of the same version, unless we do not care
+about older nightlies.
+
+Another alternative is using explicit tests of the feature calling
+`rustc`, but that is also more complex and slower.
+
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+I may take this through `rust-fixes` too, since it is straightfoward and
+it could help some developers/CIs if something gets stabilized soon.
+
+ Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Makefile b/Makefile
+index 68ebd6d6b444..cf1111476f46 100644
+--- a/Makefile
++++ b/Makefile
+@@ -445,6 +445,7 @@ KBUILD_USERLDFLAGS := $(USERLDFLAGS)
+ # host programs.
+ export rust_common_flags := --edition=2021 \
+ 			    -Zbinary_dep_depinfo=y \
++			    -Astable_features \
+ 			    -Dunsafe_op_in_unsafe_fn \
+ 			    -Dnon_ascii_idents \
+ 			    -Wrust_2018_idioms \
+--
+2.46.0
 
