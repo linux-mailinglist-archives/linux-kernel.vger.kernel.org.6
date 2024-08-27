@@ -1,84 +1,106 @@
-Return-Path: <linux-kernel+bounces-303211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CC25960914
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:41:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12A3696091B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AB49284A06
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:41:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9880284AB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE2B1A0AFA;
-	Tue, 27 Aug 2024 11:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BDC1A2C0F;
+	Tue, 27 Aug 2024 11:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hb8Uha/3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Vs16pudN"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E726E17C69;
-	Tue, 27 Aug 2024 11:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECF619FA96
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724758793; cv=none; b=jToK6m2pBkkr9EchJgrEsAQ3dzmA97nOt0+emYYxYtP019Jht0Ez7VIbbpPApfrXyN2zlxycz+NSLwqKTH90lPvk+ddIlpDTjXLsq6QaSyQjt0GCz3Gr4EpDu5EXma2IExKI68giAvyrXW0GUvdtqEfNUVV6EtQCq3cn8/6sARY=
+	t=1724758866; cv=none; b=nap4hWgbZxObySsakS7vL3MXWp2SicOsq/MMKn7qL9LCiFIdRK0fa4iUAbcx8rEc0jCllXoVl3n9wtLoONn2I6CbPWRxTvTYy346593u9ff8FDhosvdIpHOUyAJkCXOvyStzJmMT4Ij15hfMKKuw5pO7WKFX5EVwhDX9iAKIJAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724758793; c=relaxed/simple;
-	bh=4KOpM59ML50YOGsvJ+3FE065aYzzXQptCLzDTnBVYSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JepDiQ7VWv0ODmTjY11Lz0ahKV8j3qlmJvk2qdyx9rLm7Ao2FZIL6sYKIXUMduiyQUF+pvbqN3Z7JRKL/nTq+aFuFbUenjD4+sGQ08gbNAA92l1JOuoBpqf72TH3nLMmgS8f3zINrgQpVF0kCdbTV8KfZbsmGWY1xOCbA+bP8+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hb8Uha/3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5202C515C0;
-	Tue, 27 Aug 2024 11:39:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724758792;
-	bh=4KOpM59ML50YOGsvJ+3FE065aYzzXQptCLzDTnBVYSU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hb8Uha/3QANkxXd9ZcRhuXvn2zqZZBvHCLZZxmH7fMhC4OGigRNX0UvwGmbO3aZAO
-	 vml+wWHZOQh+c50od7XsNzM+gWkVXcUwEit29nDDsaxanFZWcZKHfGxtKuk/0Qj3Y/
-	 OLY7dnoL5c5dHNcUN/Eg5edjDr6/efAZbE6oCQEUwyVruQMQP24F6CKke19Gr1hLxf
-	 g+dDoCJuHwVaBahO7qtHr8Qi+9B9FugS7FzfgaYC1Msxj0QfHHylr71KWWaK10dMWY
-	 Qja6ugApd2OLReR+H0ifMqWpocrdciHXGzHt88RJPJPtubM6qgIViSdniT00aZP6Ye
-	 CNdmKXNN/WzPg==
-Date: Tue, 27 Aug 2024 13:39:49 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org, 
-	robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, abel.vesa@linaro.org, 
-	quic_msarkar@quicinc.com, quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org, 
-	kw@linux.com, lpieralisi@kernel.org, neil.armstrong@linaro.org, 
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 4/8] arm64: dts: qcom: x1e80100: Add support for PCIe3 on
- x1e80100
-Message-ID: <ag3h77zczj5ttuz4bjhtqxpllyt4di77gwaavdcdlhr5anv6yk@ygzb756hcwvm>
-References: <20240827063631.3932971-1-quic_qianyu@quicinc.com>
- <20240827063631.3932971-5-quic_qianyu@quicinc.com>
+	s=arc-20240116; t=1724758866; c=relaxed/simple;
+	bh=ic1TjHHCwiAO3n+kXu6PMjvoD055u5QT7EvE2Cthyf4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FGTEdsa1wXCoORCuXzXc9Bm3qWsFZxEsH/M4QwXimok8T7U2LNvjAiTmfmaJn/INngrCpq0z/m4SoeK9J88FiWXNjWcH/ZtSUJNXWVXqiC9rwz5CYdyy71FWf5IQZtR/bgRZ1H7ERyZwUCviIJ7y4XL32vZ9Lx4KVRjEN7/JJVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Vs16pudN; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2023dd9b86aso41933895ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 04:41:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724758864; x=1725363664; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ic1TjHHCwiAO3n+kXu6PMjvoD055u5QT7EvE2Cthyf4=;
+        b=Vs16pudNnsdtnEl73wZz5QMkL176Y1Zh/Fk1LrCuRfl9ipb4xxfcA5LfhWjWhvbo7t
+         scXJe40+rBTybD7F+H5uUAC9rkmYc7R+y0uu4/sWsLi9JGySpglsnjjAN4wroMZ6hRGl
+         wa8XMb0ko7E48PdgQw2g1htX/0hfeNZyzHm22YeVvQpKdx3tzwMZ3q1tIWN4kB/tz6pM
+         cDyloVWuBtLAwbFZz7CS+ahhGKxlEYD3cpsCuktJPitkcy0gX8MyQ3luY0Ocqe25HEv3
+         S7d67etnTELSxrI9mAe3u8Z8PN/7R0rhUVloFgnVMJymITAZOEeE9H7+kaCuaKSFMsoa
+         6vPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724758864; x=1725363664;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ic1TjHHCwiAO3n+kXu6PMjvoD055u5QT7EvE2Cthyf4=;
+        b=ci281rg+G4E71BfsWCVCiB2KZHjalBJEa0uDxi/yPM2SpL0yJQskGjOTKWsh5zJ5lO
+         Ma03mWINaclX1k41x9JmPV6Pv0E14wngN4vudN3Lxy6ZRnqXwNElClV+7fqubqVnP7iv
+         +lk1+pSucTQ0Wtfy1WbOWDO05n8kV7NgL6dC6moGslOtNHSJL1NXkLnjykzTm6pZ+aNu
+         HqF650PrHkRKmIqgkQyPkSXc3J9yhR2kt1HRzR+tkLYr6hWWiNyLdqz0LD+G6kwYacGP
+         QU8Wk2E4ecVTMaCTjtT5c/j1lzdXwgu9NGxd38SOMwRwWmYFBhYdHcnxemnL0qI4GrE9
+         QY9g==
+X-Forwarded-Encrypted: i=1; AJvYcCW2lu0DJZntmUiD24z9p5gVOqUz6xHaHE0GX5EU7mqfuM0RRVwGb3HTYaUjL3Fhe0KDJAy4tW3kXX6y+A0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjkPs5VbHqz25efO+QayDwqnsqHlj8zo2CPUrTpjhUvBHyYc4s
+	wQhatFxKOnNF2yT3j1e63+0XI3WFs1mwro1dO23ropPJsFIED4NJFH4wzYilIfZiaSNRoTDWtxF
+	Yw69zPm34suZL/zjOCo/G3IoQ7eA0bzYT1XNqjqZH1xIlhr5zzS2W
+X-Google-Smtp-Source: AGHT+IG04JrGD6kdcZPMN0hf7XIpw/QNrjq/J6phLsQZ/V++jHPx6aJM5lCRImy/Aen1tbnoYSBDPSY3y+t8EfG56BE=
+X-Received: by 2002:a17:902:ecd1:b0:1f7:1655:825c with SMTP id
+ d9443c01a7336-2039e4ca7c3mr132078745ad.36.1724758863636; Tue, 27 Aug 2024
+ 04:41:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240827063631.3932971-5-quic_qianyu@quicinc.com>
+References: <0000000000008964f1061f8c32b6@google.com> <de72f61cd96c9e55160328dd8b0c706767849e45.camel@gmail.com>
+ <Zs2m1cXz2o8o1IC-@infradead.org> <9cf7d25751d18729d14eef077b58c431f2267e0f.camel@gmail.com>
+ <Zs26gKEQzSzova4d@infradead.org>
+In-Reply-To: <Zs26gKEQzSzova4d@infradead.org>
+From: Aleksandr Nogikh <nogikh@google.com>
+Date: Tue, 27 Aug 2024 13:40:52 +0200
+Message-ID: <CANp29Y4JzKFbDiCoYykH1zO1xxeG8MNCtNZO8aXV47JdLF6UXw@mail.gmail.com>
+Subject: Re: [syzbot] [iomap?] [xfs?] WARNING in iomap_write_begin
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Julian Sun <sunjunchao2870@gmail.com>, 
+	syzbot <syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com>, brauner@kernel.org, 
+	chandan.babu@oracle.com, djwong@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 26, 2024 at 11:36:27PM -0700, Qiang Yu wrote:
-> Describe PCIe3 controller and PHY. Also add required system resources like
-> regulators, clocks, interrupts and registers configuration for PCIe3.
-> 
-> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 205 ++++++++++++++++++++++++-
+On Tue, Aug 27, 2024 at 1:37=E2=80=AFPM Christoph Hellwig <hch@infradead.or=
+g> wrote:
+>
+> On Tue, Aug 27, 2024 at 07:13:57PM +0800, Julian Sun wrote:
+> > Did you use the config and reproducer provided by syzbot? I can easily
+> > reproduce this issue using the config and c reproducer provided by
+> > syzbot.
+>
+> I used the reproducer on my usual test config for a quick run.
+> I'll try the syzcaller config when I get some time.
 
-Why DTS is mixed with the drivers? This patchset is organized in
-confusing way. Please use standard upstream submission process - DTS is
-always the last in the patchset (or separate).
+FWIW if you just want to check if the bug is still present in the
+kernel tree, you can ask syzbot to build the latest revision and run
+the reproducer there.
 
-
-Best regards,
-Krzysztof
-
+#syz test
 
