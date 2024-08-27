@@ -1,110 +1,135 @@
-Return-Path: <linux-kernel+bounces-302406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42BEC95FDDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:59:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CB5B95FDE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 02:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74D7A1C221B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:59:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A12B21F2305A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC15819D8A2;
-	Mon, 26 Aug 2024 23:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57B8B666;
+	Tue, 27 Aug 2024 00:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="OGjj+9G6"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C93A1494CF;
-	Mon, 26 Aug 2024 23:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="njxG8zx6"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6299E621;
+	Tue, 27 Aug 2024 00:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724716737; cv=none; b=V46/KnhTv/Y/up3Pcpo4UMVTe9VFg9uXwiuiBx3E0GRuEXKjnsQdECEUdcl46yM1cNEn/g7eTLhkBgzeEZnbe89Ec7XhC1w3Pvvx1hL6is0VxG3oFHMIyqogZN7iPqup4Vn5obDNSQTxFriI+x1CXOrKLzqCKdBZ4SdAyk5x8WE=
+	t=1724716935; cv=none; b=ocxizn+jmIEBg2Xyw6BXYnuTVcBulgF44QtcVzMIXwwme1YMjizYOQLb1ftOEk70q4PlCG+aOBGor5DrlTB1+IvDNZ/SnuE6D2wcEGZjLDCaQPT+Y6tYcIfM/+aZWydA3Fjk0q8MHyjs7M0M8ccxhfmP9DKzfUGIJfnF+lgmnKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724716737; c=relaxed/simple;
-	bh=nUxLJotlRFoie2z1KF7VG7SqPZm71IRkxR8soOR/bP4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=NKA72a65f8RaJLVZOYRmLrNP0h9NppAPG8H/3GDXeldyNbc/JzAL2vtTWonfZcMFLLKQSQyoR6R7a1SWIMjhj/jKF0Ngk1iIO2dccRpIG8fngP0RA5SZwaGRYMj3uR3dqHPOo2I7Ja3R4XV3Pwv/fdxIWYT/1hfBfEb2/zCtHws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=OGjj+9G6 reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=lYvDMtU32GzRUMqBUsd+A3LiN5p58lzdAs5JVRbFdOg=; b=O
-	Gjj+9G6heFpV3s/b6y3M2dwLljRcLJsGIKV5UTsQ/EdwhABirXVqvy15/2TvNMzj
-	oCYpX2YC+jTe0BjKVIR+JMfCzvEJLQnITHx8fdLUfyR1xw8mK+Tc38Fxc+ncZHKj
-	ZCgPXKNfBLz+TVvGf4SsOwgu89Vv/hz+2a7u1lljd4=
-Received: from 00107082$163.com ( [111.35.190.113] ) by
- ajax-webmail-wmsvr-40-120 (Coremail) ; Tue, 27 Aug 2024 07:58:32 +0800
- (CST)
-Date: Tue, 27 Aug 2024 07:58:32 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: rafael@kernel.org, lenb@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re:[PATCH] Add rev and func to warning message when
- acpi_evaluate_dsm failed.
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <20240826043858.4292-1-00107082@163.com>
-References: <20240826043858.4292-1-00107082@163.com>
-X-NTES-SC: AL_Qu2ZBvuauU8q5COfZukXn0oTju85XMCzuv8j3YJeN500qiTB+iklRXJ/B3zW+u6qFgS3vRWqTjpD8cFbQ7JIR7qo95lFP/wY86hIRFIatsl3
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1724716935; c=relaxed/simple;
+	bh=3Lu2qvntF0LW0D6rPDpqRDqugVpTuyFFhTjrSXWCWNE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pp+5k34FUvffeeG/RiknFoZOfBqeCsZKNov0eKgWsN2ESYMKLo9bixaRUhWdnKgzoEhdHB2f7BSt9T46eDdN0Akr7iR9u7rTlk2z65/mnOmcyrWlWSMAnSIb7c2cE3o5J32Ii5imBYnERD6biXpilXC/88Kl6aHFjCbvPokkR7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=njxG8zx6; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4281ca54fd3so42279185e9.2;
+        Mon, 26 Aug 2024 17:02:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724716932; x=1725321732; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3Lu2qvntF0LW0D6rPDpqRDqugVpTuyFFhTjrSXWCWNE=;
+        b=njxG8zx6muWAxT+dLD++zkt/KknfbWQiZyFfn72bisCBIBZSgpThKZAl1r90tDd/Fb
+         tN6+Ohwbsp+2IF10SYovuXurEpxNpzEusB/Q1HAhDV5blhB+wXMTk/pO0I4wq56166qg
+         e2215WAMelf6N4g8cdPpk+swlij4hZ+vhiDUnsOs65LKfFsUGW+L8douvvVLORrt6PGw
+         aLpA9+nmt2InYnm8eow0GFngECCdkdkh5qVZZwzz97TEIYu+QRjNOz7RkRs9tf7Bpmph
+         n2JaxfJVkMRtmQ5mi67PfrrqulnosdasWLFZRPnU4YFB/TZpSm0tvjvfZRKtKvIZtelQ
+         cxcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724716932; x=1725321732;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3Lu2qvntF0LW0D6rPDpqRDqugVpTuyFFhTjrSXWCWNE=;
+        b=gJ2bG3x71lJycslyfJGbRDbEttIX7eBW7f1btrb8a/tZ9PA35WgA3skkPj0e69lmFF
+         2HSeGgZ39TSUfYGeh0YmS/JoifSebsY/9A/1OkET8hO++pzp9w+EXnfyqQyFulExWUfM
+         AGs04UBfcOOPOM7wmg8Ml6vKeqW6+hwk2DFkWCoxxErrkZz/3CCVOgFpnCQo6sTDrYeG
+         2u3C4sHBeUm7vz0SqsNYwLYyH9F6pUA6PYzd8U/DZHVwEMoUxZXyab93NXfIXZZOQBgg
+         eMi+yWurMwdJsGk6etkf0TmN+DsGcdboFH9PKEYipdVdSKOIU+QE9eE3yRZKcZyXUQde
+         k7Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCWLpsV/93QZfh9OquMrrMYuRtVhDzw9zAbmUoiEWNwHlPlJqV7lOQrzcbA8M1JiKKLcn9P4Y/Ehuf/2@vger.kernel.org, AJvYcCXOwrd8VrdV4VAosbioVU6+4JGoIysuL89mtX9kFXvkeosaej20kJvrqN5UCdmSWaOqv37CFSsFGOGHKHc=@vger.kernel.org, AJvYcCXsXZ+UbJXu/Row/VCJW5kPWx+VHfYghD9Rgi3jYkT4yLcWgIAWhegyVxLvPJhaR2e9WyQS9elz@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMJ40q3c9U+okCVntcqC7lYFLSI15Z6fW0v8+HZk/RiKUU6k7i
+	x0L0cRR1Rn73t2/+pipLXVz1P38wESHldLyWJfqqdZs0X+kLLIrGOEqr5FSsMzYLsV0dV/9u55Y
+	wqFsjPZ2naxGmI29fw2opO8YW3nU=
+X-Google-Smtp-Source: AGHT+IGAM3TFs9NXhoHtmE3Cku2gMbd6wYRStVxQerrS1NZ8Nv7gH9pabCN8b2jcCBPPxX3JLq4ChV+hMWDv41wP16A=
+X-Received: by 2002:a05:600c:5250:b0:425:7884:6b29 with SMTP id
+ 5b1f17b1804b1-42b9adf038dmr5996955e9.19.1724716931386; Mon, 26 Aug 2024
+ 17:02:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <d43b414.1fb.191912081ba.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wD3f8qpFs1mRrsiAA--.65311W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqQVHqmVOCdN33QACsY
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+References: <20240729022316.92219-1-andrey.konovalov@linux.dev>
+In-Reply-To: <20240729022316.92219-1-andrey.konovalov@linux.dev>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Tue, 27 Aug 2024 02:02:00 +0200
+Message-ID: <CA+fCnZc7qVTmH2neiCn3T44+C-CCyxfCKNc0FP3F9Cu0oKtBRQ@mail.gmail.com>
+Subject: Re: [PATCH] usb: gadget: dummy_hcd: execute hrtimer callback in
+ softirq context
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alan Stern <stern@rowland.harvard.edu>, Marcello Sylvester Bauer <sylv@sylv.io>, 
+	Dmitry Vyukov <dvyukov@google.com>, Aleksandr Nogikh <nogikh@google.com>, Marco Elver <elver@google.com>, 
+	Alexander Potapenko <glider@google.com>, kasan-dev@googlegroups.com, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	syzbot+2388cdaeb6b10f0c13ac@syzkaller.appspotmail.com, 
+	syzbot+17ca2339e34a1d863aad@syzkaller.appspotmail.com, stable@vger.kernel.org, 
+	andrey.konovalov@linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SSBtYWRlIGEgbWlzdGFrZSBhYm91dCB0aGUgcGF0Y2ggdGl0bGUsIHBsZWFzZSBpZ25vcmUgdGhp
-cyBhbmQgSSB3aWxsIHNlbmQgYW5vdGhlciBvbmUuCgpEYXZpZAoKQXQgMjAyNC0wOC0yNiAxMjoz
-ODo1OCwgIkRhdmlkIFdhbmciIDwwMDEwNzA4MkAxNjMuY29tPiB3cm90ZToKPldoZW4gYWNwaV9l
-dmFsdWF0ZV9kc20gZmFpbGVkLCB0aGUgd2FybmluZyBtZXNzYWdlIGxhY2tzIHRoZSByZXYKPmFu
-ZCBmdW5jIGluZm9ybWF0aW9uIHdoaWNoIGlzIGF2YWlsYWJsZSBhbmQgaGVscGZ1bC4gRm9yIGV4
-YW1wbGUsCj5pd2x3aWZpIHdvdWxkIG1ha2UgRFNNIHF1ZXJpZXMgZm9yIGxhcmkgY29uZmlnLCBh
-bmQgd2l0aCBzb21lIEhXLAo+RFNNIGVycm9yIHdvdWxkIHJldHVybjoKPglBQ1BJOiBcOiBmYWls
-ZWQgdG8gZXZhbHVhdGUgX0RTTSBiZjAyMTJmMi03ODhmLWM2NGQtYTViMy0xZjczOGUyODVhZGUg
-KDB4MTAwMSkKPglBQ1BJOiBcOiBmYWlsZWQgdG8gZXZhbHVhdGUgX0RTTSBiZjAyMTJmMi03ODhm
-LWM2NGQtYTViMy0xZjczOGUyODVhZGUgKDB4MTAwMSkKPglBQ1BJOiBcOiBmYWlsZWQgdG8gZXZh
-bHVhdGUgX0RTTSBiZjAyMTJmMi03ODhmLWM2NGQtYTViMy0xZjczOGUyODVhZGUgKDB4MTAwMSkK
-PglBQ1BJOiBcOiBmYWlsZWQgdG8gZXZhbHVhdGUgX0RTTSBiZjAyMTJmMi03ODhmLWM2NGQtYTVi
-My0xZjczOGUyODVhZGUgKDB4MTAwMSkKPglBQ1BJOiBcOiBmYWlsZWQgdG8gZXZhbHVhdGUgX0RT
-TSBiZjAyMTJmMi03ODhmLWM2NGQtYTViMy0xZjczOGUyODVhZGUgKDB4MTAwMSkKPglBQ1BJOiBc
-OiBmYWlsZWQgdG8gZXZhbHVhdGUgX0RTTSBiZjAyMTJmMi03ODhmLWM2NGQtYTViMy0xZjczOGUy
-ODVhZGUgKDB4MTAwMSkKPglBQ1BJOiBcOiBmYWlsZWQgdG8gZXZhbHVhdGUgX0RTTSBiZjAyMTJm
-Mi03ODhmLWM2NGQtYTViMy0xZjczOGUyODVhZGUgKDB4MTAwMSkKPglBQ1BJOiBcOiBmYWlsZWQg
-dG8gZXZhbHVhdGUgX0RTTSBiZjAyMTJmMi03ODhmLWM2NGQtYTViMy0xZjczOGUyODVhZGUgKDB4
-MTAwMSkKPldpdGggdGhpcyBwYXRjaCwgdGhlIHdhcm5pbmcgd291bGQgYmUgbW9yZSBpbmZvcm1h
-dGl2ZToKPglBQ1BJOiBcOiBmYWlsZWQgdG8gZXZhbHVhdGUgX0RTTSBiZjAyMTJmMi03ODhmLWM2
-NGQtYTViMy0xZjczOGUyODVhZGUgcmV2OjAgZnVuYzoxICgweDEwMDEpCj4JQUNQSTogXDogZmFp
-bGVkIHRvIGV2YWx1YXRlIF9EU00gYmYwMjEyZjItNzg4Zi1jNjRkLWE1YjMtMWY3MzhlMjg1YWRl
-IHJldjowIGZ1bmM6NiAoMHgxMDAxKQo+CUFDUEk6IFw6IGZhaWxlZCB0byBldmFsdWF0ZSBfRFNN
-IGJmMDIxMmYyLTc4OGYtYzY0ZC1hNWIzLTFmNzM4ZTI4NWFkZSByZXY6MCBmdW5jOjcgKDB4MTAw
-MSkKPglBQ1BJOiBcOiBmYWlsZWQgdG8gZXZhbHVhdGUgX0RTTSBiZjAyMTJmMi03ODhmLWM2NGQt
-YTViMy0xZjczOGUyODVhZGUgcmV2OjAgZnVuYzo4ICgweDEwMDEpCj4JQUNQSTogXDogZmFpbGVk
-IHRvIGV2YWx1YXRlIF9EU00gYmYwMjEyZjItNzg4Zi1jNjRkLWE1YjMtMWY3MzhlMjg1YWRlIHJl
-djowIGZ1bmM6MyAoMHgxMDAxKQo+CUFDUEk6IFw6IGZhaWxlZCB0byBldmFsdWF0ZSBfRFNNIGJm
-MDIxMmYyLTc4OGYtYzY0ZC1hNWIzLTFmNzM4ZTI4NWFkZSByZXY6MCBmdW5jOjkgKDB4MTAwMSkK
-PglBQ1BJOiBcOiBmYWlsZWQgdG8gZXZhbHVhdGUgX0RTTSBiZjAyMTJmMi03ODhmLWM2NGQtYTVi
-My0xZjczOGUyODVhZGUgcmV2OjAgZnVuYzoxMCAoMHgxMDAxKQo+CUFDUEk6IFw6IGZhaWxlZCB0
-byBldmFsdWF0ZSBfRFNNIGJmMDIxMmYyLTc4OGYtYzY0ZC1hNWIzLTFmNzM4ZTI4NWFkZSByZXY6
-MCBmdW5jOjEyICgweDEwMDEpCj4KPlNpZ25lZC1vZmYtYnk6IERhdmlkIFdhbmcgPDAwMTA3MDgy
-QDE2My5jb20+Cj4tLS0KPiBkcml2ZXJzL2FjcGkvdXRpbHMuYyB8IDMgKystCj4gMSBmaWxlIGNo
-YW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQo+Cj5kaWZmIC0tZ2l0IGEvZHJp
-dmVycy9hY3BpL3V0aWxzLmMgYi9kcml2ZXJzL2FjcGkvdXRpbHMuYwo+aW5kZXggYWU5Mzg0Mjgy
-MjczLi42ZGU1NDJkOTk1MTggMTAwNjQ0Cj4tLS0gYS9kcml2ZXJzL2FjcGkvdXRpbHMuYwo+Kysr
-IGIvZHJpdmVycy9hY3BpL3V0aWxzLmMKPkBAIC04MDEsNyArODAxLDggQEAgYWNwaV9ldmFsdWF0
-ZV9kc20oYWNwaV9oYW5kbGUgaGFuZGxlLCBjb25zdCBndWlkX3QgKmd1aWQsIHU2NCByZXYsIHU2
-NCBmdW5jLAo+IAo+IAlpZiAocmV0ICE9IEFFX05PVF9GT1VORCkKPiAJCWFjcGlfaGFuZGxlX3dh
-cm4oaGFuZGxlLAo+LQkJCQkgImZhaWxlZCB0byBldmFsdWF0ZSBfRFNNICVwVWIgKDB4JXgpXG4i
-LCBndWlkLCByZXQpOwo+KwkJCQkgImZhaWxlZCB0byBldmFsdWF0ZSBfRFNNICVwVWIgcmV2OiVs
-bGQgZnVuYzolbGxkICgweCV4KVxuIiwKPisJCQkJIGd1aWQsIHJldiwgZnVuYywgcmV0KTsKPiAK
-PiAJcmV0dXJuIE5VTEw7Cj4gfQo+LS0gCj4yLjM5LjIK
+On Mon, Jul 29, 2024 at 4:23=E2=80=AFAM <andrey.konovalov@linux.dev> wrote:
+>
+> From: Andrey Konovalov <andreyknvl@gmail.com>
+>
+> Commit a7f3813e589f ("usb: gadget: dummy_hcd: Switch to hrtimer transfer
+> scheduler") switched dummy_hcd to use hrtimer and made the timer's
+> callback be executed in the hardirq context.
+>
+> With that change, __usb_hcd_giveback_urb now gets executed in the hardirq
+> context, which causes problems for KCOV and KMSAN.
+>
+> One problem is that KCOV now is unable to collect coverage from
+> the USB code that gets executed from the dummy_hcd's timer callback,
+> as KCOV cannot collect coverage in the hardirq context.
+>
+> Another problem is that the dummy_hcd hrtimer might get triggered in the
+> middle of a softirq with KCOV remote coverage collection enabled, and tha=
+t
+> causes a WARNING in KCOV, as reported by syzbot. (I sent a separate patch
+> to shut down this WARNING, but that doesn't fix the other two issues.)
+>
+> Finally, KMSAN appears to ignore tracking memory copying operations
+> that happen in the hardirq context, which causes false positive
+> kernel-infoleaks, as reported by syzbot.
+>
+> Change the hrtimer in dummy_hcd to execute the callback in the softirq
+> context.
+>
+> Reported-by: syzbot+2388cdaeb6b10f0c13ac@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3D2388cdaeb6b10f0c13ac
+> Reported-by: syzbot+17ca2339e34a1d863aad@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3D17ca2339e34a1d863aad
+> Fixes: a7f3813e589f ("usb: gadget: dummy_hcd: Switch to hrtimer transfer =
+scheduler")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Andrey Konovalov <andreyknvl@gmail.com>
+
+Hi Greg,
+
+Could you pick up either this or Marcello's patch
+(https://lkml.org/lkml/2024/6/26/969)? In case they got lost.
+
+Thank you!
 
