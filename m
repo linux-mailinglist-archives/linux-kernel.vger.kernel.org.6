@@ -1,145 +1,140 @@
-Return-Path: <linux-kernel+bounces-303997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E22496183B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:51:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A03796166C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:08:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FB701C20AF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:51:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F6BC2850C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9551D31A6;
-	Tue, 27 Aug 2024 19:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604961D27B1;
+	Tue, 27 Aug 2024 18:01:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OVIXCCbb"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nEvUnY+i"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46A61D2799
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 19:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43213199BC;
+	Tue, 27 Aug 2024 18:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724788259; cv=none; b=CwuFlfYCi52ZAtMgbeyRo2VBABfmOlY5MZVJxZsQZt8NOYWU8hIlGiKzK8n0oLao/N32J22OP4DYwg6KM67yTnNB/8iU4cpIVNWMjfjAWdKG/keDfpJmtMRxs//z+oFkau9F/CL2Teew0XW3+wFVUXFh0/ZdD/nEdcW14AJzcDo=
+	t=1724781662; cv=none; b=o0UqxWt0MhA0v1MyFCnfRgOvzlvTNcKw1zuRiQZRfIjYUdxR1jz5noYmwzUnFzhqTtE3r8tmnbFO0A25Kt9L3kGhHNe4pexwNW6+e/qc28QDarqAtgmoHr6DplUlU3WS8paCsEkhQtRHyjVdwU+r/He8+CcWY4ouPs0lg0LdlSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724788259; c=relaxed/simple;
-	bh=EvQO0uA0BhzYO2XF9beZx3IvAZ/PpNwJRfaNYRsSpnc=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=PZ5tOGKW8vDOh/wjAnXIOtdaF4NJDMIjUckPmWizOR2weN3Yjbt0LQxK3c0kEdNMOCfKlKTDV1cUpKT64cObbftD4oym2Vcc+IqDwB8ZLMwmYaGbRAUIS4CPizltSLqiGUChCJsSfF3ImP4CtMRV+8vD3T3bWd2zYMUZYMLtTu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=OVIXCCbb; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240827195049euoutp02067155828cb2ab1bf9ae443c58fe3fb9~vrcZKzimV0388103881euoutp02c
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 19:50:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240827195049euoutp02067155828cb2ab1bf9ae443c58fe3fb9~vrcZKzimV0388103881euoutp02c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1724788249;
-	bh=RbgxCt4c9LLN/5M2xpsNkhslAjeybQo+iNmMUSkrSXQ=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=OVIXCCbbY2QKGTL0bxxHN85fHfoEpsx9Xi8mmzReq/PCrRUy9SwRofdw3g9D/bo6f
-	 tYXjAkr1THnbBg4MUqbgecqZh71SjXejJwVxZrg23IWofVWaznJ4U7jhjOjGqmMzJS
-	 YyCzYX3AhkZelypdOrqjflu3avV9dLsw194p9eqs=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240827195049eucas1p2b511dfa65dee588f9136300cc2bbd755~vrcY2ZM2G0652606526eucas1p2O;
-	Tue, 27 Aug 2024 19:50:49 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id 7A.B4.09875.81E2EC66; Tue, 27
-	Aug 2024 20:50:49 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240827195048eucas1p126c94ff638c5b766f66205ad9bfc4ec3~vrcYk6Eiw1412914129eucas1p14;
-	Tue, 27 Aug 2024 19:50:48 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240827195048eusmtrp17fb10a10fd0e3efd0b225827498103bc~vrcYkbYoj0185601856eusmtrp1i;
-	Tue, 27 Aug 2024 19:50:48 +0000 (GMT)
-X-AuditID: cbfec7f4-11bff70000002693-db-66ce2e188d1a
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id AC.D1.08810.81E2EC66; Tue, 27
-	Aug 2024 20:50:48 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240827195048eusmtip14a4f942ed8a0d53e7219cbdbdb6cb322~vrcYZkOff0744707447eusmtip1F;
-	Tue, 27 Aug 2024 19:50:48 +0000 (GMT)
-Received: from localhost (106.210.248.81) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Tue, 27 Aug 2024 20:50:47 +0100
-Date: Tue, 27 Aug 2024 16:27:49 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Xingyu Li <xli399@ucr.edu>
-CC: <mcgrof@kernel.org>, <kees@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>
-Subject: Re: BUG: general protection fault in put_links
-Message-ID: <20240827142749.ibj4fjdp6n7wvz2p@joelS2.panther.com>
+	s=arc-20240116; t=1724781662; c=relaxed/simple;
+	bh=Aua7+lcALsAkgaRgTec3cCZqyc5LaTnbXenq8uNXako=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fk5lapZxX02rPyQsfQrg/F7s81vyAu7jeQgwZNix/r1HvQaJ36Dnvjf3imLjoP520aFLYOYTMdVgNChRSX1CF/wmFzgQ9MAI1rSMuAGPTcHV6NDLNaZvjrGIinOZ5v4My1amTo6a5P1pYakdzXuzH3oFvonw96aTF255V+EHs5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nEvUnY+i; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7cd9e4f550dso1838496a12.0;
+        Tue, 27 Aug 2024 11:01:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724781660; x=1725386460; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WF4VTRtZNd3clMftLMxr7DHg+OlI4KSvYXGAf+Bu+yg=;
+        b=nEvUnY+i5lwlNdvaByUw+rOKOar8RTPWdhgaumC5VRUTF+yi/36KJ6eSyxFeVpXH1Y
+         iujetxLYH7WSer1GREwjKg9GwdGW2Oa1JcaukgnBQSceFPYv7KrhIUNXjYC6KqhnwYIb
+         eAhbGxdJLiyx/pkXI7AXcZX5JMtBozJJss5Dw/sh401ny32IcsApUScKdY/4ZSVQFiyh
+         MlL39JYUYCQp0XAsbGm0x0G801DjFc+KBeCAJjNPXN15dAB+NKHUdBtpu/W/usaKoO/N
+         JafMKWSP1ChN14TKRp2WfI43U7+u8T9R+7KnB/kip3rrRNBQz7ILmeftsAPayy62EYA3
+         fRYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724781660; x=1725386460;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WF4VTRtZNd3clMftLMxr7DHg+OlI4KSvYXGAf+Bu+yg=;
+        b=YMXckEYxdy7XDApAf309a1k8/EMZ0rsQeOtim6u5Y8G11SDJCbFGnJ1hwfV4XveAfL
+         hdFUtZuzpF8g9nwBqB0CMlDJxftsQxitOG/rNq8JENRfo+tRmB2OZNoKZucBDJUeYuvW
+         1Dc8NxatLMkk6W2ikKi6YmEhj/WNcm/WUl+Ms8wn49bjDrXf3E+JaLHVcXynbeSt1sCP
+         vuEXo2YY+N0pWNJsqMz5Y2UgKIbaOOeIbkSbyMIyVd4gCSgXK/7R46nf9PO1MtgM2qag
+         T5tTzaiAgL3b0crtwdH4e72qRGSlCdxOrBVV3KG0Qv2ALDzFhgNOgC/YNjB7esHbIyX2
+         CsOg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0BpZ+7aZcSY/ftgDb9l/j1bnheBDEMUpagVmrcHSsTeOx6iZamgDOuOxcgoHft2s0tUby6CLKkFxlSw==@vger.kernel.org, AJvYcCXKwEHNC+ATlr82aEwphtyDT5Ou5zTdd/eImB5+6t0Hu2nhEHg7KEYnRRpE4ud009X11hX+0UWaTM/TvFR1@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYB2vvv4Vz0LGes+cIgGddNv1suNHVgrwxdYlDTXfy8O0nerhA
+	Qjps7dipqLqQZufZNrmV4P8fPAdeEG284CM6LTQr2uTMVRiR2566
+X-Google-Smtp-Source: AGHT+IE8LnpOrHa2Dd6gdAWN/kM8M6D91dSPSnXXq8Wrs/MmG8w2FcHhVbQRORX1zNnNtBCMUDMWHQ==
+X-Received: by 2002:a05:6a20:9e49:b0:1c2:905c:dc2 with SMTP id adf61e73a8af0-1cc89d6bab9mr14937066637.15.1724781660186;
+        Tue, 27 Aug 2024 11:01:00 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:95c4:e75d:161d:a90])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-714342e440bsm8811619b3a.124.2024.08.27.11.00.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 11:00:59 -0700 (PDT)
+Date: Tue, 27 Aug 2024 11:00:56 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Mattijs Korpershoek <mkorpershoek@baylibre.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH] Input: mt6779-keypad - use devm_clk_get_enabled()
+Message-ID: <Zs4UWGKt3hLjNmoP@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALAgD-4n=bgzbLyyw1Q3C=2aa=wh8FimDgS30ud_ay53hDgYBQ@mail.gmail.com>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLIsWRmVeSWpSXmKPExsWy7djP87qSeufSDLZ5WKx7e57VYs/ekywW
-	l3fNYbO4MeEpo8WLCTvZHFg9Nq3qZPOYNfsqk8fnTXIBzFFcNimpOZllqUX6dglcGWdnfGcs
-	uMJcsejGBvYGxtdMXYwcHBICJhLfZ2V3MXJxCAmsYJRYuH0LC4TzhVGiZe0dKOczo8T99vlA
-	DidYx6m1KxkhEssZJe70bGOGq7pwYzGUs4VR4umxTjaQFhYBVYklP7eBtbMJ6Eicf3OHGcQW
-	EZCTmHr7LCuIzSyQK7Gv9S5YvbCAucTDk4vBbF4BB4mdl++wQtiCEidnPmGBqNeRWLD7ExvI
-	E8wC0hLL/3GAhDkFAiX2HbvBCnGpksTbji4mCLtW4tSWW0wgt0kIHOGQmD31J1SRi8Sd/8uh
-	ioQlXh3fwg5hy0icntzDAtEwmVFi/78P7BDOakaJZY1foTqsJVquPGGHBKWjxI9fKRAmn8SN
-	t4IQd/JJTNo2nRkizCvR0SYE0agmsfreG5YJjMqzkHw2C8lnsxA+W8DIvIpRPLW0ODc9tdgo
-	L7Vcrzgxt7g0L10vOT93EyMwhZz+d/zLDsblrz7qHWJk4mA8xCjBwawkwnvi+Nk0Id6UxMqq
-	1KL8+KLSnNTiQ4zSHCxK4ryqKfKpQgLpiSWp2ampBalFMFkmDk6pBiapNQ6qbtPPNNwIt/2v
-	tMZ8l1vA/3otmQtfMppmii7a8obb/Z/vx6sF/eWbgm43bZ8pfNDxF/fq9qI9cU9e3/KL9Hr3
-	1LlPMEcoS8Yip6fFTV/ebPrLyL3BHYvnfTd8pLNZ4saqxQYG0T+S0jm8LkWfNWfM5PpSfyH1
-	xwuHuuzNtS6PlkW8nCOeurmu7o76C55zffu+MD851Z5anNd08Fv2sbs5a79p/0/7xvNKpeWh
-	3FvLKd+5UsWmvzDl2vDj48bbZndv77XV+Rgt6SdlaR38jlXn6inlWoPOhQFfrnXHeWlZX39x
-	yOPp2vDFD25f3FHHr/7OzEVfL/W201359Y/EPDZt5Tq7Lc+zRGHe3qdKLMUZiYZazEXFiQCy
-	rmwTkAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDIsWRmVeSWpSXmKPExsVy+t/xu7oSeufSDH4/07VY9/Y8q8WevSdZ
-	LC7vmsNmcWPCU0aLFxN2sjmwemxa1cnmMWv2VSaPz5vkApij9GyK8ktLUhUy8otLbJWiDS2M
-	9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DLOzvjOWHCFuWLRjQ3sDYyvmboYOTkk
-	BEwkTq1dydjFyMUhJLCUUeL4mblsEAkZiY1frrJC2MISf651sUEUfWSUOPvzCyuEs4VRYvPK
-	WYwgVSwCqhJLfm5jAbHZBHQkzr+5wwxiiwjISUy9fRZsErNArsS+1rtgG4QFzCUenlwMZvMK
-	OEjsvHwHaugSRomlq+4xQyQEJU7OfMIC0awjsWD3J6AGDiBbWmL5Pw6QMKdAoMS+YzegLlWS
-	eNvRBfVarcTnv88YJzAKz0IyaRaSSbMQJi1gZF7FKJJaWpybnltsqFecmFtcmpeul5yfu4kR
-	GE3bjv3cvINx3quPeocYmTgYDzFKcDArifCeOH42TYg3JbGyKrUoP76oNCe1+BCjKTAoJjJL
-	iSbnA+M5ryTe0MzA1NDEzNLA1NLMWEmc17OgI1FIID2xJDU7NbUgtQimj4mDU6qBSfP05xgZ
-	6yMJt5fxKHnc3PC+3/VRTjSH6Q+1fe7C9zb9EJU16TX68McrWOe70tELM3JsnKL07aQNqgRY
-	JT+1fbbf8YP/8OSunD0NDvHO/KbCq+ftfLxQvX/KnJTtbd15unfmlWYXRtvvfuewvc56w/ks
-	d1WxV67yve3+9qoTes4+EmO0/VDHw7p++xWO8JrLGjFvDpb1b8wQsn8s1SAv+vtw4epHh+Ze
-	jnrKw+MgyJm4+5G7Rt7HLXUP9onsrg5USjOePK/evWJmt3Wwy/zGNbIrNc+vmqDAcJiFJePk
-	L8+1PaUGXbtulHUorhOMji0RKksM8f3h8vEfJ3Phzdpiq4BW3gUnjq2PFC9rmKHEUpyRaKjF
-	XFScCAAtJEnqLwMAAA==
-X-CMS-MailID: 20240827195048eucas1p126c94ff638c5b766f66205ad9bfc4ec3
-X-Msg-Generator: CA
-X-RootMTR: 20240825050512eucas1p2cadb2e7d7c1428994707fec4d88a5ec4
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240825050512eucas1p2cadb2e7d7c1428994707fec4d88a5ec4
-References: <CGME20240825050512eucas1p2cadb2e7d7c1428994707fec4d88a5ec4@eucas1p2.samsung.com>
-	<CALAgD-4n=bgzbLyyw1Q3C=2aa=wh8FimDgS30ud_ay53hDgYBQ@mail.gmail.com>
 
-On Sat, Aug 24, 2024 at 10:04:54PM -0700, Xingyu Li wrote:
-> Hi,
-> 
-> We found a bug in Linux 6.10. It is probably a null pointer reference bug.
-> The reason is probably that before line 123 of
-> fs/proc/proc_sysctl.c(entry = &head->ctl_table[ctl_node -
-> head->node];), there is no null pointer check for `head`.
-> The bug report is as follow:
+Switch to using devm_clk_get_enable() helper instead of acquiring the
+clock with devm_clk_get(), enabling it, and defining and installing
+a custom devm action to call clk_disable().
 
-Thx for the report. How did you trigger it. Do you have code that
-triggers it?
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ drivers/input/keyboard/mt6779-keypad.c | 18 +-----------------
+ 1 file changed, 1 insertion(+), 17 deletions(-)
 
-Best
+diff --git a/drivers/input/keyboard/mt6779-keypad.c b/drivers/input/keyboard/mt6779-keypad.c
+index 19f69d167fbd..c13880103429 100644
+--- a/drivers/input/keyboard/mt6779-keypad.c
++++ b/drivers/input/keyboard/mt6779-keypad.c
+@@ -92,11 +92,6 @@ static irqreturn_t mt6779_keypad_irq_handler(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static void mt6779_keypad_clk_disable(void *data)
+-{
+-	clk_disable_unprepare(data);
+-}
+-
+ static void mt6779_keypad_calc_row_col_single(unsigned int key,
+ 					      unsigned int *row,
+ 					      unsigned int *col)
+@@ -213,21 +208,10 @@ static int mt6779_keypad_pdrv_probe(struct platform_device *pdev)
+ 	regmap_update_bits(keypad->regmap, MTK_KPD_SEL, MTK_KPD_SEL_COL,
+ 			   MTK_KPD_SEL_COLMASK(keypad->n_cols));
+ 
+-	keypad->clk = devm_clk_get(&pdev->dev, "kpd");
++	keypad->clk = devm_clk_get_enabled(&pdev->dev, "kpd");
+ 	if (IS_ERR(keypad->clk))
+ 		return PTR_ERR(keypad->clk);
+ 
+-	error = clk_prepare_enable(keypad->clk);
+-	if (error) {
+-		dev_err(&pdev->dev, "cannot prepare/enable keypad clock\n");
+-		return error;
+-	}
+-
+-	error = devm_add_action_or_reset(&pdev->dev, mt6779_keypad_clk_disable,
+-					 keypad->clk);
+-	if (error)
+-		return error;
+-
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0)
+ 		return irq;
+-- 
+2.46.0.295.g3b9ea8a38a-goog
+
 
 -- 
-
-Joel Granados
+Dmitry
 
