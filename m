@@ -1,114 +1,82 @@
-Return-Path: <linux-kernel+bounces-303810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60205961554
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:20:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 691C0961557
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:21:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E09E81F21DE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:20:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5702B218D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3FE1CFEB3;
-	Tue, 27 Aug 2024 17:20:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5680F1CF2B7;
+	Tue, 27 Aug 2024 17:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fN6k1dKH";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="O+y38tS1"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="dSba9TOo"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2047.outbound.protection.outlook.com [40.107.243.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6DC1925AC;
-	Tue, 27 Aug 2024 17:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C591C9EC8;
+	Tue, 27 Aug 2024 17:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.47
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724779236; cv=fail; b=odmNJfePaiOyNZDHdQ4nXtbeFHztW4vTZIIXoOUHAGy8F+gnuop29jIOuBW8hdbWnkK8j90Wz4OLT6Atb87zGSz/9am/0YsB+fyvIa4CZj+92SD95M3FGJrRgM57M7aJOpD4wtDI2sIB9x6sYrH+LQwXWPNS53SU3Ow8+id8RJs=
+	t=1724779259; cv=fail; b=OQOvwiNIxuLCWLsA/MHbdcDpuDqEMseOtecjKSFNz+9v5Z6chjisuiv6m3UnwzmlY+OruB1RoS5tH/CqD+W4wDwKVt0eL6Z9GYBSNuWntmvb4qZEjc4Dz8x6TIBEkwzh2f+MUAslrB+S/2qKb+VEtfmPC2dOd3K8+tDfD2T6eak=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724779236; c=relaxed/simple;
-	bh=6aALHgYm6vTNMfUgaQsH3sTMuf7YpnKKEGVAPHRcP50=;
+	s=arc-20240116; t=1724779259; c=relaxed/simple;
+	bh=Lo/Ym3n7MRou9PKlQ8IoOzaG25kjtavOvJEfFGArmoQ=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=jo87JoMQ4fYakL3cCO5fLcMbuKfCXx/4kFjcD/7JSTIIgHIZ83PtxqccjpRi5PczObh+bbYwqGFjkpmLI3+gSlR/qRK/rGERToXRKpUNQlmmXpJoAxuJcVJX8o33rKGXF80rKAnpBb0KQWwU3U6N3UFHY5ka5w6KgYCAsyYvWpw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fN6k1dKH; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=O+y38tS1; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47RHGVVt003776;
-	Tue, 27 Aug 2024 17:19:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=
-	corp-2023-11-20; bh=eLGvsaFT0IFzxN7Lgn3r3+zb9amuqjw4w0o+i9wwgGo=; b=
-	fN6k1dKHCgGkAKm5QpWTsnqht18BwCrjShSyi3EzokW1+A7+0XqES0NktkWzrk+3
-	xSyvi0pfdo3nC0Htzk44nrb/zkoWYu25d7l+L1gBaLTOIIHm7+dKCAO3MQenwFdQ
-	KncJ7hATyO6m793xkYlRtvFOJats80Y1KMb9nBk3Y65i74Hl+SDPVdcvkAXVeHD2
-	W7K6EZGJwokuMr0LabfD9erVSzmW/zSgS/idUR2bfUiZJPRcQn4+fbwZVmmvTy9y
-	TFqwmCj/IMx7igvRh4ZeuOLe2SC4LOVp1kjNP98WpOmnTOkJJf8cIk2HVvVEq1/s
-	Di3z13qTmdFKAKp3j0ePpg==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4177nae6k0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 27 Aug 2024 17:19:21 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47RG8brp020326;
-	Tue, 27 Aug 2024 17:19:20 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2047.outbound.protection.outlook.com [104.47.55.47])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 418j8my32v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 27 Aug 2024 17:19:20 +0000
+	 Content-Type:MIME-Version; b=R7ztADkl/5caUhObT5ffc3wkSaWTg3NSLhKGIHjh3A/3/1TdvkY8gHkfFtfTfha3dh08tPOyaLCfZ7Nmb5ycHZmMR7L7h7MA33EZErxSB8NBxQwt7AgxUP3P3XP8KEf5ZGJGzcHOXq749oHxascHjGkpqpz4uOg4dHiWfbgCCLA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=dSba9TOo; arc=fail smtp.client-ip=40.107.243.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RUuSW9twc3eWbCY8eQp8f4pd8xnYHyRKQU2giI32sSDXcldLVLrgJrgJF1nZp4AYtQO5UuLUgpv1nkhbrd/oWBlUPJL5weUq695PcA/F6yqM+0QpuBC6vHyZEtZvE0xR0cmMLkVBx4VJWw6ZYtF5hrxUYFyWYmks2vz0RMN266Oi2qYf35glr5N9bfTTWKUWso+JeiD3jM66KkGXQFo4MvgD+GC0S+JB6OIHErrVs9NgmJgfq7AArBDB+l/+KGxMSZGD/7n8Luee+9xoQr2BwBgXWGeAQvMZB4CjboFB54IzfwxxoBPXEztzIrJSaqCuD3aF6Z7atI2VSxNggOEHYA==
+ b=BEFMNhGrg/5Jkhd5ZO7/yESKnIS5f4HS1nEsaUQWR2Jzv5n8J7NwdBI8GoiPOs1EqSEIF3e81oD8ApX81Jc2WhBRWF8JfFBu+YaPttZKPYdgGEZleVZLR2FN6Wo/ZP4RvQR2Y5nsRf4iZTNXKjR+oOSzOGWCK38B46isVFcI8slIYNl5IXRG8Kd3hBVZ9ByetnslZ4PR04EbffC3otNr+9GugoJx9Tg2hFDzAhWrdvtlhNLo8G17S/zv2uRuMIk4V0uMMnZNN6Ot0ORhVhUY10CKg7jb62lFLp9m4kFkzZZgExyBLnIvf4I01q2t+2dwkBCak7MsgO/wvzbAtnq96Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eLGvsaFT0IFzxN7Lgn3r3+zb9amuqjw4w0o+i9wwgGo=;
- b=bykL7pHtMl1DCqNlaf5+qICe2iEv58yFnSSLY6uRBmMq2/fceZ6o1lbJJ8/nl8T317iP+meOfo8KwB2qYfAGayUwMgxE0uR13HKl43TjVdm7+AC5C4/CaBfC/ZlAOFYHAFXZw39fjmU7V8wlquyetEVJjubFGYRKJwUKuyYa/XtoVrcPgcqc3NJbZzu9PGVIuBXD20dAY//98wdcYdnU0StovkzvxwyGnQpdA5uiQ1edFzXVbA4lBX8v5LtEZ02zqg5x+SYnK6MlFem8CRLuxxzrgpCnZsO0m8MXmKbGfO8Vl+7jFc6BYA44Qv9b5w0IQ+Echr/qvyAjSAXALXxpMQ==
+ bh=n/yuSZNPkSUlPRc2h/C3DHCAhy3d8UFiddc8cRzc0D0=;
+ b=czc0BE1s3jWoLA4IvS2fAV5SsIJqdqRq/8lNqxExLertxdS2xsBU411EYjfZgMLiJwfComtTYYWWOzuPbiufs1FO/zwjdTiov9sUuXQ4qrgzT5HL25HD6uM6EWJaVbQzclha257gOheXtuH/2ASEenJC1ToOurIR4nM8O7EV36FHabbPSUbQ2sUz7WtaAfqC2D8iFJcMfMwsj5cVlZrrJfE2s0XJrXs22jbBW/gFCkWXApqROqD5qPrp95NhAAedzYWzo8XwruB39MZuTVdsx13lGZ0vpFDlGnyLWUs2fn5AJWG37L/JqSKAHn/Y5E+WyXgXEym4tegP4LcpuHcOlg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eLGvsaFT0IFzxN7Lgn3r3+zb9amuqjw4w0o+i9wwgGo=;
- b=O+y38tS1PB3LRGKKQhSJafh3MxIFV6/fekm8/e89/0TXaREiuVv4cCSR5RLzVVZ8h4odMihaunN9yDrWVXOJK5TLI0o/9N2aO5VdPygd+aRtQ90b1nFU7vuCNJJx1mv/NVF00+wXltjEYvnK84U1NvcWCGUMfTbRxoPrEI0qnqs=
-Received: from CY8PR10MB7218.namprd10.prod.outlook.com (2603:10b6:930:76::22)
- by SJ0PR10MB4509.namprd10.prod.outlook.com (2603:10b6:a03:2d9::5) with
+ bh=n/yuSZNPkSUlPRc2h/C3DHCAhy3d8UFiddc8cRzc0D0=;
+ b=dSba9TOo6QjqHTqG0TCJkaiQGaEq6Ab5WKblkMhNSOj2cJAsFuhfnbkvFfe0RVTgau4l0WyboDFrVy+TjmqKz0yqVuY/5F62unfPCpw6Fa0rMmQNCC6LHxTmPjqGd44yzVoaMw2uLE8c9CiDQcaTGu+3DUxJOCwrwRb1vpnTk9w=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by CY5PR12MB6180.namprd12.prod.outlook.com (2603:10b6:930:23::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.14; Tue, 27 Aug
- 2024 17:19:17 +0000
-Received: from CY8PR10MB7218.namprd10.prod.outlook.com
- ([fe80::3bfd:d89c:954f:747f]) by CY8PR10MB7218.namprd10.prod.outlook.com
- ([fe80::3bfd:d89c:954f:747f%4]) with mapi id 15.20.7897.010; Tue, 27 Aug 2024
- 17:19:17 +0000
-Message-ID: <833c9b45-b11d-4253-afab-6c4e92d650d2@oracle.com>
-Date: Tue, 27 Aug 2024 10:19:13 -0700
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.26; Tue, 27 Aug
+ 2024 17:20:53 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7875.016; Tue, 27 Aug 2024
+ 17:20:53 +0000
+Message-ID: <e5a06b5b-1281-452e-ab9e-83ac0edf2418@amd.com>
+Date: Tue, 27 Aug 2024 12:20:51 -0500
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 20/20] x86/efi: EFI stub DRTM launch support for
- Secure Launch
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
-        linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
-        dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
-        mjg59@srcf.ucam.org, James.Bottomley@hansenpartnership.com,
-        peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
-        luto@amacapital.net, nivedita@alum.mit.edu,
-        herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net,
-        ebiederm@xmission.com, dwmw2@infradead.org, baolu.lu@linux.intel.com,
-        kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com,
-        trenchboot-devel@googlegroups.com
-References: <20240826223835.3928819-1-ross.philipson@oracle.com>
- <20240826223835.3928819-21-ross.philipson@oracle.com>
- <CAMj1kXEyStoqmvvQirxt_GXTnO2qQjOxtQGzHzQeCdRCYzT7uA@mail.gmail.com>
+Subject: Re: [PATCH 01/11] Documentation: x86: Add AMD Hardware Feedback
+ Interface documentation
+To: Perry Yuan <perry.yuan@amd.com>, hdegoede@redhat.com,
+ ilpo.jarvinen@linux.intel.com, Borislav.Petkov@amd.com,
+ kprateek.nayak@amd.com
+Cc: Alexander.Deucher@amd.com, Xinmei.Huang@amd.com,
+ bharathprabhu.perdoor@amd.com, poonam.aggrwal@amd.com, Li.Meng@amd.com,
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Xiaojian.Du@amd.com
+References: <cover.1724748733.git.perry.yuan@amd.com>
+ <c4c66679fc6f8432c0402c8def2dc1b09eaa812d.1724748733.git.perry.yuan@amd.com>
 Content-Language: en-US
-From: ross.philipson@oracle.com
-In-Reply-To: <CAMj1kXEyStoqmvvQirxt_GXTnO2qQjOxtQGzHzQeCdRCYzT7uA@mail.gmail.com>
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <c4c66679fc6f8432c0402c8def2dc1b09eaa812d.1724748733.git.perry.yuan@amd.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR13CA0056.namprd13.prod.outlook.com
- (2603:10b6:a03:2c2::31) To CY8PR10MB7218.namprd10.prod.outlook.com
- (2603:10b6:930:76::22)
+X-ClientProxiedBy: SA1PR03CA0013.namprd03.prod.outlook.com
+ (2603:10b6:806:2d3::9) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -116,273 +84,247 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR10MB7218:EE_|SJ0PR10MB4509:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5b7ae786-205f-46b3-a5e6-08dcc6bc6169
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|CY5PR12MB6180:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2f9129bf-b2a7-4789-a0c9-08dcc6bc9b07
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7416014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cmlzTWZCTHRzL0FiQ3VOdWoycnR0NzN3QllVOXNCa1lDeDlySHFLMFI1VXRw?=
- =?utf-8?B?SzF2QTdLakVxdXlLWDR0UHNiUWd5ZXgwQzZzQWVONHNKZmFHR1BaeTlkS0xm?=
- =?utf-8?B?SDF1K1BJODdMOXVFOXBmWVViYU1HOGtidDVjbDhlZG91bUJvL0xuQzczV1dz?=
- =?utf-8?B?Q3JMRmNYcWVqdDRvUEw4cFdPRFFIbVZxY1VjbFVmUmdiWC9QYkJWZEZ6NEZW?=
- =?utf-8?B?RUpXZkJqelpSa1puT243bktMai9rQngzQzU4NnU5Tm5wWXF5c2xESGJsS0tG?=
- =?utf-8?B?MjdnVzZtUFVlVFhLZzY2eGp2OWFpZGlCNFpmRWJVVm81akY0b0tMSVpWcGEw?=
- =?utf-8?B?Sk4wcEhPaDRwbk9wOWU1UVlQSzBiZFk0eXRYS1FKN1gyK3FSbHlpUkloUFNw?=
- =?utf-8?B?RVVkdHM1RXFNdHBUR2FWNW96c0QvOGZRTitYMi81anJKekhBMC9YYTY3eUEz?=
- =?utf-8?B?ZTdiYmQ5S3IvOWlHMWRMeUtKZ3VFYy9pV3VncFZ3QW9lSzBieUhqcml6N3p6?=
- =?utf-8?B?dlcvTjl4eFRxRDg2eGhnWVV5U3JyaVpYSHhYRWhMRG94TFNPQ2VVVFVZM3Ns?=
- =?utf-8?B?TXJlN2dVSnhhQk1xaHVBaHdJYm9vQlFpVm9FK21rMForVDhyc1dUZ0hSbE44?=
- =?utf-8?B?NDN6T05DRUR0UDM1ay9KM3Z4c3pOdjhrQlRRWHFxOTZIa09zSmYraUliZFFo?=
- =?utf-8?B?bUo2VzRxT0MzWDl0SmN0SDJtMWlMa1ZvU054ZUZzWWRySjNhQ0Jmc2h1cWtY?=
- =?utf-8?B?d1BCeGxhd2hnNnJDOWFWMVJ1OGVTVnc5SGE5S3BYcXVIWUtpZHliQlVoWFl4?=
- =?utf-8?B?OVJHREtMWS9TMDlranRFdk82YWJSL3BYUWZxUi9STVhnOXV4QktKZit6cUQ3?=
- =?utf-8?B?U1hSaUtXM1kzZVZUK2xCb2xHeXluMVZQY2hvRCtDWEZFSkVyc2NPUW81S0Zh?=
- =?utf-8?B?eEp2UTR2VWNDZFpCenIxMCs3SVpWd3ptY2o1aVNUL28zaUFnQmtkTHdHaFBN?=
- =?utf-8?B?K2dPMmxFbEJja3JaditJZnM1MGFtNnRjTmozVUxibysxU0Z6Sk5raWhSbHpT?=
- =?utf-8?B?U3RBaXFCUXJmSmtJMnBqcEl3TjR1K29pVlJTSWlsK2hRTFdNNi9hL0NDQWk5?=
- =?utf-8?B?ejBlOGxycXJubkhJWTNHSzdtWnNKVUJmNWY5Q0cyLzFLbS9Ja3BlZ2s4djNT?=
- =?utf-8?B?NEQzaDlxR3VFNU81YXFoWmsyeUFpQ1ZJOTcwbXVkWXJ5a3VhMGVmZ2RWLzZW?=
- =?utf-8?B?UnlHbXltbXVvTnJ0MTQxcW04S3liZjZ5SUV0bTFPZ0JLZCtwRHJNemV3NzhC?=
- =?utf-8?B?MktVMndiVUhja3FKWXVhN29FWCttamJxMTZJY3orejNLTXN2eDhTWCtnSkVy?=
- =?utf-8?B?cFc0TW1SZjRvOUljZ1hKZTZtc29yUldxa1E0WkZnUU5kazIxRVYxV215ZDNZ?=
- =?utf-8?B?ZW55ODVnQ05RMGs2Ymw4K0EybkZqMXE1VlJ2UGExd2daZ3dKSHFTYVZCV2Vu?=
- =?utf-8?B?UUZCOWVUbE9oQ0JjKzJVV0ZUQ0VEbHEza2o1RG1jcmZvUVFxa0I2bURyOUpV?=
- =?utf-8?B?cTdYTUtsTHZ0UTlFQ3BSM25XZ3JwaSsvT054L0lUcHgyQzllZUNvdXdORFYw?=
- =?utf-8?B?L1hTRGNjRjFMemhrQ3VPY1g5eGtXUGFiSFdZY2VOMnNic01vMkwvNTZJVHA4?=
- =?utf-8?B?TVRBbjdicGpGSThZc253SjlvSmJvQzdnaHJwOXpJMmZLQ2FuZTlKcUVKVkVs?=
- =?utf-8?B?RWZRRjNEUnY0a0NvTnlXdVJGaVY4SUpBL2lObU5IQ0NwU1BhSzVORzlzTDJ4?=
- =?utf-8?B?OHFZQmRlTk1UdFdoSy96UT09?=
+	=?utf-8?B?R1o5Q1d2cW83VFlqOFJRWDY2a3lUREdMc1JCZ2dDTjJhcjdMNVEzOGZKUVl1?=
+ =?utf-8?B?R0R2a2lKWDQxbGptM1AyU0dlcGFyenpCaHZVMUZlM0lUQjBYbmpPTFNwa3hM?=
+ =?utf-8?B?REppN0FiaWFUZTRXUW1ZbFI5dlphK1p4N2hNRUs2cTZJMnpxMm11dE5iOHZW?=
+ =?utf-8?B?U29VU3N6RVdPM0dJaW53ZDdQUTRDbjNZQTFwSzUvZ1lyK20yTDdmeG5PdHRE?=
+ =?utf-8?B?VnVpTTA2NjhETU01RkRMQVRhdlZTTDBFRnZpM1RhSmQrL29tMnJzOXNza1A5?=
+ =?utf-8?B?cG5PU2hUa05qUkNsSU5xZkwvSjdpUVEycjBqRml4K3JoS3htZnI0eXJWOXky?=
+ =?utf-8?B?K0htV0d1OEdoQllWcW1VN1JSMmhiWWFDWTF0cWZDT05vaEZYZFlwT242TGhB?=
+ =?utf-8?B?cWllU3kwa0szaDVoZHVmU3ZYK1pGQllvVXpkb1ZzRlpWditLQmdrWVhqWG5L?=
+ =?utf-8?B?TDFSR1QycWxhUk5iLy9BTE80S29MREhQSWNLaEhsZHI5ZVlIaDNSVm5zVkVL?=
+ =?utf-8?B?bEk2emJyV1FoR3BBVDRTT2NsMnlubVZGLzh3dDcyRmNxcVNmNml2OFVqSksx?=
+ =?utf-8?B?N1JTK0YrT0pxWlc4QXFrUkpoaHVpdXkvSTRIZVNUYzM2MlIxTGsyUW93QUhn?=
+ =?utf-8?B?T0sxNlMzWUVqVzZoUGJoYU5DVkM3aUhXY0dLeVljNUdiVkUvbWFkL29qWkYv?=
+ =?utf-8?B?RFBiWUR4a29rdXNOb1pHYlN3b21yTThDNS9SbVFOQzdZQ0VhRGJoQWtQU2tm?=
+ =?utf-8?B?UE9kQTl4M1JjWDkvcFY1MGUyZEFuWGhCTStrT3BGbCtUY2xBRGN3bDA2ZVFR?=
+ =?utf-8?B?RTdjclpTZ1NrcjJTdStvN1p1ZU05YlVMNmZZdUZDNnlURGpMeUw4eHRoQUNX?=
+ =?utf-8?B?clhpSDNaUXhGcTBRVkM5cHRHMnlNejZmcTFyR1U0WTJoZWliN2hUYkU5OS9L?=
+ =?utf-8?B?L3gzQVFKWHJzVUJqT1UyV21UVG5tUUgvQWtIbVViUERMNVZxTUZyOEJnbDUv?=
+ =?utf-8?B?VFZFcXJBeUYzemdIZFRmMmR1cDl6cFhYMkNPWFVEU29KSFU1TjZEM1NWdnBr?=
+ =?utf-8?B?UnNUaTRLZmZwalVrS2VZY2k1Y0FaNE9TQTBNZXlQWVZSQk1xVTZsWXhKdzE5?=
+ =?utf-8?B?VEllQnJ2NGVZNGFzY2t6MW41SHdnejVwMzU5YktXblhqQTZGWDN1QWZ0VGwv?=
+ =?utf-8?B?dzJEYkkvR1BPc0t6YUF5eUhmeXdSS0dBbk15ZFEzb1F4L0lzdkxicElVWXF6?=
+ =?utf-8?B?Q0FQa2FGakFnVDNBQ1RucXBsQll4NmhUdGFtZkNqVXFpMjREckN2ZHJrRUty?=
+ =?utf-8?B?VS8xbUlMSHpqMytrR282MWpMWWhpRDBacjVDUlFRbUpXcDFtbk9pQ0NrcjdU?=
+ =?utf-8?B?UVdvbVdDOTBqU1JhQnZpOHZqbHNIVnk5Tk9Mdk4yMEY1VXp6T0VhUGFWa3Mv?=
+ =?utf-8?B?cUNzRGU4VFdEWFZCOXAwVVgrNDBBK3RDVWRxVG9wbElsSUFhVXEvZ1RkNTZB?=
+ =?utf-8?B?UHdkdnV0YXl6MytPMVpuZCtsQ1dwT3VxdTNYWFRNV29Ra05zM3FHYmVqT25Y?=
+ =?utf-8?B?bVcxS2M0NXNUWVdlY0xuLzZkQXVLVmFwUk5lUWtsNWtGc3F2R3Y3NG40Qk1u?=
+ =?utf-8?B?VXl1bHRBSmdyZFU3V09mQU4xRWdsUWd1N0ZqbHVPcTJjSWlwenhYNEVweXJk?=
+ =?utf-8?B?aHZsOWE1SjJDZjg4UlpGSDZmYzJscDBBT0JxUWROYy9JdllmRnY0MCtXbkd0?=
+ =?utf-8?B?MmJ4OWk0ZkFQd3Fsa2k2SEx2RFBkK1NsQmJkeWJMQ1BXRTNvRmh3YmlzUjVJ?=
+ =?utf-8?B?LzhpUzNCZ2N6cllDWXA4QT09?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR10MB7218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?b2ozTm9VMEZVaE1yOXVTM0dyVnJUbWptS25Pd216OVBKZW9YU04rZmdvWTlH?=
- =?utf-8?B?MWNNOGgwNWt3ZW9JYTVRVkNFdUxRNkJ3L25OMW9veU4zdURpZWNTblRMb0tu?=
- =?utf-8?B?ZzdkZ04wSkVUSWZlSElJL3pOWDRNNGxCNE5PV1l1bTVjYnh3MURyOW9yMVpz?=
- =?utf-8?B?QkpMWHlqNlIxbnVLaTBGaGtRMWJGWDJzZFpyVk9vUGhwNU14QnA4NTdCUit3?=
- =?utf-8?B?blAvYWY5L1RVMTMybDNHMHZFZ0lIUUpXMm1HaW9uaUtUbEpNcmdTd2Z6VS81?=
- =?utf-8?B?TVg1aXI4K2NCSjkzeHpnWmx0eEFxQ0pOY2l1TUUwOEtXUDlwQWdBUjZPOEIy?=
- =?utf-8?B?OFlqT3BkeDRvM0FjcFVWVWU0MzJZbm5rNTBvTUdmR2R3MkNIRTJtYjZiZXdF?=
- =?utf-8?B?bVlnbjdlekpqbHZiTVRZQ1NYNTBVY2g3R1Q4azVHdFlsaWNzVit3SUJYWkRC?=
- =?utf-8?B?d3JGa0xhQnhqN1dNTDY5M0tuVVRiN2FMdUJJRDUzZ0ZtcnB4MXc3QXprK1Fv?=
- =?utf-8?B?ZGFzTEZuME9kRWZKUW5HMWx0eDFUSDMraXVuQUFmdC9DQjEzS3hnaFluQzlp?=
- =?utf-8?B?Qms3eVY4MWtHY0E3b0RvNDlWRVVPY2MwRGdGaFNTRGszMWRybGFROFQzRHhL?=
- =?utf-8?B?cUoza1psZHpta1NvbGZPeHpUd1Y3NnE4QnB4TDgreHd4L3ZYcnBwMTdxc1ov?=
- =?utf-8?B?OExsSEsySXJLbVliUHdET29vekpKTUdJTlNBZk5XQ0plUWJob2t0cU9iRklE?=
- =?utf-8?B?cWtibEUrdkdjM3BLSE41VUM3bStqUzFxY2RSNmJVZTFoaG5FdkplcDlSQTFt?=
- =?utf-8?B?SStDOExhZ1N5WkFCaHI1Qi9KN2VUNE5iTDMrWEJMWmFEclUvajZkSy9yS0wr?=
- =?utf-8?B?VzFDMzY5Mm9CbUZ1NGtKSW1CT25GcTl2d3ZIUC9YT0RCZ1YyWkZvVkxWVXJt?=
- =?utf-8?B?SXhhWEQxelB0MVU3d2ZKZFcrY2RDRGpTeUpYYVRkbzFKdTZ5SE1pU2Y4cjRa?=
- =?utf-8?B?YVhtNm4wVWwxWThVeGNsKzdNYWNZSFhubDRoWFZFam96dmk4Z1VFU29hbXhr?=
- =?utf-8?B?RGhBUWxZYUpvWngzVFdMQjV4MzlSTyt1Mjg0QXUvKzQ3Q0hjcmx0OERBV28y?=
- =?utf-8?B?L05JWmdES0JKbWRYUUpWQkhnWnpETkpoanJ0RXR1RHd6TDVpMkQ3YkNkdXpu?=
- =?utf-8?B?STdWdUJMZGZSdi9UMkdPei85MzRZZlNHNmZ1ZnlCZzY0Y3FoaG9RcHJCQkdv?=
- =?utf-8?B?TVBoK3hFWnh3bVIwVmZCejVaaHJmeGNDRklxTnVsLzRRemp5dUhuandkVWJk?=
- =?utf-8?B?VkowMCtWQWIyZmcxNWd2akZTRytrK1FYQnpRd1p0Y0JvNnpqU0JjWVVaa2Z5?=
- =?utf-8?B?Y3Ywa3M5SE81SkJKZVNIcWM0V01oMzNqOFBnN1luWm9MZHNvcmd6U3ZlaEZB?=
- =?utf-8?B?aFJ4Ym1ML2VLQW5yMmxDUjBiQW9PN1IvOWRRdC9zMHA3czBDeXpVNmx5dVZK?=
- =?utf-8?B?Mno1S0JRcEFmRUtYSVpQWW9VWkJIc1FBZnRlVnNqZ1cyT0ZEUkxMWEJ3MEpo?=
- =?utf-8?B?Zm4yZkJmeDdic1hBQzJrMDFUL2szeHRPay9uajZONG9mQkxWSkQyRzBCaklI?=
- =?utf-8?B?Ukw5SkZ0d0p1Y0FZQlR6c3cyUzZidDFYangvUGt6dmJNWTRqc29Fb1JNaVlw?=
- =?utf-8?B?TUlpdWJ6ZUcwZ1dpdXlmNjhMMC9FcDBBT3JXc29UU1QrL0ZFSjNhbUhpT24r?=
- =?utf-8?B?Wnp6ZVRqWHNCZWU0NDNpa0FYdFdsZ0lUcko5eit0YktXRWtyV0UyTC9ONHQr?=
- =?utf-8?B?UDZLVjNreE5kQ1A3czcrRjFReHRuaG5aTXQram1rclczSzZTMUVxNTRCWUt1?=
- =?utf-8?B?TGJrM2VXT3pLZEhKZm9MWkt4VTFzYUVGdFUyUjF0eitnSlV5TWxKTUNSZXRP?=
- =?utf-8?B?Q3p2ajlCcTAwc2srQnN3bjJYNThJVzdMZW5nNDFFSW8xN29Qd09jZzJUZ1pV?=
- =?utf-8?B?elB2bjlkVGxtN1ZINUxxbmdqMVdDSXlpNDZmZTdDY3dPbS94SFNVeXFLdStK?=
- =?utf-8?B?cFozbi9wTk9HdDJXUTUxVjdYWS9wdEl5WmZiSUZodGxJczhrL3VRMHVrV2sw?=
- =?utf-8?B?eUZYTS9yTUh2OFd6ZUlKOS9Kcks3R1VycXNvWGlabjA5WnVjZVJTeXpxcmVS?=
- =?utf-8?B?aUE9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	aaKcQlH3R8nweOuhmIH5Ua59eZTSiMiZKT9QPEqNntGyk/kw2mRNgBpxvFTaUMtgaBLBtES806ibwHUaBgQNH19XvmVDLZB4MWloqR51lMwwqZUdnxJJWI8ecYO5qlHYeYK3RyWH9gOoPC/GYsa5TxqjgxXJKHRlWzcW3m0TmA2QRX0x39TB5XapurZLc3zQel/cC5fuLXPvGksc1QuOwmDm1/euJ8Xt0/+A1qkkp+tg0gm/I8h5GSVzfxCZnTgmo1haoT7Ct7uaRWTlSchfsc6F5lSlzMgPHkWIwhNnR+iSsCTmdPQsdebIvUhnx8yuAG5asSwHJFgTIj/964ItR/8Nk5P+MIdkJ/uL4hQ3KziAOvR0/wlhQiXNYQ93QL68Vf2k0uy+dATA3TfrstO15A2d5G8ExQupKCAwZBNEO9PtDLBPb8XrJXigWx9Exmb/ZHcivgGpW/Nj3qQefuKSRIC7e9KWpBwkGnZbEoTLSqSbS6n7BFP/Uyg299TLz7maX5uAQAaVJ9lCy4CCpHPUqCx+70AF6N3F/to9FmVOYF4T4jeS5wYB+qXskYI1jRglob+ma0BaLuBwIqPa87E7zzAPK1xpjTrleBqfmKGffJY=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b7ae786-205f-46b3-a5e6-08dcc6bc6169
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR10MB7218.namprd10.prod.outlook.com
+	=?utf-8?B?SnlXQjJsdG11enBCKzdqd2ZvRW0xZ28wTU5tT2tSSnBMdTR5VEVaektqWXZN?=
+ =?utf-8?B?OFVrRVdja1oybEFjeEhSVzdDL09tamNPbVNWeGMrT3Y1WG5pcHpMc2FmY0xU?=
+ =?utf-8?B?NlFVOEdpZ1E2ZlpxZ0RXZU1WOXRwayt3cGhHd1VtSFpjZVMyWWZYRWhNODNX?=
+ =?utf-8?B?VklSa3BHSEw0ZzJDUmZqeFV0Mm9QTU15ekNrWFpJQVFBanZ2STQ0aUVWMTVz?=
+ =?utf-8?B?V0VKWnFVY09ZTGNNdDFkRjJ6M0FoNnF0T3cwOVhxTjAxUUtBSmhIVmJKb2VH?=
+ =?utf-8?B?bGZiaHNBSnZZWUowK2pXRzNXb3pZWlJrQnBlTnVzeVRhdTFid3hTTXNhY3hM?=
+ =?utf-8?B?S0FoeStheUVVaSttMUJOT2FVRUpQNUpTK0lsZ1YrUkUzVWlIcjBlRHpSLzZD?=
+ =?utf-8?B?ckxSV1FlQXdNWXVXbTR5WlIwT3BzV0JlYUF3eGczbWxjNUVna2xhZzBTQUlt?=
+ =?utf-8?B?dHdiUjY5c0lCUFZOUWptSmt1U3RpdWd3R1NyY1dUMzFyUWtoS3lsb2tXakFk?=
+ =?utf-8?B?eUxQSERycHZYb1k0VnVyR3UreWwwQXpsMFhDWVNtRThBbndMNmRFTlhGMGRy?=
+ =?utf-8?B?MnFvN2Yvd3lCdHdxU1hkQWJHeWlwZUtmVEQ0OGVwWGNVZzQvZzZqK0RmbHh0?=
+ =?utf-8?B?Yi9GYW5ncDRPNmpVUHVaYmxkRDBWZld2VmJDTVJnT2M5c2dZWnVwa3NHVG05?=
+ =?utf-8?B?U1BSSE8rNmUrS1B1SG4zQ1dCWU1rZk9KY0s0NlBCd2pKVUZyeTVxWUxZWFNH?=
+ =?utf-8?B?ZDYrSU9nLzRMMU9UQWkwQ0N6UHhuNWpwSW5GeUZqSzhnVmduUlI4Si9UTElz?=
+ =?utf-8?B?WERJSUxKY0NZTGVBNmc4MzkzVEZ1bzFUOFVrSVU4azBDVVRPMUtFbXNHMGZB?=
+ =?utf-8?B?bWxkc0w4MUs0SWdCQ01URThJRzdqL3IvcWxnNDA1di9JVkV4MzUxMUZCcnJY?=
+ =?utf-8?B?Z29ic1JEanE4WkFXL3pLWVhEaDVUYmR3Skc2L0ZaT0hnVm1zRFRySnBNZTV2?=
+ =?utf-8?B?NStNY1lBbEEvaFY4TkZ0dXJ6aHl4UjRTTXNvTUdKbThQbWFlMFgwbS8xQzdR?=
+ =?utf-8?B?U0lIMUlaU2dDYVRLN29lTnphbmpMaUMrVFVtV0hOSG1QYWZROW80MktJVzI2?=
+ =?utf-8?B?L0RGVHVSNWxuNm84REhCa1BGTWIvaWoxa3ppMXAzYVphcmMxeHp2cjBIbDY0?=
+ =?utf-8?B?RkJ1bVBxckR4M0k4Uk10eU1Xc251dk5ENFdxaU9ndXBzTzlMTzJsdU41ZEx5?=
+ =?utf-8?B?amNSL2ZpMm1hOE0zS1JKUXdRaFl1VXdVYmlZL2I5UE9ZZWowYlBXZXl2MWwv?=
+ =?utf-8?B?bURXZXhiUkRpeFJJT08xYXM2VHVGcEl3QXFFdDVnVjVEdHhtT2tzSmF4alVL?=
+ =?utf-8?B?VWhUdzF6ZXFBYVhJc1krQ25EY1dJRmNFRi95TWFDMEFsYkVTV3U2cnNLOWI4?=
+ =?utf-8?B?YlZNVE5wcXIwWTVLd3lZekVsMjhBaG1CNDBKYUhrNXdqWkppaHN6SlFCTGhm?=
+ =?utf-8?B?MU54VG1DNEk1aHhvamtYaWdBNjA0ekw1eEhrS0ZPWHpiSkNDTG9GaXc2c29V?=
+ =?utf-8?B?VXFhUTRuSGpkNFl0aVVEczdmVkpPRlJNSldlUXhrTEd3bEdLSkVqdXlMWDA5?=
+ =?utf-8?B?Tm82ZUIwSDNBcThScXJZWk1WWTlwYXZBU2M4YUY0SFlFeVYzZUttR0FZUGJR?=
+ =?utf-8?B?SkttUnJxaFV0RWhqNHNsdnJqQS8xbkZ6aWU1NDVmSnEwOXFOK3c2UTljaXlR?=
+ =?utf-8?B?bWFEUzBEYTRpdlFIZDBZSDJoWml4VndKVFNQOU5KbmZxWnM5RlN6Znl4aTFM?=
+ =?utf-8?B?ZEQwY3BRTm5XbW9YRDU5WEc3c3NQVXUvNnlLcEJPb2E1VTVFVWhBYWhxSzEw?=
+ =?utf-8?B?c3NFYXVIQ1dqQTNjN1prMzU4TXFoQngwdWtaWnVZOUp4VHFrcmwxRE9DTm03?=
+ =?utf-8?B?aGZnWDdCandzSUMzU2FDSzB2ZWtFYUxnUEpyWnR0L1NnU3l5MW16Y21DT0Zm?=
+ =?utf-8?B?RTd0SVhneDAwQU0zbEFvOHN4a29DSU4zcFZFM3NleThpdHluRkdZaTAzVUFk?=
+ =?utf-8?B?Ti92RVRZR21SNU1DcHRWUStSSnd1R2tXY2dPMlRkTDZ5S1lQeTRtTWZWWXhQ?=
+ =?utf-8?Q?FQC75/31UFSsZjUvULAxkCc/z?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2f9129bf-b2a7-4789-a0c9-08dcc6bc9b07
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 17:19:17.3025
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 17:20:53.8215
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VjRLCnjfPajCDHEb9l3qS9MM4+OITe4xdPuQxE1I078WrC/72lg6IW1nGZh+98cxfJFtwNAZQZUYPxHqmxG9gLa4wrR4YBG6RT7uHL969iY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4509
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-27_10,2024-08-27_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxlogscore=999
- adultscore=0 mlxscore=0 spamscore=0 malwarescore=0 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2407110000 definitions=main-2408270131
-X-Proofpoint-GUID: W3lJu7yKOdIsLRQ4ci_sthbQBBLSuKqP
-X-Proofpoint-ORIG-GUID: W3lJu7yKOdIsLRQ4ci_sthbQBBLSuKqP
+X-MS-Exchange-CrossTenant-UserPrincipalName: StbCKkEIdq8tbgeEG8F9FarOVd5gISjqlWQlNrQGCILsY0GqGZYrKGvaI/LFplVtHbpV77WYatsTLfcrkgN4Ig==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6180
 
-On 8/27/24 3:28 AM, Ard Biesheuvel wrote:
-> On Tue, 27 Aug 2024 at 00:44, Ross Philipson <ross.philipson@oracle.com> wrote:
->>
->> This support allows the DRTM launch to be initiated after an EFI stub
->> launch of the Linux kernel is done. This is accomplished by providing
->> a handler to jump to when a Secure Launch is in progress. This has to be
->> called after the EFI stub does Exit Boot Services.
->>
->> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+On 8/27/2024 04:36, Perry Yuan wrote:
+> From: Perry Yuan <Perry.Yuan@amd.com>
 > 
-> Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-
-Thank you for the two reviews
-Ross
-
+> Introduce a new documentation file, `amd_hfi.rst`, which delves into the
+> implementation details of the AMD Hardware Feedback Interface and its
+> associated driver, `amd_hfi`. This documentation describes how the
+> driver provides hint to the OS scheduling which depends on the capability
+> of core performance and efficiency ranking data.
 > 
->> ---
->>   drivers/firmware/efi/libstub/efistub.h  |  8 ++
->>   drivers/firmware/efi/libstub/x86-stub.c | 98 +++++++++++++++++++++++++
->>   2 files changed, 106 insertions(+)
->>
->> diff --git a/drivers/firmware/efi/libstub/efistub.h b/drivers/firmware/efi/libstub/efistub.h
->> index d33ccbc4a2c6..baf42d6d0796 100644
->> --- a/drivers/firmware/efi/libstub/efistub.h
->> +++ b/drivers/firmware/efi/libstub/efistub.h
->> @@ -135,6 +135,14 @@ void efi_set_u64_split(u64 data, u32 *lo, u32 *hi)
->>          *hi = upper_32_bits(data);
->>   }
->>
->> +static inline
->> +void efi_set_u64_form(u32 lo, u32 hi, u64 *data)
->> +{
->> +       u64 upper = hi;
->> +
->> +       *data = lo | upper << 32;
->> +}
->> +
->>   /*
->>    * Allocation types for calls to boottime->allocate_pages.
->>    */
->> diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi/libstub/x86-stub.c
->> index f8e465da344d..04786c1b3b5d 100644
->> --- a/drivers/firmware/efi/libstub/x86-stub.c
->> +++ b/drivers/firmware/efi/libstub/x86-stub.c
->> @@ -9,6 +9,8 @@
->>   #include <linux/efi.h>
->>   #include <linux/pci.h>
->>   #include <linux/stddef.h>
->> +#include <linux/slr_table.h>
->> +#include <linux/slaunch.h>
->>
->>   #include <asm/efi.h>
->>   #include <asm/e820/types.h>
->> @@ -923,6 +925,99 @@ static efi_status_t efi_decompress_kernel(unsigned long *kernel_entry)
->>          return efi_adjust_memory_range_protection(addr, kernel_text_size);
->>   }
->>
->> +static bool efi_secure_launch_update_boot_params(struct slr_table *slrt,
->> +                                                struct boot_params *boot_params)
->> +{
->> +       struct slr_entry_intel_info *txt_info;
->> +       struct slr_entry_policy *policy;
->> +       struct txt_os_mle_data *os_mle;
->> +       bool updated = false;
->> +       int i;
->> +
->> +       txt_info = slr_next_entry_by_tag(slrt, NULL, SLR_ENTRY_INTEL_INFO);
->> +       if (!txt_info)
->> +               return false;
->> +
->> +       os_mle = txt_os_mle_data_start((void *)txt_info->txt_heap);
->> +       if (!os_mle)
->> +               return false;
->> +
->> +       os_mle->boot_params_addr = (u64)boot_params;
->> +
->> +       policy = slr_next_entry_by_tag(slrt, NULL, SLR_ENTRY_ENTRY_POLICY);
->> +       if (!policy)
->> +               return false;
->> +
->> +       for (i = 0; i < policy->nr_entries; i++) {
->> +               if (policy->policy_entries[i].entity_type == SLR_ET_BOOT_PARAMS) {
->> +                       policy->policy_entries[i].entity = (u64)boot_params;
->> +                       updated = true;
->> +                       break;
->> +               }
->> +       }
->> +
->> +       /*
->> +        * If this is a PE entry into EFI stub the mocked up boot params will
->> +        * be missing some of the setup header data needed for the second stage
->> +        * of the Secure Launch boot.
->> +        */
->> +       if (image) {
->> +               struct setup_header *hdr = (struct setup_header *)((u8 *)image->image_base +
->> +                                           offsetof(struct boot_params, hdr));
->> +               u64 cmdline_ptr;
->> +
->> +               boot_params->hdr.setup_sects = hdr->setup_sects;
->> +               boot_params->hdr.syssize = hdr->syssize;
->> +               boot_params->hdr.version = hdr->version;
->> +               boot_params->hdr.loadflags = hdr->loadflags;
->> +               boot_params->hdr.kernel_alignment = hdr->kernel_alignment;
->> +               boot_params->hdr.min_alignment = hdr->min_alignment;
->> +               boot_params->hdr.xloadflags = hdr->xloadflags;
->> +               boot_params->hdr.init_size = hdr->init_size;
->> +               boot_params->hdr.kernel_info_offset = hdr->kernel_info_offset;
->> +               efi_set_u64_form(boot_params->hdr.cmd_line_ptr, boot_params->ext_cmd_line_ptr,
->> +                                &cmdline_ptr);
->> +               boot_params->hdr.cmdline_size = strlen((const char *)cmdline_ptr);
->> +       }
->> +
->> +       return updated;
->> +}
->> +
->> +static void efi_secure_launch(struct boot_params *boot_params)
->> +{
->> +       struct slr_entry_dl_info *dlinfo;
->> +       efi_guid_t guid = SLR_TABLE_GUID;
->> +       dl_handler_func handler_callback;
->> +       struct slr_table *slrt;
->> +
->> +       if (!IS_ENABLED(CONFIG_SECURE_LAUNCH))
->> +               return;
->> +
->> +       /*
->> +        * The presence of this table indicated a Secure Launch
->> +        * is being requested.
->> +        */
->> +       slrt = (struct slr_table *)get_efi_config_table(guid);
->> +       if (!slrt || slrt->magic != SLR_TABLE_MAGIC)
->> +               return;
->> +
->> +       /*
->> +        * Since the EFI stub library creates its own boot_params on entry, the
->> +        * SLRT and TXT heap have to be updated with this version.
->> +        */
->> +       if (!efi_secure_launch_update_boot_params(slrt, boot_params))
->> +               return;
->> +
->> +       /* Jump through DL stub to initiate Secure Launch */
->> +       dlinfo = slr_next_entry_by_tag(slrt, NULL, SLR_ENTRY_DL_INFO);
->> +
->> +       handler_callback = (dl_handler_func)dlinfo->dl_handler;
->> +
->> +       handler_callback(&dlinfo->bl_context);
->> +
->> +       unreachable();
->> +}
->> +
->>   static void __noreturn enter_kernel(unsigned long kernel_addr,
->>                                      struct boot_params *boot_params)
->>   {
->> @@ -1050,6 +1145,9 @@ void __noreturn efi_stub_entry(efi_handle_t handle,
->>                  goto fail;
->>          }
->>
->> +       /* If a Secure Launch is in progress, this never returns */
->> +       efi_secure_launch(boot_params);
->> +
->>          /*
->>           * Call the SEV init code while still running with the firmware's
->>           * GDT/IDT, so #VC exceptions will be handled by EFI.
->> --
->> 2.39.3
->>
+> This documentation describes
+> * The design of the driver
+> * How the driver provides hints to the OS scheduling
+> * How the driver interfaces with the kernel for efficiency ranking data.
+> 
+> Signed-off-by: Perry Yuan <Perry.Yuan@amd.com>
+Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>   Documentation/arch/x86/amd-hfi.rst | 116 +++++++++++++++++++++++++++++
+>   Documentation/arch/x86/index.rst   |   1 +
+>   2 files changed, 117 insertions(+)
+>   create mode 100644 Documentation/arch/x86/amd-hfi.rst
+> 
+> diff --git a/Documentation/arch/x86/amd-hfi.rst b/Documentation/arch/x86/amd-hfi.rst
+> new file mode 100644
+> index 000000000000..351641ce2821
+> --- /dev/null
+> +++ b/Documentation/arch/x86/amd-hfi.rst
+> @@ -0,0 +1,116 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +======================================================================
+> +Hardware Feedback Interface For Hetero Core Scheduling On AMD Platform
+> +======================================================================
+> +
+> +:Copyright (C) 2024 Advanced Micro Devices, Inc. All Rights Reserved.
+> +
+> +:Author: Perry Yuan <perry.yuan@amd.com>
+> +
+> +Overview
+> +--------
+> +
+> +AMD Heterogeneous Core implementations are comprised of more than one
+> +architectural class and CPUs are comprised of cores of various efficiency
+> +and power capabilities. Power management strategies must be designed to accommodate
+> +the complexities introduced by incorporating different core types.
+> +Heterogeneous systems can also extend to more than two architectural classes as well.
+> +The purpose of the scheduling feedback mechanism is to provide information to
+> +the operating system scheduler in real time such that the scheduler can direct
+> +threads to the optimal core.
+> +
+> +``Classic cores`` are generally more performant and ``Dense cores`` are generally more
+> +efficient.
+> +The goal of AMD's heterogeneous architecture is to attain power benefit by sending
+> +background thread to the dense cores while sending high priority threads to the classic
+> +cores. From a performance perspective, sending background threads to dense cores can free
+> +up power headroom and allow the classic cores to optimally service demanding threads.
+> +Furthermore, the area optimized nature of the dense cores allows for an increasing
+> +number of physical cores. This improved core density will have positive multithreaded
+> +performance impact.
+> +
+> +AMD Heterogeneous Core Driver
+> +-----------------------------
+> +
+> +The ``amd_hfi`` driver delivers the operating system a performance and energy efficiency
+> +capability data for each CPU in the system. The scheduler can use the ranking data
+> +from the HFI driver to make task placement decisions.
+> +
+> +Thread Classification and Ranking Table Interaction
+> +----------------------------------------------------
+> +
+> +The thread classification is used to select into a ranking table that describes
+> +an efficiency and performance ranking for each classification.
+> +
+> +Threads are classified during runtime into enumerated classes. The classes represent
+> +thread performance/power characteristics that may benefit from special scheduling behaviors.
+> +The below table depicts an example of thread classification and a preference where a given thread
+> +should be scheduled based on its thread class. The real time thread classification is consumed
+> +by the operating system and is used to inform the scheduler of where the thread should be placed.
+> +
+> +Thread Classification Example Table
+> +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> ++----------+----------------+-------------------------------+---------------------+---------+
+> +| class ID | Classification | Preferred scheduling behavior | Preemption priority | Counter |
+> ++----------+----------------+-------------------------------+---------------------+---------+
+> +| 0        | Default        | Performant                    | Highest             |         |
+> ++----------+----------------+-------------------------------+---------------------+---------+
+> +| 1        | Non-scalable   | Efficient                     | Lowest              | PMCx1A1 |
+> ++----------+----------------+-------------------------------+---------------------+---------+
+> +| 2        | I/O bound      | Efficient                     | Lowest              | PMCx044 |
+> ++----------+----------------+-------------------------------+---------------------+---------+
+> +
+> +
+> +AMD Hardware Feedback Interface
+> +--------------------------------
+> +
+> +The Hardware Feedback Interface provides to the operating system information
+> +about the performance and energy efficiency of each CPU in the system. Each
+> +capability is given as a unit-less quantity in the range [0-255]. A higher
+> +performance value indicates higher performance capability, and a higher
+> +efficiency value indicates more efficiency. Energy efficiency and performance
+> +are reported in separate capabilities in the shared memory based ranking table.
+> +
+> +These capabilities may change at runtime as a result of changes in the
+> +operating conditions of the system or the action of external factors.
+> +Power Management FW is responsible for detecting events that would require
+> +a reordering of the performance and efficiency ranking. Table updates would
+> +happen relatively infrequently and occur on the time scale of seconds or more.
+> +
+> +The mechanism used to trigger a table update like below events:
+> +    * Thermal Stress Events
+> +    * Silent Compute
+> +    * Extreme Low Battery Scenarios
+> +
+> +The kernel or a userspace policy daemon can use these capabilities to modify
+> +task placement decisions. For instance, if either the performance or energy
+> +capabilities of a given logical processor becomes zero, it is an indication that
+> +the hardware recommends to the operating system to not schedule any tasks on
+> +that processor for performance or energy efficiency reasons, respectively.
+> +
+> +Implementation details for Linux
+> +--------------------------------
+> +
+> +The implementation of threads scheduling consists of the following steps:
+> +
+> +1. A thread is spawned and scheduled to the ideal core using the default
+> +   heterogeneous scheduling policy.
+> +2. The processor profiles thread execution and assigns an enumerated classification ID.
+> +   This classification is communicated to the OS via logical processor scope MSR.
+> +3. During the thread context switch out the operating system consumes the workload(WL)
+> +   classification which resides in a logical processor scope MSR.
+> +4. The OS triggers the hardware to clear its history by writing to an MSR,
+> +   after consuming the WL classification and before switching in the new thread.
+> +5. If due to the classification, ranking table, and processor availability,
+> +   the thread is not on its ideal processor, the OS will then consider scheduling
+> +   the thread on its ideal processor (if available).
+> +
+> +Ranking Table update
+> +---------------------------
+> +The power management firmware issues an platform interrupt after updating the ranking
+> +table and is ready for the operating system to consume it. CPUs receive such interrupt
+> +and read new ranking table from shared memory which PCCT table has provided, then
+> +``amd_hfi`` driver parse the new table to provide new consume data for scheduling decisions.
+> +
+> +
+> diff --git a/Documentation/arch/x86/index.rst b/Documentation/arch/x86/index.rst
+> index 8ac64d7de4dc..7f47229f3104 100644
+> --- a/Documentation/arch/x86/index.rst
+> +++ b/Documentation/arch/x86/index.rst
+> @@ -43,3 +43,4 @@ x86-specific Documentation
+>      features
+>      elf_auxvec
+>      xstate
+> +   amd_hfi
 
 
