@@ -1,173 +1,127 @@
-Return-Path: <linux-kernel+bounces-303652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B13D961311
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:41:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7FC3961316
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:42:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 050F11F24596
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:41:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 264821C22406
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:42:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42D61C8719;
-	Tue, 27 Aug 2024 15:41:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2EE19EEA2
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 15:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A312A1C7B61;
+	Tue, 27 Aug 2024 15:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gP658GyN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CEA1C6F40
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 15:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724773262; cv=none; b=WlHqStCAIWJEwI9qMoTnMr4UpQ/TYNNTQnGmrTisEYhJcQVe8Fh8yUqJqggVwy3ccc4Sv+L3Kh0t5FhxQ293+/DGAvahX7u0VBvbM868LAqh1LwIW1w0kkMY8o8h/5Bw8f/UXpqlLhwdC4QqNnjfmhoaI0Dj+aLiaAH7ZIyOUaE=
+	t=1724773321; cv=none; b=qzPVlI9g2B/mCgsdhLTr4w8UIOWT5LwNZ9VAcAg09vqRCRGU45RxyWz5G5JACJmleRyau6NPAxrd8IBB+smWBqBoUgoCTj/MYOXr+dlduMZy+T3Bn+4WxvprJ+41HZtjlAWGAGlFe/SzbVqdyV48XoHZdz6kQ1tx5fRR7wwsqUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724773262; c=relaxed/simple;
-	bh=3gLfo//X8ziZ7Qaz69kPcY1/j7R8E8lrAIYonW6oDcQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=h2DB5Es3UuSTwK+Z6Z+75bPvMBanEDM7l4PBaJ3shsSMnhbIl95MUWjjQ+JA3/xaL3N7iZJDZH9SMfQkKhBAEWhSjyXKfJTMLvEF5CCGurMxXz2dvnMNDTDOTD/21aNWW9xYAbYCHO7cUDnwFAufsWu40IFQssKA8CNsw0XKbCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E4C2811FB;
-	Tue, 27 Aug 2024 08:41:25 -0700 (PDT)
-Received: from [10.34.129.45] (e126645.nice.arm.com [10.34.129.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E41763F762;
-	Tue, 27 Aug 2024 08:40:54 -0700 (PDT)
-Message-ID: <a998c723-7451-439a-9c88-7c8b5c1b890b@arm.com>
-Date: Tue, 27 Aug 2024 17:40:54 +0200
+	s=arc-20240116; t=1724773321; c=relaxed/simple;
+	bh=ZAWhcKduUxTafb6/Wx9uvfL0qKweULJ0YIrs2j6Xqe0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=j1hlAvXTX8PzG1IewfCDz5gMHORX8iumAHQ8+PcczU3hHzlHj2KXB7+m18p0VlHGCHYSimjjC2QmgB2iy0FwOmwUop4m/EMmC17RbxtqCqD/9oGhZgCLpq1ptEvAGCn6EIgg5DNTtCfeo8ro/2qqlvH09E6DWCt6igE7qTli2Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gP658GyN; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724773318;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u6Px/4/l19JcNl/fwMiblMY++s/BJTa8xB5nFkqhBcc=;
+	b=gP658GyNtruYxlIZqw3AfNRPdujZa01P6R50j+1Ljv82xDZ5miSI3nqf5Y3TSKFTBuH9Fb
+	8RzGcRut8IKmWx9psSDX87HQin1kyYfV5WOiiBGwdxyHvrCpuxnD9V/if/Ab1NlPvaSvFF
+	XpI4r5zdxl1XwYyRUtec2XxVOgvP74w=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-568-q2013YTsPxe73m1zh14SxQ-1; Tue, 27 Aug 2024 11:41:56 -0400
+X-MC-Unique: q2013YTsPxe73m1zh14SxQ-1
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-534398200ffso5363201e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:41:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724773314; x=1725378114;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u6Px/4/l19JcNl/fwMiblMY++s/BJTa8xB5nFkqhBcc=;
+        b=kAziARRH1Hu4ZvyO2HY/7GoBjLDxkyCZCQU4hp5SndXhoRuwW83k2jiiTKaj++CzjT
+         FMDjrkThAW+JgiwyxjSBr90hFQEclycWOVjNj2dirdyKSGl6WufrkW+bObw/2T4eBDl8
+         Ypr49jt7xvmfgC+9oU+/COzIBTHI0BPryIdBXdmy70IlFHvIYVJghSorNxK7eaKF3z0S
+         /LR3LQV8PaFMCDiF7tYiYhVzbjSyRA60fE6Hm3Y6aJtJlXJUGBVSWh5YXUvFMNLXWbwE
+         9Xzpe3IZw6lzAgmZhJFwqoPQmyqHHAwGzr2lDltIqmpDoPzfffrzT7m1c9/TAepAicwn
+         D56g==
+X-Forwarded-Encrypted: i=1; AJvYcCUd4AX0Yx8MwG88fFCHi567AiJJeb4hvB3wE8U3w3GJOMa2Hdio0CuVqna2DpVrEQVpgtgMD1lXFwSsyUs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxs+01KDI1kSYbCZ8pjvK3WhCoqRYRu0YVQys6mBfSxbQSPIc9f
+	ZW3H+qjof0qphfXxJNpXbKq7YO8twLr28IvnB426GhSWZFeUZzmAr94e2wlCTSQY0RFAKWACj2O
+	venQrdqlITi8bqY1VOiz/KY7hN81pzF2qGPqjzIIBv/pv7M/tvxHHHKuNvpMdZg==
+X-Received: by 2002:a05:6512:1111:b0:530:e0fd:4a97 with SMTP id 2adb3069b0e04-534387e89d7mr10671847e87.0.1724773314272;
+        Tue, 27 Aug 2024 08:41:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGya5Cog7WzH/edbQ2/bZc/cQt4hmmJzKjOW3d0Qk6T3JTXf/LNCy4sxIbNx60ZPcbIN9Vw2w==
+X-Received: by 2002:a05:6512:1111:b0:530:e0fd:4a97 with SMTP id 2adb3069b0e04-534387e89d7mr10671806e87.0.1724773313471;
+        Tue, 27 Aug 2024 08:41:53 -0700 (PDT)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e549cd4esm123171166b.55.2024.08.27.08.41.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 08:41:53 -0700 (PDT)
+From: Valentin Schneider <vschneid@redhat.com>
+To: paulmck@kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+ sfr@canb.auug.org.au, linux-next@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
+In-Reply-To: <xhsmhle0inuze.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+References: <c28dbc65-7499-41a5-84d0-991843153b1a@paulmck-laptop>
+ <20240823074705.GB12053@noisy.programming.kicks-ass.net>
+ <xhsmho75fo6e4.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <b1824f4a-f5cc-4011-876f-8a73cf752067@paulmck-laptop>
+ <xhsmhle0inuze.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+Date: Tue, 27 Aug 2024 17:41:52 +0200
+Message-ID: <xhsmhikvmnfb3.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Pierre Gondois <pierre.gondois@arm.com>
-Subject: Re: [PATCH v5 3/4] arm64: topology: Support SMT control on ACPI based
- system
-To: Yicong Yang <yangyicong@huawei.com>
-Cc: linuxppc-dev@lists.ozlabs.org, bp@alien8.de, dave.hansen@linux.intel.com,
- mingo@redhat.com, linux-arm-kernel@lists.infradead.org, mpe@ellerman.id.au,
- peterz@infradead.org, tglx@linutronix.de, sudeep.holla@arm.com,
- will@kernel.org, catalin.marinas@arm.com, x86@kernel.org,
- linux-kernel@vger.kernel.org, dietmar.eggemann@arm.com,
- gregkh@linuxfoundation.org, rafael@kernel.org, jonathan.cameron@huawei.com,
- prime.zeng@hisilicon.com, linuxarm@huawei.com, yangyicong@hisilicon.com,
- xuwei5@huawei.com, guohanjun@huawei.com
-References: <20240806085320.63514-1-yangyicong@huawei.com>
- <20240806085320.63514-4-yangyicong@huawei.com>
-Content-Language: en-US
-In-Reply-To: <20240806085320.63514-4-yangyicong@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-Hello Yicong,
-IIUC we are looking for the maximum number of threads a CPU can have
-in the platform. But is is actually possible to have a platform with
-CPUs not having the same number of threads ?
+On 27/08/24 12:03, Valentin Schneider wrote:
+> On 26/08/24 09:31, Paul E. McKenney wrote:
+>> On Mon, Aug 26, 2024 at 01:44:35PM +0200, Valentin Schneider wrote:
+>>>
+>>> Woops...
+>>
+>> On the other hand, removing that dequeue_task() makes next-20240823
+>> pass light testing.
+>>
+>> I have to ask...
+>>
+>> Does it make sense for Valentin to rearrange those commits to fix
+>> the two build bugs and remove that dequeue_task(), all in the name of
+>> bisectability.  Or is there something subtle here so that only Peter
+>> can do this work, shoulder and all?
+>>
+>
+> I suppose at the very least another pair of eyes on this can't hurt, let me
+> get untangled from some other things first and I'll take a jab at it.
 
-For instance kernel/cpu.c::cpu_smt_num_threads_valid() will check
-that the number of threads is either 1 or cpu_smt_max_threads (as
-CONFIG_SMT_NUM_THREADS_DYNAMIC is not enabled for arm64). However
-a (hypothetical) platform with:
-- CPU0: 2 threads
-- CPU1: 4 threads
-should not be able to set the number of threads to 2, as
-1 < 2 < cpu_smt_max_threads (cf. cpu_smt_num_threads_valid()).
+I've taken tip/sched/core and shuffled hunks around; I didn't re-order any
+commit. I've also taken out the dequeue from switched_from_fair() and put
+it at the very top of the branch which should hopefully help bisection.
 
-So if there is an assumption that all the CPUs have the same number of
-threads, it should be sufficient to count the number of threads for one
-CPU right ?
+The final delta between that branch and tip/sched/core is empty, so it
+really is just shuffling inbetween commits.
 
-In the other (unlikely) case (i.e. CPUs can have various number of threads),
-I think we should either:
-- use your method and check that all the CPUs have the same number of threads
-- get the number of threads for one CPU and check that all the CPUs are
-    identical using the ACPI_PPTT_ACPI_IDENTICAL tag
-- have a per-cpu cpu_smt_max_threads value ?
+Please find the branch at:
 
-Same comment for the DT patch. If there is an assumption that all CPUs have
-the same number of threads, then update_smt_num_threads() could only be called
-once I suppose,
+https://gitlab.com/vschneid/linux.git -b mainline/sched/eevdf-complete-builderr
 
-Regards,
-Pierre
+I'll go stare at the BUG itself now.
 
-
-On 8/6/24 10:53, Yicong Yang wrote:
-> From: Yicong Yang <yangyicong@hisilicon.com>
-> 
-> For ACPI we'll build the topology from PPTT and we cannot directly
-> get the SMT number of each core. Instead using a temporary xarray
-> to record the SMT number of each core when building the topology
-> and we can know the largest SMT number in the system. Then we can
-> enable the support of SMT control.
-> 
-> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
-> ---
->   arch/arm64/kernel/topology.c | 24 ++++++++++++++++++++++++
->   1 file changed, 24 insertions(+)
-> 
-> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-> index 1a2c72f3e7f8..f72e1e55b05e 100644
-> --- a/arch/arm64/kernel/topology.c
-> +++ b/arch/arm64/kernel/topology.c
-> @@ -15,8 +15,10 @@
->   #include <linux/arch_topology.h>
->   #include <linux/cacheinfo.h>
->   #include <linux/cpufreq.h>
-> +#include <linux/cpu_smt.h>
->   #include <linux/init.h>
->   #include <linux/percpu.h>
-> +#include <linux/xarray.h>
->   
->   #include <asm/cpu.h>
->   #include <asm/cputype.h>
-> @@ -43,11 +45,16 @@ static bool __init acpi_cpu_is_threaded(int cpu)
->    */
->   int __init parse_acpi_topology(void)
->   {
-> +	int thread_num, max_smt_thread_num = 1;
-> +	struct xarray core_threads;
->   	int cpu, topology_id;
-> +	void *entry;
->   
->   	if (acpi_disabled)
->   		return 0;
->   
-> +	xa_init(&core_threads);
-> +
->   	for_each_possible_cpu(cpu) {
->   		topology_id = find_acpi_cpu_topology(cpu, 0);
->   		if (topology_id < 0)
-> @@ -57,6 +64,20 @@ int __init parse_acpi_topology(void)
->   			cpu_topology[cpu].thread_id = topology_id;
->   			topology_id = find_acpi_cpu_topology(cpu, 1);
->   			cpu_topology[cpu].core_id   = topology_id;
-> +
-> +			entry = xa_load(&core_threads, topology_id);
-> +			if (!entry) {
-> +				xa_store(&core_threads, topology_id,
-> +					 xa_mk_value(1), GFP_KERNEL);
-> +			} else {
-> +				thread_num = xa_to_value(entry);
-> +				thread_num++;
-> +				xa_store(&core_threads, topology_id,
-> +					 xa_mk_value(thread_num), GFP_KERNEL);
-> +
-> +				if (thread_num > max_smt_thread_num)
-> +					max_smt_thread_num = thread_num;
-> +			}
->   		} else {
->   			cpu_topology[cpu].thread_id  = -1;
->   			cpu_topology[cpu].core_id    = topology_id;
-> @@ -67,6 +88,9 @@ int __init parse_acpi_topology(void)
->   		cpu_topology[cpu].package_id = topology_id;
->   	}
->   
-> +	cpu_smt_set_num_threads(max_smt_thread_num, max_smt_thread_num);
-> +
-> +	xa_destroy(&core_threads);
->   	return 0;
->   }
->   #endif
 
