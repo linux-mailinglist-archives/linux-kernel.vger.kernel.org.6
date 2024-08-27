@@ -1,119 +1,145 @@
-Return-Path: <linux-kernel+bounces-303863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B4EA96163C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:03:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E22496183B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:51:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E0961C23252
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:03:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FB701C20AF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A516C1D2788;
-	Tue, 27 Aug 2024 18:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9551D31A6;
+	Tue, 27 Aug 2024 19:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfgIdqyF"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OVIXCCbb"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A3E1C8FD4;
-	Tue, 27 Aug 2024 18:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46A61D2799
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 19:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724781783; cv=none; b=nWO7RPMU5+hlVzrF/eocfaAfEMABrACCbcoUInzInfNhUG8tiHpazvetZxn/e4a30LQLNQSsCZ5wF0riXzYfEGMhV8jkPLLjWJ9fQbRSZy7Zx7Uhex+FbJlx42W1A/pYNrnckQ7SLGEtLrW0uaEW1rDRwZg0rj3fF3859/D2Vrs=
+	t=1724788259; cv=none; b=CwuFlfYCi52ZAtMgbeyRo2VBABfmOlY5MZVJxZsQZt8NOYWU8hIlGiKzK8n0oLao/N32J22OP4DYwg6KM67yTnNB/8iU4cpIVNWMjfjAWdKG/keDfpJmtMRxs//z+oFkau9F/CL2Teew0XW3+wFVUXFh0/ZdD/nEdcW14AJzcDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724781783; c=relaxed/simple;
-	bh=uDSRe4+ypz3TK5ICKGKQf7MdUR2fS3TzFqfb5D8FN50=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l7DbqNqJPqKmLuEZeOiDZWYwd/QkDHyN96t1uF6QcLfu7SpE6+t31nNU1jowcOjNJc/K5KBsjrt7IkjaBRfKO/RJ4BiWWgQIVMLUxYBHVMHD+g3wR8QMmOiUau+hIHWPyKNkwZb7TAquwE7ZGnz6Kv9qNQ1HDmWDCVVqUABMwQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XfgIdqyF; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7143ae1b560so3246291b3a.1;
-        Tue, 27 Aug 2024 11:03:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724781781; x=1725386581; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FZcFyZyRdSFfHxupkjJyrWOtZv+pT4JWFFLO3DW9kp4=;
-        b=XfgIdqyF+kVklAnl8tOTih0/pZfeq+oX5pY4h6TsA3S5vG8M8MFhfFkl4nAA2CTXE+
-         iexwKGFdExuRTPZdaqKpHGplNXCUQUIhWUxVms1AyuldOibGviXv4ZUb//IeEoRY6CeQ
-         heyVSaEGYhpltpfPhqao/yFUIAr6PB/ZRUtCTjVlM9iZbFrNh4+QJu7DYrA39pYv9D5I
-         7z0uIPMfUmxgeSA5xn+AMzHp3FXOOT11hEQKrpefqZgkQc49+HDdTSGnRP9wY+SIdoom
-         mQsFZov5c3Gx9OSNFxLpXAPWq7xEb+/6yfRz8mxKFUFDOXzqgFiTFHOCfAJNn/MG4AHQ
-         A6Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724781781; x=1725386581;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FZcFyZyRdSFfHxupkjJyrWOtZv+pT4JWFFLO3DW9kp4=;
-        b=rjxeNZZNGi70uQw9e/N/hAk6X/A8JjumAHaUNfTdZvf29W44vThTaDAello6F03qdD
-         PtQFH2G2ZBveKKQrHz1tIMrExP90nknYVBkT7asHfL04PA6wCBXJjIYO/Gk+2TSv8PiF
-         RYPmhlXR9Svc5gBikz2Qm+sL4WBbHweKEufR4H7k1FRvMKWrltmFBZh7hPSJ30aDHRv0
-         MVJIMZf0nfeXlxfMrkaClAjqXlVuN2QXcv7gS/7HMh2wPc/ETTkUNfo6jRoaASw/p4jp
-         fLaLbj0sQV44p/JsWHIuJBZ8UvPml1/1WXgLEduFt2KTLe9/r5uGwLZ4y5JsZK6Vs8kJ
-         G2LA==
-X-Forwarded-Encrypted: i=1; AJvYcCWWhXSO0BqKsQhFObRh40vMCeZ/3oyFHmoxMXErU4fFuJzF+xGeHNFIGmCEf71MuGVA6tyAezYA9lz3ezk=@vger.kernel.org, AJvYcCXCc3svJrbOM9N5T4z7t3uDe1zqCQbKIWJ0MMEknU0FA2rwZvHdRMdeVNuQZLo+ReC2Z5QQI6C+@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMBgZTBwlCXLa/1SrPQkYWTJXAPdWPi3mfZb42HzV3MnYFo/VS
-	ooAu9YoFyGoyq0DxXnLs0db/8FyXXgHRQt4FpHdiyP1Ukty9KP3T
-X-Google-Smtp-Source: AGHT+IEm2yR2cpxVil+mWKoSNbqIrjenA9TLxT322rLBAqYECbuk0pTTEPLg5nnyzwL7snZPOq8AYA==
-X-Received: by 2002:a05:6a20:9c8f:b0:1c4:bbb8:4d02 with SMTP id adf61e73a8af0-1ccc099746bmr3997304637.37.1724781780891;
-        Tue, 27 Aug 2024 11:03:00 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-714342e2194sm8827604b3a.126.2024.08.27.11.02.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 11:03:00 -0700 (PDT)
-Message-ID: <cca42eba-8b09-4552-ab2a-395cf28a6b24@gmail.com>
-Date: Tue, 27 Aug 2024 11:02:58 -0700
+	s=arc-20240116; t=1724788259; c=relaxed/simple;
+	bh=EvQO0uA0BhzYO2XF9beZx3IvAZ/PpNwJRfaNYRsSpnc=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=PZ5tOGKW8vDOh/wjAnXIOtdaF4NJDMIjUckPmWizOR2weN3Yjbt0LQxK3c0kEdNMOCfKlKTDV1cUpKT64cObbftD4oym2Vcc+IqDwB8ZLMwmYaGbRAUIS4CPizltSLqiGUChCJsSfF3ImP4CtMRV+8vD3T3bWd2zYMUZYMLtTu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=OVIXCCbb; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240827195049euoutp02067155828cb2ab1bf9ae443c58fe3fb9~vrcZKzimV0388103881euoutp02c
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 19:50:49 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240827195049euoutp02067155828cb2ab1bf9ae443c58fe3fb9~vrcZKzimV0388103881euoutp02c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724788249;
+	bh=RbgxCt4c9LLN/5M2xpsNkhslAjeybQo+iNmMUSkrSXQ=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=OVIXCCbbY2QKGTL0bxxHN85fHfoEpsx9Xi8mmzReq/PCrRUy9SwRofdw3g9D/bo6f
+	 tYXjAkr1THnbBg4MUqbgecqZh71SjXejJwVxZrg23IWofVWaznJ4U7jhjOjGqmMzJS
+	 YyCzYX3AhkZelypdOrqjflu3avV9dLsw194p9eqs=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240827195049eucas1p2b511dfa65dee588f9136300cc2bbd755~vrcY2ZM2G0652606526eucas1p2O;
+	Tue, 27 Aug 2024 19:50:49 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 7A.B4.09875.81E2EC66; Tue, 27
+	Aug 2024 20:50:49 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240827195048eucas1p126c94ff638c5b766f66205ad9bfc4ec3~vrcYk6Eiw1412914129eucas1p14;
+	Tue, 27 Aug 2024 19:50:48 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240827195048eusmtrp17fb10a10fd0e3efd0b225827498103bc~vrcYkbYoj0185601856eusmtrp1i;
+	Tue, 27 Aug 2024 19:50:48 +0000 (GMT)
+X-AuditID: cbfec7f4-11bff70000002693-db-66ce2e188d1a
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id AC.D1.08810.81E2EC66; Tue, 27
+	Aug 2024 20:50:48 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240827195048eusmtip14a4f942ed8a0d53e7219cbdbdb6cb322~vrcYZkOff0744707447eusmtip1F;
+	Tue, 27 Aug 2024 19:50:48 +0000 (GMT)
+Received: from localhost (106.210.248.81) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Tue, 27 Aug 2024 20:50:47 +0100
+Date: Tue, 27 Aug 2024 16:27:49 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Xingyu Li <xli399@ucr.edu>
+CC: <mcgrof@kernel.org>, <kees@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>
+Subject: Re: BUG: general protection fault in put_links
+Message-ID: <20240827142749.ibj4fjdp6n7wvz2p@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.10 000/273] 6.10.7-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240827143833.371588371@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240827143833.371588371@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CALAgD-4n=bgzbLyyw1Q3C=2aa=wh8FimDgS30ud_ay53hDgYBQ@mail.gmail.com>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLIsWRmVeSWpSXmKPExsWy7djP87qSeufSDLZ5WKx7e57VYs/ekywW
+	l3fNYbO4MeEpo8WLCTvZHFg9Nq3qZPOYNfsqk8fnTXIBzFFcNimpOZllqUX6dglcGWdnfGcs
+	uMJcsejGBvYGxtdMXYwcHBICJhLfZ2V3MXJxCAmsYJRYuH0LC4TzhVGiZe0dKOczo8T99vlA
+	DidYx6m1KxkhEssZJe70bGOGq7pwYzGUs4VR4umxTjaQFhYBVYklP7eBtbMJ6Eicf3OHGcQW
+	EZCTmHr7LCuIzSyQK7Gv9S5YvbCAucTDk4vBbF4BB4mdl++wQtiCEidnPmGBqNeRWLD7ExvI
+	E8wC0hLL/3GAhDkFAiX2HbvBCnGpksTbji4mCLtW4tSWW0wgt0kIHOGQmD31J1SRi8Sd/8uh
+	ioQlXh3fwg5hy0icntzDAtEwmVFi/78P7BDOakaJZY1foTqsJVquPGGHBKWjxI9fKRAmn8SN
+	t4IQd/JJTNo2nRkizCvR0SYE0agmsfreG5YJjMqzkHw2C8lnsxA+W8DIvIpRPLW0ODc9tdgo
+	L7Vcrzgxt7g0L10vOT93EyMwhZz+d/zLDsblrz7qHWJk4mA8xCjBwawkwnvi+Nk0Id6UxMqq
+	1KL8+KLSnNTiQ4zSHCxK4ryqKfKpQgLpiSWp2ampBalFMFkmDk6pBiapNQ6qbtPPNNwIt/2v
+	tMZ8l1vA/3otmQtfMppmii7a8obb/Z/vx6sF/eWbgm43bZ8pfNDxF/fq9qI9cU9e3/KL9Hr3
+	1LlPMEcoS8Yip6fFTV/ebPrLyL3BHYvnfTd8pLNZ4saqxQYG0T+S0jm8LkWfNWfM5PpSfyH1
+	xwuHuuzNtS6PlkW8nCOeurmu7o76C55zffu+MD851Z5anNd08Fv2sbs5a79p/0/7xvNKpeWh
+	3FvLKd+5UsWmvzDl2vDj48bbZndv77XV+Rgt6SdlaR38jlXn6inlWoPOhQFfrnXHeWlZX39x
+	yOPp2vDFD25f3FHHr/7OzEVfL/W201359Y/EPDZt5Tq7Lc+zRGHe3qdKLMUZiYZazEXFiQCy
+	rmwTkAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDIsWRmVeSWpSXmKPExsVy+t/xu7oSeufSDH4/07VY9/Y8q8WevSdZ
+	LC7vmsNmcWPCU0aLFxN2sjmwemxa1cnmMWv2VSaPz5vkApij9GyK8ktLUhUy8otLbJWiDS2M
+	9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DLOzvjOWHCFuWLRjQ3sDYyvmboYOTkk
+	BEwkTq1dydjFyMUhJLCUUeL4mblsEAkZiY1frrJC2MISf651sUEUfWSUOPvzCyuEs4VRYvPK
+	WYwgVSwCqhJLfm5jAbHZBHQkzr+5wwxiiwjISUy9fRZsErNArsS+1rtgG4QFzCUenlwMZvMK
+	OEjsvHwHaugSRomlq+4xQyQEJU7OfMIC0awjsWD3J6AGDiBbWmL5Pw6QMKdAoMS+YzegLlWS
+	eNvRBfVarcTnv88YJzAKz0IyaRaSSbMQJi1gZF7FKJJaWpybnltsqFecmFtcmpeul5yfu4kR
+	GE3bjv3cvINx3quPeocYmTgYDzFKcDArifCeOH42TYg3JbGyKrUoP76oNCe1+BCjKTAoJjJL
+	iSbnA+M5ryTe0MzA1NDEzNLA1NLMWEmc17OgI1FIID2xJDU7NbUgtQimj4mDU6qBSfP05xgZ
+	6yMJt5fxKHnc3PC+3/VRTjSH6Q+1fe7C9zb9EJU16TX68McrWOe70tELM3JsnKL07aQNqgRY
+	JT+1fbbf8YP/8OSunD0NDvHO/KbCq+ftfLxQvX/KnJTtbd15unfmlWYXRtvvfuewvc56w/ks
+	d1WxV67yve3+9qoTes4+EmO0/VDHw7p++xWO8JrLGjFvDpb1b8wQsn8s1SAv+vtw4epHh+Ze
+	jnrKw+MgyJm4+5G7Rt7HLXUP9onsrg5USjOePK/evWJmt3Wwy/zGNbIrNc+vmqDAcJiFJePk
+	L8+1PaUGXbtulHUorhOMji0RKksM8f3h8vEfJ3Phzdpiq4BW3gUnjq2PFC9rmKHEUpyRaKjF
+	XFScCAAtJEnqLwMAAA==
+X-CMS-MailID: 20240827195048eucas1p126c94ff638c5b766f66205ad9bfc4ec3
+X-Msg-Generator: CA
+X-RootMTR: 20240825050512eucas1p2cadb2e7d7c1428994707fec4d88a5ec4
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240825050512eucas1p2cadb2e7d7c1428994707fec4d88a5ec4
+References: <CGME20240825050512eucas1p2cadb2e7d7c1428994707fec4d88a5ec4@eucas1p2.samsung.com>
+	<CALAgD-4n=bgzbLyyw1Q3C=2aa=wh8FimDgS30ud_ay53hDgYBQ@mail.gmail.com>
 
-On 8/27/24 07:35, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.7 release.
-> There are 273 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Sat, Aug 24, 2024 at 10:04:54PM -0700, Xingyu Li wrote:
+> Hi,
 > 
-> Responses should be made by Thu, 29 Aug 2024 14:37:36 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.7-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+> We found a bug in Linux 6.10. It is probably a null pointer reference bug.
+> The reason is probably that before line 123 of
+> fs/proc/proc_sysctl.c(entry = &head->ctl_table[ctl_node -
+> head->node];), there is no null pointer check for `head`.
+> The bug report is as follow:
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+Thx for the report. How did you trigger it. Do you have code that
+triggers it?
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
-o--
-Florian
+Best
 
+-- 
+
+Joel Granados
 
