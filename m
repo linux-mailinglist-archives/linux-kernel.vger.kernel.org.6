@@ -1,223 +1,99 @@
-Return-Path: <linux-kernel+bounces-303220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5646196092D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:44:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30C75960933
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:45:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B98C1C22F25
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:44:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E207C281968
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:44:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5E919FA9D;
-	Tue, 27 Aug 2024 11:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5C11A01B6;
+	Tue, 27 Aug 2024 11:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u5QNvds/"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GqTMBOhi"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87481A00E7
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F2A14D29C
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724759063; cv=none; b=gZKkAHNmEDzH60J1uxRU2p3uHlgo8CL06Tbz11eSjiq//Q7ZqOlVNUntVIg8IzbY5A96A8dZQ4VfzUq5ANqlEduChlYV7ugak2sIOFKHg/zJp7We4I170Oo6AY5K1h50aFeCmsIAyzRMQgcHfJ5z6tLUysGfG59lXAw8J7BdPwk=
+	t=1724759093; cv=none; b=RgAPSipTsJMnM8/IUl9tgVbYs+tsCkWoUwRgWP26XuupNqivWJ5zuhGW97iv3sSCxwQZIWugnGXquinTrL+fQdILEAzdu8MDkA+gQ0kSJyE+7ByK+AJOIem2TOc3nfI7EsKNiquVILnQ6NUAiU+bQ3cYBfB2aH1m9qTLB9IXvRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724759063; c=relaxed/simple;
-	bh=M5U58xavEfJS9Jq3NPUxRrcl06l5is/NdCI503mKL7o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gpzQ+EVaMw+Zi/ExkzlWVmC1AEHDYBL07U+FtQ27bbPLD3fhZ9dz7yo7ju0UrA8wRUmMsSoaqoPZhakTQ9gw+4IOYXavBL3NFt1N01KYxt/8mhJzCBhwtxOtvTAM5GQifasj1JY0O1sP7eANUazk2xHdKirc0J0Yml7MFWp6ngY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u5QNvds/; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6cdae28014dso15622637b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 04:44:21 -0700 (PDT)
+	s=arc-20240116; t=1724759093; c=relaxed/simple;
+	bh=n7Xj5++MWNgSYnIAidpGGlpS/TZdD1vc2hWY2mJoXP8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I+zS9fzdnCLWLSCSLsKSomB3JAITrbXH2N+tM356FiCANv7M2kVZPSTj+X1Qa5kKkKDjEUtyBWBSw4Y1dr/v8YLgoIPe0sqfAE0Bdx6P+uzSijO6vpbl6YfLCptUU6iGOjhHeoLMgiYneFrvuaAFV2YJ9KJyPnyahZ468Xqk50Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GqTMBOhi; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-714187df604so3676916b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 04:44:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724759061; x=1725363861; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HbrPQE8jRD81MclT20thBdKrMQOQNi57XSGQvxTWTS4=;
-        b=u5QNvds/XVIi+SZ5jk6z8LK5MUJqbWdLoBza2GyDn8T9Frefwg4uc1Rw56BqGGG6UG
-         HY+P+1VqR8gNzCIgE/ac3S6bTYAmCgDcNWNImNQHHYaLm1u1O/UoB/sy8ItlT1zvUqf9
-         GK1GIJ5eP1XTWgUYcy23izncuTctjhkdcR65BpHj8JP9hDhiCXz8XK9dGOdMIJltWrQU
-         DffhrPxk2aGT7iJNYpD7qqP0H8AI+UW2o2GyxYsSUN4dCLXkHGTsPEGq6StsgRRH/36y
-         elb8GBpFocwNlBwzQmeG/myFbhWnkPSC8KMyjeufpbo+RN2O8nb9ltzVHM2cIZicnkIK
-         arWw==
+        d=linuxfoundation.org; s=google; t=1724759091; x=1725363891; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=n7Xj5++MWNgSYnIAidpGGlpS/TZdD1vc2hWY2mJoXP8=;
+        b=GqTMBOhi8gUCi07XDvVyq1t+Sb5fw1QQoG3qM0kNhN5utOF2E0Lbw4p2MqSRXfEUL6
+         21en988PmLP4Uud8sEWwN+s2bYXMRJYVJCmBpzRB5qsM7reyKWf0uf0kIqPIMG0jUbeX
+         De8ooSSxljSGXFVb7NDA4D5k4IQacA9vIOPus=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724759061; x=1725363861;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HbrPQE8jRD81MclT20thBdKrMQOQNi57XSGQvxTWTS4=;
-        b=sg314vJ4K1hNatWWz9eX+5nDhRNVtYW2j2j3M6Iiwa1igTUPqRJRrBaba5WQ8iYDED
-         oGIus9nOEldB9F4XhxYKOCWlPlhWfFdgxEjmz4DIW6bJh41d0OpKuEGcskjbGaPuY2gO
-         tyjFVt6y/Q0D5TTtQ58VI0MelTTQXX5hfwHLHFFex6fJwZWqIi/3qM3e7zCM+72oiqoy
-         nhspmSiOwXLsYp+/3VoLsMf7XV1IT9MhabcU6C1fMPOoOvunqwLhN3cbStAeMppXVeuQ
-         zMI4qMhg4iE5p1Fsl433zX6T0q0L3K+j/YItUBxFxhFpIaaDQvBXd4p+gNNdwWTcXJhe
-         c3kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGHg6ZvZL3EG7S2RYA1y+jmM8I6oOjBKgtK19Q0CrFapctmJIWeSxZbCuzyxQNPVwMV53er83USgCDxFc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3CbnwVxtbJSehIcaosu8i8EHVgQp3yoHslvWYiP48/P5z0PPB
-	UImceqS8InLaRU2hxSgCTezgGt61MS50+UoVrtKPGQSCnOui29kW1d3N7K9u6eL8ZRrkOJgBpyz
-	YSme5mu2Zm7W7I8le6RssLmTrOhxYB/JE4c6BrBYGP2pp8tj7
-X-Google-Smtp-Source: AGHT+IEFbOl3EI7OwCA2RA3WFV/8KK9lP4+cyNXB+PQIqHygNosqXZpSCOmLNbYe18abw+wdIinxpT2b9VOQqGYfq/w=
-X-Received: by 2002:a05:690c:6c09:b0:6ad:c9bd:3812 with SMTP id
- 00721157ae682-6cfb3fde15cmr20895397b3.17.1724759060653; Tue, 27 Aug 2024
- 04:44:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724759091; x=1725363891;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n7Xj5++MWNgSYnIAidpGGlpS/TZdD1vc2hWY2mJoXP8=;
+        b=Oyu2Td7lfBQfovHO4MDAByeuMq6uE7S1sy2ZNZCuSHlSl8OTsKKMk92Z2IZOakFKmp
+         9LbZbkwVUECSP6+ad52yfKwcavSTG1MyX2aPF+h3Th8jpuOS4lKBaw6niDdSRaLBOLDZ
+         E22lspfAB71XFkxvkMCyRiAUlOEyXdwwfxSkswCVqQJR14y6dPuDCOlFvIc0be2TFPc7
+         a7VkJnQ1CrqfahqpLft1SjinuX2HZC0wMCtKMlmSJo0fR3GUxUiwtaoGuEi6YgGnK7wO
+         +nbGjO+sJLU//vLmiwOoUCevUpUoEp92uv3+tH1jVNqKEueNIYz0rdWPttGsul8ZE7n+
+         biSw==
+X-Forwarded-Encrypted: i=1; AJvYcCUqxlnQ66pW843PNXMwRiUaFXAEz9EAHQ++EBcESMVg8IM0+ZqceNPQwRGPKMGYBbx88CktnYJ99cuwl7M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx10ctET4wp6GBkil8N0URicPXp4JiKMQlwrhDpHsYAZmP2xWg3
+	EKhvs5Ka/HFuqMppgMbpz1Kr0aNAiT1dfGgNI98kFsKRhaNl2XLZwz2A6OYfzQ8=
+X-Google-Smtp-Source: AGHT+IFGHgObn0rmwkspma77Vaiafu7mw8ExvIVCJJsO624LuRH1IwRUh1C2LjsM+sDvPaBol7yS/w==
+X-Received: by 2002:a05:6a21:7795:b0:1c4:91f2:936a with SMTP id adf61e73a8af0-1ccc01fca1cmr3414259637.5.1724759091336;
+        Tue, 27 Aug 2024 04:44:51 -0700 (PDT)
+Received: from [192.168.121.153] ([218.49.71.194])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ac98286sm7933489a12.5.2024.08.27.04.44.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 04:44:50 -0700 (PDT)
+Message-ID: <714f8eb4-b226-48f6-ab0d-75bdfbf83364@linuxfoundation.org>
+Date: Tue, 27 Aug 2024 05:44:44 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827063631.3932971-1-quic_qianyu@quicinc.com> <20240827063631.3932971-9-quic_qianyu@quicinc.com>
-In-Reply-To: <20240827063631.3932971-9-quic_qianyu@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 27 Aug 2024 14:44:09 +0300
-Message-ID: <CAA8EJpq5KergZ8czg4F=EYMLANoOeBsiSVoO-zAgfG0ezQrKCQ@mail.gmail.com>
-Subject: Re: [PATCH 8/8] PCI: qcom: Add support to PCIe slot power supplies
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org, 
-	robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com, 
-	sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com, 
-	quic_devipriy@quicinc.com, kw@linux.com, lpieralisi@kernel.org, 
-	neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/2] selftests: Rename sigaltstack to generic signal
+To: Dev Jain <dev.jain@arm.com>, shuah@kernel.org, oleg@redhat.com
+Cc: mingo@kernel.org, tglx@linutronix.de, mark.rutland@arm.com,
+ ryan.roberts@arm.com, broonie@kernel.org, suzuki.poulose@arm.com,
+ Anshuman.Khandual@arm.com, DeepakKumar.Mishra@arm.com,
+ aneesh.kumar@kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240822121415.3589190-1-dev.jain@arm.com>
+ <20240822121415.3589190-2-dev.jain@arm.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240822121415.3589190-2-dev.jain@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 27 Aug 2024 at 09:36, Qiang Yu <quic_qianyu@quicinc.com> wrote:
->
-> On platform x1e80100 QCP, PCIe3 is a standard x8 form factor. Hence, add
-> support to use 3.3v, 3.3v aux and 12v regulators.
+On 8/22/24 06:14, Dev Jain wrote:
+> Rename sigaltstack to generic signal directory, to allow adding more
+> signal tests in the future.
 
-First of all, I don't see corresponding bindings change.
+Sorry - I think I mentioned I don't like this test renamed. Why are you sending
+this rename still included in the patch series?
 
-Second, these supplies power up the slot, not the host controller
-itself. As such these supplies do not belong to the host controller
-entry. Please consider using the pwrseq framework instead.
-
->
-> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 52 +++++++++++++++++++++++++-
->  1 file changed, 50 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index 6f953e32d990..59fb415dfeeb 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -248,6 +248,8 @@ struct qcom_pcie_cfg {
->         bool no_l0s;
->  };
->
-> +#define QCOM_PCIE_SLOT_MAX_SUPPLIES                    3
-> +
->  struct qcom_pcie {
->         struct dw_pcie *pci;
->         void __iomem *parf;                     /* DT parf */
-> @@ -260,6 +262,7 @@ struct qcom_pcie {
->         struct icc_path *icc_cpu;
->         const struct qcom_pcie_cfg *cfg;
->         struct dentry *debugfs;
-> +       struct regulator_bulk_data slot_supplies[QCOM_PCIE_SLOT_MAX_SUPPLIES];
->         bool suspended;
->         bool use_pm_opp;
->  };
-> @@ -1174,6 +1177,41 @@ static int qcom_pcie_link_up(struct dw_pcie *pci)
->         return !!(val & PCI_EXP_LNKSTA_DLLLA);
->  }
->
-> +static int qcom_pcie_enable_slot_supplies(struct qcom_pcie *pcie)
-> +{
-> +       struct dw_pcie *pci = pcie->pci;
-> +       int ret;
-> +
-> +       ret = regulator_bulk_enable(ARRAY_SIZE(pcie->slot_supplies),
-> +                                   pcie->slot_supplies);
-> +       if (ret < 0)
-> +               dev_err(pci->dev, "Failed to enable slot regulators\n");
-> +
-> +       return ret;
-> +}
-> +
-> +static void qcom_pcie_disable_slot_supplies(struct qcom_pcie *pcie)
-> +{
-> +       regulator_bulk_disable(ARRAY_SIZE(pcie->slot_supplies),
-> +                              pcie->slot_supplies);
-> +}
-> +
-> +static int qcom_pcie_get_slot_supplies(struct qcom_pcie *pcie)
-> +{
-> +       struct dw_pcie *pci = pcie->pci;
-> +       int ret;
-> +
-> +       pcie->slot_supplies[0].supply = "vpcie12v";
-> +       pcie->slot_supplies[1].supply = "vpcie3v3";
-> +       pcie->slot_supplies[2].supply = "vpcie3v3aux";
-> +       ret = devm_regulator_bulk_get(pci->dev, ARRAY_SIZE(pcie->slot_supplies),
-> +                                     pcie->slot_supplies);
-> +       if (ret < 0)
-> +               dev_err(pci->dev, "Failed to get slot regulators\n");
-> +
-> +       return ret;
-> +}
-> +
->  static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
->  {
->         struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> @@ -1182,10 +1220,14 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
->
->         qcom_ep_reset_assert(pcie);
->
-> -       ret = pcie->cfg->ops->init(pcie);
-> +       ret = qcom_pcie_enable_slot_supplies(pcie);
->         if (ret)
->                 return ret;
->
-> +       ret = pcie->cfg->ops->init(pcie);
-> +       if (ret)
-> +               goto err_disable_slot;
-> +
->         ret = phy_set_mode_ext(pcie->phy, PHY_MODE_PCIE, PHY_MODE_PCIE_RC);
->         if (ret)
->                 goto err_deinit;
-> @@ -1216,7 +1258,8 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
->         phy_power_off(pcie->phy);
->  err_deinit:
->         pcie->cfg->ops->deinit(pcie);
-> -
-> +err_disable_slot:
-> +       qcom_pcie_disable_slot_supplies(pcie);
->         return ret;
->  }
->
-> @@ -1228,6 +1271,7 @@ static void qcom_pcie_host_deinit(struct dw_pcie_rp *pp)
->         qcom_ep_reset_assert(pcie);
->         phy_power_off(pcie->phy);
->         pcie->cfg->ops->deinit(pcie);
-> +       qcom_pcie_disable_slot_supplies(pcie);
->  }
->
->  static void qcom_pcie_host_post_init(struct dw_pcie_rp *pp)
-> @@ -1602,6 +1646,10 @@ static int qcom_pcie_probe(struct platform_device *pdev)
->                         goto err_pm_runtime_put;
->         }
->
-> +       ret = qcom_pcie_get_slot_supplies(pcie);
-> +       if (ret)
-> +               goto err_pm_runtime_put;
-> +
->         ret = pcie->cfg->ops->get_resources(pcie);
->         if (ret)
->                 goto err_pm_runtime_put;
-> --
-> 2.34.1
->
-
-
--- 
-With best wishes
-Dmitry
+thanks,
+-- Shuah
 
