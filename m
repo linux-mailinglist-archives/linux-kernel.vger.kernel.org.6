@@ -1,205 +1,173 @@
-Return-Path: <linux-kernel+bounces-302683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C8DD9601CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:34:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8D3A9601D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F034E1F22CED
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:34:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4563EB21176
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CDB7145A07;
-	Tue, 27 Aug 2024 06:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0B1145335;
+	Tue, 27 Aug 2024 06:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KI1KMHo0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sCd6ofim"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA2325570;
-	Tue, 27 Aug 2024 06:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3833A1C4
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724740443; cv=none; b=k5wcbajOWOYAcgP1fWVIi29mURllkC4+Xb1VvcRoDHRRuWM3EKEYnZCs5I2fY8kEa1vPsD3jqdL9lgHj1WQ2m9PS28V0vNNxW4MP0x+7Upsg4DKds7479trmDQzHbmvv7q+L7Iu2vdfUW+GszzQOoShoKyZV67wMpNJk7XX4pxA=
+	t=1724740540; cv=none; b=fjhI0pIkSY3YyO3UcHidqercPPod3QK1qOjgudijQos3WlLIx3zahspm4dDJgWXuGDsnfqQfsxeZo49Z3Mde43a0ngzgAi1kpL2gkHKFKZVnk9cEUxiRltUQXARxhYGQ/YAvMk0QS0ONT8/OQY0cWrgPu/XbpKxv5O6IKe8zv8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724740443; c=relaxed/simple;
-	bh=P9zOrCau2M2SHj2r5Dp5xZiqEpHI+waUUi/eT5wM3ec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iSri264RXUEtqgeQKVb0EBLfg3ObdAU5WK7Nut2KecNXfpee1BYUVqauXNlDyGNZq834mzkfDJIWDFOvC+7ZYzvBVeGACImG59kL87iFCkV8T8TXZEbDoRao83uxpKROGhw2N9nqUEFVgbWk4PXFbQW6RkQBSSM7jMppxFwdaLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KI1KMHo0; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724740442; x=1756276442;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=P9zOrCau2M2SHj2r5Dp5xZiqEpHI+waUUi/eT5wM3ec=;
-  b=KI1KMHo0/kxkI1qrFB5BSieF5zSjqGZjG7YSoMG6eYlMnwbLvlkO60AP
-   bqVfstvE7DLDRzJH04sphi3FIAMULDfRGBEry4cGVSLjk08pbmxzEtADw
-   km6XZ0qx2ZrjKVsy6Vz+Go+QujbEzjVyKuPu0aP5g7n3Cl2Z2GiHqvm4s
-   wDpPh5I2S7FtkBwIBYmoL7lKSJpDg8G0B9yMa5HytI7TjMfFh9zVChbgb
-   fFENCRgks+V0ctFHYaEAoEg0f8nsHHzyPrV15xgdBODgqSMjFL+uOiNYA
-   89TobmPW9zMR1F7qwARutTHFiz/AFnVcRxbq+idfQMM8rKLPTdIqNyKc1
-   w==;
-X-CSE-ConnectionGUID: mHUAMulTQLyp9xWOC2Jm6g==
-X-CSE-MsgGUID: 0Ra6QN8hQQaZZPsplA1rQQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="34606220"
-X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
-   d="scan'208";a="34606220"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 23:34:01 -0700
-X-CSE-ConnectionGUID: FG++n/t7TZmX7tyo1f58fw==
-X-CSE-MsgGUID: zUpZghT4SdS8EMlyUKnNVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
-   d="scan'208";a="62722566"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 26 Aug 2024 23:33:58 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sipm8-000I9S-0k;
-	Tue, 27 Aug 2024 06:33:56 +0000
-Date: Tue, 27 Aug 2024 14:32:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Maksym Kutsevol <max@kutsevol.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Breno Leitao <leitao@debian.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] netcons: Add udp send fail statistics to netconsole
-Message-ID: <202408271419.3JJwwxE7-lkp@intel.com>
-References: <20240824215130.2134153-2-max@kutsevol.com>
+	s=arc-20240116; t=1724740540; c=relaxed/simple;
+	bh=nY0/H3WOUrLfgv5L/RMNt/knVUJQ5epgSeoWM5zheLU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iyH1LLtlcNvHPStHvr+Ho3doxZBBnoTO9UGqpapurJW1ui60y/ZQft8y9cYEAC77hqDJ8nXioL4j/QdXJjgF8Gjzng8RYUgcICXZMCtykZyVhaq4DPHqhtLzM3Zt5Cwgwq5XS8+mRveMFvtSwgPPHB4Nt6oCfRmslx+OEX4P81w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sCd6ofim; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4280ac10b7cso3168805e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 23:35:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724740536; x=1725345336; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=lS8pYIjpKxHllTTCGlIdW+0lwhgCRiezC87UqPm0UP0=;
+        b=sCd6ofimipdVTcQbIVyS0DBC2nqrRyOuCqa7yfh2SaNp5JsdVdO3HFxog1OmYwomZq
+         CE9Xby5pfUMraYFbj2oyUV2kzxPjzSlxUzIk6BTupIgM+cTwwdpSNDHYhybbJzENiuCR
+         hNpvL7bE/hk5HT9yCPocWhgdaYPUqp6HIAzCSCI2C5065zy5mEYGgu7FnrAQDiZOI2/o
+         hPOsEz0AES3COZ9w4Sua0YntB0TIBmf6xewTJJAc5YcuEv1QbZGGW1JK7SWc/YGycSgT
+         SS0Gf4PWbezW+sbvnl8NGcVuC3En3irn6ok+1Uf+wXAPcMjycfckDt0LfAj14h+fRhO2
+         cmnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724740536; x=1725345336;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lS8pYIjpKxHllTTCGlIdW+0lwhgCRiezC87UqPm0UP0=;
+        b=dvVa7Oy6CU8hG0Rdd6ntogLQVcKt5hpz5+4+UCZPdzKMqsSEJ2G47GRtnmJ1w1AzVP
+         YM9uUHdRmBd5SczJ3noIEMHyx8XblLgYJu4MLmcTyMqho6i/8D0hldy7Pyayxp/YxP8N
+         2LyW2jU3QKvOgqMN/uekQ/ws7oSNkRKhTHA2uIbMAyJyaR82cNdckIlYRaFI+dv12U8d
+         QUZCMIu9vKja/qIzbhztXybovL1Kk5esXlRdXsDbQwItfi1D0FAPYtG2xgQx4kKf2+Ic
+         ZFZPV7EOSdT1UDr12h2adRrOrj1mXhhPQysp4kmVGkpob7kSUUVnRfs5cLRzN/pRtkM6
+         /GcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUmc453NxQzMfjLcHR4FinwYeZPhUkhxmuD0eHcovQ3mLuWeMSe2PhjGyJlkiaz1rmtnWO3outLsjIjPFM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkkNhM/yyMG5mCm/EqnpOoKCQKd0NXJHbnO4zp57SRl1o1LYsJ
+	Vz+dLJ5TCA45hoAP96UVcQ4vYtaiVQ6sEXr0cI/l7322mgcXpYK0LITIfj4agao=
+X-Google-Smtp-Source: AGHT+IEQBav1LoTijqFAOUgGVRHn+h7FMFAoykM1EKo1Lgse2BJSGKqScvQ5+HBXOKGMZ4jv+TZZ6w==
+X-Received: by 2002:a05:6000:1f81:b0:373:6bf:95ea with SMTP id ffacd0b85a97d-3731185f73cmr4627255f8f.4.1724740536466;
+        Mon, 26 Aug 2024 23:35:36 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.222.82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730821adc2sm12307479f8f.91.2024.08.26.23.35.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 23:35:35 -0700 (PDT)
+Message-ID: <2b368426-a572-4d3c-b991-9532fa828d23@linaro.org>
+Date: Tue, 27 Aug 2024 08:35:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240824215130.2134153-2-max@kutsevol.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] soc: ti: Add and use PVU on K3-AM65 for DMA isolation
+To: Jan Kiszka <jan.kiszka@siemens.com>, Nishanth Menon <nm@ti.com>,
+ Santosh Shilimkar <ssantosh@kernel.org>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Bao Cheng Su <baocheng.su@siemens.com>, Hua Qian Li
+ <huaqian.li@siemens.com>, Diogo Ivo <diogo.ivo@siemens.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+ <kw@linux.com>, linux-pci@vger.kernel.org,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>
+References: <cover.1724694969.git.jan.kiszka@siemens.com>
+ <93da058b-8d72-4f76-9ee7-f6837a1a4a9a@linaro.org>
+ <3dcaee19-3671-4658-a2e7-247e42b85805@siemens.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <3dcaee19-3671-4658-a2e7-247e42b85805@siemens.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Maksym,
+On 26/08/2024 21:25, Jan Kiszka wrote:
+> On 26.08.24 20:53, Krzysztof Kozlowski wrote:
+>> On 26/08/2024 19:56, Jan Kiszka wrote:
+>>> Only few of the K3 SoCs have an IOMMU and, thus, can isolate the system
+>>> against DMA-based attacks of external PCI devices. The AM65 is without
+>>> an IOMMU, but it comes with something close to it: the Peripheral
+>>> Virtualization Unit (PVU).
+>>>
+>>> The PVU was originally designed to establish static compartments via a
+>>> hypervisor, isolate those DMA-wise against each other and the host and
+>>> even allow remapping of guest-physical addresses. But it only provides
+>>> a static translation region, not page-granular mappings. Thus, it cannot
+>>> be handled transparently like an IOMMU.
+>>
+>> You keep developing on some old kernel. I noticed it on few patchsets
+>> last days. Please work on mainline.
+>>
+> 
+> How did you come to this conclusion? This patch set was written for
+> mainline, just rebased and tested again over next-20240826 before
+> sending today.
 
-kernel test robot noticed the following build warnings:
+You send it to addresses you CANNOT get from mainline kernel. There is
+no way mainline kernel get_maintainers.pl produces them.
 
-[auto build test WARNING on 8af174ea863c72f25ce31cee3baad8a301c0cf0f]
+Best regards,
+Krzysztof
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Maksym-Kutsevol/netcons-Add-udp-send-fail-statistics-to-netconsole/20240826-163850
-base:   8af174ea863c72f25ce31cee3baad8a301c0cf0f
-patch link:    https://lore.kernel.org/r/20240824215130.2134153-2-max%40kutsevol.com
-patch subject: [PATCH 2/2] netcons: Add udp send fail statistics to netconsole
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20240827/202408271419.3JJwwxE7-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 08e5a1de8227512d4774a534b91cb2353cef6284)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408271419.3JJwwxE7-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408271419.3JJwwxE7-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/net/netconsole.c:27:
-   In file included from include/linux/mm.h:2228:
-   include/linux/vmstat.h:517:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from drivers/net/netconsole.c:35:
-   In file included from include/linux/netpoll.h:11:
-   In file included from include/linux/netdevice.h:38:
-   In file included from include/net/net_namespace.h:43:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from drivers/net/netconsole.c:35:
-   In file included from include/linux/netpoll.h:11:
-   In file included from include/linux/netdevice.h:38:
-   In file included from include/net/net_namespace.h:43:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from drivers/net/netconsole.c:35:
-   In file included from include/linux/netpoll.h:11:
-   In file included from include/linux/netdevice.h:38:
-   In file included from include/net/net_namespace.h:43:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
->> drivers/net/netconsole.c:341:3: warning: format specifies type 'unsigned long' but the argument has type 'size_t' (aka 'unsigned int') [-Wformat]
-     340 |         return sysfs_emit(buf, "xmit_drop: %lu enomem: %lu\n",
-         |                                            ~~~
-         |                                            %zu
-     341 |                 nt->stats.xmit_drop_count, nt->stats.enomem_count);
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/net/netconsole.c:341:30: warning: format specifies type 'unsigned long' but the argument has type 'size_t' (aka 'unsigned int') [-Wformat]
-     340 |         return sysfs_emit(buf, "xmit_drop: %lu enomem: %lu\n",
-         |                                                        ~~~
-         |                                                        %zu
-     341 |                 nt->stats.xmit_drop_count, nt->stats.enomem_count);
-         |                                            ^~~~~~~~~~~~~~~~~~~~~~
-   9 warnings generated.
-
-
-vim +341 drivers/net/netconsole.c
-
-   335	
-   336	static ssize_t stats_show(struct config_item *item, char *buf)
-   337	{
-   338		struct netconsole_target *nt = to_target(item);
-   339	
-   340		return sysfs_emit(buf, "xmit_drop: %lu enomem: %lu\n",
- > 341			nt->stats.xmit_drop_count, nt->stats.enomem_count);
-   342	}
-   343	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
