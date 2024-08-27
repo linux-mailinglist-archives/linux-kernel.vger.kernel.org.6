@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-302964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C9C996058E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:28:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61BC096058F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDEC81C22966
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:28:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86AF41C2299A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A4C19FA7A;
-	Tue, 27 Aug 2024 09:27:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A1419FA8A;
+	Tue, 27 Aug 2024 09:27:07 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE87E19D89D
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A6719E7E7
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724750824; cv=none; b=oQESOpRDQ8rH0kWCRyeky+2OEKnSw/coN3nH+K8KkIuU71+grXR+NVTdaNAOAmIMoEzwdz0hm5IsmbKA8XC3bVK0y1xsLUNiWzFkwlnDHgwJzge4frMj79yhvReMMUFxNFMrbujO0Q/sHCRWMkvVPt1+w1FdUvxhnTnalRLTR4k=
+	t=1724750825; cv=none; b=JseTgkEuyX1eFEbEPv3HLR/iF/AAZfBHREsONpurgiKqMT2X9koYBnUUiuuPnptiHaRYcnBww3DLMfhy6q4j06wNT0+SR4628HhIQ/5eoiwvI6zXvhx5ZMfxRqpI2ppJQ54jhKYBGLoyLWp3I4JerpDWATsBCGSu0mpNnt2Un1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724750824; c=relaxed/simple;
-	bh=Oj50tsTi4io39jeBF54dMLAlg7sXeXQzapMtB4VD+Dg=;
+	s=arc-20240116; t=1724750825; c=relaxed/simple;
+	bh=HFeILM/8I55HanXA4IykNgai7hjm86Hy9lecNhsl3HI=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=WpleOmqhVvx4VBypKKEoDf5UZ1P9IonnaJRZGAseWb+3eK8/I+R35ud3ukEZR326AGgT8h24A7bGP8xqoSp5eeu3JJ5zgSMfMKj17hZA5cq+t9N+rZeRHrY2yD2Mz9CClCOU9vnOay83eUxkacXYUdhNW/1XQxxc8DrN/EkUm2Q=
+	 Content-Type; b=E/QFOSWcHWoMyF00WceHlvsuS39P693zkuw5WYcMR386k7VLOicoqpRZXBcG7yhUDFcIoGcBpOU0GUCCNFeIPnEx4AU/48BQfHUdQQtTHaUlEDx1/uzpu4X4jjUVCOJ6mkLHJMtSddUoT5bgZtmqqMM0TkLMqn25WVMQqSQRHSE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAEC4C8B7BE;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1E99C8B7C9;
 	Tue, 27 Aug 2024 09:27:04 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1sisUN-00000004SNh-1Gkx;
+	id 1sisUN-00000004SOF-1yGF;
 	Tue, 27 Aug 2024 05:27:47 -0400
-Message-ID: <20240827092747.159308148@goodmis.org>
+Message-ID: <20240827092747.323259636@goodmis.org>
 User-Agent: quilt/0.68
-Date: Tue, 27 Aug 2024 05:27:23 -0400
+Date: Tue, 27 Aug 2024 05:27:24 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
@@ -66,8 +66,7 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Clark Williams <williams@redhat.com>,
  Linus Torvalds <torvalds@linux-foundation.org>,
  "Jonathan Corbet" <corbet@lwn.net>
-Subject: [for-next][PATCH 7/8] tracing: Add option to set an instance to be the trace_printk
- destination
+Subject: [for-next][PATCH 8/8] tracing/Documentation: Start a document on how to debug with tracing
 References: <20240827092716.515115830@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -79,19 +78,11 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-Add a option "trace_printk_dest" that will make the tracing instance the
-location that trace_printk() will go to. This is useful if the
-trace_printk or one of the top level tracers is too noisy and there's a
-need to separate the two. Then an instance can be created, the
-trace_printk can be set to go there instead, where it will not be lost in
-the noise of the top level tracer.
+Add a new document Documentation/trace/debugging.rst that will hold
+various ways to debug tracing.
 
-Note, only one instance can be the destination of trace_printk at a time.
-If an instance sets this flag, the instance that had it set will have it
-cleared. There is always one instance that has this set. By default, that
-is the top instance. This flag cannot be cleared from the top instance.
-Doing so will result in an -EINVAL. The only way this flag can be cleared
-from the top instance is by another instance setting it.
+This initial version mentions trace_printk and how to create persistent
+buffers that can last across bootups.
 
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Mark Rutland <mark.rutland@arm.com>
@@ -122,142 +113,192 @@ Cc: John Kacur <jkacur@redhat.com>
 Cc: Clark Williams <williams@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: "Jonathan Corbet" <corbet@lwn.net>
-Link: https://lore.kernel.org/20240823014019.545459018@goodmis.org
+Link: https://lore.kernel.org/20240823014019.702433486@goodmis.org
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- Documentation/trace/ftrace.rst | 12 ++++++++++
- kernel/trace/trace.c           | 40 +++++++++++++++++++++++++++++-----
- kernel/trace/trace.h           |  1 +
- 3 files changed, 48 insertions(+), 5 deletions(-)
+ .../admin-guide/kernel-parameters.txt         |   2 +
+ Documentation/trace/debugging.rst             | 159 ++++++++++++++++++
+ 2 files changed, 161 insertions(+)
+ create mode 100644 Documentation/trace/debugging.rst
 
-diff --git a/Documentation/trace/ftrace.rst b/Documentation/trace/ftrace.rst
-index 5aba74872ba7..4073ca48af4a 100644
---- a/Documentation/trace/ftrace.rst
-+++ b/Documentation/trace/ftrace.rst
-@@ -1186,6 +1186,18 @@ Here are the available options:
-   trace_printk
- 	Can disable trace_printk() from writing into the buffer.
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 9e507e6cb4c8..9bb50dc78338 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -6785,6 +6785,8 @@
  
-+  trace_printk_dest
-+	Set to have trace_printk() and similar internal tracing functions
-+	write into this instance. Note, only one trace instance can have
-+	this set. By setting this flag, it clears the trace_printk_dest flag
-+	of the instance that had it set previously. By default, the top
-+	level trace has this set, and will get it set again if another
-+	instance has it set then clears it.
+ 				reserve_mem=12M:4096:trace trace_instance=boot_map^traceoff^traceprintk@trace,sched,irq
+ 
++			See also Documentation/trace/debugging.rst
 +
-+	This flag cannot be cleared by the top level instance, as it is the
-+	default instance. The only way the top level instance has this flag
-+	cleared, is by it being set in another instance.
+ 
+ 	trace_options=[option-list]
+ 			[FTRACE] Enable or disable tracer options at boot.
+diff --git a/Documentation/trace/debugging.rst b/Documentation/trace/debugging.rst
+new file mode 100644
+index 000000000000..54fb16239d70
+--- /dev/null
++++ b/Documentation/trace/debugging.rst
+@@ -0,0 +1,159 @@
++==============================
++Using the tracer for debugging
++==============================
 +
-   annotate
- 	It is sometimes confusing when the CPU buffers are full
- 	and one CPU buffer had a lot of events recently, thus
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 35b37c9aa26c..658b40b483a3 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -482,7 +482,7 @@ EXPORT_SYMBOL_GPL(unregister_ftrace_export);
- 	 TRACE_ITER_ANNOTATE | TRACE_ITER_CONTEXT_INFO |		\
- 	 TRACE_ITER_RECORD_CMD | TRACE_ITER_OVERWRITE |			\
- 	 TRACE_ITER_IRQ_INFO | TRACE_ITER_MARKERS |			\
--	 TRACE_ITER_HASH_PTR)
-+	 TRACE_ITER_HASH_PTR | TRACE_ITER_TRACE_PRINTK)
- 
- /* trace_options that are only supported by global_trace */
- #define TOP_LEVEL_TRACE_FLAGS (TRACE_ITER_PRINTK |			\
-@@ -490,7 +490,7 @@ EXPORT_SYMBOL_GPL(unregister_ftrace_export);
- 
- /* trace_flags that are default zero for instances */
- #define ZEROED_TRACE_FLAGS \
--	(TRACE_ITER_EVENT_FORK | TRACE_ITER_FUNC_FORK)
-+	(TRACE_ITER_EVENT_FORK | TRACE_ITER_FUNC_FORK | TRACE_ITER_TRACE_PRINTK)
- 
- /*
-  * The global_trace is the descriptor that holds the top-level tracing
-@@ -513,6 +513,16 @@ static __always_inline bool printk_binsafe(struct trace_array *tr)
- 	return !(tr->flags & TRACE_ARRAY_FL_BOOT);
- }
- 
-+static void update_printk_trace(struct trace_array *tr)
-+{
-+	if (printk_trace == tr)
-+		return;
++Copyright 2024 Google LLC.
 +
-+	printk_trace->trace_flags &= ~TRACE_ITER_TRACE_PRINTK;
-+	printk_trace = tr;
-+	tr->trace_flags |= TRACE_ITER_TRACE_PRINTK;
-+}
++:Author:   Steven Rostedt <rostedt@goodmis.org>
++:License:  The GNU Free Documentation License, Version 1.2
++          (dual licensed under the GPL v2)
 +
- void trace_set_ring_buffer_expanded(struct trace_array *tr)
- {
- 	if (!tr)
-@@ -5300,7 +5310,8 @@ int trace_keep_overwrite(struct tracer *tracer, u32 mask, int set)
- int set_tracer_flag(struct trace_array *tr, unsigned int mask, int enabled)
- {
- 	if ((mask == TRACE_ITER_RECORD_TGID) ||
--	    (mask == TRACE_ITER_RECORD_CMD))
-+	    (mask == TRACE_ITER_RECORD_CMD) ||
-+	    (mask == TRACE_ITER_TRACE_PRINTK))
- 		lockdep_assert_held(&event_mutex);
- 
- 	/* do nothing if flag is already set */
-@@ -5312,6 +5323,25 @@ int set_tracer_flag(struct trace_array *tr, unsigned int mask, int enabled)
- 		if (tr->current_trace->flag_changed(tr, mask, !!enabled))
- 			return -EINVAL;
- 
-+	if (mask == TRACE_ITER_TRACE_PRINTK) {
-+		if (enabled) {
-+			update_printk_trace(tr);
-+		} else {
-+			/*
-+			 * The global_trace cannot clear this.
-+			 * It's flag only gets cleared if another instance sets it.
-+			 */
-+			if (printk_trace == &global_trace)
-+				return -EINVAL;
-+			/*
-+			 * An instance must always have it set.
-+			 * by default, that's the global_trace instane.
-+			 */
-+			if (printk_trace == tr)
-+				update_printk_trace(&global_trace);
-+		}
-+	}
++- Written for: 6.12
 +
- 	if (enabled)
- 		tr->trace_flags |= mask;
- 	else
-@@ -9687,7 +9717,7 @@ static int __remove_instance(struct trace_array *tr)
- 	}
- 
- 	if (printk_trace == tr)
--		printk_trace = &global_trace;
-+		update_printk_trace(&global_trace);
- 
- 	tracing_set_nop(tr);
- 	clear_ftrace_function_probes(tr);
-@@ -10578,7 +10608,7 @@ __init static void enable_instances(void)
- 			tracer_tracing_off(tr);
- 
- 		if (traceprintk)
--			printk_trace = tr;
-+			update_printk_trace(tr);
- 
- 		/*
- 		 * If start is set, then this is a mapped buffer, and
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 07b2d2af9b33..c866991b9c78 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -1321,6 +1321,7 @@ extern int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
- 		C(IRQ_INFO,		"irq-info"),		\
- 		C(MARKERS,		"markers"),		\
- 		C(EVENT_FORK,		"event-fork"),		\
-+		C(TRACE_PRINTK,		"trace_printk_dest"),	\
- 		C(PAUSE_ON_TRACE,	"pause-on-trace"),	\
- 		C(HASH_PTR,		"hash-ptr"),	/* Print hashed pointer */ \
- 		FUNCTION_FLAGS					\
++Introduction
++------------
++The tracing infrastructure can be very useful for debugging the Linux
++kernel. This document is a place to add various methods of using the tracer
++for debugging.
++
++First, make sure that the tracefs file system is mounted::
++
++ $ sudo mount -t tracefs tracefs /sys/kernel/tracing
++
++
++Using trace_printk()
++--------------------
++
++trace_printk() is a very lightweight utility that can be used in any context
++inside the kernel, with the exception of "noinstr" sections. It can be used
++in normal, softirq, interrupt and even NMI context. The trace data is
++written to the tracing ring buffer in a lockless way. To make it even
++lighter weight, when possible, it will only record the pointer to the format
++string, and save the raw arguments into the buffer. The format and the
++arguments will be post processed when the ring buffer is read. This way the
++trace_printk() format conversions are not done during the hot path, where
++the trace is being recorded.
++
++trace_printk() is meant only for debugging, and should never be added into
++a subsystem of the kernel. If you need debugging traces, add trace events
++instead. If a trace_printk() is found in the kernel, the following will
++appear in the dmesg::
++
++  **********************************************************
++  **   NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE   **
++  **                                                      **
++  ** trace_printk() being used. Allocating extra memory.  **
++  **                                                      **
++  ** This means that this is a DEBUG kernel and it is     **
++  ** unsafe for production use.                           **
++  **                                                      **
++  ** If you see this message and you are not debugging    **
++  ** the kernel, report this immediately to your vendor!  **
++  **                                                      **
++  **   NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE   **
++  **********************************************************
++
++Debugging kernel crashes
++------------------------
++There is various methods of acquiring the state of the system when a kernel
++crash occurs. This could be from the oops message in printk, or one could
++use kexec/kdump. But these just show what happened at the time of the crash.
++It can be very useful in knowing what happened up to the point of the crash.
++The tracing ring buffer, by default, is a circular buffer than will
++overwrite older events with newer ones. When a crash happens, the content of
++the ring buffer will be all the events that lead up to the crash.
++
++There are several kernel command line parameters that can be used to help in
++this. The first is "ftrace_dump_on_oops". This will dump the tracing ring
++buffer when a oops occurs to the console. This can be useful if the console
++is being logged somewhere. If a serial console is used, it may be prudent to
++make sure the ring buffer is relatively small, otherwise the dumping of the
++ring buffer may take several minutes to hours to finish. Here's an example
++of the kernel command line::
++
++  ftrace_dump_on_oops trace_buf_size=50K
++
++Note, the tracing buffer is made up of per CPU buffers where each of these
++buffers is broken up into sub-buffers that are by default PAGE_SIZE. The
++above trace_buf_size option above sets each of the per CPU buffers to 50K,
++so, on a machine with 8 CPUs, that's actually 400K total.
++
++Persistent buffers across boots
++-------------------------------
++If the system memory allows it, the tracing ring buffer can be specified at
++a specific location in memory. If the location is the same across boots and
++the memory is not modified, the tracing buffer can be retrieved from the
++following boot. There's two ways to reserve memory for the use of the ring
++buffer.
++
++The more reliable way (on x86) is to reserve memory with the "memmap" kernel
++command line option and then use that memory for the trace_instance. This
++requires a bit of knowledge of the physical memory layout of the system. The
++advantage of using this method, is that the memory for the ring buffer will
++always be the same::
++
++  memmap==12M$0x284500000 trace_instance=boot_map@0x284500000:12M
++
++The memmap above reserves 12 megabytes of memory at the physical memory
++location 0x284500000. Then the trace_instance option will create a trace
++instance "boot_map" at that same location with the same amount of memory
++reserved. As the ring buffer is broke up into per CPU buffers, the 12
++megabytes will be broken up evenly between those CPUs. If you have 8 CPUs,
++each per CPU ring buffer will be 1.5 megabytes in size. Note, that also
++includes meta data, so the amount of memory actually used by the ring buffer
++will be slightly smaller.
++
++Another more generic but less robust way to allocate a ring buffer mapping
++at boot is with the "reserve_mem" option::
++
++  reserve_mem=12M:4096:trace trace_instance=boot_map@trace
++
++The reserve_mem option above will find 12 megabytes that are available at
++boot up, and align it by 4096 bytes. It will label this memory as "trace"
++that can be used by later command line options.
++
++The trace_instance option creates a "boot_map" instance and will use the
++memory reserved by reserve_mem that was labeled as "trace". This method is
++more generic but may not be as reliable. Due to KASLR, the memory reserved
++by reserve_mem may not be located at the same location. If this happens,
++then the ring buffer will not be from the previous boot and will be reset.
++
++Sometimes, by using a larger alignment, it can keep KASLR from moving things
++around in such a way that it will move the location of the reserve_mem. By
++using a larger alignment, you may find better that the buffer is more
++consistent to where it is placed::
++
++  reserve_mem=12M:0x2000000:trace trace_instance=boot_map@trace
++
++On boot up, the memory reserved for the ring buffer is validated. It will go
++through a series of tests to make sure that the ring buffer contains valid
++data. If it is, it will then set it up to be available to read from the
++instance. If it fails any of the tests, it will clear the entire ring buffer
++and initialize it as new.
++
++The layout of this mapped memory may not be consistent from kernel to
++kernel, so only the same kernel is guaranteed to work if the mapping is
++preserved. Switching to a different kernel version may find a different
++layout and mark the buffer as invalid.
++
++Using trace_printk() in the boot instance
++-----------------------------------------
++By default, the content of trace_printk() goes into the top level tracing
++instance. But this instance is never preserved across boots. To have the
++trace_printk() content, and some other internal tracing go to the preserved
++buffer (like dump stacks), either set the instance to be the trace_printk()
++destination from the kernel command line, or set it after boot up via the
++trace_printk_dest option.
++
++After boot up::
++
++  echo 1 > /sys/kernel/tracing/instances/boot_map/options/trace_printk_dest
++
++From the kernel command line::
++
++  reserve_mem=12M:4096:trace trace_instance=boot_map^traceprintk^traceoff@trace
++
++If setting it from the kernel command line, it is recommended to also
++disable tracing with the "traceoff" flag, and enable tracing after boot up.
++Otherwise the trace from the most recent boot will be mixed with the trace
++from the previous boot, and may make it confusing to read.
 -- 
 2.43.0
 
