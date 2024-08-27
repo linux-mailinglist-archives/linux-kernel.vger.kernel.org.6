@@ -1,120 +1,111 @@
-Return-Path: <linux-kernel+bounces-302530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C382895FFD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:31:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C26A695FFCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 035531C21E01
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:31:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C761B217F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA0C34CDE;
-	Tue, 27 Aug 2024 03:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C74286A3;
+	Tue, 27 Aug 2024 03:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FXJl1j/A"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96DC9199BC;
-	Tue, 27 Aug 2024 03:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="DXUCWhIW"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6725E3232;
+	Tue, 27 Aug 2024 03:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724729495; cv=none; b=pTRiacEWFCOzwwcjg2sonbdunYoyx8cb86rTcuuRFZ07derQtxr3FqG5g9S9wMT7Ns1k81FTLvHHQkoeKoPiVYd678vfFZ2SLzQG2a/OfIP8Gc3/rLmUKP+cEdJmnO8fKut1kLzWwGkqbG9lYOGhrl5lja6dzn/EGJEwvRPPgeA=
+	t=1724729467; cv=none; b=phwjfjNyI7bjPvpdbb/oYb9+w8KFNb2XCcTahxMqjso2fXTXwZQLIRl7Vyj0cdqb1SvFQH2BEpxGNtQAT9N7LR9953ygHX6tGoqMVAXuEf/xbk0r/KbQ7fzqAVELMP0OgN7qSfzM9CER4ct3bdVCTAN0dMywLnpwWYTGOvx+XXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724729495; c=relaxed/simple;
-	bh=ZsAX6fYNBN8s4cM6prV7+Nw4KR6G6zRcui+vpWCXiiM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y8KwqSUTeDlG+sKSDBnVKCOjj9tPDr6vNiEuvIYximkZjNp3Ob4nCZOVxw4TOgMMoHl9d2zAzfbRg9o0OjWUfR0Oi42GDYIBDskuWqDjRipxQvnImc7pAQUPmhUAzF+qGzvBk1t6qTCOy16qNq5R2ZqZ/yxl4LIAErb5wGNLLFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FXJl1j/A; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724729492; x=1756265492;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZsAX6fYNBN8s4cM6prV7+Nw4KR6G6zRcui+vpWCXiiM=;
-  b=FXJl1j/AyNRlQ0Km+tpPSaeXKtVgDT3lDNvXqNlbwOQdHImGWzHSyKke
-   bqz17w95kcG1tC0Af6f67Dlm8yMfHIdILGlrTX3ovKVa5pQ+66zPo+Hj5
-   gjNlqzGc9ZvTuDfDs+VGIPURzrWGByAq1N2Kq0IXCMK7rpn4JRghg8aRG
-   Rth7SNULAidyorGbn2sHqXGYlAuvlib4TnhW8Ogo0JLuwL7ijqB3ouX0k
-   dWRIergQTl41uO5gL3h5f0GQRSl46/JcuM3FaDBGsIAk/LJOuSU3t9td1
-   MAsLUiCfwg/EmJQQFKls+ertCa5P+Cr0tdpq7MsPZN2Jrs4VT1Kh6gYvu
-   w==;
-X-CSE-ConnectionGUID: U0VsYO+CQ5mT+4pCIfODow==
-X-CSE-MsgGUID: UI3+y8WLQ4i8nk9v/4WsOw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23154137"
-X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
-   d="scan'208";a="23154137"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 20:31:30 -0700
-X-CSE-ConnectionGUID: QDU5QLH3TqucnA37kaonFw==
-X-CSE-MsgGUID: w9+02ioqSw6jKQ/o9ovjaQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
-   d="scan'208";a="62698679"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa008.fm.intel.com with ESMTP; 26 Aug 2024 20:31:22 -0700
-Date: Tue, 27 Aug 2024 11:28:59 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
-	Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>,
-	Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Alvaro Karsz <alvaro.karsz@solid-run.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>,
-	Chaitanya Kulkarni <kch@nvidia.com>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-fpga@vger.kernel.org, linux-gpio@vger.kernel.org,
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	virtualization@lists.linux.dev
-Subject: Re: [PATCH v3 2/9] fpga/dfl-pci.c: Replace deprecated PCI functions
-Message-ID: <Zs1H+zgzZAuLUnza@yilunxu-OptiPlex-7050>
-References: <20240822134744.44919-1-pstanner@redhat.com>
- <20240822134744.44919-3-pstanner@redhat.com>
+	s=arc-20240116; t=1724729467; c=relaxed/simple;
+	bh=pdEyDHiUewDTYCXKOReuxFYlYTCvVNEK8XdDRwlXMho=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Om4h0xxkpxsVCNaxvnsmKMLhRwGDrM+N1+sImyk2jLmoZuvfxWHB9bRuG/+MQxtMR0DH83PNoFT6Yu4GshZaKw/TbnslDAFstd2OpofwzgYyzLWv536zAbdP0eMc//Vsd34X6/4j2AkcLwsprryiG1h6tAFW4PdMmSyCq1fikK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=DXUCWhIW; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=vPC0a
+	v8885Eqk/XJsUnGb3mosbXQZFoAH9c7bSZMNbI=; b=DXUCWhIWkGHlEpJatfQpj
+	4/Qv401XUT0lJ6CX8Ox0S22H9RnVEsU0kGJ0VorZNMe/963dQs43WJQeErnlKZ/C
+	Dl61h2ny1a0RfAj84N4rJ+tORQQmvLt8kqkpjfvwXlW/TdHyyIPh107ejxxNGdIW
+	eH80osNJ3E93Q3uxcGNZgg=
+Received: from localhost.localdomain (unknown [111.48.69.245])
+	by gzsmtp3 (Coremail) with SMTP id sigvCgAXreFjSM1mFL0CAA--.640S2;
+	Tue, 27 Aug 2024 11:30:44 +0800 (CST)
+From: soxiebing <soxiebing@163.com>
+To: tiwai@suse.de
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: hda: fix snd_hda_bus_reset when single_cmd is not supported
+Date: Tue, 27 Aug 2024 11:30:43 +0800
+Message-Id: <20240827033043.107572-1-soxiebing@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240821014238.338864-1-soxiebing@163.com>
+References: <20240821014238.338864-1-soxiebing@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822134744.44919-3-pstanner@redhat.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:sigvCgAXreFjSM1mFL0CAA--.640S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Wry7Xr47WrykAryrtr1DJrb_yoW8WF17pr
+	WrG3Z3Krs5Jr1xKFZa9wsYyryjyayayrW5XFn8JryUC3s8JFn5tr4UWrWYgasrAryxurn0
+	vF4jgay29w1UZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zR7rchUUUUU=
+X-CM-SenderInfo: 5vr0xvpelqwqqrwthudrp/1tbiRARIw2VOEdGPLgAAsB
 
-On Thu, Aug 22, 2024 at 03:47:34PM +0200, Philipp Stanner wrote:
-> pcim_iomap_regions() and pcim_iomap_table() have been deprecated by the
-> PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
-> pcim_iomap_table(), pcim_iomap_regions_request_all()").
-> 
-> Port dfl-pci.c to the successor, pcim_iomap_region().
-> 
-> Consistently, replace pcim_iounmap_regions() with pcim_iounmap_region().
-> 
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+>On Mon, 26 Aug 2024 11:19:58 +0200,
+>soxiebing wrote:
+>> 
+>> >On Wed, 21 Aug 2024 03:42:38 +0200,
+>> >soxiebing wrote:
+>> >> 
+>> >> From: songxiebing <songxiebing@kylinos.cn>
+>> >> 
+>> >> When an azx_get_desponse timeout occurs, ensure that bus_reset
+>> >> can be used when fallback_to_single_cmd is not supported.
+>> >> 
+>> >> Signed-off-by: songxiebing <songxiebing@kylinos.cn>
+>> >
+>> >Why do you need to change?  Does it fix any real problem you faced?
+>> 
+>> Thanks for reply, i am testing all these days, but the problem is
+>> still exists even if using bus reset.
+>>
+>> The problem i encountered is that hda_call_codec_resume returned 
+>> timeout of 120 seconds(defined CONFIG_DPM_WATCHDOG)) when doing s4, 
+>> azx_get_response timeout occured, it is a low probability event.
+>> 
+>> To avoid exceeding 120s, can i change the count value to 3 in 
+>> hda_set_power_state ?
+>
+>So the change you suggested isn't for any real "fix" but to allow the
+>possible workaround with single_cmd to be applicable somehow in a
+>different form.  Then we should rather try debugging the original
+>issue, instead of change it.
+>
+>Does the response timeout happen *during* the S4 suspend, or during S4
+>resume, or after S4 resume?
+>
+>To be noted, the behavior you changed is only for the single_cmd
+>option is set explicitly, so it's more or less the designed behavior,
+>and I don't think it's good to change blindly.
 
-Acked-by: Xu Yilun <yilun.xu@intel.com>
+The timeout happen during S4 resume. 
 
-Thanks.
+In hda_set_power_state function, the count value setting at most 10 times,
+i feel like there are a lot of retries, can we change it to 3 times, to avoid
+exceeding 120s ?
+
+thanks,
+
+soxiebing
+
 
