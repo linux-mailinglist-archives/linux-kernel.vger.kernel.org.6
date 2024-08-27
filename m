@@ -1,159 +1,180 @@
-Return-Path: <linux-kernel+bounces-303400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B27E6960B8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:15:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1C7E960BCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FE952867C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:15:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6943128622D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A1A1BF33A;
-	Tue, 27 Aug 2024 13:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Gtp+w5y0"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31E51BF7E7;
+	Tue, 27 Aug 2024 13:22:21 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806E11BE234
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 13:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0729A19DF60;
+	Tue, 27 Aug 2024 13:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724764429; cv=none; b=GHXsyjp79L+Naj6Y1UHXGSah1VepoDrn7rJuF8KoXgmDcVvmL9kvUPEmd2FUdJeq9nRNWUUims6NzjsEW86FijfoVJcGBa1BWN8ALPok7GVvi7ElbTs17UP/DhHyvAlQqlXg6AIMVIldUMzMRtvjjoCbUiIvsz4XfT6b1XN7R4A=
+	t=1724764941; cv=none; b=jhy0aoaH6cc44uorYbBENti0RHTPBdVzWzbg0fDeZW5HMsV6OFhberHiGCRcJXnOqFAS09z1yLrLHKJvuxb1/MO/UDuLMOoP4Lj036KxnLcsn5o5aLR90LNruMrUkATcksJjAV0PbOLZBZIy4t1IT+kRC0FILu78YJ4AdmzmhVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724764429; c=relaxed/simple;
-	bh=ni9G1S4E/Zcoya3p7dd4iVfMl5d5cjwBAZW7p+cjrHY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k/vybURalWSc9HUnI8IHK/Jc4rNOhNq4ECQxAjgr/RgpndV1iqf8FoABqcWgvi+ENFIn7MRRl4DneqOfO8q7q1Wex38c65jrJ71t5L2h7mHBlILgllwEJOTQV/pNF/q4EDxSMZ6kJwcnmO+EvUgCCUJ7szfOAr8wi14wUMV2JUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Gtp+w5y0; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47RDDg8q048627;
-	Tue, 27 Aug 2024 08:13:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724764422;
-	bh=HdPtO5uCCrARzRd5hu48H8CTluw1dxlNvgyjhkO3yqU=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=Gtp+w5y0dbzmST35cTi0VobRiNHLytSttIoBB+sfY10nxvPA8uvHUqeYz6nR69FgB
-	 EZ8i3uwmn5d+p7lYmdpQOtJ2GFQvZB3VR59wBXuNF3atXFV95bJx1DAN4oV6v/OjDB
-	 nGImRv33NtgnopPGMOvcvBPtiVzpS5Fz1KgsOXR0=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47RDDgMa026117
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 27 Aug 2024 08:13:42 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 27
- Aug 2024 08:13:42 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 27 Aug 2024 08:13:42 -0500
-Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47RDDgZ0064263;
-	Tue, 27 Aug 2024 08:13:42 -0500
-Date: Tue, 27 Aug 2024 08:13:42 -0500
-From: Bryan Brattlof <bb@ti.com>
-To: Dhruva Gole <d-gole@ti.com>
-CC: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@vger.kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Markus Schneider-Pargmann <msp@baylibre.com>,
-        Andrew Davis <afd@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Vibhore Vardhan <vibhore@ti.com>
-Subject: Re: [PATCH] arm64: dts: ti: k3-am62: use opp_efuse_table for
- opp-table syscon
-Message-ID: <20240827131342.6wrielete3yeoinl@bryanbrattlof.com>
-X-PGP-Fingerprint: D3D1 77E4 0A38 DF4D 1853 FEEF 41B9 0D5D 71D5 6CE0
-References: <20240827080007.2097276-1-d-gole@ti.com>
+	s=arc-20240116; t=1724764941; c=relaxed/simple;
+	bh=xq1KTl4mg5V2fkl/ICHbM5ZuA66HbQkoAYIeKBm+d3E=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bJTDgnhp47TFRKB/LUI/sbUHg26gqXrjjRqSOkP3e3IRD5ctXofF9aA3qgYcD7Vsm6Hwqhxz46phbnHw0P2fL2J8cJjXbW432Xe/9ZemGaDVc+WVfeC3Na6AN8UihoWi6Crq8bf80P7rPQCAYc6LpNKg3dzE80IZUFs1jmbF5RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WtSp40VM8zfbfl;
+	Tue, 27 Aug 2024 21:20:12 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id 81EFE180105;
+	Tue, 27 Aug 2024 21:22:15 +0800 (CST)
+Received: from localhost.localdomain (10.90.30.45) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 27 Aug 2024 21:22:14 +0800
+From: Jijie Shao <shaojijie@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>
+CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
+	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <shaojijie@huawei.com>,
+	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
+	<libaihan@huawei.com>, <andrew@lunn.ch>, <jdamato@fastly.com>,
+	<horms@kernel.org>, <jonathan.cameron@huawei.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH V5 net-next 00/11] Add support of HIBMCGE Ethernet Driver
+Date: Tue, 27 Aug 2024 21:14:44 +0800
+Message-ID: <20240827131455.2919051-1-shaojijie@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <20240827080007.2097276-1-d-gole@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
-On August 27, 2024 thus sayeth Dhruva Gole:
-> Add another entry in the wkup_conf for the syscon node, and then use
-> that for the syscon in opp-table.
-> 
-> Marking entire wkup_conf as "syscon", "simple-mfd" is wrong and needs to
-> be addressed similar to how other child-nodes in wkup_conf are implemented
-> in the same file.
-> 
-> Signed-off-by: Dhruva Gole <d-gole@ti.com>
-> ---
-> 
-> Based on the discussion we had on [0] for AM62P/A devices setting OPP,
-> Here we fix the AM625's opp-table using the syscon region in wkup_conf.
-> 
-> Build tested on top of linux-next.
-> 
-> Cc: Bryan Brattlof <bb@ti.com>
-> Cc: Vignesh Raghavendra <vigneshr@ti.com>
-> Cc: Vibhore Vardhan <vibhore@ti.com>
-> 
-> ---
-> 
->  arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi | 5 +++++
->  arch/arm64/boot/dts/ti/k3-am625.dtsi       | 2 +-
->  2 files changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
-> index e0afafd532a5..3aff8af549a5 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
-> @@ -22,6 +22,11 @@ chipid: chipid@14 {
->  			reg = <0x14 0x4>;
->  		};
->  
-> +		opp_efuse_table: syscon@18 {
-> +			compatible = "ti,am62-opp-efuse-table", "syscon";
-> +			reg = <0x18 0x4>;
-> +		};
-> +
->  		cpsw_mac_syscon: ethernet-mac-syscon@200 {
->  			compatible = "ti,am62p-cpsw-mac-efuse", "syscon";
->  			reg = <0x200 0x8>;
-> diff --git a/arch/arm64/boot/dts/ti/k3-am625.dtsi b/arch/arm64/boot/dts/ti/k3-am625.dtsi
-> index c3d1db47dc9f..c249883a8a8d 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am625.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am625.dtsi
-> @@ -108,7 +108,7 @@ cpu3: cpu@3 {
->  	a53_opp_table: opp-table {
->  		compatible = "operating-points-v2-ti-cpu";
->  		opp-shared;
-> -		syscon = <&wkup_conf>;
-> +		syscon = <&opp_efuse_table>;
+This patch set adds the support of Hisilicon BMC Gigabit Ethernet Driver.
 
-Ah I wish it was as easy as this. Unfortunately ti-cpufreq.c embeds the 
-0x18 offset from the start of the WKUP_CRTL_MMR to get to the 
-JTAG_USER_ID[0] for the AM62x. For the AM62Ax and AM62Px I used a 0x0 
-offset which is why this works for them. (Essentially hacking around the 
-issue until I could find a way to fix this)
+This patch set includes basic Rx/Tx functionality. It also includes
+the registration and interrupt codes.
 
-I think we may need some coordination between the different maintainers 
-to get this fixed without breaking DFS for the AM62x for a release. That 
-or we could add some logic in the driver to check for an offset in this 
-property eg: 'syscon = <&opp_efuse_table 0x18>;' and use that. The end 
-goal is to not need the offset at all so this is a lot of noise 
-generation just to keep things working while we clean it up.
+This work provides the initial support to the HIBMCGE and
+would incrementally add features or enhancements.
 
-All of the solutions I can think of are super messy unfortunately.
+---
+ChangeLog:
+v4 -> v5:
+  - Delete unnecessary semicolon, suggested by Jakub.
+  v4: https://lore.kernel.org/all/20240826081258.1881385-1-shaojijie@huawei.com/
+v3 -> v4:
+  - Delete INITED_STATE in priv, suggested by Andrew.
+  - Delete unnecessary defensive code in hbg_phy_start()
+    and hbg_phy_stop(), suggested by Andrew.
+  v3: https://lore.kernel.org/all/20240822093334.1687011-1-shaojijie@huawei.com/
+v2 -> v3:
+  - Add "select PHYLIB" in Kconfig, reported by Jakub.
+  - Use ndo_validate_addr() instead of is_valid_ether_addr()
+    in dev_set_mac_address(), suggested by Jakub and Andrew.
+  v2: https://lore.kernel.org/all/20240820140154.137876-1-shaojijie@huawei.com/
+v1 -> v2:
+  - fix build errors reported by kernel test robot <lkp@intel.com>
+    Closes: https://lore.kernel.org/oe-kbuild-all/202408192219.zrGff7n1-lkp@intel.com/
+    Closes: https://lore.kernel.org/oe-kbuild-all/202408200026.q20EuSHC-lkp@intel.com/
+  v1: https://lore.kernel.org/all/20240819071229.2489506-1-shaojijie@huawei.com/
+RFC v2 -> v1:
+  - Use FIELD_PREP/FIELD_GET instead of union, suggested by Andrew.
+  - Delete unnecessary defensive code, suggested by Andrew.
+  - A few other minor changes.
+  RFC v2: https://lore.kernel.org/all/20240813135640.1694993-1-shaojijie@huawei.com/
+RFC v1 -> RFC v2:
+  - Replace linkmode_copy() with phy_remove_link_mode() to
+    simplify the PHY configuration process, suggested by Andrew.
+  - Delete hbg_get_link_status() from the scheduled task, suggested by Andrew.
+  - Delete validation for mtu in hbg_net_change_mtu(), suggested by Andrew.
+  - Delete validation for mac address in hbg_net_set_mac_address(),
+    suggested by Andrew.
+  - Use napi_complete_done() to simplify the process, suggested by Joe Damato.
+  - Use ethtool_op_get_link(), phy_ethtool_get_link_ksettings(),
+    and phy_ethtool_set_link_ksettings() to simplify the code, suggested by Andrew.
+  - Add the null pointer check on the return value of pcim_iomap_table(),
+    suggested by Jonathan.
+  - Add the check on the return value of phy_connect_direct(),
+    suggested by Jonathan.
+  - Adjusted the layout to place the fields and register definitions
+    in one place, suggested by Jonathan.
+  - Replace request_irq with devm_request_irq, suggested by Jonathan.
+  - Replace BIT_MASK() with BIT(), suggested by Jonathan.
+  - Introduce irq_handle in struct hbg_irq_info in advance to reduce code changes,
+    suggested by Jonathan.
+  - Delete workqueue for this patch set, suggested by Jonathan.
+  - Support to compile this driver on all arch in Kconfig,
+    suggested by Andrew and Jonathan.
+  - Add a patch to add is_valid_ether_addr check in dev_set_mac_address,
+    suggested by Andrew.
+  - Use macro instead of inline to fix the warning about compile-time constant
+    in FIELD_PREP(), reported by Simon Horman.
+  - A few other minor changes.
+  RFC v1: https://lore.kernel.org/all/20240731094245.1967834-1-shaojijie@huawei.com/
+---
 
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/cpufreq/ti-cpufreq.c#n302
+Jijie Shao (11):
+  net: hibmcge: Add pci table supported in this module
+  net: hibmcge: Add read/write registers supported through the bar space
+  net: hibmcge: Add mdio and hardware configuration supported in this
+    module
+  net: hibmcge: Add interrupt supported in this module
+  net: hibmcge: Implement some .ndo functions
+  net: hibmcge: Implement .ndo_start_xmit function
+  net: hibmcge: Implement rx_poll function to receive packets
+  net: hibmcge: Implement some ethtool_ops functions
+  net: hibmcge: Add a Makefile and update Kconfig for hibmcge
+  net: hibmcge: Add maintainer for hibmcge
+  net: add ndo_validate_addr check in dev_set_mac_address
 
-~Bryan
+ MAINTAINERS                                   |   7 +
+ drivers/net/ethernet/hisilicon/Kconfig        |  16 +-
+ drivers/net/ethernet/hisilicon/Makefile       |   1 +
+ .../net/ethernet/hisilicon/hibmcge/Makefile   |  10 +
+ .../ethernet/hisilicon/hibmcge/hbg_common.h   | 136 ++++++
+ .../ethernet/hisilicon/hibmcge/hbg_ethtool.c  |  17 +
+ .../ethernet/hisilicon/hibmcge/hbg_ethtool.h  |  11 +
+ .../net/ethernet/hisilicon/hibmcge/hbg_hw.c   | 285 ++++++++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_hw.h   |  57 +++
+ .../net/ethernet/hisilicon/hibmcge/hbg_irq.c  | 124 +++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_irq.h  |  11 +
+ .../net/ethernet/hisilicon/hibmcge/hbg_main.c | 240 ++++++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_mdio.c | 245 ++++++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_mdio.h |  12 +
+ .../net/ethernet/hisilicon/hibmcge/hbg_reg.h  | 143 ++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_txrx.c | 429 ++++++++++++++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_txrx.h |  37 ++
+ net/core/dev.c                                |   5 +
+ 18 files changed, 1785 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/Makefile
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_common.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_reg.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.h
+
+-- 
+2.33.0
+
 
