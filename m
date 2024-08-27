@@ -1,170 +1,169 @@
-Return-Path: <linux-kernel+bounces-302775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58269960325
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:33:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D01796032B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:33:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF6941F21C87
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:33:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 807611C222E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968091885A9;
-	Tue, 27 Aug 2024 07:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RWecI8em"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86CE5197552;
+	Tue, 27 Aug 2024 07:32:25 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006C915F3FB;
-	Tue, 27 Aug 2024 07:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337E0156887;
+	Tue, 27 Aug 2024 07:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724743934; cv=none; b=EoS62Hy+CdoEMK4nhwsFLbc0fs9Ry/BS85MyVZdgRmNfp4qnZDY4cgo9v1parGsHM4sCnpHVMCnlRJp8VZss9Ik5oyRfarJmkOiXqxpvx9nFwi4HUOXJRs5VLInR+esx9WEc9zhFJobUaLe5WZP9uQoLyWKbDVPEl7v8uhv20FE=
+	t=1724743945; cv=none; b=DVNtyTK1DapbTmUA4xV94jYb4jo7MkDuBqeDnlabNjPIl4Gg1LeFIVZwYmaSr/gZEpEINSuk5stp0ARNY/fTwylfyR6JOusaMuN84fSZM1neOHUlv373CGHqEuisWe6ZhEzUuaLRSjp5PcC777ZL0xB5G2XM0sOuTgNQKwQSA9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724743934; c=relaxed/simple;
-	bh=P7VU/LvqmMEP1GwP1fQvV+wBdODNG9bamDwAzwXEW+Q=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ahxZyh6MJTbwFyLGwFlYuEwXqxtqStPwgCVceY6ES2PnvSQUUj0/1ggCbpHWxf9PH/yOR6YsWJEnp4U5JE/2yWlg3Ftxi1JtcSm/W/akqiLx2rF4fMJq8Mj5UaIroaZEOJemF690LkxN5nxHPBEhaOd8VGqRefr0fJWgiEGFISU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RWecI8em; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47QJGdVG007432;
-	Tue, 27 Aug 2024 07:32:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=nElXkCErwF6ts+y13xoxV4
-	F7aJQ10k6QU65Zdv4oGhE=; b=RWecI8emWzWpZuHGo8tkRU1vGXNUFKyuUo1kZ/
-	xAP5GVCVsIMKoP7xcTFWRf05A6Sf+hJTx4aSMpC+YH+upwQ7myK/pJE7I5cxmW8C
-	TDn5QsyF6qNIJaHZ9Q1mCxyxA5HJ8khi88ubiKTrtLE+3AEl+JNpWOKo7cvwwdHr
-	VF9iwmPcviunbP6SDgb5RZkQyzLERMT8IXoHBKqDq4dutIpbxJGDTlpuD25sbRt9
-	Z74WEIPtj4vs3ks7ZwMpCkQJVZCWNi+nLkbgK8S+39V5XDoHGq/s2vAHfxDrB/gU
-	VwP7k7F0tb9/ixXSEKdOGwazoziMmcwsCsKHycvzvxQrs04Q==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 417976x30a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 Aug 2024 07:32:09 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47R7W8xm022322
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 Aug 2024 07:32:08 GMT
-Received: from hu-prashk-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 27 Aug 2024 00:32:06 -0700
-From: Prashanth K <quic_prashk@quicinc.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thinh Nguyen
-	<Thinh.Nguyen@synopsys.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        Prashanth K
-	<quic_prashk@quicinc.com>, <stable@vger.kernel.org>
-Subject: [PATCH v4] usb: dwc3: Avoid waking up gadget during startxfer
-Date: Tue, 27 Aug 2024 13:01:50 +0530
-Message-ID: <20240827073150.3275944-1-quic_prashk@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1724743945; c=relaxed/simple;
+	bh=EN/UMBGKSnmN3+T0MpJVkTK4QnATFUq0wPjwJbUuUVk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=EZqN/hIpEBizaRRf+m/u7MOXnODfapQC5oohyfvnQdUSDlspKp0eknSZYWXuzsYTULHKgjnF+Jowo64jyDPv6y6iOUT2XDqlkqXP2Lj1Kv+abT1W8qDm1GQtG4KLWq2jcdlhNHkRPLLWxK5fXN919D2c6ybdraqnTX2cSQtYNoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WtK4S4q7Sz9rvV;
+	Tue, 27 Aug 2024 09:32:08 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id LSYoNPXiTAE6; Tue, 27 Aug 2024 09:32:08 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WtK4R1flWz9sRs;
+	Tue, 27 Aug 2024 09:32:07 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 23E088B763;
+	Tue, 27 Aug 2024 09:32:07 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 4LCKcOlpJf6Q; Tue, 27 Aug 2024 09:32:07 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (PO19727.IDSI0.si.c-s.fr [192.168.233.149])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6D5BC8B77B;
+	Tue, 27 Aug 2024 09:32:06 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: "Theodore Ts'o" <tytso@mit.edu>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arch@vger.kernel.org
+Subject: [PATCH 4/4] random: vDSO: don't use 64 bits atomics on 32 bits architectures
+Date: Tue, 27 Aug 2024 09:31:50 +0200
+Message-ID: <30806cb8d7e0b95dcfb9f81a4583759faa1d8f31.1724743492.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <cover.1724743492.git.christophe.leroy@csgroup.eu>
+References: <cover.1724743492.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724743908; l=4569; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=EN/UMBGKSnmN3+T0MpJVkTK4QnATFUq0wPjwJbUuUVk=; b=Nwn7m7g/QRHzdHMcbW6llmXewvtc/OYYeNu4SAjX+iILbev4KO02GLLjFcAIh7i1/ooUna0MF /yqwYLw77rTDzFYHY/tsKw0DoLFqoAE97mcrlt5Y5ZDxUz3gX4oj3Gb
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: uz9tGICLeOG9szQRM3lA8NEiLAVSg2Zz
-X-Proofpoint-GUID: uz9tGICLeOG9szQRM3lA8NEiLAVSg2Zz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-27_04,2024-08-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=723 malwarescore=0 clxscore=1015 impostorscore=0 adultscore=0
- priorityscore=1501 bulkscore=0 mlxscore=0 suspectscore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408270056
 
-When operating in High-Speed, it is observed that DSTS[USBLNKST] doesn't
-update link state immediately after receiving the wakeup interrupt. Since
-wakeup event handler calls the resume callbacks, there is a chance that
-function drivers can perform an ep queue, which in turn tries to perform
-remote wakeup from send_gadget_ep_cmd(STARTXFER). This happens because
-DSTS[[21:18] wasn't updated to U0 yet, it's observed that the latency of
-DSTS can be in order of milli-seconds. Hence avoid calling gadget_wakeup
-during startxfer to prevent unnecessarily issuing remote wakeup to host.
+Performing SMP atomic operations on u64 fails on powerpc32:
 
-Fixes: c36d8e947a56 ("usb: dwc3: gadget: put link to U0 before Start Transfer")
-Cc: <stable@vger.kernel.org>
-Suggested-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Signed-off-by: Prashanth K <quic_prashk@quicinc.com>
+    CC      drivers/char/random.o
+  In file included from <command-line>:
+  drivers/char/random.c: In function 'crng_reseed':
+  ././include/linux/compiler_types.h:510:45: error: call to '__compiletime_assert_391' declared with attribute error: Need native word sized stores/loads for atomicity.
+    510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+        |                                             ^
+  ././include/linux/compiler_types.h:491:25: note: in definition of macro '__compiletime_assert'
+    491 |                         prefix ## suffix();                             \
+        |                         ^~~~~~
+  ././include/linux/compiler_types.h:510:9: note: in expansion of macro '_compiletime_assert'
+    510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+        |         ^~~~~~~~~~~~~~~~~~~
+  ././include/linux/compiler_types.h:513:9: note: in expansion of macro 'compiletime_assert'
+    513 |         compiletime_assert(__native_word(t),                            \
+        |         ^~~~~~~~~~~~~~~~~~
+  ./arch/powerpc/include/asm/barrier.h:74:9: note: in expansion of macro 'compiletime_assert_atomic_type'
+     74 |         compiletime_assert_atomic_type(*p);                             \
+        |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ./include/asm-generic/barrier.h:172:55: note: in expansion of macro '__smp_store_release'
+    172 | #define smp_store_release(p, v) do { kcsan_release(); __smp_store_release(p, v); } while (0)
+        |                                                       ^~~~~~~~~~~~~~~~~~~
+  drivers/char/random.c:286:9: note: in expansion of macro 'smp_store_release'
+    286 |         smp_store_release(&__arch_get_k_vdso_rng_data()->generation, next_gen + 1);
+        |         ^~~~~~~~~~~~~~~~~
+
+Random driver generation is handled as unsigned long not u64, see for
+instance base_cnrg or struct crng.
+
+But on vDSO it needs to be an u64 not just an unsigned long because of
+32 bits VDSO being used with 64 bits kernels.
+
+On random side however it is an unsigned long hence a 32 bits value on
+32 bits architectures, so just cast it to unsigned long for the
+smp_store_release(). A side effect is that on big endian architectures
+the store will be performed in the upper 32 bits. It is not an issue
+on its own because the vDSO site doesn't mind the value, it only
+checks differences. Just make sure that the vDSO side checks the full
+64 bits, for that the local current_generation has to be u64 as well.
+
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
-v4: Rewording the comment in function definition.
-v3: Added notes on top the function definition.
-v2: Refactored the patch as suggested in v1 discussion.
+v3: Cast to unsigned long in random and use u64 in vDSO instead of changing generation field to unsigned long
+---
+ drivers/char/random.c | 9 ++++++++-
+ lib/vdso/getrandom.c  | 2 +-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
- drivers/usb/dwc3/gadget.c | 38 ++++++++++++++------------------------
- 1 file changed, 14 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 89fc690fdf34..ea583d24aa37 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -287,6 +287,20 @@ static int __dwc3_gadget_wakeup(struct dwc3 *dwc, bool async);
-  *
-  * Caller should handle locking. This function will issue @cmd with given
-  * @params to @dep and wait for its completion.
-+ *
-+ * According to databook, while issuing StartXfer command if the link is in L1/L2/U3,
-+ * then the command may not complete and timeout, hence software must bring the link
-+ * back to ON state by performing remote wakeup. However, since issuing a command in
-+ * USB2 speeds requires the clearing of GUSB2PHYCFG.SUSPENDUSB2, which turns on the
-+ * signal required to complete the given command (usually within 50us). This should
-+ * happen within the command timeout set by driver. Hence we don't expect to trigger
-+ * a remote wakeup from here; instead it should be done by wakeup ops.
-+ *
-+ * Special note: If wakeup ops is triggered for remote wakeup, care should be taken
-+ * if StartXfer command needs to be sent soon after. The wakeup ops is asynchronous
-+ * and the link state may not transition to ON state yet. And after receiving wakeup
-+ * event, device would no longer be in U3, and any link transition afterwards needs
-+ * to be adressed with wakeup ops.
-  */
- int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned int cmd,
- 		struct dwc3_gadget_ep_cmd_params *params)
-@@ -327,30 +341,6 @@ int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned int cmd,
- 			dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(0), reg);
- 	}
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index 77968309e2c2..dc9bab51e74d 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -282,8 +282,15 @@ static void crng_reseed(struct work_struct *work)
+ 	 * former to arrive at the latter. Use smp_store_release so that this
+ 	 * is ordered with the write above to base_crng.generation. Pairs with
+ 	 * the smp_rmb() before the syscall in the vDSO code.
++	 *
++	 * Cast to unsigned long for 32 bits architectures as atomic 64 bits
++	 * operations are not supported on those architectures. Anyway
++	 * base_crng.generation is a 32 bits value so it is ok. On big endian
++	 * architectures it will be stored in the upper 32 bits but that's ok
++	 * because the vDSO side only checks whether the value changed, it
++	 * doesn't use or interpret the value.
+ 	 */
+-	smp_store_release(&__arch_get_k_vdso_rng_data()->generation, next_gen + 1);
++	smp_store_release((unsigned long *)&__arch_get_k_vdso_rng_data()->generation, next_gen + 1);
+ #endif
+ 	if (!static_branch_likely(&crng_is_ready))
+ 		crng_init = CRNG_READY;
+diff --git a/lib/vdso/getrandom.c b/lib/vdso/getrandom.c
+index 5d79663b026b..8027b2711b69 100644
+--- a/lib/vdso/getrandom.c
++++ b/lib/vdso/getrandom.c
+@@ -69,7 +69,7 @@ __cvdso_getrandom_data(const struct vdso_rng_data *rng_info, void *buffer, size_
+ 	struct vgetrandom_state *state = opaque_state;
+ 	size_t batch_len, nblocks, orig_len = len;
+ 	bool in_use, have_retried = false;
+-	unsigned long current_generation;
++	u64 current_generation;
+ 	void *orig_buffer = buffer;
+ 	u32 counter[2] = { 0 };
  
--	if (DWC3_DEPCMD_CMD(cmd) == DWC3_DEPCMD_STARTTRANSFER) {
--		int link_state;
--
--		/*
--		 * Initiate remote wakeup if the link state is in U3 when
--		 * operating in SS/SSP or L1/L2 when operating in HS/FS. If the
--		 * link state is in U1/U2, no remote wakeup is needed. The Start
--		 * Transfer command will initiate the link recovery.
--		 */
--		link_state = dwc3_gadget_get_link_state(dwc);
--		switch (link_state) {
--		case DWC3_LINK_STATE_U2:
--			if (dwc->gadget->speed >= USB_SPEED_SUPER)
--				break;
--
--			fallthrough;
--		case DWC3_LINK_STATE_U3:
--			ret = __dwc3_gadget_wakeup(dwc, false);
--			dev_WARN_ONCE(dwc->dev, ret, "wakeup failed --> %d\n",
--					ret);
--			break;
--		}
--	}
--
- 	/*
- 	 * For some commands such as Update Transfer command, DEPCMDPARn
- 	 * registers are reserved. Since the driver often sends Update Transfer
 -- 
-2.25.1
+2.44.0
 
 
