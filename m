@@ -1,191 +1,181 @@
-Return-Path: <linux-kernel+bounces-303675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC46961380
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:02:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17E38961389
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:03:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF40D2849D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:02:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98B4C1F22164
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E5D1C9EAD;
-	Tue, 27 Aug 2024 16:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE7D1C6F4F;
+	Tue, 27 Aug 2024 16:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IRfrdUMQ"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RoDhZHF0"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2059.outbound.protection.outlook.com [40.107.93.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD711CF96;
-	Tue, 27 Aug 2024 16:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724774563; cv=none; b=uEF7BFzW3KRXLRG0qBMdOPDiqWcApZnGSqjCtSL3DWs2xJmfPrz7Ro/21FQNGWJI1WcdkZRPAh0f2hvbuz8kEcFd7f/ePkskVNzOzXBRwYxSHoRAY+UMbaUBsFNo8uNA5zkqeor5XtpHJ4FL+frNve/eu6p0CQEUyA2F2Pr46ao=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724774563; c=relaxed/simple;
-	bh=bftQR8XAiOa4Kj1zRha66tu+wQd2k7qmj7VrqkjwAew=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lXZDM0hW3ua2TAocsU5uDcjkYQNbEvJRCKoQH1auWO/z+/RyqQd6fOGb5/sETRUmxlbT4Pou2bZCMIbSgz9dbO3Z3pg1bmbdcjOSVXLEse0mvqrCNR/uYzFGlPGZIuoDDu9F1EQJ5v/Adxok519jMzuBEuBDbTLNZgUMuXNaTXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IRfrdUMQ; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e13d5cbc067so5833920276.2;
-        Tue, 27 Aug 2024 09:02:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724774561; x=1725379361; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YUynhOlcmLN7T5QW4XtgVMkPbI5R+at4MqJPO3psk2k=;
-        b=IRfrdUMQ5LIBSERPSFNw1r4BKjv6Lpg23bTF7uQ6mpb/lVGuQiNitZUY4JAt9Je3yz
-         jmqRbZrKaqkwaPEsPvvj1K0lf40zlSp0FNItxkKiPgu6dYTutXfa3yoIbd+e6asRBftl
-         EG5UVJa5FtD9fCDhLAiFybdy2hgKdyzNxGmP5Q0hTKqX7TNayg9oSV7tYzn0y7vK0QB4
-         /Qy7nAZkxaATBs90V4xvweZQXC2BXrsAvVJxhs8WbFVq68/9wt/E6Z+wfKnACTmENo1A
-         jnKfVL87Rd5MkZablrCdk0wru87gYZgVYizFLKkNryNEHGno4vYqQfOi/+iwvCUm09sH
-         dYtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724774561; x=1725379361;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YUynhOlcmLN7T5QW4XtgVMkPbI5R+at4MqJPO3psk2k=;
-        b=QFhinz2ZacM7SBPxLyr84YVhCqpLeztL/lOCVcf3nWzzXgXnS0+4t1VYuwNjbhItb1
-         1JM5GXXvRME1PkpLgyzPrPrA7fQ/L1g1d3lqSdccNsxtggkZKnvktgcDUEvWn4kmM9Z8
-         3RmkEAVBrDeESNZi/fA9wpC1jqplRPEnCxlzk8CqDDCmX9oGiXfUSwLJAo4sLPY43Ocb
-         ev2wfZLT3YIMCfhnsxKJwhvNOyGXf9FrEbKQT9LRmmu1O2WzvX71PX58n+FKxdSiojAS
-         8G3c30t2rcfxWUvJG9MNtUBWMq3hlvfhqUwFQgt49ZE18UFXDMwjvik4sQO9xE2lFEgP
-         TjWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjfcoOQMifa3mSSBK17V6/iePZSNbprLwTVzDCPJ7ZnfeplfVd+akYh+GhnTvORQiza9+M89A5Fk2w@vger.kernel.org, AJvYcCWHxyzijiUI/xfvyQrqXMwm4Gsk4ZlnwmiAZaZwZoXVYSHAmG10+/+qWBi1WAObpVicF57lEYrhzfAB@vger.kernel.org, AJvYcCWfeP/snpfXeNZUdyXcdbyZLNSB5Jy7WslA35UV7JgGH1hmOSyD+MAV7HTFpsU7f5tCUKOqF6/PVnTHMw==@vger.kernel.org, AJvYcCXnb2b+Ol88KjNC8yQHuMAE97ojuo/MUeryafbIthXFU3MOXUVymkIjXff2W0anrdb01RBJiNTXLIEwqxpV@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIna3bSwY4ne/QeP2/rMgUYHUmqLQ4UN4CrqxoXY23CFp3C8DB
-	zpwGkCJxYufztGgesmoZ439vQ7LoGJDcAV6RMKSPbj9y7n4wBKZ8
-X-Google-Smtp-Source: AGHT+IExAE08HkQ1ORhHjbfWeAfdnCQmLvshPsVsu4uByYzu2KqQJJMTlxqXuTwlDzVPJS9Zd5JWcQ==
-X-Received: by 2002:a05:6902:2202:b0:e13:d6f2:1181 with SMTP id 3f1490d57ef6-e1a2a5da391mr3211223276.26.1724774560695;
-        Tue, 27 Aug 2024 09:02:40 -0700 (PDT)
-Received: from fan ([50.205.20.42])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e178e4b3883sm2584126276.32.2024.08.27.09.02.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 09:02:40 -0700 (PDT)
-From: Fan Ni <nifan.cxl@gmail.com>
-X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
-Date: Tue, 27 Aug 2024 09:02:11 -0700
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Fan Ni <nifan.cxl@gmail.com>, ira.weiny@intel.com,
-	Dave Jiang <dave.jiang@intel.com>,
-	Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	nvdimm@lists.linux.dev
-Subject: Re: [PATCH v3 18/25] cxl/extent: Process DCD events and realize
- region extents
-Message-ID: <Zs34b4DoMmd9GO28@fan>
-References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
- <20240816-dcd-type2-upstream-v3-18-7c9b96cba6d7@intel.com>
- <Zsj_8IckEFpwmA5L@fan>
- <20240827130829.00004660@Huawei.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD331BFE00
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 16:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724774613; cv=fail; b=T5F0ulM53hr2WBPHeQAooWfKZPNZ7hczvSowog3unnHneW8DOIN7AM2Tk25VRLfro/hvRxYmvZq8Dhuv6ZNU2HOBZRlS7+/MwRSj/X2QrGlsyy76QoTfbY1yiRBKxa6HAlpMBZeKjVRXecJeWg9e7Nilnpb9aEFe5U2cIVBu48o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724774613; c=relaxed/simple;
+	bh=E5beNy1a78Otr5fgeW10Hg8t0FTBRQX9bKySDnikgg0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JE8paEFfTRM1imDQ87saSd7heY+6ouxYKgN8IVvg01jJxK5ZxYPN2meYu+YkDFb5ie24khtpSp7DqUttuKMn/kVfn1PDhxWe8/X/rFoFKAvfJq2nnHjKfSbLJiifNqcr7oaOIPoI4DCT+fmc0meI37lJj6+ZxWrDHWFE+Za2oKA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RoDhZHF0; arc=fail smtp.client-ip=40.107.93.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=t9DaZY+WRBM3Iiyf6LUYC3LVdKWd2L2GCgHvkp85KmIx9CLz5qlMcOzIa4NEk9RmeCUw0WZd0FMLuuho6hnXMd1XQtyenoHoIr/3RLhztF7Zr5pDzrEVWihXpez354Z5PqJXzfkXD0sP494ENtUeA5a+c9GA6lMKTh1HjH8AuOgvIwu2nFT10vD1wOK8OG+OuihW4hk2sTM2yuMfqUIBhv/un8gQR9gGevh57g1Oo4OI3T25oV0Ybf+cfgAs0trqhJah+O5ncPDMZiGuTrhLLNtvhZD2LslOsvnj/fAha38GToRz2qTmUwoGer+JpD0QwSXg7zXrx44l7gW4BCy4Hw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0RMVkzAxQtIXrR8ltI04gQpyfMQ0WSvrIFsx5/WNJ4o=;
+ b=nonaeCoRCGvlVaQhDb+F08btXwPBGx+prG4RXjfWGotZ8AQyk6jsDlhrMadOv5g67dwiTuZzx1Z+ly+bBmr7I54aBjJt9xeiUqb96RLcqM1usmr7RIsgnekMI11jY4vqceuMrDGMobOln91SPcg8by2fnb6NSTawFmMuXNUhf0jfbsd9MQoZ8f5oUc5JWEZO2+zsx1IxYOLMJvbPNuxgAKIkOhc5pDkxMGcFlPmdeTKDF+d6bwN2EgJdRRokLi7ormShg0oKoZQLqhCPjJaapfOsPzlBPl/VcIi4GOkosA8lurmUNoy2bccHYicN2XbzJ/lqE/aRhdeYh8FLskHYRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0RMVkzAxQtIXrR8ltI04gQpyfMQ0WSvrIFsx5/WNJ4o=;
+ b=RoDhZHF0Vi1kqTULlEmiA9vjtLHVpXdPPCqVikCpWKGhoqaM5QjbHlGv6njoD53vV2SCK/k12HZYFV2RztaWyMRpco/L0+NNHLFSM2cXrpsXRqyQGgJw9wqDAAHxXkk7f6Bjz9nD8yLMLutFr35dRgcQDC4fgnCN8JqZlUCeFgTKTzmTePQdzOgrIJLrT38IyiNgztjswMwH5Pg76xaDbzPFqPYGay1gkp2sjoWdH2vNV5mkmAlK1G2uaay/+lCjWxmtM5k0/p0/2LYhWu6gt32cKjX0TAp6hOULNG5aflHE/1qimL2kXLsJSsk4VGeGNCzQcG5+/XF+c/q+BRbhkQ==
+Received: from SN7PR04CA0072.namprd04.prod.outlook.com (2603:10b6:806:121::17)
+ by DM4PR12MB6303.namprd12.prod.outlook.com (2603:10b6:8:a3::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7897.26; Tue, 27 Aug 2024 16:03:29 +0000
+Received: from SN1PEPF000397B4.namprd05.prod.outlook.com
+ (2603:10b6:806:121:cafe::49) by SN7PR04CA0072.outlook.office365.com
+ (2603:10b6:806:121::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24 via Frontend
+ Transport; Tue, 27 Aug 2024 16:03:28 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SN1PEPF000397B4.mail.protection.outlook.com (10.167.248.58) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7918.13 via Frontend Transport; Tue, 27 Aug 2024 16:03:28 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 27 Aug
+ 2024 09:03:13 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 27 Aug
+ 2024 09:03:13 -0700
+Received: from c-237-113-220-225.mtl.labs.mlnx (10.127.8.12) by
+ mail.nvidia.com (10.129.68.9) with Microsoft SMTP Server id 15.2.1544.4 via
+ Frontend Transport; Tue, 27 Aug 2024 09:03:11 -0700
+From: Dragos Tatulea <dtatulea@nvidia.com>
+To: Dragos Tatulea <dtatulea@nvidia.com>, "Michael S. Tsirkin"
+	<mst@redhat.com>, Jason Wang <jasowang@redhat.com>, Xuan Zhuo
+	<xuanzhuo@linux.alibaba.com>, =?UTF-8?q?Eugenio=20P=C3=A9rez?=
+	<eperezma@redhat.com>
+CC: <si-wei.liu@oracle.com>, Jiri Pirko <jiri@nvidia.com>,
+	<virtualization@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] vdpa/mlx5: Use random MAC address when no nic vport MAC set
+Date: Tue, 27 Aug 2024 19:02:56 +0300
+Message-ID: <20240827160256.2446626-2-dtatulea@nvidia.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827130829.00004660@Huawei.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF000397B4:EE_|DM4PR12MB6303:EE_
+X-MS-Office365-Filtering-Correlation-Id: 20de135a-8781-4c1d-3785-08dcc6b1ca8a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?swbgInxHvbbKGJ9RE2WEqTYD07H5ol87YsXqw7LaSrUlmEPga53hC8vrSA4y?=
+ =?us-ascii?Q?guUuNAfIJzYU4LdPCxEmUYmH1wwdXSZx0S6Mf6QDFiSAaagrRygCEgqeOKIb?=
+ =?us-ascii?Q?AwlfW2/0M3k4Jw57euZgc9RraXC/rFWa5tN4pO8XwdB4M4T2HDSOHcWGP8k4?=
+ =?us-ascii?Q?UOK5JTnkAP5JvRkviWJYT6crjO+8pG5IsYNLAjXuWCcoc1X5WssGJ7kRiSM/?=
+ =?us-ascii?Q?3T5yQCP1poIqhbUumQf0eQ4fuA8oX/ocXewL54oCFhAUvE2tM/CtRsHNNZ0/?=
+ =?us-ascii?Q?963Ki+IaNJtcxfg2/7NO7YFMJapj9F44es06Z31FdzZWufxd3SJyB/xoulzI?=
+ =?us-ascii?Q?gwOlwQXaj3R4zs4zHXkJHKTvcCxnnDNd9oD9on6ZjtORxZjaLv6tFoPv9iZs?=
+ =?us-ascii?Q?QBv6RSFyC6K9mcYIkfuUFLgh0bF16BhXBub5Lu/6xJgy2K1VqBFHl4eSGoBq?=
+ =?us-ascii?Q?kaQbk7FQOQtZOk9IoeagRg+PcIRvJU1rcLGxCQuzY0iLYUr6CIYM3EcaX6Cd?=
+ =?us-ascii?Q?zQgqNZYz06lJrt1ySctJ0bFrH9mN5QiMVztmOztI+kTYiC8iN6zQXDV2OALy?=
+ =?us-ascii?Q?wpvB4sNUQbqmlxgVFDxXVTrKt5LCkfXgF6SQMCKvP7So/dWK76GOs+auKx86?=
+ =?us-ascii?Q?eufnQZul3BL0ns15wC5j9DTSNisCNQvpk9/pvxJUm4xUUWFL0FxLYBd7mRkU?=
+ =?us-ascii?Q?p6BIq4J9rAnYy4z5zHjAPC7rKM74QD3HeozZs1qdt87UIsysPFFNhZmU9DKP?=
+ =?us-ascii?Q?6wHhwDDlLVFcQ0KT3E4HPsjDRgJcUZV8C1/ehcBbxEFb6S0e0ma1MjyvpXe/?=
+ =?us-ascii?Q?FrSE1T/Hjt2tgQhbBlKhcOk21aHZZfaqE1rF+iZSXKuGeJOlIaijZM8OTWqc?=
+ =?us-ascii?Q?t+1yiRu7qejQjp+7/nvatHEpDHraTu7YUvVhcTCgrwRDtMaFvZUKYtfAL2Ts?=
+ =?us-ascii?Q?FIhXH+bGVgyZcBEm1scXf7JvOUyL/oa6ry9UygwX5M2x5CK53xRzeLkK4qtd?=
+ =?us-ascii?Q?unOdJ6B2/257W//cN3Yb+sZZ2rnleKBMF6s3CDw2OtChUBDdrjkH7TJbqU+0?=
+ =?us-ascii?Q?+CT0TETUojxchGE8T9ClVma8o4vFzWOGn59yQWTZqsNnbhPCA+XtfUp3oG2N?=
+ =?us-ascii?Q?WZdgM4Bwe426FPrTILgGYqjC9XO4d4FA3PzRRPN1rBb3c3zTcZYtnZXRHbbG?=
+ =?us-ascii?Q?qqKU+88gtTZG321Kc8HO59nrE7ZCvB144Q+MCTWT6E0dPvolwCo175xjQvQN?=
+ =?us-ascii?Q?F+CGe/X0ne9q8Z0CAN5J/7L+CLxoXT7ia+8ldP8lLpaeRBfOS8RTIoOA4G2M?=
+ =?us-ascii?Q?a40iLYT5BqV9zni6jUY44veLuM5ou7/eM8Bz72xHxHKEL66pk/9jWy3jYKIW?=
+ =?us-ascii?Q?ZH8iRqo2Qjwnwtb8BgMrhSb8+Pi9uSWoR9kkutIZDx4Ki7QkJM7QWcWkxaAi?=
+ =?us-ascii?Q?K5EsN2sqIkUHteneeu7E5ifrUHXTDthr?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 16:03:28.8397
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 20de135a-8781-4c1d-3785-08dcc6b1ca8a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF000397B4.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6303
 
-On Tue, Aug 27, 2024 at 01:08:29PM +0100, Jonathan Cameron wrote:
-> On Fri, 23 Aug 2024 14:32:32 -0700
-> Fan Ni <nifan.cxl@gmail.com> wrote:
-> 
-> > On Fri, Aug 16, 2024 at 09:44:26AM -0500, ira.weiny@intel.com wrote:
-> > > From: Navneet Singh <navneet.singh@intel.com>
-> > > 
-> > > A dynamic capacity device (DCD) sends events to signal the host for
-> > > changes in the availability of Dynamic Capacity (DC) memory.  These
-> > > events contain extents describing a DPA range and meta data for memory
-> > > to be added or removed.  Events may be sent from the device at any time.
-> > > 
-> > > Three types of events can be signaled, Add, Release, and Force Release.
-> > > 
-> > > On add, the host may accept or reject the memory being offered.  If no
-> > > region exists, or the extent is invalid, the extent should be rejected.
-> > > Add extent events may be grouped by a 'more' bit which indicates those
-> > > extents should be processed as a group.
-> > > 
-> > > On remove, the host can delay the response until the host is safely not
-> > > using the memory.  If no region exists the release can be sent
-> > > immediately.  The host may also release extents (or partial extents) at
-> > > any time.  Thus the 'more' bit grouping of release events is of less
-> > > value and can be ignored in favor of sending multiple release capacity
-> > > responses for groups of release events.
-> > > 
-> > > Force removal is intended as a mechanism between the FM and the device
-> > > and intended only when the host is unresponsive, out of sync, or
-> > > otherwise broken.  Purposely ignore force removal events.
-> > > 
-> > > Regions are made up of one or more devices which may be surfacing memory
-> > > to the host.  Once all devices in a region have surfaced an extent the
-> > > region can expose a corresponding extent for the user to consume.
-> > > Without interleaving a device extent forms a 1:1 relationship with the
-> > > region extent.  Immediately surface a region extent upon getting a
-> > > device extent.
-> > > 
-> > > Per the specification the device is allowed to offer or remove extents
-> > > at any time.  However, anticipated use cases can expect extents to be
-> > > offered, accepted, and removed in well defined chunks.
-> > > 
-> > > Simplify extent tracking with the following restrictions.
-> > > 
-> > > 	1) Flag for removal any extent which overlaps a requested
-> > > 	   release range.
-> > > 	2) Refuse the offer of extents which overlap already accepted
-> > > 	   memory ranges.
-> > > 	3) Accept again a range which has already been accepted by the
-> > > 	   host.  (It is likely the device has an error because it
-> > > 	   should already know that this range was accepted.  But from
-> > > 	   the host point of view it is safe to acknowledge that
-> > > 	   acceptance again.)
-> > > 
-> > > Management of the region extent devices must be synchronized with
-> > > potential uses of the memory within the DAX layer.  Create region extent
-> > > devices as children of the cxl_dax_region device such that the DAX
-> > > region driver can co-drive them and synchronize with the DAX layer.
-> > > Synchronization and management is handled in a subsequent patch.
-> > > 
-> > > Process DCD events and create region devices.
-> > > 
-> > > Signed-off-by: Navneet Singh <navneet.singh@intel.com>
-> > > Co-developed-by: Ira Weiny <ira.weiny@intel.com>
-> > > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> > >   
-> > 
-> > One minor change inline.
-> Hi Fan,
-> 
-> Crop please.  I scanned past it 3 times when scrolling without noticing
-> what you'd actually commented on.
+When the vdpa device is configured without a specific MAC
+address, the vport MAC address is used. However, this
+address can be 0 which prevents the driver from properly
+configuring the MPFS and breaks steering.
 
-Sure. I will crop in the future.
-Thanks for the tips, Jonathan.
+The solution is to simply generate a random MAC address
+when no MAC is set on the nic vport.
 
-Fan
+Now it's possible to create a vdpa device without a
+MAC address and run qemu with this device without needing
+to configure an explicit MAC address.
 
-> 
-> > > +/* See CXL 3.0 8.2.9.2.1.5 */  
-> > 
-> > Update the reference to reflect CXL 3.1.
-> > 
-> > Fan
-> > 
+Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+Reviewed-by: Jiri Pirko <jiri@nvidia.com>
+---
+ drivers/vdpa/mlx5/net/mlx5_vnet.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+index fa78e8288ebb..1c26139d02fe 100644
+--- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
++++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+@@ -3824,6 +3824,9 @@ static int mlx5_vdpa_dev_add(struct vdpa_mgmt_dev *v_mdev, const char *name,
+ 		err = mlx5_query_nic_vport_mac_address(mdev, 0, 0, config->mac);
+ 		if (err)
+ 			goto err_alloc;
++
++		if (is_zero_ether_addr(config->mac))
++			eth_random_addr(config->mac);
+ 	}
+ 
+ 	if (!is_zero_ether_addr(config->mac)) {
+-- 
+2.45.1
+
 
