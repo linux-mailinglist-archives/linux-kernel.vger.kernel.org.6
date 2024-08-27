@@ -1,130 +1,166 @@
-Return-Path: <linux-kernel+bounces-302729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BEA496029E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:58:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EE229602A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 309DF1C22649
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:58:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0905F1F21B4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA7814F125;
-	Tue, 27 Aug 2024 06:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A77915531B;
+	Tue, 27 Aug 2024 06:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UJMQ3eoc"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="P6Alwok6"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093C813E028
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB965153BF6
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724741923; cv=none; b=tyO8kdzSZ/yqkFXvnI0ktFqLvkn1TrMw9SnTnYbIAPL9VeXR3z+OamBo0kGkdjAYG996EdQZ4Y7Dw0swBu9xLu9iqaBazcj1hvQw8qznRw901dEDWI/CQVomb7l10ivMlW6Wm2qrMvtb4A+kfY7cxf/Gp0NSeSTvQPy27I3PwC4=
+	t=1724741929; cv=none; b=BQVRo8C4quT8XMKhQLd+f3wGbfkT1/gmwL0wZvCrx9nt3QQOYda+fhBFtnpKtV6L+vLrwOGQxR7PNqUDjkvQDTsdGXPGJlF5cace7/uxl+yrFHCd8egdWdpVTLd+ecrXF63CoEiv9HJ/9QqRouPSUp9AM0gI9QGXejsQ4fHYckA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724741923; c=relaxed/simple;
-	bh=8tSxgHbCYvYfA2twn1DWsR/FmG9GAaUjOojn+KhbU3s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VC+HGz2jbJmc8W8ZLVT6RZOzGHZqejrvM6ZllbTYrDE4H0UktJX5f3F8ikC53p2Faa+b7MMXf8G/7Kr918ONKCKDfIciuE/0uJ/y3uukWwGWYrF3QjXKfqULL2QrU8bDyb1mxGyjA8Tdjkg+cx9leac1hOvxIhZNSibadU71yLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UJMQ3eoc; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5bed72ff443so5935262a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 23:58:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724741920; x=1725346720; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZY9iE015kjWusc18TRiosgvJ+Wsi74GjN7yQxl/1tqw=;
-        b=UJMQ3eoc/HyHz1hxF0OvxtbhywSSZGZEefoRaLeIbv9dVsVkvsB1hmjhnUsRKtzZVd
-         u1BF5SwPxCL56TtheMap3a+w4zmKr5EwvpdUQy7VVJfhXp6WmDfbistd/Htb0CXxYtvA
-         HaisewGqKxD765YWqk4RdJmuXiK8sY+VljTgIfZzEPA5CtelfKZ56XZqnhszmpWmTB4j
-         4hhnZbnaEev7rgIhZ3a3ThLKQpiJdYcb1hoRV3Bq/O38o3p2S8vLyYXuVOMTN9eTIAwU
-         rd5dgD9KLCxbNJkrSglLz8tnH3hYf8ho1c0ow4Nye2myzSzUOof2dATjIp38U+l6sE+b
-         AQ8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724741920; x=1725346720;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZY9iE015kjWusc18TRiosgvJ+Wsi74GjN7yQxl/1tqw=;
-        b=vuTItCe3K74EI8RXmprfmsjcL19wQzH2Ms/yulLpk0GyDy0qGLwvBNjzK+02uPfGUJ
-         LQ4gX2a52aepfb30cEsCFwKFASOYE0v5yHA1xSD48rL2TDyPGj68ydcjt2W3Xci92haS
-         lXMZQDJkykf9wMS8uLgtjn7JBes94CmthnYui5NUgzfhZD+sgc1517eZDqDeNINxMTwo
-         tZvoz9oENK2wIVdKmiyyjLjIBpdK81WzsqqlBMEAuyojXtMhe9a4UiD3C047bZiXXhhD
-         Mi/l//5hUI1Z/tfFIN7LW0FOaP6bc2oBfi9y/AWamc5tHrwDW2kEfc7k2Z/jr1d38pwr
-         tk/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXiHvO2nltzihOJsaRQDaguxnsERnjJlHh5I+WVezhZiFHlNw+aYGej567ddWeR8KiSxicgbVr8Tq/1Oqs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmA7ik0PCBv8YUxo1gW+aUwx84H+bvYv+KLeJt0yi1/+qafyDe
-	5Ntj3NapOz/WgqJk2ywP2UHJ3UpfayVqV8XsQz/XRB0rZT8elVhByK4UO5dZxaM=
-X-Google-Smtp-Source: AGHT+IHGiyAa7bX/33A23l80oaz7c5FgGRiOJ9rxmhA/0tIr4irzNxptSfoweilUX1Ghv/r+StubWg==
-X-Received: by 2002:a05:6402:90b:b0:5be:bcdf:4110 with SMTP id 4fb4d7f45d1cf-5c08910fb32mr8955148a12.0.1724741920178;
-        Mon, 26 Aug 2024 23:58:40 -0700 (PDT)
-Received: from localhost (109-81-92-122.rct.o2.cz. [109.81.92.122])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb471981sm640391a12.71.2024.08.26.23.58.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 23:58:39 -0700 (PDT)
-Date: Tue, 27 Aug 2024 08:58:39 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
-	jack@suse.cz, Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <Zs15H6sT-QhvcZqa@tiehlicka>
-References: <20240826085347.1152675-1-mhocko@kernel.org>
- <20240826085347.1152675-2-mhocko@kernel.org>
- <egma4j7om4jcrxwpks6odx6wu2jc5q3qdboncwsja32mo4oe7r@qmiviwad32lm>
- <ZszeUAMgGkGNz8H9@tiehlicka>
- <d5zorhk2dmgjjjta2zyqpyaly66ykzsnje4n4j4t5gjxzt57ty@km5j4jktn7fh>
- <ZszlQEqdDl4vt43M@tiehlicka>
- <ut5zfyvpkigjqev43kttxhxmpgnbkfs4vdqhe4dpxr6wnsx6ct@qmrazzu3fxyx>
- <Zs1rvLlk0mXklHyf@tiehlicka>
- <ru3d2bfrnyap7t3ya5kke3fqyrnj2hgbl4z2negbqkqj7z4mr2@gqrstl4lpl5h>
+	s=arc-20240116; t=1724741929; c=relaxed/simple;
+	bh=8cCBudVCG5gqfk8qgkzYYW/keDsJsUtEn6KupVvzMt8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=esoolq/pWVKL1Bui+O4eRs+DYH7iG5+djFxfRcTlpjRY+ORi4+1AHRbNAlksNRGsSwFkOy9EIZ0S85uHzu6mbvrqxEiFCtrGYCIY17K8rydK1cfmq7LiToebM5t++cVRPI5TxPlC+hlJJVevs0lwVRMTfz2J8bSi9wD8nTd1agY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=P6Alwok6; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1724741923; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=R2jZq5gOpcCxh3fyRzRIu9IKJVOLCHrHSDqAuNqGBV8=;
+	b=P6Alwok6CvKPFPhGgPP8+uJhPY2B1aDU57KVajbcfZZzNhuQNc9eOVGhF9qL5NBZ7rFeGjYUxCBTcWh13go7YD/4Hu00kOrPLEEu85Ob4mcF086/9XR9nympu0k+XCF5RDqrYveLsbUkO/DvjKoBCD2Qwb1eWxaSeLbsVaCqn1c=
+Received: from 30.97.56.57(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WDlUe9c_1724741920)
+          by smtp.aliyun-inc.com;
+          Tue, 27 Aug 2024 14:58:41 +0800
+Message-ID: <16327571-3031-4758-a401-2b5f19c3196b@linux.alibaba.com>
+Date: Tue, 27 Aug 2024 14:58:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ru3d2bfrnyap7t3ya5kke3fqyrnj2hgbl4z2negbqkqj7z4mr2@gqrstl4lpl5h>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 9/9] mm: shmem: support large folio swap out
+To: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: willy@infradead.org, david@redhat.com, wangkefeng.wang@huawei.com,
+ chrisl@kernel.org, ying.huang@intel.com, 21cnbao@gmail.com,
+ ryan.roberts@arm.com, shy828301@gmail.com, ziy@nvidia.com,
+ ioworker0@gmail.com, da.gomez@samsung.com, p.raghav@samsung.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1723434324.git.baolin.wang@linux.alibaba.com>
+ <d80c21abd20e1b0f5ca66b330f074060fb2f082d.1723434324.git.baolin.wang@linux.alibaba.com>
+ <aef55f8d-6040-692d-65e3-16150cce4440@google.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <aef55f8d-6040-692d-65e3-16150cce4440@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue 27-08-24 02:40:16, Kent Overstreet wrote:
-> On Tue, Aug 27, 2024 at 08:01:32AM GMT, Michal Hocko wrote:
-> > You are not really answering the main concern I have brought up though.
-> > I.e. GFP_NOFAIL being fundamentally incompatible with NORECLAIM semantic
-> > because the page allocator doesn't and will not support this allocation
-> > mode.  Scoped noreclaim semantic makes such a use much less visible
-> > because it can be deep in the scoped context there more error prone to
-> > introduce thus making the code harder to maintain. 
+
+
+On 2024/8/26 07:14, Hugh Dickins wrote:
+> On Mon, 12 Aug 2024, Baolin Wang wrote:
 > 
-> You're too attached to GFP_NOFAIL.
+>> Shmem will support large folio allocation [1] [2] to get a better performance,
+>> however, the memory reclaim still splits the precious large folios when trying
+>> to swap out shmem, which may lead to the memory fragmentation issue and can not
+>> take advantage of the large folio for shmeme.
+>>
+>> Moreover, the swap code already supports for swapping out large folio without
+>> split, hence this patch set supports the large folio swap out for shmem.
+>>
+>> Note the i915_gem_shmem driver still need to be split when swapping, thus
+>> add a new flag 'split_large_folio' for writeback_control to indicate spliting
+>> the large folio.
+> 
+> Is that last paragraph a misunderstanding? The i915 THP splitting in
+> shmem_writepage() was to avoid mm VM_BUG_ONs and crashes when shmem.c
+> did not support huge page swapout: but now you are enabling that support,
+> and such VM_BUG_ONs and crashes are gone (so far as I can see: and this
+> is written on a laptop using the i915 driver).
 
-Unfortunatelly GFP_NOFAIL is there and we need to support it. We cannot
-just close eyes and pretend it doesn't exist and hope for the best.
+Thanks for the history, and I understand.
 
-> GFP_NOFAIL is something we very rarely use, and it's not something we
-> want to use. Furthermore, GFP_NOFAIL allocations can fail regardless of
-> this patch - e.g. if it's more than 2 pages, it's not going to be
-> GFP_NOFAIL.
+> I cannot think of why i915 itself would care how mm implements swapout
+> (beyond enjoying faster): I think all the wbc->split_large_folio you
+> introduce here should be reverted.  But you may know better!
+> 
+> I do need a further change to shmem_writepage() here: see fixup patch
+> below: that's written to apply on top of this 9/9, but I'd be glad to
+> see a replacement with wbc->split_large_folio gone, and just one
+> !IS_ENABLED(CONFIG_THP_SWAP) instead.
 
-We can reasonably assume we do not have any of those users in the tree
-though. We know that because we have a warning to tell us about that.
-We still have legit GFP_NOFAIL users and we can safely assume we will
-have some in the future though. And they have no way to handle the
-failure. If they did they wouldn't have used GFP_NOFAIL in the first
-place. So they do not check for NULL and they would either blow up or
-worse fail in subtle and harder to detect way.
- 
--- 
-Michal Hocko
-SUSE Labs
+Sure. After Andrew queuing your fixes, I can send a proper fix patch to 
+remove the 'wbc->split_large_folio'.
+
+>> [1] https://lore.kernel.org/all/cover.1717495894.git.baolin.wang@linux.alibaba.com/
+>> [2] https://lore.kernel.org/all/20240515055719.32577-1-da.gomez@samsung.com/
+> 
+> I get "Not found" for that [2] link.
+
+Weird, I can access the link, not sure why.
+
+> 
+>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> ---
+>>   drivers/gpu/drm/i915/gem/i915_gem_shmem.c |  1 +
+>>   include/linux/writeback.h                 |  4 +++
+>>   mm/shmem.c                                | 12 ++++++---
+>>   mm/vmscan.c                               | 32 ++++++++++++++++++-----
+>>   4 files changed, 38 insertions(+), 11 deletions(-)
+> 
+> [PATCH] mm: shmem: shmem_writepage() split folio at EOF before swapout
+> 
+> Working in a constrained (size= or nr_blocks=) huge=always tmpfs relies
+> on swapout to split a large folio at EOF, to trim off its excess before
+> hitting premature ENOSPC: shmem_unused_huge_shrink() contains no code to
+> handle splitting huge swap blocks, and nobody would want that to be added.
+> 
+> Signed-off-by: Hugh Dickins <hughd@google.com>
+> ---
+>   mm/shmem.c | 15 ++++++++++++++-
+>   1 file changed, 14 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 37c300f69baf..4dd0570962fa 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -1459,6 +1459,7 @@ static int shmem_writepage(struct page *page, struct writeback_control *wbc)
+>   	swp_entry_t swap;
+>   	pgoff_t index;
+>   	int nr_pages;
+> +	bool split = false;
+>   
+>   	/*
+>   	 * Our capabilities prevent regular writeback or sync from ever calling
+> @@ -1480,8 +1481,20 @@ static int shmem_writepage(struct page *page, struct writeback_control *wbc)
+>   	 * If /sys/kernel/mm/transparent_hugepage/shmem_enabled is "always" or
+>   	 * "force", drivers/gpu/drm/i915/gem/i915_gem_shmem.c gets huge pages,
+>   	 * and its shmem_writeback() needs them to be split when swapping.
+> +	 *
+> +	 * And shrinkage of pages beyond i_size does not split swap, so
+> +	 * swapout of a large folio crossing i_size needs to split too
+> +	 * (unless fallocate has been used to preallocate beyond EOF).
+>   	 */
+> -	if (wbc->split_large_folio && folio_test_large(folio)) {
+> +	if (folio_test_large(folio)) {
+> +		split = wbc->split_large_folio;
+> +		index = shmem_fallocend(inode,
+> +			DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE));
+> +		if (index > folio->index && index < folio_next_index(folio))
+> +			split = true;
+> +	}
+> +
+> +	if (split) {
+>   try_split:
+>   		/* Ensure the subpages are still dirty */
+>   		folio_test_set_dirty(folio);
+
+Thanks for the fix, Hugh. Very appreciated for your reviewing.
 
