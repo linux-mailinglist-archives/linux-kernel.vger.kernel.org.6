@@ -1,220 +1,341 @@
-Return-Path: <linux-kernel+bounces-303543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E19960DB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:34:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9307960DB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:35:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C82981F23C1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:34:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 375731F23356
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921791C4EF9;
-	Tue, 27 Aug 2024 14:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7972C1C4EE4;
+	Tue, 27 Aug 2024 14:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QPm0oLLJ";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="tRj0K38G"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jD/ht/Rw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98C91BCA00;
-	Tue, 27 Aug 2024 14:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724769269; cv=fail; b=WKyXYoxID3uzHDCZXDhPNNtHEIqwnZX26lWR0F8KwX/qv5DRh9Ftd1jsfLL7k9mCm92RKslQv/bO784vls8mLy9JcYSBnzSKi18VAal3Gr9d2d6YIzQnvG2tEb3EJieNROZESJLW5CCct/wgBd1FIbsE5czSY9D3h+dN9pG0q8E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724769269; c=relaxed/simple;
-	bh=ms9E4NZ2hTSsvyfGi7Wq3f98tMpmmLq97x5gX6PAo/k=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=XPKp15MI3JzmHkH3Q+CoefHlV1iTjPKVpqH4ao+z+P8+ShejUA1nBMjmdyaObBA3U7ZnIWou/vS7I2L9E1FGspnffnCiBdmUWHbTeWc22U7+0yJrqT3FYO0ZEcA/jgwrzzSp6BqdZ0qTvH9rY1wU5EPo7wAkbZvt0UCUAKz4cgM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=QPm0oLLJ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=tRj0K38G; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47RCBVED006492;
-	Tue, 27 Aug 2024 14:34:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:references:in-reply-to
-	:content-type:content-id:content-transfer-encoding:mime-version;
-	 s=corp-2023-11-20; bh=ms9E4NZ2hTSsvyfGi7Wq3f98tMpmmLq97x5gX6PAo
-	/k=; b=QPm0oLLJuKHcUFclI9atsvc8yhB4gu0vP6iMOh7YF0Ij8PpffOxPmAPpS
-	h1V065oYz+HwUS+wGPQh1GomuaAMgkHTvb+S4MbDq4l1AdDLMSpJGMd2z98+mmfo
-	l1KVRnmTT8SCiGEDhZLjxsHi8nra9Fd9CkfWIthFV1OQRZ3RmP/YQaw1L+LS10y7
-	8N2Q61II5TYxvHoCbTiStFwIdjm3JcDIwDFeQUBSfjfgOHILaVB7kp41UF27610y
-	hsJ4qzmQp1cdrLA7pCGLb9U/YB0q7qfQ8DbIF/L/M5lKt2qABshjo2/egV/S5CyA
-	ktuTzPsKi9FHhsBIR4TzPsnZUSvyA==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4177nw5mvm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 27 Aug 2024 14:34:21 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47RDDgDX010631;
-	Tue, 27 Aug 2024 14:34:20 GMT
-Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2040.outbound.protection.outlook.com [104.47.56.40])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41894n19vs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 27 Aug 2024 14:34:20 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aqdJBEpaZSsBsjESwIRZunrYUwXyuYlQM0kh2Pbk5HCYP1ayP/97xmVsOclvogIOyoGX2vUzJRD0o/494mPSNXnf3iZl8SdMozkcTLmkaLqOkleCkV0hpmbOkuQWVigbwR0B0HEHLil/2e7xn6MKcVaWm0GS46sdUhswKfG9E9xRb00QEMvi/vghxs/hi/23KLBm/+7fnEsaUhukE5j2tzdZpVkuKZr/RNdsu5/888q1xD/gdkIFA67Tepv48ZfSbXBnIUEXcqhLrn3wpsOaMC0ALIotk93YTZwvT4LLQx+uKkXn5Wpc0HpPnShS9uXeaxOuy9mwqqQpqiOjqjhHEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ms9E4NZ2hTSsvyfGi7Wq3f98tMpmmLq97x5gX6PAo/k=;
- b=bQ/JczVaq6e0RJinsudKLk00byDJ0T0Vh0C00jPY+FrtdD0k0mPtwDRY2XKKLZK/GquYDWUNoWs9vd0RZHUWhH8sfrCP/j3ZoYkb4UnuGQH4YoRSkt8UYvojsnUV0MgN/urCHOY++tyYRLJRlhlJX9/tzKGsh3AY9QNLHAWuvPx26JQC8+lK01HyT6Q9vdFJCfmD8uy1PTujAye6Cma0jxClgMlpHsnu3afmg/S5nMHq+cqGATsn3dEmgZAP7o0QyQr5FZmCAnlprnAQ4yy25WEyUH2AkzdcfbUOMZ0UVShFs2L9ZsrtLnB1+KONm8Y1a7jTMihc/EJakB5uXFxofQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ms9E4NZ2hTSsvyfGi7Wq3f98tMpmmLq97x5gX6PAo/k=;
- b=tRj0K38Ggr+Ov7URwTAGiPjHbEq1WQUy3sk30RGgoyvf8BS5TJylArb75xK4FQvOSHqJF21FGiDqLHhaOArXjACD0uKxQYHtsvIEtZlB9h4Vd303DH1HhpLxGz4bm1E5mZ1rgWukNUJPBS4f9om+wutNoy91U6yHTT9lynyWuFo=
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by IA0PR10MB7603.namprd10.prod.outlook.com (2603:10b6:208:485::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.14; Tue, 27 Aug
- 2024 14:34:18 +0000
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90%6]) with mapi id 15.20.7918.012; Tue, 27 Aug 2024
- 14:34:18 +0000
-From: Chuck Lever III <chuck.lever@oracle.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the nfsd-fixes
- tree
-Thread-Topic: linux-next: Signed-off-by missing for commit in the nfsd-fixes
- tree
-Thread-Index: AQHa+AT00oMLtRlTxEecb0Ry7i5S+7I7LE6A
-Date: Tue, 27 Aug 2024 14:34:17 +0000
-Message-ID: <9D9347BF-4C4B-4599-B63D-753BC0643693@oracle.com>
-References: <20240827081141.051462a4@canb.auug.org.au>
-In-Reply-To: <20240827081141.051462a4@canb.auug.org.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-mailer: Apple Mail (2.3776.700.51)
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN0PR10MB5128:EE_|IA0PR10MB7603:EE_
-x-ms-office365-filtering-correlation-id: 155f28ca-c96f-475b-e41c-08dcc6a5551c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?akRaeVNIWlBtdFhKbHFPTk1RTnR2dXJFNEZLWUU4RXBTS1JkclE0NlhHR0xq?=
- =?utf-8?B?b3krL2syaUZma0FxUzdrZk5aWENJSmFnZXdRVEpyOCt0ZnpLMTBOS1BNTnB2?=
- =?utf-8?B?TmR6Sm4xczZvUUYzeTJiL2NVUjN0ZDd6VmtBSyszalhDcXlQSlFQa1JCbzN0?=
- =?utf-8?B?K2xlM1JpbHVZZlVvS0V4d21wcVlMRGhlUHFudU40bVptdXdBOGNYRjQxUVNW?=
- =?utf-8?B?M0QyY0plZVVuS0d4bUlxSmpWc1IrVFYvOWNVRmpJcThzVncvSVVoYUtUcGln?=
- =?utf-8?B?dzhmQ2d0RFBNZFd3a0xNWXo5VjNnY291VE9PWDliMk9VMDdmbVB6TVhvQllM?=
- =?utf-8?B?bVppVC9CUnlTa0NSckptK251YitBQ3dadG9QN1BFMzR1bHBLa0ZSRWdybWJq?=
- =?utf-8?B?c3E1MTZsUkhkQ3AzTTV2bG1BbEdSK0doWDFtNE10cnJIdW40T0xqbTRFWkRq?=
- =?utf-8?B?TldYc2Y4K1JJNWhGakVmaDl1eFBFMy9tMUVKUUltbUpwNXVId0t0VGNsZ1U2?=
- =?utf-8?B?SDY1MHMweHk5ZnNQZjFhL1VuNjAxWVJrTkRBSUZZVnUxNnlRVzlqTFlSeXJJ?=
- =?utf-8?B?aURXekp3QVFUYXNocjZZZ1cxY3RULzlpZFFFM0xSTkdHSVB2Nk9LZzFOZHZB?=
- =?utf-8?B?ZnMzK1JyMnFUbDdIOC8xbnJOR0tHSGZ0RWtPNUNEUExNZUxZaVYzc2xWU1o2?=
- =?utf-8?B?ckJudTZkNnVTZnhaSWJ0Ry9hZlZSQ3hqUUJtalZPdVJZWjloQ3VuQjBwYWlM?=
- =?utf-8?B?VGtndksvdmRZWXNQTzB6OFVkQzRWa1lUQnR6RUV4Vmw5NUpkRnFHTnY4WFBK?=
- =?utf-8?B?azlpdHBJaEZRK2MwQTI0aDZ1TzYxWHJ2aDR4b3oyK3poc0ZwOEMzNHBlVFZj?=
- =?utf-8?B?QlNmaHNDUHlxY1R2bnVjYW5Rb3M1d2lIZ0ErVE9GdU1lVTg1ZC9ZQzNXTHU1?=
- =?utf-8?B?amNWcjdMNDEvVWRoVUJCM1RPNUtmdUZldjZZbVZPVG1FZE5ZZVRXdmdSQ3J0?=
- =?utf-8?B?SVlDenlwakZ5MXQ0bGtZUUZYNGFUN3BNNmFkdnYzUlNBRHkzMGg4RXdKMlBV?=
- =?utf-8?B?aDZ0bElTNGlyMGxmOU95UWpXVk5uN1g5c3pDbFJFWkNvank0UWUwZHFrV0p4?=
- =?utf-8?B?MHZPTG02aXU5STNHZk5XVUMwZXo2VkkvaC84MVZQQVNubjBOd3AwVzNjNVRt?=
- =?utf-8?B?ZWdnZjdEaU4zQVM0OTROSUZNSks2Vm1aMTQyT1hsUDA3SHltYWVlaDhZYTFR?=
- =?utf-8?B?VEVocVJuVEd0bmVSMVlyUlpBT092c0ZEVHpITDlPazFpMWF1RTdsWXFGbXVt?=
- =?utf-8?B?Rk5LREp2RmcvMUJEcTNUZ1cvbGdNd3FSR2FxZHB3TzRVK3A0dXhjQXpYcjk1?=
- =?utf-8?B?N0pQNE5uK0ZFeHJ4aW5tMS9aQjgrczM0ZnVOeExuQXZ5aTgwK3dRWTAvU0NV?=
- =?utf-8?B?M2k5Y2tyc2dXQUN5d1JDVWdPcVdUb215cUVrTVRXNVBSbWtBOGljdDQ1ZFI5?=
- =?utf-8?B?TmwxbmVOcitFMGlpS29DeDVuRkFHM21pMkJlQUhxR0g5K2RaM1RJMTRMQWFE?=
- =?utf-8?B?Wi8xZlNQdklkLzlqNDVJY1pBNnBkbmJXSldvRFVnNTZUd0J0Q3hlSWNYU3ZG?=
- =?utf-8?B?emtOWm1sd0tHcmNzNndOWndrOUJlcUlja3Q1NnYvOVh3L3loTkgxQktFblc3?=
- =?utf-8?B?ZGZGeFkweVJlYllhamFqNlV1WEtZOTRHaklaaWwwcUYwaG1obGJYb0tJbWpp?=
- =?utf-8?B?QkJzM3duK3hWRFBQUk9jbVhUM2RId1Q3am02WUljRlhOcFY5VGZhY3dxTHNG?=
- =?utf-8?B?UHpnWUREWHlvY1djUjlrYThlY3pybW9GdHdVSXhNSXNpKzRncDZjOHIyN1BD?=
- =?utf-8?B?THV4bFU5a3ZDUENOajRYVmdDQzl4eWZCUkFmTThNWXMwU0E9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?dDNXTEM3dlJTRmVOb0JsWWZLUWE3Tm9lZFBJVGFaZzRQVVBJcU42bkxQNjkw?=
- =?utf-8?B?S1hCNWg1d1dUblBkdUVCTk1TQzR3cDl3YmJwUDZ4dlJ6THl2OWtQcVE5NVow?=
- =?utf-8?B?S09YamEya1JkMTFxMk1NS2NuU21wQ1c3MUtnN25uM2xpQTIzT2ErMFRIeGtY?=
- =?utf-8?B?cjJUcjREenI2RWF6cEVac0V4WjdLMGtESFphczZvb01jNnVsVGRzemFvcFFU?=
- =?utf-8?B?bUxaTlZTQy94MDg2alhxSE9mYldkb3lkUWxERjJ3aXQ2QUNaaUJ3RGROdndv?=
- =?utf-8?B?dTZQN0poMmlvcXJLRzRFK2NjajlKOTZYTjMxMTFCVGkrbE1JdFJML0FwajFE?=
- =?utf-8?B?c1hDWEU2TktBMFpVNnl5UEVHejFZTUZUTm5ISDdxc1pGMU1aTmdyVlRaNHU3?=
- =?utf-8?B?TnRHS2w0VW1XNm05VnVQR3R4TWk2OW91VFlYc0FxTkQvZkxxUTZNL0p4K3dK?=
- =?utf-8?B?TWZUbFUxb1hvTGZKT3pqek81YWY0eEhmRTcyUlFqNTg1cGNWYmluZGthS0pi?=
- =?utf-8?B?anBHb1FsWVMwcnVWYjhRU1NWU3lVS1U4eXVHbEg1YU4yVCtPLzVYRWU0eVAx?=
- =?utf-8?B?Z29kN0QySnFvVTMxa2xTUENWZE9pVUx0MTJBd0hEMGRURFdTMWdkK3RyT01s?=
- =?utf-8?B?RFRma0VFK3l0eVN6Qnl2RTh6d2cwbW50aUNFcmppbHRKckRXdHYwUWlLNFBN?=
- =?utf-8?B?TEtCZGpYMG8wZkhHNTU0N3MyKy9HNmlFM3MwN0V6WXA5M21VOFBOMXVQWFlY?=
- =?utf-8?B?UHZnanB0MnV4cmxZMDk2b3dSSTZhNzFmVElWcmpkTFZjbmxZbjl4VjhTbk91?=
- =?utf-8?B?SmlSbDMraHFaVjM3RHlLcmgvUVVyUUZMMGJwZjlCcFpaMXR3OXFwb3ZaWVh0?=
- =?utf-8?B?VURDK283QTBxMjZFcFVNUERXNXJheFFnR2tlbHlUc1VQWU5jWWMwbnBTbzFv?=
- =?utf-8?B?d2RKU3BDODV1NDkvTVVhSUhKMHFMa3phKytzcUwrdldleHZPaUFMeWhMVWRm?=
- =?utf-8?B?MEhROTRUTi8rdkRXNWdxaGllUXF5VHdXcTRqZ1dwRzhSN21jSHR1UFZDbXBr?=
- =?utf-8?B?MzhVTjdRU09JaGY2ZlpWK0t1L1JRR09DdTg3NERuNk9UVms5amQ0Vk1Bakw0?=
- =?utf-8?B?SEpPNjRzWjNqKy9NRDJCamdkTVd5K2ZVeFc0QVZPcWo2V3VaTUhJRHB5N1JD?=
- =?utf-8?B?bTQxS2tYVHVYR2padHN6alBUanB2OUI0UUFSQ01WZjFWREVlSVJjUjlnZUto?=
- =?utf-8?B?RXV4YUhvb0xsQ3V0cEZLdjF3UDF2Qm1PVytPOUtQUTZjUXllVWtzb1g4R3Bu?=
- =?utf-8?B?c0tXNVc5b3lOcENtaFpWY1BKY2pSckpLdzhjNDBFazhQVmdzMXMzZXgwL29u?=
- =?utf-8?B?VW1xN3FWdnFVWXFzdmo3alU4Y1A2ME5wVElmUXZTK0tzSWF4Q2MvNk5KWTVz?=
- =?utf-8?B?NGdnSG50Uld5dC9WalU1MG5VOW1mbm1IWEVTbFNYR0lDV3NVOXpqVm9jc0NE?=
- =?utf-8?B?d1ZyQ28vQW15Z0FnQmhCTWdtckhtOWg3dmMwZm1ybVdXK2FEUld5cHdKMzVV?=
- =?utf-8?B?VmNTOHBVY3NDVU1mT2U1RG5lNWVZZmtBQjl6VThMbDF2VjdIcEhnV2oxOFk3?=
- =?utf-8?B?M0hRa1ZKOVlNejlsM0ZvSksrYVc2Qk9Td2lDNTM0VnQzdnJYYldFdCtTcHlQ?=
- =?utf-8?B?YUdid0FMSjhnK2l3dWUvNzAyMGx5cEwrYlJYSXYwVXR3cXhrQ0txK21HMkJS?=
- =?utf-8?B?RE1WRGEyNlJoOHAvUmxaUTZ1WG4yQXA0Q3lKSWVNUzRZeWM0TGpzUUxFeVVt?=
- =?utf-8?B?enF0UW1KUk1DZUp4SW5oTE5vOURvZEdXSHpYZThYZWJYOG8rclZmYTJ0U3g2?=
- =?utf-8?B?ZGJkRHlsYlVZOVBGWnh3NWJtQS81MkhNU0VESm1nTkZ5bm1FUEw2VDhSWEg1?=
- =?utf-8?B?OXhrcndPb1lTYXlHQ0IwOWhZUGtqZDc5N0hEME1PNWRVdmdlNXZBTFZDc29z?=
- =?utf-8?B?WDBSY0czUnRYdVhRNDUwZTdXbEZUY0hvV2p3bWhzOXM2a2kxVDdjZHBPWHVI?=
- =?utf-8?B?WmxHdFlTaGhSa1ZOcTRJWHJIWERZNmhVKysvK1pRMjgvSnFvMDAwWFRzK3Rh?=
- =?utf-8?B?UU5SZ2hUL1NsOUVBSi9KY3MxZElpRXc3bHgxWnYyWmU1ZUtBbTdHUmJ4WVN0?=
- =?utf-8?B?Rnc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E8AFB9274958464B8990B5016F0F47B3@namprd10.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2071A08A3
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 14:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724769297; cv=none; b=LeDamzx0X31ZznsxGpRgSMIdJUbWq6QIU8hBP5TUthUdJITcwPK0drFKHWt51W8DoiMD584gDyyE0dbtFZmCy4oneaKQoZn3EwW/9SQug6FE1lUANlYY0qc/ucmwY1zXjmNXO2585Ey209UgrlxMSnOXfiNmyfl/8lBFn1Vd0U4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724769297; c=relaxed/simple;
+	bh=hbYne1pfgTFWnnTMvpQLFh+ZyDiGc50wGAfOyXWLm5o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z1oCPUX9586cIemRGvUKXrCc73q0dIdp+6x9e7LRyuLz40yKsoKSzgVgIIteZvUdmj5EmWjdG+B8YUr0gQcA6PdmjGIyA8SXcUjcQVbrQRGoOdUyxSAU7skAMyvzmnVFN+MLr8lzFjf8JnmOAt+6jODNhellX1gavQb+dugcNlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jD/ht/Rw; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724769294;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Iwu4Za2Wm1Yaizvy4lS8Xc7WL1qKP7PD7M1ARL9g61k=;
+	b=jD/ht/Rwskh+ar2ZMJzjD1b5UMOLoeR7zVIQ6W2TCk+ecATX7qwllvgOM0hyvJ+mPEjfa2
+	H/M8pqtAaPe141slrDZZIvk1xmNpoGEjXUGeq9RoEOZ/dcLQww5XHi1aNdGTOadv9QHslA
+	jRnTEOF9LAE3e7yQEMkf0Mk3gVW88K8=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-8-d6uElJ4oOQC-RROt4eD4lA-1; Tue, 27 Aug 2024 10:34:52 -0400
+X-MC-Unique: d6uElJ4oOQC-RROt4eD4lA-1
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a867ed4c129so470169466b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 07:34:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724769291; x=1725374091;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Iwu4Za2Wm1Yaizvy4lS8Xc7WL1qKP7PD7M1ARL9g61k=;
+        b=bGuIoS7qg3Ux2Sooh6DZQ/K54dHJ3KcKJJElB268siiiqYQmXfQr3IBDDlZv+wHQ/z
+         ymT5accC3GjF5eFqH9sUDSxAyIezavCciyzL90gCAEWh5OdTFVEwff9eH1yUp7WvBmdx
+         djQ2iT+MstZmFVTopwlHuCVi2DSwFLxstb06z7aIoUaM1jeMTp4J+6kwNqIAiEzHi/cz
+         hkhs224t657LD+gME1VIsHf3mn4m/1jtJLebpBlIZF7wkSf34Fx9SpNTiSiSKT7Pt66o
+         VPxy372OdeS5sGjxoJH2NPLcn4aadPks7y8C+92JtCr1mTB7NjsIIla3IzGKBgRIJ2CX
+         2vAg==
+X-Forwarded-Encrypted: i=1; AJvYcCXSmPgyjykeodYhulkbSOrDfeWVOJ3ZcdUTnBz/2GfA+gs6maqrY+7KHg1XCDHDrfqSVhpVdgInsKcfgjc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY4FR9qB748XR4yURNR1xWYHhZ1SwNDe7RYITEkKZTeuhFQD1s
+	ZWK2VQEm+QLB2TuVWb4EBCPWoKnDlDn0N39UJ9OOlkxByFU8zCYAE2e2pN6nvKy4vTJ2UkcWU+S
+	otJEFp9Bp0kNWCtWVkQ4PM3HcWfl+EPPcR1sTRfD+0d2oOce7quWOG2uw2dTS7gCIJJcG+0t3Us
+	6oEQ/i3p1KU+veVmIutLoNxmZHjKxXbg4eYu5ohbQvzQwlyJCmfQ==
+X-Received: by 2002:a17:907:2da7:b0:a86:96f5:fa81 with SMTP id a640c23a62f3a-a86e3a36fbbmr231847966b.32.1724769291438;
+        Tue, 27 Aug 2024 07:34:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFZX+6v8RfoUIBAptFlsQmYtDjq55qaW8kWJXtouIu1hlDX1t+LZCcF+kX2NfJ9T4Wrn/Lyhgs1FvmrE3sswOA=
+X-Received: by 2002:a17:907:2da7:b0:a86:96f5:fa81 with SMTP id
+ a640c23a62f3a-a86e3a36fbbmr231843966b.32.1724769290430; Tue, 27 Aug 2024
+ 07:34:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	F7jAVdwOX0XNUiHqB9OfEDLCK0RbGj1D9rvZ/dP8zwkV91qKSv+J9VHyCtdkeY1NYWcbt/FsVmPAfh1a9wTiDD9eMnp+G5Kyjk/nLc8QXwLYsXQhge3/PHQGsgb2/4mIub98seu6ilAZi7xWJNR/6aJ5hv7qtLnbutPiH31/ECVJ+dZGoOPWwAErlr/A8nJesKt/QZLoI2oFCMMyhsLTCWJxPmXIhfeXvpi4vHHooZRgtC//frMIFOD1RmhYrpopyA9DVltlZk6GUuIY2M31wya4BZrbSsA6UtvnDvq2+AOAsGYeTfE+bb78Nb3xG7FGRCI//PCOBTWb7C5hveUs8gLlAnFKnSx26LRlnGf+rTNmHAtbQ/jetj61a+wK2CyDkoLc20xNDS08PakvcAoEe6k+fYSYID9sAbesBqN2EAdo1KeVcUMniint3HQ0urACtF2KWZhN26AsvXnEUt5C0TtC0HcqXlVJYCmkQ/4KNK+Ai0Z9jj4Ag2n5kaFI9faH+QmGYKFWjb6i9aPXp0Z8g0b4dP+clqCli3NnIFfR4VvIubPjaQKWZS8aGEfIaeXlI6s4NIcRygGYJ2RyzRcmVj8XtvBjfg8UGHuod1rGB6A=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 155f28ca-c96f-475b-e41c-08dcc6a5551c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2024 14:34:17.9519
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: LUVSUML6PZUxafrQ4sCwlQHEvnSqSTRDsCJvZDtmjhMYRq10xQ5TgcNjzyg1jf4mWZOjzOyKqe41NbjEZFavIg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR10MB7603
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-27_08,2024-08-27_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0 spamscore=0
- mlxlogscore=999 adultscore=0 suspectscore=0 phishscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408270108
-X-Proofpoint-GUID: Dnz0L4GV8YV2AvSrQXFYt1mZVCuLp0pB
-X-Proofpoint-ORIG-GUID: Dnz0L4GV8YV2AvSrQXFYt1mZVCuLp0pB
+References: <20240820130001.124768-1-tglozar@redhat.com> <20240823125426.404f2705@gandalf.local.home>
+ <20240823145211.34ccda61@gandalf.local.home> <CAP4=nvQnW5vS5CQBZtKp-BdjYxNFbq26P36uRy3RhCenHEG_YA@mail.gmail.com>
+ <20240826132620.1618d201@gandalf.local.home>
+In-Reply-To: <20240826132620.1618d201@gandalf.local.home>
+From: Tomas Glozar <tglozar@redhat.com>
+Date: Tue, 27 Aug 2024 16:34:39 +0200
+Message-ID: <CAP4=nvTR9EuA5WhGweSaoeptEw0n0w5exr8gq6zfqGhGNt3zpg@mail.gmail.com>
+Subject: Re: [PATCH] tracing/timerlat: Check tlat_var for NULL in timerlat_fd_release
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jkacur@redhat.com, "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-DQoNCj4gT24gQXVnIDI2LCAyMDI0LCBhdCA2OjEx4oCvUE0sIFN0ZXBoZW4gUm90aHdlbGwgPHNm
-ckBjYW5iLmF1dWcub3JnLmF1PiB3cm90ZToNCj4gDQo+IEhpIGFsbCwNCj4gDQo+IENvbW1pdA0K
-PiANCj4gIDIzNzhiMGZlNzdhYyAoImZzL25mc2Q6IGZpeCB1cGRhdGUgb2YgaW5vZGUgYXR0cnMg
-aW4gQ0JfR0VUQVRUUiIpDQo+IA0KPiBpcyBtaXNzaW5nIGEgU2lnbmVkLW9mZi1ieSBmcm9tIGl0
-cyBjb21taXR0ZXIuDQoNCkhpIFN0ZXBoZW4sIHNob3VsZCBiZSBhZGRyZXNzZWQgbm93IGluIG15
-IG5mc2QtZml4ZXMgYnJhbmNoLg0KDQotLQ0KQ2h1Y2sgTGV2ZXINCg0KDQo=
+po 26. 8. 2024 v 19:27 odes=C3=ADlatel Steven Rostedt <rostedt@goodmis.org>=
+ napsal:
+>
+> Yeah, I think I finally found the real issue. I don't think we need the r=
+ef
+> counting. The problem is the creating and killing of the threads via the
+> start and stop callbacks. That's not their purpose. The purpose of stop
+> and start callbacks is when tracing_on is set to off and back on again. I
+> think this is what is racing with the close.
+>
+
+I believe I discovered the exact mechanism of the bug. Since rtla is
+killed with SIGTERM, it leaves the timerlat tracer active and its
+timerlatu processes running. The rtla from the next iteration of the
+while loop in the reproducer deactivates the timerlat tracer,
+triggering the killing of the timerlatu processes. However, this
+killing is asynchronous, and while the processes are gradually dying
+one by one and closing their fds, the rtla from the next iteration is
+already activating the timerlat tracer again. One of the timerlatu
+processes does not die fast enough to release the fd before the
+tlat_var is cleared in osnoise_workload_start, triggering the panic.
+
+You can see the bug in action in this detailed trace I got today, with
+the use of in-kernel trace_printk together with bpftrace and
+bpf_trace_printk and captured using ftrace_dump_on_oops (running the
+same reproducer on a 8 CPU KVM system):
+[  103.227679]     rtla-2325      2..... 98242607us :
+osnoise_workload_start: tlat_var_reset: cpu=3D0,
+tlat_var=3D0000000034996efa
+[  103.227844]     rtla-2325      2..... 98242607us :
+osnoise_workload_start: tlat_var_reset: cpu=3D1,
+tlat_var=3D0000000062d1f520
+[  103.228009]     rtla-2325      2..... 98242607us :
+osnoise_workload_start: tlat_var_reset: cpu=3D2,
+tlat_var=3D0000000002e262d8
+[  103.228173]     rtla-2325      2..... 98242607us :
+osnoise_workload_start: tlat_var_reset: cpu=3D3,
+tlat_var=3D00000000b9d3a280
+[  103.228349]     rtla-2325      2..... 98242607us :
+osnoise_workload_start: tlat_var_reset: cpu=3D4,
+tlat_var=3D000000000fba7a6e
+[  103.228510]     rtla-2325      2..... 98242608us :
+osnoise_workload_start: tlat_var_reset: cpu=3D5,
+tlat_var=3D000000008ed0b87f
+[  103.228670]     rtla-2325      2..... 98242608us :
+osnoise_workload_start: tlat_var_reset: cpu=3D6,
+tlat_var=3D00000000a02fe267
+[  103.228831]     rtla-2325      2..... 98242608us :
+osnoise_workload_start: tlat_var_reset: cpu=3D7,
+tlat_var=3D000000008e1d5095
+[  103.228992]     rtla-2327      3...11 98256551us :
+bpf_trace_printk: rtla pid 2325 forks into 2328
+[  103.229156]     rtla-2327      3...11 98256873us :
+bpf_trace_printk: rtla pid 2325 forks into 2329
+[  103.229325]     rtla-2327      3...11 98257124us :
+bpf_trace_printk: rtla pid 2325 forks into 2330
+[  103.229489]     rtla-2327      3...11 98257353us :
+bpf_trace_printk: rtla pid 2325 forks into 2331
+[  103.229651]     rtla-2327      3...11 98257574us :
+bpf_trace_printk: rtla pid 2325 forks into 2332
+[  103.229810]     rtla-2327      3...11 98257801us :
+bpf_trace_printk: rtla pid 2325 forks into 2333
+[  103.229968]     rtla-2327      3...11 98258008us :
+bpf_trace_printk: rtla pid 2325 forks into 2334
+[  103.230124]     rtla-2327      3...11 98258216us :
+bpf_trace_printk: rtla pid 2325 forks into 2335
+[  103.230293]     bash-2094      0d..31 102987914us :
+bpf_trace_printk: rtla pid 2325 received signal 2
+[  103.230452]     bash-2094      0d..31 102987915us :
+bpf_trace_printk: ...from bash pid 2094
+[  103.230609]     bash-2094      0d..31 102990000us :
+bpf_trace_printk: rtla pid 2325 received signal 15
+[  103.230766]     bash-2094      0d..31 102990001us :
+bpf_trace_printk: ...from bash pid 2094
+[  103.230922]     rtla-2325      2...21 102990010us :
+bpf_trace_printk: rtla pid 2325 exiting
+[  103.231079]     rtla-2327      3...21 102990503us :
+bpf_trace_printk: rtla pid 2327 exiting
+[  103.231242]     rtla-2337      3d..31 103232021us :
+bpf_trace_printk: timerlatu/0 pid 2328 received signal 9
+[  103.231399]     rtla-2337      3d..31 103232022us :
+bpf_trace_printk: ...from rtla pid 2337
+[  103.231554]     rtla-2337      3d..31 103232024us :
+bpf_trace_printk: timerlatu/1 pid 2329 received signal 9
+[  103.231711]     rtla-2337      3d..31 103232025us :
+bpf_trace_printk: ...from rtla pid 2337
+[  103.231866]     rtla-2337      3d..31 103232029us :
+bpf_trace_printk: timerlatu/2 pid 2330 received signal 9
+[  103.232022]     rtla-2337      3d..31 103232030us :
+bpf_trace_printk: ...from rtla pid 2337
+[  103.232178]     rtla-2337      3dN.31 103232031us :
+bpf_trace_printk: timerlatu/3 pid 2331 received signal 9
+[  103.232347]     rtla-2337      3dN.31 103232031us :
+bpf_trace_printk: ...from rtla pid 2337
+[  103.232506]     rtla-2337      3dN.31 103232034us :
+bpf_trace_printk: timerlatu/4 pid 2332 received signal 9
+[  103.232685]     rtla-2337      3dN.31 103232034us :
+bpf_trace_printk: ...from rtla pid 2337
+[  103.232846]     rtla-2337      3dN.31 103232039us :
+bpf_trace_printk: timerlatu/5 pid 2333 received signal 9
+[  103.233010]     rtla-2337      3dN.31 103232039us :
+bpf_trace_printk: ...from rtla pid 2337
+[  103.233171]     rtla-2337      3dN.31 103232042us :
+bpf_trace_printk: timerlatu/6 pid 2334 received signal 9
+[  103.233357]     rtla-2337      3dN.31 103232042us :
+bpf_trace_printk: ...from rtla pid 2337
+[  103.233517]     rtla-2337      3dN.31 103232046us :
+bpf_trace_printk: timerlatu/7 pid 2335 received signal 9
+[  103.233678]     rtla-2337      3dN.31 103232046us :
+bpf_trace_printk: ...from rtla pid 2337
+[  103.233835] timerlat-2331      3...21 103232701us :
+bpf_trace_printk: timerlatu/3 pid 2331 exiting
+[  103.233995] timerlat-2329      1...21 103232704us :
+bpf_trace_printk: timerlatu/1 pid 2329 exiting
+[  103.234155] timerlat-2331      3....1 103232705us :
+timerlat_fd_release: timerlat_fd_release: cpu=3D3,
+tlat_var=3D000000000fba7a6e, osn_var->pid=3D2331
+[  103.234357] timerlat-2329      1....1 103232706us :
+timerlat_fd_release: timerlat_fd_release: cpu=3D1,
+tlat_var=3D0000000002e262d8, osn_var->pid=3D2329
+[  103.234508] timerlat-2334      6...21 103232821us :
+bpf_trace_printk: timerlatu/6 pid 2334 exiting
+[  103.234657] timerlat-2334      6....1 103232826us :
+timerlat_fd_release: timerlat_fd_release: cpu=3D6,
+tlat_var=3D000000008e1d5095, osn_var->pid=3D2334
+[  103.234813] timerlat-2330      2...21 103232850us :
+bpf_trace_printk: timerlatu/2 pid 2330 exiting
+[  103.234966] timerlat-2330      2....1 103232853us :
+timerlat_fd_release: timerlat_fd_release: cpu=3D2,
+tlat_var=3D00000000b9d3a280, osn_var->pid=3D2330
+[  103.235122] timerlat-2333      5...21 103232856us :
+bpf_trace_printk: timerlatu/5 pid 2333 exiting
+[  103.235291] timerlat-2333      5....1 103232858us :
+timerlat_fd_release: timerlat_fd_release: cpu=3D5,
+tlat_var=3D00000000a02fe267, osn_var->pid=3D2333
+[  103.235452] timerlat-2332      4...21 103232861us :
+bpf_trace_printk: timerlatu/4 pid 2332 exiting
+[  103.235610] timerlat-2332      4....1 103232864us :
+timerlat_fd_release: timerlat_fd_release: cpu=3D4,
+tlat_var=3D000000008ed0b87f, osn_var->pid=3D2332
+[  103.235769] timerlat-2335      7...21 103232867us :
+bpf_trace_printk: timerlatu/7 pid 2335 exiting
+[  103.235932] timerlat-2335      7....1 103232869us :
+timerlat_fd_release: timerlat_fd_release: cpu=3D7,
+tlat_var=3D000000003113e297, osn_var->pid=3D2335
+[  103.236103]     rtla-2337      3..... 103234109us :
+osnoise_workload_start: tlat_var_reset: cpu=3D0,
+tlat_var=3D0000000034996efa
+[  103.236316]     rtla-2337      3..... 103234109us :
+osnoise_workload_start: tlat_var_reset: cpu=3D1,
+tlat_var=3D0000000062d1f520
+[  103.236473]     rtla-2337      3..... 103234109us :
+osnoise_workload_start: tlat_var_reset: cpu=3D2,
+tlat_var=3D0000000002e262d8
+[  103.236630]     rtla-2337      3..... 103234110us :
+osnoise_workload_start: tlat_var_reset: cpu=3D3,
+tlat_var=3D00000000b9d3a280
+[  103.236797]     rtla-2337      3..... 103234110us :
+osnoise_workload_start: tlat_var_reset: cpu=3D4,
+tlat_var=3D000000000fba7a6e
+[  103.236972]     rtla-2337      3..... 103234110us :
+osnoise_workload_start: tlat_var_reset: cpu=3D5,
+tlat_var=3D000000008ed0b87f
+[  103.237144]     rtla-2337      3..... 103234110us :
+osnoise_workload_start: tlat_var_reset: cpu=3D6,
+tlat_var=3D00000000a02fe267
+[  103.237345]     rtla-2337      3..... 103234110us :
+osnoise_workload_start: tlat_var_reset: cpu=3D7,
+tlat_var=3D000000008e1d5095
+[  103.237516] timerlat-2328      0...21 103234149us :
+bpf_trace_printk: timerlatu/0 pid 2328 exiting
+[  103.237690] timerlat-2328      0....1 103234152us :
+timerlat_fd_release: timerlat_fd_release: cpu=3D0,
+tlat_var=3D0000000062d1f520, osn_var->pid=3D0
+[  103.237871] ---------------------------------
+[  103.238053] CR2: 0000000000000010
+
+On the kernel side, I'm using similar trace_printk debug prints as you
+did; the bpftrace program used is this:
+uretprobe:libc:fork
+/strncmp(comm, "rtla", 5) =3D=3D 0 && retval !=3D 0/
+{
+        debugf("rtla pid %d forks into %d", pid, retval)
+}
+tracepoint:signal:signal_generate
+/strncmp(args->comm, "rtla", 5) =3D=3D 0 || strncmp(args->comm,
+"timerlatu", 9) =3D=3D 0/ {
+        debugf("%s pid %d received signal %d", args->comm, args->pid,
+args->sig);
+        debugf("...from %s pid %d", comm, pid);
+}
+tracepoint:sched:sched_process_exit
+/strncmp(args->comm, "rtla", 5) =3D=3D 0 || strncmp(args->comm,
+"timerlatu", 9) =3D=3D 0/ {
+        debugf("%s pid %d exiting", args->comm, args->pid)
+}
+
+> Anyway, the start and stop should probably just pause the threads and not
+> kill them an start them again. That is, the osnoise_workload_start() shou=
+ld
+> be called by the init callbacks and the osnoise_workload_stop should be
+> called by reset callback.
+>
+> The start and stop callbacks should just pause and restart the the thread=
+s.
+>
+
+I'm not sure if that fits into the design of timerlat. At least for
+timerlat with user workload, each activation of the timerlat tracer
+implies the creation of a new user workload, not the re-activation of
+a lingering one (that might be an entirely different program). A
+timerlat tracer is tightly associated with its threads: if the threads
+exit, the timer itself ceases to have meaning. Of course also rtla
+should make sure there are no lingering timerlatu processes.
+
+I think waiting on the threads to actually exit in stop_kthread() is
+the proper solution:
+
+/*
+ * stop_kthread - stop a workload thread
+ */
+static void stop_kthread(unsigned int cpu){
+    struct task_struct *kthread;
+
+    kthread =3D per_cpu(per_cpu_osnoise_var, cpu).kthread;
+    if (kthread) {
+        if (test_bit(OSN_WORKLOAD, &osnoise_options)) {
+            kthread_stop(kthread);
+        } else {
+            /*
+             * This is a user thread waiting on the timerlat_fd. We need
+             * to close all users, and the best way to guarantee this is
+             * by killing the thread. NOTE: this is a purpose specific file=
+.
+             */
+            kill_pid(kthread->thread_pid, SIGKILL, 1);
+            /* ^^ here wait until kthread (actually the user workload) exit=
+s */
+            put_task_struct(kthread);
+        }
+        per_cpu(per_cpu_osnoise_var, cpu).kthread =3D NULL;
+    }
+
+There might even be another bug, not sure if calling put_task_struct
+on a task that is still exiting is sane.
+
+Tomas
+
 
