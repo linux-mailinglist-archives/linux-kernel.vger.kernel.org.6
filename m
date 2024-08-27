@@ -1,260 +1,165 @@
-Return-Path: <linux-kernel+bounces-302532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33F9895FFDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:35:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F8D95FFE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:36:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 593FA1C21B85
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:35:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D12AF2839C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260F01AAD7;
-	Tue, 27 Aug 2024 03:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386E428684;
+	Tue, 27 Aug 2024 03:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SPQPTlyt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dPOgMgtb"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A48D1B964;
-	Tue, 27 Aug 2024 03:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCC417D2;
+	Tue, 27 Aug 2024 03:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724729707; cv=none; b=aUfGBnDaXYHXsvWeO+dyHiPZQmz9KtZ91mOXAVtX3IxeGSNa+7iD5RQpibmDd/1pe5AMZvN/3vZlqfpbOK2stz0IjgzLBf71MVlLCD3dB+nNmRDC3LXywdJRLxFrrYj4aKqC7U9InfblgUx0FZUo2gcw8Gu/fEJ6nwWPSLgIAyc=
+	t=1724729806; cv=none; b=K+i8U6t5ltQ8lT2zSQtDZjgggvtE89QG1pRHy9ml0EtCjAB806bZqn+aJ6mxVitK3ISmWPN6R1u6W7CtI/2LEUm/IyUrwbEGIQX7N9NF6j0Kix7UbK/uc99typJI/vb9arkT/HkS9KYF+cHuGGsEBULJ7vKtPDb8/YWoxawBje0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724729707; c=relaxed/simple;
-	bh=qTGWF+GVczPnsEHslBM459/DCmnEFp2b3Isxhk3wMBQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gLTuHkycQPutk4DiY8eWiWLZDJWy9QuXFn0IH3PytSC7qNyWKVpftVxJcfYydJqz9dfE2a6ktGudHerEH1SgJVV6UvR+F6fu8YRzcG9ODF9A1rQJXLqlZiTsGCTz9IfqjpR3vNMTz+Q/rIb+/0Ts5rgbHw0aPoSsN1IHE1rhEG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SPQPTlyt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96BCBC8B7A6;
-	Tue, 27 Aug 2024 03:35:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724729706;
-	bh=qTGWF+GVczPnsEHslBM459/DCmnEFp2b3Isxhk3wMBQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SPQPTlytL44h9MASGQ1Hk4pIbVOpvCTg6LElIkSaxb9r5lpkeDt4wmJKXVet21VuO
-	 gy/cSN+zNnEx8tZ9TMeyGQwok6ENejQvyJWT0n7X+BeV/Wzki2Yr6pAFrQrjuQPIK6
-	 gF7kZjwWbCsqo0G5sswmQIOuHJgjrAtUhrnfpUyNz4UR9ZKt27TtpRH631BacL0PS/
-	 cIM7AKH8yZhFlKCRSu2FnHSh5GqTrQOPmaG5IshUWZUXBcOnH67Ukmjfx6KxxU4Wxp
-	 jRjCU2d2dPsaZwTLQEHymNQ/A1ry/khZbcSzmjK7HnhMcB86eXAVp5m0owokMAz7xu
-	 qP6T/w67TuLKg==
-Date: Mon, 26 Aug 2024 20:35:06 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Chandan Babu R <chandanbabu@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	xfs <linux-xfs@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, x86@kernel.org
-Subject: Re: Are jump labels broken on 6.11-rc1?
-Message-ID: <20240827033506.GH865349@frogsfrogsfrogs>
-References: <20240731031033.GP6352@frogsfrogsfrogs>
- <20240731053341.GQ6352@frogsfrogsfrogs>
- <20240731105557.GY33588@noisy.programming.kicks-ass.net>
- <20240805143522.GA623936@frogsfrogsfrogs>
- <20240806094413.GS37996@noisy.programming.kicks-ass.net>
- <20240806103808.GT37996@noisy.programming.kicks-ass.net>
- <875xsc4ehr.ffs@tglx>
- <20240807143407.GC31338@noisy.programming.kicks-ass.net>
- <87wmks2xhi.ffs@tglx>
- <20240807150503.GF6051@frogsfrogsfrogs>
+	s=arc-20240116; t=1724729806; c=relaxed/simple;
+	bh=Ho1s9vK6WS5ven3f+MOaOZfoDticBN/hl5aZNrTSOik=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J7IGzjpvIuB4DFpcLIZGuEskmH7QoJaJvTeBJbz8wSq0hOKAcZr0hqA4GvKfDwYI7ikwiHvMxdv92h8PlnylLYgMpVv5+nMoRveeGoM9K+UpWovfNWhjhOZ9qzSReF1wBbgA6RzS5bOK+WwfS9Ydbc8ZLFkwQh2oYRWhScJECGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dPOgMgtb; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-39d4161c398so20876785ab.3;
+        Mon, 26 Aug 2024 20:36:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724729804; x=1725334604; darn=vger.kernel.org;
+        h=content-transfer-encoding:organization:reply-to:mime-version
+         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vn0NLpEW1bw02AkAxFS5IlEL/ge7VBPrGJvvCAfuQds=;
+        b=dPOgMgtb93g6xfblisNBcOol8Bq6mC6tBlKVgP81CIV4JRKrb4IC+6lDdOk6hw51B3
+         cV/4L8qkUXUVsr9L1YXa3m4J5TbjKlIbJclq0qvb7qrQZeVMeEneJs21wp3LskuxaqDA
+         b5FowLmU4o/iCHuVLuwUE3v4tIa+DjPNkkv4qGxltwAk5O4en6Yt4SNAXvIxGnoARR5g
+         CpNQkP64lsOPMVWPMmMLOKABHMcypqZCDnJO90Q3F/6OiP0I8YXFsypc/g6t5EMiBNru
+         VHHbVu/IeVx3NUhasbk2H3yRdKurZ45xvIfqcNO6ZGjIHVIhfcxAdU6HQDTChZX9HwMD
+         vqWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724729804; x=1725334604;
+        h=content-transfer-encoding:organization:reply-to:mime-version
+         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Vn0NLpEW1bw02AkAxFS5IlEL/ge7VBPrGJvvCAfuQds=;
+        b=cVHHgaQcfXuW/UqdxEqr3rFMuiSUGfeqU0J63qIOv0BEvSMrIk+o0UchGrHOcEVoHt
+         aG1uD30vHn30YLJ/yboTBgp/R1IrBY+GC1DRSJNVw+YdN1i2w8JUtOC48P77Zq3vf+1/
+         8B49dinXVmqbz/4sDEjcllzLZAjsvt1wE+Nc3V17Lq3dnWJimpYfdEdL5K3/dfVrrSxQ
+         wdKp8AYfxrGjskdLoyjbphX7ocx8BePGdVXL/iYs3ZXUkECShYKkZHJTOHiy1xhMrHxw
+         v1s3PxUW6AqG1QDStSBJ5H3NQF/GRP5Fgfelg71OnF14orQccrStogFb/kqykRtNDp94
+         agFA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9w2T9g0GZo/en0D2hAR0bYo8YjMJne8PFcOIJ5D4x9YpTgl3QMLChCFXv8VKbuOZbmKyxfI5hsk0=@vger.kernel.org, AJvYcCXaZNjURMq8q84R4rtizLNh4lCuu+me3hxEQVMAgnnBXVbVK8JgNmjvtBYCQbUHyeoJrVngnf5TfbD+q3U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKPvGdSVSgGroIcVSyftCKX+PSmUpBXLsZ/Mx4aw/Nn28fHJVk
+	gYqur66y/Vl23wsVuxMeAb6kcr7zIvL66UYmAfNS0rp092akCWTi
+X-Google-Smtp-Source: AGHT+IF0TZOLF1C0ImuoTX6dAmT09pp9NxxO4tGq4K0QSXsUlhCDWz+2GZxDBkSU5ZjTpy6nzB7g0Q==
+X-Received: by 2002:a92:c261:0:b0:39a:ea4c:8c26 with SMTP id e9e14a558f8ab-39e63dd8ee2mr19389265ab.1.1724729803867;
+        Mon, 26 Aug 2024 20:36:43 -0700 (PDT)
+Received: from lenb-intel-nuc8i7hvkva.. (h75-100-80-185.cntcnh.broadband.dynamic.tds.net. [75.100.80.185])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39d73e7c20csm37054335ab.40.2024.08.26.20.36.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 20:36:43 -0700 (PDT)
+Sender: Len Brown <lenb417@gmail.com>
+From: Len Brown <lenb@kernel.org>
+To: rjw@rjwysocki.net
+Cc: linux-acpi@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Len Brown <len.brown@intel.com>,
+	Arjan van de Ven <arjan@linux.intel.com>,
+	Todd Brandt <todd.e.brandt@intel.com>
+Subject: [PATCH] ACPI: Remove msleep() bloat from acpi_os_sleep()
+Date: Mon, 26 Aug 2024 23:35:18 -0400
+Message-ID: <2803b89021f991662b000f50e45dbaebdcca438a.1724729626.git.len.brown@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240807150503.GF6051@frogsfrogsfrogs>
+Reply-To: Len Brown <lenb@kernel.org>
+Organization: Intel Open Source Technology Center
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 07, 2024 at 08:05:03AM -0700, Darrick J. Wong wrote:
-> On Wed, Aug 07, 2024 at 04:55:53PM +0200, Thomas Gleixner wrote:
-> > On Wed, Aug 07 2024 at 16:34, Peter Zijlstra wrote:
-> > > On Wed, Aug 07, 2024 at 04:03:12PM +0200, Thomas Gleixner wrote:
-> > >
-> > >> > +	if (static_key_dec(key, true)) // dec-not-one
-> > >> 
-> > >> Eeew.
-> > >
-> > > :-) I knew you'd hate on that
-> > 
-> > So you added it just to make me grumpy enough to fix it for you, right?
-> 
-> FWIW with peter's 'ugly' patch applied, fstests didn't cough up any
-> static key complaints overnight.
+From: Len Brown <len.brown@intel.com>
 
-Unfortunately, I must take back these words -- after starting up a
-nastier stress test, I can still reproduce this, but this time on arm64:
+Optimize acpi_os_sleep(ms) using usleep_range(floor, ceiling).
+The floor of the range is the exact requested ms,
+with an additional 1ms of slack for sleeps above 20ms.
 
-[   49.571229] run fstests xfs/286 at 2024-08-18 15:22:51
-[   49.763554] spectre-v4 mitigation disabled by command-line option
-[   50.004771] XFS (sda2): EXPERIMENTAL online scrub feature in use. Use at your own risk!
-[   50.968906] XFS (sda3): EXPERIMENTAL metadata directory feature in use. Use at your own risk!
-[   50.972647] XFS (sda3): EXPERIMENTAL realtime allocation group and superblock feature in use. Use at your own risk!
-[   50.982134] XFS (sda3): EXPERIMENTAL exchange-range feature enabled. Use at your own risk!
-[   50.986169] XFS (sda3): EXPERIMENTAL parent pointer feature enabled. Use at your own risk!
-[   50.992801] XFS (sda3): Mounting V5 Filesystem 035cf5e0-d5e2-4739-8dab-15a52dddf130
-[   51.025796] XFS (sda3): Ending clean mount
-[   51.028980] XFS (sda3): EXPERIMENTAL realtime quota feature in use. Use at your own risk!
-[   51.036655] XFS (sda3): Quotacheck needed: Please wait.
-[   51.060215] XFS (sda3): Quotacheck: Done.
-[   51.072704] XFS (sda3): EXPERIMENTAL online scrub feature in use. Use at your own risk!
-[  100.296395] Direct I/O collision with buffered writes! File: d2eb/dbbb/d6ed/f1168 Comm: fsstress
-[  109.211668] Direct I/O collision with buffered writes! File: de2a/dd5e/dcdd/f9f9 Comm: fsstress
-[  137.196279] Direct I/O collision with buffered writes! File: da23/d11dc/de52/f1826 Comm: fsstress
-[  175.740403] Direct I/O collision with buffered writes! File: d1163/d1085/d1225/f174e Comm: fsstress
-[  280.081330] Direct I/O collision with buffered writes! File: dd74/d1184/d12b8/f26b8 Comm: fsstress
-[  314.030300] Direct I/O collision with buffered writes! File: d31a1/d348a/d1a8d/f2de1 Comm: fsstress
-[  421.526543] Direct I/O collision with buffered writes! File: d762/d765/d1931/f1859 Comm: fsstress
-[  526.158683] Direct I/O collision with buffered writes! File: d4b6/d48f9/d5151/f12d7 Comm: fsstress
-[  699.273894] Direct I/O collision with buffered writes! File: d68b/d10a7/d991/fcd4 Comm: fsstress
-[  866.299077] Direct I/O collision with buffered writes! File: d7022/d4553/d5d89/f6925 Comm: fsstress
-[  885.699829] Direct I/O collision with buffered writes! File: d3a72/d4ce4/d4c6e/f58ed Comm: fsstress
-[ 1340.999610] Direct I/O collision with buffered writes! File: da8c/d26fe/d36ff/f6a94 Comm: fsstress
-[ 1591.402638] Direct I/O collision with buffered writes! File: d1d18/d321a/d7d0/f3666 Comm: fsstress
-[ 1595.377018] Direct I/O collision with buffered writes! File: d2fad/d15ef/d78da/f95e1 Comm: fsstress
-[ 1618.061948] Direct I/O collision with buffered writes! File: d7b12/d51b7/d2337/f4ed5 Comm: fsstress
-[ 1717.713414] Direct I/O collision with buffered writes! File: d5eb5/d3598/d71d/f42d0 Comm: fsstress
-[ 1851.153819] Direct I/O collision with buffered writes! File: d5bc9/d3aad/d1892/faafc Comm: fsstress
-[ 2080.574935] Direct I/O collision with buffered writes! File: d391f/d3e3a/d5246/fe17 Comm: fsstress
-[ 2598.295098] Direct I/O collision with buffered writes! File: d923d/d4d30/da5d0/faf5b Comm: fsstress
-[ 3549.070989] Direct I/O collision with buffered writes! File: da817/d87b0/dbc17/f7aeb Comm: fsstress
-[22298.378392] XFS (sda3): page discard on page ffffffff407e3c80, inode 0x6a0c8fe, pos 9170944.
-[22298.380577] sda3: writeback error on inode 111200510, offset 9166848, sector 24924992
-[32769.915951] XFS (sda3): page discard on page ffffffff4073ef00, inode 0x41c8aa1, pos 593920.
-[33965.988873] ------------[ cut here ]------------
-[33966.013870] WARNING: CPU: 1 PID: 8992 at kernel/jump_label.c:295 __static_key_slow_dec_cpuslocked.part.0+0xb0/0xc0
-[33966.017596] Modules linked in: xfs time_stats mean_and_variance nft_chain_nat xt_REDIRECT nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_tcpudp ip_set_hash_ip ip_set_hash_net xt_set nft_compat ip_set_hash_mac nf_tables libcrc32c crct10dif_ce sha2_ce sha256_arm64 bfq evbug sch_fq_codel fuse configfs efivarfs ip_tables x_tables overlay nfsv4
-[33966.031983] CPU: 1 UID: 0 PID: 8992 Comm: xfs_scrub Not tainted 6.11.0-rc4-xfsa #rc4 eee7712a56abc3d2e1a397d28a5166a26e38d1d6
-[33966.035837] Hardware name: QEMU KVM Virtual Machine, BIOS 1.6.6 08/22/2023
-[33966.037739] pstate: 40401005 (nZcv daif +PAN -UAO -TCO -DIT +SSBS BTYPE=--)
-[33966.040184] pc : __static_key_slow_dec_cpuslocked.part.0+0xb0/0xc0
-[33966.042845] lr : __static_key_slow_dec_cpuslocked.part.0+0x48/0xc0
-[33966.045128] sp : fffffe008708f9f0
-[33966.046504] x29: fffffe008708f9f0 x28: fffffc0031a1a500 x27: 000003fd77c6e100
-[33966.048942] x26: fffffc00e82de000 x25: 0000000000000000 x24: fffffe007a96ac88
-[33966.050713] x23: fffffc00e82de000 x22: fffffc00c71f0cd0 x21: 00000000ffffffe4
-[33966.053423] x20: fffffe00812f25c8 x19: fffffe007a890940 x18: 0000000000000000
-[33966.056225] x17: 0000000000000000 x16: 0000000000000000 x15: 000003ffc8e2ef28
-[33966.059311] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
-[33966.062103] x11: 0000000000000040 x10: 0000000000001b30 x9 : fffffe0080239558
-[33966.064880] x8 : fffffe008708f9b8 x7 : 2222222222222222 x6 : 00000c99773e47d7
-[33966.067463] x5 : 0000000000000002 x4 : 0000000000000000 x3 : 0000000000000001
-[33966.070363] x2 : 0000000000000001 x1 : 0000000000000001 x0 : 0000000000000000
-[33966.072840] Call trace:
-[33966.073838]  __static_key_slow_dec_cpuslocked.part.0+0xb0/0xc0
-[33966.076105]  static_key_slow_dec+0x48/0x88
-[33966.077739]  xfs_dir_hook_disable+0x20/0x38 [xfs 81b6cc501f608332f7590e39811e5ddd66afb315]
-[33966.080947]  xchk_teardown+0x1d4/0x220 [xfs 81b6cc501f608332f7590e39811e5ddd66afb315]
-[33966.084101]  xfs_scrub_metadata+0x52c/0x820 [xfs 81b6cc501f608332f7590e39811e5ddd66afb315]
-[33966.087429]  xfs_ioc_scrubv_metadata+0x3ec/0x5b0 [xfs 81b6cc501f608332f7590e39811e5ddd66afb315]
-[33966.090615]  xfs_file_ioctl+0xa58/0x1168 [xfs 81b6cc501f608332f7590e39811e5ddd66afb315]
-[33966.093672]  __arm64_sys_ioctl+0x4f8/0xd00
-[33966.095016]  do_el0_svc+0x74/0x110
-[33966.095983]  el0_svc+0x48/0x1f0
-[33966.097124]  el0t_64_sync_handler+0x100/0x130
-[33966.098843]  el0t_64_sync+0x190/0x198
-[33966.100330] ---[ end trace 0000000000000000 ]---
-[561654.524297] XFS (sda2): Unmounting Filesystem 4b02ad48-7ae9-4d54-a76c-32266d3a2e41
-[563105.524971] XFS (sda3): Unmounting Filesystem 035cf5e0-d5e2-4739-8dab-15a52dddf130
-[563245.534266] XFS (sda3): EXPERIMENTAL metadata directory feature in use. Use at your own risk!
-[563245.575660] XFS (sda3): EXPERIMENTAL realtime allocation group and superblock feature in use. Use at your own risk!
-[563245.576454] XFS (sda3): EXPERIMENTAL exchange-range feature enabled. Use at your own risk!
-[563245.578363] XFS (sda3): EXPERIMENTAL parent pointer feature enabled. Use at your own risk!
-[563245.592134] XFS (sda3): Mounting V5 Filesystem 035cf5e0-d5e2-4739-8dab-15a52dddf130
-[563245.632709] XFS (sda3): EXPERIMENTAL realtime quota feature in use. Use at your own risk!
-[563245.644275] XFS (sda3): Ending clean mount
-[563245.843692] XFS (sda3): Unmounting Filesystem 035cf5e0-d5e2-4739-8dab-15a52dddf130
+This reduces  the kernel resume time of the Dell 9300
+to 1,124 ms from 2,471 ms.
 
-This corresponds to the:
+The ACPI AML Sleep(ms) method calls acpi_os_sleep(ms),
+which has invoked msleep(ms) since 2013.
 
-	WARN_ON_ONCE(!static_key_slow_try_dec(key));
+But msleep(ms) is based on jiffies, and the rounding-up
+logic to convert to jiffies on a HZ=250 system causes
+msleep(5) to bloat to a minimum of a 12ms delay.
+msleep(5) typically takes over 15ms!
 
-at the end of __static_key_slow_dec_cpuslocked.  Perhaps we're seeing a
--1 value from the atomic_cmpxchg(&key->enabled, 1, 0)?
+As a result, AML delay loops with small Sleep() inside
+magnify the entire loop.  A particularly painful example
+is ACPI support for powering-on ICL and TGL
+thunderbolt/pcie_ports during system resume.
 
-If I surround the static_branch_{inc,dec} calls with a mutex the
-complaints go away, though I gather that's not an acceptable hackaround.
+Regarding jiffy-based msleep() being inexpensive
+and hrtimer-based usleep_range() being expensive.
+ACPI AML timer invocations are rare, and so it
+is unlikely the hrtimer cost will be noticible,
+or even measurable.  At the same time, the msleep()
+timer duration bloat is significant enough to
+be noticed by end users.
 
-Though as you can observe, the system ran stress testing for another 147
-hours without any xfs problems reported.
+Regarding usleep_range() timer coalescing.
+It virtually never works during ACPI flows, which
+commonly run when there are few coalescing
+opportunities. As a result, the timers almost
+always expire at the maximum end of their specified range.
 
---D
+It was tempting to use usleep_range(us, us)
+for all values of us.  But 1 ms is added to the
+range for timers over 20ms on the reasoning that
+the AML Sleep interface has a granularity of 1ms,
+most costly loops use duration under 20ms inside,
+and singular long sleeps are unlitly to notice an
+additiona 1ms, so why not allow some coalescing...
 
-> > >> +/*
-> > >> + * Fastpath: Decrement if the reference count is greater than one
-> > >> + *
-> > >> + * Returns false, if the reference count is 1 or -1 to force the caller
-> > >> + * into the slowpath.
-> > >> + *
-> > >> + * The -1 case is to handle a decrement during a concurrent first enable,
-> > >> + * which sets the count to -1 in static_key_slow_inc_cpuslocked(). As the
-> > >> + * slow path is serialized the caller will observe 1 once it acquired the
-> > >> + * jump_label_mutex, so the slow path can succeed.
-> > >> + */
-> > >> +static bool static_key_dec_not_one(struct static_key *key)
-> > >> +{
-> > >> +	int v = static_key_dec(key, true);
-> > >> +
-> > >> +	return v != 1 && v != -1;
-> > >
-> > > 	if (v < 0)
-> > > 		return false;
-> > 
-> > Hmm. I think we should do:
-> > 
-> > #define KEY_ENABLE_IN_PROGRESS		-1
-> > 
-> > or even a more distinct value like (INT_MIN / 2)
-> > 
-> > and replace all the magic -1 numbers with it. Then the check becomes
-> > explicit:
-> > 
-> >         if (v == KEY_ENABLE_IN_PROGRESS)
-> >         	return false;
-> > 
-> > > 	/*
-> > > 	 * Notably, 0 (underflow) returns true such that it bails out
-> > > 	 * without doing anything.
-> > > 	 */
-> > > 	return v != 1;
-> > >
-> > > Perhaps?
-> > 
-> > Sure.
-> > 
-> > >> +}
-> > >> +
-> > >> +/*
-> > >> + * Slowpath: Decrement and test whether the refcount hit 0.
-> > >> + *
-> > >> + * Returns true if the refcount hit zero, i.e. the previous value was one.
-> > >> + */
-> > >> +static bool static_key_dec_and_test(struct static_key *key)
-> > >> +{
-> > >> +	int v = static_key_dec(key, false);
-> > >> +
-> > >> +	lockdep_assert_held(&jump_label_mutex);
-> > >> +	return v == 1;
-> > >>  }
-> > >
-> > > But yeah, this is nicer!
-> > 
-> > :)
-> 
-> It probably goes without saying that if either of you send a cleaned up
-> patch with all these changes baked in, I will test it for you all. :)
-> 
-> --D
-> 
-> > 
-> > Thanks,
-> > 
-> >         tglx
-> > 
-> 
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=216263
+Signed-off-by: Len Brown <len.brown@intel.com>
+Suggested-by: Arjan van de Ven <arjan@linux.intel.com>
+Tested-by: Todd Brandt <todd.e.brandt@intel.com>
+---
+ drivers/acpi/osl.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+index 70af3fbbebe5..c4c76f86cd7a 100644
+--- a/drivers/acpi/osl.c
++++ b/drivers/acpi/osl.c
+@@ -607,7 +607,13 @@ acpi_status acpi_os_remove_interrupt_handler(u32 gsi, acpi_osd_handler handler)
+ 
+ void acpi_os_sleep(u64 ms)
+ {
+-	msleep(ms);
++	u64 us = ms * 1000;
++
++	if (us <= 20000)
++		usleep_range(us, us);
++	else
++		usleep_range(us, us + 1000);
++
+ }
+ 
+ void acpi_os_stall(u32 us)
+-- 
+2.43.0
+
 
