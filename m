@@ -1,111 +1,149 @@
-Return-Path: <linux-kernel+bounces-303427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97B68960BF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:26:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D35B6960BF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:26:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52FD5288C11
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:26:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 122101C22F71
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368411C2DB8;
-	Tue, 27 Aug 2024 13:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212321C2DB6;
+	Tue, 27 Aug 2024 13:23:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QQlpP6m2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="ag+wjooH"
+Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018A51B3F2B;
-	Tue, 27 Aug 2024 13:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A521BFDF3
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 13:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724764992; cv=none; b=orF4utPohrEG6B+0YYwUcTlaoT29NpIfEr4s8bq7dA3VN/JaZEXAmuZkzNaO7o3wXL9VjP7PAasWMaw+IMOO5Q/SKxxjQRreDfLznQv6t97jcmZ06U/u9PfzJt6ms9eyMoKTgwELCiFxbRfYOX2tXVBcyaRSMWXUIbMfCgztPEI=
+	t=1724765016; cv=none; b=ZMzf7jKx09XseKIyNggHu3ScLUlNygQ+gjinBCRrCYV+WxHKtVt+fQ9F22zYZVwSNpbrMNVTLteJv6nPn1wfc6UpW/TcGRxLcdhwM4PNm1Pn/NxCk4RngIAAASaeaGN06/iUQEYUY0WxS95IcZTgf1XBiq8p5J+QJ61EBOaRqo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724764992; c=relaxed/simple;
-	bh=/XHD34zdbgNKnwIhTxPsqd8L8PA1QTTE3R3kDc/VBow=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HNQ1a9pNAF3qvnYX+N06+PHMDFiS2dYsbL1GWqvYn3p+015JQZYSM7/chjy8JY2mmyIhjl6+L5KZIsvv7owdAJLffmKMi7Jky6z2ROCvAsWMrDlgKIIJ0+BcwA1fhwo2+Xr7U+KIsOuvG9I05kachfo+9b5nI8mqaKDv/YDEvyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QQlpP6m2; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724764991; x=1756300991;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=/XHD34zdbgNKnwIhTxPsqd8L8PA1QTTE3R3kDc/VBow=;
-  b=QQlpP6m2JV10r+2s7r1aK3ah12qq3tGDvdrjxiUkZ71kvRn4sTnl71NZ
-   8zWJY+Fr019dul5Sb+xa0tmA1147gMnrA2hSRZzEpl4TZpryW+3Owkf4I
-   9/o0/5/bqY1bGY+E/9/vmtqHrRVjDMfp8d9DSkDseiDeZ7jlV8W0ZCBWl
-   MBfrhtLesDnGmG2lUMPSl9AT38bi3ewh+BjI3zDjT5w+cVWAKRW7VYdQS
-   OQk3Zos31P4TynsZR2evNxg79lsR/zSZYVX5PLNKhDQcJjkrXGv+BVg8i
-   CsKQg21+WvIRiM0azjAZEd9z7EM733DdrhMF3SsoU7werFz/CzvvM6OM+
-   Q==;
-X-CSE-ConnectionGUID: LE3eBBc8Su+2tdBnEkaTTA==
-X-CSE-MsgGUID: gTJuDDGRRQuanKshbEK30A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="27007646"
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="27007646"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 06:23:10 -0700
-X-CSE-ConnectionGUID: 2+kkYFxRTWWEScD1jnqVfA==
-X-CSE-MsgGUID: 9TZQOzOmRoipbcWlZN9pvw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="63032821"
-Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.94.0.53]) ([10.94.0.53])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 06:23:07 -0700
-Message-ID: <1e9cd9d1-17c8-4603-ab95-d6996c5b4eca@linux.intel.com>
-Date: Tue, 27 Aug 2024 15:23:04 +0200
+	s=arc-20240116; t=1724765016; c=relaxed/simple;
+	bh=TElX4HxnkwI4RQCb6gi/mblVTqor6mf6ODFjQboIc8A=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=craKhe6T953igeH+8dSDE2UrVN08Le2KTTIvBVL/q3Mm5TR4iESR+zUbvkNNkdl0Mwu3ca8o9bo3XaRp3+LbGRm5JzJw8whJAHZDq0UfTIAC/wQeY3tbrun+qLmB3mIDkCT21PsjUzGOred7n+1tImlBZUTfuhHWpwABPa63wPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=ag+wjooH; arc=none smtp.client-ip=52.119.213.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1724765015; x=1756301015;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=62szxidneznjILbAIpV8/I7PRmxZEtb/XE12nVr2RDA=;
+  b=ag+wjooHwOmxJyH/r+2tjKzr57dhpcRm2nSaH/KymEgzonw/2GH9gvCZ
+   8bx3NfuaHNUWWRGr+J2rxtqmPghSAwwNbIOCXX/C72qnPbebyMP/WYUcL
+   N8Y7GU9cqmmTLm/NGVbSUkEu46x17VpYpVPGtoaIoGwYVAYnh/deKoXGk
+   s=;
+X-IronPort-AV: E=Sophos;i="6.10,180,1719878400"; 
+   d="scan'208";a="655093382"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 13:23:31 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.38.20:30580]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.20.83:2525] with esmtp (Farcaster)
+ id 992ff484-32b4-404e-8bfe-5b8840fc9acd; Tue, 27 Aug 2024 13:23:30 +0000 (UTC)
+X-Farcaster-Flow-ID: 992ff484-32b4-404e-8bfe-5b8840fc9acd
+Received: from EX19MTAUWA001.ant.amazon.com (10.250.64.218) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 27 Aug 2024 13:23:29 +0000
+Received: from dev-dsk-pjy-1a-76bc80b3.eu-west-1.amazon.com (10.15.97.110) by
+ mail-relay.amazon.com (10.250.64.204) with Microsoft SMTP Server id
+ 15.2.1258.34 via Frontend Transport; Tue, 27 Aug 2024 13:23:29 +0000
+Received: by dev-dsk-pjy-1a-76bc80b3.eu-west-1.amazon.com (Postfix, from userid 22993570)
+	id 536B320A60; Tue, 27 Aug 2024 13:23:29 +0000 (UTC)
+From: Puranjay Mohan <pjy@amazon.com>
+To: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph
+ Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	<linux-nvme@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<puranjay@kernel.org>
+Subject: [PATCH v2] nvme: check if the namespace supports metadata in nvme_map_user_request()
+Date: Tue, 27 Aug 2024 13:23:27 +0000
+Message-ID: <20240827132327.1704-1-pjy@amazon.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for stable 0/2] ASoC: topology: Fix loading topology issue
-Content-Language: en-US
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
- Linux kernel regressions list <regressions@lists.linux.dev>, tiwai@suse.com,
- perex@perex.cz, lgirdwood@gmail.com,
- =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
- Thorsten Leemhuis <regressions@leemhuis.info>,
- Vitaly Chikunov <vt@altlinux.org>, Mark Brown <broonie@kernel.org>
-References: <20240814140657.2369433-1-amadeuszx.slawinski@linux.intel.com>
- <2024082729-subatomic-anemia-003d@gregkh>
-From: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>
-In-Reply-To: <2024082729-subatomic-anemia-003d@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 8/27/2024 3:11 PM, Greg Kroah-Hartman wrote:
-> On Wed, Aug 14, 2024 at 04:06:55PM +0200, Amadeusz Sławiński wrote:
->> Commit 97ab304ecd95 ("ASoC: topology: Fix references to freed memory")
->> is a problematic fix for issue in topology loading code, which was
->> cherry-picked to stable. It was later corrected in
->> 0298f51652be ("ASoC: topology: Fix route memory corruption"), however to
->> apply cleanly e0e7bc2cbee9 ("ASoC: topology: Clean up route loading")
->> also needs to be applied.
->>
->> Link: https://lore.kernel.org/linux-sound/ZrwUCnrtKQ61LWFS@sashalap/T/#mbfd273adf86fe93b208721f1437d36e5d2a9aa19
-> 
-> You need to put the git ids in the patches directly do we have a clue
-> what to do.
-> 
-> Also, what tree(s) do you need/want these in?
-> 
-> Please fix up and resend.
-> 
+On an NVMe namespace that does not support metadata, it is possible to
+send an IO command with metadata through io-passthru.
+nvme_map_user_request() doesn't check if the namespace supports metadata
+before sending it forward.
 
-I've already send v2 and as far as I know it was merged.
+Reject an IO command with metadata when the NVMe namespace doesn't
+support it.
 
-Here is link to v2:
-https://lore.kernel.org/linux-sound/2024081442-thimble-widget-e370@gregkh/T/#t
+Suggested-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Puranjay Mohan <pjy@amazon.com>
+---
+V1: https://lore.kernel.org/all/20240827121701.48792-1-pjy@amazon.com/
+Changes in V2:
+- Add a flag called 'has_metadata' and use it for the support check and
+also for the check before calling bio_integrity_map_user()
+---
+ drivers/nvme/host/ioctl.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
+index f1d58e70933f..74d963d425c4 100644
+--- a/drivers/nvme/host/ioctl.c
++++ b/drivers/nvme/host/ioctl.c
+@@ -4,6 +4,7 @@
+  * Copyright (c) 2017-2021 Christoph Hellwig.
+  */
+ #include <linux/bio-integrity.h>
++#include <linux/blk-integrity.h>
+ #include <linux/ptrace.h>	/* for force_successful_syscall_return */
+ #include <linux/nvme_ioctl.h>
+ #include <linux/io_uring/cmd.h>
+@@ -119,9 +120,13 @@ static int nvme_map_user_request(struct request *req, u64 ubuffer,
+ 	struct request_queue *q = req->q;
+ 	struct nvme_ns *ns = q->queuedata;
+ 	struct block_device *bdev = ns ? ns->disk->part0 : NULL;
++	bool has_metadata = bdev && meta_buffer && meta_len;
+ 	struct bio *bio = NULL;
+ 	int ret;
+ 
++	if (has_metadata && !blk_get_integrity(bdev->bd_disk))
++		return -EINVAL;
++
+ 	if (ioucmd && (ioucmd->flags & IORING_URING_CMD_FIXED)) {
+ 		struct iov_iter iter;
+ 
+@@ -143,15 +148,15 @@ static int nvme_map_user_request(struct request *req, u64 ubuffer,
+ 		goto out;
+ 
+ 	bio = req->bio;
+-	if (bdev) {
++	if (bdev)
+ 		bio_set_dev(bio, bdev);
+-		if (meta_buffer && meta_len) {
+-			ret = bio_integrity_map_user(bio, meta_buffer, meta_len,
+-						     meta_seed);
+-			if (ret)
+-				goto out_unmap;
+-			req->cmd_flags |= REQ_INTEGRITY;
+-		}
++
++	if (has_metadata) {
++		ret = bio_integrity_map_user(bio, meta_buffer, meta_len,
++					     meta_seed);
++		if (ret)
++			goto out_unmap;
++		req->cmd_flags |= REQ_INTEGRITY;
+ 	}
+ 
+ 	return ret;
+-- 
+2.40.1
+
 
