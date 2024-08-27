@@ -1,166 +1,84 @@
-Return-Path: <linux-kernel+bounces-303864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BC5196163F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:03:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A574396163A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55855286958
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:03:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F57F1F24836
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A6CB1D2F51;
-	Tue, 27 Aug 2024 18:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952A21D278A;
+	Tue, 27 Aug 2024 18:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bHb07a7o"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K8TIGHNo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5301D27A8
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 18:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C920618E25;
+	Tue, 27 Aug 2024 18:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724781789; cv=none; b=vEofDJ1eRDc8EYVXzh8O17uGT+9/4PnBGZ89XkrDJOUeDKfoxLZ/ab9HXfLzCN20CNtuQPb9Rpj/u7QAPrfccvCTk/djkstXQVZ2dkuzvqr8o6Y/+6S1MOsJH9qcQE96Vs4MXVQ0gWG5pXFY0N9Ro7SnGWHI/0c3VOvXxxw/C8I=
+	t=1724781770; cv=none; b=BP1m40Y7VzRumwlZyVdzDgUpu0B+VQiNk73YQxl1CbcYLSZyRkZ0Iu2lb2KYXbSbqIXcFv7ME3PGQX4LrkkbdWzfcVKHIeiTQrNVZbc7Fs/YdKOo3ppgRBB4HOuGsQW/JTXjMxKIPnxSFiKiyvn+0/6Lj3PNnQWbRsa8o9OJSws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724781789; c=relaxed/simple;
-	bh=oR96iOXx+rs3wrdkJBENkx2GGB/C+AMxImmsvKqiHvA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ozr4sRIbmqQjODe2aV9SYSeTIN3dWzVXNO3Bj8NfxsH0PhhtfrjTV18EBAj6/QiP93GWutWXk+QZyrMk2zf/eSNFdzEJw64H0+1mUQNZcBwNZibH4Du2OeQVL9tMyXvxAsfOVxKe7c441QpNvxKPMjRkUV2LuVdIkcyDsqxB/fQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bHb07a7o; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724781786;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=p8/cxNE6VJvsneEbrGqWQbWsphVxB+ixn/SyQ/i73Rc=;
-	b=bHb07a7oLhTnGDNDMXVvU61lKdn22+SEM0ks1WaK/DWhr5WVtQcdtgQja/EDBSAixjDENX
-	pf097P0StQ0ewOVSNNcPjCCVZBjUSkxvWTDdVyIgxO1UlhYZ5wvK41lmbEfsg80iARloMp
-	75cyLi5DbHtE3DcOKZQMHUq3Sr5iUjo=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-86-x4bboJ_cMxOfXXcFMjZ1oA-1; Tue,
- 27 Aug 2024 14:03:03 -0400
-X-MC-Unique: x4bboJ_cMxOfXXcFMjZ1oA-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E8B2C1955D48;
-	Tue, 27 Aug 2024 18:02:58 +0000 (UTC)
-Received: from fs-i40c-03.mgmt.fast.eng.rdu2.dc.redhat.com (fs-i40c-03.mgmt.fast.eng.rdu2.dc.redhat.com [10.6.24.150])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EAE651955F1B;
-	Tue, 27 Aug 2024 18:02:53 +0000 (UTC)
-From: Alexander Aring <aahringo@redhat.com>
-To: teigland@redhat.com
-Cc: gfs2@lists.linux.dev,
-	song@kernel.org,
-	yukuai3@huawei.com,
-	agruenba@redhat.com,
-	mark@fasheh.com,
-	jlbec@evilplan.org,
-	joseph.qi@linux.alibaba.com,
-	gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-raid@vger.kernel.org,
-	ocfs2-devel@lists.linux.dev,
-	netdev@vger.kernel.org,
-	vvidic@valentin-vidic.from.hr,
-	heming.zhao@suse.com,
-	lucien.xin@gmail.com,
-	paulmck@kernel.org,
-	rcu@vger.kernel.org,
-	juri.lelli@redhat.com,
-	williams@redhat.com,
-	aahringo@redhat.com
-Subject: [RFC 0/7] dlm: the ultimate verifier for DLM lock correctness
-Date: Tue, 27 Aug 2024 14:02:29 -0400
-Message-ID: <20240827180236.316946-1-aahringo@redhat.com>
+	s=arc-20240116; t=1724781770; c=relaxed/simple;
+	bh=4/6qwlU9P4M74U511hEWpHFAfKj+lbHjux/s2PSXfy4=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=JUwE5b0/zt9IxYIzH3rII0XWauV7K8hbv/iWaqcnlBiLoeFuNnZ87Wl0e6ANFlhQtgLnrcE2BqzuxfTiq9lyfYK2jq+Oo39GquZC9ZGICaaWHSPmPF5QdmIvF+VexmBIIxPayjVr90IDSJVNpM5QYKvpTYHPMPNbg1hQHL+nSIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K8TIGHNo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49DFCC4AF0E;
+	Tue, 27 Aug 2024 18:02:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724781770;
+	bh=4/6qwlU9P4M74U511hEWpHFAfKj+lbHjux/s2PSXfy4=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=K8TIGHNoTnQrg+kOFk76XOX+VVKdO96gL876MGF+2c+0yH5SttVqvnFUwBWvGpQ7D
+	 cOwEt2pllVOOY/jrsw1YqFFdGa6vfflRn79ehhAeaABxbYA0X+QLSGXh1yj+P9JeiO
+	 MDr24jSUuu87QzyAckljUKRy1PkQmFzohdQ6vDr7WXwXxV+lfBOw4Puhc6PysF+5lH
+	 a05XHof5ILytP/GO2sbhmejaLCkv07PYSze9q6tNJ18PVxjG9uHqRH7YFXQlTtDSpb
+	 wIwa4FJFLuVHRyGf/O0D217yo7Gzepo6NEhvAmCP5eFDN9tHHs0vAv0vAqXIJ7YLth
+	 wnxHTHvIQF8kA==
+Message-ID: <2156bd2a8bde7f07491ab9ed9cf1ee15.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240823-x1e80100-clk-fix-v1-1-0b1b4f5a96e8@linaro.org>
+References: <20240823-x1e80100-clk-fix-v1-1-0b1b4f5a96e8@linaro.org>
+Subject: Re: [PATCH] clk: qcom: gcc-x1e80100: Don't use parking clk_ops for QUPs
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+To: Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson <andersson@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Konrad Dybcio <konradybcio@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rajendra Nayak <quic_rjendra@quicinc.com>, Sibi Sankar <quic_sibis@quicinc.com>
+Date: Tue, 27 Aug 2024 11:02:48 -0700
+User-Agent: alot/0.10
 
-Hi,
+Quoting Bryan O'Donoghue (2024-08-23 05:58:56)
+> Per Stephen Boyd's explanation in the link below, QUP RCG clocks do not
+> need to be parked when switching frequency. A side-effect in parking to a
+> lower frequency can be a momentary invalid clock driven on an in-use seri=
+al
+> peripheral.
+>=20
+> This can cause "junk" to spewed out of a UART as a low-impact example. On
+> the x1e80100-crd this serial port junk can be observed on linux-next.
+>=20
+> Apply a similar fix to the x1e80100 Global Clock controller to remediate.
+>=20
+> Link: https://lore.kernel.org/all/20240819233628.2074654-3-swboyd@chromiu=
+m.org/
+> Fixes: 161b7c401f4b ("clk: qcom: Add Global Clock controller (GCC) driver=
+ for X1E80100")
+> Fixes: 929c75d57566 ("clk: qcom: gcc-sm8550: Mark RCGs shared where appli=
+cable")
+> Suggested-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
 
-I send this rfc patch series to show a (for me) usable use-case for the
-DLM net-namespace functionality that is currently pending, see [0]. This
-patch-series introduce the DLM verifier to check on DLM correctness on
-any workload running on DLM with net-namespace feature. E.g. on gfs2 you
-can just run some filesystem benchmark tests and see if DLM works as
-aspected.
-
-This comes very useful when DLM recovery kicks in e.g. when nodes
-leaving the lockspace due e.g. fencing and recovery solves lock
-dependencies transparently from the user. However there is no "fake
-fencing switch" yet for DLM net-namespaces, but might be an idea for
-future functionality.
-
-There could be bugs in the verifier, that I don't care if they exists...
-We need to check whats happening when the verifier complains but so far
-everything looks fine. It just an issue if the verifier doesn't say
-anything but a small bug introduced in DLM and the verifier will
-complain a lot.
-
-There might be still improvements in the DLM verifier. I needed to
-change a little bit the python scripts to generate the code but I did
-not add them here to this patch series. Also checkpatch complains about
-some things in the verifier code but I oriented myself mostly to the
-other existing verifiers. There is a printout of all holders if those
-violates the DLM compatible locking states. I might improve them when I
-actually try to figure out an existing problem, but for now this
-printout is very minimal.
-
-I mainly do this work because I prepare more changes in the DLM recovery
-code in future to scale with lockspaces with a lot of members that we
-can easily try out with the net-namespace functionality.
-
-I cc here the rcu people, may they also get some ideas to check on lock
-correctness using tracing kernel verifier subsystem.
-
-- Alex
-
-[0] https://lore.kernel.org/gfs2/20240814143414.1877505-1-aahringo@redhat.com/
-
-Alexander Aring (7):
-  dlm: fix possible lkb_resource null dereference
-  dlm: fix swapped args sb_flags vs sb_status
-  dlm: make add_to_waiters() that is can't fail
-  dlm: add our_nodeid to tracepoints
-  dlm: add lkb rv mode to ast tracepoint
-  dlm: add more tracepoints for DLM kernel verifier
-  rv: add dlm compatible lock state kernel verifier
-
- Documentation/trace/rv/monitor_dlm.rst |  77 +++++
- fs/dlm/ast.c                           |  30 +-
- fs/dlm/dlm_internal.h                  |   3 +
- fs/dlm/lock.c                          |  64 ++--
- fs/dlm/lockspace.c                     |   4 +
- fs/dlm/user.c                          |   9 +-
- include/trace/events/dlm.h             | 121 ++++++-
- include/trace/events/rv.h              |   9 +
- kernel/trace/rv/Kconfig                |  18 +
- kernel/trace/rv/Makefile               |   1 +
- kernel/trace/rv/monitors/dlm/dlm.c     | 445 +++++++++++++++++++++++++
- kernel/trace/rv/monitors/dlm/dlm.h     |  38 +++
- kernel/trace/rv/monitors/dlm/dlm_da.h  | 143 ++++++++
- tools/verification/models/dlm.dot      |  14 +
- 14 files changed, 907 insertions(+), 69 deletions(-)
- create mode 100644 Documentation/trace/rv/monitor_dlm.rst
- create mode 100644 kernel/trace/rv/monitors/dlm/dlm.c
- create mode 100644 kernel/trace/rv/monitors/dlm/dlm.h
- create mode 100644 kernel/trace/rv/monitors/dlm/dlm_da.h
- create mode 100644 tools/verification/models/dlm.dot
-
--- 
-2.43.0
-
+Applied to clk-fixes
 
