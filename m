@@ -1,229 +1,109 @@
-Return-Path: <linux-kernel+bounces-303805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82E2F961548
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:16:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F295996154D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3987A2839B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:16:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1FFB282BEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB841CF2A4;
-	Tue, 27 Aug 2024 17:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCCC1CF28F;
+	Tue, 27 Aug 2024 17:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DEO8f6Vu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ThrCG66A";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zLFsx+H+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="29UJV7eu"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mk4CKD9E"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3E71BFE02;
-	Tue, 27 Aug 2024 17:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2847D1BFE02
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 17:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724778986; cv=none; b=AFol5346n373SMUAhemjiCBqqWXP2CUslWxhSeTAcSdq6epqa9IxZR/RSFBP9PJT69kmvsgtZfJxHDIs2zT+CSoPDQBkMNRaZIN5XoTepwTM/3YtgU9044I8UDd2QNUx1VQU2NAJz+gxy/AfPlB9OFYJ4VQfQCxY1ZV0yqXdUMU=
+	t=1724779109; cv=none; b=RLc3AAQQVxoF17w/gbmeh+a/PjfScrrq6MR2tBLlUU6tHWTE0wamK94ZaPhiYfcTsq2WO5+kLaPE/XkAFoHV0xtTRRidRq2lMoJFEBGjQbJ2aJQ6NLzzyVTgOaHgBy6UWtswutbAadTIYjmIBeFNV9kLghesU8gxsJGXqXgA20k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724778986; c=relaxed/simple;
-	bh=Y7t5rJddbLUq4n+i3+yj2m5zP8CQT2c4swpDMAFftrs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PYLHjMdBZZ8oXRwzCfnR+Pr3rfZHPe6M3qhifVrxRakYTkwnIx5E/CgZwhRaI8FctQ/I7jfPrY8Nx29kcBIOMq56vjY3xjhbJUZJujfzRaDnMF5NB4KxYvXWAZjOHdbD9cMiGtudb2Y/zBNnGJ3tCl+jtEVfDCWt9X9ifv1K0go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DEO8f6Vu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ThrCG66A; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zLFsx+H+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=29UJV7eu; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0A09721B19;
-	Tue, 27 Aug 2024 17:16:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724778982; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C/1ifMX9yXxtn8apWIAaHKF/yept+COR9CswO4IlPRE=;
-	b=DEO8f6VuykTkHL6lEDkpL0tWP1fMgcqPgQmE1JEMK4h+7TY9+ecK6XTeBZMKP5HCBZwMty
-	DS4JGgGz6GN7cf/ZbcHetyxENraz700QlYxSfxVXcD6446uc27oKyFgc+L3Dh1eR74vFwr
-	rjmRBWG7DwxeJ1rH/li00OF/qcNK6mg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724778982;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C/1ifMX9yXxtn8apWIAaHKF/yept+COR9CswO4IlPRE=;
-	b=ThrCG66AublzdcD+79+IdwKuULZx2IJt4pj7zmcTByQwnFF4EiJoDpTE27l72bX9jxvz8a
-	KHoV2tBPyD8TzjCg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724778981; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C/1ifMX9yXxtn8apWIAaHKF/yept+COR9CswO4IlPRE=;
-	b=zLFsx+H+owd5RVnJPCn+KvRu0yCIICd+U5kl+CkbVhd877aU58VOS7K5UtREYcfYW7kmcA
-	e3RUG8VHuK+kOAk6WaYLRXVUCbkH6TR7j52SKSy4eIkY0F15SYGQrkw+gAy8q0pvmkMGBM
-	7mxa4riAuOcWNctN/3F994eBiqaSyis=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724778981;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C/1ifMX9yXxtn8apWIAaHKF/yept+COR9CswO4IlPRE=;
-	b=29UJV7euQ+FlEg+Teu3B1g46+j4suzFyse2lLIUB5PYLp3SPg3ASHo9ceWL2dXnYqVV1HB
-	80HzZdEnd12qcCDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EA88B13724;
-	Tue, 27 Aug 2024 17:16:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id XVI+OeQJzmbhRwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 27 Aug 2024 17:16:20 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 844AAA0968; Tue, 27 Aug 2024 19:16:20 +0200 (CEST)
-Date: Tue, 27 Aug 2024 19:16:20 +0200
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-	jack@suse.cz, ritesh.list@gmail.com, ojaswin@linux.ibm.com,
-	linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
-	yangerkun@huawei.com, Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH v2 25/25] ext4: save unnecessary indentation in
- ext4_ext_create_new_leaf()
-Message-ID: <20240827171620.jrnp32rcmqu36wp4@quack3>
-References: <20240822023545.1994557-1-libaokun@huaweicloud.com>
- <20240822023545.1994557-26-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1724779109; c=relaxed/simple;
+	bh=sc/xj1pECF1comMS2pLezfWy17ZPZl9W9Dm5bqJCDQo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=B9xIbOirgf3m/qYEiK3DED0mqpT3naEQiRl9+vb7ZFaED5FnG+7L93lMRzRqRRehu+BNEDzC80WztUsKC10J8wtSTZ7WQeyvEA3XFFvxF87lcdUmpIgRDP4Nx6FcRPmYJKNGssDcssGRDos2I94fWsMwbIy0owddVKQAdQA0edY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mk4CKD9E; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3718cd91185so3074370f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 10:18:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724779106; x=1725383906; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sc/xj1pECF1comMS2pLezfWy17ZPZl9W9Dm5bqJCDQo=;
+        b=Mk4CKD9EDsYlYiUrCKDVdDIgYOqrBg8Xg+VrgbMJwsWWRcifcXGTIPioOLHe2QdFJa
+         zBF1HtyLIBo4MiRqUftmqXkfIJbE+xgr7CVUHR/7QD6uwVH4h4uI48Ra815XrDrXXv/7
+         e7JDtNtIzVBKKr/yKJGlXn8BZ3tZh7ouPbhN2BsePu47u5d4t5boPE8IhYxOmvQvMEZG
+         FLBXpa6vjoCsTuVHPwS8896D+Z4/vsiCwAkNcH4KmmzOFxBwyc+g836U3POTeeS+OJhP
+         5R120Pi1Rwmcdl9RM5YwagCFmd6dciMKEipMlGMOP6dW5eQa3zFNnsi0ePg2PCYaAA49
+         397Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724779106; x=1725383906;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sc/xj1pECF1comMS2pLezfWy17ZPZl9W9Dm5bqJCDQo=;
+        b=TMIOe5JGc/O/stag8PrPapNKCcEx0JHb6Gk+6tVXi9LDHmPzRPQHZLx+I6x+Kur+tx
+         RppBfI8+DOEOEP2gbHAyyzpdVauVrkma2RQ1Z/q+v3Vgk2mpCBgR1loTTI/4nIaPPmIo
+         9n92pJruwWoajpqHGTAmjlUBcW5Q9GQeJCw8ZJC29wJbkkAKoOOzmKz1aRT83ubzhNwI
+         1rmmTmBmPUMFXGFalPOlmvopDEmxtBkae7h88uidLg40cmYzldFSqSLBQcqiWUiomk16
+         GIKY8avkfr1mNQvruPUfHTcjh6mOQu+bAh9rrouPbItNyCbHsruGpHsxuofweQtlazGO
+         V2/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVcDsY0tAwF+t950nTDMNrmq7WvhecoRYMOKbh/SkZkaHWLpGemU71nW4PK9VmO1MDAyLLFS3o6FTOhlXc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp9rH18iGSTMDCo5lb+vg8n8WK1izqKpoENglPVg/WVGjffqlm
+	Zr9mDey71i9olhz0xYS97gi1N782fkPbNqwVbhXiFkaNxfGsocSem5FZ4BWt9F4=
+X-Google-Smtp-Source: AGHT+IEdKN54VHi0TyxtS1/HMc8FF8vE19PVNsQxQEYiZ/zFtuG0jDrslQsmOzBObk9o55tKL3923Q==
+X-Received: by 2002:a05:6000:459e:b0:371:a70d:107e with SMTP id ffacd0b85a97d-3748c7c1681mr2311250f8f.6.1724779105738;
+        Tue, 27 Aug 2024 10:18:25 -0700 (PDT)
+Received: from draig.lan ([85.9.250.243])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42abee8d1c9sm229231935e9.23.2024.08.27.10.18.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 10:18:25 -0700 (PDT)
+Received: from draig (localhost [IPv6:::1])
+	by draig.lan (Postfix) with ESMTP id 254495F9E6;
+	Tue, 27 Aug 2024 18:18:24 +0100 (BST)
+From: =?utf-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>
+To: Harald Mommer <Harald.Mommer@opensynergy.com>
+Cc: virtio-dev@lists.oasis-open.org,  Haixu Cui <quic_haixcui@quicinc.com>,
+  Mark Brown <broonie@kernel.org>,  Viresh Kumar <viresh.kumar@linaro.org>,
+  linux-spi@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  quic_ztu@quicinc.com,  Matti Moell <Matti.Moell@opensynergy.com>,
+  Mikhail Golubev <Mikhail.Golubev@opensynergy.com>
+Subject: Re: [PATCH v3 2/3] virtio-spi: Add virtio-spi.h.
+In-Reply-To: <20240326112812.31739-3-Harald.Mommer@opensynergy.com> (Harald
+	Mommer's message of "Tue, 26 Mar 2024 12:28:11 +0100")
+References: <20240326112812.31739-1-Harald.Mommer@opensynergy.com>
+	<20240326112812.31739-3-Harald.Mommer@opensynergy.com>
+Date: Tue, 27 Aug 2024 18:18:24 +0100
+Message-ID: <87ttf551gf.fsf@draig.linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822023545.1994557-26-libaokun@huaweicloud.com>
-X-Spam-Score: -2.30
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,linux.ibm.com,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,huawei.com:email,huaweicloud.com:email,suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 22-08-24 10:35:45, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> Save an indentation level in ext4_ext_create_new_leaf() by removing
-> unnecessary 'else'. Besides, the variable 'ee_block' is declared to
-> avoid line breaks. No functional changes.
-> 
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+Harald Mommer <Harald.Mommer@opensynergy.com> writes:
 
-Looks good. Feel free to add:
+> From: Harald Mommer <harald.mommer@opensynergy.com>
+>
+> Add virtio-spi.h header for virtio SPI.
+>
+> Signed-off-by: Harald Mommer <harald.mommer@opensynergy.com>
+> Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Alex Benn=C3=A9e <alex.bennee@linaro.org>
 
-								Honza
-
-> ---
->  fs/ext4/extents.c | 44 +++++++++++++++++++++-----------------------
->  1 file changed, 21 insertions(+), 23 deletions(-)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index ca1f946514dd..45ddc0692673 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -1403,6 +1403,7 @@ ext4_ext_create_new_leaf(handle_t *handle, struct inode *inode,
->  {
->  	struct ext4_ext_path *curp;
->  	int depth, i, err = 0;
-> +	ext4_lblk_t ee_block = le32_to_cpu(newext->ee_block);
->  
->  repeat:
->  	i = depth = ext_depth(inode);
-> @@ -1424,33 +1425,30 @@ ext4_ext_create_new_leaf(handle_t *handle, struct inode *inode,
->  			goto errout;
->  
->  		/* refill path */
-> -		path = ext4_find_extent(inode,
-> -				    (ext4_lblk_t)le32_to_cpu(newext->ee_block),
-> -				    path, gb_flags);
-> +		path = ext4_find_extent(inode, ee_block, path, gb_flags);
->  		return path;
-> -	} else {
-> -		/* tree is full, time to grow in depth */
-> -		err = ext4_ext_grow_indepth(handle, inode, mb_flags);
-> -		if (err)
-> -			goto errout;
-> +	}
->  
-> -		/* refill path */
-> -		path = ext4_find_extent(inode,
-> -				   (ext4_lblk_t)le32_to_cpu(newext->ee_block),
-> -				    path, gb_flags);
-> -		if (IS_ERR(path))
-> -			return path;
-> +	/* tree is full, time to grow in depth */
-> +	err = ext4_ext_grow_indepth(handle, inode, mb_flags);
-> +	if (err)
-> +		goto errout;
->  
-> -		/*
-> -		 * only first (depth 0 -> 1) produces free space;
-> -		 * in all other cases we have to split the grown tree
-> -		 */
-> -		depth = ext_depth(inode);
-> -		if (path[depth].p_hdr->eh_entries == path[depth].p_hdr->eh_max) {
-> -			/* now we need to split */
-> -			goto repeat;
-> -		}
-> +	/* refill path */
-> +	path = ext4_find_extent(inode, ee_block, path, gb_flags);
-> +	if (IS_ERR(path))
-> +		return path;
-> +
-> +	/*
-> +	 * only first (depth 0 -> 1) produces free space;
-> +	 * in all other cases we have to split the grown tree
-> +	 */
-> +	depth = ext_depth(inode);
-> +	if (path[depth].p_hdr->eh_entries == path[depth].p_hdr->eh_max) {
-> +		/* now we need to split */
-> +		goto repeat;
->  	}
-> +
->  	return path;
->  
->  errout:
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+--=20
+Alex Benn=C3=A9e
+Virtualisation Tech Lead @ Linaro
 
