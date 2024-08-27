@@ -1,196 +1,153 @@
-Return-Path: <linux-kernel+bounces-303252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9EE19609B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:09:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A23C9609B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:09:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEBB11C22DE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:09:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A861E1F24290
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:09:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A332A1A2C22;
-	Tue, 27 Aug 2024 12:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="BsSuwjLh"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2071.outbound.protection.outlook.com [40.107.117.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD16E1A2576;
+	Tue, 27 Aug 2024 12:08:35 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C311A2C0C
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724760518; cv=fail; b=t/qsyOOIUACtP6kgX0rlpqInOhBZaz+fRlagUb+c0wNgS8fMJ6Or/mc+nq7Xu0KDlDoifgkTzukgrFqdWnF/tvcRUrf+IjMPZOzsAdXSy7l02LKL31EbUVKciYMlMY9Qr+ttzO4DC5BA13Yle/AE9goGMZdv767VW3YrrX1bt34=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724760518; c=relaxed/simple;
-	bh=Uj0st/M3M/SxGHYVXVeLsFw1v8GVQOak1G7TU2m5kQc=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ssB4UXmtpS6B3q5TLcPxEKqOuGVCCpjJtRgfD4SSVH8v57+Ed6Gti7/t15okNxpwHTVCUSUDBbnhtoqX+Yj/rZKL0SzIpTnW8X51qLOVKwlOpW8n5FxyPTQUGgPr1/dDiZh2qTH8jQplZ2A04uZfnBiy+mrBaVHKPIChBXqPtNg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=BsSuwjLh; arc=fail smtp.client-ip=40.107.117.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ctf+/1h7pMDfpVMBTceiYR1w12f1yAL9BZbfC/iiRoWznNj3AQE7xI50tBE2XMIH7eKIA1JO+kzHf8va9pjqn2j8T4ch2G1iEP/AAXrbsX2a/wIwM3X/xyLwto0zv4yDy38LUItUdLZPACve5EfDhgfox1kux2ctGuFC1LvTyIwwyx+a4x+5ysRs6lAubP9VpJMb5nt355mVGYjDwuwLzf6zlfIv4lMBXJV+lEOBiYpgtpSKaQZDn5+5Kgj2zkjEwjvdK5w1leANhsITqBlyJmLNrPtgVLRSoBm39CkW+6s0vreJ6xpFmCMu1xHPyT6UwdEYE0q+gCVR1tC8kUuVEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3qgN6WGxZjl8afjN7eRid+GWMGjvT0XXrysE6YDlBJo=;
- b=GdszSdQx2l+7PFgf33/JEsClcEsWunaG4Vq77i51F1RIT0CwZThpD9exTN3WGztROytLuIlkyPUnpLwplYmzua3GnEFICb+4BE+q7tK6K2DWcd6A0LPIiGSN6aSHinNbSA1ENruDLCwYn4MKgczDvFbQ0vfCmMQ255zepTI+VnfV5pGz9CyjVvgWdXhmPfeFtTHTN20SvfVqEJ88bgRtcDpiQemJs8NJevdxRL9GTq0T/onHXQyZ6uhLafev5+WHmV5X6x+0AiBmnAQZf45vnYveVzgWpi/OBvvKUZ9/HRvHEWEA/2sZJ4w+PEMJ5cuOnxoc1TJTfggUpY2K/CNwRw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3qgN6WGxZjl8afjN7eRid+GWMGjvT0XXrysE6YDlBJo=;
- b=BsSuwjLhejZ2bQLFJQ3RnGCZKQiY+x9vPkKY+5E6fsPAQkESXvbF9Bcnm3+RjINUkgicoBIMbXpbVJUl38kMzIdEShYPFV/MBoY5PZnYExJXwEx7Q7Me6nJr1cPdx93EVeMjibiYJia+NKsX9UdVAaMbPYTBHsNHOGh450IbZGEKwaUPJCwBFKZioYF5h+qvaxLM+qVdVKOCopS9YQcJWqKvBirRegOeWqiwnSOnnEvOLayVhq4kU8Av+mmcu/RsTqpqLooR6ybI8sa/FdMzSy+Gn3e8w5xadv1djHxADguwRLP52N3bIeGQztkMrTbjeRp0VN6TZeOG/Q7OWzvgoQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB6263.apcprd06.prod.outlook.com (2603:1096:400:33d::14)
- by SEZPR06MB5221.apcprd06.prod.outlook.com (2603:1096:101:74::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Tue, 27 Aug
- 2024 12:08:26 +0000
-Received: from TYZPR06MB6263.apcprd06.prod.outlook.com
- ([fe80::bd8:d8ed:8dd5:3268]) by TYZPR06MB6263.apcprd06.prod.outlook.com
- ([fe80::bd8:d8ed:8dd5:3268%6]) with mapi id 15.20.7897.021; Tue, 27 Aug 2024
- 12:08:26 +0000
-From: Yang Ruibin <11162571@vivo.com>
-To: Sebastian Reichel <sre@kernel.org>,
-	Yang Ruibin <11162571@vivo.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-Subject: [PATCH v2] HSI: omap-ssi: Remove unnecessary debugfs_create_dir() error check
-Date: Tue, 27 Aug 2024 20:08:16 +0800
-Message-Id: <20240827120816.3910198-1-11162571@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TY2PR0101CA0026.apcprd01.prod.exchangelabs.com
- (2603:1096:404:8000::12) To TYZPR06MB6263.apcprd06.prod.outlook.com
- (2603:1096:400:33d::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7B31A0B02;
+	Tue, 27 Aug 2024 12:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724760515; cv=none; b=f59MXm5Qt2Jcdb8Y5QtbPyrWOYJSKtGN7KZrWuRLWY8UttKIKYqpO0MYNRLRMLYAGDDrWERtqYNHyjnjdsC7jgVM4kfHUec1185OilJ/XoO/wvAgfzfyiQoIKGQgSu5McUW5UuXrVfZD6anNFs1yc910/ZeFcggWUB6+YBByCcQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724760515; c=relaxed/simple;
+	bh=52M/8BWHhEzkUmRkv6Kdv6Vqv/i/kvJFaeCUvFN1u34=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GeSJZe/EajLB0Ix2Ios7srKtej3G+TgSk2IuH11R10WKOqaG6XcllaDgnmrxrBxV2dLUEJN2kt6Q080F4KFw4niSJ9Im9rU6y27ZA+delT1M8SKCRGg33mncuCMsa7/p/A2LPzqwiGbZRqE8Iu78lw6brhapFaSYbvBbKSLeMv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WtR7c3s8Bz6DBfS;
+	Tue, 27 Aug 2024 20:05:16 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3E3121400D4;
+	Tue, 27 Aug 2024 20:08:31 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 27 Aug
+ 2024 13:08:30 +0100
+Date: Tue, 27 Aug 2024 13:08:29 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Fan Ni <nifan.cxl@gmail.com>
+CC: <ira.weiny@intel.com>, Dave Jiang <dave.jiang@intel.com>, Navneet Singh
+	<navneet.singh@intel.com>, Chris Mason <clm@fb.com>, Josef Bacik
+	<josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Petr Mladek
+	<pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Rasmus Villemoes
+	<linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
+	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, <linux-btrfs@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>
+Subject: Re: [PATCH v3 18/25] cxl/extent: Process DCD events and realize
+ region extents
+Message-ID: <20240827130829.00004660@Huawei.com>
+In-Reply-To: <Zsj_8IckEFpwmA5L@fan>
+References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
+	<20240816-dcd-type2-upstream-v3-18-7c9b96cba6d7@intel.com>
+	<Zsj_8IckEFpwmA5L@fan>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB6263:EE_|SEZPR06MB5221:EE_
-X-MS-Office365-Filtering-Correlation-Id: a0a2b93e-2a62-4228-9c9d-08dcc690f488
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014|81742002;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?UcsJcXQXQo8z/mIVuOZEE2Qjd36hBx8YNyDJXCkK7nlFnJw1E+HDh9/sh8Xg?=
- =?us-ascii?Q?an5Y0CIGHuOzkaw6cGKjmFOfWZ2h4FqByt/EPSeMKA58iZOFZ45/CN6lRLVP?=
- =?us-ascii?Q?X3SzNAhXCyM2QOzF1YmLmL1sS55RXZYE31BCgBSWMcQ3nDddyfLi8oHfYRjF?=
- =?us-ascii?Q?JwM1z/6B2+7tgEiQ0MZmgwEq/UHlQrhVAZ56NgBJ5SsBL1/x80ImFU+Qg3W/?=
- =?us-ascii?Q?cWIUDc8uSXX4i536QkjtwQYHM6yMivM3bah/QX7fPbZyeOGIj4EuYJNNzzN4?=
- =?us-ascii?Q?Kt41o8u5hEUXJjRSgdKaLv3tawa0TrlPHbJqew4pOaMsPxfSSwvp3w/llQCY?=
- =?us-ascii?Q?gJ8mHnUxyejfvHua7Ar+mpzGzhwIVXOm9Zv4NrQW/Bg/n3sFKLtglns6dGcg?=
- =?us-ascii?Q?tDrOXHJM6V5Tj+vKoE/+JWHw5HAbkc64LthBRjiaocd7XUu7IR8ASH7bq6mI?=
- =?us-ascii?Q?cGjwf5ffQa6lowL0FJsUGkHj/KgnIgan8h5ACpvNPNsG0CLeaYpYbHsCSatj?=
- =?us-ascii?Q?B5J7gXyW7gNmG7U+GUZZtHRcG6u3UkkiJmh9g2MgV3Kcl44ue0tq2yVWr5hW?=
- =?us-ascii?Q?83b0H5UVtQ3ct/LgKs86gx0dCgu9YVTABn6BpTvcJn4mCUJ5RTlUUJr+JuEn?=
- =?us-ascii?Q?ZMAazqJdfuLkco/8gJFAPi8fvMqLuThgoOAY1hjwKmhvxl3DPxUhA7R/Hbgc?=
- =?us-ascii?Q?D1YEqi0sqcjCPKshZwsuffdnFSXFfD3Be79wuNB0XPBlESH57QiM23QMh6T4?=
- =?us-ascii?Q?0hqP3e5v0sBkvcdL72mP1OfEM3lodn38qSljaxQ+EM09537dXhmBlUONK+T7?=
- =?us-ascii?Q?lAmO13YN9KM2eCLKJ5HzwmCI+YipSphznPQzk8V4/aLk1hVQclDfPXdjGScc?=
- =?us-ascii?Q?T6wzarNOinkpv29iyM0w4wveFwnO91Qj+7iKxsTTZKFGhW7ZVP+8bI2RnT3F?=
- =?us-ascii?Q?iQpaYtDNXbyFhwFjkRgX5CXyaudlQfQe13EvSvnaJyzll9m3oUp9s473j7xt?=
- =?us-ascii?Q?HB2tnJtZTDmW6cXXty+cn+fVZ2HN8v5Wf09oz1s9hcE4HDrHrXlO8dBdb8eq?=
- =?us-ascii?Q?/qYpSbHhfiCW7+kJiCxjfDvblmgRCaIgqubv2VN1PiccXxUdc1fX4g4WVOah?=
- =?us-ascii?Q?JTV4EZdPhZxJa/ocC6tkba64AYElmYWFxyPCBTOTu3rldFCQHDtzaDNNRPLH?=
- =?us-ascii?Q?XO9fX+dfchN6sKMHRl6mN0PbbtSO4lLlW5O6GUsY6w0ROWOpR314YdE766QE?=
- =?us-ascii?Q?rhSPvZWVEu3n152KgE0KQZ0RPZ2m4F7/WPh/8K8Anp8diIfdMMJkHSSNYPJ0?=
- =?us-ascii?Q?02wkbJ8HVZQq1K6PUhctSLkx82wlLzQKE9EJa8HZoLwg4a2wAWbgg5aNT8+b?=
- =?us-ascii?Q?yYRV1pxE38/Qy7D0ANIxalwF8dgRQ2X6+kcKJdhOLjg2oHyS8yZdRFP8GdGt?=
- =?us-ascii?Q?GqZTfwBby/I=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6263.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014)(81742002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?zzAQBrqh0t9/VvDlGTc8BtrxkpWDtgNRZtLjv3kE+3DVm0FUHubimkyS2dY1?=
- =?us-ascii?Q?6+JYNwNu5Rj2MNy8kfYh6k8krdnL4IIp234QemMt4PN+QLC993/aElITaGWW?=
- =?us-ascii?Q?E3lKKBvIFpPaqjvwtgL6puSoFK/1zgty6V57cufLUaGYbyAMAtXeCMiI8aNB?=
- =?us-ascii?Q?B+33Xes6Iq/+oA7Kpd4p2HH0Rbdxa9CI77Gjpo8Z/MmOixJO9zid/ZhUPfkG?=
- =?us-ascii?Q?ZygUrDImDuphXKTqk8l7bksWtxqJllLHKAh6/QVwB1nvhlJvF0Sibd4pMnnJ?=
- =?us-ascii?Q?vlctKjGdatagqB6oG8CBC+sGkLDujK0wUjnKKcmuM+yWlOKtjI3IaYmoslTU?=
- =?us-ascii?Q?d33jQKxHVzjNBeYp4721tW6/j+/4PYD2XacgaULQRplRbLvXSv4MkF37ekj5?=
- =?us-ascii?Q?3unQ2jgg6fxV7Iq/FYJOmtaTj6Y1VGLU92cK13NLvjPn233pn35yv9t44lk3?=
- =?us-ascii?Q?kiUyfGA7nRpcqiin0+To6ZbAyHtb6Bahd/r7e/s60syBTywVF+V3MmUSRfkE?=
- =?us-ascii?Q?dwXRLieWZQ87gygYkotO3jGuSv35xkGAKgOgiHGhzA9Ze9JCMUeyJyim4VNT?=
- =?us-ascii?Q?MS9UhiWSWqizRfaGVX+sWHGkI2YpwrWwwClXylgNLpFQtgVguOSdWCfDLl56?=
- =?us-ascii?Q?HHYEltBiR6A98+26//oBJD5n/B3uR5c2IdHQOqC94R7ebh6NxNG5TMYWan1V?=
- =?us-ascii?Q?d8fDUkCCnS1e2iDGOWcCpf0d+bB8LTwA886CzjpRuNT+CTCTuz+7NmIbrfzq?=
- =?us-ascii?Q?8/4lh6QpJ32JLQuQf+8Bth5aQK2aWFHkIR/8NN5FPRr37QyOvNqw+x1h8GsZ?=
- =?us-ascii?Q?Q9thAF6VHDQUR9qfUY87EUMCPr9EDVBJZslYl4TiWOUcaATAUW5fFpGhNkvg?=
- =?us-ascii?Q?4j4syiRQOJ0gCaRmhnJLF5hIjswPC8Qic7/4oPMp6SjXR5+UtN3yNdycmC8D?=
- =?us-ascii?Q?EVcr3+VDNscyPPws3+V1DEwCoq+oisfBaSN9c7G5w6HZzf/dXT4CzxEB9s1F?=
- =?us-ascii?Q?HI+oJcRCqX1AZKnz+ZQo3ccz4unVnkY0GQr/kqRRS93Nsw8fIPOKoZ8hNJWy?=
- =?us-ascii?Q?5wuwhRptQF/yNRWPplYTps2/kKa5yW2d+7YS6txRxoh5wsUEjr9R+URT8+1Y?=
- =?us-ascii?Q?OgmWvtjyaMyJkB8DNvTsk2CrB9kuq0cz9aPpKTtkWwRpll0U4JY8xKAzpO72?=
- =?us-ascii?Q?1UKtTV+4JpMtW6Byq8doNW0vioL0GOY8+ElrS6W+QzwnRdf0IsXygl8HBmy5?=
- =?us-ascii?Q?cRzxDHOiqtNYICBIUc7EEEFXEkJPm1m3V6B+hUGuweNV0Q3fgJQjaRXDlxC5?=
- =?us-ascii?Q?Qh/vEEpbJ0ybwUbHzQPmMGiFojKLTuWz/NE1Qk/DfCOQnqI6AwkqkJxEU1JB?=
- =?us-ascii?Q?8chiOmy4pw567Tz3vieYsxQXWYe+NTyaBQPx76QhoyNsKYjrogDBqIBOUxmH?=
- =?us-ascii?Q?WrAK69UcT4aPvXxCC6t9ppxTuqv+UZY1XbZDUYPmi1XeKDie90cd+bIjApqF?=
- =?us-ascii?Q?iwEk3WVQHhBJHHzljYCN/VWSicuDE9mHaKuGq+I88O2xXGITPzmoF2MZXFZM?=
- =?us-ascii?Q?1JE2fxTnjg9Lfp/HvFN0DJdz7p+8gu8jmuEcJCDo?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a0a2b93e-2a62-4228-9c9d-08dcc690f488
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6263.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 12:08:26.2126
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nDgfTC11qRg1Ze140FUdZNUi7Ex/Pzz65BRUG07eFtluEuyW1QfdPSftAlSAKWeqcxIbTCvmgjGRpnMRncDNVA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5221
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Remove the debugfs_create_dir() error check. It's safe to pass in error
-pointers to the debugfs API, hence the user isn't supposed to include
-error checking of the return values.
+On Fri, 23 Aug 2024 14:32:32 -0700
+Fan Ni <nifan.cxl@gmail.com> wrote:
 
-Signed-off-by: Yang Ruibin <11162571@vivo.com>
----
-Changes v2:
--Remove debugfs_create_dir() error check
----
- drivers/hsi/controllers/omap_ssi_core.c | 8 --------
- 1 file changed, 8 deletions(-)
+> On Fri, Aug 16, 2024 at 09:44:26AM -0500, ira.weiny@intel.com wrote:
+> > From: Navneet Singh <navneet.singh@intel.com>
+> > 
+> > A dynamic capacity device (DCD) sends events to signal the host for
+> > changes in the availability of Dynamic Capacity (DC) memory.  These
+> > events contain extents describing a DPA range and meta data for memory
+> > to be added or removed.  Events may be sent from the device at any time.
+> > 
+> > Three types of events can be signaled, Add, Release, and Force Release.
+> > 
+> > On add, the host may accept or reject the memory being offered.  If no
+> > region exists, or the extent is invalid, the extent should be rejected.
+> > Add extent events may be grouped by a 'more' bit which indicates those
+> > extents should be processed as a group.
+> > 
+> > On remove, the host can delay the response until the host is safely not
+> > using the memory.  If no region exists the release can be sent
+> > immediately.  The host may also release extents (or partial extents) at
+> > any time.  Thus the 'more' bit grouping of release events is of less
+> > value and can be ignored in favor of sending multiple release capacity
+> > responses for groups of release events.
+> > 
+> > Force removal is intended as a mechanism between the FM and the device
+> > and intended only when the host is unresponsive, out of sync, or
+> > otherwise broken.  Purposely ignore force removal events.
+> > 
+> > Regions are made up of one or more devices which may be surfacing memory
+> > to the host.  Once all devices in a region have surfaced an extent the
+> > region can expose a corresponding extent for the user to consume.
+> > Without interleaving a device extent forms a 1:1 relationship with the
+> > region extent.  Immediately surface a region extent upon getting a
+> > device extent.
+> > 
+> > Per the specification the device is allowed to offer or remove extents
+> > at any time.  However, anticipated use cases can expect extents to be
+> > offered, accepted, and removed in well defined chunks.
+> > 
+> > Simplify extent tracking with the following restrictions.
+> > 
+> > 	1) Flag for removal any extent which overlaps a requested
+> > 	   release range.
+> > 	2) Refuse the offer of extents which overlap already accepted
+> > 	   memory ranges.
+> > 	3) Accept again a range which has already been accepted by the
+> > 	   host.  (It is likely the device has an error because it
+> > 	   should already know that this range was accepted.  But from
+> > 	   the host point of view it is safe to acknowledge that
+> > 	   acceptance again.)
+> > 
+> > Management of the region extent devices must be synchronized with
+> > potential uses of the memory within the DAX layer.  Create region extent
+> > devices as children of the cxl_dax_region device such that the DAX
+> > region driver can co-drive them and synchronize with the DAX layer.
+> > Synchronization and management is handled in a subsequent patch.
+> > 
+> > Process DCD events and create region devices.
+> > 
+> > Signed-off-by: Navneet Singh <navneet.singh@intel.com>
+> > Co-developed-by: Ira Weiny <ira.weiny@intel.com>
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> >   
+> 
+> One minor change inline.
+Hi Fan,
 
-diff --git a/drivers/hsi/controllers/omap_ssi_core.c b/drivers/hsi/controllers/omap_ssi_core.c
-index 3140990a6..6318506b4 100644
---- a/drivers/hsi/controllers/omap_ssi_core.c
-+++ b/drivers/hsi/controllers/omap_ssi_core.c
-@@ -116,22 +116,14 @@ static int ssi_debug_add_ctrl(struct hsi_controller *ssi)
- 
- 	/* SSI controller */
- 	omap_ssi->dir = debugfs_create_dir(dev_name(&ssi->device), NULL);
--	if (!omap_ssi->dir)
--		return -ENOMEM;
- 
- 	debugfs_create_file("regs", S_IRUGO, omap_ssi->dir, ssi,
- 								&ssi_regs_fops);
- 	/* SSI GDD (DMA) */
- 	dir = debugfs_create_dir("gdd", omap_ssi->dir);
--	if (!dir)
--		goto rback;
- 	debugfs_create_file("regs", S_IRUGO, dir, ssi, &ssi_gdd_regs_fops);
- 
- 	return 0;
--rback:
--	debugfs_remove_recursive(omap_ssi->dir);
--
--	return -ENOMEM;
- }
- 
- static void ssi_debug_remove_ctrl(struct hsi_controller *ssi)
--- 
-2.34.1
+Crop please.  I scanned past it 3 times when scrolling without noticing
+what you'd actually commented on.
 
+> > +/* See CXL 3.0 8.2.9.2.1.5 */  
+> 
+> Update the reference to reflect CXL 3.1.
+> 
+> Fan
+> 
 
