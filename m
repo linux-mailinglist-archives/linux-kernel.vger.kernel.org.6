@@ -1,212 +1,113 @@
-Return-Path: <linux-kernel+bounces-303194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 459DA9608DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:37:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C86C59608DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 668551C220BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:37:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 726671F23DC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661E11A00F8;
-	Tue, 27 Aug 2024 11:36:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB0291A01B4;
+	Tue, 27 Aug 2024 11:37:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S0tZRJpa"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZWU14K+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07C114D29C
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8351A00C9;
+	Tue, 27 Aug 2024 11:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724758617; cv=none; b=jnJd9f96RiPwsJdR/64JifUm9qOAlhowYDVZIF0OMbr41pTV1C7UoR5qsnFTNd1428/mQ/ypSfLOzzZzTOPKrVFMvaFpGwhdmJBJI7PCCyxNUWPH7N/U2y+KZfoA4bFP4WGCqvEoiPrT6CGSNXx/UCeE9fk1o5bWu34rBhCulig=
+	t=1724758633; cv=none; b=LyOoW0yLzSsko8Es0Sr0PmX4lg/KzIEtgzQpXMndw/tARFQa9uHoSe2CCstG0xbBQSRrvbANkTDc9pRr9qDxMOoZmysX9QCsy6B/rpXeQ7rjDugczNLKGT0W+8ABTNe2u2Mzfr/I7gqZobrj/y6k7IoAk4PX7sbMGQIxyTRpMuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724758617; c=relaxed/simple;
-	bh=IRbk4XlXS9AL1SVPnwuRZB64g4tDHR/DIdnqSuKhoPE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mj5wJnppYmrxaKzqHil9CtnmWiw55EYw3/TpWc6qF+YNtWX0aSaj3VomNCOHO4tw2zy12ZUPMcV1EiNGQvf9u+Vu4eJwRbLPwY5AVLk67d0zRFakhey5dFZl9UUwdif7P92Ax0Zr7Dgc5SDSJH/kwK22JZM8kA7p6z4ws+w9fL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S0tZRJpa; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-36d2a601c31so3175551f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 04:36:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724758614; x=1725363414; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OiKQkX9JXAm55mwNI4zYxY4asKveYVGU+Q+n1G5Ueug=;
-        b=S0tZRJpad7dacAWNhk7IbSgkKrz9I4QXzh1O1oAAdI/kj3Kz9hRbuLHPCG7QNa+OL3
-         PnXJNxUYcyaVcGw95CrNrDQD6G6LyQtWtlUL6sf1zUqYLGVT5G8MPZSfsPAdnaibigm4
-         tR3BaiyvSRxhDPQ+dDpJR4I/pOzOHrUrFRZjKZJWPdGg7A3JI7DsoYXP0IJKTfC5DMp1
-         vHzlGcWLcNauHr5GG7OUIH82r5+0vLRLmVM9oKNF/kuq2Ii89KNRBy+4CEKDprLMY4R6
-         8NUFgIO1STeIHZ9QAR7NDBBB2o+rIJoDDjk1+kU0C2XY3IQ6o7pMjtnvBaOtS1hTajl8
-         RClg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724758614; x=1725363414;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OiKQkX9JXAm55mwNI4zYxY4asKveYVGU+Q+n1G5Ueug=;
-        b=bdaUDoXxl6Qci4rp/H+PyLvqUhsDfak0di3pOMgg2HRfHEFBVpWqKQ6I1Xwl8022vs
-         x/0zJ1fs45H3Zfpp6/ZEYnI38zRgMjJ6FXuK46LC+kvYCbkm2AF0dENm/3wk54PGMq5+
-         yOS3mUMFl3m2gppbvhgA6ZG4y4sjHBC9pWemCTgnMCTsAQJfPvvYc97zAV8nGDyoJlC2
-         +r7RCl58RKCHtyT8HLMTW08X4GAj3+7OmF3japygfMYgb8zyWbVuYAW4m9Qs0vgjbHj+
-         f8nDeqrRrnSAxbuAKzFCZ/OKrvzvkUDmefdthSkHBZixhV6uYXsQmlQB0bOu1m0M04C9
-         i5pg==
-X-Forwarded-Encrypted: i=1; AJvYcCWZ9gjkemky2p4JjyYSK+ykQ2teAtCZx73EBGBV5Qowa4Joq2lKeVU6l06WWybwoq3icbxb+fvK3PxCASM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhONF138TpvXZWqI653M0VQGONw8X/6dm/tLth/u7M3OQtj3ir
-	nWhtKbccKEB3s+8MkDq8Z6wPhDQXigoa53MNB3ME1fJEzbxqt9ktAhNtLAiKj/+ULTjxviLm+ML
-	vfeaG6bfLsxLc36OTJVihydHyQINKfCVEHIpZ
-X-Google-Smtp-Source: AGHT+IHLB2RvAn3JqickjtZcl5YzVN33cRXUCK4PAl1Gfw449IAMUegRjNOP1+0UnRKyCCQgoiHkiFDo9yZOJt1ijW8=
-X-Received: by 2002:adf:fe86:0:b0:371:7c68:32e6 with SMTP id
- ffacd0b85a97d-3748c7c78demr1625380f8f.4.1724758613879; Tue, 27 Aug 2024
- 04:36:53 -0700 (PDT)
+	s=arc-20240116; t=1724758633; c=relaxed/simple;
+	bh=pqaE6MBhVqZ3MnXvihv9QZJKz2GO/zc7qXNrlb1bhlE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tygqVZL87HRgR9zvEciZod+s4wpvDI39YZq4KyqSVhPXl6FNrXhZwDzqWAgLuUc+jyQv+6hw67vbpBtI0IDzX1jLwDNQm1U2SdAiIRs8KcNCT2eSEnefHtWMe2ul/ibedo/g+MoKxrn63Jvv+jqn8ww3SgRmS11ZP28VqvOcVyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZWU14K+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F891C567DC;
+	Tue, 27 Aug 2024 11:37:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724758632;
+	bh=pqaE6MBhVqZ3MnXvihv9QZJKz2GO/zc7qXNrlb1bhlE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EZWU14K+PAj6TLtV2SsINSwgSrjjuNOe8bvFXR17KR/IHlsyxOjzJw7FcrOhgivzh
+	 G/Ed3KWIn9RjuLFZnQK6EkgKXmcfU65uXzaxkKaAGj2T86/ekhSVR5MJe0WHIfvW2U
+	 YGup/38jbLJVdxT/3tyPXqb4vIDfJfPpQCXH53ww2/gzMtEWQSaBVrLRveKATf93vQ
+	 ZjXTGs0/xj38HQ58xACYINxWRf7zlDngVVJPCuBYdn/SwjskFuza+RR5DVrE0ca3DP
+	 fBxzFCQWTcSTOFbfRukgvbAwAZ4/NNzCROBLcSJ16uL51MrtvQ54UcOzdVghKQ/M/r
+	 0gzd4sXB+ohAA==
+Date: Tue, 27 Aug 2024 13:37:08 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Qiang Yu <quic_qianyu@quicinc.com>
+Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org, 
+	robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, abel.vesa@linaro.org, 
+	quic_msarkar@quicinc.com, quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org, 
+	kw@linux.com, lpieralisi@kernel.org, neil.armstrong@linaro.org, 
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/8] phy: qcom-qmp: pcs-pcie: Add v6.30 register offsets
+Message-ID: <2ojutgxk4kplxwrxxcq5zorejuohbow7dr6lhl4cwndkwzvxf6@lxg4um6krdnh>
+References: <20240827063631.3932971-1-quic_qianyu@quicinc.com>
+ <20240827063631.3932971-2-quic_qianyu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806-shadow-call-stack-v5-1-26dccb829154@google.com>
- <20240820143503.GD28338@willie-the-truck> <CAH5fLggN+A2RawC-cpmSUHxYm=xz=1EDpMUv5C803hj37re1qA@mail.gmail.com>
- <20240823122423.GB32110@willie-the-truck> <CAH5fLgh6ywHeFSwbnaOu-QYrt_Jytv_y3zb1QbJzK-w4kQ617w@mail.gmail.com>
- <20240823125739.GA32156@willie-the-truck> <CAH5fLgiCr3hOEX1yaqy66OMsbPTtEhA4FCmRiw20zY64vYKHPw@mail.gmail.com>
- <20240823132133.GC32156@willie-the-truck>
-In-Reply-To: <20240823132133.GC32156@willie-the-truck>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 27 Aug 2024 13:36:41 +0200
-Message-ID: <CAH5fLgjjnDZG2BBApmiss43+gOs85xjJM9DP8RLO+y+UXm1cOg@mail.gmail.com>
-Subject: Re: [PATCH v5] rust: support for shadow call stack sanitizer
-To: Will Deacon <will@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Jamie Cunliffe <Jamie.Cunliffe@arm.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Conor Dooley <conor@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Valentin Obst <kernel@valentinobst.de>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240827063631.3932971-2-quic_qianyu@quicinc.com>
 
-On Fri, Aug 23, 2024 at 3:21=E2=80=AFPM Will Deacon <will@kernel.org> wrote=
-:
->
-> On Fri, Aug 23, 2024 at 03:09:40PM +0200, Alice Ryhl wrote:
-> > On Fri, Aug 23, 2024 at 2:57=E2=80=AFPM Will Deacon <will@kernel.org> w=
-rote:
-> > >
-> > > On Fri, Aug 23, 2024 at 02:38:20PM +0200, Alice Ryhl wrote:
-> > > > On Fri, Aug 23, 2024 at 2:24=E2=80=AFPM Will Deacon <will@kernel.or=
-g> wrote:
-> > > > >
-> > > > > On Tue, Aug 20, 2024 at 05:13:58PM +0200, Alice Ryhl wrote:
-> > > > > > On Tue, Aug 20, 2024 at 4:35=E2=80=AFPM Will Deacon <will@kerne=
-l.org> wrote:
-> > > > > > > On Tue, Aug 06, 2024 at 10:01:44AM +0000, Alice Ryhl wrote:
-> > > > > > > > diff --git a/init/Kconfig b/init/Kconfig
-> > > > > > > > index fe76c5d0a72e..d857f6f90885 100644
-> > > > > > > > --- a/init/Kconfig
-> > > > > > > > +++ b/init/Kconfig
-> > > > > > > > @@ -1909,7 +1909,7 @@ config RUST
-> > > > > > > >       depends on !MODVERSIONS
-> > > > > > > >       depends on !GCC_PLUGINS
-> > > > > > > >       depends on !RANDSTRUCT
-> > > > > > > > -     depends on !SHADOW_CALL_STACK
-> > > > > > > > +     depends on !SHADOW_CALL_STACK || RUSTC_VERSION >=3D 1=
-08000 && UNWIND_PATCH_PAC_INTO_SCS
-> > > > > > >
-> > > > > > > Sorry, I didn't spot this in v4, but since UNWIND_PATCH_PAC_I=
-NTO_SCS is
-> > > > > > > specific to arm64 and the only other architecture selecting
-> > > > > > > ARCH_SUPPORTS_SHADOW_CALL_STACK is riscv, I can't help but fe=
-el it would
-> > > > > > > be cleaner to move this logic into the arch code selecting HA=
-VE_RUST.
-> > > > > > >
-> > > > > > > That is, it's up to the architecture to make sure that it has=
- whatever
-> > > > > > > it needs for SCS to work with Rust if it claims to support Ru=
-st.
-> > > > > > >
-> > > > > > > What do you think?
-> > > > > >
-> > > > > > The `select RUST if ...` is going to get really complicated if =
-we
-> > > > > > apply that rule in general. Having options here allows us to sp=
-lit
-> > > > > > them across several `depends on` clauses. I'm not sure it will =
-even
-> > > > > > work, I had issues with cyclic Kconfig errors previously. I als=
-o don't
-> > > > > > think it's unreasonable for the architecture to say it supports=
- both
-> > > > > > options when it really does support both; they are just mutuall=
-y
-> > > > > > exclusive. I also think there is value in having all of the opt=
-ions
-> > > > > > that Rust doesn't work with in one place.
-> > > > >
-> > > > > I'm not sure I follow why this will get really complicated. Isn't=
- it as
-> > > > > straightforward as the diff below, or did I miss something?
-> > > >
-> > > > Hmm. I tried this but I wasn't able to enable Rust with this setup.
-> > > > Even though the deps of RUSTC_SUPPORTS_ARM64 are ok, it doesn't see=
-m
-> > > > to be enabled and I can't find it in menuconfig. I think we need to
-> > > > have a `select RUSTC_SUPPORTS_ARM64` somewhere.
-> > >
-> > > Sorry, yes, my diff was a little half-arsed:
-> > >
-> > > > > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> > > > > index a2f8ff354ca6..2f5702cb9dac 100644
-> > > > > --- a/arch/arm64/Kconfig
-> > > > > +++ b/arch/arm64/Kconfig
-> > > > > @@ -231,7 +231,7 @@ config ARM64
-> > > > >         select HAVE_FUNCTION_ARG_ACCESS_API
-> > > > >         select MMU_GATHER_RCU_TABLE_FREE
-> > > > >         select HAVE_RSEQ
-> > > > > -       select HAVE_RUST if CPU_LITTLE_ENDIAN
-> > > > > +       select HAVE_RUST if RUSTC_SUPPORTS_ARM64
-> > > > >         select HAVE_STACKPROTECTOR
-> > > > >         select HAVE_SYSCALL_TRACEPOINTS
-> > > > >         select HAVE_KPROBES
-> > > > > @@ -265,6 +265,11 @@ config ARM64
-> > > > >         help
-> > > > >           ARM 64-bit (AArch64) Linux support.
-> > > > >
-> > > > > +config RUSTC_SUPPORTS_ARM64
-> > > > > +       bool
-> > >
-> > > This line ^^^ should be 'def_bool y'.
-> >
-> > Ah, I see, I guess I learned something today. It also seems to work if
-> > I add `default y`.
-> >
-> > I can change it if you think this is better. I still think there's
-> > some value in having everything in one place, but it's not a big deal.
-> > Either way, it should be temporary for a few kernel releases as we'll
-> > eventually only support compiler versions where this works.
->
-> I do like moving the reference to UNWIND_PATCH_PAC_INTO_SCS into the
-> arch code, so if you could respin along these lines then that would be
-> great.
+On Mon, Aug 26, 2024 at 11:36:24PM -0700, Qiang Yu wrote:
+> x1e80100 SoC uses QMP phy with version v6.30 for PCIe Gen4 x8. Add the new
+> PCS PCIE specific offsets in a dedicated header file.
+> 
+> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+> ---
+>  .../qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h    | 25 +++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>  create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h
+> 
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h b/drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h
+> new file mode 100644
+> index 000000000000..5a58ff197e6e
+> --- /dev/null
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h
+> @@ -0,0 +1,25 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (c) 2024 Qualcomm Innovation Center. All rights reserved.
+> + */
+> +
+> +#ifndef QCOM_PHY_QMP_PCS_PCIE_V6_30_H_
+> +#define QCOM_PHY_QMP_PCS_PCIE_V6_30_H_
+> +
+> +/* Only for QMP V6_30 PHY - PCIE have different offsets than V6 */
+> +#define QPHY_PCIE_V6_30_PCS_POWER_STATE_CONFIG2		0x014
+> +#define QPHY_PCIE_V6_30_PCS_TX_RX_CONFIG		0x020
+> +#define QPHY_PCIE_V6_30_PCS_ENDPOINT_REFCLK_DRIVE	0x024
+> +#define QPHY_PCIE_V6_30_PCS_OSC_DTCT_ACTIONS		0x098
+> +#define QPHY_PCIE_V6_30_PCS_EQ_CONFIG1			0x0a8
+> +#define QPHY_PCIE_V6_30_PCS_G3_RXEQEVAL_TIME		0x0f8
+> +#define QPHY_PCIE_V6_30_PCS_G4_RXEQEVAL_TIME		0x0fc
+> +#define QPHY_PCIE_V6_30_PCS_G4_EQ_CONFIG5		0x110
+> +#define QPHY_PCIE_V6_30_PCS_G4_PRE_GAIN			0x164
+> +#define QPHY_PCIE_V6_30_PCS_RX_MARGINING_CONFIG1	0x184
+> +#define QPHY_PCIE_V6_30_PCS_RX_MARGINING_CONFIG3	0x18c
+> +#define QPHY_PCIE_V6_30_PCS_RX_MARGINING_CONFIG5	0x194
+> +#define QPHY_PCIE_V6_30_PCS_G3_FOM_EQ_CONFIG5		0x1b4
+> +#define QPHY_PCIE_V6_30_PCS_G4_FOM_EQ_CONFIG5		0x1c8
 
-Done, see:
-https://lore.kernel.org/all/20240826-shadow-call-stack-v6-1-495a7e3eb0ef@go=
-ogle.com/
+There is no user of these. Squash it with the user, because there is
+little point in adding dead code.
 
-I took the opportunity to incorporate new developments in rustc
-changes into the Kconfig rules.
+Best regards,
+Krzysztof
 
-Alice
 
