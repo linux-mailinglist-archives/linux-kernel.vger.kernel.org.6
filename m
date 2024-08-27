@@ -1,265 +1,226 @@
-Return-Path: <linux-kernel+bounces-302721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA468960282
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:53:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56904960285
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:53:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CE241F231B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:53:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 114F6283A85
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:53:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92141158DD0;
-	Tue, 27 Aug 2024 06:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F7F154C0D;
+	Tue, 27 Aug 2024 06:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0kCF8QJd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="i8KDeLBm";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0kCF8QJd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="i8KDeLBm"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hOZ1/IBM"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2077.outbound.protection.outlook.com [40.107.92.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED6114C59A
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724741561; cv=none; b=Y+2DPlLQ7I0VLuMPwAg+hesehY4Y6nZjP/Am3YxVFdDmeG8CslTqUR6EWQlcYz49QaKRLANuVAxCikanqZBW/YiQ61b3u4ZMBuLbR7TGBf10BKQdwEAi4WPFdZUZJxIC6+yK/CQqhMCMohaFChGc0lekoKp4mEDzOKyI8RujIFA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724741561; c=relaxed/simple;
-	bh=vwYWQDbz3vUpYB7jwSyI07uQM43VjcbTQ5zEvhsJNWM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CMiz1MKZVVhcU/9LTCEYeO11Slg2cKlBNfd+Yr+nndrAtynzP19tuZMSXmGrUV/trBppez8nDlDErQfnPjulEQ6BTGBy0pmDbpejxrl/YqK4sR7rPYDz+ukhv+TNfU65WuamtgkTWXL6P/n4e2k91qd0LykxuVlNQ+g31MuR8Js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0kCF8QJd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=i8KDeLBm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0kCF8QJd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=i8KDeLBm; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 614EC219C4;
-	Tue, 27 Aug 2024 06:52:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724741557; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Q4Q/foGOiwLAlEEnyHFbOjEBIbylsqi1rcIrtd8oivM=;
-	b=0kCF8QJdQLejjw8wZ/nJ86lvZTqgFB7QjhcCqNMgywpXq0BhCsgiNdifUApOTSMzqVJzgd
-	/UAPwbfs8wRRpHfm+fnIPzustXf8qN2DdNytjG5XKBbOT9HRx32dg7dg6YPmkJ/HOm76g0
-	FuzdlHrr9r4fn1XTf1E53KdtIkEakj4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724741557;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Q4Q/foGOiwLAlEEnyHFbOjEBIbylsqi1rcIrtd8oivM=;
-	b=i8KDeLBmay6hjGV5q2pc9kBNKu5WmOS8Pj2f+s/oYKOiosReMXLU7BdPuTsqUdn87mF/q3
-	GjTG6qlCel2qn5Bw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724741557; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Q4Q/foGOiwLAlEEnyHFbOjEBIbylsqi1rcIrtd8oivM=;
-	b=0kCF8QJdQLejjw8wZ/nJ86lvZTqgFB7QjhcCqNMgywpXq0BhCsgiNdifUApOTSMzqVJzgd
-	/UAPwbfs8wRRpHfm+fnIPzustXf8qN2DdNytjG5XKBbOT9HRx32dg7dg6YPmkJ/HOm76g0
-	FuzdlHrr9r4fn1XTf1E53KdtIkEakj4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724741557;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Q4Q/foGOiwLAlEEnyHFbOjEBIbylsqi1rcIrtd8oivM=;
-	b=i8KDeLBmay6hjGV5q2pc9kBNKu5WmOS8Pj2f+s/oYKOiosReMXLU7BdPuTsqUdn87mF/q3
-	GjTG6qlCel2qn5Bw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3999113724;
-	Tue, 27 Aug 2024 06:52:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0p5eDbV3zWbzbgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 27 Aug 2024 06:52:37 +0000
-Message-ID: <8678eac7-93c3-4a85-86e3-0fef8facb1f0@suse.cz>
-Date: Tue, 27 Aug 2024 08:52:36 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EA47E76D;
+	Tue, 27 Aug 2024 06:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724741586; cv=fail; b=QuthXk9rrfRdNCzz4GzacS4VHzy6tHAoK9nnOEkOzlcxO6wn8dNtafGVIgC+CgnC9GJI1yCP2C08Fv9mCai3jmsjpdjwjsbRKAee4gCM2w9z2DjdL0/xuSdMetw/XrUgA38Iub+2ZSQr27svPKQGv5qVkL2le6bs1rDOuicTVlA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724741586; c=relaxed/simple;
+	bh=VIzm9evVKLZu2zW1TWmfLUzBY4eLQWAIHs3a4TGMg84=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=IIl2GxnwVjzCo24pOXljMxKFSyUqMfyzwGnXN5G5dKVN1mHM4rusnHLgdAxjGPbnb7agPIJP7sgLXvfWiBYR8zrfYCqJZ4KP9h+OEH64dO0zq3jpKKAEs1FBJmzQyhgZP9msY7ZqLswzapzSx+R3Wura+q91FSV4McU9B+OWArE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hOZ1/IBM; arc=fail smtp.client-ip=40.107.92.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cVp/d7v+Z5KaBk7I1uJNsiUE41MK0bsBxqL8XJWnqKSn9r9VVMC/WIr951yJDJQGcGZHYF1h71i5wQXM3hE2jn2xZjZsExiKXTUASZ69FUiZmsBDRN1CwiyfqGodFaYJCIFqdvbKqMxF+oqt/h9/bj60+/1U6Y8Ib2fxvGfCYL8VUlP1gubh/IhPNR47Vh/o74EIPpCFyuIbPEkk0zgYM3QnwOVd53lwphwm1IUWyWBCKAE15JLn/RnbQXuZx3lAc3uQIvQ2efGLdymlYxM5DIuPNZaxwc+29Bawz+ujE6BP/RX3y+r5dyx22AWfb6vgKe0J3qCu0Zsu9iVWkSBmzg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=F5Nizo1kdSXdYLqzkk24Rw5s6SEwlfwcZnbEbnBw0d8=;
+ b=vcjrP+WK9J67K6sykJ5fyrNNMRrAeXxWuTKl1bCBpfT+1SQwPMLG3MQdY4dkcBER2NI/g3A6vcNflMih75AXwLCRn3KD8l8SAmJIX7HbZ1cJiuGDXGchQhWJkaHtAKN3CJYLH3hjbomhWTI8GHSUprt6FkxjoFKZE/+ChxW6bPT8BW6hiXRx1pbqGI+XGdOxrI83kvZF5QuhZAk4jCE1z/LcZUFxCAfZJ0VE6KivWCUKhYbN5y65f6Or3e9INHiEMY784tkaWaRjtwHvj7y6FwUXaDulIiBuL5fcEyylPJzjJGSmJTcKnUb0lJg0M7e/5dp2dc2V95/KUS7kV1pAyg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=F5Nizo1kdSXdYLqzkk24Rw5s6SEwlfwcZnbEbnBw0d8=;
+ b=hOZ1/IBMzGUF6u5yGYI+LaNdQBnE4N3v8S26V8/O74nSkSd4mjKZFY88wxGGgad6IfslUQVx5Qlu1dR8Ph4Xm0YytYWSQOBo3uzIGZMyTsBNpRqFsHp5ljcXx63nRD38INLSGjVUFpN6XA8ElLPgkkRJJar5Ul1cR6AOGijgtLc=
+Received: from CYYPR12MB8655.namprd12.prod.outlook.com (2603:10b6:930:c4::19)
+ by IA0PR12MB8930.namprd12.prod.outlook.com (2603:10b6:208:481::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Tue, 27 Aug
+ 2024 06:53:00 +0000
+Received: from CYYPR12MB8655.namprd12.prod.outlook.com
+ ([fe80::7fa2:65b3:1c73:cdbf]) by CYYPR12MB8655.namprd12.prod.outlook.com
+ ([fe80::7fa2:65b3:1c73:cdbf%7]) with mapi id 15.20.7897.021; Tue, 27 Aug 2024
+ 06:53:00 +0000
+From: "Yuan, Perry" <Perry.Yuan@amd.com>
+To: Mario Limonciello <superm1@kernel.org>, Borislav Petkov <bp@alien8.de>,
+	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>
+CC: "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>, "open list:X86 ARCHITECTURE (32-BIT
+ AND 64-BIT)" <linux-kernel@vger.kernel.org>, "open list:ACPI"
+	<linux-acpi@vger.kernel.org>, "open list:CPU FREQUENCY SCALING FRAMEWORK"
+	<linux-pm@vger.kernel.org>, "Limonciello, Mario" <Mario.Limonciello@amd.com>
+Subject: RE: [PATCH 8/8] cpufreq: amd-pstate: Drop some uses of
+ cpudata->hw_prefcore
+Thread-Topic: [PATCH 8/8] cpufreq: amd-pstate: Drop some uses of
+ cpudata->hw_prefcore
+Thread-Index: AQHa9/0x8aNwae7CZ0WL+O3nv7GV8LI6q3EQ
+Date: Tue, 27 Aug 2024 06:53:00 +0000
+Message-ID:
+ <CYYPR12MB86557E4BD32B6043B25E7A369C942@CYYPR12MB8655.namprd12.prod.outlook.com>
+References: <20240826211358.2694603-1-superm1@kernel.org>
+ <20240826211358.2694603-9-superm1@kernel.org>
+In-Reply-To: <20240826211358.2694603-9-superm1@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=6547b0ce-ff38-439d-9329-a3491a083ead;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
+ Internal Distribution
+ Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2024-08-27T06:52:40Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CYYPR12MB8655:EE_|IA0PR12MB8930:EE_
+x-ms-office365-filtering-correlation-id: 2a234dd2-6578-43ec-3783-08dcc664e423
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?23wYdfMkoNu+u5MY2/DgwUPFaexOieQZsWc5Y9u56BiBqhyesYOWy+j555Sg?=
+ =?us-ascii?Q?B1tcz06im/mRLLxVzQLOyXihLn7Y5S4lgv0liaUlXXQaSLntAXVVbU5/kOs5?=
+ =?us-ascii?Q?WvHPIwCkqtMS0dNbR/i6GESoP17R3AUlPH5ZqEm3RPKyrn015g/U++smbCdX?=
+ =?us-ascii?Q?7z7XzdR5LAK6BZa/VgtH/XeNnEupdzf+LMtXPspgM4+kwqxcXYuOW6F4QWov?=
+ =?us-ascii?Q?xRubTTM7lVInjdsCmWa78XloBeZi2G0SvEgrO9hqYKRH+WV+j2xRLoYeMZco?=
+ =?us-ascii?Q?dFnUYKQxxkYE7EqijhycomUn+IPppBUx6qL+GJ2ZC31WgtIRmUrbEmjZQlSS?=
+ =?us-ascii?Q?gKWSIqGrvBfiuQVewFN7uFBZlx8UtLUBTLTBmwGQXAzBPn1dbPcOEBknEGpZ?=
+ =?us-ascii?Q?Iz9WlkFnB2sWUzWfUI1p5H5j4otbtZ6dbfv5JwF4m6IOQszXJ+2zw/ocIjXj?=
+ =?us-ascii?Q?B2wWND3jet7kPHg4Q4G9wMFadhXzQCf3FSncCwl8SUGF4kFvoPXAJsbvgLWz?=
+ =?us-ascii?Q?EPBmfpbyuW0noN+E913e3//2HnNQDzsHXGx1nuLY/uET1/DQ3rejdZF5Le3C?=
+ =?us-ascii?Q?vj7pbQLyacTMiM/LE6h96n3lbWMme0rnKX81kTody5lkbN4jLYkY4eCPx64z?=
+ =?us-ascii?Q?HzoBPZVjRIcES9y70fJbTXWO63nDgsEoF5uaB7H9ICVyLs2lvZpg3kETyv5u?=
+ =?us-ascii?Q?35p8be5PFp83hLGZiPrZMKeenMcvl30DPqpds5VUOU7wr4JwuoNcaHpS2jRQ?=
+ =?us-ascii?Q?8hyTKQQys3oIWmhi+JAY3LKLogLDHKnRl/5xos0sWcu0t1RkJSTy7vSn1+bz?=
+ =?us-ascii?Q?MtyVqbEmrYRi4+R6VjwqaESeoHWfXpOsdkrV/TIHat/rgmTPqgK4PXTbXHzL?=
+ =?us-ascii?Q?CPL+2BEXHbhajW20DsoVYp4otKyN1/zMhq67t47/kJwVdIojBDki2tdUjSpt?=
+ =?us-ascii?Q?BZ17+6p3Wd3qkkYLMXAJWeTaD/UTuXgQrhuiivxXQn1j8bwBZpzumHlWLDpG?=
+ =?us-ascii?Q?PW4HScH8G0KwIIfksSqY8R0dsDLRhklRCRW5NwYbzPv4DkT3uRkjpGZKARZW?=
+ =?us-ascii?Q?hRJytK2qc153QDTERSGrf58rVUBWmOjF5SzXRQqzFbCr8TO1WNzhjDAgorXU?=
+ =?us-ascii?Q?Yiby2PiwxQ5DDg3QMI/PWD2pXlbvE+7lQKnCPppzfNVkSwvozOU6pfZ7FM0l?=
+ =?us-ascii?Q?OCKbfYLMGdeDbZ7dN2SAngQ04sUmBwki9TVtK3rdSe224V4XCKHOtjw4FW6m?=
+ =?us-ascii?Q?kzZA8gY1VIsHucYO5retl9qpPb+y/BMOc+Z/6c05ilY7R2WYXCTyp5WmhbQt?=
+ =?us-ascii?Q?44R7sWrnnIIcxJe+/TH1tPXytaBplKUkEavC64lc3pBO3izk7PPF4INNm2HR?=
+ =?us-ascii?Q?QMSSeLdydfUC1ipefFHRDSNWaKgKyrF9WLKkmah/B10BbJRQrw=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8655.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?v2qtvGe+kPgW/X5HvFj9uxNgWm6g3fw02ss5hNrxKLbu4PNb4qj2lwgRfnyH?=
+ =?us-ascii?Q?gqU5wTLciWvuasnYxEp4D02FS4KoEDe0RRZZPhH+bwC4FyrPGuodhlyBra1j?=
+ =?us-ascii?Q?IwjhTZO06JEN+IYVRxPEN3tUcbt1zfZT2+gbHssBWuuMgGmpkcOyqwGmpum7?=
+ =?us-ascii?Q?BtJvS/P9jdOPilr3BzD/KqiK6jh2GOaPwNgP2hHa28VwkpQExlztNOifgjV6?=
+ =?us-ascii?Q?Z6bBWgv2qlY+XZQhkprTNZFpi+i1XTI5P4edfQc0b4r+PehM9a39TTop6zGe?=
+ =?us-ascii?Q?HZRll3iM/drQWlWsJNLk73ZQL9A4vZyuFbF/RweA2taFJ37K9wge69rCTA9d?=
+ =?us-ascii?Q?84L+g5ge3E2hNpcmGt9Jr9kDthqgd5Rerylo9RIRNOQzXEjjHJ5lSFXA8Q7i?=
+ =?us-ascii?Q?5TeMN8yzxhNgr4bWacLPRuk0NpsuIMcSbbO83eWBQ9Ev8gv804p7pc6oiFEW?=
+ =?us-ascii?Q?dlrJI1FcC3yilw/rVh6Da7SxNL3ObP6VX+ocQfmfpQPq6ReEAG1tmKrBBrCS?=
+ =?us-ascii?Q?5hQyaWM2cs3Gb/Q8Stl13mEz3aim8M5rbYyo8zSVj9wHGK0EGEzgciZhTHrV?=
+ =?us-ascii?Q?3lWSlLWAN9g5ArRalFdp/sQWdzj7Fk/Cr2u5VxlM0lg3eo3pFOMk2esr9fXu?=
+ =?us-ascii?Q?toJJgOuG1+g5WHKPIBZTcbuFsJXTPfqYYuMFiaPyy0Gq8+vh0u2IWOTklRoI?=
+ =?us-ascii?Q?wSEJyILQFqu3QbF8JIDWduGwNU3yBMNZ6cjlpF7DgGAOOwd8RWvk5w2B20Wg?=
+ =?us-ascii?Q?syYOEc/onYdXT0bFaxISSl7PQcbO3AyGKARTr/oZyuQV0d6vZ+NH7ojZ59nq?=
+ =?us-ascii?Q?rt80xcCg/JPGDtC/9khhhx8tbget3bk+SMhpft7STP0p/1JblpNoUZc0WPt9?=
+ =?us-ascii?Q?BUEzaz3ZW249kREsynamKbZWzQ422DaeLKHSfJ7CgtRwcGkNXkmIW69i1mWZ?=
+ =?us-ascii?Q?OQrfwj3ZbedTcis8wUPAuJxXiB+wxVXo60os4Y/9r+QUuyaMQSs92kFSttpp?=
+ =?us-ascii?Q?x0uS8eEnPdgFK6okJyIm/CpZ2pcReCseYcs6ThAwE/K0a2Pa69Z42AO7v/yO?=
+ =?us-ascii?Q?RtrDvO7hcNoMYgmZqEGkrSZE/Az2I1ir9I9CUM58hTy1niOKd1qLar4bFbRR?=
+ =?us-ascii?Q?TwQMZ6n3CmfpdDOu30lFWbVzO2P7dIMUQtKHnKod3AuwFC/IB0uVsUx5sydD?=
+ =?us-ascii?Q?5gnymcFNLFPM66GbqtgHe03BBfMVh27nAN0zVLwsSJRZxTfmutbu3r7TbH8R?=
+ =?us-ascii?Q?6ma1xfSXZweTV1DDZL72j45NibVRVaPxVYnTmRaqS7EXLtvTQQDpsJY1lqN6?=
+ =?us-ascii?Q?gze0LC+XFy6SQ6Yu6/udg6EsQ7I7qf7K7YQJ5AJGO3QprgpgKg8bMvcr9RRH?=
+ =?us-ascii?Q?zGtGfIBjejVjwYQnee2YYJNG8Gg1nO0v9BsEa+sWPNEdfVz9shJjtwMKczkS?=
+ =?us-ascii?Q?Y4xIaLlyztMiqUuV08wTdYaIqZqbNakMHlpTKcXT6+NNkwxMl23bt+5q+nkU?=
+ =?us-ascii?Q?Ok5vD3hyD5vWgCw/rrrZgCq6+ztJ2BrR2qrkXGNctsffhV5Pgk+ZRUt0whkg?=
+ =?us-ascii?Q?6F1Xv9ye4t9eUXzphXc=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm/slub: Add check for s->flags in the
- alloc_tagging_slab_free_hook
-To: Hao Ge <hao.ge@linux.dev>, surenb@google.com
-Cc: 42.hyeyoo@gmail.com, akpm@linux-foundation.org, cl@linux.com,
- gehao@kylinos.cn, iamjoonsoo.kim@lge.com, kees@kernel.org,
- kent.overstreet@linux.dev, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- penberg@kernel.org, rientjes@google.com, roman.gushchin@linux.dev
-References: <CAJuCfpF5v397w9+532bQzPonXzAbBwVVvuXFw3z46q0R1E7Rug@mail.gmail.com>
- <20240816013336.17505-1-hao.ge@linux.dev>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240816013336.17505-1-hao.ge@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,linux-foundation.org,linux.com,kylinos.cn,lge.com,kernel.org,linux.dev,vger.kernel.org,kvack.org,google.com];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8655.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2a234dd2-6578-43ec-3783-08dcc664e423
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2024 06:53:00.5953
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 8o0WEqNTegC8R70QjJsZQ/5ML/euTmWnlGfnyyul+xv46YW/dKowNcQZqtljVRRZ4qMIQ9yBx3wqgqZSZbaj7w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8930
 
-On 8/16/24 03:33, Hao Ge wrote:
-> From: Hao Ge <gehao@kylinos.cn>
-> 
-> When enable CONFIG_MEMCG & CONFIG_KFENCE & CONFIG_KMEMLEAK,
-> the following warning always occurs,This is because the
-> following call stack occurred:
-> mem_pool_alloc
->     kmem_cache_alloc_noprof
->         slab_alloc_node
->             kfence_alloc
-> 
-> Once the kfence allocation is successful,slab->obj_exts will not be empty,
-> because it has already been assigned a value in kfence_init_pool.
-> 
-> Since in the prepare_slab_obj_exts_hook function,we perform a check for
-> s->flags & (SLAB_NO_OBJ_EXT | SLAB_NOLEAKTRACE),the alloc_tag_add function
-> will not be called as a result.Therefore,ref->ct remains NULL.
-> 
-> However,when we call mem_pool_free,since obj_ext is not empty,
-> it eventually leads to the alloc_tag_sub scenario being invoked.
-> This is where the warning occurs.
-> 
-> So we should add corresponding checks in the alloc_tagging_slab_free_hook.
-> For __GFP_NO_OBJ_EXT case,I didn't see the specific case where it's
-> using kfence,so I won't add the corresponding check in
-> alloc_tagging_slab_free_hook for now.
-> 
-> [    3.734349] ------------[ cut here ]------------
-> [    3.734807] alloc_tag was not set
-> [    3.735129] WARNING: CPU: 4 PID: 40 at ./include/linux/alloc_tag.h:130 kmem_cache_free+0x444/0x574
-> [    3.735866] Modules linked in: autofs4
-> [    3.736211] CPU: 4 UID: 0 PID: 40 Comm: ksoftirqd/4 Tainted: G        W          6.11.0-rc3-dirty #1
-> [    3.736969] Tainted: [W]=WARN
-> [    3.737258] Hardware name: QEMU KVM Virtual Machine, BIOS unknown 2/2/2022
-> [    3.737875] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [    3.738501] pc : kmem_cache_free+0x444/0x574
-> [    3.738951] lr : kmem_cache_free+0x444/0x574
-> [    3.739361] sp : ffff80008357bb60
-> [    3.739693] x29: ffff80008357bb70 x28: 0000000000000000 x27: 0000000000000000
-> [    3.740338] x26: ffff80008207f000 x25: ffff000b2eb2fd60 x24: ffff0000c0005700
-> [    3.740982] x23: ffff8000804229e4 x22: ffff800082080000 x21: ffff800081756000
-> [    3.741630] x20: fffffd7ff8253360 x19: 00000000000000a8 x18: ffffffffffffffff
-> [    3.742274] x17: ffff800ab327f000 x16: ffff800083398000 x15: ffff800081756df0
-> [    3.742919] x14: 0000000000000000 x13: 205d344320202020 x12: 5b5d373038343337
-> [    3.743560] x11: ffff80008357b650 x10: 000000000000005d x9 : 00000000ffffffd0
-> [    3.744231] x8 : 7f7f7f7f7f7f7f7f x7 : ffff80008237bad0 x6 : c0000000ffff7fff
-> [    3.744907] x5 : ffff80008237ba78 x4 : ffff8000820bbad0 x3 : 0000000000000001
-> [    3.745580] x2 : 68d66547c09f7800 x1 : 68d66547c09f7800 x0 : 0000000000000000
-> [    3.746255] Call trace:
-> [    3.746530]  kmem_cache_free+0x444/0x574
-> [    3.746931]  mem_pool_free+0x44/0xf4
-> [    3.747306]  free_object_rcu+0xc8/0xdc
-> [    3.747693]  rcu_do_batch+0x234/0x8a4
-> [    3.748075]  rcu_core+0x230/0x3e4
-> [    3.748424]  rcu_core_si+0x14/0x1c
-> [    3.748780]  handle_softirqs+0x134/0x378
-> [    3.749189]  run_ksoftirqd+0x70/0x9c
-> [    3.749560]  smpboot_thread_fn+0x148/0x22c
-> [    3.749978]  kthread+0x10c/0x118
-> [    3.750323]  ret_from_fork+0x10/0x20
-> [    3.750696] ---[ end trace 0000000000000000 ]---
-> 
-> Fixes: 4b8736964640 ("mm/slab: add allocation accounting into slab allocation and free paths")
-> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+[AMD Official Use Only - AMD Internal Distribution Only]
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-
+> -----Original Message-----
+> From: Mario Limonciello <superm1@kernel.org>
+> Sent: Tuesday, August 27, 2024 5:14 AM
+> To: Borislav Petkov <bp@alien8.de>; Shenoy, Gautham Ranjal
+> <gautham.shenoy@amd.com>; Yuan, Perry <Perry.Yuan@amd.com>
+> Cc: maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT) <x86@kernel.org>;
+> Rafael J . Wysocki <rafael@kernel.org>; open list:X86 ARCHITECTURE (32-BI=
+T
+> AND 64-BIT) <linux-kernel@vger.kernel.org>; open list:ACPI <linux-
+> acpi@vger.kernel.org>; open list:CPU FREQUENCY SCALING FRAMEWORK
+> <linux-pm@vger.kernel.org>; Limonciello, Mario
+> <Mario.Limonciello@amd.com>
+> Subject: [PATCH 8/8] cpufreq: amd-pstate: Drop some uses of cpudata-
+> >hw_prefcore
+>
+> From: Mario Limonciello <mario.limonciello@amd.com>
+>
+> As the global variable is cleared when preferred cores is not present the=
+ local
+> variable use isn't needed in many functions.
+> Drop it where possible.  No intended functional changes.
+>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 > ---
->  mm/slub.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/mm/slub.c b/mm/slub.c
-> index c9d8a2497fd6..a77f354f8325 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -2116,6 +2116,10 @@ alloc_tagging_slab_free_hook(struct kmem_cache *s, struct slab *slab, void **p,
->  	if (!mem_alloc_profiling_enabled())
->  		return;
->  
-> +	/* slab->obj_exts might not be NULL if it was created for MEMCG accounting. */
-> +	if (s->flags & (SLAB_NO_OBJ_EXT | SLAB_NOLEAKTRACE))
-> +		return;
-> +
->  	obj_exts = slab_obj_exts(slab);
->  	if (!obj_exts)
->  		return;
+>  drivers/cpufreq/amd-pstate.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+>
+> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+> index ed05d7a0add10..257e28e549bd1 100644
+> --- a/drivers/cpufreq/amd-pstate.c
+> +++ b/drivers/cpufreq/amd-pstate.c
+> @@ -1112,12 +1112,7 @@ static ssize_t
+> show_amd_pstate_prefcore_ranking(struct cpufreq_policy *policy,  static
+> ssize_t show_amd_pstate_hw_prefcore(struct cpufreq_policy *policy,
+>                                          char *buf)
+>  {
+> -     bool hw_prefcore;
+> -     struct amd_cpudata *cpudata =3D policy->driver_data;
+> -
+> -     hw_prefcore =3D READ_ONCE(cpudata->hw_prefcore);
+> -
+> -     return sysfs_emit(buf, "%s\n", str_enabled_disabled(hw_prefcore));
+> +     return sysfs_emit(buf, "%s\n",
+> +str_enabled_disabled(amd_pstate_prefcore));
+>  }
+>
+>  static ssize_t show_energy_performance_available_preferences(
+> --
+> 2.43.0
+>
 
+Reviewed-by: Perry Yuan <perry.yuan@amd.com>
+
+
+Best Regards.
+
+Perry.
 
