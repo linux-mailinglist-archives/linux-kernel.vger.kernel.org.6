@@ -1,141 +1,151 @@
-Return-Path: <linux-kernel+bounces-302525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEABB95FFBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:26:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2E5F95FFDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:35:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C17F282A48
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:26:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 341EDB221EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:35:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D761B978;
-	Tue, 27 Aug 2024 03:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C740219FF;
+	Tue, 27 Aug 2024 03:35:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VOn1wGVY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="mhejfn4D"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F9517D2;
-	Tue, 27 Aug 2024 03:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C648617D2;
+	Tue, 27 Aug 2024 03:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724729166; cv=none; b=qrAys8ux8SnSqxPfv4GU5SzORiNzh/k2wCQsdu6K7YUSl8QncdTcn0y33YGDNqZ1k0XJi9FY+C47U/9QWwtQ63z3QK7sWu2bfDxUj4IuHvKuAy0D2+9T664cUDBKXfXTcQMQjV9wCnn1gk/UfO69v1t66PMNW4CkBQMJtQLPu9g=
+	t=1724729747; cv=none; b=ixUl0ugiGh3ATUBmCNj3IvcTHLHNZNEV+fgFlGoJ+Ts121X5Aw+UJT3m4Hp2760sqcSuAb58+jD0Im3gkgjUG/9iqlT+REYRcRVBHJ0m5arqIFBj0qyLmzl9yICnXZoshM1wkbp/zqJiUENW951kxfZzhErPQAJOy80XnTa7bgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724729166; c=relaxed/simple;
-	bh=P3O3alY1dOWsnBgRxMhJRgQyWOYsqQUpM59bPHtbPjc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X7+Ytuv4yUWsvlgLUBH6PP5wXyzoOkr2KpzQGctpT8UlX3OMBppUxD9PejkgQutE15G4zOHhw+OJs4TX9yBWIgGQb2P1VTL6js+XFdNu1+w44uDXWPgBOcie9uBnCz2SvCNZwJ5ofjSzRMrlcfqL/fZyVYWqswEpS7pSgroRuF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VOn1wGVY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2C1BC8B7A9;
-	Tue, 27 Aug 2024 03:26:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724729166;
-	bh=P3O3alY1dOWsnBgRxMhJRgQyWOYsqQUpM59bPHtbPjc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VOn1wGVYWxDe/+cBrO7rnjlhZ4SckN/0/Weo/9m7YtiJc5WIsv8XnimZjLrwczA0R
-	 J9JjajHqHP56SId9uRHq/KwbOfwaSH1+mFuyZXWdiM9mJk+GtX1CG58p3y+cvwO+0w
-	 GLCiZypGUmm9XNayBpWahGBM7w6O1e7KjOS0AucLr3RZZJpugZfv+BkhCM/uXJUtSL
-	 rdW/+sSUU6jh6/PLJ3TyTvebP6A6AtXe4Ek4lLpDZMG2R/uGRWM+L+iuWnj69TmX2X
-	 v9SQriQJbAK8qNWcEYag6uH5urWlzesH3Iy5oaqHZ1mltRXDd4UH2+TEqcO0iv6SGi
-	 bMfz8sUI7D5HA==
-Date: Tue, 27 Aug 2024 03:25:58 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev, devicetree@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Pin-yen Lin <treapking@chromium.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Benson Leung <bleung@chromium.org>,
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	dri-devel@lists.freedesktop.org,
-	Guenter Roeck <groeck@chromium.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Lee Jones <lee@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Prashant Malani <pmalani@chromium.org>,
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>, linux-acpi@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v3 15/17] platform/chrome: cros_ec_typec: Add support for
- signaling DP HPD via drm_bridge
-Message-ID: <Zs1HRtTWlxFdSNdJ@google.com>
-References: <20240819223834.2049862-1-swboyd@chromium.org>
- <20240819223834.2049862-16-swboyd@chromium.org>
- <ZsdMoRpwv5twOwqx@tzungbi-laptop>
- <CAE-0n50MVaU2dmRLdLVFWT9KWPO_BK-L7eEqGRSb8TKm1KtPNQ@mail.gmail.com>
+	s=arc-20240116; t=1724729747; c=relaxed/simple;
+	bh=JxOOw3I8hM8McboYblBC9AuhxVq0E8rfFp3biyQnsSg=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=de/yF5J/wHxmxFjxMiwZwsJHLyWpnUGqm+m6p0sg5RaJMIbiaLy+edksvq1MidKHvtWtNjCyUMcWdnI7/36ZKYU5tLXT6LFTwkjKQ5pnWkGCbJg9HHyhwkckYS13ybp6a6aeUtImOaelP0R9khcHlsfhYQXnlwMzqP8R7oBNfWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=mhejfn4D; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1724729739; bh=6mdDp6P8g3MUmwup0fCL42gvss1KTTQoo2H9D0IBPFo=;
+	h=From:To:Cc:Subject:Date;
+	b=mhejfn4DL6LjoxNVeGzOPDL06kxY86StNKmPq6Pm9wjIbcN7opSVCC18eKRI3ToAD
+	 +ayiSS0Y7jAEROX7YV3CSLC0P6SBfOoLgankxQ2aNAZQ3t7v9QBVkNv0YIRs+4gfi8
+	 Ypscy2tUG6HOGtQoLjeM/GHuoStWtb+JmqbssQxY=
+Received: from iZ2ze0ccts00nkjy9wuyo6Z.localdomain ([101.201.76.96])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 68AAC261; Tue, 27 Aug 2024 11:26:10 +0800
+X-QQ-mid: xmsmtpt1724729170tmbqb2psx
+Message-ID: <tencent_65D10BAC9579867D29B79F44D999AED1E506@qq.com>
+X-QQ-XMAILINFO: Nd//4bIXhHdblwXXSM2RepgMK+NRSGkdF6VKULRYDdCpUJg0sJ+v7FlfJp5fdS
+	 /WFPHfVibXsNVcyuGPgke193vtFmA49du/P5MjPDQbPa5wO8ccAfszDhCDHtJhjfX3iGNZ2eNlRD
+	 ntNXAY3gmdPYPYfpGH0jdVEmW1hRsgCVXGQ7xnagSJbVqFmU2sJ25J25tPvqTQDzpm3QNlEYhm5y
+	 wCqllSCLA/QiM2NnYINQUUJZ84gfIIMiQJaRXHb+KTNGL5b/DrpDsNgNTtVsDNUcFoK7wIwkLPLz
+	 3RJgQujvnViRRvD67E3hT+SF7ZzmGONQ1nCWNqmIKXdi5TqcOaWSf5wNDlvpCPyHB1TCLsgNOMDs
+	 LhsS8DVd/moN6vuv3TjZzy0S3FFboQTtZiQKyU9fZeNJsoetSPvVpACCMO4xencOvbHe2bqwuX/P
+	 8jBRdqkXhV5f/7LTeNnkCl0NqV3/MUj7NE5Ltl2ZPTJ7wYDKrdIqhPmaEaiz2KvhFFwB2H9brFSD
+	 /lFHoBcSzB3H1M2d7LKUn74tvXR35jQpzZf4IyPB+KdrvMvlbg9e80Qu7RDUP73+Jb0ukxLddwN1
+	 t8v1P5wCOTjRT+P24tUGgjqScc3c3CN+PBOOEi7oPmaS2woLf7GGZ34wV/yIK0vlFErsNkrLOyia
+	 Qby9AXfnLGOEfU+tXxlIZF006TmGaPgkNB5EagG2NiEXeF9qFOYeExaRBW27yuYi8eV94VaIpdM5
+	 Eq0l/I8iKbMpgrCXVUWZtOPZFoddglYr188GMir+d+lkBmd9y/tvLf6Ud6pmfX23xgz16+eBVUT5
+	 c8NtLm66AC0sL8LMJOlsCMRsvQCIuDyUbpNr9O0pQ/Ls/XweCjIQbZm60gt+2Xpyp/Dg/ewh6TQA
+	 /Xq2FlUL69ddOldzcrcDb9kxdNzF30vf2uZm0CzeHdOzv5yRxpCMw=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Yanhao Dong <570260087@qq.com>
+To: rafael@kernel.org
+Cc: daniel.lezcano@linaro.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	ysaydong@gmail.com
+Subject: [PATCH] cpuidle: haltpoll: Fix guest_halt_poll_ns failed to take effect
+Date: Tue, 27 Aug 2024 11:26:09 +0800
+X-OQ-MSGID: <20240827032609.531946-1-570260087@qq.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAE-0n50MVaU2dmRLdLVFWT9KWPO_BK-L7eEqGRSb8TKm1KtPNQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 23, 2024 at 01:47:23PM -0700, Stephen Boyd wrote:
-> Quoting Tzung-Bi Shih (2024-08-22 07:35:13)
-> > On Mon, Aug 19, 2024 at 03:38:29PM -0700, Stephen Boyd wrote:
-> > > +struct cros_typec_dp_bridge {
-> > > +     struct cros_typec_data *typec_data;
-> > > +     struct drm_dp_typec_bridge_dev *dev;
-> > > +};
-> >
-> > It looks like structs are all defined in cros_ec_typec.h.  I think this struct
-> > definition can be also moved there.
-> 
-> I put it here because it wasn't used by any other driver. Maybe I can
-> skip the entire struct though and add what I need directly to 'struct
-> cros_typec_data'.
+From: ysay <ysaydong@gmail.com>
 
-I see.
+When guest_halt_poll_allow_shrink=N,setting guest_halt_poll_ns
+from a large value to 0 does not reset the CPU polling time,
+despite guest_halt_poll_ns being intended as a mandatory maximum
+time limit.
 
-* struct cros_typec_altmode_node, used by cros_ec_typec.c.
-* struct cros_typec_data, used by cros_ec_typec.c and cros_typec_vdm.c.
-* struct cros_typec_port, used by cros_ec_typec.c and cros_typec_vdm.c.
-  cros_typec_switch.c has another struct cros_typec_port.
+The problem was situated in the adjust_poll_limit() within
+drivers/cpuidle/governors/haltpoll.c:79.
 
-To simplify, I'm not sure whether we should merge cros_ec_typec.h,
-cros_typec_vdm.c, and cros_typec_vdm.h into cros_ec_typec.c.
+Specifically, when guest_halt_poll_allow_shrink was set to N,
+resetting guest_halt_poll_ns to zero did not lead to executing any
+section of code that adjusts dev->poll_limit_ns.
 
-Back to struct cros_typec_dp_bridge, I think it's fine to keep it as is.
+The issue has been resolved by relocating the check and assignment for
+dev->poll_limit_ns outside of the conditional block.
+This ensures that every modification to guest_halt_poll_ns
+properly influences the CPU polling time.
 
-> 
-> >
-> > > diff --git a/drivers/platform/chrome/cros_ec_typec.h b/drivers/platform/chrome/cros_ec_typec.h
-> > > index deda180a646f..73d300427140 100644
-> > > --- a/drivers/platform/chrome/cros_ec_typec.h
-> > > +++ b/drivers/platform/chrome/cros_ec_typec.h
-> > > @@ -27,6 +27,8 @@ struct cros_typec_altmode_node {
-> > >       struct list_head list;
-> > >  };
-> > >
-> > > +struct cros_typec_dp_bridge;
-> >
-> > If the struct definition moves here, it doesn't need to declare forward.
-> 
-> But then we have to forward declare 'struct cros_typec_data'? There's no
-> escape.
+Signed-off-by: ysay <ysaydong@gmail.com>
+Fixes: 2cffe9f6b96f ("cpuidle: add haltpoll governor")
+---
+ drivers/cpuidle/governors/haltpoll.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-I see.
+diff --git a/drivers/cpuidle/governors/haltpoll.c b/drivers/cpuidle/governors/haltpoll.c
+index 663b7f164..99c6260d7 100644
+--- a/drivers/cpuidle/governors/haltpoll.c
++++ b/drivers/cpuidle/governors/haltpoll.c
+@@ -78,26 +78,22 @@ static int haltpoll_select(struct cpuidle_driver *drv,
+ 
+ static void adjust_poll_limit(struct cpuidle_device *dev, u64 block_ns)
+ {
+-	unsigned int val;
++	unsigned int val = dev->poll_limit_ns;
+ 
+ 	/* Grow cpu_halt_poll_us if
+ 	 * cpu_halt_poll_us < block_ns < guest_halt_poll_us
+ 	 */
+ 	if (block_ns > dev->poll_limit_ns && block_ns <= guest_halt_poll_ns) {
+-		val = dev->poll_limit_ns * guest_halt_poll_grow;
++		val *= guest_halt_poll_grow;
+ 
+ 		if (val < guest_halt_poll_grow_start)
+ 			val = guest_halt_poll_grow_start;
+-		if (val > guest_halt_poll_ns)
+-			val = guest_halt_poll_ns;
+ 
+ 		trace_guest_halt_poll_ns_grow(val, dev->poll_limit_ns);
+-		dev->poll_limit_ns = val;
+ 	} else if (block_ns > guest_halt_poll_ns &&
+ 		   guest_halt_poll_allow_shrink) {
+ 		unsigned int shrink = guest_halt_poll_shrink;
+ 
+-		val = dev->poll_limit_ns;
+ 		if (shrink == 0) {
+ 			val = 0;
+ 		} else {
+@@ -108,8 +104,12 @@ static void adjust_poll_limit(struct cpuidle_device *dev, u64 block_ns)
+ 		}
+ 
+ 		trace_guest_halt_poll_ns_shrink(val, dev->poll_limit_ns);
+-		dev->poll_limit_ns = val;
+ 	}
++
++	if (val > guest_halt_poll_ns)
++		val = guest_halt_poll_ns;
++
++	dev->poll_limit_ns = val;
+ }
+ 
+ /**
+-- 
+2.43.5
+
 
