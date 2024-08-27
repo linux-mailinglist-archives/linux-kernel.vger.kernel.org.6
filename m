@@ -1,191 +1,200 @@
-Return-Path: <linux-kernel+bounces-303568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFAAD960E76
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:49:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DD24960E8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35D74284662
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:49:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44138281149
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53F11C68A1;
-	Tue, 27 Aug 2024 14:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4887C1C5792;
+	Tue, 27 Aug 2024 14:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TC2vhn3j"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n0Rf9eEr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7011C57AF
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 14:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767311BA87C;
+	Tue, 27 Aug 2024 14:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724770122; cv=none; b=Ej+sgzZ2a3D/l+yoOR2/oKyaN3XzMkdRgUPTWrQvH4yfb6x22LaV5KQzlk4lVx/1WDDMQYP6G7G1jMVWW58zbkH3GCc/5/eD3QcT2NS0CqSJzLn8aqDhM0plkGeM+kt/pJE0ugrBma14mn/gNbxktec0vSiE9pg+MQ3w62GZzTs=
+	t=1724770176; cv=none; b=EsDwGzrtHPO4rCgmlp/HBJBoO1YNuALhpDf/ZD3w6hYZtBZIVO0ACu8UmBzeuejcyZaaQyOgYVBXsvQHo9OSkBxUfgzler+IsvTrSG+pjrO29pZyAib8JJmOxZE8/AhbI9OsIMTvnfvR/XYfCwlea+gfMRU0H9jSY9FHA+tGN5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724770122; c=relaxed/simple;
-	bh=N4PX3ficBWqbXhrOOaGSmz0hcM7Nj1OqRrxnJAu2hIc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XVQu0kJEuH3FPLmrvAVuRKGfH1ryjVuFIbyYCvV2VYPVUkxOLE90wjro/wr13NSe0Mi0uPj/pLmmXqpOPcJaeoO7nhb92HGSPgxiVMiveMHKHfSofmtn4d6vaLxmFjd3VbzWKpaSm1n+uK3WjDfh9Wbrpg4GnMAHSUyb+lchlVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TC2vhn3j; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a83597ce5beso870776166b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 07:48:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724770118; x=1725374918; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vI1YgmJmUxqiwDxWkP6tVGIL7ZqDPKsbaasItCi3Lco=;
-        b=TC2vhn3jQ4JZuJ4zBpkw5bT7H8g5YMBTeZ0YIZQ0x9ZtrEEvUJV/UJFri6w4fO1M7f
-         n2C7aHJBhbCEVLDZ/g5UkfCe76Hi11xXRBLzG3b3DmzkkKOyLpsYTWgmNoAw2FGQsFUz
-         63BCcnPdiKzqLy3o0qvI1TQTPIZ7Md1iJ6llOfuPmJ0jK4SnT+KW8/VhZWl7E3fKDeQ4
-         R4xQDB90dy1Rcbr60PCVBAOPO/y0EFlTQqOWMv8ZF1yV+TXjelJF+R0XFjRXQscDKRiM
-         v08S8iDEaBR8wZjEJE/qLuHUOBrP+SlZVrAnn1UVVXUUXZmMNdygn1SoKgNKeIoFd4bK
-         C6Dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724770118; x=1725374918;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vI1YgmJmUxqiwDxWkP6tVGIL7ZqDPKsbaasItCi3Lco=;
-        b=U/KzZXiP9JSNE/cGVAF4lrFrtzC+MsZxB6TUe3a0g4zZ+Yn5rqUltScOWaydHpYRpO
-         xx1tHkZBSzQaWjhB7nUhBu0l0zs+ZNhwj1SxOiHeGiaUP1TnBoOVljWFGTDJEGPQwf5o
-         G7KG6qwEeAH5rGmcZ4gQmGmgL8+ZmucoEQe3y2B1e8f3vQlf00FWP9GmLk5kQIV2VqFj
-         JJO85dFLTyqefwiO5iDavriSA6kYw+WdnpvOXfe7RZ79YKWkn6QVjghiS+Y/qbh6kqui
-         VgH2Om0HasWcTzZfkdLUzbBx3evHT45cJPSunelisQqN8mLPor65pL82yy4g8132WIju
-         N1xA==
-X-Forwarded-Encrypted: i=1; AJvYcCV82FtGLgfxm48DuxeFXdbUrBinHXkAyRH+2dAml9mT60wA/eVL7vixbCGi5tuo/OJK61egYU7HAmZgIqc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCLDTsEtqaV4eCIfUJoijHPAiS4vs5+b5UpH4BrDgKE4ug8D7E
-	eIUMV1igNmLYfuVbTf98GYUmLmrptimL292gXnvXaRE8RJIZZgNSV9NavCK5Z3Q=
-X-Google-Smtp-Source: AGHT+IGFZUub7b9KirSODZGvRP4+6xL/E0tNJ9cjj6B+Az0LgIDnM+S6Pz65QVnXSjp6yS7H2uHpAA==
-X-Received: by 2002:a17:907:7e93:b0:a77:ab9e:9202 with SMTP id a640c23a62f3a-a86e28950f4mr303683666b.4.1724770117913;
-        Tue, 27 Aug 2024 07:48:37 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e582d52csm117927366b.124.2024.08.27.07.48.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 07:48:37 -0700 (PDT)
-Date: Tue, 27 Aug 2024 16:48:36 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH printk v4 06/17] printk: nbcon: Introduce printer kthreads
-Message-ID: <Zs3nRK4ikgzMx7JU@pathway.suse.cz>
-References: <20240827044333.88596-1-john.ogness@linutronix.de>
- <20240827044333.88596-7-john.ogness@linutronix.de>
+	s=arc-20240116; t=1724770176; c=relaxed/simple;
+	bh=db/egAmCBNmBgfIRYn9njVsO91zJcPmxdECDwFQbw4s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=EsgtuyMHPnc8nvVsGeAdHyckAbnw/Qj90dduRhWs0DH+cnqhJPVQERBQw7Lx/DsAeYiX0732jD3uko/wgJ/v4dAxjHl1bODQA6bz7RzbOf07+amxVWaDmHiQtTGpLC3nCs8wdrwj94KLA0Y8kFs80A1A+JBXtI2OwG21AyMm920=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n0Rf9eEr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E30BC4AF1C;
+	Tue, 27 Aug 2024 14:49:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724770176;
+	bh=db/egAmCBNmBgfIRYn9njVsO91zJcPmxdECDwFQbw4s=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=n0Rf9eErUPfDoZvolRPwGjqMc6fBKzC19+lrPJCcC29D96m/YHaZjAF4YumGWuAZo
+	 xyEl1Kt2Arlg52ndN10l6IGS9opq8cJxPzYu6d0AAoqsJto+uphF/CPfYjaTnh7S9i
+	 jXMKVA9bX6Rf4uKLtmik4L5Uydn+Di3K4283n8JTEf7Mumb8MK2lngpLVeVhWiMU3b
+	 QYFRqWMtfQUmwzfXTeQ5yjkqWV9Dy7SAojJx0BMprCX3pcHerWWAK81L2zFUjSdOuy
+	 zh17lUktRTlU6GYdFKb9RRKh4O5+xdzh5Z6eVt69l8Wo3O/0RJS9+nuSPxFYjw1Kh2
+	 ixvL51pgLYy1Q==
+Message-ID: <342534c3-c921-4acc-b5b4-a84ff69ce644@kernel.org>
+Date: Tue, 27 Aug 2024 16:49:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827044333.88596-7-john.ogness@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] dt-bindings: display: st,stm32-ltdc: Document
+ stm32mp25 compatible
+To: Yannick Fertre <yannick.fertre@foss.st.com>,
+ Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+ Philippe Cornu <philippe.cornu@foss.st.com>, David Airlie
+ <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240827140455.115182-1-yannick.fertre@foss.st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240827140455.115182-1-yannick.fertre@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue 2024-08-27 06:49:22, John Ogness wrote:
-> From: Thomas Gleixner <tglx@linutronix.de>
+On 27/08/2024 16:04, Yannick Fertre wrote:
+> Add "st,stm32mp25-ltdc" compatible for SOC MP25. This new SOC introduce
+> new clocks (bus, ref & lvds). Bus clock was separated from lcd clock.
+> New sources are possible for lcd clock (lvds / ref).
 > 
-> Provide the main implementation for running a printer kthread
-> per nbcon console that is takeover/handover aware. This
-> includes:
+> Signed-off-by: Yannick Fertre <yannick.fertre@foss.st.com>
+> ---
 > 
-> - new mandatory write_thread() callback
-> - kthread creation
-> - kthread main printing loop
-> - kthread wakeup mechanism
-> - kthread shutdown
+> Changes in v3: Add max/min Items fields.
+> 'make dt_binding_check' command fails on previous patch, rework fiedls mas/min items
+> of properties clocks & clock-names.
 > 
-> --- a/kernel/printk/nbcon.c
-> +++ b/kernel/printk/nbcon.c
-> @@ -1036,6 +1042,219 @@ static bool nbcon_emit_next_record(struct nbcon_write_context *wctxt, bool use_a
-[...]
-> +/*
-> + * nbcon_kthread_stop - Stop a console printer thread
-> + * @con:	Console to operate on
-> + */
-> +void nbcon_kthread_stop(struct console *con)
-> +{
-> +	lockdep_assert_console_list_lock_held();
-> +
-> +	if (!con->kthread)
-> +		return;
-> +
-> +	kthread_stop(con->kthread);
-> +	con->kthread = NULL;
-> +}
-> +
-> +/**
-> + * nbcon_kthread_create - Create a console printer thread
-> + * @con:	Console to operate on
-> + *
-> + * Return:	True if the kthread was started or already exists.
-> + *		Otherwise false and @con must not be registered.
-> + *
-> + * If @con was already registered, it must be unregistered before
-> + * the global state variable @printk_kthreads_running can be set.
-
-This paragraph is quite confusing without more context. I would
-either remove it completely or write something like:
-
-<proposal>
- * This function is called when nbcon consoles are supposed to be flushed
- * using the kthread. The messages printed with NBCON_PRIO_NORMAL are not
- * longer flushed by the legacy loop. This is why the failure is considered
- * fatal leading to the console unregistration.
-</proposal>
-
-> + */
-> +bool nbcon_kthread_create(struct console *con)
-> +{
-> +	struct task_struct *kt;
-> +
-> +	lockdep_assert_console_list_lock_held();
-> +
-> +	if (con->kthread)
-> +		return true;
-> +
-> +	kt = kthread_run(nbcon_kthread_func, con, "pr/%s%d", con->name, con->index);
-> +	if (WARN_ON(IS_ERR(kt))) {
-> +		con_printk(KERN_ERR, con, "failed to start printing thread\n");
-> +		return false;
-> +	}
-> +
-> +	con->kthread = kt;
-> +
-> +	return true;
-> +}
-> +
->  /* Track the nbcon emergency nesting per CPU. */
->  static DEFINE_PER_CPU(unsigned int, nbcon_pcpu_emergency_nesting);
->  static unsigned int early_nbcon_pcpu_emergency_nesting __initdata;
-> @@ -1419,6 +1644,13 @@ bool nbcon_alloc(struct console *con)
->  			con_printk(KERN_ERR, con, "failed to allocate printing buffer\n");
->  			return false;
->  		}
-> +
-> +		if (printk_kthreads_running) {
-> +			if (!nbcon_kthread_create(con)) {
-> +				kfree(con->pbufs);
-
-It probably is not much important but I would rather do here:
-
-				con->pbufs = NULL;
-
-> +				return false;
-> +			}
-> +		}
->  	}
+> Changes in v2: Rework clock property.
+> 
+>  .../bindings/display/st,stm32-ltdc.yaml       | 28 +++++++++++++++----
+>  1 file changed, 23 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml b/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
+> index d6ea4d62a2cf..940127820de3 100644
+> --- a/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
+> +++ b/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
+> @@ -12,7 +12,9 @@ maintainers:
 >  
->  	return true;
+>  properties:
+>    compatible:
+> -    const: st,stm32-ltdc
+> +    enum:
+> +      - st,stm32-ltdc
+> +      - st,stm32mp25-ltdc
+>  
+>    reg:
+>      maxItems: 1
+> @@ -24,12 +26,12 @@ properties:
+>      minItems: 1
+>  
+>    clocks:
+> -    maxItems: 1
+> +    minItems: 1
+> +    maxItems: 4
+>  
+>    clock-names:
+> -    items:
+> -      - const: lcd
+> -
+> +    minItems: 1
+> +    maxItems: 4
 
-Otherwise, it looks good. With the two proposed changes:
+Keep the blank line.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+>    resets:
+>      maxItems: 1
+>  
+> @@ -51,6 +53,22 @@ required:
+>    - resets
+>    - port
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - st,stm32mp25-ltdc
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 2
 
-Best Regards,
-Petr
+Instead, describe the items.
+
+Missing clock-names
+
+> +    else:
+> +      properties:
+> +        clocks:
+> +          minItems: 1
+
+minItems? Why are you changing existing device? Nothing in commit msg
+explains this.
+
+Best regards,
+Krzysztof
+
 
