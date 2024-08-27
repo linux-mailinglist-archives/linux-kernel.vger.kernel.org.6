@@ -1,187 +1,203 @@
-Return-Path: <linux-kernel+bounces-303547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3642960DBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:39:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 865FC960DC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A7E2284258
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:39:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4311C285165
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481011C4EE8;
-	Tue, 27 Aug 2024 14:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AcQf7WWc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05E41C57B9;
+	Tue, 27 Aug 2024 14:39:53 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DCC1E485
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 14:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA391C57A0;
+	Tue, 27 Aug 2024 14:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724769587; cv=none; b=V9gQUGJqrlBot/s9vFSJWUNcq2ASmhRXZxptGrz0RBIhyyICIJXOyif/OiYuIxd8whpmZZTw4jVC3qNcYOPcpQcVt1GB+Mpnd4gOCOD6NC4NzTaCq7fYMjbaNHjalouEaACkCrb4Ruu4sF6/5Q8BRC/Ueoio4jnZMdc2vgV3NoE=
+	t=1724769593; cv=none; b=jK25NDX3VZ+haLDJ5kD+qqgt+YuCJg87NYpZBZv4yN43SWozd92Mah5bZHMkgpdfejkHf3Hw/qeVZXa8oaDHDiIxRLzDaKZpN8kRn4FKOLEqgYx0pmVlDbECxZEXSZf9Czdu6SYirVQj8Szoh8odqA+XTG7JjtGjjkkbBCvYZIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724769587; c=relaxed/simple;
-	bh=ckdi/miqyo98Qcfs4P1GzK4XTVojHa5tth4ya1iCIv4=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tt7ttgn1GoNUqbZHl4n7JJAdBs7rGpF3uHVXOEJtQn9hWDOqMiS9rQD/6oYooJpQkQL30v5CSIMuoSJkAOuAsbbRne/2RCOfDUw4tkilKazBVKUWfhj3tXcZJs3TS0RtT5vEe4lU4UmocbUPADkUIL36mBCuTpfWUhTikkYPC58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AcQf7WWc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCB67C61045;
-	Tue, 27 Aug 2024 14:39:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724769587;
-	bh=ckdi/miqyo98Qcfs4P1GzK4XTVojHa5tth4ya1iCIv4=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=AcQf7WWcp0kQuk7SA6AdlDMihcTgfxilbL/BSD+uqsaRJGsOWheyFXUxS36RlrcYC
-	 /vxpS+u600m+gJI6xgJNJu3pj7LWOqTKeTtlAI3nkR6jjmwJYZKCcWomny+lw6KvYh
-	 RrEMjpw2dvnBFH4CvfVarOHGcPgzR8SWzHjotjamaxOtRm9dJbbkC5zLxCcm4dAdZA
-	 dVw1cHaoL7rpWs0Si5WAlG/6SxGdg5rmYjJimjefbmpu/b0efDewzTgszqWPtXv39Y
-	 NqDen0kBanDRyerHCc46aa0hGoduQuZLaAlFPGx74f39VCrEeX3rRasKw8E6BnlW8J
-	 TTiZgf3ljR8GQ==
-Date: Tue, 27 Aug 2024 16:39:44 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
-	Melissa Wen <melissa.srw@gmail.com>, =?utf-8?B?TWHDrXJh?= Canal <mairacanal@riseup.net>, 
-	Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net, 
-	linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com, 
-	thomas.petazzoni@bootlin.com, seanpaul@google.com, nicolejadeyee@google.com
-Subject: Re: [PATCH v2 1/6] drm/vkms: Switch to managed for connector
-Message-ID: <20240827-chubby-tidy-collie-c8ecf7@houat>
-References: <20240827-google-vkms-managed-v2-0-f41104553aeb@bootlin.com>
- <20240827-google-vkms-managed-v2-1-f41104553aeb@bootlin.com>
- <20240827-dynamic-acoustic-guillemot-ddde49@houat>
- <Zs3TeoUwn3iO7oBs@louis-chauvet-laptop>
+	s=arc-20240116; t=1724769593; c=relaxed/simple;
+	bh=ycBV1GwfJbUzMLkqjFSOpR9l/UgpJd2KCvbAx7tUV6E=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K/T/C5T2cZgaQXomsxIDAAYbyzgJjBMg2BJzFk6vPXVtEO7fL6Eh92WZMwOT7syGmUCO2cul8cQF56yVtU2THJQXskSFKMcoLOjwnwc6h32aGIUSEro6tyIN6FZPsHksKYTFgYsvV847tz3djq+Mmi4YElirOPa/xqjaAYPA63E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WtVTL1m2Tz6J7Bw;
+	Tue, 27 Aug 2024 22:35:50 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id A526A140C98;
+	Tue, 27 Aug 2024 22:39:48 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 27 Aug
+ 2024 15:39:47 +0100
+Date: Tue, 27 Aug 2024 15:39:47 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Ira Weiny <ira.weiny@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
+ Singh" <navneet.singh@intel.com>, Chris Mason <clm@fb.com>, Josef Bacik
+	<josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Petr Mladek
+	<pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Rasmus Villemoes
+	<linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
+	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, <linux-btrfs@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>
+Subject: Re: [PATCH v3 25/25] tools/testing/cxl: Add DC Regions to mock mem
+ data
+Message-ID: <20240827153947.000077a8@Huawei.com>
+In-Reply-To: <20240816-dcd-type2-upstream-v3-25-7c9b96cba6d7@intel.com>
+References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
+	<20240816-dcd-type2-upstream-v3-25-7c9b96cba6d7@intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="rvemour242cytzao"
-Content-Disposition: inline
-In-Reply-To: <Zs3TeoUwn3iO7oBs@louis-chauvet-laptop>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
+
+On Fri, 16 Aug 2024 09:44:33 -0500
+Ira Weiny <ira.weiny@intel.com> wrote:
+
+> cxl_test provides a good way to ensure quick smoke and regression
+> testing.  The complexity of Dynamic Capacity (DC) extent processing as
+> well as the complexity of the new sparse DAX regions can mostly be
+> tested through cxl_test.  This includes management of sparse regions and
+> DAX devices on those regions; the management of extent device lifetimes;
+> and the processing of DCD events.
+> 
+> The only missing functionality from this test is actual interrupt
+> processing.
+> 
+> Mock memory devices can easily mock DC information and manage fake
+> extent data.
+> 
+> Define mock_dc_region information within the mock memory data.  Add
+> sysfs entries on the mock device to inject and delete extents.
+> 
+> The inject format is <start>:<length>:<tag>:<more_flag>
+> The delete format is <start>:<length>
+> 
+> Directly call the event irq callback to simulate irqs to process the
+> test extents.
+> 
+> Add DC mailbox commands to the CEL and implement those commands.
+> 
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+
+Minor stuff inline.
+
+Thanks,
+
+Jonathan
+
+> +static int mock_get_dc_config(struct device *dev,
+> +			      struct cxl_mbox_cmd *cmd)
+> +{
+> +	struct cxl_mbox_get_dc_config_in *dc_config = cmd->payload_in;
+> +	struct cxl_mockmem_data *mdata = dev_get_drvdata(dev);
+> +	u8 region_requested, region_start_idx, region_ret_cnt;
+> +	struct cxl_mbox_get_dc_config_out *resp;
+> +	int i;
+> +
+> +	region_requested = dc_config->region_count;
+> +	if (region_requested > NUM_MOCK_DC_REGIONS)
+> +		region_requested = NUM_MOCK_DC_REGIONS;
+
+	region_requested = min(...)
+
+> +
+> +	if (cmd->size_out < struct_size(resp, region, region_requested))
+> +		return -EINVAL;
+> +
+> +	memset(cmd->payload_out, 0, cmd->size_out);
+> +	resp = cmd->payload_out;
+> +
+> +	region_start_idx = dc_config->start_region_index;
+> +	region_ret_cnt = 0;
+> +	for (i = 0; i < NUM_MOCK_DC_REGIONS; i++) {
+> +		if (i >= region_start_idx) {
+> +			memcpy(&resp->region[region_ret_cnt],
+> +				&mdata->dc_regions[i],
+> +				sizeof(resp->region[region_ret_cnt]));
+> +			region_ret_cnt++;
+> +		}
+> +	}
+> +	resp->avail_region_count = NUM_MOCK_DC_REGIONS;
+> +	resp->regions_returned = i;
+> +
+> +	dev_dbg(dev, "Returning %d dc regions\n", region_ret_cnt);
+> +	return 0;
+> +}
 
 
---rvemour242cytzao
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 27, 2024 at 03:24:10PM GMT, Louis Chauvet wrote:
-> Le 27/08/24 - 15:15, Maxime Ripard a =E9crit :
-> > Hi,
-> >=20
-> > On Tue, Aug 27, 2024 at 11:57:36AM GMT, Louis Chauvet wrote:
-> > > The current VKMS driver uses non-managed function to create connector=
-s. It
-> > > is not an issue yet, but in order to support multiple devices easily,
-> > > convert this code to use drm and device managed helpers.
-> > >=20
-> > > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> > > ---
-> > >  drivers/gpu/drm/vkms/vkms_drv.h    |  1 -
-> > >  drivers/gpu/drm/vkms/vkms_output.c | 22 ++++++++++++----------
-> > >  2 files changed, 12 insertions(+), 11 deletions(-)
-> > >=20
-> > > diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/v=
-kms_drv.h
-> > > index 5e46ea5b96dc..9a3c6c34d1f6 100644
-> > > --- a/drivers/gpu/drm/vkms/vkms_drv.h
-> > > +++ b/drivers/gpu/drm/vkms/vkms_drv.h
-> > > @@ -99,7 +99,6 @@ struct vkms_crtc_state {
-> > >  struct vkms_output {
-> > >  	struct drm_crtc crtc;
-> > >  	struct drm_encoder encoder;
-> > > -	struct drm_connector connector;
-> > >  	struct drm_writeback_connector wb_connector;
-> > >  	struct hrtimer vblank_hrtimer;
-> > >  	ktime_t period_ns;
-> > > diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkm=
-s/vkms_output.c
-> > > index 5ce70dd946aa..4fe6b88e8081 100644
-> > > --- a/drivers/gpu/drm/vkms/vkms_output.c
-> > > +++ b/drivers/gpu/drm/vkms/vkms_output.c
-> > > @@ -3,11 +3,11 @@
-> > >  #include "vkms_drv.h"
-> > >  #include <drm/drm_atomic_helper.h>
-> > >  #include <drm/drm_edid.h>
-> > > +#include <drm/drm_managed.h>
-> > >  #include <drm/drm_probe_helper.h>
-> > > =20
-> > >  static const struct drm_connector_funcs vkms_connector_funcs =3D {
-> > >  	.fill_modes =3D drm_helper_probe_single_connector_modes,
-> > > -	.destroy =3D drm_connector_cleanup,
-> > >  	.reset =3D drm_atomic_helper_connector_reset,
-> > >  	.atomic_duplicate_state =3D drm_atomic_helper_connector_duplicate_s=
-tate,
-> > >  	.atomic_destroy_state =3D drm_atomic_helper_connector_destroy_state,
-> > > @@ -50,7 +50,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, i=
-nt index)
-> > >  {
-> > >  	struct vkms_output *output =3D &vkmsdev->output;
-> > >  	struct drm_device *dev =3D &vkmsdev->drm;
-> > > -	struct drm_connector *connector =3D &output->connector;
-> > > +	struct drm_connector *connector;
-> > >  	struct drm_encoder *encoder =3D &output->encoder;
-> > >  	struct drm_crtc *crtc =3D &output->crtc;
-> > >  	struct vkms_plane *primary, *cursor =3D NULL;
-> > > @@ -80,8 +80,15 @@ int vkms_output_init(struct vkms_device *vkmsdev, =
-int index)
-> > >  	if (ret)
-> > >  		return ret;
-> > > =20
-> > > -	ret =3D drm_connector_init(dev, connector, &vkms_connector_funcs,
-> > > -				 DRM_MODE_CONNECTOR_VIRTUAL);
-> > > +	connector =3D drmm_kzalloc(dev, sizeof(*connector), GFP_KERNEL);
-> > > +	if (!connector) {
-> > > +		DRM_ERROR("Failed to allocate connector\n");
-> > > +		ret =3D -ENOMEM;
-> > > +		goto err_connector;
-> > > +	}
-> > > +
-> >=20
-> > I think it would be worth explaining why you need to move to a separate
-> > allocation for the connector now.
-> >=20
-> > Maxime
->=20
-> Hi,
->=20
-> This is in preparation for ConfigFS implementation, as the number of=20
-> connector/encoders/crtc/planes... will be dynamic, we need to have=20
-> separate alloaction.
->=20
-> If I add this paragraph in the commit message, is it sufficient?
->=20
-> 	A specific allocation for the connector is not strictly necessary=20
-> 	at this point, but in order to implement dynamic configuration of=20
-> 	VKMS (configFS), it will be easier to have one allocation per=20
-> 	connector.
->=20
-> (same for encoder & CRTC)
+> +static void cxl_mock_mem_remove(struct platform_device *pdev)
+> +{
+> +	struct cxl_mockmem_data *mdata = dev_get_drvdata(&pdev->dev);
+> +	struct cxl_memdev_state *mds = mdata->mds;
+> +
+> +	dev_dbg(mds->cxlds.dev, "Removing extents\n");
 
-Yeah, that's a good message, but it probably belongs in a separate patch
-then.
+Clean this up as it doesn't do anything!
 
-Thanks!
-Maxime
+> +}
+> +
 
---rvemour242cytzao
-Content-Type: application/pgp-signature; name="signature.asc"
+> @@ -1689,14 +2142,261 @@ static ssize_t sanitize_timeout_store(struct device *dev,
+>  
+>  	return count;
+>  }
+> -
+Grump ;)  No whitespace changes in a patch doing anything 'useful'.
+>  static DEVICE_ATTR_RW(sanitize_timeout);
+>  
 
------BEGIN PGP SIGNATURE-----
+> +static int log_dc_event(struct cxl_mockmem_data *mdata, enum dc_event type,
+> +			u64 start, u64 length, const char *tag_str, bool more)
+> +{
+> +	struct device *dev = mdata->mds->cxlds.dev;
+> +	struct cxl_test_dcd *dcd_event;
+> +
+> +	dev_dbg(dev, "mock device log event %d\n", type);
+> +
+> +	dcd_event = devm_kmemdup(dev, &dcd_event_rec_template,
+> +				     sizeof(*dcd_event), GFP_KERNEL);
+> +	if (!dcd_event)
+> +		return -ENOMEM;
+> +
+> +	dcd_event->rec.flags = 0;
+> +	if (more)
+> +		dcd_event->rec.flags |= CXL_DCD_EVENT_MORE;
+> +	dcd_event->rec.event_type = type;
+> +	dcd_event->rec.extent.start_dpa = cpu_to_le64(start);
+> +	dcd_event->rec.extent.length = cpu_to_le64(length);
+> +	memcpy(dcd_event->rec.extent.tag, tag_str,
+> +	       min(sizeof(dcd_event->rec.extent.tag),
+> +		   strlen(tag_str)));
+> +
+> +	mes_add_event(mdata, CXL_EVENT_TYPE_DCD,
+> +		      (struct cxl_event_record_raw *)dcd_event);
+I guess this is where the missing event in previous patch come from.
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZs3lMAAKCRAnX84Zoj2+
-dorsAYC5SayM75HRPLbrhndfWBwXoDjAnqDJDy6BCtRdqynORziWDr2dZYuqqd4V
-76YURcIBgKp9V3tn6rw20lDgiA2Zo1d7BrVWmVuHWRNI3PFdhjlvzRLsBw7zab+b
-v/80cgOc7Q==
-=wokh
------END PGP SIGNATURE-----
+Increment the number here, not back in that patch.
 
---rvemour242cytzao--
+Jonathan
+
 
