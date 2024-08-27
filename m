@@ -1,90 +1,153 @@
-Return-Path: <linux-kernel+bounces-304080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE4829619D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 00:04:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C27FE9619DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 00:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69A892877C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 22:04:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 013521C235F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 22:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77AE318BC2D;
-	Tue, 27 Aug 2024 22:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859B21D31B2;
+	Tue, 27 Aug 2024 22:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="V8OaSezP"
-Received: from mr85p00im-ztdg06011201.me.com (mr85p00im-ztdg06011201.me.com [17.58.23.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l7oR4XZJ"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1359158DC8
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 22:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7E515F3FB;
+	Tue, 27 Aug 2024 22:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724796270; cv=none; b=nCnqFh00PqCTurb/9j4tfOVp7eoFYKGog2ITAlmvnhPdh+vgI4UjcLBVhN+REhBWcSIP/IGUvEsD0TtxdBjzUCy5w6XQSmWRneF3jkkGPt/+4PtoPJryX49MNAfHN92m8XgVrhHxF4Dqc/azH7Dfc4hMFoC0a1u5Wj4MLCElEVA=
+	t=1724796297; cv=none; b=BZKfwl5zISM3OeHH9RA39iBl0JBpp8RC+ibEPn77gQ+gU/R5fWIJTRtksytcJ1actgYRSgGvZT1pBNdlR2ZgzKchjGUPFn6nVshC7TmAxvCMa5XSamjaMqN30ksqQV7RyKZKIeQ44GlMkuHEOew0AXqmMeRArAuAPwMPiHPgL7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724796270; c=relaxed/simple;
-	bh=XoQxxmEoNrrSJ1A4BhYsRt9j9YFrtuAFb0iWeX95F1c=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=R6KkmyVxUlAH356c224UVao6RlfBlRe06vGcvVho8hs9pWybhkjtwO5D0af3w8tuyVOmUOhSrRGaN+haHmcW8MvA9YhPYD+0rcdTMxUuKbCGJZpogWOy/ilAaMl9tPJa0dpKf4QEiIEJPOJc27bw7DaaVq+dQQclfRurDeNh6Ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=V8OaSezP; arc=none smtp.client-ip=17.58.23.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1724796269;
-	bh=gd2P4LrVBVbczM1BBbyqCRdxy6b6HjwxDG7G61RFLLc=;
-	h=Content-Type:Mime-Version:Subject:From:Date:Message-Id:To;
-	b=V8OaSezPT6MtI5fxqkuvwrF9ds1xAjTQ+7ZyR751fO6c6viyhhdg3ab3DKIoqM5VW
-	 Ko4oxRAXhTJc+1vsxVsGcevST8R0VKfT9zhAZY+CJppuN+TzPkw1jmNymXglh82ADy
-	 COf7IV4X5akqTa39zGhDRZqqV8b/V7gFPgWC4X0y1RLUDrbRoZqmBA7m19m3m1+XJi
-	 Sjn3x2OZtqCOjYbvIVoIOnYCFElPK6/yOa1DerezegpluXVk33HmT42o4DbLRNxPTZ
-	 d1xdAwDr15Z5v1WifnXG6B3IuUHG4naviqiSoKGiYU8XTJwEpSbuDaiq9ZV88YfshQ
-	 AXuxcYVbthSGA==
-Received: from smtpclient.apple (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
-	by mr85p00im-ztdg06011201.me.com (Postfix) with ESMTPSA id AB2359600FD;
-	Tue, 27 Aug 2024 22:04:27 +0000 (UTC)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1724796297; c=relaxed/simple;
+	bh=9rGkUgOufBi7Mzv+5uM4oeDmEyRh5mYHyw6X74RrwqA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kwbM1l4m+ZcTc6cVyovnEYyXgwpqoaybQ9Zo/ZCEWvmFE+TSvJpQiUiRrNuw6pwmti+hNZtrV+7XKa34VoUFURES2Hbui/Et0LoLV0PrDvTMeV8ca6gZe1JGM4YHjWGpDhXQzs8JEo9fgTq9jcZJOYN2858iXuJdwi6gWHWZoEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l7oR4XZJ; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42812945633so51395285e9.0;
+        Tue, 27 Aug 2024 15:04:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724796294; x=1725401094; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VZgyQZttbFN6Mpv5C6Zqi3PHF1KkrD2jrO7egIws/+I=;
+        b=l7oR4XZJcfGSx7WJoHvuGB68QiDbZUi2H0rHm1e6b/eVaycenLHB5TGKy907n5AYm/
+         aPKj4Lz7VwmNXNDbaF0rtZ+92cPPbzn8UImuSzmGGEIyF2cH5Rvqou+0bV75NGB3Pszk
+         iCH3x4XaxPTyC3UQaXIA497WLyzh/yFGEP7hiVqIlnCKv5PsmBXMgQyGAcgm+l0kSx1l
+         gLApTqNucWU302wLFmwS3yCneCYeOZNXWIoG1qQ/+r2Ma3RnqtyuaREZY/6ySRTmIDpp
+         VJ0YR/ZnJnMQ352BpNvjiBN2roOpw504PKNlEUvDFWpJABeZe1mz7aVFvmNLcJpTBD7W
+         xXTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724796294; x=1725401094;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VZgyQZttbFN6Mpv5C6Zqi3PHF1KkrD2jrO7egIws/+I=;
+        b=VgCTZh5NkyDTkEBzu9Ov1/DsDN7PUD99GrsbFGPn7rru5lKNaxefEmitAHI1iISdj+
+         5DOYk5iUjyv0orTcA2g9E45f/87x125P/fun/OJpAAaW1Ex0YzNtq+x05ZVf/CMReXhm
+         sF40TNTruYC435I6s72aLJNuSw3wUcCh1VBpZGAVvKTF1uoZXdQu0mE3OH9VZJmFwuBi
+         9H3qvFeLt/Hnee216UvyVYRWlFmt56F+1+ogp2qVJPxxUeQrgAWTs1D/tw/qRk26Z4OP
+         2IvsIvF4Ik+smcVXedpo+7nisHJaNBZafN/fWckQgCDd9ezXQ1UvTxO7nIoa0tMQoC6u
+         7xZw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUYVvuH9YrD2LoPBXH9OW1HeQ01T78IBoZanfWbCyvj9zlUwYo3qA3GoUcNFJw3ohJtsvIM0C7P71doh3i@vger.kernel.org, AJvYcCWZaqz6VePvuRNPwMmnd+Q2ZlJVzLYrE7vQcNZHhcq/OEJW9JexyEYyBeZXRL5dzdCp4V9blo7rddO1DHhW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0PhPtYnz86MhOR0YxwhNF82yPcjCmQPnFXAfxRsEbR8WzzbkQ
+	0a9lsTJ1CfIk6xp62KVw2ajtDRVytScTvlyBTgV2MSGpfCuMxlWAKYtALvx9JNpg+nMjJxiIB1B
+	RFC/yJSj7kuyDx6vpOVf/NKfeaLg=
+X-Google-Smtp-Source: AGHT+IHWk+OQ6gg8FUjgV2v4vECfE0Fa9RJ/6lK2GykuDqzWb1DzW5pw5cVNOpUVhtAQtCWvfc0gKwWGbXHqNy0EXDs=
+X-Received: by 2002:a05:6000:8d:b0:368:747c:5a04 with SMTP id
+ ffacd0b85a97d-3731185ad48mr7748341f8f.25.1724796293984; Tue, 27 Aug 2024
+ 15:04:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.300.61.1.2\))
-Subject: Re: [PATCH] prctl: allow prctl_set_mm_exe_file without unmapping old
- exe
-From: tblodt@icloud.com
-In-Reply-To: <20240827215930.24703-1-tblodt@icloud.com>
-Date: Tue, 27 Aug 2024 15:04:15 -0700
-Cc: Ryan Houdek <sonicadvance1@gmail.com>,
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
- David Hildenbrand <david@redhat.com>,
- "Eric W. Biederman" <ebiederm@xmission.com>,
- Kees Cook <keescook@chromium.org>
-Content-Transfer-Encoding: 7bit
-Message-Id: <82C762FE-B3DA-4985-AB79-C648763F143A@icloud.com>
-References: <20240827215930.24703-1-tblodt@icloud.com>
-To: linux-kernel@vger.kernel.org
-X-Mailer: Apple Mail (2.3774.300.61.1.2)
-X-Proofpoint-ORIG-GUID: RNoKVAlVAvomSBgnFi66oU9-wvJaXv4P
-X-Proofpoint-GUID: RNoKVAlVAvomSBgnFi66oU9-wvJaXv4P
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-27_10,2024-08-27_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=785 mlxscore=0
- adultscore=0 clxscore=1015 phishscore=0 malwarescore=0 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2408270161
+MIME-Version: 1.0
+References: <20240820070818.1124403-1-vignesh.raman@collabora.com>
+In-Reply-To: <20240820070818.1124403-1-vignesh.raman@collabora.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Tue, 27 Aug 2024 15:04:42 -0700
+Message-ID: <CAF6AEGu-T4=3jPRcnq3BFBtfb_yhmWE2b8EgxgTm5Q0bqSv04Q@mail.gmail.com>
+Subject: Re: [PATCH v1] drm/ci: increase timeout for all jobs
+To: Vignesh Raman <vignesh.raman@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, 
+	helen.koike@collabora.com, airlied@gmail.com, daniel@ffwll.ch, 
+	guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com, 
+	deborah.brouwer@collabora.com, linux-mediatek@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	intel-gfx@lists.freedesktop.org, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-PS:
+On Tue, Aug 20, 2024 at 12:09=E2=80=AFAM Vignesh Raman
+<vignesh.raman@collabora.com> wrote:
+>
+> Set the timeout of all drm-ci jobs to 1h30m since
+> some jobs takes more than 1 hour to complete.
+>
+> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
 
-1. I'm not fully sure of my research here, please contradict me if there's
-   some non-obvious reason to keep this check.
+Acked-by: Rob Clark <robdclark@gmail.com>
 
-2. While writing this I discovered that someone else had submitted
-   essentially the same patch independently about three years ago and
-   gotten no reply. Hopefully this one will have better luck.
-
-~Theodore
-
+> ---
+>  drivers/gpu/drm/ci/test.yml | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/ci/test.yml b/drivers/gpu/drm/ci/test.yml
+> index b6f428cdaf94..09d8447840e9 100644
+> --- a/drivers/gpu/drm/ci/test.yml
+> +++ b/drivers/gpu/drm/ci/test.yml
+> @@ -10,6 +10,7 @@
+>  .lava-test:
+>    extends:
+>      - .test-rules
+> +  timeout: "1h30m"
+>    script:
+>      # Note: Build dir (and thus install) may be dirty due to GIT_STRATEG=
+Y
+>      - rm -rf install
+> @@ -71,6 +72,7 @@
+>      - .baremetal-test-arm64
+>      - .use-debian/baremetal_arm64_test
+>      - .test-rules
+> +  timeout: "1h30m"
+>    variables:
+>      FDO_CI_CONCURRENT: 10
+>      HWCI_TEST_SCRIPT: "/install/igt_runner.sh"
+> @@ -215,7 +217,6 @@ panfrost:rk3399:
+>    extends:
+>      - .lava-igt:x86_64
+>    stage: i915
+> -  timeout: "1h30m"
+>    variables:
+>      DRIVER_NAME: i915
+>      DTB: ""
+> @@ -414,6 +415,7 @@ panfrost:g12b:
+>
+>  virtio_gpu:none:
+>    stage: software-driver
+> +  timeout: "1h30m"
+>    variables:
+>      CROSVM_GALLIUM_DRIVER: llvmpipe
+>      DRIVER_NAME: virtio_gpu
+> @@ -436,6 +438,7 @@ virtio_gpu:none:
+>
+>  vkms:none:
+>    stage: software-driver
+> +  timeout: "1h30m"
+>    variables:
+>      DRIVER_NAME: vkms
+>      GPU_VERSION: none
+> --
+> 2.43.0
+>
 
