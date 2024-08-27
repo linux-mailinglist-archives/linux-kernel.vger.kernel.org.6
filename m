@@ -1,153 +1,122 @@
-Return-Path: <linux-kernel+bounces-302939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C45296054B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:14:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DFD796054C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9F851F22414
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:14:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7EEFB2165C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D17A19A29A;
-	Tue, 27 Aug 2024 09:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2F41940B5;
+	Tue, 27 Aug 2024 09:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NlQ+zAP0"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gQBvCXQU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA93919752C;
-	Tue, 27 Aug 2024 09:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138CB76056
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724750039; cv=none; b=N7hY0uIHk/EZkQwueMGxMVBBGpXhpdq+XEOCavgBLlJljs+6tdYMxwbbd6dHnTVNfnBbOAmsz5Zf9v7KoaVY02ZtmDlUGCcWPChxk+avSoeZjd8ue2r36IxNDXkXtF+rDe0vhd5iCLeZhdTN61BDaLhydp0fdZMGQ+phmPjj8bQ=
+	t=1724750130; cv=none; b=BuYHC8km7ywUeU88l9kmGR7qConrLqfOILJpfbS/c9EEIquhcgTEH/mh/5NcPFO1WZw+XmgfK8TOLn2z8emxrsVR2nNaeVyd8OWUqspAhQQZ+GeTUIhCftIXfdU2ruBretKg9BxxBIHla28OtEZtFfLXUmVw9oK2Zm4ANy5KGX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724750039; c=relaxed/simple;
-	bh=DcVSrrjynKbRxXS0XwiX+7IfWWMNyF+0fi4dKQ+Xsqg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DyLUZUi+tQsTZSxyPVHEimUFySYdmi1vEl4/+WOrZBuToSW1coN96hiZnu49Fm3XV8mqeaz912vHr/93fYLyH6bbcu/2r55EWIGwXjJ8I863mICPgq/4bwOuX2PItvyVFMjn6f93BPEqa3c0VGgq/8VNTP8CEbrSnWKZ93UAPso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NlQ+zAP0; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 77BC3C0006;
-	Tue, 27 Aug 2024 09:13:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724750035;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sgDeJKYsQBbTYnMqbAF25gViBY/ePcmfyH1BkbpcCUw=;
-	b=NlQ+zAP0bIheb4MUSFf/XrzLm7aBRVV4cYsW8JL4GHMRWP5WVOvTLppgcFNL1lB2KBzxCx
-	yNR/mXljzUJMzUXPAAIGM8QpQG3afO87mMAiYcgWIv7Y3UcFHNy9tnBjQlmJ9Zl0l7jJZj
-	7eE/6o7Q1br/a7I4/4HCz1zekvBCez3cSx48TuCL83iESpFNxFS2hKGK20jMbdR4bgUnIY
-	VKg7mWy/1MYp9AiITO67gEKg2zSUOP3i491tZIX81cdq9iJQh/6xrTUtGOzIjq4ajAqOhR
-	Fv0WWp7Xh7GNaBHaXEXg5KZV7kdd+sjslH0J5ayIgEgV80ZUROVQB95DWK4dog==
-Date: Tue, 27 Aug 2024 11:13:53 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky
- <senozhatsky@chromium.org>, Jonathan Corbet <corbet@lwn.net>, John Ogness
- <john.ogness@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] hexdump: Allow skipping identical lines
-Message-ID: <20240827111353.0341c571@xps-13>
-In-Reply-To: <Zsy86HZ7uew9-Ef6@smile.fi.intel.com>
-References: <20240826162416.74501-1-miquel.raynal@bootlin.com>
-	<20240826162416.74501-3-miquel.raynal@bootlin.com>
-	<Zsy86HZ7uew9-Ef6@smile.fi.intel.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724750130; c=relaxed/simple;
+	bh=xQWpjwyGez3lqvuj3nJTCm683oykMe4FI2uhRGhHJZY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FffURr1E7FiL2gWBxiB6mc3mpcmFAEwAuPRKpuNgonK/g93EwZjiDuib6MmsvAiOiyujhDBxC/jgAlznlga7HMVoqmw+vR0XrPsKzVPWPJ/W9Q1Hhik74dv2jGnNT+DwKeeSNo3TB123E/5GNUZ26k8RPgeVg76JTUcwrLqRkO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gQBvCXQU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47BD6C8B7A0;
+	Tue, 27 Aug 2024 09:15:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724750129;
+	bh=xQWpjwyGez3lqvuj3nJTCm683oykMe4FI2uhRGhHJZY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gQBvCXQUKVPEqkM4Nz+dYrv7LDSgXXeTXaOb6mo4mMhX8FTlvXthCnKYpkg7u97pT
+	 qXig76iFhTwALb4M9+Fuiat8+pcN2nn9eu+Xao0QFRu9WbSrbIteAKdkFEDneC2MyF
+	 f/9uucBYGgLVRHLYmdxIV5eqF2TEaJ22+KR2OCtI=
+Date: Tue, 27 Aug 2024 11:15:25 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: sunyiqi <sunyiqixm@gmail.com>
+Cc: rafael@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpu: add CAP_SYSLOG check for reading crash_notes address
+Message-ID: <2024082701-trailing-poster-6126@gregkh>
+References: <20240827081133.872741-1-sunyiqixm@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240827081133.872741-1-sunyiqixm@gmail.com>
 
-Hi Andy,
+On Tue, Aug 27, 2024 at 04:11:33PM +0800, sunyiqi wrote:
+> CPU crash_notes value can be obtained through /sys/devices/system/cpu/\
+> cpu[NUM]/crash_notes for leaking the phys address(introduced in kernel
+> 5.10-rc1, but some distributions may migrate this feature to 4.x
+>   kernel).
+> The relevant function is crash_notes_show() in file drivers/base/cpu.c.
+> 
+> Though crash_notes file permission is 400 and owner is root:root,
+> but in container, the root user can also read crash_notes which leads to
+> information leak as most of kernel pointer value can not by read for
+> root user in container without CAP_SYSLOG capability.
 
-andriy.shevchenko@linux.intel.com wrote on Mon, 26 Aug 2024 20:35:36
-+0300:
+"most", but not all?
 
-> On Mon, Aug 26, 2024 at 06:24:16PM +0200, Miquel Raynal wrote:
-> > When dumping long buffers (especially for debug purposes) it may be very
-> > convenient to sometimes avoid spitting all the lines of the buffer if
-> > the lines are identical. Typically on embedded devices, the console
-> > would be wired to a UART running at 115200 bauds, which makes the dumps
-> > very (very) slow. In this case, having a flag to avoid printing
-> > duplicated lines is handy.
-> >=20
-> > Example of a made up repetitive output:
-> > 0f 53 63 47 56 55 78 7a aa b7 8c ff ff ff ff ff
-> > ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> > ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> > ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> > ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> > ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> > ff ff ff ff ff ff ff ff ff ff ff ff 01 2a 39 eb
-> >=20
-> > Same but with the flag enabled:
-> > 0f 53 63 47 56 55 78 7a aa b7 8c ff ff ff ff ff
-> > ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> > *
-> > ff ff ff ff ff ff ff ff ff ff ff ff 01 2a 39 eb =20
->=20
-> The problem here is that without offset we can't see how many lines were
-> skipped.
+> In current linux kernel implementation, kernel pointer value or address
+> printked by %pK is not directly exposed to root user in container. For
+> kernel interface which includes those values, like /sys/kallsyms,
+> /proc/net/packet, etc., address values are guarded by kernel function
+> restricted_pointer(). Without CAP_SYSLOG capability, value 0 or NULL
+> will be returned for reading those interfaces in container using root
+> user.
 
-Yes, this is intended, I prefer to mimic userspace tools behavior.
+I understand the request here, but why is giving the "real" kernel
+pointer value somehow bad here?  What can userspace in a container do
+with it?
 
-> Two ways to solve (that come to my mind immediately, maybe more and bette=
-r):
-> 1) make sure that new flag implies or expects (otherwise BUILD_BUG_ON() o=
-r so)
->   the OFFSET to be set;
+And why not give root permissions access to it container or not?
 
-It depends what you are looking for. When I print a 2kiB page and want
-to compare the output with some other dump, I will immediately see if
-there are more or less skipped lines in the diff. When I want to just
-grab the UBI header and skip all the ff's following while asking a full
-buffer to be dumped (for kernel development reasons), the amount of
-skipped lines is not of interest to me either. Of course this is my own
-use case, but I guess there are others.
+> In restricted_pointer() and container, address values only returned by
+> kernel when root user has CAP_SYSLOG capability which is not the default
+> capabilities for Docker container. CAP_SYSLOG prevents root user in
+> container to get kernel pointer from lots of interfaces based on printk,
+> but not for cpu crash_notes.
+> 
+> Add CAP_SYSLOG permission check in crash_notes_show() for viewing kernel
+> address.
 
-However this is true it is sometimes also useful to know where we are in
-the dump, but the hexdump helpers already include all the interesting
-bits for that through the 'prefix_type' parameter :
+Is this really the only place where this type of check needs to be
+added?
 
-enum {
-	DUMP_PREFIX_NONE,
-	DUMP_PREFIX_ADDRESS,
-	DUMP_PREFIX_OFFSET
-};
+> Fixes: aa838896d87a ("drivers core: Use sysfs_emit and sysfs_emit_at for show(device *...) functions")
+> Signed-off-by: sunyiqi <sunyiqixm@gmail.com>
 
-See https://elixir.bootlin.com/linux/v4.20.17/source/include/linux/printk.h
+No cc: stable?
 
-I anyway understand the request and will change the example with
-something more common, probably, by using one of the two other
-prefixes.
+> ---
+>  drivers/base/cpu.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
+> index fdaa24bb641a..a2f27bb0ffe6 100644
+> --- a/drivers/base/cpu.c
+> +++ b/drivers/base/cpu.c
+> @@ -156,6 +156,9 @@ static ssize_t crash_notes_show(struct device *dev,
+>  	unsigned long long addr;
+>  	int cpunum;
+>  
+> +	if (!has_capability_noaudit(current, CAP_SYSLOG))
+> +		return sysfs_emit(buf, "%llx\n", 0ull);
 
-> 2) [OR] add number of lines skipped in that * line.
+Why not return an error?  Why is 0 ok?
 
-As mentioned above, this is not the intended output.
+thanks,
 
-> Personally I prefer the 1) as I think that you tried to follow the existi=
-ng
-> format of user space tools and there is a chance that there are other too=
-ls or
-> scripts that parse the dump to restore the binary contents.
-
-Exactly. Also, just simply using the diff command over two dumps
-without being polluted by any additions on one side or the other is very
-convenient.
-
-Thanks,
-Miqu=C3=A8l
+greg k-h
 
