@@ -1,269 +1,250 @@
-Return-Path: <linux-kernel+bounces-302544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B7AF960003
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:49:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5EA9960006
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:50:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2F63282EC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:49:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BF0828358B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B58512E1C2;
-	Tue, 27 Aug 2024 03:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0556A2E62C;
+	Tue, 27 Aug 2024 03:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Kp0mwIGL"
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010061.outbound.protection.outlook.com [52.101.128.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g0eiuPho"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5274C823DF;
-	Tue, 27 Aug 2024 03:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724730554; cv=fail; b=mQ+4e9+kw4ZCWbzGShTBSHFAm1kS39Whqo8Js96ui09VYz4F9SnTzGaVCUEWl28dWbE+P4vB6umkdQ/pqVsS72tPeVhjgCPcYwOYjKUsek6B0N+7l8wnEUOs5QnLXoJvFrIqsIBY6yMT1HWiWw/SGm9nAL/GJLLG6TqXOEBwGF4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724730554; c=relaxed/simple;
-	bh=LQwv8w26gHCXUOZIiNPEtg7mleZIu0UpGDzzZqQlinw=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E62918AE4;
+	Tue, 27 Aug 2024 03:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724730617; cv=none; b=WsbAgKX6aTUYWWytdfrRHYvM7HNY4gY3y/FZBw0CXm1yABAbGnq5ujiOxdzyOmNekok6U1bx3xOnLLQiIlAhFS+TsAQGPurzNoWhxLVJ8Yz6+xpouGCk7z0yuBbjK6J3Wt1mpdyPpulmEQVHOzs2dIjJvUjzp+KxmZeyor+ZVuM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724730617; c=relaxed/simple;
+	bh=ct237ptWjdB4jDzLrNttZ6cueJsfldCuq2oozNM2LgA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IE8bv/tP9GC9a5RW9FIGa64ZTN83CotydJ7gAjmDl1viru9wLRhVpFvl/u/J3jzwFMqBB5tPLhhGLvmYrHmni+IbzpZ7BV17O3Zm36XOItIh11qXzvcgAr8fPQzR8Cbk7HZed6o5fipi3GhfVAqHK8oRKfzQvhuTmobNO+ePK68=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Kp0mwIGL; arc=fail smtp.client-ip=52.101.128.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=J+QOjqhYHNE3LvCzfVKnb1rxx/Fla8Dm1MOlbDZcogq600gc7vtBuc0TYL/8oJM+yGcJ/7RKolKwRnoviDKQ/AHGSkhd9n23qmNsXs4/vC1q92mimLLcRZni1tpoh2ZaorYBiHGBg90C+n43CxIGV7VPoTb/pHpTh15frpNzlmsCv3uTSPli+PIfgjSEUjPZ5QTQyYIekW9agCQC+p5uArdyXzNEieLPNoNeCL3+jeW9kIb746wNbE2wMh7DDsj6xVM50bKvVDGJbC1kInATZn1rlNtlWoBQsylxscWNGRKWXXwugSzExkN+qsNe6yC7bmHSrES1GqwjZMGL94lqlQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PoWQwT3qKzI1rJ+Y673H/hRZaFJDhObg/J9+MUYW6XE=;
- b=EOYWUde+NcAouXz9LsRgydu+nKZceK4ie2iSoPlhJTd3HNPO7T13zHdHIIYF+vmEQ/rGBIntc8erUGQQE84p+o99thIH44f/Qgc8+0HoJc3kRGv/l+3VKWETC8oAKMU/fOdaXwz2C1ztqjh73lgvBd5eq9aSgNu1vsn+5JoGdrzwxw6UyDZcefTD28YHpYjSJx7Uy0bhkZumMOMGk9xiNeIarx+O+gk4g4UZHr+7RfzAh8b/JFCgHhAzu/tMVrAySOnaWXbqwqhaW9gtXS84g6PBJ6b1Vq/TfoLJUON+tUZUiQBoYDjNySngf/XLIIIygKpdm9x0CLJFaj8SkDgv4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PoWQwT3qKzI1rJ+Y673H/hRZaFJDhObg/J9+MUYW6XE=;
- b=Kp0mwIGL74obaVx8QztUw6UhYOVE7Mn/L5fWhE9StzyDqe810Jz1NQjZb03Ck21DEl/LoRJwgq+EcyK4BabCHh1sKDilG56qoeKxpzj1zAWkqF2QRhZ604uYW89gOPiBsw6t99lbxw6+Fc2hQXpUZNw/P7Yc7dZgNaxCwmxwscweuFZu7e157Bwb3z+nnxWfEeAIE8P/qeEYBL0fGt4n+ZHPpEgZ1HTiKKWLEbwZ011hyXEVPqmdM0/WvTzMlM4uaAlE0z7lVRfMcvOpDzf3FhkBlTHM8tTCWil2VEEPNAhRuYdrM9Ff3gAeAXRLNnzbPDjo8vzMqzF5jeQNJEUxRQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- SEZPR06MB6531.apcprd06.prod.outlook.com (2603:1096:101:184::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Tue, 27 Aug
- 2024 03:49:07 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%6]) with mapi id 15.20.7897.021; Tue, 27 Aug 2024
- 03:49:07 +0000
-From: Rong Qianfeng <rongqianfeng@vivo.com>
-To: andriy.shevchenko@intel.com,
-	biju.das.jz@bp.renesas.com,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
+	 MIME-Version:Content-Type; b=Rgp11eHm4IYEXJFAYxs/7rMikNoZoB4eC9pjFax7g/XEgSiGbHg8Hb5A9ziMK3+PysUyh4wSIdnB8Fc1yexRs2fA2YAzlGtFP6L7fibPAB15OQLLL3J+Mb6ZPS64AFW48SVkQb8ZUO8eZBaidg2AD9wZQk+MQAzyiJ4LEYVm7YA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g0eiuPho; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-39b0826298cso17982545ab.2;
+        Mon, 26 Aug 2024 20:50:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724730614; x=1725335414; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yAXUgwXZ/Qq7vVTFEv6JHc8ifGQco39iwYhxaM2uIf4=;
+        b=g0eiuPhoCUBKA2CV/4B02U3XxQdO5BBKoYojfxdv6hL/mptd+LKLXk09EbEJBoVNV2
+         +QqHNXs2DsBOezYaUx+mjWsANoZFTwPZk+RKpw2ZTAy8VO0MoGRxntANPHQQh1RgaJR/
+         SZLwCkkzV+ybGzB9ylRuxS+90B9Ct+JJygbpNbNTbnToX+cjWVe4lToyOyx+nOw43KQz
+         zvG/bZA4OERsjl/XaZL88Fns3x/FQiJkoNXbqsdKJXWCurDGh+W3nE3pOdW2f6TTXdrP
+         iB2Is/QgR3+HTV7YmyifgXw5x29/dURs/ZoAIP+IhcbJH3Uy+C2xHURRvrZsS4d9tzdD
+         dwxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724730614; x=1725335414;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yAXUgwXZ/Qq7vVTFEv6JHc8ifGQco39iwYhxaM2uIf4=;
+        b=fK+LFLBpiGI+brz1PzNzhQPsihmGpot98L+zsd60pDh7f4SVu4cERljH+CRgZbGU+H
+         6YBrMzHO//S7inQv3m4fnV1G4JpwZ8imTiuMBwZ/PN8DlQun9RPVSMp5jLWFtGlT7rwm
+         E3Fdd/LmLZyV4I7ss9P3y0z/bqSTqvrT6WVK5hBaAoegmKkjcFT4mW5kh0hRP0WEo2Bl
+         z1l9uZl80G6w9VNN4jxYussZ3lgnnbaArPS8FexZ4uxJuSbbtYzxSNTZ+KahiU0u0IcP
+         6pmTGYl5QRB6d0CZ+FeK5tN+tELKL0PoARI3aErVbQNn0Jsl4jpjebMN+YggxOQ4NsZT
+         i8Uw==
+X-Forwarded-Encrypted: i=1; AJvYcCWLocHjzvzuYjDJgPcyDTDrFeuTNl5znjRA5HHSIiEfU+s+B1PENs/QEB0cDSpt6Ux8of9L3V+J@vger.kernel.org, AJvYcCXRJo4/Dut0eLxzumQRgDli7kbeb08rzwkp+eFl6I9HdaIOGYAkcvmT6eFBPM0ADO6yyGngJw6ALOOQsw==@vger.kernel.org, AJvYcCXpC+jFVvEr9HyryypNaD970kDRlvQEL0LzUSpbnZ16KAHUXaZZAvnFK/2ZrfFUd1ATRNOmpaOXIViPDDc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybsbsW+TjS7XUr1L5KGg/LBMMtdYiDlshzZ1eESqrWC9l+2+up
+	htjO1rJDkf2XY89AhshZBsqyTgioiZ97b1KrV2c7kBW0eKLw/jJF
+X-Google-Smtp-Source: AGHT+IFWnGZMFhalb255sfHb5fPwt66w1/5HjEqmfHapuEVndVH1nQsCjqVYY/Edle6+Rr8adv3wsA==
+X-Received: by 2002:a05:6e02:1c09:b0:39d:46f6:b92e with SMTP id e9e14a558f8ab-39e3c982e21mr127514795ab.11.1724730614369;
+        Mon, 26 Aug 2024 20:50:14 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143422eab8sm7670247b3a.41.2024.08.26.20.50.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 20:50:13 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: jaka@linux.ibm.com
+Cc: aha310510@gmail.com,
+	alibuda@linux.alibaba.com,
+	davem@davemloft.net,
+	dust.li@linux.alibaba.com,
+	edumazet@google.com,
+	guwen@linux.alibaba.com,
+	kuba@kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org
-Cc: opensource.kernel@vivo.com,
-	Rong Qianfeng <rongqianfeng@vivo.com>
-Subject: [PATCH v4 3/3] i2c: jz4780: Use dev_err_probe()
-Date: Tue, 27 Aug 2024 11:48:41 +0800
-Message-Id: <20240827034841.4121-4-rongqianfeng@vivo.com>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20240827034841.4121-1-rongqianfeng@vivo.com>
-References: <20240827034841.4121-1-rongqianfeng@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCPR01CA0131.jpnprd01.prod.outlook.com
- (2603:1096:400:26d::19) To SI2PR06MB5140.apcprd06.prod.outlook.com
- (2603:1096:4:1af::9)
+	linux-s390@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	tonylu@linux.alibaba.com,
+	ubraun@linux.vnet.ibm.com,
+	utz.bacher@de.ibm.com,
+	wenjia@linux.ibm.com
+Subject: Re: [PATCH net,v5,2/2] net/smc: modify smc_sock structure
+Date: Tue, 27 Aug 2024 12:50:05 +0900
+Message-Id: <20240827035005.159504-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <edfc4840-48ef-4d91-b1f8-b65b3aa4e633@linux.ibm.com>
+References: <edfc4840-48ef-4d91-b1f8-b65b3aa4e633@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|SEZPR06MB6531:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7c4936dd-41dd-4907-8779-08dcc64b33d2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?crC9lWIw4MzMnKffu4Nt/aOx7ByI8wM6ZEffsObmXd72a1A0mx6QjtAIOxFh?=
- =?us-ascii?Q?td8qb4qamIM8mRbu3rXyAqyCrK/dDWErYon+Uj6PVzi6o5SH4rnHPf0ZifTe?=
- =?us-ascii?Q?Ji0G88CzHf2J40zsQ6Cl1hjJcy9nbp7LaEtKuhRXiJ2TVhsa17W37R3WJJ8x?=
- =?us-ascii?Q?8l3OwNB5+2zgUx4DXVasxQA+CGb62MZ3OSPTslbFPl2FzvBnlHjJy1qcUi3D?=
- =?us-ascii?Q?hvkrmJof2U+U+uXcV69tkzgXzfSv0wL5th0qAEpJTOc5ZtmVRhHrOlQ0Erba?=
- =?us-ascii?Q?CQM6Kv8CFh3wyrIpcj4maSu79JD65NDy/SafZZnJDQCimW7z54m5zQ5Pnvjh?=
- =?us-ascii?Q?Bm0PQf6il1SnMUurCDE5aA8FfR4jB3LUag0Fw7wcIYts9AhPBK7zXqqQz80C?=
- =?us-ascii?Q?mUd869HDf8P7DCJ3/e5GiDYQWusfVks0Ab1BnI4+CymODvxWlDX2NwZWMEug?=
- =?us-ascii?Q?yZquKSTB4c+TPKnnKaAR8JwfaIskqVPBE3VMb1ZYkN6nsleLMyRemyz9eDo8?=
- =?us-ascii?Q?a2enBtIoq2D8LZhFc7OJJaR2tO5J9wzytlpCcip7vytkRMY4yVP9WWdpTLdM?=
- =?us-ascii?Q?ngyqoTwXvOjoP3SdoT7P3unKciwiJ9mH/q7U4COD4Gr+TeKRikhelzwhVd2j?=
- =?us-ascii?Q?jx87iwyQPcMpEr8Zj95kVXkg6QYQ4XeAahN7lrHJFBdoE6FmtGVyc59BdgFr?=
- =?us-ascii?Q?ySQpWJRPB945shzFxb4l6WWU9UUbgeOU7cs86T+hB6XFi5LqIW6XkrIrcNry?=
- =?us-ascii?Q?dxh5PnzczSk3vcvtvR6Ahu3fvXm2dDlQSI3QbhaJiKm5OrhttldIqxWwxOUw?=
- =?us-ascii?Q?WTjR4o0M5u4G/b7BlG6VRefFawFWYiwFeQQi9/pu0bpwzhrvVVVc504HaNCy?=
- =?us-ascii?Q?lvKbiDrDwNfWgGot/pFc0is56CnGFsWfnNKoi9TM4c3nwSYUhGRc38Q24OLh?=
- =?us-ascii?Q?99M8EtR8krXNUgRKj/kI96m3Pgn0PBZyREdK4Yp0tOZ7x8lhZRcWF1xgewKR?=
- =?us-ascii?Q?ADUfzGx43x04XzWVNyhSkmzb0DLndlJ0pz8jwSYEmkrb/ZA91jhR0NmECCzO?=
- =?us-ascii?Q?910kgAdyikdyiklVWT2We/ql8yT7PKTUg54JCczZtsOTDaMnMFKdVvr37Coe?=
- =?us-ascii?Q?EECVbYayVuf4MXgSqecEzrtvBJO1bURXiRsNwhPY+pEzTnOk3Y5B7a3h1oQ3?=
- =?us-ascii?Q?WDQj7mq8BtTM40FP0WPRjx8VAJgFC1gGthghJagn4z7/YmkseRyH1pggap8p?=
- =?us-ascii?Q?XD/F800c0B/lrWZYtpx/kgJohLQ+LoC8CR4ys4rf5NNRG86r0cthNEsPSh/K?=
- =?us-ascii?Q?4IJTfOc4zAYIs5w8ocXxIGo4phlefeL5aJZ9bjYZeaOYlQji0sXqH9UnVsg5?=
- =?us-ascii?Q?O5Ea22Dg9MZOGcQ0p3qZMqMS62OEusRw93V4vXvz1KYWVB0w1Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?schs4vM61dEmtsKI7/Vrf3b8sVjvA5XDmcjtHPF7vJZBJMWixLMj9ZDPj0QN?=
- =?us-ascii?Q?ahyl3tlFohpLTqiae5slyKmTYMpqdhwcntPxV7XzUUOCfCV7M2ftDPUK9nGt?=
- =?us-ascii?Q?tlcbtlBdu534OFtBBcHG6mVjmEQif/nO/ISunJ2GpiRw3Vw4g1jar78driIM?=
- =?us-ascii?Q?jAuL3AaRlB8ql5s4czb1bpd60Zg8U+8QqTlfrfakW0dbXoufeK9y1kPt3nee?=
- =?us-ascii?Q?IFvk494TiYiKJRcj6R/Lz0agWM5py3CgCvpmJ8GPj8HHTTkBRgUORsDcAwgW?=
- =?us-ascii?Q?Z5/NB1y08KoLQ89V89yrvOTjag4/j2JxOD7d21Bx8joO6WicOMvm7OpazDdz?=
- =?us-ascii?Q?E9WZO4lgIS0cREjHaCOrwYIUk4HcL0iyTNWoQQQiwfUqT+h50CgOv9HLxI6Q?=
- =?us-ascii?Q?HkviubSItBGS50p/XRepgOLOAyR0F+9xZb4feBHg6cNhukHmZ0dzSNhOyygz?=
- =?us-ascii?Q?MCZZrjKq0RHRkWqQxgIuteZArmlGgNZeOH+1ipoVBGNqULeuLL6W3O0Y/eEh?=
- =?us-ascii?Q?rwAnbFEVMfwZLmie/qoOMYiPcbBiDj8iDOMxah5Lov/TYeu/4x4HujdeKikx?=
- =?us-ascii?Q?bWG1vWuupyu/BWI6Pvcnrof47XV4KfbX61zrjywaT67WaXKwMtITiXByumSM?=
- =?us-ascii?Q?8T9bm94KcKNfgBdC/LLsGFQSpxQc6EYQh1f3i54tdehyVaGYEzuZZF14uq3f?=
- =?us-ascii?Q?xSP4mIMltA64siKwDuJqeBZUim1LvBR6RWxZBgAQlt/kqq9U/TyQ67/8NTao?=
- =?us-ascii?Q?FjT5/lbZgq1Lb7mFke7UYgGSwt1aUFAAm0GotkL3pfkLa27A54XCTHpu1JZu?=
- =?us-ascii?Q?zx+gJFHmPyqhU4Ndldeych8O97+ersyHz4s25G7IHWaJQB44b/BFtHquisAZ?=
- =?us-ascii?Q?YEVm3/CaqqycWflilCZ64NzgihoBF+fm9T9scnZAgCPP6rqiONTSEDWYQM3G?=
- =?us-ascii?Q?wkkr0JESqOvnfToqUV9/U8EJZMEmySJ36eCWdlBfy5uA/mIhP2puPXK52TJ0?=
- =?us-ascii?Q?CQ9/4dmaqhbnyO+0469tri2p05gKgXfiO8YwPDRQrCmydUtYGK48IzRWllhK?=
- =?us-ascii?Q?oui4WSfJnPkYVxAGPL5xQKqT91tib/MzF/xjerjuLSEy+RJgDrecXjjXUgzh?=
- =?us-ascii?Q?SCCwXCvJramVjK9jt/n0z6QaRywJvfw5dnJMmkXqDmwyr86fvEOa9otQYEPg?=
- =?us-ascii?Q?hbVnti9IE1lSwb/Jktbd+Qeb8ninn8VXnqLwfmRti8dTRoxKtjiD5Ds0zZcS?=
- =?us-ascii?Q?tXf5sDiBMQTlZUTSR+hlPQyIqbQJ5GKjxv+teblN3+KhJHTboZsY/ygdc9iJ?=
- =?us-ascii?Q?wc/+7PUWcIhJhsNIuaWAgffKofsLFeqld5JUQqR5eqXDjmWoK34G7j8BbPQZ?=
- =?us-ascii?Q?q1W6IhrQEh4GGolKiHmXkQZr/phf+oHHb2pte3/DrTxs/HWS3VS8zLDjETOu?=
- =?us-ascii?Q?Bygd1LSerNZthb8435jzzwnBYF/V2LexmDMxrX0xKxauYA0L+StNoHciP8WL?=
- =?us-ascii?Q?kEP4xmM3knedLxJFo9ZFffTzhv5SVCPLiNNYxJr7EEPUMo73ju9BDhKGkyI9?=
- =?us-ascii?Q?JBYQKCKPzOKPdMLWSYHdWYi8nnZPj5ZPAjsZhVIk?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7c4936dd-41dd-4907-8779-08dcc64b33d2
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 03:49:07.5787
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zYODWBbYlQLVrXu+64S0GNBHj9d2x8JsEbmrW12JXfje0oIF69si+UADK7nJYCCmQmYgD1AoQ3tGG/tk8OBhVg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6531
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: 8bit
 
-No more special handling needed here, so use dev_err_probe()
-to simplify the code.
+Jan Karcher wrote:
+>
+>
+> On 26/08/2024 04:56, D. Wythe wrote:
+> >
+> >
+> > On 8/22/24 3:19 PM, Jan Karcher wrote:
+> >>
+> >>
+> >> On 21/08/2024 13:06, Jeongjun Park wrote:
+> >>> Jan Karcher wrote:
+> >>>>
+> >>>>
+> >>
+> >> [...]
+> >>
+> >>>>
+> >>>> If so would you mind adding a helper for this check as Paolo suggested
+> >>>> and send it?
+> >>>> This way we see which change is better for the future.
+> >>>
+> >>> This is the patch I tested. Except for smc.h and smc_inet.c, the rest is
+> >>> just a patch that changes smc->sk to smc->inet.sk. When I tested using
+> >>> this patch and c repro, the vulnerability was not triggered.
+> >>>
+> >>> Regards,
+> >>> Jeongjun Park
+> >>
+> >> Thank you for providing your changes. TBH, I do like only having the
+> >> inet socket in our structure.
+> >> I did not review it completley since there are, obviously, a lot of
+> >> changes.
+> >> Testing looks good so far but needs some more time.
+> >>
+> >> @D. Wythe are there any concerns from your side regarding this solution?
+> >>
+> >> Thanks,
+> >> Jan
+> >>
+> >
+> > Well, I really don't think this is a good idea. As we've mentioned, for
+> > AF_SMC, smc_sock should not be treated as inet_sock.
+> > While in terms of actual running logic, this approach yields the same
+> > result as using a union, but the use of a union clearly indicates
+> > that it includes two distinct types of socks.
+>
+> Fair. I understand both sides here and i do not have a strong opinion.
+> One is kinda implicit, the other defines fields we do not use...
+> Of course there would be a compromise to define another struct something
+> like this:
+>
+> struct smc_sock_types {
+>         struct sock             sk;
+>         #if IS_ENABLED(CONFIG_IPV6)
+>                 struct ipv6_pinfo       *pinet6;
+>         #endif
+> };
+>
+> struct smc_sock {                               /* smc sock container */
+>         struct smc_sock_types   socks;
+> [...]
 
-While at it, use struct dev *dev to replace &pdev->dev to
-further simplify the code.
+If absolutely must use the sock structure in smc_sock, I think it would 
+be okay to modify it like the patch below to avoid a lot of code m
+odifications.
 
-Use the macro definition HZ_PER_KHZ to replace the 1000.
-
-Signed-off-by: Rong Qianfeng <rongqianfeng@vivo.com>
 ---
- drivers/i2c/busses/i2c-jz4780.c | 40 ++++++++++++++++-----------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
+ net/smc/smc.h      | 3 +++
+ net/smc/smc_inet.c | 8 +++++++-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-jz4780.c b/drivers/i2c/busses/i2c-jz4780.c
-index 92cc5b091137..72823a0f39c2 100644
---- a/drivers/i2c/busses/i2c-jz4780.c
-+++ b/drivers/i2c/busses/i2c-jz4780.c
-@@ -23,6 +23,7 @@
- #include <linux/sched.h>
- #include <linux/slab.h>
- #include <linux/time.h>
-+#include <linux/units.h>
+diff --git a/net/smc/smc.h b/net/smc/smc.h
+index 34b781e463c4..ad77d6b6b8d3 100644
+--- a/net/smc/smc.h
++++ b/net/smc/smc.h
+@@ -284,6 +284,9 @@ struct smc_connection {
  
- #define JZ4780_I2C_CTRL		0x00
- #define JZ4780_I2C_TAR		0x04
-@@ -764,14 +765,15 @@ static int jz4780_i2c_probe(struct platform_device *pdev)
- 	unsigned int clk_freq = 0;
- 	unsigned short tmp;
- 	struct jz4780_i2c *i2c;
-+	struct device *dev = &pdev->dev;
+ struct smc_sock {				/* smc sock container */
+ 	struct sock		sk;
++#if IS_ENABLED(CONFIG_IPV6)
++	struct ipv6_pinfo	*pinet6;
++#endif
+ 	struct socket		*clcsock;	/* internal tcp socket */
+ 	void			(*clcsk_state_change)(struct sock *sk);
+ 						/* original stat_change fct. */
+diff --git a/net/smc/smc_inet.c b/net/smc/smc_inet.c
+index bece346dd8e9..a5b2041600f9 100644
+--- a/net/smc/smc_inet.c
++++ b/net/smc/smc_inet.c
+@@ -60,6 +60,11 @@ static struct inet_protosw smc_inet_protosw = {
+ };
  
--	i2c = devm_kzalloc(&pdev->dev, sizeof(struct jz4780_i2c), GFP_KERNEL);
-+	i2c = devm_kzalloc(dev, sizeof(struct jz4780_i2c), GFP_KERNEL);
- 	if (!i2c)
- 		return -ENOMEM;
- 
--	i2c->cdata = device_get_match_data(&pdev->dev);
-+	i2c->cdata = device_get_match_data(dev);
- 	if (!i2c->cdata) {
--		dev_err(&pdev->dev, "Error: No device match found\n");
-+		dev_err(dev, "Error: No device match found\n");
- 		return -ENODEV;
- 	}
- 
-@@ -779,8 +781,8 @@ static int jz4780_i2c_probe(struct platform_device *pdev)
- 	i2c->adap.algo		= &jz4780_i2c_algorithm;
- 	i2c->adap.algo_data	= i2c;
- 	i2c->adap.retries	= 5;
--	i2c->adap.dev.parent	= &pdev->dev;
--	i2c->adap.dev.of_node	= pdev->dev.of_node;
-+	i2c->adap.dev.parent	= dev;
-+	i2c->adap.dev.of_node	= dev->of_node;
- 	sprintf(i2c->adap.name, "%s", pdev->name);
- 
- 	init_completion(&i2c->trans_waitq);
-@@ -792,26 +794,24 @@ static int jz4780_i2c_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, i2c);
- 
--	i2c->clk = devm_clk_get_enabled(&pdev->dev, NULL);
-+	i2c->clk = devm_clk_get_enabled(dev, NULL);
- 	if (IS_ERR(i2c->clk))
- 		return PTR_ERR(i2c->clk);
- 
--	ret = of_property_read_u32(pdev->dev.of_node, "clock-frequency",
-+	ret = of_property_read_u32(dev->of_node, "clock-frequency",
- 				   &clk_freq);
--	if (ret) {
--		dev_err(&pdev->dev, "clock-frequency not specified in DT\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+					"clock-frequency not specified in DT\n");
+ #if IS_ENABLED(CONFIG_IPV6)
++struct smc6_sock {
++	struct smc_sock		smc;
++	struct ipv6_pinfo	inet6;
++};
 +
-+	i2c->speed = clk_freq / HZ_PER_KHZ;
-+	if (i2c->speed == 0)
-+		return dev_err_probe(dev, -EINVAL,
-+					"clock-frequency minimum is HZ_PER_KHZ\n");
+ static struct proto smc_inet6_prot = {
+ 	.name		= "INET6_SMC",
+ 	.owner		= THIS_MODULE,
+@@ -67,9 +72,10 @@ static struct proto smc_inet6_prot = {
+ 	.hash		= smc_hash_sk,
+ 	.unhash		= smc_unhash_sk,
+ 	.release_cb	= smc_release_cb,
+-	.obj_size	= sizeof(struct smc_sock),
++	.obj_size	= sizeof(struct smc6_sock),
+ 	.h.smc_hash	= &smc_v6_hashinfo,
+ 	.slab_flags	= SLAB_TYPESAFE_BY_RCU,
++	.ipv6_pinfo_offset	= offsetof(struct smc6_sock, inet6),
+ };
  
--	i2c->speed = clk_freq / 1000;
--	if (i2c->speed == 0) {
--		ret = -EINVAL;
--		dev_err(&pdev->dev, "clock-frequency minimum is 1000\n");
--		return ret;
--	}
- 	jz4780_i2c_set_speed(i2c);
- 
--	dev_info(&pdev->dev, "Bus frequency is %d KHz\n", i2c->speed);
-+	dev_info(dev, "Bus frequency is %d KHz\n", i2c->speed);
- 
- 	if (i2c->cdata->version < ID_X1000) {
- 		tmp = jz4780_i2c_readw(i2c, JZ4780_I2C_CTRL);
-@@ -826,8 +826,8 @@ static int jz4780_i2c_probe(struct platform_device *pdev)
- 		return ret;
- 	i2c->irq = ret;
- 
--	ret = devm_request_irq(&pdev->dev, i2c->irq, jz4780_i2c_irq, 0,
--			       dev_name(&pdev->dev), i2c);
-+	ret = devm_request_irq(dev, i2c->irq, jz4780_i2c_irq, 0,
-+			       dev_name(dev), i2c);
- 	if (ret)
- 		return ret;
- 
--- 
-2.39.0
+ static const struct proto_ops smc_inet6_stream_ops = {
+--
 
+Regards,
+Jeongjun Park
+
+>
+> That said, don't know if i like this either.
+>
+> Thanks
+> - Jan
+>
+> >
+> > Also, if you have to make this change, perhaps you can give it a try
+> >
+> > #define smc->sk smc->inet.sk
+> >
+> > This will save lots of modifications.
+> >
+> > Thanks,
+> > D. Wythe
+> >
+> >>>
+> >>>>
+> >>>> The statement that SMC would be more aligned with other AFs is
+> >>>> already a
+> >>>>    big win in my book.
+> >>>>
+> >>>> Thanks
+> >>>> - Jan
+> >>>>
+> >>>>>
+> >>>>> Thanks,
+> >>>>>
+> >>>>> Paolo
+> >>>>>
+> >>>
 
