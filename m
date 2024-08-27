@@ -1,227 +1,187 @@
-Return-Path: <linux-kernel+bounces-303719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E1F496143D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:40:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1CBF961440
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:41:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8594AB215EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:40:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F20CBB22360
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BD61CE6EF;
-	Tue, 27 Aug 2024 16:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4837C1CF283;
+	Tue, 27 Aug 2024 16:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KWHF6ACA"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2060.outbound.protection.outlook.com [40.107.236.60])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="PqWJKRPP"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED0B54767;
-	Tue, 27 Aug 2024 16:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724776840; cv=fail; b=bFoZnM9vxUh3KsCS64SPSp5P6p0L7C9kIePBZKqh5pFlljJWjNm+g0stv634Lw3K5eS+9QA1iI67FcXbIEQjRP6FVmfcEHNZIMJCQpuMyOGcpMC/HOmMfRj96UGL/veXNyXBMa4GFa7qprlN/SGWgzkKYOf4OH80UlIEw24Xohk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724776840; c=relaxed/simple;
-	bh=YVhwRvoP3Rqt0ChCgPgHI6TFC4Psg5pDkYXGzkh24fk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HHrqzw4DrZ9aNtg8tqYZ52f5QH3Y9CReKEfx/HcN88BitX7P3SmhllFwncM/l275Wh3yvlPIXbe4iNR2JHXNqRKU3LuiS7arH2smgB1a+ZoSpGz4E3pjAuWC/aOU+OvNxuLpyoxfHlosbFuOfMgY66HDw5p4AYPKzs0SqYnv8/s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KWHF6ACA; arc=fail smtp.client-ip=40.107.236.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nD0GlrhCAUZs6Eq6jqI318DYeu5BCWZVB/gxEI9BUuxlboQPlIFwrSv5eGetQTEmtGkfvkWdNadc5+p6JAmArdTYzr6ZnDYjhGP6sH0kggPA4f6WrAD9xbhOv1juTZi0j9fp8+JtcW1qx4FXUJGPhgrR6QFzqP3hnZ03d6aPllIZ1Y/sVejKGUPi6OB0jMSZJ5jnqBsPuPySClt/mYN7WKboThkCWfb+k0J/MqI+4XZYtinAsIc4UXRW9GOh5zcbwa2U9Ez/mbCGYVCKwuVgpIhAkEJEnzOsQ2+rK5xFkyFpAro6lk5ERfpkICETkG5Lg0G3jWYdV91HvWFX0Et2YA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=v4+P/mHKztuqkitojcO3t1/1PS8b8dRl3dIHUcjjYsE=;
- b=G4HozZmTuHUEUhUCtap1TK4xDNQgb3JTtvSiOcUs56dsb4K3FJ1cvYQBWGoLJuzqYyF3nD/KeaZkda/ZE34Neo/68ESugBjuMNJHpjijvIMzJb5TBROzgovc5ci6mRHmsPwOw0CKEnbnetHzqGgpWSm8LYIKDJGRFmaDZ/WIN7HOFJdpDPjYOKc8m69sbYrmRW7sez6g0mv84TSKOooxEZ3KDFqUBCtpSnmSGDTH33BpWMUg7muBMWzfmwvWa5zyPxV/bOATncUVXa2U7f+Bc/gtaoYwsL50+8ea9Kp+6b334wb29vaVJf93PCNFGN0vT6lz2EJaoP2aiRXbFRc9UQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v4+P/mHKztuqkitojcO3t1/1PS8b8dRl3dIHUcjjYsE=;
- b=KWHF6ACAQpMxawA2ARv2HMhqr7wBOIbqNrvy6JthtzeBRja3MTE+pE9sjbrSOI155/xK1Gt6wFjiLE1SgMoyit8qlIjvVJkTDj4Jn3xqj2/aPY9Bi9uMdLn8ibilcLSuxyW2I2poR89F8p5MBu4UJMj28ul65YsYya1t4yCifg6rECyw4/Xq2hUAZBeObPXGOWjq3PmvSe5555PosKoIS9qGID3MkOr07BgpmLDizg4ofZW+5ruZYKWWbHjZdM+vQBTaAkSF9FUXUjh2rWC/n37W3CZEIIG+8YtB8mEBV6tBJgdDYz2EtDjl9x1Hy8oLvLViUd9U6HLZjSHHBmw3QA==
-Received: from CH5PR02CA0012.namprd02.prod.outlook.com (2603:10b6:610:1ed::11)
- by PH0PR12MB7840.namprd12.prod.outlook.com (2603:10b6:510:28a::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.23; Tue, 27 Aug
- 2024 16:40:34 +0000
-Received: from CH3PEPF0000000F.namprd04.prod.outlook.com
- (2603:10b6:610:1ed:cafe::ad) by CH5PR02CA0012.outlook.office365.com
- (2603:10b6:610:1ed::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.26 via Frontend
- Transport; Tue, 27 Aug 2024 16:40:34 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- CH3PEPF0000000F.mail.protection.outlook.com (10.167.244.40) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7918.13 via Frontend Transport; Tue, 27 Aug 2024 16:40:34 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 27 Aug
- 2024 09:40:19 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 27 Aug 2024 09:40:18 -0700
-Received: from vdi.nvidia.com (10.127.8.12) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 27 Aug 2024 09:40:18 -0700
-From: Liming Sun <limings@nvidia.com>
-To: Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson
-	<ulf.hansson@linaro.org>, David Thompson <davthompson@nvidia.com>
-CC: Liming Sun <limings@nvidia.com>, <linux-mmc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] mmc: sdhci-of-dwcmshc: Add hw_reset() support for BlueField-3 SoC
-Date: Tue, 27 Aug 2024 12:40:16 -0400
-Message-ID: <20240827164016.237617-1-limings@nvidia.com>
-X-Mailer: git-send-email 2.30.1
-In-Reply-To: <73703c853e36f3cd61114e4ac815926d94a1a802.1724695127.git.limings@nvidia.com>
-References: <73703c853e36f3cd61114e4ac815926d94a1a802.1724695127.git.limings@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7E11CE705
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 16:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724776844; cv=none; b=es8HYbN7iub1WSUYo3mPk2zyah7L/ajXmeo6FTI8fKdh+utdSf6HGSZIlBOPDA28V8IKDZjiQOWhtBC9/+ZgWbMxEXQ4KlO6ANFQZ4OP2OwJFnmHiVZmy6gPhtYaQr0PbRCB0vaaKMd3yvePM82LmJ4c7kz8hsd+w5zLmmzMA3o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724776844; c=relaxed/simple;
+	bh=mqj+nUaexZpLx78MbIFDbgbr3Re7pm0UFpvwCKrsD0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ISku1Y6MboY+xcvbZ3fxEuHujQtUDEOFVpcCDvyCWrV+HmudQeLrYcJ6kNbR7R461GqBAtguV4ZKcQsi/e1grDvPa4XFJlHBUZbdOXEFaDFCfpsnKkAaA++iupjcVOg9yT9z+SITQFlUSZZP+DHi7OV7qqIWn44QO+q1KmGF4fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=PqWJKRPP; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7141b04e7a3so4705759b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:40:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1724776842; x=1725381642; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rne+zpysSkg2L5/AJ4St1hJj9zp6Pm7sVmKolecYhts=;
+        b=PqWJKRPPwFLQnAy4nagGnJmHASViITGtTluO0vV3r6Y+6OjyqMxUECblHindenUk3V
+         QmXGIvAvysH1KGPOravaJZIq6Cmf3tx5sf2+JXsVrBxpfvqpyOp4Z3iOtyo+GPLTDZ4V
+         wtj4L6VbtygNztlsPDMFwQUcE5b1geMyRCzs57ILk8rvMMf14ejdnQfjcNCPnU403Mv8
+         3nlWTHrFr1BNqU0h1fAnsGXELJxSrZNR1eTyHoTsZDQbnNfPNDplWaTM1xjDy4HhocCc
+         ZXMAeEWRpJoDVXlvzD8rsCJPF0lGHWoK1yCX+TOE6XjvVAkLbw0/MTqClUqkejqgWHwR
+         6CrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724776842; x=1725381642;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rne+zpysSkg2L5/AJ4St1hJj9zp6Pm7sVmKolecYhts=;
+        b=J5oPmp/3xlRi5zIEIX7r0RTy33gGE2bEtoCBEZV5sW40VKJgSEF8UyEWcWwWh3s3ha
+         N5GwxZBwmKx4WOxImURC28D8r8V/77ofZ3fleUZ9rKp7hFXRCK/KMQ+pBU7PJJWKFqGt
+         zoXT5QaClI5u9xnAdxVTj+Ulkm5WM9duZvZqmTZhd5hcspX+mg2Y++GNugnUEljlfsyE
+         Rij4i+qKkf2WnctaKydnFra9Na0zBY63N/bkYgxr4/PyuFN5KRCGsQ6tbgChHEI5oTTM
+         jl6sQPxEbb3uoof+r4brOAuk6Cb664m4Zb9YV/lsKMW/FSSKmClM/gidkV/rMOqzUSGn
+         y2Zw==
+X-Forwarded-Encrypted: i=1; AJvYcCXWQ+DNlmRkLOwKYV1GwIs1kNk3JVulW/PRMs34q8VlDLcLIY4H2PR1jrXewyJMn8rEhi6MhAaqM+TggtU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKcEQGsTvqtmSaWbxY3bOMLOJGRpwCCOtp3kftXb5zH4Wdqhpr
+	0cdupIGQ/w6l3BzPJJS0VCIjxRKbvo+vpcr2ZqRrSJZVz54bOXSoXJhpdLUJQWQ=
+X-Google-Smtp-Source: AGHT+IG4PEytdJ7OVt7Zz6RxwZUGrSYdw900Upp1JNyJAzmPqshX0Vt1KaedOXWDN98/VzACJx3dKQ==
+X-Received: by 2002:a05:6a20:d510:b0:1c8:d4d4:4131 with SMTP id adf61e73a8af0-1cc89ee5940mr15116375637.40.1724776841470;
+        Tue, 27 Aug 2024 09:40:41 -0700 (PDT)
+Received: from ghost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-714343060e1sm9090279b3a.149.2024.08.27.09.40.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 09:40:40 -0700 (PDT)
+Date: Tue, 27 Aug 2024 09:40:38 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Palmer Dabbelt <palmer@rivosinc.com>
+Cc: cyy@cyyself.name, linux-riscv@lists.infradead.org, corbet@lwn.net,
+	Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu,
+	shuah@kernel.org, rsworktech@outlook.com, alexghiti@rivosinc.com,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] RISC-V: mm: do not treat hint addr on mmap as the
+ upper bound to search
+Message-ID: <Zs4BhmB4xOF4LOH9@ghost>
+References: <tencent_108260B43689E30AAE5D0C7C085AA31ADF06@qq.com>
+ <mhng-a7dcdfb5-0232-4ffb-8a20-13e564904da1@palmer-ri-x1c9a>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PEPF0000000F:EE_|PH0PR12MB7840:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2aad3711-3c0c-43d6-b3df-08dcc6b6f916
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/u5opN5aKtR2nS7sU0xGW/FpLbYh8QtecijGJ81Ka5vTYWWzdc4iSsU6ROnA?=
- =?us-ascii?Q?svCpSo17l/1yvBC0GQDG5O/O+rsd2e98rO3cvqezPOpk6ST171aXrIuj1y8V?=
- =?us-ascii?Q?I9Wu2vv1TjjTElhIFoVjkxNOvFZlNHFAO8yw0gE4Dy484OegSS3T3AGv6bKm?=
- =?us-ascii?Q?o4PHVHX4yJ+KBtlMKyaT6GJMRcVfZsIgVz/s+/J9Q7IqebbIMGXyYUjkZFd0?=
- =?us-ascii?Q?XgnpvfKtozr121GbODP9w7MfXpoMIOM9oL2pFSEYt2s/AIlODW6XsR0GagUN?=
- =?us-ascii?Q?e6mzk+Yx6LM/gp9CyMbZCmOTC8c71XDnbPUXlZ57gMxn9I7HZslpxjrmOAja?=
- =?us-ascii?Q?9+l2AuJxkWnXzbNf1YE+xUksTJYCFU2tQbK0RsrvgPhcLBFKVfRZEa/Hdkwh?=
- =?us-ascii?Q?9fNdWxF2abPNoD6fILcDNw3F1V6akmEhFSI5wYyHVqokPmCbVtXYwP3Txbdc?=
- =?us-ascii?Q?9eAm47Glwmw48FcB8UJ2fGQLCemBtO+r9ox1JGOC4OzyH87xyH99V6dk7mp7?=
- =?us-ascii?Q?hul9UaNxQb0NTS6FMr9UmkD71LFuNamuce4Mkqgom5FaqHV2MUwzqf2AS6e5?=
- =?us-ascii?Q?OzMkZ8gmpy+ifqYy82ax2qh0t+cwLaDamcDQSVXP3DXWE8ml3PEiwmUj/U7y?=
- =?us-ascii?Q?NYtSmM4Ll6E/rG6uL+uqdOAB7uKrA3gKtrrqowUKUmJUFB1ljEVcU1EX2c5t?=
- =?us-ascii?Q?3hwJsb7e5byNLsSENnJr0ObInU0HnK6upHnFl2glDafUpC6Co7Kp8MJfaXTX?=
- =?us-ascii?Q?OIAQiGIblK6fhMu2cxcjLW9T3SSd4XmP3N1kJr3W6hXXN8B/+57SLRKQhVSK?=
- =?us-ascii?Q?709+CZMidzVciiyLecphwQdm8NKbOaPjthVjQUv0/wiVXuh8tOnPjT7EDDyw?=
- =?us-ascii?Q?OydLaYrl1ekEWSePpwJgxOLbg9r4EvquG7KHBXbKJGCnG57jUaX3lhP5ZIlS?=
- =?us-ascii?Q?Uu4r/1M8TV3p7qZ1ypDa0+ZpQP7zZfj3pjsDZ/VmGWT8UB3giiypsmuHI5YK?=
- =?us-ascii?Q?cE/vte7E1U5xiGQzFGOVJRVo3tzdFsU1ahABk8hFXZE3y8v7NXLLoFUITsqi?=
- =?us-ascii?Q?lvSrAyz1p2B0vBC5eXkaWqLkLqLgdzrE7zkI+RB4IVz+jaOxjOrl5w1q8ei5?=
- =?us-ascii?Q?W8xi85JzeLBTmzsm5g15W9x2Ws9T2pPzJzewZ0+OKpZHGxv2LvCeUgFDGA48?=
- =?us-ascii?Q?pHlVkrLEPe5ZgrvZiPlOjdnE6x/zh5+ZY3qq4I1LORkPkRi7h463UvXXP3K3?=
- =?us-ascii?Q?XPinRgxxgDvPF9AEdkL4M8ZmG8bGIpTQDjL+pRLVYXIXr192nMdetzDlYAvJ?=
- =?us-ascii?Q?cKMbNuuZq61fg+buXymOrdYPAEMvEKuo2l7azEQyT06uKNWRctSJyW/cSg6t?=
- =?us-ascii?Q?stACINr/wm/2MaZYdPGU5VYwJZVArzTCAvpLK2k+0QHd4UvRX5r3A2TxOw0N?=
- =?us-ascii?Q?87nPCQO0Uy0wvdx29LxXSGsfSNxx2K6v?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 16:40:34.3567
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2aad3711-3c0c-43d6-b3df-08dcc6b6f916
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH3PEPF0000000F.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7840
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <mhng-a7dcdfb5-0232-4ffb-8a20-13e564904da1@palmer-ri-x1c9a>
 
-The eMMC RST_N register is implemented as secure register on
-the BlueField-3 SoC and controlled by TF-A. This commit adds the
-hw_reset() support which sends an SMC call to TF-A for the eMMC
-HW reset.
+On Tue, Aug 27, 2024 at 09:33:11AM -0700, Palmer Dabbelt wrote:
+> On Tue, 27 Aug 2024 01:05:15 PDT (-0700), cyy@cyyself.name wrote:
+> > Previous patch series[1][2] changes a mmap behavior that treats the hint
+> > address as the upper bound of the mmap address range. The motivation of the
+> > previous patch series is that some user space software may assume 48-bit
+> > address space and use higher bits to encode some information, which may
+> > collide with large virtual address space mmap may return. However, to make
+> > sv48 by default, we don't need to change the meaning of the hint address on
+> > mmap as the upper bound of the mmap address range. This behavior breaks
+> > some user space software like Chromium that gets ENOMEM error when the hint
+> > address + size is not big enough, as specified in [3].
+> > 
+> > Other ISAs with larger than 48-bit virtual address space like x86, arm64,
+> > and powerpc do not have this special mmap behavior on hint address. They
+> > all just make 48-bit / 47-bit virtual address space by default, and if a
+> > user space software wants to large virtual address space, it only need to
+> > specify a hint address larger than 48-bit / 47-bit.
+> > 
+> > Thus, this patch series change mmap to use sv48 by default but does not
+> > treat the hint address as the upper bound of the mmap address range. After
+> > this patch, the behavior of mmap will align with existing behavior on other
+> > ISAs with larger than 48-bit virtual address space like x86, arm64, and
+> > powerpc. The user space software will no longer need to rewrite their code
+> > to fit with this special mmap behavior only on RISC-V.
+> 
+> So it actually looks like we just screwed up the original version of this:
+> the reason we went with the more complicated address splits were than we
+> actually started with a defacto 39-bit page table uABI (ie 38-bit user VAs),
+> and moving to even 48-bit page tables (ie, 47-bit user VAs) broke users
+> (here's an ASAN bug, for example:
+> https://github.com/google/android-riscv64/issues/64).
+> 
+> Unless I'm missing something, though, the code doesn't actually do that.  I
+> remember having that discussion at some point, but I must have forgotten to
+> make sure it worked.  As far as I can tell we've just moved to the 48-bit
+> VAs by default, which breaks the whole point of doing the compatibilty
+> stuff.  Probably a good sign I need to pay more attention to this stuff.
+> 
+> So I'm not really sure what to do here: we can just copy the arm64 behavior
+> at tell the other users that's just how things work, but then we're just
+> pushing around breakages.  At a certain point all we can really do with this
+> hint stuff is push around problems, though, and at least if we copy arm64
+> then most of those problems get reported as bugs for us.
 
-Reviewed-by: David Thompson <davthompson@nvidia.com>
-Signed-off-by: Liming Sun <limings@nvidia.com>
----
-v1->v2:
-    Fixed a typo reported by test robot.
-v1: Initial version.
----
- drivers/mmc/host/sdhci-of-dwcmshc.c | 29 ++++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
+Relying on the hint address in any capacity will push around breakages
+is my perspective as well. I messed this up from the start. I believe
+the only way to have consistent behavior is to mark mmap relying on the
+hint address as a bug, and only rely on the hint address if a flag
+defines the behavior.
 
-diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
-index ba8960d8b2d4..8999b97263af 100644
---- a/drivers/mmc/host/sdhci-of-dwcmshc.c
-+++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
-@@ -8,6 +8,7 @@
-  */
- 
- #include <linux/acpi.h>
-+#include <linux/arm-smccc.h>
- #include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/dma-mapping.h>
-@@ -201,6 +202,9 @@
- 					 SDHCI_TRNS_BLK_CNT_EN | \
- 					 SDHCI_TRNS_DMA)
- 
-+/* SMC call for BlueField-3 eMMC RST_N */
-+#define BLUEFIELD_SMC_SET_EMMC_RST_N	0x82000007
-+
- enum dwcmshc_rk_type {
- 	DWCMSHC_RK3568,
- 	DWCMSHC_RK3588,
-@@ -1111,6 +1115,29 @@ static const struct sdhci_ops sdhci_dwcmshc_ops = {
- 	.irq			= dwcmshc_cqe_irq_handler,
- };
- 
-+#ifdef CONFIG_ACPI
-+static void dwcmshc_bf3_hw_reset(struct sdhci_host *host)
-+{
-+	struct arm_smccc_res res = { 0 };
-+
-+	arm_smccc_smc(BLUEFIELD_SMC_SET_EMMC_RST_N, 0, 0, 0, 0, 0, 0, 0, &res);
-+
-+	if (res.a0)
-+		pr_err("%s: RST_N failed.\n", mmc_hostname(host->mmc));
-+}
-+
-+static const struct sdhci_ops sdhci_dwcmshc_bf3_ops = {
-+	.set_clock		= sdhci_set_clock,
-+	.set_bus_width		= sdhci_set_bus_width,
-+	.set_uhs_signaling	= dwcmshc_set_uhs_signaling,
-+	.get_max_clock		= dwcmshc_get_max_clock,
-+	.reset			= sdhci_reset,
-+	.adma_write_desc	= dwcmshc_adma_write_desc,
-+	.irq			= dwcmshc_cqe_irq_handler,
-+	.hw_reset		= dwcmshc_bf3_hw_reset,
-+};
-+#endif
-+
- static const struct sdhci_ops sdhci_dwcmshc_rk35xx_ops = {
- 	.set_clock		= dwcmshc_rk3568_set_clock,
- 	.set_bus_width		= sdhci_set_bus_width,
-@@ -1163,7 +1190,7 @@ static const struct dwcmshc_pltfm_data sdhci_dwcmshc_pdata = {
- #ifdef CONFIG_ACPI
- static const struct dwcmshc_pltfm_data sdhci_dwcmshc_bf3_pdata = {
- 	.pdata = {
--		.ops = &sdhci_dwcmshc_ops,
-+		.ops = &sdhci_dwcmshc_bf3_ops,
- 		.quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
- 		.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
- 			   SDHCI_QUIRK2_ACMD23_BROKEN,
--- 
-2.30.1
+There is an awkward window of releases that will have this "buggy"
+behavior. However, since the mmap changes introduced a variety of
+userspace bugs it seems acceptable to revert to the previous behavior
+and to create a consistent path forward.
 
+- Charlie
+
+> 
+> > Note: Charlie also created another series [4] to completely remove the
+> > arch_get_mmap_end and arch_get_mmap_base behavior based on the hint address
+> > and size. However, this will cause programs like Go and Java, which need to
+> > store information in the higher bits of the pointer, to fail on Sv57
+> > machines.
+> > 
+> > Changes in v3:
+> > - Rebase to newest master
+> > - Changes some information in cover letter after patchset [2]
+> > - Use patch [5] to patch selftests
+> > - Link to v2: https://lore.kernel.org/linux-riscv/tencent_B2D0435BC011135736262764B511994F4805@qq.com/
+> > 
+> > Changes in v2:
+> > - correct arch_get_mmap_end and arch_get_mmap_base
+> > - Add description in documentation about mmap behavior on kernel v6.6-6.7.
+> > - Improve commit message and cover letter
+> > - Rebase to newest riscv/for-next branch
+> > - Link to v1: https://lore.kernel.org/linux-riscv/tencent_F3B3B5AB1C9D704763CA423E1A41F8BE0509@qq.com/
+> > 
+> > [1] https://lore.kernel.org/linux-riscv/20230809232218.849726-1-charlie@rivosinc.com/
+> > [2] https://lore.kernel.org/linux-riscv/20240130-use_mmap_hint_address-v3-0-8a655cfa8bcb@rivosinc.com/
+> > [3] https://lore.kernel.org/linux-riscv/MEYP282MB2312A08FF95D44014AB78411C68D2@MEYP282MB2312.AUSP282.PROD.OUTLOOK.COM/
+> > [4] https://lore.kernel.org/linux-riscv/20240826-riscv_mmap-v1-0-cd8962afe47f@rivosinc.com/
+> > [5] https://lore.kernel.org/linux-riscv/20240826-riscv_mmap-v1-2-cd8962afe47f@rivosinc.com/
+> > 
+> > Charlie Jenkins (1):
+> >   riscv: selftests: Remove mmap hint address checks
+> > 
+> > Yangyu Chen (2):
+> >   RISC-V: mm: not use hint addr as upper bound
+> >   Documentation: riscv: correct sv57 kernel behavior
+> > 
+> >  Documentation/arch/riscv/vm-layout.rst        | 43 ++++++++----
+> >  arch/riscv/include/asm/processor.h            | 20 ++----
+> >  .../selftests/riscv/mm/mmap_bottomup.c        |  2 -
+> >  .../testing/selftests/riscv/mm/mmap_default.c |  2 -
+> >  tools/testing/selftests/riscv/mm/mmap_test.h  | 67 -------------------
+> >  5 files changed, 36 insertions(+), 98 deletions(-)
 
