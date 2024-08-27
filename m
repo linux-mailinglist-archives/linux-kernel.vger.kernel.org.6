@@ -1,316 +1,130 @@
-Return-Path: <linux-kernel+bounces-303225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10166960940
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:48:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09B31960946
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA6DB28485F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:48:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77DC2B2352A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BB91A00F8;
-	Tue, 27 Aug 2024 11:48:44 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B631A072D;
+	Tue, 27 Aug 2024 11:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SvllLxzg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F075A199926
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0D5199926;
+	Tue, 27 Aug 2024 11:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724759323; cv=none; b=tVX/JUoir0DKqIf2i7bIS+f+yt1gC6W3yN2YN8mdTxYlBF4n68vSf4w0jttZAQne3wnQ5JFFK4U4RdLCEpgamA5AZRi89N1yA18Lbr83x2jCPSfiZoBTSKC0swEnTD1HkNLYpbU3yNDrLVFKKMBg6qtOtcrajQXtMG58UKTedvE=
+	t=1724759371; cv=none; b=lJVLtC0R4DF4c7r1tOhCcx19E7YKkKVfC8HBRstJ75ClJUPE9/mshqrU2nUSwNzmx8jl081gcfMg2dQ9yOSoBffsSUpDmZJWuDt2nG6MS81NOWCkvxvMLlsYSwms1l8+Y+r5q3jjwyCwkEnNRNT4QqoaAcRX9o7OMnck3IMBe6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724759323; c=relaxed/simple;
-	bh=9l5m14AmLiEL3iBQcLCCkhBFbDGj9dw+s4H2iVYtDxg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VB3fx+0Zy12rBysh7k2O0ihf67lrc/LewCtAuX1Xe4NEp75EdQ089sLDp0PnwTfo/25q0NLiZH/lOsg8Ug/Xer1VVftkbu6G82nDb3QSIAiKO5zRusyjBX2fUBg9K+pYTGAyYK6OIRX6nSCnHQ7wMwj9P4b3MgDmmnrDN7SoAHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WtQk72bvFz1xwMP;
-	Tue, 27 Aug 2024 19:46:39 +0800 (CST)
-Received: from kwepemm600004.china.huawei.com (unknown [7.193.23.242])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8F313140120;
-	Tue, 27 Aug 2024 19:48:36 +0800 (CST)
-Received: from [10.67.121.59] (10.67.121.59) by kwepemm600004.china.huawei.com
- (7.193.23.242) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 27 Aug
- 2024 19:48:35 +0800
-Message-ID: <de0d4cb2-c668-1d7f-2893-a42840a2b53b@huawei.com>
-Date: Tue, 27 Aug 2024 19:48:32 +0800
+	s=arc-20240116; t=1724759371; c=relaxed/simple;
+	bh=q8fat2cHBmCFbst/4767sxbNMOrAnZzY/bgzJE0Z8ZU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fvtyBn9w2rDUws19up/+K3OtREAw6ZA1vi0WPILljqpbGcJHFvXJCsM/YF/xE5SRCHX9Q3LTeMDssHWwvHBCzfLcUC5gq9DZUJ70tSnrAggZinEoO5ZqLISHNmoJCVyftMbxU3ZWJBrljkgZ0Mo92EoAVs4nSpdUhZMaNKNVAPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SvllLxzg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9A0DC4D04D;
+	Tue, 27 Aug 2024 11:49:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724759370;
+	bh=q8fat2cHBmCFbst/4767sxbNMOrAnZzY/bgzJE0Z8ZU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=SvllLxzg08LQfpUpPIVkUuqR/vUIVc4CzE55y0mTVYTpYMPiXfMNS9F8vE1IPfGbj
+	 jSkyal5Tht/D/jNNImeTsXJZk5X/CmLweNHMkdG86WLGmo1atThW48c6h4R+g0YaGN
+	 V1hv0qUaQq7So1vomuqFahVLcVuROj3LCtM3yF77NmxCDml5GIODxtWAlyY/WLjdWL
+	 TEexoytpzg9AEkA9UzEbMww/qGWDgNfxl4Q9lpf6okFbscX3dwot3hB5kVPnPHDV8r
+	 YmEA6R1lANeghi9WLcAmLZb84bBQ4EgB7t/cGlv/HqbNuMS5JerB3oWz5OAdCyvj4G
+	 BzaSwHH1q56yA==
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-70944d76a04so3816525a34.0;
+        Tue, 27 Aug 2024 04:49:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUmVsS6fNOLB3ghb5buLhLFNcVbLjz1PJnpeCWEfVAh/dhMVM3PKYLZv9rwmwugV7EKP2ehB189p7OA8gQ=@vger.kernel.org, AJvYcCWEC4y+V7PbPj4c+gAJhbGtOS7rhdtsNFWYBAS+8b2Z3kUtI6WJV4M+dMJQta8oFIAYKtjkhxpLSmg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkJCSpwTcsAPTqRa69z8hzyFoi5bg/cxzMu9p656NjT4AKsWAq
+	FtPMaSSNMCRDhAwWf90kWUiDrpqAoUkv+Tt0rZOS3/dX5V7Y5mWXJMU7Wu2wBEmJs2gVDZEETwV
+	3oWc7b/bt1oYno2l0h2RObvSCHGU=
+X-Google-Smtp-Source: AGHT+IE36XhiYJ2H724axgI4XwB6FfmDGnCfm2PQ028NCZUMo3q753Wj2wjuyDMs5VwFtDOxS+I14wbr7vjD1wb700g=
+X-Received: by 2002:a05:6830:2112:b0:703:6b11:33a4 with SMTP id
+ 46e09a7af769-70f47ac60fbmr989902a34.9.1724759370153; Tue, 27 Aug 2024
+ 04:49:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v2 6/6] soc: hisilicon: kunpeng_hccs: Support low power
- feature for the specified HCCS type
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-CC: <xuwei5@hisilicon.com>, <linux-kernel@vger.kernel.org>, <soc@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <krzk@kernel.org>,
-	<wanghuiqiang@huawei.com>, <liuyonglong@huawei.com>
-References: <20240718071134.31155-1-lihuisong@huawei.com>
- <20240823031059.32579-1-lihuisong@huawei.com>
- <20240823031059.32579-7-lihuisong@huawei.com>
- <20240823095851.0000004e@Huawei.com>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <20240823095851.0000004e@Huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemm600004.china.huawei.com (7.193.23.242)
+References: <4941491.31r3eYUQgx@rjwysocki.net> <3311190.44csPzL39Z@rjwysocki.net>
+ <20240826230742.GA7773@ranerica-svr.sc.intel.com>
+In-Reply-To: <20240826230742.GA7773@ranerica-svr.sc.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 27 Aug 2024 13:49:18 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hiNxLsX2ExT8QphkTev4-i++4xo4CuG3rVkLqTZsiBgA@mail.gmail.com>
+Message-ID: <CAJZ5v0hiNxLsX2ExT8QphkTev4-i++4xo4CuG3rVkLqTZsiBgA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] cpufreq: intel_pstate: Set asymmetric CPU capacity
+ on hybrid systems
+To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, x86 Maintainers <x86@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Ricardo Neri <ricardo.neri@intel.com>, Tim Chen <tim.c.chen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jonathan,
+On Tue, Aug 27, 2024 at 1:00=E2=80=AFAM Ricardo Neri
+<ricardo.neri-calderon@linux.intel.com> wrote:
+>
+> On Mon, Aug 12, 2024 at 02:44:30PM +0200, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> [...]
+> > @@ -3143,6 +3341,20 @@ static int intel_pstate_register_driver(
+> >
+> >       global.min_perf_pct =3D min_perf_pct_min();
+> >
+> > +     /*
+> > +      * On hybrid systems, use asym capacity instead of ITMT, but beca=
+use
+> > +      * the capacity of SMT threads is not deterministic even approxim=
+ately,
+> > +      * do not do that when SMT is in use.
+> > +      */
+> > +     if (hwp_is_hybrid && !sched_smt_active() &&
+> > +         arch_enable_hybrid_capacity_scale()) {
+> > +             sched_clear_itmt_support();
+> > +
+> > +             hybrid_init_cpu_scaling();
+> > +
+> > +             arch_rebuild_sched_domains();
+>
+> sched_clear_itmt_support() also calls arch_rebuild_sched_domains(). The
+> latter is also called earlier via sched_set_itmt_support(), totaling 3
+> calls, two of which are wasted.
 
-Thanks for your review again.
-Your proposal are good and are also more worth to enhance code.
-How about use guard() for all sysfs interface in furture patch?
-I want to support this feature first.
+Not necessarily two because arch_enable_hybrid_capacity_scale() may
+return "false".
 
-Huisong
+But you have a point.
 
+> Perhaps at minimum hybrid_init_cpu_scaling() can be before
+> sched_clear_itmt_support().
 
-在 2024/8/23 16:58, Jonathan Cameron 写道:
-> On Fri, 23 Aug 2024 11:10:59 +0800
-> Huisong Li <lihuisong@huawei.com> wrote:
->
->> Add the low power feature for the specified HCCS type by increasing
->> and decreasing the used lane number of these HCCS ports on platform.
->>
->> Signed-off-by: Huisong Li <lihuisong@huawei.com>
-> Hi Huisong,
->
-> A few comments inline, but all minor things.
->
-> With at least the "none" string print dropped as it's in an error path
-> that shouldn't be hit you can add
-You are correct.
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->
-> The early return comment and whitespace suggestion are things you
-> can act on if you liek for v2.
->
-> Jonathan
->
->> ---
->>   .../sysfs-devices-platform-kunpeng_hccs       |  37 ++
->>   drivers/soc/hisilicon/Kconfig                 |   7 +-
->>   drivers/soc/hisilicon/kunpeng_hccs.c          | 378 +++++++++++++++++-
->>   drivers/soc/hisilicon/kunpeng_hccs.h          |  14 +
->>   4 files changed, 433 insertions(+), 3 deletions(-)
->>
->> diff --git a/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs b/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs
->> index d4c355e0e0bb..d1b3a95a5518 100644
->> --- a/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs
->> +++ b/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs
->> @@ -87,3 +87,40 @@ Contact:	Huisong Li <lihuisong@huawei.com>
->>   Description:
->>   		This interface is used to show all HCCS types used on the
->>   		platform, like, HCCS-v1, HCCS-v2 and so on.
->> +
->> +What:		/sys/devices/platform/HISI04Bx:00/available_inc_dec_lane_types
->> +What:		/sys/devices/platform/HISI04Bx:00/dec_lane_of_type
->> +What:		/sys/devices/platform/HISI04Bx:00/inc_lane_of_type
->> +Date:		August 2024
->> +KernelVersion:	6.12
->> +Contact:	Huisong Li <lihuisong@huawei.com>
->> +Description:
->> +		These interfaces under /sys/devices/platform/HISI04Bx/ are
->> +		used to support the low power consumption feature of some
->> +		HCCS types by changing the number of lanes used. The interfaces
->> +		changing the number of lanes used are 'dec_lane_of_type' and
->> +		'inc_lane_of_type' which require root privileges. These
->> +		interfaces aren't exposed if no HCCS type on platform support
->> +		this feature. Please note that decreasing lane number is only
->> +		allowed if all the specified HCCS ports are not busy.
->> +
->> +		The low power consumption interfaces are as follows:
->> +
->> +		============================= ==== ================================
->> +		available_inc_dec_lane_types: (RO) available HCCS types (string) to
->> +						   increase and decrease the number
->> +						   of lane used, e.g. HCCS-v2.
-> See below. There is an apparent value of 'none' available, but I think in reality the
-> interface doesn't exist if that is present. So drop it as it will just cause confusion.
-Ack
->
->> +		dec_lane_of_type:             (WO) input HCCS type supported
->> +						   decreasing lane to decrease the
->> +						   used lane number of all specified
->> +						   HCCS type ports on platform to
->> +						   the minimum.
->> +						   You can query the 'cur_lane_num'
->> +						   to get the minimum lane number
->> +						   after executing successfully.
->> +		inc_lane_of_type:             (WO) input HCCS type supported
->> +						   increasing lane to increase the
->> +						   used lane number of all specified
->> +						   HCCS type ports on platform to
->> +						   the full lane state.
->> +		============================= ==== ================================
->> +static int hccs_wait_serdes_adapt_completed(struct hccs_dev *hdev, u8 type)
->> +{
->> +#define HCCS_MAX_WAIT_CNT_FOR_ADAPT	10
->> +#define HCCS_QUERY_ADAPT_RES_DELAY_MS	100
->> +#define HCCS_SERDES_ADAPT_OK		0
->> +
->> +	struct hccs_inc_lane_req_param *req_param;
->> +	u8 wait_cnt = HCCS_MAX_WAIT_CNT_FOR_ADAPT;
->> +	struct hccs_desc desc;
->> +	u8 adapt_res;
->> +	int ret;
->> +
->> +	do {
->> +		hccs_init_req_desc(&desc);
->> +		req_param = (struct hccs_inc_lane_req_param *)desc.req.data;
->> +		req_param->port_type = type;
->> +		req_param->opt_type = HCCS_GET_ADAPT_RES;
->> +		ret = hccs_pcc_cmd_send(hdev, HCCS_PM_INC_LANE, &desc);
->> +		if (ret) {
->> +			dev_err(hdev->dev, "query adapting result failed, ret = %d.\n",
->> +				ret);
->> +			return ret;
->> +		}
->> +		adapt_res = *((u8 *)&desc.rsp.data);
->> +		if (adapt_res == HCCS_SERDES_ADAPT_OK)
->> +			break;
-> return 0; here perhaps?
+It can.
 
-It's ok. And then we can directly return failure if timeout.
+I'll send a new version of the patch with this change.
 
+> The changes made by these two functions will
+> be picked up in a single call of arch_rebuild_sched_domains().
 >
->> +
->> +		msleep(HCCS_QUERY_ADAPT_RES_DELAY_MS);
->> +	} while (--wait_cnt);
->> +
->> +	if (adapt_res != HCCS_SERDES_ADAPT_OK) {
-> With above early exit in good path, this can be unconditional perhaps?
-Yes
->
->> +		dev_err(hdev->dev, "wait for adapting completed timeout.\n");
->> +		return -ETIMEDOUT;
->> +	}
->> +
->> +	return ret;
->> +}
->> +static ssize_t inc_lane_of_type_store(struct kobject *kobj, struct kobj_attribute *attr,
->> +			      const char *buf, size_t count)
->> +{
->> +	struct hccs_dev *hdev = device_kobj_to_hccs_dev(kobj);
->> +	bool full_lane;
->> +	u8 port_type;
->> +	int ret;
->> +
->> +	ret = hccs_parse_pm_port_type(hdev, buf, &port_type);
->> +	if (ret)
->> +		return ret;
->> +
->> +	mutex_lock(&hdev->lock);
-> Another comment for a future patch series perhaps.
->
-> guard(mutex)(&hdev->lock); in all these will make the code quite a bit cleaner.
-This is a good way. very nice and simple.
-But many sysfs interfaces in this driver have used mutex_lock/mutex_unlock.
-So is it better for us to keep the same mutex lock way in this patch and 
-use guard() for all sysfs interface in furture patch?
->> +	ret = hccs_get_all_spec_port_full_lane_sta(hdev, port_type, &full_lane);
->> +	if (ret || full_lane)
->> +		goto out;
->> +
->> +	ret = hccs_start_inc_lane(hdev, port_type);
->> +out:
->> +	mutex_unlock(&hdev->lock);
->> +	return ret == 0 ? count : ret;
->> +}
->> +static struct kobj_attribute inc_lane_of_type_attr =
->> +		__ATTR(inc_lane_of_type, 0200, NULL, inc_lane_of_type_store);
->> +
->> +static ssize_t available_inc_dec_lane_types_show(struct kobject *kobj,
->> +						 struct kobj_attribute *attr,
->> +						 char *buf)
->> +{
->> +	struct hccs_dev *hdev = device_kobj_to_hccs_dev(kobj);
->> +
->> +	if (hdev->caps & HCCS_CAPS_HCCS_V2_PM)
->> +		return sysfs_emit(buf, "%s\n",
->> +				  hccs_port_type_to_name(hdev, HCCS_V2));
->> +
->> +	return sysfs_emit(buf, "%s\n", "none");
-> Can we get here? I thought this was only registered if the condition
-> above is true?
->
-> Maybe worth keeping a fallback here as a code hardening measure, but
-> perhaps return -EINVAL; is fine?
-Ack
->
->
->> +}
->> +static struct kobj_attribute available_inc_dec_lane_types_attr =
->> +		__ATTR(available_inc_dec_lane_types, 0444,
->> +		       available_inc_dec_lane_types_show, NULL);
->>   
->>   static ssize_t used_types_show(struct kobject *kobj,
->>   			       struct kobj_attribute *attr, char *buf)
->> @@ -1215,11 +1553,49 @@ static struct kobj_attribute used_types_attr =
->>   static void hccs_remove_misc_sysfs(struct hccs_dev *hdev)
->>   {
->>   	sysfs_remove_file(&hdev->dev->kobj, &used_types_attr.attr);
->> +
->> +	if (!(hdev->caps & HCCS_CAPS_HCCS_V2_PM))
->> +		return;
->> +
->> +	sysfs_remove_file(&hdev->dev->kobj,
->> +			  &available_inc_dec_lane_types_attr.attr);
->> +	sysfs_remove_file(&hdev->dev->kobj, &dec_lane_of_type_attr.attr);
->> +	sysfs_remove_file(&hdev->dev->kobj, &inc_lane_of_type_attr.attr);
->>   }
->>   
->>   static int hccs_add_misc_sysfs(struct hccs_dev *hdev)
->>   {
->> -	return sysfs_create_file(&hdev->dev->kobj, &used_types_attr.attr);
->> +	int ret;
->> +
->> +	ret = sysfs_create_file(&hdev->dev->kobj, &used_types_attr.attr);
->> +	if (ret)
->> +		return ret;
->> +
->> +	if (!(hdev->caps & HCCS_CAPS_HCCS_V2_PM))
->> +		return 0;
->> +
->> +	ret = sysfs_create_file(&hdev->dev->kobj,
->> +				&available_inc_dec_lane_types_attr.attr);
->> +	if (ret)
->> +		goto used_types_remove;
->> +
->> +	ret = sysfs_create_file(&hdev->dev->kobj, &dec_lane_of_type_attr.attr);
->> +	if (ret)
->> +		goto inc_dec_lane_types_remove;
-> I can sort of see why no line break makes some sense here given these
-> two files are closely related, but I'd still add one here as I think
-> visual consistency is more important for readability reasons.
-Ack
->
->> +	ret = sysfs_create_file(&hdev->dev->kobj, &inc_lane_of_type_attr.attr);
->> +	if (ret)
->> +		goto dec_lane_of_type_remove;
->> +
->> +	return 0;
->> +
->> +dec_lane_of_type_remove:
->> +	sysfs_remove_file(&hdev->dev->kobj, &dec_lane_of_type_attr.attr);
->> +inc_dec_lane_types_remove:
->> +	sysfs_remove_file(&hdev->dev->kobj,
->> +			  &available_inc_dec_lane_types_attr.attr);
->> +used_types_remove:
->> +	sysfs_remove_file(&hdev->dev->kobj, &used_types_attr.attr);
->> +	return ret;
->>   }
->>   
->>   static void hccs_remove_die_dir(struct hccs_die_info *die)
-> .
+> Moreover, ITMT can be not enabled at all if so we wish. By the time
+> intel_pstate_set_itmt_prio() is called, the value of hwp_is_hybrid is
+> already known.
+
+But at that time it is not known whether or not
+arch_enable_hybrid_capacity_scale() will succeed.
+
+Thanks!
 
