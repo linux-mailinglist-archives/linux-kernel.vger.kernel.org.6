@@ -1,118 +1,212 @@
-Return-Path: <linux-kernel+bounces-303193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9A499608D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:36:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 459DA9608DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:37:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28F8D1C20E31
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:36:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 668551C220BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F901A01AE;
-	Tue, 27 Aug 2024 11:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661E11A00F8;
+	Tue, 27 Aug 2024 11:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u7vwb1MM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S0tZRJpa"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28029139580;
-	Tue, 27 Aug 2024 11:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07C114D29C
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724758595; cv=none; b=EVquZUUTRjaOJEVRB6IVXchYWG8On+9FnTEA/uGD3L1hkAbW7o/ZTkh5ZARZEnUIb1e4B95WcvUZ3cQ4IhStKTSZb3Xu0PegCZ8Rfhz0ztMjtCUkaqczZNmez0WQVIn7jI0gQ7ofq2Auu8FY+yfD0o9Sd9gb+b1JXc6NjEuGzak=
+	t=1724758617; cv=none; b=jnJd9f96RiPwsJdR/64JifUm9qOAlhowYDVZIF0OMbr41pTV1C7UoR5qsnFTNd1428/mQ/ypSfLOzzZzTOPKrVFMvaFpGwhdmJBJI7PCCyxNUWPH7N/U2y+KZfoA4bFP4WGCqvEoiPrT6CGSNXx/UCeE9fk1o5bWu34rBhCulig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724758595; c=relaxed/simple;
-	bh=UcW3FlwqzuyJC9hCJ1ksNC75o+2Abm/hr0EArMLVnD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A27E7zLlYU7sUTO6wf9TA7vM5GuxUPC2zgx+vOSMTaBvz9tbXTallfRJqYfDElz5Khtzt9CzbL+CXWY7F3oMdlbgPpKxpJ6Z4NPQ/1dE4X3LrvFQtYJXedOredaKOFSUIRdiM9l0lTMRHExEasOsqjyE03Z9qFg8RO2wiB2F8G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u7vwb1MM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE09FC4FF6D;
-	Tue, 27 Aug 2024 11:36:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724758594;
-	bh=UcW3FlwqzuyJC9hCJ1ksNC75o+2Abm/hr0EArMLVnD8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u7vwb1MMrQL1AC5qXHbki5GkSPFBcZxhTD/qXN7Is7Ck+79QFUzmvB8EmwEjnKB11
-	 J0bnPk5haVavHQaqxta0wkp0As1SYqmiahukScVyh75RL6P92Kk5Lt801TeYqd5t0f
-	 RSFNvqAmSXybFLkcIyUz21Ax6ZrKOnsolRf8yo6JD7AUsj29RnIcDQwrddkQf8NlxR
-	 fn5ViQ7ntWiynZbWCR7f9yPJSmETgD2NMI6mtodjWGZpqRXuxhEXRu8eAk8KuU685l
-	 k+/Xf3PGHPcQIovoE4G4324FEkigDbr6R3JNQVGQMYJugMm1Ukn3Itv0s9RGQnNnQ6
-	 NwOmBnc295sXw==
-Date: Tue, 27 Aug 2024 13:36:30 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org, 
-	robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, abel.vesa@linaro.org, 
-	quic_msarkar@quicinc.com, quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org, 
-	kw@linux.com, lpieralisi@kernel.org, neil.armstrong@linaro.org, 
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 5/8] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy:
- Document the X1E80100 QMP PCIe PHY Gen4 x8
-Message-ID: <jqzbpgqrbazf3rbdhag56rks74r2h3sjm6mr3tp7v2hb6pxamy@qhksqzsygttt>
-References: <20240827063631.3932971-1-quic_qianyu@quicinc.com>
- <20240827063631.3932971-6-quic_qianyu@quicinc.com>
+	s=arc-20240116; t=1724758617; c=relaxed/simple;
+	bh=IRbk4XlXS9AL1SVPnwuRZB64g4tDHR/DIdnqSuKhoPE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mj5wJnppYmrxaKzqHil9CtnmWiw55EYw3/TpWc6qF+YNtWX0aSaj3VomNCOHO4tw2zy12ZUPMcV1EiNGQvf9u+Vu4eJwRbLPwY5AVLk67d0zRFakhey5dFZl9UUwdif7P92Ax0Zr7Dgc5SDSJH/kwK22JZM8kA7p6z4ws+w9fL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S0tZRJpa; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-36d2a601c31so3175551f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 04:36:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724758614; x=1725363414; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OiKQkX9JXAm55mwNI4zYxY4asKveYVGU+Q+n1G5Ueug=;
+        b=S0tZRJpad7dacAWNhk7IbSgkKrz9I4QXzh1O1oAAdI/kj3Kz9hRbuLHPCG7QNa+OL3
+         PnXJNxUYcyaVcGw95CrNrDQD6G6LyQtWtlUL6sf1zUqYLGVT5G8MPZSfsPAdnaibigm4
+         tR3BaiyvSRxhDPQ+dDpJR4I/pOzOHrUrFRZjKZJWPdGg7A3JI7DsoYXP0IJKTfC5DMp1
+         vHzlGcWLcNauHr5GG7OUIH82r5+0vLRLmVM9oKNF/kuq2Ii89KNRBy+4CEKDprLMY4R6
+         8NUFgIO1STeIHZ9QAR7NDBBB2o+rIJoDDjk1+kU0C2XY3IQ6o7pMjtnvBaOtS1hTajl8
+         RClg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724758614; x=1725363414;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OiKQkX9JXAm55mwNI4zYxY4asKveYVGU+Q+n1G5Ueug=;
+        b=bdaUDoXxl6Qci4rp/H+PyLvqUhsDfak0di3pOMgg2HRfHEFBVpWqKQ6I1Xwl8022vs
+         x/0zJ1fs45H3Zfpp6/ZEYnI38zRgMjJ6FXuK46LC+kvYCbkm2AF0dENm/3wk54PGMq5+
+         yOS3mUMFl3m2gppbvhgA6ZG4y4sjHBC9pWemCTgnMCTsAQJfPvvYc97zAV8nGDyoJlC2
+         +r7RCl58RKCHtyT8HLMTW08X4GAj3+7OmF3japygfMYgb8zyWbVuYAW4m9Qs0vgjbHj+
+         f8nDeqrRrnSAxbuAKzFCZ/OKrvzvkUDmefdthSkHBZixhV6uYXsQmlQB0bOu1m0M04C9
+         i5pg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ9gjkemky2p4JjyYSK+ykQ2teAtCZx73EBGBV5Qowa4Joq2lKeVU6l06WWybwoq3icbxb+fvK3PxCASM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhONF138TpvXZWqI653M0VQGONw8X/6dm/tLth/u7M3OQtj3ir
+	nWhtKbccKEB3s+8MkDq8Z6wPhDQXigoa53MNB3ME1fJEzbxqt9ktAhNtLAiKj/+ULTjxviLm+ML
+	vfeaG6bfLsxLc36OTJVihydHyQINKfCVEHIpZ
+X-Google-Smtp-Source: AGHT+IHLB2RvAn3JqickjtZcl5YzVN33cRXUCK4PAl1Gfw449IAMUegRjNOP1+0UnRKyCCQgoiHkiFDo9yZOJt1ijW8=
+X-Received: by 2002:adf:fe86:0:b0:371:7c68:32e6 with SMTP id
+ ffacd0b85a97d-3748c7c78demr1625380f8f.4.1724758613879; Tue, 27 Aug 2024
+ 04:36:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240827063631.3932971-6-quic_qianyu@quicinc.com>
+References: <20240806-shadow-call-stack-v5-1-26dccb829154@google.com>
+ <20240820143503.GD28338@willie-the-truck> <CAH5fLggN+A2RawC-cpmSUHxYm=xz=1EDpMUv5C803hj37re1qA@mail.gmail.com>
+ <20240823122423.GB32110@willie-the-truck> <CAH5fLgh6ywHeFSwbnaOu-QYrt_Jytv_y3zb1QbJzK-w4kQ617w@mail.gmail.com>
+ <20240823125739.GA32156@willie-the-truck> <CAH5fLgiCr3hOEX1yaqy66OMsbPTtEhA4FCmRiw20zY64vYKHPw@mail.gmail.com>
+ <20240823132133.GC32156@willie-the-truck>
+In-Reply-To: <20240823132133.GC32156@willie-the-truck>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 27 Aug 2024 13:36:41 +0200
+Message-ID: <CAH5fLgjjnDZG2BBApmiss43+gOs85xjJM9DP8RLO+y+UXm1cOg@mail.gmail.com>
+Subject: Re: [PATCH v5] rust: support for shadow call stack sanitizer
+To: Will Deacon <will@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Jamie Cunliffe <Jamie.Cunliffe@arm.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Conor Dooley <conor@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Valentin Obst <kernel@valentinobst.de>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 26, 2024 at 11:36:28PM -0700, Qiang Yu wrote:
-> PCIe 3rd instance of X1E80100 support Gen 4x8 which needs different 8 lane
-> capable QMP PCIe PHY. Document Gen 4x8 PHY as separate module.
-> 
-> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> ---
->  .../phy/qcom,sc8280xp-qmp-pcie-phy.yaml        | 18 +++++++++++++++++-
->  1 file changed, 17 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
-> index 03dbd02cf9e7..e122657490b1 100644
-> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
-> @@ -40,6 +40,7 @@ properties:
->        - qcom,sm8650-qmp-gen4x2-pcie-phy
->        - qcom,x1e80100-qmp-gen3x2-pcie-phy
->        - qcom,x1e80100-qmp-gen4x2-pcie-phy
-> +      - qcom,x1e80100-qmp-gen4x8-pcie-phy
->  
->    reg:
->      minItems: 1
-> @@ -47,7 +48,7 @@ properties:
->  
->    clocks:
->      minItems: 5
-> -    maxItems: 7
-> +    maxItems: 8
->  
->    clock-names:
->      minItems: 5
-> @@ -59,6 +60,7 @@ properties:
->        - const: pipe
->        - const: pipediv2
->        - const: phy_aux
-> +      - const: clkref_en
+On Fri, Aug 23, 2024 at 3:21=E2=80=AFPM Will Deacon <will@kernel.org> wrote=
+:
+>
+> On Fri, Aug 23, 2024 at 03:09:40PM +0200, Alice Ryhl wrote:
+> > On Fri, Aug 23, 2024 at 2:57=E2=80=AFPM Will Deacon <will@kernel.org> w=
+rote:
+> > >
+> > > On Fri, Aug 23, 2024 at 02:38:20PM +0200, Alice Ryhl wrote:
+> > > > On Fri, Aug 23, 2024 at 2:24=E2=80=AFPM Will Deacon <will@kernel.or=
+g> wrote:
+> > > > >
+> > > > > On Tue, Aug 20, 2024 at 05:13:58PM +0200, Alice Ryhl wrote:
+> > > > > > On Tue, Aug 20, 2024 at 4:35=E2=80=AFPM Will Deacon <will@kerne=
+l.org> wrote:
+> > > > > > > On Tue, Aug 06, 2024 at 10:01:44AM +0000, Alice Ryhl wrote:
+> > > > > > > > diff --git a/init/Kconfig b/init/Kconfig
+> > > > > > > > index fe76c5d0a72e..d857f6f90885 100644
+> > > > > > > > --- a/init/Kconfig
+> > > > > > > > +++ b/init/Kconfig
+> > > > > > > > @@ -1909,7 +1909,7 @@ config RUST
+> > > > > > > >       depends on !MODVERSIONS
+> > > > > > > >       depends on !GCC_PLUGINS
+> > > > > > > >       depends on !RANDSTRUCT
+> > > > > > > > -     depends on !SHADOW_CALL_STACK
+> > > > > > > > +     depends on !SHADOW_CALL_STACK || RUSTC_VERSION >=3D 1=
+08000 && UNWIND_PATCH_PAC_INTO_SCS
+> > > > > > >
+> > > > > > > Sorry, I didn't spot this in v4, but since UNWIND_PATCH_PAC_I=
+NTO_SCS is
+> > > > > > > specific to arm64 and the only other architecture selecting
+> > > > > > > ARCH_SUPPORTS_SHADOW_CALL_STACK is riscv, I can't help but fe=
+el it would
+> > > > > > > be cleaner to move this logic into the arch code selecting HA=
+VE_RUST.
+> > > > > > >
+> > > > > > > That is, it's up to the architecture to make sure that it has=
+ whatever
+> > > > > > > it needs for SCS to work with Rust if it claims to support Ru=
+st.
+> > > > > > >
+> > > > > > > What do you think?
+> > > > > >
+> > > > > > The `select RUST if ...` is going to get really complicated if =
+we
+> > > > > > apply that rule in general. Having options here allows us to sp=
+lit
+> > > > > > them across several `depends on` clauses. I'm not sure it will =
+even
+> > > > > > work, I had issues with cyclic Kconfig errors previously. I als=
+o don't
+> > > > > > think it's unreasonable for the architecture to say it supports=
+ both
+> > > > > > options when it really does support both; they are just mutuall=
+y
+> > > > > > exclusive. I also think there is value in having all of the opt=
+ions
+> > > > > > that Rust doesn't work with in one place.
+> > > > >
+> > > > > I'm not sure I follow why this will get really complicated. Isn't=
+ it as
+> > > > > straightforward as the diff below, or did I miss something?
+> > > >
+> > > > Hmm. I tried this but I wasn't able to enable Rust with this setup.
+> > > > Even though the deps of RUSTC_SUPPORTS_ARM64 are ok, it doesn't see=
+m
+> > > > to be enabled and I can't find it in menuconfig. I think we need to
+> > > > have a `select RUSTC_SUPPORTS_ARM64` somewhere.
+> > >
+> > > Sorry, yes, my diff was a little half-arsed:
+> > >
+> > > > > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> > > > > index a2f8ff354ca6..2f5702cb9dac 100644
+> > > > > --- a/arch/arm64/Kconfig
+> > > > > +++ b/arch/arm64/Kconfig
+> > > > > @@ -231,7 +231,7 @@ config ARM64
+> > > > >         select HAVE_FUNCTION_ARG_ACCESS_API
+> > > > >         select MMU_GATHER_RCU_TABLE_FREE
+> > > > >         select HAVE_RSEQ
+> > > > > -       select HAVE_RUST if CPU_LITTLE_ENDIAN
+> > > > > +       select HAVE_RUST if RUSTC_SUPPORTS_ARM64
+> > > > >         select HAVE_STACKPROTECTOR
+> > > > >         select HAVE_SYSCALL_TRACEPOINTS
+> > > > >         select HAVE_KPROBES
+> > > > > @@ -265,6 +265,11 @@ config ARM64
+> > > > >         help
+> > > > >           ARM 64-bit (AArch64) Linux support.
+> > > > >
+> > > > > +config RUSTC_SUPPORTS_ARM64
+> > > > > +       bool
+> > >
+> > > This line ^^^ should be 'def_bool y'.
+> >
+> > Ah, I see, I guess I learned something today. It also seems to work if
+> > I add `default y`.
+> >
+> > I can change it if you think this is better. I still think there's
+> > some value in having everything in one place, but it's not a big deal.
+> > Either way, it should be temporary for a few kernel releases as we'll
+> > eventually only support compiler versions where this works.
+>
+> I do like moving the reference to UNWIND_PATCH_PAC_INTO_SCS into the
+> arch code, so if you could respin along these lines then that would be
+> great.
 
-That sounds like enabling clock ref, not the reference clock.
+Done, see:
+https://lore.kernel.org/all/20240826-shadow-call-stack-v6-1-495a7e3eb0ef@go=
+ogle.com/
 
->  
->    power-domains:
->      maxItems: 1
-> @@ -190,6 +192,19 @@ allOf:
->          clock-names:
->            minItems: 7
+I took the opportunity to incorporate new developments in rustc
+changes into the Kconfig rules.
 
-You need to now constrain other cases. Missing maxItems.
-
-Best regards,
-Krzysztof
-
+Alice
 
