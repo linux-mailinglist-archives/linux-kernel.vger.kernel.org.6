@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-303028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF26596065D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:56:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2A8396065E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:56:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A7191F2230E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:56:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F14F21C214E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D9119DF8D;
-	Tue, 27 Aug 2024 09:56:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB42A19E7E0;
+	Tue, 27 Aug 2024 09:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gsPIRQpT"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Dl01uO9G"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D2419D067
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2D519DF65
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724752562; cv=none; b=pQTYebv2CM3mMJWuWx1zA54ynMHboCMUcMs/upiQ1CBUKtAbZDe9vTyPDkUgbH1oKP2jNvkpt5LN29dbTpB+3qe/RQzAA/merK43D6g2dORTf9PgIhYYTDHVKR+njZJWf8hoojDsq+uKyucsPkgbw+JhfwCAfKWp50KauJY2VHE=
+	t=1724752564; cv=none; b=lvFZd6WHCg8LFd7pIKgi9Q0mR8oGBifPioDXzKXyhHNLwLrAv1fDUVwnGQHKrYhXiaxTS4Trtto/2E/CY4EXwlAW3Mf8CqeXqgQSc432jSZ4ao8y84yKV3R4d2XS3C13M/gzLncMXwHppIw9u+AdCGu852UxwepbYNjRzlRC7pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724752562; c=relaxed/simple;
-	bh=CaKmYffiLj5wjYYPSwbMvdyiljpXahIOuxC/bopPWgU=;
+	s=arc-20240116; t=1724752564; c=relaxed/simple;
+	bh=9eletfkZoOidjC/xY6StFxKzNyYPlUK7lRHiXuisd4A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ohj94mW+ntN4/9tjsKndD4m+3iLgNUPvan9a4LvGCriQk2TLqnBE3eLrMVLm7Xds7xLidwnkPD3DkIEQm8PEthenXvNzz/VL/0MytpuWKHoxv0Mm4oDrkqVE+zctT1fStc6NuvXIheNR6VBrdPDC2GJY+QM+MD3t6H1pqVd3B2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gsPIRQpT; arc=none smtp.client-ip=209.85.214.175
+	 MIME-Version; b=QDYZ6xNvADJNC4ORvV43pW+/EbuJC5fWbmMOVx6CrVs4heITUSfd37VuNJZYPA4Mr1QESL1FeTvMY3nleyFKKDjxRySpJQ4dY9oeiMmPZw+aJTFPQW0xvAWAT/Rxz0oKnAbLzDZBkTnPQjB2tYUevMicnkCBBjAR2E+eSh9bOHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Dl01uO9G; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-201e64607a5so37481945ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 02:56:00 -0700 (PDT)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-201f2b7fe0dso45377765ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 02:56:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724752560; x=1725357360; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1724752561; x=1725357361; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ulSL1wDh1UXX6pfgOa+SdSJMLV52Cd+y6JQhndrl4/Y=;
-        b=gsPIRQpTDUKLCuLP9FlANzcTzarF6Y2q7h4hgtiRECZC3IEllhG3/e33ikPJ3XpEfk
-         1VzUMJBbZfPfMzOhPN4XaOm1igAIjsdmwQCrNZkW9IXORE2ONtXfia30FBcx3RdcJA0x
-         RuNaaAxNU/buQaIRcTLtPyBzJwoK0ob+CFtts=
+        bh=d5dITA99bOKmhMprOxuF3vZ8vny2EwMiPeFLCOo3XcY=;
+        b=Dl01uO9GOkqchIB53dVKdofarXuUgTrXAk7cDyuODXV9EkZ0PfGsb8yEM0NfcrbX8J
+         tRhMqU/viM6zC7EeVn47HnGCB6/g9sftCD87g5q12O//48KLKZsisDIL/g6MzQNAC4js
+         zic9RoLMGZ/GRNE/vutRgj0HJ04AVIdmlDGf8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724752560; x=1725357360;
+        d=1e100.net; s=20230601; t=1724752561; x=1725357361;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ulSL1wDh1UXX6pfgOa+SdSJMLV52Cd+y6JQhndrl4/Y=;
-        b=uK4GiT6E4Dbm5lLyySamSwyyxK2/vh/LI0AGMMuGYFMTEb1xM1xn//aHxE1+ZOuOjr
-         rhcBG2G7BxzFm00kznWNVeA0jRF6KV41333Cpiyx9n/3deZaw3yHydic9H286jQ9q7Vn
-         lZtcPWbIrTkqj7WNDbfrK/AfBHhsIV5Drbp3QS/j3UCGBHuyjWcTvj3H0JhfFmi3weWj
-         1jVjB8NL3LX41kaqFpTQRnRPLQI5tOVr1yKbp5/fQnM5MpdI09Cx6XspkaHC4+BQKg1x
-         6mJ0JIrRb5FDWng73EQRFkFYWlQTEuLF/K74SiWxNEhu5gEN27lne3OpfIOUB8auPWg5
-         hzog==
-X-Forwarded-Encrypted: i=1; AJvYcCUJBfEOHqfhBf/TtORn7A7MsZWT1EGvPmnvUdjILG/EOCec3iHRGbPx6pJH09ankxnb+WYpaGCnaDk+CfA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwS/V9P03D5YuJShms6zJuL3juZlcghyVI+TWeIrpXrEWWZW14w
-	uVeVoAoAhMJqf3wXsixHJjjMSaczN4/6rILeYOjyCxVax9aAx4PP4FC8X1izvg==
-X-Google-Smtp-Source: AGHT+IHG3kC3TvoiL564c2nCrzUqffudLVZMezuiycIsHxkJQk5Y8znjAyFMUcZ+3HMMg+b6baVggA==
-X-Received: by 2002:a17:903:41d1:b0:202:54a5:deaf with SMTP id d9443c01a7336-2039e4fbd80mr184597195ad.57.1724752559745;
-        Tue, 27 Aug 2024 02:55:59 -0700 (PDT)
+        bh=d5dITA99bOKmhMprOxuF3vZ8vny2EwMiPeFLCOo3XcY=;
+        b=tKV2f/cfmaJzBMLevdzQRyh9/bPNMrh8nx/ucWkZ2uWyfcFw2ai97O1xDOUi7VaX+y
+         a+O54itJjKvEd7ANiaPlX4XzQ2aeNP6YbZKmTx5ALHs4TPES7ut3sqMnKAOpcCpCnHRx
+         bP4UHSrWS/+AS4I/BpDyv9s+str5CIspkY6cOsc72Ve7Q11/H5AjCuayQQLFb916Q7nD
+         uljgdPP8VvJCQImU7LkL8WOlqN8ozOjxGyIVlzOrS+2O2GxcjbEbaMNWP0PimTrYQAMP
+         jRbbzqfszbHutD7FcaF5qlJgXMVkKzgS3oqReDcG0Vv2ydtixl6Xb0dIluOmT79zfWRw
+         Xt7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWYAeWJVEmbrfl66ZT15PecRWWC76KskM4jMgReipvAeVvegCwHgatF774E7zHkkWi7vIz9D/tteG4zB70=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8ZSm7DbRnOfkw+EFPVIe9H+M/FNmNmtCcqavKBj6KlmwiSQva
+	corO9Fn5NUAQ0yFLoKc2o9ZHAEHApDUaBL6dUimDPeDOPv9iagWF5ZD8bc5dTw==
+X-Google-Smtp-Source: AGHT+IFxyh4Dh7I2pxOeTqe3BqQCexIZIRHzvyu5zz5qW6LwCSFvv6FVccQkTwPQyRBDrynayef2Cw==
+X-Received: by 2002:a17:902:e842:b0:1fb:90e1:c8c5 with SMTP id d9443c01a7336-2039e4b5193mr94212775ad.33.1724752561488;
+        Tue, 27 Aug 2024 02:56:01 -0700 (PDT)
 Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:3102:657e:87f4:c646])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038560c2basm80006775ad.222.2024.08.27.02.55.58
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038560c2basm80006775ad.222.2024.08.27.02.56.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 02:55:59 -0700 (PDT)
+        Tue, 27 Aug 2024 02:56:01 -0700 (PDT)
 From: Chen-Yu Tsai <wenst@chromium.org>
 To: Mark Brown <broonie@kernel.org>,
 	Liam Girdwood <lgirdwood@gmail.com>
@@ -70,9 +70,9 @@ Cc: Chen-Yu Tsai <wenst@chromium.org>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 1/8] regulator: core: Fix short description for _regulator_check_status_enabled()
-Date: Tue, 27 Aug 2024 17:55:41 +0800
-Message-ID: <20240827095550.675018-2-wenst@chromium.org>
+Subject: [PATCH 2/8] regulator: core: Fix regulator_is_supported_voltage() kerneldoc return value
+Date: Tue, 27 Aug 2024 17:55:42 +0800
+Message-ID: <20240827095550.675018-3-wenst@chromium.org>
 X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
 In-Reply-To: <20240827095550.675018-1-wenst@chromium.org>
 References: <20240827095550.675018-1-wenst@chromium.org>
@@ -84,35 +84,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-kernel-doc complains that _regulator_check_status_enabled() is missing a
-short description.
+The kerneldoc for regulator_is_supported_voltage() states that the
+return value is a boolean. That is not correct, as it could return an
+error number if the check failed.
 
-Since the current description is already quite short, just trim it a bit
-more and use it as the short description.
+Fix the description by expanding it to cover the true, false and error
+conditions. The description is also converted to a proper "Return"
+section.
 
-Fixes: f7d7ad42a9dc ("regulator: Allow regulators to verify enabled during enable()")
+Fixes: c5f3939b8fe0 ("regulator: core: Support fixed voltages in regulator_is_supported_voltage()")
 Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- drivers/regulator/core.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/regulator/core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 9029de5395ee..763048d6f1ed 100644
+index 763048d6f1ed..3a1b6fd9780d 100644
 --- a/drivers/regulator/core.c
 +++ b/drivers/regulator/core.c
-@@ -2707,10 +2707,8 @@ static void _regulator_delay_helper(unsigned int delay)
- }
- 
- /**
-- * _regulator_check_status_enabled
-- *
-- * A helper function to check if the regulator status can be interpreted
-- * as 'regulator is enabled'.
-+ * _regulator_check_status_enabled - check if regulator status can be
-+ *				     interpreted as "regulator is enabled"
-  * @rdev: the regulator device to check
+@@ -3456,7 +3456,8 @@ EXPORT_SYMBOL_GPL(regulator_get_linear_step);
+  * @min_uV: Minimum required voltage in uV.
+  * @max_uV: Maximum required voltage in uV.
   *
-  * Return:
+- * Returns a boolean.
++ * Return: 1 if voltage range is support, 0 if not, or error number if
++ *	   voltage can't be changed and voltage readback failed.
+  */
+ int regulator_is_supported_voltage(struct regulator *regulator,
+ 				   int min_uV, int max_uV)
 -- 
 2.46.0.295.g3b9ea8a38a-goog
 
