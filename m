@@ -1,256 +1,140 @@
-Return-Path: <linux-kernel+bounces-303849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C7119615EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:51:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB289615F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEA1E284BBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:51:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63D2E1F2691F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2745A1D1F70;
-	Tue, 27 Aug 2024 17:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4692E1D1F51;
+	Tue, 27 Aug 2024 17:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="hJmzTOYi"
-Received: from sonic305-27.consmr.mail.ne1.yahoo.com (sonic305-27.consmr.mail.ne1.yahoo.com [66.163.185.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wdhqesp5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE2D1D1F51
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 17:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E593126F1E
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 17:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724781079; cv=none; b=VdIe/6SEWqSFgLuIabw6rnrqHIuy5gI2vHkVeWrIsdJijP5HpVDbaqD/pUhapi5JiOMUgV03zPlxqMf+UcIb+jRVvKZF70MNt9V1GbAnC6a1OOIrhja5xepznsaflCNu8SbfccRyRMZilEpOwvFRMAWTQAVTCrrz4rPfAU+3ru4=
+	t=1724781141; cv=none; b=YO6hdJmyf5yMT3ZeANhsdMzvbfdnLt3tZe8OqOOJZ7emLfnhnVQ1Q8R8fXO+MEPswQlNJbEDrYtx7P16FMVmlhW04p16R27i5lFfHOVz4DuIQbhY2ppA8A/ulJp9kUBBVY46vR8P/ma0o3W0pcLfxBgkzYVtUJgtV1tym7uUoTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724781079; c=relaxed/simple;
-	bh=qWP8CZP3/ziBf/S/uz+gr64ZxrkfcLfa05tM83fnkfE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p3j29cjUaq39CnN+qRTgVtqhot/KBJMjRHu0shovjMeTTuCg6sZJ8bKYjVJjmUMXJtr/HtzeVEG6mmQiyFy8FcorQqLhjJ2pYBgNH+l9bxgFTbwnSAaFO2TRQKX5odks073LakX89X+Upb4DY2oYWwwadYxtdMtoONB33WA/NHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=hJmzTOYi; arc=none smtp.client-ip=66.163.185.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724781069; bh=u6TvPSXrn5RkJ5JkTK0PiKjELCMpf5lJXuGOFJoBdk0=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=hJmzTOYi8vJYqKGAcC0pjecJqF0ktYn1eF3SY6mA5Tlay2pg8MPv7z5KGs540JQtTc9mTNTPDIRCpZ6Dsf3oIsDWIRDS/szIQ4TYPPbHfmJarFaAh0nqYojrqAA61XefbTHk9DMJKfErC3E3zIa80/08nlW1xy0m7PVtC1ATJOXWn8U76oIHU85GzhaJSVOsRBM68JAmhiWClHWjYMqw8846YBS0vB4SsCRQy9M2nSFYH/jbbfaAGPQumLTZWob0eKp4ax0mxAkGHmVCWQ2Ihz0zag8gzm0/NWZ2ArMnHPjeh5QYE8RAb7jpxEfXX1/PatyRYcCUPn+oTxAZlI/Cxw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724781069; bh=BSCNOzt9Esm24SFLN9+KsANzwOpb64elG3soOKuUJDN=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=qIEffAjdx2gq7eIwGmuAAEXLaKORa3cqRMBqi050P6VdIQeUTEVBoXfMnFEd9NRWXmRyJlQ0hJXO5l8CMPRMP/5jK3Zy2MtYX4k/dMaVh0NRnBXm7TmaFWRWccAzY6mALtYVE2RaKTiUjodEi0TlNFAMz50nvgcU79uVMD/HB9Ai0Ywn0EXdNjkeUC4flZmoCUAeD3VxeeeXLcPCnfaQYVAsxAnsVl97fkTs2rhtW7gnGXkWYrhSy062Ay/OJQA0Pn/evSxr6OhclUiFRKXt9yqCUu5g41gD2hivNG3AkFCQvR44o8coot1HwN9tKZrwOhDFQTcy+03omzUgd1Hu9Q==
-X-YMail-OSG: rXUUZWYVM1noaRJNUYtjCc3PbvdCnjW_ge0WMU0S6ETaOGU4F6At93cS1I2agPC
- SOGgneICm80e_91ysTe3_g3qoQH.iRdKtbPC5NqQbTg6W1ML3co8B4mHuq6pddXI.Up6aNg2aw7z
- KDaTOsFYKBOHINjeikAz.ui3dsMIIqAi0t.j5K9wO2IfmgfGBnzJU_8rCFmuZ3pAssy7kCoaST0h
- oLZwM9wxOtGTrWRZ_IBg1RmmAgLWESHbkyMg8p7EYKtAHus3vtXBwLCh5SIsJ8A45uVV8FgldPIq
- wG6Ax_Bm4zOIKhbcqU2MLuE.5eK7v9RfkoZxmmPthAU12NactiVf4f1VBVvq6TsJcJn4y2_1KqyA
- 8IoVulW_sg3spcpCUZ7VyiFvqZXI3CRdgjMgbNdbZhMFLQwejejKu636lL.Tx3tkBoy0Q.A3v15z
- CNM68V2pk4m0J9P9zIXMBa.qQx4.9P6mvwVfwj6X6PpFgHOxo5SeDT.J3t_FgtZD2lpEFPZGI.ob
- G32c.DD9P5XYyk9.SNeOD29ZdoTR.YBpT6nle65H4rxQmjsWxX09NtPDXVg30JVDTsTh5rvHaEGN
- QfdRfwB1VoMiUTJwAd0OCGMvxzJ1yh_2llgCVSIgxLVEYmKcW7laCungSEFVelDgHCg0rnI9Jv1A
- MfkXMsEZ5fIo7Vu5xBm8HSwnR_7G5fIIBwtgrTxiLvmqIPpUf6r8O80Q4xPUgjhpmKW.PvfW26Wl
- 6wreH7idiuJaiBkiiBQ4TkCc8nc3dG7wjzvlfOCvMwl5pdJZAJfb5SF_teUqLUqcGHmysKlUtbL7
- vkkjwAipF4db13WUKhYtM8HKo39HsBKy82Ji4NerKmCBpMm3HdZaEXbUsbwbdGzlu62XajYmxGXR
- 4vnHFbVw4D9bvO7BeSLa6Ff9mjDLAA6R8aiY_3sQ1KPTl9Hd0NA5znET2_iFTHGMhwXFWnF0nCHD
- N.tKG7mmANNwXhOnudrvdRot7LZSrUcmrQaD_VupwDqbKzd8NWj1j._3AritjYVk0TLNWniV0Ce0
- HUxASbOAycZpPkRnkW6EBrwyQoJ8KarsBU2f4QtWUx9Us6MBdIQcBbwlUGkrE50Yl5t0YOGMTiII
- sauWiN454Kw_FlYQPki7BUQe8YcmFHIIP26FnCfmEmHYLBwKwNwJw5tfwSv2j33sduhTpRLaH2K6
- LFeAbGM8EhaX8pjAEl.qJeJ8i6fTPM_mtb_czXcP4dBdyz6grC1TjaIwnG_wvIP0ueWfgnxvDm13
- 8dP5oqsD_cHtGYAjRuP9.ObxUUpUmg320qilbTjT4SPAAs_vSw_m2AxpdG0Zwoe3j6PM6XGXGOWs
- dMAvvKRt0km7mt3vm09wpQBfgVcwGvT4HiwzK71LjMTYnVqbsE7eUNTEf.JM6ckPQABCyE6KBVHL
- 8yaIZvmpYI8Gexl.psU.eGWEfdimJZeZ6TF_FRlxTzrs7TajWl.fwlw5pZMw_7hL5.mgYEdw_6nV
- y_dHMiH_mRNTHLkcEB_Rpsu7OHix7.UN4adIDPgLhTqcJR6myeT9u.OaP4RZ_W8WLF8p3MyP8uV9
- GSUltRapNdKOcuUE0GSeyUeAzrof_4GYyJpGOKL0_L0oyhbp_G1W6PiRV11nKcwMgkU0uOT8E5cy
- 1Nun9XXzze9SS81hihrcwjXcLjBW_VTvuCIo8okW0dUc84HM_0YhCz6iM59wtnh0_c0qbuIt3jty
- XFkEzKgV2dDEOiE2rApM1f6MiOTQc_NPXEC_ZYCAP2vPkM7FKNRQ6N6zmJdw_IITA0PItqKTNZPa
- o14VQeUcF.SK4URt7UQHL8n1f5WcNYylCXFLPrGJWxY8VuWGxaiBnLF_PzJhi0wfTtOg.UB86NiO
- U3lajsroWDvOmS2Mo7jFRCfI2ZWsLQpyaOZUxu1gX5gagXcGiArF_rnD9_wwRKgfkFauI0Ysy1yu
- GvMRqxJnoQ1v8HPnEeM34ZpOQPE4HPEOrWK9vylmD56pjwMb.d.rL5Nys23kx9iAussd5Zvcx7YE
- N.Np7eZZZTNRj3CuMCWgBonDi_ETWkHnVkRRPcOeiisdSs5FX9ngRGlAef_6X6oOyNGT9tiss8CS
- FBF7j9_oTuREiYYJOVXXhrq6erKVP9RLtcQol_OhwLWxh1Gs3dfOsIJYIs8KHOfqpNf9FJQZGuiW
- upEFWn3Ur00KlRnjcWBJCm_JQMW3RDRKapO5bcM.aUlAxtJII6d2QBhQHuV0fRQ8_1NLBgw4Uc64
- x8mLMjr90AhYP29QLUOq3j8ly752gfeiTdoU07UkmPq8uOcUy45Stsn2bkEPzhRfc9Ptr7OICVt5
- ZYn2EmnE.RzfX.9Q-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: f79da837-4c72-44b0-923d-4473dd04ab63
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Tue, 27 Aug 2024 17:51:09 +0000
-Received: by hermes--production-gq1-5d95dc458-7jxgc (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 54384085c13b42d4a6eb4d4313660637;
-          Tue, 27 Aug 2024 17:51:03 +0000 (UTC)
-Message-ID: <d940241d-77f2-4f41-9695-be9dabb896cd@schaufler-ca.com>
-Date: Tue, 27 Aug 2024 10:51:01 -0700
+	s=arc-20240116; t=1724781141; c=relaxed/simple;
+	bh=e7BKM5olZ94L3g9T2tqv0EdE7YzzCKLnErdUyr4cFak=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=jRXRsJ7IdwKQqs5VoKXJjUZEDvhn8vIYbRtxpzLzexLLgnNxiJJCXjX9hpq/FcfYOt6ntatgwhhL/4xItOHWhNzqqOg5f3q3w7B5wmDInx3xgIqVGSscSSeV0+DcBcbwGECuaCo7ztsRQOfGTd8MdRcvXdAlM/blP9WoR8eqwqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wdhqesp5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724781138;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7HPuEU7mzMlv+Rhl994NDb/ii54cFT6bi9t362pW9Pk=;
+	b=Wdhqesp5cEY9lyeZeW52jkOpqGWauv1voInvC6qXUDTzBM4U2WnN0V1yhMq8OpeigugJNy
+	VhUvVApLlcWVRnof0wqSzFfS9rhVS0/DuptxLoRsHbhxJiSJzZflzfajKMgHyUzxhltFqx
+	nDbFG+CUECY+Jjh9/yn0lZ2VExx6en8=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-694-KxS0O9jGOEComt96m23FkQ-1; Tue,
+ 27 Aug 2024 13:52:14 -0400
+X-MC-Unique: KxS0O9jGOEComt96m23FkQ-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E21141955BF2;
+	Tue, 27 Aug 2024 17:52:11 +0000 (UTC)
+Received: from [10.45.224.222] (unknown [10.45.224.222])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7FEC519560A3;
+	Tue, 27 Aug 2024 17:52:09 +0000 (UTC)
+Date: Tue, 27 Aug 2024 19:52:05 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: =?ISO-8859-2?Q?=A3ukasz_Patron?= <priv.luk@gmail.com>
+cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
+    dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dm: Implement set_read_only
+In-Reply-To: <20240821213048.726082-1-priv.luk@gmail.com>
+Message-ID: <da447e8f-0068-d847-b712-47081fa9f2e7@redhat.com>
+References: <20240821213048.726082-1-priv.luk@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 04/14] Add primary TSEM implementation file.
-To: "Dr. Greg" <greg@enjellic.com>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- jmorris@namei.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20240826103728.3378-1-greg@enjellic.com>
- <20240826103728.3378-5-greg@enjellic.com>
- <4403f4ce-21eb-47a1-93f1-c663a96de9bc@schaufler-ca.com>
- <20240827105214.GA4769@wind.enjellic.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20240827105214.GA4769@wind.enjellic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22645 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: multipart/mixed; BOUNDARY="-1463811712-837155280-1724761611=:915355"
+Content-ID: <c128e9d3-00f9-b4bb-ea49-474e3a00510d@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On 8/27/2024 3:52 AM, Dr. Greg wrote:
-> On Mon, Aug 26, 2024 at 08:53:31AM -0700, Casey Schaufler wrote:
->
-> Good morning Casey, I hope this note finds your day starting well.
->
-> Greetings to others on this 'last' week of summer.
->
->> On 8/26/2024 3:37 AM, Greg Wettstein wrote:
->>> The tsem.c file is the 'master' file in the TSEM implementation. It is
->>> responsible for initializing the LSM and providing the implementation of the
->>> security event handlers.
->>> ---
->>>  security/tsem/tsem.c | 2446 ++++++++++++++++++++++++++++++++++++++++++
->>>  1 file changed, 2446 insertions(+)
->>>  create mode 100644 security/tsem/tsem.c
->>>
->>> diff --git a/security/tsem/tsem.c b/security/tsem/tsem.c
->>> new file mode 100644
->>> index 000000000000..76d65b3e62b3
->>> --- /dev/null
->>> +++ b/security/tsem/tsem.c
->>> @@ -0,0 +1,2446 @@
->>> +// SPDX-License-Identifier: GPL-2.0-only
->>> +
->>> +/*
->>> + * Copyright (C) 2024 Enjellic Systems Development, LLC
->>> + * Author: Dr. Greg Wettstein <greg@enjellic.com>
->>> + *
->>> + * This file is the primary implementation file for the tsem LSM.
->>> + *
->>> + * It implements initialization and setup functions that interpret
->>> + * kernel command-line arguments and prepares TSEM for operation.
->>> + *
->>> + * In addition it contains all of the TSEM specific security event
->>> + * handlers that are responsible for handling the LSM events that TSEM
->>> + * models.
->>> + *
->>> + * Each TSEM event handler calls the tsem_allocate_event() function to
->>> + * allocate a structure that will be used to describe the event.  The
->>> + * CELL union of this structure contains various structures that are
->>> + * used to hold these parameters.
->>> + *
->>> + * Since the event characterization parameters need to be retained for
->>> + * the lifetime of the tsem_event structure that is allocated.  In the
->>> + * case of internally modeled namespaces this lifespan is the lifetime
->>> + * of the security modeling namespace.  In the case of externally
->>> + * modeled namespaces, the lifespan is until the security event
->>> + * description is exported to an external trust orchestrator.
->>> + *
->>> + * In order to support this model, the event description structures
->>> + * are typically composed of a union over 'in' and 'out' structures.
->>> + * The 'in' structures are used to hold arguments to the event handler
->>> + * that may only be relevant for the duration of the call.  These
->>> + * values are translated into members of the 'out' structure that
->>> + * retain the values until the end of the lifetime of the tsem_event
->>> + * structure.
->>> + *
->>> + * Each TSEM event handler is responsible for allocating a tsem_event
->>> + * structure and populating the appropriate CELL structure with the
->>> + * input characteristics of the event.  The dispatch_event() function
->>> + * is called to handle the modeling of the event.  This function
->>> + * returns the permission value that is returned as the result of the
->>> + * LSM event handler.
->>> + *
->>> + * The dispatch_event() calls the tsem_event_init() function that is
->>> + * responsible for translating the input parameters into values that
->>> + * will be retained for the lifetime of the security event
->>> + * description.  The populated event description is then dispatched to
->>> + * either the tsem_model_event() or the tsem_export_event() for
->>> + * modeling by either the internal TMA or by a TMA associated with an
->>> + * external trust orchestrator.
->>> + */
->>> +
->>> + ...
->>> +
->>> +static int tsem_file_open(struct file *file)
->>> +{
->>> +	struct inode *inode = file_inode(file);
->>> +	struct tsem_event *ep;
->>> +
->>> +	if (static_branch_unlikely(&tsem_not_ready))
->>> +		return 0;
->>> +	if (bypass_event(TSEM_FILE_OPEN))
->>> +		return 0;
->>> +	if (unlikely(tsem_inode(inode)->status == TSEM_INODE_CONTROL_PLANE)) {
->>> +		if (capable(CAP_MAC_ADMIN))
->> Don't you mean CAP_MAC_OVERRIDE? CAP_MAC_ADMIN is for changes to the
->> security state of the system, where CAP_MAC_OVERRIDE is for access
->> control decision exceptions. Here (and elsewhere) you use the former
->> in access checks.
-> You are clearly the mechanistic expert on capabilities so we would
-> take your lead on this.
->
-> Some background information to hopefully assist in a discussion on the
-> types of capability checks that should be implemented.
->
-> The capability checks we apply in TSEM gate the following five types
-> of actions:
->
-> 1.) The ability to issue TSEM control commands.
->
-> 2.) The ability to register an event processing module.
->
-> 3.) Access to state information on kernel based modeling agent instances.
->
-> 4.) The ability to send signals to trust orchestration processes.
->
-> 5.) The ability to send a signal to a different security modeling namespace.
->
-> If we understand the differentiation that you suggest between
-> CAP_MAC_ADMIN and CAP_MAC_OVERRIDE we would conclude the following:
->
-> Checks 1, 2 and 4 would seem, in our opinion, have the ability to
-> change the security state of a system.  As such it would seem
-> appropriate to use CAP_MAC_ADMIN for those checks.
->
-> Rather than belabor the issue now, we can entertain a subsequent
-> discussion, if needed, on why we believe that actions 1, 2 and 4 can
-> change the security state of the system.
->
-> By your definition, check type 3 would seem to be consistent with
-> CAP_MAC_OVERRIDE, since it is gating access to potentially security
-> sensitive information but which does not imply the ability to change
-> the security state of the system.
->
-> That leaves category 5 as a possible open question.  Given the trust
-> orchestration model for externally modeled namespaces, we concluded
-> that the only entities that should be able to issue signals that can
-> manipulate, particularly terminate a process, should only come from
-> within the security modeling namespace that the target process is
-> running in.  Given that, we would consider such operations as possibly
-> affecting the security state of the system and thus suitable for
-> CAP_MAC_ADMIN.
->
-> Based on what we have always understood, and that is confirmed by 'git
-> grep', the only thing at this time that is using CAP_MAC_OVERRIDE is
-> SMACK.  If our analysis is correct, would you have any issues with us
-> changing the type 3 checks to CAP_MAC_OVERRIDE?
->
-> With respect to the check that you call out in
-> tsem.c:tsem_open_file(), the capability check is to avoid a model
-> deadlock situation.  If we adopt the model we discuss above, we would
-> need to unequivocably allow the open if the process is carrying
-> CAP_MAC_ADMIN or CAP_MAC_OVERRIDE in order to avoid a control
-> deadlock.
->
-> We will look forward to your thoughts on if we should proceed with the
-> above changes.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-It seems you were right all along, that none of these capability checks
-really fit with CAP_MAC_OVERRIDE. Thank you for the clarification. 
+---1463811712-837155280-1724761611=:915355
+Content-Type: text/plain; CHARSET=ISO-8859-2
+Content-Transfer-Encoding: 8BIT
+Content-ID: <62eac86b-f87a-04be-2451-5a96461c9b07@redhat.com>
 
->
-> Have a good day.
->
-> As always,
-> Dr. Greg
->
-> The Quixote Project - Flailing at the Travails of Cybersecurity
->               https://github.com/Quixote-Project
+
+
+On Wed, 21 Aug 2024, £ukasz Patron wrote:
+
+> This lets us change the read-only flag for device mapper block devices
+> via the BLKROSET ioctl.
+> 
+> Signed-off-by: £ukasz Patron <priv.luk@gmail.com>
+> ---
+>  drivers/md/dm.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+> index 87bb90303435..538a93e596d7 100644
+> --- a/drivers/md/dm.c
+> +++ b/drivers/md/dm.c
+> @@ -410,6 +410,12 @@ static int dm_blk_getgeo(struct block_device *bdev, struct hd_geometry *geo)
+>  	return dm_get_geometry(md, geo);
+>  }
+>  
+> +static int dm_blk_set_read_only(struct block_device *bdev, bool ro)
+> +{
+> +	set_disk_ro(bdev->bd_disk, ro);
+> +	return 0;
+> +}
+> +
+>  static int dm_prepare_ioctl(struct mapped_device *md, int *srcu_idx,
+>  			    struct block_device **bdev)
+>  {
+> @@ -3666,6 +3672,7 @@ static const struct block_device_operations dm_blk_dops = {
+>  	.release = dm_blk_close,
+>  	.ioctl = dm_blk_ioctl,
+>  	.getgeo = dm_blk_getgeo,
+> +	.set_read_only = dm_blk_set_read_only,
+>  	.report_zones = dm_blk_report_zones,
+>  	.pr_ops = &dm_pr_ops,
+>  	.owner = THIS_MODULE
+> -- 
+> 2.46.0
+
+Hi
+
+Device mapper already calls set_disk_ro in the do_resume function. So, the 
+problem here is that the value set using set_read_only will be overwritten 
+as soon as a new table will be loaded.
+
+I'd like to ask why is this patch needed? Why do you want to set read-only 
+status using this ioctl instead of using the existing table flag?
+
+If this is needed, we need to add another flag that is being set by 
+dm_blk_set_read_only, so that dm_blk_set_read_only and dm_resume won't 
+step over each other's changes.
+
+Mikulas
+---1463811712-837155280-1724761611=:915355--
+
 
