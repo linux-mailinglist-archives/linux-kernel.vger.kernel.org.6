@@ -1,347 +1,240 @@
-Return-Path: <linux-kernel+bounces-304135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0545961AD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 01:50:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 211DC961ADA
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 01:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 017851C2313B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:50:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDB0A2847BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:52:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92AB1D3186;
-	Tue, 27 Aug 2024 23:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9240A1D47AA;
+	Tue, 27 Aug 2024 23:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ggIf3er3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KXJZfp3t"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17F91D365D;
-	Tue, 27 Aug 2024 23:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8631D47AD
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 23:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724802606; cv=none; b=kC0DdDqS9T7L6BvoUgdpdgGqT64uWuhDJ3+5bZbD6GQsdmvrPJ9yBOrGREsVfxOv9/UTyoW7p5ts/TZQym0RZ+koi9dQcxVgCDlRRUrR0otAXWEOrvqG7uPLU5aOtEaphUsOsrYjh+0mkzz5hmCVTYDgMBzIIlOYDmFBe34y9zw=
+	t=1724802765; cv=none; b=hsOYJRj2+TjwH26KmgTVswV6m6jdeDQW/QuPqZGv65XpBBuwq6a5x8XVtlNkza4U6NYoIMDOEF5O2GakpSAj5d7MD8XYxOGkLkmXfYuEBqcc0HptfVYUyv7AQ3OHqn6mZipRZtsJDS0g1+i/LCscv5SFqT3dTzuSv0QOPrEebQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724802606; c=relaxed/simple;
-	bh=HgWQdtXWb0VBXnmCD7/KhTe9vlHFiMLZIIAtA6mCnN8=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=sMRecv/JEDY7HNpi2rjK924weByPR+aP0fVF93dfLf4uxhrbFwpZ9lT8SJ3+oK/FTUlEfR8OyiA3lEoS6zxViH8kEp3Qzl+8JF+75jQ6nCw/x/dPD11n7GcJlOmrpym1G82RpJi90gm6fHtmth0ItZ9BAzbt1Fs+rWO/sQlNmBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ggIf3er3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FE5DC4FF4F;
-	Tue, 27 Aug 2024 23:50:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724802606;
-	bh=HgWQdtXWb0VBXnmCD7/KhTe9vlHFiMLZIIAtA6mCnN8=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=ggIf3er3wdjqmhQNoYFkxUA88FY68ZWkbU+JcFON3upecc5v3FGQ4hF3HHO5icfYU
-	 kbnXX+a1JdlOV/P3Lgi8IGwcZ5I98CZvMa/SgJ//L+xPOxJvc4bfUSex+UqqdKhusu
-	 +PT0ymbF92x9aa6HG4ndsODEEIGzKL6Vm9UzvyrB3tpDFkMh2S6CTR+VUXablyxZr3
-	 PNOee2eaUriPd3bLmuCVIKSBkOYznKDBfxWFLoYEljh9Jf/wmrkSejgY6mEYKs+hPA
-	 YG42XNfSKi3mDrwf417Gfj/7sgdPDk+fPirNsAIX/fBWSFriUj7CxMTci5UgFSjDY9
-	 blGKzAs3mRCFA==
-Message-ID: <d7b374670eb2f6d442f351106ab1221a.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1724802765; c=relaxed/simple;
+	bh=BmfFu4yrspw+WKGzyeyd2ChfQihU26tgqZAVBGi9NjM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SY9GMuKNJdbAU6VgdX6TePW5i8r+BPk9YzaoCkIDsoJntzAmkaAIWd2KvBNIJIHb6PAVthVHflxc0PoIaQdZXDOg3GR1ID7N47wMAYxIUjaF4gMqTTeW4EAojcFF00tyMf14p0W3z1AzK157KZFh6lYtHiFUH4DD9SJA7Fez0mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KXJZfp3t; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724802760;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DSSWXtbn5wILLvu1XA/R47N7+NK81XaTgeRTtJ7F0iM=;
+	b=KXJZfp3trgSdfSgQA9oiaLntyzsc/WZFfi6sOps73DNgH131rMGlngp2SlZ22JUjcSDbA4
+	6qK9UNIyuORAR2WpXFCnR5DoUEFYSFPw+3JNhru+l8jPVqDEId2sO9LbN0A3cU8hfHGaSl
+	LSNRwbE7EAyYhcosD+q3XiZUSEBDcmk=
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	David Rientjes <rientjes@google.com>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>,
+	cgroups@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH v2] memcg: add charging of already allocated slab objects
+Date: Tue, 27 Aug 2024 16:52:28 -0700
+Message-ID: <20240827235228.1591842-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240827-qcom_ipq_cmnpll-v3-2-8e009cece8b2@quicinc.com>
-References: <20240827-qcom_ipq_cmnpll-v3-0-8e009cece8b2@quicinc.com> <20240827-qcom_ipq_cmnpll-v3-2-8e009cece8b2@quicinc.com>
-Subject: Re: [PATCH v3 2/4] clk: qcom: Add CMN PLL clock controller driver for IPQ SoC
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com, quic_pavir@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, bartosz.golaszewski@linaro.org, srinivas.kandagatla@linaro.org, Luo Jie <quic_luoj@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Luo Jie <quic_luoj@quicinc.com>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>
-Date: Tue, 27 Aug 2024 16:50:03 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Quoting Luo Jie (2024-08-27 05:46:00)
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index 8a6f0dabd02f..35f656146de7 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -29,6 +29,7 @@ obj-$(CONFIG_CLK_X1E80100_TCSRCC) +=3D tcsrcc-x1e80100.o
->  obj-$(CONFIG_CLK_QCM2290_GPUCC) +=3D gpucc-qcm2290.o
->  obj-$(CONFIG_IPQ_APSS_PLL) +=3D apss-ipq-pll.o
->  obj-$(CONFIG_IPQ_APSS_6018) +=3D apss-ipq6018.o
-> +obj-$(CONFIG_IPQ_CMN_PLL) +=3D clk-ipq-cmn-pll.o
+At the moment, the slab objects are charged to the memcg at the
+allocation time. However there are cases where slab objects are
+allocated at the time where the right target memcg to charge it to is
+not known. One such case is the network sockets for the incoming
+connection which are allocated in the softirq context.
 
-I don't see many other filenames with clk- prefix in this directory, so
-probably drop it.
+Couple hundred thousand connections are very normal on large loaded
+server and almost all of those sockets underlying those connections get
+allocated in the softirq context and thus not charged to any memcg.
+However later at the accept() time we know the right target memcg to
+charge. Let's add new API to charge already allocated objects, so we can
+have better accounting of the memory usage.
 
->  obj-$(CONFIG_IPQ_GCC_4019) +=3D gcc-ipq4019.o
->  obj-$(CONFIG_IPQ_GCC_5018) +=3D gcc-ipq5018.o
->  obj-$(CONFIG_IPQ_GCC_5332) +=3D gcc-ipq5332.o
-> diff --git a/drivers/clk/qcom/clk-ipq-cmn-pll.c b/drivers/clk/qcom/clk-ip=
-q-cmn-pll.c
-> new file mode 100644
-> index 000000000000..a9775c39b2f3
-> --- /dev/null
-> +++ b/drivers/clk/qcom/clk-ipq-cmn-pll.c
-> @@ -0,0 +1,241 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserv=
-ed.
-> + */
-> +
-> +/*
-> + * CMN PLL block expects the reference clock from on-board Wi-Fi block, =
-and
-> + * supplies fixed rate clocks as output to the Ethernet hardware blocks.
-> + * The Ethernet related blocks include PPE (packet process engine) and t=
-he
-> + * external connected PHY (or switch) chip receiving clocks from the CMN=
- PLL.
-> + *
-> + * On the IPQ9574 SoC, There are three clocks with 50 MHZ, one clock with
-> + * 25 MHZ which are output from the CMN PLL to Ethernet PHY (or switch),
-> + * and one clock with 353 MHZ to PPE.
-> + *
-> + *               +---------+
-> + *               |   GCC   |
-> + *               +--+---+--+
-> + *           AHB CLK|   |SYS CLK
-> + *                  V   V
-> + *          +-------+---+------+
-> + *          |                  +-------------> eth0-50mhz
-> + * REF CLK  |     IPQ9574      |
-> + * -------->+                  +-------------> eth1-50mhz
-> + *          |  CMN PLL block   |
-> + *          |                  +-------------> eth2-50mhz
-> + *          |                  |
-> + *          +---------+--------+-------------> eth-25mhz
-> + *                    |
-> + *                    V
-> + *                    ppe-353mhz
-> + */
-> +
-> +#include <dt-bindings/clock/qcom,ipq-cmn-pll.h>
+To measure the performance impact of this change, tcp_crr is used from
+the neper [1] performance suite. Basically it is a network ping pong
+test with new connection for each ping pong.
 
-Include dt-bindings after linux please.
+The server and the client are run inside 3 level of cgroup hierarchy
+using the following commands:
 
-> +#include <linux/bitfield.h>
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/delay.h>
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +
-> +#define CMN_PLL_REFCLK_SRC_SELECTION           0x28
-> +#define CMN_PLL_REFCLK_SRC_DIV                 GENMASK(9, 8)
-> +
-> +#define CMN_PLL_LOCKED                         0x64
-> +#define CMN_PLL_CLKS_LOCKED                    BIT(8)
-> +
-> +#define CMN_PLL_POWER_ON_AND_RESET             0x780
-> +#define CMN_ANA_EN_SW_RSTN                     BIT(6)
-> +
-> +#define CMN_PLL_REFCLK_CONFIG                  0x784
-> +#define CMN_PLL_REFCLK_EXTERNAL                        BIT(9)
-> +#define CMN_PLL_REFCLK_DIV                     GENMASK(8, 4)
-> +#define CMN_PLL_REFCLK_INDEX                   GENMASK(3, 0)
-> +
-> +#define CMN_PLL_CTRL                           0x78c
-> +#define CMN_PLL_CTRL_LOCK_DETECT_EN            BIT(15)
-> +
-> +/**
-> + * struct cmn_pll_fixed_output_clk - CMN PLL output clocks information
-> + * @id:        Clock specifier to be supplied
-> + * @name: Clock name to be registered
-> + * @rate: Clock rate
-> + */
-> +struct cmn_pll_fixed_output_clk {
-> +       unsigned int id;
-> +       const char *name;
-> +       const unsigned long rate;
-> +};
-> +
-> +#define CLK_PLL_OUTPUT(_id, _name, _rate) {            \
-> +       .id =3D _id,                                      \
-> +       .name =3D _name,                                  \
-> +       .rate =3D _rate,                                  \
-> +}
-> +
-> +static const struct cmn_pll_fixed_output_clk ipq9574_output_clks[] =3D {
-> +       CLK_PLL_OUTPUT(PPE_353MHZ_CLK, "ppe-353mhz", 353000000UL),
-> +       CLK_PLL_OUTPUT(ETH0_50MHZ_CLK, "eth0-50mhz", 50000000UL),
-> +       CLK_PLL_OUTPUT(ETH1_50MHZ_CLK, "eth1-50mhz", 50000000UL),
-> +       CLK_PLL_OUTPUT(ETH2_50MHZ_CLK, "eth2-50mhz", 50000000UL),
-> +       CLK_PLL_OUTPUT(ETH_25MHZ_CLK, "eth-25mhz", 25000000UL),
-> +};
-> +
-> +static int ipq_cmn_pll_config(struct device *dev, unsigned long parent_r=
-ate)
-> +{
-> +       void __iomem *base;
-> +       u32 val;
-> +
-> +       base =3D devm_of_iomap(dev, dev->of_node, 0, NULL);
+Server:
+ $ tcp_crr -6
 
-Use platform_device APIs please. This is a platform driver.
+Client:
+ $ tcp_crr -6 -c -H ${server_ip}
 
-> +       if (IS_ERR(base))
-> +               return PTR_ERR(base);
-> +
-> +       val =3D readl(base + CMN_PLL_REFCLK_CONFIG);
-> +       val &=3D ~(CMN_PLL_REFCLK_EXTERNAL | CMN_PLL_REFCLK_INDEX);
-> +
-> +       /*
-> +        * Configure the reference input clock selection as per the given=
- rate.
-> +        * The output clock rates are always of fixed value.
-> +        */
-> +       switch (parent_rate) {
-> +       case 25000000:
-> +               val |=3D FIELD_PREP(CMN_PLL_REFCLK_INDEX, 3);
-> +               break;
-> +       case 31250000:
-> +               val |=3D FIELD_PREP(CMN_PLL_REFCLK_INDEX, 4);
-> +               break;
-> +       case 40000000:
-> +               val |=3D FIELD_PREP(CMN_PLL_REFCLK_INDEX, 6);
-> +               break;
-> +       case 48000000:
-> +               val |=3D FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
-> +               break;
-> +       case 50000000:
-> +               val |=3D FIELD_PREP(CMN_PLL_REFCLK_INDEX, 8);
-> +               break;
-> +       case 96000000:
-> +               val |=3D FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
-> +               val &=3D ~CMN_PLL_REFCLK_DIV;
-> +               val |=3D FIELD_PREP(CMN_PLL_REFCLK_DIV, 2);
-> +               break;
-> +       default:
-> +               return -EINVAL;
-> +       }
+If the client and server run on different machines with 50 GBPS NIC,
+there is no visible impact of the change.
 
-Why isn't this done with struct clk_ops::set_rate() or clk_ops::init()?
+For the same machine experiment with v6.11-rc5 as base.
 
-> +
-> +       writel(val, base + CMN_PLL_REFCLK_CONFIG);
-> +
-> +       /* Update the source clock rate selection. Only 96 MHZ uses 0. */
-> +       val =3D readl(base + CMN_PLL_REFCLK_SRC_SELECTION);
-> +       val &=3D ~CMN_PLL_REFCLK_SRC_DIV;
-> +       if (parent_rate !=3D 96000000)
-> +               val |=3D FIELD_PREP(CMN_PLL_REFCLK_SRC_DIV, 1);
-> +
-> +       writel(val, base + CMN_PLL_REFCLK_SRC_SELECTION);
-> +
-> +       /* Enable PLL locked detect. */
-> +       val =3D readl(base + CMN_PLL_CTRL);
-> +       val |=3D CMN_PLL_CTRL_LOCK_DETECT_EN;
-> +       writel(val, base + CMN_PLL_CTRL);
-> +
-> +       /*
-> +        * Reset the CMN PLL block to ensure the updated configurations
-> +        * take effect.
-> +        */
-> +       val =3D readl(base + CMN_PLL_POWER_ON_AND_RESET);
-> +       val &=3D ~CMN_ANA_EN_SW_RSTN;
-> +       writel(val, base + CMN_PLL_POWER_ON_AND_RESET);
-> +       usleep_range(1000, 1200);
-> +
-> +       val |=3D CMN_ANA_EN_SW_RSTN;
-> +       writel(val, base + CMN_PLL_POWER_ON_AND_RESET);
-> +
-> +       /* Stability check of CMN PLL output clocks. */
-> +       return readl_poll_timeout(base + CMN_PLL_LOCKED, val,
-> +                                 (val & CMN_PLL_CLKS_LOCKED),
-> +                                 100, 100000);
-> +}
-> +
-> +static int ipq_cmn_pll_clk_register(struct device *dev, const char *pare=
-nt)
+          base (throughput)     with-patch
+tcp_crr   14545 (+- 80)         14463 (+- 56)
 
-Please don't use string names to describe topology.
+It seems like the performance impact is within the noise.
 
-> +{
-> +       const struct cmn_pll_fixed_output_clk *fixed_clk;
-> +       struct clk_hw_onecell_data *data;
-> +       unsigned int num_clks;
-> +       struct clk_hw *hw;
-> +       int i;
-> +
-> +       num_clks =3D ARRAY_SIZE(ipq9574_output_clks);
-> +       fixed_clk =3D ipq9574_output_clks;
-> +
-> +       data =3D devm_kzalloc(dev, struct_size(data, hws, num_clks), GFP_=
-KERNEL);
-> +       if (!data)
-> +               return -ENOMEM;
-> +
-> +       for (i =3D 0; i < num_clks; i++) {
-> +               hw =3D devm_clk_hw_register_fixed_rate(dev, fixed_clk[i].=
-name,
-> +                                                    parent, 0,
-> +                                                    fixed_clk[i].rate);
-> +               if (IS_ERR(hw))
-> +                       return PTR_ERR(hw);
-> +
-> +               data->hws[fixed_clk[i].id] =3D hw;
-> +       }
-> +       data->num =3D num_clks;
-> +
-> +       return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, da=
-ta);
-> +}
-> +
-> +static int ipq_cmn_pll_clk_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev =3D &pdev->dev;
-> +       struct clk *clk;
-> +       int ret;
-> +
-> +       /*
-> +        * To access the CMN PLL registers, the GCC AHB & SYSY clocks
-> +        * for CMN PLL block need to be enabled.
-> +        */
-> +       clk =3D devm_clk_get_enabled(dev, "ahb");
-> +       if (IS_ERR(clk))
-> +               return dev_err_probe(dev, PTR_ERR(clk),
-> +                                    "Enable AHB clock failed\n");
-> +
-> +       clk =3D devm_clk_get_enabled(dev, "sys");
-> +       if (IS_ERR(clk))
-> +               return dev_err_probe(dev, PTR_ERR(clk),
-> +                                    "Enable SYS clock failed\n");
+Link: https://github.com/google/neper [1]
+Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+---
+v1: https://lore.kernel.org/all/20240826232908.4076417-1-shakeel.butt@linux.dev/
+Changes since v1:
+- Correctly handle large allocations which bypass slab
+- Rearrange code to avoid compilation errors for !CONFIG_MEMCG builds
 
-Usually qcom clk drivers do this with pm_clk_add() and runtime PM. Why
-can't that be done here?
+RFC: https://lore.kernel.org/all/20240824010139.1293051-1-shakeel.butt@linux.dev/
+Changes since the RFC:
+- Added check for already charged slab objects.
+- Added performance results from neper's tcp_crr
 
-> +
-> +       clk =3D devm_clk_get(dev, "ref");
-> +       if (IS_ERR(clk))
-> +               return dev_err_probe(dev, PTR_ERR(clk),
-> +                                    "Get reference clock failed\n");
+ include/linux/slab.h            |  1 +
+ mm/slub.c                       | 51 +++++++++++++++++++++++++++++++++
+ net/ipv4/inet_connection_sock.c |  5 ++--
+ 3 files changed, 55 insertions(+), 2 deletions(-)
 
-We don't want clk providers to be clk consumers. Presumably this is the
-PLL's parent clk, and so the frequency should be passed to the clk_ops
-via the parent rate.
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index eb2bf4629157..05cfab107c72 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -547,6 +547,7 @@ void *kmem_cache_alloc_lru_noprof(struct kmem_cache *s, struct list_lru *lru,
+ 			    gfp_t gfpflags) __assume_slab_alignment __malloc;
+ #define kmem_cache_alloc_lru(...)	alloc_hooks(kmem_cache_alloc_lru_noprof(__VA_ARGS__))
+ 
++bool kmem_cache_charge(void *objp, gfp_t gfpflags);
+ void kmem_cache_free(struct kmem_cache *s, void *objp);
+ 
+ kmem_buckets *kmem_buckets_create(const char *name, slab_flags_t flags,
+diff --git a/mm/slub.c b/mm/slub.c
+index c9d8a2497fd6..8265ea5f25be 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -2185,6 +2185,43 @@ void memcg_slab_free_hook(struct kmem_cache *s, struct slab *slab, void **p,
+ 
+ 	__memcg_slab_free_hook(s, slab, p, objects, obj_exts);
+ }
++
++#define KMALLOC_TYPE (SLAB_KMALLOC | SLAB_CACHE_DMA | \
++		      SLAB_ACCOUNT | SLAB_RECLAIM_ACCOUNT)
++
++static __fastpath_inline
++bool memcg_slab_post_charge(void *p, gfp_t flags)
++{
++	struct slabobj_ext *slab_exts;
++	struct kmem_cache *s;
++	struct folio *folio;
++	struct slab *slab;
++	unsigned long off;
++
++	folio = virt_to_folio(p);
++	if (!folio_test_slab(folio)) {
++		return __memcg_kmem_charge_page(folio_page(folio, 0), flags,
++						folio_order(folio)) == 0;
++	}
++
++	slab = folio_slab(folio);
++	s = slab->slab_cache;
++
++	/* Ignore KMALLOC_NORMAL cache to avoid circular dependency. */
++	if ((s->flags & KMALLOC_TYPE) == SLAB_KMALLOC)
++		return true;
++
++	/* Ignore already charged objects. */
++	slab_exts = slab_obj_exts(slab);
++	if (slab_exts) {
++		off = obj_to_index(s, slab, p);
++		if (unlikely(slab_exts[off].objcg))
++			return true;
++	}
++
++	return __memcg_slab_post_alloc_hook(s, NULL, flags, 1, &p);
++}
++
+ #else /* CONFIG_MEMCG */
+ static inline bool memcg_slab_post_alloc_hook(struct kmem_cache *s,
+ 					      struct list_lru *lru,
+@@ -2198,6 +2235,11 @@ static inline void memcg_slab_free_hook(struct kmem_cache *s, struct slab *slab,
+ 					void **p, int objects)
+ {
+ }
++
++static inline bool memcg_slab_post_charge(void *p, gfp_t flags)
++{
++	return true;
++}
+ #endif /* CONFIG_MEMCG */
+ 
+ /*
+@@ -4062,6 +4104,15 @@ void *kmem_cache_alloc_lru_noprof(struct kmem_cache *s, struct list_lru *lru,
+ }
+ EXPORT_SYMBOL(kmem_cache_alloc_lru_noprof);
+ 
++bool kmem_cache_charge(void *objp, gfp_t gfpflags)
++{
++	if (!memcg_kmem_online())
++		return true;
++
++	return memcg_slab_post_charge(objp, gfpflags);
++}
++EXPORT_SYMBOL(kmem_cache_charge);
++
+ /**
+  * kmem_cache_alloc_node - Allocate an object on the specified node
+  * @s: The cache to allocate from.
+diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connection_sock.c
+index 64d07b842e73..3c13ca8c11fb 100644
+--- a/net/ipv4/inet_connection_sock.c
++++ b/net/ipv4/inet_connection_sock.c
+@@ -715,6 +715,7 @@ struct sock *inet_csk_accept(struct sock *sk, struct proto_accept_arg *arg)
+ 	release_sock(sk);
+ 	if (newsk && mem_cgroup_sockets_enabled) {
+ 		int amt = 0;
++		gfp_t gfp = GFP_KERNEL | __GFP_NOFAIL;
+ 
+ 		/* atomically get the memory usage, set and charge the
+ 		 * newsk->sk_memcg.
+@@ -731,8 +732,8 @@ struct sock *inet_csk_accept(struct sock *sk, struct proto_accept_arg *arg)
+ 		}
+ 
+ 		if (amt)
+-			mem_cgroup_charge_skmem(newsk->sk_memcg, amt,
+-						GFP_KERNEL | __GFP_NOFAIL);
++			mem_cgroup_charge_skmem(newsk->sk_memcg, amt, gfp);
++		kmem_cache_charge(newsk, gfp);
+ 
+ 		release_sock(newsk);
+ 	}
+-- 
+2.43.5
 
-> +
-> +       /* Configure CMN PLL to apply the reference clock. */
-> +       ret =3D ipq_cmn_pll_config(dev, clk_get_rate(clk));
-> +       if (ret)
-> +               return dev_err_probe(dev, ret, "Configure CMN PLL failed\=
-n");
-> +
-> +       return ipq_cmn_pll_clk_register(dev, __clk_get_name(clk));
-> +}
-> +
-> +static const struct of_device_id ipq_cmn_pll_clk_ids[] =3D {
-> +       { .compatible =3D "qcom,ipq9574-cmn-pll", },
-> +       { }
-> +};
-
-module device table?
 
