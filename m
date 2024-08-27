@@ -1,190 +1,144 @@
-Return-Path: <linux-kernel+bounces-303656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B331B961319
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:42:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93B5E96131C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:43:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D797F1C22457
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:42:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FA041F246B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED561C6F6D;
-	Tue, 27 Aug 2024 15:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D621C93A0;
+	Tue, 27 Aug 2024 15:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gqHSbRZr"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YaVSKF5O"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9A554648
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 15:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE381BC9FE;
+	Tue, 27 Aug 2024 15:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724773366; cv=none; b=THRErfRsilEczxKsVBqwuY069YGIiV9/QjBn7LMsbJ+xLnEuLfDUd0Bvgonk6ALgvh0qg2IlebW2qBlnbjhf+TM8qeJC24SR/o+6M1+7c98y3oBi98RvREKaB7Zxn7Soa2ec7XuggLRfpTTTYFO1CaZhwpNqZLhbh1MZqf5izXU=
+	t=1724773380; cv=none; b=K53hqwl/rmZBAZIUJY8E0v9qz6wuq2X2K98UkpUR/NB79yAus+KR+f7WwqgF9BG5+NtrI+H+IJIYkWox0xqvu400B8vtddYkcLHSnSqZT3tEWn91AaH0ueKgBmeXcUHeQ9ZWyqPQJzVeRZjSG52WOr1qgueZAKZ+LMfpw7oX6ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724773366; c=relaxed/simple;
-	bh=l69eizl+gZdu9pkZiZgwej/0TiOyJRZbZTDNs0IC4kE=;
+	s=arc-20240116; t=1724773380; c=relaxed/simple;
+	bh=lXCedQeonAV55TDDmc5vnK1OKuPMO7LuzMDVk2Kdgbk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W9TclEJxhyEieF2l+eu1gTbObCG0cczsAkg0G952dnwUq31AJUOxDBFjpA5/Kyzh4Dm6aMscteNq/qfhUCsSBDO/4HmklVNSDG+90paFCCErgzY3mBy3VdwmzFerH5THo1bLl91HbaSCw3cdBbx1pUbjlOvfJWXrKx2ElmpApCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gqHSbRZr; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id AAA1AFF80A;
-	Tue, 27 Aug 2024 15:42:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724773361;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E+RzhyD4pAb8rc1lSUeRwv5lvL+vcNuJMOqKPxo1GRU=;
-	b=gqHSbRZrur+CEvmPouhBDiWol//XNNdwjg4HH9fOMmrAuHToqUAUcILWmx9xVdm0eY9v5r
-	6FaQ0vHwIOXa8mryM2hiJ3Yy706o3W7rfP5r0OOY8H4f24WVv32aTCpGlzZ+hnM70XLVJf
-	h/9KsWxKhPpWNactdauoJ7xUCiCsMQhIj9eMBrakqEVy47nKz5rg9iC/dmSFK/GewefvET
-	iy0CK6nv/TPg8JT6Nsuwh/wjIOoIHSUVAxufM1yVcrCTed9/TPSCpPwQPd/euZM3C4xgRj
-	QXthGlNwOLTXg2KTly1uRv0gNZ1MOP48hMrRPieUkCW6paoToLxlzuAEWRXUow==
-Date: Tue, 27 Aug 2024 17:42:38 +0200
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
-	arthurgrillo@riseup.net, linux-kernel@vger.kernel.org,
-	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
-	thomas.petazzoni@bootlin.com, seanpaul@google.com,
-	nicolejadeyee@google.com
-Subject: Re: [PATCH RFC 11/15] drm: writeback: Add drm_writeback_connector
- cleanup
-Message-ID: <Zs3z7tx4dMBfY_DX@louis-chauvet-laptop>
-Mail-Followup-To: Maxime Ripard <mripard@kernel.org>,
-	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
-	arthurgrillo@riseup.net, linux-kernel@vger.kernel.org,
-	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
-	thomas.petazzoni@bootlin.com, seanpaul@google.com,
-	nicolejadeyee@google.com
-References: <20240814-google-remove-crtc-index-from-parameter-v1-0-6e179abf9fd4@bootlin.com>
- <20240814-google-remove-crtc-index-from-parameter-v1-11-6e179abf9fd4@bootlin.com>
- <20240827-solid-adorable-coucal-c3e0d1@houat>
+	 Content-Type:Content-Disposition:In-Reply-To; b=erej98KyGFV033iDV97jGo7T4eX/WGQ1SXgLQ7gnoHJSnRzwhImM3Lct8kzXMMCW9QdVVUaPuiqdy+/djNsx7blSzEneIAMfW4C5m64TbVbDsVElhAlFBVs6mJm3oTnEy2Oz7knTIGr+DHZWE+X3Q/1e49pRBdAucVQRL6kCI7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YaVSKF5O; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724773378; x=1756309378;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lXCedQeonAV55TDDmc5vnK1OKuPMO7LuzMDVk2Kdgbk=;
+  b=YaVSKF5OUgZUxwiFagK1W8Cr2ek+3S+gK8/apL/fsIMRZhDKMAOgAPnh
+   X54y6sXAJzyvYhDNHUb/cKZ6OelndvEMiGpE32r9nDT8ryf4iuycx2lF0
+   D2bxjFFNFYOcoUlXOcCE70dGkFlkdWs3C1aA/oDCZeK0cpVlHLFPmNKvj
+   BF39MnByiP6O9XnTRditdHHuSlmSYJYLDtOox/gr8BadN3epeLWNGZBmS
+   elnVDhq6DGL2T8fLqkdD8zqs//HOq8qLvXkHrJHN99qs+9XC9DNZMWHeK
+   XJKgnzGp48qbh3ZAIyyvzhBcF9P4m8p9YblBbOHRAs/nnQkosuUjFiFjg
+   A==;
+X-CSE-ConnectionGUID: 8ARYH27iTn+3y3u3n0hN/A==
+X-CSE-MsgGUID: WKjFP5OqSfW5mysTpAKyFg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="23411400"
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="23411400"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 08:42:58 -0700
+X-CSE-ConnectionGUID: yLodD4IjRfWxap87X5kFmA==
+X-CSE-MsgGUID: FMvoO2WnRRW6Dkw0m4K1CA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="67055166"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 27 Aug 2024 08:42:56 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1siyLN-000JkY-1j;
+	Tue, 27 Aug 2024 15:42:53 +0000
+Date: Tue, 27 Aug 2024 23:42:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Liming Sun <limings@nvidia.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	David Thompson <davthompson@nvidia.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Liming Sun <limings@nvidia.com>, linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] mmc: sdhci-of-dwcmshc: Add hw_reset() support for
+ BlueField-3 SoC
+Message-ID: <202408272323.10IOsTV8-lkp@intel.com>
+References: <73703c853e36f3cd61114e4ac815926d94a1a802.1724695127.git.limings@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240827-solid-adorable-coucal-c3e0d1@houat>
-X-GND-Sasl: louis.chauvet@bootlin.com
+In-Reply-To: <73703c853e36f3cd61114e4ac815926d94a1a802.1724695127.git.limings@nvidia.com>
 
-Le 27/08/24 - 16:33, Maxime Ripard a écrit :
-> Hi,
-> 
-> On Wed, Aug 14, 2024 at 04:36:33PM GMT, Louis Chauvet wrote:
-> > Currently drm_writeback_connector are created by
-> > drm_writeback_connector_init or drm_writeback_connector_init_with_encoder.
-> > Both of the function uses drm_connector_init and drm_encoder_init, but
-> > there is no way to properly clean those structure from outside.
-> > 
-> > This patch introduce the new function drm_writeback_connector_cleanup to
-> > allow a proper cleanup.
-> > 
-> > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> > ---
-> >  drivers/gpu/drm/drm_writeback.c | 10 ++++++++++
-> >  include/drm/drm_writeback.h     | 11 +++++++++++
-> >  2 files changed, 21 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
-> > index a031c335bdb9..505a4eb40f93 100644
-> > --- a/drivers/gpu/drm/drm_writeback.c
-> > +++ b/drivers/gpu/drm/drm_writeback.c
-> > @@ -184,6 +184,7 @@ int drm_writeback_connector_init(struct drm_device *dev,
-> >  	drm_encoder_helper_add(&wb_connector->encoder, enc_helper_funcs);
-> >  
-> >  	wb_connector->encoder.possible_crtcs = possible_crtcs;
-> > +	wb_connector->managed_encoder = true;
-> >  
-> >  	ret = drm_encoder_init(dev, &wb_connector->encoder,
-> >  			       &drm_writeback_encoder_funcs,
-> > @@ -290,6 +291,15 @@ int drm_writeback_connector_init_with_encoder(struct drm_device *dev,
-> >  }
-> >  EXPORT_SYMBOL(drm_writeback_connector_init_with_encoder);
-> >  
-> > +void drm_writeback_connector_cleanup(struct drm_writeback_connector *wb_connector)
-> > +{
-> > +	drm_connector_cleanup(&wb_connector->base);
-> > +	drm_property_blob_put(wb_connector->pixel_formats_blob_ptr);
-> > +	if (wb_connector->managed_encoder)
-> > +		drm_encoder_cleanup(&wb_connector->encoder);
-> > +}
-> > +EXPORT_SYMBOL(drm_writeback_connector_cleanup);
-> > +
-> >  int drm_writeback_set_fb(struct drm_connector_state *conn_state,
-> >  			 struct drm_framebuffer *fb)
-> >  {
-> > diff --git a/include/drm/drm_writeback.h b/include/drm/drm_writeback.h
-> > index 17e576c80169..e651c0c0c84c 100644
-> > --- a/include/drm/drm_writeback.h
-> > +++ b/include/drm/drm_writeback.h
-> > @@ -35,6 +35,15 @@ struct drm_writeback_connector {
-> >  	 */
-> >  	struct drm_encoder encoder;
-> >  
-> > +	/**
-> > +	 * @managed_encoder: Sets to true if @encoder was created by drm_writeback_connector_init()
-> > +	 *
-> > +	 * If the user used drm_writeback_connector_init_with_encoder() to create the connector,
-> > +	 * @encoder is not valid and not managed by drm_writeback_connector. This fields allows
-> > +	 * the drm_writeback_cleanup() function to properly destroy the encoder if needed.
-> > +	 */
-> > +	bool managed_encoder;
-> > +
-> 
-> I think we should rather create drmm_writeback_connector variants,
-> and make both deprecated in favor of these new functions.
+Hi Liming,
 
-Hi,
+kernel test robot noticed the following build warnings:
 
-I can try to do it. If I understand correctly, you want to create two 
-functions like this? 
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.11-rc5 next-20240827]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-	int drmm_writeback_connector_init([...]) {
-		/* drmm and alloc as we want to let drm core to manage this 
-		   encoder, no need to store it in drm_writeback_connector 
-		   */
-		enc = drmm_plain_encoder_alloc(...);
+url:    https://github.com/intel-lab-lkp/linux/commits/Liming-Sun/mmc-sdhci-of-dwcmshc-Add-hw_reset-support-for-BlueField-3-SoC/20240827-052819
+base:   linus/master
+patch link:    https://lore.kernel.org/r/73703c853e36f3cd61114e4ac815926d94a1a802.1724695127.git.limings%40nvidia.com
+patch subject: [PATCH v1 1/1] mmc: sdhci-of-dwcmshc: Add hw_reset() support for BlueField-3 SoC
+config: riscv-defconfig (https://download.01.org/0day-ci/archive/20240827/202408272323.10IOsTV8-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 08e5a1de8227512d4774a534b91cb2353cef6284)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408272323.10IOsTV8-lkp@intel.com/reproduce)
 
-		return drmm_writeback_connector_init_with_encoder([...], enc);
-	}
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408272323.10IOsTV8-lkp@intel.com/
 
-	int drmm_writeback_connector_init_with_encoder([...], enc) {
-		con = drmm_connector_init([...]);
+All warnings (new ones prefixed by >>):
 
-		drm_connector_attach_encoder(enc, con);
-
-		/* Needed for pixel_formats_blob_ptr, base is already 
-		   managed by drmm_connector_init. Maybe cleaning 
-		   job_queue is also needed? */
-		drmm_add_action_or_reset([...], &drm_writeback_connector_cleanup)
-	}
-
-Louis Chauvet
- 
-> Maxime
+   In file included from drivers/mmc/host/sdhci-of-dwcmshc.c:14:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:8:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:517:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/mmc/host/sdhci-of-dwcmshc.c:919:31: warning: unused variable 'sdhci_dwcmshc_bf3_ops' [-Wunused-const-variable]
+     919 | static const struct sdhci_ops sdhci_dwcmshc_bf3_ops = {
+         |                               ^~~~~~~~~~~~~~~~~~~~~
+   2 warnings generated.
 
 
+vim +/sdhci_dwcmshc_bf3_ops +919 drivers/mmc/host/sdhci-of-dwcmshc.c
+
+   918	
+ > 919	static const struct sdhci_ops sdhci_dwcmshc_bf3_ops = {
+   920		.set_clock		= sdhci_set_clock,
+   921		.set_bus_width		= sdhci_set_bus_width,
+   922		.set_uhs_signaling	= dwcmshc_set_uhs_signaling,
+   923		.get_max_clock		= dwcmshc_get_max_clock,
+   924		.reset			= sdhci_reset,
+   925		.adma_write_desc	= dwcmshc_adma_write_desc,
+   926		.irq			= dwcmshc_cqe_irq_handler,
+   927		.hw_reset		= dwcmshc_bf3_hw_reset,
+   928	};
+   929	#endif
+   930	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
