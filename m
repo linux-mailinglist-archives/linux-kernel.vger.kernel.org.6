@@ -1,109 +1,194 @@
-Return-Path: <linux-kernel+bounces-303622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46AAC961168
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:20:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD8B49611BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:22:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF02E1F23488
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:20:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92866280C14
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015A81C6F5A;
-	Tue, 27 Aug 2024 15:18:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6575B1BC9E3;
+	Tue, 27 Aug 2024 15:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="kP3YyR7y"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="juFlXAHp"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E5C1C9458
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 15:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48381BC073;
+	Tue, 27 Aug 2024 15:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724771925; cv=none; b=JJfBSHpDNDq70rQ26gho8+FKkU9jJ1reVBNnkWV4cVa8YITDX0HOsXpC2Kj82JFe+20pvnWunSanKUhJn3Fp6jA90Su22cBE+mrHsPqFOYS19y14HPxp67TYbaIwTeoWj9Qewc9vJ8X+hPhjNRpqwQjc5F/m7Uf/XgKtVqhHB8M=
+	t=1724772161; cv=none; b=Gx+7Nxxg+l21DrXoMtnijzLYmTqAkMuqQ8Eo/WfW6m63u2sSWzo81usDSOaqiktrvt47/vf31VCK4XRZuddqG7aX1JbkO8mpj5sf8W99dtLnIGfDLa936EPKsmrCIvAp00cRTbbgGdQLUYMLiubQ2PFwz8cniN9SaeD9YMK92Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724771925; c=relaxed/simple;
-	bh=FWrbAG6P0brsbGn9M+o5zlQjAT9566YEYTljPVMRvw8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=h0uzaQretnFLM1HZ5LhH7lz/mDW1hs1fe7A53BchBCGhd8eRsVAlfqpxqGDkvY5r/JXSmPB5MDNj/aBeKMbOdStJdDd9UP6aCYTL6raN/Bgc4f4tWGnfFtvkZ67Y2xbzMWrFSJ7nNHOp1iPjNbw/Hko9deWL6zYJIO5Bk+h8uYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=kP3YyR7y; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-39d4a4e4931so18293275ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:18:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1724771921; x=1725376721; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X3sz91txppRRQol2u4InUNml7heTRN8PJYStXnuBzvI=;
-        b=kP3YyR7y+7NCLk2rtx/assH1rpSQhu4URr5cV0zDDPiXN2VHQUHipmz8D4MP7K0wiO
-         SSrAZjHmcPfvnOUiWDEuyIyB0yCLKL0imCsofdGb19zlhHzZR02cf+/vys4mrwXruSwz
-         erDGuo3qJIeMrUaE4kkzOusBrhcs2RSLr6nKYNPM4F+zutjrSr05psBa1Z8ErigXzDp8
-         VoazsmtS6n1n8it9zO5C7dGlvhpb0WYpsvW1VlcRUpcN5vNOfrXSrrJWcjvJHWKQ4j+Y
-         XqYn4ltnJEyX9tOcKfgubYgk6VMjAoUcqfKbypVUQktW9wmD89lYnOizE+0U0xgM0AaX
-         afCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724771921; x=1725376721;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X3sz91txppRRQol2u4InUNml7heTRN8PJYStXnuBzvI=;
-        b=ZKQ7YYoKopol3Q+LkO6ZV1qz12RQ0+n0NX4MP53NdJfkYtiZciQwCf5DAQ6c89xYl7
-         8/kW6sdeMAt2YsksR45xyKSZOGKHj3GX+sCaThvmZan/BJZh7d2h7I26Z+/OcjIL0iXv
-         h3Y13hGBc9nty79wJvNxdpqeHdJqa66LLGPef/f4aefnIgpuyYkqZ28ZorgAWIR9JA+U
-         g59dPuRo9nrYufKKmp8Zm1TlvuyuFSteWTq1X4z3Y1duSjCWOLqQYW8wFI6GNY6uA+cW
-         4ohZuTFALLa9harIAN1elvdkR9FPfqsWzccnrW/RwisEcMH3wtOsrSZ4MpE9aDzrWOPb
-         9XBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVW8SGsDhbPpP6QOcCWYpwuOHPYTkPllCnOdt0OcnOA7Xgm5dx2udsrGMaURQNIubIpRUWnxW5Pw3A/0w4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeKGCaS9Mp5A9zPWv5bPadTF5G7CQm3mM5h2wVLgVW/6Fc/8Dk
-	hHsWTtKkPjOL1iazfAnwpC/GJtIIL+QRw/CJi1Ve5eYN+IGe4RJNFvfowLOeCdSm77VyELS7zk+
-	1
-X-Google-Smtp-Source: AGHT+IGNdx3hQSl4CkHtRMaYkJu09zBIn48d6ju/aGa6VCD7Sery0aqS73SHIK0b0MExvGSMVChjYw==
-X-Received: by 2002:a05:6e02:1749:b0:375:deb0:4c28 with SMTP id e9e14a558f8ab-39e3c9757f5mr159333585ab.6.1724771921413;
-        Tue, 27 Aug 2024 08:18:41 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39d73e67af3sm40028295ab.16.2024.08.27.08.18.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 08:18:40 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Yang Ruibin <11162571@vivo.com>
-Cc: opensource.kernel@vivo.com
-In-Reply-To: <20240827022741.3410294-1-11162571@vivo.com>
-References: <20240827022741.3410294-1-11162571@vivo.com>
-Subject: Re: [PATCH v7] pktcdvd: Remove unnecessary debugfs_create_dir()
- error check in pkt_debugfs_dev_new()
-Message-Id: <172477192076.295209.520219847740395596.b4-ty@kernel.dk>
-Date: Tue, 27 Aug 2024 09:18:40 -0600
+	s=arc-20240116; t=1724772161; c=relaxed/simple;
+	bh=FTAaRDrAktlQbof46vd1YzSU/GPPobUGQX7/r/ZL9BI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fG+iEvgMjkdRi+LYMq4VllasNNO6JYBF++/EvtJ3FJeXHBIxVtO+QzwgQ0oNopvL/ySDdEgppdxYS5D8JunD5SpVLDf6P+OkUfwlthpsmgkOVU7CZbPoSgEz+l29MOKV8vSbslArrA9CWAad+qDnky29WvzG6+qLMZn+Iy3DcpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=juFlXAHp; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47RFMJ6m084297;
+	Tue, 27 Aug 2024 10:22:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724772139;
+	bh=plRvOJkmnI84SapBQUzX8HSqk48OkCc/MtkTYAImTtM=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=juFlXAHpacIzsq2qvRlzLwmzDvCsRAVnjSMbmlSD8E1B2ixd5OgOd9cauYUGFDjXC
+	 lJba3d33PF5Vb9SbGwgPyjQxAgJ5IwnPrn7jR7MbA8t2nizNRPLnruuV8KG/B4MWyI
+	 Rp6UqE/Kf6ur5ghORRbx0NoKdr2ofZWw8a4XXnHw=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47RFMJiN015911
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 27 Aug 2024 10:22:19 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 27
+ Aug 2024 10:22:19 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 27 Aug 2024 10:22:19 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47RFMI95098754;
+	Tue, 27 Aug 2024 10:22:18 -0500
+Message-ID: <b18cb162-e95c-4927-8fa7-1c29b8dda1a7@ti.com>
+Date: Tue, 27 Aug 2024 10:22:18 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 0/3] Add generic Overlay for Grove Sunlight Sensor
+To: Ayush Singh <ayush@beagleboard.org>, Nishanth Menon <nm@ti.com>,
+        Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, Rob Herring
+	<robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Vaishnav M A <vaishnav@beagleboard.org>,
+        Derek
+ Kiernan <derek.kiernan@amd.com>,
+        Dragan Cvetic <dragan.cvetic@amd.com>, Arnd
+ Bergmann <arnd@arndb.de>,
+        Michael Walle <mwalle@kernel.org>,
+        Jason Kridner
+	<jkridner@beagleboard.org>,
+        Robert Nelson <robertcnelson@beagleboard.org>,
+        Robert Nelson <robertcnelson@gmail.com>,
+        Ayush Singh
+	<ayushdevel1325@gmail.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240702164403.29067-1-afd@ti.com>
+ <28513e07-ab56-4cff-972c-64c2e3d6d9e2@beagleboard.org>
+ <cb8af9ed-6200-428a-a9a8-87356af6e37d@ti.com>
+ <eab183e7-8e70-42af-8786-a8e7b29b72c8@beagleboard.org>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <eab183e7-8e70-42af-8786-a8e7b29b72c8@beagleboard.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-
-On Tue, 27 Aug 2024 10:27:40 +0800, Yang Ruibin wrote:
-> Remove the debugfs_create_dir() error check. It's safe to pass in error
-> pointers to the debugfs API, hence the user isn't supposed to include
-> error checking of the return values.
+On 8/27/24 8:20 AM, Ayush Singh wrote:
+>> Sorry, no I've not had time to circle back to this for the last couple weeks,
+>> and don't expect to be able to for a couple more :(
+> 
+> Np, I will see what I can do.
 > 
 > 
+>>
+>> The two parts I see that are missing are:
+>>
+>> 1) The /append-property/ tag [0].
+> 
+> So how do you envision it? Maybe something like the following:
+> 
+> Base:
+> 
+> / {
+> 
+>      node {
+> 
+>          prop = <0x00>;
+> 
+>      };
+> 
+> };
+> 
+> 
+> Overlay:
+> 
+> &node {
+> 
+>      /append-property/ prop;
+> 
+>      prop = <0x01>;
+> 
+> };
+> 
+> 
+> Or would it be better to append 1 element at a time, as follows:
+> 
+> &node {
+> 
+>      /append-property/ prop 0x01;
+> 
+> };
+> 
 
-Applied, thanks!
+Does
 
-[1/1] pktcdvd: Remove unnecessary debugfs_create_dir() error check in pkt_debugfs_dev_new()
-      commit: 752a59298ea9c695ec966fc5ba7173897a1ef361
+/append-property/ prop = <0x01 0x02 0x03>;
 
-Best regards,
--- 
-Jens Axboe
+work? We will want to be able to append lists. Some type
+checking will be needed, but shouldn't be too bad.
 
+Probably good to get input from the DT folks which syntax
+looks best to them.
 
+> 
+>>
+>> 2) Allowing the __symbols__ table properties to be phandles, not just
+>> full path strings.
+>>
+>> For item 2, this will make the "adapter overlays" look much nicer, but
+>> more importantly allow chaining together adapters more easily.
+>>
+>> Both these changes will need to be made in the DTC project, then
+>> moved back into kernel. Neither change breaks any existing compatibility
+>> so I don't expect much resistance there. It just takes some time
+>> to get changes in, then have them migrated to a kernel release before
+>> we can make use of them.
+>>
+>> If you want to help with either of those two items (I can provide more
+>> details if needed), that could help keep this moving along. :)
+>>
+>> Thanks,
+>> Andrew
+>>
+>> [0] https://lkml.org/lkml/2024/7/5/311
+> 
+> 
+> I am in the process of understanding the dtc codebase. Will send patches to device-tree mailing list since that seems to be easier to keep track of with the Linux patches instead of GitHub PRs.
+> 
 
+IIRC they have a dedicated mailing list for DTC,
+
+devicetree-compiler@vger.kernel.org
+
+Andrew
+
+> 
+> Ayush Singh
+> 
+> 
 
