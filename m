@@ -1,195 +1,199 @@
-Return-Path: <linux-kernel+bounces-304093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BAA8961A23
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 00:49:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4207961A26
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 00:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E07B11F246E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 22:49:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 238841F247F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 22:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C121D417C;
-	Tue, 27 Aug 2024 22:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628281D417D;
+	Tue, 27 Aug 2024 22:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c0t9UAo2"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="sJrWBI2F"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4405C64A;
-	Tue, 27 Aug 2024 22:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ABC01714BC
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 22:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724798972; cv=none; b=tP7PnK77meL2lIDRAIFOT9BsrStG3HpNaUlKlWFYXHxZL57rWzkjN64fJbVQSQDqRyPF4AlUyWOZ5DOfRxPaYI/yqxQFzmYRt9U8vHOe4vATR52IH5kKON9f/LzgxGezZ0Yzg5Jy/+oGH6Zcqm2hv7UCncu9wzBeYAh82ffVYF8=
+	t=1724799087; cv=none; b=deNXebhQySTDcbMHoDr+eR0NQrrOepDfSAakYEsed19wLNQtIpUPYJarPbqFaO5g6Qc0U3/3Vaev4PF8a35Q44T2dPA8xQTkFLp8ZUaRCGg5A9Om+G/WZn9wqylxT4QahXfzvAngNNg0zTF9fV70yX28e1pOeOIh9YCZdO5MPYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724798972; c=relaxed/simple;
-	bh=ZCsx4XBxZszRLALGFHsW8Srd/rR17PluQWFhIcWOekQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oo1LpF9yrPwwTZAdq0/jSaUg7ljNjdSg7oWhxurtUM8BcVhVl2Z2MIt6zJcC9oPOWKYFOiv4V/Ib82ANNIIA4x3i8HpVmzr93akzvKPz9nh+DRc3UhSCZlEUoeZfUGXCxO7UzMOKvAmG6rwfQuqUaL5A9bWndOtJeAEDDXHSzp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c0t9UAo2; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20223b5c1c0so55271615ad.2;
-        Tue, 27 Aug 2024 15:49:30 -0700 (PDT)
+	s=arc-20240116; t=1724799087; c=relaxed/simple;
+	bh=uZEV6Er55Y1nv1xBlG+kUchSJelI/Jfm4FIRafbGjV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JEVxf+w1OncqLWB06TrlZwKWQzuaUeMiYMgM1rU0nJHwevYVnUEda8qvhU8Pigv2GBCaeaGh9jjuDPu4EU5DBL9/rClWijO7OabtUL04LTkS+viYKpMBQVEGIwRbgI/OB1oX3WcVJ/7tYi1Sh7LQIRcU7cEPfkMJkwqaswGyYRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=sJrWBI2F; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20227ba378eso55008935ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 15:51:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724798970; x=1725403770; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aDrZ+EjYF19PvJC+i6jehJt+sfVjodbjYXEq8nEjBfw=;
-        b=c0t9UAo2cwN5FprNQsyQH2oA2gIUy+2/WpT06Rlk7YvH9cVP7HPg573El7gO1hpaI+
-         JdoWm/0erFnKOSqWgoCXv7Au/Y9+Skge3T1kH4APrN4z1CANUlIMotHiGhI4fLH6nrEG
-         n41Fd2dGcm1iK5ZDgQtcabZR4Rkb67OTuIl8bZr73ldUo4kYtwPY0IbiL8ndWB+ACPqV
-         mOwBcr4qi1yf5eoQLpSgbk765Qwxpl1NcoHFI2V/TeLqscV+y6H+3wJQOhF+OvaupX72
-         V3hdb7BIO1BHS0O9Q0UsD0cfyxS7JeBosQZ82TrRNQQyLLGfqxibdPhY6KTPCbNB1GZA
-         1+JA==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1724799085; x=1725403885; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GJGHZxh5R6ZTtzzS/6NHcFwTfwgCDmdEBZWgyIzoMVk=;
+        b=sJrWBI2FJL5ddMRADH+qo3A+SmTzsmuUmxnq6ndGO4pxZQFlS5VB+0sWQJDf1j1YF9
+         cnSFDgsnTkdVrQ3UEMKvf2+mZBQ6qwuu2aP6vpS7Ac2qIIRXLDsUIaeWYZdGonuH/lxQ
+         OHTeWtS4/Lzp2DFNMWw3dljnviTQ88zIZ5ZcHqzWz90bORq8ewtUD5W5rcOycr2Ar4gv
+         4uhBqYAbuIGEi8LAg2DCpsQe9QKyH05+lb/DWQYXLvdwNfo5QSQMhWzPw0jbtG/HbqtL
+         9dwFZT89JGwPkXy0/gzhxDmKFoKXnWYScQBclRcBm2nP2j7NCvXjDvptjjEgeoMqYG1F
+         NHfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724798970; x=1725403770;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aDrZ+EjYF19PvJC+i6jehJt+sfVjodbjYXEq8nEjBfw=;
-        b=FPrQ6m865Pb4M7s9YGckP4NSlB/MLHUFBIk6H5A+JCk+qnijq2VdxC+yNAByWqJOYu
-         iLjHQq/C/VQE/3hWoQXnGkm70/BX62HbU5Nk/jdlZaGT6SxOVq0uGsbLiyTpDp/x79ck
-         R0fP4Reo62TLkBXu7WWgt2zTFGqm4auM0Ms5cddzsSxlD2QoH/EyKF86Qzlll8hL1CyB
-         HndqFTQWRuEHUZ90dfvgWUXViXUoIet8f3yZpg2hwbS0U3M3bL7FPvE/KDIywwEOZRyx
-         kDUU8IIVhIacLrxSEnHk4SdOiIiYhCJCUel/zy76QKeRDpjCaRyWAiPV8sEvwiVRcXAq
-         uWlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgAdgd9A5G2RCJ8knp+4LhAJEO4K3z16sGJYv92qy/99bRrWC15yprqCciWbMXxrYvdVo/Pv0pRmmRYUxeTMlf@vger.kernel.org, AJvYcCWgBRi7vzDhp0891ilZqKSF0rhKfM7XBlH1RlvEiHVxz4Z23bUiWyVqxidYMY240+MpuxU=@vger.kernel.org, AJvYcCWgrUIRMbcLyowanmahlA4B+cIAoOVEE/BmcQjSynwoDlzWeO+Yquob1ufAMX4tsG5EnPkwtsMr5GxFjakg@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXAsVl3BQg0cib0yY5z9jO/jcyDLbH5+cgJMi3KXwhmIKW/Wup
-	uFafh5I+5PeVi8FHI6rcJkL34oSqKeJ6xKRnOuy1YD/z0ijPabmaUF5XqLI4Duns/6qSFbdPOcC
-	0WLfdTGJKNfxLWciQ7W8skjIsReE=
-X-Google-Smtp-Source: AGHT+IEwBtby9TuFKewToNcAgGmssYT1IQ4FwnBLenBDL+7cmMy1RtU0QYGENMASBUl5BodCYDZ7bMyL99TsSkTiM0A=
-X-Received: by 2002:a17:90b:4f8b:b0:2c9:e24d:bbaa with SMTP id
- 98e67ed59e1d1-2d8441a247fmr197238a91.27.1724798970365; Tue, 27 Aug 2024
- 15:49:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724799085; x=1725403885;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GJGHZxh5R6ZTtzzS/6NHcFwTfwgCDmdEBZWgyIzoMVk=;
+        b=NUHnLrJhQGtLZKz9I1q+xFlW4zlUeAMlsKLEi8NP8btmUfUz3uVFky3OpFdsdsLdPE
+         wPe3SMLUFCEQXaI4XgFdbc45VPa9e54k9wRNeGlmyKGoqa6T6MQia6ss/bgIUkBs/wV8
+         t0YAUbw+Ln6/BNNSvz25Yi90TzJUQmcPwjj7aPKWi18bWnXebCfgZCFvxV5gp3F64UVA
+         hEjBU6MXg/32+PgjIiC4rD68HB/x3aZ/UBmvU3x6B/e/D+1GNhQiJcctTqvUHHQCDFOm
+         yoOcojDa3rCPwZmcobjlC7wjbRU9xEj0ulQ+bVS35lnEHsVd2lMZWMlKp8J7hviWv9VH
+         TTfw==
+X-Forwarded-Encrypted: i=1; AJvYcCW9iUUi5ZuJ2sX9uMRJ4eVlL9hbF9+oNFOruVBwhwCTh/Tuix5+YL59ve5GQ5HMpAbN+vi4RHoyJ+oiBbQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAQY/bWmdfWN2bwjjfK/ZxpsOsEoUY0qx4B17ViaIDGtmwrG2x
+	BDCGZ+YkKo4DqI0RzMPSxYSyn39O5ZE8Ip9uJECIhZwqm2GH3BGF8OavkQjLnDuOohYJgC+1ffK
+	Q
+X-Google-Smtp-Source: AGHT+IFtWGzsf+t9jppqitVe4iRyVZpKNl+Rv44cEroZBBCOkbsjRtNxvNObXq1JQJhWQRM7TkpVTg==
+X-Received: by 2002:a17:903:244c:b0:203:a156:54af with SMTP id d9443c01a7336-203a15655dcmr223343795ad.17.1724799085373;
+        Tue, 27 Aug 2024 15:51:25 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-0-65.pa.nsw.optusnet.com.au. [49.179.0.65])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-203855dbf79sm87443545ad.125.2024.08.27.15.51.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 15:51:24 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sj522-00F3c9-04;
+	Wed, 28 Aug 2024 08:51:22 +1000
+Date: Wed, 28 Aug 2024 08:51:21 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 4/5] xfs: convert perag lookup to xarray
+Message-ID: <Zs5Yac5V0pbz1PMF@dread.disaster.area>
+References: <20240821063901.650776-1-hch@lst.de>
+ <20240821063901.650776-5-hch@lst.de>
+ <20240821162810.GF865349@frogsfrogsfrogs>
+ <20240822034548.GD32681@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827133959.1269178-1-yikai.lin@vivo.com> <20240827133959.1269178-3-yikai.lin@vivo.com>
-In-Reply-To: <20240827133959.1269178-3-yikai.lin@vivo.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 27 Aug 2024 15:49:18 -0700
-Message-ID: <CAEf4BzZXL9=pOkt=GbrYG2DpDGtXNLS7AHH5rL3adHd50zMKmQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v1 2/2] selftests/bpf: Fix cross-compile issue
- for some files and a static compile issue for "-lzstd"
-To: Lin Yikai <yikai.lin@vivo.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
-	Nick Terrell <terrelln@fb.com>, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240822034548.GD32681@lst.de>
 
-On Tue, Aug 27, 2024 at 6:40=E2=80=AFAM Lin Yikai <yikai.lin@vivo.com> wrot=
-e:
->
-> 1. Fix cross-compile issue for some files:
-> [Issue]
-> When cross-compiling bpf selftests for arm64 on x86_64 host, the followin=
-g error occurs:
-> progs/loop2.c:20:7: error: incomplete definition of type 'struct user_pt_=
-regs'
->    20 |                 if (PT_REGS_RC(ctx) & 1)
->       |                     ^~~~~~~~~~~~~~~
->
-> There are same error in files: loop1.c, loop2.c, loop3.c, loop6.c ???
->
-> [Reason]
-> On arm64, in file bpf_tracing.h, we use userspace's user_pt_regs,
-> which is defined in "linux/ptrace.h".
-> We include the header file by adding "-idirafter /usr/include" for "CLANG=
-_CFLAGS".
->
-> However, during cross-compiling, "linux/ptrace.h" is based on x86_64
-> and has no definition of "struct user_pt_regs".
->
-> [Fix]
-> Thus, to fix this issue, we include the Linux source tree's header file d=
-irectory.
->
+On Thu, Aug 22, 2024 at 05:45:48AM +0200, Christoph Hellwig wrote:
+> On Wed, Aug 21, 2024 at 09:28:10AM -0700, Darrick J. Wong wrote:
+> > On Wed, Aug 21, 2024 at 08:38:31AM +0200, Christoph Hellwig wrote:
+> > > Convert the perag lookup from the legacy radix tree to the xarray,
+> > > which allows for much nicer iteration and bulk lookup semantics.
+> > 
+> > Looks like a pretty straightforward covnersion.  Is there a good
+> > justification for converting the ici radix tree too?  Or is it too
+> > sparse to be worth doing?
+> 
+> radix trees and xarrays have pretty similar behavior related to
+> sparseness or waste of interior nodes due to it. 
 
-Hm.. Not sure that's the right fix. Note -D__TARGET_ARCH_$(SRCARCH) in
-BPF_CFLAGS, that __TARGET_ARCH has to match actual target
-architecture, so please check that first.
+And the node size is still 64 entries, which matches up with inode
+chunk size. Hence a fully populated and cached inode chunk fills
+xarray nodes completely, just like the radix tree. Hence if our
+inode allocation locality decisions work, we end up with good
+population characteristics in the in-memory cache index, too.
 
-pw-bot: cr
+> So unless we find a
+> better data structure for it, it would be worthwhile.
 
-> 2. Fix static compile issue for "-lzstd":
-> [Issue]
-> By running the command "LDLIBS=3D-static LDFLAGS=3D--sysroot=3D/aarch64-l=
-inux-gnu/libc ./vmtest.sh -s -- ./test_progs",
-> during static cross-compiling, an error occurs:
-> /aarch64-linux-gnu/bin/ld: aarch64-linux-gnu/libc/usr/lib/libelf.a(elf_co=
-mpress.o): in function `__libelf_compress':
-> (.text+0xec): undefined reference to `ZSTD_createCCtx'
-> /aarch64-linux-gnu/bin/ld: (.text+0xf0): undefined reference to `ZSTD_cre=
-ateCCtx'
-> ...
->
-> [Fix]
-> For static compile, add "LDLIBS +=3D -lzstd".
+I have prototype patches to convert the ici radix tree to an xarray.
+When I wrote it a few months ago I never got the time to actually
+test it because other stuff happened....
 
-we can probably just add it unconditionally, no? But please send it as
-a separate change in its own patch
+> But the ici radix tree does pretty funny things in terms of also
+> protecting other fields with the lock synchronizing it, so the conversion
+> is fairly complicated
 
->
-> Signed-off-by: Lin Yikai <yikai.lin@vivo.com>
-> ---
->  tools/testing/selftests/bpf/Makefile | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftes=
-ts/bpf/Makefile
-> index ec7d425c4022..5b725bc890d2 100644
-> --- a/tools/testing/selftests/bpf/Makefile
-> +++ b/tools/testing/selftests/bpf/Makefile
-> @@ -48,6 +48,10 @@ CFLAGS +=3D -g $(OPT_FLAGS) -rdynamic                 =
-                 \
->  LDFLAGS +=3D $(SAN_LDFLAGS)
->  LDLIBS +=3D $(LIBELF_LIBS) -lz -lrt -lpthread
->
-> +ifneq (,$(findstring -static,$(LDLIBS)))
-> +LDLIBS +=3D -lzstd
-> +endif
-> +
->  LDLIBS +=3D $(shell $(PKG_CONFIG) --libs libpcap 2>/dev/null)
->  CFLAGS +=3D $(shell $(PKG_CONFIG) --cflags libpcap 2>/dev/null)
->  CFLAGS +=3D $(shell $(PKG_CONFIG) --exists libpcap 2>/dev/null && echo "=
--DTRAFFIC_MONITOR=3D1")
-> @@ -443,13 +447,19 @@ CLANG_TARGET_ARCH =3D --target=3D$(notdir $(CROSS_C=
-OMPILE:%-=3D%))
->  endif
->
->  CLANG_SYS_INCLUDES =3D $(call get_sys_includes,$(CLANG),$(CLANG_TARGET_A=
-RCH))
-> +CLANG_CFLAGS =3D $(CLANG_SYS_INCLUDES)
-> +
->  BPF_CFLAGS =3D -g -Wall -Werror -D__TARGET_ARCH_$(SRCARCH) $(MENDIAN)   =
- \
->              -I$(INCLUDE_DIR) -I$(CURDIR) -I$(APIDIR)                   \
->              -I$(abspath $(OUTPUT)/../usr/include)                      \
->              -Wno-compare-distinct-pointer-types
->  # TODO: enable me -Wsign-compare
->
-> -CLANG_CFLAGS =3D $(CLANG_SYS_INCLUDES)
-> +#"make headers_install" at first
-> +ifneq ($(CROSS_COMPILE),)
-> +src_uapi_dir :=3D $(srctree)/usr/include
-> +BPF_CFLAGS +=3D -I$(src_uapi_dir)
-> +endif
->
->  $(OUTPUT)/test_l4lb_noinline.o: BPF_CFLAGS +=3D -fno-inline
->  $(OUTPUT)/test_xdp_noinline.o: BPF_CFLAGS +=3D -fno-inline
-> --
-> 2.34.1
->
+The locking isn't a big deal - I just used xa_lock() and xa_unlock()
+to use the internal xarray lock to replace the perag->pag_ici_lock.
+This gives the same semantics of making external state and tree
+state updates atomic.
+
+e.g. this code in xfs_reclaim_inode():
+
+	spin_lock(&pag->pag_ici_lock);
+	if (!radix_tree_delete(&pag->pag_ici_root,
+			       XFS_INO_TO_AGINO(ip->i_mount, ino)))
+		ASSERT(0);
+	xfs_perag_clear_inode_tag(pag, NULLAGINO, XFS_ICI_RECLAIM_TAG);
+	spin_unlock(&pag->pag_ici_lock);
+
+becomes:
+
+	xa_lock(&pag->pag_icache);
+	if (__xa_erase(&pag->pag_icache,
+			XFS_INO_TO_AGINO(ip->i_mount, ino)) != ip)
+		ASSERT(0);
+	xfs_perag_clear_inode_tag(pag, NULLAGINO, XFS_ICI_RECLAIM_TAG);
+	xa_unlock(&pag->pag_icache);
+
+so the clearing of the XFS_ICI_RECLAIM_TAG in the mp->m_perag tree
+is still atomic w.r.t. the removal of the inode from the icache
+xarray.
+
+> and I don't feel like doing it right now, at least
+> no without evaluating if for example a rthashtable might actually be
+> the better data structure here.  The downside of the rthashtable is
+> that it doens't support tags/masks and isn't great for iteration, so it
+> might very much not be very suitable.
+
+The rhashtable is not suited to the inode cache at all. A very
+common access pattern is iterating all the inodes in an inode
+cluster (e.g. in xfs_iflush_cluster() or during an icwalk) and with
+a radix tree or xarray, these lookups all hit the same node and
+cachelines. We've optimised this into gang lookups, which means
+all the inodes in a cluster are fetched at the same time via
+sequential memory access.
+
+Move to a rhashtable makes this iteration mechanism impossible
+because the rhashtable is unordered. Every inode we look up now
+takes at least one cacheline miss because it's in some other
+completely random index in the rhashtable and not adjacent to
+the last inode we lookuped up. Worse, we have to dereference each
+object we find on the chain to do key matching, so it's at least two
+cacheline accesses per inode lookup.
+
+So instead of a cluster lookup of 32 inodes only requiring a few
+cacheline accesses to walk down the tree and then 4 sequential
+cacheline accesses to retreive all the inode pointers, we have at
+least 64 individual random cacheline accesses to get the pointers to
+the same number of inodes.
+
+IOWs, a hashtable of any kind is way more inefficient than using the
+radix tree or xarray when it comes to the sorts of lockless
+sequential access patterns we use internally with the XFS inode
+cache.
+
+Keep in mind that I went through all this "scalable structure
+analysis" back in 2007 before I replaced the hash table based inode
+cache implementation with radix trees. Radix trees were a far better
+choice than a hash table way back then, and nothing in our inode
+cache access patterns and algorithms has really changed since
+then....
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
