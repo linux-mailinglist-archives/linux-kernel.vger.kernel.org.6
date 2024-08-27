@@ -1,76 +1,196 @@
-Return-Path: <linux-kernel+bounces-303976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF8149617D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:12:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DD3D9617DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:13:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C65C2845AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:12:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B832C283FFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005161D2796;
-	Tue, 27 Aug 2024 19:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FDFC1D3185;
+	Tue, 27 Aug 2024 19:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lvoac/7E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="X+vPlEne";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="siK8oYLj";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="X+vPlEne";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="siK8oYLj"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C06B1D2F6A;
-	Tue, 27 Aug 2024 19:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA21B148FE5;
+	Tue, 27 Aug 2024 19:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724785920; cv=none; b=OK53wNOiuSIF+6sh77ZlBcDXsdT52m/D0PZ3lw8l5qdhVtXZ8x/1nPIdYeRmQ8yrU4TO57DjdZxghuK3dkCa6fiYHFkmJLp8NOG3o2+1xXRLb3QVHqhc0dYH28S0xzlKwzZUK3+Uzui+ywt0FjpOOKHCmSySaR8jMzakArM0tI0=
+	t=1724785953; cv=none; b=rVg4ed2mndFqCysO7VRzA6DDCiY0mqi84qVX27clIwSR/ya3xsG1LXph7vIjH3+wnYWwkX+NCOBwsAoYmOBEDnQoNBMdnpbqwx4PBRN7L7k1DVkRTy1xNi+n1VacUFz4UfP4YWtaZFHbhF1FvfJFI2n+UqePXdK8N23e6N5AL6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724785920; c=relaxed/simple;
-	bh=Gd4PQjjdZLiFuRj4/aa/Rk20+vM/4Yx2uCwANEq7Uco=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=dyiOnk6iHKUIrukJA/+wVfypTuaKVxbznAzv6OjOh8zGe8AWVoG9XoWkg4U3O1nwVBbb/HBS9/6G5SgccfawlYxQ26lnqko+OHv7HQf6buWmEkKJgDTTbP/kleDHEQGFyUfrXdoW1GUi4osNeOniItxpLVGsHJAO0sBqQa0aReo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lvoac/7E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8ADAC4AF54;
-	Tue, 27 Aug 2024 19:11:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724785919;
-	bh=Gd4PQjjdZLiFuRj4/aa/Rk20+vM/4Yx2uCwANEq7Uco=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=lvoac/7EzDXRdcRwaoDg8pXOB6bLbo+cpOjMNJMIaRkHxAxB/DbsA8gXuA/ZVQ5Cu
-	 zV7dhvq36LM9k/dm0dHa4HawSAUNjHFnQqTJlkWdA4HY2bYfGOUUa0Z6NbM+v3FwzS
-	 DIk31KzgM1LbS7lCzaVlzpxVK3qfg/R6datIRRvF7aUqgkBiufKCYgS1XjiffW/+QO
-	 F08BCnwIdgxAwlhb+FGMGboKGoJSH+DLFIHhtapTZvOjs1Tv20gwMj9d3m8B9ztPe6
-	 Dqa+9cG49ammqCQuuouzMTQJySJ2mNPtR2ojW6R1bN4AMKayUOpeFc86hKMRhPElvE
-	 wPKG5Vug7iiZg==
-Message-ID: <e45b7cef58f910e05a77d3309b9230d3.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1724785953; c=relaxed/simple;
+	bh=WwyLTLHHcXK9QqAZ1s94cqc8FzuBnwLDgcAQwNo2nbs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=heFlv8oTI6aTUUZpcKpL59ZWQ1TwTyJsxHC4h6p8k+1QWzSS1AJe+u1Iuedhq9gp1SylcXN38Z036pmaGH/XQIbVNb4hLgxLkczifJ9c/upfW3CXGDe4N73CRpNdLcavkxpm3Mhazif2BrEtKfBTTtml2A8eis2Nzyml0gyvkJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=X+vPlEne; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=siK8oYLj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=X+vPlEne; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=siK8oYLj; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BB53B1FB86;
+	Tue, 27 Aug 2024 19:12:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724785949; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hV7fAjaizF4vynjkGZ/75HBzKrPuuFVP8PnlSmPIxwk=;
+	b=X+vPlEneJD0qhFJi2Kx8Xo0qkNOHG3KSuspOC6CMtYIY/+h7F1r9nMfpW8zLROF9taU8S3
+	aFE3GHU4Ows4b6yDeZ8jLISne4PhwcqW1DvBEh5zL1nUXMr9oQTk5JQTonU6wi6OP+Gc2Z
+	TJ2yYxpbtXWwo53DgMaBtL95IVpEQeQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724785949;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hV7fAjaizF4vynjkGZ/75HBzKrPuuFVP8PnlSmPIxwk=;
+	b=siK8oYLjSAiJ9eajPXBKoZORHOIGT3g8kdmV58jc8X/mqGtBMefSgY/j3s81MB0qZYOwDK
+	7zSZsaMT5TnT0FAg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=X+vPlEne;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=siK8oYLj
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724785949; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hV7fAjaizF4vynjkGZ/75HBzKrPuuFVP8PnlSmPIxwk=;
+	b=X+vPlEneJD0qhFJi2Kx8Xo0qkNOHG3KSuspOC6CMtYIY/+h7F1r9nMfpW8zLROF9taU8S3
+	aFE3GHU4Ows4b6yDeZ8jLISne4PhwcqW1DvBEh5zL1nUXMr9oQTk5JQTonU6wi6OP+Gc2Z
+	TJ2yYxpbtXWwo53DgMaBtL95IVpEQeQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724785949;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hV7fAjaizF4vynjkGZ/75HBzKrPuuFVP8PnlSmPIxwk=;
+	b=siK8oYLjSAiJ9eajPXBKoZORHOIGT3g8kdmV58jc8X/mqGtBMefSgY/j3s81MB0qZYOwDK
+	7zSZsaMT5TnT0FAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8007813724;
+	Tue, 27 Aug 2024 19:12:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id GGUBHh0lzmY5agAAD6G6ig
+	(envelope-from <tbogendoerfer@suse.de>); Tue, 27 Aug 2024 19:12:29 +0000
+Date: Tue, 27 Aug 2024 21:12:24 +0200
+From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ <intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, Dave Ertman <david.m.ertman@intel.com>,
+ "Jiri Pirko" <jiri@resnulli.us>
+Subject: Re: [PATCH net] ice: Fix NULL pointer access, if PF doesn't support
+ SRIOV_LAG
+Message-ID: <20240827211224.0d172e40@samweis>
+In-Reply-To: <362dd93c-8176-4c46-878d-dd0e1b897468@intel.com>
+References: <20240826085830.28136-1-tbogendoerfer@suse.de>
+	<ZsxNv6jN5hld7jYl@nanopsycho.orion>
+	<20240826121710.7fcd856e@samweis>
+	<362dd93c-8176-4c46-878d-dd0e1b897468@intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.34; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240806145601.1184337-1-peng.fan@oss.nxp.com>
-References: <20240806145601.1184337-1-peng.fan@oss.nxp.com>
-Subject: Re: [PATCH V3] clk: scmi: add is_prepared hook
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org, d-gole@ti.com, Peng Fan <peng.fan@nxp.com>
-To: Peng Fan (OSS) <peng.fan@oss.nxp.com>, cristian.marussi@arm.com, linux-clk@vger.kernel.org, mturquette@baylibre.com, sudeep.holla@arm.com
-Date: Tue, 27 Aug 2024 12:11:57 -0700
-User-Agent: alot/0.10
+X-Rspamd-Queue-Id: BB53B1FB86
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Flag: NO
 
-Quoting Peng Fan (OSS) (2024-08-06 07:56:01)
-> From: Peng Fan <peng.fan@nxp.com>
->=20
-> Some clocks maybe default enabled by hardware. For clocks that don't
-> have users, that will be left in hardware default state, because prepare
-> count and enable count is zero,if there is no is_prepared hook to get
-> the hardware state. So add is_prepared hook to detect the hardware
-> state. Then when disabling the unused clocks, they can be simply
-> turned OFF to save power during kernel boot.
->=20
-> Reviewed-by: Dhruva Gole <d-gole@ti.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
+On Tue, 27 Aug 2024 09:16:51 +0200
+Przemek Kitszel <przemyslaw.kitszel@intel.com> wrote:
 
-Applied to clk-next
+> On 8/26/24 12:17, Thomas Bogendoerfer wrote:
+> > On Mon, 26 Aug 2024 11:41:19 +0200
+> > Jiri Pirko <jiri@resnulli.us> wrote:
+> >  =20
+> >> Mon, Aug 26, 2024 at 10:58:30AM CEST, tbogendoerfer@suse.de wrote: =20
+> >>> For PFs, which don't support SRIOV_LAG, there is no pf->lag struct
+> >>> allocated. So before accessing pf->lag a NULL pointer check is needed.
+> >>>
+> >>> Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de> =20
+> >>
+> >> You need to add a "fixes" tag blaming the commit that introduced the
+> >> bug. =20
+>=20
+> Would be also good to CC the author.
+
+sure, I'm using get_maintainer for building address line and looks
+like it only adds the author, if there is a Fixes tag, which IMHO
+makes more sense than mailing all possible authors of file (in this
+case it would work, but there are other files).
+
+> > Fixes: 1e0f9881ef79 ("ice: Flesh out implementation of support for
+> > SRIOV on bonded interface") =20
+>=20
+> the bug was introduced later, the tag should be:
+> Fixes: ec5a6c5f79ed ("ice: process events created by lag netdev event=20
+> handler")
+
+I'd like to disagree, ec5a6c5f79ed adds an empty ice_lag_move_new_vf_nodes(=
+),
+which will do no harm if pf->lag is NULL. Commit 1e0f9881ef79 introduces
+the access to pf->lag without checking for NULL.
+>=20
+> The mentioned commit extracted code into ice_lag_move_new_vf_nodes(),
+> and there is just one call to this function by now, just after
+> releasing lag_mutex, so would be good to change the semantics of
+> ice_lag_move_new_vf_nodes() to "only for lag-enabled flows, with
+> lag_mutex held", and fix the call to it to reflect that.
+
+I could do that for sure, but IMHO this is about fixing a bug,
+which crashes the kernel. Making the code better should be done
+after fixing.
+
+Thomas.
+
+--=20
+SUSE Software Solutions Germany GmbH
+HRB 36809 (AG N=C3=BCrnberg)
+Gesch=C3=A4ftsf=C3=BChrer: Ivo Totev, Andrew McDonald, Werner Knoblich
 
