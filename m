@@ -1,225 +1,180 @@
-Return-Path: <linux-kernel+bounces-302887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4C859604B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:43:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 426959605A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37DAD1F23AC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:43:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7E41282AB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08C9197A95;
-	Tue, 27 Aug 2024 08:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B2019DF48;
+	Tue, 27 Aug 2024 09:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ablnBGjz"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="uoKE0okl"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077B618BC0B
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1046C199EAC
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724748174; cv=none; b=YHv5JJosXM7ypFG6be0xSsp1XVxYTwpH0VnDJpBW0ghq4Aa4Or27s/AMQ1vEqO8xqGtpJcrzQC4zY0nXzeMcuq10xiYqNeRgwxN6rF5gqHmFC5FRQaiN1dhC+nM8Uj/PhjidNMcNjWxUUwvc5ohW8wv+ZiCvmVDMwtleLqCmFF0=
+	t=1724751120; cv=none; b=W47U5RSaBcJgEpMIQICzf/5YqgQQb7fFvlEgueWuoKFHkHBFE2SdfaRCZxUwiNLw2XVwdPQLMpDbt/ZxKah+tY58WzaTedEhfRNlklTOy/382ZO9pGNzmQWJ4KZKp2Z4DxfaDeCISxgZR5lSZ3JvqrkKCckaRhTWf0/7d3NJruo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724748174; c=relaxed/simple;
-	bh=nSPV8Vu2jTB+1mmMsBZsTzuk8kyInlVIoqksoRkFqFI=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=f98ONkB95QjWDpfPrbAD8x54Tvhs4kP0Fjx4/OJFy7DJiyPx12H6RYhJuTOjhdUOhQCvVwgs1P3b81iNKQ8e8thCAZTWcxTPhqX4AGYD0fNtpRgpa5LOcp/gIvH25694zdKGJ9NDQEaGBNzAKTzfh2c/Bmi0g0zpTjxI1HR0KEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ablnBGjz; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-42808685ef0so48835295e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 01:42:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724748171; x=1725352971; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=q4GWtWFEo5xKDMIEdChm0qMn4JHq45UYY4/Y5VkFNFQ=;
-        b=ablnBGjzIN5feNPdcrUVjz6+AbUEv7WuYWq7N1u1eVthaXWTrzc6CxFWJUNCNthONe
-         DayYLtqp+pK02Rtjjb6J86iSF2Vh070hp3woY2FpP7rYB0w89e7kdiZ4zWH0wd+k2hvt
-         C5b36A0Cc6NY1ro/BrkPfaagCLc9QVEv53kNdY07u0jrdfSqZd7f/Tewt8AQBsKhX0Kt
-         pxvcMIUKl5k+bPUryzaIsWQ1F0I+2awh+sBHBxAECYFPwkTVZH7mBxsdVTtV+SnvMkf+
-         wtTfR7o9CR/RQrTc9+C78m61NLk4STAYgxpJeCa7SPELMBRyAd//vUW7PH5cCajVIX+w
-         lthA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724748171; x=1725352971;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=q4GWtWFEo5xKDMIEdChm0qMn4JHq45UYY4/Y5VkFNFQ=;
-        b=X4N4qO58/lzRhz7YNNlq20yaCak9BeOlg6KXxbwcu/wNcNUPp3xGtVhjswRl4nKBuz
-         xGr3mmyALNyIoig1laAAr79bK4aKWlRUR21LJ/OCjPEID/azbhabAjjjpC0zPGslL069
-         jy0MWbswuoLt/qooIDCJc/spUvsiewPwhJD6tKDmDCTGbEBuN1lGdc2Ej+oWpwBCH2YP
-         adVN0C3S64EwftZifiQ9QaMjN2mhM1AV8G+yZHWKRbWG9ZZEdigNA7QTWA6dOJiy4PjQ
-         o8eJDnoZP9FEoHGPyjWqWnayQdn62zkWEuxQWvbgmzwCtkdIAPzsWDczWADvrORUXK+d
-         CDVg==
-X-Forwarded-Encrypted: i=1; AJvYcCX4reqyNCJcbbZgigpWmSPhjbVSbY4O9qVTwR9UpNKAq4Pyfu41qd1gTVJUM4a0xulYPPJw/ACH3WR9JXc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1vYthEedi1DXiFgtat7lHYRMZ83rIVqcODrtyv+x9vobMEFE5
-	G1Ny3W3SSKlcuLrrdjgf1sbVM2q/0+B+zCY2ywYE3jXEOs9Dz70gumZL3MGutg4bRWlZKTC3xCL
-	OcaG2/AYlEr914g==
-X-Google-Smtp-Source: AGHT+IGtuMWRFNMgruIuVgXWhTXoVRgKsYTIKD0MW7aN7lQ7+wOBVE2iuGi7hjC9C4W7axsMuYSuGkQ7WUnU+y0=
-X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
- (user=aliceryhl job=sendgmr) by 2002:a05:600c:2296:b0:426:4920:2857 with SMTP
- id 5b1f17b1804b1-42b9ae488b8mr363105e9.8.1724748170994; Tue, 27 Aug 2024
- 01:42:50 -0700 (PDT)
-Date: Tue, 27 Aug 2024 08:41:56 +0000
+	s=arc-20240116; t=1724751120; c=relaxed/simple;
+	bh=do6qHWTCeCm3l9cSLUTNHKqPwqIuzgkjJyKydTBCk+Y=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=qLG4rdYF6AH6KiAVLomGIiuf0OXvtfPGpxQsD/WifbjCe4iLtTKy5SExVBKVwdCFeCIXHUFFvBJgmQuStirmvaME6fsTT79Va93/mXMKPgfH0wI2wrlChCPt/gr9R0Hf583YaiSjbJyQpI/XsxK8V9ppN4nxMj+Fi+Cw3+15Rt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=uoKE0okl; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240827093155euoutp01055dbabf293d5474ceaa45939ddf7adb~vjABzqfSS2692126921euoutp01X
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:31:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240827093155euoutp01055dbabf293d5474ceaa45939ddf7adb~vjABzqfSS2692126921euoutp01X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724751115;
+	bh=9hd4V5Rw29ndlgSFlRBavMhK0dYlRqcgZq2zwQ6AjW4=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=uoKE0okliO8s2pKvHqf+1rgvbw/nbRHXAiVP879/kil4m0Z+5bHtHifBViz0vWK63
+	 RKYFB2A2Sk3HK11Lyit+RQTbBGqOEc+pnVqI37Qba51qLRfuRiBI16uBWsJhMQdMmv
+	 TXbBqATXimy3CeC71zTgFJJi3SLmNTfIxON9LaQ8=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240827093155eucas1p1532b47792177f1da96cf0b459ff5ec70~vjABrDMw32410324103eucas1p19;
+	Tue, 27 Aug 2024 09:31:55 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 19.F1.09624.B0D9DC66; Tue, 27
+	Aug 2024 10:31:55 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240827093155eucas1p1af26cb2c3a568d77ee6cc9034f775bfb~vjABWAgdn2370023700eucas1p13;
+	Tue, 27 Aug 2024 09:31:55 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240827093155eusmtrp241b78b8d98cc4f9a2629b5f2e5d69bab~vjABVK0hA1596315963eusmtrp2E;
+	Tue, 27 Aug 2024 09:31:55 +0000 (GMT)
+X-AuditID: cbfec7f2-c11ff70000002598-fa-66cd9d0bac66
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 21.15.09010.B0D9DC66; Tue, 27
+	Aug 2024 10:31:55 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240827093155eusmtip1a7b7f914f6921277dbed2144fce2749b~vjABJLBL40835508355eusmtip1Z;
+	Tue, 27 Aug 2024 09:31:55 +0000 (GMT)
+Received: from localhost (106.210.248.81) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Tue, 27 Aug 2024 10:31:55 +0100
+Date: Tue, 27 Aug 2024 10:42:02 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+CC: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/6] sysctl: avoid spurious permanent empty tables
+Message-ID: <20240827084202.6a2efzvosdpbc5ll@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAFORzWYC/3XMQQ7CIBCF4as0sxbDIGLjynuYLhCndBJbGsCmp
- uHuYvcu/5e8b4NEkSnBtdkg0sKJw1RDHRpwg508CX7WBiWVlq0yImWb2YnxnWkVVj+UakmSsRb qZY7U87pz9672wCmH+Nn1BX/rH2hBgcKiJrrg2WB/uvkQ/IuOLozQlVK+Z4nwjKkAAAA=
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4940; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=nSPV8Vu2jTB+1mmMsBZsTzuk8kyInlVIoqksoRkFqFI=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmzZFifK//EYvvrWTQRp/UE7hxakMy1RJ9fhhsC
- lVBjXBsQT+JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZs2RYgAKCRAEWL7uWMY5
- Rt7bEACpo02sg0YeTDjP0UsYtbHLcanhyxMRMedx/+3tJvSDM+yBLJOv3aFVyIGrwoM5A8r8uzs
- 4AZ2qs7Mycfk1ndBvsQStiuftFtUaQNiaJPzLjwnFEbKFg8WgPhyGsUekHMWrsoV3WjS7W+Xkh5
- 9mTD3D0ZTWRlsxFi6NGmfSSl+ivCSArMNQuFHOwS4ZvHayBMqBbQiO3HZg7SyqbbQVb/WrH/JRO
- a8vaDwXE2Zcxi/7rbafDP6+EqXKlB3V1/WkQGgjCEABdK/xMV3E6jyZXpqLSprzGVuPqO/jA/Ts
- HS3b3NNVMsK9Pi1Y9ctDXMbSgmfqqFt/J6o2Ks2z8Hbga+wFFOEZwBQtgs+oGajb66UjxfqFrD8
- Iq+qgxUokKOYxsMx5EuTCA9lD+rHbKTR1EgMZ1wlpRFzAXGXx0J0tAFZNFxfBF6QhikjlMfCuww
- ee/kWmg+3+zkNlFPt1FGdK40LWXa4Ycxz7Cznji/Bwy9rd7cavubQiwbTbwyrvgmGo0r1nzsa5x
- XJyJhWRZ+OgktCBzzRF1fzwT35AWNbO1ntihUWtQo6Jk0jVuW3+PjMsza4s3zm6stggRO1FJIKF
- 5noaSsScj/hjJgRZjMX9ooBMNpimg/aHItAVU2yAcy/yKzZrq79/GHYVQUUeIihlypxivzn1Ieq It1lmXeNZ9E7dag==
-X-Mailer: b4 0.13.0
-Message-ID: <20240827-static-mutex-v2-1-17fc32b20332@google.com>
-Subject: [PATCH v2] rust: add global lock support
-From: Alice Ryhl <aliceryhl@google.com>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4baef4a5-6b02-4e2f-870a-810c615a59ce@t-8ch.de>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmleLIzCtJLcpLzFFi42LZduznOV3uuWfTDDomq1ise3ue1eLyrjls
+	Fr9/PGOyuDHhKaMDi8emVZ1sHp83yXn0dx9jD2CO4rJJSc3JLEst0rdL4MqY3nyJueAkf0Xz
+	/lnMDYwreLoYOTkkBEwk/ky7wN7FyMUhJLCCUeL502VQzhdGiff95xghnM+MErNvH2ftYuQA
+	a/m4sgAivpxRouvieUaQUWBF83dqQiS2MErsWDuFCaSBRUBVYsUKU5AaNgEdifNv7jCD2CIC
+	NhIrv31mB7GZBdIlzr/YCFYuLOApsfu6KEiYV8BBYtHP8ywQtqDEyZlPWCDK9SRuTJ3CBlLO
+	LCAtsfwfB0RYXqJ562yw6ZxA05veHWGDeFJJ4m1HFxOEXStxasstJpArJQQucEhsb2pmhUi4
+	SPxqvg1lC0u8Or6FHcKWkfi/cz5Uw2RGif3/PrBDOKsZJZY1foUaay3RcuUJVIejxObfT5gg
+	gcUnceOtIMR1fBKTtk1nhgjzSnS0CU1gVJmF5LVZSF6bhfDaLCSvLWBkWcUonlpanJueWmyY
+	l1quV5yYW1yal66XnJ+7iRGYTk7/O/5pB+PcVx/1DjEycTAeYpTgYFYS4ZW7fDJNiDclsbIq
+	tSg/vqg0J7X4EKM0B4uSOK9qinyqkEB6YklqdmpqQWoRTJaJg1OqganS12e/gIyrZ1I77+Tg
+	FWo/Z3sxfQ97cM5/M8te4dLJ61gPHLebzd809dfaA96Cr7U2fbvAttpuwe8HfKvlm/Wan2Qk
+	eqz0PrJk4xNHv8lL97Fp3AhvN2v9cHPn03M+zKULav6c5gqRm1PeWPeuY4n38k7paN6QL5Z3
+	JE+4uPxwz81N4W9POv688fMKfaeQg3bv7RZm3raziYj7zZtRIX/7egPDwrkfZyatns+yk6d1
+	c6B6V7qA4b6blgXpgplvP3/KevPwkMK/AKfy/g1roxw32dt6hb85xu/R/core4+O6b4vdU+s
+	NW8c8j/w8K1nt/iDC73HPy58K2jpmHfmmJX5rr3mgZL/GUTTp50JrVViKc5INNRiLipOBAAu
+	CdewlgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsVy+t/xu7rcc8+mGTzYJWCx7u15VovLu+aw
+	Wfz+8YzJ4saEp4wOLB6bVnWyeXzeJOfR332MPYA5Ss+mKL+0JFUhI7+4xFYp2tDCSM/Q0kLP
+	yMRSz9DYPNbKyFRJ384mJTUnsyy1SN8uQS9jevMl5oKT/BXN+2cxNzCu4Oli5OCQEDCR+Liy
+	oIuRi0NIYCmjxOFvu9m6GDmB4jISG79cZYWwhSX+XOtigyj6yCjRcmwRlLOFUWL/kymMIJNY
+	BFQlVqwwBWlgE9CROP/mDjOILSJgI7Hy22d2EJtZIF3i/IuNTCDlwgKeEruvi4KEeQUcJBb9
+	PM8CMbKXSeL66h4miISgxMmZT1ggevUkbkydwgbSyywgLbH8HwdEWF6ieetssFWcQKua3h2B
+	ul9J4m1HFxOEXSvx+e8zxgmMIrOQTJ2FZOoshKmzkExdwMiyilEktbQ4Nz232EivODG3uDQv
+	XS85P3cTIzDath37uWUH48pXH/UOMTJxMB5ilOBgVhLhlbt8Mk2INyWxsiq1KD++qDQntfgQ
+	oykwgCYyS4km5wPjPa8k3tDMwNTQxMzSwNTSzFhJnNezoCNRSCA9sSQ1OzW1ILUIpo+Jg1Oq
+	gSl1XVnFDVWplZMl04J3RLzhuiA64WH0f/cyK4+Mi/eupc130+vcqVl807TkdsulSbNnNnaH
+	3bJq9ra2012QKjkj7s7cjwk39q6WjzqdrOtt6njl+as/TVGhUlM3iM77dljFpTXV8+/EtNUT
+	PFeLsN4RfeD2/WFR20pdyycrM+/u+BxWuMVhmnGgv59K2fErQo03FI3nqMQcSdnuH3Gnsmrp
+	7vMPXngofTR40GQkuLkp8Dn3lXbpZb8OTZlhcuHfSY6I/1WPj0bX/5v1TX7m585d6ax7Hp56
+	3MGxYrJ3wKOJrUVV16foGoc8cC/bwVpc97At6Oum/edz3PQeCAp+FtLJKS/7yvCE0S05W1B2
+	5jklluKMREMt5qLiRAAnCDPzPwMAAA==
+X-CMS-MailID: 20240827093155eucas1p1af26cb2c3a568d77ee6cc9034f775bfb
+X-Msg-Generator: CA
+X-RootMTR: 20240805115202eucas1p1b459b87e0b9935d83ee52232d9cb106c
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240805115202eucas1p1b459b87e0b9935d83ee52232d9cb106c
+References: <20240805-sysctl-const-api-v2-0-52c85f02ee5e@weissschuh.net>
+	<20240805-sysctl-const-api-v2-1-52c85f02ee5e@weissschuh.net>
+	<CGME20240805115202eucas1p1b459b87e0b9935d83ee52232d9cb106c@eucas1p1.samsung.com>
+	<4baef4a5-6b02-4e2f-870a-810c615a59ce@t-8ch.de>
 
-We don't currently have any support for global locks in Rust, however
-they are very useful and I have needed to work around this limitation
-several times. My workarounds generally involve initializing the mutex
-in the module's init function, and this workaround is reflected here.
+On Mon, Aug 05, 2024 at 01:51:55PM +0200, Thomas Weißschuh wrote:
+> (trimmed recipients to only sysctl maintainers)
+> 
+> Hi Joel,
+> 
+> On 2024-08-05 11:39:35+0000, Thomas Weißschuh wrote:
+> > The test if a table is a permanently empty one, inspects the address of
+> > the registered ctl_table argument.
+> > However as sysctl_mount_point is an empty array and does not occupy and
+> > space it can end up sharing an address with another object in memory.
+> > If that other object itself is a "struct ctl_table" then registering
+> > that table will fail as it's incorrectly recognized as permanently empty.
+> > 
+> > Avoid this issue by adding a dummy element to the array so that is not
+> > empty anymore.
+> > Explicitly register the table with zero elements as otherwise the dummy
+> > element would be recognized as a sentinel element which would lead to a
+> > runtime warning from the sysctl core.
+> > 
+> > While the issue seems not being encountered at this time, this seems
+> > mostly to be due to luck.
+> > Also a future change, constifying sysctl_mount_point and root_table, can
+> > reliably trigger this issue on clang 18.
+> > 
+> > Given that empty arrays are non-standard in the first place it seems
+> > prudent to avoid them if possible.
+> 
+> Unfortunately I forgot to include the following trailers in this patch:
+> 
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202408051453.f638857e-lkp@intel.com
+> 
+> They will be part of v3 if it comes to that, but if you end up applying
+> v2, please do also add those trailers.
+> 
 
-Due to the initialization requirement, constructing a global mutex is
-unsafe with the current approach. In the future, it would be really nice
-to support global mutexes that don't need to be initialized, which would
-make them safe. Unfortunately, this is not possible today because
-bindgen refuses to expose __ARCH_SPIN_LOCK_UNLOCKED to Rust as a
-compile-time constant. It just generates an `extern "C"` global
-reference instead.
+This is a bugfix and it should be included in the next release. Please send this
+commit separately with the Reported-by tag, I'll make sure that this gets pushed
+up for 6.11.
 
-On most architectures, we could initialize the lock to just contain all
-zeros. A possible improvement would be to create a Kconfig constant
-that is set whenever the current architecture uses all zeros for the
-initializer and have `unsafe_const_init` be a no-op on those
-architectures. We could also provide a safe const initializer that is
-only available when that Kconfig option is set.
+I'll add reviewing the rest of the patchset to my "coming back from PTO"
+todolist. But since we are so late in the cycle, it might get bumped to the next
+release.
 
-For architectures that don't use all-zeros for the unlocked case, we
-will most likely have to hard-code the correct representation on the
-Rust side.
+Thx
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
-Changes in v2:
-- Require `self: Pin<&Self>` and recommend `Pin::static_ref`.
-- Other doc improvements including new example.
-- Link to v1: https://lore.kernel.org/r/20240826-static-mutex-v1-1-a14ee71561f3@google.com
----
- rust/kernel/sync/lock.rs | 64 +++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 63 insertions(+), 1 deletion(-)
-
-diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
-index f6c34ca4d819..cfc5e160d78c 100644
---- a/rust/kernel/sync/lock.rs
-+++ b/rust/kernel/sync/lock.rs
-@@ -7,7 +7,7 @@
- 
- use super::LockClassKey;
- use crate::{init::PinInit, pin_init, str::CStr, types::Opaque, types::ScopeGuard};
--use core::{cell::UnsafeCell, marker::PhantomData, marker::PhantomPinned};
-+use core::{cell::UnsafeCell, marker::PhantomData, marker::PhantomPinned, pin::Pin};
- use macros::pin_data;
- 
- pub mod mutex;
-@@ -117,6 +117,68 @@ pub fn new(t: T, name: &'static CStr, key: &'static LockClassKey) -> impl PinIni
-             }),
-         })
-     }
-+
-+    /// Create a global lock that has not yet been initialized.
-+    ///
-+    /// Since global locks is not yet fully supported, this method implements global locks by
-+    /// requiring you to initialize them before you start using it. Usually this is best done in
-+    /// the module's init function.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// use kernel::sync::Mutex;
-+    ///
-+    /// // SAFETY: We initialize the mutex before first use.
-+    /// static MY_MUTEX: Mutex<()> = unsafe { Mutex::unsafe_const_new(()) };
-+    ///
-+    /// // For the sake of this example, assume that this is the module initializer.
-+    /// fn module_init() {
-+    ///     // SAFETY:
-+    ///     // * `MY_MUTEX` was created using `unsafe_const_new`.
-+    ///     // * This call is in the module initializer, which doesn't runs more than once.
-+    ///     unsafe {
-+    ///         core::pin::Pin::static_ref(&MY_MUTEX)
-+    ///             .unsafe_const_init(kernel::c_str!("MY_MUTEX"), kernel::static_lock_class!())
-+    ///     };
-+    /// }
-+    /// ```
-+    ///
-+    /// # Safety
-+    ///
-+    /// You must call [`unsafe_const_init`] before calling any other method on this lock.
-+    ///
-+    /// [`unsafe_const_init`]: Self::unsafe_const_init
-+    pub const unsafe fn unsafe_const_new(t: T) -> Self {
-+        Self {
-+            data: UnsafeCell::new(t),
-+            state: Opaque::uninit(),
-+            _pin: PhantomPinned,
-+        }
-+    }
-+
-+    /// Initialize a global lock.
-+    ///
-+    /// When using this to initialize a `static` lock, you can use [`Pin::static_ref`] to construct
-+    /// the pinned reference.
-+    ///
-+    /// See the docs for [`unsafe_const_new`] for examples.
-+    ///
-+    /// # Safety
-+    ///
-+    /// * This lock must have been created with [`unsafe_const_new`].
-+    /// * This method must not be called more than once on a given lock.
-+    ///
-+    /// [`unsafe_const_new`]: Self::unsafe_const_new
-+    pub unsafe fn unsafe_const_init(
-+        self: Pin<&Self>,
-+        name: &'static CStr,
-+        key: &'static LockClassKey,
-+    ) {
-+        // SAFETY: The pointer to `state` is valid for the duration of this call, and both `name`
-+        // and `key` are valid indefinitely.
-+        unsafe { B::init(self.state.get(), name.as_char_ptr(), key.as_ptr()) }
-+    }
- }
- 
- impl<T: ?Sized, B: Backend> Lock<T, B> {
-
----
-base-commit: b204bbc53f958fc3119d63bf2cda5a526e7267a4
-change-id: 20240826-static-mutex-a4b228e0e6aa
-
-Best regards,
 -- 
-Alice Ryhl <aliceryhl@google.com>
 
+Joel Granados
 
