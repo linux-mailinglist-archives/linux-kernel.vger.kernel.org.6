@@ -1,325 +1,232 @@
-Return-Path: <linux-kernel+bounces-303594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 071F7960FCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:02:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2613960FDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 298361C23691
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:02:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7CC41C23586
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270141C6F40;
-	Tue, 27 Aug 2024 15:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB621C9EAF;
+	Tue, 27 Aug 2024 15:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="K1UPrr6t"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="jpXYuCEa"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F971C5788
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 15:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49D91C86FF
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 15:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724770916; cv=none; b=AQgwKPgZBgtmGmHdCCt19i204E6pclPKz9ONWDVJsFhk+8GTp/yw+pe/T8xZoqIYKW8+AC/5gtJoRpR6czJKkYrNM8r8edYXlz0+f3C/bRertWlhrNL3cueu7XSfEHkKPzZLHTRQwQNflEuCsWo8MxFALQZykxU6crffqGwRccg=
+	t=1724770932; cv=none; b=qmw0IBVBxGOszOb2i1V51WTPVzicObgUnnQmqIAW039aUZrl8IDZkwhkt6Cd0e5NAzZtgj3MNUg03Ko7zUNkQZRi9IG/M6x+vyIOeHatbHHDBv/wGzuvSSFXfAyDylu89HT5bRoTghczDNZlDEUPyHGyIAbaTddJrsyT2lVpxXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724770916; c=relaxed/simple;
-	bh=ZF9FRAmi2l6lzPGCtV8L/9yzs2x7TjAWAHvZ5JyqUHY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KwcAt01379YUmATfoXiev9bfLZ+lO3Pa66e57yBtcXmNJu/HeWzZbY8z1ffHoI4J5csKM7WSaD8pO+9HyBeZJD/csqZlQmLHsz6IBrZYtWl2urao/eX2D5XWylE0gsfVcIRjQyBjK2PenRKfGGS4fxn7YK1q3JjaKxJxd7nZTfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=K1UPrr6t; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f4f505118fso46913731fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:01:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1724770913; x=1725375713; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=sDlFUC/PnSbw58YBpKLYj7tB3pPD2wAAtnMgQnDsTUo=;
-        b=K1UPrr6tdyC+UhKTe8rzoxZz8047gWmCVpa1zQJRX9SGMzJlzoUXP1+t/AFwGX40lp
-         TmH93cfdrtQw5DfCSEtxDbbPJWrk4L07nKY1JABHzx9d0lIHzQep+AlcI3LZqAKVbqET
-         Sq2lhP0L7fjmh7wkUMo6+zipJ49cBkkiP82C4=
+	s=arc-20240116; t=1724770932; c=relaxed/simple;
+	bh=IFJgwMMBQAepiR9Zi+ANoAhwQDy/WXTKO+hYFcxwYqM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WzKwDLB5yeOTx0MuEnqL0uQuSnsENWonS2LWGOHnbvzaNM1eoI1cJ9+oW8aOG+eVldXyMz5SnaAqiy3rSgT2dE1c7jAUZFhnndMX9Joh6CG64gVqupUTJAl96MDb9dwdvO3DlmBJrfMsKNypY/iRR+OGjtiuQvpQyPGkEclrcm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=jpXYuCEa; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id C46153F62B
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 15:02:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1724770927;
+	bh=2P+kxQuaxtYEyNIEJy9bWFJkdnavlhUTk0CuwFAwO4w=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version;
+	b=jpXYuCEaAkbCWCsKXUWYaERh0jugBpkoNsynBu9Kf0eea2OIJbCF3oPG+N3FXQdVG
+	 IGwR7XfPaUoTG9LVMrLK6GDQeUl9TV/LzGlrnMAjAQArJiM1/6fvbFtPsG5hoAKM5N
+	 IhYZZPoXZ3vVqXhUvHRHXNanESr2XGXecdHi0ze+u3QO+BDhk8HAnsXO/emikj9dKn
+	 4BF14D8Rqz8DAUoAfoPIJ4OswzxvwFdNSJw4ssFhHOxZt1xpppfha/aMD6Wo0SJFc1
+	 aU91c4QYtW+jbWsL38FFt8NpblJqiL3be1/AkHpNsXqboNuabUOL1Z2NsLyKgoGL8z
+	 v3xmfqim0FlAQ==
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-70eebcab33aso5184787b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:02:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724770913; x=1725375713;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sDlFUC/PnSbw58YBpKLYj7tB3pPD2wAAtnMgQnDsTUo=;
-        b=QrD3Ntcqcqx0vynjTlE6f2PerJ6PgNvf9fOn+BVxvpfaCR6U/X9JyeZc7MuVHutVcc
-         dpCbojj6fMzHSP7PGdWIQBgRAn3QR1LGJ0hVXelJQf9LaBRmnCVKvwYVMqP6P3OmjQ9J
-         eqFOwMf0v5bJZhodY4ph5wfLi5Z+jt8UzPL81DmuLriMeVOr5G+y2jvCwh5Hww3zk32G
-         vUyunK7pyrT2qJgn/DiyXqvCYv8jA4L8IDWb2+TefONjZlz8CIlRmYTkvBzfGIcdAxzb
-         52WN3I95TSVONczodbrr63fRdYRFpzWWTILlNxiwUT90v5iuPHsWtLe6/xxRbYjJHEo6
-         T1lw==
-X-Forwarded-Encrypted: i=1; AJvYcCUifdIi4bY7ZOpSY1F/vb299fj+IuKEgy1LzO/w84ZU6rrcSKj2vOQVrMWjSRK6gR3KAMHnPbCbz54B+sM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6vtoqF92KJBeAGKbXE/SQFmKgKXXnYhyZDyv/1Nuxcb+Quc1f
-	GDW4D3NL/b3UOwBkF9MDE/b+GjoUOWUIXDLtnECZXbKlz/fzxBL1UT10k2tObIb6H5rPOlD1t/j
-	BiMXQUKxsWRf5QW77yIIT63yVvJ48cLseRlIr
-X-Google-Smtp-Source: AGHT+IFYvEIBSbU/E9nH7ayxEGCNmkU+Chi28AndaI7JTEQDfzKJ499VWKq3Libwxraw4EmqszPC5e1s0l2UV3yQzAM=
-X-Received: by 2002:a05:6512:1111:b0:52c:8abe:51fb with SMTP id
- 2adb3069b0e04-5343875582emr8755403e87.10.1724770910565; Tue, 27 Aug 2024
- 08:01:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724770925; x=1725375725;
+        h=mime-version:user-agent:content-transfer-encoding:organization
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2P+kxQuaxtYEyNIEJy9bWFJkdnavlhUTk0CuwFAwO4w=;
+        b=KmpweaHKooeDGB1+7YjTwMmQJMbLyd0wgpvDsIzDx1xokh9VcPBtM+eVgrUTQpfZ6T
+         I4MtYCThsizOJaRC4fxYg14XnmvXJlty6L4I3/AdqqD8Nmt4mkaAAnKVIeRQZo1eCo0o
+         nFLdfslOYA9rOHbNwBGhlqy6Z3Iwl06xMuBcjCegVs8PgTU0Mg8FWi/3OaoB+w1op3uI
+         RHV5Mz0uU0cb/5Vge4HrrN/bHvavbXCH1zJ5rknjh7p1KCb4T85GBIl8ZGBKjFEdpr6s
+         Kpdlr9vE+2faIkniHm0OfKjIQnQuxF3lZbWLudqMS/bBdukR/7GK92cyy4a9bbIRCi56
+         i6hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRHLTZ8/YcpRyzoMM2sTzCT7MZtH+ekvvveTYOnPlBXLtHNAsecwwvxbnQgVFQag06xgxWr2javQNT+EI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7Q/SYk2uXxRQ/VXbJgGzuVjSE/1tbztF7vM86+V69mCZktXdt
+	odd1en7uBxup8ZVbeA9j3J6WURZ/15eGOAGNhBd60MBfBR4S7UhVf3D0OwftS6Wha8tI2X/UyBW
+	O/SfbSYBaVCOmAYR7itfjMPqoSorT47k0kWzWyVe77AODrDP/Ra70T20KSzZC0p0cvBLqqbPH3w
+	aERaFfbg/a4Glu
+X-Received: by 2002:a05:6a00:1ad1:b0:70d:33b3:2d7f with SMTP id d2e1a72fcca58-714458938c8mr16205137b3a.26.1724770925424;
+        Tue, 27 Aug 2024 08:02:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFI8lTF1ZBJUDeALtcEVWbx6fWOzsswhP6jDP8l7b2/0KT1Mh1E2vOICYN29ZeYQNn5ju5YlA==
+X-Received: by 2002:a05:6a00:1ad1:b0:70d:33b3:2d7f with SMTP id d2e1a72fcca58-714458938c8mr16205091b3a.26.1724770924997;
+        Tue, 27 Aug 2024 08:02:04 -0700 (PDT)
+Received: from ?IPv6:2001:1284:f502:1ed0:3614:22f:7b0b:19c1? ([2001:1284:f502:1ed0:3614:22f:7b0b:19c1])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143430020fsm8984983b3a.146.2024.08.27.08.02.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 08:02:04 -0700 (PDT)
+Message-ID: <a8aeacdc4afec5855fa4b80f0f5f43e8f7d3b5cb.camel@canonical.com>
+Subject: Re: [PATCH 04/13] Audit: maintain an lsmblob in audit_context
+From: Georgia Garcia <georgia.garcia@canonical.com>
+To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com, 
+	linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, 
+ john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, 
+ stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+ mic@digikod.net
+Date: Tue, 27 Aug 2024 12:01:58 -0300
+In-Reply-To: <20240825190048.13289-5-casey@schaufler-ca.com>
+References: <20240825190048.13289-1-casey@schaufler-ca.com>
+	 <20240825190048.13289-5-casey@schaufler-ca.com>
+Organization: Canonical
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815225731.40276-1-james.quinlan@broadcom.com>
- <20240815225731.40276-6-james.quinlan@broadcom.com> <1a6d6972-f2db-4d44-b79c-811ba44368f0@suse.de>
- <CA+-6iNxFotwXW4Cc31daT+KwE_LEdAR=pcpsg_3Ng0ep1vYLBA@mail.gmail.com>
- <76b528f8-88e2-4954-94cf-7e0933b4ad03@suse.de> <CA+-6iNykVzd1do=dHDVD3_prJkvfRbA2U-DsLFhSA2S48L_A8A@mail.gmail.com>
- <87b38984-0a54-4773-ba20-3445d9c9c149@suse.de> <CA+-6iNwJZ+OfYaCBBx04-hO1FmpDE36uJWd1jYvaVs_o4iwWqA@mail.gmail.com>
- <3bb5c6db-11d9-4e65-a581-1a7f6945450a@suse.de> <CA+-6iNy7souF-BZHV1sBk2nx04LwshB=6amnOixfPPza96RmWw@mail.gmail.com>
- <9b7cff3f-7d22-4bb5-a56e-11d93bd11456@suse.de>
-In-Reply-To: <9b7cff3f-7d22-4bb5-a56e-11d93bd11456@suse.de>
-From: Jim Quinlan <james.quinlan@broadcom.com>
-Date: Tue, 27 Aug 2024 11:01:37 -0400
-Message-ID: <CA+-6iNwAfur96=kftP_pqZDGUoGkb3_rjKnxiGJmL4xxmzTNaA@mail.gmail.com>
-Subject: Re: [PATCH v6 05/13] PCI: brcmstb: Use bridge reset if available
-To: Stanimir Varbanov <svarbanov@suse.de>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
-	Cyril Brulebois <kibi@debian.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, bcm-kernel-feedback-list@broadcom.com, 
-	jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000009cfdf50620ab8512"
 
---0000000000009cfdf50620ab8512
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Aug 27, 2024 at 8:28=E2=80=AFAM Stanimir Varbanov <svarbanov@suse.d=
-e> wrote:
->
-> Hi Jim,
->
-> On 8/26/24 17:17, Jim Quinlan wrote:
-> > On Mon, Aug 26, 2024 at 6:43=E2=80=AFAM Stanimir Varbanov <svarbanov@su=
-se.de> wrote:
-> >>
-> >> Hi Jim,
-> >>
-> >> <cut>
-> >>
-> >>>
-> >>> Hi Stan,
-> >>>
-> >>> Most of the clocks on the STB chips come up active so one does not
-> >>> have to turn them on and off to have the device function.  It helps
-> >>> power savings to do this although I'm not sure it is significant.
-> >>>>
-> >>>>>
-> >>>>> Perhaps you don't see the dependence on the PCIe clocks if the 2712
-> >>>>> does not give the PCIe node a clock property and instead keeps its
-> >>>>> clocks on all of the time.  In that case I would think that your
-> >>>>> solution would be fine.
-> >>>>
-> >>>> What you mean by my solution? The one where avoiding assert of
-> >>>> bridge_reset at link [1] bellow?
-> >>>
-> >>> Yes.
-> >>>>
-> >>>> If so, I still cannot understand the relation between bridge_reset a=
-nd
-> >>>> rescal as the comment mentions:
-> >>>>
-> >>>> "Shutting down this bridge on pcie1 means accesses to rescal block w=
-ill
-> >>>> hang the chip if another RC wants to assert/deassert rescal".
-> >>>
-> >>> I was just describing my observations; this should not be happening.
-> >>> I would say it is a HW bug for the 2712.  I can file a bug against th=
-e
-> >>> 2712 but that will not help us right now.  From what I was told by HW=
+On Sun, 2024-08-25 at 12:00 -0700, Casey Schaufler wrote:
+> Replace the secid value stored in struct audit_context with a struct
+> lsmblob. Change the code that uses this value to accommodate the
+> change. security_audit_rule_match() expects a lsmblob, so existing
+> scaffolding can be removed. A call to security_secid_to_secctx()
+> is changed to security_lsmblob_to_secctx().  The call to
+> security_ipc_getsecid() is scaffolded.
+>=20
+> A new function lsmblob_is_set() is introduced to identify whether
+> an lsmblob contains a non-zero value.
+>=20
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> ---
+>  include/linux/security.h | 13 +++++++++++++
+>  kernel/audit.h           |  3 ++-
+>  kernel/auditsc.c         | 19 ++++++++-----------
+>  3 files changed, 23 insertions(+), 12 deletions(-)
+>=20
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 457fafc32fb0..a0b23b6e8734 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -277,6 +277,19 @@ static inline const char *kernel_load_data_id_str(en=
+um kernel_load_data_id id)
+>  	return kernel_load_data_str[id];
+>  }
+> =20
+> +/**
+> + * lsmblob_is_set - report if there is a value in the lsmblob
+> + * @blob: Pointer to the exported LSM data
+> + *
+> + * Returns true if there is a value set, false otherwise
+> + */
+> +static inline bool lsmblob_is_set(struct lsmblob *blob)
+> +{
+> +	const struct lsmblob empty =3D {};
+> +
+> +	return !!memcmp(blob, &empty, sizeof(*blob));
+> +}
+> +
+>  #ifdef CONFIG_SECURITY
+> =20
+>  int call_blocking_lsm_notifier(enum lsm_event event, void *data);
+> diff --git a/kernel/audit.h b/kernel/audit.h
+> index a60d2840559e..b1f2de4d4f1e 100644
+> --- a/kernel/audit.h
+> +++ b/kernel/audit.h
+> @@ -11,6 +11,7 @@
+> =20
+>  #include <linux/fs.h>
+>  #include <linux/audit.h>
+> +#include <linux/security.h>
+>  #include <linux/skbuff.h>
+>  #include <uapi/linux/mqueue.h>
+>  #include <linux/tty.h>
+> @@ -160,7 +161,7 @@ struct audit_context {
+>  			kuid_t			uid;
+>  			kgid_t			gid;
+>  			umode_t			mode;
+> -			u32			osid;
+> +			struct lsmblob		oblob;
+>  			int			has_perm;
+>  			uid_t			perm_uid;
+>  			gid_t			perm_gid;
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index 23adb15cae43..84f6e9356b8f 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -724,9 +724,7 @@ static int audit_filter_rules(struct task_struct *tsk=
 ,
-> >>> asserting the PCIe1 bridge reset does not affect the rescal settings,
-> >>> but it does freeze access to the rescal registers, and that is game
-> >>> over for the other PCIe controllers accessing the rescal registers.
-> >>
-> >> Good findings, thank you.
-> >>
-> >> The problem comes from this snippet from brcm_pcie_probe() :
-> >>
-> >>         ret =3D pci_host_probe(bridge);
-> >>         if (!ret && !brcm_pcie_link_up(pcie))
-> >>                 ret =3D -ENODEV;
-> >>
-> >>         if (ret) {
-> >>                 brcm_pcie_remove(pdev);
-> >>                 return ret;
-> >>         }
-> >>
-> >> Even when pci_host_probe() is successful the .probe will fail if there
-> >> are no endpoint devices on this root port bus. This is the case when
-> >> probing pcie1 port which is the one with external connector. Cause the
-> >> probe is failing we call reset_control_rearm(rescal) from
-> >> brcm_pcie_remove(), after that during .probe of pcie2 (the root port
-> >> where RP1 south-bridge is attached) reset_control_reset(rescal) will
-> >> issue rescal reset thus rescal-reset driver will stuck on read/write
-> >> registers.
-> >>
-> >> I think we have to drop this link-up check and allow the probe to fini=
-sh
-> >> successfully. Even that there no PCI devices attached to bus we want t=
-he
-> >> root port to be visible by lspci tool.
-> >
-> > Hi Stan,
-> >
-> > What is gained by having only the root bridge shown by lspci?  We do
-> > not support PCIe hotplug so why have lspci reporting a bridge with no
-> > devices?
-> >
-> > The reason we do this is to save power -- when we see no device we
-> > turn off the clocks, put things in reset (e.g. bridge), and turn off
-> > the regulators.  We have SoCs with multiple controllers  and they
-> > cannot afford to be supplying power to controllers with non-populated
-> > sockets; these may be products that are trying to conform to mandated
-> > energy-mode specifications.
->
-> I totally agree, although I do not see power consumption significantly
-> increased. Also I checked all other PCI controller drivers and no one
-> else doing this.
+>  				/* Find ipc objects that match */
+>  				if (!ctx || ctx->type !=3D AUDIT_IPC)
+>  					break;
+> -				/* scaffolding */
+> -				blob.scaffold.secid =3D ctx->ipc.osid;
+> -				if (security_audit_rule_match(&blob,
+> +				if (security_audit_rule_match(&ctx->ipc.oblob,
+>  							      f->type, f->op,
+>  							      f->lsm_rule))
+>  					++result;
+> @@ -1394,19 +1392,17 @@ static void show_special(struct audit_context *co=
+ntext, int *call_panic)
+>  			audit_log_format(ab, " a%d=3D%lx", i,
+>  				context->socketcall.args[i]);
+>  		break; }
+> -	case AUDIT_IPC: {
+> -		u32 osid =3D context->ipc.osid;
+> -
+> +	case AUDIT_IPC:
+>  		audit_log_format(ab, "ouid=3D%u ogid=3D%u mode=3D%#ho",
+>  				 from_kuid(&init_user_ns, context->ipc.uid),
+>  				 from_kgid(&init_user_ns, context->ipc.gid),
+>  				 context->ipc.mode);
+> -		if (osid) {
+> +		if (lsmblob_is_set(&context->ipc.oblob)) {
+>  			char *ctx =3D NULL;
+>  			u32 len;
+> =20
+> -			if (security_secid_to_secctx(osid, &ctx, &len)) {
+> -				audit_log_format(ab, " osid=3D%u", osid);
+> +			if (security_lsmblob_to_secctx(&context->ipc.oblob,
+> +						       &ctx, &len)) {
 
-Hi Stan,
-I  see a few drivers use runtime_pm but we  do not; our architecture
-is old and not amenable to that system.  Discounting runtime_pm, we
-seem to be the only controller that uses the .suspend* or .resume*
-methods.
+Is there any reason to stop auditing secid when we fail to get the
+security context?
 
-I think we are kind of unique in how we turn off/on voltage regulators
-for the endpoint device -- we put the regulator node under the port
-driver DT node.  This is what customers asked for and what made
-customers happy -- they just add a regulator node and ref to the DT we
-provide and they don't have to worry about syncing power for their
-device on their board.
+>  				*call_panic =3D 1;
+>  			} else {
+>  				audit_log_format(ab, " obj=3D%s", ctx);
+> @@ -1426,7 +1422,7 @@ static void show_special(struct audit_context *cont=
+ext, int *call_panic)
+>  				context->ipc.perm_gid,
+>  				context->ipc.perm_mode);
+>  		}
+> -		break; }
+> +		break;
+>  	case AUDIT_MQ_OPEN:
+>  		audit_log_format(ab,
+>  			"oflag=3D0x%x mode=3D%#ho mq_flags=3D0x%lx mq_maxmsg=3D%ld "
+> @@ -2642,7 +2638,8 @@ void __audit_ipc_obj(struct kern_ipc_perm *ipcp)
+>  	context->ipc.gid =3D ipcp->gid;
+>  	context->ipc.mode =3D ipcp->mode;
+>  	context->ipc.has_perm =3D 0;
+> -	security_ipc_getsecid(ipcp, &context->ipc.osid);
+> +	/* scaffolding */
+> +	security_ipc_getsecid(ipcp, &context->ipc.oblob.scaffold.secid);
+>  	context->type =3D AUDIT_IPC;
+>  }
+> =20
 
-There was also a recent patch submission that implemented something
-similar by making the port driver customizable so that it could pick
-up regulators; I don't recall if that ever got accepted.  But if it
-was, we were thinking of switching to it.
-
-Let me ask the HW folks if it is acceptable to leave the bridge reset
-unasserted on remove() or suspend().  Note that if RPi decides to give
-<clocks> and <clock-names>  valid props then problem will still be
-there.
-
-Regards,
-Jim Quiinlan
-Broad
-
-
->
-> >
-> >  This will solve partially the
-> >> issue with accessing rescal reset-controller registers after asserting
-> >> bridge_reset. The other part of the problem will be solved by remove t=
-he
-> >> invocation of reset_control_rearm(rescal) from __brcm_pcie_remove().
-> >> That way only the first probed root port will issue rescal reset and
-> >> every next probe will not try to reset rescal because we do not call
-> >> _rearm(rescal).
-> >
-> > In theory I agree with the above -- it should probably not be invoking
-> > the rearm() when it is being deactivated.  However, I am concerned
-> > about a controller(s) going into s2 suspend/resume or unbind/bind.
->
-> In fact not calling rearm() from __brcm_pcie_remove() is not enough
-> because the .probe will fail thus rescal reset will loose it's instance
-> and next probed pcie root port will issue rescal reset again.
->
-> I'd stick with avoiding assert of bridge_reset from brcm_pcie_turn_off()
-> for now, and this will be true only for bcm2712.
->
-> ~Stan
-
---0000000000009cfdf50620ab8512
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
-uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
-BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
-VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
-z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
-b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
-+R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
-AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
-75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
-AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
-AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
-MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCA2JvqfAWaIOEXhdmYkKqXcqppBwqLl
-7P2QoZf2uqKKzjAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA4
-MjcxNTAxNTNaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
-AgEwDQYJKoZIhvcNAQEBBQAEggEACf2oWhSh406CvXOYiRUcERQqMu7025sIbxTA0reDo4gy5LU9
-Zm1Z8Wvu0nARtpZmJOcKOZfReS5KIF3NvOagdcz9c3Mg3sMPPu4p/ZgPYjD3jLKj7I9xa9aMdx9S
-pPIezBIcJCxH/BAtbo832GGavVot3/cpE80+LG7q/EIPPmuotq/NA2NFlUOphyv0sk9zDj4O6nMI
-OuMjZqtkcDiap1ZhiQIWM319wU4ro/MK/XT39U1KyCdycVMCzjdVGrVqjC3js5aF5yqWbN8ZkWNR
-koSiRyUMgYUq5HU6eSoKrCwKTJVg2lopDgeEVmlAeDz1CVC7SzDGr7J/UWrkoFbD0w==
---0000000000009cfdf50620ab8512--
 
