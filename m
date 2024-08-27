@@ -1,139 +1,184 @@
-Return-Path: <linux-kernel+bounces-303694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C66E29613D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:17:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CAE39613D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 822DC282539
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:17:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F34FA2838EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1741CCB33;
-	Tue, 27 Aug 2024 16:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E651CE6FB;
+	Tue, 27 Aug 2024 16:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F4NgYzSV"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VkQyER4q"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A2F1C86F6;
-	Tue, 27 Aug 2024 16:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1421C68A1
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 16:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724775439; cv=none; b=tF7wyWs0my/mklWf4ftwSgQVBC6CWQpKrbb2SXUOGTf56ylyJL3DEcCneoOUkcu+XSJslnL/sRptF+EXjTbVjYjawFK2k/ZChYo6SC06jcaQdSKtKW4Pb9sV4Mm2WfJ3AoS+81s/qBgQndiHLo8uwIgX4y9aFJpO41X6c+n4D2w=
+	t=1724775441; cv=none; b=jmJpH4+BA/eOdn4kEa3G3XFKos9DrNq4W/CuSVQ17jJ0plwSllvy7SLPRlm2wJijq50fTsWcc/yYF2woGIpq5/8KrLG3PivdHuNyd28N3hV6wLibEMZDAXuR+mLLeUrz62NDeLM6K6ZqsuCy+Is+1nYedLrOj53h0wss+ijKATI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724775439; c=relaxed/simple;
-	bh=e9/SnnD2Hc7nrmiUV26PmTlAN807y9TdOycQU6CJMA8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EJaZWCNoZvPPSURgCb7/8jyxyD2x2qsqWjdnWQ4EvGetjMBr2ztN3erausoO1PAKbopSTvoIcBg3LXYkYgQ5kEf0p0StssXc4aSXQoAazU+pObLCrZyWfb6CZJV24KPZhxK+8tjavkB3+FWUsffMlIYZKrwjAT1jxRx8AMbNgyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F4NgYzSV; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6c91f9fb0d7so31364977b3.3;
-        Tue, 27 Aug 2024 09:17:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724775437; x=1725380237; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GgD4dqFDyUnD/vStQPVANJoNOpD1Qd5JKsejYAWVUn0=;
-        b=F4NgYzSVNY0kVqtHxz5fRXOPW8cv1uShLwF0ZcUJhO1TVrXYJvAWxsjeioERu5TdYJ
-         rvyeBTzC8T9QVJKPaHE/XCBpO0Go3RATK/FYPJKiOJaSxUpunBFt6Oos9GWoWGvkdWEb
-         BbzKrxNXQLy1Z3zXOINog6Q5dPVklPBUvvZixJYPZP4r2Dn5MTLwT8ZBLs9haTiNBz5b
-         4u3k5W+Tg9a82yIbxSvDF6KE1H3ZHfDncFu5VoPk5lfwXMLGAi7asQugasGz9JK0HqYt
-         MKG0z0slxNJCwvMrAXdVM+jZcrUiw0TaoqTw8y6V9xBLFNJY+cSKhtrKu7fxKu2gFqPP
-         5EIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724775437; x=1725380237;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GgD4dqFDyUnD/vStQPVANJoNOpD1Qd5JKsejYAWVUn0=;
-        b=pqhwCQzn6ka4s1mlOGsbGkimjv9gP4AZFLhCVevZubyQJwkBzI24Hfe5ZDQj4sQKIt
-         NFBuTqDNtbFcA4Vyz984L9HKYjzU262GKe0wv+beTSy+nS0hzrn5mIn1W5sE/z9m/UE4
-         X4VFWYFS5qEtKklcDlZy2tkd3ELS+N2fQTarTy5QY4/K9ANh0mdRwRAPsEqnOy5lF1ZO
-         kqm1a4pAV3zbYaZ/n0RnYP5101Uu/lpz3ix7yQ0VBiaO878/XemkLN5nf+wW47lCEh0s
-         YbRD3YmGmTc81KNZ5Y4OkFSJ4280UKkKhbG5GZiM4ckBorAT/eoW/X+E4kFk59brx1+6
-         NkKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXeAFtL4KvATtb3dn/9nkkWFUQOH2iWcRtcakN6B3C0x+YmObq4eHaUEPDT2VE7A68qGtzh1FJpcG7Y1gx@vger.kernel.org, AJvYcCUzOdIEuGPqaLy+8l/cZ/c5VwOuTG6lYmKfhGvRJPKHirGfovschkHigkTW7O6SsaUCxund9HhT9qbaVFE=@vger.kernel.org, AJvYcCXAD9ya4HiE1Xq3PRzEPpheFkh0nP3jP5PZ1geX3HMdJtXHXwkXTTuC5aveIDJ+f510Znp3wc7ZKekfDS+v@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/Yrnk3Q8SQrmaejUz+uzwBKVwJQW2YWv6bllGM2Imk+TygrWz
-	9CXMlJolZmnYzjlo4qROQhFY1iwcg09TXNknY1K9fxLCa2riGtEzh9W/daL0x5bm8laGL2aNCge
-	3gyAPUnJpHBmMcMYQ3FDjrjRFXiw=
-X-Google-Smtp-Source: AGHT+IHnzsaeAYPx8AAxOBSMK1fpK8G2cmPPm5333uqFeT+rlrVWxKv2QLBzOXLZg8T5AQY4Vh4hdFkNwQmz32UOBto=
-X-Received: by 2002:a05:690c:688a:b0:6ad:8bbd:aec2 with SMTP id
- 00721157ae682-6c6262f44e9mr177725977b3.25.1724775437350; Tue, 27 Aug 2024
- 09:17:17 -0700 (PDT)
+	s=arc-20240116; t=1724775441; c=relaxed/simple;
+	bh=dRGDAD4KPiBqXOmNHPLfWVDiOw++ZqkdXmPpkSUphBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RhsnfeYypdAyl8oWxg5ITjXE6/+ZTsfu2MruThgtbd4bsIzoKvJnmsMYsK4Jsgu33eDlt1fGor9Y1JD7foC9FHyA1rcZxwcn/v97S8y548Ik/gweLH2NWdOCNiIzHGJoW9Kx0AF8shyMSJEmSPEG6CauNkdwlV5LNRrN+GHR9xM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VkQyER4q; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 27 Aug 2024 12:17:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724775435;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DqMw3wLXUFrALSOq/FX1urjPjZInRQbR39RoFjtaExE=;
+	b=VkQyER4qXTqPpQOn1oyO9kEQvvT+Ngr1fA7Aiegk/hJZOa3sHjTuwR/EseY6pwIrg0reVF
+	sUbo0piwMGSqat2njA5MTSIfPa7CQhw0g6VOjLDprgtkdKbKqXQB9Oxt39v4IBEuZoz0X7
+	6g+nuJuRUUoFDqT2lTNi837W5CQLCHg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: David Wang <00107082@163.com>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [BUG?] bcachefs: keep writing to device when there is no
+ high-level I/O activity.
+Message-ID: <y336p7vehwl6rpi5lfht6znaosnaqk3tvigzxcda7oi6ukk3o4@p4imj4wzcxjb>
+References: <20240827094933.6363-1-00107082@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240817080408.8010-1-av2082000@gmail.com> <b155a6e9-9fe1-4990-8ba7-e1ff24cca041@stanley.mountain>
- <CAPMW_rLPN1uLNR=j+A7U03AHX5m_LSpd1EnQoCpXixX+0e4ApQ@mail.gmail.com> <070cc3e2-d0db-4d50-9a64-6a16d88b30df@stanley.mountain>
-In-Reply-To: <070cc3e2-d0db-4d50-9a64-6a16d88b30df@stanley.mountain>
-From: Amit Vadhavana <av2082000@gmail.com>
-Date: Tue, 27 Aug 2024 21:47:06 +0530
-Message-ID: <CAPMW_rJi46_2Ho6KNS9NK0kbfc3ujrx-EJ3586wf0u7vq2kUog@mail.gmail.com>
-Subject: Re: [PATCH V2] dmaengine: Fix spelling mistakes
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ricardo@marliere.net, linux-kernel-mentees@lists.linux.dev, 
-	skhan@linuxfoundation.org, vkoul@kernel.org, olivierdautricourt@gmail.com, 
-	sr@denx.de, ludovic.desroches@microchip.com, florian.fainelli@broadcom.com, 
-	bcm-kernel-feedback-list@broadcom.com, rjui@broadcom.com, 
-	sbranden@broadcom.com, wangzhou1@hisilicon.com, haijie1@huawei.com, 
-	fenghua.yu@intel.com, dave.jiang@intel.com, zhoubinbin@loongson.cn, 
-	sean.wang@mediatek.com, matthias.bgg@gmail.com, 
-	angelogioacchino.delregno@collabora.com, afaerber@suse.de, 
-	manivannan.sadhasivam@linaro.org, Basavaraj.Natikar@amd.com, 
-	linus.walleij@linaro.org, ldewangan@nvidia.com, jonathanh@nvidia.com, 
-	thierry.reding@gmail.com, laurent.pinchart@ideasonboard.com, 
-	michal.simek@amd.com, Frank.Li@nxp.com, n.shubin@yadro.com, 
-	yajun.deng@linux.dev, quic_jjohnson@quicinc.com, lizetao1@huawei.com, 
-	pliem@maxlinear.com, konrad.dybcio@linaro.org, kees@kernel.org, 
-	gustavoars@kernel.org, bryan.odonoghue@linaro.org, linux@treblig.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-actions@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240827094933.6363-1-00107082@163.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, 17 Aug 2024 at 14:38, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> On Sat, Aug 17, 2024 at 02:11:57PM +0530, Amit Vadhavana wrote:
-> > On Sat, 17 Aug 2024 at 13:55, Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> > >
-> > > On Sat, Aug 17, 2024 at 01:34:08PM +0530, Amit Vadhavana wrote:
-> > > > Correct spelling mistakes in the DMA engine to improve readability
-> > > > and clarity without altering functionality.
-> > > >
-> > > > Signed-off-by: Amit Vadhavana <av2082000@gmail.com>
-> > > > Reviewed-by: Kees Cook <kees@kernel.org>
-> > > > ---
-> > > > V1: https://lore.kernel.org/all/20240810184333.34859-1-av2082000@gmail.com
-> > > > V1 -> V2:
-> > > > - Write the commit description in imperative mode.
-> > >
-> > > Why?  Did someone ask for that?
-> > No, I received a review comment on my other document patch.
-> > So, make similar changes in response.
->
-> Ah.  Okay.  I was worried someone was sending private reviews.
->
-> (There wasn't any real need to resend this but also resending is fine).
->
-> regards,
-> dan carpenter
->
-Hi All,
+On Tue, Aug 27, 2024 at 05:49:33PM GMT, David Wang wrote:
+> Hi,
+> 
+> I was using two partitions on same nvme device to compare filesystem performance,
+> and I consistantly observed a strange behavior:
+> 
+> After 10 minutes fio test with bcachefs on one partition, performance degrade
+> significantly for other filesystems on other partition (same device).
+> 
+> 	ext4  150M/s --> 143M/s
+> 	xfs   150M/s --> 134M/s
+> 	btrfs 127M/s --> 108M/s
+> 
+> Several round tests show the same pattern that bcachefs seems occupy some device resource
+> even when there is no high-level I/O.
 
-I wanted to follow up on the DMA patch that I submitted on 17 Aug.
-Kees Cook has already reviewed it. Have you all had a chance to review
-it as well?
-Please let me know if any additional changes or updates are needed.
+This is is a known issue, it should be either journal reclaim or
+rebalance.
 
-Looking forward to your feedback.
+(We could use some better stats to see exactly which it is)
 
-Best regards,
-Amit V
+The algorithm for how we do background work needs to change; I've
+written up a new one but I'm a ways off from having time to implement it
+
+https://evilpiepirate.org/git/bcachefs.git/commit/?h=bcachefs-garbage&id=47a4b574fb420aa824aad222436f4c294daf66ae
+
+Could be a fun one for someone new to take on.
+
+> 
+> I monitor /proc/diskstats, and it confirmed that bcachefs do keep writing the device.
+> Following is the time serial samples for "writes_completed" on my bcachefs partition:
+> 
+> writes_completed @timestamp
+> 	       0 @1724748233.712
+> 	       4 @1724748248.712    <--- mkfs
+> 	       4 @1724748263.712
+> 	      65 @1724748278.712
+> 	   25350 @1724748293.712
+> 	   63839 @1724748308.712    <--- fio started
+>   	  352228 @1724748323.712
+> 	  621350 @1724748338.712
+> 	  903487 @1724748353.712
+>         ...
+> 	12790311 @1724748863.712
+> 	13100041 @1724748878.712
+> 	13419642 @1724748893.712
+> 	13701685 @1724748908.712    <--- fio done (10minutes)
+> 	13701769 @1724748923.712    <--- from here, average 5~7writes/second for 2000 seconds
+> 	13701852 @1724748938.712
+> 	13701953 @1724748953.712
+> 	13702032 @1724748968.712
+> 	13702133 @1724748983.712
+> 	13702213 @1724748998.712
+> 	13702265 @1724749013.712
+> 	13702357 @1724749028.712
+>         ...
+> 	13712984 @1724750858.712
+> 	13713076 @1724750873.712
+> 	13713196 @1724750888.712
+> 	13713299 @1724750903.712
+> 	13713386 @1724750918.712
+> 	13713463 @1724750933.712
+> 	13713501 @1724750948.712   <--- writes stopped here
+> 	13713501 @1724750963.712
+> 	13713501 @1724750978.712
+> 	...
+> 
+> Is this behavior expected? 
+> 
+> My test script:
+> 	set -e
+> 	for fsa in "btrfs" "ext4" "bcachefs" "xfs"
+> 	do
+> 		if [ $fsa == 'ext4' ]; then
+> 			mkfs -t ext4 -F /dev/nvme0n1p1
+> 		else
+> 			mkfs -t $fsa -f /dev/nvme0n1p1
+> 		fi
+> 		mount -t $fsa /dev/nvme0n1p1 /disk02/dir1
+> 		for fsb in "ext4" "bcachefs" "xfs" "btrfs"
+> 		do
+> 			if [ $fsb == 'ext4' ]; then
+> 				mkfs -t ext4 -F /dev/nvme0n1p2
+> 			else
+> 				mkfs -t $fsb -f /dev/nvme0n1p2
+> 			fi
+> 			mount -t $fsb /dev/nvme0n1p2 /disk02/dir2
+> 
+> 			cd /disk02/dir1 && fio --randrepeat=1 --ioengine=libaio --direct=1 --name=test  --bs=4k --iodepth=64 --size=1G --readwrite=randrw  --runtime=600 --numjobs=8 --time_based=1 --output=/disk02/fio.${fsa}.${fsb}.0
+> 			sleep 30
+> 			cd /disk02/dir2 && fio --randrepeat=1 --ioengine=libaio --direct=1 --name=test  --bs=4k --iodepth=64 --size=1G --readwrite=randrw  --runtime=600 --numjobs=8 --time_based=1 --output=/disk02/fio.${fsa}.${fsb}.1
+> 			sleep 30
+> 			cd /disk02
+> 			umount /disk02/dir2
+> 		done
+> 		umount /disk02/dir1
+> 	done
+> 
+> And here is a report for one round of test matrix:
+> +----------+-----------------------------+-----------------------------+-----------------------------+-----------------------------+
+> |   R|W    |             ext4            |           bcachefs          |             xfs             |            btrfs            |
+> +----------+-----------------------------+-----------------------------+-----------------------------+-----------------------------+
+> |   ext4   |    [ext4]147MB/s|147MB/s    |    [ext4]146MB/s|146MB/s    |    [ext4]150MB/s|150MB/s    |    [ext4]149MB/s|149MB/s    |
+> |          |    [ext4]146MB/s|146MB/s    | [bcachefs]72.2MB/s|72.2MB/s |     [xfs]149MB/s|149MB/s    |    [btrfs]132MB/s|132MB/s   |
+> | bcachefs | [bcachefs]71.9MB/s|71.9MB/s | [bcachefs]65.1MB/s|65.1MB/s | [bcachefs]69.6MB/s|69.6MB/s | [bcachefs]65.8MB/s|65.8MB/s |
+> |          |    [ext4]143MB/s|143MB/s    | [bcachefs]71.5MB/s|71.5MB/s |     [xfs]134MB/s|133MB/s    |    [btrfs]108MB/s|108MB/s   |
+> |   xfs    |     [xfs]148MB/s|148MB/s    |     [xfs]147MB/s|147MB/s    |     [xfs]152MB/s|152MB/s    |     [xfs]151MB/s|151MB/s    |
+> |          |    [ext4]147MB/s|147MB/s    | [bcachefs]71.3MB/s|71.3MB/s |     [xfs]148MB/s|148MB/s    |    [btrfs]127MB/s|127MB/s   |
+> |  btrfs   |    [btrfs]132MB/s|132MB/s   |    [btrfs]112MB/s|111MB/s   |    [btrfs]110MB/s|110MB/s   |    [btrfs]110MB/s|110MB/s   |
+> |          |    [ext4]147MB/s|146MB/s    | [bcachefs]69.7MB/s|69.7MB/s |     [xfs]146MB/s|146MB/s    |    [btrfs]125MB/s|125MB/s   |
+> +----------+-----------------------------+-----------------------------+-----------------------------+-----------------------------+
+> (The rows are for the FS on the first partition, and the cols are on the second partition)
+> 
+> The version of bcachefs-tools on my system is 1.9.1.
+> (The impact is worse, ext4 dropped to 80M/s, when I was using bcachefs-tools from debian repos which is too *old*,
+> and known to cause bcachefs problems. And that is the reason that I do this kind of test.)
+> 
+> 
+> Thanks
+> David
+> 
 
