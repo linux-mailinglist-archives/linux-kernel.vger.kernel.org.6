@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-302990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60B979605D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:39:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60C6A9605D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:40:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C24A1C214FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:39:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E08D280C4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758CE1A01B3;
-	Tue, 27 Aug 2024 09:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1201A0706;
+	Tue, 27 Aug 2024 09:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="1hc7BAFZ"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2089.outbound.protection.outlook.com [40.107.92.89])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YFjoaUjW"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2076.outbound.protection.outlook.com [40.107.243.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93771A00F1;
-	Tue, 27 Aug 2024 09:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F291A00F1;
+	Tue, 27 Aug 2024 09:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.76
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724751467; cv=fail; b=rNwfdU52HkuU17IGwMALJDboJlcUiSYJSdwgacYJqVToMfVUvSDRDX3UrAu8R8OxXuTLoeqkyPHHrXL1BMI74IHsK2+HE4Rpfs2QInpdkU5Z+yKnrcXYxePWhGLAgqbR37V6rhqPw26bRoj2x94ihsoTxhZ3qo29tioMjpxAz4Q=
+	t=1724751474; cv=fail; b=mR1nhQ3XgYfUk1XSpUavGcVsPWdEYxg009pKxdvPrabEjoK953Kn5VfL+Qqavqs4re34N89M7VjOywSHBoOkloh9gG2m4+S0/2h0Lphxl905Sl4QsHgwAXb0vfDuiZj86T00Dnufs2h7V4Qxwc2q/dCyC2Sc/HcxmnNElqsoYMg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724751467; c=relaxed/simple;
-	bh=tjZdoEbkgkvjvvwuPJz9cI5nCjgOaV+rqFQ2Svo4VRk=;
+	s=arc-20240116; t=1724751474; c=relaxed/simple;
+	bh=yiWYKT+tKaxyBJvm11LUMA9ysFzyGINsaYBksG5LMAY=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gllqhsLgcuxuad6KaR0pxiv3K9CJf1Seoq+B5NF5C5Ib2hzUDcTCbu/v+ab1AzrzVeKqYX1kbpqi/upkuRNo5dXxx10EgmIOG/4DzKbU41A2Ht8r/aZsNS9JTV8J1mp1t4a9VYYMuYfO3iNzFcq37UcIX3oV2TwRPlSYnzb+lZE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=1hc7BAFZ; arc=fail smtp.client-ip=40.107.92.89
+	 MIME-Version:Content-Type; b=V7dKy0GTXD7JqwZYCOS0N0vuIAV1m5aTDzMHqEpEXV39hU1QpHiXjMZ/vbQEGXcNwCZknjbP9HUeHFf8UnChQ3Tg12IkcaPXlXZ0xQTF3X0PuTn57lhBgk78SFCzwGnliLBUIWuF6UDp4MeMhgCq1MPMTP64O7qjmkt+saX1Eko=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YFjoaUjW; arc=fail smtp.client-ip=40.107.243.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Qpg2rDF3vMNT1xN54J8gbhVffIWQ4wcV+bj2afU8jlyFIry/6YiwVEbU93FMxd1QKR+Un+Yed1ii3jC53A/B3ywKRuEx+jXXLodd/yRy1RjjuubTZxHxbsCVFTogdg6mcK4V70NbNDMWMuHUWijod8SkrWP8pEn+KbdMNuxPd4DLFT5Xaf4BZftCpXsWrGsECmSKfsN37wqthPCJ/aMT5MTM1s2G2NWioNwqtD2mV1T6Z04Z99NjVB3UdU2kKxcvc3t/A0VASK09qzsTIGOs6yaHtII6U47R+344BD3IYuoXUJV2Jh7NLL+baXTPItFcaqqARZwkK4/S65Z0weHiYQ==
+ b=wQgMuGrNhVc9trPRyxoy6OPGbt3L7O+87LVM2dcCsq1Mz/zPpcCihcRz73720B6FuZE19xuReujl/Bx6h/SgiOM+vv0O2L5H4gtrNMKbfbWion/kJ3STMH1m9Ju946P5Db6myitF6d1RCegoEYM7d9UIofP4WeqOJzTEResWOdmqxrqoq11+lwNCi2pfIphYPfnh0lvwYaNKDsKwSJ46ZmScuPzpaPZT8wHX9pzkusYFXcitcM8vmaNnH/5ExQPsHpYJIIKHyiJ9Ya4IcJQsSwhW8HCLCAiUu8ZL8C1f2mx5ZUWnQQB+EIrFwvyGzBGCjY8AKD7qS3xCK2H5jr5hWA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iAfxdSezZ6RxOswLrCWx3fgy7dQPo+gg41ZJ+Adth+I=;
- b=Iv2HT1MlOLQHXD2ZbxAACz8Szsv50TzLV4n1WQYnqo5PnalefTA5hxLr/jNVKxQLJav2gQK11oPg/1kfHp7zH2kF4ycjUv+29EfiYRpA/zSlUPzgfReEw7Du2Fys4fIEAr5B33YGATITn+5zM9iqrFIJajH1A5FZH4QBfi3v1RMN0GLtTqLU5ixEnPM3rm127v+Nw06DKDUYBqSEG6WzwyvF/xsJCAIkFWoOHKFw/CtgrxrJaQalraQ8vMhLF3Cq3Rgar4F66sPt2k97ymNYnpHIVm9boiCcczNHnQK5FdGzq9Vvwzr6QPlyTdbS0D8RKuQnboKbQ48hAayzHLqhyA==
+ bh=IKkrhtSPgaxjFX1LicQ88aZRiiw/k8DNU9Y3ZOeru2M=;
+ b=Ejw10URlSsLmUwthZavyKi1zenwmGTDEu7f0+Xtp9aYLGB0Tn9qKsAfUXlFnHr8W4bT3p47jLgbtA19wmWaRB1xhSl44PFH8sqtSYJdz0MUJ9AruUgaclmFg9BRSN1PfjPvKiLy6ueYLKQPKbPOhz0cJSGGe3SPmgFZ+CeXYRHObQoS3amk4eHRfW9Bgl9wm+DtisAs6+U9QWfmP0N8ue/8NsjAchNqbuJSzZaq4wRUFfvzSW6tFe4hDvgveB91jUGUx+o2PmRr0SuSuyqCVQv3j/NemQt9piKw/SaWA4iKxch7q72jFwO9E32yNJ0Rh0G9P7wHAudG6/b7trpPQLw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iAfxdSezZ6RxOswLrCWx3fgy7dQPo+gg41ZJ+Adth+I=;
- b=1hc7BAFZA7hDgYJPeeuVpgGAPSuARMuBs3tqzQovrmYfjwamo+NlnEC1cFQrBe8W9LBB+xOLIPSnhb2NyxZQnMxhYYVC1TapjhkMt0E5ksRtHW6Wq8a57qoA2o67Y4cUCM937eg/DTNAv9Eozd1NPkwfj0XPmffYC82gypmQ7qU=
-Received: from BN1PR13CA0016.namprd13.prod.outlook.com (2603:10b6:408:e2::21)
- by CYXPR12MB9425.namprd12.prod.outlook.com (2603:10b6:930:dc::5) with
+ bh=IKkrhtSPgaxjFX1LicQ88aZRiiw/k8DNU9Y3ZOeru2M=;
+ b=YFjoaUjWO50acAkG2uE3XUBAGZyxWux/L+REKOp3kCAJTZIVcB4iObm6mcbFJBdruOOKUvjpWdW6gmLkmxlUm5OIM+CZjEblKjn7YoI30aSmhv17V8hzm74rQXNquWlZaZeqBVS2PmOVPTVd+1dohLdriXOSgG4OGCmK60Cc8T8=
+Received: from MN2PR06CA0023.namprd06.prod.outlook.com (2603:10b6:208:23d::28)
+ by CH2PR12MB4168.namprd12.prod.outlook.com (2603:10b6:610:a8::7) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Tue, 27 Aug
- 2024 09:37:40 +0000
-Received: from BL02EPF00021F6E.namprd02.prod.outlook.com
- (2603:10b6:408:e2:cafe::fe) by BN1PR13CA0016.outlook.office365.com
- (2603:10b6:408:e2::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.14 via Frontend
- Transport; Tue, 27 Aug 2024 09:37:39 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.26; Tue, 27 Aug
+ 2024 09:37:43 +0000
+Received: from BL02EPF00021F6F.namprd02.prod.outlook.com
+ (2603:10b6:208:23d:cafe::b3) by MN2PR06CA0023.outlook.office365.com
+ (2603:10b6:208:23d::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25 via Frontend
+ Transport; Tue, 27 Aug 2024 09:37:43 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,13 +62,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL02EPF00021F6E.mail.protection.outlook.com (10.167.249.10) with Microsoft
+ BL02EPF00021F6F.mail.protection.outlook.com (10.167.249.11) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Tue, 27 Aug 2024 09:37:39 +0000
+ 15.20.7918.13 via Frontend Transport; Tue, 27 Aug 2024 09:37:43 +0000
 Received: from pyuan-Chachani-VN.amd.com (10.180.168.240) by
  SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 27 Aug 2024 04:37:36 -0500
+ 15.1.2507.39; Tue, 27 Aug 2024 04:37:39 -0500
 From: Perry Yuan <perry.yuan@amd.com>
 To: <hdegoede@redhat.com>, <ilpo.jarvinen@linux.intel.com>,
 	<Mario.Limonciello@amd.com>, <Borislav.Petkov@amd.com>,
@@ -77,9 +77,9 @@ CC: <Alexander.Deucher@amd.com>, <Xinmei.Huang@amd.com>,
 	<bharathprabhu.perdoor@amd.com>, <poonam.aggrwal@amd.com>, <Li.Meng@amd.com>,
 	<platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<Xiaojian.Du@amd.com>
-Subject: [PATCH 07/11] platform/x86/: hfi: init per-cpu scores for each class
-Date: Tue, 27 Aug 2024 17:36:55 +0800
-Message-ID: <b913765989396d62f5184d32932250ee434cd0da.1724748733.git.perry.yuan@amd.com>
+Subject: [PATCH 08/11] platform/x86/: hfi: add online and offline callback support
+Date: Tue, 27 Aug 2024 17:36:56 +0800
+Message-ID: <2661e74beceb9198d0baefe1f145080ef2b812cb.1724748733.git.perry.yuan@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1724748733.git.perry.yuan@amd.com>
 References: <cover.1724748733.git.perry.yuan@amd.com>
@@ -95,189 +95,180 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF00021F6E:EE_|CYXPR12MB9425:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7522b919-138c-45a4-f318-08dcc67be47b
+X-MS-TrafficTypeDiagnostic: BL02EPF00021F6F:EE_|CH2PR12MB4168:EE_
+X-MS-Office365-Filtering-Correlation-Id: c4043ecd-2710-4ff9-58cd-08dcc67be6bc
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zc/6jZHggEKKeln/BqxlTh+XfeJveIGD96Q5NnrFMgO6c/nVXbMSmZ77Z4pR?=
- =?us-ascii?Q?gLyOGrH4ayxoQQO2uLVH11dL1D4ruCU/cuuIPPJRi+uEdbT305KAFvZkTfay?=
- =?us-ascii?Q?f4Y+6rJhtF/IDNJD8ygrkgju+IkoqJPb51hMHVpydxC+p7/E8BPLmXEaNrUa?=
- =?us-ascii?Q?qUG3x0IEGrrCCGwYHEoFXmcQh8DFdz3HeZLjbUE8/AtyQh3xkDfGfUPgfLn6?=
- =?us-ascii?Q?6jhv++aqLAS3a+ltrecRmW5uxsq4ZyJ3MOBtkd8limx2drN2srvnzwyjRmX6?=
- =?us-ascii?Q?zdXKR1CVsPYaCq6HN16cDVH/nMNayKqm25irPpRKlMZVWwF+umZ9DBkCc2UY?=
- =?us-ascii?Q?yMXiNiG+iND8+FS1qP9ceha2O1Hdtel8dKstFTJOHvcyr/DCVOTgeZ08IL/4?=
- =?us-ascii?Q?DQdiRJpqTWV1F7HTutrijiLqhzkEEVkpIlEpB2FgInxGDWxW20FI9zzVtmvH?=
- =?us-ascii?Q?FqXmRi01QRCKBjL96yMOimhcm1z7Nt7g+wCcVLhY3PJ5fNR1mZtEZ17DQBh7?=
- =?us-ascii?Q?GtRFepyXVaDV54C6lD70JaUuEo7QgW/SAFE25fSd0sXymXJ4cL7YWnsVHbgq?=
- =?us-ascii?Q?9AQlqrta8MjA/9KqEltyfFr0SwNUOpD5JOA2VgBhfZ/4IJuh1srMcbA0p3d6?=
- =?us-ascii?Q?U7n7GFZHvjfAQMY7CsVZ1ikDwj5tqGLRDG+YhwszbLsPUd7j4qlipxvS8VJ/?=
- =?us-ascii?Q?kDrUSz/zMFwWjNDvBIu29lX80jAXbvLP77B6R96P47pUCvSfhFj6/f071Bsx?=
- =?us-ascii?Q?df9u/XUoWyDCyHt2XgNgDvAMzHJnNVq+7+uNjcnTLCxe7KgftMvCNTAwHd6e?=
- =?us-ascii?Q?LdRksudJB/Q/d+otF6xEpWDVVHfO8q/zrYFu1nxcxDPFEqtaO16clvacOfxG?=
- =?us-ascii?Q?rVMssVfedeWGKiw83qkrLweVFQqNx928//dlj05l6Wp1jtrLbJvbSO1HcCfO?=
- =?us-ascii?Q?1WolwLE8Kzr83zvz7tQtcvMVQe8bkcK/VoBhWlYoY2kibC5YOodkdj92NUzS?=
- =?us-ascii?Q?ODf89K+RFppqAIXTd7OpKRoabA+h99lDMq2XA6Ynuzv4wpMsGutH6O1XrBJj?=
- =?us-ascii?Q?xuYQyRTmpWvpcSwX2pp4ofDmtMsay1XReqwsOtB5bxNr+R6dc+1V/K3SH4Z+?=
- =?us-ascii?Q?PWdBNufimcj01fp4OafZojJUtnFupmBt32TfGDhrwtP9jtyiYnFHLOtUdQDc?=
- =?us-ascii?Q?8Lp0BUlV3aHz0dzoK9xLSL9iagJPRLCQTj+k8kE/lhCzf5Bleyc8ST8HbCPS?=
- =?us-ascii?Q?wkjDbgjK2EYJBG0N44TbkpAtPxcgN9ywhOlirYgofOJObZq0Rk7kB5fWNEFz?=
- =?us-ascii?Q?nPYQwSYx+T/b+vjYixoyRXb/PVi5dYj6BJeZzQQSvJXE5EhX1UZ8RijAPqF4?=
- =?us-ascii?Q?tnAqeq9CuMUV91ZXs+kAFfA9SMA5FpH0yFaSmzpCOP2Njhqeb6e1cgXvm4vN?=
- =?us-ascii?Q?68KKkB2eX3TQ6xNrM5Rq7Euyyv9jA2s1?=
+	=?us-ascii?Q?1UFdV0//zmIMywcr05YExNcKvgH6fi0F7BKwVUM52soV42BUR7hRHCLZKIBu?=
+ =?us-ascii?Q?ZnSqPL/DNFWmTLvpd5pY4HUdhEQ5TZiepDz1UpFDAZqOocu2XqQL+CoWlxSz?=
+ =?us-ascii?Q?ZrRG38Y4KVBrR9Txy7LjWkN8CZ4t7hi+G98LogTd1mEEhKCq0gSOXgplwem+?=
+ =?us-ascii?Q?JZVM9jmkJYs5+6icsfwDyWtn7u52ZELuVs4YL6Uoytc8US06aQJBF3ngbIb5?=
+ =?us-ascii?Q?loVCJo031fsvrtpqD7fu6zU7Gr04oWkobJrBg7TgqjWFPSEBlEpFgKcNisd5?=
+ =?us-ascii?Q?bHPjpL0FEE0X8qvRYBXIyII2rEHsh4FIZOUFjldjPmgjS5/q4eJKGtCEJ3wB?=
+ =?us-ascii?Q?AOCoV0AzL/xvQ8tgCX75wENFUdnZMYbBjQx3ZfKCn9qAIUKARfiflKb4YfxA?=
+ =?us-ascii?Q?BG6twfB+zBnZdBh1uQ44a0ZHZSa8PLxDmIEn7RTneEtCgCh1vIc/jmLcbNcJ?=
+ =?us-ascii?Q?SysnE6oCJ8Pj795TGbVrgYAv7oG75X0bOUL5V4lBCZEYxWLQ1T+aUe+2Jqot?=
+ =?us-ascii?Q?9poMjaXIOwmOTXVsWIFF/xoLTR+l9dJ3FKSStpIN1uargVEJdQB/ljDsGEhI?=
+ =?us-ascii?Q?SFi81B4uXLwTbhj2BhP0KAxhcXgDqDV380Wur4xoLe6lztYcipSX3zmdGU2y?=
+ =?us-ascii?Q?gfh0FzsMhe+w445eu6P9cu87WtnqZuLhcbrJcSmwsvj4bjTnFZiGo9hC/xw8?=
+ =?us-ascii?Q?glHnEaDFMn180TYpyXta3YExE2GXUs4A9zZjOvA7FPMLk+bdo8WrBW3RsRNC?=
+ =?us-ascii?Q?wmYm6CH2bcSdRmamS1Q4bBf6Xc9QqxqzaOzGXx7qSnCirtZBEg3lW49bFvba?=
+ =?us-ascii?Q?UtDC/vWOUCDKOPlUFwWsPmaLBDw7g7E//+fYIuSJXFnL4Z/svK59MUYxl31z?=
+ =?us-ascii?Q?/fbyoOgZn3f3dDiHUO4kSDVjcxts/OPhRuVl3sSK4etBihxbqH5QRzfOL6vK?=
+ =?us-ascii?Q?9awLwbrQvbqUK70NvkG2+tnFcR9zjeIN/cV4x6P8SPqrWpEqbpPWRQPdg0fl?=
+ =?us-ascii?Q?Xpk8xQ6uzRdu2YTLxHTtooKac3/YDlP/7nPg85knacQP5wvmiBH3vAeUm+FK?=
+ =?us-ascii?Q?Q8jxAHCO96o8yN2umdxBWpfMcI6Sdu8zqlobuZGee7cw3rgK114JM1q0C/aM?=
+ =?us-ascii?Q?n8PcJVkvl/sv9I9A4fVzwNP8cFdqrq9KpTZUjkT7FKOQ1VDYIZoIDWIU22Ev?=
+ =?us-ascii?Q?nQNeHb2oyrZGZ4uOtQBn+mTG9EQMcMDR80iJNIvNDLGNy9KfRzNNOtjKGFlU?=
+ =?us-ascii?Q?pSrCHhT/6YCiNFPjjq9gC3YURV1O8iAk3YTuaGxSZxBia6DQKehqMxxtO6vS?=
+ =?us-ascii?Q?6gJ+Ewx5g8slIplHW5HYkTYnlMz+ow52mDKE0VddIwpPTI9K09zZ+BmNJ9Yq?=
+ =?us-ascii?Q?O9MmZZpIDrsyA6DFOVsOpgLnkPTYlOBRXAd9AI5gYC/DrNurWR/gBDnjxCKv?=
+ =?us-ascii?Q?t9C2itnuzNam8x7D3599TmUWkAoDkYEd?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 09:37:39.4967
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 09:37:43.2898
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7522b919-138c-45a4-f318-08dcc67be47b
+X-MS-Exchange-CrossTenant-Network-Message-Id: c4043ecd-2710-4ff9-58cd-08dcc67be6bc
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF00021F6E.namprd02.prod.outlook.com
+	BL02EPF00021F6F.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9425
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4168
 
 From: Perry Yuan <Perry.Yuan@amd.com>
 
-Initialize per cpu score `amd_hfi_ipcc_scores` which store energy score
-and performance score data for each class.
+There are some firmware parameters that need to be configured
+when a CPU core is brought online or offline.
 
-`Classic core` and `Dense core` are ranked according to those values as
-energy efficiency capability or performance capability.
-OS scheduler will pick cores from the ranking list on each class ID for
-the thread which provide the class id got from hardware feedback
-interface.
+when CPU is online, it will initialize the workload classification
+parameters to CPU firmware which will trigger the workload class ID
+updating function.
+
+Once the CPU is going to offline, it will need to disable the workload
+classification function and clear the history.
 
 Signed-off-by: Perry Yuan <Perry.Yuan@amd.com>
 ---
- drivers/platform/x86/amd/hfi/hfi.c | 65 ++++++++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
+ drivers/platform/x86/amd/hfi/hfi.c | 90 ++++++++++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)
 
 diff --git a/drivers/platform/x86/amd/hfi/hfi.c b/drivers/platform/x86/amd/hfi/hfi.c
-index 50f6ca9c148a..cd5f2b708ebf 100644
+index cd5f2b708ebf..57b642c4c522 100644
 --- a/drivers/platform/x86/amd/hfi/hfi.c
 +++ b/drivers/platform/x86/amd/hfi/hfi.c
-@@ -111,6 +111,7 @@ struct amd_hfi_data {
- 	raw_spinlock_t		table_lock;
- 	struct acpi_subtable_header	*pcct_entry;
- 	struct amd_hfi_metadata		*hfi_meta;
-+	raw_spinlock_t		hfi_data_lock;
- };
+@@ -154,6 +154,7 @@ static int __percpu *amd_hfi_ipcc_scores;
  
- /**
-@@ -130,6 +131,7 @@ struct amd_hfi_classes {
-  * struct amd_hfi_cpuinfo - HFI workload class info per CPU
-  * @cpu:		cpu index
-  * @cpus:		cpu mask of cpus
-+ * @apic_id:		apic id of the current cpu
-  * @class_index:	workload class ID index
-  * @nr_classa:		max number of workload class supported
-  * @amd_hfi_classes:	current cpu workload class ranking data
-@@ -139,6 +141,7 @@ struct amd_hfi_classes {
- struct amd_hfi_cpuinfo {
- 	int		cpu;
- 	cpumask_var_t	cpus;
-+	u32		apic_id;
- 	s16		class_index;
- 	u8		nr_class;
- 	struct amd_hfi_classes	*amd_hfi_classes;
-@@ -146,6 +149,12 @@ struct amd_hfi_cpuinfo {
+ static int amd_set_hfi_ipcc_score(struct amd_hfi_cpuinfo *info, int cpu);
+ static int update_hfi_ipcc_scores(struct amd_hfi_data *amd_hfi_data);
++static int amd_hfi_set_state(unsigned int cpu, bool state);
  
- static DEFINE_PER_CPU(struct amd_hfi_cpuinfo, amd_hfi_cpuinfo) = {.class_index = -1};
- 
-+static DEFINE_MUTEX(hfi_cpuinfo_lock);
-+static int __percpu *amd_hfi_ipcc_scores;
-+
-+static int amd_set_hfi_ipcc_score(struct amd_hfi_cpuinfo *info, int cpu);
-+static int update_hfi_ipcc_scores(struct amd_hfi_data *amd_hfi_data);
-+
  static int find_cpu_index_by_apicid(unsigned int target_apicid)
  {
- 	int cpu_index;
-@@ -293,6 +302,40 @@ static void amd_hfi_remove(struct platform_device *pdev)
- 
- 	mutex_destroy(&dev->lock);
+@@ -318,6 +319,87 @@ static int amd_set_hfi_ipcc_score(struct amd_hfi_cpuinfo *hfi_cpuinfo, int cpu)
+ 	return 0;
  }
-+
-+static int amd_set_hfi_ipcc_score(struct amd_hfi_cpuinfo *hfi_cpuinfo, int cpu)
+ 
++static int amd_hfi_set_state(unsigned int cpu, bool state)
 +{
-+	int i, *hfi_scores;
-+	u8 nr_classes = hfi_cpuinfo->nr_class;
-+
-+	hfi_scores = per_cpu_ptr(amd_hfi_ipcc_scores, cpu);
-+	if (!hfi_scores)
-+		return -ENODEV;
-+
-+	for (i = 0;  i < nr_classes; i++)
-+		WRITE_ONCE(hfi_scores[i], hfi_cpuinfo->amd_hfi_classes[i].perf);
-+
-+	return 0;
-+}
-+
-+static int update_hfi_ipcc_scores(struct amd_hfi_data *amd_hfi_data)
-+{
-+	int cpu;
 +	int ret;
 +
-+	raw_spin_lock_irq(&amd_hfi_data->hfi_data_lock);
-+	for_each_online_cpu(cpu) {
-+		struct amd_hfi_cpuinfo *hfi_cpuinfo = per_cpu_ptr(&amd_hfi_cpuinfo, cpu);
++	ret = wrmsrl_on_cpu(cpu, AMD_WORKLOAD_CLASS_CONFIG, state);
++	if (ret)
++		return ret;
 +
-+		ret = amd_set_hfi_ipcc_score(hfi_cpuinfo, cpu);
-+		if (ret)
-+			return ret;
-+	}
-+	raw_spin_unlock_irq(&amd_hfi_data->hfi_data_lock);
-+
-+	return 0;
++	return wrmsrl_on_cpu(cpu, AMD_WORKLOAD_HRST, 0x1);
 +}
 +
- static int amd_hfi_metadata_parser(struct platform_device *pdev,
- 		struct amd_hfi_data *amd_hfi_data)
- {
-@@ -344,6 +387,19 @@ static int amd_hfi_metadata_parser(struct platform_device *pdev,
- 	return ret;
- }
- 
-+static int alloc_amd_hfi_ipcc_scores(struct amd_hfi_data *amd_hfi_data)
++/*
++ * amd_hfi_online() - Enable workload classification on @cpu
++ * @cpu: CPU in which the workload classification will be enabled
++ *
++ */
++static int amd_hfi_online(unsigned int cpu)
 +{
-+	struct amd_hfi_metadata *hfi_meta = amd_hfi_data->hfi_meta;
++	struct amd_hfi_cpuinfo *hfi_info = per_cpu_ptr(&amd_hfi_cpuinfo, cpu);
++	struct amd_hfi_classes *hfi_classes;
++	int ret;
 +
-+	amd_hfi_ipcc_scores = __alloc_percpu(sizeof(*amd_hfi_ipcc_scores) *
-+			hfi_meta->n_classes,
-+			sizeof(*amd_hfi_ipcc_scores));
-+	if (WARN_ON(!amd_hfi_ipcc_scores))
++	if (WARN_ON_ONCE(!hfi_info))
++		return -EINVAL;
++
++	if (!zalloc_cpumask_var(&hfi_info->cpus, GFP_KERNEL))
 +		return -ENOMEM;
 +
++	mutex_lock(&hfi_cpuinfo_lock);
++	cpumask_set_cpu(cpu, hfi_info->cpus);
++
++	/*
++	 * Check if @cpu as an associated, initialized and ranking data must be filled
++	 */
++	hfi_classes = hfi_info->amd_hfi_classes;
++	if (!hfi_classes)
++		goto unlock;
++
++	/* Enable the workload classification interface */
++	ret = amd_hfi_set_state(cpu, true);
++	if (ret)
++		pr_err("wct enable failed for cpu %d\n", cpu);
++
++	mutex_unlock(&hfi_cpuinfo_lock);
++	return 0;
++
++unlock:
++	free_cpumask_var(hfi_info->cpus);
++	mutex_unlock(&hfi_cpuinfo_lock);
++	return ret;
++}
++
++/*
++ * amd_hfi_offline() - Disable workload classification on @cpu
++ * @cpu: CPU in which the workload classification will be disabled
++ *
++ * Remove @cpu from those covered by its HFI instance.
++ *
++ */
++static int amd_hfi_offline(unsigned int cpu)
++{
++	struct amd_hfi_cpuinfo *hfi_info = &per_cpu(amd_hfi_cpuinfo, cpu);
++	int ret;
++
++	if (WARN_ON_ONCE(!hfi_info))
++		return -EINVAL;
++
++	mutex_lock(&hfi_cpuinfo_lock);
++
++	/* Disable the workload classification interface */
++	ret = amd_hfi_set_state(cpu, false);
++	if (ret)
++		pr_err("wct disable failed for cpu %d\n", cpu);
++
++	mutex_unlock(&hfi_cpuinfo_lock);
++
++	free_cpumask_var(hfi_info->cpus);
++
 +	return 0;
 +}
 +
- static const struct acpi_device_id amd_hfi_platform_match[] = {
- 	{ "AMDI0104", 0},
- 	{ }
-@@ -385,6 +441,7 @@ static int amd_hfi_probe(struct platform_device *pdev)
- 	amd_hfi_data->dhandle = dhandle;
+ static int update_hfi_ipcc_scores(struct amd_hfi_data *amd_hfi_data)
+ {
+ 	int cpu;
+@@ -467,6 +549,14 @@ static int amd_hfi_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_exit;
  
- 	raw_spin_lock_init(&amd_hfi_data->table_lock);
-+	raw_spin_lock_init(&amd_hfi_data->hfi_data_lock);
- 	mutex_init(&amd_hfi_data->lock);
- 
- 	platform_set_drvdata(pdev, amd_hfi_data);
-@@ -402,6 +459,14 @@ static int amd_hfi_probe(struct platform_device *pdev)
- 
- 	amd_hfi_data->hfi_meta->dynamic_rank_feature =
- 					cpuid_ebx(AMD_HETERO_CPUID_27) & 0xF;
-+
-+	if (alloc_amd_hfi_ipcc_scores(amd_hfi_data))
-+		goto err_exit;
-+
-+	ret = update_hfi_ipcc_scores(amd_hfi_data);
-+	if (ret)
-+		goto err_exit;
++	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "x86/amd_hfi:online",
++			amd_hfi_online,
++			amd_hfi_offline);
++	if (ret < 0) {
++		pr_warn("failed to setup cpuhp state! (%d)\n", ret);
++		return ret;
++	}
 +
  	dev_dbg(&pdev->dev, "%s driver registered.\n", pdev->name);
  
