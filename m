@@ -1,142 +1,125 @@
-Return-Path: <linux-kernel+bounces-303749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3301D9614AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:54:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 899139614B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:55:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0CA41F25A6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:54:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46034286D56
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D380C1D278E;
-	Tue, 27 Aug 2024 16:53:59 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A211C27;
+	Tue, 27 Aug 2024 16:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WMzDnPQt"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5CB91CF29B
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 16:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5578B1CE6E7
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 16:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724777639; cv=none; b=bBHFME3aDSF0V9H6vqOgLYSBFxqecMBofvU9GwBDrOJfZJgpPxuSLkbVkg45Yl+ojhYnpJ94bMvCAIKfaYUhrPKPirUxGjdWtE7ltYb7RPoBKUFJ9n7EDqgCMtlGX0/qWD1lr02tBc5J/ICPcbLPBidZ7eY/3Nmx16JV22TYwj0=
+	t=1724777690; cv=none; b=cM3vzze0kYFw0cFAlo/QClm6DMGgWt8JJrHefyNCHVBDK1ZSdXF9QFcc6Sq3JpznkdV8C0Y6mc5KietmJiQoXksz0S2d9+utjaESwe551mGfFe1XcuRhYCn3JcBh5K46Fprs196Fw7IC2nYSSMT23HEKqj5V+1q/h/luIiU8S4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724777639; c=relaxed/simple;
-	bh=mjQwnmTJTfm5oce9f5ZfHvkUuKmSrd5gyKWY/buXXJ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Yp7PRmDi7vZzgGaQMWt1syrqlMMOEm4pl9LtOlY4j+N2aimz5n2Hh9fgfiY/1yBFDSB2Pkv5YxW0YbDuZ7Hpm9LaFOGzJftE1IHtTEONbe3ZXZG1DNFLsg2twG3foPeVrdlzE0RbjRp9f3D4BSF/SgbgtrSEBkEXAR50Vb+2Kt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WtYXf6vwlz9sRy;
-	Tue, 27 Aug 2024 18:53:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id Jz3n189mu_bD; Tue, 27 Aug 2024 18:53:54 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WtYXf68pvz9sRs;
-	Tue, 27 Aug 2024 18:53:54 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id C4BBF8B78B;
-	Tue, 27 Aug 2024 18:53:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 3mv2wfolewUL; Tue, 27 Aug 2024 18:53:54 +0200 (CEST)
-Received: from [192.168.233.149] (unknown [192.168.233.149])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 900E08B77C;
-	Tue, 27 Aug 2024 18:53:54 +0200 (CEST)
-Message-ID: <ea693ce2-61dd-4885-805f-28aa7e60ea28@csgroup.eu>
-Date: Tue, 27 Aug 2024 18:53:54 +0200
+	s=arc-20240116; t=1724777690; c=relaxed/simple;
+	bh=Kh5uwhThs9nwoOn3AOzyE5Y4+zLLyobYmzrOmotESss=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dDZvVmBxCunA62WkELEmuVFwkAr8UN7sbLuGvUfnPtRPK1dacGqU3RUQKazUQI3OMfI8RUt/ZC+FDsN77jRrnatenSYdX42V5HZVDAx737Q4dVUwwR/lIGAKfx6yq1WwovUvcnIj8qrMSX9CAJU6mKalE1YGSDzc45OfzI83phA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WMzDnPQt; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f50ca18a13so32344961fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:54:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724777685; x=1725382485; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+eb2QWgFjgHyzTInDHeCmDGITmXg3uxSmkR/8gVOEr4=;
+        b=WMzDnPQtjS/tQRuu8t3n3zIGRjooOuleopJj+eztOv6tgT5k5Qqsh6R2kpK6ecUyxF
+         XwMzF+DJaxD2XesVWM4bBjFnL4Y6J8G/EBJ1UhchuhHAN/P5GbE5NYV5pgxg0uUHi01k
+         51Wzdw6NfeEDEtyrBqQOOOpIef1aDoED2rHaT/R+0XaW2HUW1NA7KBg9PvQHmxIdkBzu
+         L2S2R94asC7Dn0n7qr+2dMga8rogZTYj3U2RbNFnoV/WhHkmUWKnqrKQovRud6dn/Rni
+         yLeievhsYqsS443fc4qFmTaj0kk9ziFJp2OOYQCkS0/LC9ozi0srFcuE22XUZ1eK7Ldy
+         Z3TA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724777685; x=1725382485;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+eb2QWgFjgHyzTInDHeCmDGITmXg3uxSmkR/8gVOEr4=;
+        b=wcQnUiAYmE4PpfwvFz1aVoNjgtRZV7vG1X0zkiNJ/w0Seyymgj7o6oPUgrEYNe00/3
+         e5yhXb4s2qmqWVR7PC5+CqaFAafXVpuDFING4ZPyAltaQduc9XiSGRXn1S0Lt/fDHjcn
+         cA8ziOAJaBMw5XY2TLjVwS1vSqunCfXfa3P6FT8BLjyCyzZUvhDxbIJ0xm0ahsX6zFqK
+         460lhUdAA91b6ci+YBn0V0XcsmRjw2P1j7DoWp8Ej5ms/a+Na6crIXjGZ91dPreiLltu
+         YO2gp7lqLtq8Z9z7xj7wIhlY79KrE0mBO6PYTYCAb75MtjngippEA0LkVYys5IfD24hG
+         yMgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/kTJlR/O0qJN7Fubs4QEes9y21Rv71BVLqGlG9LDQvdESQay83cy4zucLShQ+d09TjKmW5sezDC0d+9c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOMsf8LZfx8jmjkacHaCjDzH01cQWXGJQV7gDjoJ7LvQsfqqsG
+	PiRe3QaMOtNlCi2It4x7XOfe/EB+uWf1YDPUyzeJHnVJvcCabF6yOPxX4G6ifHRsU64/AXjdpD2
+	D/4t3C/n9prtYIM9zOHK5Ntx2v00=
+X-Google-Smtp-Source: AGHT+IEWmSkDqqcpudL+qeabHRRdGN73leKg2ewiSqympFDcYlaA6AXEBVN2n5bPd3N7145iXT4Kma+Sh0sbZxXVllg=
+X-Received: by 2002:a05:651c:545:b0:2f3:e2f0:fa8 with SMTP id
+ 38308e7fff4ca-2f4f5728ec9mr94339371fa.9.1724777684568; Tue, 27 Aug 2024
+ 09:54:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] random: vDSO: move prototype of arch chacha function
- to vdso/getrandom.h
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org
-References: <20240827151828.3326600-1-Jason@zx2c4.com>
- <20240827154822.3330270-1-Jason@zx2c4.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20240827154822.3330270-1-Jason@zx2c4.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240826171546.6777-1-robdclark@gmail.com> <20240826171546.6777-3-robdclark@gmail.com>
+ <20240827120205.GA4647@willie-the-truck>
+In-Reply-To: <20240827120205.GA4647@willie-the-truck>
+From: Rob Clark <robdclark@gmail.com>
+Date: Tue, 27 Aug 2024 09:54:29 -0700
+Message-ID: <CAF6AEGtFg2D=4RVQC=YT9OsqdNwwsuJCyi=hu8Box0A6psecQA@mail.gmail.com>
+Subject: Re: [PATCH v8 2/4] iommu/io-pgtable-arm: Re-use the pgtable walk for iova_to_phys
+To: Will Deacon <will@kernel.org>
+Cc: iommu@lists.linux.dev, Robin Murphy <robin.murphy@arm.com>, 
+	Rob Clark <robdclark@chromium.org>, Joerg Roedel <joro@8bytes.org>, 
+	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Aug 27, 2024 at 5:02=E2=80=AFAM Will Deacon <will@kernel.org> wrote=
+:
+>
+> On Mon, Aug 26, 2024 at 10:15:39AM -0700, Rob Clark wrote:
+> > @@ -776,7 +775,7 @@ static int io_pgtable_visit(struct arm_lpae_io_pgta=
+ble *data,
+> >               return 0;
+> >       }
+> >
+> > -     if (WARN_ON(!iopte_table(pte, lvl)))
+> > +     if (WARN_ON(!iopte_table(pte, lvl) && !selftest_running))
+> >               return -EINVAL;
+> >
+> >       ptep =3D iopte_deref(pte, data);
+>
+> I still don't grok this hunk. If the selftest is running, we want to
+> return -EINVAL here rather than dereference something that isn't a
+> table, right?
+>
+> Suppressing the warning is one thing, but this seems to do more than
+> that.
 
+oh, that should be
 
-Le 27/08/2024 à 17:47, Jason A. Donenfeld a écrit :
-> Having the prototype for __arch_chacha20_blocks_nostack in
-> arch/x86/include/asm/vdso/getrandom.h meant that the prototype and large
-> doc comment were cloned by every architecture, which has been causing
-> unnecessary churn. Instead move it into include/vdso/getrandom.h, where
-> it can be shared by all archs implementing it.
-> 
-> As a side bonus, this then lets us use that prototype in the
-> vdso_test_chacha self test, to ensure that it matches the source, and
-> indeed doing so turned up some inconsistencies, which are rectified
-> here.
+   if (!iopte_table(...)) {
+      WARN_ON(!selftest_running);
+      return -EINVAL;
+   }
 
-Side bonus that I dislike. Or ... it is all that u32 key stuff that I 
-dislike.
+I did boot with selftests enabled, and it didn't _seem_ to complain
+about anything, so I overlooked that
 
-If it was really u32 I would be able to read it with a LWZ instruction 
-(Load Word Zero extended). That's what I did at the begining. But if I 
-want the selftest to work, I have to use LWBRX (Load Word Byte Reversed 
-...)instead  because the bytes in the word are in reversed order in reality.
+BR,
+-R
 
-So either it is a table of 32 bytes, or it is as defined in RFC 7539:
-
-   A 256-bit key, treated as a concatenation of eight 32-bit 
-little-endian integers.
-
-And in that case it is not a table of 8x u32 but table of 8x __le32
-
-> 
-> Suggested-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-> ---
-
-
-> diff --git a/tools/testing/selftests/vDSO/vdso_test_chacha.c b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-> index e38f44e5f803..ca5639d02969 100644
-> --- a/tools/testing/selftests/vDSO/vdso_test_chacha.c
-> +++ b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-> @@ -7,16 +7,20 @@
->   #include <sys/random.h>
->   #include <string.h>
->   #include <stdint.h>
-> +#include <stdbool.h>
->   #include "../kselftest.h"
->   
-> -extern void __arch_chacha20_blocks_nostack(uint8_t *dst_bytes, const uint8_t *key, uint32_t *counter, size_t nblocks);
-> +typedef uint8_t u8;
-> +typedef uint32_t u32;
-> +typedef uint64_t u64;
-> +#include <vdso/getrandom.h>
->   
->   int main(int argc, char *argv[])
->   {
->   	enum { TRIALS = 1000, BLOCKS = 128, BLOCK_SIZE = 64 };
->   	static const uint8_t nonce[8] = { 0 };
->   	uint32_t counter[2];
-> -	uint8_t key[32];
-> +	uint32_t key[8];
->   	uint8_t output1[BLOCK_SIZE * BLOCKS], output2[BLOCK_SIZE * BLOCKS];
->   
->   	ksft_print_header();
-> @@ -27,7 +31,7 @@ int main(int argc, char *argv[])
->   			printf("getrandom() failed!\n");
->   			return KSFT_SKIP;
->   		}
-> -		crypto_stream_chacha20(output1, sizeof(output1), nonce, key);
-> +		crypto_stream_chacha20(output1, sizeof(output1), nonce, (uint8_t *)key);
->   		for (unsigned int split = 0; split < BLOCKS; ++split) {
->   			memset(output2, 'X', sizeof(output2));
->   			memset(counter, 0, sizeof(counter));
+>
+> Will
 
