@@ -1,173 +1,203 @@
-Return-Path: <linux-kernel+bounces-302636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D914D960147
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:01:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01B67960149
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:02:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 957B6282B4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:01:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24C921C21D06
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE5C13A416;
-	Tue, 27 Aug 2024 06:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D82A132132;
+	Tue, 27 Aug 2024 06:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Is6H7dMM"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="pxiAlIrb"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2085.outbound.protection.outlook.com [40.107.93.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B535628689
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724738498; cv=none; b=abYaDD1xLm52T6fi1F/Vu0DOPKuLhpcJDW5KHNCYP2lg97AbeCoYmZp9E7Ih151dGN/9it/cI6Uks7IkMIfZGjA3wqA6Ra8lPDvvRQlhJfKUaVDkb3XuerLIIM3Ayltrh0ASE3esp6AdCiqlWm7shjr4nu41IZFeCq48Aon0fM0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724738498; c=relaxed/simple;
-	bh=ZpgYtWXWQX1RlXoxt9WyOaOIHSiZV5dnIWN7iBw/Ez0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=StuxQk8NliDlJQFgeRktZcOwBX4JfxdjEy6tec5ty0SlvysUUzzKsPKSgsOZT4oUAauIHrRmuwURL2HK/JCudHaMfiG211XnZme5//ZTt/BPGw/hxiWsRr+8n46Ouv0xAbWBRYVImWgFtR55oYio3NU+p6UolQIdQFx1a8R+U7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Is6H7dMM; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c07eebf29eso2236132a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 23:01:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724738495; x=1725343295; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2V26ymBzYP2Z7GWKZsLXO+lAp6n0aHmQIkOVXPd0pbM=;
-        b=Is6H7dMMviJHa5j8LkOEErNvwLCq14O7NJvvKb55bwIILNBqJHHXrcJlF78H5FDWI/
-         sWk/qq1VN1Hqczv7JIgJ03xQYQmcns7+cANgKqJ678C76CuS5EtP0zn0kqV4xKljKdsM
-         mgOlnGxC5KDPx/azqnz3NeV9aABZHXBXdFOih6cu927V4TI9IXGU6b981K/i2qCaVFe3
-         0wbG+AoEe+5zU4/Op8VzXvL9OEOQKqJl2J7WCHv3EM0YqvyX/2K+IO7pVAtP4axE99nx
-         EN+r+BTJ2NsWHSbOrwTjT87AusqLW8Y1/cxhvNXTE1jHUF2ox0iIFJAVFswcyU1gJ8mZ
-         SO+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724738495; x=1725343295;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2V26ymBzYP2Z7GWKZsLXO+lAp6n0aHmQIkOVXPd0pbM=;
-        b=OIWbamWiCMtPLlYVZihYqKqxKLBaTh/w2F9/sRLxUjRtaFhq0IoLW2JWYd1zuaLFvF
-         AH3bdx2vpypMYOsxuvM8XuMhxawJtnaUx5WEJ1cAldOHzFxMZkxXOl/YulLUJPQQEQ9W
-         f7EnYmc31jy5gJaxs25G4Kb6LqpPFa4zo2SDFLX29EqF1izAp0f7QsmlK04xPncSN79E
-         SutMgvCGZA4RJ5e+A4nAtnkrZMEf6KlzykHNCV2swOJaud9gsU2RSfutkzqRIUKo0tOO
-         MdFkFhHWAjWE1VgSfPnh3+VGvDHGlHUEy2oI5w7LbmpJOJ8GMCgefguznKdLKVJCHBtL
-         Ei/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWpSSL5BI7aeRMaM4KVc8ScYfR4FfmIO7XV1Geof0ilCZbDvHQ8R7vOm7SJgb4WFONc0L8WjCp7szd8c5E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyj7tU0hCMniXmfRip6dbwfS/47oyAE6fMibSDe0I+q7Ygq9KfP
-	3A5AflMwTrZ5ZCMvv92rwt8isw8CA8UfSnpIlC/D2X8MXKeYqACduoew7QuuMuo=
-X-Google-Smtp-Source: AGHT+IF2gqL09d/X0zV5rFVkiVrS2Z5bbUz8sAze/K0DL8uePv7zb38gZRMFPwimQZSTcgTR1WWbYw==
-X-Received: by 2002:a05:6402:26d3:b0:5a1:2ce9:f416 with SMTP id 4fb4d7f45d1cf-5c0891b4825mr11035852a12.37.1724738494768;
-        Mon, 26 Aug 2024 23:01:34 -0700 (PDT)
-Received: from localhost (109-81-92-122.rct.o2.cz. [109.81.92.122])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb1c5b39sm602082a12.20.2024.08.26.23.01.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 23:01:34 -0700 (PDT)
-Date: Tue, 27 Aug 2024 08:01:32 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
-	jack@suse.cz, Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <Zs1rvLlk0mXklHyf@tiehlicka>
-References: <20240826085347.1152675-1-mhocko@kernel.org>
- <20240826085347.1152675-2-mhocko@kernel.org>
- <egma4j7om4jcrxwpks6odx6wu2jc5q3qdboncwsja32mo4oe7r@qmiviwad32lm>
- <ZszeUAMgGkGNz8H9@tiehlicka>
- <d5zorhk2dmgjjjta2zyqpyaly66ykzsnje4n4j4t5gjxzt57ty@km5j4jktn7fh>
- <ZszlQEqdDl4vt43M@tiehlicka>
- <ut5zfyvpkigjqev43kttxhxmpgnbkfs4vdqhe4dpxr6wnsx6ct@qmrazzu3fxyx>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC008C13;
+	Tue, 27 Aug 2024 06:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724738533; cv=fail; b=FxcDZW/qcPOk00o2i2dzLG1egcPRkD/mx28UAZ8jUV1mcyu2zcqClzrGiyOvfk5ag0Em6CuvctQzKLKSOThgzdFTTsogKRreTrtR/gyq3I0FQL6dga+ofCviSxYNLn6Iq0UtGtDLI4swfSW4tZxtIAp/qb0wBHqCMaeEAv2aC0U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724738533; c=relaxed/simple;
+	bh=ESfIq6mfT/4MM01M4v6RlMXZuItzFTnowdTLAGI/n+U=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=WmOxjV2PHEwzmeoN1WGtz3/x9hLYS3dMZocaE+4wmehA0kHKOjTE0SL5sAyEU+zGNvLwY2swhoFTXqWK1eUIONoB3sCxQENfof/Xqgf5iajkQEH+BETbL3g6MRoEi+LgUfKYfGjoOcxsPjZgGTbNDFYXMkdDMKyM4Ft2ZxGW0/Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=pxiAlIrb; arc=fail smtp.client-ip=40.107.93.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ACxEg8nO29d9c2ZvFWmHjl1GsO6meEzakuVCm/V0DiK5AdcAi5+Au3f9CnvUoqpymoLrOaNj2trdw2Li3R7ZRWLOgF+2aphclIR9uTIaBn7zPJ6IWuqRdFTJcRpUjp3JpwEM6Wgpg4XtGAdPRmCSWlt7YVipeFT8aEAYQilnPua77D+9Pu4O4K9smBH0GVuSH/5/VPeaiQc7lyDEOS+jU2vfcuHKljIWTeFMeaXo/OEY0S3dGFEd/y6HND5ugJP1zIR1bBhPAZUTPpjga87NGUtcB6UHmXN9MOYr57A148u6QFdUWjrrF4qArClYc9Nhaz6TM460ARkdud6rq5sfvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ESfIq6mfT/4MM01M4v6RlMXZuItzFTnowdTLAGI/n+U=;
+ b=lhn8NkCQKypVv+UMnIKOKbQ2QkK4X3mlvG1QHB2riqnkmC7mLHyuW0j3wcuqjuh5fC68AcupHkP/DiUENhvV9UC5roJqXeC6duAzQS2XJNSOM4sJOCpIRfQdHc+Ihmxo5sVftMAyoi4vB2OCxlBQ98QOtet793RDqp7vDTOT4pu5rTsqtzya/5zVX7YHQlRMSAhQ2erJjisDMQUEPrqkYque/vWxk439dFg6gD/1Ss1hAW1Y2lL7xZqYxaU6esXinIWeYFF5UBcCGFsmbTSq7c6uAJRHB/UB2zmjF5PzkhcYUH8im5UOnwwXl47Xk+SN2aiPWGRyxNvzToJt87ecfw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ESfIq6mfT/4MM01M4v6RlMXZuItzFTnowdTLAGI/n+U=;
+ b=pxiAlIrboBusQam0tHsqVNbazfBhNXXclTWR3Os+AzurwXBTztLW3NXXqZoq/eyeOw4z7dTbMFX36Fpe+0ZAJWW++bbZitIP0ZKrhsO6Stwo5imZHdOjHOJdygMAP2//oGKrwxW2sJi9MIBoKeeftsLYyA/tEK+2WCYShNKTas9wYRmC3vBS65eP2JS8ugYj6kMaXW3bCJNlttnY9gPO7Tv0hujNgZ2JSNiM/uuyktxtunXv5MJDoKUBS3ZArVFBTxyYp3PCq2+h7BTBBny2kmMh33Uj3gDLUjo0IQSu/n/3E6LluvaIOHCHUUzwpevgZ999U27gajxX/BOrVVhqTQ==
+Received: from DM6PR11MB4185.namprd11.prod.outlook.com (2603:10b6:5:195::29)
+ by SJ0PR11MB6621.namprd11.prod.outlook.com (2603:10b6:a03:477::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Tue, 27 Aug
+ 2024 06:01:47 +0000
+Received: from DM6PR11MB4185.namprd11.prod.outlook.com
+ ([fe80::1692:c829:d50b:8c30]) by DM6PR11MB4185.namprd11.prod.outlook.com
+ ([fe80::1692:c829:d50b:8c30%5]) with mapi id 15.20.7897.021; Tue, 27 Aug 2024
+ 06:01:46 +0000
+From: <Hari.PrasathGE@microchip.com>
+To: <ruanjinjie@huawei.com>, <broonie@kernel.org>,
+	<Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>, <linux-spi@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH -next 1/2] spi: atmel-quadspi: Fix uninitialized res
+Thread-Topic: [PATCH -next 1/2] spi: atmel-quadspi: Fix uninitialized res
+Thread-Index: AQHa97cYSoMoXj2l7kuppwpnF+OyFbI6ncKA
+Date: Tue, 27 Aug 2024 06:01:46 +0000
+Message-ID: <ad454e33-9ea0-4b94-a97f-38fd868af247@microchip.com>
+References: <20240826125913.3434305-1-ruanjinjie@huawei.com>
+ <20240826125913.3434305-2-ruanjinjie@huawei.com>
+In-Reply-To: <20240826125913.3434305-2-ruanjinjie@huawei.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microchip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR11MB4185:EE_|SJ0PR11MB6621:EE_
+x-ms-office365-filtering-correlation-id: 2b585a34-0b07-4b03-5fa1-08dcc65dbb95
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4185.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?SFNKUUVjSFlPOFI0bkZabUl3TDlzSDJiRTV5Q0VMMnFraHpkR0YvcFRVRjF6?=
+ =?utf-8?B?YzhyVHZ1R3AvMkY4VVQxWmZrdTZibUZpWlhqdFFIdHRsWnJKT2d2bEZUNjNZ?=
+ =?utf-8?B?M1RnY1BNVjRBSUxKbWtNcDBHOWcxWXJBQUo4NE1PbkpRdVFaQVJucEVldXJ6?=
+ =?utf-8?B?RGxmVWlvOWhSNkhiRmttYlUvbkx5c3FRdmxITFJDYzZ0RUEwZ3ZueG9XQ2Rv?=
+ =?utf-8?B?SjRmYUgyaE85K29rQ2RCOEFEbjhoWlpZVjVhRTgxekFkSlBMWjBoMWlhVjdJ?=
+ =?utf-8?B?UFo4Tm8yeWNLR2lrc0hsUFJkQS82UnpPelovZk5tbzUxMkcwaStrY2tZT0V1?=
+ =?utf-8?B?SGNiTWxKNWh1a1hYUUF6MEp2RkpKTGwrM21vaXd5ZjI5MnBzNGR2RXE4Zk1U?=
+ =?utf-8?B?b1VUQUpaaVB3bTl3MEs4Ui9lVEFjblFvMHUxcGhyckExRzErWXVlUEs3WlVX?=
+ =?utf-8?B?TUNjTERLVFBuYjllaFA2VFJmU1oyVUhrcUQxVFRLdkd6RG16TmVNVFM4UGJI?=
+ =?utf-8?B?cURPRnNVY1ptODZaVkdqenJiTmsyOFh0V3hMUFR4WXhNbTZ2YS9GZnh3REM1?=
+ =?utf-8?B?UlBpUlVUMksyVkE3S3RMUW5hcFliR0wwSkt3ZDNtUzdFalNiUHQzOXVyVW5H?=
+ =?utf-8?B?a1VaVnVkY1NTbVNhQkV0MmJBUXR5cno5QkhYR0ZUNzZuWmpKNCtSd0xpalFV?=
+ =?utf-8?B?emVCRDdWMkVnc1hQZ1Q1K1ZBa0YwNDU4enRxUmxTdzU4Q0w1eFZ0cWpQa281?=
+ =?utf-8?B?clBHbVo1VFRnSlZvSW9DNlIrWmcwVC8ra3FrZjJvdE1LVm5IbEg4UTVBNmJ1?=
+ =?utf-8?B?ZTNMYTNZQXdHMURxOUt2N05LUGFIODZoT09FV0phMFV4MDR4eUQrNWlCMWJV?=
+ =?utf-8?B?RjZJcVlKMFBGeDhJVXV3Z0xGQWdzdWh5WFp1VnNRU20yd2hXcm10WEF2Vitt?=
+ =?utf-8?B?ZS91Z2RlMWFIdmR4RnRXZkRiQVpYbWY0eHBQVURqeUJtcFQzLzBNN0h4THla?=
+ =?utf-8?B?MlEwV3FYVUYyWEpFM2FHbWNHdEpWVVdBelBHdXFoK1lTb1hMZk9wb3pLN0dH?=
+ =?utf-8?B?OUh4S1FJa0dVRW9lRjhvK3B0QXJXRWkxNXNDL0xEMElPZ1FDRTBFdGVBTnZ3?=
+ =?utf-8?B?c0NFZVZhVkdQNjZ6eW8zemVjMEhYaTYrQWgrVFI5V3FxSm5QbU1yYk91MnNM?=
+ =?utf-8?B?eEl2VnlQL2xCcXdvUWNxZW1Hd0JyRnNnWWpPYm5HbWR0YlFuM1VaS0laV0JE?=
+ =?utf-8?B?NjdqT2V5Q2RXQmJQYnVBUi83ZGhBMUV1L0tuR3VVb1A5Y25CalF6bUlndVFk?=
+ =?utf-8?B?UER0MWl2S3lsbURlZXNQb3JDc1NJNzdOUUd2Zm1jQjVYcFJiaXRnZ01Qb3dp?=
+ =?utf-8?B?SVBnN2lzR1M1QkYrNHVOYWFxSldpNWk4aHN2OFJVaFNiZFRiRFdHdDBRb2F5?=
+ =?utf-8?B?M3VaY09GOVRnRUFnckh5UDExQnZPSVhUOTdyYzBGcDQ4Y2loMmwyUldGR1hH?=
+ =?utf-8?B?L3I5djE0b1lBTis4bU9UOEdRcUNHSG1TWmRnc3dqZGx4WkZ1ZitvRXFYYUxO?=
+ =?utf-8?B?VkFtd0F5N0FEU3JIaUhJeSt2QXhQaHdlOUVaa2VBOFRrbjE1VTN4MHdRRXlE?=
+ =?utf-8?B?ZTBLYldkSWpBdUszZU9xOVlad291VjZUOUpUQzdPYm1FczlHcFdJeElabkVw?=
+ =?utf-8?B?ZXRNUGN1bDRYTk84RFBqZVdKSm0wVTNOSGk1K09ESytta3RLWnBSSlZrY1hm?=
+ =?utf-8?B?dWEzY3BwRDhjYitjYmphSzBvRVlOQkVBNHVybW5LQ1NobHVCTyszLzNHYlJa?=
+ =?utf-8?B?Zjl3bFhIblpMeTR4azVLZ01HaDBpN0pFell0UlZkeVM5T1prckU0YWRrTWo4?=
+ =?utf-8?B?eXVkbDRjb0hRdDhWSjRzY2o3T2U4QXI5ZnZmUmh3QkV0VXc9PQ==?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?ZExzUlgrU0JPTnhrcldsWkt1R20yanZUalEzQm1wMWoxM241Z215d2tMNjgx?=
+ =?utf-8?B?SHZiMFQ0NzdGWDRqTklWRWwwWWZwWGJEU1hUVzc2eE9tV1NUVkR3MXg5WTRB?=
+ =?utf-8?B?aTJyOUJZYmJxcEVkN2JIb21JTFlTS2F6V0VBRmdBaVZEM0kySjRpWWZqTmpL?=
+ =?utf-8?B?Yks1ZzBnbjcxTXErNCs0RFpEemJCcnZMZ1oyaXlWYmZkUHdXUWEwdGdOZTR0?=
+ =?utf-8?B?SXV4U0hHRGtCNEl0ZnVpVHVIb3ozdXhQbk9SVGVETWt1VFJXMHdaZFUvQXRs?=
+ =?utf-8?B?Z3I2aVEvTWZQME1hdEozd0VnNzZPcGVWT3Z2c3BwWnNNTmV0N3hwUU5wSGhp?=
+ =?utf-8?B?V3IwSnRYaVprSkxaWUFGZWJYMXZFb1dwZHBzR0wwTXNJRStNRCtUamc3Vzhj?=
+ =?utf-8?B?NU1COHQ4bHRibmtxZE5GT2U3ZjJCNGg3Tkw5K1kwdU5qd3VUOG1PN0pBOU1o?=
+ =?utf-8?B?VlF6REczcUVYYUcybG1Pbi9UNzBRNi91MnlYait6b29XblY2VFB4Q1d3OVYr?=
+ =?utf-8?B?UzdXQlpNU255RFRCSTIxYy9xdTZPTkNMWlhlendRS005UVB0MS9tVnZGaGIr?=
+ =?utf-8?B?OEIvUjJENTlZNkNSRlM3SFpERkJSZnp3akxNN0hwN3oxWnVqd0tYYVVEWUlU?=
+ =?utf-8?B?aVd1UjJQYUVrY2FLaXEzTjg1clFtbzVKbGtUdTZnaENsWVBWTUdOcmZVS3Vj?=
+ =?utf-8?B?WC9xckdFSXhBZisxUEpFcjRia3JJWEI5L3g1Nm5mZm45clVKdHFjRklROGxF?=
+ =?utf-8?B?YlpmWEFuZXAxRk5tWU5GWm40dHVTMC9LZmo4WmhaRWNtU08vK0k5eEdGZjVz?=
+ =?utf-8?B?M0FZRG9WSjR4Tnp6d1Z3M21FYjhhWjl6ZTBqdU0zS01Nakg4Qlg0NUEvZDBW?=
+ =?utf-8?B?STlEY1QrM0lqZTRQYVJZTTNpZGlVc2tzUVBNbVU3UkdBdEJTNTVMUG1ReEFw?=
+ =?utf-8?B?Z1FLTXpNdDBjVUxqU2dVU2JDRTlIRUMrT0V4VExYbkIwMmxVWm1mMHBSQnVO?=
+ =?utf-8?B?Ym9nbm9scDl1WGNRVFlaellsa2ZJU05USHRIOTkvdHlIQll1dWdra1Yxblhu?=
+ =?utf-8?B?Wi9tcTJ4Ri95SEZXUDNoZGw1MGRoR2xlVVE5OUJ1MUxwbEhvbythRlZ5WnpJ?=
+ =?utf-8?B?WWUwVkxMVWRqa09DVnFmUE9rQ3A3WGFqeVM4bk12aVdZRm1TdWNtRGJnTlQ2?=
+ =?utf-8?B?MkFMaFFaTVppZVNYYWxaVitxTnROY0Z1QjRJeCt4STBHSEN3L1djSjdwTU9R?=
+ =?utf-8?B?NEJkUk8vMFNpd2kxRDRzREtwQXJuNHJWTXNJa1c4S2pscXBzRHRRckY5dmR4?=
+ =?utf-8?B?d3hyQUQ0Wm9hWUlaMlovNHFYK2pPWWdUc013Nm5TcEtUSkM1S2x1UytRN2Rt?=
+ =?utf-8?B?UlJXMXJTamdvbzRRQzBULy9KN1IyRW81VXd4UUVLRlZJaGlWQWpEazl3SmpT?=
+ =?utf-8?B?YXlkODEwWUFSRmdqTzkxY0g3bFp5L1RUdU4xaHBGR1J6WHJiVjBtM2Fvb3VN?=
+ =?utf-8?B?ZXltOVlVU3Rpc0NYNlUvWmZIbEE0UEFNZ2Nid1ZCTE0vcHB5RVNKZzFIUGdF?=
+ =?utf-8?B?M1djaWl2ODJtR09IMEJlWU5LS3BJdFJFVmdvb3M4QUxjcTlXZDcyTmNVdFhZ?=
+ =?utf-8?B?L0tyNlhvRnNPcGlpSlpEbG1iQXppVnhWb2ozVlZHQXgrTzFsSEZsSE5SNU1K?=
+ =?utf-8?B?VjRHOU1PQ0EzSnptMmQxWnF1MHA5dWJiTkZ3VXB0QnRmR1h0VnlhRldhajZB?=
+ =?utf-8?B?VUcrVGVLQmFxanhJaGNoTkptTU9BUVRyaVVabGxON0dxSU9CTFpBMVp6SGds?=
+ =?utf-8?B?WjhLV3ZLN1B1MWNxNXFKOGo0bGtBNTVtN2h0dkcyRkRJYklwNFRHa1RGMUt3?=
+ =?utf-8?B?MDZQenMyNWlzVXpOZUhRNXBnU2RDbEdqWnVKT1ZvNlc1eVY2eW5EK1lUM0pS?=
+ =?utf-8?B?U3RaYzI5Tk1LckhISzJxejlTcFJHb0dHTGdOR1YxbytqbFNJQkM5VzVWS0ho?=
+ =?utf-8?B?Yks2T256OFJiTWJPejBQUFhzK05NeFA1MmdOUHhnUjJYZWRsSWdNcGZnV0pO?=
+ =?utf-8?B?Q3ZjRnRRdU9Db1BQNTFoR1M0dkc1a3ZFYXJmVnU3bUNVb0tFQ0dub28xVjNo?=
+ =?utf-8?B?bWFxVEtRQjRKTGZ3dmRESERYSkJtL0NURjU4dGJ4UEFuZ1pzNWcyV29nbFdZ?=
+ =?utf-8?B?aEE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <89BA35B02A3A024B96C0C20FFF9B0463@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ut5zfyvpkigjqev43kttxhxmpgnbkfs4vdqhe4dpxr6wnsx6ct@qmrazzu3fxyx>
+X-OriginatorOrg: microchip.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4185.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2b585a34-0b07-4b03-5fa1-08dcc65dbb95
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2024 06:01:46.0883
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: XgNW+Ja3NCxgckcOJg91e1taqsfUMMEJS86uJwIjuIrmEHuf9tQTpIwCjtZjaZMnKz/O6p0b2IRQhl2ABdfO2UaUuJzaSeGJA5JXluuYmeY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB6621
 
-On Mon 26-08-24 16:43:55, Kent Overstreet wrote:
-> On Mon, Aug 26, 2024 at 10:27:44PM GMT, Michal Hocko wrote:
-> > On Mon 26-08-24 16:00:56, Kent Overstreet wrote:
-> > > On Mon, Aug 26, 2024 at 09:58:08PM GMT, Michal Hocko wrote:
-> > > > On Mon 26-08-24 15:39:47, Kent Overstreet wrote:
-> > > > > On Mon, Aug 26, 2024 at 10:47:12AM GMT, Michal Hocko wrote:
-> > > > > > From: Michal Hocko <mhocko@suse.com>
-> > > > > > 
-> > > > > > bch2_new_inode relies on PF_MEMALLOC_NORECLAIM to try to allocate a new
-> > > > > > inode to achieve GFP_NOWAIT semantic while holding locks. If this
-> > > > > > allocation fails it will drop locks and use GFP_NOFS allocation context.
-> > > > > > 
-> > > > > > We would like to drop PF_MEMALLOC_NORECLAIM because it is really
-> > > > > > dangerous to use if the caller doesn't control the full call chain with
-> > > > > > this flag set. E.g. if any of the function down the chain needed
-> > > > > > GFP_NOFAIL request the PF_MEMALLOC_NORECLAIM would override this and
-> > > > > > cause unexpected failure.
-> > > > > > 
-> > > > > > While this is not the case in this particular case using the scoped gfp
-> > > > > > semantic is not really needed bacause we can easily pus the allocation
-> > > > > > context down the chain without too much clutter.
-> > > > > 
-> > > > > yeah, eesh, nack.
-> > > > 
-> > > > Sure, you can NAK this but then deal with the lack of the PF flag by
-> > > > other means. We have made it clear that PF_MEMALLOC_NORECLAIM is not we
-> > > > are going to support at the MM level. 
-> > > > 
-> > > > I have done your homework and shown that it is really easy
-> > > > to use gfp flags directly. The net result is passing gfp flag down to
-> > > > two functions. Sure part of it is ugglier by having several different
-> > > > callbacks implementing it but still manageable. Without too much churn.
-> > > > 
-> > > > So do whatever you like in the bcache code but do not rely on something
-> > > > that is unsupported by the MM layer which you have sneaked in without an
-> > > > agreement.
-> > > 
-> > > Michal, you're being damned hostile, while posting code you haven't even
-> > > tried to compile. Seriously, dude?
-> > > 
-> > > How about sticking to the technical issues at hand instead of saying
-> > > "this is mm, so my way or the highway?". We're all kernel developers
-> > > here, this is not what we do.
-> > 
-> > Kent, we do respect review feedback. You are clearly fine ignoring it
-> > when you feels like it (eab0af905bfc ("mm: introduce
-> > PF_MEMALLOC_NORECLAIM, PF_MEMALLOC_NOWARN") is a clear example of it).
-> > 
-> > I have already made my arguments (repeatedly) why implicit nowait
-> > allocation context is tricky and problematic. Your response is that you
-> > simply "do no buy it" which is a highly technical argument.
-> 
-> No, I explained why GFP_NORECLAIM/PF_MEMALLOC_NORECLAIM can absolutely
-> apply to a context, not a callsite, and why vmalloc() and kvmalloc()
-> ignoring gfp flags is a much more serious issue.
-
-You are not really answering the main concern I have brought up though.
-I.e. GFP_NOFAIL being fundamentally incompatible with NORECLAIM semantic
-because the page allocator doesn't and will not support this allocation
-mode.  Scoped noreclaim semantic makes such a use much less visible
-because it can be deep in the scoped context there more error prone to
-introduce thus making the code harder to maintain. 
-
-I do see why you would like to have NOWAIT kvmalloc support available
-and I also do see challenges in achieving that. But I completely fail to
-see why you are bring that up _here_ as that is not really relevant to
-PF_MEMALLOC_NORECLAIM use by bcachefs because it demonstrably doesn't
-need that. There is no other user of the flag at the moment so dropping
-the flag before there is more misuse is a reasonable goal. If you want
-to bring up vmalloc NOWAIT support then feel free to do that in another
-context and we can explore potential ways to achieve that.
-
--- 
-Michal Hocko
-SUSE Labs
+SGVsbG8sDQoNCk9uIDgvMjYvMjQgNjoyOSBQTSwgSmluamllIFJ1YW4gd3JvdGU6DQo+IEVYVEVS
+TkFMIEVNQUlMOiBEbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bmxlc3Mg
+eW91IGtub3cgdGhlIGNvbnRlbnQgaXMgc2FmZQ0KPiANCj4gVGhlIHNlY29uZCBwbGF0Zm9ybV9n
+ZXRfcmVzb3VyY2VfYnluYW1lKCkgY2FuIG5vdCBiZSByZXBsYWNlZCB3aXRoDQo+IGRldm1fcGxh
+dGZvcm1faW9yZW1hcF9yZXNvdXJjZV9ieW5hbWUoKSwgYmVjYXVzZSB0aGUgaW50ZXJtZWRpYXRl
+ICJyZXMiDQo+IGlzIHVzZWQgdG8gYXNzaWduIGZvciAiYXEtPm1tYXBfc2l6ZSIuDQo+IA0KDQpZ
+ZXMgaW5kZWVkLg0KDQpJIHNlZSB0aGF0IHRoZSBhYm92ZSBjb21taXQgaXMgbWVyZ2VkIGluIHRo
+ZSBTUEkgZ2l0IHRyZWUuIFdpdGggdGhhdCwNCg0KQWNrZWQtYnk6IEhhcmkgUHJhc2F0aCBHdWp1
+bGFuIEVsYW5nbyA8aGFyaS5wcmFzYXRoZ2VAbWljcm9jaGlwLmNvbT4NCg0KUmVnYXJkcywNCkhh
+cmkNCg0KPiBGaXhlczogM2NjZWExZGVkZWYzICgic3BpOiBhdG1lbC1xdWFkc3BpOiBTaW1waWZ5
+IHJlc291cmNlIGxvb2t1cCIpDQo+IFNpZ25lZC1vZmYtYnk6IEppbmppZSBSdWFuIDxydWFuamlu
+amllQGh1YXdlaS5jb20+DQo+IC0tLQ0KPiAgIGRyaXZlcnMvc3BpL2F0bWVsLXF1YWRzcGkuYyB8
+IDMgKystDQo+ICAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigt
+KQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3BpL2F0bWVsLXF1YWRzcGkuYyBiL2RyaXZl
+cnMvc3BpL2F0bWVsLXF1YWRzcGkuYw0KPiBpbmRleCAyYjVjNzIxNzY3MTEuLjU2ZGQ4ZGNiODZj
+YiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9zcGkvYXRtZWwtcXVhZHNwaS5jDQo+ICsrKyBiL2Ry
+aXZlcnMvc3BpL2F0bWVsLXF1YWRzcGkuYw0KPiBAQCAtNjA4LDcgKzYwOCw4IEBAIHN0YXRpYyBp
+bnQgYXRtZWxfcXNwaV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiAgICAg
+ICAgICB9DQo+IA0KPiAgICAgICAgICAvKiBNYXAgdGhlIEFIQiBtZW1vcnkgKi8NCj4gLSAgICAg
+ICBhcS0+bWVtID0gZGV2bV9wbGF0Zm9ybV9pb3JlbWFwX3Jlc291cmNlX2J5bmFtZShwZGV2LCAi
+cXNwaV9tbWFwIik7DQo+ICsgICAgICAgcmVzID0gcGxhdGZvcm1fZ2V0X3Jlc291cmNlX2J5bmFt
+ZShwZGV2LCBJT1JFU09VUkNFX01FTSwgInFzcGlfbW1hcCIpOw0KPiArICAgICAgIGFxLT5tZW0g
+PSBkZXZtX2lvcmVtYXBfcmVzb3VyY2UoJnBkZXYtPmRldiwgcmVzKTsNCj4gICAgICAgICAgaWYg
+KElTX0VSUihhcS0+bWVtKSkgew0KPiAgICAgICAgICAgICAgICAgIGRldl9lcnIoJnBkZXYtPmRl
+diwgIm1pc3NpbmcgQUhCIG1lbW9yeVxuIik7DQo+ICAgICAgICAgICAgICAgICAgcmV0dXJuIFBU
+Ul9FUlIoYXEtPm1lbSk7DQo+IC0tDQo+IDIuMzQuMQ0KPiANCj4gDQo=
 
