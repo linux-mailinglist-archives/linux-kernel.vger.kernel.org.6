@@ -1,381 +1,213 @@
-Return-Path: <linux-kernel+bounces-303134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0ED29607DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:52:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 131DE9607E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AEE5283811
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:52:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C078E282F69
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21BA19EEBB;
-	Tue, 27 Aug 2024 10:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YgvZQF4o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46BF19753F;
-	Tue, 27 Aug 2024 10:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A524C19E830;
+	Tue, 27 Aug 2024 10:52:51 +0000 (UTC)
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07EE19753F;
+	Tue, 27 Aug 2024 10:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724755913; cv=none; b=UrNeq0P95DGeyRxMv/m8jktmVHws2RLrjZ36cFpJ1EIwoU15Ga9UkNwuUDeHN3o6Z2JpbPeG9QMeWFO5udeWpIXehKeXvJ1WoAAQf99h/g7voY4gyK3b8a6sG+NpLsI31sHafSWeeWnMzZWOgkUadbNZmMMjT9YEQspUTYL8pt8=
+	t=1724755971; cv=none; b=otm1aIZRDKTXwodfwZPRT05WuD7TD48CihcxGbfFOXYV7eGSE0WGgUCSRNdUSmfAg6XYL4K3VZXJpS8AWZmrPBtwxl7Bq7iPBRuA37VlwGslK9MptAAXSvb+aOEdRALt5TcwC4l7qBa/FqmTnTuYhgV94c4Ez4DymJDaEHVTWl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724755913; c=relaxed/simple;
-	bh=TeJrDQy3fJuDWSxIq3vLDrsob+bLlaQ3lUK42XDZhl8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QIgy3q9T4RwOJTF+y1393PSi576c/vNLOOB1lflQ8uqmCikYtYaVP1OTkTZepvMaU2boQpNmoDSV+HJHZijp8rkYtBUHrZy7VKM+1l7szBt0J7bWN5nj+RbFnr9VWz031PgDgTlyHzZ8bPBuI76Ma9k1BXh+t5NP96ef1+/IW7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YgvZQF4o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C35F0C8B7C2;
-	Tue, 27 Aug 2024 10:51:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724755912;
-	bh=TeJrDQy3fJuDWSxIq3vLDrsob+bLlaQ3lUK42XDZhl8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YgvZQF4o+FN5DLg12DjaIz+won+L3MaVRP5u8wKHNGzE5Chxr+5rFMP6Iiwu6X/2Z
-	 u2m9zuG9ojvkLDjt2o39VzXvB7ejNNwWVTn8osdkT4pKiXxPFeJVZPu3gRSXF+NmLc
-	 eii51h4Qb/mWAXgFePCz0vfF9f9E57C0TnBXHqVYUFOUY8R20pIO4sZXu66zP5hsFO
-	 jys/Nx+8X9xAXP8LAA7VoGrUefGy/0gh3XvROuEgV4gW1oBW/i+gkjrC0GfGeVktiN
-	 C4PwY0VU/OXllC6Uxy+JpHg4rUX8ngC4IfJf9ysOHXc/VY1jU0CINzlWQhQWsdbdrL
-	 mSi/9miav9jOg==
-Message-ID: <81fd218f-aa0f-4710-b832-cab927bfab9d@kernel.org>
-Date: Tue, 27 Aug 2024 12:51:45 +0200
+	s=arc-20240116; t=1724755971; c=relaxed/simple;
+	bh=BAb9f/JMOQQT7cQQjeHp1XzCusfpVObNBohFIn3JObY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R+DQLs0tN75OqjdFD+EfxMr+1fWttffbb7gnTMe/ZAe15uBFDdTkV75CLyi+PKxINbVV9O7cL46rDXED0NkTEhMIQQ8qwA0dZ/zAAPwxsnOT45U7CxtfFOImW6yhzxNyUU7whtzmUtEjtemm7x8mw11Ax9Ar8K8fZIOLAUycdHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 47RAqGMh004847;
+	Tue, 27 Aug 2024 05:52:16 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 47RAqFUh004846;
+	Tue, 27 Aug 2024 05:52:15 -0500
+Date: Tue, 27 Aug 2024 05:52:15 -0500
+From: "Dr. Greg" <greg@enjellic.com>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jmorris@namei.org
+Subject: Re: [PATCH v4 04/14] Add primary TSEM implementation file.
+Message-ID: <20240827105214.GA4769@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20240826103728.3378-1-greg@enjellic.com> <20240826103728.3378-5-greg@enjellic.com> <4403f4ce-21eb-47a1-93f1-c663a96de9bc@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/29] media: iris: initialize power resources
-To: quic_dikshita@quicinc.com, Vikash Garodia <quic_vgarodia@quicinc.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
- <20240827-iris_v3-v3-4-c5fdbbe65e70@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240827-iris_v3-v3-4-c5fdbbe65e70@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4403f4ce-21eb-47a1-93f1-c663a96de9bc@schaufler-ca.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Tue, 27 Aug 2024 05:52:16 -0500 (CDT)
 
-On 27/08/2024 12:05, Dikshita Agarwal via B4 Relay wrote:
-> From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> 
-> Add support for initializing Iris "resources", which are clocks,
-> interconnects, power domains, reset clocks, and clock frequencies
-> used for iris hardware.
-> 
-> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> ---
+On Mon, Aug 26, 2024 at 08:53:31AM -0700, Casey Schaufler wrote:
 
-...
+Good morning Casey, I hope this note finds your day starting well.
 
-> +struct iris_platform_data sm8550_data = {
-> +	.icc_tbl = sm8550_icc_table,
-> +	.icc_tbl_size = ARRAY_SIZE(sm8550_icc_table),
-> +	.clk_rst_tbl = sm8550_clk_reset_table,
-> +	.clk_rst_tbl_size = ARRAY_SIZE(sm8550_clk_reset_table),
-> +	.pmdomain_tbl = sm8550_pmdomain_table,
-> +	.pmdomain_tbl_size = ARRAY_SIZE(sm8550_pmdomain_table),
-> +	.opp_pd_tbl = sm8550_opp_pd_table,
-> +	.opp_pd_tbl_size = ARRAY_SIZE(sm8550_opp_pd_table),
-> +	.clk_tbl = sm8550_clk_table,
-> +	.clk_tbl_size = ARRAY_SIZE(sm8550_clk_table),
-> +};
-> diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
-> index 0a54fdaa1ab5..2616a31224f9 100644
-> --- a/drivers/media/platform/qcom/iris/iris_probe.c
-> +++ b/drivers/media/platform/qcom/iris/iris_probe.c
-> @@ -69,6 +69,19 @@ static int iris_probe(struct platform_device *pdev)
->  	if (core->irq < 0)
->  		return core->irq;
->  
-> +	core->iris_platform_data = of_device_get_match_data(core->dev);
-> +	if (!core->iris_platform_data) {
-> +		ret = -ENODEV;
-> +		dev_err_probe(core->dev, ret, "init platform failed\n");
+Greetings to others on this 'last' week of summer.
 
-That's not even possible. I would suggest dropping entire if. But if yoi
-insist, then without this weird redundant code. return -EINVAL.
+> On 8/26/2024 3:37 AM, Greg Wettstein wrote:
+> > The tsem.c file is the 'master' file in the TSEM implementation. It is
+> > responsible for initializing the LSM and providing the implementation of the
+> > security event handlers.
+> > ---
+> >  security/tsem/tsem.c | 2446 ++++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 2446 insertions(+)
+> >  create mode 100644 security/tsem/tsem.c
+> >
+> > diff --git a/security/tsem/tsem.c b/security/tsem/tsem.c
+> > new file mode 100644
+> > index 000000000000..76d65b3e62b3
+> > --- /dev/null
+> > +++ b/security/tsem/tsem.c
+> > @@ -0,0 +1,2446 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +
+> > +/*
+> > + * Copyright (C) 2024 Enjellic Systems Development, LLC
+> > + * Author: Dr. Greg Wettstein <greg@enjellic.com>
+> > + *
+> > + * This file is the primary implementation file for the tsem LSM.
+> > + *
+> > + * It implements initialization and setup functions that interpret
+> > + * kernel command-line arguments and prepares TSEM for operation.
+> > + *
+> > + * In addition it contains all of the TSEM specific security event
+> > + * handlers that are responsible for handling the LSM events that TSEM
+> > + * models.
+> > + *
+> > + * Each TSEM event handler calls the tsem_allocate_event() function to
+> > + * allocate a structure that will be used to describe the event.  The
+> > + * CELL union of this structure contains various structures that are
+> > + * used to hold these parameters.
+> > + *
+> > + * Since the event characterization parameters need to be retained for
+> > + * the lifetime of the tsem_event structure that is allocated.  In the
+> > + * case of internally modeled namespaces this lifespan is the lifetime
+> > + * of the security modeling namespace.  In the case of externally
+> > + * modeled namespaces, the lifespan is until the security event
+> > + * description is exported to an external trust orchestrator.
+> > + *
+> > + * In order to support this model, the event description structures
+> > + * are typically composed of a union over 'in' and 'out' structures.
+> > + * The 'in' structures are used to hold arguments to the event handler
+> > + * that may only be relevant for the duration of the call.  These
+> > + * values are translated into members of the 'out' structure that
+> > + * retain the values until the end of the lifetime of the tsem_event
+> > + * structure.
+> > + *
+> > + * Each TSEM event handler is responsible for allocating a tsem_event
+> > + * structure and populating the appropriate CELL structure with the
+> > + * input characteristics of the event.  The dispatch_event() function
+> > + * is called to handle the modeling of the event.  This function
+> > + * returns the permission value that is returned as the result of the
+> > + * LSM event handler.
+> > + *
+> > + * The dispatch_event() calls the tsem_event_init() function that is
+> > + * responsible for translating the input parameters into values that
+> > + * will be retained for the lifetime of the security event
+> > + * description.  The populated event description is then dispatched to
+> > + * either the tsem_model_event() or the tsem_export_event() for
+> > + * modeling by either the internal TMA or by a TMA associated with an
+> > + * external trust orchestrator.
+> > + */
+> > +
+> > + ...
+> > +
+> > +static int tsem_file_open(struct file *file)
+> > +{
+> > +	struct inode *inode = file_inode(file);
+> > +	struct tsem_event *ep;
+> > +
+> > +	if (static_branch_unlikely(&tsem_not_ready))
+> > +		return 0;
+> > +	if (bypass_event(TSEM_FILE_OPEN))
+> > +		return 0;
+> > +	if (unlikely(tsem_inode(inode)->status == TSEM_INODE_CONTROL_PLANE)) {
+> > +		if (capable(CAP_MAC_ADMIN))
 
-> +		return ret;
-> +	}
-> +
-> +	ret = iris_init_resources(core);
-> +	if (ret) {
-> +		dev_err_probe(core->dev, ret, "init resource failed\n");
-> +		return ret;
+> Don't you mean CAP_MAC_OVERRIDE? CAP_MAC_ADMIN is for changes to the
+> security state of the system, where CAP_MAC_OVERRIDE is for access
+> control decision exceptions. Here (and elsewhere) you use the former
+> in access checks.
 
-How many same errors are you printing? Not mentioning that syntax of
-dev_errp_rpboe is different...
+You are clearly the mechanistic expert on capabilities so we would
+take your lead on this.
 
+Some background information to hopefully assist in a discussion on the
+types of capability checks that should be implemented.
 
-> +	}
-> +
->  	ret = v4l2_device_register(dev, &core->v4l2_dev);
->  	if (ret)
->  		return ret;
-> @@ -88,8 +101,14 @@ static int iris_probe(struct platform_device *pdev)
->  }
->  
->  static const struct of_device_id iris_dt_match[] = {
-> -	{ .compatible = "qcom,sm8550-iris", },
-> -	{ .compatible = "qcom,sm8250-venus", },
-> +	{
-> +		.compatible = "qcom,sm8550-iris",
-> +		.data = &sm8550_data,
-> +	},
-> +	{
-> +		.compatible = "qcom,sm8250-venus",
-> +		.data = &sm8250_data,
+The capability checks we apply in TSEM gate the following five types
+of actions:
 
-You just added this. No, please do not add code which is immediatly
-incorrect.
+1.) The ability to issue TSEM control commands.
 
-> +	},
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(of, iris_dt_match);
-> diff --git a/drivers/media/platform/qcom/iris/iris_resources.c b/drivers/media/platform/qcom/iris/iris_resources.c
-> new file mode 100644
-> index 000000000000..57c6f9f3449b
-> --- /dev/null
-> +++ b/drivers/media/platform/qcom/iris/iris_resources.c
-> @@ -0,0 +1,171 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/interconnect.h>
-> +#include <linux/pm_domain.h>
-> +#include <linux/pm_opp.h>
-> +#include <linux/reset.h>
-> +
-> +#include "iris_core.h"
-> +#include "iris_resources.h"
-> +
-> +static int iris_init_icc(struct iris_core *core)
-> +{
-> +	const struct icc_info *icc_tbl;
-> +	u32 ret, i = 0;
-> +
-> +	icc_tbl = core->iris_platform_data->icc_tbl;
-> +
-> +	core->icc_count = core->iris_platform_data->icc_tbl_size;
-> +	core->icc_tbl = devm_kzalloc(core->dev,
-> +				     sizeof(struct icc_bulk_data) * core->icc_count,
-> +				     GFP_KERNEL);
-> +	if (!core->icc_tbl)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < core->icc_count; i++) {
-> +		core->icc_tbl[i].name = icc_tbl[i].name;
-> +		core->icc_tbl[i].avg_bw = icc_tbl[i].bw_min_kbps;
-> +		core->icc_tbl[i].peak_bw = 0;
-> +	}
-> +
-> +	ret = devm_of_icc_bulk_get(core->dev, core->icc_count, core->icc_tbl);
-> +	if (ret)
-> +		dev_err(core->dev, "failed to get interconnect paths, NoC will stay unconfigured!\n");
-> +
-> +	return ret;
-> +}
-> +
-> +static int iris_pd_get(struct iris_core *core)
-> +{
-> +	int ret;
-> +
-> +	struct dev_pm_domain_attach_data iris_pd_data = {
-> +		.pd_names = core->iris_platform_data->pmdomain_tbl,
-> +		.num_pd_names = core->iris_platform_data->pmdomain_tbl_size,
-> +		.pd_flags = PD_FLAG_NO_DEV_LINK,
-> +	};
-> +
-> +	ret = devm_pm_domain_attach_list(core->dev, &iris_pd_data, &core->pmdomain_tbl);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static int iris_opp_pd_get(struct iris_core *core)
-> +{
-> +	int ret;
-> +
-> +	struct dev_pm_domain_attach_data iris_opp_pd_data = {
-> +		.pd_names = core->iris_platform_data->opp_pd_tbl,
-> +		.num_pd_names = core->iris_platform_data->opp_pd_tbl_size,
-> +		.pd_flags = PD_FLAG_DEV_LINK_ON,
-> +	};
-> +
-> +	ret = devm_pm_domain_attach_list(core->dev, &iris_opp_pd_data, &core->opp_pmdomain_tbl);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static int iris_init_power_domains(struct iris_core *core)
-> +{
-> +	const struct platform_clk_data *clk_tbl;
-> +	u32 clk_cnt, i;
-> +	int ret;
-> +
-> +	ret = iris_pd_get(core);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = iris_opp_pd_get(core);
-> +	if (ret)
-> +		return ret;
-> +
-> +	clk_tbl = core->iris_platform_data->clk_tbl;
-> +	clk_cnt = core->iris_platform_data->clk_tbl_size;
-> +
-> +	for (i = 0; i < clk_cnt; i++) {
-> +		if (clk_tbl[i].clk_type == IRIS_HW_CLK) {
-> +			ret = devm_pm_opp_set_clkname(core->dev, clk_tbl[i].clk_name);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +	}
-> +
-> +	ret = devm_pm_opp_of_add_table(core->dev);
-> +	if (ret) {
-> +		dev_err(core->dev, "failed to add opp table\n");
-> +		return ret;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int iris_init_clocks(struct iris_core *core)
-> +{
-> +	int ret;
-> +
-> +	ret = devm_clk_bulk_get_all(core->dev, &core->clock_tbl);
-> +	if (ret < 0) {
-> +		dev_err(core->dev, "failed to get bulk clock\n");
+2.) The ability to register an event processing module.
 
-Syntax is:
-return dev_err_probe(). If this is probe path. Is it?
+3.) Access to state information on kernel based modeling agent instances.
 
-> +		return ret;
-> +	}
-> +
-> +	core->clk_count = ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static int iris_init_resets(struct iris_core *core)
-> +{
-> +	const char * const *rst_tbl;
-> +	u32 rst_tbl_size;
-> +	u32 i = 0, ret;
-> +
-> +	rst_tbl = core->iris_platform_data->clk_rst_tbl;
-> +	rst_tbl_size = core->iris_platform_data->clk_rst_tbl_size;
-> +
-> +	core->resets = devm_kzalloc(core->dev,
-> +				    sizeof(*core->resets) * rst_tbl_size,
-> +				    GFP_KERNEL);
-> +	if (rst_tbl_size && !core->resets)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < rst_tbl_size; i++)
-> +		core->resets[i].id = rst_tbl[i];
-> +
-> +	ret = devm_reset_control_bulk_get_exclusive(core->dev, rst_tbl_size, core->resets);
-> +	if (ret) {
-> +		dev_err(core->dev, "failed to get resets\n");
+4.) The ability to send signals to trust orchestration processes.
 
-Syntax is:
-return dev_err_probe(). If this is probe path. Is it?
+5.) The ability to send a signal to a different security modeling namespace.
 
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +int iris_init_resources(struct iris_core *core)
-> +{
-> +	int ret;
-> +
-> +	ret = iris_init_icc(core);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = iris_init_power_domains(core);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = iris_init_clocks(core);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = iris_init_resets(core);
-> +
-> +	return ret;
-> +}
+If we understand the differentiation that you suggest between
+CAP_MAC_ADMIN and CAP_MAC_OVERRIDE we would conclude the following:
 
-This should be just part of of main unit file, next to probe. It is
-unusual to see probe parts not next to probe. Sorry, that's wrong.
+Checks 1, 2 and 4 would seem, in our opinion, have the ability to
+change the security state of a system.  As such it would seem
+appropriate to use CAP_MAC_ADMIN for those checks.
 
-Best regards,
-Krzysztof
+Rather than belabor the issue now, we can entertain a subsequent
+discussion, if needed, on why we believe that actions 1, 2 and 4 can
+change the security state of the system.
 
+By your definition, check type 3 would seem to be consistent with
+CAP_MAC_OVERRIDE, since it is gating access to potentially security
+sensitive information but which does not imply the ability to change
+the security state of the system.
+
+That leaves category 5 as a possible open question.  Given the trust
+orchestration model for externally modeled namespaces, we concluded
+that the only entities that should be able to issue signals that can
+manipulate, particularly terminate a process, should only come from
+within the security modeling namespace that the target process is
+running in.  Given that, we would consider such operations as possibly
+affecting the security state of the system and thus suitable for
+CAP_MAC_ADMIN.
+
+Based on what we have always understood, and that is confirmed by 'git
+grep', the only thing at this time that is using CAP_MAC_OVERRIDE is
+SMACK.  If our analysis is correct, would you have any issues with us
+changing the type 3 checks to CAP_MAC_OVERRIDE?
+
+With respect to the check that you call out in
+tsem.c:tsem_open_file(), the capability check is to avoid a model
+deadlock situation.  If we adopt the model we discuss above, we would
+need to unequivocably allow the open if the process is carrying
+CAP_MAC_ADMIN or CAP_MAC_OVERRIDE in order to avoid a control
+deadlock.
+
+We will look forward to your thoughts on if we should proceed with the
+above changes.
+
+Have a good day.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
 
