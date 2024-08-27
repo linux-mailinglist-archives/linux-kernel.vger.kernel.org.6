@@ -1,211 +1,444 @@
-Return-Path: <linux-kernel+bounces-302942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4D10960554
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:16:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC101960552
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DCF7281D7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:16:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24F13B20D9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8216F19D88A;
-	Tue, 27 Aug 2024 09:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACB619CD17;
+	Tue, 27 Aug 2024 09:16:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZYXni5yg"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UiPkUZKr"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7AB76056;
-	Tue, 27 Aug 2024 09:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872F7196D98
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724750167; cv=none; b=kXO8gYHFkh2HFvLA/D81uxUaSBI0j4BJbZwMRWKpJ2+JYYeKLWvzPVTsZ2kniKr7lw/61Xufg4XALmgN+snSSi8QTTesONmQzSRWhhtRRie2lHVd31XSJS6lKCe+vbVRs/aNpVhz5aIMHuaYLW6GAucIwfiFeDgw5j3R8i2bbWA=
+	t=1724750166; cv=none; b=rqDDg9KoG6gZJf2h9gDHjDNJ12vy+4kWfd3IVOQISUxFd4UcULsatyJajHKKsFFP4NOv2Ewzbf1jycQrO47GmttFlUIM8648x6O+ZJrCB+1Mjb1fnIAo3bKthpVCtrWDMT1AQDJ3N6VHMReXlbrwdCMyhN+Yj4QbhYk3NJzj+MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724750167; c=relaxed/simple;
-	bh=Rlu5n1CgqQ9ZEns9yR69BhZINc/7WBPKiF+V3/BhUM8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GoFrJdqOAKUAd71Qs8En/NdHDBo6zudh+3eyQiPoSSMeXm3qD3pRiL5yJK0XhTl9FrQLfF0GkCZ4HNErfY+o1GeRLK45g2Wit0MmxtCpu2/USO9wYrKSX3JFXh8TX6ZgcCVPuk06ffHoTV1MdeScjuJxg+IT4hWOgB9F2Mkbf7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZYXni5yg; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47R7kf6C002653;
-	Tue, 27 Aug 2024 09:15:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3J8Hej+cDjlPlbTqVxRoSC+EFUooWsxZ5wqv5MlLRRM=; b=ZYXni5ygVNuwr+u0
-	yMLYdKz3CJJpRZf98lRs9QXb3bjM9J03KLyaB+CV310hBBKmBNNWnkahNPvCu/Ge
-	vj56juvxJV0mF8ZCpS+gtdXCLU11k7tZG5hs55TCIKKWyIC6pmxDe2FI1pEfua7H
-	SIrHJc+C1PlYV0ElZ7QCM0GVTKuboJz7LLVi7lawtoLDGEKnCis+wEYrK6HWiTzX
-	jz9gGR2UJdkLTpBDkBLLAzHe9l3wAvH2ElwcducWz2nSktJQbOdFdxjZGG7aBtu+
-	S5ZJSU1/4vx/ZEFVP23QVGnld02qo3kOrI4bdjSOifMrqUQBtx17Fm4WNox797TS
-	Tx3MuQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419aq787s7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 Aug 2024 09:15:59 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47R9Fwqm027511
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 Aug 2024 09:15:58 GMT
-Received: from [10.216.25.164] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 27 Aug
- 2024 02:15:54 -0700
-Message-ID: <33fe50c8-cf98-bd04-87b7-06ec07cc9277@quicinc.com>
-Date: Tue, 27 Aug 2024 14:45:51 +0530
+	s=arc-20240116; t=1724750166; c=relaxed/simple;
+	bh=mYZfKJwwXU9PlXfA2vvpZBqIvWD72dwMGqdQABPcgQ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VyL/gQkf/kCGm32EsoVdgexu1max3KvLeygpNiOtjwVn5IFYwLM1e1ZtQbI8bW49FaEDl9ztkp66yC9eGbsyBQT+f8w8KBsslFQ3jx+7PASK2NHYFhESHMWzXSaDF+V4debjz4+2JiRVqjRVO55ywY210Vv/nRO8a/y9nCO9LYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UiPkUZKr; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f029e9c9cfso63476181fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 02:16:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724750163; x=1725354963; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YcvIyUySIodcGwxZCkT6885+KUVYMpw/seQfD4H/otI=;
+        b=UiPkUZKrWmV57H4KYp5tBarcTp7A6is6F7z+pMqtrv8+px553Fr0YGjs0sQckmTOSH
+         k+Z4K6kIrkvQ+y3WXPJOCao4yZBgyA7yLKAY1tYYpoxXDJqCWB1b5qmxcXMyTl1ks+SO
+         +oz0h36L3gtxCvy7h+xB7EjQJIV2VXVH5zUyHJSkk01xtDq7c1JryE1i1qn3TW2M4K4b
+         R9n0NOsLrqn/8YZskDCBDa3YQy/6j7ut4uXYX5xVVpoNMuXshDpkzNk86RLmAUkLR3kQ
+         tl+nAlUp4UsNeXGKsf9lJS7IhTOPNB9eC0DsgZ831Low9/vilB4aueySbydj7A8EUpT2
+         VHrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724750163; x=1725354963;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YcvIyUySIodcGwxZCkT6885+KUVYMpw/seQfD4H/otI=;
+        b=fGUUk8cTAmKFf9EGSVVyab82nPuhPkSk0J90830kITfkoXxcodixB6VB48/sDll1/Z
+         uXJ/nMsMrEqR93SzET3iJ6rvXlqUB24VWHjku84wCMDfnctkup5gw1CJSLlBrPzVlOsd
+         yKlDCsSl8LpEt2g0gDRV8dfHQkCr/0oxv+ZdN0USKth1ciHENpVe+u4pZSwp3MbDmNcf
+         QBd8GCdvZ9OIt3D4QEwE3ClO2prDrbA1qeK4pIaunL0obGMpxTXazBoqNPZCyRHbAMeo
+         g00kjRDh29/Mj3M/ztjC2flCpBKlHt+c6VrSY0NQvU34IuHeLKYUyJKgBFaP2lu3AOJt
+         WyMg==
+X-Forwarded-Encrypted: i=1; AJvYcCU9gYB9R8IALArHDQIZlMaOJaJT8I/T3KTFkESTSmMWmbQAOBJhime/QiheJj3mxFC9gKqAzshvtPXZEno=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgtZtAe3rrgSjyQOFZFc+qmMxWZx4hm7Az8VSK5gAwETq3xVPA
+	7LuxiTh4jIQgbQdkdO1kWu7trlpww2+JBiTgec8+JM52E1Do+w+FpHP7MJ8Bjoo=
+X-Google-Smtp-Source: AGHT+IFkHHuUfK3bVAtCIG4+VKPtZuhnSOCs7mTieWXWH6lFNyZOshNCB2EaFBANrCnw+ganumxv8Q==
+X-Received: by 2002:a2e:5149:0:b0:2f3:ee58:eaf with SMTP id 38308e7fff4ca-2f4f5764388mr97114901fa.23.1724750162315;
+        Tue, 27 Aug 2024 02:16:02 -0700 (PDT)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e582dcfesm83337866b.121.2024.08.27.02.16.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 02:16:01 -0700 (PDT)
+Message-ID: <f9ad5fdd-25d4-4d98-84d0-84dfba2a75f2@suse.com>
+Date: Tue, 27 Aug 2024 11:16:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v7] usb: gadget: u_serial: Add null pointer check in
- gs_read_complete & gs_write_complete
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/19] gendwarfksyms: Add symbol list handling
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Miguel Ojeda <ojeda@kernel.org>, Matthew Maurer <mmaurer@google.com>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
+ Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>,
+ Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <20240815173903.4172139-23-samitolvanen@google.com>
 Content-Language: en-US
-To: =?UTF-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>,
-        Michael Nazzareno Trimarchi
-	<michael@amarulasolutions.com>,
-        "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>
-CC: "quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        opensource.kernel <opensource.kernel@vivo.com>,
-        "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>
-References: <TYUPR06MB6217989A40FA4E18598DC694D28A2@TYUPR06MB6217.apcprd06.prod.outlook.com>
-From: Prashanth K <quic_prashk@quicinc.com>
-In-Reply-To: <TYUPR06MB6217989A40FA4E18598DC694D28A2@TYUPR06MB6217.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: m5IHa8Y4CKc8eL1K4JBhO3_MJb0dzaLL
-X-Proofpoint-ORIG-GUID: m5IHa8Y4CKc8eL1K4JBhO3_MJb0dzaLL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-27_06,2024-08-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- suspectscore=0 mlxlogscore=865 mlxscore=0 priorityscore=1501
- lowpriorityscore=0 malwarescore=0 bulkscore=0 impostorscore=0 spamscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408270069
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20240815173903.4172139-23-samitolvanen@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-On 25-08-24 01:58 pm, 胡连勤 wrote:
-> From: Lianqin Hu <hulianqin@vivo.com>
+On 8/15/24 19:39, Sami Tolvanen wrote:
+> Add support for passing a list of exported symbols to gendwarfksyms
+> via stdin and filter out non-exported symbols from the output.
 > 
-> Considering that in some extreme cases, when the unbind operation
-> is being executed, gserial_disconnect has already cleared gser->ioport,
-> and the controller has not stopped & pullup 0, sys.usb.config is reset
-
-As mentioned by Michael earlier, avoid android specific (sys.usb.config)
-operations.
-
-> and the bind operation will be re-executed, calling gs_read_complete,
-> which will result in accessing gser->iport, resulting in a null pointer
-> dereference, add a null pointer check to prevent this situation.
-> 
-> Added a static spinlock to prevent gser->ioport from becoming
-> null after the newly added check.
-> 
-> Unable to handle kernel NULL pointer dereference at
-
-[...]
-> 
-> Fixes: c1dca562be8a ("usb gadget: split out serial core")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Lianqin Hu <hulianqin@vivo.com>
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
 > ---
-> v7:
->   - Remove code comments
->   - Update the commit text
->   - Add the Fixes tag
->   - CC stable kernel
->   - Add serial_port_lock protection when checking port pointer
->   - Optimize code comments
->   - Delete log printing
-
-We usually indicate what had changed in each versions.
-v7: Remove code comments
-v6: xx
-v5: xx
-v4: xx
-v3: xx
-v2: Delete log printing
-
-> ---
-No need for this '---' here, just leave an empty line
->  drivers/usb/gadget/function/u_serial.c | 33 ++++++++++++++++++++++----
->  1 file changed, 28 insertions(+), 5 deletions(-)
+>  scripts/gendwarfksyms/Makefile        |  1 +
+>  scripts/gendwarfksyms/dwarf.c         | 53 ++++++++++++++-
+>  scripts/gendwarfksyms/gendwarfksyms.c |  4 +-
+>  scripts/gendwarfksyms/gendwarfksyms.h | 21 ++++++
+>  scripts/gendwarfksyms/symbols.c       | 96 +++++++++++++++++++++++++++
+>  5 files changed, 171 insertions(+), 4 deletions(-)
+>  create mode 100644 scripts/gendwarfksyms/symbols.c
 > 
-> diff --git a/drivers/usb/gadget/function/u_serial.c b/drivers/usb/gadget/function/u_serial.c
-> index b394105e55d6..e43d8065f7ec 100644
-> --- a/drivers/usb/gadget/function/u_serial.c
-> +++ b/drivers/usb/gadget/function/u_serial.c
-> @@ -452,20 +452,43 @@ static void gs_rx_push(struct work_struct *work)
+> diff --git a/scripts/gendwarfksyms/Makefile b/scripts/gendwarfksyms/Makefile
+> index c1389c161f9c..623f8fc975ea 100644
+> --- a/scripts/gendwarfksyms/Makefile
+> +++ b/scripts/gendwarfksyms/Makefile
+> @@ -2,6 +2,7 @@ hostprogs-always-y += gendwarfksyms
 >  
->  static void gs_read_complete(struct usb_ep *ep, struct usb_request *req)
->  {
-> -	struct gs_port	*port = ep->driver_data;
-> +	struct gs_port	*port;
-> +	unsigned long  flags;
+>  gendwarfksyms-objs += gendwarfksyms.o
+>  gendwarfksyms-objs += dwarf.o
+> +gendwarfksyms-objs += symbols.o
+>  
+>  HOST_EXTRACFLAGS := -I $(srctree)/tools/include
+>  HOSTLDLIBS_gendwarfksyms := -ldw -lelf
+> diff --git a/scripts/gendwarfksyms/dwarf.c b/scripts/gendwarfksyms/dwarf.c
+> index 65a29d0bd8f4..71cfab0553da 100644
+> --- a/scripts/gendwarfksyms/dwarf.c
+> +++ b/scripts/gendwarfksyms/dwarf.c
+> @@ -5,6 +5,48 @@
+>  
+>  #include "gendwarfksyms.h"
+>  
+> +static bool get_ref_die_attr(Dwarf_Die *die, unsigned int id, Dwarf_Die *value)
+> +{
+> +	Dwarf_Attribute da;
 > +
-> +	spin_lock_irqsave(&serial_port_lock, flags);
-> +	port = ep->driver_data;
+> +	/* dwarf_formref_die returns a pointer instead of an error value. */
+> +	return dwarf_attr(die, id, &da) && dwarf_formref_die(&da, value);
+> +}
 > +
-> +	if (!port) {
-> +		spin_unlock_irqrestore(&serial_port_lock, flags);
-> +		return;
+> +static const char *get_name(Dwarf_Die *die)
+> +{
+> +	Dwarf_Attribute attr;
+> +
+> +	/* rustc uses DW_AT_linkage_name for exported symbols */
+> +	if (dwarf_attr(die, DW_AT_linkage_name, &attr) ||
+> +	    dwarf_attr(die, DW_AT_name, &attr)) {
+> +		return dwarf_formstring(&attr);
 > +	}
->  
-> -	/* Queue all received data until the tty layer is ready for it. */
->  	spin_lock(&port->port_lock);
-> +	spin_unlock(&serial_port_lock);
 > +
-> +	/* Queue all received data until the tty layer is ready for it. */
->  	list_add_tail(&req->list, &port->read_queue);
->  	schedule_delayed_work(&port->push, 0);
-> -	spin_unlock(&port->port_lock);
-> +	spin_unlock_irqrestore(&port->port_lock, flags);
+> +	return NULL;
+> +}
+> +
+> +static bool is_export_symbol(struct state *state, Dwarf_Die *die)
+> +{
+> +	Dwarf_Die *source = die;
+> +	Dwarf_Die origin;
+> +
+> +	state->sym = NULL;
+
+Nit: This assignment isn't strictly necessary, the value is overwritten
+a few lines below and isn't used in between.
+
+> +
+> +	/* If the DIE has an abstract origin, use it for type information. */
+> +	if (get_ref_die_attr(die, DW_AT_abstract_origin, &origin))
+> +		source = &origin;
+> +
+> +	state->sym = symbol_get(get_name(die));
+> +
+> +	/* Look up using the origin name if there are no matches. */
+> +	if (!state->sym && source != die)
+> +		state->sym = symbol_get(get_name(source));
+> +
+> +	state->die = *source;
+> +	return !!state->sym;
+> +}
+> +
+>  /*
+>   * Type string processing
+>   */
+> @@ -40,7 +82,7 @@ int process_die_container(struct state *state, Dwarf_Die *die,
 >  }
 >  
->  static void gs_write_complete(struct usb_ep *ep, struct usb_request *req)
+>  /*
+> - * Symbol processing
+> + * Exported symbol processing
+>   */
+>  static int process_subprogram(struct state *state, Dwarf_Die *die)
 >  {
-> -	struct gs_port	*port = ep->driver_data;
-> +	struct gs_port	*port;
-> +	unsigned long  flags;
+> @@ -67,10 +109,15 @@ static int process_exported_symbols(struct state *state, Dwarf_Die *die)
+>  	/* Possible exported symbols */
+>  	case DW_TAG_subprogram:
+>  	case DW_TAG_variable:
+> +		if (!is_export_symbol(state, die))
+> +			return 0;
 > +
-> +	spin_lock_irqsave(&serial_port_lock, flags);
-> +	port = ep->driver_data;
+> +		debug("%s", state->sym->name);
 > +
-> +	if (!port) {
-> +		spin_unlock_irqrestore(&serial_port_lock, flags);
-> +		return;
-> +	}
+>  		if (tag == DW_TAG_subprogram)
+> -			check(process_subprogram(state, die));
+> +			check(process_subprogram(state, &state->die));
+>  		else
+> -			check(process_variable(state, die));
+> +			check(process_variable(state, &state->die));
 >  
->  	spin_lock(&port->port_lock);
-> +	spin_unlock(&serial_port_lock);
->  	list_add(&req->list, &port->write_pool);
->  	port->write_started--;
+>  		return 0;
+>  	default:
+> diff --git a/scripts/gendwarfksyms/gendwarfksyms.c b/scripts/gendwarfksyms/gendwarfksyms.c
+> index 27f2d6423c45..d209b237766b 100644
+> --- a/scripts/gendwarfksyms/gendwarfksyms.c
+> +++ b/scripts/gendwarfksyms/gendwarfksyms.c
+> @@ -27,7 +27,7 @@ static const struct {
 >  
-> @@ -486,7 +509,7 @@ static void gs_write_complete(struct usb_ep *ep, struct usb_request *req)
->  		break;
->  	}
->  
-> -	spin_unlock(&port->port_lock);
-> +	spin_unlock_irqrestore(&port->port_lock, flags);
+>  static int usage(void)
+>  {
+> -	error("usage: gendwarfksyms [options] elf-object-file ...");
+> +	error("usage: gendwarfksyms [options] elf-object-file ... < symbol-list");
+>  	return -1;
 >  }
 >  
->  static void gs_free_requests(struct usb_ep *ep, struct list_head *head,
-Regards,
+> @@ -105,6 +105,8 @@ int main(int argc, const char **argv)
+>  	if (parse_options(argc, argv) < 0)
+>  		return usage();
+>  
+> +	check(symbol_read_exports(stdin));
+> +
+>  	for (n = 0; n < object_count; n++) {
+>  		Dwfl *dwfl;
+>  		int fd;
+> diff --git a/scripts/gendwarfksyms/gendwarfksyms.h b/scripts/gendwarfksyms/gendwarfksyms.h
+> index 5ab7ce7d4efb..03f3e408a839 100644
+> --- a/scripts/gendwarfksyms/gendwarfksyms.h
+> +++ b/scripts/gendwarfksyms/gendwarfksyms.h
+> @@ -7,9 +7,11 @@
+>  #include <elfutils/libdw.h>
+>  #include <elfutils/libdwfl.h>
+>  #include <linux/hashtable.h>
+> +#include <linux/jhash.h>
+>  #include <inttypes.h>
+>  #include <stdlib.h>
+>  #include <stdio.h>
+> +#include <string.h>
+>  
+>  #ifndef __GENDWARFKSYMS_H
+>  #define __GENDWARFKSYMS_H
+> @@ -56,6 +58,23 @@ extern bool debug;
+>  /* Error == negative values */
+>  #define checkp(expr) __check(expr, __res < 0, __res)
+>  
+> +/*
+> + * symbols.c
+> + */
+> +
+> +static inline u32 name_hash(const char *name)
+> +{
+> +	return jhash(name, strlen(name), 0);
+> +}
+> +
+> +struct symbol {
+> +	const char *name;
+> +	struct hlist_node name_hash;
+> +};
+> +
+> +extern int symbol_read_exports(FILE *file);
+> +extern struct symbol *symbol_get(const char *name);
+
+Nit: extern isn't necessary here and in other similar cases throughout
+the series. It should be removed per
+Documentation/process/coding-style.rst, 6.1) Function prototypes.
+
+> +
+>  /*
+>   * dwarf.c
+>   */
+> @@ -63,6 +82,8 @@ extern bool debug;
+>  struct state {
+>  	Dwfl_Module *mod;
+>  	Dwarf *dbg;
+> +	struct symbol *sym;
+> +	Dwarf_Die die;
+>  };
+>  
+>  typedef int (*die_callback_t)(struct state *state, Dwarf_Die *die);
+> diff --git a/scripts/gendwarfksyms/symbols.c b/scripts/gendwarfksyms/symbols.c
+> new file mode 100644
+> index 000000000000..673ad9cf9e77
+> --- /dev/null
+> +++ b/scripts/gendwarfksyms/symbols.c
+> @@ -0,0 +1,96 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Copyright (C) 2024 Google LLC
+> + */
+> +
+> +#include "gendwarfksyms.h"
+> +
+> +#define SYMBOL_HASH_BITS 15
+> +static DEFINE_HASHTABLE(symbol_names, SYMBOL_HASH_BITS);
+> +
+> +typedef int (*symbol_callback_t)(struct symbol *, void *arg);
+> +
+> +static int for_each(const char *name, symbol_callback_t func, void *data)
+> +{
+> +	struct hlist_node *tmp;
+> +	struct symbol *match;
+> +
+> +	if (!name || !*name)
+> +		return 0;
+> +
+> +	hash_for_each_possible_safe(symbol_names, match, tmp, name_hash,
+> +				    name_hash(name)) {
+> +		if (strcmp(match->name, name))
+> +			continue;
+> +
+> +		if (func)
+> +			check(func(match, data));
+> +
+> +		return 1;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static bool is_exported(const char *name)
+> +{
+> +	return checkp(for_each(name, NULL, NULL)) > 0;
+> +}
+> +
+> +int symbol_read_exports(FILE *file)
+> +{
+> +	struct symbol *sym;
+> +	char *line = NULL;
+> +	char *name = NULL;
+> +	size_t size = 0;
+> +	int nsym = 0;
+> +
+> +	while (getline(&line, &size, file) > 0) {
+> +		if (sscanf(line, "%ms\n", &name) != 1) {
+> +			error("malformed input line: %s", line);
+> +			return -1;
+> +		}
+> +
+> +		free(line);
+> +		line = NULL;
+> +
+> +		if (is_exported(name))
+> +			continue; /* Ignore duplicates */
+> +
+> +		sym = malloc(sizeof(struct symbol));
+> +		if (!sym) {
+> +			error("malloc failed");
+> +			return -1;
+> +		}
+> +
+> +		sym->name = name;
+> +		name = NULL;
+> +
+> +		hash_add(symbol_names, &sym->name_hash, name_hash(sym->name));
+> +		++nsym;
+> +
+> +		debug("%s", sym->name);
+> +	}
+> +
+> +	if (line)
+> +		free(line);
+
+The loop leaks line on a potential sscanf() error and name if the symbol
+is a duplicate or malloc(sizeof(struct symbol)) fails. Additionally, it
+should be possible to avoid allocating line by getline() on each
+iteration.
+
+I would change it to something like this (not tested):
+
+int symbol_read_exports(FILE *file)
+{
+	struct symbol *sym;
+	char *line = NULL;
+	char *name = NULL;
+	size_t size = 0;
+	int nsym = 0;
+	int ret = -1;
+
+	while (getline(&line, &size, file) > 0) {
+		if (sscanf(line, "%ms\n", &name) != 1) {
+			error("malformed input line: %s", line);
+			goto out;
+		}
+
+		if (is_exported(name)) {
+			/* Ignore duplicates */
+			free(name);
+			name = NULL;
+			continue;
+		}
+
+		sym = malloc(sizeof(struct symbol));
+		if (!sym) {
+			error("malloc failed");
+			goto out;
+		}
+
+		sym->name = name;
+		name = NULL;
+
+		hash_add(symbol_names, &sym->name_hash, name_hash(sym->name));
+		++nsym;
+
+		debug("%s", sym->name);
+	}
+
+	debug("%d exported symbols", nsym);
+	ret = 0;
+
+out:
+	free(line);
+	free(name);
+	return ret;
+}
+
+> +
+> +	debug("%d exported symbols", nsym);
+> +	return 0;
+> +}
+> +
+> +static int get_symbol(struct symbol *sym, void *arg)
+> +{
+> +	struct symbol **res = arg;
+> +
+> +	*res = sym;
+> +	return 0;
+> +}
+> +
+> +struct symbol *symbol_get(const char *name)
+> +{
+> +	struct symbol *sym = NULL;
+> +
+> +	for_each(name, get_symbol, &sym);
+> +	return sym;
+> +}
+
+-- 
+Thanks,
+Petr
 
