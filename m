@@ -1,163 +1,125 @@
-Return-Path: <linux-kernel+bounces-303350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2F14960B11
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:51:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D40960B13
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:52:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B77D284857
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:51:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BD2F1C22DAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8481C0DD7;
-	Tue, 27 Aug 2024 12:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BFB11BC9EE;
+	Tue, 27 Aug 2024 12:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KsU2C8e4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="SyxMgUxj"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B60F1BFE1A;
-	Tue, 27 Aug 2024 12:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F331B1BC9FA;
+	Tue, 27 Aug 2024 12:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724763046; cv=none; b=I3TjJ8ZPjOwTV2QERj/nwPPlOoSHWOCFPXPK41xXItxToplLt+RiACPNup2wfB7Djrtor8ENCIwBSVbpFmeCRg1Y/a5Lb8XpZGhmjDhIlScNnmxNQT96iGjvHJuIxmDJ6lDH8FL/MorqPrpOTFDyz3dbYyVJ1x95HujAGOIIuNw=
+	t=1724763063; cv=none; b=UzaoCt5MY69PKlBhqSuJNFIisax5Hh+/6vsflej0lQYmGZWOj/clZxe2YCvgGHEbRGYQuJcb528d0JOuz9OouHOeQqcezG5i336w5Quii6+9FMmjbBx43jAxk0wUcmuuOBgMS825GeittZUUFVYjqwZh+WxR9bnizc/qPTd4Bvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724763046; c=relaxed/simple;
-	bh=qwDcptw+GorkjYb2aHEhqk3vhBLhz0T0r/3W8LEKW3A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=udUH7NePoxZNzw/2H8ZL+hvPxVyvVxrYYRxLsItW/DpgwMUngeQ99temZW15+c5GY8b3PDMA2l5+n4GhAoDpnlzEPwXogDc20wI5FOr7e6yPapbmvDLkNhjOy6NUHqBHFZXaykBzRCjShwkGZZtkF6XIfbTxZp2lJOqcR+lpe2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KsU2C8e4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3E28C6106D;
-	Tue, 27 Aug 2024 12:50:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724763045;
-	bh=qwDcptw+GorkjYb2aHEhqk3vhBLhz0T0r/3W8LEKW3A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KsU2C8e4LDwj/SADssPE/RQmKmgNsC5cSE+iGDc8XbTNn/TtPDiTQml00UjyBKiPQ
-	 7StZK4bmdbuJ8mDViwf3tRSyU9D9OdOlf7npkI9dvh1AyFAQovBiia+V0Dqk9yamRs
-	 NZQILFjJIbw/+NdbJB+SbSfAnVuTUaLvzYcMz4e4sAaP8ybmhhPi7uO/I08TCEVzqK
-	 So84DwabR+DR6y6gysD+VnEddq70DmCemjIRcjgNuxdzny3RTwRVbqo/ELaJZtuRyu
-	 9zzDOEfJWJCp3iDgzLdFqeuJua2wna0feA/4LX8/kmoUdx/BVipW7M7ezAq+k6n3CP
-	 QnSPSayqIaejg==
-Date: Tue, 27 Aug 2024 13:50:37 +0100
-From: Will Deacon <will@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Conor Dooley <conor@kernel.org>, Kees Cook <kees@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, Marc Zyngier <maz@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Valentin Obst <kernel@valentinobst.de>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v6] rust: support for shadow call stack sanitizer
-Message-ID: <20240827125037.GC4772@willie-the-truck>
-References: <20240826-shadow-call-stack-v6-1-495a7e3eb0ef@google.com>
+	s=arc-20240116; t=1724763063; c=relaxed/simple;
+	bh=sqnTVEDnRJOP0pwQdekLrXyA2ncK+DJnutBDsjhfh+8=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=CvEzyh3EAIzCfCDEUE9nRzGbqcEG5xQcdRJbxbASaotwWkhVn3P623OQCXpxcolHsYeU6/PSKWcEejkolNCRhgj28Xgqr6JbkighHt7minG29WAQplOp8GyArxaZ7UjtythEqwGqFtr1QeHn+GVPE5ZdG1gApm1UZuBF/PPRREE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=SyxMgUxj; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B555140E0263;
+	Tue, 27 Aug 2024 12:50:57 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id jbj84ci89aka; Tue, 27 Aug 2024 12:50:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1724763053; bh=f+MJK/7XcvBcccpfuS0K+qJ4/ZCKMDNN5UCT4vyoVng=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=SyxMgUxjSQknx49TPdkpDmp24wR5qUaKTijvoHAsE2ra19IJUtYlFdPhT5q7/xgQm
+	 /RITRqV+iGjgwiOtOGUY/xm6lMkfn0ii/YJQPAlrdbVkN8wLyKrSjjc0QdwBb02/Sd
+	 JLzhBHxDkt1P4YGZ9jsvuokr5JKk1++I4R03C1VCYFKclhNC7DJ/A4t6ZBCyNIay2r
+	 UZiIJ3tYIegUjgTVr473xy9YFIR7TaNYIHRiySt1BuqbCjSgh7Bjre/zxfHCGsedFR
+	 1Qyfeo6pxTwuruk6z4hny90YkXr9OTcqn3ojCKGcqWdXsVu8UO6Da6jVgSPJo4au7u
+	 Mk4ZoJi7yjz+yFtwgm6A4DOrqXmZsvSXAI0lAATLbSCY6RVUp7/NlXLGF8efIAjUeW
+	 CROWXshKKf8NcXaKXTWkofSHUUR0rZHba1YunzeUMSnhpxwqz+WuqJoHjUHgGewrXL
+	 YjJ4ZyBB6nZQQoG11m3vT32uQFtnMFAr3OID2CzBE5qt5r6GcujYKexxXiYBIFBmQX
+	 FPmGNKqAZdEU398iUruebmhB1a+KfMfp8tVxrXcAWwln/OBSGRJq5qYsebHu3RYmc/
+	 I+0AA/+1s65qT5TsMi5VnpM4xIcF1Jl4s9pU7etHXTK8Zc/KxhSz/R9cDJtzI79qHs
+	 BhAGexCmTg7wU5dpde6lJN3w=
+Received: from [127.0.0.1] (business-24-134-159-81.pool2.vodafone-ip.de [24.134.159.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8240340E01A2;
+	Tue, 27 Aug 2024 12:50:43 +0000 (UTC)
+Date: Tue, 27 Aug 2024 14:50:40 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>, Thomas Gleixner <tglx@linutronix.de>
+CC: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, tony.luck@intel.com,
+ x86@kernel.org, avadhut.naik@amd.com, john.allen@amd.com,
+ boris.ostrovsky@oracle.com
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_x86/MCE=3A_Prevent_CPU_offl?=
+ =?US-ASCII?Q?ine_for_SMCA_CPUs_with_non-core_banks?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20240826132057.GA449322@yaz-khff2.amd.com>
+References: <20240821140017.330105-1-yazen.ghannam@amd.com> <87jzg4g8dm.ffs@tglx> <20240826132057.GA449322@yaz-khff2.amd.com>
+Message-ID: <9D26E333-B33C-4FD4-9A8F-6F9DC1EC6527@alien8.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826-shadow-call-stack-v6-1-495a7e3eb0ef@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 26, 2024 at 02:22:52PM +0000, Alice Ryhl wrote:
-> This patch adds all of the flags that are needed to support the shadow
-> call stack (SCS) sanitizer with Rust, and updates Kconfig to allow only
-> configurations that work.
-> 
-> The -Zfixed-x18 flag is required to use SCS on arm64, and requires rustc
-> version 1.80.0 or greater. This restriction is reflected in Kconfig.
-> 
-> When CONFIG_DYNAMIC_SCS is enabled, the build will be configured to
-> include unwind tables in the build artifacts. Dynamic SCS uses the
-> unwind tables at boot to find all places that need to be patched. The
-> -Cforce-unwind-tables=y flag ensures that unwind tables are available
-> for Rust code.
-> 
-> In non-dynamic mode, the -Zsanitizer=shadow-call-stack flag is what
-> enables the SCS sanitizer. Using this flag requires rustc version 1.82.0
-> or greater on the targets used by Rust in the kernel. This restriction
-> is reflected in Kconfig.
-> 
-> It is possible to avoid the requirement of rustc 1.80.0 by using
-> -Ctarget-feature=+reserve-x18 instead of -Zfixed-x18. However, this flag
-> emits a warning during the build, so this patch does not add support for
-> using it and instead requires 1.80.0 or greater.
-> 
-> The dependency is placed on `select HAVE_RUST` to avoid a situation
-> where enabling Rust silently turns off the sanitizer. Instead, turning
-> on the sanitizer results in Rust being disabled. We generally do not
-> want changes to CONFIG_RUST to result in any mitigations being changed
-> or turned off.
-> 
-> At the time of writing, rustc 1.82.0 only exists via the nightly release
-> channel. There is a chance that the -Zsanitizer=shadow-call-stack flag
-> will end up needing 1.83.0 instead, but I think it is small.
-> 
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
-> Link: https://lore.kernel.org/rust-for-linux/20240808221138.873750-1-ojeda@kernel.org/ [1]
-> ---
-> Changes in v6:
-> - Move Kconfig requirements into arch/*/Kconfig.
-> - List non-dynamic SCS as supported on 1.82. This reflects newly added
->   things in rustc.
-> - Link to v5: https://lore.kernel.org/r/20240806-shadow-call-stack-v5-1-26dccb829154@google.com
-> 
-> Changes in v5:
-> - Rebase series on v6.11-rc2.
-> - The first patch is no longer included as it was merged in v6.11-rc2.
-> - The commit message is rewritten from scratch.
-> - Link to v4: https://lore.kernel.org/r/20240729-shadow-call-stack-v4-0-2a664b082ea4@google.com
-> 
-> Changes in v4:
-> - Move `depends on` to CONFIG_RUST.
-> - Rewrite commit messages to include more context.
-> - Link to v3: https://lore.kernel.org/r/20240704-shadow-call-stack-v3-0-d11c7a6ebe30@google.com
-> 
-> Changes in v3:
-> - Use -Zfixed-x18.
-> - Add logic to reject unsupported rustc versions.
-> - Also include a fix to be backported.
-> - Link to v2: https://lore.kernel.org/rust-for-linux/20240305-shadow-call-stack-v2-1-c7b4a3f4d616@google.com/
-> 
-> Changes in v2:
-> - Add -Cforce-unwind-tables flag.
-> - Link to v1: https://lore.kernel.org/rust-for-linux/20240304-shadow-call-stack-v1-1-f055eaf40a2c@google.com/
-> ---
->  Makefile            | 1 +
->  arch/arm64/Kconfig  | 7 ++++++-
->  arch/arm64/Makefile | 3 +++
->  arch/riscv/Kconfig  | 7 ++++++-
->  init/Kconfig        | 1 -
->  5 files changed, 16 insertions(+), 3 deletions(-)
+On August 26, 2024 3:20:57 PM GMT+02:00, Yazen Ghannam <yazen=2Eghannam@amd=
+=2Ecom> wrote:
+>On Sun, Aug 25, 2024 at 01:16:37PM +0200, Thomas Gleixner wrote:
+>> On Wed, Aug 21 2024 at 09:00, Yazen Ghannam wrote:
+>> > Logical CPUs in AMD Scalable MCA (SMCA) systems can manage non-core
+>> > banks=2E Each of these banks represents unique and separate hardware
+>> > located within the system=2E Each bank is managed by a single logical=
+ CPU;
+>> > they are not shared=2E Furthermore, the "CPU to MCA bank" assignment
+>> > cannot be modified at run time=2E
+>> >
+>> > The MCE subsystem supports run time CPU hotplug=2E Many vendors have
+>> > non-core MCA banks, so MCA settings are not cleared when a CPU is
+>> > offlined for these vendors=2E
+>> >
+>> > Even though the non-core MCA banks remain enabled, MCA errors will no=
+t
+>> > be handled (reported, cleared, etc=2E) on SMCA systems when the manag=
+ing
+>> > CPU is offline=2E
+>> >
+>> > Check if a CPU manages non-core MCA banks and, if so, prevent it from
+>> > being taken offline=2E
+>>=20
+>> Which in turn breaks hibernation and kexec=2E=2E=2E
+>>
+>
+>Right, good point=2E
+>
+>Maybe this change can apply only to a user-initiated (sysfs) case?
+>
+>Thanks,
+>Yazen
+>
 
-For the arm64 parts:
+Or, you can simply say that the MCE cannot be processed because the user t=
+ook the managing CPU offline=2E=20
 
-Acked-by: Will Deacon <will@kernel.org>
-
-In which tree do you plan to merge this?
-
-Cheers,
-
-Will
+What is this actually really fixing anyway?
+--=20
+Sent from a small device: formatting sucks and brevity is inevitable=2E 
 
