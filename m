@@ -1,79 +1,81 @@
-Return-Path: <linux-kernel+bounces-304059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D630B96194A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:32:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1ED096194B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:32:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14A641C20904
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FE1CB21AB2
 	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6543C1D4164;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DD21D4163;
 	Tue, 27 Aug 2024 21:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AZb7+YW0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iIgZ+diQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C2411552E0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06531BF329;
 	Tue, 27 Aug 2024 21:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724794342; cv=none; b=EMIZyPigTm72Aeln3gmJoZXrOBBwafQ7cu2YJHRMvw+oCKjmvRp8vPpGwI/pgkRZ1nAFmELXpkaZEhuglGtI8YXPAbwgrygXdwv0RhxR6wts+PutIOJIWq/JESjkwoctEmJt1z3YmCFW9klw3Vbmxs11xrmI+6FwEsUd4wBo26g=
+	t=1724794342; cv=none; b=GgR+aSLPShAHeCj3u5mEO3zR6W8kjvrHxu1DmyZP9PnuoCYCWDtKtN3R3/IZTMIGEq+6xzWtG4kLfFNzZYVzmTr509bzkdksa7xR3LnlNncw36ETnl69H06qHfhgNPtzO2TC9soOyPYldU3a3cyjlNkUfHVDBVbQt6oSR5So7fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724794342; c=relaxed/simple;
-	bh=mQ6qbHzgB38r7y4pyZPdkblRm04jYvDuwRoZqtAcNok=;
+	bh=VdVuzOa4xQiigr1kVsf2HhAJLMDzuQOG906kdRtZLLE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=soYDDz72W7kpYM1xr0DoAetRLBSUUlR3/cje2UR76qPoVxcEksLTeGsn0ByNXmPesZAzBsxG0tUKWq2xFPFn0jCmE+pq7vYEmW4UMwqDDvxW3vQpJtN4/ukfQLye7I7ihSmaJe3G6IefVDg8Nks16hcJXbVv5Og1TvyvUt6e0ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AZb7+YW0; arc=none smtp.client-ip=198.175.65.17
+	 Content-Type:Content-Disposition:In-Reply-To; b=CjrZPammHwevJn+RVIEbVmQ4Hl5zcjnc29G88ssRVyTwAL4Skq9hmkZmxLfwBaZjzujagwwNuRoYwAvZXXilb+3s8MtG3v84LFnhVU3cUqU0D7qImEQfqiZDFNwgqMAenyCxtpNNU9e3ShSxhm/GzOGMMiT/zwKx9EP0fHzIEYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iIgZ+diQ; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724794340; x=1756330340;
+  t=1724794341; x=1756330341;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=mQ6qbHzgB38r7y4pyZPdkblRm04jYvDuwRoZqtAcNok=;
-  b=AZb7+YW0MwC4du1TqlZ+BOrRiFEJx2DdAmtn51L135GNSShIrXb3fffX
-   OfzyvJeTD0XB88COAU7/qwdcunpgARyKuj8mTj8dumEsmazloyRg+wTle
-   pWSzmpirD12116e/V6sCEmxkHLSNzMQUE67lNOmjSi/ABXQ+SNNrHnIVB
-   lT4kv06oTyrxEwNlmN3y/9hb++V/N5GNDcf46qxps5P54zZffv4J/YKby
-   mhJqjW0tiM5Ea8RzhBhURANdl0j2B8NEW7d7Fsvf3d08mfbZiOVsVl7qU
-   330mLV17udRyHofGzSTm8ICC3j4NX3dkrzoJBCxZSZphwjbzUMGP3kbk6
-   w==;
-X-CSE-ConnectionGUID: qibPJ4/KT/W5V9h+4LtIMQ==
-X-CSE-MsgGUID: FPZ8f9OITyiOndA0m3+K2Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="23472915"
+  bh=VdVuzOa4xQiigr1kVsf2HhAJLMDzuQOG906kdRtZLLE=;
+  b=iIgZ+diQSJzSuLBdBtDP3aNTk2l9cedWz8OTKMeZVVlOH/xLx373ESCc
+   o2cW++bCFh0K5qywcItI9oKEWhNm7elBlynazYtw5cZ8O4VrZC56uqZe4
+   LpgyuUJYYmZ8rwj39uIV0866fiKWxzGAW5WmIaF/umhb9G4AirdFh0BAq
+   BDWqSpDgGMoaEI25vkyjNTLnhxWdAPCz7OnVd93J5VqQaRxVymxpXRDDq
+   v5pB0Kp3dX1nvN9FrZtsrQPYwVzuDrcamTPtnRth7P70KjzMiWu8XwfPW
+   qYp8DslE060fe8Fv98pyoGo8DsdmATDo8S09JAWgFznb3qOXL0WJvzblg
+   Q==;
+X-CSE-ConnectionGUID: mJWmn+WFSdirAyh0HS8Jpw==
+X-CSE-MsgGUID: 8I16g1ziQRWsUEZ6smiG+A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="33872128"
 X-IronPort-AV: E=Sophos;i="6.10,181,1719903600"; 
-   d="scan'208";a="23472915"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 14:32:20 -0700
-X-CSE-ConnectionGUID: SZ7GQYnnRDKEUTZXIx+mgQ==
-X-CSE-MsgGUID: HgirASMTTQmt+plh8jjpQQ==
+   d="scan'208";a="33872128"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 14:32:21 -0700
+X-CSE-ConnectionGUID: 3VdZZa3MQnW+VHfgLQcVWg==
+X-CSE-MsgGUID: YYZZ2Kn0SP6K3hJLALdGlA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,181,1719903600"; 
-   d="scan'208";a="67705584"
+   d="scan'208";a="67152953"
 Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 27 Aug 2024 14:32:17 -0700
+  by fmviesa003.fm.intel.com with ESMTP; 27 Aug 2024 14:32:17 -0700
 Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1sj3nT-000K6G-0P;
+	id 1sj3nT-000K6E-0K;
 	Tue, 27 Aug 2024 21:32:15 +0000
-Date: Wed, 28 Aug 2024 05:31:24 +0800
+Date: Wed, 28 Aug 2024 05:31:25 +0800
 From: kernel test robot <lkp@intel.com>
-To: David Leonard <David.Leonard@digi.com>,
-	linux-arm-kernel@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev, Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 4/6] pinctrl: ls1046a: Add pinctrl driver support
-Message-ID: <202408280532.YGyLCCNL-lkp@intel.com>
-References: <c0ecf4f4-94f1-2efd-b05b-fc117c62e516@digi.com>
+To: Mario Limonciello <superm1@kernel.org>, Borislav Petkov <bp@alien8.de>,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	"(maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))" <x86@kernel.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	"(open list:X86 ARCHITECTURE (32-BIT AND 64-BIT))" <linux-kernel@vger.kernel.org>,
+	linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH 6/8] cpufreq: amd-pstate: Merge
+ amd_pstate_highest_perf_set() into amd_get_boost_ratio_numerator()
+Message-ID: <202408280553.k4hXRtZy-lkp@intel.com>
+References: <20240826211358.2694603-7-superm1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,75 +84,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c0ecf4f4-94f1-2efd-b05b-fc117c62e516@digi.com>
+In-Reply-To: <20240826211358.2694603-7-superm1@kernel.org>
 
-Hi David,
+Hi Mario,
 
 kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on linusw-pinctrl/devel]
-[also build test WARNING on linusw-pinctrl/for-next shawnguo/for-next arm64/for-next/core kvmarm/next rockchip/for-next soc/for-next linus/master v6.11-rc5 next-20240827]
-[cannot apply to arm/for-next arm/fixes]
+[auto build test WARNING on rafael-pm/linux-next]
+[also build test WARNING on rafael-pm/bleeding-edge tip/x86/core tip/master linus/master v6.11-rc5 next-20240827]
+[cannot apply to tip/auto-latest]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/David-Leonard/arm64-dts-ls1012a-add-pinctrl-node/20240827-104431
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-patch link:    https://lore.kernel.org/r/c0ecf4f4-94f1-2efd-b05b-fc117c62e516%40digi.com
-patch subject: [PATCH 4/6] pinctrl: ls1046a: Add pinctrl driver support
-config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20240828/202408280532.YGyLCCNL-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240828/202408280532.YGyLCCNL-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Mario-Limonciello/x86-amd-Move-amd_get_highest_perf-from-amd-c-to-cppc-c/20240827-051648
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20240826211358.2694603-7-superm1%40kernel.org
+patch subject: [PATCH 6/8] cpufreq: amd-pstate: Merge amd_pstate_highest_perf_set() into amd_get_boost_ratio_numerator()
+config: x86_64-kexec (https://download.01.org/0day-ci/archive/20240828/202408280553.k4hXRtZy-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240828/202408280553.k4hXRtZy-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408280532.YGyLCCNL-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408280553.k4hXRtZy-lkp@intel.com/
 
 All warnings (new ones prefixed by >>):
 
-   drivers/pinctrl/freescale/pinctrl-ls1046a.c: In function 'ls1046a_pinctrl_probe':
->> drivers/pinctrl/freescale/pinctrl-ls1046a.c:199:58: warning: passing argument 2 of 'devm_pinctrl_register_and_init' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-     199 |         ret = devm_pinctrl_register_and_init(&pdev->dev, &ls1046a_pinctrl_desc,
-         |                                                          ^~~~~~~~~~~~~~~~~~~~~
-   In file included from drivers/pinctrl/freescale/pinctrl-ls1046a.c:10:
-   include/linux/pinctrl/pinctrl.h:180:54: note: expected 'struct pinctrl_desc *' but argument is of type 'const struct pinctrl_desc *'
-     180 |                                 struct pinctrl_desc *pctldesc,
-         |                                 ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+>> drivers/cpufreq/amd-pstate.c:402:38: warning: variable 'highest_perf' is uninitialized when used here [-Wuninitialized]
+     402 |         WRITE_ONCE(cpudata->max_limit_perf, highest_perf);
+         |                                             ^~~~~~~~~~~~
+   include/asm-generic/rwonce.h:61:18: note: expanded from macro 'WRITE_ONCE'
+      61 |         __WRITE_ONCE(x, val);                                           \
+         |                         ^~~
+   include/asm-generic/rwonce.h:55:33: note: expanded from macro '__WRITE_ONCE'
+      55 |         *(volatile typeof(x) *)&(x) = (val);                            \
+         |                                        ^~~
+   drivers/cpufreq/amd-pstate.c:395:18: note: initialize the variable 'highest_perf' to silence this warning
+     395 |         u32 highest_perf;
+         |                         ^
+         |                          = 0
+   1 warning generated.
 
 
-vim +199 drivers/pinctrl/freescale/pinctrl-ls1046a.c
+vim +/highest_perf +402 drivers/cpufreq/amd-pstate.c
 
-   179	
-   180	static int ls1046a_pinctrl_probe(struct platform_device *pdev)
-   181	{
-   182		struct ls1046a_pinctrl_pdata *pd;
-   183		int ret;
-   184	
-   185		pd = devm_kzalloc(&pdev->dev, sizeof(*pd), GFP_KERNEL);
-   186		if (!pd)
-   187			return -ENOMEM;
-   188		platform_set_drvdata(pdev, pd);
-   189	
-   190		pd->big_endian = device_is_big_endian(&pdev->dev);
-   191	
-   192		/* SCFG PMUX0 */
-   193		pd->cr0mem = devm_platform_ioremap_resource(pdev, 0);
-   194		if (IS_ERR(pd->cr0mem))
-   195			return PTR_ERR(pd->cr0mem);
-   196		dev_dbg(&pdev->dev, "scfg pmuxcr0 at %px %s", pd->cr0mem,
-   197			pd->big_endian ? "be" : "le");
-   198	
- > 199		ret = devm_pinctrl_register_and_init(&pdev->dev, &ls1046a_pinctrl_desc,
-   200			pd, &pd->pctl_dev);
-   201		if (ret)
-   202			return dev_err_probe(&pdev->dev, ret, "Failed pinctrl init\n");
-   203	
-   204		pinctrl_enable(pd->pctl_dev);
-   205		return ret;
-   206	}
-   207	
+ec437d71db77a1 Huang Rui         2021-12-24  391  
+e059c184da47e9 Huang Rui         2021-12-24  392  static int cppc_init_perf(struct amd_cpudata *cpudata)
+e059c184da47e9 Huang Rui         2021-12-24  393  {
+e059c184da47e9 Huang Rui         2021-12-24  394  	struct cppc_perf_caps cppc_perf;
+bedadcfb011fef Perry Yuan        2022-08-30  395  	u32 highest_perf;
+e059c184da47e9 Huang Rui         2021-12-24  396  
+e059c184da47e9 Huang Rui         2021-12-24  397  	int ret = cppc_get_perf_caps(cpudata->cpu, &cppc_perf);
+e059c184da47e9 Huang Rui         2021-12-24  398  	if (ret)
+e059c184da47e9 Huang Rui         2021-12-24  399  		return ret;
+e059c184da47e9 Huang Rui         2021-12-24  400  
+347b3754cc9780 Mario Limonciello 2024-08-26  401  	WRITE_ONCE(cpudata->highest_perf, cppc_perf.highest_perf);
+febab20caebac9 Wyes Karny        2023-11-17 @402  	WRITE_ONCE(cpudata->max_limit_perf, highest_perf);
+e059c184da47e9 Huang Rui         2021-12-24  403  	WRITE_ONCE(cpudata->nominal_perf, cppc_perf.nominal_perf);
+e059c184da47e9 Huang Rui         2021-12-24  404  	WRITE_ONCE(cpudata->lowest_nonlinear_perf,
+e059c184da47e9 Huang Rui         2021-12-24  405  		   cppc_perf.lowest_nonlinear_perf);
+e059c184da47e9 Huang Rui         2021-12-24  406  	WRITE_ONCE(cpudata->lowest_perf, cppc_perf.lowest_perf);
+e571a5e2068ef5 Meng Li           2024-01-19  407  	WRITE_ONCE(cpudata->prefcore_ranking, cppc_perf.highest_perf);
+febab20caebac9 Wyes Karny        2023-11-17  408  	WRITE_ONCE(cpudata->min_limit_perf, cppc_perf.lowest_perf);
+e059c184da47e9 Huang Rui         2021-12-24  409  
+2dd6d0ebf74049 Wyes Karny        2023-03-07  410  	if (cppc_state == AMD_PSTATE_ACTIVE)
+2dd6d0ebf74049 Wyes Karny        2023-03-07  411  		return 0;
+2dd6d0ebf74049 Wyes Karny        2023-03-07  412  
+2dd6d0ebf74049 Wyes Karny        2023-03-07  413  	ret = cppc_get_auto_sel_caps(cpudata->cpu, &cppc_perf);
+2dd6d0ebf74049 Wyes Karny        2023-03-07  414  	if (ret) {
+2dd6d0ebf74049 Wyes Karny        2023-03-07  415  		pr_warn("failed to get auto_sel, ret: %d\n", ret);
+e059c184da47e9 Huang Rui         2021-12-24  416  		return 0;
+e059c184da47e9 Huang Rui         2021-12-24  417  	}
+e059c184da47e9 Huang Rui         2021-12-24  418  
+2dd6d0ebf74049 Wyes Karny        2023-03-07  419  	ret = cppc_set_auto_sel(cpudata->cpu,
+2dd6d0ebf74049 Wyes Karny        2023-03-07  420  			(cppc_state == AMD_PSTATE_PASSIVE) ? 0 : 1);
+2dd6d0ebf74049 Wyes Karny        2023-03-07  421  
+2dd6d0ebf74049 Wyes Karny        2023-03-07  422  	if (ret)
+2dd6d0ebf74049 Wyes Karny        2023-03-07  423  		pr_warn("failed to set auto_sel, ret: %d\n", ret);
+2dd6d0ebf74049 Wyes Karny        2023-03-07  424  
+2dd6d0ebf74049 Wyes Karny        2023-03-07  425  	return ret;
+2dd6d0ebf74049 Wyes Karny        2023-03-07  426  }
+2dd6d0ebf74049 Wyes Karny        2023-03-07  427  
 
 -- 
 0-DAY CI Kernel Test Service
