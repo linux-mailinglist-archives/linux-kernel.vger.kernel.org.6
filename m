@@ -1,159 +1,124 @@
-Return-Path: <linux-kernel+bounces-303942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD3EC96173B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:48:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEAC0961743
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:49:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44886B21BC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:48:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD5192841A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CCDF1D2F59;
-	Tue, 27 Aug 2024 18:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1708C1D31B1;
+	Tue, 27 Aug 2024 18:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4eGRhfl3"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lGFIdCTt"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9C345024
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 18:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D7A1D31AB
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 18:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724784512; cv=none; b=cu8YMvupewbmhCBJBoNMU0d3jHP8Wx00WmHCq/csRXFuHVWSNyLW23fOpoTW4gX3RDA2mpHPoihj6V/bk0SLyDK0duYtOBBpFkjD2qtZDD77MLjoBZ5kuFyjVM6nImwary1FYS0/GdjA0tnrtcAst5PZWgZ2IL4j4vtNEDMHR0I=
+	t=1724784540; cv=none; b=fqRM1dkoFSmpNMJ4cOkEgXT/Dc5OoIsJrfAM/xX/zZlnDOgRt2o2WSXJZYyJjpWJVnlh0lrt0C9NNW9gkphRydz7BCmlX/eEDTNOD3h5f7B6/7VcOln5SjR/OpSCG1tghBD9I4RXfAor7XjTPZPIAwT3OEkBORB2i+O2bMHXwXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724784512; c=relaxed/simple;
-	bh=I5//Ha3NSD2Wtl/0jjx0iRpYd7vI5TxmgjMPfRVQ1/g=;
+	s=arc-20240116; t=1724784540; c=relaxed/simple;
+	bh=+fM/Qyk8h6+mYsjYQvSSfjnNJ8uLvU2/CLFvC7f9D3Q=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m6D5jKZkBB3mdvewEof9y5HAHeljbDqYcYKAK8NcSXoB4VqzFDA8LgGVWYSDDjt7/Wk6Ksz4RvoG5CHBExmIbzndIl3d9lAoWaibR1xgu/p7SleIjlQj5TtX6JOruZk78mFb/maKtZAl60M5ONjD4H9ndwnvHHM3j933ymQHVwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4eGRhfl3; arc=none smtp.client-ip=209.85.160.180
+	 To:Cc:Content-Type; b=I7Qt4dF5TliYhx8JPmjPiVGsA7DXlNOy2Cx60i1UkAedRg6BmsR8v4YE69frD5y16bb4ISseUxxIGu9veRIzfIiOpSX2PmDSXoQIaM6+akLzfdH4As0YMw1VzjCAily9ZCX/P25dSyc0YXb91A0yVXqeWsbwUbGDw39iqfasrQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lGFIdCTt; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-45029af1408so39131cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:48:31 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c0ba23a5abso1564377a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:48:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724784510; x=1725389310; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1724784537; x=1725389337; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LidQY3N7TAVU7mz++A4EWJV/Qlk2ObRsexeEqCJH/sQ=;
-        b=4eGRhfl3kXUoAYV1Enr6mzC5351bzICnr6nhNH48IsRwaHVU6z0s5mLq9fPrOcJH8x
-         XHvrX8i4u70ltCZhnNQVWkQWZbJ8OE4ye70pZwN5v7GnrptJCtO0qNmrDQI1pnzMGlXg
-         T6aLawl8+TaQPwcQ1YagRxdQ25I2Qo671YZLLrBTwSvscdTk6aHmFH0WIkdfFl9aj8Md
-         tjImVw834O50hhLLMltKfGrs603HfCFL770DDl3BVSrEfxZK+88hb8ix86u09xJ2F6m4
-         BLPqVXfNF0UHtMjF8LkmHNtrktVfPF7JdZ9k7VM/j2T4JtEl+KlH3xDdCeb3V7zoAdh6
-         KRmg==
+        bh=+fM/Qyk8h6+mYsjYQvSSfjnNJ8uLvU2/CLFvC7f9D3Q=;
+        b=lGFIdCTtRJeXOYY5grAVYQCqvGWph8gl6IGx2D3r1Xon7tF2PfbKja0EN5bzLd+5mG
+         OExGSK0AWbleiH1udVJUP98pE6+OqTRvopY6smytd5CWk6ZQWetPIwEYSvT8AqCf/Lhs
+         RT1b5o1tWO/N+h4aRRv88hUNJGm7cF/F1VtsMS3ojkiS40xukAsJAr+MqnSKREdGJ/up
+         RrZYdgP17VfKEPphNvarIMagEhKwp211ZYnSE6uBtprlZPI5MzQc/2F1mPn6zJXfaGrN
+         eCTpQJHo484MM9SFMyQ2WCIMbJqEqk3YAzi0V0YbtQDJtus3LMaI1uoGOYd9QD5524jc
+         cwqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724784510; x=1725389310;
+        d=1e100.net; s=20230601; t=1724784537; x=1725389337;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LidQY3N7TAVU7mz++A4EWJV/Qlk2ObRsexeEqCJH/sQ=;
-        b=d5Pyi5Cwsr71/fvNJZVuW40V5Y8Lp3rwfBLqhJlNKKhP2K8pj41Ya59KLzM09ZBYtA
-         EPU1eoWv6CuvgU9axJGJ8gh21PUz8kNiB6/VRVUqyWIDTG1ojhp+j9XXRUXoYPLOZB9v
-         cBop4KL38z8nAQg3vWw0AYPA+PyV9arftmHxzzEkaiPsO/BK+LJJDXz8skEegvAr4SKq
-         hX8O5kFgtt25CBDdM5wXVc1KM15ItQP0y1OD7/dLXA4iHQmNDl9QVD0cRQ+9pHwZJ0nB
-         vGgHmOlVqbuMbhaXA1SBjsWClJTAu/4x5XpvbkVse4dy1AI0WNrYQVxU0pRFS5GSCK8T
-         b+LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW4HWl5daKylwfVRlVUqtMTGj7oz+hk+AUMra2R0JvPUeHJxQIDGcHMwTQ5FbRb6VomESKdQbmykKkA6gs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx27AQU9+85ieXSpdbnl5Zmw1ppotJodkzibY5le9llYNrYTf3Q
-	cIMVudW4dLyO8vrMTMbniMZT+4HeFfoieVsbzR2ga/7yt7jCBgrePdEufE/mHDGgmrjNYCg4LRs
-	ouIvF9x3oLGkZ19BfmnPDP7rUpmdFn7y1cHwx
-X-Google-Smtp-Source: AGHT+IEYo3wpUDQ07W+N/9n1FFu7R6YCMxlFn855GpjF2BmicavhNUlzTFwLoKagN05qtS/bFGVksEONLKfLBTPt0T8=
-X-Received: by 2002:ac8:5a45:0:b0:453:5b18:817 with SMTP id
- d75a77b69052e-4566caed6c1mr336721cf.6.1724784509942; Tue, 27 Aug 2024
- 11:48:29 -0700 (PDT)
+        bh=+fM/Qyk8h6+mYsjYQvSSfjnNJ8uLvU2/CLFvC7f9D3Q=;
+        b=LTFsHE3z805yDzypNmAOnMdY3zCIkSNkevth0BZU2Tl/WHG9x91Fuht0IhYtyqKfsR
+         7NVQ9Nl8FV8mZxJT5rG6EeYJx23Pfo1IiKvZp7wzUfFD77oNHyEWdXzZ9gFHKOtIQ3W/
+         JMvs/DvvKUp7UKXAM9CzEiMcQJwrqGffxESjd4m9n9J/K5S30GZZNKUuULgXg9wAkPi/
+         +7NA/hjAcxK0Kmrj24/R24njCIJJeoL62h1tMWpXFm1lhTgKZ8hdjWbcqsHJCZuGlvyY
+         CD5Kh3XcD/UQeITMnKbK3CTOV7UKs4KvfaoLuo3XX+WNmJ7I/XKue3VVhQl0wmi5yLbA
+         z6yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCf42oRBjmAY+O9O4u8OqsMhz92WU4gAOO6K+2m5/+XRyWK/TQtH7DDvqu1e1cU4Hl5qevwFq4vxFojl4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGDAYhpKB7dB+UZrR7bded64MJKSogdqM6kOEaBW9Uoqz+2CQJ
+	j+ZCeC280qq07aFnQEM0Ob7JjRdD/907LMZ8W6T9XH1uISTNhJsXeWz8VvxSb+lIWriaikcwdm7
+	Vhi7R7VUg2wgk5xof6bEn9K6BhbZFpgeUWQmE
+X-Google-Smtp-Source: AGHT+IEDE84HW8WhltURoZPE6AnT1p3yEylLwiUEf8EfZjo6o3kJOFM23s7uhP84XseafK+WQn8SInwK5adVNDb6Bys=
+X-Received: by 2002:a17:906:c14d:b0:a86:90b8:9ac9 with SMTP id
+ a640c23a62f3a-a86a52cc979mr1096924066b.39.1724784536549; Tue, 27 Aug 2024
+ 11:48:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815173903.4172139-21-samitolvanen@google.com>
- <20240815173903.4172139-23-samitolvanen@google.com> <f9ad5fdd-25d4-4d98-84d0-84dfba2a75f2@suse.com>
-In-Reply-To: <f9ad5fdd-25d4-4d98-84d0-84dfba2a75f2@suse.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Tue, 27 Aug 2024 11:47:51 -0700
-Message-ID: <CABCJKuc8fOmsbpqOJXwYstwc+7DEf-Bf26_n5_ai2Pax1tXqUg@mail.gmail.com>
-Subject: Re: [PATCH v2 02/19] gendwarfksyms: Add symbol list handling
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, Neal Gompa <neal@gompa.dev>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+References: <BD22A15A-9216-4FA0-82DF-C7BBF8EE642E@gmail.com>
+ <6f65e3a6-5f1a-4fda-b406-17598f4a72d5@leemhuis.info> <ZsiLElTykamcYZ6J@casper.infradead.org>
+ <02D2DA66-4A91-4033-8B98-ED25FC2E0CD6@gmail.com> <CAKEwX=N-10A=C_Cp_m8yxfeTigvmZp1v7TrphcrHuRkHJ8837g@mail.gmail.com>
+ <A512FD59-63DF-48D3-BCB3-83DF8505E7E0@gmail.com> <oophwj3aj2fnfi57ebzjuc536iltilmcpoucyms6nfk2alwvtr@pdj4cn4rvpdn>
+ <3D1B8F1F-2C41-4CCD-A5D7-41CF412F99DE@gmail.com>
+In-Reply-To: <3D1B8F1F-2C41-4CCD-A5D7-41CF412F99DE@gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Tue, 27 Aug 2024 11:48:19 -0700
+Message-ID: <CAJD7tkbF2Cx4uRCJAN=EKDLkVC=CApiLAsYt4ZN9YcVUJZp_5g@mail.gmail.com>
+Subject: Re: [regression] oops on heavy compilations ("kernel BUG at
+ mm/zswap.c:1005!" and "Oops: invalid opcode: 0000")
+To: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+Cc: Pedro Falcato <pedro.falcato@gmail.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Matthew Wilcox <willy@infradead.org>, 
+	Linux regressions mailing list <regressions@lists.linux.dev>, LKML <linux-kernel@vger.kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Linux-MM <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Petr,
-
-On Tue, Aug 27, 2024 at 2:16=E2=80=AFAM Petr Pavlu <petr.pavlu@suse.com> wr=
-ote:
+On Sun, Aug 25, 2024 at 9:24=E2=80=AFAM Piotr Oniszczuk
+<piotr.oniszczuk@gmail.com> wrote:
 >
-> On 8/15/24 19:39, Sami Tolvanen wrote:
-> > +static bool is_export_symbol(struct state *state, Dwarf_Die *die)
-> > +{
-> > +     Dwarf_Die *source =3D die;
-> > +     Dwarf_Die origin;
-> > +
-> > +     state->sym =3D NULL;
 >
-> Nit: This assignment isn't strictly necessary, the value is overwritten
-> a few lines below and isn't used in between.
-
-True, I think this was left over from refactoring.
-
-> > +int symbol_read_exports(FILE *file)
-> > +{
-> > +     struct symbol *sym;
-> > +     char *line =3D NULL;
-> > +     char *name =3D NULL;
-> > +     size_t size =3D 0;
-> > +     int nsym =3D 0;
-> > +
-> > +     while (getline(&line, &size, file) > 0) {
-> > +             if (sscanf(line, "%ms\n", &name) !=3D 1) {
-> > +                     error("malformed input line: %s", line);
-> > +                     return -1;
-> > +             }
-> > +
-> > +             free(line);
-> > +             line =3D NULL;
-> > +
-> > +             if (is_exported(name))
-> > +                     continue; /* Ignore duplicates */
-> > +
-> > +             sym =3D malloc(sizeof(struct symbol));
-> > +             if (!sym) {
-> > +                     error("malloc failed");
-> > +                     return -1;
-> > +             }
-> > +
-> > +             sym->name =3D name;
-> > +             name =3D NULL;
-> > +
-> > +             hash_add(symbol_names, &sym->name_hash, name_hash(sym->na=
-me));
-> > +             ++nsym;
-> > +
-> > +             debug("%s", sym->name);
-> > +     }
-> > +
-> > +     if (line)
-> > +             free(line);
 >
-> The loop leaks line on a potential sscanf() error and name if the symbol
-> is a duplicate or malloc(sizeof(struct symbol)) fails. Additionally, it
-> should be possible to avoid allocating line by getline() on each
-> iteration.
+> > Wiadomo=C5=9B=C4=87 napisana przez Pedro Falcato <pedro.falcato@gmail.c=
+om> w dniu 25.08.2024, o godz. 17:05:
+> >
+> > Also, could you try a memtest86 on your machine, to shake out potential=
+ hardware problems?
 >
-> I would change it to something like this (not tested):
+>
+> I found less time consuming way to trigger issue: 12c24t cross compile of=
+ llvm with =E2=80=9Eonly 16G=E2=80=9D of ram - as this triggers many heavy =
+swappings (top swap usage gets 8-9G out of 16G swap part)
+>
+> With such setup - on 6.9.12 - i=E2=80=99m getting not available system (d=
+ue cpu soft lockup) just in 1..3h
+> (usually first or second compile iteration; i wrote simple scrip compilin=
+g in loop + counting interations)
 
-Good points, I'll change this to your suggested version (after testing). Th=
-anks!
+Are we sure that the soft lockup problem is related to the originally
+reported problem? It seems like in v6.10 you hit a BUG in zswap
+(corruption?), and in v6.9 you hit a soft lockup with a zswap lock
+showing up in the splat. Not sure how they are relevant.
 
-Sami
+Is the soft lockup reproducible in v6.10 as well?
+
+Since you have a narrow window (6.8.2 to 6.9) and a reproducer for the
+soft lockup problem, can you try bisecting?
+
+Thanks!
 
