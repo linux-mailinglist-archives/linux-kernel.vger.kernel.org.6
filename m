@@ -1,107 +1,187 @@
-Return-Path: <linux-kernel+bounces-302908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 819639604DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:49:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DE349604FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF3952820AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:49:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42BD7283349
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F0A199EAB;
-	Tue, 27 Aug 2024 08:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DDB19CD07;
+	Tue, 27 Aug 2024 08:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RYaxzkwg"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DusVZnZ7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C201319D06C;
-	Tue, 27 Aug 2024 08:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58188158DD0;
+	Tue, 27 Aug 2024 08:55:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724748512; cv=none; b=XAQC86ynG2GUXy0ZwzpDC4deDFYFVtzQ2VDXO2p+D2MyPoQrfKel2jTonRAOvo3g1AgFWuQPkCRgi3SCCoPacQTagcs0I2XQRWpZh2dcKCaai0tIDwY2P1hjNivqpzA8+owmE6oBrX1xEW3nw5XCjBEyyCjblAmv4Dt4lDko/tI=
+	t=1724748945; cv=none; b=bLyEsNYT8WeLcukQ5W+0k58/kim9tIPhGIssieGFgBjDgndmcdCVx+ZBvjqA2+dosRdy8ryr1CoFfr3Qb3xKHtab7WuLBYb5dgto36HhoxjfgYTAhFkXjcRKuLGnU3wrLcS1RzSy1RVxoKfUC0LtlEak2epeUdHnzCC3T84a5oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724748512; c=relaxed/simple;
-	bh=MP2fugfol8ynhnMrcyf0In9mn3dW/xM1Q/E1PtVnEUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j+Wrm+PDyIAw+fEQSqTx+Fp+sp5d3mEU5ztZOaJP1wpYGhChVDsrw4qBPhWRnHs7Uro8RfklhXtFydw6pI6G/bayHsp1zFnCrlk5N4B2jNLpoEOvXW6Fq1OC8i0DPGQmhr4smb4aDi+2oFEo+eIZ/nnYuvGVd9WdBNQtj/5F+Dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RYaxzkwg; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 61CF41C0005;
-	Tue, 27 Aug 2024 08:48:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724748509;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2UUzozClc1g/4wJHL7AZEfKpZ+z049vTa6KhZnn20Z8=;
-	b=RYaxzkwgyvA0kHKjcM0ddbBmpvVD9HrE+anbiBb+fKay0rhCN0u1RFwDaklS20Ghx4FlRE
-	JEpTZueS3BbpQeJogXXfAtmLTAmI5DEhXwKbpoLHeQ8wBODAs9uyAvLERMElM+TTNOBs9T
-	mJ6ysxcTXN5lg7ULV0F87ayOpogBLhj9B+SeXKvJxUWnt3rsXobvaRYodgCfq1i3/HmGW2
-	G0VAJ2khJzte84kaHaXyaS502p/GZVIv8sOS0jI1XEIxSV9Irx0lAVeueDPxOqk8r7jQw4
-	GXfdi3WAfrcK8WWIBs4Jyv+2RjWIR/zBaJH8F300HG50wRH3Z7dymRfEB+p9Ww==
-Date: Tue, 27 Aug 2024 10:48:25 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Pengfei Xu <pengfei.xu@intel.com>, davem@davemloft.net,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
- <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
- <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Jesse Brandeburg
- <jesse.brandeburg@intel.com>, Marek =?UTF-8?B?QmVow7pu?=
- <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
- <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
- mwojtas@chromium.org, Nathan Chancellor <nathan@kernel.org>, Antoine Tenart
- <atenart@kernel.org>, Marc Kleine-Budde <mkl@pengutronix.de>, Romain
- Gantois <romain.gantois@bootlin.com>
-Subject: Re: [PATCH net-next v17 11/14] net: ethtool: cable-test: Target the
- command to the requested PHY
-Message-ID: <20240827104825.5cbe0602@fedora-3.home>
-In-Reply-To: <a1642517-366a-4943-a55d-e86155f51310@stanley.mountain>
-References: <20240709063039.2909536-1-maxime.chevallier@bootlin.com>
-	<20240709063039.2909536-12-maxime.chevallier@bootlin.com>
-	<Zs1jYMAtYj95XuE4@xpf.sh.intel.com>
-	<20240827073359.5d47c077@fedora-3.home>
-	<a1642517-366a-4943-a55d-e86155f51310@stanley.mountain>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1724748945; c=relaxed/simple;
+	bh=WLyDwKrTLwxUKO9wLuHMkEx2eqbtMQG2RDk7GrJYDXs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oW+yXMNYQLA8jsdJv8q+4imlY13EYHDB43Pi/YHEqiPG0tfwost9HmHi9gToLX3rOliQ49yvvdc1sLeVJnek25rOgrvDA3/hH5iYjH1dJ+jRDb4w9I2hLG/S6S47Z+71FPe/IJmHo0mt47b7lYNGEiVVzOXnRRgo84P4UjHV6aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DusVZnZ7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E362BC8B7A5;
+	Tue, 27 Aug 2024 08:55:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724748944;
+	bh=WLyDwKrTLwxUKO9wLuHMkEx2eqbtMQG2RDk7GrJYDXs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DusVZnZ7wV2iULh/1avLL75JPrhMhQlBqoECiJtic0bUtwgwuIxQeD5hzgO3OPkyS
+	 dpl+eK1bBgzJJ35WOwwwbfdgq1YQrY2eHAEWUAKnv8OixY+PRJYPtQH9Uh4KDOOHgD
+	 2/VI5iJPwBhdC5LsFDFX73FW+2wIcx/umVi6Bv43EvELDrk40xPn4mIuDGkezsnKRA
+	 xbs+ZNNQqQDTYUIePAvIqd1K0l/VrmBAarQw0NUQwiKK+jAlMR+ifUUyK+I6EB0ATl
+	 0IqZzSdRMeIajz+pVDlkeyPLq3GoGX7ttE4pCEa3ZuqwGkXktl0F6ooJc0ev3A8Yxa
+	 2+SfAAZCXhU+Q==
+Date: Tue, 27 Aug 2024 11:52:55 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Bruno Faccini <bfaccini@nvidia.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vasily Gorbik <gor@linux.ibm.com>, Will Deacon <will@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+	"linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+	"loongarch@lists.linux.dev" <loongarch@lists.linux.dev>,
+	"nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
+	"sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>, Zi Yan <ziy@nvidia.com>
+Subject: Re: [PATCH v4 24/26] arch_numa: switch over to numa_memblks
+Message-ID: <Zs2T5wkSYO9MGcab@kernel.org>
+References: <MW4PR12MB72616723E1A090E315681FF6A38B2@MW4PR12MB7261.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <MW4PR12MB72616723E1A090E315681FF6A38B2@MW4PR12MB7261.namprd12.prod.outlook.com>
 
-Hi again Dan,
+Hi,
 
-On Tue, 27 Aug 2024 11:27:48 +0300
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
+On Mon, Aug 26, 2024 at 06:17:22PM +0000, Bruno Faccini wrote:
+> > On 7 Aug 2024, at 2:41, Mike Rapoport wrote:
+> > 
+> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> > 
+> > Until now arch_numa was directly translating firmware NUMA information
+> > to memblock.
+> > 
+> > Using numa_memblks as an intermediate step has a few advantages:
+> > * alignment with more battle tested x86 implementation
+> > * availability of NUMA emulation
+> > * maintaining node information for not yet populated memory
+> > 
+> > Adjust a few places in numa_memblks to compile with 32-bit phys_addr_t
+> > and replace current functionality related to numa_add_memblk() and
+> > __node_distance() in arch_numa with the implementation based on
+> > numa_memblks and add functions required by numa_emulation.
+> > 
+> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> > Tested-by: Zi Yan <ziy@nvidia.com> # for x86_64 and arm64
+> > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > Tested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> [arm64 + CXL via
+> > QEMU]
+> > Acked-by: Dan Williams <dan.j.williams@intel.com>
+> > Acked-by: David Hildenbrand <david@redhat.com>
+> > ---
+> >   drivers/base/Kconfig       |   1 +
+> >   drivers/base/arch_numa.c   | 201 +++++++++++--------------------------
+> >   include/asm-generic/numa.h |   6 +-
+> >   mm/numa_memblks.c          |  17 ++--
+> >   4 files changed, 75 insertions(+), 150 deletions(-)
+> >  
+> > <snip>
+> > 
+> > +
+> > +u64 __init numa_emu_dma_end(void)
+> > +{
+> > +             return PFN_PHYS(memblock_start_of_DRAM() + SZ_4G);
+> > +}
+> > +
+> 
+> PFN_PHYS() translation is unnecessary here, as
+> memblock_start_of_DRAM() + SZ_4G is already a
+> memory size.
+> 
+> This should fix it:
+>  
+> diff --git a/drivers/base/arch_numa.c b/drivers/base/arch_numa.c
+> index 8d49893c0e94..e18701676426 100644
+> --- a/drivers/base/arch_numa.c
+> +++ b/drivers/base/arch_numa.c
+> @@ -346,7 +346,7 @@ void __init numa_emu_update_cpu_to_node(int
+> *emu_nid_to_phys,
+> 
+> u64 __init numa_emu_dma_end(void)
+> {
+> -              return PFN_PHYS(memblock_start_of_DRAM() + SZ_4G);
+> +             return memblock_start_of_DRAM() + SZ_4G;
+> }
+> 
+> void debug_cpumask_set_cpu(unsigned int cpu, int node, bool enable)
 
+Right, I've missed that. Thanks for the fix!
 
-> Could you add some comments to ethnl_req_get_phydev() what the NULL return
-> means vs the error pointers?  I figured it out because the callers have comments
-> but it should be next to ethnl_req_get_phydev() as well.
+Andrew, can you please apply this (with fixed formatting)
 
-Actually I replied a bit too fast, this is already documented :
-https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/net/ethtool/netlink.h#n284
+diff --git a/drivers/base/arch_numa.c b/drivers/base/arch_numa.c
+index 8d49893c0e94..e18701676426 100644
+--- a/drivers/base/arch_numa.c
++++ b/drivers/base/arch_numa.c
+@@ -346,7 +346,7 @@ void __init numa_emu_update_cpu_to_node(int *emu_nid_to_phys,
+ 
+ u64 __init numa_emu_dma_end(void)
+ {
+-	return PFN_PHYS(memblock_start_of_DRAM() + SZ_4G);
++	return memblock_start_of_DRAM() + SZ_4G;
+ }
+ 
+ void debug_cpumask_set_cpu(unsigned int cpu, int node, bool enable)
 
-Is this doc clear enough or should I still add some more explicit
-comments ?
-
-Thanks,
-
-Maxime
+-- 
+Sincerely yours,
+Mike.
 
