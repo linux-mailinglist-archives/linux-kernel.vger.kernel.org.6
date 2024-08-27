@@ -1,38 +1,38 @@
-Return-Path: <linux-kernel+bounces-303203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 777C39608FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:39:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE72B960900
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:40:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D66C0B23EF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:39:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D90A1C22BF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE8A1A2C33;
-	Tue, 27 Aug 2024 11:38:20 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804251A38DF;
+	Tue, 27 Aug 2024 11:38:21 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E23D1A08BB;
-	Tue, 27 Aug 2024 11:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F211A0B06;
+	Tue, 27 Aug 2024 11:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724758700; cv=none; b=V8eRFhPWMRvS64d/cIzAdvrDJxLRRAW6vmr4VUgcv+xbdhfAiUVy7rdLl4NJEY33o8/4uQl0hGX5LfBTA06UXeJjiq3g63O+xDu3X7gqgJsc7Cb2jiDD3vekywBN8qEoDSuwVh9cWXzldUNVFTZt0kkrkbWlv4DmcQ6Au78ZCNM=
+	t=1724758701; cv=none; b=jKW3mr+nVm6p8+g9z8lPqWiej7RRQ3JlK4XdlQvXVS3RAj57ChU1SJ8o7s6iIFVUmJbT29oseQoNv5PXJP65BNsu0GPsMupJn/cI6mCPW9t7tf9+NmoWRTJd6B5fAbmNv8v8SgBr+MyQgHZDRC6L0oQJXZbViYNhn13jeaN3q+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724758700; c=relaxed/simple;
-	bh=AzNUIafzH+8sYR1mWnVz5793pPJ3NWiNtwEnj9Iyclo=;
+	s=arc-20240116; t=1724758701; c=relaxed/simple;
+	bh=6T2kzFjrqJ2pB9Lcw9tN+yUCT9Pmdj7Kk9oVwNRcnS8=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iwzXSKROzisyucInWGaZftp91jEEni6yO0KqUg+v3C+BazHN8rEUk5t/eQCukNdJQY/yLZUt79meUWxWAOMgTVbz8RYA8yfpir/JzW1UxRPctyfAhT6teTG0OmNJrFs8kkFW/J1GcA0fMK6jsSj8S3m33cQOG2LrmJAK2pMin3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+	 MIME-Version:Content-Type; b=b6rTEJJaJRzm6aHT/R3ILaDDlicFHRqAiFk1SCczWI2SgZzLad2mfw/m5TjCIHhDG8NWjmNQhWJc90rHTNstIy/gc5dLeErjJMUl1kQSgBVwTZbCdrGAOUPAp1bflIZGDmOG9zeECFmh9+5tCrbPdV67C/KISNrOc61v36KWhDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WtQQv39T5zQqgc;
-	Tue, 27 Aug 2024 19:33:27 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WtQWY6Vpgz14GKW;
+	Tue, 27 Aug 2024 19:37:29 +0800 (CST)
 Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 26A9B18010B;
+	by mail.maildlp.com (Postfix) with ESMTPS id C5510140202;
 	Tue, 27 Aug 2024 19:38:16 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
  (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
@@ -48,9 +48,9 @@ To: <andrew@lunn.ch>, <sebastian.hesselbarth@gmail.com>,
 	<ulf.hansson@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
 	<linux-tegra@vger.kernel.org>, <krzk@kernel.org>, <jic23@kernel.org>
-Subject: [PATCH -next 6/8] soc: dove: Simplify with scoped for each OF child loop
-Date: Tue, 27 Aug 2024 19:46:05 +0800
-Message-ID: <20240827114607.4019972-7-ruanjinjie@huawei.com>
+Subject: [PATCH -next 7/8] soc: ti: knav_dma: Simplify with scoped for each OF child loop
+Date: Tue, 27 Aug 2024 19:46:06 +0800
+Message-ID: <20240827114607.4019972-8-ruanjinjie@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240827114607.4019972-1-ruanjinjie@huawei.com>
 References: <20240827114607.4019972-1-ruanjinjie@huawei.com>
@@ -68,48 +68,56 @@ X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
 Use scoped for_each_child_of_node_scoped() when iterating over device
 nodes to make code a bit simpler.
 
+And use the dev_err_probe() helper to simplify error handling during
+probe. This also handle scenario, when EDEFER is returned and useless
+error is printed.
+
 Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 ---
- drivers/soc/dove/pmu.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/soc/ti/knav_dma.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/soc/dove/pmu.c b/drivers/soc/dove/pmu.c
-index 6202dbcd20a8..75f5fc3cb2c6 100644
---- a/drivers/soc/dove/pmu.c
-+++ b/drivers/soc/dove/pmu.c
-@@ -372,7 +372,7 @@ int __init dove_init_pmu_legacy(const struct dove_pmu_initdata *initdata)
-  */
- int __init dove_init_pmu(void)
+diff --git a/drivers/soc/ti/knav_dma.c b/drivers/soc/ti/knav_dma.c
+index fb0746d8caad..eeec422a46f0 100644
+--- a/drivers/soc/ti/knav_dma.c
++++ b/drivers/soc/ti/knav_dma.c
+@@ -706,20 +706,15 @@ static int knav_dma_probe(struct platform_device *pdev)
  {
--	struct device_node *np_pmu, *domains_node, *np;
-+	struct device_node *np_pmu, *domains_node;
- 	struct pmu_data *pmu;
- 	int ret, parent_irq;
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *node = pdev->dev.of_node;
+-	struct device_node *child;
+ 	int ret = 0;
  
-@@ -405,21 +405,18 @@ int __init dove_init_pmu(void)
+-	if (!node) {
+-		dev_err(&pdev->dev, "could not find device info\n");
+-		return -EINVAL;
+-	}
++	if (!node)
++		return dev_err_probe(&pdev->dev, -EINVAL, "could not find device info\n");
  
- 	pmu_reset_init(pmu);
+ 	kdev = devm_kzalloc(dev,
+ 			sizeof(struct knav_dma_pool_device), GFP_KERNEL);
+-	if (!kdev) {
+-		dev_err(dev, "could not allocate driver mem\n");
+-		return -ENOMEM;
+-	}
++	if (!kdev)
++		return dev_err_probe(dev, -ENOMEM, "could not allocate driver mem\n");
  
--	for_each_available_child_of_node(domains_node, np) {
-+	for_each_available_child_of_node_scoped(domains_node, np) {
- 		struct of_phandle_args args;
- 		struct pmu_domain *domain;
+ 	kdev->dev = dev;
+ 	INIT_LIST_HEAD(&kdev->list);
+@@ -732,10 +727,9 @@ static int knav_dma_probe(struct platform_device *pdev)
+ 	}
  
- 		domain = kzalloc(sizeof(*domain), GFP_KERNEL);
--		if (!domain) {
--			of_node_put(np);
-+		if (!domain)
- 			break;
--		}
- 
- 		domain->pmu = pmu;
- 		domain->base.name = kasprintf(GFP_KERNEL, "%pOFn", np);
- 		if (!domain->base.name) {
- 			kfree(domain);
--			of_node_put(np);
+ 	/* Initialise all packet dmas */
+-	for_each_child_of_node(node, child) {
++	for_each_child_of_node_scoped(node, child) {
+ 		ret = dma_init(node, child);
+ 		if (ret) {
+-			of_node_put(child);
+ 			dev_err(&pdev->dev, "init failed with %d\n", ret);
  			break;
  		}
- 
 -- 
 2.34.1
 
