@@ -1,127 +1,82 @@
-Return-Path: <linux-kernel+bounces-302701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10317960216
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:42:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B47E960186
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:24:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 427281C20FD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:42:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEEE31C2216E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360A813FD83;
-	Tue, 27 Aug 2024 06:42:53 +0000 (UTC)
-Received: from mta21.hihonor.com (mta21.honor.com [81.70.160.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9305F1448E0;
+	Tue, 27 Aug 2024 06:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z2gL4dQO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8FB3A1C4
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6267BA49;
+	Tue, 27 Aug 2024 06:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724740972; cv=none; b=JlWfdhXdDruIAC/ZZxFwQdq8/KNy7bUfkP4EMIbqa/dvHPpAdTggB+YBdrghf582o5JWqzzmhq/SniUAS0Mphq8y163rH9RJedLIe9Zxz6NggfpS8cgUJz10iDRPGfeCTsX8iQq5i+Dvj5EeZcgeUS/WXZVsFsx7oFQ4Pl/BAqQ=
+	t=1724739874; cv=none; b=mT924ntRswL7YYbKM+hxwfWYFYDiExR/HuZok+y8y/zKsRgTm7VTtS9KktcL5KuctkD+44bsD2ALtaGS9t+35C7GjfZwL94FQxJ3FdKdGEaGf+5bwkQ1Mnl+MXxCTsbXddwExGMjD9IaFtUPYJ/xEIuY/oX9E7DJKo7J6Gui2OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724740972; c=relaxed/simple;
-	bh=AfiEjW89m5Om/b3PrLTiuLKQ8Otjo8qrSZ78r00kCoo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GdBdR05KRu+92FQ+atGPcj8JDzWoY15vXiU/R/evK8HJi8HoigCqK4XO3pGlaiCIVQeqmyh3kz6ET6CSpQhZ+L6TeJc7zcV1m2Kk1wjLh1hFEtjFbHcR3NNVvWTma8VqE5oqZNB3wkgzNTPeCIYw/OAZZcYjJjjHQ/XD0jOFbiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w011.hihonor.com (unknown [10.68.20.122])
-	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4WtHVp4j8xzYl3hf;
-	Tue, 27 Aug 2024 14:21:22 +0800 (CST)
-Received: from a011.hihonor.com (10.68.31.243) by w011.hihonor.com
- (10.68.20.122) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 27 Aug
- 2024 14:22:45 +0800
-Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
- (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 27 Aug
- 2024 14:22:44 +0800
-From: wangzijie <wangzijie1@honor.com>
-To: <chao@kernel.org>, <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
-	<bintian.wang@honor.com>, wangzijie <wangzijie1@honor.com>
-Subject: [RFC PATCH] f2fs: don't set SBI_QUOTA_NEED_REPAIR flag if receive SIGKILL
-Date: Tue, 27 Aug 2024 14:22:42 +0800
-Message-ID: <20240827062242.776881-1-wangzijie1@honor.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1724739874; c=relaxed/simple;
+	bh=eiyBCHlvira5vozuY4SS6oQOMVMr3NqhAQQh4AhxF8k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VWTMuFa/smDCcaXjm8OhicNXn+SYm+VIj74topn6PhUGEvCPbtNiN/0JoO41W3vVZFGv8jxtZsrErt5eJ18pl+3Cew6A+21cVmmrrNZsDkd7TpIc1SvRZuiko+89P0YzK0jlKmhtY7+Q8X8B3mbJ6PFQ2/qOz/qjLlIk+S3GYxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z2gL4dQO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 754B3C4E68E;
+	Tue, 27 Aug 2024 06:24:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724739874;
+	bh=eiyBCHlvira5vozuY4SS6oQOMVMr3NqhAQQh4AhxF8k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z2gL4dQOC+6Pa8coExiUQ62UkHTnr0v7NVrt4TDtf8rM5IC6FB4HPW39qU5a7R9nB
+	 VZUnmGhOvtnZP+4w/XFkIIV1JxfQhAKItyOzIkfK82ftI9zjB991tZjs8dsH5zi8TE
+	 GH2jg1OFqHKIDRkAPYbzvK15NX7VxAly1Fu+uRGEtvwDr65bz65i1VdgENRDO9ymQM
+	 dDfdGN7UN3izcnzpkfAJuT/zUwbGUEGrOHh7K/qL+eIrgukPZlTLctBvH+8yOPvtB7
+	 QYcl2HqVyw02l59nr3XSlf9MY0ZA1jeH7TXFz9rZ9kvzCbtfp8mZa5Rue7Qyf5QVnW
+	 mVgygtRnyIyRQ==
+Date: Tue, 27 Aug 2024 08:24:30 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sricharan R <quic_srichara@quicinc.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
+	manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	vkoul@kernel.org, kishon@kernel.org, andersson@kernel.org, konradybcio@kernel.org, 
+	p.zabel@pengutronix.de, dmitry.baryshkov@linaro.org, quic_nsekar@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, robimarko@gmail.com
+Subject: Re: [PATCH V2 0/6] Enable IPQ5018 PCI support
+Message-ID: <wq5mfkqvvclubmacu5ogptdeaahxr77hk73dpmcvcelno5ylpv@4q4hfuolzky7>
+References: <20240827045757.1101194-1-quic_srichara@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: w001.hihonor.com (10.68.25.235) To a011.hihonor.com
- (10.68.31.243)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240827045757.1101194-1-quic_srichara@quicinc.com>
 
-Thread A
--dquot_initialize
- -dqget
-  -f2fs_dquot_acquire
-   -v2_read_dquot
-    -qtree_read_dquot
-     -find_tree_dqentry
-      -f2fs_quota_read
-       -read_cache_page_gfp
-        -do_read_cache_folio
-         -fiemap_read_folio
-          -folio_wait_locked_killable
-           -receive SIGKILL : return -EINTR
-       -set SBI_QUOTA_NEED_REPAIR
-   -set SBI_QUOTA_NEED_REPAIR
+On Tue, Aug 27, 2024 at 10:27:51AM +0530, Sricharan R wrote:
+> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> 
+> This patch series adds the relevant phy and controller
+> DT configurations for enabling PCI gen2 support
+> on IPQ5018.
+> 
+> v2:
+>   Fixed all review comments from Krzysztof, Robert Marko,
+>   Dmitry Baryshkov, Manivannan Sadhasivam, Konrad Dybcio.
 
-When calling read_cache_page_gfp in quota read, thread may receive SIGKILL and
-set SBI_QUOTA_NEED_REPAIR, should we set SBI_QUOTA_NEED_REPAIR in this error path?
+That's not specific. What exactly did you do? You must list the
+changes.
 
-Signed-off-by: wangzijie <wangzijie1@honor.com>
----
- fs/f2fs/inode.c | 3 ++-
- fs/f2fs/super.c | 6 +++---
- 2 files changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index ed629dabb..2af98e2b7 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -837,8 +837,9 @@ void f2fs_evict_inode(struct inode *inode)
- 
- 	err = f2fs_dquot_initialize(inode);
- 	if (err) {
-+		if (err != -EINTR)
-+			set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
- 		err = 0;
--		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
- 	}
- 
- 	f2fs_remove_ino_entry(sbi, inode->i_ino, APPEND_INO);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 1f1b3647a..f99a36ff3 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2650,8 +2650,8 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
- 			if (PTR_ERR(page) == -ENOMEM) {
- 				memalloc_retry_wait(GFP_NOFS);
- 				goto repeat;
--			}
--			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
-+			} else if (PTR_ERR(page) != -EINTR)
-+				set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
- 			return PTR_ERR(page);
- 		}
- 
-@@ -3070,7 +3070,7 @@ static int f2fs_dquot_acquire(struct dquot *dquot)
- 
- 	f2fs_down_read(&sbi->quota_sem);
- 	ret = dquot_acquire(dquot);
--	if (ret < 0)
-+	if (ret < 0 && ret != -EINTR)
- 		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
- 	f2fs_up_read(&sbi->quota_sem);
- 	return ret;
--- 
-2.25.1
+Best regards,
+Krzysztof
 
 
