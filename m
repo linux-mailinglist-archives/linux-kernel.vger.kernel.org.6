@@ -1,193 +1,233 @@
-Return-Path: <linux-kernel+bounces-303293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48782960A4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:30:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C195960A4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:30:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7822BB24748
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:30:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51CA41C22B4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15EA1B5EDA;
-	Tue, 27 Aug 2024 12:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122621B5ECA;
+	Tue, 27 Aug 2024 12:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vYm4frDR"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ghJGqaop"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E85D1A7077
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E5919FA8A;
+	Tue, 27 Aug 2024 12:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724761774; cv=none; b=r2KBC6xvU3lVGb9KZNDu05bxEGD4zw29w0xPU0BzKGC7AWTM4XYCKl0Mc+ge1GYzC9YVc7APa9OTFPOgccndxgjQuYLBwM1zT2du0olDsaO+dhGOlxfcnEDBKtrdLq46QdvRJ4Egv6I8rb9oQeJwmlkK9+cffAg2oG4o/QlK1d0=
+	t=1724761772; cv=none; b=lI/vuYNtjNAE3aDaYKPacxY93DtBDYr5pvssq3wc+RdG8jQrALZckKPwNozxGKjkNnnfzww70uPI4PlVZ8NUf7NcV7DC0GVGvIMugRA2R8pCnpTorvEFWUIsbj3NqOTywH3+D101orHuPrCUTYVdKV8AJMecfBKIWluxShzoiRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724761774; c=relaxed/simple;
-	bh=wP2AVbCMtrN5VtbZj7tTRuLCXB5q6tl+tSebAQqIpqQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DSJ2L/CAQSgOxNNlxB+jDAhyy63ObT/qxqH65Yo+Qttfa1lB/eAysYryYqPqE4d8P0rZOnXgU7h0PqU2r3Z+BKN8WSP8H4XwONlRHeJzqojGkPLIciukQMCv3+kiMAIg9OdXFblncn8cHaqejMBfiUZN+iTJ2CDvaCugj7SpD3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vYm4frDR; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3719419c2aaso168072f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 05:29:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724761770; x=1725366570; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fL31jwiSCqggQr8vCejcnZYNEtXeVayNVEVXtcMxsQo=;
-        b=vYm4frDR0K+x1KKRTaZjAiBMdzoniwXbbJU3ScqUF6JFE1fBae96BJhgKyMBdFg552
-         VTj9+dtTPPAgZeqMeuvWJzl3dncJf+qq9/p0wQUGem/4HQuU2uDvDSM0Khqh+1QPVDBN
-         ld32qKDpucg9nbs51WFL3B0yFEOlhF9Pfj3RdeGUAbwySVGIgdgGOKjilZXQ9Enus6+R
-         dXQHr9T4SIpHuRz3NCbSvtAoNFIxaV8Mok0VBfhpiiAnrJUkyn65Ir/2V/Jf15eacvSq
-         xOJB/0/uitpedL3pXaN7okk2OUnagJyS7KvTpgYBO4M1nqJ+WvsxIfKk1lKo4iB5gNjl
-         cDNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724761770; x=1725366570;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fL31jwiSCqggQr8vCejcnZYNEtXeVayNVEVXtcMxsQo=;
-        b=K1e91WAVIAVYPU0gUKsmW0QCgrWbf2QLoA03jLj3y+jzMEOHSckf5JRV0kKixCN7ex
-         oI7zADg00uhFlZITF/n1g/eF8lSaevV8QVnighELSeRcYfP36gn82p/oCox9YDPQByl2
-         +nkc9lbA7ggiuh05qA/PfQuwFrMk8opOcm37AWhk0kwcqvcNuHat/qOX6526XGZp15zw
-         kJgikqucKZjifNL4Xwpa6P8iU+1TcvD/Hj7ZnMxfnx8zRFqecjo5rk0wME0xHOOUq2z+
-         JUNhz/3ZrtwkJeNjcSExGnyrtAVuTL7I+mBM62B2c2Oaa1LsmIepcv6EmxDrGHhBFp2k
-         2zDw==
-X-Forwarded-Encrypted: i=1; AJvYcCXHjnb+iRyg3/r9DMfy3oy9z0mPdEjwK7a3T6nA96+l5PvSflpUqcnPm5xb9M1uXY6AsxHHQrXRGNPVjcU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyobMGPj2WGimiqT0yp84T6jnIO8WE0ttP28N2FMjOmLHj/B8TG
-	OdEmPmQVgyM9Q2tJy8odHNq+pqJeSDQccmrL75u3GXgD8G9x11CDjHwSB640vKM=
-X-Google-Smtp-Source: AGHT+IEs/GSUZdufo34i3JJju+48AQe7CSrCAmrcnZ54qyfZuxk0qpho9VhpbqydQfb6yzephaTVZQ==
-X-Received: by 2002:a5d:648e:0:b0:373:6bf:9608 with SMTP id ffacd0b85a97d-37311843370mr5383974f8f.2.1724761770204;
-        Tue, 27 Aug 2024 05:29:30 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730821a9fcsm12900533f8f.94.2024.08.27.05.29.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 05:29:29 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Olof Johansson <olof@lixom.net>,
-	Arnd Bergmann <arnd@arndb.de>,
-	arm@kernel.org,
-	soc@kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] memory: drivers for v6.12
-Date: Tue, 27 Aug 2024 14:29:25 +0200
-Message-ID: <20240827122926.30794-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1724761772; c=relaxed/simple;
+	bh=XqjPpcQE4knL4gWYvkss+5mIAz/vbDRiJhzFfxy/fSA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XGAunqKjhxN7sN5ACIhDYMbP6QUA8DwQStkVIkSaF4MmiSHLnpZK8ISIU5/PvJsybJi95PILLk9SOddnzYwthPlsfSX65UDqObDQIsgCZbP+DXWs7ecmBEiZjEk2UWfh3fJ0mEA9OdByOKMgIAvcjcFpa83J6NwVBLiZVpw18iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ghJGqaop; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08E3BC61044;
+	Tue, 27 Aug 2024 12:29:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724761771;
+	bh=XqjPpcQE4knL4gWYvkss+5mIAz/vbDRiJhzFfxy/fSA=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=ghJGqaoplSQSVBjl7w6ElwgsjnTSMhDi9ieygMydvtTLvnxIy6/JFYo/dpc/m+Xgt
+	 j01i84rSdEemhXryMh/ph748zxH2vgqcsisdf79a6yOD038b7QBTle7Utuo4xzKfIq
+	 X/00QFA92nnRLxNNkONzafV+w2cct8gKyj/sOSfr4o11cCa6f9VALz/TFJbR3/wy0p
+	 KtU9R3gqKUcOHe28xfl5657baiCH+9LwJOiw2bBTBTFurzGI1Ai4xz1KbAG+ZvIgN8
+	 VqyuWWE+/1ZpdVV5PDXlIu+vgmebdag21/PhaR+6U7D35JzRbEupTkrEfSbt7VgwiO
+	 wrFWNXSf//41w==
+Message-ID: <322a4a25f36794e6db3d1bc3376df1391591d0a8.camel@kernel.org>
+Subject: Re: [PATCH] vfs: elide smp_mb in iversion handling in the common
+ case
+From: Jeff Layton <jlayton@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Date: Tue, 27 Aug 2024 08:29:29 -0400
+In-Reply-To: <20240815083310.3865-1-mjguzik@gmail.com>
+References: <20240815083310.3865-1-mjguzik@gmail.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40app2) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Hi,
+On Thu, 2024-08-15 at 10:33 +0200, Mateusz Guzik wrote:
+> According to bpftrace on these routines most calls result in cmpxchg,
+> which already provides the same guarantee.
+>=20
+> In inode_maybe_inc_iversion elision is possible because even if the
+> wrong value was read due to now missing smp_mb fence, the issue is going
+> to correct itself after cmpxchg. If it appears cmpxchg wont be issued,
+> the fence + reload are there bringing back previous behavior.
+>=20
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
+>=20
+> chances are this entire barrier guarantee is of no significance, but i'm
+> not signing up to review it
+>=20
+> I verified the force flag is not *always* set (but it is set in the most =
+common case).
+>=20
+>  fs/libfs.c | 28 ++++++++++++++++++----------
+>  1 file changed, 18 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/fs/libfs.c b/fs/libfs.c
+> index 8aa34870449f..61ae4811270a 100644
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -1990,13 +1990,19 @@ bool inode_maybe_inc_iversion(struct inode *inode=
+, bool force)
+>  	 * information, but the legacy inode_inc_iversion code used a spinlock
+>  	 * to serialize increments.
+>  	 *
+> -	 * Here, we add full memory barriers to ensure that any de-facto
+> -	 * ordering with other info is preserved.
+> +	 * We add a full memory barrier to ensure that any de facto ordering
+> +	 * with other state is preserved (either implicitly coming from cmpxchg
+> +	 * or explicitly from smp_mb if we don't know upfront if we will execut=
+e
+> +	 * the former).
+>  	 *
+> -	 * This barrier pairs with the barrier in inode_query_iversion()
+> +	 * These barriers pair with inode_query_iversion().
+>  	 */
+> -	smp_mb();
+>  	cur =3D inode_peek_iversion_raw(inode);
+> +	if (!force && !(cur & I_VERSION_QUERIED)) {
+> +		smp_mb();
+> +		cur =3D inode_peek_iversion_raw(inode);
+> +	}
+> +
+>  	do {
+>  		/* If flag is clear then we needn't do anything */
+>  		if (!force && !(cur & I_VERSION_QUERIED))
+> @@ -2025,20 +2031,22 @@ EXPORT_SYMBOL(inode_maybe_inc_iversion);
+>  u64 inode_query_iversion(struct inode *inode)
+>  {
+>  	u64 cur, new;
+> +	bool fenced =3D false;
+> =20
+> +	/*
+> +	 * Memory barriers (implicit in cmpxchg, explicit in smp_mb) pair with
+> +	 * inode_maybe_inc_iversion(), see that routine for more details.
+> +	 */
+>  	cur =3D inode_peek_iversion_raw(inode);
+>  	do {
+>  		/* If flag is already set, then no need to swap */
+>  		if (cur & I_VERSION_QUERIED) {
+> -			/*
+> -			 * This barrier (and the implicit barrier in the
+> -			 * cmpxchg below) pairs with the barrier in
+> -			 * inode_maybe_inc_iversion().
+> -			 */
+> -			smp_mb();
+> +			if (!fenced)
+> +				smp_mb();
+>  			break;
+>  		}
+> =20
+> +		fenced =3D true;
+>  		new =3D cur | I_VERSION_QUERIED;
+>  	} while (!atomic64_try_cmpxchg(&inode->i_version, &cur, new));
+>  	return cur >> I_VERSION_QUERIED_SHIFT;
 
-I might have one more smaller pull request coming later.
+This looks reasonable to me.
 
-Best regards,
-Krzysztof
+As I said in my earlier email, we could stop setting "force" in more
+cases, as it's not usually required. The only reason we set it to true
+in places like inode_update_timestamps is that we're updating the the
+timestamps on disk anyway, so we might as well increment the change
+attribute too.
 
+That's not specifically required though. The only real requirement for
+the change attribute is that two samples of it must be different if,
+between the samples, the inode is changed in a way that would alter the
+ctime. If these cmpxchg's are slowing down real workloads, we could
+stop doing that when it hasn't been queried.
 
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
-
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-mem-ctrl.git tags/memory-controller-drv-6.12
-
-for you to fetch changes up to ff390189b7f2cfa20c644bc58b4462b5e2621838:
-
-  memory: mtk-smi: Use devm_clk_get_enabled() (2024-08-25 11:02:17 +0200)
-
-----------------------------------------------------------------
-Memory controller drivers for v6.12
-
-1. Tegra210 EMC: Driver refactoring and rework.
-2. Tegra186 EMC: Drop unused function.
-3. FSL WEIM: Correct fsl,weim-cs-timing property to properly validate it
-   as an array.
-4. TI AEMIF: Drop platform data support.
-5. TI EMIF: Switch to of_property_read_bool().
-
-6. Several cleanups in multiple drivers: TI AEMIF and EMIF, Tegra
-   EMC/MC, Atmel EBI, Samsung Exynos5422 DMC, STM32 FMC2 EBI, OMAP GPMC,
-   PL172 and PL1353 SMC.  These are mostly code simplifying around
-   probe() like using
-    - devm_clk_get_enabled(),
-    - dev_err_probe(),
-    - scoped device node handling (cleanup.h),
-    - scoped for each OF child loops,
-    - scoped/guard locks.
-
-----------------------------------------------------------------
-Bartosz Golaszewski (4):
-      memory: ti-aemif: remove platform data support
-      memory: ti-aemif: use devm_clk_get_enabled() and shrink the code
-      memory: ti-aemif: don't needlessly iterate over child nodes
-      memory: ti-aemif: Revert "memory: ti-aemif: don't needlessly iterate over child nodes"
-
-Diogo Ivo (7):
-      memory: tegra: Remove periodic compensation duplicate calls
-      memory: tegra: Move DQSOSC measurement to common place
-      memory: tegra: Reword and correct comments
-      memory: tegra: Change macros to interpret parameter as integer
-      memory: tegra: Loop update_clock_tree_delay()
-      memory: tegra: Move compare/update current delay values to a function
-      memory: tegra: Rework update_clock_tree_delay()
-
-Krzysztof Kozlowski (21):
-      memory: tegra186-emc: drop unused to_tegra186_emc()
-      dt-bindings: memory-controllers: renesas,rpc-if: add top-level constraints
-      memory: atmel-ebi: use scoped device node handling to simplify error paths
-      memory: atmel-ebi: simplify with scoped for each OF child loop
-      memory: samsung: exynos5422-dmc: simplify dmc->dev usage
-      memory: samsung: exynos5422-dmc: use scoped device node handling to simplify error paths
-      memory: stm32-fmc2-ebi: simplify with scoped for each OF child loop
-      memory: stm32-fmc2-ebi: simplify with dev_err_probe()
-      memory: tegra-mc: simplify with scoped for each OF child loop
-      memory: tegra124-emc: simplify with scoped for each OF child loop
-      memory: tegra20-emc: simplify with scoped for each OF child loop
-      memory: tegra30-emc: simplify with scoped for each OF child loop
-      memory: ti-aemif: simplify with dev_err_probe()
-      memory: ti-aemif: simplify with scoped for each OF child loop
-      memory: emif: drop unused 'irq_state' member
-      memory: emif: simplify locking with guard()
-      memory: omap-gpmc: simplify locking with guard()
-      memory: pl172: simplify with dev_err_probe()
-      memory: pl172: simplify with devm_clk_get_enabled()
-      memory: pl353-smc: simplify with dev_err_probe()
-      memory: pl353-smc: simplify with devm_clk_get_enabled()
-
-Rob Herring (Arm) (2):
-      memory: emif: Use of_property_read_bool()
-      dt-bindings: memory-controllers: fsl,imx-weim: Fix "fsl,weim-cs-timing" schema
-
-Rong Qianfeng (1):
-      memory: mtk-smi: Use devm_clk_get_enabled()
-
- .../memory-controllers/fsl/fsl,imx-weim.yaml       |  25 +-
- .../memory-controllers/renesas,rpc-if.yaml         |   4 +-
- drivers/memory/atmel-ebi.c                         |  35 +-
- drivers/memory/emif.c                              |  31 +-
- drivers/memory/mtk-smi.c                           |   6 +-
- drivers/memory/omap-gpmc.c                         |  24 +-
- drivers/memory/pl172.c                             |  30 +-
- drivers/memory/pl353-smc.c                         |  50 +--
- drivers/memory/samsung/exynos5422-dmc.c            |  90 ++--
- drivers/memory/stm32-fmc2-ebi.c                    |  23 +-
- drivers/memory/tegra/mc.c                          |  11 +-
- drivers/memory/tegra/tegra124-emc.c                |   7 +-
- drivers/memory/tegra/tegra186-emc.c                |   5 -
- drivers/memory/tegra/tegra20-emc.c                 |   7 +-
- drivers/memory/tegra/tegra210-emc-cc-r21021.c      | 455 +++++----------------
- drivers/memory/tegra/tegra30-emc.c                 |   7 +-
- drivers/memory/ti-aemif.c                          |  74 +---
- include/linux/platform_data/ti-aemif.h             |  45 --
- 18 files changed, 236 insertions(+), 693 deletions(-)
- delete mode 100644 include/linux/platform_data/ti-aemif.h
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
