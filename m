@@ -1,105 +1,80 @@
-Return-Path: <linux-kernel+bounces-302700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 636BB960211
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:40:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7AF396021A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:43:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2497D28110A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:40:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ECD128279A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5161149C7A;
-	Tue, 27 Aug 2024 06:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D2A6145B3F;
+	Tue, 27 Aug 2024 06:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MDj1d/+W"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r7f9RL42"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD23713D53F
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0B713D53F;
+	Tue, 27 Aug 2024 06:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724740826; cv=none; b=AqkbGIWqaqWT57mE/Jdmp5uZMpQJmVNvwVUgDG5OPwzXo3nF9iZ2b7+0rQLuDIRTMy11hRs7Z96ji1CIN1y1B3knY4KHiM9Xa/dYtsN70FmK4ncgCvG8YiziDSkwLXcJ1b43wR8i2JvkoOSVP3z2ES6ahiGFo9YdnR1mm3EC0iQ=
+	t=1724740995; cv=none; b=dnMMWyYME1rYsTo2cUJkF8eVYxdAH4iojh95wMWZR6Ym1eWWF8HYiZiE0DsFo4TVWZ3yxMDJffKnhIpy9/9o8ZLQ9Ty/C/UCRN9XiF91YMtDfXCFGddW2D+nrGu2KvIamSpwf0GVmq88WnscjseOzWbJ1+ObHhjftHtCSY0FdKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724740826; c=relaxed/simple;
-	bh=uAcZu4y7bLgSB9heMOo1Yp8Y1l5hXVmDLaXgDUIlAH0=;
+	s=arc-20240116; t=1724740995; c=relaxed/simple;
+	bh=UN8jJKWp9FZ86DyKvPyHNI3fF4Bv/Fr2Y0IH+XN6Gnk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b1z0qmC1fyS1KJynxTWqw3OVgh1rF3KJATKo2Ubk44wRWyZhuE0maYwSJWxgZMHVdI6ycrIYVqYb0zFns2MvsabBbz7WwhqknEgNNaCPNnHzlkc18Qiqte4Qx2ASNgvZZhekzJisQjXovi7ixemVGXEz8+2ZOndJULOqpCzER8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MDj1d/+W; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 27 Aug 2024 02:40:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724740821;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EQptxE7qA2VWIgX3oNQ1mmeqR6GHf9K4w2oDVMxZa14=;
-	b=MDj1d/+WOS5gCRitsfLH/21htkLMK4K2TIyc1MjdWb4dK3v74eylUATRf/+g4Be72CAJh7
-	fzv9vUbTA26ve+x7v0o/7FORTyGpY9JqJ7tG7RX0B1mJDSXS3uyYkuxYyVHjkQ7D+uAV3R
-	GAQt+lBjNurKvR3kiN0ZcLosVVtHkqo=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, 
-	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <ru3d2bfrnyap7t3ya5kke3fqyrnj2hgbl4z2negbqkqj7z4mr2@gqrstl4lpl5h>
-References: <20240826085347.1152675-1-mhocko@kernel.org>
- <20240826085347.1152675-2-mhocko@kernel.org>
- <egma4j7om4jcrxwpks6odx6wu2jc5q3qdboncwsja32mo4oe7r@qmiviwad32lm>
- <ZszeUAMgGkGNz8H9@tiehlicka>
- <d5zorhk2dmgjjjta2zyqpyaly66ykzsnje4n4j4t5gjxzt57ty@km5j4jktn7fh>
- <ZszlQEqdDl4vt43M@tiehlicka>
- <ut5zfyvpkigjqev43kttxhxmpgnbkfs4vdqhe4dpxr6wnsx6ct@qmrazzu3fxyx>
- <Zs1rvLlk0mXklHyf@tiehlicka>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tADQVKvDmHCsVOmd+vPZE9cIjOPnp4Ab0gbf+4FUlZx57GL0Lhwvynsu5mjJpG1ZlqFzPwr+BSpB1VBX6CucUEGPgpcrLFRdAQQ3Mz63OYVXpWsr59mFW9c7TAsNt+83dMPz37WWzymEp93dtbXTYvtRhmtHF/T3dsiRTGN/3hA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r7f9RL42; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CFD3C8B7A8;
+	Tue, 27 Aug 2024 06:43:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724740995;
+	bh=UN8jJKWp9FZ86DyKvPyHNI3fF4Bv/Fr2Y0IH+XN6Gnk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r7f9RL42dCe/JH7mFcxfIC9Ni0ew1mM5oQ8BnvNEKihWUttFPsybIKY1uB6olNLCz
+	 AdoAhwyu5CM27ipFGx5u3+rv3m1UduKzk/d5TWAq0dWzavrhCTMs1DHcePUb34lmoK
+	 8I7fk8idgtKPmP3HGoiG13DIIIpkA90RPhVAZZFuA5tp9b72ZTstsafp6+WX8c88c+
+	 IhJQLU52Nig+MVSJOhPBlC3RNk+egYx+pm8sdhIV5P2xwLSarG86rAMBXJJnX0vmZg
+	 msL1gTYOzO28fPYCBBJCsSlWCzklYWMXahE8b4SqqQfzIzJzjWxOGjL2WbFPmdof3W
+	 /eVlva70RMXXg==
+Date: Tue, 27 Aug 2024 08:43:11 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com, 
+	sboyd@kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: clk: at91: Add clock IDs for the slow
+ clock controller
+Message-ID: <nolm3yacbmvtwstho6c2stuaknjxpzl75z6dpechrnmr6rkpds@nzejoyryj74d>
+References: <20240826173116.3628337-1-claudiu.beznea@tuxon.dev>
+ <20240826173116.3628337-2-claudiu.beznea@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Zs1rvLlk0mXklHyf@tiehlicka>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240826173116.3628337-2-claudiu.beznea@tuxon.dev>
 
-On Tue, Aug 27, 2024 at 08:01:32AM GMT, Michal Hocko wrote:
-> You are not really answering the main concern I have brought up though.
-> I.e. GFP_NOFAIL being fundamentally incompatible with NORECLAIM semantic
-> because the page allocator doesn't and will not support this allocation
-> mode.  Scoped noreclaim semantic makes such a use much less visible
-> because it can be deep in the scoped context there more error prone to
-> introduce thus making the code harder to maintain. 
+On Mon, Aug 26, 2024 at 08:31:14PM +0300, Claudiu Beznea wrote:
+> Add clock IDs for the slow clock controller. Previously, raw numbers
+> were used (0 or 1) for clocks generated by the slow clock controller. This
+> leads to confusion and wrong IDs were used on few device trees. To avoid
+> this add macros.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> ---
+>  include/dt-bindings/clock/at91.h | 4 ++++
 
-You're too attached to GFP_NOFAIL.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-GFP_NOFAIL is something we very rarely use, and it's not something we
-want to use. Furthermore, GFP_NOFAIL allocations can fail regardless of
-this patch - e.g. if it's more than 2 pages, it's not going to be
-GFP_NOFAIL. In general you can't avoid having error paths for memory
-allocations, and GFP_NOFAIL can't fundamentally change that.
+Best regards,
+Krzysztof
 
-Stop trying to design things around GFP_NOFAIL.
-
-> I do see why you would like to have NOWAIT kvmalloc support available
-> and I also do see challenges in achieving that. But I completely fail to
-> see why you are bring that up _here_ as that is not really relevant to
-> PF_MEMALLOC_NORECLAIM use by bcachefs because it demonstrably doesn't
-> need that. There is no other user of the flag at the moment so dropping
-> the flag before there is more misuse is a reasonable goal. If you want
-> to bring up vmalloc NOWAIT support then feel free to do that in another
-> context and we can explore potential ways to achieve that.
-
-The inconsistencies between what PF_MEMALLOC supports and what gfp flags
-support are quite relevant. If gfp flags aren't plumbed everywhere, and
-aren't going to be plumbed everywhere (and that is the current
-decision), then we must have PF_MEMALLOC support.
 
