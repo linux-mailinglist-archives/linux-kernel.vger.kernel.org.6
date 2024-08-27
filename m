@@ -1,319 +1,277 @@
-Return-Path: <linux-kernel+bounces-303450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6061960C35
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:36:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 793D5960C3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D2281F21D7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:36:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D7221C21BDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C421C4621;
-	Tue, 27 Aug 2024 13:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD641C4EC8;
+	Tue, 27 Aug 2024 13:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y460HW05"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Zzwtqdhs"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45DA1C4607;
-	Tue, 27 Aug 2024 13:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46981BCA04
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 13:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724765680; cv=none; b=KLG6TrBWLSUVSAWi5PRMiFo2JiZQq4Ga95E0vaMWlpszK1Xm2ddURss4kX1IZvcxpP57Q7K3ng0MzP4yBat1evJkaIUhBr/jmOj6OeQ0KHEGYunaijsMHkZadsNci43uenCBCC75qU26GYGf+YS2FjDppSxSUtH0uyVElQbPZrQ=
+	t=1724765704; cv=none; b=EXfmX5dk81FtIpjrQqpr5GAq1u7UjVj0GWQaWYIYqpXczoJ23N4VKXpwYwNw0fUd7YP22lOBSCgfZjsQuiv7IPGpI/ud4sKx/P1V5XzGY0df5T0TO7hDTdS59A5iXFNvmnhWtJgm9EJ65e++aRWNRWsRU9untIeFMuvmWV5AOs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724765680; c=relaxed/simple;
-	bh=0Ti4uEyQ2I50MDalNEldb+1diVigldzU50iZRu2XaRc=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=X8HAZEXkOXfOrEaU2ybPW5xXBqbVgmMJtTXV8+yHc9yYawQmLy0msVGwz2l+FEgeSYGVXpBtN7XX2xqx3TL183h4haTNobQcCMxveqdfZE/4+QiSDHGdulYX8/BGXA4dxPW6A4IZBj0uUwd4Ps7LQW2PdRYL9LlpZubfkp4mSls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y460HW05; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724765679; x=1756301679;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=0Ti4uEyQ2I50MDalNEldb+1diVigldzU50iZRu2XaRc=;
-  b=Y460HW05urgLc58sdaUb/sem9OPiVNIQrIBotAgtWfTx6XCLysqGlR3T
-   1f3n9YltTKN5LyZdA45v/AUbjly2H5jFBjzPWqCBlsnesnxSHB9WwkQKR
-   s7A6r8ALYMS3NCYIkoUK8hF2hp8Na0wr2uqo+MxQ+8hZZq1RcZqAgmKG6
-   8FqDzZmX6tfMjEIhhDMTwwGNYbZxO+s1II8XMnimsqs810kZUb4JkD/kA
-   LuyQOX4n+jOCiRsOwouGQ29xRPfnnz91polc0rctBrtuw+x6CPsLnaZ0D
-   ZO3Vrw+mmPH0+GUrHUDgDanLWz6VGcmkkHnUAyIGYpCrXyj6/5LnjptTr
-   A==;
-X-CSE-ConnectionGUID: 5r3J07lNQvS4rGfLXEdIAA==
-X-CSE-MsgGUID: 2sryGk1QS3WlQWAezVk3wQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="27039481"
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="27039481"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 06:34:38 -0700
-X-CSE-ConnectionGUID: wAuaROIJRciiS4KJn6ef0w==
-X-CSE-MsgGUID: iO9iqxTwTvi6QeStW1YrqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="63581868"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.17])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 06:34:37 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 27 Aug 2024 16:34:32 +0300 (EEST)
-To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-cc: Tero Kristo <tero.kristo@linux.intel.com>, 
-    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] Documentation: admin-guide: pm: Add efficiency vs.
- latency tradeoff to uncore documentation
-In-Reply-To: <8719e7653b2f859c46966986dc81cc589a6d78ca.camel@linux.intel.com>
-Message-ID: <4fc760c8-c96c-65e3-1984-d1703a364d05@linux.intel.com>
-References: <20240821131321.824326-1-tero.kristo@linux.intel.com>  <20240821131321.824326-2-tero.kristo@linux.intel.com>  <dabdc81e-d743-6402-f87a-dee2d6b906b8@linux.intel.com>  <4d6adc49f295ad1dec26cd1a67ec3997686db4a9.camel@linux.intel.com> 
- <1b93f71a-8a36-f95e-86b9-2b8f330847ff@linux.intel.com> <8719e7653b2f859c46966986dc81cc589a6d78ca.camel@linux.intel.com>
+	s=arc-20240116; t=1724765704; c=relaxed/simple;
+	bh=kVp9sXDTtLlVwwNvYh+Nwbbf3AZVSiexqWAg9HOa7p0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kdToTk0KtPH5a+Lx27plm0xeYfJfjIGbi0dkgAaf0ZsQsM4ApHcfkQi1KgsSG34urYg9oGDxX+XxSNSENx5Iro7dfgYxlUOYoJt0+OLN3iaJLhuOxyjDIdWa+XmkPnTpyP+dY/KQjy+JwNRyjHYWMyLi6U+5Vty7nUFcHZXvZx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Zzwtqdhs; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a86acbaddb4so472406366b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:35:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1724765700; x=1725370500; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TRSnTszdSq/pc7NK2q7HfymY5oNVAHHXr0ew7M6yPfc=;
+        b=ZzwtqdhseEYlVZtnX0QnaTc/UK1Twuhr+0X/2z/BWqIKIPoTo2VycMD2BtKr6obAdf
+         ZCtePMsrDHBaV7F9NRawM47DhLMQp1F+NCtKG7+U6HnQUUkHOT8GxajA/++356gbHiQi
+         eRzXH4ezfgtijINHsII4+ufht7jt1Mzxxo1RDwDuqoDQjLfqveSBNZqoJAZquAK5XMb1
+         VlKlwPv2ZOb3vMsjDIh0BK0IIC1F40FvPnvSCgcYpkvlUBo3/IOPd4FIWIzYHkqqYbh5
+         x75TW449+4ouK6yAxd+IzD9orqwefpaLvnZbQEeZehYDnUjmF9jXgHdGGXiWCp0gHW8c
+         rVTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724765700; x=1725370500;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TRSnTszdSq/pc7NK2q7HfymY5oNVAHHXr0ew7M6yPfc=;
+        b=UoLjzH+CaoWUnGx/p9kjPhIVCnhxpAmgSmQfNWBk+iP39y9BXEsk6E3oqi2R50lw2z
+         KQkwrE+HmNaEFtykOvRqV2X6kjUDmvfhlLcpyooxObUr7LyeK44uBzqaYKcn1PeY7sTx
+         fYMsxWsrn5hQ9oK5ReyJpY5Gd0rTKnIiFQHDEuWFUl3L8Gzs6qOLtyaK2twINPUXLgd6
+         hs36LMdvB9l+ufjB2ntMQ3rcRI9gWJVqy3jhLxj6lL7KMUWsCbvxG3nHtpBDPtR/EtUO
+         WtOg6aNAw9nre/49LNbKzPuTXOyeEy66li+AOiordRO7i9bMLnHxXrrBjaK0XDeu7Ca7
+         UbiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0JEhOypkhosp4NQJPD5Ftx6rWK8OsvMgbWP2/Ux0r8PNI24XFVEv1u9wJ56VUbU8DJWZuooRmVH0j7/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyupkkNRaFQ+6zDf/FBW/pdHvgKn6GMynqZ/XMnDZWXdqSNBPrI
+	T9HVYO06FI+ZEJeaXKORUqd2Zt0kUpP7agUcfQnhiSaGC9GmpB4qqg1C6s1Nmw8=
+X-Google-Smtp-Source: AGHT+IE2j6GvIcpTlYY1CueQcYw0tif/I6nVN9OKIEDzNlieEnuC1xYbm3DV5FB4ULRvo7G6Zdwhfg==
+X-Received: by 2002:a17:907:72ca:b0:a86:442e:6e10 with SMTP id a640c23a62f3a-a86e397e669mr251530266b.2.1724765699712;
+        Tue, 27 Aug 2024 06:34:59 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e5878a6bsm112364566b.170.2024.08.27.06.34.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 06:34:59 -0700 (PDT)
+Message-ID: <f65642b5-d18d-43e8-b3c9-1810f3169631@tuxon.dev>
+Date: Tue, 27 Aug 2024 16:34:57 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-147178893-1724761709=:1032"
-Content-ID: <84e87109-ece5-8d3b-adee-03765a695973@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] watchdog: rzg2l_wdt: Power on the watchdog domain in
+ the restart handler
+Content-Language: en-US
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+ "linux@roeck-us.net" <linux@roeck-us.net>,
+ "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240826152529.2080248-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240826152529.2080248-4-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB11346A223DA7462799B9D103786942@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <4823173e-b024-482f-83a3-560c7abd888c@tuxon.dev>
+ <TY3PR01MB113464C9751ADB7B0F0356CD686942@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB113464C9751ADB7B0F0356CD686942@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
 
---8323328-147178893-1724761709=:1032
-Content-Type: text/plain; CHARSET=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <ed2ae428-6131-2dbb-97ba-592401259e85@linux.intel.com>
 
-On Tue, 27 Aug 2024, srinivas pandruvada wrote:
-> On Tue, 2024-08-27 at 11:08 +0300, Ilpo J=C3=A4rvinen wrote:
-> > On Mon, 26 Aug 2024, srinivas pandruvada wrote:
-> >=20
-> > > On Fri, 2024-08-23 at 15:28 +0300, Ilpo J=C3=A4rvinen wrote:
-> > > > On Wed, 21 Aug 2024, Tero Kristo wrote:
-> > > >=20
-> > > > > Added documentation about the functionality of efficiency vs.
-> > > > > latency tradeoff
-> > > > > control in intel Xeon processors, and how this is configured
-> > > > > via
-> > > > > sysfs.
-> > > > >=20
-> > > > > Signed-off-by: Tero Kristo <tero.kristo@linux.intel.com>
-> > > > > ---
-> > > > > =C2=A0.../pm/intel_uncore_frequency_scaling.rst=C2=A0=C2=A0=C2=A0=
-=C2=A0 | 51
-> > > > > +++++++++++++++++++=E2=81=A0Ayoub,=C2=A0Hatim=C2=A0This seems tha=
-t when on AC
-> > > > > mode, Windows don't care about PC10. Is this correct? It seems
-> > > > > that with EPB=3D6 we can
-> > > > > =C2=A01 file changed, 51 insertions(+)
-> > > > >=20
-> > > > > diff --git a/Documentation/admin-
-> > > > > guide/pm/intel_uncore_frequency_scaling.rst
-> > > > > b/Documentation/admin-
-> > > > > guide/pm/intel_uncore_frequency_scaling.rst
-> > > > > index 5ab3440e6cee..fb83aa2b744e 100644
-> > > > > --- a/Documentation/admin-
-> > > > > guide/pm/intel_uncore_frequency_scaling.rst
-> > > > > +++ b/Documentation/admin-
-> > > > > guide/pm/intel_uncore_frequency_scaling.rst
-> > > > > @@ -113,3 +113,54 @@ to apply at each uncore* level.
-> > > > > =C2=A0
-> > > > > =C2=A0Support for "current_freq_khz" is available only at each
-> > > > > fabric
-> > > > > cluster
-> > > > > =C2=A0level (i.e., in uncore* directory).
-> > > > > +
-> > > > > +Efficiency vs. Latency Tradeoff
-> > > >=20
-> > > > Does this section even cover the "tradeoff" part in its body? Why
-> > > > not
-> > > > call=20
-> > > > it directly "Control" after ELC?
-> > > >=20
-> > > > > +-------------------------------
-> > > > > +
-> > > > > +In the realm of high-performance computing, particularly with
-> > > > > Xeon
-> > > > > +processors, managing uncore frequency is an important aspect
-> > > > > of
-> > > > > system
-> > > > > +optimization. Traditionally, the uncore frequency is ramped up
-> > > > > rapidly
-> > > > > +in high load scenarios. While this strategy achieves low
-> > > > > latency,
-> > > > > which
-> > > > > +is crucial for time-sensitive computations, it does not
-> > > > > necessarily yield
-> > > > > +the best performance per watt, =E2=80=94a key metric for energy
-> > > > > efficiency
-> > > > > and
-> > > > > +operational cost savings.
-> > > >=20
-> > > > This entire paragraph feels more prose or history book than
-> > > > documentation=20
-> > > > text. I'd suggest using something that goes more directly into
-> > > > the
-> > > > point
-> > > > about what ELC brings to the table (I suppose the goal is
-> > > > "performance=20
-> > > > per watt" optimization, even that goal is only implied by the
-> > > > current
-> > > > text, not explicitly stated as the goal here).
-> > > >=20
-> > >=20
-> > > What about this?
-> > >=20
-> > > Traditionally, the uncore frequency is ramped up to reach the
-> > > maximum=20
-> > > possible level based on parameters like EPB (Energy perf Bias) and
-> > > other system power management settings programmed by BIOS.=C2=A0 Whil=
-e
-> > > this
-> > > strategy achieves low latency for latency sensitive applications,
-> > > it
-> > > does not necessarily yield the best performance per watt.=20
-> >=20
-> > This again starts with a wrong foot. Don't use words like
-> > "traditionally",
-> > "in the past", "historically", "is added", etc. that refer to past
-> > time
-> > in documentation text at all. The premise with documentation for
-> > feature x=20
-> > is that the feature x exists. After these patches have been accepted,
-> > the=20
-> > reality is that ELC exists and time before does not matter so we
-> > don't=20
-> > encumber documentation text with that era that has become irrelevant.
-> >=20
-> While the choice of words are not correct, for me background is
-> important on why a feature is implemented.
-> Here even after ELC is implemented, majority of generations will still
-> not have this feature. Uncore is not just supported on TPMI systems.
+On 27.08.2024 15:51, Biju Das wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>> Sent: Tuesday, August 27, 2024 1:33 PM
+>> To: Biju Das <biju.das.jz@bp.renesas.com>; geert+renesas@glider.be; mturquette@baylibre.com;
+>> sboyd@kernel.org; wim@linux-watchdog.org; linux@roeck-us.net; ulf.hansson@linaro.org
+>> Cc: linux-renesas-soc@vger.kernel.org; linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+>> watchdog@vger.kernel.org; linux-pm@vger.kernel.org; Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> Subject: Re: [PATCH 3/3] watchdog: rzg2l_wdt: Power on the watchdog domain in the restart handler
+>>
+>> Hi, Biju,
+>>
+>> On 27.08.2024 15:15, Biju Das wrote:
+>>> Hi Claudiu,
+>>>
+>>> Thanks for the feedback.
+>>>
+>>>> -----Original Message-----
+>>>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>>>> Sent: Monday, August 26, 2024 4:25 PM
+>>>> Subject: [PATCH 3/3] watchdog: rzg2l_wdt: Power on the watchdog
+>>>> domain in the restart handler
+>>>>
+>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>
+>>>> On RZ/G3S the watchdog can be part of a software-controlled PM
+>>>> domain. In this case, the watchdog device need to be powered on in
+>>>> struct watchdog_ops::restart API. This can be done though
+>>>> pm_runtime_resume_and_get() API if the watchdog PM domain and watchdog device are marked as IRQ
+>> safe.
+>>>> We mark the watchdog PM domain as IRQ safe with GENPD_FLAG_IRQ_SAFE
+>>>> when the watchdog PM domain is registered and the watchdog device though pm_runtime_irq_safe().
+>>>>
+>>>> Before commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid
+>>>> wait
+>>>> context'") pm_runtime_get_sync() was used in watchdog restart handler
+>>>> (which is similar to
+>>>> pm_runtime_resume_and_get() except the later one handles the runtime resume errors).
+>>>>
+>>>> Commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
+>>>> context'") dropped the pm_runtime_get_sync() and replaced it with
+>>>> clk_prepare_enable() to avoid invalid wait context due to
+>>>> genpd_lock() in genpd_runtime_resume() being called from atomic
+>>>> context. But
+>>>> clk_prepare_enable() doesn't fit for this either (as reported by Ulf
+>>>> Hansson) as clk_prepare() can also sleep (it just not throw invalid wait context warning as it is
+>> not written for this).
+>>>>
+>>>> Because the watchdog device is marked now as IRQ safe (though this
+>>>> patch) the
+>>>> irq_safe_dev_in_sleep_domain() call from genpd_runtime_resume()
+>>>> returns
+>>>> 1 for devices not registering an IRQ safe PM domain for watchdog (as
+>>>> the watchdog device is IRQ safe, PM domain is not and watchdog PM
+>>>> domain is always-on), this being the case of RZ/G2 devices that uses
+>>>
+>>> RZ/G2L alike devices or be specific RZ/{G2L,G2LC,G2UL,V2L} as it is
+>>> not applicable for RZ/G2{H,M,N,E}devices.
+>>
+>> OK, but I said "RZ/G2 devices that uses this driver". Here are included RZ/{G2L,G2LC,G2UL,V2L} AFAICT.
+> 
+> OK. Not sure you missed the same terminology on comment section, see below??
+> 
+>>
+>>>
+>>>
+>>>> this driver, we can now drop also the clk_prepare_enable() calls in
+>>>> restart handler and rely on pm_runtime_resume_and_get().
+>>>>
+>>>> Thus, drop clk_prepare_enable() and use pm_runtime_resume_and_get() in watchdog restart handler.
+>>>
+>>> Can this patch be fix for Commit e4cf89596c1f ("watchdog: rzg2l_wdt:
+>>> Fix 'BUG: Invalid wait
+>>>> context'") on RZ/{G2L,G2LC,G2UL,V2L} SoC??
+>>
+>> Not sure... I thought about it, too. I chose to have it like this thinking
+>> that:
+>>
+>> 1/ that may not apply cleanly as it depends on other cleanups done on this
+>>    driver, e.g. commit d8997ed79ed7 ("watchdog: rzg2l_wdt: Rely on the
+>>    reset driver for doing proper reset") so it may be worthless for
+>>    backport machinery
+>> 2/ There is actually no seen bug reported by lockdep (as the clk_prepare()
+>>    doesn't handle it)
+>>
+>> Don't know, I can reply here and add it. Applying this patch with b4 will take care of it. But not
+>> sure about it.
+> 
+> Maybe leave it.
+> 
+>>>
+>>>>
+>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>> ---
+>>>>  drivers/watchdog/rzg2l_wdt.c | 21 +++++++++++++++++++--
+>>>>  1 file changed, 19 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/watchdog/rzg2l_wdt.c
+>>>> b/drivers/watchdog/rzg2l_wdt.c index
+>>>> 2a35f890a288..e9e0408c96f7 100644
+>>>> --- a/drivers/watchdog/rzg2l_wdt.c
+>>>> +++ b/drivers/watchdog/rzg2l_wdt.c
+>>>> @@ -12,6 +12,7 @@
+>>>>  #include <linux/module.h>
+>>>>  #include <linux/of.h>
+>>>>  #include <linux/platform_device.h>
+>>>> +#include <linux/pm_domain.h>
+>>>>  #include <linux/pm_runtime.h>
+>>>>  #include <linux/reset.h>
+>>>>  #include <linux/units.h>
+>>>> @@ -166,8 +167,23 @@ static int rzg2l_wdt_restart(struct watchdog_device *wdev,
+>>>>  	struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
+>>>>  	int ret;
+>>>>
+>>>> -	clk_prepare_enable(priv->pclk);
+>>>> -	clk_prepare_enable(priv->osc_clk);
+>>>> +	/*
+>>>> +	 * In case of RZ/G3S the watchdog device may be part of an IRQ safe power
+>>>> +	 * domain that is currently powered off. In this case we need to power
+>>>> +	 * it on before accessing registers. Along with this the clocks will be
+>>>> +	 * enabled. We don't undo the pm_runtime_resume_and_get() as the device
+>>>> +	 * need to be on for the reboot to happen.
+>>>> +	 *
+>>>> +	 * For the rest of RZ/G2 devices (and for RZ/G3S with old device trees
+> 
+> NitPick: For the rest of RZ/G2 devices that uses this driver (This will make sure
+> It is not meant for RZ/G2{H,M,N,E} devices)
 
-I don't doubt there are plenty of systems without it, but you're=20
-supposed to document ELC, not non-ELC systems under this section.
+If one considers this driver is used by RZ/G2{H,M,N,E} when reaching this
+point then surely is in the wrong place.
 
-If the system does not have ELC, this section has zero relevance for
-the admin. (And it's a job for marketting people, not for Linux=20
-documentation, to convince people they need this new and shiny
-thing. :-))
+RZ/Five is also uses this driver. Later, maybe devices compatible with this
+driver will be added and this comment will not fit. Later, will we be
+updating the comment for that? I'm not a fan of it.
 
-Thus, the base assumption in this section is that ELC is supported and=20
-usable.
+Thank you,
+Claudiu Beznea
 
-> > You might occasionally have to mention what is not possible without
-> > ELC=20
-> > in case it's still possible to run stuff without ELC but don't put
-> > time=20
-> > references to it. However, it's not something you should start with
-> > in
-> > the documentation text.
-> >=20
-> > > The Efficiency Latency Control (ELC) feature is added to improve
-> >=20
-> > "is added to improve" -> "improves"
-> Fine.
->=20
-> >=20
-> > > performance per watt. With this feature hardware power management
-> > > algorithms optimize trade-off between latency and power
-> > > consumption.
-> > > But for some latency sensitive workloads further tuning can be done
-> > > from OS to get desired performance.
-> >=20
-> > I'd just start with this paragraph. It goes straight into the point
-> > and=20
-> > is good in that it tries to summarize what ELC tries to achieve.
->
-> There are so many features we have which improves perf/watt.
-
-I think you make an issue out of a non-issue if you think it's problem to=
-=20
-state feature A improves performance if there are also features B and C=20
-that improve it.
-
-> Why ELC is special needs some background.
-
-"special"? I didn't get that impression at all. I'm far from convinced ELC=
-=20
-is "special" or needs to be presented as such.
-
-> > > The hardware monitors the average CPU utilization across all cores
-> >=20
-> > hardware or ELC-capable HW?
-> Hardware. hardware always does this.
-
-So do I read you right, this is nothing ELC-specific? So all ELC does is=20
-adds those tunables (limits/overrides)?
-
-> > > in a power domain at regular intervals and decides a uncore
-> > > frequency.=20
-> >=20
-> > This kind of feels something that belongs to the first paragraph if
-> > it's=20
-> > about ELC. (I'm left slightly unsure if ELC refers only to those
-> > controls=20
-> > mentioned below, or if it is the automatic uncore freq control plus
-> > the=20
-> > manual controls. I assume it's the latter because of "with this
-> > feature=20
-> > hardware power management algorithms optimize" sentence.)
->
-> It is later. Hardware doesn't do a PM feature depending only on OS.
-
-I was specifically talking about what "ELC" is but you downgraded wording=
-=20
-back to "hardware" in your reply. So I have to repeat myself, what ELC=20
-consists of? Are these non-OS dependent features (that "hardware always=20
-does") part of ELC or not (for the avoidance of potential=20
-misunderstandings, this is assuming no ELC tunables added by this series=20
-are touched by the admin)?
-
-Obviously, when one of the tunables is touched, it impacts the allowed
-operating region of the autonomous algorithm (ELC tunables acting as=20
-what look like "overrides").
-
-> > > While this may result in the best performance per watt, workload
-> > > may be
-> > > expecting higher performance at the expense of power. Consider an
-> > > application that intermittently wakes up to perform memory reads on
-> > > an
-> > > otherwise idle system. In such cases, if hardware lowers uncore
-> > > frequency, then there may be delay in ramp up of frequency to meet
-> > > target performance.=20
-> > >=20
-> > > The ELC control defines some parameters which can be changed from
-> > > OS.
-> > > If the average CPU utilization is below a user defined threshold
-> > > (elc_low_threshold_percent attribute below), the user defined
-> > > uncore
-> > > frequency floor frequency will be used (elc_floor_freq_khz
-> > > attribute=20
-> > > below) instead of hardware calculated minimum.=20
-> > >=20
-> > > Similarly in high load scenario where the CPU utilization goes
-> > > above=20
-> > > the high threshold value (elc_high_threshold_percent attribute
-> > > below)=20
-> > > instead of jumping to maximum uncore frequency, uncore frequency is
-> > > increased in 100MHz steps until the power limit is reached.
-> > >=20
-> > > Attributes for efficiency latency control:=20
-> > > ..=20
-> > > ..=20
-> >=20
-> > There were a few spaces at the end if lines, those should be removed.
-> Yes in the patch.
->=20
-> Thanks,
-> Srinivas
->=20
-> >=20
->=20
-
---=20
- i.
---8323328-147178893-1724761709=:1032--
+> 
+> Cheers,
+> Biju
+> 
+> 
+> 
+>>>> +	 * where PM domains are registered like on RZ/G2 devices) it is safe
+>>>> +	 * to call pm_runtime_resume_and_get() as the
+>>>> +	 * irq_safe_dev_in_sleep_domain() call in genpd_runtime_resume()
+>>>> +	 * returns non zero value and the genpd_lock() is avoided, thus, there
+>>>> +	 * will be no invalid wait context reported by lockdep.
+>>>> +	 */
+>>>> +	ret = pm_runtime_resume_and_get(wdev->parent);
+>>>> +	if (ret)
+>>>> +		return ret;
+>>>>
+>>>>  	if (priv->devtype == WDT_RZG2L) {
+>>>>  		ret = reset_control_deassert(priv->rstc);
+>>>> @@ -275,6 +291,7 @@ static int rzg2l_wdt_probe(struct platform_device
+>>>> *pdev)
+>>>>
+>>>>  	priv->devtype = (uintptr_t)of_device_get_match_data(dev);
+>>>>
+>>>> +	pm_runtime_irq_safe(&pdev->dev);
+>>>>  	pm_runtime_enable(&pdev->dev);
+>>>>
+>>>>  	priv->wdev.info = &rzg2l_wdt_ident;
+>>>> --
+>>>> 2.39.2
+>>>>
+>>>
 
