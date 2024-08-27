@@ -1,189 +1,213 @@
-Return-Path: <linux-kernel+bounces-302711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DA2396023E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:49:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A03196024F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:51:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90DAAB20E56
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:49:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CF071C22328
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8CBB148302;
-	Tue, 27 Aug 2024 06:49:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA219154449;
+	Tue, 27 Aug 2024 06:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dcpLicI1"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="JR4v7PLC"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12olkn2074.outbound.protection.outlook.com [40.92.22.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07AC63A1C4
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724741381; cv=none; b=U3+Pl47SQ36OFAiUokHrCtKaejWchgNrhl1TpNa7uLbFT2rDW8n14AZGDxJh3jDLNaQHHTgQBWD+WV2eBF/M8FhDtMPntqWtO/oCHXVWelkfIeRpiaQ797wG2pXvy/UeO9pf/dBFjnB3DH2NjeKA7LPJmRkSd5y3Ow5Bdoc6uik=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724741381; c=relaxed/simple;
-	bh=7HWr9j5eKfZPszNvP2TblmnYYnWh07niu4cy+zDMGzU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uol4J+8kWxFVG697qfLYgTQFPKy7aymX/nT2AnCOcG8zKgph6sxaR31YqZpWyAmmNi/ln4x6cL67po/QwgGQAZRufdUnFd3F0zayDJmG1vAstGtiy2e+0xXW2JYIIkoXeGBsPXkDrhRab5xc8rEATV7MB0LsfO5GYjZTMBuvTqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dcpLicI1; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5bed83487aeso5361256a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 23:49:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724741376; x=1725346176; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DqtpVWY8T6ecoXnDsB9l8HlClxrmCb3D7K0NvHPEgqM=;
-        b=dcpLicI1wyEHcTnF+S7lub7AxszxXN+RIO9iYu774U/GS6plsHpx7rqbRzrm5k6fLA
-         ND/0q7ULZSXYW82yNAxN604fnDEGsfGoxryd6FWSoNuoicHpjJ5MyR8rYJ362v9pR+96
-         3aZ5pQZvLLT+FO9E3lIrnPmG4KolUOoakX2tM6aZpUOW2G021hclbyY+7AE1VqUs3zlJ
-         mrpM7r3/7fmGXBDt9awmwIL5fX8QOfJxPl5RnXMZ9QG7PhMMWwmnUKBIg9wHJh8Bf6Z5
-         Yr0Vg1ABS3VUgZCVBTyx4DQw2P9EfDEv0RLxpxiVs7jKgA7dm/OEBZUtBhaHQSGX+mrc
-         3/Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724741376; x=1725346176;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DqtpVWY8T6ecoXnDsB9l8HlClxrmCb3D7K0NvHPEgqM=;
-        b=sL/wCKulq0haZTaLOStsrb06kjvV63S1npFCkHT2BE8oGVK0u/ORgvatz8F+JUQctB
-         H3pkuZDGNXHXCmLO6nzkZVFB1zMVsg8MC8OK9kE/p7f+P5t6EU1QkejwI3PtgZUHyuGq
-         u1JuZ85ulOEuZ5vN0KrmNsQnIWTVcyqynsCUtdPwQqkh1wTQtQ5e+fVn64dTJRc6+nhh
-         6dJL2xyt5CNeybH6+SM9m0Iq5za/4PsGi2FdClmvscUHBxQSote06nKBLHo4O5STToLe
-         Gb2QeFKMxWy2KnzY/fDuOnQGZMVryx4TU0/CVTUZLwoD/Kokm/P6tyH0xfJQXQkwe5I5
-         nImQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVLM7LujriOl499F+SijJZQpulxpmiiiVscNUBjS4fF43UuoSBAp6VFBYUo0vTxoNUeuj8ML1tnzK8BeKc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdrCeWcyA9qd+uEXvxrYb+otPOo+uedT+3TO203a8nfsZHrRCA
-	H/8gB1jjlS9XUou/K27YLtH8y+zZOY4IZx8ZsWWklY9oYE1ife8ZchkMbfE3/iE=
-X-Google-Smtp-Source: AGHT+IEQaDxUQ/mlcLiBRdVgUBiBvE1qUZl0Y74jY/67JgEu7wmyQfM1VHkIQX+Tr0cFaJ7OOxTEPw==
-X-Received: by 2002:a17:907:6d0a:b0:a86:7c5d:1856 with SMTP id a640c23a62f3a-a86e3be5c89mr137351066b.46.1724741376203;
-        Mon, 26 Aug 2024 23:49:36 -0700 (PDT)
-Received: from localhost (109-81-92-122.rct.o2.cz. [109.81.92.122])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e582c41bsm69699366b.98.2024.08.26.23.49.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 23:49:35 -0700 (PDT)
-Date: Tue, 27 Aug 2024 08:49:35 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: Hailong Liu <hailong.liu@oppo.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Barry Song <21cnbao@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Tangquan Zheng <zhengtangquan@oppo.com>, stable@vger.kernel.org,
-	Baoquan He <bhe@redhat.com>, Matthew Wilcox <willy@infradead.org>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v1] mm/vmalloc: fix page mapping if
- vm_area_alloc_pages() with high order fallback to order 0
-Message-ID: <Zs12_8AZ0k_WRWUE@tiehlicka>
-References: <ZrXiUvj_ZPTc0yRk@tiehlicka>
- <ZrXkVhEg1B0yF5_Q@pc636>
- <20240815220709.47f66f200fd0a072777cc348@linux-foundation.org>
- <20240816091232.fsliktqgza5o5x6t@oppo.com>
- <Zr8mQbc3ETdeOMIK@pc636>
- <20240816114626.jmhqh5ducbk7qeur@oppo.com>
- <Zr9G-d6bMU4_QodJ@tiehlicka>
- <Zsi8Byjo4ayJORgS@pc638.lan>
- <Zsw0Sv9alVUb1DV2@tiehlicka>
- <Zsx3ULRaVu5Lh46Q@pc636>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4A63A1C4;
+	Tue, 27 Aug 2024 06:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.22.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724741448; cv=fail; b=OuKCFFqMdARVVmEo/hr8UXX82P5wUn30H31NX4d9ST5kZ1Wp7jFbPPEz7alG1BnWJ7JIJFY4JmVruGFbGudsKw/YvPB1N7qOwdDY35eurGoADLaIwjK6NfllHuV8nxlWKicQaqmYmL3ScufV6eho4XlnW6y3ssYLxNUeUZENS4U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724741448; c=relaxed/simple;
+	bh=a++zSDN9oMyv9fA2gKZ72zCI8P8EzQ3BS/V+g1ttRUY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iYL8sarbXBdPTGRJCBC9Vl5zpSIkKiWuH5Tbv/Vozkf/ZzpFkK4AXnR8i4wj8dq8EGsasC3xs6xx9AdKsbZo4UWtWE2ozU4MIb+XAecl8BeBTsH2b9j+sMBR421rrIQ4/TCj4nTw4JyL47wCs+VYYF7zDK+qMDtCsTrczp3YUJA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=JR4v7PLC; arc=fail smtp.client-ip=40.92.22.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Wspq1yI1ekDRhP+bXWMUIY5Z1aR4xs0mLOnUBtVvauch7rLGiNehg/xRQ06cxYxOSp5pSXDHJLrlakXKDDcQBahDkiue3Uf+TveRvfBEBO5Txly2yzbH0pMFnD8VHtkp+CWDCkuuGFMH82TH0Ze3/gRxGbUYI/leGjKyICHtpm2NVxQj2oR2SE9sA+e3fdLljF5HS4JtsHpF++RUcSteD3MFLtF9NLQMCZsXkpmRFZZj2es0QAqBi/v4kFiEmjMLBroJDhY9OvMmlxOl8BNDwyLGnoPe9tkL1CHBhkYAe7kGMpeJXPY3lRlc7fJUXLPPlHbx9lEScNp2zzUJF/Rpyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=odGUw6TQxCZH1ppD8faEmD9SkHZWFu7bl0uSM+oAuE8=;
+ b=dFmsFwtgwolQhMGlSQvaS0ygSGq5c4ybjB53YJGB8sRMNDMlXJfz2wcLU51y/G06biX5bxTkPsyPRqqnI3IVcTvbb9sf7BWHsj1tC+WRrCBdS8dGffcRJAImFi2rO2oRmeJEOdvGpJGbTae8m6orh4sjdlvwcsYxk/gy81Er6nblqxpnMeP4o2kxMxPtON64PGSNf9C0TOdup1F6iuC9kv0vSg1qkQl6ZcH7ERPYlPG28j7iulvRsxMrTXcuJBKXCCC0JBo2UBJJqjeE26auBOYysjHpSZ1hnV0HGddbHXZuiotHYTzA2b4fAw5/2VJXubsQzs+60dgjPml2Vp+Wug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=odGUw6TQxCZH1ppD8faEmD9SkHZWFu7bl0uSM+oAuE8=;
+ b=JR4v7PLCrIYNebCP9qRq9QJp10PdGLuVjtImhphTWLxIkSJgEktD79PicqrdHS2ayXgnJSJ7cTu5Mo0qLtuJomWdNaRWlu6OUg8gvV1ix/VVnJf37513u53l3kFhDlnNUteeUkRR4IQZN4vmFQfyHk8bHsuMqqF6wMJQn+BwwS/o+2LoJgAraPwbsOWuNym8sl22WcAP16lncx+Vu8z4v+4mu+tNjdvT92dwpCBCPHKF5uEctymkOkbBdiWuzRXsT5yjgPWI034I0p+PwoSpDnGtcu9ue+BkFxCQXZjZXxImERLbapD0gD9w4C+BuOmkS6wDD1STixd+mMmGTE80HA==
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+ by DM3PR20MB6939.namprd20.prod.outlook.com (2603:10b6:0:42::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Tue, 27 Aug
+ 2024 06:50:45 +0000
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149%4]) with mapi id 15.20.7897.021; Tue, 27 Aug 2024
+ 06:50:45 +0000
+From: Inochi Amaoto <inochiama@outlook.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>
+Cc: dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v12 1/3] dt-bindings: dmaengine: Add dma multiplexer for CV18XX/SG200X series SoC
+Date: Tue, 27 Aug 2024 14:49:41 +0800
+Message-ID:
+ <IA1PR20MB4953A44B1388078AB9B1CE0CBB942@IA1PR20MB4953.namprd20.prod.outlook.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <IA1PR20MB495396729244074C36E51E11BB942@IA1PR20MB4953.namprd20.prod.outlook.com>
+References: <IA1PR20MB495396729244074C36E51E11BB942@IA1PR20MB4953.namprd20.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [fe+b2hhLiKur94uz0G+heUNWBeii8B+T8Qgr3sxU6cw=]
+X-ClientProxiedBy: TYCP301CA0086.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:405:7b::12) To IA1PR20MB4953.namprd20.prod.outlook.com
+ (2603:10b6:208:3af::19)
+X-Microsoft-Original-Message-ID:
+ <20240827064944.740024-1-inochiama@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zsx3ULRaVu5Lh46Q@pc636>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|DM3PR20MB6939:EE_
+X-MS-Office365-Filtering-Correlation-Id: f3bcb4e3-8685-4a50-4b20-08dcc664933d
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|15080799006|5072599009|19110799003|8060799006|461199028|1602099012|3412199025|440099028|4302099013|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	oVJGS+EWGlb2tRGfGtE4PyY0Y/v43LYOYWQU1IZXlJQfVVOCwNgRSeK5b0ssQJNpHtJWQw7IPGWU69s0N55m/Hq76G2MC9YsFmXQTFT0qgW51aw6mp59EwW5xHILbNcW9N8VJG5rpQNUk0BkqxL8NP2b9ruaJXoBOy8o6mg6U5QkHToX0vrWAG31Huj1z3uYXncWZ3llePMC1jZjZVXAD1Bmw2gGn2q7ITRgMDTdvONa1EKxoMdmPmX6x7nr6QVwvcuPuXUUuMUrdoR8j7w4ie8CPJ3BOpfj7IO6Z2FK/CJYgx8U2oYJ3LhkrZpbNRRYwvpgm/WRBx56aWQ/l7OrVdmoD89qg8laMWVNQiMYwH3lBnD2ZsHhNoQVv7vMeCRJmZknJBvtmB8nt1N9oHZ8S9ZF2iGkafbeGGopRiLowy1NtkgciCuBGhI427pQhZVlgsg0pZziSaJ2A9l6DWRXSo5z/NX6FLHguDBH1Tfs85PUAtVxjDez1tnZePgM4ALj8eW3dU36XkxHjOM0NKb7uy83vBv+2efv1RIz80ceZJ8+k30YRqxP13T6athL9SwiSMWa4547u3ULOwkzXK5GpcdCYzuPme3YanrogQE45rZM0Gyg5Zy2hWgr6mvTvPyswFBOv5jiEQXkMmijJYPE2/L8m/mpdNvxAcTVjBmKg0Dlp0QafuCTeBuEaOrHa6qGWDiD0K8ypaltDDAjXjz556FNAaKqrZxYD+PZkbuIirmh0UZAuZgDAdD2xSdxf8WE/w9W9a6Nal2oItwiuFwi5HPHhfXBnp92b2lVqMSpCrNNZ4EuiQJXJzMV709PfTXKgy9xoqsKZnwPq3ARCVYq9DFj5xOexOjemzxgYHE2VXg=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?JUQS8lXHqFtnFUd8ZwokS/th34XxVLr0uYFGIaSSTcnJHoYeMkYvy2Pi001j?=
+ =?us-ascii?Q?ZesTH7cxGV9s8akvSMDBH2YFa1vS2hcW9pIBreI87AUknVhNsMpfFtSVK/oO?=
+ =?us-ascii?Q?Q/sE/IPVMIglcrXtTjS2OjGQDvaJxHyV/vxnyx8Z9mSHJAs2qx6GIDeYY7tx?=
+ =?us-ascii?Q?3gF6QPZOL4aPb+BMdPk0aQfBLSnBg/eKlC4zt/WevhMG7NEkMFNWToAwQKg5?=
+ =?us-ascii?Q?dmFqbx/ugMU80ry4P2hXmaAPROM0nS4JWq/H7NXdp1S8lJfFZQc4PCMZYCWt?=
+ =?us-ascii?Q?OlFw3x+c8fJKdmG5Yub1IL6cmStwJDlA56ew0p02FXtfduPYrMb2zbwDJf3j?=
+ =?us-ascii?Q?GT/aA1VBKFwSHfnG7GUHaoI28zCJZufKYSsNCbpQCi7ACBNh5W9rKiEXHrUu?=
+ =?us-ascii?Q?WDRioun2JZH+Tf2MALEqj6goEO61wT+HhLSGzTXb3h7clSOhbqHSqq04sjmJ?=
+ =?us-ascii?Q?oAfUMeD5374NIiwLsI7YvVjP2um5oanGpAsvksaTsOakhp9QT1vqbjbc634a?=
+ =?us-ascii?Q?OqBcYkFOe3hwiXDfSuyEVsoom+c32FzijZdhHowkLU6Kb3ZMCxkYLh0OPNpy?=
+ =?us-ascii?Q?Q7usMH6XATaoYeh7ArJRjDPNxN5szLvm0hdZI1envTPB6JvIx3QkKSrTzjvW?=
+ =?us-ascii?Q?kvG8s6Go/uAojz01ueFy8oyxl4kIyEe4Og9TGj8ttf6PyWpsXjIDwRT302sM?=
+ =?us-ascii?Q?0VITC0q1AQg4O6D44LRfZzHHYUgXp2zvWDWRbhiqqzwwPqcAkPhrT0vBrhFD?=
+ =?us-ascii?Q?xJLjKLN8GQGCRKgMatR/QZ0a1KkA4wrTQ47LbEkPzMxbwmuVECYB/hkQJG8y?=
+ =?us-ascii?Q?2a41VEeeopWU+ymNEjzi2EoYHc9umX434JJL5k16V1IHVgBXwj3wL5wV0X0N?=
+ =?us-ascii?Q?54jwHuZFj2yqngRWziFln6q9rGHGXlUbL6JqgABs4S+ijuZVOqVGMnZ4xQXM?=
+ =?us-ascii?Q?R0+hu/CZmOmQBWNBbbT2rwWJ245++diZz69DZnK2+/6SQP30YX20f6RV627p?=
+ =?us-ascii?Q?EZ7wGBzMaTFP3hO5Gh0hO5N4hBx0mmzcymUMbSq9JNYdxkxy8NuGuh8Uh9XO?=
+ =?us-ascii?Q?yTYQ3nW0E7SMn9WiJbycn35IbGmm0H7FryeCijDzg41d/lujvgqu8Q3oP+6b?=
+ =?us-ascii?Q?Z6i+lZ/sgyVfHliFlPyKKbKanHTEcKKnc5SBrXiGGwPu+J2z4t7lAROMHXuf?=
+ =?us-ascii?Q?Iw6kEm/3En/zjYXwNp/eDTMbQrvB2OQpfARZljiOt/ecv7D37tsEfaMINGi2?=
+ =?us-ascii?Q?vZ85R12/pO8J7A3MqZre?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f3bcb4e3-8685-4a50-4b20-08dcc664933d
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 06:50:45.1363
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR20MB6939
 
-On Mon 26-08-24 14:38:40, Uladzislau Rezki wrote:
-> On Mon, Aug 26, 2024 at 09:52:42AM +0200, Michal Hocko wrote:
-> > On Fri 23-08-24 18:42:47, Uladzislau Rezki wrote:
-> > [...]
-> > > @@ -3666,7 +3655,16 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
-> > >  	set_vm_area_page_order(area, page_shift - PAGE_SHIFT);
-> > >  	page_order = vm_area_page_order(area);
-> > >  
-> > > -	area->nr_pages = vm_area_alloc_pages(gfp_mask | __GFP_NOWARN,
-> > > +	/*
-> > > +	 * Higher order nofail allocations are really expensive and
-> > > +	 * potentially dangerous (pre-mature OOM, disruptive reclaim
-> > > +	 * and compaction etc.
-> > > +	 *
-> > > +	 * Please note, the __vmalloc_node_range_noprof() falls-back
-> > > +	 * to order-0 pages if high-order attempt has been unsuccessful.
-> > > +	 */
-> > > +	area->nr_pages = vm_area_alloc_pages(page_order ?
-> > > +		gfp_mask &= ~__GFP_NOFAIL : gfp_mask | __GFP_NOWARN,
-> > >  		node, page_order, nr_small_pages, area->pages);
-> > >  
-> > >  	atomic_long_add(area->nr_pages, &nr_vmalloc_pages);
-> > > <snip>
-> > > 
-> > > Is that aligned with your wish?
-> > 
-> > I am not a great fan of modifying gfp_mask inside the ternary operator
-> > like that. It makes the code harder to read. Is there any actual reason
-> > to simply drop GFP_NOFAIL unconditionally and rely do the NOFAIL
-> > handling for all orders at the same place?
-> > 
-> 1. So, for bulk we have below:
-> 
-> /* gfp_t bulk_gfp = gfp & ~__GFP_NOFAIL; */
-> 
-> I am not sure if we need it but it says it does not support it which
-> is not clear for me why we have to drop __GFP_NOFAIL for bulk(). There
-> is a fallback to a single page allocator. If passing __GFP_NOFAIL does
-> not trigger any warning or panic a system, then i do not follow why
-> we drop that flag.
-> 
-> Is that odd?
+The DMA IP of Sophgo CV18XX/SG200X is based on a DW AXI CORE, with
+an additional channel remap register located in the top system control
+area. The DMA channel is exclusive to each core.
 
-I suspect this was a pre-caution more than anything.
+In addition, the DMA multiplexer is a subdevice of system controller,
+so this binding only contains necessary properties for the multiplexer
+itself.
 
-> 2. High-order allocations. Do you think we should not care much about
-> it when __GFP_NOFAIL is set? Same here, there is a fallback for order-0
-> if "high" fails, it is more likely NO_FAIL succeed for order-0. Thus
-> keeping NOFAIL for high-order sounds like not a good approach to me.
+Add the dmamux binding for CV18XX/SG200X series SoC.
 
-We should avoid high order allocations with GFP_NOFAIL at all cost.
+Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ .../bindings/dma/sophgo,cv1800b-dmamux.yaml   | 51 +++++++++++++++++++
+ 1 file changed, 51 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dma/sophgo,cv1800b-dmamux.yaml
 
-> 3. "... at the same place?"
-> Do you mean in the __vmalloc_node_range_noprof()?
-> 
-> __vmalloc_node_range_noprof()
->     -> __vmalloc_area_node(gfp_mask)
->         -> vm_area_alloc_pages()
-> 
-> if, so it is not straight forward, i.e. there is one more allocation:
-> 
-> <snip>
-> static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
-> 				 pgprot_t prot, unsigned int page_shift,
-> 				 int node)
-> {
-> ...
-> 	/* Please note that the recursion is strictly bounded. */
-> 	if (array_size > PAGE_SIZE) {
-> 		area->pages = __vmalloc_node_noprof(array_size, 1, nested_gfp, node,
-> 					area->caller);
-> 	} else {
-> 		area->pages = kmalloc_node_noprof(array_size, nested_gfp, node);
-> 	}
-> ...
-> }
-> <snip>
-> 
-> whereas it is easier to do it inside of the __vmalloc_area_node().
-
-Right. The allocation path is quite convoluted here. If it is just too
-much of a hassle to implement NOFAIL at a single place then we should
-aim at reducing that. Having that at 3 different layers is just begging
-for inconsistences.
+diff --git a/Documentation/devicetree/bindings/dma/sophgo,cv1800b-dmamux.yaml b/Documentation/devicetree/bindings/dma/sophgo,cv1800b-dmamux.yaml
+new file mode 100644
+index 000000000000..e444ac2cc9a2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dma/sophgo,cv1800b-dmamux.yaml
+@@ -0,0 +1,51 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/dma/sophgo,cv1800b-dmamux.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Sophgo CV1800/SG200 Series DMA multiplexer
++
++maintainers:
++  - Inochi Amaoto <inochiama@outlook.com>
++
++description:
++  The DMA multiplexer of CV1800 is a subdevice of the system
++  controller. It support mapping 8 channels, but each channel
++  can be mapped only once.
++
++allOf:
++  - $ref: dma-router.yaml#
++
++properties:
++  compatible:
++    const: sophgo,cv1800b-dmamux
++
++  reg:
++    items:
++      - description: DMA channal remapping register
++      - description: DMA channel interrupt mapping register
++
++  '#dma-cells':
++    const: 2
++    description:
++      The first cells is device id. The second one is the cpu id.
++
++  dma-masters:
++    maxItems: 1
++
++required:
++  - reg
++  - '#dma-cells'
++  - dma-masters
++
++additionalProperties: false
++
++examples:
++  - |
++    dma-router@154 {
++      compatible = "sophgo,cv1800b-dmamux";
++      reg = <0x154 0x8>, <0x298 0x4>;
++      #dma-cells = <2>;
++      dma-masters = <&dmac>;
++    };
 -- 
-Michal Hocko
-SUSE Labs
+2.46.0
+
 
