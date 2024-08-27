@@ -1,105 +1,95 @@
-Return-Path: <linux-kernel+bounces-303895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A392961699
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:16:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B2D996169C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C50E1C20F4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:16:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E675B24644
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF851D27AC;
-	Tue, 27 Aug 2024 18:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F591D2F67;
+	Tue, 27 Aug 2024 18:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MOutDUOE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dEH7PFIv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299BD1C9EC8;
-	Tue, 27 Aug 2024 18:16:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35FC91D1757;
+	Tue, 27 Aug 2024 18:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724782564; cv=none; b=Exck0MvxcZDLVBWSNKRXXCLTuj/oR5zFs+2aozxShbEMf4CCLsz5z9qxM3rUMMHY1+4my0rKXdR6DCSnLYAUXeU4qzAAgOL8xisdyIAjvhAAiulfk8e7pBH+1dfPx9N7Qhce43PmEEYd8RSeec63U4Xow+pirWX3gbfprDz6RtY=
+	t=1724782568; cv=none; b=ts2rLfhXMSP2O9mljCplObJ4C/Nb34fBO7uDdV4wYFZ6sK9LifnIxwNFXK0S8lWidPQMCXxZ+9PQczK6LnXuXCLZ5i22zgLSuOHZSxPE1fulcboivLpDVHAxy8BaLFnZJ7K9fzEvmM8K5GLZ+MT8zwYtcmVVmTp99uDFvlscS/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724782564; c=relaxed/simple;
-	bh=ksH9jXO8i3tKAuJWox1KqrNbHbzqNUGd/zk7k3ircp8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=RL50KluTp7UeST0TymKu+NvlV81ulqKGvEu1phE5pa+4r68L9OhgGB8DHsckNrnzCGIKAYlPkRd5Zzuem9enmQapz8ksRmG+5znf3VAQXsPD5h45A2vTOawWRxsE6+19jTktREX9V5ziOwHCSrFTBOYBM567cL4AREdXrGfsYzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MOutDUOE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F967C567C2;
-	Tue, 27 Aug 2024 18:16:02 +0000 (UTC)
+	s=arc-20240116; t=1724782568; c=relaxed/simple;
+	bh=fpvBC8whWsAt8fYSueKeJdWimft2Awk2sIf75Zati24=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=OJZpykh9Q1GjflhZQdEGwcy8hZiZBP1V7rwOpxsLWm3X8KOB6ohMsXSSs1+KHxG0aN7ZrcORKjw4ZGXL7NROJHTbiw4WK218AEmuZfBL4mAsiiy5Cz0gn/R355eouZKmHgV9PXibnsXLsmXvez6BFtcLBhulXsfLiX6YVkWTj3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dEH7PFIv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB368C567C2;
+	Tue, 27 Aug 2024 18:16:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724782562;
-	bh=ksH9jXO8i3tKAuJWox1KqrNbHbzqNUGd/zk7k3ircp8=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=MOutDUOExWpk/4joejGqGfZPi/exnMaswomCZdP5ZA+ilPdk4USLv0FOXj9Q5Hq2n
-	 oEqzCujazgptd/nlL2lwxei/oR24UXYHyV/o3vz8/DDsU4taJkoymgGbsxOsqYaA62
-	 dz+S1oblAPm0jalf+/m4hqRYgO7fa3MTzu7jLiCQd4hFlHVfLf0kedVZ5/raJoe/DH
-	 zV9NuvPKP6NkBk1MfAb8vcIpKe+zaXvZ3fAEdLTJyrvhlmkf4yoLbViOellnmibwi7
-	 Bg0rz4kMMoHrt6ZLXlSsylbkysUS2DMVFdOuTyXyogy/+I0VVci0ywd+NtQIM8bX6V
-	 d0s7flQQbXSxQ==
+	s=k20201202; t=1724782568;
+	bh=fpvBC8whWsAt8fYSueKeJdWimft2Awk2sIf75Zati24=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=dEH7PFIvhxQH891GGCYZgHuUTRfOJdC4X/e6m9BK99ikqagauhRwQHqSEgVrrR99c
+	 yn6fyAYI7vOU1+OvWx12bsuvR+I+QTmoykp9jgRwcSyus+80wHJPini/08c35y65Dt
+	 +qFHCoD4wpXXXijpV4QXmRf7jLkb1H8+lnNv9vnxkvjl25o9Ewh22eQ9BrK8wC9Ck0
+	 qfNhwuS3zyP2s67557znNhr1ZfXB6F6oPHCC1JjR6ObBnK8irJOzMTVSFzAu7dyWFv
+	 cvUtw+nxKNLypyK0FAFlUsL/KRAOcXxaNn1OX/u4wUM2j1iTIb+u1KP7PB6QFkqDMN
+	 bag/kPKMe+fAA==
+Message-ID: <65cfdea2ac3373af27b8f65bb962dc04.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 27 Aug 2024 21:15:58 +0300
-Message-Id: <D3QWE0Z23AVM.1ZWNVW0C9NWMR@kernel.org>
-Cc: <zhiquan1.li@intel.com>, <kristen@linux.intel.com>, <seanjc@google.com>,
- <zhanb@microsoft.com>, <anakrish@microsoft.com>,
- <mikko.ylinen@linux.intel.com>, <yangjie@microsoft.com>,
- <chrisyan@microsoft.com>
-Subject: Re: [PATCH v16 10/16] x86/sgx: Implement async reclamation for
- cgroup
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Haitao Huang" <haitao.huang@linux.intel.com>,
- <dave.hansen@linux.intel.com>, <kai.huang@intel.com>, <tj@kernel.org>,
- <mkoutny@suse.com>, <chenridong@huawei.com>,
- <linux-kernel@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
- <x86@kernel.org>, <cgroups@vger.kernel.org>, <tglx@linutronix.de>,
- <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
- <sohil.mehta@intel.com>, <tim.c.chen@linux.intel.com>
-X-Mailer: aerc 0.17.0
-References: <20240821015404.6038-1-haitao.huang@linux.intel.com>
- <20240821015404.6038-11-haitao.huang@linux.intel.com>
-In-Reply-To: <20240821015404.6038-11-haitao.huang@linux.intel.com>
+In-Reply-To: <2156bd2a8bde7f07491ab9ed9cf1ee15.sboyd@kernel.org>
+References: <20240823-x1e80100-clk-fix-v1-1-0b1b4f5a96e8@linaro.org> <2156bd2a8bde7f07491ab9ed9cf1ee15.sboyd@kernel.org>
+Subject: Re: [PATCH] clk: qcom: gcc-x1e80100: Don't use parking clk_ops for QUPs
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+To: Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson <andersson@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Konrad Dybcio <konradybcio@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rajendra Nayak <quic_rjendra@quicinc.com>, Sibi Sankar <quic_sibis@quicinc.com>
+Date: Tue, 27 Aug 2024 11:16:05 -0700
+User-Agent: alot/0.10
 
-On Wed Aug 21, 2024 at 4:53 AM EEST, Haitao Huang wrote:
-> From: Kristen Carlson Accardi <kristen@linux.intel.com>
->
-> In cases EPC pages need be allocated during a page fault and the cgroup
-> usage is near its limit, an asynchronous reclamation needs to be
-> triggered to avoid blocking the page fault handling.
->
-> To keep implementation simple, use a workqueue instead of kthread to
-> schedule the asynchronous reclamation work. Add corresponding work item a=
-nd
-> function definitions for EPC cgroup.
->
-> In sgx_cgroup_try_charge(), if caller does not allow synchronous
-> reclamation, queue an asynchronous work into the workqueue.
->
-> The current global reclaimer, ksgxd, maintains a threshold for the
-> minimal free EPC pages to avoid thrashing when allocating EPC pages.
-> Similarly, only reclaiming EPC pages from the current cgroup when its
-> usage actually reaches limit could also cause thrashing.  To avoid that,
-> define a similar "per-cgroup usage threshold" and actively trigger
-> asynchronous per-cgroup EPC reclamation when the usage reaches the
-> threshold after try_charge() is successful.
->
-> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
-> Co-developed-by: Haitao Huang <haitao.huang@linux.intel.com>
-> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
-> Tested-by: Jarkko Sakkinen <jarkko@kernel.org>
+Quoting Stephen Boyd (2024-08-27 11:02:48)
+> Quoting Bryan O'Donoghue (2024-08-23 05:58:56)
+> > Per Stephen Boyd's explanation in the link below, QUP RCG clocks do not
+> > need to be parked when switching frequency. A side-effect in parking to=
+ a
+> > lower frequency can be a momentary invalid clock driven on an in-use se=
+rial
+> > peripheral.
+> >=20
+> > This can cause "junk" to spewed out of a UART as a low-impact example. =
+On
+> > the x1e80100-crd this serial port junk can be observed on linux-next.
+> >=20
+> > Apply a similar fix to the x1e80100 Global Clock controller to remediat=
+e.
+> >=20
+> > Link: https://lore.kernel.org/all/20240819233628.2074654-3-swboyd@chrom=
+ium.org/
+> > Fixes: 161b7c401f4b ("clk: qcom: Add Global Clock controller (GCC) driv=
+er for X1E80100")
+> > Fixes: 929c75d57566 ("clk: qcom: gcc-sm8550: Mark RCGs shared where app=
+licable")
+> > Suggested-by: Neil Armstrong <neil.armstrong@linaro.org>
+> > Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> > ---
+>=20
+> Applied to clk-fixes
+>=20
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Unapplied :( See this email[1] for more info. I'm thinking that this can
+be applied to clk-next instead, by qcom maintainers.
 
-BR, Jarkko
+[1] https://lore.kernel.org/all/CAE-0n52rYVs81jtnFHyfc+K4wECvyCKmnHu2w9JhPN=
+qvMYEeOA@mail.gmail.com
 
