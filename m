@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-302896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64FD99604C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:46:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72E6F9604C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:46:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B78E28170E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:46:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95EA1B22F79
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BFC419CD13;
-	Tue, 27 Aug 2024 08:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FA719CD07;
+	Tue, 27 Aug 2024 08:46:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vPyixhA0"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2lEIu4UO"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D588199E9A
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA46919AD85
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724748368; cv=none; b=NZnqNbqHuKFJETBA1BjieLrhBWCRLnaJbd7Cdc0xmdlG2tWeXP9s/vVRnp3b7R7c4u1wXHPWZYDaGhm01Hrw9qAYYp1YorC4jY6mSvoeB8X56OVPlH3BL5VjsF/88CXU+ss9AmG4D3wtwnkOf8DvOBRvzAYeyZs2uVUjdm4WZeA=
+	t=1724748368; cv=none; b=H41mHMWum3nOZVGWl7e8IRR2G3J5Mroc3aZWhpCrS92itbN7qTsNMIYvqQOXDSElQRJJzmirAYW9NaWhTZgD9ISSL+aysHP6jJYqzY4wgZrvVHJ+5YXiXZBGj+/CrenvdZy3iyiHrmP5E1fUmaoDOhOu+pGQLJtjRGiuen3mUhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724748368; c=relaxed/simple;
-	bh=Qr08QM26q8tDe51syMaE8h89/HxW9A0cYqV9q7lV/20=;
+	bh=Lw37HyF37GzltMhnte000Ty23NUQC83Fy2jc5oyK3FA=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=C9Ka4RlEEMrAOw487OdYpnDXJEPGV4yXIFJCbilkmUXJZank08v8JW6MGH9yOSMgOHdVWlIx417RQUc9aj/RwDdRz6L9V2XJv4O0+pqeJfio1GR63rKR1NexLGdv2uBPkpHz0tP1QyUtrQiVoupO2dNMJLoGEFf/WeIjlZBj8kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vPyixhA0; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=TdUFrv/r6FjAa5hC6ht+LA2QaGc9BCAlutlXNPai3abo3yKUb+Xoj0/PAjggkLTPbvFmFYDD4VFQUmqGquwnY73OJGVrxWNn6hrDJFEBNfYCaI2SFxRHsesy8qRxYuNbC4yC8sbYI3sy5nDd3LOjP4i6Lu445rp9UWQ45ZxtXG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2lEIu4UO; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-428fc34f41bso48933455e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 01:46:04 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6b2249bf2d0so109104837b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 01:46:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724748363; x=1725353163; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1724748366; x=1725353166; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SMXEDoUiwiu4q/DZdkFbUl9+xm4eWjv4+UrgfxPU2W4=;
-        b=vPyixhA02UoSiz0QoqBn/ZX2nYCNkeHHsjCjNY1R167fHRzoDVwlrvDArEBD8X977g
-         hGLDAaWMukL/a2Lww9yLuNO0mTThvwTergsQqMLRcanWQiEOS6CHduD8rq7/Ry2oqrxI
-         jw/JDYCDWAiSDpwO85isOJHIFrwWPLL/Vi5pgkv1ML4hmKD+yIQRQMH0sHArRZijnhqn
-         ag9FY2l0D+9P9joJHWsUgNnFUy+toGnlKdOw+EU/jiBs+QT2f/hJ5x7AGzrCLTXDCdr9
-         yQIU5Kh8NlRgJpehvhTXnM6RK2/VZqiGsSrwBKyu1veZhWCQ/mBELFYFQtha6JaMksCQ
-         YO+Q==
+        bh=S/4eIk6jI1tjaj4UGqml6oE2hCNIy1npmCkHCveHD80=;
+        b=2lEIu4UOD1oOax2M+SAPnqGL/oG1Mh65bzS0Xn0m4z9px1XM8T2BIILFAvycyL47Qm
+         xiPfLjzjqloQClxWtFwGJWraYL7KHc93E+0yac3gHP8J8qmgLR/pRncWESAFy5ulX70e
+         VghwM6QrbpxDDQmv3Lwnq3WpsgWk9SBY2MHEULwysNY+TuTS64VKcsOqmJ7JphshpBF6
+         XDEarDVyo3ZiNNnE0elEVH0Y/mGk5z7E67ZxJLzL1I5UBVvWGCzaLQG4zodFVoFY0ibV
+         0KsyaAPAwe0LXSoUUsBX5gjOIBqcw2psOMkGeRnxCB63y6kJpkhKbFL/GrTAYo+KVoEe
+         1VBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724748363; x=1725353163;
+        d=1e100.net; s=20230601; t=1724748366; x=1725353166;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SMXEDoUiwiu4q/DZdkFbUl9+xm4eWjv4+UrgfxPU2W4=;
-        b=rD3g4Bvh4+SEXofL05FpLHucMkGN/FqyAhUZVNzyFYIoInoyQUukr2RNUMXLEDJbSD
-         9qJUjunFuKZ/viBrPgAPs4hLfwH+lhOviDzPlSBrLDrAnduA9tOjnZYfmBowfe3eZUvu
-         oQqtNKb7+3AscBwih9ykeOeWoyOI5UMPSvkBv4YNsnmjbslQz50afEAw/5K0NNhghKju
-         OeOXDB30qNqbJcSvZ73izEA4sOXnZVfQ/Isg4nMiOxFi5ccmMAakFKnOpJ12zsSwRZtZ
-         T5Z9NK8dqDNE3Mg9PnpjfnFiTzZ39DkyG058R4CZP6JDXth3thRzQJp+t5InpYw3ZozW
-         8kFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxYIIehTMv4WbXnux8/ws9+L0h/aZOznV0B7wX/S8Z4NO3aiPM+Z99hqlk+oMrTQf0dtkKu9vZeEx85QE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOxHnBVx9g4zMy6dalFp8nW/WP8NbTgDaP/SD02o5sfX1ARxeP
-	sbAr3QayD26hhia8s7c/hrn/iviEPE8fopDQar83gGO7XNNwHFYn8IJgy91I18ffqMBqaoasGMH
-	Pl7PouZ1ab4aOlUP+saePw2p/oQ==
-X-Google-Smtp-Source: AGHT+IHY4rt/KDG8jBlRHZVjqb4Z3O2aMXhgahv4zi33s4tbXCpBDS46J6SJnoaHeJNB1+fTQfKkZHV28U+bNgbGPq8=
+        bh=S/4eIk6jI1tjaj4UGqml6oE2hCNIy1npmCkHCveHD80=;
+        b=bgQ/eix6XVuURn9RfDptVCchJHL4JN5m8NWJtp4vjB5OqprLF8Qvt0YDqaZRPWS/4R
+         0NHlikvegc+ADxeODAHc0co/UHAMsyrsy58wBlhLLYdC3/Ih1bfnmCiKxGGBtbnqCBBe
+         4XtzbfJzGMViNTSbgWvXS47ZLiJ4t9oNOzeiBo5i3lWcabq27GW09NDUR2RLQUUKQAHz
+         a6bagMuauO7JkrCoUbM2vJ3OBZCTjWyyaH7nUbJaEx2B8zpg8B60U3T07fCcUCU1dVh5
+         vDSUGyexOGkpL0wg3sRZphfBN/hzv59vafFHRxbZUaVx11NyE5suNmAsx0NvqPNKsxi5
+         a+hg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvUyK9L73GPGGoqVt2IYXltwDxsUsoUBBavTVjbzmDGAuOz5Lj7u+at9i2T3iXziHJO8VvDWV1ti+eJzg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2SDZ4kBkX37xgUliREkPMoonG3LtHnbQ1K5RuFXO7O6EHkSd+
+	lqGtOaRmMmSSq5IyPApojWKhvpX1Y6KXnxb9JTi7ABYxM7+Ris71/aOL2ZA5ZMwldpFd3Sm2FQE
+	s26aeysEgvFnLdSYOSPQQzS9H1A==
+X-Google-Smtp-Source: AGHT+IH5RM7JuVVSPKnjdxxxYeoYnQeY0l7qLc/ywBgRIM547MLlZ6+2U/YgCfXhEykPoaO06zqlMD4Kq2MFsPnHn0E=
 X-Received: from sebkvm.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:cd5])
- (user=sebastianene job=sendgmr) by 2002:a05:600c:3b0f:b0:426:6619:943 with
- SMTP id 5b1f17b1804b1-42b9ae1da4dmr63725e9.3.1724748363256; Tue, 27 Aug 2024
- 01:46:03 -0700 (PDT)
-Date: Tue, 27 Aug 2024 08:45:45 +0000
+ (user=sebastianene job=sendgmr) by 2002:a05:690c:4a06:b0:62d:1142:83a5 with
+ SMTP id 00721157ae682-6cfbbadf920mr1801177b3.8.1724748365682; Tue, 27 Aug
+ 2024 01:46:05 -0700 (PDT)
+Date: Tue, 27 Aug 2024 08:45:46 +0000
 In-Reply-To: <20240827084549.45731-1-sebastianene@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240827084549.45731-1-sebastianene@google.com>
 X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
-Message-ID: <20240827084549.45731-3-sebastianene@google.com>
-Subject: [PATCH v9 2/5] arm64: ptdump: Expose the attribute parsing functionality
+Message-ID: <20240827084549.45731-4-sebastianene@google.com>
+Subject: [PATCH v9 3/5] arm64: ptdump: Use the ptdump description from a local context
 From: Sebastian Ene <sebastianene@google.com>
 To: akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com, 
 	ardb@kernel.org, catalin.marinas@arm.com, christophe.leroy@csgroup.eu, 
@@ -86,202 +86,82 @@ Cc: kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 
-Reuse the descriptor parsing functionality to keep the same output format
-as the original ptdump code. In order for this to happen, move the state
-tracking objects into a common header.
+Rename the attributes description array to allow the parsing method
+to use the description from a local context. To be able to do this,
+store a pointer to the description array in the state structure. This
+will allow for the later introduced callers (stage_2 ptdump) to specify
+their own page table description format to the ptdump parser.
 
 Signed-off-by: Sebastian Ene <sebastianene@google.com>
 ---
- arch/arm64/include/asm/ptdump.h | 41 +++++++++++++++++++++++-
- arch/arm64/mm/ptdump.c          | 55 +++++++--------------------------
- 2 files changed, 51 insertions(+), 45 deletions(-)
+ arch/arm64/include/asm/ptdump.h |  1 +
+ arch/arm64/mm/ptdump.c          | 13 ++++++++-----
+ 2 files changed, 9 insertions(+), 5 deletions(-)
 
 diff --git a/arch/arm64/include/asm/ptdump.h b/arch/arm64/include/asm/ptdump.h
-index 5b1701c76d1c..bd5d3ee3e8dc 100644
+index bd5d3ee3e8dc..71a7ed01153a 100644
 --- a/arch/arm64/include/asm/ptdump.h
 +++ b/arch/arm64/include/asm/ptdump.h
-@@ -9,6 +9,7 @@
- 
- #include <linux/mm_types.h>
- #include <linux/seq_file.h>
-+#include <linux/ptdump.h>
- 
- struct addr_marker {
- 	unsigned long start_address;
-@@ -21,14 +22,52 @@ struct ptdump_info {
- 	unsigned long			base_addr;
- };
- 
-+struct ptdump_prot_bits {
-+	u64		mask;
-+	u64		val;
-+	const char	*set;
-+	const char	*clear;
-+};
-+
-+struct ptdump_pg_level {
-+	const struct ptdump_prot_bits *bits;
-+	char name[4];
-+	int num;
-+	u64 mask;
-+};
-+
-+/*
-+ * The page dumper groups page table entries of the same type into a single
-+ * description. It uses pg_state to track the range information while
-+ * iterating over the pte entries. When the continuity is broken it then
-+ * dumps out a description of the range.
-+ */
-+struct ptdump_pg_state {
-+	struct ptdump_state ptdump;
-+	struct seq_file *seq;
-+	const struct addr_marker *marker;
-+	const struct mm_struct *mm;
-+	unsigned long start_address;
-+	int level;
-+	u64 current_prot;
-+	bool check_wx;
-+	unsigned long wx_pages;
-+	unsigned long uxn_pages;
-+};
-+
- void ptdump_walk(struct seq_file *s, struct ptdump_info *info);
-+void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
-+	       u64 val);
- #ifdef CONFIG_PTDUMP_DEBUGFS
- #define EFI_RUNTIME_MAP_END	DEFAULT_MAP_WINDOW_64
- void __init ptdump_debugfs_register(struct ptdump_info *info, const char *name);
- #else
- static inline void ptdump_debugfs_register(struct ptdump_info *info,
- 					   const char *name) { }
--#endif
-+#endif /* CONFIG_PTDUMP_DEBUGFS */
-+#else
-+static inline void note_page(void *pt_st, unsigned long addr,
-+			     int level, u64 val) { }
- #endif /* CONFIG_PTDUMP_CORE */
- 
- #endif /* __ASM_PTDUMP_H */
+@@ -44,6 +44,7 @@ struct ptdump_pg_level {
+  */
+ struct ptdump_pg_state {
+ 	struct ptdump_state ptdump;
++	struct ptdump_pg_level *pg_level;
+ 	struct seq_file *seq;
+ 	const struct addr_marker *marker;
+ 	const struct mm_struct *mm;
 diff --git a/arch/arm64/mm/ptdump.c b/arch/arm64/mm/ptdump.c
-index 6986827e0d64..404751fd30fe 100644
+index 404751fd30fe..ca53ef274a8b 100644
 --- a/arch/arm64/mm/ptdump.c
 +++ b/arch/arm64/mm/ptdump.c
-@@ -38,33 +38,7 @@
- 		seq_printf(m, fmt);	\
- })
- 
--/*
-- * The page dumper groups page table entries of the same type into a single
-- * description. It uses pg_state to track the range information while
-- * iterating over the pte entries. When the continuity is broken it then
-- * dumps out a description of the range.
-- */
--struct pg_state {
--	struct ptdump_state ptdump;
--	struct seq_file *seq;
--	const struct addr_marker *marker;
--	const struct mm_struct *mm;
--	unsigned long start_address;
--	int level;
--	u64 current_prot;
--	bool check_wx;
--	unsigned long wx_pages;
--	unsigned long uxn_pages;
--};
--
--struct prot_bits {
--	u64		mask;
--	u64		val;
--	const char	*set;
--	const char	*clear;
--};
--
--static const struct prot_bits pte_bits[] = {
-+static const struct ptdump_prot_bits pte_bits[] = {
- 	{
- 		.mask	= PTE_VALID,
- 		.val	= PTE_VALID,
-@@ -143,14 +117,7 @@ static const struct prot_bits pte_bits[] = {
+@@ -117,7 +117,7 @@ static const struct ptdump_prot_bits pte_bits[] = {
  	}
  };
  
--struct pg_level {
--	const struct prot_bits *bits;
--	char name[4];
--	int num;
--	u64 mask;
--};
--
--static struct pg_level pg_level[] __ro_after_init = {
-+static struct ptdump_pg_level pg_level[] __ro_after_init = {
+-static struct ptdump_pg_level pg_level[] __ro_after_init = {
++static struct ptdump_pg_level kernel_pg_levels[] __ro_after_init = {
  	{ /* pgd */
  		.name	= "PGD",
  		.bits	= pte_bits,
-@@ -174,7 +141,7 @@ static struct pg_level pg_level[] __ro_after_init = {
- 	},
- };
- 
--static void dump_prot(struct pg_state *st, const struct prot_bits *bits,
-+static void dump_prot(struct ptdump_pg_state *st, const struct ptdump_prot_bits *bits,
- 			size_t num)
+@@ -192,6 +192,7 @@ void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
+ 	       u64 val)
  {
- 	unsigned i;
-@@ -192,7 +159,7 @@ static void dump_prot(struct pg_state *st, const struct prot_bits *bits,
- 	}
- }
- 
--static void note_prot_uxn(struct pg_state *st, unsigned long addr)
-+static void note_prot_uxn(struct ptdump_pg_state *st, unsigned long addr)
- {
- 	if (!st->check_wx)
- 		return;
-@@ -206,7 +173,7 @@ static void note_prot_uxn(struct pg_state *st, unsigned long addr)
- 	st->uxn_pages += (addr - st->start_address) / PAGE_SIZE;
- }
- 
--static void note_prot_wx(struct pg_state *st, unsigned long addr)
-+static void note_prot_wx(struct ptdump_pg_state *st, unsigned long addr)
- {
- 	if (!st->check_wx)
- 		return;
-@@ -221,10 +188,10 @@ static void note_prot_wx(struct pg_state *st, unsigned long addr)
- 	st->wx_pages += (addr - st->start_address) / PAGE_SIZE;
- }
- 
--static void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
--		      u64 val)
-+void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
-+	       u64 val)
- {
--	struct pg_state *st = container_of(pt_st, struct pg_state, ptdump);
-+	struct ptdump_pg_state *st = container_of(pt_st, struct ptdump_pg_state, ptdump);
+ 	struct ptdump_pg_state *st = container_of(pt_st, struct ptdump_pg_state, ptdump);
++	struct ptdump_pg_level *pg_level = st->pg_level;
  	static const char units[] = "KMGTPE";
  	u64 prot = 0;
  
-@@ -286,12 +253,12 @@ static void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
- void ptdump_walk(struct seq_file *s, struct ptdump_info *info)
- {
- 	unsigned long end = ~0UL;
--	struct pg_state st;
-+	struct ptdump_pg_state st;
- 
- 	if (info->base_addr < TASK_SIZE_64)
- 		end = TASK_SIZE_64;
- 
--	st = (struct pg_state){
-+	st = (struct ptdump_pg_state){
+@@ -262,6 +263,7 @@ void ptdump_walk(struct seq_file *s, struct ptdump_info *info)
  		.seq = s,
  		.marker = info->markers,
  		.mm = info->mm,
-@@ -324,7 +291,7 @@ static struct ptdump_info kernel_ptdump_info __ro_after_init = {
- 
- bool ptdump_check_wx(void)
++		.pg_level = &kernel_pg_levels[0],
+ 		.level = -1,
+ 		.ptdump = {
+ 			.note_page = note_page,
+@@ -279,10 +281,10 @@ static void __init ptdump_initialize(void)
  {
--	struct pg_state st = {
-+	struct ptdump_pg_state st = {
- 		.seq = NULL,
- 		.marker = (struct addr_marker[]) {
+ 	unsigned i, j;
+ 
+-	for (i = 0; i < ARRAY_SIZE(pg_level); i++)
+-		if (pg_level[i].bits)
+-			for (j = 0; j < pg_level[i].num; j++)
+-				pg_level[i].mask |= pg_level[i].bits[j].mask;
++	for (i = 0; i < ARRAY_SIZE(kernel_pg_levels); i++)
++		if (kernel_pg_levels[i].bits)
++			for (j = 0; j < kernel_pg_levels[i].num; j++)
++				kernel_pg_levels[i].mask |= kernel_pg_levels[i].bits[j].mask;
+ }
+ 
+ static struct ptdump_info kernel_ptdump_info __ro_after_init = {
+@@ -297,6 +299,7 @@ bool ptdump_check_wx(void)
  			{ 0, NULL},
+ 			{ -1, NULL},
+ 		},
++		.pg_level = &kernel_pg_levels[0],
+ 		.level = -1,
+ 		.check_wx = true,
+ 		.ptdump = {
 -- 
 2.46.0.295.g3b9ea8a38a-goog
 
