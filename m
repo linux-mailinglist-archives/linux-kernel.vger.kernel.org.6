@@ -1,118 +1,107 @@
-Return-Path: <linux-kernel+bounces-303971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 628489617D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:11:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BDAE9617DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:15:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4F24B2175B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:11:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBB80283AF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842541D3652;
-	Tue, 27 Aug 2024 19:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE781D2F78;
+	Tue, 27 Aug 2024 19:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="HxPbJ4GI"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="UJepcORI"
+Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA381D2787;
-	Tue, 27 Aug 2024 19:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6846E146D6A;
+	Tue, 27 Aug 2024 19:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724785846; cv=none; b=pPSA+NitYGtl5+EfOCpSgwfbvyjDrkS2LntULksldoXZmlRjZtOvLyYU/MPscHJwzh3Sa5qruFZ1T5b8ZbuERobcS19EvZT72H9Xq1Iz3X2m0PGqbRf4Qq7gJ2GZj43jxyG8YAsVZPnTHFtHsZoElmw6/gfX/yFjxjinkZ7wQcw=
+	t=1724786139; cv=none; b=gttYdd3tWPoCYnRCW0dqEOO/T0wk+kfFhUuiNrLOejPKHjh4yTe6EsFaEbIHZ92ZJP8LdSUlrLrMAXyBWQVEWMPgorm1ChZCtGml/Yz2r3DAqLZZyHpXdhOuYKmQlMzwZPuW4ES8NRLOEbnOMBOwevqf5JBJMpvIDIY7DyTpVFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724785846; c=relaxed/simple;
-	bh=VCg1E/yUOyYkbm2QnGpBTYpLqUv5Ug/iEYQzqGHhiiM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CskL423rQSfN8yyaEkGxmaLTvsV7gAHC/lLpsO5AimbQ+1IXPoVV/stf7qA7Y2xe1CpqC3KrhkHNaY2IQyApnFrSirf/9S974sDwV7qDzlppYnWAGuSvTtW93DFeC87ibg5Nru8VaOsvaLD+eq5PUXHiE+NRqkHcnNdRBqhgcws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=HxPbJ4GI; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1724785830; x=1725390630; i=wahrenst@gmx.net;
-	bh=iBp3pbEaZp9GAgIqRXdBVERs/VyykwuEMnkHZgKqzIo=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=HxPbJ4GIcYvXjUG1dEc8F0IdqNtEAT8ivSQY+dYbUccZV6xVu3Fo7CsLSYBMoBg0
-	 qI4OvVTOatFKsJbR20+s4BU9s8nTmrv1djIDggKggC9p3zGmVC5aPKRcAwkK83EUy
-	 Kvn6G4pUiGby+2ZbcMAAGrVyou4TFVMWTXDcXTVwaLzTHiN6JRx2KBSdPkBFiLc21
-	 pv9RbJyF8vXsN71HrvIS7Z4xYRNc0VJ/5brjKO2aSEY0RrsdbqDfLbEkWGAEkfNO8
-	 XKuguTjgX2ROJpdLDQM80ofLJ5fKEtHJI3zEN66WRClYuUTLqucxodU3HCc5xZshX
-	 lboI63pb1BWyPZ2TiQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from stefanw-SCHENKER ([37.4.248.43]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MRTRN-1sV5Ep2uMn-00PkuB; Tue, 27
- Aug 2024 21:10:30 +0200
-From: Stefan Wahren <wahrenst@gmx.net>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
+	s=arc-20240116; t=1724786139; c=relaxed/simple;
+	bh=jabYyamu7DASq95qkpSX31tv3SineQAeHuDW7SGS8qk=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=GprAdjEwTYdVwj77PRUe6sd52j66YUpAzq2DoA4txi/A3C6VxK96z7qTr6EPyzXKPeZZqQAffIx1dC2uRB+Yo40K4ZnEAUw+gsOR10bBiRwFX4rxi2dj/ffKKGnXdRcppToH5aDAd4U9os8LPo34OjkctGMu+xAk/fuQoLE0R+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=UJepcORI; arc=none smtp.client-ip=203.205.221.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1724785835; bh=hU7ofY00NIzY7HQ0Ss9KlIal31nOOy8WuXlW+57Dwcg=;
+	h=From:To:Cc:Subject:Date;
+	b=UJepcORIUyWuD57wuiZKi+R6KQ2byY/JKJ4UnNW2XiODiyYx0zl08Hxcr+9ejlTz8
+	 MUrv+lTZxMDB7koDHAz6GgC7Dli25e/DwI/GVh21pHjoscDsG6rOdhxKuQnqTBOEt9
+	 RCncODbvcgYbnl15EgbYDIcefiz9g9G9lg0icaZg=
+Received: from localhost.localdomain ([112.64.14.141])
+	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
+	id 29934AC8; Wed, 28 Aug 2024 03:10:25 +0800
+X-QQ-mid: xmsmtpt1724785825txqyvfh1i
+Message-ID: <tencent_B732022EF733FCEDC36B0E601B62889DB00A@qq.com>
+X-QQ-XMAILINFO: M1rD3f8svNznCM+daMDhg00chSC1QSmQAsB5g36rh0PhHo49Kw+xS8E1b+Npss
+	 dFt31s5i63Br5ivP96Cn4y/UevKztoUD/2xvhDqSaFcFMg4IRu3SYs/lky9UEwNaaJEHm1bX+4DB
+	 5OC3Lbxr9+VNmnvUSM1ijOnVr3Bguuipt5sA3Stqwp/EhWJhqjhGFrv7fr9eFS56O+TgScasmH5f
+	 9vUn+IlFiVqsQonVruvr77f9DOgZ4yPn/ir8n/OhuMvSX6/wXy9d6DyWnS36K7uxqirSNRk2fsSu
+	 aJvybHaFJHfl2cBi5gZUGIx35hRTGe0b2srGZdQjE0TNYCSDW1bm/DoxxJ2jnE8RBl+Bu09vbg7a
+	 Dg/rGl4TlRXu6GRVlXYeOtkvuRyR2ZpOgfE+jJvQKP/fxP28C5K3pqwJ8hdQBSTKjAPHb/49dGOi
+	 Bz6G8/EGxGWKPjDHKX/1KuiuaExZ7N9XTWs3IetjhkQ7VsKmkcXKaMK2uGBHx5K32epi7PDf4Q74
+	 V3I2/6n2pC038WI9GHsCGfGDwgy4uRbkHuplLIyqPZJDYd342ih19G0viiGMAcjpBhyvMnHvNb+M
+	 7LgCvYyoY0oHPpY8IjqCzE+YTtcQNNG+YuFSlzGoTVa6r+4OuFemM8vYZGKf5c19BqKibQdIvMJd
+	 n5qykqUX6gXvBy8F3alV5yrkZD0tjJED7InVuBJtQFSxtfc41hIXF4KbNiQrb8mVPY/B8wOxjE4l
+	 RCCIcTaxthtdK8EA0I0l9uNvwJ2QkZcPX7SMkxY07uHUd0rIJmyE9BOsbQhd7XZq1Pt4jIcBbmii
+	 8lMOgFAEJqU+PvXpViEImj1TEpveCH8wgF0WfRkLUk2zBGdrrnD6azlC2LqMHuYj/Fk1+fmxPdj3
+	 d2Z7STRsQuh+6NeTlVPa/U+3IAU7YGvlC05xTubEbmQ+FM0C3rkJf+R5EE3Ny3CQrGadunt4HqvO
+	 UYEp++GdytTcBA8qG9Tmq2Y5vWjzje/U5/d6mV9RZefcAQTGVHPHUlvdK//K7qoyqdg6oYwlXCR8
+	 FLSZTorH9nlzlH/+0o
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: jiping huang <huangjiping95@qq.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: [PATCH 5/5 next] net: vertexcom: mse102x: Use ETH_ZLEN
-Date: Tue, 27 Aug 2024 21:10:00 +0200
-Message-Id: <20240827191000.3244-6-wahrenst@gmx.net>
+	jiping huang <huangjiping95@qq.com>
+Subject: [PATCH] clk: Delete unused initial value for local variable "best_parent_rate".
+Date: Wed, 28 Aug 2024 03:10:22 +0800
+X-OQ-MSGID: <20240827191022.65346-1-huangjiping95@qq.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240827191000.3244-1-wahrenst@gmx.net>
-References: <20240827191000.3244-1-wahrenst@gmx.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:qus8KVBOsgQLvHN5h5ZsNS/fUFaROBPvHcN2AKzitTBClmsBM2Y
- raxPb6aihzMYj7qNWiFX8jIUCXVT4KkOmqTf1A6wj+jyi9WuzWow1XiykrqT1t59nZYZC8y
- zJbbD1LsiXiH5QHY7sIWgQWybEbTClelTN8GOChYCvTva6ezrVAEkCxVecekYnOZTBZt2jG
- 6yUMvfvqINORfUrJd7z4A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:9ZyvCe+VkmU=;aNPZiYxC4WG8jxNLbuHjflvxqpY
- 68SHXhXX0yUIsn8F+nrytDuSuQQp3ntgY5oQGiiOdKAzH2Y/Y/EY5bH7gx38YXmNdviMvpzmB
- P4zooljpsR/mCVV6q3YHjEAhIxflZdlDq5BWr+f8HydtBiuo6s7JyA+MlGbyqUvsf291ncvVo
- /fU5KhaMbskzPr9FzguGNlHdFPixejoSVoFWliMgY+qUFfc7ltwj+krgAeT/QoWIiTwVOABEq
- zeidB1UWe7LPMiE0RSVLcx3A/40ZMXNLRy3f3YGWdxHP+caCPqD6cutga2pTnW4gtqoPt5JEa
- JjzWbIuUrErRa8H+kPti64NezQA6pXOKXOkOtPysOKFxiMlcWKDOUXYje/o/RvF9Lh0aykZW6
- LQMv7SVysk+XgudJtP3Z8mBRuIZCGZZouMp5qUBAZfn2mJq8W8+ZcC18D0iI1qWXgzdncjxY4
- /pTyf1iSqdknHBy89EXPROYJkO/8mnJFjXaEtbmI4Atu6iM8pIVFHQk25S+NfGrx1k1hAi4qm
- XAe09hTl7qP43mCCLJxQRSre11MUF38ICStX0BSbSKlb4pZR/UxBZfiolzNgcLyf/+BcISZoI
- w9C0W3Aw3NNqhnUtYoOiw+X3XFgkTvlRrEtetkHh3iaK05/5LPZwC0vkpli0dbZhlOVBaeLpP
- ccQE51QBQLLtrOSBxAjxpAPJeyobQ/p60ASCavG6loeUrtCVeReL2xt7msR1c1LUqAYz32dg/
- e8W8CNcWh3JzDmFvJUq4RoUCVqPsWlEN9a6DKpKNUN3Nd+cENAy6n+save3QmPVXx/qDDcLsA
- pHyaNCKk8VoeyCqW0jCvRzfg==
+Content-Transfer-Encoding: 8bit
 
-There is already a define for minimum Ethernet frame length without FCS.
-So used this instead of the magic number.
+  At function "clk_calc_new_rates" entrance, assigned "parent->rate" to
+"best_parent_rate" as its initial value, but this initial value is unused
+in subsequent logic. Analysis is as follows.
+  The local variable 'best_parent_rate' is only used in line 2355 for
+the judgment 'best_parent_rate!=parent->rate'. However, if the
+"if (clk_core_can_round (core))" branch condition in line 2306 is true,
+the value of the local variable "best_parent_rate" will be updated by
+"best_parent_rate=req.best_parent_rate;" in line 2319, otherwise it will
+be directly returned in the "else if" branch in line 2325 and the "else"
+branch in line 2329.
+  Thank you for your precious time!
 
-Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
-=2D--
- drivers/net/ethernet/vertexcom/mse102x.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Signed-off-by: jiping huang <huangjiping95@qq.com>
 
-diff --git a/drivers/net/ethernet/vertexcom/mse102x.c b/drivers/net/ethern=
-et/vertexcom/mse102x.c
-index 8a72d8699b84..a04d4073def9 100644
-=2D-- a/drivers/net/ethernet/vertexcom/mse102x.c
-+++ b/drivers/net/ethernet/vertexcom/mse102x.c
-@@ -377,8 +377,8 @@ static int mse102x_tx_pkt_spi(struct mse102x_net *mse,=
- struct sk_buff *txb,
- 	int ret;
- 	bool first =3D true;
-
--	if (txb->len < 60)
--		pad =3D 60 - txb->len;
-+	if (txb->len < ETH_ZLEN)
-+		pad =3D ETH_ZLEN - txb->len;
-
- 	while (1) {
- 		mse102x_tx_cmd_spi(mse, CMD_RTS | (txb->len + pad));
-=2D-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 8cca52be993f..b6ff88f63bc4 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2297,8 +2297,6 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
+ 
+ 	/* save parent rate, if it exists */
+ 	parent = old_parent = core->parent;
+-	if (parent)
+-		best_parent_rate = parent->rate;
+ 
+ 	clk_core_get_boundaries(core, &min_rate, &max_rate);
+ 
+-- 
 2.34.1
 
 
