@@ -1,185 +1,184 @@
-Return-Path: <linux-kernel+bounces-303023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D3396064C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:53:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAA2096064D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:54:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73EF61C22869
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:53:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DC0C284662
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB3019D897;
-	Tue, 27 Aug 2024 09:53:50 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688D118D65C;
+	Tue, 27 Aug 2024 09:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gKiAHU7n"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050AF15ADB4;
-	Tue, 27 Aug 2024 09:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B7C15ADB4
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724752429; cv=none; b=B0EgARhbeR0jsbb/E3PjkhKVJ7Un964DK2IOVVd2LrRZ2UeV07aBbtQigq8Z7I9ojry2syUMFjLE7Ty/rvKp97VYQy/8iTNSja0TtgwK9Zyoh9kAsichcW/sLqfYDPAuvOzDEexiRPVEYKTOYC+rXJdhNIE/t29JTWBtmUz8Dus=
+	t=1724752448; cv=none; b=iebnC2lU1453RkqoxCMPajMHrcSTz/Ux7gJwN5qjn6f4cN5TlK8xT5YJ3ujYHyup48RASHNpO6OecDHr7heW1J7G0bzb2a2PE3U+Q7KOTtywcXTx+NXBDI2di9hvJzmdniFEeTR3N2vpecxafhgtW9z4uaRAqTgnIBok4wC9N8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724752429; c=relaxed/simple;
-	bh=oYQTbtbf9WfaZ++h0etITYmbiL9CHD1FpokqLRbqH/w=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CX4LN6ShE0VAVYBB4HRMrCe7vYZrUlYQvC9nk7q8fM7lNB4PaoI9u4LkWTkQU9g9c4pkHk5KXHrkd+qK3oc3gJNCi0mDbBu6gz1TTSJvKWzcBBGJkoC9s00e60Crx+yB+ePLxnf4NQXmLsPDo4BIuO0Lc01xhFo5lkeRlNfLmOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WtN862M71z6DB4F;
-	Tue, 27 Aug 2024 17:50:30 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id D1815140A71;
-	Tue, 27 Aug 2024 17:53:44 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 27 Aug
- 2024 10:53:44 +0100
-Date: Tue, 27 Aug 2024 10:53:43 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC: Ulf Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
-	<festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio
-	<konradybcio@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, <linux-pm@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-rockchip@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-msm@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 01/10] pmdomain: rockchip: Simplify with scoped for each
- OF child loop
-Message-ID: <20240827105343.00003a72@Huawei.com>
-In-Reply-To: <20240823-cleanup-h-guard-pm-domain-v1-1-8320722eaf39@linaro.org>
-References: <20240823-cleanup-h-guard-pm-domain-v1-0-8320722eaf39@linaro.org>
-	<20240823-cleanup-h-guard-pm-domain-v1-1-8320722eaf39@linaro.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724752448; c=relaxed/simple;
+	bh=+Yyy6DESuy5vOWHSUOvwdM44M68i426opWdvYATe0kU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pdKElPjIKrLErASib4qrGVSVb+6xAfaeK0zoIz9Ds8OvfOty3X0R/ySldiHd9u4A9WRQcFXyQHW91GuywuV+tvevwFl7uDvhlnIQ9NXhmQM3MHMzSTXbudpU5kB8BkeuN/qZj9aDFqV4ME6TIuawsNrJc8p2bcuYdgkORlNg628=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gKiAHU7n; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724752445;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4Hby8+vWGcxG1apHDhMC9Hlf5K3xHSz1sN7KMidP78I=;
+	b=gKiAHU7njRqG9IUZpxFpHYG5IiQ5sC45TGxuGbGqiG5J/jRy/Qaoycy7ag4Ickfw68u/uH
+	x1zf9bQV17JhVPI2sns3tlXxAjTfQT/MX/vnqhNM7Y15UuVERxX+nIDUvW2byUS7m+sUBz
+	dP6PkdA6BrB8FNVMKbp3hhDlEvyldgc=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-573-8lmtCi0XMTa7Dgo8KtKz5g-1; Tue, 27 Aug 2024 05:54:04 -0400
+X-MC-Unique: 8lmtCi0XMTa7Dgo8KtKz5g-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3719559c51dso3035195f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 02:54:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724752443; x=1725357243;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4Hby8+vWGcxG1apHDhMC9Hlf5K3xHSz1sN7KMidP78I=;
+        b=iRh0ASOmmUFCRvpm3u1srpgGHP8pWdn2pxfc2lKq+R2AmiFr45t5B4xJmo1IvBcEUe
+         8hnbF619ACcqjRqK0FPAoD/fKjFZXUlof/glKaeTw8S4Bv2xPR5XbvwwAH17/Yd+DqAG
+         LfkIpax3ecQQIVkVrfXZQaclNQU+gCMO7nIKuwLuKyXLb405Byp5iveJd0xVBQtzbYEd
+         HVATLKKpEL+0ARL4pMNfWrzqbT56R+w0ef8BFzerYYGthsyjgn0InZEjxrecmaAs+cM0
+         93S734l4r9reqGO+q3N0yRAxzjtqJnkByZJJIcPiHK0QpbRGFM3of2f7c7ujm3iYPls3
+         04wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXDkcJv1wRXnvyfgunv4lPi9WqlSmHfDv3EkHo1DEqXvtBAocaUF92xNEeVpMHZMXRrkKcTk23+vL+aV4w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+xgsEDkzh8LAMSpw2AwR2TBhSZMlEGZnwtChULbu/uMT7pr+Q
+	agr+RpB9elw73uLe0rKSt+LJQkevI2ZBbO5kAW5jm/9rW9df+kdIVF4EaVN1VircNoDxY+R85X6
+	7pmJ8A2436wZxulr16OpIlM+3FEh5W8yefTcJ6DG5ylPnNtfTE3nse2Jnr/YYrA==
+X-Received: by 2002:a05:6000:1c4:b0:373:b87:55d3 with SMTP id ffacd0b85a97d-373117c1b62mr9101558f8f.0.1724752442955;
+        Tue, 27 Aug 2024 02:54:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFc/tL9DeVtL170LyHNOFtbZ0GhSMbtprkRUoyZNpYZdNAFBYoLQDvSprEczt11CUVxwzKnGQ==
+X-Received: by 2002:a05:6000:1c4:b0:373:b87:55d3 with SMTP id ffacd0b85a97d-373117c1b62mr9101528f8f.0.1724752442418;
+        Tue, 27 Aug 2024 02:54:02 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:1b67:7410::f71? ([2a0d:3344:1b67:7410::f71])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37308264ca6sm12720447f8f.101.2024.08.27.02.54.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 02:54:02 -0700 (PDT)
+Message-ID: <c38c1482-1574-4cc9-9ebf-aa5ad30d627a@redhat.com>
+Date: Tue, 27 Aug 2024 11:53:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v28 07/13] rtase: Implement a function to receive
+ packets
+To: Justin Lai <justinlai0215@realtek.com>, kuba@kernel.org
+Cc: davem@davemloft.net, edumazet@google.com, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, andrew@lunn.ch, jiri@resnulli.us, horms@kernel.org,
+ rkannoth@marvell.com, jdamato@fastly.com, pkshih@realtek.com,
+ larry.chiu@realtek.com
+References: <20240822093754.17117-1-justinlai0215@realtek.com>
+ <20240822093754.17117-8-justinlai0215@realtek.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20240822093754.17117-8-justinlai0215@realtek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Fri, 23 Aug 2024 14:51:05 +0200
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+Hi,
 
-> Use scoped for_each_available_child_of_node_scoped() and
-> for_each_child_of_node_scoped() when iterating over
-> device nodes to make code a bit simpler.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Ripe for some dev_err_probe() usage that will make this even nicer
-as a cleanup.
+On 8/22/24 11:37, Justin Lai wrote:
+> +static int rx_handler(struct rtase_ring *ring, int budget)
+> +{
+> +	union rtase_rx_desc *desc_base = ring->desc;
+> +	u32 pkt_size, cur_rx, delta, entry, status;
+> +	struct rtase_private *tp = ring->ivec->tp;
+> +	struct net_device *dev = tp->dev;
+> +	union rtase_rx_desc *desc;
+> +	struct sk_buff *skb;
+> +	int workdone = 0;
+> +
+> +	cur_rx = ring->cur_idx;
+> +	entry = cur_rx % RTASE_NUM_DESC;
+> +	desc = &desc_base[entry];
+> +
+> +	do {
+> +		status = le32_to_cpu(desc->desc_status.opts1);
+> +
+> +		if (status & RTASE_DESC_OWN)
+> +			break;
+> +
+> +		/* This barrier is needed to keep us from reading
+> +		 * any other fields out of the rx descriptor until
+> +		 * we know the status of RTASE_DESC_OWN
+> +		 */
+> +		dma_rmb();
+> +
+> +		if (unlikely(status & RTASE_RX_RES)) {
+> +			if (net_ratelimit())
+> +				netdev_warn(dev, "Rx ERROR. status = %08x\n",
+> +					    status);
+> +
+> +			tp->stats.rx_errors++;
+> +
+> +			if (status & (RTASE_RX_RWT | RTASE_RX_RUNT))
+> +				tp->stats.rx_length_errors++;
+> +
+> +			if (status & RTASE_RX_CRC)
+> +				tp->stats.rx_crc_errors++;
+> +
+> +			if (dev->features & NETIF_F_RXALL)
+> +				goto process_pkt;
+> +
+> +			rtase_mark_to_asic(desc, tp->rx_buf_sz);
+> +			goto skip_process_pkt;
+> +		}
+> +
+> +process_pkt:
+> +		pkt_size = status & RTASE_RX_PKT_SIZE_MASK;
+> +		if (likely(!(dev->features & NETIF_F_RXFCS)))
+> +			pkt_size -= ETH_FCS_LEN;
+> +
+> +		/* The driver does not support incoming fragmented frames.
+> +		 * They are seen as a symptom of over-mtu sized frames.
+> +		 */
+> +		if (unlikely(rtase_fragmented_frame(status))) {
+> +			tp->stats.rx_dropped++;
+> +			tp->stats.rx_length_errors++;
+> +			rtase_mark_to_asic(desc, tp->rx_buf_sz);
+> +			goto skip_process_pkt;
+> +		}
+> +
+> +		dma_sync_single_for_cpu(&tp->pdev->dev,
+> +					ring->mis.data_phy_addr[entry],
+> +					tp->rx_buf_sz, DMA_FROM_DEVICE);
+> +
+> +		skb = build_skb(ring->data_buf[entry], PAGE_SIZE);
+> +		if (!skb) {
+> +			netdev_err(dev, "skb build failed\n");
 
-Looks good as it stands
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+I'm sorry for this late feedback, but the above message should be 
+dropped, too.
 
-> ---
->  drivers/pmdomain/rockchip/pm-domains.c | 20 ++++++--------------
->  1 file changed, 6 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/pmdomain/rockchip/pm-domains.c b/drivers/pmdomain/rockchip/pm-domains.c
-> index 64b4d7120d83..5679ad336a11 100644
-> --- a/drivers/pmdomain/rockchip/pm-domains.c
-> +++ b/drivers/pmdomain/rockchip/pm-domains.c
-> @@ -804,11 +804,10 @@ static void rockchip_configure_pd_cnt(struct rockchip_pmu *pmu,
->  static int rockchip_pm_add_subdomain(struct rockchip_pmu *pmu,
->  				     struct device_node *parent)
->  {
-> -	struct device_node *np;
->  	struct generic_pm_domain *child_domain, *parent_domain;
->  	int error;
->  
-> -	for_each_child_of_node(parent, np) {
-> +	for_each_child_of_node_scoped(parent, np) {
->  		u32 idx;
->  
->  		error = of_property_read_u32(parent, "reg", &idx);
-> @@ -816,7 +815,7 @@ static int rockchip_pm_add_subdomain(struct rockchip_pmu *pmu,
->  			dev_err(pmu->dev,
->  				"%pOFn: failed to retrieve domain id (reg): %d\n",
->  				parent, error);
-> -			goto err_out;
-> +			return error;
->  		}
->  		parent_domain = pmu->genpd_data.domains[idx];
->  
-> @@ -824,7 +823,7 @@ static int rockchip_pm_add_subdomain(struct rockchip_pmu *pmu,
->  		if (error) {
->  			dev_err(pmu->dev, "failed to handle node %pOFn: %d\n",
->  				np, error);
-> -			goto err_out;
-> +			return error;
->  		}
->  
->  		error = of_property_read_u32(np, "reg", &idx);
-> @@ -832,7 +831,7 @@ static int rockchip_pm_add_subdomain(struct rockchip_pmu *pmu,
->  			dev_err(pmu->dev,
->  				"%pOFn: failed to retrieve domain id (reg): %d\n",
->  				np, error);
-> -			goto err_out;
-> +			return error;
->  		}
->  		child_domain = pmu->genpd_data.domains[idx];
->  
-> @@ -840,7 +839,7 @@ static int rockchip_pm_add_subdomain(struct rockchip_pmu *pmu,
->  		if (error) {
->  			dev_err(pmu->dev, "%s failed to add subdomain %s: %d\n",
->  				parent_domain->name, child_domain->name, error);
-> -			goto err_out;
-> +			return error;
->  		} else {
->  			dev_dbg(pmu->dev, "%s add subdomain: %s\n",
->  				parent_domain->name, child_domain->name);
-> @@ -850,17 +849,12 @@ static int rockchip_pm_add_subdomain(struct rockchip_pmu *pmu,
->  	}
->  
->  	return 0;
-> -
-> -err_out:
-> -	of_node_put(np);
-> -	return error;
->  }
->  
->  static int rockchip_pm_domain_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
->  	struct device_node *np = dev->of_node;
-> -	struct device_node *node;
->  	struct device *parent;
->  	struct rockchip_pmu *pmu;
->  	const struct rockchip_pmu_info *pmu_info;
-> @@ -918,12 +912,11 @@ static int rockchip_pm_domain_probe(struct platform_device *pdev)
->  	 */
->  	mutex_lock(&dmc_pmu_mutex);
->  
-> -	for_each_available_child_of_node(np, node) {
-> +	for_each_available_child_of_node_scoped(np, node) {
->  		error = rockchip_pm_add_one_domain(pmu, node);
->  		if (error) {
->  			dev_err(dev, "failed to handle node %pOFn: %d\n",
->  				node, error);
-> -			of_node_put(node);
->  			goto err_out;
->  		}
->  
-> @@ -931,7 +924,6 @@ static int rockchip_pm_domain_probe(struct platform_device *pdev)
->  		if (error < 0) {
->  			dev_err(dev, "failed to handle subdomain node %pOFn: %d\n",
->  				node, error);
-> -			of_node_put(node);
->  			goto err_out;
->  		}
->  	}
-> 
+As pointed out by Jakub in the previous revision, this allocation can 
+fail, and the counter increase below will give exactly the same amount 
+of information, without potentially filling the dmseg buffer.
+
+FWIW, I think the above is the last item pending.
+
+Thanks,
+
+Paolo
 
 
