@@ -1,115 +1,164 @@
-Return-Path: <linux-kernel+bounces-303178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86F3A9608AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:29:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE8BD9608B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:30:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15C9E1F23A79
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:29:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DCA21C228DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E227119FA89;
-	Tue, 27 Aug 2024 11:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB701A01C9;
+	Tue, 27 Aug 2024 11:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FjiuJ4ha"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hu3tlNjF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE9919EEB4;
-	Tue, 27 Aug 2024 11:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677C11A00E2;
+	Tue, 27 Aug 2024 11:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724758183; cv=none; b=HmLz6KUFWVmbWzc6HbuLtK91drPUkkrl5yn+wcY17o5Oa4aEU3bif4NZb07KLx6WZv/lU7/Ov5Zlt517X+b7pKG7a+ZETVpqCuFEg15XDfVw3XclIyom/Qi4i2Ne3rNeIW31sCfEgPoltDlzL3OxPdDcexj0KJGXhlc7LPCCtyg=
+	t=1724758185; cv=none; b=U2tAMqikDiTscyYkQ1utB5Iwe8qiKsGAmDI+aZhCSw/SUqMzw31aLu1VcT8ViEDhwNBav6IO+9gieK1Rf2HaQqp19Nzo9kOZKmO90HRZQwcuEqi9INyn0FU6myX3Ma6kh4WzTXihDNBTZcFY+kLs1ixEyOsBiSUuq8RbptWL/ME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724758183; c=relaxed/simple;
-	bh=mtE/DIzdIY0aE9jx+lSBwiZujkAm3EwvIh0iOHY1Qao=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=olXgPuNBeOnNssqhi2BTGivEWDCuPtkbdngcSQyCu+knVJf1Nii/I0xkXa8MVtR6rKD8VO4dfioftpEScge3/Y7itktzGoEStqQnRfbiB9aQEmPy7NSsN34wCE86MpGIJte+4QtHWH54zBIPCxhC8YyVWDBPAoaBaIaKj9HKefI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FjiuJ4ha; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2021c08b95cso48013355ad.0;
-        Tue, 27 Aug 2024 04:29:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724758181; x=1725362981; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=B7IeMX+lfboWSCnTtBGO5TJWMMf36fE1uWbBvF6c/AE=;
-        b=FjiuJ4haI0G+vStvs4xTGaXjdfitrJ4zMntXp7uqYW/0AznAVezzd3CJwMFUxBrvTD
-         iMsIjZD3E/7LfvgMTpZe2pow3S4FYB1/6M5GigdlCRo/Efz2no/4RZ82Zy3csiLrIrPG
-         Oyo1ElHLGVk4QIZUnmksIHOlV5BPdpZR0ToVLfDdCe8h0Sy+c2Lk6WTw7SW2WBF8JGjb
-         pfyjSBUwLVOt0wTlB4sb/+/pLEaqAs4eCGS5CgV1aUO4y6m41GnADGaJMK7jx8TxCT9A
-         ACMjKoMKpgKHcy8RW8v43OripyANLBaUVXqaA+SYWu3aNyZ2WTXEzb+ZFn0D6wuVukgJ
-         oWIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724758181; x=1725362981;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B7IeMX+lfboWSCnTtBGO5TJWMMf36fE1uWbBvF6c/AE=;
-        b=pF0YtIgGHQ22q5/wuhr047wuyoqVROA4WAwz4UHBHZp8AqrpXE5A26f2d15XXyqJKS
-         sQhAd4aAn05jPxR0lhM4TBBvp0tlsRLgSEGCKaBJQlUzjQFtN8TvLfKjm0P8zVw6Sog7
-         lwyIReliUgsZNPR+Nxv1SObKvoCdgHN9ISDsQfs6Q/SxhKLlcJTUYWhLm5UAkx1a+FBN
-         UqMLQfAeRyS4ofQCPQNF0aWJ/GTe6G97ZMN7+GQu8nmvGpjXdypSc9ewKXiLFhjJo8Sy
-         UAEG0B8uhQQI52bXyQ9Y0sXCcWYAGUlHYIJPDJ/ttAmfYflFcE+Y9bjs0ehzfmGiqA4V
-         znOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDfIh2bQdEJUSPu+Iht0fMhZ8+1kKMPigQMsIQ9ee0ouzwgxWJX9Zty2Qy+jx5v5xdm9yHxAXKYkhEKWA=@vger.kernel.org, AJvYcCXEoEaaGSkjKyGRziea07AGq7axsHMXiCdXQ+6I91/ct95SC4XpYLE2Ct15PTwxF3cOIo32IfF+xasPKVg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4q8vq91PzSIQeGynTfTg9tTw5JEagLsKXFxnhcwoEKcxbVvDC
-	1xmFvp8h/ls8QcN6jC/e+YNI2qpNJk/kIpHIpJS5xjFDUsD+55iD
-X-Google-Smtp-Source: AGHT+IFtdkg4ZwyN3DCZQ/8qYdcfbbVtSHPLmh6oAuOhdnauyWoi7H1AtD8qepuDQR373OtKdfRc5Q==
-X-Received: by 2002:a17:903:1104:b0:1f9:d6bf:a67c with SMTP id d9443c01a7336-204ddcba2eamr48490605ad.5.1724758180954;
-        Tue, 27 Aug 2024 04:29:40 -0700 (PDT)
-Received: from localhost.localdomain ([187.17.229.165])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385ae4e3fsm81464375ad.235.2024.08.27.04.29.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 04:29:40 -0700 (PDT)
-From: Edson Juliano Drosdeck <edson.drosdeck@gmail.com>
-X-Google-Original-From: Edson Juliano Drosdeck <edson@policorp.com>
-To: tiwai@suse.com
-Cc: perex@perex.cz,
-	kailang@realtek.com,
-	sbinding@opensource.cirrus.com,
-	simont@opensource.cirrus.com,
-	foss@athaariq.my.id,
-	rf@opensource.cirrus.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	edson.drosdeck@gmail.com,
-	Edson Juliano Drosdeck <edson@policorp.com>
-Subject: [PATCH] ALSA: hda/realtek: Limit mic boost on Positivo DN50F
-Date: Tue, 27 Aug 2024 08:29:12 -0300
-Message-Id: <20240827112912.3397-1-edson@policorp.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1724758185; c=relaxed/simple;
+	bh=etuwT1euxSljZjW4oc24vh7whpGW5rQpbQ2KaCeHW/4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TNlU0NuBSZDNyTh8LRFQ1wmxh2SpW09iaEWUB0I1cZEgkURKcSBqSlX85CkWty+D2mWJfHujBYiHMkMQ3CYWJau/xeBUWsRuZByGj8G3AEp3dsSs79Y97dZBqk7jTWX5fjZgSN35bvBBgv49QHP2r8KN6EJ/rQanp8qZRZTvFzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hu3tlNjF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6709CC58282;
+	Tue, 27 Aug 2024 11:29:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724758185;
+	bh=etuwT1euxSljZjW4oc24vh7whpGW5rQpbQ2KaCeHW/4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hu3tlNjFqxBvsAC1psinXwnoeGAeh+ElETFpdgav5V+6zLCAVxo/OaZ4BzvTrmZW3
+	 xgNnt5OJ6avWOUWvSCSkLALv+NX32eKL1PsYKVOFYcrykowIDVLpIkzgpshxjjJfZs
+	 grb+6h0ORRDr7N4nGU/i0lPCwvBk7l5drDI7uuCXhYDhSRkj5A9+fQNyQEQqOw4Uma
+	 lVByBFoAoa0vV//crfyWqKzv+cu3OdRlROBit1544apTEq9+0WuXrKYBpP22gFnYAg
+	 FZK5Z1wOjqCBvg7rdQBgKHnp9IKVAsJd4qePoFK+5E6Dl0t+mmNUvxoXmz1ck063E7
+	 trLIJRAXHyjQw==
+From: Conor Dooley <conor@kernel.org>
+To: netdev@vger.kernel.org
+Cc: conor@kernel.org,
+	Steve Wilkins <steve.wilkins@raymarine.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	valentina.fernandezalanis@microchip.com,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-kernel@vger.kernel.org
+Subject: [RFC net-next] net: macb: add support for configuring eee via ethtool
+Date: Tue, 27 Aug 2024 12:29:23 +0100
+Message-ID: <20240827-excuse-banister-30136f43ef50@spud>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3478; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=/jWBHfktTnMnWwd+OtzS2TE8hmCXENAXH9kNHZHk7X8=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGlnd0y6d8t2cYtNTKJfS8Cq1wpPdNJSZlrZzzj0KsDT+ 9ySQImmjlIWBjEOBlkxRZbE230tUuv/uOxw7nkLM4eVCWQIAxenAEzkoC7D/1ipkzpT5/b+P3po pdCk7VOP7/p45JNM8EwfiRe5cb8r73Uy/LPo32vqfFFUiavnoeztP5c782Y97tqzt+N4/61Q9ai 9qZwA
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
 
-The internal mic boost on the DN50F is too high. Fix this by applying the
-ALC269_FIXUP_LIMIT_INT_MIC_BOOST fixup to the machine to limit the gain.
+From: Steve Wilkins <steve.wilkins@raymarine.com>
 
-Signed-off-by: Edson Juliano Drosdeck <edson.drosdeck@gmail.com>
+Add ethtool_ops for configuring Energy Efficient Ethernet in the PHY.
+
+Signed-off-by: Steve Wilkins <steve.wilkins@raymarine.com>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- sound/pci/hda/patch_realtek.c | 1 +
- 1 file changed, 1 insertion(+)
+Steve sent me this patch (modulo the eee -> keee change), but I know
+nothing about the macb driver, so I asked Nicolas whether the patch
+made sense. His response was:
+> Interesting although I have the feeling that some support from our MAC
+> is missing for pretending to support the feature.
+> I'm not sure the phylink without the MAC support is valid.
+>
+> I think we need a real task to be spawn to support EEE / LPI on cadence
+> driver (but I don't see it scheduled in a way or another 🙁 ).
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index d022a25635f9..b6bd3903701e 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -10767,6 +10767,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x1d72, 0x1901, "RedmiBook 14", ALC256_FIXUP_ASUS_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x1d72, 0x1945, "Redmi G", ALC256_FIXUP_ASUS_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x1d72, 0x1947, "RedmiBook Air", ALC255_FIXUP_XIAOMI_HEADSET_MIC),
-+	SND_PCI_QUIRK(0x1e50, 0x7038, "Positivo DN50F", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
- 	SND_PCI_QUIRK(0x2782, 0x0214, "VAIO VJFE-CL", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
- 	SND_PCI_QUIRK(0x2782, 0x0232, "CHUWI CoreBook XPro", ALC269VB_FIXUP_CHUWI_COREBOOK_XPRO),
- 	SND_PCI_QUIRK(0x2782, 0x1707, "Vaio VJFE-ADL", ALC298_FIXUP_SPK_VOLUME),
+Since he was not sure, next port of call is lkml.. Is this patch
+sufficient in isolation, or are additional changes required to the driver
+for it?
+
+The other drivers that I looked at that use phylink_ethtool_set_eee()
+vary between doing what's done here and just forwarding the call, but
+others are more complex, so without an understanding of the subsystem
+I cannot tell :)
+
+Alternatively, Steve, shout if you can tell me why forwarding to the phy
+is sufficient, and I'll update the commit message and send this as
+non-RFC.
+
+Thanks,
+Conor.
+
+CC: valentina.fernandezalanis@microchip.com
+CC: Nicolas Ferre <nicolas.ferre@microchip.com>
+CC: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+CC: "David S. Miller" <davem@davemloft.net>
+CC: Eric Dumazet <edumazet@google.com>
+CC: Jakub Kicinski <kuba@kernel.org>
+CC: Paolo Abeni <pabeni@redhat.com>
+CC: Russell King <linux@armlinux.org.uk>
+CC: netdev@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+---
+ drivers/net/ethernet/cadence/macb_main.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index 95e8742dce1d..a2a222954ebf 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -3321,6 +3321,20 @@ static int macb_set_link_ksettings(struct net_device *netdev,
+ 	return phylink_ethtool_ksettings_set(bp->phylink, kset);
+ }
+ 
++static int macb_get_eee(struct net_device *netdev, struct ethtool_keee *edata)
++{
++	struct macb *bp = netdev_priv(netdev);
++
++	return phylink_ethtool_get_eee(bp->phylink, edata);
++}
++
++static int macb_set_eee(struct net_device *netdev, struct ethtool_keee *edata)
++{
++	struct macb *bp = netdev_priv(netdev);
++
++	return phylink_ethtool_set_eee(bp->phylink, edata);
++}
++
+ static void macb_get_ringparam(struct net_device *netdev,
+ 			       struct ethtool_ringparam *ring,
+ 			       struct kernel_ethtool_ringparam *kernel_ring,
+@@ -3767,6 +3781,8 @@ static const struct ethtool_ops macb_ethtool_ops = {
+ 	.set_wol		= macb_set_wol,
+ 	.get_link_ksettings     = macb_get_link_ksettings,
+ 	.set_link_ksettings     = macb_set_link_ksettings,
++	.get_eee		= macb_get_eee,
++	.set_eee		= macb_set_eee,
+ 	.get_ringparam		= macb_get_ringparam,
+ 	.set_ringparam		= macb_set_ringparam,
+ };
+@@ -3783,6 +3799,8 @@ static const struct ethtool_ops gem_ethtool_ops = {
+ 	.get_sset_count		= gem_get_sset_count,
+ 	.get_link_ksettings     = macb_get_link_ksettings,
+ 	.set_link_ksettings     = macb_set_link_ksettings,
++	.get_eee		= macb_get_eee,
++	.set_eee		= macb_set_eee,
+ 	.get_ringparam		= macb_get_ringparam,
+ 	.set_ringparam		= macb_set_ringparam,
+ 	.get_rxnfc			= gem_get_rxnfc,
 -- 
-2.39.2
+2.43.0
 
 
