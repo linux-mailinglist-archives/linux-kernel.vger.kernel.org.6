@@ -1,184 +1,236 @@
-Return-Path: <linux-kernel+bounces-303921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97EFE9616EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:24:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3BAD9616EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:24:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9D6A1C23014
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:24:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BAEB289A7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:24:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838221D27B7;
-	Tue, 27 Aug 2024 18:24:21 +0000 (UTC)
-Received: from spindle.queued.net (spindle.queued.net [45.33.49.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC2B64A;
-	Tue, 27 Aug 2024 18:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.33.49.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486BF1C3F2C;
+	Tue, 27 Aug 2024 18:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lK7+yL6E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665F31D2F5C;
+	Tue, 27 Aug 2024 18:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724783061; cv=none; b=AFU5hsP0gP3d3BmIKm3A4XlQe2qs4jOdan9xvg8q43irAkQ+7apX4pgvmC4MNKbR5zVBjNCAWEvBPxLlTNMwmmXgw9uvkj/AlMsF2F1DSkJm3UvpmoodplS/SWsACSV79D9re1LxssQJZmZAf0me9jmZOPndU4YCbOzR2dgh1r4=
+	t=1724783062; cv=none; b=m6ftjoRl6zSbvpBt/M4NOsCUJcWm9kfrZ1TgqMMzu2pANmdsfQYTCBOpg1yMIWDvcJkQssu9fY8yed8BKeB7j2JC4x/O9yv5gff9iZX9c6WHW3hAigu9eNXWhWAa1QDJ7ofAzYet3xzdUxtuWcKKPmL4BzvWT6NWb2iafYrpS/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724783061; c=relaxed/simple;
-	bh=aBFZVtuwfZ+m5iiQY1UmETzqRCn8tpeZF8oNvnWbkco=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T9x9JbR1JQiQ64Q88M6uR8qx3F7u50MQcO8yOB95UdcIK2wOPolmkc5tp0oP71ZGoUTvWJ1xS0u/2AoN2zlc3gAvAkupvEBwZOQYvb24irs2ezZ80WviCXiTfDJGZWEmwPRcNI/Cvtn9/fDkJmmCp5/zNH6xFp+i0hF5geVZtRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=queued.net; spf=pass smtp.mailfrom=queued.net; arc=none smtp.client-ip=45.33.49.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=queued.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queued.net
-Received: by spindle.queued.net (Postfix, from userid 1001)
-	id 895B9116374; Tue, 27 Aug 2024 14:24:13 -0400 (EDT)
-Received: from 5400 (unknown [172.56.34.244])
-	by spindle.queued.net (Postfix) with ESMTPSA id 01704116301;
-	Tue, 27 Aug 2024 14:24:10 -0400 (EDT)
-Date: Tue, 27 Aug 2024 14:24:08 -0400
-From: Andres Salomon <dilinger@queued.net>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?=
- <linux@weissschuh.net>, Pali =?UTF-8?B?Um9ow6Fy?= <pali@kernel.org>,
- platform-driver-x86@vger.kernel.org, Matthew Garrett <mjg59@srcf.ucam.org>,
- Sebastian Reichel <sre@kernel.org>, Ilpo =?UTF-8?B?SsOkcnZpbmVu?=
- <ilpo.jarvinen@linux.intel.com>, linux-pm@vger.kernel.org,
- Dell.Client.Kernel@dell.com
-Subject: Re: [PATCH v4 1/2] platform/x86:dell-laptop: Add knobs to change
- battery charge settings
-Message-ID: <20240827142408.0748911f@5400>
-In-Reply-To: <04d48a7c-cad1-4490-bbcd-ceb332c740bd@redhat.com>
-References: <20240820033005.09e03af1@5400>
-	<04d48a7c-cad1-4490-bbcd-ceb332c740bd@redhat.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724783062; c=relaxed/simple;
+	bh=hUsevjWbTWQmzJWw63SEIYhUyZpFvPnfguEiTmgBRrk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=Gg6l5CMThOQa8xC7Vbp7iYM6SDGa2xmje32NApdXVCIrj+PhZYG980QJMGuPqyNlsdrlpjwc30/YyZcAdB/5OnARlY/+IybHFcQxqq92U822u3lXrZq8rXN3SK0DDH22qYBBAGbI+Ik48Yz6EtW/funjPxhDwjs/uczx2XhHBDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lK7+yL6E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CD42C4DE03;
+	Tue, 27 Aug 2024 18:24:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724783061;
+	bh=hUsevjWbTWQmzJWw63SEIYhUyZpFvPnfguEiTmgBRrk=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=lK7+yL6Ej1o4+DIoOwn97vdKzgzgTiXEDyW8sNzcSb8gwCIfI9L3XIZsVu5XalCeM
+	 XxBfo39lhr6gE6LqInB08vgHjd3qN4J+4FbH74pzoi/YsKu8lk4Tn6o3p625vphYGd
+	 +xhNQnTiaKdkOjXrpap+WtVXXpgkf1nFEEDy4HjaUyWM46FaPrN1IPW9S/ofZsYEqQ
+	 nEB9VcpoICpJeBDafhdWO2vS3W6jNzHz9bGbyVzY7q/trCu7Ck4nq3hB9tDDCybHh0
+	 j5nBiSQ3TBBhCsH8EaboA8pBsgsWUs1Hisdg9mzqEUNifiRMIJh7xS6kjvjgAJ5r6O
+	 N1NPGbwNsB9sQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Bogosity: Ham, tests=bogofilter, spamicity=0.000000, version=1.2.5
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 27 Aug 2024 21:24:18 +0300
+Message-Id: <D3QWKEINML37.2DGN2KEH1N173@kernel.org>
+Subject: Re: [PATCH 5/7] keys: Use key_get() instead of __key_get()
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "David Howells" <dhowells@redhat.com>
+Cc: <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240821123616.60401-1-dhowells@redhat.com>
+ <20240821123616.60401-6-dhowells@redhat.com>
+In-Reply-To: <20240821123616.60401-6-dhowells@redhat.com>
 
-On Mon, 26 Aug 2024 16:44:35 +0200
-Hans de Goede <hdegoede@redhat.com> wrote:
+On Wed Aug 21, 2024 at 3:36 PM EEST, David Howells wrote:
+> Switch users of __key_get() over to key_get() so that they benefit from t=
+he
+> future tracepointage thereof also and remove __key_get().
+>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Jarkko Sakkinen <jarkko@kernel.org>
+> cc: keyrings@vger.kernel.org
+> cc: linux-security-module@vger.kernel.org
+> ---
+>  Documentation/security/keys/core.rst |  1 -
+>  crypto/asymmetric_keys/restrict.c    |  6 +++---
+>  include/linux/key.h                  |  6 ------
+>  security/keys/keyring.c              |  4 ++--
+>  security/keys/process_keys.c         | 15 ++++++---------
+>  5 files changed, 11 insertions(+), 21 deletions(-)
+>
+> diff --git a/Documentation/security/keys/core.rst b/Documentation/securit=
+y/keys/core.rst
+> index 326b8a973828..0b179540d885 100644
+> --- a/Documentation/security/keys/core.rst
+> +++ b/Documentation/security/keys/core.rst
+> @@ -1217,7 +1217,6 @@ payload contents" for more information.
+>   *  Extra references can be made to a key by calling one of the followin=
+g
+>      functions::
+> =20
+> -	struct key *__key_get(struct key *key);
+>  	struct key *key_get(struct key *key);
+> =20
+>      Keys so references will need to be disposed of by calling key_put() =
+when
+> diff --git a/crypto/asymmetric_keys/restrict.c b/crypto/asymmetric_keys/r=
+estrict.c
+> index afcd4d101ac5..1ea7bfd4e5d7 100644
+> --- a/crypto/asymmetric_keys/restrict.c
+> +++ b/crypto/asymmetric_keys/restrict.c
+> @@ -267,20 +267,20 @@ static int key_or_keyring_common(struct key *dest_k=
+eyring,
+>  			if (!sig->auth_ids[0] && !sig->auth_ids[1]) {
+>  				if (asymmetric_key_id_same(signer_ids[2],
+>  							   sig->auth_ids[2]))
+> -					key =3D __key_get(trusted);
+> +					key =3D key_get(trusted);
+> =20
+>  			} else if (!sig->auth_ids[0] || !sig->auth_ids[1]) {
+>  				const struct asymmetric_key_id *auth_id;
+> =20
+>  				auth_id =3D sig->auth_ids[0] ?: sig->auth_ids[1];
+>  				if (match_either_id(signer_ids, auth_id))
+> -					key =3D __key_get(trusted);
+> +					key =3D key_get(trusted);
+> =20
+>  			} else if (asymmetric_key_id_same(signer_ids[1],
+>  							  sig->auth_ids[1]) &&
+>  				   match_either_id(signer_ids,
+>  						   sig->auth_ids[0])) {
+> -				key =3D __key_get(trusted);
+> +				key =3D key_get(trusted);
+>  			}
+>  		} else {
+>  			return -EOPNOTSUPP;
+> diff --git a/include/linux/key.h b/include/linux/key.h
+> index 50a19e5f9e45..80d736813b89 100644
+> --- a/include/linux/key.h
+> +++ b/include/linux/key.h
+> @@ -304,12 +304,6 @@ extern void key_put(struct key *key);
+>  extern bool key_put_tag(struct key_tag *tag);
+>  extern void key_remove_domain(struct key_tag *domain_tag);
+> =20
+> -static inline struct key *__key_get(struct key *key)
+> -{
+> -	refcount_inc(&key->usage);
+> -	return key;
+> -}
+> -
+>  static inline void key_ref_put(key_ref_t key_ref)
+>  {
+>  	key_put(key_ref_to_ptr(key_ref));
+> diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+> index 7f02b913c560..e77d927f1d4d 100644
+> --- a/security/keys/keyring.c
+> +++ b/security/keys/keyring.c
+> @@ -1122,7 +1122,7 @@ key_ref_t find_key_to_update(key_ref_t keyring_ref,
+>  		kleave(" =3D NULL [x]");
+>  		return NULL;
+>  	}
+> -	__key_get(key);
+> +	key_get(key);
+>  	kleave(" =3D {%d}", key->serial);
+>  	return make_key_ref(key, is_key_possessed(keyring_ref));
+>  }
+> @@ -1367,7 +1367,7 @@ int __key_link_check_live_key(struct key *keyring, =
+struct key *key)
+>  void __key_link(struct key *keyring, struct key *key,
+>  		struct assoc_array_edit **_edit)
+>  {
+> -	__key_get(key);
+> +	key_get(key);
+>  	assoc_array_insert_set_object(*_edit, keyring_key_to_ptr(key));
+>  	assoc_array_apply_edit(*_edit);
+>  	*_edit =3D NULL;
+> diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
+> index b5d5333ab330..01291b2d0888 100644
+> --- a/security/keys/process_keys.c
+> +++ b/security/keys/process_keys.c
+> @@ -333,7 +333,7 @@ int install_session_keyring_to_cred(struct cred *cred=
+, struct key *keyring)
+>  		if (IS_ERR(keyring))
+>  			return PTR_ERR(keyring);
+>  	} else {
+> -		__key_get(keyring);
+> +		key_get(keyring);
+>  	}
+> =20
+>  	/* install the keyring */
+> @@ -641,7 +641,7 @@ key_ref_t lookup_user_key(key_serial_t id, unsigned l=
+ong lflags,
+>  		}
+> =20
+>  		key =3D ctx.cred->thread_keyring;
+> -		__key_get(key);
+> +		key_get(key);
+>  		key_ref =3D make_key_ref(key, 1);
+>  		break;
+> =20
+> @@ -658,8 +658,7 @@ key_ref_t lookup_user_key(key_serial_t id, unsigned l=
+ong lflags,
+>  			goto reget_creds;
+>  		}
+> =20
+> -		key =3D ctx.cred->process_keyring;
+> -		__key_get(key);
+> +		key =3D key_get(ctx.cred->process_keyring);
+>  		key_ref =3D make_key_ref(key, 1);
+>  		break;
+> =20
+> @@ -688,8 +687,7 @@ key_ref_t lookup_user_key(key_serial_t id, unsigned l=
+ong lflags,
+>  			goto reget_creds;
+>  		}
+> =20
+> -		key =3D ctx.cred->session_keyring;
+> -		__key_get(key);
+> +		key =3D key_get(ctx.cred->session_keyring);
+>  		key_ref =3D make_key_ref(key, 1);
+>  		break;
+> =20
+> @@ -717,7 +715,7 @@ key_ref_t lookup_user_key(key_serial_t id, unsigned l=
+ong lflags,
+>  		if (!key)
+>  			goto error;
+> =20
+> -		__key_get(key);
+> +		key_get(key);
+>  		key_ref =3D make_key_ref(key, 1);
+>  		break;
+> =20
+> @@ -732,8 +730,7 @@ key_ref_t lookup_user_key(key_serial_t id, unsigned l=
+ong lflags,
+>  			key =3D NULL;
+>  		} else {
+>  			rka =3D ctx.cred->request_key_auth->payload.data[0];
+> -			key =3D rka->dest_keyring;
+> -			__key_get(key);
+> +			key =3D key_get(rka->dest_keyring);
+>  		}
+>  		up_read(&ctx.cred->request_key_auth->sem);
+>  		if (!key)
 
-> Hi Andres,
-> 
-> On 8/20/24 9:30 AM, Andres Salomon wrote:
-[...]
-> > +
-> > +static ssize_t charge_type_show(struct device *dev,
-> > +		struct device_attribute *attr,
-> > +		char *buf)
-> > +{
-> > +	ssize_t count = 0;
-> > +	int i;
-> > +
-> > +	for (i = 0; i < ARRAY_SIZE(battery_modes); i++) {
-> > +		bool active;
-> > +
-> > +		if (!(battery_supported_modes & BIT(i)))
-> > +			continue;
-> > +
-> > +		active = dell_battery_mode_is_active(battery_modes[i].token);
-> > +		count += sysfs_emit_at(buf, count, active ? "[%s] " : "%s ",
-> > +				battery_modes[i].label);
-> > +	}  
-> 
-> If you look at the way how charge_type is shown by the power_supply_sysfs.c
-> file which is used for power-supply drivers which directly register
-> a power-supply themselves rather then extending an existing driver, this
-> is not the correct format.
-> 
-> drivers/power/supply/power_supply_sysfs.c
-> 
-> lists charge_type as:
-> 
->         POWER_SUPPLY_ENUM_ATTR(CHARGE_TYPE),
-> 
-> and ENUM type properties use the following for show() :
-> 
-> 	default:
-> 		if (ps_attr->text_values_len > 0 &&
-> 				value.intval < ps_attr->text_values_len && value.intval >= 0) {
-> 			ret = sysfs_emit(buf, "%s\n", ps_attr->text_values[value.intval]);
-> 		} else {
-> 			ret = sysfs_emit(buf, "%d\n", value.intval);
-> 		}
-> 	}
-> 
-> with in this case text_values pointing to:
-> 
-> static const char * const POWER_SUPPLY_CHARGE_TYPE_TEXT[] = {
-> 	[POWER_SUPPLY_CHARGE_TYPE_UNKNOWN]	= "Unknown",
-> 	[POWER_SUPPLY_CHARGE_TYPE_NONE]		= "N/A",
-> 	[POWER_SUPPLY_CHARGE_TYPE_TRICKLE]	= "Trickle",
-> 	[POWER_SUPPLY_CHARGE_TYPE_FAST]		= "Fast",
-> 	[POWER_SUPPLY_CHARGE_TYPE_STANDARD]	= "Standard",
-> 	[POWER_SUPPLY_CHARGE_TYPE_ADAPTIVE]	= "Adaptive",
-> 	[POWER_SUPPLY_CHARGE_TYPE_CUSTOM]	= "Custom",
-> 	[POWER_SUPPLY_CHARGE_TYPE_LONGLIFE]	= "Long Life",
-> 	[POWER_SUPPLY_CHARGE_TYPE_BYPASS]	= "Bypass",
-> };
-> 
-> So value.intval will be within the expected range hitting:
-> 
-> 			ret = sysfs_emit(buf, "%s\n", ps_attr->text_values[value.intval]);
-> 
-> IOW instead of outputting something like this:
-> 
-> Fast [Standard] Long Life
-> 
-> which is what your show() function does it outputs only
-> the active value as a string, e.g.:
-> 
-> Standard
-> 
-> Yes not being able to see the supported values is annoying I actually
-> wrote an email about that earlier today:
-> 
-> https://lore.kernel.org/linux-pm/49993a42-aa91-46bf-acef-4a089db4c2db@redhat.com/
-> 
-> but we need to make sure that the output is consistent between drivers otherwise
-> userspace can never know how to use the API, so for charge_type the dell
-> driver should only output the active type, not all the options.
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-So should I just wait to make any changes until you hear back in that
-thread? I'm not overly excited about changing it to use the current
-charge_type API, given that the only way to get a list of modes that the
-hardware supports is to try setting them all and seeing what fails.
-
-I suppose another option is to rename it to charge_types in the dell
-driver under the assumption that your proposed charge_types API (or
-something like it) will be added..
-
-
-> 
-> This reminds me that there was a patch-series to allow battery extension drivers
-> like this one to actually use the power-supply core code for show()/store()
-> Thomas IIRC that series was done by you ?  What is the status of that ?
-> 
-> Also looking at the userspace API parts of this again I wonder
-> if mapping  BAT_PRI_AC_MODE_TOKEN -> "Trickle" is the right thing do
-> maybe "Long Life" would be a better match ?  That depends on what the option
-> actually does under the hood I guess. Is this known ?
-> 
-
-I originally thought to use Long Life rather than Trickle. We discussed
-it here:
-
-https://lore.kernel.org/linux-pm/5cfe4c42-a003-4668-8c3a-f18fb6b7fba6@gmx.de/
-
-Based on the existing documentation and the fact that the wilco driver
-already mapped it, it was decided to stick with the existing precedent
-of using Trickle.
-
-That said, Armin at first suggested creating a new "Primarily AC" entry.
-That's personally my favorite option, though I understand if we don't
-have to have 50 CHARGE_TYPE entries that just slightly different
-variations. :)
-
-
-
--- 
-I'm available for contract & employment work, please contact me if
-interested.
+BR, Jarkko
 
