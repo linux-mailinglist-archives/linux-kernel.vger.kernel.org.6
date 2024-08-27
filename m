@@ -1,227 +1,78 @@
-Return-Path: <linux-kernel+bounces-303231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCCD4960959
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:54:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFF4296095D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:56:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 422A41F2385A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:54:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AFD91F21BB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7A11A073F;
-	Tue, 27 Aug 2024 11:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767001A0715;
+	Tue, 27 Aug 2024 11:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="zOzev3E+"
-Received: from pv50p00im-ztdg10011901.me.com (pv50p00im-ztdg10011901.me.com [17.58.6.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="zw6b7p1B"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4B319EED8
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A470A139580;
+	Tue, 27 Aug 2024 11:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724759651; cv=none; b=kD+6nvmVJc3ChCS7hof3CZIKvd+823llJhOrYLQZ8VdDlK+qfPcLhVnvEKxj8aHVFuDTc5smwoOs5i+S9qGXjn8KtCvoGgUorjSVeU6lHF9IfcZ78xbQOOo9SPGe9SEMapNh8zeAUo7N+lD8BB3ve5O9LDhEDavwua2WsA61PXM=
+	t=1724759768; cv=none; b=EQ7I0wn5YAb/47EZXsfxekUfIXZEVRas1mcNAR+RrIcNYG8V9Mn0EdQymK8ojwTqrAk4EhmnYpP7Z8FEZ2ZomCKlmTRqgGd5B0E6g5Nu188qB4Ob6J0X3cQgazTVZ2zH02/AhLNytEqcsc3MvCNgpG8YgcHaGRoowFILRjnKqqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724759651; c=relaxed/simple;
-	bh=nEi8II45wAmL1f5XTIWsbyTtcx8NX0c09t6x4DVix6A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=duYOuYw6YcjqIKItxGMh6Lw21G5J8sDp/SL0fds1g0tc2teof3UA7Zxpf3xPedlb8C/dWb8Q6E8xyZ3i4B7P/tR1b7E96cAcZL4UFSYCS9P4+3PhPGY03lwPHa4L0U+XM55AroWBx8QTRISz9iuVMmbVMeYoPCNx31s4p8uM0nA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=zOzev3E+; arc=none smtp.client-ip=17.58.6.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1724759649;
-	bh=OYrHNLwmvHe2oa0rD8JJuTUs4ODsC2IJMqoKI314ldc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=zOzev3E+mosk3j16HL4HiEHL5WWqXUvHyj+nqVG/LPaaLQZRkO/seWBBb5BOOhchn
-	 O8MU75aMMqEEYO85vpySf8LxFn8N/b43eXisXvYRgH+QJU/0WExah46MmVzN9K1X48
-	 eb9NV60IlxYNaiRXPck10Ma9wo4ObI2DfJaQTEShk6Qjyvv9/tzEh9bdetfRkGQYIT
-	 EfFwSR4zeMoBe+zKTu4R0r+LCH8Cdr/Re0/DjjHX3XqpDbrjnHxBnASU5tAPwoQmhS
-	 Eeo37doe9R1qcHVXLWqFnTGzz3zUx8F64fmjjPetf/zgqiLHxrM5+Ny6OsdkusmJUN
-	 Pg5Rzlw8tC8gg==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10011901.me.com (Postfix) with ESMTPSA id DDCA83A008D;
-	Tue, 27 Aug 2024 11:53:59 +0000 (UTC)
-Message-ID: <cdfc6f98-1aa0-4cb5-bd7d-93256552c39b@icloud.com>
-Date: Tue, 27 Aug 2024 19:53:55 +0800
+	s=arc-20240116; t=1724759768; c=relaxed/simple;
+	bh=a5ZV9Z0+/DuwbgA21cGCMJWVPlMG8o4hKX+L8T0B3bI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IfM0flIiEFW++ZlmIwa4TGZ9zKkMYRN6Qm836OSYG9BiI79xiva0nCdXNEDgGetQ5cgAemGQD4xkBh83Eek0RelvYg6a1jEMKo6vf78i6xQGt1E3Dnpo/8iW/LEjdLrNOGEEmfV5+gYUx4rIZkppyl94w2EJYPtzYfTfG6lFavs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=zw6b7p1B; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 51D6B21AE5;
+	Tue, 27 Aug 2024 13:55:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1724759752;
+	bh=CafeksWBlGGflx2ww0XuQ7ArLYM/LkByOh8sKeK4ecw=;
+	h=Received:From:To:Subject;
+	b=zw6b7p1BGB2U3GGDPqTkpk6gSPF6RNOifttVHFPCgAWHACBw/iF2VXALaimn5CRPF
+	 uYczt9ZJJgAmVMBE6132c0ZDrTfYwgQTnUHlDkM8/psirM+50me1MJaXGbdAGekvyP
+	 wTTptFc1wGr5M88HOTxM/5bhrwKJXesmsAQuP7zJk52EdnFyE80LM2nElf8fC4fs7I
+	 fiXllFxzr9vEUK46BPLkIgfWa/10+e1D+Oq50zuv4bOCE2Z8bdNtgnO+Z0OQjkHAC5
+	 PNQ5JvqlsjAxMXtFaJSPE3aVSdo9wkmNkwQtuM/PiAfrGhxJPplFJfjKum55OU40Tc
+	 2hpmFQ6U/1mEw==
+Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
+	id 06E807F84D; Tue, 27 Aug 2024 13:55:51 +0200 (CEST)
+Date: Tue, 27 Aug 2024 13:55:51 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Brian Norris <briannorris@chromium.org>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/12] wifi: mwifiex: add missing locking
+Message-ID: <Zs2-x6nuAzKvKfng@gaggiata.pivistrello.it>
+References: <20240826-mwifiex-cleanup-1-v1-0-56e6f8e056ec@pengutronix.de>
+ <20240826-mwifiex-cleanup-1-v1-1-56e6f8e056ec@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] cxl/region: Find free cxl decoder by
- device_for_each_child()
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Davidlohr Bueso
- <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Takashi Sakamoto <o-takashi@sakamocchi.jp>, Timur Tabi <timur@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
- netdev@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20240824-const_dfc_prepare-v3-0-32127ea32bba@quicinc.com>
- <20240824-const_dfc_prepare-v3-2-32127ea32bba@quicinc.com>
- <20240827123006.00004527@Huawei.com>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <20240827123006.00004527@Huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: zXSu555QJvhB-nSvhZ59A5Eowv9iK99L
-X-Proofpoint-GUID: zXSu555QJvhB-nSvhZ59A5Eowv9iK99L
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-27_06,2024-08-27_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
- clxscore=1015 adultscore=0 suspectscore=0 bulkscore=0 phishscore=0
- spamscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2408270087
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826-mwifiex-cleanup-1-v1-1-56e6f8e056ec@pengutronix.de>
 
-On 2024/8/27 19:30, Jonathan Cameron wrote:
-> On Sat, 24 Aug 2024 17:07:44 +0800
-> Zijun Hu <zijun_hu@icloud.com> wrote:
+On Mon, Aug 26, 2024 at 01:01:22PM +0200, Sascha Hauer wrote:
+> cfg80211_rx_assoc_resp() and cfg80211_rx_mlme_mgmt() need to be called
+> with the wiphy locked, so lock it before calling these functions.
 > 
->> From: Zijun Hu <quic_zijuhu@quicinc.com>
->>
->> To prepare for constifying the following old driver core API:
->>
->> struct device *device_find_child(struct device *dev, void *data,
->> 		int (*match)(struct device *dev, void *data));
->> to new:
->> struct device *device_find_child(struct device *dev, const void *data,
->> 		int (*match)(struct device *dev, const void *data));
->>
->> The new API does not allow its match function (*match)() to modify
->> caller's match data @*data, but match_free_decoder() as the old API's
->> match function indeed modifies relevant match data, so it is not suitable
->> for the new API any more, solved by using device_for_each_child() to
->> implement relevant finding free cxl decoder function.
->>
->> Suggested-by: Ira Weiny <ira.weiny@intel.com>
->> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> This seems to functionally do the same as before.
-> 
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 
-yes, this change have the same logic as previous existing logic.
-
-> I'm not sure I like the original code though so a comment inline.
-> 
->> ---
->>  drivers/cxl/core/region.c | 30 ++++++++++++++++++++++++------
->>  1 file changed, 24 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
->> index 21ad5f242875..c2068e90bf2f 100644
->> --- a/drivers/cxl/core/region.c
->> +++ b/drivers/cxl/core/region.c
->> @@ -794,10 +794,15 @@ static size_t show_targetN(struct cxl_region *cxlr, char *buf, int pos)
->>  	return rc;
->>  }
->>  
->> +struct cxld_match_data {
->> +	int id;
->> +	struct device *target_device;
->> +};
->> +
->>  static int match_free_decoder(struct device *dev, void *data)
->>  {
->> +	struct cxld_match_data *match_data = data;
->>  	struct cxl_decoder *cxld;
->> -	int *id = data;
->>  
->>  	if (!is_switch_decoder(dev))
->>  		return 0;
->> @@ -805,17 +810,31 @@ static int match_free_decoder(struct device *dev, void *data)
->>  	cxld = to_cxl_decoder(dev);
->>  
->>  	/* enforce ordered allocation */
->> -	if (cxld->id != *id)
->> +	if (cxld->id != match_data->id)
-> 
-> Why do we carry on in this case?
-> Conditions are:
-> 1. Start match_data->id == 0
-> 2. First pass cxld->id == 0 (all good) or
->    cxld->id == 1 say (and we skip until we match
->    on cxld->id == 0 (perhaps on the second child if they are
->    ordered (1, 0, 2) etc. 
-> 
-> If we skipped and then matched on second child but it was
-> already in use (so region set), we will increment match_data->id to 1
-> but never find that as it was the one we skipped.
-> 
-> So this can only work if the children are ordered.
-> So if that's the case and the line above is just a sanity check
-> on that, it should be noisier (so an error print) and might
-> as well fail as if it doesn't match all bets are off.
-> 
-
-it seems Ira Weiny also has some concerns related to previous existing
-logic as following:
-
-https://lore.kernel.org/all/66c4a136d9764_2ddc2429435@iweiny-mobl.notmuch/
-"Also for those working on CXL I'm questioning the use of ID here and
-the dependence on the id's being added to the parent in order.  Is that
-a guarantee?"
-
-perhaps, create a new dedicated thread to discuss original design.
-
-> Jonathan
->  
->>  		return 0;
->>  
->> -	if (!cxld->region)
->> +	if (!cxld->region) {
->> +		match_data->target_device = get_device(dev);
->>  		return 1;
->> +	}
->>  
->> -	(*id)++;
->> +	match_data->id++;
->>  
->>  	return 0;
->>  }
->>  
->> +/* NOTE: need to drop the reference with put_device() after use. */
->> +static struct device *find_free_decoder(struct device *parent)
->> +{
->> +	struct cxld_match_data match_data = {
->> +		.id = 0,
->> +		.target_device = NULL,
->> +	};
->> +
->> +	device_for_each_child(parent, &match_data, match_free_decoder);
->> +	return match_data.target_device;
->> +}
->> +
->>  static int match_auto_decoder(struct device *dev, void *data)
->>  {
->>  	struct cxl_region_params *p = data;
->> @@ -840,7 +859,6 @@ cxl_region_find_decoder(struct cxl_port *port,
->>  			struct cxl_region *cxlr)
->>  {
->>  	struct device *dev;
->> -	int id = 0;
->>  
->>  	if (port == cxled_to_port(cxled))
->>  		return &cxled->cxld;
->> @@ -849,7 +867,7 @@ cxl_region_find_decoder(struct cxl_port *port,
->>  		dev = device_find_child(&port->dev, &cxlr->params,
->>  					match_auto_decoder);
->>  	else
->> -		dev = device_find_child(&port->dev, &id, match_free_decoder);
->> +		dev = find_free_decoder(&port->dev);
->>  	if (!dev)
->>  		return NULL;
->>  	/*
->>
-> 
+Fixes: 36995892c271 ("wifi: mwifiex: add host mlme for client mode")
+Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 
 
