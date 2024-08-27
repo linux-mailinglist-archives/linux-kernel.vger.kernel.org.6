@@ -1,154 +1,240 @@
-Return-Path: <linux-kernel+bounces-302527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6685595FFC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:30:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E6E95FFC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:28:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F388D2832B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:30:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFFDDB21448
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E4551A291;
-	Tue, 27 Aug 2024 03:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lmreND5J"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF251F93E;
+	Tue, 27 Aug 2024 03:28:33 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A3E31803D
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 03:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4C718030
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 03:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724729399; cv=none; b=UeBLaujs7MArkxkCBKsLyiOpoKnKRjVvd3hyvSQcF6scx/eTUzSlShcyfSb/isow8c0FY1twsVe4Sn0/65HotEFGC8ViBJWyJV3+jemmqItCpQhY8c0sXy8mhZAkLhvvCqdBeTLy5/GHde9eqhT3Lea1LOZhMc2KzNFATML8tpA=
+	t=1724729312; cv=none; b=lMlCH9YwG1zbXt75PMXC1X5abZ+6MSLGucxoG4PjXDJjbQvy8HMUCaBkc1MLY61yNSiMm/UjvE2GkIHqBYIkoURWvPhlaZ7S5lqEkA48RQpCVjCuuZH38/COXhdpM4nqUxaqE0K3LekuyKteTxZA00aQPJSQSgwZuCUGsW9fhao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724729399; c=relaxed/simple;
-	bh=nDDZZa2NUt3MBOd2plEH/XJHDllkd3y93u3Wq/0eZ0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nUOtDojX7JnwXDhAz1frQFdR57vE3k0WNM1+QunX0h6tuoxFbhAS6rEw2YZ/TN7vzzBdPRRw4/SrxTMViKkTvHSADmlqYIJ39M0qQac8lWgaziOwKDuRlK4zaNHhP5BRxvSwIKFEtynMxrmGmFzGAxtEY3S9B0qbILKZBVHIooI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lmreND5J; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724729398; x=1756265398;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=nDDZZa2NUt3MBOd2plEH/XJHDllkd3y93u3Wq/0eZ0w=;
-  b=lmreND5J1g4z6TrBebk2aDNWaFW30nmOT4H3BtwwvtfcHcfsICXgZWW8
-   W1jJjYGhCnvruCbI+/xFHfjBjDZlZdCgUSPwBpPT4z8Bkat5G/QerQaE2
-   6ExOVSK3OZYEZcEykb0B0pwJmJ8kvDjEcl24x66QzB7U2rAAba9Q8WXcu
-   dF7uMDSQ2D6xBrmhRLgIfvVgGj/1ur6axlC4nvFKdIunSKbzffDadDKI7
-   24CxBIPFdbrhOcvD5JMHaF5LJHCPE95jWnh/ZrqnwiQbxcFtzpRleofja
-   mrbWBOz5f94fDK4cflSeEk5gGWR3Q+iNQLsTqCwSsdotMJeV6H8FFbFNE
-   w==;
-X-CSE-ConnectionGUID: J0auDqjRQQKS4cAAbHD7JQ==
-X-CSE-MsgGUID: yTr9u1TkT56aODU78K41ow==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="33847372"
-X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
-   d="scan'208";a="33847372"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 20:27:47 -0700
-X-CSE-ConnectionGUID: LTtUaULPSgmoe1IavD1cNA==
-X-CSE-MsgGUID: Srw/+DRkTUS+v7mgMETgnw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
-   d="scan'208";a="62552107"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 26 Aug 2024 20:27:44 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1simru-000Hqs-0Q;
-	Tue, 27 Aug 2024 03:27:42 +0000
-Date: Tue, 27 Aug 2024 11:26:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Wang Zhaolong <wangzhaolong1@huawei.com>, richard@nod.at,
-	miquel.raynal@bootlin.com, vigneshr@ti.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-	wangzhaolong1@huawei.com, yi.zhang@huawei.com
-Subject: Re: [PATCH] mtd: ubi: remove unused parameter 'pnum' from
- add_volume()
-Message-ID: <202408271041.ttLMjF8z-lkp@intel.com>
-References: <20240825083515.4074081-1-wangzhaolong1@huawei.com>
+	s=arc-20240116; t=1724729312; c=relaxed/simple;
+	bh=JzyjHuARwzhwepCOT2bNahFeYhPaFET6Jeo8Q3lQMAE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bVTZ2phsDVvV9bXpgQQAtlsNGq4PNvZz+IN3PlI3i2iCwlxXXSYvRAEYuszMAqzI03KifrXnL/R58TTe4ItDvakcZWk7QX2XrhlxVkj2LfxMeWHrKTwEZuwtiws3c4+DyVnY88Nkz3Ct4L0X0sUx4IkPFjCtb/z/KVUnyK4Z5nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d4c0fc036so63220035ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 20:28:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724729309; x=1725334109;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d3xjFthS/6EQeI65pLP05Rb0vmQMjF3sKd6xX6kYOds=;
+        b=AS4ggh9NYDktoBNm2HefcNluvt2JyJEYTtLVLOV0CVrEtFKw5Isll1g2R8Y9isYH+Z
+         Bta9Wu81RFdKyZ6nKMXEFfnbrZV5lLp5C5+HkbcsDp2hZVpH84NWdfmITkonZP9b9Bao
+         roI4RJIrw4wl5tk5T26TyovfR28vifl6Q885SPAJh4QtMPQCsSlFHsoNdfdgElETMTHo
+         qADV/VABt0BDEefKAMmvr3KSZmoTax0GqvXlGoQyQX8UNFP0aITfG/7MGc1Yk6ZBTHQX
+         fzE8ZWUlpLH1TmPoIcPLLS8/F1PtUCuZMPvoV8gv3Lyf9P8nuV8JSw9E6tbvN4WGJAwp
+         W7lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVuor4YFu9hXNRbZ1sfsB/Wx+bVwc74DrzBE0+vmxeA35m9WtHXaWOw3GMe+thosEmUwoottsKGCeSEnWU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1EMqHEuQWkTZsLQFhoLagjk9d2YfFIPg1oYhTeDMfEjrIjKbT
+	DjWSlt3dLsqfpRQNOLshMPn3TRHPI7pFnHEq6/b1GePLkrTZ4CtU3K6CXM70CxgWaOTOrmfrhB1
+	j18cDNmd9nOyCLwiN57tcCmlsqx8+nYwCcu6Mg07XgGXkalOQmM8xbho=
+X-Google-Smtp-Source: AGHT+IFITaiq8Umo7bQ6KPVCgf8u9U/GIou4AaOFHIqclfJiDTb5qOVgGhpnBnQm0to7Yxzg7Y2c+rQ2MDHkgljHvDbd64pXmnMF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240825083515.4074081-1-wangzhaolong1@huawei.com>
+X-Received: by 2002:a05:6e02:1d01:b0:381:c14:70cf with SMTP id
+ e9e14a558f8ab-39e3c975718mr10848265ab.1.1724729309027; Mon, 26 Aug 2024
+ 20:28:29 -0700 (PDT)
+Date: Mon, 26 Aug 2024 20:28:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000cc73830620a1d540@google.com>
+Subject: [syzbot] [rdma?] INFO: task hung in disable_device
+From: syzbot <syzbot+4d0c396361b5dc5d610f@syzkaller.appspotmail.com>
+To: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Wang,
+Hello,
 
-kernel test robot noticed the following build warnings:
+syzbot found the following issue on:
 
-[auto build test WARNING on rw-ubifs/next]
-[also build test WARNING on rw-ubifs/fixes linus/master v6.11-rc5 next-20240826]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+HEAD commit:    872cf28b8df9 Merge tag 'platform-drivers-x86-v6.11-4' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=138e4ff5980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=df2f0ed7e30a639d
+dashboard link: https://syzkaller.appspot.com/bug?extid=4d0c396361b5dc5d610f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Wang-Zhaolong/mtd-ubi-remove-unused-parameter-pnum-from-add_volume/20240826-142424
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rw/ubifs.git next
-patch link:    https://lore.kernel.org/r/20240825083515.4074081-1-wangzhaolong1%40huawei.com
-patch subject: [PATCH] mtd: ubi: remove unused parameter 'pnum' from add_volume()
-config: i386-buildonly-randconfig-005-20240827 (https://download.01.org/0day-ci/archive/20240827/202408271041.ttLMjF8z-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408271041.ttLMjF8z-lkp@intel.com/reproduce)
+Unfortunately, I don't have any reproducer for this issue yet.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408271041.ttLMjF8z-lkp@intel.com/
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a739b83871e7/disk-872cf28b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e1a2d875095e/vmlinux-872cf28b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/26e7dbbb9245/bzImage-872cf28b.xz
 
-All warnings (new ones prefixed by >>):
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4d0c396361b5dc5d610f@syzkaller.appspotmail.com
 
->> drivers/mtd/ubi/attach.c:398: warning: Excess function parameter 'pnum' description in 'add_volume'
+INFO: task kworker/u8:3:53 blocked for more than 143 seconds.
+      Not tainted 6.11.0-rc4-syzkaller-00033-g872cf28b8df9 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/u8:3    state:D stack:19984 pid:53    tgid:53    ppid:2      flags:0x00004000
+Workqueue: ib-unreg-wq ib_unregister_work
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5188 [inline]
+ __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
+ __schedule_loop kernel/sched/core.c:6606 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6621
+ schedule_timeout+0xb0/0x310 kernel/time/timer.c:2557
+ do_wait_for_common kernel/sched/completion.c:95 [inline]
+ __wait_for_common kernel/sched/completion.c:116 [inline]
+ wait_for_common kernel/sched/completion.c:127 [inline]
+ wait_for_completion+0x355/0x620 kernel/sched/completion.c:148
+ disable_device+0x1c7/0x360 drivers/infiniband/core/device.c:1295
+ __ib_unregister_device+0x2ac/0x3c0 drivers/infiniband/core/device.c:1493
+ ib_unregister_work+0x19/0x30 drivers/infiniband/core/device.c:1604
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2e/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
+ kthread+0x2f2/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/30:
+ #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
+ #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
+ #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6626
+3 locks held by kworker/u8:3/53:
+ #0: ffff888015f8c148 ((wq_completion)ib-unreg-wq){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
+ #0: ffff888015f8c148 ((wq_completion)ib-unreg-wq){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
+ #1: ffffc90000bd7d00 ((work_completion)(&device->unregistration_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
+ #1: ffffc90000bd7d00 ((work_completion)(&device->unregistration_work)){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
+ #2: ffff888071b5c6b0 (&device->unregistration_lock){+.+.}-{3:3}, at: __ib_unregister_device+0x264/0x3c0 drivers/infiniband/core/device.c:1489
+2 locks held by kworker/u8:7/1067:
+ #0: ffff888015881148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
+ #0: ffff888015881148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
+ #1: ffffc900040a7d00 ((work_completion)(&sub_info->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
+ #1: ffffc900040a7d00 ((work_completion)(&sub_info->work)){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
+2 locks held by getty/4975:
+ #0: ffff88802b2ea0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc900031332f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6ac/0x1e00 drivers/tty/n_tty.c:2211
+4 locks held by kworker/u8:2/12786:
+ #0: ffff8880166e5948 ((wq_completion)netns){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
+ #0: ffff8880166e5948 ((wq_completion)netns){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
+ #1: ffffc9000353fd00 (net_cleanup_work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
+ #1: ffffc9000353fd00 (net_cleanup_work){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
+ #2: ffffffff8fc77a10 (pernet_ops_rwsem){++++}-{3:3}, at: cleanup_net+0x16a/0xcc0 net/core/net_namespace.c:594
+ #3: ffffffff8e93d5c0 (rcu_state.barrier_mutex){+.+.}-{3:3}, at: rcu_barrier+0x4c/0x530 kernel/rcu/tree.c:4486
+5 locks held by kworker/1:12/17513:
+3 locks held by kworker/0:10/17565:
+ #0: ffff888015878948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
+ #0: ffff888015878948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
+ #1: ffffc90004207d00 ((work_completion)(&data->fib_event_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
+ #1: ffffc90004207d00 ((work_completion)(&data->fib_event_work)){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
+ #2: ffff88807c173240 (&data->fib_lock){+.+.}-{3:3}, at: nsim_fib_event_work+0x2d1/0x4130 drivers/net/netdevsim/fib.c:1489
+2 locks held by syz.2.8079/23259:
+3 locks held by kworker/u8:5/23442:
+1 lock held by syz.5.9191/26178:
+1 lock held by syz.4.9349/26557:
+2 locks held by syz.1.9359/26583:
+6 locks held by syz.3.9361/26591:
+2 locks held by udevadm/26600:
+1 lock held by modprobe/26606:
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.11.0-rc4-syzkaller-00033-g872cf28b8df9 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xff4/0x1040 kernel/hung_task.c:379
+ kthread+0x2f2/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 26178 Comm: syz.5.9191 Not tainted 6.11.0-rc4-syzkaller-00033-g872cf28b8df9 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:lockdep_recursion_finish kernel/locking/lockdep.c:466 [inline]
+RIP: 0010:lock_acquire+0x1f1/0x550 kernel/locking/lockdep.c:5761
+Code: 7c 24 20 44 89 f6 8b 54 24 1c 48 8b 4c 24 30 4c 8b 44 24 38 6a 00 6a 00 6a 00 ff 75 10 ff 74 24 48 e8 c3 04 00 00 48 83 c4 28 <48> c7 c7 e0 e6 0a 8c e8 a3 09 47 0a b8 ff ff ff ff 65 0f c1 05 b6
+RSP: 0018:ffffc9000310f900 EFLAGS: 00000096
+RAX: 0000000000000001 RBX: ffffc9000310f960 RCX: 0ae94b015512b200
+RDX: dffffc0000000000 RSI: 0000000000000008 RDI: ffffffff93733a30
+RBP: ffffc9000310fa48 R08: ffffffff93733a37 R09: 1ffffffff26e6746
+R10: dffffc0000000000 R11: fffffbfff26e6747 R12: 1ffff92000621f28
+R13: dffffc0000000000 R14: 0000000000000000 R15: 0000000000000046
+FS:  00007fd04b14d6c0(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2ba2c6a018 CR3: 0000000054a6c000 CR4: 0000000000350ef0
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+ _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
+ __wake_up_common_lock+0x25/0x1e0 kernel/sched/wait.c:105
+ io_cqring_wake io_uring/io_uring.h:274 [inline]
+ io_cq_unlock_post io_uring/io_uring.c:595 [inline]
+ __io_cqring_overflow_flush+0x504/0x690 io_uring/io_uring.c:633
+ io_cqring_do_overflow_flush io_uring/io_uring.c:645 [inline]
+ io_cqring_wait io_uring/io_uring.c:2486 [inline]
+ __do_sys_io_uring_enter io_uring/io_uring.c:3255 [inline]
+ __se_sys_io_uring_enter+0x1c36/0x2670 io_uring/io_uring.c:3147
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fd04a379e79
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fd04b14d038 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
+RAX: ffffffffffffffda RBX: 00007fd04a515f80 RCX: 00007fd04a379e79
+RDX: 0000000000400000 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 00007fd04a3e7916 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fd04a515f80 R15: 00007ffe6d4a4928
+ </TASK>
 
 
-vim +398 drivers/mtd/ubi/attach.c
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  382  
-801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  383  /**
-a4e6042f1d07307 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  384   * add_volume - add volume to the attaching information.
-a4e6042f1d07307 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  385   * @ai: attaching information
-801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  386   * @vol_id: ID of the volume to add
-801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  387   * @pnum: physical eraseblock number
-801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  388   * @vid_hdr: volume identifier header
-801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  389   *
-801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  390   * If the volume corresponding to the @vid_hdr logical eraseblock is already
-a4e6042f1d07307 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  391   * present in the attaching information, this function does nothing. Otherwise
-a4e6042f1d07307 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  392   * it adds corresponding volume to the attaching information. Returns a pointer
-fbd0107f4d33be0 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  393   * to the allocated "av" object in case of success and a negative error code in
-fbd0107f4d33be0 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  394   * case of failure.
-801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  395   */
-beba9855702e14c drivers/mtd/ubi/attach.c Wang Zhaolong       2024-08-25  396  static struct ubi_ainf_volume *add_volume(struct ubi_attach_info *ai, int vol_id,
-801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  397  					  const struct ubi_vid_hdr *vid_hdr)
-801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27 @398  {
-517af48c0540e61 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  399  	struct ubi_ainf_volume *av;
-de4c455b3e9f630 drivers/mtd/ubi/attach.c Boris Brezillon     2016-09-16  400  	bool created;
-801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  401  
-3261ebd7d4194ff drivers/mtd/ubi/scan.c   Christoph Hellwig   2007-05-21  402  	ubi_assert(vol_id == be32_to_cpu(vid_hdr->vol_id));
-801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  403  
-de4c455b3e9f630 drivers/mtd/ubi/attach.c Boris Brezillon     2016-09-16  404  	av = ubi_find_or_add_av(ai, vol_id, &created);
-de4c455b3e9f630 drivers/mtd/ubi/attach.c Boris Brezillon     2016-09-16  405  	if (IS_ERR(av) || !created)
-517af48c0540e61 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  406  		return av;
-801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  407  
-517af48c0540e61 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  408  	av->used_ebs = be32_to_cpu(vid_hdr->used_ebs);
-517af48c0540e61 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  409  	av->data_pad = be32_to_cpu(vid_hdr->data_pad);
-517af48c0540e61 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  410  	av->compat = vid_hdr->compat;
-517af48c0540e61 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  411  	av->vol_type = vid_hdr->vol_type == UBI_VID_DYNAMIC ? UBI_DYNAMIC_VOLUME
-801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  412  							    : UBI_STATIC_VOLUME;
-801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  413  
-517af48c0540e61 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  414  	return av;
-801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  415  }
-801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  416  
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
