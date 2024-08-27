@@ -1,708 +1,188 @@
-Return-Path: <linux-kernel+bounces-302548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BA37960016
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:56:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63DFC96001D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:57:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9065A1C21E6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:56:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3E1C1F2315A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F2C225A2;
-	Tue, 27 Aug 2024 03:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193D342C0B;
+	Tue, 27 Aug 2024 03:57:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iTcgRU4o"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="MEfR5xG+"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2079.outbound.protection.outlook.com [40.107.215.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2D11803D;
-	Tue, 27 Aug 2024 03:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724730978; cv=none; b=NkYNfKpswv9QBewBNibbjj0ICKk3kw8cx6qUrTHivemAzc1ziTCgXFdIJOQPfFZyiddpXImdN0SFlA0tRVaw0G3lN/Y/IdV3NU6LvjdKveSPC2DiW34kGyHFsBBaUJikB1GqwXYaZqlwjh4aotYxxyD640xK47pjhVG0u7jN+EM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724730978; c=relaxed/simple;
-	bh=6DEeCmkjXYSRDhXv0j6cx/jWXwYhbGUL2IfOUNuV/Hg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RHou4s+pM6Dc7vAND4YMaHPAHdGv2rR8xzfvry206gMYl2svnfJkciS5f144vLuYyxOIWWvZFL4xGzdOdkDF011Bale/EuFF61+dDCve3V+TOrmII4NtyOPYfXmyYhME0uaFXGz0d26rP8ddQKQ8Ep/2Iluf89GA9uFuhJhfJpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iTcgRU4o; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7cf5e179b68so2204031a12.1;
-        Mon, 26 Aug 2024 20:56:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724730975; x=1725335775; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=y0kBnUF/rNu5L7bREwnC1KI/zQCygIz65RsnIZQb+vQ=;
-        b=iTcgRU4o0dPgbJ8jwDBnq3m3yi16D7mYdwB+4a2yU159pQziXUUIA5Hu8px1NRBRv0
-         NA4izkc5ToJ3XUfG2FckLW+Qv8cwRgTDZmDF+0A8nzC1j9MB6xcpuHcgrva9QveYWBPr
-         xQgV8/Kzl6rV381RSrssmtGNhhlo3tozmyJzDNT0Xc+hNyT6G2bF9fVp1ntNlDwDNZW3
-         q4aBFWvav/s7Xj4GN7qErT2kDe3jvRU94gpbOSRF4+Jh1jLPOVT5JNOk/zqRy0QCgCXE
-         YdeDKs/6IFD7yT9llSmv6lAXVZHdanVEljg0jHHZH2/fCfc0dLqCpFtH6raH1KwxblC2
-         9gYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724730975; x=1725335775;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y0kBnUF/rNu5L7bREwnC1KI/zQCygIz65RsnIZQb+vQ=;
-        b=LU09vsNgXDLY9QGcxAR+kclZyMHZ/lnZa5kX/3FSjwzyruwfjWzSfa4JKpuEujMx8f
-         3iW6e+jlR/HIYrdWsXCGEwTnqXEwYW1cJCNzDKgD3DM7OPwXwqQhH74WQbX2nxmicCB+
-         qM5wVZfgcXC2P2o4EVvAtDl15B9oz8IMbsMxoYs4JIKgxAW+OQjqgdBtkvh8Yyg1mrJ7
-         QHbKOol3jTuPmMBhBXnXX6pZUfmzQaFT3kjI4284vfzlkA7kTVfnMPCAhmRhFDADe2ot
-         btKYmfwY9aSUuK6cNRsPrxvf4JdOpdBrEr0Nhwg1aEG7+dWFhnkAQ98S3/NPcgoqsqf4
-         +wJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVsKu2SaQKEMDm1NYkXpVyHlJ2c+pyrz/8+eYgELxUWPcbUmpLM9UqDYks40m4+R6Sn/paGLIN9hHJym6mf@vger.kernel.org, AJvYcCWzS5wgXeLuNbgPexRK5llQr/VqHFPFmU9jr6WTEDaV6BxUJpc/S5lupoN6fl7no/4qDb0UZZhV+UyLlXw=@vger.kernel.org, AJvYcCXGGgxbQrkXMEnPjmEMFLidSDAUO9MGfhqSwoJIq4AxKMgNXP1goUPtk63/n4DoaG2jfyH+OiTOH58=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzasX5Fadd/Jtqg2FFxRoZkGJzJZn0fEIKJjaXCNbWg46zmAHVU
-	ZODHui5+oBD7pu0RD5Y4pAKJn4nDiijw3teseCsuJd9zAhAjVfSQ
-X-Google-Smtp-Source: AGHT+IHIoTYMbOfQoHKLVDcVUmP4M+JHVXN8CD2b3zJp/IBSDrMhI8JuiFGUblSX2P4KVHyi1A19HA==
-X-Received: by 2002:a17:90b:1217:b0:2c9:63fb:d3ab with SMTP id 98e67ed59e1d1-2d824d11f20mr2544467a91.22.1724730974938;
-        Mon, 26 Aug 2024 20:56:14 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d6124a9a16sm10680347a91.0.2024.08.26.20.56.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 20:56:14 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 26 Aug 2024 20:56:13 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: "Derek J. Clark" <derekjohn.clark@gmail.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-	=?iso-8859-1?Q?Joaqu=EDn_Ignacio_Aramend=EDa?= <samsagax@gmail.com>,
-	Kevin Greenberg <kdgreenberg234@protonmail.com>,
-	Joshua Tam <csinaction@pm.me>,
-	Parth Menon <parthasarathymenon@gmail.com>,
-	Philip =?iso-8859-1?Q?M=FCller?= <philm@manjaro.org>,
-	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v2 1/1] Add support for multiple new devices.
-Message-ID: <f57c0750-255f-461b-84f0-e958b074d404@roeck-us.net>
-References: <20240822183525.27289-1-derekjohn.clark@gmail.com>
- <20240822183525.27289-2-derekjohn.clark@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E77219FF;
+	Tue, 27 Aug 2024 03:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724731043; cv=fail; b=jurLXoJbX/i5bqrJRowpoKmLAUwzsrFoXdL8aICrwr0GnitwNLndIy6iI9MCwEC+N5nhHmqYTMiQiCHrWLqDv9LAgbeU+FVKPMx8ajJL3dQetz/BgAn+wc3IFdl09mRJ1u1mkX4h6FUqh0LvATZvwiiuhEzAGgiel0jYJRlzgHQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724731043; c=relaxed/simple;
+	bh=MgCw8EaSfWHzz2pr9jU2JHbbKFMNvYGGu1rQIRC/K1o=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=dO5bo4KFBZURUy+cxiWLZP07NtOR7N0Yt1auiuEI9bD6Zcj9tjgbVNMBCeU6z9pHgeLmE+E38aOX/r+fDIMo41H6+3s+bOnCy+ctwW4vVSKXY4zclqvy7MTfzd/fqnjKObKLFvUtwAh7F8iXU8QyYJDhvuAGrC4E7obAQum1GP0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=MEfR5xG+; arc=fail smtp.client-ip=40.107.215.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=l/3EOvsP2lEkwhcVCEhw/zDYabFNqxMBZGFHYQjQoGm4WdpTKj8vIz38KuZt6ITgC9lbsRYQ+y4ylHsA9xmRqsOHvJVR742GkwED0O+Bq37k5jpwR2vUOcrcuYftkBOhUjpzx3Pm4AN+9Wf9QoxL24jgRnwu18/r8xeHToNSMLmIQ28KAtAdfdibCOUhwQywJQ6uRBfZ52ZfDyxYsrO2C10VnFYwD6m7T3wLcEUPpfNdtnkt199oaf5Oj2DcxQjg8HFA7mgktmhR3z2+CGyX4Vkf8Gg68kaqVsLyYQeVHorCmbQUQHJ8yX+fut1VI/vO8Gmc6GsKeEMDAKN0pGVeyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sGk6B5ukd3A7igIQr5pp6ntcHXLEozgzBo2dELjPi74=;
+ b=pae1fq3wGsSyYHJU3oZ2hIusQ2GucINPibsf9vaTUGIFbeC7kwZ3e7vjXm8OnOm+6BGSvFZs5j5wh6WobHy2ZWz+tTbNYi+2TxGFZmHxtg9hse/ORKoH0SmeoTzifVnCwuJUsG18i/jHGCOmWJrs7qbo6Z9KfyfV3IDRV0HqVI5Ihsh8XYesLWCihp23TMxvqYJ7yGQtnWF9cT8+WdcqCXLbyKvGkZ3IVJVsdCZ9ViAik9yn/7mXcBn8K6SPYmRLshST+ZvCTeaQuzR7nBRIMHWUw1ZJMWQbbj1NtwDVMrM73Eg0WFoCnnLhN/wL5dORRE0u/ytB48MfTuJrt/XezQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sGk6B5ukd3A7igIQr5pp6ntcHXLEozgzBo2dELjPi74=;
+ b=MEfR5xG+j+FXbUdgcjr16wxGpctD+IPA/+5nzs4NLc+84DlhFj7YfICY+uvrZYmGOrS4fKIneIn9n2CS72XGTcHuVA4pZQRmkhh3p+6J73kgxNJTWCykpSd/tScgJbco9/PF7onJ+CtxXaMoL3rY4WfmZZyajSbwXtj8JcPzDahMco1wuKOxiGVLYlokroU4Bqvz1i0clU7/GE49TuWKZXduKtmlY095TlmXV7RvGxaTZkh1u0wCTXsZno7aJdcEcg5nQjWum3IpE7U7xpnh95OsgXCRhkgqwzMPQJ0yyhlZMncfndSt0EBNnNbmlcvLRtX9B17UctqBkP1xRIm3nA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5899.apcprd06.prod.outlook.com (2603:1096:101:e3::16)
+ by SEZPR06MB6231.apcprd06.prod.outlook.com (2603:1096:101:e8::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.20; Tue, 27 Aug
+ 2024 03:57:12 +0000
+Received: from SEZPR06MB5899.apcprd06.prod.outlook.com
+ ([fe80::8bfc:f1ee:8923:77ce]) by SEZPR06MB5899.apcprd06.prod.outlook.com
+ ([fe80::8bfc:f1ee:8923:77ce%3]) with mapi id 15.20.7897.021; Tue, 27 Aug 2024
+ 03:57:12 +0000
+From: Shen Lichuan <shenlichuan@vivo.com>
+To: johannes@sipsolutions.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com,
+	Shen Lichuan <shenlichuan@vivo.com>
+Subject: [PATCH v1] wifi: mac80211: use kmemdup_array instead of kmemdup for multiple allocation
+Date: Tue, 27 Aug 2024 11:56:52 +0800
+Message-Id: <20240827035652.33558-1-shenlichuan@vivo.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR02CA0033.apcprd02.prod.outlook.com
+ (2603:1096:3:18::21) To SEZPR06MB5899.apcprd06.prod.outlook.com
+ (2603:1096:101:e3::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240822183525.27289-2-derekjohn.clark@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5899:EE_|SEZPR06MB6231:EE_
+X-MS-Office365-Filtering-Correlation-Id: 95d1697b-3c80-4e49-9597-08dcc64c54b7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?DUVeekpU8Be0OeYwfzyc4SMQmWKxBrRCYdNxWe6KPtEQoC/AZHSomfrBXJGK?=
+ =?us-ascii?Q?kGaJeRBJ9UNYXowin3QNFCWt3EXNuKDexA4P9HpDqp0vSQIZJ3fniBidXkVd?=
+ =?us-ascii?Q?3fZy6mgFxaHDyovjiNsg8eK/A9SKa2kI0ratown2Qir/2C01jcBrKONL/cCG?=
+ =?us-ascii?Q?nRiGx1D/DayQ+kvhsVdBtNJbiuJwIlmscXNdL9jZj95+cj+51NvI3DAx44fk?=
+ =?us-ascii?Q?cMFfeSG+JCnJMcYPcWp+ul91wZfqJnHveO8B8YxZrOdYUxGmFiIMBJo1zUjd?=
+ =?us-ascii?Q?7N4N80Tls4HcyTA2K+yJO3UlW0B+eF5lgdkTs1Neo02b587YfTBZuUZey0hM?=
+ =?us-ascii?Q?Ni0XSZb7By7pzbsdvm+CuUkj65/T54knjwPMrqrS6FKOmohn+ZI9xEzlc697?=
+ =?us-ascii?Q?bTwOER6q29cyJNE5Di2of0sKVnHVss6579vQ7PKhWB1ZQV8pAZa9Jj1ricus?=
+ =?us-ascii?Q?Rw0iMSy5/H7ODNwncR+298Abm5b3jlzR+5afM6QBN/UQ9Z+Zw36iS/jjSmpv?=
+ =?us-ascii?Q?h/p2k+jT1f/m0ntxzLi7dILOoWcZBCAMSxdT8O5F/R12fuXNLsuE+brU5RQO?=
+ =?us-ascii?Q?i7oSL1tbAWwaakzz8YKTDtMdJCGfM1+wj1hYmH3KaiPZw2MFJpqwpSiIEP5X?=
+ =?us-ascii?Q?xJV4AzAE+yJbPATasi1JdDXqGkY266odF27D0d2HxzolWGFb2TUSzNjgKqTt?=
+ =?us-ascii?Q?S5hm1io3laSOTJDS3fc3O5qhOjxvvlNz3Z0exNQSCp2P0U8D+bg42zNAqrGE?=
+ =?us-ascii?Q?Qxs5sbYBRFu6ttOVTJh1CGDV6XyjOV8GLqNPwwldlGJVE2GmuTYOMOZ5HoWM?=
+ =?us-ascii?Q?QsWKbD4ndMEW/jOWZJvyQ32me+n8U9WZffv//VJRwoi6epezQpasB33YMSim?=
+ =?us-ascii?Q?Wt5E+RTSeuDsF/6I2cZsAFXlRfCB04b5s5rgrmMEN7l6/QCgaCz+eaxYdy+E?=
+ =?us-ascii?Q?5NELZzqYHyEbssWm5iGx/oueGzYBfO1VGasQkEUZesMIHYaVOow+Xz86Y1cK?=
+ =?us-ascii?Q?jCUuPl0Fnbap4785D+rlOHFGSueA2KhsgYuYgd+OjhzTcseZIwvt/2t1uerI?=
+ =?us-ascii?Q?3TouDfh7NlYiihoLEHYGbD/KvK/wl++dDA/HjHW53aW5JG2Wbp0NenoUHWmf?=
+ =?us-ascii?Q?LKpRpk+HiuHjjUlpFVKWibAG9u4fAnCpG1XEvXdmawPG9fij1YIuPWI0bpYx?=
+ =?us-ascii?Q?NEecRyG+cXCV/blCGjvQyXMf/arq61uDl+4GQXUJK+EWsuyNciFMmi8ZX+K9?=
+ =?us-ascii?Q?JN3lK6FL+8mHwJsQ7awn/gcwGeKeWd2AGYg+NLpAByXgGy4p87aVwnO9TJE+?=
+ =?us-ascii?Q?HHn4hdyrz179GKlttpwD11TLqYH7slFxB8bdfz8BBLOjqC5n77hofkl8CjNu?=
+ =?us-ascii?Q?JqW58hqws957+ld1zjVExpRlxW6FVx4F9XrQJu+arcQ9NoCU3A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5899.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?4U/1gX9QisWSypmOf/O1x7gbxOlmVLG7Kk/hMLgwrQDW25V4WcImDx9C4LTu?=
+ =?us-ascii?Q?tR/VDCD1O++PS7DfkMiO+d+IXksYB3MdWbX4DmsAgdUdfP235DlmG85AYgZd?=
+ =?us-ascii?Q?6HosTkj1kZ5fDfhdVvJighBKr9Bg/J63rlzt4P1PfXoOJuTd8X0PVlT6gCUH?=
+ =?us-ascii?Q?BkHwvf3ysOWM3zY7clJAOVJ+bv1fcwN+rpMLdgxNrk6RQ/sr+MovCeo/PF6D?=
+ =?us-ascii?Q?DDpYbU3i2xUwHWkV2LDz8z1ZJPl8ojVoLITAe8RM+3X3ejU1D6uHOAqUjAtT?=
+ =?us-ascii?Q?LBqZSI5MXVusCdtQl6Mm5LwSb7goEC2hvEfXeYrb++Zc491kXvDdKF9+nQnE?=
+ =?us-ascii?Q?TUTb7F119ok47wIztgLrqKtRCLV6mN2pJoH2JTtoMfs7ueZEu71uyqV2aPbt?=
+ =?us-ascii?Q?mOUX+XrzNlRWlcxMDVqrQM82Ha05BYpsAuvyfv92i6XONkXOTCNI4a1jZ8Vc?=
+ =?us-ascii?Q?Bvm9Wr46ppYxjgaMXToYxBkoLeHFglDvfSq6Tqai4wWQTK11uI5t9YK1AcG4?=
+ =?us-ascii?Q?u/lB1qhmeASJTzU1HWkTap2Oo0mro3WFRA/wWmv0/Ja45rhOxUMMboyFvUdt?=
+ =?us-ascii?Q?rWUOTbg5xCjBHDN9bpP3gzQLJvA7RnDMIbc+um3erQbcv31YeMI/6UsgLwA7?=
+ =?us-ascii?Q?Tmr6KwrnzTOVaeIkaRk92SNr4VjKOAF1SsR05r0PrCwaBsgd35P12bAjYNFE?=
+ =?us-ascii?Q?3kwX5QGiwFnGusL+FToBHJtWs1WG7rRA8Ns0d2MfCh0pPJZBC9I/pK00pBZA?=
+ =?us-ascii?Q?JAv62rh1cKo0MKJMKy03S4oLpQVMmkuekNyUF2XDRXcasgAvQMVbOpZDUrKy?=
+ =?us-ascii?Q?eEoDL87LpDKrqtg4x5MMD67mwN9bJum/g3ZHHHyMC6dl74QNnp4r8tjOiUw7?=
+ =?us-ascii?Q?UP3RzKDc6LXuUU7KZO3FIgx+VARZu7HZ4vwLzYN7W2fCzlM265mTX4XrxspO?=
+ =?us-ascii?Q?viX2xusAkLhy0ncWgqlc1QmF8bF85XJXNS7QkXH6o48tC6BUB3a3FhwfsEQL?=
+ =?us-ascii?Q?SOY2X46k4dXb+PM6KddzflQ7pG1vZiMs4vLAyWCViNXRTx2bFgAUMKJAMNPx?=
+ =?us-ascii?Q?06kEatl40rp17eaWu38R5ky/KopOBhKtOdKYtEfh6fQU1R9gGiRs3+Ew3R2x?=
+ =?us-ascii?Q?QRBhUFqqwTzAWPRZA/+Rx/C+5FE7MCNzSYF5TxyQNNeUVP1hhTfeqrVdvsky?=
+ =?us-ascii?Q?wdH0q7/hKspB7P4lrfPxD65Ll26kzvsonGDr3Pkc7sWvMINMK3169m7grNrR?=
+ =?us-ascii?Q?jB4mrKgZ7Y1wdHAbbnX57oX/HGek6CVfDdhIHrmCd7qfGPWmzf3ltyWy+Qch?=
+ =?us-ascii?Q?2VfYudpKQNw68ydONgMrIMd/TBX2dhQfsSa2ij5sRELSaS5dwDgq57CrtvUH?=
+ =?us-ascii?Q?Zn+vxZoUvIepzKh4hoEPymanD0n6QQFIH7uTezFJ/Ps0kFee63XEm1k/suKW?=
+ =?us-ascii?Q?9vfjCKA/xnQA990HHi4uPTFgQ0Dpy6Q6iCwMtliZUvTzJXaKGlRJr4DYzimj?=
+ =?us-ascii?Q?lD3GpCekx7PIel/exkhqGxUPf1hFrZIe+T05ctZEk7cEAffnGJniq2PAggrQ?=
+ =?us-ascii?Q?rmSiTkwtgrzQvEUgSkJ/loZTYeOoj5NFMM/y+vaR?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 95d1697b-3c80-4e49-9597-08dcc64c54b7
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5899.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 03:57:12.2908
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Nq14YTkiLhx5aBXATkVAKZ0Ox14ty8I/C7g6YIG8YbJCLBgFtdJWXP6WgvUfXLZfJDMqf/9ie9UsXlhZQrHO3g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6231
 
-On Thu, Aug 22, 2024 at 11:35:25AM -0700, Derek J. Clark wrote:
-> Add support for the OrangePi NEO-01. It uses different registers for PWM
-> manual mode, set PWM, and read fan speed than previous devices. Valid PWM
-> input and duty cycle is 1-244, we scale this from 1-255 to maintain
-> compatibility with the existing interface.
-> 
-> Add OneXPlayer 2 series, OneXFly, and X1 series models. The 2/X1 series use
-> new registers for turbo button takeover and read fan speed. X1 has an Intel
-> variant so change the CPU detection at init to only check for the affected
-> devices. While at it, adjust formatting of some constants and reorder all
-> cases alphabetically for consistency. Rename OXP_OLD constants to OXP_MINI
-> for disambiguation. Update code comments for clarity.
-> 
-> Add support for AYANEO models 2S, AIR 1S, Flip series, GEEK 1S, and KUN.
-> 
-> Signed-off-by: Derek J. Clark <derekjohn.clark@gmail.com>
-> Tested-by: Kevin Greenberg <kdgreenberg234@protonmail.com>
-> Tested-by: Joshua Tam <csinaction@pm.me>
-> Tested-by: Parth Menon <parthasarathymenon@gmail.com>
-> Tested-by: Philip Müller <philm@manjaro.org>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202408160329.TLNbIwRC-lkp@intel.com/
+Let the kmemdup_array() take care about multiplication
+and possible overflows.
 
-Applied.
+Using kmemdup_array() is more appropriate and makes the code
+easier to audit.
 
-Thanks,
-Guenter
+Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+---
+ net/mac80211/main.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> ---
->  Documentation/hwmon/oxp-sensors.rst |  54 +++--
->  drivers/hwmon/oxp-sensors.c         | 299 +++++++++++++++++++++++-----
->  2 files changed, 290 insertions(+), 63 deletions(-)
-> 
-> diff --git a/Documentation/hwmon/oxp-sensors.rst b/Documentation/hwmon/oxp-sensors.rst
-> index 50618f064379..581c4dafbfa1 100644
-> --- a/Documentation/hwmon/oxp-sensors.rst
-> +++ b/Documentation/hwmon/oxp-sensors.rst
-> @@ -10,41 +10,59 @@ Authors:
->  Description:
->  ------------
->  
-> -Handheld devices from One Netbook and Aya Neo provide fan readings and fan
-> -control through their embedded controllers.
-> +Handheld devices from OneNetbook, AOKZOE, AYANEO, And OrangePi provide fan
-> +readings and fan control through their embedded controllers.
->  
-> -Currently only supports AMD boards from One X Player, AOK ZOE, and some Aya
-> -Neo devices. One X Player Intel boards could be supported if we could figure
-> -out the EC registers and values to write to since the EC layout and model is
-> -different. Aya Neo devices preceding the AIR may not be supportable as the EC
-> -model is different and do not appear to have manual control capabilities.
-> +Currently supports OneXPlayer devices, AOKZOE, AYANEO, and OrangePi
-> +handheld devices. AYANEO devices preceding the AIR and OneXPlayer devices
-> +preceding the Mini A07 are not supportable as the EC model is different
-> +and do not have manual control capabilities.
->  
-> -Some models have a toggle for changing the behaviour of the "Turbo/Silent"
-> -button of the device. It will change the key event that it triggers with
-> -a flip of the `tt_toggle` attribute. See below for boards that support this
-> -function.
-> +Some OneXPlayer and AOKZOE models have a toggle for changing the behaviour
-> +of the "Turbo/Silent" button of the device. It will change the key event
-> +that it triggers with a flip of the `tt_toggle` attribute. See below for
-> +boards that support this function.
->  
->  Supported devices
->  -----------------
->  
->  Currently the driver supports the following handhelds:
->  
-> - - AOK ZOE A1
-> - - AOK ZOE A1 PRO
-> - - Aya Neo 2
-> - - Aya Neo AIR
-> - - Aya Neo AIR Plus (Mendocino)
-> - - Aya Neo AIR Pro
-> - - Aya Neo Geek
-> + - AOKZOE A1
-> + - AOKZOE A1 PRO
-> + - AYANEO 2
-> + - AYANEO 2S
-> + - AYANEO AIR
-> + - AYANEO AIR 1S
-> + - AYANEO AIR Plus (Mendocino)
-> + - AYANEO AIR Pro
-> + - AYANEO Flip DS
-> + - AYANEO Flip KB
-> + - AYANEO Geek
-> + - AYANEO Geek 1S
-> + - AYANEO KUN
-> + - OneXPlayer 2
-> + - OneXPlayer 2 Pro
->   - OneXPlayer AMD
->   - OneXPlayer mini AMD
->   - OneXPlayer mini AMD PRO
-> + - OneXPlayer OneXFly
-> + - OneXPlayer X1 A
-> + - OneXPlayer X1 i
-> + - OneXPlayer X1 mini
-> + - OrangePi NEO-01
->  
->  "Turbo/Silent" button behaviour toggle is only supported on:
->   - AOK ZOE A1
->   - AOK ZOE A1 PRO
-> + - OneXPlayer 2
-> + - OneXPlayer 2 Pro
->   - OneXPlayer mini AMD (only with updated alpha BIOS)
->   - OneXPlayer mini AMD PRO
-> + - OneXPlayer OneXFly
-> + - OneXPlayer X1 A
-> + - OneXPlayer X1 i
-> + - OneXPlayer X1 mini
->  
->  Sysfs entries
->  -------------
-> diff --git a/drivers/hwmon/oxp-sensors.c b/drivers/hwmon/oxp-sensors.c
-> index 8d3b0f86cc57..b6d06370469d 100644
-> --- a/drivers/hwmon/oxp-sensors.c
-> +++ b/drivers/hwmon/oxp-sensors.c
-> @@ -1,18 +1,21 @@
->  // SPDX-License-Identifier: GPL-2.0+
->  /*
-> - * Platform driver for OneXPlayer, AOK ZOE, and Aya Neo Handhelds that expose
-> - * fan reading and control via hwmon sysfs.
-> + * Platform driver for OneXPlayer, AOKZOE, AYANEO, and OrangePi Handhelds
-> + * that expose fan reading and control via hwmon sysfs.
->   *
->   * Old OXP boards have the same DMI strings and they are told apart by
-> - * the boot cpu vendor (Intel/AMD). Currently only AMD boards are
-> - * supported but the code is made to be simple to add other handheld
-> - * boards in the future.
-> + * the boot cpu vendor (Intel/AMD). Of these older models only AMD is
-> + * supported.
-> + *
->   * Fan control is provided via pwm interface in the range [0-255].
->   * Old AMD boards use [0-100] as range in the EC, the written value is
->   * scaled to accommodate for that. Newer boards like the mini PRO and
-> - * AOK ZOE are not scaled but have the same EC layout.
-> + * AOKZOE are not scaled but have the same EC layout. Newer models
-> + * like the 2 and X1 are [0-184] and are scaled to 0-255. OrangePi
-> + * are [1-244] and scaled to 0-255.
->   *
->   * Copyright (C) 2022 Joaquín I. Aramendía <samsagax@gmail.com>
-> + * Copyright (C) 2024 Derek J. Clark <derekjohn.clark@gmail.com>
->   */
->  
->  #include <linux/acpi.h>
-> @@ -43,32 +46,48 @@ enum oxp_board {
->  	aok_zoe_a1 = 1,
->  	aya_neo_2,
->  	aya_neo_air,
-> +	aya_neo_air_1s,
->  	aya_neo_air_plus_mendo,
->  	aya_neo_air_pro,
-> +	aya_neo_flip,
->  	aya_neo_geek,
-> +	aya_neo_kun,
-> +	orange_pi_neo,
-> +	oxp_2,
-> +	oxp_fly,
->  	oxp_mini_amd,
->  	oxp_mini_amd_a07,
->  	oxp_mini_amd_pro,
-> +	oxp_x1,
->  };
->  
->  static enum oxp_board board;
->  
->  /* Fan reading and PWM */
-> -#define OXP_SENSOR_FAN_REG		0x76 /* Fan reading is 2 registers long */
-> -#define OXP_SENSOR_PWM_ENABLE_REG	0x4A /* PWM enable is 1 register long */
-> -#define OXP_SENSOR_PWM_REG		0x4B /* PWM reading is 1 register long */
-> +#define OXP_SENSOR_FAN_REG             0x76 /* Fan reading is 2 registers long */
-> +#define OXP_2_SENSOR_FAN_REG           0x58 /* Fan reading is 2 registers long */
-> +#define OXP_SENSOR_PWM_ENABLE_REG      0x4A /* PWM enable is 1 register long */
-> +#define OXP_SENSOR_PWM_REG             0x4B /* PWM reading is 1 register long */
-> +#define PWM_MODE_AUTO                  0x00
-> +#define PWM_MODE_MANUAL                0x01
-> +
-> +/* OrangePi fan reading and PWM */
-> +#define ORANGEPI_SENSOR_FAN_REG        0x78 /* Fan reading is 2 registers long */
-> +#define ORANGEPI_SENSOR_PWM_ENABLE_REG 0x40 /* PWM enable is 1 register long */
-> +#define ORANGEPI_SENSOR_PWM_REG        0x38 /* PWM reading is 1 register long */
->  
->  /* Turbo button takeover function
-> - * Older boards have different values and EC registers
-> + * Different boards have different values and EC registers
->   * for the same function
->   */
-> -#define OXP_OLD_TURBO_SWITCH_REG	0x1E
-> -#define OXP_OLD_TURBO_TAKE_VAL		0x01
-> -#define OXP_OLD_TURBO_RETURN_VAL	0x00
-> +#define OXP_TURBO_SWITCH_REG           0xF1 /* Mini Pro, OneXFly, AOKZOE */
-> +#define OXP_2_TURBO_SWITCH_REG         0xEB /* OXP2 and X1 */
-> +#define OXP_MINI_TURBO_SWITCH_REG      0x1E /* Mini AO7 */
-> +
-> +#define OXP_MINI_TURBO_TAKE_VAL        0x01 /* Mini AO7 */
-> +#define OXP_TURBO_TAKE_VAL             0x40 /* All other models */
->  
-> -#define OXP_TURBO_SWITCH_REG		0xF1
-> -#define OXP_TURBO_TAKE_VAL		0x40
-> -#define OXP_TURBO_RETURN_VAL		0x00
-> +#define OXP_TURBO_RETURN_VAL           0x00 /* Common return val */
->  
->  static const struct dmi_system_id dmi_table[] = {
->  	{
-> @@ -88,7 +107,7 @@ static const struct dmi_system_id dmi_table[] = {
->  	{
->  		.matches = {
->  			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> -			DMI_EXACT_MATCH(DMI_BOARD_NAME, "AYANEO 2"),
-> +			DMI_MATCH(DMI_BOARD_NAME, "AYANEO 2"),
->  		},
->  		.driver_data = (void *)aya_neo_2,
->  	},
-> @@ -99,6 +118,13 @@ static const struct dmi_system_id dmi_table[] = {
->  		},
->  		.driver_data = (void *)aya_neo_air,
->  	},
-> +	{
-> +		.matches = {
-> +			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> +			DMI_EXACT_MATCH(DMI_BOARD_NAME, "AIR 1S"),
-> +		},
-> +		.driver_data = (void *)aya_neo_air_1s,
-> +	},
->  	{
->  		.matches = {
->  			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> @@ -116,10 +142,31 @@ static const struct dmi_system_id dmi_table[] = {
->  	{
->  		.matches = {
->  			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> -			DMI_EXACT_MATCH(DMI_BOARD_NAME, "GEEK"),
-> +			DMI_MATCH(DMI_BOARD_NAME, "FLIP"),
-> +		},
-> +		.driver_data = (void *)aya_neo_flip,
-> +	},
-> +	{
-> +		.matches = {
-> +			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> +			DMI_MATCH(DMI_BOARD_NAME, "GEEK"),
->  		},
->  		.driver_data = (void *)aya_neo_geek,
->  	},
-> +	{
-> +		.matches = {
-> +			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> +			DMI_EXACT_MATCH(DMI_BOARD_NAME, "KUN"),
-> +		},
-> +		.driver_data = (void *)aya_neo_kun,
-> +	},
-> +	{
-> +		.matches = {
-> +			DMI_MATCH(DMI_BOARD_VENDOR, "OrangePi"),
-> +			DMI_EXACT_MATCH(DMI_BOARD_NAME, "NEO-01"),
-> +		},
-> +		.driver_data = (void *)orange_pi_neo,
-> +	},
->  	{
->  		.matches = {
->  			DMI_MATCH(DMI_BOARD_VENDOR, "ONE-NETBOOK"),
-> @@ -127,6 +174,20 @@ static const struct dmi_system_id dmi_table[] = {
->  		},
->  		.driver_data = (void *)oxp_mini_amd,
->  	},
-> +	{
-> +		.matches = {
-> +			DMI_MATCH(DMI_BOARD_VENDOR, "ONE-NETBOOK"),
-> +			DMI_MATCH(DMI_BOARD_NAME, "ONEXPLAYER 2"),
-> +		},
-> +		.driver_data = (void *)oxp_2,
-> +	},
-> +	{
-> +		.matches = {
-> +			DMI_MATCH(DMI_BOARD_VENDOR, "ONE-NETBOOK"),
-> +			DMI_EXACT_MATCH(DMI_BOARD_NAME, "ONEXPLAYER F1"),
-> +		},
-> +		.driver_data = (void *)oxp_fly,
-> +	},
->  	{
->  		.matches = {
->  			DMI_MATCH(DMI_BOARD_VENDOR, "ONE-NETBOOK"),
-> @@ -141,6 +202,13 @@ static const struct dmi_system_id dmi_table[] = {
->  		},
->  		.driver_data = (void *)oxp_mini_amd_pro,
->  	},
-> +	{
-> +		.matches = {
-> +			DMI_MATCH(DMI_BOARD_VENDOR, "ONE-NETBOOK"),
-> +			DMI_MATCH(DMI_BOARD_NAME, "ONEXPLAYER X1"),
-> +		},
-> +		.driver_data = (void *)oxp_x1,
-> +	},
->  	{},
->  };
->  
-> @@ -192,14 +260,20 @@ static int tt_toggle_enable(void)
->  
->  	switch (board) {
->  	case oxp_mini_amd_a07:
-> -		reg = OXP_OLD_TURBO_SWITCH_REG;
-> -		val = OXP_OLD_TURBO_TAKE_VAL;
-> +		reg = OXP_MINI_TURBO_SWITCH_REG;
-> +		val = OXP_MINI_TURBO_TAKE_VAL;
->  		break;
-> -	case oxp_mini_amd_pro:
->  	case aok_zoe_a1:
-> +	case oxp_fly:
-> +	case oxp_mini_amd_pro:
->  		reg = OXP_TURBO_SWITCH_REG;
->  		val = OXP_TURBO_TAKE_VAL;
->  		break;
-> +	case oxp_2:
-> +	case oxp_x1:
-> +		reg = OXP_2_TURBO_SWITCH_REG;
-> +		val = OXP_TURBO_TAKE_VAL;
-> +		break;
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -213,14 +287,20 @@ static int tt_toggle_disable(void)
->  
->  	switch (board) {
->  	case oxp_mini_amd_a07:
-> -		reg = OXP_OLD_TURBO_SWITCH_REG;
-> -		val = OXP_OLD_TURBO_RETURN_VAL;
-> +		reg = OXP_MINI_TURBO_SWITCH_REG;
-> +		val = OXP_TURBO_RETURN_VAL;
->  		break;
-> -	case oxp_mini_amd_pro:
->  	case aok_zoe_a1:
-> +	case oxp_fly:
-> +	case oxp_mini_amd_pro:
->  		reg = OXP_TURBO_SWITCH_REG;
->  		val = OXP_TURBO_RETURN_VAL;
->  		break;
-> +	case oxp_2:
-> +	case oxp_x1:
-> +		reg = OXP_2_TURBO_SWITCH_REG;
-> +		val = OXP_TURBO_RETURN_VAL;
-> +		break;
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -233,8 +313,11 @@ static umode_t tt_toggle_is_visible(struct kobject *kobj,
->  {
->  	switch (board) {
->  	case aok_zoe_a1:
-> +	case oxp_2:
-> +	case oxp_fly:
->  	case oxp_mini_amd_a07:
->  	case oxp_mini_amd_pro:
-> +	case oxp_x1:
->  		return attr->mode;
->  	default:
->  		break;
-> @@ -273,12 +356,17 @@ static ssize_t tt_toggle_show(struct device *dev,
->  
->  	switch (board) {
->  	case oxp_mini_amd_a07:
-> -		reg = OXP_OLD_TURBO_SWITCH_REG;
-> +		reg = OXP_MINI_TURBO_SWITCH_REG;
->  		break;
-> -	case oxp_mini_amd_pro:
->  	case aok_zoe_a1:
-> +	case oxp_fly:
-> +	case oxp_mini_amd_pro:
->  		reg = OXP_TURBO_SWITCH_REG;
->  		break;
-> +	case oxp_2:
-> +	case oxp_x1:
-> +		reg = OXP_2_TURBO_SWITCH_REG;
-> +		break;
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -295,12 +383,53 @@ static DEVICE_ATTR_RW(tt_toggle);
->  /* PWM enable/disable functions */
->  static int oxp_pwm_enable(void)
->  {
-> -	return write_to_ec(OXP_SENSOR_PWM_ENABLE_REG, 0x01);
-> +	switch (board) {
-> +	case orange_pi_neo:
-> +		return write_to_ec(ORANGEPI_SENSOR_PWM_ENABLE_REG, PWM_MODE_MANUAL);
-> +	case aok_zoe_a1:
-> +	case aya_neo_2:
-> +	case aya_neo_air:
-> +	case aya_neo_air_plus_mendo:
-> +	case aya_neo_air_pro:
-> +	case aya_neo_flip:
-> +	case aya_neo_geek:
-> +	case aya_neo_kun:
-> +	case oxp_2:
-> +	case oxp_fly:
-> +	case oxp_mini_amd:
-> +	case oxp_mini_amd_a07:
-> +	case oxp_mini_amd_pro:
-> +	case oxp_x1:
-> +		return write_to_ec(OXP_SENSOR_PWM_ENABLE_REG, PWM_MODE_MANUAL);
-> +	default:
-> +		return -EINVAL;
-> +	}
->  }
->  
->  static int oxp_pwm_disable(void)
->  {
-> -	return write_to_ec(OXP_SENSOR_PWM_ENABLE_REG, 0x00);
-> +	switch (board) {
-> +	case orange_pi_neo:
-> +		return write_to_ec(ORANGEPI_SENSOR_PWM_ENABLE_REG, PWM_MODE_AUTO);
-> +	case aok_zoe_a1:
-> +	case aya_neo_2:
-> +	case aya_neo_air:
-> +	case aya_neo_air_1s:
-> +	case aya_neo_air_plus_mendo:
-> +	case aya_neo_air_pro:
-> +	case aya_neo_flip:
-> +	case aya_neo_geek:
-> +	case aya_neo_kun:
-> +	case oxp_2:
-> +	case oxp_fly:
-> +	case oxp_mini_amd:
-> +	case oxp_mini_amd_a07:
-> +	case oxp_mini_amd_pro:
-> +	case oxp_x1:
-> +		return write_to_ec(OXP_SENSOR_PWM_ENABLE_REG, PWM_MODE_AUTO);
-> +	default:
-> +		return -EINVAL;
-> +	}
->  }
->  
->  /* Callbacks for hwmon interface */
-> @@ -326,7 +455,29 @@ static int oxp_platform_read(struct device *dev, enum hwmon_sensor_types type,
->  	case hwmon_fan:
->  		switch (attr) {
->  		case hwmon_fan_input:
-> -			return read_from_ec(OXP_SENSOR_FAN_REG, 2, val);
-> +			switch (board) {
-> +			case orange_pi_neo:
-> +				return read_from_ec(ORANGEPI_SENSOR_FAN_REG, 2, val);
-> +			case oxp_2:
-> +			case oxp_x1:
-> +				return read_from_ec(OXP_2_SENSOR_FAN_REG, 2, val);
-> +			case aok_zoe_a1:
-> +			case aya_neo_2:
-> +			case aya_neo_air:
-> +			case aya_neo_air_1s:
-> +			case aya_neo_air_plus_mendo:
-> +			case aya_neo_air_pro:
-> +			case aya_neo_flip:
-> +			case aya_neo_geek:
-> +			case aya_neo_kun:
-> +			case oxp_fly:
-> +			case oxp_mini_amd:
-> +			case oxp_mini_amd_a07:
-> +			case oxp_mini_amd_pro:
-> +				return read_from_ec(OXP_SENSOR_FAN_REG, 2, val);
-> +			default:
-> +				break;
-> +			}
->  		default:
->  			break;
->  		}
-> @@ -334,31 +485,74 @@ static int oxp_platform_read(struct device *dev, enum hwmon_sensor_types type,
->  	case hwmon_pwm:
->  		switch (attr) {
->  		case hwmon_pwm_input:
-> -			ret = read_from_ec(OXP_SENSOR_PWM_REG, 1, val);
-> -			if (ret)
-> -				return ret;
->  			switch (board) {
-> +			case orange_pi_neo:
-> +				ret = read_from_ec(ORANGEPI_SENSOR_PWM_REG, 1, val);
-> +				if (ret)
-> +					return ret;
-> +				/* scale from range [1-244] */
-> +				*val = ((*val - 1) * 254 / 243) + 1;
-> +				break;
-> +			case oxp_2:
-> +			case oxp_x1:
-> +				ret = read_from_ec(OXP_SENSOR_PWM_REG, 1, val);
-> +				if (ret)
-> +					return ret;
-> +				/* scale from range [0-184] */
-> +				*val = (*val * 255) / 184;
-> +				break;
->  			case aya_neo_2:
->  			case aya_neo_air:
-> +			case aya_neo_air_1s:
->  			case aya_neo_air_plus_mendo:
->  			case aya_neo_air_pro:
-> +			case aya_neo_flip:
->  			case aya_neo_geek:
-> +			case aya_neo_kun:
->  			case oxp_mini_amd:
->  			case oxp_mini_amd_a07:
-> +				ret = read_from_ec(OXP_SENSOR_PWM_REG, 1, val);
-> +				if (ret)
-> +					return ret;
-> +				/* scale from range [0-100] */
->  				*val = (*val * 255) / 100;
->  				break;
-> -			case oxp_mini_amd_pro:
->  			case aok_zoe_a1:
-> +			case oxp_fly:
-> +			case oxp_mini_amd_pro:
->  			default:
-> +				ret = read_from_ec(OXP_SENSOR_PWM_REG, 1, val);
-> +				if (ret)
-> +					return ret;
->  				break;
->  			}
->  			return 0;
->  		case hwmon_pwm_enable:
-> -			return read_from_ec(OXP_SENSOR_PWM_ENABLE_REG, 1, val);
-> +			switch (board) {
-> +			case orange_pi_neo:
-> +				return read_from_ec(ORANGEPI_SENSOR_PWM_ENABLE_REG, 1, val);
-> +			case aok_zoe_a1:
-> +			case aya_neo_2:
-> +			case aya_neo_air:
-> +			case aya_neo_air_1s:
-> +			case aya_neo_air_plus_mendo:
-> +			case aya_neo_air_pro:
-> +			case aya_neo_flip:
-> +			case aya_neo_geek:
-> +			case aya_neo_kun:
-> +			case oxp_2:
-> +			case oxp_fly:
-> +			case oxp_mini_amd:
-> +			case oxp_mini_amd_a07:
-> +			case oxp_mini_amd_pro:
-> +			case oxp_x1:
-> +				return read_from_ec(OXP_SENSOR_PWM_ENABLE_REG, 1, val);
-> +			default:
-> +				break;
-> +			}
->  		default:
->  			break;
->  		}
-> -		break;
->  	default:
->  		break;
->  	}
-> @@ -381,21 +575,35 @@ static int oxp_platform_write(struct device *dev, enum hwmon_sensor_types type,
->  			if (val < 0 || val > 255)
->  				return -EINVAL;
->  			switch (board) {
-> +			case orange_pi_neo:
-> +				/* scale to range [1-244] */
-> +				val = ((val - 1) * 243 / 254) + 1;
-> +				return write_to_ec(ORANGEPI_SENSOR_PWM_REG, val);
-> +			case oxp_2:
-> +			case oxp_x1:
-> +				/* scale to range [0-184] */
-> +				val = (val * 184) / 255;
-> +				return write_to_ec(OXP_SENSOR_PWM_REG, val);
->  			case aya_neo_2:
->  			case aya_neo_air:
-> +			case aya_neo_air_1s:
->  			case aya_neo_air_plus_mendo:
->  			case aya_neo_air_pro:
-> +			case aya_neo_flip:
->  			case aya_neo_geek:
-> +			case aya_neo_kun:
->  			case oxp_mini_amd:
->  			case oxp_mini_amd_a07:
-> +				/* scale to range [0-100] */
->  				val = (val * 100) / 255;
-> -				break;
-> +				return write_to_ec(OXP_SENSOR_PWM_REG, val);
->  			case aok_zoe_a1:
-> +			case oxp_fly:
->  			case oxp_mini_amd_pro:
-> +				return write_to_ec(OXP_SENSOR_PWM_REG, val);
->  			default:
->  				break;
->  			}
-> -			return write_to_ec(OXP_SENSOR_PWM_REG, val);
->  		default:
->  			break;
->  		}
-> @@ -467,19 +675,20 @@ static int __init oxp_platform_init(void)
->  {
->  	const struct dmi_system_id *dmi_entry;
->  
-> -	/*
-> -	 * Have to check for AMD processor here because DMI strings are the
-> -	 * same between Intel and AMD boards, the only way to tell them apart
-> -	 * is the CPU.
-> -	 * Intel boards seem to have different EC registers and values to
-> -	 * read/write.
-> -	 */
->  	dmi_entry = dmi_first_match(dmi_table);
-> -	if (!dmi_entry || boot_cpu_data.x86_vendor != X86_VENDOR_AMD)
-> +	if (!dmi_entry)
->  		return -ENODEV;
->  
->  	board = (enum oxp_board)(unsigned long)dmi_entry->driver_data;
->  
-> +	/*
-> +	 * Have to check for AMD processor here because DMI strings are the same
-> +	 * between Intel and AMD boards on older OneXPlayer devices, the only way
-> +	 * to tell them apart is the CPU. Old Intel boards have an unsupported EC.
-> +	 */
-> +	if (board == oxp_mini_amd && boot_cpu_data.x86_vendor != X86_VENDOR_AMD)
-> +		return -ENODEV;
-> +
->  	oxp_platform_device =
->  		platform_create_bundle(&oxp_platform_driver,
->  				       oxp_platform_probe, NULL, 0, NULL, 0);
+diff --git a/net/mac80211/main.c b/net/mac80211/main.c
+index a3104b6ea6f0..f16ebad36a83 100644
+--- a/net/mac80211/main.c
++++ b/net/mac80211/main.c
+@@ -1051,9 +1051,9 @@ static int ieee80211_init_cipher_suites(struct ieee80211_local *local)
+ 			return 0;
+ 
+ 		/* Driver provides cipher suites, but we need to exclude WEP */
+-		suites = kmemdup(local->hw.wiphy->cipher_suites,
+-				 sizeof(u32) * local->hw.wiphy->n_cipher_suites,
+-				 GFP_KERNEL);
++		suites = kmemdup_array(local->hw.wiphy->cipher_suites,
++				       local->hw.wiphy->n_cipher_suites, sizeof(u32),
++				       GFP_KERNEL);
+ 		if (!suites)
+ 			return -ENOMEM;
+ 
+-- 
+2.17.1
+
 
