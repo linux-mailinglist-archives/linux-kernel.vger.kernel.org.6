@@ -1,277 +1,175 @@
-Return-Path: <linux-kernel+bounces-303451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 793D5960C3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:37:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89324960C40
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D7221C21BDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:37:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1353BB255EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD641C4EC8;
-	Tue, 27 Aug 2024 13:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0320D1C2DBB;
+	Tue, 27 Aug 2024 13:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Zzwtqdhs"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XC1fSUzL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46981BCA04
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 13:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6856E1BFDF3;
+	Tue, 27 Aug 2024 13:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724765704; cv=none; b=EXfmX5dk81FtIpjrQqpr5GAq1u7UjVj0GWQaWYIYqpXczoJ23N4VKXpwYwNw0fUd7YP22lOBSCgfZjsQuiv7IPGpI/ud4sKx/P1V5XzGY0df5T0TO7hDTdS59A5iXFNvmnhWtJgm9EJ65e++aRWNRWsRU9untIeFMuvmWV5AOs8=
+	t=1724765830; cv=none; b=XIsLOo4c5WV+3tlhrRdj5Bf+/C26h6Ir1PS7Re4vu/nxi8ml6C5nTQB4BK4zk2SiZK8PAOANfDNeprDIyy2bEQZQKTcuDYOi02nwLjz8I0FBvHgIuUxbHiL5TI96uZuayuFHQuBkbLnxYMnwBqc7+snJTjb6BzIXMFphn4Y+wWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724765704; c=relaxed/simple;
-	bh=kVp9sXDTtLlVwwNvYh+Nwbbf3AZVSiexqWAg9HOa7p0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kdToTk0KtPH5a+Lx27plm0xeYfJfjIGbi0dkgAaf0ZsQsM4ApHcfkQi1KgsSG34urYg9oGDxX+XxSNSENx5Iro7dfgYxlUOYoJt0+OLN3iaJLhuOxyjDIdWa+XmkPnTpyP+dY/KQjy+JwNRyjHYWMyLi6U+5Vty7nUFcHZXvZx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Zzwtqdhs; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a86acbaddb4so472406366b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:35:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1724765700; x=1725370500; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TRSnTszdSq/pc7NK2q7HfymY5oNVAHHXr0ew7M6yPfc=;
-        b=ZzwtqdhseEYlVZtnX0QnaTc/UK1Twuhr+0X/2z/BWqIKIPoTo2VycMD2BtKr6obAdf
-         ZCtePMsrDHBaV7F9NRawM47DhLMQp1F+NCtKG7+U6HnQUUkHOT8GxajA/++356gbHiQi
-         eRzXH4ezfgtijINHsII4+ufht7jt1Mzxxo1RDwDuqoDQjLfqveSBNZqoJAZquAK5XMb1
-         VlKlwPv2ZOb3vMsjDIh0BK0IIC1F40FvPnvSCgcYpkvlUBo3/IOPd4FIWIzYHkqqYbh5
-         x75TW449+4ouK6yAxd+IzD9orqwefpaLvnZbQEeZehYDnUjmF9jXgHdGGXiWCp0gHW8c
-         rVTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724765700; x=1725370500;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TRSnTszdSq/pc7NK2q7HfymY5oNVAHHXr0ew7M6yPfc=;
-        b=UoLjzH+CaoWUnGx/p9kjPhIVCnhxpAmgSmQfNWBk+iP39y9BXEsk6E3oqi2R50lw2z
-         KQkwrE+HmNaEFtykOvRqV2X6kjUDmvfhlLcpyooxObUr7LyeK44uBzqaYKcn1PeY7sTx
-         fYMsxWsrn5hQ9oK5ReyJpY5Gd0rTKnIiFQHDEuWFUl3L8Gzs6qOLtyaK2twINPUXLgd6
-         hs36LMdvB9l+ufjB2ntMQ3rcRI9gWJVqy3jhLxj6lL7KMUWsCbvxG3nHtpBDPtR/EtUO
-         WtOg6aNAw9nre/49LNbKzPuTXOyeEy66li+AOiordRO7i9bMLnHxXrrBjaK0XDeu7Ca7
-         UbiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0JEhOypkhosp4NQJPD5Ftx6rWK8OsvMgbWP2/Ux0r8PNI24XFVEv1u9wJ56VUbU8DJWZuooRmVH0j7/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyupkkNRaFQ+6zDf/FBW/pdHvgKn6GMynqZ/XMnDZWXdqSNBPrI
-	T9HVYO06FI+ZEJeaXKORUqd2Zt0kUpP7agUcfQnhiSaGC9GmpB4qqg1C6s1Nmw8=
-X-Google-Smtp-Source: AGHT+IE2j6GvIcpTlYY1CueQcYw0tif/I6nVN9OKIEDzNlieEnuC1xYbm3DV5FB4ULRvo7G6Zdwhfg==
-X-Received: by 2002:a17:907:72ca:b0:a86:442e:6e10 with SMTP id a640c23a62f3a-a86e397e669mr251530266b.2.1724765699712;
-        Tue, 27 Aug 2024 06:34:59 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e5878a6bsm112364566b.170.2024.08.27.06.34.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 06:34:59 -0700 (PDT)
-Message-ID: <f65642b5-d18d-43e8-b3c9-1810f3169631@tuxon.dev>
-Date: Tue, 27 Aug 2024 16:34:57 +0300
+	s=arc-20240116; t=1724765830; c=relaxed/simple;
+	bh=F7uwwE8fWUXezGAg782tjWqtQAIrRqH0usOHJInnYUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SYiSLsP5/KMSC6h/jTy+PCSi6VHMZajeWpv6DxJNncuYfWdJV/ngO+y8n/HYqkEgiMU9ayQNraQGKH6Z2hVGCHnNHnXi37pgKbGWdjjJdtAM3vuCk55ttGliBjZ9ejP7d+CX+l8Ebfdg0aoYwFCFxR66goEjCKTKl4tUyYsn84s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XC1fSUzL; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724765828; x=1756301828;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=F7uwwE8fWUXezGAg782tjWqtQAIrRqH0usOHJInnYUM=;
+  b=XC1fSUzLIeLL4uY69seqfC98xLTodAkR+XIdXGGdK8za+prNpEbJ5BW6
+   LF7ntldvU+xmi4Of28bu6/AridNyMqQDPL+0iJ5g/IvCMHT55A2NlKFHR
+   i8RKxCKSe3/yH9SLGd7fJHBKFeomq69ARfYns6gNKomV4wZB49nDb9Vhr
+   rCiJXSK+IlNRQXyddkGsI4XQyEE1xAjjdX6Hf/SV+KW1qZzQUtntSttDU
+   10s5rfMx3Bk3El7iXTc41bqW2idVLVT5jEG/9QeuUL3U/Z+gWywquDCrD
+   MLxeqzDP1ytjaujyUl7r6wcttiga0liEK5FP5QvlTuYfBsI+xwWMq4dRV
+   g==;
+X-CSE-ConnectionGUID: bd6A78AAQA6lonvWkRSv+w==
+X-CSE-MsgGUID: 5kl5DMgsQjeSA64xnwgbGA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="23418976"
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="23418976"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 06:37:07 -0700
+X-CSE-ConnectionGUID: Bz6r6OChQHqZieZ/aNQnAA==
+X-CSE-MsgGUID: RgBshjT6R36pYYBbEpG8mA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="62916912"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 06:37:05 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1siwMs-00000002HBP-1qOb;
+	Tue, 27 Aug 2024 16:36:18 +0300
+Date: Tue, 27 Aug 2024 16:36:04 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	John Ogness <john.ogness@linutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] hexdump: Allow skipping identical lines
+Message-ID: <Zs3WRKOgsvhIP8Es@smile.fi.intel.com>
+References: <20240826162416.74501-1-miquel.raynal@bootlin.com>
+ <20240826162416.74501-3-miquel.raynal@bootlin.com>
+ <Zsy86HZ7uew9-Ef6@smile.fi.intel.com>
+ <20240827111353.0341c571@xps-13>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] watchdog: rzg2l_wdt: Power on the watchdog domain in
- the restart handler
-Content-Language: en-US
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
- "linux@roeck-us.net" <linux@roeck-us.net>,
- "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240826152529.2080248-1-claudiu.beznea.uj@bp.renesas.com>
- <20240826152529.2080248-4-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB11346A223DA7462799B9D103786942@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <4823173e-b024-482f-83a3-560c7abd888c@tuxon.dev>
- <TY3PR01MB113464C9751ADB7B0F0356CD686942@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <TY3PR01MB113464C9751ADB7B0F0356CD686942@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240827111353.0341c571@xps-13>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+
+On Tue, Aug 27, 2024 at 11:13:53AM +0200, Miquel Raynal wrote:
+> andriy.shevchenko@linux.intel.com wrote on Mon, 26 Aug 2024 20:35:36
+> +0300:
+> > On Mon, Aug 26, 2024 at 06:24:16PM +0200, Miquel Raynal wrote:
+> > > When dumping long buffers (especially for debug purposes) it may be very
+> > > convenient to sometimes avoid spitting all the lines of the buffer if
+> > > the lines are identical. Typically on embedded devices, the console
+> > > would be wired to a UART running at 115200 bauds, which makes the dumps
+> > > very (very) slow. In this case, having a flag to avoid printing
+> > > duplicated lines is handy.
+> > > 
+> > > Example of a made up repetitive output:
+> > > 0f 53 63 47 56 55 78 7a aa b7 8c ff ff ff ff ff
+> > > ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> > > ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> > > ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> > > ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> > > ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> > > ff ff ff ff ff ff ff ff ff ff ff ff 01 2a 39 eb
+> > > 
+> > > Same but with the flag enabled:
+> > > 0f 53 63 47 56 55 78 7a aa b7 8c ff ff ff ff ff
+> > > ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> > > *
+> > > ff ff ff ff ff ff ff ff ff ff ff ff 01 2a 39 eb  
+> > 
+> > The problem here is that without offset we can't see how many lines were
+> > skipped.
+> 
+> Yes, this is intended, I prefer to mimic userspace tools behavior.
+> 
+> > Two ways to solve (that come to my mind immediately, maybe more and better):
+> > 1) make sure that new flag implies or expects (otherwise BUILD_BUG_ON() or so)
+> >   the OFFSET to be set;
+> 
+> It depends what you are looking for. When I print a 2kiB page and want
+> to compare the output with some other dump, I will immediately see if
+> there are more or less skipped lines in the diff. When I want to just
+> grab the UBI header and skip all the ff's following while asking a full
+> buffer to be dumped (for kernel development reasons), the amount of
+> skipped lines is not of interest to me either. Of course this is my own
+> use case, but I guess there are others.
+> 
+> However this is true it is sometimes also useful to know where we are in
+> the dump, but the hexdump helpers already include all the interesting
+> bits for that through the 'prefix_type' parameter :
+> 
+> enum {
+> 	DUMP_PREFIX_NONE,
+> 	DUMP_PREFIX_ADDRESS,
+> 	DUMP_PREFIX_OFFSET
+> };
+> 
+> See https://elixir.bootlin.com/linux/v4.20.17/source/include/linux/printk.h
+> 
+> I anyway understand the request and will change the example with
+> something more common, probably, by using one of the two other
+> prefixes.
+> 
+> > 2) [OR] add number of lines skipped in that * line.
+> 
+> As mentioned above, this is not the intended output.
+> 
+> > Personally I prefer the 1) as I think that you tried to follow the existing
+> > format of user space tools and there is a chance that there are other tools or
+> > scripts that parse the dump to restore the binary contents.
+> 
+> Exactly. Also, just simply using the diff command over two dumps
+> without being polluted by any additions on one side or the other is very
+> convenient.
+
+I got it, then provide a good examples in the cover letter / commit message,
+documentation, and test cases.
+
+After thinking more about this, if the caller asked for DUMP_PREFIX_NONE,
+that's what they get if they add also SKIP flag. So, maybe here is no
+problem after all :-)
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-
-On 27.08.2024 15:51, Biju Das wrote:
-> 
-> 
->> -----Original Message-----
->> From: claudiu beznea <claudiu.beznea@tuxon.dev>
->> Sent: Tuesday, August 27, 2024 1:33 PM
->> To: Biju Das <biju.das.jz@bp.renesas.com>; geert+renesas@glider.be; mturquette@baylibre.com;
->> sboyd@kernel.org; wim@linux-watchdog.org; linux@roeck-us.net; ulf.hansson@linaro.org
->> Cc: linux-renesas-soc@vger.kernel.org; linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
->> watchdog@vger.kernel.org; linux-pm@vger.kernel.org; Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> Subject: Re: [PATCH 3/3] watchdog: rzg2l_wdt: Power on the watchdog domain in the restart handler
->>
->> Hi, Biju,
->>
->> On 27.08.2024 15:15, Biju Das wrote:
->>> Hi Claudiu,
->>>
->>> Thanks for the feedback.
->>>
->>>> -----Original Message-----
->>>> From: Claudiu <claudiu.beznea@tuxon.dev>
->>>> Sent: Monday, August 26, 2024 4:25 PM
->>>> Subject: [PATCH 3/3] watchdog: rzg2l_wdt: Power on the watchdog
->>>> domain in the restart handler
->>>>
->>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>
->>>> On RZ/G3S the watchdog can be part of a software-controlled PM
->>>> domain. In this case, the watchdog device need to be powered on in
->>>> struct watchdog_ops::restart API. This can be done though
->>>> pm_runtime_resume_and_get() API if the watchdog PM domain and watchdog device are marked as IRQ
->> safe.
->>>> We mark the watchdog PM domain as IRQ safe with GENPD_FLAG_IRQ_SAFE
->>>> when the watchdog PM domain is registered and the watchdog device though pm_runtime_irq_safe().
->>>>
->>>> Before commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid
->>>> wait
->>>> context'") pm_runtime_get_sync() was used in watchdog restart handler
->>>> (which is similar to
->>>> pm_runtime_resume_and_get() except the later one handles the runtime resume errors).
->>>>
->>>> Commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
->>>> context'") dropped the pm_runtime_get_sync() and replaced it with
->>>> clk_prepare_enable() to avoid invalid wait context due to
->>>> genpd_lock() in genpd_runtime_resume() being called from atomic
->>>> context. But
->>>> clk_prepare_enable() doesn't fit for this either (as reported by Ulf
->>>> Hansson) as clk_prepare() can also sleep (it just not throw invalid wait context warning as it is
->> not written for this).
->>>>
->>>> Because the watchdog device is marked now as IRQ safe (though this
->>>> patch) the
->>>> irq_safe_dev_in_sleep_domain() call from genpd_runtime_resume()
->>>> returns
->>>> 1 for devices not registering an IRQ safe PM domain for watchdog (as
->>>> the watchdog device is IRQ safe, PM domain is not and watchdog PM
->>>> domain is always-on), this being the case of RZ/G2 devices that uses
->>>
->>> RZ/G2L alike devices or be specific RZ/{G2L,G2LC,G2UL,V2L} as it is
->>> not applicable for RZ/G2{H,M,N,E}devices.
->>
->> OK, but I said "RZ/G2 devices that uses this driver". Here are included RZ/{G2L,G2LC,G2UL,V2L} AFAICT.
-> 
-> OK. Not sure you missed the same terminology on comment section, see below??
-> 
->>
->>>
->>>
->>>> this driver, we can now drop also the clk_prepare_enable() calls in
->>>> restart handler and rely on pm_runtime_resume_and_get().
->>>>
->>>> Thus, drop clk_prepare_enable() and use pm_runtime_resume_and_get() in watchdog restart handler.
->>>
->>> Can this patch be fix for Commit e4cf89596c1f ("watchdog: rzg2l_wdt:
->>> Fix 'BUG: Invalid wait
->>>> context'") on RZ/{G2L,G2LC,G2UL,V2L} SoC??
->>
->> Not sure... I thought about it, too. I chose to have it like this thinking
->> that:
->>
->> 1/ that may not apply cleanly as it depends on other cleanups done on this
->>    driver, e.g. commit d8997ed79ed7 ("watchdog: rzg2l_wdt: Rely on the
->>    reset driver for doing proper reset") so it may be worthless for
->>    backport machinery
->> 2/ There is actually no seen bug reported by lockdep (as the clk_prepare()
->>    doesn't handle it)
->>
->> Don't know, I can reply here and add it. Applying this patch with b4 will take care of it. But not
->> sure about it.
-> 
-> Maybe leave it.
-> 
->>>
->>>>
->>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>> ---
->>>>  drivers/watchdog/rzg2l_wdt.c | 21 +++++++++++++++++++--
->>>>  1 file changed, 19 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/watchdog/rzg2l_wdt.c
->>>> b/drivers/watchdog/rzg2l_wdt.c index
->>>> 2a35f890a288..e9e0408c96f7 100644
->>>> --- a/drivers/watchdog/rzg2l_wdt.c
->>>> +++ b/drivers/watchdog/rzg2l_wdt.c
->>>> @@ -12,6 +12,7 @@
->>>>  #include <linux/module.h>
->>>>  #include <linux/of.h>
->>>>  #include <linux/platform_device.h>
->>>> +#include <linux/pm_domain.h>
->>>>  #include <linux/pm_runtime.h>
->>>>  #include <linux/reset.h>
->>>>  #include <linux/units.h>
->>>> @@ -166,8 +167,23 @@ static int rzg2l_wdt_restart(struct watchdog_device *wdev,
->>>>  	struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
->>>>  	int ret;
->>>>
->>>> -	clk_prepare_enable(priv->pclk);
->>>> -	clk_prepare_enable(priv->osc_clk);
->>>> +	/*
->>>> +	 * In case of RZ/G3S the watchdog device may be part of an IRQ safe power
->>>> +	 * domain that is currently powered off. In this case we need to power
->>>> +	 * it on before accessing registers. Along with this the clocks will be
->>>> +	 * enabled. We don't undo the pm_runtime_resume_and_get() as the device
->>>> +	 * need to be on for the reboot to happen.
->>>> +	 *
->>>> +	 * For the rest of RZ/G2 devices (and for RZ/G3S with old device trees
-> 
-> NitPick: For the rest of RZ/G2 devices that uses this driver (This will make sure
-> It is not meant for RZ/G2{H,M,N,E} devices)
-
-If one considers this driver is used by RZ/G2{H,M,N,E} when reaching this
-point then surely is in the wrong place.
-
-RZ/Five is also uses this driver. Later, maybe devices compatible with this
-driver will be added and this comment will not fit. Later, will we be
-updating the comment for that? I'm not a fan of it.
-
-Thank you,
-Claudiu Beznea
-
-> 
-> Cheers,
-> Biju
-> 
-> 
-> 
->>>> +	 * where PM domains are registered like on RZ/G2 devices) it is safe
->>>> +	 * to call pm_runtime_resume_and_get() as the
->>>> +	 * irq_safe_dev_in_sleep_domain() call in genpd_runtime_resume()
->>>> +	 * returns non zero value and the genpd_lock() is avoided, thus, there
->>>> +	 * will be no invalid wait context reported by lockdep.
->>>> +	 */
->>>> +	ret = pm_runtime_resume_and_get(wdev->parent);
->>>> +	if (ret)
->>>> +		return ret;
->>>>
->>>>  	if (priv->devtype == WDT_RZG2L) {
->>>>  		ret = reset_control_deassert(priv->rstc);
->>>> @@ -275,6 +291,7 @@ static int rzg2l_wdt_probe(struct platform_device
->>>> *pdev)
->>>>
->>>>  	priv->devtype = (uintptr_t)of_device_get_match_data(dev);
->>>>
->>>> +	pm_runtime_irq_safe(&pdev->dev);
->>>>  	pm_runtime_enable(&pdev->dev);
->>>>
->>>>  	priv->wdev.info = &rzg2l_wdt_ident;
->>>> --
->>>> 2.39.2
->>>>
->>>
 
