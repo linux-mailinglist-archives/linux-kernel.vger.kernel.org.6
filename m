@@ -1,165 +1,257 @@
-Return-Path: <linux-kernel+bounces-302513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B9C495FF9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:06:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D9BF95FF9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:06:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3960228327D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:06:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9E682832DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A1018037;
-	Tue, 27 Aug 2024 03:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5491118654;
+	Tue, 27 Aug 2024 03:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EDjaKR8j"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ezfFWOer"
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3542C18039
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 03:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351E218030
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 03:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724727972; cv=none; b=kxdpHOd/0D0vzYMCu6v6hh8V3tC6tRC0rZNS8DE3vkMqblq9AldsJpn7hb/Gvupt/3B7U6tQOXyPmM60guruvz5oxOQQLSjvevDSlINk5gkmbEhaif3blez2Sbo7mdBGC8ANjCpJiMKbVB+vNIc3S34KaPrSMxcZz+evUNqTh2Y=
+	t=1724728004; cv=none; b=BHyaC+foMaUWpJvV4TCWTNXd0QPvwx7BGc/LbtFsp9uLogd2Ji+z4mL+rrvbxNWICJA7X5uKOU231o/DqPVG/XrwA5XhBcFoukh9x9n7MA9aEGKL1L5VK5RpXTOzltElNv8+9Il8ZTTKU1k9ol72UdVx1S9CXvQwEzQDwxqJrHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724727972; c=relaxed/simple;
-	bh=2ecYZz6GGQ2vmg8Pz7j+mi7ALBB3Pd48KzkJgv6NiT8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F/RdmPWXCC1CNoMiua3e7VOgTBZM7U58Iz2XcG3xov2Dff54KNSuHWGqlIxYYVMHFlbHhBN6jGNDm1hn/2+IlBgJc0hPzSNe1bz7N1ZgN9W1h86JAR0BnxEdF9htu70feGMpKZ1ZuwyS6UKWEIKEF4F3llrhRbZntSl9aiSK3cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EDjaKR8j; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7142a30e3bdso4484566b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 20:06:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724727970; x=1725332770; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F2IxSWIgW9K+Ycy7Q1UnTr8RqMZZFrbF0akh3JGxgko=;
-        b=EDjaKR8j6j2CWnY9y6oAB5gFXT94HINNbxA5Xt7NqxfSIMj/B0Wm+sXYQ321YBt+Jc
-         0lLn+/rWqCXgc4TFSDfRQMVqB3nyowSiEroK8XD+w3aC1FgEKRqdfsUaVeN6t1PLqv/x
-         iKGIeBxfE3eoucS/1VqzoW8TiRgAkVWzhIjyE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724727970; x=1725332770;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F2IxSWIgW9K+Ycy7Q1UnTr8RqMZZFrbF0akh3JGxgko=;
-        b=IdN6DgPUHloHPdne94TvvtggdCxjNhc+w9EJn4oLk74nglxOkYJGhPuNIIygtySZaf
-         KieuMHITpX2vAKHsuZfGh+WiWpJ4e5AOUOXzoGXhT09ATmviu/WQlutpPPYRyGKOEwMv
-         tJ2FpxqKXFMyZRMfHH0xi/yF11ZyoCvgHaEa94fgLVDoaZirCAHU+hnrd947eZE7JQqZ
-         6YgH334vC7AdMbx1ySnLMrtNska6Qp9whuIHPjnxbnXdPKvl/8anb4Fv5b3PkZf3/ZV4
-         Ycd4m8I5g1l+4K+ijnkRgMZN9jNTtAYeL7VXiKeeBrcq4fUqjDHOlI7sWQdDXdeIo4ks
-         aGOw==
-X-Forwarded-Encrypted: i=1; AJvYcCV6YZmLVXSA3ISkDPNpAtFOMDTkTTfOhKEk/55DjQdEo+Zez5BIx3xeSMd2B9n3M7u77J89w413SFgybc0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk7lmIiUGmSo+0XBcUW2c0MBxWn2zlWx7X6MOicxKWX987OKXP
-	n0Pl2SLt5hTeLWPFXyc7qr8iZwaqZOHr23vGGjHQlE99sC0SPC8INwDYtd2pmfLlB92K1i1v9bw
-	uzA==
-X-Google-Smtp-Source: AGHT+IHyHqgOnc/AwdHdmbrBtKfYgmQmk42+/21xvXZVGuz6Gc3yhvyhX0+1DHcgKK2GjCFRPNTWJA==
-X-Received: by 2002:a17:902:da82:b0:201:ec22:8335 with SMTP id d9443c01a7336-204dde0dad4mr20542555ad.30.1724727970242;
-        Mon, 26 Aug 2024 20:06:10 -0700 (PDT)
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com. [209.85.214.171])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038556a2f7sm74180845ad.9.2024.08.26.20.06.09
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 20:06:09 -0700 (PDT)
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20260346ca1so108035ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 20:06:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW1EOU8PI158P3v+RtjLWwsy8lhyeU3je4HLjwspp+1xsLX53zy9hfV7mYv52rcoWrA90bdfvpXTLxvmtM=@vger.kernel.org
-X-Received: by 2002:a17:903:228a:b0:1fc:60f2:a089 with SMTP id
- d9443c01a7336-204e4cb920bmr1085965ad.17.1724727969099; Mon, 26 Aug 2024
- 20:06:09 -0700 (PDT)
+	s=arc-20240116; t=1724728004; c=relaxed/simple;
+	bh=3+1smjmFgwyTR+ftPXMf/8E/F3WUJDcSylBHNQywtGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n1criZEoiPEy1dSWwP45CSpU/1WThH0jthm+aveUVljaY5ry09LXVkJhFor2RoAI3kKQu05waRxQJAApRDtCC6gUbz+mZ88zb9bq7bzifcP+TAMzLAdz35bTUIq88cRTkzZ0YaYMYQUutsyJxk17F9c/fi0SLu3kQRG6Av6NL4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ezfFWOer; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 27 Aug 2024 03:06:32 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724728000;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DXh+mPkqGMQUdQjrnpg7XgHV33cM/bi2yysc+Jzmln0=;
+	b=ezfFWOer/4J1f3LXiOgSI2x7/WD2K4Tj/axgZi0hvYcXS9HJrGHaEtqPnOWYpSKguR1ol4
+	VMU24i7iXa71hoYOhRN3u+eArz/j46HMgVWxB+C20b5sDgk++ZP4Hh60kAJsARl6SmRo5J
+	XONw1klJ3MhxuiP1eaTEltshraeknKc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	David Rientjes <rientjes@google.com>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v1] memcg: add charging of already allocated slab objects
+Message-ID: <Zs1CuLa-SE88jRVx@google.com>
+References: <20240826232908.4076417-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240825035422.900370-1-jon.lin@rock-chips.com>
-In-Reply-To: <20240825035422.900370-1-jon.lin@rock-chips.com>
-From: Brian Norris <briannorris@chromium.org>
-Date: Mon, 26 Aug 2024 20:05:56 -0700
-X-Gmail-Original-Message-ID: <CA+ASDXOnwQ4Jrz=yo1QS-EAfTN_=FMZ1xtF=2-a8iDC6PwDBSQ@mail.gmail.com>
-Message-ID: <CA+ASDXOnwQ4Jrz=yo1QS-EAfTN_=FMZ1xtF=2-a8iDC6PwDBSQ@mail.gmail.com>
-Subject: Re: [PATCH] spi: rockchip: Avoid redundant clock disable in pm operation
-To: Jon Lin <jon.lin@rock-chips.com>
-Cc: broonie@kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, heiko@sntech.de, 
-	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826232908.4076417-1-shakeel.butt@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Jon,
+On Mon, Aug 26, 2024 at 04:29:08PM -0700, Shakeel Butt wrote:
+> At the moment, the slab objects are charged to the memcg at the
+> allocation time. However there are cases where slab objects are
+> allocated at the time where the right target memcg to charge it to is
+> not known. One such case is the network sockets for the incoming
+> connection which are allocated in the softirq context.
+> 
+> Couple hundred thousand connections are very normal on large loaded
+> server and almost all of those sockets underlying those connections get
+> allocated in the softirq context and thus not charged to any memcg.
+> However later at the accept() time we know the right target memcg to
+> charge. Let's add new API to charge already allocated objects, so we can
+> have better accounting of the memory usage.
+> 
+> To measure the performance impact of this change, tcp_crr is used from
+> the neper [1] performance suite. Basically it is a network ping pong
+> test with new connection for each ping pong.
+> 
+> The server and the client are run inside 3 level of cgroup hierarchy
+> using the following commands:
+> 
+> Server:
+>  $ tcp_crr -6
+> 
+> Client:
+>  $ tcp_crr -6 -c -H ${server_ip}
+> 
+> If the client and server run on different machines with 50 GBPS NIC,
+> there is no visible impact of the change.
+> 
+> For the same machine experiment with v6.11-rc5 as base.
+> 
+>           base (throughput)     with-patch
+> tcp_crr   14545 (+- 80)         14463 (+- 56)
+> 
+> It seems like the performance impact is within the noise.
+> 
+> Link: https://github.com/google/neper [1]
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
 
-On Sat, Aug 24, 2024 at 8:55=E2=80=AFPM Jon Lin <jon.lin@rock-chips.com> wr=
-ote:
-> --- a/drivers/spi/spi-rockchip.c
-> +++ b/drivers/spi/spi-rockchip.c
-> +#ifdef CONFIG_PM_SLEEP
-> +static int rockchip_spi_suspend(struct device *dev)
->  {
-> +       int ret;
->         struct spi_controller *ctlr =3D dev_get_drvdata(dev);
-> -       struct rockchip_spi *rs =3D spi_controller_get_devdata(ctlr);
->
-> -       clk_disable_unprepare(rs->spiclk);
-> -       clk_disable_unprepare(rs->apb_pclk);
-> +       ret =3D spi_controller_suspend(ctlr);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       /* Avoid redundant clock disable */
-> +       if (!pm_runtime_status_suspended(dev))
-> +               rockchip_spi_runtime_suspend(dev);
+Hi Shakeel,
 
-rockchip_spi_runtime_suspend() returns an error code. I understand
-that it doesn't actually fail in practice, but you should probably
-check it anyway.
+I like the idea and performance numbers look good. However some comments on
+the implementation:
 
-> +
-> +       pinctrl_pm_select_sleep_state(dev);
->
->         return 0;
+> ---
+> 
+> Changes since the RFC:
+> - Added check for already charged slab objects.
+> - Added performance results from neper's tcp_crr
+> 
+>  include/linux/slab.h            |  1 +
+>  mm/slub.c                       | 54 +++++++++++++++++++++++++++++++++
+>  net/ipv4/inet_connection_sock.c |  5 +--
+>  3 files changed, 58 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/slab.h b/include/linux/slab.h
+> index eb2bf4629157..05cfab107c72 100644
+> --- a/include/linux/slab.h
+> +++ b/include/linux/slab.h
+> @@ -547,6 +547,7 @@ void *kmem_cache_alloc_lru_noprof(struct kmem_cache *s, struct list_lru *lru,
+>  			    gfp_t gfpflags) __assume_slab_alignment __malloc;
+>  #define kmem_cache_alloc_lru(...)	alloc_hooks(kmem_cache_alloc_lru_noprof(__VA_ARGS__))
+>  
+> +bool kmem_cache_charge(void *objp, gfp_t gfpflags);
+>  void kmem_cache_free(struct kmem_cache *s, void *objp);
+>  
+>  kmem_buckets *kmem_buckets_create(const char *name, slab_flags_t flags,
+> diff --git a/mm/slub.c b/mm/slub.c
+> index c9d8a2497fd6..580683597b5c 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -2185,6 +2185,16 @@ void memcg_slab_free_hook(struct kmem_cache *s, struct slab *slab, void **p,
+>  
+>  	__memcg_slab_free_hook(s, slab, p, objects, obj_exts);
 >  }
->
-> -static int rockchip_spi_runtime_resume(struct device *dev)
-> +static int rockchip_spi_resume(struct device *dev)
->  {
->         int ret;
->         struct spi_controller *ctlr =3D dev_get_drvdata(dev);
-> -       struct rockchip_spi *rs =3D spi_controller_get_devdata(ctlr);
->
-> -       ret =3D clk_prepare_enable(rs->apb_pclk);
-> -       if (ret < 0)
-> -               return ret;
-> +       pinctrl_pm_select_default_state(dev);
->
-> -       ret =3D clk_prepare_enable(rs->spiclk);
-> +       if (!pm_runtime_status_suspended(dev)) {
-> +               ret =3D rockchip_spi_runtime_resume(dev);
-> +               if (ret < 0)
-> +                       return ret;
-> +       }
 > +
-> +       ret =3D spi_controller_resume(ctlr);
->         if (ret < 0)
-> -               clk_disable_unprepare(rs->apb_pclk);
-> +               rockchip_spi_runtime_suspend(dev);
+> +static __fastpath_inline
+> +bool memcg_slab_post_charge(struct kmem_cache *s, void *p, gfp_t flags)
+> +{
+> +	if (likely(!memcg_kmem_online()))
+> +		return true;
 
-I don't think this is valid error handling. AFAIK, failing the
-resume() function doesn't actually "disable" the device in any way
-(it's just informative at best), so we probably shouldn't disable
-clocks here. Otherwise, you might leave the clock disabled while the
-runtime PM framework thinks it's enabled.
+We do have this check in kmem_cache_charge(), why do we need to check it again?
 
-Brian
-
->
->         return 0;
+> +
+> +	return __memcg_slab_post_alloc_hook(s, NULL, flags, 1, &p);
+> +}
+> +
+>  #else /* CONFIG_MEMCG */
+>  static inline bool memcg_slab_post_alloc_hook(struct kmem_cache *s,
+>  					      struct list_lru *lru,
+> @@ -2198,6 +2208,13 @@ static inline void memcg_slab_free_hook(struct kmem_cache *s, struct slab *slab,
+>  					void **p, int objects)
+>  {
 >  }
-> --
-> 2.34.1
->
+> +
+> +static inline bool memcg_slab_post_charge(struct kmem_cache *s,
+> +					  void *p,
+> +					  gfp_t flags)
+> +{
+> +	return true;
+> +}
+>  #endif /* CONFIG_MEMCG */
+>  
+>  /*
+> @@ -4062,6 +4079,43 @@ void *kmem_cache_alloc_lru_noprof(struct kmem_cache *s, struct list_lru *lru,
+>  }
+>  EXPORT_SYMBOL(kmem_cache_alloc_lru_noprof);
+>  
+> +#define KMALLOC_TYPE (SLAB_KMALLOC | SLAB_CACHE_DMA | \
+> +		      SLAB_ACCOUNT | SLAB_RECLAIM_ACCOUNT)
+> +
+> +bool kmem_cache_charge(void *objp, gfp_t gfpflags)
+> +{
+> +	struct slabobj_ext *slab_exts;
+> +	struct kmem_cache *s;
+> +	struct folio *folio;
+> +	struct slab *slab;
+> +	unsigned long off;
+> +
+> +	if (!memcg_kmem_online())
+> +		return true;
+> +
+> +	folio = virt_to_folio(objp);
+> +	if (unlikely(!folio_test_slab(folio)))
+> +		return false;
+
+Does it handle the case of a too-big-to-be-a-slab-object allocation?
+I think it's better to handle it properly. Also, why return false here?
+
+> +
+> +	slab = folio_slab(folio);
+> +	s = slab->slab_cache;
+> +
+> +	/* Ignore KMALLOC_NORMAL cache to avoid circular dependency. */
+> +	if ((s->flags & KMALLOC_TYPE) == SLAB_KMALLOC)
+> +		return true;
+
+And true here? It seems to be a bit inconsistent.
+Also, if we have this check here, it means your function won't handle kmallocs
+at all? Because !KMALLOC_NORMAL allocations won't get here.
+
+> +
+> +	/* Ignore already charged objects. */
+> +	slab_exts = slab_obj_exts(slab);
+> +	if (slab_exts) {
+> +		off = obj_to_index(s, slab, objp);
+> +		if (unlikely(slab_exts[off].objcg))
+> +			return true;
+> +	}
+> +
+> +	return memcg_slab_post_charge(s, objp, gfpflags);
+> +}
+> +EXPORT_SYMBOL(kmem_cache_charge);
+> +
+>  /**
+>   * kmem_cache_alloc_node - Allocate an object on the specified node
+>   * @s: The cache to allocate from.
+> diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connection_sock.c
+> index 64d07b842e73..3c13ca8c11fb 100644
+> --- a/net/ipv4/inet_connection_sock.c
+> +++ b/net/ipv4/inet_connection_sock.c
+> @@ -715,6 +715,7 @@ struct sock *inet_csk_accept(struct sock *sk, struct proto_accept_arg *arg)
+>  	release_sock(sk);
+>  	if (newsk && mem_cgroup_sockets_enabled) {
+>  		int amt = 0;
+> +		gfp_t gfp = GFP_KERNEL | __GFP_NOFAIL;
+>  
+>  		/* atomically get the memory usage, set and charge the
+>  		 * newsk->sk_memcg.
+> @@ -731,8 +732,8 @@ struct sock *inet_csk_accept(struct sock *sk, struct proto_accept_arg *arg)
+>  		}
+>  
+>  		if (amt)
+> -			mem_cgroup_charge_skmem(newsk->sk_memcg, amt,
+> -						GFP_KERNEL | __GFP_NOFAIL);
+> +			mem_cgroup_charge_skmem(newsk->sk_memcg, amt, gfp);
+> +		kmem_cache_charge(newsk, gfp);
+
+Wait, so we assume that newsk->sk_memcg === current memcg? Or we're ok with them being
+different?
+
+Thanks!
 
