@@ -1,134 +1,127 @@
-Return-Path: <linux-kernel+bounces-303682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5B9896139E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:05:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DB89961396
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F703B248EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:05:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7071B1C21413
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444CC1C871E;
-	Tue, 27 Aug 2024 16:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571131C9446;
+	Tue, 27 Aug 2024 16:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GEIu7J2Y"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YvecuaA+"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109A51C6F48;
-	Tue, 27 Aug 2024 16:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62DC1C6F48;
+	Tue, 27 Aug 2024 16:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724774737; cv=none; b=oFrZZleMNEymz6hGme1cj6c2eNWIxrbeyTRd8BWM0ujZoSqNfGIgn/nfIbQ527ApdrAUkHm3jnu+NnwpJDjNWutVSiyD2TrB6Bak0L5t9alboVwdsGxrxpSIMtEb1aEWyY0AdeEx1BtkW8sbUsKkzIC1YS9m5Y+hFHQ+eu3hC9w=
+	t=1724774694; cv=none; b=l+FMN+MnISbN+m6Lxx6h3lDYX27zLN2Vr0Za/sHhZ/R172d9IeB7gNKH9vIHQMZYsyMMqnzzwrbpXyMLny189c4sTn8NKazjaQS3aDNknroZNh7Qrw//kxBgwykIu+qzDe6qq0PVuXfyUCC/yqg2dvbMiG9522EOITO2ncwA0JM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724774737; c=relaxed/simple;
-	bh=f9f8lgXpvqTcodB9v5gsQ7zHGT6GCWyTgjoaP9uOozY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=omXGTkJfC8Og4wK1G1Bn+j59JgVzZd1eFjN77VvJyjMcfDpG4h8jE2/S8aDbeUkBOyqoBJPQteoh65Kat2CB4IsLqGHCj9BYUU4tHkt8bjY5S9h8OPBvlk8l7ek6uap7bMTfUUkOFukUL6FJBopihkBGuWfO8UccRY+tuoJ8TEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GEIu7J2Y; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7141e20e31cso4762590b3a.3;
-        Tue, 27 Aug 2024 09:05:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724774735; x=1725379535; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jhp+ekc12c6Q6VDRk1GVsy4ZTxEJksFkC4dGRiI9m6w=;
-        b=GEIu7J2YVJVOqk4gu85bFpbgg0+y/BSd5O4RRpJZXVWmiXKiHqe7+Xun3x/wwYD3xi
-         VoVd9BpWownfQxztfLcYkTPh3qtIQXsP7XhM2ViTNXVbmjWDv9qqpmnWp/tNMdNe2Bhb
-         vNNMRR9VgODkGDLnIU9K97IxUsNhWqLQdFkHHMmmIzn7o3vnU5/m04vRXs/unyYX8819
-         yPEY3WjGPUvj3Izx9oCfUIZUmv9OSwg4gB1d03RiWnQWJSiUCpAhWa+Si+LT2wklu+Ns
-         LNATmFfVAdiS0fNXw+U6Y3goadll2dHzftlSDA7eyCk/PKVcJ3rcN9YYw1O3vtVMBp6v
-         NsuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724774735; x=1725379535;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jhp+ekc12c6Q6VDRk1GVsy4ZTxEJksFkC4dGRiI9m6w=;
-        b=NUTWh4UuyTO0m1mVeTwow8bYBoIIHjyuWcqLYsTdfbsX1KRbzbrYBy7S4IKdbUUR/E
-         gWvZ39kWio6wM3LkGTOQgZpduMK88mSnwi80WocTdU9yJyEY4QFQ/sbxSoletUi0RMgR
-         5HfhkPZGtuUv3UoXBqCERAoehm1m7OsvvFkCn+tilIDkKASMthusm+uciTzN16FH/XdR
-         /9FyojtjARNz2tmHMsiyEK3GQ3byqIlifWGOfXsMMNqNzSiaYdDydIeAsqJUZ7IoQPw6
-         AsCVWNTBbKmxZ4bc4C/AuhGyihPSNMGGjwCw/kOafft3iRG/r8uomID+8OABPERcVwu5
-         LvIQ==
-X-Gm-Message-State: AOJu0YzdkhoK/KwM+50zq/dAoKgYQWoCXxNPwd3z7/KQAPygDGHxCGa6
-	mFOV24lbYt290EkefmAKezQubc7Q2i0f4fzUtYb9I6HHy+prtdHjXofWak74vqo=
-X-Google-Smtp-Source: AGHT+IFYso0YJODSpMmoNfQ61B5mFIzydw/OAaUH0JtXvNjAuxIxW7MSo9Thua+A8C/+PvxbQWJT5w==
-X-Received: by 2002:a17:90b:4d90:b0:2c9:5a8b:ff7e with SMTP id 98e67ed59e1d1-2d82591fbb1mr3842085a91.25.1724774734868;
-        Tue, 27 Aug 2024 09:05:34 -0700 (PDT)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.. (126-84.iitb.ac.in. [103.21.126.84])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d6139201ecsm12487557a91.18.2024.08.27.09.05.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 09:05:34 -0700 (PDT)
-From: SurajSonawane2415 <surajsonawane0215@gmail.com>
-To: linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux@leemhuis.info,
-	corbet@lwn.net,
-	SurajSonawane2415 <surajsonawane0215@gmail.com>
-Subject: [PATCH v5] docs: Fix grammar and phrasing errors in reporting-issues.rst
-Date: Tue, 27 Aug 2024 21:34:10 +0530
-Message-Id: <20240827160410.124448-1-surajsonawane0215@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724774694; c=relaxed/simple;
+	bh=e46VkUMx+O9YtB2a77Mdsp+OyuWhfRtS3jV/UsDqPTQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UdhCLTGisKKPNV6jJ5FANI8GlK+5eiqvQFpyZHEMPWV6+optB26wakBUhGncraRqBy0xWmxFPiHBdXdTE9TJJGtxCfaBHtg+sK4VNOgX9Qlq5oxNjfV+t88CwXqerZdismpTq0JvG4On2grW1fv+FhKuAFzAdl9zAUYaxZn+GEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YvecuaA+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47RFcJLR025767;
+	Tue, 27 Aug 2024 16:04:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=qmxualgWirVB9VB+ifEsGQ5T
+	J/kSK5dckP6lTNPJwb0=; b=YvecuaA+G6r+KSXhl4Ste/45KnpaC0Uv2T1/r3vb
+	QOBukkeLcvWUS+xUzooXl2L6qipLkehkJOilCkeFxuR7J/bJRUpKEha7vZrXYZzM
+	+kwl57icCDLUPsLcQqNmjw6AGhCD6T04sdQQxShJ6fGrMTS2/DBEYx8V7MV4gQP2
+	deWNyU4E2vp3MnAtkA4MMad6uqiA9TYqTRo49xnCTC0Wx/LPYXUKH7ohT3tATxqH
+	MkniNAL47K8kDZJrg1s0mv4Tn5adMNxDSjmGjeGrD9caqcyaXx2Rrhiwwmy17zMq
+	4oFVRXRP3dqx3+X/4NRftgjqjpwe94WPoCpEUvifeq4F9w==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4199s89khd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 Aug 2024 16:04:48 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47RG4lrQ031027
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 Aug 2024 16:04:47 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 27 Aug 2024 09:04:43 -0700
+Date: Tue, 27 Aug 2024 21:34:35 +0530
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: Tengfei Fan <quic_tengfan@quicinc.com>
+CC: Krzysztof Kozlowski <krzk@kernel.org>, <lee@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Tingwei <quic_tingweiz@quicinc.com>,
+        "Aiqun(Maria) Yu" <quic_aiquny@quicinc.com>
+Subject: Re: [PATCH 1/2] dt-bindings: mfd: qcom,tcsr: Add compatible for
+ sa8775p
+Message-ID: <Zs35Ez/xGIkcXXd+@hu-mojha-hyd.qualcomm.com>
+References: <20240705153252.1571814-1-quic_mojha@quicinc.com>
+ <3b16214b-4693-4754-b62a-fea2e070269c@kernel.org>
+ <1f5c5be4-f864-489c-941d-aad4a914508e@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1f5c5be4-f864-489c-941d-aad4a914508e@quicinc.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: VMB5P-PHeUtTEYylM-1sk6A6aJMEwLqp
+X-Proofpoint-GUID: VMB5P-PHeUtTEYylM-1sk6A6aJMEwLqp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-27_09,2024-08-27_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ spamscore=0 adultscore=0 mlxscore=0 priorityscore=1501 phishscore=0
+ suspectscore=0 lowpriorityscore=0 mlxlogscore=706 impostorscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408270120
 
-Fix grammatical errors and improve phrasing in the `reporting-issues.rst`
-documentation file. These changes enhance readability and ensure the
-accuracy of the instructions provided.
+On Mon, Jul 29, 2024 at 06:48:51PM +0800, Tengfei Fan wrote:
+> 
+> 
+> On 7/7/2024 8:46 PM, Krzysztof Kozlowski wrote:
+> > On 05/07/2024 17:32, Mukesh Ojha wrote:
+> > > Document the compatible for sa8775p SoC.
+> > > 
+> > > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> > 
+> > Eh? SA8775p is going to be removed/changed... why adding this?
+> > 
+> > Best regards,
+> > Krzysztof
+> > 
+> 
+> After considering the feedback provided on the subject, We have decided
+> to keep current SA8775p compatible and ABI compatibility in drivers.
+> Therefore, this patch is still needed, please continue to review this
+> patch.
+> Thank you for your input.
 
-Signed-off-by: SurajSonawane2415 <surajsonawane0215@gmail.com>
----
-V4 -> V5: Fixed additional whitespace.
-V3 -> V4: Adjust line wrapping to split the long line properly.
-V2 -> V3: Re-added the fix for the line: "That's why you might be need to uninstall the".
-V1 -> V2: Removed the unwanted change to the line: "try search terms like".
+Thanks Tengfei for the reply.
 
- Documentation/admin-guide/reporting-issues.rst | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Can this series be considered now, it still applied fine on linux-next.
 
-diff --git a/Documentation/admin-guide/reporting-issues.rst b/Documentation/admin-guide/reporting-issues.rst
-index 2fd5a0302..05f2c4f0b 100644
---- a/Documentation/admin-guide/reporting-issues.rst
-+++ b/Documentation/admin-guide/reporting-issues.rst
-@@ -56,7 +56,7 @@ developers. It might be all that's needed for people already familiar with
- reporting issues to Free/Libre & Open Source Software (FLOSS) projects. For
- everyone else there is this section. It is more detailed and uses a
- step-by-step approach. It still tries to be brief for readability and leaves
--out a lot of details; those are described below the step-by-step guide in a
-+out a lot of details; those are described below in the step-by-step guide in a
- reference section, which explains each of the steps in more detail.
- 
- Note: this section covers a few more aspects than the TL;DR and does things in
-@@ -299,7 +299,7 @@ face, even if they look small or totally unrelated. That's why you should report
- issues with these kernels to the vendor. Its developers should look into the
- report and, in case it turns out to be an upstream issue, fix it directly
- upstream or forward the report there. In practice that often does not work out
--or might not what you want. You thus might want to consider circumventing the
-+or might not be what you want. You thus might want to consider circumventing the
- vendor by installing the very latest Linux kernel core yourself. If that's an
- option for you move ahead in this process, as a later step in this guide will
- explain how to do that once it rules out other potential causes for your issue.
-@@ -472,8 +472,8 @@ before proceeding.
- Note, you might not be aware that your system is using one of these solutions:
- they often get set up silently when you install Nvidia's proprietary graphics
- driver, VirtualBox, or other software that requires a some support from a
--module not part of the Linux kernel. That why your might need to uninstall the
--packages with such software to get rid of any 3rd party kernel module.
-+module not part of the Linux kernel. That's why you might need to uninstall
-+the packages with such software to get rid of any 3rd party kernel module.
- 
- 
- Check 'taint' flag
--- 
-2.34.1
+-Mukesh
 
+> 
+> -- 
+> Thx and BRs,
+> Tengfei Fan
 
