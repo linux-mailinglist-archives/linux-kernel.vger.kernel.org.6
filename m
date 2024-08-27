@@ -1,257 +1,228 @@
-Return-Path: <linux-kernel+bounces-302514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D9BF95FF9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:06:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 270DC95FF9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9E682832DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:06:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DBE9B22153
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5491118654;
-	Tue, 27 Aug 2024 03:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F4F18030;
+	Tue, 27 Aug 2024 03:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ezfFWOer"
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="B+rBYa8Q"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351E218030
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 03:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6A71DA22
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 03:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724728004; cv=none; b=BHyaC+foMaUWpJvV4TCWTNXd0QPvwx7BGc/LbtFsp9uLogd2Ji+z4mL+rrvbxNWICJA7X5uKOU231o/DqPVG/XrwA5XhBcFoukh9x9n7MA9aEGKL1L5VK5RpXTOzltElNv8+9Il8ZTTKU1k9ol72UdVx1S9CXvQwEzQDwxqJrHw=
+	t=1724728010; cv=none; b=E2DKTNYBjW63ZMmYK5EVgMww64VqU2fWdxIEWuKLbCHMlW1yfo6EGovZqX1cLkmBGk25lKS6KTuLoEGGEjgua6BKQ5eVJh6+oxDlJbNPJ5n5YvVz4Wa2xn9v2NFvTFM8kMLmPtcfOvf0iRuOSn4JsfPuaNssot9ulqwElBVq1nY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724728004; c=relaxed/simple;
-	bh=3+1smjmFgwyTR+ftPXMf/8E/F3WUJDcSylBHNQywtGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n1criZEoiPEy1dSWwP45CSpU/1WThH0jthm+aveUVljaY5ry09LXVkJhFor2RoAI3kKQu05waRxQJAApRDtCC6gUbz+mZ88zb9bq7bzifcP+TAMzLAdz35bTUIq88cRTkzZ0YaYMYQUutsyJxk17F9c/fi0SLu3kQRG6Av6NL4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ezfFWOer; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 27 Aug 2024 03:06:32 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724728000;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DXh+mPkqGMQUdQjrnpg7XgHV33cM/bi2yysc+Jzmln0=;
-	b=ezfFWOer/4J1f3LXiOgSI2x7/WD2K4Tj/axgZi0hvYcXS9HJrGHaEtqPnOWYpSKguR1ol4
-	VMU24i7iXa71hoYOhRN3u+eArz/j46HMgVWxB+C20b5sDgk++ZP4Hh60kAJsARl6SmRo5J
-	XONw1klJ3MhxuiP1eaTEltshraeknKc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	David Rientjes <rientjes@google.com>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v1] memcg: add charging of already allocated slab objects
-Message-ID: <Zs1CuLa-SE88jRVx@google.com>
-References: <20240826232908.4076417-1-shakeel.butt@linux.dev>
+	s=arc-20240116; t=1724728010; c=relaxed/simple;
+	bh=LRp0lPuItXBqFMBlwAy2tjdlrOfBJzC3jtR4GKj6cKo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rCZIxJfKX9ynhiFQf2FuPO8Nw64bSmR6NF6RGay1FGqbphNhwiFZOT+ZsFUXLXrCJkS79LSpWUA3E6TyGW03O84Qgcuk0CHp9sGKxTYJe++H86K366oYsYzoLXRpWFkJ6wJS+x7lZhHgukgM9sCbA/jnmdzhSyVe166fNe7yDCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=B+rBYa8Q; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1724727997; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=StoVR4gs7cahfEfiJN6AgpKDWBI3QRTdteP01wTy10w=;
+	b=B+rBYa8QP9UGyzCWYp3enthuBy8/Vg5AsnJR3Y7dJ4K2BTVUrOIY1CfBa0QDkYcwV7SFrDcwY3+ZrGuYtM/7e25xzoHK0AybYonwxCjxzMtLCBUf/eFnb+Nm08stszupKZqiZjaiyg3TMaNfianMzcm/hAQBLzsGNfJ5QSrw/Z0=
+Received: from 30.97.56.57(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WDl2qA4_1724727994)
+          by smtp.aliyun-inc.com;
+          Tue, 27 Aug 2024 11:06:35 +0800
+Message-ID: <5b1e9c5a-7f61-4d97-a8d7-41767ca04c77@linux.alibaba.com>
+Date: Tue, 27 Aug 2024 11:06:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826232908.4076417-1-shakeel.butt@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 6/9] mm: shmem: support large folio allocation for
+ shmem_replace_folio()
+To: Hugh Dickins <hughd@google.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, david@redhat.com,
+ wangkefeng.wang@huawei.com, chrisl@kernel.org, ying.huang@intel.com,
+ 21cnbao@gmail.com, ryan.roberts@arm.com, shy828301@gmail.com,
+ ziy@nvidia.com, ioworker0@gmail.com, da.gomez@samsung.com,
+ p.raghav@samsung.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1723434324.git.baolin.wang@linux.alibaba.com>
+ <a41138ecc857ef13e7c5ffa0174321e9e2c9970a.1723434324.git.baolin.wang@linux.alibaba.com>
+ <ab9070f8-a949-2fb0-5f7b-e392f3242928@google.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <ab9070f8-a949-2fb0-5f7b-e392f3242928@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 26, 2024 at 04:29:08PM -0700, Shakeel Butt wrote:
-> At the moment, the slab objects are charged to the memcg at the
-> allocation time. However there are cases where slab objects are
-> allocated at the time where the right target memcg to charge it to is
-> not known. One such case is the network sockets for the incoming
-> connection which are allocated in the softirq context.
-> 
-> Couple hundred thousand connections are very normal on large loaded
-> server and almost all of those sockets underlying those connections get
-> allocated in the softirq context and thus not charged to any memcg.
-> However later at the accept() time we know the right target memcg to
-> charge. Let's add new API to charge already allocated objects, so we can
-> have better accounting of the memory usage.
-> 
-> To measure the performance impact of this change, tcp_crr is used from
-> the neper [1] performance suite. Basically it is a network ping pong
-> test with new connection for each ping pong.
-> 
-> The server and the client are run inside 3 level of cgroup hierarchy
-> using the following commands:
-> 
-> Server:
->  $ tcp_crr -6
-> 
-> Client:
->  $ tcp_crr -6 -c -H ${server_ip}
-> 
-> If the client and server run on different machines with 50 GBPS NIC,
-> there is no visible impact of the change.
-> 
-> For the same machine experiment with v6.11-rc5 as base.
-> 
->           base (throughput)     with-patch
-> tcp_crr   14545 (+- 80)         14463 (+- 56)
-> 
-> It seems like the performance impact is within the noise.
-> 
-> Link: https://github.com/google/neper [1]
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
 
-Hi Shakeel,
 
-I like the idea and performance numbers look good. However some comments on
-the implementation:
-
-> ---
+On 2024/8/26 06:05, Hugh Dickins wrote:
+> On Mon, 12 Aug 2024, Baolin Wang wrote:
 > 
-> Changes since the RFC:
-> - Added check for already charged slab objects.
-> - Added performance results from neper's tcp_crr
+>> To support large folio swapin for shmem in the following patches, add
+>> large folio allocation for the new replacement folio in shmem_replace_folio().
+>> Moreover large folios occupy N consecutive entries in the swap cache
+>> instead of using multi-index entries like the page cache, therefore
+>> we should replace each consecutive entries in the swap cache instead
+>> of using the shmem_replace_entry().
+>>
+>> As well as updating statistics and folio reference count using the number
+>> of pages in the folio.
+>>
+>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> ---
+>>   mm/shmem.c | 54 +++++++++++++++++++++++++++++++-----------------------
+>>   1 file changed, 31 insertions(+), 23 deletions(-)
+>>
+>> diff --git a/mm/shmem.c b/mm/shmem.c
+>> index f6bab42180ea..d94f02ad7bd1 100644
+>> --- a/mm/shmem.c
+>> +++ b/mm/shmem.c
+>> @@ -1889,28 +1889,24 @@ static bool shmem_should_replace_folio(struct folio *folio, gfp_t gfp)
+>>   static int shmem_replace_folio(struct folio **foliop, gfp_t gfp,
+>>   				struct shmem_inode_info *info, pgoff_t index)
+>>   {
+>> -	struct folio *old, *new;
+>> -	struct address_space *swap_mapping;
+>> -	swp_entry_t entry;
+>> -	pgoff_t swap_index;
+>> -	int error;
+>> -
+>> -	old = *foliop;
+>> -	entry = old->swap;
+>> -	swap_index = swap_cache_index(entry);
+>> -	swap_mapping = swap_address_space(entry);
+>> +	struct folio *new, *old = *foliop;
+>> +	swp_entry_t entry = old->swap;
+>> +	struct address_space *swap_mapping = swap_address_space(entry);
+>> +	pgoff_t swap_index = swap_cache_index(entry);
+>> +	XA_STATE(xas, &swap_mapping->i_pages, swap_index);
+>> +	int nr_pages = folio_nr_pages(old);
+>> +	int error = 0, i;
+>>   
+>>   	/*
+>>   	 * We have arrived here because our zones are constrained, so don't
+>>   	 * limit chance of success by further cpuset and node constraints.
+>>   	 */
+>>   	gfp &= ~GFP_CONSTRAINT_MASK;
+>> -	VM_BUG_ON_FOLIO(folio_test_large(old), old);
+>> -	new = shmem_alloc_folio(gfp, 0, info, index);
+>> +	new = shmem_alloc_folio(gfp, folio_order(old), info, index);
 > 
->  include/linux/slab.h            |  1 +
->  mm/slub.c                       | 54 +++++++++++++++++++++++++++++++++
->  net/ipv4/inet_connection_sock.c |  5 +--
->  3 files changed, 58 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/slab.h b/include/linux/slab.h
-> index eb2bf4629157..05cfab107c72 100644
-> --- a/include/linux/slab.h
-> +++ b/include/linux/slab.h
-> @@ -547,6 +547,7 @@ void *kmem_cache_alloc_lru_noprof(struct kmem_cache *s, struct list_lru *lru,
->  			    gfp_t gfpflags) __assume_slab_alignment __malloc;
->  #define kmem_cache_alloc_lru(...)	alloc_hooks(kmem_cache_alloc_lru_noprof(__VA_ARGS__))
->  
-> +bool kmem_cache_charge(void *objp, gfp_t gfpflags);
->  void kmem_cache_free(struct kmem_cache *s, void *objp);
->  
->  kmem_buckets *kmem_buckets_create(const char *name, slab_flags_t flags,
-> diff --git a/mm/slub.c b/mm/slub.c
-> index c9d8a2497fd6..580683597b5c 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -2185,6 +2185,16 @@ void memcg_slab_free_hook(struct kmem_cache *s, struct slab *slab, void **p,
->  
->  	__memcg_slab_free_hook(s, slab, p, objects, obj_exts);
->  }
-> +
-> +static __fastpath_inline
-> +bool memcg_slab_post_charge(struct kmem_cache *s, void *p, gfp_t flags)
-> +{
-> +	if (likely(!memcg_kmem_online()))
-> +		return true;
+> It is not clear to me whether folio_order(old) will ever be more than 0
+> here: but if it can be, then care will need to be taken over the gfp flags,
 
-We do have this check in kmem_cache_charge(), why do we need to check it again?
+With this patch set, it can be a large folio. If a large folio still 
+exists in the swap cache, we will get a large folio during swap in.
 
-> +
-> +	return __memcg_slab_post_alloc_hook(s, NULL, flags, 1, &p);
-> +}
-> +
->  #else /* CONFIG_MEMCG */
->  static inline bool memcg_slab_post_alloc_hook(struct kmem_cache *s,
->  					      struct list_lru *lru,
-> @@ -2198,6 +2208,13 @@ static inline void memcg_slab_free_hook(struct kmem_cache *s, struct slab *slab,
->  					void **p, int objects)
->  {
->  }
-> +
-> +static inline bool memcg_slab_post_charge(struct kmem_cache *s,
-> +					  void *p,
-> +					  gfp_t flags)
-> +{
-> +	return true;
-> +}
->  #endif /* CONFIG_MEMCG */
->  
->  /*
-> @@ -4062,6 +4079,43 @@ void *kmem_cache_alloc_lru_noprof(struct kmem_cache *s, struct list_lru *lru,
->  }
->  EXPORT_SYMBOL(kmem_cache_alloc_lru_noprof);
->  
-> +#define KMALLOC_TYPE (SLAB_KMALLOC | SLAB_CACHE_DMA | \
-> +		      SLAB_ACCOUNT | SLAB_RECLAIM_ACCOUNT)
-> +
-> +bool kmem_cache_charge(void *objp, gfp_t gfpflags)
-> +{
-> +	struct slabobj_ext *slab_exts;
-> +	struct kmem_cache *s;
-> +	struct folio *folio;
-> +	struct slab *slab;
-> +	unsigned long off;
-> +
-> +	if (!memcg_kmem_online())
-> +		return true;
-> +
-> +	folio = virt_to_folio(objp);
-> +	if (unlikely(!folio_test_slab(folio)))
-> +		return false;
+And yes, the gfp flags should be updated. How about the following fix?
 
-Does it handle the case of a too-big-to-be-a-slab-object allocation?
-I think it's better to handle it properly. Also, why return false here?
+> that they are suited to allocating the large folio; and there will need to
+> be (could be awkward!) fallback to order 0 when that allocation fails.
 
-> +
-> +	slab = folio_slab(folio);
-> +	s = slab->slab_cache;
-> +
-> +	/* Ignore KMALLOC_NORMAL cache to avoid circular dependency. */
-> +	if ((s->flags & KMALLOC_TYPE) == SLAB_KMALLOC)
-> +		return true;
+I do not think we should fallback to order 0 for a large folio, which 
+will introduce more complex logic, for example, we should split the 
+original large swap entries in shmem mapping, and it is tricky to free 
+large swap entries, etc. So I want to keept it simple now.
 
-And true here? It seems to be a bit inconsistent.
-Also, if we have this check here, it means your function won't handle kmallocs
-at all? Because !KMALLOC_NORMAL allocations won't get here.
+> My own testing never comes to shmem_replace_folio(): it was originally for
+> one lowend graphics driver; but IIRC there's now a more common case for it.
 
-> +
-> +	/* Ignore already charged objects. */
-> +	slab_exts = slab_obj_exts(slab);
-> +	if (slab_exts) {
-> +		off = obj_to_index(s, slab, objp);
-> +		if (unlikely(slab_exts[off].objcg))
-> +			return true;
-> +	}
-> +
-> +	return memcg_slab_post_charge(s, objp, gfpflags);
-> +}
-> +EXPORT_SYMBOL(kmem_cache_charge);
-> +
->  /**
->   * kmem_cache_alloc_node - Allocate an object on the specified node
->   * @s: The cache to allocate from.
-> diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connection_sock.c
-> index 64d07b842e73..3c13ca8c11fb 100644
-> --- a/net/ipv4/inet_connection_sock.c
-> +++ b/net/ipv4/inet_connection_sock.c
-> @@ -715,6 +715,7 @@ struct sock *inet_csk_accept(struct sock *sk, struct proto_accept_arg *arg)
->  	release_sock(sk);
->  	if (newsk && mem_cgroup_sockets_enabled) {
->  		int amt = 0;
-> +		gfp_t gfp = GFP_KERNEL | __GFP_NOFAIL;
->  
->  		/* atomically get the memory usage, set and charge the
->  		 * newsk->sk_memcg.
-> @@ -731,8 +732,8 @@ struct sock *inet_csk_accept(struct sock *sk, struct proto_accept_arg *arg)
->  		}
->  
->  		if (amt)
-> -			mem_cgroup_charge_skmem(newsk->sk_memcg, amt,
-> -						GFP_KERNEL | __GFP_NOFAIL);
-> +			mem_cgroup_charge_skmem(newsk->sk_memcg, amt, gfp);
-> +		kmem_cache_charge(newsk, gfp);
+Good to know. Thank you very much for your valuable input.
 
-Wait, so we assume that newsk->sk_memcg === current memcg? Or we're ok with them being
-different?
 
-Thanks!
+[PATCH] mm: shmem: fix the gfp flag for large folio allocation
+
+In shmem_replace_folio(), it may be necessary to allocate a large folio,
+so we should update the gfp flags to ensure it is suitable for 
+allocating the large folio.
+
+Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+---
+  mm/shmem.c | 18 +++++++++++++-----
+  1 file changed, 13 insertions(+), 5 deletions(-)
+
+diff --git a/mm/shmem.c b/mm/shmem.c
+index dd384d4ab035..d8038a66b110 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -155,7 +155,7 @@ static unsigned long shmem_default_max_inodes(void)
+
+  static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
+                         struct folio **foliop, enum sgp_type sgp, gfp_t 
+gfp,
+-                       struct mm_struct *fault_mm, vm_fault_t *fault_type);
++                       struct vm_area_struct *vma, vm_fault_t *fault_type);
+
+  static inline struct shmem_sb_info *SHMEM_SB(struct super_block *sb)
+  {
+@@ -1887,7 +1887,8 @@ static bool shmem_should_replace_folio(struct 
+folio *folio, gfp_t gfp)
+  }
+
+  static int shmem_replace_folio(struct folio **foliop, gfp_t gfp,
+-                               struct shmem_inode_info *info, pgoff_t 
+index)
++                               struct shmem_inode_info *info, pgoff_t 
+index,
++                               struct vm_area_struct *vma)
+  {
+         struct folio *new, *old = *foliop;
+         swp_entry_t entry = old->swap;
+@@ -1902,6 +1903,12 @@ static int shmem_replace_folio(struct folio 
+**foliop, gfp_t gfp,
+          * limit chance of success by further cpuset and node constraints.
+          */
+         gfp &= ~GFP_CONSTRAINT_MASK;
++       if (nr_pages > 1) {
++               gfp_t huge_gfp = vma_thp_gfp_mask(vma);
++
++               gfp = limit_gfp_mask(huge_gfp, gfp);
++       }
++
+         new = shmem_alloc_folio(gfp, folio_order(old), info, index);
+         if (!new)
+                 return -ENOMEM;
+@@ -2073,10 +2080,11 @@ static int shmem_split_large_entry(struct inode 
+*inode, pgoff_t index,
+   */
+  static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
+                              struct folio **foliop, enum sgp_type sgp,
+-                            gfp_t gfp, struct mm_struct *fault_mm,
++                            gfp_t gfp, struct vm_area_struct *vma,
+                              vm_fault_t *fault_type)
+  {
+         struct address_space *mapping = inode->i_mapping;
++       struct mm_struct *fault_mm = vma ? vma->vm_mm : NULL;
+         struct shmem_inode_info *info = SHMEM_I(inode);
+         struct swap_info_struct *si;
+         struct folio *folio = NULL;
+@@ -2162,7 +2170,7 @@ static int shmem_swapin_folio(struct inode *inode, 
+pgoff_t index,
+         arch_swap_restore(folio_swap(swap, folio), folio);
+
+         if (shmem_should_replace_folio(folio, gfp)) {
+-               error = shmem_replace_folio(&folio, gfp, info, index);
++               error = shmem_replace_folio(&folio, gfp, info, index, vma);
+                 if (error)
+                         goto failed;
+         }
+@@ -2243,7 +2251,7 @@ static int shmem_get_folio_gfp(struct inode 
+*inode, pgoff_t index,
+
+         if (xa_is_value(folio)) {
+                 error = shmem_swapin_folio(inode, index, &folio,
+-                                          sgp, gfp, fault_mm, fault_type);
++                                          sgp, gfp, vma, fault_type);
+                 if (error == -EEXIST)
+                         goto repeat;
 
