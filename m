@@ -1,139 +1,101 @@
-Return-Path: <linux-kernel+bounces-302546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A47396000F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:52:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DFDD960012
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C57D42816D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:52:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC8ACB20D4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B65E1B977;
-	Tue, 27 Aug 2024 03:52:23 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66BEC1B978;
+	Tue, 27 Aug 2024 03:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nrMqXrHX"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988B62E62C
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 03:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1444B14A90;
+	Tue, 27 Aug 2024 03:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724730743; cv=none; b=Zh8yY0MFGRgu4dFZUR0AvHJaMJ+aDNaw4pZ3F7VgkC/0FcSfoDpLPfF/+qmVNkUIKXUuZ33reBTInY072peokpMI6g5O1zmDG7ZOGozjCXOGDCjnfeTP/Q6EZ15lOO/cg70QvujnUvVpAEIl1+67ddpk1prW8XZ6AabhYIGDJRU=
+	t=1724730935; cv=none; b=ptAmZqcXhnjarb5z+8Syo/O5ZOST/V/ZXMQMS9a+KYUoco2Shw22cPGiP9ZrSCIQ641qJSyZpZFj+L8zE/+GYDCnKQHxS8kxbOWKvOl7nT3HJBQAtw0irx6jmIBkB4szqhGpKlz7YQILJB6IMGaWW+LSWISB7LlYb7rTgq/Zo+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724730743; c=relaxed/simple;
-	bh=6dLZqVfRHKNUGkoyZ6J9Cx4oIeOYqXbtyGtGQI4VuZo=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Odnwu12DmCFPZszmsLFCZfr1pw9pRhnPMZuEoKor4XQAAa5Ll3gSQ9R8051OyDqa8ehsd+bP9MRXOebNG2AhkYedBk1U0v5rOzIPHI6cT1ty7vRop1CCevS6FmNMDy8m8OK7kmuLl/qfP2O2fkitswwomeZ643t3L7i7hpfiTxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WtD9n2Ptkz13k4s;
-	Tue, 27 Aug 2024 11:51:25 +0800 (CST)
-Received: from kwepemm000013.china.huawei.com (unknown [7.193.23.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id C68A1180105;
-	Tue, 27 Aug 2024 11:52:11 +0800 (CST)
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemm000013.china.huawei.com (7.193.23.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 27 Aug 2024 11:52:10 +0800
-Subject: Re: [PATCH] mtd: ubi: remove unused parameter 'pnum' from
- add_volume()
-To: kernel test robot <lkp@intel.com>, Wang Zhaolong
-	<wangzhaolong1@huawei.com>, <richard@nod.at>, <miquel.raynal@bootlin.com>,
-	<vigneshr@ti.com>
-CC: <llvm@lists.linux.dev>, <oe-kbuild-all@lists.linux.dev>,
-	<linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<yi.zhang@huawei.com>
-References: <20240825083515.4074081-1-wangzhaolong1@huawei.com>
- <202408271041.ttLMjF8z-lkp@intel.com>
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <8e511b87-f8e2-7e95-f212-5f2dd318c234@huawei.com>
-Date: Tue, 27 Aug 2024 11:52:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	s=arc-20240116; t=1724730935; c=relaxed/simple;
+	bh=UIZhClIfNP8RnyFc3uotLakfvAPBysWBHDbazqaO/t4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n7ruaqZRHpxcdHcJilTxq8bTMp11IrXJPZ6pgbC1Dx/E9/exZBQP2vsc/VByaTFmT8WkxlrpoD3dG1qBpSk5euGXOBtTfS5r6sgfpBkyptDSD4GP2UgElQ4W9yKnpZ+4Md1xKaseP57WmyHG3FVxt3PjyRr3ujjmb/guZj4wV6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nrMqXrHX; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-202089e57d8so31990115ad.0;
+        Mon, 26 Aug 2024 20:55:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724730933; x=1725335733; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h40UklaApWb5EyKvShhCYQi2t5utzRjtxNawvY/2Goo=;
+        b=nrMqXrHX1aeo6EM7VgCFyBxw/IAtxMoqvp2pUn6CzRgkJs0mj40dFs79cxuTDxQu7A
+         FvRv8TPjWSLDoeH6H8Z4sFJ9ytLgApYS4LkQocz4BfMRIZ5O2S2Rr6ozKH/H31GAsyOX
+         JrAhZJbpk7keuP6a79eZApMkK9WWf8/Co6F8f5jGKq2OCX2sCjqiP1bmPHHh8OmNzO6H
+         4y7OQdXuQ0yzHpiAod5aHrwvd6uLgFPyExkrA4f8VcUsnIB2iBa2dqRIEs41Dy5wpkd5
+         u8xOToFdjzs5CPj0d5p/07vzsX0PRvefnjpOBWG6AUdW0FkD3GMKP7nRBZ71K4PL6ib3
+         2Ndg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724730933; x=1725335733;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h40UklaApWb5EyKvShhCYQi2t5utzRjtxNawvY/2Goo=;
+        b=F9Kpvm0T6ZaZq2lgxuv+VW0q+5Xszd8Xqi0CwIhyeMOlLlKynrh22VmSbeaEzlhJFl
+         m3WnyEMiWknKAKw/wxRxe86VC+f7ylISonQ0eBj/9/voJIazSA5/Oz3t1eW52UXKsYue
+         sT6G/Simc+HFP3y1+ul1nr8qLC3I7mbQSZvRsZx3p8l75pVAGbFdTF0n3q+AgkiirEr+
+         9Og7Dy3oiFRah79Yt0kF954vUDlTpf5QBFtS8hZu4rVoXQDmc+1THkFBAbps3TrlBvJr
+         dx+C0lRvgtZPZzAiXrj9mLQ67YzZKW7iKLGnVgtsNHw1kP1lsNBb/HPfFG7RWgLynPOc
+         KoTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWAbKQxhH/o/1UP7fKm201GxqTAVbPSXP7oovzWT/ZfGEio+yYEppX0/g27SxhOo/iNbPwpOjPtgwonCw==@vger.kernel.org, AJvYcCWeX10PC4oVWMBsbmV4AR0ZnuSgE6j9hmEUH0R8hEkUadGNE8pXk46PTmBle90hMxsZLnwpEEFIiJnasOjz@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhMVwPMEtytEPU8kXHfkgKEzqDFwPmUN8UUTmNx9bPzpEbJQmM
+	4ZLnl6pDtUPIl7vs9IWTpmlt6vgdGdIZLcgWrx5htTLjAtXSqxkt
+X-Google-Smtp-Source: AGHT+IEubpWsuetTzJO1D0T+D1MS0gJWbz/2p9QlqPTAMHbDxAd+8y+dKvihuV64opD3a+HU+x0QJw==
+X-Received: by 2002:a17:902:c713:b0:1fd:6ca4:f987 with SMTP id d9443c01a7336-204ddd25f60mr19655035ad.15.1724730933231;
+        Mon, 26 Aug 2024 20:55:33 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038560dc8csm74345875ad.224.2024.08.26.20.55.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 20:55:32 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Mon, 26 Aug 2024 20:55:30 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon: stts751: Add "st" vendor prefix to "stts751"
+ compatible string
+Message-ID: <2672447a-67d3-464b-a3e9-acb7373677f3@roeck-us.net>
+References: <20240826191811.1416011-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <202408271041.ttLMjF8z-lkp@intel.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemm000013.china.huawei.com (7.193.23.81)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826191811.1416011-1-robh@kernel.org>
 
-ÔÚ 2024/8/27 11:26, kernel test robot Ð´µÀ:
-> Hi Wang,
+On Mon, Aug 26, 2024 at 02:18:11PM -0500, Rob Herring (Arm) wrote:
+> The documented compatible string is "st,stts751", not "stts751". Even if
+> "stts751" was in use, there's no need to list "stts751" in the DT match
+> table. The I2C core will strip any vendor prefix and match against the
+> i2c_device_id table which has an "stts751" entry.
 > 
-> kernel test robot noticed the following build warnings:
-> 
-> [auto build test WARNING on rw-ubifs/next]
-> [also build test WARNING on rw-ubifs/fixes linus/master v6.11-rc5 next-20240826]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Wang-Zhaolong/mtd-ubi-remove-unused-parameter-pnum-from-add_volume/20240826-142424
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/rw/ubifs.git next
-> patch link:    https://lore.kernel.org/r/20240825083515.4074081-1-wangzhaolong1%40huawei.com
-> patch subject: [PATCH] mtd: ubi: remove unused parameter 'pnum' from add_volume()
-> config: i386-buildonly-randconfig-005-20240827 (https://download.01.org/0day-ci/archive/20240827/202408271041.ttLMjF8z-lkp@intel.com/config)
-> compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408271041.ttLMjF8z-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202408271041.ttLMjF8z-lkp@intel.com/
-> 
-> All warnings (new ones prefixed by >>):
-> 
->>> drivers/mtd/ubi/attach.c:398: warning: Excess function parameter 'pnum' description in 'add_volume'
-> 
-> 
-> vim +398 drivers/mtd/ubi/attach.c
-> 
-> 801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  382
-> 801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  383  /**
-> a4e6042f1d07307 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  384   * add_volume - add volume to the attaching information.
-> a4e6042f1d07307 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  385   * @ai: attaching information
-> 801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  386   * @vol_id: ID of the volume to add
-> 801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  387   * @pnum: physical eraseblock number
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-Hi ZhaoLong, you need to remove the parameter description from comments too.
+Applied.
 
-> 801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  388   * @vid_hdr: volume identifier header
-> 801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  389   *
-> 801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  390   * If the volume corresponding to the @vid_hdr logical eraseblock is already
-> a4e6042f1d07307 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  391   * present in the attaching information, this function does nothing. Otherwise
-> a4e6042f1d07307 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  392   * it adds corresponding volume to the attaching information. Returns a pointer
-> fbd0107f4d33be0 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  393   * to the allocated "av" object in case of success and a negative error code in
-> fbd0107f4d33be0 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  394   * case of failure.
-> 801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  395   */
-> beba9855702e14c drivers/mtd/ubi/attach.c Wang Zhaolong       2024-08-25  396  static struct ubi_ainf_volume *add_volume(struct ubi_attach_info *ai, int vol_id,
-> 801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  397  					  const struct ubi_vid_hdr *vid_hdr)
-> 801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27 @398  {
-> 517af48c0540e61 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  399  	struct ubi_ainf_volume *av;
-> de4c455b3e9f630 drivers/mtd/ubi/attach.c Boris Brezillon     2016-09-16  400  	bool created;
-> 801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  401
-> 3261ebd7d4194ff drivers/mtd/ubi/scan.c   Christoph Hellwig   2007-05-21  402  	ubi_assert(vol_id == be32_to_cpu(vid_hdr->vol_id));
-> 801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  403
-> de4c455b3e9f630 drivers/mtd/ubi/attach.c Boris Brezillon     2016-09-16  404  	av = ubi_find_or_add_av(ai, vol_id, &created);
-> de4c455b3e9f630 drivers/mtd/ubi/attach.c Boris Brezillon     2016-09-16  405  	if (IS_ERR(av) || !created)
-> 517af48c0540e61 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  406  		return av;
-> 801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  407
-> 517af48c0540e61 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  408  	av->used_ebs = be32_to_cpu(vid_hdr->used_ebs);
-> 517af48c0540e61 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  409  	av->data_pad = be32_to_cpu(vid_hdr->data_pad);
-> 517af48c0540e61 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  410  	av->compat = vid_hdr->compat;
-> 517af48c0540e61 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  411  	av->vol_type = vid_hdr->vol_type == UBI_VID_DYNAMIC ? UBI_DYNAMIC_VOLUME
-> 801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  412  							    : UBI_STATIC_VOLUME;
-> 801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  413
-> 517af48c0540e61 drivers/mtd/ubi/scan.c   Artem Bityutskiy    2012-05-17  414  	return av;
-> 801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  415  }
-> 801c135ce73d5df drivers/mtd/ubi/scan.c   Artem B. Bityutskiy 2006-06-27  416
-> 
-
+Thanks,
+Guenter
 
