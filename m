@@ -1,199 +1,185 @@
-Return-Path: <linux-kernel+bounces-303967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63DB09617BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:09:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A35029617C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:10:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D85B81F2530B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:09:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D4481F25024
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8FB1D2F59;
-	Tue, 27 Aug 2024 19:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220161D2F66;
+	Tue, 27 Aug 2024 19:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A+Q8vB44"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="RTZ+VO4E"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB871D2F45
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 19:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2571D31AF
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 19:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724785763; cv=none; b=S2AaF9rjJyWM6ZOVvYgE2Kl8Ofs55Y2AnwHKxA2DPG2z/exiYfcmFgL5MwwnDq3wcintFOSFgNQRuNnXC/Def5aH12gk4w6qXRAPcuZDSdZDOnD78uYgfkgGUoHmTGD4/DKB0CakGs1CtUSIxpeT1Bdq/JBxKqebq0umeJ2wBco=
+	t=1724785798; cv=none; b=tNtRbRL1vHqWCN2uGjMcTi8Wpta0GPe1dqWzxNWpA2gXAZBfoTzWN57wBna8Fl6e3hWvyfCWxpbBNGCt3A8GbL/fbb79ahMlFrsl8HoOabSF4UjtbNPsTmSZC0xmSF2Aej8OxLsw1CXOWDfEUGgRgXO0DNJmYZxwPG8zliTg7Nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724785763; c=relaxed/simple;
-	bh=8vzddTF96IIqex5XKCSOlgyLRaodIyhLOQDfmbptYiw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OKvCM3QLcxCpTwBBsv6dS/037wbYorcMEdmWoslUoJgDTgAOPCrLz5Vvp/lkzVg4AdiVH3mN10qC+otgVHZZHrWt5vc+Er+ceBQUq5OR2Sk80ZvhSH7SJ6mDccPaUwUwnDLYok9islh7v5ZK+H+MKE052Y2jFIvy8Szb+yKUadQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A+Q8vB44; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-533463f6b16so6803641e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:09:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724785760; x=1725390560; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BfcLggzto3BVfKz7eDsjOiDX7mNAoTj53MKi/5GWSlk=;
-        b=A+Q8vB44MXK92pvr7PoJ1ig/BWAIjL7+jCAHztowaQMxVlaC3QDsY9zaav8gzyaBq2
-         nprjLHkP5r016r1W9jTvyhd1Qh26bLoJbC/eY3wHJ41fXFXuUf+untqAu/1bbzSe90A0
-         YxchjKa5HtOOwMrz/hcsf6CoPtpSHeLmbaRbw8L/WccWRgym7mI65Kk2XfUGqpJec4Ya
-         PGE6v4a4sLcTqAnKr8PVbTqNDSIZrOAHTC/rtYZNqb5z4R8RJJzCOFzCNWJPIsZr+UwW
-         QXu3KBqtqEbY94VqAqVr0O7owWSrey2taHYLpV3E+doICIe4gogoMkwyl0Ehjo8hXw9Y
-         G3Sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724785760; x=1725390560;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BfcLggzto3BVfKz7eDsjOiDX7mNAoTj53MKi/5GWSlk=;
-        b=Ls+JOcThXg1QN7G58sqkifjGLKhIMvDOgX7QtftxNdIYwaiyTDhw4hxWABEupQI3LA
-         QMFUQYiIRg7dGxjFcw//lU9qsyT+j5WJQKteK46narIbWMvVpFG7E4QZ7cMUdFgh8sAz
-         t8+ImP1PQmebtxpkkCw8ItED3Udb6DmNrmkoQmYHTRpv1jYbar4+pvno6OFO1kUJflwL
-         KUV0C/lXcrqPyc7GkovSL0ncr4O43Fq2FLlk8qhc2Xwts5B1cjKK95itHfmJppYw5LBD
-         QmomLf7glk01qch/fEt6Igk5xqbNgx5OXMUg2Aw8lnw5C2hpQA6dqq7u93CVJuRn2Mlt
-         IGOg==
-X-Gm-Message-State: AOJu0YxQ0BhOpp50tpDDYcQLawoMRWZVWDfgQ78y+MNPlhhZ1NwQevC1
-	jBGD96Jut+RjtmQzbZPa7CQyXfxUM7xvpXZZZ/786WDlFmBbOAz+
-X-Google-Smtp-Source: AGHT+IGYHgWH1+SAc5cajBEXxjQgStoeA6xgPw5ISmOw+UXTYmPswXwdBMwM3U4JjNbmGnQ+2ztPSw==
-X-Received: by 2002:a05:6512:3e0d:b0:52c:812b:6e72 with SMTP id 2adb3069b0e04-5343876c25dmr7676576e87.1.1724785759199;
-        Tue, 27 Aug 2024 12:09:19 -0700 (PDT)
-Received: from pc638.lan (84-217-131-213.customers.ownit.se. [84.217.131.213])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea3630bsm1878284e87.68.2024.08.27.12.09.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 12:09:17 -0700 (PDT)
-From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-To: linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Baoquan He <bhe@redhat.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Michal Hocko <mhocko@suse.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: [PATCH] mm: vmalloc: Refactor vm_area_alloc_pages() function
-Date: Tue, 27 Aug 2024 21:09:16 +0200
-Message-Id: <20240827190916.34242-1-urezki@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1724785798; c=relaxed/simple;
+	bh=du9RCy7d+nEJokh8lbqxk895BSXsrw4YoLlDSYKoblk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FcqtyWoGiRYDXKpG8vHRUSFWYgKW1mHqWHmYAqWXbAntpftvzwn7Eb//Bni26Hhdx+K7NndzwIWuSwdHkgi+lm4njIpCqTNwbYKGRbxWuCq4MyJmc8m9i5/9a8kGBvOWHJOBA9HY9o51Q1oXMhYPiG3A4dYg8/7xoPgndmfKOdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=RTZ+VO4E; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6009a.ext.cloudfilter.net ([10.0.30.184])
+	by cmsmtp with ESMTPS
+	id iyyMsVJZCqvuoj1ZdsWrnQ; Tue, 27 Aug 2024 19:09:49 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id j1ZcsFNZSsoF5j1Zcsaxsp; Tue, 27 Aug 2024 19:09:49 +0000
+X-Authority-Analysis: v=2.4 cv=e/EAS7p/ c=1 sm=1 tr=0 ts=66ce247d
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
+ a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=Oxluwhmp6ld3uWlGNnkA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+ a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=5JZFmEEhU0UCbr2plbMpHOf5fhdfzfk/fS6XDm2beLk=; b=RTZ+VO4E54YAFXBis0O/nkgeD4
+	vBNHhkiSEg8EkMDsoZGceB3t80ydoOZOc8D+0mG6lihVYVhzjAfz5KKnxuWJCtrUGrs3OOEL2k5HQ
+	KKVNuj+tQvQsOCtSfd5nc0EPqpdrZcg9y2PkyWjwicaMxFCYIoQLzKCBdLd6njnDi9+0t96l5uSR6
+	V6RKSu0SqYDpxao7RefLsBT+ZUWavtN4LQ7dVRjIDdKjmpqXFCumab0Z6x0G+0YeWCBlf1gRULKOg
+	8NjcKNjM0+DNGHRlNIG7sfwRz1cZjXp78JV3Z+ITDq0WNDffFK2sVQcTMHJEoIwgd5BQCoCnd6JOY
+	KnbkUGYQ==;
+Received: from [201.172.173.139] (port=47538 helo=[192.168.15.5])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1sj1Zc-002X62-0C;
+	Tue, 27 Aug 2024 14:09:48 -0500
+Message-ID: <2065d0f6-660e-4647-95b4-8d1a9a7eaefe@embeddedor.com>
+Date: Tue, 27 Aug 2024 13:09:46 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] drm/nouveau: Avoid -Wflex-array-member-not-at-end
+ warning
+To: Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@redhat.com>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <ZsZLFS1CsHkKjw+C@elsanto> <202408221011.82876DA0C4@keescook>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <202408221011.82876DA0C4@keescook>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.173.139
+X-Source-L: No
+X-Exim-ID: 1sj1Zc-002X62-0C
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.5]) [201.172.173.139]:47538
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfPQKvKjUgltm5ff018ZS0oYkkLTYSB8/ovtuvix6CDjtfYw3wvlWhlYOaxHKyzYz0qUAPycu34BOjsYfWVzdr9wLNRplohyIb7KQpfbVUjyjTFsCTMU+
+ Vcmyi3u9mxrXBg9QJNglhsbsRCGTMr04wxMcTZxvG4Tea3g3tOqUjqbXX0Asc53ssvP0/ZtLBugU9/VaxdwiIy+3UejvhPhKuZaiOg4/KMa3xq0sGYdqYCYY
 
-The aim is to simplify and making the vm_area_alloc_pages()
-function less confusing as it became more clogged nowadays:
 
-- eliminate a "bulk_gfp" variable and do not overwrite a gfp
-  flag for bulk allocator;
-- drop __GFP_NOFAIL flag for high-order-page requests on upper
-  layer. It becomes less spread between levels when it comes to
-  __GFP_NOFAIL allocations;
-- add a comment about a fallback path if high-order attempt is
-  unsuccessful because for such cases __GFP_NOFAIL is dropped;
-- fix a typo in a commit message.
 
-Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
----
- mm/vmalloc.c | 37 +++++++++++++++++--------------------
- 1 file changed, 17 insertions(+), 20 deletions(-)
+On 22/08/24 11:27, Kees Cook wrote:
+> On Wed, Aug 21, 2024 at 02:16:21PM -0600, Gustavo A. R. Silva wrote:
+>> Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
+>> a flexible structure where the size of the flexible-array member
+>> is known at compile-time, and refactor the rest of the code,
+>> accordingly.
+>>
+>> So, with this, fix the following warning:
+>>
+>> drivers/gpu/drm/nouveau/dispnv50/disp.c:779:47: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+>> ---
+>>   drivers/gpu/drm/nouveau/dispnv50/disp.c | 20 +++++++++-----------
+>>   1 file changed, 9 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+>> index eed579a6c858..ddddc69640be 100644
+>> --- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
+>> +++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+>> @@ -774,11 +774,9 @@ nv50_hdmi_enable(struct drm_encoder *encoder, struct nouveau_crtc *nv_crtc,
+>>   	struct drm_hdmi_info *hdmi = &nv_connector->base.display_info.hdmi;
+>>   	union hdmi_infoframe infoframe = { 0 };
+>>   	const u8 rekey = 56; /* binary driver, and tegra, constant */
+>> +	DEFINE_RAW_FLEX(struct nvif_outp_infoframe_v0, args, data, 17);
+>> +	const u8 data_len = 17; /* same length as in DEFINE_RAW_FLEX above. */
+> 
+> To avoid repeating the open-coded "17", this could either be a define:
+> 
+> nv50_hdmi_enable(...)
+> {
+> ...
+> #define data_len	17
+> 	DEFINE_RAW_FLEX(struct nvif_outp_infoframe_v0, args, data, data_len);
+> ...rest of function...
+> #undef data_len
+> }
+> 
+> or an ungainly but compile-time calculated value that exposes some
+> DEFINE_FLEX internals:
+> 
+> 	const u8 data_len = (sizeof(args_u) - sizeof(*args)) / sizeof(*args->data);
 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 3f9b6bd707d2..57862865e808 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -3531,8 +3531,6 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
- 		unsigned int order, unsigned int nr_pages, struct page **pages)
- {
- 	unsigned int nr_allocated = 0;
--	gfp_t alloc_gfp = gfp;
--	bool nofail = gfp & __GFP_NOFAIL;
- 	struct page *page;
- 	int i;
- 
-@@ -3543,9 +3541,6 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
- 	 * more permissive.
- 	 */
- 	if (!order) {
--		/* bulk allocator doesn't support nofail req. officially */
--		gfp_t bulk_gfp = gfp & ~__GFP_NOFAIL;
--
- 		while (nr_allocated < nr_pages) {
- 			unsigned int nr, nr_pages_request;
- 
-@@ -3563,12 +3558,11 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
- 			 * but mempolicy wants to alloc memory by interleaving.
- 			 */
- 			if (IS_ENABLED(CONFIG_NUMA) && nid == NUMA_NO_NODE)
--				nr = alloc_pages_bulk_array_mempolicy_noprof(bulk_gfp,
-+				nr = alloc_pages_bulk_array_mempolicy_noprof(gfp,
- 							nr_pages_request,
- 							pages + nr_allocated);
--
- 			else
--				nr = alloc_pages_bulk_array_node_noprof(bulk_gfp, nid,
-+				nr = alloc_pages_bulk_array_node_noprof(gfp, nid,
- 							nr_pages_request,
- 							pages + nr_allocated);
- 
-@@ -3582,30 +3576,24 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
- 			if (nr != nr_pages_request)
- 				break;
- 		}
--	} else if (gfp & __GFP_NOFAIL) {
--		/*
--		 * Higher order nofail allocations are really expensive and
--		 * potentially dangerous (pre-mature OOM, disruptive reclaim
--		 * and compaction etc.
--		 */
--		alloc_gfp &= ~__GFP_NOFAIL;
- 	}
- 
- 	/* High-order pages or fallback path if "bulk" fails. */
- 	while (nr_allocated < nr_pages) {
--		if (!nofail && fatal_signal_pending(current))
-+		if (!(gfp & __GFP_NOFAIL) && fatal_signal_pending(current))
- 			break;
- 
- 		if (nid == NUMA_NO_NODE)
--			page = alloc_pages_noprof(alloc_gfp, order);
-+			page = alloc_pages_noprof(gfp, order);
- 		else
--			page = alloc_pages_node_noprof(nid, alloc_gfp, order);
-+			page = alloc_pages_node_noprof(nid, gfp, order);
-+
- 		if (unlikely(!page))
- 			break;
- 
- 		/*
- 		 * Higher order allocations must be able to be treated as
--		 * indepdenent small pages by callers (as they can with
-+		 * independent small pages by callers (as they can with
- 		 * small-page vmallocs). Some drivers do their own refcounting
- 		 * on vmalloc_to_page() pages, some use page->mapping,
- 		 * page->lru, etc.
-@@ -3666,7 +3654,16 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
- 	set_vm_area_page_order(area, page_shift - PAGE_SHIFT);
- 	page_order = vm_area_page_order(area);
- 
--	area->nr_pages = vm_area_alloc_pages(gfp_mask | __GFP_NOWARN,
-+	/*
-+	 * Higher order nofail allocations are really expensive and
-+	 * potentially dangerous (pre-mature OOM, disruptive reclaim
-+	 * and compaction etc.
-+	 *
-+	 * Please note, the __vmalloc_node_range_noprof() falls-back
-+	 * to order-0 pages if high-order attempt is unsuccessful.
-+	 */
-+	area->nr_pages = vm_area_alloc_pages((page_order ?
-+		gfp_mask & ~__GFP_NOFAIL : gfp_mask) | __GFP_NOWARN,
- 		node, page_order, nr_small_pages, area->pages);
- 
- 	atomic_long_add(area->nr_pages, &nr_vmalloc_pages);
--- 
-2.39.2
+Yeah, I actually thought of something more like just __struct_size(args) - sizeof(*args),
+as the flex array member is `__u8 data[]`.
 
+> 
+> (Maybe a helper is needed for that?)
+> 
+> #define STACK_FLEX_COUNT(name, member)	\
+> 	((sizeof(name##_u) = sizeof(*(name))) / sizeof(*(name)->member))
+
+I don't like this `sizeof(name##_u)` part as it is detached from the DEFINE_RAW_FLEX()
+internals. Probably use `__struct_size(args)` instead, as in the example above.
+
+> 
+>> @@ -815,29 +813,29 @@ nv50_hdmi_enable(struct drm_encoder *encoder, struct nouveau_crtc *nv_crtc,
+>>   		return;
+>>   
+>>   	/* AVI InfoFrame. */
+>> -	args.infoframe.version = 0;
+>> -	args.infoframe.head = nv_crtc->index;
+>> +	args->version = 0;
+>> +	args->head = nv_crtc->index;
+> 
+> The stack variable (was before and is again) already zero-initialized,
+> so the "= 0" line shouldn't be needed.
+> 
+> But neither of these comments are show-stoppers, IMO.
+> 
+> Reviewed-by: Kees Cook <kees@kernel.org>
+> 
+
+Thanks!
+
+--
+Gustavo
 
