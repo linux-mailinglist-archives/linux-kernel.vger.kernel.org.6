@@ -1,140 +1,237 @@
-Return-Path: <linux-kernel+bounces-303851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEB289615F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:52:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AC03961603
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63D2E1F2691F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:52:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6A70284CF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4692E1D1F51;
-	Tue, 27 Aug 2024 17:52:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36BF91D2788;
+	Tue, 27 Aug 2024 17:53:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wdhqesp5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fBpAz1LH"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E593126F1E
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 17:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66711DDF5;
+	Tue, 27 Aug 2024 17:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724781141; cv=none; b=YO6hdJmyf5yMT3ZeANhsdMzvbfdnLt3tZe8OqOOJZ7emLfnhnVQ1Q8R8fXO+MEPswQlNJbEDrYtx7P16FMVmlhW04p16R27i5lFfHOVz4DuIQbhY2ppA8A/ulJp9kUBBVY46vR8P/ma0o3W0pcLfxBgkzYVtUJgtV1tym7uUoTM=
+	t=1724781224; cv=none; b=J+4f3S96hhCjxIYUnge9y/DVnbSVKlisPUXqBqBw7t3HQ5OUIxRvzJKX2/20/6a1wakeHobWV/4Fp2Fe0H4grvaQU5CeFPZPPl3jWgbDHusQoYg2F+k1zbq4E8++0kms+tXXrZaZqsDTsiP/K/zdaqNC22o+TTZJk2dBYDu9H1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724781141; c=relaxed/simple;
-	bh=e7BKM5olZ94L3g9T2tqv0EdE7YzzCKLnErdUyr4cFak=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=jRXRsJ7IdwKQqs5VoKXJjUZEDvhn8vIYbRtxpzLzexLLgnNxiJJCXjX9hpq/FcfYOt6ntatgwhhL/4xItOHWhNzqqOg5f3q3w7B5wmDInx3xgIqVGSscSSeV0+DcBcbwGECuaCo7ztsRQOfGTd8MdRcvXdAlM/blP9WoR8eqwqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wdhqesp5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724781138;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7HPuEU7mzMlv+Rhl994NDb/ii54cFT6bi9t362pW9Pk=;
-	b=Wdhqesp5cEY9lyeZeW52jkOpqGWauv1voInvC6qXUDTzBM4U2WnN0V1yhMq8OpeigugJNy
-	VhUvVApLlcWVRnof0wqSzFfS9rhVS0/DuptxLoRsHbhxJiSJzZflzfajKMgHyUzxhltFqx
-	nDbFG+CUECY+Jjh9/yn0lZ2VExx6en8=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-694-KxS0O9jGOEComt96m23FkQ-1; Tue,
- 27 Aug 2024 13:52:14 -0400
-X-MC-Unique: KxS0O9jGOEComt96m23FkQ-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E21141955BF2;
-	Tue, 27 Aug 2024 17:52:11 +0000 (UTC)
-Received: from [10.45.224.222] (unknown [10.45.224.222])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7FEC519560A3;
-	Tue, 27 Aug 2024 17:52:09 +0000 (UTC)
-Date: Tue, 27 Aug 2024 19:52:05 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: =?ISO-8859-2?Q?=A3ukasz_Patron?= <priv.luk@gmail.com>
-cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
-    dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dm: Implement set_read_only
-In-Reply-To: <20240821213048.726082-1-priv.luk@gmail.com>
-Message-ID: <da447e8f-0068-d847-b712-47081fa9f2e7@redhat.com>
-References: <20240821213048.726082-1-priv.luk@gmail.com>
+	s=arc-20240116; t=1724781224; c=relaxed/simple;
+	bh=Pg+Vim1QiXzWh8/BMjD6NlHKV5Iur9ofBdvIJuJxl3I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hVWlksw3VAlEvKRCn0hVQcB2uMA9NYFAJNpdE3HNQYsaJsLA18tgmsFhsj3O2AfZzbqbnmGgSvwwJOOI+i677MXVDdy37/hjcnrz1kgcS6xprk8ljEhPomKLMSzripEmNGqamzAaa5qCbs+53wR/TTS38oUv8le4DXHr4HioVU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fBpAz1LH; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2021c03c13aso43803245ad.1;
+        Tue, 27 Aug 2024 10:53:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724781222; x=1725386022; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4Bj8+gj6V7QKP757UhUX/hVK4+17oTWH2dqfcY/VtkE=;
+        b=fBpAz1LHoB820UUmcrxKEmyq06NXnHUsO+ovuIst36RT3kOlwBwOJ2ySMCe403Q/ND
+         4uRs0fO9mREKoQexV/OMCviQ1fe36jIZQqbjb3q2E4t4ckuQ6qKSS9IB5pAvmnyCVTE8
+         7vJ+ZHywSN7TYdUX5bJdt2wqilZfp68oMkjiNRsRv3fcswrZKe2IwCy07COap0lMK8SU
+         bfO4nLoqpIXDT72mvhK3434Q5IVE1Gnm4GJCRaUeNwSDtSmbGMNFazrjGer8bY8olLQn
+         EwopfzQyCsy70YrwiUJWttNSxpYW+6vFb5dL2BWBcaJTOQEsadJNRxv64S9hkCvPZYIV
+         qpmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724781222; x=1725386022;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4Bj8+gj6V7QKP757UhUX/hVK4+17oTWH2dqfcY/VtkE=;
+        b=kEcWnalCIN7PLpxDv/LA/oV93VwodQqXgCh02adrvqTaOKiJG47C7+yLZgZ2CfRP7Z
+         SHfivycB4kihcNdbgXJ1aPgBWE6Xcq/XGlYobnkLbGcqO53l0sBsSjeefl707gAx6fsp
+         mz305qmEPruu1kFkRyL0jNhOtth8/pX6Sv+DBzzas4ARVYWHXY3GZhW7Z/tla5yeJlYM
+         V8oTHqzhJ7M75aNkgOsA82V/prDItfc9GFTtpKIPBK/VfvIGso7TLYgIZkWAte6qDOYO
+         5jZIrZGy94t4rY9o0dqAXP0wwbwWLneC3y3Cia8h3OGRti9u+Z2SICyuiS5z3fpim/bJ
+         5JPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUX4d8/8Ze0SI9YV/AcTf3W/SwdDCmtTj28frl2KkA3vYOeJbalg8KjaNgDKak5XiEBDAi/ldH6W+flvC0=@vger.kernel.org, AJvYcCVQThLWvIAWX+pcRwm1ItNFivBj+/cmrzA2RpSJUSukBoFPV8n9kquXJE6l38bHJN13iPy+IX7vKJgknzOa@vger.kernel.org, AJvYcCVplmv3hkFDog5HGBmwcR2+ce/nXqhidGRYkj622L5Sdlo2YkyUlZx/4wKoKxY76T+kx353YQ9SFWsvaw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHYJk9d68NEONt9kLz/GBa7lS5Bvu2tCHtTPYqZcNf2PadKL2s
+	8IRhEW/B08NToJlNVduo3ISU4UXaGr4dvMaI+oeOejenp3OXjuCN
+X-Google-Smtp-Source: AGHT+IECPfsn+6jxJiuztxOP2GHxu8eXCDY1P6kLy7/kvpDBEBTCKluS4djYvCsE00HFkMkcybHT2Q==
+X-Received: by 2002:a17:903:2452:b0:202:3617:d52a with SMTP id d9443c01a7336-204f6793a0emr315175ad.6.1724781221860;
+        Tue, 27 Aug 2024 10:53:41 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:95c4:e75d:161d:a90])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385580d38sm85877375ad.93.2024.08.27.10.53.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 10:53:41 -0700 (PDT)
+Date: Tue, 27 Aug 2024 10:53:38 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: "Rob Herring (Arm)" <robh@kernel.org>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-input@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] input: tegra: Use of_property_read_variable_u32_array()
+ and of_property_present()
+Message-ID: <Zs4SovPgLmlrVOJr@google.com>
+References: <20240731201407.1838385-6-robh@kernel.org>
+ <zyzygwdfncus7nhnu6sgbc2wzjpih3dntgdogorg3it4vc7r6v@aufrf6kwqun3>
+ <Zs3yfc1pJDkAwhzc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="-1463811712-837155280-1724761611=:915355"
-Content-ID: <c128e9d3-00f9-b4bb-ea49-474e3a00510d@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zs3yfc1pJDkAwhzc@google.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
----1463811712-837155280-1724761611=:915355
-Content-Type: text/plain; CHARSET=ISO-8859-2
-Content-Transfer-Encoding: 8BIT
-Content-ID: <62eac86b-f87a-04be-2451-5a96461c9b07@redhat.com>
-
-
-
-On Wed, 21 Aug 2024, £ukasz Patron wrote:
-
-> This lets us change the read-only flag for device mapper block devices
-> via the BLKROSET ioctl.
+On Tue, Aug 27, 2024 at 08:36:29AM -0700, Dmitry Torokhov wrote:
+> On Tue, Aug 27, 2024 at 04:23:48PM +0200, Thierry Reding wrote:
+> > On Wed, Jul 31, 2024 at 02:14:01PM GMT, Rob Herring (Arm) wrote:
+> > > There's no need to get the length of an DT array property before
+> > > parsing the array. of_property_read_variable_u32_array() takes a
+> > > minimum and maximum length and returns the actual length (or error
+> > > code).
+> > > 
+> > > This is part of a larger effort to remove callers of of_get_property()
+> > > and similar functions. of_get_property() leaks the DT property data
+> > > pointer which is a problem for dynamically allocated nodes which may
+> > > be freed.
+> > > ---
+> > >  drivers/input/keyboard/tegra-kbc.c | 72 +++++++++++-------------------
+> > >  1 file changed, 27 insertions(+), 45 deletions(-)
+> > > 
+> > > diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
+> > > index a1765ed8c825..53f39fc155ea 100644
+> > > --- a/drivers/input/keyboard/tegra-kbc.c
+> > > +++ b/drivers/input/keyboard/tegra-kbc.c
+> > > @@ -491,12 +491,10 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
+> > >  	struct device_node *np = kbc->dev->of_node;
+> > >  	u32 prop;
+> > >  	int i;
+> > > -	u32 num_rows = 0;
+> > > -	u32 num_cols = 0;
+> > > +	int num_rows;
+> > > +	int num_cols;
+> > >  	u32 cols_cfg[KBC_MAX_GPIO];
+> > >  	u32 rows_cfg[KBC_MAX_GPIO];
+> > > -	int proplen;
+> > > -	int ret;
+> > >  
+> > >  	if (!of_property_read_u32(np, "nvidia,debounce-delay-ms", &prop))
+> > >  		kbc->debounce_cnt = prop;
+> > > @@ -510,56 +508,23 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
+> > >  	    of_property_read_bool(np, "nvidia,wakeup-source")) /* legacy */
+> > >  		kbc->wakeup = true;
+> > >  
+> > > -	if (!of_get_property(np, "nvidia,kbc-row-pins", &proplen)) {
+> > > -		dev_err(kbc->dev, "property nvidia,kbc-row-pins not found\n");
+> > > -		return -ENOENT;
+> > > -	}
+> > > -	num_rows = proplen / sizeof(u32);
+> > > -
+> > > -	if (!of_get_property(np, "nvidia,kbc-col-pins", &proplen)) {
+> > > -		dev_err(kbc->dev, "property nvidia,kbc-col-pins not found\n");
+> > > -		return -ENOENT;
+> > > -	}
+> > > -	num_cols = proplen / sizeof(u32);
+> > > -
+> > > -	if (num_rows > kbc->hw_support->max_rows) {
+> > > -		dev_err(kbc->dev,
+> > > -			"Number of rows is more than supported by hardware\n");
+> > > -		return -EINVAL;
+> > > -	}
+> > > -
+> > > -	if (num_cols > kbc->hw_support->max_columns) {
+> > > -		dev_err(kbc->dev,
+> > > -			"Number of cols is more than supported by hardware\n");
+> > > -		return -EINVAL;
+> > > -	}
+> > > -
+> > > -	if (!of_get_property(np, "linux,keymap", &proplen)) {
+> > > +	if (!of_property_present(np, "linux,keymap")) {
+> > >  		dev_err(kbc->dev, "property linux,keymap not found\n");
+> > >  		return -ENOENT;
+> > >  	}
+> > >  
+> > > -	if (!num_rows || !num_cols || ((num_rows + num_cols) > KBC_MAX_GPIO)) {
+> > > -		dev_err(kbc->dev,
+> > > -			"keypad rows/columns not properly specified\n");
+> > > -		return -EINVAL;
+> > > -	}
+> > > -
+> > >  	/* Set all pins as non-configured */
+> > >  	for (i = 0; i < kbc->num_rows_and_columns; i++)
+> > >  		kbc->pin_cfg[i].type = PIN_CFG_IGNORE;
+> > >  
+> > > -	ret = of_property_read_u32_array(np, "nvidia,kbc-row-pins",
+> > > -				rows_cfg, num_rows);
+> > > -	if (ret < 0) {
+> > > +	num_rows = of_property_read_variable_u32_array(np, "nvidia,kbc-row-pins",
+> > > +				rows_cfg, 1, KBC_MAX_GPIO);
+> > > +	if (num_rows < 0) {
+> > >  		dev_err(kbc->dev, "Rows configurations are not proper\n");
+> > > -		return -EINVAL;
+> > > -	}
+> > > -
+> > > -	ret = of_property_read_u32_array(np, "nvidia,kbc-col-pins",
+> > > -				cols_cfg, num_cols);
+> > > -	if (ret < 0) {
+> > > -		dev_err(kbc->dev, "Cols configurations are not proper\n");
+> > > +		return num_rows;
+> > > +	} else if (num_rows > kbc->hw_support->max_rows) {
+> > > +		dev_err(kbc->dev,
+> > > +			"Number of rows is more than supported by hardware\n");
+> > >  		return -EINVAL;
+> > >  	}
+> > >  
+> > > @@ -568,11 +533,28 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
+> > >  		kbc->pin_cfg[rows_cfg[i]].num = i;
+> > >  	}
+> > >  
+> > > +	num_cols = of_property_read_variable_u32_array(np, "nvidia,kbc-col-pins",
+> > > +				cols_cfg, 1, KBC_MAX_GPIO);
+> > > +	if (num_cols < 0) {
+> > > +		dev_err(kbc->dev, "Cols configurations are not proper\n");
+> > > +		return num_cols;
+> > > +	} else if (num_cols > kbc->hw_support->max_columns) {
+> > > +		dev_err(kbc->dev,
+> > > +			"Number of cols is more than supported by hardware\n");
+> > > +		return -EINVAL;
+> > > +	}
+> > > +
+> > >  	for (i = 0; i < num_cols; i++) {
+> > >  		kbc->pin_cfg[cols_cfg[i]].type = PIN_CFG_COL;
+> > >  		kbc->pin_cfg[cols_cfg[i]].num = i;
+> > >  	}
+> > >  
+> > > +	if (!num_rows || !num_cols || ((num_rows + num_cols) > KBC_MAX_GPIO)) {
+> > > +		dev_err(kbc->dev,
+> > > +			"keypad rows/columns not properly specified\n");
+> > > +		return -EINVAL;
+> > > +	}
+> > 
+> > Previously we wouldn't try to initialize the columns when the
+> > rows/columns were invalid, so this block could move before the last for
+> > loop above.
+> > 
+> > But it doesn't really matter given that these are exceptions and really
+> > shouldn't happen, so:
+> > 
+> > Acked-by: Thierry Reding <treding@nvidia.com>
 > 
-> Signed-off-by: £ukasz Patron <priv.luk@gmail.com>
-> ---
->  drivers/md/dm.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+> I don't quite like of_property_read_variable_u32_array() because it is
+> OF-specific. device_property_count_u32() will return the number of
+> elements in an array. But I guess this driver will only be used on an OF
+> system... 
 > 
-> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-> index 87bb90303435..538a93e596d7 100644
-> --- a/drivers/md/dm.c
-> +++ b/drivers/md/dm.c
-> @@ -410,6 +410,12 @@ static int dm_blk_getgeo(struct block_device *bdev, struct hd_geometry *geo)
->  	return dm_get_geometry(md, geo);
->  }
->  
-> +static int dm_blk_set_read_only(struct block_device *bdev, bool ro)
-> +{
-> +	set_disk_ro(bdev->bd_disk, ro);
-> +	return 0;
-> +}
-> +
->  static int dm_prepare_ioctl(struct mapped_device *md, int *srcu_idx,
->  			    struct block_device **bdev)
->  {
-> @@ -3666,6 +3672,7 @@ static const struct block_device_operations dm_blk_dops = {
->  	.release = dm_blk_close,
->  	.ioctl = dm_blk_ioctl,
->  	.getgeo = dm_blk_getgeo,
-> +	.set_read_only = dm_blk_set_read_only,
->  	.report_zones = dm_blk_report_zones,
->  	.pr_ops = &dm_pr_ops,
->  	.owner = THIS_MODULE
-> -- 
-> 2.46.0
+> Applied, thank you.
 
-Hi
+Oh, wait, can I get your SOB please?
 
-Device mapper already calls set_disk_ro in the do_resume function. So, the 
-problem here is that the value set using set_read_only will be overwritten 
-as soon as a new table will be loaded.
-
-I'd like to ask why is this patch needed? Why do you want to set read-only 
-status using this ioctl instead of using the existing table flag?
-
-If this is needed, we need to add another flag that is being set by 
-dm_blk_set_read_only, so that dm_blk_set_read_only and dm_resume won't 
-step over each other's changes.
-
-Mikulas
----1463811712-837155280-1724761611=:915355--
-
+-- 
+Dmitry
 
