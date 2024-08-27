@@ -1,112 +1,105 @@
-Return-Path: <linux-kernel+bounces-302699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC9A396020F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:40:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 636BB960211
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 412921F20C96
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:40:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2497D28110A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1468F146590;
-	Tue, 27 Aug 2024 06:39:22 +0000 (UTC)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5161149C7A;
+	Tue, 27 Aug 2024 06:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MDj1d/+W"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4363413D53F;
-	Tue, 27 Aug 2024 06:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD23713D53F
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724740761; cv=none; b=g4+7ttij1v34V1Op4GErryVAOiQbKlmRKMnil8PdiB0psTkmTQTDtWp9hMs7bfhYBVVp/6wuxZ/2d3rW9ZcCgJZprGpK9iRxG9tKlujIH7XZeaW5ymoTp/Wj+Jj1KlUTtxTpFxJorjWInFsdtuNCgcCNQpKgd0lc0Iq4hWvXQIE=
+	t=1724740826; cv=none; b=AqkbGIWqaqWT57mE/Jdmp5uZMpQJmVNvwVUgDG5OPwzXo3nF9iZ2b7+0rQLuDIRTMy11hRs7Z96ji1CIN1y1B3knY4KHiM9Xa/dYtsN70FmK4ncgCvG8YiziDSkwLXcJ1b43wR8i2JvkoOSVP3z2ES6ahiGFo9YdnR1mm3EC0iQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724740761; c=relaxed/simple;
-	bh=kw+SmGbNgU/Y7Ultd3TRCIDvjLA02UIU6oeUdCnjbAA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AbfwJO/xSJjmWWFJsRA+8OJkN3CM4yBNPsnQsC+2AvstVhncRhAWSSdlzH64pBoR+23BuLy0Ps93NVU1h3bsl6YaS8cfZvOtvXu1ajwdFPfIfzr68raA5csW8+mNUz/rZqpMaFghJLXOGezajCVXxALyy/vAvDU1Dwk7R9CsAfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6cf6d1a2148so9492207b3.3;
-        Mon, 26 Aug 2024 23:39:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724740757; x=1725345557;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KGZ1SOA396NzpzsyvzdR1JE9oP9KWAqRS+PYDvwpUmk=;
-        b=Eh2N57MfpCJ6FHeqmS1F2iYZT10xwKkmNScxYBF6HIz7ZlOwdPjE/zkb9ihfmSqYck
-         pRs3QxW1XFm/Hc5ouhHRoErYi+/kFh5LzqH0e6A6NE2BstMt7uW3yDriWAxYrWL0IbOq
-         n5ihXn0X++zmXfZs8CqfSFu7xVeDzA71xryt9X1/n69ssL97aKxOICuLglV/KWBL+toN
-         IRMCHIX7VKb3n++C1X5iHW5P7hvyNRvPXiSYMB0A3He+45Z7HExY+MmY8DEZv4pXzKMH
-         qsHEuWi+tWV0JyvaM9hv5BaVmVTu/1l1yJVDYbudlWh2lTDo+eaeF/w45mLqj+xaPvOK
-         D+2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUA8mL3YhccSfr7ZtpI/Qx5A46aWXqDU6dmsjKFdDSgHB+5e25BrHpviIwMqtiTCFHJnrmgXH183z0p5Q==@vger.kernel.org, AJvYcCUrE5x4R36WpNqA61atf9CB3UuwWaQiN7KJV0IqJXsy71q41VI0fg6a7sZmF2SPqe0nPQ3JclHDkZo=@vger.kernel.org, AJvYcCWGHUqbcW0RwlCSE1BkFmPwtFKdvZCKTE/i4b5GVlTDGgrzfJZb+OqXeJkvyFrttNKKg6rA++RUiuzjeN5cwVVtAO4=@vger.kernel.org, AJvYcCXNB1Z304FD0d63sevP2xmHxDRVHyy+qU5L/AedHGQoSg6VHrzdHIPoeTiVo7Vznbr2CGsxR4GopvpmVSSg@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjDb1blniTuChc4S/DJY2D7IlL1WBcEdv+O6qlmqHYkIMCqlz7
-	A3pT9YTWMiRFbf8KFtpewqZJygQS0DK2A94GzpO/97/FLdxZZ5mfaYsXMsnB
-X-Google-Smtp-Source: AGHT+IGSGJGo9EYq8UwOLeR7HNY9lgHHLu6aRq0fNm2UcjnllzrOncfhlYU6EHq/THHLlb3MnG6e6w==
-X-Received: by 2002:a05:690c:4b08:b0:6be:2044:935b with SMTP id 00721157ae682-6cfba8726cdmr23225287b3.25.1724740756855;
-        Mon, 26 Aug 2024 23:39:16 -0700 (PDT)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6c39d3a9df2sm17952847b3.103.2024.08.26.23.39.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 23:39:16 -0700 (PDT)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6b59a67ba12so46965687b3.1;
-        Mon, 26 Aug 2024 23:39:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVZD2ht3JNYB5HhrWvZiAlUhFYX0xtOsCdep2+ndvcuhDxEM1RXNqhR8Q4lJz30Liio/5erlZFTAcsCvyj4@vger.kernel.org, AJvYcCWTfEX2caGBQhaak5S5nwP9ZkArjgFCPl6NIcBRL/lMNLva/HbMXxvbNhGFjJsaFX1ddRzXUZAyJUl2g9JNmnWDpEk=@vger.kernel.org, AJvYcCWrU+3GwFK7c2Awsjs7Z+1bLuvXEM6O9U/+VGMPbcVBgCQMUWTohTWjA68+5E8u55Au2c7y+AleFel7xA==@vger.kernel.org, AJvYcCWvWL0yHs97szEltq9fek56tEzqfe03XplHjPzvRt0b5f1PFxvXCw+439mTcwBAelryr54VgY97PaI=@vger.kernel.org
-X-Received: by 2002:a05:690c:38b:b0:6c7:a120:e10f with SMTP id
- 00721157ae682-6cfbbbd4c68mr20021307b3.29.1724740755948; Mon, 26 Aug 2024
- 23:39:15 -0700 (PDT)
+	s=arc-20240116; t=1724740826; c=relaxed/simple;
+	bh=uAcZu4y7bLgSB9heMOo1Yp8Y1l5hXVmDLaXgDUIlAH0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b1z0qmC1fyS1KJynxTWqw3OVgh1rF3KJATKo2Ubk44wRWyZhuE0maYwSJWxgZMHVdI6ycrIYVqYb0zFns2MvsabBbz7WwhqknEgNNaCPNnHzlkc18Qiqte4Qx2ASNgvZZhekzJisQjXovi7ixemVGXEz8+2ZOndJULOqpCzER8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MDj1d/+W; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 27 Aug 2024 02:40:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724740821;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EQptxE7qA2VWIgX3oNQ1mmeqR6GHf9K4w2oDVMxZa14=;
+	b=MDj1d/+WOS5gCRitsfLH/21htkLMK4K2TIyc1MjdWb4dK3v74eylUATRf/+g4Be72CAJh7
+	fzv9vUbTA26ve+x7v0o/7FORTyGpY9JqJ7tG7RX0B1mJDSXS3uyYkuxYyVHjkQ7D+uAV3R
+	GAQt+lBjNurKvR3kiN0ZcLosVVtHkqo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <ru3d2bfrnyap7t3ya5kke3fqyrnj2hgbl4z2negbqkqj7z4mr2@gqrstl4lpl5h>
+References: <20240826085347.1152675-1-mhocko@kernel.org>
+ <20240826085347.1152675-2-mhocko@kernel.org>
+ <egma4j7om4jcrxwpks6odx6wu2jc5q3qdboncwsja32mo4oe7r@qmiviwad32lm>
+ <ZszeUAMgGkGNz8H9@tiehlicka>
+ <d5zorhk2dmgjjjta2zyqpyaly66ykzsnje4n4j4t5gjxzt57ty@km5j4jktn7fh>
+ <ZszlQEqdDl4vt43M@tiehlicka>
+ <ut5zfyvpkigjqev43kttxhxmpgnbkfs4vdqhe4dpxr6wnsx6ct@qmrazzu3fxyx>
+ <Zs1rvLlk0mXklHyf@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827034841.4121-1-rongqianfeng@vivo.com> <20240827034841.4121-2-rongqianfeng@vivo.com>
-In-Reply-To: <20240827034841.4121-2-rongqianfeng@vivo.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 27 Aug 2024 08:39:03 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWNJJ6q88MA+bgimmYVLyO6gp7MomLkhNRwLTLdMkkFYQ@mail.gmail.com>
-Message-ID: <CAMuHMdWNJJ6q88MA+bgimmYVLyO6gp7MomLkhNRwLTLdMkkFYQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] i2c: emev2: Use devm_clk_get_enabled() helpers
-To: Rong Qianfeng <rongqianfeng@vivo.com>
-Cc: andriy.shevchenko@intel.com, biju.das.jz@bp.renesas.com, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	Paul Cercueil <paul@crapouillou.net>, linux-renesas-soc@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mips@vger.kernel.org, opensource.kernel@vivo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zs1rvLlk0mXklHyf@tiehlicka>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Aug 27, 2024 at 5:49=E2=80=AFAM Rong Qianfeng <rongqianfeng@vivo.co=
-m> wrote:
-> The devm_clk_get_enabled() helpers:
->     - call devm_clk_get()
->     - call clk_prepare_enable() and register what is needed in order to
->      call clk_disable_unprepare() when needed, as a managed resource.
->
-> This simplifies the code and avoids the calls to clk_disable_unprepare().
->
-> While at it, no need to save clk pointer, drop sclk from struct
-> em_i2c_device.
->
-> Signed-off-by: Rong Qianfeng <rongqianfeng@vivo.com>
+On Tue, Aug 27, 2024 at 08:01:32AM GMT, Michal Hocko wrote:
+> You are not really answering the main concern I have brought up though.
+> I.e. GFP_NOFAIL being fundamentally incompatible with NORECLAIM semantic
+> because the page allocator doesn't and will not support this allocation
+> mode.  Scoped noreclaim semantic makes such a use much less visible
+> because it can be deep in the scoped context there more error prone to
+> introduce thus making the code harder to maintain. 
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+You're too attached to GFP_NOFAIL.
 
-Gr{oetje,eeting}s,
+GFP_NOFAIL is something we very rarely use, and it's not something we
+want to use. Furthermore, GFP_NOFAIL allocations can fail regardless of
+this patch - e.g. if it's more than 2 pages, it's not going to be
+GFP_NOFAIL. In general you can't avoid having error paths for memory
+allocations, and GFP_NOFAIL can't fundamentally change that.
 
-                        Geert
+Stop trying to design things around GFP_NOFAIL.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+> I do see why you would like to have NOWAIT kvmalloc support available
+> and I also do see challenges in achieving that. But I completely fail to
+> see why you are bring that up _here_ as that is not really relevant to
+> PF_MEMALLOC_NORECLAIM use by bcachefs because it demonstrably doesn't
+> need that. There is no other user of the flag at the moment so dropping
+> the flag before there is more misuse is a reasonable goal. If you want
+> to bring up vmalloc NOWAIT support then feel free to do that in another
+> context and we can explore potential ways to achieve that.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+The inconsistencies between what PF_MEMALLOC supports and what gfp flags
+support are quite relevant. If gfp flags aren't plumbed everywhere, and
+aren't going to be plumbed everywhere (and that is the current
+decision), then we must have PF_MEMALLOC support.
 
