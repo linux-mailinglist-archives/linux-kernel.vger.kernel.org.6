@@ -1,122 +1,143 @@
-Return-Path: <linux-kernel+bounces-303149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3967096081F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:03:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1E34960820
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:05:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA8DD284122
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:03:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56C4BB2145C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A0019EEB7;
-	Tue, 27 Aug 2024 11:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ar5yNACr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5EA19DF77;
+	Tue, 27 Aug 2024 11:05:02 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F2854648
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6561B674
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724756629; cv=none; b=PRVGHuZ5ma1WBAAjRzfkoJkpQeUNdR/cO6ZFzbRiUlqqM6gOzpMNZ1iNn/wLxLJqt6PKeAfdp5SH+sqFgEUDDpYSqZd2PYcEdp3buufSEppaQr4c5s5hfzyDtDMxKW+Eg0y1Hqa11hrT0TuDnGyQ6XrrepFKWTmGDEURJA1IWS8=
+	t=1724756702; cv=none; b=WvhgX5eU4xFRpbLWjBzdNpccO7vFiszbHOBFmXjNtLDvnjxbXbI0tkYad/YNhsnNGuybqheVypVwiPd2LW7RiiNMVErfVA5PNqO3mZAQAWv6lJyDtgjAgVINB4+iGZPutITJimacwrj+kzsaskCppZN+XMfkmeEU4DzG0DZkXCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724756629; c=relaxed/simple;
-	bh=A+MNWj+OQxto9jsh0jURUa7HxhqCaOn/gLNcSl4YUqI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sy6Mq1TIW2h9bNHDmO/FqC2Lgnt1xtXLgt6j3JIZPQ5t9j15ei+fG2romg6rZJ3vmv1YRw9D3dbO1vMxnpwp4zFqTeoTVMnRIT5ebDKB3O1vwx4YE/SHfBI5vgnkVXsAbdSwltD0VeEnV5sL+lRZ4LTp+OXRB3rarahmWWpWyj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ar5yNACr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724756626;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UgSQAdyFzCk1B7hAbRKds1KXjrwE0OwyWBIAVqcPcqY=;
-	b=ar5yNACrRYC75CCOD443LBCYnW7bDLCRUQTJXH/9xhqzow/fJJ7ewWImEYe1MZw9rpMFfX
-	3xFG55A4HZ8sovxQi+7W5SFODG9banpZfh156WKnO7EA9ZX0059/CPeJegUbAa9ueKxxXa
-	zslFtwYwmDgVY7jb8PeC/NpBRiyQPiM=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-202-R2Ga3nu9PfipDostbjI-WA-1; Tue, 27 Aug 2024 07:03:44 -0400
-X-MC-Unique: R2Ga3nu9PfipDostbjI-WA-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42816aacabcso47254855e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 04:03:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724756623; x=1725361423;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UgSQAdyFzCk1B7hAbRKds1KXjrwE0OwyWBIAVqcPcqY=;
-        b=rdsVfSnDxgvzvNtyPMxn/+HXOmgOKp+jJwNKmZFdowuheiR63H9YmW+R3yIia3Be0q
-         bXdS/7wNEF5prRJaRAkL9cbtAR0Zj0Vhan98bkEjtI2i6XtvWr6FmpBt7ugBnQ41M6k2
-         idyfej/gR6hI7P4UX1iOc1n0XMO/fnJYtznGrOfCMXIeUujNxP4tTJ8S+xXi6aeKAMly
-         73VenPXlQPY4xSGQ1Pc0fnFCgRe/8Hk1VmfC1XFqceUMIE1BhcqrrhNjIZeFKjZsp1FS
-         VWNRqruF5QNbU4nPtFge+Pl8J1nkO8AGrJefCVApmby0Gom9sizpgPCrW3BH1lvbSjHG
-         80NA==
-X-Forwarded-Encrypted: i=1; AJvYcCWc8lrGQCqIdZbUCzaBeQGfTKiXwFqB5BqVK3/aNLffFDxKaorz8qf/ttxExVfrr4JSeGKqnK+CgHv9SzM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMrJCLtRyDdL1X15qkGeQ8s6Fc2mxvVb+0yCXgfRTlFP2x1UUy
-	M4zd7URdmZa1HjPQeZ2uQKuU6hOMR4Rz3Ms1dF0h9xE9gcr3mIc9NhXI25ZORwkL802MuoYbZEj
-	Lx0vGVCq1XzWxIOwnmo3amncbEguon6jVGnqa8AyduXf517d18RnF9Er8RuArDQ==
-X-Received: by 2002:a05:600c:1906:b0:426:5416:67e0 with SMTP id 5b1f17b1804b1-42acca0228fmr88165335e9.31.1724756622874;
-        Tue, 27 Aug 2024 04:03:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE5rXVSWLGAoMAVG7lpEUZCl6uE3GH7MnHGgSFiGY/SippMRXHtMs4XqJiD5ahbRzNGg7baFg==
-X-Received: by 2002:a05:600c:1906:b0:426:5416:67e0 with SMTP id 5b1f17b1804b1-42acca0228fmr88165075e9.31.1724756622350;
-        Tue, 27 Aug 2024 04:03:42 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:1b67:7410::f71? ([2a0d:3344:1b67:7410::f71])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42b9e7b7f87sm12193365e9.1.2024.08.27.04.03.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 04:03:41 -0700 (PDT)
-Message-ID: <a7a33be8-6ef6-402e-b821-8ce9d4620a1b@redhat.com>
-Date: Tue, 27 Aug 2024 13:03:40 +0200
+	s=arc-20240116; t=1724756702; c=relaxed/simple;
+	bh=EkO41esWrahqVLQDgAHkhpO5Wu6cVLlWqb4iOcHwmYQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JqOcOvNJXK9s8yAj1uBXx7SCUYUi+VsYJHUycaSl/cE03EX5Ud2j7rFDd02+amppPx7lohctw2lLPQkKl7eDToif0O7cukKfMsNJM7mvfPPuSKpxrlzU/lTgFUphaR5sHOu+KipMjPUF3kfu0yzUcnU14iZoTGvTEf7jJsGq/10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WtPnn64hYz2CnnC;
+	Tue, 27 Aug 2024 19:04:45 +0800 (CST)
+Received: from kwepemm600004.china.huawei.com (unknown [7.193.23.242])
+	by mail.maildlp.com (Postfix) with ESMTPS id DC2931A0188;
+	Tue, 27 Aug 2024 19:04:55 +0800 (CST)
+Received: from [10.67.121.59] (10.67.121.59) by kwepemm600004.china.huawei.com
+ (7.193.23.242) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 27 Aug
+ 2024 19:04:55 +0800
+Message-ID: <858c23e1-2ff9-34fd-80b4-405ebd54d287@huawei.com>
+Date: Tue, 27 Aug 2024 19:04:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: bridge: fix switchdev host mdb entry updates
-To: Felix Fietkau <nbd@nbd.name>, netdev@vger.kernel.org,
- Roopa Prabhu <roopa@nvidia.com>, Nikolay Aleksandrov <razor@blackwall.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>
-Cc: bridge@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240822163836.67061-1-nbd@nbd.name>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20240822163836.67061-1-nbd@nbd.name>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v2 2/6] soc: hisilicon: kunpeng_hccs: Return failure on
+ having not die or port information
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+CC: <xuwei5@hisilicon.com>, <linux-kernel@vger.kernel.org>, <soc@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <krzk@kernel.org>,
+	<wanghuiqiang@huawei.com>, <liuyonglong@huawei.com>
+References: <20240718071134.31155-1-lihuisong@huawei.com>
+ <20240823031059.32579-1-lihuisong@huawei.com>
+ <20240823031059.32579-3-lihuisong@huawei.com>
+ <20240823093345.000024f2@Huawei.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <20240823093345.000024f2@Huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemm600004.china.huawei.com (7.193.23.242)
 
-Hi,
 
-On 8/22/24 18:38, Felix Fietkau wrote:
-> When a mdb entry is removed, the bridge switchdev code can issue a
-> switchdev_port_obj_del call for a port that was not offloaded.
-> 
-> This leads to an imbalance in switchdev_port_obj_add/del calls, since
-> br_switchdev_mdb_replay has not been called for the port before.
-> 
-> This can lead to potential multicast forwarding issues and messages such as:
-> mt7915e 0000:01:00.0 wl1-ap0: Failed to del Host Multicast Database entry
-> 	(object id=3) with error: -ENOENT (-2).
-> 
-> Fix this issue by checking the port offload status when iterating over
-> lower devs.
-> 
-> Signed-off-by: Felix Fietkau <nbd@nbd.name>
-
-This looks like a fix suitable for the net tree and deserving a fixes 
-tag. Could you please repost adding both the target tree prefix and tag?
-
-Thanks,
-
-Paolo
-
+在 2024/8/23 16:33, Jonathan Cameron 写道:
+> On Fri, 23 Aug 2024 11:10:55 +0800
+> Huisong Li <lihuisong@huawei.com> wrote:
+>
+>> Driver is unavailable if all die number or all port number obtained from
+>> firmware are zero. So return failure in this case.
+> Perhaps should include a little info on whether there are firmware's out
+> there that do this or not?  I.e. Fix, or hardening?
+Ack
+just hardening code.
+>
+>> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+> Otherwise, this lgtm.
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>
+>> ---
+>>   drivers/soc/hisilicon/kunpeng_hccs.c | 8 ++++++--
+>>   1 file changed, 6 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/soc/hisilicon/kunpeng_hccs.c b/drivers/soc/hisilicon/kunpeng_hccs.c
+>> index c4a57328f22a..6e88f597f267 100644
+>> --- a/drivers/soc/hisilicon/kunpeng_hccs.c
+>> +++ b/drivers/soc/hisilicon/kunpeng_hccs.c
+>> @@ -451,6 +451,7 @@ static int hccs_query_all_die_info_on_platform(struct hccs_dev *hdev)
+>>   	struct device *dev = hdev->dev;
+>>   	struct hccs_chip_info *chip;
+>>   	struct hccs_die_info *die;
+>> +	bool has_die_info = false;
+>>   	u8 i, j;
+>>   	int ret;
+>>   
+>> @@ -459,6 +460,7 @@ static int hccs_query_all_die_info_on_platform(struct hccs_dev *hdev)
+>>   		if (!chip->die_num)
+>>   			continue;
+>>   
+>> +		has_die_info = true;
+>>   		chip->dies = devm_kzalloc(hdev->dev,
+>>   				chip->die_num * sizeof(struct hccs_die_info),
+>>   				GFP_KERNEL);
+>> @@ -480,7 +482,7 @@ static int hccs_query_all_die_info_on_platform(struct hccs_dev *hdev)
+>>   		}
+>>   	}
+>>   
+>> -	return 0;
+>> +	return has_die_info ? 0 : -EINVAL;
+>>   }
+>>   
+>>   static int hccs_get_bd_info(struct hccs_dev *hdev, u8 opcode,
+>> @@ -601,6 +603,7 @@ static int hccs_query_all_port_info_on_platform(struct hccs_dev *hdev)
+>>   	struct device *dev = hdev->dev;
+>>   	struct hccs_chip_info *chip;
+>>   	struct hccs_die_info *die;
+>> +	bool has_port_info = false;
+>>   	u8 i, j;
+>>   	int ret;
+>>   
+>> @@ -611,6 +614,7 @@ static int hccs_query_all_port_info_on_platform(struct hccs_dev *hdev)
+>>   			if (!die->port_num)
+>>   				continue;
+>>   
+>> +			has_port_info = true;
+>>   			die->ports = devm_kzalloc(dev,
+>>   				die->port_num * sizeof(struct hccs_port_info),
+>>   				GFP_KERNEL);
+>> @@ -629,7 +633,7 @@ static int hccs_query_all_port_info_on_platform(struct hccs_dev *hdev)
+>>   		}
+>>   	}
+>>   
+>> -	return 0;
+>> +	return has_port_info ? 0 : -EINVAL;
+>>   }
+>>   
+>>   static int hccs_get_hw_info(struct hccs_dev *hdev)
+> .
 
