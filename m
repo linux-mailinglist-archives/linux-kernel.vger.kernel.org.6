@@ -1,118 +1,122 @@
-Return-Path: <linux-kernel+bounces-303496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33DD3960CE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:04:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A7D7960D1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 642701C20F17
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:04:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 278EC1C22786
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CEE1C1725;
-	Tue, 27 Aug 2024 14:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81661C7B73;
+	Tue, 27 Aug 2024 14:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cbj3RNSq"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Bf+7eYHp"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6A61A0739;
-	Tue, 27 Aug 2024 14:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC041C3F0D;
+	Tue, 27 Aug 2024 14:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724767438; cv=none; b=nTdZhC26ql51omUMqT8HW8GFPhHFJt8x3qGhqoceJUm6HYCRNtbMjXAiwtOt+8vUNmsUIsndPUwj104dA90h/KyiQqqerD0mw4eiAGVkeZreWZdThC8GCRjrHVhQhVhsICD18ihgdI08xX24e0nhBRx9lg9BwboEZ/X2awNZ6v0=
+	t=1724767566; cv=none; b=sw+bNPaGolQqME+fJMtP38OcJmUyduJ3mDnqZizpD3Fruz3TQMaPa2LM64Y7fcC5C70KZoWYKn5+OdPj66XFH0Z7sLamcyixeCYK9TBBuIaRw+cHfbv9vWpP4O8Rw3TgUisnnAAuFfT231LVg/g84fMc1v8TrS5LIxYxNefm9xU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724767438; c=relaxed/simple;
-	bh=8mK6mReE3DyTnXcZXEX6Am2kQqjJci0Jpm4bYw9fi2M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OLB09kwY4ccnsbDS/EWS55/7TYgGZBOs4Rijo7dit9LYNxCKrZIueCuYtmKgJfwS2qh6AXXCVXx/bbWxTHxfLJE1o3BG8LQwB6FpNK4vDSrlzww8kLosK/RJRTe+6ljmEWpudCcrSt9U31HKQq2tCvJ2303rgmY/4FkEghCqV08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cbj3RNSq; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8692bbec79so707691166b.3;
-        Tue, 27 Aug 2024 07:03:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724767435; x=1725372235; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7QLC+haGvzH0F2LMbU5gpuO3FyU2i0QjVlMNQG6Nbak=;
-        b=Cbj3RNSqoT2/ae6Mgp+QnbNG8Cr5BvsxiI3BbmVsWrcmkCAvoDJt/mfS2ElLjt8AZQ
-         UTriUscipn6I+wgkBYjrm02Rg29FLK0x2TMCdqrzAbtD/Z6/PMH39abFIOv+/f9G6hs4
-         BKV1ulxJtHd4AfC/PUPKbwZWx8k6jwltdb5vCTnBnjaMRtQrNWGRju4kW9yWUcr40iAD
-         PALFP49JDv3v61gspwTKwUNP4IILkWHUtZcjXGhgQpHP7AMK4xEsLgc3ky1nG0g3Jkwy
-         smfkjs8w0pKFK452sxEUZVW/4T2vb0oRhlRUvE7ru7cZreXn+rg+N4Y0t/mhiPr0x/qx
-         3Niw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724767435; x=1725372235;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7QLC+haGvzH0F2LMbU5gpuO3FyU2i0QjVlMNQG6Nbak=;
-        b=jyDwfvhc6lJi7FoGh+IHu5eSV/ukaJfSVgu/JWhCY4xSHOwI8LhJMznMHGC7Md1uie
-         9GYeRyl72hjAaVxSYNIpUh/c0LbOVM+KismEvFp6n8QSBQztIASIvaj28Dj/BVnhjl9T
-         4/uY4xpCoReUZbcfJVT30Sru3bdxcpju5N+QCkJDEtBisEB2YjCdrzHvUgSfKpxVM3YU
-         djdQnMx8j74553cEFQTQ38lsc0l7CSJZ+zsOIRsKUMyleiYmx3PePfdiVoMj3PpwI7Ml
-         IBiDo1O/Tb5DFQbljvDWRs5NLqc33YXAuIY/VJjyOXlMZsJ7w7tbbAHvUvoDoOR2ZuJ8
-         1BWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVs5M3IoEmtghHuKNYAAlCooHXYtGWpjTV8C2qF/qz6ToCY1z4skoWFp5Z0ks2x6RVmQ3wBUXItEbyR@vger.kernel.org, AJvYcCWXwdBn9e/iiJ8rNaYd1NxIwxnRXeS+mGEctmbtxict4xncnnndpu3PrT8ISiXbpgW+MYSAKaK3/U1sTWU=@vger.kernel.org, AJvYcCXQFA0l0tJBPmC5eWucx7TLbn5XR7AtW+F+CjkX4/jjY4PNvvAZ4cImyPsTZZIsRg33PeGnIN/lupiNDog+@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVdaUBh/bNMrfEWvsDVWtfJNqoictw21jnWAhH/kgCvSGs4iEB
-	l6BYCCJK3RSXQV7noX9cy/YEbjDdF4UXep/IZOXVU93BurD29r8b
-X-Google-Smtp-Source: AGHT+IG2hT2WgMAdhoPm8TTYFp3cYe4IosIAg6E11+to02wabt81KWLrWBkSWNsZNEKuaxK1vgG8MA==
-X-Received: by 2002:a17:907:2cc6:b0:a86:b727:3f27 with SMTP id a640c23a62f3a-a86e3c1d00emr208884566b.52.1724767433916;
-        Tue, 27 Aug 2024 07:03:53 -0700 (PDT)
-Received: from localhost (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e54b5cd8sm114801066b.97.2024.08.27.07.03.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 07:03:53 -0700 (PDT)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] dt-bindings: i2c: nvidia,tegra20-i2c: minor cleanups
-Date: Tue, 27 Aug 2024 16:03:50 +0200
-Message-ID: <172476741772.1248444.18184463926689075530.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240820-dt-bindings-i2c-nvidia-v1-0-2763e9a9a1b0@linaro.org>
-References: <20240820-dt-bindings-i2c-nvidia-v1-0-2763e9a9a1b0@linaro.org>
+	s=arc-20240116; t=1724767566; c=relaxed/simple;
+	bh=2gUrI/wnDkkwevIEBsqI2sQI/7DW27Ycob+3WGd3ImA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Xaq033zHDMhK93WasPUepuN7xng9wNNwTG71PiFA6rxz+Y2aC9HsaAj7qdL1zdE1FVCtIsCebobryfDeLSd6+Os+9JUrRz91a6cJZUxASBMFmwpUXKPQ+uQkY6E5QE6WRMVxlF5kwOhtL7QSOZoRQREI0YSFXzx0jH6kYKKa0JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Bf+7eYHp; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47RD2FKI022301;
+	Tue, 27 Aug 2024 16:05:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=OWUzcb7sZC3fpmb7ZiuMCd
+	Jr03L3mabve5VPP9D+l+A=; b=Bf+7eYHp/Rd6NAA6DfRy4CLOpA4eynoi6fioTM
+	gLOB+pHKiECfWGQsagJ/dS9VA99P/lXQcVSxZ7K94FKF0POqMkgncYpj5xIEGWie
+	Xv3++IQcwmS4weOjiUh9cYnjJJKLrXwYDubhXeONcC3q3T77oNzTaFCzBH1XFj08
+	7mlLIbbvE/m3XPralZxdfUbgcezz2fkk09C8d4ZE/anxkWzvegauS0cJ5vPKKc1/
+	fMsPLowVNc61uU/zHs7xP/Pq8GBs8q2fhzhRewm0mLRaKZkpSnRdnkkDPUXBaXzB
+	ST7hARvw9avuFin3rO/Sn5RFUs0VypZEY+kMSgA1zgm52ozg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 419fb408vb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 Aug 2024 16:05:45 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 24F2B40047;
+	Tue, 27 Aug 2024 16:05:40 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id DF30B26C449;
+	Tue, 27 Aug 2024 16:05:10 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
+ (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 27 Aug
+ 2024 16:05:10 +0200
+Received: from localhost (10.48.86.111) by SAFDAG1NODE1.st.com (10.75.90.17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 27 Aug
+ 2024 16:05:10 +0200
+From: Valentin Caron <valentin.caron@foss.st.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>
+CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Christophe Roullier <christophe.roullier@foss.st.com>,
+        Valentin Caron
+	<valentin.caron@foss.st.com>
+Subject: [PATCH 0/9] ARM: dts: st: add WLAN/BT on disco boards
+Date: Tue, 27 Aug 2024 16:04:46 +0200
+Message-ID: <20240827140455.345086-1-valentin.caron@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SAFCAS1NODE2.st.com (10.75.90.13) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-27_07,2024-08-27_01,2024-05-17_01
 
-From: Thierry Reding <treding@nvidia.com>
+This series enable WLAN/BT module on stm32mp1x discovery boards.
+Use LSCO from RTC to supply 32kHz clock to WLAN/BT modules.
+This is done by selecting "rtc_lsco_pins_a" in the WLAN pinctrl node.
 
+And also add RTC nodes on stm32mp25x to enable RTC on stm32mp257f-ev1
+board.
 
-On Tue, 20 Aug 2024 10:44:23 +0200, Krzysztof Kozlowski wrote:
-> Simple cleanups for nvidia I2C.
-> 
-> Best regards,
-> Krzysztof
-> 
+Christophe Roullier (2):
+  ARM: dts: stm32: add support of WLAN/BT on stm32mp157c-dk2
+  ARM: dts: stm32: add support of WLAN/BT on stm32mp135f-dk
 
-Applied, thanks!
+Valentin Caron (7):
+  ARM: dts: stm32: rtc, add pin to provide LSCO on stm32mp15
+  ARM: dts: stm32: rtc, add pin to provide LSCO on stm32mp13
+  ARM: dts: stm32: rtc, add LSCO to WLAN/BT module on stm32mp157c-dk2
+  ARM: dts: stm32: rtc, add LSCO to WLAN/BT module on stm32mp135f-dk
+  arm64: dts: st: add RTC on stm32mp25x
+  arm64: dts: st: enable RTC on stm32mp257f-ev1 board
+  ARM: dts: stm32: rtc, add pin to provide LSCO on stm32mp25
 
-[1/3] dt-bindings: i2c: nvidia,tegra20-i2c: combine same if:then: clauses
-      commit: d7ae7599809754d23cf571b849db0fead206ea67
-[2/3] dt-bindings: i2c: nvidia,tegra20-i2c: restrict also clocks in if:then:
-      commit: 82ce7a4dc6d43f067a520fa5b1ac5f2a83797474
-[3/3] dt-bindings: i2c: nvidia,tegra20-i2c: define power-domains top-level
-      commit: 2d9bac9a590ea522328ac7cdce810128ec1f333f
+ arch/arm/boot/dts/st/stm32mp13-pinctrl.dtsi   |  7 +++
+ arch/arm/boot/dts/st/stm32mp135f-dk.dts       | 52 +++++++++++++++++++
+ arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi   |  7 +++
+ arch/arm/boot/dts/st/stm32mp157c-dk2.dts      | 51 +++++++++++++++++-
+ arch/arm64/boot/dts/st/stm32mp25-pinctrl.dtsi |  6 +++
+ arch/arm64/boot/dts/st/stm32mp251.dtsi        | 10 ++++
+ arch/arm64/boot/dts/st/stm32mp257f-ev1.dts    |  4 ++
+ 7 files changed, 136 insertions(+), 1 deletion(-)
 
-Best regards,
 -- 
-Thierry Reding <treding@nvidia.com>
+2.25.1
+
 
