@@ -1,81 +1,54 @@
-Return-Path: <linux-kernel+bounces-303665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12F1B96133D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:50:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D88AC96135A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BDB61C22E96
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:50:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 448D6B22D36
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BF51C93B9;
-	Tue, 27 Aug 2024 15:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F681D048F;
+	Tue, 27 Aug 2024 15:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UZPPJ/ZC"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XJFXeS42"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F50B1C57B1
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 15:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7381A1CFEC6;
+	Tue, 27 Aug 2024 15:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724773834; cv=none; b=eZDFJD95RjTbsfy25duGhzpSsdV+6p4vUMSH5Df+CM1j2wna0TEZHx2szSy8Xphb0irfk/ZU6n1zJrmkr/Si3JSQIki734+muA8hOx0/KG6U+Xmb5R4MwCT12Xg1ABy3UxpGGnYClcYU66wuL6ijD9jlJ48ERPsYSS/hEFQKpNE=
+	t=1724773921; cv=none; b=iPpwHriRFMoPCAUQUhAKWJu7y+66zc3crnLxoqGIuU4VSRW3Fc7Zfzt+KvdQ7TzyYsCk7F/1wsDwc7NzZDT5KUYyJix/d7fQxcEt6gGrERaHNLbKtNb3r020vBiEaCQJ41i+YMvn29dcK5zs77xx4lBr3Pcqjd8RZf4HqvhIaSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724773834; c=relaxed/simple;
-	bh=Xj4jKomYimzW3NGNZve+oD+PY1FEeu/SsrX38CnwxK4=;
+	s=arc-20240116; t=1724773921; c=relaxed/simple;
+	bh=nkxZmjJsQD+WMFNTPKl18ceTuqzu825y5NWLg20zRY4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Culc7/dYreb6LX7Qypd2czZthxf4Mp4y4NA0UpkUT1/e8Q5kPJjl/pNBxsZ/SFCQP9MkG5a75S/49CelE7nmSXjczION61fnJg3ot6O73jxulj8n753LzXbdGrZSvszJb+6nnxaOyN1UQRCnsKqQ26dVcZrdGojw6FaeTWffIJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UZPPJ/ZC; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37198a6da58so3982369f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:50:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724773830; x=1725378630; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HYHYe6mgJdakAm0fe4ggqtacWr9TU/8V8y8IEeD0kkY=;
-        b=UZPPJ/ZC3u2QZPpG3qZrCak4gGVGN04nU81nkgove4XFhYEStESZIdm3fML01SAEhe
-         LCNl0YbCHCroF8wikMXu3ZTOWfcfMXgvb9yLbmqait2FPfC54Zjr0L9nAGU4JcBMP3cZ
-         DgpDLw8GZW8rTiVu13gjjXSHxwUjji5KVMdsvO+JBVJ4ogKsCn78Ip2HHEG7awSeaS1D
-         1lj7VJMIA5TGMuR2kP1UedUDo9soL9d6OCHZJLzR60h2vfjKIHQVndM3Im/zkOCCoTQo
-         a4hGke3vxB4Pssa7L2x8wkGITX0JOI+ZA0Bgo//ejcFxGdibdLeL8IFbRV8uXFw8iM/r
-         0yGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724773830; x=1725378630;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HYHYe6mgJdakAm0fe4ggqtacWr9TU/8V8y8IEeD0kkY=;
-        b=bHUvP2kTo+19tW5Gjk+stOsaF/HWandu/5zBK5tz9vnRcm1TzYtF+Lk3jttOSnOY1m
-         dnOEN2TxxHKiXwZTb5DHEHMCA0JFsG16VjPbLUJZnEg7wmtpX97MQYGRojHn4QqkNbWG
-         b1VLT84FsGXAmZb8wV8Jf46ZbkIjwCLQvoJCk1zdARvO2/rrDhg1u0bnkcX4lq6kljbr
-         sUCzgYCdT1DfaRVgp2SmrCvtjnipkQDZiP1UyijI7SChaEW7duQuENOX9+uBlhzx54D4
-         7dxKLo+rtSBbt6NbCHEGxr92HCeFyPNYwAM6Mnk7y/1elsf3oH/gZb2hcEkXjj/Jf2pe
-         4KdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUj2iX71xPNe1BAr+9UMmpz0mo0SuANLEKS5RCzogrTU2HvyoQI6CWb3JpX2G0rEKIMy7cnMOhJeZRaH+c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPjHlcpDv6q56q0Gjf7LWbHOl5JRa2d/0tle2IwDfT+9bGL0CM
-	fNVCWbROc83NJPvUx5e+YnngFhSxYSVD+mm1KQKH8a5RvB7i01ValUk37VGg8n0=
-X-Google-Smtp-Source: AGHT+IFBvwwkQc+etfgT1zS3EgEEyaqyxFiE8iazXzSI7Lh3w7j0dDoev7tpLKnWLUWbKAlI4OUfYA==
-X-Received: by 2002:adf:f0cd:0:b0:368:7282:51d6 with SMTP id ffacd0b85a97d-37311856059mr10694608f8f.21.1724773830397;
-        Tue, 27 Aug 2024 08:50:30 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e549cad0sm124876766b.49.2024.08.27.08.50.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 08:50:30 -0700 (PDT)
-Date: Tue, 27 Aug 2024 17:50:28 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH printk v4 09/17] printk: nbcon: Rely on kthreads for
- normal operation
-Message-ID: <Zs31xM0Nn0hEb74O@pathway.suse.cz>
-References: <20240827044333.88596-1-john.ogness@linutronix.de>
- <20240827044333.88596-10-john.ogness@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fC/mGZHDo3ekaVF7c2kxIiVJA9SCGPilYJgyReimDPd9KPNPe/ziac1kykIknIFhDj2eekzAqlj5pfooltvElmANBc2zWcZxUQnuLKhnxwyp5jcWNZWBKqbYRb3jNhaQ6F482imiA5VCpFNKIr2q65EIjM4H1EarRCTmh7ogc7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XJFXeS42; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9583C58106;
+	Tue, 27 Aug 2024 15:52:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724773921;
+	bh=nkxZmjJsQD+WMFNTPKl18ceTuqzu825y5NWLg20zRY4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XJFXeS42JQvsvgV8UWsTvI+dwLXioBc6g2SXLHPRsvJQ0Uy8fY/y6CmpY8G3T3npC
+	 1+r8Hod9g/If6UCs6ykeab8xFfuhQMYnMQRWpwon27//KLRj0xW66hrDLDIL7EZP9b
+	 0GdRVIRW8vzazsj6n5Nn+fxDdVH8//Rk7FPAosWipBJ3lUHD83KtM/LDP2oLo75ugM
+	 FxU0eGMSQH0abLY/g6cNTD7qGS0wMmpSMTXKxE9hKQ4PLMu2OZqh37Ot34LjMAOpEy
+	 pp7VRZnPRT+wylabBzGnOwahF6fkB63hbG2mwqmnIR/ePewcwlHjbmLGLHbTa65iHt
+	 n1vqQ/ODA+9YA==
+Date: Tue, 27 Aug 2024 10:51:58 -0500
+From: Rob Herring <robh@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>
+Subject: Re: [PATCH] of: move empty_root and unittest data DTBs to
+ .init.rodata section
+Message-ID: <20240827155158.GA3940418-robh@kernel.org>
+References: <20240826124802.1552738-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,90 +57,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240827044333.88596-10-john.ogness@linutronix.de>
+In-Reply-To: <20240826124802.1552738-1-masahiroy@kernel.org>
 
-On Tue 2024-08-27 06:49:25, John Ogness wrote:
-> Once the kthread is running and available
-> (i.e. @printk_kthreads_running is set), the kthread becomes
-> responsible for flushing any pending messages which are added
-> in NBCON_PRIO_NORMAL context. Namely the legacy
-> console_flush_all() and device_release() no longer flush the
-> console. And nbcon_atomic_flush_pending() used by
-> nbcon_cpu_emergency_exit() no longer flushes messages added
-> after the emergency messages.
+On Mon, Aug 26, 2024 at 09:48:01PM +0900, Masahiro Yamada wrote:
+> Some architectures can embed DTB(s) in vmlinux. Most of them expect a
+> single DTB in the .dtb.init.rodata section.
 > 
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -2749,6 +2753,10 @@ void resume_console(void)
->  	 */
->  	synchronize_srcu(&console_srcu);
->  
-> +	printk_get_console_flush_type(&ft);
-> +	if (ft.nbcon_offload)
-> +		nbcon_kthreads_wake();
+> For example, RISC-V previously allowed embedding multiple DTBs in
+> vmlinux, but only the first DTB in the .dtb.init.rodata section was
+> used. Which DTB was used was unpredictable, as it depended on the link
+> order (i.e., the order in Makefile).
+> 
+> Commit 2672031b20f6 ("riscv: dts: Move BUILTIN_DTB_SOURCE to common
+> Kconfig") changed the Makefiles to ensure only one DTB is embedded.
+> 
+> However, commit 7b937cc243e5 ("of: Create of_root if no dtb provided by
+> firmware") introduced another DTB into the .dtb.init.rodata section.
+> 
+> Since then, the symbol dump (sorted by address) for ARCH=riscv
+> nommu_k210_defconfig is as follows:
+> 
+>     00000000801290e0 D __dtb_k210_generic_begin
+>     00000000801290e0 D __dtb_start
+>     000000008012b571 D __dtb_k210_generic_end
+>     000000008012b580 D __dtb_empty_root_begin
+>     000000008012b5c8 D __dtb_empty_root_end
+>     000000008012b5e0 D __dtb_end
+> 
+> The .dtb.init.rodata section now contains the following two DTB files:
+> 
+>     arch/riscv/boot/dts/canaan/k210_generic.dtb
+>     drivers/of/empty_root.dtb
+> 
+> This is not an immediate problem because the boot code picks up the
+> first DTB. The second one, empty_root.dtb is just ignored.
+> 
+> However, as mentioned above, it is fragile to rely on the link order,
+> as future Makefile changes may break the behavior.
+> 
+> The cmd_wrap_S_dtb rule in scripts/Makefile.lib is used for embedding a
+> DTB into the .dtb.init.rodata, so that the arch boot code can find it by
+> the __dtb_start symbol.
+> 
+> empty_root.dtb is looked up by its own symbol, so it does not need to
+> be located in the .dtb.init.rodata. It can be moved to the .init.rodata
+> section.
+> 
+> When CONFIG_OF_UNITTEST is enabled, more unittest DTBOs are embedded in
+> the .dtb.init.rodata section. These are also looked up by name and for
+> generic purposes, so they can be moved to the .init.rodata section as
+> well.
+> 
+> I added a wrapper source file, drivers/of/empty_root_dtb.S, because this
+> is the only wrapper used in driver/of/Makefile. I moved the rule for
+> generating *.dtbo.S to drivers/of/unittest-data/Makefile because it is
+> not used anywhere else.
 
-Who would flush the nbcon consoles in the following case?
+That is likely to change. We've had fixup overlays (fixup an old dt 
+to a new binding) added into the kernel from time to time. There were 2, 
+but they've been removed. However, I just recently suggested adding some 
+new ones[1].
 
-  ft.nbcon_atomic == true && ft.legacy_direct == false
+It seems we need a named section when we access the dtb by variable 
+name and an unnamed or boot dt section for the one boot dtb.
 
-pr_flush() won't call the legacy loop in this case.
+Rob
 
-We should probably update pr_flush() to call nbcon_atomic_flush_pending()
-in this case.
+[1] https://lore.kernel.org/all/20240812212139.GA1797954-robh@kernel.org/
 
-> +
->  	pr_flush(1000, true);
->  }
->  
-> @@ -3387,9 +3405,25 @@ EXPORT_SYMBOL(console_stop);
->  
->  void console_start(struct console *console)
->  {
-> +	struct console_flush_type ft;
-> +	bool is_nbcon;
-> +
->  	console_list_lock();
->  	console_srcu_write_flags(console, console->flags | CON_ENABLED);
-> +	is_nbcon = console->flags & CON_NBCON;
->  	console_list_unlock();
-> +
-> +	/*
-> +	 * Ensure that all SRCU list walks have completed. The related
-> +	 * printing context must be able to see it is enabled so that
-> +	 * it is guaranteed to wake up and resume printing.
-> +	 */
-> +	synchronize_srcu(&console_srcu);
-> +
-> +	printk_get_console_flush_type(&ft);
-> +	if (is_nbcon && ft.nbcon_offload)
-> +		nbcon_kthread_wake(console);
-
-Same here.
-
->  	__pr_flush(console, 1000, true);
->  }
->  EXPORT_SYMBOL(console_start);
-> @@ -4629,8 +4665,13 @@ EXPORT_SYMBOL_GPL(kmsg_dump_rewind);
->   */
->  void console_try_replay_all(void)
->  {
-> +	struct console_flush_type ft;
-> +
-> +	printk_get_console_flush_type(&ft);
->  	if (console_trylock()) {
->  		__console_rewind_all();
-> +		if (ft.nbcon_offload)
-> +			nbcon_kthreads_wake();
-
-And here. We in this case, we should likely call add here:
-
-		if (ft.nbcon_atomic)
-			nbcon_atomic_flush_pending()
-			
->  		/* Consoles are flushed as part of console_unlock(). */
->  		console_unlock();
->  	}
-
-Best Regards,
-Petr
 
