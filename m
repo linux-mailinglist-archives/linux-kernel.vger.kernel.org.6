@@ -1,109 +1,124 @@
-Return-Path: <linux-kernel+bounces-302662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9146960195
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:27:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8434A960199
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:27:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ACC61F22F20
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:27:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B70671C20E86
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3594A156F30;
-	Tue, 27 Aug 2024 06:25:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F42C148853;
+	Tue, 27 Aug 2024 06:26:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QLtCluKm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hxOQOsCF"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A5D14373F;
-	Tue, 27 Aug 2024 06:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEA5146596;
+	Tue, 27 Aug 2024 06:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724739951; cv=none; b=klo2bEeeTuD7tlhNTP4G8HgEBUjEDElTgGE3sWuIsYidT30aWN3EPKnLNryNJO3DifxcJxJ/eRwXLLkBHsBpmZSqGudHddm9UhIn9shkoI1dHqp+63slEEYEsD9VhA6eax462Cc8lYa9Po+SyAUA99eBsOQN0Y/0O+lzasyzKs4=
+	t=1724739971; cv=none; b=bXbjXdz9RRbPJEu2al8rPSna9bf0OfY2Sy1NNWDeZ7wn/911wFN5KG2XgVYg9Gp5N1SGwduqNoFyhSH++W/hVbCdIuIM3B78UyzuzgfHUdhnbvT2a+7FiCo8kLM0pfY2vh66MmidPhiT7JhjFxzLJ9wRKriYKpoDATs0mPCqwoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724739951; c=relaxed/simple;
-	bh=fN1ZnF3+bANyj6nCHUeB1Vt6rRnkOrtSXJk+7r0jQKY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IDlBCUPfWPv7M9c/CE4D4iBKjxhFdBqcXq6yUX006tXTFpy3r9fzWaUChcC2hkOYNqziAArnDZEwSbjNj9eFu/AqAMRSF70IZF0tlbB392V+mmXyniLIeFl+eS5mKwpcyzC3yYeVQnr5JYwR7eX5gdEIv3MOW5tQTrULhPKRmf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QLtCluKm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB670C4FF63;
-	Tue, 27 Aug 2024 06:25:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724739950;
-	bh=fN1ZnF3+bANyj6nCHUeB1Vt6rRnkOrtSXJk+7r0jQKY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QLtCluKmvD0oXuf6N1ljeQMDrLNkQny4MvNscJbGF2J9y3EvvCTNBZN/NqLCzGDpP
-	 fU5Vk2okwhe3QGihz7Lgf8gwKk2Y2Sg50Sj163jeOJspkybovyygXxMudrdf14K8dc
-	 Ma7bUVWq9bdphXUWiL0iuwX1DxHPHOLujQ6GBGaoQg/uOMrICoClDQDiteZfRJmxl7
-	 /+KGZk9JavCq2QFlSVAIqPbkbuD/6Kukll60DFRuopF8cTUUNhfazAezT/0phK0Gni
-	 g2DS3Zs5IOH3r3KwWQDZNQ4PIVqaxQoKprtecnjf4X0OeLxEdlFlPjONs+BeNtBzjD
-	 eV3O1G+QBAEfQ==
-Date: Tue, 27 Aug 2024 08:25:47 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sricharan R <quic_srichara@quicinc.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
-	manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	vkoul@kernel.org, kishon@kernel.org, andersson@kernel.org, konradybcio@kernel.org, 
-	p.zabel@pengutronix.de, dmitry.baryshkov@linaro.org, quic_nsekar@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, robimarko@gmail.com
-Subject: Re: [PATCH V2 3/6] phy: qcom: Introduce PCIe UNIPHY 28LP driver
-Message-ID: <svraqyrvmyfvezj6zuzsoc5cy3lqklwxkmjdloquj2v4r5ik72@xnbaoigiikeu>
-References: <20240827045757.1101194-1-quic_srichara@quicinc.com>
- <20240827045757.1101194-4-quic_srichara@quicinc.com>
+	s=arc-20240116; t=1724739971; c=relaxed/simple;
+	bh=dEhTUlXeWzHxDgVzj0ci8VW5ybz/ubs17Yn9nv7EjYM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=emHdnXlghI+wz6XfLPaOcSh6WL4maDLRubsG+R/TLXSeK+kGkhR+dBFak7VS50K+HpOvy6GgG2iy+hXKVqI2rlx2xbWwh2KTeq96OS+e3wXIq+oVc5fEhOCjx7LOB9UjTCEAgiXvqoQQa9Ktk5jAjxBsrehh1gfCSI49QLIcQUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=hxOQOsCF; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1724739964;
+	bh=dEhTUlXeWzHxDgVzj0ci8VW5ybz/ubs17Yn9nv7EjYM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hxOQOsCFKBD0D/EMlqQ2y4x3oKZAVhGs1l9NbRS2Ipjg2J/qKk9Yz4utwKQb59RS7
+	 j3LZF50BJBnI1P5Hdt/TrW/LuRB3VnKVKT14vJG4DBsL14Uq7Y3xiKpSK5UBwm3mdn
+	 CI06KAzzE+ge/aGhW3BZp3B0JsNY7cGVI1FvSD8bKgcuxmwHwt9s5x9QxhK+mB+wXS
+	 2sFb1z662ze1E/MmoRPEaztGuhGloCL+LhnGzTENyhSchPHvWQI9xaTS8jxjDkHnFW
+	 0sUk2iyNrR9dTPTYCZgaHAiCQ31VOuZvpcbKQftPdxxwh+3iOIiyfbh+52WeGaGXCg
+	 sQWUk2Q1/57AA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WtHcD3GgXz4w2R;
+	Tue, 27 Aug 2024 16:26:04 +1000 (AEST)
+Date: Tue, 27 Aug 2024 16:26:03 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, brauner@kernel.org,
+ p.raghav@samsung.com, dchinner@redhat.com, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-next@vger.kernel.org
+Subject: Re: [PATCH] iomap: remove set_memor_ro() on zero page
+Message-ID: <20240827162603.1a86804a@canb.auug.org.au>
+In-Reply-To: <20240827055539.GL865349@frogsfrogsfrogs>
+References: <20240826212632.2098685-1-mcgrof@kernel.org>
+	<20240827055539.GL865349@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240827045757.1101194-4-quic_srichara@quicinc.com>
+Content-Type: multipart/signed; boundary="Sig_/WnlHn7eTQnOBUQK_4ciR3n7";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, Aug 27, 2024 at 10:27:54AM +0530, Sricharan R wrote:
-> From: Nitheesh Sekar <quic_nsekar@quicinc.com>
-> 
-> Add Qualcomm PCIe UNIPHY 28LP driver support present
-> in Qualcomm IPQ5018 SoC and the phy init sequence.
-> 
-> Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
-> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+--Sig_/WnlHn7eTQnOBUQK_4ciR3n7
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-...
+Hi all,
 
-> +static int qcom_uniphy_pcie_probe(struct platform_device *pdev)
-> +{
-> +	struct qcom_uniphy_pcie *phy;
-> +	int ret;
-> +	struct phy *generic_phy;
-> +	struct phy_provider *phy_provider;
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = of_node_get(dev->of_node);
-> +
-> +	phy = devm_kzalloc(&pdev->dev, sizeof(*phy), GFP_KERNEL);
-> +	if (!phy)
-> +		return -ENOMEM;
-> +
-> +	platform_set_drvdata(pdev, phy);
-> +	phy->dev = &pdev->dev;
-> +
-> +	phy->data = of_device_get_match_data(dev);
-> +	if (!phy->data)
-> +		return -EINVAL;
-> +
-> +	ret = qcom_uniphy_pcie_get_resources(pdev, phy);
-> +	if (ret < 0)
-> +		dev_err_probe(&pdev->dev, ret, "Failed to get resources:\n");
+On Mon, 26 Aug 2024 22:55:39 -0700 "Darrick J. Wong" <djwong@kernel.org> wr=
+ote:
+>
+> On Mon, Aug 26, 2024 at 02:26:32PM -0700, Luis Chamberlain wrote:
+> > Stephen reported a boot failure on ppc power8 system where
+> > set_memor_ro() on the new zero page failed [0]. Christophe Leroy
+> > further clarifies we can't use this on on linear memory on ppc, and
+> > so instead of special casing this just for PowerPC [2] remove the
+> > call as suggested by Darrick.
+> >=20
+> > [0] https://lore.kernel.org/all/20240826175931.1989f99e@canb.auug.org.a=
+u/T/#u
+> > [1] https://lore.kernel.org/all/b0fe75b4-c1bb-47f7-a7c3-2534b31c1780@cs=
+group.eu/
+> > [2] https://lore.kernel.org/all/ZszrJkFOpiy5rCma@bombadil.infradead.org/
+> >=20
+> > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Suggested-by: "Darrick J. Wong" <djwong@kernel.org>
+> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org> =20
+>=20
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-What the hell happened here? Read my review one more time and then git
-grep for usage of dev_err_probe.
+I added this to linux-next today, and it seems to have fixed the run
+time warning, so
 
-NAK.
+Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-Best regards,
-Krzysztof
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/WnlHn7eTQnOBUQK_4ciR3n7
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbNcXsACgkQAVBC80lX
+0GwSvQf/SZMg3tJDWWeP8zI9bZsMGEGzu5BLoZ5oj8mmXcuOqPucOfCNi/tvrAh1
+OnGlCyfZzYNT8IeItMqx7z2IgUW+PFDfXJhNCRUo/HNtI35ujrDjheFJahmA+Fxx
+pupM1EiDiKOY366X0XzQ3vc1Q224QMIcWw7NgpPC2xN3xhsiV4w3d5WSyP/hDigq
+2wlrdH8H8ssAD9EM6JXfqPxvFYEoTJzCPj4Nl7/o+/c15SRfGjwXFkd3hbUE2eif
+fXlSIFoPaRIwQDvff0jipIQG3ArRIRa0UsyiBvnmdGalXLgG9WoHKrlUzR+a/IU3
++xa+rMHLb9LGTX8ggF8/6S7lWyzF6A==
+=5GmB
+-----END PGP SIGNATURE-----
+
+--Sig_/WnlHn7eTQnOBUQK_4ciR3n7--
 
