@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-303204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A76819608FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:39:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF95B9608F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:39:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 509E91F23C62
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:39:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66EA52820EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056C31A00D0;
-	Tue, 27 Aug 2024 11:38:21 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C791A2551;
+	Tue, 27 Aug 2024 11:38:19 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB631A08B9;
-	Tue, 27 Aug 2024 11:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F4F1A0710;
+	Tue, 27 Aug 2024 11:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724758700; cv=none; b=iWw20sp4pSnvEmLKlVCQCjD/UDWJuoiUI1BKrPfnn55fiTXiVODwgExJzN6zwHeyjwlOxHSUiBTPAMl++6hNGAN5QzWrtCUTO8ZlJqOh2VKRF63DI5kdfT3MMtW4O/WI9C/9KmuimJgb8VHQxPllxHRlmzgEeShPWthsqXvFMm0=
+	t=1724758699; cv=none; b=Bghqw9dX11JPeC8IapD+S324Ysk1aMujPADU5oWDf5LpQLb3yY2J8pIqx8oezmAyWH6LKCZl8zt9+YUwJ5JL1D0JtabKfnP5GiDJeuOY83HQOE/1qgNwbD3XprwJG0/1941RLg8XfpbVbjmBN2tYWQ3FzioIi8w9o3xuSSoJ2rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724758700; c=relaxed/simple;
-	bh=00ok9dQw9q2pYIzlqcHuRqe4lAgkdqOEzuqY0nZkYjY=;
+	s=arc-20240116; t=1724758699; c=relaxed/simple;
+	bh=51D4MVbrbie62zBZ4PBe0caLTe04rtIHKvrD3K2vD1g=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XzxtxXnSnAz+q94GehFPsKN9MJHh6kO6dLhcYiTEpwWtiD0OtN2t65/daJL+fUhIbJXcVz3gKvj+EG6SyKCsOqfVs3ZGcHbgu3cmtt2fWlab8rbotcr8OdlP2Gk+o1zsRkk9XuouH9W/S8ayzSABuYPlHoeOVaH2McJXgF3j4ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+	 MIME-Version:Content-Type; b=bA170kwW48IYrbJITVndLhFJP23DpI+0gqaqdiD6916015cx+tV6VLJwUncxNe/YihjWOgqjQVvuLsaySISb49ZTP/8PxNP5MfovzidHxkwl4f+a4n5dbVSUw68khdUO1wX7X3Fk2bLKWYGgxRLEIpsHqOqQQgL1adEeWzIZ8wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WtQQt453RzQqgb;
-	Tue, 27 Aug 2024 19:33:26 +0800 (CST)
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WtQWX139WzyQZW;
+	Tue, 27 Aug 2024 19:37:28 +0800 (CST)
 Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 41C0D140202;
+	by mail.maildlp.com (Postfix) with ESMTPS id 51D4B1402DE;
 	Tue, 27 Aug 2024 19:38:15 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
  (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 27 Aug
- 2024 19:38:13 +0800
+ 2024 19:38:14 +0800
 From: Jinjie Ruan <ruanjinjie@huawei.com>
 To: <andrew@lunn.ch>, <sebastian.hesselbarth@gmail.com>,
 	<gregory.clement@bootlin.com>, <herve.codina@bootlin.com>,
@@ -48,9 +48,9 @@ To: <andrew@lunn.ch>, <sebastian.hesselbarth@gmail.com>,
 	<ulf.hansson@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
 	<linux-tegra@vger.kernel.org>, <krzk@kernel.org>, <jic23@kernel.org>
-Subject: [PATCH -next 4/8] soc: fsl: cpm1: qmc: Simplify with dev_err_probe()
-Date: Tue, 27 Aug 2024 19:46:03 +0800
-Message-ID: <20240827114607.4019972-5-ruanjinjie@huawei.com>
+Subject: [PATCH -next 5/8] soc/tegra: pmc: Simplify with scoped for each OF child loop
+Date: Tue, 27 Aug 2024 19:46:04 +0800
+Message-ID: <20240827114607.4019972-6-ruanjinjie@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240827114607.4019972-1-ruanjinjie@huawei.com>
 References: <20240827114607.4019972-1-ruanjinjie@huawei.com>
@@ -65,106 +65,54 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
  kwepemh500013.china.huawei.com (7.202.181.146)
 
-Use the dev_err_probe() helper to simplify error handling during probe.
-This also handle scenario, when EDEFER is returned and useless error
-is printed.
+Use scoped for_each_child_of_node_scoped() when iterating over device
+nodes to make code a bit simpler.
 
 Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 ---
- drivers/soc/fsl/qe/qmc.c | 53 ++++++++++++++++------------------------
- 1 file changed, 21 insertions(+), 32 deletions(-)
+ drivers/soc/tegra/pmc.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
-index d5937b5b5f15..4315af115b8e 100644
---- a/drivers/soc/fsl/qe/qmc.c
-+++ b/drivers/soc/fsl/qe/qmc.c
-@@ -1182,14 +1182,10 @@ static int qmc_of_parse_chans(struct qmc *qmc, struct device_node *np)
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 6c37d6eb8b49..a08c377933c5 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -1438,7 +1438,7 @@ static int tegra_powergate_init(struct tegra_pmc *pmc,
+ 				struct device_node *parent)
+ {
+ 	struct of_phandle_args child_args, parent_args;
+-	struct device_node *np, *child;
++	struct device_node *np;
+ 	int err = 0;
  
- 	for_each_available_child_of_node_scoped(np, chan_np) {
- 		ret = of_property_read_u32(chan_np, "reg", &chan_id);
--		if (ret) {
--			dev_err(qmc->dev, "%pOF: failed to read reg\n", chan_np);
--			return ret;
+ 	/*
+@@ -1457,12 +1457,10 @@ static int tegra_powergate_init(struct tegra_pmc *pmc,
+ 	if (!np)
+ 		return 0;
+ 
+-	for_each_child_of_node(np, child) {
++	for_each_child_of_node_scoped(np, child) {
+ 		err = tegra_powergate_add(pmc, child);
+-		if (err < 0) {
+-			of_node_put(child);
++		if (err < 0)
+ 			break;
 -		}
--		if (chan_id > 63) {
--			dev_err(qmc->dev, "%pOF: Invalid chan_id\n", chan_np);
--			return -EINVAL;
+ 
+ 		if (of_parse_phandle_with_args(child, "power-domains",
+ 					       "#power-domain-cells",
+@@ -1474,10 +1472,8 @@ static int tegra_powergate_init(struct tegra_pmc *pmc,
+ 
+ 		err = of_genpd_add_subdomain(&parent_args, &child_args);
+ 		of_node_put(parent_args.np);
+-		if (err) {
+-			of_node_put(child);
++		if (err)
+ 			break;
 -		}
-+		if (ret)
-+			return dev_err_probe(qmc->dev, ret, "%pOF: failed to read reg\n", chan_np);
-+		if (chan_id > 63)
-+			return dev_err_probe(qmc->dev, -EINVAL, "%pOF: Invalid chan_id\n", chan_np);
+ 	}
  
- 		chan = devm_kzalloc(qmc->dev, sizeof(*chan), GFP_KERNEL);
- 		if (!chan)
-@@ -1201,39 +1197,34 @@ static int qmc_of_parse_chans(struct qmc *qmc, struct device_node *np)
- 		spin_lock_init(&chan->tx_lock);
- 
- 		ret = of_property_read_u64(chan_np, "fsl,tx-ts-mask", &ts_mask);
--		if (ret) {
--			dev_err(qmc->dev, "%pOF: failed to read fsl,tx-ts-mask\n",
--				chan_np);
--			return ret;
--		}
-+		if (ret)
-+			return dev_err_probe(qmc->dev, ret,
-+					     "%pOF: failed to read fsl,tx-ts-mask\n",
-+					     chan_np);
- 		chan->tx_ts_mask_avail = ts_mask;
- 		chan->tx_ts_mask = chan->tx_ts_mask_avail;
- 
- 		ret = of_property_read_u64(chan_np, "fsl,rx-ts-mask", &ts_mask);
--		if (ret) {
--			dev_err(qmc->dev, "%pOF: failed to read fsl,rx-ts-mask\n",
--				chan_np);
--			return ret;
--		}
-+		if (ret)
-+			dev_err_probe(qmc->dev, ret, "%pOF: failed to read fsl,rx-ts-mask\n",
-+				      chan_np);
- 		chan->rx_ts_mask_avail = ts_mask;
- 		chan->rx_ts_mask = chan->rx_ts_mask_avail;
- 
- 		mode = "transparent";
- 		ret = of_property_read_string(chan_np, "fsl,operational-mode", &mode);
--		if (ret && ret != -EINVAL) {
--			dev_err(qmc->dev, "%pOF: failed to read fsl,operational-mode\n",
--				chan_np);
--			return ret;
--		}
-+		if (ret && ret != -EINVAL)
-+			return dev_err_probe(qmc->dev, ret,
-+					     "%pOF: failed to read fsl,operational-mode\n",
-+					     chan_np);
- 		if (!strcmp(mode, "transparent")) {
- 			chan->mode = QMC_TRANSPARENT;
- 		} else if (!strcmp(mode, "hdlc")) {
- 			chan->mode = QMC_HDLC;
--		} else {
--			dev_err(qmc->dev, "%pOF: Invalid fsl,operational-mode (%s)\n",
--				chan_np, mode);
--			return -EINVAL;
--		}
-+		} else
-+			return dev_err_probe(qmc->dev, -EINVAL,
-+					     "%pOF: Invalid fsl,operational-mode (%s)\n",
-+					     chan_np, mode);
- 
- 		chan->is_reverse_data = of_property_read_bool(chan_np,
- 							      "fsl,reverse-data");
-@@ -1590,10 +1581,8 @@ static int qmc_probe(struct platform_device *pdev)
- 
- 	/* Connect the serial (SCC) to TSA */
- 	ret = tsa_serial_connect(qmc->tsa_serial);
--	if (ret) {
--		dev_err(qmc->dev, "Failed to connect TSA serial\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(qmc->dev, ret, "Failed to connect TSA serial\n");
- 
- 	/* Parse channels informationss */
- 	ret = qmc_of_parse_chans(qmc, np);
+ 	of_node_put(np);
 -- 
 2.34.1
 
