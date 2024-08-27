@@ -1,256 +1,114 @@
-Return-Path: <linux-kernel+bounces-302854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7EA1960442
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:20:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C5AF960447
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:21:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BFF8283583
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:20:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15482283646
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E55C19B5BD;
-	Tue, 27 Aug 2024 08:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E09197556;
+	Tue, 27 Aug 2024 08:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ow24/vp5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dawn3zG0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61299199FB9;
-	Tue, 27 Aug 2024 08:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D3A157468;
+	Tue, 27 Aug 2024 08:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724746794; cv=none; b=cB4rX69Nx2dC41lDu+M3pnNOOiaHc/JGi3TdO97lQxYsogsy2PRvgTgSjLl171j1AcjR3Vgn/AVjWgBofSmib9c1RDoLKeD6I1aWqrGxlqCeDCwXMN63kCNGg/QqUhKXcF7HgVf3nY62iuusqvEmM2M1qk3xAZwBEhwREYyy+yw=
+	t=1724746853; cv=none; b=uWHzI8mdQuDcxfz4s8+2ztTxWjmcyqkUSwJS3epGSJC5BwtjUnDbyvUHSKEYRwvfdcUqsPMvUDAHLxWWga+u/vtv12CdKdYvuFsP2j2+DhLChC3zVv35erOvI19WDNDUu5ArRLFGVw1bUvDBss0wjjeYnrwNYOocerjPzgTvUpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724746794; c=relaxed/simple;
-	bh=pst73USFY2/jm8Z3YTbF5rFAbRivyaR41QfG2nVz0AQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZRBGiw1F7aflo0uYWbYorBaVo8Y9x+73WahPu36IN6YEyWkRuRRPcTZk9NuIcsLMYfXcELmi02B3hVyh45/rzVk4p8kRefeSoBuNRJVseV3Q9u5m1N6PxdEH1S84Ko5pw+zSlob+MTRr0QWL+rV20JzPxg4kA3KzKgV/gmReWQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ow24/vp5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94983C5812F;
-	Tue, 27 Aug 2024 08:19:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724746793;
-	bh=pst73USFY2/jm8Z3YTbF5rFAbRivyaR41QfG2nVz0AQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ow24/vp5ZCtwo0XpdwB0Y9vL3oKSdwvdNzJgXloLGSDGYKmYLNPmwJ8/J2xlNK4t0
-	 k8yzCpYEV6x/Ery+H/COfa4KeND/ifqyAzZcTPyHnrcDOsGmAQZcNlq4ujQ//d0y+p
-	 qa1iRLWWkWQqkseRVwsiwrJcxNxz/NDxYWZC9Iwr6ACCY32sR5XaGV0n5L4Z+jyrFF
-	 XZbqypArH3/Jj0akhCoUQUttgcaLO96o62kIUl9ArZTyozb8xOujn5wQ86B2/QaD0q
-	 PV1cUw8yBSxJpsvERQZUlmRvAavwCmMA6DafQv+Vn0FSmyRrUNejLFZCibXKpO76o9
-	 H0Nx7sItz/zPw==
-From: Benjamin Tissoires <bentiss@kernel.org>
-Date: Tue, 27 Aug 2024 17:19:32 +0900
-Subject: [PATCH v5 4/4] selftests/hid: Add HIDIOCREVOKE tests
+	s=arc-20240116; t=1724746853; c=relaxed/simple;
+	bh=s5DnIhW2HlQw8lb50wgDoawNR40ocw5I4M1PiF1zyFQ=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Ut4iz1HEEiLAGr1DA0F8iW8XqrAdA/aSljugGl4c94ndW3erGs3//c4UYctpfXJ6crNfWMT+RMvZHmstZeBxeZ62n+8hNb9uqkzoaaUQTTx9otTeT2Hm5ioQngy2Ul4qsLK4o0WD0NmmT8+/yGjlN6XAk4XgfCS3J9IbPEw9ffY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dawn3zG0; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724746853; x=1756282853;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=s5DnIhW2HlQw8lb50wgDoawNR40ocw5I4M1PiF1zyFQ=;
+  b=Dawn3zG0ZkYoBzWrp0ny6A+5LLVWegXUYL2azQdHMqSO86fbzEpjl52/
+   YDBD8lnNksXDHezZuWbl3ITf7qHnFjSJgfxWfQVO1tghtDp/96ZzYqY/f
+   XyDj7yV+qgNIgr7LoY9FqXTUdzn/KIkTCY0wYjU0Bmrj68M4IlfsPI5sN
+   CAQfaeGamM0oJ8cd89ZeSbKGBPTOaOR0vXkrSKymCUh1oC0wDIUTyhnnt
+   rxPLlIFhwYDpvHEvpdGRI65Cdp7nNkAVykgeH11awq2OqnHKUbZgOWMD9
+   hXcnh3wIP/tf71t20SKZMcdnJKhPy+FyAHwOaQn/zh8gmKkymxoNyaDAQ
+   w==;
+X-CSE-ConnectionGUID: lR6T1VhVTkqiNNHZYQwNtA==
+X-CSE-MsgGUID: NTfviuiaRXWGYaXgPnSXBA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23076579"
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="23076579"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 01:20:52 -0700
+X-CSE-ConnectionGUID: Ve09SytXT6iB8i6EVrOwRA==
+X-CSE-MsgGUID: +urC9lAiTXu2RnLEMr6uZw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="62757754"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.17])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 01:20:47 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 27 Aug 2024 11:20:42 +0300 (EEST)
+To: Armin Wolf <W_Armin@gmx.de>
+cc: james@equiv.tech, jlee@suse.com, corentin.chary@gmail.com, luke@ljones.dev, 
+    matan@svgalib.org, coproscefalo@gmail.com, 
+    Hans de Goede <hdegoede@redhat.com>, 
+    "Rafael J. Wysocki" <rafael@kernel.org>, lenb@kernel.org, 
+    platform-driver-x86@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+    linux-acpi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/5] hwmon: (hp-wmi-sensors) Check if WMI event data
+ exists
+In-Reply-To: <20240822173810.11090-3-W_Armin@gmx.de>
+Message-ID: <e791f8ed-f6af-d433-5c9b-a68fc9598dcc@linux.intel.com>
+References: <20240822173810.11090-1-W_Armin@gmx.de> <20240822173810.11090-3-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240827-hidraw-revoke-v5-4-d004a7451aea@kernel.org>
-References: <20240827-hidraw-revoke-v5-0-d004a7451aea@kernel.org>
-In-Reply-To: <20240827-hidraw-revoke-v5-0-d004a7451aea@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>, Shuah Khan <shuah@kernel.org>, 
- Peter Hutterer <peter.hutterer@who-t.net>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724746785; l=5102;
- i=bentiss@kernel.org; s=20230215; h=from:subject:message-id;
- bh=pst73USFY2/jm8Z3YTbF5rFAbRivyaR41QfG2nVz0AQ=;
- b=y3sUHaueIxVekOt4kgazqknNXdrYHIWgk1jscsc3h2ewTkzvw1IWUyaKLIEYM6K0dHVA4MOEM
- /8PheCYWlTgC9cWUOAGPWLjYbJ7Y0mhcd5ZxGV6wGX+15pAO6RCcktf
-X-Developer-Key: i=bentiss@kernel.org; a=ed25519;
- pk=7D1DyAVh6ajCkuUTudt/chMuXWIJHlv2qCsRkIizvFw=
+Content-Type: text/plain; charset=US-ASCII
 
-Add 4 tests for the new revoke ioctl, for read/write/ioctl and poll.
+On Thu, 22 Aug 2024, Armin Wolf wrote:
 
-Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
-Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
+> The BIOS can choose to return no event data in response to a
+> WMI event, so the ACPI object passed to the WMI notify handler
+> can be NULL.
+> 
+> Check for such a situation and ignore the event in such a case.
+> 
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> ---
+>  drivers/hwmon/hp-wmi-sensors.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/hwmon/hp-wmi-sensors.c b/drivers/hwmon/hp-wmi-sensors.c
+> index 6892518d537c..d6bdad26feb1 100644
+> --- a/drivers/hwmon/hp-wmi-sensors.c
+> +++ b/drivers/hwmon/hp-wmi-sensors.c
+> @@ -1628,6 +1628,9 @@ static void hp_wmi_notify(union acpi_object *wobj, void *context)
+>  	 * HPBIOS_BIOSEvent instance.
+>  	 */
+> 
+> +	if (!wobj)
+> +		return;
+> +
 
----
-
-new in v4
-
-Changes to v4:
-- fix a few error messages
-- also check for ENODEV errno when required
-- use ENODEV instead of its plain value
----
- tools/testing/selftests/hid/hidraw.c | 147 +++++++++++++++++++++++++++++++++++
- 1 file changed, 147 insertions(+)
-
-diff --git a/tools/testing/selftests/hid/hidraw.c b/tools/testing/selftests/hid/hidraw.c
-index 37372709130c..f8b4f7ff292c 100644
---- a/tools/testing/selftests/hid/hidraw.c
-+++ b/tools/testing/selftests/hid/hidraw.c
-@@ -3,6 +3,11 @@
- 
- #include "hid_common.h"
- 
-+/* for older kernels */
-+#ifndef HIDIOCREVOKE
-+#define HIDIOCREVOKE	      _IOW('H', 0x0D, int) /* Revoke device access */
-+#endif /* HIDIOCREVOKE */
-+
- FIXTURE(hidraw) {
- 	int dev_id;
- 	int uhid_fd;
-@@ -84,6 +89,148 @@ TEST_F(hidraw, raw_event)
- 	ASSERT_EQ(buf[1], 42);
- }
- 
-+/*
-+ * After initial opening/checks of hidraw, revoke the hidraw
-+ * node and check that we can not read any more data.
-+ */
-+TEST_F(hidraw, raw_event_revoked)
-+{
-+	__u8 buf[10] = {0};
-+	int err;
-+
-+	/* inject one event */
-+	buf[0] = 1;
-+	buf[1] = 42;
-+	uhid_send_event(_metadata, self->uhid_fd, buf, 6);
-+
-+	/* read the data from hidraw */
-+	memset(buf, 0, sizeof(buf));
-+	err = read(self->hidraw_fd, buf, sizeof(buf));
-+	ASSERT_EQ(err, 6) TH_LOG("read_hidraw");
-+	ASSERT_EQ(buf[0], 1);
-+	ASSERT_EQ(buf[1], 42);
-+
-+	/* call the revoke ioctl */
-+	err = ioctl(self->hidraw_fd, HIDIOCREVOKE, NULL);
-+	ASSERT_OK(err) TH_LOG("couldn't revoke the hidraw fd");
-+
-+	/* inject one other event */
-+	buf[0] = 1;
-+	buf[1] = 43;
-+	uhid_send_event(_metadata, self->uhid_fd, buf, 6);
-+
-+	/* read the data from hidraw */
-+	memset(buf, 0, sizeof(buf));
-+	err = read(self->hidraw_fd, buf, sizeof(buf));
-+	ASSERT_EQ(err, -1) TH_LOG("read_hidraw");
-+	ASSERT_EQ(errno, ENODEV) TH_LOG("unexpected error code while reading the hidraw node: %d",
-+					errno);
-+}
-+
-+/*
-+ * Revoke the hidraw node and check that we can not do any ioctl.
-+ */
-+TEST_F(hidraw, ioctl_revoked)
-+{
-+	int err, desc_size = 0;
-+
-+	/* call the revoke ioctl */
-+	err = ioctl(self->hidraw_fd, HIDIOCREVOKE, NULL);
-+	ASSERT_OK(err) TH_LOG("couldn't revoke the hidraw fd");
-+
-+	/* do an ioctl */
-+	err = ioctl(self->hidraw_fd, HIDIOCGRDESCSIZE, &desc_size);
-+	ASSERT_EQ(err, -1) TH_LOG("ioctl_hidraw");
-+	ASSERT_EQ(errno, ENODEV) TH_LOG("unexpected error code while doing an ioctl: %d",
-+					errno);
-+}
-+
-+/*
-+ * Setup polling of the fd, and check that revoke works properly.
-+ */
-+TEST_F(hidraw, poll_revoked)
-+{
-+	struct pollfd pfds[1];
-+	__u8 buf[10] = {0};
-+	int err, ready;
-+
-+	/* setup polling */
-+	pfds[0].fd = self->hidraw_fd;
-+	pfds[0].events = POLLIN;
-+
-+	/* inject one event */
-+	buf[0] = 1;
-+	buf[1] = 42;
-+	uhid_send_event(_metadata, self->uhid_fd, buf, 6);
-+
-+	while (true) {
-+		ready = poll(pfds, 1, 5000);
-+		ASSERT_EQ(ready, 1) TH_LOG("poll return value");
-+
-+		if (pfds[0].revents & POLLIN) {
-+			memset(buf, 0, sizeof(buf));
-+			err = read(self->hidraw_fd, buf, sizeof(buf));
-+			ASSERT_EQ(err, 6) TH_LOG("read_hidraw");
-+			ASSERT_EQ(buf[0], 1);
-+			ASSERT_EQ(buf[1], 42);
-+
-+			/* call the revoke ioctl */
-+			err = ioctl(self->hidraw_fd, HIDIOCREVOKE, NULL);
-+			ASSERT_OK(err) TH_LOG("couldn't revoke the hidraw fd");
-+		} else {
-+			break;
-+		}
-+	}
-+
-+	ASSERT_TRUE(pfds[0].revents & POLLHUP);
-+}
-+
-+/*
-+ * After initial opening/checks of hidraw, revoke the hidraw
-+ * node and check that we can not read any more data.
-+ */
-+TEST_F(hidraw, write_event_revoked)
-+{
-+	struct timespec time_to_wait;
-+	__u8 buf[10] = {0};
-+	int err;
-+
-+	/* inject one event from hidraw */
-+	buf[0] = 1; /* report ID */
-+	buf[1] = 2;
-+	buf[2] = 42;
-+
-+	pthread_mutex_lock(&uhid_output_mtx);
-+
-+	memset(output_report, 0, sizeof(output_report));
-+	clock_gettime(CLOCK_REALTIME, &time_to_wait);
-+	time_to_wait.tv_sec += 2;
-+
-+	err = write(self->hidraw_fd, buf, 3);
-+	ASSERT_EQ(err, 3) TH_LOG("unexpected error while writing to hidraw node: %d", err);
-+
-+	err = pthread_cond_timedwait(&uhid_output_cond, &uhid_output_mtx, &time_to_wait);
-+	ASSERT_OK(err) TH_LOG("error while calling waiting for the condition");
-+
-+	ASSERT_EQ(output_report[0], 1);
-+	ASSERT_EQ(output_report[1], 2);
-+	ASSERT_EQ(output_report[2], 42);
-+
-+	/* call the revoke ioctl */
-+	err = ioctl(self->hidraw_fd, HIDIOCREVOKE, NULL);
-+	ASSERT_OK(err) TH_LOG("couldn't revoke the hidraw fd");
-+
-+	/* inject one other event */
-+	buf[0] = 1;
-+	buf[1] = 43;
-+	err = write(self->hidraw_fd, buf, 3);
-+	ASSERT_LT(err, 0) TH_LOG("unexpected success while writing to hidraw node: %d", err);
-+	ASSERT_EQ(errno, ENODEV) TH_LOG("unexpected error code while writing to hidraw node: %d",
-+					errno);
-+
-+	pthread_mutex_unlock(&uhid_output_mtx);
-+}
-+
- int main(int argc, char **argv)
- {
- 	return test_harness_run(argc, argv);
+I'm left to wonder why is this patch is not placed first? Can't this 
+happen regardless who gets the wobj? And in that case, should this have
+a Fixes tag?
 
 -- 
-2.46.0
+ i.
 
 
