@@ -1,109 +1,141 @@
-Return-Path: <linux-kernel+bounces-302846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 440C9960429
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:16:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D923096042F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6C351F23914
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:16:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17C691C226C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC90193433;
-	Tue, 27 Aug 2024 08:16:33 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59203193433;
+	Tue, 27 Aug 2024 08:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZRYDNnt5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6958115535A;
-	Tue, 27 Aug 2024 08:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2558A17736
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724746593; cv=none; b=kFdg/K4A4o0XkqvEt/cDzVxge3qlxdUxZ4Cgs2OSQZ3cCx3MBnP35LeXiZRuRdkFpOUIhsaGcQeDhSnQU3YM0ebDZxi0qy2NjqHnFbYFw+y5tY6Lmb60rd6Pmqr09GV1lkT2gOEB5DKlos5xbA2raqvS/HoXSU5EtmlXRoZB+gw=
+	t=1724746696; cv=none; b=EHOIQ79L+vEZftwY7uNwBHiQCK6LS4S4MHiB7OKnMrdsghj8bBBHVavTLhbLohxz+FNqOxh3L6ZKnYgJRefUsELlAMjJZdejPZqJhAo3GcUTQ+my3PgZJhGWC6StE101c8ImF3dGdKg6IU4omiEkTtTRpN95ZfauPEB8feD6vQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724746593; c=relaxed/simple;
-	bh=4e4KFn3X2o9YId0RS3JogVooSFyHhVczdXK2/wJftVs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PLBFYbAymumHr2025HID/RbpHJOrviTp/vgVLPy6LGhdTsb9WNx9A9e0nAc5jYOgXwkDxJv64ZN2GEKTf0SrnpRRO0j7XumHRxGEChoe2Armc8s6n/Wt7GQbQuQ1kelog3YZCLX/vi5Z8zOYrEnc0/UFu315GO5XUBKlfKdzwKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WtL3V5NkGz9sRy;
-	Tue, 27 Aug 2024 10:16:22 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id qOUXLlQcHZNN; Tue, 27 Aug 2024 10:16:22 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WtL3R6BsYz9rvV;
-	Tue, 27 Aug 2024 10:16:19 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id C3B4D8B77B;
-	Tue, 27 Aug 2024 10:16:19 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id nz5gQiZQEV5x; Tue, 27 Aug 2024 10:16:19 +0200 (CEST)
-Received: from [192.168.233.149] (PO19727.IDSI0.si.c-s.fr [192.168.233.149])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 270028B763;
-	Tue, 27 Aug 2024 10:16:19 +0200 (CEST)
-Message-ID: <55a7d3ba-b384-4fb0-8fbb-e05ddf0d1fb8@csgroup.eu>
-Date: Tue, 27 Aug 2024 10:16:18 +0200
+	s=arc-20240116; t=1724746696; c=relaxed/simple;
+	bh=ueQ+aPpDc0TK9bCs4HiiYBkaW0h8zdVvh8h6Spr+UTM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kHJjfd7otx5PuDHSnmAEemlTX4BrJtC+gMvQ215WPXfScbCxD4J1ozoiV3B2k7AsIcoLVyEP2o+NmFpYP8mS1IqBoD7X8A9pJwHtWlVYiHTe9Bq6oaHxASNAJ4WdI4xyF7hOzwGK+YJsgMMtkTq3QjATu+BpgNSGH1+NFkXG0/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZRYDNnt5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724746693;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2POjXLS4suf26/CFlDwrLvuDWCdNgPkqz+C0kWqYtjM=;
+	b=ZRYDNnt5WgJzvW6wnIsIQPqE6LZ+21ttftwGq+9xo8Ykq+3DQhUJeimVkFacjNQs1/oiB1
+	dIjsDsdlcdycgykJjgbWxyvxkEIW9KM3fvZuMsMOkYUwsHkq7cnXkp466T6m1774PVZrPO
+	vWyxK+G21P0PfjESsckglATwBy0MPLU=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-549-yPgESvXbOlO8WyU5Ii5kDQ-1; Tue,
+ 27 Aug 2024 04:18:09 -0400
+X-MC-Unique: yPgESvXbOlO8WyU5Ii5kDQ-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A315A1955F42;
+	Tue, 27 Aug 2024 08:18:07 +0000 (UTC)
+Received: from dell-per7425-02.rhts.eng.pek2.redhat.com (dell-per7425-02.rhts.eng.pek2.redhat.com [10.73.116.18])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AC8BF30001A1;
+	Tue, 27 Aug 2024 08:18:02 +0000 (UTC)
+From: Li Wang <liwang@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	axboe@kernel.dk,
+	john.g.garry@oracle.com,
+	ltp@lists.linux.it
+Cc: Stefan Hajnoczi <stefanha@redhat.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Jan Stancek <jstancek@redhat.com>
+Subject: [PATCh v2] loop: Increase bsize variable from unsigned short to unsigned int
+Date: Tue, 27 Aug 2024 16:17:57 +0800
+Message-ID: <20240827081757.37646-1-liwang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] random: vDSO: Don't use PAGE_SIZE and PAGE_MASK
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
- Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>, Ingo Molnar
- <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-arch@vger.kernel.org
-References: <cover.1724743492.git.christophe.leroy@csgroup.eu>
- <b8f8fb6d1d10386c74f2d8826b737a74c60b76b2.1724743492.git.christophe.leroy@csgroup.eu>
- <Zs2FJku2hM2bp4ik@zx2c4.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <Zs2FJku2hM2bp4ik@zx2c4.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
+This change allows the loopback driver to handle block size larger than
+PAGE_SIZE and increases the consistency of data types used within the driver.
+Especially to match the struct queue_limits.logical_block_size type.
 
+Also, this is to get rid of the LTP/ioctl_loop06 test failure:
 
-Le 27/08/2024 à 09:49, Jason A. Donenfeld a écrit :
-> On Tue, Aug 27, 2024 at 09:31:48AM +0200, Christophe Leroy wrote:
->> -	ssize_t ret = min_t(size_t, INT_MAX & PAGE_MASK /* = MAX_RW_COUNT */, len);
->> +	const unsigned long page_size = 1UL << CONFIG_PAGE_SHIFT;
->> +	const unsigned long page_mask = ~(page_size - 1);
->> +	ssize_t ret = min_t(size_t, INT_MAX & page_mask /* = MAX_RW_COUNT */, len);
-> 
-> I'm really not a fan of making the code less idiomatic...
+  12 ioctl_loop06.c:76: TINFO: Using LOOP_SET_BLOCK_SIZE with arg > PAGE_SIZE
+  13 ioctl_loop06.c:59: TFAIL: Set block size succeed unexpectedly
+  ...
+  18 ioctl_loop06.c:76: TINFO: Using LOOP_CONFIGURE with block_size > PAGE_SIZE
+  19 ioctl_loop06.c:59: TFAIL: Set block size succeed unexpectedly
 
-Ok, I have another idea, let's give it a try.
+Thoese fail due to the loop_reconfigure_limits() cast bsize to 'unsined short'
+that never gets an expected error when testing invalid logical block size,
+which was just exposed since 6.11-rc1 introduced patches:
 
-> 
->> An easy solution would be to define PAGE_SIZE and PAGE_MASK in vDSO
->> when they do not exist already, but this can be misleading.
-> 
-> Why would what tglx and I suggested be misleading? That seems pretty
-> normal... Are you worried they might mismatch somehow? (If so, why?)
+  commit 9423c653fe61 ("loop: Don't bother validating blocksize")
+  commit fe3d508ba95b ("block: Validate logical block size in blk_validate_limits()")
 
-All architectures have their own definition, they are all based on 
-CONFIG_PAGE_SHIFT and should give the same value but with some 
-subtleties. The best would be to have an asm-generic definition of 
-PAGE_SIZE and PAGE_MASK that all architectures use, but that's another 
-level of work.
+Link: https://lists.linux.it/pipermail/ltp/2024-August/039912.html
+Signed-off-by: Li Wang <liwang@redhat.com>
+Cc: John Garry <john.g.garry@oracle.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Stefan Hajnoczi <stefanha@redhat.com>
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+Reviewed-by: Jan Stancek <jstancek@redhat.com>
+---
+ drivers/block/loop.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-tglx or yourself suggested to put in a one of the vdso headers instead 
-of directly in getrandom.c. This is too fragile because PAGE_SIZE might 
-be absent in that header but arrive in getrandom.c through another header.
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 78a7bb28defe..86cc3b19faae 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -173,7 +173,7 @@ static loff_t get_loop_size(struct loop_device *lo, struct file *file)
+ static bool lo_bdev_can_use_dio(struct loop_device *lo,
+ 		struct block_device *backing_bdev)
+ {
+-	unsigned short sb_bsize = bdev_logical_block_size(backing_bdev);
++	unsigned int sb_bsize = bdev_logical_block_size(backing_bdev);
+ 
+ 	if (queue_logical_block_size(lo->lo_queue) < sb_bsize)
+ 		return false;
+@@ -977,7 +977,7 @@ loop_set_status_from_info(struct loop_device *lo,
+ 	return 0;
+ }
+ 
+-static unsigned short loop_default_blocksize(struct loop_device *lo,
++static unsigned int loop_default_blocksize(struct loop_device *lo,
+ 		struct block_device *backing_bdev)
+ {
+ 	/* In case of direct I/O, match underlying block size */
+@@ -986,7 +986,7 @@ static unsigned short loop_default_blocksize(struct loop_device *lo,
+ 	return SECTOR_SIZE;
+ }
+ 
+-static int loop_reconfigure_limits(struct loop_device *lo, unsigned short bsize)
++static int loop_reconfigure_limits(struct loop_device *lo, unsigned int bsize)
+ {
+ 	struct file *file = lo->lo_backing_file;
+ 	struct inode *inode = file->f_mapping->host;
+-- 
+2.46.0
 
-Christophe
 
