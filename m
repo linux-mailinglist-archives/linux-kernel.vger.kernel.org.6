@@ -1,438 +1,191 @@
-Return-Path: <linux-kernel+bounces-303981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F34BE9617E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:20:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A9DE9617EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:21:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F70A1F24A02
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:20:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21BA41F24937
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A7D1D318E;
-	Tue, 27 Aug 2024 19:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB891D31A6;
+	Tue, 27 Aug 2024 19:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="go4YQxCD"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013036.outbound.protection.outlook.com [52.101.67.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="FLYsF3pG"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9C6195F04;
-	Tue, 27 Aug 2024 19:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.36
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724786410; cv=fail; b=o2MVOfnpgbkZO0czk7U3NmFqQTOcW2K+l3wJgRVkAFbaCp4c4AeCSb6v5DHK4Py/VRTHeBRL5o7sHz1Nf1VY0vUnH/TvTB6Sr/iGYGnJ+wjgo+rzBgbmEZ8FNIvMXYeZhbUC6WyXzDahK4965HDrlj61yZAhWgG1tBMbfn0nf2Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724786410; c=relaxed/simple;
-	bh=579MKNArS0929nDc0KPbe9RoB8C9D8puaPgdPyZ8mNA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=QYRyFphrP/dYZdi+yV/KsATRC5qOg1GT3BlMHrKErq+e9E3ck42KpAVeFVaeaII0X+/ynPHUUMQB9r0Qq2OYutG1FPAkpUEhU+Ywd1d4V0E4uBhURh4UdBOW/yLmFMt0O0Tud1d41ryZNoa2VsM2SmLyOMcYJM+vHvurlJJSbSE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=go4YQxCD; arc=fail smtp.client-ip=52.101.67.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eFYatQW/9mkQrib8QIh6qNgxheg0ZdHCnLl69F0WxfAWUrEyL0aJDoCqCj1TNwtlfh8zFF/unxzHmq6mhCccrTY4HAgpNhl5PVZ2jJ96c9+EtGfJcgX3hOEqBbF1tZseiBlAjfnCt1mC027Lul6GT6xFAEm6HLab5IliI47PLV0gRWnFobkpVRXuthwymndXjhtS+SK8P8hJRFggCbR4ueLJY/JhDLm1L5wdSte/Q4yjz/mFkv+WLavCepNuqq+xBlrRcr3ZMclCZQdV7ZBKMjTrLcEflaC3QEeD7T+TBaaPrBCIpMUwdPPomzKjlHqKsrryCzFP5uaqkzRb93yZzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SKgN/O9s76S0m/TcUWMVCWzeKoozw0FCS+//Am32JtY=;
- b=b7yKqB8Uy4a0UkTSIFurNvK8sI7VsF+zXROHttt+3SlYdJVgKSqM5sQDiIpInQgRGQh0kMsCRPZOKt3o2VdbDe+0/hAKefrfxY2T6HAUUIAlolMMESBYJrPog1OGsWFCURhchtFi3/0B6wSEsbzvRtAgN9GtH5HcrwsZNad+Z2DiuGzaNxguA2Hy1MwjiMJ8KKfIqVRwr9saUVLsimGYsD39o4eFHOnsEAIHjZqLgkjuP8IJC6+c6s0HGdA6JLl2HXFU6pIcH8DouQOTgImnjYvXeKL3Lw0RbtEZM+bNShg9Kh31IzqhGusFwsmPfIArZyU1H5abZlX33AlxDWMw9A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SKgN/O9s76S0m/TcUWMVCWzeKoozw0FCS+//Am32JtY=;
- b=go4YQxCDzsgZrAmJwgEj9gkTLMaWGMrZYU2nE6e39Zfqarw0ad0VC1vD5q8Ei1rGPTnQPmQGxnipSRwcMRRiybEVuHe8XQdIWZev3/mMYRSmA0+6VFLChOmDBJTKSlofPxS0dCr/m8JfpTxDgW53Df/dKSUFCWe7dzrwUl93hgzVt7PLF9IRnh0mZtmtckDlih7mJ7MnggzhHeYNVD98wzkp02c3uxW0yhlLjQkaR7ZMFF4oYJ+JeJ6Dn/NIgSuiU3TcaRKbu1h+iteU5wod8EP8SzODbF8o3Fvd7o/52PXE0mdOLdPg5Gc5A2P3HCyTxC3D5kmZroqVs2ycrhKiOA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by DBAPR04MB7350.eurprd04.prod.outlook.com (2603:10a6:10:1a9::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Tue, 27 Aug
- 2024 19:20:04 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d%7]) with mapi id 15.20.7897.021; Tue, 27 Aug 2024
- 19:20:04 +0000
-Date: Tue, 27 Aug 2024 15:19:55 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: David Leonard <David.Leonard@digi.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 4/6] pinctrl: ls1046a: Add pinctrl driver support
-Message-ID: <Zs4m2xZ9CTgPBGX8@lizhi-Precision-Tower-5810>
-References: <c0ecf4f4-94f1-2efd-b05b-fc117c62e516@digi.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c0ecf4f4-94f1-2efd-b05b-fc117c62e516@digi.com>
-X-ClientProxiedBy: SJ0PR05CA0188.namprd05.prod.outlook.com
- (2603:10b6:a03:330::13) To DB9PR04MB9626.eurprd04.prod.outlook.com
- (2603:10a6:10:309::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC49195F04
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 19:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724786449; cv=none; b=tr7f48Zr0plRrqKhIGuSoJmr/M0Pi0Zb0mwXWArtHlIu61Eb8UzI0soLZYsf9lElSvtvhvMjOJrWDEGlewDuX5TTzUUYBP1VrdTskzkj7+J2UUkUCNmjj8g/lRVeVvOi6FUJTQ4k5QDGidEC5P9sZ+7fZH0kxJWba7WlZTzC03E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724786449; c=relaxed/simple;
+	bh=wM4GJRd+MQ8SCrwJt4f+5j9/QCchrygEB/N+t5RkD78=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JjWEaaukOaQumi+7LPEGmoSjuFWOiL8dDjt5mg1w10zFoCcmG1gMrLwiR18V6Ly8KzS67h4XPJAgkRwVzYfAmf6aAkbwCgEFAo9hdp7aKon60aJud/3Qwsw76Wvep6vxsJbLbucdzw/tivt4iuTlBRzOZXZKzd6i0jn8vWFwZLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=FLYsF3pG; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c210e23651so243035a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:20:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1724786446; x=1725391246; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wM4GJRd+MQ8SCrwJt4f+5j9/QCchrygEB/N+t5RkD78=;
+        b=FLYsF3pGBbgKQe1dzINPK3Iuqj3Yt/sNAa+B+Kpo0bFrh2vqy22lNuipCMm3jgP9hL
+         UljnJbgIYR4NCn28o7bDceWSrKKxyv+uxg5tc9Mcw69JIAAyZIF9FZyBYC5/O3Fnty5G
+         jG7/chkIyM7gqSEouvk7R7fGOB04edt2TF/Dw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724786446; x=1725391246;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wM4GJRd+MQ8SCrwJt4f+5j9/QCchrygEB/N+t5RkD78=;
+        b=MHDya0ZS/smnooeoyRrDRLISWuu7ozTYC0wXyuvw13rjgShzDAuIj9C1y2HqbUd9X7
+         /L9TpLZNNvOqx5qcb3omG2liyXZn03YxN9mnvV//MKfdNsGRi1vsDlv1epmlm8lnukP/
+         Eo+848yQ2/chk25epj29aXbKlc5+U0xM32bVQvQzLylWI8hGPeyHYJhfX2ui11QpUq+A
+         Ulg2vg+ZrfcgG+2AgUUA/XJH3sbjGt39vlAIo53aVhfgTUq0n6V76qyEqSLhHdAlivU8
+         684wif8DHUYwM+w6Q0DKaqo7gBlNybM7NGdZ7HY1LqeNmozQvTbRRUzPcifamOEzOaT4
+         dihA==
+X-Forwarded-Encrypted: i=1; AJvYcCX1neZbagu6yG+iJPUdFPhNTLUnCSSMdNILhFxr6olhe5ILGi7zW2WVgVwFerWXhmVNc82PKQhL2QLHC1w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxagavwHQ9L9bpRyMyqutjhDI2m+5Yy0A0mfQmGNSqCY8hOUeq
+	NNFj6anlNh//WDEWT4zTciteMwflJJBtSX6kvZFLVZ2Vj8IlhWtVc7webEc8C07ocri4SY8jBwk
+	/opmTk2RG85haeHXNw1KX0U2JsmwGKukIom5+
+X-Google-Smtp-Source: AGHT+IHyiblg8oxR6h2eIw4lJCDNv5/eXNMd6VvHXK6XtRQlmFUm646Al0OG/Iev8IhnoBSvJkXvDLMUCNp608Z1PPE=
+X-Received: by 2002:a05:6402:354e:b0:5c2:106b:7191 with SMTP id
+ 4fb4d7f45d1cf-5c2106b7411mr511440a12.17.1724786446231; Tue, 27 Aug 2024
+ 12:20:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|DBAPR04MB7350:EE_
-X-MS-Office365-Filtering-Correlation-Id: f9e7d636-ecb7-4f5a-9a54-08dcc6cd4121
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Wg5k9swvUDf4cvEUo+DNYE76myqoPpK3uO72S6jwTDj/XJKx+oF1KqAcl2vr?=
- =?us-ascii?Q?uBm2sZxpMCwQ9JECGYNiMhqrkEwvGYlCDQPvSpMdXm98NdurbVeNtfeS6QTE?=
- =?us-ascii?Q?oO/hPwk0uaTjvL7Du7C3Ufe6qvaxCWiF6JRD9rpKuSk/s24QFAd9GOgboZYD?=
- =?us-ascii?Q?zM12SOYP9uIQjcVov0/geTiqwxsP40KIayWMIPYKCz7LZgRsKfz/Ki0dOCiV?=
- =?us-ascii?Q?XsT6t0qrRlYVABX+bSgisXpIEiP20ayl0L5trh6eCBPwdSvlD3NPKuOPEOj4?=
- =?us-ascii?Q?I6myS5rGXn525aJ+5+zzZf6qrVvgD578W5cCk85NF53ZcyizXjtHjyY5MWBw?=
- =?us-ascii?Q?GQYUb+FOcNO5x8EwZrqjCYhmRBSfGjcDlP+S5h2YQ8/NxuDg7pkZeRTPDBhe?=
- =?us-ascii?Q?xj57c4jbp3cuXQ8F6Y5QZKFELekrJrholDaVDyUft8K39WASv+4F1/Ac0yfF?=
- =?us-ascii?Q?eFmCfvGimX+V+EmaSfyvBPXvfpfDxcjIDOFirfuXFeMZ8EGBXV62M1iURw0N?=
- =?us-ascii?Q?Yc/e1MCFpe/10gr7Ehr+sNUrqlSWSLKubS6+7s9U6w7um0ff9tKP+t9jQ/25?=
- =?us-ascii?Q?ffbiKRjrohsSzfXFhbo+TRf9VA9IV+WWfulboJoaI7bLU5N4yl80FlCqZ0rb?=
- =?us-ascii?Q?E5cle2XqVFxgDyIlPEdWKBVrT+S3xsZ04e16LwWPkUOk0iEryCOtogqqqVDT?=
- =?us-ascii?Q?rCpYX9mlWi6lLxUzYtQASOl6qXw2F/zY5ozyB16/aGNHeGyDCtzNcYDhctfR?=
- =?us-ascii?Q?xJQRUHzoW2whyDZmRYO75eaqRjRm6QBru7rExNUtjMvR+1zE3vUYfeHIXlr8?=
- =?us-ascii?Q?tJ97Ua3csFJAjdgtbFKpgIHdmgfiOV8d0dx3BnMs0m4VyHVgquTz0twzg2f2?=
- =?us-ascii?Q?LLqDBeUTaWjYswUHjdzxQl0vAQ+8dSJzTMaedXbT3D5iUo3tghmVs5zatzgK?=
- =?us-ascii?Q?0Bdehsc9sr+rEX7VSm9CB33vTkIt5vrsqfYBezuX+Ehc1985gsgnPxvxaGmo?=
- =?us-ascii?Q?DpCUS/8fuJd2Jpoy4MrE9FOj7kEQDtswJtayi+5UVNRnJkiaBtIB5OrMuzjv?=
- =?us-ascii?Q?yvWfhz17DfKQrSJuws1VBRgQ4wU4zepv/CYlVTTCMsWqPcImG7hT9OeJ0Vi8?=
- =?us-ascii?Q?GUMwCflqHfetGmEviJYhQPcsCQGqmX4zQ0jWMiiiKfbRss7Uci5gdVejp2HO?=
- =?us-ascii?Q?ijBUTt8eg+EVuucgkxCK6cqXI0hl2ACIgOAYEvGP8oFiTtoIa3tqBL7bdrc6?=
- =?us-ascii?Q?e2XFznVJ0xbdfb01Iy1uqgjxIGxFXuEJUNZqK3BD4RyLPMYSBSArvpoqnU5u?=
- =?us-ascii?Q?Nas2rP1VAfN608/zJNQvfyCEmo4Xe9MxEYum3hTm+UTJhKs4J+VKSVMb+rqt?=
- =?us-ascii?Q?XfyyQMXIOgZugRy4xIG8/COQkJjQE2svGm7Sp/w776DoMAoi8Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YK5tFIXP91d+oNTJV84LK3fNErmwbNuhFB2euGupWGwFWH/Tn38/stlBWd/F?=
- =?us-ascii?Q?WEaNS3Mv3KxuRisw/Ejh8IzslJ8HB6EBKF+WNn98b7Fo8dUELmi2sCDRelYY?=
- =?us-ascii?Q?48L7nBoH0TcmzHue7ryGRn9dxuFeu/3WE/kRgX/2seAG5OjViK8BVgFrPpfN?=
- =?us-ascii?Q?YwntnUS/R1lQkmqcdMpCgfN/MaXGwCVXR441gVpTFnkMtkAMMmEhKup7jDqE?=
- =?us-ascii?Q?yK57h3hnfnL/TOxjzVCAkNNXfx3eltYSQ0RpkzSBmHdUUx0iq+mg1OYOMklh?=
- =?us-ascii?Q?cbH4ASs1nZHIGolo5tY+Rw9LvwToXW6HFVuR3e6Fh+fF0t0WyScZ07CVlYfx?=
- =?us-ascii?Q?xAMuuxWuMcuT+hAKQr275quvoSlt5ymirvoC8TwrM+en1UuvijzBOHnIyr03?=
- =?us-ascii?Q?oP7m/VRA/xxZHCwlYoSF6gdMfY/KFoQxAuWB8rgrwUbQ5k5kAk3MplbNwYm2?=
- =?us-ascii?Q?lh9WLAXxF6ynmdpg7+82vSFk66SsKxRWrwadcbDFqUk9rNWFv/+aO5piVH3y?=
- =?us-ascii?Q?FYhL+404Lm6YHgtvPbPP0xHsNGUDQd+oMb1EjIRzCGReV/whzuFW+XB5S+uZ?=
- =?us-ascii?Q?TBQiPYIQ99kCyhxdMRwOT3JSgmKTbFdM0H9JoBRdBi1UiPULQUKKZswjqxf6?=
- =?us-ascii?Q?tJWStqgtEe+HvGqketLeSb6UIiYVvj8aBAh9TaEPctygyYIbdadTP1TLqWZu?=
- =?us-ascii?Q?jM3iXSFTIhzVjRo5Td8QeZjHlfOSBXLBFB/T24ks0/SZlvHBpL3VALIbFieW?=
- =?us-ascii?Q?QfmFFpvablD5IbU0XJ2V2otdtyE31okcPYN7cRfCr0Np4Bl8rLku3/cSR0SY?=
- =?us-ascii?Q?MmMbAqBaQN3sYdD/lzjJjPRkx3APF8asXgwsWxoEGXCXPJUbdbstCxvIp5LY?=
- =?us-ascii?Q?A7ZN3dxCn+3wzd6Ta2R9sbTbmo+brrzz/9P+b1WD6gomYQIBeLNPKqz8APwn?=
- =?us-ascii?Q?5PRk3r8K3kjsJBpVlWKub5vOjYqOiTzePZswQWQcmhKITZYj6prdhXiWDazq?=
- =?us-ascii?Q?SlXyrg5aaOJGP/9v/Q54iXWjlddXCd2qlUFecfAxqNTR1RJlOX0CvWEplWfk?=
- =?us-ascii?Q?rhKdXGBfpy/n9nvQCnEDSmlnxE7m02+m8xwBueIqaJx0fHqlzTK9sF3tG6H+?=
- =?us-ascii?Q?HjqJgCyHC5XcsbcyIzZK6LuhSj1LNIwbfUCnH5Cyn+o0ZSXdcrMJnBDbu/cd?=
- =?us-ascii?Q?zmizE7qa1DiSN5OIpEJNukUyf6WsxsM5CZPuIfsR5wlspfUI5u47kIbIKTkf?=
- =?us-ascii?Q?IxFFdT8FL23A/hev40G/bCgxO1XMdVIPaf2cQe8O1Jn6ntMtJUw/xkPRPp2K?=
- =?us-ascii?Q?5lZAD8vzvX7+kLwZswLbx/eANXGi0mEBA8Hdigh3eQ4Bbqht/S0xeCqBqThn?=
- =?us-ascii?Q?jPF0YyW00slNiKVUNylOsszH7F245yFS+bi9UXoy3jbduisL9GeK4vk8qiCN?=
- =?us-ascii?Q?8hzO+jznJbq5o5zN3zNdKJUdkCW4wPjRj/p+dwlPQ/C5hYeSNfEH+Ec/Ziix?=
- =?us-ascii?Q?YnXcp9F63tla2ySBrBXKUkN3BVAogCRmU/oZs0ZM/BX/eIr3ov2FDillOM+J?=
- =?us-ascii?Q?ZB1U+pkDWxhkIgYhsWc=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f9e7d636-ecb7-4f5a-9a54-08dcc6cd4121
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 19:20:04.6308
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /vl6Gq6tpsJKY9yDhwvPPyCrE+GMdbx9iKQHQGtpSBKEaOaCVhvhQjcBCnt8KoCM2r0zV61nlvAsLiqkkIMVdQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7350
+References: <20240822204120.3634-1-wei.huang2@amd.com> <20240822204120.3634-12-wei.huang2@amd.com>
+ <20240826132213.4c8039c0@kernel.org> <ZszsBNC8HhCfFnhL@C02YVCJELVCG>
+ <20240826154912.6a85e654@kernel.org> <Zs3ny988Yk1LJeEY@C02YVCJELVCG> <20240827120544.383a1eef@kernel.org>
+In-Reply-To: <20240827120544.383a1eef@kernel.org>
+From: Michael Chan <michael.chan@broadcom.com>
+Date: Tue, 27 Aug 2024 12:20:34 -0700
+Message-ID: <CACKFLikctGq7Mg-7htmj=FUKcTXhaHsujJ32VCKnwDpKqNVv0A@mail.gmail.com>
+Subject: Re: [PATCH V4 11/12] bnxt_en: Add TPH support in BNXT driver
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Andy Gospodarek <andrew.gospodarek@broadcom.com>, Wei Huang <wei.huang2@amd.com>, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, netdev@vger.kernel.org, 
+	Jonathan.Cameron@huawei.com, helgaas@kernel.org, corbet@lwn.net, 
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
+	alex.williamson@redhat.com, ajit.khaparde@broadcom.com, 
+	somnath.kotur@broadcom.com, manoj.panicker2@amd.com, Eric.VanTassell@amd.com, 
+	vadim.fedorenko@linux.dev, horms@kernel.org, bagasdotme@gmail.com, 
+	bhelgaas@google.com, lukas@wunner.de, paul.e.luse@intel.com, 
+	jing2.liu@intel.com
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="00000000000079a8db0620af23fd"
 
-On Tue, Aug 27, 2024 at 12:12:24PM +1000, David Leonard wrote:
->
-> Add QorIQ LS1046A pinctrl driver allowing i2c-core to exert
-> GPIO control over the third and fourth I2C buses.
->
-> Signed-off-by: David Leonard <David.Leonard@digi.com>
-> ---
+--00000000000079a8db0620af23fd
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Why not use pinctrl-single,  please ref fsl,lx2160x.dtsi for GPIO/i2c
-recover.
+On Tue, Aug 27, 2024 at 12:05=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> w=
+rote:
 
-Frank
+> Not holding because API may not work, holding because (I thought)
+> API isn't in place at all. If bnxt_queue_stop/bnxt_queue_start are in
+> linux-pci please rewrite the patch to use those and then all clear
+> from my PoV.
 
->  drivers/pinctrl/freescale/Kconfig           |   8 +
->  drivers/pinctrl/freescale/Makefile          |   1 +
->  drivers/pinctrl/freescale/pinctrl-ls1046a.c | 224 ++++++++++++++++++++
->  3 files changed, 233 insertions(+)
->  create mode 100644 drivers/pinctrl/freescale/pinctrl-ls1046a.c
->
-> diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
-> index a2038042eeae..2641db6c64c7 100644
-> --- a/drivers/pinctrl/freescale/Kconfig
-> +++ b/drivers/pinctrl/freescale/Kconfig
-> @@ -217,6 +217,14 @@ config PINCTRL_LS1012A
->  	help
->  	  Say Y here to enable the ls1012a pinctrl driver
->
-> +config PINCTRL_LS1046A
-> +	tristate "LS1046A pinctrl driver"
-> +	depends on ARCH_LAYERSCAPE && OF || COMPILE_TEST
-> +	select PINMUX
-> +	select GENERIC_PINCONF
-> +	help
-> +	  Say Y here to enable the ls1046a pinctrl driver
-> +
->  config PINCTRL_VF610
->  	bool "Freescale Vybrid VF610 pinctrl driver"
->  	depends on SOC_VF610
-> diff --git a/drivers/pinctrl/freescale/Makefile b/drivers/pinctrl/freescale/Makefile
-> index 6926529d8635..66fec747af73 100644
-> --- a/drivers/pinctrl/freescale/Makefile
-> +++ b/drivers/pinctrl/freescale/Makefile
-> @@ -36,3 +36,4 @@ obj-$(CONFIG_PINCTRL_IMX28)	+= pinctrl-imx28.o
->  obj-$(CONFIG_PINCTRL_IMXRT1050)	+= pinctrl-imxrt1050.o
->  obj-$(CONFIG_PINCTRL_IMXRT1170)	+= pinctrl-imxrt1170.o
->  obj-$(CONFIG_PINCTRL_LS1012A)	+= pinctrl-ls1012a.o
-> +obj-$(CONFIG_PINCTRL_LS1046A)	+= pinctrl-ls1046a.o
-> diff --git a/drivers/pinctrl/freescale/pinctrl-ls1046a.c b/drivers/pinctrl/freescale/pinctrl-ls1046a.c
-> new file mode 100644
-> index 000000000000..9f5ec31f1e05
-> --- /dev/null
-> +++ b/drivers/pinctrl/freescale/pinctrl-ls1046a.c
-> @@ -0,0 +1,224 @@
-> +// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
-> +/*
-> + * Pin controller for NXP QorIQ LS1046A.
-> + *
-> + * Copyright (c) 2024 Digi International, Inc.
-> + * Author: David Leonard <David.Leonard@digi.com>
-> + */
-> +#include <linux/module.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/pinctrl/pinctrl.h>
-> +#include <linux/pinctrl/pinmux.h>
-> +#include <linux/pinctrl/pinconf-generic.h>
-> +#include <linux/of.h>
-> +#include <linux/io.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/sys_soc.h>
-> +
-> +struct ls1046a_pinctrl_pdata {
-> +	struct pinctrl_dev *pctl_dev;
-> +	void __iomem *cr0mem;
-> +	bool big_endian;
-> +	u32 ssc;
-> +};
-> +
-> +/*
-> + *       L4           M4            M3           N3
-> + *  i2c  IIC3_SCL     IIC3_SDA      IIC4_SCL     IIC4_SDA
-> + *  gpio GPIO_4[10]   GPIO_4[11]    GPIO_4[12]   GPIO_4[13]
-> + *  evt  EVT_B[5]     EVT_B[6]      EVT_B[7]     EVT_B[8]
-> + *  usb  USB2_DRVVBUS USB2_PWRFAULT USB3_DRVVBUS USB3_PWRFAULT
-> + *  ftm  FTM8_CH0     FTM8_CH1      FTM3_FAULT   FTM_EXT3CLK
-> + */
-> +
-> +/* SCFG_RCWPMUXCR0 pinmux control register */
-> +#define SCFG_RCWPMUXCR0			0x0157040c
-> +#define RCWPMUXCR0_FIELD(shift, func)	((u32)(func) << (29 - (shift)))
-> +#define RCWPMUXCR0_MASK(shift)		RCWPMUXCR0_FIELD(shift, RCWPMUXCR0_FUNC_MASK)
-> +#define RCWPMUXCR0_IIC3_SCL_SHIFT	17
-> +#define RCWPMUXCR0_IIC3_SDA_SHIFT	21
-> +#define RCWPMUXCR0_IIC4_SCL_SHIFT	25
-> +#define RCWPMUXCR0_IIC4_SDA_SHIFT	29
-> +#define RCWPMUXCR0_FUNC_I2C		0
-> +#define RCWPMUXCR0_FUNC_GPIO		1
-> +#define RCWPMUXCR0_FUNC_EVT		2
-> +#define RCWPMUXCR0_FUNC_USB		3
-> +#define RCWPMUXCR0_FUNC_FTM		5
-> +#define RCWPMUXCR0_FUNC_CLK		6
-> +#define RCWPMUXCR0_FUNC_MASK		7
-> +
-> +#define PIN_L4 0 /* IIC3_SCL/GPIO_4[10]/EVT_B[5]/USB2_DRVVBUS/FTM8_CH0 */
-> +#define PIN_M4 1 /* IIC3_SDA/GPIO_4[11]/EVT_B[6]/USB2_PWRFAULT/FTM8_CH1 */
-> +#define PIN_M3 2 /* IIC4_SCL/GPIO_4[12]/EVT_B[7]/USB3_DRVVBUS/FTM3_FAULT */
-> +#define PIN_N3 3 /* IIC4_SDA/GPIO_4[13]/EVT_B[8]/USB3_PWRFAULT/FTM_EXT3CLK */
-> +
-> +const struct pinctrl_pin_desc ls1046a_pins[] = {
-> +	PINCTRL_PIN(PIN_L4, "L4"),
-> +	PINCTRL_PIN(PIN_M4, "M4"),
-> +	PINCTRL_PIN(PIN_M3, "M3"),
-> +	PINCTRL_PIN(PIN_N3, "N3"),
-> +};
-> +
-> +/* Each pin is its own group */
-> +static const char * const ls1046a_groups[] = { "L4", "M4", "M3", "N3" };
-> +
-> +static int ls1046a_get_groups_count(struct pinctrl_dev *pcdev)
-> +{
-> +	return ARRAY_SIZE(ls1046a_pins);
-> +}
-> +
-> +static const char *ls1046a_get_group_name(struct pinctrl_dev *pcdev,
-> +	unsigned int selector)
-> +{
-> +	return ls1046a_pins[selector].name;
-> +}
-> +
-> +static int ls1046a_get_group_pins(struct pinctrl_dev *pcdev,
-> +	unsigned int selector, const unsigned int **pins, unsigned int *npins)
-> +{
-> +	*pins = &ls1046a_pins[selector].number;
-> +	*npins = 1;
-> +	return 0;
-> +}
-> +
-> +static const struct pinctrl_ops ls1046a_pinctrl_ops = {
-> +	.get_groups_count = ls1046a_get_groups_count,
-> +	.get_group_name = ls1046a_get_group_name,
-> +	.get_group_pins = ls1046a_get_group_pins,
-> +	.dt_node_to_map = pinconf_generic_dt_node_to_map_group,
-> +	.dt_free_map = pinconf_generic_dt_free_map,
-> +};
-> +
-> +/* Every pin has the same set of functions */
-> +#define FUNC_i2c	0
-> +#define FUNC_gpio	1
-> +#define FUNC_evt	2
-> +#define FUNC_usb	3
-> +#define FUNC_ftm	4
-> +
-> +#define _PINFUNC(name) \
-> +	[FUNC_##name] = PINCTRL_PINFUNCTION(#name, ls1046a_groups, ARRAY_SIZE(ls1046a_groups))
-> +static const struct pinfunction ls1046a_functions[] = {
-> +	_PINFUNC(i2c),
-> +	_PINFUNC(gpio),
-> +	_PINFUNC(evt),
-> +	_PINFUNC(usb),
-> +	_PINFUNC(ftm),
-> +};
-> +
-> +static int ls1046a_get_functions_count(struct pinctrl_dev *pctldev)
-> +{
-> +	return ARRAY_SIZE(ls1046a_functions);
-> +}
-> +
-> +static const char *ls1046a_get_function_name(struct pinctrl_dev *pctldev, unsigned int func)
-> +{
-> +	return ls1046a_functions[func].name;
-> +}
-> +
-> +static int ls1046a_get_function_groups(struct pinctrl_dev *pctldev, unsigned int func,
-> +	const char * const **groups,
-> +	unsigned int * const ngroups)
-> +{
-> +	*groups = ls1046a_functions[func].groups;
-> +	*ngroups = ls1046a_functions[func].ngroups;
-> +	return 0;
-> +}
-> +
-> +static int ls1046a_set_mux(struct pinctrl_dev *pcdev,
-> +	unsigned int func, unsigned int pin)
-> +{
-> +	struct ls1046a_pinctrl_pdata *pd = pinctrl_dev_get_drvdata(pcdev);
-> +	static const u32 cr0_reg_func[] = {
-> +		[FUNC_i2c] = RCWPMUXCR0_FUNC_I2C,
-> +		[FUNC_gpio] = RCWPMUXCR0_FUNC_GPIO,
-> +		[FUNC_evt] = RCWPMUXCR0_FUNC_EVT,
-> +		[FUNC_usb] = RCWPMUXCR0_FUNC_USB,
-> +		[FUNC_ftm] = RCWPMUXCR0_FUNC_FTM,
-> +	};
-> +	static const unsigned int cr0_pin_shift[] = {
-> +		[PIN_L4] = RCWPMUXCR0_IIC3_SCL_SHIFT,
-> +		[PIN_M4] = RCWPMUXCR0_IIC3_SDA_SHIFT,
-> +		[PIN_M3] = RCWPMUXCR0_IIC4_SCL_SHIFT,
-> +		[PIN_N3] = RCWPMUXCR0_IIC4_SDA_SHIFT,
-> +	};
-> +	u32 cr0;
-> +
-> +	if (pd->big_endian)
-> +		cr0 = ioread32be(pd->cr0mem);
-> +	else
-> +		cr0 = ioread32(pd->cr0mem);
-> +
-> +	unsigned int pin_shift = cr0_pin_shift[pin];
-> +	u32 reg_func = cr0_reg_func[func];
-> +	u32 newcr0 = (cr0 & ~RCWPMUXCR0_MASK(pin_shift)) |
-> +		RCWPMUXCR0_FIELD(pin_shift, reg_func);
-> +
-> +	if (pd->big_endian)
-> +		iowrite32be(newcr0, pd->cr0mem);
-> +	else
-> +		iowrite32(newcr0, pd->cr0mem);
-> +	return 0;
-> +}
-> +
-> +static const struct pinmux_ops ls1046a_pinmux_ops = {
-> +	.get_functions_count = ls1046a_get_functions_count,
-> +	.get_function_name = ls1046a_get_function_name,
-> +	.get_function_groups = ls1046a_get_function_groups,
-> +	.set_mux = ls1046a_set_mux,
-> +};
-> +
-> +static const struct pinctrl_desc ls1046a_pinctrl_desc = {
-> +	.name = "ls1046a",
-> +	.pins = ls1046a_pins,
-> +	.npins = ARRAY_SIZE(ls1046a_pins),
-> +	.pctlops = &ls1046a_pinctrl_ops,
-> +	.pmxops = &ls1046a_pinmux_ops,
-> +	.owner = THIS_MODULE,
-> +};
-> +
-> +static int ls1046a_pinctrl_probe(struct platform_device *pdev)
-> +{
-> +	struct ls1046a_pinctrl_pdata *pd;
-> +	int ret;
-> +
-> +	pd = devm_kzalloc(&pdev->dev, sizeof(*pd), GFP_KERNEL);
-> +	if (!pd)
-> +		return -ENOMEM;
-> +	platform_set_drvdata(pdev, pd);
-> +
-> +	pd->big_endian = device_is_big_endian(&pdev->dev);
-> +
-> +	/* SCFG PMUX0 */
-> +	pd->cr0mem = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(pd->cr0mem))
-> +		return PTR_ERR(pd->cr0mem);
-> +	dev_dbg(&pdev->dev, "scfg pmuxcr0 at %px %s", pd->cr0mem,
-> +		pd->big_endian ? "be" : "le");
-> +
-> +	ret = devm_pinctrl_register_and_init(&pdev->dev, &ls1046a_pinctrl_desc,
-> +		pd, &pd->pctl_dev);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret, "Failed pinctrl init\n");
-> +
-> +	pinctrl_enable(pd->pctl_dev);
-> +	return ret;
-> +}
-> +
-> +static const struct of_device_id ls1046a_pinctrl_match_table[] = {
-> +	{ .compatible = "fsl,ls1046a-pinctrl" },
-> +	{ /* sentinel */ }
-> +};
-> +
-> +static struct platform_driver ls1046a_pinctrl_driver = {
-> +	.driver = {
-> +		.name = "ls1046a_pinctrl",
-> +		.of_match_table = ls1046a_pinctrl_match_table,
-> +	},
-> +	.probe = ls1046a_pinctrl_probe,
-> +};
-> +
-> +builtin_platform_driver(ls1046a_pinctrl_driver)
-> +
-> +MODULE_DESCRIPTION("LS1046A pinctrl driver");
-> +MODULE_LICENSE("GPL");
-> --
-> 2.43.0
->
+To be clear, the API is available in the linux-pci tree but the recent
+patch from David to check for proper FW support is only in net-next:
+
+97cbf3d0accc ("bnxt_en: only set dev->queue_mgmt_ops if supported by FW")
+
+So we'll need to add this check for TPH also once the 2 trees are merged.
+
+--00000000000079a8db0620af23fd
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIQbQYJKoZIhvcNAQcCoIIQXjCCEFoCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+gg3EMIIFDTCCA/WgAwIBAgIQeEqpED+lv77edQixNJMdADANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMDA5MTYwMDAwMDBaFw0yODA5MTYwMDAwMDBaMFsxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBS
+MyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
+vbCmXCcsbZ/a0fRIQMBxp4gJnnyeneFYpEtNydrZZ+GeKSMdHiDgXD1UnRSIudKo+moQ6YlCOu4t
+rVWO/EiXfYnK7zeop26ry1RpKtogB7/O115zultAz64ydQYLe+a1e/czkALg3sgTcOOcFZTXk38e
+aqsXsipoX1vsNurqPtnC27TWsA7pk4uKXscFjkeUE8JZu9BDKaswZygxBOPBQBwrA5+20Wxlk6k1
+e6EKaaNaNZUy30q3ArEf30ZDpXyfCtiXnupjSK8WU2cK4qsEtj09JS4+mhi0CTCrCnXAzum3tgcH
+cHRg0prcSzzEUDQWoFxyuqwiwhHu3sPQNmFOMwIDAQABo4IB2jCCAdYwDgYDVR0PAQH/BAQDAgGG
+MGAGA1UdJQRZMFcGCCsGAQUFBwMCBggrBgEFBQcDBAYKKwYBBAGCNxQCAgYKKwYBBAGCNwoDBAYJ
+KwYBBAGCNxUGBgorBgEEAYI3CgMMBggrBgEFBQcDBwYIKwYBBQUHAxEwEgYDVR0TAQH/BAgwBgEB
+/wIBADAdBgNVHQ4EFgQUljPR5lgXWzR1ioFWZNW+SN6hj88wHwYDVR0jBBgwFoAUj/BLf6guRSSu
+TVD6Y5qL3uLdG7wwegYIKwYBBQUHAQEEbjBsMC0GCCsGAQUFBzABhiFodHRwOi8vb2NzcC5nbG9i
+YWxzaWduLmNvbS9yb290cjMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5j
+b20vY2FjZXJ0L3Jvb3QtcjMuY3J0MDYGA1UdHwQvMC0wK6ApoCeGJWh0dHA6Ly9jcmwuZ2xvYmFs
+c2lnbi5jb20vcm9vdC1yMy5jcmwwWgYDVR0gBFMwUTALBgkrBgEEAaAyASgwQgYKKwYBBAGgMgEo
+CjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAN
+BgkqhkiG9w0BAQsFAAOCAQEAdAXk/XCnDeAOd9nNEUvWPxblOQ/5o/q6OIeTYvoEvUUi2qHUOtbf
+jBGdTptFsXXe4RgjVF9b6DuizgYfy+cILmvi5hfk3Iq8MAZsgtW+A/otQsJvK2wRatLE61RbzkX8
+9/OXEZ1zT7t/q2RiJqzpvV8NChxIj+P7WTtepPm9AIj0Keue+gS2qvzAZAY34ZZeRHgA7g5O4TPJ
+/oTd+4rgiU++wLDlcZYd/slFkaT3xg4qWDepEMjT4T1qFOQIL+ijUArYS4owpPg9NISTKa1qqKWJ
+jFoyms0d0GwOniIIbBvhI2MJ7BSY9MYtWVT5jJO3tsVHwj4cp92CSFuGwunFMzCCA18wggJHoAMC
+AQICCwQAAAAAASFYUwiiMA0GCSqGSIb3DQEBCwUAMEwxIDAeBgNVBAsTF0dsb2JhbFNpZ24gUm9v
+dCBDQSAtIFIzMRMwEQYDVQQKEwpHbG9iYWxTaWduMRMwEQYDVQQDEwpHbG9iYWxTaWduMB4XDTA5
+MDMxODEwMDAwMFoXDTI5MDMxODEwMDAwMFowTDEgMB4GA1UECxMXR2xvYmFsU2lnbiBSb290IENB
+IC0gUjMxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzARBgNVBAMTCkdsb2JhbFNpZ24wggEiMA0GCSqG
+SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDMJXaQeQZ4Ihb1wIO2hMoonv0FdhHFrYhy/EYCQ8eyip0E
+XyTLLkvhYIJG4VKrDIFHcGzdZNHr9SyjD4I9DCuul9e2FIYQebs7E4B3jAjhSdJqYi8fXvqWaN+J
+J5U4nwbXPsnLJlkNc96wyOkmDoMVxu9bi9IEYMpJpij2aTv2y8gokeWdimFXN6x0FNx04Druci8u
+nPvQu7/1PQDhBjPogiuuU6Y6FnOM3UEOIDrAtKeh6bJPkC4yYOlXy7kEkmho5TgmYHWyn3f/kRTv
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBUwwggQ0oAMCAQICDF5AaMOe0cZvaJpCQjANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODIxMzhaFw0yNTA5MTAwODIxMzhaMIGO
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xFTATBgNVBAMTDE1pY2hhZWwgQ2hhbjEoMCYGCSqGSIb3DQEJ
+ARYZbWljaGFlbC5jaGFuQGJyb2FkY29tLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoC
+ggEBALhEmG7egFWvPKcrDxuNhNcn2oHauIHc8AzGhPyJxU4S6ZUjHM/psoNo5XxlMSRpYE7g7vLx
+J4NBefU36XTEWVzbEkAuOSuJTuJkm98JE3+wjeO+aQTbNF3mG2iAe0AZbAWyqFxZulWitE8U2tIC
+9mttDjSN/wbltcwuti7P57RuR+WyZstDlPJqUMm1rJTbgDqkF2pnvufc4US2iexnfjGopunLvioc
+OnaLEot1MoQO7BIe5S9H4AcCEXXcrJJiAtMCl47ARpyHmvQFQFFTrHgUYEd9V+9bOzY7MBIGSV1N
+/JfsT1sZw6HT0lJkSQefhPGpBniAob62DJP3qr11tu8CAwEAAaOCAdowggHWMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJAYDVR0R
+BB0wG4EZbWljaGFlbC5jaGFuQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNV
+HSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQU31rAyTdZweIF0tJTFYwfOv2w
+L4QwDQYJKoZIhvcNAQELBQADggEBACcuyaGmk0NSZ7Kio7O7WSZ0j0f9xXcBnLbJvQXFYM7JI5uS
+kw5ozATEN5gfmNIe0AHzqwoYjAf3x8Dv2w7HgyrxWdpjTKQFv5jojxa3A5LVuM8mhPGZfR/L5jSk
+5xc3llsKqrWI4ov4JyW79p0E99gfPA6Waixoavxvv1CZBQ4Stu7N660kTu9sJrACf20E+hdKLoiU
+hd5wiQXo9B2ncm5P3jFLYLBmPltIn/uzdiYpFj+E9kS9XYDd+boBZhN1Vh0296zLQZobLfKFzClo
+E6IFyTTANonrXvCRgodKS+QJEH8Syu2jSKe023aVemkuZjzvPK7o9iU7BKkPG2pzLPgxggJtMIIC
+aQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQD
+EyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgxeQGjDntHGb2iaQkIw
+DQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIAckulXVqKaoPHIKj9Qaluh9u2hmZrAN
+ZSUYxykCIdSHMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDgy
+NzE5MjA0NlowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCG
+SAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQC
+ATANBgkqhkiG9w0BAQEFAASCAQACqphtUml1ayKjEk6S7z0VHWEktD2jtpRoDkS3DlEQHKkeMiBf
+He/KE6LqJm29/yTsinBwvsXmd4MwwD+zrdeyTBWfTWBW6bpu+iRuFF2HWVGa4UdrDwcRpjWNNm5v
+AObwCdtxJ/CJ2NevwpRkUk4RJNR94N/3i/pR1ba1kZ7sFEgFpm7Wr2ieZm2L5S+3oPkJeg2roNph
+r8ZRMfJgfdqvZF13tTjL8hByQ77B6t2RAHJP0lk3TWxNDm8GJeoDtVjwugJA4suCeXc5NsQT42ts
+Ry8qurNecaAfWxhZMNiTsF8hbUIJEjDJhgT0QbFyjMltYA17Yv9hq/Q79zztlTvi
+--00000000000079a8db0620af23fd--
 
