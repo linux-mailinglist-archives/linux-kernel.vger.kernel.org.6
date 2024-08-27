@@ -1,122 +1,211 @@
-Return-Path: <linux-kernel+bounces-302940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DFD796054C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:15:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D10960554
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:16:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7EEFB2165C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:15:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DCF7281D7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2F41940B5;
-	Tue, 27 Aug 2024 09:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8216F19D88A;
+	Tue, 27 Aug 2024 09:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gQBvCXQU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZYXni5yg"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138CB76056
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7AB76056;
+	Tue, 27 Aug 2024 09:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724750130; cv=none; b=BuYHC8km7ywUeU88l9kmGR7qConrLqfOILJpfbS/c9EEIquhcgTEH/mh/5NcPFO1WZw+XmgfK8TOLn2z8emxrsVR2nNaeVyd8OWUqspAhQQZ+GeTUIhCftIXfdU2ruBretKg9BxxBIHla28OtEZtFfLXUmVw9oK2Zm4ANy5KGX4=
+	t=1724750167; cv=none; b=kXO8gYHFkh2HFvLA/D81uxUaSBI0j4BJbZwMRWKpJ2+JYYeKLWvzPVTsZ2kniKr7lw/61Xufg4XALmgN+snSSi8QTTesONmQzSRWhhtRRie2lHVd31XSJS6lKCe+vbVRs/aNpVhz5aIMHuaYLW6GAucIwfiFeDgw5j3R8i2bbWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724750130; c=relaxed/simple;
-	bh=xQWpjwyGez3lqvuj3nJTCm683oykMe4FI2uhRGhHJZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FffURr1E7FiL2gWBxiB6mc3mpcmFAEwAuPRKpuNgonK/g93EwZjiDuib6MmsvAiOiyujhDBxC/jgAlznlga7HMVoqmw+vR0XrPsKzVPWPJ/W9Q1Hhik74dv2jGnNT+DwKeeSNo3TB123E/5GNUZ26k8RPgeVg76JTUcwrLqRkO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gQBvCXQU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47BD6C8B7A0;
-	Tue, 27 Aug 2024 09:15:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724750129;
-	bh=xQWpjwyGez3lqvuj3nJTCm683oykMe4FI2uhRGhHJZY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gQBvCXQUKVPEqkM4Nz+dYrv7LDSgXXeTXaOb6mo4mMhX8FTlvXthCnKYpkg7u97pT
-	 qXig76iFhTwALb4M9+Fuiat8+pcN2nn9eu+Xao0QFRu9WbSrbIteAKdkFEDneC2MyF
-	 f/9uucBYGgLVRHLYmdxIV5eqF2TEaJ22+KR2OCtI=
-Date: Tue, 27 Aug 2024 11:15:25 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: sunyiqi <sunyiqixm@gmail.com>
-Cc: rafael@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpu: add CAP_SYSLOG check for reading crash_notes address
-Message-ID: <2024082701-trailing-poster-6126@gregkh>
-References: <20240827081133.872741-1-sunyiqixm@gmail.com>
+	s=arc-20240116; t=1724750167; c=relaxed/simple;
+	bh=Rlu5n1CgqQ9ZEns9yR69BhZINc/7WBPKiF+V3/BhUM8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GoFrJdqOAKUAd71Qs8En/NdHDBo6zudh+3eyQiPoSSMeXm3qD3pRiL5yJK0XhTl9FrQLfF0GkCZ4HNErfY+o1GeRLK45g2Wit0MmxtCpu2/USO9wYrKSX3JFXh8TX6ZgcCVPuk06ffHoTV1MdeScjuJxg+IT4hWOgB9F2Mkbf7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZYXni5yg; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47R7kf6C002653;
+	Tue, 27 Aug 2024 09:15:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	3J8Hej+cDjlPlbTqVxRoSC+EFUooWsxZ5wqv5MlLRRM=; b=ZYXni5ygVNuwr+u0
+	yMLYdKz3CJJpRZf98lRs9QXb3bjM9J03KLyaB+CV310hBBKmBNNWnkahNPvCu/Ge
+	vj56juvxJV0mF8ZCpS+gtdXCLU11k7tZG5hs55TCIKKWyIC6pmxDe2FI1pEfua7H
+	SIrHJc+C1PlYV0ElZ7QCM0GVTKuboJz7LLVi7lawtoLDGEKnCis+wEYrK6HWiTzX
+	jz9gGR2UJdkLTpBDkBLLAzHe9l3wAvH2ElwcducWz2nSktJQbOdFdxjZGG7aBtu+
+	S5ZJSU1/4vx/ZEFVP23QVGnld02qo3kOrI4bdjSOifMrqUQBtx17Fm4WNox797TS
+	Tx3MuQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419aq787s7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 Aug 2024 09:15:59 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47R9Fwqm027511
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 Aug 2024 09:15:58 GMT
+Received: from [10.216.25.164] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 27 Aug
+ 2024 02:15:54 -0700
+Message-ID: <33fe50c8-cf98-bd04-87b7-06ec07cc9277@quicinc.com>
+Date: Tue, 27 Aug 2024 14:45:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827081133.872741-1-sunyiqixm@gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v7] usb: gadget: u_serial: Add null pointer check in
+ gs_read_complete & gs_write_complete
+Content-Language: en-US
+To: =?UTF-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>,
+        Michael Nazzareno Trimarchi
+	<michael@amarulasolutions.com>,
+        "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>
+CC: "quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        opensource.kernel <opensource.kernel@vivo.com>,
+        "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>
+References: <TYUPR06MB6217989A40FA4E18598DC694D28A2@TYUPR06MB6217.apcprd06.prod.outlook.com>
+From: Prashanth K <quic_prashk@quicinc.com>
+In-Reply-To: <TYUPR06MB6217989A40FA4E18598DC694D28A2@TYUPR06MB6217.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: m5IHa8Y4CKc8eL1K4JBhO3_MJb0dzaLL
+X-Proofpoint-ORIG-GUID: m5IHa8Y4CKc8eL1K4JBhO3_MJb0dzaLL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-27_06,2024-08-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
+ suspectscore=0 mlxlogscore=865 mlxscore=0 priorityscore=1501
+ lowpriorityscore=0 malwarescore=0 bulkscore=0 impostorscore=0 spamscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408270069
 
-On Tue, Aug 27, 2024 at 04:11:33PM +0800, sunyiqi wrote:
-> CPU crash_notes value can be obtained through /sys/devices/system/cpu/\
-> cpu[NUM]/crash_notes for leaking the phys address(introduced in kernel
-> 5.10-rc1, but some distributions may migrate this feature to 4.x
->   kernel).
-> The relevant function is crash_notes_show() in file drivers/base/cpu.c.
+
+
+On 25-08-24 01:58 pm, 胡连勤 wrote:
+> From: Lianqin Hu <hulianqin@vivo.com>
 > 
-> Though crash_notes file permission is 400 and owner is root:root,
-> but in container, the root user can also read crash_notes which leads to
-> information leak as most of kernel pointer value can not by read for
-> root user in container without CAP_SYSLOG capability.
+> Considering that in some extreme cases, when the unbind operation
+> is being executed, gserial_disconnect has already cleared gser->ioport,
+> and the controller has not stopped & pullup 0, sys.usb.config is reset
 
-"most", but not all?
+As mentioned by Michael earlier, avoid android specific (sys.usb.config)
+operations.
 
-> In current linux kernel implementation, kernel pointer value or address
-> printked by %pK is not directly exposed to root user in container. For
-> kernel interface which includes those values, like /sys/kallsyms,
-> /proc/net/packet, etc., address values are guarded by kernel function
-> restricted_pointer(). Without CAP_SYSLOG capability, value 0 or NULL
-> will be returned for reading those interfaces in container using root
-> user.
-
-I understand the request here, but why is giving the "real" kernel
-pointer value somehow bad here?  What can userspace in a container do
-with it?
-
-And why not give root permissions access to it container or not?
-
-> In restricted_pointer() and container, address values only returned by
-> kernel when root user has CAP_SYSLOG capability which is not the default
-> capabilities for Docker container. CAP_SYSLOG prevents root user in
-> container to get kernel pointer from lots of interfaces based on printk,
-> but not for cpu crash_notes.
+> and the bind operation will be re-executed, calling gs_read_complete,
+> which will result in accessing gser->iport, resulting in a null pointer
+> dereference, add a null pointer check to prevent this situation.
 > 
-> Add CAP_SYSLOG permission check in crash_notes_show() for viewing kernel
-> address.
+> Added a static spinlock to prevent gser->ioport from becoming
+> null after the newly added check.
+> 
+> Unable to handle kernel NULL pointer dereference at
 
-Is this really the only place where this type of check needs to be
-added?
+[...]
+> 
+> Fixes: c1dca562be8a ("usb gadget: split out serial core")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Lianqin Hu <hulianqin@vivo.com>
+> ---
+> v7:
+>   - Remove code comments
+>   - Update the commit text
+>   - Add the Fixes tag
+>   - CC stable kernel
+>   - Add serial_port_lock protection when checking port pointer
+>   - Optimize code comments
+>   - Delete log printing
 
-> Fixes: aa838896d87a ("drivers core: Use sysfs_emit and sysfs_emit_at for show(device *...) functions")
-> Signed-off-by: sunyiqi <sunyiqixm@gmail.com>
-
-No cc: stable?
+We usually indicate what had changed in each versions.
+v7: Remove code comments
+v6: xx
+v5: xx
+v4: xx
+v3: xx
+v2: Delete log printing
 
 > ---
->  drivers/base/cpu.c | 3 +++
->  1 file changed, 3 insertions(+)
+No need for this '---' here, just leave an empty line
+>  drivers/usb/gadget/function/u_serial.c | 33 ++++++++++++++++++++++----
+>  1 file changed, 28 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
-> index fdaa24bb641a..a2f27bb0ffe6 100644
-> --- a/drivers/base/cpu.c
-> +++ b/drivers/base/cpu.c
-> @@ -156,6 +156,9 @@ static ssize_t crash_notes_show(struct device *dev,
->  	unsigned long long addr;
->  	int cpunum;
+> diff --git a/drivers/usb/gadget/function/u_serial.c b/drivers/usb/gadget/function/u_serial.c
+> index b394105e55d6..e43d8065f7ec 100644
+> --- a/drivers/usb/gadget/function/u_serial.c
+> +++ b/drivers/usb/gadget/function/u_serial.c
+> @@ -452,20 +452,43 @@ static void gs_rx_push(struct work_struct *work)
 >  
-> +	if (!has_capability_noaudit(current, CAP_SYSLOG))
-> +		return sysfs_emit(buf, "%llx\n", 0ull);
-
-Why not return an error?  Why is 0 ok?
-
-thanks,
-
-greg k-h
+>  static void gs_read_complete(struct usb_ep *ep, struct usb_request *req)
+>  {
+> -	struct gs_port	*port = ep->driver_data;
+> +	struct gs_port	*port;
+> +	unsigned long  flags;
+> +
+> +	spin_lock_irqsave(&serial_port_lock, flags);
+> +	port = ep->driver_data;
+> +
+> +	if (!port) {
+> +		spin_unlock_irqrestore(&serial_port_lock, flags);
+> +		return;
+> +	}
+>  
+> -	/* Queue all received data until the tty layer is ready for it. */
+>  	spin_lock(&port->port_lock);
+> +	spin_unlock(&serial_port_lock);
+> +
+> +	/* Queue all received data until the tty layer is ready for it. */
+>  	list_add_tail(&req->list, &port->read_queue);
+>  	schedule_delayed_work(&port->push, 0);
+> -	spin_unlock(&port->port_lock);
+> +	spin_unlock_irqrestore(&port->port_lock, flags);
+>  }
+>  
+>  static void gs_write_complete(struct usb_ep *ep, struct usb_request *req)
+>  {
+> -	struct gs_port	*port = ep->driver_data;
+> +	struct gs_port	*port;
+> +	unsigned long  flags;
+> +
+> +	spin_lock_irqsave(&serial_port_lock, flags);
+> +	port = ep->driver_data;
+> +
+> +	if (!port) {
+> +		spin_unlock_irqrestore(&serial_port_lock, flags);
+> +		return;
+> +	}
+>  
+>  	spin_lock(&port->port_lock);
+> +	spin_unlock(&serial_port_lock);
+>  	list_add(&req->list, &port->write_pool);
+>  	port->write_started--;
+>  
+> @@ -486,7 +509,7 @@ static void gs_write_complete(struct usb_ep *ep, struct usb_request *req)
+>  		break;
+>  	}
+>  
+> -	spin_unlock(&port->port_lock);
+> +	spin_unlock_irqrestore(&port->port_lock, flags);
+>  }
+>  
+>  static void gs_free_requests(struct usb_ep *ep, struct list_head *head,
+Regards,
 
