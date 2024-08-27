@@ -1,107 +1,120 @@
-Return-Path: <linux-kernel+bounces-303978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BDAE9617DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:15:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 729079617D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBB80283AF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:15:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E171B1F22F51
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE781D2F78;
-	Tue, 27 Aug 2024 19:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD3E1C3F2C;
+	Tue, 27 Aug 2024 19:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="UJepcORI"
-Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="p7gFyxcz"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6846E146D6A;
-	Tue, 27 Aug 2024 19:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5004E1CFECE
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 19:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724786139; cv=none; b=gttYdd3tWPoCYnRCW0dqEOO/T0wk+kfFhUuiNrLOejPKHjh4yTe6EsFaEbIHZ92ZJP8LdSUlrLrMAXyBWQVEWMPgorm1ChZCtGml/Yz2r3DAqLZZyHpXdhOuYKmQlMzwZPuW4ES8NRLOEbnOMBOwevqf5JBJMpvIDIY7DyTpVFc=
+	t=1724785880; cv=none; b=kZ4XYYUykOV7sjsY1L0p3L3ST/t+7e0FQXL1zV7gAvFvz7cwcfQfFutvbhNsReoG962llwHeKDgma2xbZyBtzggsMFV9vUS2iRgDK/rWmn+YdJDHyTwzFXrYXj9SlYXfm5xQ8HCpQGUpVVM/UsQdgKr840seNdGnGt4B0PfQpBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724786139; c=relaxed/simple;
-	bh=jabYyamu7DASq95qkpSX31tv3SineQAeHuDW7SGS8qk=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=GprAdjEwTYdVwj77PRUe6sd52j66YUpAzq2DoA4txi/A3C6VxK96z7qTr6EPyzXKPeZZqQAffIx1dC2uRB+Yo40K4ZnEAUw+gsOR10bBiRwFX4rxi2dj/ffKKGnXdRcppToH5aDAd4U9os8LPo34OjkctGMu+xAk/fuQoLE0R+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=UJepcORI; arc=none smtp.client-ip=203.205.221.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1724785835; bh=hU7ofY00NIzY7HQ0Ss9KlIal31nOOy8WuXlW+57Dwcg=;
-	h=From:To:Cc:Subject:Date;
-	b=UJepcORIUyWuD57wuiZKi+R6KQ2byY/JKJ4UnNW2XiODiyYx0zl08Hxcr+9ejlTz8
-	 MUrv+lTZxMDB7koDHAz6GgC7Dli25e/DwI/GVh21pHjoscDsG6rOdhxKuQnqTBOEt9
-	 RCncODbvcgYbnl15EgbYDIcefiz9g9G9lg0icaZg=
-Received: from localhost.localdomain ([112.64.14.141])
-	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
-	id 29934AC8; Wed, 28 Aug 2024 03:10:25 +0800
-X-QQ-mid: xmsmtpt1724785825txqyvfh1i
-Message-ID: <tencent_B732022EF733FCEDC36B0E601B62889DB00A@qq.com>
-X-QQ-XMAILINFO: M1rD3f8svNznCM+daMDhg00chSC1QSmQAsB5g36rh0PhHo49Kw+xS8E1b+Npss
-	 dFt31s5i63Br5ivP96Cn4y/UevKztoUD/2xvhDqSaFcFMg4IRu3SYs/lky9UEwNaaJEHm1bX+4DB
-	 5OC3Lbxr9+VNmnvUSM1ijOnVr3Bguuipt5sA3Stqwp/EhWJhqjhGFrv7fr9eFS56O+TgScasmH5f
-	 9vUn+IlFiVqsQonVruvr77f9DOgZ4yPn/ir8n/OhuMvSX6/wXy9d6DyWnS36K7uxqirSNRk2fsSu
-	 aJvybHaFJHfl2cBi5gZUGIx35hRTGe0b2srGZdQjE0TNYCSDW1bm/DoxxJ2jnE8RBl+Bu09vbg7a
-	 Dg/rGl4TlRXu6GRVlXYeOtkvuRyR2ZpOgfE+jJvQKP/fxP28C5K3pqwJ8hdQBSTKjAPHb/49dGOi
-	 Bz6G8/EGxGWKPjDHKX/1KuiuaExZ7N9XTWs3IetjhkQ7VsKmkcXKaMK2uGBHx5K32epi7PDf4Q74
-	 V3I2/6n2pC038WI9GHsCGfGDwgy4uRbkHuplLIyqPZJDYd342ih19G0viiGMAcjpBhyvMnHvNb+M
-	 7LgCvYyoY0oHPpY8IjqCzE+YTtcQNNG+YuFSlzGoTVa6r+4OuFemM8vYZGKf5c19BqKibQdIvMJd
-	 n5qykqUX6gXvBy8F3alV5yrkZD0tjJED7InVuBJtQFSxtfc41hIXF4KbNiQrb8mVPY/B8wOxjE4l
-	 RCCIcTaxthtdK8EA0I0l9uNvwJ2QkZcPX7SMkxY07uHUd0rIJmyE9BOsbQhd7XZq1Pt4jIcBbmii
-	 8lMOgFAEJqU+PvXpViEImj1TEpveCH8wgF0WfRkLUk2zBGdrrnD6azlC2LqMHuYj/Fk1+fmxPdj3
-	 d2Z7STRsQuh+6NeTlVPa/U+3IAU7YGvlC05xTubEbmQ+FM0C3rkJf+R5EE3Ny3CQrGadunt4HqvO
-	 UYEp++GdytTcBA8qG9Tmq2Y5vWjzje/U5/d6mV9RZefcAQTGVHPHUlvdK//K7qoyqdg6oYwlXCR8
-	 FLSZTorH9nlzlH/+0o
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: jiping huang <huangjiping95@qq.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jiping huang <huangjiping95@qq.com>
-Subject: [PATCH] clk: Delete unused initial value for local variable "best_parent_rate".
-Date: Wed, 28 Aug 2024 03:10:22 +0800
-X-OQ-MSGID: <20240827191022.65346-1-huangjiping95@qq.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724785880; c=relaxed/simple;
+	bh=xNzO7qOTTQGEuyADmXVfFcDNzsBtnhXqp36UzvFFVE0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Up89ymdp2ceW3TO+uq9gbQN0oUIfiYqNbyOmEOY7ap5cr+Nr0i7at7SG7Tlg1znSoVHMj4c+HpLz8Ha6EFXEBbL0GJ+4Wq4NJB/XJhRL1HZZ9J8rM5MwZDPRBnYkNjhIGVD21rgN1SLVlnYVoaSLj9jwB2qpsAPwENmWnrVQqHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=p7gFyxcz; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6cdae28014dso19964807b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:11:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umich.edu; s=google-2016-06-03; t=1724785877; x=1725390677; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xNzO7qOTTQGEuyADmXVfFcDNzsBtnhXqp36UzvFFVE0=;
+        b=p7gFyxczx+7zdP7P/+Rh7k8h/euUbWV/c6+j94luI2EhyrKbsbIVMNQoNP194VOLBm
+         Udh1t2zSHqe/O6UDjd+umMikLrT9CcZrnDEiUtotjtKuh3mtwc5afrvY2x3hQ4mYUyzE
+         OE+dL4j4q8pDXdXc1rTMGDR/BMn8MGk0iVlTFfDy+4aVAd1F85zP7oxwkP1wZJqknf2L
+         W2t1+udeA15Hs07xj1K9NTMYP1eveTJu1iEq5p8dKr+JYJLlFe9LlT4DEQsapdskM2UH
+         xKn8GVO13IVL7Bm1FaACmftOfKgslhKXW2fWYMpENaGRJXh8MIcB8YJEmrGgtv252H1d
+         pvNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724785877; x=1725390677;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xNzO7qOTTQGEuyADmXVfFcDNzsBtnhXqp36UzvFFVE0=;
+        b=LIeLGXnAlJtuqiYhHSCmNtfBYbC2BPzUtlNaiWbufaECSIkFq7y1Vx0eGEppN2S9y1
+         KKjyPLqgaiMj41aZOQ8yEnnHde2ONE/aWcNaj5kZrh5PCEImLS4WsrOBgnrw5lv/edhh
+         /xvbBt+l1Xd92BQqlyyOv59K7z52U5WziJrUSGq5j7xw+1M5yo/lrALCtcZr9Krqj1ch
+         IarRKSWQ1iVGR53y5upDHuPeN9w9r81C3QC6Ax5a5MF3pZNVaB1NCMj+dmPTPw8kr08C
+         zpsPxr7+10LSBxJUaNxv3frTcFWPWbCkZhG2GyuMpw+qfN7bauGoUumwZORVfxS2Odcm
+         13Gg==
+X-Forwarded-Encrypted: i=1; AJvYcCUyHXSRNO54OTwzXcLkcLFUSB0dk6z0Hit1bcMQcnXO1DbpLIvCtJkdhTKurCHRCelrCj8ikY855gCYJLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw21J/H+01LS2vA5gm52tG8L0rCKiDphWcWzMb3cmLzz/27KH6
+	w9rqdgPHDXQCP+gAW6yfm6kA0zUEaHjfiN7cNwCxpJ9yUiAwlPnQd9Ld6Xrzyd5vaLwDePWoGlO
+	M0hKVYJvtd+X7F/7eyx7c5grZPXIJR04wM4ZRKg==
+X-Google-Smtp-Source: AGHT+IFvAuIzn1nxkt/URa8Wh42r+pnypqpU85+ebAjYMRQV9X8DnUpctjW9fn8HkMEtDjJXr7rc4KN16ZG+0YDepro=
+X-Received: by 2002:a05:690c:6a89:b0:622:c892:6ae7 with SMTP id
+ 00721157ae682-6d129dbf29emr2279337b3.12.1724785877378; Tue, 27 Aug 2024
+ 12:11:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240819133345.3438739-1-nmi@metaspace.dk> <CALNs47sF1o4x-=wPdy6c520-sCX_+sA=158MMP9c0SByKvwXfw@mail.gmail.com>
+ <875xrmxdzg.fsf@metaspace.dk>
+In-Reply-To: <875xrmxdzg.fsf@metaspace.dk>
+From: Trevor Gross <tmgross@umich.edu>
+Date: Tue, 27 Aug 2024 15:11:05 -0400
+Message-ID: <CALNs47vwhV-DRzPbvE22vefaROmjj_5SCLuyQrfKvy=Q4Ou9WQ@mail.gmail.com>
+Subject: Re: [PATCH v2] rust: add `module_params` macro
+To: Andreas Hindborg <nmi@metaspace.dk>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Adam Bratschi-Kaye <ark.email@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	Daniel Gomez <da.gomez@samsung.com>, rust-for-linux@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-  At function "clk_calc_new_rates" entrance, assigned "parent->rate" to
-"best_parent_rate" as its initial value, but this initial value is unused
-in subsequent logic. Analysis is as follows.
-  The local variable 'best_parent_rate' is only used in line 2355 for
-the judgment 'best_parent_rate!=parent->rate'. However, if the
-"if (clk_core_can_round (core))" branch condition in line 2306 is true,
-the value of the local variable "best_parent_rate" will be updated by
-"best_parent_rate=req.best_parent_rate;" in line 2319, otherwise it will
-be directly returned in the "else if" branch in line 2325 and the "else"
-branch in line 2329.
-  Thank you for your precious time!
+On Tue, Aug 27, 2024 at 10:00=E2=80=AFAM Andreas Hindborg <nmi@metaspace.dk=
+> wrote:
+>
+> "Trevor Gross" <tmgross@umich.edu> writes:
+>
+> > On Mon, Aug 19, 2024 at 8:35=E2=80=AFAM Andreas Hindborg <nmi@metaspace=
+.dk> wrote:
+> >>
+> >> From: Andreas Hindborg <a.hindborg@samsung.com>
+> >>
+> >> This patch includes changes required for Rust kernel modules to utiliz=
+e
+> >> module parameters. This code implements read only support for integer
+> >> types without `sysfs` support.
+> >
+> > Also, I think the subject line needs an update ("rust: add
+> > `module_params` macro")
+>
+> Well, it is still what it does. Plus few support types. You think it is
+> not descriptive enough?
 
-Signed-off-by: jiping huang <huangjiping95@qq.com>
+Maybe it should just say 'Add parameter support to the `module!`
+macro'? The text `module_params` doesn't seem to appear in the patch,
+I was looking for something like `module_params!`.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 8cca52be993f..b6ff88f63bc4 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2297,8 +2297,6 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
- 
- 	/* save parent rate, if it exists */
- 	parent = old_parent = core->parent;
--	if (parent)
--		best_parent_rate = parent->rate;
- 
- 	clk_core_get_boundaries(core, &min_rate, &max_rate);
- 
--- 
-2.34.1
+- Trevor
 
+> BR Andreas
 
