@@ -1,196 +1,117 @@
-Return-Path: <linux-kernel+bounces-303333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7979960AE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:47:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C2BD960AC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:45:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30CA01F23CFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:47:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49B9D283C06
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56231BFE07;
-	Tue, 27 Aug 2024 12:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Nv6Vk8Jp"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C768B1BCA18;
+	Tue, 27 Aug 2024 12:45:17 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CCCB1BFDFA;
-	Tue, 27 Aug 2024 12:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4BA1A01C4;
+	Tue, 27 Aug 2024 12:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724762807; cv=none; b=tivbONYSOXeIQeS7PW4xKclSACXyyCyKkZOFytPUY6Bjk+L4VHVnWKkpIDkuQppCFpRo96hh9/OPqCEv4gx8MDEjDtJ8MRilxDSl2rOfEp4l2gCsDg9AlMxccMIsP9jb+LoSrfJ7wwWbHlDGgi4mBM5Dlz68cSJTJVUueGqAJMw=
+	t=1724762717; cv=none; b=P9fVN25oCADAW0yzGsFf3raFKQKccpLOqDWnDqPQkPp0/RTgQhEmqUEGKGi8e4qO1lD1eaKBcQ5iLsBinpavG0kcE/hWI7U8vpZPgMoLVEjL0s4v8xcyCDWp2S3ORGuGYpmvWQ6uilt2AFIn5xCm212FgEbWdy7+VhGJ8NHXU0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724762807; c=relaxed/simple;
-	bh=iDYNmkH1rPO+EIARm3K+77l72Di1gKix5GvJkXPMc0E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=PDrxujTtpQl1GddGSWN71q7ldgcBDiKYdkiHpkAwfB7YMMqq33AoD8p1wYyMewbJ/3vs0hk3jYWRsXJlAknPPtVTXI9LLKtmZVvqeg9szop5hdMb7pbN+69mbSLmGtgyUK36apK/Qs2a1AVz1aR5T9v7E0To5KmX6IuOpk7jkC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Nv6Vk8Jp; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47R6ut3R020213;
-	Tue, 27 Aug 2024 12:46:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ESduTgCKaYaSicTMZdeVrT3MA2TZqs7Q9YHb0gZCcVA=; b=Nv6Vk8JpVrtYXrKz
-	sFWleSYCatE+uJnouUUnvtDYVRqeTQU+Ll00rthU5MMHji/W2oZ2c2eOV6SCpH6P
-	jNpgJRk8bksHgkVCucZuar6syoFEwf1CFlCYYT3owvGwWryd5WUOih/Wo86RZzEA
-	kX5YyeM7LAKF4IYa5ObGVCJYVR4uuVmTStym8WiMZoN4a0JljA2FXxBjPwzM3akF
-	FVyPEERMUAzUp3p5KevybYRIdfzO6SXcbt+IuvQUJMTzjBbZZYmfW7orAGw1SDvD
-	BP4WnvrwKbVvRanX+VHlozUuT92y8h4ASqfWd38vaknd6A3vbIDt7OxhRonKGkq7
-	sh6PhA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4199yt0wrn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 Aug 2024 12:46:37 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47RCkaYY020111
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 Aug 2024 12:46:36 GMT
-Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 27 Aug 2024 05:46:31 -0700
-From: Luo Jie <quic_luoj@quicinc.com>
-Date: Tue, 27 Aug 2024 20:46:02 +0800
-Subject: [PATCH v3 4/4] arm64: dts: qcom: Add CMN PLL node for IPQ9574 SoC
+	s=arc-20240116; t=1724762717; c=relaxed/simple;
+	bh=ayBM3X9Waua/pT1URpHpdU3JoUSS/LRmAK2G4r7r43s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=uu7VgIpx7TKpRpt5IJDYsZZf83edmKrIprNNYr5x/bF5wNQXwphfGAKVTeWrMMB/Yi8eF86MDUGjupQGgbfdUKebd0kIHBrquOOZxYSJBCn4uSFjdLD9BW4V0p07uw5yL/Xb9fUBFBcLx02hBBqbGpHtJLcJFnfhx/qhk5b+Ob8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WtS1S6gV1z4f3kKt;
+	Tue, 27 Aug 2024 20:45:00 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id D5B8E1A1322;
+	Tue, 27 Aug 2024 20:45:10 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.67.175.61])
+	by APP4 (Coremail) with SMTP id gCh0CgDX_oRPys1mVyF3Cw--.61313S2;
+	Tue, 27 Aug 2024 20:45:09 +0800 (CST)
+From: Zheng Yejian <zhengyejian@huaweicloud.com>
+To: rostedt@goodmis.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	mathieu.desnoyers@efficios.com,
+	mhiramat@kernel.org,
+	zhengyejian@huaweicloud.com
+Subject: [PATCH v2] tracing: Avoid possible softlockup in tracing_iter_reset()
+Date: Tue, 27 Aug 2024 20:46:54 +0800
+Message-Id: <20240827124654.3817443-1-zhengyejian@huaweicloud.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240827075241.5cd652ae@rorschach.local.home>
+References: <20240827075241.5cd652ae@rorschach.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240827-qcom_ipq_cmnpll-v3-4-8e009cece8b2@quicinc.com>
-References: <20240827-qcom_ipq_cmnpll-v3-0-8e009cece8b2@quicinc.com>
-In-Reply-To: <20240827-qcom_ipq_cmnpll-v3-0-8e009cece8b2@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
-        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
-        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
-        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>,
-        Luo Jie
-	<quic_luoj@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724762769; l=2601;
- i=quic_luoj@quicinc.com; s=20240808; h=from:subject:message-id;
- bh=iDYNmkH1rPO+EIARm3K+77l72Di1gKix5GvJkXPMc0E=;
- b=mgPDBtJ7N+wVevHu96PkxIDWtrbKNl0oRyrTMyB9Ihe2j5hYh0HoeVfqzR4VhEdAK5APuwvmB
- sJKiJv8XpcdCRjMpGQSIPInh8m+i9+readAA7tfvrQN/g9dhVu5bMTA
-X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
- pk=P81jeEL23FcOkZtXZXeDDiPwIwgAHVZFASJV12w3U6w=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ecxqiTF1FRSmdkZ6N_ZxvdQGlJcj1M21
-X-Proofpoint-ORIG-GUID: ecxqiTF1FRSmdkZ6N_ZxvdQGlJcj1M21
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-27_06,2024-08-27_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- suspectscore=0 malwarescore=0 spamscore=0 impostorscore=0 clxscore=1015
- bulkscore=0 priorityscore=1501 mlxscore=0 adultscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408270094
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDX_oRPys1mVyF3Cw--.61313S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tw45Zw43XFyDCr48Zw4UXFb_yoW8Gry8pF
+	43XrWDKw47Ww45t397CF1fuF9rZ395tFy7GFWDCw4rZF9rCF13XrZ2gF4aqF47ZrZ3KryS
+	yrZ2kw4qg34jvFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUehL0UU
+	UUU
+X-CM-SenderInfo: x2kh0w51hmxt3q6k3tpzhluzxrxghudrp/
 
-The CMN PLL clock controller allows selection of an input
-clock rate from a defined set of input clock rates. It in-turn
-supplies fixed rate output clocks to the hardware blocks that
-provide ethernet functions, such as PPE (Packet Process Engine)
-and connected switch or PHY.
+In __tracing_open(), when max latency tracers took place on the cpu,
+the time start of its buffer would be updated, then event entries with
+timestamps being earlier than start of the buffer would be skipped
+(see tracing_iter_reset()).
 
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+Softlockup will occur if the kernel is non-preemptible and too many
+entries were skipped in the loop that reset every cpu buffer, so add
+cond_resched() to avoid it.
+
+Suggested-by: Steven Rostedt <rostedt@goodmis.org>
+Signed-off-by: Zheng Yejian <zhengyejian@huaweicloud.com>
 ---
- arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi |  6 +++++-
- arch/arm64/boot/dts/qcom/ipq9574.dtsi            | 17 ++++++++++++++++-
- 2 files changed, 21 insertions(+), 2 deletions(-)
+ kernel/trace/trace.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-index 91e104b0f865..77e1e42083f3 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-@@ -3,7 +3,7 @@
-  * IPQ9574 RDP board common device tree source
-  *
-  * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
-- * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
-  */
- 
- /dts-v1/;
-@@ -164,6 +164,10 @@ &usb3 {
- 	status = "okay";
- };
- 
-+&cmn_pll_ref_clk {
-+	clock-frequency = <48000000>;
-+};
-+
- &xo_board_clk {
- 	clock-frequency = <24000000>;
- };
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-index 48dfafea46a7..1d7c863018c0 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-@@ -3,7 +3,7 @@
-  * IPQ9574 SoC device tree source
-  *
-  * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
-- * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
-  */
- 
- #include <dt-bindings/clock/qcom,apss-ipq.h>
-@@ -19,6 +19,11 @@ / {
- 	#size-cells = <2>;
- 
- 	clocks {
-+		cmn_pll_ref_clk: cmn-pll-ref-clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+		};
-+
- 		sleep_clk: sleep-clk {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
-@@ -226,6 +231,16 @@ rpm_msg_ram: sram@60000 {
- 			reg = <0x00060000 0x6000>;
- 		};
- 
-+		clock-controller@9b000 {
-+			compatible = "qcom,ipq9574-cmn-pll";
-+			reg = <0x0009b000 0x800>;
-+			clocks = <&cmn_pll_ref_clk>,
-+				 <&gcc GCC_CMN_12GPLL_AHB_CLK>,
-+				 <&gcc GCC_CMN_12GPLL_SYS_CLK>;
-+			clock-names = "ref", "ahb", "sys";
-+			#clock-cells = <1>;
-+		};
-+
- 		rng: rng@e3000 {
- 			compatible = "qcom,prng-ee";
- 			reg = <0x000e3000 0x1000>;
+v2:
+  - Change to add cond_resched() in tracing_iter_reset()
+    Link: https://lore.kernel.org/all/20240826103522.390faa85@gandalf.local.home/
+  - Update commit title and add suggested-by tag
 
+v1: https://lore.kernel.org/all/20240824030343.3218618-1-zhengyejian@huaweicloud.com/
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index ebe7ce2f5f4a..edf6bc817aa1 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -3958,6 +3958,8 @@ void tracing_iter_reset(struct trace_iterator *iter, int cpu)
+ 			break;
+ 		entries++;
+ 		ring_buffer_iter_advance(buf_iter);
++		/* This could be a big loop */
++		cond_resched();
+ 	}
+ 
+ 	per_cpu_ptr(iter->array_buffer->data, cpu)->skipped_entries = entries;
 -- 
-2.34.1
+2.25.1
 
 
