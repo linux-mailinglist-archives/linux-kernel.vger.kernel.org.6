@@ -1,163 +1,128 @@
-Return-Path: <linux-kernel+bounces-303523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D303960D68
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:19:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13E17960D69
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:19:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 097CD2837EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:19:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C71C2840AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EBAE1C4620;
-	Tue, 27 Aug 2024 14:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72FB1C4627;
+	Tue, 27 Aug 2024 14:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DHdNKQgj"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vIUgN3HD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BA6digEf"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F4D33E8
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 14:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5283933E8
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 14:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724768336; cv=none; b=qkZ+matHrkHEZq5we803JumRuXSIqb34k1HKBo1qcNC+MKItkHP9M+Cu/nndSN7TVlj+EqYPYMZQyMq/7Cp0rlP0RSGLeW9oglfZRgD3lSp51VyFAZqMnD8zoIEIfNgHX30zUJC1fnDIg2llA9wwcwTGcH+uFkwSnGWxkFtRNMU=
+	t=1724768376; cv=none; b=PLxpQ6P+5rm1qjUwfkfDGaucr/wqUdUvycVZlYN9aVISJ0iAHitzFJ1f8Rup6nMrFhBv+bEUpP+W9/6AiGgLLU3BXXjkmOykBBpR3KyY2MJBdcjD2lCa+Hg19wAb3x6eU/qnM1DBHN+aEGAm1TAkqfgn1aR26TP8+uP62sGnxuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724768336; c=relaxed/simple;
-	bh=15ORNTWxPQZbHScIg0ExMWBB3te8D8b3ZSi/1xE+1x4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eUJN4ROz0zrQQob29Uy58kEG9yzWxDgHFBcsSkmdthdQhfPN02mL3Zp12Utjxo/Pi1goyd0Cc2Gz3rmTH8oWw4nH+Jt8YeyuzriWCZrLhuaiN3IoW+5IOhYaJ47eW4EGq2rQZ2oWSh9OWMjwCjLTQWIrU3yCViCVSl+bNH80V9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DHdNKQgj; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71456acebe8so2499686b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 07:18:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724768334; x=1725373134; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=JSMiJ5fVqnyKb+9n4eHykIt/ocg8tbqo6X0nAPTgvIk=;
-        b=DHdNKQgjqXSm94ZR8hy48pah60m/RGVbgXxlve/w3A4RJrmA+SfAhQ/1k36mY4+aPX
-         Zsx6bhGDCR0U2I+caLfAPnMuWW3oKbvBS4W/HOalYM7Il24FUoWf7JZhgeeV2iOuUv6o
-         YRjxOcAYF5B+V6kAghEPsYqmSNzzbTISL7JYgeodbdRj0jlfUitP31+gDe9Ww1u4BwRM
-         D+WeugzkJSOvtjZK6XqCVbASejX+uIkUszSP3mixRjAjQvoH9XKIJ4ZPxT0cUHkrNlR6
-         3P/RjWGQEDm5BwkFgd+wcXJb6O3NEQkCXodO+w8gv9N71qg7WqauEfpHphw+wBp3XuDu
-         MCmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724768334; x=1725373134;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JSMiJ5fVqnyKb+9n4eHykIt/ocg8tbqo6X0nAPTgvIk=;
-        b=kebUbK9eKtXVz3bJBaX/M9lMgimhGMwxl008oVMOz8BKfIEf19BFNwycNIDkEjKBH9
-         MMwljcqm4sq5PyA9f1t3qPjoDSuyb7z5Gf9Qqq2TbB10H/8i3shotG7NA+eIxT+hypmj
-         +6147swLZmuIXn5LYFeyU4GZkxI2BVP7fekoPuSOJvoPGwlu/Nna3NYglV8oCMdpN0+i
-         WQwTAzHvpCmFZgODEX4+hVXlQDtJePtgR/H9ufC9cPcCIPSEGu5Uoj9iQNJYwlqF6D91
-         SGc0QGTbjpwJY//Qt1A/RmdiI5grZrG6FbUHNvY16L6099ssUU+Ti5JjbdjpoIJ6/Nfh
-         s8wA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfqAT/d614qgCYZgXGApOvTvExTCU9VU37r4mmNX31s5i5crAJAiAKo7QYNq6RAWDVEB+15ZW/CJ3o37g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yygf2rjU02Qw3TXWmqpHs/9bhkYU05cl2f8/FuFEZcb/pDds1XP
-	MI8ze/y57DUs4md3CjuXAYEk+vpdeE+e6XDv7J2MGbmxNEPJFkCga1ukYaiL
-X-Google-Smtp-Source: AGHT+IFC8drrJmM4s4TDlAOrYOIKUf05TrbsTxNGNy/4YT441AzNhYGWwAjlpKQO3LwwXX8KcqVrdQ==
-X-Received: by 2002:a05:6a21:3987:b0:1c0:e629:3926 with SMTP id adf61e73a8af0-1cc89d6bb9amr15486459637.16.1724768334086;
-        Tue, 27 Aug 2024 07:18:54 -0700 (PDT)
-Received: from embed-PC.myguest.virtualbox.org ([106.222.235.177])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d6136fc523sm12117848a91.9.2024.08.27.07.18.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 07:18:53 -0700 (PDT)
-Date: Tue, 27 Aug 2024 19:47:24 +0530
-From: Abhishek Tamboli <abhishektamboli9@gmail.com>
-To: Guido =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>
-Cc: kernel@puri.sm, neil.armstrong@linaro.org,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
-	quic_jesszhan@quicinc.com, skhan@linuxfoundation.org,
-	rbmarliere@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/panel: mantix: Transition to multi-context write
- sequence
-Message-ID: <Zs3f9LIS1PenwMMX@embed-PC.myguest.virtualbox.org>
-References: <20240826160328.12685-1-abhishektamboli9@gmail.com>
- <ZszDipyk1Ey8M0JZ@qwark.sigxcpu.org>
+	s=arc-20240116; t=1724768376; c=relaxed/simple;
+	bh=QJ/ftQZtxj0LcUygvo9hZYcVnsFGQbSRZ3FZJk2wK3M=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fhHAGWqPISzLqgUimO0NS3Cwpgscp/TeEieF1gK5MCE/xjFhd/EhOKCZ1ejSxiJbWq3B+L/DdpiXgJshVq0Jn431ES1nr0I+5nAJnbd8BZKjllfKVusAwViR25VMb3iw2e73JgrAW3ABd18fg+mZRhwytR0wTJsYZnoBo6ckUT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vIUgN3HD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BA6digEf; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724768372;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V0+p7x+4QcXQbnltSLZ6EbN36Wx8/Q2GGi33foyf5DI=;
+	b=vIUgN3HDFjXtQwvYIqtoKHsYYrJk/NMce9C63ivrT4oCkFhbGrY5vkyHq4Tcuhpb4KwKub
+	S2ytYuTuOzmaAa+1qbHbJ1TfEBPvFwclnNtqA9vYG2LSULuusblxocD/yTfqxa36w4iWAb
+	c9Cj66Wel4Bib0j5C0GziTK7xZg0f2piL4brV3zKhKKvON3ftKhQO6+eSXyPuRpyvp2rCq
+	RmnQGAXj1b+TLRSic2ymCa2Ypt+r3reHFzo4WBUYgurGHmo+olT+ekJV4RDOrbH/MhodvT
+	rvvNusQTn7ZkYT1m8JGscy2SMtWIjRiU69blPXt/6V3ansSDyUt6OYTXJpiKGA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724768372;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V0+p7x+4QcXQbnltSLZ6EbN36Wx8/Q2GGi33foyf5DI=;
+	b=BA6digEfxdcGwktDje4WJflXrKil5NKoyv5MuH3m4csRBC2vQ/XBG0tWLlEax881E1TfnS
+	6R4Wl0KKrWYCymCw==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sebastian Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH printk v8 31/35] printk: nbcon: Implement emergency
+ sections
+In-Reply-To: <20240820063001.36405-32-john.ogness@linutronix.de>
+References: <20240820063001.36405-1-john.ogness@linutronix.de>
+ <20240820063001.36405-32-john.ogness@linutronix.de>
+Date: Tue, 27 Aug 2024 16:25:31 +0206
+Message-ID: <87plpum4jw.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZszDipyk1Ey8M0JZ@qwark.sigxcpu.org>
+Content-Type: text/plain
 
-On Mon, Aug 26, 2024 at 08:03:54PM +0200, Guido Günther wrote:
-> Hi Abhishektamboli,
-> 
-> I think this was already handled in
-> 
-> https://lore.kernel.org/dri-devel/20240820091556.1032726-2-tejasvipin76@gmail.com/
-> 
-> and applied
-> 
-> https://lore.kernel.org/dri-devel/172414629205.2571141.13215409630895562248.b4-ty@linaro.org/#t
-> 
-Hi Guido,
-Thanks for letting me know.
+Hi Petr,
 
-Regards,
-Abhishek
-> 
-> On Mon, Aug 26, 2024 at 09:33:28PM +0530, Abhishek Tamboli wrote:
-> > Replace deprecated 'mipi_dsi_generic_write_seq()' macro
-> > to 'mipi_dsi_generic_write_seq_multi()' macro in mantix_init_sequence
-> > function.
-> > 
-> > Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
-> > ---
-> >  .../gpu/drm/panel/panel-mantix-mlaf057we51.c  | 19 +++++++++++--------
-> >  1 file changed, 11 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c b/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c
-> > index ea4a6bf6d35b..f276c65cc9bb 100644
-> > --- a/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c
-> > +++ b/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c
-> > @@ -49,22 +49,25 @@ static int mantix_init_sequence(struct mantix *ctx)
-> >  {
-> >  	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-> >  	struct device *dev = ctx->dev;
-> > +	struct mipi_dsi_multi_context dsi_ctx = {
-> > +		.dsi = dsi
-> > +	};
-> > 
-> >  	/*
-> >  	 * Init sequence was supplied by the panel vendor.
-> >  	 */
-> > -	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A);
-> > +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A);
-> > 
-> > -	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_INT_CANCEL, 0x03);
-> > -	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A, 0x03);
-> > -	mipi_dsi_generic_write_seq(dsi, 0x80, 0xA9, 0x00);
-> > +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, MANTIX_CMD_INT_CANCEL, 0x03);
-> > +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A, 0x03);
-> > +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0x80, 0xA9, 0x00);
-> > 
-> > -	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A, 0x09);
-> > -	mipi_dsi_generic_write_seq(dsi, 0x80, 0x64, 0x00, 0x64, 0x00, 0x00);
-> > +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A, 0x09);
-> > +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0x80, 0x64, 0x00, 0x64, 0x00, 0x00);
-> >  	msleep(20);
-> > 
-> > -	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_SPI_FINISH, 0xA5);
-> > -	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x00, 0x2F);
-> > +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, MANTIX_CMD_SPI_FINISH, 0xA5);
-> > +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x00, 0x2F);
-> >  	msleep(20);
-> > 
-> >  	dev_dbg(dev, "Panel init sequence done\n");
-> > --
-> > 2.34.1
-> > 
+On 2024-08-20, John Ogness <john.ogness@linutronix.de> wrote:
+> +static __ref unsigned int *nbcon_get_cpu_emergency_nesting(void)
+> +{
+> +	/*
+> +	 * The value of __printk_percpu_data_ready gets set in normal
+> +	 * context and before SMP initialization. As a result it could
+> +	 * never change while inside an nbcon emergency section.
+> +	 */
+> +	if (!printk_percpu_data_ready())
+> +		return &early_nbcon_pcpu_emergency_nesting;
+> +
+> +	/* Open code this_cpu_ptr() without checking migration. */
+> +	return per_cpu_ptr(&nbcon_pcpu_emergency_nesting, raw_smp_processor_id());
+> +}
+
+It was pointed out to me that raw_cpu_ptr() exists exactly for this
+purpose. There is no need to open code it. Perhaps you can fold the
+following patch into this one for linux-next?
+
+John
+
+------------8<--------------
+From fe50e9646c44360d88749c2c24c109405b27ad9e Mon Sep 17 00:00:00 2001
+From: John Ogness <john.ogness@linutronix.de>
+Date: Tue, 27 Aug 2024 14:06:19 +0000
+Subject: [PATCH] printk: nbcon: Use raw_cpu_ptr() instead of open coding
+
+There is no need to open code a non-migration-checking
+this_cpu_ptr(). That is exactly what raw_cpu_ptr() is.
+
+Signed-off-by: John Ogness <john.ogness@linutronix.de>
+---
+ kernel/printk/nbcon.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+index 92ac5c590927..cf62f675c673 100644
+--- a/kernel/printk/nbcon.c
++++ b/kernel/printk/nbcon.c
+@@ -998,8 +998,7 @@ static __ref unsigned int *nbcon_get_cpu_emergency_nesting(void)
+ 	if (!printk_percpu_data_ready())
+ 		return &early_nbcon_pcpu_emergency_nesting;
+ 
+-	/* Open code this_cpu_ptr() without checking migration. */
+-	return per_cpu_ptr(&nbcon_pcpu_emergency_nesting, raw_smp_processor_id());
++	return raw_cpu_ptr(&nbcon_pcpu_emergency_nesting);
+ }
+ 
+ /**
+-- 
+2.30.2
 
