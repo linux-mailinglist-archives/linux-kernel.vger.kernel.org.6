@@ -1,46 +1,49 @@
-Return-Path: <linux-kernel+bounces-303705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 178FF9613FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:26:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3C509613F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:25:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1E5A1F24511
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:26:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FFF4284482
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A161CF296;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F91D1CEAC8;
 	Tue, 27 Aug 2024 16:25:34 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F5B1CDA37;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D259D1C4EE3;
 	Tue, 27 Aug 2024 16:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724775934; cv=none; b=OZC53FohbNBMEUwRJRbmJVWt6tD0si6TgjFCuNCtxajqcs/5ZMZiA0mMuseMLwSJ3g/mpQYnycqlYuhIh0BPPeyHEcjaFeqEgIz5uvJSBz+W2RQjBds20AfBmL2/+gMpkaYtVAum2jJCUE16mcih4oy4DNzbaaePD1pRjf4fgAc=
+	t=1724775933; cv=none; b=SHsn6FnoryFGdA2vNi8QVT0vkDLx6UxWj9i74QljweuVXg0Sm623P/tLh2PHx5S3ZKx40vKQzFR5jBlModxf9b6NaSrkCXvhieazWiZsDXxzKKIeoOD7Qgtfvph5sd/g+/gwd9pvRt4BreZRUdCFoPFnrlJW98OvBDRFwh6pWZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724775934; c=relaxed/simple;
-	bh=pp5seK9cFETth4Q3mhHoLrCJJb991K9mLFMTyHePyZ8=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=B2uHzqHiaHIFKyAQnm5d+5cEbYoIGOcETT8oVoL+aB2APy4UMhCuUPRjSZbjrWSunfDWMJlUhCkeg8eycc19qHlwSy13UQqqIpg2atSv9KGcLSeQhAzhGMREvAvfKWoi/G5k0YtjYrq8d3nny3i/08ZNTsPP9hxEhkV3t2aihaY=
+	s=arc-20240116; t=1724775933; c=relaxed/simple;
+	bh=henAKoUNAaByuZc9acrEy1/IV4+TOUcMIWvjZUSrQEA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=BhJvfK01TwtXanNbGYeI3TuINneWRgv9FOVcW3TE3sEali0eVLNQ8it36KztZ2FHl/ozGZnNSFxKjfJF8VximD/w9HVW8sXjB1Kd7a/kcwSnhae9IBA0Sdz/Cq167cOsQHJ6f56yzcsgK98VLqhcjVeDCVDeAbaOpmEmCW+OzUc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89726C8B7C5;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55906C8B7B7;
 	Tue, 27 Aug 2024 16:25:33 +0000 (UTC)
 Received: by mercury (Postfix, from userid 1000)
-	id 418F61060535; Tue, 27 Aug 2024 18:25:31 +0200 (CEST)
+	id 3BD591060534; Tue, 27 Aug 2024 18:25:31 +0200 (CEST)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Sebastian Reichel <sre@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <ndesaulniers@google.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- llvm@lists.linux.dev, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20240705113113.42851-1-krzysztof.kozlowski@linaro.org>
-References: <20240705113113.42851-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 1/2] power: supply: core: simplify with cleanup.h
-Message-Id: <172477593125.353499.16835192129915410138.b4-ty@collabora.com>
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>, 
+ Stanislav Jakubek <stano.jakubek@gmail.com>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <Zr3SAHlq5A78QvrW@standask-GA-A55M-S2HP>
+References: <Zr3SAHlq5A78QvrW@standask-GA-A55M-S2HP>
+Subject: Re: [PATCH] dt-bindings: power: supply: sc27xx-fg: add low voltage
+ alarm IRQ
+Message-Id: <172477593123.353499.162167504738447806.b4-ty@collabora.com>
 Date: Tue, 27 Aug 2024 18:25:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -53,18 +56,18 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.1
 
 
-On Fri, 05 Jul 2024 13:31:12 +0200, Krzysztof Kozlowski wrote:
-> Allocate the memory with scoped/cleanup.h to reduce error handling and
-> make the code a bit simpler.
+On Thu, 15 Aug 2024 12:01:36 +0200, Stanislav Jakubek wrote:
+> The SC27XX fuel gauge supports a low voltage alarm IRQ, which is used
+> for more accurate battery capacity measurements with lower voltages.
+> 
+> This was unfortunately never documented in bindings, do so now.
 > 
 > 
 
 Applied, thanks!
 
-[1/2] power: supply: core: simplify with cleanup.h
-      commit: a9125e868f7ad80d527cf5c69e20fa0ada96bff9
-[2/2] power: supply: twl4030_charger: correct comparision with old current
-      commit: e764374f4b57a0e0c0221bc0188034ae9996808e
+[1/1] dt-bindings: power: supply: sc27xx-fg: add low voltage alarm IRQ
+      commit: 17656d2215c3978bbe2811a5e249cd07fe3de77f
 
 Best regards,
 -- 
