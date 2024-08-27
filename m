@@ -1,112 +1,135 @@
-Return-Path: <linux-kernel+bounces-302437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16B9B95FE6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:42:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E788A95FE6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:42:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9B7728275B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:42:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E9C282BD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF5C8BE8;
-	Tue, 27 Aug 2024 01:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YsbtnWRj"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A238BE5;
+	Tue, 27 Aug 2024 01:42:37 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8282DC2C6;
-	Tue, 27 Aug 2024 01:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED394CA6B
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 01:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724722931; cv=none; b=AgSGjfQDUEKuo+1b/UqIBLMMJ1qaF6faYSXQBfCo9qGK3lVAR+d05iwcVSd1HWjkFhOjYgedekRWdII16ZT1mbO8oHFNVvJ5YNohzEWJ4GolhblVI6O/HeDt9RaDYsL/9rw80Lab0yL/HyaZWtxNYT1xtn/kEiyJX6Hk9sekkfQ=
+	t=1724722957; cv=none; b=nJw2Dytvmqq3E6vGIOzwt8sRnMeg2KKr8Ic/4vtWzSmaZfY9SJVfpC5PBoI8NoyLyiOEYihMo+6YjT9TBTK5R020Qiu+Z+nG6tVLhw6hHGIdnyPwi4tVgBPFVZ73QetElqKThyl6qpFmUFUggITLDXm11FMilmrBGOp1y+KmAAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724722931; c=relaxed/simple;
-	bh=5yCtVb+V90ga90qd/RI0+W60qP03p0k3ZcfCKx6c1FQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SatY3YO1RzhggaZwrSW3C4A1hrtE92TvDmXTC0Fw08ApK5OJCP+UKUn1WZEAF4k93T0sIbCHvn2XEsldg3w2OSB5IWbihOs4FN6x+A5v7UmGuLV0CofQdMIYnEhwczljXoXtUYOirh55eqRmlZzMP4z7dVwItg5G8KjvW9bvDlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YsbtnWRj; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47QJH5PP012285;
-	Tue, 27 Aug 2024 01:42:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=TCUSX7agBNvgz49pHZiPd91J
-	woz/djPSQyzQjMkP8Ok=; b=YsbtnWRjTkxSY2ByLINhyED2WCSF++X5J5vK2NZu
-	SWP1V0lkvSgR7lHpkfZTpMbegyMQkOzVVpx6+gwl3T3TwnMhQ656qGkYV4c6j2Qv
-	rXANWIpuAU/NpBi+cpS9FdVwoCbNXQKXTQwcR+WmoKpvCv6wmzHXdgIhv7NL20kO
-	20vnORCLZCwG/mnlk82O1EoYbInJ1qHo/wgsa1GHqX9EBWobDWXLR5LtEV0BPJ4p
-	u3qnMct54WgOqMhfaZL8D7tFdHFXYdreprN8vC3HnZ/HkQv1ver+EUzzKWpwpYry
-	glEVL6TGMqK6iFrLDZuRpuFGW2909aOFXNWNtCH1ROHWKg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 417993nabt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 Aug 2024 01:42:04 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47R1g4Th005397
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 Aug 2024 01:42:04 GMT
-Received: from hu-mdtipton-lv.qualcomm.com (10.49.16.6) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+	s=arc-20240116; t=1724722957; c=relaxed/simple;
+	bh=2KjMXZv8U/2bgFxhQaUWypJuW55QTDQDghkAvO8kBAs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=rt9uWDlsMhdN1FXHUYzeB4y+PsSTrmXcCVshUpaDFjcqHgLeb5Ati5Dld+1fyLzVaNOu95Xt06UNstb2CIKPrndyn/Xeht5ZxUn6Ii1aRCE7De16LajQyxrQzAlJ/ckdlQoHdJTeLlromqPssILEr6eTokKsw2yseJekk9Lo81U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wt9CX2yzTz20mq7;
+	Tue, 27 Aug 2024 09:37:44 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3B824140120;
+	Tue, 27 Aug 2024 09:42:32 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 26 Aug 2024 18:42:03 -0700
-Date: Mon, 26 Aug 2024 18:42:02 -0700
-From: Mike Tipton <quic_mdtipton@quicinc.com>
-To: Georgi Djakov <quic_c_gdjako@quicinc.com>
-CC: <andersson@kernel.org>, <quic_viveka@quicinc.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: qcom: gdsc: Add a flag to skip setting power
- collapse bits
-Message-ID: <20240827014202.GA6354@hu-mdtipton-lv.qualcomm.com>
-References: <20240813120015.3242787-1-quic_c_gdjako@quicinc.com>
+ 15.2.1544.11; Tue, 27 Aug 2024 09:42:30 +0800
+Message-ID: <9f93fe1f-c7d7-7d96-44ab-2bca0aae407e@huawei.com>
+Date: Tue, 27 Aug 2024 09:42:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240813120015.3242787-1-quic_c_gdjako@quicinc.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: tLmPm-H1tvt8nHBAGwkktn3lBgVGqqZ-
-X-Proofpoint-ORIG-GUID: tLmPm-H1tvt8nHBAGwkktn3lBgVGqqZ-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-26_18,2024-08-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 bulkscore=0 adultscore=0 mlxscore=0 clxscore=1011
- phishscore=0 mlxlogscore=731 spamscore=0 impostorscore=0
- lowpriorityscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408270010
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH -next 2/5] drm/mediatek: Fix missing of_node_put() for
+ mtk_drm_get_all_drm_priv()
+Content-Language: en-US
+To: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	<hjc@rock-chips.com>, <heiko@sntech.de>, <andy.yan@rock-chips.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<dri-devel@lists.freedesktop.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<krzk@kernel.org>, <jic23@kernel.org>
+References: <20240823092053.3170445-1-ruanjinjie@huawei.com>
+ <20240823092053.3170445-3-ruanjinjie@huawei.com>
+ <a4d23c3a-9791-4d2b-9853-9c9b27460db5@wanadoo.fr>
+ <6d4ec950-878f-499c-a808-dd5b31c2ddb6@wanadoo.fr>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <6d4ec950-878f-499c-a808-dd5b31c2ddb6@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-On Tue, Aug 13, 2024 at 05:00:15AM -0700, Georgi Djakov wrote:
-> The sdm845 platforms have a hardware issue that requires keeping
-> some of the MMNOC GDSCs in SW collapse mode (which is the power-on
-> default). But if some driver tries to use these GDSCs and the mode
-> is updated because of runtime pm calls, we may get a board hang.
-> Introduce a flag to skip any updates to the power collapse settings
-> for the impacted GDSCs to avoid unexpected board hangs.
-> 
-> Cc: Mike Tipton <quic_mdtipton@quicinc.com>
-> Cc: Vivek Aknurwar <quic_viveka@quicinc.com>
-> Signed-off-by: Georgi Djakov <quic_c_gdjako@quicinc.com>
-> ---
->  drivers/clk/qcom/gcc-sdm845.c | 6 +++---
->  drivers/clk/qcom/gdsc.c       | 3 +++
->  drivers/clk/qcom/gdsc.h       | 1 +
->  3 files changed, 7 insertions(+), 3 deletions(-)
-> 
 
-Reviewed-by: Mike Tipton <quic_mdtipton@quicinc.com>
+
+On 2024/8/25 13:16, Marion & Christophe JAILLET wrote:
+> 
+> 
+> Le 23/08/2024 à 12:46, Christophe JAILLET a écrit :
+>>> @@ -933,10 +931,8 @@ static int mtk_drm_probe(struct platform_device
+>>> *pdev)
+>>>           }
+>>>           ret = mtk_ddp_comp_init(node, &private->ddp_comp[comp_id],
+>>> comp_id);
+>>> -        if (ret) {
+>>> -            of_node_put(node);
+>>> +        if (ret)
+>>>               goto err_node;
+>>
+>> Hi,
+>>
+>> I've seen on another thread that is was not sure that scoped versions
+>> and gotos played well together.
+>>
+>> It was asked to check more in details and confirm that it was safe
+>> before applying the patch.
+>>
+>> I've not followed the discussion, so I just point it out, in case it
+>> helps.
+>>
+>> I'll try to give it a look in the coming days.
+>>
+>>
+>> CJ
+>>
+> 
+> Hi,
+> looking at the generated asm file (gcc 14.2.1), everything looks fine.
+
+Yes, as I pointed out in another thread, the test show that goto with
+this scoped function is good.
+
+> 
+> # drivers/gpu/drm/mediatek/mtk_drm_drv.c:933:         ret =
+> mtk_ddp_comp_init(node, &private->ddp_comp[comp_id], comp_id);
+>     salq    $5, %rax    #, _36
+>     movl    %r14d, %edx    # comp_id,
+>     movq    %rbx, %rdi    # node,
+>     leaq    552(%rbp,%rax), %rsi    #, _28
+>     call    mtk_ddp_comp_init    #
+>     movl    %eax, %r12d    # tmp205, <retval>
+> # drivers/gpu/drm/mediatek/mtk_drm_drv.c:934:         if (ret)
+>     testl    %eax, %eax    # <retval>
+>     jne    .L212    #,
+> 
+> ...
+> 
+> .L212:
+> # ./include/linux/of.h:138: DEFINE_FREE(device_node, struct device_node
+> *, if (_T) of_node_put(_T))
+>     movq    %rbx, %rdi    # node,
+>     call    of_node_put    #
+>     jmp    .L171    #
+> 
+> CJ
+> 
 
