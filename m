@@ -1,116 +1,145 @@
-Return-Path: <linux-kernel+bounces-303035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94CF696066B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:58:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75D0C96067A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:59:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A09B1F218C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:58:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A9081C22897
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AED81A01CD;
-	Tue, 27 Aug 2024 09:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861DB19DF65;
+	Tue, 27 Aug 2024 09:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Sjlz9zS5"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="Top51QoP"
+Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E82819FA7B
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B7219B3EE;
+	Tue, 27 Aug 2024 09:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724752574; cv=none; b=S9nx3BCZMuR6ZriOZTRpPC5KmE0tuQIJsJL1YsCqaDjc2q9KEOK1iPv6ao1Kqvz99WZFLjvi9X9SSkCCYDIXqpspVIJfx/mfBQiKda6q/gwZhRdEDTuwO+3h1XLZPLn/YEAehXRLxLSeVt4fdxHQKzncrLeQFLmIfh1ofnOfJfo=
+	t=1724752621; cv=none; b=ECUROAQUr/84U6eCbTawUBlHlVMRxMO7/nSb0OsbZhLRZg+sWKo/5MbwMwQrXY2xZsdm/VmMriuVSqODcr/e78kQ3TXHTGx8RJ2ULkTW+SGhUOM9zpPMlHdeQjyzRoVeWxbIKhkPXM2IipNgVD7kt8ROfGpc7gi7IwGzmq7PmYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724752574; c=relaxed/simple;
-	bh=61aWqOIzzepMknkcXPfDfYv2R9zOeeIrclywPB2sVo4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VGUu9LgNHlYudgoVbVOW16KzabHjQm+suGAKp9mMIxBjJ1wtiHBeGLnoxyaig9gpWG9ypmqWBESwi0klRaeB0hgpaeQPI5PDmstjXq7e45ceJyL1GwYOXwGS+5xmD3HmD1i/3riE2O6ySt27AouQA0Yj9Zhgyng9Oh1roIWruTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Sjlz9zS5; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-201fbd0d7c2so43047345ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 02:56:13 -0700 (PDT)
+	s=arc-20240116; t=1724752621; c=relaxed/simple;
+	bh=RWSZeaefIBg93jQXCXZ2QL3r8R7WrzWCZfNIjIo+xC0=;
+	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Rc9oSmBWiQGh5YJ9iBzmYP1JzntcqdB83GPU+Wx3lS9kGRE7S0pSdvNycY15irVgUf7JqCO0p4dweX0ao5W79YLQXWZ9uTBDg3ncpbEqvDZDKSdXoTIaa7mjn70FgMLaApLZ2pFan9g94De9V6/9ILDQOIBrETcFZo/mSkPUvfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=Top51QoP; arc=none smtp.client-ip=52.119.213.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724752573; x=1725357373; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3/5VBNfYAsqRzbHrubk/0yjXqiOSkP3Dbb2C0/1kFpM=;
-        b=Sjlz9zS5ZA5YBaJwgb9XuF9KPZz2YJmuLaBhLVivgf6M0eTMvMoMbPDHT1dza2yq4K
-         jozebKbHlGroWn/3V8WyWXL7YavDy21DBmPpMD+Ektgh9zVB1xwcqajbvYoRTLHtJK4v
-         AQVQewejI3Qi/a6riUpy7GDJs+5DV6PWYh9Vc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724752573; x=1725357373;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3/5VBNfYAsqRzbHrubk/0yjXqiOSkP3Dbb2C0/1kFpM=;
-        b=P/RNUmGHJjIVRCW+jtgWOj6+1l3uFfqO6tUtxEglB1XrJOKTbrEtqR3AxrR0hJ3mGY
-         HUaPI4nrOxI3YyA8Off+oYVR1ONtUORbZOOk0HoLau1DPjI3h5IBjotzk7Q2eBfPnAu8
-         2nS2H0LxGVjnN+QJEq6kgTaz6PUuDHzu9LIRqJ0E/XqWNvl+IaTlZDU1Hm8e0I3l6S10
-         zCtWjGHdwGI8ZdBQGbaF363pn0VNNL2Z4vQeGKNUyOAo9duIOnyxvlUye3dea0ABRPjY
-         4f1KCVeZxWpa321y4EKXz37j8odNGkr8e2qfujdlJBHPl3VWrY5E4gkOM+9CjQLXE9vZ
-         fuJA==
-X-Forwarded-Encrypted: i=1; AJvYcCXXt3uUKU7on9Kukeuk9I+McP/3ycpeLRCBLLj8vi6GzsE6r+CXBdkAR4MWUZu285aipt0wRv441+yoWX0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi9lnYrYhdc0sXRWYisi0b/XtuahHc5PuqC4xlm/U/gF2UvoyB
-	uGwR3TpbCtK4jtnfLYM6fvz1yUlU9uijfOAhPylUNTxC5jXqNQdUWTUTJtWkWWFmM9zzeDQpa9w
-	=
-X-Google-Smtp-Source: AGHT+IGK0iObEbnV0ut5x5siCGHthaaUKI10Pjne/4Dtm0WJAt/GcXg1cPDu6YGnkB3ody3D/pB6Pg==
-X-Received: by 2002:a17:903:11c7:b0:202:4d05:a24a with SMTP id d9443c01a7336-204df13ee41mr24113125ad.16.1724752572692;
-        Tue, 27 Aug 2024 02:56:12 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:3102:657e:87f4:c646])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038560c2basm80006775ad.222.2024.08.27.02.56.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 02:56:12 -0700 (PDT)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 8/8] regulator: irq_helpers: Add missing "Return" kerneldoc section
-Date: Tue, 27 Aug 2024 17:55:48 +0800
-Message-ID: <20240827095550.675018-9-wenst@chromium.org>
-X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
-In-Reply-To: <20240827095550.675018-1-wenst@chromium.org>
-References: <20240827095550.675018-1-wenst@chromium.org>
+  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
+  s=amazon201209; t=1724752620; x=1756288620;
+  h=from:to:cc:date:message-id:references:in-reply-to:
+   content-id:content-transfer-encoding:mime-version:subject;
+  bh=RWSZeaefIBg93jQXCXZ2QL3r8R7WrzWCZfNIjIo+xC0=;
+  b=Top51QoPQfkf+QEs+nwUoGYlOMmKMpnDjYWWLYOC2L6hpPSwNNjuyoaX
+   Hyck1hNERsFSXEf57MPRPCGYlOdgIDaDm5l+kwNaD0A6B+T/ZRmSHECVL
+   tK6HJLe/8quYvF48uvkQkIioZCqsd/dcbWGu6alEjUeI83MmOXH/5nRmD
+   Y=;
+X-IronPort-AV: E=Sophos;i="6.10,180,1719878400"; 
+   d="scan'208";a="655053123"
+Subject: Re: [PATCH 2/2] KVM: Clean up coalesced MMIO ring full check
+Thread-Topic: [PATCH 2/2] KVM: Clean up coalesced MMIO ring full check
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 09:56:56 +0000
+Received: from EX19MTAEUA002.ant.amazon.com [10.0.17.79:51087]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.6.142:2525] with esmtp (Farcaster)
+ id b398acf2-985f-4ee2-9dd7-f0d0cec5c951; Tue, 27 Aug 2024 09:56:54 +0000 (UTC)
+X-Farcaster-Flow-ID: b398acf2-985f-4ee2-9dd7-f0d0cec5c951
+Received: from EX19D018EUA002.ant.amazon.com (10.252.50.146) by
+ EX19MTAEUA002.ant.amazon.com (10.252.50.126) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 27 Aug 2024 09:56:54 +0000
+Received: from EX19D018EUA002.ant.amazon.com (10.252.50.146) by
+ EX19D018EUA002.ant.amazon.com (10.252.50.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 27 Aug 2024 09:56:54 +0000
+Received: from EX19D018EUA002.ant.amazon.com ([fe80::7a11:7dbb:2190:e2c1]) by
+ EX19D018EUA002.ant.amazon.com ([fe80::7a11:7dbb:2190:e2c1%3]) with mapi id
+ 15.02.1258.034; Tue, 27 Aug 2024 09:56:54 +0000
+From: "Stamatis, Ilias" <ilstam@amazon.co.uk>
+To: "pbonzini@redhat.com" <pbonzini@redhat.com>, "seanjc@google.com"
+	<seanjc@google.com>
+CC: "maz@kernel.org" <maz@kernel.org>, "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>, "Stamatis, Ilias" <ilstam@amazon.co.uk>,
+	"anup@brainfault.org" <anup@brainfault.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "oliver.upton@linux.dev"
+	<oliver.upton@linux.dev>, "paul@xen.org" <paul@xen.org>
+Thread-Index: AQHa9ZCx8A2EzgbgdEWpUdHZm2E42rI644WA
+Date: Tue, 27 Aug 2024 09:56:54 +0000
+Message-ID: <f8ce24507b836170e1ca5df8586a3478c164386d.camel@amazon.co.uk>
+References: <20240823191354.4141950-1-seanjc@google.com>
+	 <20240823191354.4141950-3-seanjc@google.com>
+In-Reply-To: <20240823191354.4141950-3-seanjc@google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <BEE4F6C14E2545419D0E88C899647B43@amazon.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-kernel-doc complains about missing "Return" section for the function
-regulator_irq_map_event_simple().
-
-Add a "Return" section for it based on its behavior.
-
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
- drivers/regulator/irq_helpers.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/regulator/irq_helpers.c b/drivers/regulator/irq_helpers.c
-index 5ab1a0befe12..5803ef016b7d 100644
---- a/drivers/regulator/irq_helpers.c
-+++ b/drivers/regulator/irq_helpers.c
-@@ -414,6 +414,10 @@ EXPORT_SYMBOL_GPL(regulator_irq_helper_cancel);
-  * notification helperk. Exactly one rdev and exactly one error (in
-  * "common_errs"-field) can be given at IRQ helper registration for
-  * regulator_irq_map_event_simple() to be viable.
-+ *
-+ * Return: 0
-+ *
-+ * Actual regulator error and notification are passed back through @rid.
-  */
- int regulator_irq_map_event_simple(int irq, struct regulator_irq_data *rid,
- 			    unsigned long *dev_mask)
--- 
-2.46.0.295.g3b9ea8a38a-goog
-
+T24gRnJpLCAyMDI0LTA4LTIzIGF0IDEyOjEzIC0wNzAwLCBTZWFuIENocmlzdG9waGVyc29uIHdy
+b3RlOg0KPiBGb2xkIGNvYWxlc2NlZF9tbWlvX2hhc19yb29tKCkgaW50byBpdHMgc29sZSBjYWxs
+ZXIsIGNvYWxlc2NlZF9tbWlvX3dyaXRlKCksDQo+IGFzIGl0J3MgcmVhbGx5IGp1c3QgYSBzaW5n
+bGUgbGluZSBvZiBjb2RlLCBoYXMgYSBnb29meSByZXR1cm4gdmFsdWUsIGFuZA0KPiBpcyB1bm5l
+Y2Vzc2FyaWx5IGJyaXR0bGUuDQo+IA0KPiBFLmcuIGlmIGNvYWxlc2NlZF9tbWlvX2hhc19yb29t
+KCkgd2VyZSB0byBjaGVjayByaW5nLT5sYXN0IGRpcmVjdGx5LCBvcg0KPiB0aGUgY2FsbGVyIGZh
+aWxlZCB0byB1c2UgUkVBRF9PTkNFKCksIEtWTSB3b3VsZCBiZSBzdXNjZXB0aWJsZSB0byBUT0NU
+T1UNCj4gYXR0YWNrcyBmcm9tIHVzZXJzcGFjZS4NCj4gDQo+IE9wcG9ydHVuaXN0aWNhbGx5IGFk
+ZCBhIGNvbW1lbnQgZXhwbGFpbmluZyB3aHkgb24gZWFydGggS1ZNIGxlYXZlcyBvbmUNCj4gZW50
+cnkgZnJlZSwgd2hpY2ggbWF5IG5vdCBiZSBvYnZpb3VzIHRvIHJlYWRlcnMgdGhhdCBhcmVuJ3Qg
+ZmFtYWlsaWFyIHdpdGgNCg0Kcy9mYW1haWxpYXIvZmFtaWxpYXINCg0KPiByaW5nIGJ1ZmZlcnMu
+DQo+IA0KPiBObyBmdW5jdGlvbmFsIGNoYW5nZSBpbnRlbmRlZC4NCj4gDQo+IENjOiBJbGlhcyBT
+dGFtYXRpcyA8aWxzdGFtQGFtYXpvbi5jb20+DQo+IENjOiBQYXVsIER1cnJhbnQgPHBhdWxAeGVu
+Lm9yZz4NCj4gU2lnbmVkLW9mZi1ieTogU2VhbiBDaHJpc3RvcGhlcnNvbiA8c2VhbmpjQGdvb2ds
+ZS5jb20+DQo+IC0tLQ0KPiAgdmlydC9rdm0vY29hbGVzY2VkX21taW8uYyB8IDI5ICsrKysrKysr
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgOCBpbnNlcnRpb25zKCsp
+LCAyMSBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS92aXJ0L2t2bS9jb2FsZXNjZWRf
+bW1pby5jIGIvdmlydC9rdm0vY29hbGVzY2VkX21taW8uYw0KPiBpbmRleCAxODRjNWM0MGM5YzEu
+LjM3NWQ2Mjg1NDc1ZSAxMDA2NDQNCj4gLS0tIGEvdmlydC9rdm0vY29hbGVzY2VkX21taW8uYw0K
+PiArKysgYi92aXJ0L2t2bS9jb2FsZXNjZWRfbW1pby5jDQo+IEBAIC00MCwyNSArNDAsNiBAQCBz
+dGF0aWMgaW50IGNvYWxlc2NlZF9tbWlvX2luX3JhbmdlKHN0cnVjdCBrdm1fY29hbGVzY2VkX21t
+aW9fZGV2ICpkZXYsDQo+ICAgICAgICAgcmV0dXJuIDE7DQo+ICB9DQo+IA0KPiAtc3RhdGljIGlu
+dCBjb2FsZXNjZWRfbW1pb19oYXNfcm9vbShzdHJ1Y3Qga3ZtX2NvYWxlc2NlZF9tbWlvX2RldiAq
+ZGV2LCB1MzIgbGFzdCkNCj4gLXsNCj4gLSAgICAgICBzdHJ1Y3Qga3ZtX2NvYWxlc2NlZF9tbWlv
+X3JpbmcgKnJpbmc7DQo+IC0NCj4gLSAgICAgICAvKiBBcmUgd2UgYWJsZSB0byBiYXRjaCBpdCA/
+ICovDQo+IC0NCj4gLSAgICAgICAvKiBsYXN0IGlzIHRoZSBmaXJzdCBmcmVlIGVudHJ5DQo+IC0g
+ICAgICAgICogY2hlY2sgaWYgd2UgZG9uJ3QgbWVldCB0aGUgZmlyc3QgdXNlZCBlbnRyeQ0KPiAt
+ICAgICAgICAqIHRoZXJlIGlzIGFsd2F5cyBvbmUgdW51c2VkIGVudHJ5IGluIHRoZSBidWZmZXIN
+Cj4gLSAgICAgICAgKi8NCj4gLSAgICAgICByaW5nID0gZGV2LT5rdm0tPmNvYWxlc2NlZF9tbWlv
+X3Jpbmc7DQo+IC0gICAgICAgaWYgKChsYXN0ICsgMSkgJSBLVk1fQ09BTEVTQ0VEX01NSU9fTUFY
+ID09IFJFQURfT05DRShyaW5nLT5maXJzdCkpIHsNCj4gLSAgICAgICAgICAgICAgIC8qIGZ1bGwg
+Ki8NCj4gLSAgICAgICAgICAgICAgIHJldHVybiAwOw0KPiAtICAgICAgIH0NCj4gLQ0KPiAtICAg
+ICAgIHJldHVybiAxOw0KPiAtfQ0KPiAtDQo+ICBzdGF0aWMgaW50IGNvYWxlc2NlZF9tbWlvX3dy
+aXRlKHN0cnVjdCBrdm1fdmNwdSAqdmNwdSwNCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICBzdHJ1Y3Qga3ZtX2lvX2RldmljZSAqdGhpcywgZ3BhX3QgYWRkciwNCj4gICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICBpbnQgbGVuLCBjb25zdCB2b2lkICp2YWwpDQo+IEBAIC03
+Miw5ICs1MywxNSBAQCBzdGF0aWMgaW50IGNvYWxlc2NlZF9tbWlvX3dyaXRlKHN0cnVjdCBrdm1f
+dmNwdSAqdmNwdSwNCj4gDQo+ICAgICAgICAgc3Bpbl9sb2NrKCZkZXYtPmt2bS0+cmluZ19sb2Nr
+KTsNCj4gDQo+ICsgICAgICAgLyoNCj4gKyAgICAgICAgKiBsYXN0IGlzIHRoZSBpbmRleCBvZiB0
+aGUgZW50cnkgdG8gZmlsbC4gIFZlcmlmeSB1c2Vyc3BhY2UgaGFzbid0DQo+ICsgICAgICAgICog
+c2V0IGxhc3QgdG8gYmUgb3V0IG9mIHJhbmdlLCBhbmQgdGhhdCB0aGVyZSBpcyByb29tIGluIHRo
+ZSByaW5nLg0KPiArICAgICAgICAqIExlYXZlIG9uZSBlbnRyeSBmcmVlIGluIHRoZSByaW5nIHNv
+IHRoYXQgdXNlcnNwYWNlIGNhbiBkaWZmZXJlbnRpYXRlDQo+ICsgICAgICAgICogYmV0d2VlbiBh
+biBlbXB0eSByaW5nIGFuZCBhIGZ1bGwgcmluZy4NCj4gKyAgICAgICAgKi8NCj4gICAgICAgICBp
+bnNlcnQgPSBSRUFEX09OQ0UocmluZy0+bGFzdCk7DQo+IC0gICAgICAgaWYgKCFjb2FsZXNjZWRf
+bW1pb19oYXNfcm9vbShkZXYsIGluc2VydCkgfHwNCj4gLSAgICAgICAgICAgaW5zZXJ0ID49IEtW
+TV9DT0FMRVNDRURfTU1JT19NQVgpIHsNCj4gKyAgICAgICBpZiAoaW5zZXJ0ID49IEtWTV9DT0FM
+RVNDRURfTU1JT19NQVggfHwNCj4gKyAgICAgICAgICAgKGluc2VydCArIDEpICUgS1ZNX0NPQUxF
+U0NFRF9NTUlPX01BWCA9PSBSRUFEX09OQ0UocmluZy0+Zmlyc3QpKSB7DQo+ICAgICAgICAgICAg
+ICAgICBzcGluX3VubG9jaygmZGV2LT5rdm0tPnJpbmdfbG9jayk7DQo+ICAgICAgICAgICAgICAg
+ICByZXR1cm4gLUVPUE5PVFNVUFA7DQo+ICAgICAgICAgfQ0KPiAtLQ0KPiAyLjQ2LjAuMjk1Lmcz
+YjllYThhMzhhLWdvb2cNCj4gDQoNClJldmlld2VkLWJ5OiBJbGlhcyBTdGFtYXRpcyA8aWxzdGFt
+QGFtYXpvbi5jb20+DQo=
 
