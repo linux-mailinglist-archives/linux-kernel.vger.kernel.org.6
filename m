@@ -1,171 +1,184 @@
-Return-Path: <linux-kernel+bounces-303920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A2E69616E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:24:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97EFE9616EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:24:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DC9A1C23139
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:24:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9D6A1C23014
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CADB1D2795;
-	Tue, 27 Aug 2024 18:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="CcOERhB5"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206AB1C3F2C;
-	Tue, 27 Aug 2024 18:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838221D27B7;
+	Tue, 27 Aug 2024 18:24:21 +0000 (UTC)
+Received: from spindle.queued.net (spindle.queued.net [45.33.49.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC2B64A;
+	Tue, 27 Aug 2024 18:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.33.49.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724783048; cv=none; b=GICkdaPpjROgRGT1AShd3KDWad/OFNit/4QUohF7sIrPSQ2MwEjm191TSHopl3zfFh/3ovvaxIeKTfYX8MeNlPjqNBB9fak/4Dmuk2qBHHuHG2gDUFu0kKOl7AASXX9MoYzHte0QOLcGz4S8ooqfU3bAX/QUPD9lsAk+vbGogMY=
+	t=1724783061; cv=none; b=AFU5hsP0gP3d3BmIKm3A4XlQe2qs4jOdan9xvg8q43irAkQ+7apX4pgvmC4MNKbR5zVBjNCAWEvBPxLlTNMwmmXgw9uvkj/AlMsF2F1DSkJm3UvpmoodplS/SWsACSV79D9re1LxssQJZmZAf0me9jmZOPndU4YCbOzR2dgh1r4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724783048; c=relaxed/simple;
-	bh=0l6b8HehaW+vqzQG/TIzcn0RanmUBfGthJgWFVQEBXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=imuCyjFZe3UVU4fSKeW/L9NwTrPKPi+Y4gVaLGWR/UKk2pb8dZfka9NeHfByG6RhmTYrPKLOYb3bk6f2enrsGf/LJFDYDMEHTjGgAKn7hO2MbPl7D15TmYcJ9neG9PJ9xVwF4wM88qvkyEc1/nfiGOJpl4NMTqhQY2kaU6z2G8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=CcOERhB5; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1127)
-	id C3C9820B7165; Tue, 27 Aug 2024 11:24:06 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C3C9820B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1724783046;
-	bh=E05mT8nEHfpKguDowD3PHBTuCYfL83BfAUlsYjxtd4E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CcOERhB5LBW/e0d2D/FKl+gvH7TuWeiAG20HfzfSGigEcF6mqQWsVuxWJo8OwuJvM
-	 iLNFZbmUgAFfyCpPWRlmzjnPjALBanXL+C6h8hKxi8ovXxai+mPtvLnMxGQT9qXFzs
-	 FEbP7Mo+cvSOTUZc5nZ8lJ3KBJbgFenjWV7geX/w=
-Date: Tue, 27 Aug 2024 11:24:06 -0700
-From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: Naman Jain <namjain@linux.microsoft.com>,
-	"K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Stephen Hemminger <stephen@networkplumber.org>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] Drivers: hv: vmbus: Fix rescind handling in
- uio_hv_generic
-Message-ID: <20240827182406.GA32019@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <20240822110912.13735-1-namjain@linux.microsoft.com>
- <20240822110912.13735-3-namjain@linux.microsoft.com>
- <SN6PR02MB4157FB898345A1A8B88D1F4DD48A2@SN6PR02MB4157.namprd02.prod.outlook.com>
- <a447911b-ef12-46de-ba01-13105e34b8fe@linux.microsoft.com>
- <SN6PR02MB415711F672364610BBE6861DD48B2@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1724783061; c=relaxed/simple;
+	bh=aBFZVtuwfZ+m5iiQY1UmETzqRCn8tpeZF8oNvnWbkco=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T9x9JbR1JQiQ64Q88M6uR8qx3F7u50MQcO8yOB95UdcIK2wOPolmkc5tp0oP71ZGoUTvWJ1xS0u/2AoN2zlc3gAvAkupvEBwZOQYvb24irs2ezZ80WviCXiTfDJGZWEmwPRcNI/Cvtn9/fDkJmmCp5/zNH6xFp+i0hF5geVZtRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=queued.net; spf=pass smtp.mailfrom=queued.net; arc=none smtp.client-ip=45.33.49.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=queued.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queued.net
+Received: by spindle.queued.net (Postfix, from userid 1001)
+	id 895B9116374; Tue, 27 Aug 2024 14:24:13 -0400 (EDT)
+Received: from 5400 (unknown [172.56.34.244])
+	by spindle.queued.net (Postfix) with ESMTPSA id 01704116301;
+	Tue, 27 Aug 2024 14:24:10 -0400 (EDT)
+Date: Tue, 27 Aug 2024 14:24:08 -0400
+From: Andres Salomon <dilinger@queued.net>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?=
+ <linux@weissschuh.net>, Pali =?UTF-8?B?Um9ow6Fy?= <pali@kernel.org>,
+ platform-driver-x86@vger.kernel.org, Matthew Garrett <mjg59@srcf.ucam.org>,
+ Sebastian Reichel <sre@kernel.org>, Ilpo =?UTF-8?B?SsOkcnZpbmVu?=
+ <ilpo.jarvinen@linux.intel.com>, linux-pm@vger.kernel.org,
+ Dell.Client.Kernel@dell.com
+Subject: Re: [PATCH v4 1/2] platform/x86:dell-laptop: Add knobs to change
+ battery charge settings
+Message-ID: <20240827142408.0748911f@5400>
+In-Reply-To: <04d48a7c-cad1-4490-bbcd-ceb332c740bd@redhat.com>
+References: <20240820033005.09e03af1@5400>
+	<04d48a7c-cad1-4490-bbcd-ceb332c740bd@redhat.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR02MB415711F672364610BBE6861DD48B2@SN6PR02MB4157.namprd02.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Bogosity: Ham, tests=bogofilter, spamicity=0.000000, version=1.2.5
 
-On Mon, Aug 26, 2024 at 05:40:37AM +0000, Michael Kelley wrote:
-> From: Naman Jain <namjain@linux.microsoft.com> Sent: Sunday, August 25, 2024 10:32 PM
-> > 
-> > On 8/25/2024 8:27 AM, Michael Kelley wrote:
-> > > From: Naman Jain <namjain@linux.microsoft.com> Sent: Thursday, August 22, 2024 4:09 AM
-> > >>
-> > >> Rescind offer handling relies on rescind callbacks for some of the
-> > >> resources cleanup, if they are registered. It does not unregister
-> > >> vmbus device for the primary channel closure, when callback is
-> > >> registered.
-> > >> Add logic to unregister vmbus for the primary channel in rescind callback
-> > >> to ensure channel removal and relid release, and to ensure rescind flag
-> > >> is false when driver probe happens again.
-> > >>
-> > >> Fixes: ca3cda6fcf1e ("uio_hv_generic: add rescind support")
-> > >> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
-> > >> ---
-> > >>   drivers/hv/vmbus_drv.c       | 1 +
-> > >>   drivers/uio/uio_hv_generic.c | 7 +++++++
-> > >>   2 files changed, 8 insertions(+)
-> > >>
-> > >> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-> > >> index c857dc3975be..4bae382a3eb4 100644
-> > >> --- a/drivers/hv/vmbus_drv.c
-> > >> +++ b/drivers/hv/vmbus_drv.c
-> > >> @@ -1952,6 +1952,7 @@ void vmbus_device_unregister(struct hv_device *device_obj)
-> > >>   	 */
-> > >>   	device_unregister(&device_obj->device);
-> > >>   }
-> > >> +EXPORT_SYMBOL_GPL(vmbus_device_unregister);
-> > >>
-> > >>   #ifdef CONFIG_ACPI
-> > >>   /*
-> > >> diff --git a/drivers/uio/uio_hv_generic.c b/drivers/uio/uio_hv_generic.c
-> > >> index c99890c16d29..ea26c0b460d6 100644
-> > >> --- a/drivers/uio/uio_hv_generic.c
-> > >> +++ b/drivers/uio/uio_hv_generic.c
-> > >> @@ -121,6 +121,13 @@ static void hv_uio_rescind(struct vmbus_channel *channel)
-> > >>
-> > >>   	/* Wake up reader */
-> > >>   	uio_event_notify(&pdata->info);
-> > >> +
-> > >> +	/*
-> > >> +	 * With rescind callback registered, rescind path will not unregister the device
-> > >> +	 * when the primary channel is rescinded. Without it, next onoffer msg does not come.
-> > >> +	 */
-> > >> +	if (!channel->primary_channel)
-> > >> +		vmbus_device_unregister(channel->device_obj);
-> > >
-> > > When the rescind callback is *not* set, vmbus_onoffer_rescind() makes the
-> > > call to vmbus_device_unregister(). But it does so bracketed with get_device()/
-> > > put_device(). Your code here does not do the bracketing. Is there a reason for
-> > > the difference? Frankly, I'm not sure why vmbus_onoffer_rescind() does the
-> > > bracketing, and I can't definitively say if it is really needed. So I guess I'm
-> > > just asking if you know. :-)
-> > >
-> > > Michael
-> > 
-> > IMHO, we have already NULL checked channel->device_obj and other couple
-> > of things to make sure we are safe to clean this up. At other places as
-> > well, I don't see the use of put and get device. So I think its not
-> > required. I am open to suggestions.
-> > 
-> > Regards,
-> > Naman
+On Mon, 26 Aug 2024 16:44:35 +0200
+Hans de Goede <hdegoede@redhat.com> wrote:
+
+> Hi Andres,
 > 
-> OK. I'm good with what you've said, and don't have any further suggestions.
-> Go with what your patch already has. :-)
+> On 8/20/24 9:30 AM, Andres Salomon wrote:
+[...]
+> > +
+> > +static ssize_t charge_type_show(struct device *dev,
+> > +		struct device_attribute *attr,
+> > +		char *buf)
+> > +{
+> > +	ssize_t count = 0;
+> > +	int i;
+> > +
+> > +	for (i = 0; i < ARRAY_SIZE(battery_modes); i++) {
+> > +		bool active;
+> > +
+> > +		if (!(battery_supported_modes & BIT(i)))
+> > +			continue;
+> > +
+> > +		active = dell_battery_mode_is_active(battery_modes[i].token);
+> > +		count += sysfs_emit_at(buf, count, active ? "[%s] " : "%s ",
+> > +				battery_modes[i].label);
+> > +	}  
 > 
-> Michael
+> If you look at the way how charge_type is shown by the power_supply_sysfs.c
+> file which is used for power-supply drivers which directly register
+> a power-supply themselves rather then extending an existing driver, this
+> is not the correct format.
+> 
+> drivers/power/supply/power_supply_sysfs.c
+> 
+> lists charge_type as:
+> 
+>         POWER_SUPPLY_ENUM_ATTR(CHARGE_TYPE),
+> 
+> and ENUM type properties use the following for show() :
+> 
+> 	default:
+> 		if (ps_attr->text_values_len > 0 &&
+> 				value.intval < ps_attr->text_values_len && value.intval >= 0) {
+> 			ret = sysfs_emit(buf, "%s\n", ps_attr->text_values[value.intval]);
+> 		} else {
+> 			ret = sysfs_emit(buf, "%d\n", value.intval);
+> 		}
+> 	}
+> 
+> with in this case text_values pointing to:
+> 
+> static const char * const POWER_SUPPLY_CHARGE_TYPE_TEXT[] = {
+> 	[POWER_SUPPLY_CHARGE_TYPE_UNKNOWN]	= "Unknown",
+> 	[POWER_SUPPLY_CHARGE_TYPE_NONE]		= "N/A",
+> 	[POWER_SUPPLY_CHARGE_TYPE_TRICKLE]	= "Trickle",
+> 	[POWER_SUPPLY_CHARGE_TYPE_FAST]		= "Fast",
+> 	[POWER_SUPPLY_CHARGE_TYPE_STANDARD]	= "Standard",
+> 	[POWER_SUPPLY_CHARGE_TYPE_ADAPTIVE]	= "Adaptive",
+> 	[POWER_SUPPLY_CHARGE_TYPE_CUSTOM]	= "Custom",
+> 	[POWER_SUPPLY_CHARGE_TYPE_LONGLIFE]	= "Long Life",
+> 	[POWER_SUPPLY_CHARGE_TYPE_BYPASS]	= "Bypass",
+> };
+> 
+> So value.intval will be within the expected range hitting:
+> 
+> 			ret = sysfs_emit(buf, "%s\n", ps_attr->text_values[value.intval]);
+> 
+> IOW instead of outputting something like this:
+> 
+> Fast [Standard] Long Life
+> 
+> which is what your show() function does it outputs only
+> the active value as a string, e.g.:
+> 
+> Standard
+> 
+> Yes not being able to see the supported values is annoying I actually
+> wrote an email about that earlier today:
+> 
+> https://lore.kernel.org/linux-pm/49993a42-aa91-46bf-acef-4a089db4c2db@redhat.com/
+> 
+> but we need to make sure that the output is consistent between drivers otherwise
+> userspace can never know how to use the API, so for charge_type the dell
+> driver should only output the active type, not all the options.
+
+So should I just wait to make any changes until you hear back in that
+thread? I'm not overly excited about changing it to use the current
+charge_type API, given that the only way to get a list of modes that the
+hardware supports is to try setting them all and seeing what fails.
+
+I suppose another option is to rename it to charge_types in the dell
+driver under the assumption that your proposed charge_types API (or
+something like it) will be added..
 
 
-Michael,
+> 
+> This reminds me that there was a patch-series to allow battery extension drivers
+> like this one to actually use the power-supply core code for show()/store()
+> Thomas IIRC that series was done by you ?  What is the status of that ?
+> 
+> Also looking at the userspace API parts of this again I wonder
+> if mapping  BAT_PRI_AC_MODE_TOKEN -> "Trickle" is the right thing do
+> maybe "Long Life" would be a better match ?  That depends on what the option
+> actually does under the hood I guess. Is this known ?
+> 
 
-If we look at vmbus_onoffer_rescind function, hv_uio_rescind can only be called
-if channel->device_obj is not NULL. By this if we conclude that hv_uio_rescind can
-never be called for secondary channel I think we can simplify hv_uio_rescind
-only for primary channel.
+I originally thought to use Long Life rather than Trickle. We discussed
+it here:
 
-In the first patch of this series, instead of this:
-+	struct hv_device *hv_dev = channel->primary_channel ?
-+				   channel->primary_channel->device_obj : channel->device_obj;
+https://lore.kernel.org/linux-pm/5cfe4c42-a003-4668-8c3a-f18fb6b7fba6@gmx.de/
 
-We can only have
+Based on the existing documentation and the fact that the wilco driver
+already mapped it, it was decided to stick with the existing precedent
+of using Trickle.
 
-+	struct hv_device *hv_dev = channel->device_obj;
-
-
-In second patch, instead of this:
-+        if (!channel->primary_channel)
-+                vmbus_device_unregister(channel->device_obj);
-
-We can only have:
-+                vmbus_device_unregister(channel->device_obj);
-	
-
-Possibly WARN for secondary channel is also not required as that will never happen ?
+That said, Armin at first suggested creating a new "Primarily AC" entry.
+That's personally my favorite option, though I understand if we don't
+have to have 50 CHARGE_TYPE entries that just slightly different
+variations. :)
 
 
-- Saurabh
+
+-- 
+I'm available for contract & employment work, please contact me if
+interested.
 
