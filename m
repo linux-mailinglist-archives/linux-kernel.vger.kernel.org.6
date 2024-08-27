@@ -1,146 +1,89 @@
-Return-Path: <linux-kernel+bounces-303795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2342A96151E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:09:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 438CD961525
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD5E11F2268C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:09:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F384A289ED1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9303F1D2F56;
-	Tue, 27 Aug 2024 17:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343D41CF29D;
+	Tue, 27 Aug 2024 17:10:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="eLZwaZ7/"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJzuNJcd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8C61D27A3
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 17:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7452115F41B;
+	Tue, 27 Aug 2024 17:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724778262; cv=none; b=Z//o6SpqqlOrc+Bz6/G/P98Jrawo+wuwW2eLPOxKq4EfKgmgbgEY8d+/FJkXkIab4JCwVpUP849pVsaoGpRi6FcRAP9zWfn1cwt7NhmbE18Jt8f4V2BwMi6Bnw1+r5WN4TITL8PGC4O0EjIFvzJbX4WWENP5fAtE0ZJF5LsdpRM=
+	t=1724778613; cv=none; b=U+CQEVxWF2gJtgKO7TCTZUyAO8PWgblFMB8dAbeG86S5wca7oTUZUkdmV8fuBMSQJF+RUb9soWwYJ4IhkseekjtIsNuoa0R2Eovw4U13W71R7EZ9xIPr92ZPp88kfcxPbpJ44zi7hjmUqblkDrBugwoNrkvrAdqbaEiG20Izu10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724778262; c=relaxed/simple;
-	bh=obttAat1+8vwA+epeBCm2vdJfbrMJZxdRheqx2UuBrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HJ8GRwJNbxb8N3SWw+gHHS0I1Tg4M959YLGw71DTHkX1/ZfmPJbbd98BOplHTpoP7e41DVGkggWMs9Z4QPpHGQwiEeGHkrkXJrMiCewMwKczvMqbCrTTaNvoJrmg3ZJ02vXxGqbGrUfz4CfmsULyqqgO/Iph5pxJh0uTbCYInPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=eLZwaZ7/; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7141b04e7b5so3558715b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 10:04:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1724778260; x=1725383060; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=cHVS6GvCBnOPsiOYcG8jjXps+ccwvzgozbmG4OKMFBE=;
-        b=eLZwaZ7/lBCiCmg19nB1h9fRXBQrfrswbA/muOcaTQAr3q19mx4HTZOSg3HfcVdetB
-         8q8SnYwfVN7L2ODwubGqNTVhR1o+D4BFpQnfGD4rXYSEXJRUooWRb8SGEtI22AqNiRUx
-         jfUeIFGP26RdrE7kZQvBmazeqCvrvCJNvnOpLibpRvrxxk4LFBeT1Jzt46ACIqEZ4bzx
-         Hlt5d3JH3W3OF6iiYzw99o4C7Y3UPYW5BWef3uuVHkTY4VIvYSFGsdIaPsCkHF0OlJ4o
-         w1f5m0zIL7xgNqn0bapJ/drf4UbVzbIuZNtnCvfLw9v+ap3ju474mSZktOgYJgm+ZdzT
-         3ObQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724778260; x=1725383060;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cHVS6GvCBnOPsiOYcG8jjXps+ccwvzgozbmG4OKMFBE=;
-        b=E0+FxXTO9monF/REhGN0BpIP04qnho6wZA8V7BNXRPRZsuTj9YD9aHwONGDw5+a17Y
-         r0yUrrw3tY2nwVYYsKRL438XzemhP4jjQC0zskS1jMBUdMJ2ST0amvBRjOMtKNhgrWli
-         oc6HKd5+UGG510btG+Lj1cOZpLXD17xOsj0dJuj2+OADiZyYfjzjo1GhDwJ4I0ldm3LO
-         dQUCq54/ydIaPoChxvWTKILB63ahWFu2CT6Lm0o+dQ28P5jBrzpdcfeFqVPRPTIP6/E5
-         rPHo6ePI/Zt6+1GxD1ioMNAJ1i1h2fCvhEiBQDqqgtYqXjxld6HoC3huhPcn/cxHIH6l
-         KQ1g==
-X-Forwarded-Encrypted: i=1; AJvYcCW3Kc9s6pMiLqvq+kN760ux5poxDurBS9VVRukPzdzzhtlUqn2nm1MLXVe9FeSIK80aIKaHeyRto8hZ1/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysYaSN/K3QN4IX10mcMFYAuCPNULVUU6ggprxQ9sczrcZ68dnf
-	aH2srLy6ctxs+fmtN6104ncjprEyuRNXO0DkOpZ7zCDgPIXQC8Rldzc2I9Lc4jU=
-X-Google-Smtp-Source: AGHT+IGpFb01J/dDnA2pToqsW0uyDaKXkNpjJlhzI0wYO6p2DBoqiGpaSi2i/MYfsiurNdOQfC7Pkw==
-X-Received: by 2002:a17:903:41cb:b0:1ff:6b6e:d2bb with SMTP id d9443c01a7336-2039e4ef31fmr140578985ad.45.1724778260470;
-        Tue, 27 Aug 2024 10:04:20 -0700 (PDT)
-Received: from sunil-laptop ([106.51.198.16])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-203855e2075sm85741915ad.120.2024.08.27.10.04.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 10:04:19 -0700 (PDT)
-Date: Tue, 27 Aug 2024 22:34:09 +0530
-From: Sunil V L <sunilvl@ventanamicro.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Len Brown <lenb@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Anup Patel <anup@brainfault.org>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Robert Moore <robert.moore@intel.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Haibo Xu <haibo1.xu@intel.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Atish Kumar Patra <atishp@rivosinc.com>,
-	Drew Fustini <dfustini@tenstorrent.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org, linux-acpi@vger.kernel.org,
-	acpica-devel@lists.linux.dev
-Subject: Re: [PATCH v8 00/17] RISC-V: ACPI: Add external interrupt controller
- support
-Message-ID: <Zs4HCZH3M9nRXUvu@sunil-laptop>
-References: <20240812005929.113499-1-sunilvl@ventanamicro.com>
- <ZrlgVUXC_dCW9ISM@sunil-laptop>
- <87mskzcnmf.ffs@tglx>
- <CAJZ5v0imJcU4cwDuZKEvGf93fZm4ea4s2Ocp3Cnfb3+nBQ0-Gg@mail.gmail.com>
- <Zsy3o_N8hvc6GfTp@sunil-laptop>
- <CAJZ5v0hxoT9tBjm3xRPU4fHx3MgHfYAx_Vyf4oe2toa3GWAN+Q@mail.gmail.com>
- <87jzg3c7bz.ffs@tglx>
- <CAJZ5v0iMpaxBevgPWmD2Ym_JG1ChkjzVFf22fV7Xw8-ssg9+Ag@mail.gmail.com>
+	s=arc-20240116; t=1724778613; c=relaxed/simple;
+	bh=/yYN24ZmWE1bMgHvCTd8EhmhAXDxt7CjMjdElVpgh8Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QG6/kHOYcaZyIZ1aIyn6mopYxA+h8XlfWxdMmWhLjfCUCiuPggiryXmV5xDs/QcIl9iYOUru0CFfBH0R8PQPD0fm3KrQOViMKfzfp+BtImCbzHuiUfF+rXsrdk7HQV/OgMcweAj1UkVvh7dssLWhh26fZiLKEqCIdLVwHsqR9ZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJzuNJcd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8572C4DDF6;
+	Tue, 27 Aug 2024 17:10:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724778612;
+	bh=/yYN24ZmWE1bMgHvCTd8EhmhAXDxt7CjMjdElVpgh8Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=EJzuNJcdyapmo1faVpdzBcZqREHjhOQdNOSz13rOFdR3i45oCUOMzVlC+vek1yXUc
+	 EKKC7v7dGjK/+7y3tN4yK3+QLiMDygupq5OtmcSnFmbanmV76tgvwyp30WYd8rMNgJ
+	 AyAS4CKDjbtqlzf+NNMFROjcxiuQiE1pBmVJwK6xiJDfo1dwe6DyH6nQOe7FqbtXHC
+	 z0RgEpvwkprqBdjdbRVCiOFRCVgNa1+B2IIcvd20RjVZ1bFtnYhZ0MklaD375qCRBZ
+	 qikrCmi2nFgM+pm6BcYchlWrzW3ivza+cGYMkor9kkpScMOoePymaBIaiud3s6RXwV
+	 8qeXsXBDaBusw==
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-39e6a1e0079so1600135ab.0;
+        Tue, 27 Aug 2024 10:10:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCULaGwcA2H6Yn5Zpefgp8tzGHei5jlZKeSbdHdPk3mGb9keEoqWdsKxBdz6vKzFNSrhOww6BfnKP/X/v1w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMWqb/M3+MiYO02BCQx4PgQl1OOPxbMph7TQ3lh4WAREPc+ua2
+	cwVxx/iuyCxF2pCzT5FvHB62De61I33LyF5apVG+J1zswsNmgZ1irrO6EjXv6e73cESmgFXL7mK
+	CL3LQvDbS8Oa7ojDkkpLPJ2B+dgk=
+X-Google-Smtp-Source: AGHT+IEACKAm8gd9IfusHNODoBKsa0qU0YXMxZI57NHjrgFuZ61gHCxNHY6oxfDpY5p9uRNJiykdlUoGor97rS69P6o=
+X-Received: by 2002:a05:6e02:1a2a:b0:39d:50c9:26ea with SMTP id
+ e9e14a558f8ab-39e3c9c075amr170045615ab.19.1724778612266; Tue, 27 Aug 2024
+ 10:10:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0iMpaxBevgPWmD2Ym_JG1ChkjzVFf22fV7Xw8-ssg9+Ag@mail.gmail.com>
+References: <20240801133008.459998-1-yukuai1@huaweicloud.com>
+In-Reply-To: <20240801133008.459998-1-yukuai1@huaweicloud.com>
+From: Song Liu <song@kernel.org>
+Date: Tue, 27 Aug 2024 10:10:01 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW6pKYcu5pN8PnQn_-d1ZT4PAtKHycFAs-3UfMueM1Lzhw@mail.gmail.com>
+Message-ID: <CAPhsuW6pKYcu5pN8PnQn_-d1ZT4PAtKHycFAs-3UfMueM1Lzhw@mail.gmail.com>
+Subject: Re: [PATCH -next] md/raid1: cleanup local variable 'b' from radi1_read_request()
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 27, 2024 at 06:20:24PM +0200, Rafael J. Wysocki wrote:
-> On Mon, Aug 26, 2024 at 11:22 PM Thomas Gleixner <tglx@linutronix.de> wrote:
-> >
-> > On Mon, Aug 26 2024 at 19:27, Rafael J. Wysocki wrote:
-> > > On Mon, Aug 26, 2024 at 7:22 PM Sunil V L <sunilvl@ventanamicro.com> wrote:
-> > >> There will be a conflict in PLIC irqchip driver due to a recent patch [1].
-> > >> This patch is not in latest RC5 release but in linux-next. I usually base the
-> > >> series on latest RC release. Should I rebase to linux-next in this case
-> > >> and send the next revision of the series resolving the conflict?
-> > >
-> > > No, please don't.
-> > >
-> > > That will be resolved at the merge time.
-> >
-> > Alternatively you can pull
-> >
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-urgent-2024-08-25
-> >
-> > which I'm about to send to Linus latest tomorrow morning. That contains
-> > the conflicting change.
-> 
-> So I've applied the series on top of the above.
-> 
-Thanks!
-
-> This included a full-swing rebase of the last patch, which I hope I've
-> done correctly, but Sunil please see
+On Thu, Aug 1, 2024 at 6:33=E2=80=AFAM Yu Kuai <yukuai1@huaweicloud.com> wr=
+ote:
 >
-Yeah, sorry about that. You have resolved most of the conflicts but few
-are missing (which were not obvious anyway). Could you please take below
-commit and squash?
+> From: Yu Kuai <yukuai3@huawei.com>
+>
+> The local variable will only be used onced, in the error path that
+> read_balance() failed to find a valid rdev to read. Since now the rdev
+> is ensured can't be removed from conf while IO is still pending,
+> remove the local variable and dereference rdev directly.
+>
+> Since we're here, also remove an extra empty line, and unnecessary
+> type conversion from sector_t(u64) to unsigned long long.
+>
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 
-https://github.com/vlsunil/linux/commit/c85f9d0dc31c0e77916ecdbb457748c05cf4e75a
-
-Thanks!
-Sunil 
+Applied to md-6.12. Thanks!
+Song
 
