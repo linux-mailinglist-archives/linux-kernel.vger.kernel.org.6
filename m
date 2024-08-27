@@ -1,85 +1,215 @@
-Return-Path: <linux-kernel+bounces-303276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0522E960A0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:25:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11006960A11
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A30BF1F22503
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:25:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35E4B1C227ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711D41B5EB3;
-	Tue, 27 Aug 2024 12:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MHDMp0Zs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC651B5ECF;
+	Tue, 27 Aug 2024 12:25:10 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07531B3F21;
-	Tue, 27 Aug 2024 12:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17281B5EBE;
+	Tue, 27 Aug 2024 12:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724761505; cv=none; b=GokXcr9tyu9JedyTuAknNREMPAKCoPdLGuTTEpUUbctdBI+516QWjWLVXtCowLk2scII9HlatHzzYSXkCDKLOWCjHQim4VeeLKKmufB9Br2nGQMMYfaCdy469Sg0prmzbgyv4VTjtcrmiadjEjJWeOrK2/3xIDuGlsiwn62ofF8=
+	t=1724761509; cv=none; b=dVcFigztO5bYrGeOF51HfSTKXBeo91r89bfpyhMXR61iuJKd4WjkShHOVPM/U2QvC5CrqfUw8SxkxqsMfEKcO/RuhxlvQvxogsIpHvLzq6cil5/EGq2kk3JD23XlqwGhMEjIVgz3vrvpjiTdAiR25f+xg+MHgApUCfMPN8nmKZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724761505; c=relaxed/simple;
-	bh=ibFELH6wnefwxqmKPLY/CFWmccSL2UNN83qpRzxLezI=;
+	s=arc-20240116; t=1724761509; c=relaxed/simple;
+	bh=p1mwGYvxLR5MGl2Xb7+ax17YlPahUpnD9DKyKuWMrTk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MsgnoM4lv+iMS5lkzGsBJEZ7eJJoXYOMiW0QRxsSMB43VLmeQ+emWPaiHEf5v6wyEr9snk2YBBAGNo1UUSEJT5W3WyOf5tOLwkRs3AGBo9XqJ/cdQc1d5W+NjlM5VCKMpObZwF7gxT0ZAOVkumR52ZvzJVnaAmvF3gwI/u2Oo08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MHDMp0Zs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32A3FC61047;
-	Tue, 27 Aug 2024 12:25:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724761505;
-	bh=ibFELH6wnefwxqmKPLY/CFWmccSL2UNN83qpRzxLezI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MHDMp0Zs/84W3n2xKjaRCFUmn7pMXCcxZmqzHIEEsZFoD4qv2OgB2rdPpNUTUtQ4l
-	 FVKgDPnwvNsyTja6FadTfNhI1CRmKezIZ+SVOq++Gmie8+XBsT0hSjxzzWhB9YXGJO
-	 YaeRD96UD5py7GYNPYW7xQTkDHH/aGfnQC6+YE1da0dVhOOokhrfrGiWp3EawHUIiN
-	 9Lkqluky0xoVcomrjkcQVRGmGkD8qgXOJc1JhWuSmdiOHRC2HpsmvrGwSBSWEjN3bH
-	 jFLF4csYk30tvCGcf5oT5ngr+9EuL3zjM/srmSpj7aEEBg6krZEm2cqN0w2d/tz/xF
-	 SISPZITH4x2dg==
-Date: Tue, 27 Aug 2024 13:24:59 +0100
-From: Will Deacon <will@kernel.org>
-To: Kuan-Ying Lee <kuan-ying.lee@canonical.com>
-Cc: Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-	Dave Young <dyoung@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	kexec@lists.infradead.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	ardb@kernel.org
-Subject: Re: [PATCH] arm64/vmcore: Add pgtable_l5_enabled information in
- vmcoreinfo
-Message-ID: <20240827122459.GA4679@willie-the-truck>
-References: <20240826065219.305963-1-kuan-ying.lee@canonical.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l1P3y9ggBNj2ZrJbaycWBg/yv1VFAlGPX0CptkRNbMbFgf3qHihz7Qjms9R4uVpZe7AWoSI6HJ5NLMpqNdrYpnvfzFZSiuXJiBVjKooXrpQJW/9D5rdDgsLEH9LSDJCns52ZyVkd7UHeqeC1SBLRVO4Xa/+ryUMRlmXcwHFLauA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id E5B9F1C009B; Tue, 27 Aug 2024 14:25:05 +0200 (CEST)
+Date: Tue, 27 Aug 2024 14:25:05 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Richard Maina <quic_rmaina@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Chris Lew <quic_clew@quicinc.com>, peterz@infradead.org,
+	mingo@redhat.com, will@kernel.org, corbet@lwn.net,
+	linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 5.10 20/38] hwspinlock: Introduce
+ hwspin_lock_bust()
+Message-ID: <Zs3FoWRIIJtkJ3JL@duo.ucw.cz>
+References: <20240801003643.3938534-1-sashal@kernel.org>
+ <20240801003643.3938534-20-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="SbUCcGMKf4utf5NG"
+Content-Disposition: inline
+In-Reply-To: <20240801003643.3938534-20-sashal@kernel.org>
+
+
+--SbUCcGMKf4utf5NG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240826065219.305963-1-kuan-ying.lee@canonical.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 26, 2024 at 02:52:02PM +0800, Kuan-Ying Lee wrote:
-> Since arm64 supports 5-level page tables, we need to add this
-> information to vmcoreinfo to make debug tools know if 5-level
-> page table is enabled or not.
-> 
-> Missing this information will break the debug tool like crash [1].
-> 
-> [1] https://github.com/crash-utility/crash
-> 
-> Signed-off-by: Kuan-Ying Lee <kuan-ying.lee@canonical.com>
-> ---
->  Documentation/admin-guide/kdump/vmcoreinfo.rst | 6 ++++++
->  arch/arm64/kernel/vmcore_info.c                | 3 +++
->  2 files changed, 9 insertions(+)
+Hi!
 
-In which case, wouldn't you also want to know about pgtable_l4_enabled()?
 
-Will
+> From: Richard Maina <quic_rmaina@quicinc.com>
+>=20
+> [ Upstream commit 7c327d56597d8de1680cf24e956b704270d3d84a ]
+>=20
+> When a remoteproc crashes or goes down unexpectedly this can result in
+> a state where locks held by the remoteproc will remain locked possibly
+> resulting in deadlock. This new API hwspin_lock_bust() allows
+> hwspinlock implementers to define a bust operation for freeing previously
+> acquired hwspinlocks after verifying ownership of the acquired lock.
+
+This adds unused infrastructure to -stable. Please drop.
+
+Best regards,
+									Pavel
+
+> +++ b/Documentation/locking/hwspinlock.rst
+> @@ -85,6 +85,17 @@ is already free).
+> =20
+>  Should be called from a process context (might sleep).
+> =20
+> +::
+> +
+> +  int hwspin_lock_bust(struct hwspinlock *hwlock, unsigned int id);
+> +
+> +After verifying the owner of the hwspinlock, release a previously acquir=
+ed
+> +hwspinlock; returns 0 on success, or an appropriate error code on failure
+> +(e.g. -EOPNOTSUPP if the bust operation is not defined for the specific
+> +hwspinlock).
+> +
+> +Should be called from a process context (might sleep).
+> +
+>  ::
+> =20
+>    int hwspin_lock_timeout(struct hwspinlock *hwlock, unsigned int timeou=
+t);
+> diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hw=
+spinlock_core.c
+> index fd5f5c5a5244d..425597151dd3e 100644
+> --- a/drivers/hwspinlock/hwspinlock_core.c
+> +++ b/drivers/hwspinlock/hwspinlock_core.c
+> @@ -302,6 +302,34 @@ void __hwspin_unlock(struct hwspinlock *hwlock, int =
+mode, unsigned long *flags)
+>  }
+>  EXPORT_SYMBOL_GPL(__hwspin_unlock);
+> =20
+> +/**
+> + * hwspin_lock_bust() - bust a specific hwspinlock
+> + * @hwlock: a previously-acquired hwspinlock which we want to bust
+> + * @id: identifier of the remote lock holder, if applicable
+> + *
+> + * This function will bust a hwspinlock that was previously acquired as
+> + * long as the current owner of the lock matches the id given by the cal=
+ler.
+> + *
+> + * Context: Process context.
+> + *
+> + * Returns: 0 on success, or -EINVAL if the hwspinlock does not exist, or
+> + * the bust operation fails, and -EOPNOTSUPP if the bust operation is not
+> + * defined for the hwspinlock.
+> + */
+> +int hwspin_lock_bust(struct hwspinlock *hwlock, unsigned int id)
+> +{
+> +	if (WARN_ON(!hwlock))
+> +		return -EINVAL;
+> +
+> +	if (!hwlock->bank->ops->bust) {
+> +		pr_err("bust operation not defined\n");
+> +		return -EOPNOTSUPP;
+> +	}
+> +
+> +	return hwlock->bank->ops->bust(hwlock, id);
+> +}
+> +EXPORT_SYMBOL_GPL(hwspin_lock_bust);
+> +
+>  /**
+>   * of_hwspin_lock_simple_xlate - translate hwlock_spec to return a lock =
+id
+>   * @bank: the hwspinlock device bank
+> diff --git a/drivers/hwspinlock/hwspinlock_internal.h b/drivers/hwspinloc=
+k/hwspinlock_internal.h
+> index 29892767bb7a0..f298fc0ee5adb 100644
+> --- a/drivers/hwspinlock/hwspinlock_internal.h
+> +++ b/drivers/hwspinlock/hwspinlock_internal.h
+> @@ -21,6 +21,8 @@ struct hwspinlock_device;
+>   * @trylock: make a single attempt to take the lock. returns 0 on
+>   *	     failure and true on success. may _not_ sleep.
+>   * @unlock:  release the lock. always succeed. may _not_ sleep.
+> + * @bust:    optional, platform-specific bust handler, called by hwspinl=
+ock
+> + *	     core to bust a specific lock.
+>   * @relax:   optional, platform-specific relax handler, called by hwspin=
+lock
+>   *	     core while spinning on a lock, between two successive
+>   *	     invocations of @trylock. may _not_ sleep.
+> @@ -28,6 +30,7 @@ struct hwspinlock_device;
+>  struct hwspinlock_ops {
+>  	int (*trylock)(struct hwspinlock *lock);
+>  	void (*unlock)(struct hwspinlock *lock);
+> +	int (*bust)(struct hwspinlock *lock, unsigned int id);
+>  	void (*relax)(struct hwspinlock *lock);
+>  };
+> =20
+> diff --git a/include/linux/hwspinlock.h b/include/linux/hwspinlock.h
+> index bfe7c1f1ac6d1..f0231dbc47771 100644
+> --- a/include/linux/hwspinlock.h
+> +++ b/include/linux/hwspinlock.h
+> @@ -68,6 +68,7 @@ int __hwspin_lock_timeout(struct hwspinlock *, unsigned=
+ int, int,
+>  int __hwspin_trylock(struct hwspinlock *, int, unsigned long *);
+>  void __hwspin_unlock(struct hwspinlock *, int, unsigned long *);
+>  int of_hwspin_lock_get_id_byname(struct device_node *np, const char *nam=
+e);
+> +int hwspin_lock_bust(struct hwspinlock *hwlock, unsigned int id);
+>  int devm_hwspin_lock_free(struct device *dev, struct hwspinlock *hwlock);
+>  struct hwspinlock *devm_hwspin_lock_request(struct device *dev);
+>  struct hwspinlock *devm_hwspin_lock_request_specific(struct device *dev,
+> @@ -127,6 +128,11 @@ void __hwspin_unlock(struct hwspinlock *hwlock, int =
+mode, unsigned long *flags)
+>  {
+>  }
+> =20
+> +static inline int hwspin_lock_bust(struct hwspinlock *hwlock, unsigned i=
+nt id)
+> +{
+> +	return 0;
+> +}
+> +
+>  static inline int of_hwspin_lock_get_id(struct device_node *np, int inde=
+x)
+>  {
+>  	return 0;
+
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--SbUCcGMKf4utf5NG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZs3FoQAKCRAw5/Bqldv6
+8mvxAJ9LkBphkQB5ck5R8qhhbpxWrj5PDgCbB2mauOcjLtAnkXLW+e9PgFbtd5w=
+=qLwo
+-----END PGP SIGNATURE-----
+
+--SbUCcGMKf4utf5NG--
 
