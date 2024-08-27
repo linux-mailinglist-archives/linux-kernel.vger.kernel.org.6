@@ -1,159 +1,166 @@
-Return-Path: <linux-kernel+bounces-303916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4BA69616DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:23:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 840879616E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8354328855F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:23:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7D00B2344C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA5E1D3186;
-	Tue, 27 Aug 2024 18:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403961D3191;
+	Tue, 27 Aug 2024 18:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q1CDZ/54"
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ShLcw5Eb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2B364A
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 18:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A44C1D2F49;
+	Tue, 27 Aug 2024 18:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724782984; cv=none; b=bL2F3v08ziYH87ikiFF5TY5pdZjsgCnMZYM3KF34z4HYfBadO9yoYtfCt2OlCNs96kzqjT4C4/VX1ep86TFeHFekEV/5Ms4cSqO+4sc3jhsgdG+ajXyBFujq9zvbXSSbRoF+qwHd5GcsC/udxDAZ6R29bRbpdlA6mjjH3ydA/4k=
+	t=1724782985; cv=none; b=KXcJYwYlH7Jv94sGbMotCbSFpju1UrH+Lm8NqqnIc4ID/uRXHwRl4cRS2EXXeN68YC5BUc28j3qFHc8i3z7BtQrauwntrwifmESynF2w+VXLiajk9VS4OamoQ3t+pxgyPi9i2I9bkCytu4SLgkQDNzk66Be02RAKCA1FyYMDXAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724782984; c=relaxed/simple;
-	bh=ZoI1uGoxZXd8i/fSJfnEN5o7VWbDeLjwVL47Y8XhO/Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ePX/PLkaIDxib8Oycw9EZwKCm5bxSuujAEqZ+KYW8oCBySL5mpwYW3jwNJYm1FodvWOR7nfXRs6bKcE/8RqAL6oxnj1D4Ss5eGlL9APBHkeriB46HO0X37bMSpXr4cxWySb/eNCz4L72TWqx84XFXx1w7rAjEcZqdBuzI0KRv28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q1CDZ/54; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-26ff21d82e4so4020233fac.2
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:23:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724782982; x=1725387782; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fY9rWpl0h33IonEPQe2iYhBnJ7HZgDti+YOkKoclRs4=;
-        b=q1CDZ/54HU4755F+4g8p8ICfIHOKK0MVjcQD5mnJGyzllvYvEw2rtM0JC5A6CqHysw
-         7xOovwDe8Wg5vhNiBmdYppQ75vwnPXh7ysJ2Xq1UMeAKWM7HyAe0WHHLcBIad5ndSe5+
-         9wVKF0X+pWW6b1Rq8ShgKpGttPm487yGZzgljelbw//SbIPtRKsQ/f5tsBnyAGWoAYSg
-         GUGW6QRaYXgUkzLkZkUHWK8os9TkPI7l9dlIQnSbhO/Ofm7JQwZV8n4Oo2Eb1jHHOjQ7
-         jaPdQZgJmy5Webpyldv3uPzHCXwxAh+MjhLZfz6WRtcfCkR5PHnTGnesNSmbh2AqLwAB
-         8Tcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724782982; x=1725387782;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fY9rWpl0h33IonEPQe2iYhBnJ7HZgDti+YOkKoclRs4=;
-        b=taH/GoHwvfxjocU52Sw2v8g6DwPhmQEnzaGJr/P+fv7XPTWWL/EcmWyHzkVpRMKRaS
-         y6CpnxPJ+igbmMHc1sGYyJ1PQQYg7RfxRw1Tz8R7DKtHka19PMXcsDiZshm8jveMNUDu
-         kJvjbdeXXqj77YVuiE/yiHmelgpflZoSXhhs+V1OezS4hwn5g3L8TGvi4ecCg0Rl4Osx
-         oXVYv+IG+ymOpYeiUmpYD07zPJ2Cpoyn2qtIPT29zm6PU/PKnfzVqR+vxP27PVUHLsqB
-         03yHJM0oGc9303X6v04rlEVlj/EB06WXYjssDdqlkpnv3gDMe9TH/pyH/eh/B1n/6Fyc
-         rZgw==
-X-Forwarded-Encrypted: i=1; AJvYcCVcBY7yU5pG23ShG1ZcEcxsI/NAVXrOCnhd5u+UtKRoQZZMMTJx8fG0Y6XqMp9LLWtwlyVzQrGGQ2Vwuaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyryPdUaXW/oSqEFWLdJYynhy+cjDcKsN8t/R0IYRi3FAa6WIv7
-	ewkufW98s3wKNRyF3t4xC3Ztq7m9aRIkClKP0IFYUx5gnk8TXUIUsfHg5IPIXztaCsw8u0uTA6v
-	o6A==
-X-Google-Smtp-Source: AGHT+IFtoDveiYtYqGjhZKND24rw7GMBLImHCgzxN4thzQQB0OGBHB7MhgZXIykVCbrxyQaQSyQ1Wg==
-X-Received: by 2002:a05:6870:c088:b0:25e:1659:5eec with SMTP id 586e51a60fabf-273e675e82bmr14252723fac.51.1724782982020;
-        Tue, 27 Aug 2024 11:23:02 -0700 (PDT)
-Received: from google.com (194.225.68.34.bc.googleusercontent.com. [34.68.225.194])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-273cea29e2csm3228885fac.32.2024.08.27.11.23.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 11:23:01 -0700 (PDT)
-Date: Tue, 27 Aug 2024 11:22:56 -0700
-From: Justin Stitt <justinstitt@google.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: rostedt@goodmis.org, mhiramat@kernel.org, 
-	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing: Replace strncpy() with strscpy() when copying
- comm
-Message-ID: <fcwq7rfpbd6zmjvw4cq562ej4sohp2avdehe37yldmiioj6oa6@ovznbkpnocro>
-References: <20240731075058.617588-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1724782985; c=relaxed/simple;
+	bh=r85rajG2yDYjVTPgQ/vfB0pCdDo4IKhXLQULuqEJp10=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Scri7d93yW9QAEQ0LnaHrvq4MKyOCcO0t2OWLOIUs7ewR5M0m5Q+FK8TC7n7KTlnxYOjaeKyX4n9mcBUhiz9vD1xPcPfdIdKvY0hfGHduVO9ah8u3uIz+9qU5YgNtH3F6DznSaj0ExwyW/Gu7eU56MKLaJ63WKljz9TBdt35kEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ShLcw5Eb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5438AC4AF09;
+	Tue, 27 Aug 2024 18:23:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724782984;
+	bh=r85rajG2yDYjVTPgQ/vfB0pCdDo4IKhXLQULuqEJp10=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=ShLcw5Eb9guf/o2af83nX32iqoek7YnU1k8qeS2XOYaeP6WKkRZUA8UjQeZxNKrw9
+	 jH6HAcqyJyfFU/Fq4OGpNvgj3/9KLnWZCZAu3DhZrT4l8mv+D0nfPgqdkJ8x+koUv/
+	 6m/3vl7KtO8jf6fBHGYq8YCwFxXjq5ZibFF66BnhSQfTAFVi8v382SveBPuaqvMQQl
+	 E/9FwIalIi1AYLOU5MBOFfz6zybKN9r/YCI90gmkQjhhzHaAdA5FRBrj8ffrkvOyQz
+	 4jB0TQhYWn5JOPMOtK7eGkjDvcoHjynwFOXk1tF+gsrLTbfPXN/POLYE51D8jPdFLK
+	 FbDIOVX5jCcrg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731075058.617588-1-ruanjinjie@huawei.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 27 Aug 2024 21:23:01 +0300
+Message-Id: <D3QWJEX4QDU8.3CVMNNDFDANVW@kernel.org>
+Cc: <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/7] keys: Extract struct key_user to its own header for
+ tracing purposes
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "David Howells" <dhowells@redhat.com>
+X-Mailer: aerc 0.17.0
+References: <20240821123616.60401-1-dhowells@redhat.com>
+ <20240821123616.60401-3-dhowells@redhat.com>
+In-Reply-To: <20240821123616.60401-3-dhowells@redhat.com>
 
-Hi,
-
-On Wed, Jul 31, 2024 at 03:50:58PM GMT, Jinjie Ruan wrote:
-> Replace the depreciated[1] strncpy() calls with strscpy()
-> when copying comm.
-> 
-> Link: https://github.com/KSPP/linux/issues/90 [1]
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-
-Reviewed-by: Justin Stitt <justinstitt@google.com>
-
+On Wed Aug 21, 2024 at 3:36 PM EEST, David Howells wrote:
+> Extract the key_user struct  to its own header file to make it easier to
+> access from tracepoints.
+>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Jarkko Sakkinen <jarkko@kernel.org>
+> cc: keyrings@vger.kernel.org
+> cc: linux-security-module@vger.kernel.org
 > ---
->  kernel/trace/trace.c              | 2 +-
->  kernel/trace/trace_events_hist.c  | 4 ++--
->  kernel/trace/trace_sched_switch.c | 2 +-
->  3 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index d0af984a5337..73cfdc704eec 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -1907,7 +1907,7 @@ __update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
->  	max_data->critical_start = data->critical_start;
->  	max_data->critical_end = data->critical_end;
->  
-> -	strncpy(max_data->comm, tsk->comm, TASK_COMM_LEN);
-> +	strscpy(max_data->comm, tsk->comm);
->  	max_data->pid = tsk->pid;
->  	/*
->  	 * If tsk == current, then use current_uid(), as that does not use
-> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-> index 6ece1308d36a..4ee0e64719fa 100644
-> --- a/kernel/trace/trace_events_hist.c
-> +++ b/kernel/trace/trace_events_hist.c
-> @@ -1599,7 +1599,7 @@ static inline void save_comm(char *comm, struct task_struct *task)
->  		return;
->  	}
->  
-> -	strncpy(comm, task->comm, TASK_COMM_LEN);
-> +	strscpy(comm, task->comm);
->  }
->  
->  static void hist_elt_data_free(struct hist_elt_data *elt_data)
-> @@ -3405,7 +3405,7 @@ static bool cond_snapshot_update(struct trace_array *tr, void *cond_data)
->  	elt_data = context->elt->private_data;
->  	track_elt_data = track_data->elt.private_data;
->  	if (elt_data->comm)
-> -		strncpy(track_elt_data->comm, elt_data->comm, TASK_COMM_LEN);
-> +		strscpy(track_elt_data->comm, elt_data->comm);
->  
->  	track_data->updated = true;
->  
-> diff --git a/kernel/trace/trace_sched_switch.c b/kernel/trace/trace_sched_switch.c
-> index 8a407adb0e1c..573b5d8e8a28 100644
-> --- a/kernel/trace/trace_sched_switch.c
-> +++ b/kernel/trace/trace_sched_switch.c
-> @@ -187,7 +187,7 @@ static inline char *get_saved_cmdlines(int idx)
->  
->  static inline void set_cmdline(int idx, const char *cmdline)
->  {
-> -	strncpy(get_saved_cmdlines(idx), cmdline, TASK_COMM_LEN);
-> +	strscpy(get_saved_cmdlines(idx), cmdline, TASK_COMM_LEN);
->  }
->  
->  static void free_saved_cmdlines_buffer(struct saved_cmdlines_buffer *s)
-> -- 
-> 2.34.1
-> 
+>  include/keys/key_user.h  | 35 +++++++++++++++++++++++++++++++++++
+>  security/keys/internal.h | 20 +-------------------
+>  2 files changed, 36 insertions(+), 19 deletions(-)
+>  create mode 100644 include/keys/key_user.h
+>
+> diff --git a/include/keys/key_user.h b/include/keys/key_user.h
+> new file mode 100644
+> index 000000000000..e9c383d8116e
+> --- /dev/null
+> +++ b/include/keys/key_user.h
+> @@ -0,0 +1,35 @@
+> +/* User quota tracking for keys.
+> + *
+> + * Copyright (C) 2024 Red Hat, Inc. All Rights Reserved.
+> + * Written by David Howells (dhowells@redhat.com)
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public Licence
+> + * as published by the Free Software Foundation; either version
+> + * 2 of the Licence, or (at your option) any later version.
+> + */
+> +
+> +#ifndef _KEYS_KEY_USER_H
+> +#define _KEYS_KEY_USER_H
+> +
+> +/*
+> + * Keep track of keys for a user.
+> + *
+> + * This needs to be separate to user_struct to avoid a refcount-loop
+> + * (user_struct pins some keyrings which pin this struct).
+> + *
+> + * We also keep track of keys under request from userspace for this UID =
+here.
+> + */
+> +struct key_user {
+> +	struct rb_node		node;
+> +	struct mutex		cons_lock;	/* construction initiation lock */
+> +	spinlock_t		lock;
+> +	refcount_t		usage;		/* for accessing qnkeys & qnbytes */
+> +	atomic_t		nkeys;		/* number of keys */
+> +	atomic_t		nikeys;		/* number of instantiated keys */
+> +	kuid_t			uid;
+> +	int			qnkeys;		/* number of keys allocated to this user */
+> +	int			qnbytes;	/* number of bytes allocated to this user */
+> +};
+> +
+> +#endif /* _KEYS_KEY_USER_H */
+> diff --git a/security/keys/internal.h b/security/keys/internal.h
+> index 8ba87127e446..33c929a6bb97 100644
+> --- a/security/keys/internal.h
+> +++ b/security/keys/internal.h
+> @@ -19,6 +19,7 @@
+>  #include <linux/compat.h>
+>  #include <linux/mm.h>
+>  #include <linux/vmalloc.h>
+> +#include <keys/key_user.h>
+> =20
+>  struct iovec;
+> =20
+> @@ -43,25 +44,6 @@ extern struct key_type key_type_user;
+>  extern struct key_type key_type_logon;
+> =20
+>  /***********************************************************************=
+******/
+> -/*
+> - * Keep track of keys for a user.
+> - *
+> - * This needs to be separate to user_struct to avoid a refcount-loop
+> - * (user_struct pins some keyrings which pin this struct).
+> - *
+> - * We also keep track of keys under request from userspace for this UID =
+here.
+> - */
+> -struct key_user {
+> -	struct rb_node		node;
+> -	struct mutex		cons_lock;	/* construction initiation lock */
+> -	spinlock_t		lock;
+> -	refcount_t		usage;		/* for accessing qnkeys & qnbytes */
+> -	atomic_t		nkeys;		/* number of keys */
+> -	atomic_t		nikeys;		/* number of instantiated keys */
+> -	kuid_t			uid;
+> -	int			qnkeys;		/* number of keys allocated to this user */
+> -	int			qnbytes;	/* number of bytes allocated to this user */
+> -};
+> =20
+>  extern struct rb_root	key_user_tree;
+>  extern spinlock_t	key_user_lock;
 
-Thanks
-Justin
+
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+
+BR, Jarkko
 
