@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-302567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B3EB96006C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:44:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AA5D960073
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:45:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E9301C219D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:44:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D69AF2834FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A14153BED;
-	Tue, 27 Aug 2024 04:43:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DE617C989;
+	Tue, 27 Aug 2024 04:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EpUQzoTF";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1jj/IdKz"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bKKjCMJK";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T9r7gHJs"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63EF3138490
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30F313D638
 	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 04:43:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724733821; cv=none; b=ey8TdH9JP4yxZY2j0RP5OgPdeJaSoGDvd8PsFHyCK24JWc1U9b/uwlmLBqZ+32+rz4qiwjVjESpQuyISUOnRf9N9k2m3JltTaf0PPLpbmSaY/osfwlni+W+2APjhwIJuXKQvzOI5Y6BQDGVqeTLkSkEqER1O9v7t8Rzyokpr5jM=
+	t=1724733823; cv=none; b=YlxY0FR7X+SA1NPfwW8GfZuZ0xNFlasEXyiOpPO+6LkdGzF9gQykhtfL8/ZybD2y9zhXluMpDdbn1ZBWaDdgMiFQrFBv6YDku2DxL4rO85stx25y/csxzaH/w7lofYWnPKdPpi3Iy9zOSIMZf7hAnuToV570zPTvHA+Vkp0buR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724733821; c=relaxed/simple;
-	bh=77nORTXpI1q4KDBhB66CLINRXF3REoaPCkl5EJvjm9I=;
+	s=arc-20240116; t=1724733823; c=relaxed/simple;
+	bh=17qf7HNpQC42DYqY50wFkJfCpMR9/cCGFUPFO6ROXBw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ER1nMunP7A2ZbEkLOCWoEIVozXpmEOTZA41Ozjs1DZAP7k7wTijZ6R8EDwzky4/d8xNHUXKFQwddNXHIuQhssRjX4Ml0q/jRoRnTiAZNU5Ed5aVdYCIEDSYcFq05o3tiAllDpvVo+hBWcnJJEfJyIe0Wj1gJErUupZw+Xt5JmF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EpUQzoTF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1jj/IdKz; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=TweCxVSUjKRd829szGQTA9mA7hsO3Qfxr3ZDszGgdHGWmydrki2+P+N4CcBKrLpWzUdRHbDwmfj7txx3mkxUfjUhPBmgi1mOyyredpD4jBxuPzMQJIPvq6nrg49BWrDA2F0mtKSQySPdxYvZKQEkoyw8hzsTyIz3qFOdiDdanKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bKKjCMJK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T9r7gHJs; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: John Ogness <john.ogness@linutronix.de>
@@ -38,29 +38,30 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hrB6oXwNT8+Bqp3Goa78TH7hK15/gLFUczJKrHMn7MM=;
-	b=EpUQzoTFCPot6l9kNIc61iMjdwyxymI1459e5YFxtgN73jhndCnok8QtDYBIlJF8rA1jNm
-	qK5u9pBAHqBK0NWxkhJc9xtTtP1k6QuDgx27nI0EUiQEDq5LIid2ZUHJOlKrEe6w9RKvrh
-	LVjoKOBelxaiDNUT8RUiQx05CYKLDbZ9eTeh02Zk/uIbifvkQzvLU8EC0vLnoLgiYM44Br
-	G02R/IbEBCsqY9KOOf+HzXoLZiry7n/H2+pkeavnltFmL6YglhCkp38cFBVDDI7rSDoEri
-	83f+LLHQSO1XjuJm0rT8EmGUUje8+oyf61thBMhCEz7WhD7AHPgSqnCRlXKPEw==
+	bh=OP6737NuSJ97dO1aEzW4dBtfZQ43WSf6UBGSkHNiaME=;
+	b=bKKjCMJKca0R+Q/1XLr3f5YyfXkFmDMmiJKhN2VcArH8h3B0Pgtbjbh1H3ytj8pXhjgmeF
+	7rOedV1GJHcfPRIpFA425XJs/R+aaKz6gpmAo9cX/Q3QEzon9f+mEx/7gXop9PwT2DtA3Q
+	pLerB6o/KG8IXMVL+aEWGs+Sh4sRT/KBB22EQ9NsnX2zquhb5KG4dKtDcHBSLUwuFyJwHG
+	+wYQx5M6ptwXvYtSPhU9pbfac0rsyCgYE81k3iJdeWUfo/M+cUsWfoME2wE03m4AVXF4W2
+	5kzbR7yxFXlPFLL/QTC47SKwPG8Wsqf4dVjDrrpRpNL4LhvqBmxCox8V1xk/MQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1724733817;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hrB6oXwNT8+Bqp3Goa78TH7hK15/gLFUczJKrHMn7MM=;
-	b=1jj/IdKzMTaJKs7gRMGq3gFIHMY0GHPR4hVy8NYyTU4BPPMtpf1c0zWRjw35rWnYKpc74e
-	1ylfRVNhit+sulAA==
+	bh=OP6737NuSJ97dO1aEzW4dBtfZQ43WSf6UBGSkHNiaME=;
+	b=T9r7gHJsO9RdYph8mdP5rNulqoq1oL+ZUFpIWGvVVt7nKsPd9VHlRCg7tpitAm1/jTWy0t
+	9/i0ra7lVGp20uBg==
 To: Petr Mladek <pmladek@suse.com>
 Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
 	Steven Rostedt <rostedt@goodmis.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH printk v4 10/17] printk: Provide helper for message prepending
-Date: Tue, 27 Aug 2024 06:49:26 +0206
-Message-Id: <20240827044333.88596-11-john.ogness@linutronix.de>
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH printk v4 11/17] printk: nbcon: Show replay message on takeover
+Date: Tue, 27 Aug 2024 06:49:27 +0206
+Message-Id: <20240827044333.88596-12-john.ogness@linutronix.de>
 In-Reply-To: <20240827044333.88596-1-john.ogness@linutronix.de>
 References: <20240827044333.88596-1-john.ogness@linutronix.de>
 Precedence: bulk
@@ -71,78 +72,134 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In order to support prepending different texts to printk
-messages, split out the prepending code into a helper
-function.
+An emergency or panic context can takeover console ownership
+while the current owner was printing a printk message. The
+atomic printer will re-print the message that the previous
+owner was printing. However, this can look confusing to the
+user and may even seem as though a message was lost.
+
+  [3430014.1
+  [3430014.181123] usb 1-2: Product: USB Audio
+
+Add a new field @nbcon_prev_seq to struct console to track
+the sequence number to print that was assigned to the previous
+console owner. If this matches the sequence number to print
+that the current owner is assigned, then a takeover must have
+occurred. In this case, print an additional message to inform
+the user that the previous message is being printed again.
+
+  [3430014.1
+  ** replaying previous printk message **
+  [3430014.181123] usb 1-2: Product: USB Audio
 
 Signed-off-by: John Ogness <john.ogness@linutronix.de>
 Reviewed-by: Petr Mladek <pmladek@suse.com>
 ---
- kernel/printk/printk.c | 36 +++++++++++++++++++++++++-----------
- 1 file changed, 25 insertions(+), 11 deletions(-)
+ include/linux/console.h  |  2 ++
+ kernel/printk/internal.h |  1 +
+ kernel/printk/nbcon.c    | 26 ++++++++++++++++++++++++++
+ kernel/printk/printk.c   | 11 +++++++++++
+ 4 files changed, 40 insertions(+)
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 0d45d82a7c79..fba923730af9 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -2843,30 +2843,31 @@ static void __console_unlock(void)
+diff --git a/include/linux/console.h b/include/linux/console.h
+index 788ce9c829f6..eba367bf605d 100644
+--- a/include/linux/console.h
++++ b/include/linux/console.h
+@@ -325,6 +325,7 @@ struct nbcon_write_context {
+  * @nbcon_state:	State for nbcon consoles
+  * @nbcon_seq:		Sequence number of the next record for nbcon to print
+  * @nbcon_device_ctxt:	Context available for non-printing operations
++ * @nbcon_prev_seq:	Seq num the previous nbcon owner was assigned to print
+  * @pbufs:		Pointer to nbcon private buffer
+  * @kthread:		Printer kthread for this console
+  * @rcuwait:		RCU-safe wait object for @kthread waking
+@@ -459,6 +460,7 @@ struct console {
+ 	atomic_t		__private nbcon_state;
+ 	atomic_long_t		__private nbcon_seq;
+ 	struct nbcon_context	__private nbcon_device_ctxt;
++	atomic_long_t           __private nbcon_prev_seq;
+ 
+ 	struct printk_buffers	*pbufs;
+ 	struct task_struct	*kthread;
+diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
+index 8166e24f8780..c365d25b13c7 100644
+--- a/kernel/printk/internal.h
++++ b/kernel/printk/internal.h
+@@ -319,4 +319,5 @@ bool printk_get_next_message(struct printk_message *pmsg, u64 seq,
+ 
  #ifdef CONFIG_PRINTK
- 
- /*
-- * Prepend the message in @pmsg->pbufs->outbuf with a "dropped message". This
-- * is achieved by shifting the existing message over and inserting the dropped
-- * message.
-+ * Prepend the message in @pmsg->pbufs->outbuf. This is achieved by shifting
-+ * the existing message over and inserting the scratchbuf message.
-  *
-- * @pmsg is the printk message to prepend.
-- *
-- * @dropped is the dropped count to report in the dropped message.
-+ * @pmsg is the original printk message.
-+ * @fmt is the printf format of the message which will prepend the existing one.
-  *
-- * If the message text in @pmsg->pbufs->outbuf does not have enough space for
-- * the dropped message, the message text will be sufficiently truncated.
-+ * If there is not enough space in @pmsg->pbufs->outbuf, the existing
-+ * message text will be sufficiently truncated.
-  *
-  * If @pmsg->pbufs->outbuf is modified, @pmsg->outbuf_len is updated.
-  */
--void console_prepend_dropped(struct printk_message *pmsg, unsigned long dropped)
-+__printf(2, 3)
-+static void console_prepend_message(struct printk_message *pmsg, const char *fmt, ...)
- {
- 	struct printk_buffers *pbufs = pmsg->pbufs;
- 	const size_t scratchbuf_sz = sizeof(pbufs->scratchbuf);
- 	const size_t outbuf_sz = sizeof(pbufs->outbuf);
- 	char *scratchbuf = &pbufs->scratchbuf[0];
- 	char *outbuf = &pbufs->outbuf[0];
-+	va_list args;
- 	size_t len;
- 
--	len = scnprintf(scratchbuf, scratchbuf_sz,
--		       "** %lu printk messages dropped **\n", dropped);
-+	va_start(args, fmt);
-+	len = vscnprintf(scratchbuf, scratchbuf_sz, fmt, args);
-+	va_end(args);
+ void console_prepend_dropped(struct printk_message *pmsg, unsigned long dropped);
++void console_prepend_replay(struct printk_message *pmsg);
+ #endif
+diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+index c36473fbbf89..d3a018919046 100644
+--- a/kernel/printk/nbcon.c
++++ b/kernel/printk/nbcon.c
+@@ -946,7 +946,9 @@ static bool nbcon_emit_next_record(struct nbcon_write_context *wctxt, bool use_a
+ 		.pbufs = ctxt->pbufs,
+ 	};
+ 	unsigned long con_dropped;
++	struct nbcon_state cur;
+ 	unsigned long dropped;
++	unsigned long ulseq;
  
  	/*
- 	 * Make sure outbuf is sufficiently large before prepending.
-@@ -2888,6 +2889,19 @@ void console_prepend_dropped(struct printk_message *pmsg, unsigned long dropped)
- 	pmsg->outbuf_len += len;
+ 	 * This function should never be called for consoles that have not
+@@ -987,6 +989,29 @@ static bool nbcon_emit_next_record(struct nbcon_write_context *wctxt, bool use_a
+ 	if (dropped && !is_extended)
+ 		console_prepend_dropped(&pmsg, dropped);
+ 
++	/*
++	 * If the previous owner was assigned the same record, this context
++	 * has taken over ownership and is replaying the record. Prepend a
++	 * message to let the user know the record is replayed.
++	 */
++	ulseq = atomic_long_read(&ACCESS_PRIVATE(con, nbcon_prev_seq));
++	if (__ulseq_to_u64seq(prb, ulseq) == pmsg.seq) {
++		console_prepend_replay(&pmsg);
++	} else {
++		/*
++		 * Ensure this context is still the owner before trying to
++		 * update @nbcon_prev_seq. Otherwise the value in @ulseq may
++		 * not be from the previous owner and instead be some later
++		 * value from the context that took over ownership.
++		 */
++		nbcon_state_read(con, &cur);
++		if (!nbcon_context_can_proceed(ctxt, &cur))
++			return false;
++
++		atomic_long_try_cmpxchg(&ACCESS_PRIVATE(con, nbcon_prev_seq), &ulseq,
++					__u64seq_to_ulseq(pmsg.seq));
++	}
++
+ 	if (!nbcon_context_exit_unsafe(ctxt))
+ 		return false;
+ 
+@@ -1638,6 +1663,7 @@ bool nbcon_alloc(struct console *con)
+ 
+ 	rcuwait_init(&con->rcuwait);
+ 	init_irq_work(&con->irq_work, nbcon_irq_work);
++	atomic_long_set(&ACCESS_PRIVATE(con, nbcon_prev_seq), -1UL);
+ 	nbcon_state_set(con, &state);
+ 
+ 	/*
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index fba923730af9..8863519438f9 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -2902,6 +2902,17 @@ void console_prepend_dropped(struct printk_message *pmsg, unsigned long dropped)
+ 	console_prepend_message(pmsg, "** %lu printk messages dropped **\n", dropped);
  }
  
 +/*
-+ * Prepend the message in @pmsg->pbufs->outbuf with a "dropped message".
++ * Prepend the message in @pmsg->pbufs->outbuf with a "replay message".
 + * @pmsg->outbuf_len is updated appropriately.
 + *
 + * @pmsg is the printk message to prepend.
-+ *
-+ * @dropped is the dropped count to report in the dropped message.
 + */
-+void console_prepend_dropped(struct printk_message *pmsg, unsigned long dropped)
++void console_prepend_replay(struct printk_message *pmsg)
 +{
-+	console_prepend_message(pmsg, "** %lu printk messages dropped **\n", dropped);
++	console_prepend_message(pmsg, "** replaying previous printk message **\n");
 +}
 +
  /*
