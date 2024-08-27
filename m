@@ -1,214 +1,95 @@
-Return-Path: <linux-kernel+bounces-303238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2E33960969
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:58:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62A9B960967
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:58:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 134EC1C223F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:58:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18BB61F23EEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78F41A0AE1;
-	Tue, 27 Aug 2024 11:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="szTE5j+u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3E219E825;
-	Tue, 27 Aug 2024 11:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878301A0715;
+	Tue, 27 Aug 2024 11:58:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6D419E825
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724759890; cv=none; b=u6/s+ZdNperj/85jcRdfRMvCQ8uia/Vp+YpL6j/45HwGtX6dNavdlRQXg5wtbWK0YobKKhtxpnOlpzrxigYRHo6oIWisWSR/hpNYQMi9yPtL1LAikKBd5H6kxmq9wqLw6KwmHLXR+5GHMotFz4TdGU97Mw5jC1nl7bmYmZWcmZ8=
+	t=1724759883; cv=none; b=e+pLZDM1WfSLLHlpUy0HgZB1NevxGqhdQfxU20UV1SGTjU3Wgod0Csi5JRht8Bz+7SGUoY2h+9VKJDTkSdinrwr1faLV+UU5o16aye0Xattu8Dna6XQo0edLP/ea+b57ZXlxZVVVXLTkKdKHKE3hPOUrO61IJXudNlJcTSedIFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724759890; c=relaxed/simple;
-	bh=kRxo7VItqj/OMI9oVzZbAhUcxz67WcLgEGg7thISTUI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M1aj4NBS1QptL155AWJqnYtGWeSPW2ErucliDSINCAnUQHxUjYfx3S8zSmnE9AkOBOxPXmzunwrwHwEPsj2RiqfCgFoFh5sWemVY3J1F227zP7TA7JS/u3BFMh+g5RkTzgpKbNO0iTk5lecoQLPv9ak5Hdu2eCDaq2Dzg/PviEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=szTE5j+u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 397D5C61061;
-	Tue, 27 Aug 2024 11:58:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724759890;
-	bh=kRxo7VItqj/OMI9oVzZbAhUcxz67WcLgEGg7thISTUI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=szTE5j+uX4+Q6nwZaDU1Rn6fZMnNLkz2cs1g++6I9HivCs03i66cJm/IFGXpx+GX1
-	 G26aVqNjRi8lfEzNxxHxOv0uND0Al8wx4T+a7ndY9IMaLF+uCkBDi79PmJ/utCbaky
-	 bbYuWRSK4qpwNx4Ai9HYsVElm4GJtBtm82ZK+aTL1OiCwsD4jmHnTG/UQ2Yo2B9RzQ
-	 uaYkJUGNpUOyB04PO5SDNzATnL6msep8X+SjT8UrwBQRstmTQfziW83a9VsmeN7wac
-	 HmmEpgGFYlRiK4DJ5pQVsYc5CON6l1fxvO2Qijf69RyUkUAr/lH6DMZovtUiDJelBr
-	 nTTf8agE4eOCQ==
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-70949118d26so5257451a34.0;
-        Tue, 27 Aug 2024 04:58:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWRVeFljYvV3eMyeWy0ZlcR3FeyYBgOZ5+iyhf7Kvr1LqVG+QWfWvISAdAa5i4VxVfMv3Ebe1u5oMY=@vger.kernel.org, AJvYcCXrDgVl7Aa7HsroJyBbtB6dqKMAEpmMJW71OL+i2mgaqJqAawAQrHEXJvrypK0Iik+e6U2/DOJOxFRlYkE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyI35zY7gyGK1pYbOk1QmXzN58ozGkFYDIeLBU0bgt8OHKY/uIY
-	62JSyRQ2klUa3Ge8AUYy+8HKxNGgcve0gNVaH7YZ686eYGeYTo2ey72j3+vtCtuFUVFqkzI+pS/
-	Ba2edNmtmRLFen7K2+nqePm2YLn4=
-X-Google-Smtp-Source: AGHT+IF1B6zYfYGmjEdZ/+Lb/H12g2MwdymWWZz9O+mkvpi423imAfOgehcnxdm0DES5zc2o929G13se5hU97F+5I+4=
-X-Received: by 2002:a05:6870:a40b:b0:270:1352:6c1f with SMTP id
- 586e51a60fabf-2775a037100mr2858957fac.33.1724759889585; Tue, 27 Aug 2024
- 04:58:09 -0700 (PDT)
+	s=arc-20240116; t=1724759883; c=relaxed/simple;
+	bh=Flx7bTsY17IE7Wjk12EgYowMqnfPFZ5Az3DmuH6EEpQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fm3maea4w51ub8yw0zjeOFtXBvRQbGLFJMqHsSud+Q9rp4g6wWOo/w3wMPvXWAFPZgX9b9muBMoIjqK92w+skLxl8m4KeAi/3j8gDYBxo4agab7KzZryXeyNLskh/2P0+ugGFHXm4IAU8us6k5dGRvMNGoCUiYrCOg4xfPB+uzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4923CDA7;
+	Tue, 27 Aug 2024 04:58:27 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C85FE3F762;
+	Tue, 27 Aug 2024 04:57:59 -0700 (PDT)
+Message-ID: <f803659b-d98a-4472-98e4-7deebb9df45f@arm.com>
+Date: Tue, 27 Aug 2024 12:57:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4941491.31r3eYUQgx@rjwysocki.net> <13573795.uLZWGnKmhe@rjwysocki.net>
- <20240826220849.GA7696@ranerica-svr.sc.intel.com>
-In-Reply-To: <20240826220849.GA7696@ranerica-svr.sc.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 27 Aug 2024 13:57:58 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ikE668dXQRP7JTxU44t7TeLHQGNxR5T0AeiiFpPHQDOA@mail.gmail.com>
-Message-ID: <CAJZ5v0ikE668dXQRP7JTxU44t7TeLHQGNxR5T0AeiiFpPHQDOA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] x86/sched: Add basic support for CPU capacity scaling
-To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, x86 Maintainers <x86@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Ricardo Neri <ricardo.neri@intel.com>, Tim Chen <tim.c.chen@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] dma: add IOMMU static calls with clear default ops
+To: Christoph Hellwig <hch@lst.de>
+Cc: Leon Romanovsky <leon@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Leon Romanovsky <leonro@nvidia.com>,
+ Easwar Hariharan <eahariha@linux.microsoft.com>,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ Jason Gunthorpe <jgg@nvidia.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <cover.1721818168.git.leon@kernel.org>
+ <c3179690b16d790d5bfd7d0afabac9b90922ec28.1721818168.git.leon@kernel.org>
+ <20369981-37c8-482a-9ffa-cf54d12dad2d@arm.com> <20240816071134.GA2943@lst.de>
+ <91b6da73-fc59-4751-8215-1edf68de222e@arm.com>
+ <20240820122240.GA17459@lst.de>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240820122240.GA17459@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 27, 2024 at 12:02=E2=80=AFAM Ricardo Neri
-<ricardo.neri-calderon@linux.intel.com> wrote:
->
-> On Mon, Aug 12, 2024 at 02:42:26PM +0200, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> [...]
->
-> > +bool arch_enable_hybrid_capacity_scale(void)
-> > +{
-> > +     int cpu;
-> > +
-> > +     if (static_branch_unlikely(&arch_hybrid_cap_scale_key)) {
-> > +             WARN_ONCE(1, "Hybrid CPU capacity scaling already enabled=
-");
-> > +             return true;
-> > +     }
->
-> Maybe an empty line here for readability?
+On 20/08/2024 1:22 pm, Christoph Hellwig wrote:
+> On Mon, Aug 19, 2024 at 02:16:56PM +0100, Robin Murphy wrote:
+>> Thanks, I've just had a quick look over what you queued on
+>> dma-iommu-direct-calls, and you're welcome to stick my ack on that if you
+>> like.
+> 
+> Yes, thank you a lot for your review!
+> 
+> While I have your attention - with these two patches we stop building
+> dummy_dma_ops for most common configs.  Do you think we need additional
+> safeguards for this case?  My idea would be to remove them and force the
+> bus_dma_mask to zero where we currently set the dummy ops, but I could
+> use a little reality check for that idea.
 
-Sure, if this helps.
+Yeah, the dummy ops were a nice idea at the time, but have been looking 
+increasingly anachronistic for a while - in fact I think they're 
+effectively broken already now, since if arm64 stops selecting DMA_OPS 
+via IOMMU_DMA then the set_dma_ops() in the ACPI path isn't going to be 
+effective anyway.
 
-> > +     arch_cpu_scale =3D alloc_percpu(struct arch_hybrid_cpu_scale);
-> > +     if (!arch_cpu_scale)
-> > +             return false;
-> > +
-> > +     for_each_possible_cpu(cpu) {
-> > +             per_cpu_ptr(arch_cpu_scale, cpu)->capacity =3D SCHED_CAPA=
-CITY_SCALE;
-> > +             per_cpu_ptr(arch_cpu_scale, cpu)->freq_ratio =3D arch_max=
-_freq_ratio;
-> > +     }
-> > +
-> > +     static_branch_enable(&arch_hybrid_cap_scale_key);
-> > +
-> > +     pr_info("Hybrid CPU capacity scaling enabled\n");
-> > +
-> > +     return true;
-> > +}
-> > +
-> > +/**
-> > + * arch_set_cpu_capacity - Set scale-invariance parameters for a CPU
-> > + * @cpu: Target CPU.
-> > + * @cap: Capacity of @cpu, relative to @base_cap, at its maximum frequ=
-ency.
-> > + * @base_cap: System-wide maximum CPU capacity.
->
-> It is confusing to e that @base_cap is the maximum capacity of the system=
-.
-> Maybe @max_cap?
+I certainly don't hate the idea of using bus_dma_limit as the next most 
+functionally robust way to deny DMA for now. It would probably be a bit 
+awkward to upheave the existing notion of 0 meaning no limit, but 
+setting it to 1 would have the desired effect in practice (at least with 
+dma-direct), plus would look nicely deliberate - for completeness we'd 
+probably just want an extra check or two in the right place(s) to ensure 
+that such a DMA-denied device still can't end up being given ops other 
+than dma-direct, but that seems simple enough.
 
-But the max_cap and max_freq are sort of confusing again.
-
-I guess I can call it max_cap and also rename max_freq to cap_freq.
-
-> > + * @max_freq: Frequency of @cpu corresponding to @cap.
-> > + * @base_freq: Frequency of @cpu at which MPERF counts.
-> > + *
-> > + * The units in which @cap and @base_cap are expressed do not matter, =
-so long
-> > + * as they are consistent, because the former is effectively divided b=
-y the
-> > + * latter.  Analogously for @max_freq and @base_freq.
-> > + *
-> > + * After calling this function for all CPUs, call arch_rebuild_sched_d=
-omains()
-> > + * to let the scheduler know that capacity-aware scheduling can be use=
-d going
-> > + * forward.
-> > + */
-> > +void arch_set_cpu_capacity(int cpu, unsigned long cap, unsigned long b=
-ase_cap,
-> > +                        unsigned long max_freq, unsigned long base_fre=
-q)
-> > +{
-> > +     if (static_branch_likely(&arch_hybrid_cap_scale_key)) {
-> > +             WRITE_ONCE(per_cpu_ptr(arch_cpu_scale, cpu)->capacity,
-> > +                        div_u64(cap << SCHED_CAPACITY_SHIFT, base_cap)=
-);
-> > +             WRITE_ONCE(per_cpu_ptr(arch_cpu_scale, cpu)->freq_ratio,
-> > +                        div_u64(max_freq << SCHED_CAPACITY_SHIFT, base=
-_freq));
-> > +     } else {
-> > +             WARN_ONCE(1, "Hybrid CPU capacity scaling not enabled");
-> > +     }
-> > +}
-> > +
-> > +unsigned long arch_scale_cpu_capacity(int cpu)
-> > +{
-> > +     if (static_branch_unlikely(&arch_hybrid_cap_scale_key))
-> > +             return READ_ONCE(per_cpu_ptr(arch_cpu_scale, cpu)->capaci=
-ty);
-> > +
-> > +     return SCHED_CAPACITY_SCALE;
-> > +}
-> > +EXPORT_SYMBOL_GPL(arch_scale_cpu_capacity);
-> > +
-> >  static void scale_freq_tick(u64 acnt, u64 mcnt)
-> >  {
-> >       u64 freq_scale;
-> > +     u64 freq_ratio;
->
-> Why can't freq_ratio be declared on the same line as freq_scale?
-
-It can.
-
-> >
-> >       if (!arch_scale_freq_invariant())
-> >               return;
-> > @@ -359,7 +439,12 @@ static void scale_freq_tick(u64 acnt, u6
-> >       if (check_shl_overflow(acnt, 2*SCHED_CAPACITY_SHIFT, &acnt))
-> >               goto error;
-> >
-> > -     if (check_mul_overflow(mcnt, arch_max_freq_ratio, &mcnt) || !mcnt=
-)
-> > +     if (static_branch_unlikely(&arch_hybrid_cap_scale_key))
-> > +             freq_ratio =3D READ_ONCE(this_cpu_ptr(arch_cpu_scale)->fr=
-eq_ratio);
-> > +     else
-> > +             freq_ratio =3D arch_max_freq_ratio;
->
-> It seems that arch_max_freq_ratio will never be used on hybrid processors
-> and computing arch_turbo_freq_ratio will be a waste of cycles.
-
-Well, what if the memory allocation is
-arch_enable_hybrid_capacity_scale() fails?
-
-> Unfortunately, intel_set_max_freq_ratio() is called before the
-> arch_hybrid_cap_scale_key static key is set.
->
-> Maybe some rework is in order?
-
-I'd rather not do it.  This is all initialization and done once.
-
-However, a driver mode change can mess up with it which I have
-overlooked.  I'll fix this (and make the above changes) and send a new
-version of the series.
+Thanks,
+Robin.
 
