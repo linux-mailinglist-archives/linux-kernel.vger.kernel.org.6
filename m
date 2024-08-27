@@ -1,151 +1,173 @@
-Return-Path: <linux-kernel+bounces-302635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEACD960143
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:59:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D914D960147
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:01:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CC562829AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:59:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 957B6282B4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571732C184;
-	Tue, 27 Aug 2024 05:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE5C13A416;
+	Tue, 27 Aug 2024 06:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LLXifWvs"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Is6H7dMM"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056014C92
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 05:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B535628689
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724738363; cv=none; b=p4TtqX2ihD5Z8ut877ZRSy4VkANyWhA1X1jj7L08CKRhPsebYdPmslaXUQ7HZ3GvhBf8e0CGPtqZ/XExtGR4iOrPiNwrKQnQJNJYi/EiWiJDHgwP8B8V2fzvqEfU3kKh7hkHn4xy4zLMWCnv8qHzi25i4gACzvrrZaXIkWUAUNQ=
+	t=1724738498; cv=none; b=abYaDD1xLm52T6fi1F/Vu0DOPKuLhpcJDW5KHNCYP2lg97AbeCoYmZp9E7Ih151dGN/9it/cI6Uks7IkMIfZGjA3wqA6Ra8lPDvvRQlhJfKUaVDkb3XuerLIIM3Ayltrh0ASE3esp6AdCiqlWm7shjr4nu41IZFeCq48Aon0fM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724738363; c=relaxed/simple;
-	bh=Hre8wBYDCVvotXtnF97F24g2/2YR0iei5Labiz0Unow=;
-	h=From:To:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=p0zoJqtHdwHqtmQLuoQkiTjEME+h4djQ+fyIs52oLcWn/2WomeriaVAjUZRwGjQAmbp+DT5UoDeo+I5HCbuj/yDU0yp6WJ+xYKHpHESs9ptED80jW0CZkfGZgV1nY0XDvDzfKyRbYpybK3ocriX6xJ/oMvSOO4cw/t3Vk6gZ4Ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LLXifWvs; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240827055918epoutp01850bc6954a9dbe6dff5e06fc20cf74e6~vgGY4IDCG1933819338epoutp01f
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 05:59:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240827055918epoutp01850bc6954a9dbe6dff5e06fc20cf74e6~vgGY4IDCG1933819338epoutp01f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1724738358;
-	bh=fM2ZZjUmZEqvHp27jF4mHYFhw6+/7R4l50adstiCFsE=;
-	h=From:To:In-Reply-To:Subject:Date:References:From;
-	b=LLXifWvsW/UTlCzBrFLr79sICeEl270ho19okaJsQyXPl9YxyoeJyzBkHcJp/eUQA
-	 NJvygaz6IBM8cLbdPEq9+dy9upQ5uAISDDiaoYp600qaGGcFHCaYHq/rpcvuSfJet5
-	 BDDxNBV6a0MdujzJo2dETwUYs4LPg5df2qKss+T0=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-	20240827055918epcas2p295eaae3ca664a7feadd8f38d72edd7c3~vgGYobTyr2692026920epcas2p2m;
-	Tue, 27 Aug 2024 05:59:18 +0000 (GMT)
-Received: from epsmges2p1.samsung.com (unknown [182.195.36.89]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4WtH1K6b4pz4x9Q4; Tue, 27 Aug
-	2024 05:59:17 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	96.E3.10431.53B6DC66; Tue, 27 Aug 2024 14:59:17 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240827055917epcas2p478481ff43882695feadcbccc8a3f717b~vgGXeav7n2942029420epcas2p4w;
-	Tue, 27 Aug 2024 05:59:17 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240827055917epsmtrp2f34f4629c8494a8813fc0290021a5200~vgGXb8RQ51041210412epsmtrp2D;
-	Tue, 27 Aug 2024 05:59:17 +0000 (GMT)
-X-AuditID: b6c32a45-da1ff700000028bf-24-66cd6b350ae5
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	51.14.07567.53B6DC66; Tue, 27 Aug 2024 14:59:17 +0900 (KST)
-Received: from KORCO164647 (unknown [10.229.38.229]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240827055916epsmtip25c771f2299472e6b6f1746ee8a52c87b~vgGXIpkt93243332433epsmtip2h;
-	Tue, 27 Aug 2024 05:59:16 +0000 (GMT)
-From: "Kiwoong Kim" <kwmad.kim@samsung.com>
-To: "'Bart Van Assche'" <bvanassche@acm.org>, "'Bean Huo'"
-	<huobean@gmail.com>, <linux-scsi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <alim.akhtar@samsung.com>,
-	<avri.altman@wdc.com>, <jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
-	<beanhuo@micron.com>, <adrian.hunter@intel.com>, <h10.kim@samsung.com>,
-	<hy50.seo@samsung.com>, <sh425.lee@samsung.com>, <kwangwon.min@samsung.com>,
-	<junwoo80.lee@samsung.com>, <wkon.kim@samsung.com>
-In-Reply-To: <0ad83cb2-3835-4438-a7c3-398b1ff5798a@acm.org>
-Subject: RE: [PATCH v2 0/2] scsi: ufs: introduce a callback to override OCS
- value
-Date: Tue, 27 Aug 2024 14:59:16 +0900
-Message-ID: <011901daf846$401be4e0$c053aea0$@samsung.com>
+	s=arc-20240116; t=1724738498; c=relaxed/simple;
+	bh=ZpgYtWXWQX1RlXoxt9WyOaOIHSiZV5dnIWN7iBw/Ez0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=StuxQk8NliDlJQFgeRktZcOwBX4JfxdjEy6tec5ty0SlvysUUzzKsPKSgsOZT4oUAauIHrRmuwURL2HK/JCudHaMfiG211XnZme5//ZTt/BPGw/hxiWsRr+8n46Ouv0xAbWBRYVImWgFtR55oYio3NU+p6UolQIdQFx1a8R+U7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Is6H7dMM; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c07eebf29eso2236132a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 23:01:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724738495; x=1725343295; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2V26ymBzYP2Z7GWKZsLXO+lAp6n0aHmQIkOVXPd0pbM=;
+        b=Is6H7dMMviJHa5j8LkOEErNvwLCq14O7NJvvKb55bwIILNBqJHHXrcJlF78H5FDWI/
+         sWk/qq1VN1Hqczv7JIgJ03xQYQmcns7+cANgKqJ678C76CuS5EtP0zn0kqV4xKljKdsM
+         mgOlnGxC5KDPx/azqnz3NeV9aABZHXBXdFOih6cu927V4TI9IXGU6b981K/i2qCaVFe3
+         0wbG+AoEe+5zU4/Op8VzXvL9OEOQKqJl2J7WCHv3EM0YqvyX/2K+IO7pVAtP4axE99nx
+         EN+r+BTJ2NsWHSbOrwTjT87AusqLW8Y1/cxhvNXTE1jHUF2ox0iIFJAVFswcyU1gJ8mZ
+         SO+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724738495; x=1725343295;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2V26ymBzYP2Z7GWKZsLXO+lAp6n0aHmQIkOVXPd0pbM=;
+        b=OIWbamWiCMtPLlYVZihYqKqxKLBaTh/w2F9/sRLxUjRtaFhq0IoLW2JWYd1zuaLFvF
+         AH3bdx2vpypMYOsxuvM8XuMhxawJtnaUx5WEJ1cAldOHzFxMZkxXOl/YulLUJPQQEQ9W
+         f7EnYmc31jy5gJaxs25G4Kb6LqpPFa4zo2SDFLX29EqF1izAp0f7QsmlK04xPncSN79E
+         SutMgvCGZA4RJ5e+A4nAtnkrZMEf6KlzykHNCV2swOJaud9gsU2RSfutkzqRIUKo0tOO
+         MdFkFhHWAjWE1VgSfPnh3+VGvDHGlHUEy2oI5w7LbmpJOJ8GMCgefguznKdLKVJCHBtL
+         Ei/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWpSSL5BI7aeRMaM4KVc8ScYfR4FfmIO7XV1Geof0ilCZbDvHQ8R7vOm7SJgb4WFONc0L8WjCp7szd8c5E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj7tU0hCMniXmfRip6dbwfS/47oyAE6fMibSDe0I+q7Ygq9KfP
+	3A5AflMwTrZ5ZCMvv92rwt8isw8CA8UfSnpIlC/D2X8MXKeYqACduoew7QuuMuo=
+X-Google-Smtp-Source: AGHT+IF2gqL09d/X0zV5rFVkiVrS2Z5bbUz8sAze/K0DL8uePv7zb38gZRMFPwimQZSTcgTR1WWbYw==
+X-Received: by 2002:a05:6402:26d3:b0:5a1:2ce9:f416 with SMTP id 4fb4d7f45d1cf-5c0891b4825mr11035852a12.37.1724738494768;
+        Mon, 26 Aug 2024 23:01:34 -0700 (PDT)
+Received: from localhost (109-81-92-122.rct.o2.cz. [109.81.92.122])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb1c5b39sm602082a12.20.2024.08.26.23.01.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 23:01:34 -0700 (PDT)
+Date: Tue, 27 Aug 2024 08:01:32 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
+	jack@suse.cz, Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <Zs1rvLlk0mXklHyf@tiehlicka>
+References: <20240826085347.1152675-1-mhocko@kernel.org>
+ <20240826085347.1152675-2-mhocko@kernel.org>
+ <egma4j7om4jcrxwpks6odx6wu2jc5q3qdboncwsja32mo4oe7r@qmiviwad32lm>
+ <ZszeUAMgGkGNz8H9@tiehlicka>
+ <d5zorhk2dmgjjjta2zyqpyaly66ykzsnje4n4j4t5gjxzt57ty@km5j4jktn7fh>
+ <ZszlQEqdDl4vt43M@tiehlicka>
+ <ut5zfyvpkigjqev43kttxhxmpgnbkfs4vdqhe4dpxr6wnsx6ct@qmrazzu3fxyx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQMVAzAZ81RvDzfQ3MBmGZ181G9RyALYKPinAXreuMcBjvnKx6+XdaPw
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA01TfUwTZxzee3cch654FqbvGIFyzA1QoGW0PTYxLn6ki2zWkbBFstQLPUoD
-	tLVXmJgtKeIHYDJAphkVDNCwZTBshgwRZvgMn2GZK8iHMiGCBEwdjlEGo2Ythxv/Pfm9z/P8
-	fs/vfV8CFdrxAEKrM7FGHZNB4duwpq5wWaQ0fShVPDghoftnfsDpqRtNOD2/OoLTHdMFGH1t
-	cRWlXQ/uedHlQ2aErrNOYXT1WBNCt7jyEPqnsTsYbW8px+nLo804/V3vC4SueeHA6Fu/ObGD
-	pMI+fExxxzLprbD+PI8oiqvbgWLFlo8rns9OYIqvGmuBYqkhSHGp/TKi9DmZvj+NZdSsUcTq
-	UvRqrU4TTx1LVB1SSWViSaQkjpZTIh2TycZThxOUkUe1Ge4YlCibychyl5QMx1HRB/Yb9Vkm
-	VpSm50zxFGtQZxjkhiiOyeSydJooHWt6VyIWx0jdxFPpaQNOjcGMnPm1ohsxAzsoBD4EJGPh
-	wkw9Ugi2EUKyGcD5gXFvz4GQ/BPAJx1hPHYCWH4v5KVg9e+/cF5wF8C8rg6UJ80DWPoo24Nx
-	ci+8Nt3q5SH5k70oXLM6Nlx9yPeg9X495sF+ZCJsrbZuiDFyD7SdX3dzCEJAxsHrK596ygJy
-	J+wvm9mgo2QwvO0oR/khRHB19lsvD/Ynj8KevAVvnuMPrxdcRD19ITlDwM6+aeDxhORhuF57
-	gtf6wYXeRm8eB8ClZ3dxHnOwvnkE4bVmAOsWBjdJ70DLk0sbPigZDm0t0bxlKOye2BzNF+Z3
-	ubz5sgDmXxTywlC4dqV0c8+vw7Lxh5uGCjjYNwmKQYhlS0jLlpCWLWEs//etBFgt2MUauEwN
-	y8UYJP9ddIo+swFsvO6II82g1LEY1QkQAnQCSKCUvyDI3p8qFKiZnLOsUa8yZmWwXCeQurde
-	gga8lqJ3fw+dSSWJjRPHymQSeYxULKd2C36/UKEWkhrGxKazrIE1vtQhhE+AGck5l/xLUvty
-	UXXKo1sD4fEykj5bUjUH/8ktHat5/Kqt3b5De/JC0lXlTtvaNw97xp/2/RE9tfSsZkeFet1r
-	SNzATca9EZCwlLD+wQh92hH4+K2ygptBOX7Fb4sm6lyCrNGQ7uPnWoM0B3+knhaOdiQOV6UH
-	hyFEbeAJKFf2NlZc3Xt81/u3HaqGj/dUxaLbM7PBvty5L20C37bcSOWpJPOK9tDwmaqSwO/z
-	PiSQnq9fwW2VbbrWT+ITfE/rK0YXI5aTxYbI8jflz4OLrkyEuR5MWT9f3q1BK887B1XiUOnc
-	jUL17P2hZJ8DMdmMxRHhr9s+5/xsSmb5qLCtaGXfzdQjX1AYl8ZIIlAjx/wL6uhR1WYEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGIsWRmVeSWpSXmKPExsWy7bCSvK5p9tk0gz/nWS1OPlnDZvFg3jY2
-	i5c/r7JZHHzYyWIx7cNPZou/ty+yWsw528BksXrxAxaLRTe2MVns+tvMZLH1xk4Wi8u75rBZ
-	dF/fwWax/Pg/Joul/96yWGy+9I3FQcDj8hVvj52z7rJ7LN7zksljwqIDjB7f13eweXx8eovF
-	o2/LKkaPz5vkPNoPdDMFcEZx2aSk5mSWpRbp2yVwZZz6ll7QwFRxYe4RpgbGy4xdjJwcEgIm
-	Ej9/fGEDsYUEdjNKPJnvCxGXlDix8zlUjbDE/ZYjrF2MXEA1zxkl+n6sBWtgE9CWmPZwN1hC
-	ROAms8TerW+hqr4wSmz7/5wZpIpTwFpi8bW1LCC2sECgxNr+T2BjWQRUJda3/GHvYuTg4BWw
-	lJj9PQIkzCsgKHFy5hOwcmagBb0PWxkhbHmJ7W/nMENcpCDx8+kyVhBbRMBN4ljzK3aIGhGJ
-	2Z1tzBMYhWYhGTULyahZSEbNQtKygJFlFaNkakFxbnpusmGBYV5quV5xYm5xaV66XnJ+7iZG
-	cNRqaexgvDf/n94hRiYOxkOMEhzMSiK8cpdPpgnxpiRWVqUW5ccXleakFh9ilOZgURLnNZwx
-	O0VIID2xJDU7NbUgtQgmy8TBKdXAVMDm4Vp4u3rD+2vvu9hd47b0nYj62Owy9fimdx2f6m+X
-	b3UU4AqXL7337XRq3UlrrZpNitenCVb8WstrVnbopb0ZZ/CW8K+9R2c3e9rLP3Kytt9YrxP3
-	9nStg+u00FhJud8Ha3OCFBbtcKiMPnXG+fNWG4ZJZWf8uhY7tSR0fijtZFZ9c0G6MmxFv59g
-	RN2v3oWbF/gqRfnmiNcHp3myVVwJthPI65d4Vc23Q+T2hgVbsg+V7QllmzNjZaISI/ddvqlq
-	6x6eneIzXXG9x47IaCGvl+URGkX9iqklVbaV3LfVSibZJTZtq/Vfv5XLqbn2qe6BU7zi3bx/
-	pF/61fBJbLULdpPZO6N63yutE0osxRmJhlrMRcWJACIsaA9JAwAA
-X-CMS-MailID: 20240827055917epcas2p478481ff43882695feadcbccc8a3f717b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240822111247epcas2p2d3051255f42af05fd049b7247c395da4
-References: <CGME20240822111247epcas2p2d3051255f42af05fd049b7247c395da4@epcas2p2.samsung.com>
-	<cover.1724325280.git.kwmad.kim@samsung.com>
-	<ed370c6355dee6a4af15587cdbb3b06a1fe0b842.camel@gmail.com>
-	<0ad83cb2-3835-4438-a7c3-398b1ff5798a@acm.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ut5zfyvpkigjqev43kttxhxmpgnbkfs4vdqhe4dpxr6wnsx6ct@qmrazzu3fxyx>
 
-> https://lore.kernel.org/linux-
-> scsi/763ab716ba0207ecdad6f55ce38edf2d1bc7d04b.1724325280.git.kwmad.kim@sam
-> sung.com/
+On Mon 26-08-24 16:43:55, Kent Overstreet wrote:
+> On Mon, Aug 26, 2024 at 10:27:44PM GMT, Michal Hocko wrote:
+> > On Mon 26-08-24 16:00:56, Kent Overstreet wrote:
+> > > On Mon, Aug 26, 2024 at 09:58:08PM GMT, Michal Hocko wrote:
+> > > > On Mon 26-08-24 15:39:47, Kent Overstreet wrote:
+> > > > > On Mon, Aug 26, 2024 at 10:47:12AM GMT, Michal Hocko wrote:
+> > > > > > From: Michal Hocko <mhocko@suse.com>
+> > > > > > 
+> > > > > > bch2_new_inode relies on PF_MEMALLOC_NORECLAIM to try to allocate a new
+> > > > > > inode to achieve GFP_NOWAIT semantic while holding locks. If this
+> > > > > > allocation fails it will drop locks and use GFP_NOFS allocation context.
+> > > > > > 
+> > > > > > We would like to drop PF_MEMALLOC_NORECLAIM because it is really
+> > > > > > dangerous to use if the caller doesn't control the full call chain with
+> > > > > > this flag set. E.g. if any of the function down the chain needed
+> > > > > > GFP_NOFAIL request the PF_MEMALLOC_NORECLAIM would override this and
+> > > > > > cause unexpected failure.
+> > > > > > 
+> > > > > > While this is not the case in this particular case using the scoped gfp
+> > > > > > semantic is not really needed bacause we can easily pus the allocation
+> > > > > > context down the chain without too much clutter.
+> > > > > 
+> > > > > yeah, eesh, nack.
+> > > > 
+> > > > Sure, you can NAK this but then deal with the lack of the PF flag by
+> > > > other means. We have made it clear that PF_MEMALLOC_NORECLAIM is not we
+> > > > are going to support at the MM level. 
+> > > > 
+> > > > I have done your homework and shown that it is really easy
+> > > > to use gfp flags directly. The net result is passing gfp flag down to
+> > > > two functions. Sure part of it is ugglier by having several different
+> > > > callbacks implementing it but still manageable. Without too much churn.
+> > > > 
+> > > > So do whatever you like in the bcache code but do not rely on something
+> > > > that is unsupported by the MM layer which you have sneaked in without an
+> > > > agreement.
+> > > 
+> > > Michal, you're being damned hostile, while posting code you haven't even
+> > > tried to compile. Seriously, dude?
+> > > 
+> > > How about sticking to the technical issues at hand instead of saying
+> > > "this is mm, so my way or the highway?". We're all kernel developers
+> > > here, this is not what we do.
+> > 
+> > Kent, we do respect review feedback. You are clearly fine ignoring it
+> > when you feels like it (eab0af905bfc ("mm: introduce
+> > PF_MEMALLOC_NORECLAIM, PF_MEMALLOC_NOWARN") is a clear example of it).
+> > 
+> > I have already made my arguments (repeatedly) why implicit nowait
+> > allocation context is tricky and problematic. Your response is that you
+> > simply "do no buy it" which is a highly technical argument.
 > 
-> Bart.
+> No, I explained why GFP_NORECLAIM/PF_MEMALLOC_NORECLAIM can absolutely
+> apply to a context, not a callsite, and why vmalloc() and kvmalloc()
+> ignoring gfp flags is a much more serious issue.
 
-I included you but sending the patch set was blocked.
-Sorry. Let me fix this as soon as possible.
+You are not really answering the main concern I have brought up though.
+I.e. GFP_NOFAIL being fundamentally incompatible with NORECLAIM semantic
+because the page allocator doesn't and will not support this allocation
+mode.  Scoped noreclaim semantic makes such a use much less visible
+because it can be deep in the scoped context there more error prone to
+introduce thus making the code harder to maintain. 
 
-Thank you.
+I do see why you would like to have NOWAIT kvmalloc support available
+and I also do see challenges in achieving that. But I completely fail to
+see why you are bring that up _here_ as that is not really relevant to
+PF_MEMALLOC_NORECLAIM use by bcachefs because it demonstrably doesn't
+need that. There is no other user of the flag at the moment so dropping
+the flag before there is more misuse is a reasonable goal. If you want
+to bring up vmalloc NOWAIT support then feel free to do that in another
+context and we can explore potential ways to achieve that.
 
+-- 
+Michal Hocko
+SUSE Labs
 
