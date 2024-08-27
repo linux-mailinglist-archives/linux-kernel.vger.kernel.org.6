@@ -1,97 +1,125 @@
-Return-Path: <linux-kernel+bounces-302946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93FE5960562
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:20:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72205960569
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 442A3281E26
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:20:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FD41281CFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7E8198E83;
-	Tue, 27 Aug 2024 09:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4EA19CD07;
+	Tue, 27 Aug 2024 09:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nDLjZyku"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D3WwBUse"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B80194A4F
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88BB76056;
+	Tue, 27 Aug 2024 09:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724750407; cv=none; b=cw28Zze7GxIPyJQ6w3fC196DffiaTH1csZHEzHqnTIh5zK+ZVtkg0XWIin6Vb3dD/uZLWJFGoyC05T3RCndHTQJWB6AowHXtHsDNYcEA/Iln/g0RdTMLgkVEXOifeP2WTBXLeyTrAOnZk1PVX1VxCl6Bs+8pf2rqK5GRzViadKM=
+	t=1724750433; cv=none; b=s88NO5edwx0nTRs7j9PgyleV00QIXaW7N3yQtDwBYEQtI1I/QSTKW882wPxahd5Im8JlrMmVBYb4Xlug8mE24GmH0E4FPz11YMWY50hSeTTu6zd8zASNjsxJUlSHpIkf3giN0Rk66vsvqLHHXv3X2/7/+rQZlBHkYR9LkmLNzXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724750407; c=relaxed/simple;
-	bh=cIQ5Lx8hu1UIWOCXbxQbBrh8ZnqEEBadqw0L0XigrBE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KzoNSDZzFoKJ9sc2D1DzKd9Pa2iq8yanTbrTQ8OFm9l8jvd5b14Nwz6zze0HeXSlNyiQP9uj2QPrRtZhCmJfyv6HgdBPeKBBejQ4DlJx+xTyD/0bxqjleebovmQhV93kBcdCVTaY1c4VHAk8bV9lSAQbIh0DCqxG2F0AchbtkPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nDLjZyku; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724750405; x=1756286405;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=cIQ5Lx8hu1UIWOCXbxQbBrh8ZnqEEBadqw0L0XigrBE=;
-  b=nDLjZykuTtXTfnRU4Cj/C+I9PkQ7F9MDpgZYnqgYIS/sySunujnppSa/
-   mXvNELKyLSs9YOwQMsn9VUdRSelhK88YkteClsTdA5u4JMUci5eAmg73E
-   SwlQYBsEEr4VuqpYbAlJMyEcQskpcM3rXSKFkD2A1myZh4C7MnQgtUcLk
-   qejTn9HpP/28Y6Y3DoKUIP65FoKo9Fwyl09TEAodiN1sk3S1eAk5HmIiQ
-   dm2+RlZFvq/I8hO8r6UvOnOHptH0VfQEc4W0JtS6Xc2ScPiLoeryvDgk3
-   M5n86ID5/kq3LNiuDOeMyrl1ebvr9V9ywrp1PqcPgzvtKbwlLcXSNLdb0
-   A==;
-X-CSE-ConnectionGUID: C3q93HOoTj68bSeF0o9EbQ==
-X-CSE-MsgGUID: ExA0208eTIOoU6sQb72VDg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="26981146"
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="26981146"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 02:20:04 -0700
-X-CSE-ConnectionGUID: nVbmHnI8QJKLEkpX+9k0lA==
-X-CSE-MsgGUID: Sfkx1TgPQGuIlOReiqqttQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="67612392"
-Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.226])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 02:19:58 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Thomas Zimmermann <tzimmermann@suse.de>, Andi Shyti
- <andi.shyti@linux.intel.com>, renjun wang <renjunw0@foxmail.com>
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- airlied@gmail.com, daniel@ffwll.ch, joonas.lahtinen@linux.intel.com,
- rodrigo.vivi@intel.com, tursulin@ursulin.net, lyude@redhat.com,
- imre.deak@intel.com, Wayne.Lin@amd.com, ville.syrjala@linux.intel.com,
- vidya.srinivas@intel.com, jouni.hogander@intel.com,
- janusz.krzysztofik@linux.intel.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org
-Subject: Re: [PATCH] drm: Fix kerneldoc for "Returns" section
-In-Reply-To: <c9c9e482-f80c-4158-8dc4-695f8e0c62cd@suse.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <tencent_37A873672B5CD20DECAF99DEDAC5E45C3106@qq.com>
- <Zsz9pwQ3m9zHrjo-@ashyti-mobl2.lan>
- <c9c9e482-f80c-4158-8dc4-695f8e0c62cd@suse.de>
-Date: Tue, 27 Aug 2024 12:19:54 +0300
-Message-ID: <87y14iz5j9.fsf@intel.com>
+	s=arc-20240116; t=1724750433; c=relaxed/simple;
+	bh=gtbhb54O0RAnnazSqHDzmfQXO7JPiWdE7fDbWQ9dxwI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kk7cHewPTdET7ihbb3OSEjIPUsTLOtkjoSYrAtvrYMaBXOsbN1ADIVMiUIZEKcB7Z2ZDYsaaReFswetv2QYuzPbq7G+zIkUj6olfLhSMAT/T6bcrKl486+cYp3q6EqD/tnnOzIS9g4OVV7PZUhSJFFYG+S+Glgy/fmZra6aqNsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D3WwBUse; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7142e002aceso4297963b3a.2;
+        Tue, 27 Aug 2024 02:20:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724750431; x=1725355231; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=S3OD8akG8wHAOaiKj8NG5SpXVJ2rOAl/ksW7Y2RAtL8=;
+        b=D3WwBUse7ibh7Vuz8axqGEisi8HCeOYGl4ZBxNlZUFHZRnSozBqS7drJkTcERkZMsj
+         WSvSUMFUTIHFopX8PyU+KELiFIQVCR05tPofLuGzpTKYiHi1UI9ZfIAf1RVl6ywP55am
+         hcqrIiwzDWRl3/QVcQD7VFlYkbxN/RoyXzVXFCdsX6KSgx1v3CD/cVGtn9cbQKKJ/ZB7
+         voLucjBGCF60711CPxQON0rf0rsoS53mYEoe8/zBY9CY5cjw3/JEtYAfJo9Cur7iF1u4
+         BtrvFb4PCzkbn7norgCLFG7bWNopGmevLmqNUmu/CUB0fyC6RliuD5jZvJZzEmUBTcNu
+         ORKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724750431; x=1725355231;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S3OD8akG8wHAOaiKj8NG5SpXVJ2rOAl/ksW7Y2RAtL8=;
+        b=CV67H+JzQuKkZIPxN8Sn4/euJ+qoEnqF19cXZl27LmrIXDPiRM5CkUecGOJ2/nynJw
+         SC4Mi54hqetMRfrDgd+8m6ZXyKHdTinksBWocCRjBT/axLZqRfZ42V4vQk3sKqZGDO59
+         BcCgrquX8zC7LV00Xr8ILIaUgPnik/xdLjg0H9PL/aJvbJBb7NKJSBTmQr/BPW6DnNws
+         cG4CcZrXM2UkP2LzgtITGCXVip7CFEUOoAUlMSubDdIAQ7v/SrYLSaiYnTZ9OptZGcLg
+         pNOcCdD0435BAaRXl5TXM2uiKUrB2gne4c53tWHn8zDCDKN/VEPQKnNb4tsYv1z0fZ6a
+         zTQw==
+X-Forwarded-Encrypted: i=1; AJvYcCV3Hmpck5w6q7YPRo0J4XZ1JPO4vJISK78DBIO3c+kIKlRJ/VawFSeMt4CImhNUZU83cKI8GY2Q8O1ZHYomvXNrlg==@vger.kernel.org, AJvYcCXOVqWyfLcjc0CLKJvME8hdNEffUJsMuV0Vxifmt83IC30SBuhG51rCPtPyOjJn8iHAt09YxcJ4Y3b51/A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOzau+WkfDUOzg03I/MwwMNEWvhkgMQJO35Yn1sJilgDRbXzcW
+	bc4ybNCI2bnI7ulzUNK630FOo028Xd3K1LkupGqvqdaV6QcaaPyn
+X-Google-Smtp-Source: AGHT+IFMwNpEwzOdchRiBCm0k59fIKZASq1grwE3RloSqqXcnhuwbbbg7sQHO5ePgA5wBR2h9Asmjg==
+X-Received: by 2002:a05:6a21:164e:b0:1be:bfa2:5ac3 with SMTP id adf61e73a8af0-1ccc0997455mr2219641637.35.1724750431121;
+        Tue, 27 Aug 2024 02:20:31 -0700 (PDT)
+Received: from localhost.localdomain ([2600:1700:ab14:280:f82b:883b:12eb:74c7])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d6136fdaeasm11523939a91.7.2024.08.27.02.20.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 02:20:30 -0700 (PDT)
+From: Howard Chu <howardchu95@gmail.com>
+To: acme@kernel.org
+Cc: namhyung@kernel.org,
+	irogers@google.com,
+	jolsa@kernel.org,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Howard Chu <howardchu95@gmail.com>
+Subject: [PATCH v1 0/2] perf trace: Better -p support
+Date: Tue, 27 Aug 2024 17:20:11 +0800
+Message-Id: <20240827092013.1596-1-howardchu95@gmail.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Tue, 27 Aug 2024, Thomas Zimmermann <tzimmermann@suse.de> wrote:
-> My fault. Apologies if I crossed a line by just merging it into 
-> drm-misc. It's just doc syntax, so I didn't think it was a big deal.
+Currently we don't support only collecting data for certain pids in perf
+trace. We either collect nothing or everything.
 
-No worries, retrospective ack.
+Another thing is when using -p, becausing it's a per-pid mmap,
+bpf_perf_event_output will fail under current per-cpu only
+configuration. But since I fixed the -p problem already in the perf
+trace augmentation v3 patch series, this method will be an optimization
+instead of an actually bug fix.
 
-BR,
-Jani.
+!! Note that this patch series should be applied on top of the perf
+trace v3 patch series.
+
+Before:
+perf $ perf trace -e open -p 79768
+         ? (         ):  ... [continued]: open())                                             = -1 ENOENT (No such file or directory)
+         ? (         ):  ... [continued]: open())                                             = -1 ENOENT (No such file or directory)
+         ? (         ):  ... [continued]: open())                                             = -1 ENOENT (No such file or directory)
+
+After:
+perf $ ./perf trace -e open -p 79768
+     0.000 ( 0.019 ms): open(filename: "DINGZHEN", flags: WRONLY)                             = -1 ENOENT (No such file or directory)
+  1000.187 ( 0.031 ms): open(filename: "DINGZHEN", flags: WRONLY)                             = -1 ENOENT (No such file or directory)
+  2000.377 ( 0.019 ms): open(filename: "DINGZHEN", flags: WRONLY)                             = -1 ENOENT (No such file or directory)
+
+Howard Chu (2):
+  perf trace: Collect data only for certain pids
+  perf trace: Use pid to index perf_event in BPF
+
+ tools/perf/builtin-trace.c                    | 100 ++++++++++++++++--
+ .../bpf_skel/augmented_raw_syscalls.bpf.c     |  54 ++++++++--
+ tools/perf/util/evlist.c                      |   2 +-
+ 3 files changed, 135 insertions(+), 21 deletions(-)
 
 -- 
-Jani Nikula, Intel
+2.46.0
+
 
