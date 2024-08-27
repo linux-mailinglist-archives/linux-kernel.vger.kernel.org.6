@@ -1,213 +1,238 @@
-Return-Path: <linux-kernel+bounces-303135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 131DE9607E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:52:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 161E99607E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C078E282F69
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:52:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2A4A281B74
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A524C19E830;
-	Tue, 27 Aug 2024 10:52:51 +0000 (UTC)
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07EE19753F;
-	Tue, 27 Aug 2024 10:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942A019E825;
+	Tue, 27 Aug 2024 10:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NtwuoXbU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2762E4C634;
+	Tue, 27 Aug 2024 10:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724755971; cv=none; b=otm1aIZRDKTXwodfwZPRT05WuD7TD48CihcxGbfFOXYV7eGSE0WGgUCSRNdUSmfAg6XYL4K3VZXJpS8AWZmrPBtwxl7Bq7iPBRuA37VlwGslK9MptAAXSvb+aOEdRALt5TcwC4l7qBa/FqmTnTuYhgV94c4Ez4DymJDaEHVTWl8=
+	t=1724756025; cv=none; b=cN42hWL8XlIS780vI1mGXGx4I9qCmAWEkwjN0aN1msMvkIbQ8ZMMt8J15PE9KJOlaRbu5icMXH+EbVKytp/8OMNMVE3RgIxn+iERGKqeJrTzdqz1s8HDrn2ringxE+WjrtRmLrb+mIY42ShRWvbEvq5a6yj3TRKub53+d6xKj8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724755971; c=relaxed/simple;
-	bh=BAb9f/JMOQQT7cQQjeHp1XzCusfpVObNBohFIn3JObY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R+DQLs0tN75OqjdFD+EfxMr+1fWttffbb7gnTMe/ZAe15uBFDdTkV75CLyi+PKxINbVV9O7cL46rDXED0NkTEhMIQQ8qwA0dZ/zAAPwxsnOT45U7CxtfFOImW6yhzxNyUU7whtzmUtEjtemm7x8mw11Ax9Ar8K8fZIOLAUycdHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 47RAqGMh004847;
-	Tue, 27 Aug 2024 05:52:16 -0500
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 47RAqFUh004846;
-	Tue, 27 Aug 2024 05:52:15 -0500
-Date: Tue, 27 Aug 2024 05:52:15 -0500
-From: "Dr. Greg" <greg@enjellic.com>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jmorris@namei.org
-Subject: Re: [PATCH v4 04/14] Add primary TSEM implementation file.
-Message-ID: <20240827105214.GA4769@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20240826103728.3378-1-greg@enjellic.com> <20240826103728.3378-5-greg@enjellic.com> <4403f4ce-21eb-47a1-93f1-c663a96de9bc@schaufler-ca.com>
+	s=arc-20240116; t=1724756025; c=relaxed/simple;
+	bh=0cwnZgpNLcFVVJ9Sb3+sgkuw4pLRegm1J+e48W5+bIc=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=soWpU89H7WKxjvY7gExE+jKvYFS4MFSdvFjEuHpzmBdX5KMXY/LwjZsnOS/nCuwEPWV150dfSHzT4Jium/fpo21bGj0pbZ+mIhT3/JN5SARn6tipWpKgRaIP9vCCOftDZ0Gy5RDrWKOqHsGQ2eJRVVWL9INutm+enk7NZR0aOB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NtwuoXbU; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724756024; x=1756292024;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=0cwnZgpNLcFVVJ9Sb3+sgkuw4pLRegm1J+e48W5+bIc=;
+  b=NtwuoXbUh3mFaw82AccsT+m3+LUw46Zph7f8aeMxqLMB1Lx74osaJ+B4
+   VHSIzusyLHafaATS5T+VzPB8njJWx0lHic0DIJzaQLt/DqKCujJIdn4Jr
+   Vz20YePGwCv3xa1PHNF5vRGSpIu9u2ZyRKQc5Tpgj6Y1B7WOiyoz3gaIi
+   KgFjsRtystQNv2u7y55/DPM2duSvHjfGMLXuK7Q2yyGc9J3m3JmRgTSXm
+   YTB4+xyo939kOJxNcxLubEKqp5gnNDIN6aYdGmqJ+5UHjN+fxiXj/sVKe
+   GUVSjrvpYfvGJyB0qNATny/GhJPaudMmYqT9EvxdE576XlV0WtugRSbyb
+   A==;
+X-CSE-ConnectionGUID: yn9r8z3UR/a/1MrQWM7Hvg==
+X-CSE-MsgGUID: gaoNVIDvTciAiHr7VKwk1Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23378903"
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="23378903"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 03:53:43 -0700
+X-CSE-ConnectionGUID: 2JrTYpy2QAm9jY1+zcY5jw==
+X-CSE-MsgGUID: +KdlvFXJSXe7SGJFPdy0tQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="100323888"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.17])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 03:53:39 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 27 Aug 2024 13:53:34 +0300 (EEST)
+To: Perry Yuan <perry.yuan@amd.com>
+cc: Hans de Goede <hdegoede@redhat.com>, Mario.Limonciello@amd.com, 
+    Borislav.Petkov@amd.com, kprateek.nayak@amd.com, Alexander.Deucher@amd.com, 
+    Xinmei.Huang@amd.com, bharathprabhu.perdoor@amd.com, 
+    poonam.aggrwal@amd.com, Li.Meng@amd.com, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    Xiaojian.Du@amd.com
+Subject: Re: [PATCH 08/11] platform/x86/: hfi: add online and offline callback
+ support
+In-Reply-To: <2661e74beceb9198d0baefe1f145080ef2b812cb.1724748733.git.perry.yuan@amd.com>
+Message-ID: <0242c3fa-74b8-63d5-dc2d-ae2f2519a281@linux.intel.com>
+References: <cover.1724748733.git.perry.yuan@amd.com> <2661e74beceb9198d0baefe1f145080ef2b812cb.1724748733.git.perry.yuan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4403f4ce-21eb-47a1-93f1-c663a96de9bc@schaufler-ca.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Tue, 27 Aug 2024 05:52:16 -0500 (CDT)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 
-On Mon, Aug 26, 2024 at 08:53:31AM -0700, Casey Schaufler wrote:
+On Tue, 27 Aug 2024, Perry Yuan wrote:
 
-Good morning Casey, I hope this note finds your day starting well.
+> From: Perry Yuan <Perry.Yuan@amd.com>
+> 
+> There are some firmware parameters that need to be configured
+> when a CPU core is brought online or offline.
+> 
+> when CPU is online, it will initialize the workload classification
+> parameters to CPU firmware which will trigger the workload class ID
+> updating function.
+> 
+> Once the CPU is going to offline, it will need to disable the workload
+> classification function and clear the history.
+> 
+> Signed-off-by: Perry Yuan <Perry.Yuan@amd.com>
+> ---
+>  drivers/platform/x86/amd/hfi/hfi.c | 90 ++++++++++++++++++++++++++++++
+>  1 file changed, 90 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/amd/hfi/hfi.c b/drivers/platform/x86/amd/hfi/hfi.c
+> index cd5f2b708ebf..57b642c4c522 100644
+> --- a/drivers/platform/x86/amd/hfi/hfi.c
+> +++ b/drivers/platform/x86/amd/hfi/hfi.c
+> @@ -154,6 +154,7 @@ static int __percpu *amd_hfi_ipcc_scores;
+>  
+>  static int amd_set_hfi_ipcc_score(struct amd_hfi_cpuinfo *info, int cpu);
+>  static int update_hfi_ipcc_scores(struct amd_hfi_data *amd_hfi_data);
+> +static int amd_hfi_set_state(unsigned int cpu, bool state);
 
-Greetings to others on this 'last' week of summer.
+Unnecessary.
 
-> On 8/26/2024 3:37 AM, Greg Wettstein wrote:
-> > The tsem.c file is the 'master' file in the TSEM implementation. It is
-> > responsible for initializing the LSM and providing the implementation of the
-> > security event handlers.
-> > ---
-> >  security/tsem/tsem.c | 2446 ++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 2446 insertions(+)
-> >  create mode 100644 security/tsem/tsem.c
-> >
-> > diff --git a/security/tsem/tsem.c b/security/tsem/tsem.c
-> > new file mode 100644
-> > index 000000000000..76d65b3e62b3
-> > --- /dev/null
-> > +++ b/security/tsem/tsem.c
-> > @@ -0,0 +1,2446 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +
-> > +/*
-> > + * Copyright (C) 2024 Enjellic Systems Development, LLC
-> > + * Author: Dr. Greg Wettstein <greg@enjellic.com>
-> > + *
-> > + * This file is the primary implementation file for the tsem LSM.
-> > + *
-> > + * It implements initialization and setup functions that interpret
-> > + * kernel command-line arguments and prepares TSEM for operation.
-> > + *
-> > + * In addition it contains all of the TSEM specific security event
-> > + * handlers that are responsible for handling the LSM events that TSEM
-> > + * models.
-> > + *
-> > + * Each TSEM event handler calls the tsem_allocate_event() function to
-> > + * allocate a structure that will be used to describe the event.  The
-> > + * CELL union of this structure contains various structures that are
-> > + * used to hold these parameters.
-> > + *
-> > + * Since the event characterization parameters need to be retained for
-> > + * the lifetime of the tsem_event structure that is allocated.  In the
-> > + * case of internally modeled namespaces this lifespan is the lifetime
-> > + * of the security modeling namespace.  In the case of externally
-> > + * modeled namespaces, the lifespan is until the security event
-> > + * description is exported to an external trust orchestrator.
-> > + *
-> > + * In order to support this model, the event description structures
-> > + * are typically composed of a union over 'in' and 'out' structures.
-> > + * The 'in' structures are used to hold arguments to the event handler
-> > + * that may only be relevant for the duration of the call.  These
-> > + * values are translated into members of the 'out' structure that
-> > + * retain the values until the end of the lifetime of the tsem_event
-> > + * structure.
-> > + *
-> > + * Each TSEM event handler is responsible for allocating a tsem_event
-> > + * structure and populating the appropriate CELL structure with the
-> > + * input characteristics of the event.  The dispatch_event() function
-> > + * is called to handle the modeling of the event.  This function
-> > + * returns the permission value that is returned as the result of the
-> > + * LSM event handler.
-> > + *
-> > + * The dispatch_event() calls the tsem_event_init() function that is
-> > + * responsible for translating the input parameters into values that
-> > + * will be retained for the lifetime of the security event
-> > + * description.  The populated event description is then dispatched to
-> > + * either the tsem_model_event() or the tsem_export_event() for
-> > + * modeling by either the internal TMA or by a TMA associated with an
-> > + * external trust orchestrator.
-> > + */
-> > +
-> > + ...
-> > +
-> > +static int tsem_file_open(struct file *file)
-> > +{
-> > +	struct inode *inode = file_inode(file);
-> > +	struct tsem_event *ep;
-> > +
-> > +	if (static_branch_unlikely(&tsem_not_ready))
-> > +		return 0;
-> > +	if (bypass_event(TSEM_FILE_OPEN))
-> > +		return 0;
-> > +	if (unlikely(tsem_inode(inode)->status == TSEM_INODE_CONTROL_PLANE)) {
-> > +		if (capable(CAP_MAC_ADMIN))
+>  static int find_cpu_index_by_apicid(unsigned int target_apicid)
+>  {
+> @@ -318,6 +319,87 @@ static int amd_set_hfi_ipcc_score(struct amd_hfi_cpuinfo *hfi_cpuinfo, int cpu)
+>  	return 0;
+>  }
+>  
+> +static int amd_hfi_set_state(unsigned int cpu, bool state)
+> +{
+> +	int ret;
+> +
+> +	ret = wrmsrl_on_cpu(cpu, AMD_WORKLOAD_CLASS_CONFIG, state);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return wrmsrl_on_cpu(cpu, AMD_WORKLOAD_HRST, 0x1);
+> +}
+> +
+> +/*
+> + * amd_hfi_online() - Enable workload classification on @cpu
+> + * @cpu: CPU in which the workload classification will be enabled
+> + *
+> + */
+> +static int amd_hfi_online(unsigned int cpu)
+> +{
+> +	struct amd_hfi_cpuinfo *hfi_info = per_cpu_ptr(&amd_hfi_cpuinfo, cpu);
+> +	struct amd_hfi_classes *hfi_classes;
+> +	int ret;
+> +
+> +	if (WARN_ON_ONCE(!hfi_info))
 
-> Don't you mean CAP_MAC_OVERRIDE? CAP_MAC_ADMIN is for changes to the
-> security state of the system, where CAP_MAC_OVERRIDE is for access
-> control decision exceptions. Here (and elsewhere) you use the former
-> in access checks.
+Can this ever trigger??
 
-You are clearly the mechanistic expert on capabilities so we would
-take your lead on this.
+> +		return -EINVAL;
 
-Some background information to hopefully assist in a discussion on the
-types of capability checks that should be implemented.
+Definitely wrong error code to return since this has nothing to do with 
+user input being invalid.
 
-The capability checks we apply in TSEM gate the following five types
-of actions:
+> +	if (!zalloc_cpumask_var(&hfi_info->cpus, GFP_KERNEL))
+> +		return -ENOMEM;
+> +
+> +	mutex_lock(&hfi_cpuinfo_lock);
 
-1.) The ability to issue TSEM control commands.
+Use guard().
 
-2.) The ability to register an event processing module.
+> +	cpumask_set_cpu(cpu, hfi_info->cpus);
+> +
+> +	/*
+> +	 * Check if @cpu as an associated, initialized and ranking data must be filled
+> +	 */
+> +	hfi_classes = hfi_info->amd_hfi_classes;
+> +	if (!hfi_classes)
+> +		goto unlock;
+> +
+> +	/* Enable the workload classification interface */
+> +	ret = amd_hfi_set_state(cpu, true);
+> +	if (ret)
+> +		pr_err("wct enable failed for cpu %d\n", cpu);
 
-3.) Access to state information on kernel based modeling agent instances.
+Use %u for unsigned int.
 
-4.) The ability to send signals to trust orchestration processes.
+> +
+> +	mutex_unlock(&hfi_cpuinfo_lock);
+> +	return 0;
+> +
+> +unlock:
+> +	free_cpumask_var(hfi_info->cpus);
+> +	mutex_unlock(&hfi_cpuinfo_lock);
+> +	return ret;
+> +}
+> +
+> +/*
+> + * amd_hfi_offline() - Disable workload classification on @cpu
+> + * @cpu: CPU in which the workload classification will be disabled
+> + *
+> + * Remove @cpu from those covered by its HFI instance.
+> + *
+> + */
+> +static int amd_hfi_offline(unsigned int cpu)
+> +{
+> +	struct amd_hfi_cpuinfo *hfi_info = &per_cpu(amd_hfi_cpuinfo, cpu);
+> +	int ret;
+> +
+> +	if (WARN_ON_ONCE(!hfi_info))
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&hfi_cpuinfo_lock);
+> +
+> +	/* Disable the workload classification interface */
+> +	ret = amd_hfi_set_state(cpu, false);
+> +	if (ret)
+> +		pr_err("wct disable failed for cpu %d\n", cpu);
 
-5.) The ability to send a signal to a different security modeling namespace.
+%u
 
-If we understand the differentiation that you suggest between
-CAP_MAC_ADMIN and CAP_MAC_OVERRIDE we would conclude the following:
+> +
+> +	mutex_unlock(&hfi_cpuinfo_lock);
+> +
+> +	free_cpumask_var(hfi_info->cpus);
+> +
+> +	return 0;
+> +}
+> +
+>  static int update_hfi_ipcc_scores(struct amd_hfi_data *amd_hfi_data)
+>  {
+>  	int cpu;
+> @@ -467,6 +549,14 @@ static int amd_hfi_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto err_exit;
+>  
+> +	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "x86/amd_hfi:online",
+> +			amd_hfi_online,
+> +			amd_hfi_offline);
+> +	if (ret < 0) {
+> +		pr_warn("failed to setup cpuhp state! (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+>  	dev_dbg(&pdev->dev, "%s driver registered.\n", pdev->name);
+>  
+>  	return 0;
+> 
 
-Checks 1, 2 and 4 would seem, in our opinion, have the ability to
-change the security state of a system.  As such it would seem
-appropriate to use CAP_MAC_ADMIN for those checks.
+-- 
+ i.
 
-Rather than belabor the issue now, we can entertain a subsequent
-discussion, if needed, on why we believe that actions 1, 2 and 4 can
-change the security state of the system.
-
-By your definition, check type 3 would seem to be consistent with
-CAP_MAC_OVERRIDE, since it is gating access to potentially security
-sensitive information but which does not imply the ability to change
-the security state of the system.
-
-That leaves category 5 as a possible open question.  Given the trust
-orchestration model for externally modeled namespaces, we concluded
-that the only entities that should be able to issue signals that can
-manipulate, particularly terminate a process, should only come from
-within the security modeling namespace that the target process is
-running in.  Given that, we would consider such operations as possibly
-affecting the security state of the system and thus suitable for
-CAP_MAC_ADMIN.
-
-Based on what we have always understood, and that is confirmed by 'git
-grep', the only thing at this time that is using CAP_MAC_OVERRIDE is
-SMACK.  If our analysis is correct, would you have any issues with us
-changing the type 3 checks to CAP_MAC_OVERRIDE?
-
-With respect to the check that you call out in
-tsem.c:tsem_open_file(), the capability check is to avoid a model
-deadlock situation.  If we adopt the model we discuss above, we would
-need to unequivocably allow the open if the process is carrying
-CAP_MAC_ADMIN or CAP_MAC_OVERRIDE in order to avoid a control
-deadlock.
-
-We will look forward to your thoughts on if we should proceed with the
-above changes.
-
-Have a good day.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
 
