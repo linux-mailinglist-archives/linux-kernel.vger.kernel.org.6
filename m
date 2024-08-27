@@ -1,108 +1,195 @@
-Return-Path: <linux-kernel+bounces-304092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E0A8961A20
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 00:48:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BAA8961A23
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 00:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C17FF1F24656
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 22:48:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E07B11F246E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 22:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9989D1D4165;
-	Tue, 27 Aug 2024 22:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C121D417C;
+	Tue, 27 Aug 2024 22:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VdKCj9jL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c0t9UAo2"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0447564A
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 22:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4405C64A;
+	Tue, 27 Aug 2024 22:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724798900; cv=none; b=RaUZ+19aY/M/OFWogSKq4vmq0kv7eqhYCkgtdRqsbfFGwsfQIEeEa9Htl6wI8sRqc2fPRA/3nsI8LwJirou3Gwiz3pOMTvDRS4rb7fUlzbLInS1jQGK4jqaXW8VJUK+4cnqv/G5/2mL/qIL+MyxkskaWKjO24gV6f6sBeHaUU7c=
+	t=1724798972; cv=none; b=tP7PnK77meL2lIDRAIFOT9BsrStG3HpNaUlKlWFYXHxZL57rWzkjN64fJbVQSQDqRyPF4AlUyWOZ5DOfRxPaYI/yqxQFzmYRt9U8vHOe4vATR52IH5kKON9f/LzgxGezZ0Yzg5Jy/+oGH6Zcqm2hv7UCncu9wzBeYAh82ffVYF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724798900; c=relaxed/simple;
-	bh=YVsPg1Uls31LjJoW/mvo+XDMvkOEypGxK8mPperORbs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WAMdv+9ZiHPCbywrsCZ/at57qeq4+ncRs3EmVM84ticrMR+F0cCJyf2FltAule/rUEVpEWWnZ7HSIDk0wkYM3nenLF21E+xRDohf458d53329WW2i8I9Cd61uARil1pHGqdcux5stZxDNsK7T0Ihhsw/VgmC1DR1qmHI81GLJX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VdKCj9jL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724798896;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SVWzv4d3wS++awPAHCsT183EQ2Vo8jOynbbMBJW0NUY=;
-	b=VdKCj9jLtt6t+0mArfENWFGYZG4J1JJ9AO7X7VHUsKhAQatunReflzpQ822m23e3KGliVL
-	KejDAouzlko4MNIenDjQb+NQxYUAQ8m0Q026DVWL+fSWNgDuej3TvgERwZZrYCSC5unGUT
-	iDcElz4CP7tViyV+I/GvqV7jNdgZaDo=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-673-M6HYJC8xM8-rvrkCJ4lelQ-1; Tue,
- 27 Aug 2024 18:48:13 -0400
-X-MC-Unique: M6HYJC8xM8-rvrkCJ4lelQ-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A89DC19560B0;
-	Tue, 27 Aug 2024 22:48:10 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.42])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4F1161955D8C;
-	Tue, 27 Aug 2024 22:48:07 +0000 (UTC)
-Date: Wed, 28 Aug 2024 06:48:03 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Will Deacon <will@kernel.org>
-Cc: k-hagio-ab@nec.com, lijiang@redhat.com,
-	Kuan-Ying Lee <kuan-ying.lee@canonical.com>,
-	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	kexec@lists.infradead.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	ardb@kernel.org
-Subject: Re: [PATCH] arm64/vmcore: Add pgtable_l5_enabled information in
- vmcoreinfo
-Message-ID: <Zs5Xo5eVUvGMbtSv@MiWiFi-R3L-srv>
-References: <20240826065219.305963-1-kuan-ying.lee@canonical.com>
- <20240827122459.GA4679@willie-the-truck>
+	s=arc-20240116; t=1724798972; c=relaxed/simple;
+	bh=ZCsx4XBxZszRLALGFHsW8Srd/rR17PluQWFhIcWOekQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oo1LpF9yrPwwTZAdq0/jSaUg7ljNjdSg7oWhxurtUM8BcVhVl2Z2MIt6zJcC9oPOWKYFOiv4V/Ib82ANNIIA4x3i8HpVmzr93akzvKPz9nh+DRc3UhSCZlEUoeZfUGXCxO7UzMOKvAmG6rwfQuqUaL5A9bWndOtJeAEDDXHSzp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c0t9UAo2; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20223b5c1c0so55271615ad.2;
+        Tue, 27 Aug 2024 15:49:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724798970; x=1725403770; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aDrZ+EjYF19PvJC+i6jehJt+sfVjodbjYXEq8nEjBfw=;
+        b=c0t9UAo2cwN5FprNQsyQH2oA2gIUy+2/WpT06Rlk7YvH9cVP7HPg573El7gO1hpaI+
+         JdoWm/0erFnKOSqWgoCXv7Au/Y9+Skge3T1kH4APrN4z1CANUlIMotHiGhI4fLH6nrEG
+         n41Fd2dGcm1iK5ZDgQtcabZR4Rkb67OTuIl8bZr73ldUo4kYtwPY0IbiL8ndWB+ACPqV
+         mOwBcr4qi1yf5eoQLpSgbk765Qwxpl1NcoHFI2V/TeLqscV+y6H+3wJQOhF+OvaupX72
+         V3hdb7BIO1BHS0O9Q0UsD0cfyxS7JeBosQZ82TrRNQQyLLGfqxibdPhY6KTPCbNB1GZA
+         1+JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724798970; x=1725403770;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aDrZ+EjYF19PvJC+i6jehJt+sfVjodbjYXEq8nEjBfw=;
+        b=FPrQ6m865Pb4M7s9YGckP4NSlB/MLHUFBIk6H5A+JCk+qnijq2VdxC+yNAByWqJOYu
+         iLjHQq/C/VQE/3hWoQXnGkm70/BX62HbU5Nk/jdlZaGT6SxOVq0uGsbLiyTpDp/x79ck
+         R0fP4Reo62TLkBXu7WWgt2zTFGqm4auM0Ms5cddzsSxlD2QoH/EyKF86Qzlll8hL1CyB
+         HndqFTQWRuEHUZ90dfvgWUXViXUoIet8f3yZpg2hwbS0U3M3bL7FPvE/KDIywwEOZRyx
+         kDUU8IIVhIacLrxSEnHk4SdOiIiYhCJCUel/zy76QKeRDpjCaRyWAiPV8sEvwiVRcXAq
+         uWlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgAdgd9A5G2RCJ8knp+4LhAJEO4K3z16sGJYv92qy/99bRrWC15yprqCciWbMXxrYvdVo/Pv0pRmmRYUxeTMlf@vger.kernel.org, AJvYcCWgBRi7vzDhp0891ilZqKSF0rhKfM7XBlH1RlvEiHVxz4Z23bUiWyVqxidYMY240+MpuxU=@vger.kernel.org, AJvYcCWgrUIRMbcLyowanmahlA4B+cIAoOVEE/BmcQjSynwoDlzWeO+Yquob1ufAMX4tsG5EnPkwtsMr5GxFjakg@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXAsVl3BQg0cib0yY5z9jO/jcyDLbH5+cgJMi3KXwhmIKW/Wup
+	uFafh5I+5PeVi8FHI6rcJkL34oSqKeJ6xKRnOuy1YD/z0ijPabmaUF5XqLI4Duns/6qSFbdPOcC
+	0WLfdTGJKNfxLWciQ7W8skjIsReE=
+X-Google-Smtp-Source: AGHT+IEwBtby9TuFKewToNcAgGmssYT1IQ4FwnBLenBDL+7cmMy1RtU0QYGENMASBUl5BodCYDZ7bMyL99TsSkTiM0A=
+X-Received: by 2002:a17:90b:4f8b:b0:2c9:e24d:bbaa with SMTP id
+ 98e67ed59e1d1-2d8441a247fmr197238a91.27.1724798970365; Tue, 27 Aug 2024
+ 15:49:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827122459.GA4679@willie-the-truck>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <20240827133959.1269178-1-yikai.lin@vivo.com> <20240827133959.1269178-3-yikai.lin@vivo.com>
+In-Reply-To: <20240827133959.1269178-3-yikai.lin@vivo.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 27 Aug 2024 15:49:18 -0700
+Message-ID: <CAEf4BzZXL9=pOkt=GbrYG2DpDGtXNLS7AHH5rL3adHd50zMKmQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v1 2/2] selftests/bpf: Fix cross-compile issue
+ for some files and a static compile issue for "-lzstd"
+To: Lin Yikai <yikai.lin@vivo.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
+	Nick Terrell <terrelln@fb.com>, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/27/24 at 01:24pm, Will Deacon wrote:
-> On Mon, Aug 26, 2024 at 02:52:02PM +0800, Kuan-Ying Lee wrote:
-> > Since arm64 supports 5-level page tables, we need to add this
-> > information to vmcoreinfo to make debug tools know if 5-level
-> > page table is enabled or not.
-> > 
-> > Missing this information will break the debug tool like crash [1].
-> > 
-> > [1] https://github.com/crash-utility/crash
-> > 
-> > Signed-off-by: Kuan-Ying Lee <kuan-ying.lee@canonical.com>
-> > ---
-> >  Documentation/admin-guide/kdump/vmcoreinfo.rst | 6 ++++++
-> >  arch/arm64/kernel/vmcore_info.c                | 3 +++
-> >  2 files changed, 9 insertions(+)
-> 
-> In which case, wouldn't you also want to know about pgtable_l4_enabled()?
+On Tue, Aug 27, 2024 at 6:40=E2=80=AFAM Lin Yikai <yikai.lin@vivo.com> wrot=
+e:
+>
+> 1. Fix cross-compile issue for some files:
+> [Issue]
+> When cross-compiling bpf selftests for arm64 on x86_64 host, the followin=
+g error occurs:
+> progs/loop2.c:20:7: error: incomplete definition of type 'struct user_pt_=
+regs'
+>    20 |                 if (PT_REGS_RC(ctx) & 1)
+>       |                     ^~~~~~~~~~~~~~~
+>
+> There are same error in files: loop1.c, loop2.c, loop3.c, loop6.c ???
+>
+> [Reason]
+> On arm64, in file bpf_tracing.h, we use userspace's user_pt_regs,
+> which is defined in "linux/ptrace.h".
+> We include the header file by adding "-idirafter /usr/include" for "CLANG=
+_CFLAGS".
+>
+> However, during cross-compiling, "linux/ptrace.h" is based on x86_64
+> and has no definition of "struct user_pt_regs".
+>
+> [Fix]
+> Thus, to fix this issue, we include the Linux source tree's header file d=
+irectory.
+>
 
-That is a good question. I guess it's deduced in code, mostly needed for
-different PAGE_OFFSET, how to transfer virtual addr to physical addr,
-etc.
+Hm.. Not sure that's the right fix. Note -D__TARGET_ARCH_$(SRCARCH) in
+BPF_CFLAGS, that __TARGET_ARCH has to match actual target
+architecture, so please check that first.
 
-Add Crash utility experts here.
+pw-bot: cr
 
+> 2. Fix static compile issue for "-lzstd":
+> [Issue]
+> By running the command "LDLIBS=3D-static LDFLAGS=3D--sysroot=3D/aarch64-l=
+inux-gnu/libc ./vmtest.sh -s -- ./test_progs",
+> during static cross-compiling, an error occurs:
+> /aarch64-linux-gnu/bin/ld: aarch64-linux-gnu/libc/usr/lib/libelf.a(elf_co=
+mpress.o): in function `__libelf_compress':
+> (.text+0xec): undefined reference to `ZSTD_createCCtx'
+> /aarch64-linux-gnu/bin/ld: (.text+0xf0): undefined reference to `ZSTD_cre=
+ateCCtx'
+> ...
+>
+> [Fix]
+> For static compile, add "LDLIBS +=3D -lzstd".
+
+we can probably just add it unconditionally, no? But please send it as
+a separate change in its own patch
+
+>
+> Signed-off-by: Lin Yikai <yikai.lin@vivo.com>
+> ---
+>  tools/testing/selftests/bpf/Makefile | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+>
+> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftes=
+ts/bpf/Makefile
+> index ec7d425c4022..5b725bc890d2 100644
+> --- a/tools/testing/selftests/bpf/Makefile
+> +++ b/tools/testing/selftests/bpf/Makefile
+> @@ -48,6 +48,10 @@ CFLAGS +=3D -g $(OPT_FLAGS) -rdynamic                 =
+                 \
+>  LDFLAGS +=3D $(SAN_LDFLAGS)
+>  LDLIBS +=3D $(LIBELF_LIBS) -lz -lrt -lpthread
+>
+> +ifneq (,$(findstring -static,$(LDLIBS)))
+> +LDLIBS +=3D -lzstd
+> +endif
+> +
+>  LDLIBS +=3D $(shell $(PKG_CONFIG) --libs libpcap 2>/dev/null)
+>  CFLAGS +=3D $(shell $(PKG_CONFIG) --cflags libpcap 2>/dev/null)
+>  CFLAGS +=3D $(shell $(PKG_CONFIG) --exists libpcap 2>/dev/null && echo "=
+-DTRAFFIC_MONITOR=3D1")
+> @@ -443,13 +447,19 @@ CLANG_TARGET_ARCH =3D --target=3D$(notdir $(CROSS_C=
+OMPILE:%-=3D%))
+>  endif
+>
+>  CLANG_SYS_INCLUDES =3D $(call get_sys_includes,$(CLANG),$(CLANG_TARGET_A=
+RCH))
+> +CLANG_CFLAGS =3D $(CLANG_SYS_INCLUDES)
+> +
+>  BPF_CFLAGS =3D -g -Wall -Werror -D__TARGET_ARCH_$(SRCARCH) $(MENDIAN)   =
+ \
+>              -I$(INCLUDE_DIR) -I$(CURDIR) -I$(APIDIR)                   \
+>              -I$(abspath $(OUTPUT)/../usr/include)                      \
+>              -Wno-compare-distinct-pointer-types
+>  # TODO: enable me -Wsign-compare
+>
+> -CLANG_CFLAGS =3D $(CLANG_SYS_INCLUDES)
+> +#"make headers_install" at first
+> +ifneq ($(CROSS_COMPILE),)
+> +src_uapi_dir :=3D $(srctree)/usr/include
+> +BPF_CFLAGS +=3D -I$(src_uapi_dir)
+> +endif
+>
+>  $(OUTPUT)/test_l4lb_noinline.o: BPF_CFLAGS +=3D -fno-inline
+>  $(OUTPUT)/test_xdp_noinline.o: BPF_CFLAGS +=3D -fno-inline
+> --
+> 2.34.1
+>
 
