@@ -1,59 +1,51 @@
-Return-Path: <linux-kernel+bounces-303662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E1B6961337
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:48:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7972496133A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:49:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0AFB1C22B68
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:48:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D70F1F22CDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0641C93AF;
-	Tue, 27 Aug 2024 15:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="eaheeqm4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B1B18030
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 15:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D881C9EAF;
+	Tue, 27 Aug 2024 15:48:57 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8521C7B71
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 15:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724773712; cv=none; b=YRfv294aLURBP8cGGuUWQK+bBp6aOBMOttNAg42vE6Bq+mETACRXf4BmyyUGz8jTV2X8kuMigmAX6G5XCL7bHqhilQavtX4S+vhxJYWMR0w313wTI0dFRGsWDWSPL1IwkfLwlU9J4A/pKskfku1wquK6uCHVZFHQETCEEYDXoyg=
+	t=1724773736; cv=none; b=oDWkktkYFkQA21OPEA0q0tJygAOGbpBY6W3ou//ebeWhpRi+pjZjyGhHoLX9cDriaNgJs9sB1MxHSHaEqJcFVcuR3oLW4cdPL1Hon4j2kta+NxTM+3qTDzQNa7lViZr7iGNdNkLpHfLKINtuD3SWOWAkwwr8bADtuVUf9QJs3aM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724773712; c=relaxed/simple;
-	bh=Vp0AZ+t6kr8pqTpizz6K99uV7tEk4ZOh+ZvuVD4rOKU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gwJ7x8Jku9lD+p4qeCyFweCPjOY0biQL9tBbob7ehRqc3ctIUZUm5DFoK/bnsfzV1Er/Fs7Ofx2KA7vtANW60zmpBt+r+CK1DRib7HsPYOZ43UUFDfus//Sr3DBA8adB03hWSJoqsHZ4mHzQ9FdqhF1b6yxxZ+9hiW06lnMRo8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=eaheeqm4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9D56C567F1;
-	Tue, 27 Aug 2024 15:48:31 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="eaheeqm4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1724773710;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1nhRiHmsP1t2/YPpWHGZbuqpWC7k4mUdfGGkxiGcHZ4=;
-	b=eaheeqm4Le+i/vktlEe4tws/hI09jrpwlKI5MWFgY5eW4Mq6ywtyInWnznSG2upZLZM7DF
-	vCVKlx7R/9wc5tbHbUWnw1UJqQy8IFkbBDMoNxw6hv09qMdVJn+dMplJRNv1xK4Vcszktd
-	42tRsNGppJ/G3ZVbDgvIZr/74Rbi7oE=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 313edcc7 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Tue, 27 Aug 2024 15:48:29 +0000 (UTC)
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Subject: [PATCH v2] random: vDSO: move prototype of arch chacha function to vdso/getrandom.h
-Date: Tue, 27 Aug 2024 17:47:54 +0200
-Message-ID: <20240827154822.3330270-1-Jason@zx2c4.com>
-In-Reply-To: <20240827151828.3326600-1-Jason@zx2c4.com>
-References: <20240827151828.3326600-1-Jason@zx2c4.com>
+	s=arc-20240116; t=1724773736; c=relaxed/simple;
+	bh=W3GtIf/q/dclmT9LP7pIWn9sc+dPZw1d2AHJQ2Ll774=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bm/IOmG8PzWto2hmZT0qlwIUrcSaKz4drTNKhuPK3b22YL3B3/gyrjQ7Om4yN362wnCTZwxcmDLGuOP5+Fp+Vmu+oYsOghAnAjrQhYY/SJLccFTEORnYQOiL3d3IrAJHIFDIu0lM/0L+ndxL/2TyUHMvLxrYUkaN3DhwL2TDiBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 26E13DA7;
+	Tue, 27 Aug 2024 08:49:20 -0700 (PDT)
+Received: from ionvoi01-desktop.cambridge.arm.com (ionvoi01-desktop.cambridge.arm.com [10.2.80.58])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6D65D3F762;
+	Tue, 27 Aug 2024 08:48:52 -0700 (PDT)
+From: Ionela Voinescu <ionela.voinescu@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	sudeep.holla@arm.com,
+	catalin.marinas@arm.com,
+	vincent.guittot@linaro.org,
+	beata.michalska@arm.com
+Cc: rafael@kernel.org,
+	viresh.kumar@linaro.org,
+	dietmar.eggemann@arm.com,
+	pierre.gondois@arm.com
+Subject: [PATCH] arch_topology: init capacity_freq_ref to 0
+Date: Tue, 27 Aug 2024 16:48:18 +0100
+Message-Id: <20240827154818.1195849-1-ionela.voinescu@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,108 +54,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Having the prototype for __arch_chacha20_blocks_nostack in
-arch/x86/include/asm/vdso/getrandom.h meant that the prototype and large
-doc comment were cloned by every architecture, which has been causing
-unnecessary churn. Instead move it into include/vdso/getrandom.h, where
-it can be shared by all archs implementing it.
+It's useful to have capacity_freq_ref initialized to 0 for users of
+arch_scale_freq_ref() to detect when capacity_freq_ref was not
+yet set.
 
-As a side bonus, this then lets us use that prototype in the
-vdso_test_chacha self test, to ensure that it matches the source, and
-indeed doing so turned up some inconsistencies, which are rectified
-here.
+The only scenario affected by this change in the init value is when a
+cpufreq driver is never loaded. As a result, the only setter of a
+cpu scale factor remains the call of topology_normalize_cpu_scale()
+from parse_dt_topology(). There we cannot use the value 0 of
+capacity_freq_ref so we have to compensate for its uninitialized state.
 
-Suggested-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+Signed-off-by: Ionela Voinescu <ionela.voinescu@arm.com>
+Signed-off-by: Beata Michalska <beata.michalska@arm.com>
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- arch/x86/include/asm/vdso/getrandom.h           | 13 -------------
- include/vdso/getrandom.h                        | 13 +++++++++++++
- tools/testing/selftests/vDSO/vdso_test_chacha.c | 10 +++++++---
- 3 files changed, 20 insertions(+), 16 deletions(-)
 
-diff --git a/arch/x86/include/asm/vdso/getrandom.h b/arch/x86/include/asm/vdso/getrandom.h
-index b96e674cafde..ff5334ad32a0 100644
---- a/arch/x86/include/asm/vdso/getrandom.h
-+++ b/arch/x86/include/asm/vdso/getrandom.h
-@@ -37,19 +37,6 @@ static __always_inline const struct vdso_rng_data *__arch_get_vdso_rng_data(void
- 	return &__vdso_rng_data;
- }
+Hi,
+
+This patch was previously part of the patch-set at [1], but we thought
+it's best to separate the standalone patches in that set to make
+further review easier on the remaining topics.
+
+Based on v6.11-rc5 and tested on Juno with and without a cpufreq driver.
+
+[1] https://lore.kernel.org/lkml/20240603082154.3830591-2-beata.michalska@arm.com/
+
+Thanks,
+Ionela.
+
+ drivers/base/arch_topology.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+index 75fcb75d5515..c49ef1a712f4 100644
+--- a/drivers/base/arch_topology.c
++++ b/drivers/base/arch_topology.c
+@@ -28,7 +28,7 @@
+ static DEFINE_PER_CPU(struct scale_freq_data __rcu *, sft_data);
+ static struct cpumask scale_freq_counters_mask;
+ static bool scale_freq_invariant;
+-DEFINE_PER_CPU(unsigned long, capacity_freq_ref) = 1;
++DEFINE_PER_CPU(unsigned long, capacity_freq_ref) = 0;
+ EXPORT_PER_CPU_SYMBOL_GPL(capacity_freq_ref);
  
--/**
-- * __arch_chacha20_blocks_nostack - Generate ChaCha20 stream without using the stack.
-- * @dst_bytes:	Destination buffer to hold @nblocks * 64 bytes of output.
-- * @key:	32-byte input key.
-- * @counter:	8-byte counter, read on input and updated on return.
-- * @nblocks:	Number of blocks to generate.
-- *
-- * Generates a given positive number of blocks of ChaCha20 output with nonce=0, and does not write
-- * to any stack or memory outside of the parameters passed to it, in order to mitigate stack data
-- * leaking into forked child processes.
-- */
--extern void __arch_chacha20_blocks_nostack(u8 *dst_bytes, const u32 *key, u32 *counter, size_t nblocks);
--
- #endif /* !__ASSEMBLY__ */
+ static bool supports_scale_freq_counters(const struct cpumask *cpus)
+@@ -293,13 +293,15 @@ void topology_normalize_cpu_scale(void)
  
- #endif /* __ASM_VDSO_GETRANDOM_H */
-diff --git a/include/vdso/getrandom.h b/include/vdso/getrandom.h
-index a8b7c14b0ae0..4cf02e678f5e 100644
---- a/include/vdso/getrandom.h
-+++ b/include/vdso/getrandom.h
-@@ -43,4 +43,17 @@ struct vgetrandom_state {
- 	bool 			in_use;
- };
+ 	capacity_scale = 1;
+ 	for_each_possible_cpu(cpu) {
+-		capacity = raw_capacity[cpu] * per_cpu(capacity_freq_ref, cpu);
++		capacity = raw_capacity[cpu] *
++			   (per_cpu(capacity_freq_ref, cpu) ?: 1);
+ 		capacity_scale = max(capacity, capacity_scale);
+ 	}
  
-+/**
-+ * __arch_chacha20_blocks_nostack - Generate ChaCha20 stream without using the stack.
-+ * @dst_bytes:	Destination buffer to hold @nblocks * 64 bytes of output.
-+ * @key:	32-byte input key.
-+ * @counter:	8-byte counter, read on input and updated on return.
-+ * @nblocks:	Number of blocks to generate.
-+ *
-+ * Generates a given positive number of blocks of ChaCha20 output with nonce=0, and does not write
-+ * to any stack or memory outside of the parameters passed to it, in order to mitigate stack data
-+ * leaking into forked child processes.
-+ */
-+extern void __arch_chacha20_blocks_nostack(u8 *dst_bytes, const u32 *key, u32 *counter, size_t nblocks);
-+
- #endif /* _VDSO_GETRANDOM_H */
-diff --git a/tools/testing/selftests/vDSO/vdso_test_chacha.c b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-index e38f44e5f803..ca5639d02969 100644
---- a/tools/testing/selftests/vDSO/vdso_test_chacha.c
-+++ b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-@@ -7,16 +7,20 @@
- #include <sys/random.h>
- #include <string.h>
- #include <stdint.h>
-+#include <stdbool.h>
- #include "../kselftest.h"
- 
--extern void __arch_chacha20_blocks_nostack(uint8_t *dst_bytes, const uint8_t *key, uint32_t *counter, size_t nblocks);
-+typedef uint8_t u8;
-+typedef uint32_t u32;
-+typedef uint64_t u64;
-+#include <vdso/getrandom.h>
- 
- int main(int argc, char *argv[])
- {
- 	enum { TRIALS = 1000, BLOCKS = 128, BLOCK_SIZE = 64 };
- 	static const uint8_t nonce[8] = { 0 };
- 	uint32_t counter[2];
--	uint8_t key[32];
-+	uint32_t key[8];
- 	uint8_t output1[BLOCK_SIZE * BLOCKS], output2[BLOCK_SIZE * BLOCKS];
- 
- 	ksft_print_header();
-@@ -27,7 +31,7 @@ int main(int argc, char *argv[])
- 			printf("getrandom() failed!\n");
- 			return KSFT_SKIP;
- 		}
--		crypto_stream_chacha20(output1, sizeof(output1), nonce, key);
-+		crypto_stream_chacha20(output1, sizeof(output1), nonce, (uint8_t *)key);
- 		for (unsigned int split = 0; split < BLOCKS; ++split) {
- 			memset(output2, 'X', sizeof(output2));
- 			memset(counter, 0, sizeof(counter));
+ 	pr_debug("cpu_capacity: capacity_scale=%llu\n", capacity_scale);
+ 	for_each_possible_cpu(cpu) {
+-		capacity = raw_capacity[cpu] * per_cpu(capacity_freq_ref, cpu);
++		capacity = raw_capacity[cpu] *
++			   (per_cpu(capacity_freq_ref, cpu) ?: 1);
+ 		capacity = div64_u64(capacity << SCHED_CAPACITY_SHIFT,
+ 			capacity_scale);
+ 		topology_set_cpu_scale(cpu, capacity);
 -- 
-2.46.0
+2.25.1
 
 
