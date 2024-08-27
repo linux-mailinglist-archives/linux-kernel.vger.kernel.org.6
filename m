@@ -1,228 +1,188 @@
-Return-Path: <linux-kernel+bounces-303750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A2699614B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:55:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C619961393
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:04:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB8DE1F25AFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:55:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 838C91F2219D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16B91CF296;
-	Tue, 27 Aug 2024 16:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510E51CCB34;
+	Tue, 27 Aug 2024 16:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="Gg0d7dp1"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11020112.outbound.protection.outlook.com [52.101.193.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Iyrynehh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292011C27;
-	Tue, 27 Aug 2024 16:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724777654; cv=fail; b=gT6k6/xrzAfj/Qa1fb/8e+WPdnqtNjc7wMgc4P7QSHAJNHAkGMx/wGlLxanyJpn1NkwkYvdyUuNcPXyqasnpZDHlZ29hyOaLn1KZawBdBfDKR0KnGx4GH7FQ2joEisKameFZ+09LoCtPlKjtwRTvtBOT+yToGSBXYLeDT2U/i4M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724777654; c=relaxed/simple;
-	bh=6Lq/o/1B3btATZSO50VBzDR0DYzEWf7kTAYc6D+1w6I=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 Content-Type:MIME-Version; b=rOtHRvcpCWXhrS0zP+/N7tel0fgj+cCvgitTgRmGFf47/wbAENCrwiB8OAVGmwRDsW1J8akKTARq1jQp+GODFuX9TywYazBloO91UJJQH2J3bv/5WnEaLFbYpC/PWdeKA4mN26IiRuFsSOhFPGAxns/vE0yn/8QSoQHCv0r1v/I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=Gg0d7dp1; arc=fail smtp.client-ip=52.101.193.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZkGNO4xNGchfLUYIbsz55bAksWekfVy6c2ngc8tOm9P6KIwAem4z6XRFpZE2Gz+oKLurIsjIu9vS6BfbW8FOsIPh8GF/nl8U4pl6eaXPMb9vdGYNNlJFDXfQsPw+sjIeMhjbXyaGKAKnQbFHtmotUrBmJ6yVChOnMo8cAy6PD9H77npS1ppVueynuW1wU4VDi1S/q9HRJunCY1ag7yOGRqcU/znwgbf+5KiliNW65gqWi/r9N4jZpPs9zsu4CE8XL8TTOQNmhxWWPDBv64b2CJIqRk9j00rJVag8EWxNYnk3KKKQHOeN8uf6TvL/+GmpF5sAASBBzjZIWm0hXs4AnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BTJJooAIsiNvWaH3T7kLHuPL2VURzAcZzdTI50pUV4U=;
- b=P41GoMUVN5iUBDRc1nuLJospEDhgu/Ks+hYtOwIsXK1guGfxkFVPYzxA3siHppksNnYXry/hqmBMw2i4QfaRE/4kvtPNCMjyoK0GFfISIYiA1Ryxy1IRl+DkafuPnwAgbS33U97/s0cj/IqkXjRbJEjqiTtS8sgZXN3FvuEMBDSyEw8n6Bf9/3Y7nFCIP4hlLqPh8wyehn6unXGq2HKsSwIfJYaR90sa3u9uUcxTOxeKsXWx87jboPa8bvnobXCr0c/grv7XlFK92uewIyMb8MaobihemUbLR+/wHD/xwtY/YeFFqSnW+gRiTjL6soQfQMOjkIVGSzEDwtWyQAJmpQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BTJJooAIsiNvWaH3T7kLHuPL2VURzAcZzdTI50pUV4U=;
- b=Gg0d7dp1wjG097yM+JfXgfj7n7UhzgcTkFF4gLlVjg0KzWc96lVjxIaLm7g5BNtan4YIqi9hCqR+FuDGN9gDqY9E4r2pofSl8cSoNlUhkLHmEIXkrfkNPvopBftJIK3eKiB50VhFYSGwB1O/9qRA5YP1LNaRiq6/GU/mEoA2LSE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from LV2PR01MB7792.prod.exchangelabs.com (2603:10b6:408:14f::10) by
- SA1PR01MB8325.prod.exchangelabs.com (2603:10b6:806:387::19) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7897.26; Tue, 27 Aug 2024 16:54:10 +0000
-Received: from LV2PR01MB7792.prod.exchangelabs.com
- ([fe80::2349:ebe6:2948:adb9]) by LV2PR01MB7792.prod.exchangelabs.com
- ([fe80::2349:ebe6:2948:adb9%6]) with mapi id 15.20.7897.021; Tue, 27 Aug 2024
- 16:54:09 +0000
-From: D Scott Phillips <scott@os.amperecomputing.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>, Oliver Upton
- <oliver.upton@linux.dev>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
- <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Mark Rutland
- <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org,
- linux-doc@vger.kernel.org, Besar Wicaksono <bwicaksono@nvidia.com>, Easwar
- Hariharan <eahariha@linux.microsoft.com>, Rob Herring <robh@kernel.org>,
- Andre Przywara <andre.przywara@arm.com>, linux-kernel@vger.kernel.org,
- patches@amperecomputing.com, Marc Zyngier <maz@kernel.org>,
- kvmarm@lists.linux.dev, James Morse <james.morse@arm.com>, Suzuki K
- Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>
-Subject: Re: [PATCH] arm64: errata: Enable the AC03_CPU_38 workaround for
- ampere1a
-In-Reply-To: <314b8893-2ffd-4148-974b-725cfaa97d18@arm.com>
-References: <20240826215933.1263453-1-scott@os.amperecomputing.com>
- <Zs0OelXKn_-6jtqN@linux.dev>
- <314b8893-2ffd-4148-974b-725cfaa97d18@arm.com>
-Date: Tue, 27 Aug 2024 09:02:58 -0700
-Message-ID: <86zfoy2bt9.fsf@scott-ph-mail.amperecomputing.com>
-Content-Type: text/plain
-X-ClientProxiedBy: MW4PR04CA0316.namprd04.prod.outlook.com
- (2603:10b6:303:82::21) To LV2PR01MB7792.prod.exchangelabs.com
- (2603:10b6:408:14f::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB581C6F79;
+	Tue, 27 Aug 2024 16:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724774645; cv=none; b=XKySBrwl/prbNkwibhWtORRHcZ6F50pEQK490zmkZG34dp28REUDmgG2SYvTinId6jt0molW/NipfeAA1wdGExDBhIy2QNuivBA0kOWyhJIgTuP/Iw7wk4CXOwDoR/u2x3YrkbGake6xnJ4vFNurWaVRQvR8jaaH62SAI+H3z80=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724774645; c=relaxed/simple;
+	bh=ao0RX5ro/6ez3vKUPCpFiFkR1VW7QTBa5WWL6WRZhY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F7/ZSrL9IqiNxZYJ/6DOC25s2jtHGlG91uNXNKjo4vqWRzE3xil+WOvnPgHLyBXd6wghPLWwos1pCYpjvRhssQDcBmFYC0XaDnOF0iHbZXEb+Rs9vQDCt9En1gIIQITT1Grucd1X2fePXVxzIbNy6a42lEKDH+Nxb2Jbv55GbgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Iyrynehh; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724774644; x=1756310644;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ao0RX5ro/6ez3vKUPCpFiFkR1VW7QTBa5WWL6WRZhY8=;
+  b=IyrynehhF4iOHzd+aSPbBRfBpQp/oVRfzYQTGP6EaRhnkt/mKBA8ZqpU
+   FtqIfxjCntCzaFEU2nOfYUSwAETJzzs/F7hVjvQDLmbc1CF2GxP1adVkH
+   Mh9Yn6O8gDcoR0X//mLJuLKdUItw3DIpMJ5R3wFuJpzF6eI3Ls6L25nde
+   qKbi+DZ3MADji0e3Gnkluz0Un+Aemrye31/APKyG4UuglIjkaajxfmsPg
+   5uehnnmEkex5HjqP4rd5ejno2zmU5Bu4+Mv+F1ALT99T8FSgQkqI46Han
+   52aZ+8LWehC3Wfm7iNJLrF6a0qmWC5D5nX8+pJFCJ5lkJcwARdM5quWsw
+   w==;
+X-CSE-ConnectionGUID: gu6LCfjBRcKvRrdvdhW8+A==
+X-CSE-MsgGUID: qRdXlZpFTeSCGI023EIvtw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="40736293"
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="40736293"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 09:04:03 -0700
+X-CSE-ConnectionGUID: tzVhxsI0SNCeFoPEq+h/sw==
+X-CSE-MsgGUID: QS6uijy3TGulNDeXCOoRGg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="93634623"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 27 Aug 2024 09:03:59 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1siyfj-000Jny-1n;
+	Tue, 27 Aug 2024 16:03:55 +0000
+Date: Wed, 28 Aug 2024 00:03:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: Shakeel Butt <shakeel.butt@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	David Rientjes <rientjes@google.com>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v1] memcg: add charging of already allocated slab objects
+Message-ID: <202408272341.k4cl3jz0-lkp@intel.com>
+References: <20240826232908.4076417-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR01MB7792:EE_|SA1PR01MB8325:EE_
-X-MS-Office365-Filtering-Correlation-Id: ff0287ab-6cef-44c5-b067-08dcc6b8dea9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|7416014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?x2k4kDNo2U7mblMIoYA9imQhx7jCzvdHvmS7zUX9fYaQWdQHrVeTM+4wn5LZ?=
- =?us-ascii?Q?A2wBd0Z4HT3G0qU9vOZnA7fhWJK5BRD31cSCFtgsCyIJZfeTpt5Dcp4gDmwD?=
- =?us-ascii?Q?ZBeW7edRZw5fd12Ga0wNxfuxUlvLIZVtIQ3sgFA3RTCF3l8kT00Kswpn5Jaf?=
- =?us-ascii?Q?xk3zw8yycoYCiNF5ERsIOSawMMTvXEsIG1rL0guqC0hw+apgkyblQ5xEcgCZ?=
- =?us-ascii?Q?AgSmD7CGZpIM6towJzj0/zCI/HwFStGIyHK19A0GiHzv02ShwBmPPwpcWvXB?=
- =?us-ascii?Q?ZzaljU+RaGbxN+1MXp46a7gOQKhHFO78Bu3Mn8zUK2h5ZR1oA8OOVEMZLLoY?=
- =?us-ascii?Q?OwHZt05PaDdKQ6GrrfCkVC8q5zEPE3Yi//07FO0ANExuQ5/jHgHVCsxc6KO3?=
- =?us-ascii?Q?pJsdz9kS1QaOTog2rY+r5Omi2+f7TeY53RiNziRV0pi8GZP6P1bXlbrO/wBm?=
- =?us-ascii?Q?uf30TOjtZXPCMo2zNkrjlwPJ/O7CveK0efHg5Awk3HddOukbxBzA8MOjIOlU?=
- =?us-ascii?Q?vcEi/x+S/lk7QR96DwhacPiS6b7EmbDRJoIAaoVpxIM8YNBvl1GFQymSkjzT?=
- =?us-ascii?Q?/aYwQYWJPTa6vxcETIJiLZGkVEZRnzRrZoyMHP5WaezYTbYuV0rMAWnb0yMv?=
- =?us-ascii?Q?nEk7VPA4Wz1o2d17KsdytzUlapsejF4wexMbixxF0qlrN54dFYkaqqCMbfhU?=
- =?us-ascii?Q?VD+gB5JKMR+tGQckRo32wZikz5av2ttUFGbqj2XphiWUuIAKpU13VtDFc/+D?=
- =?us-ascii?Q?OTzhNvf1CnH/gjmMqaIMsJ+nCmhQMC2z6Ci1hVg4s55DRW7FA3i3ZrYDXWJI?=
- =?us-ascii?Q?FOwBGn0bdoHSXLbbt2fU0vbM9E+oXXrRfoffcd6MkD0o5Z0bEg6wl6EiClkt?=
- =?us-ascii?Q?fQQpgSAaes1zLU/XlSQHvT1DNrbnlqLiR2u6wPpY2wQSchD7Wnb6bFtDr3Tc?=
- =?us-ascii?Q?wu26K9v8QjRLGV1ajoZRC0POV8C3tie3b9lHwGgkul3lzt2bFO/NcB5Din7Q?=
- =?us-ascii?Q?fZBWy4ALahHjavvB/eZ7kFA+LNxYjKx4fuy57lFehsUnnUv7cl60u+RkVQ08?=
- =?us-ascii?Q?0fgaxSvHz6ohRJED2dSw7bOCYbbebyIc04Mc0ouAr1bU3ErcneQQtAROrXRO?=
- =?us-ascii?Q?7zTxXMOEeY7EEeinlifE9hR8/SW7owyRZdSde+ueUyetWL7hlymMnxPwvjYV?=
- =?us-ascii?Q?MYZjelIr5PpVMTQylaFg0mLmTwoGh/+tr/L44MDF9LLGgrRmyVHd8jUbzTsW?=
- =?us-ascii?Q?RrBX9DQhVhMXSC90sIw0S7JsBCQsRqRG6e7xRAKgzcvSP7kURAvTtMOV5A9n?=
- =?us-ascii?Q?WcyKrp3OdN9Fxsy5ZG0QOe+Yy5af0wKou/ai5RYnQka++HSvTOMklyWPCUDU?=
- =?us-ascii?Q?l4MG8AqNkBWMvQN+iki62j3jOKp+TfIf1J5ZnVsd+z8YcVd9NQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR01MB7792.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?n1gl3o0S4YEXVCzxfn2vwGfB4mrV58QQGsfbSb2BZTFOrJJBZMSUvfkW+fpm?=
- =?us-ascii?Q?u4hQocE4U1Qom4uYFSGhFVYwzms6XeQeYzFH+b3rCqnGjPrhj8WfluW7qWml?=
- =?us-ascii?Q?Bd+39qmAMKrDAndpW89m9LUjnY2LCqmDUO14aVIzh7QiNxIm6oHGkgeRGr98?=
- =?us-ascii?Q?jeF/dVVNdqGx/veF1UpN/D+QD7+1bGJb5+KW+gWEFwSXjW2bwEhKtu20bcGj?=
- =?us-ascii?Q?HLbAGvhI081soar7x2w/0OYMn8724zUrcA3Vf9zUVq0priSqLd9Oxukn6U7u?=
- =?us-ascii?Q?QjFnVKERl+qreIsz7QJvjiFsJ4MM7cA4F99nc9QNPnn+NwcwGoAvyTtGfXTT?=
- =?us-ascii?Q?6D0Sss9LkrBEKBPJFcWAlY7XDhSwwk2W5LYUFCFb2fUNXLCLL/aWua8K1vtP?=
- =?us-ascii?Q?jIv79pRmgdH9PTVbFfxIURrJMm5HuSavFNiFtPAxzNbqX3ZL23sU81qSMFvB?=
- =?us-ascii?Q?rMXjagwmY/2gWrMkfhI6BMmcN0E/eCU5tsgvY2U7lsIOTVY7stbl4tGDmqcD?=
- =?us-ascii?Q?WhRJ7QAI+bskBJtVJzDRiok84gwMgCYeuImuTFfO7q193+z8X6biZcygCu4c?=
- =?us-ascii?Q?GJKl5+edkQgOlQiSZKuk7huppA2qTATZPUD+MmyrbSO6mZHMKVyiVuFXnxQd?=
- =?us-ascii?Q?vzhndlJRTq/SzSjFRBVuvNjeZKpATFFXdMnfQz9Gce4gS4qRFwkMfucHiDuW?=
- =?us-ascii?Q?1q3eoAwKGri+EyYZcEu7w9tfrdgNRrBRmB3avHD5yYjYa+kreKNKXWYPXUc+?=
- =?us-ascii?Q?bBxh0ncQFcQW532ywwtolhOzjdaJTXj+ZJXx//lc9hwwTjAsiNQmNY6k4qt4?=
- =?us-ascii?Q?j2t8AheqsxWTe/tPbDoWCOx64H9UfCdlY2ujbktLnzuCOlm7P1a+MItwuoKe?=
- =?us-ascii?Q?nxPPmsoYnoviX4FAzb8z5zMsiofhUI2epSQyQX8w6fLB2CUyfmNkGnUHCNq3?=
- =?us-ascii?Q?9WAwMILmJ5B+L60p4nedRyzkQeezZx7TosOch48CMcVtE/g3IZRT52V1n2Il?=
- =?us-ascii?Q?lTJoPRp0p5lRmHs3Vx58kBOkD68VrhW5ETCwbjgdUx4mgmS9wt9tqkqh1rrx?=
- =?us-ascii?Q?wDb9sk/2p8q+THF3kVLK/HzZRjCD+2DcIbwW6L5jAtt0L+43cukUDp1Do1hk?=
- =?us-ascii?Q?kBTjfXJaX84ffkF/fUlZKgmSousmTY3/WgBRPhm1FMqKtF8o5QgJvMzZLMCB?=
- =?us-ascii?Q?Xb2zdI55WEPEwOgBHRck9nw6s4CoR4bC5Az/ZL/0GJ0+fxexG+mxFo1FZ0NM?=
- =?us-ascii?Q?0CAfaJRjH+fofbTNkFciQ1MOpx/czue4KUJWtFhH8a1DAZaMdVFD0FdYNoUe?=
- =?us-ascii?Q?GAMuaydFsdZ+ce4RTp6gBWqxrwk2Wk6ML7Q64uTKCq56fS/MlhtCz3CrrEZp?=
- =?us-ascii?Q?YFLtesY3W+9ywqbSE45wy8Q/v3JazoY9w9GMoYikFH17SPoB4kIsoS5/sFrY?=
- =?us-ascii?Q?fcI1xFszewzqE3oOLpqciIviIw1WTs/WY2yqHTiaGNwXDIXUg5kbEVy3cEOx?=
- =?us-ascii?Q?MbuevgIBI8j9pzeLm3rwUoNkbYGQ0TkW7vviiJDG+DanwR9dfDVg0DWB43+s?=
- =?us-ascii?Q?+ABhLDAeQsOuAarer/c9tO0XDs5hOYF375r0pQfvZ3afYd8n3GZwmA7jHteu?=
- =?us-ascii?Q?udVD75es+REX5d+2xMqAapg=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff0287ab-6cef-44c5-b067-08dcc6b8dea9
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR01MB7792.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 16:54:09.6002
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: w+fU+ovy49WIaEbBAoBxu9uHw8Sa9UYxBpM5hB4aa2BQOZ8mohjc1AUnW1eh7i3NmWmxjF4/L9G3wA8APCADSkg9VQ5KGC7q7V/0OR01jonyuJA+As+BKVppXx/nsmMC
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR01MB8325
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826232908.4076417-1-shakeel.butt@linux.dev>
 
-Anshuman Khandual <anshuman.khandual@arm.com> writes:
+Hi Shakeel,
 
-> On 8/27/24 04:53, Oliver Upton wrote:
->> Hi D Scott,
->> 
->> On Mon, Aug 26, 2024 at 02:59:33PM -0700, D Scott Phillips wrote:
->>> The ampere1a cpu is affected by erratum AC04_CPU_10 which is the same
->>> bug as AC03_CPU38. Add ampere1a to the AC03_CPU_38 workaround midr list.
->>>
->>> Signed-off-by: D Scott Phillips <scott@os.amperecomputing.com>
->>> ---
->>>  Documentation/arch/arm64/silicon-errata.rst | 2 ++
->>>  arch/arm64/Kconfig                          | 2 +-
->>>  arch/arm64/include/asm/cputype.h            | 2 ++
->>>  arch/arm64/kernel/cpu_errata.c              | 1 +
->>>  4 files changed, 6 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/Documentation/arch/arm64/silicon-errata.rst b/Documentation/arch/arm64/silicon-errata.rst
->>> index 50327c05be8d1..39c52385f11fb 100644
->>> --- a/Documentation/arch/arm64/silicon-errata.rst
->>> +++ b/Documentation/arch/arm64/silicon-errata.rst
->>> @@ -55,6 +55,8 @@ stable kernels.
->>>  +----------------+-----------------+-----------------+-----------------------------+
->>>  | Ampere         | AmpereOne       | AC03_CPU_38     | AMPERE_ERRATUM_AC03_CPU_38  |
->>>  +----------------+-----------------+-----------------+-----------------------------+
->>> +| Ampere         | AmpereOne AC04  | AC04_CPU_10     | AMPERE_ERRATUM_AC03_CPU_38  |
->>> ++----------------+-----------------+-----------------+-----------------------------+
->> 
->> We tend to stick the marketing term for a part in the second column so
->> it is more recognizable for the user. Is this a placeholder for something
->> different from "ampere1a"?
->
-> Agreed, even the MIDR being added here is for AMPERE1A. Probably something
-> like 'AmpereOneA' might be more suitable.
+kernel test robot noticed the following build errors:
 
-"AmpereOne AC04" was given to me by our marketing department, so that
-should be the user visible name of the part when they buy/use
-it. ampere1a is the name of the core in the SoC and the thing you can
-use in gcc's --mtune=, similar to "neoverse-n1" within "Ampere Altra".
+[auto build test ERROR on akpm-mm/mm-everything]
+[also build test ERROR on linus/master v6.11-rc5 next-20240827]
+[cannot apply to vbabka-slab/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->> 
->>> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
->>> index f6b6b45073571..748aa536446ae 100644
->>> --- a/arch/arm64/kernel/cpu_errata.c
->>> +++ b/arch/arm64/kernel/cpu_errata.c
->>> @@ -773,6 +773,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
->>>  		.desc = "AmpereOne erratum AC03_CPU_38",
->>>  		.capability = ARM64_WORKAROUND_AMPERE_AC03_CPU_38,
->>>  		ERRATA_MIDR_ALL_VERSIONS(MIDR_AMPERE1),
->>> +		ERRATA_MIDR_ALL_VERSIONS(MIDR_AMPERE1A),
->> 
->> This will break the workaround on AC03, since the second macro reassigns
->> ::midr_range.
->> 
->> You'll want to use ERRATA_MIDR_RANGE_LIST() instead w/ an array of
->> affected MIDRs.
->> 
->
-> +1
->
-> Although ERRATA_MIDR_RANGE_LIST() in turn creates such a list.
+url:    https://github.com/intel-lab-lkp/linux/commits/Shakeel-Butt/memcg-add-charging-of-already-allocated-slab-objects/20240827-073150
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20240826232908.4076417-1-shakeel.butt%40linux.dev
+patch subject: [PATCH v1] memcg: add charging of already allocated slab objects
+config: s390-allnoconfig (https://download.01.org/0day-ci/archive/20240827/202408272341.k4cl3jz0-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 08e5a1de8227512d4774a534b91cb2353cef6284)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408272341.k4cl3jz0-lkp@intel.com/reproduce)
 
-Oops, my mistake. I'll fix this.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408272341.k4cl3jz0-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from mm/slub.c:13:
+   In file included from include/linux/mm.h:2198:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from mm/slub.c:49:
+   In file included from mm/internal.h:13:
+   include/linux/mm_inline.h:47:41: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+      47 |         __mod_lruvec_state(lruvec, NR_LRU_BASE + lru, nr_pages);
+         |                                    ~~~~~~~~~~~ ^ ~~~
+   include/linux/mm_inline.h:49:22: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+      49 |                                 NR_ZONE_LRU_BASE + lru, nr_pages);
+         |                                 ~~~~~~~~~~~~~~~~ ^ ~~~
+>> mm/slub.c:4115:31: error: no member named 'objcg' in 'struct slabobj_ext'
+    4115 |                 if (unlikely(slab_exts[off].objcg))
+         |                              ~~~~~~~~~~~~~~ ^
+   include/linux/compiler.h:77:42: note: expanded from macro 'unlikely'
+      77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
+         |                                             ^
+   3 warnings and 1 error generated.
+
+
+vim +4115 mm/slub.c
+
+  4085	
+  4086	#define KMALLOC_TYPE (SLAB_KMALLOC | SLAB_CACHE_DMA | \
+  4087			      SLAB_ACCOUNT | SLAB_RECLAIM_ACCOUNT)
+  4088	
+  4089	bool kmem_cache_charge(void *objp, gfp_t gfpflags)
+  4090	{
+  4091		struct slabobj_ext *slab_exts;
+  4092		struct kmem_cache *s;
+  4093		struct folio *folio;
+  4094		struct slab *slab;
+  4095		unsigned long off;
+  4096	
+  4097		if (!memcg_kmem_online())
+  4098			return true;
+  4099	
+  4100		folio = virt_to_folio(objp);
+  4101		if (unlikely(!folio_test_slab(folio)))
+  4102			return false;
+  4103	
+  4104		slab = folio_slab(folio);
+  4105		s = slab->slab_cache;
+  4106	
+  4107		/* Ignore KMALLOC_NORMAL cache to avoid circular dependency. */
+  4108		if ((s->flags & KMALLOC_TYPE) == SLAB_KMALLOC)
+  4109			return true;
+  4110	
+  4111		/* Ignore already charged objects. */
+  4112		slab_exts = slab_obj_exts(slab);
+  4113		if (slab_exts) {
+  4114			off = obj_to_index(s, slab, objp);
+> 4115			if (unlikely(slab_exts[off].objcg))
+  4116				return true;
+  4117		}
+  4118	
+  4119		return memcg_slab_post_charge(s, objp, gfpflags);
+  4120	}
+  4121	EXPORT_SYMBOL(kmem_cache_charge);
+  4122	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
