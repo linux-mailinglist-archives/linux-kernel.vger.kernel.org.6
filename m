@@ -1,45 +1,46 @@
-Return-Path: <linux-kernel+bounces-303703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C7B59613F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:25:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 178FF9613FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:26:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4BB3B223E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:25:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1E5A1F24511
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8A81CEAB9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A161CF296;
 	Tue, 27 Aug 2024 16:25:34 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25491C0DF9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F5B1CDA37;
 	Tue, 27 Aug 2024 16:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724775933; cv=none; b=O0UNsaod1dLyilnkLJN/g1JJckGB/3ib+7HivOcst1fZOQt7pojntKm05PG0suUAvEMYdS9ieRQuG8Cua4nWliZEVZu0FjgQu0GFNFcHgU3LOXRr0FADapZ+y2iE0joUXgpDzEjskdAnRooiszXd3jh5zaJ12jMAiNb7A81KVf0=
+	t=1724775934; cv=none; b=OZC53FohbNBMEUwRJRbmJVWt6tD0si6TgjFCuNCtxajqcs/5ZMZiA0mMuseMLwSJ3g/mpQYnycqlYuhIh0BPPeyHEcjaFeqEgIz5uvJSBz+W2RQjBds20AfBmL2/+gMpkaYtVAum2jJCUE16mcih4oy4DNzbaaePD1pRjf4fgAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724775933; c=relaxed/simple;
-	bh=4r4Mk9LVUABbaIqQckC5tl/SAoGXpVjIK37Vb+Tyvys=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=duRIRQQOTlJEOVLJdzzQ8/e0OrUTZJCO/DODDkQ6sr7MOwFfWQJhRNrCc1LVZvaPW27yAGXakpmHzxtUkYlCSpmq/Xfs68AMW3hJMJYTXJHd/uT5gTQJMdY+xSDSVTS99evn61BymprPddHqagBBOama5yPabemV1EgnO03cnVk=
+	s=arc-20240116; t=1724775934; c=relaxed/simple;
+	bh=pp5seK9cFETth4Q3mhHoLrCJJb991K9mLFMTyHePyZ8=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=B2uHzqHiaHIFKyAQnm5d+5cEbYoIGOcETT8oVoL+aB2APy4UMhCuUPRjSZbjrWSunfDWMJlUhCkeg8eycc19qHlwSy13UQqqIpg2atSv9KGcLSeQhAzhGMREvAvfKWoi/G5k0YtjYrq8d3nny3i/08ZNTsPP9hxEhkV3t2aihaY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C8C7C8B7C3;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89726C8B7C5;
 	Tue, 27 Aug 2024 16:25:33 +0000 (UTC)
 Received: by mercury (Postfix, from userid 1000)
-	id 3150610604BD; Tue, 27 Aug 2024 18:25:31 +0200 (CEST)
+	id 418F61060535; Tue, 27 Aug 2024 18:25:31 +0200 (CEST)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: linux-kernel@vger.kernel.org, Andres Salomon <dilinger@queued.net>
-Cc: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org, 
- Hans de Goede <hdegoede@redhat.com>, 
- =?utf-8?q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-In-Reply-To: <20240820041942.30ed42f3@5400>
-References: <20240820041942.30ed42f3@5400>
-Subject: Re: [PATCH] ABI: testing: sysfs-class-power: clarify charge_type
- documentation
-Message-Id: <172477593115.353499.16626853404367080768.b4-ty@collabora.com>
+To: Sebastian Reichel <sre@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <ndesaulniers@google.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ llvm@lists.linux.dev, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240705113113.42851-1-krzysztof.kozlowski@linaro.org>
+References: <20240705113113.42851-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 1/2] power: supply: core: simplify with cleanup.h
+Message-Id: <172477593125.353499.16835192129915410138.b4-ty@collabora.com>
 Date: Tue, 27 Aug 2024 18:25:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -52,20 +53,18 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.1
 
 
-On Tue, 20 Aug 2024 04:19:42 -0400, Andres Salomon wrote:
-> The existing docs here are a bit vague. This reformats and rewords it,
-> and is based upon the wording originally used by the dell-laptop driver
-> battery documentation and also sysfs-class-power-wilco.
+On Fri, 05 Jul 2024 13:31:12 +0200, Krzysztof Kozlowski wrote:
+> Allocate the memory with scoped/cleanup.h to reduce error handling and
+> make the code a bit simpler.
 > 
-> The wording for "Long Life" and "Bypass" remain the same, because I'm
-> unfamiliar with hardware that use them.
 > 
-> [...]
 
 Applied, thanks!
 
-[1/1] ABI: testing: sysfs-class-power: clarify charge_type documentation
-      commit: 919a4719026f68a9d6b5b87db2e935564cdf42a5
+[1/2] power: supply: core: simplify with cleanup.h
+      commit: a9125e868f7ad80d527cf5c69e20fa0ada96bff9
+[2/2] power: supply: twl4030_charger: correct comparision with old current
+      commit: e764374f4b57a0e0c0221bc0188034ae9996808e
 
 Best regards,
 -- 
