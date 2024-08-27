@@ -1,404 +1,119 @@
-Return-Path: <linux-kernel+bounces-302591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAE7A96009A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:58:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 108C1960087
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:53:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70C5E1F20EF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:58:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B62F128326F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0668C12F5B1;
-	Tue, 27 Aug 2024 04:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5696EB64;
+	Tue, 27 Aug 2024 04:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tkos.co.il header.i=@tkos.co.il header.b="FI98ZrqF"
-Received: from mail.tkos.co.il (wiki.tkos.co.il [84.110.109.230])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eHqehq54"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC4A7E76D;
-	Tue, 27 Aug 2024 04:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.110.109.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457C54414;
+	Tue, 27 Aug 2024 04:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724734719; cv=none; b=A75GS3UlfY9q7/GsfRxDxBedsH7B5PM0nP/kZ99R/0awKEnRDuPMHIGEwtgFsrFW7ocdl6mdtMztvX9WFbGnAdwOEUVakinadH5oVWjGwPMx1bQWHpf2Z3J30JdlSg6t18WKr+LU7P0odFs4G9hY0Agdpuj6jmUnxfojS1s1W2Y=
+	t=1724734371; cv=none; b=WzvU8WLcWG/8xT786D36fKckyplz9S7wE248h3f4I/tgkXZqbQWt11EvO2EZrkWTa30VqyVMFYlRHXEL3NIOsUyST8XK8i/6po3HMWBRNR1zBO8dpDyZeMb709mRjqGNXpqrEjlEM0Cz53M5U/ihiVTAlRff2tyRgDQRoCl1Gbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724734719; c=relaxed/simple;
-	bh=9WyFB9yd3fDx1n71EKn0NOUDm0SNyy+ugmA5x2v2FE8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Zn6ZBVCpflihCYiGpUJfEP+Vzjca2t04/IySeT2v0iIplLinKlTbNX8FNrhEQme8jckcQYAD8aUQrHtJMnsEhp9WZ3JvM07GxbWwYpu5sZY4G0DkamBhIvllOapdsyTPdHNSaMdTueCAscogReS557a7pNADIcMQNrExQ7dnvkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tkos.co.il; spf=pass smtp.mailfrom=tkos.co.il; dkim=pass (2048-bit key) header.d=tkos.co.il header.i=@tkos.co.il header.b=FI98ZrqF; arc=none smtp.client-ip=84.110.109.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tkos.co.il
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tkos.co.il
-Received: from localhost (unknown [10.0.8.3])
-	by mail.tkos.co.il (Postfix) with ESMTP id 07138440FD1;
-	Tue, 27 Aug 2024 07:50:36 +0300 (IDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tkos.co.il;
-	s=default; t=1724734236;
-	bh=9WyFB9yd3fDx1n71EKn0NOUDm0SNyy+ugmA5x2v2FE8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=FI98ZrqFrkaPZNYHWGvjN821TTsf1l9dasleqTNzWX5CifjFUlZGK/dlYU1Wg2dKf
-	 zRPa8u5HMNs78KaGG3T69/cRMOh8AbRIqBtbFb3o9kWQdLXtIxh+AyFBL9vy+LZ+/2
-	 2A5ycZJPBluf1fAsJ7U7stKNjxdl7nh8+4glxt8l6+kVK+26bXB09aUJzdJQ0wJofQ
-	 gnN4m4CuzwTE9jSfMsVg7bbJ0GKQOD/VJYGVjg+tr6El5tiuQfHN7bV32r06+TDz3a
-	 xv6DGTSn4e5mJ0VZcCom/Wil+aWl44XUvX7OoV66JMhYKIWNnpfMYZ4dGlfc2G5n5a
-	 2DSR3UzHlCrFA==
-From: Baruch Siach <baruch@tkos.co.il>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Christoph Hellwig <hch@lst.de>,  Catalin Marinas
- <catalin.marinas@arm.com>,  Will Deacon <will@kernel.org>,  Robin Murphy
- <robin.murphy@arm.com>,  iommu@lists.linux.dev,
-  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,
-  linuxppc-dev@lists.ozlabs.org,  linux-s390@vger.kernel.org,  Petr
- =?utf-8?B?VGVzYcWZw61r?=
- <petr@tesarici.cz>,  Ramon Fried <ramon@neureality.ai>,  Elad Nachman
- <enachman@marvell.com>,  linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v6 RESED 1/2] dma: replace zone_dma_bits by zone_dma_limit
-In-Reply-To: <53d988b1-bdce-422a-ae4e-158f305ad703@samsung.com> (Marek
-	Szyprowski's message of "Mon, 26 Aug 2024 21:28:29 +0200")
-References: <cover.1723359916.git.baruch@tkos.co.il>
-	<CGME20240811070951eucas1p1dc5315e0d710db13ce28fa0a977c7bc1@eucas1p1.samsung.com>
-	<17c067618b93e5d71f19c37826d54db4299621a3.1723359916.git.baruch@tkos.co.il>
-	<53d988b1-bdce-422a-ae4e-158f305ad703@samsung.com>
-Date: Tue, 27 Aug 2024 07:52:27 +0300
-Message-ID: <87mskyva7o.fsf@tarshish>
+	s=arc-20240116; t=1724734371; c=relaxed/simple;
+	bh=92tkHhOZoaPwz+uBdFGTqEu/hnuztlUZM8LQ3Y2zuQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hp3bIOqaCmkHWmZ1QxN+hXkT1t8XOsB9WsnJsyuymIyAZUO4OPp4SKMjaq5jUqcr0CVi0pNlBJPnoSdEmdsWNJBzgDhDyAJKSX6ecVevLzdci0Yms0Tu5RoLw3BLWNWidHVozq7CKK+pUTFFUMVVrqOsicrbKDSpFznu1C8THO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eHqehq54; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e165ab430e7so5225283276.2;
+        Mon, 26 Aug 2024 21:52:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724734369; x=1725339169; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=418E3MTktRHmY+leklOtGq6971YMsgcbUog7USmFf5E=;
+        b=eHqehq54u99aqL/HOgdMQxF/4xjFeaJEdaIOcEi6h+uV35+vaqOBbo4qrU60cLHdXl
+         W6IP43r3L9o3LhqwSD0dMqameS9viO48CIo8isEbs1nI53u0/vC2WTSOV7LkvMYMi5Ks
+         i5JpsRh19/mZ0KyKmCCWtwFHPEBMve4sFbOXu/j5yLzzRzCjpyYzquhlUE4UTOEeA9UP
+         10YMZb1pdNHNvswpxCqur6FEFM8BK7qVkP1SpV0wmiiMSUupm4JtkJs2pI4jpkOzYtsn
+         M0sMe5EPZfeZEQxgZnhKTc7dIS2tj8XZTPRBQYgc2nLvllYVr4/hzXBlZxEtnM66gY4A
+         lU/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724734369; x=1725339169;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=418E3MTktRHmY+leklOtGq6971YMsgcbUog7USmFf5E=;
+        b=qYLYs0XLonjjIzHyFHj4bw05uXI4qy2XPHAWgzZUHEvasVvoShyaf897B8BrFJU4Dq
+         2ZkKZlj8qFTXTj9/NcdwL1HG4b1O9Y0RBk5ETInOcbz9K7w2Wbdx0W6EBb5kIqvhvvY9
+         vj5/CRu0CQge8+YYPsX8qryydZ920THOvUNntrljh8OGlpqfrlAAK8PmWQHGx0tHfMm8
+         P2+oXgj6xDe6k8dJ4JJE92WYpbiEkZtpzb+HinpJss9R05s4DuvPo5/4BmQ7pFM+FplC
+         COl5q24lsp1NGLTW9w4ZF1gRFsbOb8ejQI1vV/TNM8IDnR9NapRjpXSMELIJzlHz0g0E
+         enPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUACg1RVtKU2MSCzwd3GLWvlV9G8nfffRZKlmJEF2xH2eWHepcQQWZXnmlbep9SeaxhgGKO3IZgtUzl@vger.kernel.org, AJvYcCVAG3uxZz5W1EtTAKUwpob41RkNBD49msGu1Di4rTWKZAyr07K1d3gXLyU0FmvH+DVRrY7mgXdYm141@vger.kernel.org, AJvYcCWHKAoUieFNQiDNYYkwTpHDz1LRKO2gd8QBCYQSLFRNsQ2LBkrgUiaDklUuDs0fhO/W4hLVxgzHfh/Gumc=@vger.kernel.org, AJvYcCXtyALfzkVfhvu8H2xyBoMOBGJ/xHDpoA93czK0gdstMHk6wQHwZDLntOMukHdTZ2CekMfvL5H2lchQdhhC@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiuRCf98lK35eaCk6qD6zAqEuZchxUz5ROFaVm182ZR8Q//yOr
+	p7cFLshoDrLgAi87QQ2M4VCIC8MIxFmEK35l+qwojMSJtDhCODpb
+X-Google-Smtp-Source: AGHT+IG9abeZfKP33m1kBLwp5ZcRFam4qvM6M6Qjkco1IbhHF/ioe2Wg9UichaH7JZICQ1R1vorh9w==
+X-Received: by 2002:a05:6902:2405:b0:e16:69b5:ef66 with SMTP id 3f1490d57ef6-e17a86a8e16mr13105821276.54.1724734369212;
+        Mon, 26 Aug 2024 21:52:49 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-714342e0e18sm7750246b3a.104.2024.08.26.21.52.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 21:52:48 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Mon, 26 Aug 2024 21:52:46 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Inochi Amaoto <inochiama@outlook.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,
+	Chao Wei <chao.wei@sophgo.com>, Yangyu Chen <cyy@cyyself.name>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Hal Feng <hal.feng@starfivetech.com>, linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v11 1/4] dt-bindings: hwmon: Add Sophgo SG2042 external
+ hardware monitor support
+Message-ID: <44ddca1a-8aac-4041-b01f-190694637753@roeck-us.net>
+References: <IA1PR20MB4953DF0AE7210A6D74162952BB822@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <IA1PR20MB49538276F283C4D01364AEB6BB822@IA1PR20MB4953.namprd20.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <IA1PR20MB49538276F283C4D01364AEB6BB822@IA1PR20MB4953.namprd20.prod.outlook.com>
 
-Hi Marek,
+On Sat, Aug 17, 2024 at 10:22:56AM +0800, Inochi Amaoto wrote:
+> Due to the design, Sophgo SG2042 use an external MCU to provide
+> hardware information, thermal information and reset control.
+> 
+> Add bindings for this monitor device.
+> 
+> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Tested-by: Chen Wang <unicorn_wang@outlook.com>
+> Reviewed-by: Chen Wang <unicorn_wang@outlook.com>
 
-Thanks for your report.
-
-On Mon, Aug 26 2024, Marek Szyprowski wrote:
-> On 11.08.2024 09:09, Baruch Siach wrote:
->> From: Catalin Marinas <catalin.marinas@arm.com>
->>
->> Hardware DMA limit might not be power of 2. When RAM range starts above
->> 0, say 4GB, DMA limit of 30 bits should end at 5GB. A single high bit
->> can not encode this limit.
->>
->> Use plain address for DMA zone limit.
->>
->> Since DMA zone can now potentially span beyond 4GB physical limit of
->> DMA32, make sure to use DMA zone for GFP_DMA32 allocations in that case.
->>
->> Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
->> Co-developed-by: Baruch Siach <baruch@tkos.co.il>
->> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
->> ---
->
-> This patch landed recently in linux-next as commit ba0fb44aed47=20
-> ("dma-mapping: replace zone_dma_bits by zone_dma_limit"). During my=20
-> tests I found that it introduces the following warning on ARM64/Rockchip=
-=20
-> based Odroid M1 board (arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts):
-
-Does this warning go away if you revert both 3be9b846896d and ba0fb44aed47?
-
-Upstream rockchip DTs have no dma-ranges property. Is that the case for
-your platform as well?
-
-Can you share kernel report of DMA zones and swiotlb? On my platform I get:
-
-[    0.000000] Zone ranges:
-[    0.000000]   DMA      [mem 0x0000000800000000-0x000000083fffffff]
-[    0.000000]   DMA32    empty
-[    0.000000]   Normal   [mem 0x0000000840000000-0x0000000fffffffff]
-...
-[    0.000000] software IO TLB: area num 8.
-[    0.000000] software IO TLB: mapped [mem 0x000000083be38000-0x000000083f=
-e38000] (64MB)
-
-What do you get at your end?
-
-> ------------[ cut here ]------------
-> dwmmc_rockchip fe2b0000.mmc: swiotlb addr 0x00000001faf00000+4096=20
-> overflow (mask ffffffff, bus limit 0).
-> WARNING: CPU: 3 PID: 1 at kernel/dma/swiotlb.c:1594 swiotlb_map+0x2f0/0x3=
-08
-> Modules linked in:
-> CPU: 3 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-rc4+ #15278
-> Hardware name: Hardkernel ODROID-M1 (DT)
-> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=3D--)
-> pc : swiotlb_map+0x2f0/0x308
-> lr : swiotlb_map+0x2f0/0x308
-> ...
-> Call trace:
->  =C2=A0swiotlb_map+0x2f0/0x308
->  =C2=A0dma_direct_map_sg+0x9c/0x2e4
->  =C2=A0__dma_map_sg_attrs+0x28/0x94
->  =C2=A0dma_map_sg_attrs+0x10/0x24
->  =C2=A0dw_mci_pre_dma_transfer+0xb8/0xf4
->  =C2=A0dw_mci_pre_req+0x50/0x68
->  =C2=A0mmc_blk_mq_issue_rq+0x3e0/0x964
->  =C2=A0mmc_mq_queue_rq+0x118/0x2b4
->  =C2=A0blk_mq_dispatch_rq_list+0x21c/0x714
->  =C2=A0__blk_mq_sched_dispatch_requests+0x490/0x58c
->  =C2=A0blk_mq_sched_dispatch_requests+0x30/0x6c
->  =C2=A0blk_mq_run_hw_queue+0x284/0x40c
->  =C2=A0blk_mq_flush_plug_list.part.0+0x190/0x974
->  =C2=A0blk_mq_flush_plug_list+0x1c/0x2c
->  =C2=A0__blk_flush_plug+0xe4/0x140
->  =C2=A0blk_finish_plug+0x38/0x4c
->  =C2=A0__ext4_get_inode_loc+0x22c/0x654
->  =C2=A0__ext4_get_inode_loc_noinmem+0x40/0xa8
->  =C2=A0__ext4_iget+0x154/0xcc0
->  =C2=A0ext4_get_journal_inode+0x30/0x110
->  =C2=A0ext4_load_and_init_journal+0x9c/0xaf0
->  =C2=A0ext4_fill_super+0x1fec/0x2d90
->  =C2=A0get_tree_bdev+0x140/0x1d8
->  =C2=A0ext4_get_tree+0x18/0x24
->  =C2=A0vfs_get_tree+0x28/0xe8
->  =C2=A0path_mount+0x3e8/0xb7c
->  =C2=A0init_mount+0x68/0xac
->  =C2=A0do_mount_root+0x108/0x1dc
->  =C2=A0mount_root_generic+0x100/0x330
->  =C2=A0mount_root+0x160/0x2d0
->  =C2=A0initrd_load+0x1f0/0x2a0
->  =C2=A0prepare_namespace+0x4c/0x29c
->  =C2=A0kernel_init_freeable+0x4b4/0x50c
->  =C2=A0kernel_init+0x20/0x1d8
->  =C2=A0ret_from_fork+0x10/0x20
-> irq event stamp: 1305682
-> hardirqs last=C2=A0 enabled at (1305681): [<ffff8000800e332c>]=20
-> console_unlock+0x124/0x130
-> hardirqs last disabled at (1305682): [<ffff80008124e684>] el1_dbg+0x24/0x=
-8c
-> softirqs last=C2=A0 enabled at (1305678): [<ffff80008005be1c>]=20
-> handle_softirqs+0x4cc/0x4e4
-> softirqs last disabled at (1305665): [<ffff8000800105b0>]=20
-> __do_softirq+0x14/0x20
-> ---[ end trace 0000000000000000 ]---
->
-> This "bus limit 0" seems to be a bit suspicious to me as well as the=20
-> fact that swiotlb is used for the MMC DMA. I will investigate this=20
-> further tomorrow. The board boots fine though.
-
-Looking at the code I guess that bus_dma_limit set to 0 means no bus
-limit. But dma_mask for your device indicates 32-bit device limit. This
-can't work with address above 4GB. For some reason DMA code tries to
-allocate from higher address. This is most likely the reason
-dma_capable() returns false.
+Applied.
 
 Thanks,
-baruch
-
->>   arch/arm64/mm/init.c       | 30 +++++++++++++++---------------
->>   arch/powerpc/mm/mem.c      |  5 ++++-
->>   arch/s390/mm/init.c        |  2 +-
->>   include/linux/dma-direct.h |  2 +-
->>   kernel/dma/direct.c        |  6 +++---
->>   kernel/dma/pool.c          |  4 ++--
->>   kernel/dma/swiotlb.c       |  6 +++---
->>   7 files changed, 29 insertions(+), 26 deletions(-)
->>
->> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
->> index 9b5ab6818f7f..c45e2152ca9e 100644
->> --- a/arch/arm64/mm/init.c
->> +++ b/arch/arm64/mm/init.c
->> @@ -115,35 +115,35 @@ static void __init arch_reserve_crashkernel(void)
->>   }
->>=20=20=20
->>   /*
->> - * Return the maximum physical address for a zone accessible by the giv=
-en bits
->> - * limit. If DRAM starts above 32-bit, expand the zone to the maximum
->> + * Return the maximum physical address for a zone given its limit.
->> + * If DRAM starts above 32-bit, expand the zone to the maximum
->>    * available memory, otherwise cap it at 32-bit.
->>    */
->> -static phys_addr_t __init max_zone_phys(unsigned int zone_bits)
->> +static phys_addr_t __init max_zone_phys(phys_addr_t zone_limit)
->>   {
->> -	phys_addr_t zone_mask =3D DMA_BIT_MASK(zone_bits);
->>   	phys_addr_t phys_start =3D memblock_start_of_DRAM();
->>=20=20=20
->>   	if (phys_start > U32_MAX)
->> -		zone_mask =3D PHYS_ADDR_MAX;
->> -	else if (phys_start > zone_mask)
->> -		zone_mask =3D U32_MAX;
->> +		zone_limit =3D PHYS_ADDR_MAX;
->> +	else if (phys_start > zone_limit)
->> +		zone_limit =3D U32_MAX;
->>=20=20=20
->> -	return min(zone_mask, memblock_end_of_DRAM() - 1) + 1;
->> +	return min(zone_limit, memblock_end_of_DRAM() - 1) + 1;
->>   }
->>=20=20=20
->>   static void __init zone_sizes_init(void)
->>   {
->>   	unsigned long max_zone_pfns[MAX_NR_ZONES]  =3D {0};
->> -	unsigned int __maybe_unused acpi_zone_dma_bits;
->> -	unsigned int __maybe_unused dt_zone_dma_bits;
->> -	phys_addr_t __maybe_unused dma32_phys_limit =3D max_zone_phys(32);
->> +	phys_addr_t __maybe_unused acpi_zone_dma_limit;
->> +	phys_addr_t __maybe_unused dt_zone_dma_limit;
->> +	phys_addr_t __maybe_unused dma32_phys_limit =3D
->> +		max_zone_phys(DMA_BIT_MASK(32));
->>=20=20=20
->>   #ifdef CONFIG_ZONE_DMA
->> -	acpi_zone_dma_bits =3D fls64(acpi_iort_dma_get_max_cpu_address());
->> -	dt_zone_dma_bits =3D fls64(of_dma_get_max_cpu_address(NULL));
->> -	zone_dma_bits =3D min3(32U, dt_zone_dma_bits, acpi_zone_dma_bits);
->> -	arm64_dma_phys_limit =3D max_zone_phys(zone_dma_bits);
->> +	acpi_zone_dma_limit =3D acpi_iort_dma_get_max_cpu_address();
->> +	dt_zone_dma_limit =3D of_dma_get_max_cpu_address(NULL);
->> +	zone_dma_limit =3D min(dt_zone_dma_limit, acpi_zone_dma_limit);
->> +	arm64_dma_phys_limit =3D max_zone_phys(zone_dma_limit);
->>   	max_zone_pfns[ZONE_DMA] =3D PFN_DOWN(arm64_dma_phys_limit);
->>   #endif
->>   #ifdef CONFIG_ZONE_DMA32
->> diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
->> index d325217ab201..05b7f702b3f7 100644
->> --- a/arch/powerpc/mm/mem.c
->> +++ b/arch/powerpc/mm/mem.c
->> @@ -216,7 +216,7 @@ static int __init mark_nonram_nosave(void)
->>    * everything else. GFP_DMA32 page allocations automatically fall back=
- to
->>    * ZONE_DMA.
->>    *
->> - * By using 31-bit unconditionally, we can exploit zone_dma_bits to inf=
-orm the
->> + * By using 31-bit unconditionally, we can exploit zone_dma_limit to in=
-form the
->>    * generic DMA mapping code.  32-bit only devices (if not handled by a=
-n IOMMU
->>    * anyway) will take a first dip into ZONE_NORMAL and get otherwise se=
-rved by
->>    * ZONE_DMA.
->> @@ -230,6 +230,7 @@ void __init paging_init(void)
->>   {
->>   	unsigned long long total_ram =3D memblock_phys_mem_size();
->>   	phys_addr_t top_of_ram =3D memblock_end_of_DRAM();
->> +	int zone_dma_bits;
->>=20=20=20
->>   #ifdef CONFIG_HIGHMEM
->>   	unsigned long v =3D __fix_to_virt(FIX_KMAP_END);
->> @@ -256,6 +257,8 @@ void __init paging_init(void)
->>   	else
->>   		zone_dma_bits =3D 31;
->>=20=20=20
->> +	zone_dma_limit =3D DMA_BIT_MASK(zone_dma_bits);
->> +
->>   #ifdef CONFIG_ZONE_DMA
->>   	max_zone_pfns[ZONE_DMA]	=3D min(max_low_pfn,
->>   				      1UL << (zone_dma_bits - PAGE_SHIFT));
->> diff --git a/arch/s390/mm/init.c b/arch/s390/mm/init.c
->> index ddcd39ef4346..91fc2b91adfc 100644
->> --- a/arch/s390/mm/init.c
->> +++ b/arch/s390/mm/init.c
->> @@ -97,7 +97,7 @@ void __init paging_init(void)
->>=20=20=20
->>   	vmem_map_init();
->>   	sparse_init();
->> -	zone_dma_bits =3D 31;
->> +	zone_dma_limit =3D DMA_BIT_MASK(31);
->>   	memset(max_zone_pfns, 0, sizeof(max_zone_pfns));
->>   	max_zone_pfns[ZONE_DMA] =3D virt_to_pfn(MAX_DMA_ADDRESS);
->>   	max_zone_pfns[ZONE_NORMAL] =3D max_low_pfn;
->> diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
->> index edbe13d00776..d7e30d4f7503 100644
->> --- a/include/linux/dma-direct.h
->> +++ b/include/linux/dma-direct.h
->> @@ -12,7 +12,7 @@
->>   #include <linux/mem_encrypt.h>
->>   #include <linux/swiotlb.h>
->>=20=20=20
->> -extern unsigned int zone_dma_bits;
->> +extern u64 zone_dma_limit;
->>=20=20=20
->>   /*
->>    * Record the mapping of CPU physical to DMA addresses for a given reg=
-ion.
->> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
->> index 4480a3cd92e0..f2ba074a6a54 100644
->> --- a/kernel/dma/direct.c
->> +++ b/kernel/dma/direct.c
->> @@ -20,7 +20,7 @@
->>    * it for entirely different regions. In that case the arch code needs=
- to
->>    * override the variable below for dma-direct to work properly.
->>    */
->> -unsigned int zone_dma_bits __ro_after_init =3D 24;
->> +u64 zone_dma_limit __ro_after_init =3D DMA_BIT_MASK(24);
->>=20=20=20
->>   static inline dma_addr_t phys_to_dma_direct(struct device *dev,
->>   		phys_addr_t phys)
->> @@ -59,7 +59,7 @@ static gfp_t dma_direct_optimal_gfp_mask(struct device=
- *dev, u64 *phys_limit)
->>   	 * zones.
->>   	 */
->>   	*phys_limit =3D dma_to_phys(dev, dma_limit);
->> -	if (*phys_limit <=3D DMA_BIT_MASK(zone_dma_bits))
->> +	if (*phys_limit <=3D zone_dma_limit)
->>   		return GFP_DMA;
->>   	if (*phys_limit <=3D DMA_BIT_MASK(32))
->>   		return GFP_DMA32;
->> @@ -580,7 +580,7 @@ int dma_direct_supported(struct device *dev, u64 mas=
-k)
->>   	 * part of the check.
->>   	 */
->>   	if (IS_ENABLED(CONFIG_ZONE_DMA))
->> -		min_mask =3D min_t(u64, min_mask, DMA_BIT_MASK(zone_dma_bits));
->> +		min_mask =3D min_t(u64, min_mask, zone_dma_limit);
->>   	return mask >=3D phys_to_dma_unencrypted(dev, min_mask);
->>   }
->>=20=20=20
->> diff --git a/kernel/dma/pool.c b/kernel/dma/pool.c
->> index d10613eb0f63..7b04f7575796 100644
->> --- a/kernel/dma/pool.c
->> +++ b/kernel/dma/pool.c
->> @@ -70,9 +70,9 @@ static bool cma_in_zone(gfp_t gfp)
->>   	/* CMA can't cross zone boundaries, see cma_activate_area() */
->>   	end =3D cma_get_base(cma) + size - 1;
->>   	if (IS_ENABLED(CONFIG_ZONE_DMA) && (gfp & GFP_DMA))
->> -		return end <=3D DMA_BIT_MASK(zone_dma_bits);
->> +		return end <=3D zone_dma_limit;
->>   	if (IS_ENABLED(CONFIG_ZONE_DMA32) && (gfp & GFP_DMA32))
->> -		return end <=3D DMA_BIT_MASK(32);
->> +		return end <=3D max(DMA_BIT_MASK(32), zone_dma_limit);
->>   	return true;
->>   }
->>=20=20=20
->> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
->> index df68d29740a0..abcf3fa63a56 100644
->> --- a/kernel/dma/swiotlb.c
->> +++ b/kernel/dma/swiotlb.c
->> @@ -450,9 +450,9 @@ int swiotlb_init_late(size_t size, gfp_t gfp_mask,
->>   	if (!remap)
->>   		io_tlb_default_mem.can_grow =3D true;
->>   	if (IS_ENABLED(CONFIG_ZONE_DMA) && (gfp_mask & __GFP_DMA))
->> -		io_tlb_default_mem.phys_limit =3D DMA_BIT_MASK(zone_dma_bits);
->> +		io_tlb_default_mem.phys_limit =3D zone_dma_limit;
->>   	else if (IS_ENABLED(CONFIG_ZONE_DMA32) && (gfp_mask & __GFP_DMA32))
->> -		io_tlb_default_mem.phys_limit =3D DMA_BIT_MASK(32);
->> +		io_tlb_default_mem.phys_limit =3D max(DMA_BIT_MASK(32), zone_dma_limi=
-t);
->>   	else
->>   		io_tlb_default_mem.phys_limit =3D virt_to_phys(high_memory - 1);
->>   #endif
->> @@ -629,7 +629,7 @@ static struct page *swiotlb_alloc_tlb(struct device =
-*dev, size_t bytes,
->>   	}
->>=20=20=20
->>   	gfp &=3D ~GFP_ZONEMASK;
->> -	if (phys_limit <=3D DMA_BIT_MASK(zone_dma_bits))
->> +	if (phys_limit <=3D zone_dma_limit)
->>   		gfp |=3D __GFP_DMA;
->>   	else if (phys_limit <=3D DMA_BIT_MASK(32))
->>   		gfp |=3D __GFP_DMA32;
->
-> Best regards
-
---=20
-                                                     ~. .~   Tk Open Systems
-=3D}------------------------------------------------ooO--U--Ooo------------=
-{=3D
-   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
+Guenter
 
