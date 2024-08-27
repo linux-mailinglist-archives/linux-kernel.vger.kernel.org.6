@@ -1,85 +1,109 @@
-Return-Path: <linux-kernel+bounces-303581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC8D960F24
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:56:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79639960F41
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:57:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD0271F2248C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:56:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 243BF1F22305
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24521C93CE;
-	Tue, 27 Aug 2024 14:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388021CDA2D;
+	Tue, 27 Aug 2024 14:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="S8o5Yl+W"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BWGWjKPD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0411A1C5792
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 14:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1761C6893
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 14:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724770507; cv=none; b=ceEGUfsnKzTyowpUEG/prLbPxGNJQh46GR5A1dgdW2qQgaY6Wbi19m5olnnAPx1s1ZPH8zp+2WKiY2GbjxhHWKpBemEmHKMa3kTwAMZ4oeZ3/mYO3E1WzGyzqudHhZXIm8KpEjZz2n3g27PLD1zM9u8vyoLsPCxeXj5ycJOPFvA=
+	t=1724770560; cv=none; b=Kas5PZ5wo5ZSU81z1f7glDuwtgaT3uqpiEb4oNpJ4ZJ5g56E0v7KxMM9hU70XNOBOYRUGe7h7P+qDDOjpEDWEMqcYz1UKZrpZgUNNUxpKznKn5Ri5e5ssCc0tpMJpg5q81iQYqAfrpxXxZY03Tw9+MRepy7pCJpXIT2kGPewUys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724770507; c=relaxed/simple;
-	bh=O7qAhe2cSB3nmkK7P42MxJ69ddHjyjGLwmbiylUXWO4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fmwOqr1TdHW8S/oi8WxUKTsH81JH9qHzG7lHmHPWDYCaZno4IS1DO+ab6c3TOpcggKAXuhAUTTShks1zLmcO8PVLV3Im8G7yHvIuscggSRKcPPRp2dfUPLwbVxppgpbIpV1bQZILKwmUBFiJQT4a29S4EdjZaUlRvYr7F+dKuwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=S8o5Yl+W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EBDBC4E691;
-	Tue, 27 Aug 2024 14:55:06 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="S8o5Yl+W"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1724770504;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=H2OWpixOinJIHrVPeHRAC79bLQm2Gq/N3vn1/xF5OzA=;
-	b=S8o5Yl+WORSo/6wyUhqOibeAyVPcL2ALUTAhxItMUgcHS8YcjXYmETNHHry9/Hvywc2ntc
-	ToBz+Mge9eXh9iFRjhGq1bHcbPVWG8d7d6KxzWh8mC6iIpdqyy3k6sYFV76mLeDMsiEdMQ
-	dluTrqSTO5aE4OpvWWF4spupD7DEqDc=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 1d45b1fe (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Tue, 27 Aug 2024 14:55:04 +0000 (UTC)
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: linux-kernel@vger.kernel.org,
-	adhemerval.zanella@linaro.org,
-	christophe.leroy@csgroup.eu
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Subject: [PATCH] selftests/vDSO: remove unnecessary command line defs from chacha test
-Date: Tue, 27 Aug 2024 16:54:24 +0200
-Message-ID: <20240827145454.3317093-1-Jason@zx2c4.com>
+	s=arc-20240116; t=1724770560; c=relaxed/simple;
+	bh=QZQ5u0mI5GTvIERqL7sO8uE4R1i9WTqn8mFJ1e8m6Cg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hPeL/rJON0G/kdNL8RPNpMi6o6PVJjYRNQbh9SIpI/qcg2fOo4a3FFUFhQdGy6JpOjqsp8ozaD36lqC4um8uEO3OrUs5RYb+HmnJ+DBV9qgtwXN0x5zflf9FrHXJdAp6dL/Na4xiDLyzYENcj5pFnzsfzKk1GZA9bmns9lR6nxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BWGWjKPD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5085FC4FDFA;
+	Tue, 27 Aug 2024 14:56:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724770560;
+	bh=QZQ5u0mI5GTvIERqL7sO8uE4R1i9WTqn8mFJ1e8m6Cg=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=BWGWjKPD/AvbpNJKSvtRj7sGxxg8NP2mnJKLSXpT/MCkEvGdfhcX45YwzSp907+Fj
+	 5WzZ8QZmJEPureIe0j5U277lDDnJyo4M24GQGTkPdA9QauhMxhuM5fWW+eeBew9/09
+	 AMFcvGjr7wx5mbUaFyhRRLqbTlSA4rEJthfxUEiXvRC8qpTrmmAgvCeEUqTW23Gly8
+	 uNKCmneoeoKdQrRRdJlMdhGBYn5mhTA2zQdFbz6l7LqKkY6NxiqWV2RuwYoXxiZC+a
+	 +hkiJlwPSqC9kOkjxAWUZKQin4kyyj+4OamshVvEBYs8fzBJyn+4r6PT/ol85MuBzT
+	 +200DCkqRtAmw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D75C54734;
+	Tue, 27 Aug 2024 14:56:00 +0000 (UTC)
+From: "Jason-JH.Lin via B4 Relay" <devnull+jason-jh.lin.mediatek.com@kernel.org>
+Subject: [PATCH v3 0/2] Fix missing configuration flags in
+ mtk_crtc_ddp_config
+Date: Tue, 27 Aug 2024 22:55:18 +0800
+Message-Id: <20240827-drm-fixup-0819-v3-0-4761005211ec@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANbozWYC/0XMQQ7CIBCF4as0s3YIFA2tq97DuCBlsFMFGqjGp
+ OndJd24/PLy/g0KZaYC12aDTB8unGKFPjUwTjY+CNlVQyvbs+xUjy4H9Px9L3jQXxS1Ths/OgP
+ 1tGSq6xG83at9TgHXKZP9Z4zUSmotO6Gk6jtUONuSIs6TeHEcAjm2Kz3FmALs+w+OtgfXowAAA
+ A==
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Singo Chang <singo.chang@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>, 
+ "Jason-JH.Lin" <jason-jh.lin@mediatek.com>, 
+ Project_Global_Chrome_Upstream_Group@mediatek.com, 
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ CK Hu <ck.hu@mediatek.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724770559; l=663;
+ i=jason-jh.lin@mediatek.com; s=20240718; h=from:subject:message-id;
+ bh=QZQ5u0mI5GTvIERqL7sO8uE4R1i9WTqn8mFJ1e8m6Cg=;
+ b=vtG4j8YW0CdzhCv8m6K3/A14B+OP06kMhQBxegBLibqv5A+ThNrS9j9AtzKCmfL5WKoGsUltR
+ pkKWr0ek2bACtvFDpM7Yc2/BNhHDyMbTxGxk84DGDUjNJmsCM1zIoJP
+X-Developer-Key: i=jason-jh.lin@mediatek.com; a=ed25519;
+ pk=7Hn+BnFBlPrluT5ks5tKVWb3f7O/bMBs6qEemVJwqOo=
+X-Endpoint-Received: by B4 Relay for jason-jh.lin@mediatek.com/20240718
+ with auth_id=187
+X-Original-From: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>
+Reply-To: jason-jh.lin@mediatek.com
 
-CONFIG_FUNCTION_ALIGNMENT=0 is no longer necessary and BULID_VDSO wasn't
-spelled right while BUILD_VDSO isn't necessary, so just remove these.
-
-Reported-by: Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
 ---
- tools/testing/selftests/vDSO/Makefile | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Change in v3:
+Change config_lock from spin_lock to spin_lock_irqsave
 
-diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
-index 834aa862ba2c..d1452c7d6d4f 100644
---- a/tools/testing/selftests/vDSO/Makefile
-+++ b/tools/testing/selftests/vDSO/Makefile
-@@ -46,5 +46,4 @@ $(OUTPUT)/vdso_test_chacha: LDLIBS += $(SODIUM_LIBS)
- $(OUTPUT)/vdso_test_chacha: CFLAGS += -idirafter $(top_srcdir)/tools/include \
-                                       -idirafter $(top_srcdir)/arch/$(ARCH)/include \
-                                       -idirafter $(top_srcdir)/include \
--                                      -D__ASSEMBLY__ -DBULID_VDSO -DCONFIG_FUNCTION_ALIGNMENT=0 \
--                                      -Wa,--noexecstack $(SODIUM_CFLAGS)
-+                                      -D__ASSEMBLY__ -Wa,--noexecstack $(SODIUM_CFLAGS)
+Change in v2:
+Add spin_lock protection for config_updating flag.
+
+---
+Jason-JH.Lin (2):
+      drm/mediatek: Fix missing configuration flags in mtk_crtc_ddp_config()
+      drm/mediatek: change config_lock from spin_lock to spin_lock_irqsave
+
+ drivers/gpu/drm/mediatek/mtk_crtc.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+---
+base-commit: 469f1bad3c1c6e268059f78c0eec7e9552b3894c
+change-id: 20240819-drm-fixup-0819-f51e2d37fcd7
+
+Best regards,
 -- 
-2.46.0
+Jason-JH.Lin <jason-jh.lin@mediatek.com>
+
 
 
