@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-303304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 972AD960A75
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:33:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E57B960A77
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:33:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F6BC2840B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:33:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6148B1C22BBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6CA1BFE16;
-	Tue, 27 Aug 2024 12:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6501C0DE5;
+	Tue, 27 Aug 2024 12:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gNMjNWho"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k7+Z18bE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFAFE1BF812;
-	Tue, 27 Aug 2024 12:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FBF1C0DC1;
+	Tue, 27 Aug 2024 12:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724761904; cv=none; b=MaAx87LBx4bIOO7Nf026fm85ELGnpifhmxNvTdWEh1m2i4vWPwBUCDMN3I0RbS2qIP3EfK6wfUEKHaVZAeBYC0KVB5CcynZrMMq3Wb1NDSOGOml1wTWIEicbeaDU2bgIDlCCi1zZfeUOzFz3Ip1F8Jcoo15EoK0jzGvg4k+tD5U=
+	t=1724761905; cv=none; b=iY62kYqfLVNWWe1SW4zaoeqp9IfiSEx6Si/R4juMTAs9oyu+aue1QE1T4ugHHsH49FAhry9ePzYFj/HV7lYwkFkYbdGxo53M55N6YSQgVC6ksIefldxevU5lcyKUMraq4XxGTUy7vugO4E1DQtQme7A4Ro9xp360WltQxxJFNAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724761904; c=relaxed/simple;
-	bh=qmMzGnC28ZCDh31+2GefMmB0QMXAHDZVokWKSX+jKyU=;
+	s=arc-20240116; t=1724761905; c=relaxed/simple;
+	bh=QwZ9hyqHjmnVtoFMR5NhGSiqDvaaD2fnq6yLs9HobqM=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=amyFdVdDVROEhtwJtqlTOlBEnGDFhHdmbBjlnApfyFQj701o/R8ijFGnQT3EDUR0qJ9Wy5TE0GF2bLQBEQ9h40N1pcnhne9HD/vKSvYWqeRrrFreoi2YYDyf08teUpsBb5+uawZBNyrYe23wgbGUUYoOnzt70OkA4XK4YtVo8ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gNMjNWho; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FCAAC6104D;
-	Tue, 27 Aug 2024 12:31:43 +0000 (UTC)
+	 Message-Id:Subject; b=izuzDJ62m/4aogzgOlilb3m2kbYZC3Hn7uu0aMdWBuqZASb0SNg4A0ysMyf2AOkyj2GfUNY+c2fgQstxk9filM0cn4FmmeeO9cjOV+mTIIqoST/+B0OO10dCelLUxyP8qb1r6yIhGq5/wspjk2dDqLcQHBosCt+VaTKcFnQy90Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k7+Z18bE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC06FC61050;
+	Tue, 27 Aug 2024 12:31:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724761903;
-	bh=qmMzGnC28ZCDh31+2GefMmB0QMXAHDZVokWKSX+jKyU=;
+	s=k20201202; t=1724761905;
+	bh=QwZ9hyqHjmnVtoFMR5NhGSiqDvaaD2fnq6yLs9HobqM=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=gNMjNWhoZffSOv1un8ggYbJD221iCDLPRhGXySnV4I9D0LpvMrLudiopVGiQHN41h
-	 sIBQFWvONGMXeFUFsvTLZ4Ug1Jk986Qn8V/R0P6HPX4mCfVarAnDYwW0/qkFeI52C5
-	 01CzjlyjSbdqLE57f0Z7YxxcQUqPP+SMMfHtgYmXU+gqDJ+wswLxRVol2yYOpC351t
-	 qK2N/HKBi6FJkb2HVNv6vR1SOwo3hokVVhnBRqlcjvuQSR4QX+OeVvg7kT6TdWJvpy
-	 1+b9n3YM4Im9LXRIM2j4UWAmCnOVb797kw4jDDohWQHpwNRuMGm0w7oCdc+o7+8r3l
-	 FWDFBNRa0Xctw==
-Date: Tue, 27 Aug 2024 07:31:41 -0500
+	b=k7+Z18bExU1tPqXtk2zDlwID1vHuzCFTEBlveWrUDFthD/wsEmBzgdyc5gsBL9XFg
+	 II/saCqySNAwtpA5jyaK/kTMdey5UGemndfnzrcrVZysCuBNmNAir7v6bDrQ7Xb2ue
+	 euuKQS7E+sCGkhjPUMJb3y/B77Q4oMSo2FKYpUs/kocqyNa2G5OT/0VjcGxcqC5RYW
+	 XxErVZr2BK3uS3zK3X0r416n5wAoZmevCKbeB72GVxs3+w6tl1XjWoz72kzThtEtmq
+	 QWjsukuGNsii3SzlRQxO+4oEzU8C255d2rnAmxk+V9n4PCy3gqjg5hTx52+0L6gFjd
+	 xbTRPCIDcJQxQ==
+Date: Tue, 27 Aug 2024 07:31:43 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,57 +50,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: devicetree@vger.kernel.org, mturquette@baylibre.com, vkoul@kernel.org, 
- dmitry.baryshkov@linaro.org, sboyd@kernel.org, neil.armstrong@linaro.org, 
- linux-clk@vger.kernel.org, conor+dt@kernel.org, 
- linux-arm-msm@vger.kernel.org, andersson@kernel.org, kw@linux.com, 
- manivannan.sadhasivam@linaro.org, lpieralisi@kernel.org, 
- konradybcio@kernel.org, abel.vesa@linaro.org, quic_devipriy@quicinc.com, 
- linux-pci@vger.kernel.org, quic_msarkar@quicinc.com, 
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
- kishon@kernel.org, krzk+dt@kernel.org
-In-Reply-To: <20240827063631.3932971-1-quic_qianyu@quicinc.com>
-References: <20240827063631.3932971-1-quic_qianyu@quicinc.com>
-Message-Id: <172476183902.3553327.3757950028426438486.robh@kernel.org>
-Subject: Re: [PATCH 0/8] Add support for PCIe3 on x1e80100
+To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
+Cc: Fabio Estevam <festevam@gmail.com>, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, Chester Lin <chester62515@gmail.com>, 
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Shawn Guo <shawnguo@kernel.org>, 
+ Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, 
+ Matthias Brugger <mbrugger@suse.com>, imx@lists.linux.dev, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+In-Reply-To: <20240827084815.1931169-1-ciprianmarian.costea@oss.nxp.com>
+References: <20240827084815.1931169-1-ciprianmarian.costea@oss.nxp.com>
+Message-Id: <172476183961.3553344.11483964192483268443.robh@kernel.org>
+Subject: Re: [PATCH] arm64: dts: s32g: Add S32G2/S32G3 uSDHC pinmux
 
 
-On Mon, 26 Aug 2024 23:36:23 -0700, Qiang Yu wrote:
-> This series add support for PCIe3 on x1e80100.
+On Tue, 27 Aug 2024 11:48:15 +0300, Ciprian Costea wrote:
+> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
 > 
-> PCIe3 needs additional set of clocks, regulators and new set of PCIe QMP
-> PHY configuration compare other PCIe instances on x1e80100. Hence add
-> required resource configuration and usage for PCIe3.
+> Adding 100mhz & 200mhz pinmux support for uSDHC helps to support
+> higher speed modes for SD (SDR50, DDR50, SDR104) and
+> eMMC (such as HS200, HS400/HS400ES).
 > 
-> Qiang Yu (8):
->   phy: qcom-qmp: pcs-pcie: Add v6.30 register offsets
->   phy: qcom-qmp: pcs: Add v6.30 register offsets
->   phy: qcom: qmp: Add phy register and clk setting for x1e80100 PCIe3
->   arm64: dts: qcom: x1e80100: Add support for PCIe3 on x1e80100
->   dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Document the X1E80100
->     QMP PCIe PHY Gen4 x8
->   clk: qcom: gcc-x1e80100: Fix halt_check for pipediv2 clocks
->   arm64: dts: qcom: x1e80100-qcp: Add power supply and sideband signal
->     for pcie3
->   PCI: qcom: Add support to PCIe slot power supplies
-> 
->  .../phy/qcom,sc8280xp-qmp-pcie-phy.yaml       |  18 +-
->  arch/arm64/boot/dts/qcom/x1e80100-qcp.dts     | 116 +++++++++
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi        | 205 +++++++++++++++-
->  drivers/clk/qcom/gcc-x1e80100.c               |  10 +-
->  drivers/pci/controller/dwc/pcie-qcom.c        |  52 +++-
->  drivers/phy/qualcomm/phy-qcom-qmp-pcie.c      | 222 +++++++++++++++++-
->  .../qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h    |  25 ++
->  drivers/phy/qualcomm/phy-qcom-qmp-pcs-v6_30.h |  19 ++
->  8 files changed, 657 insertions(+), 10 deletions(-)
->  create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h
->  create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-v6_30.h
-> 
-> --
-> 2.34.1
-> 
-> 
+> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/s32g2.dtsi      | 153 ++++++++++++++++++
+>  .../arm64/boot/dts/freescale/s32g274a-evb.dts |   4 +
+>  .../boot/dts/freescale/s32g274a-rdb2.dts      |   4 +
+>  arch/arm64/boot/dts/freescale/s32g3.dtsi      | 153 ++++++++++++++++++
+>  .../boot/dts/freescale/s32g399a-rdb3.dts      |   4 +
+>  5 files changed, 318 insertions(+)
 > 
 
 
@@ -118,46 +98,14 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y qcom/x1e80100-qcp.dtb' for 20240827063631.3932971-1-quic_qianyu@quicinc.com:
+New warnings running 'make CHECK_DTBS=y freescale/s32g274a-evb.dtb freescale/s32g274a-rdb2.dtb freescale/s32g399a-rdb3.dtb' for 20240827084815.1931169-1-ciprianmarian.costea@oss.nxp.com:
 
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: reg: [[0, 29163520, 0, 12288], [0, 2013265920, 0, 3869], [0, 2013269824, 0, 168], [0, 2013270016, 0, 4096], [0, 2014314496, 0, 1048576]] is too short
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: reg-names: ['parf', 'dbi', 'elbi', 'atu', 'config'] is too short
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: clocks: [[53, 348], [53, 84], [53, 86], [53, 87], [53, 94], [53, 95], [53, 22], [53, 33]] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: clock-names:0: 'aux' was expected
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: clock-names:1: 'cfg' was expected
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: clock-names:2: 'bus_master' was expected
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: clock-names:3: 'bus_slave' was expected
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: clock-names:4: 'slave_q2a' was expected
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: clock-names:5: 'noc_aggr' was expected
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: clock-names:6: 'cnoc_sf_axi' was expected
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: clock-names: ['pipe_clk_src', 'aux', 'cfg', 'bus_master', 'bus_slave', 'slave_q2a', 'noc_aggr', 'cnoc_sf_axi'] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: Unevaluated properties are not allowed ('operating-points-v2', 'opp-table' were unexpected)
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: phy@1be0000: clock-names:4: 'pipe' was expected
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: phy@1be0000: clock-names:5: 'pipediv2' was expected
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: phy@1be0000: clock-names:6: 'phy_aux' was expected
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pmic@3: gpio@8800: 'pm_sde7_aux_3p3', 'pm_sde7_main_3p3' do not match any of the regexes: '-hog(-[0-9]+)?$', '-state$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/qcom,spmi-pmic.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: gpio@8800: 'pm_sde7_aux_3p3', 'pm_sde7_main_3p3' do not match any of the regexes: '-hog(-[0-9]+)?$', '-state$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,pmic-gpio.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pmic@8: gpio@8800: 'pcie_x8_12v_on' does not match any of the regexes: '-hog(-[0-9]+)?$', '-state$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/qcom,spmi-pmic.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: gpio@8800: 'pcie_x8_12v_on' does not match any of the regexes: '-hog(-[0-9]+)?$', '-state$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,pmic-gpio.yaml#
+arch/arm64/boot/dts/freescale/s32g274a-rdb2.dtb: pinctrl@4009c240: 'usdhc0-100mhzgrp', 'usdhc0-200mhzgrp', 'usdhc0grp' do not match any of the regexes: '-pins$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/pinctrl/nxp,s32g2-siul2-pinctrl.yaml#
+arch/arm64/boot/dts/freescale/s32g274a-evb.dtb: pinctrl@4009c240: 'usdhc0-100mhzgrp', 'usdhc0-200mhzgrp', 'usdhc0grp' do not match any of the regexes: '-pins$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/pinctrl/nxp,s32g2-siul2-pinctrl.yaml#
+arch/arm64/boot/dts/freescale/s32g399a-rdb3.dtb: pinctrl@4009c240: 'usdhc0-100mhzgrp', 'usdhc0-200mhzgrp', 'usdhc0grp' do not match any of the regexes: '-pins$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/pinctrl/nxp,s32g2-siul2-pinctrl.yaml#
 
 
 
