@@ -1,147 +1,113 @@
-Return-Path: <linux-kernel+bounces-303215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B0FE960923
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:42:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B10D3960926
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:43:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36623284E03
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:42:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E45D91C22B89
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F7B1A38F4;
-	Tue, 27 Aug 2024 11:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZAl5WkB7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95B51A01C4;
+	Tue, 27 Aug 2024 11:42:44 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED471A0718;
-	Tue, 27 Aug 2024 11:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0DD19EED8;
+	Tue, 27 Aug 2024 11:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724758882; cv=none; b=dP1VxNAT53DIc/bUOM6fcPiB9SqR/Bg29/ru3CNQAZKG2ZA3/jUN0IRGSb/zFIzx/D0qblvuXHjR0woatevj8iz7QVpujeQouIXWHCiJI9cZ4wnOD97wrKrUJ1WaSCPMf3OLllA+eoZFAoaHNVmMKW4bUYm7oR+5bXQCwbL9b3w=
+	t=1724758964; cv=none; b=DaBo5JZgf46musTu0GNsoM9MX+2f5f9ezSe8pZNuo61nnCRO18Do6mwLkeww0YlpcxD05zBmXEa6QHp1QmVfoZfqYey4+KSwQQFLh97vDzExeB81dkJizscwHPLzqUMC5JbnNARaA2dXDIYaiqkxVZd4paOjUhTYRpTtvuPkwBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724758882; c=relaxed/simple;
-	bh=VYCX0E48ph+cth/n7E5awP96npB0EP6UJB3lBeYDBE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YZT+MEnOKtlD+prQsAqx4zn+outei16S4J6DiKH8gyHMzaGrDUyR6Rx/r5OPXZe26470n/dZd/TquXxCCzgSO4q2Q+I8pRueRfRDSofe6Af8lSZS3MRoUmoGL4h2yJTVZr8w22/D/IKtRlamcI7LcY3UE/jxXjT8Zyq6pVz5bCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZAl5WkB7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B301C51E64;
-	Tue, 27 Aug 2024 11:41:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724758882;
-	bh=VYCX0E48ph+cth/n7E5awP96npB0EP6UJB3lBeYDBE8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZAl5WkB76UMZu/3JybqCIQUYRU6jgBeGbMAgKTlHR+QVcISzMmminsDdV+HdwggY3
-	 ThIqfL82T80Yi/3+e3CrriedQwzjnsdgKZrhFM2CWGSEkpwV7Z1+KXZcwFiXwXMXtA
-	 Vf5M/hsjXs2YAahwD0bAt2KwsMhz+EJxEx9ExVe8ULA/89F6O2osPb/iNlQ0EU8vCc
-	 diFiGXzsGJOy02993ujsAfjRpE6E5Mdc2eVCqeY7p0WQRNkBDt0sgLHuPwmBCnMe/8
-	 BlKmZQh4r1ThNGMwkxVDHByuR5W5NuBaQ+oYyoAdgXEcvrGg0wP7yWR+tJ5hZTvHLS
-	 6sgB6WxQCJcDQ==
-Date: Tue, 27 Aug 2024 13:41:18 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org, 
-	robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, abel.vesa@linaro.org, 
-	quic_msarkar@quicinc.com, quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org, 
-	kw@linux.com, lpieralisi@kernel.org, neil.armstrong@linaro.org, 
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 7/8] arm64: dts: qcom: x1e80100-qcp: Add power supply and
- sideband signal for pcie3
-Message-ID: <haj2zmdk7raz4zcwaizzeyxoetrb5rcxwwkhjesuejphixgogb@gueq5pq7srcx>
-References: <20240827063631.3932971-1-quic_qianyu@quicinc.com>
- <20240827063631.3932971-8-quic_qianyu@quicinc.com>
+	s=arc-20240116; t=1724758964; c=relaxed/simple;
+	bh=dPe8DbtxerYaaq8xecDoFTNyrI561S8eGoHGxCwKKGI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=usqiJ1WgWXWuKGWgCJU7kYBCqzeXt6Jn5DOG66Gl7gI9zGjoCstiqnqkKs0c8ITn2B4cgy7Yd2GPiyY97P942pkT+1tnVJy9Ch0ysfHYXKOARLidby6YTaDvBaKQcvn4Yws9k4UBwp8WmLow9Vuk4pBtGgBFFtd8Q4zjnpxADw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WtQcd5HGQzyQYJ;
+	Tue, 27 Aug 2024 19:41:53 +0800 (CST)
+Received: from kwepemd100024.china.huawei.com (unknown [7.221.188.41])
+	by mail.maildlp.com (Postfix) with ESMTPS id E3F4F18007C;
+	Tue, 27 Aug 2024 19:42:40 +0800 (CST)
+Received: from huawei.com (10.175.124.27) by kwepemd100024.china.huawei.com
+ (7.221.188.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 27 Aug
+ 2024 19:42:40 +0800
+From: yangyun <yangyun50@huawei.com>
+To: <miklos@szeredi.hu>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lixiaokeng@huawei.com>, <yangyun50@huawei.com>
+Subject: Re:[PATCH] fuse: remove useless IOCB_DIRECT in fuse_direct_read/write_iter
+Date: Tue, 27 Aug 2024 19:41:46 +0800
+Message-ID: <20240827114146.3474592-1-yangyun50@huawei.com>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <CAJfpegt_P=Dj-CXnbZYK+XZW8ZwNH0_Str30q9vub0o00UMuWQ@mail.gmail.com>
+References: <CAJfpegt_P=Dj-CXnbZYK+XZW8ZwNH0_Str30q9vub0o00UMuWQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240827063631.3932971-8-quic_qianyu@quicinc.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemd100024.china.huawei.com (7.221.188.41)
 
-On Mon, Aug 26, 2024 at 11:36:30PM -0700, Qiang Yu wrote:
-> Add perst, wake and clkreq gpio config. Add required power supply.
+On Mon, Aug 26, 2024 at 09:12:39PM +0200, Miklos Szeredi wrote:
+> On Mon, 26 Aug 2024 at 15:07, yangyun <yangyun50@huawei.com> wrote:
+> >
+> > Commit 23c94e1cdcbf ("fuse: Switch to using async direct IO
+> > for FOPEN_DIRECT_IO") gave the async direct IO code path in the
+> > fuse_direct_read_iter() and fuse_direct_write_iter(). But since
+> > these two functions are only called under FOPEN_DIRECT_IO is set,
+> > it seems that we can also use the async direct IO even the flag
+> > IOCB_DIRECT is not set to enjoy the async direct IO method. Also
+> > move the definition of fuse_io_priv to where it is used in fuse_
+> > direct_write_iter.
 > 
-> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/x1e80100-qcp.dts | 116 ++++++++++++++++++++++
->  1 file changed, 116 insertions(+)
+> I'm interested in the motivation for this patch.
 > 
+> There's a minor risk of regressions when introducing such a behavior
+> change, so there should also be a strong supporting argument, which
+> seems to be missing in this case.
 
-Really, driver cannot depend on this patch. That's a no go.
+Thanks for your reply!
 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-> index 1c3a6a7b3ed6..0deb0c4bfea9 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-> @@ -254,6 +254,48 @@ vreg_nvme: regulator-nvme {
->  		pinctrl-names = "default";
->  		pinctrl-0 = <&nvme_reg_en>;
->  	};
-> +
-> +	vreg_pcie_12v: regulator-pcie_12v {
-> +		compatible = "regulator-fixed";
-> +
-> +		regulator-name = "VREG_PCIE_12V";
-> +		regulator-min-microvolt = <12000000>;
-> +		regulator-max-microvolt = <12000000>;
-> +
-> +		gpio = <&pm8550ve_8_gpios 8 GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pcie_x8_12v>;
-> +	};
-> +
-> +	vreg_pcie_3v3_aux: regulator-pcie_3v3_aux {
+It seems that there is a risk of regressions. But I think adding an argument 
+in this case is not so graceful, whatever adding this argument to the 
+`struct fuse_file->open_flags` or adding it to the init flags in `struct 
+fuse_init_args`.
 
-Please follow DTS coding style.
+The reasons are:
 
-> +		compatible = "regulator-fixed";
-> +
-> +		regulator-name = "VREG_PCIE_3P3_AUX";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +
-> +		gpio = <&pmc8380_3_gpios 8 GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pm_sde7_aux_3p3_en>;
-> +	};
-> +
-> +	vreg_pcie_3v3: regulator-pcie_3v3 {
-> +		compatible = "regulator-fixed";
-> +
-> +		regulator-name = "VREG_PCIE_3P3";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +
-> +		gpio = <&pmc8380_3_gpios 6 GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pm_sde7_main_3p3_en>;
-> +	};
->  };
->  
->  &apps_rsc {
-> @@ -667,6 +709,57 @@ &mdss_dp3_phy {
->  	status = "okay";
->  };
->  
-> +&pm8550ve_8_gpios {
-> +	pcie_x8_12v: pcie_x8_12v_on {
+1. Commit 23c94e1cdcbf ("fuse: Switch to using async direct IO for FOPEN_DIRECT_IO") 
+also changes the behavior from sync to async direct io, but does not import a new 
+argument to avoid the risk of regressions.
 
-Never tested.
+2. Fuse already has an init flags FUSE_ASYNC_DIO in `fuse_init_args`, which indicates
+that the direct io should be submitted asynchrounously. The comment in function 
+`fuse_direct_IO()` also indicates the situation:
+"
+      /*   
+         * By default, we want to optimize all I/Os with async request
+         * submission to the client filesystem if supported.
+         */
+"
+But the code does not go through the async direct io code path in the case described in current patch.
 
-Best regards,
-Krzysztof
+3. If adding a argument, it would be so many arguments about async and direct io (FUSE_ASYNC_DIO, 
+FUSE_ASYNC_READ, FOPEN_DIRECT_IO, etc), which may be redundant and confuse the developers about 
+their differences.
 
+What do you think ? 
+
+> 
+> Thanks,
+> Miklos
 
