@@ -1,85 +1,82 @@
-Return-Path: <linux-kernel+bounces-303011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68A2296061B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:46:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A318960623
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:46:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98DFF1C20E26
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:46:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7A72285323
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6520619E7DF;
-	Tue, 27 Aug 2024 09:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C397719DFB3;
+	Tue, 27 Aug 2024 09:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VwOvb7Jm"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r0/g4DkF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5CA319CD08
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0F719AA46;
+	Tue, 27 Aug 2024 09:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724751877; cv=none; b=tIqdUWdLDjTdpuVs+WBB5jmkXupUJlbfscaZISQJK05RQ6/Yuxt/DqRr9qyy/uTPb/AxDHbRIKCmDxvvwyYsMhZqxDRC+YRoMH80zism9NypIAAVnVGOSQf7bBqcwtPUGJKLDAkHjrfSN/h7pX6gtuw56vOxxFN+QD1Ox9IG24U=
+	t=1724751957; cv=none; b=sPpnd8S4E7Vsge/XyHP0yUPHqSRc4soOYPAYSe+o1mZYfF7rGrkuz7ePIXvSL92zPMXLil6VnVCwM2Gt9vJmohwjjtGP7PdOVnS55gcCf6qyw/txXJDRG8zSiCQa+CKAlkPoH8k8fngGmUXpytgxREF/FG5uW/mTeLdp5qQbe3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724751877; c=relaxed/simple;
-	bh=qgrAugm1rpQlY/ERueGMv3KYU9B+Bw/8sl4XuiG1TMM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Caw64Y9hkpg3MYnI06qA/W16Un2bWZZZFhnoknh3rltoXyJ0+pTsmYWRwXQY6wgB1uabi6vfiaGPVYF15R9zBDWA8HhLq66mG8wxGj+rMJFLT+mIzYdAM2YvRerThDbdqFqf0dzEzeqEzUlN+1MJzEXc4E7WSnMqdDDr9ZCty2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VwOvb7Jm; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724751871;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=bY2tYcoqP1IclXATq0vpOQDMtlpZe3AUP5YkGxabc7w=;
-	b=VwOvb7JmqRXgqPG/mcm+aBgK0ZZ4Qw+8y49Ofhr7t/DYJzfv7VNfppG6UPDhOYgkUk9pVv
-	cgvOFU2wWTNkV6MEFiiiSc5aoseI/etlGn5vsEoiCI8GCqors9oaXxkK9Krhn9vQwHFUgU
-	2hXK87cyEeu5oY4NB4PcUvuvpYDutx4=
-From: Kunwu Chan <kunwu.chan@linux.dev>
-To: robh@kernel.org,
-	saravanak@google.com
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kunwu Chan <chentao@kylinos.cn>
-Subject: [PATCH] of/platform: Use dev_is_platform() to identify PCI devices
-Date: Tue, 27 Aug 2024 17:44:02 +0800
-Message-ID: <20240827094403.166238-1-kunwu.chan@linux.dev>
+	s=arc-20240116; t=1724751957; c=relaxed/simple;
+	bh=pa1uUMzxapFwOzulx/0qiK3diOx9wGmg2r0PnQpb3Po=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BTcvKLgNda/+FnCnhiM+Zgp/OYeSE9p3CRTaCCrtsR1be2FieSCFSzymm4x2r8XS0TTJuPfGNBGLp4nJl0FFivVPz2rmf86pteWkw4aeLy0G/3zzMndDzur2Jg5CXAMskc6u1YrQoCWtuui4NhnjbnNUGYp+AUHveUHMzG2ofrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r0/g4DkF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C31CC8B7AE;
+	Tue, 27 Aug 2024 09:45:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724751956;
+	bh=pa1uUMzxapFwOzulx/0qiK3diOx9wGmg2r0PnQpb3Po=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=r0/g4DkFoNMeZQXr+c7nIt9HCMpHNwLaAeWhQHQpmpmWs6LKkloAc9FjNT7oOVWEp
+	 wrFkD2+Ss1W1sQ9L8xTj3/4LywM59VuX5qIbBfP7YnRPoIyY8P6Cb5hPZgaOIft+GN
+	 kLSXCVV6xFYYRGykeo334KMdH1XPcFmmo00aH7eoSp+fxvfP46NNp9LC/aaLsRO5jr
+	 Uxb1OLzXHLwoehorA2mRV3eBWFiV+2xn+E2ur2DbybxBQ2TCIKk+eTqw82AzEiDs2g
+	 J6KF2/XHf82qYk/HAuxkXQ69hLGDkr8O+okf2h4D3xV4RUVwe/ESgZgtsilVPLhj3E
+	 PbtN5N4RgltWA==
+Message-ID: <38f54537-7ed3-4f6d-acac-1704c004a349@kernel.org>
+Date: Tue, 27 Aug 2024 11:45:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/10] pmdomain: qcom: cpr: Simplify with dev_err_probe()
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+References: <20240823-cleanup-h-guard-pm-domain-v1-0-8320722eaf39@linaro.org>
+ <20240823-cleanup-h-guard-pm-domain-v1-5-8320722eaf39@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <20240823-cleanup-h-guard-pm-domain-v1-5-8320722eaf39@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Kunwu Chan <chentao@kylinos.cn>
+On 23.08.2024 2:51 PM, Krzysztof Kozlowski wrote:
+> Use dev_err_probe() to make defer code handling simpler.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-Use dev_is_platform() instead of checking bus type directly.
+Reviewed-by: Konrad Dybcio <konradybcio@kernel.org>
 
-Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
----
- drivers/of/platform.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-index 86be4dfb9323..3696140bae9e 100644
---- a/drivers/of/platform.c
-+++ b/drivers/of/platform.c
-@@ -625,7 +625,7 @@ int of_platform_device_destroy(struct device *dev, void *data)
- 	of_node_clear_flag(dev->of_node, OF_POPULATED);
- 	of_node_clear_flag(dev->of_node, OF_POPULATED_BUS);
- 
--	if (dev->bus == &platform_bus_type)
-+	if (dev_is_platform(dev))
- 		platform_device_unregister(to_platform_device(dev));
- #ifdef CONFIG_ARM_AMBA
- 	else if (dev->bus == &amba_bustype)
--- 
-2.41.0
-
+Konrad
 
