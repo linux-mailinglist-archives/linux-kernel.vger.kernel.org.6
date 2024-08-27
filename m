@@ -1,86 +1,110 @@
-Return-Path: <linux-kernel+bounces-302692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D2999601F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:38:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 670B7960205
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B001F1C22019
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:38:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA40BB23C64
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F677192599;
-	Tue, 27 Aug 2024 06:37:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69F114A0B7;
+	Tue, 27 Aug 2024 06:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="qflEZINF"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="C2IfQhDG"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53BC7156665
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44E31494CF;
+	Tue, 27 Aug 2024 06:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724740626; cv=none; b=tNemst7lwszYicSaXr4Gs9dPb7On2sL3McgLok2PNct8N/mhJ6elX3aI6netZGyy7j7HJnt5IX11AZGGNk4jY2+XnFfcMWPuiwkF6sQXFHDI9ODbMpeB3FDuodTPlyDBsUl8h/bSjoNkBqEizmJOPQFdmUc7L3+jkugbAuGSQ9M=
+	t=1724740660; cv=none; b=YfJ0TLQ3t/uJ34WbmeiAgDJEWKAOQJcvqNnQwZyTJG97ceNvmYciXMMwRETARG9g86sGT117zZLn8rrIkNg67vAzUt8iWUwC/LBgtGiVra05cX91jAVM7no4ljXqvsZQAHdwjVP52RqXEchQ+uSFRKQwMxQ2xBH3Fh8ZxqJB6bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724740626; c=relaxed/simple;
-	bh=Jz2DYN4GgoIl2xhz48zN+es66+xV+eZBkJuLfa5mYl0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s8Nenag2TGufu3Kjk7uuOZlS6mHfV4I/MQp/G+tHc3oviNc4A5GeViLeD8gjiINZxCy9Qpuw1PAmKcH0gCKoq9Ges2FsguSSTXwpXohdhSbK9O1hN+NI+A7RMxwAQ8jRwXkQAVI3eqyn6bryevDT+7I/msUo77I+y+D2AbaF07M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=qflEZINF; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1724740622;
-	bh=YtXQ1b+AHiYzvhi9lLvKVXsirFFKMPBoc0aah+APMNA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=qflEZINFFfc4eT24aWEhVpuHbI/WjUWgY8ltXDApgzjEKIQy+hyXdvq1CArIIMwm5
-	 HV1g45slwrWEZp5juzWB5k33zoQTfDxkalHD12d7shDFEaqvnlWOzUWXmHGldfqk0h
-	 O5JP0P3s77f+AY1XcKlQGajmQVwauD8AGvhiPVBmzQX/TMxE6Ly0sy5UWYJAP29FoS
-	 aMjUOh2T0oOlVCYF0/tO4A0TlVKMZy2+XlRhZg+81DFoUZzLqUnJNB7gR/+WW94llE
-	 6qtjqLGvehe9Zn+CG+8hW3/S0A+W2Dg/x65qi2twHMvyu+eCQ8xVUmkoP+rbY2c7Xf
-	 6dTvq0giv5fzQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WtHrt4Chxz4wnx;
-	Tue, 27 Aug 2024 16:37:02 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: <linuxppc-dev@lists.ozlabs.org>
-Cc: <linux-kernel@vger.kernel.org>
-Subject: [PATCH] MAINTAINERS: powerpc: Add Maddy
-Date: Tue, 27 Aug 2024 16:36:51 +1000
-Message-ID: <20240827063651.28985-1-mpe@ellerman.id.au>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1724740660; c=relaxed/simple;
+	bh=mc6aGlu9mnEKgX3Eg3gP9s+f+MSRAI/3kze8p2Zbk+c=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tkIbaLWS/Nzzu/pttMX7yf+anvgpG6BteTljmZePXg2FrT6AhaNIF1q8WIAsL+TO0xR/oSde/eo84AQjMXnnwz0F28lMA+f397ARofBIBuGkMUx9m6Hlw7cMVaRAwSYJso5mQAlg4uViNX/B9ey2Z8buXsAif0VWuuvMFUf3l1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=C2IfQhDG; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=7hvoZKt8KDniC16/zwNml85JaHiw3Nuh33M3Lqd0yuY=; t=1724740656; x=1725345456; 
+	b=C2IfQhDGdwSX9edHWqgl944WXLzeCMYNX2DPZa+IYxr60hw9DNTbLF5AINmsLquod0XBoAbZJgy
+	5mDwFUx31PHeaeDdMQJocHAi/Q0Fe7jebFDG3WmohnuquHvJVBqQDLMw7L40sNcVwSoCFkBmubT+I
+	MJJscA6+PrvbHlPQxpJQpBWoNUchaoEPxxYbNkEZqeoLVA1PKX/0i8psCzPzRV3Y8mugTWWrD3DhZ
+	fl0uKzZEoYWOxu2OBuXwsxihq0km7OCoDxG5saC/k4ZmRUNo62xBeRvIE6xwyrft0FMSMFXL+C3uX
+	mqegyH+tkPLuN5b6vzRbdqKswp9Bq/a1VJyg==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1sippT-00000001UP4-2QI3; Tue, 27 Aug 2024 08:37:23 +0200
+Received: from p5b13a2bf.dip0.t-ipconnect.de ([91.19.162.191] helo=[192.168.178.20])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1sippT-00000003ckf-1VoH; Tue, 27 Aug 2024 08:37:23 +0200
+Message-ID: <f355e26eead641f5f281372aadf9dee7de19a4c7.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH] crash: Default to CRASH_DUMP=n when support for it is
+ unlikely
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Baoquan He <bhe@redhat.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Dave Vasilevsky
+ <dave@vasilevsky.ca>, linuxppc-dev@lists.ozlabs.org,
+ linux-sh@vger.kernel.org,  mpe@ellerman.id.au, kexec@lists.infradead.org,
+ linux-kernel@vger.kernel.org,  Reimar =?ISO-8859-1?Q?D=F6ffinger?=
+ <Reimar.Doeffinger@gmx.de>
+Date: Tue, 27 Aug 2024 08:37:22 +0200
+In-Reply-To: <Zs1wpHxfTcwKr517@MiWiFi-R3L-srv>
+References: <20240823125156.104775-1-dave@vasilevsky.ca>
+	 <CAMuHMdVYNhFJ+qBDP3_fi9oeHsgOL0vqPe1YqE18+M8n1onssw@mail.gmail.com>
+	 <09c29a3c4879d4ce5d8b97fd60d8ba5e38bed979.camel@physik.fu-berlin.de>
+	 <Zs1wpHxfTcwKr517@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-Maddy will be helping out with upstream maintenance, add him as a
-reviewer.
+On Tue, 2024-08-27 at 14:22 +0800, Baoquan He wrote:
+> About why it's enabled by default, as Michael has explained in another
+> thread, distros usualy needs to enable it by default because vmcore
+> dumping is a very important feature on servers, even guest instances.=20
+> Even though kdump codes are enabled to built in, not providing
+> crashkernel=3D value won't make vmcore dumping take effect, it won't cost
+> system resources in that case.
 
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+OK, thanks for the explanation. But as we have found out in the mean time,
+the assumption was wrong to enable it by default for all architectures as
+some architectures cannot boot a crash dump kernel with their default bootl=
+oader
+but only through kexec.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 878dcd23b331..0ee724dcc05a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12912,6 +12912,7 @@ M:	Michael Ellerman <mpe@ellerman.id.au>
- R:	Nicholas Piggin <npiggin@gmail.com>
- R:	Christophe Leroy <christophe.leroy@csgroup.eu>
- R:	Naveen N Rao <naveen@kernel.org>
-+R:	Madhavan Srinivasan <maddy@linux.ibm.com>
- L:	linuxppc-dev@lists.ozlabs.org
- S:	Supported
- W:	https://github.com/linuxppc/wiki/wiki
--- 
-2.46.0
+Can we have a follow-up patch to disable crash dump kernels where they're
+not needed? I mean, not every platform supported by Linux is obviously a
+x86-based or POWER-based server.
 
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
