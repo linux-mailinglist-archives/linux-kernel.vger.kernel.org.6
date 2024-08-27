@@ -1,165 +1,228 @@
-Return-Path: <linux-kernel+bounces-302919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE1E3960505
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:00:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB4A5960509
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7646D28155D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:00:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D185A1C2270A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F20D199926;
-	Tue, 27 Aug 2024 08:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576E7199E98;
+	Tue, 27 Aug 2024 09:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UvleFXTk"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nCG95Urz"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2079.outbound.protection.outlook.com [40.107.102.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58CE2158DD0;
-	Tue, 27 Aug 2024 08:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724749194; cv=none; b=c1kZflU0W+NMbg/CHtx+HpUbt9ZiFE+lVXu7eZFndorC5rGDQc6XvrCVy12BFP8/EtIHuSUz44DRjRwC/blYf/UrxGIRSc833e89w4N6fS1HlTRVMwzyStZVjtXrqxHKoxmR0+UAkQVpfNVLGasIIHtZeDqwX2fkZWEByaj8c/8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724749194; c=relaxed/simple;
-	bh=+TT0uroKW11xXpPExGJDmmlkdjN9uj2GaHpKRvERy/g=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sNuajCe65j3Uiv2oaH91BiVt7c4klihi7rom3RLgo2GWMUZe7jiDeLl62AlSkWcLjvxKhP4X9i1pLuPaPi4pq2qCwyTu9uUo+yaFzBXQV6SC+3zmlx8wJndhDtf6dWsEV/LjXTUyklQtTItkb5oZRcXJbQsTnFWBpJuVnB2snbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UvleFXTk; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7cd90dbf42fso119971a12.3;
-        Tue, 27 Aug 2024 01:59:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724749192; x=1725353992; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+X6rwei4gMShKEung6RR21p/awqx+Ne1vZ7IkcdbMxo=;
-        b=UvleFXTkUXh+wZbE34sKYUxvOboQfWJO6Z2tqxLjgTUijZ74j6vKaVed0Gm1890AXQ
-         bTLe5FRsqVYjqYZ384NTvatqMr89tszPu6ONBcO338Qj/pncV9a88lKWBs1dILzGmBSC
-         w3KJgfkwhsm2QR+Ou5pv3N8zcv1ts20zXH9ViXZx5SJOoiNbRkRnW8t/oAPtjALfbqEB
-         1SVFEwhtrG0xjkgbKJRxwHGT7v3ybzTG6/pvpHNDIvKZMol5+3yfhXuIqiPJIwTVMT6I
-         G/XYOvOEe5VlUALVWGUlS3wKPmE6IOkWTJxvGIJQ47FNEByR2cFWwKPhZlfEmcO2MJbw
-         IpLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724749192; x=1725353992;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+X6rwei4gMShKEung6RR21p/awqx+Ne1vZ7IkcdbMxo=;
-        b=ifAab1skhStSFwfz+my679cpT4w3QjMVw71CJOY1JjpceG2eqmjJz/6KTby8rxOa3g
-         RjNN0yrouBvxe3Rvn1TaF74mSRek4kFt2BbU4ZJOUZ1OLQDQnI0T6kfl56h7Tkw5HsHV
-         WpmTExRDbBBhfgZ3UgceoPbpEYE6rmLHShon1pz4XRrZDCOvCpbGCmEhiyvp48D93f/C
-         sLtsU+gd3xVprdfol2HySqMRBb0OuJ9XiaTNscdk9dQqKrexd8ln0hvHd5M0ZU7m83nO
-         dSxsU3+zBdHYg1PER1HluqjxpDWA8anBBoIASZ9t1l5t3hA8qtvfAGLvSlTv9F3qN32e
-         VcZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4PtXqjDXQOK63ZOljLu7qKcewAOZ0zTiN5TlIhtKURGqI9h8j+qUvkIBVWkpbY9DWhMHxzkmg@vger.kernel.org, AJvYcCXCBcwdFXrMj4nJiHqjD7S5Cl7PSuk7G3BrMSx6iJ0VYTeh7NzRPNYDdiSBgEzBXhpCgVVDWxRRUFZkdrw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb05TwTnozV9kbRpsbIxGhRcymP7tC3Ubb/cPWgT2BbiW5ArPx
-	Bvyr5f2joMEciSeMVBa2OQfX3uGM+eVRrx0faORNEYlrYG2Tvm1/
-X-Google-Smtp-Source: AGHT+IGsrnLoe604GlGw16hpNDIHaKK6u81wwk4WYrqqcJgeFsJVrqpiwiFwpO4tOnMDhGDj3nOCZw==
-X-Received: by 2002:a05:6a00:23c2:b0:710:51e4:51f0 with SMTP id d2e1a72fcca58-714458c8c51mr9210519b3a.4.1724749192455;
-        Tue, 27 Aug 2024 01:59:52 -0700 (PDT)
-Received: from localhost.localdomain ([49.0.197.176])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-714342fc87asm8423217b3a.142.2024.08.27.01.59.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 01:59:52 -0700 (PDT)
-From: sunyiqi <sunyiqixm@gmail.com>
-To: kerneljasonxing@gmail.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	sunyiqixm@gmail.com
-Subject: Re: Re: [PATCH] net: do not release sk in sk_wait_event
-Date: Tue, 27 Aug 2024 16:59:32 +0800
-Message-Id: <20240827085932.905688-1-sunyiqixm@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CAL+tcoBw1CKpPDkbiNGrrUFiqBEhHHx9vWhqfpfV1bbu3F1i5A@mail.gmail.com>
-References: <CAL+tcoBw1CKpPDkbiNGrrUFiqBEhHHx9vWhqfpfV1bbu3F1i5A@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D8A13B293;
+	Tue, 27 Aug 2024 09:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724749243; cv=fail; b=NEPFYN/LQ3HyRJDk3CvOfOIonoOPxbSda2Kmq5x7W4KnaP5ZhNL5z90AL5q5fU4zulkSQx7g2JxrDF0GXePVDTSyBclANJTmT+ptTSievRs/hxIQqZ2kiR4vXIfsJ0EnSDy4u+lTqdP1ak/5A5LOMCZcg7hV3dojT873ufBbQc8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724749243; c=relaxed/simple;
+	bh=jfjQUIUabuVC/dgTdaAqJgU+IXL109kvp1poADEPDXg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=raUUcN2X0kkK50ZadW9EJKcpCderliSsPozZK0lcV+bxn0MGst9TkUFziGA6cf20MEB5mpd2zdk5/xnC1ge6tM8LA/2ZCIRhcTT/KXpRW3Tk+MmuUOhpkOjLM2w05MTE1ph+gCrSjm/n38bP97DFhnhHGEt5KyaEVvtaJY7SNPk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nCG95Urz; arc=fail smtp.client-ip=40.107.102.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jwlzRj/syuMiUIedrspa/wy4315AXAEetiwiIllPpGxX3kJ+JKyIW8dh+kLbJV0VUQm4ck7vxTrSBcIrU+Y5plhgrlEQySUDNVx05izG5yIJSMs7dFErXahcE7YT36D+ifG9fVxsGCr/q4PISpWVXy/gAnojUfGy7eNER2LXwlgpXeJI+y8DVl0LB1wqx+kgoviW+fdF8IcRKKK9TCLNf96a/0TdywR6yapA8KUPnZP1FA/5tdukfS2y5cN6D2WyfEFYWm/74FxJHwOjxIqRXQlQFnivRcwO2G3VEliD5fHgq21N7tziOCEaCb6WgaSpGqNPy51gJoZRdtOSQV0ozA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MjdgceC0vYgnp7EUFKuGucQPn7F+NQjuBaz2+u5qhFw=;
+ b=rpepR5mkp5RMWFBC958S+57WY9s7KhcCnoFZdwjUkCMQsHqYv0yMtDLkLbYyjM6Vmw8YuRYLIt+VtyxGYA7oqki//dtma1iqVUSoBlnLfRRyCtuOpBZs0HazcCbZgPuylKBODB/Ig9CsM2zdX+lohqOjI6d9txqZiiesBkqMpcdtoMLCA5nzXahmjLWVW1JlSvC4/Rz/q6gVhwUY5PTlWBNS6Re+1F5ge46NGqXu6xNvP8iN6QWROkMX6to7bBkwg2BDFkujXtBJZUdXfdyJi05SqWpiotBzC4+Mk2AZ88DUjU+NO02cAvkkO6zpZTJFuXqZ6xn8HsHhN8HcnwjnHQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MjdgceC0vYgnp7EUFKuGucQPn7F+NQjuBaz2+u5qhFw=;
+ b=nCG95UrzehUvd3jJXAsj1f8YMQPPDGO2tgrIcETFHF8tcwxacxz+yVuRwKPopTbV7ichA7kpbCTZozNmFhFaQ25CmghmKXi164nRMP7gtkj9CS4LT4RNDBXddWyW3+62knqVNWd0heqbTfdCZKnF0sED3aBiCexiqfQQSLa4NbM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by PH7PR12MB7017.namprd12.prod.outlook.com (2603:10b6:510:1b7::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Tue, 27 Aug
+ 2024 09:00:38 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.7897.021; Tue, 27 Aug 2024
+ 09:00:38 +0000
+Message-ID: <9ba7f944-52d1-4937-80c7-a03bc0c5b1d5@amd.com>
+Date: Tue, 27 Aug 2024 11:00:32 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/sched: Fix UB pointer dereference
+To: Danilo Krummrich <dakr@kernel.org>, Philipp Stanner <pstanner@redhat.com>
+Cc: Luben Tuikov <ltuikov89@gmail.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20240827074521.12828-2-pstanner@redhat.com>
+ <c443e90d-6907-4a02-bab4-c1943f021a8c@kernel.org>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <c443e90d-6907-4a02-bab4-c1943f021a8c@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR3P281CA0145.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:95::8) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|PH7PR12MB7017:EE_
+X-MS-Office365-Filtering-Correlation-Id: ab83b8bf-f446-45be-be16-08dcc676b8a6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?R0o4TTZkZlY2RmFmc0hwUnVPQTVaWi8ycDVGMFVXZC9UMWJ5T2VrOHJNbG1r?=
+ =?utf-8?B?MFBSQ0RUeVJyS2tGTGxCeEVWakpJWWZuczc0endjb1ZhSmQ4WEdtRG9lbGc2?=
+ =?utf-8?B?RHdselY3V3Fwdy9hSXhOWFFGS3NKYzY3cWg4bGpwc2ZBNERQR3N4L09iNVhu?=
+ =?utf-8?B?cEYwVDg0di9ydU9rQzVMQW9xbGtWMGRvN0g3WXJFRklURUtVSE9vcHhJMXNk?=
+ =?utf-8?B?bUJ6b3Q2c1B2akZPWHFBUkRxdnBFRHZYOXE1d2l6cENzNUpzdnRDdkRUV09H?=
+ =?utf-8?B?Z3gwYk8weElseHQySXlGYmNvenBGM3VwQ3RSZVdIL3hCL3NPcFFUbHBaeGRJ?=
+ =?utf-8?B?VFNEUGJZU3UrWkYybFJHZ1B2c0J1dWJCd3J4cW4wZmlnUzZCS3pzdUtDL1Vm?=
+ =?utf-8?B?Z0M1OG5ZYUcxdCtXcmxXMDJYbzBsUDlkV0FPay93bEVBRDgwUmg1Q0orOFlB?=
+ =?utf-8?B?em9UdiswU3JRMThvWldyRm1uc2E0VndOaEQyd2NuRkRYYjV4ZnEzU3k0eXRT?=
+ =?utf-8?B?dmZVd3lKemViTE5NMk5zL2NTZ0hKQmRQN29CZ1h6YnV5RHZMUFg2ZVNqNkdJ?=
+ =?utf-8?B?VlYzUE5FSmhqc3pCcUtudEc4UFFnUWJ4bVBxMTE3TzJ5dWdIOGp5RzY2Ylg5?=
+ =?utf-8?B?RS9XVXNFZXhabnY4KytJaW05TGJhdlJndm9URUFBZnBVQVFWcS9SSTRMZTFm?=
+ =?utf-8?B?QkFPM2crb1dzaEhaZHlpQy85ODI2azVJK25RUXFQbndxUHhHdkovTEZlOWdq?=
+ =?utf-8?B?Y3pBSXNoMTVBc2pNYmVzelVta0lsekdVRWRBTDZsczhwdUtOaDdpc3BkODNP?=
+ =?utf-8?B?c3N3dEZsTEtDY2Y4TG9LZExKRlJ1SWhrSnhBMGxYOHFhZTE0WFN2eVBVS0Rt?=
+ =?utf-8?B?RGU0TEtZTGpVeVZOU01aUEVZY0JPZi9wZVVMU2J1R2NjeGRlWG9GOVdwTDBJ?=
+ =?utf-8?B?ZEpvd3kvTjNreTIyaHd5d2dEb2w4ZXZLZ2NsZ1Q2ZGhHMXJmVGhxVTZXNzdH?=
+ =?utf-8?B?RWY5ZVpIV3VibExTVkY1cmtTdXBQU2pSbXVsRmhna1dRcnVQR1VrSnVSVFBu?=
+ =?utf-8?B?S2NJMU1nUTJwbkROei9kNjVlVFFoZm5xNmE2bEMvOHVsY2JFWXU0M242SVV6?=
+ =?utf-8?B?WUYydGhBcWVtL01kbkl2Y1R5QVFZMGh0SllQUUVnUmluR0FvUTVYbDIwWlRB?=
+ =?utf-8?B?M3ZBRVpNY1BJQmYxYkoyYU82a2cwR3h1Mk5STWVYYmxreUNGajE5MEM2TFRY?=
+ =?utf-8?B?Q1g3SVhNYXFGV1RZSVoxMEdDMzR5Z01DZWgwYWNFOE95T1FmUHpRQmV0Ykxn?=
+ =?utf-8?B?TXFzY0RaMTdVR1lqUUdmdUlxd0M1WFd6cjFmbDFLUDJKUExpaHUwSU5BeEFm?=
+ =?utf-8?B?RytmMEFUOXkyMnRmYVdSK2FRcWQ2Nmw5bWN1MUgyK0VHK0gvKy9GZEVPRE02?=
+ =?utf-8?B?ZThQM1BJTDl0VS80dk9VTzNrZyt5djM4L0ZtTFNjTE9YNXRTbHNtdWdocXgx?=
+ =?utf-8?B?WFFWQ24zalp3eXFIVDVEa0lINzZOd1NjVmNucTh5c0theUlyc0oxSGZoWFpR?=
+ =?utf-8?B?bGJvZ2JJQXNWNUxEOW93ZUVINHB4eXVQZ25LSFAyTGRWRjkwRng4Qk9sZmEv?=
+ =?utf-8?B?UFcxREhNUkVEdmhxVWtUUi9UMWpQQW9XNlVjR2ZMaitVbHo0bk0yTlRtRE5u?=
+ =?utf-8?B?dHpXY2Vkb2hUaGZ1OHlkbWNDTXR3d3h2ZkI0NjE4ZVcyamh6L0pSRGxXVG1y?=
+ =?utf-8?B?cnlLTUFPdlhHTE1xcklaWFJrQ2JCK09VMjVwakpPU2JFOHRldUJIZXhid1Fz?=
+ =?utf-8?Q?yGKY+ybzJsYJ0E66YyakYouT29tPfhAJAGsGY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TVNtUEY4UUJBa2VnWlowZHNmc3ZHVDZvWGJFdy9uUS91N1hEZWJGWEtHcUNP?=
+ =?utf-8?B?ZUorVzFkcld0aERramRSRGh3aERqWkR0M2NhRmN4dXJDNTM5WXhWV2FkYVBo?=
+ =?utf-8?B?UVQxaGdqdlZmWGR1a0dDaFdJREpxR1lTejZuYkVheTBGemlra1l4dnJBdGY4?=
+ =?utf-8?B?RUxWT2RyV0ZrQmFza29oSnRwaVkySnFta1hIU0gxYVN6OC85bkZQSnpDTW9N?=
+ =?utf-8?B?STRiMUZrTm83Vy9GcCtlOVBsdDRUbVVXNGs5d0JqRVpxM1QzUHBIcGYreWY2?=
+ =?utf-8?B?Ykk3NFFyWVBLMkVxcWdCM0pXZ3ZRK2ZaamFKNzlYdHR5QmwxY1ZMWUNiSDhX?=
+ =?utf-8?B?d0NJdVhyQVU0UUZKSUJCTUNIeXNBZzVROUd5RXRJV3pMM2lMWkpFTzRMZllo?=
+ =?utf-8?B?ODZrMzJoMTJVZHpHbW9aUVNwbEVjcUVPNU9iL25rbEh0ZlpnelFVNEV1R0VH?=
+ =?utf-8?B?QzFXelFwSmI0enp1ZGdqR3Q4T3Z3UGVnZGhWTEoyQmdDSkdYS1dWeDg2M2kw?=
+ =?utf-8?B?VFl3TXpGamNuUTRtS21BZ0VFVmhwK2NQRW90LzNsS2FMbndHcDBvT2hUSDA2?=
+ =?utf-8?B?V0o2aDc5WXdGSnp0VFJaeERpaHkraE1CYllST3k0ZHQrL0JRVzl6aTJ2SGhD?=
+ =?utf-8?B?ZjFrS0JBekFSUCtwQ011S3d6YkFnekFkTGkrcjhmRVhIdUdqM0xJN3hxQkh5?=
+ =?utf-8?B?SGJ4UVNCTmU0dXRGMS84cnNyLzJVL2lDUnczcTRKSWd2bDF2SGdYeHNDRUh3?=
+ =?utf-8?B?Y0FPTmpuV1VSckdXeUxMRFEybmZ0cTJXeU1GT2ROVG1LSk5zbVMrVnZUcGdL?=
+ =?utf-8?B?WkdvVDhTVkQ5NjA4MVFqZmJhdHpIb0NRV3VBaGlDS0w0KzJpVVV0MlB6L2U0?=
+ =?utf-8?B?SGF4Q2dLOC9sdlQvamRScGY2djNhSlBzMkRoUjI5MmdRNUlzLy9yTkdpVThJ?=
+ =?utf-8?B?Smo2K3d1WDcyYWtWWHRNSGNWcmlqTFpISXVxL1k4T1FBc0ZjaWZUY1pWSkFH?=
+ =?utf-8?B?Y3Q2SFF3akw2Z2ZwNVlwQ1FLTHBtR2hkSjVYVC9qUmVYb2pqTjZBaFh0ZENo?=
+ =?utf-8?B?c1lreHlxemZXcXc5ZjM5NU1YNmUxQnF5ek5YcE90UDRxbXMrd3A0dXYwUFh4?=
+ =?utf-8?B?WW1qUjBLWEZmRHd5Sm9jdStFUlpXb2U0dktUODg5K1c4TGU4TjVhWk16elZy?=
+ =?utf-8?B?WE1mTXhMSGYwRStJenFRY1l2U2IyWXYwNTZqZEVKUDUyMHAreFMwY0g4c1E1?=
+ =?utf-8?B?QjNTUW9oSkFlMFF5YUh5bWxUNG1laGcvaWNuVzFXVjdsSDU2Y20rL3RhUGtj?=
+ =?utf-8?B?YmlmN0dtQkFKeG9qeWpjcjM1RU9kb2JpSjdCRFpCaFVlVDZCSzRKekZXK3F5?=
+ =?utf-8?B?d0p3OVVjdXJKZkVKSVFsOEJXNHFXUGJJWE9VODRpSnNrVC9URXh5ckpTYkNN?=
+ =?utf-8?B?Tkw4Wk82SHY4cVFHcVRERllaQTBicnVuc3VIanBieG1Jamt4bDNZRHc2QkI5?=
+ =?utf-8?B?NHNQY0srVUwyaWY5M1RmSGNsV1FoRm5seTlhWWRiSFA2allUeEhNRkVVOHph?=
+ =?utf-8?B?VVVSanlVSVE0YS82Sjc3QXVpaEVlLzNFazhwNnVFV2JNakJMa3Bkc1R5L3Z3?=
+ =?utf-8?B?SzRhV1dMVTZ3MUZvczlFUzRmV3BsVTZyOTJGS2FWT3d1SmNMQnpMbkYrc21D?=
+ =?utf-8?B?Z1Q3bEg5VHBpM0JFVHR5RkZoVCtQNkkwYXNZU1RoRlFoTVMySlk3U25EZDg3?=
+ =?utf-8?B?eHNDNExlYk44TTBmVDhaNmZ0OXBlcVdtc0hxSVRUSDAwV2I5US85R0VmQmcw?=
+ =?utf-8?B?TnZiTUNSM3U5RVY5eng3SHdiaTVmb3ZLMU1LblFUdndIWGFERXVwVHVXTGJj?=
+ =?utf-8?B?Ym0wdFg1Ui9lRHgrUU9uRDBINXBiQVV2VVJFSzUwakZuSVRZeHhyUUt6VklL?=
+ =?utf-8?B?eG1sYWNwVGlrRGZnRVg2SmZWWE05dXpxM25oNERuSGlaOFlLa1NJKzdZcnQ0?=
+ =?utf-8?B?OFhXR1VEMSt1TW5pcWdDSFNaTVQwZHlKV3NVVk9KM3g1MmtuMlEvWVRaYXJr?=
+ =?utf-8?B?U3M5NHpvcWFkb1A1L2hwdUtsN1h3UXdDdTRnQUlSenZBWHJzUjB0eUhMSDRy?=
+ =?utf-8?Q?kc90=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab83b8bf-f446-45be-be16-08dcc676b8a6
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 09:00:38.7071
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mY+XPnrx/fOWZyzSg+JoZzMQua3nLfss2KI6gp5/CfQaCVDKk1fBeCSBbP9QptiY
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7017
 
-On Thu, 15 Aug 2024 19:14:12 Jason Xing <kerneljasonxing@gmail.com> wrote:
-> On Thu, Aug 15, 2024 at 5:50 PM sunyiqi <sunyiqixm@gmail.com> wrote:
-> >
-> > When investigating the kcm socket UAF which is also found by syzbot,
-> > I found that the root cause of this problem is actually in
-> > sk_wait_event.
-> >
-> > In sk_wait_event, sk is released and relocked and called by
-> > sk_stream_wait_memory. Protocols like tcp, kcm, etc., called it in some
-> > ops function like *sendmsg which will lock the sk at the beginning.
-> > But sk_stream_wait_memory releases sk unexpectedly and destroy
-> > the thread safety. Finally it causes the kcm sk UAF.
-> >
-> > If at the time when a thread(thread A) calls sk_stream_wait_memory
-> > and the other thread(thread B) is waiting for lock in lock_sock,
-> > thread B will successfully get the sk lock as thread A release sk lock
-> > in sk_wait_event.
-> >
-> > The thread B may change the sk which is not thread A expecting.
-> >
-> > As a result, it will lead kernel to the unexpected behavior. Just like
-> > the kcm sk UAF, which is actually cause by sk_wait_event in
-> > sk_stream_wait_memory.
-> >
-> > Previous commit d9dc8b0f8b4e ("net: fix sleeping for sk_wait_event()")
-> > in 2016 seems do not solved this problem. Is it necessary to release
-> > sock in sk_wait_event? Or just delete it to make the protocol ops
-> > thread-secure.
-> >
-> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > Link: https://syzkaller.appspot.com/bug?extid=b72d86aa5df17ce74c60
-> > Signed-off-by: sunyiqi <sunyiqixm@gmail.com>
-> > ---
-> >  include/net/sock.h | 2 --
-> >  1 file changed, 2 deletions(-)
-> >
-> > diff --git a/include/net/sock.h b/include/net/sock.h
-> > index cce23ac4d514..08d3b204b019 100644
-> > --- a/include/net/sock.h
-> > +++ b/include/net/sock.h
-> > @@ -1145,7 +1145,6 @@ static inline void sock_rps_reset_rxhash(struct sock *sk)
-> >
-> >  #define sk_wait_event(__sk, __timeo, __condition, __wait)              \
-> >         ({      int __rc, __dis = __sk->sk_disconnects;                 \
-> > -               release_sock(__sk);                                     \
-> >                 __rc = __condition;                                     \
-> >                 if (!__rc) {                                            \
-> >                         *(__timeo) = wait_woken(__wait,                 \
-> > @@ -1153,7 +1152,6 @@ static inline void sock_rps_reset_rxhash(struct sock *sk)
-> >                                                 *(__timeo));            \
-> >                 }                                                       \
-> >                 sched_annotate_sleep();                                 \
-> > -               lock_sock(__sk);                                        \
-> 
-> Are you sure that you want the socket lock to be held possibly for a
-> really long time even if it has to wait for the available memory,
-> which means, during this period, other threads trying to access the
-> lock will be blocked?
-> 
-> Thanks,
-> Jason
+Am 27.08.24 um 10:39 schrieb Danilo Krummrich:
+> On 8/27/24 9:45 AM, Philipp Stanner wrote:
+>> In drm_sched_job_init(), commit 56e449603f0a ("drm/sched: Convert the
+>> GPU scheduler to variable number of run-queues") implemented a call to
+>> drm_err(), which uses the job's scheduler pointer as a parameter.
+>> job->sched, however, is not yet valid as it gets set by
+>> drm_sched_job_arm(), which is always called after drm_sched_job_init().
+>>
+>> Since the scheduler code has no control over how the API-User has
+>> allocated or set 'job', the pointer's dereference is undefined behavior.
+>>
+>> Fix the UB by replacing drm_err() with pr_err().
+>>
+>> Cc: <stable@vger.kernel.org>    # 6.7+
+>> Fixes: 56e449603f0a ("drm/sched: Convert the GPU scheduler to 
+>> variable number of run-queues")
+>> Reported-by: Danilo Krummrich <dakr@redhat.com>
+>> Closes: 
+>> https://lore.kernel.org/lkml/20231108022716.15250-1-dakr@redhat.com/
+>> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+>> ---
+>>   drivers/gpu/drm/scheduler/sched_main.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/scheduler/sched_main.c 
+>> b/drivers/gpu/drm/scheduler/sched_main.c
+>> index 7e90c9f95611..356c30fa24a8 100644
+>> --- a/drivers/gpu/drm/scheduler/sched_main.c
+>> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+>> @@ -797,7 +797,7 @@ int drm_sched_job_init(struct drm_sched_job *job,
+>>            * or worse--a blank screen--leave a trail in the
+>>            * logs, so this can be debugged easier.
+>>            */
+>> -        drm_err(job->sched, "%s: entity has no rq!\n", __func__);
+>> +        pr_err("*ERROR* %s: entity has no rq!\n", __func__);
+>
+> I don't think the "*ERROR*" string is necessary, it's pr_err() already.
 
-You're correct. Sorry for my poor knowledge of kernel. But I think kcm socket
-UAF vulnerability is not the last one which use kernel API correctly(?) but
-result in vulnerability.
-
-Though the kcm developer can fix(and already fixed) this issue by adding more
-lock in kcm sock, but, just the same question, what's the root cause of this
-issue? Is kcm socket code or sk_wait_event release the sock?
+Good point. I will remove that and also add a comment why drm_err won't 
+work here before pushing it to drm-misc-fixes.
 
 Thanks,
-Yiqi Sun
+Christian.
+
+>
+> Otherwise,
+>
+> Acked-by: Danilo Krummrich <dakr@kernel.org>
+>
+>>           return -ENOENT;
+>>       }
+
 
