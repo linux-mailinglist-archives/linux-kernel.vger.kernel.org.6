@@ -1,185 +1,105 @@
-Return-Path: <linux-kernel+bounces-303968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A35029617C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:10:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38E919617CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D4481F25024
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:10:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A69B1C2365A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220161D2F66;
-	Tue, 27 Aug 2024 19:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1661D318E;
+	Tue, 27 Aug 2024 19:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="RTZ+VO4E"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="b0nYKSim"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2571D31AF
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 19:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B86081AD2;
+	Tue, 27 Aug 2024 19:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724785798; cv=none; b=tNtRbRL1vHqWCN2uGjMcTi8Wpta0GPe1dqWzxNWpA2gXAZBfoTzWN57wBna8Fl6e3hWvyfCWxpbBNGCt3A8GbL/fbb79ahMlFrsl8HoOabSF4UjtbNPsTmSZC0xmSF2Aej8OxLsw1CXOWDfEUGgRgXO0DNJmYZxwPG8zliTg7Nc=
+	t=1724785845; cv=none; b=HNPMw4xHoHxhoK8EUAri3V0KdDghxP2ctBxHE/I3/wnSElBnci4mszvEvOl+eMmUNc1SzB04F85A6yu1C/Xc6gVsQQVthYVH+9U5TPKkyP3aRutwmMQHJuWa9jlli9fNj5WDfjp5wU43BtYO8xXD2o7VBTWjR5mYH7WeYw5LVBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724785798; c=relaxed/simple;
-	bh=du9RCy7d+nEJokh8lbqxk895BSXsrw4YoLlDSYKoblk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FcqtyWoGiRYDXKpG8vHRUSFWYgKW1mHqWHmYAqWXbAntpftvzwn7Eb//Bni26Hhdx+K7NndzwIWuSwdHkgi+lm4njIpCqTNwbYKGRbxWuCq4MyJmc8m9i5/9a8kGBvOWHJOBA9HY9o51Q1oXMhYPiG3A4dYg8/7xoPgndmfKOdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=RTZ+VO4E; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6009a.ext.cloudfilter.net ([10.0.30.184])
-	by cmsmtp with ESMTPS
-	id iyyMsVJZCqvuoj1ZdsWrnQ; Tue, 27 Aug 2024 19:09:49 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id j1ZcsFNZSsoF5j1Zcsaxsp; Tue, 27 Aug 2024 19:09:49 +0000
-X-Authority-Analysis: v=2.4 cv=e/EAS7p/ c=1 sm=1 tr=0 ts=66ce247d
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
- a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
- a=Oxluwhmp6ld3uWlGNnkA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
- a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=5JZFmEEhU0UCbr2plbMpHOf5fhdfzfk/fS6XDm2beLk=; b=RTZ+VO4E54YAFXBis0O/nkgeD4
-	vBNHhkiSEg8EkMDsoZGceB3t80ydoOZOc8D+0mG6lihVYVhzjAfz5KKnxuWJCtrUGrs3OOEL2k5HQ
-	KKVNuj+tQvQsOCtSfd5nc0EPqpdrZcg9y2PkyWjwicaMxFCYIoQLzKCBdLd6njnDi9+0t96l5uSR6
-	V6RKSu0SqYDpxao7RefLsBT+ZUWavtN4LQ7dVRjIDdKjmpqXFCumab0Z6x0G+0YeWCBlf1gRULKOg
-	8NjcKNjM0+DNGHRlNIG7sfwRz1cZjXp78JV3Z+ITDq0WNDffFK2sVQcTMHJEoIwgd5BQCoCnd6JOY
-	KnbkUGYQ==;
-Received: from [201.172.173.139] (port=47538 helo=[192.168.15.5])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1sj1Zc-002X62-0C;
-	Tue, 27 Aug 2024 14:09:48 -0500
-Message-ID: <2065d0f6-660e-4647-95b4-8d1a9a7eaefe@embeddedor.com>
-Date: Tue, 27 Aug 2024 13:09:46 -0600
+	s=arc-20240116; t=1724785845; c=relaxed/simple;
+	bh=E5Ph32Yb/JTIfgjOxLjWjVUgTlDoSzJqMxgWq6g92nU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uSQlHej+oPukBBUUdN7Ku2RP5reysYW3wQ7lWHmcw3/p+yAMpV0E1ihnG8qmpgnjxF3P8AM1E1juVQpnwTGaYaPggVN7ZZCF9jS30G0Ns5pUjXkcZNapNiqh7i0b/4Kyjg2+FMl0dHuR1319/br3WaTseutfkzzUWfyFYWtC65g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=b0nYKSim; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1724785829; x=1725390629; i=wahrenst@gmx.net;
+	bh=fU87Wbr4Y/qBPG1mPGxt4Kn9VQhhQrrJTpfgtHIE75w=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=b0nYKSimY4WNac6mmmgamEOA2PqNgnQ3Npg4Nagcn5UoTOr15pxyfbaG2CMKNiWY
+	 4NF20Ebap99JljOoQtekOTOXZ1YEK7S92lfiwhB52cISLfxRaZo1UI7K6F8LMl/W0
+	 +dhUCsmWAwDIBrQ5HNRW/hS0cvDh9yoDB7RI4Gr6VJqCaLpEDgOygVy7e6Qn90MW8
+	 LOeHZ3sFs8iAROr5MFSYWgkW7CtbkRgBLXfv6YvTXG0N0RSk6Tu5eTvB6qsuS7W8Z
+	 vqFy5X4eg8eE+irrC2+lTnvc3AX0nze5PFd++d0p/ESAiH6Jvtv1aQgGZWFSAip4Z
+	 rd072/k2kAfGdxOXuQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from stefanw-SCHENKER ([37.4.248.43]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mlf0U-1sIBHC35JC-00kqXU; Tue, 27
+ Aug 2024 21:10:28 +0200
+From: Stefan Wahren <wahrenst@gmx.net>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Wahren <stefan.wahren@chargebyte.com>
+Subject: [PATCH 0/5 next] net: vertexcom: mse102x: Minor clean-ups
+Date: Tue, 27 Aug 2024 21:09:55 +0200
+Message-Id: <20240827191000.3244-1-wahrenst@gmx.net>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] drm/nouveau: Avoid -Wflex-array-member-not-at-end
- warning
-To: Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@redhat.com>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
- nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <ZsZLFS1CsHkKjw+C@elsanto> <202408221011.82876DA0C4@keescook>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <202408221011.82876DA0C4@keescook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.173.139
-X-Source-L: No
-X-Exim-ID: 1sj1Zc-002X62-0C
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.5]) [201.172.173.139]:47538
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfPQKvKjUgltm5ff018ZS0oYkkLTYSB8/ovtuvix6CDjtfYw3wvlWhlYOaxHKyzYz0qUAPycu34BOjsYfWVzdr9wLNRplohyIb7KQpfbVUjyjTFsCTMU+
- Vcmyi3u9mxrXBg9QJNglhsbsRCGTMr04wxMcTZxvG4Tea3g3tOqUjqbXX0Asc53ssvP0/ZtLBugU9/VaxdwiIy+3UejvhPhKuZaiOg4/KMa3xq0sGYdqYCYY
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:FXFh5c6lpOdqk48VgvWpN2QUfZg6WbZOKxsFEwK6wyDj9u8/NX2
+ LR+2fsxuJ+tBtaNxXWu86a3WoKHKmMb4RCAGsVbJ/rYZJCqDplesN3ZEwJnK51e3xHiI9UV
+ e2vtq27f+Ixq9SSaBtdZGWLFK6BVkkp/UR4QC71sG4O1XD/ovGPKvoZFgdI7aSoEUyfNcBB
+ Wqe/SOEGuywwpUJaRLH+g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:UxRrkYobkjs=;nfUGe0DJuEsqN/rBhr9UwUGf74A
+ 1/i8OjQprNT9PtDqNyVBR2SprhbhOe4ivg178eNFYyT9SgDDHXWYbWlHY+maF7j8LxaA83VRT
+ gbXAtABg5qE4GsaSNqTx52NgKLDTe2kN/GUiSwF4HJsxSDSIXZmIULpanbfrR9WOqqvq5Jfcm
+ fT43SKxrSjGdzOppNoRSNillH5OHMtI+diQBBc7DVln8GbIx6vjZ6ALS49EXmnD1TBTBVmTQ/
+ taO0N9kMMpkLfU58i9CH36bBdvtIGl1nsmBFF7xbA+2Lt34GhyL9rV6z0Yv5g4ORKxHRtqF8J
+ lAHaPARQaYIPshQfxDeFthtMQP3SVGDZrMUr0VEuu1hAs4UHHB+qB9CslSVcLNBBSQ7Lex7Ej
+ cAyx+oqCw9IiKVpMHamimAE0FV4QrqXjhNTmAVKanJturL5ZG10N1UVQ8P0KQYx8CS1FCuWPy
+ E4nsR+p4kDxOWR+Y6SBVVTtonzjSEOokMyj3vIywX9s9eeEEfHhAeR69yRAjHIjtJ5RkIlz4C
+ yeu0xXttU8K4MJQuFFK+BHYCRvNOGWCL2b8s+gi89NURFSgpFdh0Nygn2Kxb1zalD/BXVcOZj
+ GyPaFQ7EeWffuzTlgVnFhUU/cHRzca2bQ4lQoGrGxIRzE6hufgqMC6JLDKgWefdMUmbSHn8uf
+ 0cW9MDVb3e9MmZ+NF//DXui5Npvz6Ma07tee96NVDz7zlyCESURf0MhNFMZv/TRYN0cR4RuXL
+ DWJF+xsHk0NUqabEjHQRDWTK5yCKt06VXpbbxEdLRsQiPLaKdipdZziRVBTAtR3Gk7tlq4G9j
+ OxgsBdfBvn3ep9gSkGAz6XvQ==
 
+From: Stefan Wahren <stefan.wahren@chargebyte.com>
 
+This series provides some minor clean-ups for the Vertexcom MSE102x
+driver.
 
-On 22/08/24 11:27, Kees Cook wrote:
-> On Wed, Aug 21, 2024 at 02:16:21PM -0600, Gustavo A. R. Silva wrote:
->> Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
->> a flexible structure where the size of the flexible-array member
->> is known at compile-time, and refactor the rest of the code,
->> accordingly.
->>
->> So, with this, fix the following warning:
->>
->> drivers/gpu/drm/nouveau/dispnv50/disp.c:779:47: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
->> ---
->>   drivers/gpu/drm/nouveau/dispnv50/disp.c | 20 +++++++++-----------
->>   1 file changed, 9 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
->> index eed579a6c858..ddddc69640be 100644
->> --- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
->> +++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
->> @@ -774,11 +774,9 @@ nv50_hdmi_enable(struct drm_encoder *encoder, struct nouveau_crtc *nv_crtc,
->>   	struct drm_hdmi_info *hdmi = &nv_connector->base.display_info.hdmi;
->>   	union hdmi_infoframe infoframe = { 0 };
->>   	const u8 rekey = 56; /* binary driver, and tegra, constant */
->> +	DEFINE_RAW_FLEX(struct nvif_outp_infoframe_v0, args, data, 17);
->> +	const u8 data_len = 17; /* same length as in DEFINE_RAW_FLEX above. */
-> 
-> To avoid repeating the open-coded "17", this could either be a define:
-> 
-> nv50_hdmi_enable(...)
-> {
-> ...
-> #define data_len	17
-> 	DEFINE_RAW_FLEX(struct nvif_outp_infoframe_v0, args, data, data_len);
-> ...rest of function...
-> #undef data_len
-> }
-> 
-> or an ungainly but compile-time calculated value that exposes some
-> DEFINE_FLEX internals:
-> 
-> 	const u8 data_len = (sizeof(args_u) - sizeof(*args)) / sizeof(*args->data);
+Stefan Wahren (5):
+  net: vertexcom: mse102x: Use DEFINE_SIMPLE_DEV_PM_OPS
+  net: vertexcom: mse102x: Silence TX timeout
+  net: vertexcom: mse102x: Fix random MAC address log
+  net: vertexcom: mse102x: Drop log message on remove
+  net: vertexcom: mse102x: Use ETH_ZLEN
 
-Yeah, I actually thought of something more like just __struct_size(args) - sizeof(*args),
-as the flex array member is `__u8 data[]`.
+ drivers/net/ethernet/vertexcom/mse102x.c | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
-> 
-> (Maybe a helper is needed for that?)
-> 
-> #define STACK_FLEX_COUNT(name, member)	\
-> 	((sizeof(name##_u) = sizeof(*(name))) / sizeof(*(name)->member))
+=2D-
+2.34.1
 
-I don't like this `sizeof(name##_u)` part as it is detached from the DEFINE_RAW_FLEX()
-internals. Probably use `__struct_size(args)` instead, as in the example above.
-
-> 
->> @@ -815,29 +813,29 @@ nv50_hdmi_enable(struct drm_encoder *encoder, struct nouveau_crtc *nv_crtc,
->>   		return;
->>   
->>   	/* AVI InfoFrame. */
->> -	args.infoframe.version = 0;
->> -	args.infoframe.head = nv_crtc->index;
->> +	args->version = 0;
->> +	args->head = nv_crtc->index;
-> 
-> The stack variable (was before and is again) already zero-initialized,
-> so the "= 0" line shouldn't be needed.
-> 
-> But neither of these comments are show-stoppers, IMO.
-> 
-> Reviewed-by: Kees Cook <kees@kernel.org>
-> 
-
-Thanks!
-
---
-Gustavo
 
