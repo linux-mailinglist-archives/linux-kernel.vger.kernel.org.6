@@ -1,126 +1,180 @@
-Return-Path: <linux-kernel+bounces-303430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B935960BF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:26:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92C88960BFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:27:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB7B12890BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:26:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6DE81C2301B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073541C4623;
-	Tue, 27 Aug 2024 13:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390F61C4EDD;
+	Tue, 27 Aug 2024 13:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p90XrteR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lVaA8eoK"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451721B3F2B;
-	Tue, 27 Aug 2024 13:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7742F1C4EC3
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 13:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724765042; cv=none; b=X6AiU7eXdnta5FsnV868fOg22JUbrSTMHQ5DrzLmrc4xHXYTw+7W5AnCNIE25rhvs0P5hKP17GNUtkKbXNVn3ujXhMdRwP02ZEIAWnSMj+zEgamKfnfXPk3Nu+5UdRm2N5MNrpZHnnl34wI73/B1sUsO69csg73isImt+GZ13+U=
+	t=1724765058; cv=none; b=EX4+chZllb54ml9D22gGXxAlSm/j/zmR5d08Om8h7KCLRVVv+PmlEtdnxbiEilrXQ8ZVqur3e9ZX3hFssCDi8FipUBIl3r5WfmZD6lytA94W2ufNW2coe2HRcvxTM0m6IGOMSIv1rqf6SahSQGJXzbBW3MJOtrYUEEbjoSiFWAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724765042; c=relaxed/simple;
-	bh=73+RVauxylVeoSXQPKLsgBt/WsASDjw/hrVgux1lTlQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VbI7hSBEpDDyNmT/iu/MAz4rt/PC7kHZhNI9BjWXgt5HZxvlnOI1wI4mEPGQ35yDMN2wVf/mdlNfb66A3n4IFq54V+w0+Q8JtfWmhz/cxNz7VmpIeY+fkIGNGdhPXGIvNZ7ZEDmiwcz75ip+abFrpubEOTAx6P1kkUTL+xWZ/zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p90XrteR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68E85C61041;
-	Tue, 27 Aug 2024 13:23:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724765041;
-	bh=73+RVauxylVeoSXQPKLsgBt/WsASDjw/hrVgux1lTlQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=p90XrteRoMz+UCX+p3AroIYoiuNUJOOnLFy99oydxGwCEPGuNAnIdZpAxgrmygMik
-	 VsnPvJa1cyvtQs4rKhUyM6P1LJ3JBm+CO4rOVeXBLRaWPPJzSuBui3KRHsHLlXmQYj
-	 JGeg2a/FbCEmkzvwZqblNJhrixkn2+ght2TlU3tGN0l2obpndewVqnGJhYcC4hEqjk
-	 +m/0s6AlEAiZ2qKyS2sM6TDP/q+TskoauDDAZd0yYCg7VMVsGzMB/qmY7B1H5qR6ga
-	 zjxXsNV0s1R/Hjfwi4BZgxDslMzUjAJBQxIl2J+S7zr7huHBOidqxwZTvCFrRZbep5
-	 md/XVfNwZy7fQ==
-Message-ID: <2e634ee8-7622-4eb8-ba5b-0d218bb092eb@kernel.org>
-Date: Tue, 27 Aug 2024 15:23:56 +0200
+	s=arc-20240116; t=1724765058; c=relaxed/simple;
+	bh=r9WmCFRu07kKYrGje8ym8SwAHLCwsBUMCgcWuUb2Cp8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jK3hqmI8jbOqAkJ/iYVu4fkFO2QxuG7mvAzbr0J26MdHGA5RXuOTqz4sRZmob555KOYlFq9bjg++fmnH/aTX8nDG90D6tNyx70KfZ/y89PnJAv9WtW9SGdd/Vp+Q8G+ZebhDjBE5TezZfxfbSJzyDgh3iYh9oNFE2Exhoxkoj00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lVaA8eoK; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 259D61C0006;
+	Tue, 27 Aug 2024 13:24:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724765053;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gUxO98kREyq2Dv1HtZo0CIxCjyQ/xlXo+yetlw0Nwrc=;
+	b=lVaA8eoKe8FP8fayNh2Xr+2aoq09JfcOnki2XHLZgY1oL8Ofpnb1fS8vhDYtHIY/d4BUz2
+	mWPaH7hzWHNsSAyeljkL1RXmkqjVe+tsMY90zEm/OgJ48C3g7zcoHCfaQZvwatSvFnBHOw
+	60HghVmKX9Ti4Ola2HTDZlFLQkGh8TyRmNJTTIXyWCtSwRhBpjhfMhs5NhP9ZsZG3vNp3n
+	R4rakP8ox1vCxDoA9zJoK7XVJHBxYx97b9axP8Z44lcAo8Q8lJCmApkgE+sZwe11OEwCVB
+	9LjsH63kaOD8qWOZXqqNCcmIfra71E9c10dwLzXajs5H3lrUPJGEgItJ242BBw==
+Date: Tue, 27 Aug 2024 15:24:10 +0200
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
+	arthurgrillo@riseup.net, linux-kernel@vger.kernel.org,
+	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
+	thomas.petazzoni@bootlin.com, seanpaul@google.com,
+	nicolejadeyee@google.com
+Subject: Re: [PATCH v2 1/6] drm/vkms: Switch to managed for connector
+Message-ID: <Zs3TeoUwn3iO7oBs@louis-chauvet-laptop>
+Mail-Followup-To: Maxime Ripard <mripard@kernel.org>,
+	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
+	arthurgrillo@riseup.net, linux-kernel@vger.kernel.org,
+	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
+	thomas.petazzoni@bootlin.com, seanpaul@google.com,
+	nicolejadeyee@google.com
+References: <20240827-google-vkms-managed-v2-0-f41104553aeb@bootlin.com>
+ <20240827-google-vkms-managed-v2-1-f41104553aeb@bootlin.com>
+ <20240827-dynamic-acoustic-guillemot-ddde49@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/5] Add STM32MP25 USB3/PCIE COMBOPHY driver
-To: Christian Bruel <christian.bruel@foss.st.com>, vkoul@kernel.org,
- kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
- p.zabel@pengutronix.de
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- fabrice.gasnier@foss.st.com
-References: <20240827122459.1102889-1-christian.bruel@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240827122459.1102889-1-christian.bruel@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240827-dynamic-acoustic-guillemot-ddde49@houat>
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On 27/08/2024 14:24, Christian Bruel wrote:
-> This patch series adds USB3/PCIE COMBOPHY driver for the STM32MP25 SoC from
-> STMicrolectronics, respective yaml schema and enable for the stm32mp257f-ev1
-> device into which it is used for PCIe.
+Le 27/08/24 - 15:15, Maxime Ripard a écrit :
+> Hi,
 > 
-> Changes in v3:
-> Address comments from Rob and Krzysztof:
->    - Reorder MAINTAINERS patch
->    - Drop wakeup-source from bindings (should be generic)
+> On Tue, Aug 27, 2024 at 11:57:36AM GMT, Louis Chauvet wrote:
+> > The current VKMS driver uses non-managed function to create connectors. It
+> > is not an issue yet, but in order to support multiple devices easily,
+> > convert this code to use drm and device managed helpers.
+> > 
+> > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> > ---
+> >  drivers/gpu/drm/vkms/vkms_drv.h    |  1 -
+> >  drivers/gpu/drm/vkms/vkms_output.c | 22 ++++++++++++----------
+> >  2 files changed, 12 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+> > index 5e46ea5b96dc..9a3c6c34d1f6 100644
+> > --- a/drivers/gpu/drm/vkms/vkms_drv.h
+> > +++ b/drivers/gpu/drm/vkms/vkms_drv.h
+> > @@ -99,7 +99,6 @@ struct vkms_crtc_state {
+> >  struct vkms_output {
+> >  	struct drm_crtc crtc;
+> >  	struct drm_encoder encoder;
+> > -	struct drm_connector connector;
+> >  	struct drm_writeback_connector wb_connector;
+> >  	struct hrtimer vblank_hrtimer;
+> >  	ktime_t period_ns;
+> > diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
+> > index 5ce70dd946aa..4fe6b88e8081 100644
+> > --- a/drivers/gpu/drm/vkms/vkms_output.c
+> > +++ b/drivers/gpu/drm/vkms/vkms_output.c
+> > @@ -3,11 +3,11 @@
+> >  #include "vkms_drv.h"
+> >  #include <drm/drm_atomic_helper.h>
+> >  #include <drm/drm_edid.h>
+> > +#include <drm/drm_managed.h>
+> >  #include <drm/drm_probe_helper.h>
+> >  
+> >  static const struct drm_connector_funcs vkms_connector_funcs = {
+> >  	.fill_modes = drm_helper_probe_single_connector_modes,
+> > -	.destroy = drm_connector_cleanup,
+> >  	.reset = drm_atomic_helper_connector_reset,
+> >  	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+> >  	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+> > @@ -50,7 +50,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+> >  {
+> >  	struct vkms_output *output = &vkmsdev->output;
+> >  	struct drm_device *dev = &vkmsdev->drm;
+> > -	struct drm_connector *connector = &output->connector;
+> > +	struct drm_connector *connector;
+> >  	struct drm_encoder *encoder = &output->encoder;
+> >  	struct drm_crtc *crtc = &output->crtc;
+> >  	struct vkms_plane *primary, *cursor = NULL;
+> > @@ -80,8 +80,15 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+> >  	if (ret)
+> >  		return ret;
+> >  
+> > -	ret = drm_connector_init(dev, connector, &vkms_connector_funcs,
+> > -				 DRM_MODE_CONNECTOR_VIRTUAL);
+> > +	connector = drmm_kzalloc(dev, sizeof(*connector), GFP_KERNEL);
+> > +	if (!connector) {
+> > +		DRM_ERROR("Failed to allocate connector\n");
+> > +		ret = -ENOMEM;
+> > +		goto err_connector;
+> > +	}
+> > +
+> 
+> I think it would be worth explaining why you need to move to a separate
+> allocation for the connector now.
+> 
+> Maxime
 
-Where? Point me to the exact line being dropped.
+Hi,
 
-Best regards,
-Krzysztof
+This is in preparation for ConfigFS implementation, as the number of 
+connector/encoders/crtc/planes... will be dynamic, we need to have 
+separate alloaction.
 
+If I add this paragraph in the commit message, is it sufficient?
+
+	A specific allocation for the connector is not strictly necessary 
+	at this point, but in order to implement dynamic configuration of 
+	VKMS (configFS), it will be easier to have one allocation per 
+	connector.
+
+(same for encoder & CRTC)
+
+Thanks,
+Louis Chauvet
 
