@@ -1,146 +1,166 @@
-Return-Path: <linux-kernel+bounces-303025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3CDC960651
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:55:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEF86960656
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:55:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 120B51C2270D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:55:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4C191C22886
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8036119D896;
-	Tue, 27 Aug 2024 09:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="lYJCSq4x"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0B819DF5B;
+	Tue, 27 Aug 2024 09:55:25 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A5C82D91;
-	Tue, 27 Aug 2024 09:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957FE18D65C
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724752498; cv=none; b=IneYrDEfKhwH2Kdf1pPAr2DSC5WidfmAe7pD403DszKZMIq+5xJabDgUHCobQW5OOR/sWTgOp+sNsZNmLYaZHx+mgJo9fP+G3rW7z88NTkT9DJfoLwmMKiq1th5yXHw1xyq54yWzePM8nmp3YGBKCaW0cNt66Dh6PbQ0nS2E2DA=
+	t=1724752525; cv=none; b=MuO59Ug+in9Itg3Z9gIL0AbiN93MYizM8f8RL2Wo76a11wpP2tM0HWnmxWXHdcXzRjPt1VAQkysptIKbjUqOTPUviFhSXP04o8gkpiU35ZaZh/Bu8WQg8BdUpWU29m7POKEdlEiyAhDmCFRoCx8a95nRkYjgesCQhOny/MQPsYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724752498; c=relaxed/simple;
-	bh=FI10dEkXRoEqfg6u3Q2Dk6B7FUz2tABo2Vlbk9C316k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=F248bkgsBXd82ykfggDMSXriU9ffNQH8wQByn5um6MogsiLn4Hx6YhCQXMCARRo9+TVZrq94J4GcWzwl4fCWW6y1ObrAfL+qg7sUw/Uoo4WbOZEao6KFEvKq8ZpDIEDOWGEx92WyXxYe++Olf1SJpoDfggSlfewZWD5iMht4xWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=lYJCSq4x; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1724752485;
-	bh=FI10dEkXRoEqfg6u3Q2Dk6B7FUz2tABo2Vlbk9C316k=;
-	h=From:Date:Subject:To:Cc:From;
-	b=lYJCSq4xVpHE+cQK3ydTfc7R+h08/E3nryaC3+wegsJUN62L0jB2LSgT0Vumi3Ti7
-	 mKZ1Tcw3FG3qMy7Z3aw3DRVTImtVXNGXo99HKGJExWe9Gc0LtnhHtsmSA5OSBLgsey
-	 Tw4RRdtrMgIEr091KB0I0ygsmDvAp/6mZOQWKHvo=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Tue, 27 Aug 2024 11:54:43 +0200
-Subject: [PATCH] sysctl: avoid spurious permanent empty tables
+	s=arc-20240116; t=1724752525; c=relaxed/simple;
+	bh=wWnyctfdCVn9IhNbl2qDxTmXpoL0S8pz2qiqAEKkvrA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=k/c1tYJyaA7uiD/hfOGjKK5iQhY9DoTdhPEymDYTDfVXnYlFfY7vxpMzf7zMvwY3f6FqOFGBkr8huH2DxmuQ/qZci8judD3CAbC1WaFZv2oT/z7QiBZSLm0F8ic2ndPVTc2SlPdFth5IG6SkA5Lc68trTEEuukAfR4geYlcNbMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d49576404so58650415ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 02:55:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724752522; x=1725357322;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=y0kNyv7fNXRKOPzrM+ThwbmBEMrRU1hCayUpBO5ejJ0=;
+        b=rPz7j7jLxFzMkGSk2r7f6XVQryItHahMqhi/xbV3ChldEA2Oun3eA/w3xSfFy3NfuF
+         nGeVWFnE71Yp+m9iYlqXnWhdsyX46pDVX/JXB6hgrynLjPCd7HFH4NxfzTA0e1Yic87P
+         vqBvcjupyzUw1em8Hf2MFy+LUBWYtnEDPXQ0NSrf9YvaAAfUZw3bJTGLEte3wPNKXw9Y
+         iNjWRngCUn8rOfs+p8YThz/q5qqqf/qYiBrsEucLK3Faoqq4aqMtVbqe0s+A0DY2mWrY
+         ko6fR69aUyFZxQza0tN23r72SQUSGFuBGRSnupJwTFS4GTBuPO2AwZHWeuLknhWfx0ol
+         8e7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWFv7efG6JF9IyvNFfSG2hk4VBjrysdNRqOnS7EwxDlwirO5rl+lNnA17lfmVm+DQafzT46OLIrdYqN3dg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXHcx82XGwX1nA2kfiVGiCojhspUATvYfQOGnJILj4LOfRZ3nF
+	GEiTobuhVjq1STMj55XR4UKJsMWMKkwFlIARi6lzpGOUqmTv6JfK85JTfkUOalUzzjEKu8is3fa
+	qOvu8M8h52cNrlYekwB/2EhvtBXm+g4tXl/Xepjx0pOz2y7BPHnbUkKU=
+X-Google-Smtp-Source: AGHT+IE5oFjr2H4O3YDKEgFXHtzDMB9o0CBTA893gxQPt3zb5iv06tv44u2SVyPDiMUlyeRbJCqvfH1m/YdcN7LVdekvB0LsXjvQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240827-sysctl-const-shared-identity-v1-1-2714a798c4ff@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAGKizWYC/x3MSwqAMAwA0atI1ga0+L+KuKhtqgGp0hRRxLtbX
- D4Y5gGhwCQwZA8EOll49wllnoFZtV8I2SaDKlRVdKpFucXEDc3uJaKsOpBNCfnI8cZez13ZUO2
- smyEtjkCOr38/Tu/7ATpks/FuAAAA
-To: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
- Joel Granados <j.granados@samsung.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <ndesaulniers@google.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- llvm@lists.linux.dev, kernel test robot <oliver.sang@intel.com>, 
- stable@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724752485; l=2962;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=FI10dEkXRoEqfg6u3Q2Dk6B7FUz2tABo2Vlbk9C316k=;
- b=P41gnbdv8wnYCR3Jy/tGAVFr6kZg1Y61NS35L88Tmn9hFgmek9RBBh+ZeYOgYD73HwW/DRQds
- LZWja3uU0A4BTl4eJU7IQIqwWV15p75mh1h1wz/XdwM9FV8jNo8NIe8
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+X-Received: by 2002:a05:6e02:20c2:b0:395:fa9a:318e with SMTP id
+ e9e14a558f8ab-39e3c8e3417mr9353125ab.0.1724752522567; Tue, 27 Aug 2024
+ 02:55:22 -0700 (PDT)
+Date: Tue, 27 Aug 2024 02:55:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006ef2e80620a73de3@google.com>
+Subject: [syzbot] [mm?] general protection fault in ksm_do_scan
+From: syzbot <syzbot+ab2cf748d72119c9c291@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The test if a table is a permanently empty one, inspects the address of
-the registered ctl_table argument.
-However as sysctl_mount_point is an empty array and does not occupy and
-space it can end up sharing an address with another object in memory.
-If that other object itself is a "struct ctl_table" then registering
-that table will fail as it's incorrectly recognized as permanently empty.
+Hello,
 
-Avoid this issue by adding a dummy element to the array so that the
-array is not empty anymore and the potential address sharing is avoided.
-Explicitly register the table with zero elements as otherwise the dummy
-element would be recognized as a sentinel element which would lead to a
-runtime warning from the sysctl core.
+syzbot found the following issue on:
 
-While the issue seems unlikely to be encountered at this time, this
-seems mostly be due to luck.
-Also a future change, constifying sysctl_mount_point and root_table, can
-reliably trigger this issue on clang 18.
+HEAD commit:    3e9bff3bbe13 Merge tag 'vfs-6.11-rc6.fixes' of gitolite.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1112122b980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8605cd35ddc8ff3c
+dashboard link: https://syzkaller.appspot.com/bug?extid=ab2cf748d72119c9c291
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Given that empty arrays are non-standard in the first place,
-avoid them if possible.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202408051453.f638857e-lkp@intel.com
-Fixes: 4a7b29f65094 ("sysctl: move sysctl type to ctl_table_header")
-Fixes: a35dd3a786f5 ("sysctl: drop now unnecessary out-of-bounds check")
-Cc: stable@vger.kernel.org
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/93f88e5414fe/disk-3e9bff3b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0e9efe39c78f/vmlinux-3e9bff3b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9963bfff0cc9/bzImage-3e9bff3b.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ab2cf748d72119c9c291@syzkaller.appspotmail.com
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000084: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000420-0x0000000000000427]
+CPU: 0 UID: 0 PID: 36 Comm: ksmd Not tainted 6.11.0-rc5-syzkaller-00015-g3e9bff3bbe13 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:scan_get_next_rmap_item mm/ksm.c:2557 [inline]
+RIP: 0010:ksm_do_scan+0x792/0x6700 mm/ksm.c:2669
+Code: 89 e7 48 c7 c6 ff ff ff ff e8 8a 72 b2 09 49 89 c6 48 85 c0 4c 89 7c 24 58 0f 84 c9 0a 00 00 49 8d 5e 20 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 ff 60 01 00 48 8b 1b be 00 00 00
+RSP: 0018:ffffc90000ac7b60 EFLAGS: 00010217
+RAX: 0000000000000084 RBX: 0000000000000426 RCX: ffff88801b6b8000
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc90000ac7d90 R08: ffffffff8babb624 R09: ffffffff8babb4a9
+R10: 0000000000000004 R11: ffff88801b6b8000 R12: ffffc90000ac7ce0
+R13: dffffc0000000000 R14: 0000000000000406 R15: ffff8880628826c4
+FS:  0000000000000000(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055556f065808 CR3: 000000006e7c6000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ ksm_scan_thread+0x110/0x490 mm/ksm.c:2694
+ kthread+0x2f2/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:scan_get_next_rmap_item mm/ksm.c:2557 [inline]
+RIP: 0010:ksm_do_scan+0x792/0x6700 mm/ksm.c:2669
+Code: 89 e7 48 c7 c6 ff ff ff ff e8 8a 72 b2 09 49 89 c6 48 85 c0 4c 89 7c 24 58 0f 84 c9 0a 00 00 49 8d 5e 20 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 ff 60 01 00 48 8b 1b be 00 00 00
+RSP: 0018:ffffc90000ac7b60 EFLAGS: 00010217
+RAX: 0000000000000084 RBX: 0000000000000426 RCX: ffff88801b6b8000
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc90000ac7d90 R08: ffffffff8babb624 R09: ffffffff8babb4a9
+R10: 0000000000000004 R11: ffff88801b6b8000 R12: ffffc90000ac7ce0
+R13: dffffc0000000000 R14: 0000000000000406 R15: ffff8880628826c4
+FS:  0000000000000000(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fdc1b0e7ab8 CR3: 0000000023394000 CR4: 0000000000350ef0
+----------------
+Code disassembly (best guess):
+   0:	89 e7                	mov    %esp,%edi
+   2:	48 c7 c6 ff ff ff ff 	mov    $0xffffffffffffffff,%rsi
+   9:	e8 8a 72 b2 09       	call   0x9b27298
+   e:	49 89 c6             	mov    %rax,%r14
+  11:	48 85 c0             	test   %rax,%rax
+  14:	4c 89 7c 24 58       	mov    %r15,0x58(%rsp)
+  19:	0f 84 c9 0a 00 00    	je     0xae8
+  1f:	49 8d 5e 20          	lea    0x20(%r14),%rbx
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	48 89 df             	mov    %rbx,%rdi
+  34:	e8 ff 60 01 00       	call   0x16138
+  39:	48 8b 1b             	mov    (%rbx),%rbx
+  3c:	be                   	.byte 0xbe
+  3d:	00 00                	add    %al,(%rax)
+
+
 ---
-This was originally part of a feature series [0], but is resubmitted on
-its own to make it into v6.11To.
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-[0] https://lore.kernel.org/lkml/20240805-sysctl-const-api-v2-0-52c85f02ee5e@weissschuh.net/
----
- fs/proc/proc_sysctl.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 9553e77c9d31..d11ebc055ce0 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -29,8 +29,13 @@ static const struct inode_operations proc_sys_inode_operations;
- static const struct file_operations proc_sys_dir_file_operations;
- static const struct inode_operations proc_sys_dir_operations;
- 
--/* Support for permanently empty directories */
--static struct ctl_table sysctl_mount_point[] = { };
-+/*
-+ * Support for permanently empty directories.
-+ * Must be non-empty to avoid sharing an address with other tables.
-+ */
-+static struct ctl_table sysctl_mount_point[] = {
-+	{ }
-+};
- 
- /**
-  * register_sysctl_mount_point() - registers a sysctl mount point
-@@ -42,7 +47,7 @@ static struct ctl_table sysctl_mount_point[] = { };
-  */
- struct ctl_table_header *register_sysctl_mount_point(const char *path)
- {
--	return register_sysctl(path, sysctl_mount_point);
-+	return register_sysctl_sz(path, sysctl_mount_point, 0);
- }
- EXPORT_SYMBOL(register_sysctl_mount_point);
- 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
----
-base-commit: 3e9bff3bbe1355805de919f688bef4baefbfd436
-change-id: 20240827-sysctl-const-shared-identity-9ab816e5fdfb
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Best regards,
--- 
-Thomas Weißschuh <linux@weissschuh.net>
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
+If you want to undo deduplication, reply with:
+#syz undup
 
