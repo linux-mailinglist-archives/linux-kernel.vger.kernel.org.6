@@ -1,82 +1,91 @@
-Return-Path: <linux-kernel+bounces-303112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAB4296078C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:35:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB441960795
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:36:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2818A1C2220A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:35:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDB521C2207A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB1C19DFAE;
-	Tue, 27 Aug 2024 10:35:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F41182B2;
-	Tue, 27 Aug 2024 10:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1218319D8A2;
+	Tue, 27 Aug 2024 10:36:33 +0000 (UTC)
+Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAE3182B2
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 10:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724754902; cv=none; b=hYPLSv0yJve3f77hMrLr1Rpytms/LsP8q/3HPbFk0ndn2GSSQDZuHMIHN8ZihW+H3fD/ZTpzMmITUZuZ81Ry/fpVtMRhZIzRo8/P3Sop3rO01TpXJ48gf880bkIyr04Mwm3aQOP1V1arFWQVhJq97hFj7BZwl2iQye39puG1qIU=
+	t=1724754992; cv=none; b=mM/8s5gyONkebODl4vtvdO4U/NimSr3yVryIY1NNT7mfyfTZCcjHSNwtyqT2a6Qq1HGbTu+lLvLno/DnFxIUAU1mn3IBsAy6/z3cu/jyo2Hbk8QSO7MwjDEtwtWTuKObqIEgxS7j40xDtP7Qw2vsdZv68oRoa/8tSnOvm4bFOF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724754902; c=relaxed/simple;
-	bh=A83IJeB3jYoRENx+Y1h+o+5Dn5r2/7TbxwXp0TDOOHA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ORq0iPOzqub9+YA9mjUaKDs6G2ZZzflM9CyS7RF9gd3sbpRJcjDsu5tvDWX/NF1QyI0Sv0hoZkqYG+1bhUT75Kmyo90FBgG7q+lXlpzUx71w/K8E025q4dc4gla/1Cn5bmXndmlhVEN7xZyC29oRqYSZTZY3EmlSqmLjdmYrkxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 58622DA7;
-	Tue, 27 Aug 2024 03:35:26 -0700 (PDT)
-Received: from bogus (e107155-lin.cambridge.arm.com [10.1.198.42])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E59733F66E;
-	Tue, 27 Aug 2024 03:34:57 -0700 (PDT)
-Date: Tue, 27 Aug 2024 11:34:55 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-rtc@vger.kernel.org,
-	linux-input@vger.kernel.org
-Subject: Re: [PATCH v8 6/7] rtc: support i.MX95 BBM RTC
-Message-ID: <Zs2rz1FT1UsKQBj6@bogus>
-References: <20240823-imx95-bbm-misc-v2-v8-0-e600ed9e9271@nxp.com>
- <20240823-imx95-bbm-misc-v2-v8-6-e600ed9e9271@nxp.com>
+	s=arc-20240116; t=1724754992; c=relaxed/simple;
+	bh=v+MSMEyRsdso5jh7+4FCdf+iXX4bB7T8C+D9NMJOOFA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NM1jas5oQEyn9PtxaIpYabVGaohCeSZ0jAUMQhtuGgOdnY5CjymXijknA5RktIk9mabfeUF+6AtQSmOZZrbFgZvPU/Fx2S6I46EE70s/hySv61iAh6x1WmvJakV18j+fnb5RZKg9Nw+yE1iz0c2OOS/6RqBDTdUDesXtEDaDOww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from unicom145.biz-email.net
+        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id YKL00012;
+        Tue, 27 Aug 2024 18:35:12 +0800
+Received: from jtjnmail201607.home.langchao.com (10.100.2.7) by
+ jtjnmail201606.home.langchao.com (10.100.2.6) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 27 Aug 2024 18:35:12 +0800
+Received: from localhost.localdomain (10.94.8.212) by
+ jtjnmail201607.home.langchao.com (10.100.2.7) with Microsoft SMTP Server id
+ 15.1.2507.39; Tue, 27 Aug 2024 18:35:12 +0800
+From: Charles Han <hanchunchao@inspur.com>
+To: <minyard@acm.org>, <Asmaa@mellanox.com>, <vadimp@mellanox.com>
+CC: <openipmi-developer@lists.sourceforge.net>,
+	<linux-kernel@vger.kernel.org>, <liuyanming@ieisystem.com>, Charles Han
+	<hanchunchao@inspur.com>
+Subject: [PATCH] ipmi: ipmb: Check devm_kasprintf() returned value
+Date: Tue, 27 Aug 2024 18:35:08 +0800
+Message-ID: <20240827103508.2092-1-hanchunchao@inspur.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240823-imx95-bbm-misc-v2-v8-6-e600ed9e9271@nxp.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+tUid: 20248271835134c8eb9de200cf2d731de7bc6944f5735
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-Hi Alexandre,
+devm_kasprintf() can return a NULL pointer on failure but this returned
+value is not checked.
 
-On Fri, Aug 23, 2024 at 05:05:22PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> The BBM module provides RTC feature. To i.MX95, this module is managed by
-> System Manager and exported System Control Management Interface(SCMI).
-> Linux could use i.MX SCMI BBM Extension protocol to use RTC feature.
-> 
-> This driver is to use SCMI interface to get/set RTC.
->
+Fix this lack and check the returned value.
 
-Are you fine if I take this along with dependent SCMI changes via SoC tree ?
+Fixes: 51bd6f291583 ("Add support for IPMB driver")
+Signed-off-by: Charles Han <hanchunchao@inspur.com>
+---
+ drivers/char/ipmi/ipmb_dev_int.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
+diff --git a/drivers/char/ipmi/ipmb_dev_int.c b/drivers/char/ipmi/ipmb_dev_int.c
+index 7296127181ec..791dda361196 100644
+--- a/drivers/char/ipmi/ipmb_dev_int.c
++++ b/drivers/char/ipmi/ipmb_dev_int.c
+@@ -321,6 +321,9 @@ static int ipmb_probe(struct i2c_client *client)
+ 	ipmb_dev->miscdev.name = devm_kasprintf(&client->dev, GFP_KERNEL,
+ 						"%s%d", "ipmb-",
+ 						client->adapter->nr);
++	if (!ipmb_dev->miscdev.name)
++		return -EINVAL;
++
+ 	ipmb_dev->miscdev.fops = &ipmb_fops;
+ 	ipmb_dev->miscdev.parent = &client->dev;
+ 	ret = misc_register(&ipmb_dev->miscdev);
 -- 
-Regards,
-Sudeep
+2.31.1
+
 
