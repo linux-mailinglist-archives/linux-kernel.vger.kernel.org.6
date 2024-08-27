@@ -1,72 +1,130 @@
-Return-Path: <linux-kernel+bounces-303530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75837960D81
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:24:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 723D6960D83
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:25:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8797DB22B30
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:24:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F08C52845FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:25:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0FC1C4ED8;
-	Tue, 27 Aug 2024 14:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94941C4ED1;
+	Tue, 27 Aug 2024 14:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K2aaUaLR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="lOtBWMVS";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="TnIgC49V"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0441CABF;
-	Tue, 27 Aug 2024 14:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6111A0721;
+	Tue, 27 Aug 2024 14:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724768664; cv=none; b=aemCis4S7jy4FFpRn62Xyr8/CLR3zFBmKws8Zq8H41cv2q4c0GuDTjFqT2uzTUTinJn3N0Hd8muCEi7mHNc+h2QzvAbuWNm+FPxX2YZ0S0W+JC02iFZGHOgpYukHZMNZ8YjOwSo7JH/lIDVNXYGkwJOX5DiKz8C6Gq24wAKdtaw=
+	t=1724768712; cv=none; b=NGd+GNPqWFhGuyJ6eTBUKg2axoL9Uni/N1oqheWpoz0LpoOCrwRtklJoRdcT/RmuSHOcVNjbsiEyoRriiJpCKNSXVeZJmaN/fLW14qWxMvDIw/ll12LSiIUrQXSRYPRmgRm3P00spPPzLLjG5WVmdxTCvdcqMZfrHkRDVyu9kEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724768664; c=relaxed/simple;
-	bh=nPgT01Ccj6BYdANgzuzeqwZikvxxVf26U3E7v4rABQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R7HktODjCz8UO6VecGTgVM4wuj4O7iFi5N1ozWyOeY1v9NjxdhI/VvzsJonRt8GA+MbvC1HgFAnIPfcMdV6ptTH3MsgdHrD3TAqvbITZrGl04gdRRkADJcI0n4uETKJzRPi60Xg1HivpiAn0E0O4YB4XD83OhQv8kv5F0Io1Cs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K2aaUaLR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E621C4FE0E;
-	Tue, 27 Aug 2024 14:24:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724768664;
-	bh=nPgT01Ccj6BYdANgzuzeqwZikvxxVf26U3E7v4rABQQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=K2aaUaLR+vlsq6FXo05CtYWkDVLlGaePedsQap2L6qi7EMpIF4U3SHyia29VXMR8p
-	 9R6x1pgOgfBgIHe/tNnZQl4sgl5fuEA8cxkfpmCXMVBgjjw6vQryx1KKLpJyWqPvz0
-	 44TpDuosRMbrGzG8eqsYxpt/B1ZtMNrUWxW4AFYo6VQz05TWEjiTiAunka2wH722Xg
-	 SeIzp4h+lYGCkWgCYACHuRwWQS5newLKz4A+RjbU6lFeC3vZJ/cKV4P9mfb+taJ+XX
-	 /x94vV9IGUO1fN9u2stcGng+yDogei7OPNNnXio6QeZ9rrWjTAhWOm8FEQDnlz+1Qp
-	 GGcREDQQjxoHQ==
-Date: Tue, 27 Aug 2024 07:24:23 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Yan Zhen <yanzhen@vivo.com>
-Cc: louis.peens@corigine.com, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, oss-drivers@corigine.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, opensource.kernel@vivo.vom
-Subject: Re: [PATCH v1] netronome: nfp: Use min macro
-Message-ID: <20240827072423.4540bed6@kernel.org>
-In-Reply-To: <20240827084005.3815912-1-yanzhen@vivo.com>
-References: <20240827084005.3815912-1-yanzhen@vivo.com>
+	s=arc-20240116; t=1724768712; c=relaxed/simple;
+	bh=LKCUwtSMsgKqtM6IlkHHhLOESS/1JIflJn00AgT7QjU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=scuqcS1r2F5dspeIEdRZDWLmTOYlXgdL9vRFLz7ngdiZJZaWB4q1kgrnKnoKUEwlnslB0pLztTgXtymGOrj8Grfz7dmQusHDGQVXViHeZX2GstEJ+s/leimUgsJzJ5O3Ot6PV/qP5a1WGc8IPW+uMJghXAwSPMlAHE5Ombnnpe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=lOtBWMVS; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=TnIgC49V reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1724768709; x=1756304709;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=HiqpgpwN/DyTQ5enb5aMf0VU14IWuoEiQLnmzGymo1s=;
+  b=lOtBWMVSBXJMHxdC4lnPB/V5m8h/6s5sxVnpRqvSGzBzug45JIAi1Ctw
+   TPv9LwJhZwoYCi/A12J+mjAybTMklMEt57y4pntgV4f5ue028l/P6T51f
+   YcvQy5d4kk8dwFdMdA/rRoUDDGWTSuyeXpQBKJwY4j9+zVpe8Ndw5F4hp
+   ofsVUUUKwJ7tMG4CgQ2LFbEKvDnQxmDZKTqVTwiXFhYnI5NAA8MLLRhtB
+   nO3ff50x33UoIqaZaKuGIqUUyUysCu7UWwDtuMy6AePj5rHcu6QNfbFey
+   exU629ynU0/kaQi3asVKYHgF5GtKo+02Se1i6+UCPxFhbW/qMQ5Mr0qV8
+   w==;
+X-CSE-ConnectionGUID: HFGwEk9IR++MipMeOMKYtQ==
+X-CSE-MsgGUID: FAjgxtP3QNCXixWxFaHeCg==
+X-IronPort-AV: E=Sophos;i="6.10,180,1719871200"; 
+   d="scan'208";a="38614643"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 27 Aug 2024 16:25:07 +0200
+X-CheckPoint: {66CDE1C2-15-22BB8E18-F5F6D0B4}
+X-MAIL-CPID: 215C266285C7040C7030EA4E64D12783_5
+X-Control-Analysis: str=0001.0A782F23.66CDE1C2.00CE,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9A466161453;
+	Tue, 27 Aug 2024 16:25:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1724768702; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=HiqpgpwN/DyTQ5enb5aMf0VU14IWuoEiQLnmzGymo1s=;
+	b=TnIgC49VxJ9z1JMGQOknT5fyoTYzJ/jSBJDOMkYEYyRWHKmB8IMWoUDDqKYRRulw2hYSzV
+	DfmtuUUjNIeRO0KjPdBM6skzdeGFVXqNbjNUszG4G47AbdL2IEBI4dXebuPJzfKAeHEWLy
+	i3KM6WwNvvcfhUVsp5XWtDdyyv/X5QF93JmYy5KkyTR92uSj38wvcUCnbdQodOOlQlh731
+	UnW3JFJ0F3CWkfF7D3CzSWPquWcb0gRAOnrUEZhB7kSsHnxkyJaT5oyUM/xcn0ttNiBMdj
+	HkUNqPQak34LJGBZIOZ0V9UlrO0Z0R59H96ZqU6aRgkdOI1exwWMWJNBmeQkXA==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux@ew.tq-group.com,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] ARM: dts: imx6qdl: Add reserved memory area for CMA memory
+Date: Tue, 27 Aug 2024 16:24:58 +0200
+Message-Id: <20240827142458.265558-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, 27 Aug 2024 16:40:05 +0800 Yan Zhen wrote:
-> Using min macro not only makes the code more concise and readable
-> but also improves efficiency sometimes.
+Default CMA size is too small for HDMI output and VPU usage. Increase the
+default size by providing a CMA memory area.
 
-The code is fine, you're making it worse.
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+Smallest RAM variant has 512MiB.
 
-How many of those pointless min()/max() conversions do you have 
-for drivers/net ?
+ arch/arm/boot/dts/nxp/imx/imx6qdl-mba6.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-mba6.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-mba6.dtsi
+index d03f7065ddfd7..8ba3ec27bee07 100644
+--- a/arch/arm/boot/dts/nxp/imx/imx6qdl-mba6.dtsi
++++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-mba6.dtsi
+@@ -106,6 +106,20 @@ reg_vcc3v3_audio: regulator-vcc3v3-audio {
+ 		vin-supply = <&reg_mba6_3p3v>;
+ 	};
+ 
++	reserved-memory {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		linux,cma {
++			compatible = "shared-dma-pool";
++			reusable;
++			size = <0x14000000>;
++			alloc-ranges = <0x10000000 0x20000000>;
++			linux,cma-default;
++		};
++	};
++
+ 	sound {
+ 		compatible = "fsl,imx-audio-tlv320aic32x4";
+ 		pinctrl-names = "default";
 -- 
-pw-bot: reject
+2.34.1
+
 
