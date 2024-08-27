@@ -1,111 +1,101 @@
-Return-Path: <linux-kernel+bounces-303898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7D0D9616A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:16:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17BD196169E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:16:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71121281D65
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:16:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2C831F23DE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E8AF1D2F70;
-	Tue, 27 Aug 2024 18:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96711D27B4;
+	Tue, 27 Aug 2024 18:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HAWbSply"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FakWBL8F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F811D2F51
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 18:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137FC1C9EC8;
+	Tue, 27 Aug 2024 18:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724782598; cv=none; b=b3En0MZMYNd7C6p7oRufVHVdFGBqZ4kuZnXoixbJdNK+yhXtb3bsY1EOTd4iTbWnz4afiiL6AB3UvPb6M+n6r3eNDK1ZDhOHgOPe6kJYXRNWb9DqRLeiTrwg536OquR7tQKqt719e7M5XM4FMisGF1rsmYKk3i+L0PZ/8euQgxc=
+	t=1724782595; cv=none; b=GAqqDd6uEn2rxU/wgAoN039XwMqq84Wg0nPCoXTfuQHso0D0hv3uQidjTB6YlRAWGHvDI+FCXquT9Odh5Rh+f2PvnraKg1HkZRX7JhMpbSrci2jJNcQMpgMsikZU1xhKyBmdP/JSFHTyx87zBcp/QNnq8PElhhyHc/+SNXnEQyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724782598; c=relaxed/simple;
-	bh=X8QcjerdXUVJM0M6K25kjjudFG+vmIr5pWvEHt8N2WE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DYTr/HRQqsiusThVxsTpF3g9I68QwGH2l2C7ewobrFMmmIqlJBZIwqv8iQc50Wf1gicUzMtdYZKWjPMZ6EIElbG0+TDIMDOwFRDkIv1u+4CarSwvnR5QKHNLykMf+5FXAVg++r2WBtNTkKxYg7h+tB1c8sTkHSIFGFf/iLROZBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HAWbSply; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724782596;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EHSBO7ll3rbZOfjXr1T8jodqp3tHRdp2gSRkpPRf9Tg=;
-	b=HAWbSplyNrpeIEgf2zP07+t0ix/WDNJlPtOuvgEa5ulDYPiMkT1eTdxCi6eJ8Skp+mpxKa
-	ZevXnnUNa5Ejd+701HRM26ylOY466mffgmBTGiXrHQHpVUoYgPnfzb0JrrNih3dw8NY/dZ
-	uEUBX7qi0zOw0LdiR8BBLAFN+0/Kqf0=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-647-1lUuvTVxNimdStJbz7Bl5Q-1; Tue, 27 Aug 2024 14:16:35 -0400
-X-MC-Unique: 1lUuvTVxNimdStJbz7Bl5Q-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a86915aead1so496249566b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:16:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724782594; x=1725387394;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EHSBO7ll3rbZOfjXr1T8jodqp3tHRdp2gSRkpPRf9Tg=;
-        b=PUrQwWwXeBwtAykc4hRh/v+g47Cx+vjq4ijCrgVP59Zac75EDMrqCu3OWqY5H3ZJHW
-         qfWEhbne8FkL2I/Hs831R5VuxWoNCeQYl58gdYkc6iVyLhxwM6z9MLcx5OJCGk7u8PBq
-         ui5UbzSY6ooO2bz9xrU/qAf+ApQfwWJKr9azz69nTe4JbL1ilJYfRuDn7O3SejEvgdYJ
-         4GzA/6xmc0KalHcJKm16SmHLyLKmduPoD2YeenkgKMv5iip6D1zahp+U4RMF6dWi5fWh
-         Rbq6FTdGLAfsoL9ep6jqEdsgZs6PDI8Mgj8gkSNX0UsfF9HYo+E4xnW9W7arHvSavIww
-         VBRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeN0YwRKCO69V9j7lGLQnZxOOW+rH69lmtwulMwZEn8t370qCq935zOva8/dT/JO/JSDs/6dX1E63V0w0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRGlySsWZzqYk4y1EyGM3EVxHEgOxOd7ULCTT5mbrDEk67Htwn
-	EbaOc1SQmmt6GzXCYdNK1d/yXBLyqfFz85R2unxVvxL/wtvPL/VPxs6VlA2vQl3Vl5BxuQ0D4Uh
-	H96mJ6dUQK+W+JKq81AZI1btbqdA4vBthqQZgJC77BPXPaaQ3VpDW301a4cEH1Q==
-X-Received: by 2002:a17:906:7315:b0:a86:99e9:ffa1 with SMTP id a640c23a62f3a-a86e3d3e9camr241758566b.64.1724782593697;
-        Tue, 27 Aug 2024 11:16:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHnDe3VluilgSG0vcrrqRKifn4o56qtamsjzIVVNpfdjfRpMszxTYEqVcY4D+Wi8k/eikH1ig==
-X-Received: by 2002:a17:906:7315:b0:a86:99e9:ffa1 with SMTP id a640c23a62f3a-a86e3d3e9camr241756666b.64.1724782592949;
-        Tue, 27 Aug 2024 11:16:32 -0700 (PDT)
-Received: from redhat.com ([2.55.185.222])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e588b39asm138757166b.159.2024.08.27.11.16.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 11:16:32 -0700 (PDT)
-Date: Tue, 27 Aug 2024 14:16:28 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Carlos Bilbao <cbilbao@digitalocean.com>
-Cc: virtualization@lists.linux-foundation.org, jasowang@redhat.com,
-	kvm@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC] vDPA: Trying to make sense of config data
-Message-ID: <20240827141529-mutt-send-email-mst@kernel.org>
-References: <4f4572c8-1d8c-4ec6-96a1-fb74848475af@digitalocean.com>
- <e7ba91a7-2ba6-4532-a59a-03c2023309c6@digitalocean.com>
+	s=arc-20240116; t=1724782595; c=relaxed/simple;
+	bh=1GxHEPXrVAe6OIAhEpqeV+67xfNW4gro/ZqKgd5SEgo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=TY0hp2ULW6675lxp7uRiT0ugqUQerbVQ8jm4HFOUHxCL7UdCIeUqEVmFFE90UjX5hT5CelKJDpd1Y3L3VaIq/VHK8/gG0dqtienJ7UbqwKxV+nD088wIOv11li5lHVGxsMH3WiZpJX+EC2UHa8jjF8u8mNr69v4WPeqlcVWZOvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FakWBL8F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4707BC567C2;
+	Tue, 27 Aug 2024 18:16:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724782594;
+	bh=1GxHEPXrVAe6OIAhEpqeV+67xfNW4gro/ZqKgd5SEgo=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=FakWBL8Ff+52pY0kGshsQMNywCQSI+TbZ1IvN5XC0voIOWjz9wFOtbWJHItSwyKAM
+	 49aVNjN/LVFFbZqhevLCwRhhXN7kjtAQhHjCdUPzNVI6IwReFFwbPwhP6/BvCyGlo1
+	 Gg/GpUSiOVy5/wroNA0tp/rcW90+47tiWop8rZstDh5xephA7BzGh9dDY3n+50oacu
+	 rLrg+XpMyh32z4QO2N4Sf/Cdf4pryYbdhzDW/JaCEu++gN+8cizAl8h/5IO4le+R9e
+	 vMtLeconBLjwsteU6N71z8N9s5xuLgzLu0Oo3GET12SJYfx0xs6SAWSzRCvq2AdHmN
+	 GUbDkhPUU5UDw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e7ba91a7-2ba6-4532-a59a-03c2023309c6@digitalocean.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 27 Aug 2024 21:16:31 +0300
+Message-Id: <D3QWEFR2E2BZ.187FVXI3QQU9U@kernel.org>
+To: "Haitao Huang" <haitao.huang@linux.intel.com>,
+ <dave.hansen@linux.intel.com>, <kai.huang@intel.com>, <tj@kernel.org>,
+ <mkoutny@suse.com>, <chenridong@huawei.com>,
+ <linux-kernel@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
+ <x86@kernel.org>, <cgroups@vger.kernel.org>, <tglx@linutronix.de>,
+ <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+ <sohil.mehta@intel.com>, <tim.c.chen@linux.intel.com>
+Cc: <zhiquan1.li@intel.com>, <kristen@linux.intel.com>, <seanjc@google.com>,
+ <zhanb@microsoft.com>, <anakrish@microsoft.com>,
+ <mikko.ylinen@linux.intel.com>, <yangjie@microsoft.com>,
+ <chrisyan@microsoft.com>
+Subject: Re: [PATCH v16 12/16] x86/sgx: Revise global reclamation for EPC
+ cgroups
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240821015404.6038-1-haitao.huang@linux.intel.com>
+ <20240821015404.6038-13-haitao.huang@linux.intel.com>
+In-Reply-To: <20240821015404.6038-13-haitao.huang@linux.intel.com>
 
-On Fri, Aug 23, 2024 at 09:51:24AM -0500, Carlos Bilbao wrote:
-> Hello again, 
-> 
-> Answering my own question:
-> 
-> https://elixir.bootlin.com/linux/v6.10.2/source/include/uapi/linux/virtio_net.h#L92
-> 
-> Thanks, Carlos
+On Wed Aug 21, 2024 at 4:54 AM EEST, Haitao Huang wrote:
+> With EPC cgroups, the global reclamation function,
+> sgx_reclaim_pages_global(), can no longer apply to the global LRU as
+> pages are now in per-cgroup LRUs.
+>
+> Create a wrapper, sgx_cgroup_reclaim_global() to invoke
+> sgx_cgroup_reclaim_pages() passing in the root cgroup. Call this wrapper
+> from sgx_reclaim_pages_global() when cgroup is enabled. The wrapper will
+> scan and attempt to reclaim SGX_NR_TO_SCAN pages just like the current
+> global reclaim.
+>
+> Note this simple implementation doesn't _exactly_ mimic the current
+> global EPC reclaim (which always tries to do the actual reclaim in batch
+> of SGX_NR_TO_SCAN pages): in rare cases when LRUs have less than
+> SGX_NR_TO_SCAN reclaimable pages, the actual reclaim of EPC pages will
+> be split into smaller batches _across_ multiple LRUs with each being
+> smaller than SGX_NR_TO_SCAN pages.
+>
+> A more precise way to mimic the current global EPC reclaim would be to
+> have a new function to only "scan" (or "isolate") SGX_NR_TO_SCAN pages
+> _across_ the given EPC cgroup _AND_ its descendants, and then do the
+> actual reclaim in one batch.  But this is unnecessarily complicated at
+> this stage to address such rare cases.
+>
+> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
 
-Right. kernel.org would be the official source for that header.
-Or if you want it in english, that would be the virtio spec.
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
--- 
-MST
-
+BR, Jarkko
 
