@@ -1,245 +1,139 @@
-Return-Path: <linux-kernel+bounces-303110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25F5A960783
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:33:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A17E1960788
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:33:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B0E61C22B76
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:33:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C65ED1C2291E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284C219D897;
-	Tue, 27 Aug 2024 10:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA3F19E7FF;
+	Tue, 27 Aug 2024 10:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HefUqh7l"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aKvyi+Gh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DAE3182B2;
-	Tue, 27 Aug 2024 10:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EEF2182B2;
+	Tue, 27 Aug 2024 10:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724754784; cv=none; b=u/R6GfpdpXsGdnLeky8+gKw6pcrXULIoG0RaKG+qq9Tqr5b6/Rmmd4Avt6E3HB7jcVIO/tJFtBzLFoM35W0e6W7DIJAKrEnP2BvCkpr5t3rPu9AwTSdbh2ao8s5Hgde7wS60YAc4SrlXFRfstaXLVW0PQx0r8JJl9CKikjkBEZ8=
+	t=1724754791; cv=none; b=ACWvXlWtYnqNOhCnf4EaPpWk26TeE1q73jf9BXBk8t0r+tiQ7hSLqzUjTA94k3nNMkYyreR5UKzeGuDPo24o3Zjk9bz4dZ6YUqDna18GQVGU2ieQOgTMH5GjyncBZwOHGcbKqYsE0S4f4R10hJFkLLRSfNUwIgCC06pNPTUvKNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724754784; c=relaxed/simple;
-	bh=XKrROJB0xH11nSWZB7HwBkAn4vyjBq3hOmThW6LISgg=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=UlMRpROeKeTKGvsHSI51oRSctLQZjz8D9+3A6FIAYvkcuHWyC+dF3YIFCB03Pqv6YUIyXO+X3WjgB6lzKxILp5RS2XmLTWFIgp2HQI+XjGFr/RAnkNqdovY6yYFCFvN7UhqotsjQ8vnYI8Y+jE8hXXn5NoKobVpa0XLI/4olNUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HefUqh7l; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724754782; x=1756290782;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=XKrROJB0xH11nSWZB7HwBkAn4vyjBq3hOmThW6LISgg=;
-  b=HefUqh7lZHNFpR5p6IgUs43WIHg4xSVfa1fc76fH7Ab72xpu8UJDrw3h
-   LE+bPnTHrfv5OISYxBSpqHwyM25xbIc9xqdzK+IDBJM7INFINfXb9X/Nv
-   6z0qN7dIZBjElhWZnIwxfTlDi2ZJwXJ5H6p1sasbgaqNAi6brBlX+Q+OF
-   WH+mUAqAXLK1UGzVgIcIDpS1/gZDzewqmyuVI73c20c4ImieoKnxVIhx2
-   ICUB5pSZIesIrHrZUVQIpKE5/uccSeSKXIIe104jgZkUBPa5xEpKk4ykJ
-   eNqg7/SyedN1eRaELyvsY0Qcq0P2pbQ/Ub8JMQ39ctxOTAtnOhTw/oREN
-   A==;
-X-CSE-ConnectionGUID: VIm32m6+SuaBsAzTXU+Crw==
-X-CSE-MsgGUID: plPoBSyZTQOby4wao4GXZg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="27102893"
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="27102893"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 03:33:02 -0700
-X-CSE-ConnectionGUID: NAmmIA8cRam6GOvsnLdwAA==
-X-CSE-MsgGUID: 2E2d8ggLRP+S1L6nKp9xgQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="86004060"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.17])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 03:32:57 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 27 Aug 2024 13:32:53 +0300 (EEST)
-To: Perry Yuan <perry.yuan@amd.com>
-cc: Hans de Goede <hdegoede@redhat.com>, Mario.Limonciello@amd.com, 
-    Borislav.Petkov@amd.com, kprateek.nayak@amd.com, Alexander.Deucher@amd.com, 
-    Xinmei.Huang@amd.com, bharathprabhu.perdoor@amd.com, 
-    poonam.aggrwal@amd.com, Li.Meng@amd.com, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    Xiaojian.Du@amd.com
-Subject: Re: [PATCH 07/11] platform/x86/: hfi: init per-cpu scores for each
- class
-In-Reply-To: <b913765989396d62f5184d32932250ee434cd0da.1724748733.git.perry.yuan@amd.com>
-Message-ID: <2c1a18c9-6ceb-e135-876f-f832f5696124@linux.intel.com>
-References: <cover.1724748733.git.perry.yuan@amd.com> <b913765989396d62f5184d32932250ee434cd0da.1724748733.git.perry.yuan@amd.com>
+	s=arc-20240116; t=1724754791; c=relaxed/simple;
+	bh=cR7h+2R2D+Lq9NcV2CvzH83tJKg5LBeLkWoEq+6UNSY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GcM+qcub1RUvBT2FP4X20AqQlYtY9yVbGuMIWAXYQCX8DHFzqczvlsai3C39lTPtc5nnQlqen6dBHIQU5D2ywqUfzSoafbSwQfFUGBHTaiQ5nirmSAZVayph0S5uabR7SSrlXvLK1W86VZ4YYoHT9rLram52HVPnpwwBybFxd9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aKvyi+Gh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D693EC8B7A4;
+	Tue, 27 Aug 2024 10:33:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724754791;
+	bh=cR7h+2R2D+Lq9NcV2CvzH83tJKg5LBeLkWoEq+6UNSY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aKvyi+Ghqx4bemzetoDEKzGX5EfXUIegPXeuzyAzG5HZtSvGqpul8p8ML276Jw3hM
+	 FYzZjrEoHp51Qhmib+lF8rhtP6GVxreg1qCAOldPfVZiHGA4e+sYODDxkMUbr00TDd
+	 9hJ/TZ//ufr3P06s47kYc7TB6nLetewf27CLaRIfinh/iLw0YqNO2UM/jxjMj7Wn5d
+	 UKGb0RydTOFcMo6jdqmjWDTm29BdepBpKtQ4pvk9Aax5CeHvk8e2r3UEUKJLMs+VZw
+	 RBRJ+dirqwBQIu7/0XgetatDFswfjdZtSqVZUbZY4nr6i3C01RWUni7fRizE7CrHwp
+	 tg8P+t5jhNKrQ==
+Message-ID: <2d3f3da1-713e-4378-b87d-11f10f0f9590@kernel.org>
+Date: Tue, 27 Aug 2024 12:33:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/8] phy: qcom: qmp: Add phy register and clk setting for
+ x1e80100 PCIe3
+To: Qiang Yu <quic_qianyu@quicinc.com>, manivannan.sadhasivam@linaro.org,
+ vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, andersson@kernel.org,
+ konradybcio@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, abel.vesa@linaro.org,
+ quic_msarkar@quicinc.com, quic_devipriy@quicinc.com
+Cc: dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
+ neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20240827063631.3932971-1-quic_qianyu@quicinc.com>
+ <20240827063631.3932971-4-quic_qianyu@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <20240827063631.3932971-4-quic_qianyu@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 27 Aug 2024, Perry Yuan wrote:
-
-> From: Perry Yuan <Perry.Yuan@amd.com>
+On 27.08.2024 8:36 AM, Qiang Yu wrote:
+> Currently driver supports only x4 lane based functionality using tx/rx and
+> tx2/rx2 pair of register sets. To support 8 lane functionality with PCIe3,
+> PCIe3 related QMP PHY provides additional programming which are available
+> as txz and rxz based register set. Hence adds txz and rxz based registers
+> usage and programming sequences. Phy register setting for txz and rxz will
+> be applied to all 8 lanes. Some lanes may have different settings on
+> several registers than txz/rxz, these registers should be programmed after
+> txz/rxz programming sequences completing.
 > 
-> Initialize per cpu score `amd_hfi_ipcc_scores` which store energy score
-> and performance score data for each class.
+> Besides, PCIe3 related QMP PHY also requires addtional clk, which is named
+> as clkref_en. Hence, add this clk into qmp_pciephy_clk_l so that it can be
+> easily parsed from devicetree during init.
 > 
-> `Classic core` and `Dense core` are ranked according to those values as
-> energy efficiency capability or performance capability.
-> OS scheduler will pick cores from the ranking list on each class ID for
-> the thread which provide the class id got from hardware feedback
-> interface.
-> 
-> Signed-off-by: Perry Yuan <Perry.Yuan@amd.com>
+> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
 > ---
->  drivers/platform/x86/amd/hfi/hfi.c | 65 ++++++++++++++++++++++++++++++
->  1 file changed, 65 insertions(+)
-> 
-> diff --git a/drivers/platform/x86/amd/hfi/hfi.c b/drivers/platform/x86/amd/hfi/hfi.c
-> index 50f6ca9c148a..cd5f2b708ebf 100644
-> --- a/drivers/platform/x86/amd/hfi/hfi.c
-> +++ b/drivers/platform/x86/amd/hfi/hfi.c
-> @@ -111,6 +111,7 @@ struct amd_hfi_data {
->  	raw_spinlock_t		table_lock;
->  	struct acpi_subtable_header	*pcct_entry;
->  	struct amd_hfi_metadata		*hfi_meta;
-> +	raw_spinlock_t		hfi_data_lock;
->  };
+
+[...]
+
+> +static const struct qmp_phy_init_tbl x1e80100_qmp_gen4x8_pcie_rx_tbl[] = {
+> +	QMP_PHY_INIT_CFG_LANE(QSERDES_V6_20_RX_DFE_CTLE_POST_CAL_OFFSET, 0x3a, 1),
+
+1 -> BIT(0)
+
+[...]
+
+> +	/* Set to true for programming all 8 lanes using txz/rxz registers */
+> +	bool lane_broadcasting;
+
+This is unnecessary because you call qmp_configure_lane conditionally,
+but that function has a nullcheck built in
+
+> +
+>  	/* resets to be requested */
+>  	const char * const *reset_list;
+>  	int num_resets;
+> @@ -2655,6 +2815,8 @@ struct qmp_pcie {
+>  	void __iomem *rx;
+>  	void __iomem *tx2;
+>  	void __iomem *rx2;
+> +	void __iomem *txz;
+> +	void __iomem *rxz;
+>  	void __iomem *ln_shrd;
 >  
->  /**
-> @@ -130,6 +131,7 @@ struct amd_hfi_classes {
->   * struct amd_hfi_cpuinfo - HFI workload class info per CPU
->   * @cpu:		cpu index
->   * @cpus:		cpu mask of cpus
-> + * @apic_id:		apic id of the current cpu
->   * @class_index:	workload class ID index
->   * @nr_classa:		max number of workload class supported
->   * @amd_hfi_classes:	current cpu workload class ranking data
-> @@ -139,6 +141,7 @@ struct amd_hfi_classes {
->  struct amd_hfi_cpuinfo {
->  	int		cpu;
->  	cpumask_var_t	cpus;
-> +	u32		apic_id;
->  	s16		class_index;
->  	u8		nr_class;
->  	struct amd_hfi_classes	*amd_hfi_classes;
-> @@ -146,6 +149,12 @@ struct amd_hfi_cpuinfo {
+>  	void __iomem *port_b;
+> @@ -2700,7 +2862,7 @@ static inline void qphy_clrbits(void __iomem *base, u32 offset, u32 val)
 >  
->  static DEFINE_PER_CPU(struct amd_hfi_cpuinfo, amd_hfi_cpuinfo) = {.class_index = -1};
+>  /* list of clocks required by phy */
+>  static const char * const qmp_pciephy_clk_l[] = {
+> -	"aux", "cfg_ahb", "ref", "refgen", "rchng", "phy_aux",
+> +	"aux", "cfg_ahb", "ref", "refgen", "rchng", "phy_aux", "clkref_en",
+
+Why not just put in TCSR_PCIE_8L_CLKREF_EN as "ref"? It's downstream
+of the XO anyway.
+
+[...]
+
+>  	const struct qmp_phy_cfg *cfg = qmp->cfg;
+> @@ -3700,6 +3907,11 @@ static void qmp_pcie_init_registers(struct qmp_pcie *qmp, const struct qmp_phy_c
 >  
-> +static DEFINE_MUTEX(hfi_cpuinfo_lock);
-> +static int __percpu *amd_hfi_ipcc_scores;
-> +
-> +static int amd_set_hfi_ipcc_score(struct amd_hfi_cpuinfo *info, int cpu);
-> +static int update_hfi_ipcc_scores(struct amd_hfi_data *amd_hfi_data);
-
-Looks unnecessary forward declarations. In general, we try to arrange code 
-so that forward declarations are not required.
-
-> +
->  static int find_cpu_index_by_apicid(unsigned int target_apicid)
->  {
->  	int cpu_index;
-> @@ -293,6 +302,40 @@ static void amd_hfi_remove(struct platform_device *pdev)
+>  	qmp_configure(qmp->dev, serdes, tbls->serdes, tbls->serdes_num);
 >  
->  	mutex_destroy(&dev->lock);
->  }
-> +
-> +static int amd_set_hfi_ipcc_score(struct amd_hfi_cpuinfo *hfi_cpuinfo, int cpu)
-> +{
-> +	int i, *hfi_scores;
-> +	u8 nr_classes = hfi_cpuinfo->nr_class;
+> +	if (cfg->lane_broadcasting) {
 
-Reverse xmas tree order.
+All these ifs can be unconditional
 
-> +
-> +	hfi_scores = per_cpu_ptr(amd_hfi_ipcc_scores, cpu);
-> +	if (!hfi_scores)
-> +		return -ENODEV;
-> +
-> +	for (i = 0;  i < nr_classes; i++)
-
-Extra space.
-
-> +		WRITE_ONCE(hfi_scores[i], hfi_cpuinfo->amd_hfi_classes[i].perf);
-> +
-> +	return 0;
-> +}
-> +
-> +static int update_hfi_ipcc_scores(struct amd_hfi_data *amd_hfi_data)
-> +{
-> +	int cpu;
-> +	int ret;
-> +
-> +	raw_spin_lock_irq(&amd_hfi_data->hfi_data_lock);
-
-Again, this is called from .probe so why you need a raw spinlock???
-
-> +	for_each_online_cpu(cpu) {
-> +		struct amd_hfi_cpuinfo *hfi_cpuinfo = per_cpu_ptr(&amd_hfi_cpuinfo, cpu);
-> +
-> +		ret = amd_set_hfi_ipcc_score(hfi_cpuinfo, cpu);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +	raw_spin_unlock_irq(&amd_hfi_data->hfi_data_lock);
-> +
-> +	return 0;
-> +}
-> +
->  static int amd_hfi_metadata_parser(struct platform_device *pdev,
->  		struct amd_hfi_data *amd_hfi_data)
->  {
-> @@ -344,6 +387,19 @@ static int amd_hfi_metadata_parser(struct platform_device *pdev,
->  	return ret;
->  }
->  
-> +static int alloc_amd_hfi_ipcc_scores(struct amd_hfi_data *amd_hfi_data)
-> +{
-> +	struct amd_hfi_metadata *hfi_meta = amd_hfi_data->hfi_meta;
-> +
-> +	amd_hfi_ipcc_scores = __alloc_percpu(sizeof(*amd_hfi_ipcc_scores) *
-> +			hfi_meta->n_classes,
-> +			sizeof(*amd_hfi_ipcc_scores));
-
-Align these continuation lines better.
-
--- 
- i.
-
-> +	if (WARN_ON(!amd_hfi_ipcc_scores))
-> +		return -ENOMEM;
-> +
-> +	return 0;
-> +}
-> +
->  static const struct acpi_device_id amd_hfi_platform_match[] = {
->  	{ "AMDI0104", 0},
->  	{ }
-> @@ -385,6 +441,7 @@ static int amd_hfi_probe(struct platform_device *pdev)
->  	amd_hfi_data->dhandle = dhandle;
->  
->  	raw_spin_lock_init(&amd_hfi_data->table_lock);
-> +	raw_spin_lock_init(&amd_hfi_data->hfi_data_lock);
->  	mutex_init(&amd_hfi_data->lock);
->  
->  	platform_set_drvdata(pdev, amd_hfi_data);
-> @@ -402,6 +459,14 @@ static int amd_hfi_probe(struct platform_device *pdev)
->  
->  	amd_hfi_data->hfi_meta->dynamic_rank_feature =
->  					cpuid_ebx(AMD_HETERO_CPUID_27) & 0xF;
-> +
-> +	if (alloc_amd_hfi_ipcc_scores(amd_hfi_data))
-> +		goto err_exit;
-> +
-> +	ret = update_hfi_ipcc_scores(amd_hfi_data);
-> +	if (ret)
-> +		goto err_exit;
-> +
->  	dev_dbg(&pdev->dev, "%s driver registered.\n", pdev->name);
->  
->  	return 0;
-> 
+Konrad
 
