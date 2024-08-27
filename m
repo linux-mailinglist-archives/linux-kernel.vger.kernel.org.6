@@ -1,143 +1,301 @@
-Return-Path: <linux-kernel+bounces-302934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E883960541
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:12:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A14C960547
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:13:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D5E828386A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:12:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 083B41F23119
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24FB19AD70;
-	Tue, 27 Aug 2024 09:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B78619B5BB;
+	Tue, 27 Aug 2024 09:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jYsDWP2P"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PrA01tKR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4792199E98;
-	Tue, 27 Aug 2024 09:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249D9199EB4;
+	Tue, 27 Aug 2024 09:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724749946; cv=none; b=ckGv0e4Ee680NG1UwyZHnpmhVKiHcN61GOPKkzATMUSju2CUtbgHoLdUHQbzE9BOyiMOMTO+xG+M+KV+PrtSl4uZvBTDzVu4kAT84FmuT3Lq+6u2F1oS3RsTXgAhrvA14BZhCgVITWGpf1IvZ/LEcwMOQWk6J8Nu9oEv1Bv389c=
+	t=1724749981; cv=none; b=jte9quJVsp933lupLzg6TKK6wTCFI2lab8RbjXchjhJmO6SIsiKeDEwr7QkWGuR1aFlDq9yVAaEw0tFzGc5QyuwSEq2q9e/07IkVNL1miScBBZc5XxlYQuWKEag8uHntYZkEns2c1v6bO/OKAj58Tkemsmd8r2/7SKabd8zNo9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724749946; c=relaxed/simple;
-	bh=PZl2vCFO1281eoFnU2BPuzcAFcsLYdAlE5TlB6KUs7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M9jeL8PwZ4tXngZ7aHeAwqNy77bg+ChtTjJay62qFw0oNh+wO2ftDQrWaxUlGXdYv2AEJf0P2Maap0O11zAgWluIPYo8vn2crruZLpR6UnkYDidwnEumBGSjIC0zytpQntBqV4nNR51G+1Kv8jxFLGQQFqNkyayXNdTsnHVYN2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jYsDWP2P; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42817bee9e8so44609005e9.3;
-        Tue, 27 Aug 2024 02:12:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724749943; x=1725354743; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PZl2vCFO1281eoFnU2BPuzcAFcsLYdAlE5TlB6KUs7A=;
-        b=jYsDWP2PS3EyZCmVT6uK6aHhEYDuvfwjfXyGdwFwjfoXRsahAB6TNPh2GYMkVrEIq1
-         zmt8Gl2GoYoi+n1Q6U2hdOafR57Tq2a6qCGy9ebIKiGg0k0ncZ/1iVLf9vPvtaN++dg8
-         K/LUy2xskGfHKM/zGyTNYC0smnHW8zQbB9zu91BK3VH5tJN9YLTDZpTnb47wxDwfKahN
-         jWt4rOUjSAhKwvhi4uSNrMntRvqxaHwqchX8SLGa0gajHPtPH3pPC7LC7Tn0BZR2BU+5
-         se3M9n5spd8DmwMm4gC47WAV8h5LuXBnOyEJ3uqxC+gHZBmy+LBDXtQkECnoUCFt5nJR
-         0e5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724749943; x=1725354743;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PZl2vCFO1281eoFnU2BPuzcAFcsLYdAlE5TlB6KUs7A=;
-        b=bw5lk133kuDt1Fd6nScHEKVTak+CsPIAYc8wr1wKqczGiMsCxMJRpllQ6CR3pp8lP0
-         76QMsag+jBqx3LsdczNudm3fKDI64NQeZnB9dhW3kPaBX2zcFcXrNh3L4xK7TshxaD4N
-         eT3Aw+cclCa5FewLcMHg0kihP7VhEAvkJMoBG4a274g8FigjBBd9rM8K7MAFF4oLSIul
-         doSq5cvB9buqQeUp2zifQK9Nqa4HFDxlNry2+4SSZtwoLMG2g7+QhvKHS2cv7VmO/Drr
-         /qFyUXGZE8PyLp6FLAzhBjrvGV6CPPyWtIeuCOChjkkQ50GZinziWy+KiPHpdlc8cW6m
-         nveg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEEp/WlytcXJ2TspNmVRjaw8jq7PWiKAhUX1tiwZ3qxzmn3Fl+WE1H7CDf1M3J2zLU72BT8nt0uRToaZI=@vger.kernel.org, AJvYcCWNdUTE3K2ppG1ANVRHTAVLYmBvL3Qu36GCW9GD7wdXDO20L9Sok1MKO08ybBOS8KZALmQkltNQEBA=@vger.kernel.org, AJvYcCXMvKMSIwO3gYku/zipAXLl5Hq8xh/joi7INRPI6n5rf4bb7mtQyJ4UCAiZHbnuEKiHQUCLjshgXWQoJP0sSbNN32A=@vger.kernel.org, AJvYcCXor3ON6TdMYYI2ON287jAwu9Ujgnrfb8MXPQR7n82G7cXN0wIj5waq37dPVbQPVl8DvvtN63oi9uPe4kc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwLseJLR5UeeGuyXN502eXxr0bDFzCSrX//82BZTiyA65O9EnT
-	9VF0iXURTMOnfLMYxw7DqFQv0fFZHZR8Y30u8rrCQY/1CW4jp7AV
-X-Google-Smtp-Source: AGHT+IFrH1pE6tC+TQJPd5XlVKe0OED8mLEGfHKVZm18+ThOAIlLOC9xj1SU4ZgwBYz9RdlGvzKzUA==
-X-Received: by 2002:a7b:c40a:0:b0:428:e820:37ae with SMTP id 5b1f17b1804b1-42b8a0516b1mr69014115e9.1.1724749942211;
-        Tue, 27 Aug 2024 02:12:22 -0700 (PDT)
-Received: from orome (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac5158485sm178380545e9.13.2024.08.27.02.12.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 02:12:21 -0700 (PDT)
-Date: Tue, 27 Aug 2024 11:12:20 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Santosh Shilimkar <ssantosh@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v2 00/13] memory: simplify with scoped/cleanup.h for
- device nodes
-Message-ID: <qqdysgpkbfwfnelu6epeb2gwqgdo7xgc6x3yhkuahlaswy5lyo@gh5vfwnigbpa>
-References: <20240816-cleanup-h-of-node-put-memory-v2-0-9eed0ee16b78@linaro.org>
- <641cf75c-3b6f-4913-ab49-5d0ee821780e@kernel.org>
+	s=arc-20240116; t=1724749981; c=relaxed/simple;
+	bh=JxBQoVGyG+qnPOwGjG78VRBfznoWP5yyUz2/W3rfI0s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZzJSAna4S1vyrGJoZFU6tj1eqG3oNx2jKXXF0Bz4ueQn8fU7w+xECrwtQF/zWwhllGKT2dKdxb33wi+cEOSEfptKRffq1Y5HYQqY9+b1bLOkWIEGjthfVlX04rqIgPJqBKcoitCm2iIcEtfY6vtL7rkFijjzfeLvQeCkgnP43c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PrA01tKR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91C54C8B7A0;
+	Tue, 27 Aug 2024 09:13:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724749980;
+	bh=JxBQoVGyG+qnPOwGjG78VRBfznoWP5yyUz2/W3rfI0s=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PrA01tKRAv67667BhlYHwLAguaIpMvgYRwoz9RHhkkU4fdYgs3z1puwLLFt4z1yBy
+	 upl6LRUGvlrtoGBB5IcTtB1SIWyk4uf34i3TaDnu7ViPYAmhlkvfoGspCTH3Kkt1OZ
+	 /O1QYNB/5dewc14K70kKCELmMILYtHplTFZysZa8OvWZ9Et+lGPSOmRBAUbQ+RDXjS
+	 5BCOahxLoEdHRh+qcvbmct22T/FUwQfssUtUREWQhhj7F8TTtmUpQmPOogWPiBWftb
+	 mzQhUYovXDdNpWHvgNcGM7uqCprn3YOGPUuoQ0i32h9aS6WJAuIGs9lrdIi8fgVO5T
+	 IlFDEbRg2r/zw==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5334adf7249so6178305e87.3;
+        Tue, 27 Aug 2024 02:13:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUVAbX9lsIv1lWiBExJjnd6p+Fm/xDCvIa63Lxbzya2bifptI6PEVrq1kGHGrvvgc3FRtuDAH2LQJvLHhTW@vger.kernel.org, AJvYcCV9aDeWd7W1U4BINQtPVJiP1coMiuA+Jg+zWNxVFbPcxr/VniG2/5Phf8sn+3Z/GzrUcOppJEp4E33R/7xym3tghvR8@vger.kernel.org, AJvYcCWTsmHWpseRpyxmc1ImHFt7DAfWZIjRdtnkY9Pjb8LA6yEggEWGkzhs6BLcicPBxnT6nIc=@vger.kernel.org, AJvYcCXP7Zzl5nl8vApT3xvCTKhH+Z4cC+lvga2YYFDgcrIehMM2DEpSkCJWAfwYpAQKR9x/LAI0kwkFRHLymenY@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywj+nfU5WN2Tqz8Mx8wzRyGUoNIOTRkd2JHylMG1gqs4IOFT0EL
+	S/yGcXfs6eIGe+jyDGSlBYKsgaqlv6p8TZ1NU3nYh2NUg3/Sh/2MUYnfvcJ1VpAOELT/HXttejX
+	tVrETHuYQuwSs9PSXsAk2GnQZPtQ=
+X-Google-Smtp-Source: AGHT+IFpCvVGtqFkt0e1lRXvFIGTnLGle1JtCtNw8SoAQ03bNvZsLp6/AZo8+h9NMyIwcFL6WJlC0PGYw5oMpoctElo=
+X-Received: by 2002:a05:6512:2c8a:b0:52c:e0e1:9ae3 with SMTP id
+ 2adb3069b0e04-5344e500a1fmr1501367e87.57.1724749979251; Tue, 27 Aug 2024
+ 02:12:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="n64k4hkfi6aufqrw"
-Content-Disposition: inline
-In-Reply-To: <641cf75c-3b6f-4913-ab49-5d0ee821780e@kernel.org>
-
-
---n64k4hkfi6aufqrw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <cover.1720942106.git.naveen@kernel.org> <9cf2cdddba74ec167ae1af5ec189bba8f704fb51.1720942106.git.naveen@kernel.org>
+In-Reply-To: <9cf2cdddba74ec167ae1af5ec189bba8f704fb51.1720942106.git.naveen@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Tue, 27 Aug 2024 18:12:22 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQV+B=Jx1o3j3YkVL6CuTz5uPUnS+340KGA7aKs2eLxXw@mail.gmail.com>
+Message-ID: <CAK7LNAQV+B=Jx1o3j3YkVL6CuTz5uPUnS+340KGA7aKs2eLxXw@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 12/17] powerpc64/ftrace: Move ftrace sequence out
+ of line
+To: Naveen N Rao <naveen@kernel.org>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-trace-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Hari Bathini <hbathini@linux.ibm.com>, Mahesh Salgaonkar <mahesh@linux.ibm.com>, 
+	Vishal Chourasia <vishalc@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 21, 2024 at 01:41:54PM GMT, Krzysztof Kozlowski wrote:
-> On 16/08/2024 12:54, Krzysztof Kozlowski wrote:
-> > Changes in v2:
-> > - Add tags
-> > - Wrap lines before of_parse_phandle() (Jonathan)
-> > - Few new patches (see individual changelogs)
-> > - Link to v1: https://lore.kernel.org/r/20240812-cleanup-h-of-node-put-=
-memory-v1-0-5065a8f361d2@linaro.org
-> >=20
-> > Make code a bit simpler and smaller by using cleanup.h when handling
-> > device nodes.
-> >=20
-> > Best regards,
->=20
-> Rebased (some changes around ti-aemif) and applied.
+On Sun, Jul 14, 2024 at 5:29=E2=80=AFPM Naveen N Rao <naveen@kernel.org> wr=
+ote:
+>
+> Function profile sequence on powerpc includes two instructions at the
+> beginning of each function:
+>         mflr    r0
+>         bl      ftrace_caller
+>
+> The call to ftrace_caller() gets nop'ed out during kernel boot and is
+> patched in when ftrace is enabled.
+>
+> Given the sequence, we cannot return from ftrace_caller with 'blr' as we
+> need to keep LR and r0 intact. This results in link stack (return
+> address predictor) imbalance when ftrace is enabled. To address that, we
+> would like to use a three instruction sequence:
+>         mflr    r0
+>         bl      ftrace_caller
+>         mtlr    r0
+>
+> Further more, to support DYNAMIC_FTRACE_WITH_CALL_OPS, we need to
+> reserve two instruction slots before the function. This results in a
+> total of five instruction slots to be reserved for ftrace use on each
+> function that is traced.
+>
+> Move the function profile sequence out-of-line to minimize its impact.
+> To do this, we reserve a single nop at function entry using
+> -fpatchable-function-entry=3D1 and add a pass on vmlinux.o to determine
+> the total number of functions that can be traced. This is then used to
+> generate a .S file reserving the appropriate amount of space for use as
+> ftrace stubs, which is built and linked into vmlinux.
+>
+> On bootup, the stub space is split into separate stubs per function and
+> populated with the proper instruction sequence. A pointer to the
+> associated stub is maintained in dyn_arch_ftrace.
+>
+> For modules, space for ftrace stubs is reserved from the generic module
+> stub space.
+>
+> This is restricted to and enabled by default only on 64-bit powerpc,
+> though there are some changes to accommodate 32-bit powerpc. This is
+> done so that 32-bit powerpc could choose to opt into this based on
+> further tests and benchmarks.
+>
+> As an example, after this patch, kernel functions will have a single nop
+> at function entry:
+> <kernel_clone>:
+>         addis   r2,r12,467
+>         addi    r2,r2,-16028
+>         nop
+>         mfocrf  r11,8
+>         ...
+>
+> When ftrace is enabled, the nop is converted to an unconditional branch
+> to the stub associated with that function:
+> <kernel_clone>:
+>         addis   r2,r12,467
+>         addi    r2,r2,-16028
+>         b       ftrace_ool_stub_text_end+0x11b28
+>         mfocrf  r11,8
+>         ...
+>
+> The associated stub:
+> <ftrace_ool_stub_text_end+0x11b28>:
+>         mflr    r0
+>         bl      ftrace_caller
+>         mtlr    r0
+>         b       kernel_clone+0xc
+>         ...
+>
+> Signed-off-by: Naveen N Rao <naveen@kernel.org>
 
-Oh heh... nevermind those Acked-bys that I just sent out then. =3D)
 
-Thierry
 
---n64k4hkfi6aufqrw
-Content-Type: application/pgp-signature; name="signature.asc"
+> diff --git a/arch/powerpc/tools/Makefile b/arch/powerpc/tools/Makefile
+> new file mode 100644
+> index 000000000000..31dd3151c272
+> --- /dev/null
+> +++ b/arch/powerpc/tools/Makefile
+> @@ -0,0 +1,10 @@
+> +# SPDX-License-Identifier: GPL-2.0-or-later
+> +
+> +quiet_cmd_gen_ftrace_ool_stubs =3D FTRACE  $@
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmbNmHMACgkQ3SOs138+
-s6EojA//YW130a8HBrEqedkHaXwnQAIP7qPmM2Evewmi9wcBVZNgz1GVGpjhOQUX
-XBXltrFkOsbOYojaRZKrXcl2bmgvuEAwrq0qaYqC4YWST4KyMKuXj8W/3QEroxBF
-a76eC9KwmBUawTg3hrMk+b8kryDem56xMx66AxPPpCXxL89JayAjAe0AahXquHNI
-b+Jow1N6uapZMudoQugWsMC/huRcJ+/BA4FAJgi5QgLV3IovkipCnqgTlnRFGuLs
-FViWpdSAAmCuAxsjBzbQTRc0LnfwrEQPOwuJDiJ6E3OpA6cg5pAgN5ahJqZLdagt
-pT7UNzdwG1LnwVa6lg12rMeIENhhQpUUoRkKRGl9kuUYWPr4idTPQLFsB/5Q36BI
-sNSLCXzzxSk5c+9Zxr+k13Yf5DLjp+sgdBdUeFOwQQnqLjhvgnpULlsiXBZNC4A5
-NTLropv5Bh0pBaKaolxtjQ190QNDrtmCA1ZhF+mf9MkDE+ZdAK/XnTIIdfDDD6Hd
-l90kYTSvscD9W2WqzO7f2UqmZABIAyvqZ/j49JKFQLhiOi4iYp4KQzWdQgDKaFyW
-+GBloBNtOQflVimd5yt3LeXffkm8jfrGYY4U+yRTmcHgWKrT5tikjO5t7YwrpJjX
-8ttg2+qAQ1m9vldrAVju+MoF+9gQEJZGxtJy+a6xgjshhPU5zhc=
-=V649
------END PGP SIGNATURE-----
+This is not "FTRACE".
 
---n64k4hkfi6aufqrw--
+"GEN" or something like that.
+
+
+
+> +      cmd_gen_ftrace_ool_stubs =3D $< $(objtree)/vmlinux.o $@
+> +
+> +targets +=3D .arch.vmlinux.o
+> +.arch.vmlinux.o: $(srctree)/arch/powerpc/tools/ftrace-gen-ool-stubs.sh $=
+(objtree)/vmlinux.o FORCE
+> +       $(call if_changed,gen_ftrace_ool_stubs)
+> +
+> +clean-files +=3D $(objtree)/.arch.vmlinux.S $(objtree)/.arch.vmlinux.o
+
+
+
+This is wrong. $(objtree) is always '.'
+
+It will attempt to clean up:
+
+arch/powerpc/tools/.arch.vmlinux.S
+arch/powerpc/tools/.arch.vmlinux.o
+
+
+
+You must not create the intermediate file,
+.arch.vmlinux.S at the top directory because
+this build step is pretty much PowerPC-specific.
+
+
+Rather, I'd recommend to create *.S and *.o in
+arch/powerpc/tools/:
+
+arch/powerpc/tools/vmlinux.S
+arch/powerpc/tools/vmlinux.o
+
+
+
+
+When you submit the next version, please run 'make clean'
+and confirm that any powerpc-specific build artifacts
+not being left-over.
+
+
+
+
+
+
+> diff --git a/arch/powerpc/tools/ftrace-gen-ool-stubs.sh b/arch/powerpc/to=
+ols/ftrace-gen-ool-stubs.sh
+> new file mode 100755
+> index 000000000000..0b85cd5262ff
+> --- /dev/null
+> +++ b/arch/powerpc/tools/ftrace-gen-ool-stubs.sh
+> @@ -0,0 +1,48 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0-or-later
+> +
+> +# Error out on error
+> +set -e
+> +
+> +is_enabled() {
+> +       grep -q "^$1=3Dy" include/config/auto.conf
+> +}
+> +
+> +vmlinux_o=3D${1}
+> +arch_vmlinux_o=3D${2}
+> +arch_vmlinux_S=3D$(dirname ${arch_vmlinux_o})/$(basename ${arch_vmlinux_=
+o} .o).S
+> +
+> +RELOCATION=3DR_PPC64_ADDR64
+> +if is_enabled CONFIG_PPC32; then
+> +       RELOCATION=3DR_PPC_ADDR32
+> +fi
+> +
+> +num_ool_stubs_text=3D$(${CROSS_COMPILE}objdump -r -j __patchable_functio=
+n_entries ${vmlinux_o} |
+> +                    grep -v ".init.text" | grep "${RELOCATION}" | wc -l)
+> +num_ool_stubs_inittext=3D$(${CROSS_COMPILE}objdump -r -j __patchable_fun=
+ction_entries ${vmlinux_o} |
+> +                        grep ".init.text" | grep "${RELOCATION}" | wc -l=
+)
+> +
+> +cat > ${arch_vmlinux_S} <<EOF
+> +#include <asm/asm-offsets.h>
+> +#include <linux/linkage.h>
+> +
+> +.pushsection .tramp.ftrace.text,"aw"
+> +SYM_DATA(ftrace_ool_stub_text_end_count, .long ${num_ool_stubs_text})
+> +
+> +SYM_CODE_START(ftrace_ool_stub_text_end)
+> +       .space ${num_ool_stubs_text} * FTRACE_OOL_STUB_SIZE
+> +SYM_CODE_END(ftrace_ool_stub_text_end)
+> +.popsection
+> +
+> +.pushsection .tramp.ftrace.init,"aw"
+> +SYM_DATA(ftrace_ool_stub_inittext_count, .long ${num_ool_stubs_inittext}=
+)
+> +
+> +SYM_CODE_START(ftrace_ool_stub_inittext)
+> +       .space ${num_ool_stubs_inittext} * FTRACE_OOL_STUB_SIZE
+> +SYM_CODE_END(ftrace_ool_stub_inittext)
+> +.popsection
+> +EOF
+> +
+> +${CC} ${NOSTDINC_FLAGS} ${LINUXINCLUDE} ${KBUILD_CPPFLAGS} \
+> +      ${KBUILD_AFLAGS} ${KBUILD_AFLAGS_KERNEL} \
+> +      -c -o ${arch_vmlinux_o} ${arch_vmlinux_S}
+
+
+Please do not compile this within a shell script.
+
+scripts/Makefile.build provides rule_as_o_S to do this.
+
+
+
+
+[1] vmlinux.o --> arch/powerpc/tools/vmlinux.S
+
+[2] arch/powerpc/tools/vmlinux.S --> arch/powerpc/tools/vmlinux.o
+
+
+Please split these in separate build rules.
+
+
+
+
+
+> --
+> 2.45.2
+>
+
+
+--
+Best Regards
+Masahiro Yamada
 
