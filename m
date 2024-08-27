@@ -1,137 +1,102 @@
-Return-Path: <linux-kernel+bounces-302875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4505D96048D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:36:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3205960491
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:37:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE096284269
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:35:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E3AF1F21E20
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1D3197A83;
-	Tue, 27 Aug 2024 08:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C4619644B;
+	Tue, 27 Aug 2024 08:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="PYCGkb1K"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yq1PXH3l"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36ED914A90;
-	Tue, 27 Aug 2024 08:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D3A14A90;
+	Tue, 27 Aug 2024 08:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724747752; cv=none; b=BZuoM1U6pOQ17eyIJhUHhnJNUv95ZDHSuI+iJIHgnFi6fh+FGycpLZs9o3T+6FarzmsWZG/CnBkiDIybgRdUt0wAJlFfY0op0Yv/uwiANAQluZZHjJ0gUidXkWXNgWSZp+CBYfLBiBNa96aD0P4GxCRwEIlNNnvb3d1uHwESggw=
+	t=1724747825; cv=none; b=YVFwnAd5CIA3zCfDzJZ6NMcGaz6i4XMpFF7o79/3qO3nLLDy+gcgeoCli6C88JgSt5dw0wfjWg9rXFbzfQ+jw6d4RtbGrcRjy4cErq2DU6SMWKGrcFVFjgsoBQ+GFASIGK7v7LtFd5Qy4pe3NiG7n4aKdNQ7kUH4X1FuyGylEds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724747752; c=relaxed/simple;
-	bh=xEUpYp0je7oKMTEnx48I9vtTKW4Nuu8Lt0HeCRT52vA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YMxho+R/QyENMflrfH4hK9yXZdO6IEE/nolGbb8Dmpr2Nv41AQpCfFy7ZRmC4NrpgzshSIfKGtYIMWBAaEp6DW9Ep+lQM91XQPv27BWADx/7rkDMN5h3eUnKJvfMRozlgjNnKYxn0+CGn/mYmsbNi1SYK/+GY6aJUmI4Y3nmjSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=PYCGkb1K; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1724747747; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=XVjKbCb21liJy2wBYvTC4xS7sjOXiQNSn4t/bSACcxo=;
-	b=PYCGkb1Khhdv2ix+Kk3N4SeL+gOZURSbl+6ng2uJOzRuOV1rieQ8h0eaGx4579aF/pYzgPr3pXnuxAgLYocylYub6RJDEftc1kFKL2f7D/LKqxHq4CwVxV/Qnyk8oK6s2NVofc+uiO4ksHOM8GXqHoiDkXUJERKpzQcxw6lQkkA=
-Received: from 30.97.56.57(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WDm-lXk_1724747745)
-          by smtp.aliyun-inc.com;
-          Tue, 27 Aug 2024 16:35:46 +0800
-Message-ID: <d335fd2a-9ab6-4f91-aa11-559deb419433@linux.alibaba.com>
-Date: Tue, 27 Aug 2024 16:35:45 +0800
+	s=arc-20240116; t=1724747825; c=relaxed/simple;
+	bh=kxKmRko+Nd8/3GZyz7ozg6g0c2O31F21/uLhOODHrO8=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=K2fMLwrsTEejd9kNua67PR57IyWRhAzfSdy6ovXWO+WAIfjB4TBd/oUxScRpj92dWwL1OGAc8I6VoWNWxPir5Zyq1aMy4Pya+ZpDwc2myKEisuWLeorSnBhf2y3yclhQrJ9lqAzI23FzHv2FFZzt9yRprhOs/LuOfCdDCdjUcLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yq1PXH3l; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724747825; x=1756283825;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=kxKmRko+Nd8/3GZyz7ozg6g0c2O31F21/uLhOODHrO8=;
+  b=Yq1PXH3lan1mfHKWiE5Pfp3sK5r8MSxDHhecSMcyOJnghfvBYt7muLWL
+   WZx4Y7r8eamAKv42VAlSFQko0Keih6KR8IWyljjVCb6WimWGSZwVAKOWe
+   RmRif1VVErnmnsul9rejVnKo35J1Ova/JBTEu5pu5vSSrkVYzB7g+Z4Pu
+   2LnM45Z6Hv31prYvuVmIbz/c8CWsnCm2IRWjB8y+Y98b8cWR0kLu4bbqJ
+   tIQ2x/Jtz4os2MQ1xW5TsIGtWBleSosb1D9gJG6gGGONSAMnERxFZsCXb
+   MjBig+57sHTf3Y8OgPC2wpEsIVAMAOJH1LWvSzuj5Eizi0ub55Id9glvW
+   w==;
+X-CSE-ConnectionGUID: yALKWO06RBGi3rK7UIty8A==
+X-CSE-MsgGUID: 3NdYCANwSR2By+ZhSwq+0A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23370536"
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="23370536"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 01:37:04 -0700
+X-CSE-ConnectionGUID: HWjlfVLbS6WnaqtQCn3MLg==
+X-CSE-MsgGUID: wfwH5x6QSvigaRb2ct9vVA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="66923516"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.17])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 01:36:58 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 27 Aug 2024 11:36:55 +0300 (EEST)
+To: Armin Wolf <W_Armin@gmx.de>
+cc: james@equiv.tech, jlee@suse.com, corentin.chary@gmail.com, luke@ljones.dev, 
+    matan@svgalib.org, coproscefalo@gmail.com, 
+    Hans de Goede <hdegoede@redhat.com>, 
+    "Rafael J. Wysocki" <rafael@kernel.org>, lenb@kernel.org, 
+    platform-driver-x86@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+    linux-acpi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/5] platform/x86: wmi: Merge get_event_data() with
+ wmi_get_notify_data()
+In-Reply-To: <20240822173810.11090-5-W_Armin@gmx.de>
+Message-ID: <eec3f62c-67b3-8504-b87e-69700970f3de@linux.intel.com>
+References: <20240822173810.11090-1-W_Armin@gmx.de> <20240822173810.11090-5-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] thermal: sprd: Use devm_clk_get_enabled() helpers
-To: Huan Yang <link@vivo.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Orson Zhai <orsonzhai@gmail.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-References: <20240820094450.101976-1-link@vivo.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20240820094450.101976-1-link@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="8323328-584332887-1724747815=:1032"
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
+--8323328-584332887-1724747815=:1032
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-On 2024/8/20 17:44, Huan Yang wrote:
-> The devm_clk_get_enabled() helpers:
->      - call devm_clk_get()
->      - call clk_prepare_enable() and register what is needed in order to
->       call clk_disable_unprepare() when needed, as a managed resource.
-> 
-> This simplifies the code and avoids the calls to clk_disable_unprepare().
-> 
-> Signed-off-by: Huan Yang <link@vivo.com>
+On Thu, 22 Aug 2024, Armin Wolf wrote:
 
-Thanks. LGTM.
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Since get_event_data() is only called by wmi_get_notify_data(), it
+> makes sense to merge both functions.
+>=20
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
 
-> ---
->   drivers/thermal/sprd_thermal.c | 14 +++-----------
->   1 file changed, 3 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/thermal/sprd_thermal.c b/drivers/thermal/sprd_thermal.c
-> index 874192546548..dfd1d529c410 100644
-> --- a/drivers/thermal/sprd_thermal.c
-> +++ b/drivers/thermal/sprd_thermal.c
-> @@ -359,21 +359,17 @@ static int sprd_thm_probe(struct platform_device *pdev)
->   		return -EINVAL;
->   	}
->   
-> -	thm->clk = devm_clk_get(&pdev->dev, "enable");
-> +	thm->clk = devm_clk_get_enabled(&pdev->dev, "enable");
->   	if (IS_ERR(thm->clk)) {
->   		dev_err(&pdev->dev, "failed to get enable clock\n");
->   		return PTR_ERR(thm->clk);
->   	}
->   
-> -	ret = clk_prepare_enable(thm->clk);
-> -	if (ret)
-> -		return ret;
-> -
->   	sprd_thm_para_config(thm);
->   
->   	ret = sprd_thm_cal_read(np, "thm_sign_cal", &val);
->   	if (ret)
-> -		goto disable_clk;
-> +		return ret;
->   
->   	if (val > 0)
->   		thm->ratio_sign = -1;
-> @@ -382,7 +378,7 @@ static int sprd_thm_probe(struct platform_device *pdev)
->   
->   	ret = sprd_thm_cal_read(np, "thm_ratio_cal", &thm->ratio_off);
->   	if (ret)
-> -		goto disable_clk;
-> +		return ret;
->   
->   	for_each_child_of_node(np, sen_child) {
->   		sen = devm_kzalloc(&pdev->dev, sizeof(*sen), GFP_KERNEL);
-> @@ -439,8 +435,6 @@ static int sprd_thm_probe(struct platform_device *pdev)
->   
->   of_put:
->   	of_node_put(sen_child);
-> -disable_clk:
-> -	clk_disable_unprepare(thm->clk);
->   	return ret;
->   }
->   
-> @@ -526,8 +520,6 @@ static void sprd_thm_remove(struct platform_device *pdev)
->   		devm_thermal_of_zone_unregister(&pdev->dev,
->   						thm->sensor[i]->tzd);
->   	}
-> -
-> -	clk_disable_unprepare(thm->clk);
->   }
->   
->   static const struct of_device_id sprd_thermal_of_match[] = {
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--=20
+ i.
+
+--8323328-584332887-1724747815=:1032--
 
