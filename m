@@ -1,121 +1,205 @@
-Return-Path: <linux-kernel+bounces-303573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 564E3960EAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:51:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CD07960EC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:52:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88E5F1C231B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:51:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1713F1F24A16
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB15A1C6F6D;
-	Tue, 27 Aug 2024 14:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007671C6897;
+	Tue, 27 Aug 2024 14:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Q0D219xi"
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bEsYdFrG"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9EC1C68AE
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 14:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B61638DC7
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 14:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724770257; cv=none; b=gxgY8rzNxVpyREaxtToZQvZBRb7EngkJeBxNckL5yD7jBkFUZ4Ht6UHwHt5sqkdXgXQoJ3nI3TlvvFVq298K1ufQ4f7sgUUq2VT95b1PEVJU3VcQdqOKi19KAU9SivDCwJI8BknFGleQfcy0Zp7Sv434SCwcL0QzItERjCg1FQw=
+	t=1724770302; cv=none; b=M8E/dmQ3EN7RbHWZXANVvyqXcn2OkdD2/Aj579DNPusB3nzRH60+a6/gVhCm4VEF1jUEBHyalPM+gosJwMfC3n/ip2AjEVmAjlLIAYSTYX7WGX93uOFsqU0zvPb/p6kx7hbWU5MJNpzDGrp829J9cVEJPprsn6Kq9aziraKuZT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724770257; c=relaxed/simple;
-	bh=paZ0GNFKn4uEQjz0srhCfFTNE/NCDkZfX4JypROkEfM=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NgAG0DVoI0M9tIaqajZP6C9Sy9/VFz5l8418rOFXu4sCUcn71Mv70/Uskxn6xs8ZNRasevs5SEBfUt/f3orjtpqLQyxo4JbrviDhgc8p7b/9RCftlHgSEoSmW5gHrp2wHfkmsRKHR6kH5QSywRtDkLEfEktOQWsa+pRxCR0B1D0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Q0D219xi; arc=none smtp.client-ip=209.85.161.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5de8647f0d5so2174858eaf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 07:50:55 -0700 (PDT)
+	s=arc-20240116; t=1724770302; c=relaxed/simple;
+	bh=gC60MF3wJBkqk2ofUma6GBNFVbeoVIxqEgaTfAzTt1Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Lj91izV9S4tkGU1yHboc7vVx1eqrg6lsPA0n82V3ZLtEXu+9YTY311QpPXgf1UOhmSgzpQzFmonpSlGbTSDW78u9WQOlGzzPB04q82kLIUJxJdI6YOCRZi8hPbrCPBOB1vM0uBbufcWFelbp6TLFO3p4tU2V+ypJHLI5fbmvqiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bEsYdFrG; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so715102866b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 07:51:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1724770254; x=1725375054; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NMEhLTTiqmBwY1nXaDK4IjIztlks0giYedmAFfB8Fwc=;
-        b=Q0D219ximTRFJJ4MNWZAg1CMJ+HHtAiF4URWZcBj4uTyWvoX4OY/zFDTwSMIYPQgAh
-         G7mmPVp+QE6RKBk8fwVkavHT9UVIvuZehGYqe9tyCaJNvdsjKEloOoW97Hbxk+T+riBU
-         WuokYxB8chQwR8WR7GO2MfKseUWmKtOQ9LHfk=
+        d=linaro.org; s=google; t=1724770299; x=1725375099; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6O7GfpMrqTz0lBd8UHCZ0XN6KCNGlbZvNorb5xx4MUM=;
+        b=bEsYdFrGzQ09F2pBTz0VGQ5vyNr9YWqnOPYzm6ltbSTDFTupH6+jwdXeihmQuVShD2
+         0km4vVE/lI2+di9isEhzXWDtZAg7JdlUjCgP9GSB5eclN+PKOTQFGQHOUIcSvOGRMau+
+         jpCMiJcSGh06fu0GdTI2+bCVu8OXki1gGZYhNnbs0eDf6A5K+YXl/GrEcDDCQ6GRx8k0
+         D3gZgsL9tll809l+ZAKcHVjolfXssGK3b70c74s5N1xBRY9EX/ppq7lsq38LvW3Fpmny
+         UFa4CLcC4vh5rCty/cZqgKjbwkXIYOmYqOVP9pRjXgNw+UY8iJoZUJ8J6EF0imXyQCDf
+         MUow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724770254; x=1725375054;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NMEhLTTiqmBwY1nXaDK4IjIztlks0giYedmAFfB8Fwc=;
-        b=HktKy34zguHEx5btgAkkBcjh9k/m86LAk3/RYQuqQWJ16X03aI6dD0x7fZhxl6bsXN
-         sMuh3XoHhm2LjAzrtxdHERjgrhy8K4Pgwc+tHU4PbmUABL7IkJUOTm/GuH6K/Jfo7mVg
-         Iim/JyMTRDFDVVTx9dxbtqVydLnoO2sDmolbMZLih0kay++kebT3MEJfXJsYj9Tf7asV
-         9TU7lVFR+hPyZd9nGsqGAGkVd68z1p4PjVEJhgeNqDfFsEnNut4oy0QAFBjBIDhXFX+9
-         BCZULKfGlQe5y/pHu80wUadduGOhiPtg6GZvLRrmJL25RkkntB1oQefeqayzEes68GsR
-         7xgg==
-X-Forwarded-Encrypted: i=1; AJvYcCU06erMGSOX5dC0PIJ5bKAxqnOxVTGGC99vqLwchYO5IMLNW/ebxJRaS6maTz0b5yjZfhJ9jf8twM/OnUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNQS9+ESRLOMHqta3urQyR4+gqof2HkTjRR/fnypnIY+AkjkT0
-	VSQw8nRNh5INfzOpeIO2SszCPkcLcuTgLeHaKJ8tjN4iMyJvXlZOcI6+x5kDLw==
-X-Google-Smtp-Source: AGHT+IHatlFAvK6uXGDuOiOcHjDE37TG9ucPimxIcM7gtB4jyoTqbUPJ3VH2CYXi75P14ZJFtn+zNQ==
-X-Received: by 2002:a05:6359:4c04:b0:1aa:c8b7:4224 with SMTP id e5c5f4694b2df-1b5c3a6a7fbmr1146323355d.17.1724770254273;
-        Tue, 27 Aug 2024 07:50:54 -0700 (PDT)
-Received: from C02YVCJELVCG ([192.19.144.250])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a67f3199dasm558635285a.15.2024.08.27.07.50.53
+        d=1e100.net; s=20230601; t=1724770299; x=1725375099;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6O7GfpMrqTz0lBd8UHCZ0XN6KCNGlbZvNorb5xx4MUM=;
+        b=TjWv+KhSreqjwaRzPjcZgqBt8vgUWQYyrkjwJvTPe/3ztOTqC3dorR1GTf9rSALBHC
+         6TSLQWY+2iYilLavkQ7KZFur8YaRD8kx8zwjxeXfXK8ITdA/e3JMRvJt21phSR0FuM6T
+         GooTd/APXRZ5TAhMsoFkRYQABA/lGf/YGYesCd0Z4vjaNQEk8X/T4Ja8qkGF8a6SLGsP
+         /hrAVV6gLMDPqwocCNFjbXXGi9HiafWp+KEKj/5pwcQBP9Rdpa5z9C8RXW8YI1y9YMJU
+         yg+7sftgIxdO4TMscNC2o5OkT6NYDxeG/NYsuG+nkpSEdMLpfa2ndF7BP3KVKk1HxJjG
+         rJFw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4UxK22Dgxx4TQFvBB7jSkBCTugKHZ0xUHaHJax+uSb5sdX+LxTS4SMDJAjCsZwDHP7Rs9+Tkt5Ay+Nb0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3lhgGBaKkp/G7LCMAQAnP511ub217WWyrE3P79HYcwx2TMAcv
+	0zMxpsGqoqfFQ9mOBXkxyMjpzVBeG2i7WVyGUrUC8Zcg3ptw51/uvc+pIPE9abk=
+X-Google-Smtp-Source: AGHT+IGgaD4kXyKN+cc4pBxFMEALMVM9k502KHZkWzUp+EoGr7FiXWJQecknaSUi5WgoQnItfi7y7w==
+X-Received: by 2002:a17:907:9496:b0:a7a:ab1a:2d64 with SMTP id a640c23a62f3a-a86a54ddc58mr922313066b.58.1724770298234;
+        Tue, 27 Aug 2024 07:51:38 -0700 (PDT)
+Received: from localhost.localdomain ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e590a6f2sm117727666b.188.2024.08.27.07.51.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 07:50:53 -0700 (PDT)
-From: Andy Gospodarek <andrew.gospodarek@broadcom.com>
-X-Google-Original-From: Andy Gospodarek <gospo@broadcom.com>
-Date: Tue, 27 Aug 2024 10:50:51 -0400
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Andy Gospodarek <andrew.gospodarek@broadcom.com>,
-	Wei Huang <wei.huang2@amd.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	netdev@vger.kernel.org, Jonathan.Cameron@huawei.com,
-	helgaas@kernel.org, corbet@lwn.net, davem@davemloft.net,
-	edumazet@google.com, pabeni@redhat.com, alex.williamson@redhat.com,
-	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
-	somnath.kotur@broadcom.com, manoj.panicker2@amd.com,
-	Eric.VanTassell@amd.com, vadim.fedorenko@linux.dev,
-	horms@kernel.org, bagasdotme@gmail.com, bhelgaas@google.com,
-	lukas@wunner.de, paul.e.luse@intel.com, jing2.liu@intel.com
-Subject: Re: [PATCH V4 11/12] bnxt_en: Add TPH support in BNXT driver
-Message-ID: <Zs3ny988Yk1LJeEY@C02YVCJELVCG>
-References: <20240822204120.3634-1-wei.huang2@amd.com>
- <20240822204120.3634-12-wei.huang2@amd.com>
- <20240826132213.4c8039c0@kernel.org>
- <ZszsBNC8HhCfFnhL@C02YVCJELVCG>
- <20240826154912.6a85e654@kernel.org>
+        Tue, 27 Aug 2024 07:51:37 -0700 (PDT)
+From: James Clark <james.clark@linaro.org>
+To: linux-arm-kernel@lists.infradead.org,
+	will@kernel.org
+Cc: peterz@infradead.org,
+	James Clark <james.clark@linaro.org>,
+	Al Grant <al.grant@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH v3] drivers/perf: arm_spe: Use perf_allow_kernel() for permissions
+Date: Tue, 27 Aug 2024 15:51:12 +0100
+Message-Id: <20240827145113.1224604-1-james.clark@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826154912.6a85e654@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 26, 2024 at 03:49:12PM -0700, Jakub Kicinski wrote:
-> On Mon, 26 Aug 2024 16:56:36 -0400 Andy Gospodarek wrote:
-> > We plan to replace these calls with calls to stop and start only that
-> > ring via netdev_rx_queue_restart as soon as these calls all land in
-> > the same tree.  Since this set is [presumably] coming through
-> > linux-pci we didn't think we could do that yet.
-> > 
-> > Thoughts?
-> 
-> The merge window is in 3 weeks or so, so this can wait.
+Use perf_allow_kernel() for 'pa_enable' (physical addresses),
+'pct_enable' (physical timestamps) and context IDs. This means that
+perf_event_paranoid is now taken into account and LSM hooks can be used,
+which is more consistent with other perf_event_open calls. For example
+PERF_SAMPLE_PHYS_ADDR uses perf_allow_kernel() rather than just
+perfmon_capable().
 
-Are you asking for the patch for this feature to include the queue
-stop/start instead of this?  I just checked linux-pci and it does have
-bnxt_queue_stop/bnxt_queue_start.
+This also indirectly fixes the following error message which is
+misleading because perf_event_paranoid is not taken into account by
+perfmon_capable():
 
-> I'm worried we'll find out later that the current queue reset
-> implementation in bnxt turns out to be insufficient. And we'll
-> be stuck with yet another close/open in this driver.
+  $ perf record -e arm_spe/pa_enable/
 
-The queue reset _has_ to work.  We will ensure that it does and fix any
-problems found.  Note that these have been under test already internally
-and fixes are/will be posted to the list as they are made.  Holding this
-patch because an API that it uses might not work seems odd.
+  Error:
+  Access to performance monitoring and observability operations is
+  limited. Consider adjusting /proc/sys/kernel/perf_event_paranoid
+  setting ...
+
+Suggested-by: Al Grant <al.grant@arm.com>
+Signed-off-by: James Clark <james.clark@linaro.org>
+---
+Changes since v2:
+  * Change commit message to better reflect the actual changes to all
+    the options
+
+Changes since v1:
+  * Export perf_allow_kernel() instead of sysctl_perf_event_paranoid
+
+ drivers/perf/arm_spe_pmu.c | 9 ++++-----
+ include/linux/perf_event.h | 8 +-------
+ kernel/events/core.c       | 9 +++++++++
+ 3 files changed, 14 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
+index 9100d82bfabc..3569050f9cf3 100644
+--- a/drivers/perf/arm_spe_pmu.c
++++ b/drivers/perf/arm_spe_pmu.c
+@@ -41,7 +41,7 @@
+ 
+ /*
+  * Cache if the event is allowed to trace Context information.
+- * This allows us to perform the check, i.e, perfmon_capable(),
++ * This allows us to perform the check, i.e, perf_allow_kernel(),
+  * in the context of the event owner, once, during the event_init().
+  */
+ #define SPE_PMU_HW_FLAGS_CX			0x00001
+@@ -50,7 +50,7 @@ static_assert((PERF_EVENT_FLAG_ARCH & SPE_PMU_HW_FLAGS_CX) == SPE_PMU_HW_FLAGS_C
+ 
+ static void set_spe_event_has_cx(struct perf_event *event)
+ {
+-	if (IS_ENABLED(CONFIG_PID_IN_CONTEXTIDR) && perfmon_capable())
++	if (IS_ENABLED(CONFIG_PID_IN_CONTEXTIDR) && !perf_allow_kernel(&event->attr))
+ 		event->hw.flags |= SPE_PMU_HW_FLAGS_CX;
+ }
+ 
+@@ -745,9 +745,8 @@ static int arm_spe_pmu_event_init(struct perf_event *event)
+ 
+ 	set_spe_event_has_cx(event);
+ 	reg = arm_spe_event_to_pmscr(event);
+-	if (!perfmon_capable() &&
+-	    (reg & (PMSCR_EL1_PA | PMSCR_EL1_PCT)))
+-		return -EACCES;
++	if (reg & (PMSCR_EL1_PA | PMSCR_EL1_PCT))
++		return perf_allow_kernel(&event->attr);
+ 
+ 	return 0;
+ }
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 1a8942277dda..e336306b8c08 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -1602,13 +1602,7 @@ static inline int perf_is_paranoid(void)
+ 	return sysctl_perf_event_paranoid > -1;
+ }
+ 
+-static inline int perf_allow_kernel(struct perf_event_attr *attr)
+-{
+-	if (sysctl_perf_event_paranoid > 1 && !perfmon_capable())
+-		return -EACCES;
+-
+-	return security_perf_event_open(attr, PERF_SECURITY_KERNEL);
+-}
++int perf_allow_kernel(struct perf_event_attr *attr);
+ 
+ static inline int perf_allow_cpu(struct perf_event_attr *attr)
+ {
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index aa3450bdc227..ae7d63c0c593 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -13351,6 +13351,15 @@ const struct perf_event_attr *perf_event_attrs(struct perf_event *event)
+ 	return &event->attr;
+ }
+ 
++int perf_allow_kernel(struct perf_event_attr *attr)
++{
++	if (sysctl_perf_event_paranoid > 1 && !perfmon_capable())
++		return -EACCES;
++
++	return security_perf_event_open(attr, PERF_SECURITY_KERNEL);
++}
++EXPORT_SYMBOL_GPL(perf_allow_kernel);
++
+ /*
+  * Inherit an event from parent task to child task.
+  *
+-- 
+2.34.1
 
 
