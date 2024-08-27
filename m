@@ -1,127 +1,159 @@
-Return-Path: <linux-kernel+bounces-303399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C967960B8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:15:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B27E6960B8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA4D31F222E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:15:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FE952867C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041031BD4EC;
-	Tue, 27 Aug 2024 13:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A1A1BF33A;
+	Tue, 27 Aug 2024 13:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NhcDaTK9"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Gtp+w5y0"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCD91BD01E
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 13:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806E11BE234
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 13:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724764420; cv=none; b=qrbnNPQ8Jwrk4safHLeFM03kOBkLzy/G4C4PfAKYBry93U+LTAOsTd8s4Bojlhj11fg0LLqhcmnk7DXiAD+4VaP/DuPWyzutLmW6iEbt2z+RK0YCIqASxCq8SE1TnnuaP6uqa+pwy8/+xqqAMKwop8PCY8jo1LANak7tvxpAMQw=
+	t=1724764429; cv=none; b=GHXsyjp79L+Naj6Y1UHXGSah1VepoDrn7rJuF8KoXgmDcVvmL9kvUPEmd2FUdJeq9nRNWUUims6NzjsEW86FijfoVJcGBa1BWN8ALPok7GVvi7ElbTs17UP/DhHyvAlQqlXg6AIMVIldUMzMRtvjjoCbUiIvsz4XfT6b1XN7R4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724764420; c=relaxed/simple;
-	bh=AsE2cQXjHRE2DxI/XQtaPRzwG7nRcAMfnjdoARd5SkQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HQOqqTePGWCPvX5RxygQHgNyqt7Pt6NVC+HNXCGVvZ9Z4O6Ilf04dfJVPqBG02puGgvlf2mbsu/Lw8Jj7NbmBfUdFZ/Sw/GlD9TW8qz/b8Rk7SC9CFiZZhcMoACQvUDlI+6U1BfZZ8Wo46LcfIo6b6Dt9w8BO440voStwePnCcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NhcDaTK9; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-371b015572cso4019715f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:13:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724764415; x=1725369215; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xeuE13/7vbNdFThwAEiu12EGxIgMIw579eVWJrBDrS8=;
-        b=NhcDaTK9kqeCeWTX4L2H5uE32TyGWfuUl4YHLxUgJDCET/ryPigAPXMzIgiih5781b
-         d4DepFnGppbsVoOuVugz1AA+XRPexwPX2hxSFViu3dalS/PbUcBJeeoDvhZSxq/uty+e
-         CXjLrENvTPFLpquR6W4KcKyvrD9P4/lemb6mgylb1RSEX9CZQSFcvNWu9GJo/Avh+TJg
-         zrXOpRSxTNN2x2NSoOr1sSJocVkLHN31gPEqWjBOEvhxV5U3jraWT9FycTzFbIytIhpS
-         AJNapEQlJLGz+Cn2nAhSp6X6WJ21wgcM4MaFaNMM1rZTrUpFP8u4csAiq5QbB0xoVm8s
-         QMOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724764415; x=1725369215;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xeuE13/7vbNdFThwAEiu12EGxIgMIw579eVWJrBDrS8=;
-        b=TgliBJbVbk30x3dfIYkmHDaDmfb4HkGgwrbFiJgjbm9dwbbe2cfRFuoL1g4d2s+YQM
-         3zZvVX59/lDf8iQ3khgGt3ZlbzNaIgvrTeh2iCzEP0mFjv26NW9UCa5NWbSTVSMUHs4D
-         vc+T7bS0yvqyd50Go0RisqZ/ZFJI9IzjT6PHNrjkYf77d2Zl6uJHuicek3BRnpDKadLV
-         j3JPbUvT1Kg3EMU9C9W7uBuZwL2Obq+ZDockebc/YNbj1qdXx622HslEYwB8ByQTY1I7
-         Z4O8pkFQknpGn9gNLYmZkBqZygvgg3c4obhanHMubr/1VlzOxwke2BZXxxruRFMLH++l
-         lohA==
-X-Forwarded-Encrypted: i=1; AJvYcCXCCNZoWNc3aYIQN0nTj1DFat+bGf8uTXwyXR68jkEujAUVu5Yys5aMpkUOwOGOIpxozJITPaxWdq0FZN0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb2vdybOSAwX/VdcUXH9Lp/C8Xs9EDdP88vfm2h/aM+ZWVHxUt
-	MOMDOMy5Jaz7G2HXS+B1Jk7+nQCSgqTfjf/0XEIiFiDC405n2lvU88CWggt2OIE=
-X-Google-Smtp-Source: AGHT+IHdsyhSLBjiurVvaE79aFCz+ddRrXoXvKxH/wwYSLEfj/5MHZEUqYeob8Osk05sYIoi0UFnqA==
-X-Received: by 2002:a5d:67cc:0:b0:371:8283:94c1 with SMTP id ffacd0b85a97d-373117be78bmr10635617f8f.0.1724764415477;
-        Tue, 27 Aug 2024 06:13:35 -0700 (PDT)
-Received: from [192.168.0.25] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e549df50sm109365166b.53.2024.08.27.06.13.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 06:13:34 -0700 (PDT)
-Message-ID: <9a1ca52b-6eae-4897-891e-6fad3d981c6e@linaro.org>
-Date: Tue, 27 Aug 2024 14:13:33 +0100
+	s=arc-20240116; t=1724764429; c=relaxed/simple;
+	bh=ni9G1S4E/Zcoya3p7dd4iVfMl5d5cjwBAZW7p+cjrHY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k/vybURalWSc9HUnI8IHK/Jc4rNOhNq4ECQxAjgr/RgpndV1iqf8FoABqcWgvi+ENFIn7MRRl4DneqOfO8q7q1Wex38c65jrJ71t5L2h7mHBlILgllwEJOTQV/pNF/q4EDxSMZ6kJwcnmO+EvUgCCUJ7szfOAr8wi14wUMV2JUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Gtp+w5y0; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47RDDg8q048627;
+	Tue, 27 Aug 2024 08:13:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724764422;
+	bh=HdPtO5uCCrARzRd5hu48H8CTluw1dxlNvgyjhkO3yqU=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=Gtp+w5y0dbzmST35cTi0VobRiNHLytSttIoBB+sfY10nxvPA8uvHUqeYz6nR69FgB
+	 EZ8i3uwmn5d+p7lYmdpQOtJ2GFQvZB3VR59wBXuNF3atXFV95bJx1DAN4oV6v/OjDB
+	 nGImRv33NtgnopPGMOvcvBPtiVzpS5Fz1KgsOXR0=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47RDDgMa026117
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 27 Aug 2024 08:13:42 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 27
+ Aug 2024 08:13:42 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 27 Aug 2024 08:13:42 -0500
+Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47RDDgZ0064263;
+	Tue, 27 Aug 2024 08:13:42 -0500
+Date: Tue, 27 Aug 2024 08:13:42 -0500
+From: Bryan Brattlof <bb@ti.com>
+To: Dhruva Gole <d-gole@ti.com>
+CC: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@vger.kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Markus Schneider-Pargmann <msp@baylibre.com>,
+        Andrew Davis <afd@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Vibhore Vardhan <vibhore@ti.com>
+Subject: Re: [PATCH] arm64: dts: ti: k3-am62: use opp_efuse_table for
+ opp-table syscon
+Message-ID: <20240827131342.6wrielete3yeoinl@bryanbrattlof.com>
+X-PGP-Fingerprint: D3D1 77E4 0A38 DF4D 1853 FEEF 41B9 0D5D 71D5 6CE0
+References: <20240827080007.2097276-1-d-gole@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: gcc-x1e80100: Don't use parking clk_ops for
- QUPs
-To: Konrad Dybcio <konradybcio@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rajendra Nayak <quic_rjendra@quicinc.com>,
- Sibi Sankar <quic_sibis@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-References: <20240823-x1e80100-clk-fix-v1-1-0b1b4f5a96e8@linaro.org>
- <df107382-5c9b-4568-b9e3-5a893070fad7@kernel.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <df107382-5c9b-4568-b9e3-5a893070fad7@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <20240827080007.2097276-1-d-gole@ti.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 26/08/2024 14:44, Konrad Dybcio wrote:
-> On 23.08.2024 2:58 PM, Bryan O'Donoghue wrote:
->> Per Stephen Boyd's explanation in the link below, QUP RCG clocks do not
->> need to be parked when switching frequency. A side-effect in parking to a
->> lower frequency can be a momentary invalid clock driven on an in-use serial
->> peripheral.
->>
->> This can cause "junk" to spewed out of a UART as a low-impact example. On
->> the x1e80100-crd this serial port junk can be observed on linux-next.
->>
->> Apply a similar fix to the x1e80100 Global Clock controller to remediate.
->>
->> Link: https://lore.kernel.org/all/20240819233628.2074654-3-swboyd@chromium.org/
->> Fixes: 161b7c401f4b ("clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
->> Fixes: 929c75d57566 ("clk: qcom: gcc-sm8550: Mark RCGs shared where applicable")
->> Suggested-by: Neil Armstrong <neil.armstrong@linaro.org>
->> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->> ---
->> I ran into some junk on the x1e80100 serial port and asked around to see if
->> someone had already found and fixed.
->>
->> Neil pointed me at Stephen's fix for sm8550 which I found is also required
->> to fix the same thing x1e80100.
->> ---
+On August 27, 2024 thus sayeth Dhruva Gole:
+> Add another entry in the wkup_conf for the syscon node, and then use
+> that for the syscon in opp-table.
 > 
-> Reviewed-by: Konrad Dybcio <konradybcio@kernel.org>
+> Marking entire wkup_conf as "syscon", "simple-mfd" is wrong and needs to
+> be addressed similar to how other child-nodes in wkup_conf are implemented
+> in the same file.
 > 
-> Mind also fixing up 8650 that seems to have this issue?
+> Signed-off-by: Dhruva Gole <d-gole@ti.com>
+> ---
 > 
-> Konrad
+> Based on the discussion we had on [0] for AM62P/A devices setting OPP,
+> Here we fix the AM625's opp-table using the syscon region in wkup_conf.
+> 
+> Build tested on top of linux-next.
+> 
+> Cc: Bryan Brattlof <bb@ti.com>
+> Cc: Vignesh Raghavendra <vigneshr@ti.com>
+> Cc: Vibhore Vardhan <vibhore@ti.com>
+> 
+> ---
+> 
+>  arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi | 5 +++++
+>  arch/arm64/boot/dts/ti/k3-am625.dtsi       | 2 +-
+>  2 files changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
+> index e0afafd532a5..3aff8af549a5 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
+> @@ -22,6 +22,11 @@ chipid: chipid@14 {
+>  			reg = <0x14 0x4>;
+>  		};
+>  
+> +		opp_efuse_table: syscon@18 {
+> +			compatible = "ti,am62-opp-efuse-table", "syscon";
+> +			reg = <0x18 0x4>;
+> +		};
+> +
+>  		cpsw_mac_syscon: ethernet-mac-syscon@200 {
+>  			compatible = "ti,am62p-cpsw-mac-efuse", "syscon";
+>  			reg = <0x200 0x8>;
+> diff --git a/arch/arm64/boot/dts/ti/k3-am625.dtsi b/arch/arm64/boot/dts/ti/k3-am625.dtsi
+> index c3d1db47dc9f..c249883a8a8d 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am625.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am625.dtsi
+> @@ -108,7 +108,7 @@ cpu3: cpu@3 {
+>  	a53_opp_table: opp-table {
+>  		compatible = "operating-points-v2-ti-cpu";
+>  		opp-shared;
+> -		syscon = <&wkup_conf>;
+> +		syscon = <&opp_efuse_table>;
 
-np
+Ah I wish it was as easy as this. Unfortunately ti-cpufreq.c embeds the 
+0x18 offset from the start of the WKUP_CRTL_MMR to get to the 
+JTAG_USER_ID[0] for the AM62x. For the AM62Ax and AM62Px I used a 0x0 
+offset which is why this works for them. (Essentially hacking around the 
+issue until I could find a way to fix this)
+
+I think we may need some coordination between the different maintainers 
+to get this fixed without breaking DFS for the AM62x for a release. That 
+or we could add some logic in the driver to check for an offset in this 
+property eg: 'syscon = <&opp_efuse_table 0x18>;' and use that. The end 
+goal is to not need the offset at all so this is a lot of noise 
+generation just to keep things working while we clean it up.
+
+All of the solutions I can think of are super messy unfortunately.
+
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/cpufreq/ti-cpufreq.c#n302
+
+~Bryan
 
