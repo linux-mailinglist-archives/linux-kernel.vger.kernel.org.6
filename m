@@ -1,115 +1,92 @@
-Return-Path: <linux-kernel+bounces-303735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF2F961491
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:47:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FBBE961496
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:51:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E59B1C23E1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:47:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE4CDB2230C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC101D175C;
-	Tue, 27 Aug 2024 16:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="jYIALnwn"
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDD81CEAAF;
-	Tue, 27 Aug 2024 16:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B751CCB50;
+	Tue, 27 Aug 2024 16:51:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBA31A072D;
+	Tue, 27 Aug 2024 16:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724777213; cv=none; b=osjOZiVw0gswk0RN9KUAEgskPSzyPEe1GKp1KnFdjvNUoRLqh0Cnw3V1VMQvgVClkVF8FRwoHLC2h/OzEAolAAkcMfXLSQe0YAbsnblmrJ7RR/6iOcUGhPS7ftWBt0GIkLFX35NaNRqpH08gqDCfri+85KijeJW8sJc68EJo/TM=
+	t=1724777504; cv=none; b=OKkEb71L68Fb6w/Nfo6zZYVbR7OygsHv8snOLqSyFCJB0kTEYxosZ2zb64tQK/rj1QDsgsRScVWWIalhXnxEHnQ5mYGEfxjha2CA4lT5RZyrJ3JAJt3hT3P5+lJGxpJ2k0Hk1R2L03ixGO+M8BkrRBCxFVRaz2DpoO8vTA6Q12g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724777213; c=relaxed/simple;
-	bh=3coVSHnIL3mcFgBlCaZMNE1Znm3p3w7qZxfk/mb4L60=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cf0PVUOnfT0jR9XrOZjuA+zLu7FOPh2gyoxm4yVUfwf7FlaEb2kmRVGmWp1Coc1d/Fk1jGx9RPEiSFc9kz0My4kqDm57PwjY1OXGz1gDtUpnRBu6/ctU36V3xIVgCQQmq9tscKRutQGGqHvqOn1Slv3KeOvQI/QP1yQT37h1/jU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=jYIALnwn; arc=none smtp.client-ip=80.12.242.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id izL6szCw6aOqrizL6s5dis; Tue, 27 Aug 2024 18:46:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1724777203;
-	bh=HEgEh0iFiHmIlNjHfnI14kSxb/5CvpiTukzOm6OLqco=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=jYIALnwnoc/Fqyg9xaDUasFMC3qAhVc1IEHtgV+zvCHQ1XoEIl2EWEIT8e3puA8Sx
-	 wKkt2hJeMDibWHVt1JChzqWmVAuqi37IM9Oj+k7Qh6SjzxKlr5Su7g6O15Ydkl02/+
-	 ZRZyqnq9I9XkDBxY5BEIH9R6l8pc7iRFCM71Jk8JO5dNHzMCMuXtcQTa/+uxlPr662
-	 zrKLHRNJ/Aw0kRBZHt/GHRJiFwY57fiNW+bjwYa54s+dKYSn2hxojRjQbxqGjMMHbs
-	 PldyYaTMalZacDZFZcNuj9zWG6vIRl1+U2bQ6KwIVHjsF0c64m2DFo+O5RzyFEXdZv
-	 EAtrhVeZDfgGw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Tue, 27 Aug 2024 18:46:42 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <1a5d3a68-56e5-4084-b86c-e60542cbbb98@wanadoo.fr>
-Date: Tue, 27 Aug 2024 18:46:39 +0200
+	s=arc-20240116; t=1724777504; c=relaxed/simple;
+	bh=shsZa5opXckEUX0RXL8kOMl38ge7TWGV2GdQHibDaSQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WRidydV9tr8fO+A722EZtIrjUJE9KpDmpGJc62l2Gg8+pqYUWx33ttjg9QAlGoNG5pLuPPSJr06ogU1iMLi1F96SRxUa7WyyfKqCI8ktNkDRFBvTO3jU5TPXe/wt/KqXs7TU15aJz2MOvduibJggQR6Xz+EBkMnvX6fuKGJX9JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B008FDA7;
+	Tue, 27 Aug 2024 09:52:08 -0700 (PDT)
+Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 727973F66E;
+	Tue, 27 Aug 2024 09:51:40 -0700 (PDT)
+From: Leo Yan <leo.yan@arm.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	John Garry <john.g.garry@oracle.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Leo Yan <leo.yan@arm.com>
+Subject: [PATCH v1 0/7] perf arm-spe: Refactor data source encoding
+Date: Tue, 27 Aug 2024 17:51:18 +0100
+Message-Id: <20240827165125.3311306-1-leo.yan@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 1/3] usb: gadget: function: move u_f.h to
- include/linux/usb/func_utils.h
-To: Michael Grzeschik <m.grzeschik@pengutronix.de>
-Cc: andrzej.p@collabora.com, asmadeus@codewreck.org, corbet@lwn.net,
- ericvh@kernel.org, gregkh@linuxfoundation.org, kernel@pengutronix.de,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, linux_oss@crudebyte.com, lucho@ionkov.net,
- v9fs@lists.linux.dev
-References: <20240116-ml-topic-u9p-v10-0-a85fdeac2c52@pengutronix.de>
- <20240116-ml-topic-u9p-v10-1-a85fdeac2c52@pengutronix.de>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240116-ml-topic-u9p-v10-1-a85fdeac2c52@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 26/08/2024 à 23:47, Michael Grzeschik a écrit :
-> We move the func_utils.h header to include/linux/usb to be
-> able to compile function drivers outside of the
-> drivers/usb/gadget/function directory.
-> 
-> Signed-off-by: Michael Grzeschik <m.grzeschik-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-> 
-> ---
-> v9 -> v10:
->    - respect alphabetical order
->    - correctly changed filename in func_utils.h itself
->
+As more Arm CPU variants (not only Neoverse CPUs) support data source
+encoding, they share the same format for the data source packet.
 
-...
+To extend supporting these CPU variants for Arm SPE data source, this
+series refactors the code. It converts the Neoverse specific naming to
+the common naming, and then based on the MIDR stored in the metadata to
+decide if the CPU follows up the common encoding format.
 
-> index e313c3b8dcb19..e7b69e3145c07 100644
-> --- a/drivers/usb/gadget/u_f.h
-> +++ b/include/linux/usb/func_utils.h
-> @@ -1,6 +1,6 @@
->   // SPDX-License-Identifier: GPL-2.0
->   /*
-> - * u_f.h
-> + * func_utils.h
->    *
->    * Utility definitions for USB functions
->    *
-> 
+At the last, it extends CPU list for Neoverse-V2 and Cortex CPUs.
 
-Maybe the include guard could be updated as-well?
+This patch series is dependent on:
+https://lore.kernel.org/linux-perf-users/20240827164417.3309560-1-leo.yan@arm.com/T/#mea6f658945a66d37c8633f4c94b2c79312acb573
 
-By include guard I mean:
+Besar Wicaksono (1):
+  perf arm-spe: Add Neoverse-V2 to common data source encoding list
 
-	#ifndef __U_F_H__
-	#define __U_F_H__
-	...
-	#endif /* __U_F_H__ */
+Leo Yan (6):
+  perf arm-spe: Rename arm_spe__synth_data_source_generic()
+  perf arm-spe: Rename the common data source encoding
+  perf arm-spe: Introduce arm_spe__is_homogeneous()
+  perf arm-spe: Use metadata to decide the data source feature
+  perf arm-spe: Remove the unused 'midr' field
+  perf arm-spe: Add Cortex CPUs to common data source encoding list
 
-s/__U_F_H__/_FUNC_UTILS_H_/ or something like that.
+ .../util/arm-spe-decoder/arm-spe-decoder.h    |  18 +--
+ tools/perf/util/arm-spe.c                     | 136 +++++++++++++++---
+ 2 files changed, 122 insertions(+), 32 deletions(-)
 
-CJ
+-- 
+2.34.1
+
 
