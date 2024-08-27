@@ -1,299 +1,201 @@
-Return-Path: <linux-kernel+bounces-302623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD3896011A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:35:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48D9096010B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:28:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3B952831BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:35:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCDA31F2257E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7155273466;
-	Tue, 27 Aug 2024 05:35:05 +0000 (UTC)
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C804177115;
+	Tue, 27 Aug 2024 05:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZqLtX7+/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2879813A25B
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 05:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE3F9450
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 05:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724736904; cv=none; b=DdHvJjgy/YVUKYu/gln3koqx9kPRpAajY8r6E+kGZY9dSucA2vVz0MS8Pq7VxKrDv29y8Q/kLxq5AaNyXzMBywBRYtAaesVSs0g1Yj7PwZop+cdHMF2DUMRghTxT5lYZG6TK3yoBPdKs7HebEDIqirDPHdgvDGELp1WBipv/mVc=
+	t=1724736496; cv=none; b=aMx0WOO0GMNWCQk11XHeDpbZ4oZq+KZMYD+wUj5VGz/YD3xhZFv87BjOH6em7Od+/cZYeRAswf/uCvdLJHnTNnDgcorvAv7qAL+b7sfZ7I9+4S7FI/gI2ogYMDJ0hffvnAk2kHPqkgvx2iqvV7PHkWlJfPWA/iGVWW+FguIKXJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724736904; c=relaxed/simple;
-	bh=mTpraw9smTfz5cG74VQDt20WNaHXePCLzO+AXsdtK6c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fb/QUR7kevyoDQJqOQQBtKmcNXZ2dFcpl74NhgJ14HrdBZmQ3JXTkV6/q0+Wued4CkDH5tunVFSnZ2p1517dZrqDs2P0DQDTm/0ZAZ6cyrJDV7MOR8w/0EaA0WYN01DN1Pa/gRWKcZrU6YXaaQcUv3Jo4EF8kmrNJ9G5ZHQaIAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.178.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: from relay3-d.mail.gandi.net (unknown [217.70.183.195])
-	by mslow1.mail.gandi.net (Postfix) with ESMTP id A3C6EC427F
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 05:28:10 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5D0CF60002;
-	Tue, 27 Aug 2024 05:27:56 +0000 (UTC)
-Message-ID: <9535776a-5e4a-49b0-b75f-6e1b94706f46@ghiti.fr>
-Date: Tue, 27 Aug 2024 07:27:55 +0200
+	s=arc-20240116; t=1724736496; c=relaxed/simple;
+	bh=92090CEhIesvsN1slqefEgAY60Tf72jBjW+/z6ghC6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zo9Vs8snPg1Xd+Z5DhJ/pZ6DA0q4iWWGODT1BVr4icbrFIPNtqvUrVWnlSnoQxdHBXmCRKy9k3BA+Cn3V45Cmw/GJZ18M9Nd3rWCF2E4NcTD4uxSaoePfiIPi/FpCL1jS3K+kbmgM6es003CcZOWQSBVPvv/U7gxBsZ8lDrFJoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZqLtX7+/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724736492;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jS5i6mmipU7s9b5hzUepGHutOQBMw/QSW8og5ybiqVY=;
+	b=ZqLtX7+/8j//m+qH1I7xhVQauVTIimbs4sy28FJ53XHZSPp9KquqHaNSys8WG3fxeULTKm
+	K3OIVuhQaHj0Tpidj1kLid6ADecA0/KtuMRfI0hK6mNMKfjak+QW/2jZohKE1yeCecXgqQ
+	dIKZMjjAnhQMpcFmM5EZek/elL/+NQQ=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-574-NIsIHW4APgq6ZouE2ZqIIw-1; Tue,
+ 27 Aug 2024 01:28:07 -0400
+X-MC-Unique: NIsIHW4APgq6ZouE2ZqIIw-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CBAC41955F65;
+	Tue, 27 Aug 2024 05:28:05 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.42])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 17F493001FE5;
+	Tue, 27 Aug 2024 05:28:03 +0000 (UTC)
+Date: Tue, 27 Aug 2024 13:27:59 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-kernel@vger.kernel.org, noodles@fb.com, x86@kernel.org,
+	lijiang@redhat.com, dyoung@redhat.com, kexec@lists.infradead.org
+Subject: Re: [PATCH] x86/mm/sme: fix the kdump kernel breakage on SME system
+ when CONFIG_IMA_KEXEC=y
+Message-ID: <Zs1j31JGB/5EJatz@MiWiFi-R3L-srv>
+References: <20240826024457.22423-1-bhe@redhat.com>
+ <35e40987-1541-cbbe-6b16-1ddadc2c4c35@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -fixes] riscv: Fix RISCV_ALTERNATIVE_EARLY
-Content-Language: en-US
-To: zhangchunyan@iscas.ac.cn, Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Guo Ren <guoren@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Philipp Tomsich <philipp.tomsich@vrull.eu>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240826105737.106879-1-alexghiti@rivosinc.com>
- <CAOsKWHCCEAi-G=Ld9GJ2YUrbbV6dEzThXh5rOzYp6kWfUHfNHw@mail.gmail.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <CAOsKWHCCEAi-G=Ld9GJ2YUrbbV6dEzThXh5rOzYp6kWfUHfNHw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <35e40987-1541-cbbe-6b16-1ddadc2c4c35@amd.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi Chunyan,
+On 08/26/24 at 09:24am, Tom Lendacky wrote:
+> On 8/25/24 21:44, Baoquan He wrote:
+> > Recently, it's reported that kdump kernel is broken during bootup on
+> > SME system when CONFIG_IMA_KEXEC=y. When debugging, I noticed this
+> > can be traced back to commit ("b69a2afd5afc x86/kexec: Carry forward
+> > IMA measurement log on kexec"). Just nobody ever tested it on SME
+> > system when enabling CONFIG_IMA_KEXEC.
+> > 
+> > --------------------------------------------------
+> >  ima: No TPM chip found, activating TPM-bypass!
+> >  Loading compiled-in module X.509 certificates
+> >  Loaded X.509 cert 'Build time autogenerated kernel key: 18ae0bc7e79b64700122bb1d6a904b070fef2656'
+> >  ima: Allocated hash algorithm: sha256
+> >  Oops: general protection fault, probably for non-canonical address 0xcfacfdfe6660003e: 0000 [#1] PREEMPT SMP NOPTI
+> >  CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-rc2+ #14
+> >  Hardware name: Dell Inc. PowerEdge R7425/02MJ3T, BIOS 1.20.0 05/03/2023
+> >  RIP: 0010:ima_restore_measurement_list+0xdc/0x420
+> >  Code: ff 48 c7 85 10 ff ff ff 00 00 00 00 48 c7 85 18 ff ff ff 00 00 00 00 48 85 f6 0f 84 09 03 00 00 48 83 fa 17 0f 86 ff 02 00 00 <66> 83 3e 01 49 89 f4 0f 85 90 94 7d 00 48 83 7e 10 ff 0f 84 74 94
+> >  RSP: 0018:ffffc90000053c80 EFLAGS: 00010286
+> >  RAX: 0000000000000000 RBX: ffffc90000053d03 RCX: 0000000000000000
+> >  RDX: e48066052d5df359 RSI: cfacfdfe6660003e RDI: cfacfdfe66600056
+> >  RBP: ffffc90000053d80 R08: 0000000000000000 R09: ffffffff82de1a88
+> >  R10: ffffc90000053da0 R11: 0000000000000003 R12: 00000000000001a4
+> >  R13: ffffc90000053df0 R14: 0000000000000000 R15: 0000000000000000
+> >  FS:  0000000000000000(0000) GS:ffff888040200000(0000) knlGS:0000000000000000
+> >  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >  CR2: 00007f2c744050e8 CR3: 000080004110e000 CR4: 00000000003506b0
+> >  Call Trace:
+> >   <TASK>
+> >   ? show_trace_log_lvl+0x1b0/0x2f0
+> >   ? show_trace_log_lvl+0x1b0/0x2f0
+> >   ? ima_load_kexec_buffer+0x6e/0xf0
+> >   ? __die_body.cold+0x8/0x12
+> >   ? die_addr+0x3c/0x60
+> >   ? exc_general_protection+0x178/0x410
+> >   ? asm_exc_general_protection+0x26/0x30
+> >   ? ima_restore_measurement_list+0xdc/0x420
+> >   ? vprintk_emit+0x1f0/0x270
+> >   ? ima_load_kexec_buffer+0x6e/0xf0
+> >   ima_load_kexec_buffer+0x6e/0xf0
+> >   ima_init+0x52/0xb0
+> >   ? __pfx_init_ima+0x10/0x10
+> >   init_ima+0x26/0xc0
+> >   ? __pfx_init_ima+0x10/0x10
+> >   do_one_initcall+0x5b/0x300
+> >   do_initcalls+0xdf/0x100
+> >   ? __pfx_kernel_init+0x10/0x10
+> >   kernel_init_freeable+0x147/0x1a0
+> >   kernel_init+0x1a/0x140
+> >   ret_from_fork+0x34/0x50
+> >   ? __pfx_kernel_init+0x10/0x10
+> >   ret_from_fork_asm+0x1a/0x30
+> >   </TASK>
+> >  Modules linked in:
+> >  ---[ end trace 0000000000000000 ]---
+> >  RIP: 0010:ima_restore_measurement_list+0xdc/0x420
+> >  Code: ff 48 c7 85 10 ff ff ff 00 00 00 00 48 c7 85 18 ff ff ff 00 00 00 00 48 85 f6 0f 84 09 03 00 00 48 83 fa 17 0f 86 ff 02 00 00 <66> 83 3e 01 49 89 f4 0f 85 90 94 7d 00 48 83 7e 10 ff 0f 84 74 94
+> >  RSP: 0018:ffffc90000053c80 EFLAGS: 00010286
+> >  RAX: 0000000000000000 RBX: ffffc90000053d03 RCX: 0000000000000000
+> >  RDX: e48066052d5df359 RSI: cfacfdfe6660003e RDI: cfacfdfe66600056
+> >  RBP: ffffc90000053d80 R08: 0000000000000000 R09: ffffffff82de1a88
+> >  R10: ffffc90000053da0 R11: 0000000000000003 R12: 00000000000001a4
+> >  R13: ffffc90000053df0 R14: 0000000000000000 R15: 0000000000000000
+> >  FS:  0000000000000000(0000) GS:ffff888040200000(0000) knlGS:0000000000000000
+> >  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >  CR2: 00007f2c744050e8 CR3: 000080004110e000 CR4: 00000000003506b0
+> >  Kernel panic - not syncing: Fatal exception
+> >  Kernel Offset: disabled
+> >  Rebooting in 10 seconds..
+> > 
+> > From debugging printing, the stored addr and size of ima_kexec buffer
+> > are not decrypted correctly like:
+> >  ------
+> >  ima: ima_load_kexec_buffer, buffer:0xcfacfdfe6660003e, size:0xe48066052d5df359
+> >  ------
+> > 
+> > There are three pieces of setup_data info passed to kexec/kdump kernel:
+> > SETUP_EFI, SETUP_IMA and SETUP_RNG_SEED. However, among them, only
+> > ima_kexec buffer suffered from the incorrect decryption. After
+> > debugging, it's because of the code bug in early_memremap_is_setup_data()
+> > where checking the embedded content inside setup_data takes wrong range
+> > calculation.
+> > 
+> > The length of efi data, rng_seed and ima_kexec are 0x70, 0x20, 0x10,
+> > and the length of setup_data is 0x10. When checking if data is inside
+> > the embedded conent of setup_data, the starting address of efi data and
+> > rng_seed happened to land in the wrong calculated range. While the
+> > ima_kexec's starting address unluckily doesn't pass the checking, then
+> > error occurred.
+> > 
+> > Here fix the code bug to make kexec/kdump kernel boot up successfully.
+> > 
+> > Fixes: 8f716c9b5feb ("x86/mm: Add support to access boot related data in the clear")
+> 
+> The check that was modified was added by:
+> 	b3c72fc9a78e ("x86/boot: Introduce setup_indirect")
+> 
+> The SETUP_INDIRECT patches seem to be the issue here.
+> 
+> > Signed-off-by: Baoquan He <bhe@redhat.com>
+> > ---
+> >  arch/x86/mm/ioremap.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+> > index aa7d279321ea..7953c4a1d28d 100644
+> > --- a/arch/x86/mm/ioremap.c
+> > +++ b/arch/x86/mm/ioremap.c
+> > @@ -717,7 +717,7 @@ static bool __init early_memremap_is_setup_data(resource_size_t phys_addr,
+> >  		paddr_next = data->next;
+> >  		len = data->len;
+> >  
+> > -		if ((phys_addr > paddr) && (phys_addr < (paddr + len))) {
+> > +		if ((phys_addr > paddr) && (phys_addr < (paddr + size + len))) {
+> 
+> I don't think this is correct. You are adding the requested size to the
+> length of the setup data element. The length is the true length of the
+> setup data and should not be increased.
 
-On 27/08/2024 06:57, Chunyan Zhang wrote:
-> Hi Alex,
->
-> On Mon, 26 Aug 2024 at 18:58, Alexandre Ghiti <alexghiti@rivosinc.com> wrote:
->> RISCV_ALTERNATIVE_EARLY will issue sbi_ecall() very early in the boot
->> process, before the first memory mapping is setup so we can't have any
->> instrumentation happening here.
-> I also found that when CONFIG_KASAN is enabled, and either
-> RISCV_ALTERNATIVE_EARLY or CONFIG_DT_IDLE_GENPD is set, the kernel
-> cannot boot.
+I talked to Dave, he reminded me that people could mix the passed in
+parameter 'size' and the local variable 'size' defined inside the while
+loop, not sure which 'size' you are referring to.
 
-
-Yes, I was initially fixing this report: 
-https://lore.kernel.org/linux-riscv/00000000000065062c061fcec37b@google.com/
-
-And that makes me think I forgot the syzbot tag:
-
-Reported-by: syzbot+cfbcb82adf6d7279fd35@syzkaller.appspotmail.com
-
-
->
-> This patch fixed the issue.
->
-> Tested-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-
-
-Thanks!
-
-Alex
-
-
->
->> In addition, when the kernel is relocatable, we must also not issue any
->> relocation this early since they would have been patched virtually only.
->>
->> So, instead of disabling instrumentation for the whole kernel/sbi.c file
->> and compiling it with -fno-pie, simply move __sbi_ecall() and
->> __sbi_base_ecall() into their own file where this is fixed.
->>
->> Fixes: 1745cfafebdf ("riscv: don't use global static vars to store alternative data")
->> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
->> ---
->>   arch/riscv/include/asm/sbi.h  |  2 ++
->>   arch/riscv/kernel/Makefile    |  6 ++++-
->>   arch/riscv/kernel/sbi.c       | 44 --------------------------------
->>   arch/riscv/kernel/sbi_ecall.c | 48 +++++++++++++++++++++++++++++++++++
->>   4 files changed, 55 insertions(+), 45 deletions(-)
->>   create mode 100644 arch/riscv/kernel/sbi_ecall.c
->>
->> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
->> index 7cffd4ffecd0..5843a10b380e 100644
->> --- a/arch/riscv/include/asm/sbi.h
->> +++ b/arch/riscv/include/asm/sbi.h
->> @@ -9,6 +9,7 @@
->>
->>   #include <linux/types.h>
->>   #include <linux/cpumask.h>
->> +#include <linux/jump_label.h>
->>
->>   #ifdef CONFIG_RISCV_SBI
->>   enum sbi_ext_id {
->> @@ -304,6 +305,7 @@ struct sbiret {
->>   };
->>
->>   void sbi_init(void);
->> +long __sbi_base_ecall(int fid);
->>   struct sbiret __sbi_ecall(unsigned long arg0, unsigned long arg1,
->>                            unsigned long arg2, unsigned long arg3,
->>                            unsigned long arg4, unsigned long arg5,
->> diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
->> index 06d407f1b30b..7f88cc4931f5 100644
->> --- a/arch/riscv/kernel/Makefile
->> +++ b/arch/riscv/kernel/Makefile
->> @@ -20,17 +20,21 @@ endif
->>   ifdef CONFIG_RISCV_ALTERNATIVE_EARLY
->>   CFLAGS_alternative.o := -mcmodel=medany
->>   CFLAGS_cpufeature.o := -mcmodel=medany
->> +CFLAGS_sbi_ecall.o := -mcmodel=medany
->>   ifdef CONFIG_FTRACE
->>   CFLAGS_REMOVE_alternative.o = $(CC_FLAGS_FTRACE)
->>   CFLAGS_REMOVE_cpufeature.o = $(CC_FLAGS_FTRACE)
->> +CFLAGS_REMOVE_sbi_ecall.o = $(CC_FLAGS_FTRACE)
->>   endif
->>   ifdef CONFIG_RELOCATABLE
->>   CFLAGS_alternative.o += -fno-pie
->>   CFLAGS_cpufeature.o += -fno-pie
->> +CFLAGS_sbi_ecall.o += -fno-pie
->>   endif
->>   ifdef CONFIG_KASAN
->>   KASAN_SANITIZE_alternative.o := n
->>   KASAN_SANITIZE_cpufeature.o := n
->> +KASAN_SANITIZE_sbi_ecall.o := n
->>   endif
->>   endif
->>
->> @@ -88,7 +92,7 @@ obj-$(CONFIG_DYNAMIC_FTRACE)  += mcount-dyn.o
->>
->>   obj-$(CONFIG_PERF_EVENTS)      += perf_callchain.o
->>   obj-$(CONFIG_HAVE_PERF_REGS)   += perf_regs.o
->> -obj-$(CONFIG_RISCV_SBI)                += sbi.o
->> +obj-$(CONFIG_RISCV_SBI)                += sbi.o sbi_ecall.o
->>   ifeq ($(CONFIG_RISCV_SBI), y)
->>   obj-$(CONFIG_SMP)              += sbi-ipi.o
->>   obj-$(CONFIG_SMP) += cpu_ops_sbi.o
->> diff --git a/arch/riscv/kernel/sbi.c b/arch/riscv/kernel/sbi.c
->> index 837bdab2601b..ace9e2f59c41 100644
->> --- a/arch/riscv/kernel/sbi.c
->> +++ b/arch/riscv/kernel/sbi.c
->> @@ -14,9 +14,6 @@
->>   #include <asm/smp.h>
->>   #include <asm/tlbflush.h>
->>
->> -#define CREATE_TRACE_POINTS
->> -#include <asm/trace.h>
->> -
->>   /* default SBI version is 0.1 */
->>   unsigned long sbi_spec_version __ro_after_init = SBI_SPEC_VERSION_DEFAULT;
->>   EXPORT_SYMBOL(sbi_spec_version);
->> @@ -27,36 +24,6 @@ static int (*__sbi_rfence)(int fid, const struct cpumask *cpu_mask,
->>                             unsigned long start, unsigned long size,
->>                             unsigned long arg4, unsigned long arg5) __ro_after_init;
->>
->> -struct sbiret __sbi_ecall(unsigned long arg0, unsigned long arg1,
->> -                         unsigned long arg2, unsigned long arg3,
->> -                         unsigned long arg4, unsigned long arg5,
->> -                         int fid, int ext)
->> -{
->> -       struct sbiret ret;
->> -
->> -       trace_sbi_call(ext, fid);
->> -
->> -       register uintptr_t a0 asm ("a0") = (uintptr_t)(arg0);
->> -       register uintptr_t a1 asm ("a1") = (uintptr_t)(arg1);
->> -       register uintptr_t a2 asm ("a2") = (uintptr_t)(arg2);
->> -       register uintptr_t a3 asm ("a3") = (uintptr_t)(arg3);
->> -       register uintptr_t a4 asm ("a4") = (uintptr_t)(arg4);
->> -       register uintptr_t a5 asm ("a5") = (uintptr_t)(arg5);
->> -       register uintptr_t a6 asm ("a6") = (uintptr_t)(fid);
->> -       register uintptr_t a7 asm ("a7") = (uintptr_t)(ext);
->> -       asm volatile ("ecall"
->> -                     : "+r" (a0), "+r" (a1)
->> -                     : "r" (a2), "r" (a3), "r" (a4), "r" (a5), "r" (a6), "r" (a7)
->> -                     : "memory");
->> -       ret.error = a0;
->> -       ret.value = a1;
->> -
->> -       trace_sbi_return(ext, ret.error, ret.value);
->> -
->> -       return ret;
->> -}
->> -EXPORT_SYMBOL(__sbi_ecall);
->> -
->>   int sbi_err_map_linux_errno(int err)
->>   {
->>          switch (err) {
->> @@ -535,17 +502,6 @@ long sbi_probe_extension(int extid)
->>   }
->>   EXPORT_SYMBOL(sbi_probe_extension);
->>
->> -static long __sbi_base_ecall(int fid)
->> -{
->> -       struct sbiret ret;
->> -
->> -       ret = sbi_ecall(SBI_EXT_BASE, fid, 0, 0, 0, 0, 0, 0);
->> -       if (!ret.error)
->> -               return ret.value;
->> -       else
->> -               return sbi_err_map_linux_errno(ret.error);
->> -}
->> -
->>   static inline long sbi_get_spec_version(void)
->>   {
->>          return __sbi_base_ecall(SBI_EXT_BASE_GET_SPEC_VERSION);
->> diff --git a/arch/riscv/kernel/sbi_ecall.c b/arch/riscv/kernel/sbi_ecall.c
->> new file mode 100644
->> index 000000000000..24aabb4fbde3
->> --- /dev/null
->> +++ b/arch/riscv/kernel/sbi_ecall.c
->> @@ -0,0 +1,48 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/* Copyright (c) 2024 Rivos Inc. */
->> +
->> +#include <asm/sbi.h>
->> +#define CREATE_TRACE_POINTS
->> +#include <asm/trace.h>
->> +
->> +long __sbi_base_ecall(int fid)
->> +{
->> +       struct sbiret ret;
->> +
->> +       ret = sbi_ecall(SBI_EXT_BASE, fid, 0, 0, 0, 0, 0, 0);
->> +       if (!ret.error)
->> +               return ret.value;
->> +       else
->> +               return sbi_err_map_linux_errno(ret.error);
->> +}
->> +EXPORT_SYMBOL(__sbi_base_ecall);
->> +
->> +struct sbiret __sbi_ecall(unsigned long arg0, unsigned long arg1,
->> +                         unsigned long arg2, unsigned long arg3,
->> +                         unsigned long arg4, unsigned long arg5,
->> +                         int fid, int ext)
->> +{
->> +       struct sbiret ret;
->> +
->> +       trace_sbi_call(ext, fid);
->> +
->> +       register uintptr_t a0 asm ("a0") = (uintptr_t)(arg0);
->> +       register uintptr_t a1 asm ("a1") = (uintptr_t)(arg1);
->> +       register uintptr_t a2 asm ("a2") = (uintptr_t)(arg2);
->> +       register uintptr_t a3 asm ("a3") = (uintptr_t)(arg3);
->> +       register uintptr_t a4 asm ("a4") = (uintptr_t)(arg4);
->> +       register uintptr_t a5 asm ("a5") = (uintptr_t)(arg5);
->> +       register uintptr_t a6 asm ("a6") = (uintptr_t)(fid);
->> +       register uintptr_t a7 asm ("a7") = (uintptr_t)(ext);
->> +       asm volatile ("ecall"
->> +                      : "+r" (a0), "+r" (a1)
->> +                      : "r" (a2), "r" (a3), "r" (a4), "r" (a5), "r" (a6), "r" (a7)
->> +                      : "memory");
->> +       ret.error = a0;
->> +       ret.value = a1;
->> +
->> +       trace_sbi_return(ext, ret.error, ret.value);
->> +
->> +       return ret;
->> +}
->> +EXPORT_SYMBOL(__sbi_ecall);
->> --
->> 2.39.2
->>
->>
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
