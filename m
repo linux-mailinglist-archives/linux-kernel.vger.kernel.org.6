@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-303913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E5729616D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:21:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD86D9616D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:22:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB3F71F2785B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:21:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BEBB1C22BD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166BF1D1F51;
-	Tue, 27 Aug 2024 18:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9721D279D;
+	Tue, 27 Aug 2024 18:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UJ55VvBD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WpBlAI5x"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC211C57A5;
-	Tue, 27 Aug 2024 18:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBAD01C57A5;
+	Tue, 27 Aug 2024 18:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724782911; cv=none; b=IYqwpixo90fjXv87WYPyoqggoucVmKUh+GezFhtTST3AYB6C+4jjkk0dLqBvU/H6en45nBEmvmVqhsrUu9cmd+5+aWYQsDIVvnnnOr5Q7UvbRR4KzbWdaEMVLhmL0GPQWCUq75kv8hTIuj+On7WD86nvmOl8xnrsz8WxdwZwhgg=
+	t=1724782944; cv=none; b=RUzNnHhjK4uhjPnYJ2JOnaIJP6TqcdxjmPkfsP05R36uOl2At6iO2CT34k9pvaDOVApJImZi5QLprWIJv5dPwpZO/jQMmtSbpS0rF0oEZkdcz7oR8Zn//kGATeWT3oDbS+a0wL0dedSxtB4dN8mfnxuyoApQh2Gd5b9QbQ4gpcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724782911; c=relaxed/simple;
-	bh=PvGLi6GQ+NXl/8ldAF2LH6jGtMg/X2BT0prTRbzqHEw=;
+	s=arc-20240116; t=1724782944; c=relaxed/simple;
+	bh=7hdYxdp0h4HrbUL2hEPjOQoitXxoa82OnPsx6X6CD28=;
 	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=t6U1f+tzh45d5i8vt1FtlBjCMja8mk69ZgclyI7+1uR+LEzxCfOC0FYGqE4zmTx8FmfA7Or6Tef9G4XxEGVA5PiZuz7OUGTJwzZA2wDpo08YBMoMF46WV4lp/gZ/uliMXF+JLrxlvQW9BWA7W8grzFmFbS4XbdXp9OumahmThX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UJ55VvBD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42D8FC4AF64;
-	Tue, 27 Aug 2024 18:21:50 +0000 (UTC)
+	 References:In-Reply-To; b=SPjtkoAdQycOvAhuTuHEEkBLn6Gx1YIU0AaUudhjSyzNt4UdWC6w95Ojm/A+iXt8dg3SBl1u2DIglIJKu+a+0ci7AN9adAahgohGBOgvKTi7BocJqFN/rae6p2g7oMFISGDs3B00Tgol6lYacoeBcKpo/2PLDt5V7h/JJ0pThVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WpBlAI5x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10F5AC4AF60;
+	Tue, 27 Aug 2024 18:22:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724782910;
-	bh=PvGLi6GQ+NXl/8ldAF2LH6jGtMg/X2BT0prTRbzqHEw=;
+	s=k20201202; t=1724782943;
+	bh=7hdYxdp0h4HrbUL2hEPjOQoitXxoa82OnPsx6X6CD28=;
 	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=UJ55VvBDoEWA3HFm6hPAlLA1cVPnv1yleKlByVGVCbPo67TT8DaHPe913Oy00Ibi7
-	 CfFmBq7opX91ET4gU7ciky6N9Lm0SHQEzAAcjCQj0IdYewPXcmSkHgx2WGIACXStjE
-	 9Wn5zeGXbNZOnOGCflE3w6k6qlxZIQzfSlMOGhqk4RWMt6mXJzR5Gy0hrL21c+p9LN
-	 KnbZNCoKs+UD6epnUtj8cKIkbxOn1GWMtKa474RivQ+4N/m1g2oicmo5tQjHCjwhF1
-	 PLHVu/g9MYbVUgkyyyfKNzy5ghR7KU2pilk65Df/1QsRNbDNaPMCJG/4sjWwJAgtAy
-	 CtPqJEj1lVKOQ==
+	b=WpBlAI5xQyYkqJpiQVtKpPCeEM5/uvP/Hyrc5cikgQSHa/Gr9VziezXs2q61OU1xK
+	 M36dsiyvSKA5uiZ7/JN+xJBJ/XXcMbtAynDnvW2AZj2cX6TjANYtn0WdStm4r1n2xm
+	 So1pR0GH8lNQ5FAfTbM4HHtqEQF//NrNf8jnOha5+oySh6RoToXSvutmWOnwgVdwSA
+	 qVKfgaFwW/FmwyzZlWCw9YdT4vRo/U928Igp4VOlWlSUkONk37l2JdclnEHCAuss0D
+	 y5Tc3M3YqjF4Vfz+rNgBGj4aKNDgtq0AWcM/wkOYku/+kEgi4Pqd2CLkL3mI2KZtzR
+	 RIUY7jcrDC2bA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,58 +48,99 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 27 Aug 2024 21:21:47 +0300
-Message-Id: <D3QWIH0LVC3D.1J26DP9D7R49T@kernel.org>
-To: "Kai Huang" <kai.huang@intel.com>, <dave.hansen@intel.com>,
- <tglx@linutronix.de>, <bp@alien8.de>, <mingo@redhat.com>, <hpa@zytor.com>
-Cc: <x86@kernel.org>, <linux-sgx@vger.kernel.org>,
+Date: Tue, 27 Aug 2024 21:22:19 +0300
+Message-Id: <D3QWIW0EZK6J.180CPCNSOPTCN@kernel.org>
+To: "David Howells" <dhowells@redhat.com>
+Cc: <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/sgx: Fix a W=1 build warning in function comment
+Subject: Re: [PATCH 1/7] keys: Out of line key_is_dead() so it can have
+ tracepoints added in
 From: "Jarkko Sakkinen" <jarkko@kernel.org>
 X-Mailer: aerc 0.17.0
-References: <20240825080649.145250-1-kai.huang@intel.com>
-In-Reply-To: <20240825080649.145250-1-kai.huang@intel.com>
+References: <20240821123616.60401-1-dhowells@redhat.com>
+ <20240821123616.60401-2-dhowells@redhat.com>
+In-Reply-To: <20240821123616.60401-2-dhowells@redhat.com>
 
-On Sun Aug 25, 2024 at 11:06 AM EEST, Kai Huang wrote:
-> Building the SGX code with W=3D1 generates below warning:
+On Wed Aug 21, 2024 at 3:36 PM EEST, David Howells wrote:
+> Move key_is_dead() out of line so that tracepoints can be added in to it
+> without incurring circular #includes.  Also, it is only used from the fil=
+e
+> it is moved into.
 >
->   arch/x86/kernel/cpu/sgx/main.c:741: warning: Function parameter or stru=
-ct member 'low' not described in 'sgx_calc_section_metric'
->   arch/x86/kernel/cpu/sgx/main.c:741: warning: Function parameter or stru=
-ct member 'high' not described in 'sgx_calc_section_metric'
->   ...
->
-> The function sgx_calc_section_metric() is a simple helper which is only
-> used in sgx/main.c.  There's no need to use k-doc style comment for it.
->
-> Downgrade to normal comment to silence this warning.
->
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Jarkko Sakkinen <jarkko@kernel.org>
+> cc: keyrings@vger.kernel.org
+> cc: linux-security-module@vger.kernel.org
 > ---
->  arch/x86/kernel/cpu/sgx/main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  security/keys/internal.h | 20 --------------------
+>  security/keys/keyring.c  | 20 ++++++++++++++++++++
+>  2 files changed, 20 insertions(+), 20 deletions(-)
 >
-> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/mai=
-n.c
-> index 27892e57c4ef..1a000acd933a 100644
-> --- a/arch/x86/kernel/cpu/sgx/main.c
-> +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -732,7 +732,7 @@ int arch_memory_failure(unsigned long pfn, int flags)
->  	return 0;
+> diff --git a/security/keys/internal.h b/security/keys/internal.h
+> index 2cffa6dc8255..8ba87127e446 100644
+> --- a/security/keys/internal.h
+> +++ b/security/keys/internal.h
+> @@ -211,26 +211,6 @@ extern struct key *request_key_auth_new(struct key *=
+target,
+> =20
+>  extern struct key *key_get_instantiation_authkey(key_serial_t target_id)=
+;
+> =20
+> -/*
+> - * Determine whether a key is dead.
+> - */
+> -static inline bool key_is_dead(const struct key *key, time64_t limit)
+> -{
+> -	time64_t expiry =3D key->expiry;
+> -
+> -	if (expiry !=3D TIME64_MAX) {
+> -		if (!(key->type->flags & KEY_TYPE_INSTANT_REAP))
+> -			expiry +=3D key_gc_delay;
+> -		if (expiry <=3D limit)
+> -			return true;
+> -	}
+> -
+> -	return
+> -		key->flags & ((1 << KEY_FLAG_DEAD) |
+> -			      (1 << KEY_FLAG_INVALIDATED)) ||
+> -		key->domain_tag->removed;
+> -}
+> -
+>  /*
+>   * keyctl() functions
+>   */
+> diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+> index 4448758f643a..0eed018448cb 100644
+> --- a/security/keys/keyring.c
+> +++ b/security/keys/keyring.c
+> @@ -1687,6 +1687,26 @@ static void keyring_revoke(struct key *keyring)
+>  	}
 >  }
 > =20
-> -/**
 > +/*
->   * A section metric is concatenated in a way that @low bits 12-31 define=
- the
->   * bits 12-31 of the metric and @high bits 0-19 define the bits 32-51 of=
- the
->   * metric.
->
-> base-commit: e77f8f275278886d05ce6dfe9e3bc854e7bf0713
-
-Agreed, that has went there probably by plain mistake. Do not think it
-has been intentional...
+> + * Determine whether a key is dead.
+> + */
+> +static bool key_is_dead(const struct key *key, time64_t limit)
+> +{
+> +	time64_t expiry =3D key->expiry;
+> +
+> +	if (expiry !=3D TIME64_MAX) {
+> +		if (!(key->type->flags & KEY_TYPE_INSTANT_REAP))
+> +			expiry +=3D key_gc_delay;
+> +		if (expiry <=3D limit)
+> +			return true;
+> +	}
+> +
+> +	return
+> +		key->flags & ((1 << KEY_FLAG_DEAD) |
+> +			      (1 << KEY_FLAG_INVALIDATED)) ||
+> +		key->domain_tag->removed;
+> +}
+> +
+>  static bool keyring_gc_select_iterator(void *object, void *iterator_data=
+)
+>  {
+>  	struct key *key =3D keyring_ptr_to_key(object);
 
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
