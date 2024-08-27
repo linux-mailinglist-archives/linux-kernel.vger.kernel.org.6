@@ -1,117 +1,152 @@
-Return-Path: <linux-kernel+bounces-303561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34EF8960E19
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:45:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6B55960E26
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF75B1F245D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:45:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC15E1C22FB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D02C1C68B4;
-	Tue, 27 Aug 2024 14:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4011C57A9;
+	Tue, 27 Aug 2024 14:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jEtLB0EG"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EIOtcfIc"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366ED1C6F76
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 14:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1CE1C68A0
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 14:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724769872; cv=none; b=jmEcBISraT9FL5hAIYUJ/Tftayq7xBrFGNPqt6g8jEsc6VJSFewUZ5siyjjqsIpekPtB1Vd9Ve8SNp9YvJvN1fmEjshOWNmqYcMJ5vTpNznyXiJf9dH7cKlwrY5TNkOFchDdjVwN2J+wVIwHoPGj5+7jr09lbSADSpQw7vVTSX8=
+	t=1724769912; cv=none; b=eJdE2HPt7VTsSuchiHXh4pu1BD0/WYVTAWoEL1A37tGZkTYDpnjY+NZuAuSgE06LGmBODYCdcT6oktOYBmml7mCYtbXJlzlsXEiNe5gVhMgKjzlDkSNMVAuvTQ3ycVsWqLIbr+NLc7ipCiUZsUEAdsDm/hL8J9vtlCF5mh/7cVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724769872; c=relaxed/simple;
-	bh=9cJgFjD/R7mUY/jBwLx1PxnCORxDvEzzYDQVq9k+sW0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UaFpvhzYjZU26QeSqVDt7ExrlCxglNvaCz8/t/S6Z9/MyaQqT0GukAip+v8KVOaeRJa9N8WDaUH47xRUuHQATTGib+EuiYsMk6cZvvFIPr/Om8uW838fYt358otCQZ8UcN56wP9zOsxT8b5L9l2aid0ypwyLrw5AfhlehRVlWwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jEtLB0EG; arc=none smtp.client-ip=209.85.221.47
+	s=arc-20240116; t=1724769912; c=relaxed/simple;
+	bh=vqvl2wd7DAFMAHHpX+evfMh9e2Jl+1xEc6H1La+3K1k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=FkAjoKgYM+kM/dmRFIRr1Eo/weT6M3IBa+GeupuVdv5EUHnh6bcy0blwi2C+BEzPE0pQqOhrJ42CKDgumxIY+9ZpU4ZCu+0COIbB/ymxezgGvhfo9HmVZDFREI9ns4jPmvBmG1JbwJAzg49aOss2aWXiG3RGLm0SqFaJoiPtYjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EIOtcfIc; arc=none smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-371b2a51746so163609f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 07:44:30 -0700 (PDT)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-71423704ef3so4502773b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 07:45:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724769869; x=1725374669; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LEXiFF9+y1AtJUUe0lBIVMSQ2gFJFplRHBS/b2AQ058=;
-        b=jEtLB0EGfh7uOtCd+PsNwvjljxe7mw5mvh5geXteqcxqEpZmdW28Yw6v0xKdQm1260
-         VUc48XjuRj0QfuZrqL5tbXXSQTxGwoF62TVJX5E9T17EhD/9nfdQCuCc/enF6DKjXjga
-         VGE8fng8kgN+V8bnpPBHB23JV2t/Xlh3rI1qlVA5wPK4RiQxnxZS2gH2GST9KfhpKQ49
-         Nxmhwpbd7i7PSkHTmlu4yzlr0m3qJnW39D1LSBDxcnkZJ0JyGITJWx6HcINiVpCjFW6x
-         c+lUMvkXR7vvGrwWaslsiU24unxtz6IlgcPuIERtCb5zMQLdYK33KPtOZeTt/PwI7GHR
-         gjdQ==
+        d=linaro.org; s=google; t=1724769909; x=1725374709; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=iZbuGqIhqoTjhqlrNnto8kSYtP9PG/eWiGML5Tm64Lg=;
+        b=EIOtcfIcG8LOVTJ/YFktcqH0VAR+K1mFNObME36qd4JB6xRgJSjoHW4uzSP5XhAHrq
+         q+PZa5KZByz5X0NLWdfFv+2hUooSFLsY42sPHglOuH44a3CH2NtYfR64Vbc8lhhFjrAj
+         nb+8luuu9FcoGuD5TdKKfRB/bJafolRCZ8Ds1Nm38CjI1OFMkLwwN7phZ0qcli/Q+sRF
+         OnC7Y36lX13gf7pCfE0Bk57Hbq0JPA9zToOay/ExNdQ02/pV4QPI4RwoDXh6i1u7z51H
+         814q1XNPnrMsHQaUjUrHRz7o7Vf1qrXtMpO0UmvcjUiM2HqTUOs2e8Tfb94o9+cfy62K
+         0JIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724769869; x=1725374669;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LEXiFF9+y1AtJUUe0lBIVMSQ2gFJFplRHBS/b2AQ058=;
-        b=hL/uPsoQdJdS7TTqjr8UohfI9MVWB5rXKmIg1CHCYvw/fB6m76MGZ/j5AUu9ZKPhdY
-         L0J6futIPQNpX7Ki2uZd0bTLFpb37XizaMjNmnO+C/pKguxq0EQMGPaUEaLWyEuLD5IY
-         IZDuIhdxAuTkFfgn/8L6ceRHLPXHmJdEym66WHNmLc7efG8+L1JeIFHvSZNOfVgG99XP
-         1YI/zmqsEH4JNp4lvw2Ho/o/e9WKUdD5eeNmho1T7Uf7e76/3d8MnBMgtEgBWgd4ucm3
-         mnQTI5egRu9cn9vuhRzjq1FaRG2lzW40kDdhahKP6M88oIqFoYlG2I/TZanlWz9HlKHg
-         qY/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUxKHXvhn+R7EFRi1cQxOIwyUlQOkkzHGYsNgEeIMFxNUcmUEh8u0zdqGpJ9c++Ci2GU+lUGKHJKL1i9CE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyS/F+Vq4MIYGm+Of3286q7wmus+0mh3Dm45PNIOa4DxnkL14sz
-	m6JEUWxWYCDT82j7ebBmFVMX0h2OymkV/wJ2KnyjQHLrRSMCDX24ndgO0BlXeQ0=
-X-Google-Smtp-Source: AGHT+IGffSjXGCUmbOSah5oQPlaHyK36FMHgV70SJ2QT+CDm/NnObADKG1Btd3N3UFma8fanv9/p7w==
-X-Received: by 2002:a5d:648e:0:b0:373:6bf:9608 with SMTP id ffacd0b85a97d-37311843370mr5580812f8f.2.1724769869564;
-        Tue, 27 Aug 2024 07:44:29 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-373081ff654sm13270457f8f.75.2024.08.27.07.44.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 07:44:29 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Yisen Zhuang <yisen.zhuang@huawei.com>,
-	Salil Mehta <salil.mehta@huawei.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Simon Horman <horms@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH net-next RESEND 3/3] net: hisilicon: hns_mdio: fix OF node leak in probe()
-Date: Tue, 27 Aug 2024 16:44:21 +0200
-Message-ID: <20240827144421.52852-4-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240827144421.52852-1-krzysztof.kozlowski@linaro.org>
-References: <20240827144421.52852-1-krzysztof.kozlowski@linaro.org>
+        d=1e100.net; s=20230601; t=1724769909; x=1725374709;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iZbuGqIhqoTjhqlrNnto8kSYtP9PG/eWiGML5Tm64Lg=;
+        b=NQcc88wTd14Q3LP2stL6xIxcdSc9SCuurqsBAf6H0c3q0Afm960sNIdbfiLlwMYoXN
+         NthDxonbIxeY0Ssw4DQq/4Sgs8YsrIhszQ0HnMgpVQy8fujcYz+QZJyiv85YpYalelRA
+         J4w9L9r13R4SlqP1diCbLbIwJZUfKvg3fXdHbPnn/fHcdeUCqrDOSdWofBP2r/d5eJaH
+         jl/nNMkBMsFvFMcnaXz67syUcBnZJeCWaQ6OO291KramOUAAVAKZyKmy6ywc8Y93dI17
+         L/0A51l/l324x1aK8IimRS79pfzC4nBNnZwZYxiLRUvUnYR32dleuUVtZNaEHm2b+bg5
+         p2Og==
+X-Forwarded-Encrypted: i=1; AJvYcCWFpdiRrF71gHvx4OVuNqQpcWcPcR/GZsvROH4bedxrwSGtYTDVhi4ZRyC8g+ftp7XFeWlfhyJjXEUrOKU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc5ITrEhWIQiIpxeSOUtmPNzPO+8tSOrgQd5nv5hbzeKicMGJr
+	8oXp0rPM2AqOTO2wY8fjwLy/wzTkfk1ZMHDL3jzYeIGoKK/C19vz19DJQWUIoGEviNFYn7OoWCg
+	+Bvk=
+X-Google-Smtp-Source: AGHT+IF9N8sFDFv0WTjVLHaUzgFXEzBqE1vJnTU8YzQa+GyLpaD3Pj3el5aQAziWJeULrCiTACQr3A==
+X-Received: by 2002:a05:6a21:6f83:b0:1c2:8cc4:9084 with SMTP id adf61e73a8af0-1cc8b5d8839mr18734691637.34.1724769908968;
+        Tue, 27 Aug 2024 07:45:08 -0700 (PDT)
+Received: from ?IPV6:2804:1b3:a7c3:4c2c:7d73:fa05:8bad:32cb? ([2804:1b3:a7c3:4c2c:7d73:fa05:8bad:32cb])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-714342e0a98sm8651786b3a.135.2024.08.27.07.45.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 07:45:07 -0700 (PDT)
+Message-ID: <a333f3c5-2bc2-442f-8a27-7ec0d6380de8@linaro.org>
+Date: Tue, 27 Aug 2024 11:45:05 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests/vDSO: separate LDLIBS from CFLAGS for libsodium
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org
+References: <7d9c376c-10ae-40cc-8d8a-d614b8dd289f@linaro.org>
+ <20240827144200.3315093-1-Jason@zx2c4.com>
+Content-Language: en-US
+From: Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>
+Organization: Linaro
+In-Reply-To: <20240827144200.3315093-1-Jason@zx2c4.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Driver is leaking OF node reference from
-of_parse_phandle_with_fixed_args() in probe().
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/net/ethernet/hisilicon/hns_mdio.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns_mdio.c b/drivers/net/ethernet/hisilicon/hns_mdio.c
-index ed73707176c1..8a047145f0c5 100644
---- a/drivers/net/ethernet/hisilicon/hns_mdio.c
-+++ b/drivers/net/ethernet/hisilicon/hns_mdio.c
-@@ -575,6 +575,7 @@ static int hns_mdio_probe(struct platform_device *pdev)
- 						MDIO_SC_RESET_ST;
- 				}
- 			}
-+			of_node_put(reg_args.np);
- 		} else {
- 			dev_warn(&pdev->dev, "find syscon ret = %#x\n", ret);
- 			mdio_dev->subctrl_vbase = NULL;
--- 
-2.43.0
+On 27/08/24 11:41, Jason A. Donenfeld wrote:
+> On systems that set -Wl,--as-needed, putting the -lsodium in the wrong
+> place on the command line means we get a linker error:
+> 
+>       CC       vdso_test_chacha
+>     /usr/bin/ld: /tmp/ccKpjnSM.o: in function `main':
+>     vdso_test_chacha.c:(.text+0x276): undefined reference to `crypto_stream_chacha20'
+>     collect2: error: ld returned 1 exit status
+> 
+> Fix this by passing pkg-config's --libs output to the LDFLAGS field
+> instead of the CFLAGS field, as is customary.
+> 
+> Reported-by: Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> ---
+>  tools/testing/selftests/vDSO/Makefile | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
+> index 180854eb9fec..834aa862ba2c 100644
+> --- a/tools/testing/selftests/vDSO/Makefile
+> +++ b/tools/testing/selftests/vDSO/Makefile
+> @@ -1,7 +1,8 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  uname_M := $(shell uname -m 2>/dev/null || echo not)
+>  ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
+> -SODIUM := $(shell pkg-config --libs --cflags libsodium 2>/dev/null)
+> +SODIUM_LIBS := $(shell pkg-config --libs libsodium 2>/dev/null)
+> +SODIUM_CFLAGS := $(shell pkg-config --cflags libsodium 2>/dev/null)
+>  
+>  TEST_GEN_PROGS := vdso_test_gettimeofday
+>  TEST_GEN_PROGS += vdso_test_getcpu
+> @@ -13,7 +14,7 @@ endif
+>  TEST_GEN_PROGS += vdso_test_correctness
+>  ifeq ($(uname_M),x86_64)
+>  TEST_GEN_PROGS += vdso_test_getrandom
+> -ifneq ($(SODIUM),)
+> +ifneq ($(SODIUM_LIBS),)
+>  TEST_GEN_PROGS += vdso_test_chacha
+>  endif
+>  endif
+> @@ -41,8 +42,9 @@ $(OUTPUT)/vdso_test_getrandom: CFLAGS += -isystem $(top_srcdir)/tools/include \
+>                                           -isystem $(top_srcdir)/include/uapi
+>  
+>  $(OUTPUT)/vdso_test_chacha: $(top_srcdir)/tools/arch/$(ARCH)/vdso/vgetrandom-chacha.S
+> +$(OUTPUT)/vdso_test_chacha: LDLIBS += $(SODIUM_LIBS)
+>  $(OUTPUT)/vdso_test_chacha: CFLAGS += -idirafter $(top_srcdir)/tools/include \
+>                                        -idirafter $(top_srcdir)/arch/$(ARCH)/include \
+>                                        -idirafter $(top_srcdir)/include \
+>                                        -D__ASSEMBLY__ -DBULID_VDSO -DCONFIG_FUNCTION_ALIGNMENT=0 \
 
+This seems to be wrong '-DBULID_VDSO'.
+
+> -                                      -Wa,--noexecstack $(SODIUM)
+> +                                      -Wa,--noexecstack $(SODIUM_CFLAGS)
+
+LGTM, thanks.
+
+Reviewed-by: Adhemerval Zanella  <adhemerval.zanella@linaro.org>
 
