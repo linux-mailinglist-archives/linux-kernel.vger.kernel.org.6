@@ -1,173 +1,140 @@
-Return-Path: <linux-kernel+bounces-303192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 979059608D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:36:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4124D9608E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:38:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCA0E1C20A5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:36:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E56B41F23EB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A731A00E2;
-	Tue, 27 Aug 2024 11:35:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9EC01A01C3;
+	Tue, 27 Aug 2024 11:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="sf/CuY+S"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04olkn2024.outbound.protection.outlook.com [40.92.47.24])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mobileye.com header.i=@mobileye.com header.b="pWzeeCV9"
+Received: from esa1.hc555-34.eu.iphmx.com (esa1.hc555-34.eu.iphmx.com [23.90.104.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD04B14D29C;
-	Tue, 27 Aug 2024 11:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.47.24
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724758554; cv=fail; b=a8bUI8vWZf+nwHl1xO6NsdBq+Dbop7A/hg/5lOdmh4sHCt1Ardu1vrrJjW4uFrS6N5iiLdq7+8jKpuPDrhurmZAiliLvsIvyG0DGy/tC+QWjH/vkPkNJIkLc8pYD37PIzrE0yM9hjjFrJrji79Q8LHrQD/Kci6J0bSVVgAwOBeQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724758554; c=relaxed/simple;
-	bh=vzFB3ZLv2n4geExks1YqoZU3HHnM6FBcplA8ekwN2nM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lJPvrWJTzU6lji5NLc3/bn9lbR/6KNxpc0mcEN5xOSRer+FLWYzDlxrXdnqMLd8JYrSwojsL97ngmdc+fMsWEk6mPcEwRmkKEfnJSdyAFJKyg3yIoXnEqh8BD2DVSaGKx0BPftdPbLkWdG9cbxWnGE7HNCEl8B0N53UdiPv05Co=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=sf/CuY+S; arc=fail smtp.client-ip=40.92.47.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XpyoVkY2/Qcgry2QLHoadZrDBzQ9uFg94i7mxY4pmB8oqsTBvwZSdsINYp0wcCeLMvRRE+uEtOjBd+e2btQKfFByb43PALEJnPCrtzjnopXnioiveOCf8XXo3fXUNtEhi8BaTwgNu0Fm+QQRoaOphQEJi/qiBWup/FKHjqSCqz+7BA/vOcOi2zgTDGCQaU2OJwJflFJeNlg5WRo+LGcfEUM0TLIc+JgdwkIzsJwH36BWiPrUjon0z2twuc6k1aSc+92oFOsmUHUv5bBmz0oogHZVRfkQVOGnl9G03ZJsa9A9d1xZuZZz5ahMcEEWWmyHakANyToH+rvx4u887c2f2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FL9ALtdsHqGaO1a09Y1TAsJGYWHUl7rROAIise8KV/I=;
- b=Ye6d/gzk8j2z+HG+Wh63zsyBpV3slO/QXmHriiW1BM0G6isTq6Vk3MATppmA8PfXdenc82UyJbO+CWUauDuQJy9+TvOm7ZRAMnJzHgIOPAfNe3fhFi4p/jmiGqYIFqhPkbehZh5fiQpMF3YFuA167ay0cywcRa5e/nes1A+j/OTT+SHJEd7+YZGXFx1LMKFtUgxdrx05GgIAuwZOd0AzWnwExuTBSt2+IBxoz5a+qDzmJChEsasO1exhPV3ug4RttqjIsXz2X8noBQMPnkC0skr5U3MP2TwoQKcZPZRum9y1pr+vEk/M1e5u3xmkQZNVPnMLbhrrkA7+aRKOQbqNhg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FL9ALtdsHqGaO1a09Y1TAsJGYWHUl7rROAIise8KV/I=;
- b=sf/CuY+SbNd2kAiba3spPmTj19Sezo56OamQP0mz+f6ZaA8UKRqdWByihjEY4wL9B1JMKic4jYCGylZs6m8x0U/VoB2vOYTpR1leh2BGaqC9iOqoVJQfRNlRJ/30Ldf8iVV04cFL917gFxRCVgy9xGRP0hx/k/VOtE+h+bxD9Yeetn+P3lUcix6PxxnAQKuC+HXhS1u1WNjXxYj/Rjwhs/PoMCSI2IV6lowu7tJH06gsuQLvzdgyqZ8/rtOTV59AVHsacqxtW/lgeRgAZDC6gtSwOIX1p3eJDqz4b6dXDAhFoYTQMwfvChfeN0sMdITZ84o0c4KrQ6kN1vtJ7PytYw==
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
- by CH3PR20MB7037.namprd20.prod.outlook.com (2603:10b6:610:1b8::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Tue, 27 Aug
- 2024 11:35:50 +0000
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::ab0b:c0d3:1f91:d149%4]) with mapi id 15.20.7897.021; Tue, 27 Aug 2024
- 11:35:44 +0000
-From: Inochi Amaoto <inochiama@outlook.com>
-To: Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9151219DF7A
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.90.104.144
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724758694; cv=none; b=MBQqeEJ3RAO8OPJVGbfTa5MMjPN6bxxLniJ0rAQcrNb7vSio5vXNcrqyt6cSMUxUnZhXJeaVSxsRThM+ByhwfIgrk230I9t3UK/ZFMVX0+iwkDzbAkDPW/kxXwKos2f4XYQaJEGjyLlgfEVqjH5BOxOqgr2JHez1GqWn3MT5YUY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724758694; c=relaxed/simple;
+	bh=F50f3qIUpTHn684n3f885wQ8c6LqK97tiJsfNPZU8Ws=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Rxnw7yE2gPbRT1snI1sw13QRT978giKyVGVaBYAO42d6DrRMrjlEUQaUu/NoKjOYbPCJ30ZrQ8oMC0RlH53phvDzCcBE6xAKukNpiB4dokjCQCzEt3ZkBUoaTPdcxc+KAh21035osVI6qpHGRVWBl5TsZ+DYuTNOAcWrB4j75IY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mobileye.com; spf=pass smtp.mailfrom=mobileye.com; dkim=fail (0-bit key) header.d=mobileye.com header.i=@mobileye.com header.b=pWzeeCV9 reason="key not found in DNS"; arc=none smtp.client-ip=23.90.104.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mobileye.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mobileye.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=mobileye.com; i=@mobileye.com; q=dns/txt; s=MoEyIP;
+  t=1724758689; x=1756294689;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=F50f3qIUpTHn684n3f885wQ8c6LqK97tiJsfNPZU8Ws=;
+  b=pWzeeCV9YIb9QGtH9lJLXGkz4l7kWYwGh2ZpNV4lX+3BzGOYf2R1O2HD
+   dWxmuaJY9FsCPUwj/yABm8HG6glHVMJLA16JnjZTVb70wRKNmF0y+K/yl
+   COEd8vFQqkxsw3Xuo+hY5gwuh1SWBtxafeUhcWmCOz/90p+7OsMhmkW6b
+   jjHlnGkk3GInmJ6rRdeuwFLheWjC+InzCo/5UmlElui7wcuIEFqFciotz
+   SDcu45vO4NF7nL0qNcPMaR0ATrdDE2asvF3HLN3UxXce6ipuSPB1ZDhAC
+   ezIGaG7D77pgfcqebpCYKrRfu6cXZUYO4h9sBzabFXKftN5HzNV4A0sKr
+   A==;
+X-CSE-ConnectionGUID: 8Vt/tCSYTPeXDg8jGQvKyg==
+X-CSE-MsgGUID: vWMdrELcRTeflhf4xAzopQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from unknown (HELO ces03_data.me-corp.lan) ([146.255.191.134])
+  by esa1.hc555-34.eu.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 14:36:55 +0300
+X-CSE-ConnectionGUID: l89z8843QFKHaLS15hpymQ==
+X-CSE-MsgGUID: IuEfY1SqQ3WNUTEuklfTEg==
+Received: from unknown (HELO epgd022.me-corp.lan) ([10.154.54.6])
+  by ces03_data.me-corp.lan with SMTP; 27 Aug 2024 14:36:54 +0300
+Received: by epgd022.me-corp.lan (sSMTP sendmail emulation); Tue, 27 Aug 2024 14:36:54 +0300
+From: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
+To: Paul Walmsley <paul.walmsley@sifive.com>,
 	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Guo Ren <guoren@kernel.org>,
-	Chao Wei <chao.wei@sophgo.com>,
-	Yangyu Chen <cyy@cyyself.name>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Inochi Amaoto <inochiama@outlook.com>
-Cc: linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	Albert Ou <aou@eecs.berkeley.edu>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: (subset) [PATCH v11 0/4] riscv: sophgo: Add SG2042 external hardware monitor support
-Date: Tue, 27 Aug 2024 19:34:45 +0800
-Message-ID:
- <IA1PR20MB4953A509BE6FB7E05590E3FBBB942@IA1PR20MB4953.namprd20.prod.outlook.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <IA1PR20MB4953DF0AE7210A6D74162952BB822@IA1PR20MB4953.namprd20.prod.outlook.com>
-References: <IA1PR20MB4953DF0AE7210A6D74162952BB822@IA1PR20MB4953.namprd20.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-TMN: [U7DgGyrQalc7TTsTG8pMr5l5QTyi56JY88DcGqbfdh8=]
-X-ClientProxiedBy: TYCP286CA0109.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:29c::6) To IA1PR20MB4953.namprd20.prod.outlook.com
- (2603:10b6:208:3af::19)
-X-Microsoft-Original-Message-ID:
- <172475845236.1309337.9432886632005176363.b4-ty@outlook.com>
+	linux-mm@kvack.org
+Subject: [PATCH] riscv: make ZONE_DMA32 optional
+Date: Tue, 27 Aug 2024 14:36:11 +0300
+Message-Id: <20240827113611.537302-1-vladimir.kondratiev@mobileye.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|CH3PR20MB7037:EE_
-X-MS-Office365-Filtering-Correlation-Id: b4aa3f51-e042-4799-2b06-08dcc68c62e0
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|6090799003|15080799006|8060799006|5072599009|19110799003|1602099012|440099028|3412199025|4302099013|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	THuzMoXZXz6t+Np69sKKuHvHXO4mpIOhwizpEfygBVJKOD2QMlAF3ZX6f/nyp7PGNHuALyktKrHmy/w+tQp+OLyDMdu0o1eWkYtFFf2ErQJ+2m2suhhIKQa5Q8cSMjiTzqL8ZwvTxcedmuiCKkVvFxEOvQefw5p4yvortS2xK9233PDuiotjxPG5jf32lsvDHtTsihK1qQsrAgDUNfcpD9xW1ONdwnSxwSbKv5rwAhiqwLLWz1vMHhlceHi0dKVpZ3jkvosINOzr4qLoMdGzSY2thoxLK17x+glfevWUXQerV3oh5U1J+5uL8HbpIXELGiiKgI1wLqT3Ece265gGEX48ZJ0BRoy/iFvq5F+kgcArxm5VHsDEepSjIFU8yhWPjGCHPjvVaghzTJ4hoIJ0sIquVGX/HKnczOaKlkJoUqLplNFkHV06sI8gMv0AAYQrbklBqHdV1OODSNSX+3XMQSEYNAfuj8Xl2nIRESoyZtKtXvh8IWQms38VEbIMQ0/ihm4NSS4FiK6Q5FYof1S8Dp31pZ9vHX4HE/XdBf0U+LC2bRIra9RlbcTwuAINOaKpZFCUOgLI7c3I0nvEmH4otyYO8kCce3x+JpvvgCpSInWi1flaUUIZZvMPmxa+j+elQBaubyJPh2O3JtjmuQUVWyPE0NoDJhfsmYb3QPMEEbaMZQxQvS6ZDSIGhB13No8tYMf13YiGbr2UN1Y66nxCrY5tKnvortTqZoGIRwfnpt5JQBJ6iUeGciIwjMfFhNP3HtlOp0/64P2yzNkdP5PLuqQbyqxQGnAN7hvl8Wm5c24yxe0WwzrBwLRmihHseHDY+20EgUDcLyQexcSdxzfL9O6y6fhpKWz3zI6LyLnGVWhMQHIIvLeyMOxwIbiuwLtu
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?N0FPU2ZzWklFKzE3Uk9HQzhiZFd6eXZORTV4d3o2WFFIUlZHM3lqbmZzM1c3?=
- =?utf-8?B?RTFOQW9pcVZIVzhYL1RwTXhVaHlIVDJ1YzllV1RaMDVsWEMySCtRNGpXTlVi?=
- =?utf-8?B?cXY0TjR4RDJJZ01rdkRjVTV2LzBYbDUzNVYrSlFtSmRnUE03YktIaGt5U3Zk?=
- =?utf-8?B?bUhUdG95NzluZzY2WUZLZ0c0TjdoTCtYOEdmNUthWmVPVEdJYUIrR2kvelBF?=
- =?utf-8?B?NSt0U0hSS2pDT0Z5bDNuczd3TFA1MzZjY29rUkRwTldGT2g5OHc5MkpiWTJS?=
- =?utf-8?B?UVJKSFhoMDRzM2F6VzhrTGxMOC9wMWtocThIUVdUNVRNMFJFTlZ6aHFoWXVN?=
- =?utf-8?B?ekw2WDl3WVJjK04zaWdtZEJtenVQa1JCZ1h6aFVxSTRBSllqcUFTU1RHMERw?=
- =?utf-8?B?QkpRaTBPeHplK0paYy95aWFEYk9Kck1lQWpmUTFPSXZFTm9ha0p3TGdLVGY5?=
- =?utf-8?B?dXR0WkhGVDJGSXo1cnc0RWJPcytmTlUwQXhmY1MrU3BaQjJvZjFwT1REL29r?=
- =?utf-8?B?elp3Wm1IZXN1RnZ6N3VuSmtTWmx5ODFMRlFaOHFoUE5iZUdSeDVYT0pTRTFZ?=
- =?utf-8?B?QWUvcGpHU0VGUXFqd1dXN01MeTdBaCtvdmVYWlVvWGhTNERmWEw1dzhHK1BC?=
- =?utf-8?B?eGViOVFpbTEvWGZFY1NDMjhuU0NXbStrZ1dNQXN6UTQ1N0Q3cjJiOS9MYUdr?=
- =?utf-8?B?Mk5GbkY5ZWlmaFRwVUF6ZGFaRGtsTUpUZ0JKZHRkY3I4RmdtaHljb0x3amlX?=
- =?utf-8?B?c0YyU0M2YXlGMHBidzhTeG1HN2UrKyttd2Q5ZzkxMG5yb3FCQVdHWGJ6c2d4?=
- =?utf-8?B?VWNSQTdHek1jTTc4WXI3a0RlQ1grb01HRVpJc3JvMHpqcVY5Y1RKcUNPQ2ZZ?=
- =?utf-8?B?Zk54akVRY1lRTEpEWVYzZDd4Q0MxNUpXend4Q0FxNy9IVnFOUmhXN2FFVjMw?=
- =?utf-8?B?QjVTbzY2Z2NFT1Bzd2hDYlNFK29OandscnRzVitUYVhWd1B1Tm9TempOcDZF?=
- =?utf-8?B?cU96d2FHSy9kQ043Zm42RThsUTVpZUx4Q2RHRFZ5amE1MnlvMnI4WlI0blV4?=
- =?utf-8?B?aitGWmNjcnV3TG5tQThKV1Jld09pd01TbUt2anpueWFHNFV4SnRyblJHMito?=
- =?utf-8?B?dyt0dFhpTEd2RllCSmkvSEkrVkJYRXlKbkUrZlV4bXAxblBIN1BVeFVRa3Bn?=
- =?utf-8?B?OTNBVnZONEpHTjIwcEUxNXkwL2ZETXc3ZWQxUTlyQnZLdWN4dlp6N1ZPY0Z6?=
- =?utf-8?B?ckFCMjRZYzdJQ21LVEhqalhleWlTZm1zeURJSUMrN2NjaXIzYmdTMGJDY1FG?=
- =?utf-8?B?K3RxYXBTZ3J0YmpITVYraE54a0hIdWdQU2pKcXZaSUtFVk04cSt0d2tscm9w?=
- =?utf-8?B?YnVMRGlYKzhRcGF6TkQ2TXJMZ0wwNDBwUEoxYWE0TERUeEVucCsrQ1paV255?=
- =?utf-8?B?ODBIRXY1RVVNTWN3U0lJbkp5MUdSZWNYMDJNRkhXNk8zck1pL284MWQrY1FI?=
- =?utf-8?B?Rm05UGtUMWt4a0RDOUJGQW5hNVMwNkhtMFc1eVNsYTRSYndIbDFaSXJ4ZnJP?=
- =?utf-8?B?QXhjVG9sWU1VK0M0MnJweW1KQ0VkT2NKK2d2NzByVFhzd0JDRm5zdk1lbmlo?=
- =?utf-8?B?Zm5tejBaQ3NHTlIxMkFvdUdvbnlqV0E1dHZzUTd5OEJYSnpTd1F4Tm1UczhH?=
- =?utf-8?Q?rm2sCZT6fXqNek4MwlNH?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b4aa3f51-e042-4799-2b06-08dcc68c62e0
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 11:35:43.9152
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR20MB7037
+Content-Transfer-Encoding: 8bit
 
-On Sat, 17 Aug 2024 10:21:59 +0800, Inochi Amaoto wrote:
-> Add support for the onboard hardware monitor for SG2042.
-> Can be tested with OpenSBI v1.5.
-> 
-> This patch is based on sophgo/for-next:
-> https://github.com/sophgo/linux/tree/sg2000/for-next
-> 
-> Changed from v10:
-> 1. fix the hwmon entry permission.
-> 2. remention the extra entry postion in the document.
-> 
-> [...]
+It is not necessary any RISCV platform has ZONE_DMA32.
 
-Applied to sg2042/for-next, thanks!
+Example - if platform has no DRAM in [0..4G] region,
+it will report failure like below each boot.
 
-[3/4] riscv: dts: sophgo: Add mcu device for Milk-V Pioneer
-      https://github.com/sophgo/linux/commit/cec3f1940b60b057142bd11f7bd421e13d198f75
+[    0.088709] swapper/0: page allocation failure: order:7, mode:0xcc4(GFP_KERNEL|GFP_DMA32), nodemask=(null),cpuset=/
+[    0.088832] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-rc5 #30
+[    0.088864] Call Trace:
+[    0.088869] [<ffffffff800059f2>] dump_backtrace+0x1c/0x24
+[    0.088910] [<ffffffff805f328c>] show_stack+0x2c/0x38
+[    0.088957] [<ffffffff805fd800>] dump_stack_lvl+0x52/0x74
+[    0.088987] [<ffffffff805fd836>] dump_stack+0x14/0x1c
+[    0.089010] [<ffffffff801a23a8>] warn_alloc+0xf4/0x176
+[    0.089041] [<ffffffff801a3052>] __alloc_pages_noprof+0xc28/0xcb4
+[    0.089067] [<ffffffff80086eda>] atomic_pool_expand+0x62/0x1f8
+[    0.089090] [<ffffffff8080d674>] __dma_atomic_pool_init+0x46/0x9e
+[    0.089115] [<ffffffff8080d762>] dma_atomic_pool_init+0x96/0x11c
+[    0.089139] [<ffffffff80002146>] do_one_initcall+0x5c/0x1b2
+[    0.089158] [<ffffffff8080127c>] kernel_init_freeable+0x214/0x274
+[    0.089190] [<ffffffff805fefd8>] kernel_init+0x1e/0x10a
+[    0.089209] [<ffffffff8060748a>] ret_from_fork+0xe/0x1c
 
-Thanks,
-Inochi
+Signed-off-by: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
+---
+ arch/riscv/Kconfig | 2 +-
+ mm/Kconfig         | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 0f3cd7c3a436..94a573112625 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -50,6 +50,7 @@ config RISCV
+ 	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
+ 	select ARCH_HAS_UBSAN
+ 	select ARCH_HAS_VDSO_DATA
++	select ARCH_HAS_ZONE_DMA_SET if 64BIT
+ 	select ARCH_KEEP_MEMBLOCK if ACPI
+ 	select ARCH_MHP_MEMMAP_ON_MEMORY_ENABLE	if 64BIT && MMU
+ 	select ARCH_OPTIONAL_KERNEL_RWX if ARCH_HAS_STRICT_KERNEL_RWX
+@@ -200,7 +201,6 @@ config RISCV
+ 	select THREAD_INFO_IN_TASK
+ 	select TRACE_IRQFLAGS_SUPPORT
+ 	select UACCESS_MEMCPY if !MMU
+-	select ZONE_DMA32 if 64BIT
+ 
+ config CLANG_SUPPORTS_DYNAMIC_FTRACE
+ 	def_bool CC_IS_CLANG
+diff --git a/mm/Kconfig b/mm/Kconfig
+index b72e7d040f78..97c85da98e89 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -1032,7 +1032,7 @@ config ZONE_DMA
+ config ZONE_DMA32
+ 	bool "Support DMA32 zone" if ARCH_HAS_ZONE_DMA_SET
+ 	depends on !X86_32
+-	default y if ARM64
++	default y if ARM64 || (RISCV && 64BIT)
+ 
+ config ZONE_DEVICE
+ 	bool "Device memory (pmem, HMM, etc...) hotplug support"
+-- 
+2.37.3
 
 
