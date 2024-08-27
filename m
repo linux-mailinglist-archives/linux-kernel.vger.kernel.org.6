@@ -1,113 +1,106 @@
-Return-Path: <linux-kernel+bounces-303217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B10D3960926
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:43:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AC2F960928
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:43:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E45D91C22B89
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:43:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80E611C208CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95B51A01C4;
-	Tue, 27 Aug 2024 11:42:44 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0DD19EED8;
-	Tue, 27 Aug 2024 11:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 904551A0726;
+	Tue, 27 Aug 2024 11:43:20 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF1B41A00F8;
+	Tue, 27 Aug 2024 11:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724758964; cv=none; b=DaBo5JZgf46musTu0GNsoM9MX+2f5f9ezSe8pZNuo61nnCRO18Do6mwLkeww0YlpcxD05zBmXEa6QHp1QmVfoZfqYey4+KSwQQFLh97vDzExeB81dkJizscwHPLzqUMC5JbnNARaA2dXDIYaiqkxVZd4paOjUhTYRpTtvuPkwBE=
+	t=1724759000; cv=none; b=atNsro3cSqo00LOEqGP2GrKUDYzNDc61fsXEseIGWSsWhC2l0qQZOKJKDJnT4CCl8rIT4UtPehxkdvxXgpFoB4J7z8tGuCvaUr2CEKbDxZi1Y1IHNUJdukpouJvXLpqkJ7oVXAG0uBY9dcHwTiDqWJhagfQIgfAo5jlLzoRtUF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724758964; c=relaxed/simple;
-	bh=dPe8DbtxerYaaq8xecDoFTNyrI561S8eGoHGxCwKKGI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=usqiJ1WgWXWuKGWgCJU7kYBCqzeXt6Jn5DOG66Gl7gI9zGjoCstiqnqkKs0c8ITn2B4cgy7Yd2GPiyY97P942pkT+1tnVJy9Ch0ysfHYXKOARLidby6YTaDvBaKQcvn4Yws9k4UBwp8WmLow9Vuk4pBtGgBFFtd8Q4zjnpxADw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WtQcd5HGQzyQYJ;
-	Tue, 27 Aug 2024 19:41:53 +0800 (CST)
-Received: from kwepemd100024.china.huawei.com (unknown [7.221.188.41])
-	by mail.maildlp.com (Postfix) with ESMTPS id E3F4F18007C;
-	Tue, 27 Aug 2024 19:42:40 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by kwepemd100024.china.huawei.com
- (7.221.188.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 27 Aug
- 2024 19:42:40 +0800
-From: yangyun <yangyun50@huawei.com>
-To: <miklos@szeredi.hu>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lixiaokeng@huawei.com>, <yangyun50@huawei.com>
-Subject: Re:[PATCH] fuse: remove useless IOCB_DIRECT in fuse_direct_read/write_iter
-Date: Tue, 27 Aug 2024 19:41:46 +0800
-Message-ID: <20240827114146.3474592-1-yangyun50@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <CAJfpegt_P=Dj-CXnbZYK+XZW8ZwNH0_Str30q9vub0o00UMuWQ@mail.gmail.com>
-References: <CAJfpegt_P=Dj-CXnbZYK+XZW8ZwNH0_Str30q9vub0o00UMuWQ@mail.gmail.com>
+	s=arc-20240116; t=1724759000; c=relaxed/simple;
+	bh=RjmSkDXi2RDBfO+CadJcReFYsOAh8YsAaybNMMuqMZU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p8mLG70cklZkDXYf1Hsk+dhKVnQYYulQgHkwDHKARBePpx0d2FVuXplyv9d6tfjXLU9c1KbHxoaQBo27h86AEj6UQZi5hNuyzgdClIScX4RhIG1L7eAAZqVWZCO/JVpX5pKrRqwxQjw96Gadnuddw/WomT2fGeSHCxb2K8y85Dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2BC85DA7;
+	Tue, 27 Aug 2024 04:43:43 -0700 (PDT)
+Received: from [10.162.42.26] (e116581.arm.com [10.162.42.26])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5594E3F762;
+	Tue, 27 Aug 2024 04:43:12 -0700 (PDT)
+Message-ID: <4a1f75c2-1f00-4842-b2d8-fc94d82698f2@arm.com>
+Date: Tue, 27 Aug 2024 17:13:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd100024.china.huawei.com (7.221.188.41)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/2] selftests: Rename sigaltstack to generic signal
+To: Shuah Khan <skhan@linuxfoundation.org>, shuah@kernel.org, oleg@redhat.com
+Cc: mingo@kernel.org, tglx@linutronix.de, mark.rutland@arm.com,
+ ryan.roberts@arm.com, broonie@kernel.org, suzuki.poulose@arm.com,
+ Anshuman.Khandual@arm.com, DeepakKumar.Mishra@arm.com,
+ aneesh.kumar@kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240821061523.2650568-1-dev.jain@arm.com>
+ <20240821061523.2650568-2-dev.jain@arm.com>
+ <1ac911c2-9d9c-4408-8697-1e90b3ae3e8d@linuxfoundation.org>
+ <51617076-3aec-413d-bf42-cf1c359a0c38@arm.com>
+ <2b6112b1-ce10-4e14-87d4-04d64972be56@linuxfoundation.org>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <2b6112b1-ce10-4e14-87d4-04d64972be56@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 26, 2024 at 09:12:39PM +0200, Miklos Szeredi wrote:
-> On Mon, 26 Aug 2024 at 15:07, yangyun <yangyun50@huawei.com> wrote:
-> >
-> > Commit 23c94e1cdcbf ("fuse: Switch to using async direct IO
-> > for FOPEN_DIRECT_IO") gave the async direct IO code path in the
-> > fuse_direct_read_iter() and fuse_direct_write_iter(). But since
-> > these two functions are only called under FOPEN_DIRECT_IO is set,
-> > it seems that we can also use the async direct IO even the flag
-> > IOCB_DIRECT is not set to enjoy the async direct IO method. Also
-> > move the definition of fuse_io_priv to where it is used in fuse_
-> > direct_write_iter.
-> 
-> I'm interested in the motivation for this patch.
-> 
-> There's a minor risk of regressions when introducing such a behavior
-> change, so there should also be a strong supporting argument, which
-> seems to be missing in this case.
 
-Thanks for your reply!
+On 8/27/24 17:08, Shuah Khan wrote:
+> On 8/22/24 05:10, Dev Jain wrote:
+>>
+>> On 8/22/24 08:33, Shuah Khan wrote:
+>>> On 8/21/24 00:15, Dev Jain wrote:
+>>>> Rename sigaltstack to signal, and rename the existing test to
+>>>> sigaltstack.c.
+>>>
+>>> Can you elaborate on the benefits if renaming the test?
+>>>
+>>> Also you have such a good information in the cover-letter for this
+>>> patch - it would be good to include it in the change log for this
+>>> one or the new test.
+>>
+>> Okay.
+>>
+>>
+>>>
+>>> The new test itself is good. I don't understand the value of renaming.
+>>> I can see the problems due to not being able to fix stables if the
+>>> existing test needs fixing. If there are good reasons for renaming,
+>>> I am all for it.
+>>
+>> After looking into some git history, now I understand that "sas" 
+>> actually
+>> has some meaning, although I still can't find its full-form :) I 
+>> thought that
+>> sigaltstack would be a better name, but I guess sas is a subset of 
+>> sigaltstack
+>> as part of SA_ONSTACK. So, let us drop the renaming of the test.
+>>
+>
+> I assume you will be sending a new v6 patch series without the 
+> renaming and just the
+> new test?
 
-It seems that there is a risk of regressions. But I think adding an argument 
-in this case is not so graceful, whatever adding this argument to the 
-`struct fuse_file->open_flags` or adding it to the init flags in `struct 
-fuse_init_args`.
+I had already sent it:
+https://lore.kernel.org/all/20240822121415.3589190-1-dev.jain@arm.com/
 
-The reasons are:
-
-1. Commit 23c94e1cdcbf ("fuse: Switch to using async direct IO for FOPEN_DIRECT_IO") 
-also changes the behavior from sync to async direct io, but does not import a new 
-argument to avoid the risk of regressions.
-
-2. Fuse already has an init flags FUSE_ASYNC_DIO in `fuse_init_args`, which indicates
-that the direct io should be submitted asynchrounously. The comment in function 
-`fuse_direct_IO()` also indicates the situation:
-"
-      /*   
-         * By default, we want to optimize all I/Os with async request
-         * submission to the client filesystem if supported.
-         */
-"
-But the code does not go through the async direct io code path in the case described in current patch.
-
-3. If adding a argument, it would be so many arguments about async and direct io (FUSE_ASYNC_DIO, 
-FUSE_ASYNC_READ, FOPEN_DIRECT_IO, etc), which may be redundant and confuse the developers about 
-their differences.
-
-What do you think ? 
-
-> 
-> Thanks,
-> Miklos
+>
+> thanks,
+> -- Shuah
+>
 
