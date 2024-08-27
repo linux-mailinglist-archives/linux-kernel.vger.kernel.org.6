@@ -1,134 +1,78 @@
-Return-Path: <linux-kernel+bounces-303931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEE5096170E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:35:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1901961710
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:36:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D433288C5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:35:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A424C1F24D18
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271811D2F48;
-	Tue, 27 Aug 2024 18:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE0B1D27BF;
+	Tue, 27 Aug 2024 18:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mx6M21Yj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GekvIc7h"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2C81D27A0;
-	Tue, 27 Aug 2024 18:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808FF7D405;
+	Tue, 27 Aug 2024 18:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724783703; cv=none; b=OAl297zN2LM+WlCXefk0OC0mxN17cV3O4u+c1xWpRPk/8P4sbpJHDHyTwSDBTWwrmiNprqObHhR/x2CzPZhDl7O4OkFLc8f80ScNxAzvmyEFqqnjYe2gOsvcp3CgK5sKzFILna6XYoiqVq9EvpdT5O4qCS3SRqDcDyVbA30r0c8=
+	t=1724783784; cv=none; b=dWA/nopIUkSOVBW4E5M2AZetW/WRFpNORhVsz8mQyE7OfewZetH5550T2uS7Nvd6dPGZbuH5Om366e7g2GueuTzfStGIktstMHy5RP5eM/1LoC4CVwTL9lgHVvdodzPMnNlEw2pm9VI5OyQonTxU2dm9TiGhiXC5SaaFG2tq8Co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724783703; c=relaxed/simple;
-	bh=oqOoXTP0tcOmUep8+yn3jtmgtNRgcMWg3L2ZRlWrbjA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EVuYnonJOmBp7eKYrdThWRNMAC5BqJ8TSTiZsr/nqQhdSRcGdfbWhvFb/PETnGDrSzvLdOQNMTu8lw1/U3pEytPFu2dHz+4PcH0MnIuTnwsKMO5t2/xrz3XY/9es3tr8Siko6OIvU+pkoAATNjdLmCw7gySp62DZErfF630yG+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mx6M21Yj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4A64C4AF18;
-	Tue, 27 Aug 2024 18:35:02 +0000 (UTC)
+	s=arc-20240116; t=1724783784; c=relaxed/simple;
+	bh=TkTOZTz7elfBYHzD8RbvH2XZQpZKPsT+JufOQhXApJE=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=lAPuhgJxbzDzc/KKeVnznli5vG9SkEYcp+TdjFCuTeA1/Pe33JGrt+to79KTZAcO6WZSTaJQAgADrIV2he0aTZcD9za/2z2uTp28rVipSIJYv72oj/cvKL0jvqFHlzcouPdIrhN95NoHtVIEVwHRJ6Qri35kBibcB0X0tJyhPBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GekvIc7h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BE54C4AF18;
+	Tue, 27 Aug 2024 18:36:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724783702;
-	bh=oqOoXTP0tcOmUep8+yn3jtmgtNRgcMWg3L2ZRlWrbjA=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=Mx6M21YjXlN4fDqPQID31PzY5RcZD+mLAE4hLCOZzgHw4IE6MXtjJ6nLnaM/qao4E
-	 8MXX14SxoGyfpqxnKx5iXTFlvl4OhehCWtsdHq9qf/macs8NlbsGlkeXvyUKl6XGXM
-	 v0ctBXzqeZqz5ZnIL/XzfOLpE/3p7cylIdW5SFCtY3g/BWypVVP/F/ahmnRldOwjHk
-	 DBdu8cgVeu1SCccvEbZH0iDwtm4vDvE+AsYMPImXiIRYYcWSJ2IlFFjkqhbZgydV+v
-	 9WeCEwCx+O2aRfbWgh+cNLsf58lqGkFeAeOFHjcgkivP7SmaUQJWbV3vepPcqWmSCN
-	 NH/hcMof2VM+g==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 5FAA1CE11D3; Tue, 27 Aug 2024 11:35:02 -0700 (PDT)
-Date: Tue, 27 Aug 2024 11:35:02 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
-Message-ID: <103b1710-39ca-40d0-947d-fdac32d6e6a0@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <c28dbc65-7499-41a5-84d0-991843153b1a@paulmck-laptop>
- <20240823074705.GB12053@noisy.programming.kicks-ass.net>
- <xhsmho75fo6e4.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <b1824f4a-f5cc-4011-876f-8a73cf752067@paulmck-laptop>
- <xhsmhle0inuze.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <xhsmhikvmnfb3.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <c83028db-55ad-45b3-a27a-842ed665a882@paulmck-laptop>
+	s=k20201202; t=1724783784;
+	bh=TkTOZTz7elfBYHzD8RbvH2XZQpZKPsT+JufOQhXApJE=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=GekvIc7hwu6p7phqP7M34f4m88Bjwbm3GcQjFo6I9fv707wz2RN+CxwRbN40/8f9+
+	 u3z9qO00hfaD5hzJbJterkitnlAlQeP9xWYIuZncTNa3615M5+sjooMUc4x6Vw8mbp
+	 bU8LpbaPz6IbyMA/OY4iqPR4a4ONXGUch4kE1ThcKgMyadHi3VS9Kdn0EAFuzBb5tf
+	 PRTu2EZMzAqJRNWQZSf/6OZlL6jxpSMg6Z3s2oVgsN670zEFTtm/g2r25PgN92GrEw
+	 RsFwB0xMhCtpDyRlTJGLeasbqjax8ExXJH0qu9M0WB7g9x4CLlnZc9l4sNNqezvhFO
+	 3rCT2HwXqnnJw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE6F93822D6D;
+	Tue, 27 Aug 2024 18:36:25 +0000 (UTC)
+Subject: Re: [GIT PULL] sound fixes for 6.11-rc6
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <87zfoy1hr1.wl-tiwai@suse.de>
+References: <87zfoy1hr1.wl-tiwai@suse.de>
+X-PR-Tracked-List-Id: <linux-sound.vger.kernel.org>
+X-PR-Tracked-Message-Id: <87zfoy1hr1.wl-tiwai@suse.de>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.11-rc6
+X-PR-Tracked-Commit-Id: 28b329f431cef840fddd9a9b493bc3eff1aa06c0
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6ace1c7ea2972bb3d8bfd5ca3d1a1b2bbc41687e
+Message-Id: <172478378421.730673.16355849751204224560.pr-tracker-bot@kernel.org>
+Date: Tue, 27 Aug 2024 18:36:24 +0000
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c83028db-55ad-45b3-a27a-842ed665a882@paulmck-laptop>
 
-On Tue, Aug 27, 2024 at 10:33:13AM -0700, Paul E. McKenney wrote:
-> On Tue, Aug 27, 2024 at 05:41:52PM +0200, Valentin Schneider wrote:
-> > On 27/08/24 12:03, Valentin Schneider wrote:
-> > > On 26/08/24 09:31, Paul E. McKenney wrote:
-> > >> On Mon, Aug 26, 2024 at 01:44:35PM +0200, Valentin Schneider wrote:
-> > >>>
-> > >>> Woops...
-> > >>
-> > >> On the other hand, removing that dequeue_task() makes next-20240823
-> > >> pass light testing.
-> > >>
-> > >> I have to ask...
-> > >>
-> > >> Does it make sense for Valentin to rearrange those commits to fix
-> > >> the two build bugs and remove that dequeue_task(), all in the name of
-> > >> bisectability.  Or is there something subtle here so that only Peter
-> > >> can do this work, shoulder and all?
-> > >>
-> > >
-> > > I suppose at the very least another pair of eyes on this can't hurt, let me
-> > > get untangled from some other things first and I'll take a jab at it.
-> > 
-> > I've taken tip/sched/core and shuffled hunks around; I didn't re-order any
-> > commit. I've also taken out the dequeue from switched_from_fair() and put
-> > it at the very top of the branch which should hopefully help bisection.
-> > 
-> > The final delta between that branch and tip/sched/core is empty, so it
-> > really is just shuffling inbetween commits.
-> > 
-> > Please find the branch at:
-> > 
-> > https://gitlab.com/vschneid/linux.git -b mainline/sched/eevdf-complete-builderr
-> > 
-> > I'll go stare at the BUG itself now.
-> 
-> Thank you!
-> 
-> I have fired up tests on the "BROKEN?" commit.  If that fails, I will
-> try its predecessor, and if that fails, I wlll bisect from e28b5f8bda01
-> ("sched/fair: Assert {set_next,put_prev}_entity() are properly balanced"),
-> which has stood up to heavy hammering in earlier testing.
+The pull request you sent on Tue, 27 Aug 2024 10:40:02 +0200:
 
-And of 50 runs of TREE03 on the "BROKEN?" commit resulted in 32 failures.
-Of these, 29 were the dequeue_rt_stack() failure.  Two more were RCU
-CPU stall warnings, and the last one was an oddball "kernel BUG at
-kernel/sched/rt.c:1714" followed by an equally oddball "Oops: invalid
-opcode: 0000 [#1] PREEMPT SMP PTI".
+> git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.11-rc6
 
-Just to be specific, this is commit:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6ace1c7ea2972bb3d8bfd5ca3d1a1b2bbc41687e
 
-df8fe34bfa36 ("BROKEN? sched/fair: Dequeue sched_delayed tasks when switching from fair")
+Thank you!
 
-This commit's predecessor is this commit:
-
-2f888533d073 ("sched/eevdf: Propagate min_slice up the cgroup hierarchy")
-
-This predecessor commit passes 50 runs of TREE03 with no failures.
-
-So that addition of that dequeue_task() call to the switched_from_fair()
-function is looking quite suspicious to me.  ;-)
-
-							Thanx, Paul
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
