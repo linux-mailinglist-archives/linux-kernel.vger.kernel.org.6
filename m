@@ -1,57 +1,58 @@
-Return-Path: <linux-kernel+bounces-303887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48634961682
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:12:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55453961687
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:13:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E78211F2377B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:12:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79DBE1C229C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540181D2F57;
-	Tue, 27 Aug 2024 18:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DBF1D31A3;
+	Tue, 27 Aug 2024 18:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="ZfSb0FUW"
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="UKtnCYcu"
 Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B1A1D278D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BC41D278F;
 	Tue, 27 Aug 2024 18:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724782354; cv=pass; b=ZtU8csvc9rhsISQeRqsodjciyBlclPBHTLcOVPJBl2SUf/qLf9suzTC4bUTLFnMvAWVwVAOc/ymmnhyii7YqaWKkdaNNUktDv44/8hWzGUpW7D+q9RbnM1myQVposPwm6IcduQleklpgxBpUFq4fkB399WzyeumHwDBo6jxuaWs=
+	t=1724782356; cv=pass; b=TDiFRjjgIHAtDJAarTwxWgu6nbMZD/3nrzsgNoG62VmpjW55Sdz/tbTClglP8Ar/D9mPHfB096zhVeWlyGiem5o9bXXPQRoRPDkMVfPlMSIdDb7Q6RCxN2llVeY1czkQfkhKszw03OJrEuDWZxHYn/2GrCRtZTrn7ceba4nYdUQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724782354; c=relaxed/simple;
-	bh=aWREDDXw3VUSy01eYgB6syDfxtw33a+xK/k4CacyOAo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B2PddO6XeuvdqKMs2oPp9utOu+McgfpX2ubrAH7ueGky8dFoxlsdeg8ImS+KWT/5euo9lkuOZi/67KVgbEWKoNPnpXx6GxuFBbypfr2qM8V1OjVLnXjEUwlmJHXrUMccm65rXGfdhqFe1pE2vlrz0+y31Dp4E3Y42fQwPDfopFM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=ZfSb0FUW; arc=pass smtp.client-ip=136.143.188.14
+	s=arc-20240116; t=1724782356; c=relaxed/simple;
+	bh=fGK3sr087LlRrDU7/01v1k8bQjwsZtJxPIB7V0I3ElM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Y1FJk3bHLcb9Fe53+s/AH57b8FsjoQ7jl4yAY0eck6ZExCBuHLayHIh51SlU3yhWqSdO0Ls25cPfLcxorPhAGe/uSaA+1nSd03bnh3sCmlGkKeA0WJhVkODTblQLobDv8r+gc0/wzm5ezXwZB1/5FIVDOHZiX0xT4V65GdIlHqY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=UKtnCYcu; arc=pass smtp.client-ip=136.143.188.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Delivered-To: kernel@collabora.com
 ARC-Seal: i=1; a=rsa-sha256; t=1724782336; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=brXvxwVIWeMuvOScjIxgv6Wf8xsoBqkNTcBzrDa2raD6htJhsFQef4ChT+QhP2GZCqqtWEH8pqcTOpETw+4MuiZspdflFfd8lT9/+IS/eTFdyukN3EDZyBnnMHzKllkrusuwmQf5vwxfAHbq1VIfF94VfAgcxagG1pnDWSiaxcQ=
+	b=LMgi7/NBcxEZkmDljZOPFkoW1DnfJ8dU991UVIRW1hk2wbdOIHDHBk4JEERf6BxGN9lrwlnAvYhjWVLspsxWAw5Ff5hOkDlWLsivXHt9UI1vZQjemlpreO7gmjlaYY+qe9M/J8qEatk4mgXF4bOSHNbC173lLqXI9LgM3a4xRKU=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724782336; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=RoiMzBJ0Us9ppCH7FKAaOJox09dmiZXOo+WgF7DfWP8=; 
-	b=hWq2EJUZ0+8I1cwKmnyTZdGu2fZSseu+8uvJsB9WQan2Rv5qZlvs4WDjehrkYgxaXY/gnj891YtueEXQcubqnrcQK5QOM62TbwzSjX95VEFlY/6KGjPxT/Qzlzp7wMwh3k3N5QHkJOD0/5GdUsEJ5mAX62SXsAGjSAv5tci5W90=
+	t=1724782336; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=7Qw7xQaaRdRo3sbWDfRfnQBuFJO1K2dl+tdXAcckUEQ=; 
+	b=RDGHAOz0ni4V3Sq3GshnAjqTT9jB9aDngqsgkwq4c9farVsGkSBVkdFlCynJFfPOmnpGJDJMOJnopUmTsRuPCnZDqydMts1D0Q5Y2FHKrBC5covMMmQ/BmauaOcj/8bpWpwvtALBWEfBxkn5qOrpRtRvnFWClMZiwpK6i6n2hLE=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
 	dmarc=pass header.from=<sebastian.reichel@collabora.com>
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724782336;
 	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=RoiMzBJ0Us9ppCH7FKAaOJox09dmiZXOo+WgF7DfWP8=;
-	b=ZfSb0FUWLmpfAqvHz/IKDNIWZ3BCg1KxdSHY6pFH5Ab3AafKd9DxWb7YSZDf0fXk
-	gngIOB37ZSNarut3wlYNJFFycU5GoEq1JNXUfT/awDYBMT3MdplUQVhYOc/9oJ/06km
-	8AbE7/wijqQ+FslYBE2JXnHHmz8GLVxZ2w15XSdI=
-Received: by mx.zohomail.com with SMTPS id 1724782334636725.3316886969787;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=7Qw7xQaaRdRo3sbWDfRfnQBuFJO1K2dl+tdXAcckUEQ=;
+	b=UKtnCYcu5tPRq303+Z3hmCNHrJVTcAvTatB+lc3dJrEnnm+f8ZNu+c9h/z+QRroF
+	e6SvPEuUw6NBFNcxXcnj1mbyykxuodAQy4cMp6oi1hF6EID5SbJsZOhtA+OSfqzvzZa
+	1+2HuR1UT+dNnMb9JWFgxtiycPlPJ7May91bMPdc=
+Received: by mx.zohomail.com with SMTPS id 172478233479718.156062356846064;
 	Tue, 27 Aug 2024 11:12:14 -0700 (PDT)
 Received: by jupiter.universe (Postfix, from userid 1000)
-	id DFF724800E2; Tue, 27 Aug 2024 20:12:10 +0200 (CEST)
+	id E10EC4800E1; Tue, 27 Aug 2024 20:12:10 +0200 (CEST)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
 To: Heiko Stuebner <heiko@sntech.de>
 Cc: Rob Herring <robh@kernel.org>,
@@ -62,12 +63,14 @@ Cc: Rob Herring <robh@kernel.org>,
 	linux-rockchip@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	kernel@collabora.com
-Subject: [PATCH v8 0/2] RK3588 VEPU121/VPU121 support
-Date: Tue, 27 Aug 2024 20:10:19 +0200
-Message-ID: <20240827181206.147617-1-sebastian.reichel@collabora.com>
+	kernel@collabora.com,
+	Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [PATCH v8 1/2] arm64: dts: rockchip: Add VEPU121 to RK3588
+Date: Tue, 27 Aug 2024 20:10:20 +0200
+Message-ID: <20240827181206.147617-2-sebastian.reichel@collabora.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240827181206.147617-1-sebastian.reichel@collabora.com>
+References: <20240827181206.147617-1-sebastian.reichel@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,54 +80,112 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-ZohoMailClient: External
 
-Hi,
+From: Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
 
-This enables support for Hantro in the RK3588 base devicetree. Sebastian =
-Fricke
-send the pull request for the driver/binding changes for 6.12 some hours =
-ago:
+RK3588 has 4 Hantro G1 encoder-only cores. They are all independent IP,
+but can be used as a cluster (i.e. sharing work between the cores).
+These cores are called VEPU121 in the TRM. The TRM describes one more
+VEPU121, but that is combined with a Hantro H1. That one will be handled
+using the VPU binding instead.
 
-https://lore.kernel.org/all/20240827133315.qlmwdvwmghidayzy@basti-XPS-13-=
-9310/
+Signed-off-by: Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+---
+ arch/arm64/boot/dts/rockchip/rk3588-base.dtsi | 80 +++++++++++++++++++
+ 1 file changed, 80 insertions(+)
 
-Changes since PATCHv7:
- * Dropped patches 1-4 (merged to media tree)
- * Rebased DT patches to use rk3588-base.dtsi instead of rk3588s.dtsi
- * Dropped a bunch of people from Cc since the media side is done
-
-Changes since PATCHv6:
- * Collected Acked-by for RK3588 VEPU121 DT binding from Conor Dooley
- * Fix resource leak of DT node in hantro_disable_multicore()
- * Support disabled nodes in hantro_disable_multicore()
- * Use correct match data (RK3568 VEPU instead of VPU) for RK3588 VEPU121
-
-Changes since PATCHv5:
- * Fix binding for vepu121 (use enum)
- * split hantro driver patch (multicore / vepu121 compatible)
- * move video-codec@fdb50000 node to correct position
- * change "jpeg_enc*" alias to "vepu121_*"
- * change "vpu_*" alias to "vpu121_*" (to be consistent)
-
-Changes since PATCHv3 (VEPU121) / PATCHv4 (VPU121)
- * combine both patchsets, since there is some overleap
- * add patch to disable multi-core handling in the hantro driver
- * drop the RK3568 fallback compatible for VEPU (see above for the reason=
-)
- * describe all RK3588 VEPU cores (possible because of driver change)
-
-Greetings,
-
--- Sebastian
-
-Emmanuel Gil Peyrot (1):
-  arm64: dts: rockchip: Add VEPU121 to RK3588
-
-Jianfeng Liu (1):
-  arm64: dts: rockchip: Add VPU121 support for RK3588
-
- arch/arm64/boot/dts/rockchip/rk3588-base.dtsi | 101 ++++++++++++++++++
- 1 file changed, 101 insertions(+)
-
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi b/arch/arm64/b=
+oot/dts/rockchip/rk3588-base.dtsi
+index b6e4df180f0b..595f129a2d8c 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
+@@ -1122,6 +1122,86 @@ power-domain@RK3588_PD_SDMMC {
+ 		};
+ 	};
+=20
++	vepu121_0: video-codec@fdba0000 {
++		compatible =3D "rockchip,rk3588-vepu121";
++		reg =3D <0x0 0xfdba0000 0x0 0x800>;
++		interrupts =3D <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH 0>;
++		clocks =3D <&cru ACLK_JPEG_ENCODER0>, <&cru HCLK_JPEG_ENCODER0>;
++		clock-names =3D "aclk", "hclk";
++		iommus =3D <&vepu121_0_mmu>;
++		power-domains =3D <&power RK3588_PD_VDPU>;
++	};
++
++	vepu121_0_mmu: iommu@fdba0800 {
++		compatible =3D "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
++		reg =3D <0x0 0xfdba0800 0x0 0x40>;
++		interrupts =3D <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH 0>;
++		clocks =3D <&cru ACLK_JPEG_ENCODER0>, <&cru HCLK_JPEG_ENCODER0>;
++		clock-names =3D "aclk", "iface";
++		power-domains =3D <&power RK3588_PD_VDPU>;
++		#iommu-cells =3D <0>;
++	};
++
++	vepu121_1: video-codec@fdba4000 {
++		compatible =3D "rockchip,rk3588-vepu121";
++		reg =3D <0x0 0xfdba4000 0x0 0x800>;
++		interrupts =3D <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH 0>;
++		clocks =3D <&cru ACLK_JPEG_ENCODER1>, <&cru HCLK_JPEG_ENCODER1>;
++		clock-names =3D "aclk", "hclk";
++		iommus =3D <&vepu121_1_mmu>;
++		power-domains =3D <&power RK3588_PD_VDPU>;
++	};
++
++	vepu121_1_mmu: iommu@fdba4800 {
++		compatible =3D "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
++		reg =3D <0x0 0xfdba4800 0x0 0x40>;
++		interrupts =3D <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH 0>;
++		clocks =3D <&cru ACLK_JPEG_ENCODER1>, <&cru HCLK_JPEG_ENCODER1>;
++		clock-names =3D "aclk", "iface";
++		power-domains =3D <&power RK3588_PD_VDPU>;
++		#iommu-cells =3D <0>;
++	};
++
++	vepu121_2: video-codec@fdba8000 {
++		compatible =3D "rockchip,rk3588-vepu121";
++		reg =3D <0x0 0xfdba8000 0x0 0x800>;
++		interrupts =3D <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH 0>;
++		clocks =3D <&cru ACLK_JPEG_ENCODER2>, <&cru HCLK_JPEG_ENCODER2>;
++		clock-names =3D "aclk", "hclk";
++		iommus =3D <&vepu121_2_mmu>;
++		power-domains =3D <&power RK3588_PD_VDPU>;
++	};
++
++	vepu121_2_mmu: iommu@fdba8800 {
++		compatible =3D "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
++		reg =3D <0x0 0xfdba8800 0x0 0x40>;
++		interrupts =3D <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH 0>;
++		clocks =3D <&cru ACLK_JPEG_ENCODER2>, <&cru HCLK_JPEG_ENCODER2>;
++		clock-names =3D "aclk", "iface";
++		power-domains =3D <&power RK3588_PD_VDPU>;
++		#iommu-cells =3D <0>;
++	};
++
++	vepu121_3: video-codec@fdbac000 {
++		compatible =3D "rockchip,rk3588-vepu121";
++		reg =3D <0x0 0xfdbac000 0x0 0x800>;
++		interrupts =3D <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH 0>;
++		clocks =3D <&cru ACLK_JPEG_ENCODER3>, <&cru HCLK_JPEG_ENCODER3>;
++		clock-names =3D "aclk", "hclk";
++		iommus =3D <&vepu121_3_mmu>;
++		power-domains =3D <&power RK3588_PD_VDPU>;
++	};
++
++	vepu121_3_mmu: iommu@fdbac800 {
++		compatible =3D "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
++		reg =3D <0x0 0xfdbac800 0x0 0x40>;
++		interrupts =3D <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH 0>;
++		clocks =3D <&cru ACLK_JPEG_ENCODER3>, <&cru HCLK_JPEG_ENCODER3>;
++		clock-names =3D "aclk", "iface";
++		power-domains =3D <&power RK3588_PD_VDPU>;
++		#iommu-cells =3D <0>;
++	};
++
+ 	av1d: video-codec@fdc70000 {
+ 		compatible =3D "rockchip,rk3588-av1-vpu";
+ 		reg =3D <0x0 0xfdc70000 0x0 0x800>;
 --=20
 2.45.2
 
