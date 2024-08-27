@@ -1,194 +1,191 @@
-Return-Path: <linux-kernel+bounces-303642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 838D49612AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:33:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93E889612BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ACDE28434B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:33:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B87821C23316
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161DC1CCB3B;
-	Tue, 27 Aug 2024 15:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A141CE6F8;
+	Tue, 27 Aug 2024 15:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y2KV/Nnk"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWIGSLw4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1001BDA93;
-	Tue, 27 Aug 2024 15:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB131C9EB0;
+	Tue, 27 Aug 2024 15:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724772696; cv=none; b=j39vv6uaSKMhSJaTndu19R5Ji1pE8/naRHvJLvXvIHo805c0TVUt+kPgOxC7yGz/35pxjJT8gUCOFETNzK1ma5RHR5U1+D4/0ZE+C71zTGryBxQteoxSDl6m1VbtkVbSdRKlXKApeMUbp5xNJp98Pa8Ibe56+gSGIMvIExjqskg=
+	t=1724772749; cv=none; b=fehyIYmpqJjbzDoc0gEv7fpXofK4dCpZzh8sVgA+ebfNuykWlGxjuHMtvUHRDluI74CEF+Ol3mQib5DRby/zz/Oma4br+x8xWfsVVWZAjhcqcYZtOKP7Jvffhql4UNiDtl+lvwENaQG5zyt54iLWZBhmLD0u/7o4fDnZrD12s38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724772696; c=relaxed/simple;
-	bh=y4iMMsmESopo0zN+fum1KDm4qCF4V+lyxG7NtWHeEQk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VJssIUv2ucrG1lptCj+dCBkW24aBt4uBkVLuEzNS1I6kYx0jP8od+5YSmnIX6AlCT3fnr84fSSZv59jNhepSXt+1VLaRrp09kAiXGa0sDiOGYJQ9XcBBpMwBj3ReNoaCrEvkKNSMa+UU0n548X2dnpFkCBh+UZu0oKcTPRgFHZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y2KV/Nnk; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-81f9339e534so187751939f.3;
-        Tue, 27 Aug 2024 08:31:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724772694; x=1725377494; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WqcUNaxQm25GRpp+jV0VmnGAyj/IWoEm4mVeyn3fA50=;
-        b=Y2KV/NnkH3js6KGhhtGwRYHh8DThX1ppUm+p2wyA2m/pvySmPrh8lvJgiUmLt7rjqh
-         V85fXKlpBiny3SnQZSXy4HNjplE70CfBGqPN9iUz4wsTg+D3lFWRqW1kYsHEWk9jI5mk
-         XQa2+amMe7UJJ2ZQcIs1NU4eeWtMfEB9NqdHeocA0E+NjjFPWBTKYPvPAAtIHVQNF8Ox
-         9dg6A6ETQYUdnPfXV9e7EBNkLg3V6f0n2zxs+1kjWVw6nJRZeNJ0Gp6lhOg9X0H9EsQB
-         c+2FQu8uIM9GwQ7Bm48eWDYNKR/FHx5dNnkAEePK2VF1Lzo85PzXn1VGsSBINrxXh2ho
-         R8yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724772694; x=1725377494;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WqcUNaxQm25GRpp+jV0VmnGAyj/IWoEm4mVeyn3fA50=;
-        b=WqA3Fzw8Q2y3gs02+JY/dVgzycMw9Ly78g9QAIG3cCT+ePEJpee8xjtS15IHI0n+jo
-         54GqTlDKLawn3M7ppqcuhG3RXzusrrbgcMJ3a/QQChzrM1gd5ONwNWDUTU/HNvuh/rou
-         JA98/DTOVdcsFKGt0dHXm3j2plJbrXgn2LxZtCz8eYFlawM+6Q7IHUqDGRon0OhYQA4K
-         ijfYWoH6iXvLQtIL2RpvFYrE2+VH2vPVykV3wyhAQE7fWtH2lkEV+qMn/6sCADbsIhHX
-         ZHnkQvqKLQxEBL1Dj+ftxvAWaJmitjyGBeWM8gvVMSu4w5pDsUNXj1Uutt5h3ntq6dr9
-         i3mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAeq2lb8WJC9nkd5XcyUTL7ujRxIH8MP7o2kD1GD2VzmYcoS5snRSZh5bn/udF/W+GrIyGfbuh@vger.kernel.org, AJvYcCWpBpvunEpGn3cDUht016yKJ7V4dSyooida8D5YZ0ajnn8JOO2D+VUCujbkC2ggAz3iwPEDIQGKuiOBQB8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMUJMU58mznzodF+TApmFvm3YzIbzfsOrqrcTfHXe91T25eFgA
-	Kwv9Q8AwWoDk8EqJbqRRfYmQTB9H4KQ6FUShqxGs1DGiMUPEDfGCextGX4Fp3a+PEJ7k/ObAdtK
-	eM+jcIeDO0BG4ZP+/iWpxaKgG57g=
-X-Google-Smtp-Source: AGHT+IGYv3dP4E+8xvHvi2ISRorEeU+/82nOF/XKfiOihGEHwbyFnfJnqy2jdgRv1T29v0FuP0fzreKhk4djPZ4vfnY=
-X-Received: by 2002:a92:c54f:0:b0:397:70e7:143b with SMTP id
- e9e14a558f8ab-39e3c98f968mr156852035ab.14.1724772693457; Tue, 27 Aug 2024
- 08:31:33 -0700 (PDT)
+	s=arc-20240116; t=1724772749; c=relaxed/simple;
+	bh=oMFIrjpb/wL45DA40NAqPybmEnDxPFSUlGpynz4wF2U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iSIcHAodlY/6QQ3CK+prrKPezO+pKalQ352eTCYbt+c/jTzd5HeZR5uWVgwoClpVHn1jphzOF2lqOuEG2tokhBy4JJjL4VcKICLBQVJLLRUFMvNSbVZGIK0kPFkWUqA+BPvsTTZEy6bVZvxsjc6XbD8T+ofF1nKogU2S+DYWec4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oWIGSLw4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9116FC61050;
+	Tue, 27 Aug 2024 15:32:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724772749;
+	bh=oMFIrjpb/wL45DA40NAqPybmEnDxPFSUlGpynz4wF2U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oWIGSLw4QDsK1C4sX7KEzHUMXx8j9mdnaVnI1OjJpyVgki0h5/1WiPp7WlXZsNktQ
+	 y9HGWclovKpm66xhwasgajNbN0EaDTRPg9tIc3K5Pmpw2aSPi7+i1J/rD6RQgIw29h
+	 gUeG39EF3q26wlyR9xeTjeS8y5FRiI2ofHhBjWolpMqkmUC/xX+q2NHaDZIuDQ42ek
+	 G32QJpdljjZb9FNd0dZKEFd24juPkEGCa82o5Tzg71JqJmwfPUuKZMR8UR+fLbxxnF
+	 TiTDqEhgRJZI8X95EgtZBTOs8Dd2Rx63pprmC6kj+OZjXOgvsIdozqvKWObdAHO0YT
+	 8eWXXKr1Ha5vw==
+Message-ID: <2221d0dd-e7ed-4ac8-a3c8-905ad8037fb6@kernel.org>
+Date: Tue, 27 Aug 2024 17:32:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240826124021.2635705-1-linyunsheng@huawei.com>
- <20240826124021.2635705-9-linyunsheng@huawei.com> <CAKgT0Ue+6Gke9YguEDiq6whqQg0DdjPjSDDiRHEeVe5MX80+-Q@mail.gmail.com>
- <67c7c28d-bbfa-457d-a5bb-cb06806e5433@huawei.com>
-In-Reply-To: <67c7c28d-bbfa-457d-a5bb-cb06806e5433@huawei.com>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Tue, 27 Aug 2024 08:30:55 -0700
-Message-ID: <CAKgT0UdiDfL++rC_g8guhChRFsNhKeax8697O5+zfi01Y=iEeg@mail.gmail.com>
-Subject: Re: [PATCH net-next v15 08/13] mm: page_frag: use __alloc_pages() to
- replace alloc_pages_node()
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: interconnect: Add Qualcomm QCS8300 DT
+ bindings
+To: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
+ Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>,
+ Danila Tikhonov <danila@jiaxyga.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Vladimir Lypak <vladimir.lypak@gmail.com>,
+ Adam Skladowski <a39.skl@gmail.com>, Sibi Sankar <quic_sibis@quicinc.com>,
+ Rohit Agarwal <quic_rohiagar@quicinc.com>,
+ Rajendra Nayak <quic_rjendra@quicinc.com>,
+ Andrew Halaney <ahalaney@redhat.com>, linux-arm-msm@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_mdtipton@quicinc.com,
+ quic_okukatla@quicinc.com
+References: <20240827151622.305-1-quic_rlaggysh@quicinc.com>
+ <20240827151622.305-2-quic_rlaggysh@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20240827151622.305-2-quic_rlaggysh@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 27, 2024 at 5:07=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.co=
-m> wrote:
->
-> On 2024/8/27 1:00, Alexander Duyck wrote:
-> > On Mon, Aug 26, 2024 at 5:46=E2=80=AFAM Yunsheng Lin <linyunsheng@huawe=
-i.com> wrote:
-> >>
-> >> It seems there is about 24Bytes binary size increase for
-> >> __page_frag_cache_refill() after refactoring in arm64 system
-> >> with 64K PAGE_SIZE. By doing the gdb disassembling, It seems
-> >> we can have more than 100Bytes decrease for the binary size
-> >> by using __alloc_pages() to replace alloc_pages_node(), as
-> >> there seems to be some unnecessary checking for nid being
-> >> NUMA_NO_NODE, especially when page_frag is part of the mm
-> >> system.
-> >>
-> >> CC: Alexander Duyck <alexander.duyck@gmail.com>
-> >> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-> >> ---
-> >>  mm/page_frag_cache.c | 6 +++---
-> >>  1 file changed, 3 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
-> >> index bba59c87d478..e0ad3de11249 100644
-> >> --- a/mm/page_frag_cache.c
-> >> +++ b/mm/page_frag_cache.c
-> >> @@ -28,11 +28,11 @@ static struct page *__page_frag_cache_refill(struc=
-t page_frag_cache *nc,
-> >>  #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
-> >>         gfp_mask =3D (gfp_mask & ~__GFP_DIRECT_RECLAIM) |  __GFP_COMP =
-|
-> >>                    __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC;
-> >> -       page =3D alloc_pages_node(NUMA_NO_NODE, gfp_mask,
-> >> -                               PAGE_FRAG_CACHE_MAX_ORDER);
-> >> +       page =3D __alloc_pages(gfp_mask, PAGE_FRAG_CACHE_MAX_ORDER,
-> >> +                            numa_mem_id(), NULL);
-> >>  #endif
-> >>         if (unlikely(!page)) {
-> >> -               page =3D alloc_pages_node(NUMA_NO_NODE, gfp, 0);
-> >> +               page =3D __alloc_pages(gfp, 0, numa_mem_id(), NULL);
-> >>                 if (unlikely(!page)) {
-> >>                         nc->encoded_page =3D 0;
-> >>                         return NULL;
-> >
-> > I still think this would be better served by fixing alloc_pages_node
-> > to drop the superfluous checks rather than changing the function. We
-> > would get more gain by just addressing the builtin constant and
-> > NUMA_NO_NODE case there.
->
-> I am supposing by 'just addressing the builtin constant and NUMA_NO_NODE
-> case', it meant the below change from the previous discussion:
->
-> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-> index 01a49be7c98d..009ffb50d8cd 100644
-> --- a/include/linux/gfp.h
-> +++ b/include/linux/gfp.h
-> @@ -290,6 +290,9 @@ struct folio *__folio_alloc_node_noprof(gfp_t gfp, un=
-signed int order, int nid)
->  static inline struct page *alloc_pages_node_noprof(int nid, gfp_t gfp_ma=
-sk,
->                                                    unsigned int order)
->  {
-> +       if (__builtin_constant_p(nid) && nid =3D=3D NUMA_NO_NODE)
-> +               return __alloc_pages_noprof(gfp_mask, order, numa_mem_id(=
-), NULL);
+On 27/08/2024 17:16, Raviteja Laggyshetty wrote:
+> The Qualcomm QCS8300 SoC has several bus fabrics that could be
+> controlled and tuned dynamically according to the bandwidth demand.
+> 
+> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+> ---
+
+A nit, subject: drop second/last, redundant "DT bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+
+And you do not add "Qualcomm QCS8300" here. QCS8300 is a SoC. You add
+here specific device, right?
+
+
+>  .../interconnect/qcom,qcs8300-rpmh.yaml       |  50 +++++
+>  .../interconnect/qcom,qcs8300-rpmh.h          | 189 ++++++++++++++++++
+>  2 files changed, 239 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,qcs8300-rpmh.yaml
+>  create mode 100644 include/dt-bindings/interconnect/qcom,qcs8300-rpmh.h
+> 
+> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,qcs8300-rpmh.yaml b/Documentation/devicetree/bindings/interconnect/qcom,qcs8300-rpmh.yaml
+> new file mode 100644
+> index 000000000000..ac75eeb6a6b4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interconnect/qcom,qcs8300-rpmh.yaml
+> @@ -0,0 +1,50 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/interconnect/qcom,qcs8300-rpmh.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
->         if (nid =3D=3D NUMA_NO_NODE)
->                 nid =3D numa_mem_id();
->
->
-> Actually it does not seem to get more gain by judging from binary size
-> changing as below, vmlinux.org is the image after this patchset, and
-> vmlinux is the image after this patchset with this patch reverted and
-> with above change applied.
->
-> [linyunsheng@localhost net-next]$ ./scripts/bloat-o-meter vmlinux.org vml=
-inux
-> add/remove: 0/2 grow/shrink: 16/12 up/down: 432/-340 (92)
-> Function                                     old     new   delta
-> new_slab                                     808    1124    +316
-> its_probe_one                               2860    2908     +48
+> +title: Qualcomm Technologies, Inc. RPMh Network-On-Chip Interconnect on QCS8300
+> +
+> +maintainers:
+> +  - Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+> +
+> +description: |
+> +  RPMh interconnect providers support system bandwidth requirements through
+> +  RPMh hardware accelerators known as Bus Clock Manager (BCM).
+> +
+> +  See also:: include/dt-bindings/interconnect/qcom,qcs8300.h
 
-...
+Just one ':'
 
-> alloc_slab_page                              284       -    -284
-> Total: Before=3D30534822, After=3D30534914, chg +0.00%
 
-Well considering that alloc_slab_page was marked to be "inline" as per
-the qualifier applied to it I would say the shrinking had an effect,
-but it was just enough to enable the "inline" qualifier to kick in. It
-could be argued that the change exposed another issue in that the
-alloc_slab_page function is probably large enough that it should just
-be "static" and not "static inline". If you can provide you config I
-could probably look into this further but I suspect just dropping the
-inline for that one function should result in net savings.
+> +required:
+> +  - compatible
+> +
+> +allOf:
+> +  - $ref: qcom,rpmh-common.yaml#
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    gem_noc: interconnect-gem-noc {
+> +        compatible = "qcom,qcs8300-gem-noc";
 
-The only other big change I see is in its_probe_one which I am not
-sure why it would be impacted since it is not passing a constant in
-the first place, it is passing its->numa_node. I'd be curious what the
-disassembly shows in terms of the change that caused it to increase in
-size.
+Hm, no reg?
 
-Otherwise the rest of the size changes seem more like code shifts than
-anything else likely due to the functions shifting around slightly due
-to a few dropping in size.
+Where is your DTS? Please follow standard upstream process, which means
+you send DTS separately. Your internal guideline already should cover
+that. If it does not, please look at upstreaming of SM8650, update your
+guideline and then follow SM8650 process. That way we can verify that
+what you send is true.
+
+Best regards,
+Krzysztof
+
 
