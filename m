@@ -1,251 +1,149 @@
-Return-Path: <linux-kernel+bounces-303515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA3C7960D35
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:10:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7666960D37
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:10:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B18D31C23212
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:10:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 517201F210D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603641C4EC8;
-	Tue, 27 Aug 2024 14:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F101C461B;
+	Tue, 27 Aug 2024 14:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gtwfGuyS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F2ZywhW1"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E844A1E487;
-	Tue, 27 Aug 2024 14:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724767777; cv=fail; b=WWhvLavk8vFcZ+xsLGfkPDpQGw8/T0vEpWUNEbkUB3vrhFHDCVcfVGQouLFDTL7/cNMVk0o+f8hUOicb2Xc1giVnoYErjNsQQLxjfVoOqnilLP5Pra1iR2I/RmnzOQOIy6aEWnjVRtvo4XGaz8P4P/NWwLOJ+0F0LWBU5W/eftM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724767777; c=relaxed/simple;
-	bh=XlTH/Pii3h42Pg1r4E27UG5y1MmTzmbhAN8tw2Wylb8=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=dySW2F0JMMu616pMPol9imkaMc2VG0B4usulGMSaVz/06QEcxIxizHYhrny2SdVUd/yhY63HGsjNUJuaDgg8nkQUru7MNkoMPqxSTR/wMAoD9O+Urm2B4Zs8HTDVugoXG0NZ4jc1IFKc6tOLApooguL3SKm8X8GofHLdK4wNC64=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gtwfGuyS; arc=fail smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724767775; x=1756303775;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=XlTH/Pii3h42Pg1r4E27UG5y1MmTzmbhAN8tw2Wylb8=;
-  b=gtwfGuySlC2hQN37KDwdU4VZ+IX+6k063rrFwJQK3pVqXT0GzsQHxe1x
-   hlqOhNjVbKiQIZNDHsiax8SwVTuXYl8c4I2GqGx4DrpphbeQYRNXv7uRh
-   f7yZboVDMYjkoEe2r/ngoFlFMyrHgYQbRTJ9h1sQs1t/1XAPLSI1FUHcp
-   wUdsuUU+TPPpF9HBtN/kxkRLakYmXfSdqiBpnDohDO1B256imNGQm5WsO
-   s5336tdUSanpMD4hmE4+RmyjzPh2ipp6tuiKZbiv8dO7Hd/aiCuI+Awsr
-   JcrFsVmFXzPbyxUetEVaCln5nUYzJ4JackJ6vfoa41AFLlrQOsqIfNTNn
-   A==;
-X-CSE-ConnectionGUID: jYptoTFEQ/SC9VCPvV3klw==
-X-CSE-MsgGUID: dN5shsjFSZuvw2WsNdBlWQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="40719471"
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="40719471"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 07:09:34 -0700
-X-CSE-ConnectionGUID: HUL9kg64S6CUx2P1Cy31Mg==
-X-CSE-MsgGUID: IydCR5OOQ3KmB/+gsCHKYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="93614436"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 27 Aug 2024 07:09:34 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 27 Aug 2024 07:09:33 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 27 Aug 2024 07:09:32 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 27 Aug 2024 07:09:32 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.46) by
- edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 27 Aug 2024 07:09:32 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QTbIag4LhN/9vECYClfawNRTDlYY4hqaKCOk4RWkhuqRWIB5BOQ7Ca8T7LAyCL8qRhx8C403FvE7Y0rFTDQW3hlMQEkG4CfnCNpxukUYO8Tn78DvAVI+eRtvEHYGgq65u8IcTHiZ6QLmv7ckHokTXlopdpkpvbQd5yiSfa1Zdi8zA9Xcxahu35JnS4qbWE9/a4hC9pG8zx7nZV9lAmj5IcYh+id1d3Faaksnq1sRXav48hDp8O8YBSqk6PwDT8eWbgpwurR6bOTt8s7e/OJ00IUXB7TkP7GgGk3NiHVzTmbm1AQHHo/KQ/UAKrQFGeMnyg31dcsFS1i2gBU4uAjk6A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wUDBltAlbk8CcirFooKK4hut8YH0wYvVM2U7gASYCLE=;
- b=rfoPGqeRGKDGPpVtlhOekRyce3nRF+znH3fSXcJ6PqtNg7Thz9H8l0TJs5QIbWWIiv+b7zBae3IRejg8aAwL88BbW/4quNDmu9oA0+ctAkSCn6dMl8AmgSH4FDjLGPiVccPQlQBH6YeJQauk0KdTWTYbk1PMNYhAtk4V7IMq52Ugp7KsKPuzDMyOZ21pMgfschC8FaQX2O6ak8SjsqwKoYOGYQjEKIfmhiSV3bS0+CF1P5iqWAYCnhnxn91oqjFesXC+k9MgVfS3cwGrzaqXnyPn59i4kvonT1YeLf20pgEixHSPoH+xS/j0wStwmx471XO6F8C2EwTzXz8LPLpyig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
- by MN0PR11MB6304.namprd11.prod.outlook.com (2603:10b6:208:3c0::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Tue, 27 Aug
- 2024 14:09:28 +0000
-Received: from DS0PR11MB8718.namprd11.prod.outlook.com
- ([fe80::4b3b:9dbe:f68c:d808]) by DS0PR11MB8718.namprd11.prod.outlook.com
- ([fe80::4b3b:9dbe:f68c:d808%5]) with mapi id 15.20.7875.019; Tue, 27 Aug 2024
- 14:09:28 +0000
-Message-ID: <a16c0444-a289-4a84-b6eb-b06b4a3ef1f9@intel.com>
-Date: Tue, 27 Aug 2024 16:09:21 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] idpf: Slightly simplify memory management in
- idpf_add_del_mac_filters()
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>, Christophe JAILLET
-	<christophe.jaillet@wanadoo.fr>
-CC: Tony Nguyen <anthony.l.nguyen@intel.com>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-	<intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>, "Pavan Kumar
- Linga" <pavan.kumar.linga@intel.com>, Dan Carpenter
-	<dan.carpenter@linaro.org>
-References: <fa4f19064be084d5e740e625dcf05805c0d71ad0.1724394169.git.christophe.jaillet@wanadoo.fr>
- <c786a345-9ec4-4e41-8e69-506239db291c@stanley.mountain>
- <2896a4b2-2297-44cd-b4c7-a4d320298740@intel.com>
- <bbe06f51-459a-4973-9322-56b3d27427f1@wanadoo.fr>
- <dafcfb71-52b5-4bf7-8145-aae2dfc06e10@intel.com>
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-Content-Language: en-US
-In-Reply-To: <dafcfb71-52b5-4bf7-8145-aae2dfc06e10@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ZR2P278CA0017.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:46::11) To DS0PR11MB8718.namprd11.prod.outlook.com
- (2603:10b6:8:1b9::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAC11E487
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 14:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724767791; cv=none; b=iN7GnW+D9zZXu6psQ8xhOQT4w+iZGk+3/i8luP8NYKsliUiBMaL0q0wRRnlqQGIm12mIqd9xuOW3b8gQ7MS7wxkanlY2KxHGr1QzLB9Zh+Xo5tcquajMK5AXlxU35Evh0K5lag4mryzY0sUtfKZ8rfkzNiu7zPZkpZ2/hhPhSLo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724767791; c=relaxed/simple;
+	bh=GdIpFTgbfxU+NKY2XBXIblMsCTYmmc2hBkBCO3HgeWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ReUWSJwH/ZArc0z1JGC8QUa9Vsv5GLPfBvh7bRFG34HHKXxjA1S9vpe8vCPHq6g8zXgjgaq7VcHsZ7SE8ItBiIAfYjYFqJtfVVjxLXAmxqCPnOxeig39iPw1Z+7zOS1VqvVFbIGjhO6akCMdPvBkxbFQHKxzleKzpPN4puNGHj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F2ZywhW1; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7141b04e7a3so4514597b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 07:09:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724767789; x=1725372589; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ouRj4TAgkRTz5GRtzqlt4tI1PtOjY+RsVnMcjc3Hl+w=;
+        b=F2ZywhW1dAr+iWC23VdFx8sxBR3V8wxKgY4AGHc4B4G7yD16su+xtPgLqDB4jKTVAh
+         ET51ab1OrS1HbklT2VHSUBS8x8GxZSkWbuEhbxOgbBSOw5fASxPFquy87rif0UEIBg7t
+         5jJ97b5n2wUbgGxsOXwv2nfJS87S11KRGB0zQodNkB4CcERbYvi00cLH5XlhobrL8G+E
+         nI+JWkQjoXPSJ5yibkoLRdu7E6QvvbVICD/AiKBR5gxq2xhP0FW4F9cRK8VESuTWQLyi
+         hBAzszhMSPr76L0J9XoBcI4935aSL2b5K4hW6rATYsc0kNWK7jKhMfP+ng58d6LBvDug
+         GmMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724767789; x=1725372589;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ouRj4TAgkRTz5GRtzqlt4tI1PtOjY+RsVnMcjc3Hl+w=;
+        b=YszJFNkFZbPZp5s69k1cbARKLoOP916xAHVcx9PsWY3LbHBqT78qYdqiHRltrfSOKi
+         cKewojzVUnqYZsv4xdAMdSQV4WlNR5bVukyTmmb71kRwNSxkORH6NkVPA39ldAiZloOq
+         jDQ3DyU8OT/yIGjvAiWRoG+Vrr8mZPykYV404P4JFA9+YgsIgpbg+yQrRx9xJFjr8DD0
+         NeLUe1ktpAPKT1YrdWtc5H6n0kbRdQDOQV3e95yZy6NIEcXI1ly+pCpGITnYfR7mwtmE
+         MMC6OBoqd4TONwIZgpkgaXi7IgUCJKCVmJwJz5roCr8tnKwXnOjy104vQNPF9uOZI+3T
+         gKuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGAWtJk+OTOMUseTjTqhRbsF2kuLVH+FjtNiGxR1cPtHXRAc9bmeyiH55WM+Wq7pqv1dUQLDyxgrXs7CY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPWYYyi+YFb2gcdn7t2TfXKGCEgbKUT9Yjyo/xCuQn3198h6H5
+	wkrSQ316eBuloUptohxjyWddyyOyySep+10jlynkH7VkBzhuF40VPiBqlhyztv+d0acmx9CUxs4
+	=
+X-Google-Smtp-Source: AGHT+IEKzEYg3GopwFR1fgAkJ8tHS6Cu7uSDx5Vu1REqSojLlIdiqFl36KFNz6Mpex8Rv8qz5VOGzA==
+X-Received: by 2002:a17:90b:356:b0:2c9:61f9:a141 with SMTP id 98e67ed59e1d1-2d646bf605amr15398464a91.16.1724767788735;
+        Tue, 27 Aug 2024 07:09:48 -0700 (PDT)
+Received: from thinkpad ([117.213.96.164])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d61392a1efsm12323555a91.21.2024.08.27.07.09.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 07:09:48 -0700 (PDT)
+Date: Tue, 27 Aug 2024 19:39:42 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v3 1/2] PCI: don't rely on of_platform_depopulate() for
+ reused OF-nodes
+Message-ID: <20240827140942.mujjwea34iscqzmx@thinkpad>
+References: <20240823093323.33450-1-brgl@bgdev.pl>
+ <20240823093323.33450-2-brgl@bgdev.pl>
+ <20240827084012.rjbfk4dhumunhaaa@thinkpad>
+ <CAMRc=Mfd08i0NFsuf=igJRJszDNfLyHf+bf6ExjNYxX41CMdWA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB8718:EE_|MN0PR11MB6304:EE_
-X-MS-Office365-Filtering-Correlation-Id: bcd9b683-9566-47f1-65b9-08dcc6a1dd29
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?OEV5UktUZTR5S1FqZk9xV01DVkIvSFdHcElvSWluclhsSzhzZFlZY1VpZ0Uy?=
- =?utf-8?B?ZFY3SEgwRmpKeXpkNHp6TEtWazBTSU9GM3hjMFJ2aXVVRVBzUWJ1Y2pzalk2?=
- =?utf-8?B?ejdVVUdJMmFJTTl2WkxkR2JwQlhZOEgyV3grTTNmUHVObEs5U2p3eVZQeUty?=
- =?utf-8?B?b3Mwc1NDekRyL3FBdy9vcUMzMzRoaTFjK2ErL0ZKdDFGWVpIL2t0a2xUblRT?=
- =?utf-8?B?cTM1UDNQQ0FmR1dBM2Z2dGU5c1ZGQithcnZHZTlCSzBxVGpLVmNyTGt5NTVk?=
- =?utf-8?B?TXJOcG9WM3R4aHR2bFRKREpScUw4S04yU1hQNVRJY2NEU0pRRW5YYTF2QkVo?=
- =?utf-8?B?YitnSEQvdVRzV3hJb3RDeWZWSVd5LzlrQ2RSVm5EZ1kyTElSa1JXSjRCeHRX?=
- =?utf-8?B?Uy9DdnNyL2pXZEtwMjJZbStDeHRvdDFhcEgxMFJUaTVRWWZla1RENEZlb2x4?=
- =?utf-8?B?TjNHNUFtT1YxdG1LV2tZdmpHZXY1anZ0bCtpREwxNlZ4VWl4UmkrYVVjeko4?=
- =?utf-8?B?eHlEdW51eFQ5K0pKQjFqSTZYZ1NOYnk0WTFwdEdheDBBYUxPN0ZtaFVxdEhI?=
- =?utf-8?B?WGhvYTQ1OTROcDZSQUhkYjlFSXhHaVVQano0SWJUcnhaOG0yUlpQOXB4d1V4?=
- =?utf-8?B?QjZyYUJoTVhtNC9ha0IyN25Rczd3NGRhem10QkQ0VU8wc3k2dzlvSURSV0tI?=
- =?utf-8?B?WjlIKytINEFZTlhxVUxIU0RET0ZldWt1SjB1d0VXMVVRQTBJS1lQSmZYcEhJ?=
- =?utf-8?B?OHJPOCtPNUFqM0RHNXR1NzF4QUM3bDV3S0hjQnBXKzArMmJHczJyaThMZnRB?=
- =?utf-8?B?MU81V3VQaHVJUmZwTUk1OHdaWjhmMkhHcWN4NTlWYzhpTTVrRVoyRjVkaGc2?=
- =?utf-8?B?djRuY1B0WEM5N25xZWFjS1pWcnd3aDVnK3V3WkNmSXhuYmhtMmcxRDBUa2pl?=
- =?utf-8?B?di84YUpicUhRVW9FTUI3UHE2eWFPUWRYTUp0QnpVbWJ5UGhKSUJTdGQ4clg3?=
- =?utf-8?B?Z1k5UmQ3anpiMGZ3bDRmSXVEeXBuSzdzeG1YLzlSTjRYQVhyais1empHbFla?=
- =?utf-8?B?ejRmZVFOUjIxWkQ4a2xGaE5UYlQ2N0lOMUhRV3RXVHFId2VIWWhPMFJyemNm?=
- =?utf-8?B?MExvWnJYN0xyRXRGdmE1QnRnSEtUZkU0Z2FBcy9jdHhwV1VvVHJrRDBzdHZ2?=
- =?utf-8?B?RVZnV3F2SXdSTGtZZTVIVElNQkkvbmc1WWRCV3ZreDQxaFBoZmN2NWFaZGNL?=
- =?utf-8?B?N0lOZzZaSkpqZXVFWTd2Nms3Qlo0RTVUZjYzeUJ3RGV2OUV3L1dOeXE5SVFu?=
- =?utf-8?B?cHFkdUc5VUkyUDJ2ZG8veUZhNm9uMzdsVDlWNXJTRlVsMXU4aFQwbHE2Z3or?=
- =?utf-8?B?MlpSQVd5d3RNSm1NOU1sTnRmQlFROFBUaE5NUGFIaEFxTENPdlp5MDhCeVhP?=
- =?utf-8?B?cGpiSzhIUnFPVmV2eE9HS3VveTQyMlhWT0xCK0RIbE1WbHU0c3YxNVhQbENS?=
- =?utf-8?B?ZzdBUUNKSHNmMStSTlk5YWRxK3dCRVRZRmVHOGhpdFFhN1lKeEdMNWo4bTNi?=
- =?utf-8?B?V05FSXlOWHlidS9HTU40MmRLdXVyT0N3UGlKN0ZvdzNoUEkya0Y2WHdjU0V4?=
- =?utf-8?B?NGU5WmlXMVozVGkyaVdMT1RNTmduS1hSUCtSUUs2VE5helRJWGdBYk5DRGtD?=
- =?utf-8?B?djBDUjZLK1RWSzBRNjVZRFFNTkJ0ejBBNEVXcElwMG1TUWF1Nmw1Q3E4UVRt?=
- =?utf-8?B?T3hjeUVPTHdJUkxEaFBEZmlVa1JlSmp5bzZvNUwwWXpXTEl3K2cwb1JSV3Vn?=
- =?utf-8?B?b2ZBZis3azh0dWFRclExdz09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8718.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UDhSUWdvRFgwazRqWDZNRFpkRFdZczluSGJtbHg2NTNGWkFvYWVnZHVBQWRh?=
- =?utf-8?B?eGN3aFFnbFdyVmpVc1FyTUJEcWg4QmgwTTNmSTVOdTUwQklhTkJ6dDB3bkts?=
- =?utf-8?B?QjJSb3N5Vi9Dc1dBdEp3OG4zeEpvZ0ZSVEw4V3Q3WUlsZlZUUlNYTmpiTFAv?=
- =?utf-8?B?SjFWTVFLOFBVd0Z4ejcxMjh2bU1hNE1tRys3OWxtMHJNdU50ZXN5VlRxY1pI?=
- =?utf-8?B?aFU1dEZXamplOWcyUEZlZ0FNQWUxVmo2SDBrbCtoOHprRlRZQURHTlk4Mm1m?=
- =?utf-8?B?Y0xtUThnd20ya0o4OXRPZVhqck5CVFJDcHVsUWJpUjFkTmNOOGxPZlhGUTYz?=
- =?utf-8?B?NTQwaThtYTAyNXNkZXZuUEJYL3NUaWxUd0FyZnZUVHdRVzlUWGVkbnhyTUll?=
- =?utf-8?B?Ri8vY3hrTXVVZVRYSFB4V0NsM3dLN2p3NU4vWVd0YWtxMVhta2dDV3JSOGR6?=
- =?utf-8?B?WmVieWkwSjlOSlhUVnI1WDBJYVBrSkNnaG52MVVORXB3RXo0SCtuV1Vsem9C?=
- =?utf-8?B?eXF4TGhRcndkV2ZpRDQwTXpONEsweGcyVzBhZ1N0eXNZeGdyeDBiNEl4MjVG?=
- =?utf-8?B?K29lalJYeUFkQWFEanlSMzcvaGlxa1pveElwUUlUcFN4b1cwcGhBdkRzUUFn?=
- =?utf-8?B?MWhkYWZsK2dUSi90OUVkK2lQUVBFeU44VGNTNEgzbCtsbTNnNFdnNzJXNTcz?=
- =?utf-8?B?bHBZV2dXb1FKSms3UUdtT0xzM3p4WCtrdXE5ZGlCWjN1QXVDVkUzTUpYbXAz?=
- =?utf-8?B?WC9paGt1TTRoTk56NFBHMkZ4a1BhUGttVEs0NjNwdUZSVXM3bVNlcTNvYVhx?=
- =?utf-8?B?V2hwbWR1QjFvcDExT0J0VmhYbzlwK3ltYW1ZMWx3K1VXeXkrS2tkMEh6Vnpz?=
- =?utf-8?B?VitkODhyTDlSRzg4WjFSa2dLM0pDQjFvaFJzdFRjc3lwUytmMjB5OWZEVldO?=
- =?utf-8?B?UGJCUEVhSi9CL1p3TGZmQ2dvdGVNWHpiamhjb1NYWnI1L3hIWTB5UlBnSVpI?=
- =?utf-8?B?VHVqT3lqQXFLeGtMVXVEWml0R2wzeUpENjdyd0UwK0tJbXI0YzhZelRyWE9Z?=
- =?utf-8?B?YkpqaEJhU3pCSG5HRWxkcWpKa1A3WmhBUDF2VG1KVU9XWkJkZ3BldDRsNjky?=
- =?utf-8?B?MzYwRTE3NkwzVmtXcXoyU0xUKzRYUlFNc3BuS0I0RkpYaHN0TTFNN0t0WjN4?=
- =?utf-8?B?Y1RXQ0ErcFArMCtXS1BIZGRNR2lDc3U4Q0ZadWdDM3p4ZVl6VEg4QVV3TU1x?=
- =?utf-8?B?UEE5bXh4c0ZFSG0xRVFtVEpzK2pZTlFud1Uxcm5Ya1ZNQ3Znc21Ua3NzUUxG?=
- =?utf-8?B?eHN6OHNIbXBFVjJEL1FNRXBtSWJwalh2eThGMXQwSHdZZmtIVVN2V29VZUsy?=
- =?utf-8?B?ZzJ5TDRWZDB1ejg3L2xQS3NDcjFHNXdKZFdYY09CLzh2S0Jqa0FsUXZWNVpp?=
- =?utf-8?B?RW1ZbVRCRHJLbndwZUdkeXJEaWVDancreGhCOXlKdHlXZHhGdzVqSEZsVmx3?=
- =?utf-8?B?RU9zWU9mSkpEeUdOQi9ydk5WblJKekwra1lESkcwRXBVQTF6VnJNSUYvcDlM?=
- =?utf-8?B?UzRKLytzSjRoalZVREdsVGpidFM1MktOSHZqczMzMUdBTit4NDZKeFN1aWJ3?=
- =?utf-8?B?VGdyU2w4ZkZ4dlVEc2ZyVFYwckRLUnJQWHpNSVBVL3pDNVc4aE9LQjU2ckV2?=
- =?utf-8?B?Y2NEUmFEVE9heW9TVkl3K3BDYkhLcjN2bjkrZmpJMkRXZjJ5Y29kaUdTbXdW?=
- =?utf-8?B?NXd6cjRiblk4OUNweUtYMVNFOXMwK25qbE5PSktwN3d2RWt2SW4yU25vVU95?=
- =?utf-8?B?V2F5ZTN3NTdtYVZXOXVhUEJXVWFiWFpqVWVvcHRsbTdnZ2VIZnNiakZQNm1X?=
- =?utf-8?B?RVplWVE2RkNzL3h1YmMxRklsUWJSM29vaXE4dURnQkFLVVRFQTN1NGxFQmRh?=
- =?utf-8?B?c1lvNDdINGpwcG1raWk3SWdMV1hOQy9JaUliZ3ZqeFdaR0hmbDBVOFU3Q2JJ?=
- =?utf-8?B?clZGNEFGTEhnUU5oLys0R3ZXYWhFaitkd3o3ZlpsdnZEOHZBVk5CdTJwdEVX?=
- =?utf-8?B?aUZjbStuV1E1cEk3ZjNXVHlqMWpvV3lqaWloOFBQdjF5aHJMSkdjRGZxNVg0?=
- =?utf-8?B?aGRiVFNnMWNZZzJpQ0tTU3NFajdYSnFVRW9NaG9zT3pBNXJnVnVBdWlNcHBI?=
- =?utf-8?B?YUE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: bcd9b683-9566-47f1-65b9-08dcc6a1dd29
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8718.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 14:09:28.5022
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: frxW5NbyAQyPAR2rl6TlVpQnl3rYAg+saFtJGSix+Ds3gi/nXzyFLQlgNksEC2gmfMnnkzUgatNCvh2m3yyZXsOtrNd932gfqO6l+eGzIy4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR11MB6304
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=Mfd08i0NFsuf=igJRJszDNfLyHf+bf6ExjNYxX41CMdWA@mail.gmail.com>
 
-From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Date: Tue, 27 Aug 2024 08:58:33 +0200
-
-> On 8/26/24 19:14, Christophe JAILLET wrote:
->> Le 26/08/2024 à 11:15, Przemek Kitszel a écrit :
->>> On 8/23/24 11:10, Dan Carpenter wrote:
->>>> On Fri, Aug 23, 2024 at 08:23:29AM +0200, Christophe JAILLET wrote:
+On Tue, Aug 27, 2024 at 02:25:58PM +0200, Bartosz Golaszewski wrote:
+> On Tue, Aug 27, 2024 at 10:40 AM Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
+> >
+> > + Rob
+> >
+> > On Fri, Aug 23, 2024 at 11:33:22AM +0200, Bartosz Golaszewski wrote:
+> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > >
+> > > of_platform_depopulate() doesn't play nice with reused OF nodes - it
+> > > ignores the ones that are not marked explicitly as populated and it may
+> > > happen that the PCI device goes away before the platform device in which
+> > > case the PCI core clears the OF_POPULATED bit. We need to
+> > > unconditionally unregister the platform devices for child nodes when
+> > > stopping the PCI device.
+> > >
+> >
+> > It sounds like the fix is in of_platform_depopulate() itself and this patch
+> > works around the API issue in PCI driver.
+> >
+> > Rob, is that correct?
+> >
+> > - Mani
 > 
->>>> It would be even nicer to move the ma_list allocation outside the loop:
->>>>
->>>>          buf_size = struct_size(ma_list, mac_addr_list,
->>>> IDPF_NUM_FILTERS_PER_MSG);
->>>>          ma_list = kmalloc(buf_size, GFP_ATOMIC);
-
-[...]
-
->> So, I'm not sure to understand what you propose, or the code in
->> idpf_add_del_mac_filters() and co.
->>
->>>
->>> CCing author; CCing Olek to ask if there are already some refactors that
->>> would conflict with this.
-
-I'm not aware of any MAC filter code refactors.
-
->>
->> I'll way a few days for these feedbacks and send a v2.
+> of_platform_depopulate() has more issues than just that. For one: it's
+> asymmetric to of_platform_populate() as it takes a struct device as
+> argument and not a device node. This causes issues for users like TI
+> aemif that call of_platform_populate() on nodes without the compatible
+> property that are never consumed by any device. AFAIK there's
+> currently no way to depopulate them.
 > 
-> Would be good to have simple memory cleanup first, and later (if at all)
-> to untangle our locks a bit.
 
-Thanks,
-Olek
+Oouch!
+
+> In this particular case I think that the OF_POPULATED bit should not
+> be set when the PCI device is created but only when the platform
+> device is.
+> 
+> However I'm afraid to change the semantics of of_platform_depopulate()
+> et al for all users so I'm more inclined to have this fix in v6.11 to
+> avoid releasing non functional code (pwrctl devices not being removed)
+> and then possibly introduce a new variant of of_platform_depopulate()
+> that would work slightly differently.
+> 
+
+Ok, sounds like a plan. Since Rob is also in favor of this patch, it is good to
+get this series merged for 6.11.
+
+Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
