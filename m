@@ -1,165 +1,122 @@
-Return-Path: <linux-kernel+bounces-302534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F8D95FFE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:36:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A4F95FFEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:41:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D12AF2839C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:36:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D20CFB21BCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386E428684;
-	Tue, 27 Aug 2024 03:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8042E62C;
+	Tue, 27 Aug 2024 03:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dPOgMgtb"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qhtp9SLw"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCC417D2;
-	Tue, 27 Aug 2024 03:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476632747D
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 03:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724729806; cv=none; b=K+i8U6t5ltQ8lT2zSQtDZjgggvtE89QG1pRHy9ml0EtCjAB806bZqn+aJ6mxVitK3ISmWPN6R1u6W7CtI/2LEUm/IyUrwbEGIQX7N9NF6j0Kix7UbK/uc99typJI/vb9arkT/HkS9KYF+cHuGGsEBULJ7vKtPDb8/YWoxawBje0=
+	t=1724730085; cv=none; b=kbUmKqyrudSrOXnlzjXM/h0YP2s6ST1SgLoh9xlp4xwWhu/tLrkNhATPAjRVAMsUhtthKZkMlLNqrw6bI0n42OZQ/nASWU1Z1BfBkvrgYiKnb7HFAsY4VoKuGaMq7899cSHoCMCY+3cvuDKQq70JS50OyZEsKW2wA+FO1EMlaGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724729806; c=relaxed/simple;
-	bh=Ho1s9vK6WS5ven3f+MOaOZfoDticBN/hl5aZNrTSOik=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J7IGzjpvIuB4DFpcLIZGuEskmH7QoJaJvTeBJbz8wSq0hOKAcZr0hqA4GvKfDwYI7ikwiHvMxdv92h8PlnylLYgMpVv5+nMoRveeGoM9K+UpWovfNWhjhOZ9qzSReF1wBbgA6RzS5bOK+WwfS9Ydbc8ZLFkwQh2oYRWhScJECGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dPOgMgtb; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+	s=arc-20240116; t=1724730085; c=relaxed/simple;
+	bh=joD6tkAAQcTQgJl9qnoYjzr5IvpayiN5af3HTOl3TS0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f3z4eFkxdUNceniY2So0ZPhyjxz95Is4+aQxrqFlaGwI2oRu6suQiPByBCN7K3DxrtUOixlMrGShP5VdBUGOU8YKhdiZXuFP6tA4l3xtts6IQy0pZs44XnAujVyuhgLnjZtQvVedYWIm2HT3JfOLujRUTcUoq3MaCnYRX2yiPgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qhtp9SLw; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-39d4161c398so20876785ab.3;
-        Mon, 26 Aug 2024 20:36:44 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a868d7f92feso635751666b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 20:41:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724729804; x=1725334604; darn=vger.kernel.org;
-        h=content-transfer-encoding:organization:reply-to:mime-version
-         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1724730082; x=1725334882; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Vn0NLpEW1bw02AkAxFS5IlEL/ge7VBPrGJvvCAfuQds=;
-        b=dPOgMgtb93g6xfblisNBcOol8Bq6mC6tBlKVgP81CIV4JRKrb4IC+6lDdOk6hw51B3
-         cV/4L8qkUXUVsr9L1YXa3m4J5TbjKlIbJclq0qvb7qrQZeVMeEneJs21wp3LskuxaqDA
-         b5FowLmU4o/iCHuVLuwUE3v4tIa+DjPNkkv4qGxltwAk5O4en6Yt4SNAXvIxGnoARR5g
-         CpNQkP64lsOPMVWPMmMLOKABHMcypqZCDnJO90Q3F/6OiP0I8YXFsypc/g6t5EMiBNru
-         VHHbVu/IeVx3NUhasbk2H3yRdKurZ45xvIfqcNO6ZGjIHVIhfcxAdU6HQDTChZX9HwMD
-         vqWg==
+        bh=joD6tkAAQcTQgJl9qnoYjzr5IvpayiN5af3HTOl3TS0=;
+        b=Qhtp9SLw1LEOPkiUxK8F6qCt1vnXW/t2jTIYDDHUwccyFPc5EG84pQOJ8wyQNZHonx
+         SYw357MVzpS2eFmhG76Uh9SmVUULMSa5w1YGfPqFPSP/hSAq0Tz13pa9QUrUkNz+OAtK
+         zowrLOlNNjoHIAi3mhZurTzZl2gQNBhF94yH+1HVHxHhJxlnn149uQtLUH/GzyctR5WE
+         j/YkoEQgeAG76a69RzgXzsfBsH3K/FxGRXTdl96UfjI7UOvxNXW+VN9TbWRIqb+bF7xa
+         RpitLn1AKF39o21E5iY7FU3w0AnYXPMUxZ5HyDDWeaUUUc0SkHDllHA7lz9pC1pwA7GA
+         8i4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724729804; x=1725334604;
-        h=content-transfer-encoding:organization:reply-to:mime-version
-         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Vn0NLpEW1bw02AkAxFS5IlEL/ge7VBPrGJvvCAfuQds=;
-        b=cVHHgaQcfXuW/UqdxEqr3rFMuiSUGfeqU0J63qIOv0BEvSMrIk+o0UchGrHOcEVoHt
-         aG1uD30vHn30YLJ/yboTBgp/R1IrBY+GC1DRSJNVw+YdN1i2w8JUtOC48P77Zq3vf+1/
-         8B49dinXVmqbz/4sDEjcllzLZAjsvt1wE+Nc3V17Lq3dnWJimpYfdEdL5K3/dfVrrSxQ
-         wdKp8AYfxrGjskdLoyjbphX7ocx8BePGdVXL/iYs3ZXUkECShYKkZHJTOHiy1xhMrHxw
-         v1s3PxUW6AqG1QDStSBJ5H3NQF/GRP5Fgfelg71OnF14orQccrStogFb/kqykRtNDp94
-         agFA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9w2T9g0GZo/en0D2hAR0bYo8YjMJne8PFcOIJ5D4x9YpTgl3QMLChCFXv8VKbuOZbmKyxfI5hsk0=@vger.kernel.org, AJvYcCXaZNjURMq8q84R4rtizLNh4lCuu+me3hxEQVMAgnnBXVbVK8JgNmjvtBYCQbUHyeoJrVngnf5TfbD+q3U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKPvGdSVSgGroIcVSyftCKX+PSmUpBXLsZ/Mx4aw/Nn28fHJVk
-	gYqur66y/Vl23wsVuxMeAb6kcr7zIvL66UYmAfNS0rp092akCWTi
-X-Google-Smtp-Source: AGHT+IF0TZOLF1C0ImuoTX6dAmT09pp9NxxO4tGq4K0QSXsUlhCDWz+2GZxDBkSU5ZjTpy6nzB7g0Q==
-X-Received: by 2002:a92:c261:0:b0:39a:ea4c:8c26 with SMTP id e9e14a558f8ab-39e63dd8ee2mr19389265ab.1.1724729803867;
-        Mon, 26 Aug 2024 20:36:43 -0700 (PDT)
-Received: from lenb-intel-nuc8i7hvkva.. (h75-100-80-185.cntcnh.broadband.dynamic.tds.net. [75.100.80.185])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39d73e7c20csm37054335ab.40.2024.08.26.20.36.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 20:36:43 -0700 (PDT)
-Sender: Len Brown <lenb417@gmail.com>
-From: Len Brown <lenb@kernel.org>
-To: rjw@rjwysocki.net
-Cc: linux-acpi@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Len Brown <len.brown@intel.com>,
-	Arjan van de Ven <arjan@linux.intel.com>,
-	Todd Brandt <todd.e.brandt@intel.com>
-Subject: [PATCH] ACPI: Remove msleep() bloat from acpi_os_sleep()
-Date: Mon, 26 Aug 2024 23:35:18 -0400
-Message-ID: <2803b89021f991662b000f50e45dbaebdcca438a.1724729626.git.len.brown@intel.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1724730082; x=1725334882;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=joD6tkAAQcTQgJl9qnoYjzr5IvpayiN5af3HTOl3TS0=;
+        b=mkq9sJlLdNxOW6t+zY08KqxZ8CRPiLMe80GO0I5OSSZJcvr99V697XUAevXzra97Es
+         XJQVMHZEbXE5owqhWj7FdkJ05mr2C0HUpMwdFs9uoX5QyPJZtrAGNtBsLS2f+a7Yk2h8
+         pkOw0D2oPesMlWuCypV0hVlQizTE7nhVyKf81CcxQsr/GgJyxmqYqYq+CSFX8IvDQwGC
+         DgHszHHP9/BD/oDpYRjLTjhxfh6F5N69AGOLBb8L4UgXN8RTQhcWnq8eC304/LvO62gh
+         ETykPb4DNTEbLE2s0XijanKwSn5+fq7udJ/wRmZCUX2fux8vhhyYmsjqfxUYI5dtZKFl
+         ayrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpwCoz+HdLG1tnIo8TsZnZCwqzMBFmCXTPRznhjPe+Pa1Wc3DDSSHrA70LRXP9BtTTRbBvYPK/bcKYUYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzmGndVbGMo2ldAY/8JJPdJ34zWLGQLfc+FWnQZ6HL/7ccXcmR
+	45QsXHd09cdrQ9YMmjprIu6aLS8pGHP53rh63miY1vnyw9ZriSgF4hXAq1PnZUg1anZc+FE4rgm
+	i8GFpC9ROX5zzz7P1zgc1WKHAyU4=
+X-Google-Smtp-Source: AGHT+IGZZmpcl8iQ5yInakpvJVuHhxJT9XUAVmcfTef4cvFxIhLhrvd2v41MpEvIgHfkRMF3WMa5+Wy10x+DRzGCz6c=
+X-Received: by 2002:a17:907:6e90:b0:a86:85eb:bde9 with SMTP id
+ a640c23a62f3a-a86a54a95b5mr1024453866b.50.1724730082097; Mon, 26 Aug 2024
+ 20:41:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Reply-To: Len Brown <lenb@kernel.org>
-Organization: Intel Open Source Technology Center
-Content-Transfer-Encoding: 8bit
+References: <20ed69ad-5dad-446b-9f01-86ad8b1c67fa@huawei.com>
+ <20240815230612.77266-1-21cnbao@gmail.com> <CAMgjq7AeVkmOiVFa4-iP4nbyX3LHft_5wfvV_raj_N+twdzMKQ@mail.gmail.com>
+ <20240816133458.375e19fc36f61c8fd5d64f28@linux-foundation.org>
+In-Reply-To: <20240816133458.375e19fc36f61c8fd5d64f28@linux-foundation.org>
+From: Chuanhua Han <chuanhuahan@gmail.com>
+Date: Tue, 27 Aug 2024 11:41:10 +0800
+Message-ID: <CANzGp4KiQVnYDPO_FtfUFrAi5psqmbN7SY35OgtJWKxMmstNiA@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] mm: support large folios swap-in for zRAM-like devices
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kairui Song <ryncsn@gmail.com>, Barry Song <21cnbao@gmail.com>, wangkefeng.wang@huawei.com, 
+	baolin.wang@linux.alibaba.com, chrisl@kernel.org, david@redhat.com, 
+	hanchuanhua@oppo.com, hannes@cmpxchg.org, hch@infradead.org, hughd@google.com, 
+	kaleshsingh@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	mhocko@suse.com, minchan@kernel.org, nphamcs@gmail.com, ryan.roberts@arm.com, 
+	senozhatsky@chromium.org, shakeel.butt@linux.dev, shy828301@gmail.com, 
+	surenb@google.com, v-songbaohua@oppo.com, willy@infradead.org, 
+	xiang@kernel.org, ying.huang@intel.com, yosryahmed@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Len Brown <len.brown@intel.com>
+Andrew Morton <akpm@linux-foundation.org> =E4=BA=8E2024=E5=B9=B48=E6=9C=881=
+7=E6=97=A5=E5=91=A8=E5=85=AD 04:35=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Sat, 17 Aug 2024 00:50:00 +0800 Kairui Song <ryncsn@gmail.com> wrote:
+>
+> > > --
+> > > 2.34.1
+> > >
+> >
+> > Hi Barry
+> >
+> > After the fix the spamming log is gone, thanks for the fix.
+> >
+>
+> Thanks, I'll drop the v6 series.
+Hi, Andrew
 
-Optimize acpi_os_sleep(ms) using usleep_range(floor, ceiling).
-The floor of the range is the exact requested ms,
-with an additional 1ms of slack for sleeps above 20ms.
+Can you please queue v7 for testing:
+https://lore.kernel.org/linux-mm/20240821074541.516249-1-hanchuanhua@oppo.c=
+om/
 
-This reduces  the kernel resume time of the Dell 9300
-to 1,124 ms from 2,471 ms.
+V7 has addressed all comments regarding the changelog, the subject and
+order-0 charge from Christoph, Kairui and Willy.
+>
 
-The ACPI AML Sleep(ms) method calls acpi_os_sleep(ms),
-which has invoked msleep(ms) since 2013.
 
-But msleep(ms) is based on jiffies, and the rounding-up
-logic to convert to jiffies on a HZ=250 system causes
-msleep(5) to bloat to a minimum of a 12ms delay.
-msleep(5) typically takes over 15ms!
-
-As a result, AML delay loops with small Sleep() inside
-magnify the entire loop.  A particularly painful example
-is ACPI support for powering-on ICL and TGL
-thunderbolt/pcie_ports during system resume.
-
-Regarding jiffy-based msleep() being inexpensive
-and hrtimer-based usleep_range() being expensive.
-ACPI AML timer invocations are rare, and so it
-is unlikely the hrtimer cost will be noticible,
-or even measurable.  At the same time, the msleep()
-timer duration bloat is significant enough to
-be noticed by end users.
-
-Regarding usleep_range() timer coalescing.
-It virtually never works during ACPI flows, which
-commonly run when there are few coalescing
-opportunities. As a result, the timers almost
-always expire at the maximum end of their specified range.
-
-It was tempting to use usleep_range(us, us)
-for all values of us.  But 1 ms is added to the
-range for timers over 20ms on the reasoning that
-the AML Sleep interface has a granularity of 1ms,
-most costly loops use duration under 20ms inside,
-and singular long sleeps are unlitly to notice an
-additiona 1ms, so why not allow some coalescing...
-
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=216263
-Signed-off-by: Len Brown <len.brown@intel.com>
-Suggested-by: Arjan van de Ven <arjan@linux.intel.com>
-Tested-by: Todd Brandt <todd.e.brandt@intel.com>
----
- drivers/acpi/osl.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
-index 70af3fbbebe5..c4c76f86cd7a 100644
---- a/drivers/acpi/osl.c
-+++ b/drivers/acpi/osl.c
-@@ -607,7 +607,13 @@ acpi_status acpi_os_remove_interrupt_handler(u32 gsi, acpi_osd_handler handler)
- 
- void acpi_os_sleep(u64 ms)
- {
--	msleep(ms);
-+	u64 us = ms * 1000;
-+
-+	if (us <= 20000)
-+		usleep_range(us, us);
-+	else
-+		usleep_range(us, us + 1000);
-+
- }
- 
- void acpi_os_stall(u32 us)
--- 
-2.43.0
-
+--=20
+Thanks,
+Chuanhua
 
