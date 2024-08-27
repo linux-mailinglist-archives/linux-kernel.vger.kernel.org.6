@@ -1,190 +1,125 @@
-Return-Path: <linux-kernel+bounces-304066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F005E96196F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:51:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F29961997
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:56:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30020B21CE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:51:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E545D1C23232
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD901D365B;
-	Tue, 27 Aug 2024 21:51:15 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4281D414F;
+	Tue, 27 Aug 2024 21:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EZCKBQqm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E8F13B293
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 21:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024FB1C8FC4
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 21:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724795474; cv=none; b=Xx7gE5IZZt3okkBvs9rdIU5maThxwHHEC2VU2RyOADKb2YGdX5WiKOFw2QBfOgn0oYJHdg+gOnW43Mqtt/o/W5GFpqRpuYzpn21MpaBg9hIE1wIp8XL+ogzreMI+hFCKM4Lx6ZPhot3qZFha3U/v3bXr1wSNqxtHyYBnHmSZwNc=
+	t=1724795807; cv=none; b=YTH6iAvM3zzyho3aKtBAzLXz7Sv7WaAKlU7rnXg/nbDWWHoIFCzzMw1syvIJeQzevx7OrPhdEpgXWPFGhlLF7+eoXmTgE4MUwCJEQXPk9pRz37K/d2uAxd/gFgQCVeBU3l913f68TnkdWOLSHRUUTDEiW1a5t5CPVzqDvb4tNPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724795474; c=relaxed/simple;
-	bh=QJ99Z/hOF+NMBrD7AHcyx395awrT076ifVBo98TdqxM=;
+	s=arc-20240116; t=1724795807; c=relaxed/simple;
+	bh=Nm05BVxBx0NG4rRI2RIppgTXBDC7BT7NMvEIjigWDu4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u38Pk2e8/k/JJbsExUG41eVvpqG4h/IiN2MXZ+a4osKyIhnKR1fFdCAGFO0nHu6Sqq/VYBRKmAKJLEDggfnJX9zbZetDrINv+0Pf4cPzfp4LTdJ7oGqhYf9t0SzEiyibSPr4naHt+pMQMoQykmhk30eWogPvq4MV5BbeALnyT40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1sj45k-00039p-Hm; Tue, 27 Aug 2024 23:51:08 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1sj45k-003WWr-36; Tue, 27 Aug 2024 23:51:08 +0200
-Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1sj45j-0094p7-3C;
-	Tue, 27 Aug 2024 23:51:08 +0200
-Date: Tue, 27 Aug 2024 23:51:07 +0200
-From: Michael Grzeschik <mgr@pengutronix.de>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-kernel@vger.kernel.org,
-	Daniel Scally <dan.scally@ideasonboard.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Avichal Rakesh <arakesh@google.com>, linux-usb@vger.kernel.org,
-	linux-media@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: Mark UVC gadget driver as orphan
-Message-ID: <Zs5KSxkNiFuoTrId@pengutronix.de>
-References: <20240813104447.25821-1-laurent.pinchart@ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HvHUZo2+M3eHKGqFCnquv4Ot+jzRlE5kycGH5bZHOsM2h5G6dSYU8bkgokCu1LpMmFuuH7eMCJrex33uDKx94ft0G143V6iVIL93hANY1Sh+pCH9Okt3QuuLK48Oit7wodbGOrOw83AzfnRIGAGX90zECgHtnykrhGlNOIU1g+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EZCKBQqm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724795803;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tB0rU/7qvWBrZlSRues9tcob65dKQWjgPs7/47JZCEw=;
+	b=EZCKBQqmoaKnN8026MbSzjUQMYWVEnz99g7qHZc5M6BJeXNjwH8GYcCNNNk+7DBhhTF8wI
+	NHUjltWz6XmOqkMpWyLTtksKkI2jpHYdkWH2N5AcoElmtg71AqHDyjVhOf8rifTe+vn8Nl
+	vOE18ok2YHoCFlFzIvzo8sG/UATbOXU=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-457-CB30FGhxMRinfwoHJ8_HaA-1; Tue, 27 Aug 2024 17:56:42 -0400
+X-MC-Unique: CB30FGhxMRinfwoHJ8_HaA-1
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6bf6bcee8ccso74845056d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 14:56:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724795802; x=1725400602;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tB0rU/7qvWBrZlSRues9tcob65dKQWjgPs7/47JZCEw=;
+        b=svt5sbcOprqcwzG5tktuPOtKZ7kL0IiuEd64e3Rhljf5SFTqs1GjWYHm8Eq57NvPBo
+         jMJ04EYnJ44/MYIuJZWjWPBFhk+gP5RaRPlxqrMFD3eXWaj29euHVTeZY7zUKwr/8xDi
+         4to2yRtHnOhmzB8XNhBsCDs8pLGI0ARNrCGVEMkct6NtGuxj/IBoyVAOenrEOruPatgK
+         aDriCgCs7exZbiIrdI8ML2mypztlfnAyBixZzwsXI41fJ4au2yJ0Vfu2uXjdfkcAO937
+         YFboaNRkwYXBVBhoss4j2LwsR2tbQvWvQoo8Ks9DwHsD3IjXoBsk4BB/H9hOkKuoT89C
+         3mxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVUy66l1CTKwNqpJ2S6dxSUvzvaJQ0KqzKOBC9HF1L+tYh0djPVkyABY3mkE5rPIEyw4qZkUr1toX9Wec=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6bZGrEfSR9bKQmpvB3BLgnKd0jOaSjx+Bsckf0HDPpCj94aIG
+	35W3U19HGLSsbqezuD7em2rNWhTRiNJg6g4USig+ktSBp9I3dx2o2y9gffWTtiamhwPfMZmaMbU
+	602oOImB7ALoE0iPYoiC+RPcRM08dLsUEzvNr/zpog493Nas9Z2JimAaN8YTQig==
+X-Received: by 2002:a05:6214:5912:b0:6c1:6c07:800e with SMTP id 6a1803df08f44-6c16dc7caadmr197029916d6.34.1724795801750;
+        Tue, 27 Aug 2024 14:56:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHB7KRLyOvQx92isTrKIn5B9ZPx+rTBZnWrLMmVYDtZtCDv2t0QlXFfy0MKHoSeNwRUe+z2wA==
+X-Received: by 2002:a05:6214:5912:b0:6c1:6c07:800e with SMTP id 6a1803df08f44-6c16dc7caadmr197029776d6.34.1724795801441;
+        Tue, 27 Aug 2024 14:56:41 -0700 (PDT)
+Received: from x1gen2nano ([2600:1700:1ff0:d0e0::33])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c162d75484sm59974846d6.70.2024.08.27.14.56.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 14:56:41 -0700 (PDT)
+Date: Tue, 27 Aug 2024 16:56:39 -0500
+From: Andrew Halaney <ahalaney@redhat.com>
+To: Eric Chanudet <echanude@redhat.com>
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: ti: k3-j784s4-main: align watchdog clocks
+Message-ID: <hqifchzwvzyexlcq6vfhlnrp3sixkgk23vau6o46k6einn5vee@gj5a53ee2gsi>
+References: <20240805174330.2132717-2-echanude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7/l6Kwp3E/JabG5g"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240813104447.25821-1-laurent.pinchart@ideasonboard.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mgr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20240805174330.2132717-2-echanude@redhat.com>
 
+On Mon, Aug 05, 2024 at 01:42:51PM GMT, Eric Chanudet wrote:
+> assigned-clock sets DEV_RTIx_RTI_CLK(id:0) whereas clocks sets
+> DEV_RTIx_RTI_CLK_PARENT_GLUELOGIC_HFOSC0_CLKOUT(id:1)[1]. This does not
+> look right, the timers in the driver assume a max frequency of 32kHz for
+> the heartbeat (HFOSC0 is 19.2MHz on j784s4-evm).
+> 
+> With this change, WDIOC_GETTIMELEFT return coherent time left
+> (DEFAULT_HEARTBEAT=60, reports 60s upon opening the cdev).
+> 
+> [1] http://downloads.ti.com/tisci/esd/latest/5_soc_doc/j784s4/clocks.html#clocks-for-rti0-device
+> 
+> Fixes: caae599de8c6 ("arm64: dts: ti: k3-j784s4-main: Add the main domain watchdog instances")
+> Suggested-by: Andrew Halaney <ahalaney@redhat.com>
+> Signed-off-by: Eric Chanudet <echanude@redhat.com>
 
---7/l6Kwp3E/JabG5g
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Tested-by: Andrew Halaney <ahalaney@redhat.com>
 
-On Tue, Aug 13, 2024 at 01:44:47PM +0300, Laurent Pinchart wrote:
->I haven't had time to maintain the UVC gadget driver for a long while.
->Dan Scally confirmed he is also in a similar -ENOTIME situation with no
->short term hope of fixing that. Being listed as maintainers doesn't help
->progress, so mark the driver as orphan to reflect the current state.
->
->Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->---
->Dan, could you please ack this patch ?
->
->Michael, feel free to take over if you want. You have been active on the
->code base recently, so that makes you the best candidate, even if I
->disagree with most of your technical decisions. I'm a bit sad to leave a
->driver I cared about without trust in its future, hopefully the future
->will prove I was wrong.
+As mentioned throughout the other thread, you need the r5 u-boot build to
+configure the ESMs and the PMIC properly to get the board to actually
+reset (not in upstream u-boot at the moment).
 
-This is really sad to hear. For now I will not take over maintenance
-since I for myself am unsure about the time that will be available in
-the future for this project.
+This patch fixes the watchdog itself though, prior timeleft was
+bogus etc but with this patch it starts at 60 sec (default) and reboots
+when we hit 0.
 
-I understand that the path that I took to get the uvc driver working is
-not to your liking. Although we did never had some proper discussion how
-to tackle the obstacles that are obviously in the way since you know the
-spec better.
-
-For now the users are stuck to the v4l2sink backend which highly depends
-on the v4l2 ioctls. But as long we can not properly tell the OS that
-this is an limited v4l2 device which mostly using the vb2 api to share
-buffer data, it seems legit to just implement these callbacks and use
-them. Your mentioned "doubtful" progress which is not as invasive IMHO.
-
-However regarding the uvc-gadget project I think it still is the way
-to go and should be used to implement the state and workflow of e.g. the
-uvcsink gstreamer element and other applications wanting to stream via
-the uvc gadget.
-
-I for now am happy that the code is working smooth enough to properly
-fill the video pipeline. While only implementing parts of the uvc spec
-for now.
-
-So the next steps from my POV would be to rework the uvcsink to use the
-libusbgadget instead of the v4l2sink defaults and implement all missing
-parts that are currently working in the libusbgadget so it will be an
-drop in replacement.
-
-Parallel to that it should be clear what parts of the v4l2 framework
-are really necessary and we could think of some kind of flag to tell the
-userspace that this device is limited so that e.g. v4l2-compliance
-would not even worry testing it. And with that the implemented callbacks
-that will then not be needed anymore can be safely removed.
+Still an open question about the ESM(s) and their relationship with the
+PMIC, but that's an entirely independent subject to this fix.
 
 Thanks,
-Michael
+Andrew
 
->---
-> MAINTAINERS | 4 +---
-> 1 file changed, 1 insertion(+), 3 deletions(-)
->
->diff --git a/MAINTAINERS b/MAINTAINERS
->index 8766f3e5e87e..e6df197f1a58 100644
->--- a/MAINTAINERS
->+++ b/MAINTAINERS
->@@ -23819,10 +23819,8 @@ F:	drivers/media/usb/uvc/
-> F:	include/uapi/linux/uvcvideo.h
->
-> USB WEBCAM GADGET
->-M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->-M:	Daniel Scally <dan.scally@ideasonboard.com>
-> L:	linux-usb@vger.kernel.org
->-S:	Maintained
->+S:	Orphan
-> F:	drivers/usb/gadget/function/*uvc*
-> F:	drivers/usb/gadget/legacy/webcam.c
-> F:	include/uapi/linux/usb/g_uvc.h
->
->--=20
->Regards,
->
->Laurent Pinchart
->
->
-
---=20
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
---7/l6Kwp3E/JabG5g
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAmbOSkkACgkQC+njFXoe
-LGSGow/8DG9t6VpoP2vTXIwkw0kTtJmIQqbR5gIDYK5qxjfkjYwDiNtJ3OhNFCPt
-ddHzGW8iojihSx/aBl0BnNXdbzFodCOMA9sI4XQwA6Jh5NudGN7eoc6lip2NSCMF
-7HVg+41h9ruaEa8FrzeMZ2dhr/hjUFlTvK8jxmQJNyvRexZ/ypieEcWqt0fXTjlC
-fPLdacfPxWSnse5IJWq3bb9eI+Rq+q9ZIOwFvN9SYYLpIET0+ONU+RSDTxHIM4Hv
-GRzRacR0pJuTxiJ7O+0hAh5PwQP2TXEhMlEwhU3Ws6161ktTWtwgYRI5ixZQrfb4
-KdeFjsdaP9A9yE85dJDxxkrngaAVTAcUX93V++3ROqUIhUfrKjCC5dDCQ/69Vs2G
-Sj8qsWMBgnHnyS5uTsQKiFdGoqVCmdjOe7wQptQgNa1isxzuaTqizSzEUmHEx69G
-mDXT7cAMFGp+luxak75Y2LBtozjve6NCP84HuVshZe/cOxoAI4alXTb0BgI+Sssq
-v1aPI4Sg7LnW2Lr6+eTeHxqkbEwyCeDVEDbWdToq1AIyuMb8lEu9wzq2qmhcUjK0
-7PoPgY4/D6KG2qTr0bWrdH/r2qHZ3hDVrej5mIkg8BJXQasFHPE03r7I/I0Hmv5i
-OgjaI9BqSogtDn23y18gY8xoxW+GZd+3rFnbwzx25aFjSLYb86Q=
-=kqdW
------END PGP SIGNATURE-----
-
---7/l6Kwp3E/JabG5g--
 
