@@ -1,215 +1,142 @@
-Return-Path: <linux-kernel+bounces-303987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C786C961812
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:35:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD44896181F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0CA81C20D5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:35:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 847A3285521
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC9F21D31A8;
-	Tue, 27 Aug 2024 19:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF0F1D31A8;
+	Tue, 27 Aug 2024 19:39:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="y2vkfZVh"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f5qitW3p"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62D51C6F56
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 19:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0EC156250
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 19:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724787347; cv=none; b=Sxl2/zqt9SNs9TM8Kj6kAjKngYToSXjzZdmUUlJ2vqjqlrCkFGtmcMrAR12DncLAqZk+chdVLVoGZq9BoOjugpzfOSpaQHEMHKe+knXNmBeXi4UQYulHSX9Nufgf6h/NPq95QgO34WqFpJCa5MdcsNYMdJbk3wSr1sAnltbLcPM=
+	t=1724787546; cv=none; b=c3tIMGuiprPxTrI4FjecqC/D401l7mhH1mq67bCg6IN3jroDz/4bTAVyutkdyZePJ/IlkFwYFlRrgWyyJF60INjHUK8RDPhllduoOYjNBXbRaLK3wtfO6WUNKyzWFeN95HQbpwzAaQFB+FkOvsdlS/hdR7XoEcuYcj9vFd6J1fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724787347; c=relaxed/simple;
-	bh=C126ECeOuuPRfMcmLSKPSR0Cb9OCBXW6FN9t9Wdlg/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fp2BgEZUSnKy9SPeL4/Q/UJeDYtR6xeoEPVoUUnXEjY9UIFqEhLy50vkgHQ/yj+7iIFtqiE2QT3hgYS90XWfcpV31W1X/PVyZCqXhseMWDimMrBE+Ntit9Kzrr3a2FqF4PlbU1K8+IDyfIhDDAtTspPV8GcvQsFAxJ6bZyIRb1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=y2vkfZVh; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-204eebfaebdso5184995ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:35:45 -0700 (PDT)
+	s=arc-20240116; t=1724787546; c=relaxed/simple;
+	bh=K8CboGhZ9yuHVLKmofbIAcIxBqnTTRvLVVlSNw+SQII=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=akPT8s0TaragFQCdjNo3/J2fpTZVkSR8L90h25K1KVRljNgtuYr87a5ipY84boXNyH0S8uYOziDQLy2vn0ucIJvCQcJnY5VEn/a+Q6Uzp6EM55ADOwUmapN1jHR9H+EH2rrJ0z5Av3AK3oHCsoAY6ZSoGnUfJ3eXT1V++m7jiiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f5qitW3p; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20219a0fe4dso58856675ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:39:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1724787345; x=1725392145; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rFPAN19RA1hvKHrQkmp/NKYMnPJaVA3/YimxO7ZXHeE=;
-        b=y2vkfZVh8tT8eJQomtPKoMUAtv4d0kAm4LVpbMXI7D/TeeHM9PrY0lo3S/xdW6JZOr
-         4ilri21jd4o9tl5Ssbx/x+tDhHhi5E2sptp32cYSfc2/nk6XOqJdVyNCCSfx+9Xkx2jk
-         OM4wrDpjyY2dmyC5OnkXSQIVTsrhBMSANF4lARTDaOSL1SWCLH3Z5KB1wG68ATciCgRO
-         bP0hjNSaUPnSFLVEqXGI1sVwLT/+dzmmM4H27+wM2UVaxZJEPUOW4SAAwrA/LJdVg9gJ
-         tuYvjvs3n43XlDQKPl64CcXoIRLaW3qh1YU+pbaTS2Kuar5E59jcHQocLNL6UIM6t0Ts
-         ae3g==
+        d=gmail.com; s=20230601; t=1724787544; x=1725392344; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+FO60D97gOOTFkiNBFEwFM23LWZ49voULeyhtmHM4mI=;
+        b=f5qitW3pSVHn8b1Qs2WA+Ruv0zx9PEu/Q2A0y0SRhFEHeGJDtrQxQwDnjttves6t1A
+         K6g5VDGDmWHH/s+gZ861Usycquv23zJeV87PlF+6vv4F2ZrRZsbVMGtyDY35TAUvWbz8
+         3jwxpiczgahUcMkS9WhLfZmCbXiga+UfQMgSFraJKyVkXaDNqTJm4Hs2VWS6W0zyiJLt
+         XSQ0Hs8UJBTfd1VMiaXLqjkPIiOj9S9IBzCde1q01FXjMC5s2dPhAc8E0CPWC641Mkxt
+         wUIujKh5Uv2W+PiuSAn0tCNhf54M4wO0MhXsmbDaG73U5qk8QNrvgRgiV+5RmU4VxIPe
+         fPfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724787345; x=1725392145;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rFPAN19RA1hvKHrQkmp/NKYMnPJaVA3/YimxO7ZXHeE=;
-        b=bddBtw85tMrCl2cmFf9nN+mBc5rSr6kHzCqyhjPzXgqPVUHUAd91Y52jYZvOqb+JV0
-         VMoCg4haZblWUHBycvr+4+OjapILZF9wDYM2CXGDNuZdIkVR4FLcbt790EIGGx1Z+PjZ
-         +W/W/5L/3CCixKYa+00v//e6JkgcQYsSvp19buw0rHYTxjiUzViyImn6b589LTUrIfyz
-         h/4OGpGNpyf89hs5fqAjl9/6o7F29TPbuJFGrzBjaSqKqjTliJabjCBNPBnOTzVJitWA
-         5qDP2l1tY6Gkak4KRU6V6Ez5asOdI+g83QRt6UNeP+ZnhkdGkG0yj+K+6t2s1Ivso/1I
-         3dqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVCQbC0Hv4gGyHTerLH1ImFZ5XGXEML6GzLfIt7L3fa3LrRRH/brn7nwK60+G5T85sl0jTdhf149R66bkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymejPlmGCTkHRmYmFmSNAn+/F5PbU+muNAbpiZ3aUNDx7CB2Xo
-	3FXfYPmCo40XMRKLQjszFSWVgd6mjI0rtt19ADLgAhnI5TuAP2LT54HrpuGht3Q=
-X-Google-Smtp-Source: AGHT+IGCXPfghiRA1yNRvhmr+OG3R75Wa/zdLSP/YBTbifITsP8BB2EzUmqixr8vg7m1QBie0YNejQ==
-X-Received: by 2002:a17:903:22cb:b0:203:a034:c2e with SMTP id d9443c01a7336-203a0340c9cmr162046725ad.21.1724787344884;
-        Tue, 27 Aug 2024 12:35:44 -0700 (PDT)
-Received: from ghost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385581165sm87277375ad.88.2024.08.27.12.35.43
+        d=1e100.net; s=20230601; t=1724787544; x=1725392344;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+FO60D97gOOTFkiNBFEwFM23LWZ49voULeyhtmHM4mI=;
+        b=G1hj7pPhXC4sO0J4SQB89cffJ5DNB9mBxYELjNiaD83S1Ea8hURYgafvHUIZUqVKx9
+         p/K6RTCoJjvvMXbT/drXgKMCjzxCvP/a0TH0aSzPZg0ltROwo6lxNKPE5zCii65x+vxL
+         ebHr/LCQ0krtYbUB9YKEPsLC06sYlZaja277KOdhlp0FVaP/qK55BLS4MRShbFLpn8Xo
+         sKjq9FxJ9RmO7KFFg2fe5L8v6EuGHwxWDkW61lQJ6yvKUR9d8+GR8HjOcTNZGsV1Qb8H
+         hf2rkcz3CJ7fmONnvdTeuX9CTgtPVUfcFiOME2Nn0GmrVbPA6D/NA5TeDpGDW0j71JHw
+         gxuQ==
+X-Gm-Message-State: AOJu0YzfPKFFw++RyPI76KABUnbhGdHw5PGKNkUDvGPgmAqBfzp1rjku
+	xnBlgLHDjU3kc0IiSrl7ue1s37J1Fin7wT3B/DlnXLNigsj/d3g0
+X-Google-Smtp-Source: AGHT+IEdEo2C9MvAOXeKpa4R856afyBQRZuuGy0ZLczYjfA2hA/JnYu0nffVw179cBCBJKJWkDHbWA==
+X-Received: by 2002:a17:902:c401:b0:203:a0ea:6266 with SMTP id d9443c01a7336-203a0ea6d13mr140108005ad.12.1724787544151;
+        Tue, 27 Aug 2024 12:39:04 -0700 (PDT)
+Received: from fedora.. ([2409:40d0:3a:e5b4:1c14:bc7d:2dd8:f670])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385609a88sm86687205ad.208.2024.08.27.12.39.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 12:35:44 -0700 (PDT)
-Date: Tue, 27 Aug 2024 12:35:41 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Yangyu Chen <cyy@cyyself.name>
-Cc: Palmer Dabbelt <palmer@rivosinc.com>, linux-riscv@lists.infradead.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Shuah Khan <shuah@kernel.org>,
-	Levi Zim <rsworktech@outlook.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>, linux-doc@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] RISC-V: mm: do not treat hint addr on mmap as the
- upper bound to search
-Message-ID: <Zs4qjejI2PzLrI5M@ghost>
-References: <tencent_108260B43689E30AAE5D0C7C085AA31ADF06@qq.com>
- <mhng-a7dcdfb5-0232-4ffb-8a20-13e564904da1@palmer-ri-x1c9a>
- <Zs4BhmB4xOF4LOH9@ghost>
- <tencent_595F628A43601A53F8E00461B5FB1CEB7009@qq.com>
+        Tue, 27 Aug 2024 12:39:03 -0700 (PDT)
+From: Riyan Dhiman <riyandhiman14@gmail.com>
+To: sudipm.mukherjee@gmail.com,
+	teddy.wang@siliconmotion.com,
+	gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	Riyan Dhiman <riyandhiman14@gmail.com>
+Subject: [PATCH] staging: sm750fb: fix checkpatch warning architecture specific defines should be avoided
+Date: Wed, 28 Aug 2024 01:06:37 +0530
+Message-ID: <20240827193634.3291-4-riyandhiman14@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_595F628A43601A53F8E00461B5FB1CEB7009@qq.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 28, 2024 at 02:04:29AM +0800, Yangyu Chen wrote:
-> 
-> 
-> > On Aug 28, 2024, at 00:40, Charlie Jenkins <charlie@rivosinc.com> wrote:
-> > 
-> > On Tue, Aug 27, 2024 at 09:33:11AM -0700, Palmer Dabbelt wrote:
-> >> On Tue, 27 Aug 2024 01:05:15 PDT (-0700), cyy@cyyself.name wrote:
-> >>> Previous patch series[1][2] changes a mmap behavior that treats the hint
-> >>> address as the upper bound of the mmap address range. The motivation of the
-> >>> previous patch series is that some user space software may assume 48-bit
-> >>> address space and use higher bits to encode some information, which may
-> >>> collide with large virtual address space mmap may return. However, to make
-> >>> sv48 by default, we don't need to change the meaning of the hint address on
-> >>> mmap as the upper bound of the mmap address range. This behavior breaks
-> >>> some user space software like Chromium that gets ENOMEM error when the hint
-> >>> address + size is not big enough, as specified in [3].
-> >>> 
-> >>> Other ISAs with larger than 48-bit virtual address space like x86, arm64,
-> >>> and powerpc do not have this special mmap behavior on hint address. They
-> >>> all just make 48-bit / 47-bit virtual address space by default, and if a
-> >>> user space software wants to large virtual address space, it only need to
-> >>> specify a hint address larger than 48-bit / 47-bit.
-> >>> 
-> >>> Thus, this patch series change mmap to use sv48 by default but does not
-> >>> treat the hint address as the upper bound of the mmap address range. After
-> >>> this patch, the behavior of mmap will align with existing behavior on other
-> >>> ISAs with larger than 48-bit virtual address space like x86, arm64, and
-> >>> powerpc. The user space software will no longer need to rewrite their code
-> >>> to fit with this special mmap behavior only on RISC-V.
-> >> 
-> >> So it actually looks like we just screwed up the original version of this:
-> >> the reason we went with the more complicated address splits were than we
-> >> actually started with a defacto 39-bit page table uABI (ie 38-bit user VAs),
-> >> and moving to even 48-bit page tables (ie, 47-bit user VAs) broke users
-> >> (here's an ASAN bug, for example:
-> >> https://github.com/google/android-riscv64/issues/64).
-> >> 
-> >> Unless I'm missing something, though, the code doesn't actually do that.  I
-> >> remember having that discussion at some point, but I must have forgotten to
-> >> make sure it worked.  As far as I can tell we've just moved to the 48-bit
-> >> VAs by default, which breaks the whole point of doing the compatibilty
-> >> stuff.  Probably a good sign I need to pay more attention to this stuff.
-> >> 
-> >> So I'm not really sure what to do here: we can just copy the arm64 behavior
-> >> at tell the other users that's just how things work, but then we're just
-> >> pushing around breakages.  At a certain point all we can really do with this
-> >> hint stuff is push around problems, though, and at least if we copy arm64
-> >> then most of those problems get reported as bugs for us.
-> > 
-> > Relying on the hint address in any capacity will push around breakages
-> > is my perspective as well. I messed this up from the start. I believe
-> > the only way to have consistent behavior is to mark mmap relying on the
-> > hint address as a bug, and only rely on the hint address if a flag
-> > defines the behavior.
-> > 
-> 
-> I agree with this. However, since we already have this behavior on
-> x86 and aarch64 for quite a long time, to prevent breaking userspace,
-> I think we can use this patch and then add a flag like MAP_VA_FULL
-> to enable full va address in the future.
+Abstract out x86-specific code in ddk750_init_hw() to improve
+portability and adhere to kernel coding standards. Replaces
+architecture-specific defines with CONFIG_X86 checks.
 
-Since riscv is not x86 or aarch64, we should be able to make decisions
-that are best for riscv regardless of if it is identical to how it is
-implemented in x86 or aarch64.
+Fixes checkpatch warning:
+- CHECK: architecture specific defines should be avoided.
 
-- Charlie
+Changes made:
+- Create a new function sm750le_set_graphic_mode to encapsulate architecture
+specifc behaviour.
+- Using CONFIG_X86 instead of i386 and x86.
+- Added placeholder for non-x86 architectures in sm750le_set_graphic_mode
+function.
 
-> 
-> Thanks,
-> Yangyu Chen
-> 
-> > There is an awkward window of releases that will have this "buggy"
-> > behavior. However, since the mmap changes introduced a variety of
-> > userspace bugs it seems acceptable to revert to the previous behavior
-> > and to create a consistent path forward.
-> > 
-> > - Charlie
-> > 
-> >> 
-> >>> Note: Charlie also created another series [4] to completely remove the
-> >>> arch_get_mmap_end and arch_get_mmap_base behavior based on the hint address
-> >>> and size. However, this will cause programs like Go and Java, which need to
-> >>> store information in the higher bits of the pointer, to fail on Sv57
-> >>> machines.
-> >>> 
-> >>> Changes in v3:
-> >>> - Rebase to newest master
-> >>> - Changes some information in cover letter after patchset [2]
-> >>> - Use patch [5] to patch selftests
-> >>> - Link to v2: https://lore.kernel.org/linux-riscv/tencent_B2D0435BC011135736262764B511994F4805@qq.com/
-> >>> 
-> >>> Changes in v2:
-> >>> - correct arch_get_mmap_end and arch_get_mmap_base
-> >>> - Add description in documentation about mmap behavior on kernel v6.6-6.7.
-> >>> - Improve commit message and cover letter
-> >>> - Rebase to newest riscv/for-next branch
-> >>> - Link to v1: https://lore.kernel.org/linux-riscv/tencent_F3B3B5AB1C9D704763CA423E1A41F8BE0509@qq.com/
-> >>> 
-> >>> [1] https://lore.kernel.org/linux-riscv/20230809232218.849726-1-charlie@rivosinc.com/
-> >>> [2] https://lore.kernel.org/linux-riscv/20240130-use_mmap_hint_address-v3-0-8a655cfa8bcb@rivosinc.com/
-> >>> [3] https://lore.kernel.org/linux-riscv/MEYP282MB2312A08FF95D44014AB78411C68D2@MEYP282MB2312.AUSP282.PROD.OUTLOOK.COM/
-> >>> [4] https://lore.kernel.org/linux-riscv/20240826-riscv_mmap-v1-0-cd8962afe47f@rivosinc.com/
-> >>> [5] https://lore.kernel.org/linux-riscv/20240826-riscv_mmap-v1-2-cd8962afe47f@rivosinc.com/
-> >>> 
-> >>> Charlie Jenkins (1):
-> >>>  riscv: selftests: Remove mmap hint address checks
-> >>> 
-> >>> Yangyu Chen (2):
-> >>>  RISC-V: mm: not use hint addr as upper bound
-> >>>  Documentation: riscv: correct sv57 kernel behavior
-> >>> 
-> >>> Documentation/arch/riscv/vm-layout.rst        | 43 ++++++++----
-> >>> arch/riscv/include/asm/processor.h            | 20 ++----
-> >>> .../selftests/riscv/mm/mmap_bottomup.c        |  2 -
-> >>> .../testing/selftests/riscv/mm/mmap_default.c |  2 -
-> >>> tools/testing/selftests/riscv/mm/mmap_test.h  | 67 -------------------
-> >>> 5 files changed, 36 insertions(+), 98 deletions(-)
-> 
-> 
+Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
+---
+ drivers/staging/sm750fb/ddk750_chip.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/staging/sm750fb/ddk750_chip.c b/drivers/staging/sm750fb/ddk750_chip.c
+index 02860d3ec365..23196070bceb 100644
+--- a/drivers/staging/sm750fb/ddk750_chip.c
++++ b/drivers/staging/sm750fb/ddk750_chip.c
+@@ -210,6 +210,17 @@ unsigned int ddk750_get_vm_size(void)
+ 	return data;
+ }
+ 
++static void sm750le_set_graphic_mode(void)
++{
++#ifdef CONFIG_X86
++	outb_p(0x88, 0x3d4);
++	outb_p(0x06, 0x3d5);
++#else
++	/* Implement an alternative method for non-x86 architectures */
++	/* This might involve memory-mapped I/O or other chip-specific methods */
++#endif
++}
++
+ int ddk750_init_hw(struct initchip_param *p_init_param)
+ {
+ 	unsigned int reg;
+@@ -229,11 +240,7 @@ int ddk750_init_hw(struct initchip_param *p_init_param)
+ 		reg |= (VGA_CONFIGURATION_PLL | VGA_CONFIGURATION_MODE);
+ 		poke32(VGA_CONFIGURATION, reg);
+ 	} else {
+-#if defined(__i386__) || defined(__x86_64__)
+-		/* set graphic mode via IO method */
+-		outb_p(0x88, 0x3d4);
+-		outb_p(0x06, 0x3d5);
+-#endif
++		sm750le_set_graphic_mode();
+ 	}
+ 
+ 	/* Set the Main Chip Clock */
+-- 
+2.46.0
+
 
