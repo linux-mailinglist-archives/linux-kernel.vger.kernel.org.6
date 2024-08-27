@@ -1,135 +1,169 @@
-Return-Path: <linux-kernel+bounces-303315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1665960A9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:38:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB81A960AA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:39:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31A5B28293E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:38:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 844A3282057
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE61A1BBBF9;
-	Tue, 27 Aug 2024 12:38:04 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA4D1BB6A9;
+	Tue, 27 Aug 2024 12:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YnAqAc2J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D749C19DF60
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC59219D8A9;
+	Tue, 27 Aug 2024 12:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724762284; cv=none; b=S33Baj+JK7iWN3kY7vGjwyM/lV0DGWrlG4SURPYiv5azweiAdvM6HxjgeM1pOdjJD33IdzvStwL03BbQILWllrBVBX95nl5UyIQdM6oPvSCNT4vqjdXvgEmp2fBKoFnenOzp1DlWWF5KkkF32B8f1ykrB/HmzyY5s8hX0LnVZrQ=
+	t=1724762332; cv=none; b=E+i5JHYtOLsSB+zhc6F9bCwNTn8wqiils7cZJmHU92tXsTYcySRmWFnCcJ6Qf1tNVEFvMHcV6jbrPW+3+1LpVOosRq9myp9Wc3013WxFoSyb0oJhmNDMg+RXRuoUJNLP62fzAq921uEh24Z5vHqSmk+e81rVVw5MDlXsuiXnRTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724762284; c=relaxed/simple;
-	bh=PneBBWaY0SjtyPv/fNcyaurRkY5sx0Vclmfxtzmjlvg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=PvZdt3Nf/X+Cb3kLdBGMsgsFEbiN5OrVIw+kzwFRhvqBhQI+DaUF9J5j95U8QzitLza11fAFOr2628XUnd++MQFUZP+olVdjc+bg5jVZuKlygDEmzz0p9hq63fvOFWC5+n0+BHbBNnAN+t9cVF1BM495VJoIxcuvpXKzyxG+YZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-827878b9901so364374039f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 05:38:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724762282; x=1725367082;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CfQ2CgWV47HDV4GkEW+OxKq3IqX2dW3HcTDz2QDznTM=;
-        b=NxyXId6/bccJGEXFWmn7oeH1ikZoLJm3lWCnSw0L9l4GAtQ9eH4XusQOGO8WvBQaTq
-         xemuRGRWDGXDVmNIWUszcQv5i91U3G7eDItixOyrg09cXVGDQtCI2mAsL3mlv3F78Zqf
-         dCTLNRuUGlgfienDlgKNbsy21S5VSZLhELYQ8UPJcPF1EtinlP0+NSEL0i7bDVCnIwc2
-         Q8ETD1GfEdTe25oXtZZ0dXu2JIm7s/vs0N43i5mV83XxCfn0Y1pPRDvvEmYgWVVkWnZL
-         VTY6EFSrg7tDYpjzJNjr50W23pdhz9HWpWyTLLeZUgkmSwsmnDlJy6DnDBAYqWuJESi+
-         xUQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgaznysCDOLN+uJM1B4DU/i5qBPIz+tg+Ez4sxdg9mKOuY0hnsmx7tBQY5GXPT5w8WABYfCZ/MAkAvTiY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt1pef3wXNBb3oxu4yEZrYSPvjkcT8kfZnAobvSu1nGCtp9lmB
-	e4FJffT4JnrjbzD2yqJcXRu3V5iSobZhfBvBvbXrYZG+lQUe7nA5XFTY+Mww9gXyjUflwLIqJ+q
-	Q5Bmga0U03VawGIQRf/i56YICTmYm2RFNJ/GHR1zzSLoK1KL2tlRxdJk=
-X-Google-Smtp-Source: AGHT+IG+xxzMobc+xtKYrfH8fdxyx/EEiozghUn4UEmJywnZpi7IEKNYeU34TiR52ffvh5hl0mxpdeWRMCFgpwzAKzAMRMWvM38e
+	s=arc-20240116; t=1724762332; c=relaxed/simple;
+	bh=Y6HMPAXXo/K/atzBI+CujqrAmxHagHGg4R2F2TLKM+c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YYzln6Lt+/iWxnFc5/X0h1sXqD7bVSnC2FO9u0ae0kXBTOJabt6W4G+grS6mipbVRei6oHI6tx2v+eTzbslIaS2SZJn+hvrdZ/PWnKnbiN3ZYyjgMCPCnYDS5gI1rQ3UTDV21VsJf9uWqxqK49dRESuQ1xyz5V3asq073+Ny+2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YnAqAc2J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33B84C4DDFB;
+	Tue, 27 Aug 2024 12:38:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724762332;
+	bh=Y6HMPAXXo/K/atzBI+CujqrAmxHagHGg4R2F2TLKM+c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YnAqAc2JAxiaALf01Iyg+PS/dwkgiPYYNb18zsC2pn/qu5GwIHdPJ1dQVNGMm/qls
+	 64Yoz0lxCg8+CSHgAEBlSA86kyyc4PWwkU9ciMjuumP3UFiKLaEevBC0QISi3z9Qzq
+	 pvqi9PPEwrqz67JQ8N3HsvM5TvjZcymkKpT2gFdwqYqTLY1B6Y4eg0D/ss9ALze96A
+	 0F57oLqlyJa1H0Sye/4rI4O59NmN5bDYEF940Kb0wfaW/442JwA3RKu3LHCKnkcDb8
+	 Ci6PlCh+6C26K0EOG0Qy0c65+GwbXf2nwbJOkLW1zkjck5rlWizYwhPEo+rO6Gcp4H
+	 6AOLB3rJTQapg==
+Message-ID: <9c032005-556d-4466-beff-9e9c3ca60aa1@kernel.org>
+Date: Tue, 27 Aug 2024 14:38:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:13c3:b0:4ce:8f9d:2c31 with SMTP id
- 8926c6da1cb9f-4ceb4d43fa1mr160147173.0.1724762281987; Tue, 27 Aug 2024
- 05:38:01 -0700 (PDT)
-Date: Tue, 27 Aug 2024 05:38:01 -0700
-In-Reply-To: <CANp29Y4JzKFbDiCoYykH1zO1xxeG8MNCtNZO8aXV47JdLF6UXw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000023e3760620a98329@google.com>
-Subject: Re: [syzbot] [iomap?] [xfs?] WARNING in iomap_write_begin
-From: syzbot <syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com>
-To: brauner@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, 
-	hch@infradead.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, nogikh@google.com, 
-	sunjunchao2870@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dts: nxp: mxs: Update device tree description for LWE
+ imx28 based devices
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240827084255.2120864-1-lukma@denx.de>
+ <737edb34-688d-4800-bb50-2374ac94ac75@kernel.org>
+ <20240827142608.36961a3d@wsk>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240827142608.36961a3d@wsk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 27/08/2024 14:26, Lukasz Majewski wrote:
+>>>  
+>>> -			partition@100000 {
+>>> -				label = "kernel";
+>>> -				reg = <0x100000 0x400000>;
+>>> +			partition@3 {  
+>>
+>> This does not look right. It is neither explained in commit msg, nor
+>> matching reg.
+> 
+> The SPI-NOR memory layout has evolved during time lifetime of the
+> device - for example special partitions to keep track of booted devices
+> for A/B booting scheme was added.
+> 
+>>
+>> It does not look like you tested the DTS against bindings. Please run
+>> `make dtbs_check W=1` (see
+>> Documentation/devicetree/bindings/writing-schema.rst or
+>> https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+>> for instructions).
+> 
+> Could you be more specific here?
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in iomap_write_begin
+The @3 does not match "reg" as I wrote above. reg property and unit
+address should match.
 
-XFS (loop0): Mounting V5 Filesystem bfdc47fc-10d8-4eed-a562-11a831b3f791
-XFS (loop0): Ending clean mount
-XFS (loop0): Quotacheck needed: Please wait.
-XFS (loop0): Quotacheck: Done.
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6042 at fs/iomap/buffered-io.c:727 __iomap_write_begin fs/iomap/buffered-io.c:727 [inline]
-WARNING: CPU: 0 PID: 6042 at fs/iomap/buffered-io.c:727 iomap_write_begin+0x13f0/0x16f0 fs/iomap/buffered-io.c:830
-Modules linked in:
-CPU: 0 UID: 0 PID: 6042 Comm: syz.0.15 Not tainted 6.11.0-rc5-syzkaller-00015-g3e9bff3bbe13 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:__iomap_write_begin fs/iomap/buffered-io.c:727 [inline]
-RIP: 0010:iomap_write_begin+0x13f0/0x16f0 fs/iomap/buffered-io.c:830
-Code: b6 0d 01 90 48 c7 c7 e0 53 fa 8b e8 da 10 2b ff 90 0f 0b 90 90 e9 74 ef ff ff e8 eb ec 68 ff e9 4b f6 ff ff e8 e1 ec 68 ff 90 <0f> 0b 90 bb fb ff ff ff e9 e9 fe ff ff e8 ce ec 68 ff 90 0f 0b 90
-RSP: 0018:ffffc9000315f7c0 EFLAGS: 00010293
-RAX: ffffffff822a9ebf RBX: 0000000000000080 RCX: ffff88801ff39e00
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 0000000000000000
-RBP: ffffc9000315fa50 R08: ffffffff822a9bc4 R09: 1ffff1100c1a82f9
-R10: dffffc0000000000 R11: ffffed100c1a82fa R12: ffffc9000315f9b0
-R13: ffffc9000315fbf0 R14: ffffc9000315f990 R15: 0000000000000800
-FS:  00007f572bb8f6c0(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020001000 CR3: 0000000020098000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- iomap_unshare_iter fs/iomap/buffered-io.c:1351 [inline]
- iomap_file_unshare+0x460/0x780 fs/iomap/buffered-io.c:1391
- xfs_reflink_unshare+0x173/0x5f0 fs/xfs/xfs_reflink.c:1681
- xfs_file_fallocate+0x6be/0xa50 fs/xfs/xfs_file.c:997
- vfs_fallocate+0x553/0x6c0 fs/open.c:334
- ksys_fallocate fs/open.c:357 [inline]
- __do_sys_fallocate fs/open.c:365 [inline]
- __se_sys_fallocate fs/open.c:363 [inline]
- __x64_sys_fallocate+0xbd/0x110 fs/open.c:363
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f572ad779f9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f572bb8f038 EFLAGS: 00000246 ORIG_RAX: 000000000000011d
-RAX: ffffffffffffffda RBX: 00007f572af05f80 RCX: 00007f572ad779f9
-RDX: 0000000000000000 RSI: 0000000000000040 RDI: 0000000000000006
-RBP: 00007f572ade58ee R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000002000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f572af05f80 R15: 00007fff39de1648
- </TASK>
+> 
+> For example:
+> CROSS_COMPILE="*-gcc" ARCH=arm make -j4 dtbs_check W=1
+> 
+> Show:
+> arch/arm/boot/dts/nxp/mxs/imx28-xea.dtb:
+> /apb@80000000/apbx@80040000/saif@80042000: failed to match any schema
+> with compatible: ['fsl,imx28-saif']
+> 
+> Where the 'saif' sound driver is already supported:
+> git grep -n "fsl,imx28-saif"
+> Documentation/devicetree/bindings/sound/mxs-saif.txt:27: compatible = "fsl,imx28-saif";
+> Documentation/devicetree/bindings/sound/mxs-saif.txt:35: compatible = "fsl,imx28-saif";
+> arch/arm/boot/dts/nxp/mxs/imx28.dtsi:1110: compatible = "fsl,imx28-saif";
+> arch/arm/boot/dts/nxp/mxs/imx28.dtsi:1127: compatible = "fsl,imx28-saif";
+> 
+> Changes from this patch do not touch the generic imx28.{dtsi} code at
+> all.
+> 
+> I would assume, that the portion of my patch shall not bring any new,
+> extra warnings/errors?
+
+Heh, I would swear we have a warning for this... well, still this should
+be fixed.
 
 
-Tested on:
+Best regards,
+Krzysztof
 
-commit:         3e9bff3b Merge tag 'vfs-6.11-rc6.fixes' of gitolite.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13ca847b980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a0455552d0b27491
-dashboard link: https://syzkaller.appspot.com/bug?extid=296b1c84b9cbf306e5a0
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
 
