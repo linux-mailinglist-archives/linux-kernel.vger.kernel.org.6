@@ -1,112 +1,204 @@
-Return-Path: <linux-kernel+bounces-303365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D0E1960B38
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:02:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D82BE960B3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:04:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF305284163
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:02:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 053A91C22A43
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D751BCA1F;
-	Tue, 27 Aug 2024 13:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B9F1BD4EA;
+	Tue, 27 Aug 2024 13:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sUHAfuRQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lm3UJlLr"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8E819EED3;
-	Tue, 27 Aug 2024 13:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C301A1BD013;
+	Tue, 27 Aug 2024 13:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724763760; cv=none; b=esF7CbDn9wKs7AuSJjigWgBDWFi2gMSxyfh/bpet4/roDZ5EY/nUz9ZDrgIB/QN/XT9deZJjhcxVnj3H9mHTHHcgMrtH7NYHdF2yp9bVCI3a703N+pU4lKozoGpynu3Diefhg6tX3jEphz1NksqWQydsKukgwDakxWa4mlA0lCo=
+	t=1724763845; cv=none; b=Ju4Ocy18h0THOTl/p1SdpYHo7Nbx5EvkxHTt/Ad+bxEQBhe9JbjrMl2u9sDhrKQzS9wO2/x5nkalk/WHGvGY7+kjiZ3QLR61RDd5bAtP9o/mMFEthngaTkmDjeBK75/wd04Iy/Cq0OHAQgQFZz/FQIOZEZR3grrw82nI/Bt7Mzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724763760; c=relaxed/simple;
-	bh=2cH48CeKweIa6Il0vytWOeXd373y5p9pQgTadJZeWak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Am10o9b9X5AYzYH3+tbULI5cLzN1I+5nsfEZ8IaNqoTxL3UBj6uytMz4GqrlL102FvG26ltdi3yhXdR1Psu09uXOxqVG+HX7mSo4IKmdT/nH9YDX+0FZZUdxlPjNH2Anx5Q88oJQl8eLd+x38ykY99LxWHTG59HdaYIB/BT+LP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sUHAfuRQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C142C4E677;
-	Tue, 27 Aug 2024 13:02:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724763759;
-	bh=2cH48CeKweIa6Il0vytWOeXd373y5p9pQgTadJZeWak=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sUHAfuRQQuWC0D0kxcnHrk1+9OQBRN3Eu+Hz5pam8SAGEMWKPHYbUo2km69hf4nSR
-	 b/b3qjYBQZC8eZkLF9+Fw44IfQmBJRX9eIlKdnJPqcU2DGh1DXcFVR493ASgv+pNtM
-	 ug7egLXUkynEUrJFlHiCiXV/vjCwcbVx1agAwkKAeCx2RQLUFZmZof+0OHI55kf0XD
-	 iTGJarE1EItpBR1teHm0tYQzW4tMvgpd0zCPhIU2QXDdePmoSJiONCs7NZl2sJQ6mY
-	 e2HyJBkO9RFzxEjRB52F8RevQWKlE8QMoolJnpq+QqF2qwfKliBhe03P9e62d6qve8
-	 6vPdKIc4WmEaw==
-Date: Tue, 27 Aug 2024 14:02:34 +0100
-From: Will Deacon <will@kernel.org>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: robin.murphy@arm.com, joro@8bytes.org, jgg@nvidia.com,
-	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v13 06/10] iommu/arm-smmu-v3: Add
- acpi_smmu_acpi_probe_model for impl
-Message-ID: <20240827130233.GF4772@willie-the-truck>
-References: <cover.1724453781.git.nicolinc@nvidia.com>
- <8a2629bb98cabb1be72b32c120bb5ed0114b21bc.1724453781.git.nicolinc@nvidia.com>
+	s=arc-20240116; t=1724763845; c=relaxed/simple;
+	bh=B0lMfB2omigVBisxCiV6nQcNaiV/K2i5UL2yptJOSf0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J25Y4kUg6RTrc80Piknvvr/qssBqHMzsLukumQVxhKBjCJrv1yp31tsQwl/Z4mIdqLu1UdguSB4s+8jyOW7+UYAS6vNtVVNuusfaigwyH530ULkNbb/o5NfBgxRvhJmsQxMdIv/d+zXc9f2mosZRNToiTXwqo9DQA+shd+hh7Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lm3UJlLr; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-45019dccc3aso33348561cf.1;
+        Tue, 27 Aug 2024 06:04:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724763843; x=1725368643; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4NS2KSURtky0+tKNFEhKcMtrkr7RAicG1qVIXi7w+Mc=;
+        b=Lm3UJlLrShFYm+m7SD16cQEVo4+oTYIcNE02Jq1KU9mSiUcSqHTJFEir44yKz58M96
+         pMFsg0g62Zu4+zcGJpNJ+jeXE0UY9ft5oQjw7kt5MAG0CkRTvOOuCe2at9cTsROPQuZS
+         CDoW6qwoANwkcK7kHwJ1qbvgaU9Nens/evTS5bNrO1CETuaJgwzMINlIIDlLnto7YIwi
+         xbQEknoF4orTEXbeOCzcjxJMxzjk/7P1kflK/hT1PNObSFjMlNp/CjxZu/BD9Ri3Rx47
+         yuXHvu38Vq199hJqiepOIOzDGT/HUXw6UqoERGMGVDmgKn1MTAYfp3ILdaGsUZRwkER2
+         rMIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724763843; x=1725368643;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4NS2KSURtky0+tKNFEhKcMtrkr7RAicG1qVIXi7w+Mc=;
+        b=wLxnVBE91slGty3sribvaOY4nGbVdafuUpVrm/IpujOcQFZmn0kdCXGLppZrK6P8LV
+         y/DUgRHD1HTqoIyvadx87JB9dW0zuP+VB/CTIb8X5kXhyc7J6R3NsmMMjA6u56YRAXG0
+         jcOEwUoDC4C8PzdExpD++JQ+/BHLvJk1Q0bcGzb4S3aeld0Iwno0m+Yyc7d9UKFP3Qd4
+         spjt1IpDxB52VmNmhnnEmmioTOzmpAJw1kNuL0tjV16T3sMi/0/BXawc3RQ3didUFNV+
+         DU9ix1qTzYHxLPmoTDcAM4dwiWeLKylMEni84PlajVdD0ZtmxLT6n4o4P3x91gjUJTOz
+         ytag==
+X-Forwarded-Encrypted: i=1; AJvYcCUQdkQwOMlpmmuQz4Y7hhffXVknpf/VuYZrw6k9LY+0vJT4/lP6ahXi+GvaLZV8XBJHZe3UAlvtgYCYrzKj1BwH7m0=@vger.kernel.org, AJvYcCWAaifY7JdpqsXUzkXX2cwfnswwB0GZ2SZsV2KYUgDah0GeXBlwcA+dPY2R7UcYrKkr0/sLqMGU1wO96I2j@vger.kernel.org, AJvYcCWuN+tofY7177MLDRbiV/gMjUoTP/TqSnvGnQgHZvOhnLd02qRgnjHPv72LDYbbGDvk9jWtgGKKXms=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg7NU2hVO2g5+86oOqW5pcPSxTMwd1JCEn5En6IiaGkauUDFmQ
+	K/NrxRKC1rKqBD1ObXBN0Qyt5P2uo0dFnQzHjuou5HFesaNXifH0ErfIPe79YuCYZrmC7to6TdY
+	vkfZ6kQWU/8pdRKg12YR8/1pvm2E=
+X-Google-Smtp-Source: AGHT+IF3MCqYAe5gveOtRrtdaSMoCeURDc2EQdNgdM+B61nRmAAfcxswIza+Zrw5bAebvnnuPwkKoOY/WVR0xQpd+fg=
+X-Received: by 2002:a05:622a:990:b0:454:f2e1:2a65 with SMTP id
+ d75a77b69052e-455095e6effmr164131811cf.1.1724763842492; Tue, 27 Aug 2024
+ 06:04:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8a2629bb98cabb1be72b32c120bb5ed0114b21bc.1724453781.git.nicolinc@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20240822111631.544886-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240822111631.544886-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVHuej==aKo+6CTeo00cJLb59wDGu3Rq-ECRq7=cU2wdQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdVHuej==aKo+6CTeo00cJLb59wDGu3Rq-ECRq7=cU2wdQ@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 27 Aug 2024 14:03:35 +0100
+Message-ID: <CA+V-a8sk7aPsUp=J0y7ErCj+KHYb6=6N97qNzQHZ9Y8LTvCcVw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: renesas: rzv2h-cpg: Add support for dynamic
+ switching divider clocks
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 23, 2024 at 05:10:40PM -0700, Nicolin Chen wrote:
-> For model-specific implementation, repurpose the acpi_smmu_get_options()
-> to a wider acpi_smmu_acpi_probe_model(). A new model can add to the list
-> in this new function.
-> 
-> Suggested-by: Will Deacon <will@kernel.org>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 18 +++++++++++++-----
->  1 file changed, 13 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> index afdb8a76a72a..ceb31d63f79b 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> @@ -4341,18 +4341,28 @@ static int arm_smmu_device_hw_probe(struct arm_smmu_device *smmu)
->  }
->  
->  #ifdef CONFIG_ACPI
-> -static void acpi_smmu_get_options(u32 model, struct arm_smmu_device *smmu)
-> +static int acpi_smmu_iort_probe_model(struct acpi_iort_node *node,
-> +				      struct arm_smmu_device *smmu)
->  {
-> -	switch (model) {
-> +	struct acpi_iort_smmu_v3 *iort_smmu =
-> +		(struct acpi_iort_smmu_v3 *)node->node_data;
-> +
-> +	switch (iort_smmu->model) {
->  	case ACPI_IORT_SMMU_V3_CAVIUM_CN99XX:
->  		smmu->options |= ARM_SMMU_OPT_PAGE0_REGS_ONLY;
->  		break;
->  	case ACPI_IORT_SMMU_V3_HISILICON_HI161X:
->  		smmu->options |= ARM_SMMU_OPT_SKIP_PREFETCH;
->  		break;
-> +	case ACPI_IORT_SMMU_V3_GENERIC:
-> +		break;
-> +	default:
-> +		dev_err(smmu->dev, "Unknown/unsupported IORT model!\n");
-> +		return -ENXIO;
+Hi Geert,
 
-We probably don't want this 'default' case, otherwise the driver will
-need to be updated every time there's a new model.
+Thank you for the review.
 
-If you agree, then I can just drop this bit when applying.
+On Mon, Aug 26, 2024 at 2:34=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Thu, Aug 22, 2024 at 1:16=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
+.com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add support for dynamic switching divider clocks.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v1->v2
+> > - Dropped DDIV_DIVCTL_WIDTH
+> > - width is now extracted from conf
+> > - Updated DDIV_GET_* macros
+> > - Now doing rmw as some of the DIVCTLx require it
+>
+> Thanks for the update!
+>
+> > --- a/drivers/clk/renesas/rzv2h-cpg.c
+> > +++ b/drivers/clk/renesas/rzv2h-cpg.c
+> > @@ -45,14 +45,23 @@
+> >  #define PDIV(val)              FIELD_GET(GENMASK(5, 0), (val))
+> >  #define SDIV(val)              FIELD_GET(GENMASK(2, 0), (val))
+> >
+> > +#define DDIV_DIVCTL_WEN(shift)         (1 << ((shift) + 16))
+>
+> BIT((shift) + 16)
+>
+Agreed.
 
-Will
+> > +#define DDIV_GET_WIDTH(val)            FIELD_GET(GENMASK(3, 0), (val))
+> > +#define DDIV_GET_SHIFT(val)            FIELD_GET(GENMASK(7, 4), (val))
+> > +#define DDIV_GET_REG_OFFSET(val)       FIELD_GET(GENMASK(18, 8), (val)=
+)
+> > +#define DDIV_GET_MON(val)              FIELD_GET(GENMASK(23, 19), (val=
+))
+>
+> These are not register fields, so you might as well just use C bitfields
+> accesses instead:
+>
+>     struct ddiv {
+>             unsigned int width:4;
+>             unsigned int shift:4;
+>             unsigned int offset:11;
+>             unsigned int monbit:5;
+>     };
+>
+>     if ((shift + core->ddiv.width > 16)
+>             return ERR_PTR(-EINVAL);
+>
+> (you can put cpg_core_clk.conf and cpg_core_clk.ddiv in a union to save s=
+pace)
+>
+OK, I'll update it to below,
+
+/**
+ * struct ddiv - Structure for dynamic switching divider
+ *
+ * @offset: register offset
+ * @shift: position of the divider bit
+ * @width: width of the divider
+ * @monbit: monitor bit in CPG_CLKSTATUS0 register
+ */
+struct ddiv {
+    unsigned int offset:11;
+    unsigned int shift:4;
+    unsigned int width:4;
+    unsigned int monbit:5;
+};
+
+#define DDIV_PACK(_offset, _shift, _width, _monbit) \
+    ((struct ddiv){ \
+        .offset =3D _offset, \
+        .shift =3D _shift, \
+        .width =3D _width, \
+        .monbit =3D _monbit \
+    })
+
+#define CPG_CDDIV0        (0x400)
+
+#define CDDIV0_DIVCTL2    DDIV_PACK(CPG_CDDIV0, 8, 3, 2)
+
+/**
+ * Definitions of CPG Core Clocks
+ *
+ * These include:
+ *   - Clock outputs exported to DT
+ *   - External input clocks
+ *   - Internal CPG clocks
+ */
+struct cpg_core_clk {
+    const char *name;
+    unsigned int id;
+    unsigned int parent;
+    unsigned int div;
+    unsigned int mult;
+    unsigned int type;
+    union {
+        unsigned int conf;
+        struct ddiv ddiv;
+    } cfg;
+    const struct clk_div_table *dtable;
+    u32 flag;
+};
+
+Cheers,
+Prabhakar
 
