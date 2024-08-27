@@ -1,136 +1,164 @@
-Return-Path: <linux-kernel+bounces-304011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 515C8961884
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 22:30:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7D07961886
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 22:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F15B91F24CB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:30:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 184161C23476
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9CDD1D3627;
-	Tue, 27 Aug 2024 20:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F014B156C5E;
+	Tue, 27 Aug 2024 20:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fCAO6sqc"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TarepLfc"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B41186A
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 20:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1EBC77115
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 20:30:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724790598; cv=none; b=kSW/ksNbjfCYw1aW0LhOivscWCRMPjd1UgV3rVosIzm+ncIpljje2G9UQs5HtMgwGVa3MXu0dnDReZC+poA6GDkUZJBnsNvrNDeO8QzzlBfoOO61xFO4odSrMTi3tTZ0L1ru6hocMZNnpDjQTCUeHlAh0oJuLfObqVGwiC5+yoU=
+	t=1724790632; cv=none; b=XYUjkreQi19kt3rQe/WnwNumxzKHWSJ+7qTABGbENodlTzJEIb+5ywz/LtFmejBJmJkinI5pFjsaoOElajwzsJ1QqGcCwk2tTAZyU1vz2NFPSF0cl6ttDrmqOMNfXuDB+QglSVgLSbLlsy5rtP6qZvMnCE+4hPraaEX/02p5b78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724790598; c=relaxed/simple;
-	bh=p7no6Kg66EOPzk3ZiygOc+iVxvhxlykdGbuuqRJR5P0=;
+	s=arc-20240116; t=1724790632; c=relaxed/simple;
+	bh=DawOFcf5AvQ3uqzdkNrh+jArPYwELaOHKFfilJEtFpo=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CNi4ihk/0In4GzDUJVgHYIJdEIOr5bscYawcGTsY5NFILpMm7T/sKRUql5ypqtRKnyXDwvgmcGs9y+aM5HBJkgxYXeDf9VTAKC9684YpS3Gsr/dCGxQFWVlgJPfc04kay2DujWpTAwvD8xe2gnHtycwE/7UyZA8lVYgprDssYxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fCAO6sqc; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version:Content-Type; b=iIwKg5I5aijZ1NphJDqtlAWefTDrcJ9iCfcXiQ6IUGd1rCO8YUZnWKZaU2JAxrm/ddCsX081a+0IR81FBzM/zZefFeM/3eZOrQ8rwLoS9OBIEebkFSnK6vtSUHYydz8nif39pSJEyU2xn0yij2e5+T4pSYlOl8sSjg9/hUCSW+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TarepLfc; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724790595;
+	s=mimecast20190719; t=1724790629;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=iE4zYQoOFY/pMThxDo83JhTYPwl7SdOyEEbfVoiSKbc=;
-	b=fCAO6sqcYx/7XV5/IDxgfkN68+ZPUCTTMBxkoibqFwOZ1Z1SbghDy6tX68cYQZsuv5WV7H
-	zpPQcUDGsk+E6jpXdhxHBcEJMcW7NtgTjvhL6+yfzCRnHMlyny6d4jk3ITsElCL1tcWXFi
-	4XDar8MFBpBS2EgKxVw4Cn0P/mz6hgw=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=SrNqCdsW3/4Cu+elSHQrVxE9Lte4vVhhYbprkgABLJk=;
+	b=TarepLfco2GsmzdxB3LhWOor6+HD/KYkhKSojt3zsMfKM8UwYf+a4aLJatEV/D6tvdqI1M
+	O4oLNwIcP5P1WXKEyzrSsvLjuJgYzZnU+u3Wm2qcidHB4bqQ9r1bcqwPl5o4ucCEJTJmSJ
+	MKaBjr0VXY+wKk2db2y0f65KYEjYVEo=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-584-GOZNrcDLPw-JDN1T0cJ9jw-1; Tue, 27 Aug 2024 16:29:54 -0400
-X-MC-Unique: GOZNrcDLPw-JDN1T0cJ9jw-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42807a05413so52592345e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 13:29:53 -0700 (PDT)
+ us-mta-94-f7HqNM_rPiqHjpgo-FZRDA-1; Tue, 27 Aug 2024 16:30:28 -0400
+X-MC-Unique: f7HqNM_rPiqHjpgo-FZRDA-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3718ce3f6bdso4285629f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 13:30:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724790593; x=1725395393;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iE4zYQoOFY/pMThxDo83JhTYPwl7SdOyEEbfVoiSKbc=;
-        b=wvJSMGbBnQm1k9AnJi6Qkmle+QwmtlHqUfsz3M5+G9v596qw7K28zJFQgXmL3kjM3q
-         uVMRMCPjvDwitOENV/Bmn5tOFa+9U7v8Au7czTySBZMKVk6ouRc9z9v4I1ajwdiSUopJ
-         BhQb6EBJcyVAshAVaw8ROITbQNbuqYfkckz6bxnDqmJ61T4wWSWGmkiUDolUFeLMF+Lw
-         ttSASrFdG6oMpWqWD1xQbX8io0BQrOZbWPDVwMdHjj4UukGLj3OtetuejMvJiZQTqkhL
-         3Gqu1lt3wkGTSLLZMXerfNBXhF2eATd1hIOrp2mASoLTkmRlsypaRlsllKf4gMDsOdJ4
-         t6rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJ3ci8nG+YWO+cF1BRIbDah8NVo9fDQWgDuq5hKvntLa6Spqny8lfgBQ0psQ4HI7stuRmxJDv1TtYNMpU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybIs/pO6rolcNB46s3QTTE8lmLRT/HgqjA3LuoOx4g16Vd8E1D
-	rCXthG8aOtV+TFScy8h0UtrO2L+a0ZUIgKjJtPsdjLArYZVx+tuWxzEUICdKeKAlUrcsxvQibf4
-	yxPsvMLwMbfIQpodlWeNbwI+PeaibADNf1hapzFsCy5dvMovMKF3P2xTvPmJhAQ==
-X-Received: by 2002:a05:600c:4f08:b0:428:eb6:2e73 with SMTP id 5b1f17b1804b1-42acc8ff8a4mr114663465e9.29.1724790592649;
-        Tue, 27 Aug 2024 13:29:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE9p6cSCAtvnsR9SBaBgeYoO/yiN9jJ6jcXKyLC5hcsffsuClFDitNVecB7jt3bzXPKN+kCCg==
-X-Received: by 2002:a05:600c:4f08:b0:428:eb6:2e73 with SMTP id 5b1f17b1804b1-42acc8ff8a4mr114663255e9.29.1724790591680;
-        Tue, 27 Aug 2024 13:29:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724790627; x=1725395427;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SrNqCdsW3/4Cu+elSHQrVxE9Lte4vVhhYbprkgABLJk=;
+        b=l5x/VE/Med6JEdgaDQfnxVhgZgeAORcTEngTN0kHwbGKQvPJME2txxC8MQINMcWyrk
+         rGpHZpYJLhxQwt5xnLSeAFtdzRoUS22ww48K+PVTrhQa+3yhSqEW9Ra5a5uI5RPCAalq
+         YIaRlR2JiOMYjHsLJrsJbNZjHocSS15qWc6dYH/zVXUDo7tSDdrJvsQI9+ETahYNDN5t
+         5nQ/xsx/iSoKNP3mCb4vjNbBLzAdy9w71zUYZNYq08ES4oJyWLnb1IOZe/RbT0eJTnZn
+         mo7cFynXwdF60qCeCOtuJi+Ez+gZG91wx5+2jAftzd+6h9esYXmxpZo/Urs39pZ2Q9vL
+         iMQA==
+X-Forwarded-Encrypted: i=1; AJvYcCXmvHBBSb94xVlAyFcgqieiLAur+jfhPD+FwhgylN6EykT83y3Zm22GcAjaIlHcymjRzf+jyuUFqioqLcc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwU60bUfy4DZ3DY7udn7EnPkTkXaiV/5fUTIcw8rUCC5L7C7Lms
+	Snc/vL2q7rhgt+rT6ge8B/UrXEAy+TBudDvgRx2SEMREUjRFP6n61Mn7jlofTgc7I/XJhri8bH9
+	+i8NafmONIl1YzvBqUSpALdfPHoBSU21qEef7o//9EBHyOi523zSswXLo8ExfTw==
+X-Received: by 2002:a5d:67cc:0:b0:371:8283:94c1 with SMTP id ffacd0b85a97d-373117be78bmr11579983f8f.0.1724790626962;
+        Tue, 27 Aug 2024 13:30:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEqKHyQsdDDBnGt7ZSYZjBCsuGR7UU9hsI/9Tug+uTr1ipNKf2Uo3/icQ1xYFn6O3aW8AueDA==
+X-Received: by 2002:a5d:67cc:0:b0:371:8283:94c1 with SMTP id ffacd0b85a97d-373117be78bmr11579957f8f.0.1724790626129;
+        Tue, 27 Aug 2024 13:30:26 -0700 (PDT)
 Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37308157c55sm13920924f8f.46.2024.08.27.13.29.50
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac515a2a5sm199976025e9.20.2024.08.27.13.30.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 13:29:51 -0700 (PDT)
+        Tue, 27 Aug 2024 13:30:25 -0700 (PDT)
 From: Valentin Schneider <vschneid@redhat.com>
-To: Chen Yu <yu.c.chen@intel.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, linux-kernel@vger.kernel.org, kprateek.nayak@amd.com,
- wuyun.abel@bytedance.com, youssefesmat@chromium.org, tglx@linutronix.de,
- efault@gmx.de
-Subject: Re: [PATCH 12/24] sched/fair: Prepare exit/cleanup paths for
- delayed_dequeue
-In-Reply-To: <Zs2d2aaC/zSyR94v@chenyu5-mobl2>
-References: <20240727102732.960974693@infradead.org>
- <20240727105029.631948434@infradead.org>
- <xhsmh8qx0y4n0.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <20240813215421.GA10328@noisy.programming.kicks-ass.net>
- <20240813220757.GA22760@noisy.programming.kicks-ass.net>
- <20240814055330.GA22686@noisy.programming.kicks-ass.net>
- <Zs2d2aaC/zSyR94v@chenyu5-mobl2>
-Date: Tue, 27 Aug 2024 22:29:50 +0200
-Message-ID: <xhsmhed69ogjl.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+To: paulmck@kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+ sfr@canb.auug.org.au, linux-next@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
+In-Reply-To: <103b1710-39ca-40d0-947d-fdac32d6e6a0@paulmck-laptop>
+References: <c28dbc65-7499-41a5-84d0-991843153b1a@paulmck-laptop>
+ <20240823074705.GB12053@noisy.programming.kicks-ass.net>
+ <xhsmho75fo6e4.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <b1824f4a-f5cc-4011-876f-8a73cf752067@paulmck-laptop>
+ <xhsmhle0inuze.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <xhsmhikvmnfb3.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <c83028db-55ad-45b3-a27a-842ed665a882@paulmck-laptop>
+ <103b1710-39ca-40d0-947d-fdac32d6e6a0@paulmck-laptop>
+Date: Tue, 27 Aug 2024 22:30:24 +0200
+Message-ID: <xhsmhcyltogin.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 27/08/24 17:35, Chen Yu wrote:
-> On 2024-08-14 at 07:53:30 +0200, Peter Zijlstra wrote:
->> On Wed, Aug 14, 2024 at 12:07:57AM +0200, Peter Zijlstra wrote:
->> > On Tue, Aug 13, 2024 at 11:54:21PM +0200, Peter Zijlstra wrote:
+On 27/08/24 11:35, Paul E. McKenney wrote:
+> On Tue, Aug 27, 2024 at 10:33:13AM -0700, Paul E. McKenney wrote:
+>> On Tue, Aug 27, 2024 at 05:41:52PM +0200, Valentin Schneider wrote:
+>> > I've taken tip/sched/core and shuffled hunks around; I didn't re-order=
+ any
+>> > commit. I've also taken out the dequeue from switched_from_fair() and =
+put
+>> > it at the very top of the branch which should hopefully help bisection.
 >> >
->> > Obviously I remember it right after hitting send...
+>> > The final delta between that branch and tip/sched/core is empty, so it
+>> > really is just shuffling inbetween commits.
 >> >
->> > We've just done:
+>> > Please find the branch at:
 >> >
->> >    dequeue_task();
->> >    p->sched_class = some_other_class;
->> >    enqueue_task();
+>> > https://gitlab.com/vschneid/linux.git -b mainline/sched/eevdf-complete=
+-builderr
 >> >
->> > IOW, we're enqueued as some other class at this point. There is no way
->> > we can fix it up at this point.
+>> > I'll go stare at the BUG itself now.
 >>
->> With just a little more sleep than last night, perhaps you're right
->> after all. Yes we're on a different class, but we can *still* dequeue it
->> again.
+>> Thank you!
+>>
+>> I have fired up tests on the "BROKEN?" commit.  If that fails, I will
+>> try its predecessor, and if that fails, I wlll bisect from e28b5f8bda01
+>> ("sched/fair: Assert {set_next,put_prev}_entity() are properly balanced"=
+),
+>> which has stood up to heavy hammering in earlier testing.
 >
-> Not quite get this. If the old class is cfs, the task is in a rb-tree. And
-> if the new class is rt then the task is in the prio list. Just wonder
-> would the rt.dequeue break the data of rb-tree?
+> And of 50 runs of TREE03 on the "BROKEN?" commit resulted in 32 failures.
+> Of these, 29 were the dequeue_rt_stack() failure.  Two more were RCU
+> CPU stall warnings, and the last one was an oddball "kernel BUG at
+> kernel/sched/rt.c:1714"=C2=A0followed by an equally oddball "Oops: invalid
+> opcode: 0000 [#1] PREEMPT SMP PTI".
 >
+> Just to be specific, this is commit:
+>
+> df8fe34bfa36 ("BROKEN? sched/fair: Dequeue sched_delayed tasks when switc=
+hing from fair")
+>
+> This commit's predecessor is this commit:
+>
+> 2f888533d073 ("sched/eevdf: Propagate min_slice up the cgroup hierarchy")
+>
+> This predecessor commit passes 50 runs of TREE03 with no failures.
+>
+> So that addition of that dequeue_task() call to the switched_from_fair()
+> function is looking quite suspicious to me.  ;-)
+>
+>                                                       Thanx, Paul
 
-On a class change e.g. CFS to RT, __sched_setscheduler() would
-dequeue_task() (take it out of the RB tree), change the class,
-enqueue_task() (put it in the RT priolist).
+Thanks for the testing!
 
-Then check_class_changed()->switched_from_fair() happens, dequeue_task(),
-and that takes it out of the RT priolist. At least that's the theory, since
-that currently explodes...
+The WARN_ON_ONCE(!rt_se->on_list); hit in __dequeue_rt_entity() feels like
+a put_prev/set_next kind of issue...
 
-> thanks,
-> Chenyu
+So far I'd assumed a ->sched_delayed task can't be current during
+switched_from_fair(), I got confused because it's Mond^CCC Tuesday, but I
+think that still holds: we can't get a balance_dl() or balance_rt() to drop
+the RQ lock because prev would be fair, and we can't get a
+newidle_balance() with a ->sched_delayed task because we'd have
+sched_fair_runnable() :=3D true.
+
+I'll pick this back up tomorrow, this is a task that requires either
+caffeine or booze and it's too late for either.
 
 
