@@ -1,109 +1,80 @@
-Return-Path: <linux-kernel+bounces-303086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41A05960736
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:18:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FC2E960739
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA6DCB22187
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:18:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C407EB20D0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B0419FA9F;
-	Tue, 27 Aug 2024 10:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACAD41A08C1;
+	Tue, 27 Aug 2024 10:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nGnW70Wy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IFq11HQo"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD3F1758B;
-	Tue, 27 Aug 2024 10:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CAC21A073C;
+	Tue, 27 Aug 2024 10:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724753611; cv=none; b=oCont+uuNAENgXR/5LYa3TtofqRpt/2wVDu9g/pBHTeNb1h1qqw7lapn+F9QxKGeNVQljxy4Mu5QmBrkaNotNfsH+J8HIbKqUz61DAbY9RLPN/dGsptGlBJNziCW+JJxHsjbZCfZXOafCa78cPqe/OdrtluCDkDY++CUdFh6aqs=
+	t=1724753627; cv=none; b=jTJH+08XUa2ubxlUdzVa3gQryRzV1p3nlw5DnJe3QxC1kYwGdy6TEu5KsGmKj/PfLr29tzOPnRWRxqu2+xiCplkAYR6BMnZ0UqiuaZU4XQY02+mlQYj/mEiJ++T9/a2XSN73Ui/ZT3rHCnelLomoZlkp34jSMUeX45mowskWirg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724753611; c=relaxed/simple;
-	bh=ViaDqzwpYnvS/bHWsMjQGqwKYxil9jck0BPMVINQhRw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iWoq6cUZSGjsGmn7N3oAgYaPjgvnZgne6jBlEqAAAWIk/AKGi6xSSEZuIltgBHFSWu+GNW4fDKxgSjghSbweHlc9cEe8YhmCWGdgvKVyBDyZ4OtKkBGqcKDqFhGMXj8kSbgf/0+8ZUzAzWOKlGre5gSBQ0Qo+Lkt9sU3zDUL98U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nGnW70Wy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9938C8B7AA;
-	Tue, 27 Aug 2024 10:13:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724753611;
-	bh=ViaDqzwpYnvS/bHWsMjQGqwKYxil9jck0BPMVINQhRw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nGnW70Wy5l1GPvGwf6j0XLOnZugSDqYyDrtIhlTTmNZjGSpSiPVjBDJzL4XgNXOMS
-	 QOQF6eZiXBaDzgmnLto7XoCBPsp35WnouB569nfca19j9fki4xfRLseD18xbRkoebE
-	 Vl8up2lmG2pfZ75ap3/rbb77e/rekOrh/lfUq4jLat8wQns5a4y8XshHAoUgdzOLm+
-	 At3THsWikTSGe1455twvEjvE9RB+DCZb2C9KnzAUoAdd06pcYyqVq64T1Lg6mry+CB
-	 MM1zl2+Y5LBnMy/p87y/ijhNT+9DrZ7WOmUrIqjPw9clI/TGEnHs0SaCh0C5HvjSXw
-	 9aNr0SV2kmp6w==
-Message-ID: <a16b2ae5-43bf-41a5-9a6c-9acbddde36e2@kernel.org>
-Date: Tue, 27 Aug 2024 12:13:21 +0200
+	s=arc-20240116; t=1724753627; c=relaxed/simple;
+	bh=OtKLKLovPXlPeSXxDYFfqWc1OdexnokcwRWezfoZEfU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=irgvcPYrhBkkw/kAcd+3aKT4ERvOI5CGEXaSkWKKaUxCYxcsNVtg7QrLk3NYSWMiqJKk9JG+07xR6PRhS0jB7dkwTCeDADUpLtgGFa65dunm5NrINHY0Ks6kKDppt9Sr4vIXKRLzBwmzneSytDWOy5ouwtz5g3ezVtiVtE1ITno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IFq11HQo; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=oTpgnzArF2ljhVVf8MMWOhH6rtMPFPfD+TCF0oj6yfk=; b=IFq11HQohnkjBHntHpFG0iYr0j
+	asZC3RUnexBi3yUL4MBE7il6zzcqabH2zAcUmZjVMq0tF32n57UMi1YypLKQqqF4K1DGr+LYfn6QI
+	BCWOOM8TesyNTvSDyLFFyLYk+7VmCjvG5VSsi8uVs/8XGEtNKygFJec0304UVDoZ8wDwN6te3GiLd
+	nDeGMNtLUVK0Njfs/9HV3iLDYYPkp4ilzUq+K5uhWWF5AQWvYF7Muhoq87ohCkwL9A/Jb5jKWdr93
+	d/RBMxozwXCt5mj1owY8nzZGmQ/mALd8kTv8R5ZRSSsHOBwzMEMyLpF1OT3MwnOH4PHNwk8/kY6Am
+	BSl3uONw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sitCo-0000000AlHG-00a5;
+	Tue, 27 Aug 2024 10:13:42 +0000
+Date: Tue, 27 Aug 2024 03:13:41 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Julian Sun <sunjunchao2870@gmail.com>
+Cc: syzbot <syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com>,
+	brauner@kernel.org, chandan.babu@oracle.com, djwong@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [iomap?] [xfs?] WARNING in iomap_write_begin
+Message-ID: <Zs2m1cXz2o8o1IC-@infradead.org>
+References: <0000000000008964f1061f8c32b6@google.com>
+ <de72f61cd96c9e55160328dd8b0c706767849e45.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/8] phy: qcom-qmp: pcs: Add v6.30 register offsets
-To: Qiang Yu <quic_qianyu@quicinc.com>, manivannan.sadhasivam@linaro.org,
- vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, andersson@kernel.org,
- konradybcio@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, abel.vesa@linaro.org,
- quic_msarkar@quicinc.com, quic_devipriy@quicinc.com
-Cc: dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
- neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20240827063631.3932971-1-quic_qianyu@quicinc.com>
- <20240827063631.3932971-3-quic_qianyu@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20240827063631.3932971-3-quic_qianyu@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <de72f61cd96c9e55160328dd8b0c706767849e45.camel@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 27.08.2024 8:36 AM, Qiang Yu wrote:
-> x1e80100 SoC uses QMP phy with version v6.30 for PCIe Gen4 x8. Add the new
-> PCS offsets in a dedicated header file.
+On Tue, Aug 27, 2024 at 04:54:41PM +0800, Julian Sun wrote:
+> On Tue, 2024-08-13 at 01:14 -0700, syzbot wrote:
+> Hi,
 > 
-> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> ---
->  drivers/phy/qualcomm/phy-qcom-qmp-pcs-v6_30.h | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
->  create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-v6_30.h
-> 
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcs-v6_30.h b/drivers/phy/qualcomm/phy-qcom-qmp-pcs-v6_30.h
-> new file mode 100644
-> index 000000000000..9aa6d3622c24
-> --- /dev/null
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcs-v6_30.h
-> @@ -0,0 +1,19 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (c) 2024 Qualcomm Innovation Center. All rights reserved.
-> + */
-> +
-> +#ifndef QCOM_PHY_QMP_PCS_V6_30_H_
-> +#define QCOM_PHY_QMP_PCS_V6_30_H_
-> +
-> +/* Only for QMP V6_30 PHY - PCIe PCS registers */
-> +#define	QPHY_V6_30_PCS_LOCK_DETECT_CONFIG2		0x0cc
-> +#define	QPHY_V6_30_PCS_G3S2_PRE_GAIN			0x17c
-> +#define	QPHY_V6_30_PCS_RX_SIGDET_LVL			0x194
-> +#define	QPHY_V6_30_PCS_ALIGN_DETECT_CONFIG7		0x1dc
-> +#define	QPHY_V6_30_PCS_TX_RX_CONFIG			0x1e0
-> +#define	QPHY_V6_30_PCS_TX_RX_CONFIG2			0x1e4
-> +#define	QPHY_V6_30_PCS_EQ_CONFIG4			0x1fc
-> +#define	QPHY_V6_30_PCS_EQ_CONFIG5			0x200
+> Is this still a valid problem, or is it a known issue? If it is still
+> valid, I'd like to dig it into, but do you have any ideas or
+> suggestions before I proceed? Thanks.
 
-Squash with the previous one and the next one, and please make the
-indentation consistent
+I tried to reproduce it locally but haven't hit it.  Once reproduced
+the next debug check would be which of the need zeroing conditions
+triggers.
 
-Konrad
 
