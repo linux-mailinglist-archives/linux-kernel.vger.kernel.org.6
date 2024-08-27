@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-302921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C2F096050A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:00:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A343896050D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51C8F1C22269
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:00:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C7B91F23C1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9ED199E9A;
-	Tue, 27 Aug 2024 09:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D6F1993B4;
+	Tue, 27 Aug 2024 09:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b+fC9L8Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FT4RCw8E"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957221946B8;
-	Tue, 27 Aug 2024 09:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E29C145A07;
+	Tue, 27 Aug 2024 09:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724749243; cv=none; b=W6XYhku4uLnuUO6RVrDp7vypTVRtoekFwT61Zp+5mj1WajfrVtf55b9MLA1r7Gp0OZB2R7VpWwQ9NxchbDYxpu709/LY5DPd5vS7OGiA2j0vfBHZV3NnRmmm3svfzl0Q4Iz/uLXmQEB3MoQiXKOH2CYDZydkPzYdvdqmi2UVgsY=
+	t=1724749282; cv=none; b=aHy3T+/1UoS1gR3vHeHkmpbqoRsOBhlLzQjpeKg+A3OrJZDUxlb6+b5jqSdCU4Ou3/fZ/GyJRhADW7Vytbs6fNyuK904fgjWNdWbSDyXq3pgMJHNtnT1MLuO6fSI05pZdYdrTbNuzVqzBf+3NNvhUmd/MXN14m1bT1RINbqFLWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724749243; c=relaxed/simple;
-	bh=AEcuwlJtGCkKrbiEX6+IN0+L3Xu+OVNM8HVvUWcOQtU=;
+	s=arc-20240116; t=1724749282; c=relaxed/simple;
+	bh=8UUCdBjiyEtpVyx2TiHrn0ViTnoHSlVeiJqlLipap34=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fTDR0X8kAIFZ7v/MFl8Kq/0txjgyAGsQGP7PNsFk+cG5VtqF0x4yjOkAq4HZUiM3r2gRL6Mvb1XZhltHV3kkLah6p+C5In5Bh4ry0VIalOfbqYHk1Lu+7ru+Ur8k5XxeM4+1NgEIbsy3bSsg9FDuTNF/G3PwXYh2XeVJTYfuZvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b+fC9L8Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50E32C8B7AF;
-	Tue, 27 Aug 2024 09:00:38 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=f674zEZYU5ub8TsUv+t/m6eQbbTYfhpi3YmgN9CDu72dTARP2CHmi03+4qGXpF0yvBiAGCX9RKIwL+vg8kXGwBNmKR1HzIU86s83wDk8tW6aEERG6x5u6R2WIZRd3LyWYXh9dFkH+eouYTZ61PhMkvYaZkeit/YqrhsFwj+fB1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FT4RCw8E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3537C8B7AF;
+	Tue, 27 Aug 2024 09:01:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724749243;
-	bh=AEcuwlJtGCkKrbiEX6+IN0+L3Xu+OVNM8HVvUWcOQtU=;
+	s=k20201202; t=1724749281;
+	bh=8UUCdBjiyEtpVyx2TiHrn0ViTnoHSlVeiJqlLipap34=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=b+fC9L8Y0EMc0FkTnF3mcSyITji41+WVWi+blTqXieN++x7oxKNdUMSiMA0BdKf8H
-	 HZtgskyYeFZFgySbJNLkMnfPFrAziAWA4LprXLEiIhrNF12EHCBVPSHD9b2BSTEfNz
-	 gYlSli1LlXPeczkaZobrQ1XPTVRs30DHtCWX9u/VAqKiS03iJaeXnE99J77XgJmllm
-	 uJqyTomK1VsqzcgGDYGJuXOXY00ZWGYK6l0TJEBRsr53IcNzvYKzegyteRltq9pGNR
-	 sXZASdAbsM+taPZuqgf5A79nTxsOorM9nDL+RzelkvXliCO7UT1yi2/SHfEsXaisVt
-	 REc6giFhiqLqw==
-Message-ID: <737edb34-688d-4800-bb50-2374ac94ac75@kernel.org>
-Date: Tue, 27 Aug 2024 11:00:35 +0200
+	b=FT4RCw8Exat8qloTqfCb4zbXZSffXw/m1ZhTOe1NvXsE0piDZS+y4m55OFz8Vdp3y
+	 mXFdVEt1zDitWwZjOpqiHUrttPjhy2fszY8mzm0iqb/08HZknBFSvfXC2eMeHe1OrG
+	 wmtUFfWwfQ39TnPR4HZjQAwpewBkkNoXPWRsmxEmsUb+5APED0xgy1yIpLbsQjVeSo
+	 ZwuGjEe+oit238CtrTywQ2mLzfAGY6b68bNotGsK4vxbUweK1lWgy9xl9WtkfIcIjF
+	 s/+D/qOhKlureF4nOuly8nr+GejfhI7BicCZgs2a6DlL5OlW9B30SkePTQFoZ2TNrV
+	 TkJs0SKt0EsDA==
+Message-ID: <af1d8c37-0053-4c8d-94ea-b5639bca4ac8@kernel.org>
+Date: Tue, 27 Aug 2024 11:01:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dts: nxp: mxs: Update device tree description for LWE
- imx28 based devices
-To: Lukasz Majewski <lukma@denx.de>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v1 0/1] arm64: dts: qcom: Add coresight components for
+ x1e80100
+To: JieGan <quic_jiegan@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240827084255.2120864-1-lukma@denx.de>
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Tingwei Zhang <quic_tingweiz@quicinc.com>,
+ Jinlong Mao <quic_jinlmao@quicinc.com>, Tao Zhang <quic_taozha@quicinc.com>,
+ Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+ Song Chai <quic_songchai@quicinc.com>, Yushan Li <quic_yushli@quicinc.com>
+References: <20240827072724.2585859-1-quic_jiegan@quicinc.com>
+ <833eafc7-46f0-49d1-afe1-ad9d20ca16fd@kernel.org>
+ <Zs2I+M4wkjVlKuq9@jiegan-gv.ap.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,84 +109,26 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240827084255.2120864-1-lukma@denx.de>
+In-Reply-To: <Zs2I+M4wkjVlKuq9@jiegan-gv.ap.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 27/08/2024 10:42, Lukasz Majewski wrote:
-> The description for imx28 based devices needs to be updated after some
-> further development.
+On 27/08/2024 10:06, JieGan wrote:
+> On Tue, Aug 27, 2024 at 10:02:44AM +0200, Krzysztof Kozlowski wrote:
+>> On 27/08/2024 09:27, Jie Gan wrote:
+>>> Add coresight components for x1e80100. This change includes CTI,
+>>> dummy sink, dynamic Funnel, Replicator, STM, TPDM, TPDA and TMC ETF.
+>>>
+>>> Change in V1:
+>>> Check the dtb with dtbs_check W=1, and fix the warnings for
+>>> the change.
+>>
+>> So this is v2, not v1.
+>>
+> Appologize for the mistake of the version number.
+> Do I need to re-send the patch with V2?
 
-Everything is an update, please be specific in commit subject and message.
-
-> 
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
-> ---
->  arch/arm/boot/dts/nxp/mxs/imx28-lwe.dtsi | 38 +++++++++---------------
->  1 file changed, 14 insertions(+), 24 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-lwe.dtsi b/arch/arm/boot/dts/nxp/mxs/imx28-lwe.dtsi
-> index 69fcb0dde940..6fa1f3e25b08 100644
-> --- a/arch/arm/boot/dts/nxp/mxs/imx28-lwe.dtsi
-> +++ b/arch/arm/boot/dts/nxp/mxs/imx28-lwe.dtsi
-> @@ -55,23 +55,6 @@ &i2c0 {
->  	status = "okay";
->  };
->  
-> -&saif0 {
-> -	pinctrl-names = "default";
-> -	pinctrl-0 = <&saif0_pins_a>;
-> -	#sound-dai-cells = <0>;
-> -	assigned-clocks = <&clks 53>;
-> -	assigned-clock-rates = <12000000>;
-> -	status = "okay";
-> -};
-> -
-> -&saif1 {
-> -	pinctrl-names = "default";
-> -	pinctrl-0 = <&saif1_pins_a>;
-> -	fsl,saif-master = <&saif0>;
-> -	#sound-dai-cells = <0>;
-> -	status = "okay";
-> -};
-> -
->  &spi3_pins_a {
->  	fsl,pinmux-ids = <
->  		MX28_PAD_AUART2_RX__SSP3_D4
-> @@ -109,7 +92,7 @@ &ssp3 {
->  
->  	flash@0 {
->  		compatible = "jedec,spi-nor";
-> -		spi-max-frequency = <40000000>;
-> +		spi-max-frequency = <20000000>;
->  		reg = <0>;
->  
->  		partitions {
-> @@ -133,14 +116,21 @@ partition@90000 {
->  				reg = <0x90000 0x10000>;
->  			};
->  
-> -			partition@100000 {
-> -				label = "kernel";
-> -				reg = <0x100000 0x400000>;
-> +			partition@3 {
-
-This does not look right. It is neither explained in commit msg, nor
-matching reg.
-
-It does not look like you tested the DTS against bindings. Please run
-`make dtbs_check W=1` (see
-Documentation/devicetree/bindings/writing-schema.rst or
-https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
-for instructions).
-
-> +				label = "rescue";
-> +				reg = <0xA0000 0xF40000>;
-
-Lowercase hex
-
-> +			};
-> +
+Dunno, maybe Bjorn tools will handle this, maybe not.
 
 Best regards,
 Krzysztof
