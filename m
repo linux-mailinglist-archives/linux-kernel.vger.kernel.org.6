@@ -1,188 +1,177 @@
-Return-Path: <linux-kernel+bounces-304105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAE92961A48
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 01:12:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1084961A3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 01:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55296B227EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:12:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E4C21C22E09
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111B91D618D;
-	Tue, 27 Aug 2024 23:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E771D417F;
+	Tue, 27 Aug 2024 23:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jWZnfO+j"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="TVKQ28mD"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5DD1D54E7
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 23:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394FF84A2F
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 23:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724800309; cv=none; b=USEvruULyt43iyZwMHPoc4yRdzPBpZC2R6mKVTDUkKyeich7tPxjnQCUdAXHh2u2xWIfmxU4DFbwDFvbzmdMSPQ0UPQvd6M9WrJzc5MPcO2wAJ1cmQiq2f9q79AyR1B6elNRwA40AjdSTBy5Yo+1QR2s8xRpE/0UAuW1TXWl1BY=
+	t=1724800225; cv=none; b=Nysy+S31Ly5367D6ORMsg8J6JkipgICXdGqsF8w7l9MO7zfiqLuAlUZ/y3foi2t4xujFVAcrIeN6IzX9eYwib2tej1bYAvgXRtsIQOmowmUz11QXmHclyENGQepYM7AUFxFWH3npS+lsglT+aNxDkPnKBams2UJ9Id1vVI3ayJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724800309; c=relaxed/simple;
-	bh=Wq+jQvGM0OF+bTL/TJg3bi4vuxkoCJyt+mqQiab3tvg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Ca7s2vhEePQswBochuomdNF88623Hy+Fi2vMVThMt2oefEepySohEfIKMYRUU1+kQT6yiploCjX7vxkFDb0TFRrOMpduyLjCQ57RMIuNoeVS6QzGSfmxDjXrSBANLf4oYJn2hG7TomuOq7bie2UC/UChfzzDr0H8XCMt3f6t9d0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kinseyho.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jWZnfO+j; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kinseyho.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e116c697904so12009529276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 16:11:47 -0700 (PDT)
+	s=arc-20240116; t=1724800225; c=relaxed/simple;
+	bh=Ms7piF5thBQY/yUT4ix5SOgQEAlf9cszcTCRdCSSng0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c2MgI8OUUnq7XHgYUrbMzGilv3LmBFXZM0AYZORnzV8OOxeontpJvwGlYVNV5HvXONxFVknKK31OEU4Qvn6F1B5Hmg1wyYiRf5FBmNVQStfnY9sC93FM5Wv5CSxxUWynJi5OChEXPoRD8Isop8q/pi1TePN5hLnNgfbcAqb8F+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=TVKQ28mD; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7141e20e31cso5083406b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 16:10:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724800307; x=1725405107; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=F9O1xAoZAOV8c4zW9/De55yG0OzoFjxVL+7Ggug8PCo=;
-        b=jWZnfO+jg24B0DMs4vYV0POKGupZnKieQLE2DOa2/4OyECJo53vESogMi92CGHtE6f
-         6o6cJyKSmj8U0PWJLvL++U2zTZMbSEJlrJbNfakGm09zPUpNYsUirOF+v4p9KnOoS6Ql
-         HHuAwH/jN9p2HnGCdpoXC84TuwxHZmyxlC5y6HtWKQJo4vEUv7Wt4X52VSDuAK442LW1
-         Js5CPoa4o5t97w9v2rb7aSpJPk8G5RnZ89daz/dvZIbEnIqU5eYDcJJqRTDaRUug2meP
-         i1avA0HFZB1ZhSHnwC6lT0hHrT5cJ672jJVSyXQqwmJzq7XD7WcQ8ckckF770LkQy/Q/
-         JsHQ==
+        d=tenstorrent.com; s=google; t=1724800222; x=1725405022; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=W32QRSPB+v/v1hZB3DM0yi6GVvOLbgl8fIqle8GTQRg=;
+        b=TVKQ28mDknkn2Q0GmBrBua2BhkgQNbaoI+PBa+krPBK47wvnW5LrTU/ntZLhv0Hz0X
+         7PG1YG7VWYSmfvLiaYuM9K3Qg/HWyFSzoHcNCPNtmt5sSxHo/Q/mkaArfeCe4IXUIvo2
+         2zoFjoBubU1O203OVMPPEOTCA9QGYsFmiEHFwztSnvg9hlejkmiSNHz/AFYpOofcAI8+
+         0IFDsF+wPVHbQ29ISkwCxJeWR91THctsb0PsXSPigNRhF5SeelgY0gpYpfQIFBGus6PS
+         b26kB0xIKc9K7oz/3d8RofQW1eVF6azBrJrQ8svuBalSWbQzGsXHQQ4JZ1kJOSk+gcTA
+         Gd0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724800307; x=1725405107;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F9O1xAoZAOV8c4zW9/De55yG0OzoFjxVL+7Ggug8PCo=;
-        b=wP3C1Pj4kIjePhlZWEqOmWfTs//d9x1Ab7VnLwem92MKvRtF4q3G2CdnRAkuWN1Cd9
-         /1VJw6kUTZpJ59xJuWrwzkPp/CDgBvkGzzWmy7TTOaus4UZYHYAytKbydwzNdDwdpo5p
-         gdNcVLTVasrpPWwjWmg+i302un6iUngtqYNk/BT2PDVv9hKxqIpB3Cw0MeKnvKhHuOSe
-         BghlSlUwuwWCiJ7efJKqNH0ePuB7gilSvXn/gqp6UiZT7BE0NT6eSJR/3qqUrtLnJmnV
-         h1umgVY+/NJM4qq2aswKySRRYy7nUzqpA847fF6jK69wsPw68ow35+TqM8+KT68DW2qM
-         XZVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUn1BqvItSQvWJMHmxlK2qFR1DPfKAxabbRZIevEGhDiGUyqG5Hwt/m4RClwe+Fc4CxkZrojeH8F0l8Ez0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1YAuj/oP+R5tREUona7NpuzuPmimU/TNkW4cobKpebeCHhkwn
-	XE/xvXVsUekgLQmTUtWfQgaCy03Mzwr+nRGpG9ZRynWXxQLcRdhgtmhyX0X2GAZP/xj3ForMq9D
-	iUx+FoON1yg==
-X-Google-Smtp-Source: AGHT+IGhyXg3/eIiJrPzV8LA1GsjfwoUYtS3Vb5uXpGkz/KSc2MBd8B85rwqll+iK9yx1Z8d0EFBFb/FbykjYg==
-X-Received: from kinseyct.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:46b])
- (user=kinseyho job=sendgmr) by 2002:a25:2905:0:b0:e0b:f69b:da30 with SMTP id
- 3f1490d57ef6-e1a4580f12amr2713276.9.1724800306773; Tue, 27 Aug 2024 16:11:46
- -0700 (PDT)
-Date: Tue, 27 Aug 2024 23:07:42 +0000
-In-Reply-To: <20240827230753.2073580-1-kinseyho@google.com>
+        d=1e100.net; s=20230601; t=1724800222; x=1725405022;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W32QRSPB+v/v1hZB3DM0yi6GVvOLbgl8fIqle8GTQRg=;
+        b=mjLkB5vjSuI5gaAQiYXYcs9Xd80KT5OJHtJ4qS0SS67c/pYGxhbacFjI3b9gwrdHfB
+         46L+H/loOX46Cm+idD52/qx3Sl0JsMwnKYfZUoSyn3IwqyqpSkNZ+U9g+nNTCvJNxnuO
+         k4TCiujpuQpk9wJ8M0iI8MDdK5nsvAjSKZBlg+Cwm/iULu+qbyBRDmxwM1QjwjaX4iuk
+         d1q84uNgrpsF2M37f/XXLRadZmKsfXChrWc52n7hEpjUJq48DVIGkYRC39Ppv1lJeekk
+         /SJD1VnoIL4o5hwqD5udM5kPquadUgqfSl+VMYvwps0XaFpCAHDd2smH2oXhJNrqXr9X
+         VLtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVjUXp0udR9RZVHLwKvWHOGHI3MHr+sNmja7mn8TklXt6cZ3U02sN5KQzZKzF3HI3HbCPm0PeeI76jH6dM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRTsd/l2OMkshCWMH3gjRzvrc9r+A2arq7LNrnwnZT1b1pfhMR
+	fgt5k26nKeMosPM06EJvdtqTh1L7i9V6Zv4jtI+s1Z5ti/so9A/iHAtIjqDG79w=
+X-Google-Smtp-Source: AGHT+IEroGkXS6DzUhuTL3usdmL+nViyF25HwRxsfbE8sxGqcjS2RSN8mHQbCRPygBZgO5SnMudlIw==
+X-Received: by 2002:a05:6a20:c6ce:b0:1ca:dbec:c5d2 with SMTP id adf61e73a8af0-1ccd28675a7mr85752637.5.1724800222214;
+        Tue, 27 Aug 2024 16:10:22 -0700 (PDT)
+Received: from x1 (75-164-215-68.ptld.qwest.net. [75.164.215.68])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143430c407sm9369816b3a.178.2024.08.27.16.10.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 16:10:21 -0700 (PDT)
+Date: Tue, 27 Aug 2024 16:10:20 -0700
+From: Drew Fustini <dfustini@tenstorrent.com>
+To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH] riscv: make ZONE_DMA32 optional
+Message-ID: <Zs5c3KJR41AUVyEv@x1>
+References: <20240827113611.537302-1-vladimir.kondratiev@mobileye.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240827230753.2073580-1-kinseyho@google.com>
-X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
-Message-ID: <20240827230753.2073580-6-kinseyho@google.com>
-Subject: [PATCH mm-unstable v3 5/5] mm: clean up mem_cgroup_iter()
-From: Kinsey Ho <kinseyho@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	Yosry Ahmed <yosryahmed@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, mkoutny@suse.com, 
-	Kinsey Ho <kinseyho@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240827113611.537302-1-vladimir.kondratiev@mobileye.com>
 
-A clean up to make variable names more clear and to improve code
-readability.
+On Tue, Aug 27, 2024 at 02:36:11PM +0300, Vladimir Kondratiev wrote:
+> It is not necessary any RISCV platform has ZONE_DMA32.
+> 
+> Example - if platform has no DRAM in [0..4G] region,
+> it will report failure like below each boot.
+> 
+> [    0.088709] swapper/0: page allocation failure: order:7, mode:0xcc4(GFP_KERNEL|GFP_DMA32), nodemask=(null),cpuset=/
+> [    0.088832] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-rc5 #30
+> [    0.088864] Call Trace:
+> [    0.088869] [<ffffffff800059f2>] dump_backtrace+0x1c/0x24
+> [    0.088910] [<ffffffff805f328c>] show_stack+0x2c/0x38
+> [    0.088957] [<ffffffff805fd800>] dump_stack_lvl+0x52/0x74
+> [    0.088987] [<ffffffff805fd836>] dump_stack+0x14/0x1c
+> [    0.089010] [<ffffffff801a23a8>] warn_alloc+0xf4/0x176
+> [    0.089041] [<ffffffff801a3052>] __alloc_pages_noprof+0xc28/0xcb4
+> [    0.089067] [<ffffffff80086eda>] atomic_pool_expand+0x62/0x1f8
+> [    0.089090] [<ffffffff8080d674>] __dma_atomic_pool_init+0x46/0x9e
+> [    0.089115] [<ffffffff8080d762>] dma_atomic_pool_init+0x96/0x11c
+> [    0.089139] [<ffffffff80002146>] do_one_initcall+0x5c/0x1b2
+> [    0.089158] [<ffffffff8080127c>] kernel_init_freeable+0x214/0x274
+> [    0.089190] [<ffffffff805fefd8>] kernel_init+0x1e/0x10a
+> [    0.089209] [<ffffffff8060748a>] ret_from_fork+0xe/0x1c
+> 
+> Signed-off-by: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
+> ---
+>  arch/riscv/Kconfig | 2 +-
+>  mm/Kconfig         | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index 0f3cd7c3a436..94a573112625 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -50,6 +50,7 @@ config RISCV
+>  	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
+>  	select ARCH_HAS_UBSAN
+>  	select ARCH_HAS_VDSO_DATA
+> +	select ARCH_HAS_ZONE_DMA_SET if 64BIT
+>  	select ARCH_KEEP_MEMBLOCK if ACPI
+>  	select ARCH_MHP_MEMMAP_ON_MEMORY_ENABLE	if 64BIT && MMU
+>  	select ARCH_OPTIONAL_KERNEL_RWX if ARCH_HAS_STRICT_KERNEL_RWX
+> @@ -200,7 +201,6 @@ config RISCV
+>  	select THREAD_INFO_IN_TASK
+>  	select TRACE_IRQFLAGS_SUPPORT
+>  	select UACCESS_MEMCPY if !MMU
+> -	select ZONE_DMA32 if 64BIT
+>  
+>  config CLANG_SUPPORTS_DYNAMIC_FTRACE
+>  	def_bool CC_IS_CLANG
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index b72e7d040f78..97c85da98e89 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -1032,7 +1032,7 @@ config ZONE_DMA
+>  config ZONE_DMA32
+>  	bool "Support DMA32 zone" if ARCH_HAS_ZONE_DMA_SET
+>  	depends on !X86_32
+> -	default y if ARM64
+> +	default y if ARM64 || (RISCV && 64BIT)
+>  
+>  config ZONE_DEVICE
+>  	bool "Device memory (pmem, HMM, etc...) hotplug support"
+> -- 
+> 2.37.3
+> 
 
-No functional change.
+Reviewed-by: Drew Fustini <dfustini@tenstorrent.com>
 
-Signed-off-by: Kinsey Ho <kinseyho@google.com>
----
- mm/memcontrol.c | 30 +++++++++++-------------------
- 1 file changed, 11 insertions(+), 19 deletions(-)
+Thanks for sending this patch as I've also encountered that annoying
+error on systems with DRAM above 4GB.
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 33bd379c738b..2bdad7c29ac0 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -987,8 +987,8 @@ struct mem_cgroup *mem_cgroup_iter(struct mem_cgroup *root,
- {
- 	struct mem_cgroup_reclaim_iter *iter;
- 	struct cgroup_subsys_state *css;
--	struct mem_cgroup *memcg = NULL;
--	struct mem_cgroup *pos = NULL;
-+	struct mem_cgroup *pos;
-+	struct mem_cgroup *next = NULL;
- 
- 	if (mem_cgroup_disabled())
- 		return NULL;
-@@ -1000,10 +1000,9 @@ struct mem_cgroup *mem_cgroup_iter(struct mem_cgroup *root,
- restart:
- 	if (reclaim) {
- 		int gen;
--		struct mem_cgroup_per_node *mz;
-+		int nid = reclaim->pgdat->node_id;
- 
--		mz = root->nodeinfo[reclaim->pgdat->node_id];
--		iter = &mz->iter;
-+		iter = &root->nodeinfo[nid]->iter;
- 		gen = atomic_read(&iter->generation);
- 
- 		/*
-@@ -1016,29 +1015,22 @@ struct mem_cgroup *mem_cgroup_iter(struct mem_cgroup *root,
- 			goto out_unlock;
- 
- 		pos = READ_ONCE(iter->position);
--	} else if (prev) {
-+	} else
- 		pos = prev;
--	}
- 
- 	css = pos ? &pos->css : NULL;
- 
--	for (;;) {
--		css = css_next_descendant_pre(css, &root->css);
--		if (!css) {
--			break;
--		}
--
-+	while ((css = css_next_descendant_pre(css, &root->css))) {
- 		/*
- 		 * Verify the css and acquire a reference.  The root
- 		 * is provided by the caller, so we know it's alive
- 		 * and kicking, and don't take an extra reference.
- 		 */
--		if (css == &root->css || css_tryget(css)) {
-+		if (css == &root->css || css_tryget(css))
- 			break;
--		}
- 	}
- 
--	memcg = mem_cgroup_from_css(css);
-+	next = mem_cgroup_from_css(css);
- 
- 	if (reclaim) {
- 		/*
-@@ -1046,13 +1038,13 @@ struct mem_cgroup *mem_cgroup_iter(struct mem_cgroup *root,
- 		 * thread, so check that the value hasn't changed since we read
- 		 * it to avoid reclaiming from the same cgroup twice.
- 		 */
--		if (cmpxchg(&iter->position, pos, memcg) != pos) {
-+		if (cmpxchg(&iter->position, pos, next) != pos) {
- 			if (css && css != &root->css)
- 				css_put(css);
- 			goto restart;
- 		}
- 
--		if (!memcg) {
-+		if (!next) {
- 			atomic_inc(&iter->generation);
- 
- 			/*
-@@ -1071,7 +1063,7 @@ struct mem_cgroup *mem_cgroup_iter(struct mem_cgroup *root,
- 	if (prev && prev != root)
- 		css_put(&prev->css);
- 
--	return memcg;
-+	return next;
- }
- 
- /**
--- 
-2.46.0.295.g3b9ea8a38a-goog
+I tested this patch by changing the qemu virt machine to have DRAM
+starting at 2^32:
 
+diff --git a/hw/riscv/virt.c b/hw/riscv/virt.c
+index cef41c150aaf..3033a2560edb 100644
+--- a/hw/riscv/virt.c
++++ b/hw/riscv/virt.c
+@@ -87,7 +87,7 @@ static const MemMapEntry virt_memmap[] = {
+     [VIRT_IMSIC_S] =      { 0x28000000, VIRT_IMSIC_MAX_SIZE },
+     [VIRT_PCIE_ECAM] =    { 0x30000000,    0x10000000 },
+     [VIRT_PCIE_MMIO] =    { 0x40000000,    0x40000000 },
+-    [VIRT_DRAM] =         { 0x80000000,           0x0 },
++    [VIRT_DRAM] =        { 0x100000000,           0x0 },
+ };
+ 
+ /* PCIe high mmio is fixed for RV32 */
 
