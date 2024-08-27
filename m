@@ -1,275 +1,134 @@
-Return-Path: <linux-kernel+bounces-303184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E2CD9608B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:31:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B48B96091E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:42:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8E0A282355
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:31:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6DFAB21CBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811541A00EE;
-	Tue, 27 Aug 2024 11:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60001A2C3F;
+	Tue, 27 Aug 2024 11:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jH4C9Nr/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="NlO+s9jv"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFB319EED8;
-	Tue, 27 Aug 2024 11:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432C01A2C26;
+	Tue, 27 Aug 2024 11:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724758243; cv=none; b=iz5pU2tf/k4U3fJGrVGAdatKimb4dqPz8Ka+MmGrSghxwxLp4tL9Er1aMKjRxcOF26S/u5/ADxqOQwn/etGR8NSu+qVrmI+49gP6C1HtkruIt5yJ0mv0BI5vGBEgshYym51AMQaEXp+2EpbNKgq5UUGiXEbz8Ha0AcDov0EgBAM=
+	t=1724758871; cv=none; b=RQlmjKznH+KOpC/v/Rj62HB8H0qb8F1PbVJN1pINohzJn0ceUvmTNj2oKNXq0CGtocKrqUzU4aX9E8lO2ECHojGa+b/hYvSTbuLbgQf895iCtgEhFTlUQxpYPwpfBLKLqZ3xNZ1lv8SVQs/x0OVtl99Is8EPWeqAEX/yGeBOcZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724758243; c=relaxed/simple;
-	bh=98vxe8lKvwmQFrbVzGowoxh4vUjpPyeCTxGxI5JlJIk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=u1rIvqHDJIKKQaTKutMRlt14I6kVglKWW0W+Or8t7W4OzXM2JCku+EU0UeXGeJOrxEKg3AZz8P1McmyLoCqn2qUl4OE2HE++V1zkhx2YnHM/QngsWD8OnxZWQA7R/GlOEmqzRZIy/THYwrNLfdSiWgQkFQSGMvk2tEIoT5OCBV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jH4C9Nr/; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724758242; x=1756294242;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=98vxe8lKvwmQFrbVzGowoxh4vUjpPyeCTxGxI5JlJIk=;
-  b=jH4C9Nr/LWTiU5ia6AopkRgxnteHMCbiKBqHXx+4YShHlitWw/rrcZSd
-   8dU0u4fGYkrceWDw4Vmxu/xCOYUlaYAJMBLJvpnlHoJ8zGkUK/cm8LtLB
-   yEapGOfEVo9B6yj9vWhLEvNVoKhjhXx2hJ6Pg9x4aCh/vdvxgjUtjjFal
-   eps5sM3Xy4hJIbZxQpco7AhM2/9vEp3Y6MPFmvPmHfsNhXgTcQKjZcikt
-   3dBDRssUUSfHffyLEDoupsESgEqKU1JiCB6rupg7g00O7iHFNlxmQUpnu
-   hSnP9RQWo3xYh8GekfnO0KseAQDpJeXzXCnz71milNjwa9XlYTU7LA/y5
-   Q==;
-X-CSE-ConnectionGUID: pWriJR+pSqSIw1+phh1d6Q==
-X-CSE-MsgGUID: /NlNf+JtT6eYT+04lodHTQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23408491"
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="23408491"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 04:30:41 -0700
-X-CSE-ConnectionGUID: FaAxh9qXQYyvRWo1QT+f0w==
-X-CSE-MsgGUID: gf6hzSrYTROQO7iBz3fivw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="63343704"
-Received: from ehanks-mobl1.amr.corp.intel.com (HELO [10.124.223.66]) ([10.124.223.66])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 04:30:38 -0700
-Message-ID: <8719e7653b2f859c46966986dc81cc589a6d78ca.camel@linux.intel.com>
-Subject: Re: [PATCH 1/3] Documentation: admin-guide: pm: Add efficiency vs.
- latency tradeoff to uncore documentation
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Tero Kristo <tero.kristo@linux.intel.com>, Hans de Goede
-	 <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, LKML
-	 <linux-kernel@vger.kernel.org>
-Date: Tue, 27 Aug 2024 07:30:36 -0400
-In-Reply-To: <1b93f71a-8a36-f95e-86b9-2b8f330847ff@linux.intel.com>
-References: <20240821131321.824326-1-tero.kristo@linux.intel.com>
-	 <20240821131321.824326-2-tero.kristo@linux.intel.com>
-	 <dabdc81e-d743-6402-f87a-dee2d6b906b8@linux.intel.com>
-	 <4d6adc49f295ad1dec26cd1a67ec3997686db4a9.camel@linux.intel.com>
-	 <1b93f71a-8a36-f95e-86b9-2b8f330847ff@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	s=arc-20240116; t=1724758871; c=relaxed/simple;
+	bh=4qXVfER7X5jg1UYDsI8GY1Do2GP3/aEPXZ80KDKXsn0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QZ3fnjCk6G4/Igm93+qQnucJvgoKOgZqXC9vNVsnisSEOzxg45IcCAr2CKrtgD5u2/2jrplYZdgBWJ6c+2JIpV3U9eccKIC5IIssIgvF82pY2chWMtNR9+HCRbL5TKkQNa6t0EmXJcBlypEJc/gxDx7bAINkKmYiLJ5WQgzhn2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=NlO+s9jv; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7CACE40E01C5;
+	Tue, 27 Aug 2024 11:32:50 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id MnoEU6ZdDyzp; Tue, 27 Aug 2024 11:32:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1724758365; bh=wabY74DxrFZTKqWmiI9YeG1gKoQ+Qr0O+p15+2rFGe0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NlO+s9jvtLba11mx9toZJOvALKWjRdXMhC/BlLUITXiLTzP6fkv1U5mkm2vhzYdjH
+	 qWMReHJf/uhgYEdftX/kPFK6MUCiogdzzfiDnCUd50kUEnCKlEf+dxWXEwSCb/t9fT
+	 BucU2XPyVNSxbxHKyO2SwxwE/Hzv1VWprqKI7PXv0DBRgRnEEsfDurKqqE3COgkLWw
+	 mp9oYaUKXaOt7YMEdltn0L9lKGNQTVQ7M8R7046rD9Zlk2qLnavz4KU+OLiyC+/AUc
+	 xTqUER0gf+RwUyzNQip06FljIY5RzV2YOrMZIKUXA0mC1yj/DKQoFLz/FwiYj4fPj7
+	 q4yWkI+9OlyeSPQ5Vwykd4ZY12+GiyGYcU74JO2PVehoWxHCvtEQluA7/D3r7B7SVq
+	 gLER6J6xZLJ+RwoRvpMr8WnrsLHhliHej/wxJT2lDqUH/R8s/SkgKmocjj78l7+VH7
+	 sKTk/tsfo66+M2MCviCAxZ4Ln1aC6wxK/V73pXdShIfTwri7vxkQxqCRKNxWXoEgh6
+	 iYTgtuJGxhl2J3/NwmV69Qs/MGkdqSFyNSOnhN3dvtRNv2dNEPcdmKrJ0Pvk693scL
+	 pTjOvtpSHJ653JD6GHmBvWZbNtxNWXls5Q9GLkEtJIdG3tApVUDBwFVJR8DElCaFDN
+	 EPuXtWLZfIutSsn2E4j0v66U=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 51A1540E01A2;
+	Tue, 27 Aug 2024 11:32:34 +0000 (UTC)
+Date: Tue, 27 Aug 2024 13:32:27 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Nikunj A Dadhania <nikunj@amd.com>
+Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
+	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
+	pbonzini@redhat.com
+Subject: Re: [PATCH v11 06/20] x86/sev: Handle failures from snp_init()
+Message-ID: <20240827113227.GAZs25S8Ubep1CDYr8@fat_crate.local>
+References: <20240731150811.156771-1-nikunj@amd.com>
+ <20240731150811.156771-7-nikunj@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240731150811.156771-7-nikunj@amd.com>
 
-On Tue, 2024-08-27 at 11:08 +0300, Ilpo J=C3=A4rvinen wrote:
-> On Mon, 26 Aug 2024, srinivas pandruvada wrote:
->=20
-> > On Fri, 2024-08-23 at 15:28 +0300, Ilpo J=C3=A4rvinen wrote:
-> > > On Wed, 21 Aug 2024, Tero Kristo wrote:
-> > >=20
-> > > > Added documentation about the functionality of efficiency vs.
-> > > > latency tradeoff
-> > > > control in intel Xeon processors, and how this is configured
-> > > > via
-> > > > sysfs.
-> > > >=20
-> > > > Signed-off-by: Tero Kristo <tero.kristo@linux.intel.com>
-> > > > ---
-> > > > =C2=A0.../pm/intel_uncore_frequency_scaling.rst=C2=A0=C2=A0=C2=A0=
-=C2=A0 | 51
-> > > > +++++++++++++++++++=E2=81=A0Ayoub,=C2=A0Hatim=C2=A0This seems that =
-when on AC
-> > > > mode, Windows don't care about PC10. Is this correct? It seems
-> > > > that with EPB=3D6 we can
-> > > > =C2=A01 file changed, 51 insertions(+)
-> > > >=20
-> > > > diff --git a/Documentation/admin-
-> > > > guide/pm/intel_uncore_frequency_scaling.rst
-> > > > b/Documentation/admin-
-> > > > guide/pm/intel_uncore_frequency_scaling.rst
-> > > > index 5ab3440e6cee..fb83aa2b744e 100644
-> > > > --- a/Documentation/admin-
-> > > > guide/pm/intel_uncore_frequency_scaling.rst
-> > > > +++ b/Documentation/admin-
-> > > > guide/pm/intel_uncore_frequency_scaling.rst
-> > > > @@ -113,3 +113,54 @@ to apply at each uncore* level.
-> > > > =C2=A0
-> > > > =C2=A0Support for "current_freq_khz" is available only at each
-> > > > fabric
-> > > > cluster
-> > > > =C2=A0level (i.e., in uncore* directory).
-> > > > +
-> > > > +Efficiency vs. Latency Tradeoff
-> > >=20
-> > > Does this section even cover the "tradeoff" part in its body? Why
-> > > not
-> > > call=20
-> > > it directly "Control" after ELC?
-> > >=20
-> > > > +-------------------------------
-> > > > +
-> > > > +In the realm of high-performance computing, particularly with
-> > > > Xeon
-> > > > +processors, managing uncore frequency is an important aspect
-> > > > of
-> > > > system
-> > > > +optimization. Traditionally, the uncore frequency is ramped up
-> > > > rapidly
-> > > > +in high load scenarios. While this strategy achieves low
-> > > > latency,
-> > > > which
-> > > > +is crucial for time-sensitive computations, it does not
-> > > > necessarily yield
-> > > > +the best performance per watt, =E2=80=94a key metric for energy
-> > > > efficiency
-> > > > and
-> > > > +operational cost savings.
-> > >=20
-> > > This entire paragraph feels more prose or history book than
-> > > documentation=20
-> > > text. I'd suggest using something that goes more directly into
-> > > the
-> > > point
-> > > about what ELC brings to the table (I suppose the goal is
-> > > "performance=20
-> > > per watt" optimization, even that goal is only implied by the
-> > > current
-> > > text, not explicitly stated as the goal here).
-> > >=20
-> >=20
-> > What about this?
-> >=20
-> > Traditionally, the uncore frequency is ramped up to reach the
-> > maximum=20
-> > possible level based on parameters like EPB (Energy perf Bias) and
-> > other system power management settings programmed by BIOS.=C2=A0 While
-> > this
-> > strategy achieves low latency for latency sensitive applications,
-> > it
-> > does not necessarily yield the best performance per watt.=20
->=20
-> This again starts with a wrong foot. Don't use words like
-> "traditionally",
-> "in the past", "historically", "is added", etc. that refer to past
-> time
-> in documentation text at all. The premise with documentation for
-> feature x=20
-> is that the feature x exists. After these patches have been accepted,
-> the=20
-> reality is that ELC exists and time before does not matter so we
-> don't=20
-> encumber documentation text with that era that has become irrelevant.
->=20
-While the choice of words are not correct, for me background is
-important on why a feature is implemented.
-Here even after ELC is implemented, majority of generations will still
-not have this feature. Uncore is not just supported on TPMI systems.
+On Wed, Jul 31, 2024 at 08:37:57PM +0530, Nikunj A Dadhania wrote:
+> Address the ignored failures from snp_init() in sme_enable(). Add error
+> handling for scenarios where snp_init() fails to retrieve the SEV-SNP CC
+> blob or encounters issues while parsing the CC blob.
 
+Is this a real issue you've encountered or?
 
-> You might occasionally have to mention what is not possible without
-> ELC=20
-> in case it's still possible to run stuff without ELC but don't put
-> time=20
-> references to it. However, it's not something you should start with
-> in
-> the documentation text.
->=20
-> > The Efficiency Latency Control (ELC) feature is added to improve
->=20
-> "is added to improve" -> "improves"
-Fine.
+> This change ensures
 
->=20
-> > performance per watt. With this feature hardware power management
-> > algorithms optimize trade-off between latency and power
-> > consumption.
-> > But for some latency sensitive workloads further tuning can be done
-> > from OS to get desired performance.
->=20
-> I'd just start with this paragraph. It goes straight into the point
-> and=20
-> is good in that it tries to summarize what ELC tries to achieve.
-There are so many features we have which improves perf/watt. Why ELC is
-special needs some background.
+Avoid having "This patch" or "This commit" or "This <whatever>" in the commit
+message. It is tautologically useless.
 
->=20
-> > The hardware monitors the average CPU utilization across all cores
->=20
-> hardware or ELC-capable HW?
-Hardware. hardware always does this.
+Also, do
 
->=20
-> > in a power domain at regular intervals and decides a uncore
-> > frequency.=20
->=20
-> This kind of feels something that belongs to the first paragraph if
-> it's=20
-> about ELC. (I'm left slightly unsure if ELC refers only to those
-> controls=20
-> mentioned below, or if it is the automatic uncore freq control plus
-> the=20
-> manual controls. I assume it's the latter because of "with this
-> feature=20
-> hardware power management algorithms optimize" sentence.)
-It is later. Hardware doesn't do a PM feature depending only on OS.
+$ git grep 'This patch' Documentation/process
 
->=20
-> > While this may result in the best performance per watt, workload
-> > may be
-> > expecting higher performance at the expense of power. Consider an
-> > application that intermittently wakes up to perform memory reads on
-> > an
-> > otherwise idle system. In such cases, if hardware lowers uncore
-> > frequency, then there may be delay in ramp up of frequency to meet
-> > target performance.=20
-> >=20
-> > The ELC control defines some parameters which can be changed from
-> > OS.
-> > If the average CPU utilization is below a user defined threshold
-> > (elc_low_threshold_percent attribute below), the user defined
-> > uncore
-> > frequency floor frequency will be used (elc_floor_freq_khz
-> > attribute=20
-> > below) instead of hardware calculated minimum.=20
-> >=20
-> > Similarly in high load scenario where the CPU utilization goes
-> > above=20
-> > the high threshold value (elc_high_threshold_percent attribute
-> > below)=20
-> > instead of jumping to maximum uncore frequency, uncore frequency is
-> > increased in 100MHz steps until the power limit is reached.
-> >=20
-> > Attributes for efficiency latency control:=20
-> > ..=20
-> > ..=20
->=20
-> There were a few spaces at the end if lines, those should be removed.
-Yes in the patch.
+for more details.
 
-Thanks,
-Srinivas
+> that SNP guests will error out early, preventing delayed error reporting or
+> undefined behavior.
+> 
+> Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
+> ---
+>  arch/x86/mm/mem_encrypt_identity.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/arch/x86/mm/mem_encrypt_identity.c b/arch/x86/mm/mem_encrypt_identity.c
+> index ac33b2263a43..e83b363c5e68 100644
+> --- a/arch/x86/mm/mem_encrypt_identity.c
+> +++ b/arch/x86/mm/mem_encrypt_identity.c
+> @@ -535,6 +535,13 @@ void __head sme_enable(struct boot_params *bp)
+>  	if (snp && !(msr & MSR_AMD64_SEV_SNP_ENABLED))
+>  		snp_abort();
+>  
+> +	/*
+> +	 * The SEV-SNP CC blob should be present and parsing CC blob should
+> +	 * succeed when SEV-SNP is enabled.
+> +	 */
+> +	if (!snp && (msr & MSR_AMD64_SEV_SNP_ENABLED))
+> +		snp_abort();
 
->=20
+Any chance you could combine the above and this test?
 
+Perhaps look around at the code before adding your check - there might be some
+opportunity for aggregation and improvement...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
