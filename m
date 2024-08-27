@@ -1,136 +1,227 @@
-Return-Path: <linux-kernel+bounces-303140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C6F69607F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:55:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39DAA9607FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:56:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEAD52837B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:55:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F7881C22B31
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98DE719EED0;
-	Tue, 27 Aug 2024 10:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r1SoRNsb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1743219EEBF;
+	Tue, 27 Aug 2024 10:56:02 +0000 (UTC)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED1919E80F;
-	Tue, 27 Aug 2024 10:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A6719DF41;
+	Tue, 27 Aug 2024 10:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724756125; cv=none; b=Rfj3hO2MsoTK/xWiocFeSocl5tx9Ylhgp1e5QHhicT9GadlKIg1+WQm8OuInRg7PIhzmd+JY+L4mORlpCpTJDTSN8neR17/o5kFmWImvJi/uSM2caoYxWf/oxiZjuuUv4MqZGePySIuGb9STzDfd8DwQ5dP8rBmHessi+fkt/Uo=
+	t=1724756161; cv=none; b=BotMzRWZQAV/Jg59Chp5aZGzW253NG3yibIRrgELeXFOlD81EaMX8gsWLvQwXofOEAbWLOH5QpQF4NWymkcrJI3mWdbSOmrEo/tePvwCTsUDLKZw2/42I4pPQuUcAba7FV1282jSg1GrEg3IHyKT+TkOnwjDi5kHPyP65u9N93Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724756125; c=relaxed/simple;
-	bh=XxMhwTbotyXuOT/2b+zHLvZEco6WgSVKT02u5S1/x/E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t8RqqMrJ/Xf4umadGlUiqtK6Lgr6W1cqkNewmOS5kS8xR/Ny7L5g3WJZ1MYbNwBkjKpWS1QaOg2h6SbZlHt2mNyEfISiR0N0+4mJRohvO4Ujai7HgkLcig7yALroBGi3nMYyox9phepgnlvJ5E/zUqeiRW+u0PrC7fVhLYGA6No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r1SoRNsb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F79AC8B7A4;
-	Tue, 27 Aug 2024 10:55:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724756125;
-	bh=XxMhwTbotyXuOT/2b+zHLvZEco6WgSVKT02u5S1/x/E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=r1SoRNsbp+ogREa5Gak3UCmwn88HGdQumVFy0WRQiEWJKlgg+w5gkhqzJDz6HU3JN
-	 AD8jZ/HVDOMALf+EqBTuO4IwcR9d9Pnx2s6Splc61p5YrXKHSJYoA22ORFsoD9eTr2
-	 3pnu1uE9Fs4OhhUHApN3S22/KsEbifnGZL811iHi5pSf6H5h2cdU2qpzHVMsptCKmU
-	 8G0CgD710xx4MVQx2W0jOGQb5okFqO9iL7J0RboKm+nsDnIUMc0SndiAphYUHnxMcV
-	 Lu7J4srXnE/yMN2VJ585WVyn24NOIcCJcHecEvwtAt4iwEFtsIOgWR7lLiZH+gVDSL
-	 AxIycLkgv6E4g==
-Message-ID: <39576115-c19f-416d-b3d3-a5fbec90952b@kernel.org>
-Date: Tue, 27 Aug 2024 12:55:19 +0200
+	s=arc-20240116; t=1724756161; c=relaxed/simple;
+	bh=4oBV8H5bs6V7KC17pgVHrSStgbbQbPBeJsp1/aceqNY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ruEkyWte2thgqMZwajCIjcHmtl8Y6hW1OzI607zhQCIPISSReE8/8TBiM9aPXXMsVWbalfx/gr9QvMVrjBMea3lNmbCM7AnSwFZSJ1u4gp46k0F3oOfX1lJWuTKj4T2eqIFPBKqgUlH8AHaWp+J/RKheGOUOJZC6vMNb1SUxz2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6b8d96aa4c3so45161427b3.1;
+        Tue, 27 Aug 2024 03:55:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724756155; x=1725360955;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qo2NMwoxAQ1U2hSpFIW4sKP1B7w0umymouG5LJGc8hU=;
+        b=tMX1Dw9Z+zGNWhjGgBlnTjrOPMMDgNMxkP9EzaABEGB56zn7GkHHBi608bXtY0Fgjk
+         lTy2ejwiwnxctC7LgOtg2Ez9ynnKIkagkTxqT53e7yyc3EC6EfxM4ogPrnp24ngpaIZD
+         0Kuy0CfI4eAtlfWfRcT+cff/fpEDkPMBKpbMs6Av3mClyLL/ln31IGTLYF9eDxblPAi3
+         XPk5gT8+x5p6e2S11kOi0a/Wjljw0ly2ORNSxVh2jNYFCpkrpN2XS7knuXkzFapmdt5N
+         wiSw28JjTwQ7c6PudlVqoFQi/AcjHOMeMs10jJ3J24/1IiZgjKiYXaRuNQ6fuDvrIzyE
+         hv5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVEUYa5weDMTeSTBtJOzQJhrckP/E3G+Jhy93zh5fe/2lu5xAlHgpmS/Rhdbpl8xeHCadxF/hxmhTE=@vger.kernel.org, AJvYcCW/O4EY5BhYPz7EqTc31DfojVqrcKQzkOY7QFJNWvdsuXoQV+8e5ON+Jjtg5J5QyBvJXKBCxICatr0aoub9VnXpuDA=@vger.kernel.org, AJvYcCXevh5vIM4l/N1wILi26zRB0VfCRj5rOTWJ9+i8JCCTtcTqQOQqekuVdeqAxYof3zeK+uApMlN42+ttl3WH@vger.kernel.org, AJvYcCXjyiu2msfh1AXmpdACrjZx+ehysfpAHrqTL3Gk0oouOMr1XE2prmui7X17UkhP6YHRxYLeTF+ljL2Ea/bN@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCNLc2MLekUBkrs1kRjbny8AEcOO6Ria0UohKkgPnEvw8gy2TS
+	XfdJ56LwPfjZfF++mQvDay+6Ux5xItp829lIsUaNFvvSYv5zIamDBY00HOxh
+X-Google-Smtp-Source: AGHT+IETCHIGK0mw721enGSsiHio9F34nf8fMRrHd76WZv69hnIg/7XiAuB9jHfhRho4v3uBI4sk8Q==
+X-Received: by 2002:a05:690c:f82:b0:62c:e6c0:e887 with SMTP id 00721157ae682-6cfb950a938mr29761547b3.9.1724756155382;
+        Tue, 27 Aug 2024 03:55:55 -0700 (PDT)
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6c39de3e7d9sm18617947b3.128.2024.08.27.03.55.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 03:55:54 -0700 (PDT)
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e1633202008so5249104276.2;
+        Tue, 27 Aug 2024 03:55:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU1z0Udm9zoeM3IQOFyeenSQLYJpx2yx7cgvGb8yfeCoV5llNKY7CICZ6g8BCN/rfW4IHGuw+6p7YhZs0pdpHgX77M=@vger.kernel.org, AJvYcCUEzwgKCk1MaYoaZHfqkp9EhLlUj/iK4dB5HIfFlhr9/poZyCajC6rUZq2SJWdaCTTL0RG+PTqKDdqmZJK7@vger.kernel.org, AJvYcCVFj/7SgI2UFAFEDYQm1Vnt9diD2heqtr5UMpg5SFfgis85Lj3tyL1+zqJqTookxbwh0sOoPLW54j/jobd7@vger.kernel.org, AJvYcCVHBPjzhh7j36So4wkZIBIl9XOeoQU9SlsgMYz9mCk4gU81vWRbnG3X/V6bK/qE+U+R2HIHt+nJQPg=@vger.kernel.org
+X-Received: by 2002:a05:690c:9e:b0:6b2:28c3:b706 with SMTP id
+ 00721157ae682-6cfbb6fe00dmr29288707b3.34.1724756154320; Tue, 27 Aug 2024
+ 03:55:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/6] dt-bindings: PCI: ti,am65: Extend for use with PVU
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>,
- Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Siddharth Vadapalli <s-vadapalli@ti.com>,
- Bao Cheng Su <baocheng.su@siemens.com>, Hua Qian Li
- <huaqian.li@siemens.com>, Diogo Ivo <diogo.ivo@siemens.com>
-References: <cover.1724709007.git.jan.kiszka@siemens.com>
- <82ac9e266f6aca42699ec4a3c8f10887789ee6bf.1724709007.git.jan.kiszka@siemens.com>
- <afyz3i4xihir4fnt4djo45saytz5ubu3wel6munq7cinwcb55m@ohdelne4xf34>
- <554cb065-6483-42be-bfed-9ed6d3b16fb1@siemens.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <554cb065-6483-42be-bfed-9ed6d3b16fb1@siemens.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240823-cleanup-h-guard-pm-domain-v1-0-8320722eaf39@linaro.org>
+ <20240823-cleanup-h-guard-pm-domain-v1-9-8320722eaf39@linaro.org>
+ <CAMuHMdV0R0+u1eCiUOHhL5w-wzge9KhgyumJSd28oF9kQmnx_Q@mail.gmail.com>
+ <a48f1a0b-0e20-4782-bf6b-c430da9ae391@linaro.org> <58f5d332-2f2a-4607-9662-e71fd23b1316@linaro.org>
+In-Reply-To: <58f5d332-2f2a-4607-9662-e71fd23b1316@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 27 Aug 2024 12:55:40 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUQ5AD1QoO5F1nAy+GJoGtbi2ztKfK=2buU1MNeO8etJw@mail.gmail.com>
+Message-ID: <CAMuHMdUQ5AD1QoO5F1nAy+GJoGtbi2ztKfK=2buU1MNeO8etJw@mail.gmail.com>
+Subject: Re: [PATCH 09/10] pmdomain: renesas: rcar-gen4-sysc: Use scoped
+ device node handling to simplify error paths
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 27/08/2024 12:44, Jan Kiszka wrote:
->>>      maxItems: 1
->>> @@ -69,6 +71,9 @@ properties:
->>>      items:
->>>        pattern: '^pcie-phy[0-1]$'
->>>  
->>> +  memory-region:
->>> +    description: phandle to restricted DMA pool to be used for all devices behind this controller
->>
->> missing constraints, maxItems
->>
-> 
-> In fact, that was intentional: There could also be multiple region
-> specified here. The driver already handles this.
+Hi Krzysztof,
 
-Then list the items with description and minItems: 1.
+On Tue, Aug 27, 2024 at 11:39=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+> On 27/08/2024 11:33, Krzysztof Kozlowski wrote:
+> > On 27/08/2024 09:48, Geert Uytterhoeven wrote:
+> >> On Fri, Aug 23, 2024 at 2:51=E2=80=AFPM Krzysztof Kozlowski
+> >> <krzysztof.kozlowski@linaro.org> wrote:
+> >>> Obtain the device node reference with scoped/cleanup.h to reduce erro=
+r
+> >>> handling and make the code a bit simpler.
+> >>>
+> >>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> >>
+> >> Thanks for your patch!
+> >>
+> >>> --- a/drivers/pmdomain/renesas/rcar-gen4-sysc.c
+> >>> +++ b/drivers/pmdomain/renesas/rcar-gen4-sysc.c
+> >>> @@ -303,12 +304,12 @@ static int __init rcar_gen4_sysc_pd_init(void)
+> >>>         const struct rcar_gen4_sysc_info *info;
+> >>>         const struct of_device_id *match;
+> >>>         struct rcar_gen4_pm_domains *domains;
+> >>> -       struct device_node *np;
+> >>>         void __iomem *base;
+> >>>         unsigned int i;
+> >>>         int error;
+> >>>
+> >>> -       np =3D of_find_matching_node_and_match(NULL, rcar_gen4_sysc_m=
+atches, &match);
+> >>> +       struct device_node *np __free(device_node) =3D
+> >>> +               of_find_matching_node_and_match(NULL, rcar_gen4_sysc_=
+matches, &match);
+> >>
+> >> This breaks the declarations/blank-line/code structure, so please move
+> >> this up.
+> >
+> > What do you mean "declaration structure"? That's the way how variables
 
+First a block with declarations, then a blank line, followed by the actual =
+code
+(yeah, the pre-C99 style ;-)
 
-Best regards,
-Krzysztof
+> > with constructors are expected to be declared - within the code.
 
+When it matters.
+
+> Continuing thoughts, so you prefer:
+>
+>         struct rcar_gen4_pm_domains *domains;
+>         void __iomem *base;
+>         struct device_node *np __free(device_node) =3D
+>                 of_find_matching_node_and_match(NULL, rcar_gen4_sysc_matc=
+hes, &match);
+>
+> (assuming I will put it at the end of declarations).
+>
+> Are you sure this is more readable? It's really long line so it
+> obfuscates a bit the declarations. The point of the scoped assignment is =
+that
+> you declare it at point of need/first use.
+
+You're missing reverse Christmas tree order...
+
+> >> If you insist on keeping assignment to and validation of np together,
+> >> the line should be split in declaration and assignment.
+> >
+> > No, that would be inconsistent with cleanup/constructor coding style.
+> > Maybe this is something new, so let me bring previous discussions:
+
+[...]
+
+> > and finally it will reach documentation (although it focuses on
+
+Oh, "finally" as in not yet upstream ;-)
+
+> > unwinding process to be specific - "When the unwind order ..."):
+> > https://lore.kernel.org/all/171175585714.2192972.12661675876300167762.s=
+tgit@dwillia2-xfh.jf.intel.com/
+
+"When the unwind order matters..."
+
+So it's perfectly fine to have:
+
+    static int __init rcar_gen4_sysc_pd_init(void)
+    {
+            struct device_node *np __free(device_node) =3D NULL;
+            struct rcar_gen4_pm_domains *domains;
+            const struct rcar_gen4_sysc_info *info;
+            const struct of_device_id *match;
+            void __iomem *base;
+            unsigned int i;
+            int error;
+
+            np =3D of_find_matching_node_and_match(NULL,
+rcar_gen4_sysc_matches, &match);
+            if (!np)
+                    return -ENODEV;
+
+            ...
+    }
+
+But my first suggestion:
+
+    static int __init rcar_gen4_sysc_pd_init(void)
+    {
+            struct device_node *np __free(device_node) =3D
+                    of_find_matching_node_and_match(NULL,
+rcar_gen4_sysc_matches, &match);
+            struct rcar_gen4_pm_domains *domains;
+            const struct rcar_gen4_sysc_info *info;
+            const struct of_device_id *match;
+            void __iomem *base;
+            unsigned int i;
+            int error;
+
+            if (!np)
+                    return -ENODEV;
+
+            ...
+    }
+
+is safer w.r.t. to future modification.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
