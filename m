@@ -1,116 +1,214 @@
-Return-Path: <linux-kernel+bounces-303236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BC74960965
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:58:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E33960969
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:58:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC1971F23A66
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:58:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 134EC1C223F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319E21A08B9;
-	Tue, 27 Aug 2024 11:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78F41A0AE1;
+	Tue, 27 Aug 2024 11:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bx89GuTc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="szTE5j+u"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D4F1A071C;
-	Tue, 27 Aug 2024 11:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3E219E825;
+	Tue, 27 Aug 2024 11:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724759871; cv=none; b=etvoE9h9E76WHr3kHi4IXxhL+xUtqiA5gTmNBu7U62/pFyKKPEGzmdWapa8M1FodOcEmZT5sxZqM5wv0BwXIxaRaACuR7yf8vFS597D8Il2JMWvkip34UV3BOrM10OF4JyCeoOrTed3a3CR+uRjO74iRbpMPxkKo8+DovzrtIpM=
+	t=1724759890; cv=none; b=u6/s+ZdNperj/85jcRdfRMvCQ8uia/Vp+YpL6j/45HwGtX6dNavdlRQXg5wtbWK0YobKKhtxpnOlpzrxigYRHo6oIWisWSR/hpNYQMi9yPtL1LAikKBd5H6kxmq9wqLw6KwmHLXR+5GHMotFz4TdGU97Mw5jC1nl7bmYmZWcmZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724759871; c=relaxed/simple;
-	bh=CYc5VELAzAhXfQWr5pJETL/meW5/Mhe4vpHIk/kG5Fc=;
-	h=Content-Type:Date:Message-Id:Cc:From:To:Subject:References:
-	 In-Reply-To; b=rulZzoLYD9gJ58qxaY2h78j609ngXcduMJGs+FjV6TMs7m/AlNgEEGq70B/svMlce+BtXkImBS2XLQQsHXK0Lj+v1X/M3WmVR1eQqGGUYk5QIB2UuBT6RXHaKsxObS+oOGO99nUF33upTfYRDxT9wDinEcltv3QsghfV9gG0DCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bx89GuTc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87DAFC61060;
-	Tue, 27 Aug 2024 11:57:50 +0000 (UTC)
+	s=arc-20240116; t=1724759890; c=relaxed/simple;
+	bh=kRxo7VItqj/OMI9oVzZbAhUcxz67WcLgEGg7thISTUI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M1aj4NBS1QptL155AWJqnYtGWeSPW2ErucliDSINCAnUQHxUjYfx3S8zSmnE9AkOBOxPXmzunwrwHwEPsj2RiqfCgFoFh5sWemVY3J1F227zP7TA7JS/u3BFMh+g5RkTzgpKbNO0iTk5lecoQLPv9ak5Hdu2eCDaq2Dzg/PviEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=szTE5j+u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 397D5C61061;
+	Tue, 27 Aug 2024 11:58:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724759871;
-	bh=CYc5VELAzAhXfQWr5pJETL/meW5/Mhe4vpHIk/kG5Fc=;
-	h=Date:Cc:From:To:Subject:References:In-Reply-To:From;
-	b=Bx89GuTcDUlXC5ydTlMXLzKMFStTU3OGz/xCU4WqBbgTSEqMpNcjTTSmgTd/mk4QG
-	 PVfyuiWZGHRxZlnj9x/ttsraIZ+s1+MlvNRV3K6NNNlJMgnknQbdbdagHQy3Z0vmBq
-	 Qn4EBb/qjxu8/UcQQo9Xfmi/0o+JkOgsD+eTEeCY7gBfofh5NQrBu3Wq7ibUp0FT/x
-	 YRyIzY6TjBuO923cFr5tImmQKhnWb0ysCpDqLiPH3AbIAPinpwvslWurU9FjpOt7VV
-	 kyRDb9LLLdMwDjG12zNckQrY5/jhXFuRPVPRdPsWQsHjYu931fGbfXrPwEzhVKzQNV
-	 ZDmbQqaebostg==
-Content-Type: multipart/signed;
- boundary=cd9088e86bbd2ff47209cffbdbcf0cdc176a5d2737869e3e822db09cb6b3;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Tue, 27 Aug 2024 13:57:46 +0200
-Message-Id: <D3QOCGDROG5A.361R73U5376FE@kernel.org>
-Cc: <yogeshgaur.83@gmail.com>, <linux-spi@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <opensource.kernel@vivo.com>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Yan Zhen" <yanzhen@vivo.com>, <han.xu@nxp.com>, <haibo.chen@nxp.com>,
- <broonie@kernel.org>
-Subject: Re: [PATCH v1] spi: nxp-fspi: Use min macro
-X-Mailer: aerc 0.16.0
-References: <20240827085739.3817877-1-yanzhen@vivo.com>
-In-Reply-To: <20240827085739.3817877-1-yanzhen@vivo.com>
+	s=k20201202; t=1724759890;
+	bh=kRxo7VItqj/OMI9oVzZbAhUcxz67WcLgEGg7thISTUI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=szTE5j+uX4+Q6nwZaDU1Rn6fZMnNLkz2cs1g++6I9HivCs03i66cJm/IFGXpx+GX1
+	 G26aVqNjRi8lfEzNxxHxOv0uND0Al8wx4T+a7ndY9IMaLF+uCkBDi79PmJ/utCbaky
+	 bbYuWRSK4qpwNx4Ai9HYsVElm4GJtBtm82ZK+aTL1OiCwsD4jmHnTG/UQ2Yo2B9RzQ
+	 uaYkJUGNpUOyB04PO5SDNzATnL6msep8X+SjT8UrwBQRstmTQfziW83a9VsmeN7wac
+	 HmmEpgGFYlRiK4DJ5pQVsYc5CON6l1fxvO2Qijf69RyUkUAr/lH6DMZovtUiDJelBr
+	 nTTf8agE4eOCQ==
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-70949118d26so5257451a34.0;
+        Tue, 27 Aug 2024 04:58:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWRVeFljYvV3eMyeWy0ZlcR3FeyYBgOZ5+iyhf7Kvr1LqVG+QWfWvISAdAa5i4VxVfMv3Ebe1u5oMY=@vger.kernel.org, AJvYcCXrDgVl7Aa7HsroJyBbtB6dqKMAEpmMJW71OL+i2mgaqJqAawAQrHEXJvrypK0Iik+e6U2/DOJOxFRlYkE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI35zY7gyGK1pYbOk1QmXzN58ozGkFYDIeLBU0bgt8OHKY/uIY
+	62JSyRQ2klUa3Ge8AUYy+8HKxNGgcve0gNVaH7YZ686eYGeYTo2ey72j3+vtCtuFUVFqkzI+pS/
+	Ba2edNmtmRLFen7K2+nqePm2YLn4=
+X-Google-Smtp-Source: AGHT+IF1B6zYfYGmjEdZ/+Lb/H12g2MwdymWWZz9O+mkvpi423imAfOgehcnxdm0DES5zc2o929G13se5hU97F+5I+4=
+X-Received: by 2002:a05:6870:a40b:b0:270:1352:6c1f with SMTP id
+ 586e51a60fabf-2775a037100mr2858957fac.33.1724759889585; Tue, 27 Aug 2024
+ 04:58:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-
---cd9088e86bbd2ff47209cffbdbcf0cdc176a5d2737869e3e822db09cb6b3
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <4941491.31r3eYUQgx@rjwysocki.net> <13573795.uLZWGnKmhe@rjwysocki.net>
+ <20240826220849.GA7696@ranerica-svr.sc.intel.com>
+In-Reply-To: <20240826220849.GA7696@ranerica-svr.sc.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 27 Aug 2024 13:57:58 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ikE668dXQRP7JTxU44t7TeLHQGNxR5T0AeiiFpPHQDOA@mail.gmail.com>
+Message-ID: <CAJZ5v0ikE668dXQRP7JTxU44t7TeLHQGNxR5T0AeiiFpPHQDOA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] x86/sched: Add basic support for CPU capacity scaling
+To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, x86 Maintainers <x86@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Ricardo Neri <ricardo.neri@intel.com>, Tim Chen <tim.c.chen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-Hi,
-
-On Tue Aug 27, 2024 at 10:57 AM CEST, Yan Zhen wrote:
-> When the original file is guaranteed to contain the minmax.h header file
-> and compile correctly, using the real macro is usually=20
-> more intuitive and readable.
-
-The subject doesn't match what you're doing here. Also, shouldn't
-one use max_t()?
-
--michael
-
+On Tue, Aug 27, 2024 at 12:02=E2=80=AFAM Ricardo Neri
+<ricardo.neri-calderon@linux.intel.com> wrote:
 >
-> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
-> ---
->  drivers/spi/spi-nxp-fspi.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> On Mon, Aug 12, 2024 at 02:42:26PM +0200, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 >
-> diff --git a/drivers/spi/spi-nxp-fspi.c b/drivers/spi/spi-nxp-fspi.c
-> index 88397f712a3b..fda902aa5815 100644
-> --- a/drivers/spi/spi-nxp-fspi.c
-> +++ b/drivers/spi/spi-nxp-fspi.c
-> @@ -756,8 +756,7 @@ static int nxp_fspi_read_ahb(struct nxp_fspi *f, cons=
-t struct spi_mem_op *op)
->  			iounmap(f->ahb_addr);
-> =20
->  		f->memmap_start =3D start;
-> -		f->memmap_len =3D len > NXP_FSPI_MIN_IOMAP ?
-> -				len : NXP_FSPI_MIN_IOMAP;
-> +		f->memmap_len =3D max(len, NXP_FSPI_MIN_IOMAP);
-> =20
->  		f->ahb_addr =3D ioremap(f->memmap_phy + f->memmap_start,
->  					 f->memmap_len);
+> [...]
+>
+> > +bool arch_enable_hybrid_capacity_scale(void)
+> > +{
+> > +     int cpu;
+> > +
+> > +     if (static_branch_unlikely(&arch_hybrid_cap_scale_key)) {
+> > +             WARN_ONCE(1, "Hybrid CPU capacity scaling already enabled=
+");
+> > +             return true;
+> > +     }
+>
+> Maybe an empty line here for readability?
 
+Sure, if this helps.
 
---cd9088e86bbd2ff47209cffbdbcf0cdc176a5d2737869e3e822db09cb6b3
-Content-Type: application/pgp-signature; name="signature.asc"
+> > +     arch_cpu_scale =3D alloc_percpu(struct arch_hybrid_cpu_scale);
+> > +     if (!arch_cpu_scale)
+> > +             return false;
+> > +
+> > +     for_each_possible_cpu(cpu) {
+> > +             per_cpu_ptr(arch_cpu_scale, cpu)->capacity =3D SCHED_CAPA=
+CITY_SCALE;
+> > +             per_cpu_ptr(arch_cpu_scale, cpu)->freq_ratio =3D arch_max=
+_freq_ratio;
+> > +     }
+> > +
+> > +     static_branch_enable(&arch_hybrid_cap_scale_key);
+> > +
+> > +     pr_info("Hybrid CPU capacity scaling enabled\n");
+> > +
+> > +     return true;
+> > +}
+> > +
+> > +/**
+> > + * arch_set_cpu_capacity - Set scale-invariance parameters for a CPU
+> > + * @cpu: Target CPU.
+> > + * @cap: Capacity of @cpu, relative to @base_cap, at its maximum frequ=
+ency.
+> > + * @base_cap: System-wide maximum CPU capacity.
+>
+> It is confusing to e that @base_cap is the maximum capacity of the system=
+.
+> Maybe @max_cap?
 
------BEGIN PGP SIGNATURE-----
+But the max_cap and max_freq are sort of confusing again.
 
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZs2/OxIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/hfEgGAsb5PJxkUzax2SgeJkjshmtpMRRh/jJsy
-rqJX6PFamFExSeA5u8p2PlIFWeEjdR59AX9h0letX229cmVb/qUOe1Sgf8Lo23Vc
-SJCFaf97YzB+Od/GQHWgCfUbw7IHvWwlmCI=
-=pDAh
------END PGP SIGNATURE-----
+I guess I can call it max_cap and also rename max_freq to cap_freq.
 
---cd9088e86bbd2ff47209cffbdbcf0cdc176a5d2737869e3e822db09cb6b3--
+> > + * @max_freq: Frequency of @cpu corresponding to @cap.
+> > + * @base_freq: Frequency of @cpu at which MPERF counts.
+> > + *
+> > + * The units in which @cap and @base_cap are expressed do not matter, =
+so long
+> > + * as they are consistent, because the former is effectively divided b=
+y the
+> > + * latter.  Analogously for @max_freq and @base_freq.
+> > + *
+> > + * After calling this function for all CPUs, call arch_rebuild_sched_d=
+omains()
+> > + * to let the scheduler know that capacity-aware scheduling can be use=
+d going
+> > + * forward.
+> > + */
+> > +void arch_set_cpu_capacity(int cpu, unsigned long cap, unsigned long b=
+ase_cap,
+> > +                        unsigned long max_freq, unsigned long base_fre=
+q)
+> > +{
+> > +     if (static_branch_likely(&arch_hybrid_cap_scale_key)) {
+> > +             WRITE_ONCE(per_cpu_ptr(arch_cpu_scale, cpu)->capacity,
+> > +                        div_u64(cap << SCHED_CAPACITY_SHIFT, base_cap)=
+);
+> > +             WRITE_ONCE(per_cpu_ptr(arch_cpu_scale, cpu)->freq_ratio,
+> > +                        div_u64(max_freq << SCHED_CAPACITY_SHIFT, base=
+_freq));
+> > +     } else {
+> > +             WARN_ONCE(1, "Hybrid CPU capacity scaling not enabled");
+> > +     }
+> > +}
+> > +
+> > +unsigned long arch_scale_cpu_capacity(int cpu)
+> > +{
+> > +     if (static_branch_unlikely(&arch_hybrid_cap_scale_key))
+> > +             return READ_ONCE(per_cpu_ptr(arch_cpu_scale, cpu)->capaci=
+ty);
+> > +
+> > +     return SCHED_CAPACITY_SCALE;
+> > +}
+> > +EXPORT_SYMBOL_GPL(arch_scale_cpu_capacity);
+> > +
+> >  static void scale_freq_tick(u64 acnt, u64 mcnt)
+> >  {
+> >       u64 freq_scale;
+> > +     u64 freq_ratio;
+>
+> Why can't freq_ratio be declared on the same line as freq_scale?
+
+It can.
+
+> >
+> >       if (!arch_scale_freq_invariant())
+> >               return;
+> > @@ -359,7 +439,12 @@ static void scale_freq_tick(u64 acnt, u6
+> >       if (check_shl_overflow(acnt, 2*SCHED_CAPACITY_SHIFT, &acnt))
+> >               goto error;
+> >
+> > -     if (check_mul_overflow(mcnt, arch_max_freq_ratio, &mcnt) || !mcnt=
+)
+> > +     if (static_branch_unlikely(&arch_hybrid_cap_scale_key))
+> > +             freq_ratio =3D READ_ONCE(this_cpu_ptr(arch_cpu_scale)->fr=
+eq_ratio);
+> > +     else
+> > +             freq_ratio =3D arch_max_freq_ratio;
+>
+> It seems that arch_max_freq_ratio will never be used on hybrid processors
+> and computing arch_turbo_freq_ratio will be a waste of cycles.
+
+Well, what if the memory allocation is
+arch_enable_hybrid_capacity_scale() fails?
+
+> Unfortunately, intel_set_max_freq_ratio() is called before the
+> arch_hybrid_cap_scale_key static key is set.
+>
+> Maybe some rework is in order?
+
+I'd rather not do it.  This is all initialization and done once.
+
+However, a driver mode change can mess up with it which I have
+overlooked.  I'll fix this (and make the above changes) and send a new
+version of the series.
 
