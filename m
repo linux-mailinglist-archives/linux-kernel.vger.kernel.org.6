@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-303441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEA99960C18
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:33:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D909960C2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19396B25AE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:33:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 089C6B27ED2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D381C0DC2;
-	Tue, 27 Aug 2024 13:32:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342BF1C0DD0;
+	Tue, 27 Aug 2024 13:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFBBDkGx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mYjKL51S"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE311BFE02;
-	Tue, 27 Aug 2024 13:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E841A00EE;
+	Tue, 27 Aug 2024 13:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724765569; cv=none; b=idJChIVohy2/Xk9LqUnhafNli8/Zj4QPkKksERc9JVfSiwtk7yWPRkABF7PspWIzkFZGs3SqrElkiMWy0GUn/SAM/7hF90r9ceHIKEguHkPb+dn6crp/h1j7sTa4uqDtczWVBe2fGwXsjsP2hegituk3ggWyATCbm8JFhIaGh6I=
+	t=1724765665; cv=none; b=iwMUp5chenqr11Y454sGcqfv3AYfyqcTPiXjIPFGaR3q5mPwcIWN9lXLRvvjw5Jr4Eit62nJ1dJkPKk3CRwFP3hXFDmRdHV8UrKsa2C2rDXy02QIP1z33Cz4MdxEy8GdnAw8TbaRVUqczuUkOwb0+GaLK3ywrslxZ6tECRZPkt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724765569; c=relaxed/simple;
-	bh=auXWISBtLSRoRKJVQIQs8hMcLW8kHEHYi2D0jqySGfo=;
+	s=arc-20240116; t=1724765665; c=relaxed/simple;
+	bh=BaSEk/h/W6GAXSa4qvmj3Uuw2SUMroJug1LJmYJViq8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NiCi8xzuHHmkZT4Ve1e/DP+5gj2sROM/uBwcUqMVNQxDRozDo5wPd+/i2xQ+cT9PvDyGlXGUjPlsq7mTbTlOWT/83TJ2ja9hgqzfp0cwiJ+PnKAhjC4Q6rMfWptiyK6dbDvb3HLsgxNWGzVFca/Q0oUX5/ZK9kmD/d1zN0fay0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jFBBDkGx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0631C61040;
-	Tue, 27 Aug 2024 13:32:46 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=W4/c09byfGDxNoOuTR1cFCpkwv8plRDKDdzeqdpANh3xcdBnnsE7JNSKHiGnFeYZtSkMrfrd1CveVVacHduFq13cLgFvQl+jrFDCvACuhXxTw31ToCsSrGUSuobf2xLOasEPMee5HyWS6C+GwdB/KcbmkYMzPVxH2vMEwpUk1AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mYjKL51S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDE71C61040;
+	Tue, 27 Aug 2024 13:34:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724765568;
-	bh=auXWISBtLSRoRKJVQIQs8hMcLW8kHEHYi2D0jqySGfo=;
+	s=k20201202; t=1724765664;
+	bh=BaSEk/h/W6GAXSa4qvmj3Uuw2SUMroJug1LJmYJViq8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jFBBDkGxixxyPAb5ou9D2wpyxpVxkYFf82nV2iZa9J0yDzUy2Q4+nXhJrd3dC9Yox
-	 0huY/i5HyaBQFr+WO4roYhGrqcqI6xsgkmW/zi8JQ6cRexNprmXPJlyXzXBZKApryg
-	 Zyb5nBaRO6QVJ2iSXjMKIKPlsEnsSlRwBPImQaSimEAQhWDFSQwBg5iY6RdX/vm1qr
-	 nWauqsdkJIJUnjtRfe0J7Wx9QnSWiOIDqQQL3ggm0MIi8TJhr20Isk4PG4511Z03XU
-	 ml/yOSXVNbD7w4blYG/gbeIzaiJq25mu614TWCejogkH4EsFK2GtDRXe5ly+3ampfn
-	 nXOFPa9YUUN2g==
-Message-ID: <cb126c54-1cc5-4dbf-9d52-bed50834fa3b@kernel.org>
-Date: Tue, 27 Aug 2024 15:32:44 +0200
+	b=mYjKL51SUhM1AcK6otSl2UomqHVgTRlz21SibypjOotBW+rqnKmp0NA4WdAoHPpIe
+	 XLoFgdI8cL9pxPGvDvG3fgEvWKa8ciwCqxG2oz804CEYcnu+OtSiZN3A6H9LwHVYde
+	 h9zxSc3Y/ZEUi1P4jLp4uPm+xLCCffhbrTPeurmaW2qmFm7u8KQFiP8OwRb72Y36Gt
+	 nxumPI/SWa66uNkEErucl6MzQSrjZnSHiV4qSPfgS3j69Ws7DGg38YJ2Vs6TjuYTHT
+	 oDUleZTAG9FVHieXvzb9G05ZQfJmiexdvUUFapfnVikK6hSvdU4s7wEVRtbqj1oqpe
+	 hS0MZsEYWoosA==
+Message-ID: <465fa7d5-c40a-47e1-90c8-12c764679406@kernel.org>
+Date: Tue, 27 Aug 2024 15:34:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] arm64: dts: ls1046a: add pinctrl node
-To: David Leonard <David.Leonard@digi.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <1d7da01e-4f61-df0d-1795-5fbd78ae14b7@digi.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH net-next v6 0/2] net: dsa: microchip: Add KSZ8895/KSZ8864
+ switch support
+To: Tristram.Ha@microchip.com, Woojung.Huh@microchip.com,
+ UNGLinuxDriver@microchip.com, devicetree@vger.kernel.org, andrew@lunn.ch,
+ f.fainelli@gmail.com, olteanv@gmail.com
+Cc: o.rempel@pengutronix.de, pieter.van.trappen@cern.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, marex@denx.de,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <BYAPR11MB3558B8A089C88DFFFC09B067EC8B2@BYAPR11MB3558.namprd11.prod.outlook.com>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -102,37 +104,29 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <1d7da01e-4f61-df0d-1795-5fbd78ae14b7@digi.com>
+In-Reply-To: <BYAPR11MB3558B8A089C88DFFFC09B067EC8B2@BYAPR11MB3558.namprd11.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 27/08/2024 04:13, David Leonard wrote:
+On 26/08/2024 23:43, Tristram.Ha@microchip.com wrote:
+> From: Tristram Ha <tristram.ha@microchip.com>
 > 
-
-You messages have weird blank line in front.
-
-> Add a node for the LS1046A's pinmux controller and related pinctrl
-> properties for the nodes using the gpio and i2c functions it controls.
+> This series of patches is to add KSZ8895/KSZ8864 switch support to the
+> KSZ DSA driver.
 > 
-> Signed-off-by: David Leonard <David.Leonard@digi.com>
-> ---
->   .../arm64/boot/dts/freescale/fsl-ls1046a.dtsi | 36 +++++++++++++++++++
->   1 file changed, 36 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-> index 200e52622f99..d2286fd6f972 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-> @@ -350,6 +350,29 @@ extirq: interrupt-controller@1ac {
->   			};
->   		};
-> 
-> +		pinmux: pinmux@157040c {
+> v6
+> - Add reviews of Pieter and Oleksij
 
-pinctrl@
+Please fix your threading in future submissions.
 
-Keep your code consistent.
+No other changes? Then:
 
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
 
 Best regards,
 Krzysztof
