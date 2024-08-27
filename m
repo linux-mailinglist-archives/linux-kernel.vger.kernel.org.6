@@ -1,114 +1,115 @@
-Return-Path: <linux-kernel+bounces-302855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C5AF960447
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:21:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86477960450
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:22:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15482283646
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:21:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43B8D283A15
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E09197556;
-	Tue, 27 Aug 2024 08:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4561B1991AB;
+	Tue, 27 Aug 2024 08:22:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dawn3zG0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="RoXziu4k"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D3A157468;
-	Tue, 27 Aug 2024 08:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C96A196D98;
+	Tue, 27 Aug 2024 08:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724746853; cv=none; b=uWHzI8mdQuDcxfz4s8+2ztTxWjmcyqkUSwJS3epGSJC5BwtjUnDbyvUHSKEYRwvfdcUqsPMvUDAHLxWWga+u/vtv12CdKdYvuFsP2j2+DhLChC3zVv35erOvI19WDNDUu5ArRLFGVw1bUvDBss0wjjeYnrwNYOocerjPzgTvUpo=
+	t=1724746931; cv=none; b=jw7UE337S5ZMLJwksoTlZtSh7S/dnnLEqdnPWpKb2YNafRCdzfpWiXRjf9EcrvHM26HasPV+SvdoRuiKLzrXGvVF9PvollVr8V38PQv8Z6OkztMtBuPrlK9RpkKwnlJ6kKfh0T7E5Ba4hgWSHCfYApZ6WUtWXZWRUoU/xrxNHe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724746853; c=relaxed/simple;
-	bh=s5DnIhW2HlQw8lb50wgDoawNR40ocw5I4M1PiF1zyFQ=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Ut4iz1HEEiLAGr1DA0F8iW8XqrAdA/aSljugGl4c94ndW3erGs3//c4UYctpfXJ6crNfWMT+RMvZHmstZeBxeZ62n+8hNb9uqkzoaaUQTTx9otTeT2Hm5ioQngy2Ul4qsLK4o0WD0NmmT8+/yGjlN6XAk4XgfCS3J9IbPEw9ffY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dawn3zG0; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724746853; x=1756282853;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=s5DnIhW2HlQw8lb50wgDoawNR40ocw5I4M1PiF1zyFQ=;
-  b=Dawn3zG0ZkYoBzWrp0ny6A+5LLVWegXUYL2azQdHMqSO86fbzEpjl52/
-   YDBD8lnNksXDHezZuWbl3ITf7qHnFjSJgfxWfQVO1tghtDp/96ZzYqY/f
-   XyDj7yV+qgNIgr7LoY9FqXTUdzn/KIkTCY0wYjU0Bmrj68M4IlfsPI5sN
-   CAQfaeGamM0oJ8cd89ZeSbKGBPTOaOR0vXkrSKymCUh1oC0wDIUTyhnnt
-   rxPLlIFhwYDpvHEvpdGRI65Cdp7nNkAVykgeH11awq2OqnHKUbZgOWMD9
-   hXcnh3wIP/tf71t20SKZMcdnJKhPy+FyAHwOaQn/zh8gmKkymxoNyaDAQ
-   w==;
-X-CSE-ConnectionGUID: lR6T1VhVTkqiNNHZYQwNtA==
-X-CSE-MsgGUID: NTfviuiaRXWGYaXgPnSXBA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23076579"
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="23076579"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 01:20:52 -0700
-X-CSE-ConnectionGUID: Ve09SytXT6iB8i6EVrOwRA==
-X-CSE-MsgGUID: +urC9lAiTXu2RnLEMr6uZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="62757754"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.17])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 01:20:47 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 27 Aug 2024 11:20:42 +0300 (EEST)
-To: Armin Wolf <W_Armin@gmx.de>
-cc: james@equiv.tech, jlee@suse.com, corentin.chary@gmail.com, luke@ljones.dev, 
-    matan@svgalib.org, coproscefalo@gmail.com, 
-    Hans de Goede <hdegoede@redhat.com>, 
-    "Rafael J. Wysocki" <rafael@kernel.org>, lenb@kernel.org, 
-    platform-driver-x86@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-    linux-acpi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/5] hwmon: (hp-wmi-sensors) Check if WMI event data
- exists
-In-Reply-To: <20240822173810.11090-3-W_Armin@gmx.de>
-Message-ID: <e791f8ed-f6af-d433-5c9b-a68fc9598dcc@linux.intel.com>
-References: <20240822173810.11090-1-W_Armin@gmx.de> <20240822173810.11090-3-W_Armin@gmx.de>
+	s=arc-20240116; t=1724746931; c=relaxed/simple;
+	bh=ZaVUIQYOGMqPMgtYVcZSPRipNAboG/rRveMP7/qIYhs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=t/JqYl3jZ4nfe4AWbbeE1LHccGBc/LxLb7hlxIGnOeY7IaegiUPZu4F8eygqbEcUhhkmHGWItutJBjXu5gCNyPaF093ChmG3iRiNbNRxi+RTJoc352RtoDWyzugLXRfiazvqcJ3kz1uneaOykUCbA7G5sc5kC8fiYXTwW0FQMj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=RoXziu4k; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=UoOaZ55QCCB7NxyBwlW4cuUdu7hHL3vFo6vF4P29qkw=;
+	t=1724746930; x=1725956530; b=RoXziu4kOOQO8MO6rmmqgNqzkq+4jNg4goEA0oC0o+6dJQt
+	GO4Tzhc26eDvId+mUKuLKAVaewlDy2hpMso0QBGwLeLC7BzK7i34C2KdjfM5AK9EeD8s4B48jz492
+	WmlFF2U3WKp3IKQohPMDURrYjZu7UcZOa8eXKNHEDTrKeH7FO53QNUpOjI5RRgBPtr1W4u6zx9Qd7
+	SHhIBjUc5wskqj99b+z2VblE9YoKnG/mqoUVg1GO4DM5wCOz5z/ZKyayhFPUWyASlxCRZeO2WAcOo
+	NDBCpckbfFWIj4d8MxGjbCeXQrlu/rI/Di0d4kUnW00x1wCWae81nhS9jfLm4Lbg==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1sirSk-00000004T4g-0TpH;
+	Tue, 27 Aug 2024 10:22:02 +0200
+Message-ID: <6ae3908c182664496784b1f1a86dd5bfd72fbc62.camel@sipsolutions.net>
+Subject: Re: [PATCH][next] wifi: radiotap: Avoid
+ -Wflex-array-member-not-at-end warnings
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>, Kalle Valo
+ <kvalo@kernel.org>,  Stanislav Yakovlev <stas.yakovlev@gmail.com>, Ajay
+ Singh <ajay.kathat@microchip.com>, Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	libertas-dev@lists.infradead.org, netdev@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Date: Tue, 27 Aug 2024 10:22:00 +0200
+In-Reply-To: <ZrJmjM4izqDqwIrc@cute>
+References: <ZrJmjM4izqDqwIrc@cute>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-malware-bazaar: not-scanned
 
-On Thu, 22 Aug 2024, Armin Wolf wrote:
+On Tue, 2024-08-06 at 12:08 -0600, Gustavo A. R. Silva wrote:
+>=20
+> +++ b/include/net/ieee80211_radiotap.h
+> @@ -24,31 +24,36 @@
+>   * struct ieee80211_radiotap_header - base radiotap header
+>   */
+>  struct ieee80211_radiotap_header {
+> -	/**
+> -	 * @it_version: radiotap version, always 0
+> -	 */
+> -	uint8_t it_version;
+> -
+> -	/**
+> -	 * @it_pad: padding (or alignment)
+> -	 */
+> -	uint8_t it_pad;
+> -
+> -	/**
+> -	 * @it_len: overall radiotap header length
+> -	 */
+> -	__le16 it_len;
+> -
+> -	/**
+> -	 * @it_present: (first) present word
+> -	 */
+> -	__le32 it_present;
+> +	/* New members MUST be added within the __struct_group() macro below. *=
+/
 
-> The BIOS can choose to return no event data in response to a
-> WMI event, so the ACPI object passed to the WMI notify handler
-> can be NULL.
-> 
-> Check for such a situation and ignore the event in such a case.
-> 
-> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-> ---
->  drivers/hwmon/hp-wmi-sensors.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/hwmon/hp-wmi-sensors.c b/drivers/hwmon/hp-wmi-sensors.c
-> index 6892518d537c..d6bdad26feb1 100644
-> --- a/drivers/hwmon/hp-wmi-sensors.c
-> +++ b/drivers/hwmon/hp-wmi-sensors.c
-> @@ -1628,6 +1628,9 @@ static void hp_wmi_notify(union acpi_object *wobj, void *context)
->  	 * HPBIOS_BIOSEvent instance.
->  	 */
-> 
-> +	if (!wobj)
-> +		return;
-> +
+There cannot be new members without breaking interop with the radiotap
+spec, that comment isn't really useful ;-)
 
-I'm left to wonder why is this patch is not placed first? Can't this 
-happen regardless who gets the wobj? And in that case, should this have
-a Fixes tag?
+> +	__struct_group(ieee80211_radiotap_header_hdr, hdr, __packed,
 
--- 
- i.
+And also, "header header" sounds odd to me really. The header of the
+header? What's what?
 
+I think perhaps better to call this ieee80211_radiotap_hdr_fixed or so?
+
+johannes
 
