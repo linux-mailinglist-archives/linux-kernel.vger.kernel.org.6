@@ -1,113 +1,139 @@
-Return-Path: <linux-kernel+bounces-303170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B503960888
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:26:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C787F9608B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E88C2844AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:26:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85DAD283E9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A78819FA72;
-	Tue, 27 Aug 2024 11:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6044D1A0AE0;
+	Tue, 27 Aug 2024 11:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ai1XaIxA"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U7+dztS9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A664414;
-	Tue, 27 Aug 2024 11:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACBB01A08AD
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724757974; cv=none; b=pd/rlNvOEqNoEiDGRYLGbbhlzQL2XU1nedK7062gfISGSVA3K3e8Le8mRqjuODu3GkdCSYLCN1zugkks91JM4KsdEzoq/+/SWF8AgvjeRTqtn5+6UbJ/3i4tTV5qjDdrl7GN5dEPAbYzyldq9N1nrnBNZZq1T7cD8dQrzTqYZ5M=
+	t=1724758196; cv=none; b=UxA7mMrdzQCNW7KBpEc8zauYW7Uua11x5o2ch9H+r/7csAQV9wmeZTwFvd/SZHu8H1Q2dErizuyy33vqGJQlRB4c2n8r/QJ63Bk/5smhvqbrfKUAdwN0YdscoX9WYAId5+6jQ1OGyu1vxIN2bcatO1zYSH3Umq0zCRp1JWSYEfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724757974; c=relaxed/simple;
-	bh=Hn2MFMhf4wm1sWJ1Cdtt6Zzb/TRPOxG4INVnvfR5k74=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VmSC/hsolJq8Xl3SGG7oQwhALZ4uEcUwgJ5eSj67c4zhx4VdcpkVWGDR5zPRjLoyYVS5fqhBhP7jUBGdQ6NrapKgcLmkJ9qrb3UzRCRR5YCkeOHIL5hf77KfEmTAUZEJsktneQvqKDl3oQnm1BwBu/ddee12C1XooxtM9Gkb7TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ai1XaIxA; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=pPyJCT/R91XYkwzYF/KN6tVWCJJRmOpGOpF/7PNudjU=; b=ai1XaIxAI7LILZRBhBK2yNI2aq
-	hdpB046enSIHSlmoCaWmk0Qc0fK7/4H7LARWDtxKmks4YqeSG+NvYYWScheosTcjibkULw++fH325
-	thEf8Fa3V0Oi2mvLU9tLJyBjvPzxsbcth0MEDeZXWNA11Po+UzwVpW6Oy6x5hww8C8PLR76hyh6Z/
-	YYsn+i1y4i2q6PPEc7m3bUtcftKC+1tYxhSjy2IXwvaV2DwQqczbYIL7T1WEvKzT5O/tyKdw3XD7M
-	J3zlrf5eToWI6XdfwOkrslYrk11MfBsMJ1Mpf33a8t9lxoQPCyJf7q1iyHlMaG1w23TT56gnkdh2x
-	R8MDOnEA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:58178)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1siuKg-0006sT-2Q;
-	Tue, 27 Aug 2024 12:25:54 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1siuKc-0003Of-2M;
-	Tue, 27 Aug 2024 12:25:50 +0100
-Date: Tue, 27 Aug 2024 12:25:50 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Yangtao Li <frank.li@vivo.com>
-Cc: clement.leger@bootlin.com, andrew@lunn.ch, f.fainelli@gmail.com,
-	olteanv@gmail.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, ulli.kroll@googlemail.com,
-	linus.walleij@linaro.org, marcin.s.wojtas@gmail.com,
-	alexandre.torgue@foss.st.com, joabreu@synopsys.com,
-	mcoquelin.stm32@gmail.com, hkallweit1@gmail.com,
-	u.kleine-koenig@pengutronix.de, jacob.e.keller@intel.com,
-	justinstitt@google.com, sd@queasysnail.net, horms@kernel.org,
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [net-next v3 3/9] net: ethernet: cortina: Convert to
- devm_clk_get_enabled()
-Message-ID: <Zs23vqQn9zqOQ62S@shell.armlinux.org.uk>
-References: <20240827095712.2672820-1-frank.li@vivo.com>
- <20240827095712.2672820-4-frank.li@vivo.com>
+	s=arc-20240116; t=1724758196; c=relaxed/simple;
+	bh=GkYKLfgfnNwC4VD+RaGs9j8NIwhkyZyTW1fbcrJQO9I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HgsqvKtpmHhURJ10iYaqRNqbYysz7xcpznHM1+xL3X7U1RPALs6Gqlp42tT9wR7v0cDLgXFUvyIL6UJkeG5TfzrcCoHXTY0yEiiIApi2K9GkGxZMu6xPu3p4lASbz22B11X0LVgFB43kJJeaXgrAodW7VYMqjfrVXIAijaUeMYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U7+dztS9; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724758195; x=1756294195;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=GkYKLfgfnNwC4VD+RaGs9j8NIwhkyZyTW1fbcrJQO9I=;
+  b=U7+dztS9rCu89hnQcdDZ2fxp8eriDbRuezUEpH7A0nEDMZvMHmUJgomZ
+   Grga0ngWg0YUuFytedAyJ6sQJ2fgr5QUBRK+zOKqwnBGIolWlqqVErLLf
+   1vqXaaSnwGypIMYAH/OVbSkZK0UkQOOs5pUaZesS73jvQv+YnFCpB9PFH
+   AIRV2HqYZ+Udli0M0uQwIy3zuqDh36DN73/nu3pi68mH1sGdpYCPq1jqo
+   QwX0OcWlKr2dXDfx2Z+jCZKuOyJqGHoC4OaUDdhABbTgcAnQXhgZk3Pz8
+   CfEgTHL8v+zYOWF65vXszaAOlErn94G5gypQ2wWpPUHu3VoXDR2ROkt3+
+   g==;
+X-CSE-ConnectionGUID: NpfW2Y8SR5K/I/N/pEjohQ==
+X-CSE-MsgGUID: QSY1GzfwSaKsJVfWYsTTag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23408212"
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="23408212"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 04:29:54 -0700
+X-CSE-ConnectionGUID: pgyAvJwzTBiMDcYSOscqhw==
+X-CSE-MsgGUID: 5wGp+HRqQ4uPCvEXv3aS9Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="63342969"
+Received: from chenyu-dev.sh.intel.com ([10.239.62.107])
+  by orviesa007.jf.intel.com with ESMTP; 27 Aug 2024 04:29:52 -0700
+From: Chen Yu <yu.c.chen@intel.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Cc: linux-kernel@vger.kernel.org,
+	Chen Yu <yu.c.chen@intel.com>,
+	Qais Yousef <qyousef@layalina.io>,
+	Hongyan Xia <hongyan.xia2@arm.com>
+Subject: [PATCH v5] sched/pelt: Use rq_clock_task() for hw_pressure
+Date: Tue, 27 Aug 2024 19:26:07 +0800
+Message-Id: <20240827112607.181206-1-yu.c.chen@intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827095712.2672820-4-frank.li@vivo.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 27, 2024 at 03:57:06AM -0600, Yangtao Li wrote:
->  	ret = register_netdev(netdev);
->  	if (ret)
-> -		goto unprepare;
-> +		return ret;
->  
->  	return 0;
+commit 97450eb90965 ("sched/pelt: Remove shift of thermal clock")
+removed the decay_shift for hw_pressure. This commit uses the
+sched_clock_task() in sched_tick() while it replaces the
+sched_clock_task() with rq_clock_pelt() in __update_blocked_others().
+This could bring inconsistence. One possible scenario I can think of
+is in ___update_load_sum():
 
-Same comment as per patch 1. At this point, I'm going to stop reviewing
-your patches (because I don't want to waste what little time I'm able
-to spend in front of the screen raising comments against the same issue
-throughout a patch set) and I ask you to do your own review of your
-series for this pattern - and also consider where using
-PTR_ERR_OR_ZERO() may also be appropriate in any of your patches. See
-that function's documentation in linux/err.h.
+u64 delta = now - sa->last_update_time
 
-Please wait at least 24 hours before reposting.
+'now' could be calculated by rq_clock_pelt() from
+__update_blocked_others(), and last_update_time was calculated by
+rq_clock_task() previously from sched_tick(). Usually the former
+chases after the latter, it cause a very large 'delta' and brings
+unexpected behavior.
 
-Thanks.
+Fixes: 97450eb90965 ("sched/pelt: Remove shift of thermal clock")
+Cc: Qais Yousef <qyousef@layalina.io>
+Reviewed-by: Hongyan Xia <hongyan.xia2@arm.com>
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+---
+v4->v5:
+  Added Vincent's Reviewed-by tag.
+v3->v4:
+  Revert to v2 to keep the clock outside of pelt functions.
+  (Vincent Guittot)
+  Added comments for hw_pressure within __update_blocked_others().
+  (Qais Yousef)
+v2>v3:
+  call rq_clock_task() inside update_hw_load_avg() to avoid any
+  inconsistence in the future. (Qais Yousef)
+  Added comments around update_hw_load_avg(). (Qais Yousef)
+v1->v2:
+  Added Hongyan's Reviewed-by tag.
+  Removed the Reported-by/Closes tags because they are not related
+  to this fix.(Hongyan Xia)
+---
+ kernel/sched/fair.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 9057584ec06d..5176db6ae13d 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9360,9 +9360,10 @@ static bool __update_blocked_others(struct rq *rq, bool *done)
+ 
+ 	hw_pressure = arch_scale_hw_pressure(cpu_of(rq));
+ 
++	/* hw_pressure doesn't care about invariance */
+ 	decayed = update_rt_rq_load_avg(now, rq, curr_class == &rt_sched_class) |
+ 		  update_dl_rq_load_avg(now, rq, curr_class == &dl_sched_class) |
+-		  update_hw_load_avg(now, rq, hw_pressure) |
++		  update_hw_load_avg(rq_clock_task(rq), rq, hw_pressure) |
+ 		  update_irq_load_avg(rq, 0);
+ 
+ 	if (others_have_blocked(rq))
 -- 
-*** please note that I probably will only be occasionally responsive
-*** for an unknown period of time due to recent eye surgery making
-*** reading quite difficult.
+2.25.1
 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
