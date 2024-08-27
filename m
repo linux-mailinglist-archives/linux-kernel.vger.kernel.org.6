@@ -1,133 +1,116 @@
-Return-Path: <linux-kernel+bounces-303258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15B189609CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:17:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAD599609D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:17:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC4401F23902
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:17:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56F63282965
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3811A257A;
-	Tue, 27 Aug 2024 12:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DCA01A0B16;
+	Tue, 27 Aug 2024 12:17:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mm8esafK"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="rzu8dZZU"
+Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68CB1A0B1D
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54151A0B05
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724761009; cv=none; b=CEAKN3VXOv9gAUC+E14b3dDp3d6BE4ZF8tayyEGQ+rIVEo0quuPRYBvJzeEJAABAzS1ugiRWB8Qu2lyx+bUvg4cmU7vq/E+6MsOk6KWzSO94Db0alWoCUDImKNvRP0I9JXmwg9pOCYRgODINhApvBmoO16wccG5N9iNjiCdxFhA=
+	t=1724761031; cv=none; b=qg3q4iON8T9WYRRzL1Wugcg9nblRQGo121/VwR4gsKagokDpfHMMPIR5RMeiRLtoW1Rws+JFCY/wPPRtmXhQfG0FfzpDDuC60Stdb8gC1BavqSSuQYVEHuJfOsPP9+2ODGC4VGQBxpp4N+AUBSI+7ynE2BMQ3dZH+EwkrhItU9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724761009; c=relaxed/simple;
-	bh=fh++pr6DseDriPGw/XL6T3D4J5hVJAqGwUEf6s/87qA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D+4+sPARPNSkEl5LPAik/D/HDh7dYKdWYvPFDWHv7VGHHQvGXKH8saqqQW0nOitLWZ5jNJstlcWbJTiTXRgpJXSD2cY4uzhsCEuahPrPCASnyGmWyJ/pKpnRl2SrD18aOcH6C9Y/t8o/s+NsZLw/LVNeAHH9AUl8OySJaqnFXvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mm8esafK; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4280692835dso7839365e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 05:16:47 -0700 (PDT)
+	s=arc-20240116; t=1724761031; c=relaxed/simple;
+	bh=lGL6BVVAgZ1BC81ipDjzzBIycKNk69Qm0sP3C87QfOA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Uugg9/vD8DZb1fFr3+yTuEHE08p7fHoUZIMAb8dQpjTacGT0/9a61UkvD3umS58fSHzUVzikKYsjPS0FlRSD8KgJRPlkba5R3cV1rnZhT/OsMjRvMasolmw/EZopj1do+eWteEridjBeiQ+55i5HcpEw0uGkjoJZU0yjpW8LgKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=rzu8dZZU; arc=none smtp.client-ip=52.95.48.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724761006; x=1725365806; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pWeHlEO/WuzCnmFaEcHTY/lmEdw14txMtMS79yRBfng=;
-        b=mm8esafKyKQdKBD6NrpiEtmOFSox0kuhwBuwUYIAVJ63J5ZUcj8chEYF56m7WioW9z
-         5QHA26NbgIaV4Bg1hGrJsC9sWo8IVguBEh50HogJgo8uoQIOH5OxZf35Ef+nVxsaXcQW
-         K+7pDG0spsXnPKHHM7snqRheLwqF08GI9EZ9M/rm36cbZxLQ82rE0UjmmDDIf3pJjJIr
-         v7GLbEy4riGvpfy3BOSWLTXelfnZD8dRBpU6S5rEw3j4KG5hqc0EarFm7ygwSILCjasL
-         CbMhApJgwb6evOUUBnGNuAvKEMK/GpSoDmG4BK8C3jzg3fJcX2WIBSEs11NKQo827eN7
-         nT0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724761006; x=1725365806;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pWeHlEO/WuzCnmFaEcHTY/lmEdw14txMtMS79yRBfng=;
-        b=wuZgTh2SzhhcqD1O/CV8HGU0jWoWHCtefYTv1EKRGn+l2+4ZYECShNW2/rY6VonWF3
-         BqpmeRXjZJ8kark9UMmbmjh6lmBhMQf7wts8JCoBT7wHody4GBH3ophvDwhLg7u35/sF
-         ujTyqA/BA7g/kFR29ieMAeAPHfOO0sErWjtrv5oZeKNvZBfZqsb6kPOXxydp+t0WECMV
-         RTs2U7t4/KbwSuXZRh+4AelXTEjfhCuRG0O/ipTYJTyGKcwsPRTZHDUB+NypYsCNgVZM
-         FG/UQM65r2FRkipyLMBq+wEtP2Fyi8ufvIloAUoW276r2q7tvUyiXGwHLQiEy3KFYZws
-         54AQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSwYj8FCnw7uuo4VzoDtrv0EIwtxFZUGVr3PYXLvUxSigwKhhEl7JZ2Z2hnRgNnhRRG4q0N0TFpAhbFSo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkqwwxhJpm5sygBvN7yIXa+MSEmkelz++IHSPjTvskHb6udBr5
-	t0kqBDM6RtBPEkXCMaCshMZqjmrFd0mPJrlZ2u+BG1fGiWlSR3akEHHxhuFoPDc=
-X-Google-Smtp-Source: AGHT+IGs50FU1NZeLXeQdejwqyPEjAYGIdxGh4vlRpAAy2j8iphQ1MPOJ8W0ne050IZOs+MAWd4N9Q==
-X-Received: by 2002:a05:6000:154f:b0:371:730c:b0 with SMTP id ffacd0b85a97d-373118b5e0amr5517784f8f.5.1724761005990;
-        Tue, 27 Aug 2024 05:16:45 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730815b7e3sm12998658f8f.53.2024.08.27.05.16.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 05:16:45 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Olof Johansson <olof@lixom.net>,
-	Arnd Bergmann <arnd@arndb.de>,
-	arm@kernel.org,
-	soc@kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 3/3] ARM: samsung: soc/mach for v6.12
-Date: Tue, 27 Aug 2024 14:16:35 +0200
-Message-ID: <20240827121638.29707-3-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240827121638.29707-1-krzysztof.kozlowski@linaro.org>
-References: <20240827121638.29707-1-krzysztof.kozlowski@linaro.org>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1724761030; x=1756297030;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=dZafkTBMgG7yzSjlIbdpVuKXbZLWp3xe1QfVap/dPy0=;
+  b=rzu8dZZUtmHeEcM0sYw1hh282b8WGBqLAzX5p4dkXIHwrE2E5K7IK5NP
+   z8MJQaYFXj5V0fstbFItOeyFUh4SMqOB9k0meL3QFypQ8ja3pUwR2syHp
+   NqM8ysHUOCIT+lUYuMVszuqDvKH5M9Llcygyvkw/vrqc3cnU0jDEIJfFO
+   k=;
+X-IronPort-AV: E=Sophos;i="6.10,180,1719878400"; 
+   d="scan'208";a="419835842"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 12:17:05 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.21.151:55652]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.4.67:2525] with esmtp (Farcaster)
+ id f7dbd5e8-420e-40fc-b1d5-d92734efcffa; Tue, 27 Aug 2024 12:17:04 +0000 (UTC)
+X-Farcaster-Flow-ID: f7dbd5e8-420e-40fc-b1d5-d92734efcffa
+Received: from EX19MTAUWA001.ant.amazon.com (10.250.64.204) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 27 Aug 2024 12:17:03 +0000
+Received: from dev-dsk-pjy-1a-76bc80b3.eu-west-1.amazon.com (10.15.97.110) by
+ mail-relay.amazon.com (10.250.64.204) with Microsoft SMTP Server id
+ 15.2.1258.34 via Frontend Transport; Tue, 27 Aug 2024 12:17:03 +0000
+Received: by dev-dsk-pjy-1a-76bc80b3.eu-west-1.amazon.com (Postfix, from userid 22993570)
+	id 6351F20A60; Tue, 27 Aug 2024 12:17:03 +0000 (UTC)
+From: Puranjay Mohan <pjy@amazon.com>
+To: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph
+ Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	<linux-nvme@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<puranjay@kernel.org>
+Subject: [PATCH] nvme: check if the namespace supports metadata in nvme_map_user_request()
+Date: Tue, 27 Aug 2024 12:17:01 +0000
+Message-ID: <20240827121701.48792-1-pjy@amazon.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+On an NVMe namespace that does not support metadata, it is possible to
+send an IO command with metadata through io-passthru.
+nvme_map_user_request() doesn't check if the namespace supports metadata
+before sending it forward.
 
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+Reject an IO command with metadata when the NVMe namespace doesn't
+support it.
 
-are available in the Git repository at:
+Suggested-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Puranjay Mohan <pjy@amazon.com>
+---
+ drivers/nvme/host/ioctl.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-6.12
+diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
+index f1d58e70933f..4f49523b8a41 100644
+--- a/drivers/nvme/host/ioctl.c
++++ b/drivers/nvme/host/ioctl.c
+@@ -4,6 +4,7 @@
+  * Copyright (c) 2017-2021 Christoph Hellwig.
+  */
+ #include <linux/bio-integrity.h>
++#include <linux/blk-integrity.h>
+ #include <linux/ptrace.h>	/* for force_successful_syscall_return */
+ #include <linux/nvme_ioctl.h>
+ #include <linux/io_uring/cmd.h>
+@@ -122,6 +123,9 @@ static int nvme_map_user_request(struct request *req, u64 ubuffer,
+ 	struct bio *bio = NULL;
+ 	int ret;
+ 
++	if (meta_buffer && meta_len && bdev && !blk_get_integrity(bdev->bd_disk))
++		return -EINVAL;
++
+ 	if (ioucmd && (ioucmd->flags & IORING_URING_CMD_FIXED)) {
+ 		struct iov_iter iter;
+ 
+-- 
+2.40.1
 
-for you to fetch changes up to 3c8966403dae49d3402011441f3c813787a40b4e:
-
-  ARM: s3c: remove unused s3c2410_cpu_suspend() declaration (2024-08-19 21:54:23 +0200)
-
-----------------------------------------------------------------
-Samsung mach/soc changes for v6.12
-
-1. Few ARM32 machine code cleanups,
-2. Add dedicated maintainer entry for ARM64 Exynos850 DTS and driver
-   code.
-
-----------------------------------------------------------------
-Gaosheng Cui (3):
-      ARM: s3c: Remove unused s3c_init_uart_irqs() declaration
-      ARM: s3c: remove unused declarations for s3c6400
-      ARM: s3c: remove unused s3c2410_cpu_suspend() declaration
-
-Sam Protsenko (1):
-      MAINTAINERS: Add entry for Samsung Exynos850 SoC
-
-Uwe Kleine-König (1):
-      ARM: s3c: Drop explicit initialization of struct i2c_device_id::driver_data to 0
-
- MAINTAINERS                              | 10 ++++++++++
- arch/arm/mach-s3c/irq-uart-s3c64xx.h     |  2 --
- arch/arm/mach-s3c/mach-crag6410-module.c |  2 +-
- arch/arm/mach-s3c/pm.h                   |  2 --
- arch/arm/mach-s3c/s3c64xx.h              | 11 -----------
- 5 files changed, 11 insertions(+), 16 deletions(-)
 
