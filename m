@@ -1,150 +1,187 @@
-Return-Path: <linux-kernel+bounces-302609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E79F79600D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:10:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 235719600FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AA361F23034
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:10:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3A641F23356
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA18145A07;
-	Tue, 27 Aug 2024 05:09:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF9D40BF5;
+	Tue, 27 Aug 2024 05:17:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kXLHy4By"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="ipHIFNFM";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OZrpjKe8"
+Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421F371B3A
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 05:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBFE74CB4E;
+	Tue, 27 Aug 2024 05:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724735382; cv=none; b=mWpUJh8QYb4pPziWNn8d+lxNeU/IbLcqlCj+eoivrqgRfEAF9JZyHyEA5z7cJ3QWt7+NKZYl9H4jlBRGsiK9bVYdUAb29GCzaXwEWw5gH5YjaUcYjUr8zB7hfOkJoNnszdwYi+qxi0KI9B8l/b4O49KI0VXWW/4/4eS6YBtqrfg=
+	t=1724735820; cv=none; b=QSl7nbb5ZubYa18M31+BmU/frMsRB8KpTMEh7dLsAAwDSvcqn2j7qFRaccE1VAPJ8Z3s/b7A8mVoaksLYoMB5Q9cVsnqmuxApNrbPSc7dmeIPU8CLJ83qbR5EjJZiWFNcdqob4wofyJD6LpeBweHf+actmsVQQIL81Cbsa/M90s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724735382; c=relaxed/simple;
-	bh=Fxb9EB2+t66KeDUfeYI2ZYfBCt/W8W8Cq7hOkfJ7WVI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=O2LP7Tk+wXK6xf56+OiTFeo6dCpdOyoebm50bagomvbGCeJUMpsxyBDZH+ZtbyosE+q22Go5w0oGp0QHEiVp/P0NSmHFLWfgkZyQzynu0kkxZQ32+n6d2iJ/6/2iSo+BWrHoREpgsVnfbAGBY+3/X65SITJfC3SAhy0zEnA5PXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kXLHy4By; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724735381; x=1756271381;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=Fxb9EB2+t66KeDUfeYI2ZYfBCt/W8W8Cq7hOkfJ7WVI=;
-  b=kXLHy4ByMVMQPnyuR2l/9yymoouWIVkGr8RsA8+yUr7eSxoKR/zwa/uq
-   VYiSJnB7kQd5fea4dE+exXtrqJcn9zaaTOvSGfzC5j0CenjO+2UqxhW3E
-   /OdiEf6XOdyh/vv7l0t90kv0xmiV66sJWWmpF+QtEBpG/WTEsTWaGYcGE
-   xhKxSsdhu5v9T8E5ehwu4+0rltp20PXFUoZorcB9/tN/oNcy7LOJBZz3f
-   9OHAKX0aqDD66TL4vkr/BGQ8JiLfUGuZfngPnmuH11m7tholAo2YrYlju
-   ThR7vmRnD531u5GJzUghVMSDlHlTjjFJY6uk1BqvMgDTciuGfjrnBQYqE
-   g==;
-X-CSE-ConnectionGUID: WsD1bKuHT3OtDPdjbsQu1Q==
-X-CSE-MsgGUID: 6cvHIx4mTbut/0DwZKol6A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="13230488"
-X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
-   d="scan'208";a="13230488"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 22:09:39 -0700
-X-CSE-ConnectionGUID: QqkpBhfQTISliPkxHFC2yw==
-X-CSE-MsgGUID: vX9VQROrRSafoMbq527X4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
-   d="scan'208";a="62703865"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by orviesa009.jf.intel.com with ESMTP; 26 Aug 2024 22:09:39 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: x86@kernel.org
-Cc: Andreas Herrmann <aherrmann@suse.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Chen Yu <yu.c.chen@intel.com>,
-	Len Brown <len.brown@intel.com>,
-	Radu Rendec <rrendec@redhat.com>,
-	Pierre Gondois <Pierre.Gondois@arm.com>,
-	Pu Wen <puwen@hygon.cn>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Will Deacon <will@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Ricardo Neri <ricardo.neri@intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 4/4] x86/cacheinfo: Clean out init_cache_level()
-Date: Mon, 26 Aug 2024 22:16:35 -0700
-Message-Id: <20240827051635.9114-5-ricardo.neri-calderon@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240827051635.9114-1-ricardo.neri-calderon@linux.intel.com>
-References: <20240827051635.9114-1-ricardo.neri-calderon@linux.intel.com>
+	s=arc-20240116; t=1724735820; c=relaxed/simple;
+	bh=4WVQlOdz4iUXl/ZtOOfq/sz3W/LEnSLvrPuKObENMTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d8Aqq20gFD2+cPxZk1cXmU4dOIpN0inT9H5z8s5IziMDeLKGbqkZfHLIKehnYmwzOEUMlnRx2H8+EkjnPwrVX0/KluS/0cMDDxJnOjZPr5St/S8wR6hViveT3zeCqrjz7YBcSSJW+BTsZIM8LWf6Z9ylCJHOt7RRu3MmGDBVnBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net; spf=pass smtp.mailfrom=who-t.net; dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b=ipHIFNFM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OZrpjKe8; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=who-t.net
+Received: from phl-compute-06.internal (phl-compute-06.nyi.internal [10.202.2.46])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id D2FCA1151AF6;
+	Tue, 27 Aug 2024 01:16:56 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Tue, 27 Aug 2024 01:16:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1724735816; x=1724822216; bh=XnEvNey2dg
+	8TqK9++0fBtgkojn39VmGvBW+c5uPNs9s=; b=ipHIFNFMnmvaLASurFuE42XJ4H
+	O8MrnVSKQUw03hTaOnltaJqp2HuL0JHkUxeSXLdzur4y7mroys9FKIbKrCfi4LVp
+	D0+qILxcw7a9fj/0IxAZQKYrcdHSYal0a1hZekhTAc4sxGGymnpDimUjBpX8jk/Q
+	3jto+BQFa5NUW/e5k+dquBj7/pVxHj82SIMbnf5nsJsVj2igvaCRxGCQfL1hxOeX
+	jFMTuC30i6mEeu1HpC2tjoqC26sZfCf6o6D9Bmwvxh9V/q9gqDb7QDSvXvBCUhI4
+	o/iz6qu5U2euvVz8aWdhd57z8mmyjuBXMHNtJ6nIEgvO8nGWN5Y2dqxJArVg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1724735816; x=1724822216; bh=XnEvNey2dg8TqK9++0fBtgkojn39
+	VmGvBW+c5uPNs9s=; b=OZrpjKe8QTwXHNK9igIuz6o4ItQw8i++ZLrkg3NlIlOj
+	JonKQ5pjMhe/r13UcnD5S2jnAj5Cjzd7+BjhTWC3NO/F1oqfRY5+KNdUQ8jsXu5e
+	h6+CxnqjvHQWJ71mPRTCEAzwVEazXaZJf22sEeqcJTeeE6jacSorkJeJJ7tSsZ7L
+	ssquZzyxAMMZo/k0nBd7auR7esQRp/Jtrnvm6i2Cf2kMpYLHQ6LT76bspgsDTgal
+	iXEnMomdtYh3NheymhgIH1HUHsX7fJPE7050Ut/t2RrElg4hMbEt+dyxlTy5ye7T
+	2j76W9WWWKyjRrmwiad8rdjB/ywbhD+SY/NP0b/7+A==
+X-ME-Sender: <xms:SGHNZqMOa9a0hX7KLMIJQ-lb8D6K4Vc1vyJ_22Bp04X-zef5LhfaAA>
+    <xme:SGHNZo_J9Zqv91k-y8WN597TfOwg-1szt4m-WEn2OLTHeKLdm7H2bmXNaBGb6kBYC
+    MdJpapY9u4H824jOco>
+X-ME-Received: <xmr:SGHNZhSk8ZYSMatRbA4Dkc8tNNB0XWYT3sBQUfULlm_5kWWQoTAW83Z5_xgdeOVQNbivpeyDQLtbmk8BOsG1MN1ccbxGm4Xzbo84>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddvledgleefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomheprfgvthgvrhcujfhuthhtvghrvghruceophgvthgvrhdrhhhuthhtvghrvg
+    hrseifhhhoqdhtrdhnvghtqeenucggtffrrghtthgvrhhnpeekvdekgeehfeejgfdvudff
+    hfevheejffevgfeigfekhfduieefudfgtedugfetgfenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehpvghtvghrrdhhuhhtthgvrhgvrhesfihh
+    ohdqthdrnhgvthdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtg
+    hpthhtohepsggvnhhtihhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhikhho
+    sheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtoheplhhinhhugidqihhnphhuthesvhhgvghrrdhkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehlihhnuhigqdhkshgvlhhfthgvshhtsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhg
+X-ME-Proxy: <xmx:SGHNZqtAoD21fPi8acR_pj7bJolz_ursOrpitpBpE8v70B58m_wpHQ>
+    <xmx:SGHNZifvPFupfwpZYEphbyaj2WK8BdSdVdYdfnr33GnG5eOGpa2XRA>
+    <xmx:SGHNZu15qWJb9jvfWg_3YA5PY1MsqAB7XEpYO_vp2cwp6UxJNp0hCA>
+    <xmx:SGHNZm9pzaSWnZqYx0DTBCwFLOZrLSRH8BSOtJtKUCNPVymNlNhhwQ>
+    <xmx:SGHNZqRilbTf-yWYtC5G9xsmt_jKTlTcDcvdKSRlmstliBWugxKvN6M0>
+Feedback-ID: i7ce144cd:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 27 Aug 2024 01:16:54 -0400 (EDT)
+Date: Tue, 27 Aug 2024 15:16:44 +1000
+From: Peter Hutterer <peter.hutterer@who-t.net>
+To: Benjamin Tissoires <bentiss@kernel.org>
+Cc: Jiri Kosina <jikos@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] selftests/hid: Add HIDIOCREVOKE tests
+Message-ID: <20240827051644.GA1580781@quokka>
+References: <20240827-hidraw-revoke-v4-0-88c6795bf867@kernel.org>
+ <20240827-hidraw-revoke-v4-3-88c6795bf867@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240827-hidraw-revoke-v4-3-88c6795bf867@kernel.org>
 
-init_cache_level() no longer has a purpose on x86. It no longer needs to
-set num_leaves, and it never had to set num_levels, which was unnecessary
-on x86.
+Thanks for picking this up and adding the tests, much appreciated
 
-Replace it with "return 0" simply to override the weak function, which
-would return an error.
+On Tue, Aug 27, 2024 at 12:47:53AM +0900, Benjamin Tissoires wrote:
+> Add 4 tests for the new revoke ioctl, for read/write/ioctl and poll.
+> 
+> Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
+> 
+> ---
+> 
+> new in v4
+> ---
+>  tools/testing/selftests/hid/hidraw.c | 143 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 143 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/hid/hidraw.c b/tools/testing/selftests/hid/hidraw.c
+> index f8c933476dcd..669eada8886b 100644
+> --- a/tools/testing/selftests/hid/hidraw.c
+> +++ b/tools/testing/selftests/hid/hidraw.c
+> @@ -19,6 +19,11 @@
+>  	__typeof__(b) _b = (b); \
+>  	_a < _b ? _a : _b; })
+>  
+> +/* for older kernels */
+> +#ifndef HIDIOCREVOKE
+> +#define HIDIOCREVOKE	      _IOW('H', 0x0D, int) /* Revoke device access */
+> +#endif /* HIDIOCREVOKE */
+> +
+>  static unsigned char rdesc[] = {
+>  	0x06, 0x00, 0xff,	/* Usage Page (Vendor Defined Page 1) */
+>  	0x09, 0x21,		/* Usage (Vendor Usage 0x21) */
+> @@ -516,6 +521,144 @@ TEST_F(hidraw, raw_event)
+>  	ASSERT_EQ(buf[1], 42);
+>  }
+>  
+> +/*
+> + * After initial opening/checks of hidraw, revoke the hidraw
+> + * node and check that we can not read any more data.
+> + */
+> +TEST_F(hidraw, raw_event_revoked)
+> +{
+> +	__u8 buf[10] = {0};
+> +	int err;
+> +
+> +	/* inject one event */
+> +	buf[0] = 1;
+> +	buf[1] = 42;
+> +	uhid_send_event(_metadata, self->uhid_fd, buf, 6);
+> +
+> +	/* read the data from hidraw */
+> +	memset(buf, 0, sizeof(buf));
+> +	err = read(self->hidraw_fd, buf, sizeof(buf));
+> +	ASSERT_EQ(err, 6) TH_LOG("read_hidraw");
+> +	ASSERT_EQ(buf[0], 1);
+> +	ASSERT_EQ(buf[1], 42);
+> +
+> +	/* call the revoke ioctl */
+> +	err = ioctl(self->hidraw_fd, HIDIOCREVOKE, NULL);
+> +	ASSERT_OK(err) TH_LOG("couldn't revoke the hidraw fd");
+> +
+> +	/* inject one other event */
+> +	buf[0] = 1;
+> +	buf[1] = 43;
+> +	uhid_send_event(_metadata, self->uhid_fd, buf, 6);
+> +
+> +	/* read the data from hidraw */
+> +	memset(buf, 0, sizeof(buf));
+> +	err = read(self->hidraw_fd, buf, sizeof(buf));
+> +	ASSERT_EQ(err, -1) TH_LOG("read_hidraw");
 
-Reviewed-by: Len Brown <len.brown@intel.com>
-Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
----
-Cc: Andreas Herrmann <aherrmann@suse.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Chen Yu <yu.c.chen@intel.com>
-CC: Huang Ying <ying.huang@intel.com>
-Cc: Len Brown <len.brown@intel.com>
-Cc: Nikolay Borisov <nik.borisov@suse.com>
-Cc: Radu Rendec <rrendec@redhat.com>
-Cc: Pierre Gondois <Pierre.Gondois@arm.com>
-Cc: Pu Wen <puwen@hygon.cn>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Zhang Rui <rui.zhang@intel.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: stable@vger.kernel.org # 6.3+
----
-Changes since v4:
- * None
+do you want to check for errno == ENODEV here to avoid false positives?
+Shouldn't really happen in this test suite but it costs very little.
 
-Changes since v3:
- * Rebased on v6.7-rc5.
+Same for the various cases below.
 
-Changes since v2:
- * None
+With or without - series:
+Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
 
-Changes since v1:
- * Introduced this patch.
----
- arch/x86/kernel/cpu/cacheinfo.c | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-index b5e216677a46..d7375328bc1f 100644
---- a/arch/x86/kernel/cpu/cacheinfo.c
-+++ b/arch/x86/kernel/cpu/cacheinfo.c
-@@ -1002,11 +1002,6 @@ static void ci_leaf_init(struct cacheinfo *this_leaf,
- 
- int init_cache_level(unsigned int cpu)
- {
--	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
--
--	if (!this_cpu_ci)
--		return -EINVAL;
--	this_cpu_ci->num_levels = 3;
- 	return 0;
- }
- 
--- 
-2.34.1
-
+Cheers,
+  Peter
 
