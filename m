@@ -1,122 +1,133 @@
-Return-Path: <linux-kernel+bounces-304083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8D7C9619E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 00:11:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E44939619EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 00:12:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6485BB22C1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 22:11:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2D012852BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 22:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5811D3631;
-	Tue, 27 Aug 2024 22:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28101D3641;
+	Tue, 27 Aug 2024 22:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AuFxoG8U"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="WnjcOj3y"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3CF3C08A;
-	Tue, 27 Aug 2024 22:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAEE1194A6C;
+	Tue, 27 Aug 2024 22:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724796661; cv=none; b=iv9hQvIRmS1QwMpu+keAzaTZrPe9zIyEc6BwkYPxdhdCbJDRo/LBrmittJgxM1uE8rbxtKEw6r/GAvCnfr70rt6bwXnUsO28gMk4ltb1dsVpSD7Gvvhz1GRTL0TL+SxN6H1pUU8Rvdg6Cr4z3BawtJE6WvjBGVLyScQsyOq5ee0=
+	t=1724796713; cv=none; b=eNSPgFPgKGMz5d617d3CWwnFjXN26ItB8pN39Oc5tHUBQ3El7WIcFMWsDO1yRm9X8d90arhhNln6V1JMxVDHmjgHrMT2Ci1hvYlNiy2cgrnR9xmxJ+tQ0VyQhyi8dznw4jBBfQt7WMePDOUllbC6+ymJtJKemGCLL81Ssj4Kn2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724796661; c=relaxed/simple;
-	bh=aroLOKavUDzCVXxEGawFTqCx+03oSt09BdxWXcN7COY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PIjf39T76G6LRQea5w75XzGrwOmuOx77HM10+cK6U7pjoV0QI95lANfW6UCiVlS3K678u8xQyOpBTuCZsP1PUXwXUHssI9JdlGthcqlECM/nzrYYDhlkhc4qDxXuA10BA51E/lDfocV1ZZU5iy7lKUuQrce0CbvtVNoY097lRkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AuFxoG8U; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7c6aee8e8daso4282605a12.0;
-        Tue, 27 Aug 2024 15:10:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724796659; x=1725401459; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rewCyEf31R6WgjDbqaQ0TyTu1C/1OpbUO9G91fI9oWg=;
-        b=AuFxoG8UeZGa4xfBG5uw1BllURaXteA6OQ4E9G4UNFtLuIZWpaW9/g2UCOKIMehAfL
-         jwwZ7vbPmCC/8A/Jhf1qf1ta4Bppfju95dtqPwb4LMdLUAlvx0SKdT+flPxHmDqPRYIo
-         +1YquwyaGPHvronftt9L3GcJiGmqbVm+4Kz+mWh4XEHoEUWhZiEl2l7JLDkHtkd/dLd9
-         hnY0bFAZaXbdZi+ez+JoVVqbwlsxaA9gOU2ko9W5DWHbh6EjuWWWfzbGKLgWq0ov05RY
-         1ikSrNYyC/NDZGeU2z9bcOZCSJjhvn8LmmMAorXaxDXTALlVsAf440lhCw74kEpxTJyF
-         GVew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724796659; x=1725401459;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rewCyEf31R6WgjDbqaQ0TyTu1C/1OpbUO9G91fI9oWg=;
-        b=ocOHdfVNICM7xE+JD7D7KnA4UIYbocDqKNJdb9oMxwO7/FPfDf/47+bnp35VEuzXPX
-         OE4HbfyjbJ1Q5EPk35iowQercTI6SkxO5VvRIYY7GaeB9oyEtOEqs/OPY5cZC2C9Wo0m
-         yxOPuFMLI9Xe6aj8m/E1bSPQ4gsbVIaU/5D3yVPeOSgsGEvVeB4q2azCLVB+ohzNI5zk
-         BbcdoN2OckwDQFBNtFkmguR4JVbwn3RoxkssEjLRa0WgMXagvFeLKPq+cXf4wFeIcCmP
-         Kuoze2FYKpkrq3T3X/QhyaRN46iC9lEdh6JTXfpJhVIZTESPxMOjoUJRcRv+CKC/Ikp4
-         Hd7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUFOMn4sycTV6Ba1QU4l7cP29uRol4uBVHK+hOLG+Ci16TVnCWowDSekayGi9nW+wgfjYjyl77P@vger.kernel.org, AJvYcCUwtCbeBveUO9zABnS9BsFdMG4RGXiYb+wIrbY9b/W2UceqENUqKSDRQ6BQWsmCnKVUjISC2NfGnCp8GaI=@vger.kernel.org, AJvYcCW+HZ+ugNKxDf3youufemLMPljzjJyFkc9o2XHzwuimd321JYZl7KCAnzjVRORzyQYfR6yFdDZXewpkZj5daLhu@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhyBFqf09DjX5UW7gAcowGzrwIlHSvrfpcQLZZguXM0kO66cpK
-	G467KtLVBgKHtlTNoFYFhmoFTWPvgPrlu05JV9E6Rd/yzph5euhIKn94ZKvUyGXwcp97IhQGbnV
-	5uw4mpFKkyn8eGQBsDYEyLwCWH28=
-X-Google-Smtp-Source: AGHT+IFkuMfe05C9X591qKCWKdS/cLeqqd3rIrpxHnchFEEKD6L+NP13/R/yGUSEhRdoT79VrfqDDUD/mmqRyTXDXMg=
-X-Received: by 2002:a17:90a:b003:b0:2d3:dd48:992c with SMTP id
- 98e67ed59e1d1-2d646c232ffmr15900319a91.23.1724796659077; Tue, 27 Aug 2024
- 15:10:59 -0700 (PDT)
+	s=arc-20240116; t=1724796713; c=relaxed/simple;
+	bh=2aRkULfSU9AzagsP0qiU8aDKlhnBG97zGMg4RSuUxLU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PVMLtpioEPfrW7Y1s0lMLyhyf+zfXFMswAREi6PAVfBnfD+eD6VfQZLfLeSHTizQZqbg+knDo0etEEclGxexQ/ug/KIRJi1zVyKtYRmC9Wrc8QG/RIwKey8aXQc9bMzDIzS0LaqxiC0ZRibyx/Vkt4WkdK0UwOw4p3mN9NLryD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=WnjcOj3y; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1724796694; x=1725401494; i=w_armin@gmx.de;
+	bh=CUbnzYEtHJfLP1VcoboGTihEXYQaXcwV41vG7Efm3V8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=WnjcOj3y6Z/mBoiw3tXOdjT5dd4vvbf7oUoSmRaBlzkfaGXGH1iIstF0Fe8A9rG8
+	 K2BpE6af+qM0ddgXWnK+DaKbK8wvJbNclm186adOgSbvXnE1W2i8+UrgEAk3ffQjD
+	 +Hs62U2hV0IMR8d4BWvnJ+eymoICwmU3G4SJOU0duzoR8k0VLk1UodhyeT5suoU0z
+	 Md+kEUBQr0XBbuWKnxvVWT20u3vi+E9j4/M2BcLhx06roERU/5iyurToiEC6/qMDN
+	 S0GHEtyEeAFfOGwtNW+l4+/Zb22J+f6pq2u3oKo0/aQn5l8mh8B72lfwBL016UWnG
+	 7Jh/Ydm5/opQQCXgGg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MhD6W-1sDsJw2FQQ-00c1UX; Wed, 28
+ Aug 2024 00:11:34 +0200
+Message-ID: <1b84518a-9f6b-4083-a26b-c85188e23cff@gmx.de>
+Date: Wed, 28 Aug 2024 00:11:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240823-tcp-ao-selftests-upd-6-12-v4-0-05623636fe8c@gmail.com> <20240827141041.0c815dbd@kernel.org>
-In-Reply-To: <20240827141041.0c815dbd@kernel.org>
-From: Dmitry Safonov <0x7f454c46@gmail.com>
-Date: Tue, 27 Aug 2024 23:10:47 +0100
-Message-ID: <CAJwJo6Z662J4P-8rBpsMVmiCCO6oimStu9WTHNsBYqXQ0kcU=w@mail.gmail.com>
-Subject: Re: [PATCH net-next v4 0/8] net/selftests: TCP-AO selftests updates
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Dmitry Safonov via B4 Relay <devnull+0x7f454c46.gmail.com@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Mohammad Nassiri <mnassiri@ciena.com>, netdev@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] hwmon: (hp-wmi-sensors) Check if WMI event data
+ exists
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: james@equiv.tech, jlee@suse.com, corentin.chary@gmail.com,
+ luke@ljones.dev, matan@svgalib.org, coproscefalo@gmail.com,
+ Hans de Goede <hdegoede@redhat.com>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, lenb@kernel.org, platform-driver-x86@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-acpi@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20240822173810.11090-1-W_Armin@gmx.de>
+ <20240822173810.11090-3-W_Armin@gmx.de>
+ <e791f8ed-f6af-d433-5c9b-a68fc9598dcc@linux.intel.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <e791f8ed-f6af-d433-5c9b-a68fc9598dcc@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1://U4Sw6iSSfjz3bI8Qyz5EOyGLzZPQwwffGRQNyCBIeBUoN+RHB
+ ciJsCDkPhD9XpLTq0N8+H+kYxdh5qbKP88bZTPUiNP/VFtd4/6XFiqkeaszWc89VdDRa/9n
+ GoRNyByoi/GuOsS/VDN9bKpkBGFyLE+v+M7RiB7zrkCdSaXunopYbkGAN2O1JBfgoNEN2m7
+ fogMuE4u0bJWINGUQGdUA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:l3P7y/s2z6I=;S0J3w75s6//IgmFTPtwHNrBQQ/J
+ RVJcItIr+PqrCw33o9/7w1T0SGphk82+2f21HgAWtp+B8IUKBlFvnRDTrh+I13nDgDYyGjsmb
+ YauEb52w5eF4SuCZ3/rCo32AFJuf5WYwtx/k4y91zNWGZkvVftwyJPJ7r27f0kS5wV8G+ggGr
+ i5nb3LVEyPYy9+WXAs2/yKBcL4RaLEZridbg1YUUDBaCol1j5a62P1A8Tn21fPzoQKJdy+MPm
+ 9TszEQ1T5RvHMByhWZZQVPkosnG6o5jNNqK0HS8IMabbjo3qa4j1avCOKnlZtkn+DH1Mz1eQG
+ xipYvWnxfZy40DL6fTfjrDDpGvQ082l/2lF2fu+aLVqhIyG79Y09V1UecGcZmjSxf6/oBiVe1
+ J5mSnXMRrxzl6PWvAo0806Jd77JXbqNzWKOJbxUbeFGL5XbnA6sIvQXfkIhpH+26b07VPJBSf
+ bZzNRYOP86XqmDyhZqFMj+9bRzudPmvtNJGQ953q43Zcn6Mh+XVmCuqVVwCW9tk1n0Xk3x6Ef
+ BssKLTpmGE9rCnrVC6NMsEDv6x7gV2mcwQ90cFd2wh3CS0h+koHXi4ebC4Ch9+2if2ldqhPDd
+ 0A6ODFdW2F9d8pnzlhgo0A8iF9r1U61G0fcfg7BVNS2xOiARSVAmUY984FhUJBTXi1V0T5V81
+ t8yiIXe2B2VFdlPTcqrGZKgnnxM29KUMoT2r+xnipUsbvWYG3U26Zd1Ckeykp67w0asZpd+15
+ lYLog01LNvUquHs/Hnn0o/htIR4S6uIIWtbXIpYNVOZHFH9asxD5LWclFwkDmAmbYBd+HAgCf
+ TGtPPCEvxLK6shwrIZLTHlVQ==
 
-On Tue, 27 Aug 2024 at 22:17, Jakub Kicinski <kuba@kernel.org> wrote:
+Am 27.08.24 um 10:20 schrieb Ilpo J=C3=A4rvinen:
+
+> On Thu, 22 Aug 2024, Armin Wolf wrote:
 >
-> On Fri, 23 Aug 2024 23:04:50 +0100 Dmitry Safonov via B4 Relay wrote:
-> > First 3 patches are more-or-less cleanups/preparations.
-> >
-> > Patches 4/5 are fixes for netns file descriptors leaks/open.
-> >
-> > Patch 6 was sent to me/contributed off-list by Mohammad, who wants 32-bit
-> > kernels to run TCP-AO.
-> >
-> > Patch 7 is a workaround/fix for slow VMs. Albeit, I can't reproduce
-> > the issue, but I hope it will fix netdev flakes for connect-deny-*
-> > tests.
-> >
-> > And the biggest change is adding TCP-AO tracepoints to selftests.
-> > I think it's a good addition by the following reasons:
-> > - The related tracepoints are now tested;
-> > - It allows tcp-ao selftests to raise expectations on the kernel
-> >   behavior - up from the syscalls exit statuses + net counters.
-> > - Provides tracepoints usage samples.
+>> The BIOS can choose to return no event data in response to a
+>> WMI event, so the ACPI object passed to the WMI notify handler
+>> can be NULL.
+>>
+>> Check for such a situation and ignore the event in such a case.
+>>
+>> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+>> ---
+>>   drivers/hwmon/hp-wmi-sensors.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/hwmon/hp-wmi-sensors.c b/drivers/hwmon/hp-wmi-sens=
+ors.c
+>> index 6892518d537c..d6bdad26feb1 100644
+>> --- a/drivers/hwmon/hp-wmi-sensors.c
+>> +++ b/drivers/hwmon/hp-wmi-sensors.c
+>> @@ -1628,6 +1628,9 @@ static void hp_wmi_notify(union acpi_object *wobj=
+, void *context)
+>>   	 * HPBIOS_BIOSEvent instance.
+>>   	 */
+>>
+>> +	if (!wobj)
+>> +		return;
+>> +
+> I'm left to wonder why is this patch is not placed first? Can't this
+> happen regardless who gets the wobj? And in that case, should this have
+> a Fixes tag?
 >
-> Looks like we got no flakes over the weekend, so applying, thanks! :)
+Good point, i will send a v2 series to correct this.
 
-Thanks, Jakub!
+Thanks,
+Armin Wolf
 
-I think tcp-ao tests weren't particularly flaky before, but with these
-patches, those "rarer" flakes should be eliminated now (fingers
-crossed).
-To my surprise, I figured out the issue in v3 correctly, which was
-about the ftracer pthread that didn't have a chance to run during the
-test. I couldn't reproduce it even once locally.
-Yet, the newly added xfail with an unexpected tcp_hash_ao_required
-trace event I'll have to investigate.
-
--- 
-             Dmitry
 
