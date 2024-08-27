@@ -1,127 +1,94 @@
-Return-Path: <linux-kernel+bounces-302747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 789BD9602CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:16:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE65C9602BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:14:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB2EB1C21298
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:16:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 795841F23225
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323B0194090;
-	Tue, 27 Aug 2024 07:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF64C1537A8;
+	Tue, 27 Aug 2024 07:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kuhvFa7l"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="lh1bhsP9"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00259193433;
-	Tue, 27 Aug 2024 07:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D00C13774A
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 07:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724742903; cv=none; b=m08jSuygO3UwhZvvOBDxFDVYLTxZIbUzDOqzI7PErFUY33J9pMcoKVKE5Jabpzc0SyT3tKeEneUsr8ecHLnFuSso9DTLS/FQt58cYGFe+sAJVgVIcJqJvlZXxBgYh+Q6f+cneC5/h+Gw1qtA69jG3KI8X+OBvHp+/uAu8fA2a/k=
+	t=1724742878; cv=none; b=KRB4VsbJGpDUiBMTJcPRJbjQdQo1ML6XyABwhITCn0DKp8lv71MlBYfjjC+DYWosoFfIueEivV+znFNe5Wr+quMMVKnnkqlhVS1qpH3Ediyv6BWlKtK8U3i5kIfJdrdF7NAZNK9dFwzl/3zpGnEoxMWM+j7su0S0psPjUb6XtiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724742903; c=relaxed/simple;
-	bh=iOwhyk6CLSQyjuOGqBrDGkGAiGKSAVxya3654+z3ijk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jNK1PvAcAplsLqVAJA6GyO8jSQ1OZwUSdtqr/ETkyQ3nGrfKIaV9wB+8rz1DGYBhZJKgPigXkBKaJL4AgsZS/dxsm5P/yYGc8m0/IKQ20TDvty1ieYEUvgVBWF/flnvji+S6YscMFAskGTUf3LqMKOkDBUtyOJlQt9MXV4xwXSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kuhvFa7l; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724742902; x=1756278902;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=iOwhyk6CLSQyjuOGqBrDGkGAiGKSAVxya3654+z3ijk=;
-  b=kuhvFa7leEBch9kkxIn4VcUCOBIua3uaGRpdxqa0YfLWpw/sPuXH/25b
-   bfAfPsTrK0fhJbxihiTLM+cHDZ3QIK9Xk/uatlTpY0y+PrRRODH3DNHWi
-   CY19Hb7YVbyp5G9Zi4F21uJVHRLOmbcmrAnA+0UURF3pAKPzsGlRXe9ay
-   5WH8xHwSDjNL0TzJb+8D4VFe9kmVv68IJYEPWKgfF1CB7umOAalymnFOe
-   VzMqqWW8MJxBcAOEc738tTVSl9DCW5tC3pnFla7xJKuSxkHRTDYoyfsOs
-   Vu6psqwwUk9WHG8Yu362udrCgcdjAattZ0Su7RG/MnW8fomjQ72jrSWo4
-   A==;
-X-CSE-ConnectionGUID: 9fDw87EwRaqPO8va65SsYQ==
-X-CSE-MsgGUID: +5jcyY/+Tz+nIdKM7sbWaw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="34575865"
-X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
-   d="scan'208";a="34575865"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 00:15:02 -0700
-X-CSE-ConnectionGUID: tU0Zo3MbTIiCeJ3bX2bJqA==
-X-CSE-MsgGUID: kWMwzKxAQkK5DzDJE2Ypng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
-   d="scan'208";a="63092571"
-Received: from apaszkie-mobl2.apaszkie-mobl2 (HELO khuang2-desk.gar.corp.intel.com) ([10.124.223.81])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 00:14:57 -0700
-From: Kai Huang <kai.huang@intel.com>
-To: dave.hansen@intel.com,
-	kirill.shutemov@linux.intel.com,
-	tglx@linutronix.de,
-	bp@alien8.de,
-	peterz@infradead.org,
-	mingo@redhat.com,
-	hpa@zytor.com,
-	dan.j.williams@intel.com,
-	seanjc@google.com,
-	pbonzini@redhat.com
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	rick.p.edgecombe@intel.com,
-	isaku.yamahata@intel.com,
-	chao.gao@intel.com,
-	binbin.wu@linux.intel.com,
-	adrian.hunter@intel.com,
-	kai.huang@intel.com
-Subject: [PATCH v3 4/8] x86/virt/tdx: Refine a comment to reflect the latest TDX spec
-Date: Tue, 27 Aug 2024 19:14:26 +1200
-Message-ID: <88b2198138d89a9d5dc89b42efaed9ae669ae1c0.1724741926.git.kai.huang@intel.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <cover.1724741926.git.kai.huang@intel.com>
-References: <cover.1724741926.git.kai.huang@intel.com>
+	s=arc-20240116; t=1724742878; c=relaxed/simple;
+	bh=z0SSp782dvjxQaYaAapI7BR3oOPD+StxZHaAK5/WZvQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VbYOvSqycrHRO8lkp++tdLA46K6VEqyDQAH9s+t+gxu2zcH/8y70fBBgMJ3BrzH+PWFeW6rZoJzRg/llLvV7p2SDgAXJH2dmm6GVT4feQOXFxgad2RdskTibDA82juLuTKssamXKwyPG0TxJGdD2G9C8boQz0+WG7gu+rPGNwz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=lh1bhsP9; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1724742867; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=ysTiOl8kT8smCXWHLoQmCWKN4XNF1Y38+Fr5TDTXrpM=;
+	b=lh1bhsP9KLnmGLUby+a4xmibOcmn7clKBAhawIKENntHEaLZv0Opv+jzTsp8iTDPgELpeMdf63X+DCuQ9UHEMAMntPE3dFz5UEjbU1lNCIJN+CL+AEXk/sJQLQDOfmXm39HTkNl5KrbVepxq4q5KZTPud+OtfBvMsoek4ZLM4ug=
+Received: from 30.97.56.57(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WDlZBDM_1724742866)
+          by smtp.aliyun-inc.com;
+          Tue, 27 Aug 2024 15:14:26 +0800
+Message-ID: <34694c88-13c5-41d8-8a3a-437b6f4fdcd9@linux.alibaba.com>
+Date: Tue, 27 Aug 2024 15:14:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: shmem: fix minor off-by-one in shrinkable calculation
+To: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <d8e75079-af2d-8519-56df-6be1dccc247a@google.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <d8e75079-af2d-8519-56df-6be1dccc247a@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The old versions of "Intel TDX Module v1.5 ABI Specification" contain
-the definitions of all global metadata field IDs directly in a table.
 
-However, the latest spec moves those definitions to a dedicated
-'global_metadata.json' file as part of a new (separate) "Intel TDX
-Module v1.5 ABI definitions" [1].
 
-Update the comment to reflect this.
+On 2024/8/26 06:42, Hugh Dickins wrote:
+> There has been a long-standing and very minor off-by-one, where
+> shmem_get_folio_gfp() decides if a large folio extends beyond i_size
+> far enough to leave a page or more for freeing later under pressure.
+> 
+> This is not something needed for stable: but it will be proportionately
+> more significant as support for smaller large folios is added, and is
+> best fixed before duplicating the check in other places.
+> 
+> Fixes: 779750d20b93 ("shmem: split huge pages beyond i_size under memory pressure")
+> Signed-off-by: Hugh Dickins <hughd@google.com>
 
-[1]: https://cdrdv2.intel.com/v1/dl/getContent/795381
+LGTM. Feel free to add:
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
-Reported-by: Nikolay Borisov <nik.borisov@suse.com>
-Signed-off-by: Kai Huang <kai.huang@intel.com>
----
- arch/x86/virt/vmx/tdx/tdx.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/virt/vmx/tdx/tdx.h b/arch/x86/virt/vmx/tdx/tdx.h
-index 7458f6717873..8aabd03d8bf5 100644
---- a/arch/x86/virt/vmx/tdx/tdx.h
-+++ b/arch/x86/virt/vmx/tdx/tdx.h
-@@ -29,7 +29,7 @@
- /*
-  * Global scope metadata field ID.
-  *
-- * See Table "Global Scope Metadata", TDX module 1.5 ABI spec.
-+ * See the "global_metadata.json" in the "TDX 1.5 ABI definitions".
-  */
- #define MD_FIELD_ID_MAX_TDMRS			0x9100000100000008ULL
- #define MD_FIELD_ID_MAX_RESERVED_PER_TDMR	0x9100000100000009ULL
--- 
-2.46.0
-
+> ---
+>   mm/shmem.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 85e3bd3e709e..37c300f69baf 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2326,7 +2326,7 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
+>   	alloced = true;
+>   	if (folio_test_large(folio) &&
+>   	    DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE) <
+> -					folio_next_index(folio) - 1) {
+> +					folio_next_index(folio)) {
+>   		struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
+>   		struct shmem_inode_info *info = SHMEM_I(inode);
+>   		/*
 
