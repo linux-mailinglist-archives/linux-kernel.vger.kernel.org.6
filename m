@@ -1,62 +1,47 @@
-Return-Path: <linux-kernel+bounces-302719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 898DC960280
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:53:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D972696027F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D4A0285649
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AAF31C22309
 	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57DC1553B7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E37B15539A;
 	Tue, 27 Aug 2024 06:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YpeLoDgW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZbwrqmHZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70ACD3A1C4;
-	Tue, 27 Aug 2024 06:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D212454F87;
+	Tue, 27 Aug 2024 06:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724741541; cv=none; b=fB7g0zVdgYdUhfh2TO2bjFr/2nRmzcQ4qFsrNjquUAUYJKOAd7MWehJxgmreSipypFhc/fkp6M+htrRfhznu0NUMg0sJzzgkNsTdm5SCFZMYa+WnwKJfbq01oncuMV7q/KuWtgzfMpkpFtqbA+mxDRNxckD1VtVfzaf9OW5+Qv0=
+	t=1724741540; cv=none; b=M2iPfINjEE82mqduiVtbfD2oNFUExyF04qGKj0gDXWNHwrbDdlIPb+Redb1a13e2bzpT9RcSyoaEMUPjkoWJHVdGsXgddNOMz7r9eLIfu5qluT1lLMJHwz8odJvFHKg+nLLZZW6LBwurOVhWi8fBYddVfUY0Qxl7bqbkq8F2HFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724741541; c=relaxed/simple;
-	bh=zRly3KYX6kc4bx/O3lSkmmF80MxFntB5Kc/Tg5R1emM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Y44QdpqeEBu6cA8AQIXVTuoNebsINsmW5IiLdqJrFMiA1cPEtXfJU7CRo2wAljFLuDkT6EIR33h9Cac3IgEqmlOamO8nPxgRAE/CprxqxSNA3FzSyBrOBSTsMFi4i7Dg8XOhKkutbbyh8DMl+iTMhh1MUJ2PcYrzLD6xhOQK7P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YpeLoDgW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47R6gsgZ025889;
-	Tue, 27 Aug 2024 06:52:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qH99Ppugc09b9ggJmb2hMn6JmwiBCCwPmQ/4GpxjvyE=; b=YpeLoDgWq7wN6f9c
-	T+mV0/+qsLwjcaGNK4I705UUimLx4qOud5GoyMj3rtOzeV8WJAhSuXxMyn8De/S+
-	dvlo3NOXVbQ5n1T5bvm2yYQwIEWJGsKuEd/DcHL5oulBlpcNa6SkHwwKb8vqCl9B
-	08JDPFba9ieev1iCLnr05CpP+UFfh7LpKGnWao9uXiANXWaTeHSWaJ4aqZWUbxHj
-	BTgq3lhbLkoI+D36NfTmqf5ISJYlSxomTxgAzTXseN7qC/aOYLhsraMkfoRISB0j
-	rLPf5NvQ465Mj5xjuL14xO0Hn3WyGWv4+v/2zmqeQhic0UPFzxquSdyLTUH8sI01
-	vfdJVA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4199s880q7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 Aug 2024 06:52:05 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47R6q47D022130
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 Aug 2024 06:52:04 GMT
-Received: from [10.50.9.183] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 26 Aug
- 2024 23:51:56 -0700
-Message-ID: <20d38311-ce10-4d4e-996b-24f79c051f69@quicinc.com>
-Date: Tue, 27 Aug 2024 12:21:51 +0530
+	s=arc-20240116; t=1724741540; c=relaxed/simple;
+	bh=NFFYyetWLLnK/j7UnujThrwVZsi8OwjZbGEmvMMyLrc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VWlfjMRMZZQ8cn+JxpiO/4YN+m3ERLhN09VOHrPS4Aahg/usA2+IPLBGrZEPx3dFpDM7PPUyuVDrKmEuZLlPDaoG2vv+Z/JBd8Ei5zRaA5B/I4WscDrrVe8v6RLCfzqsgswYjakXNgLVXHMj/Y9cWM5UmJcfcDXsRj3UkX/KQ/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZbwrqmHZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49385C8B7C6;
+	Tue, 27 Aug 2024 06:52:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724741540;
+	bh=NFFYyetWLLnK/j7UnujThrwVZsi8OwjZbGEmvMMyLrc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZbwrqmHZJQt6oX0uINbulTZ5E1MRT8y3X44bdof6DyCzVE7AoWWCXOdeLp7A6wu5+
+	 zp7OY+j6xEfTN2IGkcMWG3EoRHqnffqSl0Q/21Alj8w9weSzFoKmSo4KM2m4+0zxsZ
+	 H1S84qy4YnOpLviCkPV1XCuPbR4mzvaA0BsbE6Yce22ktv1SiXGWftTn/mHAN1DiY7
+	 WvVsCTho7zkzB1Ef8aL6Bjyqio5nsvo35x/ryju6lxf0SHFg/y9TdbSe/4EdEdPKz1
+	 NYkLgUM6xr4JztlRpBgAsiOGmBUY5mo1Kp/EFpUU+S8LqNSEZlPpoPDthUYz4ULZ0A
+	 Su32wypJtWLIA==
+Message-ID: <b69e5a0a-acf9-412c-90b4-ebe00c7e07d4@kernel.org>
+Date: Tue, 27 Aug 2024 08:52:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,90 +49,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 3/6] phy: qcom: Introduce PCIe UNIPHY 28LP driver
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <andersson@kernel.org>, <konradybcio@kernel.org>,
-        <p.zabel@pengutronix.de>, <dmitry.baryshkov@linaro.org>,
-        <quic_nsekar@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <robimarko@gmail.com>
-References: <20240827045757.1101194-1-quic_srichara@quicinc.com>
- <20240827045757.1101194-4-quic_srichara@quicinc.com>
- <svraqyrvmyfvezj6zuzsoc5cy3lqklwxkmjdloquj2v4r5ik72@xnbaoigiikeu>
+Subject: Re: [PATCH 3/4] dt-bindings: arm: rockchip: Add Hardkernel ODROID-M1S
+To: Jonas Karlman <jonas@kwiboo.se>, Heiko Stuebner <heiko@sntech.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240826205538.1066103-1-jonas@kwiboo.se>
+ <66ccebeb.d40a0220.356790.58caSMTPIN_ADDED_BROKEN@mx.google.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <svraqyrvmyfvezj6zuzsoc5cy3lqklwxkmjdloquj2v4r5ik72@xnbaoigiikeu>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <66ccebeb.d40a0220.356790.58caSMTPIN_ADDED_BROKEN@mx.google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: DO3zQ6_OdhKrrDFWrEU9781YgY0wg5b0
-X-Proofpoint-GUID: DO3zQ6_OdhKrrDFWrEU9781YgY0wg5b0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-27_04,2024-08-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- spamscore=0 adultscore=0 mlxscore=0 priorityscore=1501 phishscore=0
- suspectscore=0 lowpriorityscore=0 mlxlogscore=776 impostorscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408270050
+
+On 26/08/2024 22:55, Jonas Karlman wrote:
+> The Hardkernel ODROID-M1S is a single-board computer based on Rockchip
+> RK3566 SoC. It features e.g. 4/8 GB LPDDR4 RAM, 64 GB eMMC, SD-card,
+> GbE LAN, HDMI 2.0, M.2 NVMe and USB 2.0/3.0.
+> 
+> Add devicetree binding documentation for the Hardkernel ODROID-M1S board.
+> 
+> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+> ---
+>  Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+> index f08e9f2f5dfc..9e29a5ecc94d 100644
+> --- a/Documentation/devicetree/bindings/arm/rockchip.yaml
+> +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+> @@ -598,6 +598,11 @@ properties:
+>            - const: hardkernel,rk3568-odroid-m1
+>            - const: rockchip,rk3568
+>  
+> +      - description: Hardkernel Odroid M1S
+> +        items:
+> +          - const: hardkernel,rk3566-odroid-m1s
+
+hardkernel,odroid-m1s
+
+Why adding SoC name to the board? Can it be Odroid M1S with RK3568?
 
 
+Best regards,
+Krzysztof
 
-On 8/27/2024 11:55 AM, Krzysztof Kozlowski wrote:
-> On Tue, Aug 27, 2024 at 10:27:54AM +0530, Sricharan R wrote:
->> From: Nitheesh Sekar <quic_nsekar@quicinc.com>
->>
->> Add Qualcomm PCIe UNIPHY 28LP driver support present
->> in Qualcomm IPQ5018 SoC and the phy init sequence.
->>
->> Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
->> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> 
-> ...
-> 
->> +static int qcom_uniphy_pcie_probe(struct platform_device *pdev)
->> +{
->> +	struct qcom_uniphy_pcie *phy;
->> +	int ret;
->> +	struct phy *generic_phy;
->> +	struct phy_provider *phy_provider;
->> +	struct device *dev = &pdev->dev;
->> +	struct device_node *np = of_node_get(dev->of_node);
->> +
->> +	phy = devm_kzalloc(&pdev->dev, sizeof(*phy), GFP_KERNEL);
->> +	if (!phy)
->> +		return -ENOMEM;
->> +
->> +	platform_set_drvdata(pdev, phy);
->> +	phy->dev = &pdev->dev;
->> +
->> +	phy->data = of_device_get_match_data(dev);
->> +	if (!phy->data)
->> +		return -EINVAL;
->> +
->> +	ret = qcom_uniphy_pcie_get_resources(pdev, phy);
->> +	if (ret < 0)
->> +		dev_err_probe(&pdev->dev, ret, "Failed to get resources:\n");
-> 
-> What the hell happened here? Read my review one more time and then git
-> grep for usage of dev_err_probe.
-> 
-  Ho ok, understood, missed it, will fix and resend.
-
-Regards,
-   Sricharan
-
-> NAK.
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
 
