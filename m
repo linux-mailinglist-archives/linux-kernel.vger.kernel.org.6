@@ -1,159 +1,135 @@
-Return-Path: <linux-kernel+bounces-303312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E99B5960A92
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:35:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1665960A9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:38:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0D0D282584
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:35:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31A5B28293E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A451BF7E7;
-	Tue, 27 Aug 2024 12:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="h2WvBXlg"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE61A1BBBF9;
+	Tue, 27 Aug 2024 12:38:04 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B3919DF60;
-	Tue, 27 Aug 2024 12:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D749C19DF60
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724762098; cv=none; b=iCwpJwmK2qzdAhmpj28lzWKLAs1RudH8GvKKqmYcchQK0lwqo7+3fGdFF7AAKSb2NQzwFqfR0Za/ujUsI1iMwCkgtzDKlaiD598cIHMZKNovAGYnXNkg0csKRGb0riyK/JQOPoviiVygAgL4n7eC1VzTEM0S/zKAdRZVYolyc2o=
+	t=1724762284; cv=none; b=S33Baj+JK7iWN3kY7vGjwyM/lV0DGWrlG4SURPYiv5azweiAdvM6HxjgeM1pOdjJD33IdzvStwL03BbQILWllrBVBX95nl5UyIQdM6oPvSCNT4vqjdXvgEmp2fBKoFnenOzp1DlWWF5KkkF32B8f1ykrB/HmzyY5s8hX0LnVZrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724762098; c=relaxed/simple;
-	bh=vwi7FIOIBmwqApnPnjPtIjvisVwfbZJaVEzwJw67Aco=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NiNKhS1IbV2e2cxzAW3Il1yf/khVxkd18ByuykgMgGfhRcABSNnb38GcM9VWHshO1eSAZ2uUDewYBoiPSfXM/A4QfJCETrCxyfAsCqtJ6taK5XRxIQ/79vDjKDk7crOvJC8V7pHQs9P+/Mn+WzfMblEXGGjjUz7KBUsvw+J8x/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=h2WvBXlg; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=nBB01xK7uCtUX4ALASTMlYsbWs/ZG0Uan6EVBQCEAig=; b=h2WvBXlgdV8t2zql2w/oc8ou+z
-	tCREVkIEIre98M6j0+1Ynf53K97T5Bn9lhscis2oDjH8OdAoawKdB9ZUGueXFEdTv4knKvVrXCRkU
-	TRhbaTY3duqCfOfC8S9uauPSpWoDv4arYY8y4v1jXjnWt2ed/nv4W49g2kzt9WWQn4cQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sivPJ-005odM-MO; Tue, 27 Aug 2024 14:34:45 +0200
-Date: Tue, 27 Aug 2024 14:34:45 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: Rob Herring <robh@kernel.org>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"Andrei Botila (OSS)" <andrei.botila@oss.nxp.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: Re: [PATCH v3 net-next 1/2] dt-bindings: net: tja11xx: add
- "nxp,phy-output-refclk" property
-Message-ID: <25356e61-2e53-483f-916e-5a3685b5e108@lunn.ch>
-References: <20240826052700.232453-1-wei.fang@nxp.com>
- <20240826052700.232453-2-wei.fang@nxp.com>
- <20240826154958.GA316598-robh@kernel.org>
- <PAXPR04MB8510228822AFFD8BD9F7414388942@PAXPR04MB8510.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1724762284; c=relaxed/simple;
+	bh=PneBBWaY0SjtyPv/fNcyaurRkY5sx0Vclmfxtzmjlvg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=PvZdt3Nf/X+Cb3kLdBGMsgsFEbiN5OrVIw+kzwFRhvqBhQI+DaUF9J5j95U8QzitLza11fAFOr2628XUnd++MQFUZP+olVdjc+bg5jVZuKlygDEmzz0p9hq63fvOFWC5+n0+BHbBNnAN+t9cVF1BM495VJoIxcuvpXKzyxG+YZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-827878b9901so364374039f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 05:38:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724762282; x=1725367082;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CfQ2CgWV47HDV4GkEW+OxKq3IqX2dW3HcTDz2QDznTM=;
+        b=NxyXId6/bccJGEXFWmn7oeH1ikZoLJm3lWCnSw0L9l4GAtQ9eH4XusQOGO8WvBQaTq
+         xemuRGRWDGXDVmNIWUszcQv5i91U3G7eDItixOyrg09cXVGDQtCI2mAsL3mlv3F78Zqf
+         dCTLNRuUGlgfienDlgKNbsy21S5VSZLhELYQ8UPJcPF1EtinlP0+NSEL0i7bDVCnIwc2
+         Q8ETD1GfEdTe25oXtZZ0dXu2JIm7s/vs0N43i5mV83XxCfn0Y1pPRDvvEmYgWVVkWnZL
+         VTY6EFSrg7tDYpjzJNjr50W23pdhz9HWpWyTLLeZUgkmSwsmnDlJy6DnDBAYqWuJESi+
+         xUQw==
+X-Forwarded-Encrypted: i=1; AJvYcCWgaznysCDOLN+uJM1B4DU/i5qBPIz+tg+Ez4sxdg9mKOuY0hnsmx7tBQY5GXPT5w8WABYfCZ/MAkAvTiY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyt1pef3wXNBb3oxu4yEZrYSPvjkcT8kfZnAobvSu1nGCtp9lmB
+	e4FJffT4JnrjbzD2yqJcXRu3V5iSobZhfBvBvbXrYZG+lQUe7nA5XFTY+Mww9gXyjUflwLIqJ+q
+	Q5Bmga0U03VawGIQRf/i56YICTmYm2RFNJ/GHR1zzSLoK1KL2tlRxdJk=
+X-Google-Smtp-Source: AGHT+IG+xxzMobc+xtKYrfH8fdxyx/EEiozghUn4UEmJywnZpi7IEKNYeU34TiR52ffvh5hl0mxpdeWRMCFgpwzAKzAMRMWvM38e
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB8510228822AFFD8BD9F7414388942@PAXPR04MB8510.eurprd04.prod.outlook.com>
+X-Received: by 2002:a05:6638:13c3:b0:4ce:8f9d:2c31 with SMTP id
+ 8926c6da1cb9f-4ceb4d43fa1mr160147173.0.1724762281987; Tue, 27 Aug 2024
+ 05:38:01 -0700 (PDT)
+Date: Tue, 27 Aug 2024 05:38:01 -0700
+In-Reply-To: <CANp29Y4JzKFbDiCoYykH1zO1xxeG8MNCtNZO8aXV47JdLF6UXw@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000023e3760620a98329@google.com>
+Subject: Re: [syzbot] [iomap?] [xfs?] WARNING in iomap_write_begin
+From: syzbot <syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com>
+To: brauner@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, 
+	hch@infradead.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, nogikh@google.com, 
+	sunjunchao2870@gmail.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-> > This binding is completely broken. I challenge you to make it report any errors.
-> > Those issues need to be addressed before you add more properties.
-> > 
-> Sorry, I'm not sure I fully understand what you mean, do you mean I need
-> to move the "nxp,rmii-refclk-in" property out of the patternProperties?
-> Just like below?
-> +properties:
-> +  nxp,rmii-refclk-in:
-> +    type: boolean
-> +    description: |
-> +      The REF_CLK is provided for both transmitted and received data
-> +      in RMII mode. This clock signal is provided by the PHY and is
-> +      typically derived from an external 25MHz crystal. Alternatively,
-> +      a 50MHz clock signal generated by an external oscillator can be
-> +      connected to pin REF_CLK. A third option is to connect a 25MHz
-> +      clock to pin CLK_IN_OUT. So, the REF_CLK should be configured
-> +      as input or output according to the actual circuit connection.
-> +      If present, indicates that the REF_CLK will be configured as
-> +      interface reference clock input when RMII mode enabled.
-> +      If not present, the REF_CLK will be configured as interface
-> +      reference clock output when RMII mode enabled.
-> +      Only supported on TJA1100 and TJA1101.
-> 
-> patternProperties:
->    "^ethernet-phy@[0-9a-f]+$":
-> @@ -32,28 +71,6 @@ patternProperties:
->          description:
->            The ID number for the child PHY. Should be +1 of parent PHY.
-> 
-> -      nxp,rmii-refclk-in:
-> -        type: boolean
-> -        description: |
-> -          The REF_CLK is provided for both transmitted and received data
-> -          in RMII mode. This clock signal is provided by the PHY and is
-> -          typically derived from an external 25MHz crystal. Alternatively,
-> -          a 50MHz clock signal generated by an external oscillator can be
-> -          connected to pin REF_CLK. A third option is to connect a 25MHz
-> -          clock to pin CLK_IN_OUT. So, the REF_CLK should be configured
-> -          as input or output according to the actual circuit connection.
-> -          If present, indicates that the REF_CLK will be configured as
-> -          interface reference clock input when RMII mode enabled.
-> -          If not present, the REF_CLK will be configured as interface
-> -          reference clock output when RMII mode enabled.
-> -          Only supported on TJA1100 and TJA1101.
-> 
-> > If you want/need custom properties, then you must have a compatible string.
-> > 
-> I looked at the binding documentation of other PHYs and there doesn't seem to
-> be any precedent for doing this. Is this a newly added dt-binding rule?
-> 
-> There is another question. For PHY, usually its compatible string is either
-> "ethernet-phy-ieee802.3-c45" or "ethernet-phy-ieee802.3-c22". If I want to
-> add a custom property to TJA11xx PHY, can I use these generic compatible
-> strings? As shown below:
+Hello,
 
-This is where we get into the differences between how the kernel
-actually works, and how the tools work. The kernel does not need a
-compatible, it reads the ID registers and uses that to load the
-driver. You can optionally have a compatible with the contents of the
-ID registers, and that will force the kernel to ignore the ID in the
-hardware and load a specific driver.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in iomap_write_begin
 
-The DT tools however require a compatible in order to match the node
-in the blob to the binding in a .yaml file. Without the compatible,
-the binding is not imposed, which is why you will never see an error.
+XFS (loop0): Mounting V5 Filesystem bfdc47fc-10d8-4eed-a562-11a831b3f791
+XFS (loop0): Ending clean mount
+XFS (loop0): Quotacheck needed: Please wait.
+XFS (loop0): Quotacheck: Done.
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 6042 at fs/iomap/buffered-io.c:727 __iomap_write_begin fs/iomap/buffered-io.c:727 [inline]
+WARNING: CPU: 0 PID: 6042 at fs/iomap/buffered-io.c:727 iomap_write_begin+0x13f0/0x16f0 fs/iomap/buffered-io.c:830
+Modules linked in:
+CPU: 0 UID: 0 PID: 6042 Comm: syz.0.15 Not tainted 6.11.0-rc5-syzkaller-00015-g3e9bff3bbe13 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:__iomap_write_begin fs/iomap/buffered-io.c:727 [inline]
+RIP: 0010:iomap_write_begin+0x13f0/0x16f0 fs/iomap/buffered-io.c:830
+Code: b6 0d 01 90 48 c7 c7 e0 53 fa 8b e8 da 10 2b ff 90 0f 0b 90 90 e9 74 ef ff ff e8 eb ec 68 ff e9 4b f6 ff ff e8 e1 ec 68 ff 90 <0f> 0b 90 bb fb ff ff ff e9 e9 fe ff ff e8 ce ec 68 ff 90 0f 0b 90
+RSP: 0018:ffffc9000315f7c0 EFLAGS: 00010293
+RAX: ffffffff822a9ebf RBX: 0000000000000080 RCX: ffff88801ff39e00
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 0000000000000000
+RBP: ffffc9000315fa50 R08: ffffffff822a9bc4 R09: 1ffff1100c1a82f9
+R10: dffffc0000000000 R11: ffffed100c1a82fa R12: ffffc9000315f9b0
+R13: ffffc9000315fbf0 R14: ffffc9000315f990 R15: 0000000000000800
+FS:  00007f572bb8f6c0(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020001000 CR3: 0000000020098000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ iomap_unshare_iter fs/iomap/buffered-io.c:1351 [inline]
+ iomap_file_unshare+0x460/0x780 fs/iomap/buffered-io.c:1391
+ xfs_reflink_unshare+0x173/0x5f0 fs/xfs/xfs_reflink.c:1681
+ xfs_file_fallocate+0x6be/0xa50 fs/xfs/xfs_file.c:997
+ vfs_fallocate+0x553/0x6c0 fs/open.c:334
+ ksys_fallocate fs/open.c:357 [inline]
+ __do_sys_fallocate fs/open.c:365 [inline]
+ __se_sys_fallocate fs/open.c:363 [inline]
+ __x64_sys_fallocate+0xbd/0x110 fs/open.c:363
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f572ad779f9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f572bb8f038 EFLAGS: 00000246 ORIG_RAX: 000000000000011d
+RAX: ffffffffffffffda RBX: 00007f572af05f80 RCX: 00007f572ad779f9
+RDX: 0000000000000000 RSI: 0000000000000040 RDI: 0000000000000006
+RBP: 00007f572ade58ee R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000002000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f572af05f80 R15: 00007fff39de1648
+ </TASK>
 
-So in the example, include a compatible, using the real ID.
 
-For a real DT blob, you need to decide if you want to include a
-compatible or not. The downside is that it forces the ID. It is not
-unknown for board manufacturers to replace a PHY with another pin
-compatible PHY. Without a compatible, the kernel will load the correct
-driver, based on the ID. With a compatible it will keep using the same
-driver, which is probably wrong for the hardware.
+Tested on:
 
-Does the PHY use the lower nibble to indicate the revision? Using a
-compatible will also override the revision. So the driver cannot even
-trust the revision if there is a compatible.
+commit:         3e9bff3b Merge tag 'vfs-6.11-rc6.fixes' of gitolite.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13ca847b980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a0455552d0b27491
+dashboard link: https://syzkaller.appspot.com/bug?extid=296b1c84b9cbf306e5a0
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-	Andrew
+Note: no patches were applied.
 
