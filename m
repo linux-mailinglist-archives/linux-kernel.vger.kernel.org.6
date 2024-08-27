@@ -1,78 +1,123 @@
-Return-Path: <linux-kernel+bounces-303233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFF4296095D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:56:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B444960960
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AFD91F21BB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:56:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A77D3B23D52
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767001A0715;
-	Tue, 27 Aug 2024 11:56:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DDF51A0721;
+	Tue, 27 Aug 2024 11:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="zw6b7p1B"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O6VHObzs"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A470A139580;
-	Tue, 27 Aug 2024 11:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7844419EEA1;
+	Tue, 27 Aug 2024 11:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724759768; cv=none; b=EQ7I0wn5YAb/47EZXsfxekUfIXZEVRas1mcNAR+RrIcNYG8V9Mn0EdQymK8ojwTqrAk4EhmnYpP7Z8FEZ2ZomCKlmTRqgGd5B0E6g5Nu188qB4Ob6J0X3cQgazTVZ2zH02/AhLNytEqcsc3MvCNgpG8YgcHaGRoowFILRjnKqqs=
+	t=1724759789; cv=none; b=qAUZnitd3qBjccRg2BNvuefUozpyj+0+GMgDZy3MpsJdyIwKWYZ/iCLeiZz6/Luu1FgMtSmXIpiJ8b1tRBL1SVyFrNJTQDblZfHBiWhQnmaik6Yt5NqP0kT8V0F7S4T/9rETEGWpbc+gsCqaS6L0NxZ1q/6rMJOmmXlC6TZqTMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724759768; c=relaxed/simple;
-	bh=a5ZV9Z0+/DuwbgA21cGCMJWVPlMG8o4hKX+L8T0B3bI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IfM0flIiEFW++ZlmIwa4TGZ9zKkMYRN6Qm836OSYG9BiI79xiva0nCdXNEDgGetQ5cgAemGQD4xkBh83Eek0RelvYg6a1jEMKo6vf78i6xQGt1E3Dnpo/8iW/LEjdLrNOGEEmfV5+gYUx4rIZkppyl94w2EJYPtzYfTfG6lFavs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=zw6b7p1B; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 51D6B21AE5;
-	Tue, 27 Aug 2024 13:55:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1724759752;
-	bh=CafeksWBlGGflx2ww0XuQ7ArLYM/LkByOh8sKeK4ecw=;
-	h=Received:From:To:Subject;
-	b=zw6b7p1BGB2U3GGDPqTkpk6gSPF6RNOifttVHFPCgAWHACBw/iF2VXALaimn5CRPF
-	 uYczt9ZJJgAmVMBE6132c0ZDrTfYwgQTnUHlDkM8/psirM+50me1MJaXGbdAGekvyP
-	 wTTptFc1wGr5M88HOTxM/5bhrwKJXesmsAQuP7zJk52EdnFyE80LM2nElf8fC4fs7I
-	 fiXllFxzr9vEUK46BPLkIgfWa/10+e1D+Oq50zuv4bOCE2Z8bdNtgnO+Z0OQjkHAC5
-	 PNQ5JvqlsjAxMXtFaJSPE3aVSdo9wkmNkwQtuM/PiAfrGhxJPplFJfjKum55OU40Tc
-	 2hpmFQ6U/1mEw==
-Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
-	id 06E807F84D; Tue, 27 Aug 2024 13:55:51 +0200 (CEST)
-Date: Tue, 27 Aug 2024 13:55:51 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Brian Norris <briannorris@chromium.org>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/12] wifi: mwifiex: add missing locking
-Message-ID: <Zs2-x6nuAzKvKfng@gaggiata.pivistrello.it>
-References: <20240826-mwifiex-cleanup-1-v1-0-56e6f8e056ec@pengutronix.de>
- <20240826-mwifiex-cleanup-1-v1-1-56e6f8e056ec@pengutronix.de>
+	s=arc-20240116; t=1724759789; c=relaxed/simple;
+	bh=zIIlH/1eILLEKC06D2I1Pu2PIAcknVoKtcQdLzlTRIQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LbXlCjyVhBGqp5TdNKx5b1p2cSZZ53VMryPOUCGVcSHjyfJGR7Mz8B+KxuZXUECaNZutZk8J2/2xaQiIMCdSeFwLaFx2ra7LNXYgwF4lbxEA6hlm5c7rofiH+L46Lee+0QkY7Y0JD5v08JaSThchJOc25z5aZ6ezg0wtv//i8Y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O6VHObzs; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20219a0fe4dso52890125ad.2;
+        Tue, 27 Aug 2024 04:56:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724759788; x=1725364588; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zIIlH/1eILLEKC06D2I1Pu2PIAcknVoKtcQdLzlTRIQ=;
+        b=O6VHObzs9aPDh8jJDNgkJeEljhlLYo/NZZtdElundiEZExvr+CwLBw9UzPLJ4Is5Vv
+         QQS2Y2nxjaivvu1RvX+MIF0fD+m6xbhmK4h68upsS55xEBmo8L7gH6poBqIqW2CGRlT+
+         q6LrJMdPFh7hGKn+upCvrkCYUR4gYH7/XQBjZcriNm0bQXwl0iFxifySvR789hY2zMbc
+         aV6kqQ4t5tu/ijuV9Z3B+BhS/MxA614EzSBXI/TeQtF8T0z5qC0VByjaqb27Lf2gY1WP
+         AHOVdbyogFLaiqhwXM1YZjszfKSLzKn4ymV2pfe+EDhdOCJRUhMpmOuoESsQEz4ltmF5
+         Kpnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724759788; x=1725364588;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zIIlH/1eILLEKC06D2I1Pu2PIAcknVoKtcQdLzlTRIQ=;
+        b=GVaOAXu1Jn0EXuPJKCLV6bJtcyvZyx9TOSJBjcJFmZVdERlAsho8VNLXkDxg0Fv+bu
+         AMNbD5jB2PNTW9wo+fPvgCzSbk2b3pL+PhRs+TjgbPSqSUh29Px79+6Ly295lyY75sWo
+         aWv5vqu8EMChE/N/+NlwWQe+GXtCM7T0Jm+jk+Oq9OeNW0SKmz8c1Vho63yfICvftMKo
+         nWggRH2IcWhVKjFg+OHeB1/8zfjHTGzI17yMBTHNPkXQcy/qbJUWotvhfh9Wwnqz0QS0
+         iwZbxape74FhxQ0h7Mq8E1Rys3e/d+/J+zGC05M97HVJttqGVniqvDvKbEftk3SaiiKO
+         8EjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUibON1oz3B7S1xzgcfkZH51gv+SD7GVojfmCakr+Ln0rsmjns4hHnYoJDBJxw12adXsWqaQaB0KxeK+tsX@vger.kernel.org, AJvYcCVdJLGoVhp2W6QDNIoZ9zKX//+3ULQHV0dbbig7Szb0Nhbk6pAsPd91y4mIr8vgohui4RjGurkpXlVM@vger.kernel.org, AJvYcCVs2QppsrgMszJ6X0MbIS3GFz2niifmwwokjaNPZ/5qFp8sRaLTaKNAqVY3xkMVDKKgo2gc61hGZARXuovg@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxi2hLAJiElIRduopg/bC+4ilfoahbkWnqg2j74HVicmgfGPQK2
+	R5YNDps1D7pdY2Y31O5OHYOAymJB+X4TJ0mOirmTN1cFqlgN3ZXC
+X-Google-Smtp-Source: AGHT+IGFqLm2BIcPsAt/sy3YXl5oqvh5sEArYUg39s0DaeC+Ji+3QjFB5YAZ03tyGp01X7XC+OKIuA==
+X-Received: by 2002:a17:903:41c3:b0:1fb:8c35:6036 with SMTP id d9443c01a7336-2039e44af01mr146880295ad.5.1724759787386;
+        Tue, 27 Aug 2024 04:56:27 -0700 (PDT)
+Received: from [127.0.0.1] ([103.85.75.88])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038557e895sm81794195ad.71.2024.08.27.04.56.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 04:56:26 -0700 (PDT)
+Message-ID: <0bdaf103f5f8de02a48b33481f787c4ac8806df5.camel@gmail.com>
+Subject: Re: [syzbot] [iomap?] [xfs?] WARNING in iomap_write_begin
+From: Julian Sun <sunjunchao2870@gmail.com>
+To: Aleksandr Nogikh <nogikh@google.com>, Christoph Hellwig
+ <hch@infradead.org>
+Cc: syzbot <syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com>, 
+	brauner@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Date: Tue, 27 Aug 2024 19:56:23 +0800
+In-Reply-To: <CANp29Y4JzKFbDiCoYykH1zO1xxeG8MNCtNZO8aXV47JdLF6UXw@mail.gmail.com>
+References: <0000000000008964f1061f8c32b6@google.com>
+	 <de72f61cd96c9e55160328dd8b0c706767849e45.camel@gmail.com>
+	 <Zs2m1cXz2o8o1IC-@infradead.org>
+	 <9cf7d25751d18729d14eef077b58c431f2267e0f.camel@gmail.com>
+	 <Zs26gKEQzSzova4d@infradead.org>
+	 <CANp29Y4JzKFbDiCoYykH1zO1xxeG8MNCtNZO8aXV47JdLF6UXw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826-mwifiex-cleanup-1-v1-1-56e6f8e056ec@pengutronix.de>
 
-On Mon, Aug 26, 2024 at 01:01:22PM +0200, Sascha Hauer wrote:
-> cfg80211_rx_assoc_resp() and cfg80211_rx_mlme_mgmt() need to be called
-> with the wiphy locked, so lock it before calling these functions.
-> 
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+On Tue, 2024-08-27 at 13:40 +0200, Aleksandr Nogikh wrote:
+> On Tue, Aug 27, 2024 at 1:37=E2=80=AFPM Christoph Hellwig <hch@infradead.=
+org>
+> wrote:
+> >=20
+> > On Tue, Aug 27, 2024 at 07:13:57PM +0800, Julian Sun wrote:
+> > > Did you use the config and reproducer provided by syzbot? I can
+> > > easily
+> > > reproduce this issue using the config and c reproducer provided
+> > > by
+> > > syzbot.
+> >=20
+> > I used the reproducer on my usual test config for a quick run.
+> > I'll try the syzcaller config when I get some time.
+>=20
+> FWIW if you just want to check if the bug is still present in the
+> kernel tree, you can ask syzbot to build the latest revision and run
+> the reproducer there.
+>=20
 
-Fixes: 36995892c271 ("wifi: mwifiex: add host mlme for client mode")
-Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> #syz test
 
+Thanks for the remainder, I will try it.
+
+Thanks,
+--=20
+Julian Sun <sunjunchao2870@gmail.com>
 
