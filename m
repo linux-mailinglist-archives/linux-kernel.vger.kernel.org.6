@@ -1,216 +1,85 @@
-Return-Path: <linux-kernel+bounces-303015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42140960630
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:49:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 282BB960635
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0A821F2582B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:49:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9566B221AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D847119B5A3;
-	Tue, 27 Aug 2024 09:49:12 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685C819B5A3;
+	Tue, 27 Aug 2024 09:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cygvi/Og"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B06413B588
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9909913B588;
+	Tue, 27 Aug 2024 09:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724752152; cv=none; b=MDTsspIsz2kMJktsy8wxdfvxBxevfyzFhlB3HTfAeoiGSJ2RdQVWNvJQsIFbU87NU1RVrrQF/4xy1YRbQj9LJRWvKxePa52wXrp+G4f3hEQJcSOR+u0MMNGmUk4y6p9pUdRaCKUm9aXJuuiL/6/RL9jGeKDJd4IFVF8M3k2UcBo=
+	t=1724752159; cv=none; b=VylPdp15FKv96GcNgMDnOK9DOM9caZdE105Tm7+cOBoSqbUMLouHdFnrUnx2sCecDmKx808uNuEj8ySZ53dibwuo0KorQID0n0sOqwSjOn7NXUak3S4qEDSQvWBqMF/zJhC54AmQKU3Dv99JCTQjUjlfeoO7k2mcZBkSy6+Iy4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724752152; c=relaxed/simple;
-	bh=uXO+ovcrMFy/Em87vM3KBO8Ib1TN5xlomZGsu4P9d5s=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=En0NRe1+8PQvpRRruZ5fKNSUMH00K7tuW7TGrgHy/K99sKRcUy+RHdNi3dK8mkjzxZiFUwuFKDN6XUkzu1O+oOeXclDyS5ExPmV44MAO+4HfYf9Ey8PqffLIod7i9VmCzqDtTKnXsbMKDeDY5jfrl16rn4FSNQjgCDE9XJcxPMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WtN2f5gCjz6DBQl;
-	Tue, 27 Aug 2024 17:45:46 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5DA6F140B2A;
-	Tue, 27 Aug 2024 17:49:01 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 27 Aug
- 2024 10:49:00 +0100
-Date: Tue, 27 Aug 2024 10:49:00 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-CC: <hjc@rock-chips.com>, <heiko@sntech.de>, <andy.yan@rock-chips.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<dri-devel@lists.freedesktop.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<krzk@kernel.org>, <jic23@kernel.org>
-Subject: Re: [PATCH -next 1/5] drm/rockchip: Use
- for_each_child_of_node_scoped()
-Message-ID: <20240827104900.00004060@Huawei.com>
-In-Reply-To: <5d6debd0-1a02-f631-649e-26fb69e164e2@huawei.com>
-References: <20240823092053.3170445-1-ruanjinjie@huawei.com>
-	<20240823092053.3170445-2-ruanjinjie@huawei.com>
-	<20240823123203.00002aac@Huawei.com>
-	<5d6debd0-1a02-f631-649e-26fb69e164e2@huawei.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724752159; c=relaxed/simple;
+	bh=i7NI4Nrkz5Xqzy0dJnBCstnJ32/Jo2lh/i45uj2UqIg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UBVxJSdumeU9Cng5zZCBTiw8OzhszUUYnCSHuLeA8146zyRbGIQ3LjysKHBdduoCubtOUs9M7sGdK8k1IVGypMV/Q5VAavjuV3SXX+cId3i9/n37gDgU6wUOmH0wODsWWmmVAwlen7jvbgo6Xk7fd8DsMKa/HlbkftsfrTRo0/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cygvi/Og; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9ECCC8B7A0;
+	Tue, 27 Aug 2024 09:49:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724752159;
+	bh=i7NI4Nrkz5Xqzy0dJnBCstnJ32/Jo2lh/i45uj2UqIg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Cygvi/OgZdHtqq0AMRAJRp78Rc4ZBdfMMPXYVfc8o4bdDtdC2wlSp9KusaMSwWGWT
+	 YUYGidlt2nSYLzkiiFqRZX49f/pqvSGRFLs+xNURMmU205hRAUNcbGbsUmfpQp/xbD
+	 9p/IBH+qQXYPC9qPQi3uA9yuKbklEjRxSBwSJurhGD9CFWOL8VHs4lNBMop/ZRlgZ+
+	 /3zPeS82CE42Z8NsG7bRXLe9+d1hba5SJo7RGWtHrzIJM9NtmH/yFYtt9e2bEz85Ds
+	 dtksnOSEuVayjjqJrXHM5pX68LrU5mPCyf8/RimDvJIawSHB20NrINI555SGgS5Q4M
+	 J7mYfePXbXMkg==
+Message-ID: <ca9e5cf0-2e6b-4584-ad2d-86e1ce638093@kernel.org>
+Date: Tue, 27 Aug 2024 11:49:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/10] pmdomain: qcom: rpmpd: Simplify locking with
+ guard()
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+References: <20240823-cleanup-h-guard-pm-domain-v1-0-8320722eaf39@linaro.org>
+ <20240823-cleanup-h-guard-pm-domain-v1-8-8320722eaf39@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <20240823-cleanup-h-guard-pm-domain-v1-8-8320722eaf39@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 27 Aug 2024 09:40:07 +0800
-Jinjie Ruan <ruanjinjie@huawei.com> wrote:
+On 23.08.2024 2:51 PM, Krzysztof Kozlowski wrote:
+> Simplify error handling (less gotos) over locks with guard().
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-> On 2024/8/23 19:32, Jonathan Cameron wrote:
-> > On Fri, 23 Aug 2024 17:20:49 +0800
-> > Jinjie Ruan <ruanjinjie@huawei.com> wrote:
-> >  =20
-> >> Avoids the need for manual cleanup of_node_put() in early exits
-> >> from the loop.
-> >>
-> >> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com> =20
-> >=20
-> > There is more to do here, and looking at the code, I'm far from
-> > sure it isn't releasing references it never had.
-> >  =20
-> >> ---
-> >>  drivers/gpu/drm/rockchip/rockchip_lvds.c | 8 +++-----
-> >>  1 file changed, 3 insertions(+), 5 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/rockchip/rockchip_lvds.c b/drivers/gpu/dr=
-m/rockchip/rockchip_lvds.c
-> >> index 9a01aa450741..f5b3f18794dd 100644
-> >> --- a/drivers/gpu/drm/rockchip/rockchip_lvds.c
-> >> +++ b/drivers/gpu/drm/rockchip/rockchip_lvds.c
-> >> @@ -548,7 +548,7 @@ static int rockchip_lvds_bind(struct device *dev, =
-struct device *master,
-> >>  	struct drm_encoder *encoder;
-> >>  	struct drm_connector *connector;
-> >>  	struct device_node *remote =3D NULL;
-> >> -	struct device_node  *port, *endpoint; =20
-> >=20
-> > Odd extra space before *port in original. Clean that up whilst here.
-> >=20
-> >  =20
-> >> +	struct device_node  *port; =20
-> >=20
-> > Use __free(device_node) for *port as well. =20
->=20
-> Yes=EF=BC=8Cthat is right.
->=20
-> >=20
-> > So where the current asignment is.
-> > 	struct device_node *port =3D of_graph_get_port_by_id(dev->of_node, 1);
-> >  =20
-> >>  	int ret =3D 0, child_count =3D 0;
-> >>  	const char *name;
-> >>  	u32 endpoint_id =3D 0;
-> >> @@ -560,15 +560,13 @@ static int rockchip_lvds_bind(struct device *dev=
-, struct device *master,
-> >>  			      "can't found port point, please init lvds panel port!\n");
-> >>  		return -EINVAL;
-> >>  	}
-> >> -	for_each_child_of_node(port, endpoint) {
-> >> +	for_each_child_of_node_scoped(port, endpoint) {
-> >>  		child_count++;
-> >>  		of_property_read_u32(endpoint, "reg", &endpoint_id);
-> >>  		ret =3D drm_of_find_panel_or_bridge(dev->of_node, 1, endpoint_id,
-> >>  						  &lvds->panel, &lvds->bridge);
-> >> -		if (!ret) {
-> >> -			of_node_put(endpoint);
-> >> +		if (!ret)
-> >>  			break; =20
-> >=20
-> > This then can simply be
-> > 			return dev_err_probe(dev, ret,
-> > 					     "failed to find pannel and bridge node\n"); =20
-> >> -		} =20
->=20
-> It seems to me there's no easy way return here, as it will try
-> drm_of_find_panel_or_bridge() for each child node, only "child_count =3D
-> 0" or all child node  drm_of_find_panel_or_bridge() fails it will error
-> and return.
-Ah. Good point. That is an odd code structure that I read wrong but it inde=
-ed
-carries on and ignores the error if for an earlier loop
-the drm_of_find_pannel_or_bridge() failed and a later one succeeds.
+Reviewed-by: Konrad Dybcio <konradybcio@kernel.org>
 
-If you want to make it more 'standard I'd do
-if (ret)
-	continue;
+Thanks for taking care of this!
 
-and have the code code path of the early break 'inline'
-
-e.g.
-	for_each_child_of_node(port, endpoint) {
-		child_count++;
-		of_property_read_u32(endpoint, "reg", &endpoint_id);
-		ret =3D drm_of_find_panel_or_bridge(dev->of_node, 1, endpoint_id,
-						  &lvds->panel, &lvds->bridge);
-		if (ret)
-			continue;
-
-		of_node_put(endpoint);
-		break;
-	}
-
-I'd also be tempted to pull the child_count before this with
-
-if (of_get_child_count() =3D=3D 0) {
-	DRM_DEV_ERROR(dev, "...");
-	return -EINVAL;
-
-Then can simply check ret at the end of the loop rather than needing
-the else if as we can't get there with child_count non zero.
-Can also drop the increment of child_count in the loop. So overall that
-becomes something like
-
-	if (of_get_child_count(endpoint) =3D=3D 0) {
-		DRM_DEV_ERROR(dev, "...");
-		return -EINVAL;
-	}
-
-	for_each_child_of_node_scoped(port, endpoint) {
-		of_property_read_u32(endpoint, "reg", &endpoint_id);
-		ret =3D drm_of_find_panel_or_bridge(dev->of_node, 1, endpoint_id,
-						  &lvds->panel, &lvds->bridge);
-		/* A later child node may succeed */
-		if (ret)
-			continue;
-		break;
-	}
-	if (ret)
-		return dev_err_probe();
-
-
->=20
-> >=20
-> > Various other paths become direct returns as well.
-> >  =20
-> >>  	} =20
-> >=20
-> > The later code with remote looks suspect as not obvious who got the ref=
-erence that
-> > is being put but assuming that is correct, it's another possible place =
-for __free based
-> > cleanup. =20
->=20
-> Yes, the remote looks suspect.
->=20
-> >=20
-> >  =20
-> >>  	if (!child_count) {
-> >>  		DRM_DEV_ERROR(dev, "lvds port does not have any children\n"); =20
-> >  =20
-
+Konrad
 
