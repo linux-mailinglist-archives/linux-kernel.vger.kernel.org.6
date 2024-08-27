@@ -1,218 +1,241 @@
-Return-Path: <linux-kernel+bounces-302913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A53199604ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:55:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 084159604F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D5412830A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:55:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CAF01C20C45
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A846D199FB9;
-	Tue, 27 Aug 2024 08:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IOEyXOyP"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F34A19922A;
+	Tue, 27 Aug 2024 08:55:38 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A0D198A19;
-	Tue, 27 Aug 2024 08:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044C6158DD0;
+	Tue, 27 Aug 2024 08:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724748887; cv=none; b=hEFLhLt679Dp5vJizoGTVRsfcsdA2SZRcQlnG3p9BclvBWTGW4Rcrd5fMZxBdXmkkeBGy30mbxNqXga7qi5z9cPnSMzhLjQCozfv2YL6owZzxUcLCMsKIEollf0zHYrXszLIxzVrO9LzoVuZoJgbGaKsXSk5TUBJYtQvZkBiWUw=
+	t=1724748938; cv=none; b=jCGLF0lu15EN3HuIdG9dTf/lnQkrPv4n38QK2mcv6fJbkaFj6YSKhu3txS25cRjrz/kug9wyIT6iFlUeau32cXgMl8K5VO8kpnh/eQEvht1YZOlGsJynhUihwoY/GsWLK2Wih6QoV0lhj9stG8JFnUmuZ9dCJDLdWDnAhf8pGmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724748887; c=relaxed/simple;
-	bh=vMRHis5IJteHATEps18AP4tB+HzMMFymR/ZT/D3Fkuw=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QBQqIQ8tAZkUnbFRtFx1Q24jvOhcSeXW34lMV0LsjFah2Zg8NWv212dm0vMv4UFpijpUpl3iSc6L9UilOeNObdKiQsR+j/UUz57ZV+ax78du8HSlLwI2UdECgxH/viPg9dC0fYN5EDXq6IvjvFKE6Ez5Rxme1KJ7UOf+xf2inmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IOEyXOyP; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71456acebe8so2240935b3a.3;
-        Tue, 27 Aug 2024 01:54:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724748885; x=1725353685; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vMRHis5IJteHATEps18AP4tB+HzMMFymR/ZT/D3Fkuw=;
-        b=IOEyXOyPlh70s5WTh555JhJ+9v77yD+vRBAdNll4iSCv80lAAotiIvVesXtBfUMyoC
-         aRNucFl/JhDup/cq5vTpM1CKoGkJ0I/+fsTA42MPEeME7s/KMkPfxn6fuUc/GdZUmqNl
-         O+GQRCElS6C7XZ/P9sS6BOnGuEgL7A/lA0kXDJqpvFU8oOkCo/ZwqoXBkn0vwDYR+8/x
-         HHMIdPdZeCAcE/qXJ5f9Z6OnGn1Rqi6cRi5/eAryVWfdfySkBQr/wxsmi+UjRPIPsZDM
-         280U45Jog5o9BOKHsCtkflNhsk/NX8XjnYAHXU4JgaEpj1hCEu74riUGy4cGRVWOVhXg
-         VUOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724748885; x=1725353685;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=vMRHis5IJteHATEps18AP4tB+HzMMFymR/ZT/D3Fkuw=;
-        b=GMKFi9tjSDw0squ6hh6sBC/JVHYX/ZTjtmF4CPGFoQ2a8Gb4LsCashfy62qihrTodk
-         j8tWWI1pRvu3kfcdgv5RXFnghnktiLrJipyeuB6qWN+ItEbZ/cI/vZk4Sdm1QaRITkAP
-         IV7EyV6M0nwaD2ZxS4PL84UemrwVzoBXhvTn08Bf5uKmwLO0N8BzKi53Ou80uRKe/QHa
-         ArMFpFfpIu2MFHIGhLY7dOIeEOzQPlTHlpblRsI/PHeDdfuWrgeC+VoJffoD50zx0/E1
-         pZv0+UQx56zIaCGzsV248KAXGMyPqrebRGC4X8Gow1ZZ9AqmrWs/vrbqQSKTSSqNvoHJ
-         i1uw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdg6z2mQhN/hKYqTT24FpFBrDHnZi4JeYIVzva3PDaorgWxF77etWQ/2tPGxn/4CQ26SqH3jJ6ztmM@vger.kernel.org, AJvYcCVa3q/8vSAdsON77tjo+2eD20MJtiAE1LzWsPSkjNM2KmXbrG99ibtNHQdcLnfbmBDC3HSqfxnzLzEcwBen@vger.kernel.org, AJvYcCXU/6RpbmKE351mb1+PLXT0NoyxIClViANpl4W48dDnZgjV35k+BhwNp3lo50Mjl0/Sekj77ARFcA+xQjpH@vger.kernel.org
-X-Gm-Message-State: AOJu0YzswyCmCByX3p+ip75j3+l+0SzbfqdYo3A993w5YRQsQVwL7QTF
-	33Nae5Ky+VtV370nzt6Bj0Ay06HVqSgXzS1BX5vWGifyWievshsI
-X-Google-Smtp-Source: AGHT+IEpua06xTDcLS4bU0WThZbPlHn8vWh/bto5eaPO+Q7m8oD+H/lnSwzfwlt48IJZUtqva9yw3A==
-X-Received: by 2002:a05:6a00:181b:b0:714:2268:52c5 with SMTP id d2e1a72fcca58-714457552d6mr15839922b3a.1.1724748885177;
-        Tue, 27 Aug 2024 01:54:45 -0700 (PDT)
-Received: from [127.0.0.1] ([103.85.75.88])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143431a239sm8441104b3a.179.2024.08.27.01.54.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 01:54:44 -0700 (PDT)
-Message-ID: <de72f61cd96c9e55160328dd8b0c706767849e45.camel@gmail.com>
-Subject: Re: [syzbot] [iomap?] [xfs?] WARNING in iomap_write_begin
-From: Julian Sun <sunjunchao2870@gmail.com>
-To: syzbot <syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com>, 
-	brauner@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Date: Tue, 27 Aug 2024 16:54:41 +0800
-In-Reply-To: <0000000000008964f1061f8c32b6@google.com>
-References: <0000000000008964f1061f8c32b6@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1724748938; c=relaxed/simple;
+	bh=ZfA+lNjZLRY1OVSU5/JRfG/bdaLh+2XWOYPWuqUMM4M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pwCFYbO6/0I9bxAgahES6xPLa4tHSMyLxnZBIxsy8RObOSIt3CZCc0Q0jhQI79nTSDWmagreGPBTk8OAscGTUDHms4+VvsJX6g9oUUmbBdnw8bPhEhSH1rxy9t7ZCBwKPRqk+sXGsd0tyZaDlnuwLBv/Huywjas/n5LO41QKDAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WtLwk0nMzz9sRr;
+	Tue, 27 Aug 2024 10:55:34 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id XOoAxCltyyiQ; Tue, 27 Aug 2024 10:55:34 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WtLwj6xKNz9rvV;
+	Tue, 27 Aug 2024 10:55:33 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id DC4A38B781;
+	Tue, 27 Aug 2024 10:55:33 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id E77BewEmZDDY; Tue, 27 Aug 2024 10:55:33 +0200 (CEST)
+Received: from [192.168.233.149] (unknown [192.168.233.149])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 2BECF8B763;
+	Tue, 27 Aug 2024 10:55:33 +0200 (CEST)
+Message-ID: <cd32f64c-e3c4-46f3-94cc-69baf493f452@csgroup.eu>
+Date: Tue, 27 Aug 2024 10:55:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] random: vDSO: Redefine PAGE_SIZE and PAGE_MASK
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Theodore Ts'o <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
+ Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-arch@vger.kernel.org
+References: <b8f8fb6d1d10386c74f2d8826b737a74c60b76b2.1724743492.git.christophe.leroy@csgroup.eu>
+ <defab86b7fb897c88a05a33b62ccf38467dda884.1724747058.git.christophe.leroy@csgroup.eu>
+ <Zs2RCfMgfNu_2vos@zx2c4.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <Zs2RCfMgfNu_2vos@zx2c4.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2024-08-13 at 01:14 -0700, syzbot wrote:
-Hi,
 
-Is this still a valid problem, or is it a known issue? If it is still
-valid, I'd like to dig it into, but do you have any ideas or
-suggestions before I proceed? Thanks.
 
-> Hello,
->=20
-> syzbot found the following issue on:
->=20
-> HEAD commit:=C2=A0=C2=A0=C2=A0 ee9a43b7cfe2 Merge tag 'net-6.11-rc3' of
-> git://git.kernel...
-> git tree:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 upstream
-> console+strace:
-> https://syzkaller.appspot.com/x/log.txt?x=3D10b70c5d980000
-> kernel config:=C2=A0
-> https://syzkaller.appspot.com/x/.config?x=3D9358cc4a2e37fd30
-> dashboard link:
-> https://syzkaller.appspot.com/bug?extid=3D296b1c84b9cbf306e5a0
-> compiler:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Debian clang version 15.0.6=
-, GNU ld (GNU Binutils for
-> Debian) 2.40
-> syz repro:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
-> https://syzkaller.appspot.com/x/repro.syz?x=3D139519d9980000
-> C reproducer:=C2=A0=C2=A0
-> https://syzkaller.appspot.com/x/repro.c?x=3D13deb97d980000
->=20
-> Downloadable assets:
-> disk image:
-> https://storage.googleapis.com/syzbot-assets/e6062f24de48/disk-ee9a43b7.r=
-aw.xz
-> vmlinux:
-> https://storage.googleapis.com/syzbot-assets/5d3ec6153dbd/vmlinux-ee9a43b=
-7.xz
-> kernel image:
-> https://storage.googleapis.com/syzbot-assets/98dbabb91d02/bzImage-ee9a43b=
-7.xz
-> mounted in repro:
-> https://storage.googleapis.com/syzbot-assets/4d05d229907e/mount_0.gz
->=20
-> IMPORTANT: if you fix the issue, please add the following tag to the
-> commit:
-> Reported-by: syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com
->=20
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 5222 at fs/iomap/buffered-io.c:727
-> __iomap_write_begin fs/iomap/buffered-io.c:727 [inline]
-> WARNING: CPU: 1 PID: 5222 at fs/iomap/buffered-io.c:727
-> iomap_write_begin+0x13f0/0x16f0 fs/iomap/buffered-io.c:830
-> Modules linked in:
-> CPU: 1 UID: 0 PID: 5222 Comm: syz-executor247 Not tainted 6.11.0-rc2-
-> syzkaller-00111-gee9a43b7cfe2 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine,
-> BIOS Google 06/27/2024
-> RIP: 0010:__iomap_write_begin fs/iomap/buffered-io.c:727 [inline]
-> RIP: 0010:iomap_write_begin+0x13f0/0x16f0 fs/iomap/buffered-io.c:830
-> Code: b5 0d 01 90 48 c7 c7 a0 54 fa 8b e8 da 19 2b ff 90 0f 0b 90 90
-> e9 74 ef ff ff e8 5b f1 68 ff e9 4b f6 ff ff e8 51 f1 68 ff 90 <0f>
-> 0b 90 bb fb ff ff ff e9 e9 fe ff ff e8 3e f1 68 ff 90 0f 0b 90
-> RSP: 0018:ffffc90003a577c0 EFLAGS: 00010293
-> RAX: ffffffff822a858f RBX: 0000000000000080 RCX: ffff888023080000
-> RDX: 0000000000000000 RSI: 0000000000000080 RDI: 0000000000000000
-> RBP: ffffc90003a57a50 R08: ffffffff822a8294 R09: 1ffff11029263f69
-> R10: dffffc0000000000 R11: ffffed1029263f6a R12: ffffc90003a579b0
-> R13: ffffc90003a57bf0 R14: ffffc90003a57990 R15: 0000000000000800
-> FS:=C2=A0 000055555f8fc480(0000) GS:ffff8880b9300000(0000)
-> knlGS:0000000000000000
-> CS:=C2=A0 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000020001000 CR3: 0000000079b06000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
-> =C2=A0<TASK>
-> =C2=A0iomap_unshare_iter fs/iomap/buffered-io.c:1351 [inline]
-> =C2=A0iomap_file_unshare+0x460/0x780 fs/iomap/buffered-io.c:1391
-> =C2=A0xfs_reflink_unshare+0x173/0x5f0 fs/xfs/xfs_reflink.c:1681
-> =C2=A0xfs_file_fallocate+0x6be/0xa50 fs/xfs/xfs_file.c:997
-> =C2=A0vfs_fallocate+0x553/0x6c0 fs/open.c:334
-> =C2=A0ksys_fallocate fs/open.c:357 [inline]
-> =C2=A0__do_sys_fallocate fs/open.c:365 [inline]
-> =C2=A0__se_sys_fallocate fs/open.c:363 [inline]
-> =C2=A0__x64_sys_fallocate+0xbd/0x110 fs/open.c:363
-> =C2=A0do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> =C2=A0do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> =C2=A0entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f2d716a6899
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48
-> 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48>
-> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffd620c3d18 EFLAGS: 00000246 ORIG_RAX:
-> 000000000000011d
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f2d716a6899
-> RDX: 0000000000000000 RSI: 0000000000000040 RDI: 0000000000000006
-> RBP: 0000000000000000 R08: 0700000000000000 R09: 0700000000000000
-> R10: 0000000000002000 R11: 0000000000000246 R12: 00007ffd620c3d60
-> R13: 00007ffd620c3fe8 R14: 431bde82d7b634db R15: 00007f2d716ef03b
-> =C2=A0</TASK>
->=20
->=20
+Le 27/08/2024 à 10:40, Jason A. Donenfeld a écrit :
+> I don't love this, but it might be the lesser of evils, so sure, let's
+> do it.
+
+I don't love it either but I still prefer it to:
+
+#ifndef PAGE_SIZE
+#define PAGE_SIZE
+#define PAGE_MASK
+#endif
+
+At least we are sure that every architecture get the same , independant 
+of the selected options, and we know what we get.
+
+For instance, on x86, when you select CONFIG_HYPERV_TIMER you get 
+asm/hyperv_timer.h which indirectly pulls page.h. But when 
+CONFIG_HYPERV_TIMER is not selected you don't get asm/hyperv_timer.h
+
+> 
+> I think I'll combine these header fixups so that the whole operation is
+> a bit more clear. The commit is still pretty small. Something like
+> below:
+
+Looks good to me.
+
+Thanks
+Christophe
+
+> 
+>  From 0d9a3d68cd6222395a605abd0ac625c41d4cabfa Mon Sep 17 00:00:00 2001
+> From: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Date: Tue, 27 Aug 2024 09:31:47 +0200
+> Subject: [PATCH] random: vDSO: clean header inclusion in getrandom
+> 
+> Depending on the architecture, building a 32-bit vDSO on a 64-bit kernel
+> is problematic when some system headers are included.
+> 
+> Minimise the amount of headers by moving needed items, such as
+> __{get,put}_unaligned_t, into dedicated common headers and in general
+> use more specific headers, similar to what was done in commit
+> 8165b57bca21 ("linux/const.h: Extract common header for vDSO") and
+> commit 8c59ab839f52 ("lib/vdso: Enable common headers").
+> 
+> On some architectures this results in missing PAGE_SIZE, as was
+> described by commit 8b3843ae3634 ("vdso/datapage: Quick fix - use
+> asm/page-def.h for ARM64"), so define this if necessary, in the same way
+> as done prior by commit cffaefd15a8f ("vdso: Use CONFIG_PAGE_SHIFT in
+> vdso/datapage.h").
+> 
+> Removing linux/time64.h leads to missing 'struct timespec64' in
+> x86's asm/pvclock.h. Add a forward declaration of that struct in
+> that file.
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
 > ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ=C2=A0for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->=20
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status=C2=A0for how to communicate with syzbot.
->=20
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->=20
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before
-> testing.
->=20
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->=20
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->=20
-> If you want to undo deduplication, reply with:
-> #syz undup
-
-Best Regards,
---=20
-Julian Sun <sunjunchao2870@gmail.com>
+>   arch/x86/include/asm/pvclock.h  |  1 +
+>   include/asm-generic/unaligned.h | 11 +----------
+>   include/vdso/helpers.h          |  1 +
+>   include/vdso/unaligned.h        | 15 +++++++++++++++
+>   lib/vdso/getrandom.c            | 13 ++++++++-----
+>   5 files changed, 26 insertions(+), 15 deletions(-)
+>   create mode 100644 include/vdso/unaligned.h
+> 
+> diff --git a/arch/x86/include/asm/pvclock.h b/arch/x86/include/asm/pvclock.h
+> index 0c92db84469d..6e4f8fae3ce9 100644
+> --- a/arch/x86/include/asm/pvclock.h
+> +++ b/arch/x86/include/asm/pvclock.h
+> @@ -5,6 +5,7 @@
+>   #include <asm/clocksource.h>
+>   #include <asm/pvclock-abi.h>
+> 
+> +struct timespec64;
+>   /* some helper functions for xen and kvm pv clock sources */
+>   u64 pvclock_clocksource_read(struct pvclock_vcpu_time_info *src);
+>   u64 pvclock_clocksource_read_nowd(struct pvclock_vcpu_time_info *src);
+> diff --git a/include/asm-generic/unaligned.h b/include/asm-generic/unaligned.h
+> index a84c64e5f11e..95acdd70b3b2 100644
+> --- a/include/asm-generic/unaligned.h
+> +++ b/include/asm-generic/unaligned.h
+> @@ -8,16 +8,7 @@
+>    */
+>   #include <linux/unaligned/packed_struct.h>
+>   #include <asm/byteorder.h>
+> -
+> -#define __get_unaligned_t(type, ptr) ({						\
+> -	const struct { type x; } __packed *__pptr = (typeof(__pptr))(ptr);	\
+> -	__pptr->x;								\
+> -})
+> -
+> -#define __put_unaligned_t(type, val, ptr) do {					\
+> -	struct { type x; } __packed *__pptr = (typeof(__pptr))(ptr);		\
+> -	__pptr->x = (val);							\
+> -} while (0)
+> +#include <vdso/unaligned.h>
+> 
+>   #define get_unaligned(ptr)	__get_unaligned_t(typeof(*(ptr)), (ptr))
+>   #define put_unaligned(val, ptr) __put_unaligned_t(typeof(*(ptr)), (val), (ptr))
+> diff --git a/include/vdso/helpers.h b/include/vdso/helpers.h
+> index 73501149439d..3ddb03bb05cb 100644
+> --- a/include/vdso/helpers.h
+> +++ b/include/vdso/helpers.h
+> @@ -4,6 +4,7 @@
+> 
+>   #ifndef __ASSEMBLY__
+> 
+> +#include <asm/barrier.h>
+>   #include <vdso/datapage.h>
+> 
+>   static __always_inline u32 vdso_read_begin(const struct vdso_data *vd)
+> diff --git a/include/vdso/unaligned.h b/include/vdso/unaligned.h
+> new file mode 100644
+> index 000000000000..eee3d2a4dbe4
+> --- /dev/null
+> +++ b/include/vdso/unaligned.h
+> @@ -0,0 +1,15 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __VDSO_UNALIGNED_H
+> +#define __VDSO_UNALIGNED_H
+> +
+> +#define __get_unaligned_t(type, ptr) ({						\
+> +	const struct { type x; } __packed *__pptr = (typeof(__pptr))(ptr);	\
+> +	__pptr->x;								\
+> +})
+> +
+> +#define __put_unaligned_t(type, val, ptr) do {					\
+> +	struct { type x; } __packed *__pptr = (typeof(__pptr))(ptr);		\
+> +	__pptr->x = (val);							\
+> +} while (0)
+> +
+> +#endif /* __VDSO_UNALIGNED_H */
+> diff --git a/lib/vdso/getrandom.c b/lib/vdso/getrandom.c
+> index 1281fa3546c2..938ca539aaa6 100644
+> --- a/lib/vdso/getrandom.c
+> +++ b/lib/vdso/getrandom.c
+> @@ -4,15 +4,18 @@
+>    */
+> 
+>   #include <linux/array_size.h>
+> -#include <linux/cache.h>
+> -#include <linux/kernel.h>
+> -#include <linux/time64.h>
+> +#include <linux/minmax.h>
+>   #include <vdso/datapage.h>
+>   #include <vdso/getrandom.h>
+> +#include <vdso/unaligned.h>
+>   #include <asm/vdso/getrandom.h>
+> -#include <asm/vdso/vsyscall.h>
+> -#include <asm/unaligned.h>
+>   #include <uapi/linux/mman.h>
+> +#include <uapi/linux/random.h>
+> +
+> +#undef PAGE_SIZE
+> +#undef PAGE_MASK
+> +#define PAGE_SIZE (1UL << CONFIG_PAGE_SHIFT)
+> +#define PAGE_MASK (~(PAGE_SIZE - 1))
+> 
+>   #define MEMCPY_AND_ZERO_SRC(type, dst, src, len) do {				\
+>   	while (len >= sizeof(type)) {						\
+> --
+> 2.46.0
 
