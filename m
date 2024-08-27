@@ -1,116 +1,137 @@
-Return-Path: <linux-kernel+bounces-303162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FDEE960845
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:14:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1F4D960847
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84DF5B21F86
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:14:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C349B21B03
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35BE19F48B;
-	Tue, 27 Aug 2024 11:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UG9mG0ew"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000E619D88A;
+	Tue, 27 Aug 2024 11:15:18 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F77155CBD;
-	Tue, 27 Aug 2024 11:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6470118C345
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724757244; cv=none; b=IBuo0Xj9wtznnV+/93CkLPBiFJlUneoldQBun3dtfnWUJ58ROeqq6JysnW3Gsd5P0MPJz0flbJDr1d57+eg/zPVRJJPU3fQ8ifpdQq7IWSm6MUhBa8IgF3Fs4W80XtWXZlmQu7KZbcWBpSm6KArkHfitPYjSSUN6wbF/58Nz1VM=
+	t=1724757318; cv=none; b=J/uCF23R0nL522H2gIcIK1tjksc1Usu5/6eQAkU91AVeLIznG0f8KfKudlkjNE3jq/qb/TyrZUO1YaoKNDrUGn8CaGf5oS62I37MxrEMQAQOJaZF9+gyTFi/utSJCTPR5B65t1QONeCcrZVQBYiZXYntmcx1OP4UUpGrENgcifg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724757244; c=relaxed/simple;
-	bh=sJB6BWfeo6L2k2FVR6KRU+TF3NDH+eFLGAGCx52AgpM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ob0LBjqKiJgDScse+jU5DdoGkKrOUwrym7sbnIMti1N7ktXMbgrOSw80wcWsy5NPL/r6SaZKb670G+oHsTiZ3G3VQ0zGhsHQUvAfOyTYK9HwAQ8NOqca52Ky7z4i4y1PdWUpACOKYo4EBY/EYCt16sYFvSAX3p3q+/DdpMEcdkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UG9mG0ew; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2d3da6d3f22so4158330a91.0;
-        Tue, 27 Aug 2024 04:14:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724757242; x=1725362042; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=sJB6BWfeo6L2k2FVR6KRU+TF3NDH+eFLGAGCx52AgpM=;
-        b=UG9mG0ewNni3FG+f5iAV4N+6KSOwWg0f22nU3r1rZufNV4myMBnWHWmt5lvxywTjcJ
-         wXGjRH7miXSu1T4oGCtaZIyhgHnzX8kRW4d7IK4x2G/KLuqV7SArQ3gziJ/SrlqQIds9
-         b71iL83J4k3BkdfP8rivSzclhnXFsLMS8EiZixkMaops37/GuVcTxyxVp/gz2yW8D/cU
-         u/aSs8Ml4YrlDqiJYxBM+bgGdirC4kFYkRHqIFQL8qjDswJVN3LIhGW/8XV27F45G82s
-         duPAFdbwdsVtocn/zm0n/YELhBuMwjKZpraPHW+LBKHToCH0MhCdG/eXXpZ84i25dvfl
-         JWHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724757242; x=1725362042;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sJB6BWfeo6L2k2FVR6KRU+TF3NDH+eFLGAGCx52AgpM=;
-        b=ryKEj1Xl9aEZeVLRss0FkrVZZqleX3pcmF3mrAl712ptG0+IUUAgnddG7N+Jj8Nr9F
-         /Vu+8I5YTIJ5Du4tg5nlEAmksvPdQ17/Al1ooC4i7DLFPhOGSWkYorXoqJmKb7uGm1op
-         V+3fjN0i/vTRV8l0naLmfNU+3/s23ZT6FY6uW+xC91sTV5YCVGDyv+c16lSRyE/ZrlS5
-         2rrpLKtRDfh/e30lCUfjPOsJQoBd8aTUCcX4HiyHR13aAvy53n8cr6e9NTZam8rsqcy4
-         3XXpQR6Jr8Q7zozR35b93yd1Xd7lCPfG9ilB8Bo5GCdULbE0ANC1/gwn0pQzHy2W9rDk
-         bibQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2uVeEMDtMLrcaB/ilAJ5tdJ9+9giWZ5NfS6SHSS61tra9JwRymZaj34tzcTNidmX4o5vbuDTrxqk7@vger.kernel.org, AJvYcCURvEO3DLotTjICthPUt/gQ6shK4XKMZGqAn2T9WvPvPo0DRCt6ETOTto7CNZEOZD8KlO7rINJ3x+fMcko2@vger.kernel.org, AJvYcCUynvI8xS9TMlQHSKSEaUl1pKoVQ3+6n7/1cKMxILcIJkcCpZ5bNGJV3L+2kAt43YslVS+3dTJyVUKFcYeC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr581USSJYybZHV4cyRpniR1k+9G0+Zk4V35rSMYmm4TMo9wwj
-	xxEyZ+ka9lwnde9ChyCs5lDG82A5LrY16eRtgAgDgCmaMTnKRVaQ
-X-Google-Smtp-Source: AGHT+IGy6XBinqHN2biziYVYPIivzfLbv3BkETS0DT0xIa0yiUoP6SRdTTr1nKiVtLH6NfNaOjw/+g==
-X-Received: by 2002:a17:90b:2251:b0:2d3:c0ea:72b3 with SMTP id 98e67ed59e1d1-2d646d269f9mr15273439a91.34.1724757241903;
-        Tue, 27 Aug 2024 04:14:01 -0700 (PDT)
-Received: from [127.0.0.1] ([103.85.75.88])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d5ebbd9d65sm13997504a91.48.2024.08.27.04.13.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 04:14:01 -0700 (PDT)
-Message-ID: <9cf7d25751d18729d14eef077b58c431f2267e0f.camel@gmail.com>
-Subject: Re: [syzbot] [iomap?] [xfs?] WARNING in iomap_write_begin
-From: Julian Sun <sunjunchao2870@gmail.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: syzbot <syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com>, 
-	brauner@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Date: Tue, 27 Aug 2024 19:13:57 +0800
-In-Reply-To: <Zs2m1cXz2o8o1IC-@infradead.org>
-References: <0000000000008964f1061f8c32b6@google.com>
-	 <de72f61cd96c9e55160328dd8b0c706767849e45.camel@gmail.com>
-	 <Zs2m1cXz2o8o1IC-@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1724757318; c=relaxed/simple;
+	bh=U/BE+kYHJ6hvw3UpG3tjaMv5uf/ZVTnGx85njLlc51k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=unB3kGd28cRJ2Iemf/kAynoN+FzIqvu/Gik/osp0j8ZLynYcwuEbZDgYt8oZBzpSZ5zpmebV+pzmaYMJ3qHEKaAIczE/eeJldAegw/q9VGr++XjbdkWoji89KaPVVeLf2jU242LFJ6Ftc9gl6k5881o7xaRtcF5VQ9/6IlcSMBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WtQ0x4KSSzyQWq;
+	Tue, 27 Aug 2024 19:14:25 +0800 (CST)
+Received: from kwepemm600004.china.huawei.com (unknown [7.193.23.242])
+	by mail.maildlp.com (Postfix) with ESMTPS id BC16D18007C;
+	Tue, 27 Aug 2024 19:15:12 +0800 (CST)
+Received: from [10.67.121.59] (10.67.121.59) by kwepemm600004.china.huawei.com
+ (7.193.23.242) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 27 Aug
+ 2024 19:15:12 +0800
+Message-ID: <03160a07-0507-f5a9-fb26-5940cae29750@huawei.com>
+Date: Tue, 27 Aug 2024 19:15:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v2 4/6] soc: hisilicon: kunpeng_hccs: Fix the 'lane_mode'
+ field name in port info structure to 'max_lane_num'
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+CC: <xuwei5@hisilicon.com>, <linux-kernel@vger.kernel.org>, <soc@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <krzk@kernel.org>,
+	<wanghuiqiang@huawei.com>, <liuyonglong@huawei.com>
+References: <20240718071134.31155-1-lihuisong@huawei.com>
+ <20240823031059.32579-1-lihuisong@huawei.com>
+ <20240823031059.32579-5-lihuisong@huawei.com>
+ <20240823094058.00002b9f@Huawei.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <20240823094058.00002b9f@Huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemm600004.china.huawei.com (7.193.23.242)
 
-On Tue, 2024-08-27 at 03:13 -0700, Christoph Hellwig wrote:
-> On Tue, Aug 27, 2024 at 04:54:41PM +0800, Julian Sun wrote:
-> > On Tue, 2024-08-13 at 01:14 -0700, syzbot wrote:
-> > Hi,
-> >=20
-> > Is this still a valid problem, or is it a known issue? If it is
-> > still
-> > valid, I'd like to dig it into, but do you have any ideas or
-> > suggestions before I proceed? Thanks.
->=20
-> I tried to reproduce it locally but haven't hit it.=C2=A0 Once reproduced
-> the next debug check would be which of the need zeroing conditions
-> triggers.
->=20
 
-Hi Christoph, thanks for your reply.
-
-Did you use the config and reproducer provided by syzbot? I can easily
-reproduce this issue using the config and c reproducer provided by
-syzbot. =20
-
-Thanks,
---=20
-Julian Sun <sunjunchao2870@gmail.com>
+在 2024/8/23 16:40, Jonathan Cameron 写道:
+> On Fri, 23 Aug 2024 11:10:57 +0800
+> Huisong Li <lihuisong@huawei.com> wrote:
+>
+>> The lane mode of HCCS port is an information to user, and actually comes
+>> from the maximum lane number. But it is good and easy for driver to use
+>> the maximum lane number. So fix the 'lane_mode' field name in port info
+>> structure to 'max_lane_num'.
+>>
+>> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+> It's unfortunate we missed the ABI in the first place
+> as that's still confusingly names, but at least this improves things
+> in the driver.
+But it is ok for an external interface to use the 'lane_mode' name. It's 
+similar to PCIE's x8.
+>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>
+>> ---
+>>   drivers/soc/hisilicon/kunpeng_hccs.c | 4 ++--
+>>   drivers/soc/hisilicon/kunpeng_hccs.h | 4 ++--
+>>   2 files changed, 4 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/soc/hisilicon/kunpeng_hccs.c b/drivers/soc/hisilicon/kunpeng_hccs.c
+>> index 6055e5091cbd..418e4ee5d9e5 100644
+>> --- a/drivers/soc/hisilicon/kunpeng_hccs.c
+>> +++ b/drivers/soc/hisilicon/kunpeng_hccs.c
+>> @@ -594,7 +594,7 @@ static int hccs_get_all_port_info_on_die(struct hccs_dev *hdev,
+>>   		port = &die->ports[i];
+>>   		port->port_id = attrs[i].port_id;
+>>   		port->port_type = attrs[i].port_type;
+>> -		port->lane_mode = attrs[i].lane_mode;
+>> +		port->max_lane_num = attrs[i].max_lane_num;
+>>   		port->enable = attrs[i].enable;
+>>   		port->die = die;
+>>   	}
+>> @@ -839,7 +839,7 @@ static ssize_t lane_mode_show(struct kobject *kobj, struct kobj_attribute *attr,
+>>   {
+>>   	const struct hccs_port_info *port = kobj_to_port_info(kobj);
+>>   
+>> -	return sysfs_emit(buf, "x%u\n", port->lane_mode);
+>> +	return sysfs_emit(buf, "x%u\n", port->max_lane_num);
+>>   }
+>>   static struct kobj_attribute lane_mode_attr = __ATTR_RO(lane_mode);
+>>   
+>> diff --git a/drivers/soc/hisilicon/kunpeng_hccs.h b/drivers/soc/hisilicon/kunpeng_hccs.h
+>> index c3adbc01b471..5e12a1e1474e 100644
+>> --- a/drivers/soc/hisilicon/kunpeng_hccs.h
+>> +++ b/drivers/soc/hisilicon/kunpeng_hccs.h
+>> @@ -19,7 +19,7 @@
+>>   struct hccs_port_info {
+>>   	u8 port_id;
+>>   	u8 port_type;
+>> -	u8 lane_mode;
+>> +	u8 max_lane_num;
+>>   	bool enable; /* if the port is enabled */
+>>   	struct kobject kobj;
+>>   	bool dir_created;
+>> @@ -113,7 +113,7 @@ struct hccs_die_info_rsp_data {
+>>   struct hccs_port_attr {
+>>   	u8 port_id;
+>>   	u8 port_type;
+>> -	u8 lane_mode;
+>> +	u8 max_lane_num;
+>>   	u8 enable : 1; /* if the port is enabled */
+>>   	u16 rsv[2];
+>>   };
+> .
 
