@@ -1,147 +1,122 @@
-Return-Path: <linux-kernel+bounces-304029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 962B29618D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 22:56:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C19F09618DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 22:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53E3328587A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:56:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CC311F24FF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550921D3631;
-	Tue, 27 Aug 2024 20:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF541D362C;
+	Tue, 27 Aug 2024 20:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S1hnEZpK"
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Lnnc7tc4"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFF915B115;
-	Tue, 27 Aug 2024 20:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A891615B115;
+	Tue, 27 Aug 2024 20:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724792198; cv=none; b=RqN6u2jCzgyRe1GnS2k/v0cFbY4DqWQIAdxxYnl0oAx1N5UR4Lt5AEd6hDqSKFK64BG2XrExWc3mnAel4i2DtdE5sPfwSNonNkdQVt3JO7SqMGU4exeKjYLfL0gx4lp36BgH3ECMzq8oghmNJveR2JRZubKoUDprS24F+aMltSk=
+	t=1724792212; cv=none; b=IpAgxIgiHPNbyscKxmaPAF+znRC1g0O/HEyopp/Wv0dhyMal0C2ych1bQwbZA+eljp3CqFEOSDyjJbrBtv9E6DVm1/jiHAwWXDxKXuXOpbK6j6HI142Jcv8gsqxxe2xyZ7SQNVWznHd4uhfS0eovMlPXx2aQZUx+F00ZXQm+3Ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724792198; c=relaxed/simple;
-	bh=N1s7elCnHNJNSlhr9LOhLRv5lq5GhYPY/MT7R5iq2+U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XkwRTNWAhz6NyUGEWdmQ4WE7CWsQbJvSibgWIAV9rxtidNEowkTLEas3yVTVKmAl/yMWo96ixBsrlHaN9Jg7jwHxrQGALtSBSFXpfosYDUY4NXbzVW5UzrF7lC4haogFyLF5eibV2fgWS/BHr699pGJ/nif9mq7gdak2zWGlaWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S1hnEZpK; arc=none smtp.client-ip=209.85.217.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-498d0268541so39161137.1;
-        Tue, 27 Aug 2024 13:56:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724792196; x=1725396996; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nKUjhpWGzAhwCnQJlQGIriMIhdyBFH1jBwreh1yr2J4=;
-        b=S1hnEZpKDoKLq2rckz4Oq8uo14FKfKRJDgGvdi4MDT3h8abG5o56BHcgKv4sLf7Bye
-         cS2Z4MjL0f7Yj0mTjEcUgVnGObBQDsUjdy/Rm9eZfkmtxyF5tl1uh3lXPrKhxJyMpqUc
-         M2obH2RfIWasv5nwhqtrda9NnrXwFR3ATFVoP5rL1fjGdxHQduu4TPXvf0aTopa09TFS
-         xerYF309fj+YhPKv4mjKNbOi8zRHiZJcsNyol6j17NKQukfOIwF0xpHmb9d6ld7j5WD5
-         /xFprPLVQgx5d0LaCHbgsxZ6UHshxWkzNEVdhTGjG9NOhdnbgSUBTiC+UV8ZwboJe5Uk
-         EzpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724792196; x=1725396996;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nKUjhpWGzAhwCnQJlQGIriMIhdyBFH1jBwreh1yr2J4=;
-        b=urTywrhtadHBhmBSw8eoDFUGvyuc2McMluxP9R9cfWtEGSghJjhNML31aZ6lofRpGc
-         95/WlDXzMjNIhAffGAUI8IqTt2BYJgrKFNH5roiS0OC3BJnBhMgwSD/A8bTmsOTuPTUp
-         DqTe7oZR2UOkQuULXfGdcBaxNEGFZoypWtR++wVRsLsv7NqAf87FiII0Hv3dlu1TGyb9
-         ZtE3mIcmtJrgIY8Vw/DDctRGJraJE1YUvMukiblsLrvGy7opfHZhojPythVnaztx9++8
-         rnWwoTHFsDku1r0+YPfqb6CdSKU1XXDZVs4GVjgA4lrYTe49NfYK9LO2ByDQjjKl//1Z
-         Dfmg==
-X-Forwarded-Encrypted: i=1; AJvYcCWs829vYBUabiU6lKEdxWoRcaVdaK65i/dJP/lxyi8Zmf6yQSquQK80WT0iL0SrHDg2Sr4CgY18bD446w+JEzYX@vger.kernel.org, AJvYcCXZg2EJg+pIt80QHCDJvgsnMZpjRxblhaa2HBkEZ8C9GHKnk03m+EygnRDgEyuG04f9KdMtSqARhgskg/0=@vger.kernel.org, AJvYcCXflE2APBDWBtOU22DWrzI7T28HW8ErlWAXL/6EUU/ZuzW5IoXy2hZGgoBOpw+6xDmq7B4muFXk@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy34vEjFYJZ+ff6hDQ9CY2hEIteSjqh3SJ0hJk18f+l4tYzuKIi
-	xHfRJzwQ/Ow2A0IIrzgwh+E98pv1BYm3WOGil3aTzUdwRKuMG4yu
-X-Google-Smtp-Source: AGHT+IECGLxcEgHHRyB9IE+pXGVPfrf7rt7RmtoKeBWWbbGeoJYWd2y73w0+zXrRyGDxr6+dHOqBAQ==
-X-Received: by 2002:a05:6102:441f:b0:498:f38a:2c5a with SMTP id ada2fe7eead31-49a4e34da42mr13631137.2.1724792195871;
-        Tue, 27 Aug 2024 13:56:35 -0700 (PDT)
-Received: from localhost (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-498e4799fe8sm1639715137.6.2024.08.27.13.56.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 13:56:35 -0700 (PDT)
-From: David Hunter <david.hunter.linux@gmail.com>
-To: kuba@kernel.org
-Cc: davem@davemloft.net,
-	david.hunter.linux@gmail.com,
-	edumazet@google.com,
-	javier.carrasco.cruz@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	shuah@kernel.org
-Subject: [PATCH 1/1 V3] selftests: net: improve missing modules error message
-Date: Tue, 27 Aug 2024 16:56:29 -0400
-Message-ID: <20240827205629.51004-1-david.hunter.linux@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240826085010.27ff4377@kernel.org>
-References: <20240826085010.27ff4377@kernel.org>
+	s=arc-20240116; t=1724792212; c=relaxed/simple;
+	bh=MhJvUjB0MIngwLWhQ4L4C5OlYEq18S/8DIMMXXIloQs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HD8gmlMrNJHWlr5WWvQlU5xD0MX/TQYAYwUSZvJsaqMKoTbW1uDrDjP4nRpJv5lRsPzi0VQOZKqG7e+4IE0vmr+QFqn2CPTup1eGQiFXaXwqvI2OtRTH9uE//7BfJAdTigEHv/3Xi24BCTLp8KTXPel0krblS+k24IwrUlLtrBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Lnnc7tc4; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47RJkwxu000308;
+	Tue, 27 Aug 2024 20:56:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ifnkAG0rtHV4uVtNT9kwPjMq8aQC7SuEsZa/E/2O0+E=; b=Lnnc7tc4oJqZeKEF
+	4nSbvIELgsXzE6K+Y8YtR/H1kafi0g5WJaS2jlVlOOjDyVtlQuaIY5yuDvx1n+CS
+	mhcelFXSL2JCg3nyfC3us01rk6zONjolHSsIFpAi2YPakGN7LN0MWxDecdcXf8Ro
+	v6QOwohjJEIL6RFzxMbqXVEgXbDpy8O5RWOaVn6g9YVJ89VIXNzW0umDhadoY5Av
+	q7D/wwPNhSb4aMcMz/IsGxWA3pmfZoRfYSl/pB4NVPBPTTLUX6KZqpQ8Phc3cJwU
+	YS1LhaxUVZXaxmSzSTJO0qqHwk9WCR7HswHTYECgUFO4X+4kKg4BiCm94uovYB/j
+	r0zsOA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4198s02cb3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 Aug 2024 20:56:43 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47RKugOX030243
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 Aug 2024 20:56:42 GMT
+Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 27 Aug
+ 2024 13:56:41 -0700
+Message-ID: <2fcf6747-9bd0-4b27-80c0-fa6246aec812@quicinc.com>
+Date: Tue, 27 Aug 2024 13:56:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 07/12] drm/msm/dpu: move scaling limitations out of the
+ hw_catalog
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Daniel
+ Vetter <daniel@ffwll.ch>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20240627-dpu-virtual-wide-v5-0-5efb90cbb8be@linaro.org>
+ <20240627-dpu-virtual-wide-v5-7-5efb90cbb8be@linaro.org>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20240627-dpu-virtual-wide-v5-7-5efb90cbb8be@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: kuelQIvE4DodCVuMi1BK6dKeoYh8u-Aj
+X-Proofpoint-GUID: kuelQIvE4DodCVuMi1BK6dKeoYh8u-Aj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-27_10,2024-08-27_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 malwarescore=0 impostorscore=0 clxscore=1015 adultscore=0
+ suspectscore=0 mlxscore=0 mlxlogscore=999 spamscore=0 bulkscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408270154
 
-The error message describing the required modules is inaccurate.
-Currently, only  "SKIP: Need act_mirred module" is printed when any of
-the modules are missing. As a result, users might only include that
-module; however, three modules are required.
 
-Fix the error message to show any/all modules needed for the script file
-to properly execute.
 
-Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
----
+On 6/26/2024 2:46 PM, Dmitry Baryshkov wrote:
+> Max upscale / downscale factors are constant between platforms. In
+> preparation to adding support for virtual planes and allocating SSPP
+> blocks on demand move max scaling factors out of the HW catalog and
+> handle them in the dpu_plane directly. If any of the scaling blocks gets
+> different limitations, this will have to be handled separately, after
+> the plane refactoring.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c | 12 ------------
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h |  4 ----
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c      | 16 +++++++++++++---
+>   3 files changed, 13 insertions(+), 19 deletions(-)
+> 
 
-V1 --> V2
-	- included subject prefixes 
-	- split the patch into two separate patches (one for each issue)
-	- fixed typos in message body
-	- removed second, unnecessary for loop
-V2 --> V3
-	- fixed subject prefix (omit capitilization)
-	- fixed spelling mistake in commit message
-	- fixed coding style based on recommendations
----
- .../selftests/net/test_ingress_egress_chaining.sh    | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+If we do end up with different scaling limits in the future, we will 
+decide on what would be the best way to handle that, but till then,
 
-diff --git a/tools/testing/selftests/net/test_ingress_egress_chaining.sh b/tools/testing/selftests/net/test_ingress_egress_chaining.sh
-index 08adff6bb3b6..007a5d04c3e1 100644
---- a/tools/testing/selftests/net/test_ingress_egress_chaining.sh
-+++ b/tools/testing/selftests/net/test_ingress_egress_chaining.sh
-@@ -13,10 +13,20 @@ if [ "$(id -u)" -ne 0 ];then
- fi
- 
- needed_mods="act_mirred cls_flower sch_ingress"
-+mods_missing=""
-+numb_mods_needed=0
-+
- for mod in $needed_mods; do
--	modinfo $mod &>/dev/null || { echo "SKIP: Need act_mirred module"; exit $ksft_skip; }
-+	modinfo $mod &>/dev/null && continue
-+	mods_missing="$mods_missing$mod "
-+	numb_mods_needed=$(expr $numb_mods_needed + 1)
- done
- 
-+if [ $numb_mods_needed -gt 0 ]; then
-+	echo "SKIP: $numb_mods_needed modules needed: $mods_missing"
-+	exit $ksft_skip
-+fi
-+
- ns="ns$((RANDOM%899+100))"
- veth1="veth1$((RANDOM%899+100))"
- veth2="veth2$((RANDOM%899+100))"
--- 
-2.43.0
-
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
