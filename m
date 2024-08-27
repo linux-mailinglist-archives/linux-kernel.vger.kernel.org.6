@@ -1,221 +1,159 @@
-Return-Path: <linux-kernel+bounces-303841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BC389615C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:48:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC299615C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0D431C23434
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:48:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFECC2849D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7421D1F51;
-	Tue, 27 Aug 2024 17:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642271D1F76;
+	Tue, 27 Aug 2024 17:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ExfsgvKr"
-Received: from out203-205-221-231.mail.qq.com (out203-205-221-231.mail.qq.com [203.205.221.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XbYJbH7r"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC813126F1E;
-	Tue, 27 Aug 2024 17:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31257126F1E;
+	Tue, 27 Aug 2024 17:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724780890; cv=none; b=tgFRjKfVZ0YpeBhEDkALBUX5bpG4iwd5elxrhASPs6nLX39KSILCyas8Z6s1nQoZNgkuab0RN79tnM361hL1fH1OYBUHvSgOt7b6kUzbZDS5RT4jodYTwdVK0VYawTPFGTT+8yr5UF3RiqygA2U5bgLUDMg9AoV/MIcdZldYeaI=
+	t=1724780878; cv=none; b=R9TFCVp+965dP0Nif7Pko4uvANQckx5A9GFJbUxaOMH+UGUwiikGm1msLqnrd5tpIaYoyOp39VedQLIzFppZ/xoYRxxL4Us6yYKjniJKozsr+7DB/LL4CIKiTYL440AKUiwJLI7YoCApp1EtN31PlUCeXPnzloHEbAcFYYVOWGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724780890; c=relaxed/simple;
-	bh=KTbFSM9tHSP+RlcWea9+1q3s56PX4BgmMZgHn8mNEQo=;
-	h=Message-ID:Content-Type:Mime-Version:Subject:From:In-Reply-To:
-	 Date:Cc:References:To; b=SyA+SAri17AGSvAK6kN9hhJZOHOSWvGJW9ZsFBKWatLxEdulULG69TFWQEUFf+Q6UXOkyMehy+n2l+JqvrmvYVbpLPhTGmx1zsLgE53Cmm3l3f5oPYgVrfwm1/+TqCf3NLJJfjdBWA23M+WnanAuOI7OpixRLl0owUGjEoa9xSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ExfsgvKr; arc=none smtp.client-ip=203.205.221.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1724780884; bh=Bkd8gFeLSf6g7a8IsJ2hm/2hCok13/+tTgniHLVL1lU=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To;
-	b=ExfsgvKrjIaXGs2ha3dh2uIpv6csDYSum/0rJ7Xe+++TS0U+QDteYeefBMK2FPRaO
-	 352N3txmwOu7or2e/iBmaGIjzB7vsiNvWpIQ0d1tIckVUQqF45yvm53GLD+O0rhFwN
-	 KlP6zrIwH/DEc7FJL6l5xI5+5Z27XuaSYhL7gL2c=
-Received: from smtpclient.apple ([2408:8207:18a0:bb80:79e5:c8db:9406:ceaa])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id BFB9A4CC; Wed, 28 Aug 2024 01:47:59 +0800
-X-QQ-mid: xmsmtpt1724780879tjalo6r6g
-Message-ID: <tencent_04EADAB08E75B88431FB219C8D757C108208@qq.com>
-X-QQ-XMAILINFO: MLAWG7dqOaka7Nb1xVPHfb7JG1kJ36BetyPhzCvbVVudcp9kJlLa/63mWQq6j+
-	 PyMBi6irRz/tB3D2gbm4frIj4bkIxUA88BqEfbp8++n9BomqVAm3Ok1b1bFESGUqcKQFnuVqzgqu
-	 uf9XC4JO2s8QWQEXs2i5sJIy//O+3xlRpotgqrgQBesW3Mp4z6rBwVRYQXME31bRN7cn0dtIpW8P
-	 zzb0FYkxVhpckNC7MlY56ruTQiX4EpkJDGh9paXNSmrnEtNceHydRXPh4z7Sk4U95VLZHymOS4Hl
-	 HEOiuzSGGBq5e3wl6/vry+qddJx6qQVFQO42+vBm+2S3YQGvGdIN4KGlwNJ2YR+onBKAVlTsciIP
-	 bG99SSqX6gO0gY86ZRGxrOGPXVOpmmRYL4sXrwhCn9UCeCsuHbbgg0Yk1h9xOBk6QcJi7ZUz6Fa4
-	 1oUlnFUldVMc1CMZRrDIpq1OeVJiWOB9OKSpu9kRa2PLbMtIyKKhJ8HkRy5kwpGv+jsP/sCQsjSv
-	 ozrUk/LH7HhS95+RoU66X8Z9EONiOiQzYminWziZ891oQNqJ064ZcsPEOT2iWGKPkRqgbC2Ce/lb
-	 8K68b9TuleTQ4IuxicfoVgj+k7b+mRVrjh6xUMzQxlQm/NogJqEAdsjTTEstlRLq0jXcbvaA86g2
-	 S0Rw6SuK+rI4+KC+YkfMc9x812AzZe5KOey7hlPrxn3Yk/vMAyzghjOly8P4jVn9laXFxDFerCat
-	 Bj0XzKQwGOoRqd25wMMGqIY+LQv/NRd3wqi31XKPdKZsHdJNNoqdsbjGEsA+rgdF16avD3ifx6F/
-	 hgMygs0wZ9eeBQrpm1a0+MwxbE47mRBnzXffGzlwBGAMRRNqsy2kaOOf4C0OqSvBSMyWqc23AT61
-	 5nPMr0uACHb9W98Qz4JzSNB3ZuXIC+VzF06UObRzAwZL9yXsOXVVEo29u9gedObJkqibAy+0ZARC
-	 QWEUQ5cyrGooI5WucgLmLHIgsJTpxdnvrIdpzdwnjTwHi9s2/R/ije9mPz4nECFgtcZndfcgLHNm
-	 HaH4ozseKt4cVlTzZ5oX6IftKSuUqUzmEVM4l2NPli6cHU8lnw
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1724780878; c=relaxed/simple;
+	bh=dYHoc8tAXja1j/gy+quwz+VAVNvuZkG5hw3yiikQ1eg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WudWNXPTLga/9cjY5NYJcUD14RDu45G5mYW9G/1ug9eCsyrHc87GeC7mzh5P1Wf0f6mzk5FpuQTqYCo8DFnIuXv7uOA1hgJ/qU3S3jFycvw1Bqc/+HZsjLL3X3MHXfWXsT/Ke8vfHJFedja6iW/AwvDyLZQ6p8ogkyDMI7WuZ04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XbYJbH7r; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7141d7b270dso4428763b3a.2;
+        Tue, 27 Aug 2024 10:47:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724780876; x=1725385676; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HCUSrgJ+TJUnurxjMntJCkv6+wXwXOpsEspjhz3H0Yw=;
+        b=XbYJbH7rBpjD/HDL1RGX4gq675Ui6ijwGuPRro2XRZjsPmekCJcrME+MHzRSFtkf3j
+         snmvaBvPFio0FzTWX3fFWIh54p3I56jH8YVgNTZg4KmnA3Tcxc5I1CX/tzO08urfO20n
+         4JLBxclLSI0Rr8NHn26iNHfKf4+rpn/GWE/Z0UdcCmLaEXb14elAx9j/yCurrSIrZser
+         Y+rzHT62gzzYfx/nFHuTlbXl3sRAjTERAcalNJi+cDyhwYuiZXOgPYvMQYE2KD5flC8p
+         FvECKPKoj0wgTjDUfzomnuuQBXkUxiU8qzqgh8qRvOatWmlBBpSLJnXLbBpQA8z6pLPG
+         pSLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724780876; x=1725385676;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HCUSrgJ+TJUnurxjMntJCkv6+wXwXOpsEspjhz3H0Yw=;
+        b=Xsk4d6rUx4FgTdBEPdw8U5BbVeKATxy/xYKstHbEwKrnSC+gg7rCkXpNVef8eE4MYq
+         Ux5yyXZmXqG8xzFOGWE7SR4lTGJOtcD6V9qMpU0+pV2VtIX9AZrrg8+NXFHLt5JuV3IL
+         7qyPfd8iljEDXI1wJdEOtcvqR0Pyxez10Sm9LJrw4r4rMOFQWmxO7Z460f2OX+2WEW0d
+         hZagtsx+5sP1VVmMU+QOGwTeEJFyekVk3473KctSQE1P+yQigjVu/hg+BbttkLf+hxIP
+         b/3pQYsho/20sfKChjxl9UNu7MkiGXEMWVPb3dxw4d9kFN3mOpZuBkQCKzcJAVGH8Nq3
+         JlVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUsUuL2lrAygkPv3x4aKB7sfe7bUo0kVqzAlG4UxY3c41LaLdkkYaduYaaihk0KrWkcp+TJ8mGN@vger.kernel.org, AJvYcCWM2ReZ2+0v7Z2qXBs/rHO8qL/D7N+XkvIEW66zfOi5RGZKb85X1mg9RFb3xs00pUl0/kZEQfeI2S76FGE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywis1sGc6HHjzmK1iXRI6V3qq5QDN+Gxa7BUxUILlUv54Vp+Km4
+	VjdNfxCPByVTgBa4Eym/79Q44otVSiI8/FKCmZe8zXewXz9QsJAQ
+X-Google-Smtp-Source: AGHT+IES6okLZnfj/yTGFxwPWh7nsD/tI3mz++Ei4dyFWneiXSsFd3im9erE2HEYmM+cxnd9sViCiA==
+X-Received: by 2002:a05:6a20:4f18:b0:1cc:9f24:3d with SMTP id adf61e73a8af0-1cc9f240253mr7540278637.25.1724780876432;
+        Tue, 27 Aug 2024 10:47:56 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2038556686asm86076995ad.40.2024.08.27.10.47.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 10:47:55 -0700 (PDT)
+Message-ID: <ffd773a0-d71c-4647-b7de-b22a008849ab@gmail.com>
+Date: Tue, 27 Aug 2024 10:47:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH v3 0/3] RISC-V: mm: do not treat hint addr on mmap as the
- upper bound to search
-From: Yangyu Chen <cyy@cyyself.name>
-In-Reply-To: <mhng-a7dcdfb5-0232-4ffb-8a20-13e564904da1@palmer-ri-x1c9a>
-Date: Wed, 28 Aug 2024 01:47:49 +0800
-Cc: linux-riscv@lists.infradead.org,
- Charlie Jenkins <charlie@rivosinc.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- Shuah Khan <shuah@kernel.org>,
- Levi Zim <rsworktech@outlook.com>,
- Alexandre Ghiti <alexghiti@rivosinc.com>,
- linux-doc@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-kselftest@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-X-OQ-MSGID: <05A72DDA-F689-403F-9214-6392AB6B5C29@cyyself.name>
-References: <mhng-a7dcdfb5-0232-4ffb-8a20-13e564904da1@palmer-ri-x1c9a>
-To: Palmer Dabbelt <palmer@rivosinc.com>
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 000/341] 6.6.48-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240827143843.399359062@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20240827143843.399359062@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 8/27/24 07:33, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.48 release.
+> There are 341 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 29 Aug 2024 14:37:36 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.48-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
+Same problem as with the 6.1-rc, perf fails to build with:
 
-> On Aug 28, 2024, at 00:33, Palmer Dabbelt <palmer@rivosinc.com> wrote:
->=20
-> On Tue, 27 Aug 2024 01:05:15 PDT (-0700), cyy@cyyself.name wrote:
->> Previous patch series[1][2] changes a mmap behavior that treats the =
-hint
->> address as the upper bound of the mmap address range. The motivation =
-of the
->> previous patch series is that some user space software may assume =
-48-bit
->> address space and use higher bits to encode some information, which =
-may
->> collide with large virtual address space mmap may return. However, to =
-make
->> sv48 by default, we don't need to change the meaning of the hint =
-address on
->> mmap as the upper bound of the mmap address range. This behavior =
-breaks
->> some user space software like Chromium that gets ENOMEM error when =
-the hint
->> address + size is not big enough, as specified in [3].
->>=20
->> Other ISAs with larger than 48-bit virtual address space like x86, =
-arm64,
->> and powerpc do not have this special mmap behavior on hint address. =
-They
->> all just make 48-bit / 47-bit virtual address space by default, and =
-if a
->> user space software wants to large virtual address space, it only =
-need to
->> specify a hint address larger than 48-bit / 47-bit.
->>=20
->> Thus, this patch series change mmap to use sv48 by default but does =
-not
->> treat the hint address as the upper bound of the mmap address range. =
-After
->> this patch, the behavior of mmap will align with existing behavior on =
-other
->> ISAs with larger than 48-bit virtual address space like x86, arm64, =
-and
->> powerpc. The user space software will no longer need to rewrite their =
-code
->> to fit with this special mmap behavior only on RISC-V.
->=20
-> So it actually looks like we just screwed up the original version of =
-this: the reason we went with the more complicated address splits were =
-than we actually started with a defacto 39-bit page table uABI (ie =
-38-bit user VAs), and moving to even 48-bit page tables (ie, 47-bit user =
-VAs) broke users (here's an ASAN bug, for example: =
-https://github.com/google/android-riscv64/issues/64). =20
-> Unless I'm missing something, though, the code doesn't actually do =
-that.  I remember having that discussion at some point, but I must have =
-forgotten to make sure it worked.  As far as I can tell we've just moved =
-to the 48-bit VAs by default, which breaks the whole point of doing the =
-compatibilty stuff.  Probably a good sign I need to pay more attention =
-to this stuff.
->=20
-
-It seems the issues have been solved in LLVM D139823 [1] and LLVM =
-D152895 [2].
-
-[1] https://reviews.llvm.org/D139823
-[2] https://reviews.llvm.org/D152895
-
-> So I'm not really sure what to do here: we can just copy the arm64 =
-behavior at tell the other users that's just how things work, but then =
-we're just pushing around breakages.  At a certain point all we can =
-really do with this hint stuff is push around problems, though, and at =
-least if we copy arm64 then most of those problems get reported as bugs =
-for us.
->=20
->> Note: Charlie also created another series [4] to completely remove =
-the
->> arch_get_mmap_end and arch_get_mmap_base behavior based on the hint =
-address
->> and size. However, this will cause programs like Go and Java, which =
-need to
->> store information in the higher bits of the pointer, to fail on Sv57
->> machines.
->>=20
->> Changes in v3:
->> - Rebase to newest master
->> - Changes some information in cover letter after patchset [2]
->> - Use patch [5] to patch selftests
->> - Link to v2: =
-https://lore.kernel.org/linux-riscv/tencent_B2D0435BC011135736262764B51199=
-4F4805@qq.com/
->>=20
->> Changes in v2:
->> - correct arch_get_mmap_end and arch_get_mmap_base
->> - Add description in documentation about mmap behavior on kernel =
-v6.6-6.7.
->> - Improve commit message and cover letter
->> - Rebase to newest riscv/for-next branch
->> - Link to v1: =
-https://lore.kernel.org/linux-riscv/tencent_F3B3B5AB1C9D704763CA423E1A41F8=
-BE0509@qq.com/
->>=20
->> [1] =
-https://lore.kernel.org/linux-riscv/20230809232218.849726-1-charlie@rivosi=
-nc.com/
->> [2] =
-https://lore.kernel.org/linux-riscv/20240130-use_mmap_hint_address-v3-0-8a=
-655cfa8bcb@rivosinc.com/
->> [3] =
-https://lore.kernel.org/linux-riscv/MEYP282MB2312A08FF95D44014AB78411C68D2=
-@MEYP282MB2312.AUSP282.PROD.OUTLOOK.COM/
->> [4] =
-https://lore.kernel.org/linux-riscv/20240826-riscv_mmap-v1-0-cd8962afe47f@=
-rivosinc.com/
->> [5] =
-https://lore.kernel.org/linux-riscv/20240826-riscv_mmap-v1-2-cd8962afe47f@=
-rivosinc.com/
->>=20
->> Charlie Jenkins (1):
->>  riscv: selftests: Remove mmap hint address checks
->>=20
->> Yangyu Chen (2):
->>  RISC-V: mm: not use hint addr as upper bound
->>  Documentation: riscv: correct sv57 kernel behavior
->>=20
->> Documentation/arch/riscv/vm-layout.rst        | 43 ++++++++----
->> arch/riscv/include/asm/processor.h            | 20 ++----
->> .../selftests/riscv/mm/mmap_bottomup.c        |  2 -
->> .../testing/selftests/riscv/mm/mmap_default.c |  2 -
->> tools/testing/selftests/riscv/mm/mmap_test.h  | 67 =
--------------------
->> 5 files changed, 36 insertions(+), 98 deletions(-)
-
+In file included from ./util/header.h:10,
+                  from pmu-events/pmu-events.c:9:
+../include/linux/bitmap.h: In function 'bitmap_zero':
+../include/linux/bitmap.h:28:34: warning: implicit declaration of 
+function 'ALIGN' [-Wimplicit-function-declaration]
+    28 | #define bitmap_size(nbits)      (ALIGN(nbits, BITS_PER_LONG) / 
+BITS_PER_BYTE)
+       |                                  ^~~~~
+../include/linux/bitmap.h:35:32: note: in expansion of macro 'bitmap_size'
+    35 |                 memset(dst, 0, bitmap_size(nbits));
+       |                                ^~~~~~~~~~~
+   LD 
+/local/users/fainelli/buildroot/output/arm/build/linux-custom/tools/perf/pmu-events/pmu-events-in.o
+   LINK 
+/local/users/fainelli/buildroot/output/arm/build/linux-custom/tools/perf/perf
+/local/stbopt_p/toolchains_303/stbgcc-12.3-1.0/bin/../lib/gcc/arm-unknown-linux-gnueabihf/12.3.0/../../../../arm-unknown-linux-gnueabihf/bin/ld: 
+/local/users/fainelli/buildroot/output/arm/build/linux-custom/tools/perf/perf-in.o: 
+in function `record__mmap_read_evlist':
+builtin-record.c:(.text+0x13578): undefined reference to `ALIGN'
+/local/stbopt_p/toolchains_303/stbgcc-12.3-1.0/bin/../lib/gcc/arm-unknown-linux-gnueabihf/12.3.0/../../../../arm-unknown-linux-gnueabihf/bin/ld: 
+/local/users/fainelli/buildroot/output/arm/build/linux-custom/tools/perf/perf-in.o: 
+in function `record__init_thread_masks_spec.constprop.0':
+builtin-record.c:(.text+0x13b10): undefined reference to `ALIGN'
+/local/stbopt_p/toolchains_303/stbgcc-12.3-1.0/bin/../lib/gcc/arm-unknown-linux-gnueabihf/12.3.0/../../../../arm-unknown-linux-gnueabihf/bin/ld: 
+builtin-record.c:(.text+0x13b68): undefined reference to `ALIGN'
+/local/stbopt_p/toolchains_303/stbgcc-12.3-1.0/bin/../lib/gcc/arm-unknown-linux-gnueabihf/12.3.0/../../../../arm-unknown-linux-gnueabihf/bin/ld: 
+builtin-record.c:(.text+0x13b9c): undefined reference to `ALIGN'
+/local/stbopt_p/toolchains_303/stbgcc-12.3-1.0/bin/../lib/gcc/arm-unknown-linux-gnueabihf/12.3.0/../../../../arm-unknown-linux-gnueabihf/bin/ld: 
+builtin-record.c:(.text+0x13bd8): undefined reference to `ALIGN'
+/local/stbopt_p/toolchains_303/stbgcc-12.3-1.0/bin/../lib/gcc/arm-unknown-linux-gnueabihf/12.3.0/../../../../arm-unknown-linux-gnueabihf/bin/ld: 
+/local/users/fainelli/buildroot/output/arm/build/linux-custom/tools/perf/perf-in.o:builtin-record.c:(.text+0x13c14): 
+more undefined references to `ALIGN' follow
+collect2: error: ld returned 1 exit status
+make[4]: *** [Makefile.perf:672: 
+/local/users/fainelli/buildroot/output/arm/build/linux-custom/tools/perf/perf] 
+Error 1
+make[3]: *** [Makefile.perf:242: sub-make] Error 2
+make[2]: *** [Makefile:70: all] Error 2
+make[1]: *** [package/pkg-generic.mk:294: 
+/local/users/fainelli/buildroot/output/arm/build/linux-tools/.stamp_built] 
+Error 2
+make: *** [Makefile:29: _all] Error 2
+-- 
+Florian
 
 
