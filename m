@@ -1,207 +1,258 @@
-Return-Path: <linux-kernel+bounces-302480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6062D95FF37
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:39:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D84295FF5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:54:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0673B21360
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 02:39:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3F111F22F3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 02:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC5F12B93;
-	Tue, 27 Aug 2024 02:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69C91759F;
+	Tue, 27 Aug 2024 02:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="A4nf3OFy"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2043.outbound.protection.outlook.com [40.107.255.43])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gy4nyYpV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51EF9C8FE;
-	Tue, 27 Aug 2024 02:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724726342; cv=fail; b=tI+BgJellN0IBstDs3opj9GmEsMyteNsEcmfk6O/27Rq2iZp/5+NBfmTU7XOZVC9wjqT1uJUvKHuHzxUJ8GMQPdhrDWFCOTLd3sdE50gDVT+yb3qOz/jqZ8EyP7FGhxTXDTtey+UHTHi1gkcSGSv1mZtegg3sb4To4pF58RDjxw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724726342; c=relaxed/simple;
-	bh=2XMdLxLysw7v/oWA3lqRp+Rhihme0+u9FocwGjTiblE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Y4gZGGmHTHUeKoQ41p4P/te3mAf9DhJW9wS9Q3mjDwWKccqV4Gc9rhwGFaZ2lWhlv+/xOHekWvd8JjLuIN3mK5y8bMJSmLRcSsS6i22kPqd/V1PPkPgrxr0RvWqMYn5O51JV0XOTiebNBWwcjUNynaRy07u5rDTghbkBWiITCTo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=A4nf3OFy; arc=fail smtp.client-ip=40.107.255.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=w8AvDZCvMy6dD3dTZlr4yfpLRoqibe1SO/+imwM5j204SqqE+ea2rAC8+YezsK2WP+ycI2sTxSAyjQT0cbZTOP2yeuaXfp00dCiAzz4n6ayyO+7Zgjx/6uteHlw0iVHrcRccouzfbd+ZXM7dHnFA0WSeHqvMIKl9hcPLqPCXvgF25oU2f2DejQa4i/JhSiXw2YQPv+oycr734DFG3olVtCaMA7CUamhoeLaaSG/RXAhnGvh0wycRjPQeb7ShFIIPvUFrSoQ8kScBAI6CQ/IxPcYLT4+/0U7natZeKSzmWQacJDtGsjB8qMtlWkrD0MRqzokDZyxVqhUEWtAcfnT0CQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jRddbbpYjf2Obi56bYY2mI2MxgX86TbwYibHAMvVQVU=;
- b=PEeiW+/eEvqCRqtwomans0ptxl0ZOADY6JFO6tTH9qUybiYa5Cr/XDD1QxEQSCW9fvwJVnLM7KwrvOJ2MotBfo6heBOKk92htZQznK/IYrdQGsVpCXSE7PErpP+o8VYvVsHwJpWhDy0MAdznXeRpngYO8YFep7Ap1o795EtG7v2k8ZVty00kRFZAqM2v4jBz99ruN9zqySGBrMNY2SD9umhGBFi4R2ha+OHIhDq8JgOJXd1TFXU9oBXRPq8ExFSRx57iFMKITGcmyZOGawS5hLzM6IjyepzGwI72X1OSVzj2KRSJcUHMJmQ911zYcxkP67ymFu/RfQWb5dHNUV2KAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jRddbbpYjf2Obi56bYY2mI2MxgX86TbwYibHAMvVQVU=;
- b=A4nf3OFyZOa3gn3PIuPn5xehgP1zS82W1P4cBuQH9tiXGNgQ6E3qHkLs4BVlHm9L6YONsoZNXqbiEAjfMlwvjRHZF0FBgyKZGYpGTWt8M3ZyC31V6y9T1KnVGKCsmkdKHWGw/xgzR/5yA3z1Tv/2gAve60Edo4GhN65lx0+AKhJmzRGKNwgRi/NZMP/COQKTFHdt5WfaXmqeGqNxxOCcJmXsCgNw+9BHO7NfwYSoVkhGqJEevW+4tmo9tPFST6nXzutZBST5RyUSh3/TuE4tqFcdLU4qjm2T9o+M+pJMVSRrQBoNOf5b34/B7Lzd9It/aBYHNvMRJIiA8wSIuFMMBA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PSAPR06MB4486.apcprd06.prod.outlook.com (2603:1096:301:89::11)
- by TYUPR06MB6270.apcprd06.prod.outlook.com (2603:1096:400:346::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Tue, 27 Aug
- 2024 02:38:56 +0000
-Received: from PSAPR06MB4486.apcprd06.prod.outlook.com
- ([fe80::43cb:1332:afef:81e5]) by PSAPR06MB4486.apcprd06.prod.outlook.com
- ([fe80::43cb:1332:afef:81e5%6]) with mapi id 15.20.7875.019; Tue, 27 Aug 2024
- 02:38:56 +0000
-From: Wu Bo <bo.wu@vivo.com>
-To: linux-kernel@vger.kernel.org
-Cc: fancer.lancer@gmail.com,
-	linux-mips@vger.kernel.org,
-	wubo.oduw@gmail.com,
-	Wu Bo <bo.wu@vivo.com>
-Subject: [PATCH v2 2/2] bus: bt1-apb: change to use devm_clk_get_enabled() helper
-Date: Mon, 26 Aug 2024 20:53:58 -0600
-Message-Id: <2059e872cc9cb129752c1656be073b1a6beb4cc5.1724726725.git.bo.wu@vivo.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <98e5fe3c7762f3c2cbf7b2f3b3461c0cef789dd6.1724726725.git.bo.wu@vivo.com>
-References: <98e5fe3c7762f3c2cbf7b2f3b3461c0cef789dd6.1724726725.git.bo.wu@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR01CA0119.apcprd01.prod.exchangelabs.com
- (2603:1096:4:40::23) To PSAPR06MB4486.apcprd06.prod.outlook.com
- (2603:1096:301:89::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680AD1754B;
+	Tue, 27 Aug 2024 02:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724727290; cv=none; b=pMN+angQ1RNzpr0fVA4EjAo7amRbARc5LnKtgRL0+pnu6qCLw7OKU5DxWlTq1o8u0g12NGgr9mz88nXJm9Z57NCcuxpCv8AF+ZjrtdTKuhJ3Z+EvMw3A1YJnCNVIOaGPl+cVnmYgih1aqDEcGtzz5kjG1GLzq2eN4VgwiDzM6b8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724727290; c=relaxed/simple;
+	bh=rN/h/kIfM1rJjuoXzuWT45K5gm3d2kWicXFFCsPee7Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T0vjY+T97hmljfr5qh8xEE6SL5LQK4dDYVrneuQx1GLbcn/N8TNawNOQM+bJChpeYolrD4gnXrP5/1EfxqYtg3iOW9GOdUcvLpK6ZNI2YCU5Y7tibkwRLPJrfno4HB6vZvspt09e4pZRWzvv2qcd9aEcAQn+fdOGW2cOndKZpw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gy4nyYpV; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724727288; x=1756263288;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rN/h/kIfM1rJjuoXzuWT45K5gm3d2kWicXFFCsPee7Y=;
+  b=Gy4nyYpV7EWN/bVBzYFvVLPZ/+O49tfNB0WQcrpiLNJlIuuk+57T7E8L
+   qg2nnfTH0kqD451vuk39QceyT9Fn3G3Qm7c8Huenz6zjGWjAhjXtgkMQu
+   y8uIvUSuUbrCi3HPIN8uQw9WJ8BWwZASAVxCnT1xdYw6qFXtcFKuvqOt8
+   SUvesQ76yxA95kx1LMNmL/VMBD/6LO9ISxO6xMuEOkSh3m4oVSug7tR93
+   1xmwVpvGNBGfk8DpeAOMDjpeAiSIAkATiXlg2j4rivzR6RGKIewXRVbpe
+   xVMSIfKsJ3263nrO3URsMpMOTl8hHNTwBdgKd64lokKKI3sAB+ps5/2L1
+   g==;
+X-CSE-ConnectionGUID: oFhbm6QzR/SIzuZ41K94lA==
+X-CSE-MsgGUID: vyJIRHbzSLWCAiESo1YBkw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="34558666"
+X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
+   d="scan'208";a="34558666"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 19:54:47 -0700
+X-CSE-ConnectionGUID: cTcBETDLSUSL/e9BUHoeLQ==
+X-CSE-MsgGUID: 2653ryGeSqWpa68aqcDMbA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
+   d="scan'208";a="62688226"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 26 Aug 2024 19:54:43 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1simLx-000How-0T;
+	Tue, 27 Aug 2024 02:54:41 +0000
+Date: Tue, 27 Aug 2024 10:54:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: Matthew Rosato <mjrosato@linux.ibm.com>, joro@8bytes.org,
+	will@kernel.org, robin.murphy@arm.com,
+	gerald.schaefer@linux.ibm.com, schnelle@linux.ibm.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, jgg@ziepe.ca,
+	baolu.lu@linux.intel.com, hca@linux.ibm.com, gor@linux.ibm.com,
+	agordeev@linux.ibm.com, svens@linux.ibm.com, jroedel@suse.de,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org
+Subject: Re: [PATCH v3] iommu/s390: Implement blocking domain
+Message-ID: <202408271011.SsRB0mow-lkp@intel.com>
+References: <20240823203108.304054-1-mjrosato@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PSAPR06MB4486:EE_|TYUPR06MB6270:EE_
-X-MS-Office365-Filtering-Correlation-Id: fe7e5e74-063c-495c-af9a-08dcc641658d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?D+/NHLlPcV4wE3C6VSip1QO/ERtpm7R7661KTVS6U7pLG94O8WDGsHccHruN?=
- =?us-ascii?Q?5dkdaZgR+odabhUm4SDpHsTJGxm7hqHsJEJHENLjAaUCL24IzN+PhFCVwvyS?=
- =?us-ascii?Q?QcYKUE4MXblXRWL1C2VBNL1mnwPLsYcR87oxnPd7V3WpofSCcCpIWO10cCd+?=
- =?us-ascii?Q?Esywhl4Sx7ZIA+TTIuOfhBJqqJL9DGQMuh3cBx3Oz5oZPCaja0liIt97yTp0?=
- =?us-ascii?Q?7LWdv2h5AKP+VvC7ko6hQBR0N4PBgWW7dBzxSl/tKFuZ/5s9qc15zeMIKY5w?=
- =?us-ascii?Q?XhRTzig7fwqWH9YL6lDXONiJk5Rc5eUOGKz4nL14E/w6iJAyVtAxHumpeY3Q?=
- =?us-ascii?Q?r2jCSWe0Ip6e7EoaDLesUyOxBzppVpaY5uhnimo+0eo7P3wu4t4E5+5R9zYU?=
- =?us-ascii?Q?fvpPDtavAqwq7dQrSFNHsId3/aF7hAGWHpa/YtCt5XKbE0UwqUgOR9RJBxeO?=
- =?us-ascii?Q?LDenc1o908sBaPiyvntr5WT2kEP4Nr5QHmxroqTfOqCGW/IR1ycR2bBrttKX?=
- =?us-ascii?Q?9B5LjAmFCJOyZxApN/le6QgBi403g8wWzcRpm/sV0aEN2tmen5O1sWAQ2dIS?=
- =?us-ascii?Q?GHTNNKp7Nbmp7UanChLSwUBBE/y0Cmzu9hiG9vLPhzSrSrEdxsLdRwb806r/?=
- =?us-ascii?Q?D4GLflS7xCkZFwzmejbD7INmh1eje3KbhQjLDNz+0vGbbWZJvozQu/QA/GhU?=
- =?us-ascii?Q?wu6oybKTo+XNbrFaaoTviTq/ZBcBty4umsifZUa0O404OkK+qRYX+9jNMzdS?=
- =?us-ascii?Q?qNt4etzjpPfY8QsPfxXL08ggLy9V2CPrNDvRySiX3zdiDHtzqVJ5K2Z81fcu?=
- =?us-ascii?Q?hgXhFGzh2Hjq82GalZcSK0HWknm6UInPLVdM7r0vN9Nkit4uUsM9Ae4w6fRE?=
- =?us-ascii?Q?XIJlc+ZwDCgtLVbCIY0P8NL6WRWh1v8ccmQVX6+TZohKgKdyN/EzYmqyelYk?=
- =?us-ascii?Q?0LoQl2hGxR/ahlAHRtOXFyajgC5+oofSjVTxKSWwItsun6p3vGSMXS5L0efw?=
- =?us-ascii?Q?wBTwIdIlZRFY45d18rEGwT5L9cLxZDZnl6tPHwHEWB4G1z8zWEmAe1+0ouA3?=
- =?us-ascii?Q?+1GTM8fMU1OGfnwuO79R+c2ysVdnEjvJHh311cfe1I2nCtlzcd5L/OEviS7h?=
- =?us-ascii?Q?xp6PEuWW5ZeBRgkt7GLtMrqaSrqjTQKYAEqSvruUDamPzYH52pq/QwiLgWEW?=
- =?us-ascii?Q?knO/XXCvAnf3h1rxUYqKdWDKPPX6iiyI3s4N3a9nuzSte9uEu3fXR+N9qoEw?=
- =?us-ascii?Q?cNBKt0gfsZIsRaQaFw/hGKGEspDJfbJR+A45EDsJBOnqlWndUrbHFoQN2NFi?=
- =?us-ascii?Q?PAGwVmOlQYK3GgAgaTaqSX235gi0OLqXWmZ1AaXF0UuO+rvwLKTU6F3hSwyo?=
- =?us-ascii?Q?/WmdyxSrmQLKD817krxRm/AbkSHVXmdu3I/y020oxDvyZgbrwQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR06MB4486.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?CdZVd7hNU7lzHnXyudM1HxbKG7vkkmdDmVIfSsyR6NILBoUeJ1+AOJM6IEhN?=
- =?us-ascii?Q?MBFrzgGaGRrcSOViUxOAs15uQsjiwM1TM+rhPngv6ocUcaxaUn7cZL2+ae+8?=
- =?us-ascii?Q?Ip2wFte4KhQ3ugQYV+zAd8Dj4JUCyv6XxKThjkq/0pzl3IE9lQZU5r88NYBg?=
- =?us-ascii?Q?jsXemyrIhdZSLG6tkQjFomC9dCyHPFpgjs/t0+mkfIiwt1HFnlM57Tc9+VaC?=
- =?us-ascii?Q?uqzZNaNIn2rMO17yTnk4GfeeZbQxVejQhewwBwWiBPDkzvt+/qL8HpjSQ/KX?=
- =?us-ascii?Q?Wc3pido6ggGLsCA0zLFgD8h0o3aVOz9pYRUXKAu1AHFRPNYK21IRYmcQGRVX?=
- =?us-ascii?Q?z9P3+fbe5Gkf5xKAK2SbKQTq9EHknda/XBTukIsaGr5rN71UUg4F4uPFj0Xz?=
- =?us-ascii?Q?dsDsyqUmLIZxpGbdBG/Gqh70MiV33Eq5OLwGOgUTPISPLkP4sX674SJz7EsV?=
- =?us-ascii?Q?KcU0+bsHyl/XXx1iv2HK8Vgey1rJjEdZZqdskdzgxPvE29wkhUy2gdF7183w?=
- =?us-ascii?Q?5dwbYw9CCXPCqhruGaH7n2NChdWRnpmF5b5E7e7G6JzDmy8XpXxUUmLWE95P?=
- =?us-ascii?Q?2h88CixGPfSbenrbIkgWsX6FvWJ7PMWZ9ZPqWTJOZWKKxW0f6JN6qYLj0eIb?=
- =?us-ascii?Q?GHAgjTcto7I5mTs+PHx6pvyHVm1th6q9L1okd8iqN9X9ZBMvUV4CdE4HbOR3?=
- =?us-ascii?Q?Tb2vToA6Y18HstDlPD50Wt5ATE85TjsbFp0XkkQZhKatrcUr0vHlbvsKfG2y?=
- =?us-ascii?Q?cNQvs3olPJmME/UOs0+GmnrtsHB3Znmtbc/Qk5+bdVZMW2+qF/9U9QdRS0SS?=
- =?us-ascii?Q?AIPxzNvbB7T1rq6dT/F4VKG/l+n7CaIlrfM8os37mRqOgPTVI/8b6y+VSIf7?=
- =?us-ascii?Q?+ywN9P8h/GHzKKLnrAA7qWvZSmv3mHK4gcEuQ73xeypjulKgwOldsJh1onyx?=
- =?us-ascii?Q?9fvUukaWWLVE5Crx1V+glqJUjUdl+B60ChdWFTA2wgZWT8t2ssuxsl9c1vqb?=
- =?us-ascii?Q?f9+IWRzZ1HVYUAfKvR7QF0yJMI8fwO1KoMl+iRIx0DYR/DVLZDmvJ+ckNEVm?=
- =?us-ascii?Q?fqN3zjBA9agHsIn9Z6BGPQ5XQ0IFsyQV1FNeIZ3eHy73vMMo/M2X6Lbb25Rc?=
- =?us-ascii?Q?M26gKQQFI6ABI99jd0p5mHqYYRjPoFa1Et83e8Hhj41hSloodEwk7MLCWBWJ?=
- =?us-ascii?Q?Nwo5zwCDlzqLudkEUGZGWcyyW9h2XqlryvAdZcxSAU90IuUPlY5QtqpkMhKg?=
- =?us-ascii?Q?7hQGTzUlFsBHA4FYr+ZQRomvEE25DIRp/Hld+sQurNhYn0r/Cw/v6shP93NL?=
- =?us-ascii?Q?phoGKlR2KSSIukbZL4f11mw+0VV3UtDH/dkWqikepOaWwmWS4EsK+lf3dj5s?=
- =?us-ascii?Q?E/k7GflIZxDuWUmVls5hcWXWJqNprw+LCmbDteTEjD9Ddroy0mGwX8gGKVZL?=
- =?us-ascii?Q?/vTg8YaoN2pEpwlMlfF5U2Md9MrgnJHIPDfyVCsdwPknkp7Im1Q8XkTBJA/F?=
- =?us-ascii?Q?hk7j5e/U/gJsVajFUqLg2rIzmj8SNhNVcIn8OdHCOv8NROHyfCBxPlEXI2Wp?=
- =?us-ascii?Q?M6rTqBwNgpGrpLNVC1RJ3PvD0NT/eEYw3xsRmSxz?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe7e5e74-063c-495c-af9a-08dcc641658d
-X-MS-Exchange-CrossTenant-AuthSource: PSAPR06MB4486.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 02:38:56.0663
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KyzskF/x2i7s2jDBKiM4n+3MpZ3YIdkelRcNhhYnxGdL0a32BXP39mh2LWVE3ZPBr+6o8inE/IV/xhOUEf5ryA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYUPR06MB6270
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823203108.304054-1-mjrosato@linux.ibm.com>
 
-Use devm_clk_get_enabled() instead of devm_clk_get() to make the code
-cleaner and avoid calling clk_disable_unprepare()
+Hi Matthew,
 
-Signed-off-by: Wu Bo <bo.wu@vivo.com>
----
- drivers/bus/bt1-apb.c | 23 +----------------------
- 1 file changed, 1 insertion(+), 22 deletions(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/drivers/bus/bt1-apb.c b/drivers/bus/bt1-apb.c
-index 595fb22b73e0..7463124b6dd9 100644
---- a/drivers/bus/bt1-apb.c
-+++ b/drivers/bus/bt1-apb.c
-@@ -185,34 +185,13 @@ static int bt1_apb_request_rst(struct bt1_apb *apb)
- 	return ret;
- }
- 
--static void bt1_apb_disable_clk(void *data)
--{
--	struct bt1_apb *apb = data;
--
--	clk_disable_unprepare(apb->pclk);
--}
--
- static int bt1_apb_request_clk(struct bt1_apb *apb)
- {
--	int ret;
--
--	apb->pclk = devm_clk_get(apb->dev, "pclk");
-+	apb->pclk = devm_clk_get_enabled(apb->dev, "pclk");
- 	if (IS_ERR(apb->pclk))
- 		return dev_err_probe(apb->dev, PTR_ERR(apb->pclk),
- 				     "Couldn't get APB clock descriptor\n");
- 
--	ret = clk_prepare_enable(apb->pclk);
--	if (ret) {
--		dev_err(apb->dev, "Couldn't enable the APB clock\n");
--		return ret;
--	}
--
--	ret = devm_add_action_or_reset(apb->dev, bt1_apb_disable_clk, apb);
--	if (ret) {
--		dev_err(apb->dev, "Can't add APB EHB clocks disable action\n");
--		return ret;
--	}
--
- 	apb->rate = clk_get_rate(apb->pclk);
- 	if (!apb->rate) {
- 		dev_err(apb->dev, "Invalid clock rate\n");
+[auto build test ERROR on s390/features]
+[also build test ERROR on linus/master v6.11-rc5 next-20240826]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Matthew-Rosato/iommu-s390-Implement-blocking-domain/20240826-163744
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git features
+patch link:    https://lore.kernel.org/r/20240823203108.304054-1-mjrosato%40linux.ibm.com
+patch subject: [PATCH v3] iommu/s390: Implement blocking domain
+config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20240827/202408271011.SsRB0mow-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 08e5a1de8227512d4774a534b91cb2353cef6284)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408271011.SsRB0mow-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408271011.SsRB0mow-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/iommu/s390-iommu.c:9:
+   In file included from include/linux/pci.h:37:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/s390/include/asm/elf.h:181:
+   In file included from arch/s390/include/asm/mmu_context.h:11:
+   In file included from arch/s390/include/asm/pgalloc.h:18:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:500:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     500 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     501 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:507:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     507 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     508 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:519:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     519 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     520 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:528:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     528 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     529 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   In file included from drivers/iommu/s390-iommu.c:9:
+   In file included from include/linux/pci.h:39:
+   In file included from include/linux/io.h:14:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
+     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
+         |                                                      ^
+   In file included from drivers/iommu/s390-iommu.c:9:
+   In file included from include/linux/pci.h:39:
+   In file included from include/linux/io.h:14:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
+     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
+         |                                                      ^
+   In file included from drivers/iommu/s390-iommu.c:9:
+   In file included from include/linux/pci.h:39:
+   In file included from include/linux/io.h:14:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     693 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     701 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     709 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     718 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     727 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     736 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+>> drivers/iommu/s390-iommu.c:707:2: error: member reference type 'spinlock_t' (aka 'struct spinlock') is not a pointer; did you mean to use '.'?
+     707 |         lockdep_assert_held(zdev->dom_lock);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/lockdep.h:285:17: note: expanded from macro 'lockdep_assert_held'
+     285 |         lockdep_assert(lockdep_is_held(l) != LOCK_STATE_NOT_HELD)
+         |         ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/lockdep.h:252:52: note: expanded from macro 'lockdep_is_held'
+     252 | #define lockdep_is_held(lock)           lock_is_held(&(lock)->dep_map)
+         |                                                             ^
+   include/linux/lockdep.h:279:32: note: expanded from macro 'lockdep_assert'
+     279 |         do { WARN_ON(debug_locks && !(cond)); } while (0)
+         |              ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+   arch/s390/include/asm/bug.h:54:25: note: expanded from macro 'WARN_ON'
+      54 |         int __ret_warn_on = !!(x);                      \
+         |                                ^
+>> drivers/iommu/s390-iommu.c:707:2: error: cannot take the address of an rvalue of type 'struct lockdep_map'
+     707 |         lockdep_assert_held(zdev->dom_lock);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/lockdep.h:285:17: note: expanded from macro 'lockdep_assert_held'
+     285 |         lockdep_assert(lockdep_is_held(l) != LOCK_STATE_NOT_HELD)
+         |         ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/lockdep.h:252:45: note: expanded from macro 'lockdep_is_held'
+     252 | #define lockdep_is_held(lock)           lock_is_held(&(lock)->dep_map)
+         |                                                      ^
+   include/linux/lockdep.h:279:32: note: expanded from macro 'lockdep_assert'
+     279 |         do { WARN_ON(debug_locks && !(cond)); } while (0)
+         |              ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+   arch/s390/include/asm/bug.h:54:25: note: expanded from macro 'WARN_ON'
+      54 |         int __ret_warn_on = !!(x);                      \
+         |                                ^
+   17 warnings and 2 errors generated.
+
+
+vim +707 drivers/iommu/s390-iommu.c
+
+   702	
+   703	struct zpci_iommu_ctrs *zpci_get_iommu_ctrs(struct zpci_dev *zdev)
+   704	{
+   705		struct s390_domain *s390_domain;
+   706	
+ > 707		lockdep_assert_held(zdev->dom_lock);
+   708	
+   709		if (zdev->s390_domain->type == IOMMU_DOMAIN_BLOCKED)
+   710			return NULL;
+   711	
+   712		s390_domain = to_s390_domain(zdev->s390_domain);
+   713		return &s390_domain->ctrs;
+   714	}
+   715	
+
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
