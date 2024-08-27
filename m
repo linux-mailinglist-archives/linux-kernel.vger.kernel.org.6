@@ -1,218 +1,224 @@
-Return-Path: <linux-kernel+bounces-303958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 205229617A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:02:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF3A49617A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:02:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98E281F25C90
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:02:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D359D1C23663
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627A41D318E;
-	Tue, 27 Aug 2024 19:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3087D1D318D;
+	Tue, 27 Aug 2024 19:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SN+IH5xO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Fn4C3U4O"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2046.outbound.protection.outlook.com [40.107.220.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D5A1D2784
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 19:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724785320; cv=none; b=lv2BeaTQ9KrP5Gpdy9drPjTub0dr/vp8gXjsbtup678qcFAHltQ5QWnnNLVnmCWIaWiPM24M3SHK8vvu/PnYHSi1DaIdfWhFxLXzQ33z354E4N5zY9XY/2xPHW0h7z+oCASuHg9WU7rFO/CHZw3O12YYJf4Yh0D74Qs5nNaRgBg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724785320; c=relaxed/simple;
-	bh=MG+1JwSVWzI4JEBvm3KwyK2QGGWa4BG6fPSkkFcFZ9c=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MeV4M52MKDCY0Ckk37MqueG1PBlQgegaN59T9O+uBLinr7pEX3wtLU5SWR+CeiEyKBKHb8NLeV8/cXYppAfJWe+zQtyj5OV4AiXjetjVvxelXQDHZjahEqmMCvBCG43ApxRR/GGcuvsB8yunR2zRqTk8mafTHqsBEkNE94VxZpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SN+IH5xO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724785318;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MG+1JwSVWzI4JEBvm3KwyK2QGGWa4BG6fPSkkFcFZ9c=;
-	b=SN+IH5xOfPBWISB5HQ7XqSh6TpHl0ySt/ElKDKYNAhSY+DLzQu+3zirVpQ8I4ISI6V3tIf
-	1rcbh2r9CMC9j59+XMnpjwm/Ou4q+WRV4kZCs6wVIA6MYGaX8AIKS123BYdRtxXkow9bch
-	CBs/FBv3erfcKDyernljJqYfqvp2XUI=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-423-mjk0-AqFNlS7PomlpePCcw-1; Tue, 27 Aug 2024 15:01:56 -0400
-X-MC-Unique: mjk0-AqFNlS7PomlpePCcw-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a868b6d6882so838056766b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:01:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724785315; x=1725390115;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MG+1JwSVWzI4JEBvm3KwyK2QGGWa4BG6fPSkkFcFZ9c=;
-        b=qhDJ4QAr3CLqDTc3JE+HuWIs7R8b4jz/3Tjo9kivxUsBt2VJZlYFX6XMTXyKOj8gH1
-         eWmBfAx8d7s4B6gtrIbsIRh2GTfzQ0+FPtgpZLimk+AeIxrRRaMJdgBGq59NG+5rIK2y
-         mWO1yFetWW+wzsBM3f8isPB8K/t1r/BFnVjijOc59W79yJEuuQ1zx3iX9rcwMpolnWnH
-         7vMglenW7CxNoAc31f//POhGkiW/sbvwT4wbVOovAmC6ZP/qiEonSpoDWP2Qlel+rSd3
-         SEJ8PJgsFt8QhVKprguKvuZ2HEZ8CvFs2AB5GGPnCx57Gd725vmNU1NCm51oTqb5OMUV
-         gVyg==
-X-Forwarded-Encrypted: i=1; AJvYcCVj6kb7Jxjhe9vHDviN6xmMTFQWJpDA2Ei6WNmFYxOmnnY/nkYMZaSFkjSn0zhIdavY3NbGqeWF0V8fSwQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyixjq3ZxYboZN8CR0LYvdF/T0quMKT/NJW3xXzo7HiNOhm5vG2
-	LY3y96F6cj2TuJBkjxRB6r5HYJGAX89VmD0zFeCJh3/ovbdfHAahoMan1UfRP/1nQ+mZ3Ua8jzd
-	0s7r69m3RpaLM6azl84U6j2fOxuNWSSx4104Z9RZ81Z/4uHdw3G7eChBXtPQH7g==
-X-Received: by 2002:a17:906:c141:b0:a72:66d5:892c with SMTP id a640c23a62f3a-a87070ec53fmr13249466b.18.1724785314764;
-        Tue, 27 Aug 2024 12:01:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHu6wGbiomauwZEYTCN/vBiJQQuMuuwKpc/s7DQcNYQx3NMc5fWjOy1EYaWCWHMYlMXPLBPhA==
-X-Received: by 2002:a17:906:c141:b0:a72:66d5:892c with SMTP id a640c23a62f3a-a87070ec53fmr13243566b.18.1724785314196;
-        Tue, 27 Aug 2024 12:01:54 -0700 (PDT)
-Received: from ?IPv6:2001:16b8:3dbc:3c00:460c:db7e:8195:ddb5? ([2001:16b8:3dbc:3c00:460c:db7e:8195:ddb5])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e594eb1csm142585366b.212.2024.08.27.12.01.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 12:01:53 -0700 (PDT)
-Message-ID: <a00ede68e809a5bd2fea5b7174536b3d4d44b949.camel@redhat.com>
-Subject: Re: [PATCH v4 0/7] PCI: Remove pcim_iounmap_regions()
-From: Philipp Stanner <pstanner@redhat.com>
-To: ens Axboe <axboe@kernel.dk>, Wu Hao <hao.wu@intel.com>, Moritz Fischer
- <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>, Andy Shevchenko
- <andy@kernel.org>,  Linus Walleij <linus.walleij@linaro.org>, Bartosz
- Golaszewski <brgl@bgdev.pl>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Bjorn Helgaas <bhelgaas@google.com>, Alvaro
- Karsz <alvaro.karsz@solid-run.com>, "Michael S. Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
- Eugenio =?ISO-8859-1?Q?P=E9rez?= <eperezma@redhat.com>, Richard Cochran
- <richardcochran@gmail.com>, Damien Le Moal <dlemoal@kernel.org>, Hannes
- Reinecke <hare@suse.de>, Keith Busch <kbusch@kernel.org>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-fpga@vger.kernel.org, linux-gpio@vger.kernel.org,
- netdev@vger.kernel.org,  linux-pci@vger.kernel.org,
- virtualization@lists.linux.dev
-Date: Tue, 27 Aug 2024 21:01:52 +0200
-In-Reply-To: <20240827185616.45094-1-pstanner@redhat.com>
-References: <20240827185616.45094-1-pstanner@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8669146590;
+	Tue, 27 Aug 2024 19:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724785351; cv=fail; b=UYBt9YUd2vCZs+fvbMbsQOcGeAU0cJ5wn9w8NM2KG8350PjtnV8enE16SYU5+M7lMFSBuVJrel10tCEq5ufx6hK+OnSsqfX4LRePZafez2bfc3QxE+7uG2fC/b3j9Ukz670lK0L6WC3uy1cLWPMUu+TC7eE6h62FRVbo2BogRWw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724785351; c=relaxed/simple;
+	bh=sRQxn/tBerOCoB2lqwvfcpnKxzJIOdBZyR0/khy3VmE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=p5VcYdwRjjHF110PB191Rc3rRVBESgY8iqAsYSIu2AZZFtyHYXXhy4YYK8yrWb/vbhKtCH/TF5nngo5KB+BbOkd6l+A3bWKVkjpryVb0mJmd4HKqoY2doQiGUnFZAiHIlfBRbA6q8kDsMXyDdknlq+wZubey6KfFDzqUadgksOs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Fn4C3U4O; arc=fail smtp.client-ip=40.107.220.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Y+rm8RwIqDFcnoF0O2NOncfnxjSDzeV7lrDc1jYdjLeTAAKDC83R/w7a32Ne6Wx28layTBcjiLy7H3kMaQBTMY9sBwd6usafF/qPBnIfEulwa/ua2nFjMQnCUfkbNNnQ2JHmExEcO0Hss9mysRZxRd7n6VLga0WSukJ5C+8mBJ7a3LFv6lf7W0d6rIac8LfZKI7pOSyGFXUXTJNMWwdxsSS8VOc4AUey0UGXKNJf5fSVRBuuCnjCuYRMvV9I9CsFzz8z5tZTlcrZrIZkJRADiQo33CSLE6C9zkxsgWbH877mi+GXeQJBY7JesMZX/qB+yQyvqnpJx1QZ4B6AOVjsBg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=n47N3Y8I1SbvPk1o//hH/rIqQhHwjpvFCLokk+9vJXg=;
+ b=HeXjHxUALQDQBUlJPbNcs6771IVUllwOd/wJCi/KoZuK+j5WOWd8FIrvmNl6C8FI8TUrj54khFH+INYHee0HNL0chqhFXD4JS9h91i/7kO56zUc0CaMjpxlICRj3mFFVL1PSoW24xYZ7MKKYIYdklXpvm3I2247cZntmsBWbF8+WxmNHJowxYRTq+NCPcjFoDXHMY927o+QLGwK05rABC0KyVNDsb4XeYXHQppt3gJme0OYuTpQlMNKv0nrU6jH6lh9iRuK8Mi5Q3YxzE9daknhNdcFZtCbzBrjURjdnC8l43mQ3U6Th3uM/ym4dGCxEQiNVcPq4FKH/bRTL33aAHA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n47N3Y8I1SbvPk1o//hH/rIqQhHwjpvFCLokk+9vJXg=;
+ b=Fn4C3U4OHJx3nZzP0/gZpfVH/YP03RoDcuAWK8n21ycoQhNlY7ZQML/V9IVDndlUc6ASHYVcCdfkr+TML8VehFi7E/+qOSWbzoKIf5W1qMaeCPSIRKRDAfc0K9lRoWFhKNDItvIpiYKDuFscpg6jni7C1V/29u9GoRL0HlNDJAc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by DS0PR12MB6390.namprd12.prod.outlook.com (2603:10b6:8:ce::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7897.26; Tue, 27 Aug 2024 19:02:27 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7875.016; Tue, 27 Aug 2024
+ 19:02:27 +0000
+Message-ID: <8acd43d7-3eb6-4cba-b962-e6b32c620b51@amd.com>
+Date: Tue, 27 Aug 2024 14:02:25 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/8] cpufreq: amd-pstate: Optimize
+ amd_pstate_update_limits()
+To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+ Mario Limonciello <superm1@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>, Perry Yuan <perry.yuan@amd.com>,
+ "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+ <linux-kernel@vger.kernel.org>, "open list:ACPI"
+ <linux-acpi@vger.kernel.org>,
+ "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>
+References: <20240826211358.2694603-1-superm1@kernel.org>
+ <20240826211358.2694603-8-superm1@kernel.org>
+ <Zs4FaUoKzlKpoCDV@BLRRASHENOY1.amd.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <Zs4FaUoKzlKpoCDV@BLRRASHENOY1.amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN7P220CA0030.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:806:123::35) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|DS0PR12MB6390:EE_
+X-MS-Office365-Filtering-Correlation-Id: f241634a-b37c-44d6-8aee-08dcc6cacb02
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cEREbHRKMXI2bW1seFpGNEttRFAvOTJOTHZ2OEdrS0ZNL0htbjlua0orK2Q2?=
+ =?utf-8?B?Wkxqd2dtTWtRa0pSRmUvSUtZSFlFUnVwMWpzSTVjcHBoV0hveGx0YzYwU2M1?=
+ =?utf-8?B?UWFKQnJ0bk12Rzdkamx6TG5EMWpUKzlPVmhuc1BLeXF1MVpXTGxjWW51NjFr?=
+ =?utf-8?B?SVFXeUNSM2o3UkZydFZ1OThQK1dyY09vdkZ5MG5MSDljamhzUWtSbUU5eWN0?=
+ =?utf-8?B?QVRsQjJraysyZjlMQkxlN1hiNXNUSXY3Umg1Y1RSYW55NFFjYUhQRWlQejlk?=
+ =?utf-8?B?SE5nL2NsTlJEc0pIeVdlRStrRHpmeWljcHMvS0FiZFIydG5saTBiNDMxblhy?=
+ =?utf-8?B?MkRKSTU3UENNZHZlRk1CRVNZNzg1d2ZnR3F6d0RiOE9Qc0wyQVBZdld3Zllx?=
+ =?utf-8?B?ZnloNktJOThIT29vZWJ2WmVwOVl5K29tQVhuV2FsUk84cGRIclJuSThmb1JH?=
+ =?utf-8?B?ZzYyaHJSUEt3OXhWc29jUlYrT0J2RnAwVlRNKzBoMlh6UmRRTXdhTHViMXRG?=
+ =?utf-8?B?MUpIeTFvcDNpNVk1MFVCakp0YVZlVlJyNm50dXpjSGxTTG9KaGROR2tSMzhI?=
+ =?utf-8?B?cElnS3ZzUVMrWTduaG4wYUNWbWRESEVLSDVLYUsybXorYzNQdUNFUUplVC9J?=
+ =?utf-8?B?TkRYRC92V2oxeWNvZWZ1bHY2NWt3VFlFTFNJOHFySEYvNnRNdldncTh3bm1i?=
+ =?utf-8?B?QnFvbjRBamNsazJlNTBZQ0NjcVhLSHdSa1NWKzArNmkwblR4blplSGJDTVgr?=
+ =?utf-8?B?M1c3R2diRWtwZ1NMa2Zxd1E5YnphYURnMUVQQkREbUdHZUVLVUFzaXljNyty?=
+ =?utf-8?B?SHVXaWk2TURXUEtWbGQ0QUJpMU03RGZETi9YQmRVWUIwYWpCYk1JQWFidUZZ?=
+ =?utf-8?B?ZDNDRzVYeWhkRU40TEFsQS90OCtQRFF5VnV6NmdUL054SFNNbUUwdFpaYkFp?=
+ =?utf-8?B?bmlPZUxMQ1pBQzBnUzVhZzZhb09TUTl5YXFtY0JXSHd5VjdiTCtIRlpCUTl6?=
+ =?utf-8?B?MnNvbTA1ems2WUVyRVNGdzdpejhtTkdaU0tKdk5QRUZqL2M4bzJlV1VYVjZi?=
+ =?utf-8?B?QStDTHBRcG5OeCtaUnB6bUxuMmVKMk96R2FuUlFoeGhKUlVobkNBM3c1dE1L?=
+ =?utf-8?B?T240SnFHclZIMU04MGRhRWdRVGFnRUhzOUtNRXV5eVYwdDZFRXJYdXZKZXhv?=
+ =?utf-8?B?UndMdzBlMDNwOVBWRWVrWlhFVTFyQ3JDTTZvVzlWSFN3SUxnKzNCVGNKOHBH?=
+ =?utf-8?B?cE0xUk4yaC9taXA0NFcvbWVscUxTWFIrcElyYk1HK0xCOXlCcGh3aSt0Qith?=
+ =?utf-8?B?MVp6ejhVVDFaVHpwMGVaZ1dWUlM1cXYyRkQ2MVRVMFFmR1BEbDJSbFRCVU5u?=
+ =?utf-8?B?c2pidHdLT2FmM0haUUtqZVdFTkpidWdwODEzNkdEbFhiYVoyS1JnTHFuYTYv?=
+ =?utf-8?B?Y2EzeGtJaHA3VW9UUWFybnZyb0ZZbnU2djY4cVl3a0VrZm5BQkI0aFNkbkor?=
+ =?utf-8?B?Z2NTM3NqRE9aQ0E2UFZwcXJFampRcjJDZ1RncUNTNnZEWUFBK1dPYlpVd1Y4?=
+ =?utf-8?B?OUI4L0J1VG9IcmZDQVlHVlp3alpzN2pHQUtSZDg3QmM5Nk5MY3lSQndKTDIx?=
+ =?utf-8?B?Q0tkNXVJYk1QN1pFbUxvaG1OUThnYXc4UW0xdmxkOTJNUUw2cXZVd1JjTDd0?=
+ =?utf-8?B?RXljTVRtV2x1ZUZNWjhtQTRiV1VkdGxyZWhEN01LaDVkWXRVVThPNk1nSnY3?=
+ =?utf-8?B?M1FGS2JFdmhEOTRQVk5OVVF6WlhpQ29OU1FaN25INkRnMitWMm55aWhRUnVF?=
+ =?utf-8?B?YW95STlJYXNDSHRiemxkZz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZTdxblArRjV6aXJoQW4wcTFqQTRmTk9oSWsybnA5TU9NQWVNek9LcmhZbFBU?=
+ =?utf-8?B?d2s5d21wTll0SlNlaFZjcXMvZ05SWTNObW5tRThWSFdURWl5RHdqY1ZlK3Jw?=
+ =?utf-8?B?cVFFV0tkRXVOWlFTcm04b2l5MnBrSDBlSHpqVkFPUFJEcFkyWDlJaG1Obytt?=
+ =?utf-8?B?ZDl2ZG9jc2FXTWlCbnBRc0VMWWZkb0xNWjVPN3NzZFJCOXVDYWpmYzRFcS83?=
+ =?utf-8?B?elhUSkZPdTVSRmtXY251SktuTVRXSG1zaUg4MjhDMUFjVHlGSlpjeitIL2ds?=
+ =?utf-8?B?WXZDU2JoN29LRWhXcUI1aXVRZjlJU3k5OThFayt5dkp0KzQxSHRmNGxud3J2?=
+ =?utf-8?B?QzRpT3ZVUENZSHRSK0hoZmNnejk2bDgwQVcwR1FkSUJXNXlYc0QvVTF0OGRF?=
+ =?utf-8?B?OTk1L0lhUkV1VG13SXc1Y0V4am5Rd3Rkb210L0o4OFd0SXVTZXlVdWpQNlNU?=
+ =?utf-8?B?TDI3ekxYLzAxUVQ3TWRJY25QbFhMUHB4aDVxMkxYaUZiV2xaZlYwRlVvWFhB?=
+ =?utf-8?B?NmdiODREWDR6UlNsMVd5VndzUVlSRURPNGl0TkpvOE1Ub1NKVTRQZXBUOFdz?=
+ =?utf-8?B?N0JHd3V0QzJIK1g4Q1M5Yi94ekh5bGNpN3NNd3VqSkh2ejJvMlBscHp2akVE?=
+ =?utf-8?B?V042UWZmKzZ6eXUwRy80R0N6ZHZncWh3d01BY01FVmxRVUNFR3RaOXNITlJ5?=
+ =?utf-8?B?Ni9vUVRnMHNVU213dWZCbHpMZm9Nd2l6L2VsOE9SNzJtcFhNaFBJSEdqejBo?=
+ =?utf-8?B?cjlNcHRuZ2FoQTFZWjBBQWVLdWswZHdHSGVaTkxHbDdmMm9GQ3pOSTFGY3py?=
+ =?utf-8?B?OHd3dU5DQzk3bGprNmtLR0tlTXRYWk5TZk1tNUJtaWEybHJjVkpjQWFwUmVX?=
+ =?utf-8?B?aitpcGtaaGtCTGhSeVVpVy9aNkNiWWl4QnRPcnUwbXBLQTFFaTVxczZTQjdi?=
+ =?utf-8?B?KzZwSHR1SGRVTVRJcHIrNUd5SFNtbStIQ2dROE9uNzBhZXdoREREM2hSVFRj?=
+ =?utf-8?B?NWlkenUrVHhMKzNHWVRQMTQ0QTNmRTdKbDIwdEVlYkowKytBTXdLbVJ6WWow?=
+ =?utf-8?B?blVEYW1iMDRaN3huaCtlOWZYM0NySDNvSG5jVEFwSUNNTXFhdThpN3BUUFFr?=
+ =?utf-8?B?Rkx2c2s2OUF1NGdaYk01dDNVWUd2ZGh1b3hrY2YwY05kRndrY1krZjZSSXFa?=
+ =?utf-8?B?QnNkUUlHQUI4RDAwV3dqTW9UL2RmeU5yUHY5aW1sZUlydkRhNXVhdW0wTXpw?=
+ =?utf-8?B?MWFUNzRiTGVDOVYvcUtkRWh0UFFhSDJha1l3aWZ2WGdkMnNFM3dFZG5ZdG9Y?=
+ =?utf-8?B?WlBKbnBJUkZIeHoxK1ArNWdyd0tpeDN3Ymh3V0tIMG9uWnRrRGdZU1pxbVpy?=
+ =?utf-8?B?cVNPMWZaajlQVU5TVUlwSm5rMExTU1UwRjlrNFEraXVnYjdrVStzMjRTUWc4?=
+ =?utf-8?B?OW5yL2VzWjdXU2tMSGxDelFrSUFKeGtZUVQyOXM1b2dNWk5WdzFlNnFNV2hx?=
+ =?utf-8?B?T0I3TXBJam8rZUZSN2UrNkZ5bkpUVGJnekJJSnNaMGVBZ20xbEc1YWw5QUNr?=
+ =?utf-8?B?YzBvbFdZZHhFWVJQaEZuVWRhL3pTSEhxOGgybHBncHhpT1hsTmFvWGk0V3JF?=
+ =?utf-8?B?MGlVek9CK1k1eTBZZDcyU2xpK1NNdG12NHpWTkZOZjNZRVZqS2VQUjRYc0sr?=
+ =?utf-8?B?a0Z1ZHczUW9rSi9PRXRUWFNpbE1zNzZjYTBHVTFOYXR0L1NrblU4dWRJL0Ry?=
+ =?utf-8?B?SDl5c01Ed01wV0x0N3Z3cnhUQXBzMWdHN2tDeGduTE5rU0dyU1pXdUNOcVJH?=
+ =?utf-8?B?VVdhYU9QdjZGMG5GNUQ3OXJzdnN6Y2lQMjRqeFlWaGkxWEsvVDBRejJuaFN1?=
+ =?utf-8?B?TWp1eGlpZFpMR0ZJZ0x2bWlVMzRGZ05TalBhd1hSZ3J6V0lxMEEwL0E3MXQ0?=
+ =?utf-8?B?Ly9CR01qQXJWL2RYVm5kejJ2QWdudzNVZ0NWajY2S0c3N1Z0NWpFdnJ4Tk10?=
+ =?utf-8?B?SmlhTVFrcXN4b1NKQnpONDgrUEQ2eUlZZERCQTJsK0pjbzAwbFEwM2NMb0hV?=
+ =?utf-8?B?OTg3N2NTbmJDaGp5VnZRZ1d4MElCczMyb2ZrZkxTV3VYRzZndndnYnpOWDFY?=
+ =?utf-8?Q?Fh74ka+BWhb79C7644VKLo0q8?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f241634a-b37c-44d6-8aee-08dcc6cacb02
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 19:02:27.2660
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yVbfByu4u8wfEVNsS6o80IUHcDwrvXOVSxdZVaYuMtydZHH22jwyay3GAb0GkaestEGNRUtkSFD+6gk7bU4vGQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6390
 
-PS:
-This series's title should now obviously be "*Mostly* Remove
-pcim_iounmap_regions()".
+On 8/27/2024 11:57, Gautham R. Shenoy wrote:
+> On Mon, Aug 26, 2024 at 04:13:57PM -0500, Mario Limonciello wrote:
+>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>
+>> Don't take and release the mutex when prefcore isn't present and
+>> avoid initialization of variables that will be initially set
+>> in the function.
+>>
+>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> 
+>> ---
+>>   drivers/cpufreq/amd-pstate.c | 10 +++++-----
+>>   1 file changed, 5 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+>> index 75568d0f84623..ed05d7a0add10 100644
+>> --- a/drivers/cpufreq/amd-pstate.c
+>> +++ b/drivers/cpufreq/amd-pstate.c
+>> @@ -798,17 +798,17 @@ static void amd_pstate_update_limits(unsigned int cpu)
+>>   	int ret;
+>>   	bool highest_perf_changed = false;
+>>   
+>> -	mutex_lock(&amd_pstate_driver_lock);
+>> -	if ((!amd_pstate_prefcore) || (!cpudata->hw_prefcore))
+>> -		goto free_cpufreq_put;
+>> +	if (!amd_pstate_prefcore)
+>> +		return;
+> 
+> Looks good to me.
+> 
+> Wondering if it is worth maintaining a static key for
+> amd_pstate_prefcore. Anyway it doesn't change after boot.
 
-On Tue, 2024-08-27 at 20:56 +0200, Philipp Stanner wrote:
-> OK, so unfortunately it seems very challenging to reconcile the merge
-> conflict pointed up by Serge between net-next and pci-devres
-> regarding
-> "ethernet: stmicro": A patch that applies to the net-next tree does
-> not
-> apply anymore to pci-devres (and vice versa).
->=20
-> So I actually think that it would be best if we just drop the
-> portation
-> of "ethernet: stmicro" for now and port it as the last user in v6.13.
->=20
-> That should then be trivial.
->=20
-> Changes in v4:
-> =C2=A0 - Drop the "ethernet: stmicro: [...] patch since it doesn't apply
-> to
-> =C2=A0=C2=A0=C2=A0 net-next, and making it apply to that prevents it from=
- being
-> =C2=A0=C2=A0=C2=A0 applyable to PCI ._. (Serge, me)
-> =C2=A0 - Instead, deprecate pcim_iounmap_regions() and keep "ethernet:
-> =C2=A0=C2=A0=C2=A0 stimicro" as the last user for now. Perform the deprec=
-ation in
-> the
-> =C2=A0=C2=A0=C2=A0 series' first patch. Remove the Reviewed-by's givin so=
- far to
-> that
-> =C2=A0=C2=A0=C2=A0 patch.
-> =C2=A0 - ethernet: cavium: Use PTR_ERR_OR_ZERO(). (Andy)
-> =C2=A0 - vdpa: solidrun (Bugfix) Correct wrong printf string (was "psnet"
-> instead of
-> =C2=A0=C2=A0=C2=A0 "snet"). (Christophe)
-> =C2=A0 - vdpa: solidrun (Bugfix): Add missing blank line. (Andy)
-> =C2=A0 - vdpa: solidrun (Portation): Use PTR_ERR_OR_ZERO(). (Andy)
-> =C2=A0 - Apply Reviewed-by's from Andy and Xu Yilun.
->=20
-> Changes in v3:
-> =C2=A0 - fpga/dfl-pci.c: remove now surplus wrapper around
-> =C2=A0=C2=A0=C2=A0 pcim_iomap_region(). (Andy)
-> =C2=A0 - block: mtip32xx: remove now surplus label. (Andy)
-> =C2=A0 - vdpa: solidrun: Bugfix: Include forgotten place where stack UB
-> =C2=A0=C2=A0=C2=A0 occurs. (Andy, Christophe)
-> =C2=A0 - Some minor wording improvements in commit messages. (Me)
->=20
-> Changes in v2:
-> =C2=A0 - Add a fix for the UB stack usage bug in vdap/solidrun. Separate
-> =C2=A0=C2=A0=C2=A0 patch, put stable kernel on CC. (Christophe, Andy).
-> =C2=A0 - Drop unnecessary pcim_release_region() in mtip32xx (Andy)
-> =C2=A0 - Consequently, drop patch "PCI: Make pcim_release_region() a
-> public
-> =C2=A0=C2=A0=C2=A0 function", since there's no user anymore. (obsoletes t=
-he squash
-> =C2=A0=C2=A0=C2=A0 requested by Damien).
-> =C2=A0 - vdap/solidrun:
-> =C2=A0=C2=A0=C2=A0 =E2=80=A2 make 'i' an 'unsigned short' (Andy, me)
-> =C2=A0=C2=A0=C2=A0 =E2=80=A2 Use 'continue' to simplify loop (Andy)
-> =C2=A0=C2=A0=C2=A0 =E2=80=A2 Remove leftover blank line
-> =C2=A0 - Apply given Reviewed- / acked-bys (Andy, Damien, Bartosz)
->=20
->=20
-> Important things first:
-> This series is based on [1] and [2] which Bjorn Helgaas has currently
-> queued for v6.12 in the PCI tree.
->=20
-> This series shall remove pcim_iounmap_regions() in order to make way
-> to
-> remove its brother, pcim_iomap_regions().
->=20
-> @Bjorn: Feel free to squash the PCI commits.
->=20
-> Regards,
-> P.
->=20
-> [1]
-> https://lore.kernel.org/all/20240729093625.17561-4-pstanner@redhat.com/
-> [2]
-> https://lore.kernel.org/all/20240807083018.8734-2-pstanner@redhat.com/
->=20
-> Philipp Stanner (7):
-> =C2=A0 PCI: Deprecate pcim_iounmap_regions()
-> =C2=A0 fpga/dfl-pci.c: Replace deprecated PCI functions
-> =C2=A0 block: mtip32xx: Replace deprecated PCI functions
-> =C2=A0 gpio: Replace deprecated PCI functions
-> =C2=A0 ethernet: cavium: Replace deprecated PCI functions
-> =C2=A0 vdpa: solidrun: Fix UB bug with devres
-> =C2=A0 vdap: solidrun: Replace deprecated PCI functions
->=20
-> =C2=A0drivers/block/mtip32xx/mtip32xx.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 16 +++--
-> =C2=A0drivers/fpga/dfl-pci.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 | 16 ++---
-> =C2=A0drivers/gpio/gpio-merrifield.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 14 ++---
-> =C2=A0.../net/ethernet/cavium/common/cavium_ptp.c=C2=A0=C2=A0 |=C2=A0 6 +=
--
-> =C2=A0drivers/pci/devres.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 8 ++-
-> =C2=A0drivers/vdpa/solidrun/snet_main.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 59 ++++++++---------
+As there is a kernel command line option how would you pass the early 
+param parsing result over without a static variable?
+
+> 
+> Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+> 
+Thanks!
+
+> 
 > --
-> =C2=A0include/linux/pci.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1 +
-> =C2=A07 files changed, 51 insertions(+), 69 deletions(-)
->=20
+> Thanks and Regards
+> gautham.
 
 
