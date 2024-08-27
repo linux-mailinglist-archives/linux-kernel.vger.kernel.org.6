@@ -1,167 +1,165 @@
-Return-Path: <linux-kernel+bounces-302512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE76495FF98
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:05:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B9C495FF9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D1C51C21FF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:05:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3960228327D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818DF1805E;
-	Tue, 27 Aug 2024 03:05:18 +0000 (UTC)
-Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A1018037;
+	Tue, 27 Aug 2024 03:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EDjaKR8j"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB57517543;
-	Tue, 27 Aug 2024 03:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3542C18039
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 03:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724727918; cv=none; b=WBZ0eTXZS30hVY5W3251wPKXE6qCy8WByhoqN0TJnP6QaQSUDghRNZj1RhaPPNWr2a1ANYD88UKVwVZXNmWEef6gQcaf6LyCcwXcbcvWl0DyWWkgmm8g0FbEcXp23XdJRxtk7+qgCW70aq0jyncSJm920dNcFOm6CTkjoJy0LHg=
+	t=1724727972; cv=none; b=kxdpHOd/0D0vzYMCu6v6hh8V3tC6tRC0rZNS8DE3vkMqblq9AldsJpn7hb/Gvupt/3B7U6tQOXyPmM60guruvz5oxOQQLSjvevDSlINk5gkmbEhaif3blez2Sbo7mdBGC8ANjCpJiMKbVB+vNIc3S34KaPrSMxcZz+evUNqTh2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724727918; c=relaxed/simple;
-	bh=TaLGGeK1zzfzdVeKlIjAMTEwsD0xRl6mZk/vMHriXWg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rFYEGyMWN8zXjo6Iyk8TFDn7MsuW2dIrGD7P58ATLMH0lBdFTeOjKVUu2WJHk/NspvrZ+PX5YI7Xdmp1XJa8q3hJiN4wOcpS0t4ULqI2OJhR+wCwp9mATzR7PkuureHHtqyR09ko0M9EPwAA+OPP6ei2TEUJL0NgRBi0TZEGXOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Tue, 27 Aug
- 2024 11:05:13 +0800
-Received: from mail.aspeedtech.com (192.168.10.10) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
- Transport; Tue, 27 Aug 2024 11:05:13 +0800
-From: Jacky Chou <jacky_chou@aspeedtech.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <jacky_chou@aspeedtech.com>,
-	<u.kleine-koenig@pengutronix.de>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v3] net: ftgmac100: Get link speed and duplex for NC-SI
-Date: Tue, 27 Aug 2024 11:05:13 +0800
-Message-ID: <20240827030513.481469-1-jacky_chou@aspeedtech.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1724727972; c=relaxed/simple;
+	bh=2ecYZz6GGQ2vmg8Pz7j+mi7ALBB3Pd48KzkJgv6NiT8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F/RdmPWXCC1CNoMiua3e7VOgTBZM7U58Iz2XcG3xov2Dff54KNSuHWGqlIxYYVMHFlbHhBN6jGNDm1hn/2+IlBgJc0hPzSNe1bz7N1ZgN9W1h86JAR0BnxEdF9htu70feGMpKZ1ZuwyS6UKWEIKEF4F3llrhRbZntSl9aiSK3cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EDjaKR8j; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7142a30e3bdso4484566b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 20:06:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1724727970; x=1725332770; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F2IxSWIgW9K+Ycy7Q1UnTr8RqMZZFrbF0akh3JGxgko=;
+        b=EDjaKR8j6j2CWnY9y6oAB5gFXT94HINNbxA5Xt7NqxfSIMj/B0Wm+sXYQ321YBt+Jc
+         0lLn+/rWqCXgc4TFSDfRQMVqB3nyowSiEroK8XD+w3aC1FgEKRqdfsUaVeN6t1PLqv/x
+         iKGIeBxfE3eoucS/1VqzoW8TiRgAkVWzhIjyE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724727970; x=1725332770;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F2IxSWIgW9K+Ycy7Q1UnTr8RqMZZFrbF0akh3JGxgko=;
+        b=IdN6DgPUHloHPdne94TvvtggdCxjNhc+w9EJn4oLk74nglxOkYJGhPuNIIygtySZaf
+         KieuMHITpX2vAKHsuZfGh+WiWpJ4e5AOUOXzoGXhT09ATmviu/WQlutpPPYRyGKOEwMv
+         tJ2FpxqKXFMyZRMfHH0xi/yF11ZyoCvgHaEa94fgLVDoaZirCAHU+hnrd947eZE7JQqZ
+         6YgH334vC7AdMbx1ySnLMrtNska6Qp9whuIHPjnxbnXdPKvl/8anb4Fv5b3PkZf3/ZV4
+         Ycd4m8I5g1l+4K+ijnkRgMZN9jNTtAYeL7VXiKeeBrcq4fUqjDHOlI7sWQdDXdeIo4ks
+         aGOw==
+X-Forwarded-Encrypted: i=1; AJvYcCV6YZmLVXSA3ISkDPNpAtFOMDTkTTfOhKEk/55DjQdEo+Zez5BIx3xeSMd2B9n3M7u77J89w413SFgybc0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyk7lmIiUGmSo+0XBcUW2c0MBxWn2zlWx7X6MOicxKWX987OKXP
+	n0Pl2SLt5hTeLWPFXyc7qr8iZwaqZOHr23vGGjHQlE99sC0SPC8INwDYtd2pmfLlB92K1i1v9bw
+	uzA==
+X-Google-Smtp-Source: AGHT+IHyHqgOnc/AwdHdmbrBtKfYgmQmk42+/21xvXZVGuz6Gc3yhvyhX0+1DHcgKK2GjCFRPNTWJA==
+X-Received: by 2002:a17:902:da82:b0:201:ec22:8335 with SMTP id d9443c01a7336-204dde0dad4mr20542555ad.30.1724727970242;
+        Mon, 26 Aug 2024 20:06:10 -0700 (PDT)
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com. [209.85.214.171])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038556a2f7sm74180845ad.9.2024.08.26.20.06.09
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 20:06:09 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20260346ca1so108035ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 20:06:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW1EOU8PI158P3v+RtjLWwsy8lhyeU3je4HLjwspp+1xsLX53zy9hfV7mYv52rcoWrA90bdfvpXTLxvmtM=@vger.kernel.org
+X-Received: by 2002:a17:903:228a:b0:1fc:60f2:a089 with SMTP id
+ d9443c01a7336-204e4cb920bmr1085965ad.17.1724727969099; Mon, 26 Aug 2024
+ 20:06:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <20240825035422.900370-1-jon.lin@rock-chips.com>
+In-Reply-To: <20240825035422.900370-1-jon.lin@rock-chips.com>
+From: Brian Norris <briannorris@chromium.org>
+Date: Mon, 26 Aug 2024 20:05:56 -0700
+X-Gmail-Original-Message-ID: <CA+ASDXOnwQ4Jrz=yo1QS-EAfTN_=FMZ1xtF=2-a8iDC6PwDBSQ@mail.gmail.com>
+Message-ID: <CA+ASDXOnwQ4Jrz=yo1QS-EAfTN_=FMZ1xtF=2-a8iDC6PwDBSQ@mail.gmail.com>
+Subject: Re: [PATCH] spi: rockchip: Avoid redundant clock disable in pm operation
+To: Jon Lin <jon.lin@rock-chips.com>
+Cc: broonie@kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, heiko@sntech.de, 
+	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The ethtool of this driver uses the phy API of ethtool
-to get the link information from PHY driver.
-Because the NC-SI is forced on 100Mbps and full duplex,
-the driver connect a fixed-link phy driver for NC-SI.
-The ethtool will get the link information from the
-fixed-link phy driver.
+Hi Jon,
 
-Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
----
-v3:
-  - Add fixed-link phy device unregister in
-    ftgmac100_phy_disconnect().
-  - Adjust header and variable sorting.
-v2:
-  - use static for struct fixed_phy_status ncsi_phy_status
-  - Stop phy device at net_device stop when using NC-SI.
-  - Start phy device at net_device start when using NC-SI.
----
- drivers/net/ethernet/faraday/ftgmac100.c | 28 ++++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
+On Sat, Aug 24, 2024 at 8:55=E2=80=AFPM Jon Lin <jon.lin@rock-chips.com> wr=
+ote:
+> --- a/drivers/spi/spi-rockchip.c
+> +++ b/drivers/spi/spi-rockchip.c
+> +#ifdef CONFIG_PM_SLEEP
+> +static int rockchip_spi_suspend(struct device *dev)
+>  {
+> +       int ret;
+>         struct spi_controller *ctlr =3D dev_get_drvdata(dev);
+> -       struct rockchip_spi *rs =3D spi_controller_get_devdata(ctlr);
+>
+> -       clk_disable_unprepare(rs->spiclk);
+> -       clk_disable_unprepare(rs->apb_pclk);
+> +       ret =3D spi_controller_suspend(ctlr);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       /* Avoid redundant clock disable */
+> +       if (!pm_runtime_status_suspended(dev))
+> +               rockchip_spi_runtime_suspend(dev);
 
-diff --git a/drivers/net/ethernet/faraday/ftgmac100.c b/drivers/net/ethernet/faraday/ftgmac100.c
-index fddfd1dd5070..444671b8bbe2 100644
---- a/drivers/net/ethernet/faraday/ftgmac100.c
-+++ b/drivers/net/ethernet/faraday/ftgmac100.c
-@@ -24,6 +24,7 @@
- #include <linux/crc32.h>
- #include <linux/if_vlan.h>
- #include <linux/of_net.h>
-+#include <linux/phy_fixed.h>
- #include <net/ip.h>
- #include <net/ncsi.h>
- 
-@@ -50,6 +51,15 @@
- #define FTGMAC_100MHZ		100000000
- #define FTGMAC_25MHZ		25000000
- 
-+/* For NC-SI to register a fixed-link phy device */
-+static struct fixed_phy_status ncsi_phy_status = {
-+	.link = 1,
-+	.speed = SPEED_100,
-+	.duplex = DUPLEX_FULL,
-+	.pause = 0,
-+	.asym_pause = 0
-+};
-+
- struct ftgmac100 {
- 	/* Registers */
- 	struct resource *res;
-@@ -1531,7 +1541,8 @@ static int ftgmac100_open(struct net_device *netdev)
- 	if (netdev->phydev) {
- 		/* If we have a PHY, start polling */
- 		phy_start(netdev->phydev);
--	} else if (priv->use_ncsi) {
-+	}
-+	if (priv->use_ncsi) {
- 		/* If using NC-SI, set our carrier on and start the stack */
- 		netif_carrier_on(netdev);
- 
-@@ -1544,6 +1555,7 @@ static int ftgmac100_open(struct net_device *netdev)
- 	return 0;
- 
-  err_ncsi:
-+	phy_stop(netdev->phydev);
- 	napi_disable(&priv->napi);
- 	netif_stop_queue(netdev);
-  err_alloc:
-@@ -1577,7 +1589,7 @@ static int ftgmac100_stop(struct net_device *netdev)
- 	netif_napi_del(&priv->napi);
- 	if (netdev->phydev)
- 		phy_stop(netdev->phydev);
--	else if (priv->use_ncsi)
-+	if (priv->use_ncsi)
- 		ncsi_stop_dev(priv->ndev);
- 
- 	ftgmac100_stop_hw(priv);
-@@ -1715,6 +1727,9 @@ static void ftgmac100_phy_disconnect(struct net_device *netdev)
- 	phy_disconnect(netdev->phydev);
- 	if (of_phy_is_fixed_link(priv->dev->of_node))
- 		of_phy_deregister_fixed_link(priv->dev->of_node);
-+
-+	if (priv->use_ncsi)
-+		fixed_phy_unregister(netdev->phydev);
- }
- 
- static void ftgmac100_destroy_mdio(struct net_device *netdev)
-@@ -1792,6 +1807,7 @@ static int ftgmac100_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	int irq;
- 	struct net_device *netdev;
-+	struct phy_device *phydev;
- 	struct ftgmac100 *priv;
- 	struct device_node *np;
- 	int err = 0;
-@@ -1879,6 +1895,14 @@ static int ftgmac100_probe(struct platform_device *pdev)
- 			err = -EINVAL;
- 			goto err_phy_connect;
- 		}
-+
-+		phydev = fixed_phy_register(PHY_POLL, &ncsi_phy_status, NULL);
-+		err = phy_connect_direct(netdev, phydev, ftgmac100_adjust_link,
-+					 PHY_INTERFACE_MODE_MII);
-+		if (err) {
-+			dev_err(&pdev->dev, "Connecting PHY failed\n");
-+			goto err_phy_connect;
-+		}
- 	} else if (np && of_phy_is_fixed_link(np)) {
- 		struct phy_device *phy;
- 
--- 
-2.25.1
+rockchip_spi_runtime_suspend() returns an error code. I understand
+that it doesn't actually fail in practice, but you should probably
+check it anyway.
 
+> +
+> +       pinctrl_pm_select_sleep_state(dev);
+>
+>         return 0;
+>  }
+>
+> -static int rockchip_spi_runtime_resume(struct device *dev)
+> +static int rockchip_spi_resume(struct device *dev)
+>  {
+>         int ret;
+>         struct spi_controller *ctlr =3D dev_get_drvdata(dev);
+> -       struct rockchip_spi *rs =3D spi_controller_get_devdata(ctlr);
+>
+> -       ret =3D clk_prepare_enable(rs->apb_pclk);
+> -       if (ret < 0)
+> -               return ret;
+> +       pinctrl_pm_select_default_state(dev);
+>
+> -       ret =3D clk_prepare_enable(rs->spiclk);
+> +       if (!pm_runtime_status_suspended(dev)) {
+> +               ret =3D rockchip_spi_runtime_resume(dev);
+> +               if (ret < 0)
+> +                       return ret;
+> +       }
+> +
+> +       ret =3D spi_controller_resume(ctlr);
+>         if (ret < 0)
+> -               clk_disable_unprepare(rs->apb_pclk);
+> +               rockchip_spi_runtime_suspend(dev);
+
+I don't think this is valid error handling. AFAIK, failing the
+resume() function doesn't actually "disable" the device in any way
+(it's just informative at best), so we probably shouldn't disable
+clocks here. Otherwise, you might leave the clock disabled while the
+runtime PM framework thinks it's enabled.
+
+Brian
+
+>
+>         return 0;
+>  }
+> --
+> 2.34.1
+>
 
