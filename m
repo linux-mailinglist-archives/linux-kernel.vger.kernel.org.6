@@ -1,141 +1,107 @@
-Return-Path: <linux-kernel+bounces-302848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D923096042F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:18:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2282A960430
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:19:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17C691C226C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:18:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47EFE1C22613
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59203193433;
-	Tue, 27 Aug 2024 08:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57EC6192594;
+	Tue, 27 Aug 2024 08:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZRYDNnt5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YYURdzLB"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2558A17736
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7CD33999
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724746696; cv=none; b=EHOIQ79L+vEZftwY7uNwBHiQCK6LS4S4MHiB7OKnMrdsghj8bBBHVavTLhbLohxz+FNqOxh3L6ZKnYgJRefUsELlAMjJZdejPZqJhAo3GcUTQ+my3PgZJhGWC6StE101c8ImF3dGdKg6IU4omiEkTtTRpN95ZfauPEB8feD6vQ0=
+	t=1724746733; cv=none; b=uJ+Wvvkuxlq3koK9AUXQzgEwn7oV8flaFAEU+ce2T26qw0a1TlN/7++k/lSzL13DNkZTqJ8ZBxtxu/XKPs/3ztmhe2aMHqhGxVP/khsa60pt8aZDt5Gjx7RzpcjjZxk12YZVAoO1Q36wFs0rKFUdQJjGVixs6U5zhpI+UGcB94w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724746696; c=relaxed/simple;
-	bh=ueQ+aPpDc0TK9bCs4HiiYBkaW0h8zdVvh8h6Spr+UTM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kHJjfd7otx5PuDHSnmAEemlTX4BrJtC+gMvQ215WPXfScbCxD4J1ozoiV3B2k7AsIcoLVyEP2o+NmFpYP8mS1IqBoD7X8A9pJwHtWlVYiHTe9Bq6oaHxASNAJ4WdI4xyF7hOzwGK+YJsgMMtkTq3QjATu+BpgNSGH1+NFkXG0/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZRYDNnt5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724746693;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=2POjXLS4suf26/CFlDwrLvuDWCdNgPkqz+C0kWqYtjM=;
-	b=ZRYDNnt5WgJzvW6wnIsIQPqE6LZ+21ttftwGq+9xo8Ykq+3DQhUJeimVkFacjNQs1/oiB1
-	dIjsDsdlcdycgykJjgbWxyvxkEIW9KM3fvZuMsMOkYUwsHkq7cnXkp466T6m1774PVZrPO
-	vWyxK+G21P0PfjESsckglATwBy0MPLU=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-549-yPgESvXbOlO8WyU5Ii5kDQ-1; Tue,
- 27 Aug 2024 04:18:09 -0400
-X-MC-Unique: yPgESvXbOlO8WyU5Ii5kDQ-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A315A1955F42;
-	Tue, 27 Aug 2024 08:18:07 +0000 (UTC)
-Received: from dell-per7425-02.rhts.eng.pek2.redhat.com (dell-per7425-02.rhts.eng.pek2.redhat.com [10.73.116.18])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AC8BF30001A1;
-	Tue, 27 Aug 2024 08:18:02 +0000 (UTC)
-From: Li Wang <liwang@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	axboe@kernel.dk,
-	john.g.garry@oracle.com,
-	ltp@lists.linux.it
-Cc: Stefan Hajnoczi <stefanha@redhat.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Jan Stancek <jstancek@redhat.com>
-Subject: [PATCh v2] loop: Increase bsize variable from unsigned short to unsigned int
-Date: Tue, 27 Aug 2024 16:17:57 +0800
-Message-ID: <20240827081757.37646-1-liwang@redhat.com>
+	s=arc-20240116; t=1724746733; c=relaxed/simple;
+	bh=t9IGVRRdm8rEGT3/Jj7lU+fXIDHmB3sxw1FRiZjk4r8=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=dmATG4PvHTgO8WkgX3tKX5jGowSnedVShhx5yRHyxJ1CWGrDVOSMQHdB+cO8DY4uAl5OUBW3HQv3+yXkoCtECYifQXApx8+b32VkYCKBePXgPHQIorTS6a5iBwOYq2O9kpxgCI38WqW56uC/S027THsVvNfAks7V2nVZQ7WK3Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YYURdzLB; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8684c31c60so623060366b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 01:18:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724746730; x=1725351530; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=I70MSYbAc1AGHnHaOGdeVVD6i++V9UU7IxJECcqEc04=;
+        b=YYURdzLBU1P9CCtOHGdKDtZA5QHw06jToDt2QMdWFKfk3QiHBSSi9C8i6kMI/b2s++
+         Wnvw+n06qZpXqbtlCHMyEo7H8UlFLpgPAE8xzHBQieMRIqnrEJDI5x6UBk/T+G+ESrJl
+         usPyrbHWg0ks94E/WMdGlJ4niwb3iNh0jlEKBomRE75Rv3rdFafWsGOOWTc4/YAB71gy
+         ozgpHeUIwgkeuVUQM2ZUJ+QrylyvtjV66XKeukqxbtFQj+J1DobFOtOWv5zxmXw3Q4eJ
+         W5RPXH4VR4NXzJfFDPOc3HJrWwnnYXGmRaLSoXIZiWMIEEINIaU5Ws6tDnqSSQxVXpxN
+         jZJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724746730; x=1725351530;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I70MSYbAc1AGHnHaOGdeVVD6i++V9UU7IxJECcqEc04=;
+        b=e9Ly3nr1cB7Jpw8nq6X3fpFacXKkRZy2TF0Ry9iuGxpMu0zSwTeAzoVxDfjlpy2xPK
+         StOk6fzb3dFHLHqQ8zpRQf7krWCmBx0yRtLWAfHlSdCCRVBmXkkSo7oVRd7ypiXHY4yT
+         2DacqJXtxntWewfGivA2DHtIlsymjFdnp8otYioshf0gXRPFUuoLujh5Cm9RpFagGbxS
+         oFz4Q9SDjNom4rugWEvi0MgmjFHyJIMkJ9vIatAH+6Ux7B/Sjzux9r+37vnLh4h86Q4t
+         8WwzVnDgGyEHyLkkvu73Se+a898+QvbHpfFHngnTXxLjoLLZGd49604uPejgKfwMldf3
+         EqFg==
+X-Forwarded-Encrypted: i=1; AJvYcCWk+2S8y91zzpYnCDpKeL/orFx/Gsyl+KEh32C+HfUTleqSmSBgnD2NV0yqfOFRtGMn3C0tFM2Eq/HcF00=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysG7LyRHRuln5GiLjJs7coZSCYfWKOD0565vWb08NiFtK3rPei
+	C+BNBBQjt4I+PPX6ChF3y2oib1ErLn4Yguylrk2pBFahusdsFV+/1i+vQIyG
+X-Google-Smtp-Source: AGHT+IEvD+pu/vLKN88m5xfnUGgU9GX0+asJE4mdQmyQ3pZT+JunQfaxXM2+DDLmVKefshg96reEJw==
+X-Received: by 2002:a17:907:9689:b0:a86:8ff8:1dd8 with SMTP id a640c23a62f3a-a86a54a9387mr831255366b.46.1724746729544;
+        Tue, 27 Aug 2024 01:18:49 -0700 (PDT)
+Received: from ubuntu-focal ([197.237.50.252])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e54875b8sm78601066b.1.2024.08.27.01.18.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 01:18:49 -0700 (PDT)
+Date: Tue, 27 Aug 2024 08:18:45 +0000
+From: Dorine Tipo <dorine.a.tipo@gmail.com>
+To: Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: rtl87212: Match parenthesis alignment
+Message-ID: <20240827081845.GA15504@ubuntu-focal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This change allows the loopback driver to handle block size larger than
-PAGE_SIZE and increases the consistency of data types used within the driver.
-Especially to match the struct queue_limits.logical_block_size type.
+Fix the parenthesis alignment in r8712_read_port() function to match
+the opening parenthesis
 
-Also, this is to get rid of the LTP/ioctl_loop06 test failure:
-
-  12 ioctl_loop06.c:76: TINFO: Using LOOP_SET_BLOCK_SIZE with arg > PAGE_SIZE
-  13 ioctl_loop06.c:59: TFAIL: Set block size succeed unexpectedly
-  ...
-  18 ioctl_loop06.c:76: TINFO: Using LOOP_CONFIGURE with block_size > PAGE_SIZE
-  19 ioctl_loop06.c:59: TFAIL: Set block size succeed unexpectedly
-
-Thoese fail due to the loop_reconfigure_limits() cast bsize to 'unsined short'
-that never gets an expected error when testing invalid logical block size,
-which was just exposed since 6.11-rc1 introduced patches:
-
-  commit 9423c653fe61 ("loop: Don't bother validating blocksize")
-  commit fe3d508ba95b ("block: Validate logical block size in blk_validate_limits()")
-
-Link: https://lists.linux.it/pipermail/ltp/2024-August/039912.html
-Signed-off-by: Li Wang <liwang@redhat.com>
-Cc: John Garry <john.g.garry@oracle.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Stefan Hajnoczi <stefanha@redhat.com>
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-Reviewed-by: Jan Stancek <jstancek@redhat.com>
+Signed-off-by: Dorine Tipo <dorine.a.tipo@gmail.com>
 ---
- drivers/block/loop.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/rtl8712/usb_ops_linux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 78a7bb28defe..86cc3b19faae 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -173,7 +173,7 @@ static loff_t get_loop_size(struct loop_device *lo, struct file *file)
- static bool lo_bdev_can_use_dio(struct loop_device *lo,
- 		struct block_device *backing_bdev)
- {
--	unsigned short sb_bsize = bdev_logical_block_size(backing_bdev);
-+	unsigned int sb_bsize = bdev_logical_block_size(backing_bdev);
- 
- 	if (queue_logical_block_size(lo->lo_queue) < sb_bsize)
- 		return false;
-@@ -977,7 +977,7 @@ loop_set_status_from_info(struct loop_device *lo,
- 	return 0;
- }
- 
--static unsigned short loop_default_blocksize(struct loop_device *lo,
-+static unsigned int loop_default_blocksize(struct loop_device *lo,
- 		struct block_device *backing_bdev)
- {
- 	/* In case of direct I/O, match underlying block size */
-@@ -986,7 +986,7 @@ static unsigned short loop_default_blocksize(struct loop_device *lo,
- 	return SECTOR_SIZE;
- }
- 
--static int loop_reconfigure_limits(struct loop_device *lo, unsigned short bsize)
-+static int loop_reconfigure_limits(struct loop_device *lo, unsigned int bsize)
- {
- 	struct file *file = lo->lo_backing_file;
- 	struct inode *inode = file->f_mapping->host;
--- 
-2.46.0
+diff --git a/drivers/staging/rtl8712/usb_ops_linux.c b/drivers/staging/rtl8712/usb_ops_linux.c
+index 0a3451cdc8a1..4a34824830e3 100644
+--- a/drivers/staging/rtl8712/usb_ops_linux.c
++++ b/drivers/staging/rtl8712/usb_ops_linux.c
+@@ -221,7 +221,7 @@ static void r8712_usb_read_port_complete(struct urb *purb)
+ 			fallthrough;
+ 		case -EPROTO:
+ 			r8712_read_port(padapter, precvpriv->ff_hwaddr, 0,
+-				  (unsigned char *)precvbuf);
++					(unsigned char *)precvbuf);
+ 			break;
+ 		case -EINPROGRESS:
+ 			netdev_err(padapter->pnetdev, "ERROR: URB IS IN PROGRESS!\n");
+--
+2.25.1
 
 
