@@ -1,130 +1,162 @@
-Return-Path: <linux-kernel+bounces-303800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8CEA961536
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:12:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 775DB961538
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17D2F1C23230
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:12:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CEF91F241A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766601CF298;
-	Tue, 27 Aug 2024 17:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dhBvK4Sb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19BE11CF296;
+	Tue, 27 Aug 2024 17:13:58 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13DE54767;
-	Tue, 27 Aug 2024 17:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D431197A7C
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 17:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724778743; cv=none; b=NqxYOitobcVX2VwzdcYX206Bf7HPI7qxuRx90A916KY5kSS1tZmYqysqG29+dZZ/mxsjEIR1VqC0GHF3TA2wYqxWFTTNAx+RQ1yakbN2Pgk5EYRsAfXnNpSbN2iqrLyiavobYUo5yKZrAZp1LZK9CFzY+G3ILpHKuM6FX1Rtb8w=
+	t=1724778837; cv=none; b=evdXVVxTllFonJ1IblnmLI4b/rsNfjbNUsclN+68aYt1d57OzmiVKAKvQXiWXofYsILPHOT3g5wimD7Vt5GdBi/bixOgBHCcevACw7hU8YCNu8FVej/bAXCnQGzVTjWszpkhTXjlcxpFBDzRItWvD/XK0jm8llkRaxB7tTtJ0MQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724778743; c=relaxed/simple;
-	bh=089Q0VO8GXMKA5GhUHPQu2rPCYw84zh09Ml5OYxdz68=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JirzE7Cne3u2HgNvXCSYWfpDayXxa8KBbtbnEip9qmYQIU7BjqcGvxbnMI2TRqRobJS/VDivsp+D7katSy2z2QpYFSTn4c/IwHLCriiCZ1buPJkHxh0SxxHqMoS2JIwOn9uCUtAvqMuNWLRBV4ohrqkcwfQrKms9MDX1b8i7Dx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dhBvK4Sb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A55AC4DE11;
-	Tue, 27 Aug 2024 17:12:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724778743;
-	bh=089Q0VO8GXMKA5GhUHPQu2rPCYw84zh09Ml5OYxdz68=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dhBvK4Sb/o23wrZW7Mrt5iWQIiEn+jadXQTYu1Rk2n915iNQ4gZQbkEf5G1TaOk7k
-	 PXLr7c8PZZV1AozzrJTnD9lppGB1j7AurrJpQEYkX3yCKSlNwYVynRBYhX5tKCFZ8B
-	 OKLZQ69zPJNqNiNMEm4ga0zi4UZ3JAp2WdLtGwr6Gcalhao+7BrSIoffhar+yV5LIt
-	 jf29LRVcJnQKEliVHu1M6h0jmyrljxMxwXhkOJ4J33kQ23gByKi2hwFl37Nq+VBsrH
-	 4MVdD6TI4zcjK683eaexn+32y2m7Jh8M+8lkUmj6q3t+g3AStgAYMIDaUKirQLlNsQ
-	 wuBExyyLxjDJw==
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-27046394c9bso3374151fac.2;
-        Tue, 27 Aug 2024 10:12:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWUNBkAWitpOtD7ou1SbaVRGD6vTbYp1woPgGj5vmBkkmllO1RMdvvKSUVuS3veRF3v7eqqpVEE+Qa6@vger.kernel.org, AJvYcCWeHMTSNeUpXRmTDK3KG4KWsMWDsyp2YDxIWgY3JkpthH0t/7fztpRHSkJj3FlfGf1b8A2TCBOldnuiBGPw@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgK9lnoinvtm+b57MvMZNQTWDuIBvfU61NFriQIUWytYyzLaz6
-	dUd08OfNP1x+jSZJR0gPDNVQY7/RR819RPBdgLNP9UdjtFFf4xzUt0+gMDh3XsvceDLyfPR08Yn
-	MrTEJb8dOauTFsXAmvgIOoq2DJtc=
-X-Google-Smtp-Source: AGHT+IEi+8s9/sVzsiTVwscNVREvFCPTsaKYFoVZmsBGqFAgUmBmznctQE6RetdHOf6mO/SZ096Q9h8qJmnqUy0gcrs=
-X-Received: by 2002:a05:6870:210a:b0:270:6bae:5573 with SMTP id
- 586e51a60fabf-27759e7bb0fmr4006576fac.28.1724778742659; Tue, 27 Aug 2024
- 10:12:22 -0700 (PDT)
+	s=arc-20240116; t=1724778837; c=relaxed/simple;
+	bh=VTHNMJuIWalwgU2VfUrTvqwD0q/dzKXGq/joqrcZ2ZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Iw4IUdInuuCvioC2bl/iJUa5j3CemFlWI+kAV+/Vppqj/mrDuR66m//rAUVnRGd7uJdtPMzV2IEKqmJcfd8Arn/qPOgPp24KBwb453bUgNd62AAVG3NQFO4sUf2ElKSN94euE+ud6oye5jBrAFKEKdtXKat9V/iAlqg+ox2akRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1sizlJ-0006U8-Bs; Tue, 27 Aug 2024 19:13:45 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1sizlE-003TxI-T5; Tue, 27 Aug 2024 19:13:40 +0200
+Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1sizlE-0091ks-2W;
+	Tue, 27 Aug 2024 19:13:40 +0200
+Date: Tue, 27 Aug 2024 19:13:40 +0200
+From: Michael Grzeschik <mgr@pengutronix.de>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: andrzej.p@collabora.com, asmadeus@codewreck.org, corbet@lwn.net,
+	ericvh@kernel.org, gregkh@linuxfoundation.org,
+	kernel@pengutronix.de, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux_oss@crudebyte.com, lucho@ionkov.net, v9fs@lists.linux.dev
+Subject: Re: [PATCH v10 1/3] usb: gadget: function: move u_f.h to
+ include/linux/usb/func_utils.h
+Message-ID: <Zs4JRPR9CKWX_hWb@pengutronix.de>
+References: <20240116-ml-topic-u9p-v10-0-a85fdeac2c52@pengutronix.de>
+ <20240116-ml-topic-u9p-v10-1-a85fdeac2c52@pengutronix.de>
+ <1a5d3a68-56e5-4084-b86c-e60542cbbb98@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812005929.113499-1-sunilvl@ventanamicro.com>
- <ZrlgVUXC_dCW9ISM@sunil-laptop> <87mskzcnmf.ffs@tglx> <CAJZ5v0imJcU4cwDuZKEvGf93fZm4ea4s2Ocp3Cnfb3+nBQ0-Gg@mail.gmail.com>
- <Zsy3o_N8hvc6GfTp@sunil-laptop> <CAJZ5v0hxoT9tBjm3xRPU4fHx3MgHfYAx_Vyf4oe2toa3GWAN+Q@mail.gmail.com>
- <87jzg3c7bz.ffs@tglx> <CAJZ5v0iMpaxBevgPWmD2Ym_JG1ChkjzVFf22fV7Xw8-ssg9+Ag@mail.gmail.com>
- <Zs4HCZH3M9nRXUvu@sunil-laptop>
-In-Reply-To: <Zs4HCZH3M9nRXUvu@sunil-laptop>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 27 Aug 2024 19:12:11 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i-8N8VG-D4FRh0qFxt44Ax4TKY_CiFhZxLCzkhQrt0=Q@mail.gmail.com>
-Message-ID: <CAJZ5v0i-8N8VG-D4FRh0qFxt44Ax4TKY_CiFhZxLCzkhQrt0=Q@mail.gmail.com>
-Subject: Re: [PATCH v8 00/17] RISC-V: ACPI: Add external interrupt controller support
-To: Sunil V L <sunilvl@ventanamicro.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Len Brown <lenb@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Anup Patel <anup@brainfault.org>, 
-	Samuel Holland <samuel.holland@sifive.com>, Robert Moore <robert.moore@intel.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, Haibo Xu <haibo1.xu@intel.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Atish Kumar Patra <atishp@rivosinc.com>, 
-	Drew Fustini <dfustini@tenstorrent.com>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="0j5NiQ+wIVM5a7qk"
+Content-Disposition: inline
+In-Reply-To: <1a5d3a68-56e5-4084-b86c-e60542cbbb98@wanadoo.fr>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mgr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+
+
+--0j5NiQ+wIVM5a7qk
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 27, 2024 at 7:04=E2=80=AFPM Sunil V L <sunilvl@ventanamicro.com=
-> wrote:
+On Tue, Aug 27, 2024 at 06:46:39PM +0200, Christophe JAILLET wrote:
+>Le 26/08/2024 =E0 23:47, Michael Grzeschik a =E9crit=A0:
+>>We move the func_utils.h header to include/linux/usb to be
+>>able to compile function drivers outside of the
+>>drivers/usb/gadget/function directory.
+>>
+>>Signed-off-by: Michael Grzeschik <m.grzeschik-bIcnvbaLZ9MEGnE8C9+IrQ@publ=
+ic.gmane.org>
+>>
+>>---
+>>v9 -> v10:
+>>   - respect alphabetical order
+>>   - correctly changed filename in func_utils.h itself
+>>
 >
-> On Tue, Aug 27, 2024 at 06:20:24PM +0200, Rafael J. Wysocki wrote:
-> > On Mon, Aug 26, 2024 at 11:22=E2=80=AFPM Thomas Gleixner <tglx@linutron=
-ix.de> wrote:
-> > >
-> > > On Mon, Aug 26 2024 at 19:27, Rafael J. Wysocki wrote:
-> > > > On Mon, Aug 26, 2024 at 7:22=E2=80=AFPM Sunil V L <sunilvl@ventanam=
-icro.com> wrote:
-> > > >> There will be a conflict in PLIC irqchip driver due to a recent pa=
-tch [1].
-> > > >> This patch is not in latest RC5 release but in linux-next. I usual=
-ly base the
-> > > >> series on latest RC release. Should I rebase to linux-next in this=
- case
-> > > >> and send the next revision of the series resolving the conflict?
-> > > >
-> > > > No, please don't.
-> > > >
-> > > > That will be resolved at the merge time.
-> > >
-> > > Alternatively you can pull
-> > >
-> > >   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-urgen=
-t-2024-08-25
-> > >
-> > > which I'm about to send to Linus latest tomorrow morning. That contai=
-ns
-> > > the conflicting change.
-> >
-> > So I've applied the series on top of the above.
-> >
-> Thanks!
+>...
 >
-> > This included a full-swing rebase of the last patch, which I hope I've
-> > done correctly, but Sunil please see
-> >
-> Yeah, sorry about that. You have resolved most of the conflicts but few
-> are missing (which were not obvious anyway). Could you please take below
-> commit and squash?
+>>index e313c3b8dcb19..e7b69e3145c07 100644
+>>--- a/drivers/usb/gadget/u_f.h
+>>+++ b/include/linux/usb/func_utils.h
+>>@@ -1,6 +1,6 @@
+>>  // SPDX-License-Identifier: GPL-2.0
+>>  /*
+>>- * u_f.h
+>>+ * func_utils.h
+>>   *
+>>   * Utility definitions for USB functions
+>>   *
+>>
 >
-> https://github.com/vlsunil/linux/commit/c85f9d0dc31c0e77916ecdbb457748c05=
-cf4e75a
+>Maybe the include guard could be updated as-well?
+>
+>By include guard I mean:
+>
+>	#ifndef __U_F_H__
+>	#define __U_F_H__
+>	...
+>	#endif /* __U_F_H__ */
+>
+>s/__U_F_H__/_FUNC_UTILS_H_/ or something like that.
+>
+>CJ
+>
 
-Can you please send me a diff?
+Doh! I missed that but will spin another round!
+
+Thanks,
+Michael
+
+
+
+--=20
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--0j5NiQ+wIVM5a7qk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAmbOCUEACgkQC+njFXoe
+LGQiCxAAlPehYXviL/Tao53N3ObBQa9mJ0Oiw7j+6/nmmk1A1NbOz/92pmKZLxxp
+a+l8k4VKNf7mUW3FaszDXabIpq9844Qoh7SqrtBvVA+a6mcggDBuJbGQfVKnAB7n
+asBnF0InhhXRkhCmpELmrTOIaPt8Q4TTTZXWRRTEvPxQ2rh/5VbpErQ4OwT6Wy/o
+P2HH/9s467xfmcEEuy8uKLuAOXuTiTKCCPtwqxoO4x6zw2N4j2hgH79VzzZb95kv
++c+AaZrHQb+jQ9maDliIqyEHbhCBfgS0IKVLFH6scwooL1TLNIcMKRg7fZorOvBp
+s+imoVuNZV9fSXT5JdENSM5gDkqyTj9vJTleW7/JAEZ7G/mbRuIqe23Sj9LoA910
+iWXtmnvR2atikD3gUlJE9DwrFG9SK0aQp9ac7pcn72MWaKk0asAsNoXD59aYQRrw
+rZSrG1TWNt8RHnD6wpP0NfqxQDtimXqUSateAxQa9cMqN981C887dNDjrC5468WB
+rtqKo1r3YPT+qyhOxNahLp775nRCujzvmS+DIZa5knjkwP25KBMNanGMnRjjPnz5
+/wsBhYP7u+BRKtaAJDxXhmOOq3klBi25T2N5ET3GGDGFkhUkGxTzUAIIrrxlENmF
+pvFLTqOyhKFa5hjrq4RbOk+Hp5YgFiyC2Z/GsROkf7wjSDOah68=
+=vBTo
+-----END PGP SIGNATURE-----
+
+--0j5NiQ+wIVM5a7qk--
 
