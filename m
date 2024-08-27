@@ -1,110 +1,221 @@
-Return-Path: <linux-kernel+bounces-302881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DD0E96049E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:40:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A54960499
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7B1CB23845
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:39:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 797EC1F22F9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD75197A8F;
-	Tue, 27 Aug 2024 08:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951C3197A83;
+	Tue, 27 Aug 2024 08:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZhgDCZgs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mswjum4k";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5LqKuqOY";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mswjum4k";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5LqKuqOY"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247DB14A90;
-	Tue, 27 Aug 2024 08:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B7A14A90;
+	Tue, 27 Aug 2024 08:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724747990; cv=none; b=BKJdlmdl071W3oofZ822NJUhRJ+Lwmb0kAPOKVaB3kHIr4zevdhDWznZ2DIsGQHMRwTY3ZPnDKFfQJb5iKC7+eSZoJ0lNIr1y/JWAyO+qMs1r+pukBpkeN3kUgWNeaz4Truou1svcdkSTC2986tlYIYiLfEHqbQ5hQT14giwaF8=
+	t=1724747962; cv=none; b=W3RSwMaXAz4tPxF05++0q7jUhZxqfz+5EdncR1ln19LwIo+Y5MHWTrsjprOsSu76A+GDBnIaGEgNSW8MboYxB2ITJ0CmcFD9dnUXI0bNbfcHquUfItwr8GgPr3puSoyCX63YJccGgrcXkAsq3kU13HxbZEdGjuK3QTJOP2SyONg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724747990; c=relaxed/simple;
-	bh=rZ2wpB0Y+VWnhoCHWKOo5llJYLwaTLq/4hYvgehNZ2s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F8MPTn0xImFGZdzyccFRYUAgT+KjNEoD3Y4ccgtG8GpvhchhGCVjrWvS4dE5vTLkkwIO99Pp4+Nqhb7ZXfpQmNcWmByjpz/Z+lwENqGn9aab60QC5YUP5LrMRzTiibu/RE67wD/8pyF0i/Xv5fJY4vZbR8HI7yXD0+imR+VTq+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZhgDCZgs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5901BC8B7AA;
-	Tue, 27 Aug 2024 08:39:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724747989;
-	bh=rZ2wpB0Y+VWnhoCHWKOo5llJYLwaTLq/4hYvgehNZ2s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZhgDCZgs3GArgGQylJXU0u72MWPZYCKfCElYIRFJKfpZSkL2EdPV8Cmq5TuOEns37
-	 v0D701DXavUQ0RTJkI2zfZU34C0KeldFJzYBb+d2P7K2FjrlDgvhbORUGJqXjIKVzL
-	 MLaKpMDL29pEaGZwgAHHAY1e2XPrAF/QIG7rUCK/xU9NkIxqP2zX7rbWwwy2KzUo4e
-	 qwraGfKm51CRYpaPuHQyGWMSKFzJiZvhFslQSVCT7KuZj8jcCxvUDrCbTID/dP3W73
-	 j/GZ3MNJPh2xEWhErNl1KCyxX+5g7/bBLqLQGoVPA0NM6shSpXWT+IguWtloYWvv0k
-	 Ujk6ilIZtj/fg==
-Message-ID: <c443e90d-6907-4a02-bab4-c1943f021a8c@kernel.org>
-Date: Tue, 27 Aug 2024 10:39:44 +0200
+	s=arc-20240116; t=1724747962; c=relaxed/simple;
+	bh=si+DrXeOC6jl+FzJPYmVZJNqRw8SM0DSMfghOPNmA6s=;
+	h=Date:Message-ID:From:To:Cc:Subject:MIME-Version:Content-Type; b=GpZuh0zs3aBo0oNITsDb02Y6W9pYJihmhEzSK4TyYIrUtcCONzybZ7ucjimls+Ka8wWBtInkAH/lysL4LFwYyxhhDaeAoSdMrg66SINIERyXRkuntfXWKzfw4e8ykk2g5mC8OTJ9lHfgHTxEnxeLbA+wOpfvsT+XjMf2fsKeYfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mswjum4k; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5LqKuqOY; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mswjum4k; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5LqKuqOY; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 28EEB1FB51;
+	Tue, 27 Aug 2024 08:39:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724747959; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=wWSM30/jjOeBszKKgXJTIzBpDLn18GrnIpI3U+R15ik=;
+	b=mswjum4kj9QfxxHmH462tpJKVDx4S5HHZco5oiO30CpIZc6wFSX9Y6iuXwFTGwJW2jKKdJ
+	wtiRLMR2GIbSz4ianhK9eRMCI8vx4+UfVTdqBs2aeT68iDLLQoFrIni2YEolUDXZVPAzxB
+	QCgtujCUT4vQ1VKef4MEALsETXV4mCc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724747959;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=wWSM30/jjOeBszKKgXJTIzBpDLn18GrnIpI3U+R15ik=;
+	b=5LqKuqOYyRuncf6Y+7axCjdslUOZU3dqp/d3NHIr7wKILLhL4vjlU2frN2cGbYjdyeHR4G
+	U65HhlKBLhjQMYBA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724747959; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=wWSM30/jjOeBszKKgXJTIzBpDLn18GrnIpI3U+R15ik=;
+	b=mswjum4kj9QfxxHmH462tpJKVDx4S5HHZco5oiO30CpIZc6wFSX9Y6iuXwFTGwJW2jKKdJ
+	wtiRLMR2GIbSz4ianhK9eRMCI8vx4+UfVTdqBs2aeT68iDLLQoFrIni2YEolUDXZVPAzxB
+	QCgtujCUT4vQ1VKef4MEALsETXV4mCc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724747959;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=wWSM30/jjOeBszKKgXJTIzBpDLn18GrnIpI3U+R15ik=;
+	b=5LqKuqOYyRuncf6Y+7axCjdslUOZU3dqp/d3NHIr7wKILLhL4vjlU2frN2cGbYjdyeHR4G
+	U65HhlKBLhjQMYBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0221913724;
+	Tue, 27 Aug 2024 08:39:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id gCDxOraQzWaUFAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 27 Aug 2024 08:39:18 +0000
+Date: Tue, 27 Aug 2024 10:40:02 +0200
+Message-ID: <87zfoy1hr1.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] sound fixes for 6.11-rc6
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/sched: Fix UB pointer dereference
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Luben Tuikov <ltuikov89@gmail.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20240827074521.12828-2-pstanner@redhat.com>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20240827074521.12828-2-pstanner@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=ISO-8859-2
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.30
+X-Spam-Flag: NO
 
-On 8/27/24 9:45 AM, Philipp Stanner wrote:
-> In drm_sched_job_init(), commit 56e449603f0a ("drm/sched: Convert the
-> GPU scheduler to variable number of run-queues") implemented a call to
-> drm_err(), which uses the job's scheduler pointer as a parameter.
-> job->sched, however, is not yet valid as it gets set by
-> drm_sched_job_arm(), which is always called after drm_sched_job_init().
-> 
-> Since the scheduler code has no control over how the API-User has
-> allocated or set 'job', the pointer's dereference is undefined behavior.
-> 
-> Fix the UB by replacing drm_err() with pr_err().
-> 
-> Cc: <stable@vger.kernel.org>	# 6.7+
-> Fixes: 56e449603f0a ("drm/sched: Convert the GPU scheduler to variable number of run-queues")
-> Reported-by: Danilo Krummrich <dakr@redhat.com>
-> Closes: https://lore.kernel.org/lkml/20231108022716.15250-1-dakr@redhat.com/
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> ---
->   drivers/gpu/drm/scheduler/sched_main.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-> index 7e90c9f95611..356c30fa24a8 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -797,7 +797,7 @@ int drm_sched_job_init(struct drm_sched_job *job,
->   		 * or worse--a blank screen--leave a trail in the
->   		 * logs, so this can be debugged easier.
->   		 */
-> -		drm_err(job->sched, "%s: entity has no rq!\n", __func__);
-> +		pr_err("*ERROR* %s: entity has no rq!\n", __func__);
+Linus,
 
-I don't think the "*ERROR*" string is necessary, it's pr_err() already.
+please pull sound fixes for v6.11-rc6 from:
 
-Otherwise,
+  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.11-rc6
 
-Acked-by: Danilo Krummrich <dakr@kernel.org>
+The topmost commit is 28b329f431cef840fddd9a9b493bc3eff1aa06c0
 
->   		return -ENOENT;
->   	}
->   
+----------------------------------------------------------------
+
+sound fixes for 6.11-rc6
+
+It became a bit larger collection of fixes than wished at this time,
+but all changes are small and mostly device-specific fixes that
+should be fairly safe to apply.  Majority of fixes are about ASoC
+for AMD SOF, Cirrus codecs, lpass, etc, in addition to the usual
+HD-audio quirks / fixes.
+
+----------------------------------------------------------------
+
+Albert Jakie³a (1):
+      ASoC: SOF: mediatek: Add missing board compatible
+
+Dmitry Baryshkov (2):
+      ASoC: codecs: lpass-macro: fix version strings returned for 1.x codecs
+      ASoC: codecs: lpass-va-macro: warn on unknown version
+
+Hendrik Borghorst (1):
+      ALSA: hda/realtek: support HP Pavilion Aero 13-bg0xxx Mute LED
+
+Hongbo Li (2):
+      ASoC: allow module autoloading for table db1200_pids
+      ASoC: allow module autoloading for table board_ids
+
+John Sweeney (1):
+      ALSA: hda/realtek: Enable mute/micmute LEDs on HP Laptop 14-ey0xxx
+
+Kailang Yang (2):
+      ALSA: hda/realtek - Fixed ALC256 headphone no sound
+      ALSA: hda/realtek - FIxed ALC285 headphone no sound
+
+Krzysztof Kozlowski (2):
+      ASoC: MAINTAINERS: Drop Banajit Goswami from Qualcomm sound drivers
+      ASoC: codecs: wcd937x: Fix missing de-assert of reset GPIO
+
+Richard Fitzgerald (3):
+      ASoC: cs-amp-lib-test: Force test calibration blob entries to be valid
+      ASoC: cs-amp-lib: Ignore empty UEFI calibration entries
+      ALSA: hda: hda_component: Fix mutex crash if nothing ever binds
+
+Simon Trimmer (1):
+      ALSA: hda: cs35l56: Don't use the device index as a calibration index
+
+Takashi Iwai (1):
+      ALSA: seq: Skip event type filtering for UMP events
+
+Vijendar Mukunda (3):
+      ASoC: SOF: amd: move iram-dram fence register programming sequence
+      ASoC: SOF: amd: Fix for incorrect acp error register offsets
+      ASoC: SOF: amd: Fix for acp init sequence
+
+YOUNGJIN JOO (1):
+      ALSA: hda/realtek: Fix the speaker output on Samsung Galaxy Book3 Ultra
+
+YR Yang (1):
+      ASoC: mediatek: mt8188: Mark AFE_DAC_CON0 register as volatile
+
+Yuntao Liu (1):
+      ASoC: amd: acp: fix module autoloading
+
+---
+ MAINTAINERS                                |  1 -
+ sound/core/seq/seq_clientmgr.c             |  3 ++
+ sound/pci/hda/cs35l56_hda.c                |  2 +-
+ sound/pci/hda/hda_component.c              |  5 +-
+ sound/pci/hda/patch_realtek.c              | 79 ++++++++++++++++++++----------
+ sound/soc/amd/acp/acp-legacy-mach.c        |  2 +
+ sound/soc/amd/acp/acp-sof-mach.c           |  2 +
+ sound/soc/au1x/db1200.c                    |  1 +
+ sound/soc/codecs/cs-amp-lib-test.c         |  9 ++++
+ sound/soc/codecs/cs-amp-lib.c              |  7 ++-
+ sound/soc/codecs/lpass-macro-common.h      |  6 +++
+ sound/soc/codecs/lpass-va-macro.c          |  4 ++
+ sound/soc/codecs/wcd937x.c                 |  5 +-
+ sound/soc/mediatek/mt8188/mt8188-afe-pcm.c |  1 +
+ sound/soc/sof/amd/acp-dsp-offset.h         |  6 ++-
+ sound/soc/sof/amd/acp.c                    | 52 +++++++++++++-------
+ sound/soc/sof/amd/acp.h                    |  9 +++-
+ sound/soc/sof/amd/pci-acp63.c              |  2 +
+ sound/soc/sof/amd/pci-rmb.c                |  2 +
+ sound/soc/sof/amd/pci-rn.c                 |  2 +
+ sound/soc/sof/mediatek/mt8195/mt8195.c     |  3 ++
+ 21 files changed, 149 insertions(+), 54 deletions(-)
+
 
