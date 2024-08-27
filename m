@@ -1,166 +1,131 @@
-Return-Path: <linux-kernel+bounces-302538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB32695FFED
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:43:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87DF595FFF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:48:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF6141C21FB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:43:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB4691C22188
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E8C26AFA;
-	Tue, 27 Aug 2024 03:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZS1AqR07"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900A628689;
+	Tue, 27 Aug 2024 03:47:55 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8619017D2;
-	Tue, 27 Aug 2024 03:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDB7175BF;
+	Tue, 27 Aug 2024 03:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724730212; cv=none; b=gdJ0tOOcbl60Pqc4CI05xqte8hd2ZZlsG4AASjh5PSAIENmRXvuiF0tzp05a37Jxu2+KC003QAu4gP7rhhHraqiGXfucag38NvJMxn2IdIjrHtf7cHfFXA6axWSUxymyIwqDrWrsdJfaSskR78XsY9T90Rg2p+0/Et+IaTPcp8s=
+	t=1724730475; cv=none; b=HFMgG03+CE5Iz14UaSb2+EjbdeIvviucMWDIoZQdHy2YjkHyZiT7YJdWM2jNqdkCUxWREJuok8KCocnQuxVNpptbZcvR0uySWNDXvsvLIAh74F7Wf0vHStgoxar1JK7WAK4ZFgcS2U1Zlj/AG2RiEUSbMdvf2Qkfnu9rFor48h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724730212; c=relaxed/simple;
-	bh=NMaZMu5kLVVRx3syKNFovcWtu0GpqpBq+L+KabGUL3Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JZSRYV/h0Jf1D7xsXAjawnTo2vtZTXOX/ZCC1yhXylO+upKYdTTHr0ExqZW8V4BgBVBtAeySnflG1fWi4zOgAPshrmKagriHLFDAvId7kGqD8l4r1ku14oGNEOfsqZ7z3lnXpzlXHf3dRIXFZxh3GNFqfxw8u1FIy0i6wJ7fcjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZS1AqR07; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2d3d58d6e08so3884067a91.3;
-        Mon, 26 Aug 2024 20:43:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724730211; x=1725335011; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hTaNDoHudMv3bzmqeleURjD4/FcotZDelM+rzdNVn6Q=;
-        b=ZS1AqR07lNeXYboiV2xLza9cyFpAWFXfPY10eDspUXMt68pp92aw68ALgpl5MkbjSl
-         hyuPqbUO0B/ulx8bkoQzMcpNnx3iuMLmOP1he+RE1s504TOMU1O8awcAMOMT03AbYF0u
-         gA32gsFSPapvOtZDK//svHla9OxNjlsPWDgoCU+yxkJWwzou5mwPS8nVyB5L+HcgiGAj
-         aM34hnbaqJaF0e01HfEkBqrGeXxY7Ptxm/OUgy0asWGSzxADrvuLGo1LFu6RcENdVhcX
-         v2bk8iufuJLdCZbBVslB0K/8rPOUb2ElE1P0FrejNFHbTr6PhA6sUl/RnegZ3KJUX/xc
-         DnmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724730211; x=1725335011;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hTaNDoHudMv3bzmqeleURjD4/FcotZDelM+rzdNVn6Q=;
-        b=Wbj3zbNP8rBenGUsWZQuYrxmtxpDaIlracwitOMkfHB/KX7F+/iS0ThPueuao8Wq6V
-         lcxMPMl/2q2wOZmy4YhCtWio8EPpz3ronCNI+EK70XqCofOFhK2Hq69wJBLozaMO8Q5f
-         d8XQCYma6KXCshfBonqi+Vu9s0Wy3n/VNAr7Un+jy/AbQ5iK1xlW/4o2Smtz2cSkhetm
-         U8XtRKdfhh5WtBHRIfxAekW6vYvv7MrMbuoorEhsl0dSSFTAEHMJC0UPT0kaQQWoglne
-         8mzDkAZru0QBbqFIRO+1WgnXcXH+SydMMDypq4kKaLO1e3E9Z3sntWI+7OZDNRk9JWb7
-         A1ng==
-X-Forwarded-Encrypted: i=1; AJvYcCW3JqAxy8UzZC+GWBOyy4WpWeK65ZHV95+yMsH/TyrUowldKrXzpXB4wfYn9AtHvQFhVLMrO+LR@vger.kernel.org, AJvYcCX22p3Vi+aIZby17uSiytxKGlJVXhTk26xIQdKauCDI/T9Ao82D9bQgJBZRfpLCusmt6W2TMHU1TCQGIqc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOaeB/W9sAI1kOpQRNnfRoNe7cyC/DkHxbTu/GEJbBO0SEYV6B
-	rz40HLhEqho7GQtIZXZ6fqBq8VtxoRZH286Z93zDbwY/dgz/TrVH
-X-Google-Smtp-Source: AGHT+IEvnGKTv4Qjyeqw8RdfF5VIUg+jU6364AYs3SYNrNBJTvXwVoIbrOFLiA31uluktVcD83vvjg==
-X-Received: by 2002:a17:90a:dd86:b0:2c9:84f9:a321 with SMTP id 98e67ed59e1d1-2d646c26b9fmr12604597a91.23.1724730210560;
-        Mon, 26 Aug 2024 20:43:30 -0700 (PDT)
-Received: from localhost ([123.113.110.156])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d613af1884sm10676797a91.43.2024.08.26.20.43.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 20:43:29 -0700 (PDT)
-From: Julian Sun <sunjunchao2870@gmail.com>
-To: syzbot+ebea2790904673d7c618@syzkaller.appspotmail.com
-Cc: chao@kernel.org,
-	jaegeuk@kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	Julian Sun <sunjunchao2870@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] f2fs: Do not check the FI_DIRTY_INODE flag when umounting a ro fs.
-Date: Tue, 27 Aug 2024 11:43:24 +0800
-Message-Id: <20240827034324.339129-1-sunjunchao2870@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <000000000000b0231406204772a1@google.com>
-References: <000000000000b0231406204772a1@google.com>
+	s=arc-20240116; t=1724730475; c=relaxed/simple;
+	bh=lPtDJ1wNWNDenZoG4SuiqmoxqD7FETC475odRZucW5U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tFY3dfLFjssGBGq1gc31zTq8+/dhEJiiyAnsJgabAuZ7hEx0wUkzljvAJM8AzuFCu6kWlM5JMYsPPwXPk0anozCJjExIe9ViIURwFtaZwzftklvL4H9Ni6lKSIAkwCUQRs6cs6ZjN8CChdVQ+d5mm6gLQd4sywg0eQM7RkzNC5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WtD5K1TnDz4f3jM8;
+	Tue, 27 Aug 2024 11:47:33 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id B12321A14E7;
+	Tue, 27 Aug 2024 11:47:47 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP4 (Coremail) with SMTP id gCh0CgB37IJfTM1m5shTCw--.52889S3;
+	Tue, 27 Aug 2024 11:47:47 +0800 (CST)
+Message-ID: <5b7455f8-4637-4ec0-a016-233827131fb2@huaweicloud.com>
+Date: Tue, 27 Aug 2024 11:47:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cachefiles: fix dentry leak in cachefiles_open_file()
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, David Howells <dhowells@redhat.com>,
+ Jeff Layton <jlayton@kernel.org>, stable@kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, Christian Brauner <brauner@kernel.org>,
+ Gao Xiang <hsiangkao@linux.alibaba.com>, Hou Tao <houtao1@huawei.com>,
+ Jingbo Xu <jefflexu@linux.alibaba.com>, Yang Erkun <yangerkun@huawei.com>,
+ Yu Kuai <yukuai3@huawei.com>, Zizhi Wo <wozizhi@huawei.com>,
+ Baokun Li <libaokun1@huawei.com>
+References: <20240826040018.2990763-1-libaokun@huaweicloud.com>
+ <467d9b9b-34b4-4a94-95c1-1d41f0a91e05@web.de>
+Content-Language: en-US
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <467d9b9b-34b4-4a94-95c1-1d41f0a91e05@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgB37IJfTM1m5shTCw--.52889S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7GryUWF4kGw4rZFWUKFyDWrg_yoW8Jr4UpF
+	Way3WUKryfWr4UKr4kAa1Fvw1F9397WFs0q3W3Wr9rAan0qryYvr12grn0qF98AryDJr42
+	qa1j9a43X3yUJFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	aFAJUUUUU==
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAQAIBWbMPH9KgwAAss
 
-Hi, all.
+On 2024/8/26 21:55, Markus Elfring wrote:
+> …
+>> Add the missing dput() to cachefiles_open_file() for a quick fix.
+> I suggest to use a goto chain accordingly.
+>
+>
+> …
 
-Recently syzbot reported a bug as following:
+Hi Markus,
 
-kernel BUG at fs/f2fs/inode.c:896!
-CPU: 1 UID: 0 PID: 5217 Comm: syz-executor605 Not tainted 6.11.0-rc4-syzkaller-00033-g872cf28b8df9 #0
-RIP: 0010:f2fs_evict_inode+0x1598/0x15c0 fs/f2fs/inode.c:896
-Call Trace:
- <TASK>
- evict+0x532/0x950 fs/inode.c:704
- dispose_list fs/inode.c:747 [inline]
- evict_inodes+0x5f9/0x690 fs/inode.c:797
- generic_shutdown_super+0x9d/0x2d0 fs/super.c:627
- kill_block_super+0x44/0x90 fs/super.c:1696
- kill_f2fs_super+0x344/0x690 fs/f2fs/super.c:4898
- deactivate_locked_super+0xc4/0x130 fs/super.c:473
- cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1373
- task_work_run+0x24f/0x310 kernel/task_work.c:228
- ptrace_notify+0x2d2/0x380 kernel/signal.c:2402
- ptrace_report_syscall include/linux/ptrace.h:415 [inline]
- ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
- syscall_exit_work+0xc6/0x190 kernel/entry/common.c:173
- syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
- syscall_exit_to_user_mode+0x279/0x370 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-The syzbot constructed the following scenario: concurrently
-creating directories and setting the file system to read-only.
-In this case, while f2fs was making dir, the filesystem switched to
-readonly, and when it tried to clear the dirty flag, it triggered this
-code path: f2fs_mkdir()-> f2fs_sync_fs()->f2fs_write_checkpoint()
-->f2fs_readonly(). This resulted FI_DIRTY_INODE flag not being cleared,
-which eventually led to a bug being triggered during the FI_DIRTY_INODE
-check in f2fs_evict_inode().
+Thanks for the suggestion, but I think the current solution is simple
+enough that we don't need to add a label to it.
 
-In this case, we cannot do anything further, so if filesystem is readonly,
-do not trigger the BUG. Instead, clean up resources to the best of our
-ability to prevent triggering subsequent resource leak checks.
+Actually, at first I was going to release the reference count of the
+dentry uniformly in cachefiles_look_up_object() and delete all dput()
+in cachefiles_open_file(), but this may conflict when backporting
+the code to stable. So just keep it simple to facilitate backporting
+to stable.
 
-If there is anything important I'm missing, please let me know, thanks.
+Thanks,
+Baokun
+>> +++ b/fs/cachefiles/namei.c
+>> @@ -554,6 +554,7 @@ static bool cachefiles_open_file(struct cachefiles_object *object,
+>>   	if (!cachefiles_mark_inode_in_use(object, d_inode(dentry))) {
+>>   		pr_notice("cachefiles: Inode already in use: %pd (B=%lx)\n",
+>>   			  dentry, d_inode(dentry)->i_ino);
+>> +		dput(dentry);
+>>   		return false;
+> Please replace two statements by the statement “goto put_dentry;”.
+>
+>
+> …
+>> error:
+>> 	cachefiles_do_unmark_inode_in_use(object, d_inode(dentry));
+> +put_dentry:
+>> 	dput(dentry);
+>> 	return false;
+>> }
+> Regards,
+> Markus
 
-Reported-by: syzbot+ebea2790904673d7c618@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=ebea2790904673d7c618
-Fixes: ca7d802a7d8e ("f2fs: detect dirty inode in evict_inode")
-CC: stable@vger.kernel.org
-Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
----
- fs/f2fs/inode.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index aef57172014f..52d273383ec2 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -892,8 +892,12 @@ void f2fs_evict_inode(struct inode *inode)
- 			atomic_read(&fi->i_compr_blocks));
- 
- 	if (likely(!f2fs_cp_error(sbi) &&
--				!is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
--		f2fs_bug_on(sbi, is_inode_flag_set(inode, FI_DIRTY_INODE));
-+				!is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
-+		if (!f2fs_readonly(sbi->sb))
-+			f2fs_bug_on(sbi, is_inode_flag_set(inode, FI_DIRTY_INODE));
-+		else
-+			f2fs_inode_synced(inode);
-+	}
- 	else
- 		f2fs_inode_synced(inode);
- 
 -- 
-2.39.2
+With Best Regards,
+Baokun Li
 
 
