@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-302831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C931D9603F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:06:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C6B29603F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:07:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A2C628297B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:06:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45817283BAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4306318D62D;
-	Tue, 27 Aug 2024 08:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A396C197A7F;
+	Tue, 27 Aug 2024 08:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DRMC/HNX"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GY4bT0AX"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D21E10A3E;
-	Tue, 27 Aug 2024 08:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C97B194C62;
+	Tue, 27 Aug 2024 08:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724745985; cv=none; b=ntY4AkjZA/dXR83MZuGVXrVXQQfGWs6Vy9UZ7RvbK8i+CjIRH9BY1YtH5BVbl43OPiebqmmukQYjxr0mew3CYv5NHabhZLrB4tbNs37aoaxLeoPrLmo1CY7kqgOqB5sys+E/XmkT6N2Pntq1KHfAlMV04vJ9s9lwEU2QVJNu4h4=
+	t=1724745990; cv=none; b=tOR2g28cQoUdLz5ug6BQDiO98wkC1LDSKNqvLvcyx060161++G9pI1GJ3mGeWVOtJvioZOA2jSw72uJO9SZ8lwPCv1Y1y/ilJIvyEp4YyUWyI6+RWhCGn1wX4B469XdOlasFEsNhdEyo93NNosKaQTWU5R6Mau3k0D9dH8g1Cbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724745985; c=relaxed/simple;
-	bh=AcLkc26b9PYQn4/uwF23aTQej+Cge+p2ru+EExJCk9U=;
+	s=arc-20240116; t=1724745990; c=relaxed/simple;
+	bh=bNrUlql358duxz0xZ6kkPTqgaytxYizLfD7UW4xAL5E=;
 	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bFZNk/B1zoEB+68Ie7AjeyDdDgHoIMvtQz6I5UvTV0rWik5iAeewYOzOcNuJriqZCK0Da1foFPm6htDSPflBvHGneSQ+/lzDx85vwbyGhZMgQXMZIPWJdEigOdYu98SJHmpB9ncWqpqfXlMj0yHKHMXki0TsH7MW0Ip+pyi8PNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=DRMC/HNX; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47R86Gpa029843;
-	Tue, 27 Aug 2024 03:06:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724745976;
-	bh=7HdlXB9b99rm5OP5zMcmXcUANpRivvoEO64WttLFBuk=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=DRMC/HNXKQkBoIGM+V31jRAdSh3Di10xO1Or/Bz+Xgn/sm9kTiJHSP/PfLEWhu4s/
-	 Ao59ykHm2mi2Yn4Y8W7Hmsx0IO/dmBlXrqNerfT1P8dAIRr7+E2J3JE+RRCxj+5RWQ
-	 8CG9vQg6p88h7zoAy3lgiSRqa6Ha8692jrOqWzsE=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47R86G7i022204
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 27 Aug 2024 03:06:16 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 27
- Aug 2024 03:06:15 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 27 Aug 2024 03:06:15 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47R86E22126086;
-	Tue, 27 Aug 2024 03:06:15 -0500
-Date: Tue, 27 Aug 2024 13:36:13 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Manorit Chawdhry <m-chawdhry@ti.com>
-CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Udit Kumar <u-kumar1@ti.com>,
-        Neha Malcom
- Francis <n-francis@ti.com>,
-        Aniket Limaye <a-limaye@ti.com>, Beleswar Padhi
-	<b-padhi@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: Re: [PATCH v4 1/5] arm64: dts: ti: Refactor J784s4 SoC files to a
- common file
-Message-ID: <78410d3c-0426-42e3-a0fa-480f845542da@ti.com>
-References: <20240819-b4-upstream-j742s2-v4-0-f2284f6f771d@ti.com>
- <20240819-b4-upstream-j742s2-v4-1-f2284f6f771d@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JeZoWrrjdN+4OcJwaPlIKZc6+q6X+KKcQ8wDWnXsrzPxrUxCgC+d0GDYob1MVfkOpkAFfCUhws/QDQanRqZ4ahint5J7w5oaF+EvVmdUGoFR19uykSHVoHun6gb+Rf9AWmECG8YDyHgtSFAR9Uy/XguGfAZxjC5QQylI5sImsrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GY4bT0AX; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47R6umTS020197;
+	Tue, 27 Aug 2024 08:06:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=rMzWwOxLAvaYBL8C14V2DUa7
+	Royn8qe6WziQ4i9Py9g=; b=GY4bT0AXvdPoYZYuSXwqcW8dJ9//Jm4BgcfHXDfM
+	hPeBtWURey+hrxUjq2o8htmOJF2il8rMDoTvx1WuX7Ah3nWGn0XekpyXLfl9Nu9Z
+	hk2Ze9JY7tFH4hWWpWIVN1b3hzQ7fNnpHdaS//EDliMttJ3h4nZNHvhi/lgBWh+j
+	ekkjs0sb0QD8agaMulIBIf6stYk6BjlNk0Jc/bR+BAPu/dL5VZ63ZUPLYqPUnyzE
+	tMgwzLloRVjy30K19RNWeDGNDNfHEXqpkxp6//Sql36YsyUhnNdgoB8+9KKiD6Wk
+	7Cgz1LWqi1j2xunnjAOJZkW6vAJucnrWMinOTzOyTlU0mg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4199yt05ht-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 Aug 2024 08:06:25 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47R86OHH021760
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 Aug 2024 08:06:24 GMT
+Received: from jiegan-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 27 Aug 2024 01:06:20 -0700
+Date: Tue, 27 Aug 2024 16:06:16 +0800
+From: JieGan <quic_jiegan@quicinc.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Tingwei Zhang <quic_tingweiz@quicinc.com>,
+        Jinlong Mao <quic_jinlmao@quicinc.com>,
+        Tao Zhang <quic_taozha@quicinc.com>,
+        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+        Song Chai
+	<quic_songchai@quicinc.com>,
+        Yushan Li <quic_yushli@quicinc.com>
+Subject: Re: [PATCH v1 0/1] arm64: dts: qcom: Add coresight components for
+ x1e80100
+Message-ID: <Zs2I+M4wkjVlKuq9@jiegan-gv.ap.qualcomm.com>
+References: <20240827072724.2585859-1-quic_jiegan@quicinc.com>
+ <833eafc7-46f0-49d1-afe1-ad9d20ca16fd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,130 +84,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240819-b4-upstream-j742s2-v4-1-f2284f6f771d@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <833eafc7-46f0-49d1-afe1-ad9d20ca16fd@kernel.org>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: VvDaQR_qxkiI1NW4xDmtASEtCFuJxqbJ
+X-Proofpoint-ORIG-GUID: VvDaQR_qxkiI1NW4xDmtASEtCFuJxqbJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-27_05,2024-08-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=417
+ suspectscore=0 malwarescore=0 spamscore=0 impostorscore=0 clxscore=1015
+ bulkscore=0 priorityscore=1501 mlxscore=0 adultscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408270061
 
-On Mon, Aug 19, 2024 at 03:09:35PM +0530, Manorit Chawdhry wrote:
-> Refactor J784s4 SoC files to a common file which uses the
-> superset device to allow reuse in j742s2-evm which uses the subset part.
+On Tue, Aug 27, 2024 at 10:02:44AM +0200, Krzysztof Kozlowski wrote:
+> On 27/08/2024 09:27, Jie Gan wrote:
+> > Add coresight components for x1e80100. This change includes CTI,
+> > dummy sink, dynamic Funnel, Replicator, STM, TPDM, TPDA and TMC ETF.
+> > 
+> > Change in V1:
+> > Check the dtb with dtbs_check W=1, and fix the warnings for
+> > the change.
 > 
-> Reviewed-by: Beleswar Padhi <b-padhi@ti.com>
-> Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
-> ---
->  .../arm64/boot/dts/ti/k3-j784s4-j742s2-common.dtsi |  149 +
->  .../boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi  | 2667 ++++++++++++++++++
->  ...tsi => k3-j784s4-j742s2-mcu-wakeup-common.dtsi} |    2 +-
->  ...l.dtsi => k3-j784s4-j742s2-thermal-common.dtsi} |    0
->  arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi         | 2847 +-------------------
->  arch/arm64/boot/dts/ti/k3-j784s4.dtsi              |  135 +-
->  6 files changed, 2913 insertions(+), 2887 deletions(-)
+> So this is v2, not v1.
 > 
-> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-common.dtsi
-> new file mode 100644
-> index 000000000000..958054ab1018
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-common.dtsi
-> @@ -0,0 +1,149 @@
-> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
-> +/*
-> + * Device Tree Source for J784S4 SoC Family
+Appologize for the mistake of the version number.
+Do I need to re-send the patch with V2?
 
-Since the file is already named "...-j784s4-j742s2-...", wouldn't it be
-better to add J742S2 and the link to its TRM here itself rather than
-adding it in patch 4/5?
-
-> + *
-> + * TRM (SPRUJ43 JULY 2022): https://www.ti.com/lit/zip/spruj52
-> + *
-> + * Copyright (C) 2022-2024 Texas Instruments Incorporated - https://www.ti.com/
-
-Since this is a new file and not a moved file, should it simply be "2024"?
-
-> + *
-> + */
-
-[...]
-
-> +
-> +
-> +	cbass_main: bus@100000 {
-> +		bootph-all;
-> +		compatible = "simple-bus";
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges = <0x00 0x00100000 0x00 0x00100000 0x00 0x00020000>, /* ctrl mmr */
-> +			 <0x00 0x00600000 0x00 0x00600000 0x00 0x00031100>, /* GPIO */
-> +			 <0x00 0x00700000 0x00 0x00700000 0x00 0x00001000>, /* ESM */
-> +			 <0x00 0x01000000 0x00 0x01000000 0x00 0x0d000000>, /* Most peripherals */
-
-Since SERDES2 lies in the above range, to be techincally correct, the
-above range should be split up to move SERDES2 out of the common file.
-
-> +			 <0x00 0x04210000 0x00 0x04210000 0x00 0x00010000>, /* VPU0 */
-> +			 <0x00 0x04220000 0x00 0x04220000 0x00 0x00010000>, /* VPU1 */
-> +			 <0x00 0x0d000000 0x00 0x0d000000 0x00 0x00800000>, /* PCIe0 Core*/
-> +			 <0x00 0x0d800000 0x00 0x0d800000 0x00 0x00800000>, /* PCIe1 Core*/
-> +			 <0x00 0x0e000000 0x00 0x0e000000 0x00 0x00800000>, /* PCIe2 Core*/
-> +			 <0x00 0x0e800000 0x00 0x0e800000 0x00 0x00800000>, /* PCIe3 Core*/
-
-PCIe2 and PCIe3 should be dropped from the common file.
-
-> +			 <0x00 0x10000000 0x00 0x10000000 0x00 0x08000000>, /* PCIe0 DAT0 */
-> +			 <0x00 0x18000000 0x00 0x18000000 0x00 0x08000000>, /* PCIe1 DAT0 */
-> +			 <0x00 0x64800000 0x00 0x64800000 0x00 0x0070c000>, /* C71_1 */
-> +			 <0x00 0x65800000 0x00 0x65800000 0x00 0x0070c000>, /* C71_2 */
-> +			 <0x00 0x66800000 0x00 0x66800000 0x00 0x0070c000>, /* C71_3 */
-> +			 <0x00 0x67800000 0x00 0x67800000 0x00 0x0070c000>, /* C71_4 */
-> +			 <0x00 0x6f000000 0x00 0x6f000000 0x00 0x00310000>, /* A72 PERIPHBASE */
-> +			 <0x00 0x70000000 0x00 0x70000000 0x00 0x00400000>, /* MSMC RAM */
-> +			 <0x00 0x30000000 0x00 0x30000000 0x00 0x0c400000>, /* MAIN NAVSS */
-> +			 <0x40 0x00000000 0x40 0x00000000 0x01 0x00000000>, /* PCIe0 DAT1 */
-> +			 <0x41 0x00000000 0x41 0x00000000 0x01 0x00000000>, /* PCIe1 DAT1 */
-> +			 <0x42 0x00000000 0x42 0x00000000 0x01 0x00000000>, /* PCIe2 DAT1 */
-> +			 <0x43 0x00000000 0x43 0x00000000 0x01 0x00000000>, /* PCIe3 DAT1 */
-> +			 <0x44 0x00000000 0x44 0x00000000 0x00 0x08000000>, /* PCIe2 DAT0 */
-> +			 <0x44 0x10000000 0x44 0x10000000 0x00 0x08000000>, /* PCIe3 DAT0 */
-
-PCIe2 and PCIe3 should be dropped from the common file.
-
-> +			 <0x4e 0x20000000 0x4e 0x20000000 0x00 0x00080000>, /* GPU */
-> +
-> +			 /* MCUSS_WKUP Range */
-> +			 <0x00 0x28380000 0x00 0x28380000 0x00 0x03880000>,
-> +			 <0x00 0x40200000 0x00 0x40200000 0x00 0x00998400>,
-> +			 <0x00 0x40f00000 0x00 0x40f00000 0x00 0x00020000>,
-> +			 <0x00 0x41000000 0x00 0x41000000 0x00 0x00020000>,
-
-[...]
-
-> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-> new file mode 100644
-> index 000000000000..04d77c42442d
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-> @@ -0,0 +1,2667 @@
-> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
-> +/*
-> + * Device Tree Source for J784S4 and J742S2 SoC Family Main Domain peripherals
-
-Here, you have mentioned J742S2 as well, so to keep it consistent,
-J742S2 should be mentioned in the "k3-j784s4-j742s2-common.dtsi" file as
-well as I have indicated above.
-
-> + *
-> + * Copyright (C) 2022-2024 Texas Instruments Incorporated - https://www.ti.com/
-
-Since this is a new file and not a renamed file, shouldn't it be "2024"?
-
-> + */
-> +
-> +#include <dt-bindings/mux/mux.h>
-> +#include <dt-bindings/phy/phy.h>
-> +#include <dt-bindings/phy/phy-ti.h>
-> +
-
-[...]
-
-Regards,
-Siddharth.
+Thanks,
+Jie
 
