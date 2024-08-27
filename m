@@ -1,156 +1,388 @@
-Return-Path: <linux-kernel+bounces-303319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9583C960AAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:40:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6268D960AAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:40:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31314B2227B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:40:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA008B23B4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4E51BC08F;
-	Tue, 27 Aug 2024 12:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE6E1BC9E3;
+	Tue, 27 Aug 2024 12:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b6oPnuuy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Q4nVfgRA"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91711BA862;
-	Tue, 27 Aug 2024 12:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7824C1BAED5
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724762414; cv=none; b=lv9SAuyNwZwOQaLnCpamUL9qh59uUjip+9zjMpfdBuK1C+kArPGeXSkezuvtKWRp8NtdYkgIVT6VlbFKS6arlVr9TbtiKmhDWUbdIBrORCPnYPhh1jTwsrHJJifvbduAxglSzXjzbbugvst2ZrUAWx9mH+9GGoDpIVd3a5jocok=
+	t=1724762436; cv=none; b=L6+RYcLFfQ9d85jpUHnczh5Xj63S5ywOq1swKYiPcIqBkwUTaCJjgF1TvQcYc7a3kZk/7LJdleup6WZXZ7939BALdhTBOBjNHfVHi5jcEE4H0Q4J+YTso+5gdwkQo/fNabHM1I23Uv0cbhjBF+BHSC5pKuyRNNlIHel2+tTe7rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724762414; c=relaxed/simple;
-	bh=K4K8o40fJGQu6cafxSC7zWCIvY6jYj3G/g/Nol8nbuQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Y/4bDDitCblRHjHWKrBwdQ3i6BYO6AR95ilKl6HSwOPOkuNCzeDcNxKQU2sHaaq4mvZ51nRb9IhfOLaXnsLa55oJtKd1BaHiaz5+VCRmhR4VfyMSUYP8+WASz45ageqJCnf5ahPTWEWjUF+GU9RgcheM19AgVh0DM3yy8jZljPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b6oPnuuy; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724762413; x=1756298413;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=K4K8o40fJGQu6cafxSC7zWCIvY6jYj3G/g/Nol8nbuQ=;
-  b=b6oPnuuySHXu9JBr1PLlQgAYXRhP1k1bHtV0CM8BA5ichQAkNRdPbRZU
-   PqTc78XOxb4zWX6XHrc+3IORH9sWKT783nvi29w/XhfK/2t28IjrHXvr3
-   k/7k7awCJE0BdPtu83QxY0l2+whn4f2fFPzcNgS08a3sG7coO4Qeh1osy
-   ThTbEZCQVIdhe2NRdXtguCugIXBwu7NAqBqaNsiFMqAlAA3lTqy/N/wF1
-   HYb1YPVrziaZzgRb599epwO5xQaZQEAvWc1LSxc2CMaNwxqjo4rNQ+dH1
-   BK3pqOfbg2iCcPgW2y/X93J3RYUz+Onm6MkDy+u508dmawUNWxGWzxh4T
-   A==;
-X-CSE-ConnectionGUID: 7yTPWtYzQju1bDdH7i35ZA==
-X-CSE-MsgGUID: p+Fsarn8R6evEzvUftnwSQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23115468"
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="23115468"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 05:40:12 -0700
-X-CSE-ConnectionGUID: 3aJrmhWoQyG4VAUeNQd4AA==
-X-CSE-MsgGUID: nqTcsyasRlyC0Xh04Mq1/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="66998828"
-Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.226])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 05:40:02 -0700
-From: Jani Nikula <jani.nikula@intel.com>
-To: Devarsh Thakkar <devarsht@ti.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>
-Cc: mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- sebastian.fricke@collabora.com, linux-doc@vger.kernel.org,
- praneeth@ti.com, nm@ti.com, vigneshr@ti.com, s-jain1@ti.com,
- r-donadkar@ti.com, b-brnich@ti.com, detheridge@ti.com, p-mantena@ti.com,
- vijayp@ti.com, andi.shyti@linux.intel.com, nicolas@ndufresne.ca,
- jirislaby@kernel.org, davidgow@google.com, dlatypov@google.com,
- corbet@lwn.net, broonie@kernel.org, rdunlap@infradead.org,
- nik.borisov@suse.com, Dave.Martin@arm.com
-Subject: Re: [PATCH v2 1/6] math.h: Add macros for rounding to the closest
- value
-In-Reply-To: <9c41f6b7-6b06-cd5b-74bd-24873c4beaf7@ti.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240826150822.4057164-1-devarsht@ti.com>
- <20240826150822.4057164-2-devarsht@ti.com>
- <Zsy-8xXQ01-JhL0m@smile.fi.intel.com>
- <9c41f6b7-6b06-cd5b-74bd-24873c4beaf7@ti.com>
-Date: Tue, 27 Aug 2024 15:40:00 +0300
-Message-ID: <87frqqyw9r.fsf@intel.com>
+	s=arc-20240116; t=1724762436; c=relaxed/simple;
+	bh=/PsGYidPx6+ERZmAziEKQOOY4l7eHfRbQ5ZJvgTJFS0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FmhpWsJMiOs8CZQhAKYPAqKLStNoRQWYYPP2qDle1qMLxvEhLbRXVW1jh5qYgh4EgToTMcFRpgB8F9VQ1zcYFgzBh19nyOA+th2i6oOxQF9NSnMa8kvZzquFmsmkW65EIvPA1UJSKpbxfkUuvngNGVwYUEeKXbJnEeBE17xlQi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Q4nVfgRA; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8677ae5a35so518608866b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 05:40:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724762432; x=1725367232; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9zVOTmoRZ3AzmWugvFPF8grdlifA6e7LOITutJp+jd0=;
+        b=Q4nVfgRAzI55Zy4CWaZEH1tCNburNPMn/l0ptbE6nVoq8Gfwo8fUB4q0S8oWiXJNew
+         YYucGJNaw9MeM/ZlWaYFKVts+wQXhngvCGvIzn58Jsd5i+DkHEtUcd1EK1GCOugy9+JC
+         28WZLvs8RCWw7gMOz5z3QooxwE/7HTXTiN6ZZ7Vby57s3CSc2/HoHmyPEnY8xp97ly0e
+         vW/1X6nKPy6+dasu2fLULz5FK3aW+TyNJciUd1t1b22RsVoUErAYS8fBXatDlUQP+Bhj
+         9IRKVnN7AAwx2omv6j9tbv58TV/ul4c6uneKzTo1Rff6fKmqhJ4HjuMuAOBEuYK8S6nN
+         wh8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724762432; x=1725367232;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9zVOTmoRZ3AzmWugvFPF8grdlifA6e7LOITutJp+jd0=;
+        b=lUemcupTRZSvyU5zfS3wJuRocK1hiZHEtX4zQFFabZlihwJ8QUwJ1iJXrReB5i1SLx
+         UEb+W65lTowxvrTqoCs+MrFlLmIKf3jSK2ukV+WL3kQJEj+TeUrsLuN43gU+SBM6bzok
+         P02t1YnWSOx4smwbCTV2PUH9cSaTyOPEHePSM0BpjUQULkEHWLSHNkLXuKLi93Qprm4W
+         ov3jPsgO2Pn8H+Vb0/grS2OQmMu7aT9SywDdeqkozAtgaSKQ/1HMoELlQe8EHEuZM+zL
+         0c91JQFzBOjhCXqlId8zjT+bIi2YO9pCTL6WSNNeg0EDduV0NZU23O5bBtctnmohwN+Y
+         isOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWRXNIqjjW1HIsGsmEOaoR5fHTQVKztte5tNGWpy+q5WrZLCLtgge+2UKx1Fzpc7i73kcQiMs5XUJj7sq0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxB3YCyBCy0mibXVekYDYFIzmXhRCFl6AbqFLewU9prR+6dI/rl
+	hZsYCkYMH2jnzr7a5K3ObPC/ZRgR/Y+w/oLqPvyN/088IEO6VbJdx8X0V4mbuko=
+X-Google-Smtp-Source: AGHT+IH6McW6hyGl6MR/gJhPXCODeA+z498UhPFdaJ7K9nt2nnEpjKiqvYziIFRATCpbd9fKRid2WA==
+X-Received: by 2002:a17:906:6a23:b0:a7a:8e98:890d with SMTP id a640c23a62f3a-a86e39c9e11mr232226966b.16.1724762431563;
+        Tue, 27 Aug 2024 05:40:31 -0700 (PDT)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e549cf94sm105628966b.80.2024.08.27.05.40.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 05:40:31 -0700 (PDT)
+Message-ID: <d63ddefe-a6f6-4a5b-9330-11438fca8f9f@suse.com>
+Date: Tue, 27 Aug 2024 14:40:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/19] gendwarfksyms: Add address matching
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
+ Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>,
+ Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
+ Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <20240815173903.4172139-24-samitolvanen@google.com>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20240815173903.4172139-24-samitolvanen@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 27 Aug 2024, Devarsh Thakkar <devarsht@ti.com> wrote:
-> Hi Andy,
->
-> Thanks for the review.
->
-> On 26/08/24 23:14, Andy Shevchenko wrote:
->> On Mon, Aug 26, 2024 at 08:38:17PM +0530, Devarsh Thakkar wrote:
->>> Add below rounding related macros:
->>>
->>> round_closest_up(x, y) : Rounds x to the closest multiple of y where y is a
->>> power of 2, with a preference to round up in case two nearest values are
->>> possible.
->>>
->>> round_closest_down(x, y) : Rounds x to the closest multiple of y where y is
->>> a power of 2, with a preference to round down in case two nearest values
->>> are possible.
->>>
->>> roundclosest(x, y) : Rounds x to the closest multiple of y, this macro
->>> should generally be used only when y is not multiple of 2 as otherwise
->>> round_closest* macros should be used which are much faster.
->> 
->> I understand the point, but if you need to send a v3, please explain
->> the equivalency between roundclosest() and one (or both?) of the
->> round_closest_*() in case the argument is power-of-2.
->> 
->
-> The equivalency between roundclosest w.r.t round_closest is same as
-> equivalency between existing macros rounddown w.r.t round_down. Functionally
-> both are same but the former is recommended to be used only for the scenario
-> where multiple is not power of 2 and latter is faster but is strictly for the
-> scenario where multiple is power of 2. I think the same is already summarized
-> well in commit message and further elaborated in the patch itself as part of
-> header file comments [1] so I personally don't think any update is required
-> w.r.t this.
+On 8/15/24 19:39, Sami Tolvanen wrote:
+> The compiler may choose not to emit type information in DWARF for all
+> aliases, but it's possible for each alias to be exported separately.
+> To ensure we find type information for the aliases as well, read
+> {section, address} tuples from the symbol table and match symbols also
+> by address.
+> 
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> ---
+>  scripts/gendwarfksyms/gendwarfksyms.c |   2 +
+>  scripts/gendwarfksyms/gendwarfksyms.h |   7 ++
+>  scripts/gendwarfksyms/symbols.c       | 161 +++++++++++++++++++++++++-
+>  3 files changed, 165 insertions(+), 5 deletions(-)
+> 
+> diff --git a/scripts/gendwarfksyms/gendwarfksyms.c b/scripts/gendwarfksyms/gendwarfksyms.c
+> index d209b237766b..e2f8ee5a4bf3 100644
+> --- a/scripts/gendwarfksyms/gendwarfksyms.c
+> +++ b/scripts/gendwarfksyms/gendwarfksyms.c
+> @@ -118,6 +118,8 @@ int main(int argc, const char **argv)
+>  			return -1;
+>  		}
+>  
+> +		check(symbol_read_symtab(fd));
+> +
+>  		dwfl = dwfl_begin(&callbacks);
+>  		if (!dwfl) {
+>  			error("dwfl_begin failed for '%s': %s", object_files[n],
+> diff --git a/scripts/gendwarfksyms/gendwarfksyms.h b/scripts/gendwarfksyms/gendwarfksyms.h
+> index 03f3e408a839..cb9106dfddb9 100644
+> --- a/scripts/gendwarfksyms/gendwarfksyms.h
+> +++ b/scripts/gendwarfksyms/gendwarfksyms.h
+> @@ -61,6 +61,10 @@ extern bool debug;
+>  /*
+>   * symbols.c
+>   */
+> +struct symbol_addr {
+> +	uint32_t section;
+> +	Elf64_Addr address;
+> +};
+>  
+>  static inline u32 name_hash(const char *name)
+>  {
+> @@ -69,10 +73,13 @@ static inline u32 name_hash(const char *name)
+>  
+>  struct symbol {
+>  	const char *name;
+> +	struct symbol_addr addr;
+> +	struct hlist_node addr_hash;
+>  	struct hlist_node name_hash;
+>  };
+>  
+>  extern int symbol_read_exports(FILE *file);
+> +extern int symbol_read_symtab(int fd);
+>  extern struct symbol *symbol_get(const char *name);
+>  
+>  /*
+> diff --git a/scripts/gendwarfksyms/symbols.c b/scripts/gendwarfksyms/symbols.c
+> index 673ad9cf9e77..f96acb941196 100644
+> --- a/scripts/gendwarfksyms/symbols.c
+> +++ b/scripts/gendwarfksyms/symbols.c
+> @@ -6,11 +6,43 @@
+>  #include "gendwarfksyms.h"
+>  
+>  #define SYMBOL_HASH_BITS 15
+> +
+> +/* struct symbol_addr -> struct symbol */
+> +static DEFINE_HASHTABLE(symbol_addrs, SYMBOL_HASH_BITS);
+> +/* name -> struct symbol */
+>  static DEFINE_HASHTABLE(symbol_names, SYMBOL_HASH_BITS);
+>  
+> +static inline u32 symbol_addr_hash(const struct symbol_addr *addr)
+> +{
+> +	return jhash(addr, sizeof(struct symbol_addr), 0);
 
-I still don't think rounddown vs. round_down naming is a good example to
-model anything after.
+I would be careful and avoid including the padding between
+symbol_addr.section and symbol_addr.address in the hash calculation.
 
-I have yet to hear a single compelling argument in favor of having a
-single underscore in the middle of a name having implications about the
-inputs of a macro/function.
+> +}
+> +
+>  typedef int (*symbol_callback_t)(struct symbol *, void *arg);
+>  
+> -static int for_each(const char *name, symbol_callback_t func, void *data)
+> +static int __for_each_addr(struct symbol *sym, symbol_callback_t func,
+> +			   void *data)
+> +{
+> +	struct hlist_node *tmp;
+> +	struct symbol *match = NULL;
+> +	int processed = 0;
+> +
+> +	hash_for_each_possible_safe(symbol_addrs, match, tmp, addr_hash,
+> +				    symbol_addr_hash(&sym->addr)) {
+> +		if (match == sym)
+> +			continue; /* Already processed */
+> +
+> +		if (match->addr.section == sym->addr.section &&
+> +		    match->addr.address == sym->addr.address) {
+> +			check(func(match, data));
+> +			++processed;
+> +		}
+> +	}
+> +
+> +	return processed;
+> +}
+> +
+> +static int for_each(const char *name, bool name_only, symbol_callback_t func,
+> +		    void *data)
+>  {
+>  	struct hlist_node *tmp;
+>  	struct symbol *match;
+> @@ -23,9 +55,13 @@ static int for_each(const char *name, symbol_callback_t func, void *data)
+>  		if (strcmp(match->name, name))
+>  			continue;
+>  
+> +		/* Call func for the match, and all address matches */
+>  		if (func)
+>  			check(func(match, data));
+>  
+> +		if (!name_only && match->addr.section != SHN_UNDEF)
+> +			return checkp(__for_each_addr(match, func, data)) + 1;
+> +
+>  		return 1;
+>  	}
+>  
+> @@ -34,7 +70,7 @@ static int for_each(const char *name, symbol_callback_t func, void *data)
+>  
+>  static bool is_exported(const char *name)
+>  {
+> -	return checkp(for_each(name, NULL, NULL)) > 0;
+> +	return checkp(for_each(name, true, NULL, NULL)) > 0;
+>  }
+>  
+>  int symbol_read_exports(FILE *file)
+> @@ -57,13 +93,14 @@ int symbol_read_exports(FILE *file)
+>  		if (is_exported(name))
+>  			continue; /* Ignore duplicates */
+>  
+> -		sym = malloc(sizeof(struct symbol));
+> +		sym = calloc(1, sizeof(struct symbol));
+>  		if (!sym) {
+> -			error("malloc failed");
+> +			error("calloc failed");
+>  			return -1;
+>  		}
+>  
+>  		sym->name = name;
+> +		sym->addr.section = SHN_UNDEF;
+>  		name = NULL;
+>  
+>  		hash_add(symbol_names, &sym->name_hash, name_hash(sym->name));
+> @@ -91,6 +128,120 @@ struct symbol *symbol_get(const char *name)
+>  {
+>  	struct symbol *sym = NULL;
+>  
+> -	for_each(name, get_symbol, &sym);
+> +	for_each(name, false, get_symbol, &sym);
+>  	return sym;
+>  }
+> +
+> +typedef int (*elf_symbol_callback_t)(const char *name, GElf_Sym *sym,
+> +				     Elf32_Word xndx, void *arg);
+> +
+> +static int elf_for_each_symbol(int fd, elf_symbol_callback_t func, void *arg)
+> +{
+> +	size_t sym_size;
+> +	GElf_Shdr shdr_mem;
+> +	GElf_Shdr *shdr;
+> +	Elf_Data *xndx_data = NULL;
+> +	Elf_Scn *scn;
+> +	Elf *elf;
+> +
+> +	if (elf_version(EV_CURRENT) != EV_CURRENT) {
+> +		error("elf_version failed: %s", elf_errmsg(-1));
+> +		return -1;
+> +	}
+> +
+> +	elf = elf_begin(fd, ELF_C_READ_MMAP, NULL);
+> +	if (!elf) {
+> +		error("elf_begin failed: %s", elf_errmsg(-1));
+> +		return -1;
+> +	}
+> +
+> +	sym_size = gelf_getclass(elf) == ELFCLASS32 ? sizeof(Elf32_Sym) :
+> +						      sizeof(Elf64_Sym);
+> +
+> +	scn = elf_nextscn(elf, NULL);
+> +
+> +	while (scn) {
+> +		shdr = gelf_getshdr(scn, &shdr_mem);
+> +
+> +		if (shdr && shdr->sh_type == SHT_SYMTAB_SHNDX) {
+> +			xndx_data = elf_getdata(scn, NULL);
+> +			break;
+> +		}
+> +
+> +		scn = elf_nextscn(elf, scn);
+> +	}
+> +
+> +	scn = elf_nextscn(elf, NULL);
+> +
+> +	while (scn) {
+> +		shdr = gelf_getshdr(scn, &shdr_mem);
+> +
+> +		if (shdr && shdr->sh_type == SHT_SYMTAB) {
+> +			Elf_Data *data = elf_getdata(scn, NULL);
+> +			unsigned int nsyms = data->d_size / sym_size;
 
-The macros being added here are at 2 or 3 in Rusty's scale [1]. We could
-aim for 6 (The name tells you how to use it), but also do opportunistic
-8 (The compiler will warn if you get it wrong) for compile-time
-constants.
+I think strictly speaking this should be:
+size_t nsyms = shdr->sh_size / shdr->sh_entsize;
+.. and the code could check that shdr->sh_entsize is same as what
+gelf_fsize(elf, ELF_T_SYM, 1, EV_CURRENT) returns.
 
-As-is, these, and round_up/round_down, are just setting a trap for an
-unsuspecting kernel developer to fall into.
+> +			unsigned int n;
+> +
+> +			for (n = 0; n < nsyms; ++n) {
 
+The first symbol in the symbol table is always undefined, the loop can
+start from 1.
 
-BR,
-Jani.
+Alternatively, since elf_for_each_symbol() ends up in the entire series
+being used only with process_symbol() which skips symbols with the local
+binding, the function could be renamed to elf_for_each_global_symbol()
+and start the loop from shdr->sh_info.
 
-
-[1] https://ozlabs.org/~rusty/index.cgi/tech/2008-03-30.html
-
-
->
-> [1]: https://lore.kernel.org/all/20240826150822.4057164-2-devarsht@ti.com
->
-> Regards
-> Devarsh
+> +				const char *name = NULL;
+> +				Elf32_Word xndx = 0;
+> +				GElf_Sym sym_mem;
+> +				GElf_Sym *sym;
+> +
+> +				sym = gelf_getsymshndx(data, xndx_data, n,
+> +						       &sym_mem, &xndx);
+> +
+> +				if (sym->st_shndx != SHN_XINDEX)
+> +					xndx = sym->st_shndx;
+> +
+> +				name = elf_strptr(elf, shdr->sh_link,
+> +						  sym->st_name);
+> +
+> +				/* Skip empty symbol names */
+> +				if (name && *name &&
+> +				    checkp(func(name, sym, xndx, arg)) > 0)
+> +					break;
+> +			}
+> +		}
+> +
+> +		scn = elf_nextscn(elf, scn);
+> +	}
+> +
+> +	return check(elf_end(elf));
+> +}
+> +
+> +static int set_symbol_addr(struct symbol *sym, void *arg)
+> +{
+> +	struct symbol_addr *addr = arg;
+> +
+> +	if (sym->addr.section == SHN_UNDEF) {
+> +		sym->addr.section = addr->section;
+> +		sym->addr.address = addr->address;
+> +		hash_add(symbol_addrs, &sym->addr_hash,
+> +			 symbol_addr_hash(&sym->addr));
+> +
+> +		debug("%s -> { %u, %lx }", sym->name, sym->addr.section,
+> +		      sym->addr.address);
+> +	} else {
+> +		warn("multiple addresses for symbol %s?", sym->name);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int process_symbol(const char *name, GElf_Sym *sym, Elf32_Word xndx,
+> +			  void *arg)
+> +{
+> +	struct symbol_addr addr = { .section = xndx, .address = sym->st_value };
+> +
+> +	/* Set addresses for exported symbols */
+> +	if (GELF_ST_BIND(sym->st_info) != STB_LOCAL &&
+> +	    addr.section != SHN_UNDEF)
+> +		checkp(for_each(name, true, set_symbol_addr, &addr));
+> +
+> +	return 0;
+> +}
+> +
+> +int symbol_read_symtab(int fd)
+> +{
+> +	return elf_for_each_symbol(fd, process_symbol, NULL);
+> +}
 
 -- 
-Jani Nikula, Intel
+Thanks,
+Petr
 
