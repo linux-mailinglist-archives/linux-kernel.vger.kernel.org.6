@@ -1,192 +1,176 @@
-Return-Path: <linux-kernel+bounces-303326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56016960AC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:45:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C81D960ACF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15644283894
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:45:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C3E21F23A03
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB8A1BB6A9;
-	Tue, 27 Aug 2024 12:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E351BC9EA;
+	Tue, 27 Aug 2024 12:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CEm6lfXi"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="c/146qm1"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24E31BA87C
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43E6719CCE7;
+	Tue, 27 Aug 2024 12:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724762699; cv=none; b=DIPQIwo+NPM7Kr89zxyMm47qpvbxx3vMzKJ3y0ksAY/bdAnwfVaWHOIgzEGn6o2XtZtrvf0l/Osni8jcXs9A9eO1+YXVhyqKDc5Eh9koGZjKeLsh+uZRwbduvD2vbygGOqZ9qhagSseTgAlMFhavRvBlhtjN7biSSYRVvCWHKEY=
+	t=1724762789; cv=none; b=ro/8Cxd5AMUgye0aOxP03iI9yual8mOUK8i35jHMrQhiS8TaP+oV0uPCQ8poAScrfk93e/EG/EVcY+lW7i0jsHkcz3zxrnQdDuO9qDdmu7FAggVY0xvG/kCeEc5osmgdtahnmktTk4lRKDY1wie+J15HiMhpWQ5j6RreyfD0o+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724762699; c=relaxed/simple;
-	bh=W6VYK5ussb278Jvw7jBj33HvaUn400Zdj9kzeqPv+yY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WsCDFOO5fQfaeGp3JYNnrddwxihQoh+INoBm7iJNWitDi7F2qp5P2LixtijHcjJfiYuvGLKwro15O20tE7UycNS+xPC7k4mXJOHBr50iiHSeprWBlcHBFocFsXhSt3+C4YRQ7IFVtWS878boSCthtCf0d6g3cbHay+cYgQEAFCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CEm6lfXi; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-371b8d402c9so233941f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 05:44:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724762696; x=1725367496; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=66+eh6f+AkABcSGN98gKFJMVC91wf+RFWyEiAvoOHX0=;
-        b=CEm6lfXiqIQ8K9MZDiMREmE+YISCiVdvZBo3svF8D6s26VBi6iQMmnyGTP5MTnOat/
-         4+gYhy8eyk7v0FuD9jrZu80eX9g239pio/NblsoRF26hy5HN1Sn6X9bcy3Xt6Af4NkJK
-         bF21ucuj77lzHlf6NAgGaLDd4YL6k5O2/AtE0otl0iGk9DiEDN21+ug71WV0Vd52xzu4
-         RDvF+y1p2SySV/5yN4JrEd8Iw7RoiEsdSm7FRqyGgsx1N44L3fow4IVmPCp2w3TlX7Mo
-         WkuFe8wG3pfITchhdWptI7oqKZW7fpj7l00qMqZaVNt2huOQmqFBfrXg5mgA2JkQUTPT
-         j3lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724762696; x=1725367496;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=66+eh6f+AkABcSGN98gKFJMVC91wf+RFWyEiAvoOHX0=;
-        b=VisfgYza4+bz7jZZm4Me9irt8RYMrsMBUwdIMztvaq6oOvplyctmPIWTDRKXKjbTkW
-         4/IeYQDth6R14x+bk44KtyZZKg9xYnoLyLAbUo3cPyH91BtN/TOns7GLkLDqbnCRFcvJ
-         a0gE5zxeRGspcocQnMgnPlbgLzNIjMvjZlOVGawqxVz6R6/zLGDucoLEnmp3bGjwyfte
-         XBpUlIUYq2lg4Y7OTWPUUIuRnwOfntDb+X6PQJbN1Av0yxeXbVlyUeqrG2U7dAzNAHNf
-         6ylHmXosWMyXMhF9fkuHhBKeGxhBrxEXJ2cvwek0w4SQOdYFib4uD6N5xge3ZFHubO8m
-         OPqA==
-X-Forwarded-Encrypted: i=1; AJvYcCWrl99avo5soySr3k3NCZuLTx3++AWbfbWTymJTpqDdmf8qYYpIFZ0FeFDunOghA9eX+6sMyVE6OnA5MSc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl10oOmJjzvlnYc2iJDDl1QgJuTWKMjzxU4iVN7i2qUh28LgRh
-	AAVMhwRLPE+UiLZu63qnPS+oVn46zlpL5rJeAO+niVQBtNytai47oK1ffwwVmj8=
-X-Google-Smtp-Source: AGHT+IGmlGlXOC5uZwO7odv3sd/7X3oe06bYvwTJsSFI+hxpjpN8d02VoMXjcEOZx5lFrB1uKOpxcA==
-X-Received: by 2002:a5d:6d05:0:b0:367:9495:9016 with SMTP id ffacd0b85a97d-373118e9996mr5308476f8f.6.1724762696168;
-        Tue, 27 Aug 2024 05:44:56 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac516252asm183939975e9.26.2024.08.27.05.44.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 05:44:55 -0700 (PDT)
-Message-ID: <d67019fe-2107-4a8b-8495-4b737afb6e93@linaro.org>
-Date: Tue, 27 Aug 2024 14:44:53 +0200
+	s=arc-20240116; t=1724762789; c=relaxed/simple;
+	bh=vgn8uX1N5zG+nayIOSO9znCgxojVnlywzQCSUueGkXk=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=s+2po2v/C8X3Y3cnku+9XZU8WOLxlnLdBONM7ifyWXaN/ClQJ/9bmI3qHIBucvUe4vkjdaeEmMbBsWVgwipcHQ/WiWEH2LKoxSGisDpAvQZXYKwFVrctEsYoV5J82nwuk23HtVyBfkiMPRo31EpF7QEeVm9ScMYRvzt7oNLLFd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=c/146qm1; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47R8Ljxb027921;
+	Tue, 27 Aug 2024 12:46:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=1NWakbH7hilxF70Y026R8y
+	lbkAIcSwyIxHqUXroCl4U=; b=c/146qm1+mOHMx9YB87aGne/o++ioWfyV0fEWb
+	U/8dnU63FOCtx9VzgwBcxLWFbvxt3luurCr4Bb8yFr9kOGz7jvdrfzE8NbUoea4I
+	UzvvPc7xhEER26DJlMDYeXGCFDxABKD1S6obgxi8ckOSx5rDQbfhlaxFj1mOFih3
+	xUHdN9uPBZi1tbzBt9ACie4wOj/NxZnIIl+D1ZhsFDLeCkoGGn2yvcC/C5Gy+VEu
+	bPO1NeoTQ1JNOoRETpNrSWzf3MUc5//+1wda0yEuLE869eOM79iEfrQflbW0S1i4
+	DBxMThCbEfBUOlQqAOneIvKzxR24Ff7UBGCS5QEaDEUSx+uw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41798exvcs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 Aug 2024 12:46:16 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47RCkF3H019808
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 Aug 2024 12:46:15 GMT
+Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 27 Aug 2024 05:46:10 -0700
+From: Luo Jie <quic_luoj@quicinc.com>
+Subject: [PATCH v3 0/4] Add CMN PLL clock controller driver for IPQ9574
+Date: Tue, 27 Aug 2024 20:45:58 +0800
+Message-ID: <20240827-qcom_ipq_cmnpll-v3-0-8e009cece8b2@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] soc: ti: Add and use PVU on K3-AM65 for DMA isolation
-To: Jan Kiszka <jan.kiszka@siemens.com>, Nishanth Menon <nm@ti.com>,
- Santosh Shilimkar <ssantosh@kernel.org>,
- Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Siddharth Vadapalli <s-vadapalli@ti.com>,
- Bao Cheng Su <baocheng.su@siemens.com>, Hua Qian Li
- <huaqian.li@siemens.com>, Diogo Ivo <diogo.ivo@siemens.com>,
- Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
- <kw@linux.com>, linux-pci@vger.kernel.org,
- Lorenzo Pieralisi <lpieralisi@kernel.org>
-References: <cover.1724694969.git.jan.kiszka@siemens.com>
- <93da058b-8d72-4f76-9ee7-f6837a1a4a9a@linaro.org>
- <3dcaee19-3671-4658-a2e7-247e42b85805@siemens.com>
- <2b368426-a572-4d3c-b991-9532fa828d23@linaro.org>
- <bac7e1fb-83d0-40de-b789-0a4e469a0b64@siemens.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <bac7e1fb-83d0-40de-b789-0a4e469a0b64@siemens.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIbKzWYC/3XNwQ6CMAyA4VchPTvTbSLTk+9hDJFtSBMYsOmiI
+ by7g5PGePyb9usEwXqyAY7ZBN5GCtS7FHKTgW6u7mYZmdQgUOxQoWKj7ruShrHUnRvalhWac36
+ oRI6ygHQ1eFvTcxXPl9QNhXvvX+uDyJfpfytyhqzCveRGV3Wh8tP4IE1Ob9MiLFoUH4LAX0GsA
+ qIxUuZC4bcwz/Mbhz8oW/IAAAA=
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
+        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>,
+        Luo Jie
+	<quic_luoj@quicinc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724762769; l=2792;
+ i=quic_luoj@quicinc.com; s=20240808; h=from:subject:message-id;
+ bh=vgn8uX1N5zG+nayIOSO9znCgxojVnlywzQCSUueGkXk=;
+ b=16/ZCyzu/Dqhk0QPU0QlE98Ep+VbepBmFhIJBlVx7Dp3+Vo/rqbiYJ1ThOU1To2PmiztMokVs
+ tZo9WGBlgRPAHvR4Hec2QjB+bPqAcuuPR2XFNDCL9j8zSVUyll+Tm6y
+X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
+ pk=P81jeEL23FcOkZtXZXeDDiPwIwgAHVZFASJV12w3U6w=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ezc6HeO2vG4PYzlHHRhSuAAjTSvy9kYb
+X-Proofpoint-ORIG-GUID: ezc6HeO2vG4PYzlHHRhSuAAjTSvy9kYb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-27_06,2024-08-27_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 suspectscore=0 mlxscore=0 malwarescore=0 adultscore=0
+ lowpriorityscore=0 clxscore=1015 phishscore=0 mlxlogscore=999
+ impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2408270094
 
-On 27/08/2024 11:22, Jan Kiszka wrote:
-> On 27.08.24 08:35, Krzysztof Kozlowski wrote:
->> On 26/08/2024 21:25, Jan Kiszka wrote:
->>> On 26.08.24 20:53, Krzysztof Kozlowski wrote:
->>>> On 26/08/2024 19:56, Jan Kiszka wrote:
->>>>> Only few of the K3 SoCs have an IOMMU and, thus, can isolate the system
->>>>> against DMA-based attacks of external PCI devices. The AM65 is without
->>>>> an IOMMU, but it comes with something close to it: the Peripheral
->>>>> Virtualization Unit (PVU).
->>>>>
->>>>> The PVU was originally designed to establish static compartments via a
->>>>> hypervisor, isolate those DMA-wise against each other and the host and
->>>>> even allow remapping of guest-physical addresses. But it only provides
->>>>> a static translation region, not page-granular mappings. Thus, it cannot
->>>>> be handled transparently like an IOMMU.
->>>>
->>>> You keep developing on some old kernel. I noticed it on few patchsets
->>>> last days. Please work on mainline.
->>>>
->>>
->>> How did you come to this conclusion? This patch set was written for
->>> mainline, just rebased and tested again over next-20240826 before
->>> sending today.
->>
->> You send it to addresses you CANNOT get from mainline kernel. There is
->> no way mainline kernel get_maintainers.pl produces them.
->>
-> 
-> That is likely due to that I didn't re-run the get_maintainers.pl for
-> all areas of changes but rather reused an address list from a slightly
-> older posting, sorry.
-> 
-> IOW, your assumption is still not correct when it comes to code.
+The CMN PLL clock controller in Qualcomm IPQ chipsets provides
+the clocks to the networking hardware blocks that are internal or
+external to the SoC. This driver configures the CMN PLL clock
+controller to enable the output clocks to such networking hardware
+blocks. These networking blocks include the internal PPE (Packet
+Process Engine), external connected Ethernet PHY, or external switch.
+ 
+The controller expects the input reference clock from the internal
+Wi-Fi block acting as the clock source. The output clocks supplied
+by the controller are fixed rate clocks.
 
-Sure, I see results and I am guessing the reason. Keeping the list
-static is not the approach you should be using, as seen here. It does
-not make even sense, because then you need to keep several lists per
-different subsystems or you CC unrelated people (don't). Just use simple
-wrapper over git send email, b4 or patman.
+The CMN PLL hardware block does not include any other function other
+than enabling the clocks to the networking hardware blocks.
 
-https://github.com/krzk/tools/blob/master/linux/.bash_aliases_linux#L91
+The driver is being enabled to support IPQ9574 SoC initially, and
+will be extended for other SoCs.
+
+Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+---
+Changes in v3:
+- Update description of dt-binding to explain scope of 'CMN' in CMN PLL.
+- Collect Reviewed-by tags for dtbindings and defconfig patches.
+- Enable PLL_LOCKED check for the stability of output clocks.
+- Link to v2: https://lore.kernel.org/r/20240820-qcom_ipq_cmnpll-v2-0-b000dd335280@quicinc.com
+
+Changes in v2:
+- Rename the dt-binding file with the compatible.
+- Remove property 'clock-output-names' from dt-bindings and define
+  names in the driver. Add qcom,ipq-cmn-pll.h to export the output
+  clock specifier.
+- Alphanumeric ordering of 'cmn_pll_ref_clk' node in DTS.
+- Fix allmodconfig error reported by test robot.
+- Replace usage of "common" to "CMN" to match the name with the
+  hardware specification.
+- Clarify in commit message on scope of CMN PLL function.
+- Link to v1: https://lore.kernel.org/r/20240808-qcom_ipq_cmnpll-v1-0-b0631dcbf785@quicinc.com
+
+---
+Luo Jie (4):
+      dt-bindings: clock: qcom: Add CMN PLL clock controller for IPQ SoC
+      clk: qcom: Add CMN PLL clock controller driver for IPQ SoC
+      arm64: defconfig: Enable Qualcomm IPQ CMN PLL clock controller
+      arm64: dts: qcom: Add CMN PLL node for IPQ9574 SoC
+
+ .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       |  72 ++++++
+ arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi   |   6 +-
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi              |  17 +-
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/clk/qcom/Kconfig                           |  10 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/clk-ipq-cmn-pll.c                 | 241 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq-cmn-pll.h       |  15 ++
+ 8 files changed, 361 insertions(+), 2 deletions(-)
+---
+base-commit: 222a3380f92b8791d4eeedf7cd750513ff428adf
+change-id: 20240808-qcom_ipq_cmnpll-7c1119b25037
 
 Best regards,
-Krzysztof
+-- 
+Luo Jie <quic_luoj@quicinc.com>
 
 
