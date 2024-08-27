@@ -1,135 +1,249 @@
-Return-Path: <linux-kernel+bounces-302438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E788A95FE6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:42:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11C6F95FE6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E9C282BD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:42:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 369171C21A01
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A238BE5;
-	Tue, 27 Aug 2024 01:42:37 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E53E18F54;
+	Tue, 27 Aug 2024 01:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kE6fHyqr"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED394CA6B
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 01:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E692E1C32
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 01:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724722957; cv=none; b=nJw2Dytvmqq3E6vGIOzwt8sRnMeg2KKr8Ic/4vtWzSmaZfY9SJVfpC5PBoI8NoyLyiOEYihMo+6YjT9TBTK5R020Qiu+Z+nG6tVLhw6hHGIdnyPwi4tVgBPFVZ73QetElqKThyl6qpFmUFUggITLDXm11FMilmrBGOp1y+KmAAw=
+	t=1724722982; cv=none; b=LhQv4PyYo2lvergj9exv74b3tYxgadkkjICYL9+4/Xtg2n9HIOpXygLd9bYHWNSLTziJZVhHnhmJW1FkDJgXKMY3EGKl6Jkgh7FAt64mYH8iLxLeDdW2IrcnSK/2ohC4kwwKU1cnmEDidnoPsQm3eknq+wo2rXFcCDB3f8+jQJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724722957; c=relaxed/simple;
-	bh=2KjMXZv8U/2bgFxhQaUWypJuW55QTDQDghkAvO8kBAs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rt9uWDlsMhdN1FXHUYzeB4y+PsSTrmXcCVshUpaDFjcqHgLeb5Ati5Dld+1fyLzVaNOu95Xt06UNstb2CIKPrndyn/Xeht5ZxUn6Ii1aRCE7De16LajQyxrQzAlJ/ckdlQoHdJTeLlromqPssILEr6eTokKsw2yseJekk9Lo81U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wt9CX2yzTz20mq7;
-	Tue, 27 Aug 2024 09:37:44 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3B824140120;
-	Tue, 27 Aug 2024 09:42:32 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 27 Aug 2024 09:42:30 +0800
-Message-ID: <9f93fe1f-c7d7-7d96-44ab-2bca0aae407e@huawei.com>
-Date: Tue, 27 Aug 2024 09:42:30 +0800
+	s=arc-20240116; t=1724722982; c=relaxed/simple;
+	bh=FX3f2Qv2jDQ3tc/K83Ikx7MleTT7aFx2ZpWIZhl1WLI=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=JGV5bRyYmngR4Olmcfvk4kWQiSP93tRqYEx7oxhLBemfPcJODxlzGTMWXb4+Zoh9oDoqoyq+Oi+u1XB/gZq0PPfMOmPMa3x3QbC7VKH03c2k026UsiEkakD43f6EsyYd0t+x8X1Zaavp3rF1wXVHkCBIuAtPG9ho8krSerAB1T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=kE6fHyqr; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240827014257epoutp0459d12b0ff00ff04ca23c57ae22b31e03~vcmkN3VnC0669106691epoutp04l
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 01:42:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240827014257epoutp0459d12b0ff00ff04ca23c57ae22b31e03~vcmkN3VnC0669106691epoutp04l
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724722977;
+	bh=FX3f2Qv2jDQ3tc/K83Ikx7MleTT7aFx2ZpWIZhl1WLI=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=kE6fHyqrWOP2OzlaTWyspvDSJAYiOOdmSoDXqqwrz0Jjdnqc2HxDPCdkE7pXaYKL8
+	 mZhCeLUivaXt51iij1uMLuYmPlsYlGxo16/bQplLqMKZ3Kb3RJ05jNw7PLsiBRUQbf
+	 Nufc/v6lGmj1aRQzqM9+vA90sLTlMguLCBdxfA24=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240827014257epcas1p14de210a06fcbc8963513301b910d4b47~vcmjy-9oa0785007850epcas1p1m;
+	Tue, 27 Aug 2024 01:42:57 +0000 (GMT)
+Received: from epsmgec1p1-new.samsung.com (unknown [182.195.36.222]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Wt9KX74KYz4x9Q4; Tue, 27 Aug
+	2024 01:42:56 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+	epsmgec1p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	DD.03.19509.02F2DC66; Tue, 27 Aug 2024 10:42:56 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240827014256epcas1p233930a9e49baf908a8226cdfbd777091~vcmi5h6Ja2060720607epcas1p2x;
+	Tue, 27 Aug 2024 01:42:56 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240827014256epsmtrp10ec1fd07e50997950f57d931a3be4126~vcmi4gw6S2843928439epsmtrp1H;
+	Tue, 27 Aug 2024 01:42:56 +0000 (GMT)
+X-AuditID: b6c32a4c-10bff70000004c35-12-66cd2f203262
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	C4.C2.08456.02F2DC66; Tue, 27 Aug 2024 10:42:56 +0900 (KST)
+Received: from sh8267baek02 (unknown [10.253.99.49]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240827014256epsmtip2dba87e612c33813aa97e044b8b43e5be~vcmijgz1N1297412974epsmtip2C;
+	Tue, 27 Aug 2024 01:42:56 +0000 (GMT)
+From: "Seunghwan Baek" <sh8267.baek@samsung.com>
+To: "'Adrian Hunter'" <adrian.hunter@intel.com>,
+	<linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+	<ulf.hansson@linaro.org>, <ritesh.list@gmail.com>,
+	<quic_asutoshd@quicinc.com>
+Cc: <grant.jung@samsung.com>, <jt77.jang@samsung.com>,
+	<junwoo80.lee@samsung.com>, <dh0421.hwang@samsung.com>,
+	<jangsub.yi@samsung.com>, <sh043.lee@samsung.com>, <cw9316.lee@samsung.com>,
+	<wkon.kim@samsung.com>, <stable@vger.kernel.org>
+In-Reply-To: <7164bfde-3c43-495f-8e1f-83b998ff17e2@intel.com>
+Subject: RE: [PATCH 2/2] mmc : fix for check cqe halt.
+Date: Tue, 27 Aug 2024 10:42:55 +0900
+Message-ID: <000001daf822$70840e10$518c2a30$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH -next 2/5] drm/mediatek: Fix missing of_node_put() for
- mtk_drm_get_all_drm_priv()
-Content-Language: en-US
-To: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	<hjc@rock-chips.com>, <heiko@sntech.de>, <andy.yan@rock-chips.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<dri-devel@lists.freedesktop.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<krzk@kernel.org>, <jic23@kernel.org>
-References: <20240823092053.3170445-1-ruanjinjie@huawei.com>
- <20240823092053.3170445-3-ruanjinjie@huawei.com>
- <a4d23c3a-9791-4d2b-9853-9c9b27460db5@wanadoo.fr>
- <6d4ec950-878f-499c-a808-dd5b31c2ddb6@wanadoo.fr>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <6d4ec950-878f-499c-a808-dd5b31c2ddb6@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJuvxDFnMLAOlvZlfnWGnWQ3NmNqwJctd59Asipdhaw6ZsZ4A==
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJJsWRmVeSWpSXmKPExsWy7bCmvq6C/tk0g5aZBhYnn6xhs5hxqo3V
+	Yt+1k+wWv/6uZ7fo2DqZyWLH8zPsFrv+NjNZXN41h83iyP9+RouFHXNZLA6e6mC3aPqzj8Vi
+	wcZHjBbH14ZbbL70jcWB32PnrLvsHov3vGTyuHNtD5vHxD11Hn1bVjF6fN4kF8AWlW2TkZqY
+	klqkkJqXnJ+SmZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA3SxkkJZYk4pUCgg
+	sbhYSd/Opii/tCRVISO/uMRWKbUgJafArECvODG3uDQvXS8vtcTK0MDAyBSoMCE7Y8LKuywF
+	Mxwq9qw9wtzA+Mm2i5GTQ0LAROJt0yO2LkYuDiGBPYwSEzY9YodwPjFKvHh0Acr5xijRcmUW
+	M0zLlYZlUC17GSWWb7/LCOG8BOr/+p0dpIpNwECi+cdBsHYRgUOMEvPab7CCOMwgg7f8OcbS
+	xcjBwSlgK3HrWQJIg7CAmcSl721MIDaLgKrEno4uNhCbV8BS4sTlr8wQtqDEyZlPWEBsZgFt
+	iWULX0OdpCDx8+kyVhBbRMBJYuOsB8wQNSISszvbmEH2Sgjc4ZDYtGEbI0SDi8STjzfZIGxh
+	iVfHt7BD2FISL/vboOxiiYUbJ7FANLcwSlxf/geq2V6iubWZDeQBZgFNifW79CGW8Um8+9rD
+	ChKWEOCV6GgTgqhWlTi1YStUp7TE9eYGVgjbQ+LmtB6mCYyKs5C8NgvJa7OQvDALYdkCRpZV
+	jFKpBcW56anJhgWGunmp5fA4T87P3cQITtNaPjsYv6//q3eIkYmDERgBHMxKIrxyl0+mCfGm
+	JFZWpRblxxeV5qQWH2I0BQb4RGYp0eR8YKbIK4k3NLE0MDEzMrEwtjQ2UxLnPXOlLFVIID2x
+	JDU7NbUgtQimj4mDU6qBServ2X8yu99bP/8eWn7j83OLAvNnIiwVVvfsRMQbw5cy/wvO5i58
+	ffPdraqsjdcbhSwUnN/HBZ8/76905z9b0q7fpersfe++MGtPae42/sDr9pDf4rjLuvSw4N53
+	L/c/4jcqn9CwYOfZ+PkfPh47LZ3h1aN0e/Witgu7N8jY/36au0pIftvmV9wbcuTOnkvotGD5
+	G9WUduS67YtFS2cE9C/PCdP+I3r1+7MPTbwzC2c0fCyY8MNbauGCQndZxTYX7q6DOj+mfDWr
+	/uNxvLfBZfeG178Sb038GX/oyG+tNVvX/65OshELOnrt7dXtGSWJNnU7lSddVkrOq7i51/Tu
+	8vxrWgndq8x/VHaxfjS3UlZiKc5INNRiLipOBACzAP8fXAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPIsWRmVeSWpSXmKPExsWy7bCSvK6C/tk0g4/XeCxOPlnDZjHjVBur
+	xb5rJ9ktfv1dz27RsXUyk8WO52fYLXb9bWayuLxrDpvFkf/9jBYLO+ayWBw81cFu0fRnH4vF
+	go2PGC2Orw232HzpG4sDv8fOWXfZPRbvecnkcefaHjaPiXvqPPq2rGL0+LxJLoAtissmJTUn
+	syy1SN8ugStjT/9T1oLFOhVPOhtYGhj3KncxcnJICJhIXGlYxtbFyMUhJLCbUWLhtRnsEAlp
+	iccHXjJ2MXIA2cIShw8XQ9Q8Z5SY9rmXGaSGTcBAovnHQXaQhIjAMUaJWUdXM4M4zAJ/GCXm
+	nJsMNXY/o8SH7rVgozgFbCVuPUsA6RYWMJO49L2NCcRmEVCV2NPRxQZi8wpYSpy4/JUZwhaU
+	ODnzCQuIzSygLfH05lM4e9nC18wQlypI/Hy6jBXEFhFwktg46wEzRI2IxOzONuYJjMKzkIya
+	hWTULCSjZiFpWcDIsopRMrWgODc9t9iwwCgvtVyvODG3uDQvXS85P3cTIzhOtbR2MO5Z9UHv
+	ECMTB+MhRgkOZiURXrnLJ9OEeFMSK6tSi/Lji0pzUosPMUpzsCiJ83573ZsiJJCeWJKanZpa
+	kFoEk2Xi4JRqYKr0sl+8UevNj4htK+vrN+5m+5D+r3il/IX7e95f8lhi/jiF3cLo7ZmeatMa
+	OZf5U0wq7sm/3//9P7NSdVX5hJKQena7qRd0xKNSuORe6M5RcvdL3Cq3WG0ry+OS//+Zy88U
+	3WDT2mfeFLvmVu1Tu7eBd7NlmmNY278L/Fr4s2OnfTDrnfognp9hG7kD+NZG7ri7wGpF9Qp+
+	r81vPssdy557aIbF6ap9Tp/n8IWYCe1o7nr9Mmcal6vTWxn27J0zL//fvukLe0/d58WsbMr1
+	EqEP/6gdlY67UqJYwvvh8wvFHZOfMNRcYl2xSin5ovT+4DsyRU+vre9Svb9wv/Z29112cVxH
+	uh9O6y1/wNKwZKUSS3FGoqEWc1FxIgBt0xGgQgMAAA==
+X-CMS-MailID: 20240827014256epcas1p233930a9e49baf908a8226cdfbd777091
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240826091726epcas1p19797d2dd890feef6f9c4b83e9156341a
+References: <CGME20240826091726epcas1p19797d2dd890feef6f9c4b83e9156341a@epcas1p1.samsung.com>
+	<20240826091703.14631-1-sh8267.baek@samsung.com>
+	<7164bfde-3c43-495f-8e1f-83b998ff17e2@intel.com>
 
-
-
-On 2024/8/25 13:16, Marion & Christophe JAILLET wrote:
-> 
-> 
-> Le 23/08/2024 à 12:46, Christophe JAILLET a écrit :
->>> @@ -933,10 +931,8 @@ static int mtk_drm_probe(struct platform_device
->>> *pdev)
->>>           }
->>>           ret = mtk_ddp_comp_init(node, &private->ddp_comp[comp_id],
->>> comp_id);
->>> -        if (ret) {
->>> -            of_node_put(node);
->>> +        if (ret)
->>>               goto err_node;
->>
->> Hi,
->>
->> I've seen on another thread that is was not sure that scoped versions
->> and gotos played well together.
->>
->> It was asked to check more in details and confirm that it was safe
->> before applying the patch.
->>
->> I've not followed the discussion, so I just point it out, in case it
->> helps.
->>
->> I'll try to give it a look in the coming days.
->>
->>
->> CJ
->>
-> 
-> Hi,
-> looking at the generated asm file (gcc 14.2.1), everything looks fine.
-
-Yes, as I pointed out in another thread, the test show that goto with
-this scoped function is good.
-
-> 
-> # drivers/gpu/drm/mediatek/mtk_drm_drv.c:933:         ret =
-> mtk_ddp_comp_init(node, &private->ddp_comp[comp_id], comp_id);
->     salq    $5, %rax    #, _36
->     movl    %r14d, %edx    # comp_id,
->     movq    %rbx, %rdi    # node,
->     leaq    552(%rbp,%rax), %rsi    #, _28
->     call    mtk_ddp_comp_init    #
->     movl    %eax, %r12d    # tmp205, <retval>
-> # drivers/gpu/drm/mediatek/mtk_drm_drv.c:934:         if (ret)
->     testl    %eax, %eax    # <retval>
->     jne    .L212    #,
-> 
-> ...
-> 
-> .L212:
-> # ./include/linux/of.h:138: DEFINE_FREE(device_node, struct device_node
-> *, if (_T) of_node_put(_T))
->     movq    %rbx, %rdi    # node,
->     call    of_node_put    #
->     jmp    .L171    #
-> 
-> CJ
-> 
+> The subject starts with =22=5BPatch 2/2=5D=22 but is there another patch?
+> Did you mean =22=5BPatch v2=5D ...=22?
+>=20
+> > To check if mmc cqe is in halt state, need to check set/clear of
+> > CQHCI_HALT bit. At this time, we need to check with &, not &&.
+> > Therefore, code to> check whether cqe is in halt state is modified to
+> cqhci_halted, which has already been implemented.
+>=20
+> Doesn't compile:
+>=20
+> drivers/mmc/host/cqhci-core.c: In function =E2=80=98__cqhci_enable=E2=80=
+=99:=0D=0A>=20drivers/mmc/host/cqhci-core.c:285:13:=20error:=20implicit=20d=
+eclaration=20of=0D=0A>=20function=20=E2=80=98cqhci_halted=E2=80=99;=20did=
+=20you=20mean=20=E2=80=98cqhci_writel=E2=80=99?=20=5B-Werror=3Dimplicit-=0D=
+=0A>=20function-declaration=5D=0D=0A>=20=20=20285=20=7C=20=20=20=20=20=20=
+=20=20=20if=20(cqhci_halted(cq_host))=0D=0A>=20=20=20=20=20=20=20=7C=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=5E=7E=7E=7E=7E=7E=7E=7E=7E=7E=7E=7E=0D=0A=
+>=20=20=20=20=20=20=20=7C=20=20=20=20=20=20=20=20=20=20=20=20=20cqhci_write=
+l=0D=0A>=20drivers/mmc/host/cqhci-core.c:=20At=20top=20level:=0D=0A>=20driv=
+ers/mmc/host/cqhci-core.c:956:13:=20error:=20conflicting=20types=20for=0D=
+=0A>=20=E2=80=98cqhci_halted=E2=80=99;=20have=20=E2=80=98bool(struct=20cqhc=
+i_host=20*)=E2=80=99=20=7Baka=20=E2=80=98_Bool(struct=0D=0A>=20cqhci_host=
+=20*)=E2=80=99=7D=0D=0A>=20=20=20956=20=7C=20static=20bool=20cqhci_halted(s=
+truct=20cqhci_host=20*cq_host)=0D=0A>=20=20=20=20=20=20=20=7C=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=5E=7E=7E=7E=7E=7E=7E=7E=7E=7E=7E=7E=0D=0A>=20dr=
+ivers/mmc/host/cqhci-core.c:285:13:=20note:=20previous=20implicit=20declara=
+tion=0D=0A>=20of=20=E2=80=98cqhci_halted=E2=80=99=20with=20type=20=E2=80=98=
+int()=E2=80=99=0D=0A>=20=20=20285=20=7C=20=20=20=20=20=20=20=20=20if=20(cqh=
+ci_halted(cq_host))=0D=0A>=20=20=20=20=20=20=20=7C=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=5E=7E=7E=7E=7E=7E=7E=7E=7E=7E=7E=7E=0D=0A>=20cc1:=20all=20w=
+arnings=20being=20treated=20as=20errors=0D=0A>=20=0D=0A>=20Not=20only=20sho=
+uld=20it=20compile,=20but=20you=20must=20test=20it=21=0D=0A>=20=0D=0A>=20Pr=
+obably=20better=20to=20make=202=20patches:=0D=0A>=201.=20Just=20the=20fix,=
+=20cc=20stable=20i.e.=0D=0A>=20=0D=0A>=20diff=20--git=20a/drivers/mmc/host/=
+cqhci-core.c=20b/drivers/mmc/host/cqhci-core.c=0D=0A>=20index=20c14d7251d0b=
+b..a02da26a1efd=20100644=0D=0A>=20---=20a/drivers/mmc/host/cqhci-core.c=0D=
+=0A>=20+++=20b/drivers/mmc/host/cqhci-core.c=0D=0A>=20=40=40=20-617,7=20+61=
+7,7=20=40=40=20static=20int=20cqhci_request(struct=20mmc_host=20*mmc,=20str=
+uct=0D=0A>=20mmc_request=20*mrq)=0D=0A>=20=20=09=09cqhci_writel(cq_host,=20=
+0,=20CQHCI_CTL);=0D=0A>=20=20=09=09mmc->cqe_on=20=3D=20true;=0D=0A>=20=20=
+=09=09pr_debug(=22%s:=20cqhci:=20CQE=20on=5Cn=22,=20mmc_hostname(mmc));=0D=
+=0A>=20-=09=09if=20(cqhci_readl(cq_host,=20CQHCI_CTL)=20&&=20CQHCI_HALT)=20=
+=7B=0D=0A>=20+=09=09if=20(cqhci_readl(cq_host,=20CQHCI_CTL)=20&=20CQHCI_HAL=
+T)=20=7B=0D=0A>=20=20=09=09=09pr_err(=22%s:=20cqhci:=20CQE=20failed=20to=20=
+exit=20halt=20state=5Cn=22,=0D=0A>=20=20=09=09=09=20=20=20=20=20=20=20mmc_h=
+ostname(mmc));=0D=0A>=20=20=09=09=7D=0D=0A>=20=0D=0A>=202.=20Tidy=20up,=20n=
+o=20cc=20stable=0D=0A>=20=0D=0A>=20diff=20--git=20a/drivers/mmc/host/cqhci-=
+core.c=20b/drivers/mmc/host/cqhci-core.c=0D=0A>=20index=20a02da26a1efd..178=
+277d90c31=20100644=0D=0A>=20---=20a/drivers/mmc/host/cqhci-core.c=0D=0A>=20=
++++=20b/drivers/mmc/host/cqhci-core.c=0D=0A>=20=40=40=20-33,6=20+33,11=20=
+=40=40=20struct=20cqhci_slot=20=7B=0D=0A>=20=20=23define=20CQHCI_HOST_OTHER=
+=09BIT(4)=0D=0A>=20=20=7D;=0D=0A>=20=0D=0A>=20+static=20bool=20cqhci_halted=
+(struct=20cqhci_host=20*cq_host)=20=7B=0D=0A>=20+=09return=20cqhci_readl(cq=
+_host,=20CQHCI_CTL)=20&=20CQHCI_HALT;=20=7D=0D=0A>=20+=0D=0A>=20=20static=
+=20inline=20u8=20*get_desc(struct=20cqhci_host=20*cq_host,=20u8=20tag)=20=
+=20=7B=0D=0A>=20=20=09return=20cq_host->desc_base=20+=20(tag=20*=20cq_host-=
+>slot_sz);=20=40=40=20-282,7=0D=0A>=20+287,7=20=40=40=20static=20void=20__c=
+qhci_enable(struct=20cqhci_host=20*cq_host)=0D=0A>=20=0D=0A>=20=20=09cqhci_=
+writel(cq_host,=20cqcfg,=20CQHCI_CFG);=0D=0A>=20=0D=0A>=20-=09if=20(cqhci_r=
+eadl(cq_host,=20CQHCI_CTL)=20&=20CQHCI_HALT)=0D=0A>=20+=09if=20(cqhci_halte=
+d(cq_host))=0D=0A>=20=20=09=09cqhci_writel(cq_host,=200,=20CQHCI_CTL);=0D=
+=0A>=20=0D=0A>=20=20=09mmc->cqe_on=20=3D=20true;=0D=0A>=20=40=40=20-617,7=
+=20+622,7=20=40=40=20static=20int=20cqhci_request(struct=20mmc_host=20*mmc,=
+=20struct=0D=0A>=20mmc_request=20*mrq)=0D=0A>=20=20=09=09cqhci_writel(cq_ho=
+st,=200,=20CQHCI_CTL);=0D=0A>=20=20=09=09mmc->cqe_on=20=3D=20true;=0D=0A>=
+=20=20=09=09pr_debug(=22%s:=20cqhci:=20CQE=20on=5Cn=22,=20mmc_hostname(mmc)=
+);=0D=0A>=20-=09=09if=20(cqhci_readl(cq_host,=20CQHCI_CTL)=20&=20CQHCI_HALT=
+)=20=7B=0D=0A>=20+=09=09if=20(cqhci_halted(cq_host))=20=7B=0D=0A>=20=20=09=
+=09=09pr_err(=22%s:=20cqhci:=20CQE=20failed=20to=20exit=20halt=20state=5Cn=
+=22,=0D=0A>=20=20=09=09=09=20=20=20=20=20=20=20mmc_hostname(mmc));=0D=0A>=
+=20=20=09=09=7D=0D=0A>=20=40=40=20-953,11=20+958,6=20=40=40=20static=20bool=
+=20cqhci_clear_all_tasks(struct=20mmc_host=0D=0A>=20*mmc,=20unsigned=20int=
+=20timeout)=0D=0A>=20=20=09return=20ret;=0D=0A>=20=20=7D=0D=0A>=20=0D=0A>=
+=20-static=20bool=20cqhci_halted(struct=20cqhci_host=20*cq_host)=20-=7B=0D=
+=0A>=20-=09return=20cqhci_readl(cq_host,=20CQHCI_CTL)=20&=20CQHCI_HALT;=0D=
+=0A>=20-=7D=0D=0A>=20-=0D=0A>=20=20static=20bool=20cqhci_halt(struct=20mmc_=
+host=20*mmc,=20unsigned=20int=20timeout)=20=20=7B=0D=0A>=20=20=09struct=20c=
+qhci_host=20*cq_host=20=3D=20mmc->cqe_private;=0D=0A>=20=0D=0A>=20=0D=0A>=
+=20=0D=0A>=20>=0D=0A>=20>=20Fixes:=200653300224a6=20(=22mmc:=20cqhci:=20ren=
+ame=20cqhci.c=20to=20cqhci-core.c=22)=0D=0A>=20=0D=0A>=20Fixes=20tag=20shou=
+ld=20be=20the=20commit=20that=20introduced=20the=20code,=20not=20one=20that=
+=0D=0A>=20moved=20it.=20=20In=20this=20case,=20it=20has=20been=20there=20si=
+nce=20the=20beginning:=0D=0A>=20=0D=0A>=20Fixes:=20a4080225f51d=20(=22mmc:=
+=20cqhci:=20support=20for=20command=20queue=20enabled=20host=22)=0D=0A>=20=
+=0D=0A>=20Looks=20like=20the=20offending=20code=20kinda=20worked=20which=20=
+explains=20why=20it=20wasn't=0D=0A>=20noticed=20sooner.=0D=0A>=20=0D=0ASorr=
+y=20for=20my=20mistake.=0D=0A=0D=0AI=20will=20make=20the=20patch=20again=20=
+as=20you=20advised.=0D=0A=0D=0AThank=20you=20for=20your=20help.=0D=0A=0D=0A=
+>=20>=20Cc:=20stable=40vger.kernel.org=0D=0A>=20>=20Signed-off-by:=20Seungh=
+wan=20Baek=20<sh8267.baek=40samsung.com>=0D=0A>=20>=20---=0D=0A>=20>=20=20d=
+rivers/mmc/host/cqhci-core.c=20=7C=204=20++--=0D=0A>=20>=20=201=20file=20ch=
+anged,=202=20insertions(+),=202=20deletions(-)=0D=0A>=20>=0D=0A>=20>=20diff=
+=20--git=20a/drivers/mmc/host/cqhci-core.c=0D=0A>=20>=20b/drivers/mmc/host/=
+cqhci-core.c=20index=20c14d7251d0bb..3d5bcb92c78e=0D=0A>=20>=20100644=0D=0A=
+>=20>=20---=20a/drivers/mmc/host/cqhci-core.c=0D=0A>=20>=20+++=20b/drivers/=
+mmc/host/cqhci-core.c=0D=0A>=20>=20=40=40=20-282,7=20+282,7=20=40=40=20stat=
+ic=20void=20__cqhci_enable(struct=20cqhci_host=0D=0A>=20>=20*cq_host)=0D=0A=
+>=20>=0D=0A>=20>=20=20=09cqhci_writel(cq_host,=20cqcfg,=20CQHCI_CFG);=0D=0A=
+>=20>=0D=0A>=20>=20-=09if=20(cqhci_readl(cq_host,=20CQHCI_CTL)=20&=20CQHCI_=
+HALT)=0D=0A>=20>=20+=09if=20(cqhci_halted(cq_host))=0D=0A>=20>=20=20=09=09c=
+qhci_writel(cq_host,=200,=20CQHCI_CTL);=0D=0A>=20>=0D=0A>=20>=20=20=09mmc->=
+cqe_on=20=3D=20true;=0D=0A>=20>=20=40=40=20-617,7=20+617,7=20=40=40=20stati=
+c=20int=20cqhci_request(struct=20mmc_host=20*mmc,=0D=0A>=20struct=20mmc_req=
+uest=20*mrq)=0D=0A>=20>=20=20=09=09cqhci_writel(cq_host,=200,=20CQHCI_CTL);=
+=0D=0A>=20>=20=20=09=09mmc->cqe_on=20=3D=20true;=0D=0A>=20>=20=20=09=09pr_d=
+ebug(=22%s:=20cqhci:=20CQE=20on=5Cn=22,=20mmc_hostname(mmc));=0D=0A>=20>=20=
+-=09=09if=20(cqhci_readl(cq_host,=20CQHCI_CTL)=20&&=20CQHCI_HALT)=20=7B=0D=
+=0A>=20>=20+=09=09if=20(cqhci_halted(cq_host))=20=7B=0D=0A>=20>=20=20=09=09=
+=09pr_err(=22%s:=20cqhci:=20CQE=20failed=20to=20exit=20halt=20state=5Cn=22,=
+=0D=0A>=20>=20=20=09=09=09=20=20=20=20=20=20=20mmc_hostname(mmc));=0D=0A>=
+=20>=20=20=09=09=7D=0D=0A=0D=0A=0D=0A
 
