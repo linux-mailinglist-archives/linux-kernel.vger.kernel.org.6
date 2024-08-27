@@ -1,167 +1,115 @@
-Return-Path: <linux-kernel+bounces-302586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59F1696008F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:54:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4F3496008C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 161A7283618
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:54:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E852F1C2218D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0BB74413;
-	Tue, 27 Aug 2024 04:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981D674413;
+	Tue, 27 Aug 2024 04:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="lhTUL/jJ"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AG7iDVK4"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B110F84D3E
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 04:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8355A54648;
+	Tue, 27 Aug 2024 04:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724734429; cv=none; b=Zs0Dsjj4fwSG2c3eRYU4PofD80jiXRuoLU3xXhStjnbB66YV2joWdeWb3Gytmn6QVs7+fyiqHdwe9Macob73+n0QIf9Gz7Mst3cgjAa7rlvZrr/VD8tMxKjOePo0q3adzgZdjY/M0xz8KnNfc9EM7O7i0gHVfVLUpknYH06KB/c=
+	t=1724734423; cv=none; b=JtmGVeICBCEOHB+6KF2kgxgK3I2jir+WfJoMXRdck6dBYAXXexG/TOzo4zv5iA93cETWxvdxNl3CkLMTSfLfVu7syRlgu9EqxK2tn6XReley2s3qNRs0lC8FxA9LAMLgPZyB67o1XD1d70Mmf9KDAyqNLQ6GIxdfhl5OpqalOGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724734429; c=relaxed/simple;
-	bh=HCagZvCrZHaytv1NYUg2rh9lg4ucZ87nY3vNvdjVMgc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZFmvghhwFCBJKzXetzKPPtlE+qckjwtYWB23Oz6wwwFkMadHizdJKD0dbASGk6qzBoWpxyifwlLlXFXrq0UY4HKRALhowCJc3J9linyJwE5m+PBImj1fZC0ss13N9oAkYhmUXFfo1FcxveNMglIiuhtfQ58KPjURxYeqv0U6bFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=lhTUL/jJ; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e0875f1e9edso4901560276.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 21:53:47 -0700 (PDT)
+	s=arc-20240116; t=1724734423; c=relaxed/simple;
+	bh=yMbQF0uHORUf0udirhElpdblOuGQiBeBYSNIiCP1D6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qKFyT5gVIWU6N3mrAsJYiU2BQIVbmvbTrG2ZbwyD0ERy4b4EwG6iBV4SAskB2/T29PUqtPYmINPcWW0Xq6IbtH6jqbEUtHR5xYE5p7N2PSM/S1CO/jUnmpKCF6eWG9l4nuTmQKiM1LpxAOFA3XWMBOK9cHVUshWPXcXiFewIERs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AG7iDVK4; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20203988f37so49589285ad.1;
+        Mon, 26 Aug 2024 21:53:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1724734426; x=1725339226; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gL0CtwyQELiqJJaIVlxrXuLFauzAqYM0sY701FPxABY=;
-        b=lhTUL/jJliFshOHKjo7ghfKVJxo06BbeAaV8K2q5jwf1oj6m35q8jycElvhMOUVOVw
-         pMcpg2j0UAKK/w8Fm17qVtrHNedTMmHfqMkBaKmCAeZHXkAZzVQSSoAb5/VfyeMxvC0X
-         9KRGY9zl20BDj0PRnqN+3YIyao7uLUuT2dP5dynxy3pp08/g4Ghwb9y3hewSNfha6Uq2
-         wngqe5oMMAqI6Jgjhljmi0CMAnMQeRGmatX9he6z09xZWqvf+GmlbJmJ+mgEAni77KQL
-         XNZax8drbKpQZxtpNJ/F/otKHBC5mMI9aTWsmLlq46HgO3kVu0k4YFCJ3TGJJxWMQYzV
-         tUiA==
+        d=gmail.com; s=20230601; t=1724734422; x=1725339222; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uvPg2odSODo+vDn/Yud57+BmBlEnCSstG5MaGB4eQ8U=;
+        b=AG7iDVK4qjquQTcQyW9Gy5H2RkOh1YF7Tt8LwZmdUoDYIUyE9kIGlR3Gi97w0bvGox
+         wsCI0AtGCzivxi25qSkCy31UdKIly0cOBZeK3PjAiN4NPjEbKK15uT/U752+d9cyOvL6
+         vZVgoRiTWbFhLe7TrX0KvkKzWaGKGyRp6ZqdM0mTVo0LK6752CiCiOK4sFA+74qxBXqX
+         dZ5Jm0SgIiwVJYrYDTGl0E9MoCAkVMmzNi+lG3k/smVuO2Hay7n/Ru96Jy4uFvwSSWuM
+         6FwBm7nQ8ieXBJmeQryhmoSrAZycRcFDFJfEEN27wyHS+VNljv1V2DbNW87mVweeJrK8
+         5RPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724734426; x=1725339226;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gL0CtwyQELiqJJaIVlxrXuLFauzAqYM0sY701FPxABY=;
-        b=oxbbYkYXscWTnvt9L0F4+DJ16dTqvsCmRc9oz3fQhBaS2HQQZ6ogmXgGCbplp5KOcM
-         EIst5NGEOoekzWFVzYC261xHqot4IVRZtWjrI39p9mg7A9Ep0ELeqMv29KsnUY6TNLsr
-         mJMqSTCW+L/d2Z4l+YMzmEzRJ1DDtKDDfIE6KHMRtmSJQe+pznKMP0P0v+6LLT0e+Mam
-         9cByjyb++U67M7PFDoEez8tPhL7SnbwONwqMY2nJTlU4H/EJMJb3rGwhIlFRDVnpulIl
-         GBaq4GcrXI8aEGpyIv8HiIbVkVBliVm8FBCPAGiDqVYQuPjRfJCoKTuHW20ViOknB6dM
-         DrYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXNswCV2NTVgVq9YilyYQqE/Vzn3MrtLfjLP1Y1rqzYcyybtWJAw+evjyveKl51ejedGW6GZiF8hxJ26lY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBaelP0/glUgsNBUTt7vgugTaWYm3O0wKcZ01hvjnTK/tY0fcn
-	qYxWR3RCJ4hEKtcPgCuobyZU9vj+QOeQ9Yu3oh0vLixkDcn6T+TCnRFh1WC2BNTTq3z3qh54Kk6
-	F
-X-Google-Smtp-Source: AGHT+IHvJKgGgS8F6PA+OGYeR1MSS8jBA76sh6PwAVPa/wEnz55WlDC55HealKCjGZuy9Cax5P2SIA==
-X-Received: by 2002:a05:6902:849:b0:e13:e6c1:ce3d with SMTP id 3f1490d57ef6-e1a2a978a80mr2069360276.43.1724734426374;
-        Mon, 26 Aug 2024 21:53:46 -0700 (PDT)
-Received: from [10.4.59.158] ([139.177.225.242])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d21700a48csm359552a12.85.2024.08.26.21.53.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 21:53:46 -0700 (PDT)
-Message-ID: <581a7d44-25c6-4498-b11a-9c0029bb9d78@bytedance.com>
-Date: Tue, 27 Aug 2024 12:53:37 +0800
+        d=1e100.net; s=20230601; t=1724734422; x=1725339222;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uvPg2odSODo+vDn/Yud57+BmBlEnCSstG5MaGB4eQ8U=;
+        b=AOFT0T1zkHjC9jk0MOOkZT3Y2CMPcorlgQpNX3umEQL92o4BFlLtMmGa5sih8T6Spm
+         7aaR5BrJQjqsajAm8o/BLviGC62cecogy5TvSXLdCsquE01YdCfXrgjN8dtznERvE4d9
+         FOsRKnbeueaHOrtcRjl0yQndApzAzSsuTOq0bdrN7L3cneSeJIdjrlSdxOrOhAlGicTe
+         0r4bmqCzpOsBLNMYEL40zHN6fzsP3o0oRsOlybmeawsLYCKc1/AcudrZ+n60f+wsL8Dc
+         hpUvuWiQ+AuMPWBq3JcIBqJm/ltHswMmMqYt6/fRpSLBu/6FgKefjYfcazrUVp2jP2BI
+         95ig==
+X-Forwarded-Encrypted: i=1; AJvYcCUmtpTLTjXyd0NqxJIcj/n5JQVwFRmyypo1ppWoK2i363EC1VYvI7kXduVqruwpo148k0Si+1lH3pw0rRXU@vger.kernel.org, AJvYcCVTm9DnyAjH4lxFfJjkfqHNppEFUKffWdUIrJFZyj/Ih+mHZ1lXlZgUO0q/fUmnbKGXjLwhKHPy73aW@vger.kernel.org, AJvYcCWzqE3ktXdCViJa3BET9dC7H7xsW9/9LJ0TeUGj+ay0qBgpSh6fPJjlbLXg9Fj5+IXot8b+UQNDMpcSmmw=@vger.kernel.org, AJvYcCX0oJ0UI+AqT0i+BxG1oa5FYhA7rrQ6YKWNma2aGtYdtu3OZuFgjQXjcANAw/qE3nK4OoX/7rhPvEn8@vger.kernel.org
+X-Gm-Message-State: AOJu0YwH2mlaCTzZUbOfibZaKeLa9suNbNJolA44NxQ/AfE660iI5FUT
+	rdYfGrOjUSfjB3jI6dE7+UCTZT4CHuP0124mWHyWx+/ofd4znXMx
+X-Google-Smtp-Source: AGHT+IEL1kKWGCjT1JsS3shOvdnMLab3oIYLzpv2H9njpHNKyiMPBT8u41muELEiFrxu91t9FxKUFg==
+X-Received: by 2002:a17:90a:6543:b0:2d3:c933:6c72 with SMTP id 98e67ed59e1d1-2d646bcd8bfmr14272772a91.8.1724734421649;
+        Mon, 26 Aug 2024 21:53:41 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d82a6d3d42sm125910a91.1.2024.08.26.21.53.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 21:53:40 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Mon, 26 Aug 2024 21:53:39 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Inochi Amaoto <inochiama@outlook.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,
+	Chao Wei <chao.wei@sophgo.com>, Yangyu Chen <cyy@cyyself.name>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Hal Feng <hal.feng@starfivetech.com>, linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v11 2/4] drivers: hwmon: sophgo: Add SG2042 external
+ hardware monitor support
+Message-ID: <5c7d6c42-e9ab-44b3-87d0-f2e4711a8c24@roeck-us.net>
+References: <IA1PR20MB4953DF0AE7210A6D74162952BB822@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <IA1PR20MB49536C786048D1E676BB9C20BB822@IA1PR20MB4953.namprd20.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/14] mm: handle_pte_fault() use
- pte_offset_map_rw_nolock()
-Content-Language: en-US
-To: David Hildenbrand <david@redhat.com>
-Cc: hughd@google.com, willy@infradead.org, muchun.song@linux.dev,
- vbabka@kernel.org, akpm@linux-foundation.org, rppt@kernel.org,
- vishal.moola@gmail.com, peterx@redhat.com, ryan.roberts@arm.com,
- christophe.leroy2@cs-soprasteria.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org
-References: <cover.1724310149.git.zhengqi.arch@bytedance.com>
- <5acabedfae7ded01b075960b4a91f2e15b4d76b5.1724310149.git.zhengqi.arch@bytedance.com>
- <ea518cf0-890d-4292-b775-dd3880c85bc6@redhat.com>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <ea518cf0-890d-4292-b775-dd3880c85bc6@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <IA1PR20MB49536C786048D1E676BB9C20BB822@IA1PR20MB4953.namprd20.prod.outlook.com>
 
-
-
-On 2024/8/26 23:36, David Hildenbrand wrote:
-> On 22.08.24 09:13, Qi Zheng wrote:
->> In handle_pte_fault(), we may modify the vmf->pte after acquiring the
->> vmf->ptl, so convert it to using pte_offset_map_rw_nolock(). But since we
->> will do the pte_same() check, so there is no need to get pmdval to do
->> pmd_same() check, just pass a dummy variable to it.
->>
->> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
->> ---
->>   mm/memory.c | 12 ++++++++++--
->>   1 file changed, 10 insertions(+), 2 deletions(-)
->>
->> diff --git a/mm/memory.c b/mm/memory.c
->> index 93c0c25433d02..7b6071a0e21e2 100644
->> --- a/mm/memory.c
->> +++ b/mm/memory.c
->> @@ -5499,14 +5499,22 @@ static vm_fault_t handle_pte_fault(struct 
->> vm_fault *vmf)
->>           vmf->pte = NULL;
->>           vmf->flags &= ~FAULT_FLAG_ORIG_PTE_VALID;
->>       } else {
->> +        pmd_t dummy_pmdval;
->> +
->>           /*
->>            * A regular pmd is established and it can't morph into a huge
->>            * pmd by anon khugepaged, since that takes mmap_lock in write
->>            * mode; but shmem or file collapse to THP could still morph
->>            * it into a huge pmd: just retry later if so.
->> +         *
->> +         * Use the maywrite version to indicate that vmf->pte will be
->> +         * modified, but since we will use pte_same() to detect the
->> +         * change of the pte entry, there is no need to get pmdval, so
->> +         * just pass a dummy variable to it.
->>            */
->> -        vmf->pte = pte_offset_map_nolock(vmf->vma->vm_mm, vmf->pmd,
->> -                         vmf->address, &vmf->ptl);
->> +        vmf->pte = pte_offset_map_rw_nolock(vmf->vma->vm_mm, vmf->pmd,
->> +                            vmf->address, &dummy_pmdval,
->> +                            &vmf->ptl);
->>           if (unlikely(!vmf->pte))
->>               return 0;
->>           vmf->orig_pte = ptep_get_lockless(vmf->pte);
+On Sat, Aug 17, 2024 at 10:22:57AM +0800, Inochi Amaoto wrote:
+> SG2042 use an external MCU to provide basic hardware information
+> and thermal sensors.
 > 
-> No I understand why we don't need the PMD val in these cases ... the PTE 
-> would also be pte_none() at the point the page table is freed, so we 
-> would detect the change as well.
-
-Yes.
-
+> Add driver support for the onboard MCU of SG2042.
 > 
-> I do enjoy documenting why we use a dummy value, though. Likely without 
-> that, new users will just pass NULL and call it a day.
+> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
 
-OK, how about the following:
+Applied.
 
-Use the maywrite version to indicate that vmf->pte will be
-modified, but since we will use pte_same() to detect the
-change of the !pte_none() entry, there is no need to recheck
-the pmdval. Here we chooes to pass a dummy variable instead
-of NULL, which helps new user think about why this place is
-special.
-
-> 
-> Acked-by: David Hildenbrand <david@redhat.com>
-
-Thanks!
-
-> 
+Thanks,
+Guenter
 
