@@ -1,140 +1,156 @@
-Return-Path: <linux-kernel+bounces-302611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DD459600F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:16:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F0A69600D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:09:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60E881C21187
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:16:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1A451F22D97
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C5A8003F;
-	Tue, 27 Aug 2024 05:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C740912C80F;
+	Tue, 27 Aug 2024 05:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="oXzKgh7X"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09F49450;
-	Tue, 27 Aug 2024 05:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ftlakTUv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BAFD4C92
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 05:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724735800; cv=none; b=Qx3VsuBLTHgKPfj7ADAxcjfSBe9gD8LbDi8kzNZ04s5SX2lAV102klN0N0r0fi30nys69LqtbGvBX1IHYkusJ+FQ+vHbFyecoqY8kca7n0tFatvPML8tS/Ga+etJz/p5pg1vlQHV8mkLiLOVdiI+XVPuXq5Ru1VxdlyopmGeKwM=
+	t=1724735381; cv=none; b=TaL1iW2AbpVM1Nxi3OgkirHbF0PjyJQAwOBEQDHswt4ffJ0L2SWt1Mcr0NH/IZ6KVwfXxBICsvJQAeqTDxBifTjhKdOljpPqnrY3HGFy98Pji/VpVsd7qAzXUatO6W1E6btCVMyDjRJOEl77xFmk7BR9xmtI9EqAz2x66Ba+2dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724735800; c=relaxed/simple;
-	bh=K+GmY4gdcn7uAYZPeaBQygIXA8pVBbxuLeRLl3Cz9HA=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=gN2CfvzFoap/1byLKJb1CyLa/dKHxk4icNeoAf7jFwTo/7YYALjYGrwZqM3RVZK0xkuUoQTT9e1RdPOmOWRvY/Y9xctdwAIQs5f92bedy66IvR+byDiSXg9HciV5nSwiV+BMAD17h83XPoi1HzqI4O2MwAbOQazEzCIZXJI/c7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=oXzKgh7X; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1173)
-	id 86F7C20B7165; Mon, 26 Aug 2024 22:16:38 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 86F7C20B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1724735798;
-	bh=KhV9yigjdRhu5Msq5dP4Yrc+yBo/M/rjxpLcEAj8cSQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=oXzKgh7XwbflA9IbBEd9Tm8Nux2CDIdM6Xtt7N3GNbA4J8AUz5tom6VoZsaSh2zAs
-	 PzDhd/3DCTYW+3aLihuFtCH5fKUU1HIZ42Gp+kJHuGMAa4Sa2O/r2dN6Jbi5DXoInH
-	 PQ+8+Xu4hZlEonQovM/auCrm/sxDHE5souIDjNdE=
-From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-To: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org,
+	s=arc-20240116; t=1724735381; c=relaxed/simple;
+	bh=CIvKikOPhEGLHf7EWowVUA0K+rreGMGnHAgAKNeRrJk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=OPlmq6bbSxlVK8ktKJKOTCJogK3ocAzN+z1iJEGLSuXHK3BY8GgfwhH9aYG81yX79MI99Pt8Fh72MGXjx7KmNGCaNquH/mj7FjtQ9KynmmxEC2S9kBgU7xeA8d58QjtgW+o30+xorBicPfo9mlKMgOJksQRmaGkx7w9vXWCs7pU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ftlakTUv; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724735380; x=1756271380;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references;
+  bh=CIvKikOPhEGLHf7EWowVUA0K+rreGMGnHAgAKNeRrJk=;
+  b=ftlakTUv6pCgL/5C/7tt5UiSB525t+Zc23bY8Ro1Z0xcGqAWrSfb3+ly
+   3s7097R/2A1X7DXvhuk0m+RS07kNlBMtV9y5pkROlXvDwK7g1NgQfJHha
+   EW5y69AJM0Hv6VrOz1uXc2PcIZcrXvbLw/C+To9Y1hRRdZaGnZdgoNlLC
+   rU7HzL4w7r684faxwH+a43A9iqV6K7yBrECZzJ9QGzgoosTuf3bfQa5qX
+   6T/tzgrbl38cYXSFC+DbKdl7fy6+nVwlHogOYv7o3uuN9ZHaQJM8Dp15x
+   rZumqcV2GPP/TxgYI00zY1vuxSb0Xw921RRUJHbY/tVxlzrDi4vdiO9aS
+   w==;
+X-CSE-ConnectionGUID: jWyjv9BAQiaPFpbmdlDf5g==
+X-CSE-MsgGUID: 5vCeqWLzTk+18wNsA/jL2w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="13230470"
+X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
+   d="scan'208";a="13230470"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 22:09:38 -0700
+X-CSE-ConnectionGUID: kZ2OVvyJRUahBDIhj4T2/Q==
+X-CSE-MsgGUID: nuUhmEumSBK3LD55NUWluw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
+   d="scan'208";a="62703855"
+Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
+  by orviesa009.jf.intel.com with ESMTP; 26 Aug 2024 22:09:37 -0700
+From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To: x86@kernel.org
+Cc: Andreas Herrmann <aherrmann@suse.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Chen Yu <yu.c.chen@intel.com>,
+	Len Brown <len.brown@intel.com>,
+	Radu Rendec <rrendec@redhat.com>,
+	Pierre Gondois <Pierre.Gondois@arm.com>,
+	Pu Wen <puwen@hygon.cn>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Will Deacon <will@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Huang Ying <ying.huang@intel.com>,
+	Ricardo Neri <ricardo.neri@intel.com>,
 	linux-kernel@vger.kernel.org
-Cc: ernis@microsoft.com,
-	Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-Subject: [PATCH v4] net: netvsc: Update default VMBus channels
-Date: Mon, 26 Aug 2024 22:16:31 -0700
-Message-Id: <1724735791-22815-1-git-send-email-ernis@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+Subject: [PATCH v5 1/4] cacheinfo: Check for null last-level cache info
+Date: Mon, 26 Aug 2024 22:16:32 -0700
+Message-Id: <20240827051635.9114-2-ricardo.neri-calderon@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20240827051635.9114-1-ricardo.neri-calderon@linux.intel.com>
+References: <20240827051635.9114-1-ricardo.neri-calderon@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-Change VMBus channels macro (VRSS_CHANNEL_DEFAULT) in
-Linux netvsc from 8 to 16 to align with Azure Windows VM
-and improve networking throughput.
+Before determining the validity of the last-level cache info, ensure that
+it has been allocated. Simply checking for non-zero cache_leaves() is not
+sufficient, as some architectures (e.g., Intel processors) have non-zero
+cache_leaves() before allocation.
 
-For VMs having less than 16 vCPUS, the channels depend
-on number of vCPUs. For greater than 16 vCPUs,
-set the channels to maximum of VRSS_CHANNEL_DEFAULT and
-number of physical cores / 2 which is returned by
-netif_get_num_default_rss_queues() as a way to optimize CPU
-resource utilization and scale for high-end processors with
-many cores.
-Maximum number of channels are by default set to 64.
+Dereferencing NULL cacheinfo can occur in update_per_cpu_data_slice_size().
+This function iterates over all online CPUs. However, a CPU may have come
+online recently, but its cacheinfo may not have been allocated yet.
 
-Based on this change the channel creation would change as follows:
-
------------------------------------------------------------------
-| No. of vCPU |  dev_info->num_chn |    channels created        |
------------------------------------------------------------------
-|    1-16     |        16	   |          vCPU              |
-|    >16      |  max(16,#cores/2)  | min(64 , max(16,#cores/2)) |
------------------------------------------------------------------
-
-Performance tests showed significant improvement in throughput:
-- 0.54% for 16 vCPUs
-- 0.83% for 32 vCPUs
-- 0.86% for 48 vCPUs
-- 9.72% for 64 vCPUs
-- 13.57% for 96 vCPUs
-
-Signed-off-by: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
-Reviewed-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
 ---
-Changes in v4:
-* Update commit message for channels created
+Cc: Andreas Herrmann <aherrmann@suse.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Chen Yu <yu.c.chen@intel.com>
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: Len Brown <len.brown@intel.com>
+Cc: Nikolay Borisov <nik.borisov@suse.com>
+Cc: Radu Rendec <rrendec@redhat.com>
+Cc: Pierre Gondois <Pierre.Gondois@arm.com>
+Cc: Pu Wen <puwen@hygon.cn>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Zhang Rui <rui.zhang@intel.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: stable@vger.kernel.org # 6.3+
 ---
-Changes in v3:
-* Use netif_get_num_default_rss_queues() to set channels
-* Change terminology for channels in commit message
----
-Changes in v2:
-* Set dev_info->num_chn based on vCPU count.
----
- drivers/net/hyperv/hyperv_net.h | 2 +-
- drivers/net/hyperv/netvsc_drv.c | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+Changes since v4:
+ * Combined checks for per_cpu_cacheinfo() and cache_leaves() in a single
+   line. (Sudeep)
+ * Added Reviewed-by tag from Sudeep. Thanks!
 
-diff --git a/drivers/net/hyperv/hyperv_net.h b/drivers/net/hyperv/hyperv_net.h
-index 810977952f95..e690b95b1bbb 100644
---- a/drivers/net/hyperv/hyperv_net.h
-+++ b/drivers/net/hyperv/hyperv_net.h
-@@ -882,7 +882,7 @@ struct nvsp_message {
+Changes since v3:
+ * Introduced this patch.
+
+Changes since v2:
+ * N/A
+
+Changes since v1:
+ * N/A
+---
+The dereference of a NULL cacheinfo is not observed today because
+cache_leaves(cpu) is zero until after init_cache_level() is called
+(during the CPU hotplug callback). A subsequent changeset will set
+the number of cache leaves earlier and the NULL-pointer dereference
+will be observed.
+---
+ drivers/base/cacheinfo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
+index 23b8cba4a2a3..77f2e0f91589 100644
+--- a/drivers/base/cacheinfo.c
++++ b/drivers/base/cacheinfo.c
+@@ -58,7 +58,7 @@ bool last_level_cache_is_valid(unsigned int cpu)
+ {
+ 	struct cacheinfo *llc;
  
- #define VRSS_SEND_TAB_SIZE 16  /* must be power of 2 */
- #define VRSS_CHANNEL_MAX 64
--#define VRSS_CHANNEL_DEFAULT 8
-+#define VRSS_CHANNEL_DEFAULT 16
+-	if (!cache_leaves(cpu))
++	if (!cache_leaves(cpu) || !per_cpu_cacheinfo(cpu))
+ 		return false;
  
- #define RNDIS_MAX_PKT_DEFAULT 8
- #define RNDIS_PKT_ALIGN_DEFAULT 8
-diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
-index 44142245343d..a6482afe4217 100644
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -987,7 +987,8 @@ struct netvsc_device_info *netvsc_devinfo_get(struct netvsc_device *nvdev)
- 			dev_info->bprog = prog;
- 		}
- 	} else {
--		dev_info->num_chn = VRSS_CHANNEL_DEFAULT;
-+		dev_info->num_chn = max(VRSS_CHANNEL_DEFAULT,
-+					netif_get_num_default_rss_queues());
- 		dev_info->send_sections = NETVSC_DEFAULT_TX;
- 		dev_info->send_section_size = NETVSC_SEND_SECTION_SIZE;
- 		dev_info->recv_sections = NETVSC_DEFAULT_RX;
+ 	llc = per_cpu_cacheinfo_idx(cpu, cache_leaves(cpu) - 1);
 -- 
 2.34.1
 
