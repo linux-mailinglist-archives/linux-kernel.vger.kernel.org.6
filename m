@@ -1,120 +1,101 @@
-Return-Path: <linux-kernel+bounces-303582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C696A960F30
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:56:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3382960F33
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 656DAB26592
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:56:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DAFB282E14
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 904451C6F5F;
-	Tue, 27 Aug 2024 14:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD471CC170;
+	Tue, 27 Aug 2024 14:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mzY3Ekoi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M+ZftaPJ"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC7E1C5783;
-	Tue, 27 Aug 2024 14:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502781C5783
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 14:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724770532; cv=none; b=bS9gRkH6THt//RMdyZlMqWm+CsJaS3vc/r/KDoa2NsHKAd9dN6rEBDLYfRyubPWQO6nZpMFsNUB6wGzlFbgMbfI9konstRNQOnlp45Rw0N0PtdbxyEsQjo0U9aISi88h8dI1xMOscdzJD6nJ2WUdhzZbQRQb0P9pgaOwdebr5JM=
+	t=1724770538; cv=none; b=dYSZOuLK5G4VMYZqcm6fI2sJVSB10KzucrcI3tWpeq+NxsAdN5db+9pE7AeyyBxpG36ph7myjg3w69AzWxItkHCF/ibdLo5j0L2vNhig492SIoHePH5d1que+tTPLhACL3DVLrgxNtInHLexnmOLXdZw0mtuH9ZyDtvgWpZVd4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724770532; c=relaxed/simple;
-	bh=D80vpx6U6QT7GcY5OtgT2Iqfz6U4g8ngRy6lrqYUReA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GhKZXs7VECeaziw/m0RWVW2DFRTl2o3hgesoB1Un4xw9tzjN+6BOWb5atGjvdcfakjU987ukoKTPq58kKN7RHZ59jTDiG6BpgNaP/xlrOiQ/I1pXZxubmZECgGj2AEngB4iMDqjIKAPXRFrp8EFJfFZ1AJW1Kp18oQBH9sjjsTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mzY3Ekoi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 903EDC4E699;
-	Tue, 27 Aug 2024 14:55:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724770532;
-	bh=D80vpx6U6QT7GcY5OtgT2Iqfz6U4g8ngRy6lrqYUReA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mzY3EkoijKjcm5DDmYoHp5H2ObZXtFKsAMa12P/QKAptq4mddaMTqo7uGVS3xob46
-	 5jUTvBkE/DZ33nI2za/bDA6MbTauhaXisYMORZ/5e9XdAIGzWXD3JDhE64Ii2i/eKt
-	 O8HiVHGByi9iQJybjjlB2SiZ9eTUVQAE39HG9gr5whw2clXYCtDtvubb7gaZpfy/pE
-	 sx8K4t+gUDaNJDGp/EXP5b8wW7lrQo6TNDlaJ+8SiWg5z61yjpl4plNnwjB9cBtYos
-	 Ql/I7sCYTMQ4C109ubkSm5qLVdm/90L4TOuXhH4QjUYve1b/uzB1+GNGVDGEX4bVCS
-	 sRdHpm4Q4lIjw==
-Date: Tue, 27 Aug 2024 15:55:25 +0100
-From: Simon Horman <horms@kernel.org>
-To: Yangtao Li <frank.li@vivo.com>
-Cc: clement.leger@bootlin.com, andrew@lunn.ch, f.fainelli@gmail.com,
-	olteanv@gmail.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, ulli.kroll@googlemail.com,
-	linus.walleij@linaro.org, marcin.s.wojtas@gmail.com,
-	linux@armlinux.org.uk, alexandre.torgue@foss.st.com,
-	joabreu@synopsys.com, mcoquelin.stm32@gmail.com,
-	hkallweit1@gmail.com, u.kleine-koenig@pengutronix.de,
-	jacob.e.keller@intel.com, justinstitt@google.com,
-	sd@queasysnail.net, linux-renesas-soc@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [net-next v3 8/9] net: mvpp2: Convert to devm_clk_get_enabled()
- and devm_clk_get_optional_enabled()
-Message-ID: <20240827145525.GK1368797@kernel.org>
-References: <20240827095712.2672820-1-frank.li@vivo.com>
- <20240827095712.2672820-9-frank.li@vivo.com>
+	s=arc-20240116; t=1724770538; c=relaxed/simple;
+	bh=uc9QBu/RgpptTCan+mn+ezxYGNJHONA/8aOr7nu41oE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=adopiFEOTEdOrkJ2fu8bJz7/sD9gH9QrSrCSbislHqFd/lm4ev18Eun621hKsNO5Gi1DOBN+Q4WalBNoWAFLBQrbtFmy5pQiJiJ8QezutthDK1S0el5XiDB0nov6ZJVA6xuJoEyGQ70trHGpwmyx8JkQYBxhSoM1VjCLqARiQAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M+ZftaPJ; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6bf7ba05f75so47206486d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 07:55:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724770536; x=1725375336; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uc9QBu/RgpptTCan+mn+ezxYGNJHONA/8aOr7nu41oE=;
+        b=M+ZftaPJhkRxiQ7oJu3BTD2RQJ899ONi5J5kXi67wNaEKPmJu8cuHAdYQE7/MCzljx
+         le9UCaXsJ79/hMTz0/LJMq5FV4fR1hfU3FRmQFns3gAX2Q2vQHtOdux019+Lx/czjo6v
+         om3w+dpX0HfaySjgX88dFZIJPmIWm5ry07i7evRvL2T+sRN+f93j4DLNWhORuWilkMZ1
+         wu5GBVC8vqA1LO1jwOTeDSLgK8Bswa90pV1vKgh40WnM3k5BTdM7mKpNGvLXqNM+XpeS
+         HGAaonA+FBiw9m9ouit+q48CIIng9IX1HqqiMCnKzMMNOmXCKjbJr5q6nWiQclr03m5A
+         /TmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724770536; x=1725375336;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uc9QBu/RgpptTCan+mn+ezxYGNJHONA/8aOr7nu41oE=;
+        b=KUtNwVayPM4grQ5TA4YtpvKk7l1erDhR1g+fyUCRXrparxayaKxTu/MgJOMeJyaCen
+         M0LlYGD2BIPVij97c6OGGvdSWoq2iFWuBqPWkOfK/xwqZKtQm3epWfCLFqzBuGLwey5b
+         eFPodw7BMukDl7Wu60XHtSVlZxJ1sQqM/qxrH7hdmK4fICXAgy8gF3YaG4mVc4UlAYaF
+         NqfeuGNq4q11xdWmyW8zJxL0wo/wboCdnKxG9aZ56SPfSMHyVeWUQZDVYfLa6nPVlEPW
+         /Yydmmne6MqSTDhqkGtZfiA0Y6f/0I9J8OmdMYhTbCd3OPbJ2GHVDHysp8fHi7wgLpdl
+         Voqw==
+X-Gm-Message-State: AOJu0YxE8gTBGMn95uF8ts9IO0rmL5AMUno/pE68zrCqTvtmfhBaa6u0
+	wDwZFyxBoiwJ63mFVXs3jb0Lfq40D0B7x2d3PdQEoBhhCqkRrNt9NjW8d3fRtyHnTbPdj74h0t8
+	1Wi5lEc7c40VNCWFHOQCHaYcp/woKlQ==
+X-Google-Smtp-Source: AGHT+IEhTFBEoiQbXcVwZVgrKHQB0MClfuVl4vjNSwpN7UbWREqIOx9oA0rwouWDb5hB5J0ZKkQip+KnCDOecqJu0Ac=
+X-Received: by 2002:a05:6214:224d:b0:6b5:1584:62bf with SMTP id
+ 6a1803df08f44-6c32ae9c191mr60838606d6.6.1724770536125; Tue, 27 Aug 2024
+ 07:55:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827095712.2672820-9-frank.li@vivo.com>
+References: <20240819021621.29125-1-kanchana.p.sridhar@intel.com>
+In-Reply-To: <20240819021621.29125-1-kanchana.p.sridhar@intel.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Tue, 27 Aug 2024 07:55:25 -0700
+Message-ID: <CAKEwX=Nw3bbm7_J3feiUbk-3n3jj9_FbKHLiBJtQc6ZTfqq2Rg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/4] mm: ZSWAP swap-out of mTHP folios
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
+	yosryahmed@google.com, ryan.roberts@arm.com, ying.huang@intel.com, 
+	21cnbao@gmail.com, akpm@linux-foundation.org, nanhai.zou@intel.com, 
+	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 27, 2024 at 03:57:11AM -0600, Yangtao Li wrote:
-> Use devm_clk_get_enabled() and devm_clk_get_optional_enabled()
-> to simplify code.
-> 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> Tested-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> Suggested-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Reviewed-by: Marcin Wojtas <marcin.s.wojtas@gmail.com>
+On Sun, Aug 18, 2024 at 7:16=E2=80=AFPM Kanchana P Sridhar
+<kanchana.p.sridhar@intel.com> wrote:
+>
+> Hi All,
+>
+> base-commit: 8c0b4f7b65fd1ca7af01267f491e815a40d77444
+> --
+> 2.27.0
+>
 
-...
+BTW, where does this commit come from? I assume this is post-mTHP
+swapout - does it have mTHP swapin? Chris Li's patch series to improve
+swap slot allocation?
 
-> diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> index 2fe8bae4eb3c..0ca2daeb0f90 100644
-> --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> @@ -7561,56 +7561,32 @@ static int mvpp2_probe(struct platform_device *pdev)
-
-...
-
-> -		priv->axi_clk = devm_clk_get_optional(&pdev->dev, "axi_clk");
-> -		if (IS_ERR(priv->axi_clk)) {
-> -			err = PTR_ERR(priv->axi_clk);
-> -			goto err_mg_core_clk;
-> +			clk = devm_clk_get_optional_enabled(&pdev->dev, "mg_core_clk");
-
-As it looks like there will be a v3 anyway, a minor nit from my side:
-IMHO, the line above could be trivially wrapped to keep it <= 80 columns wide,
-which is still preferred by Networking code.
-
-> +			if (IS_ERR(clk))
-> +				return PTR_ERR(clk);
->  		}
->  
-> -		err = clk_prepare_enable(priv->axi_clk);
-> -		if (err < 0)
-> -			goto err_mg_core_clk;
-> -
-> -		/* Get system's tclk rate */
-> -		priv->tclk = clk_get_rate(priv->pp_clk);
-> +		clk = devm_clk_get_optional_enabled(&pdev->dev, "axi_clk");
-> +		if (IS_ERR(clk))
-> +			return PTR_ERR(clk);
-
-...
+Can't seem to find it when I fetch mm-unstable for some reason hmmmmm.
 
