@@ -1,140 +1,393 @@
-Return-Path: <linux-kernel+bounces-302926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA79960519
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:06:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2F3596051D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 790621F215E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:06:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C496281678
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B955E176FD3;
-	Tue, 27 Aug 2024 09:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6C0199947;
+	Tue, 27 Aug 2024 09:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q0+YL/b/"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cem+3wjm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255F5198E92
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3173A13B293
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724749580; cv=none; b=VnlacsogZ28D9zA/VInFMZY54zKMUenF96T/cp9cJR1HcNmnGiyLJiDJsceQzvg36g/1tVnORlYd102+qLrgndLzy7RD0qnWniTQoX65v6P73J9kr+ZM7xOQrB1KoMbYQv6tqxCEhzbb5Stmf4hxfWGazHs5mfZY0/FrBpeqJvo=
+	t=1724749648; cv=none; b=DRnbg5vtG9HVRMu2rCXg0PSOLVhKYv7DP8MLOAalgvRhuZMDnJevHvtOXAjGKAKg8tmSKDhEBS6iW5Gf3JE7f2iWzvyxLUbbtvfS972ooM2gA2K6H7lvGnyjTY5ZjeJ+5py8yZ4zIZ/9Y+uxssakGaaTt6nWo5qh1uIRLib8l4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724749580; c=relaxed/simple;
-	bh=td6TsY+x1jF2bYWtgW1QVma5ZvKvJwuhzTvVDhTcxRU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=dNvrn/T7PnRGiNjMz3FFUdQUQW5K459vy2vGdHZaHxylVd+A6HAiyNna/CJtpUQWTGt6VZoLI34qPBsKGgnPjaAWWrM9cf8+GtgeksXzP7N6z7RiOBlhPrsaVBQhEPV3ucjj3uWU6yWmS5a6SMJkBHkIA7tnQ+VyueWwOHPtA2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q0+YL/b/; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4281d812d3eso57954725e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 02:06:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724749576; x=1725354376; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ys5q7+xt7V4u8ZvUMbFPxHX+g0yKhziPVMVNXUTaajE=;
-        b=Q0+YL/b/rl5j1EuCKgYUI8/1tv7hP3ynaUFvOc6LAh2q5WZWdaUTrVCnPuqVCMYMq+
-         S29T2gYKSix5SIxrO6CryQW41Ci0QM6WVoGegsHxJVF0ABvKxkNvmdUHdQriV5Hspnau
-         24wrg+mqJt6J4ClbsIRvrt+h+Eh/bUdAWJWp13Ybp/CCsAcQPxOb53Qczsr4Qy8LqFoE
-         ZJsrfekr1cC6qSLWHDCuIAPy/cPmNmmux9yYVjqQyYsc3BV8SzdQVJQx93xnyv16c33q
-         S0KjBE4oScqKwwqaKgq8E4nBtMWdZEsx43skUVvqHD7vCmUsGe87ab3S2h7EHFRn8XJL
-         /Uww==
+	s=arc-20240116; t=1724749648; c=relaxed/simple;
+	bh=PKEN6I5V8pypNB6zwLv46ZWR3A6nnO0DXd+d/r8UWLA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i+mHIsNSynLvlTF36u6JpehCIcNxylSnPb8q8w0rMQRliN/zWkcAjT/B7ZGqryCO7Lz5lgn51GcNaD+vYSVg712MmiPgLbXTGAtoRs0WmvhUDNbkvafyXoiCi1ZlosTchlOy/9NusegYmuL3gAc8s5vHQ4wlxsRAEF2SFE9Iv4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cem+3wjm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724749645;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l3k5aXgmeHpOgCqavu3RPvmVi3OTsmxyK+VkxJKU+yU=;
+	b=Cem+3wjmGTNeNYYzXuwIDGAAlUyNs4km4VnsLAwUw8sYfv4v16rltbFUU/HTIdktWObBqX
+	Ln2yxLx5KEeubg3kwyJhW3hxPkcoN1absliYgkUP16Rvd3DfhHW2y+jG40lsV3KCMea+2a
+	LVEdAGC+tfwwhvm7KmSY6A2t/Xlzyg8=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-218-1hZHDrBDOjuPfMnHj7AcXQ-1; Tue, 27 Aug 2024 05:07:23 -0400
+X-MC-Unique: 1hZHDrBDOjuPfMnHj7AcXQ-1
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2f3f9517948so48255071fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 02:07:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724749576; x=1725354376;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ys5q7+xt7V4u8ZvUMbFPxHX+g0yKhziPVMVNXUTaajE=;
-        b=LR8rJvlJJmUQSTRRKsm9Duu6ibIJVq2W6xYH2irLbRPCQdyUkpadr0coT0YO4fAhSb
-         jqHw+e51w/XzZydKi1moDkU9377dJgO82d1d/STlKg6sYLNeIECCl9pBpnp7EP5IZ6Yn
-         nDs3BnRPRz8uYEPMqlcq1lnNuHjaOrqGvYdLHxY6iZCg5txLqIe7GjW3c4azenXSLHDX
-         f8GyJjdGN/ABbhqX07h9QXmXqvFTmUxwXOeMk1LFWgvG8VAzLK4T8yuKWZk2ofXysmX5
-         +i3MnCYjBwElcW92apLma90oUOzvKtfRlEx0mxqqNf9DitHZYtRP2vFt8lZd/TXvGj80
-         u9QA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ/Y54mfUikBBJretUsPGQfnAZWvJNmG0D/FiwmEZdrYKo7biLIRY2DPqOQV6pnznmhte6fNrOUeLl4M8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx96fHIkGv9IKIInzmMrsN2K1YGsTJVlkmic3TzlHSTgD2A8svb
-	ERyhR7zSe+6YeFPf1WlA3i+XYUxuZkh552BkNm0OKN5X3ujTr7IFg1mFnCmzIuY=
-X-Google-Smtp-Source: AGHT+IE+VDn5FOe01bWlunlr3Q/efu0PB9LC4RFl5VPjT0A0kz6PEXEkfZYstnAt53OJLkCDA/f1HA==
-X-Received: by 2002:adf:b311:0:b0:368:3f6a:1dea with SMTP id ffacd0b85a97d-37311840050mr9300691f8f.6.1724749575912;
-        Tue, 27 Aug 2024 02:06:15 -0700 (PDT)
-Received: from draig.lan ([85.9.250.243])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730826a3f7sm12533503f8f.112.2024.08.27.02.06.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 02:06:15 -0700 (PDT)
-Received: from draig (localhost [IPv6:::1])
-	by draig.lan (Postfix) with ESMTP id 507E15F7A2;
-	Tue, 27 Aug 2024 10:06:14 +0100 (BST)
-From: =?utf-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,  Marc Zyngier <maz@kernel.org>,
-  Oliver Upton <oliver.upton@linux.dev>,  Tianrui Zhao
- <zhaotianrui@loongson.cn>,  Bibo Mao <maobibo@loongson.cn>,  Huacai Chen
- <chenhuacai@kernel.org>,  Michael Ellerman <mpe@ellerman.id.au>,  Anup
- Patel <anup@brainfault.org>,  Paul Walmsley <paul.walmsley@sifive.com>,
-  Palmer Dabbelt <palmer@dabbelt.com>,  Albert Ou <aou@eecs.berkeley.edu>,
-  Christian Borntraeger <borntraeger@linux.ibm.com>,  Janosch Frank
- <frankja@linux.ibm.com>,  Claudio Imbrenda <imbrenda@linux.ibm.com>,
-  kvm@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  kvmarm@lists.linux.dev,  loongarch@lists.linux.dev,
-  linux-mips@vger.kernel.org,  linuxppc-dev@lists.ozlabs.org,
-  kvm-riscv@lists.infradead.org,  linux-riscv@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  David Matlack <dmatlack@google.com>,
-  David Stevens <stevensd@chromium.org>
-Subject: Re: [PATCH v12 00/84] KVM: Stop grabbing references to PFNMAP'd pages
-In-Reply-To: <20240726235234.228822-1-seanjc@google.com> (Sean
-	Christopherson's message of "Fri, 26 Jul 2024 16:51:09 -0700")
-References: <20240726235234.228822-1-seanjc@google.com>
-Date: Tue, 27 Aug 2024 10:06:14 +0100
-Message-ID: <875xrme3nd.fsf@draig.linaro.org>
+        d=1e100.net; s=20230601; t=1724749642; x=1725354442;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l3k5aXgmeHpOgCqavu3RPvmVi3OTsmxyK+VkxJKU+yU=;
+        b=anh8y7Mbd/0LyIOmyq/TBDJYbYbpq7tJfsfEYMcDjlUmeyc2DKosw5YAwVb5JhQxgf
+         pz/W18BZ/G265FZJLHzeMrRSwsekBs3ntJMe/56Jfvq/1GzoAw+hLsaBh2A6+z76uP//
+         PUnxWCy8aH9MqaWf7+deFgBwLsnNQlfccSsUn2m/ipFpLUbULbmfrlom+CJxZTzP1Aku
+         C7Ixofh+hCde1JzmeNBUfpFO22YToMw0NzkJeR5HY2sZI1ee5AOZ8SLRyBCYX9vQfB+o
+         /Hi4Fvb6hkvo0d+KLuN7nber5pu1lN8dGvssfRqisaJckkxaDEcwTEoT/2FHpE4tmhLu
+         xl/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXejCvQewzDJONpjmyQyYDBlSKZOy9U9gr0AqXR+f9loos+UkXuso8+lhTr/P8WDZhorz4Tk3buCKR4nrA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCd/hUhWvX/zWBBXq70IyeAWI4aA7PrkXP5yWT8KU+Bv1Jh0fG
+	RUTlRLNgqFu7FMSl1WpsQQ0Yjx3VYGcZtvZEp9zdMxzXS4H2sd1k6jm0FsZwWO7Ur0MjXprtini
+	3fb0YZ9OUtjoE2idJZpfDQ1OtYn1ndHFJXHFewoTJPtVglbsQz8CWCQAp9eOgdQ==
+X-Received: by 2002:a05:651c:54e:b0:2ef:2c0f:283e with SMTP id 38308e7fff4ca-2f514a2fd6amr14686291fa.12.1724749641626;
+        Tue, 27 Aug 2024 02:07:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEel0jovheZHux9Pox4ntorGH0rGVklDEPrOVvhQYHt58E5EJzmLItmotwzMzG3AI3lA3LU+A==
+X-Received: by 2002:a05:651c:54e:b0:2ef:2c0f:283e with SMTP id 38308e7fff4ca-2f514a2fd6amr14685861fa.12.1724749640928;
+        Tue, 27 Aug 2024 02:07:20 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb1c280dsm774115a12.3.2024.08.27.02.07.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 02:07:20 -0700 (PDT)
+Message-ID: <4dab4f36-309d-4b95-8b01-84963ca08d16@redhat.com>
+Date: Tue, 27 Aug 2024 11:07:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] platform/surface: Add OF support
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Len Brown <lenb@kernel.org>, Maximilian Luz <luzmaximilian@gmail.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <quic_kdybcio@quicinc.com>
+References: <20240814-topic-sam-v3-0-a84588aad233@quicinc.com>
+ <20240814-topic-sam-v3-3-a84588aad233@quicinc.com>
+ <ZszrjQChQ2aS5YjV@surfacebook.localdomain>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <ZszrjQChQ2aS5YjV@surfacebook.localdomain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Sean Christopherson <seanjc@google.com> writes:
+Hi Andy,
 
-> arm64 folks, the first two patches are bug fixes, but I have very low
-> confidence that they are correct and/or desirable.  If they are more or
-> less correct, I can post them separately if that'd make life easier.  I
-> included them here to avoid conflicts, and because I'm pretty sure how
-> KVM deals with MTE tags vs. dirty logging will impact what APIs KVM needs
-> to provide to arch code.
->
-> On to the series...  The TL;DR is that I would like to get input on two
-> things:
->
->  1. Marking folios dirty/accessed only on the intial stage-2 page fault
->  2. The new APIs for faulting, prefetching, and doing "lookups" on
->  pfns
+Thank you for the review.
 
-I've finally managed to get virtio-vulkan working on my Arm64 devbox
-with an AMD graphics card plugged into the PCI. I'm confident that the
-graphics path is using the discrete card memory (as it has been mapped
-as device memory with alignment handlers to deal with the broken Altra
-PCI). However aside from running graphics workloads in KVM guests is
-their anything else I can check to see things are behaving as expected?
+Note this has already been merged though.
 
-The predecessor series did break launching some KVM guests on my x86
-system but with this series launching guests works fine and I haven't
-noticed any weirdness.
+Still there are some good suggestions here for a follow-up
+cleanup patch.
 
-So for those caveats you can certainly have a:
+Regards,
 
-Tested-by: Alex Benn=C3=A9e <alex.bennee@linaro.org>
+Hans
 
-However if there is anything else I can do to further stress test this
-code do let me know.
 
---=20
-Alex Benn=C3=A9e
-Virtualisation Tech Lead @ Linaro
+On 8/26/24 10:54 PM, Andy Shevchenko wrote:
+> Wed, Aug 14, 2024 at 12:27:27PM +0200, Konrad Dybcio kirjoitti:
+>> From: Konrad Dybcio <quic_kdybcio@quicinc.com>
+>>
+>> Add basic support for registering the aggregator module on Device Tree-
+>> based platforms. These include at least three generations of Qualcomm
+>> Snapdragon-based Surface devices:
+>>
+>> - SC8180X / SQ1 / SQ2: Pro X,
+>> - SC8280XP / SQ3: Devkit 2023, Pro 9
+>> - X Elite: Laptop 7 / Pro11
+>>
+>> Thankfully, the aggregators on these seem to be configured in an
+>> identical way, which allows for using these settings as defaults and
+>> no DT properties need to be introduced (until that changes, anyway).
+>>
+>> Based on the work done by Maximilian Luz, largely rewritten.
+> 
+> ...
+> 
+>>  	sdev->dev.fwnode = fwnode_handle_get(node);
+>> +	sdev->dev.of_node = to_of_node(node);
+> 
+> Please, use device_set_node() instead of those two.
+> 
+> ...
+> 
+>> +static int ssam_controller_caps_load(struct device *dev, struct ssam_controller_caps *caps)
+>> +{
+> 
+>> +	acpi_handle handle = ACPI_HANDLE(dev);
+> 
+> It's a bit non-standard way to check if we run on DT or ACPI. The others (most
+> of them?) do something like this:
+> 
+> 	struct fwnode_handle *fwnode = dev_fwnode(...);
+> 
+> 	if (is_of_node(fwnode))
+> 		return X;
+> 	if (is_acpi_node(fwnode)) // also more precise _device or _data variant
+> 		return Y;
+> 
+> 	return ERROR;
+> 
+>> +	/* Set defaults. */
+>> +	caps->ssh_power_profile = U32_MAX;
+>> +	caps->screen_on_sleep_idle_timeout = U32_MAX;
+>> +	caps->screen_off_sleep_idle_timeout = U32_MAX;
+>> +	caps->d3_closes_handle = false;
+>> +	caps->ssh_buffer_size = U32_MAX;
+>> +
+>> +	if (handle)
+>> +		return ssam_controller_caps_load_from_acpi(handle, caps);
+> 
+> Yeah, I see that you use handle here, that's why it's up to you how to proceed
+> with that. 
+> 
+>> +	else
+>> +		return ssam_controller_caps_load_from_of(dev, caps);
+> 
+> But just note that we have 4 options for fwnode type here and this covers 3 and
+> I don't know if you ever have an ACPI data node or software node and what you
+> want to do with that.
+> 
+>> +}
+> 
+> ...
+> 
+>>  	gpiod = gpiod_get(dev, "ssam_wakeup-int", GPIOD_ASIS);
+>> -	if (IS_ERR(gpiod))
+>> -		return PTR_ERR(gpiod);
+>> -
+>> -	irq = gpiod_to_irq(gpiod);
+>> -	gpiod_put(gpiod);
+>> +	if (IS_ERR(gpiod)) {
+>> +		irq = fwnode_irq_get(dev_fwnode(dev), 0);
+>> +	} else {
+>> +		irq = gpiod_to_irq(gpiod);
+>> +		gpiod_put(gpiod);
+>> +	}
+> 
+> Can't you try fwnode_irq_get_byname() followed by fwnode_irq_get()? And why do
+> you need unnamed variant to begin with? As far as I understand it's pure DT and
+> names are there, no?
+> 
+> ...
+> 
+>>  #include <linux/kernel.h>
+>>  #include <linux/kref.h>
+>>  #include <linux/module.h>
+>> +#include <linux/of.h>
+> 
+> I do not see how you use this. You probably missed mod_devicetable.h.
+> 
+>> +#include <linux/platform_device.h>
+>>  #include <linux/pm.h>
+>>  #include <linux/serdev.h>
+>>  #include <linux/sysfs.h>
+> 
+> ...
+> 
+>> +	/*
+>> +	 * When using DT, we have to register the platform hub driver manually,
+>> +	 * as it can't be matched based on top-level board compatible (like it
+>> +	 * does the ACPI case).
+>> +	 */
+>> +	if (!ssh) {
+>> +		struct platform_device *ph_pdev =
+>> +			platform_device_register_simple("surface_aggregator_platform_hub",
+>> +							0, NULL, 0);
+>> +		if (IS_ERR(ph_pdev))
+>> +			return dev_err_probe(dev, PTR_ERR(ph_pdev),
+>> +					     "Failed to register the platform hub driver\n");
+> 
+>> +	}
+>> +
+>> +	if (ssh)
+> 
+> Simply 'else' ? And making condition positive?
+> 
+> ...
+> 
+>> -static const struct acpi_device_id ssam_serial_hub_match[] = {
+>> +static const struct acpi_device_id ssam_serial_hub_acpi_match[] = {
+>>  	{ "MSHW0084", 0 },
+>>  	{ },
+> 
+> At some point, please drop that 0 part above and the comma in the terminator
+> entry.
+> 
+>>  };
+>> -MODULE_DEVICE_TABLE(acpi, ssam_serial_hub_match);
+>> +MODULE_DEVICE_TABLE(acpi, ssam_serial_hub_acpi_match);
+> 
+> Do you really need this renaming?
+> 
+> ...
+> 
+>> +#ifdef CONFIG_OF
+>> +static const struct of_device_id ssam_serial_hub_of_match[] = {
+>> +	{ .compatible = "microsoft,surface-sam", },
+> 
+> No inner comma.
+> 
+>> +	{ },
+> 
+> No comma for the terminator.
+> 
+>> +};
+>> +MODULE_DEVICE_TABLE(of, ssam_serial_hub_of_match);
+>> +#endif
+>>  
+>>  static struct serdev_device_driver ssam_serial_hub = {
+>>  	.probe = ssam_serial_hub_probe,
+>>  	.remove = ssam_serial_hub_remove,
+>>  	.driver = {
+>>  		.name = "surface_serial_hub",
+>> -		.acpi_match_table = ssam_serial_hub_match,
+>> +		.acpi_match_table = ACPI_PTR(ssam_serial_hub_acpi_match),
+> 
+> No, please do not use ACPI_PTR(), it's more harmful than helpful.
+> 
+>> +		.of_match_table = of_match_ptr(ssam_serial_hub_of_match),
+> 
+> There is ongoing task to drop of_match_ptr(), so for ACPI_PTR().
+> 
+>>  		.pm = &ssam_serial_hub_pm_ops,
+>>  		.shutdown = ssam_serial_hub_shutdown,
+>>  		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+> 
+> ...
+> 
+>> --- a/drivers/platform/surface/surface3_power.c
+>> +++ b/drivers/platform/surface/surface3_power.c
+>> @@ -479,6 +479,7 @@ static int mshw0011_install_space_handler(struct i2c_client *client)
+>>  	}
+>>  
+>>  	acpi_dev_clear_dependencies(adev);
+>> +
+>>  	return 0;
+>>  }
+> 
+> Stray change.
+> 
+> ...
+> 
+>> +/* Devices for Surface Laptop 7. */
+>> +static const struct software_node *ssam_node_group_sl7[] = {
+>> +	&ssam_node_root,
+>> +	&ssam_node_bat_ac,
+>> +	&ssam_node_bat_main,
+>> +	&ssam_node_tmp_perf_profile_with_fan,
+>> +	&ssam_node_fan_speed,
+>> +	&ssam_node_hid_sam_keyboard,
+>> +	/* TODO: evaluate thermal sensors devices when we get a driver for that */
+>> +	NULL,
+> 
+> At some point please drop commas at the terminator entries. This will make code
+> more robust against quite unlikely but potential rebase-like mistakes (when a
+> new entry is added behind the terminator).
+> 
+>> +};
+> 
+> ...
+> 
+>> -static const struct acpi_device_id ssam_platform_hub_match[] = {
+>> +static const struct acpi_device_id ssam_platform_hub_acpi_match[] = {
+>>  	/* Surface Pro 4, 5, and 6 (OMBR < 0x10) */
+>>  	{ "MSHW0081", (unsigned long)ssam_node_group_gen5 },
+>>  
+>> @@ -400,18 +413,41 @@ static const struct acpi_device_id ssam_platform_hub_match[] = {
+>>  
+>>  	{ },
+>>  };
+>> -MODULE_DEVICE_TABLE(acpi, ssam_platform_hub_match);
+>> +MODULE_DEVICE_TABLE(acpi, ssam_platform_hub_acpi_match);
+> 
+> If renaming is needed, it can be done in a separate patch.
+> 
+>> +#ifdef CONFIG_OF
+>> +static const struct of_device_id ssam_platform_hub_of_match[] = {
+>> +	/* Surface Laptop 7 */
+>> +	{ .compatible = "microsoft,romulus13", (void *)ssam_node_group_sl7 },
+>> +	{ .compatible = "microsoft,romulus15", (void *)ssam_node_group_sl7 },
+>> +	{ },
+>> +};
+>> +#endif
+> 
+> As per above.
+> 
+> ...
+> 
+>>  static int ssam_platform_hub_probe(struct platform_device *pdev)
+>>  {
+>>  	const struct software_node **nodes;
+>> +	const struct of_device_id *match;
+>> +	struct device_node *fdt_root;
+>>  	struct ssam_controller *ctrl;
+>>  	struct fwnode_handle *root;
+>>  	int status;
+>>  
+>>  	nodes = (const struct software_node **)acpi_device_get_match_data(&pdev->dev);
+> 
+> Hmm... Why this doesn't use simple device_get_match_data()?
+> 
+>> -	if (!nodes)
+>> -		return -ENODEV;
+>> +	if (!nodes) {
+>> +		fdt_root = of_find_node_by_path("/");
+>> +		if (!fdt_root)
+>> +			return -ENODEV;
+>> +
+>> +		match = of_match_node(ssam_platform_hub_of_match, fdt_root);
+>> +		of_node_put(fdt_root);
+>> +		if (!match)
+>> +			return -ENODEV;
+>> +
+>> +		nodes = (const struct software_node **)match->data;
+> 
+> This is quite strange! Where are they being defined?
+> 
+>> +		if (!nodes)
+>> +			return -ENODEV;
+>> +	}
+> 
+> ...
+> 
+>> +MODULE_ALIAS("platform:surface_aggregator_platform_hub");
+> 
+> Can it be platfrom device ID table instead? But do you really need it?
+> 
+
 
