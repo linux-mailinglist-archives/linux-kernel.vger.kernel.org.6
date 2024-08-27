@@ -1,182 +1,319 @@
-Return-Path: <linux-kernel+bounces-303449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE21E960C33
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:36:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6061960C35
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:36:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75602288663
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:36:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D2281F21D7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08AB1C0DE7;
-	Tue, 27 Aug 2024 13:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C421C4621;
+	Tue, 27 Aug 2024 13:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Q+geZFdb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y460HW05"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099F61A00EE;
-	Tue, 27 Aug 2024 13:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45DA1C4607;
+	Tue, 27 Aug 2024 13:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724765671; cv=none; b=gks1tWhzz/2aD27bUnCXJPrrDmjq+1XkysCFoAXNO9sFgU+lK78Pbq2kRALGH3oZJG9Wmg5pWkGq9MxXbkdGUQkHnduWKOoVS65m1n+pDSceBQGT/zNYBt9tQ6+Nw/sEOMVVyjcmfJVBZpcN28MmhZWk05uZIAQDQBcHu9CEZok=
+	t=1724765680; cv=none; b=KLG6TrBWLSUVSAWi5PRMiFo2JiZQq4Ga95E0vaMWlpszK1Xm2ddURss4kX1IZvcxpP57Q7K3ng0MzP4yBat1evJkaIUhBr/jmOj6OeQ0KHEGYunaijsMHkZadsNci43uenCBCC75qU26GYGf+YS2FjDppSxSUtH0uyVElQbPZrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724765671; c=relaxed/simple;
-	bh=G5clD8Optkw0MoCKh+T6nncwLBMLnao15yzQVBD2UyU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WUgxRKsKAp9+VMo2CEOtfZ4ijuBQU4DOdVsUkFniRaPuBGowaQH+67UcM8ZGExZ2pl6eqrzcs17eA2NuaIuU4fFalhuxb2KpQ572vJ7LZkqMeT2jYDsWS/OE/g+n50H5sdmLRoTb60LjNCnqWCil4Mpqb9Xn5TdvSZJwfLTGa/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=Q+geZFdb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD927C61043;
-	Tue, 27 Aug 2024 13:34:29 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Q+geZFdb"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1724765667;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JXX7f47ZGvyfYVfZTOAIbEyIBS+BUEfdrN8TErecN44=;
-	b=Q+geZFdbPMu7rSZ4x8XhBI4emfB05hMJcMdYsIGhwHySfBuHbhdQr8L55m3dY5D3kJEzXd
-	1YJpYekLGGYWUybW4PeWnwrvH6WzgSzJPBtTG0hH7DR9g0l0QYuXiB6uOxnjOHQtPG3Wgd
-	CpSHTbxThM8qNcQH4G5T7vaDXFDcjMs=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 764f8b54 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Tue, 27 Aug 2024 13:34:26 +0000 (UTC)
-Date: Tue, 27 Aug 2024 15:34:20 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>
-Cc: Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-arch@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>
-Subject: Re: [PATCH] aarch64: vdso: Wire up getrandom() vDSO implementation
-Message-ID: <Zs3V3FYwz57tyGgp@zx2c4.com>
-References: <20240826181059.111536-1-adhemerval.zanella@linaro.org>
- <ZszlGPqfrULzi3KG@zx2c4.com>
- <fd3cd385-131a-43b2-8ce9-05547a4f2d1d@linaro.org>
+	s=arc-20240116; t=1724765680; c=relaxed/simple;
+	bh=0Ti4uEyQ2I50MDalNEldb+1diVigldzU50iZRu2XaRc=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=X8HAZEXkOXfOrEaU2ybPW5xXBqbVgmMJtTXV8+yHc9yYawQmLy0msVGwz2l+FEgeSYGVXpBtN7XX2xqx3TL183h4haTNobQcCMxveqdfZE/4+QiSDHGdulYX8/BGXA4dxPW6A4IZBj0uUwd4Ps7LQW2PdRYL9LlpZubfkp4mSls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y460HW05; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724765679; x=1756301679;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=0Ti4uEyQ2I50MDalNEldb+1diVigldzU50iZRu2XaRc=;
+  b=Y460HW05urgLc58sdaUb/sem9OPiVNIQrIBotAgtWfTx6XCLysqGlR3T
+   1f3n9YltTKN5LyZdA45v/AUbjly2H5jFBjzPWqCBlsnesnxSHB9WwkQKR
+   s7A6r8ALYMS3NCYIkoUK8hF2hp8Na0wr2uqo+MxQ+8hZZq1RcZqAgmKG6
+   8FqDzZmX6tfMjEIhhDMTwwGNYbZxO+s1II8XMnimsqs810kZUb4JkD/kA
+   LuyQOX4n+jOCiRsOwouGQ29xRPfnnz91polc0rctBrtuw+x6CPsLnaZ0D
+   ZO3Vrw+mmPH0+GUrHUDgDanLWz6VGcmkkHnUAyIGYpCrXyj6/5LnjptTr
+   A==;
+X-CSE-ConnectionGUID: 5r3J07lNQvS4rGfLXEdIAA==
+X-CSE-MsgGUID: 2sryGk1QS3WlQWAezVk3wQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="27039481"
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="27039481"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 06:34:38 -0700
+X-CSE-ConnectionGUID: wAuaROIJRciiS4KJn6ef0w==
+X-CSE-MsgGUID: iO9iqxTwTvi6QeStW1YrqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="63581868"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.17])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 06:34:37 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 27 Aug 2024 16:34:32 +0300 (EEST)
+To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+cc: Tero Kristo <tero.kristo@linux.intel.com>, 
+    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] Documentation: admin-guide: pm: Add efficiency vs.
+ latency tradeoff to uncore documentation
+In-Reply-To: <8719e7653b2f859c46966986dc81cc589a6d78ca.camel@linux.intel.com>
+Message-ID: <4fc760c8-c96c-65e3-1984-d1703a364d05@linux.intel.com>
+References: <20240821131321.824326-1-tero.kristo@linux.intel.com>  <20240821131321.824326-2-tero.kristo@linux.intel.com>  <dabdc81e-d743-6402-f87a-dee2d6b906b8@linux.intel.com>  <4d6adc49f295ad1dec26cd1a67ec3997686db4a9.camel@linux.intel.com> 
+ <1b93f71a-8a36-f95e-86b9-2b8f330847ff@linux.intel.com> <8719e7653b2f859c46966986dc81cc589a6d78ca.camel@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <fd3cd385-131a-43b2-8ce9-05547a4f2d1d@linaro.org>
+Content-Type: multipart/mixed; BOUNDARY="8323328-147178893-1724761709=:1032"
+Content-ID: <84e87109-ece5-8d3b-adee-03765a695973@linux.intel.com>
 
-On Tue, Aug 27, 2024 at 10:17:18AM -0300, Adhemerval Zanella Netto wrote:
-> 
-> 
-> On 26/08/24 17:27, Jason A. Donenfeld wrote:
-> > Hi Adhemerval,
-> > 
-> > Thanks for posting this! Exciting to have it here.
-> > 
-> > Just some small nits for now:
-> > 
-> > On Mon, Aug 26, 2024 at 06:10:40PM +0000, Adhemerval Zanella wrote:
-> >> +static __always_inline ssize_t getrandom_syscall(void *buffer, size_t len, unsigned int flags)
-> >> +{
-> >> +	register long int x8 asm ("x8") = __NR_getrandom;
-> >> +	register long int x0 asm ("x0") = (long int) buffer;
-> >> +	register long int x1 asm ("x1") = (long int) len;
-> >> +	register long int x2 asm ("x2") = (long int) flags;
-> > 
-> > Usually it's written just as `long` or `unsigned long`, and likewise
-> > with the cast. Also, no space after the cast.
-> 
-> Ack.
-> 
-> > 
-> >> +#define __VDSO_RND_DATA_OFFSET  480
-> > 
-> > This is the size of the data currently there?
-> 
-> Yes, I used the same strategy x86 did.
-> 
-> > 
-> >>  #include <asm/page.h>
-> >>  #include <asm/vdso.h>
-> >>  #include <asm-generic/vmlinux.lds.h>
-> >> +#include <vdso/datapage.h>
-> >> +#include <asm/vdso/vsyscall.h>
-> > 
-> > Possible to keep the asm/ together?
-> 
-> Ack.
-> 
-> > 
-> >> + * ARM64 ChaCha20 implementation meant for vDSO.  Produces a given positive
-> >> + * number of blocks of output with nonnce 0, taking an input key and 8-bytes
-> > 
-> > nonnce -> nonce
-> 
-> Ack.
-> 
-> > 
-> >> -ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
-> >> +ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/ -e s/aarch64.*/arm64/)
-> >>  SODIUM := $(shell pkg-config --libs libsodium 2>/dev/null)
-> >>  
-> >>  TEST_GEN_PROGS := vdso_test_gettimeofday
-> >> @@ -11,7 +11,7 @@ ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
-> >>  TEST_GEN_PROGS += vdso_standalone_test_x86
-> >>  endif
-> >>  TEST_GEN_PROGS += vdso_test_correctness
-> >> -ifeq ($(uname_M),x86_64)
-> >> +ifeq ($(uname_M), $(filter x86_64 aarch64, $(uname_M)))
-> >>  TEST_GEN_PROGS += vdso_test_getrandom
-> >>  ifneq ($(SODIUM),)
-> >>  TEST_GEN_PROGS += vdso_test_chacha
-> > 
-> > You'll need to add the symlink to get the chacha selftest running:
-> > 
-> >   $ ln -s ../../../arch/arm64/kernel/vdso tools/arch/arm64/vdso
-> >   $ git add tools/arch/arm64/vdso
-> > 
-> > Also, can you confirm that the chacha selftest runs and works?
-> 
-> Yes, last time I has to built it manually since the Makefile machinery seem 
-> to be broken even on x86_64.  In a Ubuntu vm I have:
-> 
-> tools/testing/selftests/vDSO$ make
->   CC       vdso_test_gettimeofday
->   CC       vdso_test_getcpu
->   CC       vdso_test_abi
->   CC       vdso_test_clock_getres
->   CC       vdso_standalone_test_x86
->   CC       vdso_test_correctness
->   CC       vdso_test_getrandom
->   CC       vdso_test_chacha
-> In file included from /home/azanella/Projects/linux/linux-git/include/linux/limits.h:7,
->                  from /usr/include/x86_64-linux-gnu/bits/local_lim.h:38,
->                  from /usr/include/x86_64-linux-gnu/bits/posix1_lim.h:161,
->                  from /usr/include/limits.h:195,
->                  from /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h:205,
->                  from /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h:7,
->                  from /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h:34,
->                  from /usr/include/sodium/export.h:7,
->                  from /usr/include/sodium/crypto_stream_chacha20.h:14,
->                  from vdso_test_chacha.c:6:
-> /usr/include/x86_64-linux-gnu/bits/xopen_lim.h:99:6: error: missing binary operator before token "("
->    99 | # if INT_MAX == 32767
->       |      ^~~~~~~
-> /usr/include/x86_64-linux-gnu/bits/xopen_lim.h:102:7: error: missing binary operator before token "("
->   102 | #  if INT_MAX == 2147483647
->       |       ^~~~~~~
-> /usr/include/x86_64-linux-gnu/bits/xopen_lim.h:126:6: error: missing binary operator before token "("
->   126 | # if LONG_MAX == 2147483647
->       |      ^~~~~~~~
-> make: *** [../lib.mk:222: /home/azanella/Projects/linux/linux-git/tools/testing/selftests/vDSO/vdso_test_chacha] Error 1
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-You get that even with the latest random.git? I thought Christophe's
-patch fixed that, but maybe not and I should just remove the dependency
-on the sodium header instead.
+--8323328-147178893-1724761709=:1032
+Content-Type: text/plain; CHARSET=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <ed2ae428-6131-2dbb-97ba-592401259e85@linux.intel.com>
 
-Jason
+On Tue, 27 Aug 2024, srinivas pandruvada wrote:
+> On Tue, 2024-08-27 at 11:08 +0300, Ilpo J=C3=A4rvinen wrote:
+> > On Mon, 26 Aug 2024, srinivas pandruvada wrote:
+> >=20
+> > > On Fri, 2024-08-23 at 15:28 +0300, Ilpo J=C3=A4rvinen wrote:
+> > > > On Wed, 21 Aug 2024, Tero Kristo wrote:
+> > > >=20
+> > > > > Added documentation about the functionality of efficiency vs.
+> > > > > latency tradeoff
+> > > > > control in intel Xeon processors, and how this is configured
+> > > > > via
+> > > > > sysfs.
+> > > > >=20
+> > > > > Signed-off-by: Tero Kristo <tero.kristo@linux.intel.com>
+> > > > > ---
+> > > > > =C2=A0.../pm/intel_uncore_frequency_scaling.rst=C2=A0=C2=A0=C2=A0=
+=C2=A0 | 51
+> > > > > +++++++++++++++++++=E2=81=A0Ayoub,=C2=A0Hatim=C2=A0This seems tha=
+t when on AC
+> > > > > mode, Windows don't care about PC10. Is this correct? It seems
+> > > > > that with EPB=3D6 we can
+> > > > > =C2=A01 file changed, 51 insertions(+)
+> > > > >=20
+> > > > > diff --git a/Documentation/admin-
+> > > > > guide/pm/intel_uncore_frequency_scaling.rst
+> > > > > b/Documentation/admin-
+> > > > > guide/pm/intel_uncore_frequency_scaling.rst
+> > > > > index 5ab3440e6cee..fb83aa2b744e 100644
+> > > > > --- a/Documentation/admin-
+> > > > > guide/pm/intel_uncore_frequency_scaling.rst
+> > > > > +++ b/Documentation/admin-
+> > > > > guide/pm/intel_uncore_frequency_scaling.rst
+> > > > > @@ -113,3 +113,54 @@ to apply at each uncore* level.
+> > > > > =C2=A0
+> > > > > =C2=A0Support for "current_freq_khz" is available only at each
+> > > > > fabric
+> > > > > cluster
+> > > > > =C2=A0level (i.e., in uncore* directory).
+> > > > > +
+> > > > > +Efficiency vs. Latency Tradeoff
+> > > >=20
+> > > > Does this section even cover the "tradeoff" part in its body? Why
+> > > > not
+> > > > call=20
+> > > > it directly "Control" after ELC?
+> > > >=20
+> > > > > +-------------------------------
+> > > > > +
+> > > > > +In the realm of high-performance computing, particularly with
+> > > > > Xeon
+> > > > > +processors, managing uncore frequency is an important aspect
+> > > > > of
+> > > > > system
+> > > > > +optimization. Traditionally, the uncore frequency is ramped up
+> > > > > rapidly
+> > > > > +in high load scenarios. While this strategy achieves low
+> > > > > latency,
+> > > > > which
+> > > > > +is crucial for time-sensitive computations, it does not
+> > > > > necessarily yield
+> > > > > +the best performance per watt, =E2=80=94a key metric for energy
+> > > > > efficiency
+> > > > > and
+> > > > > +operational cost savings.
+> > > >=20
+> > > > This entire paragraph feels more prose or history book than
+> > > > documentation=20
+> > > > text. I'd suggest using something that goes more directly into
+> > > > the
+> > > > point
+> > > > about what ELC brings to the table (I suppose the goal is
+> > > > "performance=20
+> > > > per watt" optimization, even that goal is only implied by the
+> > > > current
+> > > > text, not explicitly stated as the goal here).
+> > > >=20
+> > >=20
+> > > What about this?
+> > >=20
+> > > Traditionally, the uncore frequency is ramped up to reach the
+> > > maximum=20
+> > > possible level based on parameters like EPB (Energy perf Bias) and
+> > > other system power management settings programmed by BIOS.=C2=A0 Whil=
+e
+> > > this
+> > > strategy achieves low latency for latency sensitive applications,
+> > > it
+> > > does not necessarily yield the best performance per watt.=20
+> >=20
+> > This again starts with a wrong foot. Don't use words like
+> > "traditionally",
+> > "in the past", "historically", "is added", etc. that refer to past
+> > time
+> > in documentation text at all. The premise with documentation for
+> > feature x=20
+> > is that the feature x exists. After these patches have been accepted,
+> > the=20
+> > reality is that ELC exists and time before does not matter so we
+> > don't=20
+> > encumber documentation text with that era that has become irrelevant.
+> >=20
+> While the choice of words are not correct, for me background is
+> important on why a feature is implemented.
+> Here even after ELC is implemented, majority of generations will still
+> not have this feature. Uncore is not just supported on TPMI systems.
+
+I don't doubt there are plenty of systems without it, but you're=20
+supposed to document ELC, not non-ELC systems under this section.
+
+If the system does not have ELC, this section has zero relevance for
+the admin. (And it's a job for marketting people, not for Linux=20
+documentation, to convince people they need this new and shiny
+thing. :-))
+
+Thus, the base assumption in this section is that ELC is supported and=20
+usable.
+
+> > You might occasionally have to mention what is not possible without
+> > ELC=20
+> > in case it's still possible to run stuff without ELC but don't put
+> > time=20
+> > references to it. However, it's not something you should start with
+> > in
+> > the documentation text.
+> >=20
+> > > The Efficiency Latency Control (ELC) feature is added to improve
+> >=20
+> > "is added to improve" -> "improves"
+> Fine.
+>=20
+> >=20
+> > > performance per watt. With this feature hardware power management
+> > > algorithms optimize trade-off between latency and power
+> > > consumption.
+> > > But for some latency sensitive workloads further tuning can be done
+> > > from OS to get desired performance.
+> >=20
+> > I'd just start with this paragraph. It goes straight into the point
+> > and=20
+> > is good in that it tries to summarize what ELC tries to achieve.
+>
+> There are so many features we have which improves perf/watt.
+
+I think you make an issue out of a non-issue if you think it's problem to=
+=20
+state feature A improves performance if there are also features B and C=20
+that improve it.
+
+> Why ELC is special needs some background.
+
+"special"? I didn't get that impression at all. I'm far from convinced ELC=
+=20
+is "special" or needs to be presented as such.
+
+> > > The hardware monitors the average CPU utilization across all cores
+> >=20
+> > hardware or ELC-capable HW?
+> Hardware. hardware always does this.
+
+So do I read you right, this is nothing ELC-specific? So all ELC does is=20
+adds those tunables (limits/overrides)?
+
+> > > in a power domain at regular intervals and decides a uncore
+> > > frequency.=20
+> >=20
+> > This kind of feels something that belongs to the first paragraph if
+> > it's=20
+> > about ELC. (I'm left slightly unsure if ELC refers only to those
+> > controls=20
+> > mentioned below, or if it is the automatic uncore freq control plus
+> > the=20
+> > manual controls. I assume it's the latter because of "with this
+> > feature=20
+> > hardware power management algorithms optimize" sentence.)
+>
+> It is later. Hardware doesn't do a PM feature depending only on OS.
+
+I was specifically talking about what "ELC" is but you downgraded wording=
+=20
+back to "hardware" in your reply. So I have to repeat myself, what ELC=20
+consists of? Are these non-OS dependent features (that "hardware always=20
+does") part of ELC or not (for the avoidance of potential=20
+misunderstandings, this is assuming no ELC tunables added by this series=20
+are touched by the admin)?
+
+Obviously, when one of the tunables is touched, it impacts the allowed
+operating region of the autonomous algorithm (ELC tunables acting as=20
+what look like "overrides").
+
+> > > While this may result in the best performance per watt, workload
+> > > may be
+> > > expecting higher performance at the expense of power. Consider an
+> > > application that intermittently wakes up to perform memory reads on
+> > > an
+> > > otherwise idle system. In such cases, if hardware lowers uncore
+> > > frequency, then there may be delay in ramp up of frequency to meet
+> > > target performance.=20
+> > >=20
+> > > The ELC control defines some parameters which can be changed from
+> > > OS.
+> > > If the average CPU utilization is below a user defined threshold
+> > > (elc_low_threshold_percent attribute below), the user defined
+> > > uncore
+> > > frequency floor frequency will be used (elc_floor_freq_khz
+> > > attribute=20
+> > > below) instead of hardware calculated minimum.=20
+> > >=20
+> > > Similarly in high load scenario where the CPU utilization goes
+> > > above=20
+> > > the high threshold value (elc_high_threshold_percent attribute
+> > > below)=20
+> > > instead of jumping to maximum uncore frequency, uncore frequency is
+> > > increased in 100MHz steps until the power limit is reached.
+> > >=20
+> > > Attributes for efficiency latency control:=20
+> > > ..=20
+> > > ..=20
+> >=20
+> > There were a few spaces at the end if lines, those should be removed.
+> Yes in the patch.
+>=20
+> Thanks,
+> Srinivas
+>=20
+> >=20
+>=20
+
+--=20
+ i.
+--8323328-147178893-1724761709=:1032--
 
