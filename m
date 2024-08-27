@@ -1,180 +1,111 @@
-Return-Path: <linux-kernel+bounces-303996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5D8E961838
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:51:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3763C96183F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA58D1C22AFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:51:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95E67B21203
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B345C1D31B7;
-	Tue, 27 Aug 2024 19:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D61D1D31A8;
+	Tue, 27 Aug 2024 19:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ao/4mZiW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SV3AvS/h"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2E01D2799
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 19:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 516B31D175D
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 19:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724788253; cv=none; b=GpAQKapB32Fw9yd2ZDP0yeLxTyZ+t+SLZCcPn92lz5WXGh6/KfpAAWxc5rEhHAK8EYc++ngv4OxrjIf3/UrSH61cneExnBgN79vX3eonc+KiFmCDTaXm0jO2aV8lY9wcCd4iZfEaA4+skL7nWJu4kv5Uyu1EW4eqhSv3/Ono1A8=
+	t=1724788586; cv=none; b=SqY14EVCsE5UelO7n6OeIW3qwhaS/5zpQFhJ1vg8pC9Ql1jzeT9UReDl6+smWeBkOWqq2U+oUecS4uXiTJ8qh4twhYn8td6qrPN82BOoMNGXNngCRxQDzneyZCR0nsEQfhcgZFzKA/eIeqSAr/L2JrHeZ/J6Z9HOqj3dscu6mQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724788253; c=relaxed/simple;
-	bh=PAa2iphw1cbZ+4J0LvndlZUJT94QiQinotFdX3u//os=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uB8qPJu8Y6/38ud1MFFKu3mrWmZL40l6WX0mIuRVHpbQBXXEE8zcOHnd72VwtWqoOVyUZGDn+YB4U0pSpYpOgSU2+4Gb2G9SrAEisb1v7VqAY43Y0iZ9Nh1X1IL+arLkuyCQaidvWe7qGSOC5swDXs82B9XiYTGtlCjhoAkRnSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ao/4mZiW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724788250;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PAa2iphw1cbZ+4J0LvndlZUJT94QiQinotFdX3u//os=;
-	b=ao/4mZiW0sv6wV23T9uwtoISFZKcAA8/SkFnfB6GX3dKtVWKrAE+stdEaZv4SldFuo4EUD
-	wvmWPv3wojaZ8eYry+ifxO+oDcCa4V7aJpn5bXtuJVe6mN7oEP2QtwrP/kF7D4GR5NmcW0
-	BTMiEYRip3MuKBxBUoKByALrqmDSDQA=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-499-pxa6eiK_OFmS5XqjxwYSBQ-1; Tue, 27 Aug 2024 15:50:49 -0400
-X-MC-Unique: pxa6eiK_OFmS5XqjxwYSBQ-1
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-44ffce7ed6aso84875531cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:50:49 -0700 (PDT)
+	s=arc-20240116; t=1724788586; c=relaxed/simple;
+	bh=TlHnc6LhVP9H/5j0kBJ84CxpzBsrXkKjWnAYwNr8I4Y=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=qbXxWF8w17nwxJY7Jtkbk0pYBQQ9yDpWYbw7VNL6WPWQ/YzAeQ4VXSsbd55V1l56SGn8/ZAzTV6jcXAtMXGjoK0PH+zfigtcKhu4ky3nqLDIpFuZ1+bc/t426xnFirs+KQ/bCBgDazty7ZUVXBSNSoxPtSzlb4/MRH+JyQk0eQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SV3AvS/h; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-714302e7285so4831474b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:56:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724788584; x=1725393384; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=c4m8pZ58RVuetSQCef8u+byuvMfFoIktNE8VEW444zY=;
+        b=SV3AvS/h7OtZBiAqd4QlHmiGMtu4ILNvqKqYYE0Pizn54GkEO4gDsICllDl8uAEnrZ
+         /pxugB4Yg5uwKhKb5qmvNsMsvAJCpwyxTArn4n98kznmCx+WEg8sotE/Cs2YL4GWp11U
+         ODA7DaAn0hzoMw5/BkxzAYtujBO4kxxqMKcOvotUf3+ihsMKIfaGecvhL3Y6kQkXUgZv
+         faRDLka2PvzXzhqaNUR2U/ERTeyDknwh0pe+v12k1wOGdQ63jfc2Tch8XVWp45uH3fGf
+         NV9EDsqS6Fd+PQa6Q39Ql8yLxDMfy0H35hyWPrv4fHvBkT0fH2YreAiy0ObkQkVnLWtn
+         +UXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724788249; x=1725393049;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PAa2iphw1cbZ+4J0LvndlZUJT94QiQinotFdX3u//os=;
-        b=dOFwNPP2QLe/JnOt6zipx3nxLvtLCiR3pwsaJ3/S6JhaqjnuBN2v7FdB2PlNezMW6p
-         HHGvD5H1Gdp1p25Z0ww2ZuBTyCz/5Fz/OCW8BmzxPuD7730oGvlNYUGi9F7Z3DkWaatl
-         vQ+wBUj0VIleBYVmnZPy7qEpufz7MFnhrh5P/zpNmi0d696DaY8FAGtRNRsBkQ85mCFV
-         e3G/A0C08wnWyZESODBBQskgE63/0jSE9JpM/nYwHRs3ZdXV9IjLg7/r5B6k7gVB1TKc
-         0c9hRyu+4AuAV77YAL8sl7EJpkHrvt2IhELp5yN0Z4UMLCcWQqHngUdB7gW3rBy0mkDx
-         1bOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCURfuwtquelPuJpj8+HNB6746X7FPZjxDBmuNMrJ6T38D8Nspp0ZYK3vi3lmybf/05vC/n3rny/nR4IbcY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYLHfs7Tt6X/pk9aHwtTgi4/ra+gFPi6Gd4kp2QvPk7bq5e8kl
-	lvGf/Q9Q3lY1eEniQ1qY/KE97tQd9x9jIvgOhUtlM4tL3NiRnsRmT152QmQF/+nEX4/zGu9pGey
-	4ENWwNan08e2kPuV4c63kdDAizCwYU75/WjqEWT8cmm15dZw7X2q5EGQFyFpzu6MM2Nv6omV5mI
-	KHpx/0ZSZTht5TaS/1dfuu7lyOFXOxfuxOzdFK
-X-Received: by 2002:a05:622a:5c0b:b0:451:caeb:8cfd with SMTP id d75a77b69052e-455096eb4b8mr188637041cf.31.1724788248792;
-        Tue, 27 Aug 2024 12:50:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFh/NuO46jyeabBgVTwTRwBQN4Upju2mh5cSkfpCWefpOcvdaKPzrnmLAnbpxWRE2R3FjdE8DPdMiNEDPoVjDg=
-X-Received: by 2002:a05:622a:5c0b:b0:451:caeb:8cfd with SMTP id
- d75a77b69052e-455096eb4b8mr188636811cf.31.1724788248324; Tue, 27 Aug 2024
- 12:50:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724788585; x=1725393385;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=c4m8pZ58RVuetSQCef8u+byuvMfFoIktNE8VEW444zY=;
+        b=h58cBHTvJI+hQZJbH5WwYFYRjebhJzkVVYgK4pNGcnO7zUEnhaLmJx0KhbS8JiFunZ
+         23sZrYnynpKaeLnJdFvYprGtoVcOPVnUS/yoGMnKrd9F5CbgjFx9mXjEQaX5Sv2FwLPf
+         Y1nXZDll+EcIQKfW/U+8SyZSmzK7scBaqlrzWObFddBbZ8+9JqlPTkdbXbL7qllfaLEx
+         YUdcaZVe/gzekwrbHZiyLortESRI2EuPTkaJE8G9Oc2xXbzK/jFET48lG0QzBIgtkfFO
+         Hdh2YfQNkldBkoZkIp2XjBZXLQFzB0c+xZ/vYkDasN5LuFifPiaxJHTuhvXOnfZ8Pb3V
+         DSww==
+X-Forwarded-Encrypted: i=1; AJvYcCURcIvK/V7AVBGIZsiqjB+kseutnHFi4VLYPlBg62L+s7CmNHFCCzj/ObTKvaypb+BcWM8Dg95NssEmwZw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkHl27aXJTJ43SQKfQ4ovMgliBvWtRqra1I8dikMm15cR6TNSM
+	NncZ1+b0lKRJMImmsUaMhZ8iI9lVyiWdLGtP2OpJV+IQfSWDqmmr
+X-Google-Smtp-Source: AGHT+IHb8TtMldCvGdpVG6MwxW1eBlqOcmE3Z+fdcc3o7bBNDkjK6qr9rgwQvEieUw/2M8om6csfCg==
+X-Received: by 2002:a05:6a00:1415:b0:710:4d3a:2d92 with SMTP id d2e1a72fcca58-7144573e05cmr17362654b3a.4.1724788584507;
+        Tue, 27 Aug 2024 12:56:24 -0700 (PDT)
+Received: from localhost.localdomain ([2804:16d8:ec10:100:8c4e:d5a2:795b:a46e])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143422ebc6sm8965745b3a.38.2024.08.27.12.56.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 12:56:24 -0700 (PDT)
+From: Nilo Alexandre <n1lux.comp@gmail.com>
+To: gregkh@linuxfoundation.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	~lkcamp/patches@lists.sr.ht
+Subject: [PATCH v3] staging: rtl8192e: Fix parenthesis alignment in r8192E_dev.c 325
+Date: Tue, 27 Aug 2024 16:56:19 -0300
+Message-ID: <20240827195619.34712-1-n1lux.comp@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJ6HWG7pgMu7sAUPykFPtsDfq5Kfh1WecRcgN5wpKQj_EyrbJA@mail.gmail.com>
- <68c39823-6b1d-4368-bd1e-a521ade8889b@paulmck-laptop> <ZkQ97QcEw34aYOB1@LeoBras>
- <17ebd54d-a058-4bc8-bd65-a175d73b6d1a@paulmck-laptop> <ZnPUTGSdF7t0DCwR@LeoBras>
- <ec8088fa-0312-4e98-9e0e-ba9a60106d58@paulmck-laptop> <ZnosF0tqZF72XARQ@LeoBras>
- <ZnosnIHh3b2vbXgX@LeoBras> <Zo8WuwOBSeAcHMp9@LeoBras> <f06ef91d-7f8c-4f69-8535-fee372766a7f@redhat.com>
- <ZpGL1rEHNild9CG5@LeoBras> <CAJ6HWG75LYS6UtWebznZ-9wXZCJep_pj3rf-gt-W=PfR-D9b9Q@mail.gmail.com>
-In-Reply-To: <CAJ6HWG75LYS6UtWebznZ-9wXZCJep_pj3rf-gt-W=PfR-D9b9Q@mail.gmail.com>
-From: Leonardo Bras Soares Passos <leobras@redhat.com>
-Date: Tue, 27 Aug 2024 16:50:36 -0300
-Message-ID: <CAJ6HWG53vjhAKjPAFeyjdbopAWzSJTBDz5t5YY+2B13MUdPYfQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/1] kvm: Note an RCU quiescent state on guest exit
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, Leonardo Bras <leobras.c@gmail.com>, 
-	Sean Christopherson <seanjc@google.com>, Frederic Weisbecker <frederic@kernel.org>, 
-	Marcelo Tosatti <mtosatti@redhat.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Sean,
+Align parenthesis to improve readability.
 
-Have you had the time to review this?
+CHECK: Alignment should match open parenthesis
 
-QE team is hitting this bug a lot, and I am afraid that it will start
-to hit customers soon.
+Signed-off-by: Nilo Alexandre <n1lux.comp@gmail.com>
+---
+v3: Fix typo in commit message.
+v2: Using tabs instead of spaces.
+---
+ drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Please let me know if you need any further data / assistance.
-
-Thanks!
-Leo
-
-
-On Mon, Jul 29, 2024 at 8:28=E2=80=AFAM Leonardo Bras Soares Passos
-<leobras@redhat.com> wrote:
->
-> On Fri, Jul 12, 2024 at 5:02=E2=80=AFPM Leonardo Bras <leobras@redhat.com=
-> wrote:
-> >
-> > On Fri, Jul 12, 2024 at 05:57:10PM +0200, Paolo Bonzini wrote:
-> > > On 7/11/24 01:18, Leonardo Bras wrote:
-> > > > What are your thoughts on above results?
-> > > > Anything you would suggest changing?
-> > >
-> >
-> > Hello Paolo, thanks for the feedback!
-> >
-> > > Can you run the test with a conditional on "!tick_nohz_full_cpu(vcpu-=
->cpu)"?
-> > >
-> > > If your hunch is correct that nohz-full CPUs already avoid invoke_rcu=
-_core()
-> > > you might get the best of both worlds.
-> > >
-> > > tick_nohz_full_cpu() is very fast when there is no nohz-full CPU, bec=
-ause
-> > > then it shortcuts on context_tracking_enabled() (which is just a stat=
-ic
-> > > key).
-> >
-> > But that would mean not noting an RCU quiescent state in guest_exit of
-> > nohz_full cpus, right?
-> >
-> > The original issue we were dealing was having invoke_rcu_core() running=
- on
-> > nohz_full cpus, and messing up the latency of RT workloads inside the V=
-M.
-> >
-> > While most of the invoke_rcu_core() get ignored by the nohz_full rule,
-> > there are some scenarios in which it the vcpu thread may take more than=
- 1s
-> > between a guest_entry and the next one (VM busy), and those which did
-> > not get ignored have caused latency peaks in our tests.
-> >
-> > The main idea of this patch is to note RCU quiescent states on guest_ex=
-it
-> > at nohz_full cpus (and use rcu.patience) to avoid running invoke_rcu_co=
-re()
-> > between a guest_exit and the next guest_entry if it takes less than
-> > rcu.patience miliseconds between exit and entry, and thus avoiding the
-> > latency increase.
-> >
-> > What I tried to prove above is that it also improves non-Isolated cores=
- as
-> > well, since rcu_core will not be running as often, saving cpu cycles th=
-at
-> > can be used by the VM.
-> >
-> >
-> > What are your thoughts on that?
->
-> Hello Paolo, Sean,
-> Thanks for the feedback so far!
->
-> Do you have any thoughts or suggestions for this patch?
->
-> Thanks!
-> Leo
->
-> >
-> > Thanks!
-> > Leo
+diff --git a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
+index b767dc00100aa..2d17d8e8898e7 100644
+--- a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
++++ b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
+@@ -322,7 +322,7 @@ static void _rtl92e_read_eeprom_info(struct net_device *dev)
+ 		if (priv->epromtype == EEPROM_93C46) {
+ 			if (!priv->autoload_fail_flag) {
+ 				usValue = rtl92e_eeprom_read(dev,
+-					                     EEPROM_TxPwDiff_CrystalCap >> 1);
++								EEPROM_TxPwDiff_CrystalCap >> 1);
+ 				priv->eeprom_ant_pwr_diff = usValue & 0x0fff;
+ 				priv->eeprom_crystal_cap = (usValue & 0xf000)
+ 							 >> 12;
+-- 
+2.46.0
 
 
