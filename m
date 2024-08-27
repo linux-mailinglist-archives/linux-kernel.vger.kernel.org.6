@@ -1,97 +1,73 @@
-Return-Path: <linux-kernel+bounces-303961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 830379617AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:06:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21D959617B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:06:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 346581F26539
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:06:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3C3D284461
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:06:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473851D3194;
-	Tue, 27 Aug 2024 19:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCE11D2F59;
+	Tue, 27 Aug 2024 19:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="doJMjLuw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E77juzqs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE96770F1;
-	Tue, 27 Aug 2024 19:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A551A01C8
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 19:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724785547; cv=none; b=iObQOHPNyjk7o8jJGPZpLaNoLeXZqx0LVfFL7hiXhXTlDa+Zi1Vvji/nUxjFPk8yGJoaUAHBQKA7bvSj9Uvj+gtK2n7gQuec2B6K6JO1VQgYpkLUTg6RZISmjLyv/vJ/wcc1PnEqz0lQp/S2xBkt2QKc0/ndaLalOAs1vuuMjT4=
+	t=1724785597; cv=none; b=SsIJO5Hk/AQ1NkfbA5hYzh1iLEMJWB3CzzKgkYBO2VSLlHype98YngNK28KZuriajFHl8xZbHstHrZmkFepGnEfgTYYhhxuzk9PiKxlB+CXljH+So7J6D0LoOj2NOxQ3APZK7r2gjtqnfcrzjUF0yA44RzA2WtQJpndRjsbeoY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724785547; c=relaxed/simple;
-	bh=2/HpgshCK19xkX85wh1aiPA9KDp9vPJdMLlDAGfD1ls=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bGAu9Wtni98If+piFRKmd+jFK4KFWK2eC1bcuDGklXXAphk5VD6G0lLVXA0Z7dOHue+7vj5aJWWtoXtOsaO2+o8F6t5NeOt+o2gxaFBWJRl4n30SlXkjzGYi8C4ntPp/bDzL5TzZVi6c6CMhsbPxtQqT04VJv5sRp3OOsdY+UGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=doJMjLuw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5C83C4AF1B;
-	Tue, 27 Aug 2024 19:05:45 +0000 (UTC)
+	s=arc-20240116; t=1724785597; c=relaxed/simple;
+	bh=GjwL/TztTTTJZS7egkf+4b2C1QhowBjdFFPiIAq5wEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F3uvf7NcbuZoUuzme7cmlybfce1zwMCiae63KTAKP1NVYZ24jJBDsSauKtKbnv2N33fsbAEuDxq+V84XP4Ps66pEZ89c62MIEy3wO11VTRwCk5Pnnbrc3vqVwyGawtINqN6GSIHIIZLvHTYvVioG/hfdHEgc6dom+R0tAdPtfrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E77juzqs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29462C4AF1C;
+	Tue, 27 Aug 2024 19:06:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724785546;
-	bh=2/HpgshCK19xkX85wh1aiPA9KDp9vPJdMLlDAGfD1ls=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=doJMjLuwdHqPWCcV3WE6NSq7XUTWA2rkIlB8ZpgXVXjVC8xXmbqmjBGzbhDZQQLIT
-	 oIVBimeSLJ11Sa932CabKaAQUoaOYl3pS7cJ0WC3PbbRJ0f54QNzYYz8xHOVtnlJeU
-	 U8Ml6FDCn4OnF71bsjwM/mphrV3GXKuR7DcddxS4tb4y+4PmxxYnTfPwIVv5pAzGSG
-	 5xEdjMCv7uGOFx1RfdeaS0+8mhcP7c/HXzQP7jd81yFMCtsmIuqL0No0sef0D7zXhQ
-	 lK9hmCC2vol5DX8foaw6iA1nYlFwb9MVxdE7CzbmETs1afbKxAD2mWUDYrwn2lC27a
-	 yrkW2JAMtfISg==
-Date: Tue, 27 Aug 2024 12:05:44 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Andy Gospodarek <andrew.gospodarek@broadcom.com>
-Cc: Wei Huang <wei.huang2@amd.com>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- netdev@vger.kernel.org, Jonathan.Cameron@huawei.com, helgaas@kernel.org,
- corbet@lwn.net, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, alex.williamson@redhat.com, michael.chan@broadcom.com,
- ajit.khaparde@broadcom.com, somnath.kotur@broadcom.com,
- manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
- vadim.fedorenko@linux.dev, horms@kernel.org, bagasdotme@gmail.com,
- bhelgaas@google.com, lukas@wunner.de, paul.e.luse@intel.com,
- jing2.liu@intel.com
-Subject: Re: [PATCH V4 11/12] bnxt_en: Add TPH support in BNXT driver
-Message-ID: <20240827120544.383a1eef@kernel.org>
-In-Reply-To: <Zs3ny988Yk1LJeEY@C02YVCJELVCG>
-References: <20240822204120.3634-1-wei.huang2@amd.com>
-	<20240822204120.3634-12-wei.huang2@amd.com>
-	<20240826132213.4c8039c0@kernel.org>
-	<ZszsBNC8HhCfFnhL@C02YVCJELVCG>
-	<20240826154912.6a85e654@kernel.org>
-	<Zs3ny988Yk1LJeEY@C02YVCJELVCG>
+	s=k20201202; t=1724785596;
+	bh=GjwL/TztTTTJZS7egkf+4b2C1QhowBjdFFPiIAq5wEE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E77juzqsKJVRDrgt8clNMouCxiWITMIfP+9wjFM3yT/dqEQGqcKgPIP/gqaGSHZuQ
+	 RLZW2R1EQZ3tRZ0VQRWsbo4fzwIkVCyZY8H3YlY5sAXTMfoIBf8FiUHcg0+sIbzuCi
+	 EGcg+pGlAo1Ai9QwoLoJdutsQ68GXJ4TG+Z7B1VFnjXcg5515EsTe9nstEQ2NIE7qa
+	 G5g6cPJzGd5IMhohQ/lDj0oYhaK74EV1eMHxcKtC3FOTjIF11LkLGBZk0N/ibsEMN1
+	 YBSP8H5vNy3sce6RnOvYjAHxEgBwqiPJQcpKm6eLzCmz5SDgiyzGthunILJLIbhGAc
+	 6NoawmWwD2K/A==
+Date: Tue, 27 Aug 2024 13:06:33 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Werner Sembach <wse@tuxedocomputers.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Georg Gottleuber <ggo@tuxedocomputers.com>,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] nvme-pci: Add sleep quirk for Samsung 990 Evo
+Message-ID: <Zs4juYi-kkO9_NAy@kbusch-mbp.dhcp.thefacebook.com>
+References: <20240827104134.11697-1-wse@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240827104134.11697-1-wse@tuxedocomputers.com>
 
-On Tue, 27 Aug 2024 10:50:51 -0400 Andy Gospodarek wrote:
-> > The merge window is in 3 weeks or so, so this can wait.  
+On Tue, Aug 27, 2024 at 12:41:33PM +0200, Werner Sembach wrote:
+> From: Georg Gottleuber <ggo@tuxedocomputers.com>
 > 
-> Are you asking for the patch for this feature to include the queue
-> stop/start instead of this? 
-
-Yes, indeed.
-
-> I just checked linux-pci and it does have bnxt_queue_stop/bnxt_queue_start.
->
-> > I'm worried we'll find out later that the current queue reset
-> > implementation in bnxt turns out to be insufficient. And we'll
-> > be stuck with yet another close/open in this driver.  
+> On some TUXEDO platforms, a Samsung 990 Evo NVMe leads to a high
+> power consumption in s2idle sleep (2-3 watts).
 > 
-> The queue reset _has_ to work.  We will ensure that it does and fix any
-> problems found.  Note that these have been under test already internally
-> and fixes are/will be posted to the list as they are made.  Holding this
-> patch because an API that it uses might not work seems odd.
+> This patch applies 'Force No Simple Suspend' quirk to achieve a
+> sleep with a lower power consumption, typically around 0.5 watts.
 
-Not holding because API may not work, holding because (I thought) 
-API isn't in place at all. If bnxt_queue_stop/bnxt_queue_start are in
-linux-pci please rewrite the patch to use those and then all clear 
-from my PoV.
+Thanks, queued up for nvme-6.11.
 
