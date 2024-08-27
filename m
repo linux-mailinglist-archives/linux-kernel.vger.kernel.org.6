@@ -1,64 +1,63 @@
-Return-Path: <linux-kernel+bounces-303340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3236960AFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:49:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1881C960AF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA5341C22C43
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:49:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C374C1F2235A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D871C4620;
-	Tue, 27 Aug 2024 12:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4BF1C0DC2;
+	Tue, 27 Aug 2024 12:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="Zl7YOZGO"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="MxaVnte3"
 Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4571C32E3
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124111BF801
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724762879; cv=none; b=tXCzAetHnImYqirsYL1L8SZJRzxm0sIZyOGcX8gJCQjHDflbCScpadpkYTsamddw22povyP30huG/5kFSXfQ2dc5lKl7MtDV/OnDXPx81m1AufsmzR1/9kWe4PLydoWzbuHS6giMC7Jlk+iF0FXz9hUWbm9PxMNCNpSkDdYcjrE=
+	t=1724762874; cv=none; b=mHxbzYz/1+fV4FJwK/JHy1qYpiC2AbG67mqoLehm0V5YM5LtDeODAUpkeRCiz7+g1e+iThJVZOQE/N1Fwkm29HAmk+M2WpoSdAUO3ckr93M/UiyFV60kOcI6uVgL996MrV10ICFFOqmOu5igjRQLpnGJXb7PChnbQeDwh4WbW2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724762879; c=relaxed/simple;
-	bh=BkR66Rxn7CKsiWyF0wNqTkgsLKmrndjLEiy0BCV1+jY=;
+	s=arc-20240116; t=1724762874; c=relaxed/simple;
+	bh=LYqmpaIdE1wYPo3wHu0ijU4oRzcYiUcPh5Apz2eAs7o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WtpC2hX+KCbk4loVIJ/h7nINulE8W0bH2Ag2wYsCoHiKSt0vreUchws3aryfFT7vVMLwvnFfiIObzs0CTDIWmL6q0DS/606F+37s/tW3EUFuaNBLDG2zxZWC8z0jtyMaQf3JC6KzxnXTxIIl96mzNIwBA6d+KZEXEoShus5E8AE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=Zl7YOZGO; arc=none smtp.client-ip=18.9.28.11
+	 MIME-Version:Content-Type; b=dvf/wlBVmMKctJsQps+7qL631jDTcp7pSZcw2IcmWmcKzvxyjvqqbtwxswIcr/QqRxp4TqlucLqzMIlcTsjMYcF6yMLh2/IJTpQ6YL7jJ+mKG1t5XbgJfua3IQZNzRK8M/Lqiukae+hHZCxF6lzGLaeICfzN010lP+OzwJ1SsCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=MxaVnte3; arc=none smtp.client-ip=18.9.28.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
 Received: from cwcc.thunk.org (pool-173-48-112-93.bstnma.fios.verizon.net [173.48.112.93])
 	(authenticated bits=0)
         (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 47RCleQ2021490
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 47RClevf021489
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Tue, 27 Aug 2024 08:47:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1724762862; bh=Tdbr3erC3C87Tpj+QDL7eRkJIWDz+3mi2LufyrVfNDA=;
+	t=1724762863; bh=O9aqUbJiflq+Jj5TMarn+kwjgS0QFHmSlvz6N5WUEwo=;
 	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=Zl7YOZGO/IslKoA8cjDhypYMDnbWqO/+nFzTMtkT0xg61I7dc1VqxDWqs63JGIOYu
-	 p+ODCAioieveZ8MK6B5ToqZcgHIIvTuY05PKm3RZ5bmmZlz77KudXgdp6uhuNGAxvF
-	 ey118KiSoasck8U+XKAl1Y8YI3KXjIBYF2rXgLzuWUF7B2WHIVvmH10zyBBasSg38e
-	 iVU/ngR8zhIdyFPXFJsFt2X5pFsQFvbQPzV7r8bGFbjvr1junU9GHgWVqFUfSNvqJx
-	 i1yZCu7gS+tyKsLsspnC6NsxkSjWIIvdI/DF9YDIm8CBje/1qyECIdlsD711Cwd+mx
-	 IoK62EISz4fDQ==
+	b=MxaVnte3Hmv04Y05uQQWhcVr0C3AGSHPc216zcjDTwwMwcMwY2NvzufimrCbSx7JA
+	 Ozg963EHK9wkdEhooN5yViXtDjWvdz2BE8kXX173OIg9kztqR6ilJDD+2ssLJmQRCi
+	 m0lvyW9IwfjJbkQ2HYD5ZFFH1cTAQiCYui3FbMeO5LvqnyZlsYa4dQ1+Un20ITq40T
+	 4rJUemu0JP0zSKKGhSaqNaEM9hEIZJlaCnZRsdnJqHTggWG44drlxDAMLg8LLTAf8y
+	 +LF/0DpBsyjSv2WHdBWQvnyiQTi6qAWxn/eeWdNhWYPqHLiNrp0MaLC8pFaChilwz+
+	 0AnYGLi75EonQ==
 Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id B812F15C1909; Tue, 27 Aug 2024 08:47:38 -0400 (EDT)
+	id B9E5B15C1942; Tue, 27 Aug 2024 08:47:38 -0400 (EDT)
 From: "Theodore Ts'o" <tytso@mit.edu>
-To: Andreas Dilger <adilger@dilger.ca>, Jan Kara <jack@suse.cz>,
-        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-        "Luis Henriques (SUSE)" <luis.henriques@linux.dev>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] ext4: fix fast commit inode enqueueing during a full journal commit
-Date: Tue, 27 Aug 2024 08:47:26 -0400
-Message-ID: <172476284018.635532.11127658295639985238.b4-ty@mit.edu>
+To: linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Markus Elfring <Markus.Elfring@web.de>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ext4: Use seq_putc() in two functions
+Date: Tue, 27 Aug 2024 08:47:27 -0400
+Message-ID: <172476284016.635532.5082003928541749251.b4-ty@mit.edu>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240717172220.14201-1-luis.henriques@linux.dev>
-References: <20240717172220.14201-1-luis.henriques@linux.dev>
+In-Reply-To: <076974ab-4da3-4176-89dc-0514e020c276@web.de>
+References: <076974ab-4da3-4176-89dc-0514e020c276@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,21 +68,18 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 17 Jul 2024 18:22:20 +0100, Luis Henriques (SUSE) wrote:
-> When a full journal commit is on-going, any fast commit has to be enqueued
-> into a different queue: FC_Q_STAGING instead of FC_Q_MAIN.  This enqueueing
-> is done only once, i.e. if an inode is already queued in a previous fast
-> commit entry it won't be enqueued again.  However, if a full commit starts
-> _after_ the inode is enqueued into FC_Q_MAIN, the next fast commit needs to
-> be done into FC_Q_STAGING.  And this is not being done in function
-> ext4_fc_track_template().
+On Sat, 13 Jul 2024 20:15:44 +0200, Markus Elfring wrote:
+> Single characters (line breaks) should be put into a sequence.
+> Thus use the corresponding function “seq_putc”.
 > 
-> [...]
+> This issue was transformed by using the Coccinelle software.
+> 
+> 
 
 Applied, thanks!
 
-[1/1] ext4: fix fast commit inode enqueueing during a full journal commit
-      commit: 6db3c1575a750fd417a70e0178bdf6efa0dd5037
+[1/1] ext4: Use seq_putc() in two functions
+      commit: bd8daa7717d94752ecd4a60b67a928d7159c2825
 
 Best regards,
 -- 
