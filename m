@@ -1,238 +1,183 @@
-Return-Path: <linux-kernel+bounces-303136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 161E99607E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:53:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 417EA9607EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:54:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2A4A281B74
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:53:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E091F1F236A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942A019E825;
-	Tue, 27 Aug 2024 10:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NtwuoXbU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0046419EEA1;
+	Tue, 27 Aug 2024 10:53:56 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2762E4C634;
-	Tue, 27 Aug 2024 10:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A0C4C634;
+	Tue, 27 Aug 2024 10:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724756025; cv=none; b=cN42hWL8XlIS780vI1mGXGx4I9qCmAWEkwjN0aN1msMvkIbQ8ZMMt8J15PE9KJOlaRbu5icMXH+EbVKytp/8OMNMVE3RgIxn+iERGKqeJrTzdqz1s8HDrn2ringxE+WjrtRmLrb+mIY42ShRWvbEvq5a6yj3TRKub53+d6xKj8o=
+	t=1724756035; cv=none; b=EAjTBX55aua3iU5bdz94Wl6a0JiH8v/tn6vd6F5Zbnns46+5F+89N4RqOl7cFnyfpSeNHTBInLP9lizcXZysqAj0jvctjWEy4c3zkHAxxa/sT3rTev5Qj63o0YHpWKoSzmTmgL/xdR6pW3Uqrq0J1CmygaOnSsa4dIEdhN1GEC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724756025; c=relaxed/simple;
-	bh=0cwnZgpNLcFVVJ9Sb3+sgkuw4pLRegm1J+e48W5+bIc=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=soWpU89H7WKxjvY7gExE+jKvYFS4MFSdvFjEuHpzmBdX5KMXY/LwjZsnOS/nCuwEPWV150dfSHzT4Jium/fpo21bGj0pbZ+mIhT3/JN5SARn6tipWpKgRaIP9vCCOftDZ0Gy5RDrWKOqHsGQ2eJRVVWL9INutm+enk7NZR0aOB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NtwuoXbU; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724756024; x=1756292024;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=0cwnZgpNLcFVVJ9Sb3+sgkuw4pLRegm1J+e48W5+bIc=;
-  b=NtwuoXbUh3mFaw82AccsT+m3+LUw46Zph7f8aeMxqLMB1Lx74osaJ+B4
-   VHSIzusyLHafaATS5T+VzPB8njJWx0lHic0DIJzaQLt/DqKCujJIdn4Jr
-   Vz20YePGwCv3xa1PHNF5vRGSpIu9u2ZyRKQc5Tpgj6Y1B7WOiyoz3gaIi
-   KgFjsRtystQNv2u7y55/DPM2duSvHjfGMLXuK7Q2yyGc9J3m3JmRgTSXm
-   YTB4+xyo939kOJxNcxLubEKqp5gnNDIN6aYdGmqJ+5UHjN+fxiXj/sVKe
-   GUVSjrvpYfvGJyB0qNATny/GhJPaudMmYqT9EvxdE576XlV0WtugRSbyb
-   A==;
-X-CSE-ConnectionGUID: yn9r8z3UR/a/1MrQWM7Hvg==
-X-CSE-MsgGUID: gaoNVIDvTciAiHr7VKwk1Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23378903"
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="23378903"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 03:53:43 -0700
-X-CSE-ConnectionGUID: 2JrTYpy2QAm9jY1+zcY5jw==
-X-CSE-MsgGUID: +KdlvFXJSXe7SGJFPdy0tQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="100323888"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.17])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 03:53:39 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 27 Aug 2024 13:53:34 +0300 (EEST)
-To: Perry Yuan <perry.yuan@amd.com>
-cc: Hans de Goede <hdegoede@redhat.com>, Mario.Limonciello@amd.com, 
-    Borislav.Petkov@amd.com, kprateek.nayak@amd.com, Alexander.Deucher@amd.com, 
-    Xinmei.Huang@amd.com, bharathprabhu.perdoor@amd.com, 
-    poonam.aggrwal@amd.com, Li.Meng@amd.com, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    Xiaojian.Du@amd.com
-Subject: Re: [PATCH 08/11] platform/x86/: hfi: add online and offline callback
- support
-In-Reply-To: <2661e74beceb9198d0baefe1f145080ef2b812cb.1724748733.git.perry.yuan@amd.com>
-Message-ID: <0242c3fa-74b8-63d5-dc2d-ae2f2519a281@linux.intel.com>
-References: <cover.1724748733.git.perry.yuan@amd.com> <2661e74beceb9198d0baefe1f145080ef2b812cb.1724748733.git.perry.yuan@amd.com>
+	s=arc-20240116; t=1724756035; c=relaxed/simple;
+	bh=s8W6qCwP1dfOxsBwXIaTpsIJ8nG5fLwW/vsZ9t46X/c=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dpK+H/Gh16YwNPK6yDSw+BMWCxatPYy9qpV4u0th/uBnPXTB6CmHpYcQ3SJj/MC41pP6jvI2zRHCDFXNy3cmlWG08gPG9/tEuXVeexZU5UxFMfh8WT4fV0pmSEQtdZjTl+3S/pCA+cuzsTEKskiWYh7QyzP+X3JB01wAYK79nNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WtPSd1cR5z6J7LP;
+	Tue, 27 Aug 2024 18:49:53 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 265CA140A71;
+	Tue, 27 Aug 2024 18:53:51 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 27 Aug
+ 2024 11:53:50 +0100
+Date: Tue, 27 Aug 2024 11:53:49 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Yangtao Li <frank.li@vivo.com>
+CC: <clement.leger@bootlin.com>, <andrew@lunn.ch>, <f.fainelli@gmail.com>,
+	<olteanv@gmail.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <ulli.kroll@googlemail.com>,
+	<linus.walleij@linaro.org>, <marcin.s.wojtas@gmail.com>,
+	<linux@armlinux.org.uk>, <alexandre.torgue@foss.st.com>,
+	<joabreu@synopsys.com>, <mcoquelin.stm32@gmail.com>, <hkallweit1@gmail.com>,
+	<u.kleine-koenig@pengutronix.de>, <jacob.e.keller@intel.com>,
+	<justinstitt@google.com>, <sd@queasysnail.net>, <horms@kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>, Maxime Chevallier
+	<maxime.chevallier@bootlin.com>
+Subject: Re: [net-next v3 3/9] net: ethernet: cortina: Convert to
+ devm_clk_get_enabled()
+Message-ID: <20240827115349.00002f77@Huawei.com>
+In-Reply-To: <20240827095712.2672820-4-frank.li@vivo.com>
+References: <20240827095712.2672820-1-frank.li@vivo.com>
+	<20240827095712.2672820-4-frank.li@vivo.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Tue, 27 Aug 2024, Perry Yuan wrote:
+On Tue, 27 Aug 2024 03:57:06 -0600
+Yangtao Li <frank.li@vivo.com> wrote:
 
-> From: Perry Yuan <Perry.Yuan@amd.com>
+> Convert devm_clk_get(), clk_prepare_enable() to a single
+> call to devm_clk_get_enabled(), as this is exactly
+> what this function does.
 > 
-> There are some firmware parameters that need to be configured
-> when a CPU core is brought online or offline.
-> 
-> when CPU is online, it will initialize the workload classification
-> parameters to CPU firmware which will trigger the workload class ID
-> updating function.
-> 
-> Once the CPU is going to offline, it will need to disable the workload
-> classification function and clear the history.
-> 
-> Signed-off-by: Perry Yuan <Perry.Yuan@amd.com>
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+I don't like the mixing of devm and non devm here.
+Maybe better to use a devm_add_action_or_reset()
+for geth_cleanup_freeq() as well.
+
+
 > ---
->  drivers/platform/x86/amd/hfi/hfi.c | 90 ++++++++++++++++++++++++++++++
->  1 file changed, 90 insertions(+)
+> v3:
+> -move the local clock variables, keep lines longest to shortest
 > 
-> diff --git a/drivers/platform/x86/amd/hfi/hfi.c b/drivers/platform/x86/amd/hfi/hfi.c
-> index cd5f2b708ebf..57b642c4c522 100644
-> --- a/drivers/platform/x86/amd/hfi/hfi.c
-> +++ b/drivers/platform/x86/amd/hfi/hfi.c
-> @@ -154,6 +154,7 @@ static int __percpu *amd_hfi_ipcc_scores;
->  
->  static int amd_set_hfi_ipcc_score(struct amd_hfi_cpuinfo *info, int cpu);
->  static int update_hfi_ipcc_scores(struct amd_hfi_data *amd_hfi_data);
-> +static int amd_hfi_set_state(unsigned int cpu, bool state);
-
-Unnecessary.
-
->  static int find_cpu_index_by_apicid(unsigned int target_apicid)
->  {
-> @@ -318,6 +319,87 @@ static int amd_set_hfi_ipcc_score(struct amd_hfi_cpuinfo *hfi_cpuinfo, int cpu)
->  	return 0;
+>  drivers/net/ethernet/cortina/gemini.c | 25 ++++++++-----------------
+>  1 file changed, 8 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/cortina/gemini.c b/drivers/net/ethernet/cortina/gemini.c
+> index 73e1c71c5092..5c86987c6fdf 100644
+> --- a/drivers/net/ethernet/cortina/gemini.c
+> +++ b/drivers/net/ethernet/cortina/gemini.c
+> @@ -109,7 +109,6 @@ struct gemini_ethernet_port {
+>  	struct device *dev;
+>  	void __iomem *dma_base;
+>  	void __iomem *gmac_base;
+> -	struct clk *pclk;
+>  	struct reset_control *reset;
+>  	int irq;
+>  	__le32 mac_addr[3];
+> @@ -2326,7 +2325,6 @@ static void gemini_port_remove(struct gemini_ethernet_port *port)
+>  		phy_disconnect(port->netdev->phydev);
+>  		unregister_netdev(port->netdev);
+>  	}
+> -	clk_disable_unprepare(port->pclk);
+>  	geth_cleanup_freeq(port->geth);
 >  }
 >  
-> +static int amd_hfi_set_state(unsigned int cpu, bool state)
-> +{
-> +	int ret;
-> +
-> +	ret = wrmsrl_on_cpu(cpu, AMD_WORKLOAD_CLASS_CONFIG, state);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return wrmsrl_on_cpu(cpu, AMD_WORKLOAD_HRST, 0x1);
-> +}
-> +
-> +/*
-> + * amd_hfi_online() - Enable workload classification on @cpu
-> + * @cpu: CPU in which the workload classification will be enabled
-> + *
-> + */
-> +static int amd_hfi_online(unsigned int cpu)
-> +{
-> +	struct amd_hfi_cpuinfo *hfi_info = per_cpu_ptr(&amd_hfi_cpuinfo, cpu);
-> +	struct amd_hfi_classes *hfi_classes;
-> +	int ret;
-> +
-> +	if (WARN_ON_ONCE(!hfi_info))
-
-Can this ever trigger??
-
-> +		return -EINVAL;
-
-Definitely wrong error code to return since this has nothing to do with 
-user input being invalid.
-
-> +	if (!zalloc_cpumask_var(&hfi_info->cpus, GFP_KERNEL))
-> +		return -ENOMEM;
-> +
-> +	mutex_lock(&hfi_cpuinfo_lock);
-
-Use guard().
-
-> +	cpumask_set_cpu(cpu, hfi_info->cpus);
-> +
-> +	/*
-> +	 * Check if @cpu as an associated, initialized and ranking data must be filled
-> +	 */
-> +	hfi_classes = hfi_info->amd_hfi_classes;
-> +	if (!hfi_classes)
-> +		goto unlock;
-> +
-> +	/* Enable the workload classification interface */
-> +	ret = amd_hfi_set_state(cpu, true);
-> +	if (ret)
-> +		pr_err("wct enable failed for cpu %d\n", cpu);
-
-Use %u for unsigned int.
-
-> +
-> +	mutex_unlock(&hfi_cpuinfo_lock);
-> +	return 0;
-> +
-> +unlock:
-> +	free_cpumask_var(hfi_info->cpus);
-> +	mutex_unlock(&hfi_cpuinfo_lock);
-> +	return ret;
-> +}
-> +
-> +/*
-> + * amd_hfi_offline() - Disable workload classification on @cpu
-> + * @cpu: CPU in which the workload classification will be disabled
-> + *
-> + * Remove @cpu from those covered by its HFI instance.
-> + *
-> + */
-> +static int amd_hfi_offline(unsigned int cpu)
-> +{
-> +	struct amd_hfi_cpuinfo *hfi_info = &per_cpu(amd_hfi_cpuinfo, cpu);
-> +	int ret;
-> +
-> +	if (WARN_ON_ONCE(!hfi_info))
-> +		return -EINVAL;
-> +
-> +	mutex_lock(&hfi_cpuinfo_lock);
-> +
-> +	/* Disable the workload classification interface */
-> +	ret = amd_hfi_set_state(cpu, false);
-> +	if (ret)
-> +		pr_err("wct disable failed for cpu %d\n", cpu);
-
-%u
-
-> +
-> +	mutex_unlock(&hfi_cpuinfo_lock);
-> +
-> +	free_cpumask_var(hfi_info->cpus);
-> +
-> +	return 0;
-> +}
-> +
->  static int update_hfi_ipcc_scores(struct amd_hfi_data *amd_hfi_data)
->  {
->  	int cpu;
-> @@ -467,6 +549,14 @@ static int amd_hfi_probe(struct platform_device *pdev)
->  	if (ret)
->  		goto err_exit;
+> @@ -2401,6 +2399,7 @@ static int gemini_ethernet_port_probe(struct platform_device *pdev)
+>  	struct gemini_ethernet *geth;
+>  	struct net_device *netdev;
+>  	struct device *parent;
+> +	struct clk *pclk;
+>  	u8 mac[ETH_ALEN];
+>  	unsigned int id;
+>  	int irq;
+> @@ -2453,14 +2452,11 @@ static int gemini_ethernet_port_probe(struct platform_device *pdev)
+>  	port->irq = irq;
 >  
-> +	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "x86/amd_hfi:online",
-> +			amd_hfi_online,
-> +			amd_hfi_offline);
-> +	if (ret < 0) {
-> +		pr_warn("failed to setup cpuhp state! (%d)\n", ret);
+>  	/* Clock the port */
+> -	port->pclk = devm_clk_get(dev, "PCLK");
+> -	if (IS_ERR(port->pclk)) {
+> +	pclk = devm_clk_get_enabled(dev, "PCLK");
+> +	if (IS_ERR(pclk)) {
+>  		dev_err(dev, "no PCLK\n");
+> -		return PTR_ERR(port->pclk);
+> +		return PTR_ERR(pclk);
+>  	}
+> -	ret = clk_prepare_enable(port->pclk);
+> -	if (ret)
+> -		return ret;
+>  
+>  	/* Maybe there is a nice ethernet address we should use */
+>  	gemini_port_save_mac_addr(port);
+> @@ -2469,8 +2465,7 @@ static int gemini_ethernet_port_probe(struct platform_device *pdev)
+>  	port->reset = devm_reset_control_get_exclusive(dev, NULL);
+>  	if (IS_ERR(port->reset)) {
+>  		dev_err(dev, "no reset\n");
+> -		ret = PTR_ERR(port->reset);
+> -		goto unprepare;
+> +		return PTR_ERR(port->reset);
+>  	}
+>  	reset_control_reset(port->reset);
+>  	usleep_range(100, 500);
+> @@ -2532,24 +2527,20 @@ static int gemini_ethernet_port_probe(struct platform_device *pdev)
+>  					port_names[port->id],
+>  					port);
+>  	if (ret)
+> -		goto unprepare;
 > +		return ret;
-> +	}
-> +
->  	dev_dbg(&pdev->dev, "%s driver registered.\n", pdev->name);
+>  
+>  	ret = gmac_setup_phy(netdev);
+>  	if (ret) {
+>  		netdev_err(netdev,
+>  			   "PHY init failed\n");
+> -		goto unprepare;
+> +		return ret;
+>  	}
+>  
+>  	ret = register_netdev(netdev);
+>  	if (ret)
+> -		goto unprepare;
+> +		return ret;
 >  
 >  	return 0;
-> 
-
--- 
- i.
+> -
+> -unprepare:
+> -	clk_disable_unprepare(port->pclk);
+> -	return ret;
+>  }
+>  
+>  static void gemini_ethernet_port_remove(struct platform_device *pdev)
 
 
