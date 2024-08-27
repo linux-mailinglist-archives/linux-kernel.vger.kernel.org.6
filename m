@@ -1,117 +1,172 @@
-Return-Path: <linux-kernel+bounces-302447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7659C95FE86
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:52:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB5F395FE94
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:56:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5A7E1C212DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:52:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CCE51F222D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F97BA49;
-	Tue, 27 Aug 2024 01:52:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8718F58;
-	Tue, 27 Aug 2024 01:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B63D515;
+	Tue, 27 Aug 2024 01:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="NEPKGZ8n"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C492C13D
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 01:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724723547; cv=none; b=NeFqdVyBIv7nQT5qKm0fWi57zFxjasA+YJomdBp3YO1XuLEDMRSpx7lVP2VHbiUbFWQWXKycEi9q38S3wy0Y2/DyNBMAd8zNpgbBJLnRIA+Ii9hwSl/jzaEgo4S3HeCARrW+LdiydNR10Z6u70cUxaW2UsgZ4Lp2Mg2hR6PTd7M=
+	t=1724723803; cv=none; b=uKP7L8HgPa3p4v5VfJ0Gq220eQHvEtWS3YL286IbabIaRIXIyqQ11WvIKYyDI958R+1BA0NQ+rrfs4gSOtDpwldsbWuT6a0eM7IFBZTFf6m5zfV7m51R6Aj8EbKOaTmPEboO2J4T1URZ7D0Yz5RG6dPFLJtS3iHSnHgE13Op7p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724723547; c=relaxed/simple;
-	bh=UqQwOrDy3fbpOnLiLj0AnhcuqgiOkrrn5adE3OLf6fY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p2kx+PonoTAqS7HIMgKRCmEFCnLsSBdYUhReQT1zIwquGK0tBbxfM+RXyYnaUvgaU3UyVAp0/WeG9HJhHN7YB9QBI+jtryAOav70gnog2wvNd5Gj+mitXZC8sEScU7CIOlNW4xCP0AIHfMbDBn0Sv9dl/wkCIAkh/1CXq3aoiPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E66C0DA7;
-	Mon, 26 Aug 2024 18:52:49 -0700 (PDT)
-Received: from [10.163.61.7] (unknown [10.163.61.7])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 407B63F66E;
-	Mon, 26 Aug 2024 18:52:18 -0700 (PDT)
-Message-ID: <314b8893-2ffd-4148-974b-725cfaa97d18@arm.com>
-Date: Tue, 27 Aug 2024 07:22:16 +0530
+	s=arc-20240116; t=1724723803; c=relaxed/simple;
+	bh=1fwivF5Kntd8INxTCggymxiPWNXgH985IU6YIXH/YaM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tsqhdCDp7N4VRQv6B6TlJC3uHHtrvTLhmmHc7NG6n0QUX0YOorxY54/RTDaRGhJ/SbFV8xCRb6CDMyfx+hjwca2vePrcW5Lp01h5yC/6f58uimx35AmXt3AEGAS1rYIFjhxTAsLCMtlNpepOGsmW7bXMq1kY3UGw6jgLRrUTxOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=NEPKGZ8n; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso5148179276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 18:56:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1724723800; x=1725328600; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZHkpf2eW9vtVI3uQimkDc6XD8VPV3xIbNHiNaLloE6M=;
+        b=NEPKGZ8nzpUOkImZ7ja0ABxwl/OiJQs2L08CcPqkwkJUb34RwJiViY/7few+zUnx+Z
+         TbJ58ykwrjhgQ82Bw71/fmJ8L7i3Pz+hHgL4KMA1snzNgn982gLd2/BnWvyFOBkO/0pF
+         KdiswguzJh8UPgTcryPGb/N+2994x3qHVv6r7rCdNDKk5dSZTH2ax1fTHeMOrzJdCiee
+         oRQdbAoUMh3eUitInSkPbY2ohT3g184MMEqTa0Y4rJY29V0DOaCZhhVr19euqgUwWSvz
+         sFyCIOs6CS3MQRa3tAQjsR913E3KZ2nO8an3mmnVStPQJoOz0ZRAPtFE2xLuYP+LJ7jT
+         b4eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724723800; x=1725328600;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZHkpf2eW9vtVI3uQimkDc6XD8VPV3xIbNHiNaLloE6M=;
+        b=J1FGpaXbBCkQ5fgHNqEN9af0a812vu0DmmRAAISPOAb+DHrq+eqVdbodtmw7W2Xido
+         8twRnxyP8UCprzldMuO/UsgqIzxAp/k/ypl7ItQfC/IIY74SDBGcLBDJLWnyZ7KPvAW/
+         as3tuiybkVqSiH9H30+Aud79fgguNQMbq/mdx5OWtemlQ0Bi8t2KYPKjnXjf9OScUhFf
+         WFqa/4O0J1y/dJGqIR6+arE2ReKVNCaJgXl18YAFt7Kpi2cQRY3bOrgJPY+3rVBLv2lj
+         0zA68nDIVrUCzWJkbOUX3z3r0YxdnnUcWaP+ob3YbH6GZq0pG2uP/ECPSt+zNopx9MRy
+         BtRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4MToLHdXFYT6r6uxUi2J906ZCGzltf/W8jF3VMO0LYw2FmLfrrLIazCdno2c8wMXP37n1tCGjqBlvRaA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhrnpK4UhRqCjltZPySzR7eKHNH+gCNl0MJyKrLHsigPI0YOSb
+	Tw3/ieiVpGJ/3UYZGLq8BftObm4s5D0riymmpt7M9lXVsMlMdS07pwbCh5Ab1g1BW077SwoWJIK
+	jAvh48bE1MNfAKTxhOyoRgJ4NA0NbY+fqFbvI
+X-Google-Smtp-Source: AGHT+IGAlsSd5u0kuXsprdwgpBWXtwruGr5DEyvE3wl7DuUl9p6ZRcHG5g6fvYorBxc3UuC0PA06wNMuggPIcc4VLCo=
+X-Received: by 2002:a05:690c:760a:b0:6b1:2825:a3e2 with SMTP id
+ 00721157ae682-6c629159d06mr130236787b3.44.1724723800391; Mon, 26 Aug 2024
+ 18:56:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: errata: Enable the AC03_CPU_38 workaround for
- ampere1a
-To: Oliver Upton <oliver.upton@linux.dev>,
- D Scott Phillips <scott@os.amperecomputing.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Mark Rutland <mark.rutland@arm.com>,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
- Besar Wicaksono <bwicaksono@nvidia.com>,
- Easwar Hariharan <eahariha@linux.microsoft.com>,
- Rob Herring <robh@kernel.org>, Andre Przywara <andre.przywara@arm.com>,
- linux-kernel@vger.kernel.org, patches@amperecomputing.com
-References: <20240826215933.1263453-1-scott@os.amperecomputing.com>
- <Zs0OelXKn_-6jtqN@linux.dev>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <Zs0OelXKn_-6jtqN@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240826120449.1666461-1-yukaixiong@huawei.com>
+ <20240826120449.1666461-8-yukaixiong@huawei.com> <CAHC9VhS=5k3zZyuuon2c6Lsf5GixAra6+d3A4bG2FVytv33n_w@mail.gmail.com>
+ <aeb685e9-3a2d-13b4-4ec8-0752ded06d61@huawei.com>
+In-Reply-To: <aeb685e9-3a2d-13b4-4ec8-0752ded06d61@huawei.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 26 Aug 2024 21:56:29 -0400
+Message-ID: <CAHC9VhS4TKvTyUB+H6cQNjRFbssGRM-U6S-X7011bSv7bHiQqg@mail.gmail.com>
+Subject: Re: [PATCH -next 07/15] security: min_addr: move sysctl into its own file
+To: yukaixiong <yukaixiong@huawei.com>
+Cc: akpm@linux-foundation.org, mcgrof@kernel.org, ysato@users.sourceforge.jp, 
+	dalias@libc.org, glaubitz@physik.fu-berlin.de, luto@kernel.org, 
+	tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, kees@kernel.org, 
+	j.granados@samsung.com, willy@infradead.org, Liam.Howlett@oracle.com, 
+	vbabka@suse.cz, lorenzo.stoakes@oracle.com, trondmy@kernel.org, 
+	anna@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, 
+	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, jmorris@namei.org, 
+	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	wangkefeng.wang@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/27/24 04:53, Oliver Upton wrote:
-> Hi D Scott,
-> 
-> On Mon, Aug 26, 2024 at 02:59:33PM -0700, D Scott Phillips wrote:
->> The ampere1a cpu is affected by erratum AC04_CPU_10 which is the same
->> bug as AC03_CPU38. Add ampere1a to the AC03_CPU_38 workaround midr list.
->>
->> Signed-off-by: D Scott Phillips <scott@os.amperecomputing.com>
->> ---
->>  Documentation/arch/arm64/silicon-errata.rst | 2 ++
->>  arch/arm64/Kconfig                          | 2 +-
->>  arch/arm64/include/asm/cputype.h            | 2 ++
->>  arch/arm64/kernel/cpu_errata.c              | 1 +
->>  4 files changed, 6 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/arch/arm64/silicon-errata.rst b/Documentation/arch/arm64/silicon-errata.rst
->> index 50327c05be8d1..39c52385f11fb 100644
->> --- a/Documentation/arch/arm64/silicon-errata.rst
->> +++ b/Documentation/arch/arm64/silicon-errata.rst
->> @@ -55,6 +55,8 @@ stable kernels.
->>  +----------------+-----------------+-----------------+-----------------------------+
->>  | Ampere         | AmpereOne       | AC03_CPU_38     | AMPERE_ERRATUM_AC03_CPU_38  |
->>  +----------------+-----------------+-----------------+-----------------------------+
->> +| Ampere         | AmpereOne AC04  | AC04_CPU_10     | AMPERE_ERRATUM_AC03_CPU_38  |
->> ++----------------+-----------------+-----------------+-----------------------------+
-> 
-> We tend to stick the marketing term for a part in the second column so
-> it is more recognizable for the user. Is this a placeholder for something
-> different from "ampere1a"?
+On Mon, Aug 26, 2024 at 9:38=E2=80=AFPM yukaixiong <yukaixiong@huawei.com> =
+wrote:
+> On 2024/8/27 6:49, Paul Moore wrote:
+> > On Mon, Aug 26, 2024 at 8:05=E2=80=AFAM Kaixiong Yu <yukaixiong@huawei.=
+com> wrote:
+> >> The dac_mmap_min_addr belongs to min_addr.c, move it into
+> >> its own file from /kernel/sysctl.c. In the previous Linux kernel
+> >> boot process, sysctl_init_bases needs to be executed before
+> >> init_mmap_min_addr, So, register_sysctl_init should be executed
+> >> before update_mmap_min_addr in init_mmap_min_addr.
+> >>
+> >> Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
+> >> ---
+> >>   kernel/sysctl.c     |  9 ---------
+> >>   security/min_addr.c | 11 +++++++++++
+> >>   2 files changed, 11 insertions(+), 9 deletions(-)
+> >>
+> >> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> >> index 41d4afc978e6..0c0bab3dad7d 100644
+> >> --- a/kernel/sysctl.c
+> >> +++ b/kernel/sysctl.c
+> >> @@ -2059,15 +2059,6 @@ static struct ctl_table vm_table[] =3D {
+> >>                  .proc_handler   =3D proc_dointvec_minmax,
+> >>                  .extra1         =3D SYSCTL_ZERO,
+> >>          },
+> >> -#ifdef CONFIG_MMU
+> >> -       {
+> >> -               .procname       =3D "mmap_min_addr",
+> >> -               .data           =3D &dac_mmap_min_addr,
+> >> -               .maxlen         =3D sizeof(unsigned long),
+> >> -               .mode           =3D 0644,
+> >> -               .proc_handler   =3D mmap_min_addr_handler,
+> >> -       },
+> >> -#endif
+> >>   #if (defined(CONFIG_X86_32) && !defined(CONFIG_UML))|| \
+> >>      (defined(CONFIG_SUPERH) && defined(CONFIG_VSYSCALL))
+> >>          {
+> >> diff --git a/security/min_addr.c b/security/min_addr.c
+> >> index 0ce267c041ab..b2f61649e110 100644
+> >> --- a/security/min_addr.c
+> >> +++ b/security/min_addr.c
+> >> @@ -44,8 +44,19 @@ int mmap_min_addr_handler(const struct ctl_table *t=
+able, int write,
+> >>          return ret;
+> >>   }
+> >>
+> >> +static struct ctl_table min_addr_sysctl_table[] =3D {
+> >> +       {
+> >> +               .procname       =3D "mmap_min_addr",
+> >> +               .data           =3D &dac_mmap_min_addr,
+> >> +               .maxlen         =3D sizeof(unsigned long),
+> >> +               .mode           =3D 0644,
+> >> +               .proc_handler   =3D mmap_min_addr_handler,
+> >> +       },
+> >> +};
+> >
+> > I haven't chased all of the Kconfig deps to see if there is a problem,
+> > but please provide a quick explanation in the commit description about
+> > why it is okay to drop the CONFIG_MMU check.
+>
+> According to the compilation condition in security/Makefile:
+>
+>                obj-$(CONFIG_MMU)            +=3D min_addr.o
+>
+> if CONFIG_MMU is not defined, min_addr.c would not be included in the
+> compilation process.
+> So=EF=BC=8Cit is okay to drop the CONFIG_MMU check.
 
-Agreed, even the MIDR being added here is for AMPERE1A. Probably something
-like 'AmpereOneA' might be more suitable.
+Great, please add some text about that in the commit description as it
+is an important difference in the code changes that isn't currently
+documented in the patch.
 
-> 
->> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
->> index f6b6b45073571..748aa536446ae 100644
->> --- a/arch/arm64/kernel/cpu_errata.c
->> +++ b/arch/arm64/kernel/cpu_errata.c
->> @@ -773,6 +773,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
->>  		.desc = "AmpereOne erratum AC03_CPU_38",
->>  		.capability = ARM64_WORKAROUND_AMPERE_AC03_CPU_38,
->>  		ERRATA_MIDR_ALL_VERSIONS(MIDR_AMPERE1),
->> +		ERRATA_MIDR_ALL_VERSIONS(MIDR_AMPERE1A),
-> 
-> This will break the workaround on AC03, since the second macro reassigns
-> ::midr_range.
-> 
-> You'll want to use ERRATA_MIDR_RANGE_LIST() instead w/ an array of
-> affected MIDRs.
-> 
-
-+1
-
-Although ERRATA_MIDR_RANGE_LIST() in turn creates such a list.
+--=20
+paul-moore.com
 
