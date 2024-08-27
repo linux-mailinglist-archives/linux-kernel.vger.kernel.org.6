@@ -1,130 +1,347 @@
-Return-Path: <linux-kernel+bounces-304134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53C04961AD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 01:50:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0545961AD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 01:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1827828388A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:50:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 017851C2313B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26911D47C4;
-	Tue, 27 Aug 2024 23:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92AB1D3186;
+	Tue, 27 Aug 2024 23:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="TAQ8TDQH";
-	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="kUfLFSMX"
-Received: from mx-lax3-2.ucr.edu (mx-lax3-2.ucr.edu [169.235.156.37])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ggIf3er3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051901D47B4
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 23:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=169.235.156.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17F91D365D;
+	Tue, 27 Aug 2024 23:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724802565; cv=none; b=JUkd9WskfVu0U4FBjOsROb2D+NWeCyQUKvyGlXVVVzWPrJ+Ao7p8N0BEnyg5sYNtTqJY/kU2ijuU/fR4999vNCsLjY+Zy05xR5i5kI95c1qZgoOMhYU8OXxoqMVsv8Oz5JN80ZACeoIi7G12bYkqng3dHqUaDCYfS6e76n1RA1Y=
+	t=1724802606; cv=none; b=kC0DdDqS9T7L6BvoUgdpdgGqT64uWuhDJ3+5bZbD6GQsdmvrPJ9yBOrGREsVfxOv9/UTyoW7p5ts/TZQym0RZ+koi9dQcxVgCDlRRUrR0otAXWEOrvqG7uPLU5aOtEaphUsOsrYjh+0mkzz5hmCVTYDgMBzIIlOYDmFBe34y9zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724802565; c=relaxed/simple;
-	bh=Oa/q/B7QC9shO/oS8EXiewx53fGXKpzhCJSJ6R64P3I=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=lHm/OuZQhapgOU2N2wjWdbcYApxwYfbXRqVhwJzMQ7TW/VNJX8XjEFe7EK3oXE3lIv9DDGpeTZuV/2E5uCpybRRjSHl5OUWVvH6XJh68RKPDSUn+cOZWDM/zH8W1R3Ct6LKws0gfYI7QRZzlhgKHlLq4Zo+SnC+ObDO80qRVA/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=email.ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=TAQ8TDQH; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=kUfLFSMX; arc=none smtp.client-ip=169.235.156.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=email.ucr.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1724802564; x=1756338564;
-  h=dkim-signature:x-google-dkim-signature:
-   x-forwarded-encrypted:x-gm-message-state:
-   x-google-smtp-source:mime-version:from:date:message-id:
-   subject:to:content-type:x-cse-connectionguid:
-   x-cse-msgguid;
-  bh=Oa/q/B7QC9shO/oS8EXiewx53fGXKpzhCJSJ6R64P3I=;
-  b=TAQ8TDQH82fuWxeJbHi+p3BH2+AWTbvjtI8UYBqA6H/zTJpYWhv5h/k8
-   SJRbMdX/mwOBd3Ht/juplzzO/P3y0e4LdZAyB+/HX9cP/4aNz+DUWnUjl
-   fKGO6gLa0KfPVylpEQLYLRSih+EdMrS7bv8SOip5tvVi2a7KGRMISq7Eh
-   kEKYliZ+XruF9zTV11WcBxx/NhfI9IrSHmR4mKzStsiUhWPWJnUl0FYZB
-   eO8ZqCQPIxQfm8GtjG0jABWWGczAuvVhSQiXhovjYaYsQWSLLcFsx1j44
-   +U2j0FjxvwDy+6RwY0mGLEifCM4HESSzA83lKAdPnDG70Zz9qJGaNRpyH
-   g==;
-X-CSE-ConnectionGUID: 6nM5VPwaSnKMiptNx8OWhw==
-X-CSE-MsgGUID: FzX/a6fJRim/OZWQ93XV+g==
-Received: from mail-il1-f198.google.com ([209.85.166.198])
-  by smtp-lax3-2.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 27 Aug 2024 16:49:17 -0700
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39d51267620so68901855ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 16:49:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ucr.edu; s=rmail; t=1724802556; x=1725407356; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=VhkdcW8ZfYHu6XlXCqHwIh0I4/YRYFz8/VqS+ioBQ68=;
-        b=kUfLFSMX84oVMjEfw+lpah2hotRY6CcXigKX/e8RIS7QkoRAbUBVOIG+sf6CIwn3N1
-         qd2N8WHWvs7ym9XXhtve60F9vrLVsmeAKN2xoQCBwA44GuH7z8EsSKitX1fwDn0XMZNB
-         F08/oTRTyPt3E3duA4nm8eAAun+/FYAfRDmQg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724802556; x=1725407356;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VhkdcW8ZfYHu6XlXCqHwIh0I4/YRYFz8/VqS+ioBQ68=;
-        b=EkejzCg+B+ReZgyRRNuhjfx144smDi9QApC7L1KSFfSzCXQAlkxad1UzonVqNWLv5V
-         tWa6eoW5QNkC2ftDDky6rFyj03/f48Ix0PqtLIjmT9ZlXlggOHRgI9cuApv2+kMsp/DN
-         2hLEGw0/8P9yFgSadjua9U23Ph4ZrVBiNrOuOwdJ7H6Y1ovXn8r8yOlHBKfLwREakSJe
-         d/K6iLeYOpZKpkO6Y5T9yWqCnt2YepzRhaDhQfGYCcRZl+m7k+RLI5hI9rh3ZUqby/oY
-         hacv9QPF1Rf6Gwcz7+2tgnYAB0T/Ko5WGZPxxiMNMuF9TNvQfzg129MvoyR0czfmeqtI
-         i6dA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDudWzOFw8prGX6OGO0fhAYCOA7AbC/Rw3YqpqtGZijxTvONIzpi3hyrtNgaA/Xxtl9js3IAyy+17uBY4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxTmo94glIpiVUT09sjSqPnc8bOviD0tm5y9t9b+fxJVLtIt6o
-	rWq2PeEfnsGcc1of4aR5nq3Ng8bwMF1nbeSJQrk+XGPKb6WZ09iFOIKf5moU/+PZn4JJPOyvgLx
-	QoDtRWJcCObUPxTTofFAsbpWj6dOiDlpbqHKVP53InfnGJYvOrRzVfxMbO39b/oxj2RoLo8PREg
-	UjDOrpRBDmIAB51dx5eLnM+Q1Vd+9QExn/vmyYAQ==
-X-Received: by 2002:a05:6e02:1562:b0:39d:2a84:869f with SMTP id e9e14a558f8ab-39e3c9756e4mr163288765ab.6.1724802555935;
-        Tue, 27 Aug 2024 16:49:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHUBOoBnmQiWTUynS2fxSdY+CC+P2PsHPuzJdu9eahzwq/2ll+ccECRRFgXem+6XGY2oTPkmP3A99AQ2q0lQ3A=
-X-Received: by 2002:a05:6e02:1562:b0:39d:2a84:869f with SMTP id
- e9e14a558f8ab-39e3c9756e4mr163288615ab.6.1724802555664; Tue, 27 Aug 2024
- 16:49:15 -0700 (PDT)
+	s=arc-20240116; t=1724802606; c=relaxed/simple;
+	bh=HgWQdtXWb0VBXnmCD7/KhTe9vlHFiMLZIIAtA6mCnN8=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=sMRecv/JEDY7HNpi2rjK924weByPR+aP0fVF93dfLf4uxhrbFwpZ9lT8SJ3+oK/FTUlEfR8OyiA3lEoS6zxViH8kEp3Qzl+8JF+75jQ6nCw/x/dPD11n7GcJlOmrpym1G82RpJi90gm6fHtmth0ItZ9BAzbt1Fs+rWO/sQlNmBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ggIf3er3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FE5DC4FF4F;
+	Tue, 27 Aug 2024 23:50:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724802606;
+	bh=HgWQdtXWb0VBXnmCD7/KhTe9vlHFiMLZIIAtA6mCnN8=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=ggIf3er3wdjqmhQNoYFkxUA88FY68ZWkbU+JcFON3upecc5v3FGQ4hF3HHO5icfYU
+	 kbnXX+a1JdlOV/P3Lgi8IGwcZ5I98CZvMa/SgJ//L+xPOxJvc4bfUSex+UqqdKhusu
+	 +PT0ymbF92x9aa6HG4ndsODEEIGzKL6Vm9UzvyrB3tpDFkMh2S6CTR+VUXablyxZr3
+	 PNOee2eaUriPd3bLmuCVIKSBkOYznKDBfxWFLoYEljh9Jf/wmrkSejgY6mEYKs+hPA
+	 YG42XNfSKi3mDrwf417Gfj/7sgdPDk+fPirNsAIX/fBWSFriUj7CxMTci5UgFSjDY9
+	 blGKzAs3mRCFA==
+Message-ID: <d7b374670eb2f6d442f351106ab1221a.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Juefei Pu <juefei.pu@email.ucr.edu>
-Date: Tue, 27 Aug 2024 16:49:04 -0700
-Message-ID: <CANikGpf0OmGMSkksH_ihW9_yXVAL25xKD4CBy8d1gpKj0inPjQ@mail.gmail.com>
-Subject: BUG: kernel panic: corrupted stack end in worker_thread
-To: James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, 
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yu Hao <yhao016@ucr.edu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240827-qcom_ipq_cmnpll-v3-2-8e009cece8b2@quicinc.com>
+References: <20240827-qcom_ipq_cmnpll-v3-0-8e009cece8b2@quicinc.com> <20240827-qcom_ipq_cmnpll-v3-2-8e009cece8b2@quicinc.com>
+Subject: Re: [PATCH v3 2/4] clk: qcom: Add CMN PLL clock controller driver for IPQ SoC
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com, quic_pavir@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, bartosz.golaszewski@linaro.org, srinivas.kandagatla@linaro.org, Luo Jie <quic_luoj@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Luo Jie <quic_luoj@quicinc.com>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>
+Date: Tue, 27 Aug 2024 16:50:03 -0700
+User-Agent: alot/0.10
 
-Hello,
-We found the following issue using syzkaller on Linux v6.10.
-The PoC generated by Syzkaller can have the kernel panic.
-The full report including the Syzkaller reproducer:
-https://gist.github.com/TomAPU/a96f6ccff8be688eb2870a71ef4d035d
+Quoting Luo Jie (2024-08-27 05:46:00)
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index 8a6f0dabd02f..35f656146de7 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -29,6 +29,7 @@ obj-$(CONFIG_CLK_X1E80100_TCSRCC) +=3D tcsrcc-x1e80100.o
+>  obj-$(CONFIG_CLK_QCM2290_GPUCC) +=3D gpucc-qcm2290.o
+>  obj-$(CONFIG_IPQ_APSS_PLL) +=3D apss-ipq-pll.o
+>  obj-$(CONFIG_IPQ_APSS_6018) +=3D apss-ipq6018.o
+> +obj-$(CONFIG_IPQ_CMN_PLL) +=3D clk-ipq-cmn-pll.o
 
-The brief report is below:
+I don't see many other filenames with clk- prefix in this directory, so
+probably drop it.
 
-Syzkaller hit 'kernel panic: corrupted stack end in worker_thread' bug.
+>  obj-$(CONFIG_IPQ_GCC_4019) +=3D gcc-ipq4019.o
+>  obj-$(CONFIG_IPQ_GCC_5018) +=3D gcc-ipq5018.o
+>  obj-$(CONFIG_IPQ_GCC_5332) +=3D gcc-ipq5332.o
+> diff --git a/drivers/clk/qcom/clk-ipq-cmn-pll.c b/drivers/clk/qcom/clk-ip=
+q-cmn-pll.c
+> new file mode 100644
+> index 000000000000..a9775c39b2f3
+> --- /dev/null
+> +++ b/drivers/clk/qcom/clk-ipq-cmn-pll.c
+> @@ -0,0 +1,241 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserv=
+ed.
+> + */
+> +
+> +/*
+> + * CMN PLL block expects the reference clock from on-board Wi-Fi block, =
+and
+> + * supplies fixed rate clocks as output to the Ethernet hardware blocks.
+> + * The Ethernet related blocks include PPE (packet process engine) and t=
+he
+> + * external connected PHY (or switch) chip receiving clocks from the CMN=
+ PLL.
+> + *
+> + * On the IPQ9574 SoC, There are three clocks with 50 MHZ, one clock with
+> + * 25 MHZ which are output from the CMN PLL to Ethernet PHY (or switch),
+> + * and one clock with 353 MHZ to PPE.
+> + *
+> + *               +---------+
+> + *               |   GCC   |
+> + *               +--+---+--+
+> + *           AHB CLK|   |SYS CLK
+> + *                  V   V
+> + *          +-------+---+------+
+> + *          |                  +-------------> eth0-50mhz
+> + * REF CLK  |     IPQ9574      |
+> + * -------->+                  +-------------> eth1-50mhz
+> + *          |  CMN PLL block   |
+> + *          |                  +-------------> eth2-50mhz
+> + *          |                  |
+> + *          +---------+--------+-------------> eth-25mhz
+> + *                    |
+> + *                    V
+> + *                    ppe-353mhz
+> + */
+> +
+> +#include <dt-bindings/clock/qcom,ipq-cmn-pll.h>
 
-Kernel panic - not syncing: corrupted stack end detected inside scheduler
-CPU: 0 PID: 5818 Comm: kworker/0:4 Not tainted 6.10.0 #13
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-Workqueue:  0x0 (ata_sff)
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x23d/0x360 lib/dump_stack.c:114
- panic+0x331/0x850 kernel/panic.c:347
- schedule_debug+0x2a8/0x3f0 kernel/sched/core.c:5964
- __schedule+0x12b/0x15e0 kernel/sched/core.c:6630
- __schedule_loop kernel/sched/core.c:6825 [inline]
- schedule+0x143/0x310 kernel/sched/core.c:6840
- worker_thread+0xc6b/0x1020 kernel/workqueue.c:3424
- kthread+0x2eb/0x380 kernel/kthread.c:389
- ret_from_fork+0x49/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:244
- </TASK>
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+Include dt-bindings after linux please.
+
+> +#include <linux/bitfield.h>
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/delay.h>
+> +#include <linux/io.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +
+> +#define CMN_PLL_REFCLK_SRC_SELECTION           0x28
+> +#define CMN_PLL_REFCLK_SRC_DIV                 GENMASK(9, 8)
+> +
+> +#define CMN_PLL_LOCKED                         0x64
+> +#define CMN_PLL_CLKS_LOCKED                    BIT(8)
+> +
+> +#define CMN_PLL_POWER_ON_AND_RESET             0x780
+> +#define CMN_ANA_EN_SW_RSTN                     BIT(6)
+> +
+> +#define CMN_PLL_REFCLK_CONFIG                  0x784
+> +#define CMN_PLL_REFCLK_EXTERNAL                        BIT(9)
+> +#define CMN_PLL_REFCLK_DIV                     GENMASK(8, 4)
+> +#define CMN_PLL_REFCLK_INDEX                   GENMASK(3, 0)
+> +
+> +#define CMN_PLL_CTRL                           0x78c
+> +#define CMN_PLL_CTRL_LOCK_DETECT_EN            BIT(15)
+> +
+> +/**
+> + * struct cmn_pll_fixed_output_clk - CMN PLL output clocks information
+> + * @id:        Clock specifier to be supplied
+> + * @name: Clock name to be registered
+> + * @rate: Clock rate
+> + */
+> +struct cmn_pll_fixed_output_clk {
+> +       unsigned int id;
+> +       const char *name;
+> +       const unsigned long rate;
+> +};
+> +
+> +#define CLK_PLL_OUTPUT(_id, _name, _rate) {            \
+> +       .id =3D _id,                                      \
+> +       .name =3D _name,                                  \
+> +       .rate =3D _rate,                                  \
+> +}
+> +
+> +static const struct cmn_pll_fixed_output_clk ipq9574_output_clks[] =3D {
+> +       CLK_PLL_OUTPUT(PPE_353MHZ_CLK, "ppe-353mhz", 353000000UL),
+> +       CLK_PLL_OUTPUT(ETH0_50MHZ_CLK, "eth0-50mhz", 50000000UL),
+> +       CLK_PLL_OUTPUT(ETH1_50MHZ_CLK, "eth1-50mhz", 50000000UL),
+> +       CLK_PLL_OUTPUT(ETH2_50MHZ_CLK, "eth2-50mhz", 50000000UL),
+> +       CLK_PLL_OUTPUT(ETH_25MHZ_CLK, "eth-25mhz", 25000000UL),
+> +};
+> +
+> +static int ipq_cmn_pll_config(struct device *dev, unsigned long parent_r=
+ate)
+> +{
+> +       void __iomem *base;
+> +       u32 val;
+> +
+> +       base =3D devm_of_iomap(dev, dev->of_node, 0, NULL);
+
+Use platform_device APIs please. This is a platform driver.
+
+> +       if (IS_ERR(base))
+> +               return PTR_ERR(base);
+> +
+> +       val =3D readl(base + CMN_PLL_REFCLK_CONFIG);
+> +       val &=3D ~(CMN_PLL_REFCLK_EXTERNAL | CMN_PLL_REFCLK_INDEX);
+> +
+> +       /*
+> +        * Configure the reference input clock selection as per the given=
+ rate.
+> +        * The output clock rates are always of fixed value.
+> +        */
+> +       switch (parent_rate) {
+> +       case 25000000:
+> +               val |=3D FIELD_PREP(CMN_PLL_REFCLK_INDEX, 3);
+> +               break;
+> +       case 31250000:
+> +               val |=3D FIELD_PREP(CMN_PLL_REFCLK_INDEX, 4);
+> +               break;
+> +       case 40000000:
+> +               val |=3D FIELD_PREP(CMN_PLL_REFCLK_INDEX, 6);
+> +               break;
+> +       case 48000000:
+> +               val |=3D FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
+> +               break;
+> +       case 50000000:
+> +               val |=3D FIELD_PREP(CMN_PLL_REFCLK_INDEX, 8);
+> +               break;
+> +       case 96000000:
+> +               val |=3D FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
+> +               val &=3D ~CMN_PLL_REFCLK_DIV;
+> +               val |=3D FIELD_PREP(CMN_PLL_REFCLK_DIV, 2);
+> +               break;
+> +       default:
+> +               return -EINVAL;
+> +       }
+
+Why isn't this done with struct clk_ops::set_rate() or clk_ops::init()?
+
+> +
+> +       writel(val, base + CMN_PLL_REFCLK_CONFIG);
+> +
+> +       /* Update the source clock rate selection. Only 96 MHZ uses 0. */
+> +       val =3D readl(base + CMN_PLL_REFCLK_SRC_SELECTION);
+> +       val &=3D ~CMN_PLL_REFCLK_SRC_DIV;
+> +       if (parent_rate !=3D 96000000)
+> +               val |=3D FIELD_PREP(CMN_PLL_REFCLK_SRC_DIV, 1);
+> +
+> +       writel(val, base + CMN_PLL_REFCLK_SRC_SELECTION);
+> +
+> +       /* Enable PLL locked detect. */
+> +       val =3D readl(base + CMN_PLL_CTRL);
+> +       val |=3D CMN_PLL_CTRL_LOCK_DETECT_EN;
+> +       writel(val, base + CMN_PLL_CTRL);
+> +
+> +       /*
+> +        * Reset the CMN PLL block to ensure the updated configurations
+> +        * take effect.
+> +        */
+> +       val =3D readl(base + CMN_PLL_POWER_ON_AND_RESET);
+> +       val &=3D ~CMN_ANA_EN_SW_RSTN;
+> +       writel(val, base + CMN_PLL_POWER_ON_AND_RESET);
+> +       usleep_range(1000, 1200);
+> +
+> +       val |=3D CMN_ANA_EN_SW_RSTN;
+> +       writel(val, base + CMN_PLL_POWER_ON_AND_RESET);
+> +
+> +       /* Stability check of CMN PLL output clocks. */
+> +       return readl_poll_timeout(base + CMN_PLL_LOCKED, val,
+> +                                 (val & CMN_PLL_CLKS_LOCKED),
+> +                                 100, 100000);
+> +}
+> +
+> +static int ipq_cmn_pll_clk_register(struct device *dev, const char *pare=
+nt)
+
+Please don't use string names to describe topology.
+
+> +{
+> +       const struct cmn_pll_fixed_output_clk *fixed_clk;
+> +       struct clk_hw_onecell_data *data;
+> +       unsigned int num_clks;
+> +       struct clk_hw *hw;
+> +       int i;
+> +
+> +       num_clks =3D ARRAY_SIZE(ipq9574_output_clks);
+> +       fixed_clk =3D ipq9574_output_clks;
+> +
+> +       data =3D devm_kzalloc(dev, struct_size(data, hws, num_clks), GFP_=
+KERNEL);
+> +       if (!data)
+> +               return -ENOMEM;
+> +
+> +       for (i =3D 0; i < num_clks; i++) {
+> +               hw =3D devm_clk_hw_register_fixed_rate(dev, fixed_clk[i].=
+name,
+> +                                                    parent, 0,
+> +                                                    fixed_clk[i].rate);
+> +               if (IS_ERR(hw))
+> +                       return PTR_ERR(hw);
+> +
+> +               data->hws[fixed_clk[i].id] =3D hw;
+> +       }
+> +       data->num =3D num_clks;
+> +
+> +       return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, da=
+ta);
+> +}
+> +
+> +static int ipq_cmn_pll_clk_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev =3D &pdev->dev;
+> +       struct clk *clk;
+> +       int ret;
+> +
+> +       /*
+> +        * To access the CMN PLL registers, the GCC AHB & SYSY clocks
+> +        * for CMN PLL block need to be enabled.
+> +        */
+> +       clk =3D devm_clk_get_enabled(dev, "ahb");
+> +       if (IS_ERR(clk))
+> +               return dev_err_probe(dev, PTR_ERR(clk),
+> +                                    "Enable AHB clock failed\n");
+> +
+> +       clk =3D devm_clk_get_enabled(dev, "sys");
+> +       if (IS_ERR(clk))
+> +               return dev_err_probe(dev, PTR_ERR(clk),
+> +                                    "Enable SYS clock failed\n");
+
+Usually qcom clk drivers do this with pm_clk_add() and runtime PM. Why
+can't that be done here?
+
+> +
+> +       clk =3D devm_clk_get(dev, "ref");
+> +       if (IS_ERR(clk))
+> +               return dev_err_probe(dev, PTR_ERR(clk),
+> +                                    "Get reference clock failed\n");
+
+We don't want clk providers to be clk consumers. Presumably this is the
+PLL's parent clk, and so the frequency should be passed to the clk_ops
+via the parent rate.
+
+> +
+> +       /* Configure CMN PLL to apply the reference clock. */
+> +       ret =3D ipq_cmn_pll_config(dev, clk_get_rate(clk));
+> +       if (ret)
+> +               return dev_err_probe(dev, ret, "Configure CMN PLL failed\=
+n");
+> +
+> +       return ipq_cmn_pll_clk_register(dev, __clk_get_name(clk));
+> +}
+> +
+> +static const struct of_device_id ipq_cmn_pll_clk_ids[] =3D {
+> +       { .compatible =3D "qcom,ipq9574-cmn-pll", },
+> +       { }
+> +};
+
+module device table?
 
