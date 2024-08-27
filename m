@@ -1,153 +1,127 @@
-Return-Path: <linux-kernel+bounces-302654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B975C96017F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:23:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10317960216
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:42:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE33D1C21CFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:23:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 427281C20FD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9C31465AC;
-	Tue, 27 Aug 2024 06:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CgRs9408"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360A813FD83;
+	Tue, 27 Aug 2024 06:42:53 +0000 (UTC)
+Received: from mta21.hihonor.com (mta21.honor.com [81.70.160.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3502113DB99;
-	Tue, 27 Aug 2024 06:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8FB3A1C4
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724739782; cv=none; b=PFMHPH9PWMZyuT864IYL/OQyuabUS7RugOTcky9u4k8FY5nEjqOtNF72bUcHH1NKkYkxNvNJ4vbyWnUoZmvwjTLZ+HTtddDUETdvEWqlvB5yBTUr7clKSZdaS0QJYud+fZIS8O1CYWltp/rwZopnL+4Pddxn/GESAPd0NxdiYZQ=
+	t=1724740972; cv=none; b=JlWfdhXdDruIAC/ZZxFwQdq8/KNy7bUfkP4EMIbqa/dvHPpAdTggB+YBdrghf582o5JWqzzmhq/SniUAS0Mphq8y163rH9RJedLIe9Zxz6NggfpS8cgUJz10iDRPGfeCTsX8iQq5i+Dvj5EeZcgeUS/WXZVsFsx7oFQ4Pl/BAqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724739782; c=relaxed/simple;
-	bh=sjyWgZeGfHgwkuBWTUfyr58uBeXYxYz+Nt1GMaQKmV0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FzJ+6UN+ZSidRCqerCK0Pqo/hNWl5+gPIoZyAZdSkWkVdznZ8WDQYdNj1bvNR22hgafI7QJtBnA3b4VNFuzGFvqzLDLd2eHPv77FTb8zXYkmV3HCv+lTki0+qXCaFztRKePmVE+nkWyLIn8TQ2X5vE2z8DHLYwjIGwLWzQF9VYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CgRs9408; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724739781; x=1756275781;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sjyWgZeGfHgwkuBWTUfyr58uBeXYxYz+Nt1GMaQKmV0=;
-  b=CgRs9408iiGBeEoshx02sSRDabTOI9zTxpcgbTNkky/4sishumHEPbZe
-   B767UXGuJ0HUZYIhDiqFsDwnvkAXZYkXk37qxOE/Wq+8rdcrh7YVR6d3o
-   HzU4RxDB+NpQZTRFYWvzLqK73NTpk9LEI2skOCoLVn/p+Y7bhWlwmubZM
-   +dWeCZrtKx5RMdNNHXY2SsLqmMtWu+m8mzAASCW6a0NKd3CcO+SCMsHwQ
-   FDlU6FcRTzzRZWHoRW48k9HT3s2awPXeUGsTU2y7lqoLLaXuImt8SKOqR
-   kzxXCHUuhMk7PXXJmORPkzQkCu9pYnXcmh05ru4vXmyO2UfabNDBOWw0E
-   w==;
-X-CSE-ConnectionGUID: q1SrjWXbSYSKAO7VpizWjA==
-X-CSE-MsgGUID: tWH3pqcWRRCC16lIpJLUog==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="33821574"
-X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
-   d="scan'208";a="33821574"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 23:23:01 -0700
-X-CSE-ConnectionGUID: EgCJSd8CRbawrLjie8jyrw==
-X-CSE-MsgGUID: TiixJNvQRGGOiH+t8POUPA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
-   d="scan'208";a="62589117"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 26 Aug 2024 23:22:58 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sipbT-000I86-1q;
-	Tue, 27 Aug 2024 06:22:55 +0000
-Date: Tue, 27 Aug 2024 14:22:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: Brian Norris <briannorris@chromium.org>,
-	Mark Brown <broonie@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	=?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>,
-	Brian Norris <briannorris@chromium.org>, stable@vger.kernel.org,
-	Heiko Stuebner <heiko@sntech.de>, Jon Lin <jon.lin@rock-chips.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-spi@vger.kernel.org,
-	shengfei Xu <xsf@rock-chips.com>
-Subject: Re: [PATCH] spi: rockchip: Resolve unbalanced runtime PM / system PM
- handling
-Message-ID: <202408271225.Zh4Kc31M-lkp@intel.com>
-References: <20240823214235.1718769-1-briannorris@chromium.org>
+	s=arc-20240116; t=1724740972; c=relaxed/simple;
+	bh=AfiEjW89m5Om/b3PrLTiuLKQ8Otjo8qrSZ78r00kCoo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GdBdR05KRu+92FQ+atGPcj8JDzWoY15vXiU/R/evK8HJi8HoigCqK4XO3pGlaiCIVQeqmyh3kz6ET6CSpQhZ+L6TeJc7zcV1m2Kk1wjLh1hFEtjFbHcR3NNVvWTma8VqE5oqZNB3wkgzNTPeCIYw/OAZZcYjJjjHQ/XD0jOFbiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w011.hihonor.com (unknown [10.68.20.122])
+	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4WtHVp4j8xzYl3hf;
+	Tue, 27 Aug 2024 14:21:22 +0800 (CST)
+Received: from a011.hihonor.com (10.68.31.243) by w011.hihonor.com
+ (10.68.20.122) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 27 Aug
+ 2024 14:22:45 +0800
+Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
+ (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 27 Aug
+ 2024 14:22:44 +0800
+From: wangzijie <wangzijie1@honor.com>
+To: <chao@kernel.org>, <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+	<bintian.wang@honor.com>, wangzijie <wangzijie1@honor.com>
+Subject: [RFC PATCH] f2fs: don't set SBI_QUOTA_NEED_REPAIR flag if receive SIGKILL
+Date: Tue, 27 Aug 2024 14:22:42 +0800
+Message-ID: <20240827062242.776881-1-wangzijie1@honor.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240823214235.1718769-1-briannorris@chromium.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: w001.hihonor.com (10.68.25.235) To a011.hihonor.com
+ (10.68.31.243)
 
-Hi Brian,
+Thread A
+-dquot_initialize
+ -dqget
+  -f2fs_dquot_acquire
+   -v2_read_dquot
+    -qtree_read_dquot
+     -find_tree_dqentry
+      -f2fs_quota_read
+       -read_cache_page_gfp
+        -do_read_cache_folio
+         -fiemap_read_folio
+          -folio_wait_locked_killable
+           -receive SIGKILL : return -EINTR
+       -set SBI_QUOTA_NEED_REPAIR
+   -set SBI_QUOTA_NEED_REPAIR
 
-kernel test robot noticed the following build warnings:
+When calling read_cache_page_gfp in quota read, thread may receive SIGKILL and
+set SBI_QUOTA_NEED_REPAIR, should we set SBI_QUOTA_NEED_REPAIR in this error path?
 
-[auto build test WARNING on rockchip/for-next]
-[also build test WARNING on broonie-sound/for-next broonie-spi/for-next linus/master v6.11-rc5 next-20240826]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: wangzijie <wangzijie1@honor.com>
+---
+ fs/f2fs/inode.c | 3 ++-
+ fs/f2fs/super.c | 6 +++---
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Brian-Norris/spi-rockchip-Resolve-unbalanced-runtime-PM-system-PM-handling/20240826-135245
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git for-next
-patch link:    https://lore.kernel.org/r/20240823214235.1718769-1-briannorris%40chromium.org
-patch subject: [PATCH] spi: rockchip: Resolve unbalanced runtime PM / system PM handling
-config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20240827/202408271225.Zh4Kc31M-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408271225.Zh4Kc31M-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408271225.Zh4Kc31M-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/spi/spi-rockchip.c: In function 'rockchip_spi_suspend':
->> drivers/spi/spi-rockchip.c:948:30: warning: unused variable 'rs' [-Wunused-variable]
-     948 |         struct rockchip_spi *rs = spi_controller_get_devdata(ctlr);
-         |                              ^~
-   drivers/spi/spi-rockchip.c: In function 'rockchip_spi_resume':
-   drivers/spi/spi-rockchip.c:969:30: warning: unused variable 'rs' [-Wunused-variable]
-     969 |         struct rockchip_spi *rs = spi_controller_get_devdata(ctlr);
-         |                              ^~
-
-
-vim +/rs +948 drivers/spi/spi-rockchip.c
-
-64e36824b32b06 addy ke      2014-07-01  942  
-64e36824b32b06 addy ke      2014-07-01  943  #ifdef CONFIG_PM_SLEEP
-64e36824b32b06 addy ke      2014-07-01  944  static int rockchip_spi_suspend(struct device *dev)
-64e36824b32b06 addy ke      2014-07-01  945  {
-43de979ddc099c Jeffy Chen   2017-08-07  946  	int ret;
-d66571a20f68f1 Chris Ruehl  2020-05-11  947  	struct spi_controller *ctlr = dev_get_drvdata(dev);
-e882575efc771f shengfei Xu  2022-02-16 @948  	struct rockchip_spi *rs = spi_controller_get_devdata(ctlr);
-64e36824b32b06 addy ke      2014-07-01  949  
-d66571a20f68f1 Chris Ruehl  2020-05-11  950  	ret = spi_controller_suspend(ctlr);
-43de979ddc099c Jeffy Chen   2017-08-07  951  	if (ret < 0)
-64e36824b32b06 addy ke      2014-07-01  952  		return ret;
-64e36824b32b06 addy ke      2014-07-01  953  
-8d3fb5bc7d0206 Brian Norris 2024-08-23  954  	ret = pm_runtime_force_suspend(dev);
-8d3fb5bc7d0206 Brian Norris 2024-08-23  955  	if (ret < 0) {
-8d3fb5bc7d0206 Brian Norris 2024-08-23  956  		spi_controller_resume(ctlr);
-8d3fb5bc7d0206 Brian Norris 2024-08-23  957  		return ret;
-8d3fb5bc7d0206 Brian Norris 2024-08-23  958  	}
-64e36824b32b06 addy ke      2014-07-01  959  
-23e291c2e4c84a Brian Norris 2016-12-16  960  	pinctrl_pm_select_sleep_state(dev);
-23e291c2e4c84a Brian Norris 2016-12-16  961  
-43de979ddc099c Jeffy Chen   2017-08-07  962  	return 0;
-64e36824b32b06 addy ke      2014-07-01  963  }
-64e36824b32b06 addy ke      2014-07-01  964  
-
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index ed629dabb..2af98e2b7 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -837,8 +837,9 @@ void f2fs_evict_inode(struct inode *inode)
+ 
+ 	err = f2fs_dquot_initialize(inode);
+ 	if (err) {
++		if (err != -EINTR)
++			set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+ 		err = 0;
+-		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+ 	}
+ 
+ 	f2fs_remove_ino_entry(sbi, inode->i_ino, APPEND_INO);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 1f1b3647a..f99a36ff3 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2650,8 +2650,8 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
+ 			if (PTR_ERR(page) == -ENOMEM) {
+ 				memalloc_retry_wait(GFP_NOFS);
+ 				goto repeat;
+-			}
+-			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
++			} else if (PTR_ERR(page) != -EINTR)
++				set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+ 			return PTR_ERR(page);
+ 		}
+ 
+@@ -3070,7 +3070,7 @@ static int f2fs_dquot_acquire(struct dquot *dquot)
+ 
+ 	f2fs_down_read(&sbi->quota_sem);
+ 	ret = dquot_acquire(dquot);
+-	if (ret < 0)
++	if (ret < 0 && ret != -EINTR)
+ 		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+ 	f2fs_up_read(&sbi->quota_sem);
+ 	return ret;
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.25.1
+
 
