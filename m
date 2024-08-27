@@ -1,138 +1,250 @@
-Return-Path: <linux-kernel+bounces-303144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7F03960800
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:57:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9278E960805
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 059781C22948
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:57:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A924284254
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4C419F478;
-	Tue, 27 Aug 2024 10:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MloyMNoT"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB7A19EED0;
+	Tue, 27 Aug 2024 10:57:38 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8EFC19E7FF;
-	Tue, 27 Aug 2024 10:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2CF19E7FF;
+	Tue, 27 Aug 2024 10:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724756222; cv=none; b=PU/82qLer/rnE9xGhU0aBRUqw3hCNSESBFGnurGBxQqlrsnW4oClIuC1wERQc+vJKbS7PdOPHYgkCuXaUE4LCeji7cucmcdKYATGcpSwOocagwmFgAfY5MAnxWIvJgC4Suf7y4qg1g2p14PIci1rRCj1C7vJQWh48K52FgXK/ks=
+	t=1724756257; cv=none; b=I2Vz7E+mkBQ2nMEuAkX5oxaiTFZ4Nf/unHfmNRymOnFUc+OtW8ZsEP+mMjXuSZc8SO6fAAzmw/PhDuBqsqWo+vPKZIfh93IukGdy+w4DNIEixuvC9L7mare66RsX6VqcDUeKdXuNmFYagV6rFFOHg/CbnneaT6PB1QYSRXDckdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724756222; c=relaxed/simple;
-	bh=tx0g7NhvrM+O/NA3qD141c9tzZma0yfUmDnIeJKoP84=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LfGFmBRnCcqvbvuJyRlXJ5a5fPfC52sWbaCuzdogvs1SVAfGnAXExZruc4+ul24uz6tCN8Tg7kCXeNoLfgteoctB+mnW9WJgo+QJsQlXe5JNlHMZRFYy9hs6aQC3/LwQ7eOpz7mBBtyl+6A/c/BtmlF6fnuuqFBAb3MWn1GoqDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=MloyMNoT; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47RAun1G068796;
-	Tue, 27 Aug 2024 05:56:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724756209;
-	bh=zPbib7xbMUlrnvdopHSHphG/Tp3WBjra4xzF/7bFHgw=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=MloyMNoTQ8DwDwnalFLbExTUodOpCNW4hozGyUef6EG0XLQ8eoqEXHoDqjzx2Bl8j
-	 ugMA6OtiJZVRQAQ4fHJqplqN7hpLxCpaRLGIYnXM3AkMXwhYn1kGw0546SKMmO+q33
-	 1UV/DKmSUeAyeT4NHIqKoKPu9M6+dxEuXvf4imPA=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47RAunxP128162
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 27 Aug 2024 05:56:49 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 27
- Aug 2024 05:56:49 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 27 Aug 2024 05:56:49 -0500
-Received: from localhost (a0498981-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.68.216])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47RAumpu051333;
-	Tue, 27 Aug 2024 05:56:48 -0500
-From: Bhavya Kapoor <b-kapoor@ti.com>
-To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <conor+dt@kernel.org>,
-        <krzk+dt@kernel.org>, <robh@kernel.org>, <kristo@kernel.org>,
-        <b-kapoor@ti.com>, <jm@ti.com>, <vigneshr@ti.com>, <nm@ti.com>
-Subject: [PATCH v2 2/2] arm64: dts: ti: k3-j722s-evm: Describe main_uart5
-Date: Tue, 27 Aug 2024 16:26:44 +0530
-Message-ID: <20240827105644.575862-3-b-kapoor@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240827105644.575862-1-b-kapoor@ti.com>
-References: <20240827105644.575862-1-b-kapoor@ti.com>
+	s=arc-20240116; t=1724756257; c=relaxed/simple;
+	bh=CeKAJbVu1lrX4Inx0HaxDPih7bt9gT3sC6XDxRYXs0A=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hKmPaEpERHPryBfw0Vx/Tc9wxRv1E0i0R6l4+U1yYH9q465odRyNubELcwS8cqr8Fnawjrb1hvgl8c9KJ3QXUKwMlKRrFmk7qjCf4xlV2ma9tGntR/JKHPEbWTSfWoic0XC99daFPVb0Nu4y8IIVDGBxZlKLAwaV92EvtdWSs8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WtPXv0Ypyz6J6rX;
+	Tue, 27 Aug 2024 18:53:35 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 05273140B39;
+	Tue, 27 Aug 2024 18:57:33 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 27 Aug
+ 2024 11:57:32 +0100
+Date: Tue, 27 Aug 2024 11:57:31 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Yangtao Li <frank.li@vivo.com>
+CC: <clement.leger@bootlin.com>, <andrew@lunn.ch>, <f.fainelli@gmail.com>,
+	<olteanv@gmail.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <ulli.kroll@googlemail.com>,
+	<linus.walleij@linaro.org>, <marcin.s.wojtas@gmail.com>,
+	<linux@armlinux.org.uk>, <alexandre.torgue@foss.st.com>,
+	<joabreu@synopsys.com>, <mcoquelin.stm32@gmail.com>, <hkallweit1@gmail.com>,
+	<u.kleine-koenig@pengutronix.de>, <jacob.e.keller@intel.com>,
+	<justinstitt@google.com>, <sd@queasysnail.net>, <horms@kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>
+Subject: Re: [net-next v3 6/9] net: ethernet: broadcom: bcm63xx_enet:
+ Convert to devm_clk_get_enabled()
+Message-ID: <20240827115731.00007469@Huawei.com>
+In-Reply-To: <20240827095712.2672820-7-frank.li@vivo.com>
+References: <20240827095712.2672820-1-frank.li@vivo.com>
+	<20240827095712.2672820-7-frank.li@vivo.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-System firmware uses main_uart5 in J722S EVM for trace data.
-Thus, describe it in device tree for completeness,
-adding the pinmux and mark it as reserved.
+On Tue, 27 Aug 2024 03:57:09 -0600
+Yangtao Li <frank.li@vivo.com> wrote:
 
-Signed-off-by: Bhavya Kapoor <b-kapoor@ti.com>
----
+> Convert devm_clk_get(), clk_prepare_enable() to a single
+> call to devm_clk_get_enabled(), as this is exactly
+> what this function does.
+> 
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+Another one where this is mixing devm and not which makes care
+hard to review and may introduce subtle bugs.
 
-Link to v1: https://lore.kernel.org/all/20240822053538.10475-1-b-kapoor@ti.com/
+Use devm_alloc_etherdev() and devm_register_netdev()
+and take all the cleanup handling managed.
 
-changelog v1->v2:
-	- Modified commit message to be more clear
-	- provide documentation on why main_uart5 is reserved
+Much simpler to review that way.
 
- arch/arm64/boot/dts/ti/k3-j722s-evm.dts | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-index 8daa47a245aa..41c36f82a3c5 100644
---- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-@@ -20,6 +20,7 @@ / {
- 	aliases {
- 		serial0 = &wkup_uart0;
- 		serial2 = &main_uart0;
-+		serial3 = &main_uart5;
- 		mmc0 = &sdhci0;
- 		mmc1 = &sdhci1;
- 	};
-@@ -211,6 +212,13 @@ J722S_IOPAD(0x01cc, PIN_OUTPUT, 0)	/* (B22) UART0_TXD */
- 		bootph-all;
- 	};
- 
-+	main_uart5_pins_default: main-uart5-default-pins {
-+		pinctrl-single,pins = <
-+			J722S_IOPAD(0x0108, PIN_INPUT, 3)       /* (J27) UART5_RXD */
-+			J722S_IOPAD(0x010c, PIN_OUTPUT, 3)      /* (H27) UART5_TXD */
-+		>;
-+	};
-+
- 	vdd_sd_dv_pins_default: vdd-sd-dv-default-pins {
- 		pinctrl-single,pins = <
- 			J722S_IOPAD(0x0120, PIN_INPUT, 7) /* (F27) MMC2_CMD.GPIO0_70 */
-@@ -330,6 +338,13 @@ &main_uart0 {
- 	bootph-all;
- };
- 
-+&main_uart5 {
-+	/* MAIN UART 5 is used by System firmware */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_uart5_pins_default>;
-+	status = "reserved";
-+};
-+
- &mcu_pmx0 {
- 
- 	mcu_mcan0_pins_default: mcu-mcan0-default-pins {
--- 
-2.34.1
+J
+> ---
+> v3:
+> -Reduce the number of clk variables
+> 
+>  drivers/net/ethernet/broadcom/bcm63xx_enet.c | 47 ++++++--------------
+>  drivers/net/ethernet/broadcom/bcm63xx_enet.h |  6 ---
+>  2 files changed, 13 insertions(+), 40 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/broadcom/bcm63xx_enet.c b/drivers/net/ethernet/broadcom/bcm63xx_enet.c
+> index 3c0e3b9828be..dcc741837d50 100644
+> --- a/drivers/net/ethernet/broadcom/bcm63xx_enet.c
+> +++ b/drivers/net/ethernet/broadcom/bcm63xx_enet.c
+> @@ -1718,6 +1718,7 @@ static int bcm_enet_probe(struct platform_device *pdev)
+>  	struct bcm63xx_enet_platform_data *pd;
+>  	int irq, irq_rx, irq_tx;
+>  	struct mii_bus *bus;
+> +	struct clk *clk;
+>  	int i, ret;
+>  
+>  	if (!bcm_enet_shared_base[0])
+> @@ -1752,14 +1753,11 @@ static int bcm_enet_probe(struct platform_device *pdev)
+>  	priv->irq_rx = irq_rx;
+>  	priv->irq_tx = irq_tx;
+>  
+> -	priv->mac_clk = devm_clk_get(&pdev->dev, "enet");
+> -	if (IS_ERR(priv->mac_clk)) {
+> -		ret = PTR_ERR(priv->mac_clk);
+> +	clk = devm_clk_get_enabled(&pdev->dev, "enet");
+> +	if (IS_ERR(clk)) {
+> +		ret = PTR_ERR(clk);
+>  		goto out;
+>  	}
+> -	ret = clk_prepare_enable(priv->mac_clk);
+> -	if (ret)
+> -		goto out;
+>  
+>  	/* initialize default and fetch platform data */
+>  	priv->rx_ring_size = BCMENET_DEF_RX_DESC;
+> @@ -1789,15 +1787,11 @@ static int bcm_enet_probe(struct platform_device *pdev)
+>  
+>  	if (priv->has_phy && !priv->use_external_mii) {
+>  		/* using internal PHY, enable clock */
+> -		priv->phy_clk = devm_clk_get(&pdev->dev, "ephy");
+> -		if (IS_ERR(priv->phy_clk)) {
+> -			ret = PTR_ERR(priv->phy_clk);
+> -			priv->phy_clk = NULL;
+> -			goto out_disable_clk_mac;
+> +		clk = devm_clk_get_enabled(&pdev->dev, "ephy");
+> +		if (IS_ERR(clk)) {
+> +			ret = PTR_ERR(clk);
+> +			goto out;
+>  		}
+> -		ret = clk_prepare_enable(priv->phy_clk);
+> -		if (ret)
+> -			goto out_disable_clk_mac;
+>  	}
+>  
+>  	/* do minimal hardware init to be able to probe mii bus */
+> @@ -1889,10 +1883,7 @@ static int bcm_enet_probe(struct platform_device *pdev)
+>  out_uninit_hw:
+>  	/* turn off mdc clock */
+>  	enet_writel(priv, 0, ENET_MIISC_REG);
+> -	clk_disable_unprepare(priv->phy_clk);
+>  
+> -out_disable_clk_mac:
+> -	clk_disable_unprepare(priv->mac_clk);
+>  out:
+>  	free_netdev(dev);
+>  	return ret;
+> @@ -1927,10 +1918,6 @@ static void bcm_enet_remove(struct platform_device *pdev)
+>  				       bcm_enet_mdio_write_mii);
+>  	}
+>  
+> -	/* disable hw block clocks */
+> -	clk_disable_unprepare(priv->phy_clk);
+> -	clk_disable_unprepare(priv->mac_clk);
+> -
+>  	free_netdev(dev);
+>  }
+>  
+> @@ -2648,6 +2635,7 @@ static int bcm_enetsw_probe(struct platform_device *pdev)
+>  	struct bcm63xx_enetsw_platform_data *pd;
+>  	struct resource *res_mem;
+>  	int ret, irq_rx, irq_tx;
+> +	struct clk *mac_clk;
+>  
+>  	if (!bcm_enet_shared_base[0])
+>  		return -EPROBE_DEFER;
+> @@ -2694,14 +2682,11 @@ static int bcm_enetsw_probe(struct platform_device *pdev)
+>  		goto out;
+>  	}
+>  
+> -	priv->mac_clk = devm_clk_get(&pdev->dev, "enetsw");
+> -	if (IS_ERR(priv->mac_clk)) {
+> -		ret = PTR_ERR(priv->mac_clk);
+> +	mac_clk = devm_clk_get_enabled(&pdev->dev, "enetsw");
+> +	if (IS_ERR(mac_clk)) {
+> +		ret = PTR_ERR(mac_clk);
+>  		goto out;
+>  	}
+> -	ret = clk_prepare_enable(priv->mac_clk);
+> -	if (ret)
+> -		goto out;
+>  
+>  	priv->rx_chan = 0;
+>  	priv->tx_chan = 1;
+> @@ -2720,7 +2705,7 @@ static int bcm_enetsw_probe(struct platform_device *pdev)
+>  
+>  	ret = register_netdev(dev);
+>  	if (ret)
+> -		goto out_disable_clk;
+> +		goto out;
+>  
+>  	netif_carrier_off(dev);
+>  	platform_set_drvdata(pdev, dev);
+> @@ -2729,8 +2714,6 @@ static int bcm_enetsw_probe(struct platform_device *pdev)
+>  
+>  	return 0;
+>  
+> -out_disable_clk:
+> -	clk_disable_unprepare(priv->mac_clk);
+>  out:
+>  	free_netdev(dev);
+>  	return ret;
+> @@ -2740,16 +2723,12 @@ static int bcm_enetsw_probe(struct platform_device *pdev)
+>  /* exit func, stops hardware and unregisters netdevice */
+>  static void bcm_enetsw_remove(struct platform_device *pdev)
+>  {
+> -	struct bcm_enet_priv *priv;
+>  	struct net_device *dev;
+>  
+>  	/* stop netdevice */
+>  	dev = platform_get_drvdata(pdev);
+> -	priv = netdev_priv(dev);
+>  	unregister_netdev(dev);
+>  
+> -	clk_disable_unprepare(priv->mac_clk);
+> -
+>  	free_netdev(dev);
+>  }
+>  
+> diff --git a/drivers/net/ethernet/broadcom/bcm63xx_enet.h b/drivers/net/ethernet/broadcom/bcm63xx_enet.h
+> index 78f1830fb3cb..e98838b8b92f 100644
+> --- a/drivers/net/ethernet/broadcom/bcm63xx_enet.h
+> +++ b/drivers/net/ethernet/broadcom/bcm63xx_enet.h
+> @@ -316,12 +316,6 @@ struct bcm_enet_priv {
+>  	/* lock mib update between userspace request and workqueue */
+>  	struct mutex mib_update_lock;
+>  
+> -	/* mac clock */
+> -	struct clk *mac_clk;
+> -
+> -	/* phy clock if internal phy is used */
+> -	struct clk *phy_clk;
+> -
+>  	/* network device reference */
+>  	struct net_device *net_dev;
+>  
 
 
