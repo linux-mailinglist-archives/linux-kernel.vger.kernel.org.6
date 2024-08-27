@@ -1,59 +1,89 @@
-Return-Path: <linux-kernel+bounces-304070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88EDD96199F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:59:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7B059619C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 00:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DEFD1F245B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:59:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8176A2867C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 22:01:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19731D4156;
-	Tue, 27 Aug 2024 21:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F111D54F9;
+	Tue, 27 Aug 2024 22:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="fnsRHhGz"
-Received: from mr85p00im-zteg06021601.me.com (mr85p00im-zteg06021601.me.com [17.58.23.187])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NfwJf/3e"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2066.outbound.protection.outlook.com [40.107.237.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A4B1D365B
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 21:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.187
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724795977; cv=none; b=kEOojqxtG3/OZETPlXlZ11RwkQxegkf6pHv10AOasisGuBXlIoi16ToJOzkGEFwWcrjzwURHQojPd2RWjR5GtzBxKiEZeyfo9OSGVZTOtJVEiJwq1x3IDwAoJD++m7rAgTlvL61mBIStpYEk9HYH2nBmrm39WOgElvKdw+UeE1c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724795977; c=relaxed/simple;
-	bh=AluzE7qot99z2jNjiIFCEQrH2MQfJi9fA0czYQ2Q3Yc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l/Xt71WLE51bo36rybiXus9Fz9/jcKOc6MydzzKtMVVLw0L3Agt7aFJ0f5Vdhryg6wS1B3wbGx/3FKnS9h9hf6W5VJ60TE8SH0NsFZEpwMivrB4gdYqJUpQzDkWz0GeLtASDurEY4GrajoTICE56AlF0tHyPbtZ/RUHU8g+l1/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=fnsRHhGz; arc=none smtp.client-ip=17.58.23.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1724795974;
-	bh=30VxiSUVs/itezQY+QL9VDeWXfeP3dXU+aE6Ix49Yls=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=fnsRHhGzMi3RMoWOw+H4oef1K/3JQftN4+yKizMG7vadaTHWCDD+sl9qZboq1K1+q
-	 n2Q8Hv0/WrXK3ADLJ3rhTHVof3MJ7i/CStuGyETy3E9RIRB/hMJ49CvAV+l3c3l2gt
-	 +sTycgt4MLSZJJwxajNWfVkbrZWNKxA59UwlFrGfnP+ynxxMaPpj9YovVUhIk8iZ+O
-	 w+RYOD5BjhDIsWlz/6N/4oO7x3gt3C+lAx9Sagxy6zY0Ft0dw1xYVf3N1ZwSCs7AOv
-	 Mvk74VrI3Hd7FLdULZiJ4k/69vWtrknNNuJtoAZh4f5PLwpuxBTDEjhTLD/WMWSihh
-	 MiNNPBHoSQdeA==
-Received: from linux-luka.tailf878.ts.net (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
-	by mr85p00im-zteg06021601.me.com (Postfix) with ESMTPSA id 667F1305830F;
-	Tue, 27 Aug 2024 21:59:33 +0000 (UTC)
-From: Theodore Dubois <tblodt@icloud.com>
-To: linux-kernel@vger.kernel.org
-Cc: Theodore Dubois <tblodt@icloud.com>,
-	Ryan Houdek <sonicadvance1@gmail.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	David Hildenbrand <david@redhat.com>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Kees Cook <keescook@chromium.org>
-Subject: [PATCH] prctl: allow prctl_set_mm_exe_file without unmapping old exe
-Date: Tue, 27 Aug 2024 21:59:30 +0000
-Message-ID: <20240827215930.24703-1-tblodt@icloud.com>
-X-Mailer: git-send-email 2.46.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF381D54DA;
+	Tue, 27 Aug 2024 22:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724796038; cv=fail; b=mwM1pUtDx8L/iG0tmVATxpjvK2/Jf+/dFJi0wuwRMw7A5Wh03dnA0Luw4HbSxzjcF7EZaXva/q0+3ZxriJ3kWt7LgFyCmpI2l1DEl7KlAF9r59nT30OZzJRurHLk00y+edZGuWjXqLhKtFCm8eUaFhZOlqCUXniBWQV0DwgCVgs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724796038; c=relaxed/simple;
+	bh=7gsgtsp7fPjqi2GzZkuGZecGepka+mlfAypr38lQFXs=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MddOZOcSu7MiHZaB0EdplEKneemiTW9AZ+MrgxbuFoNlpeX5IKwNuCfUIgiqO6xvUxVtCvUjwXsVrZumFU5sO1WhUkRTtcbEjR4lsDKPmKlmeLyaxoZDoIOGW7mJEirc+kFDJIGtbIKIB4k6TGdRHlYhuDR3zshDwNGI5Gyfxdg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NfwJf/3e; arc=fail smtp.client-ip=40.107.237.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AE+aXYuEw7Go1Ol5+SBoRwQ0RlNoqEmFb9Hpg/MAdHD/J/yBWjQu6dJ3Aij/jgHr/2fS4wSt95I8/UndabSctGtj3CSFc1AxYac0jPvsI3Tru9aNBchG3iJMnm8OpltvzujYasfdgdBkvuS0ILZYl2iZrhrd2JAih0G6/7Kmpr/3trLREeizruNBBxbnVfc5FUdwv/1BTT1pZV1wqXWIDpLUYO4gPIUww5XaPCWWFo0IX6Nl9iNXQY35GIGEAip9oZiXOIunj168gBRPX0uYeUrE/cZy87QFCze3KD0HIkMhPk7UIVIOU0/12P2dfRgQBh0tBKJNZITJskwcCKiPsA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gj2qXXhRtnR0BugKiyAPi7i5qL0MCbnSlW4lR9MZSjQ=;
+ b=NfRCCXuoxOXvI2Uc/vwr2vS6YWtVPwlsoMbxC9Grpk4P0LpdwevB+J2e+51NCbzrFOeoCDboRl/KnMtxMNorZa4bdxBR/a0lldvmFM7dtrBjFQ3oMyTsXqWeCjBzO2O0xc+370taqRUryDW3xqeNBtWspwqQCzhx4SDVUD7oHx8G7zO5ETgSRvFbnsV+96qWM6JqU+Lzxod6pP9bMSFvjR1byVzeRyom57+HxwIy8r2D0GdsFUbE2jtFhL0KWJStkccrIJVyyudKX7PQ2G+lK2ax3gh5dv4v+YkKem6dpgpcOx9o8Og63bHIk2Zb4i48OWb7oEnitDVNFXIuXGhuUg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gj2qXXhRtnR0BugKiyAPi7i5qL0MCbnSlW4lR9MZSjQ=;
+ b=NfwJf/3eSQa5sqtosV4OAj+I2GoF7st25+CMwhtdr3IFtCQw7yV38Jk+IXoVAXkR2mIpGLFMGZuDJAlZeqcCUXdBu1oBBw2AkUz1wGdePZkUfLCiBiMbHH+Ol9Fvwp5EgZk3q5sUZFjdGpEtRQA3i8b4a9HdkhXMLHPxIn1QBjk=
+Received: from MN0PR03CA0012.namprd03.prod.outlook.com (2603:10b6:208:52f::25)
+ by DM4PR12MB6589.namprd12.prod.outlook.com (2603:10b6:8:b4::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Tue, 27 Aug
+ 2024 22:00:34 +0000
+Received: from BN3PEPF0000B06D.namprd21.prod.outlook.com
+ (2603:10b6:208:52f:cafe::93) by MN0PR03CA0012.outlook.office365.com
+ (2603:10b6:208:52f::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.26 via Frontend
+ Transport; Tue, 27 Aug 2024 22:00:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN3PEPF0000B06D.mail.protection.outlook.com (10.167.243.72) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7939.2 via Frontend Transport; Tue, 27 Aug 2024 22:00:32 +0000
+Received: from tlendack-t1.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 27 Aug
+ 2024 17:00:30 -0500
+From: Tom Lendacky <thomas.lendacky@amd.com>
+To: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+	<linux-coco@lists.linux.dev>
+CC: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson
+	<seanjc@google.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, "Thomas
+ Gleixner" <tglx@linutronix.de>, Michael Roth <michael.roth@amd.com>, "Ashish
+ Kalra" <ashish.kalra@amd.com>, Joerg Roedel <jroedel@suse.de>, Roy Hopkins
+	<roy.hopkins@suse.com>
+Subject: [RFC PATCH 6/7] KVM: SVM: Support launching an SVSM with Restricted Injection set
+Date: Tue, 27 Aug 2024 16:59:30 -0500
+Message-ID: <25460ae2dcf050bd26ac58b71b727bda3913529a.1724795971.git.thomas.lendacky@amd.com>
+X-Mailer: git-send-email 2.43.2
+In-Reply-To: <cover.1724795970.git.thomas.lendacky@amd.com>
+References: <cover.1724795970.git.thomas.lendacky@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,110 +91,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: YNBN0bnEFnQnMFl8jpPpGh3CBI8zmDxL
-X-Proofpoint-GUID: YNBN0bnEFnQnMFl8jpPpGh3CBI8zmDxL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-27_10,2024-08-27_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 clxscore=1011 phishscore=0
- bulkscore=0 suspectscore=0 spamscore=0 malwarescore=0 mlxscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2408270161
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B06D:EE_|DM4PR12MB6589:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0bdc5b2d-c074-45bb-e14c-08dcc6e3abc0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|7416014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?2srwx/z/vo5BfGli/3SQJ4+aUhci7Thuktfex+zjP266pkn7wSbPiJ8QDm5W?=
+ =?us-ascii?Q?giS2mFUmA9hXzRJuNvFHxWn2y4qWKysNM15pu98YGsMbjeXqzoPPEHQprayk?=
+ =?us-ascii?Q?rOHnz429RhyRA6YTrJ6o0Uc9MI1M0k4uKAI/lI6VU2iBRsLt3WLQ9+ZNWkMq?=
+ =?us-ascii?Q?NNRlTRIMcLhSPujRY86ujSaS2V55VZePWlfJs79yeCwntFqLjGe887PahJ+J?=
+ =?us-ascii?Q?FffiD9FfkW+kkQkA3p3igEMk47MyP0BdLIaFLG1tG2solm2qVRS/NkrA2o/U?=
+ =?us-ascii?Q?2nNfHgW4kkg1NVw2LPsUYENh7Zgvtlu9Hw5YIxVBiV1+SPQ/BzfUn2LYuoWH?=
+ =?us-ascii?Q?cnlHfQJzGKcNUsZYz+bS5MdNa6H5V6AtO6TknDrp2Zww8m4+87m1SJ54XRA+?=
+ =?us-ascii?Q?spqHL/OEZxReWcKHKgJupPJ7KO5pi5PVdqp7cIxB80RJ9vDT/gFnWjg6hLyz?=
+ =?us-ascii?Q?YYMBb3YBLS3e/9JvMI++P+ZrT+KIGxul85U7hZ7FaWafZbYI/7E0LoZPzDx6?=
+ =?us-ascii?Q?BYWDmXKnKASgRFxqc/GB0Pbui8ClBk0fZ9kPm3Ou7Fdroh0ZGF6czpWzBc3m?=
+ =?us-ascii?Q?0gj+S5E+TsalIQudaSWaOeuswG0Wyh0MtYLUNHtyiVQ0rWMuvPlVk8Q6x496?=
+ =?us-ascii?Q?eWX/4zsOZynmuHMCVhY24HrYj2+qdnWXKh1OM4WHapdKRMeTUubAf/cTSNZN?=
+ =?us-ascii?Q?G+Q07wkEG6kQGrzGiOiXIVPDb9Q7/iVIVyj+sTu6cOEXUO+SywT9z/B91eyf?=
+ =?us-ascii?Q?uufgwJqNRJZcL9tlErxgWXk5hLRlhHuyLA2YZY9DQlL+NGGWyGankdOe2H3x?=
+ =?us-ascii?Q?sEfNZnOGRq4Q0s+xmVU/pfnbGdNfcjMp3AN52dzlOLgJl6tZgFaRljc8yO28?=
+ =?us-ascii?Q?D+yPKwgPKR/tBXnJkkP+ME9DGUDnhAx7f7bnsNmJ4QXUlzu/LwYxMPvoumpF?=
+ =?us-ascii?Q?uKvrcuUcIPjyrwwRZ5ceEBVTMkAG+fbVWRDKAq06KHE0fCKS5dTejxkZI17q?=
+ =?us-ascii?Q?FUmgzu9PHP5jOwu9trM0CXGqnt44AkezfRgyeKCzWaLCGdWa5k3lypVW/rfD?=
+ =?us-ascii?Q?+eL3ejmeJCCSEf9r5PqkN0/AxISA3APXczCwdzUD9EM9Dzzr8INkn/CvoP+r?=
+ =?us-ascii?Q?YymLs00n67HDh4rc8hxCyqNc3Q/+/7lUjuJKufuGlAV9OChIzfilxlQAYOLh?=
+ =?us-ascii?Q?/eEjlaotXJES0e/1S6LluoSkv7j5dZlJL3klm0WW/3u/t7gCWPNoMoEd46yW?=
+ =?us-ascii?Q?QCXFIQGFIViR8vKJxnHEMCVVt2ViGYWkjIqogsA8aUkjYZTfF9oqKLg5GEYn?=
+ =?us-ascii?Q?mWBkeT9hIxAtMaqmUaoa3N+qK4vXQGPz53qk3MeOVsubqamtlMgZosljhS7k?=
+ =?us-ascii?Q?NdWxJ3tBppuNySeCjXnFyngQdffyXt0mhCmDkMtTOCVkDxgR8VHbWB+QgK8D?=
+ =?us-ascii?Q?DPPNsYSyoyoxQGEr2cvTGFHpM4+I7pRE?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 22:00:32.0406
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0bdc5b2d-c074-45bb-e14c-08dcc6e3abc0
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B06D.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6589
 
-As far as I can tell, the original purpose of this check was simply as
-the easiest way to work with a quirk of /proc/self/exe at the time. From
-the original patch[1]:
+Allow Restricted Injection to be set in SEV_FEATURES. When set,
+attempts to inject any interrupts other than #HV will make VMRUN fail.
+This is done to further reduce the security exposure within the SVSM.
 
-    Note it allows to change /proc/$pid/exe iif there
-    are no VM_EXECUTABLE vmas present for current process,
-    simply because this feature is a special to C/R
-    and mm::num_exe_file_vmas become meaningless after
-    that.
-
-num_exe_file_vmas was created to preserve a quirk of the original
-/proc/self/exe implementation: if you unmapped all executable VMAs,
-/proc/self/exe would disappear (because it worked by scanning the
-address space for the first executable VMA.) Keeping the quirk after
-switching to just saving the executable on the mm worked by keeping a
-count of executable VMAs in num_exe_file_vmas, and zeroing exe_file when
-it reached zero. You can probably see how it would have been annoying to
-handle both num_exe_file_vmas and this prctl intending to change
-exe_file, and it's easier to only allow changing exe_file after
-num_exe_file_vmas has already gone to 0 and made exe_file null.
-
-However, num_exe_file_vmas no longer exists[2]. This quirk was taken out
-because it would save a bit in the vma flags, and it seems clear by now
-that nobody was relying on it. These days you can simply update exe_file
-with no interference.
-
-Recently a use case for this prctl has come up outside of
-checkpoint/restore, namely binfmt_misc based emulators such as FEX[3].
-Any program that uses /proc/self/exe will, of course, expect it to point
-to its own executable. But when executed through binfmt_misc, it will be
-the emulator, resulting in compatibility issues. Emulators currently
-have to attempting to intercept syscalls targeting /proc/self/exe to
-redirect the path, and this is not possible in the general case
-considering how flexible path resolution is. For more detail on this see
-[3].
-
-The above seems to me like a solid case for simply dropping the check.
-It's also worth noting that it is already possible to achieve the same
-result by the laborious and complex process of just unmapping all your
-code and remapping it again after the switch (just remember to put the
-code that does this in a .so!), so this is not strictly allowing
-anything that wasn't allowed before. It's just cutting red tape.
-
-[1]: https://lore.kernel.org/lkml/20120316210343.925446961@openvz.org/
-[2]: https://lore.kernel.org/lkml/20120731104230.20515.72416.stgit@zurg/
-[3]: https://lore.kernel.org/lkml/CABnRqDdzqfB1_ixd-2JnfSocKvXNM+9ivM1hhd1C=ejLQyen8g@mail.gmail.com/
-
-Signed-off-by: Theodore Dubois <tblodt@icloud.com>
-Cc: Ryan Houdek <sonicadvance1@gmail.com>
-Cc: Guilherme G. Piccoli <gpiccoli@igalia.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Cc: Kees Cook <keescook@chromium.org>
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
 ---
- kernel/fork.c | 22 ----------------------
- 1 file changed, 22 deletions(-)
+ arch/x86/kvm/svm/sev.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index cc760491f..407e515b9 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1430,30 +1430,8 @@ int set_mm_exe_file(struct mm_struct *mm, struct file *new_exe_file)
-  */
- int replace_mm_exe_file(struct mm_struct *mm, struct file *new_exe_file)
- {
--	struct vm_area_struct *vma;
--	struct file *old_exe_file;
- 	int ret = 0;
+diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+index 4324a72d35ea..3aa9489786ee 100644
+--- a/arch/x86/kvm/svm/sev.c
++++ b/arch/x86/kvm/svm/sev.c
+@@ -3078,6 +3078,7 @@ void __init sev_hardware_setup(void)
+ 		sev_es_debug_swap_enabled = false;
  
--	/* Forbid mm->exe_file change if old file still mapped. */
--	old_exe_file = get_mm_exe_file(mm);
--	if (old_exe_file) {
--		VMA_ITERATOR(vmi, mm, 0);
--		mmap_read_lock(mm);
--		for_each_vma(vmi, vma) {
--			if (!vma->vm_file)
--				continue;
--			if (path_equal(&vma->vm_file->f_path,
--				       &old_exe_file->f_path)) {
--				ret = -EBUSY;
--				break;
--			}
--		}
--		mmap_read_unlock(mm);
--		fput(old_exe_file);
--		if (ret)
--			return ret;
--	}
--
- 	get_file(new_exe_file);
- 
- 	/* set the new file */
+ 	sev_supported_vmsa_features = 0;
++	sev_supported_vmsa_features |= SVM_SEV_FEAT_RESTRICTED_INJECTION;
+ 	if (sev_es_debug_swap_enabled)
+ 		sev_supported_vmsa_features |= SVM_SEV_FEAT_DEBUG_SWAP;
+ }
 -- 
-2.46.0
+2.43.2
 
 
