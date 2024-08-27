@@ -1,135 +1,105 @@
-Return-Path: <linux-kernel+bounces-302813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B32EB9603B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:55:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8538C9603B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:56:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8A851C2109B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:55:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B85101C20D6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491F2176AD7;
-	Tue, 27 Aug 2024 07:55:41 +0000 (UTC)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4088317BEAE;
+	Tue, 27 Aug 2024 07:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j6tisHsW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E728F156F28;
-	Tue, 27 Aug 2024 07:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F825156C5E;
+	Tue, 27 Aug 2024 07:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724745340; cv=none; b=KUhKVz6ERKqMRF/LPVtG5qGFlP79BSgCo8qSaBaTzh0ezJAFuygo4CpCS9QcFSno2cvCizxTWZDPkt1MHQPkgXS5uxsklgca880u5hEXifqZB3z7TIi4LvjWRbUIa9iD6glA1uGkDoxeUhIIewn6CZauO2ebhFvQ5gwsCZgSjuQ=
+	t=1724745397; cv=none; b=tJiPSluaVd7Kdpcb9XFCrV80aysLJ6GkzDPw6Bi4uG2rEEZYoJyg+9H75KOdqo+fZFEwN1MnWuOZM8A5HjYTwVj/GT5yFmMz50WIBVX6Z4AlXnD3uItbo17bAyZKpVhYvsSpZIHZWko/X+JP8thiZV492UDWIVlrvsbKTOJZ07g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724745340; c=relaxed/simple;
-	bh=hB7ZwdMBPkDMj4TZ0j8Pz1hCtIfwUxbSGIFo0L0U7yQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MLQ9mY+ja7eqgLOsKzECPyBBCYVnHDOCn2TNxqhKWLQkj6TC94wxEd5E29iPyuyZr19DqjWVDGpJisZBboZkf3jsW8ljov6EYfuJVm/LQHsP/jnUspnX/V9GRo5u3TjtJay0nddUqoY2OOTa4eMHvVmazQG515za10uKl2y5r0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6c0ac97232bso42956117b3.1;
-        Tue, 27 Aug 2024 00:55:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724745336; x=1725350136;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P4JN30GN77x4NUy5z6yHPloDIcCANz9yHy+MUlnyZj4=;
-        b=UVQJW1qKCIapMAvCNrfXUSlau7Hsmx1T+455dMAeiLH7apw9zCMZxa6Q7mmvp8YkL+
-         Kl4XW1kE+2YZaTo4ainvB7rvVzk5cr1RRMBBIK0N/tw6OckZ9Xz9InLaRjlqleMTFxJ2
-         rwE+DJZGqKVxB0NIp6QCrO7Ti/33Z9zssx9FMtiL54n9rXrbwYmTqromHTU9pLr+klV4
-         rqWM2JwP23t7feqc9P4mUpf6VQQIGFrNZGthoJAewAXlTjxLZYsjq4v0rYCMEfYKWeHk
-         Bm/HTyUDr1l3mBDZ5I1Me0chf5XJfibviCeEV19e72TRJFmmnavSglY/koEiGnXcNBRT
-         yjpA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5iAyGN4ELNyBHfoTfgeckXd+6XfLYEDmbsxVLBeBvh8svz2JPV7viNVFuq1/wpvIP+JT9TQg4/WXm1QOC@vger.kernel.org, AJvYcCVMs2HCRxKkZJkxSAT07OuRvmpfFKa50dEuLvcGlYzsSp8zX4zBuNDE+9PdiLIXyGzIvORMkLJ5wY5+yhgF2pX0iB8=@vger.kernel.org, AJvYcCW1W/RxCICE/xZBShw6Yk8xo2qTm8GJJWnB2iB4D4FcTvCATxUMQT/Uuaz9RzoKg6BgLrLn2J8RHBA=@vger.kernel.org, AJvYcCWNhVIE5NUqAOIqoUBCtmAwsX1DvO9UYv7ogo8NTtFJTBHoA5FTXdEZdx4Tsg6QfVd7PulLMQAqGUczq1Gt@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNDjSR/El14GN2BVgbCyvk4kCFzYTzb7RHI9PNAh+AVIGKd7DB
-	dgkmKGK9Dyky4QCzt2BToxro+VnWz1YA4rPx0EFmM+5E9wtnre6MszZIm4l/
-X-Google-Smtp-Source: AGHT+IEO4ABYY/ILHfI9+ZyCGCz7so1nuk8lMph+lgiyFPzGmlvALrUWZgz1gO7bywGHhjNArT4Hsg==
-X-Received: by 2002:a05:690c:10d:b0:64a:791b:60ce with SMTP id 00721157ae682-6c6286b93fcmr126703237b3.30.1724745336660;
-        Tue, 27 Aug 2024 00:55:36 -0700 (PDT)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6c39d3a9f90sm18399347b3.96.2024.08.27.00.55.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 00:55:36 -0700 (PDT)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6b747f2e2b7so48821937b3.3;
-        Tue, 27 Aug 2024 00:55:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUFydUKDcDk2d3BSoq17yPcG5GhnhY+qE8TI1NJs/UTJWflsNajtRXWCNp2IrwPE5f51dM/bgR3sB/ijv4O@vger.kernel.org, AJvYcCVgWjAhV1NQLdRQg7Nwx3VZPRBNvXZqfP+WH0pxgOWim0xWwu1TA+Vm09kCMe15fKoP8f05CMB3NiM=@vger.kernel.org, AJvYcCVkptfvL4Q59Ig9s5xFBMZzDPszjOaDSblia91AZz+nemGgrBzbZ2ehWmACh0DEU57YUPhk24laLJsb/nd0MKTv5y8=@vger.kernel.org, AJvYcCW82EuplG0JKwEY7ibng+8e5sf2rGcI+CzulBFdwnMKbnR3QIFJQRcHipt+PitKqesiTV/FnH00cup8NLrw@vger.kernel.org
-X-Received: by 2002:a05:690c:d8c:b0:643:aef1:fb9d with SMTP id
- 00721157ae682-6c624229802mr164962817b3.4.1724745335406; Tue, 27 Aug 2024
- 00:55:35 -0700 (PDT)
+	s=arc-20240116; t=1724745397; c=relaxed/simple;
+	bh=oO5gSw8M0jsTcQ+YuJSX9e785Wg33X/8V5dNeYaomok=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UH3lNpbmmTHmN8kbhPonvQJQzctUw8QmDpkN0gj8hFqlHWWaWOAaGvXv0ottcGnYP1G/PeuQ1j9rDsrr2jGh+poFVAGsc70J8cuu1cALeBAvTJmr/8+5pLnM791mo2i/O7t2emwATWJVDGLvI+76s320f3bZxePkEyfc9ulOO0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j6tisHsW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E53DC8B7B0;
+	Tue, 27 Aug 2024 07:56:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724745396;
+	bh=oO5gSw8M0jsTcQ+YuJSX9e785Wg33X/8V5dNeYaomok=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=j6tisHsWG0ji/gBthhf5i+dy+y8wZGai14x3XI6gvyiCCqERJpEk4qHq8W1pRSAsR
+	 WGixFKSfVOskEK482soXwwc1nE4yo71X2VPbNRuotsRHAKpHdJOYNgZ20IW190kwvl
+	 Jb5jPFdQEpPtZncjnCOkfFidgyj2N/CyiEaEb4mMNx5QTt5KmVmAzr6P89AxyBCPLo
+	 ywKWaN4Dcbyg9tozGoC9xSibmh01yhEAYJ8nU7s/SD39uWE70l/Qzb+iizYqPm1WLk
+	 dM4/V76DKSUnqrB9y6+bCf8rld0LPnr0Gw/FJ3KeDtV36Pxy8dYnpQFRhcXQLHDayu
+	 DcYq6NceqjByw==
+From: Christian Brauner <brauner@kernel.org>
+To: djwong@kernel.org,
+	sfr@canb.auug.org.au,
+	Luis Chamberlain <mcgrof@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	p.raghav@samsung.com,
+	dchinner@redhat.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-next@vger.kernel.org
+Subject: Re: [PATCH] iomap: remove set_memor_ro() on zero page
+Date: Tue, 27 Aug 2024 09:56:07 +0200
+Message-ID: <20240827-gebilde-zaudern-9b332d7cf0b6@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240826212632.2098685-1-mcgrof@kernel.org>
+References: <20240826212632.2098685-1-mcgrof@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240823-cleanup-h-guard-pm-domain-v1-0-8320722eaf39@linaro.org> <20240823-cleanup-h-guard-pm-domain-v1-10-8320722eaf39@linaro.org>
-In-Reply-To: <20240823-cleanup-h-guard-pm-domain-v1-10-8320722eaf39@linaro.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 27 Aug 2024 09:55:23 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXCPJz=bNZppMExGdhCdzuTVOV-EcvnkZfBYCGnT7A7ZA@mail.gmail.com>
-Message-ID: <CAMuHMdXCPJz=bNZppMExGdhCdzuTVOV-EcvnkZfBYCGnT7A7ZA@mail.gmail.com>
-Subject: Re: [PATCH 10/10] pmdomain: renesas: rcar-sysc: Use scoped device
- node handling to simplify error paths
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1429; i=brauner@kernel.org; h=from:subject:message-id; bh=oO5gSw8M0jsTcQ+YuJSX9e785Wg33X/8V5dNeYaomok=; b=kA0DAAoWkcYbwGV43KIByyZiAGbNhq2gQ6q0MKW9tglwrmDjBP10C7DLt09BqYxRLYmOrGAOc Ih1BAAWCgAdFiEEQIc0Vx6nDHizMmkokcYbwGV43KIFAmbNhq0ACgkQkcYbwGV43KKKZgD/WaQU /MQ6E1JRCUz/DicibuEasydNCDl6EooIlSg2gb0BAKr0Yro3bz32NQ4WeA6SdmGaD1NySAcQ58J QLULefEAM
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof,
+On Mon, 26 Aug 2024 14:26:32 -0700, Luis Chamberlain wrote:
+> Stephen reported a boot failure on ppc power8 system where
+> set_memor_ro() on the new zero page failed [0]. Christophe Leroy
+> further clarifies we can't use this on on linear memory on ppc, and
+> so instead of special casing this just for PowerPC [2] remove the
+> call as suggested by Darrick.
+> 
+> [0] https://lore.kernel.org/all/20240826175931.1989f99e@canb.auug.org.au/T/#u
+> [1] https://lore.kernel.org/all/b0fe75b4-c1bb-47f7-a7c3-2534b31c1780@csgroup.eu/
+> [2] https://lore.kernel.org/all/ZszrJkFOpiy5rCma@bombadil.infradead.org/
+> 
+> [...]
 
-On Fri, Aug 23, 2024 at 2:51=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
-> Obtain the device node reference with scoped/cleanup.h to reduce error
-> handling and make the code a bit simpler.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Thank you for the quick fix!
 
-Thanks for your patch!
+---
 
-> --- a/drivers/pmdomain/renesas/rcar-sysc.c
-> +++ b/drivers/pmdomain/renesas/rcar-sysc.c
-> @@ -348,12 +349,12 @@ static int __init rcar_sysc_pd_init(void)
->         const struct rcar_sysc_info *info;
->         const struct of_device_id *match;
->         struct rcar_pm_domains *domains;
-> -       struct device_node *np;
->         void __iomem *base;
->         unsigned int i;
->         int error;
->
-> -       np =3D of_find_matching_node_and_match(NULL, rcar_sysc_matches, &=
-match);
-> +       struct device_node *np __free(device_node) =3D
-> +               of_find_matching_node_and_match(NULL, rcar_sysc_matches, =
-&match);
+Applied to the vfs.blocksize branch of the vfs/vfs.git tree.
+Patches in the vfs.blocksize branch should appear in linux-next soon.
 
-Same comment as on [PATCH 9/10].
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
->         if (!np)
->                 return -ENODEV;
->
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-Gr{oetje,eeting}s,
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-                        Geert
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.blocksize
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+[1/1] iomap: remove set_memor_ro() on zero page
+      https://git.kernel.org/vfs/vfs/c/51eac77be01b
 
