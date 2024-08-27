@@ -1,55 +1,47 @@
-Return-Path: <linux-kernel+bounces-303478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3015D960CC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:58:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 025F7960C9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:53:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E6BEB29CB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:53:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B15302830CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5792D1C4629;
-	Tue, 27 Aug 2024 13:52:27 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338E01C4ED8;
+	Tue, 27 Aug 2024 13:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AN6d+xLv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A5C1C460C;
-	Tue, 27 Aug 2024 13:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B89D1C0DEC;
+	Tue, 27 Aug 2024 13:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724766746; cv=none; b=bXeDd54ccV8F9EVU0zQmnztw88R5Kk+Fe7AJhV6ufklcex2OaST6XxZzsruEzuyUqqs4AnTUAj1q6bnO07poE+0hKZ65bVt/14HYnfk6+0PvVdQ1tqbj1kJYa6HeaFUnYFjRZqK40D2KO+Ai+i0fsAbXanQX2dVH0GcTX1VaFUQ=
+	t=1724766753; cv=none; b=fEcDu5OUVuh/XAdoezBctUYRi2MZERJuNtVAgOKEsmLB5ZXNLbJavjzd1xprb1gYon4kPp/J76PrA2wjpyJ2CYEI917wBFsfMi/0guh2vY2aIrAfkFVLU7/R7/f9VfCpkwWUGPSU/DiV4JrgKw1HKf2KWplagbMOBuXbGmVmoFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724766746; c=relaxed/simple;
-	bh=QtBWaqTGdUAGgNmIlwBBGUsERV466m5iQc0yT2aplFE=;
+	s=arc-20240116; t=1724766753; c=relaxed/simple;
+	bh=8Q1OgVu1ZV4pADj3kH6liTryjhqWiTziReTFu0+p8n8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NeM3QNxhc7yWTofKyW9f6/1v0Ib8mW9M9LNt9Ct4G/lfR4ybx6rKW4XWTZH37Igc/taJeDxa85hSU6O/Z/Vzs1et1TDdXgkl533VSamA3OTzvB5GQYqjNbyQF+OGP/S/jA2Uk02wYseyavMU6nz+1o976r1+j82sTMMjW8fEPXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WtTWB1vtLz9sPd;
-	Tue, 27 Aug 2024 15:52:22 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id eYDrvO0daCfp; Tue, 27 Aug 2024 15:52:22 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WtTWB0wK1z9rvV;
-	Tue, 27 Aug 2024 15:52:22 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 0BE968B787;
-	Tue, 27 Aug 2024 15:52:22 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id WM9csDU1aTaJ; Tue, 27 Aug 2024 15:52:21 +0200 (CEST)
-Received: from [192.168.233.149] (unknown [192.168.233.149])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6FC368B77C;
-	Tue, 27 Aug 2024 15:52:21 +0200 (CEST)
-Message-ID: <df354c7e-e93b-4697-a373-c68c72c73adf@csgroup.eu>
-Date: Tue, 27 Aug 2024 15:52:21 +0200
+	 In-Reply-To:Content-Type; b=XsNGDGCKMrSvbZPRp2jLcSJpvIUT6XUCQ6+1RQDxTmayXwb20JH+l9/29AhNdj4VwxD/p+I8NTvUfr3/DivLQjYwr8lK2F28Lk13qaKJEFpdqI1FmnutGkPnywlmISc/kca9jnRcy86A+shl1sL+vFKFCjuWDoHIJDYvGcNygwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AN6d+xLv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FC80C61043;
+	Tue, 27 Aug 2024 13:52:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724766752;
+	bh=8Q1OgVu1ZV4pADj3kH6liTryjhqWiTziReTFu0+p8n8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AN6d+xLvIP0sscHmnVyE5H6qeuGv4Rbl769SEQOla/D/n0bparj4hGGOy/Pd4kH7g
+	 hACHYMOPLJwSAVNs5efO4gYsf05EuB2wPiUDxcBvOVdj0t9hjmNN10/56AgbcjRo3T
+	 Ww/3L+LdrHcVgUrXNvz/IhEG2yoMg+SWKsOS/gU8JdT6qvbqTmwPEBzAHYL/2XfZmD
+	 VNbPE0ziTRyr3TqdiGnGD7a8r3R7A28BGIUIEPRFEb2hAmXbOb9AngTHh7ZAjIIAUh
+	 KkwqwpDuy1X7PQxTDJU/Da5BXVcnqHjJ0WWUww8RLHSjD2s9BN0OZ1ok9DEUeFypni
+	 5bvSm6uUdBXpA==
+Message-ID: <cdd77270-3189-4fa9-9b4e-e443db5fb583@kernel.org>
+Date: Tue, 27 Aug 2024 15:52:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,137 +49,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] aarch64: vdso: Wire up getrandom() vDSO implementation
-To: Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
- "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
- linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-arch@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Eric Biggers <ebiggers@kernel.org>
-References: <20240826181059.111536-1-adhemerval.zanella@linaro.org>
- <ZszlGPqfrULzi3KG@zx2c4.com>
- <fd3cd385-131a-43b2-8ce9-05547a4f2d1d@linaro.org>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <fd3cd385-131a-43b2-8ce9-05547a4f2d1d@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v3 3/3] platform/surface: Add OF support
+To: Hans de Goede <hdegoede@redhat.com>,
+ Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Len Brown <lenb@kernel.org>, Maximilian Luz <luzmaximilian@gmail.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <quic_kdybcio@quicinc.com>
+References: <20240814-topic-sam-v3-0-a84588aad233@quicinc.com>
+ <20240814-topic-sam-v3-3-a84588aad233@quicinc.com>
+ <ZszrjQChQ2aS5YjV@surfacebook.localdomain>
+ <4dab4f36-309d-4b95-8b01-84963ca08d16@redhat.com>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <4dab4f36-309d-4b95-8b01-84963ca08d16@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 27.08.2024 11:07 AM, Hans de Goede wrote:
+> Hi Andy,
+> 
+> Thank you for the review.
+> 
+> Note this has already been merged though.
+> 
+> Still there are some good suggestions here for a follow-up
+> cleanup patch.
 
+Andy, Hans
 
-Le 27/08/2024 à 15:17, Adhemerval Zanella Netto a écrit :
-> [Vous ne recevez pas souvent de courriers de adhemerval.zanella@linaro.org. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
-> 
-> On 26/08/24 17:27, Jason A. Donenfeld wrote:
->> Hi Adhemerval,
->>
->> Thanks for posting this! Exciting to have it here.
->>
->> Just some small nits for now:
->>
->> On Mon, Aug 26, 2024 at 06:10:40PM +0000, Adhemerval Zanella wrote:
->>> +static __always_inline ssize_t getrandom_syscall(void *buffer, size_t len, unsigned int flags)
->>> +{
->>> +    register long int x8 asm ("x8") = __NR_getrandom;
->>> +    register long int x0 asm ("x0") = (long int) buffer;
->>> +    register long int x1 asm ("x1") = (long int) len;
->>> +    register long int x2 asm ("x2") = (long int) flags;
->>
->> Usually it's written just as `long` or `unsigned long`, and likewise
->> with the cast. Also, no space after the cast.
-> 
-> Ack.
-> 
->>
->>> +#define __VDSO_RND_DATA_OFFSET  480
->>
->> This is the size of the data currently there?
-> 
-> Yes, I used the same strategy x86 did.
-> 
->>
->>>   #include <asm/page.h>
->>>   #include <asm/vdso.h>
->>>   #include <asm-generic/vmlinux.lds.h>
->>> +#include <vdso/datapage.h>
->>> +#include <asm/vdso/vsyscall.h>
->>
->> Possible to keep the asm/ together?
-> 
-> Ack.
-> 
->>
->>> + * ARM64 ChaCha20 implementation meant for vDSO.  Produces a given positive
->>> + * number of blocks of output with nonnce 0, taking an input key and 8-bytes
->>
->> nonnce -> nonce
-> 
-> Ack.
-> 
->>
->>> -ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
->>> +ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/ -e s/aarch64.*/arm64/)
->>>   SODIUM := $(shell pkg-config --libs libsodium 2>/dev/null)
->>>
->>>   TEST_GEN_PROGS := vdso_test_gettimeofday
->>> @@ -11,7 +11,7 @@ ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
->>>   TEST_GEN_PROGS += vdso_standalone_test_x86
->>>   endif
->>>   TEST_GEN_PROGS += vdso_test_correctness
->>> -ifeq ($(uname_M),x86_64)
->>> +ifeq ($(uname_M), $(filter x86_64 aarch64, $(uname_M)))
->>>   TEST_GEN_PROGS += vdso_test_getrandom
->>>   ifneq ($(SODIUM),)
->>>   TEST_GEN_PROGS += vdso_test_chacha
->>
->> You'll need to add the symlink to get the chacha selftest running:
->>
->>    $ ln -s ../../../arch/arm64/kernel/vdso tools/arch/arm64/vdso
->>    $ git add tools/arch/arm64/vdso
->>
->> Also, can you confirm that the chacha selftest runs and works?
-> 
-> Yes, last time I has to built it manually since the Makefile machinery seem
-> to be broken even on x86_64.  In a Ubuntu vm I have:
-> 
-> tools/testing/selftests/vDSO$ make
->    CC       vdso_test_gettimeofday
->    CC       vdso_test_getcpu
->    CC       vdso_test_abi
->    CC       vdso_test_clock_getres
->    CC       vdso_standalone_test_x86
->    CC       vdso_test_correctness
->    CC       vdso_test_getrandom
->    CC       vdso_test_chacha
-> In file included from /home/azanella/Projects/linux/linux-git/include/linux/limits.h:7,
->                   from /usr/include/x86_64-linux-gnu/bits/local_lim.h:38,
->                   from /usr/include/x86_64-linux-gnu/bits/posix1_lim.h:161,
->                   from /usr/include/limits.h:195,
->                   from /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h:205,
->                   from /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h:7,
->                   from /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h:34,
->                   from /usr/include/sodium/export.h:7,
->                   from /usr/include/sodium/crypto_stream_chacha20.h:14,
->                   from vdso_test_chacha.c:6:
-> /usr/include/x86_64-linux-gnu/bits/xopen_lim.h:99:6: error: missing binary operator before token "("
->     99 | # if INT_MAX == 32767
->        |      ^~~~~~~
-> /usr/include/x86_64-linux-gnu/bits/xopen_lim.h:102:7: error: missing binary operator before token "("
->    102 | #  if INT_MAX == 2147483647
->        |       ^~~~~~~
-> /usr/include/x86_64-linux-gnu/bits/xopen_lim.h:126:6: error: missing binary operator before token "("
->    126 | # if LONG_MAX == 2147483647
->        |      ^~~~~~~~
-> make: *** [../lib.mk:222: /home/azanella/Projects/linux/linux-git/tools/testing/selftests/vDSO/vdso_test_chacha] Error 1
-> 
-> 
-> I will try to figure out to be build it correctly, but I think it would be
-> better to vgetrandom-chacha.S with a different rule.
+Is it fine if I submit a fat "address review comments" patch, or should
+I split it up per issue?
 
-Hi, can you try with the following commit : 
-https://git.kernel.org/pub/scm/linux/kernel/git/crng/random.git/commit/?id=e1af61334ade39a9af3031b7189f9acb419648a4
-
-Thanks
-Christophe
+Konrad
 
