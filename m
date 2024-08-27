@@ -1,149 +1,125 @@
-Return-Path: <linux-kernel+bounces-304124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 308F5961AB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 01:39:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6AA2961AB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 01:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE7581F2412C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:39:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85120284C45
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45D61D47A4;
-	Tue, 27 Aug 2024 23:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604D31D47AC;
+	Tue, 27 Aug 2024 23:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I1GHWCco"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QzXIMASK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768BB15CD4A;
-	Tue, 27 Aug 2024 23:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E4E1D45E3;
+	Tue, 27 Aug 2024 23:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724801943; cv=none; b=NBKUzHXF4bg151Wd12m+REBmiZmlk57dQMMiUg9zTXj60C1DX1I2PYljaoRJxB6DZ62V1ZPp31bwUFTnSdl9h+i/leS9VWH91smh+ylaE0SWGpkoS5Gdo9TFbswQTcCj0OWMGbPPp17IbYixW4ueP0CzkPBTLpA1OvZRRIWrpNk=
+	t=1724802055; cv=none; b=VsPOOaxnoCH4zyzFpNAEJGRDVjDFIKHF0vrnl8vbuHeVXaD0HdJcAspnpOo3zGFg9q60gsUWjeBwImMCX9crZUXML13/7CtgTsmxsQXkBOemdBLPRtTS03hxE75e+9GcqMEYrU+NXf2AnLlozPgZ5vjQoH9BFuPuGUsDjZVb+RQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724801943; c=relaxed/simple;
-	bh=Iv5XH68xorPUQHJ3UuBYpRFDra7UYg0SpNE4jKP3Q6g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q/MS/vwNWyaHAOL0lkt+AuT2MYBAZLhCKTdW8BNFD7UURfrZl0JVK7Yh8xO1BhRdHy7xlJ7a6I3K0FJUq3Lk3WVi9eqJWv2T3u2ClXZJDHBxmw9slA8hm8ztF86O9rMIohRx40fyLZvq9aOyYvpbaWig2VGiXZwV4DZZ5ZqnGis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I1GHWCco; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5bebd3b7c22so112895a12.0;
-        Tue, 27 Aug 2024 16:39:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724801939; x=1725406739; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R05NRDGOO1oSOh780OWfzTYLlgnTmADM/nPauNHjeEs=;
-        b=I1GHWCcoYDcqL6YZ/xjuMX3OjpX6KipYeO1JAoVitTGIy0QBVLY8Gq5JjXi+ubiUTG
-         kZiUJS2mq5NluQUN28G6tkjpuDg/SyjFqVIU4nyJr2jblWtqMaKUo2wS2l20u+zBxHs+
-         zoJg3Zi0QuH7CCLwELcOXEGtAOK5UpRW4b1FIdWM8uB6bHHRETtbplBuN+qfKi1FvHgf
-         TLaVrmYAloZoPlsF50N2bwEReOnKWwxhuY6csBbNUb8NTLDAP0g/P6unVB9ylRgiFgLZ
-         7ytK2qcIC5yiMd+/rbxhv5sSphURn9PqfLO5eHXSSaFMTfnad6xuJE6tdjx7xouYezTY
-         Hdqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724801939; x=1725406739;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R05NRDGOO1oSOh780OWfzTYLlgnTmADM/nPauNHjeEs=;
-        b=w3EbncPcYd22mrjZsDgH8pIj2d6g4T9toEftup114cCFLlvkuLf/6BO70qiGsHJQdL
-         0uFoOK7td40r9n3kvvtFa+edXFwWqRtQ8WrGmmiaxvhhs9F8SFLsYHVWJmfFRKrJ5Iaq
-         sS51GOlRuAR8PjGSxNXr3d1l2UL4dNlJ45NybbTNnSuFKEZqvQIvo3ZjLW2/p00S4Sgb
-         NfesjIzAemoeAhI5W7BKGCaFX80hys2KYZ3roTUIINVy5sOcpnzFN75QUYqccTqkRrCr
-         RzMRpo+eA4RaW4AGCHUFj/w9iLsOQbocv18s7RCFH5+Q8w454BZfLAAiIF2AmVmqG9sf
-         ei/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX50AevotJO3jT4NOgDhX8dL9qcylmnvPgckYd1FObBNTNgNOPrY2C7aMAXy/FxWRbNNARcDaz/HEF1MFIu@vger.kernel.org, AJvYcCXQOmSMXJr4lMyrnYkFIzYR93Zu9LiJXdKBd0WFBxpyDWaFDbA7Z3Qpl19ym2shW0wVbHjhs2nbhpP7DEVn@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcraFmH5Mzii/P37sXCRn8gjNGI7n3ZSbGHhbsG2qIjWUqqU6t
-	tWreAV7kCTUmXzk0gTbWH6Z8LayqqoifleuM8XobwL79eRvl4t8IMHtoj2Q/cGY1BdlurQUm6MY
-	Ly7vi50LbphUiEB1ae3wD9SjPmbghe6sU
-X-Google-Smtp-Source: AGHT+IGu4H0HV/KBLUKwzHBe2B1fbkPiH37MLwobFjeSBQdDSdK/LDuQh3+LMDwSobR6E3nuCguSmWiFqVabZlSisWs=
-X-Received: by 2002:a17:907:94d2:b0:a77:ab9e:9202 with SMTP id
- a640c23a62f3a-a870a8c8e55mr33125766b.4.1724801939287; Tue, 27 Aug 2024
- 16:38:59 -0700 (PDT)
+	s=arc-20240116; t=1724802055; c=relaxed/simple;
+	bh=uqrM2V2XUJLc4pgu/Aww4+b2GdKnuDt3PVEz7Sr5IpM=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=JF2iU1V3DqGzkRpt9o4Cokduom/RAc+kvmV32qsh5Hm4PTHi9EYgdJokhTyf1LzgfW/JlXtN41apYddbKOpBXRvCBZ2xwTy+a+LyQI5D0HQJQmoxFOwa1ksZBJIwK9KP0o+jjL6spG2uE5BD7yfgJYoa0O8NUciNm7LCR5wPXv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QzXIMASK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF597C4AF48;
+	Tue, 27 Aug 2024 23:40:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724802055;
+	bh=uqrM2V2XUJLc4pgu/Aww4+b2GdKnuDt3PVEz7Sr5IpM=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=QzXIMASKT66GFa9TA9/DogHT9n4Q14c3Ln/9BGRg7+NKCqUBKgYfY0HH38bzgOvB4
+	 etBHV3qp1B1wG0woKbGU8+dgboQCtVdt87nv1YrKxN7+/YpbEsteJ/xQ2U3ZlfwBlS
+	 O51ZidQ+codqrCbPFpYkgIMPRsLe7je+m2LQvlRKY39xl0XC5+UZ1zrbOqBAI+C8G8
+	 97R6jSsV5IwI6p9uGCCpz/XBLDdEDf5iOX0Q88R/59lImai+6WMV+Ju3bOgbjt0dAv
+	 QpJ8uc7sTiAz8ShgLL9dxc6iFtj5GvRScQoGB9U5LiFJaX4mhef+iZjNxjLy0FeHsp
+	 gtoxy/DukxxJA==
+Message-ID: <ced9ed863c4b648a65c80447a8482cb2.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827-iversion-v1-1-b46a2b612400@kernel.org>
-In-Reply-To: <20240827-iversion-v1-1-b46a2b612400@kernel.org>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 28 Aug 2024 01:38:46 +0200
-Message-ID: <CAGudoHE+PkQp+RVen+0YZ1G6LZfG5aQsq0LrmTP+kZb-6=p2xA@mail.gmail.com>
-Subject: Re: [PATCH RFC] fs: don't force i_version increment when timestamps change
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <D3QXIGN92QZ7.S2LY531JZ1L9@protonmail.com>
+References: <20240826123602.1872-1-hpausten@protonmail.com> <20240826123602.1872-8-hpausten@protonmail.com> <2024082655-cubicle-flashily-6ab3@gregkh> <D3QXIGN92QZ7.S2LY531JZ1L9@protonmail.com>
+Subject: Re: [PATCH v3 7/9] uio: add Xilinx user clock monitor support
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>, Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Harry Austen <hpausten@protonmail.com>
+Date: Tue, 27 Aug 2024 16:40:52 -0700
+User-Agent: alot/0.10
 
-On Tue, Aug 27, 2024 at 4:30=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
-ote:
->
-> inode_maybe_inc_iversion will increment the i_version if it has been
-> queried. We can also set the "force" parameter to force an increment.
-> When we originally did this, the idea was to set it to force when we
-> were going to be otherwise updating the inode timestamps anyway --
-> purely a "might as well" measure.
->
-> When we used coarse-grained timestamps exclusively, this would give us
-> an extra cmpxchg operation roughly every jiffy when a file is under
-> heavy writes. With the advent of multigrain timestamps however, this can
-> fire more frequently.
->
-> There is no requirement to force an increment to the i_version just
-> because a timestamp changed, so stop doing it.
->
-> Cc: Mateusz Guzik <mjguzik@gmail.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
-> I've not tested this other than for compilation, but it should be fine.
-> Mateusz, does this help your workload at all? There may be other places
-> where we can just set this to false (maybe even convert some of the
-> inode_inc_iversion() calls to this.
+Quoting Harry Austen (2024-08-27 12:08:52)
+> On Mon Aug 26, 2024 at 2:11 PM BST, Greg Kroah-Hartman wrote:
+> > On Mon, Aug 26, 2024 at 12:38:36PM +0000, Harry Austen wrote:
+> > > Xilinx clocking wizard IP core supports monitoring of up to four
+> > > optional user clock inputs, with a corresponding interrupt for
+> > > notification in change of clock state (stop, underrun, overrun or
+> > > glitch). Give userspace access to this monitor logic through use of t=
+he
+> > > UIO framework.
+> > >
+> > > Implemented as an auxiliary_driver to avoid introducing UIO dependency
+> > > to the main clock driver.
+> > >
+> > > Signed-off-by: Harry Austen <hpausten@protonmail.com>
+> > > ---
+> > >  drivers/uio/Kconfig            |  8 ++++
+> > >  drivers/uio/Makefile           |  1 +
+> > >  drivers/uio/uio_xlnx_clk_mon.c | 71 ++++++++++++++++++++++++++++++++=
+++
+> > >  3 files changed, 80 insertions(+)
+> > >  create mode 100644 drivers/uio/uio_xlnx_clk_mon.c
+> > >
+> > > diff --git a/drivers/uio/Kconfig b/drivers/uio/Kconfig
+> > > index b060dcd7c6350..ca8a53de26a67 100644
+> > > --- a/drivers/uio/Kconfig
+> > > +++ b/drivers/uio/Kconfig
+> > > @@ -164,4 +164,12 @@ config UIO_DFL
+> > >         opae-sdk/tools/libopaeuio/
+> > >
+> > >       If you compile this as a module, it will be called uio_dfl.
+> > > +
+> > > +config UIO_XLNX_CLK_MON
+> > > +   tristate "Xilinx user clock monitor support"
+> > > +   depends on COMMON_CLK_XLNX_CLKWZRD
+> > > +   help
+> > > +     Userspace I/O interface to the user clock monitor logic within =
+the
+> > > +     Xilinx Clocking Wizard IP core.
+> >
+> > Why do you want a UIO api for a clock device?  What userspace code is
+> > going to access the hardware this way?  Why not use the normal
+> > kernel/user apis instead?
+>=20
+> I was just trying to provide userspace access to these _unexpected_ clock
+> status event indications (clock stopped, underrun, overrun or glitched) a=
+nd UIO
 
-This does not make a difference for me since any call to
-inode_maybe_inc_iversion is guaranteed to provide a full barrier, this
-is at best moving it from the cmpxchg to spelled out smp_mb
+Maybe unexpected events can be indicated through the EDAC subsystem,
+except that is usually about memory or cache errors, not device driver
+issues.
 
-As to whether the patch makes sense otherwise I have no idea.
+> seemed like an easy way to do it and leave interrupt enablement and monit=
+oring
+> up to userspace. I'm not aware of any existing clock event notification
+> framework. Are you suggesting that such a generic event notification mech=
+anism
+> should be added to the clk subsystem? e.g. additional clk_ops callbacks e=
+tc.?
+>=20
 
-> ---
->  fs/inode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 10c4619faeef..2abd6317839b 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -1962,7 +1962,7 @@ int inode_update_timestamps(struct inode *inode, in=
-t flags)
->                         inode_set_mtime_to_ts(inode, now);
->                         updated |=3D S_MTIME;
->                 }
-> -               if (IS_I_VERSION(inode) && inode_maybe_inc_iversion(inode=
-, updated))
-> +               if (IS_I_VERSION(inode) && inode_maybe_inc_iversion(inode=
-, false))
->                         updated |=3D S_VERSION;
->         } else {
->                 now =3D current_time(inode);
->
-> ---
-> base-commit: 3e9bff3bbe1355805de919f688bef4baefbfd436
-> change-id: 20240827-iversion-afa53f0a070b
->
-> Best regards,
-> --
-> Jeff Layton <jlayton@kernel.org>
->
-
-
---=20
-Mateusz Guzik <mjguzik gmail.com>
+I've been thinking of adding devcoredump support to clk drivers when
+they hit an error condition. The idea is it would be a coredump for the
+device register state when the clk driver detects an error. Maybe you
+can use devcoredump for this?
 
