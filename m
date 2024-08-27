@@ -1,194 +1,114 @@
-Return-Path: <linux-kernel+bounces-302628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D6A0960131
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:53:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8ED7960136
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 364EF280BDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:53:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D84C2832F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB86132132;
-	Tue, 27 Aug 2024 05:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140B713B2A2;
+	Tue, 27 Aug 2024 05:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YtoBu6i2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YXKcG0Eu";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YtoBu6i2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YXKcG0Eu"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZMbZytn/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7095F2260C;
-	Tue, 27 Aug 2024 05:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1EB2260C;
+	Tue, 27 Aug 2024 05:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724737983; cv=none; b=uvLc2wjUpKJd4EqXALGHTQnsImfSLzTksZr2WWLDqxm3DHhmLyjSkac3OdGh1fWII7/0KXbU+BxX6Bvc2TegdKtP4MDvKQEjAfSECh7PoVvSt7MpGvlFq4tm0EWwuAlqqKZ53LPfcXvG40aGmMVpi4CVTxGROjy5X1smNYXWCRk=
+	t=1724738140; cv=none; b=Ymm3BbhZoIiF11T6a443r5scuDG4gFlMuw992YUTg5T2dW0MZdXiFhRiVe6TpMtIIkCSuOkFVmakj3eu6+UzwxAZNegIL83gl+b/V5EV/KDMfxmujXKqFjlbw10HFCz63Igf5Pbhzsli9i2NOnf9JvdMR+cMdUjLcShnNWPsTIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724737983; c=relaxed/simple;
-	bh=pl4c7h6INgfUNX2XD6vsgEE11FLBxWG1vx7R8FGrVcI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Kr6dkYOdN2bV+YCH0E4rRmfPzsLhz6F12Q3ffDEyexH3tanC1bonvpaq3+Oklz7DJfF4wcf94dbe2J3sZoa68f30/a+RmQ3GpUdFy85955T+qBcb3tFa5NJu9fHkFNO55syqt+IuhvrcBMaVOgsoyL1+Ll5LJMfp3UuNYgsum4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YtoBu6i2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YXKcG0Eu; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YtoBu6i2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YXKcG0Eu; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 46F0721AFC;
-	Tue, 27 Aug 2024 05:52:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724737979; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YbyRpVQyzDYEEPLh9ZRLZD4ogKV9LDeaqbmK0A8SjRo=;
-	b=YtoBu6i2DV6dE5lauEETwW8nn/hQ5jH9JhKEtPlA5SgpGIhfy+W2VmV30vdhqU3fCdIJG+
-	iGKL3ivuRzfcYBFAyWrMoqaXewTW6bDyFCj/QYqsb3YosrJLDklkXEcliYpOyWFR/Xbemf
-	ucjjiw00J8VWgw198BlzT8JfOwbwvnY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724737979;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YbyRpVQyzDYEEPLh9ZRLZD4ogKV9LDeaqbmK0A8SjRo=;
-	b=YXKcG0Eu6elKoG5bJRvzVKjVPVxCdK32YCKQjbcaKfwtUD0w5irGjgoB/hcLB6cHhoQtEV
-	2aGm8hncAmA4SmBA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=YtoBu6i2;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=YXKcG0Eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724737979; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YbyRpVQyzDYEEPLh9ZRLZD4ogKV9LDeaqbmK0A8SjRo=;
-	b=YtoBu6i2DV6dE5lauEETwW8nn/hQ5jH9JhKEtPlA5SgpGIhfy+W2VmV30vdhqU3fCdIJG+
-	iGKL3ivuRzfcYBFAyWrMoqaXewTW6bDyFCj/QYqsb3YosrJLDklkXEcliYpOyWFR/Xbemf
-	ucjjiw00J8VWgw198BlzT8JfOwbwvnY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724737979;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YbyRpVQyzDYEEPLh9ZRLZD4ogKV9LDeaqbmK0A8SjRo=;
-	b=YXKcG0Eu6elKoG5bJRvzVKjVPVxCdK32YCKQjbcaKfwtUD0w5irGjgoB/hcLB6cHhoQtEV
-	2aGm8hncAmA4SmBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1C20F1398B;
-	Tue, 27 Aug 2024 05:52:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vGktBbtpzWbjXQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 27 Aug 2024 05:52:59 +0000
-Date: Tue, 27 Aug 2024 07:53:42 +0200
-Message-ID: <87o75e340p.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: soxiebing <soxiebing@163.com>
-Cc: tiwai@suse.de,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: hda: fix snd_hda_bus_reset when single_cmd is not supported
-In-Reply-To: <20240827033043.107572-1-soxiebing@163.com>
-References: <20240821014238.338864-1-soxiebing@163.com>
-	<20240827033043.107572-1-soxiebing@163.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1724738140; c=relaxed/simple;
+	bh=UNUUCvQTms/9iZEo4GfsCDlp2KN6INNumi/aUtPAUsw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sscPRcJhw6TrwcQuU0Hd0PuDc3E8dGfYB9wD7TiN8MoKrOEjO0KcedGVKu/u3fqo5DBPCADnrehtu/820gzVnwaLwkmkoj0OeOielI3V+ct+YdiYbIOTgRCkAKWtxzbeJzsstCUXWJCHDIP6Kp6xl9N54w9bCIMPoMKMBKkd4do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZMbZytn/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C286AC8B7A4;
+	Tue, 27 Aug 2024 05:55:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724738139;
+	bh=UNUUCvQTms/9iZEo4GfsCDlp2KN6INNumi/aUtPAUsw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZMbZytn/IziybM+kw+0P3sab/WKf0I5NwzlFI7IVFzXzCbFZHXD1QcqQiRFvOl9L2
+	 kuTPNW/NkTSPpccRYnnVrYqFpHTN86B+PypYoQ2I/0VLpR8gm/zT+UoUZ0AioG4/2e
+	 vpSEZshcHFujaCfyIL7aLPA1hylOrjz/Rh2ruVI3APVvv2dy5pisd8Skr3CT3Dr6UI
+	 1T+WAkrlnzexX+YxPOrLdgrs/DQRSArPt+q45/KR3xfOIDFazUJ1zaAfYWVHkxYYCh
+	 TAbkj4JA+GJPDKOa7R58vwTA2rT1FHCfRBpS/9Vni3rdxBv4vegLJJI6CuV5gUOiSv
+	 2UfD2/XHf7E6Q==
+Date: Mon, 26 Aug 2024 22:55:39 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: brauner@kernel.org, sfr@canb.auug.org.au, p.raghav@samsung.com,
+	dchinner@redhat.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-next@vger.kernel.org
+Subject: Re: [PATCH] iomap: remove set_memor_ro() on zero page
+Message-ID: <20240827055539.GL865349@frogsfrogsfrogs>
+References: <20240826212632.2098685-1-mcgrof@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 46F0721AFC
-X-Spam-Score: -3.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[163.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[163.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:dkim]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826212632.2098685-1-mcgrof@kernel.org>
 
-On Tue, 27 Aug 2024 05:30:43 +0200,
-soxiebing wrote:
+On Mon, Aug 26, 2024 at 02:26:32PM -0700, Luis Chamberlain wrote:
+> Stephen reported a boot failure on ppc power8 system where
+> set_memor_ro() on the new zero page failed [0]. Christophe Leroy
+> further clarifies we can't use this on on linear memory on ppc, and
+> so instead of special casing this just for PowerPC [2] remove the
+> call as suggested by Darrick.
 > 
-> >On Mon, 26 Aug 2024 11:19:58 +0200,
-> >soxiebing wrote:
-> >> 
-> >> >On Wed, 21 Aug 2024 03:42:38 +0200,
-> >> >soxiebing wrote:
-> >> >> 
-> >> >> From: songxiebing <songxiebing@kylinos.cn>
-> >> >> 
-> >> >> When an azx_get_desponse timeout occurs, ensure that bus_reset
-> >> >> can be used when fallback_to_single_cmd is not supported.
-> >> >> 
-> >> >> Signed-off-by: songxiebing <songxiebing@kylinos.cn>
-> >> >
-> >> >Why do you need to change?  Does it fix any real problem you faced?
-> >> 
-> >> Thanks for reply, i am testing all these days, but the problem is
-> >> still exists even if using bus reset.
-> >>
-> >> The problem i encountered is that hda_call_codec_resume returned 
-> >> timeout of 120 seconds(defined CONFIG_DPM_WATCHDOG)) when doing s4, 
-> >> azx_get_response timeout occured, it is a low probability event.
-> >> 
-> >> To avoid exceeding 120s, can i change the count value to 3 in 
-> >> hda_set_power_state ?
-> >
-> >So the change you suggested isn't for any real "fix" but to allow the
-> >possible workaround with single_cmd to be applicable somehow in a
-> >different form.  Then we should rather try debugging the original
-> >issue, instead of change it.
-> >
-> >Does the response timeout happen *during* the S4 suspend, or during S4
-> >resume, or after S4 resume?
-> >
-> >To be noted, the behavior you changed is only for the single_cmd
-> >option is set explicitly, so it's more or less the designed behavior,
-> >and I don't think it's good to change blindly.
+> [0] https://lore.kernel.org/all/20240826175931.1989f99e@canb.auug.org.au/T/#u
+> [1] https://lore.kernel.org/all/b0fe75b4-c1bb-47f7-a7c3-2534b31c1780@csgroup.eu/
+> [2] https://lore.kernel.org/all/ZszrJkFOpiy5rCma@bombadil.infradead.org/
 > 
-> The timeout happen during S4 resume. 
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Suggested-by: "Darrick J. Wong" <djwong@kernel.org>
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+--D
+
+> ---
 > 
-> In hda_set_power_state function, the count value setting at most 10 times,
-> i feel like there are a lot of retries, can we change it to 3 times, to avoid
-> exceeding 120s ?
-
-No, no, if such a long timeout happens, something is already wrong.
-Extending it is no real fix at all.
-
-You need to figure out which access or action causes the problem at
-first.
-
-
-Takashi
+> This applies to the vfs.blocksize branch on the vfs tree.
+> 
+>  fs/iomap/direct-io.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index c02b266bba52..f637aa0706a3 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -11,7 +11,6 @@
+>  #include <linux/iomap.h>
+>  #include <linux/backing-dev.h>
+>  #include <linux/uio.h>
+> -#include <linux/set_memory.h>
+>  #include <linux/task_io_accounting_ops.h>
+>  #include "trace.h"
+>  
+> @@ -781,8 +780,6 @@ static int __init iomap_dio_init(void)
+>  	if (!zero_page)
+>  		return -ENOMEM;
+>  
+> -	set_memory_ro((unsigned long)page_address(zero_page),
+> -		      1U << IOMAP_ZERO_PAGE_ORDER);
+>  	return 0;
+>  }
+>  fs_initcall(iomap_dio_init);
+> -- 
+> 2.43.0
+> 
+> 
 
