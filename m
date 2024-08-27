@@ -1,440 +1,157 @@
-Return-Path: <linux-kernel+bounces-302468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D58095FF12
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:28:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CCA695FEDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:12:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72B471C21B57
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 02:28:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BBBAB21827
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 02:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592D7134B2;
-	Tue, 27 Aug 2024 02:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=digi.com header.i=@digi.com header.b="E//XctzB"
-Received: from outbound-ip24b.ess.barracuda.com (outbound-ip24b.ess.barracuda.com [209.222.82.221])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78665C8D7;
+	Tue, 27 Aug 2024 02:12:34 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14CF2D53F
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 02:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.221
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724725726; cv=fail; b=iky98NHN4dISSxe4kGtyEdG2frw44qDG8JfzIySwdyynTnL34RhQzipSFLxBWwpo8PhJDXoohTML2tgdv+5UBNcAQfYQ2zwFAlB2wUJrYkNCpheKxT8WLtf6TlA+CJb1dqCP7tvP2P3ibKi80SOCqeD+FB3FuYIFuZutkOT+3V0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724725726; c=relaxed/simple;
-	bh=5+VjKiQH2XIRJLScTheh31Jz/v+/KCcR1cIKGCCtvpI=;
-	h=Date:From:To:cc:Subject:Message-ID:Content-Type:MIME-Version; b=J0hDVSEy1AkBHO8uNHA9Qmwrj4aa3zO5PeT8WGbyHIjMOPCRjwAx4k/Jc+7uCJ2/EUf5q74VFxlmTMEFrU0BdTJLFWaOtutayofaxXoasaJGKZPWVJ4uar6MpIwLiASV/x3cx+DXa5LWMJBhxtShQh25zs9tM+boEhzP+lvXrOQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digi.com; spf=pass smtp.mailfrom=digi.com; dkim=pass (2048-bit key) header.d=digi.com header.i=@digi.com header.b=E//XctzB; arc=fail smtp.client-ip=209.222.82.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digi.com
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2043.outbound.protection.outlook.com [104.47.66.43]) by mx-outbound16-121.us-east-2b.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Tue, 27 Aug 2024 02:28:40 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QiqShegcbUnu/hX2yyXG/zvj5RRUjlCriZ2lLqG5/lttBlr8kIUNPlzczKDcjBKrUPdF6OzY/2dqoe4AebTh8fYkfRhPJyHUXiqIv7KFF1jI/qqx+odVbvSMHOvYM0AOSRU56vdiuhjolzM2GXgU2OJo6MIZk2ZCQoLn+yduabPF7+9vauW0AhE0vRb7bYb03JiW6SlmokxkvtAUkGSIYzjGJ/gsE1iJMlUUBYH4iS7L4qxt8bJRrEXMM128mepa5XjBzFYy+T4cvv5KBtDM6Jhbsd8HGrrQJFCjkHzmdOnnvu3dR/ZU3TtMrDfkclc7sr54gozOite3vaqqN17jPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RGo/qtI6DrVdCYOJbM1oovYF01KBW/lbe13pWeZjpQQ=;
- b=TnxhMdS9ePJmC9po6lv+GvFaIHuUgnJb+NqaBG8X1pSieUmBu+8moZfj6nyA82nIU5Trp/GYPaX/cbhfjfVqEkRFlPhDiVZZnXT2SRfCjfl7J/cBhojX8yCbeD8VGEM7lxqb5NcdT/pK4/kSX/IirC64s+JRoqj6L0xLmhN+MbK2i99qPfhgOXO4U0s0OacHdLeQBnrJzJSBijlKVyysTSH+ZDpRCA//WA3UnR8Q5PHIfsgSeBusW35tf2BJLgHhxqjQJVIKBffqg/Ydwhivfx3F5ZS9Jz0tx83uPNasSY7gcvAdKP472Rf14cIiWrNwzvRsYzrIHKUV8C0IPkNBVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=digi.com; dmarc=pass action=none header.from=digi.com;
- dkim=pass header.d=digi.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digi.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RGo/qtI6DrVdCYOJbM1oovYF01KBW/lbe13pWeZjpQQ=;
- b=E//XctzBi6x7xZ6aI5ggRzoEv8Jv6sXJCOpkQFdAHfokLPh+FPeTSxxcNrvKsILkQ9tbg1Lmf3SEUy7UtYIjvWpLz7KlzBOTn1RisCbh4N75sPU/VDe3zIXaU/4eKWkXL4pON71CuuKfDuUhoYPbELO565paUWQYxw4VhQkrLAUXBMq9nCBmiSZP0hPQcXc7y8zG/easd+E/vmAiiV7+XZC7L2t+S1ublViVv5xXkjXP57zd1C+yY7Wvgg0eL6N7isTGHPWNT4el0j+gYOdRy0YaWt6E5AturBKwZkznJLt96hVdYbWAlKeLtYy0+OSJhqs1RTmjiBgdDDN4Yq+WRQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=digi.com;
-Received: from DS0PR10MB6918.namprd10.prod.outlook.com (2603:10b6:8:136::8) by
- DS0PR10MB7432.namprd10.prod.outlook.com (2603:10b6:8:155::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7918.14; Tue, 27 Aug 2024 02:12:31 +0000
-Received: from DS0PR10MB6918.namprd10.prod.outlook.com
- ([fe80::3697:c0ef:caee:24ae]) by DS0PR10MB6918.namprd10.prod.outlook.com
- ([fe80::3697:c0ef:caee:24ae%5]) with mapi id 15.20.7918.006; Tue, 27 Aug 2024
- 02:12:31 +0000
-Date: Tue, 27 Aug 2024 12:12:24 +1000 (AEST)
-From: David Leonard <David.Leonard@digi.com>
-To: linux-arm-kernel@lists.infradead.org
-cc: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-    Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-    Pengutronix Kernel Team <kernel@pengutronix.de>, 
-    Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, 
-    linux-gpio@vger.kernel.org
-Subject: [PATCH 4/6] pinctrl: ls1046a: Add pinctrl driver support
-Message-ID: <c0ecf4f4-94f1-2efd-b05b-fc117c62e516@digi.com>
-Organization: Opengear Digi
-Content-Type: text/plain; format=flowed; charset=US-ASCII
-X-ClientProxiedBy: SY6PR01CA0015.ausprd01.prod.outlook.com
- (2603:10c6:10:e8::20) To DS0PR10MB6918.namprd10.prod.outlook.com
- (2603:10b6:8:136::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88464B666
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 02:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724724754; cv=none; b=jN4l1FFZLAGNAIHdrAQBQXwMKwe8/WHqFTYSAVN4YPhsVtQsMtxsaeKgyJTAG8fxPS2Er/hCRFbovljsMSucQsdCkHBFiRNYhY6QYnCpjAUB74tSEVR7WRnWj341YH+eoi5mX+fF1fZgrhS9gn6m0G2pBFw30RLvmeAFwbb9yPk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724724754; c=relaxed/simple;
+	bh=PBJlMclewKlsCt+IGH4PPg3fGtUcOp+uJR/vZ1jx69I=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YTaLY1gRsQHv6XKLsqrUrNfwHDjS+MKu93P/q9Ut7hgKNesicK27MRd1fBptAeMylSs5NMveIZ3OCw0MECfUqNgF1sdFrADJc0SFyKHFyoS3Oy3+KJ2yztABDJb2e5QEP0569LqQb1hdCqwFGqSvJECTsHuRq/eBlv2DPES6qO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39d4c745e31so64290005ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:12:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724724751; x=1725329551;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K9h+fqkMkBoiRVkgbbFxpZ3SzgfLCLTAdbi9tiyS+Zs=;
+        b=HpqRuoFDsk856OopUIRZdORjWUJJ9yl8PiIoOdMvC5I9IkslZnS9GfwWOyfMJTGZLU
+         2yJnml8+Yv7AC4zY9zPDZ+fCjorIj6ctjbijGn7jwTCuzRJuT/YGgU1LeCBGpJxbgqwk
+         c1SnON9UEtZB5SsxB8u2viJj6plqPIpvur0fUfYgcqNUJeFDf8VuUhvXJujWJZ7hQ2MU
+         VYhsIEzxie0YbkDyKjtkvGk1gMMdpeWgSVGmQf18+lMwUjHQEvvPVJQSZhVbZZ+A9KhP
+         RKlqRlqws/d0/YrlAcAP9cBd8HYSVVWMLpjMiEVo8+3zvHYc498elpmsnR7gL+EbctkX
+         rXQQ==
+X-Gm-Message-State: AOJu0YwOxFs+5iqHU1FHH6pRjHEsuJivza4MkKtMUY6l5tHAhImQmhXN
+	3A7gJXXUz8CRn5+WQexZZheQU2zqb74EIvdinZayO+onjuaHUKBIiLQwlqXxMfwReM21l91tuTI
+	sgAJJ8iD7v5d9eMvdVIRahYyQYY0EndgRtXtzVGPkJplD5CCfOFhPW+Y=
+X-Google-Smtp-Source: AGHT+IHjy344hgBY1WzvoMnnho/QcOMBnSH/Y+IgJHyt8vGmPIdid+1D0GSkNrEltpSWSRyz+PXqN/p0qHwhc5EfVr7Mo9h67yhZ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR10MB6918:EE_|DS0PR10MB7432:EE_
-X-MS-Office365-Filtering-Correlation-Id: d71f2753-6bab-4b0b-6976-08dcc63db53f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Ux6HC1v/RtsNgg0ezk+QnXo55qhnfN4aUFxp10OXaShM7b2Jrls8wBiE9+22?=
- =?us-ascii?Q?DJlTj6uUf45rpAVIgL3OFahzRXQO7YDLsJD+dp1V0WRyOGVFCh3danmYEGWl?=
- =?us-ascii?Q?uhJeYZW7jUxoT34Do98fCAjatUT+qwiWU069iRwR0nUYlRELp+Qr6AfKLBaw?=
- =?us-ascii?Q?x0UTXpg7qGoX8X8LQQ0tygoJ07NxJsnLGnhsUzSYgCtedkD4COouJrb7KfCY?=
- =?us-ascii?Q?6DEV0po+e9wIflv64XUx/YnhMpOhFR7iPhie/SnwJ+s710NR9Q+lPDFV4tWX?=
- =?us-ascii?Q?fYvohLeVGqiFSPDxNW1R6zZRCcu4ewrVJlOT2CmYb/yJZzv66IiVYprfbyWq?=
- =?us-ascii?Q?6LDLqN56gEYHWR5Ka5tHVaLz5uL9PiQv/0u8TkPY9RCDZSg0NhTJoqF0y+kV?=
- =?us-ascii?Q?ZazZfBNfR6m/IphlM7Y5a3h69Q/jPd1OwPHJcpkkmZn4p9kHSCdpo9nYNa2T?=
- =?us-ascii?Q?qLQoPaat9pElwczQ8jyP0Wp5PukKKi7P6Tg63hCb74YlVJeMCRMmT+uByTAK?=
- =?us-ascii?Q?4mqkhqOJPJA170CGxlRbwv97HodhBsmLkBZIUxONyTHIF6q7XqmgfSyAfaPN?=
- =?us-ascii?Q?JuHW8q1BsUdNHkRi+1OfvfT81mxmf2XJkUIZeHKg3comwQj3FAz9OVWmPSRf?=
- =?us-ascii?Q?RZ7RMByNcVAg2hvgjQGL5w5nj7JSRnNYxwGEYTHcV96rYMBekkbbvWAFPfbP?=
- =?us-ascii?Q?JLoKIHv3Rz8/JS3dTnpFeaUPkv5LJNzHV8b4MKLujppx/9TzrO/sK1Rzm9cQ?=
- =?us-ascii?Q?nCtvJTwmRvyaM6E8fQVFLCzBIeRVGK+LCROrYyzlY92Vda7TVLbwYeXDlmcZ?=
- =?us-ascii?Q?SXNgc8NcIZuLXJB2yzv4t8fCy4nmNUixpMJf6AOIZleXw2/AVCSs6DXIk9Cn?=
- =?us-ascii?Q?MW1WHR80D81uZy77SUg1xNDtKvEfWp7qCwoRe/Ouc8SVbRexqYw4yXK6JRXS?=
- =?us-ascii?Q?WB2d+yR+oX8kRSbd/NkPuQOWUdG+2eNLagZgd9x9dD+dRN7w0OCCfe4SitdA?=
- =?us-ascii?Q?sFepDJZDCvHr5ZkhH7RMLLqc2/FOIQps2QLAGj9+J9sebNZHYHajMYK/iAwz?=
- =?us-ascii?Q?RCtS29KBAArskC2K2OgFKh3HvgC9HhHOHiV+NMxttAVl0bD47eV/RA+wOdVt?=
- =?us-ascii?Q?zc3Ffcb5HOG1x2mTlOeoMbbLfbyivVpqS7g3YsbXE+YFxcCRsWX8M0YXVX0m?=
- =?us-ascii?Q?LfQz5+tSbySYdS1Dp0N2qsnDsx47Bgnf4Z+if5QBRfxfhvizF3u0PYsRXTW0?=
- =?us-ascii?Q?Oq38G1254Kt51iALL74+heboAPfxQSK6d8SwsWuMfd4YyucphjT5gSDXi/6S?=
- =?us-ascii?Q?9F82atNPySJchYPfyyU0iL5HE6R5dXq78NqAb/by3OaPUQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB6918.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?0gqkuPkeWoge1Ti8gR7Fly/ID+VnZUPQHcrocmSBeRPD5LWYFlPrWp5UIwrE?=
- =?us-ascii?Q?vlOs68+9E2ECFsbRyRqT2tMLIuoDbEOjy8Kkfsak+RrSLFvYtJBgMEW2U9mp?=
- =?us-ascii?Q?e26z1vr/qM2d9OjFduaLz+0m58tolE+qbDVMlAgDdww+3C+sXCz+nFHRwqxb?=
- =?us-ascii?Q?rh2JUJ3uXLgALk74xJMp3brNEXjVcM1FQ0nFZYAlyUp4PJ7/VflHaxyHPN2/?=
- =?us-ascii?Q?LsKBUez/d1LwAoRkzGrvSbrvtpr3y9lo3GzVgFbGtL2nNEc4Es15p9vI9K/4?=
- =?us-ascii?Q?ZVW7fIjg4bpkGL+JnTOJnbyIOhiqYtlclb9kkXKlSJ2stAlqCtoa9ccXOPr1?=
- =?us-ascii?Q?xcHbaMhgnzyTkC0aWUQnUnjlh5lxXrUZIGJPxSBaPcE/6qDr5RWZT8o8QQc3?=
- =?us-ascii?Q?hQ1yOp8WNRUjNNMABce1Vs1RxF90vZF7YJ57JtWGXGFertySZnBYaYaHe3cV?=
- =?us-ascii?Q?+7Ou1KESiKfft/jOhrPBwEkpeQBB6vlvwh4WbySC8fdQ2bQ+AHyZICzMLPCa?=
- =?us-ascii?Q?THyM4PsGUCFfYclcaGVVfRNVkcOS8zwA9vpra9zLfznRqgNeZkHypdexfwzm?=
- =?us-ascii?Q?TTD53CiKP87bfA0E7NukZa87TcwhqHOqrRMORcBs/454dKYWRorPz07jp8hr?=
- =?us-ascii?Q?G0JFlGHXs3aCJrRWk+VjM/IMIu/hk9HwhU1NcpIK9WJDn/v1FKJSRF8w+VDk?=
- =?us-ascii?Q?q98EKkO13W2LLzxsURG4kuNOnvVFHOGuQl72ebhqafoAt9SoiLZzpcPr0j42?=
- =?us-ascii?Q?VtfnUNbhix1kZFbyTx2cz0NWSZXSMdniAYl3WOkngrrhw2cjGbPPesburr2R?=
- =?us-ascii?Q?7ixbTkTSoUZbDPsiViUfBLoERci8fd9qG9avvSdShHNbIvNTuMtGPRidh98t?=
- =?us-ascii?Q?7SRw1yAbFPiJmOC9aM3sG836FRPH04OE+qQeqI+S1H97gCDKWwchrSGZwBZ8?=
- =?us-ascii?Q?vLPsDLd/xTv6QPwWGMP2dvrJ6JJ9kE7wEpeDJbXicIFGNnO9KxVpda5OHbeu?=
- =?us-ascii?Q?KGxekIQ+JYuhv4wSJmLEovrbOIiEsOyG7SEqa3YkH57u+L37XtH9Nkz70HkI?=
- =?us-ascii?Q?D5ExD6xO9RucnoyBlfdw3AeqH2kXuOUMYn9ZdVYp6Vgw3KFgZQTNL0JO2drO?=
- =?us-ascii?Q?OMaxhf7wFmlBoo6zPr8p3UiWseupZLIpzRAsdmN3mFdKU0i5od+LJbOJ6Sl/?=
- =?us-ascii?Q?Wo/s+1BGRphUpnJH2l7AbE0Z15n2JvWLPwq7/iofqLXvXVhUuK+R0fLdYYGo?=
- =?us-ascii?Q?J293St3MOxm5yTPLm+qLog0En2bDjD/2e2UEZHgGlVKLtmFwWVN8dX/agAI1?=
- =?us-ascii?Q?Q+wv/O2cxN+E/7CjgiadM1XVz9CPRH1JpNN+p6dB3Ecj6UnKK6FwoUmTsBR2?=
- =?us-ascii?Q?WmJZHpHLqatrDkGrdQezRL6LdJS8vmwgYmoV09M08HJkP3Rr+UG3BIwALF7j?=
- =?us-ascii?Q?yr8Ydcox8ZphXINX6cZUSwUm4ospdjblxYxR+qTJH1JqEy+Mt7aR3IGrnbTn?=
- =?us-ascii?Q?5SUcMJoIfKNQFx2CyGyX9ovzPUVhVmaiofY1Df4Bv/hjqPHGB22EllpRaVW/?=
- =?us-ascii?Q?cPDdPHcZKZivvJGaEcsCIXKskHMtnhbXdtzQ2FjIMqOP4vGiJdbJZU03SKH+?=
- =?us-ascii?Q?iAYBH+ZjhVCCypCOOmo37r9ynWIaA48MMRgYpEtvNKFJ?=
-X-OriginatorOrg: digi.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d71f2753-6bab-4b0b-6976-08dcc63db53f
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB6918.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 02:12:31.6856
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: abb4cdb7-1b7e-483e-a143-7ebfd1184b9e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: d7pMQIk0d/kkIht9HyKRMvdAfPaW0Dvf4/DUs8moft2RDy5V2hGloKZszqxbDtd/CDfK1mZiaDb1f6wla26C+A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7432
-X-BESS-ID: 1724725720-104217-29947-20966-1
-X-BESS-VER: 2019.1_20240823.2008
-X-BESS-Apparent-Source-IP: 104.47.66.43
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVhYmhgZAVgZQ0NDYxMTCODXRxD
-	DFyDzJ2DLZItnA2CDZ3MjE3DjVNM1cqTYWAB6AWgRBAAAA
-X-BESS-Outbound-Spam-Score: 0.50
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.258621 [from 
-	cloudscan16-59.us-east-2b.ess.aws.cudaops.com]
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------
-	0.50 BSF_RULE7568M          META: Custom Rule 7568M 
-	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS112744 scores of KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status:1
+X-Received: by 2002:a05:6638:3594:b0:4c2:8e08:f588 with SMTP id
+ 8926c6da1cb9f-4ceb51a1a3cmr81984173.2.1724724751525; Mon, 26 Aug 2024
+ 19:12:31 -0700 (PDT)
+Date: Mon, 26 Aug 2024 19:12:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002680930620a0c6b9@google.com>
+Subject: [syzbot] [sound?] WARNING in snd_pcm_open
+From: syzbot <syzbot+d2b696e5cb7a92fee831@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, perex@perex.cz, 
+	syzkaller-bugs@googlegroups.com, tiwai@suse.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    6a7917c89f21 Add linux-next specific files for 20240822
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11a72e09980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=897bd7c53a10fcfc
+dashboard link: https://syzkaller.appspot.com/bug?extid=d2b696e5cb7a92fee831
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/47820545bc51/disk-6a7917c8.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e300f3a38860/vmlinux-6a7917c8.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9146afef58aa/bzImage-6a7917c8.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d2b696e5cb7a92fee831@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+do not call blocking ops when !TASK_RUNNING; state=1 set at [<ffffffff89468b6f>] snd_pcm_open+0x2ff/0x7a0 sound/core/pcm_native.c:2860
+WARNING: CPU: 1 PID: 5346 at kernel/sched/core.c:8556 __might_sleep+0xb9/0xe0 kernel/sched/core.c:8552
+Modules linked in:
+CPU: 1 UID: 0 PID: 5346 Comm: syz.4.9 Not tainted 6.11.0-rc4-next-20240822-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:__might_sleep+0xb9/0xe0 kernel/sched/core.c:8552
+Code: a1 0e 01 90 42 80 3c 23 00 74 08 48 89 ef e8 ce e6 97 00 48 8b 4d 00 48 c7 c7 c0 60 0a 8c 44 89 ee 48 89 ca e8 f8 02 f1 ff 90 <0f> 0b 90 90 eb b5 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 70 ff ff ff
+RSP: 0018:ffffc90004457408 EFLAGS: 00010246
+RAX: 0dea8fe797fdb300 RBX: 1ffff11002cf16ac RCX: 0000000000040000
+RDX: ffffc90009dd9000 RSI: 00000000000085c7 RDI: 00000000000085c8
+RBP: ffff88801678b560 R08: ffffffff8155a632 R09: fffffbfff1cfa364
+R10: dffffc0000000000 R11: fffffbfff1cfa364 R12: dffffc0000000000
+R13: 0000000000000001 R14: 0000000000000249 R15: ffffffff8c0ab880
+FS:  00007fa51e6226c0(0000) GS:ffff8880b9100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b32715ff8 CR3: 00000000771dc000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+ __mutex_lock+0xc1/0xd70 kernel/locking/mutex.c:752
+ snd_pcm_open+0x34b/0x7a0 sound/core/pcm_native.c:2863
+ snd_pcm_playback_open+0x6e/0xe0 sound/core/pcm_native.c:2810
+ chrdev_open+0x523/0x600 fs/char_dev.c:414
+ do_dentry_open+0x928/0x13f0 fs/open.c:959
+ vfs_open+0x3e/0x330 fs/open.c:1089
+ do_open fs/namei.c:3774 [inline]
+ path_openat+0x2c87/0x3590 fs/namei.c:3933
+ do_filp_open+0x235/0x490 fs/namei.c:3960
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1416
+ do_sys_open fs/open.c:1431 [inline]
+ __do_sys_openat fs/open.c:1447 [inline]
+ __se_sys_openat fs/open.c:1442 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1442
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa51d778810
+Code: 48 89 44 24 20 75 93 44 89 54 24 0c e8 19 8f 02 00 44 8b 54 24 0c 89 da 48 89 ee 41 89 c0 bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 77 38 44 89 c7 89 44 24 0c e8 6c 8f 02 00 8b 44
+RSP: 002b:00007fa51e621b70 EFLAGS: 00000293 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fa51d778810
+RDX: 0000000000000000 RSI: 00007fa51e621c10 RDI: 00000000ffffff9c
+RBP: 00007fa51e621c10 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fa51d915f80 R15: 00007ffc16ca31f8
+ </TASK>
 
 
-Add QorIQ LS1046A pinctrl driver allowing i2c-core to exert
-GPIO control over the third and fourth I2C buses.
-
-Signed-off-by: David Leonard <David.Leonard@digi.com>
 ---
-  drivers/pinctrl/freescale/Kconfig           |   8 +
-  drivers/pinctrl/freescale/Makefile          |   1 +
-  drivers/pinctrl/freescale/pinctrl-ls1046a.c | 224 ++++++++++++++++++++
-  3 files changed, 233 insertions(+)
-  create mode 100644 drivers/pinctrl/freescale/pinctrl-ls1046a.c
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
-index a2038042eeae..2641db6c64c7 100644
---- a/drivers/pinctrl/freescale/Kconfig
-+++ b/drivers/pinctrl/freescale/Kconfig
-@@ -217,6 +217,14 @@ config PINCTRL_LS1012A
-  	help
-  	  Say Y here to enable the ls1012a pinctrl driver
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-+config PINCTRL_LS1046A
-+	tristate "LS1046A pinctrl driver"
-+	depends on ARCH_LAYERSCAPE && OF || COMPILE_TEST
-+	select PINMUX
-+	select GENERIC_PINCONF
-+	help
-+	  Say Y here to enable the ls1046a pinctrl driver
-+
-  config PINCTRL_VF610
-  	bool "Freescale Vybrid VF610 pinctrl driver"
-  	depends on SOC_VF610
-diff --git a/drivers/pinctrl/freescale/Makefile b/drivers/pinctrl/freescale/Makefile
-index 6926529d8635..66fec747af73 100644
---- a/drivers/pinctrl/freescale/Makefile
-+++ b/drivers/pinctrl/freescale/Makefile
-@@ -36,3 +36,4 @@ obj-$(CONFIG_PINCTRL_IMX28)	+= pinctrl-imx28.o
-  obj-$(CONFIG_PINCTRL_IMXRT1050)	+= pinctrl-imxrt1050.o
-  obj-$(CONFIG_PINCTRL_IMXRT1170)	+= pinctrl-imxrt1170.o
-  obj-$(CONFIG_PINCTRL_LS1012A)	+= pinctrl-ls1012a.o
-+obj-$(CONFIG_PINCTRL_LS1046A)	+= pinctrl-ls1046a.o
-diff --git a/drivers/pinctrl/freescale/pinctrl-ls1046a.c b/drivers/pinctrl/freescale/pinctrl-ls1046a.c
-new file mode 100644
-index 000000000000..9f5ec31f1e05
---- /dev/null
-+++ b/drivers/pinctrl/freescale/pinctrl-ls1046a.c
-@@ -0,0 +1,224 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
-+/*
-+ * Pin controller for NXP QorIQ LS1046A.
-+ *
-+ * Copyright (c) 2024 Digi International, Inc.
-+ * Author: David Leonard <David.Leonard@digi.com>
-+ */
-+#include <linux/module.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/pinctrl/pinmux.h>
-+#include <linux/pinctrl/pinconf-generic.h>
-+#include <linux/of.h>
-+#include <linux/io.h>
-+#include <linux/platform_device.h>
-+#include <linux/sys_soc.h>
-+
-+struct ls1046a_pinctrl_pdata {
-+	struct pinctrl_dev *pctl_dev;
-+	void __iomem *cr0mem;
-+	bool big_endian;
-+	u32 ssc;
-+};
-+
-+/*
-+ *       L4           M4            M3           N3
-+ *  i2c  IIC3_SCL     IIC3_SDA      IIC4_SCL     IIC4_SDA
-+ *  gpio GPIO_4[10]   GPIO_4[11]    GPIO_4[12]   GPIO_4[13]
-+ *  evt  EVT_B[5]     EVT_B[6]      EVT_B[7]     EVT_B[8]
-+ *  usb  USB2_DRVVBUS USB2_PWRFAULT USB3_DRVVBUS USB3_PWRFAULT
-+ *  ftm  FTM8_CH0     FTM8_CH1      FTM3_FAULT   FTM_EXT3CLK
-+ */
-+
-+/* SCFG_RCWPMUXCR0 pinmux control register */
-+#define SCFG_RCWPMUXCR0			0x0157040c
-+#define RCWPMUXCR0_FIELD(shift, func)	((u32)(func) << (29 - (shift)))
-+#define RCWPMUXCR0_MASK(shift)		RCWPMUXCR0_FIELD(shift, RCWPMUXCR0_FUNC_MASK)
-+#define RCWPMUXCR0_IIC3_SCL_SHIFT	17
-+#define RCWPMUXCR0_IIC3_SDA_SHIFT	21
-+#define RCWPMUXCR0_IIC4_SCL_SHIFT	25
-+#define RCWPMUXCR0_IIC4_SDA_SHIFT	29
-+#define RCWPMUXCR0_FUNC_I2C		0
-+#define RCWPMUXCR0_FUNC_GPIO		1
-+#define RCWPMUXCR0_FUNC_EVT		2
-+#define RCWPMUXCR0_FUNC_USB		3
-+#define RCWPMUXCR0_FUNC_FTM		5
-+#define RCWPMUXCR0_FUNC_CLK		6
-+#define RCWPMUXCR0_FUNC_MASK		7
-+
-+#define PIN_L4 0 /* IIC3_SCL/GPIO_4[10]/EVT_B[5]/USB2_DRVVBUS/FTM8_CH0 */
-+#define PIN_M4 1 /* IIC3_SDA/GPIO_4[11]/EVT_B[6]/USB2_PWRFAULT/FTM8_CH1 */
-+#define PIN_M3 2 /* IIC4_SCL/GPIO_4[12]/EVT_B[7]/USB3_DRVVBUS/FTM3_FAULT */
-+#define PIN_N3 3 /* IIC4_SDA/GPIO_4[13]/EVT_B[8]/USB3_PWRFAULT/FTM_EXT3CLK */
-+
-+const struct pinctrl_pin_desc ls1046a_pins[] = {
-+	PINCTRL_PIN(PIN_L4, "L4"),
-+	PINCTRL_PIN(PIN_M4, "M4"),
-+	PINCTRL_PIN(PIN_M3, "M3"),
-+	PINCTRL_PIN(PIN_N3, "N3"),
-+};
-+
-+/* Each pin is its own group */
-+static const char * const ls1046a_groups[] = { "L4", "M4", "M3", "N3" };
-+
-+static int ls1046a_get_groups_count(struct pinctrl_dev *pcdev)
-+{
-+	return ARRAY_SIZE(ls1046a_pins);
-+}
-+
-+static const char *ls1046a_get_group_name(struct pinctrl_dev *pcdev,
-+	unsigned int selector)
-+{
-+	return ls1046a_pins[selector].name;
-+}
-+
-+static int ls1046a_get_group_pins(struct pinctrl_dev *pcdev,
-+	unsigned int selector, const unsigned int **pins, unsigned int *npins)
-+{
-+	*pins = &ls1046a_pins[selector].number;
-+	*npins = 1;
-+	return 0;
-+}
-+
-+static const struct pinctrl_ops ls1046a_pinctrl_ops = {
-+	.get_groups_count = ls1046a_get_groups_count,
-+	.get_group_name = ls1046a_get_group_name,
-+	.get_group_pins = ls1046a_get_group_pins,
-+	.dt_node_to_map = pinconf_generic_dt_node_to_map_group,
-+	.dt_free_map = pinconf_generic_dt_free_map,
-+};
-+
-+/* Every pin has the same set of functions */
-+#define FUNC_i2c	0
-+#define FUNC_gpio	1
-+#define FUNC_evt	2
-+#define FUNC_usb	3
-+#define FUNC_ftm	4
-+
-+#define _PINFUNC(name) \
-+	[FUNC_##name] = PINCTRL_PINFUNCTION(#name, ls1046a_groups, ARRAY_SIZE(ls1046a_groups))
-+static const struct pinfunction ls1046a_functions[] = {
-+	_PINFUNC(i2c),
-+	_PINFUNC(gpio),
-+	_PINFUNC(evt),
-+	_PINFUNC(usb),
-+	_PINFUNC(ftm),
-+};
-+
-+static int ls1046a_get_functions_count(struct pinctrl_dev *pctldev)
-+{
-+	return ARRAY_SIZE(ls1046a_functions);
-+}
-+
-+static const char *ls1046a_get_function_name(struct pinctrl_dev *pctldev, unsigned int func)
-+{
-+	return ls1046a_functions[func].name;
-+}
-+
-+static int ls1046a_get_function_groups(struct pinctrl_dev *pctldev, unsigned int func,
-+	const char * const **groups,
-+	unsigned int * const ngroups)
-+{
-+	*groups = ls1046a_functions[func].groups;
-+	*ngroups = ls1046a_functions[func].ngroups;
-+	return 0;
-+}
-+
-+static int ls1046a_set_mux(struct pinctrl_dev *pcdev,
-+	unsigned int func, unsigned int pin)
-+{
-+	struct ls1046a_pinctrl_pdata *pd = pinctrl_dev_get_drvdata(pcdev);
-+	static const u32 cr0_reg_func[] = {
-+		[FUNC_i2c] = RCWPMUXCR0_FUNC_I2C,
-+		[FUNC_gpio] = RCWPMUXCR0_FUNC_GPIO,
-+		[FUNC_evt] = RCWPMUXCR0_FUNC_EVT,
-+		[FUNC_usb] = RCWPMUXCR0_FUNC_USB,
-+		[FUNC_ftm] = RCWPMUXCR0_FUNC_FTM,
-+	};
-+	static const unsigned int cr0_pin_shift[] = {
-+		[PIN_L4] = RCWPMUXCR0_IIC3_SCL_SHIFT,
-+		[PIN_M4] = RCWPMUXCR0_IIC3_SDA_SHIFT,
-+		[PIN_M3] = RCWPMUXCR0_IIC4_SCL_SHIFT,
-+		[PIN_N3] = RCWPMUXCR0_IIC4_SDA_SHIFT,
-+	};
-+	u32 cr0;
-+
-+	if (pd->big_endian)
-+		cr0 = ioread32be(pd->cr0mem);
-+	else
-+		cr0 = ioread32(pd->cr0mem);
-+
-+	unsigned int pin_shift = cr0_pin_shift[pin];
-+	u32 reg_func = cr0_reg_func[func];
-+	u32 newcr0 = (cr0 & ~RCWPMUXCR0_MASK(pin_shift)) |
-+		RCWPMUXCR0_FIELD(pin_shift, reg_func);
-+
-+	if (pd->big_endian)
-+		iowrite32be(newcr0, pd->cr0mem);
-+	else
-+		iowrite32(newcr0, pd->cr0mem);
-+	return 0;
-+}
-+
-+static const struct pinmux_ops ls1046a_pinmux_ops = {
-+	.get_functions_count = ls1046a_get_functions_count,
-+	.get_function_name = ls1046a_get_function_name,
-+	.get_function_groups = ls1046a_get_function_groups,
-+	.set_mux = ls1046a_set_mux,
-+};
-+
-+static const struct pinctrl_desc ls1046a_pinctrl_desc = {
-+	.name = "ls1046a",
-+	.pins = ls1046a_pins,
-+	.npins = ARRAY_SIZE(ls1046a_pins),
-+	.pctlops = &ls1046a_pinctrl_ops,
-+	.pmxops = &ls1046a_pinmux_ops,
-+	.owner = THIS_MODULE,
-+};
-+
-+static int ls1046a_pinctrl_probe(struct platform_device *pdev)
-+{
-+	struct ls1046a_pinctrl_pdata *pd;
-+	int ret;
-+
-+	pd = devm_kzalloc(&pdev->dev, sizeof(*pd), GFP_KERNEL);
-+	if (!pd)
-+		return -ENOMEM;
-+	platform_set_drvdata(pdev, pd);
-+
-+	pd->big_endian = device_is_big_endian(&pdev->dev);
-+
-+	/* SCFG PMUX0 */
-+	pd->cr0mem = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(pd->cr0mem))
-+		return PTR_ERR(pd->cr0mem);
-+	dev_dbg(&pdev->dev, "scfg pmuxcr0 at %px %s", pd->cr0mem,
-+		pd->big_endian ? "be" : "le");
-+
-+	ret = devm_pinctrl_register_and_init(&pdev->dev, &ls1046a_pinctrl_desc,
-+		pd, &pd->pctl_dev);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret, "Failed pinctrl init\n");
-+
-+	pinctrl_enable(pd->pctl_dev);
-+	return ret;
-+}
-+
-+static const struct of_device_id ls1046a_pinctrl_match_table[] = {
-+	{ .compatible = "fsl,ls1046a-pinctrl" },
-+	{ /* sentinel */ }
-+};
-+
-+static struct platform_driver ls1046a_pinctrl_driver = {
-+	.driver = {
-+		.name = "ls1046a_pinctrl",
-+		.of_match_table = ls1046a_pinctrl_match_table,
-+	},
-+	.probe = ls1046a_pinctrl_probe,
-+};
-+
-+builtin_platform_driver(ls1046a_pinctrl_driver)
-+
-+MODULE_DESCRIPTION("LS1046A pinctrl driver");
-+MODULE_LICENSE("GPL");
--- 
-2.43.0
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
