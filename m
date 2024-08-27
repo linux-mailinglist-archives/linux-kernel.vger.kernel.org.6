@@ -1,112 +1,99 @@
-Return-Path: <linux-kernel+bounces-303564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA199960E3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:46:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58D6B960E50
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 190E31C22FC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:46:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB1E3B23E6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03BA01C57BD;
-	Tue, 27 Aug 2024 14:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DB61C6F64;
+	Tue, 27 Aug 2024 14:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EmIBigeC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JK56yt0p"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2851C6F5B
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 14:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725581C68A5
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 14:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724769979; cv=none; b=NfIHfeImr6FZvrPKIl18r79Nef1K0SFZFMOyKijCkWN19tOFVCBPFakSch1ZPhIO/cHEGVfmf9pIcpYETevPv2kjhg7/8C9j5t1loqVnYnkoQxVKm+IHZC8+CFPv+fCg2X9Qj+0p+5TvYcIx/aITXA2uPSlEc2SumZozdVrPHh4=
+	t=1724770027; cv=none; b=JrEAWG0npR16SWMEv69S/vKY6lnaXbdOtQWOxpH2NXsRRnLdAbcQdAEpiNUgR/R4DqnQeLa3Sp6nnf8yY2RlqnkPQLj10Fl8O7VAMCANMNCHJ0WCkcqxtlQIFbEz81LxnAS1k9Z/ZDUPJkJS1gIytk+7uAawCMMnn4Mi5Rf1YU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724769979; c=relaxed/simple;
-	bh=Ut6wtB3afFPfnM8/3InMmzC+pymVz6Qun6OR7O+FXO4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LIwKEmtv0Tg26vHjWF09UIcEIXmqCq8VHPt7psDjXa+oenw/cbUISBpxNshHWzisnumhlLlBjLJAMpvKRv4hL6NZv92FRK9Gj0t+JdZE2KCobDzByAELcFHLuwcDnshBesLNEj2R5zsGFIize53c4LGbGPMzbn1fOYdL7xA7pqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EmIBigeC; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724769978; x=1756305978;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Ut6wtB3afFPfnM8/3InMmzC+pymVz6Qun6OR7O+FXO4=;
-  b=EmIBigeCccu6wt1wwA4ElvYesjD1jxDlLbXd6NyH/NSv0pdb6bvNHMDl
-   hlveaXlZLCtMCywOfHyc7bABRUWpaWG2h/Bgy06Grt8Rix9MQK5jLSlEk
-   8sGzzzkY29qQsFOZ6VTmmYgutYV+3b0LAMwQ83PYPP82Ao6AEh9kCzTXF
-   FOA/Qluo39BFC+Jr9SRPeKO4IJ0w1mZjXZFFMPT6eHchmeu0ekduw55Az
-   54AbZy6rkdFdnMHwiGQ+bf43g70hp6YKVxKUOmtvjU1fe6pARGYnOb8H5
-   ouoGItrAKS0B55SGnLl+dJvQCYNl0mNX12FR4PTo2glX+/eH3amZDlz4I
-   g==;
-X-CSE-ConnectionGUID: nmcs8aD/Q/qMLrU63pB4vg==
-X-CSE-MsgGUID: KiYLATPxTEmk+3M5krVUnw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="23426834"
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="23426834"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 07:46:17 -0700
-X-CSE-ConnectionGUID: xjyD17UBTlSLvMVxkClH5A==
-X-CSE-MsgGUID: Rk50y7ELQsmPzeLNWR4PcQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="62601951"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 07:46:15 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sixSW-00000002IYu-1g1K;
-	Tue, 27 Aug 2024 17:46:12 +0300
-Date: Tue, 27 Aug 2024 17:46:12 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/8] regulator: kerneldoc section fixes
-Message-ID: <Zs3mtN-vPnVtppY-@smile.fi.intel.com>
-References: <20240827095550.675018-1-wenst@chromium.org>
+	s=arc-20240116; t=1724770027; c=relaxed/simple;
+	bh=+AmonIJCykCJOo/Uu7OJvxf21efia77ZJrd62BC4QT4=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=WMMsrQNs6TGgGLzcxC69jXC4as/bh6LtVLRI5x5MIzZvGY/Du3nUAfpCSSVehsAMw/E+4O0vuJDQx/WXPIT/mMX3uhbI5ebd6N3mMHbxJEmmMhKLzjoocWDc85HrF2N2HXlzyG4+pEWav8j17SnX9Jh4HBFfcQJuala5h8LSHXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JK56yt0p; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724770025;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=aFd0/WLiPXvJiPqmeiXOS+H/ZKM/prGo2nSmnbwce94=;
+	b=JK56yt0p3JiSzJPUJmVYA+/5+pqCBul+lydx0rdlJ0MBXBxPa5zEevsrgaL5he3n1DqVvi
+	W6hNgYFxfIScI+06aTMM2LjQtEdv7GhIO5CtQqfqXKv5+qpicf+hpTkWe+mrFZXZOmK2No
+	c2xaalM2oOsDUZmr7XKC/J+KjyyhUPc=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-664-9rtXBTUGNpe2wr4MTBTVGQ-1; Tue,
+ 27 Aug 2024 10:47:01 -0400
+X-MC-Unique: 9rtXBTUGNpe2wr4MTBTVGQ-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 23F7C1955BF4;
+	Tue, 27 Aug 2024 14:46:59 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 61AAD19560AA;
+	Tue, 27 Aug 2024 14:46:56 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Jan Kara <jack@suse.cz>
+cc: dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+    Steve French <sfrench@samba.org>, netfs@lists.linux.dev,
+    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: The mapping->invalidate_lock, copy-offload and cifs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827095550.675018-1-wenst@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <774274.1724770015.1@warthog.procyon.org.uk>
+Date: Tue, 27 Aug 2024 15:46:55 +0100
+Message-ID: <774275.1724770015@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Tue, Aug 27, 2024 at 05:55:40PM +0800, Chen-Yu Tsai wrote:
-> Hi,
-> 
-> Here are a bunch of kerneldoc fixes for the regulator core. This sort of
-> came as a request from Andy to not move code that already had warnings
+Hi Jann,
 
-You can add Reported-by: or Suggested-by to the cover letter.
+I'm looking at trying to fix cifs_file_copychunk_range().  Currently, it
+invalidates the destination range, apart from a partial folio at either end
+which will be flushed, and then tries the copy.  But if the copy fails or can
+only be partially completed (eg. ENOSPC), we lose any data in the destination
+region, so I think it needs to be flushed and invalidated rather than just
+being invalidated.
 
-> without fixing said warnings. So here I'm fixing them first.
-> 
-> The bulk of the fixes are in the regulator core and OF code, but I also
-> fixed up a few bits in common code that were missing "Return" sections.
-> These are purely kerneldoc fixes and don't touch any actual code. I left
-> the devres code and helpers alone for now.
+Now, we have filemap_invalidate_inode() which I can use to flush back and
+invalidate the folios under the invalidate_lock (thereby avoiding the need for
+launder_folio).  However, that doesn't prevent mmap from reinstating the
+destination folios with modifications whilst the copy is ongoing the moment
+the invalidate_lock is dropped.
 
-Thanks for doing this!
+Question is: would it be reasonable to do the copy offload whilst holding the
+invalidate_lock for the duration?
 
-I briefly looked at them, the main two remarks are:
-1) definite vs. indefinite article;
-2) same and consistent term for negative error codes (or numbers if you
-prefer).
-
-Otherwise LGTM!
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Thanks,
+David
 
 
