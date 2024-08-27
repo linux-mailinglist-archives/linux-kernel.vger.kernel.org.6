@@ -1,99 +1,143 @@
-Return-Path: <linux-kernel+bounces-303221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30C75960933
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:45:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50B33960936
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:45:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E207C281968
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:44:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E61E280E67
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5C11A01B6;
-	Tue, 27 Aug 2024 11:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A96919F464;
+	Tue, 27 Aug 2024 11:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GqTMBOhi"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="R8RN5Eot"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F2A14D29C
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3E51A08A9;
+	Tue, 27 Aug 2024 11:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724759093; cv=none; b=RgAPSipTsJMnM8/IUl9tgVbYs+tsCkWoUwRgWP26XuupNqivWJ5zuhGW97iv3sSCxwQZIWugnGXquinTrL+fQdILEAzdu8MDkA+gQ0kSJyE+7ByK+AJOIem2TOc3nfI7EsKNiquVILnQ6NUAiU+bQ3cYBfB2aH1m9qTLB9IXvRk=
+	t=1724759107; cv=none; b=UC+bCDCiY/IZjgiAzpseU9ylt5dUHI15zGKdvTxXtwbQQ2IdYxAd2kNvhWDFhuUPp18z8HtSZ4HQZkbUbCPN+wLXVmTYE1VRuiOZ+K1a5itAU2E5lK+5jb4m+xKZ+IRCndE2zx1+nIrvMQtsGLUwJ+rGFf1Kh1o0q9mCOWk+ws4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724759093; c=relaxed/simple;
-	bh=n7Xj5++MWNgSYnIAidpGGlpS/TZdD1vc2hWY2mJoXP8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I+zS9fzdnCLWLSCSLsKSomB3JAITrbXH2N+tM356FiCANv7M2kVZPSTj+X1Qa5kKkKDjEUtyBWBSw4Y1dr/v8YLgoIPe0sqfAE0Bdx6P+uzSijO6vpbl6YfLCptUU6iGOjhHeoLMgiYneFrvuaAFV2YJ9KJyPnyahZ468Xqk50Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GqTMBOhi; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-714187df604so3676916b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 04:44:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1724759091; x=1725363891; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=n7Xj5++MWNgSYnIAidpGGlpS/TZdD1vc2hWY2mJoXP8=;
-        b=GqTMBOhi8gUCi07XDvVyq1t+Sb5fw1QQoG3qM0kNhN5utOF2E0Lbw4p2MqSRXfEUL6
-         21en988PmLP4Uud8sEWwN+s2bYXMRJYVJCmBpzRB5qsM7reyKWf0uf0kIqPIMG0jUbeX
-         De8ooSSxljSGXFVb7NDA4D5k4IQacA9vIOPus=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724759091; x=1725363891;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n7Xj5++MWNgSYnIAidpGGlpS/TZdD1vc2hWY2mJoXP8=;
-        b=Oyu2Td7lfBQfovHO4MDAByeuMq6uE7S1sy2ZNZCuSHlSl8OTsKKMk92Z2IZOakFKmp
-         9LbZbkwVUECSP6+ad52yfKwcavSTG1MyX2aPF+h3Th8jpuOS4lKBaw6niDdSRaLBOLDZ
-         E22lspfAB71XFkxvkMCyRiAUlOEyXdwwfxSkswCVqQJR14y6dPuDCOlFvIc0be2TFPc7
-         a7VkJnQ1CrqfahqpLft1SjinuX2HZC0wMCtKMlmSJo0fR3GUxUiwtaoGuEi6YgGnK7wO
-         +nbGjO+sJLU//vLmiwOoUCevUpUoEp92uv3+tH1jVNqKEueNIYz0rdWPttGsul8ZE7n+
-         biSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqxlnQ66pW843PNXMwRiUaFXAEz9EAHQ++EBcESMVg8IM0+ZqceNPQwRGPKMGYBbx88CktnYJ99cuwl7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx10ctET4wp6GBkil8N0URicPXp4JiKMQlwrhDpHsYAZmP2xWg3
-	EKhvs5Ka/HFuqMppgMbpz1Kr0aNAiT1dfGgNI98kFsKRhaNl2XLZwz2A6OYfzQ8=
-X-Google-Smtp-Source: AGHT+IFGHgObn0rmwkspma77Vaiafu7mw8ExvIVCJJsO624LuRH1IwRUh1C2LjsM+sDvPaBol7yS/w==
-X-Received: by 2002:a05:6a21:7795:b0:1c4:91f2:936a with SMTP id adf61e73a8af0-1ccc01fca1cmr3414259637.5.1724759091336;
-        Tue, 27 Aug 2024 04:44:51 -0700 (PDT)
-Received: from [192.168.121.153] ([218.49.71.194])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ac98286sm7933489a12.5.2024.08.27.04.44.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 04:44:50 -0700 (PDT)
-Message-ID: <714f8eb4-b226-48f6-ab0d-75bdfbf83364@linuxfoundation.org>
-Date: Tue, 27 Aug 2024 05:44:44 -0600
+	s=arc-20240116; t=1724759107; c=relaxed/simple;
+	bh=qQ5rnwHBebdoqbagT23hX6UofBKa8mmMdLPucmPVnks=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=c3Q2zCsjTv+ghr2Phcff1KlkXaJBrfCvamaS0DXXs4+4kgI/y1vgnNiyvyVwDA3Cmc938nUbOxEqC51XyAulEoL2ibwD0ASC4rxbK9k5+hdwheg7fvKsRDvdczTinjVbL4lf5GlOoz+hZdbENJImFHef0eoKOGLgGxm65JQUFr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=R8RN5Eot; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=xLXPfKWDxExyWqYh9vtXpPA+hwYuofc+hgQ3XeMgQEI=; b=R8RN5EotjK+Krdq8wnD52auW0j
+	zVu8/mHLkhcE3xaGIpM1UcXdL1qZEHnT/6q4HEPw/9lPNFT1pYIcJNkU6QLanbEgsRZAqz+57p8qM
+	O5iIxC67NNogtyNOu74OCzmRoBPvcqoNLrpp3aVMXmI+Z9uBem3zmeCyf7z19OmfivaCWxgSE1KGb
+	3Oke7WuMtYI4WG1jglXzaN+TUKSKJ/xzS7kX+F8RjNXs5Gp/qjSMOmd06vY4Ox28QL66toCcYxMKL
+	/kntGsR1sO4xOyaXzTaDE6zJ6aDafl4VLjUM3kfN7DDvvKZ8k09B6pYm2+MQ0gf45TonWZ5rVxH6l
+	vORb+vJg==;
+Received: from dynamic-176-006-142-117.176.6.pool.telefonica.de ([176.6.142.117] helo=[127.0.0.1])
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1siud9-0005QN-9R; Tue, 27 Aug 2024 13:44:59 +0200
+Date: Tue, 27 Aug 2024 13:44:58 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Jonas Karlman <jonas@kwiboo.se>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+CC: linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] dt-bindings: arm: rockchip: Add Hardkernel ODROID-M1S
+User-Agent: K-9 Mail for Android
+In-Reply-To: 1ec02fa5-4b11-424b-a595-c715b62d105e@kwiboo.se
+References: <20240826205538.1066103-1-jonas@kwiboo.se> <66ccebeb.d40a0220.356790.58caSMTPIN_ADDED_BROKEN@mx.google.com> <b69e5a0a-acf9-412c-90b4-ebe00c7e07d4@kernel.org> 1ec02fa5-4b11-424b-a595-c715b62d105e@kwiboo.se
+Message-ID: <99731A50-58FA-4829-9785-339051E791B2@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/2] selftests: Rename sigaltstack to generic signal
-To: Dev Jain <dev.jain@arm.com>, shuah@kernel.org, oleg@redhat.com
-Cc: mingo@kernel.org, tglx@linutronix.de, mark.rutland@arm.com,
- ryan.roberts@arm.com, broonie@kernel.org, suzuki.poulose@arm.com,
- Anshuman.Khandual@arm.com, DeepakKumar.Mishra@arm.com,
- aneesh.kumar@kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240822121415.3589190-1-dev.jain@arm.com>
- <20240822121415.3589190-2-dev.jain@arm.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240822121415.3589190-2-dev.jain@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 8/22/24 06:14, Dev Jain wrote:
-> Rename sigaltstack to generic signal directory, to allow adding more
-> signal tests in the future.
 
-Sorry - I think I mentioned I don't like this test renamed. Why are you sending
-this rename still included in the patch series?
 
-thanks,
--- Shuah
+Am 27=2E August 2024 13:29:34 MESZ schrieb Jonas Karlman <jonas@kwiboo=2Es=
+e>:
+>Hi Krzysztof,
+>
+>On 2024-08-27 08:52, Krzysztof Kozlowski wrote:
+>> On 26/08/2024 22:55, Jonas Karlman wrote:
+>>> The Hardkernel ODROID-M1S is a single-board computer based on Rockchip
+>>> RK3566 SoC=2E It features e=2Eg=2E 4/8 GB LPDDR4 RAM, 64 GB eMMC, SD-c=
+ard,
+>>> GbE LAN, HDMI 2=2E0, M=2E2 NVMe and USB 2=2E0/3=2E0=2E
+>>>
+>>> Add devicetree binding documentation for the Hardkernel ODROID-M1S boa=
+rd=2E
+>>>
+>>> Signed-off-by: Jonas Karlman <jonas@kwiboo=2Ese>
+>>> ---
+>>>  Documentation/devicetree/bindings/arm/rockchip=2Eyaml | 5 +++++
+>>>  1 file changed, 5 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/arm/rockchip=2Eyaml b/D=
+ocumentation/devicetree/bindings/arm/rockchip=2Eyaml
+>>> index f08e9f2f5dfc=2E=2E9e29a5ecc94d 100644
+>>> --- a/Documentation/devicetree/bindings/arm/rockchip=2Eyaml
+>>> +++ b/Documentation/devicetree/bindings/arm/rockchip=2Eyaml
+>>> @@ -598,6 +598,11 @@ properties:
+>>>            - const: hardkernel,rk3568-odroid-m1
+>>>            - const: rockchip,rk3568
+>>> =20
+>>> +      - description: Hardkernel Odroid M1S
+>>> +        items:
+>>> +          - const: hardkernel,rk3566-odroid-m1s
+>>=20
+>> hardkernel,odroid-m1s
+>>=20
+>> Why adding SoC name to the board? Can it be Odroid M1S with RK3568?
+>
+>No, the M1S (rk3566) is a variant of the M1 (rk3568) with less features
+>and the smaller SoC package, fully agree that hardkernel,odroid-m1s is
+>better, will use it in a v2=2E
+>
+>I mainly wanted to keep it consistent to other Hardkernel Odroid boards=
+=2E
+>- hardkernel,rk3326-odroid-go2
+>- hardkernel,rk3326-odroid-go2-v11
+>- hardkernel,rk3326-odroid-go3
+>- rockchip,rk3568-odroid-m1 (hardkernel,rk3568-odroid-m1)
+>
+>If you agree to a vendor prefix change of rockchip,rk3568-odroid-m1,
+>maybe we can also drop the soc name from that compatible at the same
+>time? E=2Eg=2E change it to hardkernel,odroid-m1=2E
+
+I'd also agree with going with compatibles without the soc name in it=2E I=
+t is an ABI break but I think except the chrome devices no other board actu=
+ally uses that part of the compatible ?
+
+
+>Regards,
+>Jonas
+>
+>>=20
+>>=20
+>> Best regards,
+>> Krzysztof
+>>=20
+>
+
+--=20
+Diese Nachricht wurde von meinem Android-Ger=C3=A4t mit K-9 Mail gesendet=
+=2E
 
