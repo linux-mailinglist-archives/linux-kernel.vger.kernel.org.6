@@ -1,388 +1,513 @@
-Return-Path: <linux-kernel+bounces-303320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6268D960AAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:40:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36CDE960AB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA008B23B4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:40:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1E142823E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE6E1BC9E3;
-	Tue, 27 Aug 2024 12:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Q4nVfgRA"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36EF31BC090;
+	Tue, 27 Aug 2024 12:41:37 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7824C1BAED5
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905381448C7;
+	Tue, 27 Aug 2024 12:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724762436; cv=none; b=L6+RYcLFfQ9d85jpUHnczh5Xj63S5ywOq1swKYiPcIqBkwUTaCJjgF1TvQcYc7a3kZk/7LJdleup6WZXZ7939BALdhTBOBjNHfVHi5jcEE4H0Q4J+YTso+5gdwkQo/fNabHM1I23Uv0cbhjBF+BHSC5pKuyRNNlIHel2+tTe7rk=
+	t=1724762496; cv=none; b=P7r82N6a9pMW/fjOGCGg5vVdKhBARn1j4/8J4fKnKlvPHppZfYNho4sLe0nGuYQyxyu/Bwan+OUSOgNG+uFEMiQ2qBgHsQnQtfifRTbaVtmWrwfdHsCNa20knBBxTSePr0ZKwECUcDF2jxZ6x4968rx5J1hEE2NDpk+Tet6kfmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724762436; c=relaxed/simple;
-	bh=/PsGYidPx6+ERZmAziEKQOOY4l7eHfRbQ5ZJvgTJFS0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FmhpWsJMiOs8CZQhAKYPAqKLStNoRQWYYPP2qDle1qMLxvEhLbRXVW1jh5qYgh4EgToTMcFRpgB8F9VQ1zcYFgzBh19nyOA+th2i6oOxQF9NSnMa8kvZzquFmsmkW65EIvPA1UJSKpbxfkUuvngNGVwYUEeKXbJnEeBE17xlQi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Q4nVfgRA; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8677ae5a35so518608866b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 05:40:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724762432; x=1725367232; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9zVOTmoRZ3AzmWugvFPF8grdlifA6e7LOITutJp+jd0=;
-        b=Q4nVfgRAzI55Zy4CWaZEH1tCNburNPMn/l0ptbE6nVoq8Gfwo8fUB4q0S8oWiXJNew
-         YYucGJNaw9MeM/ZlWaYFKVts+wQXhngvCGvIzn58Jsd5i+DkHEtUcd1EK1GCOugy9+JC
-         28WZLvs8RCWw7gMOz5z3QooxwE/7HTXTiN6ZZ7Vby57s3CSc2/HoHmyPEnY8xp97ly0e
-         vW/1X6nKPy6+dasu2fLULz5FK3aW+TyNJciUd1t1b22RsVoUErAYS8fBXatDlUQP+Bhj
-         9IRKVnN7AAwx2omv6j9tbv58TV/ul4c6uneKzTo1Rff6fKmqhJ4HjuMuAOBEuYK8S6nN
-         wh8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724762432; x=1725367232;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9zVOTmoRZ3AzmWugvFPF8grdlifA6e7LOITutJp+jd0=;
-        b=lUemcupTRZSvyU5zfS3wJuRocK1hiZHEtX4zQFFabZlihwJ8QUwJ1iJXrReB5i1SLx
-         UEb+W65lTowxvrTqoCs+MrFlLmIKf3jSK2ukV+WL3kQJEj+TeUrsLuN43gU+SBM6bzok
-         P02t1YnWSOx4smwbCTV2PUH9cSaTyOPEHePSM0BpjUQULkEHWLSHNkLXuKLi93Qprm4W
-         ov3jPsgO2Pn8H+Vb0/grS2OQmMu7aT9SywDdeqkozAtgaSKQ/1HMoELlQe8EHEuZM+zL
-         0c91JQFzBOjhCXqlId8zjT+bIi2YO9pCTL6WSNNeg0EDduV0NZU23O5bBtctnmohwN+Y
-         isOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWRXNIqjjW1HIsGsmEOaoR5fHTQVKztte5tNGWpy+q5WrZLCLtgge+2UKx1Fzpc7i73kcQiMs5XUJj7sq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxB3YCyBCy0mibXVekYDYFIzmXhRCFl6AbqFLewU9prR+6dI/rl
-	hZsYCkYMH2jnzr7a5K3ObPC/ZRgR/Y+w/oLqPvyN/088IEO6VbJdx8X0V4mbuko=
-X-Google-Smtp-Source: AGHT+IH6McW6hyGl6MR/gJhPXCODeA+z498UhPFdaJ7K9nt2nnEpjKiqvYziIFRATCpbd9fKRid2WA==
-X-Received: by 2002:a17:906:6a23:b0:a7a:8e98:890d with SMTP id a640c23a62f3a-a86e39c9e11mr232226966b.16.1724762431563;
-        Tue, 27 Aug 2024 05:40:31 -0700 (PDT)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e549cf94sm105628966b.80.2024.08.27.05.40.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 05:40:31 -0700 (PDT)
-Message-ID: <d63ddefe-a6f6-4a5b-9330-11438fca8f9f@suse.com>
-Date: Tue, 27 Aug 2024 14:40:30 +0200
+	s=arc-20240116; t=1724762496; c=relaxed/simple;
+	bh=XRCLVkwYU0jLODQYx+RhXkU2EuSxMJQ7MESg0/2mo0k=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=a90uw35/XhheMVwgFTkvy8JEwfOgXp8L/F/myWFPH1Fh0eIrCyC7j2ePqSV1SQ+ArUopt83yY8FdeDZukUiqkSs6ebPOuQCgcxpcYVAOtl1R9unD7bo605+dkK5psF6hTKaTkhrNO03oVTFvVHPK7HMXT6EGlBBsS/RSjBufD+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WtRsb6JvBz1HHZk;
+	Tue, 27 Aug 2024 20:38:11 +0800 (CST)
+Received: from kwepemm600005.china.huawei.com (unknown [7.193.23.191])
+	by mail.maildlp.com (Postfix) with ESMTPS id 92B4E1401F4;
+	Tue, 27 Aug 2024 20:41:30 +0800 (CST)
+Received: from [10.67.121.110] (10.67.121.110) by
+ kwepemm600005.china.huawei.com (7.193.23.191) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 27 Aug 2024 20:41:29 +0800
+Subject: Re: [PATCH v8 3/4] hisi_acc_vfio_pci: register debugfs for hisilicon
+ migration driver
+To: Alex Williamson <alex.williamson@redhat.com>
+CC: <jgg@nvidia.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<jonathan.cameron@huawei.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linuxarm@openeuler.org>
+References: <20240806122928.46187-1-liulongfang@huawei.com>
+ <20240806122928.46187-4-liulongfang@huawei.com>
+ <20240826150635.113aba4c.alex.williamson@redhat.com>
+From: liulongfang <liulongfang@huawei.com>
+Message-ID: <39e88dee-7e75-8a5e-2823-0bfc92406bfe@huawei.com>
+Date: Tue, 27 Aug 2024 20:41:29 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/19] gendwarfksyms: Add address matching
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
- Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>,
- Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
- Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-References: <20240815173903.4172139-21-samitolvanen@google.com>
- <20240815173903.4172139-24-samitolvanen@google.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20240815173903.4172139-24-samitolvanen@google.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20240826150635.113aba4c.alex.williamson@redhat.com>
+Content-Type: text/plain; charset="gbk"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemm600005.china.huawei.com (7.193.23.191)
 
-On 8/15/24 19:39, Sami Tolvanen wrote:
-> The compiler may choose not to emit type information in DWARF for all
-> aliases, but it's possible for each alias to be exported separately.
-> To ensure we find type information for the aliases as well, read
-> {section, address} tuples from the symbol table and match symbols also
-> by address.
+On 2024/8/27 5:06, Alex Williamson wrote:
+> On Tue, 6 Aug 2024 20:29:27 +0800
+> Longfang Liu <liulongfang@huawei.com> wrote:
 > 
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> ---
->  scripts/gendwarfksyms/gendwarfksyms.c |   2 +
->  scripts/gendwarfksyms/gendwarfksyms.h |   7 ++
->  scripts/gendwarfksyms/symbols.c       | 161 +++++++++++++++++++++++++-
->  3 files changed, 165 insertions(+), 5 deletions(-)
+>> On the debugfs framework of VFIO, if the CONFIG_VFIO_DEBUGFS macro is
+>> enabled, the debug function is registered for the live migration driver
+>> of the HiSilicon accelerator device.
+>>
+>> After registering the HiSilicon accelerator device on the debugfs
+>> framework of live migration of vfio, a directory file "hisi_acc"
+>> of debugfs is created, and then three debug function files are
+>> created in this directory:
+>>
+>>    vfio
+>>     |
+>>     +---<dev_name1>
+>>     |    +---migration
+>>     |        +--state
+>>     |        +--hisi_acc
+>>     |            +--dev_data
+>>     |            +--migf_data
+>>     |            +--cmd_state
+>>     |
+>>     +---<dev_name2>
+>>          +---migration
+>>              +--state
+>>              +--hisi_acc
+>>                  +--dev_data
+>>                  +--migf_data
+>>                  +--cmd_state
+>>
+>> dev_data file: read device data that needs to be migrated from the
+>> current device in real time
+>> migf_data file: read the migration data of the last live migration
+>> from the current driver.
+>> cmd_state: used to get the cmd channel state for the device.
+>>
+>> +----------------+        +--------------+       +---------------+
+>> | migration dev  |        |   src  dev   |       |   dst  dev    |
+>> +-------+--------+        +------+-------+       +-------+-------+
+>>         |                        |                       |
+>>         |                 +------v-------+       +-------v-------+
+>>         |                 |  saving_migf |       | resuming_migf |
+>>   read  |                 |     file     |       |     file      |
+>>         |                 +------+-------+       +-------+-------+
+>>         |                        |          copy         |
+>>         |                        +------------+----------+
+>>         |                                     |
+>> +-------v--------+                    +-------v--------+
+>> |   data buffer  |                    |   debug_migf   |
+>> +-------+--------+                    +-------+--------+
+>>         |                                     |
+>>    cat  |                                 cat |
+>> +-------v--------+                    +-------v--------+
+>> |   dev_data     |                    |   migf_data    |
+>> +----------------+                    +----------------+
+>>
+>> When accessing debugfs, user can obtain the most recent status data
+>> of the device through the "dev_data" file. It can read recent
+>> complete status data of the device. If the current device is being
+>> migrated, it will wait for it to complete.
+>> The data for the last completed migration function will be stored
+>> in debug_migf. Users can read it via "migf_data".
+>>
+>> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
+>> ---
+>>  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 209 ++++++++++++++++++
+>>  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.h    |   6 +
+>>  2 files changed, 215 insertions(+)
+>>
+>> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+>> index a8c53952d82e..379657904f86 100644
+>> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+>> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+>> @@ -627,15 +627,30 @@ static void hisi_acc_vf_disable_fd(struct hisi_acc_vf_migration_file *migf)
+>>  	mutex_unlock(&migf->lock);
+>>  }
+>>  
+>> +static void hisi_acc_debug_migf_copy(struct hisi_acc_vf_core_device *hisi_acc_vdev,
+>> +	struct hisi_acc_vf_migration_file *src_migf)
+>> +{
+>> +	struct hisi_acc_vf_migration_file *dst_migf = hisi_acc_vdev->debug_migf;
+>> +
+>> +	if (!dst_migf)
+>> +		return;
+>> +
+>> +	dst_migf->total_length = src_migf->total_length;
+>> +	memcpy(&dst_migf->vf_data, &src_migf->vf_data,
+>> +		sizeof(struct acc_vf_data));
+>> +}
+>> +
+>>  static void hisi_acc_vf_disable_fds(struct hisi_acc_vf_core_device *hisi_acc_vdev)
+>>  {
+>>  	if (hisi_acc_vdev->resuming_migf) {
+>> +		hisi_acc_debug_migf_copy(hisi_acc_vdev, hisi_acc_vdev->resuming_migf);
+>>  		hisi_acc_vf_disable_fd(hisi_acc_vdev->resuming_migf);
+>>  		fput(hisi_acc_vdev->resuming_migf->filp);
+>>  		hisi_acc_vdev->resuming_migf = NULL;
+>>  	}
+>>  
+>>  	if (hisi_acc_vdev->saving_migf) {
+>> +		hisi_acc_debug_migf_copy(hisi_acc_vdev, hisi_acc_vdev->saving_migf);
+>>  		hisi_acc_vf_disable_fd(hisi_acc_vdev->saving_migf);
+>>  		fput(hisi_acc_vdev->saving_migf->filp);
+>>  		hisi_acc_vdev->saving_migf = NULL;
+>> @@ -1294,6 +1309,191 @@ static long hisi_acc_vfio_pci_ioctl(struct vfio_device *core_vdev, unsigned int
+>>  	return vfio_pci_core_ioctl(core_vdev, cmd, arg);
+>>  }
+>>  
+>> +static int hisi_acc_vf_debug_check(struct seq_file *seq, struct vfio_device *vdev)
+>> +{
+>> +	struct hisi_acc_vf_core_device *hisi_acc_vdev = hisi_acc_get_vf_dev(vdev);
+>> +	struct hisi_qm *vf_qm = &hisi_acc_vdev->vf_qm;
+>> +	int ret;
+>> +
+>> +	lockdep_assert_held(&hisi_acc_vdev->state_mutex);
+>> +	if (!vdev->mig_ops) {
+>> +		seq_printf(seq, "%s\n", "device does not support live migration!\n");
+>> +		return -EINVAL;
+>> +	}
 > 
-> diff --git a/scripts/gendwarfksyms/gendwarfksyms.c b/scripts/gendwarfksyms/gendwarfksyms.c
-> index d209b237766b..e2f8ee5a4bf3 100644
-> --- a/scripts/gendwarfksyms/gendwarfksyms.c
-> +++ b/scripts/gendwarfksyms/gendwarfksyms.c
-> @@ -118,6 +118,8 @@ int main(int argc, const char **argv)
->  			return -1;
->  		}
->  
-> +		check(symbol_read_symtab(fd));
-> +
->  		dwfl = dwfl_begin(&callbacks);
->  		if (!dwfl) {
->  			error("dwfl_begin failed for '%s': %s", object_files[n],
-> diff --git a/scripts/gendwarfksyms/gendwarfksyms.h b/scripts/gendwarfksyms/gendwarfksyms.h
-> index 03f3e408a839..cb9106dfddb9 100644
-> --- a/scripts/gendwarfksyms/gendwarfksyms.h
-> +++ b/scripts/gendwarfksyms/gendwarfksyms.h
-> @@ -61,6 +61,10 @@ extern bool debug;
->  /*
->   * symbols.c
->   */
-> +struct symbol_addr {
-> +	uint32_t section;
-> +	Elf64_Addr address;
-> +};
->  
->  static inline u32 name_hash(const char *name)
->  {
-> @@ -69,10 +73,13 @@ static inline u32 name_hash(const char *name)
->  
->  struct symbol {
->  	const char *name;
-> +	struct symbol_addr addr;
-> +	struct hlist_node addr_hash;
->  	struct hlist_node name_hash;
->  };
->  
->  extern int symbol_read_exports(FILE *file);
-> +extern int symbol_read_symtab(int fd);
->  extern struct symbol *symbol_get(const char *name);
->  
->  /*
-> diff --git a/scripts/gendwarfksyms/symbols.c b/scripts/gendwarfksyms/symbols.c
-> index 673ad9cf9e77..f96acb941196 100644
-> --- a/scripts/gendwarfksyms/symbols.c
-> +++ b/scripts/gendwarfksyms/symbols.c
-> @@ -6,11 +6,43 @@
->  #include "gendwarfksyms.h"
->  
->  #define SYMBOL_HASH_BITS 15
-> +
-> +/* struct symbol_addr -> struct symbol */
-> +static DEFINE_HASHTABLE(symbol_addrs, SYMBOL_HASH_BITS);
-> +/* name -> struct symbol */
->  static DEFINE_HASHTABLE(symbol_names, SYMBOL_HASH_BITS);
->  
-> +static inline u32 symbol_addr_hash(const struct symbol_addr *addr)
-> +{
-> +	return jhash(addr, sizeof(struct symbol_addr), 0);
+> I don't think it's possible for this to be called with this condition,
+> the debugfs files are only registered when this exists.
+> 
+> Also, we don't need %s for a fixed string, nor do we need multiple new
+> lines.  Please fix throughout.
+> 
+>> +
+>> +	/*
+>> +	 * When the device is not opened, the io_base is not mapped.
+>> +	 * The driver cannot perform device read and write operations.
+>> +	 */
+>> +	if (!hisi_acc_vdev->dev_opened) {
+>> +		seq_printf(seq, "%s\n", "device not opened!\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	ret = qm_wait_dev_not_ready(vf_qm);
+>> +	if (ret) {
+>> +		seq_printf(seq, "%s\n", "VF device not ready!\n");
+>> +		return -EBUSY;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int hisi_acc_vf_debug_cmd(struct seq_file *seq, void *data)
+>> +{
+>> +	struct device *vf_dev = seq->private;
+>> +	struct vfio_pci_core_device *core_device = dev_get_drvdata(vf_dev);
+>> +	struct vfio_device *vdev = &core_device->vdev;
+>> +	struct hisi_acc_vf_core_device *hisi_acc_vdev = hisi_acc_get_vf_dev(vdev);
+>> +	struct hisi_qm *vf_qm = &hisi_acc_vdev->vf_qm;
+>> +	u64 value;
+>> +	int ret;
+>> +
+>> +	mutex_lock(&hisi_acc_vdev->state_mutex);
+>> +	ret = hisi_acc_vf_debug_check(seq, vdev);
+>> +	if (ret) {
+>> +		mutex_unlock(&hisi_acc_vdev->state_mutex);
+>> +		return ret;
+>> +	}
+>> +
+>> +	value = readl(vf_qm->io_base + QM_MB_CMD_SEND_BASE);
+>> +	if (value == QM_MB_CMD_NOT_READY) {
+>> +		mutex_unlock(&hisi_acc_vdev->state_mutex);
+>> +		seq_printf(seq, "mailbox cmd channel not ready!\n");
+>> +		return -EINVAL;
+>> +	}
+>> +	mutex_unlock(&hisi_acc_vdev->state_mutex);
+>> +	seq_printf(seq, "mailbox cmd channel ready!\n");
+> 
+> This debugfs entry seems pretty pointless to me.  Also we polled for
+> the device to be ready in debug_check, so if the channel is not ready
+> aren't we more likely to see any error (without a seq_printf) in the
+> first error branch?
+> 
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int hisi_acc_vf_dev_read(struct seq_file *seq, void *data)
+>> +{
+>> +	struct device *vf_dev = seq->private;
+>> +	struct vfio_pci_core_device *core_device = dev_get_drvdata(vf_dev);
+>> +	struct vfio_device *vdev = &core_device->vdev;
+>> +	struct hisi_acc_vf_core_device *hisi_acc_vdev = hisi_acc_get_vf_dev(vdev);
+>> +	size_t vf_data_sz = offsetofend(struct acc_vf_data, padding);
+>> +	struct acc_vf_data *vf_data = NULL;
+>> +	int ret;
+>> +
+>> +	vf_data = kzalloc(sizeof(struct acc_vf_data), GFP_KERNEL);
+>> +	if (!vf_data)
+>> +		return -ENOMEM;
+>> +
+>> +	mutex_lock(&hisi_acc_vdev->state_mutex);
+>> +	ret = hisi_acc_vf_debug_check(seq, vdev);
+>> +	if (ret) {
+>> +		mutex_unlock(&hisi_acc_vdev->state_mutex);
+>> +		goto migf_err;
+>> +	}
+>> +
+>> +	vf_data->vf_qm_state = hisi_acc_vdev->vf_qm_state;
+>> +	ret = vf_qm_read_data(&hisi_acc_vdev->vf_qm, vf_data);
+>> +	if (ret) {
+>> +		mutex_unlock(&hisi_acc_vdev->state_mutex);
+>> +		goto migf_err;
+>> +	}
+>> +
+>> +	mutex_unlock(&hisi_acc_vdev->state_mutex);
+>> +
+>> +	seq_hex_dump(seq, "Dev Data:", DUMP_PREFIX_OFFSET, 16, 1,
+>> +			(unsigned char *)vf_data,
+>> +			vf_data_sz, false);
+>> +
+>> +	seq_printf(seq,
+>> +		 "acc device:\n"
+>> +		 "device  ready: %u\n"
+>> +		 "device  opened: %d\n"
+>> +		 "data     size: %lu\n",
+>> +		 hisi_acc_vdev->vf_qm_state,
+>> +		 hisi_acc_vdev->dev_opened,
+>> +		 sizeof(struct acc_vf_data));
+> 
+> This function called hisi_acc_vf_debug_check() which requires the
+> device to be opened, therefore except for the race where the unlock
+> allowed the device to close, what is the purpose of printing the opened
+> state here?  We can also tell from the hex dump the size of the data,
+> so why is that value printed here?  vf_qm_state appears to be a state
+> value rather than a bool, so labeling it as "ready" doesn't make much
+> sense.  The arbitrary white space also doesn't make much sense.
+> 
+>> +
+>> +migf_err:
+>> +	kfree(vf_data);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int hisi_acc_vf_migf_read(struct seq_file *seq, void *data)
+>> +{
+>> +	struct device *vf_dev = seq->private;
+>> +	struct vfio_pci_core_device *core_device = dev_get_drvdata(vf_dev);
+>> +	struct vfio_device *vdev = &core_device->vdev;
+>> +	struct hisi_acc_vf_core_device *hisi_acc_vdev = hisi_acc_get_vf_dev(vdev);
+>> +	size_t vf_data_sz = offsetofend(struct acc_vf_data, padding);
+>> +	struct hisi_acc_vf_migration_file *debug_migf = hisi_acc_vdev->debug_migf;
+>> +
+>> +	/* Check whether the live migration operation has been performed */
+>> +	if (debug_migf->total_length < QM_MATCH_SIZE) {
+>> +		seq_printf(seq, "%s\n", "device not migrated!\n");
+>> +		return -EAGAIN;
+>> +	}
+>> +
+>> +	seq_hex_dump(seq, "Mig Data:", DUMP_PREFIX_OFFSET, 16, 1,
+>> +			(unsigned char *)&debug_migf->vf_data,
+>> +			vf_data_sz, false);
+> 
+> Why doesn't this stop at total_length?
+> 
+>> +
+>> +	seq_printf(seq,
+>> +		 "acc device:\n"
+>> +		 "device  ready: %u\n"
+>> +		 "device  opened: %d\n"
+>> +		 "data     size: %lu\n",
+>> +		 hisi_acc_vdev->vf_qm_state,
+>> +		 hisi_acc_vdev->dev_opened,
+>> +		 debug_migf->total_length);
+> 
+> Again, "ready" seems more like a "state" value, here opened could be
+> false, but why do we care(?), size could be inferred from the hex dump,
+> and white spaces are arbitrary.
+> 
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int hisi_acc_vfio_debug_init(struct hisi_acc_vf_core_device *hisi_acc_vdev)
+>> +{
+>> +	struct vfio_device *vdev = &hisi_acc_vdev->core_device.vdev;
+>> +	struct dentry *vfio_dev_migration = NULL;
+>> +	struct dentry *vfio_hisi_acc = NULL;
+>> +	struct device *dev = vdev->dev;
+>> +	void *migf = NULL;
+>> +
+>> +	if (!debugfs_initialized() ||
+>> +	    !IS_ENABLED(CONFIG_VFIO_DEBUGFS))
+>> +		return 0;
+>> +
+>> +	migf = kzalloc(sizeof(struct hisi_acc_vf_migration_file), GFP_KERNEL);
+>> +	if (!migf)
+>> +		return -ENOMEM;
+>> +	hisi_acc_vdev->debug_migf = migf;
+>> +
+>> +	vfio_dev_migration = debugfs_lookup("migration", vdev->debug_root);
+> 
+> Test this before anything is allocated or assigned.
+> 
+>> +	if (!vfio_dev_migration) {
+>> +		kfree(migf);
+>> +		hisi_acc_vdev->debug_migf = NULL;
+>> +		dev_err(dev, "failed to lookup migration debugfs file!\n");
+>> +		return -ENODEV;
+>> +	}
+>> +
+>> +	vfio_hisi_acc = debugfs_create_dir("hisi_acc", vfio_dev_migration);
+>> +	debugfs_create_devm_seqfile(dev, "dev_data", vfio_hisi_acc,
+>> +				  hisi_acc_vf_dev_read);
+>> +	debugfs_create_devm_seqfile(dev, "migf_data", vfio_hisi_acc,
+>> +				  hisi_acc_vf_migf_read);
+>> +	debugfs_create_devm_seqfile(dev, "cmd_state", vfio_hisi_acc,
+>> +				  hisi_acc_vf_debug_cmd);
+>> +
+>> +	return 0;
+>> +}
+> 
+> Why does this function return an int when the only caller ignores the
+> return value?
+>
 
-I would be careful and avoid including the padding between
-symbol_addr.section and symbol_addr.address in the hash calculation.
+Okay, I can change this function to void return type.
 
-> +}
-> +
->  typedef int (*symbol_callback_t)(struct symbol *, void *arg);
->  
-> -static int for_each(const char *name, symbol_callback_t func, void *data)
-> +static int __for_each_addr(struct symbol *sym, symbol_callback_t func,
-> +			   void *data)
-> +{
-> +	struct hlist_node *tmp;
-> +	struct symbol *match = NULL;
-> +	int processed = 0;
-> +
-> +	hash_for_each_possible_safe(symbol_addrs, match, tmp, addr_hash,
-> +				    symbol_addr_hash(&sym->addr)) {
-> +		if (match == sym)
-> +			continue; /* Already processed */
-> +
-> +		if (match->addr.section == sym->addr.section &&
-> +		    match->addr.address == sym->addr.address) {
-> +			check(func(match, data));
-> +			++processed;
-> +		}
-> +	}
-> +
-> +	return processed;
-> +}
-> +
-> +static int for_each(const char *name, bool name_only, symbol_callback_t func,
-> +		    void *data)
->  {
->  	struct hlist_node *tmp;
->  	struct symbol *match;
-> @@ -23,9 +55,13 @@ static int for_each(const char *name, symbol_callback_t func, void *data)
->  		if (strcmp(match->name, name))
->  			continue;
->  
-> +		/* Call func for the match, and all address matches */
->  		if (func)
->  			check(func(match, data));
->  
-> +		if (!name_only && match->addr.section != SHN_UNDEF)
-> +			return checkp(__for_each_addr(match, func, data)) + 1;
-> +
->  		return 1;
->  	}
->  
-> @@ -34,7 +70,7 @@ static int for_each(const char *name, symbol_callback_t func, void *data)
->  
->  static bool is_exported(const char *name)
->  {
-> -	return checkp(for_each(name, NULL, NULL)) > 0;
-> +	return checkp(for_each(name, true, NULL, NULL)) > 0;
->  }
->  
->  int symbol_read_exports(FILE *file)
-> @@ -57,13 +93,14 @@ int symbol_read_exports(FILE *file)
->  		if (is_exported(name))
->  			continue; /* Ignore duplicates */
->  
-> -		sym = malloc(sizeof(struct symbol));
-> +		sym = calloc(1, sizeof(struct symbol));
->  		if (!sym) {
-> -			error("malloc failed");
-> +			error("calloc failed");
->  			return -1;
->  		}
->  
->  		sym->name = name;
-> +		sym->addr.section = SHN_UNDEF;
->  		name = NULL;
->  
->  		hash_add(symbol_names, &sym->name_hash, name_hash(sym->name));
-> @@ -91,6 +128,120 @@ struct symbol *symbol_get(const char *name)
->  {
->  	struct symbol *sym = NULL;
->  
-> -	for_each(name, get_symbol, &sym);
-> +	for_each(name, false, get_symbol, &sym);
->  	return sym;
->  }
-> +
-> +typedef int (*elf_symbol_callback_t)(const char *name, GElf_Sym *sym,
-> +				     Elf32_Word xndx, void *arg);
-> +
-> +static int elf_for_each_symbol(int fd, elf_symbol_callback_t func, void *arg)
-> +{
-> +	size_t sym_size;
-> +	GElf_Shdr shdr_mem;
-> +	GElf_Shdr *shdr;
-> +	Elf_Data *xndx_data = NULL;
-> +	Elf_Scn *scn;
-> +	Elf *elf;
-> +
-> +	if (elf_version(EV_CURRENT) != EV_CURRENT) {
-> +		error("elf_version failed: %s", elf_errmsg(-1));
-> +		return -1;
-> +	}
-> +
-> +	elf = elf_begin(fd, ELF_C_READ_MMAP, NULL);
-> +	if (!elf) {
-> +		error("elf_begin failed: %s", elf_errmsg(-1));
-> +		return -1;
-> +	}
-> +
-> +	sym_size = gelf_getclass(elf) == ELFCLASS32 ? sizeof(Elf32_Sym) :
-> +						      sizeof(Elf64_Sym);
-> +
-> +	scn = elf_nextscn(elf, NULL);
-> +
-> +	while (scn) {
-> +		shdr = gelf_getshdr(scn, &shdr_mem);
-> +
-> +		if (shdr && shdr->sh_type == SHT_SYMTAB_SHNDX) {
-> +			xndx_data = elf_getdata(scn, NULL);
-> +			break;
-> +		}
-> +
-> +		scn = elf_nextscn(elf, scn);
-> +	}
-> +
-> +	scn = elf_nextscn(elf, NULL);
-> +
-> +	while (scn) {
-> +		shdr = gelf_getshdr(scn, &shdr_mem);
-> +
-> +		if (shdr && shdr->sh_type == SHT_SYMTAB) {
-> +			Elf_Data *data = elf_getdata(scn, NULL);
-> +			unsigned int nsyms = data->d_size / sym_size;
+>> +
+>> +static void hisi_acc_vf_debugfs_exit(struct hisi_acc_vf_core_device *hisi_acc_vdev)
+>> +{
+>> +	if (!debugfs_initialized() ||
+>> +	    !IS_ENABLED(CONFIG_VFIO_DEBUGFS))
+>> +		return;
+> 
+> Do we really need to test these on the exit path?  debug_migf would not
+> be allocated.
+>
 
-I think strictly speaking this should be:
-size_t nsyms = shdr->sh_size / shdr->sh_entsize;
-.. and the code could check that shdr->sh_entsize is same as what
-gelf_fsize(elf, ELF_T_SYM, 1, EV_CURRENT) returns.
+Yes, redundant checks can be deleted here.
 
-> +			unsigned int n;
-> +
-> +			for (n = 0; n < nsyms; ++n) {
+>> +
+>> +	if (hisi_acc_vdev->debug_migf)
+>> +		kfree(hisi_acc_vdev->debug_migf);
+> 
+> I suppose this is not set NULL because this is only called in the
+> device remove path.
 
-The first symbol in the symbol table is always undefined, the loop can
-start from 1.
 
-Alternatively, since elf_for_each_symbol() ends up in the entire series
-being used only with process_symbol() which skips symbols with the local
-binding, the function could be renamed to elf_for_each_global_symbol()
-and start the loop from shdr->sh_info.
+OK, I can add a line:
+hisi_acc_vdev->debug_migf = NULL;
 
-> +				const char *name = NULL;
-> +				Elf32_Word xndx = 0;
-> +				GElf_Sym sym_mem;
-> +				GElf_Sym *sym;
-> +
-> +				sym = gelf_getsymshndx(data, xndx_data, n,
-> +						       &sym_mem, &xndx);
-> +
-> +				if (sym->st_shndx != SHN_XINDEX)
-> +					xndx = sym->st_shndx;
-> +
-> +				name = elf_strptr(elf, shdr->sh_link,
-> +						  sym->st_name);
-> +
-> +				/* Skip empty symbol names */
-> +				if (name && *name &&
-> +				    checkp(func(name, sym, xndx, arg)) > 0)
-> +					break;
-> +			}
-> +		}
-> +
-> +		scn = elf_nextscn(elf, scn);
-> +	}
-> +
-> +	return check(elf_end(elf));
-> +}
-> +
-> +static int set_symbol_addr(struct symbol *sym, void *arg)
-> +{
-> +	struct symbol_addr *addr = arg;
-> +
-> +	if (sym->addr.section == SHN_UNDEF) {
-> +		sym->addr.section = addr->section;
-> +		sym->addr.address = addr->address;
-> +		hash_add(symbol_addrs, &sym->addr_hash,
-> +			 symbol_addr_hash(&sym->addr));
-> +
-> +		debug("%s -> { %u, %lx }", sym->name, sym->addr.section,
-> +		      sym->addr.address);
-> +	} else {
-> +		warn("multiple addresses for symbol %s?", sym->name);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int process_symbol(const char *name, GElf_Sym *sym, Elf32_Word xndx,
-> +			  void *arg)
-> +{
-> +	struct symbol_addr addr = { .section = xndx, .address = sym->st_value };
-> +
-> +	/* Set addresses for exported symbols */
-> +	if (GELF_ST_BIND(sym->st_info) != STB_LOCAL &&
-> +	    addr.section != SHN_UNDEF)
-> +		checkp(for_each(name, true, set_symbol_addr, &addr));
-> +
-> +	return 0;
-> +}
-> +
-> +int symbol_read_symtab(int fd)
-> +{
-> +	return elf_for_each_symbol(fd, process_symbol, NULL);
-> +}
+> 
+>> +}
+>> +
+>>  static int hisi_acc_vfio_pci_open_device(struct vfio_device *core_vdev)
+>>  {
+>>  	struct hisi_acc_vf_core_device *hisi_acc_vdev = hisi_acc_get_vf_dev(core_vdev);
+>> @@ -1311,9 +1511,11 @@ static int hisi_acc_vfio_pci_open_device(struct vfio_device *core_vdev)
+>>  			return ret;
+>>  		}
+>>  		hisi_acc_vdev->mig_state = VFIO_DEVICE_STATE_RUNNING;
+>> +		hisi_acc_vdev->dev_opened = true;
+>>  	}
+>>  
+>>  	vfio_pci_core_finish_enable(vdev);
+>> +
+>>  	return 0;
+>>  }
+>>  
+>> @@ -1322,7 +1524,10 @@ static void hisi_acc_vfio_pci_close_device(struct vfio_device *core_vdev)
+>>  	struct hisi_acc_vf_core_device *hisi_acc_vdev = hisi_acc_get_vf_dev(core_vdev);
+>>  	struct hisi_qm *vf_qm = &hisi_acc_vdev->vf_qm;
+>>  
+>> +	mutex_lock(&hisi_acc_vdev->state_mutex);
+>> +	hisi_acc_vdev->dev_opened = false;
+>>  	iounmap(vf_qm->io_base);
+>> +	mutex_unlock(&hisi_acc_vdev->state_mutex);
+> 
+> Co-opting the state_mutex to protect dev_opened is rather sketchy.
+>
 
--- 
-Thanks,
-Petr
+So do we need to reconsider creating a new mmap_mutex here?
+
+>>  	vfio_pci_core_close_device(core_vdev);
+>>  }
+>>  
+>> @@ -1413,6 +1618,9 @@ static int hisi_acc_vfio_pci_probe(struct pci_dev *pdev, const struct pci_device
+>>  	ret = vfio_pci_core_register_device(&hisi_acc_vdev->core_device);
+>>  	if (ret)
+>>  		goto out_put_vdev;
+>> +
+>> +	if (ops == &hisi_acc_vfio_pci_migrn_ops)
+>> +		hisi_acc_vfio_debug_init(hisi_acc_vdev);
+> 
+> Call this unconditionally and test hisi_acc_vdev->mig_ops in the
+> debug_init function.  That way init and exit are symmetric.
+>
+
+OK, here is the processing code in exit, like this:
+
+if (vdev->ops == &hisi_acc_vfio_pci_migrn_ops)
+	hisi_acc_vf_debugfs_exit(hisi_acc_vdev);
+
+>>  	return 0;
+>>  
+>>  out_put_vdev:
+>> @@ -1425,6 +1633,7 @@ static void hisi_acc_vfio_pci_remove(struct pci_dev *pdev)
+>>  	struct hisi_acc_vf_core_device *hisi_acc_vdev = hisi_acc_drvdata(pdev);
+>>  
+>>  	vfio_pci_core_unregister_device(&hisi_acc_vdev->core_device);
+>> +	hisi_acc_vf_debugfs_exit(hisi_acc_vdev);
+>>  	vfio_put_device(&hisi_acc_vdev->core_device.vdev);
+>>  }
+>>  
+>> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
+>> index 5bab46602fad..f86f3b88b09e 100644
+>> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
+>> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
+>> @@ -32,6 +32,7 @@
+>>  #define QM_SQC_VFT_BASE_MASK_V2		GENMASK(15, 0)
+>>  #define QM_SQC_VFT_NUM_SHIFT_V2		45
+>>  #define QM_SQC_VFT_NUM_MASK_V2		GENMASK(9, 0)
+>> +#define QM_MB_CMD_NOT_READY	0xffffffff
+>>  
+>>  /* RW regs */
+>>  #define QM_REGS_MAX_LEN		7
+>> @@ -111,5 +112,10 @@ struct hisi_acc_vf_core_device {
+>>  	int vf_id;
+>>  	struct hisi_acc_vf_migration_file *resuming_migf;
+>>  	struct hisi_acc_vf_migration_file *saving_migf;
+>> +
+>> +	/* To make sure the device is opened */
+>> +	bool dev_opened;
+>> +	/* To save migration data */
+>> +	struct hisi_acc_vf_migration_file *debug_migf;
+> 
+> Poor structure packing.
+>
+
+OK, I will adjust the order in the next version.
+
+Thanks.
+Longfang.
+
+>>  };
+>>  #endif /* HISI_ACC_VFIO_PCI_H */
+> 
+> 
+> .
+> 
 
