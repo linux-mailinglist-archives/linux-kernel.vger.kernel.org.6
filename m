@@ -1,182 +1,116 @@
-Return-Path: <linux-kernel+bounces-303899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0EF19616A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:17:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 070B09616AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 983781F247C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:17:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B499E281DAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8351D2F48;
-	Tue, 27 Aug 2024 18:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DB41D2F47;
+	Tue, 27 Aug 2024 18:17:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u+rsQzmV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ez0OFoKF"
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9C21CF2B8;
-	Tue, 27 Aug 2024 18:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D131D1F70;
+	Tue, 27 Aug 2024 18:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724782608; cv=none; b=Oj/WSTssSM/sBfPglLQLOBA/tEllvuPLL98nSbJCKKSvfASRwgH7V3IBnCd2K8oC26/Hp2OjO+9C9uQUAhx2C51T9aBO6npjqAL0c3rWruyWD3Vj6v3H31Ff1op6gsnTY/yU9VvaFiaxi54Odqc4pIUu09wCjYPGS3teT/14RzI=
+	t=1724782620; cv=none; b=gDQljJ/8/qNI91udi0GLDek3NiWer2RWEKYu7e/T0PRLBMWfnnQidWBY8VBlUOqhSS6Wciy2hA+J9TVTGdV1RHr3jEUn7Rs9l7o5nLc0KUx+7TALXidtkNAMeoEbD54ojAZi6SN4oXMo/66B2g7kj1OqcwHrJgq/Ds77iHSzwvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724782608; c=relaxed/simple;
-	bh=oThr/IHEo/kvfoyvCuCzvD+In/VfXyrZvGOyTXkMn+0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Xdxcx7F3w+XvOTXeP259VdZDM5R1MNoVkVLsgD4FjetPZs6x75Ci+/sB6dgt8uugfZSFw2KExvS2hlzY4dTM2CEZ2LDKu1DTlm7JwsGarvksyto1vsDqnlAMDTnQsPVkeSHr/OYkijwUbjPR8ZAsnlbnlUrA2GRx/RrN6pgpE8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u+rsQzmV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8940AC567C2;
-	Tue, 27 Aug 2024 18:16:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724782607;
-	bh=oThr/IHEo/kvfoyvCuCzvD+In/VfXyrZvGOyTXkMn+0=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=u+rsQzmVlmnkwAVJTDrKo36mnyuZoyQlRGcOm+p4aZGlnt8oAMw2LQyDe/uaCqTil
-	 x8bMKTC9cShA+VBAoUAC12+mWoOrLHGhjAZpT7fNXqXmdy3ofrIShymdQ5kz+N+3CX
-	 hkxe4eSLV1XEDoGC8QijD7jb1a55io3ytyIgrcmE9xIg7fvBVPQeft+TZADdWfq3+9
-	 +F3ePJS1Nza9K1RnD8T94KonLYxDF35dGEiJYhqJKzCRYqFBdFtJ0nosRm6FtmRtfk
-	 gqHV7LyopX0akMRvgl/5CK27qHcW+WANBird/u0w4Iv/2eE5Cp7z9clWI1TlaIsNHp
-	 buOAU7gUc+oxA==
+	s=arc-20240116; t=1724782620; c=relaxed/simple;
+	bh=wENg9M1mTCLG9DTei9fg7wyJPouDKzJF0AV1TbCvcs4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LMhTnL0KMROD+SVXvpMdJjwuAB6WAI1fTa34MFmN2n3j3qk+Hfd8n9Gn6dwBc1PWnygsOnY+Nik9uVF/+d0NwkRdO/99VrycfQMOdYz5a2TSLq2lY3CEcAGt2A2l/bTTLVqaWotmuPFNPTKVPmKQVtXA1UP5hpS1mIGnRINXO5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ez0OFoKF; arc=none smtp.client-ip=209.85.210.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7093472356dso4334484a34.0;
+        Tue, 27 Aug 2024 11:16:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724782618; x=1725387418; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=c7wTbxXV4u9wIUZqkNbsPqFqHbsr9atSZCuro+rt3qU=;
+        b=ez0OFoKFG3C96p290FnaVJVQk3ELJKexs9B3g2qfgf0RS5IvUmosVLbkXtTNITVJQp
+         21vlsIf2HmmYaeH12/C+cRXepHGhHBzFxegob3W+nt+i/um0BTpPHJCJS5P+Gj+i7TCd
+         Iawl6crFcenVIlAp3E8QcL0vUIWBfBLZiF9DyHh6jugWRu8gmjrNpSibWUDNkchPKEHi
+         12kzdA7W0P6ai/iiI2TAMZaPDKWNVakhYD81bRo5nIOmZuEqNZMUd3KROEvixSknVuC9
+         wxzwL881Gv5DMyap5Sk0f3DcT1uAR++faJdCwyNU7HGLVWRqRugn1cD8A9GnsgdOGhKt
+         7y7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724782618; x=1725387418;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=c7wTbxXV4u9wIUZqkNbsPqFqHbsr9atSZCuro+rt3qU=;
+        b=fvyVhNsdG6JX7Or3fB+bSs8Z2xqkb7UlpmwAKNxVXLcNC3BgKxLKO2uaoJPDtcaS+z
+         TS2DSUBu4xYjY1He4cRxgdxemFPcTWHN5FyQjiZjFy7MaSBDTRkGBKIlZ2TkVztixIQj
+         VzAUwYyVlCbXZBHG1Sf/kX3JiBmObJUYq7kqlm0e57dw+yMpxolp6VwJYP8O9RWuBVdm
+         HIWsqavfOhfriKULvpJ4SCoJSHDzT76fz2s8VJSu+TiImsSG4PdMoG3Jq3NCbU0UKOsZ
+         DwnPXRriCu6pQaYI/XEh2mgwiwmgesxVKLTGA5jhPWAGBu0mwpFWsBumpdFtOx3CC/eB
+         fnnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5wKbFgNLfrMTd9bxJukC4gmX1fiyfYBOdDRjYhtY83xXOyL8mEFf221NUIxPid1nacCyQcpE5w9Y4FEw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpBB5iwZfK7nJ9FPhA3JFvyQOtcKctuIGdv5e/6Mm0dmm0z1xB
+	5Htw41lquX9HHUJsOnPadQjCdZO57Y8exu7BvUEnBW7/IjxixUbF
+X-Google-Smtp-Source: AGHT+IGq7zGUZVAjEK/FHGK81dTpOpXi8mb4tQfiAL4nwIswAacojWfQIog396Xtm6RQuvjj83cFJA==
+X-Received: by 2002:a05:6830:7008:b0:70f:3973:1236 with SMTP id 46e09a7af769-70f397319ddmr11554103a34.26.1724782617868;
+        Tue, 27 Aug 2024 11:16:57 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6c162d216fasm58104436d6.22.2024.08.27.11.16.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 11:16:57 -0700 (PDT)
+Message-ID: <94f46a7d-638c-417c-b2f7-917be48bac96@gmail.com>
+Date: Tue, 27 Aug 2024 11:16:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 27 Aug 2024 21:16:44 +0300
-Message-Id: <D3QWELUYFVKI.2ODRK1OP9149A@kernel.org>
-Cc: <zhiquan1.li@intel.com>, <kristen@linux.intel.com>, <seanjc@google.com>,
- <zhanb@microsoft.com>, <anakrish@microsoft.com>,
- <mikko.ylinen@linux.intel.com>, <yangjie@microsoft.com>,
- <chrisyan@microsoft.com>
-Subject: Re: [PATCH v16 13/16] x86/sgx: implement direct reclamation for
- cgroups
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Haitao Huang" <haitao.huang@linux.intel.com>,
- <dave.hansen@linux.intel.com>, <kai.huang@intel.com>, <tj@kernel.org>,
- <mkoutny@suse.com>, <chenridong@huawei.com>,
- <linux-kernel@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
- <x86@kernel.org>, <cgroups@vger.kernel.org>, <tglx@linutronix.de>,
- <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
- <sohil.mehta@intel.com>, <tim.c.chen@linux.intel.com>
-X-Mailer: aerc 0.17.0
-References: <20240821015404.6038-1-haitao.huang@linux.intel.com>
- <20240821015404.6038-14-haitao.huang@linux.intel.com>
-In-Reply-To: <20240821015404.6038-14-haitao.huang@linux.intel.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net: ethtool: cable-test: Release RTNL when the
+ PHY isn't found
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>,
+ Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Herve Codina <herve.codina@bootlin.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
+ =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
+ Oleksij Rempel <o.rempel@pengutronix.de>, Simon Horman <horms@kernel.org>,
+ mwojtas@chromium.org, Dan Carpenter <dan.carpenter@linaro.org>,
+ Romain Gantois <romain.gantois@bootlin.com>
+References: <20240827092314.2500284-1-maxime.chevallier@bootlin.com>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20240827092314.2500284-1-maxime.chevallier@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed Aug 21, 2024 at 4:54 AM EEST, Haitao Huang wrote:
-> sgx_reclaim_direct() was introduced to preemptively reclaim some pages
-> as the best effort to avoid on-demand reclamation that can stall forward
-> progress in some situations, e.g., allocating pages to load previously
-> reclaimed page to perform EDMM operations on [1].
->
-> Currently when the global usage is close to the capacity,
-> sgx_reclaim_direct() makes one invocation to sgx_reclaim_pages_global()
-> but does not guarantee there are free pages available for later
-> allocations to succeed. In other words, the only goal here is to reduce
-> the chance of on-demand reclamation at allocation time. In cases of
-> allocation failure, the caller, the EDMM ioctl()'s, would return -EAGAIN
-> to user space and let the user space to decide whether to retry or not.
->
-> With EPC cgroups enabled, usage of a cgroup can also reach its limit
-> (usually much lower than capacity) and trigger per-cgroup reclamation.
-> Implement a similar strategy to reduce the chance of on-demand
-> per-cgroup reclamation for this use case.
->
-> Create a wrapper, sgx_cgroup_reclaim_direct(), to perform a preemptive
-> reclamation at cgroup level, and have sgx_reclaim_direct() call it when
-> EPC cgroup is enabled.
->
-> [1] https://lore.kernel.org/all/a0d8f037c4a075d56bf79f432438412985f7ff7a.=
-1652137848.git.reinette.chatre@intel.com/T/#u
->
-> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
-> ---
->  arch/x86/kernel/cpu/sgx/epc_cgroup.c | 15 +++++++++++++++
->  arch/x86/kernel/cpu/sgx/epc_cgroup.h |  3 +++
->  arch/x86/kernel/cpu/sgx/main.c       |  4 ++++
->  3 files changed, 22 insertions(+)
->
-> diff --git a/arch/x86/kernel/cpu/sgx/epc_cgroup.c b/arch/x86/kernel/cpu/s=
-gx/epc_cgroup.c
-> index 23a61689e0d9..b7d60b2d878d 100644
-> --- a/arch/x86/kernel/cpu/sgx/epc_cgroup.c
-> +++ b/arch/x86/kernel/cpu/sgx/epc_cgroup.c
-> @@ -252,6 +252,21 @@ void sgx_cgroup_reclaim_pages_global(struct mm_struc=
-t *charge_mm)
->  	sgx_cgroup_reclaim_pages(&sgx_cg_root, charge_mm, SGX_NR_TO_SCAN);
->  }
-> =20
-> +/**
-> + * sgx_cgroup_reclaim_direct() - Preemptive reclamation.
-> + *
-> + * Scan and attempt to reclaim %SGX_NR_TO_SCAN as best effort to allow c=
-aller
-> + * make quick progress.
-> + */
-> +void sgx_cgroup_reclaim_direct(void)
-> +{
-> +	struct sgx_cgroup *sgx_cg =3D sgx_get_current_cg();
-> +
-> +	if (sgx_cgroup_should_reclaim(sgx_cg))
-> +		sgx_cgroup_reclaim_pages(sgx_cg, current->mm, SGX_NR_TO_SCAN);
-> +	sgx_put_cg(sgx_cg);
-> +}
-> +
->  /*
->   * Asynchronous work flow to reclaim pages from the cgroup when the cgro=
-up is
->   * at/near its maximum capacity.
-> diff --git a/arch/x86/kernel/cpu/sgx/epc_cgroup.h b/arch/x86/kernel/cpu/s=
-gx/epc_cgroup.h
-> index c0390111e28c..cf2b946d993e 100644
-> --- a/arch/x86/kernel/cpu/sgx/epc_cgroup.h
-> +++ b/arch/x86/kernel/cpu/sgx/epc_cgroup.h
-> @@ -38,6 +38,8 @@ static inline void __init sgx_cgroup_register(void) { }
-> =20
->  static inline void sgx_cgroup_reclaim_pages_global(struct mm_struct *cha=
-rge_mm) { }
-> =20
-> +static inline void sgx_cgroup_reclaim_direct(void) { }
-> +
->  #else /* CONFIG_CGROUP_MISC */
-> =20
->  struct sgx_cgroup {
-> @@ -90,6 +92,7 @@ static inline void sgx_put_cg(struct sgx_cgroup *sgx_cg=
-)
->  int sgx_cgroup_try_charge(struct sgx_cgroup *sgx_cg, enum sgx_reclaim re=
-claim);
->  void sgx_cgroup_uncharge(struct sgx_cgroup *sgx_cg);
->  void sgx_cgroup_reclaim_pages_global(struct mm_struct *charge_mm);
-> +void sgx_cgroup_reclaim_direct(void);
->  int __init sgx_cgroup_init(void);
->  void __init sgx_cgroup_register(void);
->  void __init sgx_cgroup_deinit(void);
-> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/mai=
-n.c
-> index d00cb012838b..9a8f91ebd21b 100644
-> --- a/arch/x86/kernel/cpu/sgx/main.c
-> +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -428,6 +428,10 @@ static void sgx_reclaim_pages_global(struct mm_struc=
-t *charge_mm)
->   */
->  void sgx_reclaim_direct(void)
->  {
-> +	/* Reduce chance of per-cgroup reclamation for later allocation */
-> +	sgx_cgroup_reclaim_direct();
-> +
-> +	/* Reduce chance of the global reclamation for later allocation */
->  	if (sgx_should_reclaim_global(SGX_NR_LOW_PAGES))
->  		sgx_reclaim_pages_global(current->mm);
->  }
+On 8/27/24 02:23, Maxime Chevallier wrote:
+> Use the correct logic to check for the presence of a PHY device, and
+> jump to a label that correctly releases RTNL in case of an error, as we
+> are holding RTNL at that point.
+> 
+> Fixes: 3688ff3077d3 ("net: ethtool: cable-test: Target the command to the requested PHY")
+> Closes: https://lore.kernel.org/netdev/20240827104825.5cbe0602@fedora-3.home/T/#m6bc49cdcc5cfab0d162516b92916b944a01c833f
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
 
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-BR, Jarkko
 
