@@ -1,150 +1,120 @@
-Return-Path: <linux-kernel+bounces-302620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57706960115
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:33:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F31E960117
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:34:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89DF51C22451
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:33:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CE331C22512
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED352556F;
-	Tue, 27 Aug 2024 05:33:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4848003F;
+	Tue, 27 Aug 2024 05:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="p2laHNNH"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AQyk4QSw"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C809A84D34;
-	Tue, 27 Aug 2024 05:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD2D8289C;
+	Tue, 27 Aug 2024 05:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724736833; cv=none; b=EaIrmZag5A1tZacjUCKHDDlKj8rmMjTOxPwV5oHkix8/VM5Eij69/7PRXM8R90Cf2qHdhzWTBYsDlQVuY4/8+YcAqH5le1BYq/cE5qtkE2dOxvP6fQegrBm3CD5NKwBf+nJcBPNGlahxi+yH6B7BIEnjmTStel2q7BD9VnIg06Q=
+	t=1724736848; cv=none; b=KhpdgUR7IheLuIL42XSr7QrdKwk8Z6UjpmaUmiDOm3X5/BQ9u+ef6Donw2j4IIgCeQ7yAsidFlivuRW/sDOUwHXvXfDJ0XFtWWKqxIKkJ4F/jKenAkaPwEMdqi6J9FilOXcspHsMaITzjsL3208Muz9dAy4qn7+VzxUegFb1iKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724736833; c=relaxed/simple;
-	bh=zrPRCQFfWs0AsTqRvX8XIl+6nm9INVWGrsZG8yK8GHQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IFS/eJfGB4fA+InHBwixZWuiymYBe/J92d43i7i+Uj/Jy1tcqmN8cGYkgAqse3lKsDIMIZOgmsInwZWg2SvpqnjTg7QWFkn4EWqAU6/u909D0NJHusAtGmS+OgoIQAnrxgHGQSAfD6R7pDZVp/CZqRcOQJdw2+vaVq+xbeThQ3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=p2laHNNH; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47R1tVLo015136;
-	Tue, 27 Aug 2024 05:33:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=L8Sjx5YSltujz
-	I60JahR8FVhesLAlU00v4fqtvSMiGY=; b=p2laHNNHTI/0ykTeuNBTu5GWbb9Kk
-	DrpSNih83djzsCqkomzswBwCAJDagHd/3jY4yBrorY0VZjdOdwwnFbSn3fD+uXoO
-	s2i+I7lTd8Iq7uSaDTE0hTVtYscsxfpTZK89tMgqywDAo7I8OUSXmtqio/27kXBy
-	1NsKHv2xYjadkrIfHYuVMI1Dx66VwHW+CdRmt6GbM6fh+//FesD9K4Eu7Flwlob/
-	OsKBX16y1J7d9tAYC89JrPihXZORvp+1Bn4WEz8GLEEKssffkEonpsWB1PNBS0j5
-	emUDuAgjzFCrBo6DKvSuW3NkCKfGrJmLVt4TByx8ZqBzTCZ18z1YITSaA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 417fvc1tsg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 Aug 2024 05:33:45 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47R5XiDA028487;
-	Tue, 27 Aug 2024 05:33:44 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 417fvc1tsa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 Aug 2024 05:33:44 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47R3XFZ9008239;
-	Tue, 27 Aug 2024 05:33:41 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 417v2mh4xq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 Aug 2024 05:33:40 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47R5Xb9u55509362
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 27 Aug 2024 05:33:37 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7E9512004B;
-	Tue, 27 Aug 2024 05:33:37 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C580B20040;
-	Tue, 27 Aug 2024 05:33:30 +0000 (GMT)
-Received: from li-e8dccbcc-2adc-11b2-a85c-bc1f33b9b810.ibm.com.ustream.lldns.net (unknown [9.200.51.96])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 27 Aug 2024 05:33:30 +0000 (GMT)
-From: Kajol Jain <kjain@linux.ibm.com>
-To: acme@kernel.org, irogers@google.com
-Cc: namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        maddy@linux.ibm.com, atrajeev@linux.vnet.ibm.com, kjain@linux.ibm.com,
-        hbathini@linux.ibm.com, disgoel@linux.vnet.ibm.com
-Subject: [PATCH 3/3] perf vendor events: Move PM_BR_MPRED_CMPL event for power10 platform
-Date: Tue, 27 Aug 2024 11:02:06 +0530
-Message-ID: <20240827053206.538814-3-kjain@linux.ibm.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20240827053206.538814-1-kjain@linux.ibm.com>
-References: <20240827053206.538814-1-kjain@linux.ibm.com>
+	s=arc-20240116; t=1724736848; c=relaxed/simple;
+	bh=/PDv7nmU69Adt/Bfez+pXxVY7UGKVtLBkyuR5p/i0mA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XM9nZpc1Gr2jskl5swEajfUF9Sa0bkM/JumCcjn0o4LEXaRNI9Ue71GKqo4IERbtvGWveEAICAIxeY0BI4EKEtKPTvmzMa1nNon6ZbWsKkGjtaQXddLnJA1A3HdPd7vX3PAGokjiduECS1W36BkQ8mfNz/ViawvalWMabs9OeKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AQyk4QSw; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A7B3E40005;
+	Tue, 27 Aug 2024 05:34:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724736843;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MQ6dpe98L/8TCUESLaKBikF1ntMfY9wxYyoOQRmWTKw=;
+	b=AQyk4QSwtJmE+tQ8ViV6yL1K/oPH4PeoVk0ttW73t8ZO+k7ISm+r/kaR+R3G6PoS1RK6co
+	yr+kbxZ0Kn3AhsfO5PxQv6BbtzSmfPihcUMXtMnz2fuKOw51r1lALNwPuew0pTcDc14kV/
+	Z9E9sldqZpsi7josy5zz2wBJF1hkSR7QxjSDhw4VUke1koZkA5cRq+SBHRvhB9cz5XIEjl
+	wbIkGTnt6w4hHecMVlun/6anNauYV+4c9k4Xx0DJHXyOE1eT13Xlr4s4GGApOuoUExocYg
+	Qq/TsgI1tmnLnpdnocSqk4+aohPidA+BS662mM+sbOC/3IcPS1hIsLeDmi2GZg==
+Date: Tue, 27 Aug 2024 07:33:59 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Pengfei Xu <pengfei.xu@intel.com>
+Cc: <davem@davemloft.net>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <thomas.petazzoni@bootlin.com>, Andrew Lunn
+ <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell King
+ <linux@armlinux.org.uk>, <linux-arm-kernel@lists.infradead.org>,
+ "Christophe Leroy" <christophe.leroy@csgroup.eu>, Herve Codina
+ <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, Heiner
+ Kallweit <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, "Jesse
+ Brandeburg" <jesse.brandeburg@intel.com>, Marek =?UTF-8?B?QmVow7pu?=
+ <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
+ Oleksij Rempel <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
+ <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
+ <mwojtas@chromium.org>, Nathan Chancellor <nathan@kernel.org>, Antoine
+ Tenart <atenart@kernel.org>, Marc Kleine-Budde <mkl@pengutronix.de>, Dan
+ Carpenter <dan.carpenter@linaro.org>, Romain Gantois
+ <romain.gantois@bootlin.com>
+Subject: Re: [PATCH net-next v17 11/14] net: ethtool: cable-test: Target the
+ command to the requested PHY
+Message-ID: <20240827073359.5d47c077@fedora-3.home>
+In-Reply-To: <Zs1jYMAtYj95XuE4@xpf.sh.intel.com>
+References: <20240709063039.2909536-1-maxime.chevallier@bootlin.com>
+	<20240709063039.2909536-12-maxime.chevallier@bootlin.com>
+	<Zs1jYMAtYj95XuE4@xpf.sh.intel.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: _PMNOpisS7R51y7GDlnBtpvGFuTfQJod
-X-Proofpoint-GUID: l8-l_rXsSQmF8Lv2U7hQ4MJIdQl8Lwg_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-27_04,2024-08-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- mlxscore=0 priorityscore=1501 mlxlogscore=999 clxscore=1015
- lowpriorityscore=0 adultscore=0 phishscore=0 spamscore=0 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408270039
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Move PM_BR_MPRED_CMPL event from cache.json to frontend.json file
-for power10 platform
+Hi,
 
-Signed-off-by: Kajol Jain <kjain@linux.ibm.com>
----
- tools/perf/pmu-events/arch/powerpc/power10/cache.json    | 5 -----
- tools/perf/pmu-events/arch/powerpc/power10/frontend.json | 5 +++++
- 2 files changed, 5 insertions(+), 5 deletions(-)
+On Tue, 27 Aug 2024 13:25:52 +0800
+Pengfei Xu <pengfei.xu@intel.com> wrote:
 
-diff --git a/tools/perf/pmu-events/arch/powerpc/power10/cache.json b/tools/perf/pmu-events/arch/powerpc/power10/cache.json
-index 9814a59fce31..b7e0be09ff57 100644
---- a/tools/perf/pmu-events/arch/powerpc/power10/cache.json
-+++ b/tools/perf/pmu-events/arch/powerpc/power10/cache.json
-@@ -18,10 +18,5 @@
-     "EventCode": "0x300F4",
-     "EventName": "PM_RUN_INST_CMPL_CONC",
-     "BriefDescription": "PowerPC instruction completed by this thread when all threads in the core had the run-latch set."
--  },
--  {
--    "EventCode": "0x400F6",
--    "EventName": "PM_BR_MPRED_CMPL",
--    "BriefDescription": "A mispredicted branch completed. Includes direction and target."
-   }
- ]
-diff --git a/tools/perf/pmu-events/arch/powerpc/power10/frontend.json b/tools/perf/pmu-events/arch/powerpc/power10/frontend.json
-index 684374fe5699..b6998987ab75 100644
---- a/tools/perf/pmu-events/arch/powerpc/power10/frontend.json
-+++ b/tools/perf/pmu-events/arch/powerpc/power10/frontend.json
-@@ -94,6 +94,11 @@
-     "EventName": "PM_DTLB_HIT_1G",
-     "BriefDescription": "Data TLB hit (DERAT reload) page size 1G. Implies radix translation. When MMCR1[16]=0 this event counts only for demand misses. When MMCR1[16]=1 this event includes demand misses and prefetches."
-   },
-+  {
-+    "EventCode": "0x400F6",
-+    "EventName": "PM_BR_MPRED_CMPL",
-+    "BriefDescription": "A mispredicted branch completed. Includes direction and target."
-+  },
-   {
-     "EventCode": "0x400FC",
-     "EventName": "PM_ITLB_MISS",
--- 
-2.43.5
+> Hi Maxime Chevallier,
+> 
+> I used syzkaller and found that: there was general protection fault in
+> phy_start_cable_test_tdr in Linux next:next-20240826.
+> 
+> Bisected and found first bad commit:
+> "
+> 3688ff3077d3 net: ethtool: cable-test: Target the command to the requested PHY
+> "
+> After reverted below commit on top of next-20240826, this issue was gone.
+> 
+> All detailed info: https://github.com/xupengfe/syzkaller_logs/tree/main/240826_202302_phy_start_cable_test_tdr
+> Syzkaller repro code: https://github.com/xupengfe/syzkaller_logs/blob/main/240826_202302_phy_start_cable_test_tdr/repro.c
+> Syzkaller repro syscall steps: https://github.com/xupengfe/syzkaller_logs/blob/main/240826_202302_phy_start_cable_test_tdr/repro.prog
+> Syzkaller report: https://github.com/xupengfe/syzkaller_logs/blob/main/240826_202302_phy_start_cable_test_tdr/repro.report
+> Kconfig(make olddefconfig): https://github.com/xupengfe/syzkaller_logs/blob/main/240826_202302_phy_start_cable_test_tdr/kconfig_origin
+> Bisect info: https://github.com/xupengfe/syzkaller_logs/blob/main/240826_202302_phy_start_cable_test_tdr/bisect_info.log
+> bzImage: https://github.com/xupengfe/syzkaller_logs/raw/main/240826_202302_phy_start_cable_test_tdr/bzImage_1ca4237ad9ce29b0c66fe87862f1da54ac56a1e8.tar.gz
+> Issue dmesg: https://github.com/xupengfe/syzkaller_logs/blob/main/240826_202302_phy_start_cable_test_tdr/1ca4237ad9ce29b0c66fe87862f1da54ac56a1e8_dmesg.log
 
+Thanks for the report !
+
+This issue has indeed been detected, and is being addressed, see :
+
+https://lore.kernel.org/netdev/20240826134656.94892-1-djahchankoike@gmail.com/
+
+Thanks,
+
+Maxime
 
