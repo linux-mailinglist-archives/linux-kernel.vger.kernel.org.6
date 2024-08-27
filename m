@@ -1,167 +1,289 @@
-Return-Path: <linux-kernel+bounces-303407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16C19960BA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:18:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9563F960BAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:18:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C13541F23574
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:18:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D2032850D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577A21BFDF9;
-	Tue, 27 Aug 2024 13:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0971BF331;
+	Tue, 27 Aug 2024 13:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KrBA74CI"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EhBKY6F9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFEB31BCA1F;
-	Tue, 27 Aug 2024 13:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0EF1BD50A;
+	Tue, 27 Aug 2024 13:18:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724764660; cv=none; b=GQA7I7Ud740KLdBiFcmlXcZTD9s9PGZ16o6iiRh5VPUsOFmx/eB91x3f0vQXL2jnXDpjXi9HH8MgzAyI0R3SjBEQDFzHHVXPx+YYZCNMq513bmFCn0zSssv8gXJsux6lDilod2oDKa553Et6Awyg6DHiu4incKEj0dgnQB4al5s=
+	t=1724764691; cv=none; b=lafksIWCYPON3LmhSKuMh5xUwOChyFein7CRE2azUMhVpUt28XFLA+a7/E9P2ekAPnn/ouMn4GQoi4S9tzG9osnE6mM87Gvd6qNb9AiohE4SZaNKSzL6I0nSvRfjVxnobqmuAblpZy+km3V8nnBivGtgZHY/8x3u4jTblQXe7s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724764660; c=relaxed/simple;
-	bh=v7i8U1exn/p4Kp2wy1QiVDZ6BNT58N56FTmveyApcn0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ozW8jc9nPg4Fgkx12/45/nkiVqkkhhg0t2+MWlRj1patOhLO76AXH00OAMAOAF0+pG0w3xGT3j/GTd3/ah2UqAr/cnjIUQ0aQA9kz12SZsQHFSh8dGvEXIY//rEdXgkDbLL/kmjsRGFvXGMC7KVyNT6lUz0uGoj42WrFCQf0N9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KrBA74CI; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5bec4fc82b0so10776262a12.1;
-        Tue, 27 Aug 2024 06:17:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724764657; x=1725369457; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mxBf660Bv9zRXPQcrs/5nvFvHYc/SYwwwZQ1HYhGogQ=;
-        b=KrBA74CILz1FoA336bSNeJpOt9iAN+hx2v8ZB33EMnDGKod0+sP1m8KNlHxF4ZlGxi
-         eC/X50IFTSjJZEpGF5lcsBzlCs8z9/RaTObr/RUSYgDdCSU1HU8uNrDUwUtjQzvTekTx
-         ht9jfoiC13EKk8iTxGviEEo6/FssrCIFYTkEd9pbLt9mpx/gDlDsVAon5C8AHdVKQS28
-         RsdczQLtutqWiiNkdbJlvh47vWfJQeb36d3rrpfb3MYW0CdNgUmUNHO/9GS2lJJ+v3Nq
-         N/cd0vMdCZq67YOrbC6p2SfAnPbhtgAN4FlmkEe77z40F4EQ6l+SqziqoQdm9++aUz9V
-         fLdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724764657; x=1725369457;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mxBf660Bv9zRXPQcrs/5nvFvHYc/SYwwwZQ1HYhGogQ=;
-        b=P8iHHEdKe/DvtOYwv/BNCswJoawxhcZVQXMQ7Bn/z/GiCC6P6CesY90ltfyj4zZyS9
-         n51DjslJK+woldDWo5+KYvJt2nSOlV1WhJfAtfUYYEpF/EgD/Jr+7qUvWHorzid+To8w
-         cbB8i9PMvlonArJ3QBQTRNxYmkrpr24KjQTZnLAzNaS6DqCG3lU4fIpZkzZKhzPeGFq5
-         4GcxW0f6jxqUjK/CEUGBBR55GqmaQydVucjxD16iyliRYkmb0/tW2+cqSJmb8CmPfO1S
-         scfcP8hXrdWI9QhRKX7NexZ4vcLF2K/XKOw9BscSPnmlOb9U3Sh3CsyM5IN0DMq3mp2b
-         r/sg==
-X-Forwarded-Encrypted: i=1; AJvYcCUoJCZyaXsgS1Ujsj70KKEqkcHywNIzoRB0JryZYFdQNYwrUedRQGU3a5UAKKac8ZykOGYMWXtDrtDxZ/l0@vger.kernel.org, AJvYcCWWKeXVR9b2iQhnDRyqL9XtS/SidLG2aNIHmzfhStThrPsxSZOO8bgwSzgN7tROuU/0On9uVKjFs4+F@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7XZ8c16WayWxlDv/SlY0AXEv2kiijGSwkDpa/Y46gKWSCbbcs
-	ujdthaaVK+UaeyqNYvnrow4PPlqefQF95/eV6WrQTu1tKB4xq3eA
-X-Google-Smtp-Source: AGHT+IGhFaepLVw8n3BA5Ac566F9q6frA0UQsKGr69tE8YrQqVwA3DD8C+apzBJbdhoAor20lggjhA==
-X-Received: by 2002:a17:907:809:b0:a7a:bae8:f2b5 with SMTP id a640c23a62f3a-a86e2aa4c70mr305452666b.36.1724764656836;
-        Tue, 27 Aug 2024 06:17:36 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2500:a01:5ac5:89a0:20cd:42bc])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e5878597sm110338466b.175.2024.08.27.06.17.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 06:17:36 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 2/2] pinctrl: renesas: rzg2l: Move pinconf_to_config_argument() call outside of switch cases
-Date: Tue, 27 Aug 2024 14:17:22 +0100
-Message-Id: <20240827131722.89359-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240827131722.89359-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20240827131722.89359-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1724764691; c=relaxed/simple;
+	bh=RCzuKTFN/faQNgu04Bbp5FM+f12nyS0HtynHkBTLOXs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r/YxBPVwb1+JRgJQmarlGA9aVQ7DWKpNU1SS6mScz1P3XODN2AoWxZYtuNVrPfckiizjJ/zmxrLzOgKe1Uj6lTCB8kcUQMn1i8eC9dS2wxpIRYZDXB66PAvxd72iSJCf+7ACOGlGSDWjkn22vByE4olCsTF1Qi5aPX7QvsiU/jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EhBKY6F9; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724764689; x=1756300689;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RCzuKTFN/faQNgu04Bbp5FM+f12nyS0HtynHkBTLOXs=;
+  b=EhBKY6F9Qo5wv/1I9PpF3gcSzSb2WBdyY00Uv4hFz7fc0AC6T87rqS+t
+   7lxBtK6s4PvghQ3FNLD9UNfzkLXW5SgI5gN+sJrIvJKWoHfQ9cZW3Jwve
+   fLvx+aDj2Siy7zpvY/kBjIiuLkwmNHBvdeQJW25cXCbRFHKL9qN+dqfeo
+   iJzWHi2DLnXvW7aZ64/XBu1epRY63T6h6n3w8cMjnIzZhwB68cLUOpgBZ
+   Z2ooH2wlPdGDrwGUO6u3FwNAltgcUokGqZfl+nK0NNggisBdDpsgpaUfj
+   zzuY9oSTK8dXjAOZXq9r9cY+JryIUuKdNDHLIkDvR7LXw15vlFbjsYhfh
+   g==;
+X-CSE-ConnectionGUID: 41BgJiuERRW/pFsjCRiaXQ==
+X-CSE-MsgGUID: xPc++jevT7GeJZZfVrX9jg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="22832196"
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="22832196"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 06:18:08 -0700
+X-CSE-ConnectionGUID: aWjBSD9HS0qNntGcBGBgkQ==
+X-CSE-MsgGUID: a54sve+dTjG+tvt3RMGuOg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="100365065"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 06:18:03 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1siw59-00000002Guo-3fuh;
+	Tue, 27 Aug 2024 16:17:59 +0300
+Date: Tue, 27 Aug 2024 16:17:59 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ira Weiny <ira.weiny@intel.com>
+Cc: Petr Mladek <pmladek@suse.com>, Dave Jiang <dave.jiang@intel.com>,
+	Fan Ni <fan.ni@samsung.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	nvdimm@lists.linux.dev
+Subject: Re: [PATCH v3 02/25] printk: Add print format (%par) for struct range
+Message-ID: <Zs3SB48QdLmUEdzw@smile.fi.intel.com>
+References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
+ <20240816-dcd-type2-upstream-v3-2-7c9b96cba6d7@intel.com>
+ <ZsSjdjzRSG87alk5@pathway.suse.cz>
+ <66c77b1c5c65c_1719d2940@iweiny-mobl.notmuch>
+ <Zsd_EctNZ80fuKMu@smile.fi.intel.com>
+ <ZsyB5rqhaZ-oRwny@pathway.suse.cz>
+ <Zsy6BbJiYqiXORGu@smile.fi.intel.com>
+ <66ccf10089b0_e0732294ef@iweiny-mobl.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <66ccf10089b0_e0732294ef@iweiny-mobl.notmuch>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Mon, Aug 26, 2024 at 04:17:52PM -0500, Ira Weiny wrote:
+> Andy Shevchenko wrote:
+> > On Mon, Aug 26, 2024 at 03:23:50PM +0200, Petr Mladek wrote:
+> > > On Thu 2024-08-22 21:10:25, Andy Shevchenko wrote:
+> > > > On Thu, Aug 22, 2024 at 12:53:32PM -0500, Ira Weiny wrote:
+> > > > > Petr Mladek wrote:
+> > > > > > On Fri 2024-08-16 09:44:10, Ira Weiny wrote:
 
-Refactor the `rzg2l_pinctrl_pinconf_set()` function by moving the call to
-`arg = pinconf_to_config_argument(_configs[i])` to the beginning of the
-loop. Previously, this call was redundantly made in each case of the
-switch statement.
+...
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+> > > > > > > +	%par	[range 0x60000000-0x6fffffff] or
+> > > > > > 
+> > > > > > It seems that it is always 64-bit. It prints:
+> > > > > > 
+> > > > > > struct range {
+> > > > > > 	u64   start;
+> > > > > > 	u64   end;
+> > > > > > };
+> > > > > 
+> > > > > Indeed.  Thanks I should not have just copied/pasted.
+> > > > 
+> > > > With that said, I'm not sure the %pa is a good placeholder for this ('a' stands
+> > > > to "address" AFAIU). Perhaps this should go somewhere under %pr/%pR?
+> 
+> I'm speaking a bit for Dan here but also the logical way I thought of
+> things.
+> 
+> 1) %p does not dictate anything about the format of the data.  Rather
+>    indicates that what is passed is a pointer.  Because we are passing a
+>    pointer to a range struct %pXX makes sense.
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 8fc1f28d02d1..e742a4e3eb4a 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -1384,9 +1384,9 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
- 
- 	for (i = 0; i < num_configs; i++) {
- 		param = pinconf_to_config_param(_configs[i]);
-+		arg = pinconf_to_config_argument(_configs[i]);
- 		switch (param) {
- 		case PIN_CONFIG_INPUT_ENABLE:
--			arg = pinconf_to_config_argument(_configs[i]);
- 
- 			if (!(cfg & PIN_CFG_IEN))
- 				return -EINVAL;
-@@ -1395,7 +1395,6 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
- 			break;
- 
- 		case PIN_CONFIG_OUTPUT_ENABLE:
--			arg = pinconf_to_config_argument(_configs[i]);
- 			if (!(cfg & PIN_CFG_OEN))
- 				return -EINVAL;
- 			if (!pctrl->data->oen_write)
-@@ -1410,8 +1409,6 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
- 			break;
- 
- 		case PIN_CONFIG_SLEW_RATE:
--			arg = pinconf_to_config_argument(_configs[i]);
--
- 			if (!(cfg & PIN_CFG_SR) || arg > 1)
- 				return -EINVAL;
- 
-@@ -1432,8 +1429,6 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
- 			break;
- 
- 		case PIN_CONFIG_DRIVE_STRENGTH:
--			arg = pinconf_to_config_argument(_configs[i]);
--
- 			if (!(cfg & PIN_CFG_IOLH_A) || hwcfg->drive_strength_ua)
- 				return -EINVAL;
- 
-@@ -1457,8 +1452,6 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
- 			break;
- 
- 		case PIN_CONFIG_OUTPUT_IMPEDANCE_OHMS:
--			arg = pinconf_to_config_argument(_configs[i]);
--
- 			if (!(cfg & PIN_CFG_IOLH_B) || !hwcfg->iolh_groupb_oi[0])
- 				return -EINVAL;
- 
-@@ -1476,7 +1469,6 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
- 			if (!(cfg & PIN_CFG_IOLH_RZV2H))
- 				return -EINVAL;
- 
--			arg = pinconf_to_config_argument(_configs[i]);
- 			if (arg > 3)
- 				return -EINVAL;
- 			rzg2l_rmw_pin_config(pctrl, IOLH(off), bit, IOLH_MASK, arg);
+There is no objection to that.
+
+> 2) %pa indicates what follows is 'address'.  This was a bit of creative
+>    license because, as I said in the commit message most of the time
+>    struct range contains an address range.  So for this narrow use case it
+>    also makes sense.
+
+As in the discussion it was pointed out that struct range is always 64-bit,
+limiting it to the "address" is a wrong assumption as we are talking generic
+printing routine here. We don't know what users will be in the future on 32-bit
+platforms, or what data (semantically) is being held by this structure.
+
+> 3) %par r for range.
+
+I understand, but again struct range != address.
+
+> %p[rR] is taken.
+> %pra confuses things IMO.
+
+It doesn't confuse me. :-) But I believe Petr also has a rationale behind this
+proposal as he described earlier.
+
+> > > The r/R in %pr/%pR actually stands for "resource".
+> > > 
+> > > But "%ra" really looks like a better choice than "%par". Both
+> > > "resource"  and "range" starts with 'r'. Also the struct resource
+> > > is printed as a range of values.
+> 
+> %r could be used I think.  But this breaks with the convention of passing a
+> pointer and how to interpret it.  The other idea I had, mentioned in the commit
+> message was %pn.  Meaning passed by pointer 'raNge'.
+
+No, we can't use %r or anything else that is documented for the standard
+printf() format specifiers, otherwise you will get a compiler warning and
+basically it means no go.
+
+> I think that follows better than %r.  That would be another break from C99.
+> But we don't have to follow that.
+> 
+> > Fine with me as long as it:
+> > 1) doesn't collide with %pa namespace
+> > 2) tries to deduplicate existing code as much as possible.
+> 
+> Andy, I'm not quite following how you expect to share the code between
+> resource_string() and range_string()?
+> 
+> There is very little duplicated code.  In fact with Petr's suggestions and some
+> more work range_string() is quite simple:
+> 
+> +static noinline_for_stack
+> +char *range_string(char *buf, char *end, const struct range *range,
+> +                     struct printf_spec spec, const char *fmt)
+> +{
+> +#define RANGE_DECODED_BUF_SIZE         ((2 * sizeof(struct range)) + 4)
+> +#define RANGE_PRINT_BUF_SIZE           sizeof("[range -]")
+> +       char sym[RANGE_DECODED_BUF_SIZE + RANGE_PRINT_BUF_SIZE];
+> +       char *p = sym, *pend = sym + sizeof(sym);
+
+
+Missing check for pointer, but it's not that I wanted to tell.
+
+> +       *p++ = '[';
+> +       p = string_nocheck(p, pend, "range ", default_str_spec);
+
+Hmm... %pr uses str_spec, what the difference can be here?
+
+> +       p = special_hex_number(p, pend, range->start, sizeof(range->start));
+> +       *p++ = '-';
+> +       p = special_hex_number(p, pend, range->end, sizeof(range->end));
+
+This is basically the copy of %pr implementation.
+
+	p = number(p, pend, res->start, *specp);
+	if (res->start != res->end) {
+		*p++ = '-';
+		p = number(p, pend, res->end, *specp);
+	}
+
+Would it be possible to unify? I think so, but it requires a bit of thinking.
+
+That's why testing is very important in this kind of generic code.
+
+> +       *p++ = ']';
+> +       *p = '\0';
+> +
+> +       return string_nocheck(buf, end, sym, spec);
+> +}
+> 
+> Also this is the bulk of the patch except for documentation and the new
+> testing code.  [new patch below]
+> 
+> Am I missing your point somehow?
+
+See above.
+
+> I considered cramming a struct range into a
+> struct resource to let resource_string() process the data.  But that would
+> involve creating a new IORESOURCE_* flag (not ideal) and also does not allow
+> for the larger u64 data in struct range should this be a 32 bit physical
+> address config.
+
+No, that's not what I was expecting.
+
+> Most importantly that would not be much less code AFAICT.
+
+...
+
+> +       %par    [range 0x0000000060000000-0x000000006fffffff]
+
+I still think this is not okay to use %pa namespace.
+
+...
+
+> +static void __init
+> +struct_range(void)
+> +{
+> +       struct range test_range = {
+> +               .start = 0xc0ffee00ba5eba11,
+> +               .end = 0xc0ffee00ba5eba11,
+> +       };
+> +
+> +       test("[range 0xc0ffee00ba5eba11-0xc0ffee00ba5eba11]",
+> +            "%par", &test_range);
+> +
+> +       test_range = (struct range) {
+> +               .start = 0xc0ffee,
+> +               .end = 0xba5eba11,
+> +       };
+> +       test("[range 0x0000000000c0ffee-0x00000000ba5eba11]",
+> +            "%par", &test_range);
+
+Case when start == end?
+Case when end < start?
+
+> +}
+
+...
+
+> +       *p++ = '[';
+> +       p = string_nocheck(p, pend, "range ", default_str_spec);
+> +       p = special_hex_number(p, pend, range->start, sizeof(range->start));
+> +       *p++ = '-';
+> +       p = special_hex_number(p, pend, range->end, sizeof(range->end));
+> +       *p++ = ']';
+> +       *p = '\0';
+
+As per above comments.
+
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
 
