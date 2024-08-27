@@ -1,82 +1,102 @@
-Return-Path: <linux-kernel+bounces-303645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B45B9612FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:38:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 782D19612F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4467CB256FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:36:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F6CE1F240BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481B71C6F7C;
-	Tue, 27 Aug 2024 15:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98721C6F7C;
+	Tue, 27 Aug 2024 15:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P0KE2Ohb"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aFKwpdiw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="h5+Lg4D2";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aFKwpdiw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="h5+Lg4D2"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37591C1723;
-	Tue, 27 Aug 2024 15:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7289B19EEA2;
+	Tue, 27 Aug 2024 15:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724772995; cv=none; b=XuylMp94dKG/bUF2Fj5qVIyaYpMjATtsesgwteOvYdvV5PKrLxD6pB3F7R4TGtLnUbAGD6BhtOOUbzoKpPBWpg9R2krA30U8xNm+WUt2uARtqWa2rJSRU7i+cUBgrfMhZe+NKzFmKJwEJ2/cJyX97AgFbtgs3l65ZFv0ZPbHCB8=
+	t=1724773069; cv=none; b=ljKjHQkGuu4uBoIaD0XI8hW5tyRuvj2YN7XrpPmqt4xmACJ4EZ4kaEO2sIduEOJLQ45hVPfB/5PunPy5GxQtFn+gxfurrod9va4EHp8tWt6iBTnFZJuaiUtlQDSiqhdY9rxn9Hvx+Tw/m3oxnauH+XthrW+ptPkSArPxVSQ6jH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724772995; c=relaxed/simple;
-	bh=KYrMAoJCt+EV7WoaEnKxjVrsnUTS3xitiFfMxJQdzHo=;
+	s=arc-20240116; t=1724773069; c=relaxed/simple;
+	bh=ZVsyH+5BlaRKkuNNP3WObwiO6VxPzbzhqUi0aY/uRw8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FUVjGCZGedfIkIxeZAS+PXCIz7zeh1jpa0E38aPH09waB30shGjoFB5HULF2p+Tnoi9eP00FV35Ub+ukDLcs5LUjrVqYsloFFF2pVvoNAmxqQpc/Oq/T01s6qXchkjw0IhpiN4ACtlZ0T6sz7VVj6zkGtR9dbGw8ZiysNcssyZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P0KE2Ohb; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-715c160e231so1006078b3a.0;
-        Tue, 27 Aug 2024 08:36:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724772993; x=1725377793; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=i06m+lajlNBP6LGt0oGGIooKzG4I9XsfXSKSmv9z5Nk=;
-        b=P0KE2Ohb7LIvafcZLCw2FjbHH40MaXONqjohJRicSXYTWfBVixY6bjmYhp6qJD3XDS
-         npn+r4/nh4jqdyIsVBm2oiisSFeTs2kBisEzgdih5EAXUPjANCmaykb1KWyoFOJwnm9e
-         LM1qU5tekIaOb8Gjn6F6+Ak2eDGZUkq90iUxWXcohMelj23QUowtGGYon110f52DECDU
-         T7kVCuZXHMNfEJdo986iJSCO1d5SXMT5HYBrQLrC42QDRqk3Osb+BddYsRiHzdt7KlXR
-         PJYj/nHuteO4GBj9UtWu1LEr7l3Wc5FWGVwDaTNLGMhKK7pDCkgA0XajeWeoc6NCY1rC
-         nCyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724772993; x=1725377793;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i06m+lajlNBP6LGt0oGGIooKzG4I9XsfXSKSmv9z5Nk=;
-        b=wR0Y+j51IgYEkCSDdJ9IU1SKWYav2nSzLB+zzAmtCBX34p+YFpi5ejII/n8H6w1GJV
-         rgUE01V5ie8Lq/fEFMDsrtLbkBuhPUILw9u2pnnd3D6asAspT/oLUUovWk0A9YtiBNWn
-         1Dq1DigFBuOv164z64jHbzzhPJawwfIOlUj6iy4geXx55/1b3qJbKvoXzEpmD4mqd+J1
-         us8G/SMwBUqZmKhgisNB+a7ot+dgqzO2+k2djvIUsI+NN7TX9i9FIh0jSvKSPMJLdTjg
-         JAJzRI+mmQRPsXSzBqvHLMTkawIwEc/cuTxux/wAn2A4KiVoEJkVYK5MYtOxJT0E3Nbb
-         3keg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4Vc4IovNcCR7m9hK+Y6KvaLtninO5G1HuXV5oT6kkU0PUI1//playbWrhDYK20GNQHPVBkvJ2b7/CdiE=@vger.kernel.org, AJvYcCUy30W66Xz7rpEiZ4Fkn1uFA3XpkNVdaa1+RtHKrDTI0SasJC+RHM/d3XIy4KNwaIN0pd/Yxe+6GWNn4w==@vger.kernel.org, AJvYcCVdo6Igs1jLpYHN9iSALvOUkPVeMWeNiGLsh81VxgB+5i5ZskY9ppXtBs/LwqataFtwNXi6fhKFsb/PBkk4@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMsGnzqeJHmED2c2KQg7phUbpkLK2AEodhSqYRAk3PCkI7YmzW
-	7U2ev7H66Me8mrTu4ooeeGYfEtLQQ0JrNRRbwWY8Un+WMgr6n98F
-X-Google-Smtp-Source: AGHT+IEvQGwNNvRjt/gQ3MweAjTwx8USmVtCznICoy0IzZHOhyJB9kgCfh6r6IN+M3mCARs4NX/0eA==
-X-Received: by 2002:a05:6a21:3406:b0:1c4:2134:dd54 with SMTP id adf61e73a8af0-1cc8a079e5cmr15672790637.45.1724772992904;
-        Tue, 27 Aug 2024 08:36:32 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:fce4:8959:e48d:980c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715c49aa23dsm1267675b3a.5.2024.08.27.08.36.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 08:36:32 -0700 (PDT)
-Date: Tue, 27 Aug 2024 08:36:29 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "Rob Herring (Arm)" <robh@kernel.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-input@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] input: tegra: Use of_property_read_variable_u32_array()
- and of_property_present()
-Message-ID: <Zs3yfc1pJDkAwhzc@google.com>
-References: <20240731201407.1838385-6-robh@kernel.org>
- <zyzygwdfncus7nhnu6sgbc2wzjpih3dntgdogorg3it4vc7r6v@aufrf6kwqun3>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qjX9QWrPeYruiFfAvlrJ9d7RFM119RW0nJCrSthtfHpbzpLxnyCM596psGA7SyB7U2KGiQ69Ij3Shfy/fx4ksazUunrLY94jLiV8//rDI7uyBRC2xO4VULaJPDkLncfuF0ZvxD/vvQrltvjEgOXjSitkP5nzQdeFpN3wndsn4YM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aFKwpdiw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=h5+Lg4D2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aFKwpdiw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=h5+Lg4D2; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B350B21AA6;
+	Tue, 27 Aug 2024 15:37:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1724773065;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BcCsuhIw7zwSosdhpQoFiQdYj2NYeJCTsIAoNY2Bd9E=;
+	b=aFKwpdiwqCVvAFOwwmCQy5yCoPpzPJBJJZgVJzCr3CF9lHnOe53jKQuMYV3rg4n5SKy1Wd
+	rd4QQWsCMeFznhDJ+KIARPwVUXFOXGbSKlm7EXKTkYTYXrPHd35hQsjXXoVfB00HRJ14N6
+	aGd9K20fo84aMr/ew85gIte3qyXhxbI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1724773065;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BcCsuhIw7zwSosdhpQoFiQdYj2NYeJCTsIAoNY2Bd9E=;
+	b=h5+Lg4D2PDf6XkoGom3NyBxfJmo49e/lVNL/yPLY0Act1IArjGY4dNXfy9DwEkl6MYGvfg
+	JJ3IW8skZoCDAyDQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1724773065;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BcCsuhIw7zwSosdhpQoFiQdYj2NYeJCTsIAoNY2Bd9E=;
+	b=aFKwpdiwqCVvAFOwwmCQy5yCoPpzPJBJJZgVJzCr3CF9lHnOe53jKQuMYV3rg4n5SKy1Wd
+	rd4QQWsCMeFznhDJ+KIARPwVUXFOXGbSKlm7EXKTkYTYXrPHd35hQsjXXoVfB00HRJ14N6
+	aGd9K20fo84aMr/ew85gIte3qyXhxbI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1724773065;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BcCsuhIw7zwSosdhpQoFiQdYj2NYeJCTsIAoNY2Bd9E=;
+	b=h5+Lg4D2PDf6XkoGom3NyBxfJmo49e/lVNL/yPLY0Act1IArjGY4dNXfy9DwEkl6MYGvfg
+	JJ3IW8skZoCDAyDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 95A4A13A44;
+	Tue, 27 Aug 2024 15:37:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id tecqJMnyzWZMKAAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Tue, 27 Aug 2024 15:37:45 +0000
+Date: Tue, 27 Aug 2024 17:37:39 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Li Zetao <lizetao1@huawei.com>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] btrfs: Fix reversed condition in
+ copy_inline_to_page()
+Message-ID: <20240827153739.GY25962@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <3a05145b-6c24-4101-948e-1a457b92ea3e@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,149 +105,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <zyzygwdfncus7nhnu6sgbc2wzjpih3dntgdogorg3it4vc7r6v@aufrf6kwqun3>
+In-Reply-To: <3a05145b-6c24-4101-948e-1a457b92ea3e@stanley.mountain>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-0.994];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_HAS_DN(0.00)[]
+X-Spam-Score: -4.00
+X-Spam-Flag: NO
 
-On Tue, Aug 27, 2024 at 04:23:48PM +0200, Thierry Reding wrote:
-> On Wed, Jul 31, 2024 at 02:14:01PM GMT, Rob Herring (Arm) wrote:
-> > There's no need to get the length of an DT array property before
-> > parsing the array. of_property_read_variable_u32_array() takes a
-> > minimum and maximum length and returns the actual length (or error
-> > code).
-> > 
-> > This is part of a larger effort to remove callers of of_get_property()
-> > and similar functions. of_get_property() leaks the DT property data
-> > pointer which is a problem for dynamically allocated nodes which may
-> > be freed.
-> > ---
-> >  drivers/input/keyboard/tegra-kbc.c | 72 +++++++++++-------------------
-> >  1 file changed, 27 insertions(+), 45 deletions(-)
-> > 
-> > diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
-> > index a1765ed8c825..53f39fc155ea 100644
-> > --- a/drivers/input/keyboard/tegra-kbc.c
-> > +++ b/drivers/input/keyboard/tegra-kbc.c
-> > @@ -491,12 +491,10 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
-> >  	struct device_node *np = kbc->dev->of_node;
-> >  	u32 prop;
-> >  	int i;
-> > -	u32 num_rows = 0;
-> > -	u32 num_cols = 0;
-> > +	int num_rows;
-> > +	int num_cols;
-> >  	u32 cols_cfg[KBC_MAX_GPIO];
-> >  	u32 rows_cfg[KBC_MAX_GPIO];
-> > -	int proplen;
-> > -	int ret;
-> >  
-> >  	if (!of_property_read_u32(np, "nvidia,debounce-delay-ms", &prop))
-> >  		kbc->debounce_cnt = prop;
-> > @@ -510,56 +508,23 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
-> >  	    of_property_read_bool(np, "nvidia,wakeup-source")) /* legacy */
-> >  		kbc->wakeup = true;
-> >  
-> > -	if (!of_get_property(np, "nvidia,kbc-row-pins", &proplen)) {
-> > -		dev_err(kbc->dev, "property nvidia,kbc-row-pins not found\n");
-> > -		return -ENOENT;
-> > -	}
-> > -	num_rows = proplen / sizeof(u32);
-> > -
-> > -	if (!of_get_property(np, "nvidia,kbc-col-pins", &proplen)) {
-> > -		dev_err(kbc->dev, "property nvidia,kbc-col-pins not found\n");
-> > -		return -ENOENT;
-> > -	}
-> > -	num_cols = proplen / sizeof(u32);
-> > -
-> > -	if (num_rows > kbc->hw_support->max_rows) {
-> > -		dev_err(kbc->dev,
-> > -			"Number of rows is more than supported by hardware\n");
-> > -		return -EINVAL;
-> > -	}
-> > -
-> > -	if (num_cols > kbc->hw_support->max_columns) {
-> > -		dev_err(kbc->dev,
-> > -			"Number of cols is more than supported by hardware\n");
-> > -		return -EINVAL;
-> > -	}
-> > -
-> > -	if (!of_get_property(np, "linux,keymap", &proplen)) {
-> > +	if (!of_property_present(np, "linux,keymap")) {
-> >  		dev_err(kbc->dev, "property linux,keymap not found\n");
-> >  		return -ENOENT;
-> >  	}
-> >  
-> > -	if (!num_rows || !num_cols || ((num_rows + num_cols) > KBC_MAX_GPIO)) {
-> > -		dev_err(kbc->dev,
-> > -			"keypad rows/columns not properly specified\n");
-> > -		return -EINVAL;
-> > -	}
-> > -
-> >  	/* Set all pins as non-configured */
-> >  	for (i = 0; i < kbc->num_rows_and_columns; i++)
-> >  		kbc->pin_cfg[i].type = PIN_CFG_IGNORE;
-> >  
-> > -	ret = of_property_read_u32_array(np, "nvidia,kbc-row-pins",
-> > -				rows_cfg, num_rows);
-> > -	if (ret < 0) {
-> > +	num_rows = of_property_read_variable_u32_array(np, "nvidia,kbc-row-pins",
-> > +				rows_cfg, 1, KBC_MAX_GPIO);
-> > +	if (num_rows < 0) {
-> >  		dev_err(kbc->dev, "Rows configurations are not proper\n");
-> > -		return -EINVAL;
-> > -	}
-> > -
-> > -	ret = of_property_read_u32_array(np, "nvidia,kbc-col-pins",
-> > -				cols_cfg, num_cols);
-> > -	if (ret < 0) {
-> > -		dev_err(kbc->dev, "Cols configurations are not proper\n");
-> > +		return num_rows;
-> > +	} else if (num_rows > kbc->hw_support->max_rows) {
-> > +		dev_err(kbc->dev,
-> > +			"Number of rows is more than supported by hardware\n");
-> >  		return -EINVAL;
-> >  	}
-> >  
-> > @@ -568,11 +533,28 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
-> >  		kbc->pin_cfg[rows_cfg[i]].num = i;
-> >  	}
-> >  
-> > +	num_cols = of_property_read_variable_u32_array(np, "nvidia,kbc-col-pins",
-> > +				cols_cfg, 1, KBC_MAX_GPIO);
-> > +	if (num_cols < 0) {
-> > +		dev_err(kbc->dev, "Cols configurations are not proper\n");
-> > +		return num_cols;
-> > +	} else if (num_cols > kbc->hw_support->max_columns) {
-> > +		dev_err(kbc->dev,
-> > +			"Number of cols is more than supported by hardware\n");
-> > +		return -EINVAL;
-> > +	}
-> > +
-> >  	for (i = 0; i < num_cols; i++) {
-> >  		kbc->pin_cfg[cols_cfg[i]].type = PIN_CFG_COL;
-> >  		kbc->pin_cfg[cols_cfg[i]].num = i;
-> >  	}
-> >  
-> > +	if (!num_rows || !num_cols || ((num_rows + num_cols) > KBC_MAX_GPIO)) {
-> > +		dev_err(kbc->dev,
-> > +			"keypad rows/columns not properly specified\n");
-> > +		return -EINVAL;
-> > +	}
+On Tue, Aug 27, 2024 at 01:21:08PM +0300, Dan Carpenter wrote:
+> This if statement is reversed leading to locking issues.
 > 
-> Previously we wouldn't try to initialize the columns when the
-> rows/columns were invalid, so this block could move before the last for
-> loop above.
-> 
-> But it doesn't really matter given that these are exceptions and really
-> shouldn't happen, so:
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
+> Fixes: 8e603cfe05f0 ("btrfs: convert copy_inline_to_page() to use folio")
 
-I don't quite like of_property_read_variable_u32_array() because it is
-OF-specific. device_property_count_u32() will return the number of
-elements in an array. But I guess this driver will only be used on an OF
-system... 
-
-Applied, thank you.
-
--- 
-Dmitry
+This is from series that appeared in linux-next for a short time and has
+been removed due to problems, one if which might be the one you report.
+Thanks.
 
