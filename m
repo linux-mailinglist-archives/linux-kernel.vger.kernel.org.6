@@ -1,172 +1,115 @@
-Return-Path: <linux-kernel+bounces-303177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA4719608AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:29:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86F3A9608AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 189091C2287D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:29:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15C9E1F23A79
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968C119FA86;
-	Tue, 27 Aug 2024 11:29:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E227119FA89;
+	Tue, 27 Aug 2024 11:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="puV1QpwR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FjiuJ4ha"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73C315535A;
-	Tue, 27 Aug 2024 11:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE9919EEB4;
+	Tue, 27 Aug 2024 11:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724758152; cv=none; b=BvPzpOEgCyn4IqrydiYwDeDnhLYC72dRqPtxpWX1pETyS/2AC4jsWgY/GTbqwHkrQ8MP8nLTEzu3sFCIT8JZCh9dtEkp5qoC4qJm/w/z65MGsox0HW8V8m+Izbfb5O1USFVENlpu48ajsrn7CMUrLjrYk49SH2804z+thOIUshI=
+	t=1724758183; cv=none; b=HmLz6KUFWVmbWzc6HbuLtK91drPUkkrl5yn+wcY17o5Oa4aEU3bif4NZb07KLx6WZv/lU7/Ov5Zlt517X+b7pKG7a+ZETVpqCuFEg15XDfVw3XclIyom/Qi4i2Ne3rNeIW31sCfEgPoltDlzL3OxPdDcexj0KJGXhlc7LPCCtyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724758152; c=relaxed/simple;
-	bh=7hG0IYA1h2hw7SvTKbJ20PPbF9uHd2tn3lDRrv/IAX8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OYwIteYMuQWzjfyO8rEtZY9ZsOnjWIwomnRTxzCGFmoQDHeObXHtFUGmbD6uIvZvkfFPKlK4Lx4QCqhbMzQEsuAw5g7Ry+VmQh+iwLvyl4MWRnsVg0QoxxPQXpPoaKNc+4pYJ3jDKOw/+S2YK+vGXUXrQsuWmQax8PobjSSg7V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=puV1QpwR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B55AC58282;
-	Tue, 27 Aug 2024 11:29:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724758152;
-	bh=7hG0IYA1h2hw7SvTKbJ20PPbF9uHd2tn3lDRrv/IAX8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=puV1QpwRLkXJWyL/TTeIrYISl/Lb67ZLV10fHXiwc6YbxzTDFPzhWZOylvmTkxycm
-	 5aqIC2m1iatFIFOejCAKb1qVL6UkY4giFq0PQgV1lyhDir/q7SlOX07P7V+nvdBj9N
-	 ks6C1S496BpufxwVYMSMH3I35Nu50TlaC1jYFZCt5uT1S2oyEmh6rZdIdVllnCYIP7
-	 UZlDRGwmId+wCvbKGX4tojGsn3s8jsQQECdNULbWhKUEiKa6Se3TUL4EXfwYqCac0E
-	 0+mIsa7WSDGnpLvn8umW1pd+kDClbVKApotcoX5ojl8eFAEt1uRXDyJkuZY25PMg3/
-	 tJNYU8ztVo7Iw==
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-27018df4ff3so4170999fac.1;
-        Tue, 27 Aug 2024 04:29:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWISJIhe1Zn2yj8Xq/ntEnb+w+vmGh9j9MNxrx/bUG3bRQKQ2Mu9fRGFbboPqnJ9BLd38m1YP2ifiWv@vger.kernel.org, AJvYcCWkfdxR8idPeBkrh6Xo9k85eCVI/R27jZk0+Q06XmN7zWnHJUR8CeTh2YLD9euwyuWqq933LBGgftCSpPY0@vger.kernel.org, AJvYcCXJMnqBtZWxvb+bQgDFwnQS0GGA2xlMin+luLTzJ17atfbgo5LRym5L1YjHXbJ81sdLO+04Y64L4PY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0xzVCdW+4qodctTmeZGg4APq1SdFXxhwTKzns9YsmsbLt1fGv
-	39FAW1WJhHvpQecdoguFfcn7dAdtGiVk1+uXyt8Efs0zS/mCDkha94F9FtiQAK+3r62ZGqo9ZDl
-	3hkFlx/IB5P/cPfAc5BtBY8O+LiA=
-X-Google-Smtp-Source: AGHT+IGluB8OUXeTRU3WcYxq/C0TwAoctiKqmpfkrFvtB9qB6quMRK/TPKl3uIB6H0P84Ellf2rtm+5yWQAKmr67UFc=
-X-Received: by 2002:a05:6870:8993:b0:254:994b:5e6b with SMTP id
- 586e51a60fabf-273e66f290fmr14818695fac.44.1724758151783; Tue, 27 Aug 2024
- 04:29:11 -0700 (PDT)
+	s=arc-20240116; t=1724758183; c=relaxed/simple;
+	bh=mtE/DIzdIY0aE9jx+lSBwiZujkAm3EwvIh0iOHY1Qao=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=olXgPuNBeOnNssqhi2BTGivEWDCuPtkbdngcSQyCu+knVJf1Nii/I0xkXa8MVtR6rKD8VO4dfioftpEScge3/Y7itktzGoEStqQnRfbiB9aQEmPy7NSsN34wCE86MpGIJte+4QtHWH54zBIPCxhC8YyVWDBPAoaBaIaKj9HKefI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FjiuJ4ha; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2021c08b95cso48013355ad.0;
+        Tue, 27 Aug 2024 04:29:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724758181; x=1725362981; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=B7IeMX+lfboWSCnTtBGO5TJWMMf36fE1uWbBvF6c/AE=;
+        b=FjiuJ4haI0G+vStvs4xTGaXjdfitrJ4zMntXp7uqYW/0AznAVezzd3CJwMFUxBrvTD
+         iMsIjZD3E/7LfvgMTpZe2pow3S4FYB1/6M5GigdlCRo/Efz2no/4RZ82Zy3csiLrIrPG
+         Oyo1ElHLGVk4QIZUnmksIHOlV5BPdpZR0ToVLfDdCe8h0Sy+c2Lk6WTw7SW2WBF8JGjb
+         pfyjSBUwLVOt0wTlB4sb/+/pLEaqAs4eCGS5CgV1aUO4y6m41GnADGaJMK7jx8TxCT9A
+         ACMjKoMKpgKHcy8RW8v43OripyANLBaUVXqaA+SYWu3aNyZ2WTXEzb+ZFn0D6wuVukgJ
+         oWIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724758181; x=1725362981;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B7IeMX+lfboWSCnTtBGO5TJWMMf36fE1uWbBvF6c/AE=;
+        b=pF0YtIgGHQ22q5/wuhr047wuyoqVROA4WAwz4UHBHZp8AqrpXE5A26f2d15XXyqJKS
+         sQhAd4aAn05jPxR0lhM4TBBvp0tlsRLgSEGCKaBJQlUzjQFtN8TvLfKjm0P8zVw6Sog7
+         lwyIReliUgsZNPR+Nxv1SObKvoCdgHN9ISDsQfs6Q/SxhKLlcJTUYWhLm5UAkx1a+FBN
+         UqMLQfAeRyS4ofQCPQNF0aWJ/GTe6G97ZMN7+GQu8nmvGpjXdypSc9ewKXiLFhjJo8Sy
+         UAEG0B8uhQQI52bXyQ9Y0sXCcWYAGUlHYIJPDJ/ttAmfYflFcE+Y9bjs0ehzfmGiqA4V
+         znOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUDfIh2bQdEJUSPu+Iht0fMhZ8+1kKMPigQMsIQ9ee0ouzwgxWJX9Zty2Qy+jx5v5xdm9yHxAXKYkhEKWA=@vger.kernel.org, AJvYcCXEoEaaGSkjKyGRziea07AGq7axsHMXiCdXQ+6I91/ct95SC4XpYLE2Ct15PTwxF3cOIo32IfF+xasPKVg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4q8vq91PzSIQeGynTfTg9tTw5JEagLsKXFxnhcwoEKcxbVvDC
+	1xmFvp8h/ls8QcN6jC/e+YNI2qpNJk/kIpHIpJS5xjFDUsD+55iD
+X-Google-Smtp-Source: AGHT+IFtdkg4ZwyN3DCZQ/8qYdcfbbVtSHPLmh6oAuOhdnauyWoi7H1AtD8qepuDQR373OtKdfRc5Q==
+X-Received: by 2002:a17:903:1104:b0:1f9:d6bf:a67c with SMTP id d9443c01a7336-204ddcba2eamr48490605ad.5.1724758180954;
+        Tue, 27 Aug 2024 04:29:40 -0700 (PDT)
+Received: from localhost.localdomain ([187.17.229.165])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385ae4e3fsm81464375ad.235.2024.08.27.04.29.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 04:29:40 -0700 (PDT)
+From: Edson Juliano Drosdeck <edson.drosdeck@gmail.com>
+X-Google-Original-From: Edson Juliano Drosdeck <edson@policorp.com>
+To: tiwai@suse.com
+Cc: perex@perex.cz,
+	kailang@realtek.com,
+	sbinding@opensource.cirrus.com,
+	simont@opensource.cirrus.com,
+	foss@athaariq.my.id,
+	rf@opensource.cirrus.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	edson.drosdeck@gmail.com,
+	Edson Juliano Drosdeck <edson@policorp.com>
+Subject: [PATCH] ALSA: hda/realtek: Limit mic boost on Positivo DN50F
+Date: Tue, 27 Aug 2024 08:29:12 -0300
+Message-Id: <20240827112912.3397-1-edson@policorp.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2803b89021f991662b000f50e45dbaebdcca438a.1724729626.git.len.brown@intel.com>
-In-Reply-To: <2803b89021f991662b000f50e45dbaebdcca438a.1724729626.git.len.brown@intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 27 Aug 2024 13:29:00 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jcOUoN6gDDFkufu8xWF-BHXaSKnXqraHsTkq8JanJXuQ@mail.gmail.com>
-Message-ID: <CAJZ5v0jcOUoN6gDDFkufu8xWF-BHXaSKnXqraHsTkq8JanJXuQ@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: Remove msleep() bloat from acpi_os_sleep()
-To: Len Brown <lenb@kernel.org>
-Cc: rjw@rjwysocki.net, linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>, 
-	Arjan van de Ven <arjan@linux.intel.com>, Todd Brandt <todd.e.brandt@intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
-	Frederic Weisbecker <frederic@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-First, let me add a few people who know more about timers than I do.
+The internal mic boost on the DN50F is too high. Fix this by applying the
+ALC269_FIXUP_LIMIT_INT_MIC_BOOST fixup to the machine to limit the gain.
 
-On Tue, Aug 27, 2024 at 5:42=E2=80=AFAM Len Brown <lenb@kernel.org> wrote:
->
-> From: Len Brown <len.brown@intel.com>
->
-> Optimize acpi_os_sleep(ms) using usleep_range(floor, ceiling).
-> The floor of the range is the exact requested ms,
-> with an additional 1ms of slack for sleeps above 20ms.
->
-> This reduces  the kernel resume time of the Dell 9300
-> to 1,124 ms from 2,471 ms.
->
-> The ACPI AML Sleep(ms) method calls acpi_os_sleep(ms),
-> which has invoked msleep(ms) since 2013.
->
-> But msleep(ms) is based on jiffies, and the rounding-up
-> logic to convert to jiffies on a HZ=3D250 system causes
-> msleep(5) to bloat to a minimum of a 12ms delay.
-> msleep(5) typically takes over 15ms!
->
-> As a result, AML delay loops with small Sleep() inside
-> magnify the entire loop.  A particularly painful example
-> is ACPI support for powering-on ICL and TGL
-> thunderbolt/pcie_ports during system resume.
->
-> Regarding jiffy-based msleep() being inexpensive
-> and hrtimer-based usleep_range() being expensive.
-> ACPI AML timer invocations are rare, and so it
-> is unlikely the hrtimer cost will be noticible,
-> or even measurable.  At the same time, the msleep()
-> timer duration bloat is significant enough to
-> be noticed by end users.
+Signed-off-by: Edson Juliano Drosdeck <edson.drosdeck@gmail.com>
+---
+ sound/pci/hda/patch_realtek.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-I'm not sure why you are refusing to follow the implementation of
-fsleep() and Documentation/timers/timers-howto.rst and still use
-msleep() for sleep durations longer than 20 ms.
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index d022a25635f9..b6bd3903701e 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -10767,6 +10767,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x1d72, 0x1901, "RedmiBook 14", ALC256_FIXUP_ASUS_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x1d72, 0x1945, "Redmi G", ALC256_FIXUP_ASUS_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x1d72, 0x1947, "RedmiBook Air", ALC255_FIXUP_XIAOMI_HEADSET_MIC),
++	SND_PCI_QUIRK(0x1e50, 0x7038, "Positivo DN50F", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
+ 	SND_PCI_QUIRK(0x2782, 0x0214, "VAIO VJFE-CL", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
+ 	SND_PCI_QUIRK(0x2782, 0x0232, "CHUWI CoreBook XPro", ALC269VB_FIXUP_CHUWI_COREBOOK_XPRO),
+ 	SND_PCI_QUIRK(0x2782, 0x1707, "Vaio VJFE-ADL", ALC298_FIXUP_SPK_VOLUME),
+-- 
+2.39.2
 
-Why should usleep_range() be used for 100 ms sleeps, for instance?
-This goes against the recommendation in the above document, so is
-there a particular reason?
-
-> Regarding usleep_range() timer coalescing.
-> It virtually never works during ACPI flows, which
-> commonly run when there are few coalescing
-> opportunities. As a result, the timers almost
-> always expire at the maximum end of their specified range.
-
-I don't think that's the main point of using a nonzero range in
-usleep_range().  AFAICS, this is about letting the timekeeping
-subsystem know how much you care about timer precision so it can
-arrange things to meet everyone's needs.
-
-> It was tempting to use usleep_range(us, us)
-> for all values of us.  But 1 ms is added to the
-> range for timers over 20ms on the reasoning that
-> the AML Sleep interface has a granularity of 1ms,
-> most costly loops use duration under 20ms inside,
-> and singular long sleeps are unlitly to notice an
-> additiona 1ms, so why not allow some coalescing...
-
-So again, why not use msleep() for sleeps longer than 20 ms?
-
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D216263
-> Signed-off-by: Len Brown <len.brown@intel.com>
-> Suggested-by: Arjan van de Ven <arjan@linux.intel.com>
-> Tested-by: Todd Brandt <todd.e.brandt@intel.com>
-> ---
->  drivers/acpi/osl.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
-> index 70af3fbbebe5..c4c76f86cd7a 100644
-> --- a/drivers/acpi/osl.c
-> +++ b/drivers/acpi/osl.c
-> @@ -607,7 +607,13 @@ acpi_status acpi_os_remove_interrupt_handler(u32 gsi=
-, acpi_osd_handler handler)
->
->  void acpi_os_sleep(u64 ms)
->  {
-> -       msleep(ms);
-> +       u64 us =3D ms * 1000;
-> +
-> +       if (us <=3D 20000)
-> +               usleep_range(us, us);
-> +       else
-> +               usleep_range(us, us + 1000);
-> +
->  }
->
->  void acpi_os_stall(u32 us)
-> --
-
-While I agree with using usleep_range() for sleeps up to 20 ms in
-acpi_os_sleep(), I disagree with the patch as is.
-
-Thanks!
 
