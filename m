@@ -1,144 +1,124 @@
-Return-Path: <linux-kernel+bounces-303923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CED29616F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:24:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF82961708
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:33:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C3E3B21164
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:24:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEA051C23056
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CF41D2F59;
-	Tue, 27 Aug 2024 18:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE781D1F55;
+	Tue, 27 Aug 2024 18:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxfOrOef"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="alWX8iss"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008531D27A3;
-	Tue, 27 Aug 2024 18:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0191D27B1;
+	Tue, 27 Aug 2024 18:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724783077; cv=none; b=Hx9wnoFekfMV7oMaunGBmC/9se+Vm/EAV9yHCY6hFcdM0Fwx1F0BBvMgJO1FOit4MwJGqZE/fsoUd7QcMZ/F615uDMAhcgtNRvuQ2ZuZdZJTvBCVCBbCgQ+U9r7xIJNqDeGZgR7buHKXVsBravFmIgcpjOKt9Zt6xLzRkOBp34c=
+	t=1724783584; cv=none; b=SypZTzkVIJm9hnxjVej88mifywR2lfIya1afnBOjlf+SEoSHmckavYzLyp8BOI716xYENuWQzPirb/IgMELhRvtTpxK17nDObgomhmmKsq+LKM+4cFFsB2D6R5eaBbw8Ic/lNEbda4tCvh84eazvUeWUwtBAwNh9N056DwqfiD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724783077; c=relaxed/simple;
-	bh=/Tw/BAbmJ86KglO6HRmnOfxV9PBQaZOCrQMcgFDZ6tc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=Krp1zrZ3Kc7Wqjug0/lQpksAiZXb4RaY9RfIHxqLRHS80j76mnDBjT2L+b7xhv70siYAUK1T8Ul1dMozv8RGx9ZJNa0qzRsi0HI0khFfGFYCokBLGDMp2HOgxBYP3NOHnmcu2TCui1EMSxXAGf5esghxTDBm6LRpeRQfVx+X49k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxfOrOef; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A907C4AF0E;
-	Tue, 27 Aug 2024 18:24:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724783076;
-	bh=/Tw/BAbmJ86KglO6HRmnOfxV9PBQaZOCrQMcgFDZ6tc=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=rxfOrOefl1/065iEs0XC4vrQUvHW0oAkICAyCa7v4tIWKKfiw5jQHJAhd5CBvuK1b
-	 Tt7fCknWLVK5X1zdc2ayYnEN2Fy9BsuS0LQF0JlvvsoadCPWLx2LY3rRkkPvkeTngI
-	 ta4rmWzdVp9AbyYOlEYR2ldifDEBeNQmIJe1US/+PZS6dOjjh9Df8TbC0bLel09C3g
-	 MoTSOFDCaQaEeihuAhGa+htPWoHyZowvrn/+UX4ZsWzd+zaWZk4r7jYudDhckqU3Ht
-	 r7BDhzK1e16cbmQio1W06Uy69ZgwOzy7K/9EBokZgTvCl+3ZrgvxpAj/5D65YF1euM
-	 QO2mI5PPxRlZg==
+	s=arc-20240116; t=1724783584; c=relaxed/simple;
+	bh=1386lGTMB6WCcSqsjLJUMCrOsAbXFeBuQL4kGvdYOLQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ltyr1+VLLoIhsXhoH+POAq7XpYOrv3OOfUPMLnCMcukTNh8fKVPRFjVWwJWkiNI1+om+zE80/jH16ejQ1535pWmNbKq+KI/7tVwaEjqtn3U9Eg5SUq3S4EgSPe9kVH0xhBg+7Rm5JkLGWYnVK3TKih0RJ8oZ7hF70nC3RCHtwUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=alWX8iss; arc=none smtp.client-ip=192.19.144.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 40E0AC0000E4;
+	Tue, 27 Aug 2024 11:24:54 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 40E0AC0000E4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1724783094;
+	bh=1386lGTMB6WCcSqsjLJUMCrOsAbXFeBuQL4kGvdYOLQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=alWX8issrocCy8Fbnb6qTjBa1LKsp87QC9xvBRCelEPXvz00Fy66v0ajMCipefx+w
+	 O74Q76fWS9tmOW3wAfv94aMnF7LZ8JzsEeMPUbYLIDhBW+n9sipw8rAkpwJlKEFUcj
+	 TMIgDW/ZoQeXTBCq1itZlXWMGBlpj5YjP9tQbIFM=
+Received: from stbirv-lnx-1.igp.broadcom.net (stbirv-lnx-1.igp.broadcom.net [10.67.48.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id CD45118045E7C9;
+	Tue, 27 Aug 2024 11:24:53 -0700 (PDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list),
+	arm-scmi@vger.kernel.org (open list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE),
+	justin.chen@broadcom.com,
+	opendmb@gmail.com,
+	kapil.hali@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v4 0/2] Support for I/O width within ARM SCMI SHMEM
+Date: Tue, 27 Aug 2024 11:24:48 -0700
+Message-Id: <20240827182450.3608307-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 27 Aug 2024 21:24:33 +0300
-Message-Id: <D3QWKLDSU5CF.1NC837V9HZ3O3@kernel.org>
-To: "David Howells" <dhowells@redhat.com>
-Cc: <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 6/7] keys: Provide a key_try_get() function and use it
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240821123616.60401-1-dhowells@redhat.com>
- <20240821123616.60401-7-dhowells@redhat.com>
-In-Reply-To: <20240821123616.60401-7-dhowells@redhat.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed Aug 21, 2024 at 3:36 PM EEST, David Howells wrote:
-> Add a key_try_get() function to try to get a ref on a key and switch code
-> that's manipulating the key refcount directly to use it.  This will allow=
- a
-> tracepoint to be emplaced there later.
->
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Jarkko Sakkinen <jarkko@kernel.org>
-> cc: keyrings@vger.kernel.org
-> cc: linux-security-module@vger.kernel.org
-> ---
->  include/linux/key.h     |  1 +
->  security/keys/key.c     | 16 +++++++++++++++-
->  security/keys/keyring.c |  2 +-
->  3 files changed, 17 insertions(+), 2 deletions(-)
->
-> diff --git a/include/linux/key.h b/include/linux/key.h
-> index 80d736813b89..4e5baf3e7286 100644
-> --- a/include/linux/key.h
-> +++ b/include/linux/key.h
-> @@ -300,6 +300,7 @@ extern struct key *key_alloc(struct key_type *type,
->  extern void key_revoke(struct key *key);
->  extern void key_invalidate(struct key *key);
->  struct key *key_get(struct key *key);
-> +struct key *key_try_get(struct key *key);
->  extern void key_put(struct key *key);
->  extern bool key_put_tag(struct key_tag *tag);
->  extern void key_remove_domain(struct key_tag *domain_tag);
-> diff --git a/security/keys/key.c b/security/keys/key.c
-> index 14c7ee77ea15..59cffb6f9b94 100644
-> --- a/security/keys/key.c
-> +++ b/security/keys/key.c
-> @@ -649,6 +649,20 @@ struct key *key_get(struct key *key)
->  }
->  EXPORT_SYMBOL(key_get);
-> =20
-> +/**
-> + * key_try_get - Get a ref on a key if its refcount is not non-zero.
-> + * @key: The key to get a reference on.
-> + *
-> + * Get a reference on a key unless it has no references and return true =
-if
-> + * successful.  @key must not be NULL.
-> + */
-> +struct key *key_try_get(struct key *key)
-> +{
-> +	if (!refcount_inc_not_zero(&key->usage))
-> +		return NULL;
-> +	return key;
-> +}
-> +
->  /**
->   * key_put - Discard a reference to a key.
->   * @key: The key to discard a reference from.
-> @@ -709,7 +723,7 @@ struct key *key_lookup(key_serial_t id)
->  	/* A key is allowed to be looked up only if someone still owns a
->  	 * reference to it - otherwise it's awaiting the gc.
->  	 */
-> -	if (!refcount_inc_not_zero(&key->usage))
-> +	if (!key_try_get(key))
->  		goto not_found;
-> =20
->  error:
-> diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-> index e77d927f1d4d..a09a4c2b1bcb 100644
-> --- a/security/keys/keyring.c
-> +++ b/security/keys/keyring.c
-> @@ -1174,7 +1174,7 @@ struct key *find_keyring_by_name(const char *name, =
-bool uid_keyring)
->  		/* we've got a match but we might end up racing with
->  		 * key_cleanup() if the keyring is currently 'dead'
->  		 * (ie. it has a zero usage count) */
-> -		if (!refcount_inc_not_zero(&keyring->usage))
-> +		if (!key_try_get(keyring))
->  			continue;
->  		keyring->last_used_at =3D ktime_get_real_seconds();
->  		goto out;
+We just got our hands on hardware that only supports 32-bit access width
+to the SRAM being used. This patch series adds support for the
+'reg-io-width' property and allows us to specify the exact access width
+that the SRAM supports.
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Changes in v4:
 
-BR, Jarkko
+- added alignment warnings in case the source/destination/count are not
+  a 4 bytes multiple
+- switched to __ioread32_copy/__iowrite32_copy per Sudeep's suggestion
+- dropped volatile qualifiers to permit that switch
+
+Changes in v3:
+
+- added missing documentation for the structure members being added
+- removed the use of a macro for the 32-bit only operation, this
+  gets rid of a number of checkpatch warnings
+- added missing trailing barriers
+- corrected binding indentation
+
+Changes in v2:
+
+- fixed typo in the binding and added reviewed-by tag from Krzysztof
+
+- determine the correct I/O operation at the time we parse the
+  'reg-io-width' property rather than for each
+  tx_prepare/fetch_response/fetch_notification call
+
+- dropped support for 1 and 2 bytes 'reg-io-width' as they do not quite
+  make sense, if we can support such smaller access size, then we can
+  support the larger 4 byte access width, too, and there are many places
+  within the SCMI code where ioread32/iowrite32 are used
+
+Florian Fainelli (2):
+  dt-bindings: sram: Document reg-io-width property
+  firmware: arm_scmi: Support 'reg-io-width' property for shared memory
+
+ .../devicetree/bindings/sram/sram.yaml        |  6 ++
+ drivers/firmware/arm_scmi/common.h            | 32 +++++++-
+ .../arm_scmi/scmi_transport_mailbox.c         | 13 +++-
+ .../firmware/arm_scmi/scmi_transport_optee.c  | 11 ++-
+ .../firmware/arm_scmi/scmi_transport_smc.c    | 11 ++-
+ drivers/firmware/arm_scmi/shmem.c             | 78 +++++++++++++++++--
+ 6 files changed, 130 insertions(+), 21 deletions(-)
+
+-- 
+2.34.1
+
 
