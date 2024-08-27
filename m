@@ -1,196 +1,148 @@
-Return-Path: <linux-kernel+bounces-303387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5A70960B67
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:11:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C222D960B68
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:11:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D315285F3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:11:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52C5E28650B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E281C6889;
-	Tue, 27 Aug 2024 13:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B1E1C6F45;
+	Tue, 27 Aug 2024 13:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BzcnpWlq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ar4mYpLY"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE461C57AC;
-	Tue, 27 Aug 2024 13:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26E41C689B
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 13:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724764111; cv=none; b=hVaZw50z3zUYOzy5WTjmxvTfn2FMaqLcwyScU+/wGTRGfg+8bHV1kAUG3efPrNGMIA+vcPbzV44O2U3Foc+tSfpwAicc4a7fKeFnJaOTMotHALke39yXAorHQjPJqrXxMv2Oa2/p63BBmECjJTJimUDWq6bu9r6HW+nQn9hHmPE=
+	t=1724764115; cv=none; b=N6rcfT2ZpnNNQzq6m9poSH9JFA6qlsSZo2ZKgD6eLp2X5bfQxt4ycLoL6r7QrV0SqLYyK4nTm5L3In8rCXvBbe/eem9mtLc1JLBn6JxAXDZJ4RlwE7NLpmJyB0pK9y2JcPwwGidNOhgWrCep79eDCdLkTKOQztSVb3HFtS7lpEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724764111; c=relaxed/simple;
-	bh=eSJuvZ4Q+njTExXsTZ7XIOuYEEP6S/r8p97JVTQ9T/c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=i9CLi4JHFatwGFlmhlzpQuHuHdB6VdCSrFuA23TmfnB/44ShfztaIYKs2xakHN3YueR+Qpmd1RHm8fA6TOa3drMlCVL7uxSDu8JzK5qFnOqLT6dgDyB78YKZezCuq+LP/DUXwgQeYFTgotE0KXxwqmdFgQAyLq0gMPLfR6JztPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BzcnpWlq; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724764109; x=1756300109;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=eSJuvZ4Q+njTExXsTZ7XIOuYEEP6S/r8p97JVTQ9T/c=;
-  b=BzcnpWlqwCGTp2bGVBf+JrvGDh2Cyl0Ku29rUg+992WGdwh1RPsmLnlj
-   EJacq67igJF7avRm6oLPCqawgE5vIcd5am46QSDn5+HGQEMtswo0nQhR6
-   F1BUiGJE1EgJzW18nZaTusvBn5v6vPIBTzLQenSnTiOPMKbJxqiRN22jP
-   QyUwP5faZcmTBTqFNWgKG/63alGjK7cuThp7+RFdHTYVIPln2oU98R+mi
-   YZPEdimkn/k/LZhH/RcZqvMmtPTCYUhp3cCmPWYPlJ9lQRpDcHYq35ogX
-   GDO5fHkJrIsmz0mY890MKQi946Ui4QkeoIKJzqn2xjLzJwiB84wtb5iOO
-   w==;
-X-CSE-ConnectionGUID: mDzeN8TeTFqy+v/3Ji4yzQ==
-X-CSE-MsgGUID: kVwqhwI3Sp2p3YQSjZY9hQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23400661"
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="23400661"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 06:08:29 -0700
-X-CSE-ConnectionGUID: qyz7k+CiT7efcD87cWMQdw==
-X-CSE-MsgGUID: V+IjgattRnem//1MWGS9uw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="67552168"
-Received: from anmitta2-mobl4.gar.corp.intel.com (HELO yungchua-desk.intel.com) ([10.247.118.39])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 06:08:27 -0700
-From: Bard Liao <yung-chuan.liao@linux.intel.com>
-To: linux-sound@vger.kernel.org,
-	vkoul@kernel.org
-Cc: vinod.koul@linaro.org,
-	linux-kernel@vger.kernel.org,
-	pierre-louis.bossart@linux.intel.com,
-	bard.liao@intel.com
-Subject: [PATCH 14/14] soundwire: mipi-disco: add support for DP0/DPn 'lane-list' property
-Date: Tue, 27 Aug 2024 21:07:07 +0800
-Message-ID: <20240827130707.298477-15-yung-chuan.liao@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240827130707.298477-1-yung-chuan.liao@linux.intel.com>
-References: <20240827130707.298477-1-yung-chuan.liao@linux.intel.com>
+	s=arc-20240116; t=1724764115; c=relaxed/simple;
+	bh=aXlqjOf+2RvyqEdGkHnp+gbVK7RCcBbO0Rx1Vr5MLN8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=FREvjPASNz3GOc0Pb0OTEF0qkSuLT1K+wDzCtN9Wqa05QNriiVkt1TSI2gu+VouMYBoowWxAhbRB5IUbQKiyhMNivJk/N98xYmmLixYXUXZp2e+45/suzXkrHlTtxastBwwfjyrNvls4jGYYM0QqBJ8YnHkrqzLn9abbRgY61mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ar4mYpLY; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-371a92d8c90so2869445f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:08:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724764112; x=1725368912; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vmhgoThXpsRE2ZPXF8R0CGdwPpFNc8Epv22ahkVAR6E=;
+        b=Ar4mYpLY2SN+jFaDls2QYld+i4o1VZ42yk36K9B3dOAM59MgHVz9UQoAdprzkRB1ZM
+         itMsXs6oaRXk46qOJms6eec2nGDpNbl1FW1Nr9Ca690yg1vICUk7xTunw4b6WrEl6OC/
+         7wII5r+Zx+BRzisctCb2evp7lW7XRIDz3C+/EkfFnQaEXPJJh+RXiR7RRliu0dBBfxQa
+         rw1DZAbH6OfjlD5HeSHHOWYeDmcvnonSMi/8yiJCUeJ/0RFrCjAudoxBsVLZVHWO1CpL
+         NNMZRT+7yXA0ftqJk4i+Js/bnGq52JXK5EyBjIjrkYuT9ZqeCpdT+HFYWoTOFRq4cPEv
+         dMzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724764112; x=1725368912;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vmhgoThXpsRE2ZPXF8R0CGdwPpFNc8Epv22ahkVAR6E=;
+        b=Dc5goP9wJvcN6DqNWQThmSZlr3FrE7rcbLhDwPXNahz/pdSB3XktmuKFbBk296Ji4o
+         4D3E81/MrmcpAp547JWeeSR3LSXhxK/Lf9QR0oDrwGnAYWgpTv6peOV64OU64rfUh1t0
+         AohVUkRvVw6C48kcfEV/zfiBe71b16m2ldTUp9qfNh1xyo3g6PSomWDJ/KV0G3Sowhob
+         dkBnAotdbiOn1CjrIj2D5la+wsBYoZpaRMWzV/wKYjm9C9YegAESq/Wodj0MMzFekI14
+         khvEyFGTZxgC0oGJaQfwxjynP3GkLXFaJx2OjyDdsenuj9LGxtQQTsaezR+cP+iLa2s+
+         7kGA==
+X-Gm-Message-State: AOJu0Yy5HpDDMOAyYRQfH5VyckLdYKOGMvcnJmXNmOuAqcxlKg4ZVQS2
+	rfAespNYuADpQpniM4ZdeV7fRTy113+Mm56m5fp4yAK9DFVb6svQN8sQ+bd8JWk=
+X-Google-Smtp-Source: AGHT+IGHn0fUmNiXD2kqIU9eVqVFjdu3ykcNSCWApUcSFi9kVI2cR/nL4JnTMb6vecuV/AX0n7YrfQ==
+X-Received: by 2002:a5d:570b:0:b0:365:980c:d281 with SMTP id ffacd0b85a97d-3748c81a115mr1892925f8f.45.1724764111532;
+        Tue, 27 Aug 2024 06:08:31 -0700 (PDT)
+Received: from draig.lan ([85.9.250.243])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac516252asm184573695e9.26.2024.08.27.06.08.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 06:08:30 -0700 (PDT)
+Received: from draig.lan (localhost [IPv6:::1])
+	by draig.lan (Postfix) with ESMTP id 0DA6E5F9E6;
+	Tue, 27 Aug 2024 14:08:30 +0100 (BST)
+From: =?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>
+To: linux-kernel@vger.kernel.org
+Cc: kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	maz@kernel.org,
+	arnd@linaro.org,
+	=?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>
+Subject: [PATCH 0/3] altra workarounds for PCIE_64 with instrumentation
+Date: Tue, 27 Aug 2024 14:08:26 +0100
+Message-Id: <20240827130829.43632-1-alex.bennee@linaro.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+While testing virtio-vulkan on the AVA platform we needed to include
+some fixups for its PCI handling. As far as I know these have only
+been included in various downstream kernel repos:
 
-The SoundWire specification did not clearly require that ports could
-use all Lanes. Some SoundWire/SDCA peripheral adopters added
-restrictions on which lanes can be used by what port, and the DisCo
-for SoundWire 2.1 specification added a 'lane-list' property to model
-this hardware limitation.
+  https://community.amperecomputing.com/t/gpu-support-for-ampere-altra/274
 
-When not specified, the ports can use all Lanes. Otherwise, the
-'lane-list' indicates which Lanes can be used, sorted by order of
-preference (most-preferred-first).
+The initial two patches are as we found them save for a fix to
+align_ldst_regoff_simdfp in the alignment handler. The third and new
+patch is trace point instrumentation so we could see how often the
+workaround is being invoked.
 
-This patch only reads the properties, the use of this property will
-come at a later time with multi-lane support.
+Combined with Sean's PFN patches:
 
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
----
- drivers/soundwire/mipi_disco.c | 32 ++++++++++++++++++++++++++++++++
- include/linux/soundwire/sdw.h  |  8 ++++++++
- 2 files changed, 40 insertions(+)
+  https://lore.kernel.org/all/20240726235234.228822-1-seanjc@google.com/
 
-diff --git a/drivers/soundwire/mipi_disco.c b/drivers/soundwire/mipi_disco.c
-index 2215c53f95de..23c1a413598c 100644
---- a/drivers/soundwire/mipi_disco.c
-+++ b/drivers/soundwire/mipi_disco.c
-@@ -197,6 +197,22 @@ static int sdw_slave_read_dp0(struct sdw_slave *slave,
- 	dp0->imp_def_interrupts = mipi_fwnode_property_read_bool(port,
- 				"mipi-sdw-imp-def-dp0-interrupts-supported");
- 
-+	nval = fwnode_property_count_u32(port, "mipi-sdw-lane-list");
-+	if (nval > 0) {
-+		dp0->num_lanes = nval;
-+		dp0->lane_list = devm_kcalloc(&slave->dev,
-+					      dp0->num_lanes, sizeof(*dp0->lane_list),
-+					      GFP_KERNEL);
-+		if (!dp0->lane_list)
-+			return -ENOMEM;
-+
-+		ret = fwnode_property_read_u32_array(port,
-+					       "mipi-sdw-lane-list",
-+					       dp0->lane_list, dp0->num_lanes);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
- 	return 0;
- }
- 
-@@ -326,6 +342,22 @@ static int sdw_slave_read_dpn(struct sdw_slave *slave,
- 		fwnode_property_read_u32(node, "mipi-sdw-port-encoding-type",
- 					 &dpn[i].port_encoding);
- 
-+		nval = fwnode_property_count_u32(node, "mipi-sdw-lane-list");
-+		if (nval > 0) {
-+			dpn[i].num_lanes = nval;
-+			dpn[i].lane_list = devm_kcalloc(&slave->dev,
-+							dpn[i].num_lanes, sizeof(*dpn[i].lane_list),
-+							GFP_KERNEL);
-+			if (!dpn[i].lane_list)
-+				return -ENOMEM;
-+
-+			ret = fwnode_property_read_u32_array(node,
-+						       "mipi-sdw-lane-list",
-+						       dpn[i].lane_list, dpn[i].num_lanes);
-+			if (ret < 0)
-+				return ret;
-+		}
-+
- 		fwnode_handle_put(node);
- 
- 		i++;
-diff --git a/include/linux/soundwire/sdw.h b/include/linux/soundwire/sdw.h
-index 952514f044f0..73f655334fe9 100644
---- a/include/linux/soundwire/sdw.h
-+++ b/include/linux/soundwire/sdw.h
-@@ -238,6 +238,8 @@ enum sdw_clk_stop_mode {
-  * @simple_ch_prep_sm: If channel prepare sequence is required
-  * @imp_def_interrupts: If set, each bit corresponds to support for
-  * implementation-defined interrupts
-+ * @num_lanes: array size of @lane_list
-+ * @lane_list: indicates which Lanes can be used by DP0
-  *
-  * The wordlengths are specified by Spec as max, min AND number of
-  * discrete values, implementation can define based on the wordlengths they
-@@ -252,6 +254,8 @@ struct sdw_dp0_prop {
- 	bool BRA_flow_controlled;
- 	bool simple_ch_prep_sm;
- 	bool imp_def_interrupts;
-+	int num_lanes;
-+	u32 *lane_list;
- };
- 
- /**
-@@ -275,6 +279,8 @@ struct sdw_dp0_prop {
-  * @num_ch_combinations: Number of channel combinations supported
-  * @channels: Discrete channels supported
-  * @ch_combinations: Channel combinations supported
-+ * @lane_list: indicates which Lanes can be used by DPn
-+ * @num_lanes: array size of @lane_list
-  * @modes: SDW mode supported
-  * @max_async_buffer: Number of samples that this port can buffer in
-  * asynchronous modes
-@@ -300,6 +306,8 @@ struct sdw_dpn_prop {
- 	u32 num_ch_combinations;
- 	u32 *channels;
- 	u32 *ch_combinations;
-+	u32 *lane_list;
-+	int num_lanes;
- 	u32 modes;
- 	u32 max_async_buffer;
- 	u32 port_encoding;
+And the Vulkan/Venus support for QEMU:
+
+  https://patchew.org/QEMU/20240822185110.1757429-1-dmitry.osipenko@collabora.com/
+
+I was able to test virtio-vulkan running in a Aarch64 KVM guest hosted
+on my AVA platform with an AMD Radeon graphics card plugged into the
+PCI bus.
+
+I don't know if there is any interest in getting these upstream but I
+figured it was worth posting to the lists for wider visibility and
+discussion. For now I'll just carry these patches locally on my AVA
+until I get a better system for PCI GPU experiments.
+
+Thanks,
+
+Alex.
+
+Alex Bennée (1):
+  ampere/arm64: instrument the altra workarounds
+
+D Scott Phillips (2):
+  ampere/arm64: Add a fixup handler for alignment faults in aarch64 code
+  ampere/arm64: Work around Ampere Altra erratum #82288 PCIE_65
+
+ arch/arm64/Kconfig                 |  22 +-
+ arch/arm64/include/asm/insn.h      |   1 +
+ arch/arm64/include/asm/io.h        |   3 +
+ arch/arm64/include/asm/pgtable.h   |  29 +-
+ arch/arm64/mm/Makefile             |   3 +-
+ arch/arm64/mm/fault.c              | 726 +++++++++++++++++++++++++++++
+ arch/arm64/mm/fault_neon.c         |  59 +++
+ arch/arm64/mm/ioremap.c            |  38 ++
+ drivers/pci/quirks.c               |   9 +
+ include/asm-generic/io.h           |   4 +
+ include/trace/events/altra_fixup.h |  57 +++
+ mm/ioremap.c                       |   2 +-
+ 12 files changed, 945 insertions(+), 8 deletions(-)
+ create mode 100644 arch/arm64/mm/fault_neon.c
+ create mode 100644 include/trace/events/altra_fixup.h
+
 -- 
-2.43.0
+2.39.2
 
 
