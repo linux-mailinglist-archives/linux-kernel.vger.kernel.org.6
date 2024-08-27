@@ -1,153 +1,99 @@
-Return-Path: <linux-kernel+bounces-303251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A23C9609B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:09:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E21A9609BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:10:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A861E1F24290
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:09:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D73E284575
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD16E1A2576;
-	Tue, 27 Aug 2024 12:08:35 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932C31A08DF;
+	Tue, 27 Aug 2024 12:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l1n5fPse"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7B31A0B02;
-	Tue, 27 Aug 2024 12:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B4B1A072B;
+	Tue, 27 Aug 2024 12:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724760515; cv=none; b=f59MXm5Qt2Jcdb8Y5QtbPyrWOYJSKtGN7KZrWuRLWY8UttKIKYqpO0MYNRLRMLYAGDDrWERtqYNHyjnjdsC7jgVM4kfHUec1185OilJ/XoO/wvAgfzfyiQoIKGQgSu5McUW5UuXrVfZD6anNFs1yc910/ZeFcggWUB6+YBByCcQ=
+	t=1724760649; cv=none; b=aT/3XooHt60Y0Qd9Gykp+0brn58OnCfQ0G+EtZKio7umbL7uLJMG5W5Ud4XBACClkeI+KPRU8KH7q9thRAhcuxv7juDRCdQ8GvpfSeDhwXUDnPXSbb0G9VvWLzDtucbViR8ZZ7DXPp5v1poM8AH1ren/AVjRgBpC0sDEWznRfWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724760515; c=relaxed/simple;
-	bh=52M/8BWHhEzkUmRkv6Kdv6Vqv/i/kvJFaeCUvFN1u34=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GeSJZe/EajLB0Ix2Ios7srKtej3G+TgSk2IuH11R10WKOqaG6XcllaDgnmrxrBxV2dLUEJN2kt6Q080F4KFw4niSJ9Im9rU6y27ZA+delT1M8SKCRGg33mncuCMsa7/p/A2LPzqwiGbZRqE8Iu78lw6brhapFaSYbvBbKSLeMv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WtR7c3s8Bz6DBfS;
-	Tue, 27 Aug 2024 20:05:16 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3E3121400D4;
-	Tue, 27 Aug 2024 20:08:31 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 27 Aug
- 2024 13:08:30 +0100
-Date: Tue, 27 Aug 2024 13:08:29 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Fan Ni <nifan.cxl@gmail.com>
-CC: <ira.weiny@intel.com>, Dave Jiang <dave.jiang@intel.com>, Navneet Singh
-	<navneet.singh@intel.com>, Chris Mason <clm@fb.com>, Josef Bacik
-	<josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Petr Mladek
-	<pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Rasmus Villemoes
-	<linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, <linux-btrfs@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>
-Subject: Re: [PATCH v3 18/25] cxl/extent: Process DCD events and realize
- region extents
-Message-ID: <20240827130829.00004660@Huawei.com>
-In-Reply-To: <Zsj_8IckEFpwmA5L@fan>
-References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
-	<20240816-dcd-type2-upstream-v3-18-7c9b96cba6d7@intel.com>
-	<Zsj_8IckEFpwmA5L@fan>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724760649; c=relaxed/simple;
+	bh=AQQY0+eCtpauFdwfMB/DPq7vz6WsH8SVHCLuIW7R2r4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EaR8+bmE1Bi9iIKZ3iA3DdeM1JaqKLqZrV5n9ni89lyh+yELTrHoEKevB/xefL+leyJyt/Xbw5HDpI3CyQkpapP31rOCsv0ysEhICS+ZEkVmjdTjQ+ZJDr5NXE+fMdzq5NETYAJSAW1v7/noPm7M/UyztKAKq/8AtCAccJMj+dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l1n5fPse; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-533488ffaf7so7273574e87.0;
+        Tue, 27 Aug 2024 05:10:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724760646; x=1725365446; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ocWvo9DzoExmIHq9UIiaFosa4hw3n9psCH8ZfRs9xow=;
+        b=l1n5fPseKKnSQT/zheLDx/TUHIq5vDPpdOVeC4o3ABvDqb3PBJMH22aBKOfA67k2Y4
+         Vy+1I44OuelJ+6T5xFPYqN0uazVBYM4bQxBfvbWc0xFRvySuhoyqxFtgYm9tdU7EI/1z
+         +bmHTOHE7aBvHZnEyedsz9trOW1KpYyx9KVzZ2v7m7m9im0hXZZDZF5qK/m9BPnBGFrz
+         xsb8RAiphKDMYD2PyX0TmRV2NJQY+0ST/QIc8GLYQzALz4UIJFlDRd9q4AufMY/E9dip
+         m2nLYTRgRn61HEGbj9AdTOg4wWO7mzbss9g0RoCGiYb5Ilmz8r+oGOgTOXCWPUk0ATmE
+         5g4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724760646; x=1725365446;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ocWvo9DzoExmIHq9UIiaFosa4hw3n9psCH8ZfRs9xow=;
+        b=saadsdgmMXohMYlZYw/S8X2ZCIXMLuxqAIf1NBuT8R+6M6a40qDA0mYA6rwayQoo5q
+         hx21DuwqSZVeOwqHKkpJ+8Ta/EtNdPoRIOEuLrPIumj+0lXcJX+4QDSsbxJHd8kZssfd
+         q3Zrn4lmPUGSNIyKp1eXENst3eLUwFGuYH+sUduP1p5LgK+gJbawXpLVLB0broMOrBwm
+         KV8yAMJJYkferz20PC5Pa+31o3zBo9Q3zTsh1V9WXOLulqOyDlxCZ6OSvyXMHGq945TP
+         8x6yg32rBWTaa/Ff48LeRxQNDdXb9Y7nlQ6//Wb861OCh62Y2IIrJ0WYVfQjaODUlNm+
+         EY/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUkLYBZsLbd6pP7VGmlcwO89Cqumhmpi0KIOW2VK3bcXk3JCbrYeHqlvPDak7XwaNf5DyoHUJh8+aPX@vger.kernel.org, AJvYcCXxommqoh0jBdAMmPTacA0BbylgmR85G5WptzJN9YpFqk03GS4iwSGOYOsL8b3pm6tcRnzjjFAR5DAJkroi@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEecIZ191SVI5V2395lt0NpUYNtBBCoKovrCgjz6TEy+4JT+dp
+	Ek6Cdr6kn9UEmhNcM999p46jhm2/0MmrDYdjanWjbbUwp2SZ1j5Vn6DTy4YaIOIQsUCsAZ+u999
+	Susr5DLCn2MToyd/FYP8w6uQVq9M=
+X-Google-Smtp-Source: AGHT+IEh5psS72JM5hvNRaxVWHrg402o8pnzLlLRh3KcneC/lRx90ichG0VNgnlvvr66dtMljeyh19iUph+sTp2ULkA=
+X-Received: by 2002:a05:6512:6d2:b0:530:b871:eb9a with SMTP id
+ 2adb3069b0e04-5344e4faf07mr1737573e87.47.1724760646028; Tue, 27 Aug 2024
+ 05:10:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+References: <20240823120158.19294-1-tarang.raval@siliconsignals.io>
+ <20240823-demonic-jolly-chital-fb4d61-mkl@pengutronix.de> <PN3P287MB1829E68257FC17F8ADA725028B942@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
+In-Reply-To: <PN3P287MB1829E68257FC17F8ADA725028B942@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Tue, 27 Aug 2024 09:10:34 -0300
+Message-ID: <CAOMZO5BUrJBo5+bEyBA3i7q9Kb0HXgRwu8J-kV9JbDMFcx-WGg@mail.gmail.com>
+Subject: Re: [PATCH v3] arm64: dts: imx8mm-emtop-baseboard: Add Peripherals Support
+To: Tarang Raval <tarang.raval@siliconsignals.io>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 23 Aug 2024 14:32:32 -0700
-Fan Ni <nifan.cxl@gmail.com> wrote:
+Hi Tarang,
 
-> On Fri, Aug 16, 2024 at 09:44:26AM -0500, ira.weiny@intel.com wrote:
-> > From: Navneet Singh <navneet.singh@intel.com>
-> > 
-> > A dynamic capacity device (DCD) sends events to signal the host for
-> > changes in the availability of Dynamic Capacity (DC) memory.  These
-> > events contain extents describing a DPA range and meta data for memory
-> > to be added or removed.  Events may be sent from the device at any time.
-> > 
-> > Three types of events can be signaled, Add, Release, and Force Release.
-> > 
-> > On add, the host may accept or reject the memory being offered.  If no
-> > region exists, or the extent is invalid, the extent should be rejected.
-> > Add extent events may be grouped by a 'more' bit which indicates those
-> > extents should be processed as a group.
-> > 
-> > On remove, the host can delay the response until the host is safely not
-> > using the memory.  If no region exists the release can be sent
-> > immediately.  The host may also release extents (or partial extents) at
-> > any time.  Thus the 'more' bit grouping of release events is of less
-> > value and can be ignored in favor of sending multiple release capacity
-> > responses for groups of release events.
-> > 
-> > Force removal is intended as a mechanism between the FM and the device
-> > and intended only when the host is unresponsive, out of sync, or
-> > otherwise broken.  Purposely ignore force removal events.
-> > 
-> > Regions are made up of one or more devices which may be surfacing memory
-> > to the host.  Once all devices in a region have surfaced an extent the
-> > region can expose a corresponding extent for the user to consume.
-> > Without interleaving a device extent forms a 1:1 relationship with the
-> > region extent.  Immediately surface a region extent upon getting a
-> > device extent.
-> > 
-> > Per the specification the device is allowed to offer or remove extents
-> > at any time.  However, anticipated use cases can expect extents to be
-> > offered, accepted, and removed in well defined chunks.
-> > 
-> > Simplify extent tracking with the following restrictions.
-> > 
-> > 	1) Flag for removal any extent which overlaps a requested
-> > 	   release range.
-> > 	2) Refuse the offer of extents which overlap already accepted
-> > 	   memory ranges.
-> > 	3) Accept again a range which has already been accepted by the
-> > 	   host.  (It is likely the device has an error because it
-> > 	   should already know that this range was accepted.  But from
-> > 	   the host point of view it is safe to acknowledge that
-> > 	   acceptance again.)
-> > 
-> > Management of the region extent devices must be synchronized with
-> > potential uses of the memory within the DAX layer.  Create region extent
-> > devices as children of the cxl_dax_region device such that the DAX
-> > region driver can co-drive them and synchronize with the DAX layer.
-> > Synchronization and management is handled in a subsequent patch.
-> > 
-> > Process DCD events and create region devices.
-> > 
-> > Signed-off-by: Navneet Singh <navneet.singh@intel.com>
-> > Co-developed-by: Ira Weiny <ira.weiny@intel.com>
-> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> >   
-> 
-> One minor change inline.
-Hi Fan,
+On Tue, Aug 27, 2024 at 8:16=E2=80=AFAM Tarang Raval
+<tarang.raval@siliconsignals.io> wrote:
 
-Crop please.  I scanned past it 3 times when scrolling without noticing
-what you'd actually commented on.
+> [    8.639860] fec 30be0000.ethernet eth0: Unable to connect to phy
+> [    8.708452] fec 30be0000.ethernet eth0: Unable to connect to phy
 
-> > +/* See CXL 3.0 8.2.9.2.1.5 */  
-> 
-> Update the reference to reflect CXL 3.1.
-> 
-> Fan
-> 
+What about this network issue?
 
