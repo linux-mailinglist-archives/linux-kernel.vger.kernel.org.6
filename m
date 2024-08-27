@@ -1,259 +1,189 @@
-Return-Path: <linux-kernel+bounces-304006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 986A496186F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 22:17:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 580A996187A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 22:25:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 172731F24928
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:17:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D66B21F24C7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242611D363D;
-	Tue, 27 Aug 2024 20:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2D61D3627;
+	Tue, 27 Aug 2024 20:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="H2cRDo2s";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Oigw9UeX";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="H2cRDo2s";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Oigw9UeX"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="erS7aSkB"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C85A15B554;
-	Tue, 27 Aug 2024 20:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F727186A;
+	Tue, 27 Aug 2024 20:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724789805; cv=none; b=pmKj9ANSNg1SsTSZ4xOKCaG3CGxul3pS4W56tiF0+KNdaM0Y0QD0ibK2RA9C9erLxPVkrP1SczdViQX6rAYBTG4VEJRwEtTpVtq+Uh0kYXCbYpRldPIMKoBgd1/5x1miJROJHvyz8VU0KgMLiYbCekwlgSBCI3ftC7/oFF/hjk8=
+	t=1724790334; cv=none; b=KR7ZLj7Skhwg0eb9Ju3SVgU8WHp/T1yaPBkKGOCx56IccfnMlxTNglG20YUMqmHbhzMS6HSr5RZSV9zZQH/UB9Jshhp3VdyeQ1d5MVaniTyYBc0t9GoIS2ZXxG6D2o6FsjdKHcGe6xGba8NVWhulthoVT6GmdLPEf/dk6kCeu1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724789805; c=relaxed/simple;
-	bh=Hcx8QcIxQCwYgcS9aVzVA/bgTxxtOqbsBjmUJhdmgDE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tNOR5fsbFYz7f4ojncvA+HUFaYZSBqOlBF3rThvZ3pnzqABhRO6pjIJQp7RBYtTXGQn4uWXCIiOQN99yNdU9QRaLDX4L+XtnD71nZQwPdmIRCHjE9aGr6x+3pq/NzFubQoM61pTk4u53mzufZ86S4FMMmKET8FUo/ULGIHihyEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=H2cRDo2s; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Oigw9UeX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=H2cRDo2s; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Oigw9UeX; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A903621B26;
-	Tue, 27 Aug 2024 20:16:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724789801; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nGZ2P7NBrFDQ9r5RZr35OZ49pTXK6VSOYy22Fa0AIok=;
-	b=H2cRDo2sZsK9GGwhMSl1+LBbuJkzDzZYXcRxrrBUP1ii16m+nlgl5lQuGRMlXjKO3rMU+2
-	RW7ZakNBPsPXhimbmHe87HiRt56Srjp7XbDJTAs786nC4bb+YpVip4YFqKQJVmk2ruOvwG
-	TTSl5TE1vADus4Sac+O5ia3FfZexrQE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724789801;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nGZ2P7NBrFDQ9r5RZr35OZ49pTXK6VSOYy22Fa0AIok=;
-	b=Oigw9UeXIEcBSjzCMhjwNNDBauMqt8lcBgPJkrJGXLDcmeW7czBJF9IftZwl7tLtBCB5ac
-	SJ5wvU5kPUJ/WpCg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724789801; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nGZ2P7NBrFDQ9r5RZr35OZ49pTXK6VSOYy22Fa0AIok=;
-	b=H2cRDo2sZsK9GGwhMSl1+LBbuJkzDzZYXcRxrrBUP1ii16m+nlgl5lQuGRMlXjKO3rMU+2
-	RW7ZakNBPsPXhimbmHe87HiRt56Srjp7XbDJTAs786nC4bb+YpVip4YFqKQJVmk2ruOvwG
-	TTSl5TE1vADus4Sac+O5ia3FfZexrQE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724789801;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nGZ2P7NBrFDQ9r5RZr35OZ49pTXK6VSOYy22Fa0AIok=;
-	b=Oigw9UeXIEcBSjzCMhjwNNDBauMqt8lcBgPJkrJGXLDcmeW7czBJF9IftZwl7tLtBCB5ac
-	SJ5wvU5kPUJ/WpCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6516913A20;
-	Tue, 27 Aug 2024 20:16:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id NMafEik0zmYWfQAAD6G6ig
-	(envelope-from <krisman@suse.de>); Tue, 27 Aug 2024 20:16:41 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Lizhi Xu <lizhi.xu@windriver.com>,  adilger.kernel@dilger.ca,
-  coreteam@netfilter.org,  davem@davemloft.net,  ebiggers@kernel.org,
-  fw@strlen.de,  jaegeuk@kernel.org,  kadlec@netfilter.org,
-  kuba@kernel.org,  linux-ext4@vger.kernel.org,
-  linux-fscrypt@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  lkp@intel.com,  llvm@lists.linux.dev,  netdev@vger.kernel.org,
-  netfilter-devel@vger.kernel.org,  oe-kbuild-all@lists.linux.dev,
-  pablo@netfilter.org,
-  syzbot+340581ba9dceb7e06fb3@syzkaller.appspotmail.com,
-  syzkaller-bugs@googlegroups.com
-Subject: [PATCH] ext4: Fix error message when rejecting the default hash
-In-Reply-To: <172433877724.370733.16770771071139702263.b4-ty@mit.edu>
-	(Theodore Ts'o's message of "Thu, 22 Aug 2024 11:00:11 -0400")
-Organization: SUSE
-References: <87le3kle87.fsf@mailhost.krisman.be>
-	<20240605012335.44086-1-lizhi.xu@windriver.com>
-	<172433877724.370733.16770771071139702263.b4-ty@mit.edu>
-Date: Tue, 27 Aug 2024 16:16:36 -0400
-Message-ID: <87jzg1en6j.fsf_-_@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1724790334; c=relaxed/simple;
+	bh=B8gN9XtIUX9WdpdalYG97OlcN8j4MUH+67fi4NVVKNk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M8Uo1A0tOD+IgyJ5wUOJppFOFd6e9Zmj9habBaATvxD5ZmzujGuLd2Fpi3hmhElJBqV8+i2yQ8trLkeHYm3BQmAnGkARKPMXHu1xR4+TltCCdR6bpKkK7Caxe8iwL7Kgg3vC8CwO2pSmgLdqYznWzbVH+ZEtOgzQgNJjwGNCjCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=erS7aSkB; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5bf068aebe5so7470808a12.0;
+        Tue, 27 Aug 2024 13:25:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724790330; x=1725395130; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K1S0R3Tsboq9f6ZxXIsz+JWCDez7fEOp5R3ignLWd2g=;
+        b=erS7aSkBfhK0AnStdpn+9cMH09ThGUP+0zhrb0jp63mZvv/teaMChq6fb3qMSXpwAA
+         eAQaykI7h+FqsOpgVsL1l2Wa8exnOctV7Ai8lkJi/JHHg0PjPvanML68jj36lPBzPXbK
+         Y0JNSdylBLFTfpn+4hS4pNHee/9QmXbmv9lvZH/v0+kFTOPq9gjffBTbK3U8hnfZGaoN
+         hrqSvbOe2+VBSlXho+hhq34aZkR5Fz1luL7XlFdmDqxBnNWFJCAIeV8zYduDfcxALZWA
+         rczUOWE7FaZkv0CPg7s1AsowooquiUAuA+ysXzN5Owuzbp0J/vMCF3gzmSwGBL5Hbjrw
+         FiVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724790330; x=1725395130;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K1S0R3Tsboq9f6ZxXIsz+JWCDez7fEOp5R3ignLWd2g=;
+        b=IDjzOVS/Kkz3psUBKCXCPBpJf+65klYWuNI6/LpNcFDSD9dCDp5fFqd/ghqTUY9rUA
+         vjBY9Pz9Q2zSJEk1yyPzYwLX4QaYavvoZ8exGCYnT/HOFqPV6rQ3+oJVB6BjwlCTCrjv
+         WhZtO7fy8NDS5z28XRFWQeRZBjFnJyT7jn1Lo+v81OFJ3sibNKCzOzEVeTsmeQAF1mpp
+         c/OyejmRSNO3FeqfyRbCEkK7g1P2D6YdVuDrw4aCKv8axpur/Z10a5IKVWbQmfsYtAgj
+         iuA78mnGOGHqQHQ8f0D4qoFEOdjXtpNummsDN8URZj3GOgttVmEKi3Uys5vp/Z3mc4fo
+         ozUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzDd3lq8i2DMJsBfOWWm2T3nl6PqEycVOdabafWAVp7S3oLc658mXNi9sZ/IEE19EUzTEIKhW2ODzSWhh4@vger.kernel.org, AJvYcCVIP3BHfHVAuOEQOctibjzQRAVCL9sqf+GP4jqEAzEAwR8AD5X21lQ+QmIRGies3vTCNH2D3PlmPzJnpSpW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+mzC/1TMhkCDdyX2qx4PoF1uHZxfzgOnyaeAtqDxHbKMhW6dM
+	Ik1M81ZH7kTdvU2U1c8r5SvTpP1ky+FHXsKJP5x8sFhcAv1wrccnxXU3HOPm
+X-Google-Smtp-Source: AGHT+IHYr2Isp4SrehIxVOF2itRQBjAnp3RlVSfqAQ04TR2Run1LZayMQtfINtPXvD1sQMdwvt9w4w==
+X-Received: by 2002:a17:907:f1d8:b0:a7a:b4bd:d0eb with SMTP id a640c23a62f3a-a86a5199bd9mr994403466b.24.1724790329979;
+        Tue, 27 Aug 2024 13:25:29 -0700 (PDT)
+Received: from [192.168.1.15] (host-87-18-175-92.retail.telecomitalia.it. [87.18.175.92])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e5954a88sm150233366b.224.2024.08.27.13.25.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 13:25:29 -0700 (PDT)
+Message-ID: <d95ef763-7237-4080-b323-838ca337734a@gmail.com>
+Date: Tue, 27 Aug 2024 22:25:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	HAS_ORG_HEADER(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_RCPT(0.00)[340581ba9dceb7e06fb3];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/7] drm/msm/A6xx: Implement preemption for A7XX targets
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>,
+ Connor Abbott <cwabbott0@gmail.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Sharat Masetty <smasetty@codeaurora.org>
+References: <20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com>
+ <20240815-preemption-a750-t-v1-4-7bda26c34037@gmail.com>
+ <20240819200837.etzn7oaoamnceigr@hu-akhilpo-hyd.qualcomm.com>
+ <CACu1E7E7FPJP-Ry64m257A7WrL3Q9jy8xMS9XpSBRNimBWzYUQ@mail.gmail.com>
+ <20240822200534.fgugb3zmcp7hjyck@hu-akhilpo-hyd.qualcomm.com>
+ <CACu1E7F068sAMFgn=D7qBGM81qvYP4iW1+hXpfXVKtQGWeyTKQ@mail.gmail.com>
+ <CACu1E7EueMnte9e+yLEtRE9WmG0J5bVMj59VbPfkDeB7OHbsAw@mail.gmail.com>
+ <20240827194828.jxwelq4xr2wsdxos@hu-akhilpo-hyd.qualcomm.com>
+Content-Language: en-US
+From: Antonino Maniscalco <antomani103@gmail.com>
+In-Reply-To: <20240827194828.jxwelq4xr2wsdxos@hu-akhilpo-hyd.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-"Theodore Ts'o" <tytso@mit.edu> writes:
+On 8/27/24 9:48 PM, Akhil P Oommen wrote:
+> On Fri, Aug 23, 2024 at 10:23:48AM +0100, Connor Abbott wrote:
+>> On Fri, Aug 23, 2024 at 10:21 AM Connor Abbott <cwabbott0@gmail.com> wrote:
+>>>
+>>> On Thu, Aug 22, 2024 at 9:06 PM Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
+>>>>
+>>>> On Wed, Aug 21, 2024 at 05:02:56PM +0100, Connor Abbott wrote:
+>>>>> On Mon, Aug 19, 2024 at 9:09 PM Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
+>>>>>>
+>>>>>> On Thu, Aug 15, 2024 at 08:26:14PM +0200, Antonino Maniscalco wrote:
+>>>>>>> This patch implements preemption feature for A6xx targets, this allows
+>>>>>>> the GPU to switch to a higher priority ringbuffer if one is ready. A6XX
+>>>>>>> hardware as such supports multiple levels of preemption granularities,
+>>>>>>> ranging from coarse grained(ringbuffer level) to a more fine grained
+>>>>>>> such as draw-call level or a bin boundary level preemption. This patch
+>>>>>>> enables the basic preemption level, with more fine grained preemption
+>>>>>>> support to follow.
+>>>>>>>
+>>>>>>> Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
+>>>>>>> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
+>>>>>>> ---
+>>>>>>
+>>>>>> No postamble packets which resets perfcounters? It is necessary. Also, I
+>>>>>> think we should disable preemption during profiling like we disable slumber.
+>>>>>>
+>>>>>> -Akhil.
+>>>>>
+>>>>> I don't see anything in kgsl which disables preemption during
+>>>>> profiling. It disables resetting perfcounters when doing system-wide
+>>>>> profiling, like freedreno, and in that case I assume preempting is
+>>>>> fine because the system profiler has a complete view of everything and
+>>>>> should "see" preemptions through the traces. For something like
+>>>>> VK_KHR_performance_query I suppose we'd want to disable preemption
+>>>>> because we disable saving/restoring perf counters, but that has to
+>>>>> happen in userspace because the kernel doesn't know what userspace
+>>>>> does.
+>>>>>
+>>>>
+>>>> KGSL does some sort of arbitration of perfcounter configurations and
+>>>> adds the select/enablement reg configuration as part of dynamic
+>>>> power up register list which we are not doing here. Is this something
+>>>> you are taking care of from userspace via preamble?
+>>>>
+>>>> -Akhil
+>>>
+>>> I don't think we have to take care of that in userspace, because Mesa
+>>> will always configure the counter registers before reading them in the
+>>> same submission, and if it gets preempted in the meantime then we're
+>>> toast anyways (due to not saving/restoring perf counters). kgsl sets
+>>> them from userspace, which is why it has to do something to set them
+>>
+>> Sorry, should be "kgsl sets them from the kernel".
+>>
+>>> after IFPC slumber or a context switch when the HW state is gone.
+>>> Also, because the upstream approach doesn't play nicely with system
+>>> profilers like perfetto, VK_KHR_performance_query is hidden by default
+>>> behind a debug flag in turnip. So there's already an element of "this
+>>> is unsupported, you have to know what you're doing to use it."
+> 
+> But when you have composition on GPU enabled, there will be very frequent
+> preemption. And I don't know how usable profiling tools will be in that
+> case unless you disable preemption with a Mesa debug flag. But for that
+> to work, all existing submitqueues should be destroyed and recreated.
+> 
+> So I was thinking that we can use the sysprof propertry to force L0
+> preemption from kernel.
+> 
+> -Akhil.
+> 
 
-> On Wed, 05 Jun 2024 09:23:35 +0800, Lizhi Xu wrote:
->> When mounting the ext4 filesystem, if the default hash version is set to
->> DX_HASH_SIPHASH but the casefold feature is not set, exit the mounting.
->> 
->> 
->
-> Applied, thanks!
->
-> [1/1] fs/ext4: Filesystem without casefold feature cannot be mounted with spihash
->       commit: 985b67cd86392310d9e9326de941c22fc9340eec
+Right but when using a system profiler I imagined the expectation would 
+be to be able to understand how applications and compositor interact. An 
+use case could be measuring latency and understanding what contributes 
+to it. That is actually the main reason I added traces for preemption. 
+Disabling preemption would make it less useful for this type of 
+analysis. Did you have an use case in mind for a system profiler that 
+would benefit from disabling preemption and that is not covered by 
+VK_KHR_performance_query (or equivalent GL ext)?
 
-Ted,
-
-Since you took the above, can you please consider the following fixup?
-I had pointed we shouldn't have siphash as the sb default hash at all:
-
-based on your dev branch.
-
->8
-Subject: [PATCH] ext4: Fix error message when rejecting the default hash
-
-Commit 985b67cd8639 ("ext4: filesystems without casefold feature cannot
-be mounted with siphash") properly rejects volumes where
-s_def_hash_version is set to DX_HASH_SIPHASH, but the check and the
-error message should not look into casefold setup - a filesystem should
-never have DX_HASH_SIPHASH as the default hash.  Fix it and, since we
-are there, move the check to ext4_hash_info_init.
-
-Fixes:985b67cd8639 ("ext4: filesystems without casefold feature cannot
-be mounted with siphash")
-Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
----
- fs/ext4/ext4.h  |  1 +
- fs/ext4/super.c | 27 +++++++++++++++++----------
- 2 files changed, 18 insertions(+), 10 deletions(-)
-
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 5845e4aa091a..4120f24880cb 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -2462,6 +2462,7 @@ static inline __le16 ext4_rec_len_to_disk(unsigned len, unsigned blocksize)
- #define DX_HASH_HALF_MD4_UNSIGNED	4
- #define DX_HASH_TEA_UNSIGNED		5
- #define DX_HASH_SIPHASH			6
-+#define DX_HASH_LAST 			DX_HASH_SIPHASH
- 
- static inline u32 ext4_chksum(struct ext4_sb_info *sbi, u32 crc,
- 			      const void *address, unsigned int length)
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 25cd0d662e31..c6a34ad07ecc 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -3582,13 +3582,6 @@ int ext4_feature_set_ok(struct super_block *sb, int readonly)
- 			 "mounted without CONFIG_UNICODE");
- 		return 0;
- 	}
--	if (EXT4_SB(sb)->s_es->s_def_hash_version == DX_HASH_SIPHASH &&
--	    !ext4_has_feature_casefold(sb)) {
--		ext4_msg(sb, KERN_ERR,
--			 "Filesystem without casefold feature cannot be "
--			 "mounted with siphash");
--		return 0;
--	}
- 
- 	if (readonly)
- 		return 1;
-@@ -5094,16 +5087,27 @@ static int ext4_load_super(struct super_block *sb, ext4_fsblk_t *lsb,
- 	return ret;
- }
- 
--static void ext4_hash_info_init(struct super_block *sb)
-+static int ext4_hash_info_init(struct super_block *sb)
- {
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	struct ext4_super_block *es = sbi->s_es;
- 	unsigned int i;
- 
-+	sbi->s_def_hash_version = es->s_def_hash_version;
-+
-+	if (sbi->s_def_hash_version > DX_HASH_LAST) {
-+		ext4_msg(sb, KERN_ERR,
-+			 "Invalid default hash set in the superblock");
-+		return -EINVAL;
-+	} else if (sbi->s_def_hash_version == DX_HASH_SIPHASH) {
-+		ext4_msg(sb, KERN_ERR,
-+			 "SIPHASH is not a valid default hash value");
-+		return -EINVAL;
-+	}
-+
- 	for (i = 0; i < 4; i++)
- 		sbi->s_hash_seed[i] = le32_to_cpu(es->s_hash_seed[i]);
- 
--	sbi->s_def_hash_version = es->s_def_hash_version;
- 	if (ext4_has_feature_dir_index(sb)) {
- 		i = le32_to_cpu(es->s_flags);
- 		if (i & EXT2_FLAGS_UNSIGNED_HASH)
-@@ -5121,6 +5125,7 @@ static void ext4_hash_info_init(struct super_block *sb)
- #endif
- 		}
- 	}
-+	return 0;
- }
- 
- static int ext4_block_group_meta_init(struct super_block *sb, int silent)
-@@ -5256,7 +5261,9 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
- 	if (err)
- 		goto failed_mount;
- 
--	ext4_hash_info_init(sb);
-+	err = ext4_hash_info_init(sb);
-+	if (err)
-+		goto failed_mount;
- 
- 	err = ext4_handle_clustersize(sb);
- 	if (err)
+Best regards,
 -- 
-2.46.0
+Antonino Maniscalco <antomani103@gmail.com>
+
 
