@@ -1,269 +1,118 @@
-Return-Path: <linux-kernel+bounces-302808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77DB6960397
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:47:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8512A9603B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:56:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8534B20956
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:47:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B81151C226FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84117192594;
-	Tue, 27 Aug 2024 07:46:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD4515884D;
+	Tue, 27 Aug 2024 07:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="aonowNXF"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="Hixc4zK4"
+Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A9118D642
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 07:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45EA5156C5E
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 07:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724744775; cv=none; b=JIj/yz8KfQLIWLYPPd8u/G+BvEA7zzOwp+7y8yYEfOMoWqOpdQ6s2nk8focQwwDt7C7wUMip8ly3sDLmT6M41/0q1yb5D9QxaYEVDa2DZXO66pA8nBLgLAIfxmajjhhskOO9ew0q4JomfBOCyMAtgre7LoTN7EumVITyXaH6epI=
+	t=1724745344; cv=none; b=PdfJKePfwdbAzudiXgR7SMobojwz6s9qgHdvMpeVG1V+QTeSQ62glETE2FqHDiQh+okq9mCJy+h+aI0qLWl8/HeQQqYc++xVVrcapQXP8pFjY/h+gTuxdrgw3W5dwY8gJ6V7Uj7AXbfbxv6lDCf6jPKStK0f4lcu+++dRiXRpbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724744775; c=relaxed/simple;
-	bh=ikZCmmAm5THeKWLXLqgcL8YwQmmXnt0dgIwvfcrnj0Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=T63sChGQQx0oI85moNw65Wc++8vcZyL+Z/dR7caf2OCtLcbfxaaiAZjQKn6cvNU4bb7IDXRk1Sdp8nXeU+2L0NP0AjFJvAI0NpwGB4JpvS5/vfbUvMhtNnflbMmWe7+Qv0rojRfROMLYAVuHQ+FX6V1A0LMmV9Zc/0kebXhX1sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=aonowNXF; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240827074611euoutp01a1cfb2c684c66cf4f9a14532eb5fcf3e~vhjs2WsGL0713607136euoutp01X
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 07:46:11 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240827074611euoutp01a1cfb2c684c66cf4f9a14532eb5fcf3e~vhjs2WsGL0713607136euoutp01X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1724744771;
-	bh=kfDFUjs7/q5tIplnMbJnk4YsrEAYZmv3Pq/OPVvfdLM=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=aonowNXFnsPBl1w5o3cHGIn0bWkFavi8nntq8BZnBxrL1W506Eyh2lI/cllMpe/uf
-	 tQks1xYDXHMUOOCooyhNJLg6aPGnRZHapjBr8+K+1jwQg++AbMyFle1rzera/r4oRb
-	 keqdrJux1RG3zdjIKCHIAfyC3II02q+GUc5+nDzA=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240827074610eucas1p13ac389b59f36049879f9f074056b2a1e~vhjsbJFKV0306003060eucas1p1G;
-	Tue, 27 Aug 2024 07:46:10 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id F8.A5.09875.2448DC66; Tue, 27
-	Aug 2024 08:46:10 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240827074610eucas1p213b68cc09fbe310cb707804e90a6a3c6~vhjr4wuuc1758917589eucas1p28;
-	Tue, 27 Aug 2024 07:46:10 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240827074610eusmtrp2a06199635b59700d136eb9e7aafd0dcb~vhjr4CO3o2030920309eusmtrp2I;
-	Tue, 27 Aug 2024 07:46:10 +0000 (GMT)
-X-AuditID: cbfec7f4-131ff70000002693-95-66cd844202b0
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 14.64.08810.1448DC66; Tue, 27
-	Aug 2024 08:46:09 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240827074608eusmtip2a9ffd70ae4400a94c17978bd742ea4ea~vhjqpiDOe0430004300eusmtip2O;
-	Tue, 27 Aug 2024 07:46:08 +0000 (GMT)
-Message-ID: <5615235b-d114-4a7c-bebf-f7fe72886489@samsung.com>
-Date: Tue, 27 Aug 2024 09:46:06 +0200
+	s=arc-20240116; t=1724745344; c=relaxed/simple;
+	bh=KLp66pXeCyQ/PBzH4Pg7bqSDB9W/oacAbiUakwYZg8s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G23GAy8RfWIvJCl3se2l5n9ZHhlwIzt+KpVR+KZlMB+WKrRVs2BEqCrbUsrg+uC8Fjm7l1krkrfNB2Rfo2/IkkveXwogQVxzdNP149QhB4Xa6t4IC8i9pGmwDF032HBtjzeP2/+mTn9BtpdnEwd+20VUC8sKbfLIXi5NMBdZ/V0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=Hixc4zK4; arc=none smtp.client-ip=109.73.34.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
+Received: from mx1.t-argos.ru (localhost [127.0.0.1])
+	by mx1.t-argos.ru (Postfix) with ESMTP id DCF2A100003;
+	Tue, 27 Aug 2024 10:48:01 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
+	t=1724744881; bh=mZd5SxQ6/iSv3dYwCp9ZswLfTPzSCAOtFAA9bwTE6qg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=Hixc4zK42W0PUvTNP9csFFw2LFvYIuqIMzPQX1Y1bcQCmeoKp9B5zMa8rCSQXUP5w
+	 7T8WObj2M150zKldSafqzClsC6qIVPHrWJlKfk1NhjDYuHwIcAe1kLSuSnUGDGDG/2
+	 M1XNTObdyJim11MTjV4B3RCCwlb01/Gg1l5rO0tTPDBXu807fR2GZ24SmWIOqdLyN/
+	 FvQ7NWUTeOzz17A0T9qLAFnVJ59INvFmdse2c2Gz7dabfuRdPQG8joH8doFwj1ueLD
+	 TJENQg1NtQ8DtHPIWkrYZO0WB5ycdOMJkJxMp9Kzn9DuZVftbVP9RXw7xz+jFOjl1p
+	 EitMixoumK7Cg==
+Received: from mx1.t-argos.ru.ru (mail.t-argos.ru [172.17.13.212])
+	by mx1.t-argos.ru (Postfix) with ESMTP;
+	Tue, 27 Aug 2024 10:47:27 +0300 (MSK)
+Received: from Comp.ta.t-argos.ru (172.17.44.124) by ta-mail-02
+ (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 27 Aug
+ 2024 10:47:07 +0300
+From: Aleksandr Mishin <amishin@t-argos.ru>
+To: Greg Kroah-Hartman <gregkh@suse.de>
+CC: Aleksandr Mishin <amishin@t-argos.ru>, Ian Abbott <abbotti@mev.co.uk>, H
+ Hartley Sweeten <hsweeten@visionengravers.com>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: [PATCH] staging: comedi: Add driver register error handling in c6xdigio_attach()
+Date: Tue, 27 Aug 2024 10:46:54 +0300
+Message-ID: <20240827074654.14131-1-amishin@t-argos.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 RESED 1/2] dma: replace zone_dma_bits by
- zone_dma_limit
-To: Baruch Siach <baruch@tkos.co.il>
-Cc: Christoph Hellwig <hch@lst.de>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Robin Murphy
-	<robin.murphy@arm.com>, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-	=?UTF-8?B?UGV0ciBUZXNhxZnDrWs=?= <petr@tesarici.cz>, Ramon Fried
-	<ramon@neureality.ai>, Elad Nachman <enachman@marvell.com>,
-	linux-rockchip@lists.infradead.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <87ikvmv45i.fsf@tarshish>
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJKsWRmVeSWpSXmKPExsWy7djPc7pOLWfTDPYfUrBYce0Ni8X7ZT2M
-	Fo8XbWO3WLn6KJPFry8WFpseX2O1uLxrDpvFpwf/mS0mLGxmtvj9/R+rxcI5z1kt+l6uYbU4
-	+OEJq0XLHVMHPo8189Ywemxa1cnmsXlJvceLzTMZPc7PWMjosftmA5vH5IUXmT1m/fzH4rF3
-	73ZGj7kNt5g8Pm+SC+CO4rJJSc3JLEst0rdL4Mp4fZu1oEGnYsWcqywNjFdUuhg5OCQETCQm
-	zjTrYuTiEBJYwSjx4eAq9i5GTiDnC6PE9Zf+EPZnRok3D+pAbJD6yetbWCAaljNKvFi9kw3C
-	+cgocaCzjQWkilfATuLL1uWMIDaLgKrEo5k/2CHighInZz4BqxEVkJe4f2sGWFxYIEBiyrNN
-	bCC2iICKxP/n28BsZoFrzBKbZ9hA2OISt57MZwKx2QQMJbredoHVcAqoSdw7eo0dokZeonnr
-	bGaQgyQEtnNKzOjYwwZxtovEjq/NLBC2sMSr41vYIWwZif87QYaCNLQzSiz4fR/KmcAo0fD8
-	FiNElbXEnXO/2EABxiygKbF+lz5E2FFi+dwXTJBw5JO48VYQ4gg+iUnbpjNDhHklOtqEIKrV
-	JGYdXwe39uCFS8wTGJVmIQXLLCRvzkLyziyEvQsYWVYxiqeWFuempxYb5aWW6xUn5haX5qXr
-	JefnbmIEpr7T/45/2cG4/NVHvUOMTByMhxglOJiVRHjlLp9ME+JNSaysSi3Kjy8qzUktPsQo
-	zcGiJM6rmiKfKiSQnliSmp2aWpBaBJNl4uCUamDi7wlJOrlmm6Z+X8PjOQ7rLl9JDnB+vWxp
-	lPkPpcnB+fnzFTd/+MZe2q9xPFjzxK66xU/M16lsnTfhuw9ztx/7xOsCtlZ6dosrD5cWcK48
-	FHV/TWK0qq5pVtOx5ZxhP3vOL/9pllf6vKLu8tMk73357o5Hd+/pkZ5n2/ho7V/5ug9pGv2h
-	mz59P5Bid3TOe/t1u46et5oW0uxuoel8bIfow5xFdZNbbFrP7HnUmPSUN90zdXLZwsglJzN0
-	s6xOcgX+v7z/vu2meudl24sff1/1Q7XjTPGndZG++QVzE32dzmewympLMd3enfC57NiBsMVL
-	w83/6TU8OHEn/Wehskfit2uvL7wtl/6meCnEQl5NiaU4I9FQi7moOBEAMPhlE+wDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPIsWRmVeSWpSXmKPExsVy+t/xe7qOLWfTDG6ttbJYce0Ni8X7ZT2M
-	Fo8XbWO3WLn6KJPFry8WFpseX2O1uLxrDpvFpwf/mS0mLGxmtvj9/R+rxcI5z1kt+l6uYbU4
-	+OEJq0XLHVMHPo8189Ywemxa1cnmsXlJvceLzTMZPc7PWMjosftmA5vH5IUXmT1m/fzH4rF3
-	73ZGj7kNt5g8Pm+SC+CO0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJ
-	Sc3JLEst0rdL0Mt4fZu1oEGnYsWcqywNjFdUuhg5OSQETCQmr29h6WLk4hASWMoo0brwHzNE
-	Qkbi5LQGVghbWOLPtS42iKL3jBK/754ES/AK2El82bqcEcRmEVCVeDTzBztEXFDi5MwnLCC2
-	qIC8xP1bM8DiwgJ+EvffbmUDsUUEVCT+P98GNpRZ4BqzROvP81AbvjBJzGh6DtbNLCAucevJ
-	fCYQm03AUKLrbRdYN6eAmsS9o9fYIWrMJLq2djFC2PISzVtnM09gFJqF5JBZSEbNQtIyC0nL
-	AkaWVYwiqaXFuem5xYZ6xYm5xaV56XrJ+bmbGIExv+3Yz807GOe9+qh3iJGJg/EQowQHs5II
-	r9zlk2lCvCmJlVWpRfnxRaU5qcWHGE2BoTGRWUo0OR+YdPJK4g3NDEwNTcwsDUwtzYyVxHk9
-	CzoShQTSE0tSs1NTC1KLYPqYODilGphWFwjcUBPdcWW6ufQE9mbmbj9ti/q27S+SLu1bdjVn
-	3s/ZGxe/iMnKsGjvWl+xKOHDCSf5faHydx4qV1qsvV3+429p1feFjDzzivJ1boaGzjC49TqL
-	semFcnq+9+pFT14Lhb9PV3p4UeaUyeHbF70F1kwQsGMyfhBRvDdijbmGoVzRo89HAy4UnL/a
-	zD9RpuSCBPs1zdsTo/Oybv87+O/ejMMbpCI5Hrva9x6bmFUc+3TPhmcZ7fkrlwS/cTa6llIo
-	tOX+p2kHl5/YMT9f9YJfnPOczB9FbwsPTDSv0n73+f+Vx47sb4qqlXi+ZvxTmi1Wc+v0Q6G9
-	rgzheq6Prknp8byfXMVp+ThAhLfpNf8jJZbijERDLeai4kQA35+ZY4IDAAA=
-X-CMS-MailID: 20240827074610eucas1p213b68cc09fbe310cb707804e90a6a3c6
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20240811070951eucas1p1dc5315e0d710db13ce28fa0a977c7bc1
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240811070951eucas1p1dc5315e0d710db13ce28fa0a977c7bc1
-References: <cover.1723359916.git.baruch@tkos.co.il>
-	<CGME20240811070951eucas1p1dc5315e0d710db13ce28fa0a977c7bc1@eucas1p1.samsung.com>
-	<17c067618b93e5d71f19c37826d54db4299621a3.1723359916.git.baruch@tkos.co.il>
-	<53d988b1-bdce-422a-ae4e-158f305ad703@samsung.com> <87mskyva7o.fsf@tarshish>
-	<f206f46c-0e2a-47a3-84b3-30bb53499f75@samsung.com> <87ikvmv45i.fsf@tarshish>
+Content-Type: text/plain
+X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
+ (172.17.13.212)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 187352 [Aug 27 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 27 0.3.27 71302da218a62dcd84ac43314e19b5cc6b38e0b6, {Tracking_from_domain_doesnt_match_to}, t-argos.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;mx1.t-argos.ru.ru:7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/08/27 07:21:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/08/27 03:57:00 #26440321
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On 27.08.2024 09:03, Baruch Siach wrote:
-> On Tue, Aug 27 2024, Marek Szyprowski wrote:
->> On 27.08.2024 06:52, Baruch Siach wrote:
->>> Hi Marek,
->>>
->>> Thanks for your report.
->>>
->>> On Mon, Aug 26 2024, Marek Szyprowski wrote:
->>>> On 11.08.2024 09:09, Baruch Siach wrote:
->>>>> From: Catalin Marinas <catalin.marinas@arm.com>
->>>>>
->>>>> Hardware DMA limit might not be power of 2. When RAM range starts above
->>>>> 0, say 4GB, DMA limit of 30 bits should end at 5GB. A single high bit
->>>>> can not encode this limit.
->>>>>
->>>>> Use plain address for DMA zone limit.
->>>>>
->>>>> Since DMA zone can now potentially span beyond 4GB physical limit of
->>>>> DMA32, make sure to use DMA zone for GFP_DMA32 allocations in that case.
->>>>>
->>>>> Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
->>>>> Co-developed-by: Baruch Siach <baruch@tkos.co.il>
->>>>> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
->>>>> ---
->>>> This patch landed recently in linux-next as commit ba0fb44aed47
->>>> ("dma-mapping: replace zone_dma_bits by zone_dma_limit"). During my
->>>> tests I found that it introduces the following warning on ARM64/Rockchip
->>>> based Odroid M1 board (arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts):
->>> Does this warning go away if you revert both 3be9b846896d and ba0fb44aed47?
->> Yes, linux-next with above mentioned commits reverted works fine.
->>
->>
->>> Upstream rockchip DTs have no dma-ranges property. Is that the case for
->>> your platform as well?
->>>
->>> Can you share kernel report of DMA zones and swiotlb? On my platform I get:
->>>
->>> [    0.000000] Zone ranges:
->>> [    0.000000]   DMA      [mem 0x0000000800000000-0x000000083fffffff]
->>> [    0.000000]   DMA32    empty
->>> [    0.000000]   Normal   [mem 0x0000000840000000-0x0000000fffffffff]
->>> ...
->>> [    0.000000] software IO TLB: area num 8.
->>> [    0.000000] software IO TLB: mapped [mem 0x000000083be38000-0x000000083fe38000] (64MB)
->>>
->>> What do you get at your end?
->> On ba0fb44aed47 I got:
->>
->> [    0.000000] NUMA: No NUMA configuration found
->> [    0.000000] NUMA: Faking a node at [mem
->> 0x0000000000200000-0x00000001ffffffff]
->> [    0.000000] NUMA: NODE_DATA [mem 0x1ff7a0600-0x1ff7a2fff]
->> [    0.000000] Zone ranges:
->> [    0.000000]   DMA      [mem 0x0000000000200000-0x00000001ffffffff]
->> [    0.000000]   DMA32    empty
->> [    0.000000]   Normal   empty
->> [    0.000000] Movable zone start for each node
->> [    0.000000] Early memory node ranges
->> [    0.000000]   node   0: [mem 0x0000000000200000-0x00000000083fffff]
->> [    0.000000]   node   0: [mem 0x0000000009400000-0x00000000efffffff]
->> [    0.000000]   node   0: [mem 0x00000001f0000000-0x00000001ffffffff]
->> [    0.000000] Initmem setup node 0 [mem
->> 0x0000000000200000-0x00000001ffffffff]
->> [    0.000000] On node 0, zone DMA: 512 pages in unavailable ranges
->> [    0.000000] On node 0, zone DMA: 4096 pages in unavailable ranges
->> [    0.000000] cma: Reserved 96 MiB at 0x00000001f0000000 on node -1
->>
->> ...
->>
->> [    0.000000] software IO TLB: SWIOTLB bounce buffer size adjusted to 3MB
->> [    0.000000] software IO TLB: area num 4.
->> [    0.000000] software IO TLB: mapped [mem
->> 0x00000001fac00000-0x00000001fb000000] (4MB)
->>
->> On the fa3c109a6d30 (parent commit of the $subject) I got:
->>
->> [    0.000000] NUMA: No NUMA configuration found
->> [    0.000000] NUMA: Faking a node at [mem
->> 0x0000000000200000-0x00000001ffffffff]
->> [    0.000000] NUMA: NODE_DATA [mem 0x1ff7a0600-0x1ff7a2fff]
->> [    0.000000] Zone ranges:
->> [    0.000000]   DMA      [mem 0x0000000000200000-0x00000000ffffffff]
->> [    0.000000]   DMA32    empty
->> [    0.000000]   Normal   [mem 0x0000000100000000-0x00000001ffffffff]
->> [    0.000000] Movable zone start for each node
->> [    0.000000] Early memory node ranges
->> [    0.000000]   node   0: [mem 0x0000000000200000-0x00000000083fffff]
->> [    0.000000]   node   0: [mem 0x0000000009400000-0x00000000efffffff]
->> [    0.000000]   node   0: [mem 0x00000001f0000000-0x00000001ffffffff]
->> [    0.000000] Initmem setup node 0 [mem
->> 0x0000000000200000-0x00000001ffffffff]
->> [    0.000000] On node 0, zone DMA: 512 pages in unavailable ranges
->> [    0.000000] On node 0, zone DMA: 4096 pages in unavailable ranges
->> [    0.000000] cma: Reserved 96 MiB at 0x00000000ea000000 on node -1
->>
->> ...
->>
->> [    0.000000] software IO TLB: area num 4.
->> [    0.000000] software IO TLB: mapped [mem
->> 0x00000000e6000000-0x00000000ea000000] (64MB)
->>
->> It looks that for some reasons $subject patch changes the default zone
->> and swiotlb configuration.
-> Does this fix the issue?
->
-> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> index bfb10969cbf0..7fcd0aaa9bb6 100644
-> --- a/arch/arm64/mm/init.c
-> +++ b/arch/arm64/mm/init.c
-> @@ -116,6 +116,9 @@ static void __init arch_reserve_crashkernel(void)
->   
->   static phys_addr_t __init max_zone_phys(phys_addr_t zone_limit)
->   {
-> +	if (memblock_start_of_DRAM() < U32_MAX)
-> +		zone_limit = min(zone_limit, U32_MAX);
-> +
->   	return min(zone_limit, memblock_end_of_DRAM() - 1) + 1;
->   }
->   
+In c6xdigio_attach() there is a pnp_register_driver() call without return
+value check. But pnp_register_driver() can return error in some case
+(e.q. kzalloc() error in bus_add_driver() etc.).
 
-Yes, this fixes my issue. Thanks!
+Add return value check.
 
-Fell free to add:
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Fixes: 2c89e159cd2f ("Staging: comedi: add c6xdigio driver")
+Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+---
+ drivers/comedi/drivers/c6xdigio.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Best regards
+diff --git a/drivers/comedi/drivers/c6xdigio.c b/drivers/comedi/drivers/c6xdigio.c
+index 14b90d1c64dc..3f507f53518d 100644
+--- a/drivers/comedi/drivers/c6xdigio.c
++++ b/drivers/comedi/drivers/c6xdigio.c
+@@ -250,7 +250,9 @@ static int c6xdigio_attach(struct comedi_device *dev,
+ 		return ret;
+ 
+ 	/*  Make sure that PnP ports get activated */
+-	pnp_register_driver(&c6xdigio_pnp_driver);
++	ret = pnp_register_driver(&c6xdigio_pnp_driver);
++	if (ret)
++		return ret;
+ 
+ 	s = &dev->subdevices[0];
+ 	/* pwm output subdevice */
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.30.2
 
 
