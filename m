@@ -1,129 +1,202 @@
-Return-Path: <linux-kernel+bounces-302911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10CD59604E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:54:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DE7C9604EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D3E5B2103A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:54:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 624271C2278C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACAEC198E74;
-	Tue, 27 Aug 2024 08:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8900F1991A5;
+	Tue, 27 Aug 2024 08:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="D1/WZsrs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="CtCo6O2k"
+Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010070.outbound.protection.outlook.com [52.101.128.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE3C1EEE0;
-	Tue, 27 Aug 2024 08:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724748833; cv=none; b=F0Pjn1J4lTomXyYIYyc+XYJik9/BwGyMtS9C3Ew/M3xGFlJ4o0ujoBT9fEB1D4iF92IJyYpApy+7tinfaLER5ArMnf69mFWAosZ/VpInJH/U5rXGY8R7Owej8La8aDgGXUoYIGJRWMQ8rWmpRjdFcAvkctITGgmk5XBJMcGODD8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724748833; c=relaxed/simple;
-	bh=uJh1BECLYykryv2qkUmuuEWHi81HJAVxT6K2ErkpGBo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u/umhVVogkXmL4DohR93571eBQydtSr5hdBWur6wQzrY1J2tj7Ud2SoSXPTca23Bx7F6wrgEVixKpxJCcCCPPKl9coR/OsmERdojzKu/8ZGdNr0NyOGywViuRQEXPdxsNUPBPKGXleFY2fFpS1fTt4fc4sfYS+pzPa0a5r2MwqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=D1/WZsrs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2810FC8B7A1;
-	Tue, 27 Aug 2024 08:53:51 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="D1/WZsrs"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1724748829;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hhZkFRC4BoRf7DDoYQ5LMerp2DKl7zuwL0hrKx7OfYM=;
-	b=D1/WZsrsVBICInECxaAzM5ZzLnpcUbffHSeTWi1jkL1GMpaIbPFop5qpynTi5PTWOs31yJ
-	r4mn5bQmbf/biAOcwdYkekFC9FzuPx8Hk3lNftQPPRwYnYoE7iNviSJlmUQCVdXagvnCrc
-	r/hXqQrO7oZDFWP5u9smem6JjbbRGfs=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 318679ca (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Tue, 27 Aug 2024 08:53:49 +0000 (UTC)
-Date: Tue, 27 Aug 2024 10:53:44 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Adhemerval Zanella <adhemerval.zanella@linaro.org>,
-	Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-arch@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: Re: [PATCH] aarch64: vdso: Wire up getrandom() vDSO implementation
-Message-ID: <Zs2UGH6xjJmis5XD@zx2c4.com>
-References: <20240826181059.111536-1-adhemerval.zanella@linaro.org>
- <397f9865-c4ad-44be-91ab-9764fe3aeb89@csgroup.eu>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB73197A7F;
+	Tue, 27 Aug 2024 08:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724748886; cv=fail; b=T0fumyS8Rg4swZYdnhpsmEk/SfdQdN07m6i3izRUpGww+1toahE0CIoe+Fuvm2zp42mP3QDhRWqP3Cq8gEcFyGcxvykPuDQPArclnuQKn04xD+9MQm0S+B1/Mo3soE8v7ZMcQqwkGHuo9qK3ciYMzC9PV6T0x0Kzh27qWPS3BuI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724748886; c=relaxed/simple;
+	bh=jgZBvFvwi2zzvu6/jDjHj0HUR8saQj6Xow8S4Oy7Gck=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=dj/ExgGY4jRk5pHdP/iwt53JdSra8lXmCpueb3bo+ceVetUyleRXUaPmDCdM522pN+tR/wbEa0ApX8tHJ4KrGynr9QGKKaZhA5icejCfqNRSlPrUT8+ZXF5/nteaOrDucgztYjxlpZmVuc/02+CCxylpsjgekg/t6eNdtvxxI5A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=CtCo6O2k; arc=fail smtp.client-ip=52.101.128.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NHO2S23ee5mt6LZUUkUvFORf25Zu8Q6m+DQN5ZdxaaRnl6dfjCe7MCTu9P5L2x0oz+84dn0bmDWs9JfecN0JozXkj4sFTY3f2iocjbTZhWnoXUpeELO7hH4ZevO0FX468SDoQ57YZjZKEPSyCqT+a0nB00+kvsX+j5wHS5d4c9I7cmplbAnC+9ZklDmejKrg6Csxn6YiGgjIvNvP0NfvQibYZSNIyg2Tv8MMBFEkd24RsRqFGZYtuKY06oVLRRx6w3P8P/gg7K35T+vPyjBckvMWsOzHGEbVgJvAnwCRsNpHM3XqgRLjaSBeqHkPDEZcFjFdQ1sM46ViIHO4VvFtJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iBHDloAr8UZRvJmQh8PlMUBzTBx4PRqNtOsVv8ssxMY=;
+ b=d0LZUYAhc1veU7M3dDlR00M9emkp3hOTFPJNHWXjHaVw3EyqRtmm2/H0DsSWr7Z8YFXrmC419abe/9aV5GnuXu2dzYd0r3PHuKcVu6P2jA+ILuDPPZ6kDlss2xJGbIpo52clRItIgZ8ylBwchGjkrb8ld0zpjqM49cuRDU3qsFWClNqkcMzZbAAGBVCVzhPaLTNAWQoLXLKECBWVmGGxzrnVSb5pk648E156j69d/Au7CEuyvYMAAuCt3At7JJSoKgvplsQaJpCfO+r227rgZKQ3qLsvNiJf/Qo3IRz9y8/dulTVg5m4Zb8FKvqYXHp/yjR5U5bCsSqL+7h2KcKTBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iBHDloAr8UZRvJmQh8PlMUBzTBx4PRqNtOsVv8ssxMY=;
+ b=CtCo6O2khE3kjyeLUELNpR/ofAwrPxHSOpDwZLx9PRWvi3bA+3Aek914I/xRxWHPunCM5PlKYdaHadHRRjg/UGfuWDi3LyGMdFn1Pk8cUbVEX8G6hEd/ti/rlYykSBjWT5gO/Ds8ul4zqqGMee2Cvyed6h2bb7obapeFqDc/eSvRpoQhgW9alETrV5vaFnENTvJCUwIlxophtIntYyNTv3Vc3tit6b4xpMuEekifAjqxOI2Z7g758z4jOXJXHZ3GLnXw6CB/0pD1d86GOuLOC6K9a4eTWt+WfX5KdQXtm+By9SFFqUNe+pSMbzHC4Kcck4lwjSvCkMQ0xY16+nmz5Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5899.apcprd06.prod.outlook.com (2603:1096:101:e3::16)
+ by TYUPR06MB6098.apcprd06.prod.outlook.com (2603:1096:400:358::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Tue, 27 Aug
+ 2024 08:54:40 +0000
+Received: from SEZPR06MB5899.apcprd06.prod.outlook.com
+ ([fe80::8bfc:f1ee:8923:77ce]) by SEZPR06MB5899.apcprd06.prod.outlook.com
+ ([fe80::8bfc:f1ee:8923:77ce%3]) with mapi id 15.20.7897.021; Tue, 27 Aug 2024
+ 08:54:40 +0000
+From: Shen Lichuan <shenlichuan@vivo.com>
+To: sfrench@samba.org
+Cc: pc@manguebit.com,
+	ronniesahlberg@gmail.com,
+	sprasad@microsoft.com,
+	tom@talpey.com,
+	bharathsm@microsoft.com,
+	linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org,
+	linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com,
+	Shen Lichuan <shenlichuan@vivo.com>
+Subject: [PATCH v1] smb: client: Use min() macro
+Date: Tue, 27 Aug 2024 16:54:20 +0800
+Message-Id: <20240827085420.76655-1-shenlichuan@vivo.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0010.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::17) To SEZPR06MB5899.apcprd06.prod.outlook.com
+ (2603:1096:101:e3::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <397f9865-c4ad-44be-91ab-9764fe3aeb89@csgroup.eu>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5899:EE_|TYUPR06MB6098:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8a4755c2-5d50-413c-b1c7-08dcc675e2ed
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?NKFrq8akPH1W49uayGmJyFSe3Zjdh4UChOZk36kXAr/437OJgYd2JIcSyN3j?=
+ =?us-ascii?Q?iYiulrbpggPz4/laB5ds070NG22gNYFkS9jlZb2ErmVxNtaJ2Cz6OlJG/i2Z?=
+ =?us-ascii?Q?FK6GvqnbqPterWgPngRxUGRHC6w4AXHub7ZdHjACIW90PFPUmbgeOXohIoup?=
+ =?us-ascii?Q?ZKLulNYa9CQpy3+jT5pRD4YdN6Vgynl3MmEuAkyuNO5rftIixac2kruE7etx?=
+ =?us-ascii?Q?tcrpmWYxr1TsnUTVhNQPJW4oGRseSN5q1YD9SZ9Z1ZOvFa0tJ6e+LvXGGLE/?=
+ =?us-ascii?Q?jpmVpABZ7fsu0SsMIzOlVU6Bvs6EYhR+hCISLKlYhCac8RUflXqgaixSUdK6?=
+ =?us-ascii?Q?QBswH9UEb0M9u+AF5PgiR9RVKHG4WhycRU/NOL8QCcfdWfGJbDQ6E2cOI4jR?=
+ =?us-ascii?Q?KmEJCHR8QTpao/z6VhgpN2TuqHPlcJx8KZzi7TUkX0tZuk5L/J6GfK70s9zW?=
+ =?us-ascii?Q?9Uw1Nn3315qouoEE1NRZcIA1oZJsoAkE9+Bx830BCL9Q+OFxTG02Lgsx1QVl?=
+ =?us-ascii?Q?+9mrIRVhjGfRvhXhpMn3WrIsNvmJQVCdXv85owpYC6yDSbfW1B6mrE7rq8V/?=
+ =?us-ascii?Q?tpXzNpsP7mVbYB2bL8DVVgMM9gTDwqMlHF7qNc58aBjYQ6k8I2FqdRkZlwXs?=
+ =?us-ascii?Q?QrSKDk9vWmv33LDGJs5+wlBa0dAq5bVIE2v/un64EJb/R1g86ytJbyb1mv8Z?=
+ =?us-ascii?Q?rXr108Mi3FlEO4pFAcRB96VjXNvRmU6Eyj9Ywds/Hi1XvHSye9iuRpDlv3dC?=
+ =?us-ascii?Q?Vh7ytpzrIUKQ5Wl1J2HyuGMdlMYZGrWWKl/SSzcyf1e+549WHzUwlZNgbAhu?=
+ =?us-ascii?Q?Mky1hiEUgHdn5wEBQUYz+K8u4uND6457zTmfqthW9FLrSHx68d1OnbUtCsvd?=
+ =?us-ascii?Q?z7fp55JhpQfohmVshdFBgxersVIY8dOW8LBqsRrQxTJEfteZYYtmS9sYM/Pa?=
+ =?us-ascii?Q?NPzRWx/6ev/xnLRvPHs6ll55HQG4YgijDtyDWDFn2bFnboDfMxg2l8kCGtGg?=
+ =?us-ascii?Q?tu2HTMR239yD+4YFOBxirw/1hZmWRwyyflofGdJRWH9zbdHw3Ae4RuaPjo+q?=
+ =?us-ascii?Q?1F0OxXRZ7Bc56YiPIDxAZD5Skyzoe5AlvDLAPI4ynvoCe5oAbAWkM2bFf71U?=
+ =?us-ascii?Q?ZxffTGysXEol8gHJnm41D+O/hquDPPZ3zYVh9I0xtDVowBkZxMVjD4JiVjg0?=
+ =?us-ascii?Q?ynWdjzKdFMjJwjCu8Dn9nwZqEWPKaPg3rLUOIFy5rZiDIs1tDuKN3Unvpeqe?=
+ =?us-ascii?Q?Wa20KxgoD3ZLFGL31iICCXl6Wv6p7fadD9IB2c1gkqHuxXIADB6lZtqmQ05z?=
+ =?us-ascii?Q?lHxHsJgqCzQp1BOW7DY4Bb8PUAP2kscN+L4OCcpCWuymZaqF241pxCVFwacV?=
+ =?us-ascii?Q?hdqlyi0+JghPvlK7IKhJHvXBp9QNqll2LZUOQLyw1kPYo3C8Dg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5899.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?LNrKoL8ItTydkJpwiTIb4cPAsgYE3rihIN5+STedc7V/U13yQoM0OycXb4wI?=
+ =?us-ascii?Q?cRBbOMg1n/mxeNWf5bsWcxJmPS6bkYe0/PLNfK28v+Z0jLIfRJ8/ZMlTFJtS?=
+ =?us-ascii?Q?lNkLLGx23+jxTwnZbZRu243g25yZ469Ms7+afcinky/iv5ndwP8+wt0lBv1y?=
+ =?us-ascii?Q?YlMN52STuJChfvY66/jVyXc4wxq4eCBFxnbvUbfj7NLoiqqRAxQTZ3RiRgot?=
+ =?us-ascii?Q?5zKDBFJDRXT74804rL7HnPs/UHmRIeysqS4eiI4oKwu4Od4dVJi7BhYuQdXT?=
+ =?us-ascii?Q?YMNB2qOc8pGb+QtmOviwyQGbl+YQOnenUmfIBIimrAtD9IGR7Y89wLGvLn+Q?=
+ =?us-ascii?Q?yxPXkGgP50s+KRLtz8hO5a6P4BtYl6lf481QLxZSYDOiLfzjPVrOyMpf8QfU?=
+ =?us-ascii?Q?OKh//Nv/mnyGj7oH32nYGf32rm5EtPdD0D+JktGLY+WblgpBGCHEQlb3EPEe?=
+ =?us-ascii?Q?iJzzTvHa8UmmW29ejnBIqQLRJcwHzYN6AQDSMqQglBI83B9vXKhJsAwFm7UB?=
+ =?us-ascii?Q?QoC7EOSeGJtdY5BXzvTKoL0ipdikxPQ4KjFT2T7H/PfT9W+4KcvddFAPPaXe?=
+ =?us-ascii?Q?lNL3BGuw4y7pqPCguKRN8Shf3jFAUYmQs4W3hZCrsjsqAfgcF7SJi58/54iK?=
+ =?us-ascii?Q?g0G5U6IU+sw5ad7qV/OrS/+JNSQUOd2IOi0skr6yDpCSZPVRUCiWOdjRvDIc?=
+ =?us-ascii?Q?cN3L4kGoUKveiaaxgJrOqskuGlG39DStRRSUHxi+hnnzDBlYWi1DfE0yik7d?=
+ =?us-ascii?Q?wVi40iMffsn4OLlNgomATgoReghRDhb8S513gWfc21DtZ2Euz/6S4/GiKRzS?=
+ =?us-ascii?Q?xhBb8fdlLAgN5KRSWfyCLOS3v2Q+Kd9fUNFQXzJAwrxs2UYIVfGwldoj76KS?=
+ =?us-ascii?Q?f8qvO4b9+ffzpqGWJMQYxgbWP3u/JopHFgat7KTtqXjpQidbQ3wiENSfVjc5?=
+ =?us-ascii?Q?RAJjDzMrE6lSGLk+5aQeuB89EVvSiV1WSLfctsgz/Bs+A35PMmJ61/riah5L?=
+ =?us-ascii?Q?LRYBo5anPfv+vKLC99fQBH+G/7aaUENiKafT+jvCBdgR82KM2FJ4JNN/DOMo?=
+ =?us-ascii?Q?J9dBjfNgA2ovxAO2Qj2qmpOPXpuUm+Ejw2VcEvUJEJveiBZ1C4/ObGt+qe+X?=
+ =?us-ascii?Q?bgO7c+NRaAlMGU6PyffAuW0dCJX/tq15G6DTR/3ostC7cxTUDv1K4BdA+WLL?=
+ =?us-ascii?Q?/0CPATTCKY5V1//fvSdYrDHAr5bjtNbFGqTGV0yoPiqycy2xGcimXGEAjFgR?=
+ =?us-ascii?Q?I5PiLf1pV54XETsZ3Q3U4JKcNEdo2Wo9qAhzJBGV1EMLRUDxTHK6cUn3yDQF?=
+ =?us-ascii?Q?rZt4fgh/GP+XWy/qNGSapFco+8LAb4hpSP8tTBjFpzejCrYevQMCFSzLBLo9?=
+ =?us-ascii?Q?T8Hl3zrEFSjD1UOwrhDeIt6T4JFfrhqAEPmUG5gh47z0+dBPunb7hrhKAi19?=
+ =?us-ascii?Q?3HQb2O2SzGF+4dbgTegdRizlIMyy6OFdcBMP+4+iiwpfdCECMeCWyAC+rEJA?=
+ =?us-ascii?Q?A3Ja+RtmcE/EMp7GiYM7v+KkHz2Ihzw+FXwcF0vdCXS9z2mVK90uV9NH5Lq0?=
+ =?us-ascii?Q?fFYK2OO49IRuX+NoKVNPR1qMdEl4NLQtisCOYsaq?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a4755c2-5d50-413c-b1c7-08dcc675e2ed
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5899.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 08:54:40.4039
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xBntiSCChFn0OAm/JQnnJMI5FWHaWV9fhrgBbyqAXdYfBc9XKPDxv+gvAi7JCsZLQpLZeuIIP+Lv33wXMip5LA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYUPR06MB6098
 
-On Tue, Aug 27, 2024 at 10:46:21AM +0200, Christophe Leroy wrote:
-> > +/**
-> > + * __arch_chacha20_blocks_nostack - Generate ChaCha20 stream without using the stack.
-> > + * @dst_bytes:	Destination buffer to hold @nblocks * 64 bytes of output.
-> > + * @key:	32-byte input key.
-> > + * @counter:	8-byte counter, read on input and updated on return.
-> > + * @nblocks:	Number of blocks to generate.
-> > + *
-> > + * Generates a given positive number of blocks of ChaCha20 output with nonce=0, and does not write
-> > + * to any stack or memory outside of the parameters passed to it, in order to mitigate stack data
-> > + * leaking into forked child processes.
-> > + */
-> > +extern void __arch_chacha20_blocks_nostack(u8 *dst_bytes, const u32 *key, u32 *counter, size_t nblocks);
-> 
-> For Jason: We all redefine this prototype, should we have it in a 
-> central place, or do you expect some architecture to provide some static 
-> inline for it ?
+Use the min() macro to simplify the function and improve
+its readability.
 
-Given the doc comment and such, that would be nice. But I didn't see a
-straight forward way of doing that when I tried before. If you want to
-try and send another fixup commit, that'd be welcomed.
+Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+---
+ fs/smb/client/cifsacl.c   | 2 +-
+ fs/smb/client/smbdirect.c | 8 +++-----
+ 2 files changed, 4 insertions(+), 6 deletions(-)
 
-> > +#define __VDSO_RND_DATA_OFFSET  480
-> > +
-> 
-> How is this offset calculated or defined ? What happens if the other 
-> structures grow ? Could you use some sizeof(something) instead of 
-> something from asm-offsets if you also need it in ASM ?
+diff --git a/fs/smb/client/cifsacl.c b/fs/smb/client/cifsacl.c
+index f5b6df82e857..2f9a1bb6e21c 100644
+--- a/fs/smb/client/cifsacl.c
++++ b/fs/smb/client/cifsacl.c
+@@ -187,7 +187,7 @@ compare_sids(const struct cifs_sid *ctsid, const struct cifs_sid *cwsid)
+ 	/* compare all of the subauth values if any */
+ 	num_sat = ctsid->num_subauth;
+ 	num_saw = cwsid->num_subauth;
+-	num_subauth = num_sat < num_saw ? num_sat : num_saw;
++	num_subauth = min(num_sat, num_saw);
+ 	if (num_subauth) {
+ 		for (i = 0; i < num_subauth; ++i) {
+ 			if (ctsid->sub_auth[i] != cwsid->sub_auth[i]) {
+diff --git a/fs/smb/client/smbdirect.c b/fs/smb/client/smbdirect.c
+index 7bcc379014ca..f307122b59fe 100644
+--- a/fs/smb/client/smbdirect.c
++++ b/fs/smb/client/smbdirect.c
+@@ -1584,11 +1584,9 @@ static struct smbd_connection *_smbd_get_connection(
+ 	memset(&conn_param, 0, sizeof(conn_param));
+ 	conn_param.initiator_depth = 0;
+ 
+-	conn_param.responder_resources =
+-		info->id->device->attrs.max_qp_rd_atom
+-			< SMBD_CM_RESPONDER_RESOURCES ?
+-		info->id->device->attrs.max_qp_rd_atom :
+-		SMBD_CM_RESPONDER_RESOURCES;
++	conn_param.responder_resources =
++		min(info->id->device->attrs.max_qp_rd_atom,
++		    SMBD_CM_RESPONDER_RESOURCES);
+ 	info->responder_resources = conn_param.responder_resources;
+ 	log_rdma_mr(INFO, "responder_resources=%d\n",
+ 		info->responder_resources);
+-- 
+2.17.1
 
-FYI, there's a similar static calculation like this in the x86 code:
-
-+#if !defined(_SINGLE_DATA)
-+#define _SINGLE_DATA
-+DECLARE_VVAR_SINGLE(640, struct vdso_rng_data, _vdso_rng_data)
-+#endif
-
-> >   uname_M := $(shell uname -m 2>/dev/null || echo not)
-> > -ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
-> > +ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/ -e s/aarch64.*/arm64/)
-> 
-> >   SODIUM := $(shell pkg-config --libs libsodium 2>/dev/null)
-> >   
-> >   TEST_GEN_PROGS := vdso_test_gettimeofday
-> > @@ -11,7 +11,7 @@ ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
-> >   TEST_GEN_PROGS += vdso_standalone_test_x86
-> >   endif
-> >   TEST_GEN_PROGS += vdso_test_correctness
-> > -ifeq ($(uname_M),x86_64)
-> > +ifeq ($(uname_M), $(filter x86_64 aarch64, $(uname_M)))
-> 
-> Does that work for you when you cross-compile ? For powerpc when I cross 
-> compile I still get the x86_64 from uname_M here, which is unexpected.
-
-That sounds like a legitimate bug you're pointing out, but not one with
-Adhemerval's code, right? Rather, it's something to be fixed inside of
-these self tests as a whole?
-
-Jason
 
