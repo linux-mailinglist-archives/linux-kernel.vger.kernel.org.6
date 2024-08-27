@@ -1,166 +1,140 @@
-Return-Path: <linux-kernel+bounces-302925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A659F960517
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:05:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA79960519
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F13DB21154
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:05:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 790621F215E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE6B199229;
-	Tue, 27 Aug 2024 09:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B955E176FD3;
+	Tue, 27 Aug 2024 09:06:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L70EMzDP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q0+YL/b/"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DCC13C9A9
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255F5198E92
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724749533; cv=none; b=RoMJBQHy8y7vpjqJUzesM7a5NFacVXWaAVXeU6L/XnjomyJlOENZjbKgZR9XoXFT0mBuXOl+/3NyrfQrbgtSW4zq0N2KJN8W56SBv/iOiYBAkBsRsQ7YT/lphjjxRILfdd6B5geB/Zo0ANZUdtw4FcLLwMyjeqsdtneGmt3okl0=
+	t=1724749580; cv=none; b=VnlacsogZ28D9zA/VInFMZY54zKMUenF96T/cp9cJR1HcNmnGiyLJiDJsceQzvg36g/1tVnORlYd102+qLrgndLzy7RD0qnWniTQoX65v6P73J9kr+ZM7xOQrB1KoMbYQv6tqxCEhzbb5Stmf4hxfWGazHs5mfZY0/FrBpeqJvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724749533; c=relaxed/simple;
-	bh=6MJOEhJa/JatPJXsyYOm05fUkSrsn3SRjV56Hm6O2b4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E4Wv2u0yw2PRnBK83vTh6oCC1jHAlxj4cBeFOB4Ayl5gcVDU1PmVth7HgAsywf2V82GlZIcS6hxvyAx1YQ0yWoCZTvLboy8Ln8MBuCKmvpTopyDDsM7DIAzEd/ZZ443dSq1VmRGUiEsFtRX74Q4m76GHK4LSIdztfAOwCPe8Pis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L70EMzDP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724749530;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=b8AvRIiEgd+T2ByFA4V3B4ba6CEhrT0LmOrF0twKr2Q=;
-	b=L70EMzDP21f9VSwUDi01CJR2GjT51Rnl93y0kwknlY6J1NvprnBkb9w/Psu6PB3HKc2v4x
-	bQ/8Yxy1l6CmP8Vw513bURQvuLcLtMxr67RkxaRHG+q57SyTHuLEWg6/hfiuMEkkfd193Z
-	hL5t8lT4EfDqPGcPUkHeBj+09QA6Jpg=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-564-NBYNAUJGPRa1wPTOJ7ESUQ-1; Tue, 27 Aug 2024 05:05:29 -0400
-X-MC-Unique: NBYNAUJGPRa1wPTOJ7ESUQ-1
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2f3f667fea8so44948421fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 02:05:28 -0700 (PDT)
+	s=arc-20240116; t=1724749580; c=relaxed/simple;
+	bh=td6TsY+x1jF2bYWtgW1QVma5ZvKvJwuhzTvVDhTcxRU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dNvrn/T7PnRGiNjMz3FFUdQUQW5K459vy2vGdHZaHxylVd+A6HAiyNna/CJtpUQWTGt6VZoLI34qPBsKGgnPjaAWWrM9cf8+GtgeksXzP7N6z7RiOBlhPrsaVBQhEPV3ucjj3uWU6yWmS5a6SMJkBHkIA7tnQ+VyueWwOHPtA2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q0+YL/b/; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4281d812d3eso57954725e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 02:06:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724749576; x=1725354376; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ys5q7+xt7V4u8ZvUMbFPxHX+g0yKhziPVMVNXUTaajE=;
+        b=Q0+YL/b/rl5j1EuCKgYUI8/1tv7hP3ynaUFvOc6LAh2q5WZWdaUTrVCnPuqVCMYMq+
+         S29T2gYKSix5SIxrO6CryQW41Ci0QM6WVoGegsHxJVF0ABvKxkNvmdUHdQriV5Hspnau
+         24wrg+mqJt6J4ClbsIRvrt+h+Eh/bUdAWJWp13Ybp/CCsAcQPxOb53Qczsr4Qy8LqFoE
+         ZJsrfekr1cC6qSLWHDCuIAPy/cPmNmmux9yYVjqQyYsc3BV8SzdQVJQx93xnyv16c33q
+         S0KjBE4oScqKwwqaKgq8E4nBtMWdZEsx43skUVvqHD7vCmUsGe87ab3S2h7EHFRn8XJL
+         /Uww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724749527; x=1725354327;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b8AvRIiEgd+T2ByFA4V3B4ba6CEhrT0LmOrF0twKr2Q=;
-        b=h0TLQ4GnL5UlEL/gNlCqsGHAm9aF/H52CFurevKuB4QjEqM6SWyVr5bCR9VDKatkLN
-         lb1u/z1SCYobgCwcjiir0krFkjKBojvEJ+pZMGqNQXKlkz8oBbaw1Gu/iMyXYn8Dy9/p
-         +MWrf7eida1uNtojMC7oZoYrneXP03y7BVHIYVPZifcCOmwCEJMYvsBmpAq6YtPmJm0N
-         DxVtJn/t0PHnQPuqkC9ZPPJXpNdThu84QQ78r+YPh2vsQ5fnmdN4z4DKBb3+rf7Y44dR
-         EEihzmfS3MeNfADPI6j9Cbu1sHYaHDoCxv3teTHxcNJtE+UVBRJaLHchxxNyCXGHFtor
-         d5ww==
-X-Forwarded-Encrypted: i=1; AJvYcCWgN5Zdl93fq49b2auEVPVJcVZfiV9vCbTzA2sRtnYfn35KTsfdY7+ElCLA4RViMmJ2V5m+YsftqEa6SUg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypsBixN8JC50Wagk/Edxddj9BCHGoQm26Z9wBpVs120bdPI7Wu
-	JhmFg/2hQTBdraeBEvyOnnDenVaTpZF8JtwjHfudO3sGikY2nsZfQ2ZfVUAW7uBAKnApQFIoiOZ
-	SKH+vpDzETF9037sdvX3Z35s09q4URtYULf87aOc/hzsj4RUwybQBcq0aEzd5iw==
-X-Received: by 2002:a2e:9186:0:b0:2ef:2543:457c with SMTP id 38308e7fff4ca-2f4f49135e2mr71941301fa.24.1724749527485;
-        Tue, 27 Aug 2024 02:05:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGSqUHC32MG1RXcP//rWHTciaJ+jrI4azojVO+P8tX3v+DwkqqD6jBq+iB43z3IKRAv39Dj2w==
-X-Received: by 2002:a2e:9186:0:b0:2ef:2543:457c with SMTP id 38308e7fff4ca-2f4f49135e2mr71941101fa.24.1724749526872;
-        Tue, 27 Aug 2024 02:05:26 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb4829ccsm761675a12.95.2024.08.27.02.05.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 02:05:26 -0700 (PDT)
-Message-ID: <65362768-f64b-42d9-8f74-e4f5190af95c@redhat.com>
-Date: Tue, 27 Aug 2024 11:05:25 +0200
+        d=1e100.net; s=20230601; t=1724749576; x=1725354376;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ys5q7+xt7V4u8ZvUMbFPxHX+g0yKhziPVMVNXUTaajE=;
+        b=LR8rJvlJJmUQSTRRKsm9Duu6ibIJVq2W6xYH2irLbRPCQdyUkpadr0coT0YO4fAhSb
+         jqHw+e51w/XzZydKi1moDkU9377dJgO82d1d/STlKg6sYLNeIECCl9pBpnp7EP5IZ6Yn
+         nDs3BnRPRz8uYEPMqlcq1lnNuHjaOrqGvYdLHxY6iZCg5txLqIe7GjW3c4azenXSLHDX
+         f8GyJjdGN/ABbhqX07h9QXmXqvFTmUxwXOeMk1LFWgvG8VAzLK4T8yuKWZk2ofXysmX5
+         +i3MnCYjBwElcW92apLma90oUOzvKtfRlEx0mxqqNf9DitHZYtRP2vFt8lZd/TXvGj80
+         u9QA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZ/Y54mfUikBBJretUsPGQfnAZWvJNmG0D/FiwmEZdrYKo7biLIRY2DPqOQV6pnznmhte6fNrOUeLl4M8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx96fHIkGv9IKIInzmMrsN2K1YGsTJVlkmic3TzlHSTgD2A8svb
+	ERyhR7zSe+6YeFPf1WlA3i+XYUxuZkh552BkNm0OKN5X3ujTr7IFg1mFnCmzIuY=
+X-Google-Smtp-Source: AGHT+IE+VDn5FOe01bWlunlr3Q/efu0PB9LC4RFl5VPjT0A0kz6PEXEkfZYstnAt53OJLkCDA/f1HA==
+X-Received: by 2002:adf:b311:0:b0:368:3f6a:1dea with SMTP id ffacd0b85a97d-37311840050mr9300691f8f.6.1724749575912;
+        Tue, 27 Aug 2024 02:06:15 -0700 (PDT)
+Received: from draig.lan ([85.9.250.243])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730826a3f7sm12533503f8f.112.2024.08.27.02.06.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 02:06:15 -0700 (PDT)
+Received: from draig (localhost [IPv6:::1])
+	by draig.lan (Postfix) with ESMTP id 507E15F7A2;
+	Tue, 27 Aug 2024 10:06:14 +0100 (BST)
+From: =?utf-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,  Marc Zyngier <maz@kernel.org>,
+  Oliver Upton <oliver.upton@linux.dev>,  Tianrui Zhao
+ <zhaotianrui@loongson.cn>,  Bibo Mao <maobibo@loongson.cn>,  Huacai Chen
+ <chenhuacai@kernel.org>,  Michael Ellerman <mpe@ellerman.id.au>,  Anup
+ Patel <anup@brainfault.org>,  Paul Walmsley <paul.walmsley@sifive.com>,
+  Palmer Dabbelt <palmer@dabbelt.com>,  Albert Ou <aou@eecs.berkeley.edu>,
+  Christian Borntraeger <borntraeger@linux.ibm.com>,  Janosch Frank
+ <frankja@linux.ibm.com>,  Claudio Imbrenda <imbrenda@linux.ibm.com>,
+  kvm@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+  kvmarm@lists.linux.dev,  loongarch@lists.linux.dev,
+  linux-mips@vger.kernel.org,  linuxppc-dev@lists.ozlabs.org,
+  kvm-riscv@lists.infradead.org,  linux-riscv@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  David Matlack <dmatlack@google.com>,
+  David Stevens <stevensd@chromium.org>
+Subject: Re: [PATCH v12 00/84] KVM: Stop grabbing references to PFNMAP'd pages
+In-Reply-To: <20240726235234.228822-1-seanjc@google.com> (Sean
+	Christopherson's message of "Fri, 26 Jul 2024 16:51:09 -0700")
+References: <20240726235234.228822-1-seanjc@google.com>
+Date: Tue, 27 Aug 2024 10:06:14 +0100
+Message-ID: <875xrme3nd.fsf@draig.linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] platform/x86: serial-multi-instantiate: Don't require
- both I2C and SPI
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
- Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: ilpo.jarvinen@linux.intel.com, platform-driver-x86@vger.kernel.org,
- linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-References: <20240814132939.308696-1-rf@opensource.cirrus.com>
- <ZszhKCKYl9161RIP@surfacebook.localdomain>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <ZszhKCKYl9161RIP@surfacebook.localdomain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andy,
+Sean Christopherson <seanjc@google.com> writes:
 
-On 8/26/24 10:10 PM, Andy Shevchenko wrote:
-> Wed, Aug 14, 2024 at 02:29:39PM +0100, Richard Fitzgerald kirjoitti:
->> Change the Kconfig dependency so that it doesn't require both I2C and SPI
->> subsystems to be built. Make a few small changes to the code so that the
->> code for a bus is only called if the bus is being built.
->>
->> When SPI support was added to serial-multi-instantiate it created a
->> dependency that both CONFIG_I2C and CONFIG_SPI must be enabled.
->> Typically they are, but there's no reason why this should be a
->> requirement. A specific kernel build could have only I2C devices
->> or only SPI devices. It should be possible to use serial-multi-instantiate
->> if only I2C or only SPI is enabled.
->>
->> The dependency formula used is:
->>
->>   depends on (I2C && !SPI) || (!I2C && SPI) || (I2C && SPI)
->>
->> The advantage of this approach is that if I2C=m or SPI=m then
->> SERIAL_MULTI_INSTANTIATE is limited to n/m.
-> 
-> ...
-> 
->>  static void smi_devs_unregister(struct smi *smi)
->>  {
->> +#if IS_REACHABLE(CONFIG_I2C)
-> 
-> There is no explanation why ugly ifdeffery is used here, while normal
-> conditionals elsewhere.
+> arm64 folks, the first two patches are bug fixes, but I have very low
+> confidence that they are correct and/or desirable.  If they are more or
+> less correct, I can post them separately if that'd make life easier.  I
+> included them here to avoid conflicts, and because I'm pretty sure how
+> KVM deals with MTE tags vs. dirty logging will impact what APIs KVM needs
+> to provide to arch code.
+>
+> On to the series...  The TL;DR is that I would like to get input on two
+> things:
+>
+>  1. Marking folios dirty/accessed only on the intial stage-2 page fault
+>  2. The new APIs for faulting, prefetching, and doing "lookups" on
+>  pfns
 
-Note that this has already been merged as is, as you've figured
-out yourself the reason to use #ifdef here is because
-there is no i2c_unregister_device() prototype declared when
-CONFIG_I2C=n
+I've finally managed to get virtio-vulkan working on my Arm64 devbox
+with an AMD graphics card plugged into the PCI. I'm confident that the
+graphics path is using the discrete card memory (as it has been mapped
+as device memory with alignment handlers to deal with the broken Altra
+PCI). However aside from running graphics workloads in KVM guests is
+their anything else I can check to see things are behaving as expected?
 
-> 
->>  	while (smi->i2c_num--)
->>  		i2c_unregister_device(smi->i2c_devs[smi->i2c_num]);
->> +#endif
->>  
->> -	while (smi->spi_num--)
->> -		spi_unregister_device(smi->spi_devs[smi->spi_num]);
->> +	if (IS_REACHABLE(CONFIG_SPI)) {
->> +		while (smi->spi_num--)
->> +			spi_unregister_device(smi->spi_devs[smi->spi_num]);
->> +	}
->>  }
-> 
-> There are ways to solve this:
-> 1) add a stub for I2C=n for i2c_unregister_device();
+The predecessor series did break launching some KVM guests on my x86
+system but with this series launching guests works fine and I haven't
+noticed any weirdness.
 
-Yes that would be an option to clean this up a bit as a follow-up
-patch series.
+So for those caveats you can certainly have a:
 
-Note no need for a stub, just move the declaration out of
-the #if IS_ENABLED(CONFIG_I2C) block, using if (IS_REACHABLE)
-only requires a prototype.
+Tested-by: Alex Benn=C3=A9e <alex.bennee@linaro.org>
 
-> 2) resplit this driver to have several built modules:
->    core, I2C parts, SPI parts.
-> 
+However if there is anything else I can do to further stress test this
+code do let me know.
 
-Regards,
-
-Hans
-
-
+--=20
+Alex Benn=C3=A9e
+Virtualisation Tech Lead @ Linaro
 
