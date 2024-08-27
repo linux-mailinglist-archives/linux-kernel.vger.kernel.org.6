@@ -1,148 +1,191 @@
-Return-Path: <linux-kernel+bounces-302877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AEA3960493
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:37:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AF23960496
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:38:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E54111F23DFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:37:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ABBD281F50
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B9E197A83;
-	Tue, 27 Aug 2024 08:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mJVqTFzY"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C40197A7E;
+	Tue, 27 Aug 2024 08:38:02 +0000 (UTC)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28B614A90;
-	Tue, 27 Aug 2024 08:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8FA14A90;
+	Tue, 27 Aug 2024 08:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724747866; cv=none; b=NXCXO7BV7raCwY1xNWtmCEZM7X1GhZyEImCEHn9ppXm6JInbCrtBbC0mJidHf48qZjOfMuS/QHxXSHWUEQySCI2hlSKBMOqEW2kqnNinQ/uINnqa4n3jp4AEQ9d0ezVpdodY4iweNVbTelKINZ+d+vcP+f2qcyub/9R0FVtq0uM=
+	t=1724747881; cv=none; b=VxaVZBfydHfPFyuJCoVb71yOFAry87GYpdFYnV6CaoOFLYKyIh4bHzRgKZo785aYggYPqO1DXKoK4zHx974HNxh+96M/CUx7Z7AYdgnx+VLwG2WRDHlkpiWOZDJIYyQab197UL1J3f6yxu7b95ZXarIRpTkaJMKyniocBJ7cios=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724747866; c=relaxed/simple;
-	bh=pJYd3MeHbM+FMXGaSzSNOjHpJNhImUFrqZ/s4G6drms=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hwtftF7GcUXP+UOVjdyxLQpFOiXM6pdZi54doGNFz1zF7FgXsOPfZhvItPoP0UxcKVSfJJ7mCoqla7aCzoxRXzhUE6Qfqfa3KqYHGi6rgOZEg9duA9fIaKVp40cWUs9e3sXYwf3NwimvXYKiYMeLl6ch3mpNqhV3VFbgljAx3qI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mJVqTFzY; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 612D02000B;
-	Tue, 27 Aug 2024 08:37:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724747856;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1QUY99BQnRe9MEXDdHrO9LU1xOLBc9OegOD6TyQWubM=;
-	b=mJVqTFzYXycsoLCe+NUIJgC4yILgvNqq9PToTnxwc5V3/fgp1p2JUuupgmI1ly9k5+eHH/
-	ZipB99yIq7m+Crlu705p/926mn7yIny7fO2ncfm4cD0I8K5PjmL7shxhfdTtLUnCqBmosg
-	SSLUmk8//WADlpVMIpOHSOFyxOoUPMFeb0PUiratCNYhx8xA/32Bg4b1xOOOFLQf5BRMWu
-	wq4ErU7HpDKdR5MyKG2t5m6rHJWJwI75A2R2dd7Xp/BP5+WDA4Z80iUNAuUiodv+w1rQlf
-	KmA3LuAVyPKxWilCEPiB+mG7lXlb8lE9PnANDHcuIOJx29b+Gx6g64qFP0N5rw==
-Date: Tue, 27 Aug 2024 10:37:32 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Pengfei Xu <pengfei.xu@intel.com>, davem@davemloft.net,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
- <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
- <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Jesse Brandeburg
- <jesse.brandeburg@intel.com>, Marek =?UTF-8?B?QmVow7pu?=
- <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
- <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
- mwojtas@chromium.org, Nathan Chancellor <nathan@kernel.org>, Antoine Tenart
- <atenart@kernel.org>, Marc Kleine-Budde <mkl@pengutronix.de>, Romain
- Gantois <romain.gantois@bootlin.com>
-Subject: Re: [PATCH net-next v17 11/14] net: ethtool: cable-test: Target the
- command to the requested PHY
-Message-ID: <20240827103732.690fb31d@fedora-3.home>
-In-Reply-To: <a1642517-366a-4943-a55d-e86155f51310@stanley.mountain>
-References: <20240709063039.2909536-1-maxime.chevallier@bootlin.com>
-	<20240709063039.2909536-12-maxime.chevallier@bootlin.com>
-	<Zs1jYMAtYj95XuE4@xpf.sh.intel.com>
-	<20240827073359.5d47c077@fedora-3.home>
-	<a1642517-366a-4943-a55d-e86155f51310@stanley.mountain>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1724747881; c=relaxed/simple;
+	bh=x7NK9MJBUCf9GM6SrohKqQHEpAcDrF5zORo4r2pz4zc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZIbnladYsrEEUrAtDUHpcMl5Da/wOr9ObXC5NBTGa4ICEECheJLa9bG97g5TaWE5+T4r1c/a/LPZ4/3IXV8RtuFetYtTYR5jRiRE5MS5CW+/oFVF01iaM2jlP57sGnMarCNPfxTlgda0jljYjVIBU3yASuBrQurOqHzIM57YvhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5becd359800so5871686a12.0;
+        Tue, 27 Aug 2024 01:37:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724747878; x=1725352678;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K/AqdSfSatrSy53wlWrucsTLY/adz3zVDIbzP6oKuPE=;
+        b=qKiiwk+rLAUgzVPZl2Mn7t+LlfhqohLE5xPnGfaksx+p6NTLphkpjbnpHzbYaQwkhW
+         L/Hqadd3FFANMFLYn3vFfxj8v1Vo+AFYoe7RtLGvzsboZ8Fq7t9q1g6Idhi3tos1v8iH
+         Z4foA64caZZiaR4H6YtN15g37f1hxq/1/Er1xAbIOBhCl5Bg5s7/154deqEV2iO/Yj1U
+         r+3fGpEQ8X4bb635XRS27cK6UOlnvaXLsQfkcJ7+yI+6olNtDAig9RQqWwWnyWcj8oRE
+         5mzE80M5NMVSu/iVF2+X7GoVyp4Npy61G82UZYVAPZcKBA3mR+hY5tq//8liPCpjnEhT
+         6XCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ9TblLR8bgkMhnmemw3xPzURuydyghszqaNi0T34EvxeanSleuUDpthiMzqtwjJFO9XdqFxY2UdHKt/P7@vger.kernel.org, AJvYcCVxWg8B28qNIhr904Bs5RAF/1hnXLp4Nt9Wm4vNoL4tLZ5S+HaEZrph4jKAXXb+AE4N2F8=@vger.kernel.org, AJvYcCWCZYgu8QcJLOopafpvU5vIlV5HJaJBixO4/b5+RjKPkLSVm+APZu3VId3MeSEhbyKSu+N47JeNvnFeKOZK@vger.kernel.org, AJvYcCWzfQB806sOVb7Xunjb3nAMQEzRnZDlO3DCE2OO29idSmhvNS76N8aFOhptAcQtzRdTyCRcYz0Alg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSt8IRYclwZ8zvS5hFVtNU7Zv4n4YH8bxuNGCTnmou90zY52TO
+	BQKGKdi0lmIX8znUWbdCUBIAy9jX8FzdevhS5mv+iup2r6GIF1XARMArodPSOwA=
+X-Google-Smtp-Source: AGHT+IEt9blpneyJEFiiCE26oaEejWwBGbkneRcELBPhGkenUA3vPLHXqBDvD3Pmbkmjl6/HGA0Bdw==
+X-Received: by 2002:a05:6402:d0e:b0:5c0:ad76:f70f with SMTP id 4fb4d7f45d1cf-5c0ba2b3d39mr1555422a12.15.1724747877630;
+        Tue, 27 Aug 2024 01:37:57 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb4722b0sm724083a12.69.2024.08.27.01.37.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 01:37:56 -0700 (PDT)
+Message-ID: <7016b011-cab3-4fbd-9fa7-19dd0123c989@kernel.org>
+Date: Tue, 27 Aug 2024 10:37:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] kbuild: bpf: Do not run pahole with -j on 32bit userspace
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Shung-Hsi Yu <shung-hsi.yu@suse.com>, dwarves@vger.kernel.org,
+ Jiri Olsa <olsajiri@gmail.com>, masahiroy@kernel.org,
+ linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>,
+ Nicolas Schier <nicolas@fjasle.eu>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ linux-kbuild@vger.kernel.org, bpf@vger.kernel.org, msuchanek@suse.com
+References: <20240820085950.200358-1-jirislaby@kernel.org>
+ <ZsSpU5DqT3sRDzZy@krava> <523c1afa-ed9d-4c76-baea-1c43b1b0c682@kernel.org>
+ <c2086083-4378-4503-b3e2-08fb14f8ff37@kernel.org>
+ <7ebee21d-058f-4f83-8959-bd7aaa4e7719@kernel.org>
+ <a45nq7wustxrztjxmkqzevv3mkki5oizfik7b24gqiyldhlkhv@4rpy4tzwi52l>
+ <ZsdYGOS7Yg9pS2BJ@x1> <f170d7c2-2056-4f47-8847-af15b9a78b81@kernel.org>
+ <Zsy1blxRL9VV9DRg@x1>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <Zsy1blxRL9VV9DRg@x1>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Hello Dan,
-
-On Tue, 27 Aug 2024 11:27:48 +0300
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
-
-> On Tue, Aug 27, 2024 at 07:33:59AM +0200, Maxime Chevallier wrote:
-> > 
-> > This issue has indeed been detected, and is being addressed, see :
-> > 
-> > https://lore.kernel.org/netdev/20240826134656.94892-1-djahchankoike@gmail.com/
-> >   
+On 26. 08. 24, 19:03, Arnaldo Carvalho de Melo wrote:
+> On Mon, Aug 26, 2024 at 10:57:22AM +0200, Jiri Slaby wrote:
+>> On 22. 08. 24, 17:24, Arnaldo Carvalho de Melo wrote:
+>>> On Thu, Aug 22, 2024 at 11:55:05AM +0800, Shung-Hsi Yu wrote:
+>>> I stumbled on this limitation as well when trying to build the kernel on
+>>> a Libre Computer rk3399-pc board with only 4GiB of RAM, there I just
+>>> created a swapfile and it managed to proceed, a bit slowly, but worked
+>>> as well.
+>>
+>> Here, it hits the VM space limit (3 G).
 > 
-> There is a similar bug in ethnl_act_cable_test_tdr() that needs to be fixed
-> as well.
+> right, in my case it was on a 64-bit system, so just not enough memory,
+> not address space.
+>   
+>>> Please let me know if what is in the 'next' branch of:
 > 
-> net/ethtool/cabletest.c
->    307  int ethnl_act_cable_test_tdr(struct sk_buff *skb, struct genl_info *info)
->    308  {
->    309          struct ethnl_req_info req_info = {};
->    310          const struct ethtool_phy_ops *ops;
->    311          struct nlattr **tb = info->attrs;
->    312          struct phy_device *phydev;
->    313          struct phy_tdr_config cfg;
->    314          struct net_device *dev;
->    315          int ret;
->    316  
->    317          ret = ethnl_parse_header_dev_get(&req_info,
->    318                                           tb[ETHTOOL_A_CABLE_TEST_TDR_HEADER],
->    319                                           genl_info_net(info), info->extack,
->    320                                           true);
->    321          if (ret < 0)
->    322                  return ret;
->    323  
->    324          dev = req_info.dev;
->    325  
->    326          ret = ethnl_act_cable_test_tdr_cfg(tb[ETHTOOL_A_CABLE_TEST_TDR_CFG],
->    327                                             info, &cfg);
->    328          if (ret)
->    329                  goto out_dev_put;
->    330  
->    331          rtnl_lock();
->                 ^^^^^^^^^^^^
+>>> https://git.kernel.org/pub/scm/devel/pahole/pahole.git
 > 
->    332          phydev = ethnl_req_get_phydev(&req_info,
->    333                                        tb[ETHTOOL_A_CABLE_TEST_TDR_HEADER],
->    334                                        info->extack);
->    335          if (!IS_ERR_OR_NULL(phydev)) {
->                     ^
-> This test is reversed so it will lead to a crash.
+>>> Works for you, that will be extra motivation to move it to the master
+>>> branch and cut 1.28.
 > 
-> Could you add some comments to ethnl_req_get_phydev() what the NULL return
-> means vs the error pointers?  I figured it out because the callers have comments
-> but it should be next to ethnl_req_get_phydev() as well.
+>> on 64bit (-j1):
+>> * master: 3.706 GB
+>> (* master + my changes: 3.559 GB)
+>> * next: 3.157 GB
+>   
+>> on 32bit:
+>>   * master-j1: 2.445 GB
+>>   * master-j16: 2.608 GB
+>>   * master-j32: 2.811 GB
+>>   * next-j1: 2.256 GB
+>>   * next-j16: 2.401 GB
+>>   * next-j32: 2.613 GB
+>>
+>> It's definitely better. So I think it could work now, if the thread count
+>> was limited to 1 on 32bit. As building with -j10, -j20 randomly fails on
+>> random machines (32bit processes only of course). Unlike -j1.
+> 
+> Cool, I just merged a patch from Alan Maguire that should help with the
+> parallel case, would be able to test it? It is in the 'next' branch:
 
-Good catch ! I'll send some followup to address this report as
-well as update the doc.
+Not much helping.
 
-Thanks,
+On my box (as all previous runs):
+next-j1 2.242
+next-j16 2.808
+next-j32 2.646
 
-Maxime
+On a build host:
+next-j1: 2.242
+next-j16: 2.824
+next-j20: 2.902 (crash)
+next-j32: 2.902 (crash)
+
+-- 
+js
+suse labs
+
 
