@@ -1,113 +1,651 @@
-Return-Path: <linux-kernel+bounces-303129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7555D9607CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:47:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7F2E9607D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:50:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE3EAB20EE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:47:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58D901F231ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C38B19E82A;
-	Tue, 27 Aug 2024 10:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8851719E80F;
+	Tue, 27 Aug 2024 10:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="ShlApHpa"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A1BMJIyq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94EE2B674;
-	Tue, 27 Aug 2024 10:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008B219DF5B
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 10:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724755656; cv=none; b=hpzWqYuuwXIiR6PMfHXgLhwiXWbAJNyGBB5eWlOalXHeFb3wO/9zV6h+DGecvLWIlNIzsoLVsReoUb0foNla9XrAAKpvRVE43u1zVRfLv/TpE6LnN3EjSvj+BHm6UtHnNNUGhAEuaYdxOnmkQBR7sCAAgC2B8SitmiHE05ZlI1s=
+	t=1724755797; cv=none; b=uEEifkfPNuiUiJyaHKNxy9C0lJmW1feEAAwuZ6i6tM8WxM9+WN69I4syF2eBZUqj4RVKiq0w2Wp26QFCnG5+IUwEj1UrIMdVRJ6cRJpvjAWXD/oKxKXc7HODnl6EQsrO0ySXwT2qRmbu9inViWr6CWUwoBe1DJvmPN1ungP1OFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724755656; c=relaxed/simple;
-	bh=SmhHwuuQyrzcMnahqot7kRJoEME562bGHyRJZsIm/bY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ndwL7VySZfJKo11LdAs1HssO05o7b1uZ12TYwt7fLoCXdTgRTv9u9pR/B+o9e/yJyP0p89mr6HUVKXa2D4cwei6G53DUP1m5L5uCSKrOYGnoC0W7PTkKF42CG00QBn6wD2Xg9CR0FZFdWNPlzd6CpccEbmd4p3HpykUA7I/7z/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=ShlApHpa; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 47RAkiJ13918725, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1724755604; bh=SmhHwuuQyrzcMnahqot7kRJoEME562bGHyRJZsIm/bY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=ShlApHpaV1kBPzHNvJrTZ5qS49IX3a8GGsHrjxThIxmRzLzRocyBXE/ehyTFiGWfW
-	 luhEVy8vJlrqkHGa+nf1IXSWLV/+oLg1VlRfFfxu9+oElh3SUKRg8vZwvP/4spiZ8Q
-	 TMWGiD8xypNNBIOYBzSYy7byODr4vbt7+5PimKvqtr2r4U9ZppCagL919C28Dwio2+
-	 VWRx5T7aROhcTQx5fA4z+MwQBGTS9YrPlyVvTy0CdQ9+tWUYmqWf6MCiXuhZ3wOh9X
-	 O2Ek+93nMAxrycLUtOVkPoxhwMGanW1VjY7+x7MMdOxapP18g1lo8biVpjV2A9Yqcd
-	 SukY0ik1sE0vw==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 47RAkiJ13918725
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 27 Aug 2024 18:46:44 +0800
-Received: from RTEXMBS02.realtek.com.tw (172.21.6.95) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 27 Aug 2024 18:46:44 +0800
-Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
- RTEXMBS02.realtek.com.tw (172.21.6.95) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Tue, 27 Aug 2024 18:46:43 +0800
-Received: from RTEXMBS03.realtek.com.tw ([fe80::80c2:f580:de40:3a4f]) by
- RTEXMBS03.realtek.com.tw ([fe80::80c2:f580:de40:3a4f%2]) with mapi id
- 15.01.2507.035; Tue, 27 Aug 2024 18:46:43 +0800
-From: Larry Chiu <larry.chiu@realtek.com>
-To: Paolo Abeni <pabeni@redhat.com>, Justin Lai <justinlai0215@realtek.com>,
-        "kuba@kernel.org" <kuba@kernel.org>
-CC: "davem@davemloft.net" <davem@davemloft.net>,
-        "edumazet@google.com"
-	<edumazet@google.com>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>,
-        "andrew@lunn.ch" <andrew@lunn.ch>,
-        "jiri@resnulli.us" <jiri@resnulli.us>,
-        "horms@kernel.org" <horms@kernel.org>,
-        "rkannoth@marvell.com" <rkannoth@marvell.com>,
-        "jdamato@fastly.com"
-	<jdamato@fastly.com>,
-        Ping-Ke Shih <pkshih@realtek.com>
-Subject: RE: [PATCH net-next v28 07/13] rtase: Implement a function to receive packets
-Thread-Topic: [PATCH net-next v28 07/13] rtase: Implement a function to
- receive packets
-Thread-Index: AQHa9HdUAPRW/0+ZOk+rNOW44eTUqLI6XwUAgACSvbA=
-Date: Tue, 27 Aug 2024 10:46:43 +0000
-Message-ID: <1036b59d9aa541db9b59a0cdc5868d9c@realtek.com>
-References: <20240822093754.17117-1-justinlai0215@realtek.com>
- <20240822093754.17117-8-justinlai0215@realtek.com>
- <c38c1482-1574-4cc9-9ebf-aa5ad30d627a@redhat.com>
-In-Reply-To: <c38c1482-1574-4cc9-9ebf-aa5ad30d627a@redhat.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-x-kse-serverinfo: RTEXMBS02.realtek.com.tw, 9
-x-kse-antispam-interceptor-info: fallback
-x-kse-antivirus-interceptor-info: fallback
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1724755797; c=relaxed/simple;
+	bh=valtsrMXDV3BOaGM0uDpfXUuZ98mRLetvuou2PMjhUI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EqYtLjW9jQsiQwE5ku/cbqTjDPQo9gQHQ20bEV76eaQGo9FJnEhHeFmNW+ATPBAiCOECtSt2UMZX4eKuy8e32jmP+/Ko57PZWQ6iyT3TODDHd+2lPdRFb8hX1ksYIXhs53dFJF0VFxfTunAmpaXfvX5dVSeuUVj2PMEoiqICr3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A1BMJIyq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724755793;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=pZzb35Tk5OguTyxgKgya3RaNc2DizRUTSM/K1huLeJU=;
+	b=A1BMJIyqX+kYJcFwkfXVOo4FReiJ/7F+zAVCmuiw0eBKmWaS3q+sjUX5oXxRQjm6ddcNGs
+	1xdqjVV5hxy/Guw5INB2VD33WsIMdzJ9LhzsjvXEeqbbLjPMkPcK9hcbNLkzUbSROCa86k
+	/Txt4K2lDT7NpSF0hvAZX7/thTCXJ44=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-421-qJEQoCadPBiF_rAfLa9fUw-1; Tue,
+ 27 Aug 2024 06:49:50 -0400
+X-MC-Unique: qJEQoCadPBiF_rAfLa9fUw-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 108CF1954B2A;
+	Tue, 27 Aug 2024 10:49:49 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.39.193.3])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AD1DD1955F1B;
+	Tue, 27 Aug 2024 10:49:47 +0000 (UTC)
+From: Hans de Goede <hdegoede@redhat.com>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH resend v2] extcon: Add LC824206XA microUSB switch driver
+Date: Tue, 27 Aug 2024 12:49:38 +0200
+Message-ID: <20240827104938.17719-1-hdegoede@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSE-AntiSpam-Interceptor-Info: fallback
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-DQo+ID4gKw0KPiA+ICsgICAgICAgICAgICAgc2tiID0gYnVpbGRfc2tiKHJpbmctPmRhdGFfYnVm
-W2VudHJ5XSwgUEFHRV9TSVpFKTsNCj4gPiArICAgICAgICAgICAgIGlmICghc2tiKSB7DQo+ID4g
-KyAgICAgICAgICAgICAgICAgICAgIG5ldGRldl9lcnIoZGV2LCAic2tiIGJ1aWxkIGZhaWxlZFxu
-Iik7DQo+IA0KPiBJJ20gc29ycnkgZm9yIHRoaXMgbGF0ZSBmZWVkYmFjaywgYnV0IHRoZSBhYm92
-ZSBtZXNzYWdlIHNob3VsZCBiZQ0KPiBkcm9wcGVkLCB0b28uDQo+IA0KPiBBcyBwb2ludGVkIG91
-dCBieSBKYWt1YiBpbiB0aGUgcHJldmlvdXMgcmV2aXNpb24sIHRoaXMgYWxsb2NhdGlvbiBjYW4N
-Cj4gZmFpbCwgYW5kIHRoZSBjb3VudGVyIGluY3JlYXNlIGJlbG93IHdpbGwgZ2l2ZSBleGFjdGx5
-IHRoZSBzYW1lIGFtb3VudA0KPiBvZiBpbmZvcm1hdGlvbiwgd2l0aG91dCBwb3RlbnRpYWxseSBm
-aWxsaW5nIHRoZSBkbXNlZyBidWZmZXIuDQo+IA0KPiBGV0lXLCBJIHRoaW5rIHRoZSBhYm92ZSBp
-cyB0aGUgbGFzdCBpdGVtIHBlbmRpbmcuDQo+IA0KPiBUaGFua3MsDQo+IA0KPiBQYW9sbw0KDQpU
-aGFuayB5b3UgZm9yIHRha2luZyB0aGUgdGltZSB0byByZXZpZXcuDQpXZSB3aWxsIHJlbW92ZSBp
-dCBpbiB0aGUgbmV4dCB2ZXJzaW9uLg0KDQpMYXJyeQ0K
+Add a new driver for the ON Semiconductor LC824206XA microUSB switch and
+accessory detector chip.
+
+ON Semiconductor has an "Advance Information" datasheet available
+(ENA2222-D.PDF), but no full datasheet. So there is no documentation
+available for the registers.
+
+This driver is based on the register info from the extcon-fsa9285.c driver,
+from the Lollipop Android sources for the Lenovo Yoga Tablet 2 (Pro)
+830 / 1050 / 1380 models. Note despite the name this is actually a driver
+for the LC824206XA not the FSA9285.
+
+This has only been tested on a Lenovo Yoga Tablet 2 Pro 1380 and
+using the driver on other setups may require additional work.
+
+So far this driver is only used on x86/ACPI (non devicetree) devs.
+Therefor there is no devicetree bindings documentation for this driver's
+"onnn,enable-miclr-for-dcp" property since this is not used in actual
+devicetree files and the dt bindings maintainers have requested properties
+with no actual dt users to _not_ be added to the dt bindings.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+v2 addressed all v1 review comments, but got no reply. Can this please
+be merged now?
+---
+Changes in v2:
+- Fix whitespace issues reported by checkpatch
+---
+ drivers/extcon/Kconfig             |  11 +
+ drivers/extcon/Makefile            |   1 +
+ drivers/extcon/extcon-lc824206xa.c | 500 +++++++++++++++++++++++++++++
+ 3 files changed, 512 insertions(+)
+ create mode 100644 drivers/extcon/extcon-lc824206xa.c
+
+diff --git a/drivers/extcon/Kconfig b/drivers/extcon/Kconfig
+index 3da94b382292..a6f6d467aacf 100644
+--- a/drivers/extcon/Kconfig
++++ b/drivers/extcon/Kconfig
+@@ -75,6 +75,17 @@ config EXTCON_INTEL_MRFLD
+ 	  Say Y here to enable extcon support for charger detection / control
+ 	  on the Intel Merrifield Basin Cove PMIC.
+ 
++config EXTCON_LC824206XA
++	tristate "LC824206XA extcon Support"
++	depends on I2C
++	depends on POWER_SUPPLY
++	help
++	  Say Y here to enable support for the ON Semiconductor LC824206XA
++	  microUSB switch and accessory detector chip. The LC824206XA is a USB
++	  port accessory detector and switch. The LC824206XA is fully controlled
++	  using I2C and enables USB data, stereo and mono audio, video,
++	  microphone and UART data to use a common connector port.
++
+ config EXTCON_MAX14577
+ 	tristate "Maxim MAX14577/77836 EXTCON Support"
+ 	depends on MFD_MAX14577
+diff --git a/drivers/extcon/Makefile b/drivers/extcon/Makefile
+index f779adb5e4c7..0d6d23faf748 100644
+--- a/drivers/extcon/Makefile
++++ b/drivers/extcon/Makefile
+@@ -12,6 +12,7 @@ obj-$(CONFIG_EXTCON_GPIO)	+= extcon-gpio.o
+ obj-$(CONFIG_EXTCON_INTEL_INT3496) += extcon-intel-int3496.o
+ obj-$(CONFIG_EXTCON_INTEL_CHT_WC) += extcon-intel-cht-wc.o
+ obj-$(CONFIG_EXTCON_INTEL_MRFLD) += extcon-intel-mrfld.o
++obj-$(CONFIG_EXTCON_LC824206XA)	+= extcon-lc824206xa.o
+ obj-$(CONFIG_EXTCON_MAX14577)	+= extcon-max14577.o
+ obj-$(CONFIG_EXTCON_MAX3355)	+= extcon-max3355.o
+ obj-$(CONFIG_EXTCON_MAX77693)	+= extcon-max77693.o
+diff --git a/drivers/extcon/extcon-lc824206xa.c b/drivers/extcon/extcon-lc824206xa.c
+new file mode 100644
+index 000000000000..d58a2c369018
+--- /dev/null
++++ b/drivers/extcon/extcon-lc824206xa.c
+@@ -0,0 +1,500 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * ON Semiconductor LC824206XA Micro USB Switch driver
++ *
++ * Copyright (c) 2024 Hans de Goede <hansg@kernel.org>
++ *
++ * ON Semiconductor has an "Advance Information" datasheet available
++ * (ENA2222-D.PDF), but no full datasheet. So there is no documentation
++ * available for the registers.
++ *
++ * This driver is based on the register info from the extcon-fsa9285.c driver,
++ * from the Lollipop Android sources for the Lenovo Yoga Tablet 2 (Pro)
++ * 830 / 1050 / 1380 models. Note despite the name this is actually a driver
++ * for the LC824206XA not the FSA9285. The Android sources can be downloaded
++ * from Lenovo's support page for these tablets, filename:
++ * yoga_tab_2_osc_android_to_lollipop_201505.rar.
++ */
++
++#include <linux/bits.h>
++#include <linux/delay.h>
++#include <linux/device.h>
++#include <linux/extcon-provider.h>
++#include <linux/i2c.h>
++#include <linux/interrupt.h>
++#include <linux/module.h>
++#include <linux/power_supply.h>
++#include <linux/property.h>
++#include <linux/regulator/consumer.h>
++#include <linux/workqueue.h>
++
++/*
++ * Register defines as mentioned above there is no datasheet with register
++ * info, so this may not be 100% accurate.
++ */
++#define REG00				0x00
++#define REG00_INIT_VALUE		0x01
++
++#define REG_STATUS			0x01
++#define STATUS_OVP			BIT(0)
++#define STATUS_DATA_SHORT		BIT(1)
++#define STATUS_VBUS_PRESENT		BIT(2)
++#define STATUS_USB_ID			GENMASK(7, 3)
++#define STATUS_USB_ID_GND		0x80
++#define STATUS_USB_ID_ACA		0xf0
++#define STATUS_USB_ID_FLOAT		0xf8
++
++/*
++ * This controls the DP/DM muxes + other switches,
++ * meaning of individual bits is unknown.
++ */
++#define REG_SWITCH_CONTROL		0x02
++#define SWITCH_STEREO_MIC		0xc8
++#define SWITCH_USB_HOST			0xec
++#define SWITCH_DISCONNECTED		0xf8
++#define SWITCH_USB_DEVICE		0xfc
++
++/* 5 bits? ADC 0x10 GND, 0x1a-0x1f ACA, 0x1f float */
++#define REG_ID_PIN_ADC_VALUE		0x03
++
++/* Masks for all 3 interrupt registers */
++#define INTR_ID_PIN_CHANGE		BIT(0)
++#define INTR_VBUS_CHANGE		BIT(1)
++/* Both of these get set after a continuous mode ADC conversion */
++#define INTR_ID_PIN_ADC_INT1		BIT(2)
++#define INTR_ID_PIN_ADC_INT2		BIT(3)
++/* Charger type available in reg 0x09 */
++#define INTR_CHARGER_DET_DONE		BIT(4)
++#define INTR_OVP			BIT(5)
++
++/* There are 7 interrupt sources, bit 6 use is unknown (OCP?) */
++#define INTR_ALL			GENMASK(6, 0)
++
++/* Unmask interrupts this driver cares about */
++#define INTR_MASK \
++	(INTR_ALL & ~(INTR_ID_PIN_CHANGE | INTR_VBUS_CHANGE | INTR_CHARGER_DET_DONE))
++
++/* Active (event happened and not cleared yet) interrupts */
++#define REG_INTR_STATUS			0x04
++
++/*
++ * Writing a 1 to a bit here clears it in INTR_STATUS. These bits do NOT
++ * auto-reset to 0, so these must be set to 0 manually after clearing.
++ */
++#define REG_INTR_CLEAR			0x05
++
++/* Interrupts which bit is set to 1 here will not raise the HW IRQ */
++#define REG_INTR_MASK			0x06
++
++/* ID pin ADC control, meaning of individual bits is unknown */
++#define REG_ID_PIN_ADC_CTRL		0x07
++#define ID_PIN_ADC_AUTO			0x40
++#define ID_PIN_ADC_CONTINUOUS		0x44
++
++#define REG_CHARGER_DET			0x08
++#define CHARGER_DET_ON			BIT(0)
++#define CHARGER_DET_CDP_ON		BIT(1)
++#define CHARGER_DET_CDP_VAL		BIT(2)
++
++#define REG_CHARGER_TYPE		0x09
++#define CHARGER_TYPE_UNKNOWN		0x00
++#define CHARGER_TYPE_DCP		0x01
++#define CHARGER_TYPE_SDP_OR_CDP		0x04
++#define CHARGER_TYPE_QC			0x06
++
++#define REG10				0x10
++#define REG10_INIT_VALUE		0x00
++
++struct lc824206xa_data {
++	struct work_struct work;
++	struct i2c_client *client;
++	struct extcon_dev *edev;
++	struct power_supply *psy;
++	struct regulator *vbus_boost;
++	unsigned int usb_type;
++	unsigned int cable;
++	unsigned int previous_cable;
++	u8 switch_control;
++	u8 previous_switch_control;
++	bool vbus_ok;
++	bool vbus_boost_enabled;
++	bool fastcharge_over_miclr;
++};
++
++static const unsigned int lc824206xa_cables[] = {
++	EXTCON_USB_HOST,
++	EXTCON_CHG_USB_SDP,
++	EXTCON_CHG_USB_CDP,
++	EXTCON_CHG_USB_DCP,
++	EXTCON_CHG_USB_ACA,
++	EXTCON_CHG_USB_FAST,
++	EXTCON_NONE,
++};
++
++/* read/write reg helpers to add error logging to smbus byte functions */
++static int lc824206xa_read_reg(struct lc824206xa_data *data, u8 reg)
++{
++	int ret;
++
++	ret = i2c_smbus_read_byte_data(data->client, reg);
++	if (ret < 0)
++		dev_err(&data->client->dev, "Error %d reading reg 0x%02x\n", ret, reg);
++
++	return ret;
++}
++
++static int lc824206xa_write_reg(struct lc824206xa_data *data, u8 reg, u8 val)
++{
++	int ret;
++
++	ret = i2c_smbus_write_byte_data(data->client, reg, val);
++	if (ret < 0)
++		dev_err(&data->client->dev, "Error %d writing reg 0x%02x\n", ret, reg);
++
++	return ret;
++}
++
++static int lc824206xa_get_id(struct lc824206xa_data *data)
++{
++	int ret;
++
++	ret = lc824206xa_write_reg(data, REG_ID_PIN_ADC_CTRL, ID_PIN_ADC_CONTINUOUS);
++	if (ret)
++		return ret;
++
++	ret = lc824206xa_read_reg(data, REG_ID_PIN_ADC_VALUE);
++
++	lc824206xa_write_reg(data, REG_ID_PIN_ADC_CTRL, ID_PIN_ADC_AUTO);
++
++	return ret;
++}
++
++static void lc824206xa_set_vbus_boost(struct lc824206xa_data *data, bool enable)
++{
++	int ret;
++
++	if (data->vbus_boost_enabled == enable)
++		return;
++
++	if (enable)
++		ret = regulator_enable(data->vbus_boost);
++	else
++		ret = regulator_disable(data->vbus_boost);
++
++	if (ret == 0)
++		data->vbus_boost_enabled = enable;
++	else
++		dev_err(&data->client->dev, "Error updating Vbus boost regulator: %d\n", ret);
++}
++
++static void lc824206xa_charger_detect(struct lc824206xa_data *data)
++{
++	int charger_type, ret;
++
++	charger_type = lc824206xa_read_reg(data, REG_CHARGER_TYPE);
++	if (charger_type < 0)
++		return;
++
++	dev_dbg(&data->client->dev, "charger type 0x%02x\n", charger_type);
++
++	switch (charger_type) {
++	case CHARGER_TYPE_UNKNOWN:
++		data->usb_type = POWER_SUPPLY_USB_TYPE_UNKNOWN;
++		/* Treat as SDP */
++		data->cable = EXTCON_CHG_USB_SDP;
++		data->switch_control = SWITCH_USB_DEVICE;
++		break;
++	case CHARGER_TYPE_SDP_OR_CDP:
++		data->usb_type = POWER_SUPPLY_USB_TYPE_SDP;
++		data->cable = EXTCON_CHG_USB_SDP;
++		data->switch_control = SWITCH_USB_DEVICE;
++
++		ret = lc824206xa_write_reg(data, REG_CHARGER_DET,
++					   CHARGER_DET_CDP_ON | CHARGER_DET_ON);
++		if (ret < 0)
++			break;
++
++		msleep(100);
++		ret = lc824206xa_read_reg(data, REG_CHARGER_DET);
++		if (ret >= 0 && (ret & CHARGER_DET_CDP_VAL)) {
++			data->usb_type = POWER_SUPPLY_USB_TYPE_CDP;
++			data->cable = EXTCON_CHG_USB_CDP;
++		}
++
++		lc824206xa_write_reg(data, REG_CHARGER_DET, CHARGER_DET_ON);
++		break;
++	case CHARGER_TYPE_DCP:
++		data->usb_type = POWER_SUPPLY_USB_TYPE_DCP;
++		data->cable = EXTCON_CHG_USB_DCP;
++		if (data->fastcharge_over_miclr)
++			data->switch_control = SWITCH_STEREO_MIC;
++		else
++			data->switch_control = SWITCH_DISCONNECTED;
++		break;
++	case CHARGER_TYPE_QC:
++		data->usb_type = POWER_SUPPLY_USB_TYPE_DCP;
++		data->cable = EXTCON_CHG_USB_DCP;
++		data->switch_control = SWITCH_DISCONNECTED;
++		break;
++	default:
++		dev_warn(&data->client->dev, "Unknown charger type: 0x%02x\n", charger_type);
++		break;
++	}
++}
++
++static void lc824206xa_work(struct work_struct *work)
++{
++	struct lc824206xa_data *data = container_of(work, struct lc824206xa_data, work);
++	bool vbus_boost_enable = false;
++	int status, id;
++
++	status = lc824206xa_read_reg(data, REG_STATUS);
++	if (status < 0)
++		return;
++
++	dev_dbg(&data->client->dev, "status 0x%02x\n", status);
++
++	data->vbus_ok = (status & (STATUS_VBUS_PRESENT | STATUS_OVP)) == STATUS_VBUS_PRESENT;
++
++	/* Read id pin ADC if necessary */
++	switch (status & STATUS_USB_ID) {
++	case STATUS_USB_ID_GND:
++	case STATUS_USB_ID_FLOAT:
++		break;
++	default:
++		/* Happens when the connector is inserted slowly, log at dbg level */
++		dev_dbg(&data->client->dev, "Unknown status 0x%02x\n", status);
++		fallthrough;
++	case STATUS_USB_ID_ACA:
++		id = lc824206xa_get_id(data);
++		dev_dbg(&data->client->dev, "RID 0x%02x\n", id);
++		switch (id) {
++		case 0x10:
++			status = STATUS_USB_ID_GND;
++			break;
++		case 0x18 ... 0x1e:
++			status = STATUS_USB_ID_ACA;
++			break;
++		case 0x1f:
++			status = STATUS_USB_ID_FLOAT;
++			break;
++		default:
++			dev_warn(&data->client->dev, "Unknown RID 0x%02x\n", id);
++			return;
++		}
++	}
++
++	/* Check for out of spec OTG charging hubs, treat as ACA */
++	if ((status & STATUS_USB_ID) == STATUS_USB_ID_GND &&
++	    data->vbus_ok && !data->vbus_boost_enabled) {
++		dev_info(&data->client->dev, "Out of spec USB host adapter with Vbus present, not enabling 5V output\n");
++		status = STATUS_USB_ID_ACA;
++	}
++
++	switch (status & STATUS_USB_ID) {
++	case STATUS_USB_ID_ACA:
++		data->usb_type = POWER_SUPPLY_USB_TYPE_ACA;
++		data->cable = EXTCON_CHG_USB_ACA;
++		data->switch_control = SWITCH_USB_HOST;
++		break;
++	case STATUS_USB_ID_GND:
++		data->usb_type = POWER_SUPPLY_USB_TYPE_UNKNOWN;
++		data->cable = EXTCON_USB_HOST;
++		data->switch_control = SWITCH_USB_HOST;
++		vbus_boost_enable = true;
++		break;
++	case STATUS_USB_ID_FLOAT:
++		/* When fast charging with Vbus > 5V, OVP will be set */
++		if (data->fastcharge_over_miclr &&
++		    data->switch_control == SWITCH_STEREO_MIC &&
++		    (status & STATUS_OVP)) {
++			data->cable = EXTCON_CHG_USB_FAST;
++			break;
++		}
++
++		if (data->vbus_ok) {
++			lc824206xa_charger_detect(data);
++		} else {
++			data->usb_type = POWER_SUPPLY_USB_TYPE_UNKNOWN;
++			data->cable = EXTCON_NONE;
++			data->switch_control = SWITCH_DISCONNECTED;
++		}
++		break;
++	}
++
++	lc824206xa_set_vbus_boost(data, vbus_boost_enable);
++
++	if (data->switch_control != data->previous_switch_control) {
++		lc824206xa_write_reg(data, REG_SWITCH_CONTROL, data->switch_control);
++		data->previous_switch_control = data->switch_control;
++	}
++
++	if (data->cable != data->previous_cable) {
++		extcon_set_state_sync(data->edev, data->previous_cable, false);
++		extcon_set_state_sync(data->edev, data->cable, true);
++		data->previous_cable = data->cable;
++	}
++
++	power_supply_changed(data->psy);
++}
++
++static irqreturn_t lc824206xa_irq(int irq, void *_data)
++{
++	struct lc824206xa_data *data = _data;
++	int intr_status;
++
++	intr_status = lc824206xa_read_reg(data, REG_INTR_STATUS);
++	if (intr_status < 0)
++		intr_status = INTR_ALL; /* Should never happen, clear all */
++
++	dev_dbg(&data->client->dev, "interrupt 0x%02x\n", intr_status);
++
++	lc824206xa_write_reg(data, REG_INTR_CLEAR, intr_status);
++	lc824206xa_write_reg(data, REG_INTR_CLEAR, 0);
++
++	schedule_work(&data->work);
++	return IRQ_HANDLED;
++}
++
++/*
++ * Newer charger (power_supply) drivers expect the max input current to be
++ * provided by a parent power_supply device for the charger chip.
++ */
++static int lc824206xa_psy_get_prop(struct power_supply *psy,
++				   enum power_supply_property psp,
++				   union power_supply_propval *val)
++{
++	struct lc824206xa_data *data = power_supply_get_drvdata(psy);
++
++	switch (psp) {
++	case POWER_SUPPLY_PROP_ONLINE:
++		val->intval = data->vbus_ok && !data->vbus_boost_enabled;
++		break;
++	case POWER_SUPPLY_PROP_USB_TYPE:
++		val->intval = data->usb_type;
++		break;
++	case POWER_SUPPLY_PROP_CURRENT_MAX:
++		switch (data->usb_type) {
++		case POWER_SUPPLY_USB_TYPE_DCP:
++		case POWER_SUPPLY_USB_TYPE_ACA:
++			val->intval = 2000000;
++			break;
++		case POWER_SUPPLY_USB_TYPE_CDP:
++			val->intval = 1500000;
++			break;
++		default:
++			val->intval = 500000;
++		}
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static const enum power_supply_usb_type lc824206xa_psy_usb_types[] = {
++	POWER_SUPPLY_USB_TYPE_SDP,
++	POWER_SUPPLY_USB_TYPE_CDP,
++	POWER_SUPPLY_USB_TYPE_DCP,
++	POWER_SUPPLY_USB_TYPE_ACA,
++	POWER_SUPPLY_USB_TYPE_UNKNOWN,
++};
++
++static const enum power_supply_property lc824206xa_psy_props[] = {
++	POWER_SUPPLY_PROP_ONLINE,
++	POWER_SUPPLY_PROP_USB_TYPE,
++	POWER_SUPPLY_PROP_CURRENT_MAX,
++};
++
++static const struct power_supply_desc lc824206xa_psy_desc = {
++	.name = "lc824206xa-charger-detect",
++	.type = POWER_SUPPLY_TYPE_USB,
++	.usb_types = lc824206xa_psy_usb_types,
++	.num_usb_types = ARRAY_SIZE(lc824206xa_psy_usb_types),
++	.properties = lc824206xa_psy_props,
++	.num_properties = ARRAY_SIZE(lc824206xa_psy_props),
++	.get_property = lc824206xa_psy_get_prop,
++};
++
++static int lc824206xa_probe(struct i2c_client *client)
++{
++	struct power_supply_config psy_cfg = { };
++	struct device *dev = &client->dev;
++	struct lc824206xa_data *data;
++	int ret;
++
++	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	data->client = client;
++	INIT_WORK(&data->work, lc824206xa_work);
++	data->cable = EXTCON_NONE;
++	data->previous_cable = EXTCON_NONE;
++	data->usb_type = POWER_SUPPLY_USB_TYPE_UNKNOWN;
++	/* Some designs use a custom fast-charge protocol over the mic L/R inputs */
++	data->fastcharge_over_miclr =
++		device_property_read_bool(dev, "onnn,enable-miclr-for-dcp");
++
++	data->vbus_boost = devm_regulator_get(dev, "vbus");
++	if (IS_ERR(data->vbus_boost))
++		return dev_err_probe(dev, PTR_ERR(data->vbus_boost),
++				     "getting regulator\n");
++
++	/* Init */
++	ret = lc824206xa_write_reg(data, REG00, REG00_INIT_VALUE);
++	ret |= lc824206xa_write_reg(data, REG10, REG10_INIT_VALUE);
++	msleep(100);
++	ret |= lc824206xa_write_reg(data, REG_INTR_CLEAR, INTR_ALL);
++	ret |= lc824206xa_write_reg(data, REG_INTR_CLEAR, 0);
++	ret |= lc824206xa_write_reg(data, REG_INTR_MASK, INTR_MASK);
++	ret |= lc824206xa_write_reg(data, REG_ID_PIN_ADC_CTRL, ID_PIN_ADC_AUTO);
++	ret |= lc824206xa_write_reg(data, REG_CHARGER_DET, CHARGER_DET_ON);
++	if (ret)
++		return -EIO;
++
++	/* Initialize extcon device */
++	data->edev = devm_extcon_dev_allocate(dev, lc824206xa_cables);
++	if (IS_ERR(data->edev))
++		return PTR_ERR(data->edev);
++
++	ret = devm_extcon_dev_register(dev, data->edev);
++	if (ret)
++		return dev_err_probe(dev, ret, "registering extcon device\n");
++
++	psy_cfg.drv_data = data;
++	data->psy = devm_power_supply_register(dev, &lc824206xa_psy_desc, &psy_cfg);
++	if (IS_ERR(data->psy))
++		return dev_err_probe(dev, PTR_ERR(data->psy), "registering power supply\n");
++
++	ret = devm_request_threaded_irq(dev, client->irq, NULL, lc824206xa_irq,
++					IRQF_TRIGGER_LOW | IRQF_ONESHOT,
++					KBUILD_MODNAME, data);
++	if (ret)
++		return dev_err_probe(dev, ret, "requesting IRQ\n");
++
++	/* Sync initial state */
++	schedule_work(&data->work);
++	return 0;
++}
++
++static const struct i2c_device_id lc824206xa_i2c_ids[] = {
++	{ "lc824206xa" },
++	{ }
++};
++MODULE_DEVICE_TABLE(i2c, lc824206xa_i2c_ids);
++
++static struct i2c_driver lc824206xa_driver = {
++	.driver = {
++		.name = KBUILD_MODNAME,
++	},
++	.probe = lc824206xa_probe,
++	.id_table = lc824206xa_i2c_ids,
++};
++
++module_i2c_driver(lc824206xa_driver);
++
++MODULE_AUTHOR("Hans de Goede <hansg@kernel.org>");
++MODULE_DESCRIPTION("LC824206XA Micro USB Switch driver");
++MODULE_LICENSE("GPL");
+-- 
+2.46.0
+
 
