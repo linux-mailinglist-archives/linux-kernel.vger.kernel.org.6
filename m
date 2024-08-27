@@ -1,74 +1,47 @@
-Return-Path: <linux-kernel+bounces-302995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D4109605E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:41:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF3699605E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:41:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF4F61F233DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:41:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 659DEB234C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E11619AA46;
-	Tue, 27 Aug 2024 09:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8D219DFAB;
+	Tue, 27 Aug 2024 09:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YULUR8Yy"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JdQXMcf9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E5819CCED
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288CB19CCED;
+	Tue, 27 Aug 2024 09:39:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724751576; cv=none; b=D3fZJQp5c6eLY/akojCa2eiM63YS2mLpUewaSNSuWy9lAfZ0XpBX5A5J7PPKjrN0w/KPiB+mN25TbhHpITAVXuc4aQK0VQpUVmUx1q5hs7ouKRxiepU4dnk2KOrqk0jPOzbmPpC53TcUGiP8oHSVhB1AEHkZtU3SbiKoVJDyilU=
+	t=1724751594; cv=none; b=b7/jLPcbR2WHexBrJIFM/YCD8UH0/xNlNUPNXR/YZYxt2sVf8RDcQFXNz60G5+XX0gqmocZS2hoEh5l6Ydh00Yx1/WeKwuvWzw/rX/KnaCQ/m8t1yh4KX6vAsctiZ3yRZI78J61PvPiT6WairrF8AlznpW4JDXn0jM3XX/AlW2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724751576; c=relaxed/simple;
-	bh=pd7vAXEynb0hQPnIaxUHQTA8QqnRpztQOlW6pMiXuWw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=KmHwuuMjedb0vFL9b7vfcDO5HagxmNssDQO/qxjVNc58bK3qbgTZ4I6ZOlzZ+wZcDlgi3bqvVXjlZMAs0PiZg1ZfD4447TBK8+Qkgd1mvCkgyCXHivW2WUGfAc1itzJEmOpqEpiuDkPRCvrtWUDjmVTeLqnZ4+gDWEgsP+/k6JU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YULUR8Yy; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42803adb420so6677055e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 02:39:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724751573; x=1725356373; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=9NA1hPLphJFkg55aBOeaWrnCS8TwQLe/FT77xsFVr/g=;
-        b=YULUR8Yy8y05bKM85RDC9NjuO/tDizuQBhNDgXTGBj9unuEQRmAR7Xc+GCytXqyAUE
-         OgwbXwB23fCuDq+N/VQwPYgRyt6/NsjfkAYSEBG2CdgajNGzNSUBR2UddLqFS2yM4lbN
-         MSBBNnaCPsjRihFuRAkxnWd+X61ebAMTRBBA94ZFmve5wAZ42nsj4JNmRCnQhIqXaYUC
-         5g1qyCeVqWaiZlsoBX+wtahWN91vVoAseFBORhK/DEXL+vrgyzLsXVia1Vb8+rwcljBp
-         wnlJ5qgRCPg0eN7Qs+Rv99ejiayPbht49Jrqf5HSTELIWF3hQaOcbfAcvq+mvv2c2+dg
-         KpaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724751573; x=1725356373;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9NA1hPLphJFkg55aBOeaWrnCS8TwQLe/FT77xsFVr/g=;
-        b=B9rEI477twnkekyzxyKvh6H5jJGyEjoTGy11qY1SS5PvrkVZK/7FNYK3SVG1x5Br8U
-         jO00BwkMiRte0kgQiyC5BZ+eXtNJR3kpV2xaVxMhvVKoQjeuaXVcuIEdJBQfCbT2a4kI
-         O6ij1bk2cj6EBnl7H5LnVKhkogpk7TgGnkqr+lHpKGlu0ZU6eexJBQ98KcsyhjSpb6L6
-         DSCfw/qgHVvG7RgERawhk0UEAIVL/IAeX3IxhdBHmqyZtAo2OuCJz41SXsiygGPUxZ3Z
-         tgcy9SjS3YnwpYuDgOnrfFl0Dx1xLa6bjE5fcbJQitgJCTJsPidHyZboOBrE6Ctk7Pc0
-         iOsw==
-X-Forwarded-Encrypted: i=1; AJvYcCWcCEqb5cYlU5P6DWRugOpbMSdZfvd8RSa4L9+GIbObsSVj5T+c4O8MWUFm1uCkFi2ROtAomABR4leySZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVBZSokrExJcxMdLhqPCsPnNbHTFBTHnzIz0spoacmdfZkityp
-	uFd1SKK636UIRW6/mfOf4LkjvTBhHKDYEdxBPTPMAYZ1dlVrhBtTY8sAUv9KmvA=
-X-Google-Smtp-Source: AGHT+IEucEoPnsJ4jJ6ZUZu1I9QHe7Vec7KyXnEjRKdsR+FfHN00nz2DTyVEWDOUtU6KNSpcb2mu9A==
-X-Received: by 2002:a05:600c:3ca3:b0:426:6358:7c5d with SMTP id 5b1f17b1804b1-42acca0c1c8mr54322945e9.4.1724751572652;
-        Tue, 27 Aug 2024 02:39:32 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac514e269sm182322605e9.2.2024.08.27.02.39.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 02:39:32 -0700 (PDT)
-Message-ID: <58f5d332-2f2a-4607-9662-e71fd23b1316@linaro.org>
-Date: Tue, 27 Aug 2024 11:39:30 +0200
+	s=arc-20240116; t=1724751594; c=relaxed/simple;
+	bh=tTOdIYGEpUYrs7p5lDLezY5WL2wSjJff06XLjNySGvo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rZ+X/YRlxskfIRxJoF/DnaiUXbz3RZThbxSR1tR9tW3FpsQEMvjX9vj+0AfUQJvviEcirgR+T1C2LDd/gBzzTuNkPjBMKMdeaNpqoBHCPlX2Le5qcbaSq+rG11fK4pE0NtIqiKkeNj9dLRqzVoRsWPO1ZigqIlXuwMRLN/TSZ1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JdQXMcf9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38584C567ED;
+	Tue, 27 Aug 2024 09:39:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724751593;
+	bh=tTOdIYGEpUYrs7p5lDLezY5WL2wSjJff06XLjNySGvo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JdQXMcf9y+ZrimiTarq68UJig4tgGu8n6JaFX46gXQIF5W5t5Oy1Oe2VPjHl7h9h/
+	 JDLr7WsHFWSurjIcf5XRGIcW/Tnn4zEV3YijsbjVSuSn2RSQMEo0OLjKsf7BCqan5A
+	 //YhAZd0HHeNUtNmfR33PuDttndBa8vmcyTpGdcYKFxiw8BymoZrVjuEdpYjybPNVR
+	 01ufIm0CyAm6wA4tsWnUj7nTZQI1svsFDOKptC6m3qh7ZXxfTjlrC1ATLoVGNsqF5T
+	 DZMEn1K0GuwUw1eyaiGxwABan5lnvEy1lEyOdti8tKMXg1RcwuIbblIxYNqkt0aaSA
+	 zmmOyK4oeguYA==
+Message-ID: <1efd71c4-3bee-4c71-9e40-1284b9483824@kernel.org>
+Date: Tue, 27 Aug 2024 11:39:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,167 +49,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/10] pmdomain: renesas: rcar-gen4-sysc: Use scoped
- device node handling to simplify error paths
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20240823-cleanup-h-guard-pm-domain-v1-0-8320722eaf39@linaro.org>
- <20240823-cleanup-h-guard-pm-domain-v1-9-8320722eaf39@linaro.org>
- <CAMuHMdV0R0+u1eCiUOHhL5w-wzge9KhgyumJSd28oF9kQmnx_Q@mail.gmail.com>
- <a48f1a0b-0e20-4782-bf6b-c430da9ae391@linaro.org>
+Subject: Re: [PATCH v2 2/2] drm/msm/dpu: don't play tricks with debug macros
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Jeykumar Sankaran <jsanka@codeaurora.org>
+References: <20240802-dpu-fix-wb-v2-0-7eac9eb8e895@linaro.org>
+ <20240802-dpu-fix-wb-v2-2-7eac9eb8e895@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <a48f1a0b-0e20-4782-bf6b-c430da9ae391@linaro.org>
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <20240802-dpu-fix-wb-v2-2-7eac9eb8e895@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 27/08/2024 11:33, Krzysztof Kozlowski wrote:
-> On 27/08/2024 09:48, Geert Uytterhoeven wrote:
->> Hi Krzysztof,
->>
->> On Fri, Aug 23, 2024 at 2:51 PM Krzysztof Kozlowski
->> <krzysztof.kozlowski@linaro.org> wrote:
->>> Obtain the device node reference with scoped/cleanup.h to reduce error
->>> handling and make the code a bit simpler.
->>>
->>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>
->> Thanks for your patch!
->>
->>> --- a/drivers/pmdomain/renesas/rcar-gen4-sysc.c
->>> +++ b/drivers/pmdomain/renesas/rcar-gen4-sysc.c
->>> @@ -303,12 +304,12 @@ static int __init rcar_gen4_sysc_pd_init(void)
->>>         const struct rcar_gen4_sysc_info *info;
->>>         const struct of_device_id *match;
->>>         struct rcar_gen4_pm_domains *domains;
->>> -       struct device_node *np;
->>>         void __iomem *base;
->>>         unsigned int i;
->>>         int error;
->>>
->>> -       np = of_find_matching_node_and_match(NULL, rcar_gen4_sysc_matches, &match);
->>> +       struct device_node *np __free(device_node) =
->>> +               of_find_matching_node_and_match(NULL, rcar_gen4_sysc_matches, &match);
->>
->> This breaks the declarations/blank-line/code structure, so please move
->> this up.
+On 2.08.2024 9:47 PM, Dmitry Baryshkov wrote:
+> DPU debugging macros need to be converted to a proper drm_debug_*
+> macros, however this is a going an intrusive patch, not suitable for a
+> fix. Wire DPU_DEBUG and DPU_DEBUG_DRIVER to always use DRM_DEBUG_DRIVER
+> to make sure that DPU debugging messages always end up in the drm debug
+> messages and are controlled via the usual drm.debug mask.
 > 
-> What do you mean "declaration structure"? That's the way how variables
-> with constructors are expected to be declared - within the code.
+> I don't think that it is a good idea for a generic DPU_DEBUG macro to be
+> tied to DRM_UT_KMS. It is used to report a debug message from driver, so by
+> default it should go to the DRM_UT_DRIVER channel. While refactoring
+> debug macros later on we might end up with particular messages going to
+> ATOMIC or KMS, but DRIVER should be the default.
+> 
+> Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h | 14 ++------------
+>  1 file changed, 2 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
+> index e2adc937ea63..935ff6fd172c 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
+> @@ -31,24 +31,14 @@
+>   * @fmt: Pointer to format string
+>   */
+>  #define DPU_DEBUG(fmt, ...)                                                \
+> -	do {                                                               \
+> -		if (drm_debug_enabled(DRM_UT_KMS))                         \
+> -			DRM_DEBUG(fmt, ##__VA_ARGS__); \
+> -		else                                                       \
+> -			pr_debug(fmt, ##__VA_ARGS__);                      \
+> -	} while (0)
+> +	DRM_DEBUG_DRIVER(fmt, ##__VA_ARGS__)
 
-Continuing thoughts, so you prefer:
+Should we just get rid of these macros at this point and use
+DRM_DEBUG_DRIVER directly?
 
-	struct rcar_gen4_pm_domains *domains;
-	void __iomem *base;
-	struct device_node *np __free(device_node) =
-		of_find_matching_node_and_match(NULL, rcar_gen4_sysc_matches, &match);
-
-(assuming I will put it at the end of declarations).
-
-Are you sure this is more readable? It's really long line so it
-obfuscates a bit the declarations. The point of the scoped assignment is that
-you declare it at point of need/first use.
-
-> 
->>
->> If you insist on keeping assignment to and validation of np together,
->> the line should be split in declaration and assignment.
-> 
-> No, that would be inconsistent with cleanup/constructor coding style.
-> Maybe this is something new, so let me bring previous discussions:
-> 
-> https://lore.kernel.org/all/CAHk-=wicfvWPuRVDG5R1mZSxD8Xg=-0nLOiHay2T_UJ0yDX42g@mail.gmail.com/
-> 
-> https://lore.kernel.org/all/CAHk-=wgRHiV5VSxtfXA4S6aLUmcQYEuB67u3BJPJPtuESs1JyA@mail.gmail.com/
-> 
-> https://lore.kernel.org/all/CAHk-=whvOGL3aNhtps0YksGtzvaob_bvZpbaTcVEqGwNMxB6xg@mail.gmail.com/
-> 
-> and finally it will reach documentation (although it focuses on
-> unwinding process to be specific - "When the unwind order ..."):
-> https://lore.kernel.org/all/171175585714.2192972.12661675876300167762.stgit@dwillia2-xfh.jf.intel.com/
-> 
->>
->>>         if (!np)
->>>                 return -ENODEV;
->>>
->>
->>> @@ -369,14 +365,12 @@ static int __init rcar_gen4_sysc_pd_init(void)
->>>                 if (error) {
->>>                         pr_warn("Failed to add PM subdomain %s to parent %u\n",
->>>                                 area->name, area->parent);
->>> -                       goto out_put;
->>> +                       return error;
->>>                 }
->>>         }
->>>
->>>         error = of_genpd_add_provider_onecell(np, &domains->onecell_data);
->>>
->>> -out_put:
->>> -       of_node_put(np);
->>>         return error;
->>
->> return of_genpd_add_provider_onecell(...);
-> 
-> Ack.
-> 
-> Best regards,
-> Krzysztof
-> 
-
-Best regards,
-Krzysztof
-
+Konrad
 
