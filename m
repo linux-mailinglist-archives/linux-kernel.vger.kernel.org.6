@@ -1,125 +1,165 @@
-Return-Path: <linux-kernel+bounces-302918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED227960503
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:59:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE1E3960505
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:00:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57474B21B94
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:59:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7646D28155D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB509199392;
-	Tue, 27 Aug 2024 08:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F20D199926;
+	Tue, 27 Aug 2024 08:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkFzgDgD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UvleFXTk"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15799158DD0;
-	Tue, 27 Aug 2024 08:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58CE2158DD0;
+	Tue, 27 Aug 2024 08:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724749140; cv=none; b=YthRMQob5GuOfnY8zEn6OEvjahB0PRddcqqjA+4rvZiC19mgs7xucWn5HaYq5anFLVy7ig+SHP2r/RC3/s3zsIfX+4NCU/AdjAVldT9K5KIP9h1Ex1XUvjGCVgUJGPu1131BgGxxSaCV2Ui24R8V62GKAkALJbZxLbJMrDVlFp4=
+	t=1724749194; cv=none; b=c1kZflU0W+NMbg/CHtx+HpUbt9ZiFE+lVXu7eZFndorC5rGDQc6XvrCVy12BFP8/EtIHuSUz44DRjRwC/blYf/UrxGIRSc833e89w4N6fS1HlTRVMwzyStZVjtXrqxHKoxmR0+UAkQVpfNVLGasIIHtZeDqwX2fkZWEByaj8c/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724749140; c=relaxed/simple;
-	bh=brMwUnoxrTvNJcSO2RG6nxbRHtnEcIrTU0qQDmJE/7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nMko8M2iIAsICHqgESsihoexYWO/QtqIKXH+jr5G1x50ReBf0E9PYI52ffZkpM2xit82BDJmaYkpUY6VYWyNUxlNsoZqnsaKQuo1Bmp6UOaeGebzsXzdIp7XPZuTOI/6gFF94MyoTVSoW1uNLB1rHPekJ6M4ehSB4rIXIJrvhvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkFzgDgD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D68EC8B7A5;
-	Tue, 27 Aug 2024 08:58:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724749138;
-	bh=brMwUnoxrTvNJcSO2RG6nxbRHtnEcIrTU0qQDmJE/7U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SkFzgDgDObrJZ62sKyhzDaQWPSu69zfgIIlt6JriR+Pd+4k0BmqKPB5RbGnecjA+g
-	 qrGPlLmMaEkmKURMJdZtNLM/xOqwwECLm25Is6vmmxu4L3+ZRXd+ZdvABVItbUmZ4S
-	 /T1q9GAaxJgA06eVBchBKVVsoeQfjkYnrsjNIrwOPhYwTTF/XtFvX5ZDqw94r0x0MC
-	 HDe8z9qhw+nsOizgwq0aPnslhBS2LAXKi/fU7D1LcyI1BQQP9y+MwNcCDlNTRf3Ohd
-	 MH0JYXGNSbadD7+cswhubahggRqDZMbRHcFYw0ZvTvIm7gvhwoBy07crol/e58A2A+
-	 ZH5UQRyzp3JFg==
-Date: Tue, 27 Aug 2024 10:58:55 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, 
-	kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>, 
-	Luis de Arquer <ldearquer@gmail.com>, Algea Cao <algea.cao@rock-chips.com>
-Subject: Re: [PATCH v4 2/4] drm/bridge: synopsys: Add DW HDMI QP TX
- Controller support library
-Message-ID: <20240827-armored-magnificent-badger-ffb025@houat>
-References: <20240819-b4-rk3588-bridge-upstream-v4-0-6417c72a2749@collabora.com>
- <20240819-b4-rk3588-bridge-upstream-v4-2-6417c72a2749@collabora.com>
+	s=arc-20240116; t=1724749194; c=relaxed/simple;
+	bh=+TT0uroKW11xXpPExGJDmmlkdjN9uj2GaHpKRvERy/g=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sNuajCe65j3Uiv2oaH91BiVt7c4klihi7rom3RLgo2GWMUZe7jiDeLl62AlSkWcLjvxKhP4X9i1pLuPaPi4pq2qCwyTu9uUo+yaFzBXQV6SC+3zmlx8wJndhDtf6dWsEV/LjXTUyklQtTItkb5oZRcXJbQsTnFWBpJuVnB2snbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UvleFXTk; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7cd90dbf42fso119971a12.3;
+        Tue, 27 Aug 2024 01:59:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724749192; x=1725353992; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+X6rwei4gMShKEung6RR21p/awqx+Ne1vZ7IkcdbMxo=;
+        b=UvleFXTkUXh+wZbE34sKYUxvOboQfWJO6Z2tqxLjgTUijZ74j6vKaVed0Gm1890AXQ
+         bTLe5FRsqVYjqYZ384NTvatqMr89tszPu6ONBcO338Qj/pncV9a88lKWBs1dILzGmBSC
+         w3KJgfkwhsm2QR+Ou5pv3N8zcv1ts20zXH9ViXZx5SJOoiNbRkRnW8t/oAPtjALfbqEB
+         1SVFEwhtrG0xjkgbKJRxwHGT7v3ybzTG6/pvpHNDIvKZMol5+3yfhXuIqiPJIwTVMT6I
+         G/XYOvOEe5VlUALVWGUlS3wKPmE6IOkWTJxvGIJQ47FNEByR2cFWwKPhZlfEmcO2MJbw
+         IpLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724749192; x=1725353992;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+X6rwei4gMShKEung6RR21p/awqx+Ne1vZ7IkcdbMxo=;
+        b=ifAab1skhStSFwfz+my679cpT4w3QjMVw71CJOY1JjpceG2eqmjJz/6KTby8rxOa3g
+         RjNN0yrouBvxe3Rvn1TaF74mSRek4kFt2BbU4ZJOUZ1OLQDQnI0T6kfl56h7Tkw5HsHV
+         WpmTExRDbBBhfgZ3UgceoPbpEYE6rmLHShon1pz4XRrZDCOvCpbGCmEhiyvp48D93f/C
+         sLtsU+gd3xVprdfol2HySqMRBb0OuJ9XiaTNscdk9dQqKrexd8ln0hvHd5M0ZU7m83nO
+         dSxsU3+zBdHYg1PER1HluqjxpDWA8anBBoIASZ9t1l5t3hA8qtvfAGLvSlTv9F3qN32e
+         VcZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4PtXqjDXQOK63ZOljLu7qKcewAOZ0zTiN5TlIhtKURGqI9h8j+qUvkIBVWkpbY9DWhMHxzkmg@vger.kernel.org, AJvYcCXCBcwdFXrMj4nJiHqjD7S5Cl7PSuk7G3BrMSx6iJ0VYTeh7NzRPNYDdiSBgEzBXhpCgVVDWxRRUFZkdrw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb05TwTnozV9kbRpsbIxGhRcymP7tC3Ubb/cPWgT2BbiW5ArPx
+	Bvyr5f2joMEciSeMVBa2OQfX3uGM+eVRrx0faORNEYlrYG2Tvm1/
+X-Google-Smtp-Source: AGHT+IGsrnLoe604GlGw16hpNDIHaKK6u81wwk4WYrqqcJgeFsJVrqpiwiFwpO4tOnMDhGDj3nOCZw==
+X-Received: by 2002:a05:6a00:23c2:b0:710:51e4:51f0 with SMTP id d2e1a72fcca58-714458c8c51mr9210519b3a.4.1724749192455;
+        Tue, 27 Aug 2024 01:59:52 -0700 (PDT)
+Received: from localhost.localdomain ([49.0.197.176])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-714342fc87asm8423217b3a.142.2024.08.27.01.59.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 01:59:52 -0700 (PDT)
+From: sunyiqi <sunyiqixm@gmail.com>
+To: kerneljasonxing@gmail.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	sunyiqixm@gmail.com
+Subject: Re: Re: [PATCH] net: do not release sk in sk_wait_event
+Date: Tue, 27 Aug 2024 16:59:32 +0800
+Message-Id: <20240827085932.905688-1-sunyiqixm@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CAL+tcoBw1CKpPDkbiNGrrUFiqBEhHHx9vWhqfpfV1bbu3F1i5A@mail.gmail.com>
+References: <CAL+tcoBw1CKpPDkbiNGrrUFiqBEhHHx9vWhqfpfV1bbu3F1i5A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="7d6czoxivc6cezpy"
-Content-Disposition: inline
-In-Reply-To: <20240819-b4-rk3588-bridge-upstream-v4-2-6417c72a2749@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On Thu, 15 Aug 2024 19:14:12 Jason Xing <kerneljasonxing@gmail.com> wrote:
+> On Thu, Aug 15, 2024 at 5:50 PM sunyiqi <sunyiqixm@gmail.com> wrote:
+> >
+> > When investigating the kcm socket UAF which is also found by syzbot,
+> > I found that the root cause of this problem is actually in
+> > sk_wait_event.
+> >
+> > In sk_wait_event, sk is released and relocked and called by
+> > sk_stream_wait_memory. Protocols like tcp, kcm, etc., called it in some
+> > ops function like *sendmsg which will lock the sk at the beginning.
+> > But sk_stream_wait_memory releases sk unexpectedly and destroy
+> > the thread safety. Finally it causes the kcm sk UAF.
+> >
+> > If at the time when a thread(thread A) calls sk_stream_wait_memory
+> > and the other thread(thread B) is waiting for lock in lock_sock,
+> > thread B will successfully get the sk lock as thread A release sk lock
+> > in sk_wait_event.
+> >
+> > The thread B may change the sk which is not thread A expecting.
+> >
+> > As a result, it will lead kernel to the unexpected behavior. Just like
+> > the kcm sk UAF, which is actually cause by sk_wait_event in
+> > sk_stream_wait_memory.
+> >
+> > Previous commit d9dc8b0f8b4e ("net: fix sleeping for sk_wait_event()")
+> > in 2016 seems do not solved this problem. Is it necessary to release
+> > sock in sk_wait_event? Or just delete it to make the protocol ops
+> > thread-secure.
+> >
+> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> > Link: https://syzkaller.appspot.com/bug?extid=b72d86aa5df17ce74c60
+> > Signed-off-by: sunyiqi <sunyiqixm@gmail.com>
+> > ---
+> >  include/net/sock.h | 2 --
+> >  1 file changed, 2 deletions(-)
+> >
+> > diff --git a/include/net/sock.h b/include/net/sock.h
+> > index cce23ac4d514..08d3b204b019 100644
+> > --- a/include/net/sock.h
+> > +++ b/include/net/sock.h
+> > @@ -1145,7 +1145,6 @@ static inline void sock_rps_reset_rxhash(struct sock *sk)
+> >
+> >  #define sk_wait_event(__sk, __timeo, __condition, __wait)              \
+> >         ({      int __rc, __dis = __sk->sk_disconnects;                 \
+> > -               release_sock(__sk);                                     \
+> >                 __rc = __condition;                                     \
+> >                 if (!__rc) {                                            \
+> >                         *(__timeo) = wait_woken(__wait,                 \
+> > @@ -1153,7 +1152,6 @@ static inline void sock_rps_reset_rxhash(struct sock *sk)
+> >                                                 *(__timeo));            \
+> >                 }                                                       \
+> >                 sched_annotate_sleep();                                 \
+> > -               lock_sock(__sk);                                        \
+> 
+> Are you sure that you want the socket lock to be held possibly for a
+> really long time even if it has to wait for the available memory,
+> which means, during this period, other threads trying to access the
+> lock will be blocked?
+> 
+> Thanks,
+> Jason
 
---7d6czoxivc6cezpy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+You're correct. Sorry for my poor knowledge of kernel. But I think kcm socket
+UAF vulnerability is not the last one which use kernel API correctly(?) but
+result in vulnerability.
 
-On Mon, Aug 19, 2024 at 01:29:29AM GMT, Cristian Ciocaltea wrote:
-> +static irqreturn_t dw_hdmi_qp_main_hardirq(int irq, void *dev_id)
-> +{
-> +	struct dw_hdmi_qp *hdmi = dev_id;
-> +	struct dw_hdmi_qp_i2c *i2c = hdmi->i2c;
-> +	u32 stat;
-> +
-> +	stat = dw_hdmi_qp_read(hdmi, MAINUNIT_1_INT_STATUS);
-> +
-> +	i2c->stat = stat & (I2CM_OP_DONE_IRQ | I2CM_READ_REQUEST_IRQ |
-> +			    I2CM_NACK_RCVD_IRQ);
-> +
-> +	if (i2c->stat) {
-> +		dw_hdmi_qp_write(hdmi, i2c->stat, MAINUNIT_1_INT_CLEAR);
-> +		complete(&i2c->cmp);
-> +	}
-> +
-> +	if (stat)
-> +		return IRQ_HANDLED;
-> +
-> +	return IRQ_NONE;
-> +}
+Though the kcm developer can fix(and already fixed) this issue by adding more
+lock in kcm sock, but, just the same question, what's the root cause of this
+issue? Is kcm socket code or sk_wait_event release the sock?
 
-If the scrambler is enabled, you need to deal with hotplug. On hotplug,
-the monitor will drop its TMDS ratio and scrambling status, but the
-driver will keep assuming it's been programmed.
-
-If you don't have a way to deal with hotplug yet, then I'd suggest to
-just drop the scrambler setup for now.
-
-Maxime
-
---7d6czoxivc6cezpy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZs2VRgAKCRAnX84Zoj2+
-doR9AX9jVRhemySX3ezsY45XTCyYbffOw0vhn1iAZ9FcKrlkjaZ1jF3VuvQVlqV+
-CgkFKFwBfRfYZWXSy78SdiB2VLCDGrHhrKCyjwCWW4R2Le9bIP4lzSh1HDBv4FFA
-JXPD9gbLhA==
-=OVt5
------END PGP SIGNATURE-----
-
---7d6czoxivc6cezpy--
+Thanks,
+Yiqi Sun
 
