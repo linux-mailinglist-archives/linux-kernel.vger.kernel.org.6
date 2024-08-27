@@ -1,124 +1,119 @@
-Return-Path: <linux-kernel+bounces-302663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8434A960199
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:27:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2255496019B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B70671C20E86
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:27:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1E091F22E3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F42C148853;
-	Tue, 27 Aug 2024 06:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD51314F126;
+	Tue, 27 Aug 2024 06:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hxOQOsCF"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V7SCRrUw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEA5146596;
-	Tue, 27 Aug 2024 06:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A845146596;
+	Tue, 27 Aug 2024 06:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724739971; cv=none; b=bXbjXdz9RRbPJEu2al8rPSna9bf0OfY2Sy1NNWDeZ7wn/911wFN5KG2XgVYg9Gp5N1SGwduqNoFyhSH++W/hVbCdIuIM3B78UyzuzgfHUdhnbvT2a+7FiCo8kLM0pfY2vh66MmidPhiT7JhjFxzLJ9wRKriYKpoDATs0mPCqwoc=
+	t=1724740007; cv=none; b=GI10kAeiGKg7X86tcyZUNHA2hHGPivJUcMMKiA+e15EzdHwh3ZxltW8yQqCZ7KQWbdZ1TxDpBdcbzNCerDN1AK0LfARBTxzW9S5ZQD9NdA2UEjod+pdSqwH+mRS7KpoBdzsZsQN7zkXbSZXq3fv3PiQnEx+nv1TGof8JTIM+YtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724739971; c=relaxed/simple;
-	bh=dEhTUlXeWzHxDgVzj0ci8VW5ybz/ubs17Yn9nv7EjYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=emHdnXlghI+wz6XfLPaOcSh6WL4maDLRubsG+R/TLXSeK+kGkhR+dBFak7VS50K+HpOvy6GgG2iy+hXKVqI2rlx2xbWwh2KTeq96OS+e3wXIq+oVc5fEhOCjx7LOB9UjTCEAgiXvqoQQa9Ktk5jAjxBsrehh1gfCSI49QLIcQUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=hxOQOsCF; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1724739964;
-	bh=dEhTUlXeWzHxDgVzj0ci8VW5ybz/ubs17Yn9nv7EjYM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hxOQOsCFKBD0D/EMlqQ2y4x3oKZAVhGs1l9NbRS2Ipjg2J/qKk9Yz4utwKQb59RS7
-	 j3LZF50BJBnI1P5Hdt/TrW/LuRB3VnKVKT14vJG4DBsL14Uq7Y3xiKpSK5UBwm3mdn
-	 CI06KAzzE+ge/aGhW3BZp3B0JsNY7cGVI1FvSD8bKgcuxmwHwt9s5x9QxhK+mB+wXS
-	 2sFb1z662ze1E/MmoRPEaztGuhGloCL+LhnGzTENyhSchPHvWQI9xaTS8jxjDkHnFW
-	 0sUk2iyNrR9dTPTYCZgaHAiCQ31VOuZvpcbKQftPdxxwh+3iOIiyfbh+52WeGaGXCg
-	 sQWUk2Q1/57AA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WtHcD3GgXz4w2R;
-	Tue, 27 Aug 2024 16:26:04 +1000 (AEST)
-Date: Tue, 27 Aug 2024 16:26:03 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, brauner@kernel.org,
- p.raghav@samsung.com, dchinner@redhat.com, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
- linux-next@vger.kernel.org
-Subject: Re: [PATCH] iomap: remove set_memor_ro() on zero page
-Message-ID: <20240827162603.1a86804a@canb.auug.org.au>
-In-Reply-To: <20240827055539.GL865349@frogsfrogsfrogs>
-References: <20240826212632.2098685-1-mcgrof@kernel.org>
-	<20240827055539.GL865349@frogsfrogsfrogs>
+	s=arc-20240116; t=1724740007; c=relaxed/simple;
+	bh=jNfRUmdqKJgP/Ct4LLn/ZaSO+4IPIoj6zIdHnKM2eBQ=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=aCpPeH/6WUT1kXfO48UUV5X/O6hzfFaxh+cvWCcwWZOqHPWhj4u98ay0flqYZYJcTRhB60rxFuUfUsXMVkf/b7uTBXq6B0zUsZysSCgI9pgzi7QQrCd5Dll7ToYGO4j+0Nb3DJiu/q+3ucg73NunQ3D90H11vjPI5+xij4G7s58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V7SCRrUw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C14A7C567C7;
+	Tue, 27 Aug 2024 06:26:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724740006;
+	bh=jNfRUmdqKJgP/Ct4LLn/ZaSO+4IPIoj6zIdHnKM2eBQ=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=V7SCRrUwtwy+ws3yCqYXbc/TZBXIC3GnchjIHOT4mt7m7WB5wYmh8rqFXxMMJcHUo
+	 RdL/xtlWBnh2vwOvNBTK/aYEgXB3wvo+zqmk5DVwRlSNh4CKe0V8uD3WiD/PjCvJep
+	 oCHnEE50DJQH+gi+6CulY6RqgL4QFL6dUL61gGYUketYHEuEeXSzjvUn/yWGRviD4u
+	 XiJjTWzm10pUs2ux9MUvzrl4josuGzu9Yj7bQxRwGPxjMY8kuONAFeSxC+SctT3iYq
+	 KbfQkJaFSeBcOAwXiHoGNTFVp9bpB91u6zD2CKn10FtKl4NqfjMeGw6/C7T9IobWx4
+	 AQc6CqLgTARcA==
+From: Kalle Valo <kvalo@kernel.org>
+To: David Wang <00107082@163.com>
+Cc: miriam.rachel.korenblit@intel.com,  johannes.berg@intel.com,
+  gregory.greenman@intel.com,  pagadala.yesu.anjaneyulu@intel.com,
+  dan.carpenter@linaro.org,  daniel.gabay@intel.com,
+  linux-wireless@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] wifi: iwlwifi: acpi/dsm: cache error retcode for
+ iwl_acpi_get_dsm
+References: <20240827005114.4950-1-00107082@163.com>
+Date: Tue, 27 Aug 2024 09:26:42 +0300
+In-Reply-To: <20240827005114.4950-1-00107082@163.com> (David Wang's message of
+	"Tue, 27 Aug 2024 08:51:14 +0800")
+Message-ID: <871q2afplp.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/WnlHn7eTQnOBUQK_4ciR3n7";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain
 
---Sig_/WnlHn7eTQnOBUQK_4ciR3n7
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+David Wang <00107082@163.com> writes:
 
-Hi all,
-
-On Mon, 26 Aug 2024 22:55:39 -0700 "Darrick J. Wong" <djwong@kernel.org> wr=
-ote:
+> On some HW, acpi _DSM query would failed for iwlwifi device
+> and everytime when network is reactiaved (boot,
+> suspend/resume, manually restart network, etc.),
+> bunch of kernel warning shows up together:
+>   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
+>   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
+>   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
+>   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
+>   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
+>   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
+>   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
+>   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
+> since iwlwifi would make 8 acpi/dsm queries for lari config.
+> But for iwlwifi, it is safe to cache the _DSM errors,
+> since it is not possible to correct it without upgrading BIOS.
+> With this patch, those kernel warnings would only show up once when
+> booting the system and unnecessary acpi/dsm queries are avoid.
 >
-> On Mon, Aug 26, 2024 at 02:26:32PM -0700, Luis Chamberlain wrote:
-> > Stephen reported a boot failure on ppc power8 system where
-> > set_memor_ro() on the new zero page failed [0]. Christophe Leroy
-> > further clarifies we can't use this on on linear memory on ppc, and
-> > so instead of special casing this just for PowerPC [2] remove the
-> > call as suggested by Darrick.
-> >=20
-> > [0] https://lore.kernel.org/all/20240826175931.1989f99e@canb.auug.org.a=
-u/T/#u
-> > [1] https://lore.kernel.org/all/b0fe75b4-c1bb-47f7-a7c3-2534b31c1780@cs=
-group.eu/
-> > [2] https://lore.kernel.org/all/ZszrJkFOpiy5rCma@bombadil.infradead.org/
-> >=20
-> > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Suggested-by: "Darrick J. Wong" <djwong@kernel.org>
-> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org> =20
->=20
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> Signed-off-by: David Wang <00107082@163.com>
+> ---
+>  drivers/net/wireless/intel/iwlwifi/fw/acpi.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/drivers/net/wireless/intel/iwlwifi/fw/acpi.c b/drivers/net/wireless/intel/iwlwifi/fw/acpi.c
+> index 79774c8c7ff4..3f98f522daac 100644
+> --- a/drivers/net/wireless/intel/iwlwifi/fw/acpi.c
+> +++ b/drivers/net/wireless/intel/iwlwifi/fw/acpi.c
+> @@ -30,6 +30,8 @@ static const size_t acpi_dsm_size[DSM_FUNC_NUM_FUNCS] = {
+>  	[DSM_FUNC_ENABLE_11BE] =		sizeof(u32),
+>  };
+>  
+> +static int acpi_dsm_func_retcode[DSM_FUNC_NUM_FUNCS] = {0};
+> +
+>  static int iwl_acpi_get_handle(struct device *dev, acpi_string method,
+>  			       acpi_handle *ret_handle)
+>  {
+> @@ -169,6 +171,10 @@ int iwl_acpi_get_dsm(struct iwl_fw_runtime *fwrt,
+>  	if (WARN_ON(func >= ARRAY_SIZE(acpi_dsm_size)))
+>  		return -EINVAL;
+>  
+> +	/* If HW return an error once, do not bother try again. */
+> +	if (acpi_dsm_func_retcode[func])
+> +		return acpi_dsm_func_retcode[func];
 
-I added this to linux-next today, and it seems to have fixed the run
-time warning, so
+Static variables are usually avoided because they are problematic if
+there are multiple iwlwifi devices on the same host. Should the error
+message be just removed entirely?
 
-Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/WnlHn7eTQnOBUQK_4ciR3n7
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbNcXsACgkQAVBC80lX
-0GwSvQf/SZMg3tJDWWeP8zI9bZsMGEGzu5BLoZ5oj8mmXcuOqPucOfCNi/tvrAh1
-OnGlCyfZzYNT8IeItMqx7z2IgUW+PFDfXJhNCRUo/HNtI35ujrDjheFJahmA+Fxx
-pupM1EiDiKOY366X0XzQ3vc1Q224QMIcWw7NgpPC2xN3xhsiV4w3d5WSyP/hDigq
-2wlrdH8H8ssAD9EM6JXfqPxvFYEoTJzCPj4Nl7/o+/c15SRfGjwXFkd3hbUE2eif
-fXlSIFoPaRIwQDvff0jipIQG3ArRIRa0UsyiBvnmdGalXLgG9WoHKrlUzR+a/IU3
-+xa+rMHLb9LGTX8ggF8/6S7lWyzF6A==
-=5GmB
------END PGP SIGNATURE-----
-
---Sig_/WnlHn7eTQnOBUQK_4ciR3n7--
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
