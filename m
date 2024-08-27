@@ -1,124 +1,265 @@
-Return-Path: <linux-kernel+bounces-302845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E65960427
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:15:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8854496042C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:17:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD4FB1F239DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:15:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1809D1F23960
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1DF190075;
-	Tue, 27 Aug 2024 08:15:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E337C17BEA4;
+	Tue, 27 Aug 2024 08:16:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Mw5T+3sl"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Qr/uXIe/"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2456B17BEA4
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43BDF158D9C
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724746547; cv=none; b=SY2CbntIwNdgXbF1ms2BTg6J2VqeMy2f8MbNMEIF5QOhIICv+jD322NBbk0Sk16759X+hQiGDrrTNGXjtg7g4pBS4bntWlDh57LyrL/rIYdSahzxkpFY5E9CcpnQFVeZ3Qt457yoCtwUTKOOaVoAmAvFjxIOYglZyT7L7lXS7Ms=
+	t=1724746619; cv=none; b=LjYyb414YGuIVu467y0dLe2RizyZ8z67w0MXvcwBin2gg8No2DDdUeHTVekIQE186dHxzpdNyxFOWDoVmtQM3Iqp8qEd5g7b1ro/URpco/VIK7dHJZoTU0hEHu90vJm4Ge6Y3vwu769guCJgUWBRzspnKPH3+85bK11NAS4EOKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724746547; c=relaxed/simple;
-	bh=f5yCQfaq3T1r9YsaGWqcZcBSr/TcL0RuFHGw/TIxxFQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ntNkAHQxNphd21GpT1ZjdXl/A983nQI2OufzyW8PxXDyX/xZDN8VwWH96z03fZfI8jMjiCLXzbiqgIIhDgrHDrhyo2v5iAWq9Jxs378d49BAtWSb/aycKPFSSiOrHv1TFg17K6jfcDZ7CQw1rZFNfrs2iyI9fc6d7YMUvbv3Ol8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Mw5T+3sl; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47R1xQ7a015375;
-	Tue, 27 Aug 2024 08:15:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	yTOu2Pf9GhC7wmbivrcb7Ryf3ynPpRy4DC+KmbPykGo=; b=Mw5T+3sl+ka0T0Ju
-	eqAq9PVfp8Vf0GWJ/0gxTZTvpnAW6euPeNp34nR1jpk2QK4/OYCwdeOB8q7Fk64M
-	311CezMdkijCF4WH4/cSC8ggnE4FEsY5cQa5MLWCyTSNwkoMyZA5t8FUCldG5AbY
-	Ho9ZnHH+AQ5sPL0BH901qAQj0cPteTkwvny8PvlIzsEQ4DWJr6CYY0cGmKAIRK5C
-	Gu5JMccDe74A9W2Ce5WPW9aQwd+0NLnq10ImO9p7+Q/SfW2eEaWw4Tx3Ol1k3LRC
-	+eSLOZ+kcNsGTPgKTryzxauNMTyYgOSXsOcVEbqNiuc1XBD/coONxUFdJ0rHehyj
-	HIzPLQ==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 417g51jmcy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 Aug 2024 08:15:35 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47R839DP008239;
-	Tue, 27 Aug 2024 08:15:35 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 417v2mhpcv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 Aug 2024 08:15:35 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47R8FYiM42336720
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 27 Aug 2024 08:15:34 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 44C7A58056;
-	Tue, 27 Aug 2024 08:15:34 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CE34258054;
-	Tue, 27 Aug 2024 08:15:32 +0000 (GMT)
-Received: from [9.43.108.197] (unknown [9.43.108.197])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 27 Aug 2024 08:15:32 +0000 (GMT)
-Message-ID: <e561213f-81b8-4582-8009-b542dc06d88f@linux.ibm.com>
-Date: Tue, 27 Aug 2024 13:45:30 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: powerpc: Add Maddy
-To: Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org
-References: <20240827063651.28985-1-mpe@ellerman.id.au>
-Content-Language: en-US
-From: Madhavan Srinivasan <maddy@linux.ibm.com>
-In-Reply-To: <20240827063651.28985-1-mpe@ellerman.id.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: aJ7yhJ2XBUouaq_vRB0cTHSaFX7vLnvA
-X-Proofpoint-GUID: aJ7yhJ2XBUouaq_vRB0cTHSaFX7vLnvA
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1724746619; c=relaxed/simple;
+	bh=MKkm9qMsRUpF3pd9pJZ/la8EY11iBqcRAJwn8afn+uY=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=IzfXrpMI+b5iM1rzKShmQk9n8SMlxWpgVo1ZOty5UiliC0k0yo/QKGvnZv2jhkoIEfnSy4bwjYfe1vt677irCJi5ml/KSzhdPQKFWgVxXlZ+vIa+GXh5GrSdGWBJQo0bWujzKR9AQAIZWvt4/iChtj5YwiJGyV6kGeSVF7N2N9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Qr/uXIe/; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724746614;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cxt+VGDRBTaPSFOGZMDocY40CDrItRmbO7MUtHbwBV0=;
+	b=Qr/uXIe/iLQniybPLcv9BZdRIi008MYoe96+XAqWTckItAZCtpRe3gDHZgg4Chtzb2x+Aw
+	MRsw+MzW2lgUJ/9UAdLjR7OE8kFv249H6pdtTe4wKVVBmR0iKOh84C04uMeL6N0h6HIfwE
+	VVakBlz5wtVKp9eGKsKEiJu6QAqz8LA=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-27_05,2024-08-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- lowpriorityscore=0 impostorscore=0 adultscore=0 spamscore=0
- priorityscore=1501 malwarescore=0 suspectscore=0 clxscore=1011
- phishscore=0 bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408270061
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH 4/4] block: fix fix ordering between checking
+ QUEUE_FLAG_QUIESCED and adding requests to hctx->dispatch
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <1929CA74-3770-4B5D-B0A5-759911E97815@linux.dev>
+Date: Tue, 27 Aug 2024 16:16:15 +0800
+Cc: Muchun Song <songmuchun@bytedance.com>,
+ Jens Axboe <axboe@kernel.dk>,
+ "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D53C1E55-80A4-4F71-B93D-D357F424D2FF@linux.dev>
+References: <20240811101921.4031-1-songmuchun@bytedance.com>
+ <20240811101921.4031-5-songmuchun@bytedance.com> <ZshyPVEc9w4sqXJy@fedora>
+ <CAMZfGtW-AG9gBD2f=FwNAZqxoFZwoEECbS0+4eurnSoxN5AhRg@mail.gmail.com>
+ <45A22FCE-10FA-485C-8624-F1F22086B5E9@linux.dev> <ZsxI6uCbGpQh1XrF@fedora>
+ <1929CA74-3770-4B5D-B0A5-759911E97815@linux.dev>
+To: Ming Lei <ming.lei@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
 
-On 8/27/24 12:06 PM, Michael Ellerman wrote:
-> Maddy will be helping out with upstream maintenance, add him as a
-> reviewer.
->
-> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Acked-by: Madhavan Srinivasan <maddy@linux.ibm.com>
-> ---
->   MAINTAINERS | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 878dcd23b331..0ee724dcc05a 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -12912,6 +12912,7 @@ M:	Michael Ellerman <mpe@ellerman.id.au>
->   R:	Nicholas Piggin <npiggin@gmail.com>
->   R:	Christophe Leroy <christophe.leroy@csgroup.eu>
->   R:	Naveen N Rao <naveen@kernel.org>
-> +R:	Madhavan Srinivasan <maddy@linux.ibm.com>
->   L:	linuxppc-dev@lists.ozlabs.org
->   S:	Supported
->   W:	https://github.com/linuxppc/wiki/wiki
+
+> On Aug 27, 2024, at 15:24, Muchun Song <muchun.song@linux.dev> wrote:
+>=20
+>=20
+>=20
+>> On Aug 26, 2024, at 17:20, Ming Lei <ming.lei@redhat.com> wrote:
+>>=20
+>> On Mon, Aug 26, 2024 at 03:33:18PM +0800, Muchun Song wrote:
+>>>=20
+>>>=20
+>>>> On Aug 26, 2024, at 15:06, Muchun Song <songmuchun@bytedance.com> =
+wrote:
+>>>>=20
+>>>> On Fri, Aug 23, 2024 at 7:28=E2=80=AFPM Ming Lei =
+<ming.lei@redhat.com> wrote:
+>>>>>=20
+>>>>> On Sun, Aug 11, 2024 at 06:19:21 PM +0800, Muchun Song wrote:
+>>>>>> Supposing the following scenario.
+>>>>>>=20
+>>>>>> CPU0                                                              =
+  CPU1
+>>>>>>=20
+>>>>>> blk_mq_request_issue_directly()                                   =
+  blk_mq_unquiesce_queue()
+>>>>>>  if (blk_queue_quiesced())                                        =
+   blk_queue_flag_clear(QUEUE_FLAG_QUIESCED)   3) store
+>>>>>>      blk_mq_insert_request()                                      =
+   blk_mq_run_hw_queues()
+>>>>>>          /*                                                       =
+       blk_mq_run_hw_queue()
+>>>>>>           * Add request to dispatch list or set bitmap of         =
+           if (!blk_mq_hctx_has_pending())     4) load
+>>>>>>           * software queue.                  1) store             =
+               return
+>>>>>>           */
+>>>>>>      blk_mq_run_hw_queue()
+>>>>>>          if (blk_queue_quiesced())           2) load
+>>>>>>              return
+>>>>>>          blk_mq_sched_dispatch_requests()
+>>>>>>=20
+>>>>>> The full memory barrier should be inserted between 1) and 2), as =
+well as
+>>>>>> between 3) and 4) to make sure that either CPU0 sees =
+QUEUE_FLAG_QUIESCED is
+>>>>>> cleared or CPU1 sees dispatch list or setting of bitmap of =
+software queue.
+>>>>>> Otherwise, either CPU will not re-run the hardware queue causing =
+starvation.
+>>>>>=20
+>>>>> Memory barrier shouldn't serve as bug fix for two slow code paths.
+>>>>>=20
+>>>>> One simple fix is to add helper of blk_queue_quiesced_lock(), and
+>>>>> call the following check on CPU0:
+>>>>>=20
+>>>>>      if (blk_queue_quiesced_lock())
+>>>>>       blk_mq_run_hw_queue();
+>>>>=20
+>>>> This only fixes blk_mq_request_issue_directly(), I think anywhere =
+that
+>>>> matching this
+>>>> pattern (inserting a request to dispatch list and then running the
+>>>> hardware queue)
+>>>> should be fixed. And I think there are many places which match this
+>>>> pattern (E.g.
+>>>> blk_mq_submit_bio()). The above graph should be adjusted to the =
+following.
+>>>>=20
+>>>> CPU0                                        CPU1
+>>>>=20
+>>>> blk_mq_insert_request()         1) store    =
+blk_mq_unquiesce_queue()
+>>>> blk_mq_run_hw_queue()
+>>>> blk_queue_flag_clear(QUEUE_FLAG_QUIESCED)       3) store
+>>>>  if (blk_queue_quiesced())   2) load         blk_mq_run_hw_queues()
+>>>>      return                                      =
+blk_mq_run_hw_queue()
+>>>>  blk_mq_sched_dispatch_requests()                    if
+>>>> (!blk_mq_hctx_has_pending())     4) load
+>>>>                                                          return
+>>>=20
+>>> Sorry. There is something wrong with my email client. Resend the =
+graph.
+>>>=20
+>>> CPU0                                        CPU1
+>>>=20
+>>> blk_mq_insert_request()         1) store    blk_mq_unquiesce_queue()
+>>> blk_mq_run_hw_queue()                       =
+blk_queue_flag_clear(QUEUE_FLAG_QUIESCED)       3) store
+>>>   if (blk_queue_quiesced())   2) load         blk_mq_run_hw_queues()
+>>>       return                                      =
+blk_mq_run_hw_queue()
+>>>   blk_mq_sched_dispatch_requests()                    if =
+(!blk_mq_hctx_has_pending())     4) load
+>>>                                                           return
+>>=20
+>> OK.
+>>=20
+>> The issue shouldn't exist if blk_queue_quiesced() return false in
+>> blk_mq_run_hw_queue(), so it is still one race in two slow paths?
+>>=20
+>> I guess the barrier-less approach should work too, such as:
+>>=20
+>=20
+> If we prefer barrier-less approach, I think the following solution
+> will work as well, I'll use it in v2. Thanks.
+>=20
+>>=20
+>> diff --git a/block/blk-mq.c b/block/blk-mq.c
+>> index e3c3c0c21b55..632261982a77 100644
+>> --- a/block/blk-mq.c
+>> +++ b/block/blk-mq.c
+>> @@ -2202,6 +2202,12 @@ void blk_mq_delay_run_hw_queue(struct =
+blk_mq_hw_ctx *hctx, unsigned long msecs)
+>> }
+>> EXPORT_SYMBOL(blk_mq_delay_run_hw_queue);
+>>=20
+>> +static inline bool blk_mq_hw_queue_need_run(struct blk_mq_hw_ctx =
+*hctx)
+>> +{
+>> + 	return !blk_queue_quiesced(hctx->queue) &&
+>> + 		blk_mq_hctx_has_pending(hctx);
+>> +}
+>> +
+>> /**
+>> * blk_mq_run_hw_queue - Start to run a hardware queue.
+>> * @hctx: Pointer to the hardware queue to run.
+>> @@ -2231,11 +2237,19 @@ void blk_mq_run_hw_queue(struct blk_mq_hw_ctx =
+*hctx, bool async)
+>> * quiesced.
+>> */
+>> 	__blk_mq_run_dispatch_ops(hctx->queue, false,
+>> - 		need_run =3D !blk_queue_quiesced(hctx->queue) &&
+>> - 		blk_mq_hctx_has_pending(hctx));
+>> + 		need_run =3D blk_mq_hw_queue_need_run(hctx));
+>>=20
+>> - 	if (!need_run)
+>> - 		return;
+>> + 	if (!need_run) {
+>> + 		unsigned long flags;
+>> +
+>> + 		/* sync with unquiesce */
+>> + 		spin_lock_irqsave(&hctx->queue->queue_lock, flags);
+
+After some time thought, I think here we need a big comment to explain
+why we need to sync. Because there are other caller of =
+blk_queue_quiesced()
+which do not need to hold ->queue_lock to sync. Then, I am thinking
+is ->queue_lock really easier to be maintained than mb? For developers,
+we still need to care about this, right? I don't see any obvious =
+benefit.
+And the mb approach seems more efficient than spinlock. Something like:
+
+	if (!need_run) {
+		/* Add a comment here to explain what's going on here. =
+*/
+		smp_mb();
+		need_run =3D blk_mq_hw_queue_need_run(hctx);
+		if (!need_run)
+			return;
+	}
+
+I am not objecting to your approach, I want to know if you insist on
+barrier-less approach here. If yes, I'm fine with this approach. I can
+use it in v2.
+
+Muhcun,
+Thanks.
+
+>> + 		need_run =3D blk_mq_hw_queue_need_run(hctx);
+>=20
+> One question here: should we use __blk_mq_run_dispatch_ops()? I saw a =
+comment above.
+> It seems it is safe to call blk_mq_hw_queue_need_run under [s]rcu =
+lock.
+>=20
+> Thanks.
+>=20
+>> + 		spin_unlock_irqrestore(&hctx->queue->queue_lock, flags);
+>> +
+>> + 		if (!need_run)
+>> + 			return;
+>> + 	}
+>>=20
+>> 	if (async || !cpumask_test_cpu(raw_smp_processor_id(), =
+hctx->cpumask)) {
+>> 		blk_mq_delay_run_hw_queue(hctx, 0);
+>>=20
+>>=20
+>> thanks,
+>> Ming
+>=20
+>=20
+
 
