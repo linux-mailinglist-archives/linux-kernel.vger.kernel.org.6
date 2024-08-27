@@ -1,135 +1,85 @@
-Return-Path: <linux-kernel+bounces-303580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FFB5960EFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:55:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CC8D960F24
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:56:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C71E286556
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:54:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD0271F2248C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3830C1CB126;
-	Tue, 27 Aug 2024 14:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24521C93CE;
+	Tue, 27 Aug 2024 14:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SrUT5WTG"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="S8o5Yl+W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7160A1A0B13;
-	Tue, 27 Aug 2024 14:53:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0411A1C5792
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 14:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724770415; cv=none; b=ju26E/uua56Sn8/Y7zhff4ATdPKU5aCm7Wk2dm/avtC7IL2dUIK2xNJCBjyGMpqnBakf8vCclcvkefgu3xLd/yaj0FPTUK2vCt8Lr0I/JxUbcniWapzZUj+6BWLPKkfed3piFK6Ciw6q3sf8ywBdoHtSE7pBI/pb9Dw1pUR6SMw=
+	t=1724770507; cv=none; b=ceEGUfsnKzTyowpUEG/prLbPxGNJQh46GR5A1dgdW2qQgaY6Wbi19m5olnnAPx1s1ZPH8zp+2WKiY2GbjxhHWKpBemEmHKMa3kTwAMZ4oeZ3/mYO3E1WzGyzqudHhZXIm8KpEjZz2n3g27PLD1zM9u8vyoLsPCxeXj5ycJOPFvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724770415; c=relaxed/simple;
-	bh=ND1nM316SmnI2uLNfJnvcy1K3FityWNNBNH9l6o7LNo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GQzmbxSNv7WaieUTAUIa18IhBjZHumPfg64lEmuuqPduzWYgL4CQf3Ob668RoPm4HETfj03miKZeslH90PoOrAnbKC4E2LRxz/qL21RqV0cSBt50WYlJAAZNAjfpG37yQD5HbmHBYCtQTGRBq5gpOc1VDyM0x0eQcte3Enc43aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SrUT5WTG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 182FEC6106E;
-	Tue, 27 Aug 2024 14:53:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724770415;
-	bh=ND1nM316SmnI2uLNfJnvcy1K3FityWNNBNH9l6o7LNo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SrUT5WTGP2Dta6NNl3ZtipbShjUHbfPl9vEnh7+c/a0gfCvd3fDFkkwWcTD7MKw2n
-	 Eet4agTZqcI35gqrKzDGaoHu7q2uJ07SqSYazenBUo1kNwM1ApiUZUt9XjG0ZOJo/u
-	 X2McGktRiITcCGVp4FfRewwYdHqVo5CF2dFW7fZ/dfGcOI17Zrpch5UJsp86oDLRPC
-	 FexFNLbzgbQF6vXpR5wmlcHgzEvPkdAuRbiiERo86APSBoFFlVrLOtiK71YDzGug01
-	 MttaepYTrDfbTp9xphvsseJtrcuRVGD8yklUoQKFc/v5tti0bzAJOvTVYoyKJYYemO
-	 LxjX2rSk1bieQ==
-Date: Tue, 27 Aug 2024 15:53:28 +0100
-From: Simon Horman <horms@kernel.org>
-To: Yangtao Li <frank.li@vivo.com>
-Cc: clement.leger@bootlin.com, andrew@lunn.ch, f.fainelli@gmail.com,
-	olteanv@gmail.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, ulli.kroll@googlemail.com,
-	linus.walleij@linaro.org, marcin.s.wojtas@gmail.com,
-	linux@armlinux.org.uk, alexandre.torgue@foss.st.com,
-	joabreu@synopsys.com, mcoquelin.stm32@gmail.com,
-	hkallweit1@gmail.com, u.kleine-koenig@pengutronix.de,
-	jacob.e.keller@intel.com, justinstitt@google.com,
-	sd@queasysnail.net, linux-renesas-soc@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Serge Semin <fancer.lancer@gmail.com>
-Subject: Re: [net-next v3 2/9] net: stmmac: platform: Convert to
- devm_clk_get_enabled() and devm_clk_get_optional_enabled()
-Message-ID: <20240827145328.GJ1368797@kernel.org>
-References: <20240827095712.2672820-1-frank.li@vivo.com>
- <20240827095712.2672820-3-frank.li@vivo.com>
+	s=arc-20240116; t=1724770507; c=relaxed/simple;
+	bh=O7qAhe2cSB3nmkK7P42MxJ69ddHjyjGLwmbiylUXWO4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fmwOqr1TdHW8S/oi8WxUKTsH81JH9qHzG7lHmHPWDYCaZno4IS1DO+ab6c3TOpcggKAXuhAUTTShks1zLmcO8PVLV3Im8G7yHvIuscggSRKcPPRp2dfUPLwbVxppgpbIpV1bQZILKwmUBFiJQT4a29S4EdjZaUlRvYr7F+dKuwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=S8o5Yl+W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EBDBC4E691;
+	Tue, 27 Aug 2024 14:55:06 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="S8o5Yl+W"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1724770504;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=H2OWpixOinJIHrVPeHRAC79bLQm2Gq/N3vn1/xF5OzA=;
+	b=S8o5Yl+WORSo/6wyUhqOibeAyVPcL2ALUTAhxItMUgcHS8YcjXYmETNHHry9/Hvywc2ntc
+	ToBz+Mge9eXh9iFRjhGq1bHcbPVWG8d7d6KxzWh8mC6iIpdqyy3k6sYFV76mLeDMsiEdMQ
+	dluTrqSTO5aE4OpvWWF4spupD7DEqDc=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 1d45b1fe (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Tue, 27 Aug 2024 14:55:04 +0000 (UTC)
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: linux-kernel@vger.kernel.org,
+	adhemerval.zanella@linaro.org,
+	christophe.leroy@csgroup.eu
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Subject: [PATCH] selftests/vDSO: remove unnecessary command line defs from chacha test
+Date: Tue, 27 Aug 2024 16:54:24 +0200
+Message-ID: <20240827145454.3317093-1-Jason@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827095712.2672820-3-frank.li@vivo.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 27, 2024 at 03:57:05AM -0600, Yangtao Li wrote:
-> Use devm_clk_get_enabled() and devm_clk_get_optional_enabled()
-> to simplify code.
-> 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> Suggested-by: Serge Semin <fancer.lancer@gmail.com>
-> ---
-> v2:
-> -remove unused 'ret'
-> -fix incompatible-pointer-types
-> 
->  .../ethernet/stmicro/stmmac/stmmac_platform.c | 35 +++++--------------
->  1 file changed, 8 insertions(+), 27 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-> index ad868e8d195d..4365afabf3c4 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-> @@ -415,8 +415,6 @@ static int stmmac_of_get_mac_mode(struct device_node *np)
->  static void stmmac_remove_config_dt(struct platform_device *pdev,
->  				    struct plat_stmmacenet_data *plat)
->  {
-> -	clk_disable_unprepare(plat->stmmac_clk);
-> -	clk_disable_unprepare(plat->pclk);
->  	of_node_put(plat->phy_node);
->  	of_node_put(plat->mdio_node);
->  }
-> @@ -436,7 +434,6 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
->  	struct plat_stmmacenet_data *plat;
->  	struct stmmac_dma_cfg *dma_cfg;
->  	int phy_mode;
-> -	void *ret;
->  	int rc;
->  
->  	plat = devm_kzalloc(&pdev->dev, sizeof(*plat), GFP_KERNEL);
-> @@ -615,21 +612,16 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
->  
->  	/* clock setup */
->  	if (!of_device_is_compatible(np, "snps,dwc-qos-ethernet-4.10")) {
-> -		plat->stmmac_clk = devm_clk_get(&pdev->dev,
-> -						STMMAC_RESOURCE_NAME);
-> +		plat->stmmac_clk = devm_clk_get_enabled(&pdev->dev, STMMAC_RESOURCE_NAME);
+CONFIG_FUNCTION_ALIGNMENT=0 is no longer necessary and BULID_VDSO wasn't
+spelled right while BUILD_VDSO isn't necessary, so just remove these.
 
-As it looks like there will be a v3 anyway, a minor nit from my side:
-Please preserve the line wrapping so that the lines remain <= 80 columns wide,
-which is still preferred by Networking code.
+Reported-by: Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>
+Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+---
+ tools/testing/selftests/vDSO/Makefile | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-		plat->stmmac_clk = devm_clk_get_enabled(&pdev->dev,
-							STMMAC_RESOURCE_NAME);
+diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
+index 834aa862ba2c..d1452c7d6d4f 100644
+--- a/tools/testing/selftests/vDSO/Makefile
++++ b/tools/testing/selftests/vDSO/Makefile
+@@ -46,5 +46,4 @@ $(OUTPUT)/vdso_test_chacha: LDLIBS += $(SODIUM_LIBS)
+ $(OUTPUT)/vdso_test_chacha: CFLAGS += -idirafter $(top_srcdir)/tools/include \
+                                       -idirafter $(top_srcdir)/arch/$(ARCH)/include \
+                                       -idirafter $(top_srcdir)/include \
+-                                      -D__ASSEMBLY__ -DBULID_VDSO -DCONFIG_FUNCTION_ALIGNMENT=0 \
+-                                      -Wa,--noexecstack $(SODIUM_CFLAGS)
++                                      -D__ASSEMBLY__ -Wa,--noexecstack $(SODIUM_CFLAGS)
+-- 
+2.46.0
 
->  		if (IS_ERR(plat->stmmac_clk)) {
->  			dev_warn(&pdev->dev, "Cannot get CSR clock\n");
->  			plat->stmmac_clk = NULL;
->  		}
-> -		clk_prepare_enable(plat->stmmac_clk);
->  	}
->  
-
-...
 
