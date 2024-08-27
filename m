@@ -1,127 +1,127 @@
-Return-Path: <linux-kernel+bounces-303689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2694F9613BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:13:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 332FC9613C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:14:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A6D3B22290
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:13:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C76AB1F23EC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDAAD1CEAB8;
-	Tue, 27 Aug 2024 16:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80FB41C9DF7;
+	Tue, 27 Aug 2024 16:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="RI+mUrYT"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mvypKUkj"
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6B71CE6E7
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 16:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703B119EEB4;
+	Tue, 27 Aug 2024 16:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724775173; cv=none; b=crL0MY2VUiffUd3bLWNEo+EsJDug8HkGlPerY4DkShu4UOoaO523GdvFMB1mROC+JyX4l0xsdHg+I/FpXx/OnOBF6Jj58dE81PSqdFQea6F4dYhTYyBkTYDgUGlgPsDfGYX0iw0+iJQFjqN/+LP8+/Aw2mn5eq7aw1dJmHIKKNc=
+	t=1724775255; cv=none; b=rfx3XD9bsSWRKkKdx8+fyn+zig/qEgLgjHyiKpnXWcUwg9I0Sda2JPMaqybOWLEiLAsTPq9AdU+X5APSqSqWGJxwRzZMB5GaHDowYl0DmKUPksoTYLYixlL2aRgWDwlwS5x48n1FGx8XtwHEavdsT/KSlYisbj3f717T9C3oxt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724775173; c=relaxed/simple;
-	bh=fY38fN99qRFKXKSA5I+1rUysd3mbokIVBvaR3N/Edko=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QyIlzuAAjExB0VkjK7cdnm3KRjHI2QNOG9t3XMAfIYxhhe2bOhKhTlrFOT5WaDUgCFQizPfQ7799o0IjPJRXa++s2fXmwWbgK3Lt2nJ71ePZAoMDG2l9poRVOkTni5F488PreHr/8zIKJC9jz4wkQrZMRpaLUg8Wl9bmWo/e6JY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=RI+mUrYT; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5343e75c642so4888286e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:12:51 -0700 (PDT)
+	s=arc-20240116; t=1724775255; c=relaxed/simple;
+	bh=ANltZQlNMXUC/raYAwwTWFrv0mMK49Ggh38qhIinfoA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e2MW3ZQLCN48vqXLoYTzGMxGRd+sH3KZ7DcTJb48ug59/Df0GYWUqC1w9Xq8ZOzMOCK6+blGuddi3xCecy3UVrDTch7jGwxW0rSk69434xsG6FibYAnMdrLCMgqOGYbGaZLpNquWSgg5WgayninZBnr2Q3vmBzpuYYUWmVF0DpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mvypKUkj; arc=none smtp.client-ip=209.85.167.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3db1e21b0e4so594910b6e.2;
+        Tue, 27 Aug 2024 09:14:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1724775170; x=1725379970; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1724775253; x=1725380053; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/VeZJltoLAKxh7d3cB6a8DRSH0vtTp7P9mPnF3uj0f8=;
-        b=RI+mUrYTpwomUtNNZddBxcnpkQo3+xlfIbutUj2xTqTH43Yg0/Rdd8Cl6kX/pRYRHt
-         DjhmiCJ23GZW7N18wuGDFve1iXdkmWV0GJn790afZL4JkdtFVahHmrf12Oa5ZCDWDtKX
-         TBTqWSTExIUt1sB1uzIFV3kOhnR4bB0mxwLJpuAymG21qUyorC75pnXf4awgotjMn4mW
-         7FpGKr/K+8qVkJDD1hmNfTPBP/b2/Q8pS0xR2MByIWmvm+uBz5NGj6CHYhnbAqMYFHlb
-         /rI3KA1mCCJftKG19eIno1N00h5WRZu+3ttyqgXVhlc9cUgtRLznHWVqypD+NIOe497K
-         x9Ow==
+        bh=Aa6xcT3MJxzEFLTzf5A2PiY1HCQJjSWCUnddlk6n61o=;
+        b=mvypKUkjW3jpa3jH6SBvM9DwlguGe/NJYNG9ivtsxZ2DKGuQ5IPnBdADomycVoR5pC
+         434cCkjSErWIaQyQeWGYVzIUY7sziEVkxq3zHk7QOpQW4oZQJjlv+XiaCOtklR0x3C4u
+         d0KgqUwJsikkdUxyY8ZPz1TK9PtORGMa1KkZ95O9NXyYi/T4D1G7Vu5/3FtSIex8C5gQ
+         9FEQpK0AzPC0j+BRIZGn2UPb4p/xozreMCYjwpjNGC5jOexIQ/IWlQJEdSEWjvh4JIbC
+         tXYrLC8eF+jFDU9mM9dtEvokOXrhpetB+5CcPhXQLQn/YezeiD/0n4vB1GSxSC8SEt4+
+         4Vwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724775170; x=1725379970;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1724775253; x=1725380053;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/VeZJltoLAKxh7d3cB6a8DRSH0vtTp7P9mPnF3uj0f8=;
-        b=jxRVn377Guydt94dq48FCtjbbaA0RtPuixARH9AombSxEtEUe1x0HewDJPU0X5Xj59
-         Emi9wqIE518n53n794DmnSEeuRyEDCMB5Nmz3Rvln/9gOkmQCM4TRucxR95VjTwRQORW
-         K0zJD306KetLkolhfZLhDMkvCzdBfWDg5Gnti8+PkMsvIZOd/2BdCfXC91qC1TvCrJ2a
-         QYgT7MDoGdIMyRQpsuFTxP3jHcx7hJGp8NxsC4uK7QD5wBLXxtrRG46WAKpSgTYpukcd
-         /qH1AUPk5rMlye39bcMsz7hDXqz3UU6plECqjDbGdlszOJ/mWb/jF3QdAVA4pT3XnD/Y
-         CIyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXhFRvVYZQqetMcp5ioCj77lxqPCPBzoPXVTex50KxWHgXAAx4ftiCcm2N5VTvzAOwF7MytfZ5pnpr6wZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQcl+54/IzQ8gMZBam75rIVuhuc5TAGrXb48NoiUwrY2yqn6R6
-	d5j77BoJumq/jZbaedJvEVvvdp3Ezyh9AUq2esLVhYE2PFCg0oJix+Uk+cZ47Hw=
-X-Google-Smtp-Source: AGHT+IEn6EiOoC6u9T3Qh/ZYHO31b5oMxMsAnawAD7VSKPISxZfLW3mQWnzXyfQVhrfz81mditnTcg==
-X-Received: by 2002:a05:6512:4004:b0:530:aa09:b6bf with SMTP id 2adb3069b0e04-534388330bcmr10078492e87.24.1724775169565;
-        Tue, 27 Aug 2024 09:12:49 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e54b50dbsm127893966b.93.2024.08.27.09.12.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 09:12:49 -0700 (PDT)
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-To: manikandan.m@microchip.com,
-	dharma.b@microchip.com,
-	andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	hari.prasathge@microchip.com
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	claudiu.beznea@tuxon.dev
-Subject: [PATCH 3/3] drm/bridge: microchip-lvds: Use devm_platform_ioremap_resource()
-Date: Tue, 27 Aug 2024 19:12:23 +0300
-Message-Id: <20240827161223.4152195-4-claudiu.beznea@tuxon.dev>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240827161223.4152195-1-claudiu.beznea@tuxon.dev>
-References: <20240827161223.4152195-1-claudiu.beznea@tuxon.dev>
+        bh=Aa6xcT3MJxzEFLTzf5A2PiY1HCQJjSWCUnddlk6n61o=;
+        b=LZYD+YPE6zIxtkY2wTi3cCCC1kPgtXatce2UvWQ24TSlEq89fmPJ3Jh03ZdCZzXpeD
+         PRNaqxEAhGmUBWtvXxBIBw+l0DVM042Ah2IfdoCPrzZVxLRcXHYynGB8AUbzGPrFo+uf
+         wF0H82lv1y8Y0wbqsuqyH+vhlylefCuuVMSJm8XIdTWwKXgayle7J9W2uAyvjYhW9c0U
+         kMIcL4LPED5QePpIjgC2mh42/zP9MOPBgi9xgbTKWJDqSGoqgzIDvEax7ap7RyB3gaoN
+         c9QuZpLjMA+mQIeAXD13Z83RHsK3v3mRDpfBQlig3z+A+jYOu2qYEDaXeHosXjT1Divp
+         UN2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUcHTSgE0oT/DbpE61vHhDqUteoRHNmf6+NWey1Wewu4+SmAuQiClovSH5aL50TN4MvU0dayGMkUunNC4aq@vger.kernel.org, AJvYcCXAYRZWvYW7KmohirjFGA4SZG19KdnD4eR/mfOMauXtABxuGMuZRExNxc93dIJi5thwpH8rHA39s4C8@vger.kernel.org, AJvYcCXDAbpeLfWrytQQRfcNie5M9WbYJanxmxa0XtQYpkkmgFrjW7+eMfpWDDNBYeqsYQXR8/3jcubSAvofy0OQ7ga6sYQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJlXjHPukWi06P2jlyGPYTm0RRIf0guNRGvNU+0+zj0lnR/Uqk
+	YthlFm6HuaOp3vRa/B9ABeZvyCAk2l5Vf3x8NkuWkHZHc+hT4ZXnpZefRZIFfzTy9sKGP4Cffw8
+	byXDoRZgXcylu7/JZMixflg6Dzdg=
+X-Google-Smtp-Source: AGHT+IEeiQotsUr+GkK5yN/p67VboH4ZO9deY7B7MqAyr+C+/Bg7qj24ZRgznhykflAIsJ4MsNKHgHW2uf+YX8Co8vM=
+X-Received: by 2002:a05:6808:ec9:b0:3dd:b5b:e5ca with SMTP id
+ 5614622812f47-3de2a8c94a6mr17027105b6e.46.1724775253312; Tue, 27 Aug 2024
+ 09:14:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240821085644.240009-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240821085644.240009-8-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUyW_8ma++zP8bRLMh120mysSD7206On0euRG7+S-081A@mail.gmail.com>
+In-Reply-To: <CAMuHMdUyW_8ma++zP8bRLMh120mysSD7206On0euRG7+S-081A@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 27 Aug 2024 17:13:46 +0100
+Message-ID: <CA+V-a8tWCXxOCdD_C-rWJG_6EBL1S0nSxG2cNZQ6rVsqStsA6A@mail.gmail.com>
+Subject: Re: [PATCH v3 7/8] arm64: dts: renesas: r9a09g057h44-gp-evk: Enable
+ OSTM, I2C, and SDHI
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The devm_platform_ioremap_resouce() does exactly what
-devm_ioremap_resource() combined with platform_get_resouce() does.
-Thus use it.
+Hi Geert,
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
----
- drivers/gpu/drm/bridge/microchip-lvds.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Thank you for the review.
 
-diff --git a/drivers/gpu/drm/bridge/microchip-lvds.c b/drivers/gpu/drm/bridge/microchip-lvds.c
-index f04831106eea..85aff8c5aaf4 100644
---- a/drivers/gpu/drm/bridge/microchip-lvds.c
-+++ b/drivers/gpu/drm/bridge/microchip-lvds.c
-@@ -154,8 +154,7 @@ static int mchp_lvds_probe(struct platform_device *pdev)
- 
- 	lvds->dev = dev;
- 
--	lvds->regs = devm_ioremap_resource(lvds->dev,
--			platform_get_resource(pdev, IORESOURCE_MEM, 0));
-+	lvds->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(lvds->regs))
- 		return PTR_ERR(lvds->regs);
- 
--- 
-2.39.2
+On Mon, Aug 26, 2024 at 1:49=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Wed, Aug 21, 2024 at 10:56=E2=80=AFAM Prabhakar <prabhakar.csengg@gmai=
+l.com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Enable OSTM0-OSTM7, RIIC{0,1,2,3,6,7,8}, and SDHI1 (available on the SD=
+2
+> > connector) on the RZ/V2H GP-EVK platform.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > ---
+> > note, for i2c nodes we are defaulting the clock-frequency and this
+> > will be updated when slave nodes are enabled.
+>
+> This causes lots of "'clock-frequency' is a required property" warnings
+> from "make dtbs".  Moreover, what if I run i2cdetect on any of these
+> buses? Could it run the bus faster than the board wiring allows?
+> Hence I think you should add "clock-frequency" properties to all
+> enabled I2C bus nodes.
+>
+OK, I will set the clock-frequency property for all the enabled i2c
+buses to 400K.
 
+Cheers,
+Prabhakar
 
