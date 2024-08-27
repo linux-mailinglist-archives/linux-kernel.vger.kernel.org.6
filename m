@@ -1,175 +1,144 @@
-Return-Path: <linux-kernel+bounces-303453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89324960C40
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:37:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0930D960C3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1353BB255EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:37:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B5F41C22E0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0320D1C2DBB;
-	Tue, 27 Aug 2024 13:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B03C1C1725;
+	Tue, 27 Aug 2024 13:36:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XC1fSUzL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="w+JX/Hgq"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6856E1BFDF3;
-	Tue, 27 Aug 2024 13:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3CD1BFDF3
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 13:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724765830; cv=none; b=XIsLOo4c5WV+3tlhrRdj5Bf+/C26h6Ir1PS7Re4vu/nxi8ml6C5nTQB4BK4zk2SiZK8PAOANfDNeprDIyy2bEQZQKTcuDYOi02nwLjz8I0FBvHgIuUxbHiL5TI96uZuayuFHQuBkbLnxYMnwBqc7+snJTjb6BzIXMFphn4Y+wWo=
+	t=1724765801; cv=none; b=H/ZmRdsciTKZuqy7ltDTuC3gc0r9OMAxmZzAjkiUmE2AUumfUKhcL/tqjwloZUiBeAD0CmqrzfM2LnLbHvHAXkW9bczzX32TzfmKJHqtIpW7Hm+O5olqtGM3v5wjTvoJh5CYZ6QU0j30flXcY79n9BNh4UdnLip9gsAdehoq/Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724765830; c=relaxed/simple;
-	bh=F7uwwE8fWUXezGAg782tjWqtQAIrRqH0usOHJInnYUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SYiSLsP5/KMSC6h/jTy+PCSi6VHMZajeWpv6DxJNncuYfWdJV/ngO+y8n/HYqkEgiMU9ayQNraQGKH6Z2hVGCHnNHnXi37pgKbGWdjjJdtAM3vuCk55ttGliBjZ9ejP7d+CX+l8Ebfdg0aoYwFCFxR66goEjCKTKl4tUyYsn84s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XC1fSUzL; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724765828; x=1756301828;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=F7uwwE8fWUXezGAg782tjWqtQAIrRqH0usOHJInnYUM=;
-  b=XC1fSUzLIeLL4uY69seqfC98xLTodAkR+XIdXGGdK8za+prNpEbJ5BW6
-   LF7ntldvU+xmi4Of28bu6/AridNyMqQDPL+0iJ5g/IvCMHT55A2NlKFHR
-   i8RKxCKSe3/yH9SLGd7fJHBKFeomq69ARfYns6gNKomV4wZB49nDb9Vhr
-   rCiJXSK+IlNRQXyddkGsI4XQyEE1xAjjdX6Hf/SV+KW1qZzQUtntSttDU
-   10s5rfMx3Bk3El7iXTc41bqW2idVLVT5jEG/9QeuUL3U/Z+gWywquDCrD
-   MLxeqzDP1ytjaujyUl7r6wcttiga0liEK5FP5QvlTuYfBsI+xwWMq4dRV
-   g==;
-X-CSE-ConnectionGUID: bd6A78AAQA6lonvWkRSv+w==
-X-CSE-MsgGUID: 5kl5DMgsQjeSA64xnwgbGA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="23418976"
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="23418976"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 06:37:07 -0700
-X-CSE-ConnectionGUID: Bz6r6OChQHqZieZ/aNQnAA==
-X-CSE-MsgGUID: RgBshjT6R36pYYBbEpG8mA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
-   d="scan'208";a="62916912"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 06:37:05 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1siwMs-00000002HBP-1qOb;
-	Tue, 27 Aug 2024 16:36:18 +0300
-Date: Tue, 27 Aug 2024 16:36:04 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	John Ogness <john.ogness@linutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] hexdump: Allow skipping identical lines
-Message-ID: <Zs3WRKOgsvhIP8Es@smile.fi.intel.com>
-References: <20240826162416.74501-1-miquel.raynal@bootlin.com>
- <20240826162416.74501-3-miquel.raynal@bootlin.com>
- <Zsy86HZ7uew9-Ef6@smile.fi.intel.com>
- <20240827111353.0341c571@xps-13>
+	s=arc-20240116; t=1724765801; c=relaxed/simple;
+	bh=2BfLlfZNpjATIv4G7J2SgXFYlzQxHH4irggz/urF4y4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=giUoslMU8NWjhOgcYUO76uM5/4gTTAgkyhQzDjQqdDs9CsZhhgQT7vS2TnZmNrIg0GeHs9x5ueGAgluddhCopoN8x6htqB1k2PC1mDr/ghL1Fs4CIYJxRySvJ7uCLasgolDQ/rpCN2X00dKncIS9y+Lt0VvhdpbNcc3o+K9TJCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=w+JX/Hgq; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724765796;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iRIGZ0wgkj3ZUOkwKf4jqmKYT6MZrP5kCetvM2EiQSI=;
+	b=w+JX/HgqXJY99M2E1FzwM/vwsbRRKPRUp+jjaol77ATBJkajayTrTlwJ07tJxC+jLraHyf
+	588bIZuK+HRR6oiFJydwVqpkevg+inmV1CIng0/MuriQQ6xo0XB57Qk95LF9lom7PeZyc3
+	N2CUdtz7o94Bvuwh07IwHw+V/86bqPo=
+From: Luis Henriques <luis.henriques@linux.dev>
+To: Xiubo Li <xiubli@redhat.com>
+Cc: Ilya Dryomov <idryomov@gmail.com>,  ceph-devel@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] ceph: fix out-of-bound array access when doing a
+ file read
+In-Reply-To: <20240822150113.14274-1-luis.henriques@linux.dev> (Luis
+	Henriques's message of "Thu, 22 Aug 2024 16:01:13 +0100")
+References: <20240822150113.14274-1-luis.henriques@linux.dev>
+Date: Tue, 27 Aug 2024 14:36:14 +0100
+Message-ID: <87mskyxf3l.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827111353.0341c571@xps-13>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Aug 27, 2024 at 11:13:53AM +0200, Miquel Raynal wrote:
-> andriy.shevchenko@linux.intel.com wrote on Mon, 26 Aug 2024 20:35:36
-> +0300:
-> > On Mon, Aug 26, 2024 at 06:24:16PM +0200, Miquel Raynal wrote:
-> > > When dumping long buffers (especially for debug purposes) it may be very
-> > > convenient to sometimes avoid spitting all the lines of the buffer if
-> > > the lines are identical. Typically on embedded devices, the console
-> > > would be wired to a UART running at 115200 bauds, which makes the dumps
-> > > very (very) slow. In this case, having a flag to avoid printing
-> > > duplicated lines is handy.
-> > > 
-> > > Example of a made up repetitive output:
-> > > 0f 53 63 47 56 55 78 7a aa b7 8c ff ff ff ff ff
-> > > ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> > > ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> > > ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> > > ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> > > ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> > > ff ff ff ff ff ff ff ff ff ff ff ff 01 2a 39 eb
-> > > 
-> > > Same but with the flag enabled:
-> > > 0f 53 63 47 56 55 78 7a aa b7 8c ff ff ff ff ff
-> > > ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> > > *
-> > > ff ff ff ff ff ff ff ff ff ff ff ff 01 2a 39 eb  
-> > 
-> > The problem here is that without offset we can't see how many lines were
-> > skipped.
-> 
-> Yes, this is intended, I prefer to mimic userspace tools behavior.
-> 
-> > Two ways to solve (that come to my mind immediately, maybe more and better):
-> > 1) make sure that new flag implies or expects (otherwise BUILD_BUG_ON() or so)
-> >   the OFFSET to be set;
-> 
-> It depends what you are looking for. When I print a 2kiB page and want
-> to compare the output with some other dump, I will immediately see if
-> there are more or less skipped lines in the diff. When I want to just
-> grab the UBI header and skip all the ff's following while asking a full
-> buffer to be dumped (for kernel development reasons), the amount of
-> skipped lines is not of interest to me either. Of course this is my own
-> use case, but I guess there are others.
-> 
-> However this is true it is sometimes also useful to know where we are in
-> the dump, but the hexdump helpers already include all the interesting
-> bits for that through the 'prefix_type' parameter :
-> 
-> enum {
-> 	DUMP_PREFIX_NONE,
-> 	DUMP_PREFIX_ADDRESS,
-> 	DUMP_PREFIX_OFFSET
-> };
-> 
-> See https://elixir.bootlin.com/linux/v4.20.17/source/include/linux/printk.h
-> 
-> I anyway understand the request and will change the example with
-> something more common, probably, by using one of the two other
-> prefixes.
-> 
-> > 2) [OR] add number of lines skipped in that * line.
-> 
-> As mentioned above, this is not the intended output.
-> 
-> > Personally I prefer the 1) as I think that you tried to follow the existing
-> > format of user space tools and there is a chance that there are other tools or
-> > scripts that parse the dump to restore the binary contents.
-> 
-> Exactly. Also, just simply using the diff command over two dumps
-> without being polluted by any additions on one side or the other is very
-> convenient.
+On Thu, Aug 22 2024, Luis Henriques (SUSE) wrote:
 
-I got it, then provide a good examples in the cover letter / commit message,
-documentation, and test cases.
+> If, while doing a read, the inode is updated and the size is set to zero,
+> __ceph_sync_read() may not be able to handle it.  It is thus easy to hit a
+> NULL pointer dereferrence by continuously reading a file while, on another
+> client, we keep truncating and writing new data into it.
+>
+> This patch fixes the issue by adding extra checks to avoid integer overfl=
+ows
+> for the case of a zero size inode.  This will prevent the loop doing page
+> copies from running and thus accessing the pages[] array beyond num_pages.
+>
+> Link: https://tracker.ceph.com/issues/67524
+> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+> ---
+> Hi!
+>
+> Please note that this patch is only lightly tested and, to be honest, I'm
+> not sure if this is the correct way to fix this bug.  For example, if the
+> inode size is 0, then maybe ceph_osdc_wait_request() should have returned
+> 0 and the problem would be solved.  However, it seems to be returning the
+> size of the reply message and that's not something easy to change.  Or ma=
+ybe
+> I'm just reading it wrong.  Anyway, this is just an RFC to see if there's
+> other ideas.
+>
+> Also, the tracker contains a simple testcase for crashing the client.
 
-After thinking more about this, if the caller asked for DUMP_PREFIX_NONE,
-that's what they get if they add also SKIP flag. So, maybe here is no
-problem after all :-)
+Just for the record, I've done a quick bisect as this bug is easily
+reproducible.  The issue was introduced in v6.9-rc1, with commit
+1065da21e5df ("ceph: stop copying to iter at EOF on sync reads").
+Reverting it makes the crash go away.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Cheers,
+--=20
+Lu=C3=ADs
 
+
+>  fs/ceph/file.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index 4b8d59ebda00..dc23d5e5b11e 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -1200,9 +1200,9 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_=
+t *ki_pos,
+>  		}
+>=20=20
+>  		idx =3D 0;
+> -		if (ret <=3D 0)
+> +		if ((ret <=3D 0) || (i_size =3D=3D 0))
+>  			left =3D 0;
+> -		else if (off + ret > i_size)
+> +		else if ((i_size >=3D off) && (off + ret > i_size))
+>  			left =3D i_size - off;
+>  		else
+>  			left =3D ret;
+> @@ -1210,6 +1210,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_=
+t *ki_pos,
+>  			size_t plen, copied;
+>=20=20
+>  			plen =3D min_t(size_t, left, PAGE_SIZE - page_off);
+> +			WARN_ON_ONCE(idx >=3D num_pages);
+>  			SetPageUptodate(pages[idx]);
+>  			copied =3D copy_page_to_iter(pages[idx++],
+>  						   page_off, plen, to);
+> @@ -1234,7 +1235,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_=
+t *ki_pos,
+>  	}
+>=20=20
+>  	if (ret > 0) {
+> -		if (off >=3D i_size) {
+> +		if ((i_size >=3D *ki_pos) && (off >=3D i_size)) {
+>  			*retry_op =3D CHECK_EOF;
+>  			ret =3D i_size - *ki_pos;
+>  			*ki_pos =3D i_size;
+>
 
 
