@@ -1,123 +1,200 @@
-Return-Path: <linux-kernel+bounces-303048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A16B296069A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:02:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 541DC960687
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D800F1F23066
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:02:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 977C7B2315C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653D619EEDB;
-	Tue, 27 Aug 2024 10:02:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD23719E7DC;
+	Tue, 27 Aug 2024 09:59:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="f/UHflwO"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="KmI89gKn";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dolzJs3+"
+Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C186519E7E4
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 10:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C78F19D8A4;
+	Tue, 27 Aug 2024 09:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724752922; cv=none; b=FNgqmgQiUsBPZsaL7KZHepVMX4j2h6hyYfJuIvC4zvKMrny3HTOl7hqZ9BiIy5Gdn/NVHCIxCD4dmKaU1vj04m4nmeNkhNY/Fr5nh5fTzufGXEqZB9u8upKeHU8Q03bWqUY56LMXPraLeVA1WeG3b626N0WCsdKqTXkWQv4sIIs=
+	t=1724752789; cv=none; b=O1OnyXJo9q3nSR/rM+IXFnd4vXFkqXWiM/hNLdJF9hQG+hZQZzd7C+HnEct+yv+PCRD5FjDX7cNQDUfkh/gfrHmZh7MFSnKs5uyOmp+no9d4mDtEL1WVWmaFPBZO+21OILek+ZjojBl3AE/nMXBbL3n2uX9RcoSuYE0gefaqNZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724752922; c=relaxed/simple;
-	bh=eon9nKAT8aprMkogaxLTrCwGM6rlkI2aZ3rSwA+swpU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=J6d0FBf8ikMvhty4PzHoLngI1hz0nJOU8SuSwJBnmN/V62Lsarh0PgN7XaNPG+PUkcS2axxRVJcUKA0cRyZN8sjbmt33G0RUYIF63dCsINv7YgS0+nWFW2V2ryJQGEsN9aoUKJqh10WrfhAquBGzew8IQWgGoYVhUcNxKQ5ukJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=f/UHflwO; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7667C1C0002;
-	Tue, 27 Aug 2024 10:01:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724752919;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QXbrQYbwu05I9QcdP0EOzRyW3VmbUgQZEfA/b5hJq/c=;
-	b=f/UHflwOwNjX3GLS9YGAaiQzzbpHgXjZD2iKJxHwfggRH236UQ+HPVCJrjoFw5d3ryrdYt
-	UGfDhaQg72qAQ7eepZub2VOUG+P/qmD8NNgVlad7B9nZ9HO0iCxTHp8RbDuhso7J7XGXhj
-	MEErdzUe0CdmiOdZiw8lQaGFhLzQMsV+pTU4duPycmHj0YciJsl468heZGR/7vFU4xG0fp
-	tT9X0z5qV1s2nNx2dI4NZebpldrhYxYF3Pt3Ng1p6HRx6mMd/i7duXlUm4Kk1hhE68D7nl
-	DFwitAm/TWZc4jnvRYXatENvxI/Op82NoK64JJKrqu+BUmzurHxuGrhgMPhn2w==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Tue, 27 Aug 2024 11:57:41 +0200
-Subject: [PATCH v2 6/6] drm/vkms: Add missing check for CRTC initialization
+	s=arc-20240116; t=1724752789; c=relaxed/simple;
+	bh=0gIKJBCJIngU14neZhUiwBiIsIWjLZ6FZjKB9uQSRz0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=GJ45FmUSaylwdUKFTAMTrZU/XEEHiMqb9YtrbvZlWE8U4PUIPJIXltUnGqBEppVrE9HTQSUp8kHTwIZ8WfrhAIJc28fQB86BjrX+UDQ1BDvgkwVpnO/TI0UPzTA7iPK1lHyYN+TyvrhBiK8DMX7d1HbEwiVAWZ0JV9aw+6WybYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=KmI89gKn; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dolzJs3+; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 779D8138F115;
+	Tue, 27 Aug 2024 05:59:46 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-04.internal (MEProxy); Tue, 27 Aug 2024 05:59:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1724752786;
+	 x=1724839186; bh=5+ahPqz+wUqbchfcJRTGxUBq/MCrVrzFJecPrVS+88Q=; b=
+	KmI89gKntQkahciViBufBQ4WzAtQN/aF+d95+6TFPYmOMeqUNUJW1TsSGLJvfn6c
+	kbv0CZT3Rd8sUBNVGxo6fKVhHRR9jYLLD9icMIqii+t1MSigsQnoB3eXhQnFKlec
+	zlGLwyyFXA6Nqk2jUPwL3FZFah8kXXfddtVd7SRWUaiLgtOhdPtDBA3bSIGShEo6
+	BRsq1s3L+HRO/WDAgjYVEXaiOINQ4PDprEj1PpIu1449Ir41OOC5XRjH9WJq4Qzc
+	ynHXBsEGGUXYFQCffLBNl9U/xXXtcCP7YJ9mZGtbeldaHHxurZGaPNp2euiIiVOw
+	nmF2seofWxaxTCZUwgLyRQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724752786; x=
+	1724839186; bh=5+ahPqz+wUqbchfcJRTGxUBq/MCrVrzFJecPrVS+88Q=; b=d
+	olzJs3+CtSItImG0V2R2GV7dnVjPwKFq0tB9Oqj0QHdiseJnJz/hbjRnfqzK59TQ
+	4OEguW8eddonLXp/V6CdygKNXEyVlKU+uA615eI2ldkGC19fh6g9TNGVlRQvAn5/
+	pc0gwnPYAUiFvjsrX0iF1P3aEC/0CB52TY7hpYH2O13QHB/fkHp29fxu4TwHKasZ
+	XOwh10djCwqhXZe2OiZnJlElONRxvLPYe9s/Iji1A0KoLyanNEU1jlu+nRAXqiKr
+	PClEh0owH+B1Qx+P37Qs5C0fMxF9c/jH4ophiLQXXAjklmFuxYAC8f7L466w/STP
+	g6+msN/rshiWkZeJMKb1w==
+X-ME-Sender: <xms:kaPNZnxaoi8GRNjPUmD-oT_dBtAdLXT1QzzZD4sVI7hMUFpTtTIxJw>
+    <xme:kaPNZvQKsl_-mQQdrKL5rzhaQR1xHpqdsvjESFb_Nlu05uGPYM9sDrI49NafYafTB
+    Q2J0TF8adk7tV8MsxQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeftddgvddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudeg
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprh
+    gtphhtthhopehvihhntggvnhiiohdrfhhrrghstghinhhosegrrhhmrdgtohhmpdhrtghp
+    thhtoheptghhrhhishhtohhphhgvrdhlvghrohihsegtshhgrhhouhhprdgvuhdprhgtph
+    htthhopehluhhtoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepgiekieeskhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtg
+    hpthhtohepuggrvhgvrdhhrghnshgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgt
+    phhtthhopehlihhnuhigphhptgdquggvvheslhhishhtshdrohiilhgrsghsrdhorhhgpd
+    hrtghpthhtohepthihthhsohesmhhithdrvgguuh
+X-ME-Proxy: <xmx:kaPNZhU69lzcxUhSfacmpZp7nfIUu-P7-meYsy9xFT1mFU5U8_Hbow>
+    <xmx:kaPNZhgFRdOKbLJ6FHKyj-81WbN-KONGrDqIc499j0liw-VpW25Ldg>
+    <xmx:kaPNZpB_WrWZ8OYAkaACQjECKZxYxGJoTqUjS9fbUD9Hh98ucYyh_g>
+    <xmx:kaPNZqJMyn_RxonKjNSIC_IUqHH2_tULeMDUxTH-bvHi3OcTR3NGhQ>
+    <xmx:kqPNZhxUL02RTIgdMAntEKQbrMDQoOxizRrf2TZ6lMpklbuTz06Gkhj->
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 651AE222006F; Tue, 27 Aug 2024 05:59:45 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Date: Tue, 27 Aug 2024 11:59:25 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jason A . Donenfeld" <Jason@zx2c4.com>,
+ "Christophe Leroy" <christophe.leroy@csgroup.eu>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, "Andy Lutomirski" <luto@kernel.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Vincenzo Frascino" <vincenzo.frascino@arm.com>,
+ "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, Linux-Arch <linux-arch@vger.kernel.org>
+Message-Id: <cb66b582-ba63-4a5a-9df8-b07288f1f66d@app.fastmail.com>
+In-Reply-To: <Zs2RCfMgfNu_2vos@zx2c4.com>
+References: 
+ <b8f8fb6d1d10386c74f2d8826b737a74c60b76b2.1724743492.git.christophe.leroy@csgroup.eu>
+ <defab86b7fb897c88a05a33b62ccf38467dda884.1724747058.git.christophe.leroy@csgroup.eu>
+ <Zs2RCfMgfNu_2vos@zx2c4.com>
+Subject: Re: [PATCH] random: vDSO: Redefine PAGE_SIZE and PAGE_MASK
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240827-google-vkms-managed-v2-6-f41104553aeb@bootlin.com>
-References: <20240827-google-vkms-managed-v2-0-f41104553aeb@bootlin.com>
-In-Reply-To: <20240827-google-vkms-managed-v2-0-f41104553aeb@bootlin.com>
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
- Melissa Wen <melissa.srw@gmail.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
- Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net, 
- linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com, 
- miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com, 
- seanpaul@google.com, nicolejadeyee@google.com, 
- Louis Chauvet <louis.chauvet@bootlin.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1030;
- i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=eon9nKAT8aprMkogaxLTrCwGM6rlkI2aZ3rSwA+swpU=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBmzaQPRDVNlHwwkHSIsyM3580wfuLwKuybATZ3e
- f1fTFkk8FaJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZs2kDwAKCRAgrS7GWxAs
- 4q3VD/9O53/2TSWKz6e2kcpm9dLhofqv1w+m5klIZ8QHKUHuTMyrKFAtsz1h8R4ElpWZXr1sXAc
- ncPE46mxY559k5KaL+fEwK9mtU9XRbD6OczzCmiRCTCU0BJKCDa/KMJgd6F63ITacdZF5JcuFkR
- Xv9M1hgHh92mTXp+XdZwTKOoVsDMWtXIJW9xYQp9cLTd4kfAkkzqaK3D6/0Ql+9sPN8oPHSkZfs
- /0NDi55NfeUllmYA9I+EeKjqp25WxLxmbj+JrWgmVjZ9aVYXvfmazK3bnMXWIEMDG6pj8+Uexf+
- qVjJ4JqtmYOlDsKGWdWUz91jgWQH3Z1pI5wg6XvKAI12bL1p3+2t0T2np0+LyrdqxJr4phgT2SA
- jtgP6gKCABQaoE9Eqmfn0YSGqjQ+O2esSfx5+xUb6bCFDY5LB/bBpyJbrJ1244ZHVN9FPxvukb5
- NraOGZ+CTOFSx6mbdC1clO6qfIKgzwqQ7SARti31N+crDKbzvHlfdjmp/U9m2AvlOzQc1bwrgUZ
- ZgUou1GjYGxQGxAmKCay9KupgL/3FoKFL6CJ5x11dwoN9GNjvXz+3kxtbHyaSDFJN62TtEmpNwS
- /0Kih70wh2BRmK81LRVMjhj5k6oHVuwbr3Ge7Ra+TnoBg+w8S7kSm9g0CTIrBgehCCskkoQ5SdH
- qC3+Dhf6xAYwRDA==
-X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
- fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
-X-GND-Sasl: louis.chauvet@bootlin.com
 
-CRTC initialization call drm_mode_crtc_set_gamma_size without the proper
-checks, introduce this check.
+On Tue, Aug 27, 2024, at 10:40, Jason A. Donenfeld wrote:
+> I don't love this, but it might be the lesser of evils, so sure, let's
+> do it.
+>
+> I think I'll combine these header fixups so that the whole operation is
+> a bit more clear. The commit is still pretty small. Something like
+> below:
+>
+> From 0d9a3d68cd6222395a605abd0ac625c41d4cabfa Mon Sep 17 00:00:00 2001
+> From: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Date: Tue, 27 Aug 2024 09:31:47 +0200
+> Subject: [PATCH] random: vDSO: clean header inclusion in getrandom
+>
+> Depending on the architecture, building a 32-bit vDSO on a 64-bit kernel
+> is problematic when some system headers are included.
+>
+> Minimise the amount of headers by moving needed items, such as
+> __{get,put}_unaligned_t, into dedicated common headers and in general
+> use more specific headers, similar to what was done in commit
+> 8165b57bca21 ("linux/const.h: Extract common header for vDSO") and
+> commit 8c59ab839f52 ("lib/vdso: Enable common headers").
+>
+> On some architectures this results in missing PAGE_SIZE, as was
+> described by commit 8b3843ae3634 ("vdso/datapage: Quick fix - use
+> asm/page-def.h for ARM64"), so define this if necessary, in the same way
+> as done prior by commit cffaefd15a8f ("vdso: Use CONFIG_PAGE_SHIFT in
+> vdso/datapage.h").
+>
+> Removing linux/time64.h leads to missing 'struct timespec64' in
+> x86's asm/pvclock.h. Add a forward declaration of that struct in
+> that file.
+>
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
 
-Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
----
- drivers/gpu/drm/vkms/vkms_crtc.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+This is clearly better, but there are still a couple of inaccuracies
+that may end up biting us again later. Not sure whether it's worth
+trying to fix it all at once or if we want to address them when that
+happens:
 
-diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_crtc.c
-index ff55099c86ce..39802c928bdf 100644
---- a/drivers/gpu/drm/vkms/vkms_crtc.c
-+++ b/drivers/gpu/drm/vkms/vkms_crtc.c
-@@ -293,7 +293,12 @@ struct vkms_crtc *vkms_crtc_init(struct vkms_device *vkmsdev, struct drm_plane *
- 	}
- 	drm_crtc_helper_add(&vkms_crtc->base, &vkms_crtc_helper_funcs);
- 
--	drm_mode_crtc_set_gamma_size(&vkms_crtc->base, VKMS_LUT_SIZE);
-+	ret = drm_mode_crtc_set_gamma_size(&vkms_crtc->base, VKMS_LUT_SIZE);
-+	if (ret) {
-+		DRM_DEV_ERROR(vkmsdev->drm.dev, "Failed to set gamma size\n");
-+		return ERR_PTR(ret);
-+	}
-+
- 	drm_crtc_enable_color_mgmt(&vkms_crtc->base, 0, false, VKMS_LUT_SIZE);
- 
- 	spin_lock_init(&vkms_crtc->lock);
+>  #include <linux/array_size.h>
+> -#include <linux/cache.h>
+> -#include <linux/kernel.h>
+> -#include <linux/time64.h>
+> +#include <linux/minmax.h>
 
--- 
-2.44.2
+These are still two headers outside of the vdso/ namespace. For arm64
+we had concluded that this is never safe, and any vdso header should
+only include other vdso headers so we never pull in anything that
+e.g. depends on memory management headers that are in turn broken
+for the compat vdso.
 
+The array_size.h header is really small, so that one could
+probably just be moved into the vdso/ namespace. The minmax.h
+header is already rather complex, so it may be better to just
+open-code the usage of MIN/MAX where needed?
+
+>  #include <vdso/datapage.h>
+>  #include <vdso/getrandom.h>
+> +#include <vdso/unaligned.h>
+>  #include <asm/vdso/getrandom.h>
+> -#include <asm/vdso/vsyscall.h>
+> -#include <asm/unaligned.h>
+>  #include <uapi/linux/mman.h>
+> +#include <uapi/linux/random.h>
+> +
+> +#undef PAGE_SIZE
+> +#undef PAGE_MASK
+> +#define PAGE_SIZE (1UL << CONFIG_PAGE_SHIFT)
+> +#define PAGE_MASK (~(PAGE_SIZE - 1))
+
+Since these are now the same across all architectures, maybe we
+can just have the PAGE_SIZE definitions a vdso header instead
+and include that from asm/page.h.
+
+Including uapi/linux/mman.h may still be problematic on
+some architectures if they change it in a way that is
+incompatible with compat vdso, but at least that can't
+accidentally rely on CONFIG_64BIT or something else that
+would be wrong there.
+
+     Arnd
 
