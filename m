@@ -1,224 +1,182 @@
-Return-Path: <linux-kernel+bounces-302916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F310C9604FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:56:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52CF3960500
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AABE6283AE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:56:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6F23B21069
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF11199926;
-	Tue, 27 Aug 2024 08:56:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D1B19923A;
+	Tue, 27 Aug 2024 08:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aiGdvWAv"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="qgcQxVOY"
+Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010039.outbound.protection.outlook.com [52.101.128.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FD51990CF
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724748985; cv=none; b=cuKSLN+5Y1vu9dVtOejqIdRujT2e2lp//Jj2XqB6yF4GYiPklr/2vdyYIKYKRFpVLX02voQwdFLZ7RecPqVvViHXJy399HACyh9zVwsSnvYAvvmr5d8rc+ACUR2zLbNwkrxnCGreKrKks/4XOtYh6fcks2pnqoB61dqZhL65eiE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724748985; c=relaxed/simple;
-	bh=KnshcSSjPgWEKcRoguKRkHR8KeIvH8sTByntzoFaFYA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qy4g4KJ/gKXuoytYF6ls0KUn1fN6iR7ECTHCADMV+yK1RDdRC97e6U2F2aHKoayRfUj889ofUQvwkcKpvmEIYcFcK8KDbtFrw7mvDWqfdh93vXApHMR7LuyD7SNMXaQxOs6mlMF9w+DqKAHKeuv/0MsutDsG3hq06pIlgUYDoww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aiGdvWAv; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-201fae21398so36262225ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 01:56:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724748983; x=1725353783; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=MCjpA1BkM7XAvfhNc3VnANr4WtSUCNv2xJfm2SvPqTg=;
-        b=aiGdvWAvtwTFE24lYyjFqyUeCcb+TLREeHNipukypn6EvDdulIT9kwKJjIIVA7hSJp
-         Zw80wXQkveCs/iMWfAp0igykj1dv790iSxJrsueLDQ+xWJNZBu6vuyfPUH6YtXAcdmU6
-         JstcY3SNb/6co/8cuoF9tIk/uo9h6jj+qTmDXrYkeh4NJvDcc9PAiHyD0svhJXxAeg4I
-         gsMt76Ivr1OVVlATZ6L+CK0snXKdIzd6S8scN2ovlsAtTSuSf6bGvsv2qBTGGA3hKPE1
-         I0FURsQO+bDIb6XrZA2JOucHPgupyV1L/nWDnduZZOAfRX3xLwwMAD5vML5FekoJ5edK
-         hAZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724748983; x=1725353783;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MCjpA1BkM7XAvfhNc3VnANr4WtSUCNv2xJfm2SvPqTg=;
-        b=YC+oZMOtAoNR8HdonF62vQAU4UNrvQQU2Sq4eLs66I0/lBEDifw2huXWRn7XDGqk9T
-         /8z45rb9x4XZllQ42io5rASLFemigXV/uyZEZGo036E0Z6Qrrm69sqmJcZ/BIbCeY0a2
-         NI+DxZEzU5S2JWDqm8tnwqVwcDSGwLbU2LCtF/Q2yB3omtfYekd77WHla4eoErWOM3+M
-         5bucohA29ygG+8R5AuVbMvZJ83QdchfjpGH/RFWoK4ISezmTrz8Xi89KmwK7BihjASxf
-         /nWPCO6gYCDfrkPTpVUtxvVJAZTOTJPKudgIYtqGJjTob8Kpwa5RYF4lLlBfVRlbUoYs
-         aAIA==
-X-Forwarded-Encrypted: i=1; AJvYcCVyDGZS4tAat0xmZJGxgZRzoZ7CMdhnRnUl7T0P4XaBlxBYUlUoOWXcS+MEeuyCUCM5BCnuJRDzu2K04ik=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQXT96sOzjnrfNVXsygj8aBU6iYtzIL9VORA2nvpArhQc73tzd
-	tG3wbI+5vnGUzu1TlR3pHERcpmuGUHjtdMgDnOBt84xmGuFvi/xbo1+sf24q6hxVpYAfONYzmDQ
-	=
-X-Google-Smtp-Source: AGHT+IE1rgR8+yyQWa5wIANJNMpAX1XXUQS+uZ8+XMfk9HlE0GmezrZblJ8U8iol6/Rz0qEIFUedJg==
-X-Received: by 2002:a17:903:1210:b0:203:a115:59a2 with SMTP id d9443c01a7336-204df50677fmr30875585ad.54.1724748982807;
-        Tue, 27 Aug 2024 01:56:22 -0700 (PDT)
-Received: from thinkpad ([117.213.96.164])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385ae512bsm78756345ad.259.2024.08.27.01.56.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 01:56:22 -0700 (PDT)
-Date: Tue, 27 Aug 2024 14:26:16 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Subject: Re: [PATCH v3 2/2] PCI/pwrctl: put the bus rescan on a different
- thread
-Message-ID: <20240827085616.v3xzrgyojxd746bv@thinkpad>
-References: <20240823093323.33450-1-brgl@bgdev.pl>
- <20240823093323.33450-3-brgl@bgdev.pl>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8680B158DD0;
+	Tue, 27 Aug 2024 08:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.39
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724749088; cv=fail; b=RPg/w3avbgpHPg/52DlZZ4OKk0dndKYQDe5+M9MxZcF4u8G6utA/lriVios7spZPvF9qsXKa67nPRvHQ6Nqc7BI9ucSKZagwOY4A4vqDLntIuO0pDLOHUqCxBzg8Od2+3yzjeIbs+SJAHv4g96Qu8wlFXK35s9gSeGpZThWfup0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724749088; c=relaxed/simple;
+	bh=pw52ONbiz1mpKdpuTb2Eohk5aKT3RblYiJZpacJng34=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ZK6rEwlNxev7s674jc4nktU8oTN5gsMjmpPz7qCZD12JDJTFbmyUFm4GxEollX3dF6SZ93qJyxdVZ5dI6qBlT4swTb/fhu8sdKi6PNixE/qVqKI7zbFnntohRVF2z/kJdUUeRuyNuJR0KC27asH8EnDhujXHyU6zXP1r0tw0lDY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=qgcQxVOY; arc=fail smtp.client-ip=52.101.128.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZjjSjmeyhebkOYtXURx57btMeUnqmlk6M89fk5Q9irODlw2+BdG2gJYmvzPySCFkV4fNRLyFvlJb8H1Nh0YfkPecUEGt6z58kIohmnW2pXE7HNsr/3b9/wi297PWzraHhVb/gnAD91JElZdJS5Z9fl99FPeoxUNoOehrZpv1BIyhZ6WAQQc7e07mtQESMG2ysOpZh6W8+eZdfcX1UCIwOhk/X9bagFVj0TtaYjskd76P2wnuZbruEL2cryqNbRQvKrJgL18hzceUroIitx6qvtdFMijO9wYx43FBemJ/t68AT0iPtNk1XEb9YgQ7YqTVQgdnhV06K5Lq/yxaWeB2Xw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rOvbItxax8oqxr8kRBnE87x2LRPUEb+hBpTqh2JgQNY=;
+ b=i6PwVmuP2QKYM3IduJ0oG+YPh/63aojH2h2KdgAkQ0PVjSYTBbBoHMOcRHf9HvWRgLnt2J3bsIDjsFo8nByGkTfNII2PnQ1KBj5m9//iSPrzulUaR02k6rjjgiIx1bUsd5MtFr7t9tXwZRsOUdkM+fwYTmXIzZs3lgwavrahVFTB6QLvAuwk4FgebDjhtNrRqCTv6krxxagGpH7S1hNuauh3wug/x5GpD8BDzvAn7Zs3qkRyVJ8tB5+Pe4tPknVsXlWbsKqpif7W4U41VnwyIs9VXOaALZ2IkFf9OI2DnpAryxqObXqTVVIKDVPMnmcD/m/ISQ4EeZb3wVpptg4NAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rOvbItxax8oqxr8kRBnE87x2LRPUEb+hBpTqh2JgQNY=;
+ b=qgcQxVOYIwVI7FdWdFQC7+UaTDO1OZspBW1bfAUiWLtocMgpTcvnbNZx9894Y+VUr+KywbMqe3oVaBIwjKRlQsSkt4x+qR13WojazCKPVHQPFz7wp6TYgGJVWhfLxRQLIWRCdxDDrGtXPG/K1GfcK7hG7PpJ6JWMEqF3x+9CYqSQzNs3D9HXwCbannePFo1ubs6DaJ9QmTak5nj6nmXdId5LV46noOksWtzwM3AWx9QBtzavrGCpUDtGyoJq9FW+UCK/8xjdKp1DnK3OPpPWC81LUVgAQUH5sAWipQ/u7i259iTH3bqE8lHo2rYB5vg+de33rRrB1Z8mjbKAgJIrjQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR0601MB4113.apcprd06.prod.outlook.com (2603:1096:820:31::7)
+ by SEZPR06MB6720.apcprd06.prod.outlook.com (2603:1096:101:183::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Tue, 27 Aug
+ 2024 08:58:03 +0000
+Received: from KL1PR0601MB4113.apcprd06.prod.outlook.com
+ ([fe80::7e85:dad0:3f7:78a1]) by KL1PR0601MB4113.apcprd06.prod.outlook.com
+ ([fe80::7e85:dad0:3f7:78a1%4]) with mapi id 15.20.7897.021; Tue, 27 Aug 2024
+ 08:58:02 +0000
+From: Yan Zhen <yanzhen@vivo.com>
+To: han.xu@nxp.com,
+	haibo.chen@nxp.com,
+	broonie@kernel.org
+Cc: yogeshgaur.83@gmail.com,
+	linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com,
+	Yan Zhen <yanzhen@vivo.com>
+Subject: [PATCH v1] spi: nxp-fspi: Use min macro
+Date: Tue, 27 Aug 2024 16:57:39 +0800
+Message-Id: <20240827085739.3817877-1-yanzhen@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR02CA0014.apcprd02.prod.outlook.com
+ (2603:1096:4:194::19) To KL1PR0601MB4113.apcprd06.prod.outlook.com
+ (2603:1096:820:31::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240823093323.33450-3-brgl@bgdev.pl>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR0601MB4113:EE_|SEZPR06MB6720:EE_
+X-MS-Office365-Filtering-Correlation-Id: e752666b-32ae-4ce1-083e-08dcc6765ba7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|1800799024|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?xpq4QtPaycsXPCwPQt430+yxhhzuloKg0xDb+HgPP7Z+ifWgd8lZbJl3B024?=
+ =?us-ascii?Q?Cv0uVQnGWb0qGe5YIXDVP7+ts/XRDUlNU9+J8tTNLWjpnV4orBygnDOImd/J?=
+ =?us-ascii?Q?Quku21sUJBQz4VBfNIaDkeOgQP30jh0XDGP1j27rDnBqhcU8TxZbtH9pXrbb?=
+ =?us-ascii?Q?+71VQpCO+6hKMjFpzwkQC3JQcZ2FV2N/bs3Tw1VtkCtE7xFHQ9IOlf2jUeQL?=
+ =?us-ascii?Q?Kq1Afql3L9OoW4PxPa41Im3vcn1rQvAm9NfU2c+hOS0OQKgfdpMX3qLD9NBi?=
+ =?us-ascii?Q?vPy7Be1fAImJ838mg+U4R/7xjoHmw4PxAb+LnOt1iXswks775JFV6iHM3KKN?=
+ =?us-ascii?Q?cytnwfzBZORjYJ2D6q53ngXJiW5U1LkziedtfAChAbIrhJ9tQwXvLqBqxXyc?=
+ =?us-ascii?Q?tQ0VUHjB1vmFB9ybFJINewVOp9di2zYpOLy2QxN0aZdk10mzbr1giE8kheHw?=
+ =?us-ascii?Q?oLJ3aIZRg24Ou2m/doWBNRdcB7yqFfNvZXNMBRO4r2ayoCb+hFpJobGc+q+X?=
+ =?us-ascii?Q?JxtnJptZqWhPKLcd9YoCRT/wMJH4wbgqxVmpgIk8Uocjm/hbIBqYUMPulCB+?=
+ =?us-ascii?Q?c2U+5E/WxpRoh9qgWMHpI3gZk6XH+AMIf/+YftSV6lNHJ8Qn0AmOjEyWb9j/?=
+ =?us-ascii?Q?WpAG9z/BJPXFuVslnFljFau0rderhqdReChmjzM20WLKen6VpOy/fl5Beoa5?=
+ =?us-ascii?Q?XdS9djrrBc3oFEnziccMYA8ECeyQdL13rpV9H9+MzsrmkXQRwXv4yk5VRd6A?=
+ =?us-ascii?Q?3VWWMFhc1wdP4ss+tffnXlDiWvPbnrUJ2jzI56Ys7AyTJFpow1wfD2lbRnLV?=
+ =?us-ascii?Q?2tUVzX7UnLNTQlhtTyYAnH0qcN592DIDUhoTkyYYELgiZL8oaSv4Z3fGSh8J?=
+ =?us-ascii?Q?/6FY/hl0nJDI3oFgK94VLZv1rjqfoQ0Dq3ViOXSnLXKDSoQt2Ho9tHoULdXM?=
+ =?us-ascii?Q?GDCQXBRNIJpXIMuvF+H/nSawKA8QXePQ8SLbUJEjV1WrCBYRyaeDI3GewscD?=
+ =?us-ascii?Q?mR3fXR3X/ygoBW+gl/oGpxYnUAgxhv6pmKkAOxTnfN3VcD0sQ/JsIAbyp57N?=
+ =?us-ascii?Q?Z23Xfm8WyZLDmtu6M1DA+nQOCmhbGRZrhrlRbNxoLXvvBWv4iQepJY7Ubm+y?=
+ =?us-ascii?Q?Zj/2fgfpFhszyBskzpg2CTIaMmu9szsDdniRjKqtjhzTdy7xVZ65NN9C1mQI?=
+ =?us-ascii?Q?evhWPHXEnKjpMGcflhS9SkJNGMuYn6v/HoO5R5PgIzlbPPzuP4hJxGkIe0wZ?=
+ =?us-ascii?Q?A9foYpL3ttO9ns6AM8GsYJep9B0GChkZRoC/rUeLi6kU2URAJU0picnszGkR?=
+ =?us-ascii?Q?tm4gVNq+qfsZC54BC9gSywbyhaNHqyh3INIe8VBsjplR5iv9qgJBWjDxX/77?=
+ =?us-ascii?Q?3yWpDdS37equb0HPNTb0Ldaz6NGo18HL3MNy9rzlmdf3lhd5QQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR0601MB4113.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?kAmp1l139uUidWrF+es0vhhlEdNs9bvDy/KkGMzl2ShH/PwCwmt3zLnu6BCg?=
+ =?us-ascii?Q?Zy8sfGCMkj92CDy057cPiq51+Z6zvoAwy3SYasa/T3ODpr/CU6HlCdlm/HmO?=
+ =?us-ascii?Q?HUPhn+gvBSkdRjq7oYv+E0wUXY4q2Ym+NmcL/QEZ57mok/34AHacm9Vcw+yk?=
+ =?us-ascii?Q?RZ+zPTFwJea4Qs6siufjAZricoR0Cj5XIXuwOzyKUCx/tpHS8FzQqx4VblqH?=
+ =?us-ascii?Q?X47+SA541WJLd2wy0mLxZpUekRfIUEOVhmD1H+ZzAyJUXvOlpivZqlItOv8d?=
+ =?us-ascii?Q?1y6s1VhqZ37le2p1++gyN/aeV6XHkU5EPQOxFIs2nmFXAruVEBerQPB9vpRB?=
+ =?us-ascii?Q?D090B+rnmu26pkeeXNbGXAJgvz9aJyBRXS3YjV8p76t6Xf/ShVvAlojiLojx?=
+ =?us-ascii?Q?E8WWkAhQUceiQuYzEdzLv4WmqD/5lR3a2oNfqO/wjnrhier3Kkl8sX/S9Qur?=
+ =?us-ascii?Q?GAY5wYPLoNMwLyxXOICqc0w0PQMqXa5YSsOMG19Lo7A+9Z6As7p0WaHYEKxp?=
+ =?us-ascii?Q?QnFYTlc018rRgmbD4jNP8Tju+btPaEmxrpLgLAg6ZWS87RGBtaDLOhBqg2xn?=
+ =?us-ascii?Q?wSbERII6Jii14qCElfzEHKTcg1XrM9SUIjLNxAKExaCmoSGXtmadQI9p4xlq?=
+ =?us-ascii?Q?G8xayVbCWMKLDXS1lg1LVoQGEt7LYkcWr9XdmnmAMjW1BjHA4PlKSj4K40L1?=
+ =?us-ascii?Q?Bkx8t85on4alGaT4SGAjxJnHVXEcAZ8sRx4xXYd459//TRY/i3aWR89SbCA5?=
+ =?us-ascii?Q?DLHq8UDeswwTmXAkNqz+w0iGQ6WbTN9X7IsknWSFN8wlwSY1cLv8dL5+vmqh?=
+ =?us-ascii?Q?E9nb7HAtaseQfaJQ5dtVvdRH1Iqvx4OwQKnyO8IeTcO4S8lDbX3t4AcXtyb4?=
+ =?us-ascii?Q?e6ApSxdxVxKQ6DrDjXG+9sReJoSDsJXnP5ecqhg1dw7gqp5DpOWmj34J4P98?=
+ =?us-ascii?Q?LX/LkL1okTga+O62viupQZIuMQBWVV85HUsVavBoDbu0tJkmazBq9CYQw/HN?=
+ =?us-ascii?Q?EXKFNxNWHOGZnLVv2l7kXngy5lIf3Y/VKdDdzZqN5MBXRYz/8DRxOdEMotQQ?=
+ =?us-ascii?Q?B8FS/hqc5pXFDswxKRI4DdP0toB23jNdIJUsujPnqU7qPsekQ0QKhgCLPSJW?=
+ =?us-ascii?Q?HMCW2p7suK9h0iQC6p8M0xJ0f0CQXpCnQtwViEWxiyg7crjnSjhZwAZd1llx?=
+ =?us-ascii?Q?MWfOiz1XBZxQi/hmMQeEiw9zECamqB2ETAinXUuVfOYDZsfAPd4TsbYPGpyV?=
+ =?us-ascii?Q?uNDKnZE1kDVI9FbLDgDFCfTIjWT6VyahIqhTqEqK/ERVAxvyvTcfMCw/ZcZ/?=
+ =?us-ascii?Q?j7RASaoq2nhSyois/B8OOBVZFAaiZA3SJhxydglmyxbli0y0O4na9UhR2NHR?=
+ =?us-ascii?Q?kx1koTNHDRlCWdDVkLUURwAjIwbrK4st762nhHy7Ib6o97rKFnwwky5nJAd0?=
+ =?us-ascii?Q?+f65M2RwuLjVAS0Ww9MAPNdf7XtKKZqqpNHWr820A9JcoOLhqlcjsg6vOEJ8?=
+ =?us-ascii?Q?DUyEKxIdjtU+oNDUlZx1TSEN/VYrwc6beUIADEgm+ByfmbU8HjwuhrPfCy/s?=
+ =?us-ascii?Q?zaTy6Wikc4+bV5JGZpY8fP2biW/TgiKDv+YT4VbJ?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e752666b-32ae-4ce1-083e-08dcc6765ba7
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR0601MB4113.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 08:58:02.7406
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3K4Pi+tLOI3eq3+Ze6w46m0ZaTKPEOzlDjEJX2YFa2WkAOHRBoCaYeYWEjTJ6R9aupPtGtFM15/gck1xAtEjjQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6720
 
-On Fri, Aug 23, 2024 at 11:33:23AM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> If we trigger the bus rescan from sysfs, we'll try to lock the PCI
+When the original file is guaranteed to contain the minmax.h header file
+and compile correctly, using the real macro is usually 
+more intuitive and readable.
 
-I think the first 'we' is user and second 'we' is PCI and pwrctl drivers. If so,
-it should be spelled out to make it clear.
+Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+---
+ drivers/spi/spi-nxp-fspi.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> rescan mutex recursively and deadlock - the platform device will be
-> populated and probed on the same thread that handles the sysfs write.
-> 
-
-A little bit rewording could help here:
-
-'When a user triggers a rescan from sysfs, sysfs code acquires the
-pci_rescan_remove_lock during the start of the rescan. Then if a platform
-device is created, pwrctl driver may get probed to control the power to the
-device and it will also try to acquire the same lock to do the rescan after
-powering up the device. And this will cause a deadlock.'
-
-> Add a workqueue to the pwrctl code on which we schedule the rescan for
-> controlled PCI devices. While at it: add a new interface for
-> initializing the pwrctl context where we'd now assign the parent device
-> address and initialize the workqueue.
-> 
-> Fixes: 4565d2652a37 ("PCI/pwrctl: Add PCI power control core code")
-> Reported-by: Konrad Dybcio <konradybcio@kernel.org>
-
-Don't we need 'Closes' link these days? I hope this is reported in ML.
-
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-With above changes,
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-- Mani
-
-> ---
->  drivers/pci/pwrctl/core.c              | 26 +++++++++++++++++++++++---
->  drivers/pci/pwrctl/pci-pwrctl-pwrseq.c |  2 +-
->  include/linux/pci-pwrctl.h             |  3 +++
->  3 files changed, 27 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pci/pwrctl/core.c b/drivers/pci/pwrctl/core.c
-> index feca26ad2f6a..01d913b60316 100644
-> --- a/drivers/pci/pwrctl/core.c
-> +++ b/drivers/pci/pwrctl/core.c
-> @@ -48,6 +48,28 @@ static int pci_pwrctl_notify(struct notifier_block *nb, unsigned long action,
->  	return NOTIFY_DONE;
->  }
->  
-> +static void rescan_work_func(struct work_struct *work)
-> +{
-> +	struct pci_pwrctl *pwrctl = container_of(work, struct pci_pwrctl, work);
-> +
-> +	pci_lock_rescan_remove();
-> +	pci_rescan_bus(to_pci_dev(pwrctl->dev->parent)->bus);
-> +	pci_unlock_rescan_remove();
-> +}
-> +
-> +/**
-> + * pci_pwrctl_init() - Initialize the PCI power control context struct
-> + *
-> + * @pwrctl: PCI power control data
-> + * @dev: Parent device
-> + */
-> +void pci_pwrctl_init(struct pci_pwrctl *pwrctl, struct device *dev)
-> +{
-> +	pwrctl->dev = dev;
-> +	INIT_WORK(&pwrctl->work, rescan_work_func);
-> +}
-> +EXPORT_SYMBOL_GPL(pci_pwrctl_init);
-> +
->  /**
->   * pci_pwrctl_device_set_ready() - Notify the pwrctl subsystem that the PCI
->   * device is powered-up and ready to be detected.
-> @@ -74,9 +96,7 @@ int pci_pwrctl_device_set_ready(struct pci_pwrctl *pwrctl)
->  	if (ret)
->  		return ret;
->  
-> -	pci_lock_rescan_remove();
-> -	pci_rescan_bus(to_pci_dev(pwrctl->dev->parent)->bus);
-> -	pci_unlock_rescan_remove();
-> +	schedule_work(&pwrctl->work);
->  
->  	return 0;
->  }
-> diff --git a/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c b/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c
-> index c7a113a76c0c..f07758c9edad 100644
-> --- a/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c
-> +++ b/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c
-> @@ -50,7 +50,7 @@ static int pci_pwrctl_pwrseq_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> -	data->ctx.dev = dev;
-> +	pci_pwrctl_init(&data->ctx, dev);
->  
->  	ret = devm_pci_pwrctl_device_set_ready(dev, &data->ctx);
->  	if (ret)
-> diff --git a/include/linux/pci-pwrctl.h b/include/linux/pci-pwrctl.h
-> index 45e9cfe740e4..0d23dddf59ec 100644
-> --- a/include/linux/pci-pwrctl.h
-> +++ b/include/linux/pci-pwrctl.h
-> @@ -7,6 +7,7 @@
->  #define __PCI_PWRCTL_H__
->  
->  #include <linux/notifier.h>
-> +#include <linux/workqueue.h>
->  
->  struct device;
->  struct device_link;
-> @@ -41,8 +42,10 @@ struct pci_pwrctl {
->  	/* Private: don't use. */
->  	struct notifier_block nb;
->  	struct device_link *link;
-> +	struct work_struct work;
->  };
->  
-> +void pci_pwrctl_init(struct pci_pwrctl *pwrctl, struct device *dev);
->  int pci_pwrctl_device_set_ready(struct pci_pwrctl *pwrctl);
->  void pci_pwrctl_device_unset_ready(struct pci_pwrctl *pwrctl);
->  int devm_pci_pwrctl_device_set_ready(struct device *dev,
-> -- 
-> 2.43.0
-> 
-
+diff --git a/drivers/spi/spi-nxp-fspi.c b/drivers/spi/spi-nxp-fspi.c
+index 88397f712a3b..fda902aa5815 100644
+--- a/drivers/spi/spi-nxp-fspi.c
++++ b/drivers/spi/spi-nxp-fspi.c
+@@ -756,8 +756,7 @@ static int nxp_fspi_read_ahb(struct nxp_fspi *f, const struct spi_mem_op *op)
+ 			iounmap(f->ahb_addr);
+ 
+ 		f->memmap_start = start;
+-		f->memmap_len = len > NXP_FSPI_MIN_IOMAP ?
+-				len : NXP_FSPI_MIN_IOMAP;
++		f->memmap_len = max(len, NXP_FSPI_MIN_IOMAP);
+ 
+ 		f->ahb_addr = ioremap(f->memmap_phy + f->memmap_start,
+ 					 f->memmap_len);
 -- 
-மணிவண்ணன் சதாசிவம்
+2.34.1
+
 
