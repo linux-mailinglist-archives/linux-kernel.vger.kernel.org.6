@@ -1,132 +1,163 @@
-Return-Path: <linux-kernel+bounces-303888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15CF4961685
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:13:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AABF6961688
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:13:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9A231F2163B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:13:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE0FA1C22EBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0E31D3180;
-	Tue, 27 Aug 2024 18:12:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CACB1D27A0;
+	Tue, 27 Aug 2024 18:13:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MqRSE37Q"
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="T8IGj4LS"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B111A1D279D
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 18:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3090B1D2784
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 18:13:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724782355; cv=none; b=Z1L/Tm4zd8+Mpil2SWAepdtSNTbmpM5hM2NEO2dK4pdbzVXirUlT7ORVld3Huz+vHOI0VXYdInWnG8ONsiGTOMh6gqZ9rYxvtVSLHJoODbPuEOeXlg9QywI9Cf0+OGRWa5AqdAbCp2twDy4IpEwgTx2Eh2M4rrPUpqqdQiuiEE8=
+	t=1724782391; cv=none; b=B/CnummVG1ehta8xR6H0l3ODOFlZrHdKI3zysLSDBlug74hcxd5qgM1SybOrZWaTORhpg18T20BgzQeQgIzaYaiQcGOmx+cQ1YIVU1KiM/caTEScJQBhB518HboRcAtNswIbuYp807TiRbOA42UIFoVEeD3pULbBxnW7xbSEgy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724782355; c=relaxed/simple;
-	bh=2Gq+2musOhFx/RMETG21n43RSloaFRXCaGyo+L3E4Wg=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LUP7ekptteE9oMzdjbGGwCDd9LQ5z0DiurpzTWN5IWJk6Fm+oqCFugOcWYTlCPCalZev5lLyhxRsAC1Yqi953cya1RwzJ2NvFOun+kdfyQ98y/bD+8X0QlGjpkhSmYeqxhKHwS9No2pSwLdltJeRr9UFbstc2XSv9/eilOCPku8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MqRSE37Q; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3db16129143so549410b6e.0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:12:33 -0700 (PDT)
+	s=arc-20240116; t=1724782391; c=relaxed/simple;
+	bh=VcDmWN5tuvcf9Gn2Ph/J9APylvM2kII9TBKe7Yws0B8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BWepz65HSn2s+XRMg2QIiDqph3DHQ6itkgVYTbWpSXP1VqkkWz5sQSI6jS7cLNY5hJWnTe7tkkxL3FjqgtMHhFT7oCuDyxXWyrjawQJE5U5qkJVt903vUeNrjRXTkT6lc+7RAY79cK29hKafidvQjlMuh79uVQH6aUVu7HAeXS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=T8IGj4LS; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-714262f1bb4so4251539b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:13:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724782353; x=1725387153; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/+UZugxSnKhmm7RFCDsmleDRPP8DXg1UAuzoT1y4+P4=;
-        b=MqRSE37QYR6tDVPksZ7r+UQJrE1wWQCz/ZDGXZEHnPoIqYDPTHnyBBqhGboHLS1N/D
-         Zkkc4v1QBEabawegSsFJrvVa3OFdLh/WNjVnbX9nLoDcXwLAKiMScsCpmDtuxs/6vhm/
-         hkbkbf2/Nc5eUvt8Vy15xLvTTaH8RqjOeIAvM=
+        d=ventanamicro.com; s=google; t=1724782389; x=1725387189; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MPA+hJJLDVmD4KICeVltx2lJ4690a/Dvth1Aghkw/GI=;
+        b=T8IGj4LSz6ZqOTtZdiBqpcdDSVYPZqZuDsAAKj8WVbHRE3Sgd6f6SB3cz6Z7eXOAd2
+         AWMn2InNC3ojBFKzP7plIFim6q0XazjhM406gIemkkMQ5q10ODD/aQPI5NZrMkevk0rU
+         f+mLezGsWusptwHZgjD9UK+D5M6Sy7Ptz8AlR4nd6a6vIYOqctIrb5rxZeNqJijVt2PG
+         g9KhzpkK1S4zE5ZQZiH8kQ0ObtvJ1f39J9cvTz0Pe2m0MflufXIVqslTKzhzIahnVdhg
+         xY7NjV0y8vs0TjnmJ9wH+3WsHAVn9YSedznZlJrMZ+fSS8vRH3JqHXoJxlExqqUVx1f/
+         25Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724782353; x=1725387153;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/+UZugxSnKhmm7RFCDsmleDRPP8DXg1UAuzoT1y4+P4=;
-        b=BsQLr9qIhPuOHlvvhqEnjk2XSO7ePPnq1gEZBfe59WE8igoKJUzOFjgSvl8Am5IMqp
-         Z3kr203p+nqC1giJ2+AOnr7Jc8LctaDLT4Ol1PrxvwNh5NCVy0xzea6AOuV6D1AahgkK
-         RrcWe+3EYyNVUDrELIBnZw+5TDMExNr+rQZ5r1vdZDoCg45zqEEqRrq+Bb/Lm8e5TA9E
-         4YaabMzgh596FctaLhd2cumHIw1jjZ2NkjThEX0zpX3e7RKzVTKjLYld3xqGX77nBEI+
-         DbNVzq6po/TpiEjt+nwXxi/TkMwfzztogVWjLgkT5fnbcJmTRhgqH0Hdzq3Gmy2NVReO
-         aFQQ==
-X-Gm-Message-State: AOJu0Yx0pMDH7rq/O/uS+HgH38Fu3xG8RXZZMa1CulpFHUzg1heovBwT
-	U2s+3MMFzJWullTfkVVBs7DPwAn74Ej6EhzdZzLH+OdmHrPxX9Lju9mn8QKkUc2d02GB+9O3KDu
-	3/PjLr3zwpsWX2tMICVy1tVi4J+nRvp7vO/Hi
-X-Google-Smtp-Source: AGHT+IGl0H4rNd8NW0ENgt9xGW7rk51tX57pU2aohNgYNq8W5Pr4zVblVKQwHr9lpbRFsQig9r5rX8R15eQqRrrD7jQ=
-X-Received: by 2002:a05:6808:2118:b0:3d5:4256:26d4 with SMTP id
- 5614622812f47-3de2a86e26amr17368925b6e.7.1724782352645; Tue, 27 Aug 2024
- 11:12:32 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 27 Aug 2024 11:12:32 -0700
+        d=1e100.net; s=20230601; t=1724782389; x=1725387189;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MPA+hJJLDVmD4KICeVltx2lJ4690a/Dvth1Aghkw/GI=;
+        b=JQZGzWpzPhCcL44FDzuF7mc8n9UgVe40RrzSPQ0iPVzbUrsWOFV+OHcfb8NpdMVV/Q
+         RbuEu1BwN64coeU49CH7NZyKqzwlWWI5H/nBIi59Uw6EYCPkiMH61JHfaM3HSotzXaNS
+         e90hme9yXhomMTsXm6lKEXbhEg5SXR6bsfBzsIJGqW415fu3dv5YWyZq2/oW813Gwc2L
+         +9mZV1uNrL2prk8xjax4bKfqgFQEA9bfE4/EaVF4FSy2dmJTN6m7MrjuuOeUynyzz92m
+         gLCzupZQzjtnYgvuDor13KS0KM3d7oQHbNCsDC1UW11s9bx1aGev5FpB+9TIzzRqCtZa
+         +GGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUg0LdM5TzPugcyzQPSTKJqXRPWLpKBABSBoEVqG6504t4FJHnlmhmBtgaERzTXkf0mjbL+CU0K7MJmd1Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynwA9K2x75q1sqzAElYvGzJXUlB/7oZQWrQOngPGLyQLqnCJfa
+	r+vQ1ATZns+0oBiCZsDMS6HjrLYP9OfAC95k9Wi1lyXkxZQ5IJ7F6iuR9qIki8I=
+X-Google-Smtp-Source: AGHT+IGEsVPP4TjFJ+n/ifWb2tjPXQhtvEJKI4QpcXf0fpsIED85YBXgVczc0V+0pl8DdWJzUA5R6g==
+X-Received: by 2002:a05:6a00:91db:b0:70d:311b:8569 with SMTP id d2e1a72fcca58-71445ed4f93mr12988732b3a.26.1724782389449;
+        Tue, 27 Aug 2024 11:13:09 -0700 (PDT)
+Received: from sunil-laptop ([106.51.198.16])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-714342e09c3sm8820322b3a.122.2024.08.27.11.13.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 11:13:08 -0700 (PDT)
+Date: Tue, 27 Aug 2024 23:42:58 +0530
+From: Sunil V L <sunilvl@ventanamicro.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Len Brown <lenb@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Anup Patel <anup@brainfault.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Robert Moore <robert.moore@intel.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Haibo Xu <haibo1.xu@intel.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Atish Kumar Patra <atishp@rivosinc.com>,
+	Drew Fustini <dfustini@tenstorrent.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org, linux-acpi@vger.kernel.org,
+	acpica-devel@lists.linux.dev
+Subject: Re: [PATCH v8 00/17] RISC-V: ACPI: Add external interrupt controller
+ support
+Message-ID: <Zs4XKootCrW5ZPy7@sunil-laptop>
+References: <87mskzcnmf.ffs@tglx>
+ <CAJZ5v0imJcU4cwDuZKEvGf93fZm4ea4s2Ocp3Cnfb3+nBQ0-Gg@mail.gmail.com>
+ <Zsy3o_N8hvc6GfTp@sunil-laptop>
+ <CAJZ5v0hxoT9tBjm3xRPU4fHx3MgHfYAx_Vyf4oe2toa3GWAN+Q@mail.gmail.com>
+ <87jzg3c7bz.ffs@tglx>
+ <CAJZ5v0iMpaxBevgPWmD2Ym_JG1ChkjzVFf22fV7Xw8-ssg9+Ag@mail.gmail.com>
+ <Zs4HCZH3M9nRXUvu@sunil-laptop>
+ <CAJZ5v0i-8N8VG-D4FRh0qFxt44Ax4TKY_CiFhZxLCzkhQrt0=Q@mail.gmail.com>
+ <Zs4NcmM79kMUc7Ol@sunil-laptop>
+ <CAJZ5v0hRWxNSrx9XPBdsU-mQpDurRJAUmzHtHNkyCTf0Hz1TgQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240819233628.2074654-3-swboyd@chromium.org>
-References: <20240819233628.2074654-1-swboyd@chromium.org> <20240819233628.2074654-3-swboyd@chromium.org>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date: Tue, 27 Aug 2024 11:12:32 -0700
-Message-ID: <CAE-0n52rYVs81jtnFHyfc+K4wECvyCKmnHu2w9JhPNqvMYEeOA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: qcom: gcc-sm8550: Don't park the USB RCG at
- registration time
-To: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	patches@lists.linux.dev, linux-clk@vger.kernel.org, 
-	Konrad Dybcio <konradybcio@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
-	Amit Pundir <amit.pundir@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0hRWxNSrx9XPBdsU-mQpDurRJAUmzHtHNkyCTf0Hz1TgQ@mail.gmail.com>
 
-Quoting Stephen Boyd (2024-08-19 16:36:27)
-> Amit Pundir reports that audio and USB-C host mode stops working if the
-> gcc_usb30_prim_master_clk_src clk is registered and
-> clk_rcg2_shared_init() parks it on XO. Skip parking this clk at
-> registration time to fix those issues.
->
-> Partially revert commit 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon
-> registration") by skipping the parking bit for this clk, but keep the
-> part where we cache the config register. That's still necessary to
-> figure out the true parent of the clk at registration time.
->
-> Fixes: 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration")
-> Fixes: 929c75d57566 ("clk: qcom: gcc-sm8550: Mark RCGs shared where applicable")
-> Cc: Konrad Dybcio <konradybcio@kernel.org>
-> Cc: Bjorn Andersson <andersson@kernel.org>
-> Cc: Taniya Das <quic_tdas@quicinc.com>
-> Reported-by: Amit Pundir <amit.pundir@linaro.org>
-> Closes: https://lore.kernel.org/CAMi1Hd1KQBE4kKUdAn8E5FV+BiKzuv+8FoyWQrrTHPDoYTuhgA@mail.gmail.com
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->  drivers/clk/qcom/clk-rcg.h    |  1 +
->  drivers/clk/qcom/clk-rcg2.c   | 30 ++++++++++++++++++++++++++++++
->  drivers/clk/qcom/gcc-sm8550.c |  2 +-
->  3 files changed, 32 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-> index d7414361e432..8e0f3372dc7a 100644
-> --- a/drivers/clk/qcom/clk-rcg.h
-> +++ b/drivers/clk/qcom/clk-rcg.h
-> @@ -198,6 +198,7 @@ extern const struct clk_ops clk_byte2_ops;
->  extern const struct clk_ops clk_pixel_ops;
->  extern const struct clk_ops clk_gfx3d_ops;
->  extern const struct clk_ops clk_rcg2_shared_ops;
-> +extern const struct clk_ops clk_rcg2_shared_no_init_park_ops;
-
-I'm considering inverting these two rcg2_shared clk_ops so that only a
-few clks are parked at clk registration time, to minimize the impact of
-commit 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration").
-We're up to three or four band-aids, that we can probably wait on
-applying if we make all the shared RCGs determine the correct parent at
-registration time but skip the parking, except for the display clks on
-sc7180 where that exposes another problem with shared parents getting
-turned off during probe. It's possible that other SoCs will want to park
-their display clks as well to avoid that secondary problem, but it can
-be an opt-in case instead of a change to all shared RCGs.
+On Tue, Aug 27, 2024 at 07:56:52PM +0200, Rafael J. Wysocki wrote:
+> On Tue, Aug 27, 2024 at 7:31 PM Sunil V L <sunilvl@ventanamicro.com> wrote:
+> >
+> > On Tue, Aug 27, 2024 at 07:12:11PM +0200, Rafael J. Wysocki wrote:
+> > > On Tue, Aug 27, 2024 at 7:04 PM Sunil V L <sunilvl@ventanamicro.com> wrote:
+> > > >
+> > > > On Tue, Aug 27, 2024 at 06:20:24PM +0200, Rafael J. Wysocki wrote:
+> > > > > On Mon, Aug 26, 2024 at 11:22 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+> > > > > >
+> > > > > > On Mon, Aug 26 2024 at 19:27, Rafael J. Wysocki wrote:
+> > > > > > > On Mon, Aug 26, 2024 at 7:22 PM Sunil V L <sunilvl@ventanamicro.com> wrote:
+> > > > > > >> There will be a conflict in PLIC irqchip driver due to a recent patch [1].
+> > > > > > >> This patch is not in latest RC5 release but in linux-next. I usually base the
+> > > > > > >> series on latest RC release. Should I rebase to linux-next in this case
+> > > > > > >> and send the next revision of the series resolving the conflict?
+> > > > > > >
+> > > > > > > No, please don't.
+> > > > > > >
+> > > > > > > That will be resolved at the merge time.
+> > > > > >
+> > > > > > Alternatively you can pull
+> > > > > >
+> > > > > >   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-urgent-2024-08-25
+> > > > > >
+> > > > > > which I'm about to send to Linus latest tomorrow morning. That contains
+> > > > > > the conflicting change.
+> > > > >
+> > > > > So I've applied the series on top of the above.
+> > > > >
+> > > > Thanks!
+> > > >
+> > > > > This included a full-swing rebase of the last patch, which I hope I've
+> > > > > done correctly, but Sunil please see
+> > > > >
+> > > > Yeah, sorry about that. You have resolved most of the conflicts but few
+> > > > are missing (which were not obvious anyway). Could you please take below
+> > > > commit and squash?
+> > > >
+> > > > https://github.com/vlsunil/linux/commit/c85f9d0dc31c0e77916ecdbb457748c05cf4e75a
+> > >
+> > > Can you please send me a diff?
+> > >
+> > Hi Rafael,
+> >
+> > I have sent the diff to you. Hope that is fine.
+> 
+> Squashed and pushed out, please see
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/commit/?h=bleeding-edge&id=9153fdae30867fe5d71f6a15b8a1974d7e801f39
+> 
+LGTM. Thanks!
 
