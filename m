@@ -1,188 +1,151 @@
-Return-Path: <linux-kernel+bounces-303653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51352961327
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:43:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE26961309
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:39:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7338B2471C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:41:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFD711C22656
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:39:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F02F61C6F6D;
-	Tue, 27 Aug 2024 15:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CDEB1C6F40;
+	Tue, 27 Aug 2024 15:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A5Nwnhsx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cshmBU59"
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318EA1C3F17;
-	Tue, 27 Aug 2024 15:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D95519EEA2
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 15:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724773295; cv=none; b=OwqnpzlTYGOnNshlMAT2JRnNwz0uDywSbbbampje5SmwQd2/YyrGswrHezfUbc/15jkkXsaMBqY6isMxHkv/MQBTmZZEtEJ4sjCv65bGUKSXA4mJNzBRbosIbxmiYR2cxcHSr6UwNWiKPhv5X481OSNmY0iO455BImIHVthD4sA=
+	t=1724773187; cv=none; b=NKw558L/8o6eO8VLWLPl+S/9O12p184rFKuu4MTJS5kbrLySEt0x3icr3FGutB8LqVmLCOF37VODZS1CDpGd3NkXgwd/3tzn7Bcn66yr09vfkI+mwxlgtTGBUajFjoyJNQt1YQigDeBgdJyWdF2rQOelYKtqcqjMX1csZncBWkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724773295; c=relaxed/simple;
-	bh=KGcgnIeqrGXeUGtQ7h7ij+LZBISHnFBEkptDoXmZ614=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LrrAmSaq0WI5M2Yu+ocMmnhlIg8Dr5wMy+btGJ1orpifVFjYN+QSg27S1t95Rhkq8TVdLd3WWJhIz7PbtoJQkc04Oli/DdMq7O197ZvhpSMX4TvJ+5MSx0SuczoxB7z8fwfnIDy5Dfr9pX4aJ1xYOAqbJ7qvQbdm+gIE9NGiMTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A5Nwnhsx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 196FAC61075;
-	Tue, 27 Aug 2024 15:41:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724773294;
-	bh=KGcgnIeqrGXeUGtQ7h7ij+LZBISHnFBEkptDoXmZ614=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A5NwnhsxDPpBnrbg2sO1mAk1tKTuzE6J3XzsrcQoXZo6r7hPqIBRfewcIiDlsB8Wa
-	 GfdntBONSJwQZ11f2xZhLu/Wx8WUjk5D0quEeIcQqgsD/XeF+MbBSY/3iENF4WeCcY
-	 0BIJXxFNT145BB56wigbninpTcZE7aPbxK18bOf764TDKe+62vlB6ifFJUA42Ktz+D
-	 1jxYBU0CCIzpSpeOTqIL2ds92Ba2d38wKFbC4aEKosltvUUXJ5icAyrDTDmNpOT7oR
-	 RCsAyCeRuSroyj88oyz6JoARKaEk+jhjCChcjYGWU8u5CmhfumDw50UU+eHN6kmzRp
-	 b2dDL/qc++tcA==
-Date: Tue, 27 Aug 2024 18:38:57 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Song Liu <song@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Christian Brauner <brauner@kernel.org>,
-	Pankaj Raghav <p.raghav@samsung.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	djwong@kernel.org, ritesh.list@gmail.com,
-	linuxppc-dev@lists.ozlabs.org
-Subject: Re: linux-next: boot warning after merge of the vfs-brauner tree
-Message-ID: <Zs3zEcLh5cMykkho@kernel.org>
-References: <20240826175931.1989f99e@canb.auug.org.au>
- <20240826154818.hzqnvofdmaxvuwrh@quentin>
- <b0fe75b4-c1bb-47f7-a7c3-2534b31c1780@csgroup.eu>
- <ZszrJkFOpiy5rCma@bombadil.infradead.org>
+	s=arc-20240116; t=1724773187; c=relaxed/simple;
+	bh=J8i0Lb2oWbc6JBapK1BY0lUoCq02D7GVagTSdbkqv1Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PdcsSRkM2zkOAZszb8c9SxJosYgnFKo54SIuBwzXJm80wWLJ5RXTLMxYfLGjU3O44MJEW5P05OHptce7L9TvB2ni/gxTRlBLp8wKJqWbAFthqgJolxw1SeeNW9PZOpk8ilN1Z+afILfCJxM2C2ZzTNT8jmiCcSdZhjyd26Nq2qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cshmBU59; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5dcd8403656so2810549eaf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:39:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724773185; x=1725377985; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ABrGPaQeXTHEpHj1nG5eL4qDwA/TNxf5sECkQr9qYBQ=;
+        b=cshmBU59B8Y5XavgvLSrMfF/g+ab0w0/qNjaBmPn8DOLpyzD5OfHW28NZoxO+y/oTC
+         BrJSIy0yTwDQX7gSxm81rMLhIk1MTNjXSx51UHSRZuE8VxYP5IE4EeJFMOL4FR2/51jP
+         6fejy1vw2Q1cIQz3hekKQqAjtD2xRdcfl0IdLNyd/fJVP+6hLH9D2bDNJFicZvbFF/b8
+         jlxBTQdCHX43+sQ/2rGVN1RH1SY1RJcYYrwV1WQl+wdrAwGiEiVS8epmlrjbWSFnOJHe
+         w/P9zdhuWd4r+18VLvYdph2jW4Ml7UYQXD6el0w4QvHnNdGBN0Y/NKFShBbs03paQD++
+         dwGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724773185; x=1725377985;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ABrGPaQeXTHEpHj1nG5eL4qDwA/TNxf5sECkQr9qYBQ=;
+        b=NJy/UNvIjh6lXgNtOa6XgrcbH1rQoBIakrXvJFnObc7yF4HCXHb4hUSQTIDUMEOarv
+         YEr+GgMeg/1jDC1R/mK6bnAsG1ezPDWO1k7bc82nptRj7kb662UxGZ6mZQJUfUMymtvS
+         BjwCkGlWVgDBv2qe6F8CIu2vz+Ke6oOgIBDeDZwUx237goddzEyvPL9PGrAstq1vXRFw
+         sTOt+WOu6pYKduigr6bGeoNaa/OaFK4C8Vm4nl4pDkfa6L0KkF5F9SC6oYaUZFn1R4Nz
+         aM9P9BEETxxQ0GMooKjooWk/b7vmLWebUDAvlN4MKi2wdHrRqqtnKhtihZZuYQw8IzIY
+         fe7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVv/Vpwzf5nWEJUrFv9AEQDVfK1Q6xWNGIKYzWXMVGSOtXWWhUAqVHiSJ/QG+47nk96e23U3Z75GN6jE9k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlCAczXxoLj0XFCE9Mtp1wGPKY/lIdDRz9Ml0IwaPI9fSJWwAJ
+	Rlj1/yGjmIcbAOdrvfATTaore0am28U++Ph+TbzfA6cb99QnjkHJxgwpeaZ5rhvnbbOWvUqQ+js
+	H17xLfHkzJrHAWO1vY1kMhOoZt5AEMfkzMWJhgg==
+X-Google-Smtp-Source: AGHT+IE+kcBunpFXfOGpuNdas/X5FdTgaWsUmcSrsoP0VkiG4IG6IRfZg8+GgGc5TZDGinb+7wjme3MyFaQZ0qKWfPE=
+X-Received: by 2002:a05:6358:430f:b0:1aa:c49e:587d with SMTP id
+ e5c5f4694b2df-1b5c215d7efmr1740185555d.18.1724773185173; Tue, 27 Aug 2024
+ 08:39:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZszrJkFOpiy5rCma@bombadil.infradead.org>
+References: <20240827143843.399359062@linuxfoundation.org>
+In-Reply-To: <20240827143843.399359062@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 27 Aug 2024 21:09:33 +0530
+Message-ID: <CA+G9fYuibSowhidTVByMzSRdqudz1Eg_aYBs9rVS3bYEBesiUA@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/341] 6.6.48-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org, rcu <rcu@vger.kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Zhen Lei <thunder.leizhen@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Aug 26, 2024 at 01:52:54PM -0700, Luis Chamberlain wrote:
-> On Mon, Aug 26, 2024 at 07:43:20PM +0200, Christophe Leroy wrote:
-> > 
-> > 
-> > Le 26/08/2024 à 17:48, Pankaj Raghav (Samsung) a écrit :
-> > > On Mon, Aug 26, 2024 at 05:59:31PM +1000, Stephen Rothwell wrote:
-> > > > Hi all,
-> > > > 
-> > > > After merging the vfs-brauner tree, today's linux-next boot test (powerpc
-> > > > pseries_le_defconfig) produced this warning:
-> > > 
-> > > iomap dio calls set_memory_ro() on the page that is used for sub block
-> > > zeroing.
-> > > 
-> > > But looking at powerpc code, they don't support set_memory_ro() for
-> > > memory region that belongs to the kernel(LINEAR_MAP_REGION_ID).
-> > > 
-> > > /*
-> > >   * On hash, the linear mapping is not in the Linux page table so
-> > >   * apply_to_existing_page_range() will have no effect. If in the future
-> > >   * the set_memory_* functions are used on the linear map this will need
-> > >   * to be updated.
-> > >   */
-> > > if (!radix_enabled()) {
-> > >          int region = get_region_id(addr);
-> > > 
-> > >          if (WARN_ON_ONCE(region != VMALLOC_REGION_ID && region != IO_REGION_ID))
-> > >                  return -EINVAL;
-> > > }
-> > > 
-> > > We call set_memory_ro() on the zero page as a extra security measure.
-> > > I don't know much about powerpc, but looking at the comment, is it just
-> > > adding the following to support it in powerpc:
-> > > 
-> > > diff --git a/arch/powerpc/mm/pageattr.c b/arch/powerpc/mm/pageattr.c
-> > > index ac22bf28086fa..e6e0b40ba6db4 100644
-> > > --- a/arch/powerpc/mm/pageattr.c
-> > > +++ b/arch/powerpc/mm/pageattr.c
-> > > @@ -94,7 +94,9 @@ int change_memory_attr(unsigned long addr, int numpages, long action)
-> > >          if (!radix_enabled()) {
-> > >                  int region = get_region_id(addr);
-> > > -               if (WARN_ON_ONCE(region != VMALLOC_REGION_ID && region != IO_REGION_ID))
-> > > +               if (WARN_ON_ONCE(region != VMALLOC_REGION_ID &&
-> > > +                                region != IO_REGION_ID &&
-> > > +                                region != LINEAR_MAP_REGION_ID))
-> > >                          return -EINVAL;
-> > >          }
-> > >   #endif
-> > 
-> > By doing this you will just hide the fact that it didn't work.
-> > 
-> > See commit 1f9ad21c3b38 ("powerpc/mm: Implement set_memory() routines") for
-> > details. The linear memory region is not mapped using page tables so
-> > set_memory_ro() will have no effect on it.
-> > 
-> > You can either use vmalloc'ed pages, or do a const static allocation at
-> > buildtime so that it will be allocated in the kernel static rodata area.
-> > 
-> > By the way, your code should check the value returned by set_memory_ro(),
-> > there is some work in progress to make it mandatory, see
-> > https://github.com/KSPP/linux/issues/7
-> 
-> Our users expect contiguous memory [0] and so we use alloc_pages() here,
-> so if we're architecture limitted by this I'd rather we just remove the
-> set_memory_ro() only for PPC, I don't see why other have to skip this.
-> 
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index c02b266bba52..aba5cde89e14 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -775,14 +775,22 @@ EXPORT_SYMBOL_GPL(iomap_dio_rw);
->  
->  static int __init iomap_dio_init(void)
->  {
-> +	int ret;
-> +
->  	zero_page = alloc_pages(GFP_KERNEL | __GFP_ZERO,
->  				IOMAP_ZERO_PAGE_ORDER);
->  
->  	if (!zero_page)
->  		return -ENOMEM;
->  
-> -	set_memory_ro((unsigned long)page_address(zero_page),
-> -		      1U << IOMAP_ZERO_PAGE_ORDER);
-> -	return 0;
-> +	if (IS_ENABLED(CONFIG_PPC))
-> +		return 0;
-> +
-> +	ret = set_memory_ro((unsigned long)page_address(zero_page),
-> +			    1U << IOMAP_ZERO_PAGE_ORDER);
-> +	if (ret)
-> +		free_pages((unsigned long) zero_page, IOMAP_ZERO_PAGE_ORDER);
+On Tue, 27 Aug 2024 at 20:12, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.48 release.
+> There are 341 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 29 Aug 2024 14:37:36 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.48-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-arm64 will return -EINVAL here, their code for changing memory attributes
-only works on vmalloc:
+The tinyconfig builds failed due to following build warnings / errors on the
+stable-rc linux.6.6.y.
 
-	 * Let's restrict ourselves to mappings created by vmalloc (or vmap).
-	 * Those are guaranteed to consist entirely of page mappings, and
-	 * splitting is never needed.
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+Build error:
+-------
+kernel/rcu/update.c:49:
+kernel/rcu/rcu.h: In function 'debug_rcu_head_callback':
+/kernel/rcu/rcu.h:255:17: error: implicit declaration of function
+'kmem_dump_obj'; did you mean 'mem_dump_obj'?
+[-Werror=implicit-function-declaration]
+  255 |                 kmem_dump_obj(rhp);
+      |                 ^~~~~~~~~~~~~
+      |                 mem_dump_obj
+cc1: some warnings being treated as errors
+
+Build log links,
+------
+ - https://storage.tuxsuite.com/public/linaro/lkft/builds/2lFMi7HOL2XF8hQWViw6CjE3NAF/
+
+ metadata:
+----
+  git describe: v6.6.47-342-g0ec2cf1e20ad
+  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+  git sha: 0ec2cf1e20adc2c8dcc5f58f3ebd40111c280944
+  kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2lFMi7HOL2XF8hQWViw6CjE3NAF/config
+  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2lFMi7HOL2XF8hQWViw6CjE3NAF/
+  toolchain: clang-18 and gcc-13
+  config: tinyconfig
 
 
-> +
-> +	return ret;
->  }
->  fs_initcall(iomap_dio_init);
-> 
-> Thoughts?
-> 
-> [0] https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs.blocksize&id=d940b3b7b76b409b0550fdf2de6dc2183f01526f
-> 
->   Luis
+steps to reproduce:
+------
+# tuxmake --runtime podman --target-arch arm64 --toolchain gcc-13
+--kconfig tinyconfig
 
--- 
-Sincerely yours,
-Mike.
+--
+Linaro LKFT
+https://lkft.linaro.org
 
