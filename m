@@ -1,134 +1,109 @@
-Return-Path: <linux-kernel+bounces-302661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 600F9960190
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:26:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9146960195
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:27:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 929631C208BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:26:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ACC61F22F20
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07311552E0;
-	Tue, 27 Aug 2024 06:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3594A156F30;
+	Tue, 27 Aug 2024 06:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FlRPL94n"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QLtCluKm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D131494B5
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A5D14373F;
+	Tue, 27 Aug 2024 06:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724739946; cv=none; b=l/7n2U6tqfDQWnEat0dYc+byHM85eYatQuGx3HKTMPvFtJf5+HGwIU+Zys0ECO3l2za2cEFlRb1bsi4XX+O5l+IkrgDii9Fjs8NTiTsqeYGbmrdpwoUn3xPR4hthnnFBR7OpUcADANtlHI9kSYCObCpRAwj4YrGpExOEoe09l8M=
+	t=1724739951; cv=none; b=klo2bEeeTuD7tlhNTP4G8HgEBUjEDElTgGE3sWuIsYidT30aWN3EPKnLNryNJO3DifxcJxJ/eRwXLLkBHsBpmZSqGudHddm9UhIn9shkoI1dHqp+63slEEYEsD9VhA6eax462Cc8lYa9Po+SyAUA99eBsOQN0Y/0O+lzasyzKs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724739946; c=relaxed/simple;
-	bh=WmB0wo2kGM2nwplrjypHlZtd9IRU7iJe1X+JRXxRYVQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=m8XSmS62oEqe+qx3VUnmyhl6SpseWRH1cOM6FfZp89q/3J6JrLBs70JSIn5Bn6VGyXX7a6w1KCefGFu35Trm538Zm40kiLZdEFgAIeCqbvLMEjM1VnCoUfVyHWCynsE5uS2PMno3z3SkjRzR2NJ9gWvt1HWHfgsGg589zbYsck0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FlRPL94n; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724739943;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tChrxO1HuAIgDg5Agw3TuPA4TMpEaBjY2k6lF8kLxg0=;
-	b=FlRPL94nDZ3p4ZCc+5K7BbtUxzqJY/Kge9c8cwcjpMQNpAmkyUvPJlysxDI+CeoHUWUmPT
-	MEDjHGOxFZHw9da3O5afF0Yid8QZS7IWuwsGbQTmiR6/+lpcoy57XYtFG++zbgU8dIkOYq
-	ECqMc0Ro2+vCX3hXGpDfP418OK6ZTvs=
-Received: from mail-ua1-f69.google.com (mail-ua1-f69.google.com
- [209.85.222.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-438--yImuWslP3-SU79xSXIMhg-1; Tue, 27 Aug 2024 02:25:41 -0400
-X-MC-Unique: -yImuWslP3-SU79xSXIMhg-1
-Received: by mail-ua1-f69.google.com with SMTP id a1e0cc1a2514c-842f6f5deaaso490912241.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 23:25:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724739941; x=1725344741;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tChrxO1HuAIgDg5Agw3TuPA4TMpEaBjY2k6lF8kLxg0=;
-        b=evhLTcUkAbjnTv0sq4fgw/MNYiXPpnzRDiHoQYARFgCBOs3VtOYKECFwl0ARDWHusU
-         hABRhnR0ZtISH5AeEvjYdsJ+DnNhqJOHKWrGPYiwquEcXjemjT7NaCVxtpDNziRq8WS4
-         YZ7TkS3qgrUEb9QfvVfSgpSNiI0EvxwIYvuma/jClAGojKbvUqr2/MvjVSxIXsJ0sOmk
-         vGe+vosMFWFjYo1d85LZH2MJopbtJreGVbm3cnkNcrcBWxAV2+Fb/87Ew9oU/2dWmVHY
-         GSRJQfzLwsqkFFsb3fId6XD3ABAEJFvmEfNCsW5jkuRNxtxg56PLltz7ZG7GDMCmqiDP
-         YNiw==
-X-Forwarded-Encrypted: i=1; AJvYcCURJRqpsV4l/6jLFZxZ43M+7LnTDNdMcUDzn09pr8rC1ZHyyNj3asT8gPFRxcgPsZkTl77Znb/y94E7vGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx12FZp+zYb5LXcv45qnSI8Si90P3zQywDFAHz5c7m6GAUtMbas
-	xY/UV2p3s6zl3YQd8m2IUA2Tn0s0Mfxv5bMiQj/GQ1ItbQYg1HiYErKYUBvFkzCX+JzAc3SmqEV
-	LgAfFidsTn22FLAqunybT+/DNYaBbxpOOV3mkil+isfOUhNO32x6YDyxXrdNiyQ==
-X-Received: by 2002:a05:6102:2ac3:b0:497:6360:6454 with SMTP id ada2fe7eead31-498f4527b10mr10077648137.1.1724739940808;
-        Mon, 26 Aug 2024 23:25:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEKJOfa1bnLznhnu8Wk2lq1SZIINHqonjeWtxA62MU4NC0rheKOcp5i9yqAIel7fXo9kfvaag==
-X-Received: by 2002:a05:6102:2ac3:b0:497:6360:6454 with SMTP id ada2fe7eead31-498f4527b10mr10077631137.1.1724739940420;
-        Mon, 26 Aug 2024 23:25:40 -0700 (PDT)
-Received: from rhfedora.. ([71.217.43.75])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a67f1fe176sm521044185a.0.2024.08.26.23.25.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 23:25:39 -0700 (PDT)
-From: "John B. Wyatt IV" <jwyatt@redhat.com>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: "John B. Wyatt IV" <jwyatt@redhat.com>,
-	linux-pm@vger.kernel.org,
-	Thomas Renninger <trenn@suse.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org,
-	John Kacur <jkacur@redhat.com>,
-	Tomas Glozar <tglozar@redhat.com>,
-	Arnaldo Melo <acme@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"John B. Wyatt IV" <sageofredondo@gmail.com>
-Subject: [PATCH v2 4/4] MAINTAINERS: Add Maintainers for SWIG Python bindings
-Date: Tue, 27 Aug 2024 02:24:36 -0400
-Message-ID: <20240827062438.71809-5-jwyatt@redhat.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240827062438.71809-1-jwyatt@redhat.com>
-References: <20240827062438.71809-1-jwyatt@redhat.com>
+	s=arc-20240116; t=1724739951; c=relaxed/simple;
+	bh=fN1ZnF3+bANyj6nCHUeB1Vt6rRnkOrtSXJk+7r0jQKY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IDlBCUPfWPv7M9c/CE4D4iBKjxhFdBqcXq6yUX006tXTFpy3r9fzWaUChcC2hkOYNqziAArnDZEwSbjNj9eFu/AqAMRSF70IZF0tlbB392V+mmXyniLIeFl+eS5mKwpcyzC3yYeVQnr5JYwR7eX5gdEIv3MOW5tQTrULhPKRmf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QLtCluKm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB670C4FF63;
+	Tue, 27 Aug 2024 06:25:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724739950;
+	bh=fN1ZnF3+bANyj6nCHUeB1Vt6rRnkOrtSXJk+7r0jQKY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QLtCluKmvD0oXuf6N1ljeQMDrLNkQny4MvNscJbGF2J9y3EvvCTNBZN/NqLCzGDpP
+	 fU5Vk2okwhe3QGihz7Lgf8gwKk2Y2Sg50Sj163jeOJspkybovyygXxMudrdf14K8dc
+	 Ma7bUVWq9bdphXUWiL0iuwX1DxHPHOLujQ6GBGaoQg/uOMrICoClDQDiteZfRJmxl7
+	 /+KGZk9JavCq2QFlSVAIqPbkbuD/6Kukll60DFRuopF8cTUUNhfazAezT/0phK0Gni
+	 g2DS3Zs5IOH3r3KwWQDZNQ4PIVqaxQoKprtecnjf4X0OeLxEdlFlPjONs+BeNtBzjD
+	 eV3O1G+QBAEfQ==
+Date: Tue, 27 Aug 2024 08:25:47 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sricharan R <quic_srichara@quicinc.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
+	manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	vkoul@kernel.org, kishon@kernel.org, andersson@kernel.org, konradybcio@kernel.org, 
+	p.zabel@pengutronix.de, dmitry.baryshkov@linaro.org, quic_nsekar@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, robimarko@gmail.com
+Subject: Re: [PATCH V2 3/6] phy: qcom: Introduce PCIe UNIPHY 28LP driver
+Message-ID: <svraqyrvmyfvezj6zuzsoc5cy3lqklwxkmjdloquj2v4r5ik72@xnbaoigiikeu>
+References: <20240827045757.1101194-1-quic_srichara@quicinc.com>
+ <20240827045757.1101194-4-quic_srichara@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240827045757.1101194-4-quic_srichara@quicinc.com>
 
-Adding myself as the primary maintainer and John Kacur as the backup
-maintainer for the libcpupower SWIG generated Python bindings.
+On Tue, Aug 27, 2024 at 10:27:54AM +0530, Sricharan R wrote:
+> From: Nitheesh Sekar <quic_nsekar@quicinc.com>
+> 
+> Add Qualcomm PCIe UNIPHY 28LP driver support present
+> in Qualcomm IPQ5018 SoC and the phy init sequence.
+> 
+> Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
+> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
 
-Suggested-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: John B. Wyatt IV <jwyatt@redhat.com>
-Signed-off-by: John B. Wyatt IV <sageofredondo@gmail.com>
----
+...
 
-Changes in v2:
-	- Added as requested.
+> +static int qcom_uniphy_pcie_probe(struct platform_device *pdev)
+> +{
+> +	struct qcom_uniphy_pcie *phy;
+> +	int ret;
+> +	struct phy *generic_phy;
+> +	struct phy_provider *phy_provider;
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = of_node_get(dev->of_node);
+> +
+> +	phy = devm_kzalloc(&pdev->dev, sizeof(*phy), GFP_KERNEL);
+> +	if (!phy)
+> +		return -ENOMEM;
+> +
+> +	platform_set_drvdata(pdev, phy);
+> +	phy->dev = &pdev->dev;
+> +
+> +	phy->data = of_device_get_match_data(dev);
+> +	if (!phy->data)
+> +		return -EINVAL;
+> +
+> +	ret = qcom_uniphy_pcie_get_resources(pdev, phy);
+> +	if (ret < 0)
+> +		dev_err_probe(&pdev->dev, ret, "Failed to get resources:\n");
 
----
- MAINTAINERS | 3 +++
- 1 file changed, 3 insertions(+)
+What the hell happened here? Read my review one more time and then git
+grep for usage of dev_err_probe.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f328373463b0..80d5475c943b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5819,6 +5819,9 @@ CPU POWER MONITORING SUBSYSTEM
- M:	Thomas Renninger <trenn@suse.com>
- M:	Shuah Khan <shuah@kernel.org>
- M:	Shuah Khan <skhan@linuxfoundation.org>
-+M:	John B. Wyatt IV <jwyatt@redhat.com>
-+M:	John B. Wyatt IV <sageofredondo@gmail.com>
-+M:	John Kacur <jkacur@redhat.com>
- L:	linux-pm@vger.kernel.org
- S:	Maintained
- F:	tools/power/cpupower/
--- 
-2.46.0
+NAK.
+
+Best regards,
+Krzysztof
 
 
