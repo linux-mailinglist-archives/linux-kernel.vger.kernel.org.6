@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-304114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44B31961A65
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 01:20:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BCE4961A6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 01:20:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76D0B1C22DDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:20:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 536031C22F58
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630381D45FD;
-	Tue, 27 Aug 2024 23:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239441D47BB;
+	Tue, 27 Aug 2024 23:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kVpv5ToD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CrfHSGiR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FB1770F1;
-	Tue, 27 Aug 2024 23:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F44B1D4618;
+	Tue, 27 Aug 2024 23:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724800828; cv=none; b=QTwr4NzlLEh4O7M7qffDf4OPjv+85nZfV9lTuQvn5OW0uBsJBcdV8dI0neu8PwTURHX7bKnFiDh7UDcer3j4auEDJ9Jxs4dmQqfpvuUIrTnH+BbY4pTsvCDtaFg+w+BQ8ehgMMnghKYD+OYBumpUXXqOeQhR3WOrbl8GH6nKSoA=
+	t=1724800831; cv=none; b=l1nGJenntmXvFDo38reSTK65yQ6FI2Q7LRmHLcaA5AtzCa10EAeElkaEztTO/WbBW4j5An+2iglrSxNONcWup/qFWmayGDSwWcGRK8ScNlfJK9it3+WVMkHrVGLJlfPdeJ5a0O02M2EwRA+gpUxvCIpYH0yIR9GV5E7Klqb1jEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724800828; c=relaxed/simple;
-	bh=n9eG3dqNrjcMWSZ8MtKYYEfFVvD6GvS6o1npsvN8ggY=;
+	s=arc-20240116; t=1724800831; c=relaxed/simple;
+	bh=kwLKKjeVrbCsWWOOaGFaaEgALyESZIHFayJqbW+xteE=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=DX/2IJal9SNlU0JXUiUZTmVwwBirr3hBY5W80TrDbilV+xJw8AfqBBg7cGCpLevNttEL7RBk9c3DeoryG87sTzmnjUWJxk6sqs/gc78EiuIw90R/IT6/W4XzH+QhFtm7e3gnE225V0k6Ru+1SIX2DZjv9SKD1uNKf7J0h8FU32o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kVpv5ToD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 255BBC4AF65;
-	Tue, 27 Aug 2024 23:20:28 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=twaPLskt6c6TXFrLVbAQMDEvd3bnpknmWC2wRcZ5b06Sh5R8keNcz9kdosz2PzmvtpbfSL8/e/NdLGXR8TGMuW/s3GroZhXsreKzQsW2Ve9hGZ3orO+skzUWCc3Sx+gKdnvQ5oKYhUx2jJdcHUv6SzdvVv9ih4Ezc+kA2Py3KV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CrfHSGiR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 249EEC4AF61;
+	Tue, 27 Aug 2024 23:20:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724800828;
-	bh=n9eG3dqNrjcMWSZ8MtKYYEfFVvD6GvS6o1npsvN8ggY=;
+	s=k20201202; t=1724800831;
+	bh=kwLKKjeVrbCsWWOOaGFaaEgALyESZIHFayJqbW+xteE=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=kVpv5ToDFHLRormH+VeWcesDGeaB7mS2793UW1DrNluwgdeyGAn+pMRf7UpkxBaSC
-	 i/8SyzM4j4QxCRfBpUBfp02yZTmQHrWNkHLz6NBD5BF+TksYd5KDD+zx1DYF479Hac
-	 D3ODe6CJNJIK/gSmRY/tYJlIt2WgVoZ6d7Z0KCk9KOCJe9QM3ZPQbKr3NNQRyhFD1I
-	 jC2C3hxlxvt1z4CWzhaI34MORwwU9CUPTc0pC9FGN0JDgzUWtdJ4QCyTXlILcDUf3N
-	 tidWrUCUep1ZGq/Sk5bNqqos0clXGKSkURsJZvmXAKu/0mgxnM/W2iXyVcqBBy28bB
-	 RBEH/qx7weKgQ==
+	b=CrfHSGiRmHGRTVgMEyvIXORgnoLcCaBDn7cE8JMKLSN9/WwF53xGLK23TOSMMppJ0
+	 MYIlFiJN+iYcZkzTNCWArOXBHaUU54xq6yFwt76Al8lGgsZD1ito/37C2sujz/OP6a
+	 SxegJXMjycIJvHppgtvh+//eFW18oSI/xPn+CsueouuJH5tA8jLUmatGyi4ASz+enY
+	 O5HnrfBULs9dMcrDPWLTL9UenIp3ogGaHRNs/ogjHmMvG788lqbAdesy0SLqSArikJ
+	 yDO/qMVMmrEfxRGkYKgb9v06v+/5Xr1uJJpPzgTCcjtzVkjdhSkZLeK5ceBV3bR8tJ
+	 ZKMQoDEhqBnfw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C333822D6D;
-	Tue, 27 Aug 2024 23:20:29 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C0A3822D6D;
+	Tue, 27 Aug 2024 23:20:32 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,43 +51,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next] samples/bpf: tracex4: Fix failed to create kretprobe
- 'kmem_cache_alloc_node+0x0'
+Subject: Re: [PATCH net] sctp: fix association labeling in the duplicate
+ COOKIE-ECHO case
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172480082826.787068.693535971609017102.git-patchwork-notify@kernel.org>
-Date: Tue, 27 Aug 2024 23:20:28 +0000
-References: <tencent_34E5BCCAC5ABF3E81222AD81B1D05F16DE06@qq.com>
-In-Reply-To: <tencent_34E5BCCAC5ABF3E81222AD81B1D05F16DE06@qq.com>
-To: Rong Tao <rtoax@foxmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, rongtao@cestc.cn, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
+ <172480083124.787068.2952553408915985956.git-patchwork-notify@kernel.org>
+Date: Tue, 27 Aug 2024 23:20:31 +0000
+References: <20240826130711.141271-1-omosnace@redhat.com>
+In-Reply-To: <20240826130711.141271-1-omosnace@redhat.com>
+To: Ondrej Mosnacek <omosnace@redhat.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, kuba@kernel.org,
+ lucien.xin@gmail.com, vyasevich@gmail.com, nhorman@tuxdriver.com,
+ marcelo.leitner@gmail.com, paul@paul-moore.com,
+ stephen.smalley.work@gmail.com, linux-sctp@vger.kernel.org,
+ selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
  linux-kernel@vger.kernel.org
 
 Hello:
 
-This patch was applied to bpf/bpf-next.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-On Tue, 27 Aug 2024 12:30:30 +0800 you wrote:
-> From: Rong Tao <rongtao@cestc.cn>
+On Mon, 26 Aug 2024 15:07:11 +0200 you wrote:
+> sctp_sf_do_5_2_4_dupcook() currently calls security_sctp_assoc_request()
+> on new_asoc, but as it turns out, this association is always discarded
+> and the LSM labels never get into the final association (asoc).
 > 
-> commit 7bd230a26648 ("mm/slab: enable slab allocation tagging for kmalloc
-> and friends") [1] swap kmem_cache_alloc_node() to
-> kmem_cache_alloc_node_noprof().
-> 
->     linux/samples/bpf$ sudo ./tracex4
->     libbpf: prog 'bpf_prog2': failed to create kretprobe
->     'kmem_cache_alloc_node+0x0' perf event: No such file or directory
->     ERROR: bpf_program__attach failed
+> This can be reproduced by having two SCTP endpoints try to initiate an
+> association with each other at approximately the same time and then peel
+> off the association into a new socket, which exposes the unitialized
+> labels and triggers SELinux denials.
 > 
 > [...]
 
 Here is the summary with links:
-  - [bpf-next] samples/bpf: tracex4: Fix failed to create kretprobe 'kmem_cache_alloc_node+0x0'
-    https://git.kernel.org/bpf/bpf-next/c/d205d4af3a5e
+  - [net] sctp: fix association labeling in the duplicate COOKIE-ECHO case
+    https://git.kernel.org/netdev/net/c/3a0504d54b3b
 
 You are awesome, thank you!
 -- 
