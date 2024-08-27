@@ -1,141 +1,157 @@
-Return-Path: <linux-kernel+bounces-302901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 304589604CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:48:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFBCF9604D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE9011F23A61
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:48:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0B6D1C225E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0DEF197A92;
-	Tue, 27 Aug 2024 08:47:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92DF719DF48;
+	Tue, 27 Aug 2024 08:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dyYBthEd"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iCrobTB1"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5FF176FD3;
-	Tue, 27 Aug 2024 08:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82A819925F
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724748422; cv=none; b=ik2hWi1LaVmESOLNdc27hr4fmqriBf8JqpkWqouFYg2MRaBnn0pOmEYjTzd7Wb6kBnCL6m1tV0x0k4cB1ko+HY7IJCfw9G7irR+dytvasCJPK0s2mf7MXtuBAVLUwhFGbdWXlsagszeCQJ0gC/hbS8q6LxoAHXQLhSs0HxrPiBI=
+	t=1724748494; cv=none; b=JgDw+DYY3ei0eZT20GVDxRoXUKKrcslN0qZqpe/mrAU75aGoVTJkdyqWc/Wqnkj3BIvy0VmQ1CsjoaBjLDDg8mV7Nxa5wVPYFQyj7NzD55BBtjIAvUKENm2egQzaEXlylLioKLo1wS5mWXhoSJN7yVyCAD5xCJ6ndpMr0Zx+KyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724748422; c=relaxed/simple;
-	bh=NoaCQBu8nufCCZrkhu3Og44vYtGsHr8i9cHgC9V2Tmk=;
+	s=arc-20240116; t=1724748494; c=relaxed/simple;
+	bh=lyUq6uzIFLGApAFk8uAkLlzZWO6fwqnEeSVsD5zPCLw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TD9Se+KBUs2HhJcinS5WLDGY488AhBOXHka/5ZfdWmp+6bvqH4Xp7XjQzDpa8EKkQTk3nXPtC1EMzyyhxBZxeujvu6vY9aDXk9BTYLABWJqlC3A+1SLBGDagwZ+LkSmU3L5FjcJKf1i8b1bYbFZ8D1Sf6lAKdVatfWuWIqX/SOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dyYBthEd; arc=none smtp.client-ip=209.85.222.176
+	 To:Cc:Content-Type; b=Z+34FUQKaMDM7U+Dp/UGZ8qqRSQXaShH7c+UpgFLPxLRQmaGIiXePhIlWQHejRUXEbpeSZBW0CGjes2wRkLCANSSeqfwvNZBYwJRzgwRqjWjP9i15/O8aJvAzZfB97dqRGf+Pvqzyhn8uGlZ1Ea7219BeFMuCj5J5w5Zt64H02E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iCrobTB1; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7a1d6f4714bso523915785a.1;
-        Tue, 27 Aug 2024 01:47:00 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f3fea6a0a9so46145921fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 01:48:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724748419; x=1725353219; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724748491; x=1725353291; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PFSIf+Z9JMualKg/KAoH5HvbY8LNu1GRislhgYXlBko=;
-        b=dyYBthEdyoqGjpejfqd+OTrzA8YdbPi8FUYx126EJ3j80uEwvZqvsED8jDwjIB+udg
-         RD1r9V0q2ZwddsqOM/SsGsCAos94EPdP/S8M0n5Pmc3E3iE1raYjf03E/zad9nn0J4v2
-         /XEvP00TQOjl5lgaUHA/8GGAtgVviT3vbeDX9ojdD7TL/hl4gaCZRQPEarlFScRWhCpE
-         U6bFQbmbhSBGRkpSoKRbVfj+KWwvTR0Qs6H8P8PtE5WaGvtUV8Co1WG6BLcRnYDRE/tW
-         n12/Tf9kf2dizI5aB8hhd6JNcm7cceElIOT0SioJanbUwxEPBLU8EEXLcPX2cEJU5T43
-         q4eA==
+        bh=8kDKIOwTEd6w8yb+ASnRf9bhshqBEl1pUBH6pCnSK/I=;
+        b=iCrobTB13dkqj/f9stErm9mYjzqkf0OdzoLqfGbEB82b1BDSZFXOMRqAgGFC74gioY
+         ydZ9bRerVQRqUNo60OO2ODSA46p+XUye2j8ckJxjbpc7QnCI23gg7n2+yGI8X37P0A1A
+         beM89RrgzzR4wOkU01fYWm/GOlsjIR3OQwU4xl6K/6WBSJcr9z/2X/013V/kMw8Qxyw6
+         PYFR6Yycx1GHGAaZre8nle5OzpISyUNKHqya0aeYKx7zyOm9Pu8MrhFponaQcP3bzxMx
+         TqZVclTjaFBRCFGbZtmLeUOds/FYTU7tvUMwLeOC2QAxbKetPelyKT1r3XO8NTGoz/aQ
+         Ja2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724748419; x=1725353219;
+        d=1e100.net; s=20230601; t=1724748491; x=1725353291;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PFSIf+Z9JMualKg/KAoH5HvbY8LNu1GRislhgYXlBko=;
-        b=SR3rm5ueadbAv0UZkHoWGpFxNUIkYzPhdzwfRlEctSJsHa7CifEo9Yke8fIjlS/2uE
-         12oTX1Gf4mW8+Oi4/IQed4K6DKuuw61A82HaROqhTBhswQoJETKF6drotZbbay8ZfpPm
-         f7Bs4bM5eTqRp+LXAhJXbobce18K2H+rnyrC0dxqZDkNnSoH7A19rfHLhcENX/zazhT3
-         /7geH8wDK+sMdWu2/vCHkt4lcaJiqN/TSc9oKmlGE2Xkw+s+gRNaKwMdNAwek4cltpcb
-         MpJyrosSej6bxNzlOO0+0NLgWLvZPBsYZV+Du4AkJ1M1ZBwJBmH7ndV5xBX/g8qwvJjU
-         EC+g==
-X-Forwarded-Encrypted: i=1; AJvYcCV7tWEj88DITyLGGJIiDjzgXICOhFgx4JKySRSmSMG0ScasE/k7NVf5Zaqjr+FIZNpEtzdN2DwFCaLoskB4DQ==@vger.kernel.org, AJvYcCWT4zauyaLqXiq1/iwBzAtuzRlvOWPpN9p3xfNpIiz/e/BJ6pTmeWOB/JO55x1h5YJzx2t6m0kuIpZm1zk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLUwLDY12Be6LPG2HD+Wxv9Uld/jL5YCSSmy9ZBotA+F03ZMzf
-	OzoGGAwLOrV+K6bBIIsfurDiTXZtbFrFHAtHWfwhC1z6X2IAUqG6cOK6PMGo6npSn99uGELcUG7
-	zGg/GKQNzzFOUhOr+ES7+aV/xc4mDi0v8
-X-Google-Smtp-Source: AGHT+IFqWBwmZFUFDSoIG52LlfPgR2Lpyh0XsgvG+p8GDoLM5hMqSk1vtAD6Vf5eaRSWj88KlgUrlyexWBoBKVg5XZo=
-X-Received: by 2002:a05:620a:2982:b0:79f:4c8:d873 with SMTP id
- af79cd13be357-7a7e4cab8camr343583085a.28.1724748418988; Tue, 27 Aug 2024
- 01:46:58 -0700 (PDT)
+        bh=8kDKIOwTEd6w8yb+ASnRf9bhshqBEl1pUBH6pCnSK/I=;
+        b=naEsq3t5mpfNMGPqdlWctYF1bieU1T64cRnluyBSTgF/a2rOHvYTiGODwRzmMefwP2
+         uARNubRCrI88+lGTo0vAB6nkYtSQ8KDDHQqw6jWETmbpU+I6CKv48GQ3hhuE5PhMhIb1
+         GPjzDCmCBtqzk/i6R3PtzqQkx/rKBK5kVqpDS4ApcOBGzLK7UFmqgJhfwClb+JlATiCk
+         OPQsY6XvEY9JrMIaQymUGusDzVkP7ZFCgtr8DgRtXXFj+0lXfwd8Zyh1CEe/XHqO2OVS
+         qnLaUb4iURegr5rBJRxjzG20rQCR3bf1o5To9XRsjqquOO3y29aHscY72+zEEpkwRX9x
+         tVag==
+X-Forwarded-Encrypted: i=1; AJvYcCUlft7eC3JX0EhB1dElUWJwV8PLZGhgKww3D3/ScShjBWnI778/GyA/w01OkeNpjY+iPSdZWK/E/1EWj+c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxxDTeI+K6Cc6Qoht3iMbJ3I/mrcmdQuh+yn4qLmJDVX1F5De4
+	u1b0ZLHY3iy7V3kthu0MddYtCMGDEQOmNu5EcEL3xy5Zu8vN70rm4LNeCwca3gyEBsHYgaBy7ok
+	r3frUbh+PPWpysqFY0V91rGK4t88=
+X-Google-Smtp-Source: AGHT+IHfzEjvAa6juUPHsEOAGjLWPcwPUMqsodqfndjPZiVuX++xmoBVqhxYgl03omfSpxoIUvlKwJD7cx+EtDranMw=
+X-Received: by 2002:a05:651c:b0a:b0:2ef:1c05:6907 with SMTP id
+ 38308e7fff4ca-2f514b7a52bmr8112801fa.5.1724748490547; Tue, 27 Aug 2024
+ 01:48:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240722101443.10768-1-feilv@asrmicro.com> <CAOQ4uxhP03BHK8gDmeySxkacGvy9BToZkb5nTgaegWxJPAuG8A@mail.gmail.com>
- <CAJfpegtPOgowkK5EHxNZnuHDo9AZTbF2-zxMc99rvWL44rdMXQ@mail.gmail.com>
-In-Reply-To: <CAJfpegtPOgowkK5EHxNZnuHDo9AZTbF2-zxMc99rvWL44rdMXQ@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 27 Aug 2024 10:46:47 +0200
-Message-ID: <CAOQ4uxiYGsKzMZ73=WLZqseU=ibboFtPfqpeGtmFWYY3uxjMvw@mail.gmail.com>
-Subject: Re: [PATCH V2] ovl: fsync after metadata copy-up via mount option "fsync=strict"
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Fei Lv <feilv@asrmicro.com>, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lianghuxu@asrmicro.com
+References: <CA+G9fYuFDon59=Nw6WCdgp0FanZ1oE3dCkoq71EK0Bxe6Jhe_g@mail.gmail.com>
+ <CA+G9fYtd1Hw9YLpceUAwwC+UytVQVXOET4gmGT9jiCgHa+WexQ@mail.gmail.com>
+ <CAMgjq7Bz0DY+rY0XgCoH7-Q=uHLdo3omi8kUr4ePDweNyofsbQ@mail.gmail.com>
+ <20240819220548.d8f1ea5cf504cfd8feb5780e@linux-foundation.org> <CACePvbVJab1QNv35jepKYVdXV1Brnn=sTwBx7Vs5fr-93jDQvQ@mail.gmail.com>
+In-Reply-To: <CACePvbVJab1QNv35jepKYVdXV1Brnn=sTwBx7Vs5fr-93jDQvQ@mail.gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Tue, 27 Aug 2024 16:47:54 +0800
+Message-ID: <CAMgjq7A7k7FvZM=cGXiz9q9YuQD4iH5H_Og4wY0ENSgHiVdDYg@mail.gmail.com>
+Subject: Re: gcc-8: mm/swapfile.c:863:40: error: array subscript 1 is above
+ array bounds of 'struct list_head[1]' [-Werror=array-bounds]
+To: Chris Li <chrisl@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, linux-mm <linux-mm@kvack.org>, 
+	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, Barry Song <21cnbao@gmail.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, Hugh Dickins <hughd@google.com>, 
+	Kalesh Singh <kaleshsingh@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Anders Roxell <anders.roxell@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 26, 2024 at 5:59=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
-wrote:
+On Tue, Aug 20, 2024 at 4:51=E2=80=AFPM Chris Li <chrisl@kernel.org> wrote:
 >
-> On Mon, 22 Jul 2024 at 15:56, Amir Goldstein <amir73il@gmail.com> wrote:
+> On Mon, Aug 19, 2024 at 10:05=E2=80=AFPM Andrew Morton
+> <akpm@linux-foundation.org> wrote:
 > >
-> > On Mon, Jul 22, 2024 at 1:14=E2=80=AFPM Fei Lv <feilv@asrmicro.com> wro=
-te:
-> > >
-> > > For upper filesystem which does not enforce ordering on storing of
-> > > metadata changes(e.g. ubifs), when overlayfs file is modified for
-> > > the first time, copy up will create a copy of the lower file and
-> > > its parent directories in the upper layer. Permission lost of the
-> > > new upper parent directory was observed during power-cut stress test.
-> > >
-> > > Fix by adding new mount opion "fsync=3Dstrict", make sure data/metada=
-ta of
-> > > copied up directory written to disk before renaming from tmp to final
-> > > destination.
-> > >
-> > > Signed-off-by: Fei Lv <feilv@asrmicro.com>
+> > On Mon, 19 Aug 2024 19:44:25 +0800 Kairui Song <ryncsn@gmail.com> wrote=
+:
 > >
-> > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> > > --- a/mm/swapfile.c
+> > > +++ b/mm/swapfile.c
+> > > @@ -836,7 +836,7 @@ static unsigned long cluster_alloc_swap_entry(str=
+uct swap_info_struct *si, int o
+> > >               goto done;
+> > >
+> > >       /* Order 0 stealing from higher order */
+> > > -     for (int o =3D 1; o < PMD_ORDER; o++) {
+> > > +     for (int o =3D 1; o < SWAP_NR_ORDERS; o++) {
+> > >               /*
+> > >                * Clusters here have at least one usable slots and can=
+'t fail order 0
+> > >                * allocation, but reclaim may drop si->lock and race w=
+ith another user.
 > >
-> > but I'd also like to wait for an ACK from Miklos on this feature.
+> > OK, I got that landed in the right place, but...
+> >
+> > The definition of `o' within the for statement isn't typical kernel
+> > style - I'm surprised we didn't get a warning for this - maybe things
+> > have changed when I wasn't looking.
 >
-> I'm okay with this.  I'm a little confused about sync=3Dstrict mode,
-> since most copy ups will have vfs_fsync() called twice.  Is this what
-> we want, or could this be consolidated into a single fsync?
+> Noted.
 >
+> I did use the checkpatch.pl and fixed all the warnings before I sent
+> the patch out.
+> The checkpatch.pl script did not complain about this. Sure I can stay
+> away from it.
+> BTW, I did  a search on the kernel tree:
+> $ rg 'for \(int' | wc -l
+> 970
+> $
+> It seems pretty common in the kernel tree now.
 
-Maybe it could, but remember that ubifs strict mode is the odd case
-if we have an extra fsync for the odd case, I think code simplicity is
-a more important factor.
+Might be off topic from the issue...
 
-> Also is it worth optimizing away the fsync on the directory in cases
-> the filesystem is well behaved?  Maybe we should just move the
-> vfs_fsync() call into ovl_copy_up_metadata() and omit the complexity
-> related to the additional mount option?
+I believe this issue it's not an upstream problem nowadays after
+e8c07082a810 ("Kbuild: move to -std=3Dgnu11"), I did notice a GCC error
+after backporting these commits to an older kernel which still used
+c89, but for upstream this should be OK?
+
 >
-
-Hmm. Maybe you are confused by the commit message that only mentions
-fsync of the parent directory (same as the reported reproducer), but
-the strict mode fsync also affects metacopy, not only parent dir copy up.
-
-> To me it feels that it shouldn't matter in terms of performance, but
-> if reports of performance regressions come in, we can still make this
-> optional.
+> >
+> > Also, this code makes no attempt to honor our "The preferred limit on
+> > the length of a single line is 80 columns" objective.  There's just no
+> > reason for comment blocks to violate this.
 >
+> I was wondering why the checkpatch.pl did not catch this, is there any
+> config for checkpatch.pl I should apply?
+>
+> I typically invoke:
+>
+> ./scripts/checkpatch.pl -g HEAD
 
-I think that the case of chown -R with metacopy is going to be terribly cri=
-ppled
-if every metacopy gets and fsync.
-
-Thanks,
-Amir.
+I found checkpatch.pl stopped checking for 80 columns limit after
+commit bdc48fa11e46 ("checkpatch/coding-style: deprecate 80-column
+warning") 4 years ago. But the 80 column limit seems still preferred?
 
