@@ -1,284 +1,174 @@
-Return-Path: <linux-kernel+bounces-302588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10C02960092
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:55:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72770960096
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:55:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35B171C22286
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:55:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28E60283640
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B4274413;
-	Tue, 27 Aug 2024 04:55:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985997B3E1;
+	Tue, 27 Aug 2024 04:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lbiCpdw4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CFC45028;
-	Tue, 27 Aug 2024 04:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PLrae34h"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC0513A24A;
+	Tue, 27 Aug 2024 04:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724734509; cv=none; b=Fu+LF7bbfbNtBSpwgvdFk4FcbROmqZwB3pKOELtsXxD/FblXZq4eNUAEzWODvOnUdNmqq7hG2xRcC1qGun+450cWnDgMTyIkwM+o6HfUXf5cpUlE043QgXK+OJodwd7mYF3rH7m3Vmz5uEOZjjFEVbG7fgzB8fzFtgHBNvOKJrM=
+	t=1724734528; cv=none; b=A+J3bN1faXDE+9/qiMO5846uo/8CftYf8pgTuKl69XcgVxMWR/O7kNyz4SvbkLmNEl11JsZ0AkrHHZgNmXlqFhr538YaL80GNj1/Ktp7edVwQObapCtbx7FpdbCgGuaejaBA23+L7FEFtl0qdTpIrmL0K4U9CNCZEz26EpN+1PQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724734509; c=relaxed/simple;
-	bh=PdA0EpTBc8PSnwnMVFJg2PvKQseIM/bCCQkx0W8vh2o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sjMgwf8J9lk6KzGZuCTkZ0hOdB9Wok1EoBGwupPUP0AqUm6BwyjoiW/fYiC16bXpDS+ED4TQrMFsOEy9J7EIcgO9V8KwcM7NzQZB+S6QfgE5yGpI5bxWnb0MLr2UYZPI8YlUM36AMxL0QHPPKAnCs+V2sJo0uZvFHR3E8GIuFu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lbiCpdw4; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724734507; x=1756270507;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=PdA0EpTBc8PSnwnMVFJg2PvKQseIM/bCCQkx0W8vh2o=;
-  b=lbiCpdw4YNVBxJqtNNgOtMATvY6UXUarPBv67/P9m7RgUuZImowgIujU
-   8Xjc+pHhBYFI9B7Y4xYxEZiDfce+O4KAgGYEsyiRiYvM3o9Atk3REfoks
-   ecTmDuNU9lYVH5g1fP51n54THxX6QsP1Y6en+A5z4flcuQrEj89kvCe5J
-   kk/dJLhSpDK4rlodZxv2XTJSmECxBONypBJelU/4dk5azYtdtE054hVZm
-   3fkqAut5V88M+0jFC7O9xql/I3Soepwf3bRSlAk7fNFcS4CQ2V/Y6jVIL
-   gHhK8ZW7haqL+6a4BragZwRXrWm8M0uFdcDEiLer9t0Js8enBQL2QXDI/
-   A==;
-X-CSE-ConnectionGUID: c9l6BwfBQC+yyW0wlj4mFg==
-X-CSE-MsgGUID: iXNsJ658TvWYQrHM+V8AAw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23073120"
-X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
-   d="scan'208";a="23073120"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 21:55:06 -0700
-X-CSE-ConnectionGUID: cqa0QI58RDSrmJUsNwlFIg==
-X-CSE-MsgGUID: lb8NBX+9SAeG4kCWpIu35A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
-   d="scan'208";a="100238910"
-Received: from unknown (HELO [10.0.2.15]) ([10.245.89.141])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 21:55:00 -0700
-Message-ID: <7ae1fcac-cbea-478c-b8c9-d2c2a5dd6f11@intel.com>
-Date: Tue, 27 Aug 2024 07:54:54 +0300
+	s=arc-20240116; t=1724734528; c=relaxed/simple;
+	bh=q0nFpfwDB71M8hRiJH0fFpqrz1a/viVuLN0yaqfzmOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=reyOXcrEjE8vKmCs0M6yLrpPddlIKD2dpIpwz7izZEwfHXbzyRkPd2qpXEvY/ocE5mV6F7OGG29B3yHxD+3Pxpe8rI2pOGtMZY66Frb0lwFmf/buWiPHnQ91HqsRzb39XVGOWozvFzkZNGtAGLsqzJJYRs6mwBY5vAT0IwhP/kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=PLrae34h; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1173)
+	id C027520B7165; Mon, 26 Aug 2024 21:55:21 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C027520B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1724734521;
+	bh=y7u/adLfEfWQBZYvxPMqom7lgVuRUle0taA6pKvQB+I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PLrae34hkaXgZs8gWphQNxMWNt0Jm6TjvjKYFazPZRlMrAdUWJB+95Mxa9pJuE8BD
+	 UXUlqSA6lCuK6oBH8e1ocHtKS6MNNTuWXjQ175mlt6aa/fd9jCj1/QEIl7tSgvjpdY
+	 XdU85MKV6Z1RyTKNALnxmmj4SbpIlm8SeosBCLmA=
+Date: Mon, 26 Aug 2024 21:55:21 -0700
+From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: "kys@microsoft.com" <kys@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"ernis@microsoft.com" <ernis@microsoft.com>
+Subject: Re: [PATCH v3] net: netvsc: Update default VMBus channels
+Message-ID: <20240827045521.GA17487@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1724339168-20913-1-git-send-email-ernis@linux.microsoft.com>
+ <SN6PR02MB415769AD9CC9B1C9398DCC6CD4882@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/10] x86/virt/tdx: Unbind global metadata read with
- 'struct tdx_tdmr_sysinfo'
-To: "Huang, Kai" <kai.huang@intel.com>, "Hansen, Dave"
- <dave.hansen@intel.com>, "seanjc@google.com" <seanjc@google.com>,
- "bp@alien8.de" <bp@alien8.de>, "peterz@infradead.org"
- <peterz@infradead.org>, "hpa@zytor.com" <hpa@zytor.com>,
- "mingo@redhat.com" <mingo@redhat.com>,
- "Williams, Dan J" <dan.j.williams@intel.com>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>
-Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Gao, Chao" <chao.gao@intel.com>,
- "binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>,
- "x86@kernel.org" <x86@kernel.org>
-References: <cover.1721186590.git.kai.huang@intel.com>
- <7af2b06ec26e2964d8d5da21e2e9fa412e4ed6f8.1721186590.git.kai.huang@intel.com>
- <66b16121c48f4_4fc729424@dwillia2-xfh.jf.intel.com.notmuch>
- <7b65b317-397d-4a72-beac-6b0140b1d8dd@intel.com>
- <66b178d4cfae4_4fc72944b@dwillia2-xfh.jf.intel.com.notmuch>
- <96c248b790907b14efcb0885c78e4000ba5b9694.camel@intel.com>
- <a107b067-861d-43f4-86b5-29271cb93dad@intel.com>
- <49dabff079d0b55bd169353d9ef159495ff2893e.camel@intel.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <49dabff079d0b55bd169353d9ef159495ff2893e.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <SN6PR02MB415769AD9CC9B1C9398DCC6CD4882@SN6PR02MB4157.namprd02.prod.outlook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On 27/08/24 01:40, Huang, Kai wrote:
-> On Mon, 2024-08-26 at 18:38 +0300, Adrian Hunter wrote:
->> On 7/08/24 15:09, Huang, Kai wrote:
->>> On Mon, 2024-08-05 at 18:13 -0700, Dan Williams wrote:
->>>> Huang, Kai wrote:
->>>> [..]
->>>>>> The unrolled loop is the same amount of work as maintaining @fields.
->>>>>
->>>>> Hi Dan,
->>>>>
->>>>> Thanks for the feedback.
->>>>>
->>>>> AFAICT Dave didn't like this way:
->>>>>
->>>>> https://lore.kernel.org/lkml/cover.1699527082.git.kai.huang@intel.com/T/#me6f615d7845215c278753b57a0bce1162960209d
->>>>
->>>> I agree with Dave that the original was unreadable. However, I also
->>>> think he glossed over the loss of type-safety and the silliness of
->>>> defining an array to precisely map fields only to turn around and do a
->>>> runtime check that the statically defined array was filled out
->>>> correctly. So I think lets solve the readability problem *and* make the
->>>> array definition identical in appearance to unrolled type-safe
->>>> execution, something like (UNTESTED!):
->>>>
->>>>
->>> [...]
->>>
->>>> +/*
->>>> + * Assumes locally defined @ret and @ts to convey the error code and the
->>>> + * 'struct tdx_tdmr_sysinfo' instance to fill out
->>>> + */
->>>> +#define TD_SYSINFO_MAP(_field_id, _offset)                              \
->>>> + ({                                                              \
->>>> +         if (ret == 0)                                           \
->>>> +                 ret = read_sys_metadata_field16(                \
->>>> +                         MD_FIELD_ID_##_field_id, &ts->_offset); \
->>>> + })
->>>> +
->>>
->>> We need to support u16/u32/u64 metadata field sizes, but not just u16.
->>>
->>> E.g.:
->>>
->>> struct tdx_sysinfo_module_info {
->>>         u32 sys_attributes;
->>>         u64 tdx_features0;
->>> };
->>>
->>> has both u32 and u64 in one structure.
->>>
->>> To achieve type-safety for all field sizes, I think we need one helper
->>> for each field size.  E.g.,
->>>
->>> #define READ_SYSMD_FIELD_FUNC(_size)                            \
->>> static inline int                                               \
->>> read_sys_metadata_field##_size(u64 field_id, u##_size *data)    \
->>> {                                                               \
->>>         u64 tmp;                                                \
->>>         int ret;                                                \
->>>                                                                 \
->>>         ret = read_sys_metadata_field(field_id, &tmp);          \
->>>         if (ret)                                                \
->>>                 return ret;                                     \
->>>                                                                 \
->>>         *data = tmp;                                            \
->>>         return 0;                                               \
->>> }
->>>
->>> /* For now only u16/u32/u64 are needed */
->>> READ_SYSMD_FIELD_FUNC(16)
->>> READ_SYSMD_FIELD_FUNC(32)
->>> READ_SYSMD_FIELD_FUNC(64)
->>>
->>> Is this what you were thinking?
->>>
->>> (Btw, I recall that I tried this before for internal review, but AFAICT
->>> Dave didn't like this.)
->>>
->>> For the build time check as you replied to the next patch, I agree it's
->>> better than the runtime warning check as done in the current code.
->>>
->>> If we still use the type-less 'void *stbuf' function to read metadata
->>> fields for all sizes, then I think we can do below:
->>>
->>> /*
->>>  * Read one global metadata field and store the data to a location of a
->>>  * given buffer specified by the offset and size (in bytes).
->>>  */
->>> static int stbuf_read_sysmd_field(u64 field_id, void *stbuf, int offset,
->>>                                   int size)
->>> {
->>>         void *member = stbuf + offset;
->>>         u64 tmp;
->>>         int ret;
->>>
->>>         ret = read_sys_metadata_field(field_id, &tmp);
->>>         if (ret)
->>>                 return ret;
->>>
->>>         memcpy(member, &tmp, size);
->>>
->>>         return 0;
->>> }
->>>
->>> /* Wrapper to read one metadata field to u8/u16/u32/u64 */
->>> #define stbuf_read_sysmd_single(_field_id, _pdata)      \
->>>         stbuf_read_sysmd_field(_field_id, _pdata, 0,        \
->>>             sizeof(typeof(*(_pdata))))
->>>
->>> #define CHECK_MD_FIELD_SIZE(_field_id, _st, _member)    \
->>>         BUILD_BUG_ON(MD_FIELD_ELE_SIZE(MD_FIELD_ID_##_field_id) != \
->>>                         sizeof(_st->_member))
->>>
->>> #define TD_SYSINFO_MAP_TEST(_field_id, _st, _member)                    \
->>>         ({                                                              \
->>>                 if (ret) {                                              \
->>>                         CHECK_MD_FIELD_SIZE(_field_id, _st, _member);   \
->>>                         ret = stbuf_read_sysmd_single(                  \
->>>                                         MD_FIELD_ID_##_field_id,        \
->>>                                         &_st->_member);                 \
->>>                 }                                                       \
->>>          })
->>>
->>> static int get_tdx_module_info(struct tdx_sysinfo_module_info *modinfo)
->>> {
->>>         int ret = 0;
->>>
->>> #define TD_SYSINFO_MAP_MOD_INFO(_field_id, _member)     \
->>>         TD_SYSINFO_MAP_TEST(_field_id, modinfo, _member)
->>>
->>>         TD_SYSINFO_MAP_MOD_INFO(SYS_ATTRIBUTES, sys_attributes);
->>>         TD_SYSINFO_MAP_MOD_INFO(TDX_FEATURES0,  tdx_features0);
->>>
->>>         return ret;
->>> }
->>>
->>> With the build time check above, I think it's OK to lose the type-safe
->>> inside the stbuf_read_sysmd_field(), and the code is simpler IMHO.
->>>
->>> Any comments?
->>
->> BUILD_BUG_ON() requires a function, but it is still
->> be possible to add a build time check in TD_SYSINFO_MAP
->> e.g.
->>
->> #define TD_SYSINFO_CHECK_SIZE(_field_id, _size)                       \
->>       __builtin_choose_expr(MD_FIELD_ELE_SIZE(_field_id) == _size, _size, (void)0)
->>
->> #define _TD_SYSINFO_MAP(_field_id, _offset, _size)            \
->>       { .field_id = _field_id,                                \
->>         .offset   = _offset,                                  \
->>         .size     = TD_SYSINFO_CHECK_SIZE(_field_id, _size) }
->>
->> #define TD_SYSINFO_MAP(_field_id, _struct, _member)           \
->>       _TD_SYSINFO_MAP(MD_FIELD_ID_##_field_id,                \
->>                       offsetof(_struct, _member),             \
->>                       sizeof(typeof(((_struct *)0)->_member)))
->>
->>
+On Fri, Aug 23, 2024 at 04:37:17PM +0000, Michael Kelley wrote:
+> From: Erni Sri Satya Vennela <ernis@linux.microsoft.com> Sent: Thursday, August 22, 2024 8:06 AM
+> > 
+> > Change VMBus channels macro (VRSS_CHANNEL_DEFAULT) in
+> > Linux netvsc from 8 to 16 to align with Azure Windows VM
+> > and improve networking throughput.
+> > 
+> > For VMs having less than 16 vCPUS, the channels depend
+> > on number of vCPUs. Between 16 to 64 vCPUs, the channels
+> > default to VRSS_CHANNEL_DEFAULT. For greater than 64 vCPUs,
+> > set the channels to number of physical cores / 2 returned by
+> > netif_get_num_default_rss_queues() as a way to optimize CPU
+> > resource utilization and scale for high-end processors with
+> > many cores. Due to hyper-threading, the number of
+> > physical cores = vCPUs/2.
 > 
-> Thanks for the comment, but I don't think this meets for our purpose.
+> But note that a given physical processor may or may not support
+> hyper-threading. For example, the physical processor used for
+> ARM64 VMs in Azure does not have hyper-threading. And even
+> if the physical processor supports hyper-threading, the VM might
+> not see hyper-threading as enabled. Many Azure GPU-based VM
+> sizes see only full cores, with no hyper-threading. It's also possible
+> to boot Linux with hyper-threading disabled even if the VM sees
+> hyper-threaded cores (the "nosmt" or "smt=1" kernel boot option).
 > 
-> We want a build time "error" when the "MD_FIELD_ELE_SIZE(_field_id) == _size"
-> fails, but not "still initializing the size to 0".
-
-FWIW, it isn't 0, it is void.  Assignment to void is an error.  Could use
-anything that is correct syntax but would produce a compile-time error
-e.g. (1 / 0).
-
-> Otherwise, we might get
-> some unexpected issue (due to size is 0) at runtime, which is worse IMHO than
-> a runtime check as done in the current upstream code.
+> Your code below probably isn't affected when hyper-threading
+> isn't present. But in the interest of accuracy, the discussion here
+> in the commit message should qualify the use of "vCPU/4" as
+> the number of channels. It might be "vCPU/2" when
+> hyper-threading isn't present or is disabled, and for vCPU
+> counts between 16 and 64, you'll get more than 16 channels.
 > 
-> I have been trying to add a BUILD_BUG_ON() to the field_mapping structure
-> initializer, but I haven't found a reliable way to do so.
+> > Maximum number of channels are by default set to 64.
+> > 
+> > Based on this change the channel creation would change as follows:
+> > 
+> > -------------------------------------------------------------
+> > | No. of vCPU	|  dev_info->num_chn	| channels created  |
+> > -------------------------------------------------------------
+> > |  0-16		|       16		|       vCPU        |
 > 
-> For now I have completed the new version based on Dan's suggestion, but still
-> need to work on changelog/coverletter etc, so I think I can send the new
-> version out and see whether people like it.  We can revert back if that's not
-> what people want.
-
+> Nit: Presumably we won't ever have 0 vCPUs.  :-)
+> 
+> > | >16 & <=64	|       16		|       16          |
+> > | >64 & <=256	|       vCPU/4		|       vCPU/4      |
+> > | >256		|       vCPU/4		|       64          |
+> > -------------------------------------------------------------
+> > 
+> > Performance tests showed significant improvement in throughput:
+> > - 0.54% for 16 vCPUs
+> > - 0.83% for 32 vCPUs
+> > - 0.86% for 48 vCPUs
+> > - 9.72% for 64 vCPUs
+> > - 13.57% for 96 vCPUs
+> > 
+> > Signed-off-by: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+> > Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+> > Reviewed-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+> > ---
+> > Changes in v3:
+> > * Use netif_get_num_default_rss_queues() to set channels
+> > * Change terminology for channels in commit message
+> > ---
+> > Changes in v2:
+> > * Set dev_info->num_chn based on vCPU count.
+> > ---
+> >  drivers/net/hyperv/hyperv_net.h | 2 +-
+> >  drivers/net/hyperv/netvsc_drv.c | 3 ++-
+> >  2 files changed, 3 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/net/hyperv/hyperv_net.h b/drivers/net/hyperv/hyperv_net.h
+> > index 810977952f95..e690b95b1bbb 100644
+> > --- a/drivers/net/hyperv/hyperv_net.h
+> > +++ b/drivers/net/hyperv/hyperv_net.h
+> > @@ -882,7 +882,7 @@ struct nvsp_message {
+> > 
+> >  #define VRSS_SEND_TAB_SIZE 16  /* must be power of 2 */
+> >  #define VRSS_CHANNEL_MAX 64
+> > -#define VRSS_CHANNEL_DEFAULT 8
+> > +#define VRSS_CHANNEL_DEFAULT 16
+> > 
+> >  #define RNDIS_MAX_PKT_DEFAULT 8
+> >  #define RNDIS_PKT_ALIGN_DEFAULT 8
+> > diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
+> > index 44142245343d..a6482afe4217 100644
+> > --- a/drivers/net/hyperv/netvsc_drv.c
+> > +++ b/drivers/net/hyperv/netvsc_drv.c
+> > @@ -987,7 +987,8 @@ struct netvsc_device_info *netvsc_devinfo_get(struct netvsc_device *nvdev)
+> >  			dev_info->bprog = prog;
+> >  		}
+> >  	} else {
+> > -		dev_info->num_chn = VRSS_CHANNEL_DEFAULT;
+> > +		dev_info->num_chn = max(VRSS_CHANNEL_DEFAULT,
+> > +					netif_get_num_default_rss_queues());
+> >  		dev_info->send_sections = NETVSC_DEFAULT_TX;
+> >  		dev_info->send_section_size = NETVSC_SEND_SECTION_SIZE;
+> >  		dev_info->recv_sections = NETVSC_DEFAULT_RX;
+> > --
+> > 2.34.1
+> > 
+Thank you for the knowledge you shared. I’ll update the patch
+with your suggestions in the next version.
 
