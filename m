@@ -1,197 +1,92 @@
-Return-Path: <linux-kernel+bounces-303335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F537960AE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:48:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BC01960B00
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:50:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4F381C22A09
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:48:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F1B01C22A95
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF771BD4EC;
-	Tue, 27 Aug 2024 12:47:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6967B1C578A;
+	Tue, 27 Aug 2024 12:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WRJ8/Eq7"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="bfNh6WBO"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35A71BC9FD;
-	Tue, 27 Aug 2024 12:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E09F1C460A
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724762858; cv=none; b=CVdxJJ8hjPSLfCcZQ620oUkbO3PbfQf/auCzCQQ20zayTiESNi6fz2PillkJXK/csRS6lm+KdQRn/5boUR3wiUHeZLXrcBCxIb4idEkX26tcN3g6iLX3G+77hAnuiyyJKjQBUZF8Qq/dpYFR0D2jm117I3mUwoxCCsfBXiLhWR8=
+	t=1724762882; cv=none; b=DUQaI+mjMhb/Wj9gj0u2+dElsYa3H62BhMB9c+GdT5bJvBEK8YLrgJcCTHSr2pB57yZu1j4FWZhnPJ3xEWZQEVXtEMjSEsre6K2Jl7505/9G0dFWcGZ3JKuRAMUGReurblCvdPG0X5npfsxVdHRMZmxIdUFPXq7sgbGzxLO9AMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724762858; c=relaxed/simple;
-	bh=2Gk8PZbMT6/gqj4CAJeNZFNHkhDwFprEuUlxugkVmFg=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JQe4Lj9nLKfMspbVge9W1MPiUqrqBlf+iqcN4lnV3bFYzeLQjH5gHtcn38seSNHAEcPtC708UBeb4wWkIr2D0VdqBD1YgBLzhs/gwyQnGrK+HdMMafINhLIqjm3J7K0/GHwzODSb98tGtHHG6FrHX/9Zq8aIj4aN4WDkh1OjJ0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WRJ8/Eq7; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f4f2868783so50065701fa.2;
-        Tue, 27 Aug 2024 05:47:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724762855; x=1725367655; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WTsY1OQvaQ96+WTh0hHjByyS4uHxvasMiB+TQotf8Dw=;
-        b=WRJ8/Eq7lCLUaCPrPnH576faB/JCpKS+22Hmt8iD5N9q4lQzHuMOqucXG9D4bTL1sW
-         GXHqyKUldS4sJgHAeVRNKVlMjsiF9F/C6MsyrOaD9YNUSBVMd+jMgmmx70gWyaXmXMsN
-         V5I8eZvDhX8J+HxjXfJtOhH7iB6dUSUQVHH9e/+iQHGZpF+pD+ScY9D8OQxiKgWfik2X
-         bcp+5ICcED1L4mDf5u6W6+xhiNUjGJzLfOFI3KRMV0h6zDv7DTTcel+8bLRuCGp9EGCu
-         QaxKWYDoUROUngAlmvdMSbadlQHU6gi8o4zJz//YWEA7ykcIaZe4sIrtLMMVRFbxGkV3
-         pguA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724762855; x=1725367655;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WTsY1OQvaQ96+WTh0hHjByyS4uHxvasMiB+TQotf8Dw=;
-        b=pmDzNp89OKOnqSEhqZGfhCRQQiQEgy+lD/3AoMcuhoh6ycO0quxUMb9yGi66UH+alj
-         D4cvWDJkyk4osUiybVTU0tQuarhSJQMEYnHbZotkFdErNBqMZCs0fctD/sv4Vb3cAIcM
-         YhhNBB2xb8EivDGp3c4NNQKipITHZFXM4QVPN0jy3+wP/rZ1la/h0LEFmCFcwOvZ8xWx
-         SnKH3nVtSinBk8KABPWJeSJMnZexzUXQ3//wdmjYM4XaEKmCJtxkpEUOd22/R+vX2HQx
-         oChWM4bhZBSdVXuXUF2eSXGzhLlnUIyL1Pmqzq3mSyGXCnIrkgihNc1+wjlgfYs7Ngf9
-         V44g==
-X-Forwarded-Encrypted: i=1; AJvYcCXc+eM6tQP3nrDwajQMlvnc22UyIoQ2DoyFul/1BUMHDDSQl8gNMwklivspEvQPzcGirwFOLu1G@vger.kernel.org, AJvYcCXvE5+6q63UrdrH/m+Q8uCXrtvO0EO9M32r2WytdsmzjziRufuvLxsmeHh+OulcXd+Gfm6u0YcDZ2FmcPE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTk/W1/4o1UviAraV8LHl4KhKkhBMEsoYtiCuC9qVjlieWey1B
-	cAb3djvxevKaDfTKPUYs2wvS28Hp5Xts9KQ1PBN0kucyQ/vXO4kESOjNuA==
-X-Google-Smtp-Source: AGHT+IFpmby8qEhRSQcb+/YF//pOeyUg9yGHuBr9W9k2QuOxSz9CDjC9ConH0eXNYDwRzCMuNXSLmA==
-X-Received: by 2002:a2e:4e11:0:b0:2ef:21b3:cdef with SMTP id 38308e7fff4ca-2f514a44caamr17878701fa.25.1724762854290;
-        Tue, 27 Aug 2024 05:47:34 -0700 (PDT)
-Received: from pc636 (host-90-233-206-146.mobileonline.telia.com. [90.233.206.146])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f4047defaasm15320271fa.66.2024.08.27.05.47.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 05:47:33 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Tue, 27 Aug 2024 14:47:30 +0200
-To: Michal Hocko <mhocko@suse.com>
-Cc: Uladzislau Rezki <urezki@gmail.com>, Hailong Liu <hailong.liu@oppo.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Barry Song <21cnbao@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Tangquan Zheng <zhengtangquan@oppo.com>, stable@vger.kernel.org,
-	Baoquan He <bhe@redhat.com>, Matthew Wilcox <willy@infradead.org>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v1] mm/vmalloc: fix page mapping if
- vm_area_alloc_pages() with high order fallback to order 0
-Message-ID: <Zs3K4h5ulL1zlj6L@pc636>
-References: <ZrXkVhEg1B0yF5_Q@pc636>
- <20240815220709.47f66f200fd0a072777cc348@linux-foundation.org>
- <20240816091232.fsliktqgza5o5x6t@oppo.com>
- <Zr8mQbc3ETdeOMIK@pc636>
- <20240816114626.jmhqh5ducbk7qeur@oppo.com>
- <Zr9G-d6bMU4_QodJ@tiehlicka>
- <Zsi8Byjo4ayJORgS@pc638.lan>
- <Zsw0Sv9alVUb1DV2@tiehlicka>
- <Zsx3ULRaVu5Lh46Q@pc636>
- <Zs12_8AZ0k_WRWUE@tiehlicka>
+	s=arc-20240116; t=1724762882; c=relaxed/simple;
+	bh=R6D7+qQnQm3jzPsIpmE3Q9GrFtEYUrdUsuVPo5UPswk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tHDWnm2NAM90v7R4jjUsq++bLa/GMh6WdOwn7YcURtt5hgnkBzK+9vpwLaCrtP6UsXuSJI39i66yH6Y0XTQFLfySO4GDNc4CH+bhpLhDW5pF0EF2jOmID1abgy/aZseab59adnHU50RBkCCveGE3MRpBIqmpkR//B24U8Lda8QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=bfNh6WBO; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-112-93.bstnma.fios.verizon.net [173.48.112.93])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 47RClf7P021540
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 Aug 2024 08:47:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1724762864; bh=U19LhhR9iTB/RKGBv97tak0iv7y0eTeJ8XQThvjLR/c=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=bfNh6WBOqcmJ2065PFYfR423gWY/0Ik/9ZgBbHhi0PPjmMHHqhuDbn8zWs9exiNxA
+	 y/D0wiAHCkFM9IBjFARNoW9Usc943BIUP89R1Ezfog2zfwY58FTTFg2+77EptQXInB
+	 oi5xA+tg8OtbcOMOtM5TGtJCABt6T0/gQHEbTElhhlmDjqafdoiliQzit+3ArDGj4/
+	 jsI3ZYbMZcM+SmK9yc6AEi/Axkq/v/ONIj0/D6GOK8+tNEF1br289GqTLkgt7IOUh1
+	 q0QXHKapovmLjFt+i91ZUdVo2j0qIoyfCYUWQifYMO3ayw3O5YhTRHSad/ZWjnC/Jl
+	 qYbYLxSW59zWA==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id C34E415C1C63; Tue, 27 Aug 2024 08:47:38 -0400 (EDT)
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: adilger.kernel@dilger.ca, kees@kernel.org, gustavoars@kernel.org,
+        Thorsten Blum <thorsten.blum@toblux.com>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v4] ext4: Annotate struct ext4_xattr_inode_array with __counted_by()
+Date: Tue, 27 Aug 2024 08:47:32 -0400
+Message-ID: <172476284022.635532.12692920677759695178.b4-ty@mit.edu>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240730220200.410939-3-thorsten.blum@toblux.com>
+References: <20240730220200.410939-3-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zs12_8AZ0k_WRWUE@tiehlicka>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 27, 2024 at 08:49:35AM +0200, Michal Hocko wrote:
-> On Mon 26-08-24 14:38:40, Uladzislau Rezki wrote:
-> > On Mon, Aug 26, 2024 at 09:52:42AM +0200, Michal Hocko wrote:
-> > > On Fri 23-08-24 18:42:47, Uladzislau Rezki wrote:
-> > > [...]
-> > > > @@ -3666,7 +3655,16 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
-> > > >  	set_vm_area_page_order(area, page_shift - PAGE_SHIFT);
-> > > >  	page_order = vm_area_page_order(area);
-> > > >  
-> > > > -	area->nr_pages = vm_area_alloc_pages(gfp_mask | __GFP_NOWARN,
-> > > > +	/*
-> > > > +	 * Higher order nofail allocations are really expensive and
-> > > > +	 * potentially dangerous (pre-mature OOM, disruptive reclaim
-> > > > +	 * and compaction etc.
-> > > > +	 *
-> > > > +	 * Please note, the __vmalloc_node_range_noprof() falls-back
-> > > > +	 * to order-0 pages if high-order attempt has been unsuccessful.
-> > > > +	 */
-> > > > +	area->nr_pages = vm_area_alloc_pages(page_order ?
-> > > > +		gfp_mask &= ~__GFP_NOFAIL : gfp_mask | __GFP_NOWARN,
-> > > >  		node, page_order, nr_small_pages, area->pages);
-> > > >  
-> > > >  	atomic_long_add(area->nr_pages, &nr_vmalloc_pages);
-> > > > <snip>
-> > > > 
-> > > > Is that aligned with your wish?
-> > > 
-> > > I am not a great fan of modifying gfp_mask inside the ternary operator
-> > > like that. It makes the code harder to read. Is there any actual reason
-> > > to simply drop GFP_NOFAIL unconditionally and rely do the NOFAIL
-> > > handling for all orders at the same place?
-> > > 
-> > 1. So, for bulk we have below:
-> > 
-> > /* gfp_t bulk_gfp = gfp & ~__GFP_NOFAIL; */
-> > 
-> > I am not sure if we need it but it says it does not support it which
-> > is not clear for me why we have to drop __GFP_NOFAIL for bulk(). There
-> > is a fallback to a single page allocator. If passing __GFP_NOFAIL does
-> > not trigger any warning or panic a system, then i do not follow why
-> > we drop that flag.
-> > 
-> > Is that odd?
-> 
-> I suspect this was a pre-caution more than anything.
-> 
-OK, then i drop it.
 
-> > 2. High-order allocations. Do you think we should not care much about
-> > it when __GFP_NOFAIL is set? Same here, there is a fallback for order-0
-> > if "high" fails, it is more likely NO_FAIL succeed for order-0. Thus
-> > keeping NOFAIL for high-order sounds like not a good approach to me.
+On Wed, 31 Jul 2024 00:02:02 +0200, Thorsten Blum wrote:
+> Add the __counted_by compiler attribute to the flexible array member
+> inodes to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+> CONFIG_FORTIFY_SOURCE.
 > 
-> We should avoid high order allocations with GFP_NOFAIL at all cost.
+> Remove the now obsolete comment on the count field.
 > 
-What do you propose here? Fail such request?
+> In ext4_expand_inode_array(), use struct_size() instead of offsetof()
+> and remove the local variable count. Increment the count field before
+> adding a new inode to the inodes array.
+> 
+> [...]
 
-> > 3. "... at the same place?"
-> > Do you mean in the __vmalloc_node_range_noprof()?
-> > 
-> > __vmalloc_node_range_noprof()
-> >     -> __vmalloc_area_node(gfp_mask)
-> >         -> vm_area_alloc_pages()
-> > 
-> > if, so it is not straight forward, i.e. there is one more allocation:
-> > 
-> > <snip>
-> > static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
-> > 				 pgprot_t prot, unsigned int page_shift,
-> > 				 int node)
-> > {
-> > ...
-> > 	/* Please note that the recursion is strictly bounded. */
-> > 	if (array_size > PAGE_SIZE) {
-> > 		area->pages = __vmalloc_node_noprof(array_size, 1, nested_gfp, node,
-> > 					area->caller);
-> > 	} else {
-> > 		area->pages = kmalloc_node_noprof(array_size, nested_gfp, node);
-> > 	}
-> > ...
-> > }
-> > <snip>
-> > 
-> > whereas it is easier to do it inside of the __vmalloc_area_node().
-> 
-> Right. The allocation path is quite convoluted here. If it is just too
-> much of a hassle to implement NOFAIL at a single place then we should
-> aim at reducing that. Having that at 3 different layers is just begging
-> for inconsistences.
->
-Hard to not agree :)
+Applied, thanks!
 
---
-Uladzislau Rezki
+[1/1] ext4: Annotate struct ext4_xattr_inode_array with __counted_by()
+      commit: 01cdf03b1378f2d860d4eb5951895a92002226a3
+
+Best regards,
+-- 
+Theodore Ts'o <tytso@mit.edu>
 
