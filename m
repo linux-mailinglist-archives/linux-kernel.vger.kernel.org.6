@@ -1,194 +1,166 @@
-Return-Path: <linux-kernel+bounces-303623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD8B49611BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:22:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACF5C9611C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92866280C14
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:22:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0EBCB28500
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6575B1BC9E3;
-	Tue, 27 Aug 2024 15:22:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DB91C9EAD;
+	Tue, 27 Aug 2024 15:22:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="juFlXAHp"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XNkwqFLd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48381BC073;
-	Tue, 27 Aug 2024 15:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B7001C68BD;
+	Tue, 27 Aug 2024 15:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724772161; cv=none; b=Gx+7Nxxg+l21DrXoMtnijzLYmTqAkMuqQ8Eo/WfW6m63u2sSWzo81usDSOaqiktrvt47/vf31VCK4XRZuddqG7aX1JbkO8mpj5sf8W99dtLnIGfDLa936EPKsmrCIvAp00cRTbbgGdQLUYMLiubQ2PFwz8cniN9SaeD9YMK92Yc=
+	t=1724772173; cv=none; b=p8kQ7BLoEmnWH0+usWxMM/NWFxvUYXXSfxKLVQXQjkl/NHBwo4maX8Fg6z5KhiarK5MC8eTMF488WvFaYYmF04bupa799HKEN3nFE9G6uqtQssydK5wsub4hgIpaEnlR1pQEXKg6uxgLZ8nGjKNqMnTrzXVuzZecrWiXoJghIgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724772161; c=relaxed/simple;
-	bh=FTAaRDrAktlQbof46vd1YzSU/GPPobUGQX7/r/ZL9BI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fG+iEvgMjkdRi+LYMq4VllasNNO6JYBF++/EvtJ3FJeXHBIxVtO+QzwgQ0oNopvL/ySDdEgppdxYS5D8JunD5SpVLDf6P+OkUfwlthpsmgkOVU7CZbPoSgEz+l29MOKV8vSbslArrA9CWAad+qDnky29WvzG6+qLMZn+Iy3DcpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=juFlXAHp; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47RFMJ6m084297;
-	Tue, 27 Aug 2024 10:22:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724772139;
-	bh=plRvOJkmnI84SapBQUzX8HSqk48OkCc/MtkTYAImTtM=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=juFlXAHpacIzsq2qvRlzLwmzDvCsRAVnjSMbmlSD8E1B2ixd5OgOd9cauYUGFDjXC
-	 lJba3d33PF5Vb9SbGwgPyjQxAgJ5IwnPrn7jR7MbA8t2nizNRPLnruuV8KG/B4MWyI
-	 Rp6UqE/Kf6ur5ghORRbx0NoKdr2ofZWw8a4XXnHw=
-Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47RFMJiN015911
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 27 Aug 2024 10:22:19 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 27
- Aug 2024 10:22:19 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 27 Aug 2024 10:22:19 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47RFMI95098754;
-	Tue, 27 Aug 2024 10:22:18 -0500
-Message-ID: <b18cb162-e95c-4927-8fa7-1c29b8dda1a7@ti.com>
-Date: Tue, 27 Aug 2024 10:22:18 -0500
+	s=arc-20240116; t=1724772173; c=relaxed/simple;
+	bh=7qXMJi9JOU9nntdkpteu2ojSeQ24TNEcx8FDTGb2clM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q31PVCrbTPVHwEJhwSqFO4Z1oY1y9yjiQ4AuKTYf975mP6UyYqz8ave6J0NK0yENTlIder1DahKTutX2CqIURop8rSsoHYqfQ3DjYL/4ADsidYSOeK78K/51zQhuJXz/2agQpqAmSAOjgNzC98tt61E39QTCq+Pu6h9aQk3UG7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XNkwqFLd; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724772171; x=1756308171;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7qXMJi9JOU9nntdkpteu2ojSeQ24TNEcx8FDTGb2clM=;
+  b=XNkwqFLduAYU/Z3IoTplUWjq5iFd0HAogQVgObew4vqWfpCA1qRViMj+
+   /RfOvThbUjdjNwK3DMfAmFf0wxhGneznxtO4fBQPRqf0lUCL+KvGFLVFl
+   hyrhyNIsTslV8HUPlxw7RXqxO5lTaajPAKIcmUCCb2HGH9Bkd67BgVv+S
+   BESUCbnikJzXdAT/Yt0WUYxG74gXsYozdwgYnwbycPXPQSNO2hxhOA+Tl
+   3lDl8oErfzaLEs3BIqk56ySJpj2+tJsFfY66kzczpfBdOT8G4Y58MALcD
+   HJYfvjgkxRZIM4CfdIxLjlZipym8zul/NYGOwac+3RmgThElonG93yaW9
+   Q==;
+X-CSE-ConnectionGUID: O89DUGkkQtKq03sd/78e8w==
+X-CSE-MsgGUID: wTum0RY+QUCYqwCHSwBMcA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="23059181"
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="23059181"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 08:22:50 -0700
+X-CSE-ConnectionGUID: Lyq+Vl9JTW2Od2mvhlmZRA==
+X-CSE-MsgGUID: 6sopaUusQ42/+CHkftjt9A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="62561480"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 27 Aug 2024 08:22:48 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1siy1u-000JVh-0G;
+	Tue, 27 Aug 2024 15:22:46 +0000
+Date: Tue, 27 Aug 2024 23:22:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH v1 2/2] iio: imu: st_lsm6dsx: Remove useless dev_fwnode()
+ calls
+Message-ID: <202408272315.6tUsOdsF-lkp@intel.com>
+References: <20240826212344.866928-3-andy.shevchenko@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/3] Add generic Overlay for Grove Sunlight Sensor
-To: Ayush Singh <ayush@beagleboard.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh
- Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>, Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        Vaishnav M A <vaishnav@beagleboard.org>,
-        Derek
- Kiernan <derek.kiernan@amd.com>,
-        Dragan Cvetic <dragan.cvetic@amd.com>, Arnd
- Bergmann <arnd@arndb.de>,
-        Michael Walle <mwalle@kernel.org>,
-        Jason Kridner
-	<jkridner@beagleboard.org>,
-        Robert Nelson <robertcnelson@beagleboard.org>,
-        Robert Nelson <robertcnelson@gmail.com>,
-        Ayush Singh
-	<ayushdevel1325@gmail.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240702164403.29067-1-afd@ti.com>
- <28513e07-ab56-4cff-972c-64c2e3d6d9e2@beagleboard.org>
- <cb8af9ed-6200-428a-a9a8-87356af6e37d@ti.com>
- <eab183e7-8e70-42af-8786-a8e7b29b72c8@beagleboard.org>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <eab183e7-8e70-42af-8786-a8e7b29b72c8@beagleboard.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826212344.866928-3-andy.shevchenko@gmail.com>
 
-On 8/27/24 8:20 AM, Ayush Singh wrote:
->> Sorry, no I've not had time to circle back to this for the last couple weeks,
->> and don't expect to be able to for a couple more :(
-> 
-> Np, I will see what I can do.
-> 
-> 
->>
->> The two parts I see that are missing are:
->>
->> 1) The /append-property/ tag [0].
-> 
-> So how do you envision it? Maybe something like the following:
-> 
-> Base:
-> 
-> / {
-> 
->      node {
-> 
->          prop = <0x00>;
-> 
->      };
-> 
-> };
-> 
-> 
-> Overlay:
-> 
-> &node {
-> 
->      /append-property/ prop;
-> 
->      prop = <0x01>;
-> 
-> };
-> 
-> 
-> Or would it be better to append 1 element at a time, as follows:
-> 
-> &node {
-> 
->      /append-property/ prop 0x01;
-> 
-> };
-> 
+Hi Andy,
 
-Does
+kernel test robot noticed the following build warnings:
 
-/append-property/ prop = <0x01 0x02 0x03>;
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on linus/master v6.11-rc5 next-20240827]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-work? We will want to be able to append lists. Some type
-checking will be needed, but shouldn't be too bad.
+url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/iio-imu-st_lsm6dsx-Use-iio_read_acpi_mount_matrix-helper/20240827-052617
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20240826212344.866928-3-andy.shevchenko%40gmail.com
+patch subject: [PATCH v1 2/2] iio: imu: st_lsm6dsx: Remove useless dev_fwnode() calls
+config: arm64-randconfig-002-20240827 (https://download.01.org/0day-ci/archive/20240827/202408272315.6tUsOdsF-lkp@intel.com/config)
+compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408272315.6tUsOdsF-lkp@intel.com/reproduce)
 
-Probably good to get input from the DT folks which syntax
-looks best to them.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408272315.6tUsOdsF-lkp@intel.com/
 
-> 
->>
->> 2) Allowing the __symbols__ table properties to be phandles, not just
->> full path strings.
->>
->> For item 2, this will make the "adapter overlays" look much nicer, but
->> more importantly allow chaining together adapters more easily.
->>
->> Both these changes will need to be made in the DTC project, then
->> moved back into kernel. Neither change breaks any existing compatibility
->> so I don't expect much resistance there. It just takes some time
->> to get changes in, then have them migrated to a kernel release before
->> we can make use of them.
->>
->> If you want to help with either of those two items (I can provide more
->> details if needed), that could help keep this moving along. :)
->>
->> Thanks,
->> Andrew
->>
->> [0] https://lkml.org/lkml/2024/7/5/311
-> 
-> 
-> I am in the process of understanding the dtc codebase. Will send patches to device-tree mailing list since that seems to be easier to keep track of with the Linux patches instead of GitHub PRs.
-> 
+All warnings (new ones prefixed by >>):
 
-IIRC they have a dedicated mailing list for DTC,
+>> drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c:2137:55: warning: incompatible integer to pointer conversion passing 'int' to parameter of type 'u32 *' (aka 'unsigned int *') [-Wint-conversion]
+           if (device_property_read_u32(dev, "st,drdy-int-pin", drdy_pin) < 0) {
+                                                                ^~~~~~~~
+   include/linux/property.h:229:36: note: passing argument to parameter 'val' here
+                                              const char *propname, u32 *val)
+                                                                         ^
+>> drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c:2137:55: warning: variable 'drdy_pin' is uninitialized when used here [-Wuninitialized]
+           if (device_property_read_u32(dev, "st,drdy-int-pin", drdy_pin) < 0) {
+                                                                ^~~~~~~~
+   drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c:2135:23: note: initialize the variable 'drdy_pin' to silence this warning
+           int err = 0, drdy_pin;
+                                ^
+                                 = 0
+   2 warnings generated.
 
-devicetree-compiler@vger.kernel.org
 
-Andrew
+vim +2137 drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
 
-> 
-> Ayush Singh
-> 
-> 
+  2129	
+  2130	static int
+  2131	st_lsm6dsx_get_drdy_reg(struct st_lsm6dsx_hw *hw,
+  2132				const struct st_lsm6dsx_reg **drdy_reg)
+  2133	{
+  2134		struct device *dev = hw->dev;
+  2135		int err = 0, drdy_pin;
+  2136	
+> 2137		if (device_property_read_u32(dev, "st,drdy-int-pin", drdy_pin) < 0) {
+  2138			struct st_sensors_platform_data *pdata;
+  2139	
+  2140			pdata = (struct st_sensors_platform_data *)dev->platform_data;
+  2141			drdy_pin = pdata ? pdata->drdy_int_pin : 1;
+  2142		}
+  2143	
+  2144		switch (drdy_pin) {
+  2145		case 1:
+  2146			hw->irq_routing = &hw->settings->irq_config.irq1_func;
+  2147			*drdy_reg = &hw->settings->irq_config.irq1;
+  2148			break;
+  2149		case 2:
+  2150			hw->irq_routing = &hw->settings->irq_config.irq2_func;
+  2151			*drdy_reg = &hw->settings->irq_config.irq2;
+  2152			break;
+  2153		default:
+  2154			dev_err(hw->dev, "unsupported data ready pin\n");
+  2155			err = -EINVAL;
+  2156			break;
+  2157		}
+  2158	
+  2159		return err;
+  2160	}
+  2161	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
