@@ -1,245 +1,353 @@
-Return-Path: <linux-kernel+bounces-303979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12D729617E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:17:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 218F29617E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:17:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37C131C23322
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:17:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9884E1F248F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047921D3195;
-	Tue, 27 Aug 2024 19:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A881D3191;
+	Tue, 27 Aug 2024 19:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bFe8hXaD"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2046.outbound.protection.outlook.com [40.107.101.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CYYKf/7x"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADB677117;
-	Tue, 27 Aug 2024 19:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724786224; cv=fail; b=gzYc/L/0SBFmlFx4iL9ii4/s3lf7Sldn9ZW7Y2fPOqTNNsH/l8F7KqpeJxeq8R51RaEsxLORZO/QI2UONiADuA9VOHQynYNfvINtq1DVY2oPbBRQSu2iB7GDoP/uof/YZHwD2q5CIObDa2auRvfiBRBIGi8APJImA/ePjQn21Do=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724786224; c=relaxed/simple;
-	bh=P3YkUbImCStXFZ+S1mZLoKlJoMCOh6IY1b7ztVytaqQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=fwvnJvjrVjw9xNf97YnEqOM84ENbTdjrUlUUELumxu2/Zwz7z1EiEQzWVp+EuIw1VRKWXWW4BAuL9a6nI6CN5T5uHsE54bayMipnAXsw/QFhkL76LlBqzfjlUYplyd4Xsj+Y306XBFA8MXOVg9FUVRxsaDdqbcLG2M6h87HkJLs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bFe8hXaD; arc=fail smtp.client-ip=40.107.101.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IaxznNcT28jbLFgZbKWxrk8p4HVsNe1HnVgFQv9wyR7ZmDbBnxXuaHsbyoGpxYTeQgD3wpAraI99gCHnoh0edovmIYwBJadA3PQbCBl5w2obRev26gfmgbgIMnLnLLFKOlk/VxTsEuPyCUdAwC6xd+0fdC731vbjmfL5JaBxArqErCvdJ+FwFi3kpkT+8V7ngu5V5fhZTl4uFQDpdo4brlI4KibV+KWhcGAnfqpYuz6413TUzDXKNwRSH2rmvTkUhOyhF+8/mDfTH9foqf0apUAiqETl2r+59p3bBTLNP2uYzaMXEQpTP4FqwWwgSWyZrYSwIl8PARNHBNLgxNjrUg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CEzqFPqtLWYslippUxgCyHqK1c6tToa255pro00HTZc=;
- b=LSXfrN/t0fujDT/DjdzFPW5iplvXog1AdY2sdGnx4Ffpgv1CZgVFNm84pFVvGRl1kvseO2/PhZU3rIxVYcz39/oWtbzE1BucQYSPtumADiPH9yDXVD7TYwLU8o7yYg8JlNWYADStL+zFmsptwN+lrG2VgewoqccStEiQeo3PzfbBOde5O8My9xrJc2mFKMi0/ZPAcXHUmDPN8TXCryXp9QLBMTE4/UAER7fFS9ErPjr3WemVkdRKDBmq8deFegE6MeZNWnGDpszhLtKxdmDcXOlYILC5y50DutZhYj/eK9kYrv805LOliCBPz+F1lel1mc5FNuubvG9z2FqD2iXGOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CEzqFPqtLWYslippUxgCyHqK1c6tToa255pro00HTZc=;
- b=bFe8hXaDYdlZT18S/iw/+NhOWDHRf4BYjU0fhVscoaOhNhmPMWGKrk4aVWPeEkyEfu+6OF94c3vjnXagyrU0UgmmwbnemBj54h9eo5nwMTImzwOcXL8mPlxfKuxCCiJSow30U7oSrzdzm5VtzZxpknSgFlak97zauYfzKTEi9hI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by IA1PR12MB6282.namprd12.prod.outlook.com (2603:10b6:208:3e6::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Tue, 27 Aug
- 2024 19:16:55 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7875.016; Tue, 27 Aug 2024
- 19:16:55 +0000
-Message-ID: <61b96549-2969-4b64-a40d-f91f614ec3ab@amd.com>
-Date: Tue, 27 Aug 2024 14:16:51 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 8/8] cpufreq: amd-pstate: Drop some uses of
- cpudata->hw_prefcore
-To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
- Mario Limonciello <superm1@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, Perry Yuan <perry.yuan@amd.com>,
- "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>, "open list:ACPI"
- <linux-acpi@vger.kernel.org>,
- "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>
-References: <20240826211358.2694603-1-superm1@kernel.org>
- <20240826211358.2694603-9-superm1@kernel.org>
- <Zs4G084+7MmzdYjU@BLRRASHENOY1.amd.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <Zs4G084+7MmzdYjU@BLRRASHENOY1.amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR13CA0083.namprd13.prod.outlook.com
- (2603:10b6:a03:2c4::28) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B235C1D172A;
+	Tue, 27 Aug 2024 19:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724786264; cv=none; b=TwxQCpb+wnZ/YEbWdDVT3O2TupjjUeg1FXmMdhLceVm76vwNkxoewGKF8pxvk9PtbNgG8+CSjdnydwzxv6MQlbvUj1Qo4y8k+eVTYTqZYY3dFBfbjdfMz8j6FBNkLUdN61PjgV4GD/pODlWvmpQ7DRHxWs39K8mDZXpvb4kbT4o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724786264; c=relaxed/simple;
+	bh=pdtJtYcljDGIj8IElyC0oJM003X0EzKcuKt0WmW2UB4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fim3s6+vEyAQpeQ1sxulrYtcpNsigG/WavGONeakU31pJCnqGUeleInyAjKeA3OWXtVfZjle0GRFxD1jSVnqRmzO64KTih58wHrVorwc2a5XqYGldPi875vTJu6DIR8vTRq9RyA7yG3yuqP9XGrzOSsseCXb92HJ62BWB+a6c3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CYYKf/7x; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6bd6f2c9d52so30827186d6.3;
+        Tue, 27 Aug 2024 12:17:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724786261; x=1725391061; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YtFcWiFabVE+TEGEk7y46bKWyNtZQWsWB7C5BT2PA/c=;
+        b=CYYKf/7xTnoDYZllfnP/CA24QBVsUSAxjOuxkwr0A60MOnTAoQYf2mZH0pcV8zltS/
+         OAcSDrEu8T/0xhSg0gwsdsRxjgpJGaqs7ZLvrLx08xq//9VdYHiXH2pMW9Q2wIG060iV
+         db/2L+9hQo6ojltJU2jcZzCxh+aMW1h77WcxK8YjcrNzbb5qGn4MlIZZKuBwCOwc2L72
+         rpKAmFZIDP+g4jPuZQ2z83fcBsaHOu0IIHrWMQH7tbb2fZVwLA6wK+2jGVU+keQyanVA
+         sOaVbYkRPfiuvfAfFbq2gM3c0XHO8Sx1wsM+z7EmFj0VrpUunfE5drQGSrKSLmMzeTWY
+         H0sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724786261; x=1725391061;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YtFcWiFabVE+TEGEk7y46bKWyNtZQWsWB7C5BT2PA/c=;
+        b=usVLH5twCpJAiQUdpqYpSxt/mvEitgBN8+RqliLyGRYdw8T7c34vw+SwxgccYbjsvV
+         C+9+0QDk6szedUvV+KlDNc4cu/BBSNiuW+FqY7vx0kJq2S3Qt9lJizc34gjC9JdCvVzb
+         nj96SZTlTZcDrNDys8hEKTeMMWTSnPvkywf5C90W6y0usMuCSATDI4Q9aBLZsQBIpsuS
+         2zeKvINg5kUVXRZTKXuGhjuDxZS/BNVNZR1TamAg6FEDI7ixE0l4rSYjgBgSLC8gXRqa
+         8uO1mFxILZuKkPRMXXC+t3gtpq8ZyFL23WPwao5WOACcLL5pVObzXURVE19jvipCg+Un
+         7NBg==
+X-Forwarded-Encrypted: i=1; AJvYcCVT4F6FKXO5xTatEpRlPdtMjgwS2xpLDT5YclJoV88Rs7l/ZkjDOJbBoEr1FiD3g1nb+JGUPc/8soarZkKgHCg=@vger.kernel.org, AJvYcCWmbb9xKuIGxPr0rWYH5sgB5W/gxM3d7k9qdylJYn3Q0jOt/EZnDANRxH8Roku+Kge6qtfpSRmh3H1KDEs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxbpFavYkG07aajJK96OcAqqC+Hu7AqjsKhq1NCF8TN2NPo3Tb
+	XMyDjRB+o7v/33MrgL4H+uvqLcftm8JFuUYdProtbszWagUr9aVq
+X-Google-Smtp-Source: AGHT+IHljUkXfiqmQvnos9EPS/iO6ae2Q7hAsy57vVzJjX3TGKTCl9MUWNi2m2Zj+jSIKpDNBGIqKw==
+X-Received: by 2002:a0c:ea8d:0:b0:6c1:6ec9:605d with SMTP id 6a1803df08f44-6c16ec96164mr126616466d6.15.1724786261293;
+        Tue, 27 Aug 2024 12:17:41 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c162d29000sm59019426d6.10.2024.08.27.12.17.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 12:17:40 -0700 (PDT)
+Received: from phl-compute-02.internal (phl-compute-02.nyi.internal [10.202.2.42])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 2A9AE1200043;
+	Tue, 27 Aug 2024 15:17:40 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Tue, 27 Aug 2024 15:17:40 -0400
+X-ME-Sender: <xms:VCbOZpfUWZvGUpQ1uOHN4ng1EDZFVFANR6npO1fMHS9mYnsPjTD7Tg>
+    <xme:VCbOZnNKaQ-8LzPUmx-jhSDaIhTx3X1AeWessZ_0c4AutYdPsyq8KorrC-EeHlA7_
+    CTKh9WhzUyXH-s-RA>
+X-ME-Received: <xmr:VCbOZihdHHxiSVa7JNvmhViFUGyWY2bdLT1u_1UegH7YCxobo3zTN8_AvoBCCQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeftddgudefgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
+    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
+    drtghomheqnecuggftrfgrthhtvghrnhephfetvdfgtdeukedvkeeiteeiteejieehvdet
+    heduudejvdektdekfeegvddvhedtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhn
+    odhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejje
+    ekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhn
+    rghmvgdpnhgspghrtghpthhtohepvdehpdhmohguvgepshhmthhpohhuthdprhgtphhtth
+    hopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomh
+    dprhgtphhtthhopeifvggushhonhgrfhesghhmrghilhdrtghomhdprhgtphhtthhopehg
+    rghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehprh
+    hothhonhhmrghilhdrtghomhdprhgtphhtthhopegsvghnnhhordhlohhsshhinhesphhr
+    ohhtohhnrdhmvgdprhgtphhtthhopegrrdhhihhnuggsohhrghesshgrmhhsuhhnghdrtg
+    homhdprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomh
+X-ME-Proxy: <xmx:VCbOZi8GiSkGJAtdsFQgjrFYO5dlxyzgoG-LQXwFRrTbDf132XR5bw>
+    <xmx:VCbOZlugfXwidqb0gm-fET3MZFK-ApX5AKwjrkASUkbH9zk4wiAsCg>
+    <xmx:VCbOZhGlWR7ddZebimzsfc0rc4BNcQK9bTe-mZ-kH0cpUqzsmbQJTg>
+    <xmx:VCbOZsMfwtJmCw1kmR_Dd753dKhrVxouWIsfAzJIvf7yVtS5aO6flQ>
+    <xmx:VCbOZuOEpY9zEJdYasyS9HrClzKLhRiX8JFhNDS8bIDzPpH-HlLAJbRI>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 27 Aug 2024 15:17:39 -0400 (EDT)
+Date: Tue, 27 Aug 2024 12:17:15 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	akpm@linux-foundation.org, daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
+	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v6 00/26] Generic `Allocator` support for Rust
+Message-ID: <Zs4mO8Lzayru3JFm@boqun-archlinux>
+References: <20240816001216.26575-1-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|IA1PR12MB6282:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9fcec32e-1756-4403-8344-08dcc6ccd039
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dUxMOEZySWNVTXdRT2tkK1RtTFZNdmJXRlcvbUVuRWRTZ3lLSmNXNTlTNWlP?=
- =?utf-8?B?REd6KzRPd2lTaSt6SGlqNndSb1NkUmJDbTdVaXZNRms3aE40YnRyak9tNWZo?=
- =?utf-8?B?WHRaRXpUbkowNjJQY0pGNE9CYm9zZFk1NEtHVEtGNy8zUFUrTnRUazFYaSty?=
- =?utf-8?B?NHRCS2lVV29DSThXUVFaZzI1ajNhRjhyY0RPK3d1QWErQ1doOUgzaFV0ZHJR?=
- =?utf-8?B?T1ZHeldZWlY4eWFFLzllUVRZdHo0YzNFbzg2dXA4dHdpSHk0WmZNSGNaSUF3?=
- =?utf-8?B?TjZxSEZ0dHNUcWp2VnFqTVpkL2NRV05jN2FRTnUwMDhIazdyNWtnc2oybzQx?=
- =?utf-8?B?UVNkRVlDdmxERlpaZXA3Ly9PRStBYkFzZ1BSZWw3dis0OHNvWGhWMGc5Wlk3?=
- =?utf-8?B?SWIzaHBBMkpBMXc4cEliYldlNkVnd0hKYjBwRDNIbVVuQ0YrZWdZQUIzRTFn?=
- =?utf-8?B?UnE1RVhtU3p5b3ZpbkRUYjBQc1B3UUZueThtRXZrUHZyRHl3bXlvNEF4SUhI?=
- =?utf-8?B?NnptRGJ0YmV1M3JTdVdIY3RMK1ZVY25BZER6ZXd2bExBaTFRcmFvOHZNNlhv?=
- =?utf-8?B?ZUVQR1lLcEhKUlhpTURGRy9OWXJ0VHkzS01RQ21ma3ZqSlVFUS9WbFhhbmw0?=
- =?utf-8?B?cjRLRUxrRlN6cjIrN3Z5cXpQVHJNa2d0OGVIVWdxWUk1cnQ3VEF4QU1tYlNj?=
- =?utf-8?B?d0JwWUE3Z2dXOHc4SXUyek1taWdIeGxsa00wYXNNWlhLcEpKSU8zamtEdFhC?=
- =?utf-8?B?bDBjenNva3NCMTFzUkVyZW9ZSytrLy94U2IvQ0s0QkdWKzZqZzlocVkvMzJj?=
- =?utf-8?B?MG8wVkhQcE0xUEJJcHp4Vk1vSlFpVENScVVpTWxFOS9TTnVnZk5yVXlOcXBn?=
- =?utf-8?B?WXFKTzVmd3V2Z0lHNjZCOG5oR1F6V3RRL01qUnhEaU1ZNkZSSUJ6RkZ5a21W?=
- =?utf-8?B?YkRzeXZqR2RVYmlVVnFtR29XUW5VdHdOUGVVa3g5RlhBdVdvR28rUlNCTktn?=
- =?utf-8?B?YzNYT092ODBPNnJUTkF2Y2pDK1U2cUEzell3OER3YmhHRkplMTlXM0cxWElC?=
- =?utf-8?B?Zm5vQnVNcVpNWkxhT0dIRGtXcitoTDRFMng2ODN2ODh0bWJNREFyTkQvOGM4?=
- =?utf-8?B?eWxQRGlFQU9lTTZjSEFzREd4UWhkWXo3aThkcG9Lbm5jM3hVbDRpdCtBWVFL?=
- =?utf-8?B?Q3dRQ0lZdSsyS2tieldaSVpvWW1rZllFeHhDR3BNQnJ1WHJuSjZCcWVHSTZN?=
- =?utf-8?B?Y2FscW9tbXZGeEZvL0NMZFZJMEhVa1BUcVN3em5DeGV3NVFNWGtCR2JhaHNJ?=
- =?utf-8?B?bFUvUk5ZR3VHcDlibmdtZHBzdnNhbzlzWVR0ZDQvYzROUVBIMkRacXpmNDNx?=
- =?utf-8?B?d1R0cVRnb0M1b1ZqUnFXQ2lZUng2cEE5VzJnYTlnUkhNZXBmZ2p6VnNvbzda?=
- =?utf-8?B?dnpxVmhiSzBrS2VHR3NlcER6NVVlb0xlVzBEV0lkdWhTRGlTYTJLQ3JoblNU?=
- =?utf-8?B?WlJ6RjV6ckxsNEhuUk9ZZlNjUHdjTCtMSnRBTDZqZUUrWXBoTk1XVk8rU2hp?=
- =?utf-8?B?aEpocW5DY1lmM1Uxd29ab2VpNlFvM3NLeHdXWU1qMW04d3VsSEVnemJqM1pi?=
- =?utf-8?B?RUJOMC8xQlFFZTZMalVxdTRqbWZUQ2xnbGRXM1NRZ3hRVVF2V0I5OWJvSTl5?=
- =?utf-8?B?S1NnVVkrOGh2b2puV2ptNXJVTnhGczE3empYb3BSSmxyQVZpK0Y2ZEZqdUlT?=
- =?utf-8?B?b2dlL3h2M2xheDB0bnIvQlM2VmJRVU5venppaVN5OTR1YXpGb1d0cS9TRjJ1?=
- =?utf-8?B?TUlLN2h3dEIrOFBBdEJsdz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?am0xd04vZ3EzVXBIQkViOThjTU90bUpZYnM4NXJJbHlZT3hkRkQ1RHUzZ0p4?=
- =?utf-8?B?b3M3NUdrQ0hKVTVDZ2RTM09iTjRuak9rTGtUWm1aNGNraXZYbEhNdzhsU01a?=
- =?utf-8?B?Y215SUMxYXhiTTRDT2dHV1VTTTk5c0ZxMUExTmRIbHdvUEsrWERMTUN1OFNz?=
- =?utf-8?B?eVJYOXRLelV6djJ2NlUyWDZFMTNaSWZMSWwwTXZwNXhwRVVPVFEzUE5LMVpz?=
- =?utf-8?B?TTRVUXBJSEdUZ2pwcjRlL3BYbFM5d2xUT1pRNFNiZGovc0dYc25WaW9BRTJv?=
- =?utf-8?B?MUIvV3N0WXhnRTRtOHNETFgzdUF1QjFCcHRnK3c4WlYrdnAxK2xHZ0pyN0pC?=
- =?utf-8?B?b1lIVllHQWNjdmlsVFRJeVQrZVI0WEpYT293VGVIaG1ZeXgxOVR1N2pzOHly?=
- =?utf-8?B?ZWtzaWlvamdWNGVtemc1Ym5OcUtMQWQwUEJIcnFaN0V2RmZhNEhJZVlDVUQ5?=
- =?utf-8?B?Mk5iKzRLaVd2aTgraTd4VzQ3TEtXM1d0NnYyaDdEWVJuL1hKNzZ6QmpKNURC?=
- =?utf-8?B?VGMrMzQvMW94cGFva3hEbWxwZGlQKzNhRlQxenh1MHJib3ZrVFVkazYra3dv?=
- =?utf-8?B?a1d3Wm4wL3NZQ3F3SURXNUNvM1paKzZocEZ6blRGbEI4OW5SZnNPU1l2OXNi?=
- =?utf-8?B?RlBnakN5alRSQXp5VzZyR2U1U3dIZ0RVUEIzSCtkNUNqVFFpZy9mWGNkQStZ?=
- =?utf-8?B?bjdWdS9YbmpiUEsvdGFWMXJoTFIveHVzdjlxcGhxeTRWMDdHb1laRXV2VXhQ?=
- =?utf-8?B?QXlNVlVVUDNlbDFsUzNnZ0dJbi9FckFvcUZqeVZrTkpGeE1ZVkk5dEkwNUlG?=
- =?utf-8?B?bjkzWCswdWQ2UHh6SG85blB6aVlOcWFremNac05KL0ovc21qbWNiejcwcTY5?=
- =?utf-8?B?UEx5SGMyUmlXVEJCTU4vU3ZGYU1heGxPbjJYL0JEWHZ4bitUNTRoUDBRajR5?=
- =?utf-8?B?MHpLcVRBd25oeUtxTUdBSzVUTjdKemxoTG9ONXQrS1B1V2lJRE9jYWpGcTlK?=
- =?utf-8?B?VEppNVByWlo1QWlST1R4NUtxUEZpWmtidjBsVk9IZUlTajcrT1pUeFRuRnZm?=
- =?utf-8?B?Z3RkZzV0NXpzUGZaT3prK2FWbmtVOSt2UWkzdUttbnZNOUZpdHBrODhxWUFa?=
- =?utf-8?B?SXpHNkZ5TjJTNWNCaWY4SDNSR0V4OHRIaldtUWRBQjdkYnA0OFJvQkFjRURT?=
- =?utf-8?B?V1lqUU1wQS9hek50eHQxNkdRcVQzMW1wcXVacWwwc2xxSTZod3pOQTU5VzZC?=
- =?utf-8?B?UEJwZUdTYkI5SHRvTXFPOFVpVVlCQVFmZFNaMnd5QnlBWDN6MG1rejZYWVMx?=
- =?utf-8?B?YlZRKy82T04wYUhjUzhEV2gzU0w4VzlqN2hFQ0pwUGN3cmFlVnpuMDc0TDNu?=
- =?utf-8?B?RjFZanBkTlc3TEkxKzRxOVJnSTcveGJjTFB5R3ZUdlFTQmJmbUtlTEkyUzk2?=
- =?utf-8?B?bksvYlFOM3FZd0tBN3hWdjE0Tm94VndNdTlqQ1VhWGJXSUEvK2ZyaVk0QVp1?=
- =?utf-8?B?ZVpiTmg5UXoyS2JsbWQwYzMxNC9lcS9OU2pnRmpvNnNTVzh6b2xsUnJpeDg1?=
- =?utf-8?B?dHFsK1VJQkZ6NWl6d2JiVzRSMmwxMUNTaUV1a3d1cTJmcXFsalZMK0NwUUEz?=
- =?utf-8?B?dnhJanExVC9aaGFlTDFLL3gvcmR1ZmFaaEVBZHJpeUdYSDNCSUFjY1lQY2Y2?=
- =?utf-8?B?TGlPNnp2N0o4RkpsYktvNUxYa3JPc3BTVW1lMktQN09ubXd1aUVZVVNOOTZC?=
- =?utf-8?B?ZFZzaTJPZ2F5eHl2Uzl0eWJ1Y3dIQ3lOTEZrUXh5bGgxL01Zbk5Da2pLNlVY?=
- =?utf-8?B?ZnkrMmR5NXZQcTVZY3VHQ244NXE1ck95NUhiZTNGQmgrNThOczdjb0pDZEF6?=
- =?utf-8?B?UE5DZU1Zd1JLS1M2NlpXVDR2RjhRaHhnZ0JUaW45OG15V2RlcnZ4ckRqSDZp?=
- =?utf-8?B?RndTODU4UTRsdnZxeDJ1b1pRUW1yV0FPbTlIcVdweE9Rb3czNnBkcDYvbWVY?=
- =?utf-8?B?SEwrZ1hWc0xUek1aTS9hc014NkVpQTZXSm52cFVjY1dHc1YwTUxMZWlIdVZQ?=
- =?utf-8?B?VkhKWnVUZFFuNGMvZERMNW9lREEvMC9hRm4xTnNWTDRVZHZ1bmNCMUo3MmM5?=
- =?utf-8?Q?DWp05Gnug3fb+2A/5X97B+ij3?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9fcec32e-1756-4403-8344-08dcc6ccd039
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 19:16:55.0331
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZNiRsNHuwIGa+o/DPeJd3rmiOOKsaxeFRLgsiFuZWzH2K/IwPygs877d9k3ecljTBd+JZP1eFn4rM4xcHy0B7w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6282
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240816001216.26575-1-dakr@kernel.org>
 
-On 8/27/2024 12:03, Gautham R. Shenoy wrote:
-> On Mon, Aug 26, 2024 at 04:13:58PM -0500, Mario Limonciello wrote:
->> From: Mario Limonciello <mario.limonciello@amd.com>
->>
->> As the global variable is cleared when preferred cores is not present
->> the local variable use isn't needed in many functions.
->> Drop it where possible.  No intended functional changes.
->>
->> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->> ---
->>   drivers/cpufreq/amd-pstate.c | 7 +------
->>   1 file changed, 1 insertion(+), 6 deletions(-)
->>
->> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
->> index ed05d7a0add10..257e28e549bd1 100644
->> --- a/drivers/cpufreq/amd-pstate.c
->> +++ b/drivers/cpufreq/amd-pstate.c
->> @@ -1112,12 +1112,7 @@ static ssize_t show_amd_pstate_prefcore_ranking(struct cpufreq_policy *policy,
->>   static ssize_t show_amd_pstate_hw_prefcore(struct cpufreq_policy *policy,
->>   					   char *buf)
->>   {
->> -	bool hw_prefcore;
->> -	struct amd_cpudata *cpudata = policy->driver_data;
->> -
->> -	hw_prefcore = READ_ONCE(cpudata->hw_prefcore);
->> -
->> -	return sysfs_emit(buf, "%s\n", str_enabled_disabled(hw_prefcore));
->> +	return sysfs_emit(buf, "%s\n", str_enabled_disabled(amd_pstate_prefcore));
+On Fri, Aug 16, 2024 at 02:10:42AM +0200, Danilo Krummrich wrote:
+> Hi,
+> 
+> This patch series adds generic kernel allocator support for Rust, which so far
+> is limited to `kmalloc` allocations.
+> 
+> In order to abstain from (re-)adding unstable Rust features to the kernel, this
+> patch series does not extend the `Allocator` trait from Rust's `alloc` crate,
+> nor does it extend the `BoxExt` and `VecExt` extensions.
+> 
+> Instead, this series introduces a kernel specific `Allocator` trait, which is
+> implemented by the `Kmalloc`, `Vmalloc` and `KVmalloc` allocators, also
+> implemented in the context of this series.
+> 
+> As a consequence we need our own kernel `Box<T, A>` and `Vec<T, A>` types.
+> Additionally, this series adds the following type aliases:
+> 
+> ```
+> pub type KBox<T> = Box<T, Kmalloc>;
+> pub type VBox<T> = Box<T, Vmalloc>;
+> pub type KVBox<T> = Box<T, KVmalloc>;
 > 
 > 
-> If the user boots with "amd_prefcore=disable" on a system that
-> supports preferred-core, pror to this patchset, cpudata->hw_prefcore
-> would be true and thus, amd_pstate_hw_prefcore would show "enabled".
+> pub type KVec<T> = Vec<T, Kmalloc>;
+> pub type VVec<T> = Vec<T, Vmalloc>;
+> pub type KVVec<T> = Vec<T, KVmalloc>;
+> ```
+> 
+> With that, we can start using the kernel `Box` and `Vec` types throughout the
+> tree and remove the now obolete extensions `BoxExt` and `VecExt`.
+> 
+> For a final cleanup, this series removes the last minor dependencies to Rust's
+> `alloc` crate and removes it from the entire kernel build.
+> 
+> The series ensures not to break the `rusttest` make target by implementing the
+> `allocator_test` module providing a stub implementation for all kernel
+> `Allocator`s.
+> 
+> This patch series passes all KUnit tests, including the ones added by this
+> series. Additionally, the tests were run with `kmemleak` and `KASAN` enabled,
+> without any issues.
+> 
+> This series is based on [1], which hit -mm/mm-unstable, and is also available
+> in [2].
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=mm/krealloc
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/mm
 > 
 
-Yes; you're right about the previous behavior.
+Finally managed to apply this on rust-dev ;-) A few things I resolved,
+JFYI:
 
-> With this patchset, it would show "disabled". Or am I missing something?
+*	Resolve the conflicts between patch 6 & 7 and the helper split,
+	note that the vmalloc() helper temporarily lives in a file
+	called `slab.c`.
 
-This appears to be another case we don't have documentation for the 
-sysfs file `amd_pstate_hw_prefcore`.
+*	Adjust patch 9 with the introduction of InPlaceInit::PinnedSelf,
+	also drop the ForeignOwnable::borrow_mut() implemenation.
 
-I had thought this was a malfunction in the behavior that it reflected 
-the current status, not the hardware /capability/.
+*	Resolve the conflict between patch 10 and the latest rbtree
+	patchset (v12).
 
-Which one makes more sense for userspace?  In my mind the most likely 
-consumer of this information would be something a sched_ext based 
-userspace scheduler.  They would need to know whether the scheduler was 
-using preferred cores; not whether the hardware supported it.
+*	Adjust patch 11 with the introduction of
+	InPlaceInit::PinnedSelf.
 
-Whichever direction we agree to go; I'll add documentation for v2.
+*	Resolve the conflicts between patch 25 and the helper split.
 
+(very likely I could make mistakes during these conflict resolution,
+just let me know)
+
+I've put this on the rust-dev based on today's rust-next (+ your mm
+changes) for testing, will continue to review the series, thanks!
+
+Regards,
+Boqun
+
+> Changes in v6:
+>  - rebase onto rust-dev
+>  - keep compiler annotations for {k,v,kv}realloc()
+>  - documentation changes suggested by Alice, Benno
+>  - remove `Box::into_pin`
+>  - fix typo in `Send` and `Sync` for `Box` and `Vec`
+>  - `kvec!` changes suggested by Alice
+>  - free `src` after copy in `Cmalloc`
+>  - handle `n == 0` in `Vec::extend_with`
+> 
+> Changes in v5:
+>  - (safety) comment / documentation fixes suggested by Alice, Benno and Gary
+>  - remove `Unique<T>` and implement `Send` and `Sync` for `Box` and `Vec`
+>  - use `KMALLOC_MAX_SIZE` for `KVmalloc` test and add a `Kmalloc` test that
+>    expects to fail for `KMALLOC_MAX_SIZE`
+>  - create use constants `KREALLOC`, `VREALLOC` and `KVREALLOC` for
+>    `ReallocFuncs`
+>  - drop `Box::drop_contents` for now, will add it again, once I actually rebase
+>    on the original patch that introduces it
+>  - improve usage of `size_of_val` in `Box`
+>  - move `InPlaceInit` and `ForeignOwnable` impls into kbox.rs
+>  - fix missing `Box` conversions in rnull.rs
+>  - reworked `Cmalloc` to keep track of the size of memory allocations itself
+>  - remove `GlobalAlloc` together with the `alloc` crate to avoid a linker error
+>  - remove `alloc` from scripts/generate_rust_analyzer.py
+> 
+> Changes in v4:
+>  - (safety) comment fixes suggested by Alice and Boqun
+>  - remove `Box::from_raw_alloc` and `Box::into_raw_alloc`, we don't need them
+>  - in `Box::drop` call `size_of_val` before `drop_in_place`
+>  - implement ForeignOwnable for Pin<Box<T>> as suggested by Alice
+>  - in `Vec::extend_with`, iterate over `n` instead of `spare.len()`
+>  - for `Vmalloc` and `KVmalloc` fail allocation for alignments larger than
+>    PAGE_SIZE for now (will add support for larger alignments in a separate
+>    series)
+>  - implement `Cmalloc` in `allocator_test` and type alias all kernel allocator
+>    types to it, such that we can use the kernel's `Box` and `Vec` types in
+>    userspace tests (rusttest)
+>    - this makes patch "rust: str: test: replace `alloc::format`" rather trivial
+> 
+> Changes in v3:
+>  - Box:
+>    - minor documentation fixes
+>    - removed unnecessary imports in doc tests
+>    - dropeed `self` argument from some remaining `Box` methods
+>    - implement `InPlaceInit` for Box<T, A> rather than specifically for `KBox<T>`
+>  - Vec:
+>    - minor documentation fixes
+>    - removed useless `Vec::allocator` method
+>    - in `Vec::extend_with` use `Vec::spare_capacity_mut` instead of raw pointer operations
+>    - added a few missing safety comments
+>    - pass GFP flags to `Vec::collect`
+>  - fixed a rustdoc warning in alloc.rs
+>  - fixed the allocator_test module to implement the `Allocator` trait correctly
+>  - rebased to rust-next
+> 
+> Changes in v2:
+>   - preserve `impl GlobalAlloc for Kmalloc` and remove it at the end (Benno)
+>   - remove `&self` parameter from all `Allocator` functions (Benno)
+>   - various documentation fixes for `Allocator` (Benno)
+>   - use `NonNull<u8>` for `Allocator::free` and `Option<NonNull<u8>>` for
+>     `Allocator::realloc` (Benno)
+>   - fix leak of `IntoIter` in `Vec::collect` (Boqun)
+>   - always realloc (try to shrink) in `Vec::collect`, it's up the the
+>     `Allocator` to provide a heuristic whether it makes sense to actually shrink
+>   - rename `KBox<T, A>` -> `Box<T, A>` and `KVec<T, A>` -> `Vec<T, A>` and
+>     provide type aliases `KBox<T>`, `VBox<T>`, `KVBox<T>`, etc.
+>     - This allows for much cleaner code and, in combination with removing
+>       `&self` parameters from `Allocator`s, gets us rid of the need for
+>       `Box::new` and `Box::new_alloc` and all other "_alloc" postfixed
+>       functions.
+>     - Before: `KBox::new_alloc(foo, Vmalloc)?`
+>     - After:  `VBox::new(foo)?`, which resolves to
+>               `Box::<Foo,  Vmalloc>::new(foo)?;
 > 
 > 
+> Danilo Krummrich (26):
+>   rust: alloc: add `Allocator` trait
+>   rust: alloc: separate `aligned_size` from `krealloc_aligned`
+>   rust: alloc: rename `KernelAllocator` to `Kmalloc`
+>   rust: alloc: implement `Allocator` for `Kmalloc`
+>   rust: alloc: add module `allocator_test`
+>   rust: alloc: implement `Vmalloc` allocator
+>   rust: alloc: implement `KVmalloc` allocator
+>   rust: alloc: add __GFP_NOWARN to `Flags`
+>   rust: alloc: implement kernel `Box`
+>   rust: treewide: switch to our kernel `Box` type
+>   rust: alloc: remove `BoxExt` extension
+>   rust: alloc: add `Box` to prelude
+>   rust: alloc: implement kernel `Vec` type
+>   rust: alloc: implement `IntoIterator` for `Vec`
+>   rust: alloc: implement `collect` for `IntoIter`
+>   rust: treewide: switch to the kernel `Vec` type
+>   rust: alloc: remove `VecExt` extension
+>   rust: alloc: add `Vec` to prelude
+>   rust: error: use `core::alloc::LayoutError`
+>   rust: error: check for config `test` in `Error::name`
+>   rust: alloc: implement `contains` for `Flags`
+>   rust: alloc: implement `Cmalloc` in module allocator_test
+>   rust: str: test: replace `alloc::format`
+>   rust: alloc: update module comment of alloc.rs
+>   kbuild: rust: remove the `alloc` crate and `GlobalAlloc`
+>   MAINTAINERS: add entry for the Rust `alloc` module
 > 
->>   }
->>   
->>   static ssize_t show_energy_performance_available_preferences(
->> -- 
->> 2.43.0
->>
+>  MAINTAINERS                         |   7 +
+>  drivers/block/rnull.rs              |   4 +-
+>  rust/Makefile                       |  44 +-
+>  rust/bindings/bindings_helper.h     |   1 +
+>  rust/exports.c                      |   1 -
+>  rust/helpers.c                      |  15 +
+>  rust/kernel/alloc.rs                | 142 ++++-
+>  rust/kernel/alloc/allocator.rs      | 173 ++++--
+>  rust/kernel/alloc/allocator_test.rs | 185 ++++++
+>  rust/kernel/alloc/box_ext.rs        |  80 ---
+>  rust/kernel/alloc/kbox.rs           | 480 +++++++++++++++
+>  rust/kernel/alloc/kvec.rs           | 891 ++++++++++++++++++++++++++++
+>  rust/kernel/alloc/vec_ext.rs        | 185 ------
+>  rust/kernel/error.rs                |   6 +-
+>  rust/kernel/init.rs                 |  93 +--
+>  rust/kernel/init/__internal.rs      |   2 +-
+>  rust/kernel/lib.rs                  |   1 -
+>  rust/kernel/prelude.rs              |   5 +-
+>  rust/kernel/rbtree.rs               |  34 +-
+>  rust/kernel/str.rs                  |  35 +-
+>  rust/kernel/sync/arc.rs             |  17 +-
+>  rust/kernel/sync/condvar.rs         |   4 +-
+>  rust/kernel/sync/lock/mutex.rs      |   2 +-
+>  rust/kernel/sync/lock/spinlock.rs   |   2 +-
+>  rust/kernel/sync/locked_by.rs       |   2 +-
+>  rust/kernel/types.rs                |  30 +-
+>  rust/kernel/uaccess.rs              |  17 +-
+>  rust/kernel/workqueue.rs            |  20 +-
+>  rust/macros/lib.rs                  |  12 +-
+>  samples/rust/rust_minimal.rs        |   4 +-
+>  scripts/Makefile.build              |   7 +-
+>  scripts/generate_rust_analyzer.py   |  11 +-
+>  32 files changed, 1973 insertions(+), 539 deletions(-)
+>  create mode 100644 rust/kernel/alloc/allocator_test.rs
+>  delete mode 100644 rust/kernel/alloc/box_ext.rs
+>  create mode 100644 rust/kernel/alloc/kbox.rs
+>  create mode 100644 rust/kernel/alloc/kvec.rs
+>  delete mode 100644 rust/kernel/alloc/vec_ext.rs
 > 
-> --
-> Thanks and Regards
-> gautham.
-
+> 
+> base-commit: f005c686d6c1a2e66f2f9d21179d6b6bd45b20e2
+> -- 
+> 2.46.0
+> 
 
