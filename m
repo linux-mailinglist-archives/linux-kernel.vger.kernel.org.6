@@ -1,159 +1,171 @@
-Return-Path: <linux-kernel+bounces-302839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C37E96040A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:09:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1115C96040D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C63F7283967
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:09:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4878CB22BD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78DF419A296;
-	Tue, 27 Aug 2024 08:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F5819D06B;
+	Tue, 27 Aug 2024 08:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="oK+P+wyR"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=anirudhrb.com header.i=anirudh@anirudhrb.com header.b="SYKbZR39"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9507199242;
-	Tue, 27 Aug 2024 08:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724746120; cv=none; b=tJp+HBey9TOEn55SUNrW+p+BATLjIT3zugYlYpHDdKKq77ohgbZGdicu9pt446NnDWGUOUSGbvYGKPetL1qUF/nADzWI674pvac+rZbIa4yO5oxUj7UVKEKAT/AeoQVkMDYnvznduqfgXfEQlYHoLwH3drGRIusAY8fg0ZJLDE4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724746120; c=relaxed/simple;
-	bh=KUNevkqKItUtyAoJeoaCrfGr37Eon6c2GKQEP9yAB9U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pYrIAh0JFJkELIEbprvX4pbVgKamqcey9j+9hq6FAgscMOreXK0Qr4pVQjch0F/3Kv+n+tjbCy7HCK+ftRRvUBeHmDRqu1TjWO2sOFTTFtvWEBNWXlWzR1lmfsBTLaZYFOxq+XmeQplPGwNQoAXKhArjMWQ346H1VdfGavhbA3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=oK+P+wyR; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47R7NZnX002527;
-	Tue, 27 Aug 2024 10:08:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	NL0vfsDaZi+n7IXnnxL961mLfvdpI9ZZJJiAuUY0CU8=; b=oK+P+wyRw6FWOfoE
-	ii3HFisp1T+BZcECPD9QcTmWQAnw0oAdYT+ELLEbd2HwfVDIg7dqla3qthTTlFDn
-	9dHgJfiS8GlyJMKotw2TmRX8VLsA6NXdw5Vp0hUnHbt95dJ7cvqsNkTTe8JSlqJ3
-	ilBOB9iLUYx3zQ8pltIC2PiQLRKfPPRkVT4ih9SmavhWveUdmAzzFkRyAkUJDsIg
-	3Vw5npBP4l3po35kbKOg4jkMJke1iHgIvabfPlrSXmv9OrBF/NqfqrM7/Ub5Obe3
-	fZV9bmY/1mm9Fkq5GKQXAbp2Zl9HrzxP2GDbbFfvPdDpSI9/fSwEZKZY5gub+8z+
-	Vw8oWQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 419ac886r4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 Aug 2024 10:08:05 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2089540048;
-	Tue, 27 Aug 2024 10:08:00 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C12A724DCC5;
-	Tue, 27 Aug 2024 10:07:11 +0200 (CEST)
-Received: from [10.252.31.50] (10.252.31.50) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 27 Aug
- 2024 10:07:10 +0200
-Message-ID: <8a13fd32-4bc4-4711-bf6b-7e0ce2e938ec@foss.st.com>
-Date: Tue, 27 Aug 2024 10:07:10 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE72194136;
+	Tue, 27 Aug 2024 08:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724746123; cv=pass; b=XorO425WzeCwWqNYZSHwN93YVDOSCdMmBOhNH5n0X1+rkrRVTHHueVt4HRT1CoBbeHn0YCktX4NRsRs+WEXw3x+34oiXUN1CgaOCQO/McWpPgI7+iBQOl6tGrcl/iKiX5iMTLk0kL+SQnIywdFyrgOVjOeyaSVVebxFHTd0CcX8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724746123; c=relaxed/simple;
+	bh=0HsOksNJT9R9KbeUb6IVcPk2ehrn0odcjcGVeX1aFnU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NgFl8MkN2NA0KNV+XFPgLrCowZ6Vq4/ol45QtZIHrD8j3Ck8rzfezgGKyEZPbChW8VawwcIGE67KyNZ1ZFB0/tsnB1ZCj+nweIDNjLj2d2klhoTXj69DkE1O2SbanCQwTf4aW4mjAF8f/GEmzVsbEHG885nwEwQEuY73H3v7ZbY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=anirudhrb.com; spf=pass smtp.mailfrom=anirudhrb.com; dkim=fail (0-bit key) header.d=anirudhrb.com header.i=anirudh@anirudhrb.com header.b=SYKbZR39 reason="key not found in DNS"; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=anirudhrb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=anirudhrb.com
+ARC-Seal: i=1; a=rsa-sha256; t=1724746097; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=cgxVTTMHZzvapGuM7vngv+DBMxw2qlQ1gNHPRVrZnmoezXjNbF+/MkZc+RVEk6VXt9DTRGAnd6/mDlbIyGDbC/EKktcimUdilEyUbEl4IRQRF4DRn2LodLGXlzBJWrWCAPg312IG0CDCHqEbTtUhOn7377rJkqTPmJYL6VbaQi4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724746097; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Yhda3ZaakIRr5Jfh9tLkpGI4s2ObP0t0lO8nd/HrFCI=; 
+	b=aUx0I7HHauNRq3i045wRmuB0ePWWSxjR9eh5uH3WVnmNmL33NXHei/lpn1KB2tePG/rhwtXFGakJLB57LG1h+sWN7hhC5yc/Yc3+VsJ8a2DFH9niiPYWQHC2lwX12gabnbiLYWo4meMqL4asU4FAzZeiQ2pB/wrQWlTAHr9h1cY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=anirudhrb.com;
+	spf=pass  smtp.mailfrom=anirudh@anirudhrb.com;
+	dmarc=pass header.from=<anirudh@anirudhrb.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724746097;
+	s=zoho; d=anirudhrb.com; i=anirudh@anirudhrb.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=Yhda3ZaakIRr5Jfh9tLkpGI4s2ObP0t0lO8nd/HrFCI=;
+	b=SYKbZR39/CIGEAZT0wX9xS9l/bTRgeUH5SIxC6ymVgqCSBa2WL/qxLHrnTyInQy9
+	65GmWv+EdpPs/ps8fY3K6MTUnBgDhM90hLo3P5hpKVGsgYuFr6ryp/f/bB//8+GhpMS
+	/awoMc3XVbvNkdIM36SWvk4sAAMwZyJCfItCCQ5E=
+Received: by mx.zohomail.com with SMTPS id 1724746096946252.20843917403852;
+	Tue, 27 Aug 2024 01:08:16 -0700 (PDT)
+Date: Tue, 27 Aug 2024 08:08:10 +0000
+From: Anirudh Rayabharam <anirudh@anirudhrb.com>
+To: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: stable@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Michael Kelley <mikelley@microsoft.com>
+Subject: Re: [PATCH] x86/hyperv: fix kexec crash due to VP assist page
+ corruption
+Message-ID: <Zs2JamdDJs07WCS5@anirudh-surface.>
+References: <20240826105029.3173782-1-anirudh@anirudhrb.com>
+ <87zfozxxyb.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] arm: dts: st: stm32mp151a-prtt1l: Fix QSPI
- configuration
-To: Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Oleksij Rempel
-	<o.rempel@pengutronix.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Rob
- Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>
-CC: <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@pengutronix.de>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20240806120517.406714-1-o.rempel@pengutronix.de>
- <20dc2cd4-7684-4894-9db3-23c3f4abd661@pengutronix.de>
-Content-Language: en-US
-From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
-In-Reply-To: <20dc2cd4-7684-4894-9db3-23c3f4abd661@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-27_05,2024-08-26_01,2024-05-17_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87zfozxxyb.fsf@redhat.com>
+X-ZohoMailClient: External
 
-Hi
+On Mon, Aug 26, 2024 at 02:36:44PM +0200, Vitaly Kuznetsov wrote:
+> Anirudh Rayabharam <anirudh@anirudhrb.com> writes:
+> 
+> > From: Anirudh Rayabharam (Microsoft) <anirudh@anirudhrb.com>
+> >
+> > 9636be85cc5b ("x86/hyperv: Fix hyperv_pcpu_input_arg handling when CPUs go
+> > online/offline") introduces a new cpuhp state for hyperv initialization.
+> >
+> > cpuhp_setup_state() returns the state number if state is CPUHP_AP_ONLINE_DYN
+> > or CPUHP_BP_PREPARE_DYN and 0 for all other states. For the hyperv case,
+> > since a new cpuhp state was introduced it would return 0. However,
+> > in hv_machine_shutdown(), the cpuhp_remove_state() call is conditioned upon
+> > "hyperv_init_cpuhp > 0". This will never be true and so hv_cpu_die() won't be
+> > called on all CPUs. This means the VP assist page won't be reset. When the
+> > kexec kernel tries to setup the VP assist page again, the hypervisor corrupts
+> > the memory region of the old VP assist page causing a panic in case the kexec
+> > kernel is using that memory elsewhere. This was originally fixed in dfe94d4086e4
+> > ("x86/hyperv: Fix kexec panic/hang issues").
+> >
+> > Set hyperv_init_cpuhp to CPUHP_AP_HYPERV_ONLINE upon successful setup so that
+> > the hyperv cpuhp state is removed correctly on kexec and the necessary cleanup
+> > takes place.
+> >
+> > Cc: stable@vger.kernel.org
+> > Fixes: 9636be85cc5b ("x86/hyperv: Fix hyperv_pcpu_input_arg handling when CPUs go online/offline")
+> > Signed-off-by: Anirudh Rayabharam (Microsoft) <anirudh@anirudhrb.com>
+> > ---
+> >  arch/x86/hyperv/hv_init.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+> > index 17a71e92a343..81d1981a75d1 100644
+> > --- a/arch/x86/hyperv/hv_init.c
+> > +++ b/arch/x86/hyperv/hv_init.c
+> > @@ -607,7 +607,7 @@ void __init hyperv_init(void)
+> >  
+> >  	register_syscore_ops(&hv_syscore_ops);
+> >  
+> > -	hyperv_init_cpuhp = cpuhp;
+> > +	hyperv_init_cpuhp = CPUHP_AP_HYPERV_ONLINE;
+> 
+> Do we really need 'hyperv_init_cpuhp' at all? I.e. post-change (which
+> LGTM btw), I can only see one usage in hv_machine_shutdown():
+> 
+>    if (kexec_in_progress && hyperv_init_cpuhp > 0)
+>            cpuhp_remove_state(hyperv_init_cpuhp);
+> 
+> and I'm wondering if the 'hyperv_init_cpuhp' check is really
+> needed. This only case where this check would fail is if we're crashing
+> in between ms_hyperv_init_platform() and hyperv_init() afaiu. Does it
 
-On 8/7/24 11:38, Ahmad Fatoum wrote:
-> Hello Oleksij,
-> 
-> On 06.08.24 14:05, Oleksij Rempel wrote:
->> Rename 'pins1' to 'pins' in the qspi_bk1_pins_a node to correct the
->> subnode name. The previous name caused the configuration to be
->> applied to the wrong subnode, resulting in QSPI not working properly.
->>
->> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
->> ---
->>   arch/arm/boot/dts/st/stm32mp151a-prtt1l.dtsi | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/boot/dts/st/stm32mp151a-prtt1l.dtsi b/arch/arm/boot/dts/st/stm32mp151a-prtt1l.dtsi
->> index 3938d357e198f..4db684478c320 100644
->> --- a/arch/arm/boot/dts/st/stm32mp151a-prtt1l.dtsi
->> +++ b/arch/arm/boot/dts/st/stm32mp151a-prtt1l.dtsi
->> @@ -123,7 +123,7 @@ flash@0 {
->>   };
->>   
->>   &qspi_bk1_pins_a {
->> -	pins1 {
->> +	pins {
-> 
-> As you have seen such device tree overriding is error prone and would
-> be entirely avoidable if specifying full board-specific pinctrl groups
-> was allowed for the stm32 platforms instead of override-and-pray.
+Or if we fail to setup the cpuhp state for some reason but don't
+actually crash and then later do a kexec?
 
-You can create your own pin group in stm32mp15-pinctlr.dtsi. What is the 
-issue ? Do I miss something ? It will avoid to overwrite an existing 
-configuration
+I guess I was just trying to be extra safe and make sure we have
+actually setup the cpuhp state before calling cpuhp_remove_state()
+for it. However, looking elsewhere in the kernel code I don't
+see anybody doing this for custom states...
 
-regards
-alex
+> hurt if we try cpuhp_remove_state() anyway?
 
+cpuhp_invoke_callback() would trigger a WARNING if we try to remove a
+cpuhp state that was never setup.
 
-> Anyways, there's better syntax for such overriding now:
+184         if (cpuhp_step_empty(bringup, step)) {
+185                 WARN_ON_ONCE(1);
+186                 return 0;
+187         }
+
+Thanks,
+Anirudh
+
 > 
->    &{qspi_blk1_pins_a/pins}
+> >  
+> >  	if (cpuid_ebx(HYPERV_CPUID_FEATURES) & HV_ACCESS_PARTITION_ID)
+> >  		hv_get_partition_id();
+> > @@ -637,7 +637,7 @@ void __init hyperv_init(void)
+> >  clean_guest_os_id:
+> >  	wrmsrl(HV_X64_MSR_GUEST_OS_ID, 0);
+> >  	hv_ivm_msr_write(HV_X64_MSR_GUEST_OS_ID, 0);
+> > -	cpuhp_remove_state(cpuhp);
+> > +	cpuhp_remove_state(CPUHP_AP_HYPERV_ONLINE);
+> >  free_ghcb_page:
+> >  	free_percpu(hv_ghcb_pg);
+> >  free_vp_assist_page:
 > 
-> which would cause a compilation error if pins was renamed again.
-> 
->>   		bias-pull-up;
-> 
-> There's bias-disable in stm32mp15-pinctrl.dtsi. You may want to add
-> a /delete-property/ for that to make sure, it's not up to the driver
-> which one has priority.
-> 
->>   		drive-push-pull;
->>   		slew-rate = <1>;
-> 
-> These are already in qspi_bk1_pins_a. If repeating those is ok, why
-> not go a step further and just duplicate the pinmux property and stay
-> clear of this issue altogether, provided Alex is amenable to changing
-> his mind regarding pinctrl groups in board device trees.
-> 
-> 
-> Cheers,
-> Ahmad
+> -- 
+> Vitaly
 > 
 
