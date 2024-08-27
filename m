@@ -1,101 +1,110 @@
-Return-Path: <linux-kernel+bounces-303457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B79D1960C48
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:38:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7F00960C4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:39:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 435D5B288A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:38:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 916D61F22849
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D2B1C2DCD;
-	Tue, 27 Aug 2024 13:38:17 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77831A00EE
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 13:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFCF1BFE02;
+	Tue, 27 Aug 2024 13:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LwolZ22I"
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3A71A0730
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 13:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724765897; cv=none; b=gl7rBqymr+ED8rvHi99fFodRRGRMOA+Qg8yU8e8oVadYt0PfqRqjM2CkK2DeAuNO1hJc/vWZcmlXakBOnLHL984Es34uOlxkgTm5R73nOYKZvqGEkXkKmt3+ZHfZ+nq41JyqkJUJs39pIZXoVXLOeoH6IYuZVVBMIdoYdu6/SEQ=
+	t=1724765944; cv=none; b=M6ThWrhhalD9pH+S0wkMCeeUoDHpUY8d9lkterNaSaN/zScCkCCBxX2qHALUhnxxjDikshmBssguXo6R/c9/Y2r4pQouByeFzg6RwnS2YSG+nhhQTLgM3DztoJWGkg60a3RSnpw5hsUCL4zcrAwg67CVpg15XLSdud1VPuSc8ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724765897; c=relaxed/simple;
-	bh=ERLthtgB5hPtkdxFxq7l3sdLVXMzX7gZyoAKnGd3MU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rxvOkoxj3RTJKBJT8Oe3GEyefk9ojABeM8NGqEYzSbZinwH3+A2wvV4z70I6bKjbgqUZUAKF4df4qyHDgnsrCLSTIXpbmN+NUuqNf3xkOOte6+Z5bF3eofocC9tpUCT1+Kz3NWNLwoL7lGTLFWdrF0xSh/MJ5waSqLWheJGBv/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 46B1311FB
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:38:41 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D9D7F3F66E
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:38:14 -0700 (PDT)
-Date: Tue, 27 Aug 2024 14:38:04 +0100
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Aryabhatta Dey <aryabhattadey35@gmail.com>
-Cc: airlied@gmail.com, daniel@ffwll.ch, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, corbet@lwn.net,
-	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation/gpu: Fix typo in
- Documentation/gpu/komeda-kms.rst
-Message-ID: <Zs3WvKCbvqCrIO0G@e110455-lin.cambridge.arm.com>
-References: <l5wzytcamcc43eadaquqbrfqilq6ajfnnseh37c77eceamtw35@hhtdipi4h22c>
+	s=arc-20240116; t=1724765944; c=relaxed/simple;
+	bh=EmUgM2/ytQuJfPaiYklRwOQpvnyqCeJX2p7TWdM5moA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pTk4pt9HuWKIDkpbzEvGCV55pnz/bF7hBbjC10vNTlAjuUAhT+EzwOAdZwkrU+X0CHZEuwm7CV6rt3Y954g7bWfAop3lPHEsqU4PGYcsV2PuxHJrrU0EKDHXUfbub0wYWY9hJdTMQs6iMW+dku2e2p0XmEmHTtr8B3cLLy/hkJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LwolZ22I; arc=none smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3db16129143so360680b6e.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:39:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1724765941; x=1725370741; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WzNFgePLd1xkOZP0EuX/y0xPFlqksOAZUan0SE77Djc=;
+        b=LwolZ22Iq+2RBuR9j41sRLkXW87w7thvHreub+1+IUfhQ1W4NAFqUMPVit6wX7w/+U
+         xps7QD31i8Suh/UTTYPVqXmdDyRzC2mofwe4gCd0Nv8klV2pau47PSYeb7tlXwDJcitX
+         JaliUmxLm5P2VTYUKu9GbOP4qhZMrb4c6ddUc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724765941; x=1725370741;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WzNFgePLd1xkOZP0EuX/y0xPFlqksOAZUan0SE77Djc=;
+        b=duOWTITlX3LantlTBqotxiaZfkE40ee9LPZYNt43WwSeNM13xm2JoNM/SUqDZYIC8z
+         a4PpPYCP1B7294xIJQtK3be5Yv+RPuiuAhWf+YiJ6dvkre7uMqSBbgRM8a4yu8z0gPGH
+         p3/zkN0oJ2xL/WoWwR6n2oXA4D6DG6w/1Q4JiPZUQ1OWrzHIDQd6p+/KUbpDgqSE5Lq8
+         a8gyYna8rchVxBHeogHxG3m3m++w8mGZvect+QDys6CdkK1D/mrQMQZQ8L2lBuB5kI1H
+         huyL524wLHgVmjbCLje32uO72gZ4ekGeGwUzyXwXP4fvFi5UKs2xk4TfID5TVSOMFROv
+         xmsg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQd1W4S4ANOMdaLySEdTEy5wrxfhBlMkQBDufUvG5u53IkMw95MCZOBHPegtgrQKz0BQk5lyIJa8PU4kI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzruHe3ZTNFeYOp85o/TupEzFaHf/ow3be6yYfUF9Xk4m98V0V+
+	lAg7Rhyknjb9HO4Z932x0t32XVrh4CtZBNtVPo/x099c7347OIScmtZeLx0ifvU=
+X-Google-Smtp-Source: AGHT+IHGRL6ToaIoM39AfyW127C9/x+YWGPFSMwGHsfntziflfJyV03EUQlEF4NMjqFLP58aaTehTQ==
+X-Received: by 2002:a05:6808:6489:b0:3d5:5fbe:b2fa with SMTP id 5614622812f47-3de2a8d4697mr12190240b6e.35.1724765941408;
+        Tue, 27 Aug 2024 06:39:01 -0700 (PDT)
+Received: from [192.168.121.153] ([218.49.71.194])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9acabccasm8007261a12.27.2024.08.27.06.38.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 06:39:01 -0700 (PDT)
+Message-ID: <0a197b29-f0f4-429e-82c0-f54469f31b12@linuxfoundation.org>
+Date: Tue, 27 Aug 2024 07:38:56 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <l5wzytcamcc43eadaquqbrfqilq6ajfnnseh37c77eceamtw35@hhtdipi4h22c>
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build warning after merge of the kunit-fixes tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Brendan Higgins <brendanhiggins@google.com>
+Cc: David Gow <davidgow@google.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240827160631.67e121ed@canb.auug.org.au>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240827160631.67e121ed@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 27, 2024 at 06:48:52PM +0530, Aryabhatta Dey wrote:
-> Change 'indenpendently' to 'independently'.
+On 8/27/24 00:06, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Signed-off-by: Aryabhatta Dey <aryabhattadey35@gmail.com>
-
-Acked-by: Liviu Dudau <liviu.dudau@arm.com>
-
-Thanks for the patch!
-
-Jonathan, is that something you can pick up in your tree?
-
-Best regards,
-Liviu
-
-> ---
->  Documentation/gpu/komeda-kms.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> After merging the kunit-fixes tree, today's linux-next build (htmldocs)
+> produced this warning:
 > 
-> diff --git a/Documentation/gpu/komeda-kms.rst b/Documentation/gpu/komeda-kms.rst
-> index 633a016563ae..eaea40eb725b 100644
-> --- a/Documentation/gpu/komeda-kms.rst
-> +++ b/Documentation/gpu/komeda-kms.rst
-> @@ -86,7 +86,7 @@ types of working mode:
->  -   Single display mode
->      Two pipelines work together to drive only one display output.
->  
-> -    On this mode, pipeline_B doesn't work indenpendently, but outputs its
-> +    On this mode, pipeline_B doesn't work independently, but outputs its
->      composition result into pipeline_A, and its pixel timing also derived from
->      pipeline_A.timing_ctrlr. The pipeline_B works just like a "slave" of
->      pipeline_A(master)
-> -- 
-> 2.46.0
+> include/kunit/test.h:492: warning: Function parameter or struct member 'test' not described in 'kunit_kfree_const'
+> 
+> Introduced by commit
+> 
+>    f2c6dbd22017 ("kunit: Device wrappers should also manage driver name")
 > 
 
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+Thank you Stephen.
+
+David,
+
+Can you send me fix for this on linux-kselftest kunit-fixes branch?
+
+thanks,
+-- Shuah
 
