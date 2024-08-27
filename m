@@ -1,233 +1,240 @@
-Return-Path: <linux-kernel+bounces-303472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9D5F960C85
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:51:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D71E4960C89
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:51:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31EC5B24D06
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:51:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 287BB1F233EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F41D1C2DD1;
-	Tue, 27 Aug 2024 13:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E34B1C2DD9;
+	Tue, 27 Aug 2024 13:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bo3ZzlPo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iK2iYZgL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A295F8F54;
-	Tue, 27 Aug 2024 13:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F658F54;
+	Tue, 27 Aug 2024 13:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724766652; cv=none; b=NeMmEJOPhe2lTrQ6ItzMY2t6BEl+AfDPTc03vr3VtEjCWDzrCUV1FGqKW+Pxdi9523NIVvgctv4gK4OXWGlFjy21Ja4GM8cryyxd9ZPkSJwlW7Lu672aG/NXRhTenEk2MOdo/uO89H3GuQBBT6F3Y3OkaT1r2mPbfB+KDMjlnmo=
+	t=1724766687; cv=none; b=cT9OYWDhKw8csBurfsCuzF5BSdXxSdaDekwFXOQVD+pxBRBMQi0i4atBMrJEr3jQPg6rMTB1sQ/XK6eW23K5f7FGnN0tWZ4l7p9beJkroJPXdNOA1eq1DdIgHzNlRrbJFKHJFP8mOGMTwtx4J8KRCovy+rnUIhDM/8lgAmoMktk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724766652; c=relaxed/simple;
-	bh=yyaK86cIMMTd3wpksUlSfN5t/YeeCIjLW+ZTAg0foC8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=e70Z4QRuVTfzVq3sHAjrnD5Nmc7TLTTRY/3HbQfoyGpU+PYXwESrENt61tPqPIE7OpEWixZJehBGNxFYtmud5lb8cSJDe/Tjh2AUbBnDPEriCLcnrdTEiV+cmDTetXRzCoNdknRGo47demCWQjt5/uTFR0UrM1E59jZcW2oCBi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bo3ZzlPo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EDD6C4FDF2;
-	Tue, 27 Aug 2024 13:50:47 +0000 (UTC)
+	s=arc-20240116; t=1724766687; c=relaxed/simple;
+	bh=i4R3LNWjGGRK9lK5dAlPs8k/3QxcZegbijSLg2LlOdA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lL7GJWbA4HsIgHBNYpJojZu99ted8p8iXYlLBN5bfNwpcDMoNQ6DdP+2n2/E2vjeBHrc2uc8BSTUEbGSq3ewAcjR03QWLcYIm5wPy72VFRZsfMBttmcEM3uuunSs58gj5Vj8jMMuhxM1PyrmZ27gqZFUlQvS/kq3Nr9AANLaSZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iK2iYZgL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4659CC4FE81;
+	Tue, 27 Aug 2024 13:51:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724766652;
-	bh=yyaK86cIMMTd3wpksUlSfN5t/YeeCIjLW+ZTAg0foC8=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=Bo3ZzlPohVVBS/ZKvyxFyFyp2cBhnsbxo9SQzyKnOYbsd9I62/PFsT7OIv0wcW+7J
-	 QhKdxx2gTghDrpfNkuuHYmzDhUM7jpcJsprjKQenAmzGjF/EfX6j+GmtQ990ypUHsc
-	 tWjNFOdobxbggCTId7Sg2L4bbeA3+bgj+KbdyqcjVhXQYTog1AitXi4u3kx8Gs5J6k
-	 45tGjHM1sdDy+AQu2FRbIaQimz+6u6wo1pSqz6DjqtCicU6zLz6v/28dBe3jRE20XT
-	 VWKYBl3hYkEI7YQZ8zhh8FbAws6VehJQlz6Owpn1+xNkHosQtqPk4ylT6TQE2XbMCv
-	 V5gopRNyQjL9w==
-Message-ID: <87abe3f1-3cf2-4331-8dde-a422716dd94a@kernel.org>
-Date: Tue, 27 Aug 2024 15:50:45 +0200
+	s=k20201202; t=1724766687;
+	bh=i4R3LNWjGGRK9lK5dAlPs8k/3QxcZegbijSLg2LlOdA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=iK2iYZgL5izP9RHqtdic4iCItpd8vaAP6Grm64hiolAmp+qRdk+/NQf3j21+g9d5Y
+	 uT0JjARiXbGpIsyhwXxq6FIxTmVru5BhHbK2btzMtwx90WEOe17EQXqm4V8xmimGRk
+	 uf21D0zwjsJqRsch1F/kjx1QDkQw//9TSnzqC2yfEgImKvjw0IETpAPPgXXlsVwa88
+	 IhY7oTx3nVEUfdD6OtfoYrx4KVZk4jzFCZaj3EuV6cM/k+mC5PIqREdRoy/XMHNrGo
+	 jmFZ59gTgmpJ8yc4Fdqi4VAxOXf6Rl3lT52Hibdns9RErUY84J80mSyR7pGqXfPYj+
+	 XVhtEN1LT4D/w==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53346132365so6477397e87.1;
+        Tue, 27 Aug 2024 06:51:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUIAxUUZtM3G5k9jeqzNMhIQsieH928CF6JSg1q0VCGv+L73s66rxNC8QgriCGxu8JvCTLfQvRcNkbB/LfC@vger.kernel.org, AJvYcCUlDWhacrMZ/UI0aSzzUKxBvre4OQKZnLvJJHfmfO3fBiY2R/nx4fPPDl5G+Tzsh8L6H20mPp2RniKwfK3P@vger.kernel.org, AJvYcCVznzIbZbSoJ36y3MoMBqRFluWIFAoYau1USUc2ltsL0Kk6r6CVlAvewsvOteWsHbzl4RldUxm9a0Fa@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6cTWGDNnzuyGOusC2hieUbtUPmLjDo4BOT+MtjUYA9bneQ+85
+	CXzSGP84Pp8Uwoq7p84yOgVdnLVDdegl+w6Culp/MyKagIVpAqeFlBHbcQov3Fnpb4n+wQU3Utg
+	cdie9GMtJRSTBRge0nwsy4Xj+Kic=
+X-Google-Smtp-Source: AGHT+IHN2l4sloAjBg8ujMfn3jI7UbVTMJMQSaQdc5aJM+cNfKIaWp4PsouKm4uFv5oS26zdJ17GDFDP7wkrDmjQIIk=
+X-Received: by 2002:a05:6512:1110:b0:533:4689:9750 with SMTP id
+ 2adb3069b0e04-5344e3dd56bmr1722609e87.26.1724766685571; Tue, 27 Aug 2024
+ 06:51:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next 2/8] soc: fsl: cpm1: Simplify with dev_err_probe()
-To: Jinjie Ruan <ruanjinjie@huawei.com>, andrew@lunn.ch,
- sebastian.hesselbarth@gmail.com, gregory.clement@bootlin.com,
- herve.codina@bootlin.com, qiang.zhao@nxp.com, christophe.leroy@csgroup.eu,
- thierry.reding@gmail.com, jonathanh@nvidia.com, nm@ti.com,
- ssantosh@kernel.org, petlozup@nvidia.com, pshete@nvidia.com,
- christophe.jaillet@wanadoo.fr, ulf.hansson@linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-tegra@vger.kernel.org, jic23@kernel.org
-References: <20240827114607.4019972-1-ruanjinjie@huawei.com>
- <20240827114607.4019972-3-ruanjinjie@huawei.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240827114607.4019972-3-ruanjinjie@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240826181059.111536-1-adhemerval.zanella@linaro.org>
+In-Reply-To: <20240826181059.111536-1-adhemerval.zanella@linaro.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 27 Aug 2024 15:51:14 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXFan+yKH_Z8ib=dDBiupRO1SpBn1EbkUC6pQ_k5+bjUvQ@mail.gmail.com>
+Message-ID: <CAMj1kXFan+yKH_Z8ib=dDBiupRO1SpBn1EbkUC6pQ_k5+bjUvQ@mail.gmail.com>
+Subject: Re: [PATCH] aarch64: vdso: Wire up getrandom() vDSO implementation
+To: Adhemerval Zanella <adhemerval.zanella@linaro.org>
+Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>, "Theodore Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arch@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Eric Biggers <ebiggers@kernel.org>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Type: text/plain; charset="UTF-8"
 
-On 27/08/2024 13:46, Jinjie Ruan wrote:
-> Use the dev_err_probe() helper to simplify error handling during probe.
-> This also handle scenario, when EDEFER is returned and useless error
-> is printed.
+Hi Adhemerval,
 
-? Sorry, this cannot happen. Please point to below code which can defer.
+...
 
-> 
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->  drivers/soc/fsl/qe/tsa.c | 62 +++++++++++++++-------------------------
->  1 file changed, 23 insertions(+), 39 deletions(-)
-> 
-> diff --git a/drivers/soc/fsl/qe/tsa.c b/drivers/soc/fsl/qe/tsa.c
-> index 7fa399b7a47c..fc37d23b746d 100644
-> --- a/drivers/soc/fsl/qe/tsa.c
-> +++ b/drivers/soc/fsl/qe/tsa.c
-> @@ -453,10 +453,8 @@ static int tsa_of_parse_tdms(struct tsa *tsa, struct device_node *np)
->  
->  	for_each_available_child_of_node_scoped(np, tdm_np) {
->  		ret = of_property_read_u32(tdm_np, "reg", &tdm_id);
-> -		if (ret) {
-> -			dev_err(tsa->dev, "%pOF: failed to read reg\n", tdm_np);
-> -			return ret;
-> -		}
-> +		if (ret)
-> +			return dev_err_probe(tsa->dev, ret, "%pOF: failed to read reg\n", tdm_np);
->  		switch (tdm_id) {
->  		case 0:
->  			tsa->tdms |= BIT(TSA_TDMA);
-> @@ -465,18 +463,15 @@ static int tsa_of_parse_tdms(struct tsa *tsa, struct device_node *np)
->  			tsa->tdms |= BIT(TSA_TDMB);
->  			break;
->  		default:
-> -			dev_err(tsa->dev, "%pOF: Invalid tdm_id (%u)\n", tdm_np,
-> -				tdm_id);
-> -			return -EINVAL;
-> +			return dev_err_probe(tsa->dev, -EINVAL, "%pOF: Invalid tdm_id (%u)\n",
-> +					     tdm_np, tdm_id);
->  		}
->  	}
->  
->  	for_each_available_child_of_node_scoped(np, tdm_np) {
->  		ret = of_property_read_u32(tdm_np, "reg", &tdm_id);
-> -		if (ret) {
-> -			dev_err(tsa->dev, "%pOF: failed to read reg\n", tdm_np);
-> -			return ret;
-> -		}
-> +		if (ret)
-> +			return dev_err_probe(tsa->dev, ret, "%pOF: failed to read reg\n", tdm_np);
->  
->  		tdm = &tsa->tdm[tdm_id];
->  		tdm->simode_tdm = TSA_SIMODE_TDM_SDM_NORM;
-> @@ -484,35 +479,26 @@ static int tsa_of_parse_tdms(struct tsa *tsa, struct device_node *np)
->  		val = 0;
->  		ret = of_property_read_u32(tdm_np, "fsl,rx-frame-sync-delay-bits",
->  					   &val);
-> -		if (ret && ret != -EINVAL) {
-> -			dev_err(tsa->dev,
-> -				"%pOF: failed to read fsl,rx-frame-sync-delay-bits\n",
-> -				tdm_np);
-> -			return ret;
-> -		}
-> -		if (val > 3) {
-> -			dev_err(tsa->dev,
-> -				"%pOF: Invalid fsl,rx-frame-sync-delay-bits (%u)\n",
-> -				tdm_np, val);
-> -			return -EINVAL;
-> -		}
-> +		if (ret && ret != -EINVAL)
-> +			return dev_err_probe(tsa->dev, ret,
-> +					     "%pOF: failed to read fsl,rx-frame-sync-delay-bits\n",
-> +					     tdm_np);
-> +		if (val > 3)
-> +			return dev_err_probe(tsa->dev, -EINVAL,
-> +					     "%pOF: Invalid fsl,rx-frame-sync-delay-bits (%u)\n",
-> +					     tdm_np, val);
->  		tdm->simode_tdm |= TSA_SIMODE_TDM_RFSD(val);
->  
->  		val = 0;
->  		ret = of_property_read_u32(tdm_np, "fsl,tx-frame-sync-delay-bits",
->  					   &val);
-> -		if (ret && ret != -EINVAL) {
-> -			dev_err(tsa->dev,
-> -				"%pOF: failed to read fsl,tx-frame-sync-delay-bits\n",
-> -				tdm_np);
-> -			return ret;
-> -		}
-> -		if (val > 3) {
-> -			dev_err(tsa->dev,
-> -				"%pOF: Invalid fsl,tx-frame-sync-delay-bits (%u)\n",
-> -				tdm_np, val);
-> -			return -EINVAL;
-> -		}
-> +		if (ret && ret != -EINVAL)
-> +			return dev_err_probe(tsa->dev, ret,
-> +				"%pOF: failed to read fsl,tx-frame-sync-delay-bits\n", tdm_np);
-> +		if (val > 3)
-> +			return dev_err_probe(tsa->dev, -EINVAL,
-> +					     "%pOF: Invalid fsl,tx-frame-sync-delay-bits (%u)\n",
-> +					     tdm_np, val);
->  		tdm->simode_tdm |= TSA_SIMODE_TDM_TFSD(val);
->  
->  		if (of_property_read_bool(tdm_np, "fsl,common-rxtx-pins"))
-> @@ -645,10 +631,8 @@ static int tsa_probe(struct platform_device *pdev)
->  		return PTR_ERR(tsa->si_regs);
->  
->  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "si_ram");
-> -	if (!res) {
-> -		dev_err(tsa->dev, "si_ram resource missing\n");
-> -		return -EINVAL;
-> -	}
-> +	if (!res)
-> +		return dev_err_probe(tsa->dev, -EINVAL, "si_ram resource missing\n");
->  	tsa->si_ram_sz = resource_size(res);
->  	tsa->si_ram = devm_ioremap_resource(&pdev->dev, res);
->  	if (IS_ERR(tsa->si_ram))
+> diff --git a/arch/arm64/kernel/vdso/vgetrandom-chacha.S b/arch/arm64/kernel/vdso/vgetrandom-chacha.S
+> new file mode 100644
+> index 000000000000..3fb9715dd6f0
+> --- /dev/null
+> +++ b/arch/arm64/kernel/vdso/vgetrandom-chacha.S
+> @@ -0,0 +1,153 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/linkage.h>
+> +#include <asm/cache.h>
+> +
+> +       .text
+> +
+> +/*
+> + * ARM64 ChaCha20 implementation meant for vDSO.  Produces a given positive
+> + * number of blocks of output with nonnce 0, taking an input key and 8-bytes
+> + * counter.  Importantly does not spill to the stack.
+> + *
+> + * void __arch_chacha20_blocks_nostack(uint8_t *dst_bytes,
+> + *                                    const uint8_t *key,
+> + *                                    uint32_t *counter,
+> + *                                    size_t nblocks)
+> + *
+> + *     x0: output bytes
+> + *     x1: 32-byte key input
+> + *     x2: 8-byte counter input/output
+> + *     x3: number of 64-byte block to write to output
+> + */
+> +SYM_FUNC_START(__arch_chacha20_blocks_nostack)
+> +
 
-Best regards,
-Krzysztof
+Shouldn't we preserve d8-d15 here?
 
+> +       /* v0 = "expand 32-byte k" */
+> +       adr_l           x8, CTES
+> +       ld1             {v5.4s}, [x8]
+> +       /* v1,v2 = key */
+> +       ld1             { v6.4s, v7.4s }, [x1]
+> +       /* v3 = counter || zero noonce  */
+> +       ldr             d8, [x2]
+> +
+> +       adr_l           x8, ONE
+> +       ldr             q13, [x8]
+> +
+> +       adr_l           x10, ROT8
+> +       ld1             {v12.4s}, [x10]
+> +.Lblock:
+> +       /* copy state to auxiliary vectors for the final add after the permute.  */
+> +       mov             v0.16b, v5.16b
+> +       mov             v1.16b, v6.16b
+> +       mov             v2.16b, v7.16b
+> +       mov             v3.16b, v8.16b
+> +
+> +       mov             w4, 20
+> +.Lpermute:
+> +       /*
+> +        * Permute one 64-byte block where the state matrix is stored in the four NEON
+> +        * registers v0-v3.  It performs matrix operations on four words in parallel,
+> +        * but requires shuffling to rearrange the words after each round.
+> +        */
+> +
+> +.Ldoubleround:
+> +       /* x0 += x1, x3 = rotl32(x3 ^ x0, 16) */
+> +       add             v0.4s, v0.4s, v1.4s
+> +       eor             v3.16b, v3.16b, v0.16b
+> +       rev32           v3.8h, v3.8h
+> +
+> +       /* x2 += x3, x1 = rotl32(x1 ^ x2, 12) */
+> +       add             v2.4s, v2.4s, v3.4s
+> +       eor             v4.16b, v1.16b, v2.16b
+> +       shl             v1.4s, v4.4s, #12
+> +       sri             v1.4s, v4.4s, #20
+> +
+> +       /* x0 += x1, x3 = rotl32(x3 ^ x0, 8) */
+> +       add             v0.4s, v0.4s, v1.4s
+> +       eor             v3.16b, v3.16b, v0.16b
+> +       tbl             v3.16b, {v3.16b}, v12.16b
+> +
+> +       /* x2 += x3, x1 = rotl32(x1 ^ x2, 7) */
+> +       add             v2.4s, v2.4s, v3.4s
+> +       eor             v4.16b, v1.16b, v2.16b
+> +       shl             v1.4s, v4.4s, #7
+> +       sri             v1.4s, v4.4s, #25
+> +
+> +       /* x1 = shuffle32(x1, MASK(0, 3, 2, 1)) */
+> +       ext             v1.16b, v1.16b, v1.16b, #4
+> +       /* x2 = shuffle32(x2, MASK(1, 0, 3, 2)) */
+> +       ext             v2.16b, v2.16b, v2.16b, #8
+> +       /* x3 = shuffle32(x3, MASK(2, 1, 0, 3)) */
+> +       ext             v3.16b, v3.16b, v3.16b, #12
+> +
+> +       /* x0 += x1, x3 = rotl32(x3 ^ x0, 16) */
+> +       add             v0.4s, v0.4s, v1.4s
+> +       eor             v3.16b, v3.16b, v0.16b
+> +       rev32           v3.8h, v3.8h
+> +
+> +       /* x2 += x3, x1 = rotl32(x1 ^ x2, 12) */
+> +       add             v2.4s, v2.4s, v3.4s
+> +       eor             v4.16b, v1.16b, v2.16b
+> +       shl             v1.4s, v4.4s, #12
+> +       sri             v1.4s, v4.4s, #20
+> +
+> +       /* x0 += x1, x3 = rotl32(x3 ^ x0, 8) */
+> +       add             v0.4s, v0.4s, v1.4s
+> +       eor             v3.16b, v3.16b, v0.16b
+> +       tbl             v3.16b, {v3.16b}, v12.16b
+> +
+> +       /* x2 += x3, x1 = rotl32(x1 ^ x2, 7) */
+> +       add             v2.4s, v2.4s, v3.4s
+> +       eor             v4.16b, v1.16b, v2.16b
+> +       shl             v1.4s, v4.4s, #7
+> +       sri             v1.4s, v4.4s, #25
+> +
+> +       /* x1 = shuffle32(x1, MASK(2, 1, 0, 3)) */
+> +       ext             v1.16b, v1.16b, v1.16b, #12
+> +       /* x2 = shuffle32(x2, MASK(1, 0, 3, 2)) */
+> +       ext             v2.16b, v2.16b, v2.16b, #8
+> +       /* x3 = shuffle32(x3, MASK(0, 3, 2, 1)) */
+> +       ext             v3.16b, v3.16b, v3.16b, #4
+> +
+> +       subs            w4, w4, #2
+> +       b.ne            .Ldoubleround
+> +
+> +       /* output0 = state0 + v0 */
+> +       add             v0.4s, v0.4s, v5.4s
+> +       /* output1 = state1 + v1 */
+> +       add             v1.4s, v1.4s, v6.4s
+> +       /* output2 = state2 + v2 */
+> +       add             v2.4s, v2.4s, v7.4s
+> +       /* output2 = state3 + v3 */
+> +       add             v3.4s, v3.4s, v8.4s
+> +       st1             { v0.4s - v3.4s }, [x0]
+> +
+> +       /* ++copy3.counter */
+> +       add             d8, d8, d13
+> +
+> +       /* output += 64, --nblocks */
+> +       add             x0, x0, 64
+> +       subs            x3, x3, #1
+> +       b.ne            .Lblock
+> +
+> +       /* counter = copy3.counter */
+> +       str             d8, [x2]
+> +
+> +       /* Zero out the potentially sensitive regs, in case nothing uses these again. */
+> +       eor             v0.16b, v0.16b, v0.16b
+> +       eor             v1.16b, v1.16b, v1.16b
+> +       eor             v2.16b, v2.16b, v2.16b
+> +       eor             v3.16b, v3.16b, v3.16b
+> +       eor             v6.16b, v6.16b, v6.16b
+> +       eor             v7.16b, v7.16b, v7.16b
+> +       ret
+> +SYM_FUNC_END(__arch_chacha20_blocks_nostack)
+> +
+> +        .section        ".rodata", "a", %progbits
+> +        .align          L1_CACHE_SHIFT
+> +
+> +CTES:  .word           1634760805, 857760878,  2036477234, 1797285236
+> +ONE:    .xword         1, 0
+> +ROT8:  .word           0x02010003, 0x06050407, 0x0a09080b, 0x0e0d0c0f
+> +
+> +emit_aarch64_feature_1_and
 
