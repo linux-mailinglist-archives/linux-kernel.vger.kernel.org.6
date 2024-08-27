@@ -1,183 +1,345 @@
-Return-Path: <linux-kernel+bounces-303240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50A0696096E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:59:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37C1596096B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 092AD28578F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:59:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF7171F219DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030021A0AF4;
-	Tue, 27 Aug 2024 11:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="bOTMiYIj"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2046.outbound.protection.outlook.com [40.107.117.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A35E19EED8;
+	Tue, 27 Aug 2024 11:59:18 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3461A071C;
-	Tue, 27 Aug 2024 11:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724759960; cv=fail; b=nHuRbNLZLFWJcp83Zv78GC0kK2nupbZG4mG3edGsTSvn3KY/ggBt2W4cZwKDjGJ0awTYib5vNLXpCLYZIFP/jwaRgY1fwb95aDgGFchBpYMasRJFGTEX7/nvdqpcGSF2780JBTfYqRFZ8UJjQ4ra97FObjknMP+auz5cNzXKlco=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724759960; c=relaxed/simple;
-	bh=misQeNZaT8uucUkchxQEOu3g3qPoWKbUF9lzNnXInHI=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=OjouEA2/q4du4NFOsVHzOa3Vz05nK8zjxZG+tRMV9rIvpL6PAFPX/Q6cOKwPmFvrwYwQxJGoS8AbyaLJ6SHfm0EKmCXLM0nGfFm0vf7bIK7flTj472ssyWV3W1neyqinhG5B9gJdRO5rb/wPgboZjGIFXy/au1gLICfW4zSxkuw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=bOTMiYIj; arc=fail smtp.client-ip=40.107.117.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qmIPh/wlcv/pHA6SSW9RrRoO1NJYcwt+Vr5T9RGmfbm6NCLaLY2lyk3foJV/6QuH0sGPL/3TzfUdqRkoWqm9CypeRyHIjPjq4RBJiJ5B9zPqVwY2N7LGmxCm1t0sxWw6CMjz6yhjM9qkrWKR/Wco2OGFWSyrtiqlWtI/6/nA0nCIPiqMbzbiRevkeO7kw7r0wxKUuYlmD6Y72OR3eyS0CRIs02BWNTzBnw5VK3QWnokozCLI3FAgw5cqTuHHNgiK13kTg54+3cYHIDtvd9sYmFNG9De+1Nee004hXnjRQm7jqJjfJHH0lxCv1E3yEPS4DX4pVKQmNPcCmth9jZe/fg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EEXscr/gpOx0xRv3aKxTCv2UohyKw3LCq+HqJdFl5Hw=;
- b=mh6HUMLyzBJHxDWNgRs7yxwpnP7Rs34Y680pIXKbApbahP3QwlDjiekSOaVohFGPowBBZyD1b4brW8bEfooc2R7pHan7McOk4Ma7We1s6so6/QXVTzqrVDGjyM1n/Og4dx/T+t0mgjYOH507BAbgS1zZs+IeXhkMZwXNstsRoGqI9Fd8oGAxWXd2WMYMbsgosY8L11YWSiI2tKKYQNGvWu1yUsXoAXWGafHRJflxuzpb1TR4PCEU5kMUsi7lWeJFN3ZdHv7uQbDQNlwd1fPL8U9rjjLG6cGrtFNbZu26JBmUnd02wsU1vDO+sidLxxKnOIZftoyqtR/YLGKgqTXxLw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EEXscr/gpOx0xRv3aKxTCv2UohyKw3LCq+HqJdFl5Hw=;
- b=bOTMiYIjSlx3mDxXd037VhxEWQr7qvjKc0ZXtxoIeJxsGbRt85sF/TdZTI+LgorBeiSmMfiStHXV+K4IteNdxhaqaspWrEqVUTCwq0FPrOSdqTCtw7Jt5kWFjc3al6ObBhd+u3QMM/hZZ3K8+hBf7d8ClNVuTCuUHqDDal2KEk+zs3WDFJtL9e8Rhaj21/eUBHbEOuxrQRjnjQ80Zy1Jd4L8fSvmaIWUueUu/iJnjB64oz0bF0r+nHmzxxn+uuMqab9cbQy3FeKXlBjtX5temqZLf1QL+eETm3eAjAI+rKMDQ8gvsEMJxQm08iMk7GVympYNhNoA365V4D+ovR316w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR0601MB4113.apcprd06.prod.outlook.com (2603:1096:820:31::7)
- by SEYPR06MB6929.apcprd06.prod.outlook.com (2603:1096:101:1d9::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Tue, 27 Aug
- 2024 11:59:14 +0000
-Received: from KL1PR0601MB4113.apcprd06.prod.outlook.com
- ([fe80::7e85:dad0:3f7:78a1]) by KL1PR0601MB4113.apcprd06.prod.outlook.com
- ([fe80::7e85:dad0:3f7:78a1%4]) with mapi id 15.20.7897.021; Tue, 27 Aug 2024
- 11:59:14 +0000
-From: Yan Zhen <yanzhen@vivo.com>
-To: marcin.s.wojtas@gmail.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com,
-	Yan Zhen <yanzhen@vivo.com>
-Subject: [PATCH v1] ethernet: marvell: Use min macro
-Date: Tue, 27 Aug 2024 19:58:48 +0800
-Message-Id: <20240827115848.3908369-1-yanzhen@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TY2PR04CA0009.apcprd04.prod.outlook.com
- (2603:1096:404:f6::21) To KL1PR0601MB4113.apcprd06.prod.outlook.com
- (2603:1096:820:31::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850DB19D88C
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724759957; cv=none; b=My0BwurLpLFeU0Yk51JXLtAJswxIBoEVfCeCjmOQzvzLbtbBbWiUYGH9dXna7tTBjB4P06+8eYOICOwuzfAWiXVTHndx1sJsKWENljwvM0LB9nyIP7Yu5RMcqfSF8hlE1QZEVk9w42IAZR6Th42TPxN76+E+XUjeRaR7JDWSFqk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724759957; c=relaxed/simple;
+	bh=HksysG1xLCN+VLYDz1IdYYSqeiJYzIGslGvCfdijGUw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=drutzbLmqpZZQvikvIxTC/D6rO6EvL28o0zCX/qIylejkzhz+kKMMNKcd7BKVw+qJMBVJFp88JJDzMI13+EN5u38UbG/1TATR5lGNIkPRv++GWCpeAzuaxU242ArNyNPvQugshLI3Ohdz1QuYMNRjyxNTSHNd3BIe6TiFBM2Nho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WtQw143fmz6J7Zj;
+	Tue, 27 Aug 2024 19:55:13 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9C2AE140B39;
+	Tue, 27 Aug 2024 19:59:11 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 27 Aug
+ 2024 12:59:11 +0100
+Date: Tue, 27 Aug 2024 12:59:10 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: "lihuisong (C)" <lihuisong@huawei.com>
+CC: <xuwei5@hisilicon.com>, <linux-kernel@vger.kernel.org>, <soc@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <krzk@kernel.org>,
+	<wanghuiqiang@huawei.com>, <liuyonglong@huawei.com>
+Subject: Re: [PATCH v2 6/6] soc: hisilicon: kunpeng_hccs: Support low power
+ feature for the specified HCCS type
+Message-ID: <20240827125910.00007cdd@Huawei.com>
+In-Reply-To: <de0d4cb2-c668-1d7f-2893-a42840a2b53b@huawei.com>
+References: <20240718071134.31155-1-lihuisong@huawei.com>
+	<20240823031059.32579-1-lihuisong@huawei.com>
+	<20240823031059.32579-7-lihuisong@huawei.com>
+	<20240823095851.0000004e@Huawei.com>
+	<de0d4cb2-c668-1d7f-2893-a42840a2b53b@huawei.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR0601MB4113:EE_|SEYPR06MB6929:EE_
-X-MS-Office365-Filtering-Correlation-Id: 21a8c9b7-a853-4c16-8e3c-08dcc68fab70
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?H/lLY3bZhyK3uBmE89UFWM5A2iZGHlOtRvUM0WeNLmZiUEqI3tMPXVwohZQA?=
- =?us-ascii?Q?zC/YTIrC84XqxT7kz5DGI9OH8mZiEOD3WApN1JIVFBq41jD1GYmRt6okxmqz?=
- =?us-ascii?Q?QAp04lAURWFf7oGYU9arQcR3Y1/gXlSRf2B/b0OdOgoxwc7KyUQqFEi4OAOB?=
- =?us-ascii?Q?wVJaJHdbJEDZTR3mwTsERh72JaTWFawD8pv+OvYWjjGavnQz9XDk1WCXdK24?=
- =?us-ascii?Q?JYL3DDSBbzMyzQADLXlrp1LoMX3QxC76qwNyRCbxWwKHN9Of+7eE3TAZJv1a?=
- =?us-ascii?Q?6YHflU+X56idYVK4Ehx7Er26GzPxt/izyNNRbmaI093oqauHyvzuvRt0u/N0?=
- =?us-ascii?Q?1SI3l/DDR6ZnbsVGZO02Ftjx5NHhE+WWYPSUZtRFvYQ0lKDTc5ANwGGFGxAB?=
- =?us-ascii?Q?u/frgU01yKR/1Gun5YnWqYWIaLbpdb8chdjEcGy64YHzAFUVTginfvuMLSfi?=
- =?us-ascii?Q?JiKcLB7BeHnBaEhgO2nJC0GYq+y1SOFuWgBUqb9/7zhUkKHX2B5UqrdKl7mm?=
- =?us-ascii?Q?Nug2hNQdWV6RAY0n8ng1mQNNXcfTup7HjYn/iFhr7MkeIFJMZG3nW6CxUR2t?=
- =?us-ascii?Q?Chj1rES9fAsNdPSCooP+8QLqYMU7JIyud8ypo3OdtaCJU1peg7YQm+j4esXV?=
- =?us-ascii?Q?dj+OYIpbNcOwpf89ZmHrXoXX8X7nOslIfbasbF2qOB6W785zyCNKpKxZqVbp?=
- =?us-ascii?Q?JrQHMCi+1kXhzn7uysNIwpRS3nd36Z+oJzwSv7hvXTn59zrSkmtWUcJwQMHr?=
- =?us-ascii?Q?MjbNvj/0WXOd3stiIvYUXD57P488RmhYoCnZ+K7xW2xCnIPr83jF+epMyofH?=
- =?us-ascii?Q?NhQwBq+pPc4NZC3rSDLOfeh32vjScFQE1ZMJ7Alwb8UjYAQKaxX2ATIVInQv?=
- =?us-ascii?Q?DlHIMQuL+wf8Vvw07Iy7AYQnz1KsdQm0u81CpPmYlLSsxuiKmx9iZaD+QArX?=
- =?us-ascii?Q?rIQ0cbheKBnoCzDlQ34mNZV42LR0bzCFWXj0zsUx20/xenlpSPIC4xSYxqYC?=
- =?us-ascii?Q?8TFkIhP/8bbe5jZ4Os22qq7GLuNTFsi7/BNKcZkdpBmQIjiiXTBzxjIHBqCV?=
- =?us-ascii?Q?wwObN3u28BbqhYFR0inA6tNRKDi+J83itdsFiETndrj/luCi5XgZt+prhMCU?=
- =?us-ascii?Q?bWGSCUzVEvIHwUeKHgcFl7Lt9hOspP51Gi7ORe4CXIZl+jbzVKOx+Lbz0/+w?=
- =?us-ascii?Q?gHjxOvLHEX8fMZq5v1fA5gv3ET1J4Yey4t5y9dqWIJNKy6FquOB1tXMro4sf?=
- =?us-ascii?Q?ircuiQb3l1npFOFrobilztEg4uILO1HYji5L1hhSS71o38L+a8Fi44kFSkiI?=
- =?us-ascii?Q?bABfbWnyA563E35lHX1vjXEE5v+YdHmuY7qtSU8wOX8jb39XYld9rK0qfzbD?=
- =?us-ascii?Q?Gk1oGdEV2uwc8cMqdstpPDa2GegzorfbRIn5HGQQq0xWydec7w=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR0601MB4113.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?v/eLdJOHVotJfr75FamRPwibT8DFvkGje0sEL+qxGuOvlPoeUcj+uadS3Qvo?=
- =?us-ascii?Q?01QNQKn8+gNYoqb7MGzcIf203koH9KZ0lKqodz36bs2yYpDMK4e0z9KFD6C4?=
- =?us-ascii?Q?GJntJJvL7FvTOAR9nQclrIJaznMVLYuoxQhvZXaqbqnP5RIvEnSMcN4QJFFX?=
- =?us-ascii?Q?qyHVi1QtDXdHpJSlpA+dg7q2p3nWdchakb2Sn6hPazrY9Sdi6zRtaSkYqGpq?=
- =?us-ascii?Q?pDPfel6cQe3CIOsBtC9jR+etsTzwudDPQw005UmrNejXIg7SXmY6/xl96D6O?=
- =?us-ascii?Q?TDrxOKta7+hBSHvvxg5doMY6oSJxCv4MXgPX1EXeYaBLxLCNgT3dy5/5OW+i?=
- =?us-ascii?Q?jwfynutv4tAlK47lgCkPl57/m3H4bYmZLpRvsZcibWci8Uz2mwKgrUr9Vl6T?=
- =?us-ascii?Q?DGmIVUQ2aHYgycCPAPgVw7DcQudALpEvN+P8mHJZALMuaIkywnM9w6ZX8zMD?=
- =?us-ascii?Q?pzFhewcUr/YY34AJmFISos2zen3a+Haz5IRNYcK+FzrR71hPMCceKnOFOMx7?=
- =?us-ascii?Q?Wa4Om9N/qwdTa7b44uH4TsHEcrkJiRua/cLAk8Gd7UguUai/N2rK1eu9jKOA?=
- =?us-ascii?Q?3xB1M+v/8vUS0yJV1wOD3RbhLPEAUFTtvdcNZvA0tUr3Gw4XNaed6uS4ADXO?=
- =?us-ascii?Q?lB8eXH/B8bcjHGlNT4WtYN2MtRRFvsOH7zG01NfWQyQhnMnDYPQiWOScA6aN?=
- =?us-ascii?Q?a9FM6z5B0RnLHiW3PAwD+voIE5H6rylIlF/prKjLzO4LM8+bSbvSykgFtiW0?=
- =?us-ascii?Q?04nKowS9KS2wCzfi0PraThk0W7rAB+cuXa3VUf/oacRh1oB/8jUkF4ifDljs?=
- =?us-ascii?Q?xe54actPFHumFHyIORVC0hel7g1akBiBI9U94Cm3jg/Ia4Rhxr+LcZVg7FeK?=
- =?us-ascii?Q?Xtot4JpWRzMrgP/jf1yxA+coxMCjn/PHNMK8Rhx3lys0DWAlpmfIg0aZc2YO?=
- =?us-ascii?Q?3k8ssG8sSqOgAHabPguhFcIXOaUiapjwH2CpF1mBRB36z59CwEduRMUzEKqy?=
- =?us-ascii?Q?EA6LAvEprxm0Q15Ba4rteY10FB6ZKvuM83JvM0urFegpVonhHGtTF3NShY7m?=
- =?us-ascii?Q?BmBSp98Sm4pTL/5QbZ5pc6A6rgWjpRgm/pQqySl0u9JIhY6DERmhK1J+4VFD?=
- =?us-ascii?Q?jWrfRCWVQx20qxftLibF/yqxbdkZOHqREK4+XuhXAiaKJKNueNox+bibyqfo?=
- =?us-ascii?Q?COZ0/RnKxGpYTbMO7Qm29z4Yqy4IqapvRyroFddyNCesSkLzVhNC1nN0IrFP?=
- =?us-ascii?Q?qrCcOWa4KAlaOmYsbELJT6Fpzq7q4sta01lb3TBrn01nF2tBnpXVxugQTDaN?=
- =?us-ascii?Q?hFvIa9HALsnPWz4Cg4YZ+hVFEYGePCdaEO/gL3iUwUSY1KTC6kf1Wvwxg/Ty?=
- =?us-ascii?Q?NO3+ma+Kr7PVVhZKvxd58pymYbMc/8droaULZfjO+Q6E04pTUbt5ybKCVFGs?=
- =?us-ascii?Q?dRAJ1WmneatHf1tXNLh3ovpv2sMlIOt6vfxAn/XOmxAMvpq7cs1vf12zd72S?=
- =?us-ascii?Q?gg1NlBRw7Nmxg1D5NwltbfLP+4UQkZxQYSsiPzrRUfW90Jeusk9hJLcrIqAY?=
- =?us-ascii?Q?4AW6Q8kvMslCbn73HEPuExJj+6YuvHXKU+qAOwC+?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 21a8c9b7-a853-4c16-8e3c-08dcc68fab70
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR0601MB4113.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 11:59:14.1112
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PsHgYscA+N/zzT4l6vVaA3ap+k/zH4WBbGk13SyRwzCX6bIUFLDVBN9FpkId0W4X5+AHLvsS56e3al21Db4CcQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6929
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Using the real macro is usually more intuitive and readable,
-When the original file is guaranteed to contain the minmax.h header file 
-and compile correctly.
+On Tue, 27 Aug 2024 19:48:32 +0800
+"lihuisong (C)" <lihuisong@huawei.com> wrote:
 
-Signed-off-by: Yan Zhen <yanzhen@vivo.com>
----
- drivers/net/ethernet/marvell/mvneta.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> Hi Jonathan,
+>=20
+> Thanks for your review again.
+> Your proposal are good and are also more worth to enhance code.
+> How about use guard() for all sysfs interface in furture patch?
+> I want to support this feature first.
+Sure, that's fine and why I gave an RB tag even with comments.
 
-diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
-index d72b2d5f96db..415d2b9e63f9 100644
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -4750,8 +4750,7 @@ mvneta_ethtool_set_ringparam(struct net_device *dev,
- 
- 	if ((ring->rx_pending == 0) || (ring->tx_pending == 0))
- 		return -EINVAL;
--	pp->rx_ring_size = ring->rx_pending < MVNETA_MAX_RXD ?
--		ring->rx_pending : MVNETA_MAX_RXD;
-+	pp->rx_ring_size = min(ring->rx_pending, MVNETA_MAX_RXD);
- 
- 	pp->tx_ring_size = clamp_t(u16, ring->tx_pending,
- 				   MVNETA_MAX_SKB_DESCS * 2, MVNETA_MAX_TXD);
--- 
-2.34.1
+Thanks,
+
+Jonathan
+
+>=20
+> Huisong
+>=20
+>=20
+> =E5=9C=A8 2024/8/23 16:58, Jonathan Cameron =E5=86=99=E9=81=93:
+> > On Fri, 23 Aug 2024 11:10:59 +0800
+> > Huisong Li <lihuisong@huawei.com> wrote:
+> > =20
+> >> Add the low power feature for the specified HCCS type by increasing
+> >> and decreasing the used lane number of these HCCS ports on platform.
+> >>
+> >> Signed-off-by: Huisong Li <lihuisong@huawei.com> =20
+> > Hi Huisong,
+> >
+> > A few comments inline, but all minor things.
+> >
+> > With at least the "none" string print dropped as it's in an error path
+> > that shouldn't be hit you can add =20
+> You are correct.
+> > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> >
+> > The early return comment and whitespace suggestion are things you
+> > can act on if you liek for v2.
+> >
+> > Jonathan
+> > =20
+> >> ---
+> >>   .../sysfs-devices-platform-kunpeng_hccs       |  37 ++
+> >>   drivers/soc/hisilicon/Kconfig                 |   7 +-
+> >>   drivers/soc/hisilicon/kunpeng_hccs.c          | 378 ++++++++++++++++=
++-
+> >>   drivers/soc/hisilicon/kunpeng_hccs.h          |  14 +
+> >>   4 files changed, 433 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_=
+hccs b/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs
+> >> index d4c355e0e0bb..d1b3a95a5518 100644
+> >> --- a/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs
+> >> +++ b/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs
+> >> @@ -87,3 +87,40 @@ Contact:	Huisong Li <lihuisong@huawei.com>
+> >>   Description:
+> >>   		This interface is used to show all HCCS types used on the
+> >>   		platform, like, HCCS-v1, HCCS-v2 and so on.
+> >> +
+> >> +What:		/sys/devices/platform/HISI04Bx:00/available_inc_dec_lane_types
+> >> +What:		/sys/devices/platform/HISI04Bx:00/dec_lane_of_type
+> >> +What:		/sys/devices/platform/HISI04Bx:00/inc_lane_of_type
+> >> +Date:		August 2024
+> >> +KernelVersion:	6.12
+> >> +Contact:	Huisong Li <lihuisong@huawei.com>
+> >> +Description:
+> >> +		These interfaces under /sys/devices/platform/HISI04Bx/ are
+> >> +		used to support the low power consumption feature of some
+> >> +		HCCS types by changing the number of lanes used. The interfaces
+> >> +		changing the number of lanes used are 'dec_lane_of_type' and
+> >> +		'inc_lane_of_type' which require root privileges. These
+> >> +		interfaces aren't exposed if no HCCS type on platform support
+> >> +		this feature. Please note that decreasing lane number is only
+> >> +		allowed if all the specified HCCS ports are not busy.
+> >> +
+> >> +		The low power consumption interfaces are as follows:
+> >> +
+> >> +		=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >> +		available_inc_dec_lane_types: (RO) available HCCS types (string) to
+> >> +						   increase and decrease the number
+> >> +						   of lane used, e.g. HCCS-v2. =20
+> > See below. There is an apparent value of 'none' available, but I think =
+in reality the
+> > interface doesn't exist if that is present. So drop it as it will just =
+cause confusion. =20
+> Ack
+> > =20
+> >> +		dec_lane_of_type:             (WO) input HCCS type supported
+> >> +						   decreasing lane to decrease the
+> >> +						   used lane number of all specified
+> >> +						   HCCS type ports on platform to
+> >> +						   the minimum.
+> >> +						   You can query the 'cur_lane_num'
+> >> +						   to get the minimum lane number
+> >> +						   after executing successfully.
+> >> +		inc_lane_of_type:             (WO) input HCCS type supported
+> >> +						   increasing lane to increase the
+> >> +						   used lane number of all specified
+> >> +						   HCCS type ports on platform to
+> >> +						   the full lane state.
+> >> +		=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >> +static int hccs_wait_serdes_adapt_completed(struct hccs_dev *hdev, u8=
+ type)
+> >> +{
+> >> +#define HCCS_MAX_WAIT_CNT_FOR_ADAPT	10
+> >> +#define HCCS_QUERY_ADAPT_RES_DELAY_MS	100
+> >> +#define HCCS_SERDES_ADAPT_OK		0
+> >> +
+> >> +	struct hccs_inc_lane_req_param *req_param;
+> >> +	u8 wait_cnt =3D HCCS_MAX_WAIT_CNT_FOR_ADAPT;
+> >> +	struct hccs_desc desc;
+> >> +	u8 adapt_res;
+> >> +	int ret;
+> >> +
+> >> +	do {
+> >> +		hccs_init_req_desc(&desc);
+> >> +		req_param =3D (struct hccs_inc_lane_req_param *)desc.req.data;
+> >> +		req_param->port_type =3D type;
+> >> +		req_param->opt_type =3D HCCS_GET_ADAPT_RES;
+> >> +		ret =3D hccs_pcc_cmd_send(hdev, HCCS_PM_INC_LANE, &desc);
+> >> +		if (ret) {
+> >> +			dev_err(hdev->dev, "query adapting result failed, ret =3D %d.\n",
+> >> +				ret);
+> >> +			return ret;
+> >> +		}
+> >> +		adapt_res =3D *((u8 *)&desc.rsp.data);
+> >> +		if (adapt_res =3D=3D HCCS_SERDES_ADAPT_OK)
+> >> +			break; =20
+> > return 0; here perhaps? =20
+>=20
+> It's ok. And then we can directly return failure if timeout.
+>=20
+> > =20
+> >> +
+> >> +		msleep(HCCS_QUERY_ADAPT_RES_DELAY_MS);
+> >> +	} while (--wait_cnt);
+> >> +
+> >> +	if (adapt_res !=3D HCCS_SERDES_ADAPT_OK) { =20
+> > With above early exit in good path, this can be unconditional perhaps? =
+=20
+> Yes
+> > =20
+> >> +		dev_err(hdev->dev, "wait for adapting completed timeout.\n");
+> >> +		return -ETIMEDOUT;
+> >> +	}
+> >> +
+> >> +	return ret;
+> >> +}
+> >> +static ssize_t inc_lane_of_type_store(struct kobject *kobj, struct ko=
+bj_attribute *attr,
+> >> +			      const char *buf, size_t count)
+> >> +{
+> >> +	struct hccs_dev *hdev =3D device_kobj_to_hccs_dev(kobj);
+> >> +	bool full_lane;
+> >> +	u8 port_type;
+> >> +	int ret;
+> >> +
+> >> +	ret =3D hccs_parse_pm_port_type(hdev, buf, &port_type);
+> >> +	if (ret)
+> >> +		return ret;
+> >> +
+> >> +	mutex_lock(&hdev->lock); =20
+> > Another comment for a future patch series perhaps.
+> >
+> > guard(mutex)(&hdev->lock); in all these will make the code quite a bit =
+cleaner. =20
+> This is a good way. very nice and simple.
+> But many sysfs interfaces in this driver have used mutex_lock/mutex_unloc=
+k.
+> So is it better for us to keep the same mutex lock way in this patch and=
+=20
+> use guard() for all sysfs interface in furture patch?
+> >> +	ret =3D hccs_get_all_spec_port_full_lane_sta(hdev, port_type, &full_=
+lane);
+> >> +	if (ret || full_lane)
+> >> +		goto out;
+> >> +
+> >> +	ret =3D hccs_start_inc_lane(hdev, port_type);
+> >> +out:
+> >> +	mutex_unlock(&hdev->lock);
+> >> +	return ret =3D=3D 0 ? count : ret;
+> >> +}
+> >> +static struct kobj_attribute inc_lane_of_type_attr =3D
+> >> +		__ATTR(inc_lane_of_type, 0200, NULL, inc_lane_of_type_store);
+> >> +
+> >> +static ssize_t available_inc_dec_lane_types_show(struct kobject *kobj,
+> >> +						 struct kobj_attribute *attr,
+> >> +						 char *buf)
+> >> +{
+> >> +	struct hccs_dev *hdev =3D device_kobj_to_hccs_dev(kobj);
+> >> +
+> >> +	if (hdev->caps & HCCS_CAPS_HCCS_V2_PM)
+> >> +		return sysfs_emit(buf, "%s\n",
+> >> +				  hccs_port_type_to_name(hdev, HCCS_V2));
+> >> +
+> >> +	return sysfs_emit(buf, "%s\n", "none"); =20
+> > Can we get here? I thought this was only registered if the condition
+> > above is true?
+> >
+> > Maybe worth keeping a fallback here as a code hardening measure, but
+> > perhaps return -EINVAL; is fine? =20
+> Ack
+> >
+> > =20
+> >> +}
+> >> +static struct kobj_attribute available_inc_dec_lane_types_attr =3D
+> >> +		__ATTR(available_inc_dec_lane_types, 0444,
+> >> +		       available_inc_dec_lane_types_show, NULL);
+> >>  =20
+> >>   static ssize_t used_types_show(struct kobject *kobj,
+> >>   			       struct kobj_attribute *attr, char *buf)
+> >> @@ -1215,11 +1553,49 @@ static struct kobj_attribute used_types_attr =
+=3D
+> >>   static void hccs_remove_misc_sysfs(struct hccs_dev *hdev)
+> >>   {
+> >>   	sysfs_remove_file(&hdev->dev->kobj, &used_types_attr.attr);
+> >> +
+> >> +	if (!(hdev->caps & HCCS_CAPS_HCCS_V2_PM))
+> >> +		return;
+> >> +
+> >> +	sysfs_remove_file(&hdev->dev->kobj,
+> >> +			  &available_inc_dec_lane_types_attr.attr);
+> >> +	sysfs_remove_file(&hdev->dev->kobj, &dec_lane_of_type_attr.attr);
+> >> +	sysfs_remove_file(&hdev->dev->kobj, &inc_lane_of_type_attr.attr);
+> >>   }
+> >>  =20
+> >>   static int hccs_add_misc_sysfs(struct hccs_dev *hdev)
+> >>   {
+> >> -	return sysfs_create_file(&hdev->dev->kobj, &used_types_attr.attr);
+> >> +	int ret;
+> >> +
+> >> +	ret =3D sysfs_create_file(&hdev->dev->kobj, &used_types_attr.attr);
+> >> +	if (ret)
+> >> +		return ret;
+> >> +
+> >> +	if (!(hdev->caps & HCCS_CAPS_HCCS_V2_PM))
+> >> +		return 0;
+> >> +
+> >> +	ret =3D sysfs_create_file(&hdev->dev->kobj,
+> >> +				&available_inc_dec_lane_types_attr.attr);
+> >> +	if (ret)
+> >> +		goto used_types_remove;
+> >> +
+> >> +	ret =3D sysfs_create_file(&hdev->dev->kobj, &dec_lane_of_type_attr.a=
+ttr);
+> >> +	if (ret)
+> >> +		goto inc_dec_lane_types_remove; =20
+> > I can sort of see why no line break makes some sense here given these
+> > two files are closely related, but I'd still add one here as I think
+> > visual consistency is more important for readability reasons. =20
+> Ack
+> > =20
+> >> +	ret =3D sysfs_create_file(&hdev->dev->kobj, &inc_lane_of_type_attr.a=
+ttr);
+> >> +	if (ret)
+> >> +		goto dec_lane_of_type_remove;
+> >> +
+> >> +	return 0;
+> >> +
+> >> +dec_lane_of_type_remove:
+> >> +	sysfs_remove_file(&hdev->dev->kobj, &dec_lane_of_type_attr.attr);
+> >> +inc_dec_lane_types_remove:
+> >> +	sysfs_remove_file(&hdev->dev->kobj,
+> >> +			  &available_inc_dec_lane_types_attr.attr);
+> >> +used_types_remove:
+> >> +	sysfs_remove_file(&hdev->dev->kobj, &used_types_attr.attr);
+> >> +	return ret;
+> >>   }
+> >>  =20
+> >>   static void hccs_remove_die_dir(struct hccs_die_info *die) =20
+> > . =20
 
 
