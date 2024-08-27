@@ -1,154 +1,167 @@
-Return-Path: <linux-kernel+bounces-302435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD3295FE66
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:40:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 569C895FE4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:33:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7421F1F2110F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:40:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C48128232E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2328BE8;
-	Tue, 27 Aug 2024 01:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71414322E;
+	Tue, 27 Aug 2024 01:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="YwcnEvCB"
-Received: from mail-m155116.qiye.163.com (mail-m155116.qiye.163.com [101.71.155.116])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hlfWdGf/";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7dtox4/X"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075E679D0;
-	Tue, 27 Aug 2024 01:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1349F79CC
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 01:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724722849; cv=none; b=fgFFowx5e+DyPurwm/aLjppRJzDGBaK+XM+vbgbqwODYgt54IEI98piRH7kBL0M1mxLvkn5tMaONPhkJBfR9I8N1sQEOYZWFs9vVQxwayCOSG9zEel6CNZnWjQDPM8YdFOquoqL+//vcuta5OpWuCNVUG7SO6iUOTCiKV8jqEMU=
+	t=1724722378; cv=none; b=H4q4N0jtMXMZKj2OzLC00RUzpZahEW9A60VLn7M2hR6F4u7pxXSxNpTE/jKlTUxMZ3ZHZ4mm1Vo6S1L1MEuIZaHDkTnQMP8/Co+S2m2bHWULOSBvhQaBPzN+umei3oyhmx1JZPcKFQ3nwJRY6Ds6Wz77Er62zMyA8n7cSvg5t5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724722849; c=relaxed/simple;
-	bh=67RseptJ9zS6HPWFxA6mgoDhVt/aPRStVXtn6DisPbU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=JrWMbbmgUm2Lr8RhOkjRvrwK+4zba4jd4s74V3XUGqjG8eP7D12hCx88nQXr92lmErwyzmwegvyHu2amVYQfjHiOdhLfv2SQboovTjPqkDN4NyRNis9djcCwj9CuFr0Kied8/f9Kh42fwFx4ZrHbrhuuZh2m3VTrwgfH/gyqYgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=YwcnEvCB; arc=none smtp.client-ip=101.71.155.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-DKIM-Signature: a=rsa-sha256;
-	b=YwcnEvCBSXSDD0L2/VPndhPM3BAC608LHVmbCaY2FgrSLmixGTDXK16c9laZL3Vc9zhBA79CGcacJ3buJ5kKH47oW87YRniMjjfMXheaeN6kQfiFnypvIHorTL204omol7FROzdb9AFMeP+YNmhX5PuAXuKxR4hhOKr8HF0+6qE=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=/Q9mCEfT7guHVPvwR6ja5s0FAEOaseOBjw07BJH8nVo=;
-	h=date:mime-version:subject:message-id:from;
-Received: from [172.16.33.28] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 0C70C6E01B6;
-	Tue, 27 Aug 2024 09:32:50 +0800 (CST)
-Message-ID: <27302919-5bcd-4bcd-bdad-02aa48e628e9@rock-chips.com>
-Date: Tue, 27 Aug 2024 09:32:52 +0800
+	s=arc-20240116; t=1724722378; c=relaxed/simple;
+	bh=E+0UJB+1QT4OIZork/Uqcny0+WHDtNGIleijDe28ugE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=beF0wQ0pTpKhyZ3gc4ih3aWGwU6dp1DCAJU8593vU+fJkpo4il00t38pG92RVo02lKEqSp0REoTY67vu3quygMnTwvIL8IIP12bTmlVXyo5i54wi7QKtv8SYwNf92aGW1p2yTSQntoyGA/g88126+uBf/XsA4WdCVKTE60SRdhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hlfWdGf/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7dtox4/X; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724722374;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BqJLg0A9Lp+JLrWMX4eT38HNjMX8Sqz8hnELo6fRc68=;
+	b=hlfWdGf/TGgJ1gsPxZhTy4hLqn14Jc0JPFQby5/Ti3Fwr0zaEU4DD9wugOCap/ckTHJou9
+	etPA3had1xf2VSf0rSRNJdZhrkTUzpf6NugBhnLJL4R7J76PlBU1SF4dwE+8anMZVzEq5u
+	2V1/J719nrOUCJJcFj4RqNHXNWd57FK1ne5AIush8UTPoA8wNTOW3rJVPwFJeqTcPcbJcR
+	zkOnfkCG0zkiTVcLS5Z2/VWY7ICxGfiX4nLsVkjVvOri7Zu4pFEyruOUIVGHFYXWBmqpxB
+	tPryi4ZQzlKKqUFIn2EcGl2XOtywfM4XdU4/SZ9BFQk2BzuLNaHLZwQ+df0wHA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724722374;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BqJLg0A9Lp+JLrWMX4eT38HNjMX8Sqz8hnELo6fRc68=;
+	b=7dtox4/XNzVscz9xmp5xinny4vRdwkgxcWVNUs59yZRuc2rYpc1SudxBcSKBDNJBNEQTg8
+	OIklsf/AoItnHzAA==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
+ linux-kernel@vger.kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH printk v3 03/19] printk: nbcon: Add function for
+ printers to reacquire ownership
+In-Reply-To: <ZqixOLkuo0IW2qql@pathway.suse.cz>
+References: <20240722171939.3349410-1-john.ogness@linutronix.de>
+ <20240722171939.3349410-4-john.ogness@linutronix.de>
+ <ZqOVsZ1KGh3rkxE6@pathway.suse.cz> <87cymwfvd7.fsf@jogness.linutronix.de>
+ <ZqixOLkuo0IW2qql@pathway.suse.cz>
+Date: Tue, 27 Aug 2024 03:38:54 +0206
+Message-ID: <874j76hhrt.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Jon Lin <jon.lin@rock-chips.com>
-Subject: Re: [PATCH] spi: rockchip: Avoid redundant clock disable in pm
- operation
-To: Brian Norris <briannorris@chromium.org>
-Cc: broonie@kernel.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, heiko@sntech.de,
- linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
-References: <20240825035422.900370-1-jon.lin@rock-chips.com>
- <Zs0BRsNdZdI69aXM@google.com>
-In-Reply-To: <Zs0BRsNdZdI69aXM@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUxMHlZITE5JHR5OGR1DTUtWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	xVSktLVUpCS0tZBg++
-X-HM-Tid: 0a919176dba609d5kunm0c70c6e01b6
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MDY6Cjo*CzIxKBwRPiINEDQR
-	Dg8wCxFVSlVKTElPTElJSExJS0lJVTMWGhIXVREUFVUXEhU7CRQYEFYYExILCFUYFBZFWVdZEgtZ
-	QVlOQ1VJSVVMVUpKT1lXWQgBWUFPT09DNwY+
+Content-Type: text/plain
 
-On 2024/8/27 6:27, Brian Norris wrote:
-> (NB: I have several nearly identical copies of this email. I'm replying
-> to the latest one I see.)
-> 
-> Hi Jon,
-> 
-> On Sun, Aug 25, 2024 at 11:54:22AM +0800, Jon Lin wrote:
->> Fix WARN_ON:
->> [   22.869352][ T1885] clk_spi0 already unprepared
->> [   22.869379][ T1885] WARNING: CPU: 3 PID: 1885 at drivers/clk/clk.c:813 clk_core_unprepare+0xbc4
->> [   22.869380][ T1885] Modules linked in: bcmdhd dhd_static_buf
->> [   22.869391][ T1885] CPU: 3 PID: 1885 Comm: Binder:355_2 Tainted: G        W         5.10.66 #59
->> [   22.869393][ T1885] Hardware name: Rockchip RK3588 EVB1 LP4 V10 Board (DT)
->> [   22.869397][ T1885] pstate: 60400009 (nZCv daif +PAN -UAO -TCO BTYPE=--)
->> [   22.869401][ T1885] pc : clk_core_unprepare+0xbc/0x214
->> [   22.869404][ T1885] lr : clk_core_unprepare+0xbc/0x214
-> 
-> I appreciate the snippet of a WARNING trace, but I'd also appreciate
-> some actual explanation of what the problem is, and why you're solving
-> it this way.
-> 
+On 2024-07-30, Petr Mladek <pmladek@suse.com> wrote:
+> My idea was: "If we still own the context that we have owned it all
+> 	      the time and con-write_atomic() succeeded."
+>
+> The race is is not important. If we lose the ownership before updating
+> nbcon_seq then the line will get written again anyway.
+>
+>> Once a reacquire has occurred, the driver is allowed to proceed. It just
+>> is not allowed to print (because its buffer is gone).
+>
+> I see. My idea does not work because the driver is going to reacquire
+> the ownership. It means that nbcon_can_proceed() would return true
+> even when con->atomic_write() failed.
+>
+> But it is not documented anywhere. And what if the driver has a bug
+> and does not call reacquire. Or what if the driver does not need
+> to restore anything.
+>
+> IMHO, nbcon_emit_next_record() should check both:
+>
+> 	if (use_atomic)
+> 		con->write_atomic(con, wctxt);
+> 	else
+> 		con->write_thread(con, wctxt);
+>
+> 	/* Still owns the console? */
+> 	if (!nbcon_can_proceed(wctxt)
+> 		return false;
+>
+> 	if (!wctxt->outbuf) {
+> 		/*
+> 		 * Ownership was lost and reacquired by the driver.
+> 		 * Handle it as if ownership was lost.
+> 		 */
+> 		nbcon_context_release(ctxt);
+> 		return false;
+> 	}
 
-Thank you for the reminder.
+Except that the next thing nbcon_emit_next_record() does is
+nbcon_context_enter_unsafe(), which checks ownership. So your suggested
+nbcon_can_proceed() is redundant.
 
->> Fixes: e882575efc77 ("spi: rockchip: Suspend and resume the bus during NOIRQ_SYSTEM_SLEEP_PM ops")
->> Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
->> ---
->>
->>   drivers/spi/spi-rockchip.c | 57 +++++++++++++++++---------------------
->>   1 file changed, 26 insertions(+), 31 deletions(-)
->>
->> diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
->> index e1ecd96c7858..043a7739c330 100644
->> --- a/drivers/spi/spi-rockchip.c
->> +++ b/drivers/spi/spi-rockchip.c
-> 
->> +#ifdef CONFIG_PM_SLEEP
->> +static int rockchip_spi_suspend(struct device *dev)
->>   {
->> +	int ret;
->>   	struct spi_controller *ctlr = dev_get_drvdata(dev);
->> -	struct rockchip_spi *rs = spi_controller_get_devdata(ctlr);
->>   
->> -	clk_disable_unprepare(rs->spiclk);
->> -	clk_disable_unprepare(rs->apb_pclk);
->> +	ret = spi_controller_suspend(ctlr);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	/* Avoid redundant clock disable */
->> +	if (!pm_runtime_status_suspended(dev))
->> +		rockchip_spi_runtime_suspend(dev);
-> 
-> It seems like you'd really be served well by
-> pm_runtime_force_{suspend,resume}() here, and in fact, that's what this
-> driver used to use before the breaking change (commit
-> e882575efc77). Why aren't you just going back to using it? (This is the
-> kind of thing I might expect in your commit message -- reasoning as to
-> why you're doing what you're doing.)
-> 
-> And in fact, I already submitted a patch that resolves the above problem
-> and does exactly that:
-> 
-> https://lore.kernel.org/all/20240823214235.1718769-1-briannorris@chromium.org/
-> [PATCH] spi: rockchip: Resolve unbalanced runtime PM / system PM handling
-> 
-> Do you see any problem with it?
-> 
+For v4 I can add comments explaining this. It would look like this (at
+this point in the series):
 
-I have reviewed your submission and although the code has been 
-simplified, the execution efficiency has decreased. So although it is a 
-commonly used processing solution for SPI Upstream, I still hope to 
-retain a more efficiency approach as I submitted.
+	/* Initialize the write context for driver callbacks. */
+	nbcon_write_context_set_buf(wctxt, &pmsg.pbufs->outbuf[0], pmsg.outbuf_len);
 
-> Thanks,
-> Brian
-> 
->> +	pinctrl_pm_select_sleep_state(dev);
->>   
->>   	return 0;
->>   }
-> 
+	if (con->write_atomic) {
+		con->write_atomic(con, wctxt);
+	} else {
+		/*
+		 * This function should never be called for legacy consoles.
+		 * Handle it as if ownership was lost and try to continue.
+		 */
+		WARN_ON_ONCE(1);
+		nbcon_context_release(ctxt);
+		return false;
+	}
 
+	if (!wctxt->outbuf) {
+		/*
+		 * Ownership was lost and reacquired by the driver. Handle it
+		 * as if ownership was lost.
+		 */
+		nbcon_context_release(ctxt);
+		return false;
+	}
+
+	/*
+	 * Ownership may have been lost but _not_ reacquired by the driver.
+	 * This case is detected and handled when entering unsafe to update
+	 * dropped/seq values.
+	 */
+
+	/*
+	 * Since any dropped message was successfully output, reset the
+	 * dropped count for the console.
+	 */
+	dropped = 0;
+update_con:
+	/*
+	 * The dropped count and the sequence number are updated within an
+	 * unsafe section. This limits update races to the panic context and
+	 * allows the panic context to win.
+	 */
+
+	if (!nbcon_context_enter_unsafe(ctxt))
+		return false;
+
+John Ogness
 
