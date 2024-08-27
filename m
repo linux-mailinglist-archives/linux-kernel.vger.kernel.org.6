@@ -1,187 +1,146 @@
-Return-Path: <linux-kernel+bounces-304122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5817E961AAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 01:36:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED34F961AB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 01:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C15D1C21F3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:36:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BC9E1C22ED1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAB41D4619;
-	Tue, 27 Aug 2024 23:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082C31D47A8;
+	Tue, 27 Aug 2024 23:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rMfA+WBo"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gESINRa/"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D655D1442E8;
-	Tue, 27 Aug 2024 23:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE541442E8;
+	Tue, 27 Aug 2024 23:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724801774; cv=none; b=DvCqpDJDQC140JlhSfehd9PGrN7Z/j21TSZxRdsIDYvr7FSxEi47MoS96BEhajmr+qpRkSyYPVFJ+hP+6UL1xqhsTEl316K2x6ix6BNrQm5LWpfPE8mb/lYRJhiNZ4jbD0hxJWryiVS6OxhUJdnyCW10U+rsaT8m10Ii+zDYDsw=
+	t=1724801815; cv=none; b=o8k5dmEf5QYanwD7ljw2DdllaA6JDLqvGL85hHhfO+BqF/EOP9FLiIweSuVcI8bX/sCvdt0F7WFVnKDd1z2VUTMUcXHgVouYU5PZT40qQYTJ4InKN+ez4DD0XqZxpqa7GVa5hintstgqUJoM0VdN9B6kpfOmcimdBGx/4r9YwiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724801774; c=relaxed/simple;
-	bh=qOALTF57Cc3BYIbN0N5+zwdS9ic3L7sQ2P/e6aNADo8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YJGFf/hsN2YblXVh7DZQwkad7hsSJl9TkzOIoXUZMNRClMmFA/J8yva5iFa7h5OE7klWT0Tc/sCz523dVyPwGNT8sNVog4oTw/QYcL7qrq1JFJUtTYOkrnD2qeSlKGb/+MpQbt+l3TvgsZaRMLsA7tAFRHN7DIOkmmbgBHmR/1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=rMfA+WBo; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1724801764;
-	bh=+HC/rC5SNmTrs+6H5oTU/XtGzav0M+9azHuK/Gzrez8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rMfA+WBoYZMECmFaV95epdfHysoc2J4znMPhsWBaV0FlIhO4yW/bUDmi6Ln7driqF
-	 MET7HjDwgyjuEMQ5dLFoyYNYnhxwE7V2KZPgUhl9FgzKQTar8uPzmVHlSxFKgX9I7J
-	 AAGcAlKkDDXzsjrzLdIE0bzi2wwH9Hd74vi9zq3nWp6+S8QvlUs9aM4i6B6Pr4SJAn
-	 3ta2Q2TiZWNth48IMvdeBZ4WDqSFqt9ghEVBB6wk9kUbeK9OaCDkYZbS8Cubi242UB
-	 cnBDuQW/pA3z4WU8+rSTXtDFgtjy3A8Vhr8LL5ls8BOu11217lkq5IMmJH+nYDNp8l
-	 xNzf9+TZIwB0w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WtkSg5wvlz4wnt;
-	Wed, 28 Aug 2024 09:36:03 +1000 (AEST)
-Date: Wed, 28 Aug 2024 09:36:02 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Zhiguo Jiang <justinjiang@vivo.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: boot warning after merge of the mm tree
-Message-ID: <20240828093602.1c08632f@canb.auug.org.au>
-In-Reply-To: <20240826194648.407fdf58@canb.auug.org.au>
-References: <20240826194648.407fdf58@canb.auug.org.au>
+	s=arc-20240116; t=1724801815; c=relaxed/simple;
+	bh=wIAMi8gRK2LvVfrOokWwZqbiDGniwpk2AgbFvhIfXM0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q365uW7OqkduIp3pB2HR3pZ4I24RXJp0OvKRjGFTNZ36pplo4EFVE5dRPU+kdsx5ETy2NdrF0K7pIsKIMI1grPsgSZTc+D0Nl9TB4GCq9EsXlycS9PwMlK6DZKgF+MMTbeYyM0AKw8mMv2eqYiYlwqlZlupH6b18rr2gYAFOxMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gESINRa/; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e115c8aa51fso6054939276.1;
+        Tue, 27 Aug 2024 16:36:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724801813; x=1725406613; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ts9O7xOYd5W83qRleAA3fQN//P95aRGTSy1N+0Pd5/U=;
+        b=gESINRa/xHWjhLrulteBglJ5m5qVnvNHzGZHcL8q5YDJRRLSMfDAVoNWTEazOuHr+U
+         wN92hKQEsmTTSA1dKUoe/RXEUTUODFJDlbF8kYJ3x7XM1TrL1E/WYEC18D1yJ0v4wkAe
+         CxDZSnaemIVY2SFyeNnnFLqkLSHvEZZAuCuZifmgYTA0bVhP0m9TOcJdNzmRGP2nGUiJ
+         Dxxa9LWWRCTP10IN++agISiXbc8QuVZW5jtFNWlKADKK+YnGKevcTaMu6jRC5Ic2uVAJ
+         wbfmUlPYqxirRlfpObbR4EjIrO2epVqCbCM0xdxoncHEBXvuLfHkNtsYsdv4fcBoqzmW
+         EzBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724801813; x=1725406613;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ts9O7xOYd5W83qRleAA3fQN//P95aRGTSy1N+0Pd5/U=;
+        b=tsxta+SAF6kaDJqrQM93ppTeGyz472CgyREyiKW9y5L0tq/Hz2KbpWUgGdg6gwa3mI
+         JrDGPQSdxJp4sR8RsYSDmZNKaXM1G1oZVP/tCZeuT08gFk0kj4m/PRAlZnm3mDUjm/MS
+         FRdN4I5gkWtcZLisxmhD/9QlYOmLXmYvHPOuC3PUijdQGMHgcsC7cr6hLmUBqQd60X71
+         Jmm+Jan6y/o58g0BopzEQIlVzhfjIr8YhBNwsP9TZ+gFzED10Efdnvp5X8I49dk8Z0vB
+         8xEWCMIVTCmy67G3Q8BMp+Rctuh5deCqCa8/9V7LEIQ/nY/H5sScjmAe6JfBAFiyS8b9
+         PYpw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJrwwua7eLKsBURr4EMOr2ZX+zRFBrO4hFCVUP5vRLEnH7BEp7JD8dwryly+EkbezisxQUqmWTX+/KtII=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8V3qpGrx7uaAPcWlTk9q2fmx6mqf060VOUw0DherAfmGeZhjq
+	VW8f2JxTWkH7Q6tUQFQJiBWeAwmxoYByvJw/Yb0Re8TKe9LN3T1Me9Fkl53yFWcRLHFeC3ab+kn
+	qc/Z6W75bLUe+dw6f8PuQVmLtzbUigg==
+X-Google-Smtp-Source: AGHT+IFnYcmWVXRY+zcuHH2Irc/SxiPI4maAH1Ky2p5KlsbiyuRkLm9zB8QLhwsU7NWCvjxqtCrkxpomx8esRequL1E=
+X-Received: by 2002:a05:690c:f01:b0:646:fe8e:f03b with SMTP id
+ 00721157ae682-6c624228f5emr204845137b3.2.1724801812857; Tue, 27 Aug 2024
+ 16:36:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/EghZR7.qgz1=uFaO8E.E.Sm";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/EghZR7.qgz1=uFaO8E.E.Sm
-Content-Type: text/plain; charset=US-ASCII
+References: <20240826212205.187073-1-rosenp@gmail.com> <20240827161258.535f8835@kernel.org>
+In-Reply-To: <20240827161258.535f8835@kernel.org>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Tue, 27 Aug 2024 16:36:41 -0700
+Message-ID: <CAKxU2N-SDtFCrXWDc_2fGKSjosjBg=s4PJ2ztETrocTDo75ayQ@mail.gmail.com>
+Subject: Re: [PATCHv4 net-next] net: ag71xx: get reset control using devm api
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com, 
+	pabeni@redhat.com, linux@armlinux.org.uk, linux-kernel@vger.kernel.org, 
+	o.rempel@pengutronix.de, p.zabel@pengutronix.de
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
-
-On Mon, 26 Aug 2024 19:46:48 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On Tue, Aug 27, 2024 at 4:13=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
 >
-> After merging the mm tree, today's linux-next boot test (powerpc
-> pseries_le_defconfig) produced many warnings like this:
->=20
-> Run /init as init process
-> mount (55) used greatest stack depth: 28240 bytes left
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 1 at mm/rmap.c:443 unlink_anon_vmas+0x23c/0x358
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 1 Comm: init Not tainted 6.11.0-rc5-06732-g133a683d26f=
-d #14
-> Hardware name: IBM pSeries (emulated by qemu) POWER8 (architected) 0x4d02=
-00 0xf000004 of:SLOF,HEAD pSeries
-> NIP:  c0000000004d0208 LR: c0000000004d0158 CTR: c00000000121d230
-> REGS: c0000000049bf550 TRAP: 0700   Not tainted  (6.11.0-rc5-06732-g133a6=
-83d26fd)
-> MSR:  800000000282b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  CR: 44004222  X=
-ER: 20000000
-> CFAR: c0000000004d019c IRQMASK: 0=20
-> GPR00: c0000000004d0158 c0000000049bf7f0 c00000000167b100 c000000008b5e2b=
-0=20
-> GPR04: c000000008b5e300 0000000000000006 c00000000445a108 000000000000000=
-0=20
-> GPR08: 0000000000000000 0000000000000001 ffffffffffffffff c0000000013550d=
-8=20
-> GPR12: 0000000000000000 c000000002b90000 0000000000000000 000000000000000=
-0=20
-> GPR16: 0000000000000000 c000000006cea000 c00000000405e3c0 c00000000655650=
-0=20
-> GPR20: c000000006ce5000 c000000002a30308 0000000000000000 c000000008ba839=
-8=20
-> GPR24: c000000008ba8388 c000000008b60310 c000000002acb790 5deadbeef000010=
-0=20
-> GPR28: c000000008ba8398 5deadbeef0000122 c000000008ba8388 c000000008b6030=
-0=20
-> NIP [c0000000004d0208] unlink_anon_vmas+0x23c/0x358
-> LR [c0000000004d0158] unlink_anon_vmas+0x18c/0x358
-> Call Trace:
-> [c0000000049bf7f0] [c0000000004d00f0] unlink_anon_vmas+0x124/0x358 (unrel=
-iable)
-> [c0000000049bf860] [c0000000004a7eec] free_pgtables+0x1d0/0x368
-> [c0000000049bf930] [c0000000004bce20] exit_mmap+0x1c0/0x578
-> [c0000000049bfa70] [c000000000151f80] __mmput+0x60/0x1e0
-> [c0000000049bfaa0] [c0000000005a6980] begin_new_exec+0x6e0/0xed0
-> [c0000000049bfb20] [c0000000006405a8] load_elf_binary+0x460/0x1b68
-> [c0000000049bfc70] [c0000000005a4088] bprm_execve+0x2ac/0x754
-> [c0000000049bfd40] [c0000000005a5de0] do_execveat_common+0x188/0x250
-> [c0000000049bfde0] [c0000000005a71c4] sys_execve+0x54/0x6c
-> [c0000000049bfe10] [c000000000030980] system_call_exception+0x120/0x310
-> [c0000000049bfe50] [c00000000000d6a0] system_call_common+0x160/0x2c4
-> --- interrupt: c00 at 0x7fff98ea1638
-> NIP:  00007fff98ea1638 LR: 000000001004a12c CTR: 0000000000000000
-> REGS: c0000000049bfe80 TRAP: 0c00   Not tainted  (6.11.0-rc5-06732-g133a6=
-83d26fd)
-> MSR:  800000000280f033 <SF,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 22002824=
-  XER: 00000000
-> IRQMASK: 0=20
-> GPR00: 000000000000000b 00007fffcec19410 00007fff98f79900 000001001dc2041=
-0=20
-> GPR04: 000001001dc20440 000001001dc20450 0000000000000000 000000000000000=
-0=20
-> GPR08: 000001001dc20410 0000000000000000 0000000000000000 000000000000000=
-0=20
-> GPR12: 0000000000000000 00007fff98ffa9a0 0000000000000000 000000000000000=
-0=20
-> GPR16: 0000000000000000 0000000000000000 0000000000000000 00000000100b8fd=
-0=20
-> GPR20: 00000000100d03a2 00000000100b8f90 0000000000000000 000000000000000=
-0=20
-> GPR24: 0000000000000000 00000000100e77b8 00000000100b8700 00000000100d03e=
-6=20
-> GPR28: 000001001dc20450 00000000100d03e6 000001001dc20410 000001001dc2044=
-0=20
-> NIP [00007fff98ea1638] 0x7fff98ea1638
-> LR [000000001004a12c] 0x1004a12c
-> --- interrupt: c00
-> Code: fbbf0018 7fdff378 48033221 60000000 ebd90000 7c39e040 3bdefff0 4182=
-00a8 e87f0008 e9430038 312affff 7d295110 <0b090000> e9430040 312affff 7d295=
-110=20
-> ---[ end trace 0000000000000000 ]---
-> mkdir (59) used greatest stack depth: 28176 bytes left
->=20
-> Bisected to commit
->=20
->   1cd7eb306a54 ("vma remove the unneeded avc bound with non-CoWed folio")
->=20
-> I have reverted that commit for today.
-
-I am still reverting that commit.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/EghZR7.qgz1=uFaO8E.E.Sm
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbOYuMACgkQAVBC80lX
-0Gzwagf+Ob/x/WgJ23WG5A2KaUNrj55FTc8+5BCCMdmPG40bSRKWDG5C5HIhkNEB
-5pux7qDgCFz7UTS1YKYaWgcewoiwe2828RcTzpW/+3l1+B5kFeNEDd18CuYxFEsC
-zCcot17PmPPxZo7bjxW/oCzwrY/vs7/puZNd9d9ddCiI909Zko4Z3/OBQ1xPY1eS
-HmdFxwyQfNEB180e5SAyIW9R19mG+ce23tZIpukiX2388O7i161Y3jasQwIWfdNs
-wnMqgkThCEWNYb/LNCZ3h7gGPGWJDoPUrfQY96+VHC3fkbpFBuTqrkFUVAlFe+P9
-IoYBf9auScZ7kZF0tfx//lnZTHi9fQ==
-=dAak
------END PGP SIGNATURE-----
-
---Sig_/EghZR7.qgz1=uFaO8E.E.Sm--
+> On Mon, 26 Aug 2024 14:21:57 -0700 Rosen Penev wrote:
+> > Currently, the of variant is missing reset_control_put in error paths.
+> > The devm variant does not require it.
+> >
+> > Allows removing mdio_reset from the struct as it is not used outside th=
+e
+> > function.
+>
+> > @@ -683,6 +682,7 @@ static int ag71xx_mdio_probe(struct ag71xx *ag)
+> >       struct device *dev =3D &ag->pdev->dev;
+> >       struct net_device *ndev =3D ag->ndev;
+> >       static struct mii_bus *mii_bus;
+> > +     struct reset_control *mdio_reset;
+>
+> nit: maintain the longest to shortest ordering of the variables
+> (sorted by line length not type length)
+>
+> >       struct device_node *np, *mnp;
+> >       int err;
+> >
+> > @@ -698,10 +698,10 @@ static int ag71xx_mdio_probe(struct ag71xx *ag)
+> >       if (!mii_bus)
+> >               return -ENOMEM;
+> >
+> > -     ag->mdio_reset =3D of_reset_control_get_exclusive(np, "mdio");
+> > -     if (IS_ERR(ag->mdio_reset)) {
+> > +     mdio_reset =3D devm_reset_control_get_exclusive(dev, "mdio");
+> > +     if (IS_ERR(mdio_reset)) {
+> >               netif_err(ag, probe, ndev, "Failed to get reset mdio.\n")=
+;
+> > -             return PTR_ERR(ag->mdio_reset);
+> > +             return PTR_ERR(mdio_reset);
+> >       }
+> >
+> >       mii_bus->name =3D "ag71xx_mdio";
+> > @@ -712,10 +712,10 @@ static int ag71xx_mdio_probe(struct ag71xx *ag)
+> >       mii_bus->parent =3D dev;
+> >       snprintf(mii_bus->id, MII_BUS_ID_SIZE, "%s.%d", np->name, ag->mac=
+_idx);
+> >
+> > -     if (!IS_ERR(ag->mdio_reset)) {
+> > -             reset_control_assert(ag->mdio_reset);
+> > +     if (!IS_ERR(mdio_reset)) {
+>
+> Are you planning to follow up to remove this check?
+> Would be nice to do that as second patch in the same series
+I actually have no idea why this is here. I assume it's some mistake.
+I don't think it's meant to be optional...
+>
+> > +             reset_control_assert(mdio_reset);
+> >               msleep(100);
+> > -             reset_control_deassert(ag->mdio_reset);
+> > +             reset_control_deassert(mdio_reset);
+> >               msleep(200);
+> >       }
+> >
+>
 
