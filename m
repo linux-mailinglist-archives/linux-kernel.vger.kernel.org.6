@@ -1,134 +1,182 @@
-Return-Path: <linux-kernel+bounces-302891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E30149604BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:44:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 672E79604B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:43:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67F5EB23F71
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:44:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5E9CB232FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DB8198E92;
-	Tue, 27 Aug 2024 08:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="YTSGiMWx"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABCE1714A8;
-	Tue, 27 Aug 2024 08:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71BC21991AA;
+	Tue, 27 Aug 2024 08:43:24 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499CC197A7A
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724748267; cv=none; b=Ylt7H48KnJGWyDcKOsIadnnlgLXrwzkGxOTxRU7LcxYAeCoSPjn45OEE1beTJ4GI1TT2nyUBbl0o2OjtoduXDLuqVTW+nKqd1HYQKZj5YnJ96fvUIawkXP6YFRH7hVzcKvo/qwMvw/kFPbHW2hTMqkUmKQQ0x1nAKyQDvFuirz8=
+	t=1724748203; cv=none; b=srkkr4x5/o0o1EzMkuu2510QK3F+auI4CgP2bDu6gjiFSsUiFJdLwTqqJA8GRp3uU9FAzB9yC5hFqgHcW3GoVY30nTozQ8p1jv3B8jy710bs/KyShQX7bf8K9/7mN09fOsg3e61G9Tw4tQnJqb5XPfzLU8/kUIR824TIuYgbH9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724748267; c=relaxed/simple;
-	bh=StXru7EHwI5/gpRagbvwB77A2UW9Fs27pgmipO98z6E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hbLwxwCW5l5EuEuSEexAE3H+hJWO3YkmxGI+BSkbioO8exTN+KHDprbeEnHBNyUKArSi+se8YTkLxNR8dlFL/e+SC+3i2DZ1p4QVXw5ct+cmK6syGhkMo/zJvZtKCQKVENaoaC0NdtnBiJaBpO/LjV0INKTOgD3BcSvXyKiVfE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=YTSGiMWx; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=AJMDb
-	XVZKNDuUogjILs4lsGwqWb6Fx1ewkq0VUXwj5M=; b=YTSGiMWxa0gk/JbMkod3d
-	7OL6S6U3c5Ks7/MBe24IzJAMHOp5koGKukHOwtXXyFlLa9BvJoq1qvzQsyh00Wq3
-	cAnXYFhs7CXtKqM2/0IdNffqh75y2ggzpdPuEa4NnR8k6jGMeq7yHl1UX9CZ/2BY
-	TkZyRQ3zdW4QqSBLiwTiSQ=
-Received: from localhost.localdomain (unknown [111.35.190.113])
-	by gzsmtp1 (Coremail) with SMTP id sCgvCgBHmyCrkc1muhMXAA--.5975S4;
-	Tue, 27 Aug 2024 16:43:39 +0800 (CST)
-From: David Wang <00107082@163.com>
-To: miriam.rachel.korenblit@intel.com,
-	kvalo@kernel.org,
-	johannes.berg@intel.com,
-	pagadala.yesu.anjaneyulu@intel.com,
-	dan.carpenter@linaro.org,
-	daniel.gabay@intel.com
-Cc: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	David Wang <00107082@163.com>
-Subject: [PATCH v2] wifi: iwlwifi: acpi/dsm: cache error retcode for iwl_acpi_get_dsm
-Date: Tue, 27 Aug 2024 16:43:18 +0800
-Message-Id: <20240827084318.5169-1-00107082@163.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1724748203; c=relaxed/simple;
+	bh=uqXQ09OZG+mGGBfN1F682nY06fkqom9Qm8QtVUIDzaE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=FP+upu2VVU8E3Xc6+8dBDUHXFFxVUCp70nqzbYjdoPUNkmcs9g/SYW7RUrem+mB8xAu7uufOq2YTJReEP1qaxQnKFwC4LeNrHMnDfMikzWK209vt9OxDP9O0C96Wtanj9lCT5dj3DLKvMyPpfppSdEeOKOyMY/W0ZeLfcamc1XE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f7fa42463so430487839f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 01:43:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724748201; x=1725353001;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZWhGELMHbMK2mB/lYhoJt+wxjNr36ERFlN6hsd1zl1U=;
+        b=dmJbqEG69LfL0LWKUbbKKobijpGsk2d9i9N1kr9x1g+/xvHiUkYNfgxFO/K+3JWuve
+         IXTz0sUdTvbnTzBsFK8/1KCnqDgVZbcITEbps653r8pzWpM1GeKpF3UK4Gxje2y7s6J3
+         cWNoJ556TAMSg5z0xQvK8Ff8pUmKE6PbWyURkgPVgRl5TcBO9ScaAOgTZm0zEBoNVmDB
+         O5Dv5tskwM853mcrzz9fEGw1Mm+zfYwcr83j019ijaLyxw6gHiRUPlEHSYC7RX2SB8no
+         RCyGgt+xFuG2yBfWbYOBH1vFgdwvnEMMcbvxgzEZsVEbewMX7nBw0vc2CAXqRu+eu0Ph
+         RpTg==
+X-Forwarded-Encrypted: i=1; AJvYcCXN/yJwZnzkUfFTP0Lcr1OzoctefrF8DXRZTpKSFE0tzJnB/1STRdOjos5IxPcbcQ0eN1QHlrBOP1LfZ60=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxgnnSm/nN94oxQ80rMI3yFWrWMjaHKkAJKeZux+By8Zgj3z8+
+	1ntP0mXGDsphctT70m4pO3zkI3K6RNaM8Xh8wxoLKqbHyB1V7wvHsyYVu6rackHdcTJJjEsFOCE
+	fQQBeLxW3RHfd9SJ+k58DZOiMzEjLj0WkNuMrULqiTHgSFTkoK2brqJ4=
+X-Google-Smtp-Source: AGHT+IF9OTQp2cy1NHfX7EuSzFZv2knlruThxP9d1hWTJ4SmCBKolG1dxR19zYlDyvYoWJM4dmbyNTrv8sS5v8phEHp85FdxPWdK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:sCgvCgBHmyCrkc1muhMXAA--.5975S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxWrWkWw4rAr47uFykXF4kCrg_yoW5Cr45pF
-	4j9a12kryDXa1UJ3Z3tF4Sywn5GanrW398CFZrG343Zr1kJw1SqFW5WF12va10vw1UJay3
-	uF47tF4jkrnYvrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piJKI_UUUUU=
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMxtIqmXAncs1HgAAsS
+X-Received: by 2002:a05:6602:6404:b0:81a:2abb:48a7 with SMTP id
+ ca18e2360f4ac-829f14698b0mr3598039f.1.1724748201413; Tue, 27 Aug 2024
+ 01:43:21 -0700 (PDT)
+Date: Tue, 27 Aug 2024 01:43:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000df5f630620a63b03@google.com>
+Subject: [syzbot] [bpf?] [net?] BUG: unable to handle kernel NULL pointer
+ dereference in tcp_bpf_sendmsg
+From: syzbot <syzbot+7449cfb801474783f727@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, davem@davemloft.net, edumazet@google.com, 
+	jakub@cloudflare.com, john.fastabend@gmail.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On some HW, acpi _DSM query would failed for iwlwifi device
-and everytime when network is reactiaved (boot,
-suspend/resume, manually restart network, etc.),
-bunch of kernel warning shows up together:
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
-since iwlwifi would make 8 acpi/dsm queries for lari config.
-But for iwlwifi, it is safe to cache the _DSM errors,
-since it is not possible to correct it without upgrading BIOS.
-With this patch, those kernel warnings would only show up once when
-booting the system and unnecessary acpi/dsm queries are avoid.
+Hello,
 
-Signed-off-by: David Wang <00107082@163.com>
+syzbot found the following issue on:
+
+HEAD commit:    7eb61cc674ee Merge tag 'input-for-v6.11-rc4' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1415747b980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8eee190eab0ebaf5
+dashboard link: https://syzkaller.appspot.com/bug?extid=7449cfb801474783f727
+compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/384ffdcca292/non_bootable_disk-7eb61cc6.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/da1f81d9a714/vmlinux-7eb61cc6.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/18292fa70148/Image-7eb61cc6.gz.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7449cfb801474783f727@syzkaller.appspotmail.com
+
+Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+Mem abort info:
+  ESR = 0x0000000096000006
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x06: level 2 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+user pgtable: 4k pages, 52-bit VAs, pgdp=0000000043fd4f00
+[0000000000000000] pgd=080000004882a003, p4d=080000005bba7003, pud=080000004a4bd003, pmd=0000000000000000
+Internal error: Oops: 0000000096000006 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 0 UID: 0 PID: 23032 Comm: syz.0.5798 Not tainted 6.11.0-rc4-syzkaller-00222-g7eb61cc674ee #0
+Hardware name: linux,dummy-virt (DT)
+pstate: 81400009 (Nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+pc : page_kasan_tag include/linux/mm.h:1816 [inline]
+pc : lowmem_page_address include/linux/mm.h:2254 [inline]
+pc : sg_virt include/linux/scatterlist.h:404 [inline]
+pc : sk_msg_memcopy_from_iter+0x134/0x1e0 net/core/skmsg.c:389
+lr : tcp_bpf_sendmsg+0x1f4/0x8d0 net/ipv4/tcp_bpf.c:541
+sp : ffff800088013720
+x29: ffff800088013720 x28: faf0000010f136c0 x27: fcf000001bb93200
+x26: 000000000000018c x25: fdf00000242bc400 x24: 0000000000000001
+x23: 0000000000000000 x22: ffff801000000000 x21: 00003e0040000000
+x20: fff0000000000000 x19: ffff800088013da0 x18: 0000000000000000
+x17: 0000000000000000 x16: 0000000000000000 x15: 0000000020001100
+x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+x11: f8f0000008d11ce0 x10: 0000000000000000 x9 : 0000000000000000
+x8 : ffff800088013af8 x7 : 0000000000000000 x6 : 000000000000003f
+x5 : 0000000000000000 x4 : fdf00000242bc440 x3 : 0000000000000000
+x2 : 0000000000000000 x1 : 0000000000000001 x0 : 0000000000000000
+Call trace:
+ arch_static_branch_jump arch/arm64/include/asm/jump_label.h:46 [inline]
+ kasan_enabled include/linux/kasan-enabled.h:13 [inline]
+ page_kasan_tag include/linux/mm.h:1815 [inline]
+ lowmem_page_address include/linux/mm.h:2254 [inline]
+ sg_virt include/linux/scatterlist.h:404 [inline]
+ sk_msg_memcopy_from_iter+0x134/0x1e0 net/core/skmsg.c:389
+ tcp_bpf_sendmsg+0x1f4/0x8d0 net/ipv4/tcp_bpf.c:541
+ inet6_sendmsg+0x44/0x70 net/ipv6/af_inet6.c:661
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x54/0x60 net/socket.c:745
+ ____sys_sendmsg+0x274/0x2ac net/socket.c:2597
+ ___sys_sendmsg+0xac/0x100 net/socket.c:2651
+ __sys_sendmsg+0x84/0xe0 net/socket.c:2680
+ __do_sys_sendmsg net/socket.c:2689 [inline]
+ __se_sys_sendmsg net/socket.c:2687 [inline]
+ __arm64_sys_sendmsg+0x24/0x30 net/socket.c:2687
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x48/0x110 arch/arm64/kernel/syscall.c:49
+ el0_svc_common.constprop.0+0x40/0xe0 arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x1c/0x28 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x34/0xec arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x100/0x12c arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x19c/0x1a0 arch/arm64/kernel/entry.S:598
+Code: d346fed6 1a9a92f7 8b163296 d503201f (f9400001) 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	d346fed6 	lsr	x22, x22, #6
+   4:	1a9a92f7 	csel	w23, w23, w26, ls	// ls = plast
+   8:	8b163296 	add	x22, x20, x22, lsl #12
+   c:	d503201f 	nop
+* 10:	f9400001 	ldr	x1, [x0] <-- trapping instruction
+
+
 ---
-Change since v1:
- - make acpi_dsm_func_retcode cache per device.
----
- drivers/net/wireless/intel/iwlwifi/fw/acpi.c    | 6 ++++++
- drivers/net/wireless/intel/iwlwifi/fw/runtime.h | 2 ++
- 2 files changed, 8 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/fw/acpi.c b/drivers/net/wireless/intel/iwlwifi/fw/acpi.c
-index 79774c8c7ff4..22dfce6d5111 100644
---- a/drivers/net/wireless/intel/iwlwifi/fw/acpi.c
-+++ b/drivers/net/wireless/intel/iwlwifi/fw/acpi.c
-@@ -169,6 +169,10 @@ int iwl_acpi_get_dsm(struct iwl_fw_runtime *fwrt,
- 	if (WARN_ON(func >= ARRAY_SIZE(acpi_dsm_size)))
- 		return -EINVAL;
- 
-+	/* If HW return an error once, do not bother try again. */
-+	if (fwrt && fwrt->acpi_dsm_func_retcode[func])
-+		return fwrt->acpi_dsm_func_retcode[func];
-+
- 	expected_size = acpi_dsm_size[func];
- 
- 	/* Currently all ACPI DSMs are either 8-bit or 32-bit */
-@@ -177,6 +181,8 @@ int iwl_acpi_get_dsm(struct iwl_fw_runtime *fwrt,
- 
- 	ret = iwl_acpi_get_dsm_integer(fwrt->dev, ACPI_DSM_REV, func,
- 				       &iwl_guid, &tmp, expected_size);
-+	if (fwrt)
-+		fwrt->acpi_dsm_func_retcode[func] = ret;
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/net/wireless/intel/iwlwifi/fw/runtime.h b/drivers/net/wireless/intel/iwlwifi/fw/runtime.h
-index 048877fa7c71..63dca94a937c 100644
---- a/drivers/net/wireless/intel/iwlwifi/fw/runtime.h
-+++ b/drivers/net/wireless/intel/iwlwifi/fw/runtime.h
-@@ -182,6 +182,8 @@ struct iwl_fw_runtime {
- 	bool sgom_enabled;
- 	struct iwl_mcc_allowed_ap_type_cmd uats_table;
- 	u8 uefi_tables_lock_status;
-+	int acpi_dsm_func_retcode[DSM_FUNC_NUM_FUNCS];
-+
- };
- 
- void iwl_fw_runtime_init(struct iwl_fw_runtime *fwrt, struct iwl_trans *trans,
--- 
-2.39.2
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
