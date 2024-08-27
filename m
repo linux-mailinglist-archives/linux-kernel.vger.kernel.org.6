@@ -1,154 +1,159 @@
-Return-Path: <linux-kernel+bounces-302843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF5BD96041D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:14:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C37E96040A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:09:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53A001F239EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:14:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C63F7283967
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1BE194A65;
-	Tue, 27 Aug 2024 08:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78DF419A296;
+	Tue, 27 Aug 2024 08:08:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="XL66B2rp"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.54])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="oK+P+wyR"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE66F13D53F;
-	Tue, 27 Aug 2024 08:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9507199242;
+	Tue, 27 Aug 2024 08:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724746428; cv=none; b=KzGN8+nWjDJ/ZkCzQ3+eDkJootZ52a4lqY39ViBP6xGGYnpRrlQzrxeT+E4Iz/jApgCjLKK6GCuIbkR4WLXBUaiBr1eBlRtM+HWLOqu+t/8KpYo75n3ZcAyMYcQ+2zHZ29nJtt0aKucn+0km0hA8+EhnAkUh5/5cqmc+MOnnPHY=
+	t=1724746120; cv=none; b=tJp+HBey9TOEn55SUNrW+p+BATLjIT3zugYlYpHDdKKq77ohgbZGdicu9pt446NnDWGUOUSGbvYGKPetL1qUF/nADzWI674pvac+rZbIa4yO5oxUj7UVKEKAT/AeoQVkMDYnvznduqfgXfEQlYHoLwH3drGRIusAY8fg0ZJLDE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724746428; c=relaxed/simple;
-	bh=5QfsJTyIY32W/wA54Kf19YGCYgreDzccpzOQVRfQiBg=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=gZsIVMZODYEmDtVtYnAE3SfAo4R5TCkkX41OvBiWCSiYUG2oErUGCy6iUKanPx9J7VyADtzk0ylvHdBhUbPOWbBW6CBBUv4F+PMMqk9Lr8+sYF52U0Z1cwZ5pW9ntptVi02Bob2UZ0mSAsN4J1pXlGOEajWBpxqOsu1yj8LE2UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=XL66B2rp; arc=none smtp.client-ip=43.163.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1724746410; bh=8n5ghoJPbarAekh4wde579rn7yevYYmJTRo6ruyL1Hw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=XL66B2rpYAoXOQgBvTZSru+0n5s0HG5x2pePu26M0FW2MJ2NdrHJE0gZRPeTU8teG
-	 5W2vGbHQj181cfColmNECtx0Z6a/vhLrR4FSG3XrbhGqsY6YnpIH3bZalI18YBTAQh
-	 115BEp8ZYAl+QfZ+r0GgQA74VdSLdo2nZRL8z4+s=
-Received: from cyy-pc.lan ([240e:379:224b:5f00:16b6:fb41:2849:da9d])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id 1CBA7234; Tue, 27 Aug 2024 16:07:11 +0800
-X-QQ-mid: xmsmtpt1724746043tpuyub02x
-Message-ID: <tencent_387731262004AB31874F45504D7BC2F11705@qq.com>
-X-QQ-XMAILINFO: Mm0mzSig0p2pUXSd5oAdHOeLQuZOsj9T7ASgnZ5wcRxByrv6k5m3cjVaM+S36v
-	 ObZgtDSbamsYnPtEBSOlXZKQRjS8noCBT3NEQRJ+2TekpQ4oGBhTOGUA0pMOw4fI0KfU7jzuRXes
-	 EwY9yvV6Ul7qGPbA8Zu4ItVl9xCEKZZRTXNyITp8r0Q3v9ZYEmsF147TgEWtLYzjsa4mh+MXGOs6
-	 8L7221oUUm3V+SPvCbxN4IUq0qREB2ZNVL+doHpA8pfdV7wT3JVZBOSxE9E/dv+Tu2yNK54uTOmU
-	 R2AZChfkZmJ5IlOLGUgXMIN+d4F5TlxB9FoL+7FxGxT+WteO/Zb+BGnRobqAh1Mw5MgiwFFD1IJg
-	 lwoey8gPI6s8vUZj0bPLnim52y/KnmhC6e/FUdp9TowYjx7DQ5S8dmKncs2P0e0YXUjwX+wXGNHw
-	 2RfBo3OgwsmGi0Fw+Z5LU7KMQimdI3bNCFW7pWAYLO2hpET5bAgdPHfrtT7KfWBXG93x5rIk3DTn
-	 4t16hU3EItrmZzhnxJTqi+wG6VdvtcPXj96tnCZESumhktY8Tqt/fS9l6yb+P4Nxi5oEkuTM4az3
-	 DZxeyrz4wrFe4xP54pvYDpI/JFL1+JbvVUzFp6q81jWyHjw1eyLQw97IDY0/M4QvRBviT7PQUYR7
-	 lQOF0Qpd9GrGABrnldzPpqabv3+QtMp1cxZYE8IxeuNL9CHQ/U9vAA8WANbW4rLp/fOfiuz/eS8/
-	 X+KWZKR4b9h+vie1+s4J0Js35bJakp1FD2LP7gZJJtDnqvsbwFjGvZHMxw2EYpvbxuSgvWKqiJb1
-	 1DQRkPKmo4xhemOIKLsBI7nRcV70OLEl8mjS94ow3ktxsMNYKAC4BbXCQnUJzoM+PLerEinpBdvq
-	 H5/Mt+yD5xWNdnGZ97s4pIKtChSHiUjZfULRWEet6En6OXd584ynt85kmiNKPEQb8fFbLxXPJyyM
-	 0mwoPc7fkuoXN7Pc3A4rUx12ZwjOR2tl2oRBlAGxIFCGf88EHGcikdcHWdR5SOp0SIfF6ccmHaG2
-	 pfHkj9KExg6h4t1AS5dougdm6aSdA=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Yangyu Chen <cyy@cyyself.name>
-To: linux-riscv@lists.infradead.org
-Cc: Charlie Jenkins <charlie@rivosinc.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Shuah Khan <shuah@kernel.org>,
-	Levi Zim <rsworktech@outlook.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	linux-kselftest@vger.kernel.org,
-	Yangyu Chen <cyy@cyyself.name>
-Subject: [PATCH v3 3/3] Documentation: riscv: correct sv57 kernel behavior
-Date: Tue, 27 Aug 2024 16:07:07 +0800
-X-OQ-MSGID: <20240827080707.3788836-3-cyy@cyyself.name>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <tencent_108260B43689E30AAE5D0C7C085AA31ADF06@qq.com>
-References: <tencent_108260B43689E30AAE5D0C7C085AA31ADF06@qq.com>
+	s=arc-20240116; t=1724746120; c=relaxed/simple;
+	bh=KUNevkqKItUtyAoJeoaCrfGr37Eon6c2GKQEP9yAB9U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pYrIAh0JFJkELIEbprvX4pbVgKamqcey9j+9hq6FAgscMOreXK0Qr4pVQjch0F/3Kv+n+tjbCy7HCK+ftRRvUBeHmDRqu1TjWO2sOFTTFtvWEBNWXlWzR1lmfsBTLaZYFOxq+XmeQplPGwNQoAXKhArjMWQ346H1VdfGavhbA3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=oK+P+wyR; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47R7NZnX002527;
+	Tue, 27 Aug 2024 10:08:05 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	NL0vfsDaZi+n7IXnnxL961mLfvdpI9ZZJJiAuUY0CU8=; b=oK+P+wyRw6FWOfoE
+	ii3HFisp1T+BZcECPD9QcTmWQAnw0oAdYT+ELLEbd2HwfVDIg7dqla3qthTTlFDn
+	9dHgJfiS8GlyJMKotw2TmRX8VLsA6NXdw5Vp0hUnHbt95dJ7cvqsNkTTe8JSlqJ3
+	ilBOB9iLUYx3zQ8pltIC2PiQLRKfPPRkVT4ih9SmavhWveUdmAzzFkRyAkUJDsIg
+	3Vw5npBP4l3po35kbKOg4jkMJke1iHgIvabfPlrSXmv9OrBF/NqfqrM7/Ub5Obe3
+	fZV9bmY/1mm9Fkq5GKQXAbp2Zl9HrzxP2GDbbFfvPdDpSI9/fSwEZKZY5gub+8z+
+	Vw8oWQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 419ac886r4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 Aug 2024 10:08:05 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2089540048;
+	Tue, 27 Aug 2024 10:08:00 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C12A724DCC5;
+	Tue, 27 Aug 2024 10:07:11 +0200 (CEST)
+Received: from [10.252.31.50] (10.252.31.50) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 27 Aug
+ 2024 10:07:10 +0200
+Message-ID: <8a13fd32-4bc4-4711-bf6b-7e0ce2e938ec@foss.st.com>
+Date: Tue, 27 Aug 2024 10:07:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] arm: dts: st: stm32mp151a-prtt1l: Fix QSPI
+ configuration
+To: Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Oleksij Rempel
+	<o.rempel@pengutronix.de>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Rob
+ Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>
+CC: <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@pengutronix.de>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20240806120517.406714-1-o.rempel@pengutronix.de>
+ <20dc2cd4-7684-4894-9db3-23c3f4abd661@pengutronix.de>
+Content-Language: en-US
+From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20dc2cd4-7684-4894-9db3-23c3f4abd661@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-27_05,2024-08-26_01,2024-05-17_01
 
-The original documentation treated the hint address on mmap as the upper
-bound, since we have already removed this behavior, this document should
-be updated. Most of the content is copied from the corresponding feature
-in x86_64 with some modifications to align with the current kernel's
-behavior on RISC-V.
+Hi
 
-Signed-off-by: Yangyu Chen <cyy@cyyself.name>
----
- Documentation/arch/riscv/vm-layout.rst | 43 +++++++++++++++++---------
- 1 file changed, 29 insertions(+), 14 deletions(-)
+On 8/7/24 11:38, Ahmad Fatoum wrote:
+> Hello Oleksij,
+> 
+> On 06.08.24 14:05, Oleksij Rempel wrote:
+>> Rename 'pins1' to 'pins' in the qspi_bk1_pins_a node to correct the
+>> subnode name. The previous name caused the configuration to be
+>> applied to the wrong subnode, resulting in QSPI not working properly.
+>>
+>> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+>> ---
+>>   arch/arm/boot/dts/st/stm32mp151a-prtt1l.dtsi | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm/boot/dts/st/stm32mp151a-prtt1l.dtsi b/arch/arm/boot/dts/st/stm32mp151a-prtt1l.dtsi
+>> index 3938d357e198f..4db684478c320 100644
+>> --- a/arch/arm/boot/dts/st/stm32mp151a-prtt1l.dtsi
+>> +++ b/arch/arm/boot/dts/st/stm32mp151a-prtt1l.dtsi
+>> @@ -123,7 +123,7 @@ flash@0 {
+>>   };
+>>   
+>>   &qspi_bk1_pins_a {
+>> -	pins1 {
+>> +	pins {
+> 
+> As you have seen such device tree overriding is error prone and would
+> be entirely avoidable if specifying full board-specific pinctrl groups
+> was allowed for the stm32 platforms instead of override-and-pray.
 
-diff --git a/Documentation/arch/riscv/vm-layout.rst b/Documentation/arch/riscv/vm-layout.rst
-index 077b968dcc81..826d0a3f4cbf 100644
---- a/Documentation/arch/riscv/vm-layout.rst
-+++ b/Documentation/arch/riscv/vm-layout.rst
-@@ -136,17 +136,32 @@ RISC-V Linux Kernel SV57
-   __________________|____________|__________________|_________|____________________________________________________________
- 
- 
--Userspace VAs
----------------------
--To maintain compatibility with software that relies on the VA space with a
--maximum of 48 bits the kernel will, by default, return virtual addresses to
--userspace from a 48-bit range (sv48). This default behavior is achieved by
--passing 0 into the hint address parameter of mmap. On CPUs with an address space
--smaller than sv48, the CPU maximum supported address space will be the default.
--
--Software can "opt-in" to receiving VAs from another VA space by providing
--a hint address to mmap. When a hint address is passed to mmap, the returned
--address will never use more bits than the hint address. For example, if a hint
--address of `1 << 40` is passed to mmap, a valid returned address will never use
--bits 41 through 63. If no mappable addresses are available in that range, mmap
--will return `MAP_FAILED`.
-+User-space and large virtual address space
-+==========================================
-+On RISC-V, Sv57 paging enables 56-bit userspace virtual address space. Not all
-+user space is ready to handle wide addresses. It's known that at least some JIT
-+compilers use higher bits in pointers to encode their information. It collides
-+with valid pointers with Sv57 paging and leads to crashes.
-+
-+To mitigate this, we are not going to allocate virtual address space above
-+47-bit by default.
-+
-+But userspace can ask for allocation from full address space by specifying hint
-+address (with or without MAP_FIXED) above 47-bits, or hint address + size above
-+47-bits with MAP_FIXED.
-+
-+If hint address set above 47-bit, but MAP_FIXED is not specified, we try to look
-+for unmapped area by specified address. If it's already occupied, we look for
-+unmapped area in *full* address space, rather than from 47-bit window.
-+
-+A high hint address would only affect the allocation in question, but not any
-+future mmap()s.
-+
-+Specifying high hint address without MAP_FIXED on older kernel or on machine
-+without Sv57 paging support is safe. The hint will be treated as the upper bound
-+of the address space to search, but this was removed in the future version of
-+kernels. On machine without Sv57 paging support, the kernel will fall back to
-+allocation from the supported address space.
-+
-+This approach helps to easily make application's memory allocator aware about
-+large address space without manually tracking allocated virtual address space.
--- 
-2.45.2
+You can create your own pin group in stm32mp15-pinctlr.dtsi. What is the 
+issue ? Do I miss something ? It will avoid to overwrite an existing 
+configuration
 
+regards
+alex
+
+
+> Anyways, there's better syntax for such overriding now:
+> 
+>    &{qspi_blk1_pins_a/pins}
+> 
+> which would cause a compilation error if pins was renamed again.
+> 
+>>   		bias-pull-up;
+> 
+> There's bias-disable in stm32mp15-pinctrl.dtsi. You may want to add
+> a /delete-property/ for that to make sure, it's not up to the driver
+> which one has priority.
+> 
+>>   		drive-push-pull;
+>>   		slew-rate = <1>;
+> 
+> These are already in qspi_bk1_pins_a. If repeating those is ok, why
+> not go a step further and just duplicate the pinmux property and stay
+> clear of this issue altogether, provided Alex is amenable to changing
+> his mind regarding pinctrl groups in board device trees.
+> 
+> 
+> Cheers,
+> Ahmad
+> 
 
