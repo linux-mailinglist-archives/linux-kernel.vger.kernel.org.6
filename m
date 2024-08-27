@@ -1,110 +1,139 @@
-Return-Path: <linux-kernel+bounces-303459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7F00960C4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:39:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF960960C54
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 916D61F22849
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:39:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D7AD1C22695
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFCF1BFE02;
-	Tue, 27 Aug 2024 13:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3899A1C2DA3;
+	Tue, 27 Aug 2024 13:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LwolZ22I"
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V3m8AHT1"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3A71A0730
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 13:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB941C0DE3;
+	Tue, 27 Aug 2024 13:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724765944; cv=none; b=M6ThWrhhalD9pH+S0wkMCeeUoDHpUY8d9lkterNaSaN/zScCkCCBxX2qHALUhnxxjDikshmBssguXo6R/c9/Y2r4pQouByeFzg6RwnS2YSG+nhhQTLgM3DztoJWGkg60a3RSnpw5hsUCL4zcrAwg67CVpg15XLSdud1VPuSc8ig=
+	t=1724766001; cv=none; b=FjQt+BmlvKUrg9r9IHnbgyj4jBxupV90iEMcTEDf62SEDK0lVdC32Ukd0vzdtJFYAOo3ryGVlsPKoGAdP55yogRgOKxc8bXW6vhT0H85Ot4lgXYG15aNOCQpHAp+u7/2aQb5fXNonmQv+wOGFhTF2+yq6TVNerEFFo92xERxKw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724765944; c=relaxed/simple;
-	bh=EmUgM2/ytQuJfPaiYklRwOQpvnyqCeJX2p7TWdM5moA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pTk4pt9HuWKIDkpbzEvGCV55pnz/bF7hBbjC10vNTlAjuUAhT+EzwOAdZwkrU+X0CHZEuwm7CV6rt3Y954g7bWfAop3lPHEsqU4PGYcsV2PuxHJrrU0EKDHXUfbub0wYWY9hJdTMQs6iMW+dku2e2p0XmEmHTtr8B3cLLy/hkJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LwolZ22I; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3db16129143so360680b6e.0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 06:39:02 -0700 (PDT)
+	s=arc-20240116; t=1724766001; c=relaxed/simple;
+	bh=joSayfGZbhAgfS7Af87lUtotvFzcgcb3h/kA/FP+0Cc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eJI8WRr0AEImX55unfh5AYkb4t8MuaxsDUEUViljeHotW4EzgCtIvhqKh0AG5pkQW1oTCRCnSBUtLOs2Y6EiQ26r9Vok/hpNApx4Zy6vxjsUcGar7CCmA8mjhjOXPD+o0eaqi1APe/W/Y0kpzU3jiK3FyEMB1r8Z/GR+jwyou7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V3m8AHT1; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-44fdde0c8dcso31046121cf.0;
+        Tue, 27 Aug 2024 06:39:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1724765941; x=1725370741; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WzNFgePLd1xkOZP0EuX/y0xPFlqksOAZUan0SE77Djc=;
-        b=LwolZ22Iq+2RBuR9j41sRLkXW87w7thvHreub+1+IUfhQ1W4NAFqUMPVit6wX7w/+U
-         xps7QD31i8Suh/UTTYPVqXmdDyRzC2mofwe4gCd0Nv8klV2pau47PSYeb7tlXwDJcitX
-         JaliUmxLm5P2VTYUKu9GbOP4qhZMrb4c6ddUc=
+        d=gmail.com; s=20230601; t=1724765999; x=1725370799; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R+JzrrWhLwPRmVxAzC6IAz2guX6EbmEAvRvJoNjLnwA=;
+        b=V3m8AHT1oCKwilqb9qbdN+zYeYDivmzaqkju2+emULL6tQFY1RTHDzLlC3az9JiFM+
+         jqqLGkVK3OQdBTXoQe6JZlswuHJcGmaCeV2NJApHCZ8GmFRt1/sa8ko8fOBbsfLtWAWN
+         cMWLmNut6OZGFfqxkZGrIn5z+tTJExnmDgS2gDOCGLgLIsKffBrVOaznwKQ/oGG9elgq
+         o+5yKu+h+TRGjZqkCPWlAmMMPgACw2v/jiYVGn/agGxcEtNZKSu9c9zY9sBykGcS11Td
+         xA+pVj15pRwFrD/hmQQi/5TgEAC6VQSdg5/T8yuNPi4G5d1hzm6pvrYYYS0FtM+H23Gr
+         rBKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724765941; x=1725370741;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WzNFgePLd1xkOZP0EuX/y0xPFlqksOAZUan0SE77Djc=;
-        b=duOWTITlX3LantlTBqotxiaZfkE40ee9LPZYNt43WwSeNM13xm2JoNM/SUqDZYIC8z
-         a4PpPYCP1B7294xIJQtK3be5Yv+RPuiuAhWf+YiJ6dvkre7uMqSBbgRM8a4yu8z0gPGH
-         p3/zkN0oJ2xL/WoWwR6n2oXA4D6DG6w/1Q4JiPZUQ1OWrzHIDQd6p+/KUbpDgqSE5Lq8
-         a8gyYna8rchVxBHeogHxG3m3m++w8mGZvect+QDys6CdkK1D/mrQMQZQ8L2lBuB5kI1H
-         huyL524wLHgVmjbCLje32uO72gZ4ekGeGwUzyXwXP4fvFi5UKs2xk4TfID5TVSOMFROv
-         xmsg==
-X-Forwarded-Encrypted: i=1; AJvYcCWQd1W4S4ANOMdaLySEdTEy5wrxfhBlMkQBDufUvG5u53IkMw95MCZOBHPegtgrQKz0BQk5lyIJa8PU4kI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzruHe3ZTNFeYOp85o/TupEzFaHf/ow3be6yYfUF9Xk4m98V0V+
-	lAg7Rhyknjb9HO4Z932x0t32XVrh4CtZBNtVPo/x099c7347OIScmtZeLx0ifvU=
-X-Google-Smtp-Source: AGHT+IHGRL6ToaIoM39AfyW127C9/x+YWGPFSMwGHsfntziflfJyV03EUQlEF4NMjqFLP58aaTehTQ==
-X-Received: by 2002:a05:6808:6489:b0:3d5:5fbe:b2fa with SMTP id 5614622812f47-3de2a8d4697mr12190240b6e.35.1724765941408;
-        Tue, 27 Aug 2024 06:39:01 -0700 (PDT)
-Received: from [192.168.121.153] ([218.49.71.194])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9acabccasm8007261a12.27.2024.08.27.06.38.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 06:39:01 -0700 (PDT)
-Message-ID: <0a197b29-f0f4-429e-82c0-f54469f31b12@linuxfoundation.org>
-Date: Tue, 27 Aug 2024 07:38:56 -0600
+        d=1e100.net; s=20230601; t=1724765999; x=1725370799;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R+JzrrWhLwPRmVxAzC6IAz2guX6EbmEAvRvJoNjLnwA=;
+        b=nnhNywbCCOdZJI5VUX6XV0MCg9aSpEsioxci3g6f3kL7TUcbeik0w5Sgc3yE8azjgv
+         ALKbwEjbl7TYj0IBHaKcdboYLLnAouxk+HNDVhc13/R8KiHx4oZ50e4F1LgpOkcrSksL
+         S1fXMHB5AOt67LG70AyUt2uStYVRrcDNxtJE3HcqWbMNttG3kh1PDBscs3ivPj8uY/GF
+         VVNWvVWKcVR4HvpTAkqN8WXAsnJgrpoXuUWZPaheOnR7x6uzOZiVH17n5uMrGFrg9uSj
+         /xfHVE3RJah/RQm0uyyHIqBIkv/zkXSsprU/qe7RovEzw7hN7BriiGbcldBGkgq4y3UR
+         5IAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCNFpy6xQSYVZk+mAYMJioBANSaQGWvM3UtohSWreyG8oz2Tyb+aWdG+L2X+xCvEOhOIWhUXtlEAz8as+U@vger.kernel.org, AJvYcCW4xW2EnRebOZun78u/ot38tQfwRIPTlVPFPvwuac/XFMg4yKKAfaOZkmDlBXPfd/xTN1tXupsJflx+09ZjAcYZJzM=@vger.kernel.org, AJvYcCXu3Ewut3mtcg+HMNhcCVhlFQSfL4/zfaVUYjlUZCBQKs/H08eiVHytWYsesrEzrSECQ68nH0Go5X3r@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJPdv1KJILLyLSSWR1H3y79MWSatibP8yMnwv0818O1qbLjIGW
+	l8jPgwm/KfGuwz5gq0KEG6GV0XeKbT3fs9YynhMJAbtbZqPIa84gME6JldVi5H5+dcxQU4Ko2Z2
+	PtAVtTQSPLPF+nsho1VGclbyiEoo=
+X-Google-Smtp-Source: AGHT+IGJ8PhaVJ/ECaHF2mR2KdRB/84usJc1sUbmkZvFaKSqLou+KRIZSWHQY7dyo5gAcjE6tSLXwS8btDovdvbGKuU=
+X-Received: by 2002:a05:622a:4805:b0:446:5368:cce4 with SMTP id
+ d75a77b69052e-45509d37d36mr159127051cf.48.1724765998857; Tue, 27 Aug 2024
+ 06:39:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build warning after merge of the kunit-fixes tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Brendan Higgins <brendanhiggins@google.com>
-Cc: David Gow <davidgow@google.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240827160631.67e121ed@canb.auug.org.au>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240827160631.67e121ed@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240821085644.240009-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240821085644.240009-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdW2=u8enge6N+A617V+5oNYnNmhw_VFW9qbcX=TEbJKig@mail.gmail.com>
+In-Reply-To: <CAMuHMdW2=u8enge6N+A617V+5oNYnNmhw_VFW9qbcX=TEbJKig@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 27 Aug 2024 14:39:31 +0100
+Message-ID: <CA+V-a8t+ri3YtU+=MhVx4ZkPOvoUS6ZY+Hj-nvuXkVKrDUX9pA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/8] arm64: dts: renesas: Add initial DTS for RZ/V2H
+ GP-EVK board
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/27/24 00:06, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the kunit-fixes tree, today's linux-next build (htmldocs)
-> produced this warning:
-> 
-> include/kunit/test.h:492: warning: Function parameter or struct member 'test' not described in 'kunit_kfree_const'
-> 
-> Introduced by commit
-> 
->    f2c6dbd22017 ("kunit: Device wrappers should also manage driver name")
-> 
+Hi Geert,
 
-Thank you Stephen.
+On Mon, Aug 26, 2024 at 1:07=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Wed, Aug 21, 2024 at 10:56=E2=80=AFAM Prabhakar <prabhakar.csengg@gmai=
+l.com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add initial DTS for RZ/V2H GP-EVK board, adding the below support:
+> > - Memory
+> > - Clock inputs
+> > - PINCTRL
+> > - SCIF
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-gp-evk.dts
+> > @@ -0,0 +1,61 @@
+> > +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +/*
+> > + * Device Tree Source for the RZ/V2H GP-EVK board
+> > + *
+> > + * Copyright (C) 2024 Renesas Electronics Corp.
+> > + */
+> > +
+> > +/dts-v1/;
+> > +
+> > +#include "r9a09g057.dtsi"
+> > +
+> > +/ {
+> > +       model =3D "Renesas GP-EVK Board based on r9a09g057h44";
+> > +       compatible =3D "renesas,gp-evk", "renesas,r9a09g057h44", "renes=
+as,r9a09g057";
+>
+> Board name/compatible (and thus file name) are still under discussion...
+>
+As discussed internally I'll update the board name/compatible to
+"renesas,rzv2h-evk" and rename r9a09g057h44-gp-evk.dts to
+r9a09g057h44-rzv2h-evk.dts.
 
-David,
-
-Can you send me fix for this on linux-kselftest kunit-fixes branch?
-
-thanks,
--- Shuah
+Cheers,
+Prabhakar
 
