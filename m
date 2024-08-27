@@ -1,243 +1,169 @@
-Return-Path: <linux-kernel+bounces-303943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADA30961740
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:49:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A11E961748
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 20:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A9FD2841E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:49:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C6B21C235FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44AF1D175F;
-	Tue, 27 Aug 2024 18:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D289F1D2F5C;
+	Tue, 27 Aug 2024 18:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ogXNj1uo"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2041.outbound.protection.outlook.com [40.107.94.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z+gtvOJ0"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D3D1A08AD;
-	Tue, 27 Aug 2024 18:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724784532; cv=fail; b=q9U6CyxPT5DCvWQiLRrVki1xT2PbotdHpxCNXXkQcmLvnQ/7o+aq4kb6WIyB03rPPPEoyq0YoLepDF0cKkXCwPxv27kr/axn5f8nhfoMv2fK2q5rmO4B3LKpxlIr0vurS8FQb4cdQj2w8WCz6RzoW6rIr06Xqb8ULNWRNQ0Z7ns=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724784532; c=relaxed/simple;
-	bh=mOOaBei/FRqz3ZxO3QeENnckux2DFiI5trrO7qzoF5o=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=cjzWFgTGUc8QPNhV7zMj1wVUAmdOlDAk0iK4UQmEDtf1wUubW/Xa9QOi6k06ayykqmHYf/WlNRBBJB8roNwKz9GpmHOXW5mzLcyd0OR+D8xCO7Eb0U0tEhdsEm8D2XBV1srpzAziT8g9VcIV/SSKVr4a/gRH0pmNuiajz/4Ax+g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ogXNj1uo; arc=fail smtp.client-ip=40.107.94.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rgW6WJEbHUYCkHHBM631NuSUwsH/cqi5ot6xPiEtC3F8b8xF1+ognMdAq8BGcg3WgziW8gU9qsq51gFViVCh69fzCDeIQZxObIFjS/qtHHN9UV5lSHSFmsVR/qPZn3fj1BtErxOZsZMaC8sEeue53XNIUX/X0S2ULre+v30aGUWuhsBNOpGdXI/tJE+ZN4JUrZv7i9sEstNThMU6jTWhDKbECR+0oiUS/6fUtLNZ8TOtQregmRuhyLkicBsHWYS45T0LoHkd4ccyzlROL3uHNSRdheKMBibEVOzqs/4zs7hXZXskZIN/njBQeGdvKVWfvmBeWBNi0a9NSkpKW9rp0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0AI6o57CwPuMwqEzfHazVeSua/qBxIw1Sz/6d+Chlhs=;
- b=DC+ePIKXwtvQhtmlCMwZpkeC9Nm4IejcwkwACRN2V8eFRWE9RpjVeMP8GpojCBAvdaWqn5XRhamvbtx0KzRiEONJHJOKzsC3PkGhu/Ls6ZMjjkRTRRb6YxcZFmPLdp13BwovFcZSyf96MqdD5b2YXVeFu75m+gQNxwozc1RYc0qdlbaNf4BbnphpQj1zj/PuNs/jmgZHG4RfYh6vtu/4E+qDuhf8JqFb/NEdAMw+6ny6OVuR8sL0c/5j8A9+r6arqUIDbXXeS5ltPImxXFNszqc7CQmXz19PA828WOZdlhVv4eGhEC5TlZdYQjzcrAselOKBen9J8LY1Vj7+kvlswQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0AI6o57CwPuMwqEzfHazVeSua/qBxIw1Sz/6d+Chlhs=;
- b=ogXNj1uoUQ3LLoM7wFI01NccYKs2T7oeI2VnyFG/FNCJSk/ORwJl6qhY/d1xvswDarKb3TzZi8u9APp6BRWDy+7WRM+qxGbDbxAUJNNqcSM7iFyy9uMGgmGpKPMY+KUqDA5iYn+o3TRcVscVcWATJ94z9l6pi9nSW+dBxWJ9LrY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by SN7PR12MB7371.namprd12.prod.outlook.com (2603:10b6:806:29a::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.23; Tue, 27 Aug
- 2024 18:48:49 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7875.016; Tue, 27 Aug 2024
- 18:48:48 +0000
-Message-ID: <d1222c30-114b-4f56-8805-600236b2684c@amd.com>
-Date: Tue, 27 Aug 2024 13:48:47 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/8] ACPI: CPPC: Adjust debug messages in
- amd_set_max_freq_ratio() to warn
-To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
- Mario Limonciello <superm1@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, Perry Yuan <perry.yuan@amd.com>,
- "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>, "open list:ACPI"
- <linux-acpi@vger.kernel.org>,
- "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>
-References: <20240826211358.2694603-1-superm1@kernel.org>
- <20240826211358.2694603-4-superm1@kernel.org>
- <Zs3np8AeARzbMVSB@BLRRASHENOY1.amd.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <Zs3np8AeARzbMVSB@BLRRASHENOY1.amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA9P221CA0013.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:806:25::18) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD0C1CDFBC
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 18:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724784768; cv=none; b=OfHn/2GxbcsgreRn2PpxJtUP4DgtKOXDjxu1nND4nLN0v2yPyu4XEDivzKVBwWa/lEB8wa7PggtBZ09IYlyJDRnd28VgQUJWFGKeYHDqeEkztHjWSALFYBFCmc7Z21jeza+ai8gYCucPUUKqX03ekwTqvb8m9mE5UuyEEdBegx4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724784768; c=relaxed/simple;
+	bh=xVV9GYhTkMlzHWpiC/bq4VAS7CWyf8PnusQxbzgds7Q=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=aB7ApEgwBu4DNvRLihgpsNISNUn+h525aGm9rKOi79GIg4iXzORS1BgvihlJc6Od8wFsd1eyxjlEzjgrR3vVsCQEX6wZj6/ZdoRCFFZsplouQiifwflu9QFCy9f/jlmWasIo+hHY+c+aUUS/ZpvYye8GSD271/wV5nQUHrzIRzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z+gtvOJ0; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e11703f1368so8571559276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:52:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724784765; x=1725389565; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0qOq6giNTthe/vHgL7jh4v/W5dWk9cHPxYF82wHoE5I=;
+        b=z+gtvOJ0p2ZKoZISR8IR+D9mkRjaO6lM7dudT33pg1V303QOeRmvT/Xv4eHkbdLbAh
+         crMDIwttZ+K1U5pOwGx5a9KwqQepL7GyamIOnsUiN+95NY6LmB5Jb3keZeV+rMJKuWv+
+         NNRsH0Gsq75kJpycmS6RRFyMW130Y5iBa3RuCj2V6lw0vGcPTHRf42Y9yu3IHmUlCATS
+         XGZrN6bEYBzEMcASjiOuq0Un4NeWIEt5nNahvVHb6Qy+Cs8LMlOMStnggmicQ7AQmhU0
+         qGoSI8Bwj449ZPNwHdKK2pE/Pu6iDtpK4/21BMZ0302LopeTljRAtjaLSG4K8bTDcGBo
+         7Zvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724784765; x=1725389565;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0qOq6giNTthe/vHgL7jh4v/W5dWk9cHPxYF82wHoE5I=;
+        b=fqMuB4oy0jx18r6EheY9p6wulRG1Vr25xzINFtOdPQGzLMtdA+HYgP9h9JuSLZazJh
+         nZ2L5PS2EnmNSQdVm08ynBxKWddVgyialTmYEnr6DispzVdlpoHTOShF0JRouhdw8kzE
+         K7D3t7QI6qR9DkIEH+/vcCOo6plkDKUzq6EQWtNWDj/Fx7KHCvHlaOlBYCss8V697m6f
+         4b4nWsytHdutpoPc9gTfX7eitI09BZqRAB2k0WmYVHIV+N/s3rjk4FA5b4YuY1acgcDA
+         aeFyZSj9ijKAPwx+WonIUyPX4jDR5CHJK/EQJJDNwa0qGzOuhUU4K8LzR74BsPs7rapr
+         UNCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVefRH9GZ/dSeVlwPtzzQva4GBIrLNm9IOjPSVxvuVQ9X9nql0OezbLpxL2x00UzVIaoRqny7MrJLO3lq4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBldezMgrB1tEJre93qY9m8nbXJZIZV12PBdxx1AaA/Xj2K2G9
+	fK+uHyDVwq5zHxHlxM0XT3TShNFb37cmNMfpR6S0+ZnuqkJbAlMgxOfwQCVobmiydReAYJoV+pu
+	FyQ==
+X-Google-Smtp-Source: AGHT+IHNrLc33ieWWd9lzB1MKJLDyAAk3DCw6aLfcazPx/Bis1ZADTxM0+P1k3xYxg9qRJbX1JBtXUP4GyI=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:86cd:0:b0:e0b:ab63:b9c8 with SMTP id
+ 3f1490d57ef6-e17a865a104mr26901276.11.1724784765414; Tue, 27 Aug 2024
+ 11:52:45 -0700 (PDT)
+Date: Tue, 27 Aug 2024 11:52:43 -0700
+In-Reply-To: <2024082759-theatrics-sulk-85f2@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SN7PR12MB7371:EE_
-X-MS-Office365-Filtering-Correlation-Id: bd328bbd-3d16-4343-dc9c-08dcc6c8e338
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?b0luaEZUcHJwTWNNeW9jSjZPV25wZ2FNSnFxZWFDM1FkRHZwT0doYnpXVWZv?=
- =?utf-8?B?anQ2SER3bndDenUxd09XaDhJdjFvbnZ3cUpRZjRxektoUVRXd2tiWDk4QlJT?=
- =?utf-8?B?NzhoYzN4RXVGQ1lDeXQ2dTBHUEhsaHNSUDA2Z3I0OHp5TjUzRGtvcmVCeVNa?=
- =?utf-8?B?YzFrUlZBakRkN20rMVlaL2EwU3ZyeHJHWXdub09ZZ2NTRVJSbHh6K2l6Y252?=
- =?utf-8?B?NWhBTzhIb0JGd0JCa3ZQeFEvWnliVTZTYUJzQjcyek5hMzl0UUdSdGJ5MkpD?=
- =?utf-8?B?THlDbU9UMEhkQXJGRnpvb3ZyeVFQSDRFbWFZNkFza3ZkYWZzbGZmcDdQNHhR?=
- =?utf-8?B?anh6NlVIcUlsTkFQWFR2WVZTM0pzUzNVdEladmQyaXlNNTRla0NLajN5RndO?=
- =?utf-8?B?QVpTdkVLNGZ5RW5tcXpGbHF3UUc1elRsTnlON0l1YzBQU0Zsck1VTWRPd3p0?=
- =?utf-8?B?VThsUnloNG00cGJUWk5hTHdRblVQTUFaMFkvbUg5Z1JGd2RUY2J0a2xYQk9m?=
- =?utf-8?B?dVArL3NVNHF2cThTNTlRVk9oUHJ3OUJQM1hIbzRPaStBeVZGZ0JzeHZIUEE1?=
- =?utf-8?B?WXBxWnlRZExGSHphVFBMeWtqMEJmamw0RHZxVUZLT3RUU0MweS94N0VnZjQ5?=
- =?utf-8?B?cWlkU0Z5UlpBazkwOE96cEhCVkdHUENaUFEvT3F2NVVFa05RRlBXOFVWanp2?=
- =?utf-8?B?N21NdWpuWDN1b1h0U2tET0tVOHZxcHZsNmJobzExNmhxVHRjSXBya1FHSzc5?=
- =?utf-8?B?SXdaNHk4NHNWWEZyR1UxdU9tNXo1S2RZcTgzR040WElWcjJGM241R1BqbW1Q?=
- =?utf-8?B?V1RpWENLc2h0dkw5OWdBcGhwcEhabDZ6OFp5VnNkVm1OMG5iUmR2c01uMlJk?=
- =?utf-8?B?ZGVuQWRJejVnS3RQVVFJeE5PWEh5NmJQSVg0TWJ1TEZmM2RkU2hHWmhmOFhQ?=
- =?utf-8?B?ZVpXZ0hGWGdKOTNtRjhLTVU0VFhGUkZOTHlBRm9ML291NzhoVDF5eXQ0cnkx?=
- =?utf-8?B?ZnA5eDl0NHZlUzR2MURZa21QTG5odngxOGc0WERWWE51OXBGOUFGNEtYV08r?=
- =?utf-8?B?OVJyZFVsekZDbmtjTngxeHV1Q0NtZUJFeE4zcWZpTjk0ZVdjRDJWcC9kQjJG?=
- =?utf-8?B?Sng0Yk9kMGt6Wng3aTI4d2ZGaXExYnEvMVhnSlFNNjNHWG5GUWRHSVRpNTVO?=
- =?utf-8?B?M3FVWXEwSGdReUFPNm9RcjVyN3NMVk1DSVdVdGN0eHBxclo2VTl5Ylhydm9S?=
- =?utf-8?B?NGNoM3JZcWJKL1YwdWUwa1pZaVJ6RG1la1AyWWs3VXJFMWYvaEFLanJJK0tv?=
- =?utf-8?B?SUc5OEE4cjdKY3N2L0hGUUM2Yy9SQ25iZzY2YUsyUDBuQjlVWUs5dTNoa1pB?=
- =?utf-8?B?cnBpNGlXOVVBT096YklvNVVUcTN6RVREOFJUaEp0NW5ZZkd1aDdjQWNXY3Iy?=
- =?utf-8?B?OTRKTVU1cVdRRW1UcUFOaUpKTmNtTktPYmdhcXpyNmFJZVBTdnFCM25vaDRY?=
- =?utf-8?B?SlplQllXcHdTR1lLbEVCdlhyQ1FxeGlsT1BLUXNBK2ZvY1BlSGNCemN5QlN4?=
- =?utf-8?B?Ukhvd1JvUWlPUVl2ZDB4WDZFT3RJd1cxVmxOV0hRVG1wQlpoYklRajZXdEdW?=
- =?utf-8?B?bEkwbU1idkYvOHg2dEsvZnlCVkJxSXgxMXQyNjhNRm9FeERZekNIdXlBSnpm?=
- =?utf-8?B?YTU0c1dSdzdGMjdqd0NuMmxDZVNUa0JyZWVkZzlsZVhTM1FjSXR4a0RtSlJD?=
- =?utf-8?B?SmpXd1NpUjZkUk9QcllWRUhPN1Y4eEFPWnRnQ296aDR5SjMrajk3eVVUNmlC?=
- =?utf-8?B?T0U2clEydUhFY2hhcUJKQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Rk1VVmRvcVl0QWZ2bEZob3VrdEFHY1ovbkx0Vjh1ekVLcktGaEF6SVN5Zy84?=
- =?utf-8?B?ZmZiUE5VT2xta0tHVG9ONllkTlB3Um5Bb2RaOXJyMDdOeTQzZlJseHF6SmE1?=
- =?utf-8?B?aW5WY0d3Si9zamNSTkFSWDVBbjhta2RhMkZ0TzJxemEzZjN4Z3hhZFBhaVlj?=
- =?utf-8?B?MGtYRURLT1Zyd3NHb3dmMm5wc1MwbithOWxPVHVaWE9OaWNsS3VHcU55NHp0?=
- =?utf-8?B?anhJTmxqZTgrV2FKTHA0UDhmd2lJckJFOTduOUcwSWpIVFBIZU1BcnNYRlhI?=
- =?utf-8?B?YjIvWEc4eFp5RlI4UUFCd2lQRTBlSXhMRlRnaTl5b29tVlZBOEhHSmt3U2FT?=
- =?utf-8?B?TEFKTnZjMDRUSXBBaFU2SlQ0WWdrc1FsRnREUDVaSGlacUF2WG4yZmpQRHN2?=
- =?utf-8?B?a0lEWVF2NkhTSlZRQythUG9RT1V0bGxEUDgvTGllMWtXdVlkbm0zZm1ZZGN0?=
- =?utf-8?B?LytuUzljb3hOSXYvV00wRWUwSDhkOU5XMmJSNk5MU0VUM2hWdEw4Y1VuYk9h?=
- =?utf-8?B?OEpRU2pDbU9nd1UwNC9zenRrM0wzSHk2dVdjQUF2WFMwZDZaZDlUZmkrekxP?=
- =?utf-8?B?Zy9nNW5vNDhtZHMrZUo1SmI2R00xN2RMMTFIUjlJZDdINy9pczZpTnJEbFM0?=
- =?utf-8?B?RVNraWxRM3BjYUg3NlZtbE5mcFArWWg3bFVtOHJXWlI0OExHMVBqTXNsUUtn?=
- =?utf-8?B?bG5OeGZrR25LQWhMOWM4OGdxM3FXK3ZVNGtmQ01NR0c2Y1Y4a2RIczFkOWZQ?=
- =?utf-8?B?Z1NxU09LejZIOWdBVnlNWXQrWWVveEZtOEQwMThiMnVQMzlRcUhORkVPQ2E2?=
- =?utf-8?B?UmtLOFhGb2lzWlVyci9vVGprQmt1Qld5U2RzdU5NbHdBR0hhOEIwZXltUEt1?=
- =?utf-8?B?RytJaVVYUVVkZk5tNE92b3JyTkxqell6ZXpWcU5VMEhwUmxnTVVxZVNHNGh3?=
- =?utf-8?B?T3RBV1VtZnIzcVhSZjhObUpVSUdDMXNXa3NXdzcvcFhuSTVEWmtaQXVPMTA3?=
- =?utf-8?B?UkdBM0hhNXpVcy9hSTJ4N2hFTFZrQ21Da2tEZjBIZnJ1YTNPdCtSQnJLTVkw?=
- =?utf-8?B?RisxcnFSUTZITEIzQ251NTk2eE1MbFJTMCtldjB5UDhjcWxKU1piK2pHcTVk?=
- =?utf-8?B?Y0hFWVhpNHIzM3N2Q0JWbUJvQzFuSVMxaTZwWThlcERYcmx3QUJ5U0FiMG5p?=
- =?utf-8?B?Y3ZEL2crcHpwZDhBWWtaUmo4d3NzWVhuVm1FeXRSZ1lyTHZqZGxBalFRWHZH?=
- =?utf-8?B?UUxaU3BqZW1kZWJPdUVIWE9FRXkva1RQYlZQMDh4ZzJua3ltNUx3Y3dCY2tH?=
- =?utf-8?B?VWVUYXpmWjF5S2I5MVdlS1pWbEhsakdKOHQ2V3VNeTlMY3d0Q0RoVTdVdDBp?=
- =?utf-8?B?NENoS0poMHpOcDVZVkgxb3NIVFBuMk4zUlZBRTBqZk9JNHJ1SlY2RWZOL3l3?=
- =?utf-8?B?bVZ3STAvVW5DZ0xnM3lPNHg0NWN6d0xqRlg1YSsrZnV4d3p5b0FydjljYTNQ?=
- =?utf-8?B?cnBVNmNXNEFMNEhXcThsNUQxaXd0a3l5MUxud3FzME4zM040SVBUM3lIWUVH?=
- =?utf-8?B?MTV4eVI3QWY4cW5zYjVaMXJFaDRHY0txL0o3eCs2SVFYNlRWWk9kTldKdTFz?=
- =?utf-8?B?M1U1WGdNRExoMFdqdnJaNWd2WXo2RWt1YkxsbUNEbCtVNHE0UXYyTERaOC9K?=
- =?utf-8?B?SmVieWR4dzBDN0hrdXdJbVFLZERuOVdmYks2YWRGSFhsbXQ0WTZpNWdyVnl4?=
- =?utf-8?B?N21kOUEvQkwyUkh4N2pEV254dmJwOVJwaWx5Q3pQZ3YxMlc5VGk4REhzdHZ6?=
- =?utf-8?B?Nk94RjRpY2lwM25YVDYzdC9NZUZsLzRIRXVqbnU4eGFOMElhVnNBWEtSV3dq?=
- =?utf-8?B?b21kMjEvakJVWkZxbjNUMmJXVmp1VEl1cDVEblBVeXpJa2dtVFdHOWN1NW10?=
- =?utf-8?B?Qi8vL0RMMnhNdEJsUmQvMWNUaU1Pdm16dFk2VmdwdFh2MzlKL1UyMFBHRjBm?=
- =?utf-8?B?cGd6NjhJUFBySjFoMTZXcEdIQXkvb1A1eGtGVEQzRmpLMHRNNVQ4cHJiV1VN?=
- =?utf-8?B?dzNGKy9jZ0VJUmRFOERyQU91eTQ3QWw3OEw4cFNMWTNpRWNKdExXa0JBcW81?=
- =?utf-8?Q?lDXXQa0j4vaQMeknQ6HZXApbT?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bd328bbd-3d16-4343-dc9c-08dcc6c8e338
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 18:48:48.9012
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2nh8o8f3mRUnwRWxcU2vLp1vxqS86nfPIbh1QflRauAAWGZEnwDw1GNd4Yn7K7rn7o4gUeRIRi+EGDK0sW30aQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7371
+Mime-Version: 1.0
+References: <ZsSiQkQVSz0DarYC@google.com> <20240826221336.14023-1-david.hunter.linux@gmail.com>
+ <20240826221336.14023-3-david.hunter.linux@gmail.com> <2024082759-theatrics-sulk-85f2@gregkh>
+Message-ID: <Zs4ge62HmNkF4TGG@google.com>
+Subject: Re: [PATCH 6.1.y 2/2 V2] KVM: x86: Fix lapic timer interrupt lost
+ after loading a snapshot.
+From: Sean Christopherson <seanjc@google.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: David Hunter <david.hunter.linux@gmail.com>, dave.hansen@linux.intel.com, 
+	hpa@zytor.com, javier.carrasco.cruz@gmail.com, jmattson@google.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, lirongqing@baidu.com, 
+	pbonzini@redhat.com, pshier@google.com, shuah@kernel.org, 
+	stable@vger.kernel.org, x86@kernel.org, Haitao Shan <hshan@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On 8/27/2024 09:50, Gautham R. Shenoy wrote:
-> On Mon, Aug 26, 2024 at 04:13:53PM -0500, Mario Limonciello wrote:
->> From: Mario Limonciello <mario.limonciello@amd.com>
->>
->> If the boost ratio isn't calculated properly for the system for any
->> reason this can cause other problems that are non-obvious.
->>
->> Raise all messages to warn instead.
->>
->> Suggested-by: Perry Yuan <Perry.Yuan@amd.com>
->> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->> ---
->>   arch/x86/kernel/acpi/cppc.c | 8 ++++----
->>   1 file changed, 4 insertions(+), 4 deletions(-)
->>
->> diff --git a/arch/x86/kernel/acpi/cppc.c b/arch/x86/kernel/acpi/cppc.c
->> index 1d631ac5ec328..e94507110ca24 100644
->> --- a/arch/x86/kernel/acpi/cppc.c
->> +++ b/arch/x86/kernel/acpi/cppc.c
->> @@ -75,17 +75,17 @@ static void amd_set_max_freq_ratio(void)
->>   
->>   	rc = cppc_get_perf_caps(0, &perf_caps);
->>   	if (rc) {
->> -		pr_debug("Could not retrieve perf counters (%d)\n", rc);
->> +		pr_warn("Could not retrieve perf counters (%d)\n", rc);
->>   		return;
->>   	}
->>   
->>   	rc = amd_get_boost_ratio_numerator(0, &highest_perf);
->>   	if (rc)
->> -		pr_debug("Could not retrieve highest performance\n");
->> +		pr_warn("Could not retrieve highest performance\n");
->>   	nominal_perf = perf_caps.nominal_perf;
->>   
->>   	if (!nominal_perf) {
->> -		pr_debug("Could not retrieve nominal performance\n");
->> +		pr_warn("Could not retrieve nominal performance\n");
->>   		return;
->>   	}
->>   
->> @@ -93,7 +93,7 @@ static void amd_set_max_freq_ratio(void)
->>   	/* midpoint between max_boost and max_P */
->>   	perf_ratio = (perf_ratio + SCHED_CAPACITY_SCALE) >> 1;
->>   	if (!perf_ratio) {
->> -		pr_debug("Non-zero highest/nominal perf values led to a 0 ratio\n");
->> +		pr_warn("Non-zero highest/nominal perf values led to a 0 ratio\n");
->>   		return;
+On Tue, Aug 27, 2024, Greg KH wrote:
+> On Mon, Aug 26, 2024 at 06:13:36PM -0400, David Hunter wrote:
+> > 
+> > [ Upstream Commit 9cfec6d097c607e36199cf0cfbb8cf5acbd8e9b2]
 > 
-> Aside:
-> perf_ratio is a u64, and SCHED_CAPACITY_SCALE is (1L << 10). Thus, is
-> it even possible to have !perf_ratio?
+> This is already in the 6.1.66 release, so do you want it applied again?
 > 
-> Otherwise, I am ok with this promotion of pr_debug to pr_warn.
+> > From: Haitao Shan <hshan@google.com>
+> > Date:   Tue Sep 12 16:55:45 2023 -0700 
+> > 
+> > When running android emulator (which is based on QEMU 2.12) on
+> > certain Intel hosts with kernel version 6.3-rc1 or above, guest
+> > will freeze after loading a snapshot. This is almost 100%
+> > reproducible. By default, the android emulator will use snapshot
+> > to speed up the next launching of the same android guest. So
+> > this breaks the android emulator badly.
+> > 
+> > I tested QEMU 8.0.4 from Debian 12 with an Ubuntu 22.04 guest by
+> > running command "loadvm" after "savevm". The same issue is
+> > observed. At the same time, none of our AMD platforms is impacted.
+> > More experiments show that loading the KVM module with
+> > "enable_apicv=false" can workaround it.
+> > 
+> > The issue started to show up after commit 8e6ed96cdd50 ("KVM: x86:
+> > fire timer when it is migrated and expired, and in oneshot mode").
+> > However, as is pointed out by Sean Christopherson, it is introduced
+> > by commit 967235d32032 ("KVM: vmx: clear pending interrupts on
+> > KVM_SET_LAPIC"). commit 8e6ed96cdd50 ("KVM: x86: fire timer when
+> > it is migrated and expired, and in oneshot mode") just makes it
+> > easier to hit the issue.
+> > 
+> > Having both commits, the oneshot lapic timer gets fired immediately
+> > inside the KVM_SET_LAPIC call when loading the snapshot. On Intel
+> > platforms with APIC virtualization and posted interrupt processing,
+> > this eventually leads to setting the corresponding PIR bit. However,
+> > the whole PIR bits get cleared later in the same KVM_SET_LAPIC call
+> > by apicv_post_state_restore. This leads to timer interrupt lost.
+> > 
+> > The fix is to move vmx_apicv_post_state_restore to the beginning of
+> > the KVM_SET_LAPIC call and rename to vmx_apicv_pre_state_restore.
+> > What vmx_apicv_post_state_restore does is actually clearing any
+> > former apicv state and this behavior is more suitable to carry out
+> > in the beginning.
+> > 
+> > Fixes: 967235d32032 ("KVM: vmx: clear pending interrupts on KVM_SET_LAPIC")
+> > Cc: stable@vger.kernel.org
+> > Suggested-by: Sean Christopherson <seanjc@google.com>
+> > Signed-off-by: Haitao Shan <hshan@google.com>
+> > Link: https://lore.kernel.org/r/20230913000215.478387-1-hshan@google.com
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > 
+> > (Cherry-Picked from commit 9cfec6d097c607e36199cf0cfbb8cf5acbd8e9b2)
+> > Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
+> > ---
+> >  arch/x86/kvm/vmx/vmx.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> > index 87abf4eebf8a..4040075bbd5a 100644
+> > --- a/arch/x86/kvm/vmx/vmx.c
+> > +++ b/arch/x86/kvm/vmx/vmx.c
+> > @@ -8203,6 +8203,7 @@ static struct kvm_x86_ops vmx_x86_ops __initdata = {
+> >  	.load_eoi_exitmap = vmx_load_eoi_exitmap,
+> >  	.apicv_pre_state_restore = vmx_apicv_pre_state_restore,
+> >  	.check_apicv_inhibit_reasons = vmx_check_apicv_inhibit_reasons,
+> > +	.required_apicv_inhibits = VMX_REQUIRED_APICV_INHIBITS,
+> >  	.hwapic_irr_update = vmx_hwapic_irr_update,
+> >  	.hwapic_isr_update = vmx_hwapic_isr_update,
+> >  	.guest_apic_has_interrupt = vmx_guest_apic_has_interrupt,
+> 
+> Wait, this is just one hunk?  This feels wrong, you didn't say why you
+> modfied this from the original commit, or backport, what was wrong with
+> that?
 
-You're right; I don't see this is possible.  I'll tear it out in a 
-prerequisite patch in v2.
+Gah, my bad.  I told David[*] that this needed to be paired with patch 1 to avoid
+creating a regression in 6.1.y, without realizing this commit had already landed
+in 6.1.y.
 
-> 
-> Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
-> 
-> --
-> Thanks and Regards
-> gautham.
+So yeah, please ignore this patch.
 
+[*] https://lore.kernel.org/all/ZsSiQkQVSz0DarYC@google.com
 
