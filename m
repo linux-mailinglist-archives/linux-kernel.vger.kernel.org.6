@@ -1,153 +1,104 @@
-Return-Path: <linux-kernel+bounces-303628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5108961213
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:26:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12ADC96122D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:28:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13B651C22D81
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:26:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C65EB293A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674DB1CDFCE;
-	Tue, 27 Aug 2024 15:25:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCE81D0DE4;
+	Tue, 27 Aug 2024 15:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aa5dKryM"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="tky1Hq3+"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753C51C6F51
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 15:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5D21C93AE;
+	Tue, 27 Aug 2024 15:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724772331; cv=none; b=fKA7Ex1A5Zw24zTBdO8mmQdW5oqeHO73M1A70RBvuqkDbEknJA9T9Q/gh4h52My3EqdrAKlOjMk6xeWMWXFgwg4CPmTVHoCLNVmR/YI9QeFNzWE0IxeDRomYpGzLyYWfRo3C37sAKwf4KeJh0HEEDjqGk9gHTjRWjpBeVpMyhg0=
+	t=1724772365; cv=none; b=ibdaggXvhs4incSPq8kC8UywAOCZYUimpm+uu+TKpeXGF53MCb7DI9swTeyLtXPgQFPFALSiFPeEaorcpLB64TfBXQqdUZHaVYpvUYaOMkkpaAWNzwhlgxvix8YEf4JfIh6PXyktsdmy4/Sb0OQSVwLpwWlLFZ+pG5GZUCFAPRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724772331; c=relaxed/simple;
-	bh=g8PzivK/LOA7LwMV2nTLLVuvJxR4cEPe+e5NQo45z6w=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=sExmJb9prchCBMI3Nll+OG7LWLqvYnSFwkkdbwkxL4pmiLp1bzYouFpuf/bsb3Bqs0q540Cpl+qwk7WRa+HAl0mMF426t15jQyHTPj89LFgAuJIXcoiMpxbo2m+9vN6OkA482aR0zTdfK+euCztcYr0dUhR+khrWnRfQzJgqUU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aa5dKryM; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5342109d726so3597064e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:25:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724772326; x=1725377126; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nrb5Vc3qSwLA43ufwjhdVQVpmhMVD2NR4A5ewZ/IEPQ=;
-        b=aa5dKryMYJsfYdjJniNlM03TLiezYqKR3qaouTy1CDUNjN/dwGjiRXkqKsAr4brOEP
-         2yiGHWMBh9VXLGeXasSejxKBi3+dZlsOYqxsoiPNy1k9iDV39lc79BvVthH4UolLGHMB
-         AdGLumz/vfKdXEku4fTFrK/B/DSb5gRyOORfsstUSTZAbAm0okuWi7f8SRPPxinMw0No
-         PJvA9Yb25KEJDPPRNzmmh5j5TViewT3hHEwY2wjM9U1jtoVDSJKKHuMeap9pmxySnsfJ
-         sPwOLYyn+fohYDqGniI+B2UbLuqKVCd1IGbM8+LtLzRJ9LbtoRaZaJRnyaKYo2Wr/V0c
-         koYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724772326; x=1725377126;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nrb5Vc3qSwLA43ufwjhdVQVpmhMVD2NR4A5ewZ/IEPQ=;
-        b=CAj4X6DyknzLRjGpymIrPZ8/TQgRbGahI58gkffAa739HBUGwiRpnRnX5sBFcs4sFT
-         NuJVsqgQ7cN7FyhhrpEP4Rgnr+xT5TjZtWzXGJ35XpRJ3SaEU/Oawy2SISxUxur8vHyv
-         eBmyLtV6IB/3A+h11XcZFqsdGJFe5nWEWmNc0yIL3X2PkfN0txLdK80RBY3GD34rBMsN
-         +XnnhtNjtBJcDVoPNwF7ILhR8rsdYhFuju1zldafhFvDe0KQjl6GyNwZa1giL9q4g7/n
-         emtSiD8KB1tw1zyM4OLwPl0AMl/skNcgnqitmIoct8P0MlPXl0PnpVyjCxmtyRtyvceV
-         66Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCXtgLeNP0SZo9dUf7Dhq5rGGCaQWPEP0YMDb3W5aGR31LVBMhPIAFe8kSX0rU8j1LCn2jpDn+sei3jUWbo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNE9qypdohQH7T7By3MzT0htCWdygxqYxnmuT+l16teCfp7Hb7
-	VIGtFWV8ybdjsz8F9cURwU/9I3eSr0D54TFahcQkMLbArOFej/dUK2DBUbuiSsjVpcyuf7MYniO
-	MQar3xLXoE2EMyYlKvxyassMNx5Kd5fUaDJ+4KkDbR8i3MbzEkLY=
-X-Google-Smtp-Source: AGHT+IH1xiFBwEH0y6vYTLzLWKM2ZFp4UQ78DvCJUlStFVOLhnp4iZFm3fkMY7odrrlxKwE6UBfkjJxYmnJ0rIj3h90=
-X-Received: by 2002:a05:6512:3b06:b0:52b:faa1:7c74 with SMTP id
- 2adb3069b0e04-5344dd6b5b6mr1295153e87.5.1724772325851; Tue, 27 Aug 2024
- 08:25:25 -0700 (PDT)
+	s=arc-20240116; t=1724772365; c=relaxed/simple;
+	bh=2e4vyf28xxH0Hr6la1wTNPqSQ1+adyxwjIEbYSuV2ZQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=TMJPNg5DnIfzFmyjhlo0LOKfLsjQBCgE7HSo1QQ0+zTiMn+rSqNY7pHVM2mBA828GFGO9R2L6yL/ApPZfLt45TXgUJN+d9a6TgkoYIwXV50K3Ei4Uns1JkJbQ8l9ABG/mzPBpqU+S4CHjMFybcZu6RrzeQKq/5twg6lqWvduVr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=tky1Hq3+; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1724772360;
+	bh=2e4vyf28xxH0Hr6la1wTNPqSQ1+adyxwjIEbYSuV2ZQ=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=tky1Hq3+/fxIo0PR0yLhX4NeR2JZSc/FpDc/+iBEYIVZx4tKdGLw00kqmM651bNzx
+	 sd/ivrIlYFCsOdOLZ7rW7yGaUt5cSBkW2IUp7YpXHJZ7zqNPzqlNN6f+cUB8uQtxj4
+	 agBtu0KwAJHvWLvPv1OlQD8y27tatHW9ABsom+58=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Tue, 27 Aug 2024 17:25:16 +0200
+Subject: [PATCH 5/5] fbdev/efifb: Use driver-private screen_info for sysfs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 27 Aug 2024 17:25:15 +0200
-Message-ID: <CACRpkdbWs10eU-jSiN9H6UNkTNA7K8PS3gAfUxe+T6dktJsSyA@mail.gmail.com>
-Subject: [GIT PULL] pin control fixes for v6.11
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240827-efifb-sysfs-v1-5-c9cc3e052180@weissschuh.net>
+References: <20240827-efifb-sysfs-v1-0-c9cc3e052180@weissschuh.net>
+In-Reply-To: <20240827-efifb-sysfs-v1-0-c9cc3e052180@weissschuh.net>
+To: Peter Jones <pjones@redhat.com>, Helge Deller <deller@gmx.de>, 
+ Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724772358; l=1194;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=2e4vyf28xxH0Hr6la1wTNPqSQ1+adyxwjIEbYSuV2ZQ=;
+ b=+Pk0n0e5P2rpmmg2vlrNRCkM2i9FDYVDXSk03eilvNcK3JU9PZrT56fs06i4gUziwWgueLNAH
+ XoyCQh/LzQbAT60VaYMbFxlv0u10WFRv1JQti4gSy+KJhNvN/dOi9qd
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-Hi Linus,
+Since commit b9cfd1d271ab ("fbdev/efifb: Use screen_info pointer from device")
+efifb uses a local copy of screen_info and applies its modifications
+there. Adapt the sysfs attributes to also work with the custom copy
+instead of the unmodified platform data.
 
-here are some pin control fixes that have been stacking
-up in my tree. All driver fixes!
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+ drivers/video/fbdev/efifb.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Details in the signed tag as usual.
+diff --git a/drivers/video/fbdev/efifb.c b/drivers/video/fbdev/efifb.c
+index 7215973ef602..1f86a07bf292 100644
+--- a/drivers/video/fbdev/efifb.c
++++ b/drivers/video/fbdev/efifb.c
+@@ -304,7 +304,7 @@ static ssize_t name##_show(struct device *dev,				\
+ 			   struct device_attribute *attr,		\
+ 			   char *buf)					\
+ {									\
+-	struct screen_info *si = dev_get_platdata(dev);			\
++	struct screen_info *si = dev_get_drvdata(dev);			\
+ 	if (!si)							\
+ 		return -ENODEV;						\
+ 	return sprintf(buf, fmt "\n", (si->lfb_##name));		\
+@@ -369,6 +369,8 @@ static int efifb_probe(struct platform_device *dev)
+ 	if (!si)
+ 		return -ENOMEM;
+ 
++	dev_set_drvdata(&dev->dev, si);
++
+ 	if (si->orig_video_isVGA != VIDEO_TYPE_EFI)
+ 		return -ENODEV;
+ 
 
-Please pull it in!
+-- 
+2.46.0
 
-Yours,
-Linus Walleij
-
-
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b=
-:
-
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v6.11-2
-
-for you to fetch changes up to 128f71fe014fc91efa1407ce549f94a9a9f1072c:
-
-  pinctrl: rockchip: correct RK3328 iomux width flag for GPIO2-B pins
-(2024-08-24 16:39:51 +0200)
-
-----------------------------------------------------------------
-Pin control fixes for the v6.11 series:
-
-- Fix the hwirq map and pin offsets in the Qualcomm X1E80100 driver.
-
-- Fix the pin range handling in the AT91 driver so it works again.
-
-- Fix a NULL-dereference risk in pinctrl single.
-
-- Fix a serious biasing bug in the Mediatek driver.
-
-- Fix the level trigged IRQ in the StarFive JH7110.
-
-- Fix the iomux width in the Rockchip GPIO2-B pin handling.
-
-----------------------------------------------------------------
-Hal Feng (1):
-      pinctrl: starfive: jh7110: Correct the level trigger
-configuration of iev register
-
-Huang-Huang Bao (1):
-      pinctrl: rockchip: correct RK3328 iomux width flag for GPIO2-B pins
-
-Konrad Dybcio (2):
-      pinctrl: qcom: x1e80100: Update PDC hwirq map
-      pinctrl: qcom: x1e80100: Fix special pin offsets
-
-Ma Ke (1):
-      pinctrl: single: fix potential NULL dereference in pcs_get_function()
-
-N=C3=ADcolas F. R. A. Prado (1):
-      pinctrl: mediatek: common-v2: Fix broken bias-disable for
-PULL_PU_PD_RSEL_TYPE
-
-Thomas Blocher (1):
-      pinctrl: at91: make it work with current gpiolib
-
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c   | 55 ++++++++++++------=
-----
- drivers/pinctrl/pinctrl-at91.c                     |  5 +-
- drivers/pinctrl/pinctrl-rockchip.c                 |  2 +-
- drivers/pinctrl/pinctrl-single.c                   |  2 +
- drivers/pinctrl/qcom/pinctrl-x1e80100.c            | 35 +++++++-------
- drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c |  4 +-
- 6 files changed, 57 insertions(+), 46 deletions(-)
 
