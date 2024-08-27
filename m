@@ -1,142 +1,162 @@
-Return-Path: <linux-kernel+bounces-302827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39CB69603E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:03:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1803C9603E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B95B1C220AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:03:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C36432837B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49232198E71;
-	Tue, 27 Aug 2024 08:03:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82185197556;
+	Tue, 27 Aug 2024 08:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vtq05eLL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="WSGKO7lo"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12849196D98
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA0719581F
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 08:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724745790; cv=none; b=XHK3cbium0oIXjJePmF1bZbWYsXhjbv0gBNMqf0ALlcCTKISA3zM9G9AWk/XWqgojJEoyy7P7oulPpWxlqc1HA82pKPwI3uku2x+V212xbn1qjIV54W2BKgIy021V7j/UW3pM1+HDD3ZVw+cV7lAOLhSeRg6nXdwwuD+JF7U4oU=
+	t=1724745788; cv=none; b=TEcz3GeEXtqBSwzsB14bPQOKUa0DjHV5g4wOrDH9M1ssF123FXHtMOCMIJJ7q2Klymn/OJXZIw8RdJDoKCJUXcOVrh9202Y6S+NLpTSmQMIo25mJCmW8VGu3ntGWDRoquFxgWmYG6m39Pa9WK7d6E/zo7poDKdIpLMMSRZM88PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724745790; c=relaxed/simple;
-	bh=4MFCsHCbSfsLzCMTMa6Dj5HQcFVkxz2Gp/cD9XJHo4w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lkQErXPRE4BRpIXOeQADT8iIuF8e/c7etERW+zW2rJJ3iwgp5XVO2L6gGa81KgZUASrk/As1N5FhKWX48XnXqo3sVO3sMe2Zr9dpjDBhj57DMmCfoE051SoXO0YHrl7y4sZgc/Uldh+UB4N9Rxh2lq7U+9SBRfCocJ3yTLNOT98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vtq05eLL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724745787;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ffMGKoiHs0yZ815x5dyOzgYe6p4XSSyZPbsnLGfo48c=;
-	b=Vtq05eLLXhLd9hWSD+ttDlp5pFZZH32Op/LXc7KMxuXbaVW7qAETYQfivAa84heOBxAgTO
-	Z6hainP3vgWScFSWdccx7dS6RKa+eEa3r94wr78I9AL6FNoXQ3jL/GfXegEFvFm1nhLQVj
-	yvgsTup7pnWFs4xK8aMVy7LSnDHz5dQ=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-252-txYPOakSO0mefbd4ZHGq7Q-1; Tue, 27 Aug 2024 04:03:06 -0400
-X-MC-Unique: txYPOakSO0mefbd4ZHGq7Q-1
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2d406dc42f4so5347690a91.3
+	s=arc-20240116; t=1724745788; c=relaxed/simple;
+	bh=dnoHKm2yvxPH3VTkgPHnEhhPPekUB87k1C9//rmT6Zg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JAWc8/WE6oLjhBUyPMjSbEzOUdVaC2nQHS6rkOUlD2xKwH/mq9Ky47CCyhsd46wozJ8nNC+Hz0DTPB/KKCjztrVGLtvC/OhT4uHyHKeNcSQCHf9PslQbRukSqdgzG/ppYHaqGlPIJiwFAJEwijieDgZuEf/q9E0JHr2gNrKCRpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=WSGKO7lo; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20202df1c2fso40221585ad.1
         for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 01:03:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1724745786; x=1725350586; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=STq2SksYEpeE5OUyyw6K3VOvxFlLjRrHwh+2IswLxOg=;
+        b=WSGKO7loWDL1iJpVlAaNTr75V7Ghhm1S+6eJGP9RVUtqg1U0ygzvq7lXrzhsGGKG8d
+         uYJBGBn+9uI5QFXVyWy/8RO5SFSca6ctHfvFHnqh1gtHwvUfrA9dqgq+pUcKwp8+nqpD
+         4sRrK7HwlcDBfqQpZ1Tx22AW7pRGedNCLfrsazQ2w/Dd0+8GvDZBTwIsQySQ7f4jKzIo
+         ku1qxydULGm4U6MnnpsPttRXhcRuB67XM8G2ZXPk8aRiWFE8hx3HdN9RKXpl81A8WjUI
+         +bfThRSPxG27PKjemVifCISmmpxZTZEQiG+pRA4kCm7le3th048kqhUYdwc0M7cAmL9X
+         tZvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724745785; x=1725350585;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ffMGKoiHs0yZ815x5dyOzgYe6p4XSSyZPbsnLGfo48c=;
-        b=USBEcvC3JjJUIZz2E6Avrwj65Fcau2Ru5yLHI3aiOp3alObGonMn9KV2DHsDK4bJ6X
-         zADNH8nIhcPbB1i6YMGQudRpQNO47kVy5So1YISj1cR0Nc+Tj1NfmXVVNuQtvx/3suqE
-         xy1fim5+adnh082qtrOs/onQjXzfJcdX1wuWOTY7WGDoinw5MFGK9DDl6X7p48YexNpo
-         42QyFWAYCzTsxMn+KDdpYJS3Mo8ujkJ2WsU+QEfZ8JWINfSuQ9on9CUQxwfF0nirGUjt
-         RdoOQgjGVEyzOShyfi8iYaekrwtP5ONvMVihzDgR0DAx7HoY3pd0VSOssthYJrRtQhms
-         4LNQ==
-X-Gm-Message-State: AOJu0YwQIMyum66D7GA5kv2q+WAIT1LsUg4JmGDHBS0Mp355mzrERA7F
-	HaQA1l0xWGlRL9mIu8WqaWDuKzZphBkCLE8mhEUZHWGxqXQLi5CGhcThuvUxULEIpFGTcHjneeV
-	fnryIkHAysPx6iY6lxJaXczpjv/5U7M8BZVMYFqiMfRKUK3K59YMIGxbaN3Pysv3BsA+TQjJfDh
-	LZjXnfJW29LPX/PDZYhCin1QgTlzMM/V/xZyqd
-X-Received: by 2002:a17:90a:394c:b0:2c9:e24d:bbaa with SMTP id 98e67ed59e1d1-2d8259d4663mr2250659a91.27.1724745785051;
+        d=1e100.net; s=20230601; t=1724745786; x=1725350586;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=STq2SksYEpeE5OUyyw6K3VOvxFlLjRrHwh+2IswLxOg=;
+        b=OGkHxVBZ+FGGTtokpneb55o2xT1ER+Nian9W6V+ykEll73Q4imQTP3w25ovAUf9qFB
+         KZjEHjvJkNRnnQr4C19EgDFvqZdBxS3jkYAUEV26wnbxyrW6rF0W+MXyjCjA/229FKJK
+         3LS5iRKksXSoiAcRuCvMy9dbm+gC1iBLnWpQ2xiCCeRGTB4fzshGho+q996L5KIRdQ9x
+         N2sulkPukf8Dpi76TnLoOgnQWkyvnJ1HV0ybnOMdiRPQ70+8QcjsfqXs3vUorBzyMx8y
+         YT6pzODokdS4dAMRRMmeLX2Om3lRgjK5QNDxcjvOrHv9Cn86V2Y4OSubWLRWXGtF5oh1
+         ZYKg==
+X-Forwarded-Encrypted: i=1; AJvYcCXVSKIS6czVEemzu4vg8eAVUJvzh98Tsvn1eUqTw41edpcpHwaj141A8B5EbT8W4NinvIJhfkzyMipJSs8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBzPMOUakeD4Ss8yBS1fPgZb+rR21cNxPF3TuxFqGtoPq3KVZq
+	AwoeEfOf4TEbLq1dpnkCZ4qJpL3wPbq1bJAHW+3dZLidRZjIrtA+1ontsK20waI=
+X-Google-Smtp-Source: AGHT+IFragTajUnyMQOrCKm363S7w2u729C+2OQ5oQm9xpWjQFoR7pFUfYmaEOZUaiOLr9UG0AFueg==
+X-Received: by 2002:a17:903:1104:b0:1f9:d6bf:a67c with SMTP id d9443c01a7336-204ddcba2eamr40232545ad.5.1724745785897;
         Tue, 27 Aug 2024 01:03:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFCZ0HUn8POci1+wrCfZMzm6mS4ZeB+DcoBO5sIlJ8wwnpW4tPy+dcsyOe2ekJNdcposI/b7etWYGnF60z08I4=
-X-Received: by 2002:a17:90a:394c:b0:2c9:e24d:bbaa with SMTP id
- 98e67ed59e1d1-2d8259d4663mr2250612a91.27.1724745783995; Tue, 27 Aug 2024
- 01:03:03 -0700 (PDT)
+Received: from [10.68.121.74] ([63.216.146.178])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385567907sm78912905ad.12.2024.08.27.01.03.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 01:03:05 -0700 (PDT)
+Message-ID: <c63f8752-527a-4960-a58c-87b6685ac074@bytedance.com>
+Date: Tue, 27 Aug 2024 16:02:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827032218.34744-1-liwang@redhat.com> <8694fd51-67a2-45e2-bda4-f6816e1d612c@oracle.com>
- <CAEemH2djkWMtuTN2=Y5MXZVOACeCm32_Hh0zAJxH7X4Ss1MSuQ@mail.gmail.com> <d431a0a3-a12d-4da0-b8cb-dd349aee8d4d@oracle.com>
-In-Reply-To: <d431a0a3-a12d-4da0-b8cb-dd349aee8d4d@oracle.com>
-From: Li Wang <liwang@redhat.com>
-Date: Tue, 27 Aug 2024 16:02:51 +0800
-Message-ID: <CAEemH2d9uzDv030eYRs_hsu_PcbVTXR75YPyN4Ux2v9AVxd5Lg@mail.gmail.com>
-Subject: Re: [PATCH] loop: Increase bsize variable from unsigned short to
- unsigned int
-To: John Garry <john.g.garry@oracle.com>
-Cc: linux-kernel@vger.kernel.org, ltp@lists.linux.it, 
-	Jan Stancek <jstancek@redhat.com>, Damien Le Moal <dlemoal@kernel.org>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, linux-block@vger.kernel.org, axboe@kernel.dk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] Re: [PATCH bpf-next v2] net: Don't allow to attach xdp
+ if bond slave device's upper already has a program
+To: Jiri Pirko <jiri@resnulli.us>, Daniel Borkmann <daniel@iogearbox.net>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, ast@kernel.org, hawk@kernel.org,
+ john.fastabend@gmail.com, bigeasy@linutronix.de, lorenzo@kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ yangzhenze@bytedance.com, wangdongdong.6@bytedance.com,
+ =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+References: <20240823084204.67812-1-zhoufeng.zf@bytedance.com>
+ <Zsh4vPAPBKdRUq8H@nanopsycho.orion>
+ <6d38eaf5-0a13-9f85-3a5d-0ca354bc45d5@iogearbox.net>
+ <ZsiOxkd5KbbIIB6k@nanopsycho.orion>
+From: Feng Zhou <zhoufeng.zf@bytedance.com>
+In-Reply-To: <ZsiOxkd5KbbIIB6k@nanopsycho.orion>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-John Garry <john.g.garry@oracle.com> wrote:
+在 2024/8/23 21:29, Jiri Pirko 写道:
+> Fri, Aug 23, 2024 at 02:07:45PM CEST, daniel@iogearbox.net wrote:
+>> On 8/23/24 1:55 PM, Jiri Pirko wrote:
+>>> Fri, Aug 23, 2024 at 10:42:04AM CEST, zhoufeng.zf@bytedance.com wrote:
+>>>> From: Feng Zhou <zhoufeng.zf@bytedance.com>
+>>>>
+>>>> Cannot attach when an upper device already has a program, This
+>>>> restriction is only for bond's slave devices or team port, and
+>>>> should not be accidentally injured for devices like eth0 and vxlan0.
+>>>
+>>> What if I attach xdp program to solo netdev and then I enslave it
+>>> to bond/team netdev that already has xdp program attached?
+>>> What prevents me from doing that?
+>>
+>> In that case the enslaving of the device to bond(/team) must fail as
+>> otherwise the latter won't be able to propagate the XDP prog downwards.
+> 
+> Yep, I don't see that in the code though.
+> 
+> 
 
-> On 27/08/2024 08:35, Li Wang wrote:
-> > On Tue, Aug 27, 2024 at 3:20=E2=80=AFPM John Garry <john.g.garry@oracle=
-.com> wrote:
-> >>
-> >> On 27/08/2024 04:22, Li Wang wrote:
-> >>
-> >> +linux-block, Jens
-> >>
-> >>> This change allows the loopback driver to handle larger block sizes
-> >>
-> >> larger than what? PAGE_SIZE?
-> >
-> > Yes,
->
-> Please then explicitly mention that
+Thanks for your suggestion, I will complete it.
 
-Sure.
-
->
-> > system should return EINVAL when the tested bsize is larger than PAGE_S=
-IZE.
-> > But due to the loop_reconfigure_limits() cast it to 'unsined short' tha=
-t
->  > never gets an expected error when testing invalid logical block size.>
-> > That's why LTP/ioctl_loop06 failed on a system with 64k (ppc64le) pages=
-ize
-> > (since kernel-v6.11-rc1 with patches):
-> >
-> >    9423c653fe6110 ("loop: Don't bother validating blocksize")
-> >    fe3d508ba95bc6 ("block: Validate logical block size in blk_validate_=
-limits()")
-> >
-> >
-> >
->
-> I feel that you should be adding a fixes tag, but it seems that those
-> commits only expose the issue, and whatever introduced unsigned short
-> usage was not right. Maybe you can just get this included for 6.11,
-> where 9423c653fe6110 was introduced.
-
-Ok, we can mention that two commits exposed the problem since v6.11-rc1.
-I will send V2 including that. Thanks!
-
---=20
-Regards,
-Li Wang
+>>
+>> Feng, did you double check if we have net or BPF selftest coverage for
+>> that? If not might be good to add.
+>>
+>>>> Reviewed-by: Toke Høiland-Jørgensen <toke@redhat.com>
+>>>> Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
+>>>> ---
+>>>> Changelog:
+>>>> v1->v2: Addressed comments from Paolo Abeni, Jiri Pirko
+>>>> - Use "netif_is_lag_port" relace of "netif_is_bond_slave"
+>>>> Details in here:
+>>>> https://lore.kernel.org/netdev/3bf84d23-a561-47ae-84a4-e99488fc762b@bytedance.com/T/
+>>>>
+>>>> net/core/dev.c | 10 ++++++----
+>>>> 1 file changed, 6 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/net/core/dev.c b/net/core/dev.c
+>>>> index f66e61407883..49144e62172e 100644
+>>>> --- a/net/core/dev.c
+>>>> +++ b/net/core/dev.c
+>>>> @@ -9502,10 +9502,12 @@ static int dev_xdp_attach(struct net_device *dev, struct netlink_ext_ack *extack
+>>>> 	}
+>>>>
+>>>> 	/* don't allow if an upper device already has a program */
+>>>> -	netdev_for_each_upper_dev_rcu(dev, upper, iter) {
+>>>> -		if (dev_xdp_prog_count(upper) > 0) {
+>>>> -			NL_SET_ERR_MSG(extack, "Cannot attach when an upper device already has a program");
+>>>> -			return -EEXIST;
+>>>> +	if (netif_is_lag_port(dev)) {
+>>>> +		netdev_for_each_upper_dev_rcu(dev, upper, iter) {
+>>>> +			if (dev_xdp_prog_count(upper) > 0) {
+>>>> +				NL_SET_ERR_MSG(extack, "Cannot attach when an upper device already has a program");
+>>>> +				return -EEXIST;
+>>>> +			}
+>>>> 		}
+>>>> 	}
+>>>>
+>>>> -- 
+>>>> 2.30.2
+>>>>
+>>>
+>>
 
 
