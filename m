@@ -1,113 +1,122 @@
-Return-Path: <linux-kernel+bounces-303753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40F639614B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:55:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DB359614BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D3121C24087
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:55:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D003B1C23C19
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17151CDFCE;
-	Tue, 27 Aug 2024 16:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98D31CE706;
+	Tue, 27 Aug 2024 16:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="jDMGpJe4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hedFYLG2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE591C5788
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 16:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEB61C27;
+	Tue, 27 Aug 2024 16:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724777738; cv=none; b=gnLq+/29ScoEtW45wxZ4M3RIKk9cOQmavAV6/AkUa6vm+lPzBErI6am+rHH1bX5oK1fjnomPVBF4kinV+VVK3LvWUwG6lsa2qp9dLRWRXBYgMb+n8/RsYi+8In3aWHqAYsTS8tFayqPzTuF9VIGk3ZgDXVx3Ja9KOUwD9bHNeX0=
+	t=1724777771; cv=none; b=tiF2pgo+dyOuizzyDz3iJnWAD8lTGmvKIypwb1N7vuXmBWPcRWi2KG1M/UQY8mLlxlH/cg9tBqISn1wzil5dP9D/6wIFba8LMa3MZx7x2ovnTdWvcbY0KUarc+XniXOa6lUxKmipVa9CTZx3nxUy6I4ZsUVdplkSxmxIhB6J9No=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724777738; c=relaxed/simple;
-	bh=lrrYIG7in/QR4AMy4ffSfWIq+2Jt3VMtFMx3YJ2o+E4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A60lbJCbfSaXKZBUNoLzbPsit3haU5pJR1HOOKymEQ+p7QsmlzFylmZrUMs8MvILht1ayCWWZrwpm8HfoI/wFNvAqIsCoYwLVNw+yTvZ6Aib3AosiwpbzyCo5oobwMy2sT9FLwUt8Orfz8VBMPYEQkdq2KEZIGZLcTtvgroYs2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=jDMGpJe4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD532C4AF63
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 16:55:37 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="jDMGpJe4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1724777736;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pT/Xdh5+T8GlMlK/jW0CPUYYdVUk10nShsIg0lBI0xI=;
-	b=jDMGpJe4MAS+kU+4Pdr9LRaBUvPQ9zjPsUfNNSjAhnCAn18+O/YdBd9Fmah5Uzn48cYB2c
-	qMoLY7YVkzibqXbkjjbxBBhtzrhp9ZVLZF5zeVw9Cit3m7+AqDqGCiwv5oefvUlph7YRK1
-	1rmYVubRhJ5chtMEIIPJmbRmg7WpsRk=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 00b8ce63 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO)
-	for <linux-kernel@vger.kernel.org>;
-	Tue, 27 Aug 2024 16:55:36 +0000 (UTC)
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-27051f63018so4567388fac.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:55:35 -0700 (PDT)
-X-Gm-Message-State: AOJu0YzgpE9cRcwN/Qz8dEz7UvZ5a87e8yhgeEJRj3Edi4PyxQBcwUSL
-	b7/D3FiE8ZXp8j1J6HTpIVg5s+rpAiMrbKSmsnjwZx9SjrWdurD/Y90G03uosmswimRhIyl8qky
-	Fo+twp0uTo/2M9B84McWpztH2PX0=
-X-Google-Smtp-Source: AGHT+IFaXR2bwF03p8eVlxcaocMo+O4Guka092XVHmvCP/yFHHu2Y7y2NO++PRR78G0P+iAxA6isu94K0/5YO7a/roI=
-X-Received: by 2002:a05:6870:a10f:b0:260:eb3a:1b2 with SMTP id
- 586e51a60fabf-273e63e6bc2mr15811940fac.7.1724777735245; Tue, 27 Aug 2024
- 09:55:35 -0700 (PDT)
+	s=arc-20240116; t=1724777771; c=relaxed/simple;
+	bh=TpgY5Goxq3Cb2OOuAE/kh9u2rtmTr3lvYDP7Tgu5rSI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b/jiYzxrxsj1hajj4as0uKOOuBl0MOEp4GNxgvysjhQzYtYEPAJSut6A1+hflnHWsfI6Vind1mxTKSbEnt94NlOgZFOodSoVcXoyeYvaQl6fziJZx6gZ9rIv31dh0vEs3la8u/TO53pZvtnvR2ZJCpZ8ZSbQj0BMUBV9yLmnU80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hedFYLG2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A77D3C4AF63;
+	Tue, 27 Aug 2024 16:56:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724777770;
+	bh=TpgY5Goxq3Cb2OOuAE/kh9u2rtmTr3lvYDP7Tgu5rSI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hedFYLG280viYumUxRNfeuVYQ53WQMvOuhkG+AqbMfgJck8q7U1F3GxtFOTMziu07
+	 rbD2xgSmxKUpk3nnW9XZnJMXBz6o8jbaRBy2k51+4MRtOJSq6h4vn2C7Rf4BLl5UEz
+	 d9iy4umTjg1bt1ncruuY9JXtlO6Ai6f0/+Lffjzo77RNLu/2SHaFghcrEMNM/Aai7M
+	 2eGJmevsSyeLZWB3DvoIM+t/4InlLMRQwMArTqp4ZQN3IeDrsCSxctRGMDAFSK3mud
+	 NybessVmdUBU/GqSHy3uAQNEPGmZpjIeny2RgCEGnFZmPP37GZwbnYkyCFqVyt4ezX
+	 TqtEGMpVzxBkA==
+Date: Tue, 27 Aug 2024 17:56:05 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Olof Johansson <olof@lixom.net>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev
+Subject: Re: [PATCH 1/3] dt-bindings: PCI: layerscape-pci: Replace
+ fsl,lx2160a-pcie with fsl,lx2160ar2-pcie
+Message-ID: <20240827-sepia-setup-fb8396972b54@spud>
+References: <20240826-2160r2-v1-0-106340d538d6@nxp.com>
+ <20240826-2160r2-v1-1-106340d538d6@nxp.com>
+ <20240827-breeding-vagrancy-22cd1e1f9428@spud>
+ <Zs3/qnkcSl4pQQSg@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827151828.3326600-1-Jason@zx2c4.com> <20240827154822.3330270-1-Jason@zx2c4.com>
- <ea693ce2-61dd-4885-805f-28aa7e60ea28@csgroup.eu>
-In-Reply-To: <ea693ce2-61dd-4885-805f-28aa7e60ea28@csgroup.eu>
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date: Tue, 27 Aug 2024 18:55:22 +0200
-X-Gmail-Original-Message-ID: <CAHmME9p9vEN_zcwgFt07m7jtHJ3cxkN=yEQNNb5h8uYShJrajg@mail.gmail.com>
-Message-ID: <CAHmME9p9vEN_zcwgFt07m7jtHJ3cxkN=yEQNNb5h8uYShJrajg@mail.gmail.com>
-Subject: Re: [PATCH v2] random: vDSO: move prototype of arch chacha function
- to vdso/getrandom.h
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="RgNqtIwAT2TJQYCf"
+Content-Disposition: inline
+In-Reply-To: <Zs3/qnkcSl4pQQSg@lizhi-Precision-Tower-5810>
+
+
+--RgNqtIwAT2TJQYCf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 27, 2024 at 6:53=E2=80=AFPM Christophe Leroy
-<christophe.leroy@csgroup.eu> wrote:
->
->
->
-> Le 27/08/2024 =C3=A0 17:47, Jason A. Donenfeld a =C3=A9crit :
-> > Having the prototype for __arch_chacha20_blocks_nostack in
-> > arch/x86/include/asm/vdso/getrandom.h meant that the prototype and larg=
-e
-> > doc comment were cloned by every architecture, which has been causing
-> > unnecessary churn. Instead move it into include/vdso/getrandom.h, where
-> > it can be shared by all archs implementing it.
+On Tue, Aug 27, 2024 at 12:32:42PM -0400, Frank Li wrote:
+> On Tue, Aug 27, 2024 at 05:14:32PM +0100, Conor Dooley wrote:
+> > On Mon, Aug 26, 2024 at 05:38:32PM -0400, Frank Li wrote:
+> > > fsl,lx2160a-pcie compatible is used for mobivel according to
+> > > Documentation/devicetree/bindings/pci/layerscape-pcie-gen4.txt
+> > >
+> > > fsl,layerscape-pcie.yaml is used for designware PCIe controller bindi=
+ng. So
+> > > change it to fsl,lx2160ar2-pcie and allow fall back to fsl,ls2088a-pc=
+ie.
+> > >
+> > > Sort compatible string.
+> > >
+> > > Fixes: 24cd7ecb3886 ("dt-bindings: PCI: layerscape-pci: Convert to YA=
+ML format")
 > >
-> > As a side bonus, this then lets us use that prototype in the
-> > vdso_test_chacha self test, to ensure that it matches the source, and
-> > indeed doing so turned up some inconsistencies, which are rectified
-> > here.
->
-> Side bonus that I dislike. Or ... it is all that u32 key stuff that I
-> dislike.
->
-> If it was really u32 I would be able to read it with a LWZ instruction
-> (Load Word Zero extended). That's what I did at the begining. But if I
-> want the selftest to work, I have to use LWBRX (Load Word Byte Reversed
-> ...)instead  because the bytes in the word are in reversed order in reali=
-ty.
->
-> So either it is a table of 32 bytes, or it is as defined in RFC 7539:
->
->    A 256-bit key, treated as a concatenation of eight 32-bit
-> little-endian integers.
->
-> And in that case it is not a table of 8x u32 but table of 8x __le32
+> > I don't understand what this fixes tag is for, this is a brand new
+> > compatible that you are adding, why does it need a fixes tag pointing to
+> > the conversion?
+>=20
+> Because previous convert wrongly included "fsl,lx2160a-pcie" here, which
+> already used for mobivel pci controler, descripted in
+> layerscape-pcie-gen4.txt.
+>=20
+> This patch fix this problem, rename fsl,lx2160a-pcie to fsl,lx2160ar2-pcie
 
-It's a table of bytes that are 4-byte aligned. Or, sure, a table of __le32.
+Ah, I see that now. Lost in the noise of reordering the list first time
+around.
+
+--RgNqtIwAT2TJQYCf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZs4FJQAKCRB4tDGHoIJi
+0vLRAPsFrYnP12WBONWVolx0rNNnFpQTkL5y3HnprcmHPNCnZQD+NFrvy1AmEWLb
+DBcuFN8q7NWORpAJEjIQcsxB6hIy7wk=
+=BUL8
+-----END PGP SIGNATURE-----
+
+--RgNqtIwAT2TJQYCf--
 
