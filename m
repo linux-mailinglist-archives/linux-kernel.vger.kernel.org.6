@@ -1,39 +1,73 @@
-Return-Path: <linux-kernel+bounces-303306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D5AC960A7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:34:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ADD7960A88
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 809631C22D11
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:34:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03073283DE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB191C2DD9;
-	Tue, 27 Aug 2024 12:32:07 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA951C2DA7;
-	Tue, 27 Aug 2024 12:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36FD51BCA19;
+	Tue, 27 Aug 2024 12:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="IcQnMc08"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E180B1BCA1A
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724761927; cv=none; b=pVl1xhiiUOe2yHZbysQn0wtsTEIyQE4eiU5wqIpT5186X6Z43EjH2cHrLDpvSVi71/VNsnIkIMpZG9K6D0EhG7XCdH69G8nqk25A8LQVIoLa26plvRRKYb8dRyJfQq8Wa9dAcyTdsJtYLLiXhaMYEgkRwkk4cHOimfVqMlE4M0k=
+	t=1724761977; cv=none; b=tpvJdGMlMHJ4VFOQ+Pf3pXSrYzefWuWrPo3eog9YENPO2QTCt7cFnT0g89oT+OXatMm/PnQElMYBGrpIw98+hhSMByKEnWnb2il51EECVpsR32defhy8PITiI+7cRdA74tEor3qUXUV5am+AtWY09SoN+kJC8ks7RKCr++x76mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724761927; c=relaxed/simple;
-	bh=Wm/BkMezv2xCJOsSmzbRpJVXjxQ8zUW0dbYK/XHmGEE=;
+	s=arc-20240116; t=1724761977; c=relaxed/simple;
+	bh=LiQo0dIQMk7M3bHa0opvBkYq4ByVUwoYrG6oVZ/Bk8c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p9cGqXjua0qA0R02k/GpiBer7XV6siTlQW1IBW9VO7FQKkBEClnQp+SXKF4JBCQK+2LDtLzo30qaTg/031jfBH17Y9BJz74tPMpxhJBH8c92pIZs5zj++Z9RR5tTd0seCkqQw/hap9UDyDVOPmaFAo5uxAtgo//HL5CrtroUF3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 69B28DA7;
-	Tue, 27 Aug 2024 05:32:30 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C67E53F762;
-	Tue, 27 Aug 2024 05:32:01 -0700 (PDT)
-Message-ID: <91ef4036-6468-4ecc-ac14-0146130d8da4@arm.com>
-Date: Tue, 27 Aug 2024 13:31:59 +0100
+	 In-Reply-To:Content-Type; b=IMvYqc3XmmLF3F5hGJPrWtp0M+ptxVZqWkZrLZVfElyCgJipoF4sD2gAkmLXm1d+yoq2fS9y8YLQgAANawyNNqKgSgkhFZTus+puajppJfqey5uxU1u2MWN3mac9fiw8o590dzlb7+oT9Retan3Pk7eBokp6ZmK1I/Vo5cQomfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=IcQnMc08; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5bebd3b7c22so10359763a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 05:32:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1724761973; x=1725366773; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=y+8zmpgoxrDLbCqZtH6gEBqxTqDF5Ns65h0U7300PsM=;
+        b=IcQnMc08NA3XNXX2i1hA2fZN/ycQMaXttC83gkKvAH8jl7+IntgUnWXapNyr0eXSVK
+         8WYE9bOxTtKcNmevPz5VZ/BCkyrKD1KFVsqoCHUZvyvJx2lb47D3mmPIJUi6EKafLlTJ
+         N+aY97sZk9eBvfHpkLLxMUuSxGraBtIB+mV20stiXY2Jj7iMrl0vV/v7njcgEWz6qTkO
+         sSPoC6Emds7gMuyKkoPUb74oEAx8GfIId48v+ophxkSvZIp5HO+E8heOhC7YV738JC/m
+         VVOxyX39DudwvkoGJMO/ACdUnhYBDdXR8cD1Wd297T4VI6gg81ONmQ55onyFeud0C9/d
+         XJ7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724761973; x=1725366773;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y+8zmpgoxrDLbCqZtH6gEBqxTqDF5Ns65h0U7300PsM=;
+        b=Kns0mzTpdQyxW+FhtF2pkJxoJZnJztdC+GkDSPQlFD0I9eHer4G9o8HGLlV9KmCj7Y
+         fRe7BvkEJyGUGoThg581MC8M/YtdDTW9+0UnKEM2C5+FM4L7qjtnmD4IG7bjPCi7xODs
+         pe5nyrP6Bj1Azq35n2IoD7+YBeEE3AQp0wE0Zi+0qHR/S2i+KfIcAnzLvWK9PNDA0ZP+
+         OFkVqC8fgfsIZOxfta1jDb5mqz/oklOjiGt+uQn0u8s2iXvgMxYbH53WBMnyPl+u2tCE
+         S+GMp2LNr2CK62w/jTGLpZZPZUEAar4E39he/8JHYyHj2Hi/MMG4lQqj0UFdYhTGVjRr
+         EVmg==
+X-Forwarded-Encrypted: i=1; AJvYcCUuRqTXv2cHhFv7PlhIHkVLX11xd229gl6Yq8Fkgq6QWeX3ZcCiSpUFiv1a9VCaBdXC5DEKFTbirsbUwzQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8f71obbX6Ssnif86HhsSyrgCaGO/y2aeJ+o1M1NEBtyazdbhj
+	0owPBK1DZkwGnMX6VZnmQpUTUMXHutKB/mKcja/gy7OOWStF4R1SNl2HJAvdYTE=
+X-Google-Smtp-Source: AGHT+IF0YQF/+Km2Nk6dAVkx3nFNSFyP0k8EfYjfWpB5kX5bCXbFaKsLnQfAOxMeQ48X0I85aPkxKg==
+X-Received: by 2002:a05:6402:2683:b0:5c0:c6a7:1c58 with SMTP id 4fb4d7f45d1cf-5c0c6a71cafmr729455a12.15.1724761972930;
+        Tue, 27 Aug 2024 05:32:52 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb481fb8sm961543a12.87.2024.08.27.05.32.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 05:32:52 -0700 (PDT)
+Message-ID: <4823173e-b024-482f-83a3-560c7abd888c@tuxon.dev>
+Date: Tue, 27 Aug 2024 15:32:50 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,38 +75,156 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dma-mapping: clear mark DMA ops as an architecture
- feature
-To: Christoph Hellwig <hch@lst.de>, iommu@lists.linux.dev
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Bingbu Cao <bingbu.cao@intel.com>, "Michael S . Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-media@vger.kernel.org,
- virtualization@lists.linux.dev, xen-devel@lists.xenproject.org
-References: <20240824035817.1163502-1-hch@lst.de>
- <20240824035817.1163502-2-hch@lst.de>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240824035817.1163502-2-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 3/3] watchdog: rzg2l_wdt: Power on the watchdog domain in
+ the restart handler
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+ "linux@roeck-us.net" <linux@roeck-us.net>,
+ "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240826152529.2080248-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240826152529.2080248-4-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB11346A223DA7462799B9D103786942@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <TY3PR01MB11346A223DA7462799B9D103786942@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24/08/2024 4:57 am, Christoph Hellwig wrote:
-> DMA ops are a helper for architectures and not for drivers to override
-> the DMA implementation.  Unfortunately driver authors keep ignoring
-> this.  Make this more clear by renaming the symbol to ARCH_DMA_OPS,
-> have the three drivers overriding it depend on that.  They should
-> probably also be marked broken, but we can give them a bit of a grace
-> period for that.
+Hi, Biju,
 
-Nit: from a quick survey of "git grep 'select ARCH_'", maybe 
-ARCH_HAS_DMA_OPS might be the clearest and most consistent name? 
-Otherwise, now that any potential confusion from drivers/iommu is no 
-more, I too thoroughly approve of the overall idea.
+On 27.08.2024 15:15, Biju Das wrote:
+> Hi Claudiu,
+> 
+> Thanks for the feedback.
+> 
+>> -----Original Message-----
+>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>> Sent: Monday, August 26, 2024 4:25 PM
+>> Subject: [PATCH 3/3] watchdog: rzg2l_wdt: Power on the watchdog domain in the restart handler
+>>
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> On RZ/G3S the watchdog can be part of a software-controlled PM domain. In this case, the watchdog
+>> device need to be powered on in struct watchdog_ops::restart API. This can be done though
+>> pm_runtime_resume_and_get() API if the watchdog PM domain and watchdog device are marked as IRQ safe.
+>> We mark the watchdog PM domain as IRQ safe with GENPD_FLAG_IRQ_SAFE when the watchdog PM domain is
+>> registered and the watchdog device though pm_runtime_irq_safe().
+>>
+>> Before commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
+>> context'") pm_runtime_get_sync() was used in watchdog restart handler (which is similar to
+>> pm_runtime_resume_and_get() except the later one handles the runtime resume errors).
+>>
+>> Commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
+>> context'") dropped the pm_runtime_get_sync() and replaced it with
+>> clk_prepare_enable() to avoid invalid wait context due to genpd_lock() in genpd_runtime_resume() being
+>> called from atomic context. But
+>> clk_prepare_enable() doesn't fit for this either (as reported by Ulf Hansson) as clk_prepare() can
+>> also sleep (it just not throw invalid wait context warning as it is not written for this).
+>>
+>> Because the watchdog device is marked now as IRQ safe (though this patch) the
+>> irq_safe_dev_in_sleep_domain() call from genpd_runtime_resume() returns
+>> 1 for devices not registering an IRQ safe PM domain for watchdog (as the watchdog device is IRQ safe,
+>> PM domain is not and watchdog PM domain is always-on), this being the case of RZ/G2 devices that uses
+> 
+> RZ/G2L alike devices or be specific RZ/{G2L,G2LC,G2UL,V2L} as it is not applicable for
+> RZ/G2{H,M,N,E}devices.
 
-Acked-by: Robin Murphy <robin.murphy@arm.com>
+OK, but I said "RZ/G2 devices that uses this driver". Here are included
+RZ/{G2L,G2LC,G2UL,V2L} AFAICT.
+
+> 
+> 
+>> this driver, we can now drop also the clk_prepare_enable() calls in restart handler and rely on
+>> pm_runtime_resume_and_get().
+>>
+>> Thus, drop clk_prepare_enable() and use pm_runtime_resume_and_get() in watchdog restart handler.
+> 
+> Can this patch be fix for Commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
+>> context'") on RZ/{G2L,G2LC,G2UL,V2L} SoC??
+
+Not sure... I thought about it, too. I chose to have it like this thinking
+that:
+
+1/ that may not apply cleanly as it depends on other cleanups done on this
+   driver, e.g. commit d8997ed79ed7 ("watchdog: rzg2l_wdt: Rely on the
+   reset driver for doing proper reset") so it may be worthless for
+   backport machinery
+2/ There is actually no seen bug reported by lockdep (as the clk_prepare()
+   doesn't handle it)
+
+Don't know, I can reply here and add it. Applying this patch with b4 will
+take care of it. But not sure about it.
+
+Thank you,
+Claudiu Beznea
+
+> 
+> Cheers,
+> Biju
+> 
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>  drivers/watchdog/rzg2l_wdt.c | 21 +++++++++++++++++++--
+>>  1 file changed, 19 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c index
+>> 2a35f890a288..e9e0408c96f7 100644
+>> --- a/drivers/watchdog/rzg2l_wdt.c
+>> +++ b/drivers/watchdog/rzg2l_wdt.c
+>> @@ -12,6 +12,7 @@
+>>  #include <linux/module.h>
+>>  #include <linux/of.h>
+>>  #include <linux/platform_device.h>
+>> +#include <linux/pm_domain.h>
+>>  #include <linux/pm_runtime.h>
+>>  #include <linux/reset.h>
+>>  #include <linux/units.h>
+>> @@ -166,8 +167,23 @@ static int rzg2l_wdt_restart(struct watchdog_device *wdev,
+>>  	struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
+>>  	int ret;
+>>
+>> -	clk_prepare_enable(priv->pclk);
+>> -	clk_prepare_enable(priv->osc_clk);
+>> +	/*
+>> +	 * In case of RZ/G3S the watchdog device may be part of an IRQ safe power
+>> +	 * domain that is currently powered off. In this case we need to power
+>> +	 * it on before accessing registers. Along with this the clocks will be
+>> +	 * enabled. We don't undo the pm_runtime_resume_and_get() as the device
+>> +	 * need to be on for the reboot to happen.
+>> +	 *
+>> +	 * For the rest of RZ/G2 devices (and for RZ/G3S with old device trees
+>> +	 * where PM domains are registered like on RZ/G2 devices) it is safe
+>> +	 * to call pm_runtime_resume_and_get() as the
+>> +	 * irq_safe_dev_in_sleep_domain() call in genpd_runtime_resume()
+>> +	 * returns non zero value and the genpd_lock() is avoided, thus, there
+>> +	 * will be no invalid wait context reported by lockdep.
+>> +	 */
+>> +	ret = pm_runtime_resume_and_get(wdev->parent);
+>> +	if (ret)
+>> +		return ret;
+>>
+>>  	if (priv->devtype == WDT_RZG2L) {
+>>  		ret = reset_control_deassert(priv->rstc);
+>> @@ -275,6 +291,7 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
+>>
+>>  	priv->devtype = (uintptr_t)of_device_get_match_data(dev);
+>>
+>> +	pm_runtime_irq_safe(&pdev->dev);
+>>  	pm_runtime_enable(&pdev->dev);
+>>
+>>  	priv->wdev.info = &rzg2l_wdt_ident;
+>> --
+>> 2.39.2
+>>
+> 
 
