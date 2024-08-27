@@ -1,150 +1,183 @@
-Return-Path: <linux-kernel+bounces-302462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F357B95FEFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:24:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF0B95FF10
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 328311C21974
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 02:24:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 276CA1C21BEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 02:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46576168DC;
-	Tue, 27 Aug 2024 02:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7EB168B7;
+	Tue, 27 Aug 2024 02:28:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M1A4zhe3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="a+cpME+9"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A9EDDAB;
-	Tue, 27 Aug 2024 02:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF46EAF1;
+	Tue, 27 Aug 2024 02:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724725428; cv=none; b=D+LQiyiRBRk83bA5TnJub+ubjZjqM9Rt9kPs9w3wRPIoyFDn8X1GNi23KUiCal9fWIQoPAiUJTCNa/pgAB8HVtBUTxwOPqw6wflXnJy8rS8dDtbyHw6XFvuu28qbM1LfX4F4jv6h7aTKlC2A+KW4hSK2KMapSt+poZgbIqKMEBc=
+	t=1724725693; cv=none; b=ZMxoNZn8m9ezOy5Gys0GxSW4ExoY9h8Vbzo311EXLSE5nSXQ5wovB3RJoLVqNJeYZr46Oop7GwkfBxRwonmKdZn/g0hKfH5XnsS4r3NJABWrPNxLD3X1W+RT5TM4aq7/8V2QDdC2TqMn/UH6Tlz4x4PBrjkeCUgXJVF++rc22bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724725428; c=relaxed/simple;
-	bh=1+sHOJGfAv3d8ge8kXJJwvkdj5TiGGUN6rNeh4kdWzM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jv3XuUaGzICdx89PxMsY09Cl+2WLI6OUOwlGSh/GfUq9wj0XFvlj3Nj1pDWl4KLO+S+G+2+cQjiVJ89MA7weqgXB7uVY2J2OqxZo5pwdrSXaC2+p0H9MN3KMTIyHF8fhKpsb2rrnylXfzEI89xCn9Gn4xPkc73ccVYPjuZ7akmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M1A4zhe3; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724725427; x=1756261427;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1+sHOJGfAv3d8ge8kXJJwvkdj5TiGGUN6rNeh4kdWzM=;
-  b=M1A4zhe3yTZNflLhbG7GSdsVzujX9nL9sUuOi8ZGQU/cMInAKriu32pG
-   RmfS998aIAWecf66wksr4UoN8SEKC44/UKpV4imJ9ls80hPlM+FSbhGPm
-   nQU5E9Dwu24NJ/q1Ky6lEdJ2k49gBhu2mzTJZtyPva5R2skSybNnMW3yP
-   WB0URQsHfd1eUoGhrRPcrd4ZQBgGKohh7g4jSmRSaRjP77bk7yTk5rWRJ
-   Vp3KxH4FYsa2h7FrAVQnLT/CU6JbyJH/nkArIs43ZwcYOmYB57vV9VfyI
-   ureM/1wq3Amas4crp77qmYLA1QDXFbVlOEp7Hv55m/i6qWY9rlqiZfC1O
-   g==;
-X-CSE-ConnectionGUID: u66o9mkAQOGQP1YquD/rkg==
-X-CSE-MsgGUID: 89UwY8CeQE6FzCLIiKLTwg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="34588685"
-X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
-   d="scan'208";a="34588685"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 19:23:46 -0700
-X-CSE-ConnectionGUID: YwZL9LciQSqndo2/dXftPg==
-X-CSE-MsgGUID: t1P2njC9S/CqMPyGYv+p4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
-   d="scan'208";a="85898308"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 26 Aug 2024 19:23:43 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1silrw-000HnO-0L;
-	Tue, 27 Aug 2024 02:23:40 +0000
-Date: Tue, 27 Aug 2024 10:23:07 +0800
-From: kernel test robot <lkp@intel.com>
-To: Michal Hocko <mhocko@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>, jack@suse.cz,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
-	linux-bcachefs@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <202408271041.5IWf4ZQC-lkp@intel.com>
-References: <20240826085347.1152675-2-mhocko@kernel.org>
+	s=arc-20240116; t=1724725693; c=relaxed/simple;
+	bh=Rex+v/gRjv7leIkVQjbIzLC9Eoh8KVP6y99gGD7O1VM=;
+	h=Message-ID:Content-Type:Mime-Version:Subject:From:In-Reply-To:
+	 Date:Cc:References:To; b=Bo5YzJCSLkqi2RkJ7UT0CZfSBY9xvqrAnwnovbjBVUEHGRhd28+fhBKYlKdZSBn8RbMm1zf20Rf9lzTNNQRF+q/+Bvg26lFtz8hOkAcml3PiGnq68PYDe95SbeZOWb0azhBy3HFx6fncUZ45AmeAnrmousus6LYv2xdw7SRKVcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=a+cpME+9; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1724725685; bh=6OUVBGQm+R7uNiXYq6N251s4vbehYFjQAwiXtpU9mUU=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To;
+	b=a+cpME+9Vk5/xWBfvZfkEO1zc2xqcYEQfwTHTNDjp+dHPC2VFZmKpz1AEHE8M7qT3
+	 Yyc57EKoRkIQoW0qvbKmWktftmfbIJseAJ6H8sGVooxcp4IK+ROoJm6p9uA0FbhpYD
+	 hqseTAqmHAzr049fGWjDgNdkCu9Z9RVnRPdzd44w=
+Received: from smtpclient.apple ([2408:8207:18a0:211f:25e9:f22a:88fc:3aa2])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id 62AB22D1; Tue, 27 Aug 2024 10:24:42 +0800
+X-QQ-mid: xmsmtpt1724725482tyapdnd0p
+Message-ID: <tencent_A414DA7D8E69B831317A21368D057C378208@qq.com>
+X-QQ-XMAILINFO: MziGzrjZeogZJQ6VsuNCfMEWmzxEuNlCz4qLlbmWD8GXK82Tlhv024UTyHMuIW
+	 ZtLBG68GVeE2jivNbSpoKPduTbKnA+QTcfUHwOZl2QERMeWJ6DciXxTfMgN87P4/tt7wNODCLr/i
+	 6CgpqzkgKxF9mRHFf9HMTr7+G3qhcMGCTcN+vO9GEHdhaSHYu175P9c/sTybxbQBV1UR2KfEGRg9
+	 z+JILA8bxwqIn6bqshESR1mhoJslaizNhds1dwS+WHN+bKVhgr5LmJkOc8ujMu2TnjLE3/DlK7/a
+	 dgn11Cpc8JBwRMLLdEfA8jO+Ni8ZXWUQamEgh5MQNDRrXL4PZSjKnA+WDKTiQG8OwqjD0nUKgAM3
+	 u2twQqRrjT623mTZypNeVgzrrnzJ2pV9hZhT3Tb+wrl/ht1Pae7pkK3vFOoqNc65+oMnR5V9IUyv
+	 2H2UuHGUSFYN8RM6/9d0x3AxBFG+BD+b9eERHZATAnBWC95ib6NXMkBbJ6SQ05KyGSP0kQusTHrc
+	 XaP+n002mFehPmr3ObtoHI7j2YLCNa5JTH5ICle0Zb/z2GfrhvkvpZ1C9e7VngM70n4HGtZxdLL3
+	 Mys36Um1BmZklMItTEgend+zP/c4Y9/HN758EdpnRw/vV0CW+N746A87dl64wMa8vgl+Ua0sxthN
+	 +u1qxQtSJzW/bDEMQzC5w3YxfDdiQK09aYT1F5k9CufRYKuL11RtXdEew7e5dQxGwGKPWQKhHriL
+	 SyUAFwWgGoRoPliMkbSTRcLIRTN6a1j+v1fOeIb8HFtfbQafKsqOHkJZ0LdsJozsP+PORMRaXzT7
+	 fSepXLJPn9LRMvi6MhyJ4LCXaa2afmBKKeRDAACZ3/1NtFyId5YksShgvRMNyEqlyMlxEgrCtZyN
+	 1Ck2VZYyp6HeqKmXKmSVLghYnSh00JCXj7F4BvEWDqbUzaPQi0AzktLd63NDtrvMqhceWreCudxn
+	 2n8l8UuXinL3n6S/Hln/mMrRcibbXWIMaU8iK5hYaSdxEruZvqAeITlTElmhSw4Yps++wtc8E=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826085347.1152675-2-mhocko@kernel.org>
-
-Hi Michal,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on akpm-mm/mm-everything]
-[also build test WARNING on tip/sched/core brauner-vfs/vfs.all linus/master v6.11-rc5]
-[cannot apply to next-20240826]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Michal-Hocko/bcachefs-do-not-use-PF_MEMALLOC_NORECLAIM/20240826-171013
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20240826085347.1152675-2-mhocko%40kernel.org
-patch subject: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-config: i386-buildonly-randconfig-003-20240827 (https://download.01.org/0day-ci/archive/20240827/202408271041.5IWf4ZQC-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408271041.5IWf4ZQC-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408271041.5IWf4ZQC-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> security/security.c:664: warning: Function parameter or struct member 'gfp' not described in 'lsm_inode_alloc'
->> security/security.c:1586: warning: Function parameter or struct member 'gfp' not described in 'security_inode_alloc'
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH 3/3] riscv: mm: Do not restrict mmap address based on hint
+From: Yangyu Chen <cyy@cyyself.name>
+In-Reply-To: <20240826-riscv_mmap-v1-3-cd8962afe47f@rivosinc.com>
+Date: Tue, 27 Aug 2024 10:24:38 +0800
+Cc: Jonathan Corbet <corbet@lwn.net>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Shuah Khan <shuah@kernel.org>,
+ Levi Zim <rsworktech@outlook.com>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>,
+ linux-doc@vger.kernel.org,
+ linux-riscv@lists.infradead.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Palmer Dabbelt <palmer@rivosinc.com>,
+ linux-kselftest@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+X-OQ-MSGID: <C5CD5C41-B9C2-42E0-BAC4-AD8A6FE52447@cyyself.name>
+References: <20240826-riscv_mmap-v1-0-cd8962afe47f@rivosinc.com>
+ <20240826-riscv_mmap-v1-3-cd8962afe47f@rivosinc.com>
+To: Charlie Jenkins <charlie@rivosinc.com>
+X-Mailer: Apple Mail (2.3776.700.51)
 
 
-vim +664 security/security.c
 
-33bf60cabcc768 Casey Schaufler 2018-11-12  654  
-afb1cbe37440c7 Casey Schaufler 2018-09-21  655  /**
-afb1cbe37440c7 Casey Schaufler 2018-09-21  656   * lsm_inode_alloc - allocate a composite inode blob
-afb1cbe37440c7 Casey Schaufler 2018-09-21  657   * @inode: the inode that needs a blob
-afb1cbe37440c7 Casey Schaufler 2018-09-21  658   *
-afb1cbe37440c7 Casey Schaufler 2018-09-21  659   * Allocate the inode blob for all the modules
-afb1cbe37440c7 Casey Schaufler 2018-09-21  660   *
-afb1cbe37440c7 Casey Schaufler 2018-09-21  661   * Returns 0, or -ENOMEM if memory can't be allocated.
-afb1cbe37440c7 Casey Schaufler 2018-09-21  662   */
-b2ce84652b3193 Michal Hocko    2024-08-26  663  int lsm_inode_alloc(struct inode *inode, gfp_t gfp)
-afb1cbe37440c7 Casey Schaufler 2018-09-21 @664  {
-afb1cbe37440c7 Casey Schaufler 2018-09-21  665  	if (!lsm_inode_cache) {
-afb1cbe37440c7 Casey Schaufler 2018-09-21  666  		inode->i_security = NULL;
-afb1cbe37440c7 Casey Schaufler 2018-09-21  667  		return 0;
-afb1cbe37440c7 Casey Schaufler 2018-09-21  668  	}
-afb1cbe37440c7 Casey Schaufler 2018-09-21  669  
-b2ce84652b3193 Michal Hocko    2024-08-26  670  	inode->i_security = kmem_cache_zalloc(lsm_inode_cache, gfp);
-afb1cbe37440c7 Casey Schaufler 2018-09-21  671  	if (inode->i_security == NULL)
-afb1cbe37440c7 Casey Schaufler 2018-09-21  672  		return -ENOMEM;
-afb1cbe37440c7 Casey Schaufler 2018-09-21  673  	return 0;
-afb1cbe37440c7 Casey Schaufler 2018-09-21  674  }
-afb1cbe37440c7 Casey Schaufler 2018-09-21  675  
+> On Aug 27, 2024, at 00:36, Charlie Jenkins <charlie@rivosinc.com> =
+wrote:
+>=20
+> The hint address should not forcefully restrict the addresses returned
+> by mmap as this causes mmap to report ENOMEM when there is memory =
+still
+> available.
+>=20
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Fixing in this way will break userspace on Sv57 machines as some
+issues mentioned in the patch [1].
+
+I suggest restricting to BIT(47) by default, like patch [2], to
+align with kernel behavior on x86 and aarch64, and this does exist
+on x86 and aarch64 for quite a long time. In that way, we will also
+solve the problem mentioned in the first patch [1], as QEMU enables
+Sv57 by default now and will not break userspace.
+
+[1] =
+https://lore.kernel.org/linux-riscv/20230809232218.849726-1-charlie@rivosi=
+nc.com/
+[2] =
+https://lore.kernel.org/linux-riscv/tencent_B2D0435BC011135736262764B51199=
+4F4805@qq.com/
+
+Thanks,
+Yangyu Chen
+
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> Fixes: b5b4287accd7 ("riscv: mm: Use hint address in mmap if =
+available")
+> Fixes: add2cc6b6515 ("RISC-V: mm: Restrict address space for =
+sv39,sv48,sv57")
+> Closes: =
+https://lore.kernel.org/linux-kernel/ZbxTNjQPFKBatMq+@ghost/T/#mccb1890466=
+bf5a488c9ce7441e57e42271895765
+> ---
+> arch/riscv/include/asm/processor.h | 26 ++------------------------
+> 1 file changed, 2 insertions(+), 24 deletions(-)
+>=20
+> diff --git a/arch/riscv/include/asm/processor.h =
+b/arch/riscv/include/asm/processor.h
+> index 8702b8721a27..efa1b3519b23 100644
+> --- a/arch/riscv/include/asm/processor.h
+> +++ b/arch/riscv/include/asm/processor.h
+> @@ -14,36 +14,14 @@
+>=20
+> #include <asm/ptrace.h>
+>=20
+> -/*
+> - * addr is a hint to the maximum userspace address that mmap should =
+provide, so
+> - * this macro needs to return the largest address space available so =
+that
+> - * mmap_end < addr, being mmap_end the top of that address space.
+> - * See Documentation/arch/riscv/vm-layout.rst for more details.
+> - */
+> #define arch_get_mmap_end(addr, len, flags) \
+> ({ \
+> - unsigned long mmap_end; \
+> - typeof(addr) _addr =3D (addr); \
+> - if ((_addr) =3D=3D 0 || is_compat_task() || \
+> -    ((_addr + len) > BIT(VA_BITS - 1))) \
+> - mmap_end =3D STACK_TOP_MAX; \
+> - else \
+> - mmap_end =3D (_addr + len); \
+> - mmap_end; \
+> + STACK_TOP_MAX; \
+> })
+>=20
+> #define arch_get_mmap_base(addr, base) \
+> ({ \
+> - unsigned long mmap_base; \
+> - typeof(addr) _addr =3D (addr); \
+> - typeof(base) _base =3D (base); \
+> - unsigned long rnd_gap =3D DEFAULT_MAP_WINDOW - (_base); \
+> - if ((_addr) =3D=3D 0 || is_compat_task() || \
+> -    ((_addr + len) > BIT(VA_BITS - 1))) \
+> - mmap_base =3D (_base); \
+> - else \
+> - mmap_base =3D (_addr + len) - rnd_gap; \
+> - mmap_base; \
+> + base; \
+> })
+>=20
+> #ifdef CONFIG_64BIT
+>=20
+> --=20
+> 2.45.0
+>=20
+
 
