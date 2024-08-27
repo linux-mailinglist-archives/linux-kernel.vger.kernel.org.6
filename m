@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-304055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DBBF96193E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:31:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2780961941
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:31:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62CB4B21CDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:31:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F723284FC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD3F1D4604;
-	Tue, 27 Aug 2024 21:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DDD1C942C;
+	Tue, 27 Aug 2024 21:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F1ZOdqDg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ERvKuRqt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2FD1C942C;
-	Tue, 27 Aug 2024 21:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5320D1D47B4;
+	Tue, 27 Aug 2024 21:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724794238; cv=none; b=faXFlM58uFaW+/SiEGJpV9LMM+oGT3M/ot2KnGAzRVIJwL+EnDibICcFLoSv0hzx82snWayqVXqPdIDbJvNLOk3HEnbSkZ1GY3UJEhTPjxsWn5myyYEFcW0nQmg9wAmdPCgsFzwkkBNNDrgNghM6TG7JGp6rr5XJMqF5uenUSak=
+	t=1724794241; cv=none; b=icL1JIX00GpWqifLC11+pQyrN2lXI7BQkbQJ5SfcLJZKfHAZ4+SfKYO6bhAWBzJrYJ5K8w5E2oXAlnh0MZ5jAhZRTaeSZHNg+EmMfEOyCiMkL0eqRcYydGQYLbV00tvlfib884Ewddk/q+hCwICzP7XkY3yurxv8uJeCpqRj3G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724794238; c=relaxed/simple;
-	bh=UF5oNncSFvh5U+Vjqi3Hnl24mcbFhjSedPb+WcU/Gm8=;
+	s=arc-20240116; t=1724794241; c=relaxed/simple;
+	bh=H2wQoaxqtUjqkFcVVz/DQwwvyjDD5qJEDoV9DMtB/CU=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=KIo1VvtWbT0bt3KWnXvxs5/1d8UB31S3nvDja0ogZ39ur0nge3ULbyJsotmmX2rRYMHaBx6yQXTkakicwY2x9G0oX5bfIHjwGH4pm5U3+89bBrTwBEUZtwwUUV2Kx8P+HhpXw4a2X+zwb3E6wi8/ckRh6nunH2wCHbGCtb6omZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F1ZOdqDg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D513C4AF16;
-	Tue, 27 Aug 2024 21:30:38 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=BjJX52KCEQhifQIhIGeGfcSVjio5N+CEiI0oPDlEO1d2hhxlSRQ1eBdWmut9xTruMjWgFqs1GjX1NbaTpcFQONxh1OyVDDnhvtQQWh/jn/0KXCUC3w3ksFLW0nipC0hJy4Vq2xQpePD97NIuyLcLmY43AABDK4E2zqn9YpVVYSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ERvKuRqt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 240BFC4AF1B;
+	Tue, 27 Aug 2024 21:30:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724794238;
-	bh=UF5oNncSFvh5U+Vjqi3Hnl24mcbFhjSedPb+WcU/Gm8=;
+	s=k20201202; t=1724794241;
+	bh=H2wQoaxqtUjqkFcVVz/DQwwvyjDD5qJEDoV9DMtB/CU=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=F1ZOdqDgh9eaByDkMTogAgtVkUPaLms3uPDn4TdjdAdZOh9rgT5jsKiOijCAWRQkA
-	 Wbz4kCjX4Jql6YYuteW496b9Qk6T3VwJg2GdmeOwKEuN15G/mKVKMcicX/6DphU9ml
-	 8pdx/H/pmYSBZ9YyFuorkvtuEMFQy4K0WngwyICuGiN705hepCO5SlRsZkbsXqMhZC
-	 Mg9XDg2PB0juHMifWw0u0Sbj4bMc3a52mJWn5BP9NRuAb6paawIYZq3CuYRWjZ9jLl
-	 R6Bn+jbdY5EPOeY6FFw9iXFpkqNk+ZabwjRPMAf3Kqtdw4cHtqvOWnpFozZND4BuDt
-	 6xMqFxn8PatNQ==
+	b=ERvKuRqt8LdgA1gH3dU68K/KbYr770mwVSgLN+JElKblO97lYCiotHFS3S+hQ8waE
+	 qD+ecJ1lthFcl/0mhzZK2EvB8qDifwX01tQBD/P4PoRBnwMXV6xG8nPNhEI7RCRTzW
+	 nyh28AVDNlBv/IC4U6AsGYqqrawtbikOMJ5fdXMayl3V+qc4d/sGfFWkoinU5rzudd
+	 9d3VmlSBdPBQ4f9LhqREvKg6FwXVnl+8G9z2ZJw4CmsGOxYBn+jnw8GSSxk+67aObb
+	 fnZ8rdtUVsGSqhaxnwv2O3uT95P8HU9yLHx9MJdIjvrVr4tNDeWgO5g6OlSEL4oIe4
+	 5jBHAkWO2Hokg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E5E3822D6D;
-	Tue, 27 Aug 2024 21:30:39 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70CCF3822D6D;
+	Tue, 27 Aug 2024 21:30:42 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,47 +51,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH -next 0/3] net: fix module autoloading
+Subject: Re: [PATCH net-next v2] net: phy: vitesse: implement MDI-X configuration
+ in vsc73xx
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172479423799.767553.16922286999565364785.git-patchwork-notify@kernel.org>
-Date: Tue, 27 Aug 2024 21:30:37 +0000
-References: <20240826091858.369910-1-liaochen4@huawei.com>
-In-Reply-To: <20240826091858.369910-1-liaochen4@huawei.com>
-To: Liao Chen <liaochen4@huawei.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- chris.snook@gmail.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, lorenzo@kernel.org, nbd@nbd.name,
- sean.wang@mediatek.com, Mark-MC.Lee@mediatek.com, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com
+ <172479424099.767553.11079699582642143947.git-patchwork-notify@kernel.org>
+Date: Tue, 27 Aug 2024 21:30:40 +0000
+References: <20240826093710.511837-1-paweldembicki@gmail.com>
+In-Reply-To: <20240826093710.511837-1-paweldembicki@gmail.com>
+To: Pawel Dembicki <paweldembicki@gmail.com>
+Cc: netdev@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
+ linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org
 
 Hello:
 
-This series was applied to netdev/net-next.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Mon, 26 Aug 2024 09:18:55 +0000 you wrote:
-> Hi all,
+On Mon, 26 Aug 2024 11:37:10 +0200 you wrote:
+> This commit introduces MDI-X configuration support in vsc73xx phys.
 > 
-> This patchset aims to enable autoloading of some net modules.
-> By registering MDT, the kernel is allowed to automatically bind
-> modules to devices that match the specified compatible strings.
+> Vsc73xx supports only auto mode or forced MDI.
 > 
-> Liao Chen (3):
->   net: dm9051: fix module autoloading
->   net: ag71xx: fix module autoloading
->   net: airoha: fix module autoloading
+> Vsc73xx have auto MDI-X disabled by default in forced speed mode.
+> This commit enables it.
 > 
 > [...]
 
 Here is the summary with links:
-  - [-next,1/3] net: dm9051: fix module autoloading
-    https://git.kernel.org/netdev/net-next/c/2e25147a6560
-  - [-next,2/3] net: ag71xx: fix module autoloading
-    https://git.kernel.org/netdev/net-next/c/c76afed1bace
-  - [-next,3/3] net: airoha: fix module autoloading
-    https://git.kernel.org/netdev/net-next/c/7d2bd8ac9d24
+  - [net-next,v2] net: phy: vitesse: implement MDI-X configuration in vsc73xx
+    https://git.kernel.org/netdev/net-next/c/cf740e3cc761
 
 You are awesome, thank you!
 -- 
