@@ -1,145 +1,116 @@
-Return-Path: <linux-kernel+bounces-303260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 367339609D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:18:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9D9D9609DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4CD8282974
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:18:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC66E1C22A63
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F551A0B07;
-	Tue, 27 Aug 2024 12:18:24 +0000 (UTC)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA751A0B10;
+	Tue, 27 Aug 2024 12:18:53 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A16A19DF97;
-	Tue, 27 Aug 2024 12:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352D819F466;
+	Tue, 27 Aug 2024 12:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724761103; cv=none; b=JC99kI5Y7oFFxYB9ie+bxBiClmbt8TFUXRPgoGLLjfiB5LqxdmU//U/u2sXG+76yTw17VqMPL88qyG8N5RRFmSlAcmNRv96mHut55BnXmPhx8t9/aAK+I6DLd7zzbMZ3iTJmmwTeiHxwbNWMcsYqJC0sAEIKi7TMm0kCkAeqBwE=
+	t=1724761133; cv=none; b=ukJz7s6ZdBtOQZ3HXbOxXyrxz6jGf7ORNCEg14jBnbZ9TA5O799dcaZ340F76vgH+QECPKywCZEAfbG/bDXedkG3mwIm+n3ObKdB7fEfMVvQAxrBewsPGrv/BzgXRWsRUNDj780fRAo7/YojdjmZMH/+S9Kqcg0daaP3JnyZSAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724761103; c=relaxed/simple;
-	bh=XrKo7BgEbXwr0g6lhrGm2tqmwrC0mCd15I5ko3rQJKU=;
+	s=arc-20240116; t=1724761133; c=relaxed/simple;
+	bh=aepOSfjAE0/4/STeaK9DfgC3Tuqxfkj3mGK+g0Exu7o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CYbn3Esh5yHAVIIaCHfe+4VL/r70dRKFKfSviga/OpIyd7JN5BUSyavQ3693kUE/yvcNVwL0Z99ckBI6UmXaLsx4kvSEBJZ3uwasrfJfEaWaHvSEu2zAbHVRunZvnJPglKBWLU0KiuhwPpSig84l8PPqdAVIxtfAt599kbG6HkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a868b739cd9so652105166b.2;
-        Tue, 27 Aug 2024 05:18:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724761100; x=1725365900;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ldg0C6C8gUg0Mw1/T0yY1ppe51hsxkql3LZnSGcFOtA=;
-        b=YlXQKxJpabqVSQMQhQZ4d9R9B4gykFSJiZWQ178Aczp1ypAK4XURpqMWtdWa0SgE73
-         SwHFS0hNQMj1O0qL5jM4gJRLXP2ap4Bi5T72/4HW8nArYKwtCH06DxHKGPRfqXRxu2M+
-         KIUnGXLFhWzkH8QhmYU4J8+ldYQ6Gtsu/OKn5thBSgVY9i6lFiCmL4Caf+sPsFpdq4HJ
-         RZNl/6rMnJeg54supgz+IqnZjwbb12qYbui0BmiYIBxFNJ4h18uwwJ8IYDwMps7ee4mr
-         ZWOMlCRbHEEqsTCUSDBNZqhCrFrYQXt9wgYRuvKpxiLcdxz/S8i+2I8/VSddpx4hxYZz
-         DGPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVE1/Y+zOXCGkDZjcdrQD5crwltqSTfJ2kf4cufyNSIjDbbQE6i99R6qCw+JqlmgGie6QUmrOq1@vger.kernel.org, AJvYcCXofD/A+5i4tGicW71Hr5SYp5nmw7gFgHDleMr/Qbav1zFp/UPcHgEJ710oA/n8Pm066482f3yJvVP9Zic=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD62OqJtTntYmr5OqIQCVy/bsTJzIsSstWkOty2BSUuAsXkz0R
-	s2cRN1ReeR01L+4tWFtFjnspAx1vCytgbjBn4tgMxRzAoztRS61u
-X-Google-Smtp-Source: AGHT+IEVsjDlS+XlwCWM4HBqYlpFnazL068brbR7e3UpU7b1vz8wW2TMS6o2/Q4dAr7xGxt73Kt+Ug==
-X-Received: by 2002:a17:907:5c8:b0:a80:7ce0:8b2a with SMTP id a640c23a62f3a-a86e39dc919mr195156666b.19.1724761099688;
-        Tue, 27 Aug 2024 05:18:19 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-010.fbsv.net. [2a03:2880:30ff:a::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e5832855sm103689966b.130.2024.08.27.05.18.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 05:18:19 -0700 (PDT)
-Date: Tue, 27 Aug 2024 05:18:15 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Maksym Kutsevol <max@kutsevol.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] netcons: Add udp send fail statistics to netconsole
-Message-ID: <Zs3EB+p+Qq1nYObX@gmail.com>
-References: <20240824215130.2134153-1-max@kutsevol.com>
- <20240824215130.2134153-2-max@kutsevol.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z8rlj/C+M0cVW0ucnZTMp17FPH/QEr3HMASarbTscCxfblATS9ruG8cVgrHqT05KlLw7qrWP9P/7yDRqPDdwvD746x/RaaAwzNPrTyj6Tm3x9ZBcMwcqsAgBVt45zOULvOkgJKhqrBOqq2835mrARaw8MWn3R6Q3TLTW6Xm1tJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 520F91C0082; Tue, 27 Aug 2024 14:18:43 +0200 (CEST)
+Date: Tue, 27 Aug 2024 14:18:42 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
+	viro@zeniv.linux.org.uk, brauner@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH AUTOSEL 4.19 06/14] ELF: fix kernel.randomize_va_space
+ double read
+Message-ID: <Zs3EIrnulQ38qJ6o@duo.ucw.cz>
+References: <20240801004037.3939932-1-sashal@kernel.org>
+ <20240801004037.3939932-6-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="0H/kKR1q4BOCT0lu"
+Content-Disposition: inline
+In-Reply-To: <20240801004037.3939932-6-sashal@kernel.org>
+
+
+--0H/kKR1q4BOCT0lu
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240824215130.2134153-2-max@kutsevol.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 24, 2024 at 02:50:24PM -0700, Maksym Kutsevol wrote:
-> Enhance observability of netconsole. UDP sends can fail. Start tracking at
-> least two failure possibilities: ENOMEM and NET_XMIT_DROP for every target.
-> Stats are exposed via an additional attribute in CONFIGFS.
-> 
-> The exposed statistics allows easier debugging of cases when netconsole
-> messages were not seen by receivers, eliminating the guesswork if the
-> sender thinks that messages in question were sent out.
-> 
-> Stats are not reset on enable/disable/change remote ip/etc, they
-> belong to the netcons target itself.
-> 
-> Signed-off-by: Maksym Kutsevol <max@kutsevol.com>
+Hi!
 
-Would you mind adding a "Reported-by" me in this case?
+> [ Upstream commit 2a97388a807b6ab5538aa8f8537b2463c6988bd2 ]
+>=20
+> ELF loader uses "randomize_va_space" twice. It is sysctl and can change
+> at any moment, so 2 loads could see 2 different values in theory with
+> unpredictable consequences.
+>=20
+> Issue exactly one load for consistent value across one exec.
+>=20
+> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+> Link: https://lore.kernel.org/r/3329905c-7eb8-400a-8f0a-d87cff979b5b@p183
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  fs/binfmt_elf.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index c41c568ad1b8a..af8830878fa0b 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -876,7 +876,8 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  	if (elf_read_implies_exec(loc->elf_ex, executable_stack))
+>  		current->personality |=3D READ_IMPLIES_EXEC;
+> =20
+> -	if (!(current->personality & ADDR_NO_RANDOMIZE) && randomize_va_space)
+> +	const int snapshot_randomize_va_space =3D READ_ONCE(randomize_va_space);
+> +	if (!(current->personality & ADDR_NO_RANDOMIZE) && snapshot_randomize_v=
+a_space)
+>  		current->flags |=3D PF_RANDOMIZE;
+> =20
+>  	setup_new_exec(bprm);
 
-https://lore.kernel.org/all/ZsWoUzyK5du9Ffl+@gmail.com/
+We normally put variable declaration at start of the function. I'd not
+be surprised if this broke with older compilers.
 
-> diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-> index 9c09293b5258..45c07ec7842d 100644
-> --- a/drivers/net/netconsole.c
-> +++ b/drivers/net/netconsole.c
-> @@ -82,6 +82,13 @@ static DEFINE_SPINLOCK(target_list_lock);
->   */
->  static struct console netconsole_ext;
->  
-> +#ifdef CONFIG_NETCONSOLE_DYNAMIC
-> +struct netconsole_target_stats  {
-> +	size_t xmit_drop_count;
-> +	size_t enomem_count;
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
-I am looking at other drivers, and they use a specific type for these
-counters, u64_stats_sync.
+--0H/kKR1q4BOCT0lu
+Content-Type: application/pgp-signature; name="signature.asc"
 
-if it is possible to use this format, then you can leverage the
-`__u64_stats_update` helpers, and not worry about locking/overflow!?
+-----BEGIN PGP SIGNATURE-----
 
-> @@ -1015,6 +1035,25 @@ static struct notifier_block netconsole_netdev_notifier = {
->  	.notifier_call  = netconsole_netdev_event,
->  };
->  
-> +/**
-> + * count_udp_send_stats - Classify netpoll_send_udp result and count errors.
-> + * @nt: target that was sent to
-> + * @result: result of netpoll_send_udp
-> + *
-> + * Takes the result of netpoll_send_udp and classifies the type of error that
-> + * occurred. Increments statistics in nt->stats accordingly.
-> + */
-> +static void count_udp_send_stats(struct netconsole_target *nt, int result)
-> +{
-> +#ifdef CONFIG_NETCONSOLE_DYNAMIC
-> +	if (result == NET_XMIT_DROP) {
-> +		nt->stats.xmit_drop_count++;
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZs3EIgAKCRAw5/Bqldv6
+8rWzAKCw9WxXBUQFNz70zssjVcP983gl5gCfWUO5DlUA2oNoLPx9KUEZXqVmqRo=
+=PKkY
+-----END PGP SIGNATURE-----
 
-If you change the type, you can use the `u64_stats_inc` helper here.
-
-> @@ -1126,7 +1167,11 @@ static void send_ext_msg_udp(struct netconsole_target *nt, const char *msg,
->  			this_offset += this_chunk;
->  		}
->  
-> -		netpoll_send_udp(&nt->np, buf, this_header + this_offset);
-> +		count_udp_send_stats(nt,
-> +				     netpoll_send_udp(&nt->np,
-> +						      buf,
-> +						      this_header + this_offset)
-> +		);
-
-as Jakub said, this is not a format that is common in the Linux kenrel.
+--0H/kKR1q4BOCT0lu--
 
