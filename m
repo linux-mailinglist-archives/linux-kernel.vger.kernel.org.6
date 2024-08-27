@@ -1,309 +1,161 @@
-Return-Path: <linux-kernel+bounces-304051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AB1F961924
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:21:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 985E996194F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E488A285118
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:21:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C521B1C22C8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64036158218;
-	Tue, 27 Aug 2024 21:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF451D3656;
+	Tue, 27 Aug 2024 21:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bic56hyF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P28gqYxO"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2096A1F943
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 21:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C301B4C2D
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 21:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724793681; cv=none; b=lyWFFmbMOSxRpDYXEYcMlprijy06ZrlLGaJdY4sxJ26DLpLdZ6zedEQnGHi5liKMjnmiWQi91askkHxOsLg+0GLjwuxRpnMInYzeUfmU2iZz297YuVw2wZw/bzts8smhlupgZWCKVXru8M8m3zFu+BjcdIsPxq6sWfEniZuB2KI=
+	t=1724794628; cv=none; b=TrMoXqbydf3kBB0xgZD0x4BYt3IJLM6hC9dvHWHwew+VXqMirBnaRgRKUIVlsAfAEHDAL8YGThKcQkMwMCb88UmMhFYu4+vKgW3IkN3d719J8RVVPzdVGSGmTBO5B2OYIQhCqLqDBU1lZD7TP6p0twjA3CY0xM0KC7AtYGBYREs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724793681; c=relaxed/simple;
-	bh=xQk45zRQ0xoVZuNXXa/W6qn9zlMrp++9qmVx/q0XDQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=e6NEsz99dV5eY1RFGDg8bpO0tLEfS0dFaFG0mTtRVUfpYwemBKZwFnUyFVAA8BufbJFoJQwKi/fzJqgwCtmzHX+kzzCPgFZTogDkGpkcYrT9wKGICxTaw5+FwXdH/4+PSjkR4Npn2gvDdJIs/rrHsfuYhzcRSftg0vghzh0+DV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bic56hyF; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724793679; x=1756329679;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=xQk45zRQ0xoVZuNXXa/W6qn9zlMrp++9qmVx/q0XDQQ=;
-  b=Bic56hyFLVbmdbDjnlhh1qmNZlb7XIQC+bslX2ko7u6QBOyCAmToXhln
-   nEycolXUnGZkaEIJtaxUGPW1f6CblIAZqY6UfteutD9OwUVei0qsLMHrW
-   hgO3KDI47wp9Wm8nl+l+CtB7ar9xskbpSxX43emu7dSeuXZ0bIBAtGzff
-   CQf8+FV5kVTG9+J9sqaKoyF7IpHEYAMDq7ir2f+xS5WkY+oiu67XB8KlH
-   xwVS80npOrEZyC0j+IXQNDX2S06qUojh01z7YZjS91GO/JGvR3sPpdmJc
-   WmUYsvRzMwEld/dDnZUpiqQP47FtImrnmRi6W5kETX7/OVXUtESZWuNM6
-   Q==;
-X-CSE-ConnectionGUID: dCdcvNaLTveD77fDFqNuwA==
-X-CSE-MsgGUID: chW5UilLQ7qwBsoeBnTaAg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="34672092"
-X-IronPort-AV: E=Sophos;i="6.10,181,1719903600"; 
-   d="scan'208";a="34672092"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 14:21:19 -0700
-X-CSE-ConnectionGUID: jFcVtE9JTu6u0OxZhRzz2A==
-X-CSE-MsgGUID: WkzoaYBySmutTnfA4vn/RA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,181,1719903600"; 
-   d="scan'208";a="62727827"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 27 Aug 2024 14:21:17 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sj3co-000K5w-33;
-	Tue, 27 Aug 2024 21:21:14 +0000
-Date: Wed, 28 Aug 2024 05:21:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kees Cook <kees@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Vlastimil Babka <vbabka@suse.cz>
-Subject: include/linux/slab.h:552:15: error: type defaults to 'int' in
- declaration of 'kmem_buckets_create'
-Message-ID: <202408280559.FIsoHAAc-lkp@intel.com>
+	s=arc-20240116; t=1724794628; c=relaxed/simple;
+	bh=zgEgmrdD0ptR2rv9IaNbtPHc6vf0nOiTzwH2GpRCEzQ=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=baO1Ht6iBrmIKr9QTjUo3WMmO9066uaZEBQFF8Y23NBSLrxfAhW0jO5seo9owGv1MTNkBnEpPNaxrw2x+v5gsgQGywJhWucHThXs1hI/e/ob6vQn/x27bzwM6qZANEEkADhldqIl/LvgdzVL7HZwETddmwiNI7FaIPLWOX4bCSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P28gqYxO; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6b351a76beeso128109387b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 14:37:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724794625; x=1725399425; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dluq5P0RLumNyO/9SBujDaYG7Xf4enGWH7djPxvSwQE=;
+        b=P28gqYxOzLOcekosT5rk31dumiVBRdC32Ksezu252N/Xz/Mem12Wepr2okANMyx03g
+         MGrMozFm+11aI53Txj7uIkysSqgZePk++s+UNR6KN/gIogXviF11AcbddH2OgXDOndy6
+         YwIAwO5AZIiJAsSmoSfFpGOBnwkOa0NsgGIGWvfY2EkaCLafaUIu6xldOcYQZn6o1HDk
+         /up4S3bHC8fnATpJSJamDXcF7zUQLLkUZlMRpTJqxYfHqTs7Q3HzJblRWZVfGNzfpuQb
+         w2lr4KMPoe9C3VJemB2ZAEySVk2wFoaFJzP07PBgoU9kz7GHk6H0bSvZieEhPz76WTUP
+         0/nQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724794625; x=1725399425;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dluq5P0RLumNyO/9SBujDaYG7Xf4enGWH7djPxvSwQE=;
+        b=rOXFVCGxsBY22J0cVAoCOyRt7azwzTxnf41ptyFA5jgYaZwIxbsYBtFLRyDNnKCxwc
+         FM/lI1yOcVBnRWIutBSZZyzq9Pc3cLZ1lepPK6QIWPsx2O97RP09t0kFi/NMm1yy0ykO
+         h2Zsd4t5tv7fzpsmjepfRWt1CDzL3A9lcQb5P56bW+8P/EuSPrIM71cXOHwgO6XxC1Hg
+         xxqswKfHDRgjNGwvnPbuB+XvEpuHIILRmiOt601B59GLBZwteVu3X9lTq6cLyqK7BdF9
+         T2FACmutlq/e7/hpikkaICGhFTQAZrQa7ooFXWnH1hTuM26L7qzpmwQyksHKPwlyZz9k
+         +djA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7S3rEgm4ZOmuYjloA/5yOUhHRhHME4d++VWfZ6d8+8Oc1fREMpHe7EOOdgIzrZCPZhUyP6Vynodo7B+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZNkgeHc4CQ0qSUtgHRrL0k/a/QRelqYY9mGM3OFvCHZqCP20h
+	77BzdH1oC14tYkBCazSF5G1dd/24ZP5QPacJfOTlB1uNeGpoTFeBj37WcpgKCeHDSw9S7VRQ/dh
+	IJhvzyg==
+X-Google-Smtp-Source: AGHT+IHbgUiW+/3JydibTmeqr1pN94Tpwab3g7gq4l2Vdwkn9FplXLFyQAmd6R3YKxgoZ3pbUdYAZpmw3qtG
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:efd2:6807:80da:9919])
+ (user=irogers job=sendgmr) by 2002:a81:dc07:0:b0:691:41f5:7f3d with SMTP id
+ 00721157ae682-6c627f0b1e1mr569987b3.4.1724794625608; Tue, 27 Aug 2024
+ 14:37:05 -0700 (PDT)
+Date: Tue, 27 Aug 2024 14:27:57 -0700
+Message-Id: <20240827212757.1469340-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
+Subject: [PATCH v1] perf report: Name events in stats for pipe mode
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   3ec3f5fc4a91e389ea56b111a73d97ffc94f19c6
-commit: b32801d1255be1da62ea8134df3ed9f3331fba12 mm/slab: Introduce kmem_buckets_create() and family
-date:   8 weeks ago
-config: x86_64-randconfig-072-20240827 (https://download.01.org/0day-ci/archive/20240828/202408280559.FIsoHAAc-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240828/202408280559.FIsoHAAc-lkp@intel.com/reproduce)
+In stats mode PERF_RECORD_EVENT_UPDATE isn't being handled meaning the
+evsels aren't named when handling pipe mode output.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408280559.FIsoHAAc-lkp@intel.com/
+Before:
+```
+$ perf record -e inst_retired.any -a -o - sleep 0.1|perf report --stats -i -
+...
+Aggregated stats:
+           TOTAL events:      23358
+            COMM events:       2608  (11.2%)
+            EXIT events:          1  ( 0.0%)
+            FORK events:       2607  (11.2%)
+          SAMPLE events:        174  ( 0.7%)
+           MMAP2 events:      17936  (76.8%)
+            ATTR events:          2  ( 0.0%)
+  FINISHED_ROUND events:          2  ( 0.0%)
+        ID_INDEX events:          1  ( 0.0%)
+      THREAD_MAP events:          1  ( 0.0%)
+         CPU_MAP events:          1  ( 0.0%)
+    EVENT_UPDATE events:          3  ( 0.0%)
+       TIME_CONV events:          1  ( 0.0%)
+         FEATURE events:         20  ( 0.1%)
+   FINISHED_INIT events:          1  ( 0.0%)
+raw 0xc0 stats:
+          SAMPLE events:        174
+```
 
-All errors (new ones prefixed by >>):
+After:
+```
+$ perf record -e inst_retired.any -a -o - sleep 0.1|perf report --stats -i -
+...
+Aggregated stats:
+           TOTAL events:      23742
+            COMM events:       2620  (11.0%)
+            EXIT events:          2  ( 0.0%)
+            FORK events:       2619  (11.0%)
+          SAMPLE events:        165  ( 0.7%)
+           MMAP2 events:      18304  (77.1%)
+            ATTR events:          2  ( 0.0%)
+  FINISHED_ROUND events:          2  ( 0.0%)
+        ID_INDEX events:          1  ( 0.0%)
+      THREAD_MAP events:          1  ( 0.0%)
+         CPU_MAP events:          1  ( 0.0%)
+    EVENT_UPDATE events:          3  ( 0.0%)
+       TIME_CONV events:          1  ( 0.0%)
+         FEATURE events:         20  ( 0.1%)
+   FINISHED_INIT events:          1  ( 0.0%)
+inst_retired.any stats:
+          SAMPLE events:        165
+```
 
-   arch/x86/include/asm/fpu/types.h:355:22: note: in expansion of macro 'PAGE_SIZE'
-     355 |         u8 __padding[PAGE_SIZE];
-         |                      ^~~~~~~~~
-   arch/x86/include/asm/page_types.h:10:33: warning: "CONFIG_PAGE_SHIFT" is not defined, evaluates to 0 [-Wundef]
-      10 | #define PAGE_SHIFT              CONFIG_PAGE_SHIFT
-         |                                 ^~~~~~~~~~~~~~~~~
-   arch/x86/include/asm/page_types.h:11:47: note: in expansion of macro 'PAGE_SHIFT'
-      11 | #define PAGE_SIZE               (_AC(1,UL) << PAGE_SHIFT)
-         |                                               ^~~~~~~~~~
-   include/linux/mm_types.h:531:6: note: in expansion of macro 'PAGE_SIZE'
-     531 | #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
-         |      ^~~~~~~~~
-   In file included from include/vdso/const.h:5,
-                    from include/linux/const.h:4,
-                    from include/linux/list.h:9,
-                    from include/linux/swait.h:5,
-                    from include/linux/completion.h:12,
-                    from include/linux/crypto.h:15,
-                    from arch/x86/kernel/asm-offsets.c:9:
-   arch/x86/include/asm/page_types.h:10:33: warning: "CONFIG_PAGE_SHIFT" is not defined, evaluates to 0 [-Wundef]
-      10 | #define PAGE_SHIFT              CONFIG_PAGE_SHIFT
-         |                                 ^~~~~~~~~~~~~~~~~
-   include/uapi/linux/const.h:32:50: note: in definition of macro '__ALIGN_KERNEL_MASK'
-      32 | #define __ALIGN_KERNEL_MASK(x, mask)    (((x) + (mask)) & ~(mask))
-         |                                                  ^~~~
-   include/linux/mm_types.h:508:41: note: in expansion of macro '__ALIGN_MASK'
-     508 | #define PAGE_FRAG_CACHE_MAX_SIZE        __ALIGN_MASK(32768, ~PAGE_MASK)
-         |                                         ^~~~~~~~~~~~
-   arch/x86/include/asm/page_types.h:11:47: note: in expansion of macro 'PAGE_SHIFT'
-      11 | #define PAGE_SIZE               (_AC(1,UL) << PAGE_SHIFT)
-         |                                               ^~~~~~~~~~
-   arch/x86/include/asm/page_types.h:12:36: note: in expansion of macro 'PAGE_SIZE'
-      12 | #define PAGE_MASK               (~(PAGE_SIZE-1))
-         |                                    ^~~~~~~~~
-   include/linux/mm_types.h:508:62: note: in expansion of macro 'PAGE_MASK'
-     508 | #define PAGE_FRAG_CACHE_MAX_SIZE        __ALIGN_MASK(32768, ~PAGE_MASK)
-         |                                                              ^~~~~~~~~
-   include/linux/mm_types.h:531:18: note: in expansion of macro 'PAGE_FRAG_CACHE_MAX_SIZE'
-     531 | #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
-         |                  ^~~~~~~~~~~~~~~~~~~~~~~~
-   arch/x86/include/asm/page_types.h:10:33: warning: "CONFIG_PAGE_SHIFT" is not defined, evaluates to 0 [-Wundef]
-      10 | #define PAGE_SHIFT              CONFIG_PAGE_SHIFT
-         |                                 ^~~~~~~~~~~~~~~~~
-   include/uapi/linux/const.h:32:61: note: in definition of macro '__ALIGN_KERNEL_MASK'
-      32 | #define __ALIGN_KERNEL_MASK(x, mask)    (((x) + (mask)) & ~(mask))
-         |                                                             ^~~~
-   include/linux/mm_types.h:508:41: note: in expansion of macro '__ALIGN_MASK'
-     508 | #define PAGE_FRAG_CACHE_MAX_SIZE        __ALIGN_MASK(32768, ~PAGE_MASK)
-         |                                         ^~~~~~~~~~~~
-   arch/x86/include/asm/page_types.h:11:47: note: in expansion of macro 'PAGE_SHIFT'
-      11 | #define PAGE_SIZE               (_AC(1,UL) << PAGE_SHIFT)
-         |                                               ^~~~~~~~~~
-   arch/x86/include/asm/page_types.h:12:36: note: in expansion of macro 'PAGE_SIZE'
-      12 | #define PAGE_MASK               (~(PAGE_SIZE-1))
-         |                                    ^~~~~~~~~
-   include/linux/mm_types.h:508:62: note: in expansion of macro 'PAGE_MASK'
-     508 | #define PAGE_FRAG_CACHE_MAX_SIZE        __ALIGN_MASK(32768, ~PAGE_MASK)
-         |                                                              ^~~~~~~~~
-   include/linux/mm_types.h:531:18: note: in expansion of macro 'PAGE_FRAG_CACHE_MAX_SIZE'
-     531 | #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
-         |                  ^~~~~~~~~~~~~~~~~~~~~~~~
-   In file included from arch/x86/include/asm/page.h:9,
-                    from arch/x86/include/asm/thread_info.h:12,
-                    from include/linux/thread_info.h:60,
-                    from include/linux/spinlock.h:60,
-                    from include/linux/swait.h:7,
-                    from include/linux/completion.h:12,
-                    from include/linux/crypto.h:15,
-                    from arch/x86/kernel/asm-offsets.c:9:
-   arch/x86/include/asm/page_types.h:10:33: warning: "CONFIG_PAGE_SHIFT" is not defined, evaluates to 0 [-Wundef]
-      10 | #define PAGE_SHIFT              CONFIG_PAGE_SHIFT
-         |                                 ^~~~~~~~~~~~~~~~~
-   include/linux/mmzone.h:1757:23: note: in expansion of macro 'PAGE_SHIFT'
-    1757 | #if (MAX_PAGE_ORDER + PAGE_SHIFT) > SECTION_SIZE_BITS
-         |                       ^~~~~~~~~~
-   In file included from include/linux/crypto.h:17,
-                    from arch/x86/kernel/asm-offsets.c:9:
-   include/linux/slab.h:431:21: error: type defaults to 'int' in declaration of 'kmalloc_caches' [-Werror=implicit-int]
-     431 | extern kmem_buckets kmalloc_caches[NR_KMALLOC_TYPES];
-         |                     ^~~~~~~~~~~~~~
-   In file included from include/linux/container_of.h:5,
-                    from include/linux/list.h:5,
-                    from include/linux/swait.h:5,
-                    from include/linux/completion.h:12,
-                    from include/linux/crypto.h:15,
-                    from arch/x86/kernel/asm-offsets.c:9:
-   arch/x86/include/asm/page_types.h:10:33: error: expression in static assertion is not an integer
-      10 | #define PAGE_SHIFT              CONFIG_PAGE_SHIFT
-         |                                 ^~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   include/linux/slab.h:527:1: note: in expansion of macro 'static_assert'
-     527 | static_assert(PAGE_SHIFT <= 20);
-         | ^~~~~~~~~~~~~
-   include/linux/slab.h:527:15: note: in expansion of macro 'PAGE_SHIFT'
-     527 | static_assert(PAGE_SHIFT <= 20);
-         |               ^~~~~~~~~~
-   In file included from include/linux/crypto.h:17,
-                    from arch/x86/kernel/asm-offsets.c:9:
->> include/linux/slab.h:552:15: error: type defaults to 'int' in declaration of 'kmem_buckets_create' [-Werror=implicit-int]
-     552 | kmem_buckets *kmem_buckets_create(const char *name, slab_flags_t flags,
-         |               ^~~~~~~~~~~~~~~~~~~
-   include/linux/slab.h:612:33: warning: 'assume_aligned' attribute argument <erroneous-expression> is not an integer constant [-Wattributes]
-     612 |                                 __assume_page_alignment __alloc_size(1);
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/slab.h:615:33: warning: 'assume_aligned' attribute argument <erroneous-expression> is not an integer constant [-Wattributes]
-     615 |                                 __assume_page_alignment __alloc_size(1);
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/slab.h: In function 'kmalloc_noprof':
-   include/linux/slab.h:682:78: error: subscripted value is neither array nor pointer nor vector
-     682 |                                 kmalloc_caches[kmalloc_type(flags, _RET_IP_)][index],
-         |                                                                              ^
-   include/linux/slab.h:675:30: warning: variable 'index' set but not used [-Wunused-but-set-variable]
-     675 |                 unsigned int index;
-         |                              ^~~~~
-   include/linux/slab.h: In function 'kmalloc_node_noprof':
-   include/linux/slab.h:705:78: error: subscripted value is neither array nor pointer nor vector
-     705 |                                 kmalloc_caches[kmalloc_type(flags, _RET_IP_)][index],
-         |                                                                              ^
-   include/linux/slab.h:698:30: warning: variable 'index' set but not used [-Wunused-but-set-variable]
-     698 |                 unsigned int index;
-         |                              ^~~~~
-   In file included from include/linux/container_of.h:5,
-                    from include/linux/list.h:5,
-                    from include/linux/swait.h:5,
-                    from include/linux/completion.h:12,
-                    from include/linux/crypto.h:15,
-                    from arch/x86/kernel/asm-offsets.c:9:
-   include/linux/highmem.h: In function 'memcpy_from_file_folio':
-   include/linux/minmax.h:31:9: error: first argument to '__builtin_choose_expr' not a constant
-      31 |         __builtin_choose_expr(__is_constexpr(is_signed_type(typeof(x))),        \
-         |         ^~~~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   include/linux/minmax.h:51:9: note: in expansion of macro 'static_assert'
-      51 |         static_assert(__types_ok(x, y),                 \
-         |         ^~~~~~~~~~~~~
-   include/linux/minmax.h:39:28: note: in expansion of macro '__is_signed'
-      39 |         (__is_signed(x) == __is_signed(y) ||                    \
-         |                            ^~~~~~~~~~~
-   include/linux/minmax.h:51:23: note: in expansion of macro '__types_ok'
-      51 |         static_assert(__types_ok(x, y),                 \
-         |                       ^~~~~~~~~~
-   include/linux/minmax.h:58:17: note: in expansion of macro '__cmp_once'
-      58 |                 __cmp_once(op, x, y, __UNIQUE_ID(__x), __UNIQUE_ID(__y)))
-         |                 ^~~~~~~~~~
-   include/linux/minmax.h:161:33: note: in expansion of macro '__careful_cmp'
-     161 | #define min_t(type, x, y)       __careful_cmp(min, (type)(x), (type)(y))
-         |                                 ^~~~~~~~~~~~~
-   include/linux/highmem.h:596:23: note: in expansion of macro 'min_t'
-     596 |                 len = min_t(size_t, len, PAGE_SIZE - offset);
-         |                       ^~~~~
-   include/linux/minmax.h:31:9: error: first argument to '__builtin_choose_expr' not a constant
-      31 |         __builtin_choose_expr(__is_constexpr(is_signed_type(typeof(x))),        \
-         |         ^~~~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   include/linux/minmax.h:51:9: note: in expansion of macro 'static_assert'
-      51 |         static_assert(__types_ok(x, y),                 \
-         |         ^~~~~~~~~~~~~
-   include/linux/minmax.h:40:41: note: in expansion of macro '__is_signed'
-      40 |                 __is_signed((x) + 0) == __is_signed((y) + 0) || \
-         |                                         ^~~~~~~~~~~
-   include/linux/minmax.h:51:23: note: in expansion of macro '__types_ok'
-      51 |         static_assert(__types_ok(x, y),                 \
-         |                       ^~~~~~~~~~
-   include/linux/minmax.h:58:17: note: in expansion of macro '__cmp_once'
-      58 |                 __cmp_once(op, x, y, __UNIQUE_ID(__x), __UNIQUE_ID(__y)))
-         |                 ^~~~~~~~~~
-   include/linux/minmax.h:161:33: note: in expansion of macro '__careful_cmp'
-     161 | #define min_t(type, x, y)       __careful_cmp(min, (type)(x), (type)(y))
-         |                                 ^~~~~~~~~~~~~
-   include/linux/highmem.h:596:23: note: in expansion of macro 'min_t'
-     596 |                 len = min_t(size_t, len, PAGE_SIZE - offset);
-         |                       ^~~~~
-   include/linux/minmax.h:31:9: error: first argument to '__builtin_choose_expr' not a constant
-      31 |         __builtin_choose_expr(__is_constexpr(is_signed_type(typeof(x))),        \
-         |         ^~~~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   include/linux/minmax.h:51:9: note: in expansion of macro 'static_assert'
-      51 |         static_assert(__types_ok(x, y),                 \
-         |         ^~~~~~~~~~~~~
-   include/linux/minmax.h:36:53: note: in expansion of macro '__is_signed'
-      36 |         (__builtin_choose_expr(__is_constexpr(x) && __is_signed(x), x, -1) >= 0)
-         |                                                     ^~~~~~~~~~~
-   include/linux/minmax.h:41:38: note: in expansion of macro '__is_noneg_int'
-      41 |                 __is_noneg_int(x) || __is_noneg_int(y))
-         |                                      ^~~~~~~~~~~~~~
-   include/linux/minmax.h:51:23: note: in expansion of macro '__types_ok'
-      51 |         static_assert(__types_ok(x, y),                 \
-         |                       ^~~~~~~~~~
-   include/linux/minmax.h:58:17: note: in expansion of macro '__cmp_once'
-      58 |                 __cmp_once(op, x, y, __UNIQUE_ID(__x), __UNIQUE_ID(__y)))
-         |                 ^~~~~~~~~~
-   include/linux/minmax.h:161:33: note: in expansion of macro '__careful_cmp'
-     161 | #define min_t(type, x, y)       __careful_cmp(min, (type)(x), (type)(y))
+This makes the pipe output match the regular output.
 
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+This bug pre-dates commit 113f614c6dd0 ("perf report: Use
+perf_tool__init()")
+---
+ tools/perf/builtin-report.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-vim +552 include/linux/slab.h
-
-   551	
- > 552	kmem_buckets *kmem_buckets_create(const char *name, slab_flags_t flags,
-   553					  unsigned int useroffset, unsigned int usersize,
-   554					  void (*ctor)(void *));
-   555	
-
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index 1643113616f4..5c21ca33ca08 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -811,6 +811,7 @@ static void stats_setup(struct report *rep)
+ 	rep->tool.attr = process_attr;
+ 	rep->tool.sample = count_sample_event;
+ 	rep->tool.lost_samples = count_lost_samples_event;
++	rep->tool.event_update = perf_event__process_event_update;
+ 	rep->tool.no_warn = true;
+ }
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.46.0.295.g3b9ea8a38a-goog
+
 
