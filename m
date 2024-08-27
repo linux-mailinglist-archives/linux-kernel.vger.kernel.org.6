@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-303429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41D20960BF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:26:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B935960BF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:26:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B78231F24FCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:26:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB7B12890BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:26:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2271C3F3B;
-	Tue, 27 Aug 2024 13:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073541C4623;
+	Tue, 27 Aug 2024 13:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GPPHdM9w"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p90XrteR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4461C2DCB;
-	Tue, 27 Aug 2024 13:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451721B3F2B;
+	Tue, 27 Aug 2024 13:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724765026; cv=none; b=DTaa3WQsHe5Mhy0JFn5ZlHcec92C7JOVVdNZjj3xz3TjjHdW2lVklTzQL3gpEcAFSp4EACzIpDJTVSk2TpX7+Y973lY0nwI/vzEzVsVgUqr6MOzM6OoCvmKkWmSCodCgvTrMTkXKdl5Njd4c3P0XxeAD6pBKFXOVeHM1pTr68eA=
+	t=1724765042; cv=none; b=X6AiU7eXdnta5FsnV868fOg22JUbrSTMHQ5DrzLmrc4xHXYTw+7W5AnCNIE25rhvs0P5hKP17GNUtkKbXNVn3ujXhMdRwP02ZEIAWnSMj+zEgamKfnfXPk3Nu+5UdRm2N5MNrpZHnnl34wI73/B1sUsO69csg73isImt+GZ13+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724765026; c=relaxed/simple;
-	bh=mDhu/iZsja8ip8Pm2FL9kdwCESYdBw1UKwf/Kf3cPCc=;
+	s=arc-20240116; t=1724765042; c=relaxed/simple;
+	bh=73+RVauxylVeoSXQPKLsgBt/WsASDjw/hrVgux1lTlQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IW2VDK0QJFrHdBGw2kQt1a/xcrYsM2EEoD0MAX9s0x/fs+zWQFKJna82CnSaN9kDsCu0clvajDkfpNwE4CNpDnfp03JJHNcB/YEO1Vs01WLfhp7gtLvn5ggFPO7pVgHk4zlqRWFO35kMBEA4WK37156kx86y79AQVKqoi0nrqN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GPPHdM9w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87E0AC61041;
-	Tue, 27 Aug 2024 13:23:42 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=VbI7hSBEpDDyNmT/iu/MAz4rt/PC7kHZhNI9BjWXgt5HZxvlnOI1wI4mEPGQ35yDMN2wVf/mdlNfb66A3n4IFq54V+w0+Q8JtfWmhz/cxNz7VmpIeY+fkIGNGdhPXGIvNZ7ZEDmiwcz75ip+abFrpubEOTAx6P1kkUTL+xWZ/zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p90XrteR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68E85C61041;
+	Tue, 27 Aug 2024 13:23:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724765026;
-	bh=mDhu/iZsja8ip8Pm2FL9kdwCESYdBw1UKwf/Kf3cPCc=;
+	s=k20201202; t=1724765041;
+	bh=73+RVauxylVeoSXQPKLsgBt/WsASDjw/hrVgux1lTlQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GPPHdM9wD3DL6t8QBV6TWNJF3pGC/kAJZ+e9RYQlt0rfVg5hGwDgUjAJxXLqD5zsf
-	 r0EaYKdWSXe7UV9Qif+G1bA78IGft6VPPcaIApr9ykpQf5xe2AuyJTHQHlJnYad416
-	 At9QLUXmrOeybWoOEF5ad5ra18Vm8i6bm5avo5dp62WuDOIbPLhRrchufidq1m5mDP
-	 fx/os3mheeNaZn7uojTLex68vCVZF9VOvmZx+t2uJVqKnamuR3Av0S9w+JaxLUBf0J
-	 TThtY8jBeRczIof4mubmZRPsIyuPkLBjnMNL35Hvj1NTe9CGzsKu4tcK1Q9RZNlwlX
-	 9PpROBBQznykw==
-Message-ID: <5f29a065-269d-4e72-81b8-30d247994fbd@kernel.org>
-Date: Tue, 27 Aug 2024 15:23:40 +0200
+	b=p90XrteRoMz+UCX+p3AroIYoiuNUJOOnLFy99oydxGwCEPGuNAnIdZpAxgrmygMik
+	 VsnPvJa1cyvtQs4rKhUyM6P1LJ3JBm+CO4rOVeXBLRaWPPJzSuBui3KRHsHLlXmQYj
+	 JGeg2a/FbCEmkzvwZqblNJhrixkn2+ght2TlU3tGN0l2obpndewVqnGJhYcC4hEqjk
+	 +m/0s6AlEAiZ2qKyS2sM6TDP/q+TskoauDDAZd0yYCg7VMVsGzMB/qmY7B1H5qR6ga
+	 zjxXsNV0s1R/Hjfwi4BZgxDslMzUjAJBQxIl2J+S7zr7huHBOidqxwZTvCFrRZbep5
+	 md/XVfNwZy7fQ==
+Message-ID: <2e634ee8-7622-4eb8-ba5b-0d218bb092eb@kernel.org>
+Date: Tue, 27 Aug 2024 15:23:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: phy: Add STM32MP25 COMBOPHY bindings
+Subject: Re: [PATCH v3 0/5] Add STM32MP25 USB3/PCIE COMBOPHY driver
 To: Christian Bruel <christian.bruel@foss.st.com>, vkoul@kernel.org,
  kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
  mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
@@ -59,7 +59,6 @@ Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  fabrice.gasnier@foss.st.com
 References: <20240827122459.1102889-1-christian.bruel@foss.st.com>
- <20240827122459.1102889-2-christian.bruel@foss.st.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,100 +104,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240827122459.1102889-2-christian.bruel@foss.st.com>
+In-Reply-To: <20240827122459.1102889-1-christian.bruel@foss.st.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 27/08/2024 14:24, Christian Bruel wrote:
-> Document the bindings for STM32 COMBOPHY interface, used to support
-> the PCIe and USB3 stm32mp25 drivers.
-> Following entries can be used to tune caracterisation parameters
->  - st,output-micro-ohms and st,output-vswing-microvolt bindings entries
-> to tune the impedance and voltage swing using discrete simulation results
->  - st,rx-equalizer register to set the internal rx equalizer filter value.
+> This patch series adds USB3/PCIE COMBOPHY driver for the STM32MP25 SoC from
+> STMicrolectronics, respective yaml schema and enable for the stm32mp257f-ev1
+> device into which it is used for PCIe.
 > 
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
+> Changes in v3:
+> Address comments from Rob and Krzysztof:
+>    - Reorder MAINTAINERS patch
+>    - Drop wakeup-source from bindings (should be generic)
 
-v1? Or v3?
-
-> ---
->  .../bindings/phy/st,stm32-combophy.yaml       | 144 ++++++++++++++++++
->  1 file changed, 144 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/st,stm32-combophy.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/st,stm32-combophy.yaml b/Documentation/devicetree/bindings/phy/st,stm32-combophy.yaml
-> new file mode 100644
-> index 000000000000..c33a843b83a3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/st,stm32-combophy.yaml
-
-Filename matching compatible.
-
-> @@ -0,0 +1,144 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/phy/st,stm32-combophy.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: STMicroelectronics STM32MP25 USB3/PCIe COMBOPHY
-> +
-> +maintainers:
-> +  - Christian Bruel <christian.bruel@foss.st.com>
-> +
-> +description:
-> +  Single lane PHY shared (exclusive) between the USB3 and PCIe controllers.
-> +  Supports 5Gbit/s for USB3 and PCIe gen2 or 2.5Gbit/s for PCIe gen1.
-> +
-> +properties:
-> +  compatible:
-> +    const: st,stm32mp25-combophy
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#phy-cells":
-> +    const: 1
-> +    description: |
-> +      The cells contain the following arguments.
-> +
-> +      - description: The PHY type
-
-That's some sort of mess. Is it schema within description or schema? Why
-two descriptions?
-
-> +          enum:
-> +            - PHY_TYPE_USB3
-> +            - PHY_TYPE_PCIE
-> +
-
-...
-
-> +required:
-> +  - compatible
-> +  - reg
-> +  - st,syscfg
-> +  - '#phy-cells'
-> +  - resets
-> +  - reset-names
-> +  - clocks
-> +  - clock-names
-> +
-> +allOf:
-> +  - if:
-> +      required:
-> +        - wakeup-source
-> +    then:
-> +      anyOf:
-> +        - required: [interrupts]
-> +        - required: [interrupts-extended]
-> +
-
-I do not see any improvements.
-
-The tag you received was CONDITIONAL. If you do not apply the comments,
-you cannot just apply the tag.
+Where? Point me to the exact line being dropped.
 
 Best regards,
 Krzysztof
