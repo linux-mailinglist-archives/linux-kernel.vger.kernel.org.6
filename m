@@ -1,161 +1,145 @@
-Return-Path: <linux-kernel+bounces-302976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5FAC9605B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:36:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B92269605C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51EB21F22492
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:36:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8C7C1C225E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400DE19DFAB;
-	Tue, 27 Aug 2024 09:35:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E0819DF67;
+	Tue, 27 Aug 2024 09:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bxJmPm7A"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FbLLNd9/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9E419D89C
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE4119DF5C;
+	Tue, 27 Aug 2024 09:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724751329; cv=none; b=GblsWA2FlM9xCkwTHo0j5yIYqFGfxIfMo+iP2HK1ic7WzqnwOWrrfadRitURZYPnnPAtIVrRCj5aeWIlBj6WEV5z3Hu3VFS7WPcAqnzAm6WhfH+K1rE3eTsd4mXiEgiWHy0CziEy2nFQNhEuhgiwfwIt6x7r2ueZqef62Jv13m8=
+	t=1724751436; cv=none; b=i3/mx5ikMqoM1K8avGRT6xbtDrZU5iy+BS7v+BkZ0xf/NG8pyDEgk8r8OW1leTMMSnpNTUK5y3JmEvznpLTTnKDVvCI1LGHM9sert5nRVS4tGdX9zJEQu8WThplLjJoRYqU0BEa6UaZ96TBk2/JLSyHQyr7Jbn2RD8T7rug47SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724751329; c=relaxed/simple;
-	bh=/qYEaNO0f0/j0GNVdDMtDz3dnPGIlUfEcopvMXwrDzo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rTrnYASEKisfJUbpLiyL4PXZpAkRJpmJ6I2fSS5YKL9JJE+7UWA+oQ5UHbodw3ORT2l/hJI4Pa+ZlCidPNx/Z75V6mDfWq8SXykUUSrhv8Xh15DhnmcmUC/3TguM1Dy63WhifLV3ZirCb0uGJ8PToGtI/R9dWp2z+bKn33O079g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bxJmPm7A; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-371b8d402c9so213442f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 02:35:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724751326; x=1725356126; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=FwvkZPahHcoAXP/+I5Y9zpq7z6mvaxa3E0EjT/3SfIU=;
-        b=bxJmPm7AQ+ekl1kEL1annYEDETsoedxDHJhhLA530vyagSp8hsstjG3yaGoxSYoNQW
-         raxWlIpYAejXRDsb4MwUwP7hyLy4/KN6t3j8//gpNg7YrHKxXwTl0/GUSE9h/2Q2Xquf
-         fiHAj6wQnHFwT0yVod3IEl+rtP5huMw5fuIAQ+xXT0WV3S1OJiQnYV1lJu8uCqU6unPT
-         bdxg1MIMUV9oRMpfameUrsNOP0CrnU9eIImGVW1LUf05IVgqts6X/haqlKH5W9GMkZ/J
-         0V6NbJHKPiDKBI0sfFXf+Y4nisDpEZSkXbTtKgh8G51Gx/FiVt1ToKi4h4iya2HO5cPn
-         4n6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724751326; x=1725356126;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FwvkZPahHcoAXP/+I5Y9zpq7z6mvaxa3E0EjT/3SfIU=;
-        b=kHSPOXafkyi+rQmiFsKQwdmZU9s4yQUYiM2kII+P7h7wLOPIm6YdVEswZ4r2ID+RCo
-         VlsUz90EHp13m3R2Lrkoijt8Li6bV+V8nZ4bZEeoL+yBLWHnEVFmfAr5g9TzbRrcOpRP
-         Q7qm6dAzj2VZjnjxPsszKSo2gAFQVM/5K9i2OhLJPi9Thj1hs3UiHy8kSE2D0Hn0NOMy
-         y4hX4mYU3NxjrmUamRAocWWzPM5MKGnOkI/UGfsFj+8yVdBZuqRC+kM6BWtdBoHRyrYW
-         NlA2vgvm/jTuMFarI+Lmg0pvy3qpmsw+sjMoVyOjDp/+SLTDUdhaHKPMQ//sTnuJETDk
-         K8bg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjDVNVhVPJaalr5mmRjYQYgr99uyzNS+P29r6Gpdw5ELCgdq2esPC5Dxb504gSbCPj2e038N5nDTVhSog=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFC8Du/zURzH1LrPPk7ly+jrmvdDezcXFaliYz2h7EltwD0zYa
-	79VRTt4zy5sRjczk1VybNZIZTjPPziz6E/h48rU+Egx9LEq92TAgdxIf+vNsGvE=
-X-Google-Smtp-Source: AGHT+IGbIMoyFxf2wkJPSy9lJAdsfddn7eHX3cATKuq9Occ3teA1vXlQLSZWmqbpLkgrcqoTcC6ReQ==
-X-Received: by 2002:a5d:6daf:0:b0:362:4aac:8697 with SMTP id ffacd0b85a97d-373117c3298mr5146120f8f.0.1724751325846;
-        Tue, 27 Aug 2024 02:35:25 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730817a548sm12592529f8f.63.2024.08.27.02.35.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 02:35:25 -0700 (PDT)
-Message-ID: <7c6df930-f685-421d-9186-b064d15dfa00@linaro.org>
-Date: Tue, 27 Aug 2024 11:35:23 +0200
+	s=arc-20240116; t=1724751436; c=relaxed/simple;
+	bh=fIUOVedot9IeaESAjfIzsPX/QunqKG3XqRU7QX9msjU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FND3mkFWLaSLVx82m3+w6b0ufk3arkoEOSNCECJ24eclKcpJBt0nPagxfL82v7XJadXRaZyuhB/Dt+kUqKQutn0awch5yn9CFz4LtV0NrPKtKBnrBEfJdHD8ZDjmEtJ58f15+IZ3lLVX8vmtCSYsC7wM4lRQthzIdI2TWQmqwN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FbLLNd9/; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724751434; x=1756287434;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fIUOVedot9IeaESAjfIzsPX/QunqKG3XqRU7QX9msjU=;
+  b=FbLLNd9/Iga7nuJ85sYeL1CWJaELTCfb8shZR60BTJjH0R9tJgL5CLqa
+   FgQs5rfn9qdV8kyvemleJq5DjZeFYoXBHlAPChBx7ON3dT5iFz6tpO5MC
+   BBccyb8p+tihuhogvuLKPJyvuH9jXKt6LUWpItJMMmAhjsiLK+GN5OLU9
+   UiJdpuu5JZQLLxZuE4MjmK4YhjaGVBiZmFL2OA1lD9JY/NykF8JJZ1qzw
+   ydBdy3laxRSE0bBE0q5W/do5PFx3ecQiuOh0mAL4mfst3Ze7T/NmWCP5D
+   9j9F3zeIFbqVsqKfE15d49PglI7SCFrguKDuzRAATpEZkdczjIHMexJdn
+   A==;
+X-CSE-ConnectionGUID: zGLCbJ/7Q6CpHnQeT6AEPg==
+X-CSE-MsgGUID: LT/4U2/IQ1msPx6jrD4Udw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23377726"
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="23377726"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 02:37:14 -0700
+X-CSE-ConnectionGUID: Y3S4DTg+R5Wqfj+T4JjJaA==
+X-CSE-MsgGUID: LPh9aVcORPSKtq6sP2WCwg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="62501975"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 27 Aug 2024 02:37:11 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sisdR-000IRM-0m;
+	Tue, 27 Aug 2024 09:37:09 +0000
+Date: Tue, 27 Aug 2024 17:36:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Maksym Kutsevol <max@kutsevol.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Breno Leitao <leitao@debian.org>
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] netcons: Add udp send fail statistics to netconsole
+Message-ID: <202408271711.RhzKTDRD-lkp@intel.com>
+References: <20240824215130.2134153-2-max@kutsevol.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/11] usb: dwc3: st: simplify with dev_err_probe
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Patrice Chotard <patrice.chotard@foss.st.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Michal Simek <michal.simek@amd.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "imx@lists.linux.dev" <imx@lists.linux.dev>,
- "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
-References: <20240814-b4-cleanup-h-of-node-put-usb-v1-0-95481b9682bc@linaro.org>
- <20240814-b4-cleanup-h-of-node-put-usb-v1-2-95481b9682bc@linaro.org>
- <20240827011901.zcu3x24ph3bmfwap@synopsys.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240827011901.zcu3x24ph3bmfwap@synopsys.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240824215130.2134153-2-max@kutsevol.com>
 
-On 27/08/2024 03:19, Thinh Nguyen wrote:
-> On Wed, Aug 14, 2024, Krzysztof Kozlowski wrote:
->> Use dev_err_probe() to make the error paths a bit simpler.
-> 
-> I think it makes more sense to note that this helps with cases of
-> -EPROBE_DEFER than making this simpler. Regardless, this is an
-> improvement.
-> 
-> Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Hi Maksym,
 
-Yeah, I forgot about this argument. Getting resets can defer, so this
-actually solves the dmesg flood for deferred probes.
+kernel test robot noticed the following build warnings:
 
-Best regards,
-Krzysztof
+[auto build test WARNING on 8af174ea863c72f25ce31cee3baad8a301c0cf0f]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Maksym-Kutsevol/netcons-Add-udp-send-fail-statistics-to-netconsole/20240826-163850
+base:   8af174ea863c72f25ce31cee3baad8a301c0cf0f
+patch link:    https://lore.kernel.org/r/20240824215130.2134153-2-max%40kutsevol.com
+patch subject: [PATCH 2/2] netcons: Add udp send fail statistics to netconsole
+config: arc-allyesconfig (https://download.01.org/0day-ci/archive/20240827/202408271711.RhzKTDRD-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408271711.RhzKTDRD-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408271711.RhzKTDRD-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/net/netconsole.c: In function 'stats_show':
+>> drivers/net/netconsole.c:340:46: warning: format '%lu' expects argument of type 'long unsigned int', but argument 3 has type 'size_t' {aka 'unsigned int'} [-Wformat=]
+     340 |         return sysfs_emit(buf, "xmit_drop: %lu enomem: %lu\n",
+         |                                            ~~^
+         |                                              |
+         |                                              long unsigned int
+         |                                            %u
+     341 |                 nt->stats.xmit_drop_count, nt->stats.enomem_count);
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~     
+         |                          |
+         |                          size_t {aka unsigned int}
+   drivers/net/netconsole.c:340:58: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'size_t' {aka 'unsigned int'} [-Wformat=]
+     340 |         return sysfs_emit(buf, "xmit_drop: %lu enomem: %lu\n",
+         |                                                        ~~^
+         |                                                          |
+         |                                                          long unsigned int
+         |                                                        %u
+     341 |                 nt->stats.xmit_drop_count, nt->stats.enomem_count);
+         |                                            ~~~~~~~~~~~~~~~~~~~~~~
+         |                                                     |
+         |                                                     size_t {aka unsigned int}
+
+
+vim +340 drivers/net/netconsole.c
+
+   335	
+   336	static ssize_t stats_show(struct config_item *item, char *buf)
+   337	{
+   338		struct netconsole_target *nt = to_target(item);
+   339	
+ > 340		return sysfs_emit(buf, "xmit_drop: %lu enomem: %lu\n",
+   341			nt->stats.xmit_drop_count, nt->stats.enomem_count);
+   342	}
+   343	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
