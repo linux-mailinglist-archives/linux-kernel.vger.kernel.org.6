@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-303631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A25F961227
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:27:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7374D961230
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:28:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CBB01C233F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:27:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5F3A1C2387D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AEBA1CFEA4;
-	Tue, 27 Aug 2024 15:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E93E1CB31B;
+	Tue, 27 Aug 2024 15:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="DCqt5RYP"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="i8EjG6U6"
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874621C93AB;
-	Tue, 27 Aug 2024 15:26:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84D21C9ECD;
+	Tue, 27 Aug 2024 15:26:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724772364; cv=none; b=iaVJ4h7CVftexQRYAH3ayDk0xbLiFaHRVnTU8l62VgX6ceVNX8F9nFzNgvyrk7E+iV1BR9uIA9PIa+lbzcUOf6nwv8xp/h0nr2/lBK1d6469MKxfZrAEObpq3vHFivYD4yLPQX5kpTWKODDIJKGvfs0AOE5nrFds34BLVJ5u0ZA=
+	t=1724772367; cv=none; b=nQJSCENKtPWEL+hNWk56N+FLYhRyqFNOxhee2zhV1R+vHEPFOs9FvUksYOBhxh9NqwPrjK6180t/MZ3NoXy4dqqEBXKhYsGbrviKB5Yhr9XkfKlVscgxE5J/b32hyEY09obxwMCmpI2a1sxvnc3/6vl1p5lxsmDOoCY6IlFBhYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724772364; c=relaxed/simple;
-	bh=2fuwEC3Yp225FwaS701NUfjP1g4xTmgB08/zOpmpsAA=;
+	s=arc-20240116; t=1724772367; c=relaxed/simple;
+	bh=z4+MXZQwSzyk1DP5JRe+oUonhr5WcjwKYTX3+no3UJk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FpVvR/F8NS9BvgxhFcETKNItzHcesYIYGSglG3pJQ/bOzzGutsRN+XXIGmFIcElVKZ6l1XlS/M/rAEiWU16KsJz9OVPqYQoGD/xFtBCHY/TPUUOyINwMatbinXMiSO8P1GVuSdxrg4Rc5KItJdTJzHXkasBbAri5RNnluD5Qf/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=DCqt5RYP; arc=none smtp.client-ip=159.69.126.157
+	 In-Reply-To:To:Cc; b=G/h8IR/DzLA/J0TZ5ITF8SJLlbdRKPCRZtM432GD7C5DOSZcR4ErUjUajkMspN3U5H03nm8M/xKoaX3kqB78vY7o6HuJ1wTJqECSgoW8xD4roEYTXGwCma90aG9JPP7L6GDJRdY5mhLSj6+7kOTyadG0FmWq5OvShZ8BFoSKR0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=i8EjG6U6; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1724772359;
-	bh=2fuwEC3Yp225FwaS701NUfjP1g4xTmgB08/zOpmpsAA=;
+	bh=z4+MXZQwSzyk1DP5JRe+oUonhr5WcjwKYTX3+no3UJk=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=DCqt5RYPBHq4y1tFuB7C/JYlnHW4jqqVrEEB1R/smTUMuyK20U4nSdr/FlzcZzJ8W
-	 LwMRCSA5L2wN0ozoBsQGBx7s/HbX0HnQXv3kOU2+TJwq2Zd09JVyIP2jycTHMSXOnL
-	 kwDWf9a5ogwdQi1LGAsMK7jQ3ZgqyDJzn6CJQYGo=
+	b=i8EjG6U6G1PkfcqAsUdXQFhmPUG3mk30QmSV7iu3wr2oUNGMRPqCdynu45Ib3l8HG
+	 SvaKdjX23oRT7GBBUUtbIhRBltGzxt3NrZ0R4+RPbDpT0UrylB4sbIRcSmPw7cu+IT
+	 5tBe1aSXkWhiRVPM6hAgG3tJQpcnDwYi3QQhAYxI=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Tue, 27 Aug 2024 17:25:12 +0200
-Subject: [PATCH 1/5] fbdev/efifb: Use stack memory for screeninfo structs
+Date: Tue, 27 Aug 2024 17:25:13 +0200
+Subject: [PATCH 2/5] fbdev/efifb: Register sysfs groups through driver core
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,7 +48,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240827-efifb-sysfs-v1-1-c9cc3e052180@weissschuh.net>
+Message-Id: <20240827-efifb-sysfs-v1-2-c9cc3e052180@weissschuh.net>
 References: <20240827-efifb-sysfs-v1-0-c9cc3e052180@weissschuh.net>
 In-Reply-To: <20240827-efifb-sysfs-v1-0-c9cc3e052180@weissschuh.net>
 To: Peter Jones <pjones@redhat.com>, Helge Deller <deller@gmx.de>, 
@@ -57,76 +57,70 @@ Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
  linux-kernel@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724772358; l=1859;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724772358; l=1814;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=2fuwEC3Yp225FwaS701NUfjP1g4xTmgB08/zOpmpsAA=;
- b=rOkv5WWJdsYyy7gSwo6ETnm+0fpNWf1gQQInzjmRji2pSdC5vaSVpncDd9Wvim18h/qjuGEaS
- 6mXd0NYbotdCVXwSvlogkuLn3iuwWJeBwPQzO8P3C6CInqlgPfHpFPJ
+ bh=z4+MXZQwSzyk1DP5JRe+oUonhr5WcjwKYTX3+no3UJk=;
+ b=dFQ22KZQtiJhBVo/hCnGO4UOTOmeEvkQZjkIRcgRS5YGTZFjIL+ghunSlzA2DUjztOeDJq+G3
+ Vf69rcJVMwdCvEjMXIqXtmhG+AgZbyjeP6gBQo8cNof0NulgiAvPWk0
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-These variables are only used inside efifb_probe().
-Afterwards they are using memory unnecessarily.
+The driver core can register and cleanup sysfs groups already.
+Make use of that functionality to simplify the error handling and
+cleanup.
+
+Also avoid a UAF race during unregistering where the sysctl attributes
+were usable after the info struct was freed.
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- drivers/video/fbdev/efifb.c | 36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+ drivers/video/fbdev/efifb.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/video/fbdev/efifb.c b/drivers/video/fbdev/efifb.c
-index 8dd82afb3452..8bfe0ccbc67a 100644
+index 8bfe0ccbc67a..d36b95856dd0 100644
 --- a/drivers/video/fbdev/efifb.c
 +++ b/drivers/video/fbdev/efifb.c
-@@ -52,24 +52,6 @@ struct efifb_par {
- 	resource_size_t size;
- };
+@@ -561,15 +561,10 @@ static int efifb_probe(struct platform_device *dev)
+ 		break;
+ 	}
  
--static struct fb_var_screeninfo efifb_defined = {
--	.activate		= FB_ACTIVATE_NOW,
--	.height			= -1,
--	.width			= -1,
--	.right_margin		= 32,
--	.upper_margin		= 16,
--	.lower_margin		= 4,
--	.vsync_len		= 4,
--	.vmode			= FB_VMODE_NONINTERLACED,
--};
--
--static struct fb_fix_screeninfo efifb_fix = {
--	.id			= "EFI VGA",
--	.type			= FB_TYPE_PACKED_PIXELS,
--	.accel			= FB_ACCEL_NONE,
--	.visual			= FB_VISUAL_TRUECOLOR,
--};
--
- static int efifb_setcolreg(unsigned regno, unsigned red, unsigned green,
- 			   unsigned blue, unsigned transp,
- 			   struct fb_info *info)
-@@ -357,6 +339,24 @@ static int efifb_probe(struct platform_device *dev)
- 	char *option = NULL;
- 	efi_memory_desc_t md;
+-	err = sysfs_create_groups(&dev->dev.kobj, efifb_groups);
+-	if (err) {
+-		pr_err("efifb: cannot add sysfs attrs\n");
+-		goto err_unmap;
+-	}
+ 	err = fb_alloc_cmap(&info->cmap, 256, 0);
+ 	if (err < 0) {
+ 		pr_err("efifb: cannot allocate colormap\n");
+-		goto err_groups;
++		goto err_unmap;
+ 	}
  
-+	struct fb_var_screeninfo efifb_defined = {
-+		.activate		= FB_ACTIVATE_NOW,
-+		.height			= -1,
-+		.width			= -1,
-+		.right_margin		= 32,
-+		.upper_margin		= 16,
-+		.lower_margin		= 4,
-+		.vsync_len		= 4,
-+		.vmode			= FB_VMODE_NONINTERLACED,
-+	};
-+
-+	struct fb_fix_screeninfo efifb_fix = {
-+		.id			= "EFI VGA",
-+		.type			= FB_TYPE_PACKED_PIXELS,
-+		.accel			= FB_ACCEL_NONE,
-+		.visual			= FB_VISUAL_TRUECOLOR,
-+	};
-+
- 	/*
- 	 * If we fail probing the device, the kernel might try a different
- 	 * driver. We get a copy of the attached screen_info, so that we can
+ 	err = devm_aperture_acquire_for_platform_device(dev, par->base, par->size);
+@@ -587,8 +582,6 @@ static int efifb_probe(struct platform_device *dev)
+ 
+ err_fb_dealloc_cmap:
+ 	fb_dealloc_cmap(&info->cmap);
+-err_groups:
+-	sysfs_remove_groups(&dev->dev.kobj, efifb_groups);
+ err_unmap:
+ 	if (mem_flags & (EFI_MEMORY_UC | EFI_MEMORY_WC))
+ 		iounmap(info->screen_base);
+@@ -608,12 +601,12 @@ static void efifb_remove(struct platform_device *pdev)
+ 
+ 	/* efifb_destroy takes care of info cleanup */
+ 	unregister_framebuffer(info);
+-	sysfs_remove_groups(&pdev->dev.kobj, efifb_groups);
+ }
+ 
+ static struct platform_driver efifb_driver = {
+ 	.driver = {
+ 		.name = "efi-framebuffer",
++		.dev_groups = efifb_groups,
+ 	},
+ 	.probe = efifb_probe,
+ 	.remove_new = efifb_remove,
 
 -- 
 2.46.0
