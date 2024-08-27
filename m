@@ -1,74 +1,73 @@
-Return-Path: <linux-kernel+bounces-303512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BFDC960D28
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:09:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6A4A960D2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:09:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFF1A1C231B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:09:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 246591C223A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A562D1C57AB;
-	Tue, 27 Aug 2024 14:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2047F1C68AE;
+	Tue, 27 Aug 2024 14:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PIuMkapE"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JTcXAHYx"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4511C57A1
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 14:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8ABE1C688B
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 14:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724767648; cv=none; b=UJTcAZMCiibuohtZOEtL6bWq6Ni+Amj4zOivQ4vz2Eb70ycKJoANxQeqTfpL3e6918nz8jUtsectSyBtFNgmETlfx3GBsgknbjJHWG/Z42ugrHXoicrSNQbZbAWnA57R9EQc2uEOAQeDVFGjWaiLf5UYSUvwtJQPO2WQ6x6+Xas=
+	t=1724767688; cv=none; b=De4Y35/9sSx9t+PjUBCUNvQ5sA94/PlB4dTTLM0e00ViIqQSlSqIIEmfvfM9WfWc4rz7QlgmhXLZplHQfz2JiZyPxqDY06f1gJifTO9NZTyikobRc61BL3VYmpZwfwqJhIzRomGz6M0R5OHMjzH1WPDri1r3gPbPIa5I7Zsoe8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724767648; c=relaxed/simple;
-	bh=K9lgvZpWgHyZfOmspvVq64PEIHpt0SbtQcTFhjLn10A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=EIRGFGArZER7RFDFS2KycVwYEUCDteGTV5atynp2XkzwTa1+a2c+YWGcrGTZwEqyHwKYuHvRhxE4oaLf/M3ctxwpSqeOfwnnoB5/w2ugG2RmeahKumAERfAexr6JVvbKjfK2l+BmtHXw3DGCHcmxDHVlnC3/gXy5VVnHIlPaxcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PIuMkapE; arc=none smtp.client-ip=209.85.214.173
+	s=arc-20240116; t=1724767688; c=relaxed/simple;
+	bh=ZBUTCv3zmcq8wCzDWDN1pjb0U21sMh9Mda4jt580So0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IPb920vP3B2tOGgxExsw1zLaoO5IMxB9QCJ6LbPUd7x1Ge2aF/swwm+sK1+1fRyh5uOwr0bKJEB3cZ2/AOfwzGGK/jJF93fxP93SqR66Uk46tco23wwoKWwaLXIE68zSdLU8UKF1oyjlX64I7dKQw6CSTLK4vitbFxC+CWbMMBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JTcXAHYx; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-202146e9538so49705225ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 07:07:26 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a86a37208b2so496102066b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 07:08:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724767646; x=1725372446; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=TDm5a7OlR/7U6ykT+0Jq6tWrOVlgFNdpji+7rba+NPs=;
-        b=PIuMkapEejcJIhueS/NlQHQ2P072C/TClFILc6N7hRJyplVhp6lSCobkLAG8Ezcouq
-         tmnpUJRsnnG6IA1ftTwoEYWEkwUQOLZpaKb5uoxVle8NWrMUo7b18g6+CVXPTAwl2Qyh
-         fgTTSKYPZNx+R6sUovGm2ssBGMXQWyrIrJBI0lmYNDocmQRYuaPtu/HrzmwIGHWlVMI9
-         Kx92jZXPLzUaDAQcgMFe7aMAwmljy/oRT9Rkz2Vb7uaLby6L48szlLHdfbDZqoIFlWgV
-         T+feOUlY2LFRPNYKG++seMuvNQiqVv+gFTWYokrra2G5dtqzp80Pam5tZz/h8ikO8wgr
-         vXcg==
+        d=linaro.org; s=google; t=1724767685; x=1725372485; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CpeTd/yl72bFm2R7iWr/Y3ABLQEY7ujZ2y0DqdcJWHA=;
+        b=JTcXAHYxTLz3YI7TiGWxx3JlWzqk2K/lCs/y3pWVUZtkC07eIGNHcLarh8hehR/546
+         4lUJEtKWmLfFsbWvD5OwT6NbH/lRCf572aauykAh38xCP0cXCiupNjohFcGgZwX/WT7s
+         W8GdCWwmjyAbnloWS8Y7DqoEp4VbyrE/YM0g4HGMD9+hnj+c7KFrVwA/jwVKcsj0UHaK
+         Zb5mO/gs+VF1Jwxg01dOgjBYkiFEhwtPxqGya+t5+uoZngJ5ziDp0pcHTNuk5gpWaZ8S
+         cacDSmp7uQ4smnSeoQdjjBTQDXpZMH5cvMA0IyBotW+pTbOM8u3GYkJ95ZXRthzPm9zo
+         Ookw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724767646; x=1725372446;
-        h=content-transfer-encoding:in-reply-to:organization:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TDm5a7OlR/7U6ykT+0Jq6tWrOVlgFNdpji+7rba+NPs=;
-        b=pWuZUMTejKy92m9i45sEC7Xh86uMN3Xc3WbQiZEkaxvNDE4/bctPhUiG5Du+T+KMLc
-         cr5YNu+LFbTF6J6oxE7Ne2JevvZUa2drOgMvLGpzNiCQg0mbBrVO6VS5D4J5Ecm/+i4t
-         C6u/TV2wwcLQQz+QXsLsRJQ6t3GDJVYmswTcNNhp7fp3W56Q1z3etGZmVoSXfaqMXP+L
-         tRL/JWrqHw6rfWLgFRH1wJJ+sx+D6Azi4WKD2QtZABDpLA7qa5XSSNKDrYvy02eB9Iig
-         r8FNAqEqFdTCuUOAxcBzzXSvTheCx3Uhg8NZ7q7KfA3syJ9iJrfGOWgSC/Jl+fTz8xw5
-         s9oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWdYytUzE2wjYy6kIh/4fFmfd6GrhAkcIeYv4dXLZhSbQVBrfZflr4UqAV1cVLDA37qxB+gS8MJAS3FXLc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+4obMZTLTrZw3acqTMk8K9mOqpH0usJdbb/1IHl1xOwxYqh+e
-	7gBQnOFYovVskN5R7bf2a8FyvRNh4U3Ni+hnJLDB5RDjSaWk5I3Of1ZO0zE9GdE=
-X-Google-Smtp-Source: AGHT+IHQDbCLVIzMT09kixbJK36L4yX7rLhWugQTIJdytpmko0/ySpR5JCewS6qB8AN3IQ8VQY5dCQ==
-X-Received: by 2002:a17:902:ce92:b0:202:359:9f66 with SMTP id d9443c01a7336-2039e4fbbc8mr197529735ad.54.1724767645460;
-        Tue, 27 Aug 2024 07:07:25 -0700 (PDT)
-Received: from ?IPV6:2804:1b3:a7c3:4c2c:7d73:fa05:8bad:32cb? ([2804:1b3:a7c3:4c2c:7d73:fa05:8bad:32cb])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385fd0e91sm84062115ad.309.2024.08.27.07.07.21
+        d=1e100.net; s=20230601; t=1724767685; x=1725372485;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CpeTd/yl72bFm2R7iWr/Y3ABLQEY7ujZ2y0DqdcJWHA=;
+        b=txOP4XoFBfRqJIGFs4Pv38sPitNmWfPDJp9szz0vu9JgjYUpyf7sXMdBH+JESC8Mks
+         mYYTVkhY0gvJVp9q4WpHpmYA2oGzcaWAMBKQnG1yCN0JLV9d8BhsHsA3ij1hlNdo5X63
+         jIYlK4MUZ9i2wlSJB/pNGOdbUYjitEhVVxG39YfDjmqIhp6HGbyuRQgZRF9QU9se1P5W
+         MBDWBRPEtMXJXOl7AQ8Bohv9tcORFjyARessUB4xJjzp4Inr592cK0SEQNfdP3/mHWvV
+         Bwzgq6UnJAhIRUE9soTJQxXU6AlzA4xDhN5Q4zqtN1gzHgDJOBZePPIqk/8iNz8HMZlk
+         AYtw==
+X-Forwarded-Encrypted: i=1; AJvYcCXaV4Ko18Fzjz7mVkiAtB03senrBO9p2bwlWvhfnWtgghutt9+Ns6z0hpxB4ajZ4tVAC5xVyAqrsy08xCM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR/4Seiv0nmhVnOpQ8MKcnZh52OwIJoCBYaGaFV4Tr0l20S7L/
+	9iR7gMvvY2FIg1ITl8aeMlRnDN74eXpW0CGm8LF/3bSa+OrlB1wBbcpUzLihOL4=
+X-Google-Smtp-Source: AGHT+IFnXxZ6TInJiGYBFSrV4NvTQ5kX2P4kKzBITbVc2Gps66StZ4WmlWBUcCNAhc9WsjoqwzWKiA==
+X-Received: by 2002:a17:906:d7c8:b0:a86:812a:d2ca with SMTP id a640c23a62f3a-a86a52b7413mr988954466b.25.1724767684873;
+        Tue, 27 Aug 2024 07:08:04 -0700 (PDT)
+Received: from [192.168.0.25] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e5878455sm114015066b.160.2024.08.27.07.08.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 07:07:24 -0700 (PDT)
-Message-ID: <f4400864-7bd2-4dc1-975b-52023ee597e5@linaro.org>
-Date: Tue, 27 Aug 2024 11:07:20 -0300
+        Tue, 27 Aug 2024 07:08:04 -0700 (PDT)
+Message-ID: <74126160-57f9-4abf-a26c-3491c8f3dd78@linaro.org>
+Date: Tue, 27 Aug 2024 15:08:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,286 +75,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] aarch64: vdso: Wire up getrandom() vDSO implementation
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>, Theodore Ts'o <tytso@mit.edu>,
- linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Eric Biggers <ebiggers@kernel.org>
-References: <20240826181059.111536-1-adhemerval.zanella@linaro.org>
- <397f9865-c4ad-44be-91ab-9764fe3aeb89@csgroup.eu>
+Subject: Re: [PATCH v3 03/29] media: iris: add platform driver for iris video
+ device
+To: quic_dikshita@quicinc.com, Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
+ <20240827-iris_v3-v3-3-c5fdbbe65e70@quicinc.com>
 Content-Language: en-US
-From: Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>
-Organization: Linaro
-In-Reply-To: <397f9865-c4ad-44be-91ab-9764fe3aeb89@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240827-iris_v3-v3-3-c5fdbbe65e70@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 27/08/2024 11:05, Dikshita Agarwal via B4 Relay wrote:
+> +static const struct of_device_id iris_dt_match[] = {
+> +	{ .compatible = "qcom,sm8550-iris", },
+> +	{ .compatible = "qcom,sm8250-venus", },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, iris_dt_match);
 
+The enabling patch for the compat strings should come last - if its 
+first then the time between the compat add and the last patch is a dead 
+zone where things are bound to break on a booting board.
 
-On 27/08/24 05:46, Christophe Leroy wrote:
-> 
-> 
-> Le 26/08/2024 à 20:10, Adhemerval Zanella a écrit :
->> Hook up the generic vDSO implementation to the aarch64 vDSO data page.
->> The _vdso_rng_data required data is placed within the _vdso_data vvar
->> page, by using a offset larger than the vdso_data
->> (__VDSO_RND_DATA_OFFSET).
->>
->> The vDSO function requires a ChaCha20 implementation that does not
->> write to the stack, and that can do an entire ChaCha20 permutation.
->> The one provided is based on the current chacha-neon-core.S and uses NEON
->> on the permute operation.
->>
->> Signed-off-by: Adhemerval Zanella <adhemerval.zanella@linaro.org>
->> ---
->>   arch/arm64/Kconfig                         |   1 +
->>   arch/arm64/include/asm/vdso/getrandom.h    |  50 +++++++
->>   arch/arm64/include/asm/vdso/vsyscall.h     |   9 ++
->>   arch/arm64/kernel/vdso/Makefile            |   7 +-
->>   arch/arm64/kernel/vdso/vdso.lds.S          |   4 +
->>   arch/arm64/kernel/vdso/vgetrandom-chacha.S | 153 +++++++++++++++++++++
->>   arch/arm64/kernel/vdso/vgetrandom.c        |  13 ++
->>   tools/testing/selftests/vDSO/Makefile      |   4 +-
->>   8 files changed, 238 insertions(+), 3 deletions(-)
->>   create mode 100644 arch/arm64/include/asm/vdso/getrandom.h
->>   create mode 100644 arch/arm64/kernel/vdso/vgetrandom-chacha.S
->>   create mode 100644 arch/arm64/kernel/vdso/vgetrandom.c
-> 
-> Were you able to use selftests ? I think you are missing the symbolic link to vdso directory (assuming you are using latest master branch from https://git.kernel.org/pub/scm/linux/kernel/git/crng/random.git)
-
-It is missing indeed, last time I use a old brach that has a different Makefile
-machinery and it I could it built more easily.
-
-> 
->>
->> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
->> index b3fc891f1544..e3f4c5bf0661 100644
->> --- a/arch/arm64/Kconfig
->> +++ b/arch/arm64/Kconfig
->> @@ -237,6 +237,7 @@ config ARM64
->>       select HAVE_KPROBES
->>       select HAVE_KRETPROBES
->>       select HAVE_GENERIC_VDSO
->> +    select VDSO_GETRANDOM
-> 
-> You don't keep things in alphabetical here order on ARM64 ?
-
-It seems to most part, but the file does have some outliers (HAVE_SOFTIRQ_ON_OWN_STACK
-for instance).   I moved to the end of the list.
-
-> 
->>       select HOTPLUG_CORE_SYNC_DEAD if HOTPLUG_CPU
->>       select IRQ_DOMAIN
->>       select IRQ_FORCED_THREADING
->> diff --git a/arch/arm64/include/asm/vdso/getrandom.h b/arch/arm64/include/asm/vdso/getrandom.h
->> new file mode 100644
->> index 000000000000..6e2b136813ca
->> --- /dev/null
->> +++ b/arch/arm64/include/asm/vdso/getrandom.h
->> @@ -0,0 +1,50 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +
->> +#ifndef __ASM_VDSO_GETRANDOM_H
->> +#define __ASM_VDSO_GETRANDOM_H
->> +
->> +#ifndef __ASSEMBLY__
->> +
->> +#include <asm/unistd.h>
->> +#include <vdso/datapage.h>
->> +
->> +/**
->> + * getrandom_syscall - Invoke the getrandom() syscall.
->> + * @buffer:    Destination buffer to fill with random bytes.
->> + * @len:    Size of @buffer in bytes.
->> + * @flags:    Zero or more GRND_* flags.
->> + * Returns:    The number of random bytes written to @buffer, or a negative value indicating an error.
->> + */
->> +static __always_inline ssize_t getrandom_syscall(void *buffer, size_t len, unsigned int flags)
->> +{
->> +    register long int x8 asm ("x8") = __NR_getrandom;
->> +    register long int x0 asm ("x0") = (long int) buffer;
->> +    register long int x1 asm ("x1") = (long int) len;
->> +    register long int x2 asm ("x2") = (long int) flags;
->> +
->> +    asm ("svc 0" : "=r"(x0) : "r"(x8), "0"(x0), "r"(x1), "r"(x2));
->> +
->> +    return x0;
->> +}
->> +
->> +static __always_inline const struct vdso_rng_data *__arch_get_vdso_rng_data(void)
->> +{
->> +    return &_vdso_rng_data;
->> +}
->> +
->> +/**
->> + * __arch_chacha20_blocks_nostack - Generate ChaCha20 stream without using the stack.
->> + * @dst_bytes:    Destination buffer to hold @nblocks * 64 bytes of output.
->> + * @key:    32-byte input key.
->> + * @counter:    8-byte counter, read on input and updated on return.
->> + * @nblocks:    Number of blocks to generate.
->> + *
->> + * Generates a given positive number of blocks of ChaCha20 output with nonce=0, and does not write
->> + * to any stack or memory outside of the parameters passed to it, in order to mitigate stack data
->> + * leaking into forked child processes.
->> + */
->> +extern void __arch_chacha20_blocks_nostack(u8 *dst_bytes, const u32 *key, u32 *counter, size_t nblocks);
-> 
-> For Jason: We all redefine this prototype, should we have it in a central place, or do you expect some architecture to provide some static inline for it ?
-> 
->> +
->> +#endif /* !__ASSEMBLY__ */
->> +
->> +#endif /* __ASM_VDSO_GETRANDOM_H */
->> diff --git a/arch/arm64/include/asm/vdso/vsyscall.h b/arch/arm64/include/asm/vdso/vsyscall.h
->> index f94b1457c117..7ddb2bc3b57b 100644
->> --- a/arch/arm64/include/asm/vdso/vsyscall.h
->> +++ b/arch/arm64/include/asm/vdso/vsyscall.h
->> @@ -2,6 +2,8 @@
->>   #ifndef __ASM_VDSO_VSYSCALL_H
->>   #define __ASM_VDSO_VSYSCALL_H
->>   +#define __VDSO_RND_DATA_OFFSET  480
->> +
-> 
-> How is this offset calculated or defined ? What happens if the other structures grow ? Could you use some sizeof(something) instead of something from asm-offsets if you also need it in ASM ?
-
-That is something I talked to Jason some time ago, since a similar strategy
-to use a 'magic' offset is used on x86_64.  Ideally I think the vdso_rnd_data
-should be moved to  a common static structure along with _vdso_data, so the
-there is no need to come up with magic offset like this.  It seems that the
-powerpc does follow this pattern, but other ports no.
-
-However, since each architecture does some specific machinery with the vdso
-datapages; it would require some more extensive refactoring on multiple
-architectures to get this right.
-
-> 
->>   #ifndef __ASSEMBLY__
->>     #include <linux/timekeeper_internal.h>
->> @@ -21,6 +23,13 @@ struct vdso_data *__arm64_get_k_vdso_data(void)
->>   }
->>   #define __arch_get_k_vdso_data __arm64_get_k_vdso_data
->>   +static __always_inline
->> +struct vdso_rng_data *__arm64_get_k_vdso_rnd_data(void)
->> +{
->> +    return (void *)__arm64_get_k_vdso_data() + __VDSO_RND_DATA_OFFSET;
->> +}
->> +#define __arch_get_k_vdso_rng_data __arm64_get_k_vdso_rnd_data
->> +
->>   static __always_inline
->>   void __arm64_update_vsyscall(struct vdso_data *vdata, struct timekeeper *tk)
->>   {
->> diff --git a/arch/arm64/kernel/vdso/Makefile b/arch/arm64/kernel/vdso/Makefile
->> index d11da6461278..37dad3bb953a 100644
->> --- a/arch/arm64/kernel/vdso/Makefile
->> +++ b/arch/arm64/kernel/vdso/Makefile
->> @@ -9,7 +9,7 @@
->>   # Include the generic Makefile to check the built vdso.
->>   include $(srctree)/lib/vdso/Makefile
->>   -obj-vdso := vgettimeofday.o note.o sigreturn.o
->> +obj-vdso := vgettimeofday.o note.o sigreturn.o vgetrandom.o vgetrandom-chacha.o
->>     # Build rules
->>   targets := $(obj-vdso) vdso.so vdso.so.dbg
->> @@ -40,8 +40,13 @@ CFLAGS_REMOVE_vgettimeofday.o = $(CC_FLAGS_FTRACE) -Os $(CC_FLAGS_SCS) \
->>                   $(RANDSTRUCT_CFLAGS) $(GCC_PLUGINS_CFLAGS) \
->>                   $(CC_FLAGS_LTO) $(CC_FLAGS_CFI) \
->>                   -Wmissing-prototypes -Wmissing-declarations
->> +CFLAGS_REMOVE_vgetrandom.o = $(CC_FLAGS_FTRACE) -Os $(CC_FLAGS_SCS) \
->> +                 $(RANDSTRUCT_CFLAGS) $(GCC_PLUGINS_CFLAGS) \
->> +                 $(CC_FLAGS_LTO) $(CC_FLAGS_CFI) \
->> +                 -Wmissing-prototypes -Wmissing-declarations
->>     CFLAGS_vgettimeofday.o = -O2 -mcmodel=tiny -fasynchronous-unwind-tables
->> +CFLAGS_vgetrandom.o = -O2 -mcmodel=tiny -fasynchronous-unwind-tables
->>     ifneq ($(c-gettimeofday-y),)
->>     CFLAGS_vgettimeofday.o += -include $(c-gettimeofday-y)
->> diff --git a/arch/arm64/kernel/vdso/vdso.lds.S b/arch/arm64/kernel/vdso/vdso.lds.S
->> index 45354f2ddf70..f8dbcece20e2 100644
->> --- a/arch/arm64/kernel/vdso/vdso.lds.S
->> +++ b/arch/arm64/kernel/vdso/vdso.lds.S
->> @@ -12,6 +12,8 @@
->>   #include <asm/page.h>
->>   #include <asm/vdso.h>
->>   #include <asm-generic/vmlinux.lds.h>
->> +#include <vdso/datapage.h>
->> +#include <asm/vdso/vsyscall.h>
->>     OUTPUT_FORMAT("elf64-littleaarch64", "elf64-bigaarch64", "elf64-littleaarch64")
->>   OUTPUT_ARCH(aarch64)
->> @@ -19,6 +21,7 @@ OUTPUT_ARCH(aarch64)
->>   SECTIONS
->>   {
->>       PROVIDE(_vdso_data = . - __VVAR_PAGES * PAGE_SIZE);
->> +    PROVIDE(_vdso_rng_data = _vdso_data + __VDSO_RND_DATA_OFFSET);
->>   #ifdef CONFIG_TIME_NS
->>       PROVIDE(_timens_data = _vdso_data + PAGE_SIZE);
->>   #endif
->> @@ -102,6 +105,7 @@ VERSION
->>           __kernel_gettimeofday;
->>           __kernel_clock_gettime;
->>           __kernel_clock_getres;
->> +        __kernel_getrandom;
->>       local: *;
->>       };
->>   }
->> diff --git a/arch/arm64/kernel/vdso/vgetrandom-chacha.S b/arch/arm64/kernel/vdso/vgetrandom-chacha.S
-> 
-> [skipped ASM as I have not spoken ARM asm since I was at school in the 90's]
-> 
->> diff --git a/arch/arm64/kernel/vdso/vgetrandom.c b/arch/arm64/kernel/vdso/vgetrandom.c
->> new file mode 100644
->> index 000000000000..b6d6f4db3a98
->> --- /dev/null
->> +++ b/arch/arm64/kernel/vdso/vgetrandom.c
->> @@ -0,0 +1,13 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +
->> +#include <linux/types.h>
->> +#include <linux/mm.h>
->> +
->> +#include "../../../../lib/vdso/getrandom.c"
-> 
-> For gettimeofday ARM64 uses c-gettimeofday-y in the Makefile instead.
-> 
-> You should do the same with c-getrandom-y
-
-Ack.
-
-> 
->> +
->> +ssize_t __kernel_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len);
->> +
->> +ssize_t __kernel_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len)
->> +{
->> +    return __cvdso_getrandom(buffer, len, flags, opaque_state, opaque_len);
->> +}
->> diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
->> index 10ffdda3f2fa..f07ea679a4cc 100644
->> --- a/tools/testing/selftests/vDSO/Makefile
->> +++ b/tools/testing/selftests/vDSO/Makefile
->> @@ -1,6 +1,6 @@
->>   # SPDX-License-Identifier: GPL-2.0
->>   uname_M := $(shell uname -m 2>/dev/null || echo not)
->> -ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
->> +ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/ -e s/aarch64.*/arm64/)
-> 
->>   SODIUM := $(shell pkg-config --libs libsodium 2>/dev/null)
->>     TEST_GEN_PROGS := vdso_test_gettimeofday
->> @@ -11,7 +11,7 @@ ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
->>   TEST_GEN_PROGS += vdso_standalone_test_x86
->>   endif
->>   TEST_GEN_PROGS += vdso_test_correctness
->> -ifeq ($(uname_M),x86_64)
->> +ifeq ($(uname_M), $(filter x86_64 aarch64, $(uname_M)))
-> 
-> Does that work for you when you cross-compile ? For powerpc when I cross compile I still get the x86_64 from uname_M here, which is unexpected.
-
-Right, I haven't test cross-compilation on the selftests so I
-am not sure.  I will check it.
-
-> 
->>   TEST_GEN_PROGS += vdso_test_getrandom
->>   ifneq ($(SODIUM),)
->>   TEST_GEN_PROGS += vdso_test_chacha
-> 
-> Christophe
+---
+bod
 
