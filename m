@@ -1,187 +1,118 @@
-Return-Path: <linux-kernel+bounces-302612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 235719600FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:17:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C0EE960100
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3A641F23356
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:17:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2BB51F233CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF9D40BF5;
-	Tue, 27 Aug 2024 05:17:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63F773466;
+	Tue, 27 Aug 2024 05:18:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="ipHIFNFM";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OZrpjKe8"
-Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PmB/PnxM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBFE74CB4E;
-	Tue, 27 Aug 2024 05:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EFB8171AF
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 05:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724735820; cv=none; b=QSl7nbb5ZubYa18M31+BmU/frMsRB8KpTMEh7dLsAAwDSvcqn2j7qFRaccE1VAPJ8Z3s/b7A8mVoaksLYoMB5Q9cVsnqmuxApNrbPSc7dmeIPU8CLJ83qbR5EjJZiWFNcdqob4wofyJD6LpeBweHf+actmsVQQIL81Cbsa/M90s=
+	t=1724735916; cv=none; b=rNQruQO/MVq9cQYvERP9V/6F8wn8VesaQAnmh2Uy4PwByPTlI9QH3DcBOMP4oiIqNEI4DZ1BeMcUS5+FwwEc4y+rI9kOuwe4c9GUhg6KBoc+jMqeDSURZWpjGPfCOAnfMC0yVBvWyo6+t5Zy5ArUbfK1Arhxlj6P8+eaQmfwQW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724735820; c=relaxed/simple;
-	bh=4WVQlOdz4iUXl/ZtOOfq/sz3W/LEnSLvrPuKObENMTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d8Aqq20gFD2+cPxZk1cXmU4dOIpN0inT9H5z8s5IziMDeLKGbqkZfHLIKehnYmwzOEUMlnRx2H8+EkjnPwrVX0/KluS/0cMDDxJnOjZPr5St/S8wR6hViveT3zeCqrjz7YBcSSJW+BTsZIM8LWf6Z9ylCJHOt7RRu3MmGDBVnBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net; spf=pass smtp.mailfrom=who-t.net; dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b=ipHIFNFM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OZrpjKe8; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=who-t.net
-Received: from phl-compute-06.internal (phl-compute-06.nyi.internal [10.202.2.46])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id D2FCA1151AF6;
-	Tue, 27 Aug 2024 01:16:56 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Tue, 27 Aug 2024 01:16:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1724735816; x=1724822216; bh=XnEvNey2dg
-	8TqK9++0fBtgkojn39VmGvBW+c5uPNs9s=; b=ipHIFNFMnmvaLASurFuE42XJ4H
-	O8MrnVSKQUw03hTaOnltaJqp2HuL0JHkUxeSXLdzur4y7mroys9FKIbKrCfi4LVp
-	D0+qILxcw7a9fj/0IxAZQKYrcdHSYal0a1hZekhTAc4sxGGymnpDimUjBpX8jk/Q
-	3jto+BQFa5NUW/e5k+dquBj7/pVxHj82SIMbnf5nsJsVj2igvaCRxGCQfL1hxOeX
-	jFMTuC30i6mEeu1HpC2tjoqC26sZfCf6o6D9Bmwvxh9V/q9gqDb7QDSvXvBCUhI4
-	o/iz6qu5U2euvVz8aWdhd57z8mmyjuBXMHNtJ6nIEgvO8nGWN5Y2dqxJArVg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1724735816; x=1724822216; bh=XnEvNey2dg8TqK9++0fBtgkojn39
-	VmGvBW+c5uPNs9s=; b=OZrpjKe8QTwXHNK9igIuz6o4ItQw8i++ZLrkg3NlIlOj
-	JonKQ5pjMhe/r13UcnD5S2jnAj5Cjzd7+BjhTWC3NO/F1oqfRY5+KNdUQ8jsXu5e
-	h6+CxnqjvHQWJ71mPRTCEAzwVEazXaZJf22sEeqcJTeeE6jacSorkJeJJ7tSsZ7L
-	ssquZzyxAMMZo/k0nBd7auR7esQRp/Jtrnvm6i2Cf2kMpYLHQ6LT76bspgsDTgal
-	iXEnMomdtYh3NheymhgIH1HUHsX7fJPE7050Ut/t2RrElg4hMbEt+dyxlTy5ye7T
-	2j76W9WWWKyjRrmwiad8rdjB/ywbhD+SY/NP0b/7+A==
-X-ME-Sender: <xms:SGHNZqMOa9a0hX7KLMIJQ-lb8D6K4Vc1vyJ_22Bp04X-zef5LhfaAA>
-    <xme:SGHNZo_J9Zqv91k-y8WN597TfOwg-1szt4m-WEn2OLTHeKLdm7H2bmXNaBGb6kBYC
-    MdJpapY9u4H824jOco>
-X-ME-Received: <xmr:SGHNZhSk8ZYSMatRbA4Dkc8tNNB0XWYT3sBQUfULlm_5kWWQoTAW83Z5_xgdeOVQNbivpeyDQLtbmk8BOsG1MN1ccbxGm4Xzbo84>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddvledgleefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomheprfgvthgvrhcujfhuthhtvghrvghruceophgvthgvrhdrhhhuthhtvghrvg
-    hrseifhhhoqdhtrdhnvghtqeenucggtffrrghtthgvrhhnpeekvdekgeehfeejgfdvudff
-    hfevheejffevgfeigfekhfduieefudfgtedugfetgfenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehpvghtvghrrdhhuhhtthgvrhgvrhesfihh
-    ohdqthdrnhgvthdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtg
-    hpthhtohepsggvnhhtihhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhikhho
-    sheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtoheplhhinhhugidqihhnphhuthesvhhgvghrrdhkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehlihhnuhigqdhkshgvlhhfthgvshhtsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhg
-X-ME-Proxy: <xmx:SGHNZqtAoD21fPi8acR_pj7bJolz_ursOrpitpBpE8v70B58m_wpHQ>
-    <xmx:SGHNZifvPFupfwpZYEphbyaj2WK8BdSdVdYdfnr33GnG5eOGpa2XRA>
-    <xmx:SGHNZu15qWJb9jvfWg_3YA5PY1MsqAB7XEpYO_vp2cwp6UxJNp0hCA>
-    <xmx:SGHNZm9pzaSWnZqYx0DTBCwFLOZrLSRH8BSOtJtKUCNPVymNlNhhwQ>
-    <xmx:SGHNZqRilbTf-yWYtC5G9xsmt_jKTlTcDcvdKSRlmstliBWugxKvN6M0>
-Feedback-ID: i7ce144cd:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 27 Aug 2024 01:16:54 -0400 (EDT)
-Date: Tue, 27 Aug 2024 15:16:44 +1000
-From: Peter Hutterer <peter.hutterer@who-t.net>
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: Jiri Kosina <jikos@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] selftests/hid: Add HIDIOCREVOKE tests
-Message-ID: <20240827051644.GA1580781@quokka>
-References: <20240827-hidraw-revoke-v4-0-88c6795bf867@kernel.org>
- <20240827-hidraw-revoke-v4-3-88c6795bf867@kernel.org>
+	s=arc-20240116; t=1724735916; c=relaxed/simple;
+	bh=W37ISD4crpk0UQsa33E7SWa8eaAStZHx+iTF56Mxgo8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vz4b6Ncrox3Ly8qHTZ2AqQbakshaOiy05FqZMg+OqKOnKOLc95aDl1XO79cTeinSqqM1Nd2dtLi7PtFQVujJnm6udpjw8FkMBUYIKUcLDfXmYhqf2Qb8HNAG8SHZVxOYibdIAsBQhbVGcJBaNFdwcCxAJzK/r3sxBpz1Xxev9y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PmB/PnxM; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724735913;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fgll1oEFe7T1tuU4poe+D6xuDVQzzekSrXQi10lQLNg=;
+	b=PmB/PnxMDh/nPmcW+iC/VRm3CtDDLS0jTk+3emlgOPCE8VhGXoqkxcFdlt4l4xWqVO1uso
+	g3FzBPAfX8HycKSCVogSFNjAjRKTpxtk0VozvdCtS/q298rDq4+tJK0tmbQvqZa4lXQNa0
+	TbwdMpZdw5bCWQvIRpTkm9pTHH2fkHo=
+Received: from mail-oa1-f72.google.com (mail-oa1-f72.google.com
+ [209.85.160.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-610-nyV0TSDHPnqbKqs13Qsq-g-1; Tue, 27 Aug 2024 01:18:31 -0400
+X-MC-Unique: nyV0TSDHPnqbKqs13Qsq-g-1
+Received: by mail-oa1-f72.google.com with SMTP id 586e51a60fabf-27066f937ffso6543878fac.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 22:18:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724735910; x=1725340710;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fgll1oEFe7T1tuU4poe+D6xuDVQzzekSrXQi10lQLNg=;
+        b=rLzxL4nzFTJGIr6CIzAGj4BIM5K0rUiHKkfwQIYvAPgzwIY+zQ6iJaUevKCRIVGi0E
+         Bh8Vvj8fWw/05NvzHQDuEKPkpd5TGvAbdk5u04dboAArv/4HeHTmTF/YOr3pg2r3kgJR
+         NCiYlxzKCEOpKe92Fx21Zx4/ZMHtfAgF+ej4OlMvcW8QhQz6pN50vhMk8pz5sYMkHgTr
+         bedhAtOELfhD5Lz58edC9UK/ntItg91OJpELAOdXVjBYj8L2HjzpBgmnMMMT5do9eevB
+         KQqw8/2N1uNFvnMDPCyXmNynLJqhxZCQrl27VlPYpARP12fw5Iyvi3arcy9egvxZEZsR
+         26vQ==
+X-Gm-Message-State: AOJu0YwA5MOi3LcCFLBJP8qDlNd0NTwa5zBbFy9bXWcUBrv2+c84yRIW
+	V+NkexcSMn3ybsdv6Xxi0YpdrBnXLeGvvnuNLp9OYjqjWW4Tw1tMytGhrhrDDKSMhnXMutZXZ1A
+	OqZyxh/VUY1Mu4PC35Y87XxfcGnZOWFxz898piTqzm1hn9nVOgvJouAGzmzpZ1lW1dpi1h7paBI
+	4jFAGs0wWuZHW99blpRRAT56WGsgt4lWJdjCgY2QuR3ZCNoac=
+X-Received: by 2002:a05:6870:c14c:b0:260:e2ea:e67f with SMTP id 586e51a60fabf-273e63e708fmr14343828fac.10.1724735910608;
+        Mon, 26 Aug 2024 22:18:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH8h1kF+iYvqxdmiHNnOKQ8jgdKBMOLVDbjuZ+BtBMl52nGOlo6niP967qOLSUjER1YSDiSnk33kpb4OJukK2Y=
+X-Received: by 2002:a05:6870:c14c:b0:260:e2ea:e67f with SMTP id
+ 586e51a60fabf-273e63e708fmr14343814fac.10.1724735910191; Mon, 26 Aug 2024
+ 22:18:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827-hidraw-revoke-v4-3-88c6795bf867@kernel.org>
+References: <20240827032218.34744-1-liwang@redhat.com>
+In-Reply-To: <20240827032218.34744-1-liwang@redhat.com>
+From: Jan Stancek <jstancek@redhat.com>
+Date: Tue, 27 Aug 2024 07:18:09 +0200
+Message-ID: <CAASaF6yVb30xTrZ11SCRNvp4=t76VC+eiXWLxW+fWfOzavj-HA@mail.gmail.com>
+Subject: Re: [PATCH] loop: Increase bsize variable from unsigned short to
+ unsigned int
+To: Li Wang <liwang@redhat.com>
+Cc: linux-kernel@vger.kernel.org, ltp@lists.linux.it, 
+	John Garry <john.g.garry@oracle.com>, Damien Le Moal <dlemoal@kernel.org>, 
+	Stefan Hajnoczi <stefanha@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for picking this up and adding the tests, much appreciated
+On Tue, Aug 27, 2024 at 5:22=E2=80=AFAM Li Wang <liwang@redhat.com> wrote:
+>
+> This change allows the loopback driver to handle larger block sizes
+> and increases the consistency of data types used within the driver.
+> Especially to mactch the struct queue_limits.logical_block_size type.
+                        ^^ small typo here, extra 'c' in "match"
+>
+> Also, this is to get rid of the LTP/ioctl_loop06 test failure:
+>
+>   12 ioctl_loop06.c:76: TINFO: Using LOOP_SET_BLOCK_SIZE with arg > PAGE_=
+SIZE
+>   13 ioctl_loop06.c:59: TFAIL: Set block size succeed unexpectedly
+>   ...
+>   18 ioctl_loop06.c:76: TINFO: Using LOOP_CONFIGURE with block_size > PAG=
+E_SIZE
+>   19 ioctl_loop06.c:59: TFAIL: Set block size succeed unexpectedly
+>
+> Link: https://lists.linux.it/pipermail/ltp/2024-August/039912.html
+> Signed-off-by: Li Wang <liwang@redhat.com>
+> Cc: Jan Stancek <jstancek@redhat.com>
+> Cc: John Garry <john.g.garry@oracle.com>
+> Cc: Damien Le Moal <dlemoal@kernel.org>
+> Cc: Stefan Hajnoczi <stefanha@redhat.com>
 
-On Tue, Aug 27, 2024 at 12:47:53AM +0900, Benjamin Tissoires wrote:
-> Add 4 tests for the new revoke ioctl, for read/write/ioctl and poll.
-> 
-> Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
-> 
-> ---
-> 
-> new in v4
-> ---
->  tools/testing/selftests/hid/hidraw.c | 143 +++++++++++++++++++++++++++++++++++
->  1 file changed, 143 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/hid/hidraw.c b/tools/testing/selftests/hid/hidraw.c
-> index f8c933476dcd..669eada8886b 100644
-> --- a/tools/testing/selftests/hid/hidraw.c
-> +++ b/tools/testing/selftests/hid/hidraw.c
-> @@ -19,6 +19,11 @@
->  	__typeof__(b) _b = (b); \
->  	_a < _b ? _a : _b; })
->  
-> +/* for older kernels */
-> +#ifndef HIDIOCREVOKE
-> +#define HIDIOCREVOKE	      _IOW('H', 0x0D, int) /* Revoke device access */
-> +#endif /* HIDIOCREVOKE */
-> +
->  static unsigned char rdesc[] = {
->  	0x06, 0x00, 0xff,	/* Usage Page (Vendor Defined Page 1) */
->  	0x09, 0x21,		/* Usage (Vendor Usage 0x21) */
-> @@ -516,6 +521,144 @@ TEST_F(hidraw, raw_event)
->  	ASSERT_EQ(buf[1], 42);
->  }
->  
-> +/*
-> + * After initial opening/checks of hidraw, revoke the hidraw
-> + * node and check that we can not read any more data.
-> + */
-> +TEST_F(hidraw, raw_event_revoked)
-> +{
-> +	__u8 buf[10] = {0};
-> +	int err;
-> +
-> +	/* inject one event */
-> +	buf[0] = 1;
-> +	buf[1] = 42;
-> +	uhid_send_event(_metadata, self->uhid_fd, buf, 6);
-> +
-> +	/* read the data from hidraw */
-> +	memset(buf, 0, sizeof(buf));
-> +	err = read(self->hidraw_fd, buf, sizeof(buf));
-> +	ASSERT_EQ(err, 6) TH_LOG("read_hidraw");
-> +	ASSERT_EQ(buf[0], 1);
-> +	ASSERT_EQ(buf[1], 42);
-> +
-> +	/* call the revoke ioctl */
-> +	err = ioctl(self->hidraw_fd, HIDIOCREVOKE, NULL);
-> +	ASSERT_OK(err) TH_LOG("couldn't revoke the hidraw fd");
-> +
-> +	/* inject one other event */
-> +	buf[0] = 1;
-> +	buf[1] = 43;
-> +	uhid_send_event(_metadata, self->uhid_fd, buf, 6);
-> +
-> +	/* read the data from hidraw */
-> +	memset(buf, 0, sizeof(buf));
-> +	err = read(self->hidraw_fd, buf, sizeof(buf));
-> +	ASSERT_EQ(err, -1) TH_LOG("read_hidraw");
+Reviewed-by: Jan Stancek <jstancek@redhat.com>
 
-do you want to check for errno == ENODEV here to avoid false positives?
-Shouldn't really happen in this test suite but it costs very little.
-
-Same for the various cases below.
-
-With or without - series:
-Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
-
-Cheers,
-  Peter
 
