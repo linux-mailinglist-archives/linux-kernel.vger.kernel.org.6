@@ -1,159 +1,124 @@
-Return-Path: <linux-kernel+bounces-303840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EC299615C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:48:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 456389615D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 19:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFECC2849D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:48:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDC2A1F259AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642271D1F76;
-	Tue, 27 Aug 2024 17:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E331D1F5C;
+	Tue, 27 Aug 2024 17:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XbYJbH7r"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="MEw8vtAI"
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31257126F1E;
-	Tue, 27 Aug 2024 17:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC5C1CDA3C
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 17:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724780878; cv=none; b=R9TFCVp+965dP0Nif7Pko4uvANQckx5A9GFJbUxaOMH+UGUwiikGm1msLqnrd5tpIaYoyOp39VedQLIzFppZ/xoYRxxL4Us6yYKjniJKozsr+7DB/LL4CIKiTYL440AKUiwJLI7YoCApp1EtN31PlUCeXPnzloHEbAcFYYVOWGA=
+	t=1724780990; cv=none; b=IBWdfNJGHAcvEVNjmwABlMNOqGBfDDSqgczLKikvJ4b86ac1gvx+zV+3LWmCUix6Fs/w4gffyKZp9vE+BPvcSH5jSXf554C2G1nygyqGWVNQG8P491+ve569BQa9lFZt73MHU98+7kl0zC8W1SGD/wczDb/ylLanaPNzpN10IRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724780878; c=relaxed/simple;
-	bh=dYHoc8tAXja1j/gy+quwz+VAVNvuZkG5hw3yiikQ1eg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WudWNXPTLga/9cjY5NYJcUD14RDu45G5mYW9G/1ug9eCsyrHc87GeC7mzh5P1Wf0f6mzk5FpuQTqYCo8DFnIuXv7uOA1hgJ/qU3S3jFycvw1Bqc/+HZsjLL3X3MHXfWXsT/Ke8vfHJFedja6iW/AwvDyLZQ6p8ogkyDMI7WuZ04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XbYJbH7r; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7141d7b270dso4428763b3a.2;
-        Tue, 27 Aug 2024 10:47:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724780876; x=1725385676; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HCUSrgJ+TJUnurxjMntJCkv6+wXwXOpsEspjhz3H0Yw=;
-        b=XbYJbH7rBpjD/HDL1RGX4gq675Ui6ijwGuPRro2XRZjsPmekCJcrME+MHzRSFtkf3j
-         snmvaBvPFio0FzTWX3fFWIh54p3I56jH8YVgNTZg4KmnA3Tcxc5I1CX/tzO08urfO20n
-         4JLBxclLSI0Rr8NHn26iNHfKf4+rpn/GWE/Z0UdcCmLaEXb14elAx9j/yCurrSIrZser
-         Y+rzHT62gzzYfx/nFHuTlbXl3sRAjTERAcalNJi+cDyhwYuiZXOgPYvMQYE2KD5flC8p
-         FvECKPKoj0wgTjDUfzomnuuQBXkUxiU8qzqgh8qRvOatWmlBBpSLJnXLbBpQA8z6pLPG
-         pSLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724780876; x=1725385676;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HCUSrgJ+TJUnurxjMntJCkv6+wXwXOpsEspjhz3H0Yw=;
-        b=Xsk4d6rUx4FgTdBEPdw8U5BbVeKATxy/xYKstHbEwKrnSC+gg7rCkXpNVef8eE4MYq
-         Ux5yyXZmXqG8xzFOGWE7SR4lTGJOtcD6V9qMpU0+pV2VtIX9AZrrg8+NXFHLt5JuV3IL
-         7qyPfd8iljEDXI1wJdEOtcvqR0Pyxez10Sm9LJrw4r4rMOFQWmxO7Z460f2OX+2WEW0d
-         hZagtsx+5sP1VVmMU+QOGwTeEJFyekVk3473KctSQE1P+yQigjVu/hg+BbttkLf+hxIP
-         b/3pQYsho/20sfKChjxl9UNu7MkiGXEMWVPb3dxw4d9kFN3mOpZuBkQCKzcJAVGH8Nq3
-         JlVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsUuL2lrAygkPv3x4aKB7sfe7bUo0kVqzAlG4UxY3c41LaLdkkYaduYaaihk0KrWkcp+TJ8mGN@vger.kernel.org, AJvYcCWM2ReZ2+0v7Z2qXBs/rHO8qL/D7N+XkvIEW66zfOi5RGZKb85X1mg9RFb3xs00pUl0/kZEQfeI2S76FGE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywis1sGc6HHjzmK1iXRI6V3qq5QDN+Gxa7BUxUILlUv54Vp+Km4
-	VjdNfxCPByVTgBa4Eym/79Q44otVSiI8/FKCmZe8zXewXz9QsJAQ
-X-Google-Smtp-Source: AGHT+IES6okLZnfj/yTGFxwPWh7nsD/tI3mz++Ei4dyFWneiXSsFd3im9erE2HEYmM+cxnd9sViCiA==
-X-Received: by 2002:a05:6a20:4f18:b0:1cc:9f24:3d with SMTP id adf61e73a8af0-1cc9f240253mr7540278637.25.1724780876432;
-        Tue, 27 Aug 2024 10:47:56 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2038556686asm86076995ad.40.2024.08.27.10.47.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 10:47:55 -0700 (PDT)
-Message-ID: <ffd773a0-d71c-4647-b7de-b22a008849ab@gmail.com>
-Date: Tue, 27 Aug 2024 10:47:53 -0700
+	s=arc-20240116; t=1724780990; c=relaxed/simple;
+	bh=+QDiJFQRjIMeWRIgyt+g1PRn4rR2PN7QCutTsSsZ4RU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ngZCOVQOW6Cv/VzQFY1LE3rS1/TF/OgwWP/R92RbcyAZY88z1hrmHBXqADQynLLUs2XlHKMtyVzt6WpF6ykV/vb05eX61qSysim9VnjCFWg0dg2SNyddTlnXKBAnPC597sZPtvdflRItabWP1K6asYzmFClkFiMKQEDNCAKgtW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=MEw8vtAI; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 944B0100002;
+	Tue, 27 Aug 2024 20:49:42 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 944B0100002
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1724780982;
+	bh=/E3gedr2wgbmn/YfDZDCnVtSmImQ4g2OtUK6h494324=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=MEw8vtAIPwO6rssy5kHuV1zimOL0g9NVwVDYUwhDCFfYcwTK8fcjVk+usRfTNnRBC
+	 u4c56HbS82MclLGI5XlheK/758UrSLTbV00EIbk0NSFAS0q9auDDmkb96Kb2PwoF4U
+	 FnqSixaPp3eCDl3aKleJBiDD3hz/pr/JAR27e6RBslCMkCO2SZjo6FtdVsk+c/m/Ip
+	 EDKQj3cttJrPmWqeKeGBi4hbymC0KlEx8KKHr9wov7rQSS9L4WcaGEBq7oWwoZJMzi
+	 a+w2rCoGmqSjmsWGiRIlsASzhNFLdUWWID+BGp9dexik+RG/V519q41cF95VexDeN3
+	 DXCYo+k1WBIVw==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Tue, 27 Aug 2024 20:49:42 +0300 (MSK)
+From: Martin Kurbanov <mmkurbanov@salutedevices.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger
+	<richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Mika Westerberg
+	<mika.westerberg@linux.intel.com>, Michael Walle <michael@walle.cc>, "Mark
+ Brown" <broonie@kernel.org>, Chia-Lin Kao <acelan.kao@canonical.com>, "Md
+ Sadre Alam" <quic_mdalam@quicinc.com>, Ezra Buehler
+	<ezra.buehler@husqvarnagroup.com>, Sridharan S N <quic_sridsn@quicinc.com>,
+	Frieder Schrempf <frieder.schrempf@kontron.de>, Alexey Romanov
+	<avromanov@salutedevices.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+	<kernel@salutedevices.com>, Martin Kurbanov <mmkurbanov@salutedevices.com>
+Subject: [PATCH v2 0/5] mtd: spinand: add OTP support
+Date: Tue, 27 Aug 2024 20:48:58 +0300
+Message-ID: <20240827174920.316756-1-mmkurbanov@salutedevices.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/341] 6.6.48-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240827143843.399359062@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240827143843.399359062@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
+ p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 187372 [Aug 27 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: mmkurbanov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 27 0.3.27 71302da218a62dcd84ac43314e19b5cc6b38e0b6, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;lore.kernel.org:7.1.1;salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/08/27 07:21:00
+X-KSMG-LinksScanning: Clean, bases: 2024/08/27 07:12:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/08/27 16:21:00 #26445643
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On 8/27/24 07:33, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.48 release.
-> There are 341 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 29 Aug 2024 14:37:36 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.48-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+This patchset implements the SPI-NAND OTP functions to allow access to
+the SPI-NAND OTP data.
+Specific support is added for Micron MT29F2G01ABAGD and ESMT F50L1G41LB/
+F50D1G41LB flash chips.
 
-Same problem as with the 6.1-rc, perf fails to build with:
+Changelog:
+  v2 since v1 at [1]:
+    - Make cosmetic changes (Miquel Raynal)
 
-In file included from ./util/header.h:10,
-                  from pmu-events/pmu-events.c:9:
-../include/linux/bitmap.h: In function 'bitmap_zero':
-../include/linux/bitmap.h:28:34: warning: implicit declaration of 
-function 'ALIGN' [-Wimplicit-function-declaration]
-    28 | #define bitmap_size(nbits)      (ALIGN(nbits, BITS_PER_LONG) / 
-BITS_PER_BYTE)
-       |                                  ^~~~~
-../include/linux/bitmap.h:35:32: note: in expansion of macro 'bitmap_size'
-    35 |                 memset(dst, 0, bitmap_size(nbits));
-       |                                ^~~~~~~~~~~
-   LD 
-/local/users/fainelli/buildroot/output/arm/build/linux-custom/tools/perf/pmu-events/pmu-events-in.o
-   LINK 
-/local/users/fainelli/buildroot/output/arm/build/linux-custom/tools/perf/perf
-/local/stbopt_p/toolchains_303/stbgcc-12.3-1.0/bin/../lib/gcc/arm-unknown-linux-gnueabihf/12.3.0/../../../../arm-unknown-linux-gnueabihf/bin/ld: 
-/local/users/fainelli/buildroot/output/arm/build/linux-custom/tools/perf/perf-in.o: 
-in function `record__mmap_read_evlist':
-builtin-record.c:(.text+0x13578): undefined reference to `ALIGN'
-/local/stbopt_p/toolchains_303/stbgcc-12.3-1.0/bin/../lib/gcc/arm-unknown-linux-gnueabihf/12.3.0/../../../../arm-unknown-linux-gnueabihf/bin/ld: 
-/local/users/fainelli/buildroot/output/arm/build/linux-custom/tools/perf/perf-in.o: 
-in function `record__init_thread_masks_spec.constprop.0':
-builtin-record.c:(.text+0x13b10): undefined reference to `ALIGN'
-/local/stbopt_p/toolchains_303/stbgcc-12.3-1.0/bin/../lib/gcc/arm-unknown-linux-gnueabihf/12.3.0/../../../../arm-unknown-linux-gnueabihf/bin/ld: 
-builtin-record.c:(.text+0x13b68): undefined reference to `ALIGN'
-/local/stbopt_p/toolchains_303/stbgcc-12.3-1.0/bin/../lib/gcc/arm-unknown-linux-gnueabihf/12.3.0/../../../../arm-unknown-linux-gnueabihf/bin/ld: 
-builtin-record.c:(.text+0x13b9c): undefined reference to `ALIGN'
-/local/stbopt_p/toolchains_303/stbgcc-12.3-1.0/bin/../lib/gcc/arm-unknown-linux-gnueabihf/12.3.0/../../../../arm-unknown-linux-gnueabihf/bin/ld: 
-builtin-record.c:(.text+0x13bd8): undefined reference to `ALIGN'
-/local/stbopt_p/toolchains_303/stbgcc-12.3-1.0/bin/../lib/gcc/arm-unknown-linux-gnueabihf/12.3.0/../../../../arm-unknown-linux-gnueabihf/bin/ld: 
-/local/users/fainelli/buildroot/output/arm/build/linux-custom/tools/perf/perf-in.o:builtin-record.c:(.text+0x13c14): 
-more undefined references to `ALIGN' follow
-collect2: error: ld returned 1 exit status
-make[4]: *** [Makefile.perf:672: 
-/local/users/fainelli/buildroot/output/arm/build/linux-custom/tools/perf/perf] 
-Error 1
-make[3]: *** [Makefile.perf:242: sub-make] Error 2
-make[2]: *** [Makefile:70: all] Error 2
-make[1]: *** [package/pkg-generic.mk:294: 
-/local/users/fainelli/buildroot/output/arm/build/linux-tools/.stamp_built] 
-Error 2
-make: *** [Makefile:29: _all] Error 2
+Links:
+  [1] https://lore.kernel.org/all/20240617133504.179705-1-mmkurbanov@salutedevices.com/
+
+Martin Kurbanov (5):
+  mtd: spinand: make spinand_{read,write}_page global
+  mtd: spinand: add OTP support
+  mtd: spinand: make spinand_wait() global
+  mtd: spinand: micron: OTP access for MT29F2G01ABAGD
+  mtd: spinand: esmt: OTP access for F50{L,D}1G41LB
+
+ drivers/mtd/nand/spi/Makefile |   3 +-
+ drivers/mtd/nand/spi/core.c   |  45 +++++--
+ drivers/mtd/nand/spi/esmt.c   |  69 +++++++++-
+ drivers/mtd/nand/spi/micron.c | 117 ++++++++++++++++-
+ drivers/mtd/nand/spi/otp.c    | 232 ++++++++++++++++++++++++++++++++++
+ include/linux/mtd/spinand.h   |  65 ++++++++++
+ 6 files changed, 519 insertions(+), 12 deletions(-)
+ create mode 100644 drivers/mtd/nand/spi/otp.c
+
 -- 
-Florian
+2.43.2
 
 
