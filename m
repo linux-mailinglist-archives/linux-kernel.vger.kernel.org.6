@@ -1,80 +1,58 @@
-Return-Path: <linux-kernel+bounces-302552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DEA8960021
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:58:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D37196002F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:08:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14B991F22E46
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 03:58:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D40D7B21490
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 04:08:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EFF228689;
-	Tue, 27 Aug 2024 03:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC2F47F69;
+	Tue, 27 Aug 2024 04:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IfsczR0Z"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="1Y9tJ2Oi"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6D645024;
-	Tue, 27 Aug 2024 03:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0854FEAF6;
+	Tue, 27 Aug 2024 04:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724731113; cv=none; b=hdSXkw4GoxBnoFscox3gaoejUhPEaC6l5p+lx9QJaBuwEQGy+Itb3bbHiEpIv3AFtImnLZbBWYg8wyVsaM/bRTmoDcdGS5HZkprLz6Wzujzg31Onr+zOQHhdpbBkVlCrekUNNA5scr0ag6q3y0TRKNREvukdSMe4r2NSt0c0Bbg=
+	t=1724731677; cv=none; b=CN9Vk/JGEb0PMCOFLhaR1LfZft47jSqYlNo0d4+KFIDSuINaJlWhyVhWSQMLtEOYFogOcxogm1+DtQSGd5Q9YXcNw14wan8RwzfcYvEeMRBs0EsWiXt0iRTM11tRiAcattdO84uGaI2HKXHqeNF8V/5L6Zpotgqh+CeKEvMW6MM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724731113; c=relaxed/simple;
-	bh=6CFOT98r5Fod3U6oQTSBBboex8E+qgNayAj3KyGoUeE=;
+	s=arc-20240116; t=1724731677; c=relaxed/simple;
+	bh=RtUA6cq7N9QmBBZxtw9JQjTCZ4WN/zo2ZWjZeftflNA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z1TsGgaLoG3SH2ES6GAFBQyyp8WdaWaG61KrTgAReQiOKXGtKYv+cjYHiZr1l9byx+YDD9VAYa0tViwuWFEI9db9AiRgP+2041IQkd7sV9OnzAEbrilGTE+VMBGeZY5yW4BhPJYXqnwWPBmrdbibVWYVP0VyyegsoRlumuCx0pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IfsczR0Z; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-201fbd0d7c2so40798145ad.0;
-        Mon, 26 Aug 2024 20:58:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724731110; x=1725335910; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UKW36OOVVaGjYnc4xLLFE4dsBW5TSJQVQszH560Uq9o=;
-        b=IfsczR0ZAXlcnoM6d4+1pNuG8cGupdccXrYgNGRXB4wAinFFlQ76+A6HMqqTpCHQv0
-         LzzDyF40+NNndCenQxxhB7ZCRB75pvOzi/kpFETYlxpArLBQmf1TaJsRC+oIM8/yEkg8
-         nJobl8N0+hB1BncljGF46ZiPU8WALPry8mHaYl/kB0x/Z7IMf9VCIi4RnEjSxZ3CyWLK
-         awbCnLKG3xRV5/CZSWgv0qqKyO2o6ptk6XreT7V5NuHiGV3+tjGZ+c/kISJ055evB048
-         lGbzL180O6rbRW7tjqXWue+3yKd6w9gifzQNak86PU9R41FjaOFlR/2hJDqw2/xTEP2m
-         QI0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724731110; x=1725335910;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UKW36OOVVaGjYnc4xLLFE4dsBW5TSJQVQszH560Uq9o=;
-        b=lBEYzWZxJGVPUKEEmIsi8jb+ZmFqHTUntSgMcN7rzgFrglpK4mV51dfRY6EB9aMFp0
-         uSw1/1CnI104pzX9XbQCzn9y9ZLmrMWuc+n6MBrraqmxreVMNw4rREIkEU8ddoFRWUD+
-         tbZly82vHvwb28HpscDSQkGYWNxIRKccqMLMB5HnQALb7rDylWbaTVmN5riN6oSADukg
-         x200gvex5MikcpzVI04lIOm24Er9rytlETEdU5Aj3czlGHv0QjNRimb3P3nMEx+2PmD2
-         bMNytVsqHeVQwCfIlt2EGJSSzz2mCPageF1dnbZo8+N+n2JLDDLg+2ltXR44+a6xPK8g
-         hHxg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7A6PD9nu8DNhzHD2ckX8J8UuuozfuZxo8SoPY9QQECM7cC0dvAs6Kk5EiB4q24pdKr2G1jQecZna8Ki0Z@vger.kernel.org, AJvYcCVgdlDEv3jt21DQfMtNW7AUDtOgpi77BVQyIxP3TB5F0k6ICpz+iUHzjNqg8WpBA/NboDZ6Au4kVNb3eA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmnrBcHlBSJ99cfuZq0CK+HrqX/3qFKZAtrsoXdKXZxNY5wumw
-	ojEiL0QVzXtjc3HCbFD+d5qynsb5BkN1P24qMiaGea+Xms8JRzVK
-X-Google-Smtp-Source: AGHT+IHpkHWFQ3vwrfdMYAjbb8aIH3A5SLLz9w5XQ3Xy0LaYPTOtxjsfZiy8c8TUpatEexyFUytw/Q==
-X-Received: by 2002:a17:902:da82:b0:202:64e:f9 with SMTP id d9443c01a7336-204df4840c4mr15324925ad.35.1724731110417;
-        Mon, 26 Aug 2024 20:58:30 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385581165sm75044285ad.88.2024.08.26.20.58.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 20:58:29 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 26 Aug 2024 20:58:28 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Cosmo Chou <chou.cosmo@gmail.com>
-Cc: jdelvare@suse.com, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cosmo.chou@quantatw.com
-Subject: Re: [PATCH v2] hwmon: (pt5161l) Fix invalid temperature reading
-Message-ID: <c16f3254-36c1-4ec3-ac09-ca15ed547413@roeck-us.net>
-References: <20240819104630.2375441-1-chou.cosmo@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cbr+mkBxFdBcGip6XMijEH8LV6ay0XlQ4rh7OsphraCJWlQX+Je3djPFRFPV/r7LszKI3nNKM+BEzI6/XophUC7r6avCjw2q25dKrBW52HQNa5FB6a5eMcv7XeC/LhF/Xk7d0Nt65eJ2ZBkxflM2Uxd9e/evS3ztd4oknRvPHio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=1Y9tJ2Oi; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=RtUA6cq7N9QmBBZxtw9JQjTCZ4WN/zo2ZWjZeftflNA=; b=1Y9tJ2Oi/J4f69kPCbpWSCDjv+
+	zifJLauBV+9m365svWPvGL1dxgLhmaTGndTMGaDaVYMRVeY7+EbadmfK9TyDjAnr5l10C5bzAipPH
+	g6AdCDXe3nCglX8sgodr8bw+CgcK43juXW0COmrq9O9kuE+osMZBLVyiqQO+/7sFgWkO0qw5In2l9
+	ljeoGaiRsB1rgc4gEyKj9T55Z+Vzzuu+AJYKpuYbaTfeX2MmPfjnDSL+yLyIg6v7vcW/C7Cfx6BYq
+	JNicPMx4i8iNn6tq2fOR6OXpY+vTAx5P3P1W5kmUW6OY0TVC1cOBIbeG/f3tRj2+CxXfhvG9LV9rR
+	EEftR/FA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sinUl-00000009fTG-19Ti;
+	Tue, 27 Aug 2024 04:07:51 +0000
+Date: Mon, 26 Aug 2024 21:07:51 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: brauner@kernel.org, djwong@kernel.org, sfr@canb.auug.org.au,
+	p.raghav@samsung.com, dchinner@redhat.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: [PATCH] iomap: remove set_memor_ro() on zero page
+Message-ID: <Zs1RFxM9tW1-O4rg@infradead.org>
+References: <20240826212632.2098685-1-mcgrof@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,22 +61,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240819104630.2375441-1-chou.cosmo@gmail.com>
+In-Reply-To: <20240826212632.2098685-1-mcgrof@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, Aug 19, 2024 at 06:46:30PM +0800, Cosmo Chou wrote:
-> The temperature reading function was using a signed long for the ADC
-> code, which could lead to mishandling of invalid codes on 32-bit
-> platforms. This allowed out-of-range ADC codes to be incorrectly
-> interpreted as valid values and used in temperature calculations.
-> 
-> Change adc_code to u32 to ensure that invalid ADC codes are correctly
-> identified on all platforms.
-> 
-> Fixes: 1b2ca93cd059 ("hwmon: Add driver for Astera Labs PT5161L retimer")
-> Signed-off-by: Cosmo Chou <chou.cosmo@gmail.com>
+On Mon, Aug 26, 2024 at 02:26:32PM -0700, Luis Chamberlain wrote:
+> Stephen reported a boot failure on ppc power8 system where
+> set_memor_ro() on the new zero page failed [0]. Christophe Leroy
+> further clarifies we can't use this on on linear memory on ppc, and
+> so instead of special casing this just for PowerPC [2] remove the
+> call as suggested by Darrick.
 
-Applied.
+I've already asked for it not to be added multiple times, but I'm
+glad we're getting there now:
 
-Thanks,
-Guenter
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
