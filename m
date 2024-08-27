@@ -1,104 +1,98 @@
-Return-Path: <linux-kernel+bounces-303633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12ADC96122D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:28:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 393B1961268
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C65EB293A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:28:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B38D1B264A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCE81D0DE4;
-	Tue, 27 Aug 2024 15:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DB01CE71D;
+	Tue, 27 Aug 2024 15:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="tky1Hq3+"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kt3rPFzO"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5D21C93AE;
-	Tue, 27 Aug 2024 15:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E2B1C8FCF;
+	Tue, 27 Aug 2024 15:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724772365; cv=none; b=ibdaggXvhs4incSPq8kC8UywAOCZYUimpm+uu+TKpeXGF53MCb7DI9swTeyLtXPgQFPFALSiFPeEaorcpLB64TfBXQqdUZHaVYpvUYaOMkkpaAWNzwhlgxvix8YEf4JfIh6PXyktsdmy4/Sb0OQSVwLpwWlLFZ+pG5GZUCFAPRo=
+	t=1724772472; cv=none; b=e+Tti4K56R5w95bb4wv06jZkuXX7mvjwAs2+XlAURsPhy6WNUgU4x7cJ0ZsPV83YTTvyoSOLCKFlNCJ7AjY0oaEscniwt3ZAGulzQ5L+uKr3icoiRALVbdFkw9euBn/w/nQl5stnnh+8tbEvoBEs03/9+DLRKvBVRxz2UCYIt3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724772365; c=relaxed/simple;
-	bh=2e4vyf28xxH0Hr6la1wTNPqSQ1+adyxwjIEbYSuV2ZQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TMJPNg5DnIfzFmyjhlo0LOKfLsjQBCgE7HSo1QQ0+zTiMn+rSqNY7pHVM2mBA828GFGO9R2L6yL/ApPZfLt45TXgUJN+d9a6TgkoYIwXV50K3Ei4Uns1JkJbQ8l9ABG/mzPBpqU+S4CHjMFybcZu6RrzeQKq/5twg6lqWvduVr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=tky1Hq3+; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1724772360;
-	bh=2e4vyf28xxH0Hr6la1wTNPqSQ1+adyxwjIEbYSuV2ZQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=tky1Hq3+/fxIo0PR0yLhX4NeR2JZSc/FpDc/+iBEYIVZx4tKdGLw00kqmM651bNzx
-	 sd/ivrIlYFCsOdOLZ7rW7yGaUt5cSBkW2IUp7YpXHJZ7zqNPzqlNN6f+cUB8uQtxj4
-	 agBtu0KwAJHvWLvPv1OlQD8y27tatHW9ABsom+58=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Tue, 27 Aug 2024 17:25:16 +0200
-Subject: [PATCH 5/5] fbdev/efifb: Use driver-private screen_info for sysfs
+	s=arc-20240116; t=1724772472; c=relaxed/simple;
+	bh=d1d5cGqzy6lm6m3aGhaqea2h3PIg7NV/csf/31lm2jU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=khcp8Z95VBh/JeoqBsBiXyt6f6BZCI/8I2vZXx7frKagluP2Cpzj1jXF5uxngEA+v9v1VeubNA5kWjXNRHaz6T8Yzkx2A7Ax6Fgydszu2Ac+pTDATNw9rXAHb8pWRVH93GyDs1vUxj+rcxBhrWbqPsLeuBBqTLxo98Lj+7icB60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kt3rPFzO; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20203988f37so55467085ad.1;
+        Tue, 27 Aug 2024 08:27:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724772470; x=1725377270; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=k7V95t9Eny7FjX1177LVW9tNDMS6rw8HF+Z0knd4Kuc=;
+        b=kt3rPFzOXIuB6AIBa5ydOGnF5daJP/DdN1ec1zblYxVpOp0PbTB3Y552FwwtMlEvqL
+         NLZhVy9PP/vnlmZY+RLPL6Mr2OL39Imgl+SJpPxWX+4/l6N3GNYU4Zrs6nbtetycSXzA
+         doKJFmsWl1EAw+v/tJrzOHB0RtxMWJQuLK9+72Pm8Js0fHrlSqqCP0A0PvB8itZWbFPc
+         ysQ+iToSmC7dwZy8+duaRLupb1MdZTM7pICbACEBtfV+H7NNOFWqHV5hpg/Al3nX6gQn
+         3ibu6gU+Vn50COb8/B1qfvIsIq56X+hMlLLGi2F9Wk59JJEnB3dn90q9lcc2XcNTqDY4
+         r8ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724772470; x=1725377270;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k7V95t9Eny7FjX1177LVW9tNDMS6rw8HF+Z0knd4Kuc=;
+        b=NORGJ373fJvK1W/2MGjK0yvyiAqYxNL/RkT2rb9RIkVklkJnl7PK8f3yJKeOAWpLac
+         7tzaePVD+6SUEZolcwwb/unb8708Z0YoB5u6jkIntLFjfapLT0j4tgu4PSP5toPWxggJ
+         vp8nVJY1SDLA1d7+BiVv2FEaRI0uF0wGQmOLsjoT1X92ITLm1c7Q4hNozFK6Zxv8ud7J
+         VOSr3Ozw2I+snh5wnNW1ikzhiKo8biJh7MBp04qo+jvY3CNn3Yv9AGGUrG7OOD9Rq+k/
+         +WrCpAqnBQD33Pygim1Yjbfk6u4VasTsFeHCe+1e4dimBT1zdos3CXUkciOWHxWb39uf
+         9Piw==
+X-Forwarded-Encrypted: i=1; AJvYcCWB47ATWHdAW/An/mXIkS/YUEKfF5SceioqsR/a1BqiM0eba8thUPx7w13evflgq3H53tD4T2cDfB6cJJg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDjQu+/x0vMeFZBOviTA9NS3A4SdqHtYHIlM4zgArQv7Cw0j/a
+	D32kXvnL9tUkPmj3EMLQvtNO1CbJqadBZ1mfwc7IpFhSW3pfN3qU
+X-Google-Smtp-Source: AGHT+IEPtmV8NBgh9Dnh9bO4NJM4SHx6FsWwQbk1pW18vK1HMdArx/2c73ChRv4IRCQbzDp60q+6tw==
+X-Received: by 2002:a17:902:c404:b0:203:a0ea:6265 with SMTP id d9443c01a7336-203a0ea6d20mr198925725ad.11.1724772469523;
+        Tue, 27 Aug 2024 08:27:49 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:fce4:8959:e48d:980c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-203855dd2d7sm85222915ad.169.2024.08.27.08.27.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 08:27:49 -0700 (PDT)
+Date: Tue, 27 Aug 2024 08:27:46 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Liao Chen <liaochen4@huawei.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, mkorpershoek@baylibre.com,
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com
+Subject: Re: [PATCH -next] Input: mt6779-keypad - fix module autoloading
+Message-ID: <Zs3wcpJ_vVmOXbIl@google.com>
+References: <20240827123411.431388-1-liaochen4@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240827-efifb-sysfs-v1-5-c9cc3e052180@weissschuh.net>
-References: <20240827-efifb-sysfs-v1-0-c9cc3e052180@weissschuh.net>
-In-Reply-To: <20240827-efifb-sysfs-v1-0-c9cc3e052180@weissschuh.net>
-To: Peter Jones <pjones@redhat.com>, Helge Deller <deller@gmx.de>, 
- Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724772358; l=1194;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=2e4vyf28xxH0Hr6la1wTNPqSQ1+adyxwjIEbYSuV2ZQ=;
- b=+Pk0n0e5P2rpmmg2vlrNRCkM2i9FDYVDXSk03eilvNcK3JU9PZrT56fs06i4gUziwWgueLNAH
- XoyCQh/LzQbAT60VaYMbFxlv0u10WFRv1JQti4gSy+KJhNvN/dOi9qd
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240827123411.431388-1-liaochen4@huawei.com>
 
-Since commit b9cfd1d271ab ("fbdev/efifb: Use screen_info pointer from device")
-efifb uses a local copy of screen_info and applies its modifications
-there. Adapt the sysfs attributes to also work with the custom copy
-instead of the unmodified platform data.
+On Tue, Aug 27, 2024 at 12:34:11PM +0000, Liao Chen wrote:
+> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
+> based on the alias from of_device_id table.
+> 
+> Signed-off-by: Liao Chen <liaochen4@huawei.com>
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- drivers/video/fbdev/efifb.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/video/fbdev/efifb.c b/drivers/video/fbdev/efifb.c
-index 7215973ef602..1f86a07bf292 100644
---- a/drivers/video/fbdev/efifb.c
-+++ b/drivers/video/fbdev/efifb.c
-@@ -304,7 +304,7 @@ static ssize_t name##_show(struct device *dev,				\
- 			   struct device_attribute *attr,		\
- 			   char *buf)					\
- {									\
--	struct screen_info *si = dev_get_platdata(dev);			\
-+	struct screen_info *si = dev_get_drvdata(dev);			\
- 	if (!si)							\
- 		return -ENODEV;						\
- 	return sprintf(buf, fmt "\n", (si->lfb_##name));		\
-@@ -369,6 +369,8 @@ static int efifb_probe(struct platform_device *dev)
- 	if (!si)
- 		return -ENOMEM;
- 
-+	dev_set_drvdata(&dev->dev, si);
-+
- 	if (si->orig_video_isVGA != VIDEO_TYPE_EFI)
- 		return -ENODEV;
- 
+Applied, thank you.
 
 -- 
-2.46.0
-
+Dmitry
 
