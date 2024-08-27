@@ -1,191 +1,113 @@
-Return-Path: <linux-kernel+bounces-303643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93E889612BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:34:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C08939612E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 17:36:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B87821C23316
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:34:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25F33B2BE30
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 15:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A141CE6F8;
-	Tue, 27 Aug 2024 15:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3CA1C5792;
+	Tue, 27 Aug 2024 15:33:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWIGSLw4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qXF9iqYM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB131C9EB0;
-	Tue, 27 Aug 2024 15:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB6A1C68A6;
+	Tue, 27 Aug 2024 15:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724772749; cv=none; b=fehyIYmpqJjbzDoc0gEv7fpXofK4dCpZzh8sVgA+ebfNuykWlGxjuHMtvUHRDluI74CEF+Ol3mQib5DRby/zz/Oma4br+x8xWfsVVWZAjhcqcYZtOKP7Jvffhql4UNiDtl+lvwENaQG5zyt54iLWZBhmLD0u/7o4fDnZrD12s38=
+	t=1724772829; cv=none; b=WfenvT4Wb2YW2ZfWtUN00C6alhz3VfCDgNx+mZVdaMpeUAXd2nTL/1XCzXkU9ZPLaIRGoRz8CewttdW4uFsLBbvZsLoOYN+t2nCc164/7kVqhsltYUdj0Xr7hC1e1Ib/ufawvdvzm74SAUFoVpqs8cprqIaoh3XFHih6aEJYvmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724772749; c=relaxed/simple;
-	bh=oMFIrjpb/wL45DA40NAqPybmEnDxPFSUlGpynz4wF2U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iSIcHAodlY/6QQ3CK+prrKPezO+pKalQ352eTCYbt+c/jTzd5HeZR5uWVgwoClpVHn1jphzOF2lqOuEG2tokhBy4JJjL4VcKICLBQVJLLRUFMvNSbVZGIK0kPFkWUqA+BPvsTTZEy6bVZvxsjc6XbD8T+ofF1nKogU2S+DYWec4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oWIGSLw4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9116FC61050;
-	Tue, 27 Aug 2024 15:32:22 +0000 (UTC)
+	s=arc-20240116; t=1724772829; c=relaxed/simple;
+	bh=tqwwuQLxLu65R7hMO4ggXIpGa/v/feGOdzPghQiP2ss=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cTJshQJfr6TwmULAYkcUV2JLS/wtLhn5R4Ixk9ebiTVVYQpXA/GE+Q/g4XcJy25zuNrnHtzKmdzgP1RilEgwvUMwA4/vp/Cko2bx58SQvhcTvRFptYJKU2yqg4s0QNcLG4OTU0jWYrRv+UO5rKCS2b3gaQosRAbF0idoZc1MjWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qXF9iqYM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46DA8C6105C;
+	Tue, 27 Aug 2024 15:33:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724772749;
-	bh=oMFIrjpb/wL45DA40NAqPybmEnDxPFSUlGpynz4wF2U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oWIGSLw4QDsK1C4sX7KEzHUMXx8j9mdnaVnI1OjJpyVgki0h5/1WiPp7WlXZsNktQ
-	 y9HGWclovKpm66xhwasgajNbN0EaDTRPg9tIc3K5Pmpw2aSPi7+i1J/rD6RQgIw29h
-	 gUeG39EF3q26wlyR9xeTjeS8y5FRiI2ofHhBjWolpMqkmUC/xX+q2NHaDZIuDQ42ek
-	 G32QJpdljjZb9FNd0dZKEFd24juPkEGCa82o5Tzg71JqJmwfPUuKZMR8UR+fLbxxnF
-	 TiTDqEhgRJZI8X95EgtZBTOs8Dd2Rx63pprmC6kj+OZjXOgvsIdozqvKWObdAHO0YT
-	 8eWXXKr1Ha5vw==
-Message-ID: <2221d0dd-e7ed-4ac8-a3c8-905ad8037fb6@kernel.org>
-Date: Tue, 27 Aug 2024 17:32:20 +0200
+	s=k20201202; t=1724772829;
+	bh=tqwwuQLxLu65R7hMO4ggXIpGa/v/feGOdzPghQiP2ss=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=qXF9iqYM0IZF+fj2TGYsGIcZ0mzS/oprfqLCd5oBvjv42CtYJIwrpbOJhILjZidOn
+	 pwUIvIsnwO5A8wv930hPLC2SzDGWWRvcZS6OAfCx51O0y88u2oDs1HHr8/OTURBOUE
+	 7IbethpI2xSq5nmgDEQ+5zEA3yg26J/boR0Y/C/fxIb14BQI7/ByuJ89W3s6e7I5Ka
+	 HpWZH8PnF180qD5lZcFyvhaYMP8XnoZcV84wpB2fLd+IgykGCMagRzMMp7gdAEIGeZ
+	 e0xQ6IjUFu9pFcdzRN2VX0928IYb949BymdqCnxnoaqbPzp7bcV2lgKkW0MMM+jlw3
+	 LX3sfYm/VpKgA==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53438aa64a4so5596785e87.3;
+        Tue, 27 Aug 2024 08:33:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVUqH9b6ZmIZTM34WmhyZh/NAtpPQNnnma7MCYUdP/6dzKzgHwWOKJOBeoqyIghacvIyQyFMO2Ag41h@vger.kernel.org, AJvYcCVcYcOnjfnQGM2tgiXfpDnrfBt7ymUzbGOVKaWQ/nG2WIOwwDaMlq5TK53LW3BDSXcbsh7OWXkU85M78YIU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzdz3nekY/yOnBabZxaE8kTdnND8EZ3OxYY5qxr6NjLRe14cEBv
+	YtQeSKJgK/GJotkHeml6Y4JCVPgylgeW9TMXO+tbRsiyabxAODSOmc1f7EDeu25drZF/UX66t3W
+	b/umzhyDl2FQMQIc7rQEPCQY5kA==
+X-Google-Smtp-Source: AGHT+IGPSqybKNiMvVQKgXZTAevFJTqkzUUFlz68S4B5I+liROoTC4SfTPGnNIlnHt/Jxu/nnJUoQ4TDwc/tyfOPKJc=
+X-Received: by 2002:a05:6512:1393:b0:52c:caa6:13b4 with SMTP id
+ 2adb3069b0e04-5343882d1c1mr8829662e87.3.1724772827623; Tue, 27 Aug 2024
+ 08:33:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: interconnect: Add Qualcomm QCS8300 DT
- bindings
-To: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
- Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
- Danila Tikhonov <danila@jiaxyga.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Vladimir Lypak <vladimir.lypak@gmail.com>,
- Adam Skladowski <a39.skl@gmail.com>, Sibi Sankar <quic_sibis@quicinc.com>,
- Rohit Agarwal <quic_rohiagar@quicinc.com>,
- Rajendra Nayak <quic_rjendra@quicinc.com>,
- Andrew Halaney <ahalaney@redhat.com>, linux-arm-msm@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_mdtipton@quicinc.com,
- quic_okukatla@quicinc.com
-References: <20240827151622.305-1-quic_rlaggysh@quicinc.com>
- <20240827151622.305-2-quic_rlaggysh@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240827151622.305-2-quic_rlaggysh@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <cover.1724682539.git.jan.kiszka@siemens.com> <7062ec915ecd161f6c62952eb7c1cd5036785dba.1724682539.git.jan.kiszka@siemens.com>
+In-Reply-To: <7062ec915ecd161f6c62952eb7c1cd5036785dba.1724682539.git.jan.kiszka@siemens.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Tue, 27 Aug 2024 10:33:34 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJ+czuiiBUEaPBn0E+=5intMsxr6D8c33BapAD2=n7jOg@mail.gmail.com>
+Message-ID: <CAL_JsqJ+czuiiBUEaPBn0E+=5intMsxr6D8c33BapAD2=n7jOg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: ti: iot2050: Add overlays for M.2 used by firmware
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Bao Cheng Su <baocheng.su@siemens.com>, 
+	Hua Qian Li <huaqian.li@siemens.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 27/08/2024 17:16, Raviteja Laggyshetty wrote:
-> The Qualcomm QCS8300 SoC has several bus fabrics that could be
-> controlled and tuned dynamically according to the bandwidth demand.
-> 
-> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+On Mon, Aug 26, 2024 at 9:29=E2=80=AFAM Jan Kiszka <jan.kiszka@siemens.com>=
+ wrote:
+>
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+>
+> To allow firmware to pick up all DTs from here, move the overlays that
+> are normally applied during DT fixup to the kernel source as well. Hook
+> then into the build nevertheless to ensure that regular checks are
+> performed.
+>
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 > ---
+>  arch/arm64/boot/dts/ti/Makefile               |  2 +
+>  ...48-iot2050-advanced-m2-bkey-ekey-pcie.dtso | 27 +++++++++++
+>  ...-am6548-iot2050-advanced-m2-bkey-usb3.dtso | 47 +++++++++++++++++++
+>  3 files changed, 76 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-m2-=
+bkey-ekey-pcie.dtso
+>  create mode 100644 arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-m2-=
+bkey-usb3.dtso
+>
+> diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Mak=
+efile
+> index e20b27ddf901..f459af7fac0d 100644
+> --- a/arch/arm64/boot/dts/ti/Makefile
+> +++ b/arch/arm64/boot/dts/ti/Makefile
+> @@ -77,6 +77,8 @@ dtb-$(CONFIG_ARCH_K3) +=3D k3-am6528-iot2050-basic.dtb
+>  dtb-$(CONFIG_ARCH_K3) +=3D k3-am6528-iot2050-basic-pg2.dtb
+>  dtb-$(CONFIG_ARCH_K3) +=3D k3-am6548-iot2050-advanced.dtb
+>  dtb-$(CONFIG_ARCH_K3) +=3D k3-am6548-iot2050-advanced-m2.dtb
+> +dtb-$(CONFIG_ARCH_K3) +=3D k3-am6548-iot2050-advanced-m2-bkey-ekey-pcie.=
+dtbo
+> +dtb-$(CONFIG_ARCH_K3) +=3D k3-am6548-iot2050-advanced-m2-bkey-usb3.dtbo
 
-A nit, subject: drop second/last, redundant "DT bindings". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+You are missing applying these overlays to anything. That is a
+requirement for any overlay in the tree.
 
-And you do not add "Qualcomm QCS8300" here. QCS8300 is a SoC. You add
-here specific device, right?
-
-
->  .../interconnect/qcom,qcs8300-rpmh.yaml       |  50 +++++
->  .../interconnect/qcom,qcs8300-rpmh.h          | 189 ++++++++++++++++++
->  2 files changed, 239 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,qcs8300-rpmh.yaml
->  create mode 100644 include/dt-bindings/interconnect/qcom,qcs8300-rpmh.h
-> 
-> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,qcs8300-rpmh.yaml b/Documentation/devicetree/bindings/interconnect/qcom,qcs8300-rpmh.yaml
-> new file mode 100644
-> index 000000000000..ac75eeb6a6b4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interconnect/qcom,qcs8300-rpmh.yaml
-> @@ -0,0 +1,50 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/interconnect/qcom,qcs8300-rpmh.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Technologies, Inc. RPMh Network-On-Chip Interconnect on QCS8300
-> +
-> +maintainers:
-> +  - Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-> +
-> +description: |
-> +  RPMh interconnect providers support system bandwidth requirements through
-> +  RPMh hardware accelerators known as Bus Clock Manager (BCM).
-> +
-> +  See also:: include/dt-bindings/interconnect/qcom,qcs8300.h
-
-Just one ':'
-
-
-> +required:
-> +  - compatible
-> +
-> +allOf:
-> +  - $ref: qcom,rpmh-common.yaml#
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    gem_noc: interconnect-gem-noc {
-> +        compatible = "qcom,qcs8300-gem-noc";
-
-Hm, no reg?
-
-Where is your DTS? Please follow standard upstream process, which means
-you send DTS separately. Your internal guideline already should cover
-that. If it does not, please look at upstreaming of SM8650, update your
-guideline and then follow SM8650 process. That way we can verify that
-what you send is true.
-
-Best regards,
-Krzysztof
-
+Rob
 
