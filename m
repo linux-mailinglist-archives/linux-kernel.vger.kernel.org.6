@@ -1,271 +1,178 @@
-Return-Path: <linux-kernel+bounces-302600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 114A69600C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:04:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 218189600C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 07:04:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B427B21F8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:04:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D6B31F21EBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 05:04:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C716C33CFC;
-	Tue, 27 Aug 2024 05:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE7D374CB;
+	Tue, 27 Aug 2024 05:04:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="C6K7KLFN"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FPg11gFe"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E48F4C92
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 05:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5DF4C92;
+	Tue, 27 Aug 2024 05:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724735043; cv=none; b=cn/fPmLVT7mJDx4riH4XDjztfHJQlFpfFDml9bjcC0QtydYLEfG85XwOnj33E2eYfX5/5bp/6z/Oeia0llgV/TN87fLMbcHWrYdSSa2C2knlY4B13UGXBtFstnH8SOKeD7IPF6DUOCUiYQwGsQ7jG3fVbrXLFzedg8f4LT1Me1A=
+	t=1724735051; cv=none; b=s6h4CJrbuExsIRWaIy430yO0giaka1do3IHTl2G89lpV1eOvYmoZ62icXBFQHEM+rpzC8bF6CVfo44ig4XkaK7I7aZ0Dp+5O2Ju88sOeave7h5UkOie4OuzR1I+iWGXqbMNmtJWLp/5vIhOs0EEDNPlSwXsSG0mmXHWIxTDIfuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724735043; c=relaxed/simple;
-	bh=wksRg42g0VVOA2GWRSHzFHZK9dQOKIE2GlpGoreMqb0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 Content-Type:MIME-Version; b=SWIdS57ibaae9mHDgAjVx7vZQaOOsv8/ofz1e0nU4ULy7WSIA0ubQYYDSDLROsfmywGuU0TDzKudWUxovTg3+GTRYnUa4jjqa8Y0tO+4DRwNsSoPuzEp4ww9JvHs6zaVTjAWcsJAOluX50EFJX2IuwZ0wyiZqFb0DUj3ewGbIpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=C6K7KLFN; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47R1xInM014691;
-	Tue, 27 Aug 2024 05:03:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:in-reply-to:references:date:message-id
-	:content-type:mime-version; s=pp1; bh=xAJzky6VlIH1RnuZZ+v8zK2DMO
-	HKt74QQUCJakQdb5Y=; b=C6K7KLFNOTuJ9htRHzHKbjaHt+E7CNpx7t0cHQ5R6U
-	aHyr/LiKc6yKJxnUaRDmNHxe+I/7J+xQGOge10hC6jmKbA1wwqEeR52yr2f7sZCs
-	1O8ePMce2EggtPPQxbCImk8yTRfYstvkva7WRv2LBj5W9zlE40bcON1zK23KZQTx
-	C+6VPDiZhvYkBIxaAOtCUW4IKYwIQu7oFo9HW0fZ4G2WhiHL0R+9rIPoBeXrd3nl
-	UavbArx0YGqEjDRz53gPDHjSEYM4CT6lrM6MsJQd94uFkL5Swbyn1kprQ3p7CR4g
-	dbidj2mDi8na6B4VLXp4cvtW5ZMf/tIW3RZ+DxiiO44w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 417g51hyj7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 Aug 2024 05:03:45 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47R4xDON021942;
-	Tue, 27 Aug 2024 05:03:44 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 417g51hyj1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 Aug 2024 05:03:44 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47R15VWq021741;
-	Tue, 27 Aug 2024 05:03:43 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 417suu9grg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 Aug 2024 05:03:43 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47R53dk943319728
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 27 Aug 2024 05:03:39 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C3D7F2004B;
-	Tue, 27 Aug 2024 05:03:39 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C272820049;
-	Tue, 27 Aug 2024 05:03:36 +0000 (GMT)
-Received: from vaibhav?linux.ibm.com (unknown [9.171.52.227])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Tue, 27 Aug 2024 05:03:36 +0000 (GMT)
-Received: by vaibhav@linux.ibm.com (sSMTP sendmail emulation); Tue, 27 Aug 2024 10:33:35 +0530
-From: Vaibhav Jain <vaibhav@linux.ibm.com>
-To: Narayana Murty N <nnmlinux@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
-        mpe@ellerman.id.au, linux-kernel@vger.kernel.org
-Cc: mahesh@linux.ibm.com, oohall@gmail.com, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, naveen@kernel.org, ganeshgr@linux.ibm.com,
-        sbhat@linux.ibm.com
-Subject: Re: [PATCH v2] powerpc/pseries/eeh: Fix pseries_eeh_err_inject
-In-Reply-To: <20240823151158.92602-1-nnmlinux@linux.ibm.com>
-References: <20240823151158.92602-1-nnmlinux@linux.ibm.com>
-Date: Tue, 27 Aug 2024 10:33:35 +0530
-Message-ID: <87mskyy2u0.fsf@vajain21.in.ibm.com>
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: EBJ-5CNmJ00Fq8A7LUKkvr-9dGVWlGVj
-X-Proofpoint-GUID: 91vrVtlJbTAMZB9e6bld7jglgBs4r2UB
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1724735051; c=relaxed/simple;
+	bh=GO0zNOW/uhkO9YPbWUQ7p2nEfAJZKu25c78aYjvnEXc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f5g93hrUFViIJ9Y6RZFXQp1Cmq1CR9AZ7VUbsMu3JEFVjHOBEL87kgn40m7l3kW2cJQ0PubYpivBtz39iioUTyCh3Jj+Fb8lrCDCOb91p7VTYvyGZDeuB06vjPLSvH6ziLnBhOovLGHeDHBNZ4SZjY/CAMuT09bmdmK8JPxyeTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FPg11gFe; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2020ac89cabso45033085ad.1;
+        Mon, 26 Aug 2024 22:04:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724735049; x=1725339849; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=pS15vPEb/TE1/EitqKs+W/XYfjN7muJ2TfqmqJCODDk=;
+        b=FPg11gFej/wmvaQYP+Mnnxn7wXxtw8yGC1ue6iVTDVg3AFpKkwi5RzFpuQxeuN+GEw
+         VXp0/uiGWZDueVH0F+Ed9lHlMp5ZaznnGZreoeK5puuq99PM/Egg/P7IenqPHCe8Hk6s
+         Fx8NTswrBu5j9XE/W51rNaYej2xjtPtVzNoE65GxEkbjNxhBxou52PKViVDQwb1Pi5fx
+         x5GjpFfUD7eR3mLqDn3PRknKwjr3YMwIjbscoqx4ycobSSvfv4y0Z/LtcgtxrYX2vFhM
+         P7+l6JC84O2VkV6cXOHT4ljKOc9wQ6seo0/X8/gRoJwoijsIa/XrWh8OD57kgfGzq8cP
+         5J9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724735049; x=1725339849;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pS15vPEb/TE1/EitqKs+W/XYfjN7muJ2TfqmqJCODDk=;
+        b=uaAP3k8eiTwOsUwa65lj66XM8Jh2SkZ6QRuglpzxTafA7Uz5Y/vjEQSv6VD360lOwB
+         Ftv7fzJ1eeJFqRvkDyJHALcw4/bSjGCh1Mph5eYg/SihzEMhmnyrQnZ2fAXBaj48/e7d
+         ZbGrB272ChEfwlVFgi8x8903dQFrbiTdPcF2ycgVnYzXKiFhm6DTRK3kK3PqCmZP5krA
+         X3xLLUQw0ARl+CBPwHxD78EXcod9v9I5SsV6lcd2VNIckZWLxVcbs+MBp5yqFKt3CtaA
+         n1ahAhrzaO/RBmyq6wty4QGCHJbcIoS0Nrp6ZtlOEaYlFAaVi46jUv+1Ms3rbR5ZnQHh
+         hYvw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6LD0KOS2/Xs8pgUzQ2+JKiHMPvnD3TcF1+H/TIsM8ADmMnE/6O+C+ngE4dpbhT5oKqsHYLxEvsuM=@vger.kernel.org, AJvYcCVdVO/K5fzTTr0yF6DJ3bi7A1zERlGGblYQa72cJU77UbnTz+Tifzc1+Z1EgD7Iccpr16monMIj8VGdhWlB@vger.kernel.org, AJvYcCW42uNGLJ6Xq2vnKWvEQ0bOO3SHQq5gP5lHIEFC3sQs30Ky83+OuhkPKn+m2+pHvDFw1x7SuN+W8iE=@vger.kernel.org, AJvYcCXyPdeTqHSedKEqqgU8wzBVda85P907D4zofBXJesqeIh81O+w5nQxx1EQkgEBWoT1Y9rDPrzBPwxdl5avKz18=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMuRag1hlhqF+80gU1gH2CMzZCvNxaM2SGzUQ+PpnQlBBKUw1w
+	ZE92C7bBtVZB1n4Ek28QtCiXp25MG60ejiTP9xQ5+0esZ87nEdLT
+X-Google-Smtp-Source: AGHT+IHYMlAJ7cseyBWWV3t9xPn+jhmKSnw0GVJdJSMZSjCeZH9bI3KDUJ3ytLkyMDvyWzQWl2op4Q==
+X-Received: by 2002:a17:902:ec83:b0:202:883:bef with SMTP id d9443c01a7336-2039e4ab20bmr100966045ad.30.1724735049361;
+        Mon, 26 Aug 2024 22:04:09 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-203855dbf57sm75480025ad.147.2024.08.26.22.04.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 22:04:08 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <ee11fea3-3e77-4870-837a-ef6147ac2bf0@roeck-us.net>
+Date: Mon, 26 Aug 2024 22:04:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-27_03,2024-08-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- lowpriorityscore=0 impostorscore=0 adultscore=0 spamscore=0
- priorityscore=1501 malwarescore=0 suspectscore=0 clxscore=1011
- phishscore=0 bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408270035
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] watchdog: rzg2l_wdt: Power on the watchdog domain in
+ the restart handler
+To: Claudiu <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be,
+ mturquette@baylibre.com, sboyd@kernel.org, wim@linux-watchdog.org,
+ ulf.hansson@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240826152529.2080248-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240826152529.2080248-4-claudiu.beznea.uj@bp.renesas.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240826152529.2080248-4-claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Narayana,
+On 8/26/24 08:25, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> On RZ/G3S the watchdog can be part of a software-controlled PM domain. In
+> this case, the watchdog device need to be powered on in
+> struct watchdog_ops::restart API. This can be done though
+> pm_runtime_resume_and_get() API if the watchdog PM domain and watchdog
+> device are marked as IRQ safe. We mark the watchdog PM domain as IRQ safe
+> with GENPD_FLAG_IRQ_SAFE when the watchdog PM domain is registered and the
+> watchdog device though pm_runtime_irq_safe().
+> 
+> Before commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
+> context'") pm_runtime_get_sync() was used in watchdog restart handler
+> (which is similar to pm_runtime_resume_and_get() except the later one
+> handles the runtime resume errors).
+> 
+> Commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
+> context'") dropped the pm_runtime_get_sync() and replaced it with
+> clk_prepare_enable() to avoid invalid wait context due to genpd_lock()
+> in genpd_runtime_resume() being called from atomic context. But
+> clk_prepare_enable() doesn't fit for this either (as reported by
+> Ulf Hansson) as clk_prepare() can also sleep (it just not throw invalid
+> wait context warning as it is not written for this).
+> 
+> Because the watchdog device is marked now as IRQ safe (though this patch)
+> the irq_safe_dev_in_sleep_domain() call from genpd_runtime_resume() returns
+> 1 for devices not registering an IRQ safe PM domain for watchdog (as the
+> watchdog device is IRQ safe, PM domain is not and watchdog PM domain is
+> always-on), this being the case of RZ/G2 devices that uses this driver,
+> we can now drop also the clk_prepare_enable() calls in restart handler and
+> rely on pm_runtime_resume_and_get().
+> 
+> Thus, drop clk_prepare_enable() and use pm_runtime_resume_and_get() in
+> watchdog restart handler.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Thanks for the patch.
+Acked-by: Guenter Roeck <linux@roeck-us.net>
 
-Narayana Murty N <nnmlinux@linux.ibm.com> writes:
-
-> VFIO_EEH_PE_INJECT_ERR ioctl is currently failing on pseries
-> due to missing implementation of err_inject eeh_ops for pseries.
-> This patch implements pseries_eeh_err_inject in eeh_ops/pseries
-> eeh_ops. Implements support for injecting MMIO load/store error
-> for testing from user space.
->
-> The check on PCI error type code is moved to platform code, since
-> the eeh_pe_inject_err can be allowed to more error types depending
-> on platform requirement.
->
-> Signed-off-by: Narayana Murty N <nnmlinux@linux.ibm.com>
-
-Code changes LGTM, hence
-Reviewed-by: Vaibhav Jain <vaibhav@linux.ibm.com>
-
-> ---
->
-> Testing:
-> ========
-> vfio-test [1] by Alex Willamson, was forked and updated to add
-> support inject error on pSeries guest and used to test this
-> patch[2].
->
-> References:
-> ===========
-> [1] https://github.com/awilliam/tests
-> [2] https://github.com/nnmwebmin/vfio-ppc-tests/tree/vfio-ppc-ex
->
-> ================
-> Changelog:
-> V1:https://lore.kernel.org/all/20240822082713.529982-1-nnmlinux@linux.ibm.com/
-> - Resolved build issues for ppc64|le_defconfig by moving the
-> pseries_eeh_err_inject() definition outside of the CONFIG_PCI_IOV
-> code block.
-> - New eeh_pe_inject_mmio_error wrapper function added to avoid
-> CONFIG_EEH is not set.
-> ---
->  arch/powerpc/include/asm/eeh.h               |  6 ++-
->  arch/powerpc/kernel/eeh.c                    |  9 +++--
->  arch/powerpc/platforms/pseries/eeh_pseries.c | 39 +++++++++++++++++++-
->  3 files changed, 48 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/powerpc/include/asm/eeh.h b/arch/powerpc/include/asm/eeh.h
-> index 91a9fd53254f..8da6b047a4fe 100644
-> --- a/arch/powerpc/include/asm/eeh.h
-> +++ b/arch/powerpc/include/asm/eeh.h
-> @@ -308,7 +308,7 @@ int eeh_pe_reset(struct eeh_pe *pe, int option, bool include_passed);
->  int eeh_pe_configure(struct eeh_pe *pe);
->  int eeh_pe_inject_err(struct eeh_pe *pe, int type, int func,
->  		      unsigned long addr, unsigned long mask);
-> -
-> +int eeh_pe_inject_mmio_error(struct pci_dev *pdev);
->  /**
->   * EEH_POSSIBLE_ERROR() -- test for possible MMIO failure.
->   *
-> @@ -338,6 +338,10 @@ static inline int eeh_check_failure(const volatile void __iomem *token)
->  	return 0;
->  }
->  
-> +static inline int eeh_pe_inject_mmio_error(struct pci_dev *pdev)
-> +{
-> +	return -ENXIO;
-> +}
->  #define eeh_dev_check_failure(x) (0)
->  
->  static inline void eeh_addr_cache_init(void) { }
-> diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
-> index d03f17987fca..49ab11a287a3 100644
-> --- a/arch/powerpc/kernel/eeh.c
-> +++ b/arch/powerpc/kernel/eeh.c
-> @@ -1537,10 +1537,6 @@ int eeh_pe_inject_err(struct eeh_pe *pe, int type, int func,
->  	if (!eeh_ops || !eeh_ops->err_inject)
->  		return -ENOENT;
->  
-> -	/* Check on PCI error type */
-> -	if (type != EEH_ERR_TYPE_32 && type != EEH_ERR_TYPE_64)
-> -		return -EINVAL;
-> -
->  	/* Check on PCI error function */
->  	if (func < EEH_ERR_FUNC_MIN || func > EEH_ERR_FUNC_MAX)
->  		return -EINVAL;
-> @@ -1851,6 +1847,11 @@ static const struct file_operations eeh_dev_break_fops = {
->  	.read   = eeh_debugfs_dev_usage,
->  };
->  
-> +int eeh_pe_inject_mmio_error(struct pci_dev *pdev)
-> +{
-> +	return eeh_debugfs_break_device(pdev);
-> +}
-> +
->  static ssize_t eeh_dev_can_recover(struct file *filp,
->  				   const char __user *user_buf,
->  				   size_t count, loff_t *ppos)
-> diff --git a/arch/powerpc/platforms/pseries/eeh_pseries.c b/arch/powerpc/platforms/pseries/eeh_pseries.c
-> index b1ae0c0d1187..1893f66371fa 100644
-> --- a/arch/powerpc/platforms/pseries/eeh_pseries.c
-> +++ b/arch/powerpc/platforms/pseries/eeh_pseries.c
-> @@ -784,6 +784,43 @@ static int pseries_notify_resume(struct eeh_dev *edev)
->  }
->  #endif
->  
-> +/**
-> + * pseries_eeh_err_inject - Inject specified error to the indicated PE
-> + * @pe: the indicated PE
-> + * @type: error type
-> + * @func: specific error type
-> + * @addr: address
-> + * @mask: address mask
-> + * The routine is called to inject specified error, which is
-> + * determined by @type and @func, to the indicated PE
-> + */
-> +static int pseries_eeh_err_inject(struct eeh_pe *pe, int type, int func,
-> +				  unsigned long addr, unsigned long mask)
-> +{
-> +	struct	eeh_dev	*pdev;
-> +
-> +	/* Check on PCI error type */
-> +	if (type != EEH_ERR_TYPE_32 && type != EEH_ERR_TYPE_64)
-> +		return -EINVAL;
-> +
-> +	switch (func) {
-> +	case EEH_ERR_FUNC_LD_MEM_ADDR:
-> +	case EEH_ERR_FUNC_LD_MEM_DATA:
-> +	case EEH_ERR_FUNC_ST_MEM_ADDR:
-> +	case EEH_ERR_FUNC_ST_MEM_DATA:
-> +		/* injects a MMIO error for all pdev's belonging to PE */
-> +		pci_lock_rescan_remove();
-> +		list_for_each_entry(pdev, &pe->edevs, entry)
-> +			eeh_pe_inject_mmio_error(pdev->pdev);
-> +		pci_unlock_rescan_remove();
-> +		break;
-> +	default:
-> +		return -ERANGE;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static struct eeh_ops pseries_eeh_ops = {
->  	.name			= "pseries",
->  	.probe			= pseries_eeh_probe,
-> @@ -792,7 +829,7 @@ static struct eeh_ops pseries_eeh_ops = {
->  	.reset			= pseries_eeh_reset,
->  	.get_log		= pseries_eeh_get_log,
->  	.configure_bridge       = pseries_eeh_configure_bridge,
-> -	.err_inject		= NULL,
-> +	.err_inject		= pseries_eeh_err_inject,
->  	.read_config		= pseries_eeh_read_config,
->  	.write_config		= pseries_eeh_write_config,
->  	.next_error		= NULL,
-> -- 
-> 2.45.2
->
-
--- 
-Cheers
-~ Vaibhav
 
