@@ -1,215 +1,100 @@
-Return-Path: <linux-kernel+bounces-303295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E58960A56
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:31:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27AFB960A4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:31:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B8721C22B16
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:31:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E24DB249E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04BF1BA87C;
-	Tue, 27 Aug 2024 12:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A86B1B9B44;
+	Tue, 27 Aug 2024 12:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IUbRiB2R";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="V1J/ng/u";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IUbRiB2R";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="V1J/ng/u"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ANXjkYD6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40E31B8E8D;
-	Tue, 27 Aug 2024 12:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AEA1B86FF
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724761857; cv=none; b=pdpNF7spsUuL1PwNphuB/0elcwSjZkjhKbR8Bg6vAaKM5N37xtSwOc6Wddj8fjpYfvkNzJemMU//R7S8VjyfMHc5CBrUxzonAisUJDhdhuEm9zsW4WcZS5/ZdUXzpRF29Hz2m0m7ej5OSDHsWy8qNw8jPFRRmheOVASjDYOx6H4=
+	t=1724761850; cv=none; b=I4/kx3PaXOzh/j26l/sAbP5lV0KZxLVN8knBNVnk7jxzybDbBH6CXlSWeWtq1gcG827KmDxCm2vhjespexlHWQKwcByLe8R71W3SAGR4ANEMIeejqOUiRHXDbgvAfKOoB6B+L91n/7jb61It/gZcGlRqhRPUjKMvUwOvLR9leS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724761857; c=relaxed/simple;
-	bh=f78axjmUclun1wfP7kwMZNcG2d9SoMClxopFFWHREJ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Sz+FdTWTKYNc2DsYMxAJTizxh+IToLsKgHU1Ad26h7vr3piyLRz9iy8V95D0v4cqf2xL99yciWsikXLDg3NOFLQ6v/jnocBJYzvpXeMenfJ768er36OsDzocgBYviNW31bFfRd2QInC12jtccNXPBUcmM97wi36yEfBlu+BJ70o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IUbRiB2R; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=V1J/ng/u; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IUbRiB2R; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=V1J/ng/u; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CD37421B13;
-	Tue, 27 Aug 2024 12:30:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724761853; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=7xeRe7MAoinPXOehDj1oDor3joTDsLsD5OEV3LKTtL4=;
-	b=IUbRiB2R60ah/B9UNr9nTUvkDQ/MlMufXyZaCKowZgzJ9MBLfDbJHxhHNeppzOeHXqDSoI
-	BuEVSP2h3P/WhzggxO0MCN/rw+RAMCsheNaiWP/CuFx0AbuiS07wQdzqaigb292YsSznDT
-	D7E0EG5fJnlQfXXhkFJuxchmD82xSZ4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724761853;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=7xeRe7MAoinPXOehDj1oDor3joTDsLsD5OEV3LKTtL4=;
-	b=V1J/ng/uHiY+L9OJlOAHtbTCJy4Q4vcv47NUJA4Ax4dXuXz+HmEMg4ZapBpQVPbNzZFKIV
-	IVFkGpDBAAUUbzBg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724761853; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=7xeRe7MAoinPXOehDj1oDor3joTDsLsD5OEV3LKTtL4=;
-	b=IUbRiB2R60ah/B9UNr9nTUvkDQ/MlMufXyZaCKowZgzJ9MBLfDbJHxhHNeppzOeHXqDSoI
-	BuEVSP2h3P/WhzggxO0MCN/rw+RAMCsheNaiWP/CuFx0AbuiS07wQdzqaigb292YsSznDT
-	D7E0EG5fJnlQfXXhkFJuxchmD82xSZ4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724761853;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=7xeRe7MAoinPXOehDj1oDor3joTDsLsD5OEV3LKTtL4=;
-	b=V1J/ng/uHiY+L9OJlOAHtbTCJy4Q4vcv47NUJA4Ax4dXuXz+HmEMg4ZapBpQVPbNzZFKIV
-	IVFkGpDBAAUUbzBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C556F13724;
-	Tue, 27 Aug 2024 12:30:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id blURMP3GzWauYwAAD6G6ig
-	(envelope-from <lhruska@suse.cz>); Tue, 27 Aug 2024 12:30:53 +0000
-From: Lukas Hruska <lhruska@suse.cz>
-To: pmladek@suse.com,
-	mbenes@suse.cz,
-	jpoimboe@kernel.org
-Cc: joe.lawrence@redhat.com,
-	live-patching@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	mpdesouza@suse.com,
-	lhruska@suse.cz
-Subject: [PATCH v3 0/6] livepatch: klp-convert tool - Minimal version
-Date: Tue, 27 Aug 2024 14:30:45 +0200
-Message-ID: <20240827123052.9002-1-lhruska@suse.cz>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1724761850; c=relaxed/simple;
+	bh=2yh5vhfyIPxRTXHV/fSp3x4mj2cm7R/8NBWmhYVPJxo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j7TXoy+rLsy/AV5FlbAlvBzaqRydWi3QjKX2xZfp3O84s0NElHcTVISDddRCaX0W5LZ7UXMexDY1+cJNfUTmzPczteg7vR8RVVaoJjmpbn/IyGDcfDxtOdi2dMNwOl7uBNiEB1mdLK67u5msDEgtkGC0MyRpTqHpzaspl+hChlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ANXjkYD6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D18C8C61049;
+	Tue, 27 Aug 2024 12:30:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724761850;
+	bh=2yh5vhfyIPxRTXHV/fSp3x4mj2cm7R/8NBWmhYVPJxo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ANXjkYD6sl/zwNvyJmC5vDlEEtooIlOCYwgX4sTPWJdnGSq0qflSHn/L4cbRw9C6h
+	 1btyDC+OLpGku/rxjiNMFXub4q+vMhx5vI2HCVWcRQv7RqwbGGBIsUeFHmlG3yeXDa
+	 SIQY100CNvuFSuE8pdaOCigGQVmr+l928qWmZkHe1BgQo+JIyacHuAlwexK5Wq9J/3
+	 bVBSmYVC/AfPGDpGDaQ0DXuMPOM24rDE/aekE0QvMPjzgDN3Y2TrZ+8hPXNbq0QxZm
+	 HXtHZVJCaZrDi0j7wNtLOxsuEMup5FVN+x/8BWG/kUHaCcIMMKqAX/xHiI+T6rG/ht
+	 OSCShdb9EtZUw==
+Date: Tue, 27 Aug 2024 13:30:45 +0100
+From: Will Deacon <will@kernel.org>
+To: Liao Chang <liaochang1@huawei.com>
+Cc: catalin.marinas@arm.com, ptosi@google.com, oliver.upton@linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: Return early when break handler is found on
+ linked-list
+Message-ID: <20240827123044.GB4679@willie-the-truck>
+References: <20240827110046.3209679-1-liaochang1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_NONE(0.00)[];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240827110046.3209679-1-liaochang1@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Summary
--------
+On Tue, Aug 27, 2024 at 11:00:46AM +0000, Liao Chang wrote:
+> The search for breakpoint handlers iterate through the entire
+> linked list. Given that all registered hook has a valid fn field, and no
+> registered hooks share the same mask and imm. This commit optimize the
+> efficiency slightly by returning early as a matching handler is found.
+> 
+> Signed-off-by: Liao Chang <liaochang1@huawei.com>
+> ---
+>  arch/arm64/kernel/debug-monitors.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/debug-monitors.c b/arch/arm64/kernel/debug-monitors.c
+> index 024a7b245056..fc998956f44c 100644
+> --- a/arch/arm64/kernel/debug-monitors.c
+> +++ b/arch/arm64/kernel/debug-monitors.c
+> @@ -281,6 +281,7 @@ static LIST_HEAD(kernel_break_hook);
+>  
+>  void register_user_break_hook(struct break_hook *hook)
+>  {
+> +	WARN_ON(!hook->fn);
+>  	register_debug_hook(&hook->node, &user_break_hook);
+>  }
+>  
+> @@ -291,6 +292,7 @@ void unregister_user_break_hook(struct break_hook *hook)
+>  
+>  void register_kernel_break_hook(struct break_hook *hook)
+>  {
+> +	WARN_ON(!hook->fn);
+>  	register_debug_hook(&hook->node, &kernel_break_hook);
+>  }
 
-This is a significantly simplified version of the original klp-convert tool.
-The klp-convert code has never got a proper review and also clean ups
-were not easy. The last version was v7, see
-https://lore.kernel.org/r/20230306140824.3858543-1-joe.lawrence@redhat.com
+I don't think we need these WARN_ON()s. This API is pretty limited and
+passing a NULL callback doesn't make sense.
 
-The main change is that the tool does not longer search for the
-symbols which would need the livepatch specific relocation entry.
-Also klp.symbols file is not longer needed.
+Rest of the patch looks fine.
 
-Instead, the needed information is appended to the symbol declaration
-via a new macro KLP_RELOC_SYMBOL(). It creates symbol with all needed
-metadata. For example:
-
-  extern char *saved_command_line \
-                 KLP_RELOC_SYMBOL(vmlinux, vmlinux, saved_command_line, 0);
-
-would create symbol
-
-$>readelf -r -W <compiled livepatch module>:
-Relocation section '.rela.text' at offset 0x32e60 contains 10 entries:
-    Offset             Info             Type               Symbol's Value  Symbol's Name + Addend
-[...]
-0000000000000068  0000003c00000002 R_X86_64_PC32          0000000000000000 .klp.sym.rela.vmlinux.vmlinux.saved_command_line,0 - 4
-[...]
-
-
-The simplified klp-convert tool just transforms symbols
-created by KLP_RELOC_SYMBOL() to object specific rela sections
-and rela entries which would later be proceed when the livepatch
-or the livepatched object is loaded.
-
-For example, klp-convert would replace the above symbols with:
-
-$> readelf -r -W <livepatch_module_proceed_by_klp_convert>
-Relocation section '.klp.rela.vmlinux.text' at offset 0x5cb60 contains 1 entry:
-    Offset             Info             Type               Symbol's Value  Symbol's Name + Addend
-0000000000000068  0000003c00000002 R_X86_64_PC32          0000000000000000 .klp.sym.vmlinux.saved_command_line,0 - 4
-
-
-Note that similar macro was needed also in the original version
-to handle more symbols of the same name (sympos).
-
-Given the above, add klp-convert tool; integrate klp-convert tool into
-kbuild; add data-structure and macros to enable users to annotate
-livepatch source code; make modpost stage compatible with livepatches;
-update livepatch-sample and update documentation.
-
-
-Testing
--------
-
-The patchset selftests build and execute on x86_64, s390x, and ppc64le
-for both default config (with added livepatch dependencies) and a larger
-SLE-15-ish config.
-
-
-Summary of changes in this minimal version v3
-------------------------
-
-- klp-convert: symbol format changes (suggested by jlawrence)
-- samples: fixed name of added sample in Makefile (suggested by pmladek)
-- selftests: added ibt test case as an example (DON'T MERGE)
-- fixed all suggested small changes in v2
-
-Previous versions
------------------
-
-RFC:
-  https://lore.kernel.org/r/cover.1477578530.git.jpoimboe@redhat.com/
-v2:
-  https://lore.kernel.org/r/f52d29f7-7d1b-ad3d-050b-a9fa8878faf2@redhat.com/
-v3:
-  https://lore.kernel.org/r/20190410155058.9437-1-joe.lawrence@redhat.com/
-v4:
-  https://lore.kernel.org/r/20190509143859.9050-1-joe.lawrence@redhat.com/
-v5:
-  (not posted)
-  https://github.com/joe-lawrence/klp-convert-tree/tree/klp-convert-v5-devel
-v6:
-  https://lore.kernel.org/r/20220216163940.228309-1-joe.lawrence@redhat.com/
-v7:
-  https://lore.kernel.org/r/20230306140824.3858543-1-joe.lawrence@redhat.com/
-v1 minimal:
-  https://lore.kernel.org/r/20231106162513.17556-1-lhruska@suse.cz/
-v2 minimal:
-  https://lore.kernel.org/r/20240516133009.20224-1-lhruska@suse.cz/
+Will
 
