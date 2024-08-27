@@ -1,127 +1,338 @@
-Return-Path: <linux-kernel+bounces-303534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78C40960D97
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:30:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C22FB960D99
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 366D0284F41
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:30:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E604E1C227B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D036F1C578A;
-	Tue, 27 Aug 2024 14:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED7A1C4EE3;
+	Tue, 27 Aug 2024 14:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FOLpxAPK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aeYk23CC"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD431C4EE4;
-	Tue, 27 Aug 2024 14:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF10F1BC097
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 14:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724769007; cv=none; b=nlrmVoJCkrIz1bWuc5P/xt3Z1vC2c/19yLN2yycqX2QUche5Kgg/xMDuoKBSnZURch4VFmgJN09RaqIqAU4nFyYGwJut37VhByKNOA3KrNYdXzpEyJGM3Y39rTZ9/kaXwUeBrxUdsN5KHqc6tgQ/g/Iil2oVNh3ervj7PZ6Bm14=
+	t=1724769028; cv=none; b=W5uI6LqiydXCzE10UwSPxtEVG+EaXGZNjghJ5OTD3rRSKEhtp83lWHpZtDfr7TrZLTMgqxqWfz1p7PkLnRXJPFwjFOF4S3xJWq+rnnm5f3lQQFo8QtyZPO756a3TLjPjWWQ1MdZGnUQR760z14ykfxNddarwXLczUi0iRLdv8HI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724769007; c=relaxed/simple;
-	bh=Bn7g3ZRhQUFtR+qoR+xAzgONWPtKnN7FsmMA0O7VGcU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=d59wg/4zsd+4aYSSI06spnPmh0jZPyC1aQd/Tm6He2mkrfhhN9hnnqo6bV1rgHBK2bUCt3Z5/XdxVPRdmRG9s6jaScuWQyzv6bLdviSWTKm06YJyOKwwJFXZ/MAazBa70yo+m+85SVkLKDMHeAMFkML6XGvLvhbvvWFg+iJ5cwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FOLpxAPK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E341BC61046;
-	Tue, 27 Aug 2024 14:30:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724769006;
-	bh=Bn7g3ZRhQUFtR+qoR+xAzgONWPtKnN7FsmMA0O7VGcU=;
-	h=From:Date:Subject:To:Cc:From;
-	b=FOLpxAPKLGUCrbmj8+XHiwyPDGwVP7ttIsoYaWdssmTWSEDi8+3UF6Iekq1KSoTI1
-	 aBIq/tmUAoytfv90NakY9mXyZ81eHf+6bzHzYgI479qUapMZh/MnEX6WKcKGxcTroU
-	 c/D49VGP8QJOsrZ5M/NqqYA0SWrNzAPSZfEe9jSkOjsjMftJITBP1HVuqkoa0+PVws
-	 IrxihXgM6Cr56FmaaZ+Eeu/sisSX9xnSjHJv35uZJk1Z9CMMHrI8T5zGjsD5p7MltJ
-	 wq+uSjccc/Vcmw2EVVf/9vTvxEUFL7EDlgUsa3xBM7dK+uwe0iH039b6hM72d7UrZi
-	 KLhaszlre/5lw==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Tue, 27 Aug 2024 10:29:57 -0400
-Subject: [PATCH RFC] fs: don't force i_version increment when timestamps
- change
+	s=arc-20240116; t=1724769028; c=relaxed/simple;
+	bh=9g2RA3GRxxLTB2R1xVwA9egtWHbQ3EnyUhXjClhFAfU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t+3sm62iDQOxh1U48do8B3VZoLt9hPZcTz/S+BPAT6yVZFPsDQL+HB/pPugHtvvPLARnaswvTzSuaqh9IgqxIWNPU/ZaCGEnkWuj/KnIRcGSv0ybc9OUll83+NaEoBMdPyQ3814REbEIdnCM/2qiMEUpliEVs871cGD0Ti5bZaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aeYk23CC; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2021537a8e6so50162475ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 07:30:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724769025; x=1725373825; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=nHV3+IEXr1Vk+Gf9Z5h/Zajy8h6zEGOOhNSv5B2ABPk=;
+        b=aeYk23CCMF+INEilaWep+Suun9DyZMGHy8oly9bUEjCXQQYuJgKaGtiqE1azs9EWBr
+         KR/dxZ03QdgiWY288XV/E+dfAOlpNzIpt/P89mglaOypK2MGM+odQBe2OSRT58VvSre/
+         55QOl2/WGHIR2qUCeUE0VF9Z7/+Ni2pUyXVHu9KENDmuZYFc83O0zphznBEn0QEj7QW5
+         pN3Ky6jI9nKc6cxYsJopOrISEAAsrLwXLeE4v2t1iJjfDL6BWzkAw2IT7fRahP9Eaun3
+         HyrFIm7VJRwHUbr5MBXYJUQQPGDrnJk4Uxoa0npm2Ia4vVrnbYX7uHgRNSK1U1WDlFhy
+         uLjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724769025; x=1725373825;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nHV3+IEXr1Vk+Gf9Z5h/Zajy8h6zEGOOhNSv5B2ABPk=;
+        b=JWGS6SigHV+nIUW/ekhxEITDyIpT7ZfdaC8ifXd2E06gl4kJufEy71iJDc67PiMFTK
+         +ncIucBue2YKPbVY/6/FoTCAu6SkpwXWv8YY+M/9RzFmWDoIlFFnV+RDA6Z+gH1G7go/
+         xgxmidifxCYssHLI0MLRJBYilfG/KyeolzxU2zUvD98IivteYZrw94Q7g2rcZM25Stjr
+         mocJztShLpwm9MVsKTk8Z2MuR2nd7gD0vbcH38JsQdljp0v1wgTgOm5N0QWLXsQtvX0d
+         ibocTpgoCD74f/p2bEFVW502WF1fcZbUItyiJ3pL6z6qSxeNHONaIHFafzSLANLZXwDu
+         1poQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXJTwdCcFu7q+4m/pyJ/B3kykch1r7wVeF04wvpJHjkpniV3pYaesarejKTLsTb0t9wwzQ0VB7czgxWEwY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjuD7W3ZvrZxZfcUR8qAeLlj/3kFq+6LxbTdCBrbSzgc6TgSCV
+	FYrQAqZBAnbKyc2GoxPQgxFtpX7rKwqd34pA/p6TGwC52a95B6IEP3qKNYOJlbs=
+X-Google-Smtp-Source: AGHT+IFDhS7+ZZGLEaypzmhWuJoAda0C07oK3zdMIJ3+iBkQVe6eB0pi9tF8FOZOi2AD5xvbnZh9PA==
+X-Received: by 2002:a17:902:f543:b0:202:162c:1f29 with SMTP id d9443c01a7336-2039e4f21f1mr171023565ad.47.1724769024985;
+        Tue, 27 Aug 2024 07:30:24 -0700 (PDT)
+Received: from ?IPV6:2804:1b3:a7c3:4c2c:7d73:fa05:8bad:32cb? ([2804:1b3:a7c3:4c2c:7d73:fa05:8bad:32cb])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-203855dd2d7sm84593515ad.169.2024.08.27.07.30.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 07:30:23 -0700 (PDT)
+Message-ID: <9666ada7-5f34-4085-8e4d-10eb197da3f5@linaro.org>
+Date: Tue, 27 Aug 2024 11:30:19 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240827-iversion-v1-1-b46a2b612400@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAOTizWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDCyNz3cyy1CKQIt3EtERT4zSDRANzgyQloPKCotS0zAqwUdFKQW7OSrG
- 1tQAHLrOLXwAAAA==
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1739; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=Bn7g3ZRhQUFtR+qoR+xAzgONWPtKnN7FsmMA0O7VGcU=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmzeLq1yb8mVRVxzFO9nV2yzyUermGn89aOvtnC
- u1keHKDzk6JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZs3i6gAKCRAADmhBGVaC
- FZo1D/9CMCSGywH8YRz2f4QkoXLED5nZEsp4MV5QzfpztU7U8JvvCgGx39dVtPWc1fxXp7XtcTp
- hx5c3VaEoKkFQtKPDc+HsXp9+CwIay3jg8Q1JycBQi2Q9KkNku/Li1Ch1AsuOqTAu9ep2gAQoUc
- TUGZrgNXZ91tGmP3V+HkJ4u/Qk6QQzC8o4EBxnHFoO6Wcexbz80ry+prcgYEV1jxORoF4Wwiyan
- ajiwZSVemqdfRySpR/cXVkiyzG7NovlcgGcVYU8RBH2lJoC4l5cAq4AboPa9+wZvUkmiA9FnoVP
- 9tlhhNMTl/xQ86/ymyfClg+vYw9ixaYooSi2ffw4Le/YhQ/0VeTvnWz1MQ3M3EmX/WLf9X/XUA/
- kKQDiflXjYBkCg20xGlqCs5RxJ/982JdtAlbVhJR+VCx94u6G/NKmo/fKg8zRuyWEOFMHjWZel8
- iFOdEY5+IXqc6Xr1tY62kKDRJYD86L/EeZnHlzQww5mtVc8HmltG4WDxA0BAjS1sCNqH7WnD+A2
- msPRX+eyri07eulYIHPglQ8Um5PpaoXmpBTDCKGFaaIIVAjvOte4d5oCDNAwqld7uGi+YRfz0/l
- v3f544OVAzSIl/mzCBbeFxp4aNaG7L2wlWYsqtZ6PFUjl9yKQQRqGGNlFDD7++aHdTct2UJxxA2
- 3WEkkxawFCChSfg==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] aarch64: vdso: Wire up getrandom() vDSO implementation
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+ linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-arch@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Eric Biggers <ebiggers@kernel.org>
+References: <20240826181059.111536-1-adhemerval.zanella@linaro.org>
+ <ZszlGPqfrULzi3KG@zx2c4.com>
+ <fd3cd385-131a-43b2-8ce9-05547a4f2d1d@linaro.org>
+ <Zs3V3FYwz57tyGgp@zx2c4.com>
+ <907e86f6-c9e8-41b1-9538-b1bb13d481ae@linaro.org>
+ <4d966dc6-655e-4700-bc59-e03693d874cb@csgroup.eu>
+ <b0e44997-06e0-4b03-b94a-1c54da5516ac@linaro.org>
+ <8631deef-c2f0-4499-8e30-8bc48001ef5a@csgroup.eu>
+ <84975137-de73-4ac9-a691-d87d9c0a5b75@linaro.org>
+ <Zs3ijKpXasyf29-h@zx2c4.com>
+Content-Language: en-US
+From: Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>
+Organization: Linaro
+In-Reply-To: <Zs3ijKpXasyf29-h@zx2c4.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-inode_maybe_inc_iversion will increment the i_version if it has been
-queried. We can also set the "force" parameter to force an increment.
-When we originally did this, the idea was to set it to force when we
-were going to be otherwise updating the inode timestamps anyway --
-purely a "might as well" measure.
 
-When we used coarse-grained timestamps exclusively, this would give us
-an extra cmpxchg operation roughly every jiffy when a file is under
-heavy writes. With the advent of multigrain timestamps however, this can
-fire more frequently.
 
-There is no requirement to force an increment to the i_version just
-because a timestamp changed, so stop doing it.
+On 27/08/24 11:28, Jason A. Donenfeld wrote:
+> On Tue, Aug 27, 2024 at 11:14:27AM -0300, Adhemerval Zanella Netto wrote:
+>>
+>>
+>> On 27/08/24 11:10, Christophe Leroy wrote:
+>>>
+>>>
+>>> Le 27/08/2024 à 16:01, Adhemerval Zanella Netto a écrit :
+>>>> [Vous ne recevez pas souvent de courriers de adhemerval.zanella@linaro.org. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+>>>>
+>>>> On 27/08/24 11:00, Christophe Leroy wrote:
+>>>>>
+>>>>>
+>>>>> Le 27/08/2024 à 15:39, Adhemerval Zanella Netto a écrit :
+>>>>>> [Vous ne recevez pas souvent de courriers de adhemerval.zanella@linaro.org. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+>>>>>>
+>>>>>> On 27/08/24 10:34, Jason A. Donenfeld wrote:
+>>>>>>> On Tue, Aug 27, 2024 at 10:17:18AM -0300, Adhemerval Zanella Netto wrote:
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> On 26/08/24 17:27, Jason A. Donenfeld wrote:
+>>>>>>>>> Hi Adhemerval,
+>>>>>>>>>
+>>>>>>>>> Thanks for posting this! Exciting to have it here.
+>>>>>>>>>
+>>>>>>>>> Just some small nits for now:
+>>>>>>>>>
+>>>>>>>>> On Mon, Aug 26, 2024 at 06:10:40PM +0000, Adhemerval Zanella wrote:
+>>>>>>>>>> +static __always_inline ssize_t getrandom_syscall(void *buffer, size_t len, unsigned int flags)
+>>>>>>>>>> +{
+>>>>>>>>>> +  register long int x8 asm ("x8") = __NR_getrandom;
+>>>>>>>>>> +  register long int x0 asm ("x0") = (long int) buffer;
+>>>>>>>>>> +  register long int x1 asm ("x1") = (long int) len;
+>>>>>>>>>> +  register long int x2 asm ("x2") = (long int) flags;
+>>>>>>>>>
+>>>>>>>>> Usually it's written just as `long` or `unsigned long`, and likewise
+>>>>>>>>> with the cast. Also, no space after the cast.
+>>>>>>>>
+>>>>>>>> Ack.
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>> +#define __VDSO_RND_DATA_OFFSET  480
+>>>>>>>>>
+>>>>>>>>> This is the size of the data currently there?
+>>>>>>>>
+>>>>>>>> Yes, I used the same strategy x86 did.
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>>    #include <asm/page.h>
+>>>>>>>>>>    #include <asm/vdso.h>
+>>>>>>>>>>    #include <asm-generic/vmlinux.lds.h>
+>>>>>>>>>> +#include <vdso/datapage.h>
+>>>>>>>>>> +#include <asm/vdso/vsyscall.h>
+>>>>>>>>>
+>>>>>>>>> Possible to keep the asm/ together?
+>>>>>>>>
+>>>>>>>> Ack.
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>> + * ARM64 ChaCha20 implementation meant for vDSO.  Produces a given positive
+>>>>>>>>>> + * number of blocks of output with nonnce 0, taking an input key and 8-bytes
+>>>>>>>>>
+>>>>>>>>> nonnce -> nonce
+>>>>>>>>
+>>>>>>>> Ack.
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>> -ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
+>>>>>>>>>> +ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/ -e s/aarch64.*/arm64/)
+>>>>>>>>>>    SODIUM := $(shell pkg-config --libs libsodium 2>/dev/null)
+>>>>>>>>>>
+>>>>>>>>>>    TEST_GEN_PROGS := vdso_test_gettimeofday
+>>>>>>>>>> @@ -11,7 +11,7 @@ ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
+>>>>>>>>>>    TEST_GEN_PROGS += vdso_standalone_test_x86
+>>>>>>>>>>    endif
+>>>>>>>>>>    TEST_GEN_PROGS += vdso_test_correctness
+>>>>>>>>>> -ifeq ($(uname_M),x86_64)
+>>>>>>>>>> +ifeq ($(uname_M), $(filter x86_64 aarch64, $(uname_M)))
+>>>>>>>>>>    TEST_GEN_PROGS += vdso_test_getrandom
+>>>>>>>>>>    ifneq ($(SODIUM),)
+>>>>>>>>>>    TEST_GEN_PROGS += vdso_test_chacha
+>>>>>>>>>
+>>>>>>>>> You'll need to add the symlink to get the chacha selftest running:
+>>>>>>>>>
+>>>>>>>>>     $ ln -s ../../../arch/arm64/kernel/vdso tools/arch/arm64/vdso
+>>>>>>>>>     $ git add tools/arch/arm64/vdso
+>>>>>>>>>
+>>>>>>>>> Also, can you confirm that the chacha selftest runs and works?
+>>>>>>>>
+>>>>>>>> Yes, last time I has to built it manually since the Makefile machinery seem
+>>>>>>>> to be broken even on x86_64.  In a Ubuntu vm I have:
+>>>>>>>>
+>>>>>>>> tools/testing/selftests/vDSO$ make
+>>>>>>>>     CC       vdso_test_gettimeofday
+>>>>>>>>     CC       vdso_test_getcpu
+>>>>>>>>     CC       vdso_test_abi
+>>>>>>>>     CC       vdso_test_clock_getres
+>>>>>>>>     CC       vdso_standalone_test_x86
+>>>>>>>>     CC       vdso_test_correctness
+>>>>>>>>     CC       vdso_test_getrandom
+>>>>>>>>     CC       vdso_test_chacha
+>>>>>>>> In file included from /home/azanella/Projects/linux/linux-git/include/linux/limits.h:7,
+>>>>>>>>                    from /usr/include/x86_64-linux-gnu/bits/local_lim.h:38,
+>>>>>>>>                    from /usr/include/x86_64-linux-gnu/bits/posix1_lim.h:161,
+>>>>>>>>                    from /usr/include/limits.h:195,
+>>>>>>>>                    from /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h:205,
+>>>>>>>>                    from /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h:7,
+>>>>>>>>                    from /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h:34,
+>>>>>>>>                    from /usr/include/sodium/export.h:7,
+>>>>>>>>                    from /usr/include/sodium/crypto_stream_chacha20.h:14,
+>>>>>>>>                    from vdso_test_chacha.c:6:
+>>>>>>>> /usr/include/x86_64-linux-gnu/bits/xopen_lim.h:99:6: error: missing binary operator before token "("
+>>>>>>>>      99 | # if INT_MAX == 32767
+>>>>>>>>         |      ^~~~~~~
+>>>>>>>> /usr/include/x86_64-linux-gnu/bits/xopen_lim.h:102:7: error: missing binary operator before token "("
+>>>>>>>>     102 | #  if INT_MAX == 2147483647
+>>>>>>>>         |       ^~~~~~~
+>>>>>>>> /usr/include/x86_64-linux-gnu/bits/xopen_lim.h:126:6: error: missing binary operator before token "("
+>>>>>>>>     126 | # if LONG_MAX == 2147483647
+>>>>>>>>         |      ^~~~~~~~
+>>>>>>>> make: *** [../lib.mk:222: /home/azanella/Projects/linux/linux-git/tools/testing/selftests/vDSO/vdso_test_chacha] Error 1
+>>>>>>>
+>>>>>>> You get that even with the latest random.git? I thought Christophe's
+>>>>>>> patch fixed that, but maybe not and I should just remove the dependency
+>>>>>>> on the sodium header instead.
+>>>>>>
+>>>>>> On x86_64 I tested with Linux master.  With random.git it is a different issue:
+>>>>>>
+>>>>>> linux-git/tools/testing/selftests/vDSO$ make
+>>>>>>     CC       vdso_test_gettimeofday
+>>>>>>     CC       vdso_test_getcpu
+>>>>>>     CC       vdso_test_abi
+>>>>>>     CC       vdso_test_clock_getres
+>>>>>>     CC       vdso_standalone_test_x86
+>>>>>>     CC       vdso_test_correctness
+>>>>>>     CC       vdso_test_getrandom
+>>>>>>     CC       vdso_test_chacha
+>>>>>> /usr/bin/ld: /tmp/ccKpjnSM.o: in function `main':
+>>>>>> vdso_test_chacha.c:(.text+0x276): undefined reference to `crypto_stream_chacha20'
+>>>>>> collect2: error: ld returned 1 exit status
+>>>>>>
+>>>>>> If I move -lsodium to the end of the compiler command it works.
+>>>>>>
+>>>>>>
+>>>>>
+>>>>> Try a "make clean" maybe ?
+>>>>>
+>>>>> I have Fedora 38 and no build problem with latest random tree:
+>>>>>
+>>>>> $ make V=1
+>>>>> gcc -std=gnu99 -D_GNU_SOURCE=    vdso_test_gettimeofday.c parse_vdso.c -o /home/chleroy/linux-powerpc/tools/testing/selftests/vDSO/vdso_test_gettimeofday
+>>>>> gcc -std=gnu99 -D_GNU_SOURCE=    vdso_test_getcpu.c parse_vdso.c  -o /home/chleroy/linux-powerpc/tools/testing/selftests/vDSO/vdso_test_getcpu
+>>>>> gcc -std=gnu99 -D_GNU_SOURCE=    vdso_test_abi.c parse_vdso.c  -o /home/chleroy/linux-powerpc/tools/testing/selftests/vDSO/vdso_test_abi
+>>>>> gcc -std=gnu99 -D_GNU_SOURCE=    vdso_test_clock_getres.c  -o /home/chleroy/linux-powerpc/tools/testing/selftests/vDSO/vdso_test_clock_getres
+>>>>> gcc -std=gnu99 -D_GNU_SOURCE= -nostdlib -fno-asynchronous-unwind-tables -fno-stack-protector    vdso_standalone_test_x86.c parse_vdso.c  -o /home/chleroy/linux-powerpc/tools/testing/selftests/vDSO/vdso_standalone_test_x86
+>>>>> gcc -std=gnu99 -D_GNU_SOURCE=  -ldl  vdso_test_correctness.c  -o /home/chleroy/linux-powerpc/tools/testing/selftests/vDSO/vdso_test_correctness
+>>>>> gcc -std=gnu99 -D_GNU_SOURCE= -isystem /home/chleroy/linux-powerpc/tools/testing/selftests/../../../tools/include -isystem /home/chleroy/linux-powerpc/tools/testing/selftests/../../../include/uapi    vdso_test_getrandom.c parse_vdso.c  -o /home/chleroy/linux-powerpc/tools/testing/selftests/vDSO/vdso_test_getrandom
+>>>>> gcc -std=gnu99 -D_GNU_SOURCE= -idirafter /home/chleroy/linux-powerpc/tools/testing/selftests/../../../tools/include -idirafter /home/chleroy/linux-powerpc/tools/testing/selftests/../../../arch/x86/include -idirafter /home/chleroy/linux-powerpc/tools/testing/selftests/../../../include -D__ASSEMBLY__ -DBULID_VDSO -DCONFIG_FUNCTION_ALIGNMENT=0 -Wa,--noexecstack -lsodium     vdso_test_chacha.c /home/chleroy/linux-powerpc/tools/testing/selftests/../../../tools/arch/x86/vdso/vgetrandom-chacha.S  -o /home/chleroy/linux-powerpc/tools/testing/selftests/vDSO/vdso_test_chacha
+>>>>> $
+>>>>
+>>>> It is a clean tree (git clean -dfx), and I take there is no need to build a kernel
+>>>> prior hand.
+>>>
+>>> I meeant 'make clean'
+>>>
+>>>
+>>> Right, I have not built any x86 kernel at the moment.
+>>>
+>>> Just :
+>>> $ pwd
+>>> /home/chleroy/linux-powerpc/tools/testing/selftests/vDSO
+>>>
+>>> $ make clean
+>>>
+>>> then
+>>>
+>>> $ make V=1
+>>
+>> The issue is Ubuntu linker is configure to use --as-needed by default, this
+>> patch fixes the issue:
+>>
+>> diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
+>> index 10ffdda3f2fa..151baf650e4c 100644
+>> --- a/tools/testing/selftests/vDSO/Makefile
+>> +++ b/tools/testing/selftests/vDSO/Makefile
+>> @@ -45,4 +45,4 @@ $(OUTPUT)/vdso_test_chacha: CFLAGS += -idirafter $(top_srcdir)/tools/include \
+>>                                        -idirafter $(top_srcdir)/arch/$(ARCH)/include \
+>>                                        -idirafter $(top_srcdir)/include \
+>>                                        -D__ASSEMBLY__ -DBULID_VDSO -DCONFIG_FUNCTION_ALIGNMENT=0 \
+>> -                                      -Wa,--noexecstack $(SODIUM)
+>> +                                      -Wa,--noexecstack -Wl,-no-as-needed $(SODIUM)
+> 
+> Oh, it's an as-needed thing. In that case, does this fix it for you?
+> 
+> diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
+> index 10ffdda3f2fa..834aa862ba2c 100644
+> --- a/tools/testing/selftests/vDSO/Makefile
+> +++ b/tools/testing/selftests/vDSO/Makefile
+> @@ -1,7 +1,8 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  uname_M := $(shell uname -m 2>/dev/null || echo not)
+>  ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
+> -SODIUM := $(shell pkg-config --libs libsodium 2>/dev/null)
+> +SODIUM_LIBS := $(shell pkg-config --libs libsodium 2>/dev/null)
+> +SODIUM_CFLAGS := $(shell pkg-config --cflags libsodium 2>/dev/null)
+> 
+>  TEST_GEN_PROGS := vdso_test_gettimeofday
+>  TEST_GEN_PROGS += vdso_test_getcpu
+> @@ -13,7 +14,7 @@ endif
+>  TEST_GEN_PROGS += vdso_test_correctness
+>  ifeq ($(uname_M),x86_64)
+>  TEST_GEN_PROGS += vdso_test_getrandom
+> -ifneq ($(SODIUM),)
+> +ifneq ($(SODIUM_LIBS),)
+>  TEST_GEN_PROGS += vdso_test_chacha
+>  endif
+>  endif
+> @@ -41,8 +42,9 @@ $(OUTPUT)/vdso_test_getrandom: CFLAGS += -isystem $(top_srcdir)/tools/include \
+>                                           -isystem $(top_srcdir)/include/uapi
+> 
+>  $(OUTPUT)/vdso_test_chacha: $(top_srcdir)/tools/arch/$(ARCH)/vdso/vgetrandom-chacha.S
+> +$(OUTPUT)/vdso_test_chacha: LDLIBS += $(SODIUM_LIBS)
+>  $(OUTPUT)/vdso_test_chacha: CFLAGS += -idirafter $(top_srcdir)/tools/include \
+>                                        -idirafter $(top_srcdir)/arch/$(ARCH)/include \
+>                                        -idirafter $(top_srcdir)/include \
+>                                        -D__ASSEMBLY__ -DBULID_VDSO -DCONFIG_FUNCTION_ALIGNMENT=0 \
+> -                                      -Wa,--noexecstack $(SODIUM)
+> +                                      -Wa,--noexecstack $(SODIUM_CFLAGS)
+> 
 
-Cc: Mateusz Guzik <mjguzik@gmail.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
-I've not tested this other than for compilation, but it should be fine.
-Mateusz, does this help your workload at all? There may be other places
-where we can just set this to false (maybe even convert some of the
-inode_inc_iversion() calls to this.
----
- fs/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/inode.c b/fs/inode.c
-index 10c4619faeef..2abd6317839b 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1962,7 +1962,7 @@ int inode_update_timestamps(struct inode *inode, int flags)
- 			inode_set_mtime_to_ts(inode, now);
- 			updated |= S_MTIME;
- 		}
--		if (IS_I_VERSION(inode) && inode_maybe_inc_iversion(inode, updated))
-+		if (IS_I_VERSION(inode) && inode_maybe_inc_iversion(inode, false))
- 			updated |= S_VERSION;
- 	} else {
- 		now = current_time(inode);
-
----
-base-commit: 3e9bff3bbe1355805de919f688bef4baefbfd436
-change-id: 20240827-iversion-afa53f0a070b
-
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
-
+Nops, 'pkg-config --cflags libsodium' is empty. The -Wl,-no-as-needed is simpler
+I think.
 
