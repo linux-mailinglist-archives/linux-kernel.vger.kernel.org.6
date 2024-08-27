@@ -1,74 +1,49 @@
-Return-Path: <linux-kernel+bounces-303274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4950A960A07
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:25:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49AC3960A83
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06198281CB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:25:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BC7D1C22B20
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937BB1B5310;
-	Tue, 27 Aug 2024 12:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aKG8e5Hm"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4057C1BD006;
+	Tue, 27 Aug 2024 12:32:50 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004E21B3F35;
-	Tue, 27 Aug 2024 12:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E17C1BCA16;
+	Tue, 27 Aug 2024 12:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724761498; cv=none; b=WEPet+5c5f9QNXJ6E6h/YnySu2OpQRofoT0PnCKd4/qfVZFEZCmfNQ50deDtVWfokSiox12tKAvWwpVn6EuDFhNx1VVOTGY1QOq7Kqzj03rIKVVxGraUw24x/7+UvATWRX6TT9oX+nJoruAnpaZRSM06/EeIQiOQARbXyYL3lN4=
+	t=1724761969; cv=none; b=ihwoRaoU3v1n4x/kWHMwJivtTT/096DROXcxVXoOPXf0lQ1gQ9G5n2U15ezUFygfKFbGvmOkfAT5kLFVuIdVerRC1t3rHKOC6hZSwU0iJNTHvr6i55xtM4sWA3qZdysz3YQHeuo1j9oGL+q1cqEd2OAEORlelCoYpFYIrrYAMHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724761498; c=relaxed/simple;
-	bh=jFHcTYxKauKn2j4L1ebE8sDM6pDpVTJdYTkal9P+V2E=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=moW2Gzc2DlL9LW4d5MtuzN+1HHLtoyQZ9t3gv35zYPTs3m5mcmIIrTBB+w6hldzg0HZGpzl5NeaAbJ3GOLZQGz4WoHo3AxoQ83OXRZhHHci6I5knVIDzjYnfNg/cZX5DrW7N437bMkrk6ff3b1fimEakUQruhbV1RkIg7gVloXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=aKG8e5Hm; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47RCOecH092068;
-	Tue, 27 Aug 2024 07:24:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724761480;
-	bh=Jxki9UuRPZGgt+9UKSYU76B9FROiegSaoeKr9g9BOz4=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=aKG8e5HmJLcG0AdEFGK6Nx9YhpT/Jn6ycieCkLnedh8WtcxdRnwzOcA+hbwjJAOrp
-	 W/cvjWzlWtbrjXA8iFltjB/5sqZT++5bL7cttTSO8lcGxnrakYgZdbSYwDo1Z4h0Ft
-	 5eMOs6jNZ5ZKqbzmhcxbssiCJsX+fmnQkHYnWTN4=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47RCOeL7051182
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 27 Aug 2024 07:24:40 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 27
- Aug 2024 07:24:39 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 27 Aug 2024 07:24:40 -0500
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47RCONYE011388;
-	Tue, 27 Aug 2024 07:24:34 -0500
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <robh@kernel.org>, <vigneshr@ti.com>, <kishon@kernel.org>,
-        <manivannan.sadhasivam@linaro.org>, <j-keerthy@ti.com>
-CC: <linux-omap@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <stable@vger.kernel.org>, <u-kumar1@ti.com>, <srk@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: [PATCH 2/2] PCI: dra7xx: Fix error handling when IRQ request fails in probe
-Date: Tue, 27 Aug 2024 17:54:22 +0530
-Message-ID: <20240827122422.985547-3-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240827122422.985547-1-s-vadapalli@ti.com>
-References: <20240827122422.985547-1-s-vadapalli@ti.com>
+	s=arc-20240116; t=1724761969; c=relaxed/simple;
+	bh=QEkuhXOW25Oziqqk8V6qfXPak6Rbnwp1SVwQ/V8uK3k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LeWwW35Uytk/eBcp/4bS0boWh7ev3iZgz4HH2ZFVK9fGtRIwhVt+o99llaG+68kcDVzPmbWCVLSby1LBjlDJgg0qxs/cEx2IYj5KkCiNo6jek9U3cgDUtCr8Nmt5zMNZJJugl6gF1TbjSQ+01skBmcBLjaODteByPHQQZhyMuok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WtRl61QbLz1j7FR;
+	Tue, 27 Aug 2024 20:32:34 +0800 (CST)
+Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
+	by mail.maildlp.com (Postfix) with ESMTPS id 260261A0188;
+	Tue, 27 Aug 2024 20:32:44 +0800 (CST)
+Received: from huawei.com (10.67.174.77) by dggpemm500020.china.huawei.com
+ (7.185.36.49) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 27 Aug
+ 2024 20:32:43 +0800
+From: Liao Chen <liaochen4@huawei.com>
+To: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <kabel@kernel.org>, <pavel@ucw.cz>, <lee@kernel.org>
+Subject: [PATCH -next] leds: turris-omnia: fix module autoloading
+Date: Tue, 27 Aug 2024 12:24:31 +0000
+Message-ID: <20240827122431.430818-1-liaochen4@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,46 +52,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemm500020.china.huawei.com (7.185.36.49)
 
-Commit d4c7d1a089d6 ("PCI: dwc: dra7xx: Push request_irq() call to the
-bottom of probe") moved the IRQ request for "dra7xx-pcie-main" towards
-the end of dra7xx_pcie_probe(). However, the error handling does not take
-into account the initialization performed by either dra7xx_add_pcie_port()
-or dra7xx_add_pcie_ep(), depending on the mode of operation. Fix the error
-handling to address this.
+Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
+based on the alias from of_device_id table.
 
-Fixes: d4c7d1a089d6 ("PCI: dwc: dra7xx: Push request_irq() call to the bottom of probe")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+Signed-off-by: Liao Chen <liaochen4@huawei.com>
 ---
- drivers/pci/controller/dwc/pci-dra7xx.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/leds/leds-turris-omnia.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
-index 20fb50741f3d..5c62e1a3ba52 100644
---- a/drivers/pci/controller/dwc/pci-dra7xx.c
-+++ b/drivers/pci/controller/dwc/pci-dra7xx.c
-@@ -854,11 +854,17 @@ static int dra7xx_pcie_probe(struct platform_device *pdev)
- 					"dra7xx-pcie-main", dra7xx);
- 	if (ret) {
- 		dev_err(dev, "failed to request irq\n");
--		goto err_gpio;
-+		goto err_deinit;
- 	}
+diff --git a/drivers/leds/leds-turris-omnia.c b/drivers/leds/leds-turris-omnia.c
+index 39f740be058f..dd547f5fc800 100644
+--- a/drivers/leds/leds-turris-omnia.c
++++ b/drivers/leds/leds-turris-omnia.c
+@@ -532,6 +532,7 @@ static const struct of_device_id of_omnia_leds_match[] = {
+ 	{ .compatible = "cznic,turris-omnia-leds", },
+ 	{},
+ };
++MODULE_DEVICE_TABLE(of, of_omnia_leds_match);
  
- 	return 0;
- 
-+err_deinit:
-+	if (dra7xx->mode == DW_PCIE_RC_TYPE)
-+		dw_pcie_host_deinit(&dra7xx->pci->pp);
-+	else
-+		dw_pcie_ep_deinit(&dra7xx->pci->ep);
-+
- err_gpio:
- err_get_sync:
- 	pm_runtime_put(dev);
+ static const struct i2c_device_id omnia_id[] = {
+ 	{ "omnia" },
 -- 
-2.40.1
+2.34.1
 
 
