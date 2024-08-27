@@ -1,508 +1,236 @@
-Return-Path: <linux-kernel+bounces-303710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93C39961417
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:32:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C3BF96141C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:33:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E272285091
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:32:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E310A1F2487D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F08B1CDA23;
-	Tue, 27 Aug 2024 16:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BC71CDFC4;
+	Tue, 27 Aug 2024 16:33:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n4bdlIuh"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Vm3Y+8NO"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011029.outbound.protection.outlook.com [52.101.65.29])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0A61CC142
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 16:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724776330; cv=none; b=cZ7v8/rJ6TXUdoeYfp2gsZyju3qNSainpofkQlUbF6GsKnrzTWNQvlpNInJZnT+2e9wACOtuYIDJwS9WOR1v8soUZAVjQ5YVE559gFaS5N8XqI5R/YK4YZEA8uop316J4gdPW8fN2femJOKBF4PwbFZAjaQYkqR0cKNSRZB20PE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724776330; c=relaxed/simple;
-	bh=3c8Z3fjRZy+h1EuBVQHFN/DbWe4QfIrkWCZ+o/YgEWw=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=STXCVvfuneHQgXGwcdHxBJl83dDxBwIB5px+N2vvpcSFwqVXUxOb02y8jZN8oY6vd9HCO28Etz7zJ3pjF3EmB2MoiESXaFUOT8K/MPFyhbgq8qlncWWWhoCTApKwwyIbAj2eJcKEwRjaSVKLcmn7dCzd7PwETY2Sxvxb0WIBIio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n4bdlIuh; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37182eee02dso3127819f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 09:32:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724776327; x=1725381127; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N2GA1kFg4bwsjPats8Iqr30M6pzfeQqTgWzcSHQLlMQ=;
-        b=n4bdlIuhRQx5Or2v3p0UO03gQWcYtGEL/OapaTgtMRqI2a/XX8czH8tPMDYWWPflXd
-         QNdNnNVgqDe93N6VphUKHsMrjjGERnTtGIiJKHWASsp+BgszgHC5gUv98FpNfuU7C7Fz
-         W+ETZWSN1PHlPjLTN6f+69DgCMisq7nCZQHvMnhnjYqZhVJlqwCqIUvUOJJxzLnOF0zY
-         foXPEAGoy6tULRlkHJdWrQQ0FjHNf0R7xXwQf2bo3NKoGufu4fRIq7ixiV65EE0ySLNm
-         mpzovTXhb/Cynm0ISbdTd5nxkoEB00LsXLNqnzMdkPo3iDGTVbmrh+S8vCPT5aNr+/cC
-         CX8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724776327; x=1725381127;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=N2GA1kFg4bwsjPats8Iqr30M6pzfeQqTgWzcSHQLlMQ=;
-        b=nFJPfWLdW0Rlwj6V5uevM6V9l6R973/idX7C7yWO4HF4XlahF8T4cjzVV+oBhchhL5
-         TuxzOFqRBdbbWfuwEFDg1R8LueOSpgDXap3//QaW3GXztTx+RhTpM8Z2tm6oOrF23fUN
-         USklGhEn0zBMfP+T3nmwsK28bytGfL4IyvbELMjLXsMaoEu9Vp8LhFZvFXx1EdNJ24Zz
-         FdTe2RrI70TSySXck5OAlurQrK9IUJsXF14MNfU2Ctvf2Q+xAhKc+pes8EMAGXvN9H+R
-         PSJy7TO2++J/u/5MDwKfE+g9hu9gagtfv85BvHc4lQK+HExGaCmTtw9zNv3mU02HkSCi
-         22Wg==
-X-Forwarded-Encrypted: i=1; AJvYcCXcEU6N22dbxU+KEUcvZvX6nLlPEAQl3V6fhLkrtrsob/0XHBpUbR2OjCky/0sODcwTSTFwa8prxCfPgT4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrDxcvYHWKRCsjhxFUDmxIN03mzNRSUmcdA8D8aSSx7GcAOAcL
-	UEn62WPZaRAxoRVlbOBxnMppK9bqChdx610oLgOC5uHHezRPV95QdVXZQ3ulruM=
-X-Google-Smtp-Source: AGHT+IFh450mSgeYREKHVr3vSUg/8Mffx5Z7eXeTZGxL+qvQuWQYOdeLe4RVD68qvdHzv+ZisuQBhA==
-X-Received: by 2002:adf:ecd0:0:b0:366:eadc:573f with SMTP id ffacd0b85a97d-3748c89dd9cmr2174194f8f.27.1724776326372;
-        Tue, 27 Aug 2024 09:32:06 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:cedc:30f:887e:7717? ([2a01:e0a:982:cbb0:cedc:30f:887e:7717])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42abefc62dbsm227485595e9.30.2024.08.27.09.32.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 09:32:05 -0700 (PDT)
-Message-ID: <fd75381f-e39c-404c-b71d-19364e958226@linaro.org>
-Date: Tue, 27 Aug 2024 18:32:05 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD081C6F5B;
+	Tue, 27 Aug 2024 16:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.29
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724776381; cv=fail; b=NoTDMxUoYcaKOj9ZxqrFqs7TM2q63tlwLh7iP/4VZoyOep7jICiThrNhtbwuOBFgYqbFRF409Z09O84cmAMpkzG/AreaZ7XZAdlWPUZL0EmXbLlBu9vFtgyo2iBhBDoKx+RIXc7wrV5Q9XcKwvXTPi0LCxt/mt1x2XftjFUMFUI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724776381; c=relaxed/simple;
+	bh=ZddIDTyWtVJARtwbcCU47fBAjecGuT66rEZI3oUbGn4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=f53Hi/LpH9Ywym/bsE/DSR+xmA3uAdSDSYEnyrblZDiZ7Ne0h12oWJUDCnX2N08TD4BXbn4BoHYDpGEfEFD21e4hTfNYqeSTQuIIREYMWvmg0pLVOhT2alYYVRXG/uXk4/tpUZllx3o0mznpnYmn1NHyHGGHzoMgFR7ZuU/Z9bI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Vm3Y+8NO; arc=fail smtp.client-ip=52.101.65.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=y8djOqhoyBITPgGLXXkhP1LWhLfVusxbDc2Bh1ObGQKFHksAmE4OWum/JdRslcFcLbh3Dzm8p19JyZUg+OSZVn9kyfJjwEXztkOirFg4f6f11fym7IwNgHC6m868VfL9ujBdDPAMza/6LCzST0UsZAItNp1VIn570kW3PyKk/+qgu8XIdAcFbHHS0qD2cM6JZc4INcxu/YS7H80FHP21+ECm25Zow1LPXREpMqa/FRHXLTcbLQKVe8g/jAQmjZ+mAXRb5z13FhNjXwDplnOpF2Kkk4QgH9Wnq0lwELVya/09s6bIHm4IrkcMSKkwkKC6SaJp8+4dU9b9mMTHkOLUsQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Wi8S8/Lpc+w3tYxJry9AvKL+qOaRdti9qFEpSIxz+CY=;
+ b=AwB/QNW/RnqjHEozqZa7bpeWZs/A5qEPf9LtkRbzAqJbIw13jKWcVS0PE2dNGAbqd1FjT/SLh6djmF+0RkS2Ioo/AtlSLmuAh1APjyiVKpSSpnjnHSZy9js0FmW3tQI5ABNLX6YswvdkLiRwWHh7HsfBRpYIv1uak4C+Lalsxqeuz8Jx/yVNAP19jrv9gk25Lw85+3Huou21/ogy/Gh7KWV5IQ/SXypSqQlUp44XOpazyFMnHn7/6I2ZJs4xXlwWeoe0eRFBnkUtKwFdbSXyIc8RBCq0oONjniGBFjVbvPPf2+2K+LKKOKe/xaTfinOzLvPxTrOagg01YXypaAY9DA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Wi8S8/Lpc+w3tYxJry9AvKL+qOaRdti9qFEpSIxz+CY=;
+ b=Vm3Y+8NOzVQhGgjQc8FKaAiX+h726VBwGxKGCU7uMqR2w/rn23Rial8XCu+U26tVzr9aspOSRWDs0kM7kY8Bvsla3s25rdKQwU4N6J7ObFEar0omNPGfRVh+IbrnQyRwB6GhXLuZ78MKzgh/1HCf+hvXwPz8DslUuOlrVKIGA4bbvk3ta6AD/a098JYawSYTR43d1UI+1FgCoF/cjQnnPDrJaeOSTVs8JOqicJa3NDAbJXbuF1F5oAX/Q1VYH8e1/PZkrtgncNZ1Cep0cJrsGryfEEGqOPQNyHd7LgqsbTcW1bN/4D7EVE8qHS/2reburLLGbJtmr5a+F8iu1zQ0mA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PAXPR04MB8444.eurprd04.prod.outlook.com (2603:10a6:102:1db::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Tue, 27 Aug
+ 2024 16:32:54 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7875.019; Tue, 27 Aug 2024
+ 16:32:54 +0000
+Date: Tue, 27 Aug 2024 12:32:42 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Olof Johansson <olof@lixom.net>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev
+Subject: Re: [PATCH 1/3] dt-bindings: PCI: layerscape-pci: Replace
+ fsl,lx2160a-pcie with fsl,lx2160ar2-pcie
+Message-ID: <Zs3/qnkcSl4pQQSg@lizhi-Precision-Tower-5810>
+References: <20240826-2160r2-v1-0-106340d538d6@nxp.com>
+ <20240826-2160r2-v1-1-106340d538d6@nxp.com>
+ <20240827-breeding-vagrancy-22cd1e1f9428@spud>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240827-breeding-vagrancy-22cd1e1f9428@spud>
+X-ClientProxiedBy: SJ0PR03CA0176.namprd03.prod.outlook.com
+ (2603:10b6:a03:338::31) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] drm/panel: novatek-nt35950: transition to mipi_dsi
- wrapped functions
-To: Tejas Vipin <tejasvipin76@gmail.com>, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch
-Cc: quic_jesszhan@quicinc.com, dianders@chromium.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240824084422.202946-1-tejasvipin76@gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240824084422.202946-1-tejasvipin76@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB8444:EE_
+X-MS-Office365-Filtering-Correlation-Id: 28f5e010-01a6-4405-f832-08dcc6b5e548
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|7416014|376014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?F9KNHskxWlsE7KOZ3WrFYkzqgQnnWGgqJfG3+Nb7nXIuznnL079HtG8MXZRV?=
+ =?us-ascii?Q?J9xD/VAkQBKZlCl9hz9LKJGAOSc5nsqI9ImxhTd6TWfu3peFjB1PLSktI8fe?=
+ =?us-ascii?Q?SbeFrf933HPFXqoKGnV/CXXx0hNL2EqsZzC++6wgnlQBUS/ICq3NHsyT0MDE?=
+ =?us-ascii?Q?BONhotMhAqN4fV+/kSdZFsp/g4uZC0V7tkRI8cPniTY4aVSRX6GxBje3FrSQ?=
+ =?us-ascii?Q?oSfhwolAMeuRUY5D5pHB5+n3CBteJyfBgaY678es2a+ettBN0ZiYv4bXHLo1?=
+ =?us-ascii?Q?k0mERr9E4Uv+1UTl0m2FR1+mggYKlswwwRMmzH71SXr5TYdXbOaMCFsY3G5C?=
+ =?us-ascii?Q?egTzjY+Ee1xIJ3VO5D75qR+iyAIKzTGi+0yov5vpicelkyFuU/RbKrhlDPCS?=
+ =?us-ascii?Q?er/Zwz3huoRenqeFIjuxE94vqkUXhPfjGzvHbtLjgnuS2SIFhywXfWHd7bvH?=
+ =?us-ascii?Q?6VVMPsD6QmOExCk4UVhMiY0/CAxe6mletoNb+uh6shN/47V32eUs7hHDQmqV?=
+ =?us-ascii?Q?eWVHOOuQDRYEvlkJp5n5wuzXnS8bppUPHtEAtAKPfVf+LOrGRzVC+MrDMV7k?=
+ =?us-ascii?Q?QNh5Y8O387OkOIo5q6DYD6fitchaHd2XFmUKNSFXr3c3MYIJmzK4iGCkMY/u?=
+ =?us-ascii?Q?4SLoJzIk+hqunaMIuA3CZ1mBKrEzrljRVg4XLkjGCj7o6sdApeVnkr2NjT5k?=
+ =?us-ascii?Q?fTwMiPkAKvLb9GZELiLXnRNErtnyLCcLFVK3wmYcRKrjlO/2vo6aeP62548T?=
+ =?us-ascii?Q?2YiG8qpsX90350ds838zN695u0x2hbrWVPem2VPHk7xOUeGNr3bFfNbYLYHj?=
+ =?us-ascii?Q?2Hczq16hrjkbDukPO2eUUOulaSdwH95nY45epJdJdCy6hr63Yc/PfLX7SpN+?=
+ =?us-ascii?Q?gbV6HglWVgCaxTunv3dc0qFwiYoPvsDgKLoO2S6Iihj+pFXHTctXvDsrQQpo?=
+ =?us-ascii?Q?LEIU3047Qmkx2+8+GXyQk3LCKFdj5FALC92htb3T0TBQqAqhqLSJq80Ozds8?=
+ =?us-ascii?Q?vgSp0OSRNggC9k0I3gGANInYdxJ8GJGcoHItyV/dI0TcVUh+NyhwTSSWxGn2?=
+ =?us-ascii?Q?gg0pYRHA66gUvHKB1algks9HXxHPs2BwiL6AjWRFBSDdL1PTiYWh9ijWVb2A?=
+ =?us-ascii?Q?d7PbT8HhGqRBL+tkKlb4EYtBDAx9PAod4b8UZPManC3gThD1TmdA3kb6Tt/2?=
+ =?us-ascii?Q?KlChw3oiCN134hS509C+EJVtJvkZ+pavqUQwcsBGUmBndKZkVwP9Q1HJWWPG?=
+ =?us-ascii?Q?ug1E1Es0ok6uLOR+yxK9eRAGnqeGDxqV/3q09DUwk8UwIsmxyf0U2ZkfF+Kq?=
+ =?us-ascii?Q?D11+Gzy38+SM9gJ54c2uLGYWYm7xkisvxb8MjQQ7glzZ21Re5HEBFbC6vDoF?=
+ =?us-ascii?Q?NUenJxyakKOR6Xr3Gr0/X6FR41R3GzaN6HIm664IOKX9qNaefw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?LQeMg8ktNrcd9N/JEeZ0EH9t85icJ9tg/svHekIOW/lw9PM/Xo+uRBWmWI67?=
+ =?us-ascii?Q?dteBp1jAgmX2fR5tkc+p4sbVJPQyjrSy4ncON4sWl4D0UnM+bUfHLwK1zkL7?=
+ =?us-ascii?Q?UQgJ1Bz3VyBlKG+RhH1Tx3pnmDS6Po2eXcx6MJCStWtdtLLdva0l0lE+VJ1S?=
+ =?us-ascii?Q?g8eEZ9/YlihLsdjI13i+/9eIIkcfKyJYhsD70HLUBEaoV8j+wnUc3PFQRKxf?=
+ =?us-ascii?Q?Oqh8v878gRwIQqUNxcqmAXp8mLvvXKQRa0NTB4cjKQj68EbNlr0hZQ9vKwB2?=
+ =?us-ascii?Q?tAkWYmeMehb7XBV9d79t/K0m2OPfVB8h8aNWzTF6wxIdLF4yG0ag//bjoIHV?=
+ =?us-ascii?Q?8TYc08eX5MMRQnB0bRk8Vz53THu0VkJOxnZrvwiCIyVPK8gxnusclLBEPmDT?=
+ =?us-ascii?Q?OrEtRwZ8mYHeJanoXrsEaWNxIcuV0v0clXs8L9bNUUjcyxBSMy5lhmO0PgNY?=
+ =?us-ascii?Q?tGGvlGqbQ0npfY44KAvYpFp71C0VT5Wl/vue5VoxGrxxaA2szt39xF5ykCsm?=
+ =?us-ascii?Q?AftjWHk3SjZ4q7oeBkqdukOyF9mZ7zx9l2KZg56pl5UsUz67EVmrvuIxVdo0?=
+ =?us-ascii?Q?8GlMm1nwQkN7vA8WTfDkIdcARGBYs/Yl7AI62lT0TRmyDE7M+0jQHCR214Er?=
+ =?us-ascii?Q?lGIFy8qYuCDvWayCyetrdZ0kC5L2ULFgxR/YvXLwiNa4Ee8eDvbPis2DKZ+O?=
+ =?us-ascii?Q?2wJbcUoHXR4nX8OEc2KYVS4eu65EzM5A+x3neAOZ+krxl5vOXN0DZSg4Ctvb?=
+ =?us-ascii?Q?c72A0DEvUQhtk/R8kyoKrifUkbjSHLa5qCjm2ii/+oA7noaatFUQsMTJxWuw?=
+ =?us-ascii?Q?p9WUuf5HDdO7Y1NaVqTpAILVecamIuREMVhaQXQDpACz7JuLNMtqq1r3LFBa?=
+ =?us-ascii?Q?YAcreKQlPYVp9w8zSQHKUA67ZK3tLkN9VB9Z38cP/DnUSfSk5Dbzc6pqNbMO?=
+ =?us-ascii?Q?oNzykcwz5vDriZ7KyOMnTwldQ9wUpZGOl0tstrTlTQVXltJItKqpNa8Z01I7?=
+ =?us-ascii?Q?RQyG6HZcSVxRXmgaPTpps5eqxhpMWzqMQOCINn+Y53cBtUkhXHFfaDotn4jh?=
+ =?us-ascii?Q?gyxV5h59Pf2G1nrE8SwXxJUjI7bhINYGjLOZzF3rkR93a0R3Ye40TEPnkiUL?=
+ =?us-ascii?Q?ZpY1aO/WBxquc/pZA0X7JsSa/J22Rvo+9+05ljNLliNC57k7ICaiG5zayoIL?=
+ =?us-ascii?Q?mZPExT/z4urKu9RTis8RGIYelWPI79kjWI0Qafm/CA+nwjs8614j9/4MO07j?=
+ =?us-ascii?Q?TvUDkb0uAVEgsNaEoK1dEzrth6PgZ5zTDbBOX8A+x6DtUQ843PZBgbeVg7Sx?=
+ =?us-ascii?Q?/dZY/4cs84PzYh42F31klMntxRPV4ek2tvhc+kN3sDXm+ZpKKElF6IyoHI8f?=
+ =?us-ascii?Q?NwSqnnmhSr+1rQCqig0F2td/GxbZhEbrug7p3bim/98W/SLjywFcklBrMO4D?=
+ =?us-ascii?Q?cDW2njuJhjaUAJegr+PzXLJZxBHnfC8bCxT5KYlZIm4ixhAiXrBD609BxE/Z?=
+ =?us-ascii?Q?x3pxCO7H/1GSdtnVVbfsXwYfafDZ1KUBAs3Ez6J8L/5IRYNmD+QgSYY/cJPj?=
+ =?us-ascii?Q?eKGTewaS9sLWH87DrbE=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28f5e010-01a6-4405-f832-08dcc6b5e548
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 16:32:54.1408
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qukaG9VD6SPmu3bRpUF9yfzcE9MYFnY89gqGjPxevUJjTZjKhmFTFSEUN+4Q4BvmwMwKTQZsW3oBXdJKfIjPDQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8444
 
-On 24/08/2024 10:44, Tejas Vipin wrote:
-> Changes the novatek-nt35950 panel to use multi style functions for
-> improved error handling.
-> 
-> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
-> ---
->   drivers/gpu/drm/panel/panel-novatek-nt35950.c | 214 ++++++------------
->   1 file changed, 70 insertions(+), 144 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-novatek-nt35950.c b/drivers/gpu/drm/panel/panel-novatek-nt35950.c
-> index 028fdac293f7..fa4db7a3bc25 100644
-> --- a/drivers/gpu/drm/panel/panel-novatek-nt35950.c
-> +++ b/drivers/gpu/drm/panel/panel-novatek-nt35950.c
-> @@ -100,106 +100,89 @@ static void nt35950_reset(struct nt35950 *nt)
->   
->   /*
->    * nt35950_set_cmd2_page - Select manufacturer control (CMD2) page
-> + * @dsi_ctx: context for mipi_dsi functions
->    * @nt:   Main driver structure
->    * @page: Page number (0-7)
-> - *
-> - * Return: Number of transferred bytes or negative number on error
->    */
-> -static int nt35950_set_cmd2_page(struct nt35950 *nt, u8 page)
-> +static void nt35950_set_cmd2_page(struct mipi_dsi_multi_context *dsi_ctx,
-> +				  struct nt35950 *nt, u8 page)
->   {
->   	const u8 mauc_cmd2_page[] = { MCS_CMD_MAUCCTR, 0x55, 0xaa, 0x52,
->   				      0x08, page };
-> -	int ret;
->   
-> -	ret = mipi_dsi_dcs_write_buffer(nt->dsi[0], mauc_cmd2_page,
-> +	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, mauc_cmd2_page,
->   					ARRAY_SIZE(mauc_cmd2_page));
-> -	if (ret < 0)
-> -		return ret;
-> +	if (dsi_ctx->accum_err)
-> +		return;
->   
->   	nt->last_page = page;
-> -	return 0;
->   }
->   
->   /*
->    * nt35950_set_data_compression - Set data compression mode
-> + * @dsi_ctx: context for mipi_dsi functions
->    * @nt:        Main driver structure
->    * @comp_mode: Compression mode
-> - *
-> - * Return: Number of transferred bytes or negative number on error
->    */
-> -static int nt35950_set_data_compression(struct nt35950 *nt, u8 comp_mode)
-> +static void nt35950_set_data_compression(struct mipi_dsi_multi_context *dsi_ctx,
-> +					 struct nt35950 *nt, u8 comp_mode)
->   {
->   	u8 cmd_data_compression[] = { MCS_PARAM_DATA_COMPRESSION, comp_mode };
->   	u8 cmd_vesa_dsc_on[] = { MCS_PARAM_VESA_DSC_ON, !!comp_mode };
->   	u8 cmd_vesa_dsc_setting[] = { MCS_PARAM_VESA_DSC_SETTING, 0x03 };
->   	u8 last_page = nt->last_page;
-> -	int ret;
->   
->   	/* Set CMD2 Page 0 if we're not there yet */
-> -	if (last_page != 0) {
-> -		ret = nt35950_set_cmd2_page(nt, 0);
-> -		if (ret < 0)
-> -			return ret;
-> -	}
-> +	if (last_page != 0)
-> +		nt35950_set_cmd2_page(dsi_ctx, nt, 0);
->   
-> -	ret = mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_data_compression,
-> +	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_data_compression,
->   					ARRAY_SIZE(cmd_data_compression));
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	ret = mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_vesa_dsc_on,
-> +	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_vesa_dsc_on,
->   					ARRAY_SIZE(cmd_vesa_dsc_on));
-> -	if (ret < 0)
-> -		return ret;
->   
->   	/* Set the vesa dsc setting on Page 4 */
-> -	ret = nt35950_set_cmd2_page(nt, 4);
-> -	if (ret < 0)
-> -		return ret;
-> +	nt35950_set_cmd2_page(dsi_ctx, nt, 4);
->   
->   	/* Display Stream Compression setting, always 0x03 */
-> -	ret = mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_vesa_dsc_setting,
-> +	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_vesa_dsc_setting,
->   					ARRAY_SIZE(cmd_vesa_dsc_setting));
-> -	if (ret < 0)
-> -		return ret;
->   
->   	/* Get back to the previously set page */
-> -	return nt35950_set_cmd2_page(nt, last_page);
-> +	nt35950_set_cmd2_page(dsi_ctx, nt, last_page);
->   }
->   
->   /*
->    * nt35950_set_scaler - Enable/disable resolution upscaling
-> - * @nt:        Main driver structure
-> + * @dsi_ctx: context for mipi_dsi functions
->    * @scale_up:  Scale up function control
-> - *
-> - * Return: Number of transferred bytes or negative number on error
->    */
-> -static int nt35950_set_scaler(struct nt35950 *nt, u8 scale_up)
-> +static void nt35950_set_scaler(struct mipi_dsi_multi_context *dsi_ctx,
-> +			       u8 scale_up)
->   {
->   	u8 cmd_scaler[] = { MCS_PARAM_SCALER_FUNCTION, scale_up };
->   
-> -	return mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_scaler,
-> -					 ARRAY_SIZE(cmd_scaler));
-> +	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_scaler,
-> +					ARRAY_SIZE(cmd_scaler));
->   }
->   
->   /*
->    * nt35950_set_scale_mode - Resolution upscaling mode
-> - * @nt:   Main driver structure
-> + * @dsi_ctx: context for mipi_dsi functions
->    * @mode: Scaler mode (MCS_DATA_COMPRESSION_*)
-> - *
-> - * Return: Number of transferred bytes or negative number on error
->    */
-> -static int nt35950_set_scale_mode(struct nt35950 *nt, u8 mode)
-> +static void nt35950_set_scale_mode(struct mipi_dsi_multi_context *dsi_ctx,
-> +				   u8 mode)
->   {
->   	u8 cmd_scaler[] = { MCS_PARAM_SCALEUP_MODE, mode };
->   
-> -	return mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_scaler,
-> -					 ARRAY_SIZE(cmd_scaler));
-> +	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_scaler,
-> +					ARRAY_SIZE(cmd_scaler));
->   }
->   
->   /*
->    * nt35950_inject_black_image - Display a completely black image
-> - * @nt:   Main driver structure
-> + * @dsi_ctx: context for mipi_dsi functions
->    *
->    * After IC setup, the attached panel may show random data
->    * due to driveric behavior changes (resolution, compression,
-> @@ -208,43 +191,34 @@ static int nt35950_set_scale_mode(struct nt35950 *nt, u8 mode)
->    * the display.
->    * It makes sense to push a black image before sending the sleep-out
->    * and display-on commands.
-> - *
-> - * Return: Number of transferred bytes or negative number on error
->    */
-> -static int nt35950_inject_black_image(struct nt35950 *nt)
-> +static void nt35950_inject_black_image(struct mipi_dsi_multi_context *dsi_ctx)
->   {
->   	const u8 cmd0_black_img[] = { 0x6f, 0x01 };
->   	const u8 cmd1_black_img[] = { 0xf3, 0x10 };
->   	u8 cmd_test[] = { 0xff, 0xaa, 0x55, 0xa5, 0x80 };
-> -	int ret;
->   
->   	/* Enable test command */
-> -	ret = mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_test, ARRAY_SIZE(cmd_test));
-> -	if (ret < 0)
-> -		return ret;
-> +	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_test, ARRAY_SIZE(cmd_test));
->   
->   	/* Send a black image */
-> -	ret = mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd0_black_img,
-> +	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd0_black_img,
->   					ARRAY_SIZE(cmd0_black_img));
-> -	if (ret < 0)
-> -		return ret;
-> -	ret = mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd1_black_img,
-> +	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd1_black_img,
->   					ARRAY_SIZE(cmd1_black_img));
-> -	if (ret < 0)
-> -		return ret;
->   
->   	/* Disable test command */
->   	cmd_test[ARRAY_SIZE(cmd_test) - 1] = 0x00;
-> -	return mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_test, ARRAY_SIZE(cmd_test));
-> +	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_test, ARRAY_SIZE(cmd_test));
->   }
->   
->   /*
->    * nt35950_set_dispout - Set Display Output register parameters
->    * @nt:    Main driver structure
-> - *
-> - * Return: Number of transferred bytes or negative number on error
-> + * @dsi_ctx: context for mipi_dsi functions
->    */
-> -static int nt35950_set_dispout(struct nt35950 *nt)
-> +static void nt35950_set_dispout(struct mipi_dsi_multi_context *dsi_ctx,
-> +				struct nt35950 *nt)
->   {
->   	u8 cmd_dispout[] = { MCS_PARAM_DISP_OUTPUT_CTRL, 0x00 };
->   	const struct nt35950_panel_mode *mode_data = nt->desc->mode_data;
-> @@ -254,8 +228,8 @@ static int nt35950_set_dispout(struct nt35950 *nt)
->   	if (mode_data[nt->cur_mode].enable_sram)
->   		cmd_dispout[1] |= MCS_DISP_OUT_SRAM_EN;
->   
-> -	return mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_dispout,
-> -					 ARRAY_SIZE(cmd_dispout));
-> +	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_dispout,
-> +					ARRAY_SIZE(cmd_dispout));
->   }
->   
->   static int nt35950_get_current_mode(struct nt35950 *nt)
-> @@ -284,109 +258,68 @@ static int nt35950_on(struct nt35950 *nt)
->   {
->   	const struct nt35950_panel_mode *mode_data = nt->desc->mode_data;
->   	struct mipi_dsi_device *dsi = nt->dsi[0];
-> -	struct device *dev = &dsi->dev;
-> -	int ret;
-> +	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
->   
->   	nt->cur_mode = nt35950_get_current_mode(nt);
->   	nt->dsi[0]->mode_flags |= MIPI_DSI_MODE_LPM;
->   	nt->dsi[1]->mode_flags |= MIPI_DSI_MODE_LPM;
->   
-> -	ret = nt35950_set_cmd2_page(nt, 0);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	ret = nt35950_set_data_compression(nt, mode_data[nt->cur_mode].compression);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	ret = nt35950_set_scale_mode(nt, mode_data[nt->cur_mode].scaler_mode);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	ret = nt35950_set_scaler(nt, mode_data[nt->cur_mode].scaler_on);
-> -	if (ret < 0)
-> -		return ret;
-> +	nt35950_set_cmd2_page(&dsi_ctx, nt, 0);
-> +	nt35950_set_data_compression(&dsi_ctx, nt, mode_data[nt->cur_mode].compression);
-> +	nt35950_set_scale_mode(&dsi_ctx, mode_data[nt->cur_mode].scaler_mode);
-> +	nt35950_set_scaler(&dsi_ctx, mode_data[nt->cur_mode].scaler_on);
-> +	nt35950_set_dispout(&dsi_ctx, nt);
->   
-> -	ret = nt35950_set_dispout(nt);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	ret = mipi_dsi_dcs_set_tear_on(dsi, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
-> -	if (ret < 0) {
-> -		dev_err(dev, "Failed to set tear on: %d\n", ret);
-> -		return ret;
-> -	}
-> -
-> -	ret = mipi_dsi_dcs_set_tear_scanline(dsi, 0);
-> -	if (ret < 0) {
-> -		dev_err(dev, "Failed to set tear scanline: %d\n", ret);
-> -		return ret;
-> -	}
-> +	mipi_dsi_dcs_set_tear_on_multi(&dsi_ctx, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
-> +	mipi_dsi_dcs_set_tear_scanline_multi(&dsi_ctx, 0);
->   
->   	/* CMD2 Page 1 */
-> -	ret = nt35950_set_cmd2_page(nt, 1);
-> -	if (ret < 0)
-> -		return ret;
-> +	nt35950_set_cmd2_page(&dsi_ctx, nt, 1);
->   
->   	/* Unknown command */
-> -	mipi_dsi_dcs_write_seq(dsi, 0xd4, 0x88, 0x88);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xd4, 0x88, 0x88);
->   
->   	/* CMD2 Page 7 */
-> -	ret = nt35950_set_cmd2_page(nt, 7);
-> -	if (ret < 0)
-> -		return ret;
-> +	nt35950_set_cmd2_page(&dsi_ctx, nt, 7);
->   
->   	/* Enable SubPixel Rendering */
-> -	mipi_dsi_dcs_write_seq(dsi, MCS_PARAM_SPR_EN, 0x01);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MCS_PARAM_SPR_EN, 0x01);
->   
->   	/* SPR Mode: YYG Rainbow-RGB */
-> -	mipi_dsi_dcs_write_seq(dsi, MCS_PARAM_SPR_MODE, MCS_SPR_MODE_YYG_RAINBOW_RGB);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MCS_PARAM_SPR_MODE,
-> +				     MCS_SPR_MODE_YYG_RAINBOW_RGB);
->   
->   	/* CMD3 */
-> -	ret = nt35950_inject_black_image(nt);
-> -	if (ret < 0)
-> -		return ret;
-> +	nt35950_inject_black_image(&dsi_ctx);
-> +	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-> +	mipi_dsi_msleep(&dsi_ctx, 120);
->   
-> -	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
-> -	if (ret < 0)
-> -		return ret;
-> -	msleep(120);
-> -
-> -	ret = mipi_dsi_dcs_set_display_on(dsi);
-> -	if (ret < 0)
-> -		return ret;
-> -	msleep(120);
-> +	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
-> +	mipi_dsi_msleep(&dsi_ctx, 120);
->   
->   	nt->dsi[0]->mode_flags &= ~MIPI_DSI_MODE_LPM;
->   	nt->dsi[1]->mode_flags &= ~MIPI_DSI_MODE_LPM;
->   
-> -	return 0;
-> +	return dsi_ctx.accum_err;
->   }
->   
->   static int nt35950_off(struct nt35950 *nt)
->   {
-> -	struct device *dev = &nt->dsi[0]->dev;
-> -	int ret;
-> +	struct mipi_dsi_device *dsi = nt->dsi[0];
-> +	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
->   
-> -	ret = mipi_dsi_dcs_set_display_off(nt->dsi[0]);
-> -	if (ret < 0) {
-> -		dev_err(dev, "Failed to set display off: %d\n", ret);
-> -		goto set_lpm;
-> -	}
-> -	usleep_range(10000, 11000);
-> +	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
-> +	mipi_dsi_usleep_range(&dsi_ctx, 10000, 11000);
->   
-> -	ret = mipi_dsi_dcs_enter_sleep_mode(nt->dsi[0]);
-> -	if (ret < 0) {
-> -		dev_err(dev, "Failed to enter sleep mode: %d\n", ret);
-> -		goto set_lpm;
-> -	}
-> -	msleep(150);
-> +	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
-> +	mipi_dsi_msleep(&dsi_ctx, 150);
->   
-> -set_lpm:
-> -	nt->dsi[0]->mode_flags |= MIPI_DSI_MODE_LPM;
-> -	nt->dsi[1]->mode_flags |= MIPI_DSI_MODE_LPM;
-> +	if (dsi_ctx.accum_err) {
-> +		nt->dsi[0]->mode_flags |= MIPI_DSI_MODE_LPM;
-> +		nt->dsi[1]->mode_flags |= MIPI_DSI_MODE_LPM;
-> +	}
->   
-> -	return 0;
-> +	return dsi_ctx.accum_err;
->   }
->   
->   static int nt35950_sharp_init_vregs(struct nt35950 *nt, struct device *dev)
-> @@ -427,7 +360,6 @@ static int nt35950_sharp_init_vregs(struct nt35950 *nt, struct device *dev)
->   static int nt35950_prepare(struct drm_panel *panel)
->   {
->   	struct nt35950 *nt = to_nt35950(panel);
-> -	struct device *dev = &nt->dsi[0]->dev;
->   	int ret;
->   
->   	ret = regulator_enable(nt->vregs[0].consumer);
-> @@ -452,10 +384,8 @@ static int nt35950_prepare(struct drm_panel *panel)
->   	nt35950_reset(nt);
->   
->   	ret = nt35950_on(nt);
-> -	if (ret < 0) {
-> -		dev_err(dev, "Failed to initialize panel: %d\n", ret);
-> +	if (ret < 0)
->   		goto end;
-> -	}
->   
->   end:
->   	if (ret < 0) {
-> @@ -469,12 +399,8 @@ static int nt35950_prepare(struct drm_panel *panel)
->   static int nt35950_unprepare(struct drm_panel *panel)
->   {
->   	struct nt35950 *nt = to_nt35950(panel);
-> -	struct device *dev = &nt->dsi[0]->dev;
-> -	int ret;
->   
-> -	ret = nt35950_off(nt);
-> -	if (ret < 0)
-> -		dev_err(dev, "Failed to deinitialize panel: %d\n", ret);
-> +	nt35950_off(nt);
->   
->   	gpiod_set_value_cansleep(nt->reset_gpio, 0);
->   	regulator_bulk_disable(ARRAY_SIZE(nt->vregs), nt->vregs);
+On Tue, Aug 27, 2024 at 05:14:32PM +0100, Conor Dooley wrote:
+> On Mon, Aug 26, 2024 at 05:38:32PM -0400, Frank Li wrote:
+> > fsl,lx2160a-pcie compatible is used for mobivel according to
+> > Documentation/devicetree/bindings/pci/layerscape-pcie-gen4.txt
+> >
+> > fsl,layerscape-pcie.yaml is used for designware PCIe controller binding. So
+> > change it to fsl,lx2160ar2-pcie and allow fall back to fsl,ls2088a-pcie.
+> >
+> > Sort compatible string.
+> >
+> > Fixes: 24cd7ecb3886 ("dt-bindings: PCI: layerscape-pci: Convert to YAML format")
+>
+> I don't understand what this fixes tag is for, this is a brand new
+> compatible that you are adding, why does it need a fixes tag pointing to
+> the conversion?
 
-Looks fine!
+Because previous convert wrongly included "fsl,lx2160a-pcie" here, which
+already used for mobivel pci controler, descripted in
+layerscape-pcie-gen4.txt.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+This patch fix this problem, rename fsl,lx2160a-pcie to fsl,lx2160ar2-pcie
+
+>
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> >  .../bindings/pci/fsl,layerscape-pcie.yaml          | 26 ++++++++++++----------
+> >  1 file changed, 14 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/pci/fsl,layerscape-pcie.yaml b/Documentation/devicetree/bindings/pci/fsl,layerscape-pcie.yaml
+> > index 793986c5af7ff..daeab5c0758d1 100644
+> > --- a/Documentation/devicetree/bindings/pci/fsl,layerscape-pcie.yaml
+> > +++ b/Documentation/devicetree/bindings/pci/fsl,layerscape-pcie.yaml
+> > @@ -22,18 +22,20 @@ description:
+> >
+> >  properties:
+> >    compatible:
+> > -    enum:
+> > -      - fsl,ls1021a-pcie
+> > -      - fsl,ls2080a-pcie
+> > -      - fsl,ls2085a-pcie
+> > -      - fsl,ls2088a-pcie
+> > -      - fsl,ls1088a-pcie
+> > -      - fsl,ls1046a-pcie
+> > -      - fsl,ls1043a-pcie
+> > -      - fsl,ls1012a-pcie
+> > -      - fsl,ls1028a-pcie
+> > -      - fsl,lx2160a-pcie
+> > -
+> > +    oneOf:
+> > +      - enum:
+> > +          - fsl,ls1012a-pcie
+> > +          - fsl,ls1021a-pcie
+> > +          - fsl,ls1028a-pcie
+> > +          - fsl,ls1043a-pcie
+> > +          - fsl,ls1046a-pcie
+> > +          - fsl,ls1088a-pcie
+> > +          - fsl,ls2080a-pcie
+> > +          - fsl,ls2085a-pcie
+> > +          - fsl,ls2088a-pcie
+> > +      - items:
+> > +          - const: fsl,lx2160ar2-pcie
+> > +          - const: fsl,ls2088a-pcie
+> >    reg:
+> >      maxItems: 2
+> >
+> >
+> > --
+> > 2.34.1
+> >
+
+
 
