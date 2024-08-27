@@ -1,56 +1,58 @@
-Return-Path: <linux-kernel+bounces-304062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 313E5961958
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:39:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0E0E961960
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 23:45:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3C872852DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:39:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7500C28527E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 21:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17981D365A;
-	Tue, 27 Aug 2024 21:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836241D4151;
+	Tue, 27 Aug 2024 21:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m0vOtu67"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sROgmd8y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE7576056;
-	Tue, 27 Aug 2024 21:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65A376056;
+	Tue, 27 Aug 2024 21:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724794773; cv=none; b=GSMpBgcy4FRa05rP0R9ZYkoWwIUCd1cW9daTu3P/JcXu48m9rJvgwQ6juax4Mnld8wkFbBemsF3xcJJIjEYVjWtLIEeyMYsQj98qducT1EHV21hiv7oLX3ZQkpOlr0fi4mMTblROJ3lXSE50qIHVvZywiGOnoTmiMPX4qKITOdg=
+	t=1724795090; cv=none; b=qrfqbrd67CHZ/tCLtnhojtjH/ihPl5krUDB8CFXZjnv4brv+J2M2VyUcc5IeY/V7AWz7+4VSS2EUbUE+CWDfFfftQpmQJcaDUSz+YA3KOZFzzwA+/wOFkIciiUWczdboSiT0XZ0YFfllluwZqd9UYchcyOjKUcgJ1z01hmnNfUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724794773; c=relaxed/simple;
-	bh=OyyfSKarDP0q5xmb3yBIfxUWdPYlP7qMKRaQ9Xra5rY=;
+	s=arc-20240116; t=1724795090; c=relaxed/simple;
+	bh=U2sz/hFBHKZ7Q1bi4efWJ8xrKDEPk/xSIkvt7nQJU7c=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U7ex7Bo+GW8pRkRigjuQ5uBNimBqudxBMfT9kAA5eG7hMBCfoHTh0UgB0u9KDvHp/FjIedxTahXzt331pHk7f/zvEx+uqfr5ZfvFJcxXWSVxK+al5mqJSxXZ9vZ0/+m7XUCn7WR2dYy8pQ6VYIpDDfgfDi88EnCgFM0VrIKZhD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m0vOtu67; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32D94C32786;
-	Tue, 27 Aug 2024 21:39:32 +0000 (UTC)
+	 MIME-Version:Content-Type; b=fqjEn5toZ2niTqkiBTC4WzxHOBFWT5hGGeTw0N0NBah134qlCdXeMDtM35gyp/8H5+hakZ26O/UkRh70wMZpEBhXDmUQp76LGPnVh7HIA3BtT1mvAcduMAUcgeGIPs3YLLKmjZxQQpUyUMfiDed72CaiSWSHm9pVhQ+ZJfuWQbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sROgmd8y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB56AC4AF09;
+	Tue, 27 Aug 2024 21:44:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724794772;
-	bh=OyyfSKarDP0q5xmb3yBIfxUWdPYlP7qMKRaQ9Xra5rY=;
+	s=k20201202; t=1724795090;
+	bh=U2sz/hFBHKZ7Q1bi4efWJ8xrKDEPk/xSIkvt7nQJU7c=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=m0vOtu67Jqz5xNycs9l0bChqxtZ4eDW2cu3iMoyYWA9cgsk76bbBSYkiGOgdRbUdw
-	 obm1NpuoZzuz/nceWk1kFKungtih7kBSXgpGKC0mJlMntjQ866ZoAoTLDHQc8UJn2w
-	 1sMwN9pRT0q0F1c8H2MGiZBcBafU1aagEhRjLHUAeLvYfGXXw0A1Z4P6U+AlxYkgpd
-	 VDnDADG7pSB956ffSBqbHM0vSkmpUbqj4jZ8i3tZCfFnL0JTGAmlrk6o1B13fDYq46
-	 mNrKdOWX6POsieDD+MS7+OtKiks8mGEB2soDpcMCwdVI/hvUImEtq1fp4k8jcThnaL
-	 FlV7ZLopgyzRQ==
-Date: Tue, 27 Aug 2024 14:39:31 -0700
+	b=sROgmd8yUWiirJphImEfmCLHCmchD3y+o6ztnlldiWnbtzQ8Mqh9lNNuesiYAynGs
+	 WKt+EZtouPBe/NoNjjRzgN/IhknfypdsgjobB4Ebsmzi57AH0I5sRkZ+PRJZxEW9Dq
+	 MokyXBz3PWVgTaNvYo7OR9eTFmqYCj7WKw7zuZlvOxWgGDBNgns45LJ+1FZQTIF3g1
+	 mH0iYRMHBp+YgcZngKbQ0OKdbD66PjwuhaYl0NI1aBdJUJnu3mSeyRRo5zuD7WVc0Z
+	 enD3Zs2gyABzBk8ECjY/9SmQ8qdnAodVFIDn7F8p/Gem5OkdbqNTN21WRjds5skikh
+	 W4yV0PSLpbAzQ==
+Date: Tue, 27 Aug 2024 14:44:48 -0700
 From: Jakub Kicinski <kuba@kernel.org>
-To: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
-Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Maciej
- Fijalkowski <maciej.fijalkowski@intel.com>, Kurt Kanzenbach
- <kurt@linutronix.de>, "David S. Miller" <davem@davemloft.net>, Georg Kunz
- <georg.kunz@ericsson.com>
-Subject: Re: [PATCH net] mailmap: update entry for Sriram Yagnaraman
-Message-ID: <20240827143931.267bb6b7@kernel.org>
-In-Reply-To: <20240827120558.3551336-1-sriram.yagnaraman@ericsson.com>
-References: <20240827120558.3551336-1-sriram.yagnaraman@ericsson.com>
+To: David Hunter <david.hunter.linux@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com,
+ javier.carrasco.cruz@gmail.com, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
+ shuah@kernel.org
+Subject: Re: [PATCH 1/1 V2] Selftests: net: Set executable bit for shell
+ script
+Message-ID: <20240827144448.64524df3@kernel.org>
+In-Reply-To: <20240827213721.53379-1-david.hunter.linux@gmail.com>
+References: <20240826144022.72a80d8c@kernel.org>
+	<20240827213721.53379-1-david.hunter.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,9 +62,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Tue, 27 Aug 2024 14:05:58 +0200 Sriram Yagnaraman wrote:
-> Link my old est.tech address to my active mail address
+On Tue, 27 Aug 2024 17:37:21 -0400 David Hunter wrote:
+> On  Mon, 26 Aug 2024 14:40:22 -0700 Jakub Kicinski wrote:
+> > What is linux_mainline and how does one download from it?  
+> 
+> The Linux Mainline source files can be downloaded using the following command:
+> 
+> git clone git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git linux_mainline
+> 
+> I meant to say "Linux Mainline". In my computer, I put the title for
+> the directory as "linux_mainline", so I have a habit of putting the
+> underscore when I should not. 
 
-Thanks for updating the email! We do need a sign-off on the commit,
-tho, no matter how trivial.
+I see. But going back to the commit message - why would the files be
+skipped? At some point you shared a warning which gets printed:
+
+ # Warning: file test_ingress_egress_chaining.sh is not executable
+
+that's a better thing to put in the commit message, than talking 
+about downloading.
+
+Keep in mind you need to put a space or two before the # otherwise
+git will think it's a comment.
 
