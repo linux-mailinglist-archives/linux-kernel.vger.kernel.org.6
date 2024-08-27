@@ -1,249 +1,150 @@
-Return-Path: <linux-kernel+bounces-303009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8627960617
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:45:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77904960690
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:02:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCD6D1C22886
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 09:45:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00F6F1F21DE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 10:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1188519DF79;
-	Tue, 27 Aug 2024 09:43:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2029919CCEA;
+	Tue, 27 Aug 2024 10:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="GyYLYFFs"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2055.outbound.protection.outlook.com [40.107.215.55])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iw+Ttc95"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C23145A07;
-	Tue, 27 Aug 2024 09:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724751779; cv=fail; b=YELgb4CyTlo8cB1AxMXfFkNuGPBwsjD00nqtRBTBK+VpCp2zma81sBn+jwQYGcmuWcGeOgaCpEp7uVY1g/ZkTyvHIrgV06rmGDdOajScYO5hYpUX7YAQ9vZ5JYJP7U57hogM/qD37Mw/CDhk4IpdxoFa67a6RxUZwkzL4VVfd1M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724751779; c=relaxed/simple;
-	bh=zeX/YnL+vXc3rtOcLL7mYLbRFsPSV5CJbQZUVBOm3VM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=c2Y+23V6PHHnOacLziXVmm5j9J12YJxO38RAz6D7BiOWtaM8eRR6d5VwzEFad6lx36tJvHLt4edXti96nEhDLfz8HQUO6z/lNJu3O8jvGfTBy+aRz5kk80zmO1TXcie8/2tECfEP/CTcBEWAaNlYG+p+lUbF4+pgFR6diu5yuKc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=GyYLYFFs; arc=fail smtp.client-ip=40.107.215.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hwHk+GqvtI3HEVAtOEpovTFa6tzOkOfoiQNiVWu4wvIrebJflPxcq+onAxDeD4ezkBk0P2G4OsBTobAtzL67HTla3KFzUmvYM0UzQL4oCWArCmmPnZxrz5ENsyL6eZUe9qbygFFNlA/TB2DeO/1s5NzeSDkmNGwPfTGfIXfhTHgI4idzXM3NwQfoA7ZmEqDVTKP7Ub1qHf2vSvYYe14Uo7iXWl2pxm4eBiMjoYqfPOQTRJtXIK9PCyAgfVf/9mnd57zLkAHSyWjRsETbiGosb7/OMXi/nEfVziYYIRuFGeudV+d1nGq/hL86lwfyShgzae+znvqpfFA6N5xyoHGsSg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=loKZ3Jg1P258pXcp3YCt+6qnQHyeqRZ5FiyqwfFFhhU=;
- b=AntMXu/Hxece4NyI6wiHCbixUdHM/A7N8Zf1ggffJU3HUtMb0xQWnMGWuPa+SB8qgQEO7E10yX1Zl0PfUw4WGpawawy2byyY5g+qmsjkRbN1JrjBLGuSTxwO9eYd0/fjUjxXNOsVw02mR343vm2Dr3k+WXmesrJbIF5xWGLgattar1MZ60Tbln9+eJYWSv0xnJfOKnkTT/9WoFPJ6Tb4bau2aBergVz4XILi+o+I0e6tHern03dP3EaUD7yoRcbOrPaQxnQAOXngFbZSrQtrVFPV/MfgPRoxX58HrYfK5icAWczXYABoZLGiaHdnrdpLc9Qf3R/eTIAmyfJSz01QGQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=loKZ3Jg1P258pXcp3YCt+6qnQHyeqRZ5FiyqwfFFhhU=;
- b=GyYLYFFs2fYub5IdVSNekgcJcn5yAnqd96V0a7zDqopfYoOmYw44IkQl0omWTmdw8xN8tkhbLqV4mN0ZvkZGDeqazfc5rNH3cO4dkRylNhBLHlQduAph0ZWaSLgcebQknVB7qO58j3byUa1ZPJaKMv9Uo5J50hTS60NTwdRxvoOS1NeuCMnXoU2I5lUbVSYWKZ4qNU/8MIkW7//tDAwuUjSrhxUUQUOKn98LM86pU0DV922iPt8pO61qxHWIATkkO6LzhtABb+13monTnnR3RLtIAFTc+MfH58+xGGzN7A+yfJW/hOUCCj62UMAsPJrdeDfV/bxyrgk1ECdnvB+Elg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by TYZPR06MB5734.apcprd06.prod.outlook.com (2603:1096:400:281::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Tue, 27 Aug
- 2024 09:42:53 +0000
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535]) by SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535%7]) with mapi id 15.20.7897.021; Tue, 27 Aug 2024
- 09:42:53 +0000
-From: Yangtao Li <frank.li@vivo.com>
-To: clement.leger@bootlin.com,
-	andrew@lunn.ch,
-	f.fainelli@gmail.com,
-	olteanv@gmail.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	ulli.kroll@googlemail.com,
-	linus.walleij@linaro.org,
-	marcin.s.wojtas@gmail.com,
-	linux@armlinux.org.uk,
-	alexandre.torgue@foss.st.com,
-	joabreu@synopsys.com,
-	mcoquelin.stm32@gmail.com,
-	hkallweit1@gmail.com,
-	u.kleine-koenig@pengutronix.de,
-	jacob.e.keller@intel.com,
-	justinstitt@google.com,
-	sd@queasysnail.net,
-	horms@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Yangtao Li <frank.li@vivo.com>
-Subject: [net-next v3 9/9] net: marvell: pxa168_eth: Convert to devm_clk_get_enabled()
-Date: Tue, 27 Aug 2024 03:57:12 -0600
-Message-Id: <20240827095712.2672820-10-frank.li@vivo.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240827095712.2672820-1-frank.li@vivo.com>
-References: <20240827095712.2672820-1-frank.li@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR02CA0053.apcprd02.prod.outlook.com
- (2603:1096:4:196::16) To SEZPR06MB5269.apcprd06.prod.outlook.com
- (2603:1096:101:78::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DF12FB2
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 10:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724752917; cv=none; b=EiEZ4NdYvvtsRNdYmwF6GPTI1UqjS/7h3GnBMHhk38ohfDKoF+KMO+G/G0xk1zhaRBcXuOjGqhY9kT/U29R0yn1mdioo4L0rblr/GKxj71Wq2oHZxzREFZiZMQ1jgvzlQaAEpWvWeaMrq9I5SYgftG3AWjY672ZKTTPy3RiEPYA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724752917; c=relaxed/simple;
+	bh=kkQPZG06IpFYUa1eknEy2U+GBqL9zKMZwhs+ar0jO0o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iHHOfYl6gS/svbdZFWDHq5km4rKGN82VxW8Zg8dF4uK1q5Z+OnvESuHoDrrgo9r/whAreZC8kSRsJ78iF8+DuIZy+o/fFIk9tweCDSuYlMWexG1wYsgd5RkeDipLdgsziy7GpO9NfltLNipJyqgBM+8TBAKNY0M3+DIT3yvoxSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iw+Ttc95; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id F131D1C0009;
+	Tue, 27 Aug 2024 10:01:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724752913;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=a2BE0t2+jrdIWHLllfSRcGCCmI5KaLivDVMuWirHlqw=;
+	b=iw+Ttc95e/nnYF1Lrp2KMwhTqzwct1NCpWnGN/egsQHfpQ5qfuUL0atFPOGK8mBsg6ngac
+	En3tsqL5pc8KYOj9UYvCqHWSC1Ywro45VKE5QqpSq2KXeELJnNCm2VYyo5KDgJ0jTYReoL
+	98AjkT2BCu5TvDnPExiQMegDG/c8cLYegi1ixBjlNtm4+V/ggeOmqySziu93LKymPMW1XD
+	ebY2OpozH++vLmjmFeRYM/rRGDMkXyR+BdZlp0eWt0ecGfUDpprq+rUVCRx3Wq3LBpLpVh
+	KCtAvVuz2vt+MfFx2mtmUb3hjk6JZeFQp8SPybpmI6kwgJ+M2mfgUkFpNl5nxw==
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Subject: [PATCH v2 0/6] drm/vkms: Switch all vkms object to DRM managed
+ objects
+Date: Tue, 27 Aug 2024 11:57:35 +0200
+Message-Id: <20240827-google-vkms-managed-v2-0-f41104553aeb@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|TYZPR06MB5734:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2300050a-1963-451e-acac-08dcc67c9f7e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|7416014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?EmPvyhko7dfPYZb8SeFkqpfCgWtq4VkejUzPjSWu/EnXwBIJfXIg5zF339cc?=
- =?us-ascii?Q?m2VZdWlQ2TKgBZQBJsFmwlEC3mRP9SRj4IdOjG6W7Dm9rXXgOfIo03spaUdD?=
- =?us-ascii?Q?0X2xsZvlDjrrOXoP0mvEkos1qCDMEzM9VNaiQ1fRgYsvkcnW8q39JJC6f9Id?=
- =?us-ascii?Q?SrXjd3EipMHOf3g+0oFZrq7m1uv6Ux5ZwbSjn+ZUA4uSoz/f6Tzk/E41zOH2?=
- =?us-ascii?Q?NJiI+hAsM763H6NRKoHkSzZf+sysQKWNLiCCoNw4oWBGiBrkgosPpXUsgmh9?=
- =?us-ascii?Q?WbwsBWHL/cRq21P4wiVme7zB9I8USBYA3cwD0cABnPW6WFrMsaRtIQROY8sI?=
- =?us-ascii?Q?oZGABwxZ0+6phDT9M/pcvcgDDCTAwkgT/C3oHYG4poqquzjQZ7XiIWTxwmfq?=
- =?us-ascii?Q?oRi4kjFMkROZCbu88pBryaEcC/7S4/sb4v3SKcmFHiA1BHNFBCqIA3PznJ4e?=
- =?us-ascii?Q?1aCsN/3oDyo78crSBVWIgLS8x+f5wDKsUKT8ru6/aw+Bm5Lr+NtWrNP8Xs96?=
- =?us-ascii?Q?IiAnKViA82pMCCG48+aXKxVIcKLvWJnRVIyMaYajAuXzumMDctq1T6RAt7Ns?=
- =?us-ascii?Q?mvSBBJkNAG3IWklWMPobFaLLBn/dZ6lTFnsCKIB4ZFnBj6oGDcj9zSD6iVPb?=
- =?us-ascii?Q?sK69m2QY1tsXxP8VEj2AJm57EAeDtMbOWR88Lb5r5MpxzaVLfOwL2fu4TzOU?=
- =?us-ascii?Q?tZFFjD1SAXgBA3mbXFRI67ZKK7gMCvi8dwQ/AOPyk5J5hOz+2ev4/lxFhgdd?=
- =?us-ascii?Q?NZiHhbAtqWoM4kZ83cQa6chpxZwwCjk2eHoJSN0iV+o87V0WIqz/qZe4ALbL?=
- =?us-ascii?Q?xQQdZd30nObUc+UdxV2sIafq2p8YhQ15MHe9jqq13sdsBCVTREZqzA/U0c2J?=
- =?us-ascii?Q?Tx8/ayPR4xXpwWiQK3JPLHcIdXYw8FBb2VClYKl2WnBk25Zq+C0OhaXBD7Iz?=
- =?us-ascii?Q?bDM7FwqF+l94OEPEmVEH4QPSsmnEpKqVlyNIIeuOTGbDA9kBEzEpgd5egriI?=
- =?us-ascii?Q?U104VdjRhvfAcXy7jwacpJPH0MOJkCCVDPs5gRwUYO9oB3yJtTbVGqLg3Sh9?=
- =?us-ascii?Q?nFJPFEBXq3MyVFxeQDFLkn7rurOcJn2VVpLHOZU8IA90sjzbD3gbU5KjBcek?=
- =?us-ascii?Q?Pn4h/0uq5yp16C1URRIYD1L7IrF8vmNNTbWeS3pcQOXerSSK+WwQ7bxXPBTQ?=
- =?us-ascii?Q?3SyWv0x9sx5kzn0EIUWBOo582ZAmcGyg5VoxcTSnWAWmEuL7LDhlutnnPz3N?=
- =?us-ascii?Q?ZPG1reHSYLeuAzLq+Mg0aWQw0o9LAr/q2QDhdY3deo3/RyYoDz8BBEmjQz6+?=
- =?us-ascii?Q?NLSkIrIXsfgMIwelCfVasxrT2A7T3TEiRlWJEZTzefpa9PAaJ7u6PZ8Qt2VL?=
- =?us-ascii?Q?a+QT33oQVV5Z9jZCBgQp59ySG0AQNRvvutCvLoogCi6XJY1+xPj+w8vgc4ty?=
- =?us-ascii?Q?cb7m+7ijoZY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(7416014)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YIDQB1GhOUHvjOuGaDZNgZVExRU+pc+OxHOkTv34zXoR9uXKAsQyDvOwqYlT?=
- =?us-ascii?Q?Kv74xdPNFFGiNzxxznZ0V0rJcb/z8G1Q/D82W6EnGnBNSkYUCRzLhbh+51aL?=
- =?us-ascii?Q?+i2kvfAPrLag9pYPgyn61EUbwHqsGIg/KGimqsenMsWn96NrYmr51yUAqkMg?=
- =?us-ascii?Q?GfhtyIUBZbeHUxzwljtoVBhw9n1cXRoUVvnNXU5ZKSlSNGKz3Xb1FztlfiqN?=
- =?us-ascii?Q?VlBQR1dpKTws2sgYf+WbALCyOcy9OIdUaFPXCI0QDHFaQ7GvP6OEs0jpKvwF?=
- =?us-ascii?Q?xnT0IASj4ApRjfzs7lX/zO3beACHF3BJOS4Kr2hnqGKMtFsXq7oft1FnBv+R?=
- =?us-ascii?Q?qYUUdUPupE6GZeSf73/bHswhiXiYQGeY087qgfr+Z+kNEs4jlCtUTBXiAxq4?=
- =?us-ascii?Q?EzE+sbDD5WLGoOtENLKtLJzbIRIO5adjPTumBEpWYg5jHyBAqbnjSJl6q6FM?=
- =?us-ascii?Q?PhL0KizgcsYjXfKn+R/bF+r9o6bVoRcZHHlEiqw6EWfGDQvRMPSf7qJ+ZEMk?=
- =?us-ascii?Q?oqu9+Bq3xLzFcCB/rINS5lwsKNq7nXEOUbeVPBpFA6cMqpErzOn4OE3ugAfA?=
- =?us-ascii?Q?USMM4zxvapVaKihLb9XHh18ixquB5lamiGDgEaVoq9RH4Cwir8q9GSkfc1ss?=
- =?us-ascii?Q?pwhflR8t8NZFN12uiN21lxvGr1DzXhxmWlvtcFnsC2e2l4Mzweg3SOzGbBC7?=
- =?us-ascii?Q?Wa/nmlQnVF07SHPPEi6OCDqiGjT1DF8V3ufVfLBPQwrKHmcqqO9Blfu7+IcA?=
- =?us-ascii?Q?xncG5H6T+Ac8vFhT+CaVA+KI1aEGqwdhACBUS7RYizB7sVhlrHTzl1P+cunF?=
- =?us-ascii?Q?g/UjFWuzGh5QLAVvSiuDEuN/6REJUD23HYWSbU8neEnh7HRiwqqD6y7SXXe9?=
- =?us-ascii?Q?VPO9gQ3+xaocv8AtpN86XCFxBXRxwoZ55Z2DMRkFST/70SLIXY86U2GiCet6?=
- =?us-ascii?Q?cf8BJ3Zr5px2cptKHxEipsgliUHaYdtwaBkbIIC8oFe+9rgD+XHtAcG6KFEP?=
- =?us-ascii?Q?h6ypV3aW+nsxCB1mAcKOaJmlp+Ty2xr1Rgm7grkbJKrtMYxieKLvtXKU4K9Y?=
- =?us-ascii?Q?daG/wI/fN3XZ4T9mipHDMbZ89lr63j0AQSvGl88G1S0pPVLaSnJ/h0FjaYfO?=
- =?us-ascii?Q?nxT552ZipwV1iyrCw3z7bRxYiZ5stVasMd/EGklgdBJt6hJ12SSJUKE+9X+3?=
- =?us-ascii?Q?SkGFbE4/a2bVQb4aeA9/zSSqwhKgWewWFiXJ8BERDfoYTUNeFzX69wjg/ONm?=
- =?us-ascii?Q?F41o8FaAY4Yir+zE+HqNIsybH7g8Dpxf5gvIMXeIhTJKX5Hy0YSW3skU+HR6?=
- =?us-ascii?Q?Mr48GiAIw4ikZAUGVBBFlcp7Dkn3Pc/OICPx44Fyme0NSyn8DtwAP33A2DXk?=
- =?us-ascii?Q?T+aYidx39jeN3Uq5MZgEsi3NS6bEJxK5dRI7U0o519hbGsoEAArzNiUKnT6o?=
- =?us-ascii?Q?by43SjOlAAWdJ8srHfFXvxww2W+s9IhRLyY5GVmeHabpylVVF8Vj9Qw8MIRg?=
- =?us-ascii?Q?aMskr7CCfpf7Nh99K17/IJC9n14DOCalJdfE7fh5OgZLT519SD+tqIzbLygo?=
- =?us-ascii?Q?dlJpS4J+9tnqE2BOjHtyGy/G0WtzzlaKYgnchBJN?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2300050a-1963-451e-acac-08dcc67c9f7e
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 09:42:53.5264
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KnQGE2Og8283HW4EoODAnKWWEx2eM67AUosbCNvqNoL3mB27Zr+GR1eXZOoeB1/vLC5Ngon2r+bya+nK+Fv+/Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5734
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAA+jzWYC/22Oyw6CMBBFf4XM2lFaUR4r/8OwKDDiRNtqWwmG8
+ O9WiDt3cyc5954JPDkmD1UygaOBPVsTg9wk0F6V6Qm5ixlkKrP0IAX21vZ3wuGmPWplVE8dZor
+ assyOQuU5RPLh6MLj0nqu1+zo+YrlYX1Cozxha7XmUCWd06jZt7vfgYbGAF/yyj5Y9170BrGgi
+ 0khsr8mg8AUc9UUTVFKIdL9qbE23Nls4xjU8zx/AGS8n3TyAAAA
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
+ Melissa Wen <melissa.srw@gmail.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
+ Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net, 
+ linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com, 
+ miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com, 
+ seanpaul@google.com, nicolejadeyee@google.com, 
+ Louis Chauvet <louis.chauvet@bootlin.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2334;
+ i=louis.chauvet@bootlin.com; h=from:subject:message-id;
+ bh=kkQPZG06IpFYUa1eknEy2U+GBqL9zKMZwhs+ar0jO0o=;
+ b=kA0DAAgBIK0uxlsQLOIByyZiAGbNpAWhOGenNaFhOIUMlPA7yyRKLWkMbVKJUk7qUvyEYEiZy
+ 4kCMwQAAQgAHRYhBE+PuD++eDwxDFBZBCCtLsZbECziBQJmzaQFAAoJECCtLsZbECzilnoQAMGB
+ nJx8Ba1ppeQtMtaE3ZgkPR1RG7phsMbOy9lxgZH0VY2amTYjm/1X9w2RfCd2jFaB2WU3DU5NSfu
+ yAG0puCNCrnm5DHOMaMzQLI6TDNN8/d/8wrvS9/D9G87gjB0as0qAUX0drNI2ySyTQqUXs45Vmn
+ k2XOfF6I1M5N4dWJlHEDQiY3I2yigNGgvVWyWHH0AKF9NqXJz5Wuz/+zWUTBJe/xsoQ8M4UeB4h
+ iaDffTKM4rsm37Q3Cc5zVLO2KWqN/6j7kTm0PjqGxuJ30fwuy10kKcwZs7AVwyDrH4BsNM8AapI
+ Rv/DelA4uclT/O9Jih8a5X7n6JmdxXLP0VkGkfAVGU3BOrYve9dAXR6nAurYMqyeQpFBnfYV9cl
+ Cwzzm0/BhxtwE2UEC4dsYNMSaX9Gm2+CuubRduiR5P8K1cTCfuMSiyg+4pN8R5WNHIFshdxYZ8+
+ uVX0O9aeygHDGOVIcolNjH1IPrepx9Ll5drrJ6NVgqFkNVsTdjHMnhbj1u+aFYrT6xqntgicUPJ
+ 8zMx3EDsOeFuHTGDBeL3/zPNNWksby5Vj6qyS3kRZ5M4rUsa2lHGQCVW4IIka7Xmhp0m2c98K9p
+ Sf2DNuJ0ElVmJWwsN4AcA3s6ws62j6HzrYzWD2ryQ0kj5z2Q93UXzhc/aV7QP09yTCq9EOXiYuR
+ +FeHO
+X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
+ fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-Convert devm_clk_get(), clk_prepare_enable() to a single
-call to devm_clk_get_enabled(), as this is exactly
-what this function does.
+To simplify the memory managment this series replace all allocation by 
+drm-managed one. This way the VKMS code don't have to manage it directly 
+and the DRM core will handle the object destruction.
 
-Signed-off-by: Yangtao Li <frank.li@vivo.com>
+No functional changes are intended in this series.
+
+PATCH 1/6: Migrate connector managment to drm
+PATCH 2/6: Migrate encoder managment to drm
+PATCH 3/6: Rename vkms_output to vkms_crtc
+PATCH 4/6: Rename to_vkms_crtc_state
+PATCH 5/6: Migrate connector management to drm
+PATCH 6/6: Add missing check in CRTC initialization
+
+This series have conflicts with [1], which adds documentation for the 
+vkms_output/vkms_crtc structure. when one of those series is merged, I 
+will rebase the other.
+
+[1]: https://lore.kernel.org/all/20240826-google-clarifications-v2-1-2574655b0b91@bootlin.com/
+
+Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 ---
- drivers/net/ethernet/marvell/pxa168_eth.c | 17 ++++-------------
- 1 file changed, 4 insertions(+), 13 deletions(-)
+Changes in v2:
+- Applied comments from José
+- Extract the rename vkms_output -> vkms_crtc to avoid useless changes in 
+  the last commit
+- Extract the rename to_vkms_crtc_state to
+  drm_crtc_state_to_vkms_crtc_state to avoid useless changes in last 
+  commit
+- Extract the drm_mode_crtc_set_gamma_size result check in its own commit
+- Rebased on drm-misc/drm-misc-next
+- Link to v1: https://lore.kernel.org/r/20240814-google-vkms-managed-v1-0-7ab8b8921103@bootlin.com
 
-diff --git a/drivers/net/ethernet/marvell/pxa168_eth.c b/drivers/net/ethernet/marvell/pxa168_eth.c
-index 1a59c952aa01..bad91cc705e8 100644
---- a/drivers/net/ethernet/marvell/pxa168_eth.c
-+++ b/drivers/net/ethernet/marvell/pxa168_eth.c
-@@ -237,8 +237,6 @@ struct pxa168_eth_private {
- 	struct timer_list timeout;
- 	struct mii_bus *smi_bus;
- 
--	/* clock */
--	struct clk *clk;
- 	struct pxa168_eth_platform_data *pd;
- 	/*
- 	 * Ethernet controller base address.
-@@ -1394,23 +1392,19 @@ static int pxa168_eth_probe(struct platform_device *pdev)
- 
- 	printk(KERN_NOTICE "PXA168 10/100 Ethernet Driver\n");
- 
--	clk = devm_clk_get(&pdev->dev, NULL);
-+	clk = devm_clk_get_enabled(&pdev->dev, NULL);
- 	if (IS_ERR(clk)) {
- 		dev_err(&pdev->dev, "Fast Ethernet failed to get clock\n");
--		return -ENODEV;
-+		return PTR_ERR(clk);
- 	}
--	clk_prepare_enable(clk);
- 
- 	dev = alloc_etherdev(sizeof(struct pxa168_eth_private));
--	if (!dev) {
--		err = -ENOMEM;
--		goto err_clk;
--	}
-+	if (!dev)
-+		return -ENOMEM;
- 
- 	platform_set_drvdata(pdev, dev);
- 	pep = netdev_priv(dev);
- 	pep->dev = dev;
--	pep->clk = clk;
- 
- 	pep->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pep->base)) {
-@@ -1523,8 +1517,6 @@ static int pxa168_eth_probe(struct platform_device *pdev)
- 	mdiobus_free(pep->smi_bus);
- err_netdev:
- 	free_netdev(dev);
--err_clk:
--	clk_disable_unprepare(clk);
- 	return err;
- }
- 
-@@ -1542,7 +1534,6 @@ static void pxa168_eth_remove(struct platform_device *pdev)
- 	if (dev->phydev)
- 		phy_disconnect(dev->phydev);
- 
--	clk_disable_unprepare(pep->clk);
- 	mdiobus_unregister(pep->smi_bus);
- 	mdiobus_free(pep->smi_bus);
- 	unregister_netdev(dev);
+---
+Louis Chauvet (6):
+      drm/vkms: Switch to managed for connector
+      drm/vkms: Switch to managed for encoder
+      drm/vkms: Rename vkms_output to vkms_crtc
+      drm/vkms: rename to_vkms_crtc_state to drm_crtc_state_to_vkms_crtc_state  to avoid confusion
+      drm/vkms: Switch to managed for CRTC
+      drm/vkms: Add missing check for CRTC initialization
+
+ drivers/gpu/drm/vkms/vkms_composer.c  |  30 +++++-----
+ drivers/gpu/drm/vkms/vkms_crtc.c      |  97 ++++++++++++++++++--------------
+ drivers/gpu/drm/vkms/vkms_drv.c       |  11 +---
+ drivers/gpu/drm/vkms/vkms_drv.h       |  21 +++----
+ drivers/gpu/drm/vkms/vkms_output.c    | 101 ++++++++++++++++------------------
+ drivers/gpu/drm/vkms/vkms_writeback.c |  22 ++++----
+ 6 files changed, 138 insertions(+), 144 deletions(-)
+---
+base-commit: 071d583e01c88272f6ff216d4f867f8f35e94d7d
+change-id: 20240521-google-vkms-managed-4aec99461a77
+
+Best regards,
 -- 
-2.39.0
+Louis Chauvet <louis.chauvet@bootlin.com>
 
 
