@@ -1,269 +1,128 @@
-Return-Path: <linux-kernel+bounces-302680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61FBE9601C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:32:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54FF49601C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 08:33:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB6B2B232F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:32:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BC7B1C22B79
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 06:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D121A148FF6;
-	Tue, 27 Aug 2024 06:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF6F1494CF;
+	Tue, 27 Aug 2024 06:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="HMUpKqiO"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2071.outbound.protection.outlook.com [40.107.244.71])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DHQ4K1JH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8961482E6;
-	Tue, 27 Aug 2024 06:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724740164; cv=fail; b=KnHb3U02LRWE24CbacnjsstW01syRhDXbyPkdjlqcr1l6xQM4Mr8L8dmiH7O5doCfYP250QelMfn6ZHQHNBAR5tg0hO4zVTt+zTCOf3M0eABC2Lxq21SQQkyf0A8kPQs+XGzN+LGu08D/YkFqWxHqvcGV7P1d6bjhLFmadbk0BI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724740164; c=relaxed/simple;
-	bh=WItSRT20Mi2GAVYZ7dcFFvHeFdvCZLuirAUy4SP9i2I=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=YwuI/gQKoqC8FTzX6370UV0CQ5eUqQ2BiQthDN1ulXvU/4VI4tAZolu+eLe3PSLsDl31W/BEgnMwzr6ibo3HGa/AfL5XsOrIcs78/djvfLlKZ+/43dGleT+bn01BAm1yK7863qmvYKKrPhH5GSbWwGWcdnY6I0zBEgjBT5yiczw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=HMUpKqiO; arc=fail smtp.client-ip=40.107.244.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JC3QIs/h4qW2l+2IogfnaNAXWCNkhXjfOEOicEbGbEn1hVwW0lMndbFFpGdI24gOC/pm9bDRxba0bxPeNvS6qstaf2lElEPw/RojTlERX1V3yTNL1FI70xy6rVTr3ObJ60IUKD2QgFfgrI9IKtRHM/Wg2M9vnkCeutrazwYOwyodJoe6cjTLFdS+la37vX5AFXqfntX+LZJmWQ9Rbz4OnTe6yc/hQR3jTgugeq/KDTy3MSqjROsGZRDZhneIsJAxd6CeB+snKGibTpITEoZuwHlK/m8IdxEbtHUU1+e/XxU4/n4tG9n0eJI4Wml/5Hvs4n8ezVKW/7LEGoWC7rQ0WA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jutqPppDTK2N0CIn9NX/VcMpxOovWEp8gAuxoM+J8BE=;
- b=cnlHe/bEA1K9/01e/hVzmtyHc76d3otXwVQHCcRgF5v/DyvPxAclfXCOJXXQFFwh9eaTAESa2iH3Ot+JlI3wPqt6eOoNFQz9uVZrjjuJz3taJo1hG45/NjDDkOgIixukbT8QIaz78xqidCkMJxTM+3yNlS+Vp4WyEB5X+tSanTRo1loX/2cENdq19qTWE1ZUYV48pL5Oqf2vx7UThOvRfbYBCdSU4erhj2dP1isZ2kGYiQmKlQa/RDtIHRuS7MIbbEupB/PS41NUGLboYL5y1fMlVxu+Oblm5VO6vY0zqHvX1wedrYBbvs3GtK8Bl1ZMGDzuHkguQdIdyKBwEMkXUA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jutqPppDTK2N0CIn9NX/VcMpxOovWEp8gAuxoM+J8BE=;
- b=HMUpKqiOajkdehRAY8xjFACmHtHBeaZeKKjM0IixbWMc4Ccof5IhXJ/giLjdZEjFlvW9dKgLJ/s0Koa+791M+ljJKk9rUYX1Ewv0y2Wu9zLML247Wp0mMV94GioEd/HslrX0oYQaHF2jYWUVNnemdGkeVkEztdFWUoxOt41b6TQ=
-Received: from CYYPR12MB8655.namprd12.prod.outlook.com (2603:10b6:930:c4::19)
- by CH3PR12MB8187.namprd12.prod.outlook.com (2603:10b6:610:125::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Tue, 27 Aug
- 2024 06:29:19 +0000
-Received: from CYYPR12MB8655.namprd12.prod.outlook.com
- ([fe80::7fa2:65b3:1c73:cdbf]) by CYYPR12MB8655.namprd12.prod.outlook.com
- ([fe80::7fa2:65b3:1c73:cdbf%7]) with mapi id 15.20.7897.021; Tue, 27 Aug 2024
- 06:29:19 +0000
-From: "Yuan, Perry" <Perry.Yuan@amd.com>
-To: Mario Limonciello <superm1@kernel.org>, Borislav Petkov <bp@alien8.de>,
-	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>
-CC: "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>, "open list:X86 ARCHITECTURE (32-BIT
- AND 64-BIT)" <linux-kernel@vger.kernel.org>, "open list:ACPI"
-	<linux-acpi@vger.kernel.org>, "open list:CPU FREQUENCY SCALING FRAMEWORK"
-	<linux-pm@vger.kernel.org>, "Limonciello, Mario" <Mario.Limonciello@amd.com>
-Subject: RE: [PATCH 1/8] x86/amd: Move amd_get_highest_perf() from amd.c to
- cppc.c
-Thread-Topic: [PATCH 1/8] x86/amd: Move amd_get_highest_perf() from amd.c to
- cppc.c
-Thread-Index: AQHa9/zsEf+g0+H19U6yFtwJGcW/qLI6pHnQ
-Date: Tue, 27 Aug 2024 06:29:19 +0000
-Message-ID:
- <CYYPR12MB8655396ADBB331E00D74C6BA9C942@CYYPR12MB8655.namprd12.prod.outlook.com>
-References: <20240826211358.2694603-1-superm1@kernel.org>
- <20240826211358.2694603-2-superm1@kernel.org>
-In-Reply-To: <20240826211358.2694603-2-superm1@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=6e8ca469-4364-4f75-b807-bd3d737230c5;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2024-08-27T06:27:44Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CYYPR12MB8655:EE_|CH3PR12MB8187:EE_
-x-ms-office365-filtering-correlation-id: 8524d856-3c0c-436c-d790-08dcc661952a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?PKQ5WSBkIdmx3DRCxLZMHAb1ykW7x1eKFTrdppIJNUT7S+rCDWJCme1gWjHb?=
- =?us-ascii?Q?ddX451arF+xYm32/dyFDZOfyD4mXqMK+7VRVqxU8QT3p3KxdEIwXs1YOlX29?=
- =?us-ascii?Q?Jy6n05Go5VW6uULLztDCGqumWxb7u+GWII5cMiLj5SKy92k0ObjQ935VYCve?=
- =?us-ascii?Q?R8b6oTxHtzfgk6YUoqFjhFtK24kDQ6fvI/K3xiO5CQEUMTgvQHhvNNJ5Fvdt?=
- =?us-ascii?Q?CkyEJrMBGl28E/jKD+AW4rajXdlOdrx6Jx5dDybFV97SYjDx7yZfU718LOUt?=
- =?us-ascii?Q?5/4GtFX57DetLdvbCK+kaxF1MCchMG3/8hCgqCjeSJeeb5wnshJdHuLhJaad?=
- =?us-ascii?Q?W3k2EGiMQXSRyCq8G+82DdBP1+CRaGm2FF541797HFs2u78Tn7upNv5YhS+A?=
- =?us-ascii?Q?rS9SFYaoSON1YanOCpsrDlIQaHnl6Lt7TA8v/UEDzAY79op7AaFYpoa2ldsp?=
- =?us-ascii?Q?rVjz+MhA2p3pfqa1OowPP7OVZ+qcmqRsLuHEt/JLu3Zh7n/oD0DvjnfKZTIc?=
- =?us-ascii?Q?ldSDPlBaTnWfwLww+lcrDlY8cWOnWV+voRZXKQdplKbl0o1hOjP9Ub+728nl?=
- =?us-ascii?Q?SdY6/58J1J3UulY4MuWQMrBcagW5yNmKUxSDy7K+F2Nmupop+BRlOZg5Mwlv?=
- =?us-ascii?Q?4zKtcFqjB/Hswvg3OjRMGsRvRhfcIGzzJDK/uXvMG3XV6cChHLMsZ5TeJ2pJ?=
- =?us-ascii?Q?pTGOhidUrUV5IOPuL+4GUBxVxKFV05IBbymmg/XwzqlN02gjE0hqy752QvVb?=
- =?us-ascii?Q?ZzaUsdObPVfNQyyF5n0btDKRPsECEUYFlYT/8P9eW9UhnnjADCMibMRVuczE?=
- =?us-ascii?Q?oEynFlYFhfQgB6FuIHp1/TnUjFWR2ANVSAk9/YIh+UwRRykkhn4mbBUkdj/6?=
- =?us-ascii?Q?UiSPKFTS8LPXnB4/GR37fNQw9PsXT8w9mLpvyQhIgx725cQi6OPzTEldZVbR?=
- =?us-ascii?Q?cmDk1IZCwQ9hxORaXqkPxCnmEldKqz4zIPb9IO0po2fUUAscjNd+dVWm/rcA?=
- =?us-ascii?Q?k+ArNsX5iYxdW1lPOAl7Y4yRaocbq8/82WuzcWBt1VHiHlxbJFGL4T3J3HdW?=
- =?us-ascii?Q?4KkJIljIoLqYf/bSdwKiWzSRUeGiA0kWIHshJRbOQzrL4GIlzaOttYvmVAlz?=
- =?us-ascii?Q?MoDS1zk7Y9ceYAPGPrVYPSuyA+cw/OgqstDbnjQQr4OtUGl2boNeThvlurKR?=
- =?us-ascii?Q?02+Fb1qdjJG8yzQyOqkFa4yjuByX8NLewm5KwwzicZmzRcoq5e00ZkqFKwVI?=
- =?us-ascii?Q?DNQdJnewA7qG/TQJ8gkXDc1nMk7F4nCACupL5K1P0CsAeDGed3aNh3nCy4WX?=
- =?us-ascii?Q?Pm/shVoYm7m7ajYit6wIL6Ot655rHOQ7LoAI0ZE+xCzSK7773mw+HC/oRbJX?=
- =?us-ascii?Q?WConOmUXBHm9Nbp7OPOucJOcCDCnzwtADBgdNkRGyMlCODUh7A=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8655.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?8keX0hhY2zuxs8QMMS/roDUMTuP+TNrh96AXCx7Z35aMMKwIgZNqvtJpJT1m?=
- =?us-ascii?Q?vzL94SMJYa/Cte/uWijfzoGZLB15g+zBiOKjvORMXnor08+yRKNXhO6V3/yt?=
- =?us-ascii?Q?cJ8ArFlQEVpIG937e2F7s+bIN0qja6fpP1oFOmaUHsXrWIGP35n8T1Kh1p6Q?=
- =?us-ascii?Q?ZJcZNLDbnqceAP62ZOgguVNJh+5GR9nUXAtInZAdbN2fti0uPr20PBBmQXet?=
- =?us-ascii?Q?+fNpCqb7tJqEy3dunPs8Xw1OaWN39DFHKI9SS85gV/qOlRoIN4fly5rqH3uS?=
- =?us-ascii?Q?6NQOVDUXMadJUgBBu3ALqC6PvHIarIjQW0LTZPz8luSKeLjxPztrh/7o1Fmv?=
- =?us-ascii?Q?KoMxIk/RevmTigA5hAFaYUYOknWAX7pUzGCCUgg8HJUC3RPVDnQXHwDKg/qt?=
- =?us-ascii?Q?jpuuLxOcodSf4PSTX8TkndBeJfkQ/5CwpA4YXYjR31e1dtPDhEnwUKo0QBdD?=
- =?us-ascii?Q?hrLpos7qvUcWoJRVy0DHNNUtT93mbaP5pLvwwxrQvLQJOi+fzJW4aV/sPQZp?=
- =?us-ascii?Q?vmiIsKnILoUHvPQ7Iv39CQA8BsGX51K5423a908UGcs2sMyKGKol+5aWizeE?=
- =?us-ascii?Q?rLHwZT4eMbmNEsbIZdZrSD23yTqcabqkPIb30DFlxrEdWUwEpuU8tssThcPS?=
- =?us-ascii?Q?X+NoPZ36KKQrN/8V0aKiwMLb3B6vr8afqf0MghhQh31gF+6Cxu0+H2lDZCH2?=
- =?us-ascii?Q?unuV1QvqlwkWtH/669zcyRJHBcIksZF3+rVMRxkcYeW4okMPfQpHhAeFxyO+?=
- =?us-ascii?Q?pp3X5T7RSvevUPYLQM34mn3WfhEt/jqaatStRqZiBV1F+hmejKJZpiqnfWSh?=
- =?us-ascii?Q?L5FAD+wf00Xaxiqmhd2AKgIBx2l3xCT6N0j0SkybAGVDoRv2NUCRWiFlK+wi?=
- =?us-ascii?Q?6rJ1BTQSlBilHSmk4K5iRqOk/MS7heDd1TNBJ74ktBzIPqJ7D6WN/1/C8Em1?=
- =?us-ascii?Q?fYZrpR9gISu8UJf6H3tQn8mv9ycqo5ezlQZT/IBGyByUbw2Nmnn17GJoBpev?=
- =?us-ascii?Q?iVGmReleU8in+NacXv4UQYDDZ6HJVdhcUq6+/mU57UHeyq74fAD1IO/ffDW/?=
- =?us-ascii?Q?EAbyZM58DzwU80HYY0Nb/6W4fprnhbbyFdtvVYTdV88He8pqbXVYkZUzZJVD?=
- =?us-ascii?Q?wxx8U/cmYKNLjf64WM8k/tlYzvT8+lFdqnCkzD3Kx9NZiOQizWMkkyqHW7v2?=
- =?us-ascii?Q?7ST+1oXlhi0Wlr/9D/oX0dCC6ubdth60EvHnItoAya/V7MTqsqDJ3PzeUQMa?=
- =?us-ascii?Q?uXyzYCpnjGtqGpQaXP+56f0aX4QZxGU6uM9+jloGfDmwy6gyok/O10Zt5gZR?=
- =?us-ascii?Q?RhFM371XnKAMaurLxDhdCIx3YzDAN8BH4eYLi5iTZwBgMsI1Y7kE0To/VlAp?=
- =?us-ascii?Q?vTeUvyfD9u9lrWTzxOoTYQTR4lgYxP/ez7Rt7Uhw9IMnik02GEyrBE+CsVFX?=
- =?us-ascii?Q?6yekpqQdC3rNHNFnztLqF4pIzABkNVbvlQcynp1fO7/Zk2xUdRlVtn6dwK/E?=
- =?us-ascii?Q?c01Bc4j5+DTnZPlFGtsv4blfuX/OU7g5igGDoZoVluj9SXmaHdOTV+0ZSWkq?=
- =?us-ascii?Q?W+PBlOzIk+KurA+/dXo=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A5C13DB99;
+	Tue, 27 Aug 2024 06:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724740335; cv=none; b=PvgMAApSfDBojdpFf592WHY6a33SDveRf18mqD5w1/MKPoyFc4J9cvYdRjVa6GUYCW+QcL6lLYLpBXPlZL5jxYaCXdGz+uyIBoh2qF/mFlTaI3p7JMQFDZP5fSd9GHiSWlSsKRitMC4bt25PBx+Uf39PqiPkHjMpk2JyYKLbRJ8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724740335; c=relaxed/simple;
+	bh=ifBkb4l5BhM2XKPPUFoMMHnfY0rA9sgsJx3aUbGwWiU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wkcs3VvWly+rXJ7PfTUSyP5dzoKhuGXkvNrocD2bZ6QkNJX76alDNKCeec9+YcLInd7W8pErIDS02F7RsGADQcVbV2SWKVDMbbYz60B2evLBaUgju/mghtdZHvm/DA2E+GgbXa8+xAWjhKtg319/SbO5EKFi545oKkJ4DE4036k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DHQ4K1JH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01303C58315;
+	Tue, 27 Aug 2024 06:32:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724740334;
+	bh=ifBkb4l5BhM2XKPPUFoMMHnfY0rA9sgsJx3aUbGwWiU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DHQ4K1JHf5n9/o1brIGLa4WJTmOr9cR8oiAWeFhcMhyacaZ1hi6L3KO23deZIVqI4
+	 hvzkDOiml3URIfvL7PQSYUzZcZP+NOmDspXm+9ZYkq796NX7MEVrd9gcC8QdsuQO4W
+	 5wGdzQmzvBrf0RQt9gxppim5LE6a1lsm3tKKY/SqJsMhoc4Myh48NEo2PWbwBhSvDA
+	 EGwTUKdVGutX/Q4Fs1mtFXHMelIfxCcfxGpdnPkckPqD7Lo+LU0LthyB64R3VDGChU
+	 Ck8z1/IrnhCucP77lfxK7d5bvIAk4qCw7PLwH3frH0ipm3OsBz3ukUMVA8Pju02cRT
+	 eI0MHaNJ+Q3JQ==
+Date: Tue, 27 Aug 2024 14:32:06 +0800
+From: Peter Chen <peter.chen@kernel.org>
+To: superm1@kernel.org
+Cc: Mathias Nyman <mathias.nyman@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"open list:USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	mika.westerberg@linux.intel.com,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH 2/2] xhci: pci: Put XHCI controllers into D3hot at
+ shutdown
+Message-ID: <20240827063206.GA879539@nchen-desktop>
+References: <20240712185418.937087-1-superm1@kernel.org>
+ <20240712185418.937087-3-superm1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8655.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8524d856-3c0c-436c-d790-08dcc661952a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2024 06:29:19.6369
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: JFgzLjR4Xgko/i/zuAcQzbQIFAX7WzYtBjRaVA0Fe0TKZNnTfa5yjFddtOAKjOrQOcQHi85aJKigVc6QyeQT1A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8187
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240712185418.937087-3-superm1@kernel.org>
 
-[AMD Official Use Only - AMD Internal Distribution Only]
-
-> -----Original Message-----
-> From: Mario Limonciello <superm1@kernel.org>
-> Sent: Tuesday, August 27, 2024 5:14 AM
-> To: Borislav Petkov <bp@alien8.de>; Shenoy, Gautham Ranjal
-> <gautham.shenoy@amd.com>; Yuan, Perry <Perry.Yuan@amd.com>
-> Cc: maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT) <x86@kernel.org>;
-> Rafael J . Wysocki <rafael@kernel.org>; open list:X86 ARCHITECTURE (32-BI=
-T
-> AND 64-BIT) <linux-kernel@vger.kernel.org>; open list:ACPI <linux-
-> acpi@vger.kernel.org>; open list:CPU FREQUENCY SCALING FRAMEWORK
-> <linux-pm@vger.kernel.org>; Limonciello, Mario
-> <Mario.Limonciello@amd.com>
-> Subject: [PATCH 1/8] x86/amd: Move amd_get_highest_perf() from amd.c to
-> cppc.c
->
+On 24-07-12 13:54:18, superm1@kernel.org wrote:
 > From: Mario Limonciello <mario.limonciello@amd.com>
->
-> To prepare to let amd_get_highest_perf() detect preferred cores it will r=
-equire
-> CPPC functions. Move amd_get_highest_perf() to cppc.c to prepare for
-> 'preferred core detection' rework.
->
-> No functional changes intended.
->
+> 
+> A workaround was put in place for Haswell systems with spurious events
+> to put XHCI controllers into D3hot at shutdown.  This solution actually
+> makes sense for all XHCI controllers though because XHCI controllers
+> left in D0 by the OS may remain in D0 when the SoC goes into S5.
+> 
+> Explicitly put all XHCI controllers into D3hot at shutdown and when
+> module is unloaded.
+> 
 > Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 > ---
->  arch/x86/kernel/acpi/cppc.c | 16 ++++++++++++++++
->  arch/x86/kernel/cpu/amd.c   | 16 ----------------
->  2 files changed, 16 insertions(+), 16 deletions(-)
->
-> diff --git a/arch/x86/kernel/acpi/cppc.c b/arch/x86/kernel/acpi/cppc.c in=
-dex
-> ff8f25faca3dd..7ec8f2ce859c8 100644
-> --- a/arch/x86/kernel/acpi/cppc.c
-> +++ b/arch/x86/kernel/acpi/cppc.c
-> @@ -116,3 +116,19 @@ void init_freq_invariance_cppc(void)
->       init_done =3D true;
->       mutex_unlock(&freq_invariance_lock);
+>  drivers/usb/host/xhci-pci.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+> index 4408d4caf66d2..dde5e4a210719 100644
+> --- a/drivers/usb/host/xhci-pci.c
+> +++ b/drivers/usb/host/xhci-pci.c
+> @@ -667,9 +667,7 @@ static void xhci_pci_remove(struct pci_dev *dev)
+>  		xhci->shared_hcd = NULL;
+>  	}
+>  
+> -	/* Workaround for spurious wakeups at shutdown with HSW */
+> -	if (xhci->quirks & XHCI_SPURIOUS_WAKEUP)
+> -		pci_set_power_state(dev, PCI_D3hot);
+> +	pci_set_power_state(dev, PCI_D3hot);
+>  
+>  	usb_hcd_pci_remove(dev);
 >  }
-> +
-> +u32 amd_get_highest_perf(void)
-> +{
-> +     struct cpuinfo_x86 *c =3D &boot_cpu_data;
-> +
-> +     if (c->x86 =3D=3D 0x17 && ((c->x86_model >=3D 0x30 && c->x86_model =
-<
-> 0x40) ||
-> +                            (c->x86_model >=3D 0x70 && c->x86_model <
-> 0x80)))
-> +             return 166;
-> +
-> +     if (c->x86 =3D=3D 0x19 && ((c->x86_model >=3D 0x20 && c->x86_model =
-<
-> 0x30) ||
-> +                            (c->x86_model >=3D 0x40 && c->x86_model <
-> 0x70)))
-> +             return 166;
-> +
-> +     return 255;
-> +}
-> +EXPORT_SYMBOL_GPL(amd_get_highest_perf);
-> diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c index
-> 1e0fe5f8ab84e..015971adadfc7 100644
-> --- a/arch/x86/kernel/cpu/amd.c
-> +++ b/arch/x86/kernel/cpu/amd.c
-> @@ -1190,22 +1190,6 @@ unsigned long amd_get_dr_addr_mask(unsigned
-> int dr)  }  EXPORT_SYMBOL_GPL(amd_get_dr_addr_mask);
->
-> -u32 amd_get_highest_perf(void)
-> -{
-> -     struct cpuinfo_x86 *c =3D &boot_cpu_data;
-> -
-> -     if (c->x86 =3D=3D 0x17 && ((c->x86_model >=3D 0x30 && c->x86_model =
-<
-> 0x40) ||
-> -                            (c->x86_model >=3D 0x70 && c->x86_model <
-> 0x80)))
-> -             return 166;
-> -
-> -     if (c->x86 =3D=3D 0x19 && ((c->x86_model >=3D 0x20 && c->x86_model =
-<
-> 0x30) ||
-> -                            (c->x86_model >=3D 0x40 && c->x86_model <
-> 0x70)))
-> -             return 166;
-> -
-> -     return 255;
-> -}
-> -EXPORT_SYMBOL_GPL(amd_get_highest_perf);
-> -
->  static void zenbleed_check_cpu(void *unused)  {
->       struct cpuinfo_x86 *c =3D &cpu_data(smp_processor_id());
-> --
-> 2.43.0
->
+> @@ -882,9 +880,7 @@ static void xhci_pci_shutdown(struct usb_hcd *hcd)
+>  	xhci_shutdown(hcd);
+>  	xhci_cleanup_msix(xhci);
+>  
+> -	/* Yet another workaround for spurious wakeups at shutdown with HSW */
+> -	if (xhci->quirks & XHCI_SPURIOUS_WAKEUP)
+> -		pci_set_power_state(pdev, PCI_D3hot);
+> +	pci_set_power_state(pdev, PCI_D3hot);
 
-LGTM, thanks!
+Hi Mario & Mathias,
 
-Reviewed-by: Perry Yuan <perry.yuan@amd.com>
+According to xHCI spec v1.2: A.1.2 Power State Definitions:
+
+	Software shall place each downstream USB port with power
+	enabled into the Suspend or Disabled state before it
+	attempts to move the xHC out of the D0 power state.
+
+But I have not found any USB core code does it, do you have any ideas
+about it?
+
+We have added the similar codes at non-PCI USB platform, but met above
+concerns. In fact, we met kernel dump that the thread usb-storage try
+to access the port status when the platform xHCI code has already put
+the controller to D3.
+
+Best regards,
+Peter
+
 
 
