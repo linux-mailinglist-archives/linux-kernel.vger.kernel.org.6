@@ -1,236 +1,191 @@
-Return-Path: <linux-kernel+bounces-303712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C3BF96141C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:33:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37A8A961419
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:32:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E310A1F2487D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:33:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E880A284887
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BC71CDFC4;
-	Tue, 27 Aug 2024 16:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1B51CDA32;
+	Tue, 27 Aug 2024 16:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Vm3Y+8NO"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011029.outbound.protection.outlook.com [52.101.65.29])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VNO7YGCQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD081C6F5B;
-	Tue, 27 Aug 2024 16:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724776381; cv=fail; b=NoTDMxUoYcaKOj9ZxqrFqs7TM2q63tlwLh7iP/4VZoyOep7jICiThrNhtbwuOBFgYqbFRF409Z09O84cmAMpkzG/AreaZ7XZAdlWPUZL0EmXbLlBu9vFtgyo2iBhBDoKx+RIXc7wrV5Q9XcKwvXTPi0LCxt/mt1x2XftjFUMFUI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724776381; c=relaxed/simple;
-	bh=ZddIDTyWtVJARtwbcCU47fBAjecGuT66rEZI3oUbGn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=f53Hi/LpH9Ywym/bsE/DSR+xmA3uAdSDSYEnyrblZDiZ7Ne0h12oWJUDCnX2N08TD4BXbn4BoHYDpGEfEFD21e4hTfNYqeSTQuIIREYMWvmg0pLVOhT2alYYVRXG/uXk4/tpUZllx3o0mznpnYmn1NHyHGGHzoMgFR7ZuU/Z9bI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Vm3Y+8NO; arc=fail smtp.client-ip=52.101.65.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=y8djOqhoyBITPgGLXXkhP1LWhLfVusxbDc2Bh1ObGQKFHksAmE4OWum/JdRslcFcLbh3Dzm8p19JyZUg+OSZVn9kyfJjwEXztkOirFg4f6f11fym7IwNgHC6m868VfL9ujBdDPAMza/6LCzST0UsZAItNp1VIn570kW3PyKk/+qgu8XIdAcFbHHS0qD2cM6JZc4INcxu/YS7H80FHP21+ECm25Zow1LPXREpMqa/FRHXLTcbLQKVe8g/jAQmjZ+mAXRb5z13FhNjXwDplnOpF2Kkk4QgH9Wnq0lwELVya/09s6bIHm4IrkcMSKkwkKC6SaJp8+4dU9b9mMTHkOLUsQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Wi8S8/Lpc+w3tYxJry9AvKL+qOaRdti9qFEpSIxz+CY=;
- b=AwB/QNW/RnqjHEozqZa7bpeWZs/A5qEPf9LtkRbzAqJbIw13jKWcVS0PE2dNGAbqd1FjT/SLh6djmF+0RkS2Ioo/AtlSLmuAh1APjyiVKpSSpnjnHSZy9js0FmW3tQI5ABNLX6YswvdkLiRwWHh7HsfBRpYIv1uak4C+Lalsxqeuz8Jx/yVNAP19jrv9gk25Lw85+3Huou21/ogy/Gh7KWV5IQ/SXypSqQlUp44XOpazyFMnHn7/6I2ZJs4xXlwWeoe0eRFBnkUtKwFdbSXyIc8RBCq0oONjniGBFjVbvPPf2+2K+LKKOKe/xaTfinOzLvPxTrOagg01YXypaAY9DA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Wi8S8/Lpc+w3tYxJry9AvKL+qOaRdti9qFEpSIxz+CY=;
- b=Vm3Y+8NOzVQhGgjQc8FKaAiX+h726VBwGxKGCU7uMqR2w/rn23Rial8XCu+U26tVzr9aspOSRWDs0kM7kY8Bvsla3s25rdKQwU4N6J7ObFEar0omNPGfRVh+IbrnQyRwB6GhXLuZ78MKzgh/1HCf+hvXwPz8DslUuOlrVKIGA4bbvk3ta6AD/a098JYawSYTR43d1UI+1FgCoF/cjQnnPDrJaeOSTVs8JOqicJa3NDAbJXbuF1F5oAX/Q1VYH8e1/PZkrtgncNZ1Cep0cJrsGryfEEGqOPQNyHd7LgqsbTcW1bN/4D7EVE8qHS/2reburLLGbJtmr5a+F8iu1zQ0mA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PAXPR04MB8444.eurprd04.prod.outlook.com (2603:10a6:102:1db::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Tue, 27 Aug
- 2024 16:32:54 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7875.019; Tue, 27 Aug 2024
- 16:32:54 +0000
-Date: Tue, 27 Aug 2024 12:32:42 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Olof Johansson <olof@lixom.net>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev
-Subject: Re: [PATCH 1/3] dt-bindings: PCI: layerscape-pci: Replace
- fsl,lx2160a-pcie with fsl,lx2160ar2-pcie
-Message-ID: <Zs3/qnkcSl4pQQSg@lizhi-Precision-Tower-5810>
-References: <20240826-2160r2-v1-0-106340d538d6@nxp.com>
- <20240826-2160r2-v1-1-106340d538d6@nxp.com>
- <20240827-breeding-vagrancy-22cd1e1f9428@spud>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827-breeding-vagrancy-22cd1e1f9428@spud>
-X-ClientProxiedBy: SJ0PR03CA0176.namprd03.prod.outlook.com
- (2603:10b6:a03:338::31) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C6419D074;
+	Tue, 27 Aug 2024 16:32:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724776369; cv=none; b=pDt5LJe688R1bAlgenxrDWCDYt7aXdAW9bujNJ41HCu22aUaZzohjAePXGUA9Oz8KhRdzTnCXX53H9nTitNgx48u7vcEKgrbhvHekHbZaOqri8gLH9kKfFStgW0nMNj21ka2IhPxuD2V2eFGmxGLsqlz5qkuo8HAM/xvHa4FxEI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724776369; c=relaxed/simple;
+	bh=UWasNlc54W1BHwFGH/q2jps6anYu8yLxqPLhNlKOaOw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XzSRMO38GEg0oEuER1kV78WgJY/ARA3daVLSvIjsh6kXO5NoBeBWlGEQxqfLDMO+1QjOPXKIAC0F/MhgMAAMy0LEwqn6V4CHKuNJbqMu94U8EnAudOZefA/sludAZ3RD7uNYojcDUqFNe6Re9qC+4Ads4p02CFjBxPe8XuNaMFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VNO7YGCQ; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724776368; x=1756312368;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=UWasNlc54W1BHwFGH/q2jps6anYu8yLxqPLhNlKOaOw=;
+  b=VNO7YGCQMjA2N00hgbucYYGlpdiv7gFyiHOIc9PuUhph2nRay3H7cijT
+   53DmdtoabKg5mbOp2uFhdiziuvfE3IsZQrDOmH83+ZnMY/9UoMtIsQ824
+   pGeXtrsqSGWJxeZ3gLZDqkeGEkxAEPsnaZNp4SU4WrJhkPhgCJdV1S43p
+   ctcZxCsv4zOnUZ9WJ0sUy1/EvuNRiP4qfpO33Kb6+Hx21JSODmPYQ94n9
+   k/OnA1ThdG6aJPGio/ladrtVE/0We5Ob4WXsm6hQJcxfHJq0jBrOx0LOz
+   PFb/W42i0dhvaSGJBjSbzBRtXCZHS7x2HP9fJ4QrIOuWuOJ2vx53UIQ6d
+   g==;
+X-CSE-ConnectionGUID: vundmbgJT2SxUwcdKhMDOw==
+X-CSE-MsgGUID: uPJjy7dtTIO4aMxaGk7F3A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="23448504"
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="23448504"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 09:32:47 -0700
+X-CSE-ConnectionGUID: b8XDM3wTReyzNPyQBYvNTQ==
+X-CSE-MsgGUID: epHKnMABQkuJZjqCwmY6MA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="63084795"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 09:32:46 -0700
+Received: from [10.212.83.97] (kliang2-mobl1.ccr.corp.intel.com [10.212.83.97])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 43D3620CFED7;
+	Tue, 27 Aug 2024 09:32:45 -0700 (PDT)
+Message-ID: <a530f6de-3a89-47fc-bc4e-ea5cc57ee006@linux.intel.com>
+Date: Tue, 27 Aug 2024 12:32:44 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB8444:EE_
-X-MS-Office365-Filtering-Correlation-Id: 28f5e010-01a6-4405-f832-08dcc6b5e548
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|7416014|376014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?F9KNHskxWlsE7KOZ3WrFYkzqgQnnWGgqJfG3+Nb7nXIuznnL079HtG8MXZRV?=
- =?us-ascii?Q?J9xD/VAkQBKZlCl9hz9LKJGAOSc5nsqI9ImxhTd6TWfu3peFjB1PLSktI8fe?=
- =?us-ascii?Q?SbeFrf933HPFXqoKGnV/CXXx0hNL2EqsZzC++6wgnlQBUS/ICq3NHsyT0MDE?=
- =?us-ascii?Q?BONhotMhAqN4fV+/kSdZFsp/g4uZC0V7tkRI8cPniTY4aVSRX6GxBje3FrSQ?=
- =?us-ascii?Q?oSfhwolAMeuRUY5D5pHB5+n3CBteJyfBgaY678es2a+ettBN0ZiYv4bXHLo1?=
- =?us-ascii?Q?k0mERr9E4Uv+1UTl0m2FR1+mggYKlswwwRMmzH71SXr5TYdXbOaMCFsY3G5C?=
- =?us-ascii?Q?egTzjY+Ee1xIJ3VO5D75qR+iyAIKzTGi+0yov5vpicelkyFuU/RbKrhlDPCS?=
- =?us-ascii?Q?er/Zwz3huoRenqeFIjuxE94vqkUXhPfjGzvHbtLjgnuS2SIFhywXfWHd7bvH?=
- =?us-ascii?Q?6VVMPsD6QmOExCk4UVhMiY0/CAxe6mletoNb+uh6shN/47V32eUs7hHDQmqV?=
- =?us-ascii?Q?eWVHOOuQDRYEvlkJp5n5wuzXnS8bppUPHtEAtAKPfVf+LOrGRzVC+MrDMV7k?=
- =?us-ascii?Q?QNh5Y8O387OkOIo5q6DYD6fitchaHd2XFmUKNSFXr3c3MYIJmzK4iGCkMY/u?=
- =?us-ascii?Q?4SLoJzIk+hqunaMIuA3CZ1mBKrEzrljRVg4XLkjGCj7o6sdApeVnkr2NjT5k?=
- =?us-ascii?Q?fTwMiPkAKvLb9GZELiLXnRNErtnyLCcLFVK3wmYcRKrjlO/2vo6aeP62548T?=
- =?us-ascii?Q?2YiG8qpsX90350ds838zN695u0x2hbrWVPem2VPHk7xOUeGNr3bFfNbYLYHj?=
- =?us-ascii?Q?2Hczq16hrjkbDukPO2eUUOulaSdwH95nY45epJdJdCy6hr63Yc/PfLX7SpN+?=
- =?us-ascii?Q?gbV6HglWVgCaxTunv3dc0qFwiYoPvsDgKLoO2S6Iihj+pFXHTctXvDsrQQpo?=
- =?us-ascii?Q?LEIU3047Qmkx2+8+GXyQk3LCKFdj5FALC92htb3T0TBQqAqhqLSJq80Ozds8?=
- =?us-ascii?Q?vgSp0OSRNggC9k0I3gGANInYdxJ8GJGcoHItyV/dI0TcVUh+NyhwTSSWxGn2?=
- =?us-ascii?Q?gg0pYRHA66gUvHKB1algks9HXxHPs2BwiL6AjWRFBSDdL1PTiYWh9ijWVb2A?=
- =?us-ascii?Q?d7PbT8HhGqRBL+tkKlb4EYtBDAx9PAod4b8UZPManC3gThD1TmdA3kb6Tt/2?=
- =?us-ascii?Q?KlChw3oiCN134hS509C+EJVtJvkZ+pavqUQwcsBGUmBndKZkVwP9Q1HJWWPG?=
- =?us-ascii?Q?ug1E1Es0ok6uLOR+yxK9eRAGnqeGDxqV/3q09DUwk8UwIsmxyf0U2ZkfF+Kq?=
- =?us-ascii?Q?D11+Gzy38+SM9gJ54c2uLGYWYm7xkisvxb8MjQQ7glzZ21Re5HEBFbC6vDoF?=
- =?us-ascii?Q?NUenJxyakKOR6Xr3Gr0/X6FR41R3GzaN6HIm664IOKX9qNaefw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?LQeMg8ktNrcd9N/JEeZ0EH9t85icJ9tg/svHekIOW/lw9PM/Xo+uRBWmWI67?=
- =?us-ascii?Q?dteBp1jAgmX2fR5tkc+p4sbVJPQyjrSy4ncON4sWl4D0UnM+bUfHLwK1zkL7?=
- =?us-ascii?Q?UQgJ1Bz3VyBlKG+RhH1Tx3pnmDS6Po2eXcx6MJCStWtdtLLdva0l0lE+VJ1S?=
- =?us-ascii?Q?g8eEZ9/YlihLsdjI13i+/9eIIkcfKyJYhsD70HLUBEaoV8j+wnUc3PFQRKxf?=
- =?us-ascii?Q?Oqh8v878gRwIQqUNxcqmAXp8mLvvXKQRa0NTB4cjKQj68EbNlr0hZQ9vKwB2?=
- =?us-ascii?Q?tAkWYmeMehb7XBV9d79t/K0m2OPfVB8h8aNWzTF6wxIdLF4yG0ag//bjoIHV?=
- =?us-ascii?Q?8TYc08eX5MMRQnB0bRk8Vz53THu0VkJOxnZrvwiCIyVPK8gxnusclLBEPmDT?=
- =?us-ascii?Q?OrEtRwZ8mYHeJanoXrsEaWNxIcuV0v0clXs8L9bNUUjcyxBSMy5lhmO0PgNY?=
- =?us-ascii?Q?tGGvlGqbQ0npfY44KAvYpFp71C0VT5Wl/vue5VoxGrxxaA2szt39xF5ykCsm?=
- =?us-ascii?Q?AftjWHk3SjZ4q7oeBkqdukOyF9mZ7zx9l2KZg56pl5UsUz67EVmrvuIxVdo0?=
- =?us-ascii?Q?8GlMm1nwQkN7vA8WTfDkIdcARGBYs/Yl7AI62lT0TRmyDE7M+0jQHCR214Er?=
- =?us-ascii?Q?lGIFy8qYuCDvWayCyetrdZ0kC5L2ULFgxR/YvXLwiNa4Ee8eDvbPis2DKZ+O?=
- =?us-ascii?Q?2wJbcUoHXR4nX8OEc2KYVS4eu65EzM5A+x3neAOZ+krxl5vOXN0DZSg4Ctvb?=
- =?us-ascii?Q?c72A0DEvUQhtk/R8kyoKrifUkbjSHLa5qCjm2ii/+oA7noaatFUQsMTJxWuw?=
- =?us-ascii?Q?p9WUuf5HDdO7Y1NaVqTpAILVecamIuREMVhaQXQDpACz7JuLNMtqq1r3LFBa?=
- =?us-ascii?Q?YAcreKQlPYVp9w8zSQHKUA67ZK3tLkN9VB9Z38cP/DnUSfSk5Dbzc6pqNbMO?=
- =?us-ascii?Q?oNzykcwz5vDriZ7KyOMnTwldQ9wUpZGOl0tstrTlTQVXltJItKqpNa8Z01I7?=
- =?us-ascii?Q?RQyG6HZcSVxRXmgaPTpps5eqxhpMWzqMQOCINn+Y53cBtUkhXHFfaDotn4jh?=
- =?us-ascii?Q?gyxV5h59Pf2G1nrE8SwXxJUjI7bhINYGjLOZzF3rkR93a0R3Ye40TEPnkiUL?=
- =?us-ascii?Q?ZpY1aO/WBxquc/pZA0X7JsSa/J22Rvo+9+05ljNLliNC57k7ICaiG5zayoIL?=
- =?us-ascii?Q?mZPExT/z4urKu9RTis8RGIYelWPI79kjWI0Qafm/CA+nwjs8614j9/4MO07j?=
- =?us-ascii?Q?TvUDkb0uAVEgsNaEoK1dEzrth6PgZ5zTDbBOX8A+x6DtUQ843PZBgbeVg7Sx?=
- =?us-ascii?Q?/dZY/4cs84PzYh42F31klMntxRPV4ek2tvhc+kN3sDXm+ZpKKElF6IyoHI8f?=
- =?us-ascii?Q?NwSqnnmhSr+1rQCqig0F2td/GxbZhEbrug7p3bim/98W/SLjywFcklBrMO4D?=
- =?us-ascii?Q?cDW2njuJhjaUAJegr+PzXLJZxBHnfC8bCxT5KYlZIm4ixhAiXrBD609BxE/Z?=
- =?us-ascii?Q?x3pxCO7H/1GSdtnVVbfsXwYfafDZ1KUBAs3Ez6J8L/5IRYNmD+QgSYY/cJPj?=
- =?us-ascii?Q?eKGTewaS9sLWH87DrbE=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 28f5e010-01a6-4405-f832-08dcc6b5e548
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 16:32:54.1408
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qukaG9VD6SPmu3bRpUF9yfzcE9MYFnY89gqGjPxevUJjTZjKhmFTFSEUN+4Q4BvmwMwKTQZsW3oBXdJKfIjPDQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8444
-
-On Tue, Aug 27, 2024 at 05:14:32PM +0100, Conor Dooley wrote:
-> On Mon, Aug 26, 2024 at 05:38:32PM -0400, Frank Li wrote:
-> > fsl,lx2160a-pcie compatible is used for mobivel according to
-> > Documentation/devicetree/bindings/pci/layerscape-pcie-gen4.txt
-> >
-> > fsl,layerscape-pcie.yaml is used for designware PCIe controller binding. So
-> > change it to fsl,lx2160ar2-pcie and allow fall back to fsl,ls2088a-pcie.
-> >
-> > Sort compatible string.
-> >
-> > Fixes: 24cd7ecb3886 ("dt-bindings: PCI: layerscape-pci: Convert to YAML format")
->
-> I don't understand what this fixes tag is for, this is a brand new
-> compatible that you are adding, why does it need a fixes tag pointing to
-> the conversion?
-
-Because previous convert wrongly included "fsl,lx2160a-pcie" here, which
-already used for mobivel pci controler, descripted in
-layerscape-pcie-gen4.txt.
-
-This patch fix this problem, rename fsl,lx2160a-pcie to fsl,lx2160ar2-pcie
-
->
-> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > ---
-> >  .../bindings/pci/fsl,layerscape-pcie.yaml          | 26 ++++++++++++----------
-> >  1 file changed, 14 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/pci/fsl,layerscape-pcie.yaml b/Documentation/devicetree/bindings/pci/fsl,layerscape-pcie.yaml
-> > index 793986c5af7ff..daeab5c0758d1 100644
-> > --- a/Documentation/devicetree/bindings/pci/fsl,layerscape-pcie.yaml
-> > +++ b/Documentation/devicetree/bindings/pci/fsl,layerscape-pcie.yaml
-> > @@ -22,18 +22,20 @@ description:
-> >
-> >  properties:
-> >    compatible:
-> > -    enum:
-> > -      - fsl,ls1021a-pcie
-> > -      - fsl,ls2080a-pcie
-> > -      - fsl,ls2085a-pcie
-> > -      - fsl,ls2088a-pcie
-> > -      - fsl,ls1088a-pcie
-> > -      - fsl,ls1046a-pcie
-> > -      - fsl,ls1043a-pcie
-> > -      - fsl,ls1012a-pcie
-> > -      - fsl,ls1028a-pcie
-> > -      - fsl,lx2160a-pcie
-> > -
-> > +    oneOf:
-> > +      - enum:
-> > +          - fsl,ls1012a-pcie
-> > +          - fsl,ls1021a-pcie
-> > +          - fsl,ls1028a-pcie
-> > +          - fsl,ls1043a-pcie
-> > +          - fsl,ls1046a-pcie
-> > +          - fsl,ls1088a-pcie
-> > +          - fsl,ls2080a-pcie
-> > +          - fsl,ls2085a-pcie
-> > +          - fsl,ls2088a-pcie
-> > +      - items:
-> > +          - const: fsl,lx2160ar2-pcie
-> > +          - const: fsl,ls2088a-pcie
-> >    reg:
-> >      maxItems: 2
-> >
-> >
-> > --
-> > 2.34.1
-> >
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] perf/core: Fix small negative period being ignored
+To: Luo Gengkun <luogengkun@huaweicloud.com>, peterz@infradead.org
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+ mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+ irogers@google.com, adrian.hunter@intel.com,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240821134227.577544-1-luogengkun@huaweicloud.com>
+ <20240821134227.577544-2-luogengkun@huaweicloud.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240821134227.577544-2-luogengkun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
+
+On 2024-08-21 9:42 a.m., Luo Gengkun wrote:
+> In perf_adjust_period, we will first calculate period, and then use
+> this period to calculate delta. However, when delta is less than 0,
+> there will be a deviation compared to when delta is greater than or
+> equal to 0. For example, when delta is in the range of [-14,-1], the
+> range of delta = delta + 7 is between [-7,6], so the final value of
+> delta/8 is 0. Therefore, the impact of -1 and -2 will be ignored.
+> This is unacceptable when the target period is very short, because
+> we will lose a lot of samples.
+> 
+> Here are some tests and analyzes:
+> before:
+>   # perf record -e cs -F 1000  ./a.out
+>   [ perf record: Woken up 1 times to write data ]
+>   [ perf record: Captured and wrote 0.022 MB perf.data (518 samples) ]
+> 
+>   # perf script
+>   ...
+>   a.out     396   257.956048:         23 cs:  ffffffff81f4eeec schedul>
+>   a.out     396   257.957891:         23 cs:  ffffffff81f4eeec schedul>
+>   a.out     396   257.959730:         23 cs:  ffffffff81f4eeec schedul>
+>   a.out     396   257.961545:         23 cs:  ffffffff81f4eeec schedul>
+>   a.out     396   257.963355:         23 cs:  ffffffff81f4eeec schedul>
+>   a.out     396   257.965163:         23 cs:  ffffffff81f4eeec schedul>
+>   a.out     396   257.966973:         23 cs:  ffffffff81f4eeec schedul>
+>   a.out     396   257.968785:         23 cs:  ffffffff81f4eeec schedul>
+>   a.out     396   257.970593:         23 cs:  ffffffff81f4eeec schedul>
+>   ...
+> 
+> after:
+>   # perf record -e cs -F 1000  ./a.out
+>   [ perf record: Woken up 1 times to write data ]
+>   [ perf record: Captured and wrote 0.058 MB perf.data (1466 samples) ]
+> 
+>   # perf script
+>   ...
+>   a.out     395    59.338813:         11 cs:  ffffffff81f4eeec schedul>
+>   a.out     395    59.339707:         12 cs:  ffffffff81f4eeec schedul>
+>   a.out     395    59.340682:         13 cs:  ffffffff81f4eeec schedul>
+>   a.out     395    59.341751:         13 cs:  ffffffff81f4eeec schedul>
+>   a.out     395    59.342799:         12 cs:  ffffffff81f4eeec schedul>
+>   a.out     395    59.343765:         11 cs:  ffffffff81f4eeec schedul>
+>   a.out     395    59.344651:         11 cs:  ffffffff81f4eeec schedul>
+>   a.out     395    59.345539:         12 cs:  ffffffff81f4eeec schedul>
+>   a.out     395    59.346502:         13 cs:  ffffffff81f4eeec schedul>
+>   ...
+> 
+> test.c
+> 
+> int main() {
+>         for (int i = 0; i < 20000; i++)
+>                 usleep(10);
+> 
+>         return 0;
+> }
+> 
+>   # time ./a.out
+>   real    0m1.583s
+>   user    0m0.040s
+>   sys     0m0.298s
+> 
+> The above results were tested on x86-64 qemu with KVM enabled using
+> test.c as test program. Ideally, we should have around 1500 samples,
+> but the previous algorithm had only about 500, whereas the modified
+> algorithm now has about 1400. Further more, the new version shows 1
+> sample per 0.001s, while the previous one is 1 sample per 0.002s.This
+> indicates that the new algorithm is more sensitive to small negative
+> values compared to old algorithm.
+> 
+> Fixes: bd2b5b12849a ("perf_counter: More aggressive frequency adjustment")
+> Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
+> Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
+
+You may want to Cc stable to back port it to the LTS kernel.
+
+Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
+
+Thanks,
+Kan
+> ---
+>  kernel/events/core.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index c973e3c11e03..a9395bbfd4aa 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -4092,7 +4092,11 @@ static void perf_adjust_period(struct perf_event *event, u64 nsec, u64 count, bo
+>  	period = perf_calculate_period(event, nsec, count);
+>  
+>  	delta = (s64)(period - hwc->sample_period);
+> -	delta = (delta + 7) / 8; /* low pass filter */
+> +	if (delta >= 0)
+> +		delta += 7;
+> +	else
+> +		delta -= 7;
+> +	delta /= 8; /* low pass filter */
+>  
+>  	sample_period = hwc->sample_period + delta;
+>  
 
