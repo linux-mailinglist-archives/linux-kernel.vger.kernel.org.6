@@ -1,230 +1,73 @@
-Return-Path: <linux-kernel+bounces-303308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ADD7960A88
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:34:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77EF1960A8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 14:35:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03073283DE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:34:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15A48B2425C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 12:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36FD51BCA19;
-	Tue, 27 Aug 2024 12:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C691BD00E;
+	Tue, 27 Aug 2024 12:33:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="IcQnMc08"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gJ3+xc0T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E180B1BCA1A
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 12:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434D31B3B0F;
+	Tue, 27 Aug 2024 12:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724761977; cv=none; b=tpvJdGMlMHJ4VFOQ+Pf3pXSrYzefWuWrPo3eog9YENPO2QTCt7cFnT0g89oT+OXatMm/PnQElMYBGrpIw98+hhSMByKEnWnb2il51EECVpsR32defhy8PITiI+7cRdA74tEor3qUXUV5am+AtWY09SoN+kJC8ks7RKCr++x76mg=
+	t=1724762033; cv=none; b=u+Sy29dgtoRzN3JMctG+Rs9LpAF4I3p6hQeQ7WF1LzJj1iPnyu9Ja8J5F/syryVrToIhCMUBkE0Zf3CQvlKb90eN7BoWHU8T+txrrixcHkLKO5VRLU9mFXTTeesubmAz5S6oXZmkgIODlxKLMheoHW5+gOdrkGHidTDhVEYbiRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724761977; c=relaxed/simple;
-	bh=LiQo0dIQMk7M3bHa0opvBkYq4ByVUwoYrG6oVZ/Bk8c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IMvYqc3XmmLF3F5hGJPrWtp0M+ptxVZqWkZrLZVfElyCgJipoF4sD2gAkmLXm1d+yoq2fS9y8YLQgAANawyNNqKgSgkhFZTus+puajppJfqey5uxU1u2MWN3mac9fiw8o590dzlb7+oT9Retan3Pk7eBokp6ZmK1I/Vo5cQomfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=IcQnMc08; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5bebd3b7c22so10359763a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 05:32:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1724761973; x=1725366773; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=y+8zmpgoxrDLbCqZtH6gEBqxTqDF5Ns65h0U7300PsM=;
-        b=IcQnMc08NA3XNXX2i1hA2fZN/ycQMaXttC83gkKvAH8jl7+IntgUnWXapNyr0eXSVK
-         8WYE9bOxTtKcNmevPz5VZ/BCkyrKD1KFVsqoCHUZvyvJx2lb47D3mmPIJUi6EKafLlTJ
-         N+aY97sZk9eBvfHpkLLxMUuSxGraBtIB+mV20stiXY2Jj7iMrl0vV/v7njcgEWz6qTkO
-         sSPoC6Emds7gMuyKkoPUb74oEAx8GfIId48v+ophxkSvZIp5HO+E8heOhC7YV738JC/m
-         VVOxyX39DudwvkoGJMO/ACdUnhYBDdXR8cD1Wd297T4VI6gg81ONmQ55onyFeud0C9/d
-         XJ7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724761973; x=1725366773;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y+8zmpgoxrDLbCqZtH6gEBqxTqDF5Ns65h0U7300PsM=;
-        b=Kns0mzTpdQyxW+FhtF2pkJxoJZnJztdC+GkDSPQlFD0I9eHer4G9o8HGLlV9KmCj7Y
-         fRe7BvkEJyGUGoThg581MC8M/YtdDTW9+0UnKEM2C5+FM4L7qjtnmD4IG7bjPCi7xODs
-         pe5nyrP6Bj1Azq35n2IoD7+YBeEE3AQp0wE0Zi+0qHR/S2i+KfIcAnzLvWK9PNDA0ZP+
-         OFkVqC8fgfsIZOxfta1jDb5mqz/oklOjiGt+uQn0u8s2iXvgMxYbH53WBMnyPl+u2tCE
-         S+GMp2LNr2CK62w/jTGLpZZPZUEAar4E39he/8JHYyHj2Hi/MMG4lQqj0UFdYhTGVjRr
-         EVmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUuRqTXv2cHhFv7PlhIHkVLX11xd229gl6Yq8Fkgq6QWeX3ZcCiSpUFiv1a9VCaBdXC5DEKFTbirsbUwzQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8f71obbX6Ssnif86HhsSyrgCaGO/y2aeJ+o1M1NEBtyazdbhj
-	0owPBK1DZkwGnMX6VZnmQpUTUMXHutKB/mKcja/gy7OOWStF4R1SNl2HJAvdYTE=
-X-Google-Smtp-Source: AGHT+IF0YQF/+Km2Nk6dAVkx3nFNSFyP0k8EfYjfWpB5kX5bCXbFaKsLnQfAOxMeQ48X0I85aPkxKg==
-X-Received: by 2002:a05:6402:2683:b0:5c0:c6a7:1c58 with SMTP id 4fb4d7f45d1cf-5c0c6a71cafmr729455a12.15.1724761972930;
-        Tue, 27 Aug 2024 05:32:52 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb481fb8sm961543a12.87.2024.08.27.05.32.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 05:32:52 -0700 (PDT)
-Message-ID: <4823173e-b024-482f-83a3-560c7abd888c@tuxon.dev>
-Date: Tue, 27 Aug 2024 15:32:50 +0300
+	s=arc-20240116; t=1724762033; c=relaxed/simple;
+	bh=lDz4ISBXWZCRlL/3unK7Hse04bz7RKVPVPVtS46cgMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=twC9b7PhSHQf7R1P3+qddvi3x4G0AtaN3XRizafUyLxqoVLHJ9Tt2kyTQYAXqkzahjyagctpmwFqZnxnHPInAzbNDL8216RiAogqVkP5L4rnZadOjU1aQkRgTsBdMWWy+EvbRbMJe8efl/2WO/vWv0n7pa6mZmmXQkxY7SwVTkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gJ3+xc0T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E69D6C61042;
+	Tue, 27 Aug 2024 12:33:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724762032;
+	bh=lDz4ISBXWZCRlL/3unK7Hse04bz7RKVPVPVtS46cgMQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gJ3+xc0Td318s/3ReSPtyBnJasCSAYV3s4/vS+ZGK/6gmRbJMz68oVD5FdT/i4We2
+	 nedDkvlnoap8QcF26kJENeQe3WQGpaPQWmdUinbgSLmy7Ck7q+lCIgqs9Nf8Q42l7r
+	 LuF2i981vDOoB102SRf93nhqB5m93ktaX/pnvSv7ihZ0d8P1hWK5kdSOMO5MqvzyOp
+	 OfzxSD6ts6NHOARWUPx7ykt3e+qMTNfzWSBRu7NCOGmjy6nClRWNBc44QlOfGDzra8
+	 3nyx6Zuzr3u75E0bp329u3zP418Feggn5PtxGWlzLdzO232LOB8cpCeR3qFgiDfuBo
+	 ZXmgGqCCyw4JQ==
+Date: Tue, 27 Aug 2024 13:33:47 +0100
+From: Will Deacon <will@kernel.org>
+To: Dev Jain <dev.jain@arm.com>
+Cc: shuah@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, Catalin.Marinas@arm.com,
+	broonie@kernel.org, ryan.roberts@arm.com, Anshuman.Khandual@arm.com,
+	aneesh.kumar@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/arm64: Fix build warnings for abi
+Message-ID: <20240827123347.GC4679@willie-the-truck>
+References: <20240827051851.3738533-1-dev.jain@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] watchdog: rzg2l_wdt: Power on the watchdog domain in
- the restart handler
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
- "linux@roeck-us.net" <linux@roeck-us.net>,
- "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240826152529.2080248-1-claudiu.beznea.uj@bp.renesas.com>
- <20240826152529.2080248-4-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB11346A223DA7462799B9D103786942@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <TY3PR01MB11346A223DA7462799B9D103786942@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240827051851.3738533-1-dev.jain@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Hi, Biju,
+On Tue, Aug 27, 2024 at 10:48:51AM +0530, Dev Jain wrote:
+> A "%s" is missing in ksft_exit_fail_msg(); instead, use the newly
+> introduced ksft_exit_fail_perror(). Also, uint64_t corresponds to
+> unsigned 64-bit integer, so use %lx instead of %llx.
 
-On 27.08.2024 15:15, Biju Das wrote:
-> Hi Claudiu,
-> 
-> Thanks for the feedback.
-> 
->> -----Original Message-----
->> From: Claudiu <claudiu.beznea@tuxon.dev>
->> Sent: Monday, August 26, 2024 4:25 PM
->> Subject: [PATCH 3/3] watchdog: rzg2l_wdt: Power on the watchdog domain in the restart handler
->>
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> On RZ/G3S the watchdog can be part of a software-controlled PM domain. In this case, the watchdog
->> device need to be powered on in struct watchdog_ops::restart API. This can be done though
->> pm_runtime_resume_and_get() API if the watchdog PM domain and watchdog device are marked as IRQ safe.
->> We mark the watchdog PM domain as IRQ safe with GENPD_FLAG_IRQ_SAFE when the watchdog PM domain is
->> registered and the watchdog device though pm_runtime_irq_safe().
->>
->> Before commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
->> context'") pm_runtime_get_sync() was used in watchdog restart handler (which is similar to
->> pm_runtime_resume_and_get() except the later one handles the runtime resume errors).
->>
->> Commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
->> context'") dropped the pm_runtime_get_sync() and replaced it with
->> clk_prepare_enable() to avoid invalid wait context due to genpd_lock() in genpd_runtime_resume() being
->> called from atomic context. But
->> clk_prepare_enable() doesn't fit for this either (as reported by Ulf Hansson) as clk_prepare() can
->> also sleep (it just not throw invalid wait context warning as it is not written for this).
->>
->> Because the watchdog device is marked now as IRQ safe (though this patch) the
->> irq_safe_dev_in_sleep_domain() call from genpd_runtime_resume() returns
->> 1 for devices not registering an IRQ safe PM domain for watchdog (as the watchdog device is IRQ safe,
->> PM domain is not and watchdog PM domain is always-on), this being the case of RZ/G2 devices that uses
-> 
-> RZ/G2L alike devices or be specific RZ/{G2L,G2LC,G2UL,V2L} as it is not applicable for
-> RZ/G2{H,M,N,E}devices.
+What's wrong with using %llx for a uint64_t? I think that part of the
+code is fine as-is.
 
-OK, but I said "RZ/G2 devices that uses this driver". Here are included
-RZ/{G2L,G2LC,G2UL,V2L} AFAICT.
-
-> 
-> 
->> this driver, we can now drop also the clk_prepare_enable() calls in restart handler and rely on
->> pm_runtime_resume_and_get().
->>
->> Thus, drop clk_prepare_enable() and use pm_runtime_resume_and_get() in watchdog restart handler.
-> 
-> Can this patch be fix for Commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
->> context'") on RZ/{G2L,G2LC,G2UL,V2L} SoC??
-
-Not sure... I thought about it, too. I chose to have it like this thinking
-that:
-
-1/ that may not apply cleanly as it depends on other cleanups done on this
-   driver, e.g. commit d8997ed79ed7 ("watchdog: rzg2l_wdt: Rely on the
-   reset driver for doing proper reset") so it may be worthless for
-   backport machinery
-2/ There is actually no seen bug reported by lockdep (as the clk_prepare()
-   doesn't handle it)
-
-Don't know, I can reply here and add it. Applying this patch with b4 will
-take care of it. But not sure about it.
-
-Thank you,
-Claudiu Beznea
-
-> 
-> Cheers,
-> Biju
-> 
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>  drivers/watchdog/rzg2l_wdt.c | 21 +++++++++++++++++++--
->>  1 file changed, 19 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c index
->> 2a35f890a288..e9e0408c96f7 100644
->> --- a/drivers/watchdog/rzg2l_wdt.c
->> +++ b/drivers/watchdog/rzg2l_wdt.c
->> @@ -12,6 +12,7 @@
->>  #include <linux/module.h>
->>  #include <linux/of.h>
->>  #include <linux/platform_device.h>
->> +#include <linux/pm_domain.h>
->>  #include <linux/pm_runtime.h>
->>  #include <linux/reset.h>
->>  #include <linux/units.h>
->> @@ -166,8 +167,23 @@ static int rzg2l_wdt_restart(struct watchdog_device *wdev,
->>  	struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
->>  	int ret;
->>
->> -	clk_prepare_enable(priv->pclk);
->> -	clk_prepare_enable(priv->osc_clk);
->> +	/*
->> +	 * In case of RZ/G3S the watchdog device may be part of an IRQ safe power
->> +	 * domain that is currently powered off. In this case we need to power
->> +	 * it on before accessing registers. Along with this the clocks will be
->> +	 * enabled. We don't undo the pm_runtime_resume_and_get() as the device
->> +	 * need to be on for the reboot to happen.
->> +	 *
->> +	 * For the rest of RZ/G2 devices (and for RZ/G3S with old device trees
->> +	 * where PM domains are registered like on RZ/G2 devices) it is safe
->> +	 * to call pm_runtime_resume_and_get() as the
->> +	 * irq_safe_dev_in_sleep_domain() call in genpd_runtime_resume()
->> +	 * returns non zero value and the genpd_lock() is avoided, thus, there
->> +	 * will be no invalid wait context reported by lockdep.
->> +	 */
->> +	ret = pm_runtime_resume_and_get(wdev->parent);
->> +	if (ret)
->> +		return ret;
->>
->>  	if (priv->devtype == WDT_RZG2L) {
->>  		ret = reset_control_deassert(priv->rstc);
->> @@ -275,6 +291,7 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
->>
->>  	priv->devtype = (uintptr_t)of_device_get_match_data(dev);
->>
->> +	pm_runtime_irq_safe(&pdev->dev);
->>  	pm_runtime_enable(&pdev->dev);
->>
->>  	priv->wdev.info = &rzg2l_wdt_ident;
->> --
->> 2.39.2
->>
-> 
+Will
 
