@@ -1,184 +1,234 @@
-Return-Path: <linux-kernel+bounces-303695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CAE39613D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:17:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE2FD9613DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 18:19:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F34FA2838EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:17:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 950CF284A31
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 16:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E651CE6FB;
-	Tue, 27 Aug 2024 16:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D2D1C9EC9;
+	Tue, 27 Aug 2024 16:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VkQyER4q"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pAbvqgIf"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2075.outbound.protection.outlook.com [40.107.95.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1421C68A1
-	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 16:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724775441; cv=none; b=jmJpH4+BA/eOdn4kEa3G3XFKos9DrNq4W/CuSVQ17jJ0plwSllvy7SLPRlm2wJijq50fTsWcc/yYF2woGIpq5/8KrLG3PivdHuNyd28N3hV6wLibEMZDAXuR+mLLeUrz62NDeLM6K6ZqsuCy+Is+1nYedLrOj53h0wss+ijKATI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724775441; c=relaxed/simple;
-	bh=dRGDAD4KPiBqXOmNHPLfWVDiOw++ZqkdXmPpkSUphBQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RhsnfeYypdAyl8oWxg5ITjXE6/+ZTsfu2MruThgtbd4bsIzoKvJnmsMYsK4Jsgu33eDlt1fGor9Y1JD7foC9FHyA1rcZxwcn/v97S8y548Ik/gweLH2NWdOCNiIzHGJoW9Kx0AF8shyMSJEmSPEG6CauNkdwlV5LNRrN+GHR9xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VkQyER4q; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 27 Aug 2024 12:17:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724775435;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DqMw3wLXUFrALSOq/FX1urjPjZInRQbR39RoFjtaExE=;
-	b=VkQyER4qXTqPpQOn1oyO9kEQvvT+Ngr1fA7Aiegk/hJZOa3sHjTuwR/EseY6pwIrg0reVF
-	sUbo0piwMGSqat2njA5MTSIfPa7CQhw0g6VOjLDprgtkdKbKqXQB9Oxt39v4IBEuZoz0X7
-	6g+nuJuRUUoFDqT2lTNi837W5CQLCHg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: David Wang <00107082@163.com>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [BUG?] bcachefs: keep writing to device when there is no
- high-level I/O activity.
-Message-ID: <y336p7vehwl6rpi5lfht6znaosnaqk3tvigzxcda7oi6ukk3o4@p4imj4wzcxjb>
-References: <20240827094933.6363-1-00107082@163.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7941C579D;
+	Tue, 27 Aug 2024 16:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724775545; cv=fail; b=HS/j7toR8m9/qkVdiQpa9ouTsMC3d4Xn3Um/JzCyZYrVDmKDaRB9TtjjI/MWiObBOWwRjtBNVHzVs5Z/qEOkTPn1xTmYYpDwfrkuDZW6vQ8hRi8uCVrsovkxM2iqk8t7wom08shWfYywduwadtX97qWrOni8NHjwofVFWH8m3n0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724775545; c=relaxed/simple;
+	bh=WMvRAxXXmqgDzK5FhWRep/h4qth55ZT+2wejfwb3bGQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V+VszRNMKL53zUY2k8Qxdv/VW2EZ6TXfZFYt0n5j8JFtX3WZ+zv5xxo7Jam3O0i8z3BD3Di6ecQX1NkN3aHZe9TjEvwueh6LQwfphIFCxRXKET5davuodGeBuEWHDihWPMCB8FpwRUTo7rUee0Ka+tToixWpVFHE/oGUGeMGCzE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pAbvqgIf; arc=fail smtp.client-ip=40.107.95.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kMn+vMaDjc/6n0OjnBmu7A/bLxlrMSfAfCeByDiHHv3b1yQNaU4Wyzea/061j7dzJTvNQ/6g2KG7g1fSqrsRsK0292cWc20Bw0XRFEKxWhu0EfwFPB9ypjm5H+UtuH1gcKIjXKFINcEgjib7iINfbXgp9cvA/75W/BRwlncsVd/kGGuSDhSUmeMArfgsMAlhe3gJVP43NfNj3voOT/94IIT9unYOVvBexMilsoCHG9oSEuCLqzFIFu4w01snfXBW/yeGtYaZzT/v4LmfYCoQ85EpatjD6NrAKVECVkc7IeRLgdrkxz84GQ374OV6xrVZqPAgjq9PrsAJEbI9g9XViA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rrmKXSzm6G/0wLyeLOVNYeJPtw/J96eBqyhVaem5ziY=;
+ b=AUJ/2CinYFhLpt+EWMivoKH731EppxHP0CryXS02dOBAaPwdxq4WL50Gig2U9jAJ35plYdsC8i/9dFzbge5VnAvJk4MgbAy+IlOWULwpeQ4uGn1E8SjN6F0DaG1keRz45jk4qLoTyiTF5ZtEfGCwrveTnc3H26JAdj0OEJ9Yas2zUpYev5JMrgiAFvltC4iJ5hkFMfuL1sw9KEpM/ne01IPIzcXDWGF98UtugrEXvfMsYn/JVq0i2KrWLDkcJ3uDaCjm2T3YVjtfjXEclPSfhl73mhfrBXUw+RbsJL4pOUSO/Pm0C02CRjUykGfp05euDMzvHPBKT2WQPVc6rC5Y/g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rrmKXSzm6G/0wLyeLOVNYeJPtw/J96eBqyhVaem5ziY=;
+ b=pAbvqgIf88YaKk/VGP1eUFD3Hsvq+cLT6sMENaL7vGPYCY6Pkxu5BkwajdftSUvGRN/g8VrT29KGiJsfKlqawLp5fR4u2QC71pHP6T54MzXnTRVk6riFP+tFv8a7bxLwO68iDfgb1jDYPxfvaEyfVcbIMVHQuuEqIsMuueP1h8Xql17pz5hFTC8vRg7jgy0qoXRrDHaNc7E271wZ8t4WJ6YEDHyKZzrEFVOzLhZmaK47zojtWgj+MgZtVHywp43ic19p/hXEBkdLTolK45kmPVZ/wBYZjA5bXvlRKoA30gtsB+XdmpJKClrBRsnu14d7cjkOdZUWGlDPudeq0ENfkw==
+Received: from SJ0PR03CA0250.namprd03.prod.outlook.com (2603:10b6:a03:3a0::15)
+ by DS0PR12MB7703.namprd12.prod.outlook.com (2603:10b6:8:130::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.26; Tue, 27 Aug
+ 2024 16:18:55 +0000
+Received: from SJ5PEPF000001D0.namprd05.prod.outlook.com
+ (2603:10b6:a03:3a0:cafe::94) by SJ0PR03CA0250.outlook.office365.com
+ (2603:10b6:a03:3a0::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24 via Frontend
+ Transport; Tue, 27 Aug 2024 16:18:55 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SJ5PEPF000001D0.mail.protection.outlook.com (10.167.242.52) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7918.13 via Frontend Transport; Tue, 27 Aug 2024 16:18:55 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 27 Aug
+ 2024 09:18:47 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 27 Aug 2024 09:18:46 -0700
+Received: from Asurada-Nvidia (10.127.8.13) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Tue, 27 Aug 2024 09:18:46 -0700
+Date: Tue, 27 Aug 2024 09:18:44 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
+CC: <joro@8bytes.org>, <jgg@nvidia.com>, <thierry.reding@gmail.com>,
+	<vdumpa@nvidia.com>, <jonathanh@nvidia.com>, <linux-kernel@vger.kernel.org>,
+	<iommu@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v13 06/10] iommu/arm-smmu-v3: Add
+ acpi_smmu_acpi_probe_model for impl
+Message-ID: <Zs38ZK3XERYMgXmC@Asurada-Nvidia>
+References: <cover.1724453781.git.nicolinc@nvidia.com>
+ <8a2629bb98cabb1be72b32c120bb5ed0114b21bc.1724453781.git.nicolinc@nvidia.com>
+ <20240827130233.GF4772@willie-the-truck>
+ <3256d9ce-2c10-4cdd-b4c4-358f2c30a9a3@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240827094933.6363-1-00107082@163.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <3256d9ce-2c10-4cdd-b4c4-358f2c30a9a3@arm.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D0:EE_|DS0PR12MB7703:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6ff164ad-f2af-4724-44f5-08dcc6b3f2e7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?IChl+v2xKOK7LK89CTKl7DrUcXxHcQd4+4X/JBXfI+A8CF2jvmNYUnyJfo/5?=
+ =?us-ascii?Q?MsdKQoGu63qpweI4KIChfGlJ9zJE7S23v980Qs6zNbPHVq9LBSn0snFI4Xk+?=
+ =?us-ascii?Q?dBFkCDH/QCsK/AU0t8Sydk4dkVnyB8xgF26i4011uQvUiNOpf1Jh1AlNVjCP?=
+ =?us-ascii?Q?5a1pB8+Vg57ry92hkc3W5A2QkCCEATtOrTTDWNielEmxU/2rIFg6tb9jnIuY?=
+ =?us-ascii?Q?H7MEQPhfYmKQKGY/WVdF2nQh1wrfRfOU84SQhhEEf9Gl6Lu75Gunn93rzW9w?=
+ =?us-ascii?Q?v7D4x+0NtISIjGXPHSkGV261OBNLpbY/KY2/cywoOh+GLtlrcgfprOutBRvq?=
+ =?us-ascii?Q?5lMoRv/HWBp5zYcqs9ew1Ap1CcvjEdghQ3cmkezDjyFHhI3zTG2OOpYhPLmr?=
+ =?us-ascii?Q?DUK2J9McIU2zgms1lt55VjuKlWM5AqJIm3BMgNi0ZEf4G4eu/Z6hPWiyxUwA?=
+ =?us-ascii?Q?zpc4rti1UvlmKFAx3dBIgDsuytSantOyzygLxx8uddX3zwtmr5Ahaic2Oeqk?=
+ =?us-ascii?Q?YFXcx7VjZECAzwIwZJcFU+gr27SJYdG1aV+eZqt2XGqXGr5E55aH09e0Deij?=
+ =?us-ascii?Q?ZwjTLdSzrcCbiIE9cmkKBU41XXebXUiOrdUnfWDcDSs8A7AQsLzBHqhnG+HJ?=
+ =?us-ascii?Q?hSouinxLN5HN7hb7xrb77WDCKEXFb6sBggGu13AasD8FVwU9RL89tkJbWqkI?=
+ =?us-ascii?Q?4Tsxn0cgfv9NnfOk9r7NB2f6AxFO4+XpE9Y0CQxRki1OZ9B4VNX0UEGb97Yu?=
+ =?us-ascii?Q?Zc4vRVHZAIhUpxBNwhnnyvB/JXhuHoVQWK6fwmORCqkK3KfwogNkVYqL/wcY?=
+ =?us-ascii?Q?A/GC8SN5eKw+k/1uCA1GOXxItzSO3w1u9lsYjLJ98EF8iDfpxWGJJ9wIeARg?=
+ =?us-ascii?Q?yAs3gWto+mqcCquhDQs/3INAWO2B6HhoJz72sOokH9JVZZ2Fluez14hgCrEA?=
+ =?us-ascii?Q?Ozbhr0WFAn90ncS4yGlBoNb4BEPFZh1tFibpa3NpFcWY0GyJzdcPWPHlZqs/?=
+ =?us-ascii?Q?PWcOMnCIRCfFD1LS9JaO4DWPFYi2XSBhR/VeWnO+YAR8Sj2hBNaLdV4rWRXi?=
+ =?us-ascii?Q?+PPoqrVQPyr8a5K66cZTvsg4+9JLMygDIqIoF1jyFAbdIG2nZTJqgBVD7Tmy?=
+ =?us-ascii?Q?YC63fqQaGNiDfdXp0KwavGqa1UY88tHlZejNezWz2vDrzoMZKa19dAHCCUyU?=
+ =?us-ascii?Q?JuaJQz0BlLX0LgnyhS2hM9DXFIi4uH2fo2AyfCunABi/2NxdTv7kDt7mJKMU?=
+ =?us-ascii?Q?HfkybtdiBh3yLxlunNBan1dob/dMjhFFYWOEOPx8Dkgi0+YMHVS5RikaFptZ?=
+ =?us-ascii?Q?hJBnbbgMcGI0fCb+5B7pPsv8/zLcn5NZXY5soOTGqU2qAKJ3covJoiucLOGM?=
+ =?us-ascii?Q?Kjc9nLUZ2dYbiE0ic/Mf/9BxnQaCcfABwVeTqWKUk1Bu4qvzcVWVtGy7J6uf?=
+ =?us-ascii?Q?F1DmAXqfr2nWVpvowl7LGICRpeXimUoa?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 16:18:55.6143
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6ff164ad-f2af-4724-44f5-08dcc6b3f2e7
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001D0.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7703
 
-On Tue, Aug 27, 2024 at 05:49:33PM GMT, David Wang wrote:
-> Hi,
+On Tue, Aug 27, 2024 at 04:57:48PM +0100, Robin Murphy wrote:
+> > > @@ -4341,18 +4341,28 @@ static int arm_smmu_device_hw_probe(struct arm_smmu_device *smmu)
+> > >   }
+> > > 
+> > >   #ifdef CONFIG_ACPI
+> > > -static void acpi_smmu_get_options(u32 model, struct arm_smmu_device *smmu)
+> > > +static int acpi_smmu_iort_probe_model(struct acpi_iort_node *node,
+> > > +                                  struct arm_smmu_device *smmu)
+> > >   {
+> > > -    switch (model) {
+> > > +    struct acpi_iort_smmu_v3 *iort_smmu =
+> > > +            (struct acpi_iort_smmu_v3 *)node->node_data;
+> > > +
+> > > +    switch (iort_smmu->model) {
+> > >      case ACPI_IORT_SMMU_V3_CAVIUM_CN99XX:
+> > >              smmu->options |= ARM_SMMU_OPT_PAGE0_REGS_ONLY;
+> > >              break;
+> > >      case ACPI_IORT_SMMU_V3_HISILICON_HI161X:
+> > >              smmu->options |= ARM_SMMU_OPT_SKIP_PREFETCH;
+> > >              break;
+> > > +    case ACPI_IORT_SMMU_V3_GENERIC:
+> > > +            break;
+> > > +    default:
+> > > +            dev_err(smmu->dev, "Unknown/unsupported IORT model!\n");
+> > > +            return -ENXIO;
+> > 
+> > We probably don't want this 'default' case, otherwise the driver will
+> > need to be updated every time there's a new model.
 > 
-> I was using two partitions on same nvme device to compare filesystem performance,
-> and I consistantly observed a strange behavior:
-> 
-> After 10 minutes fio test with bcachefs on one partition, performance degrade
-> significantly for other filesystems on other partition (same device).
-> 
-> 	ext4  150M/s --> 143M/s
-> 	xfs   150M/s --> 134M/s
-> 	btrfs 127M/s --> 108M/s
-> 
-> Several round tests show the same pattern that bcachefs seems occupy some device resource
-> even when there is no high-level I/O.
+> ...although the intent is very strongly that there should never be any
+> new models, because by now hardware should really not be failing to
+> implement SMMU_IIDR correctly. In some ways, having this might help
+> further discourage people from abusing the mechanism and making random
+> stuff up in their firmware :/
 
-This is is a known issue, it should be either journal reclaim or
-rebalance.
+I don't have a strong feeling about this, though Robin's point was
+my intention here.
 
-(We could use some better stats to see exactly which it is)
+Apart from this "default case", I typo-ed the function name in the
+patch subject and commit message. Also, there's a missed kdoc line
+in struct tegra241_cmdqv (PATCH-8).
 
-The algorithm for how we do background work needs to change; I've
-written up a new one but I'm a ways off from having time to implement it
+So, I prepared a v14:
+https://github.com/nicolinc/iommufd/commits/vcmdq_in_kernel-v14
+v14 changelog (attaching git-diff at the EOM):
+ * Rebased on Will's for-joerg/arm-smmu/updates
+ * Added a missed kdoc for "dev" in struct tegra241_cmdqv
+ * Dropped the default case in acpi_smmu_iort_probe_model()
+   (did this before seeing Robin's mail here.)
 
-https://evilpiepirate.org/git/bcachefs.git/commit/?h=bcachefs-garbage&id=47a4b574fb420aa824aad222436f4c294daf66ae
+Let's see what makes the best for you, Will.
 
-Could be a fun one for someone new to take on.
+Thanks
+Nicolin
 
-> 
-> I monitor /proc/diskstats, and it confirmed that bcachefs do keep writing the device.
-> Following is the time serial samples for "writes_completed" on my bcachefs partition:
-> 
-> writes_completed @timestamp
-> 	       0 @1724748233.712
-> 	       4 @1724748248.712    <--- mkfs
-> 	       4 @1724748263.712
-> 	      65 @1724748278.712
-> 	   25350 @1724748293.712
-> 	   63839 @1724748308.712    <--- fio started
->   	  352228 @1724748323.712
-> 	  621350 @1724748338.712
-> 	  903487 @1724748353.712
->         ...
-> 	12790311 @1724748863.712
-> 	13100041 @1724748878.712
-> 	13419642 @1724748893.712
-> 	13701685 @1724748908.712    <--- fio done (10minutes)
-> 	13701769 @1724748923.712    <--- from here, average 5~7writes/second for 2000 seconds
-> 	13701852 @1724748938.712
-> 	13701953 @1724748953.712
-> 	13702032 @1724748968.712
-> 	13702133 @1724748983.712
-> 	13702213 @1724748998.712
-> 	13702265 @1724749013.712
-> 	13702357 @1724749028.712
->         ...
-> 	13712984 @1724750858.712
-> 	13713076 @1724750873.712
-> 	13713196 @1724750888.712
-> 	13713299 @1724750903.712
-> 	13713386 @1724750918.712
-> 	13713463 @1724750933.712
-> 	13713501 @1724750948.712   <--- writes stopped here
-> 	13713501 @1724750963.712
-> 	13713501 @1724750978.712
-> 	...
-> 
-> Is this behavior expected? 
-> 
-> My test script:
-> 	set -e
-> 	for fsa in "btrfs" "ext4" "bcachefs" "xfs"
-> 	do
-> 		if [ $fsa == 'ext4' ]; then
-> 			mkfs -t ext4 -F /dev/nvme0n1p1
-> 		else
-> 			mkfs -t $fsa -f /dev/nvme0n1p1
-> 		fi
-> 		mount -t $fsa /dev/nvme0n1p1 /disk02/dir1
-> 		for fsb in "ext4" "bcachefs" "xfs" "btrfs"
-> 		do
-> 			if [ $fsb == 'ext4' ]; then
-> 				mkfs -t ext4 -F /dev/nvme0n1p2
-> 			else
-> 				mkfs -t $fsb -f /dev/nvme0n1p2
-> 			fi
-> 			mount -t $fsb /dev/nvme0n1p2 /disk02/dir2
-> 
-> 			cd /disk02/dir1 && fio --randrepeat=1 --ioengine=libaio --direct=1 --name=test  --bs=4k --iodepth=64 --size=1G --readwrite=randrw  --runtime=600 --numjobs=8 --time_based=1 --output=/disk02/fio.${fsa}.${fsb}.0
-> 			sleep 30
-> 			cd /disk02/dir2 && fio --randrepeat=1 --ioengine=libaio --direct=1 --name=test  --bs=4k --iodepth=64 --size=1G --readwrite=randrw  --runtime=600 --numjobs=8 --time_based=1 --output=/disk02/fio.${fsa}.${fsb}.1
-> 			sleep 30
-> 			cd /disk02
-> 			umount /disk02/dir2
-> 		done
-> 		umount /disk02/dir1
-> 	done
-> 
-> And here is a report for one round of test matrix:
-> +----------+-----------------------------+-----------------------------+-----------------------------+-----------------------------+
-> |   R|W    |             ext4            |           bcachefs          |             xfs             |            btrfs            |
-> +----------+-----------------------------+-----------------------------+-----------------------------+-----------------------------+
-> |   ext4   |    [ext4]147MB/s|147MB/s    |    [ext4]146MB/s|146MB/s    |    [ext4]150MB/s|150MB/s    |    [ext4]149MB/s|149MB/s    |
-> |          |    [ext4]146MB/s|146MB/s    | [bcachefs]72.2MB/s|72.2MB/s |     [xfs]149MB/s|149MB/s    |    [btrfs]132MB/s|132MB/s   |
-> | bcachefs | [bcachefs]71.9MB/s|71.9MB/s | [bcachefs]65.1MB/s|65.1MB/s | [bcachefs]69.6MB/s|69.6MB/s | [bcachefs]65.8MB/s|65.8MB/s |
-> |          |    [ext4]143MB/s|143MB/s    | [bcachefs]71.5MB/s|71.5MB/s |     [xfs]134MB/s|133MB/s    |    [btrfs]108MB/s|108MB/s   |
-> |   xfs    |     [xfs]148MB/s|148MB/s    |     [xfs]147MB/s|147MB/s    |     [xfs]152MB/s|152MB/s    |     [xfs]151MB/s|151MB/s    |
-> |          |    [ext4]147MB/s|147MB/s    | [bcachefs]71.3MB/s|71.3MB/s |     [xfs]148MB/s|148MB/s    |    [btrfs]127MB/s|127MB/s   |
-> |  btrfs   |    [btrfs]132MB/s|132MB/s   |    [btrfs]112MB/s|111MB/s   |    [btrfs]110MB/s|110MB/s   |    [btrfs]110MB/s|110MB/s   |
-> |          |    [ext4]147MB/s|146MB/s    | [bcachefs]69.7MB/s|69.7MB/s |     [xfs]146MB/s|146MB/s    |    [btrfs]125MB/s|125MB/s   |
-> +----------+-----------------------------+-----------------------------+-----------------------------+-----------------------------+
-> (The rows are for the FS on the first partition, and the cols are on the second partition)
-> 
-> The version of bcachefs-tools on my system is 1.9.1.
-> (The impact is worse, ext4 dropped to 80M/s, when I was using bcachefs-tools from debian repos which is too *old*,
-> and known to cause bcachefs problems. And that is the reason that I do this kind of test.)
-> 
-> 
-> Thanks
-> David
-> 
+diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+index 8b1437240ce5..f23245012681 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
++++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+@@ -4356,9 +4356,6 @@ static int acpi_smmu_iort_probe_model(struct acpi_iort_node *node,
+ 		break;
+ 	case ACPI_IORT_SMMU_V3_GENERIC:
+ 		break;
+-	default:
+-		dev_err(smmu->dev, "Unknown/unsupported IORT model!\n");
+-		return -ENXIO;
+ 	}
+ 
+ 	dev_notice(smmu->dev, "option mask 0x%x\n", smmu->options);
+diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+index b794a4dcbce1..5ac3032ee6dd 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
++++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+@@ -160,6 +160,7 @@ struct tegra241_vintf {
+ /**
+  * struct tegra241_cmdqv - CMDQ-V for SMMUv3
+  * @smmu: SMMUv3 device
++ * @dev: CMDQV device
+  * @base: MMIO base address
+  * @irq: IRQ number
+  * @num_vintfs: Total number of VINTFs
 
