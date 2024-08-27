@@ -1,79 +1,126 @@
-Return-Path: <linux-kernel+bounces-303196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-303208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1E0C9608E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:37:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5120D96090A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 13:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE55F2827D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:37:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76EBA1C22EF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 11:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F4219DF7A;
-	Tue, 27 Aug 2024 11:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C801A4F07;
+	Tue, 27 Aug 2024 11:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eCot5GO2"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FeV1T5uJ"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C2A139580;
-	Tue, 27 Aug 2024 11:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 473341A38FB
+	for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 11:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724758659; cv=none; b=r48KuK6NsQR7qeJdm9ab5nWgkCzlucQyKQEcDbmH1YfGhdxOkQGQYZMhupVEKdzK5zctHC1ht4ip1uiRYJ6tRM7VAwzgwDQkID8k0ZjHQ+2rJ5Oy2YxUZC+dkMXmi9X3Utke4X3m+F7Xbz0V8E4C/AK9tR2nUbisLNsr1YuGXK0=
+	t=1724758706; cv=none; b=Of1epIyRQsK5z/kYsHwrtzAtbW6pVhgdVcLnaQZalC9OP2KE6TVsRc+O0nzdUc5DlnOombb4OTA4CW1WPgEqkgfpevYZwEPtDbS7ErFHehL0VrWLHYGKkfMwOylZAIUm5bSBFwlK+3VScgU1opwqU8k38fYmPYP1tweWEICLGhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724758659; c=relaxed/simple;
-	bh=bfxW13z7pEPjtKFNOU5w7SrEAs7p62DFqI5PwjfrY5U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jqfpKACbCDF3xV/33MxN//dwPZ2X3yBgm5FyIA+/m3QvSWaqsm+PCq+8rrvBcexIkXmPeF16nOvoZJiNvxDXhmwL7P4EY0ZP/cfKYXx0Z3XQMBglR7XAfHJHKM1XIRQ9/AwW6jdbHYeWviJUdiBhmtd+vzXwIFQodvxhIqXN4Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eCot5GO2; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=L3QeFG63p0L9YwT0+qxyiNPTNYtWWhMBJ4I/IWsyCIg=; b=eCot5GO2WcwBf/0qRZJ2OJhGXb
-	6luQFGEZlKTLbNwam765PLcvBfPmJ6apvC5T9KfObqJ1c1/cxRCl33ff7mEmNwcKB6LsXc8IHkgGK
-	7So40/ip/ppHYOtI1KAQ2c01fuL75YkzKi2pIbg+Dbi3I680xlDW2Nwo39W1Qzcp3EUgKO2gCNxB5
-	468xHXikV7dfKfHooeBc9Ds1xjOJtoIzB/tkEkbFdhNr4l16eBn16G+BVFCAci7HkKH+q1oDw/e15
-	ZgX7lmvtGR7/0rzyo/bnaS1xji+7b6dlNSrhMMZRjbuqDjD5p+oZpmtYRhgK3kKKiOPDSUDHBe3U7
-	4Mm4QnVw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1siuW0-0000000B2TU-0TME;
-	Tue, 27 Aug 2024 11:37:36 +0000
-Date: Tue, 27 Aug 2024 04:37:36 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Julian Sun <sunjunchao2870@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	syzbot <syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com>,
-	brauner@kernel.org, chandan.babu@oracle.com, djwong@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [iomap?] [xfs?] WARNING in iomap_write_begin
-Message-ID: <Zs26gKEQzSzova4d@infradead.org>
-References: <0000000000008964f1061f8c32b6@google.com>
- <de72f61cd96c9e55160328dd8b0c706767849e45.camel@gmail.com>
- <Zs2m1cXz2o8o1IC-@infradead.org>
- <9cf7d25751d18729d14eef077b58c431f2267e0f.camel@gmail.com>
+	s=arc-20240116; t=1724758706; c=relaxed/simple;
+	bh=Npj44TBKlqnhu3zHMPy7+eqaEtI/Ba/zXO+RNqdGj8w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AEOImf6X3OJ3A7OewlF/WSoV4GKJrFU9SlCpSdYrvZDv9Mu0AdzgsTn6VzjA106Ts9ha/oMHfMBr/XOsu0lE1Fsg+JSirUjqWggahJtLC7LtmXAGMZPGtkWXrMndqs7IeU7InLxUSiPEzeyOh/2kjQorfyPyZsQxxYg6M6+X+K8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FeV1T5uJ; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7143ae1b48fso3079962b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 04:38:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1724758704; x=1725363504; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TAy/Xjv7dazCWNa6I0ehFJegEbGsU1jmIx9V0tPRpro=;
+        b=FeV1T5uJRH48usV9BLsrMKoJ1ZY8OpbniAy/YZO2DutNzu7DxFPJtJVBYWrDIkCx2N
+         a1aeJoQiWNUDPbPgewPenDFqp5N49LPr0TdXawkQfGro0QTgViv7RLFZ2M5C+WkMTqsU
+         kbVyiAa6qRwels5Wi5NdvjNmrZBKYHeHnFGFY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724758704; x=1725363504;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TAy/Xjv7dazCWNa6I0ehFJegEbGsU1jmIx9V0tPRpro=;
+        b=Owm54LxLhxkR9RenLKXEvhsQfn2DDsMbZS0GIChaFUBMbOWb/ofPj7eK0c4p04dyIB
+         Q3gN9ZnEh8sOZEDv6fRbyh+1zKttZao5UdBZOjpy00w43Tt2Z4NqLrnVWU/qp5lEnSVu
+         b4UIun6h4z6RbktGgXBHABLsoEdQwb8EE+YoqdV8ZKp551EyHDDn2hdtMlx3RoC8gIhk
+         AezPc3QeaeYH5NL2NkmJwFkqYKLij1qTzwbGjxBOp7T7lxK4Gqs9J/85AvLJHp6+yd1X
+         1jsuGu+z+VZ93vCwHf1Jx0bewtyZBdZaNy4ySjGWV0XgAhBqdWSEfOtvMkJBZBf/q/lV
+         nj8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXSHFr3jdPLLn5oXX8ue7hRPe6peJSi/kbyGRS++7+R/lQqtKa44npMGC7FpQ1jHqPRJCHTXjNaVGHKRJI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwykxL/Zc2Kt6yRPAjcxQp67XyEW4SNnaQumxyNo8YlKQHtQMRf
+	gh8rx7cuzAGUNnHmO8GgkC9qWzeJth8pjFSytkSHYboPW1lbgNGhY5450O/alHs=
+X-Google-Smtp-Source: AGHT+IHgbs9Bq+GBA6SDyCLeBOxwxfa3Hl8DfIoeX8tN6KodOJhVa97KS7/E2OhmeptghNq1dqpSVQ==
+X-Received: by 2002:a05:6a00:23c2:b0:70d:2583:7227 with SMTP id d2e1a72fcca58-71445cd599dmr11286300b3a.6.1724758704331;
+        Tue, 27 Aug 2024 04:38:24 -0700 (PDT)
+Received: from [192.168.121.153] ([218.49.71.194])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ac97fb5sm9115107a12.8.2024.08.27.04.38.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 04:38:23 -0700 (PDT)
+Message-ID: <2b6112b1-ce10-4e14-87d4-04d64972be56@linuxfoundation.org>
+Date: Tue, 27 Aug 2024 05:38:17 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9cf7d25751d18729d14eef077b58c431f2267e0f.camel@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/2] selftests: Rename sigaltstack to generic signal
+To: Dev Jain <dev.jain@arm.com>, shuah@kernel.org, oleg@redhat.com
+Cc: mingo@kernel.org, tglx@linutronix.de, mark.rutland@arm.com,
+ ryan.roberts@arm.com, broonie@kernel.org, suzuki.poulose@arm.com,
+ Anshuman.Khandual@arm.com, DeepakKumar.Mishra@arm.com,
+ aneesh.kumar@kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240821061523.2650568-1-dev.jain@arm.com>
+ <20240821061523.2650568-2-dev.jain@arm.com>
+ <1ac911c2-9d9c-4408-8697-1e90b3ae3e8d@linuxfoundation.org>
+ <51617076-3aec-413d-bf42-cf1c359a0c38@arm.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <51617076-3aec-413d-bf42-cf1c359a0c38@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 27, 2024 at 07:13:57PM +0800, Julian Sun wrote:
-> Did you use the config and reproducer provided by syzbot? I can easily
-> reproduce this issue using the config and c reproducer provided by
-> syzbot.  
+On 8/22/24 05:10, Dev Jain wrote:
+> 
+> On 8/22/24 08:33, Shuah Khan wrote:
+>> On 8/21/24 00:15, Dev Jain wrote:
+>>> Rename sigaltstack to signal, and rename the existing test to
+>>> sigaltstack.c.
+>>
+>> Can you elaborate on the benefits if renaming the test?
+>>
+>> Also you have such a good information in the cover-letter for this
+>> patch - it would be good to include it in the change log for this
+>> one or the new test.
+> 
+> Okay.
+> 
+> 
+>>
+>> The new test itself is good. I don't understand the value of renaming.
+>> I can see the problems due to not being able to fix stables if the
+>> existing test needs fixing. If there are good reasons for renaming,
+>> I am all for it.
+> 
+> After looking into some git history, now I understand that "sas" actually
+> has some meaning, although I still can't find its full-form :) I thought that
+> sigaltstack would be a better name, but I guess sas is a subset of sigaltstack
+> as part of SA_ONSTACK. So, let us drop the renaming of the test.
+> 
 
-I used the reproducer on my usual test config for a quick run.
-I'll try the syzcaller config when I get some time.
+I assume you will be sending a new v6 patch series without the renaming and just the
+new test?
+
+thanks,
+-- Shuah
 
 
