@@ -1,166 +1,157 @@
-Return-Path: <linux-kernel+bounces-305373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE1A0962DB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:32:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F6C6962DBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:33:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D28281C23496
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:32:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C327D2864C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6ACD1A705A;
-	Wed, 28 Aug 2024 16:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1E21A3BDB;
+	Wed, 28 Aug 2024 16:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pR5/59CT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AmtdJVrf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24B61A7042;
-	Wed, 28 Aug 2024 16:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5557C16087B;
+	Wed, 28 Aug 2024 16:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724862749; cv=none; b=F/MY3G90y7sUC18UHCWGbG48ya25CTmpNNtkyumm49suU5Xx/aIh4ElJGzlO1XhjlVtmU8a8jWKMnsV7a58f5aDBTGb78Q8/3gTpfpyfoaiRxaMtuun8QqvvwPu0p5Rav0cNJ1F7BmVAeLUHudweWi5e3758kM8RQnOs2ZtVe5k=
+	t=1724862814; cv=none; b=GoYwptQ1qUNI0s0wPVdaiMeyK83T15dC0ILces4teL2w5/Fbk/IkcO+1hAkt4LlK013JxiVR+RiY30XAtLZq+6S11lQ77OpBuwrehz7H7a8FxHqQCcyf6Dq86sP358vzrutZWM8ZLYczH96oUaIjYFBgRLoC1OAnXGO7AEEOdW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724862749; c=relaxed/simple;
-	bh=IcOpHz8GgohndUTMyAYMIG+hCu7kJbe6e1APBKfYgPY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZZwSUolYhqLa9JXrskZUauBHbhJmvmXX4tGTQ/snc2LneLeobpI89DFTc3Hicj8qJg40DLiTMq1PGAreEeAWb4B2Wjc6hXS/Iy8SD9KPhlw322l//yKFCs5VWgU7IPSM3F+v9y0BGsembgqnvnUF31lxTNRgtIfKpJQyAqBy/+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pR5/59CT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 433E5C515B4;
-	Wed, 28 Aug 2024 16:32:26 +0000 (UTC)
+	s=arc-20240116; t=1724862814; c=relaxed/simple;
+	bh=aQ0KQce/2N+M0hzwi9uNRhtlX3s6yHVhTY+57+7wVFw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dnllW9VXb3KEzp2v7t7SQuWcCOobhidIhoPjU9k0BCux21Iv6N+9z6WT7CeyjdVMByIJhVCAg0rfjNkEyCuZZsgqKgfL/k6jSjHJ+TMTnbCjcluAEhCvV/6Anh1BL48AOPRsAM3gjPcCC7wrRawlHzDi/+ywdI4C/LFAngC+5mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AmtdJVrf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C10F7C51EE4;
+	Wed, 28 Aug 2024 16:33:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724862749;
-	bh=IcOpHz8GgohndUTMyAYMIG+hCu7kJbe6e1APBKfYgPY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pR5/59CTcmE9y0TjuQtpRRU3O8DmJUlgFo4Y3OfmCeqIgIPRE4+iuwlxl+bC5IsIE
-	 gOXLu02v+azXCkwZ0eRQPL5UavCwaAq5b9aMsznsCN1YvMX9YFvIiX07ApHGdRN9Er
-	 pCEJo7LHnlfTP/Jf5UKH3EukXS7kRH1Igoi71h4PRA+PLaLfuyggj6/FYeNUS5RfzR
-	 48neoiCmzP/+8UggeZ5ic1cAanCrHwwYo5exk6A++87m0f1fb/qG2b6cX4YBKKlUuj
-	 60Z25CRgS416qfMPZlbg2HmXe1Y0MshwxeUoMlSIL9uTD1rMqLZE05g4LvQoDqujex
-	 f4aeE+c9aSomQ==
-Date: Wed, 28 Aug 2024 17:32:24 +0100
-From: Simon Horman <horms@kernel.org>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, Pantelis Antoniou <pantelis.antoniou@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	Herve Codina <herve.codina@bootlin.com>,
-	linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH net-next 6/6] net: ethernet: fs_enet: phylink conversion
-Message-ID: <20240828163224.GT1368797@kernel.org>
-References: <20240828095103.132625-1-maxime.chevallier@bootlin.com>
- <20240828095103.132625-7-maxime.chevallier@bootlin.com>
+	s=k20201202; t=1724862813;
+	bh=aQ0KQce/2N+M0hzwi9uNRhtlX3s6yHVhTY+57+7wVFw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=AmtdJVrfR+SHUriKR+drxuFbQqIr8aYtBCbIQFzBq08u+RnJsbWcLtqaDtaO3U6BB
+	 IoNQUZYPeHzCOkOnK7713ApEWtgGxuH4ejJawISLkWBEeIGT+ZUlIOiHhTAActiRMl
+	 lQS2LKas+2hkv+voyfc9YhRxtzcp5wpP5SrF4dR5SchyuZMcAR2jS8azB5U3WRAZJ2
+	 0YoCtiN0ys4tftuZbeiuiChyCfFalFdoToIQqn9+KgsTPTEJa0AIoTW+5p4pd/ZajO
+	 n3THZtP5vzTqLoF2fSnooz0EaZUGJCnyeGdJ8SVC3HLiWKBX8pBeIT/ykyzP6mim+B
+	 bgZkkSfaUzNFA==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52f01b8738dso5420491e87.1;
+        Wed, 28 Aug 2024 09:33:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU6cUnJVdAaAC0WixJM8+7m/0viCABj8JwzpchCaeEov6Vw1QKO+3Mu9FbH5C7e09TmGmI=@vger.kernel.org, AJvYcCV8k1dNl2suvVQzfz4hydl0qCFXyzcE9y9/k11fCgmrCn/mkEvNCLM/8kQcD2rScFP4ACcK8kuBf6ccYXKR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz085NdqEuqWC+/Yy1kCgCNDKQ6jtJeM5Pt7EZzqcg6lJpjm0z4
+	psjXqQrpOlvDWDDYf7fqsgRafMPu2oXqzdTaHVT1NyqQgqdRAK2L60FVESkOqeRAQF35QxW4898
+	39jWM4wN4c9YyqO/crMow+Og0qFY=
+X-Google-Smtp-Source: AGHT+IEivT+dFM5X9bkSS+rjeKookYXGG3XPFDxUb3v78gdnX6Q0KTbaBY3D7g7x3B3QOY/xE9GdPTRtg/RS5n69tUY=
+X-Received: by 2002:a05:6512:3ba3:b0:52c:e01f:3665 with SMTP id
+ 2adb3069b0e04-53438783dd9mr12258894e87.25.1724862812470; Wed, 28 Aug 2024
+ 09:33:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240828095103.132625-7-maxime.chevallier@bootlin.com>
+References: <20240828152559.4101550-1-legion@kernel.org>
+In-Reply-To: <20240828152559.4101550-1-legion@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 29 Aug 2024 01:32:56 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQju8OeqW_8JtNXAQWow8Ho8778Rq-Y_v22PSrbB39L0g@mail.gmail.com>
+Message-ID: <CAK7LNAQju8OeqW_8JtNXAQWow8Ho8778Rq-Y_v22PSrbB39L0g@mail.gmail.com>
+Subject: Re: [PATCH v1] bpf: Add missing force_checksrc macro
+To: Alexey Gladkov <legion@kernel.org>
+Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Oleg Nesterov <oleg@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 28, 2024 at 11:51:02AM +0200, Maxime Chevallier wrote:
-> fs_enet is a quite old but still used Ethernet driver found on some NXP
-> devices. It has support for 10/100 Mbps ethernet, with half and full
-> duplex. Some variants of it can use RMII, while other integrations are
-> MII-only.
-> 
-> Add phylink support, thus removing custom fixed-link hanldling.
-> 
-> This also allows removing some internal flags such as the use_rmii flag.
-> 
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+On Thu, Aug 29, 2024 at 12:42=E2=80=AFAM Alexey Gladkov <legion@kernel.org>=
+ wrote:
+>
+> According to the documentation, when building a kernel with the C=3D2
+> parameter, all source files should be checked. But this does not happen
+> for the kernel/bpf/ directory.
+>
+> $ touch kernel/bpf/core.o
+> $ make C=3D2 CHECK=3Dtrue kernel/bpf/core.o
+>
+> Outputs:
+>
+>   CHECK   scripts/mod/empty.c
+>   CALL    scripts/checksyscalls.sh
+>   DESCEND objtool
+>   INSTALL libsubcmd_headers
+>   CC      kernel/bpf/core.o
+>
+> As can be seen the compilation is done, but CHECK is not executed. This
+> happens because kernel/bpf/Makefile has defined its own rule for
+> compilation and forgotten the macro that does the check.
+>
+> Signed-off-by: Alexey Gladkov <legion@kernel.org>
 
-Hi Maxime,
 
-Some minor issues from my side: not a full review by any stretch of
-the imagination.
+NACK.
 
-...
 
-> @@ -911,7 +894,7 @@ static int fs_enet_probe(struct platform_device *ofdev)
->  	if (!IS_ERR(clk)) {
->  		ret = clk_prepare_enable(clk);
->  		if (ret)
-> -			goto out_deregister_fixed_link;
-> +			goto out_phylink;
->  
->  		fpi->clk_per = clk;
->  	}
+This Makefile is already screwed up.
 
-This goto will result in a dereference of fep.
-But fep is not initialised until the following line,
-which appears a little below this hunk.
+There is no need to duplicate the build code.
 
-	fep = netdev_priv(ndev);
+Please remove the last 6 lines of kernel/bpf/Makefile
 
-This goto will also result in the function returning without
-releasing clk.
 
-Both flagged by Smatch.
 
-> @@ -936,6 +919,26 @@ static int fs_enet_probe(struct platform_device *ofdev)
->  	fep->fpi = fpi;
->  	fep->ops = ops;
->  
-> +	fep->phylink_config.dev = &ndev->dev;
-> +	fep->phylink_config.type = PHYLINK_NETDEV;
-> +	fep->phylink_config.mac_capabilities = MAC_10 | MAC_100;
-> +
-> +	__set_bit(PHY_INTERFACE_MODE_MII,
-> +		  fep->phylink_config.supported_interfaces);
-> +
-> +	if (of_device_is_compatible(ofdev->dev.of_node, "fsl,mpc5125-fec"))
-> +		__set_bit(PHY_INTERFACE_MODE_RMII,
-> +			  fep->phylink_config.supported_interfaces);
-> +
-> +	phylink = phylink_create(&fep->phylink_config, dev_fwnode(fep->dev),
-> +				 phy_mode, &fs_enet_phylink_mac_ops);
-> +	if (IS_ERR(phylink)) {
-> +		ret = PTR_ERR(phylink);
-> +		goto out_free_fpi;
+See the following code as an example:
+arch/arm/boot/compressed/fdt_rw.c
 
-This also appears to leak clk, as well as ndev.
 
-I didn't look for other cases.
 
-> +	}
-> +
-> +	fep->phylink = phylink;
-> +
->  	ret = fep->ops->setup_data(ndev);
->  	if (ret)
->  		goto out_free_dev;
-> @@ -968,8 +971,6 @@ static int fs_enet_probe(struct platform_device *ofdev)
->  
->  	ndev->ethtool_ops = &fs_ethtool_ops;
->  
-> -	netif_carrier_off(ndev);
-> -
->  	ndev->features |= NETIF_F_SG;
->  
->  	ret = register_netdev(ndev);
-> @@ -988,10 +989,8 @@ static int fs_enet_probe(struct platform_device *ofdev)
->  	free_netdev(ndev);
->  out_put:
->  	clk_disable_unprepare(fpi->clk_per);
-> -out_deregister_fixed_link:
-> -	of_node_put(fpi->phy_node);
-> -	if (of_phy_is_fixed_link(ofdev->dev.of_node))
-> -		of_phy_deregister_fixed_link(ofdev->dev.of_node);
-> +out_phylink:
-> +	phylink_destroy(fep->phylink);
->  out_free_fpi:
->  	kfree(fpi);
->  	return ret;
 
-...
+Like this:
+
+$ cat kernel/bpf/btf_iter.c
+#include "../../tools/lib/bpf/btf_iter.c"
+
+
+Same for
+kernel/bpf/btf_relocate.c
+kernel/bpf/relo_core.c
+
+
+
+
+
+
+
+
+
+> ---
+>  kernel/bpf/Makefile | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
+> index 0291eef9ce92..f0ba6bf73bb6 100644
+> --- a/kernel/bpf/Makefile
+> +++ b/kernel/bpf/Makefile
+> @@ -58,3 +58,4 @@ vpath %.c $(srctree)/kernel/bpf:$(srctree)/tools/lib/bp=
+f
+>
+>  $(obj)/%.o: %.c FORCE
+>         $(call if_changed_rule,cc_o_c)
+> +       $(call cmd,force_checksrc)
+> --
+> 2.46.0
+>
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
