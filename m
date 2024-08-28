@@ -1,103 +1,122 @@
-Return-Path: <linux-kernel+bounces-304785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 488BC9624D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:25:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6320D9624D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:25:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1FFC1F21242
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:25:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 969B61C23635
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8C716B73E;
-	Wed, 28 Aug 2024 10:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B7C16A94B;
+	Wed, 28 Aug 2024 10:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="cbGAVQgi"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cYDW5o9B"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0D786250;
-	Wed, 28 Aug 2024 10:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1CF86250
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 10:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724840699; cv=none; b=VSCsT2RjIcpRUr9Xu0WeeV8KYXcASEn2pRRFZjhf53qP4brCBYBHyJ5UPcXpOOLPQ/G/iY3s/GfMaJY8JeD3Bdqn9iJ91bhyUSFoCpJhRYa0ZQIThLBFqchu/aya/vD1DR9wHdVVCGMoxD4l+DqJm0+QXD8gAhVBKDtmVljmrKs=
+	t=1724840718; cv=none; b=Ruad/tJiKoXeJkVzfETKM41N0pQt7h28qA5ckQak6koAKem5O4vi4nNlY4wCM80joq0dKqEk1Cy3ULdA292zD95TZ5wOaDf/mFdOzDTtFMubqOCJIXbX0KSleaov4MUcgVThTg1+RBk/U80Ph164m/JhyLNvBwYgpB5QPRrEi50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724840699; c=relaxed/simple;
-	bh=Z/qi/c2IvKeKwiaZ6NfQJSNqZ1JgRS36svZzHMTZmzM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZT4/5QRaJPIhaWpXk7E5qtzpVPEVl3PXBxQBuPv3H5G9FZgDWpjzkQzgb4VmKWxRFQdx4KR1Wxn7GPZMLQs4OPbMmqm/zzE3Hj5QzCAvXBCx1AwZ+6h+c85v1qw2X91sat/1miSf0riTV2PcBCbMoaGs8z3ANvAd0BJa6EsZuiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=cbGAVQgi; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=O/BM3QttQXByMfJAW9hhalkO4P+GBm0Hu1hMTokbCmQ=; b=cbGAVQgiJ1ZEIKB3qtK8gJt2D0
-	K0B+fmIIgbVMsPHk2AkGQinZ714LfcnupGLNHLlbQU81I56ABT7VN4HbS5dGcogBZTLbi/AP2mdM+
-	vwSrA/TO5K+uhaYoS4tWPLXN8WicPn94alWf97Pv2L2tJVj6joZ2LMr+sUeOxKPHAj9vlFN1kLrzK
-	R1JLB9fYSl60fZd93OvgvwiXBUQwIG4taL1+CSe62ewrCAuH58XugaDtDHufM9Gdcu2e2Mr9IxSvd
-	v3rgbkxnC3NieMNMTjbOzTbm7r24Fv3YPKFrHqIVRh5pB1F/WfXmEgIyUTtY9xOFr4BjUQgZjFuaQ
-	40IGlfVg==;
-Received: from i5e8616cd.versanet.de ([94.134.22.205] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sjFrB-0004Up-BN; Wed, 28 Aug 2024 12:24:53 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Conor Dooley <conor+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Alex Bee <knaerzche@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: (subset) [PATCH 0/3] Add VPU support for RK3128
-Date: Wed, 28 Aug 2024 12:24:49 +0200
-Message-ID: <172484065905.1479647.10986779548768332833.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240523185633.71355-1-knaerzche@gmail.com>
-References: <20240523185633.71355-1-knaerzche@gmail.com>
+	s=arc-20240116; t=1724840718; c=relaxed/simple;
+	bh=v2U9Jvrzu8FM9RThS8YhoqSwZg/ytfc+nZ8NshoJWOk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SpjfNi6gYxg1g3KH4KJHSbH41wPgVIKYuAzS8OfKs49h2PKhHp7KH84fhSd6FYIN62hxkbhFFD2a4T2SE1fkD+xXaeEAbYclvDmsDgnxiR4ntROUyBPJf8ul1yNazTFyxqXaorxdEnaGov702jy0O07v1Nn4z8dyWxKyOFPoRck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cYDW5o9B; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-428178fc07eso54713785e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 03:25:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724840715; x=1725445515; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1Lzp4oHGEN8/PxMaUUHsZAh0vkNYG+xd0zc2zsHZgl4=;
+        b=cYDW5o9Bd60MfRLwCNGLOVJJpB+dZeO4w6vLY8vjxhPqm4HOGD20vgoExsbYtNfm2W
+         soSoIe0VTwFHJhR1z3YDXIahmUN9QjBvvhvPJckjlW2zBBTX8GftZuyZ0o6ezAvu4h2n
+         BmNPuNk8x46bsSTvnpZgBbjZIDAQg26lQNJslwglM2jeXpdrdbz/KnO+upeEZJJ5/SHG
+         DgrTlGhX3IBFb67b4SsN4wXRl8lz5V0ZZ+GbG4JvVjZ3UKdnTU8+5UXLSiZSzHPeZWPD
+         mTjPk+ALf+GCyDKfvBjNugH1EWt7akYpqhFI08/ET8QnwlzfBiLhqxZ8G8653qmWKryv
+         VvhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724840715; x=1725445515;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1Lzp4oHGEN8/PxMaUUHsZAh0vkNYG+xd0zc2zsHZgl4=;
+        b=nti3biBBzzIoWwfHO/zX0NzpfzJLiAq27ZB4/NSx4sVaNgmZyF4g2pSrQTKb0OkhhV
+         vX7bKdZ/9rNGGHBHrdUVyBI8TtFrraiwPxab5O3uPHPDW9Kp6fO+/sJ2eGCdtdvm5O7u
+         QRDBwHaZjdeeR3Uc4YoYBZUUczATItDZPYXoHe3mKa+oHgzJ4drqrCYjjdz8DzEqByeF
+         scFMufLgi3qgGFIWlHIXUvw36xUrl3LfcENki2mmVUHAjbS0gwXh/mBrTPVIWSt49XNq
+         kfdfINjh6fIocF5Uv/sOnvM9GX6xuyKb576pT9SjF+G8sQ8hLt8Z+5fwtEaMa7ICwAHA
+         NgPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXhmE5h98FZe+HWwTBVqkyyzXGRYizGzLGlyGU9YVxGH0msxaFs7JjaLhJw/kqA4ScrFoZCFaOwTBbQIqE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5mzc32W21VkSJLwhMxwNz+UkLXJYKQKSxRmq53PtAZqV5H+xb
+	jaDUjfVpomzWrIVa3Y6t+mUWl0mCg4X+ZcGRpiNOBSNELQNsNdWYwJ+t4KgUJd4=
+X-Google-Smtp-Source: AGHT+IEp4R0TyxUVAN/DCult+Gly4yNrgEo0qXCuWLCZ3cQk3nKdUAD4f8ccgCbvcdHUOkn0Xldt1A==
+X-Received: by 2002:a05:600c:1d0b:b0:426:593c:9351 with SMTP id 5b1f17b1804b1-42acd542a3cmr103707135e9.6.1724840715323;
+        Wed, 28 Aug 2024 03:25:15 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba6425a82sm17164015e9.44.2024.08.28.03.25.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 03:25:14 -0700 (PDT)
+Date: Wed, 28 Aug 2024 13:25:10 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: vivek t s <vivek6429.ts@gmail.com>
+Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Staging: rtl8723bs: Rename function SelectChannel()
+Message-ID: <2092a3f1-e319-45c5-a33c-3f271e70785f@stanley.mountain>
+References: <Zs7vQXhcYRCxCDaH@victor-IdeaPad-Gaming-3-16IAH7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zs7vQXhcYRCxCDaH@victor-IdeaPad-Gaming-3-16IAH7>
 
-On Thu, 23 May 2024 20:56:30 +0200, Alex Bee wrote:
-> Similar to most Rockchip SoCs RK312x have hantro G1 based decoder and a
-> hantro H1 based encoder with attached iommu.
+On Wed, Aug 28, 2024 at 03:04:57PM +0530, vivek t s wrote:
+> Rename SelectChannel() to select_channel() to avoid
+> CamelCase warning from checkpatch.
+
+I wouldn't have commented on this except there are some other issues.
+Line wrap your commit message at 72-75 characters (similar to email).
+So "CamelCase warning" moves to the line before.
+
+Rename SelectChannel() to select_channel() to avoid CamelCase warning
+from checkpatch.
+
 > 
-> The existing drivers can be used as-is.
+> compile tested.
 > 
-> Fluster scores:
->   - FFmpeg:
->     - H.264: 127/135
->     - VP8:    59/61
->   - GStreamer:
->     - H.264: 129/135
->     - VP8:    59/61
-> 
-> [...]
 
-Applied, thanks!
+Put this under the --- cut off.  (This is the real reason why I'm responding to
+your patch)
 
-[3/3] ARM: dts: rockchip: Add vpu nodes for RK3128
-      commit: fc5aa1ba77c78c17d2c1ddb94e7aca3f4f32efcf
+> Signed-off-by: vivek t s <vivek6429.ts@gmail.com>
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+Your signed-off-by is like signing a legal document.  If you were buying a
+house, then would you write your name like this?  If so then that's fine.
+
+> ---
+  ^^^
+Cut off line here.
+
+regards,
+dan carpenter
+
+>  drivers/staging/rtl8723bs/core/rtw_ap.c          | 4 ++--
+>  drivers/staging/rtl8723bs/core/rtw_mlme_ext.c    | 4 ++--
+>  drivers/staging/rtl8723bs/core/rtw_wlan_util.c   | 2 +-
+>  drivers/staging/rtl8723bs/include/rtw_mlme_ext.h | 2 +-
+>  4 files changed, 6 insertions(+), 6 deletions(-)
+
 
