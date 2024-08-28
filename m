@@ -1,174 +1,419 @@
-Return-Path: <linux-kernel+bounces-304427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71ECF961FEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:43:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D55F5961FF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:44:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9693C1C230AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:43:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 897C4284CC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90C4157A67;
-	Wed, 28 Aug 2024 06:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9198F157A55;
+	Wed, 28 Aug 2024 06:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="p2mtu48c"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OByETeiq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271E114C592;
-	Wed, 28 Aug 2024 06:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C57114C592;
+	Wed, 28 Aug 2024 06:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724827402; cv=none; b=jn+lW78jj+0LEHsx4iBdvpPKzookOzUIc2NchIuJTL6u0pBPr0NUefVLd7VxhnuRHhDC9RDJeoCPykrcC0fTsqxqflHgpaaYp5HKT3ydiEn5iEV+pnGztAZeHKzLwrX+yVuEapJ8zsKBfe+fiXab4dK8sTYs9H+MLA7mhUPX3lk=
+	t=1724827467; cv=none; b=A5TVRXDwf+b1hWepwYuxenMYN5WHQqUKZrZOwVVPBq+gZCFYk13JIkJKpTVGsqgSlOxLQZx7DH62ckAbWVK39XpbRjmj5+YKnEoGXAwEfES6S0LLjxJJNRgXmVPZ1HmuER7rutAFDBn4mMuX4D2+ylunHU+1COfp9bqE++55J50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724827402; c=relaxed/simple;
-	bh=rsiAMp57Z/5zBytNpIkIilUXDilu3Uy4T1oIEsHrgcg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nRGT8x5ymTivD1XsVSsaatkXd1R3ItovDlg91ySPK/IcjNXXP/NS26wdl4WYXpvCpZwWDCKrGHtZFMo0qSXYkSTrv9ORdwP2+/ch3ZGTQtXHF1+lC3sIXHfYGsXkqdQbwHW1e1/1YWoV1vJXA4cp5ia07IoErXL4xZeZouGzxVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=p2mtu48c; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47RLaRIC021272;
-	Wed, 28 Aug 2024 06:43:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=CdUSoJjsUsxlgyNm12dI3j
-	e/l93RIgQwpoMZZyGXofM=; b=p2mtu48cO44TdsjTaywoe7j2qPijmSYVJriuyn
-	gxko13AK+vgY7/8dFATps/nFWz/M+tTxGp4P9t7u6jbPUWa0qjG2dxROBlYPABsL
-	Uz0l7noer152tSpngho/7jfxktxF05JE2HA9AoAoKrUjeLTO84oT91tztN6mvEZJ
-	o77wHubpU0GK0s0BcDKQJlv2dlcebQz9NWROUxbuxcopu9AabjOHLpm75Ov7bqj+
-	Zun/rsMI260OQ5nyG1auzrzyLa5hU9/q1dv9lZ1yhwFl7kpoWCHIH/goN5EF8rjB
-	opa51YdJ4w4PzbWKDT92ESkLPSHFDJv+kw96qppyCnIbiiIA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419pv0gx70-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 06:43:17 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47S6hG0Y021131
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 06:43:16 GMT
-Received: from hu-prashk-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 27 Aug 2024 23:43:13 -0700
-From: Prashanth K <quic_prashk@quicinc.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thinh Nguyen
-	<Thinh.Nguyen@synopsys.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        Prashanth K
-	<quic_prashk@quicinc.com>, <stable@vger.kernel.org>
-Subject: [PATCH v5] usb: dwc3: Avoid waking up gadget during startxfer
-Date: Wed, 28 Aug 2024 12:13:02 +0530
-Message-ID: <20240828064302.3796315-1-quic_prashk@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1724827467; c=relaxed/simple;
+	bh=ZtD8DehdY/yGq+FNYcKa60Z0xPXcr1rD3nIXAeKaBYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t8zK3xzrfCzGUuXwVtbjWzB/mDRoJrC4KwSDODvctj0e73LcDtKcQoZdPozDEYwMZudG+r9s/nXmSkfvymH4ZBMJYzaYIajGDsAMNNNChYnWdfrh3JxgoZibAn6JlxliBFRCt7Fb0TtCB0Co9wsfBlELKY/YuxJzJlhbn8Xh9Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OByETeiq; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724827466; x=1756363466;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZtD8DehdY/yGq+FNYcKa60Z0xPXcr1rD3nIXAeKaBYc=;
+  b=OByETeiqMbuYzYcZ6M/zG88ZODZVDZiNJNBbtZl/5OSNu1Wz8r7zZNV7
+   0/760rtc6eBsNgBUJd5pB13Ree6s/APU/wF8zX+eF0wsYXnD2fMEPmbmR
+   eCKxTaIKA6vVnNu3ro3mgKqbSFJ1ioueWDzGkFP08vNGa0WrG/vi8fpSh
+   pGa/+pAU/p11qZ4gMPxU/w80eiYubt7ft18WLOraz23cC7wOVCsEj81f9
+   5ERDc0DIh8YEdzRNhUdUknWnMzYu2YiLFITIOFLGIx3M8k89BuVcUdiPs
+   80/sZCkMl6mLYih9cH1mj72XcpA5HcEE9z88nQ/WVw1e79d+INOWcuHBT
+   Q==;
+X-CSE-ConnectionGUID: bk79ePq0SmiZjpyn1Ge6Ew==
+X-CSE-MsgGUID: +HBqykNwTWGTY2qFBHIPGQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="23518129"
+X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
+   d="scan'208";a="23518129"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 23:44:25 -0700
+X-CSE-ConnectionGUID: BaF0LFONR2aM2XPH/MUeAw==
+X-CSE-MsgGUID: 78zVWC0mSRmEHC+dBqcEfQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
+   d="scan'208";a="63826764"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 23:44:23 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id F1BA111F8B3;
+	Wed, 28 Aug 2024 09:44:19 +0300 (EEST)
+Date: Wed, 28 Aug 2024 06:44:19 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Tommaso Merciai <tomm.merciai@gmail.com>
+Cc: linuxfancy@googlegroups.com, michael.roeder@avnet.eu,
+	julien.massot@collabora.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] media: i2c: max96717: add test pattern ctrl
+Message-ID: <Zs7HQxieYEVJ9-5X@kekkonen.localdomain>
+References: <20240627151806.3999400-1-tomm.merciai@gmail.com>
+ <20240627151806.3999400-2-tomm.merciai@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: wB7SqPSeaBLVRDf2kmzRM7t_AZHZ78pf
-X-Proofpoint-ORIG-GUID: wB7SqPSeaBLVRDf2kmzRM7t_AZHZ78pf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-28_03,2024-08-27_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=464 bulkscore=0 impostorscore=0 phishscore=0 clxscore=1015
- mlxscore=0 spamscore=0 suspectscore=0 malwarescore=0 adultscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408280046
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240627151806.3999400-2-tomm.merciai@gmail.com>
 
-When operating in High-Speed, it is observed that DSTS[USBLNKST] doesn't
-update link state immediately after receiving the wakeup interrupt. Since
-wakeup event handler calls the resume callbacks, there is a chance that
-function drivers can perform an ep queue, which in turn tries to perform
-remote wakeup from send_gadget_ep_cmd(STARTXFER). This happens because
-DSTS[[21:18] wasn't updated to U0 yet, it's observed that the latency of
-DSTS can be in order of milli-seconds. Hence avoid calling gadget_wakeup
-during startxfer to prevent unnecessarily issuing remote wakeup to host.
+Hi Tommaso,
 
-Fixes: c36d8e947a56 ("usb: dwc3: gadget: put link to U0 before Start Transfer")
-Cc: <stable@vger.kernel.org>
-Suggested-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Signed-off-by: Prashanth K <quic_prashk@quicinc.com>
----
-v5: Further rewording of the comment in function.
-v4: Rewording the comment in function definition.
-v3: Added notes on top the function definition.
-v2: Refactored the patch as suggested in v1 discussion.
+Thanks for the patch.
 
- drivers/usb/dwc3/gadget.c | 41 ++++++++++++++++-----------------------
- 1 file changed, 17 insertions(+), 24 deletions(-)
+On Thu, Jun 27, 2024 at 05:18:06PM +0200, Tommaso Merciai wrote:
+> Add v4l2 test pattern control.
+> 
+> Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
+> ---
+> Changes since v1:
+>  - Rename and move pattern regs under VTX section as suggested by JMassot
+>  - Fix VTX regs order
+>  - Add comment saying that the deserializer should manage the link in
+>    pixel mode as suggested by JMassot
+> 
+>  drivers/media/i2c/max96717.c | 213 ++++++++++++++++++++++++++++++++---
+>  1 file changed, 197 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/max96717.c b/drivers/media/i2c/max96717.c
+> index 949306485873..859a439b64d9 100644
+> --- a/drivers/media/i2c/max96717.c
+> +++ b/drivers/media/i2c/max96717.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/regmap.h>
+>  
+>  #include <media/v4l2-cci.h>
+> +#include <media/v4l2-ctrls.h>
+>  #include <media/v4l2-fwnode.h>
+>  #include <media/v4l2-subdev.h>
+>  
+> @@ -38,9 +39,35 @@
+>  #define MAX96717_DEV_REV_MASK GENMASK(3, 0)
+>  
+>  /* VID_TX Z */
+> +#define MAX96717_VIDEO_TX0 CCI_REG8(0x110)
+> +#define MAX96717_VIDEO_AUTO_BPP BIT(3)
+>  #define MAX96717_VIDEO_TX2 CCI_REG8(0x112)
+>  #define MAX96717_VIDEO_PCLKDET BIT(7)
+>  
+> +/* VTX_Z */
+> +#define MAX96717_VTX0                  CCI_REG8(0x24e)
+> +#define MAX96717_VTX1                  CCI_REG8(0x24f)
+> +#define MAX96717_PATTERN_CLK_FREQ      GENMASK(3, 1)
+> +#define MAX96717_VTX_VS_DLY            CCI_REG24(0x250)
+> +#define MAX96717_VTX_VS_HIGH           CCI_REG24(0x253)
+> +#define MAX96717_VTX_VS_LOW            CCI_REG24(0x256)
+> +#define MAX96717_VTX_V2H               CCI_REG24(0x259)
+> +#define MAX96717_VTX_HS_HIGH           CCI_REG16(0x25c)
+> +#define MAX96717_VTX_HS_LOW            CCI_REG16(0x25e)
+> +#define MAX96717_VTX_HS_CNT            CCI_REG16(0x260)
+> +#define MAX96717_VTX_V2D               CCI_REG24(0x262)
+> +#define MAX96717_VTX_DE_HIGH           CCI_REG16(0x265)
+> +#define MAX96717_VTX_DE_LOW            CCI_REG16(0x267)
+> +#define MAX96717_VTX_DE_CNT            CCI_REG16(0x269)
+> +#define MAX96717_VTX29                 CCI_REG8(0x26b)
+> +#define MAX96717_VTX_MODE              GENMASK(1, 0)
+> +#define MAX96717_VTX_GRAD_INC          CCI_REG8(0x26c)
+> +#define MAX96717_VTX_CHKB_COLOR_A      CCI_REG24(0x26d)
+> +#define MAX96717_VTX_CHKB_COLOR_B      CCI_REG24(0x270)
+> +#define MAX96717_VTX_CHKB_RPT_CNT_A    CCI_REG8(0x273)
+> +#define MAX96717_VTX_CHKB_RPT_CNT_B    CCI_REG8(0x274)
+> +#define MAX96717_VTX_CHKB_ALT          CCI_REG8(0x275)
+> +
+>  /* GPIO */
+>  #define MAX96717_NUM_GPIO         11
+>  #define MAX96717_GPIO_REG_A(gpio) CCI_REG8(0x2be + (gpio) * 3)
+> @@ -82,6 +109,12 @@
+>  /* MISC */
+>  #define PIO_SLEW_1 CCI_REG8(0x570)
+>  
+> +enum max96717_vpg_mode {
+> +	MAX96717_VPG_DISABLED = 0,
+> +	MAX96717_VPG_CHECKERBOARD = 1,
+> +	MAX96717_VPG_GRADIENT = 2,
+> +};
+> +
+>  struct max96717_priv {
+>  	struct i2c_client		  *client;
+>  	struct regmap			  *regmap;
+> @@ -89,6 +122,7 @@ struct max96717_priv {
+>  	struct v4l2_mbus_config_mipi_csi2 mipi_csi2;
+>  	struct v4l2_subdev                sd;
+>  	struct media_pad                  pads[MAX96717_PORTS];
+> +	struct v4l2_ctrl_handler          ctrl_handler;
+>  	struct v4l2_async_notifier        notifier;
+>  	struct v4l2_subdev                *source_sd;
+>  	u16                               source_sd_pad;
+> @@ -96,6 +130,7 @@ struct max96717_priv {
+>  	u8                                pll_predef_index;
+>  	struct clk_hw                     clk_hw;
+>  	struct gpio_chip                  gpio_chip;
+> +	enum max96717_vpg_mode            pattern;
+>  };
+>  
+>  static inline struct max96717_priv *sd_to_max96717(struct v4l2_subdev *sd)
+> @@ -131,6 +166,118 @@ static inline int max96717_start_csi(struct max96717_priv *priv, bool start)
+>  			       start ? MAX96717_START_PORT_B : 0, NULL);
+>  }
+>  
+> +static int max96717_apply_patgen_timing(struct max96717_priv *priv,
+> +					struct v4l2_subdev_state *state)
+> +{
+> +	struct v4l2_mbus_framefmt *fmt =
+> +		v4l2_subdev_state_get_format(state, MAX96717_PAD_SOURCE);
+> +	const u32 h_active = fmt->width;
+> +	const u32 h_fp = 88;
+> +	const u32 h_sw = 44;
+> +	const u32 h_bp = 148;
+> +	u32 h_tot;
+> +	const u32 v_active = fmt->height;
+> +	const u32 v_fp = 4;
+> +	const u32 v_sw = 5;
+> +	const u32 v_bp = 36;
 
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 89fc690fdf34..291bc549935b 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -287,6 +287,23 @@ static int __dwc3_gadget_wakeup(struct dwc3 *dwc, bool async);
-  *
-  * Caller should handle locking. This function will issue @cmd with given
-  * @params to @dep and wait for its completion.
-+ *
-+ * According to the programming guide, if the link state is in L1/L2/U3,
-+ * then sending the Start Transfer command may not complete. The
-+ * programming guide suggested to bring the link state back to ON/U0 by
-+ * performing remote wakeup prior to sending the command. However, don't
-+ * initiate remote wakeup when the user/function does not send wakeup
-+ * request via wakeup ops. Send the command when it's allowed.
-+ *
-+ * Notes:
-+ * For L1 link state, issuing a command requires the clearing of
-+ * GUSB2PHYCFG.SUSPENDUSB2, which turns on the signal required to complete
-+ * the given command (usually within 50us). This should happen within the
-+ * command timeout set by driver. No additional step is needed.
-+ *
-+ * For L2 or U3 link state, the gadget is in USB suspend. Care should be
-+ * taken when sending Start Transfer command to ensure that it's done after
-+ * USB resume.
-  */
- int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned int cmd,
- 		struct dwc3_gadget_ep_cmd_params *params)
-@@ -327,30 +344,6 @@ int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned int cmd,
- 			dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(0), reg);
- 	}
- 
--	if (DWC3_DEPCMD_CMD(cmd) == DWC3_DEPCMD_STARTTRANSFER) {
--		int link_state;
--
--		/*
--		 * Initiate remote wakeup if the link state is in U3 when
--		 * operating in SS/SSP or L1/L2 when operating in HS/FS. If the
--		 * link state is in U1/U2, no remote wakeup is needed. The Start
--		 * Transfer command will initiate the link recovery.
--		 */
--		link_state = dwc3_gadget_get_link_state(dwc);
--		switch (link_state) {
--		case DWC3_LINK_STATE_U2:
--			if (dwc->gadget->speed >= USB_SPEED_SUPER)
--				break;
--
--			fallthrough;
--		case DWC3_LINK_STATE_U3:
--			ret = __dwc3_gadget_wakeup(dwc, false);
--			dev_WARN_ONCE(dwc->dev, ret, "wakeup failed --> %d\n",
--					ret);
--			break;
--		}
--	}
--
- 	/*
- 	 * For some commands such as Update Transfer command, DEPCMDPARn
- 	 * registers are reserved. Since the driver often sends Update Transfer
+Some comments here would be nice, what do these values signify for
+instance?
+
+> +	u32 v_tot;
+> +	int ret = 0;
+> +
+> +	h_tot = h_active + h_fp + h_sw + h_bp;
+> +	v_tot = v_active + v_fp + v_sw + v_bp;
+> +
+> +	/* 75 Mhz pixel clock */
+> +	cci_update_bits(priv->regmap, MAX96717_VTX1,
+> +			MAX96717_PATTERN_CLK_FREQ, 0xa, &ret);
+> +
+> +	dev_info(&priv->client->dev, "height: %d width: %d\n", fmt->height,
+> +		 fmt->width);
+> +
+> +	cci_write(priv->regmap, MAX96717_VTX_VS_DLY, 0, &ret);
+> +	cci_write(priv->regmap, MAX96717_VTX_VS_HIGH, v_sw * h_tot, &ret);
+> +	cci_write(priv->regmap, MAX96717_VTX_VS_LOW,
+> +		  (v_active + v_fp + v_bp) * h_tot, &ret);
+> +	cci_write(priv->regmap, MAX96717_VTX_HS_HIGH, h_sw, &ret);
+> +	cci_write(priv->regmap, MAX96717_VTX_HS_LOW, h_active + h_fp + h_bp,
+> +		  &ret);
+> +	cci_write(priv->regmap, MAX96717_VTX_V2D,
+> +		  h_tot * (v_sw + v_bp) + (h_sw + h_bp), &ret);
+> +	cci_write(priv->regmap, MAX96717_VTX_HS_CNT, v_tot, &ret);
+> +	cci_write(priv->regmap, MAX96717_VTX_DE_HIGH, h_active, &ret);
+> +	cci_write(priv->regmap, MAX96717_VTX_DE_LOW, h_fp + h_sw + h_bp,
+> +		  &ret);
+> +	cci_write(priv->regmap, MAX96717_VTX_DE_CNT, v_active, &ret);
+> +	/* B G R */
+> +	cci_write(priv->regmap, MAX96717_VTX_CHKB_COLOR_A, 0xfecc00, &ret);
+> +	/* B G R */
+> +	cci_write(priv->regmap, MAX96717_VTX_CHKB_COLOR_B, 0x006aa7, &ret);
+> +	cci_write(priv->regmap, MAX96717_VTX_CHKB_RPT_CNT_A, 0x3c, &ret);
+> +	cci_write(priv->regmap, MAX96717_VTX_CHKB_RPT_CNT_B, 0x3c, &ret);
+> +	cci_write(priv->regmap, MAX96717_VTX_CHKB_ALT, 0x3c, &ret);
+> +	cci_write(priv->regmap, MAX96717_VTX_GRAD_INC, 0x10, &ret);
+> +
+> +	return ret;
+> +}
+> +
+> +static int max96717_apply_patgen(struct max96717_priv *priv,
+> +				 struct v4l2_subdev_state *state)
+> +{
+> +	unsigned int val;
+> +	int ret = 0;
+> +
+> +	if (priv->pattern)
+> +		ret = max96717_apply_patgen_timing(priv, state);
+> +
+> +	cci_write(priv->regmap, MAX96717_VTX0, priv->pattern ? 0xfb : 0,
+> +		  &ret);
+> +
+> +	val = FIELD_PREP(MAX96717_VTX_MODE, priv->pattern);
+> +	cci_update_bits(priv->regmap, MAX96717_VTX29, MAX96717_VTX_MODE,
+> +			val, &ret);
+> +	return ret;
+> +}
+> +
+> +static int max96717_s_ctrl(struct v4l2_ctrl *ctrl)
+> +{
+> +	struct max96717_priv *priv =
+> +		container_of(ctrl->handler, struct max96717_priv, ctrl_handler);
+> +	int ret;
+> +
+> +	switch (ctrl->id) {
+> +	case V4L2_CID_TEST_PATTERN:
+> +		if (priv->enabled_source_streams)
+> +			return -EBUSY;
+> +		priv->pattern = ctrl->val;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Use bpp from bpp register */
+> +	ret = cci_update_bits(priv->regmap, MAX96717_VIDEO_TX0,
+> +			      MAX96717_VIDEO_AUTO_BPP,
+> +			      priv->pattern ? 0 : MAX96717_VIDEO_AUTO_BPP,
+> +			      NULL);
+> +
+> +	/*
+> +	 * Pattern generator doesn't work with tunnel mode.
+> +	 * Needs RGB color format and deserializer tunnel mode must be disabled.
+> +	 */
+> +	return cci_update_bits(priv->regmap, MAX96717_MIPI_RX_EXT11,
+> +			       MAX96717_TUN_MODE,
+> +			       priv->pattern ? 0 : MAX96717_TUN_MODE, &ret);
+> +}
+> +
+> +static const char * const max96717_test_pattern[] = {
+> +	"Disabled",
+> +	"Checkerboard",
+> +	"Gradient"
+> +};
+> +
+> +static const struct v4l2_ctrl_ops max96717_ctrl_ops = {
+> +	.s_ctrl = max96717_s_ctrl,
+> +};
+> +
+>  static int max96717_gpiochip_get(struct gpio_chip *gpiochip,
+>  				 unsigned int offset)
+>  {
+> @@ -352,20 +499,28 @@ static int max96717_enable_streams(struct v4l2_subdev *sd,
+>  	u64 sink_streams;
+>  	int ret;
+>  
+> -	sink_streams = v4l2_subdev_state_xlate_streams(state,
+> -						       MAX96717_PAD_SOURCE,
+> -						       MAX96717_PAD_SINK,
+> -						       &streams_mask);
+> -
+>  	if (!priv->enabled_source_streams)
+>  		max96717_start_csi(priv, true);
+>  
+> -	ret = v4l2_subdev_enable_streams(priv->source_sd, priv->source_sd_pad,
+> -					 sink_streams);
+> -	if (ret) {
+> -		dev_err(dev, "Fail to start streams:%llu on remote subdev\n",
+> -			sink_streams);
+> +	ret = max96717_apply_patgen(priv, state);
+> +	if (ret)
+>  		goto stop_csi;
+> +
+> +	if (!priv->pattern) {
+> +		sink_streams =
+> +			v4l2_subdev_state_xlate_streams(state,
+> +							MAX96717_PAD_SOURCE,
+> +							MAX96717_PAD_SINK,
+> +							&streams_mask);
+> +
+> +		ret = v4l2_subdev_enable_streams(priv->source_sd,
+> +						 priv->source_sd_pad,
+> +						 sink_streams);
+> +		if (ret) {
+> +			dev_err(dev, "Fail to start streams:%llu on remote subdev\n",
+> +				sink_streams);
+> +			goto stop_csi;
+> +		}
+>  	}
+>  
+>  	priv->enabled_source_streams |= streams_mask;
+> @@ -394,13 +549,23 @@ static int max96717_disable_streams(struct v4l2_subdev *sd,
+>  	if (!priv->enabled_source_streams)
+>  		max96717_start_csi(priv, false);
+>  
+> -	sink_streams = v4l2_subdev_state_xlate_streams(state,
+> -						       MAX96717_PAD_SOURCE,
+> -						       MAX96717_PAD_SINK,
+> -						       &streams_mask);
+> +	if (!priv->pattern) {
+> +		int ret;
+> +
+> +		sink_streams =
+> +			v4l2_subdev_state_xlate_streams(state,
+> +							MAX96717_PAD_SOURCE,
+> +							MAX96717_PAD_SINK,
+> +							&streams_mask);
+>  
+> -	return v4l2_subdev_disable_streams(priv->source_sd, priv->source_sd_pad,
+> -					   sink_streams);
+> +		ret = v4l2_subdev_disable_streams(priv->source_sd,
+> +						  priv->source_sd_pad,
+> +						  sink_streams);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+>  }
+>  
+>  static const struct v4l2_subdev_pad_ops max96717_pad_ops = {
+> @@ -513,6 +678,19 @@ static int max96717_subdev_init(struct max96717_priv *priv)
+>  	v4l2_i2c_subdev_init(&priv->sd, priv->client, &max96717_subdev_ops);
+>  	priv->sd.internal_ops = &max96717_internal_ops;
+>  
+> +	v4l2_ctrl_handler_init(&priv->ctrl_handler, 1);
+> +	priv->sd.ctrl_handler = &priv->ctrl_handler;
+> +
+> +	v4l2_ctrl_new_std_menu_items(&priv->ctrl_handler,
+> +				     &max96717_ctrl_ops,
+> +				     V4L2_CID_TEST_PATTERN,
+> +				     ARRAY_SIZE(max96717_test_pattern) - 1,
+> +				     0, 0, max96717_test_pattern);
+> +	if (priv->ctrl_handler.error) {
+> +		ret = priv->ctrl_handler.error;
+> +		goto err_free_ctrl;
+> +	}
+> +
+>  	priv->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_STREAMS;
+
+With controls, you should add the HAS_EVENTS flag.
+
+I'll take this one as we're in rc5 already, please address these in a
+separate patch.
+
+>  	priv->sd.entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
+>  	priv->sd.entity.ops = &max96717_entity_ops;
+> @@ -552,6 +730,8 @@ static int max96717_subdev_init(struct max96717_priv *priv)
+>  	v4l2_subdev_cleanup(&priv->sd);
+>  err_entity_cleanup:
+>  	media_entity_cleanup(&priv->sd.entity);
+> +err_free_ctrl:
+> +	v4l2_ctrl_handler_free(&priv->ctrl_handler);
+>  
+>  	return ret;
+>  }
+> @@ -563,6 +743,7 @@ static void max96717_subdev_uninit(struct max96717_priv *priv)
+>  	v4l2_async_nf_cleanup(&priv->notifier);
+>  	v4l2_subdev_cleanup(&priv->sd);
+>  	media_entity_cleanup(&priv->sd.entity);
+> +	v4l2_ctrl_handler_free(&priv->ctrl_handler);
+>  }
+>  
+>  struct max96717_pll_predef_freq {
+
 -- 
-2.25.1
+Kind regards,
 
+Sakari Ailus
 
