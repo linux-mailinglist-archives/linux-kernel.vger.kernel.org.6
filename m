@@ -1,273 +1,195 @@
-Return-Path: <linux-kernel+bounces-304292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECBDD961D51
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:06:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFF38961D6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:12:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A33CA283B2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:06:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CC2F281E2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 406A5149C53;
-	Wed, 28 Aug 2024 04:06:42 +0000 (UTC)
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6EE1DA21;
+	Wed, 28 Aug 2024 04:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FjXnBwht"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5D364A;
-	Wed, 28 Aug 2024 04:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1CF13E03E
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 04:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724818001; cv=none; b=jxY6TR6JZOKsqEjATmBTxxKVzVksX06/pLAj9150Vz0FHwYBz2JT3P3tYt5MfSKG2S8NTaQjsQ6rilszjkcb+//fEquz73kxCUlueuVrKXrqv0KQZLJqWuN1fifssR3sDfkpN8QIHqSoUIoFv25unhVkR2S/SsRFFKH0+OXaPp0=
+	t=1724818346; cv=none; b=qICi0LrTj7z26YLwKSgAnG0qSXS/4l0X4EiKW6tgdKOB4EA4SyI4+s1pOWy3nK61lik8wCvF6/fN3BwAm9qdjMQVrtZazeBBciq6hQpfnj4rsWuSCr8Lu8M4O4JO6fXGD0AokWGVrMzWlbbanQP7nSS3MevcqYjzsvaJsItMPMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724818001; c=relaxed/simple;
-	bh=wwf+OQyIKysNGIvd81VUp3kLMb/OOHPlnxGaSu4g1k0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bfUsssqo/ELFmeDDUMfP46WG1IjXp+lNnPMIaawg0at2WludyKuXSqqUI95hQS2SvmnqNwJXlMcLwSpFm19pndufhx/ItlNIDzAefJdwnvxFY+TYhmwjTpac2kURbQIRH1LuhMy9qvWXBRQQ9fKux0g496QIRXy7436c1VWLYJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3dc16d00ba6so916858b6e.0;
-        Tue, 27 Aug 2024 21:06:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724817999; x=1725422799;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q5Pwrf9PAUtwtkVY34xRe125byTeFc6RM91G/i63L5Y=;
-        b=KDzK5gAnjobsj+3qL9F8cRVrUgIM/Oobo+IzC3CeR1d4/n40Bwl3eNnXDDRkCFgtM7
-         HzaZHMA/fzUzoFc3fG2zgwT3MSHCsdUWHf9TVNFnr4oyV7My4YIlG1Gg25D82fuwUSib
-         4ml3+yrYppMoZPVqjW+VIPohKMLjPJ0QXhjH4ylF1P+bhMJOB8b5ZccaO2GsqySFUJkQ
-         L0TGK6b93iYzmlWOYpdYu1/yfo+GvnajNkQK8hawbDLUhTynFp4yMXCgXRSPB9OpA8k3
-         CRBekknwZo+aJVuKU0STqah+oIOnH7y223JdrL43LEdzTNGcmT9c94Y7IJhz0X5pKnvr
-         3HOg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUIrnHj3ySF6okEhqwGHFTUXCSk5dhs6IBjdBZSJ7DRKHsz/bBlyBC588LD4i99nzlQl7voriwc4AIO+lr@vger.kernel.org, AJvYcCWXnhZAgPv71t0hH+Il6GxsB8FGpwbOzrWUDP8EH6MCc4S363j4y6Vd3gElvJgs1a35VEHwCYvHMwvH@vger.kernel.org, AJvYcCWo1h8AYzxNCmjfz8e15xCA2QxqPf1SyBNmsaQmLA4Gxwrzw0tFWUhJ2gJ8tS2RpJRb0rT+s2gtLhc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhvIoUAYvrTeBEfUPPZzJPedxqJZPNKGHy92SmHkPETcJR4aN7
-	HyT0TiBWYvT/jz+rD8z/dgxfIa77n0tNwqJ7Lh9E51ShLgot5jKIOYRzP0Hs+6fsuY3CJ0wD2jq
-	LVA2MEH2Ka/wEjIQa0YZ/+wihX5k=
-X-Google-Smtp-Source: AGHT+IGCpGss4254t5HnEUDtHI1fEuWcNMuQgSKbxwLqyWSfXldzt/fwp2SUaZFhDv3SG4OhV1XUClpkzfjPY35RB6E=
-X-Received: by 2002:a05:6808:1402:b0:3db:3b15:7e76 with SMTP id
- 5614622812f47-3deffba7abfmr1002946b6e.47.1724817998956; Tue, 27 Aug 2024
- 21:06:38 -0700 (PDT)
+	s=arc-20240116; t=1724818346; c=relaxed/simple;
+	bh=XTt1glJu0rUb8owyLnA57AYtub8xBCVVnILF+wSZyrU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=hhkumqjlrFMx8AoQhGS34Al35ynZPoOzBUgbs9raV6vMQz5d+6rXGPZBxeBvwu/LstXyNmUPtT5aMZppASkAl34DL8PWgHyIIA0+Iv0OHtT0wnaznFEwtfiqdYdo34o36EPtMC9FIaY8p+cqoPJ65PykuQ7GQtGWVBDdh5OjkOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FjXnBwht; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240828041222epoutp02d03c50feb0800171fc4a1bd56b6ff0cd~vySTJ4ioD0772107721epoutp02r
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 04:12:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240828041222epoutp02d03c50feb0800171fc4a1bd56b6ff0cd~vySTJ4ioD0772107721epoutp02r
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724818342;
+	bh=xY/5bssFJz3c4MH21yr5Lg7t97Fz6p4kSqYdRPCosQw=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=FjXnBwhto2WPTiS849OiIrbg4gMm+x9EVOJZy0js0bKRhXnP6xmgHbMZl5h0+lyq8
+	 LU1hSokl8UKYWskiXQXysLdcgHaOh88ebbEpVjUOmrrtHv4CBmLfBIla0j3zt+9h6U
+	 Fxt0D4dUdgWVTTIHlksVsQ4W2ZqbgaLQAi24hOrM=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240828041221epcas5p25eab363bd19fbe63bb5ccfff560e2c82~vySSsN48v2954929549epcas5p22;
+	Wed, 28 Aug 2024 04:12:21 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4WtrbR1tMPz4x9Pt; Wed, 28 Aug
+	2024 04:12:19 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	0F.05.09640.3A3AEC66; Wed, 28 Aug 2024 13:12:19 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240828040823epcas5p47149c92b86596bd5f39a52cededabe29~vyO0saBr01187911879epcas5p4a;
+	Wed, 28 Aug 2024 04:08:23 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240828040823epsmtrp12462cee2a5aaf9c562f3e23b21d0b366~vyO0rhHJb2266022660epsmtrp1m;
+	Wed, 28 Aug 2024 04:08:23 +0000 (GMT)
+X-AuditID: b6c32a49-a57ff700000025a8-30-66cea3a3e29e
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9A.79.08964.7B2AEC66; Wed, 28 Aug 2024 13:08:23 +0900 (KST)
+Received: from [107.122.5.126] (unknown [107.122.5.126]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240828040820epsmtip18742cfc0b437319cebc3c73ebe4cabb8~vyOyKE1c72270122701epsmtip1j;
+	Wed, 28 Aug 2024 04:08:20 +0000 (GMT)
+Message-ID: <3beb7209-9ed4-4155-bea8-c31dc0d5f017@samsung.com>
+Date: Wed, 28 Aug 2024 09:38:18 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2803b89021f991662b000f50e45dbaebdcca438a.1724729626.git.len.brown@intel.com>
- <CAJZ5v0jcOUoN6gDDFkufu8xWF-BHXaSKnXqraHsTkq8JanJXuQ@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jcOUoN6gDDFkufu8xWF-BHXaSKnXqraHsTkq8JanJXuQ@mail.gmail.com>
-From: Len Brown <lenb@kernel.org>
-Date: Wed, 28 Aug 2024 00:06:27 -0400
-Message-ID: <CAJvTdKkucaRVDZm6EVeUxwyrQexyuYd7ECUBSkpP0nC9PwzspA@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: Remove msleep() bloat from acpi_os_sleep()
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: rjw@rjwysocki.net, linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>, 
-	Arjan van de Ven <arjan@linux.intel.com>, Todd Brandt <todd.e.brandt@intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
-	Frederic Weisbecker <frederic@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] usb: dwc3: core: Prevent USB core invalid event
+ buffer address access
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Thinh.Nguyen@synopsys.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jh0801.jung@samsung.com,
+	dh10.jung@samsung.com, naushad@samsung.com, akash.m5@samsung.com,
+	rc93.raju@samsung.com, taehyun.cho@samsung.com, hongpooh.kim@samsung.com,
+	eomji.oh@samsung.com, shijie.cai@samsung.com, stable@vger.kernel.org
+Content-Language: en-US
+From: Selvarasu Ganesan <selvarasu.g@samsung.com>
+In-Reply-To: <2024082212-copper-oversight-f84f@gregkh>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJJsWRmVeSWpSXmKPExsWy7bCmpu7ixefSDG5uYbd4c3UVq8WdBdOY
+	LE4tX8hk0bx4PZvFpD1bWSzuPvzBYnF51xw2i0XLWpktPh39z2qxqnMOUOz7TmaLBRsfMVpM
+	OihqsWrBAXYHPo/9c9ewe/RtWcXosWX/Z0aPz5vkAliism0yUhNTUosUUvOS81My89JtlbyD
+	453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgG5UUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQX
+	l9gqpRak5BSYFOgVJ+YWl+al6+WlllgZGhgYmQIVJmRnzH35k7Vgo3BFR8cjpgbGHv4uRk4O
+	CQETib0vvjF3MXJxCAnsZpTYN2EXO4TziVFi3qcvjBDON0aJhatmM8K0HFzYwA5iCwnsZZQ4
+	PjsBougto8SMviY2kASvgJ3EkfaTrCA2i4CqxJPNH6HighInZz5hAbFFBeQl7t+aATZIWCBe
+	4sjtpWD1IgIaEi+P3mIBGcoscJJJ4urSZUwgCWYBcYlbT+YD2RwcbAKGEs9O2ICEOQXMJD6d
+	eM8GUSIvsf3tHLB/JAT2cEhcuvGeHeJqF4m78/4wQ9jCEq+Ob4GKS0m87G+DsqslVt8BORSk
+	uYVR4vCTb1AJe4nHRx8xgyxmFtCUWL9LHyIsKzH11Dqo2/gken8/YYKI80rsmAdjq0qcarzM
+	BmFLS9xbco0VwvaQmPxiC/MERsVZSOEyC8mbs5D8Mwth8wJGllWMkqkFxbnpqcWmBYZ5qeXw
+	GE/Oz93ECE7DWp47GO8++KB3iJGJg/EQowQHs5II74njZ9OEeFMSK6tSi/Lji0pzUosPMZoC
+	I2gis5Rocj4wE+SVxBuaWBqYmJmZmVgamxkqifO+bp2bIiSQnliSmp2aWpBaBNPHxMEp1cBU
+	v3vGs8xNB3R61ziXJEkvCPwSc0jxvFqPTHDm9jUaK39c77W/rj/9+7PeQy1HP2SvCks04sv3
+	6v68ZVmj+5MPzovu7he7ZrNnb0bmjXNT/wr8n/f9+PwErzgbtcdrHB7uqZA/fDzH0CkgKuDH
+	xKKjfYZ7Vjb3Sl4RmRCUG7fXdXdOx4U7Bod+5PLJ+Pkzs4iFel5YorNsj6MFdy7Hso3tVU3N
+	emb/T67kuLNs8pR9v/RmMDZfuLz88R6XhfeuVuxdZ6x1oOHAvOv6h1l1p4bMv//MwVFp5728
+	3OvfH1U8ri3aGmYnOu/fsb+uz5mNZF5f+nLz76RNa1Ibwyfkhy9UPKFkV3k9529w8K3/fQpf
+	jimxFGckGmoxFxUnAgCodfrATAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKIsWRmVeSWpSXmKPExsWy7bCSnO72RefSDC6d5bJ4c3UVq8WdBdOY
+	LE4tX8hk0bx4PZvFpD1bWSzuPvzBYnF51xw2i0XLWpktPh39z2qxqnMOUOz7TmaLBRsfMVpM
+	OihqsWrBAXYHPo/9c9ewe/RtWcXosWX/Z0aPz5vkAliiuGxSUnMyy1KL9O0SuDLmvvzJWrBR
+	uKKj4xFTA2MPfxcjJ4eEgInEwYUN7F2MXBxCArsZJXZ+fcwKkZCWeD2rixHCFpZY+e85VNFr
+	RoneDxfZQRK8AnYSR9pPgjWwCKhKPNn8kQ0iLihxcuYTFhBbVEBe4v6tGWD1wgLxEs2T9zOB
+	2CICGhIvj95iARnKLHCSSWLflT5miA2/mSSWPbkO1s0sIC5x68l8oA4ODjYBQ4lnJ2xAwpwC
+	ZhKfTrxngygxk+jaCnEpM9Cy7W/nME9gFJqF5I5ZSCbNQtIyC0nLAkaWVYySqQXFuem5xYYF
+	hnmp5XrFibnFpXnpesn5uZsYwTGnpbmDcfuqD3qHGJk4GA8xSnAwK4nwnjh+Nk2INyWxsiq1
+	KD++qDQntfgQozQHi5I4r/iL3hQhgfTEktTs1NSC1CKYLBMHp1QDk5P6q3X/pl9VFbilacb/
+	4eN7PccEu5jJamVHLmyP+l6ypcNTbQe/13Orvfan1rH7rd4XefDk3cltmpP/vLDoe1UtpOIc
+	/tf/O5f65INbF29u3Hx+wVr9gEPNT3Tv+Zl55e6s3X0r+M/i/XO99ySYPTGPZGF8y2JReP3L
+	cduAc3O/bv1kE5iaWcy5uDphI4P4646vq57qHt5x4pjYnKuPd3v2mMbtZm5sF0ro1J43+3DP
+	i6dFtnwTrXv7qm/axArnX/zNuU+w9lD46r1fF+m94S32Oi8/9ci/2+3cuVkihjseNNTyci+9
+	aGF8e9/8JcfmP/lypvLdg0u5839p3Pnj6bvjxMHuqq4WTzanWT1TGmYqsRRnJBpqMRcVJwIA
+	AJ8iCigDAAA=
+X-CMS-MailID: 20240828040823epcas5p47149c92b86596bd5f39a52cededabe29
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240815064918epcas5p1248e4f9084d33fdb11a25fa34e66cdbe
+References: <CGME20240815064918epcas5p1248e4f9084d33fdb11a25fa34e66cdbe@epcas5p1.samsung.com>
+	<20240815064836.1491-1-selvarasu.g@samsung.com>
+	<2024081618-singing-marlin-2b05@gregkh>
+	<4f286780-89a2-496d-9007-d35559f26a21@samsung.com>
+	<2024081700-skittle-lethargy-9567@gregkh>
+	<c477fdb2-a92a-4551-b6c8-38ada06914c6@samsung.com>
+	<2024082212-copper-oversight-f84f@gregkh>
 
-On Tue, Aug 27, 2024 at 7:29=E2=80=AFAM Rafael J. Wysocki <rafael@kernel.or=
-g> wrote:
+
+On 8/22/2024 1:29 PM, Greg KH wrote:
+> On Sat, Aug 17, 2024 at 07:13:53PM +0530, Selvarasu Ganesan wrote:
+>> On 8/17/2024 10:47 AM, Greg KH wrote:
+>>> On Fri, Aug 16, 2024 at 09:13:09PM +0530, Selvarasu Ganesan wrote:
+>>>> On 8/16/2024 3:25 PM, Greg KH wrote:
+>>>>> On Thu, Aug 15, 2024 at 12:18:31PM +0530, Selvarasu Ganesan wrote:
+>>>>>> This commit addresses an issue where the USB core could access an
+>>>>>> invalid event buffer address during runtime suspend, potentially causing
+>>>>>> SMMU faults and other memory issues in Exynos platforms. The problem
+>>>>>> arises from the following sequence.
+>>>>>>            1. In dwc3_gadget_suspend, there is a chance of a timeout when
+>>>>>>            moving the USB core to the halt state after clearing the
+>>>>>>            run/stop bit by software.
+>>>>>>            2. In dwc3_core_exit, the event buffer is cleared regardless of
+>>>>>>            the USB core's status, which may lead to an SMMU faults and
+>>>>>>            other memory issues. if the USB core tries to access the event
+>>>>>>            buffer address.
+>>>>>>
+>>>>>> To prevent this hardware quirk on Exynos platforms, this commit ensures
+>>>>>> that the event buffer address is not cleared by software  when the USB
+>>>>>> core is active during runtime suspend by checking its status before
+>>>>>> clearing the buffer address.
+>>>>>>
+>>>>>> Cc: stable@vger.kernel.org # v6.1+
+>>>>> Any hint as to what commit id this fixes?
+>>>>>
+>>>>> thanks,
+>>>>>
+>>>>> greg k-h
+>>>> Hi Greg,
+>>>>
+>>>> This issue is not related to any particular commit. The given fix is
+>>>> address a hardware quirk on the Exynos platform. And we require it to be
+>>>> backported on stable kernel 6.1 and above all stable kernel.
+>>> If it's a hardware quirk issue, why are you restricting it to a specific
+>>> kernel release and not a specific kernel commit?  Why not 5.15?  5.4?
+>> Hi Greg,
+>>
+>> I mentioned a specific kernel because our platform is set to be tested
+>> and functioning with kernels 6.1 and above, and the issue was reported
+>> with these kernel versions. However, we would be fine if all stable
+>> kernels, such as 5.4 and 5.15, were backported. In this case, if you
+>> need a new patch version to update the Cc tag for all stable kernels,
+>> please suggest the Cc tag to avoid confusion in next version.
+> I'll fix it up when applying it, thanks.
+
+Thank you for the support!!.
+
+Thanks,
+Selva
 >
-> First, let me add a few people who know more about timers than I do.
+> greg k-h
 >
-> On Tue, Aug 27, 2024 at 5:42=E2=80=AFAM Len Brown <lenb@kernel.org> wrote=
-:
-> >
-> > From: Len Brown <len.brown@intel.com>
-> >
-> > Optimize acpi_os_sleep(ms) using usleep_range(floor, ceiling).
-> > The floor of the range is the exact requested ms,
-> > with an additional 1ms of slack for sleeps above 20ms.
-> >
-> > This reduces  the kernel resume time of the Dell 9300
-> > to 1,124 ms from 2,471 ms.
-> >
-> > The ACPI AML Sleep(ms) method calls acpi_os_sleep(ms),
-> > which has invoked msleep(ms) since 2013.
-> >
-> > But msleep(ms) is based on jiffies, and the rounding-up
-> > logic to convert to jiffies on a HZ=3D250 system causes
-> > msleep(5) to bloat to a minimum of a 12ms delay.
-> > msleep(5) typically takes over 15ms!
-> >
-> > As a result, AML delay loops with small Sleep() inside
-> > magnify the entire loop.  A particularly painful example
-> > is ACPI support for powering-on ICL and TGL
-> > thunderbolt/pcie_ports during system resume.
-> >
-> > Regarding jiffy-based msleep() being inexpensive
-> > and hrtimer-based usleep_range() being expensive.
-> > ACPI AML timer invocations are rare, and so it
-> > is unlikely the hrtimer cost will be noticible,
-> > or even measurable.  At the same time, the msleep()
-> > timer duration bloat is significant enough to
-> > be noticed by end users.
->
-> I'm not sure why you are refusing to follow the implementation of
-> fsleep() and Documentation/timers/timers-howto.rst and still use
-> msleep() for sleep durations longer than 20 ms.
-
-timers_howto.rst could use an update to reflect reality.
-
-It doesn't disclose how toxic msleep actually is for small values.
-msleep(1) takes 11ms on a HZ=3D250 system.
-
-Linux/ACPI has to support any random AML Sleep(ms) call,
-and sometimes we see timeout loops implemented around
-an inner Sleep(1ms).  If we use msleep those loops explode
-by 11x and aggregate durations that are noticed by end users.
-
-fsleep does three things -- and none of them are a good fit
-for acpi_os_sleep:
-
-static inline void fsleep(unsigned long usecs)
-{
-        if (usecs <=3D 10)
-                udelay(usecs);
-        else if (usecs <=3D 20000)
-                usleep_range(usecs, 2 * usecs);
-        else
-                msleep(DIV_ROUND_UP(usecs, 1000));
-}
-
-> udelay(usecs);
-will never execute in the ACPI case, as the minimum delay is 1000 usec.
-
-> usleep_range(usecs, 2 * usecs);
-
-timers-howto.rst says this:
-
-                        "With the introduction of a range, the scheduler is
-                        free to coalesce your wakeup with any other wakeup
-                        that may have happened for other reasons, or at the
-                        worst case, fire an interrupt for your upper bound.=
-"
-
-But the way usleep_range works is it sets the timer for the
-upper bound, and opportunistically wakes/cancels if another timer
-fires after the lower bound and before the upper bound.
-
-It calls it a "worst case" that the timer fires at the upper bound.
-
-But when ACPI suspend/resume flows are running the only other
-timer is the tick, and so the "worst case" happens effectively ALWAYS.
-
-So when fsleep does a usleep_range(usecs, 2 * usecs), it is effectively
-DOUBLING the duration of all timers 20 ms and smaller.
-There may be scenarios where doing this makes sense,
-but acpi_os_sleep() is not one of them.
-
-> msleep(DIV_ROUND_UP(usecs, 1000));
-
-msleep(50) takes 59.8ms -- a 20% penalty.
-We have loops with AML Sleep(50) in the middle,
-and this  code would bloat them by 20%, while
-the user is waiting -- for no benefit. o
-Again, there may be scenarios where doing this makes sense,
-but acpi_os_sleep() is not one of them.
-
-
-> Why should usleep_range() be used for 100 ms sleeps, for instance?
-> This goes against the recommendation in the above document, so is
-> there a particular reason?
-
-The document doesn't say *why* msleep is recommended.
-One would assume that when there are many timers, msleep
-is efficient because it consolidates them to jiffy boundaries,
-and if they are long duration timers, perhaps the assumption is
-that they don't care so much about the additional delays?
-
-Again, there are certainly scenarios where that makes sense,
-but at the end of the day, msleep(100) takes 106 msec.
-
-ACPI is not a heavy timer user, so the msleep efficiency justification
-for making the user wait longer holds no weight.
-
-Now that we realize that end-users notice timer bloat in acp_os_sleep,
-it is clear that msleep is simply a poor choice for acpi_os_sleep.
-
-> > Regarding usleep_range() timer coalescing.
-> > It virtually never works during ACPI flows, which
-> > commonly run when there are few coalescing
-> > opportunities. As a result, the timers almost
-> > always expire at the maximum end of their specified range.
->
-> I don't think that's the main point of using a nonzero range in
-> usleep_range().  AFAICS, this is about letting the timekeeping
-> subsystem know how much you care about timer precision so it can
-> arrange things to meet everyone's needs.
-
-The range in usleep_range is to enable timer coalescing,
-which is to reduce the number of timers firing on the system.
-If it has another purpose, neither the code nor the API documentation
-are forthcoming.
-
-> > It was tempting to use usleep_range(us, us)
-> > for all values of us.  But 1 ms is added to the
-> > range for timers over 20ms on the reasoning that
-> > the AML Sleep interface has a granularity of 1ms,
-> > most costly loops use duration under 20ms inside,
-> > and singular long sleeps are unlitly to notice an
-> > additiona 1ms, so why not allow some coalescing...
->
-> So again, why not use msleep() for sleeps longer than 20 ms?
-
-per above.  Too slow.
-
-> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D216263
-> > Signed-off-by: Len Brown <len.brown@intel.com>
-> > Suggested-by: Arjan van de Ven <arjan@linux.intel.com>
-> > Tested-by: Todd Brandt <todd.e.brandt@intel.com>
-> > ---
-> >  drivers/acpi/osl.c | 8 +++++++-
-> >  1 file changed, 7 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
-> > index 70af3fbbebe5..c4c76f86cd7a 100644
-> > --- a/drivers/acpi/osl.c
-> > +++ b/drivers/acpi/osl.c
-> > @@ -607,7 +607,13 @@ acpi_status acpi_os_remove_interrupt_handler(u32 g=
-si, acpi_osd_handler handler)
-> >
-> >  void acpi_os_sleep(u64 ms)
-> >  {
-> > -       msleep(ms);
-> > +       u64 us =3D ms * 1000;
-> > +
-> > +       if (us <=3D 20000)
-> > +               usleep_range(us, us);
-> > +       else
-> > +               usleep_range(us, us + 1000);
-> > +
-> >  }
-> >
-> >  void acpi_os_stall(u32 us)
-> > --
->
-> While I agree with using usleep_range() for sleeps up to 20 ms in
-> acpi_os_sleep(), I disagree with the patch as is.
-
-The measurement results do not support any form of acpi_os_sleep that
-invokes any form of msleep().
-
-Honestly, I think because of when and how acpi_os_sleep is called, we shoul=
-d
-consider making it yet simpler:
-
-void acpi_os_sleep(u64 ms)
-{
-        u64 us =3D ms * 1000;
-
-        usleep_range(us, us);
-}
-
-thanks,
--Len
 
