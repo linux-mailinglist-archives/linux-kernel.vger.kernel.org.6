@@ -1,181 +1,81 @@
-Return-Path: <linux-kernel+bounces-304246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26D34961CBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 05:06:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34236961CF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 05:20:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54C461C2154E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 03:06:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC97D1F25F40
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 03:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61970139578;
-	Wed, 28 Aug 2024 03:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC9013E023;
+	Wed, 28 Aug 2024 03:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dnlNCrAc"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBAF213E023;
-	Wed, 28 Aug 2024 03:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="QuD6riFS"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCAC244C68;
+	Wed, 28 Aug 2024 03:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724814346; cv=none; b=pgoAsJTkvnRwBp4/ia7YI+5IgKHMxkUzr5jUQV58rXgToDV/8HeiE9euarM3npb0/owChB3PEadDiGyTle29FJEQP5SjZ+/QgZHvh+c3dKk6fq0EFRF3BCj/kVI/1ofTtRK3khD7D2XBopkeuMXWbPQgE0M4L0zkAZCafCoNxyk=
+	t=1724815025; cv=none; b=pW+Ui37fKJnQXESQ4wx1Y4EyYM2Wl4k36UDUXmSsr1m09NtJJLjQnJOGAIzXrwD0C/66bPNdQpFB2XPmy6zGaj2pqmbw5+P47vVRph+3zdHNRK4zSQX32Tofp4HK3yxT/XDjkkiJsPkHawXT5aA8tbk5a2UgLfa4R8HoYo1aHD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724814346; c=relaxed/simple;
-	bh=DEANYYUC732mJ6l1JPJ8NBjJnnuAALDmZ5WjJY7Fojo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K3/h7Kw5b9VkBKlM1oPRfNRjen3Mt6ILDhkP+momM1pjx3OYkgwFoaq6YqAOYuEFRzOFB0MUl8WzqupHXmZFMSH+GeAtsZd6STlpFa0vQfqBdMgnv3e3OYAjhSm1nGp1IkCMQWXTC0ii3Mrh92dZ8PvsAynRogWFTwjNGS0Ew5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dnlNCrAc; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47RLZugk001941;
-	Wed, 28 Aug 2024 03:05:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	M4F60F0rBoSpFONUEcy3jhOmQ1ejE4dsZxEVlIEgRFA=; b=dnlNCrAcORxpOjuE
-	6OszrzSyOI9o3hXTsXHJ8UM+zp2GCoMvOR6S3hLdZjCPVpg48GRIppO4gs/hVR2B
-	vCviEvLFwoH4FYLdBmo/8CMXoqcpimbziGSQnzWrgL0c6l+yebRwEIy2DTHg9tEn
-	ONLELyRj+zbnruTdLnO5G586AFBdMVf6UE2/fs6wZsZpT5Jo+k44BlyGTKDgMEQi
-	PVl6wh9YjJANwRXHc/TzY9BfJekNbCKja52Gc2e1WZlU/prLijHhElTNbcDfxkPX
-	Yg8iEEiLrXz2gwxnIUw46ZCaLbTzKTHlIOBMphrEW1mnW6E+/wUaEPe8rW3o9ei7
-	O2hgNg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419puuggyu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 03:05:40 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47S35dGv022975
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 03:05:39 GMT
-Received: from jingyw-gv.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 27 Aug 2024 20:05:35 -0700
-From: Jingyi Wang <quic_jingyw@quicinc.com>
-To: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <andersson@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <mathieu.poirier@linaro.org>,
-        <bartosz.golaszewski@linaro.or>, <quic_tingweiz@quicinc.com>,
-        <quic_aiquny@quicinc.com>, <quic_tengfan@quicinc.com>
-CC: <quic_jingyw@quicinc.com>, Xin Liu <quic_liuxin@quicinc.com>
-Subject: [PATCH 2/2] remoteproc: qcom: pas: Add QCS8300 remoteproc support
-Date: Wed, 28 Aug 2024 11:05:11 +0800
-Message-ID: <20240828030511.443605-3-quic_jingyw@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240828030511.443605-1-quic_jingyw@quicinc.com>
-References: <20240828030511.443605-1-quic_jingyw@quicinc.com>
+	s=arc-20240116; t=1724815025; c=relaxed/simple;
+	bh=yjruTkH+iQYNYqAu7y8WfqDV7wkGwwFHk76trAp4yG8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=chprmAlzqQsI6VaP23Nb4tQev9kLm0c3oSTJ1yztqAIEE7K8GIlqKPoU+olb8KIdH1EhGI3SkPT/pWprsQxr/36DuMFoQkqOP2/BCnX+RcCyKXOHbpw7pif8Fde+bLjhgoAk29SOo9Sq6wWRy3SP+8aE0J9uzLBvzaYgpd2Jkq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=QuD6riFS; arc=none smtp.client-ip=1.95.21.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=oNzLh8Gu+ggx9rZgIUozzmmC1mDe2Hles0hNfTp2uCU=;
+	b=QuD6riFSacSMvqRhS3iT3p7DJE+jzi8cwLOj096cExBifQQbLczzcwxUznha/z
+	kd1oIHXqqno96gIivTA3tS7HLhQq7stSynD9ChlA2243Ik1goIrfH2U2e7sUualM
+	GOpk7JO6woxVjyBwKUR+CTCR7H+NHcq00c0/WfPhXEvyA=
+Received: from dragon (unknown [114.216.210.89])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgD390EGlM5mz1kOAA--.25186S3;
+	Wed, 28 Aug 2024 11:05:44 +0800 (CST)
+Date: Wed, 28 Aug 2024 11:05:42 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: layerscape: remove unused num-viewport
+Message-ID: <Zs6UBgR/T1raECSi@dragon>
+References: <20240810061812.155376-1-animeshagarwal28@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: uWKYzc3QvKWref52gbduu0hKrUDHvB6k
-X-Proofpoint-GUID: uWKYzc3QvKWref52gbduu0hKrUDHvB6k
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-28_01,2024-08-27_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 clxscore=1015 impostorscore=0 phishscore=0 adultscore=0
- bulkscore=0 suspectscore=0 lowpriorityscore=0 spamscore=0 mlxlogscore=999
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408280020
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240810061812.155376-1-animeshagarwal28@gmail.com>
+X-CM-TRANSID:Mc8vCgD390EGlM5mz1kOAA--.25186S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW7GF4UCr15GFykJw1UXw43KFg_yoW3XFbE9F
+	47XF1kurWkAFsrWa4ayw4fGw1vk3y7J343tFyftFn3XFyIvayvya4S9wn3JFn8Gr4IgF9r
+	Z3WYqFyrJa4FkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8-_-PUUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiAgFJZWbOiGUy-gAAsm
 
-Add support for PIL loading on ADSP, CDSP and GPDSP on QCS8300
-platform.
+On Sat, Aug 10, 2024 at 11:48:06AM +0530, Animesh Agarwal wrote:
+> Remove unused property num-viewport to fix dtbs warnings.
+> 
+> arch/arm64/boot/dts/freescale/fsl-ls1012a-frwy.dtb: pcie@3400000: Unevaluated properties are not allowed ('num-viewport' was unexpected)
+>     from schema $id: http://devicetree.org/schemas/pci/fsl,layerscape-pcie.yaml#
+> arch/arm64/boot/dts/freescale/fsl-ls1012a-oxalis.dtb: pcie@3400000: Unevaluated properties are not allowed ('num-viewport' was unexpected)
+>     from schema $id: http://devicetree.org/schemas/pci/fsl,layerscape-pcie.yaml#
+> 
+> Cc: Daniel Baluta <daniel.baluta@nxp.com>
+> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
 
-Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
-Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
-Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
----
- drivers/remoteproc/qcom_q6v5_pas.c | 55 ++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
-
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index ef82835e98a4..368aa9cc0051 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -857,6 +857,58 @@ static const struct adsp_data sdm845_adsp_resource_init = {
- 	.ssctl_id = 0x14,
- };
- 
-+static const struct adsp_data qcs8300_adsp_resource = {
-+	.crash_reason_smem = 423,
-+	.firmware_name = "adsp.mdt",
-+	.pas_id = 1,
-+	.minidump_id = 5,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"lcx",
-+		"lmx",
-+		NULL
-+	},
-+	.load_state = "adsp",
-+	.ssr_name = "lpass",
-+	.sysmon_name = "adsp",
-+	.ssctl_id = 0x14,
-+};
-+
-+static const struct adsp_data qcs8300_cdsp_resource = {
-+	.crash_reason_smem = 601,
-+	.firmware_name = "cdsp0.mdt",
-+	.pas_id = 18,
-+	.minidump_id = 7,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mxc",
-+		"nsp0",
-+		NULL
-+	},
-+	.load_state = "cdsp",
-+	.ssr_name = "cdsp",
-+	.sysmon_name = "cdsp",
-+	.ssctl_id = 0x17,
-+};
-+
-+static const struct adsp_data qcs8300_gpdsp_resource = {
-+	.crash_reason_smem = 640,
-+	.firmware_name = "gpdsp0.mdt",
-+	.pas_id = 39,
-+	.minidump_id = 21,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mxc",
-+		NULL
-+	},
-+	.load_state = "gpdsp",
-+	.ssr_name = "gpdsp",
-+	.sysmon_name = "gpdsp",
-+	.ssctl_id = 0x21,
-+};
-+
- static const struct adsp_data sm6350_adsp_resource = {
- 	.crash_reason_smem = 423,
- 	.firmware_name = "adsp.mdt",
-@@ -1416,6 +1468,9 @@ static const struct of_device_id adsp_of_match[] = {
- 	{ .compatible = "qcom,qcs404-adsp-pas", .data = &adsp_resource_init },
- 	{ .compatible = "qcom,qcs404-cdsp-pas", .data = &cdsp_resource_init },
- 	{ .compatible = "qcom,qcs404-wcss-pas", .data = &wcss_resource_init },
-+	{ .compatible = "qcom,qcs8300-adsp-pas", .data = &qcs8300_adsp_resource},
-+	{ .compatible = "qcom,qcs8300-cdsp-pas", .data = &qcs8300_cdsp_resource},
-+	{ .compatible = "qcom,qcs8300-gpdsp-pas", .data = &qcs8300_gpdsp_resource},
- 	{ .compatible = "qcom,sa8775p-adsp-pas", .data = &sa8775p_adsp_resource},
- 	{ .compatible = "qcom,sa8775p-cdsp0-pas", .data = &sa8775p_cdsp0_resource},
- 	{ .compatible = "qcom,sa8775p-cdsp1-pas", .data = &sa8775p_cdsp1_resource},
--- 
-2.25.1
+Applied, thanks!
 
 
