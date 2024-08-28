@@ -1,258 +1,161 @@
-Return-Path: <linux-kernel+bounces-304810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25C6396252F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:46:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C82EE962527
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:45:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCA76284A1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:46:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30FE9284402
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACAC17335E;
-	Wed, 28 Aug 2024 10:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82E716C680;
+	Wed, 28 Aug 2024 10:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vDAJ/kZw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+wPUG7d"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5EF17332C;
-	Wed, 28 Aug 2024 10:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2861553BC;
+	Wed, 28 Aug 2024 10:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724841930; cv=none; b=oF6kUfnJftSFbGibYj9PtMVZuGuWoivVGVWN3LTFxo6+THy3e9vQ11aN3WTrgC2/QKfq+38GuLdOTnHdZhfW0UiBNHktthEF/5k9E5utpls+4Q0FgbvmQyZ1LTjpRJ2HX2+BGXw06SDuTIzmKadozKyzzDTtIvDMJvjGhoAtUUM=
+	t=1724841899; cv=none; b=ZCvTyhql6948z7Szvz4vAcYy3t2ZijLrDGXrhIoEQnuivBgmew4hpCFf5eHUhBVDB8Tpve3rt+zjGDc9dNh7V0bOID/DWbEwO4jGU9S1EtYE1miWVHo6217u4Fez3iNQvoXeYlO5xWgbJL7RE7tTxogT0cuvml6v0gycr2cATS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724841930; c=relaxed/simple;
-	bh=oJqUQOk3o8bIk/rAfWnTmRRVoeg4z5+bXwcyEO9YgA0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PkHztfcX6mbmZKzZzb3CTAZXATGBQ9MAeuVI8zNZ8uw65rqJBhMMPjyOZo2Peh1bFHrpEtqc5Xcr99xYlT/Ckv4ulEN1RanHRjKLzBvttrWGjMoaeExqwb8T9DRRBqOtS0J3jC3Bri3O/JrLIdzK7Oc5kKvIBpz4WCiYnuNdPFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vDAJ/kZw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5139C98EC0;
-	Wed, 28 Aug 2024 10:45:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724841929;
-	bh=oJqUQOk3o8bIk/rAfWnTmRRVoeg4z5+bXwcyEO9YgA0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vDAJ/kZwaX7nXf8vqSCNOkFOT9yLQtcJgXUsWQeuVGGoiVJTLofjwxMyy1KMPBux7
-	 GidQ9s5nA8x7rz5d4gKl7qZ7fpVXsglyxRSE4ZFcDxlDsDm8lAmTZh3eQZJxNVv6Hs
-	 UCdlrZoqBzIdFHLJlpyG2odykUnbZegIM35iyq2cRqQfaD2Pq9ax4oKfSFt30/Xv8u
-	 uIq8RbWIeThbQSS1PlU5UjThHIYHa1DVbndeoYcj4JuPCzWiVZpY8bYhRC9Gd1AYXP
-	 jrWyWFcOZZ1qLwUc7fwufASPnfnkHnPp+sTp3ni6mrvlm6Y7VvevDqs82wsCszxwEW
-	 P9UZMn4xycy/Q==
-From: Alexey Gladkov <legion@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-coco@lists.linux.dev
-Cc: "Alexey Gladkov (Intel)" <legion@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Yuan Yao <yuan.yao@intel.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Yuntao Wang <ytcoode@gmail.com>,
-	Kai Huang <kai.huang@intel.com>,
-	Baoquan He <bhe@redhat.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	cho@microsoft.com,
-	decui@microsoft.com,
-	John.Starks@microsoft.com
-Subject: [PATCH v5 6/6] x86/tdx: Implement MOVS for MMIO
-Date: Wed, 28 Aug 2024 12:44:36 +0200
-Message-ID: <86af46ade7688c9f4216da51573b6f74b7c53143.1724837158.git.legion@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <cover.1724837158.git.legion@kernel.org>
-References: <cover.1724248680.git.legion@kernel.org> <cover.1724837158.git.legion@kernel.org>
+	s=arc-20240116; t=1724841899; c=relaxed/simple;
+	bh=8aaF19HI5B2yzFRE0SF8pYSauAEi73MVY06nUd8ylzE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EGb7Bm7sd9kRZW0nMrLvC0VMKp5M+agyFb9jEbJisCq+3o/jkOyVP7x2WIm+2v7Iwn0okW0R5fX35pjajlO7M/OYW4zZuGpx4f32wCR0u3FcMWY10/AWUlI4++aGJExAgTiME2UJAI01tE3p5IETKt+m7cZlRwoD3yRPMljm3k0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+wPUG7d; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a86933829dcso743894166b.3;
+        Wed, 28 Aug 2024 03:44:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724841896; x=1725446696; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=x2kNJxOTuqFsipbBScG0DLZ5hyvlGOCflIXITsRjahw=;
+        b=Q+wPUG7dE0TbkAdGzq+6wgIBYq9stL/qAwHhWCmRWFOh+/cZxUtbAcM8vyL3Cp/9pP
+         ioJoJFw60l1FE+QVCir3/2xJTwgah18wnIbcKWct2DIZWEMtQ5mcZFQL5F0al0VKZYJY
+         H7r7Kw1vNBoCPiKn8fIoenC05l+79MbZSz6zQ4bpyFqHvnAC5RQ7kLO8MbE0iV+3KNIO
+         TaNsilbCZQqLOP0IScjb5lBhwAcxaJKex5mhiy4HpMkLr4pgvaFM7mIMdHBLOEW7tOUQ
+         ceU/NlGAGWBWljmpjt4Rsm5fXqfqAy+CxZE0xp9Agbb1CrdPgoFciMcsqNtXfDpgowCk
+         zXLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724841896; x=1725446696;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x2kNJxOTuqFsipbBScG0DLZ5hyvlGOCflIXITsRjahw=;
+        b=jqy0ySDl0E8f3LzfdLzAGNX0qrGa4DC6Y81v+JRVajIJzDvun2Gm0vQFb/G5ybDzuB
+         aJIAJ0oTn36VfGFuD1Ce0VkVBQS4g0FoFYIEctOKiCs3IHgTpgbn9GxDIBgR0lWm9RVZ
+         gW4AA8wUv1w0wwLGIM8Upn/7cxLczJfvOeS3C9JMP8xzjNoXoER4yU9+h/ablpZgvv7a
+         aR8+FPPO7BXP2Fz8utlqQ5EQ9GoI5hPMuK+NDQ09lwifRfEgumBSboV/RMLb7H8H5GeG
+         G0FeoBKEWwcnFjxkz5cqytLc08DgFcHBFMDanbFabjiQq/LDIKLG+ZvKskT+kqxvxmwE
+         9wLg==
+X-Forwarded-Encrypted: i=1; AJvYcCUh6n+DSHPRo9mFfWNziHLH83GRbjWOxuHapM+lqbUi3xWBnpOn2eRGiVvh6EIUHnWDgzfhBYbdMFKJY4UK@vger.kernel.org, AJvYcCXvoSVtbCBmqds4a6x8iUG662dhL46VDL5FUa5n5h+vGDg1fsQeM9f5kv+guuSt05J8uwc85Tou+A8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywk0/BRU3JiaN/Ld88n5aBsXj4fec30HZK9tRaV2MUJbVrRhZfh
+	2qTKpEIpOjLy1Y+XLaTfeCBcpfgiZyRCKAnhhpffbQhMqr3xV76u
+X-Google-Smtp-Source: AGHT+IGMoYDTVcLmKtKBbEfgOB2rQ1TYZVKs5frEt7O1bdUKTrEU6PFwVisPNEMHr/crvWP4yyLLHQ==
+X-Received: by 2002:a17:907:2d8e:b0:a86:83f9:bc1f with SMTP id a640c23a62f3a-a86a54de2cdmr1014126366b.61.1724841895200;
+        Wed, 28 Aug 2024 03:44:55 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::6:b05d])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e58315dbsm228435366b.106.2024.08.28.03.44.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Aug 2024 03:44:54 -0700 (PDT)
+Message-ID: <18647b68-0c7c-47bc-9b9e-9cf46ce86761@gmail.com>
+Date: Wed, 28 Aug 2024 11:44:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 0/2] mm: introduce THP deferred setting
+To: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ Rik van Riel <riel@surriel.com>, Nico Pache <npache@redhat.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>,
+ Barry Song <baohua@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Lance Yang
+ <ioworker0@gmail.com>, Peter Xu <peterx@redhat.com>,
+ Rafael Aquini <aquini@redhat.com>, Andrea Arcangeli <aarcange@redhat.com>,
+ Jonathan Corbet <corbet@lwn.net>, Zi Yan <ziy@nvidia.com>
+References: <20240729222727.64319-1-npache@redhat.com>
+ <72320F9D-9B6A-4ABA-9B18-E59B8382A262@nvidia.com>
+ <CAA1CXcCD798gkLoZuz3Cd5-Wf2MRfnAG_EB0U3nbScZeFv09dw@mail.gmail.com>
+ <CAA1CXcCCOS8-aqcm+w8Aoqe2P5q005wMrgmtx=xjzJgjKFb7mg@mail.gmail.com>
+ <61411216-d196-42de-aa64-12bd28aef44f@gmail.com>
+ <CAA1CXcCe8QDir2KiWg=GmN4BErfXSDs_9kmnYfyK=X8H8U8QwA@mail.gmail.com>
+ <698ea52e-db99-4d21-9984-ad07038d4068@gmail.com>
+ <20240827110959.GA438928@cmpxchg.org>
+ <9cf237df1a7bb21bba1a464787938eba8f372658.camel@surriel.com>
+ <ouerpxb676mei3kndz53j4am4fo2duvygoatfnposo2rkct566@akl7ckd7nrvk>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <ouerpxb676mei3kndz53j4am4fo2duvygoatfnposo2rkct566@akl7ckd7nrvk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: "Alexey Gladkov (Intel)" <legion@kernel.org>
 
-Add emulation of the MOVS instruction on MMIO regions. MOVS emulation
-consists of dividing it into a series of read and write operations,
-which in turn will be validated separately.
 
-This implementation is based on the same principle as in SEV. It splits
-MOVS into separate read and write operations, which in turn can cause
-nested #VEs depending on which of the arguments caused the first #VE.
+On 28/08/2024 02:17, Kirill A . Shutemov wrote:
+> On Tue, Aug 27, 2024 at 09:18:58PM -0400, Rik van Riel wrote:
+>> On Tue, 2024-08-27 at 13:09 +0200, Johannes Weiner wrote:
+>>>
+>>> I agree with this. The defer mode is an improvement over the upstream
+>>> status quo, no doubt. However, both defer mode and the shrinker solve
+>>> the issue of memory waste under pressure, while the shrinker permits
+>>> more desirable behavior when memory is abundant.
+>>>
+>>> So my take is that the shrinker is the way to go, and I don't see a
+>>> bonafide usecase for defer mode that the shrinker couldn't cover.
+>>>
+>>>
+>> I would like to take one step back, and think about what some real
+>> world workloads might want as a tunable for THP.
+>>
+>> Workload owners are going to have a real problem trying to figure
+>> out what the best value of max_ptes_none should be for their
+>> workloads.
+>>
+Yes, I agree. For both solutions, max_ptes_none needs to be adjusted,
+and would require experimentation with different values which workload
+owners might not do or want to do. But as Kirill said, the information
+on the number of zero pages in THPs isn't available. A possible solution
+might be randomly sampling a number of THPs at certain time intervals,
+but I don't think its a good idea to use that as a representation of the
+entire system.
 
-The difference with the SEV implementation is the execution context. SEV
-code is executed in atomic context. Exception handler in TDX is executed
-with interrupts enabled. That's why the approach to locking is
-different. In TDX, mmap_lock is taken to verify and emulate the
-instruction.
+Its ok from my side to have both the solutions in kernel as they don't
+interfere with each other. THP=defer makes sense to have as well if there
+are real world workloads or benchmarks that show page fault latency is
+problem due to THP=always as Nico mentioned in his reply [1]
 
-Another difference is how the read and write instructions are executed
-for MOVS emulation. While in SEV each read/write operation returns to
-user space, in TDX these operations are performed from the kernel
-context.
+[1] https://lore.kernel.org/all/CAA1CXcCyRd+qfszM4GGvKqW=95AV9v8LG5oihByEBGLtW4tD4g@mail.gmail.com/
 
-It may be possible to achieve more code reuse at this point,
-but it would require confirmation from SEV that such a thing wouldn't
-break anything.
 
-Signed-off-by: Alexey Gladkov (Intel) <legion@kernel.org>
----
- arch/x86/coco/tdx/tdx.c          | 82 ++++++++++++++++++++++++++++----
- arch/x86/include/asm/processor.h |  3 ++
- 2 files changed, 77 insertions(+), 8 deletions(-)
-
-diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
-index 65f65015238a..a9b3c6dee9ad 100644
---- a/arch/x86/coco/tdx/tdx.c
-+++ b/arch/x86/coco/tdx/tdx.c
-@@ -518,6 +518,60 @@ static int decode_insn_struct(struct insn *insn, struct pt_regs *regs)
- 	return 0;
- }
- 
-+static int handle_mmio_movs(struct insn *insn, struct pt_regs *regs, int size, struct ve_info *ve)
-+{
-+	unsigned long ds_base, es_base;
-+	unsigned char *src, *dst;
-+	unsigned char buffer[8];
-+	int off, ret;
-+	bool rep;
-+
-+	/*
-+	 * The in-kernel code must use a special API that does not use MOVS.
-+	 * If the MOVS instruction is received from in-kernel, then something
-+	 * is broken.
-+	 */
-+	if (WARN_ON_ONCE(!user_mode(regs)))
-+		return -EFAULT;
-+
-+	ds_base = insn_get_seg_base(regs, INAT_SEG_REG_DS);
-+	es_base = insn_get_seg_base(regs, INAT_SEG_REG_ES);
-+
-+	if (ds_base == -1L || es_base == -1L)
-+		return -EINVAL;
-+
-+	current->thread.in_mmio_emul = 1;
-+
-+	rep = insn_has_rep_prefix(insn);
-+
-+	do {
-+		src = ds_base + (unsigned char *) regs->si;
-+		dst = es_base + (unsigned char *) regs->di;
-+
-+		ret = __get_iomem(src, buffer, size);
-+		if (ret)
-+			goto out;
-+
-+		ret = __put_iomem(dst, buffer, size);
-+		if (ret)
-+			goto out;
-+
-+		off = (regs->flags & X86_EFLAGS_DF) ? -size : size;
-+
-+		regs->si += off;
-+		regs->di += off;
-+
-+		if (rep)
-+			regs->cx -= 1;
-+	} while (rep || regs->cx > 0);
-+
-+	ret = insn->length;
-+out:
-+	current->thread.in_mmio_emul = 0;
-+
-+	return ret;
-+}
-+
- static int handle_mmio_write(struct insn *insn, enum insn_mmio_type mmio, int size,
- 			     struct pt_regs *regs, struct ve_info *ve)
- {
-@@ -539,9 +593,8 @@ static int handle_mmio_write(struct insn *insn, enum insn_mmio_type mmio, int si
- 		return insn->length;
- 	case INSN_MMIO_MOVS:
- 		/*
--		 * MMIO was accessed with an instruction that could not be
--		 * decoded or handled properly. It was likely not using io.h
--		 * helpers or accessed MMIO accidentally.
-+		 * MOVS is processed through higher level emulation which breaks
-+		 * this instruction into a sequence of reads and writes.
- 		 */
- 		return -EINVAL;
- 	default:
-@@ -600,6 +653,7 @@ static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
- {
- 	enum insn_mmio_type mmio;
- 	struct insn insn = {};
-+	int need_validation;
- 	unsigned long vaddr;
- 	int size, ret;
- 
-@@ -611,14 +665,27 @@ static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
- 	if (WARN_ON_ONCE(mmio == INSN_MMIO_DECODE_FAILED))
- 		return -EINVAL;
- 
-+	if (mmio == INSN_MMIO_MOVS)
-+		return handle_mmio_movs(&insn, regs, size, ve);
-+
-+	need_validation = user_mode(regs);
-+
- 	if (!user_mode(regs) && !is_kernel_addr(ve->gla)) {
--		WARN_ONCE(1, "Access to userspace address is not supported");
--		return -EINVAL;
-+		/*
-+		 * Access from kernel to userspace addresses is not allowed
-+		 * unless it is a nested exception during MOVS emulation.
-+		 */
-+		if (!current->thread.in_mmio_emul || !current->mm) {
-+			WARN_ONCE(1, "Access to userspace address is not supported");
-+			return -EINVAL;
-+		}
-+
-+		need_validation = 1;
- 	}
- 
- 	vaddr = (unsigned long)insn_get_addr_ref(&insn, regs);
- 
--	if (user_mode(regs)) {
-+	if (need_validation) {
- 		if (mmap_read_lock_killable(current->mm))
- 			return -EINTR;
- 
-@@ -644,7 +711,6 @@ static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
- 	switch (mmio) {
- 	case INSN_MMIO_WRITE:
- 	case INSN_MMIO_WRITE_IMM:
--	case INSN_MMIO_MOVS:
- 		ret = handle_mmio_write(&insn, mmio, size, regs, ve);
- 		break;
- 	case INSN_MMIO_READ:
-@@ -665,7 +731,7 @@ static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
- 		ret = -EINVAL;
- 	}
- unlock:
--	if (user_mode(regs))
-+	if (need_validation)
- 		mmap_read_unlock(current->mm);
- 
- 	return ret;
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index a75a07f4931f..33875a217ed8 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -486,6 +486,9 @@ struct thread_struct {
- 	unsigned long		iopl_emul;
- 
- 	unsigned int		iopl_warn:1;
-+#ifdef CONFIG_INTEL_TDX_GUEST
-+	unsigned int		in_mmio_emul:1;
-+#endif
- 
- 	/*
- 	 * Protection Keys Register for Userspace.  Loaded immediately on
--- 
-2.46.0
+>> However, giving workload owners the ability to say "this workload
+>> should not waste more than 1GB of memory on zero pages inside THPs",
+>> or 500MB, or 4GB or whatever, would then allow the kernel to
+>> automatically adjust the max_ptes_none threshold.
+> 
+> The problem is that we don't have and cannot have the info on zero pages
+> inside THPs readily available. It requires memory scanning which is
+> prohibitively expensive if we want the info to be somewhat up-to-date.
+> 
+> We don't have enough input from HW on the access pattern. It would be nice
+> to decouple A/D bit (or maybe just A) from page table structure and get
+> higher resolution on the access pattern for THPs.
+> 
+> I tried to talk to HW folk, but it went nowhere. Maybe if there would be a
+> customer demand... Just saying...
+> 
 
 
