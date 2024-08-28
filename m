@@ -1,261 +1,109 @@
-Return-Path: <linux-kernel+bounces-305827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F1169634EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:40:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 573A09634EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:40:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0E9EB25A21
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:40:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AD951F246D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE8D1AE032;
-	Wed, 28 Aug 2024 22:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA7E1AD3F9;
+	Wed, 28 Aug 2024 22:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RinDndi0"
-Received: from mail-io1-f73.google.com (mail-io1-f73.google.com [209.85.166.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nWBoCJT7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FA71AC89B
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EE1166F01
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724884777; cv=none; b=N1wwMY1PKVkcZoje4SzJMXT3Y/iDIMKd7yIf7RQhIN9JDFTAuj2cqN5GQejak3dExn4risi22fmYQFcx6CPca/PQhj1uknUVLcyN0Pxw8Chc3v6CTOjN/Z9FBEtQEcl0oMFj/fML0Q7RaL/+EmV68Lv4btzEJIXyEki+AqHln/0=
+	t=1724884828; cv=none; b=QD3obxlmCLAhRVsBFxHkhdRRRCVz+N8pIOHhfAY+0QSGjQ+1yDSXliEbMni7zkm51u7GfTQMPLvsKrXypUSwxQwWhV8HV8+W3xObVaW8sn1eY8LdLHsbV1duVFNzwcriuDcIgfVAzDvZlRCRF/li8+hcnPn8sVdX+GMFJfU0XSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724884777; c=relaxed/simple;
-	bh=9uwtz3kcfa067V39AoKxu0Wu3ZsHQ6CrZUBA48vVY6M=;
-	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=D0L+vfnHxI9Rz4hkcoBfFeqo43Q7B5O8jd1NTMhG59v8u35k/AouwcN3a95Zib8W8EVuVS4Kl9+eMwzqs5/46c8K9g6VayNaUbYQfZEmavg02EvFLD+XCiVfaqGjh38YAwpDL7L/ZXLUP6OXJrJm2rnGFbKHm3mUHN47hpFTM+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RinDndi0; arc=none smtp.client-ip=209.85.166.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
-Received: by mail-io1-f73.google.com with SMTP id ca18e2360f4ac-824d69be8f7so10620439f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:39:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724884775; x=1725489575; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OAsnME+1ttvFS+7fzgI3/tOYVOypFVKT5MTMnTtwz3M=;
-        b=RinDndi0vtvECBi9o19azRqiBWBOGRKAj3+XMWE+vJ7sqJDNw4xy0dYnYgq+ghoQI5
-         t3x1hdsYWscI/8fGXi91sg2o0nOVqBG8/5GY3FfmyeFdKNZjwp7azbZMU60F2tla9WDO
-         +N74sXCVS+tmBj3NBOnDtg0j+bKAW1IZaZGnfAUZOTrq0eNZC3ubut/AnXcimquRLMRD
-         n2ryNPwU0+b3hP4QQ6ZI69FP4HosOTQCwH/N36cM2I/0F0eJY60rKdWWZm+qfBidf1tf
-         Lfq8u3wIISJ1kqfgRd+mhu06cM3/bKr7P43vaJkP4pIve7NvWSgo1DsHfx3Kp83TuDDV
-         tbpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724884775; x=1725489575;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OAsnME+1ttvFS+7fzgI3/tOYVOypFVKT5MTMnTtwz3M=;
-        b=BnZrLCo7++RH8wRei3+qQkRMh5mEqggLGURtzygZbnLGyBKHdfSwP6mYdAv8fDR32I
-         IBBf0ISRXouQ21Qo9eIMY1VEv2vWUiq0QlgrI2tKnpd7V8LUX7aU9EQsfdLq8jZLp1qI
-         d+6JIRUEJxoLBHBGatZ7MfDSiZs0FKP2amOs9e/7HUq+0aD5wnGXmcziPyPHsWstx7K9
-         4D9HT0eEfKg+NZmQyx8wCybARon2j/UwXdr+N4SGyvpWzKmuHExrOLPeMh7V5zt/Oc4L
-         NRsPR3l35+fG3VubyTgVhClOD7MSGfPOMcXoFdKerXRCwLZ5d+xhPPsHPZ95+HHE9p4J
-         Zm6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWhYIPpTxH0XA0w78kyrMgbn6jCwVJhdBYdmGtTzW+4fuNpEWmnJ/YUcn9+g94BUyNNeYINVGE0Mbt/nIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOGW1MV2GGxUINGEfnHU1sMS8i3YzjbF9FyQNbdFhD6FKneFSb
-	GyrvCCv7G6HvtCpdFjPNATQiZUM1P5YG/r8EUG/uGPbmE7n1yTKl8pY7Uyhq2bljPCadFdFwxYO
-	N/HbSVghfT+Vfc+4X2b5sKw==
-X-Google-Smtp-Source: AGHT+IEtsGwfm3FYZRqeDe5owwNzQffvuPu3yibSqfSWXPq2y5mmZ/3/gKcqfVyxJMmNWrvr1iyAEbqEbQ0pnYUIeg==
-X-Received: from coltonlewis-kvm.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:14ce])
- (user=coltonlewis job=sendgmr) by 2002:a05:6638:4119:b0:4b7:c9b5:6765 with
- SMTP id 8926c6da1cb9f-4ced00565f8mr31295173.5.1724884775117; Wed, 28 Aug 2024
- 15:39:35 -0700 (PDT)
-Date: Wed, 28 Aug 2024 22:39:34 +0000
-In-Reply-To: <Zs0FLglChWqsGa6w@google.com> (message from Mingwei Zhang on Mon,
- 26 Aug 2024 22:43:58 +0000)
+	s=arc-20240116; t=1724884828; c=relaxed/simple;
+	bh=w97wCVpJgt6bJ+N/mhy9Y0K9i8SQlHFEOfjW9LC1isc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UQM9i5WmXvGznzNju3nnuWxM/GAAAFow6cykb+jaIg84q+bOhIqF4yDZ5DfNCVkuCCdG1Qn6j12K9f//eH5LrwK1d3jV22AlWDtUNqYSPz7MgmnOHMZoMOl0q45ygqOPZ/Cpy0vQtw45Ju7qJsjnzMVK3EHmDUGgDHb4QciJmmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nWBoCJT7; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724884827; x=1756420827;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=w97wCVpJgt6bJ+N/mhy9Y0K9i8SQlHFEOfjW9LC1isc=;
+  b=nWBoCJT7Jwr3IQIG549cZt8m+70EJ02oYkPvG1gZvegCUDDkA5u4Cp8H
+   t8lPc9dBkjkb9rVSIq9Gfy8/Kx/xZXlndN+Po94JajEk/LId1WtMMRfmC
+   kOmpqetu3iqRMKdisL83KWY03dSj6pppKNUUISLfGLcjj1k70xI7BlEYc
+   vi6jEtapUd/+T2tPVbwydtG2poQ6aJUdpBo0AecOiqBNByslYnWE0H6Tl
+   pc45gDdznT9amhihvjx+PV9ZYuisQF4ZjAlZGiOjp9Xquda/Lu7VMFakc
+   l76xxo2ErunfLpx8Ltw5jhXe+AJ4lMfqlhj0ZmAi3Gh4bz1VPfwphYQTn
+   w==;
+X-CSE-ConnectionGUID: 3VN/ycjBTfKH5eXACVj3TA==
+X-CSE-MsgGUID: wyt/0XC2SlWIf4E/6oY/Qw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="13269363"
+X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
+   d="scan'208";a="13269363"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 15:40:27 -0700
+X-CSE-ConnectionGUID: BqmN+pEhRwikRzxDNJfgyA==
+X-CSE-MsgGUID: n6D5bouDREGJeQMaZVGAYg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
+   d="scan'208";a="68152537"
+Received: from njkybert-mobl.amr.corp.intel.com (HELO dsneddon-desk.sneddon.lan) ([10.125.160.160])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 15:40:26 -0700
+From: Daniel Sneddon <daniel.sneddon@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+Cc: pawan.kumar.gupta@linux.intel.com,
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+Subject: [PATCH] x86/bugs: Add missing NO_SSB flag
+Date: Wed, 28 Aug 2024 15:40:11 -0700
+Message-Id: <20240828224011.4043872-1-daniel.sneddon@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <gsnth6b49srd.fsf@coltonlewis-kvm.c.googlers.com>
-Subject: Re: [PATCH 3/6] KVM: x86: selftests: Set up AMD VM in pmu_counters_test
-From: Colton Lewis <coltonlewis@google.com>
-To: Mingwei Zhang <mizhang@google.com>
-Cc: kvm@vger.kernel.org, ljr.kernel@gmail.com, jmattson@google.com, 
-	aaronlewis@google.com, seanjc@google.com, pbonzini@redhat.com, 
-	shuah@kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Mingwei
+The Moorefield and Lightning Mountain Atom processors are
+missing the NO_SSB flag in the vulnerabilities whitelist.
+This will cause unaffected parts to incorrectly be reported
+as vulnerable. Add the missing flag.
 
-Mingwei Zhang <mizhang@google.com> writes:
+Signed-off-by: Daniel Sneddon <daniel.sneddon@linux.intel.com>
+---
+ arch/x86/kernel/cpu/common.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> On Tue, Aug 13, 2024, Colton Lewis wrote:
->> Branch in main() depending on if the CPU is Intel or AMD. They are
->> subject to vastly different requirements because the AMD PMU lacks
->> many properties defined by the Intel PMU including the entire CPUID
->> 0xa function where Intel stores all the PMU properties. AMD lacks this
->> as well as any consistent notion of PMU versions as Intel does. Every
->> feature is a separate flag and they aren't the same features as Intel.
-
->> Set up a VM for testing core AMD counters and ensure proper CPUID
->> features are set.
-
->> Signed-off-by: Colton Lewis <coltonlewis@google.com>
->> ---
->>   .../selftests/kvm/x86_64/pmu_counters_test.c  | 80 ++++++++++++++++---
->>   1 file changed, 68 insertions(+), 12 deletions(-)
-
->> diff --git a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c  
->> b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
->> index 0e305e43a93b..a11df073331a 100644
->> --- a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
->> +++ b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
->> @@ -33,7 +33,7 @@
->>   static uint8_t kvm_pmu_version;
->>   static bool kvm_has_perf_caps;
-
->> -static struct kvm_vm *pmu_vm_create_with_one_vcpu(struct kvm_vcpu  
->> **vcpu,
->> +static struct kvm_vm *intel_pmu_vm_create(struct kvm_vcpu **vcpu,
->>   						  void *guest_code,
->>   						  uint8_t pmu_version,
->>   						  uint64_t perf_capabilities)
->> @@ -303,7 +303,7 @@ static void test_arch_events(uint8_t pmu_version,  
->> uint64_t perf_capabilities,
->>   	if (!pmu_version)
->>   		return;
-
->> -	vm = pmu_vm_create_with_one_vcpu(&vcpu, guest_test_arch_events,
->> +	vm = intel_pmu_vm_create(&vcpu, guest_test_arch_events,
->>   					 pmu_version, perf_capabilities);
-
->>   	vcpu_set_cpuid_property(vcpu, X86_PROPERTY_PMU_EBX_BIT_VECTOR_LENGTH,
->> @@ -463,7 +463,7 @@ static void test_gp_counters(uint8_t pmu_version,  
->> uint64_t perf_capabilities,
->>   	struct kvm_vcpu *vcpu;
->>   	struct kvm_vm *vm;
-
->> -	vm = pmu_vm_create_with_one_vcpu(&vcpu, guest_test_gp_counters,
->> +	vm = intel_pmu_vm_create(&vcpu, guest_test_gp_counters,
->>   					 pmu_version, perf_capabilities);
-
->>   	vcpu_set_cpuid_property(vcpu, X86_PROPERTY_PMU_NR_GP_COUNTERS,
->> @@ -530,7 +530,7 @@ static void test_fixed_counters(uint8_t pmu_version,  
->> uint64_t perf_capabilities,
->>   	struct kvm_vcpu *vcpu;
->>   	struct kvm_vm *vm;
-
->> -	vm = pmu_vm_create_with_one_vcpu(&vcpu, guest_test_fixed_counters,
->> +	vm = intel_pmu_vm_create(&vcpu, guest_test_fixed_counters,
->>   					 pmu_version, perf_capabilities);
-
->>   	vcpu_set_cpuid_property(vcpu, X86_PROPERTY_PMU_FIXED_COUNTERS_BITMASK,
->> @@ -627,18 +627,74 @@ static void test_intel_counters(void)
->>   	}
->>   }
-
->> -int main(int argc, char *argv[])
->> +static uint8_t nr_core_counters(void)
->>   {
->> -	TEST_REQUIRE(kvm_is_pmu_enabled());
->> +	const uint8_t nr_counters =  
->> kvm_cpu_property(X86_PROPERTY_NUM_PERF_CTR_CORE);
->> +	const bool core_ext = kvm_cpu_has(X86_FEATURE_PERF_CTR_EXT_CORE);
->> +	/* The default numbers promised if the property is 0 */
->> +	const uint8_t amd_nr_core_ext_counters = 6;
->> +	const uint8_t amd_nr_core_counters = 4;
->> +
->> +	if (nr_counters != 0)
->> +		return nr_counters;
->> +
->> +	if (core_ext)
->> +		return amd_nr_core_ext_counters;
->> +
->> +	return amd_nr_core_counters;
->> +}
->> +
->> +static void guest_test_core_counters(void)
->> +{
->> +	GUEST_DONE();
->> +}
-
->> -	TEST_REQUIRE(host_cpu_is_intel);
->> -	TEST_REQUIRE(kvm_cpu_has_p(X86_PROPERTY_PMU_VERSION));
->> -	TEST_REQUIRE(kvm_cpu_property(X86_PROPERTY_PMU_VERSION) > 0);
->> +static void test_core_counters(void)
->> +{
->> +	uint8_t nr_counters = nr_core_counters();
->> +	bool core_ext = kvm_cpu_has(X86_FEATURE_PERF_CTR_EXT_CORE);
->> +	bool perf_mon_v2 = kvm_cpu_has(X86_FEATURE_PERF_MON_V2);
->> +	struct kvm_vcpu *vcpu;
->> +	struct kvm_vm *vm;
-
->> -	kvm_pmu_version = kvm_cpu_property(X86_PROPERTY_PMU_VERSION);
->> -	kvm_has_perf_caps = kvm_cpu_has(X86_FEATURE_PDCM);
->> +	vm = vm_create_with_one_vcpu(&vcpu, guest_test_core_counters);
-
->> -	test_intel_counters();
->> +	/* This property may not be there in older underlying CPUs,
->> +	 * but it simplifies the test code for it to be set
->> +	 * unconditionally.
->> +	 */
->> +	vcpu_set_cpuid_property(vcpu, X86_PROPERTY_NUM_PERF_CTR_CORE,  
->> nr_counters);
->> +	if (core_ext)
->> +		vcpu_set_cpuid_feature(vcpu, X86_FEATURE_PERF_CTR_EXT_CORE);
->> +	if (perf_mon_v2)
->> +		vcpu_set_cpuid_feature(vcpu, X86_FEATURE_PERF_MON_V2);
-
-> hmm, I think this might not be enough. So, when the baremetal machine
-> supports Perfmon v2, this code is just testing v2. But we should be able
-> to test anything below v2, ie., v1, v1 without core_ext. So, three
-> cases need to be tested here: v1 with 4 counters; v1 with core_ext (6
-> counters); v2.
-
-> If, the machine running this selftest does not support v2 but it does
-> support core extension, then we fall back to test v1 with 4 counters and
-> v1 with 6 counters.
-
-This should cover all cases the way I wrote it. I detect the number of
-counters in nr_core_counters(). That tells me if I am dealing with 4 or
-6 and then I set the cpuid property based on that so I can read that
-number in later code instead of duplicating the logic.
-
-I could always inline nr_core_counters() to make this more obvious since
-it is only called in this function. It was one of the first bits of code
-I wrote working on this series and I assumed I would need to call it a
-bunch before I decided I could just set the cpuid property after calling
-it once.
-
->> +
->> +	pr_info("Testing core counters: CoreExt = %u, PerfMonV2 = %u,  
->> NumCounters = %u\n",
->> +		core_ext, perf_mon_v2, nr_counters);
->> +	run_vcpu(vcpu);
->> +
->> +	kvm_vm_free(vm);
->> +}
->> +
->> +static void test_amd_counters(void)
->> +{
->> +	test_core_counters();
->> +}
->> +
->> +int main(int argc, char *argv[])
->> +{
->> +	TEST_REQUIRE(kvm_is_pmu_enabled());
->> +
->> +	if (host_cpu_is_intel) {
->> +		TEST_REQUIRE(kvm_cpu_has_p(X86_PROPERTY_PMU_VERSION));
->> +		TEST_REQUIRE(kvm_cpu_property(X86_PROPERTY_PMU_VERSION) > 0);
->> +		kvm_pmu_version = kvm_cpu_property(X86_PROPERTY_PMU_VERSION);
->> +		kvm_has_perf_caps = kvm_cpu_has(X86_FEATURE_PDCM);
->> +		test_intel_counters();
->> +	} else if (host_cpu_is_amd) {
->> +		/* AMD CPUs don't have the same properties to look at. */
->> +		test_amd_counters();
->> +	}
-
->>   	return 0;
->>   }
->> --
->> 2.46.0.76.ge559c4bf1a-goog
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index d4e539d4e158..be307c9ef263 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1165,8 +1165,8 @@ static const __initconst struct x86_cpu_id cpu_vuln_whitelist[] = {
+ 
+ 	VULNWL_INTEL(INTEL_CORE_YONAH,		NO_SSB),
+ 
+-	VULNWL_INTEL(INTEL_ATOM_AIRMONT_MID,	NO_L1TF | MSBDS_ONLY | NO_SWAPGS | NO_ITLB_MULTIHIT),
+-	VULNWL_INTEL(INTEL_ATOM_AIRMONT_NP,	NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT),
++	VULNWL_INTEL(INTEL_ATOM_AIRMONT_MID,	NO_SSB | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT | MSBDS_ONLY),
++	VULNWL_INTEL(INTEL_ATOM_AIRMONT_NP,	NO_SSB | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT),
+ 
+ 	VULNWL_INTEL(INTEL_ATOM_GOLDMONT,	NO_MDS | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT | NO_MMIO),
+ 	VULNWL_INTEL(INTEL_ATOM_GOLDMONT_D,	NO_MDS | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT | NO_MMIO),
+-- 
+2.25.1
 
 
