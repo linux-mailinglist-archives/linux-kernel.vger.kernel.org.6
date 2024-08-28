@@ -1,155 +1,210 @@
-Return-Path: <linux-kernel+bounces-305756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6E2E9633DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:30:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26C019633E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:31:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 185851C21B2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:30:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19669B22921
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1591AD3F5;
-	Wed, 28 Aug 2024 21:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8481C1AC43B;
+	Wed, 28 Aug 2024 21:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="bE5k5MHW";
-	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="N5vENj3z"
-Received: from mx-lax3-1.ucr.edu (mx-lax3-1.ucr.edu [169.235.156.35])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="HBpym8/U"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2056.outbound.protection.outlook.com [40.107.93.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3223115B137
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 21:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=169.235.156.35
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724880627; cv=none; b=qifTt4fYJ1Lzs6xYcex7y9kC25fwkM/iD4t/SaW3QdBX/E6NKih9qEOqKTLBhGhXCqNGjJsULiFT8FKzOPjo4krmGvt+0YlU20MJqSNaKI+BaQGpv3ZCGawdoBj8ceqecjZ2sND34Oxwa/2TgdcRwVDw/9QSYX/Vmh4BUShgVVM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724880627; c=relaxed/simple;
-	bh=W5t+TsHDdqtEqlQVwzAKb8FXLK5wwvdp8VqTqGXN3yE=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=KzJk40fSyz0IA3zoCA2br+gm7jlhOhnG5MGB0ob25nTFmFw8X7OqBxVwTwTGnV3EkhA2nok5ym1lqwVT0fN1iPDgvUrq5UXaGI2tBC3TkZ+IWP4gi39BYsq4xKq9PhgxlfniqtEkqcaHeYKMSADCMiYNswgU4EOR5dPrMLK0omw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=bE5k5MHW; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=N5vENj3z; arc=none smtp.client-ip=169.235.156.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1724880626; x=1756416626;
-  h=dkim-signature:x-google-dkim-signature:
-   x-forwarded-encrypted:x-gm-message-state:
-   x-google-smtp-source:mime-version:from:date:message-id:
-   subject:to:cc:content-type:x-cse-connectionguid:
-   x-cse-msgguid;
-  bh=W5t+TsHDdqtEqlQVwzAKb8FXLK5wwvdp8VqTqGXN3yE=;
-  b=bE5k5MHWK3cCvSAKgjkyHxK2BhZAMYFflyjb9QVtIQ5cISFvgnXimU/6
-   c2wvenyJ7i7wVxIr9mKc7v7lii4i0JuDnKZhdYWas+EOrz10BHbLNtJrM
-   dxfKTFXpWfQx28//4s0YBLhltN2bcuVnIMNor8UdMiOgZB42XUhH7ogtk
-   A6ntyJkf3O0yu6X4ty2XkBqbFw6nSvICbUwwugWvMtTPFXQnJ09Dr4ELf
-   6jwo0JeNAUheRlFPi1czeVIgojTNmH6AIaYV80tHKVz70h/w8fPkiwxhh
-   22IO/f9oZnEOMmCg006v1pz/GwKgpjaPmSHDYZrI41g2J04KpHajv3wuh
-   g==;
-X-CSE-ConnectionGUID: qlrmuTfTS4qZV16DSkx0hg==
-X-CSE-MsgGUID: lVVBBKzCQymxrW1z7Kn/Rw==
-Received: from mail-pj1-f72.google.com ([209.85.216.72])
-  by smtp-lax3-1.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 28 Aug 2024 14:30:23 -0700
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2d3bd8a0bd4so8124665a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:30:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ucr.edu; s=rmail; t=1724880623; x=1725485423; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=p7w2fRhYaEno5pjgH9P7KAMSDvs8lR65sZW4tF1Hqts=;
-        b=N5vENj3zT/++vzucKJ/iGmK0aubkRo6+cAII5VAcfOeCZgY18M36djk9ghK4fUvixc
-         JyqkxAVzAVQPHV05P5NXJdrRMdrXTSnoFu6ARCszWrjQpGWl60FlDCMnYmTzjBobgy+J
-         aKcSLf6EurYF3TEM8Lc+4y2AY85BuDAJwa9rI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724880623; x=1725485423;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=p7w2fRhYaEno5pjgH9P7KAMSDvs8lR65sZW4tF1Hqts=;
-        b=TmMZ16kQB4d7dzZLaqpNuusgUC9/f1ksFampEIJ5wwDIH/AKv/TnzHkidmu9eij871
-         eXc+unmTmfVFuObGGCBtqrjoAPFC3cr1wDaPDvtn7Y5ySStJwXUpi3M6BYIJj+WSPX9R
-         zhk1tOqZdYtMdngB/k27ZdyutpiiEf9jGD1NQtl+6ZQsFsWn13Fr/9umkQDzfX5XNEkl
-         1hPGLSALHRfO0ogtKPEpnvsbnofNDUvrGj0Eb+gsEVtxIew0n256xLHCv43A0RtdwfgG
-         0sJ+qqAiGU6VCaiZRv2bcLMJK/hE/OrqKVUxhiEzPp9A+bQL6p1H1y6f6DBF1nc7wj08
-         Vhsw==
-X-Forwarded-Encrypted: i=1; AJvYcCVf0nAz16SB6fcWxacLbdcL2h7GcWoBPq5KKrujQ8mfOqusp4gHV07/X7o6+g8buAJAICiCrNo50U2Qr+I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywmifx1G2LMmbJLxbW43Ark3B0GwwbKOo6rbbwLqaXF3+QtohWa
-	fbZ7BwkV2yQTeOFTF07QT5dGXkdmGkoC/vxizIOEKPwhnJMlthBajL8Ef/Ud4T7AnAuA9Eeg2Kr
-	45mTE/hyyuQmrLpF2GhOJyuvsB0+hXy+nP/4G+FxDUZuyZbQhXb9qEHPJCnrDnNoggbTXdE9jCp
-	zm+ja/9g/wPqzioH/a9O+J7+sVJv4Qqg8zUO40jg==
-X-Received: by 2002:a17:90b:4b07:b0:2d3:b8eb:9c3c with SMTP id 98e67ed59e1d1-2d85618a1e0mr605256a91.2.1724880622404;
-        Wed, 28 Aug 2024 14:30:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFGV5H75RSLzKNcOXv8IbEQGpVirzOsDloof6cRBzWiFNyeyDgl3TGz7xoZhUQf2+V5Eb4kH90EKD9vAAH4mbk=
-X-Received: by 2002:a17:90b:4b07:b0:2d3:b8eb:9c3c with SMTP id
- 98e67ed59e1d1-2d85618a1e0mr605234a91.2.1724880622051; Wed, 28 Aug 2024
- 14:30:22 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4E615C122
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 21:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724880679; cv=fail; b=BGUTLwatcnxhdmHbJvnpgZMSYvxnkuZPRRVSfGi+dkBz0BQ/N4XjDEVrHsGoLFF1xRUj/P4ZXDG1VK7GhVPESxwDai5VYQqHGDczzDVKg+U6w/79KfRJdc8R5dRmcTC18kIRt5zWUErqzGv6flO0q0W6y1uBO2HAx1glw3W7FsY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724880679; c=relaxed/simple;
+	bh=qZPxtCHXCEyAFziUVBSpu2kdZU9SUuSEmV4+zrwM+jE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=RvYRgaBOR2Ny2Xm9ZsFXjGGUTxiRRDTkjmMbIsNEuv7TUaKsjH4YjqT8b6h1GZt5yJsX9QjIoKlx9qF350mpJJVS/6BnEpNPikB5YuD/OwRaP+IhadrKLPPwRB3N8HxFHaKIo0mA/tDidkdvwdnw1qGkpK/DTw04b56Ol68ESn4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=HBpym8/U; arc=fail smtp.client-ip=40.107.93.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=e3ZY8Z1DT/3vijeScpNtPC369Na8qSUqEwaf/wJWyPaEiIRtnaq5F7zM+kLvOTriI+BBNPMFZqyn0UqiI8MGRit9s+eX67D2WA6e/3YlaNXi43z0KmnYNh5/CKxi9esoL0j17RMeD09NUZK4cfJ66fdrnrxEE9zVpMMazg4tz65SeeNQVEn9Tx/MpnR/VCKH8JK3Xslgwv0OtftK3l2LOcDRT95s+zuNTYqXmg83rvGCAcJuyXE0yhyjAqTAHYkhknQxaVofKGK7mYQNnwRr7vIaVJqb6j3tYqRlRNyDrqbHjqYQVek8cQl47XYgTV9HW5pXOuGQtylexbNtYx144A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Lqi2dH5FnQxRgXsuaNMyNeMRqxau6iTxhzsUUuxiwNE=;
+ b=dxYtLScL1JLssXz86tuAowSpEtZf1tdOtYMd+v/DGp1bnVSGKamw4fKKEHD+ZeOu2Sr973z34WZtDISHohZCuKQQ7l1JabFATJSqhB5UuL3LZ9lMSeNiIbk7YqgH4HbWW9Z+T7oz9V7mx3P6Pyc7963V1JPekV/syXC5C5CjmW5TqFPyDA/FGBIz59R/FJIBiihQc6sNJYOhBpzTiMTs7IlYo1EPxHfSUadXgIaq1DJ6q7H2Hfm1Yd9mmcTwuekjya8uQSS1T4iqKN/SwPgIZKvuRcJDkdB5LOZpUXQp5mLDt2ueHzyOX1ssficLVXr6w6O8xIoiCx1Uif1EC0qy3g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Lqi2dH5FnQxRgXsuaNMyNeMRqxau6iTxhzsUUuxiwNE=;
+ b=HBpym8/UpU/NOC3CAGrHvN9dRTPeGt67shndUIiUL/u5PGY4jC9V/La4KQQK0AnqbzzF1rfzC0y6EYD6f2a/AD7U4wuIUif6DqattB6Adba8c3Ov1+xcd9ouEJ0uxX0p99CCwqbDjeESb1Z0w9iioGhqQTDjxTNJmisNcrcoN2k=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB6095.namprd12.prod.outlook.com (2603:10b6:8:9c::19) by
+ PH7PR12MB9202.namprd12.prod.outlook.com (2603:10b6:510:2ef::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7897.25; Wed, 28 Aug 2024 21:31:13 +0000
+Received: from DS7PR12MB6095.namprd12.prod.outlook.com
+ ([fe80::c48a:6eaf:96b0:8405]) by DS7PR12MB6095.namprd12.prod.outlook.com
+ ([fe80::c48a:6eaf:96b0:8405%7]) with mapi id 15.20.7849.023; Wed, 28 Aug 2024
+ 21:31:13 +0000
+Message-ID: <cff255b7-3f06-45b4-949a-8873562782e9@amd.com>
+Date: Wed, 28 Aug 2024 16:31:09 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] amdgpu: disable amdgpu_dpm on THTF-SW831-1W-DS25_MB board
+To: Alex Deucher <alexdeucher@gmail.com>, WangYuli <wangyuli@uniontech.com>
+Cc: alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com,
+ airlied@gmail.com, daniel@ffwll.ch, lijo.lazar@amd.com, le.ma@amd.com,
+ Jun.Ma2@amd.com, hamza.mahfooz@amd.com, andrealmeid@igalia.com,
+ wenlunpeng@uniontech.com, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ guanwentao@uniontech.com, zhanjun@uniontech.com
+References: <3EA7C2B9E8C4D00A+20240828105938.37674-1-wangyuli@uniontech.com>
+ <CADnq5_P42A81D_VufAdSkwVwC08ZRiT=6XAS3oHmSH325ygbow@mail.gmail.com>
+ <D25D5E6FB683DA94+808c82a3-546f-4289-b531-fa24d7278879@uniontech.com>
+ <CADnq5_MJTTX0koP7am-D0RoZro=0_e38ic5BoJuKhbyM6y-99g@mail.gmail.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <CADnq5_MJTTX0koP7am-D0RoZro=0_e38ic5BoJuKhbyM6y-99g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SA0PR11CA0018.namprd11.prod.outlook.com
+ (2603:10b6:806:d3::23) To DS7PR12MB6095.namprd12.prod.outlook.com
+ (2603:10b6:8:9c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Xingyu Li <xli399@ucr.edu>
-Date: Wed, 28 Aug 2024 14:30:11 -0700
-Message-ID: <CALAgD-7JNKw5m0wpGAN+ezCL-qn7LcTL5vgyBmQZKbf5BTNUCw@mail.gmail.com>
-Subject: BUG: WARNING in kvfree_rcu_bulk
-To: paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org, 
-	joel@joelfernandes.org, josh@joshtriplett.org, boqun.feng@gmail.com, 
-	urezki@gmail.com, rostedt@goodmis.org, mathieu.desnoyers@efficios.com, 
-	jiangshanlai@gmail.com, qiang.zhang1211@gmail.com, rcu@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: Yu Hao <yhao016@ucr.edu>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB6095:EE_|PH7PR12MB9202:EE_
+X-MS-Office365-Filtering-Correlation-Id: c08f58d0-dad6-4fbd-507d-08dcc7a8bdc2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L280cU56dXAxQjF2R3IzbHFDSGdBZzVrRStXT1BxUVJEVmRoYWpqdGFmYzNI?=
+ =?utf-8?B?bmQ4UUZaclFVb1J1Rk9wNlZlMDFjeE5vQngvMldnY1Z5SDJEYTNnaWJyS1FL?=
+ =?utf-8?B?L3FUd0E3RlJSbm41c3RaMFRjc0gxa2pUdDRXNTlNL0MwTnIzTnZKT3JzSVZN?=
+ =?utf-8?B?aGdENmNVV2puZ25WZkJiRURVaGxiS3YyVmtHSld3bUtVa2dSekpnQWJwd3dB?=
+ =?utf-8?B?WFBrb3RobTRSZk8xTG1uU1orbGtZNEFQS0tkOWRPM2diSGVDL0tOYm9lMVov?=
+ =?utf-8?B?MlowazVMQkhTWEJXQjQwdGpMUHNjWW9YWjNObXgyVDByK3VxL1dkYkRRZzl2?=
+ =?utf-8?B?L0R3TU5PU0NGZ0sxM3Vxc1VqZVBTbFNKSCtGdzhTR0JVdDJDb01YOFB2WUhq?=
+ =?utf-8?B?a0swSTNDT0Uwcloxdk1oNkE3T1l4SjE3SDJmaU5jME1sMzZWcjBxdWthZ1pL?=
+ =?utf-8?B?S0N4Y3RKV1RER1VWWnNqYVoyYnN2UG1oSVpBUTJOWTFVdW9lcnNGaUFlVzlG?=
+ =?utf-8?B?bFZzVWtVV29YSXRHdFpHaEpiRnptVFNROGE2NjUvSmtMRGNFTTE3ZkloWVk1?=
+ =?utf-8?B?M3Fva0k3ZkVzaEN4RW11Ni9jQ2hBZWpuc215T256S1NkQWI4WjBPWW9FUGpu?=
+ =?utf-8?B?a003bllqeVFPajREVmt5TTNGY25Tb1U3dVRFekdSWENtQ2dwZjc3L1FJMU85?=
+ =?utf-8?B?MWNpYXQ0QkNWK1c1L0EyNXc1ejdBdXR6Z2Y0WUpKQUFINWNyc1B1enl3Sld0?=
+ =?utf-8?B?M1l4dW1SeTJuQjhjU0VuM1BWdndXc0FvZGppRmMwenRpSXVxUG1qckVPdlFD?=
+ =?utf-8?B?eFZjcjBhSUlYTExEVFExZERYMTZMakpVL1YvLytOSUdTZ3RhUkNiR1NyRnhL?=
+ =?utf-8?B?anNIVEV0VVJseldSRFFuWjhSbmpMNk80cUxKMUpLWEEwc3lWOCtGOEZITkdM?=
+ =?utf-8?B?R3RFdEVXdW40aVlNcnRFc2JSRzRzTmFuNEJSai91YzZYUXl0Nm5jSHh4WWkw?=
+ =?utf-8?B?b0NKbUxLd0EyUy9WeFlNcmNZbHkxT1NvQTJuVm01bnREYkRGR0hNU3A4b3N1?=
+ =?utf-8?B?Nkt4akJJZ3l5cEg0TGZyOUd5b3lPUS9URldIK24wU3RNRFBrNEJ4RG9yRjUy?=
+ =?utf-8?B?bEMvUUszM0xXNnJzNDZId1ZKTFROcWw5NUNlOC9TRnNpQVQ2NHRZMmdrcFVh?=
+ =?utf-8?B?RSsyWVNWUVlwNEtHM0tLUXBhR0lxTDJyWlo1UlhHZk05QmVSRkJudTlrYXZ0?=
+ =?utf-8?B?d3RjS1B5Z3dhek5CaGtreFJyREl5Y01LTUdKRkk0SHo5NzBCeWRnbVFMODdO?=
+ =?utf-8?B?REFuTFp4N01DSDlhdzM3V0ZYOUNhOTlKbWt6eXdkT1BIZmVCalhtQ05TZkkx?=
+ =?utf-8?B?YVRPS0dUZElTaUhPSEhQSUgzZkQwdFAzc1JhWVd2K0NtMHlpeDd4eThGelJh?=
+ =?utf-8?B?dGVka0ZGZmRwUEdZZDEwMks2a2lMbHNEeXhHa0lZTHk3NjMveGlRS2N0QUNF?=
+ =?utf-8?B?QWJSK1BnRmFvYlo3dC9UbVYydjFHTkt1eHJTdlRVSi9QcUJTQUNxWXpvNTNP?=
+ =?utf-8?B?VFE5WXFQVHhKMSt1eEVaNk4vMENRRENGTVozS3FwVm8wOS94RWo3bGtzeDQ1?=
+ =?utf-8?B?Vjl2ZTQ2YzVqSUM4T2pwRjZ3YWptRE4vL1FCc25VdWxyYjF4VG5aZEE5bDZK?=
+ =?utf-8?B?ZnVYRmNDMzkvK0JWaUExTzF2ejdra1FqclhsUlF1TDVuNE5SVHZwNk1FVE5N?=
+ =?utf-8?B?Y0kvb1RKZmhvblpxMWRFWm92bFhOeWk0alVEZjRPdjl1R0ZIbmdWNmpLaWln?=
+ =?utf-8?B?YWRSQ3lURkhjRUVrRDRRZz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6095.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bmJJYkRtemFhMUI2dU5ScHVYK2ptanlyUU9jd2VvZUtZdzg0SGRCbkp2Qm9G?=
+ =?utf-8?B?S3NYTkZCU0dRMDIxV0hjcGdFQW5POFBjR3JkOEJHUm9oaDY1bXV6ZjFablFK?=
+ =?utf-8?B?Z0JMeEh5N2ZScVNDRFM1ZkNEamo3L3JHcDZINWRIeFhTVjA3VXNpVmhwdFRh?=
+ =?utf-8?B?VWp2cmJ0TnBrR2syejJBUFRZajM2QVFHYU9WZWFsaU5JM3ArQmwydFBvL3J2?=
+ =?utf-8?B?a0hMYU5GYlJOQnRudXVUKzYzL3RMbTFZQytZM1NYZjVVdmVtZjFqdCtKRjdi?=
+ =?utf-8?B?RU1xVWlvVC9xRVk2UzhYeGJralhmeEVBWTUwc25wZXFSa3RCM2tjcVVLWHFm?=
+ =?utf-8?B?dEpybVhsZ2lMeFFRb3NoYTJwSENSdEhaeWFPTTFvL3M0Z0lJektSWHM4WXlE?=
+ =?utf-8?B?SlVlRVZnRDZNU3A0akZETmRPWlJXZVh5dFdualB4QnJNT0NHTEtBZDFscHlR?=
+ =?utf-8?B?UDc2WHhUQVh1YmM1bDB1VUh0VjkvYlBQYlRKYWszZEtXT0ZIbDFBYTNqbFlX?=
+ =?utf-8?B?L1lPTmZuQjUvYU1ENjJjbzlXalhGV0g3eXc3ME84Vk45QUVsTzg5aEQ4ck9s?=
+ =?utf-8?B?eWoxN2VrdUVrRDJ3RC9sNFByaTg0bnFBZTROVlF6emV0cnVHdEVrK2lCYmlY?=
+ =?utf-8?B?VXhCTmVLWWllbFdDejFQeU83N2hVUDR2MXNFQXB1ZHBudFQwTGpvZzdtNHZo?=
+ =?utf-8?B?SkRQVnNTSFpVZ2RrNlMvaEdqdnY2Snl6dDdNdTk5YitoQ0FRb3Y5MEJ3QnVI?=
+ =?utf-8?B?Q2hSdHlDVS9zcTlWL3Z6RnlxNWxuMDZSYzJCTFdTTWJHclpIN01jMnFTazZH?=
+ =?utf-8?B?NFBBaC9ucjFFUEZBd1JlK244TGxsanRSTXRicDJQT20wSDZUeVlHQm9BMVRh?=
+ =?utf-8?B?ZG0wb0VNa2JReGdSQUkyWUNyUzhGQVhlVmgzWEV1THpnQ3J0VVBrYUh5NDE1?=
+ =?utf-8?B?MDc2akg4MkZ5cFNPS0pyVm5hNUJISUJGS2lxQ2hxWGhJcmRiYnZuWWxnOFZY?=
+ =?utf-8?B?S3d3OEJ2RGF2R3lwck9IWXg0U29nNVpoZjkzZUFUanNkR2ZCbzlqdnVnL3VG?=
+ =?utf-8?B?clduUDNuTGZyMkRGYU8xa2llSEpsMFJEam1taTZtalJkaWlKUUVjYlREbE90?=
+ =?utf-8?B?SVA4cHBTUEUxWExuMm42SStCdEZaWHRKTDBLOWlGbEgvLzJoUUIxQnVGZU80?=
+ =?utf-8?B?TWlpaytDVG1xQWVxYUVtVGZzOFpHUmFZVTFSSE5hOEZERXFreC82UC9jUG0z?=
+ =?utf-8?B?VHdqM2s3bWVpUVlIbmdIOEZuOHR1Ym1tcHJjOWRkb2xWNHlvTzBvVERkMndp?=
+ =?utf-8?B?MlhGOHJLR1J3eER3WVBMQnlwYmIrYjdldHB2U3Q1dVNUelowbi9NSGpVY0xM?=
+ =?utf-8?B?blh3TmRSK1d2cHRDUzJ0MVhzOEVVT0lDWDRtY0wxbzB5UkZoYVBIMkNQcGFC?=
+ =?utf-8?B?TjNkQkhjaUI5WFlPcjI3dkZ3emJHTDhuUGdSWGxoWlJEMHNnMDI0R1dCaU1n?=
+ =?utf-8?B?ZFB5d3VSWHJuVXFXM3lpRXJYdXh4NTVvQnFNZU13NENIdnBOUi9XTkhkZDMx?=
+ =?utf-8?B?MFhqS0gyYnA0YzNxajV3RWxRNzk0RDBaemRwTWRTeS9UL1BQK2ZYd3FIOHZG?=
+ =?utf-8?B?NkdPdVNPQXJGMkYzdC9zazgzazYydWVvRHhKNTgyUy96cGZuS3hWS2s4dEp5?=
+ =?utf-8?B?UGt0S0dQS2I1RzgwUHpCbjBsTmo2bFZvdnE0L28yWFN4QmhLOVNsRjIraHh4?=
+ =?utf-8?B?M1pJeWRpMW8wWmlvRkQ5V05KeHJoYlRCMCtCeXBYMEZOb0g2N2xlK1EvUjMv?=
+ =?utf-8?B?cFgrUDFERGdiUlhUdkwvR0xCTHh0QjZkaGJ2b2phdnJSazZpN093V3JURHJo?=
+ =?utf-8?B?Y0ZEMFRseWxvQWRZVHQvYzFuVUZndUpHVlBzMDAybVdDUllBVmlBQ0Zxb1M2?=
+ =?utf-8?B?NDh3RjM5aitxSlBRZ1RvTktnR3k5NVdPWHZSd01ESVpVVFZTVy9iWE5leHk5?=
+ =?utf-8?B?TXVMcmRnSnptVFVaUzVDUmEwdEVIbllmSkpXWmExNlBKelc1M2RGVzdzbnNT?=
+ =?utf-8?B?UmNkZG8vS2R6RXkzZFpEU2RSUFVCN3RNNW56aFV3enBQdnhidW82enU3U2pJ?=
+ =?utf-8?Q?ZplPADTqpWpXdN1ZUhGvzH4wG?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c08f58d0-dad6-4fbd-507d-08dcc7a8bdc2
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6095.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 21:31:13.3627
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YhhWd5SKuNRoVZNb6Pq36S9x47LdHJk1R4ybUEdsjYtiOqzEPoIBfy9uZKmu74SCXmr+o3KMUwTOf1PLTHEdnQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9202
 
-Hi,
+On 8/28/2024 11:14, Alex Deucher wrote:
+> On Wed, Aug 28, 2024 at 11:47 AM WangYuli <wangyuli@uniontech.com> wrote:
+>>
+>>
+>> On 2024/8/28 23:30, Alex Deucher wrote:
+>>> On Wed, Aug 28, 2024 at 7:28 AM WangYuli <wangyuli@uniontech.com> wrote:
+>>>
+>>> This will disable dpm on all devices that you might install on this
+>>> platform.  If this is specific to a particular platform and board
+>>> combination, it might be better to check the platform in the
+>>> dpm_init() code for the specific chip that is problematic.
+>>> Additionally, disabling dpm will result in boot clocks which means
+>>> performance will be very low.
+>>>
+>>> Alex
+>>
+>> This motherboard model doesn't have combinations with different
+>> platforms or chipsets now.Their model numbers are unique,so it seems
+>> unnecessary to add extra judgment.
+> 
+> The error message looks to be from an SI board which is a dGPU.  Is
+> that dGPU integrated into the motherboard?  Does the motherboard have
+> PCIe slots?  If there are PCIe slots you could presumably put any GPU
+> into it and if you did, dpm would be disabled by default.
+> 
+> Alex
 
-We found a bug in Linux 6.10 using syzkaller. It is possibly a  task hung bug.
-The reprodcuer is
-https://gist.github.com/freexxxyyy/67172235de920ccf2f282f9e1179354d
+I would also then question whether the SI board also has failures in 
+other systems.  If notit could point at BIOS bugs with the PCIe 
+implementation from the MB.
 
-The bug report is:
-
-------------[ cut here ]------------
-ODEBUG: active_state not available (active state 0) object:
-ffff88802526c180 object type: rcu_head hint: 0x0
-WARNING: CPU: 0 PID: 4497 at lib/debugobjects.c:517 debug_print_object
-lib/debugobjects.c:514 [inline]
-WARNING: CPU: 0 PID: 4497 at lib/debugobjects.c:517
-debug_object_active_state+0x2b0/0x360 lib/debugobjects.c:954
-Modules linked in:
-CPU: 0 PID: 4497 Comm: kworker/0:3 Not tainted 6.10.0 #13
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-Workqueue: events kfree_rcu_work
-RIP: 0010:debug_print_object lib/debugobjects.c:514 [inline]
-RIP: 0010:debug_object_active_state+0x2b0/0x360 lib/debugobjects.c:954
-Code: d7 95 fd 4d 8b 0c 24 48 c7 c7 a0 61 a9 8b 48 c7 c6 60 5e a9 8b
-48 89 ea 8b 4c 24 04 49 89 d8 41 57 e8 24 1b f7 fc 48 83 c4 08 <0f> 0b
-ff 05 88 0c c6 0a 48 83 c4 28 5b 41 5c 41 5d 41 5e 41 5f 5d
-RSP: 0018:ffffc90002cc7a10 EFLAGS: 00010292
-RAX: f9c69a923cadb800 RBX: ffff88802526c180 RCX: ffff88801e3cbc00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffffff8ba96360 R08: ffffffff8155a25a R09: 1ffff1100c74519a
-R10: dffffc0000000000 R11: ffffed100c74519b R12: ffffffff8b4de5c0
-R13: 0000000000000005 R14: dffffc0000000000 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa7a316ef78 CR3: 000000000d932000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- debug_rcu_head_unqueue kernel/rcu/rcu.h:236 [inline]
- debug_rcu_bhead_unqueue kernel/rcu/tree.c:3287 [inline]
- kvfree_rcu_bulk+0xc5/0x4d0 kernel/rcu/tree.c:3364
- kfree_rcu_work+0x443/0x500 kernel/rcu/tree.c:3450
- process_one_work kernel/workqueue.c:3248 [inline]
- process_scheduled_works+0x977/0x1410 kernel/workqueue.c:3329
- worker_thread+0xaa0/0x1020 kernel/workqueue.c:3409
- kthread+0x2eb/0x380 kernel/kthread.c:389
- ret_from_fork+0x49/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:244
- </TASK>
-
--- 
-Yours sincerely,
-Xingyu
+One thing that you can try to do is turn off pcie port pm using the 
+kernel command line and see if things improve.  Some motherboards have 
+had issues with this in the past.
 
