@@ -1,92 +1,117 @@
-Return-Path: <linux-kernel+bounces-304240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6467961C71
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 05:01:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0C54961C73
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 05:02:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 145161C214AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 03:01:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D695283874
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 03:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9090F12EBDB;
-	Wed, 28 Aug 2024 03:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD78130A47;
+	Wed, 28 Aug 2024 03:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hHPuqjjw"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="UEdniFD4"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7F1288B1
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 03:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD7A288D1;
+	Wed, 28 Aug 2024 03:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724814075; cv=none; b=lZho9EeqfSGDOknD7FpiZWlPn6s37Kqc6uBdgKnad6kXxN0XGalETBbbBuxgvnn+zNQLQ51iz9MZMs95WlARa0m5LJBRm9MSow54qbvVxBdqNGBPmHFn88QDUua8WLFAjpAc4x7I/AZcOJKRubE8hXXuS37S+JMf6OCPxJmn2rk=
+	t=1724814148; cv=none; b=QokoamMGvJo42Nqd0KUS/MX07dpftu3VilYWXk6R3vL5uvi5kj0uUbCAHjLBwUzzxYBClXZKZS9+jLFOg1Cp/dF7T9sq+kTUM+ahBjRrRlw1Xxk6OxE8ZkDr0cfjML7g5N8awu0dEVgub4ETW4UrDTZnGAvTqh8KdQy2diVhQL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724814075; c=relaxed/simple;
-	bh=d+uUfx7E7QGXzIMrzijdkoukkdREaIXEc8D6JYUK0y8=;
+	s=arc-20240116; t=1724814148; c=relaxed/simple;
+	bh=SOTxwbFrMSqTW71U+pEymAMKbZxNgOikX6p9B7/ca0Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OW7hGmMJhdmlRB9vR0O4iCYB52/Yoz5e2F9wKZ+/5JmpnZZHupUrM3X4fdY9PqdOIaKflExYSVTrMnTWzOaRHTFIW4vVgA8WTe66HVgFNSVxwOyVNArRv6+3U+7yWWejVeOlp2SEHRA/VAeLK1JZbpPlrMlTCpo+GX9fwRwfAOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hHPuqjjw; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <a3b37ff6-6049-4c7c-a00d-93e739836d37@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724814072;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M0lAJv6ln7pv6tibnmlRss1E2Pgnyr5DFpnvWqE40jE=;
-	b=hHPuqjjwjhRfPhonI8k66ypWrpe2p5UBEgLQ0JXP4ZvT9MNZxTukCFF8eqacxB9ZXViiLx
-	wQxj6W9JnqT02UkTTJxOPasyTaGo6hhA7u7dMIVUh6VUobYKxZtrU8CZMve8JNq7vhoX8a
-	R3mez82qKvtV532NzIOutIZoByPu994=
-Date: Wed, 28 Aug 2024 11:00:52 +0800
+	 In-Reply-To:Content-Type; b=E5+M1HMx5fPgo+X/VyaSSV9kYkMXkO6uNlFkBfUfCibOP5Yr596K9IuON1FUQdAr+vLtc+rH0YaZtPvgEm3GOo/9lVgJRKzlAUuAC30vJM2z8R3sV4CtBcCQmoVV/t7uOAoMSWXNK1JQWwF1C235EGs6M4vQz17PLjK9W1n77iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=UEdniFD4; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8695cc91c8so660286666b.3;
+        Tue, 27 Aug 2024 20:02:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1724814146; x=1725418946; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bJAYrp+cQrXiacMO/ZldsdhoCD1fUbRejySfU9vG1kw=;
+        b=UEdniFD4dBiamrEs6T0ErbWdt6zSakIUysdX5UvItYEzGSs2+0L5cp/JH9lmGI030p
+         EaefxAv8Se/0rBsjaLaAcR74N+A1tpVD22AJIfvakpiUVHtAc22UNLIzzyXkGUwKcMTQ
+         FnXCjpnyxVaihw1HUgFA+8NSshKEuYXpAIMXa3Ux+R8QT4aU5DxfCUZpsle2nTJl0GvI
+         2sjRhsauGbTogbPKRZlFcamQM7Z7ioEkH1ccvAcLHKjatm8GwkTquuFIw/Wr3MuImp/k
+         rpsCMHauGwYopyG+Ismo7qTlvbqKFpsK9vaiIsvn0ruP4Ua/ZN1MPLFzdwcVxC9Z7h9d
+         kBQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724814146; x=1725418946;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bJAYrp+cQrXiacMO/ZldsdhoCD1fUbRejySfU9vG1kw=;
+        b=BYVTOYwV9jWId2pnMxFGswEtKA/AjGMmc4omGKnOeFkpZ2K439yEDmcoDQ4FsXQ6f7
+         A/p+opHj/bTV89ER506KD8SGak6udKkXhamWXQTYTqMfMfalqom1NNKd7ocROis1S192
+         4ZCJyM9FUr33gyZPNaZ4NImlPXj/9hJMgFxbtj+oiba+j+RlwWAX1D3IVIflYuIa9mwz
+         xeFBz2jie1WGhjLJlbLqFo5Wj3NUwRSfl5TEFWgOiYlMQ8r8J4X4LOMhNz0zzvfdjn+6
+         GIW0acTT3MalNJ6MUIssMCMnaFbFYoAbxmUfHxxyV8FJlXXyS1TX8vgnCCuV7Y6XtKhv
+         fc5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVTAQrYQECrLPrsDluj+VLHVIZ9Zlc3aV8Bk0LkFduLrI/Et04TLUUA4Vld72D1wKsvC4KiKCRo@vger.kernel.org, AJvYcCXEKXWLrfJrNgEy/WM4X5wyZ1Q4g5zbSFSPv58hT74BbuJU+d+KyvogxexncJB2w4QMlqJeptk81H4r6MA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKop62DcJr552cKuiARvI/uNAjIv3ZKd0W/8SVyMa2whMSO+By
+	VALgCEYMqb2qOafhePJwbhfC0XCeJxndvbfQBHVUOwr5vR01X6s=
+X-Google-Smtp-Source: AGHT+IGnRvkbr6RpGnEb2i9qd3/t6Se9AspfMmTn6r7ANZTx4fnF//jyWcRSwVeMlhldo5OoDMYUTQ==
+X-Received: by 2002:a17:907:9812:b0:a7a:bae8:f297 with SMTP id a640c23a62f3a-a870a9b10c1mr48077466b.15.1724814145336;
+        Tue, 27 Aug 2024 20:02:25 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2acd20.dip0.t-ipconnect.de. [91.42.205.32])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86ecaaba4esm147767466b.132.2024.08.27.20.02.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 20:02:24 -0700 (PDT)
+Message-ID: <ac87b6c9-cca6-4eeb-b5c4-c65665873f5a@googlemail.com>
+Date: Wed, 28 Aug 2024 05:02:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] amba: make amba_bustype constant
-Content-Language: en-US
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: krzk@kernel.org, andi.shyti@kernel.org,
- andriy.shevchenko@linux.intel.com, robh@kernel.org,
- gregkh@linuxfoundation.org, suzuki.poulose@arm.com,
- linux-kernel@vger.kernel.org, Kunwu Chan <chentao@kylinos.cn>
-References: <20240823064203.119284-1-kunwu.chan@linux.dev>
- <Zs3YsjunDlGSaW4c@shell.armlinux.org.uk>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kunwu Chan <kunwu.chan@linux.dev>
-In-Reply-To: <Zs3YsjunDlGSaW4c@shell.armlinux.org.uk>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.1 000/321] 6.1.107-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240827143838.192435816@linuxfoundation.org>
+Content-Language: de-DE
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20240827143838.192435816@linuxfoundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-On 2024/8/27 21:46, Russell King (Oracle) wrote:
-> On Fri, Aug 23, 2024 at 02:42:03PM +0800, Kunwu Chan wrote:
->> From: Kunwu Chan <chentao@kylinos.cn>
->>
->> Since commit d492cc2573a0 ("driver core: device.h: make struct
->> bus_type a const *"), the driver core can properly handle constant
->> struct bus_type, move the amba_bustype variable to be a constant
->> structure as well, placing it into read-only memory which can not be
->> modified at runtime.
-> I'm happy with this, but as AMBA bus maintainer, it needs to go to
-> my patch system. Please see details in my signature. Please also
-> note that I'm limited in terms of my time in front of the screen at
-> the moment, so I'm not very responsive at the moment. Thanks.
->
-Thank you very much for your reply.
+Am 27.08.2024 um 16:35 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.1.107 release.
+> There are 321 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-  I will follow your suggestion and submit the patch to the 
-https://www.armlinux.org.uk/,
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
-I have already created an account.
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+
+
+Beste Grüße,
+Peter Schneider
 
 -- 
-Thanks,
-   Kunwu.Chan
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
