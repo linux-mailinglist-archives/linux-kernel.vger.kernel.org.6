@@ -1,162 +1,149 @@
-Return-Path: <linux-kernel+bounces-305190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DCCE962AB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:48:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5429F962ABF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCBF12824D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:48:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5A98B24A02
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C483218A6C3;
-	Wed, 28 Aug 2024 14:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB4B51A08DB;
+	Wed, 28 Aug 2024 14:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GGna2OCE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="TjpLr7zm"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E221C19E83D;
-	Wed, 28 Aug 2024 14:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CCB4176255
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724856497; cv=none; b=mjDC5DEXJHJPIyvBkkJ3my4R9W64BYwR5jvzXC0IBkyCoGjOyAEssznGc07hu4lnmSfPYaPyMHQYmSPEndB5MV6ah9jqFRsZ/wXChiqcC70NQ3hbBxPLfCTqlp4W1Xo1a0tQNEzZQaFFLA9Z3N/IA91Y+q+3rHz583hfazeBXxk=
+	t=1724856605; cv=none; b=lrzGDPGwKZERBIhcV2eQD2n4sCiL1F1bcxHZX5idxH1tqgIPpvENZRxmxF/YnqFiTqW31toEvexASlxatkl7ZDQnhg/xaFL83pFMzPYnnKGdcSQJVHhG+C3dreqwWz5Wff145O3ABGDbta2UbE4NpW2GfzCnFHBTMotBI9kC2N0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724856497; c=relaxed/simple;
-	bh=m03l2pckmcLxB1u80BXxyIAto7ot9H09XhIkMydHFCs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TIMIgJUqAGVPzRYSJaRkDlHfMo36W9d+lI8eFzZ4atu+Oqwl0u+ErTPcMwMS+q5LPmBu7rSk94pE/S28jPVFz11F7LCfJlaq1NIvnOp36zdO4Hvt3SXvakW1Ku1iGxmnk47n6vOYoOD523YeRVzJwbx8k/vMaimZuIW7V29KdVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GGna2OCE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6B12C4FE14;
-	Wed, 28 Aug 2024 14:48:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724856496;
-	bh=m03l2pckmcLxB1u80BXxyIAto7ot9H09XhIkMydHFCs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GGna2OCEOd0yRlCJ/Mi3lmHZ9WToycz/5la6bbGFhBefHrOTJ4SgA3Eu5sTfH16E+
-	 ZRDHQKl//Hr0jSYe+RoBhgi1Y4qgX4S/NT7ymxesaNF4cJ8yBOm2VM/dQk3P/FmRq4
-	 +Kif3jLVLYZUzYUqHvXmbeYe7Ak+/sMmrS08tr+SBCBAwcHk6zbYDu8PvNAWF/V1go
-	 07avT2WOJPWscyQJklczLyWKXWtUm89dP/d5qMK1QYnqS8h7pFMgr0IoQKXEkMAvfO
-	 AmEdW7kfX/Q/ld+TJNfrTlMLARNpqjgHWs4JpwlW7432MXLBo3MAsjvuKj6C85sJ8q
-	 ouorR+R/JX6jQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Li Zhijian <lizhijian@fujitsu.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs/inode: Prevent dump_mapping() accessing invalid dentry.d_name.name
-Date: Wed, 28 Aug 2024 16:48:02 +0200
-Message-ID: <20240828-abgegangen-neuformulierung-6fe9fc2b0b3e@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240826055503.1522320-1-lizhijian@fujitsu.com>
-References: <20240826055503.1522320-1-lizhijian@fujitsu.com>
+	s=arc-20240116; t=1724856605; c=relaxed/simple;
+	bh=J/jwHT4zbJgGObXt+D2j/0zzLiAWfKkvbdM+Ta6bS7Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eJuzrnrT1G0RTBQLlsWSPp5OgV/4RztzdT1HcjxzpdlZw0I3+ONcI3r3tntwIWsFVDOlUCtkpA14Yp5jkobmMlxDfvlTyaXva/bOD2QjpPB8UmkyJQrT3kB54bcQMxP8Jp1T+5RS1sLWhK1JPhbii3TOHJQ6h9V9q8mEHTSM9rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=TjpLr7zm; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-39d21fdc11bso24032015ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:50:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1724856601; x=1725461401; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mkLMtpGIw3Y/dhXXuYhIUT4xTca0Ie89HWp40We3Xeg=;
+        b=TjpLr7zmxDKYik9nmetyJQTPQ9slqpYnCX+aBlaLqojZBLk7IRhTLRpbZEP3Q/pTZ1
+         ebGzhjX07IssLxwUhGJ8Kl13VjMprmSiPuZV+sf1UTpkn3Vn8BGewden42zQkJJFVLuk
+         0jOr4VgnEQnr2nLyhDhKB8DwLq53k9VxkNlo1mO4Sshpr9BRe7a1fFT9jOX17l4beRKV
+         g/Lwhcc+uCFPAXq5o/i+uK7tih8uZTtFTW1aMNZs6RXkC+5g40SBWlPr9PlBEAOGgV2n
+         M448MMMOd7lvgdpHrdNJv5UcLLZkiLEorqY/Jj349ybOM0uL8I/cQSmto3/GpoMdbfyS
+         qoXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724856601; x=1725461401;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mkLMtpGIw3Y/dhXXuYhIUT4xTca0Ie89HWp40We3Xeg=;
+        b=dTsX6PQn+L7DkvFAB0XD2XXhz1SlyWw32KcfcgHbSEvwFrNzvYRbE+PwSxnEhOdXE9
+         VxUTdAc+x2UYz/0/CWzAbFY0EP3uO/N7j50dWu90Dv3Wn3jwTTq7360bNSmBorPydVmN
+         T+EtnPIOSu4ymlF6Tic8EFzi0m2X0o2LrwsGT6yy+d2DoKSbwIdobdKzB+VNOiDtGcKQ
+         JDTdjMRF1npMGXraP1+LtWFmv3Ly7uFJyYqCBC+H0Pd2+bc+TcZwJAmCB/G6fqhl0jXH
+         J9MMIIVlT5DrUbv9Ju00hL/enOi0q1DVnf5dgK6QIzvu/2rja8BF0wygYYRHSB5zd4Ct
+         L/Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCVaBkb6oKdkko2exeSBhuLxLDi6hXIutxIgFk5rCmRl8hsAhRecIoUOqlNvVpLqFy/noGZ8s0cdIyx8uio=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv2OsyC9kkOqT0qmRFVYQIUDVPrCsaFH7grMLLxQPmD7xO7+7s
+	p7rKmqWZZqintdvpx3fdRyb4kVLh/7FmxGDpzp5BCMc4Xc84KqO7mVo4EcG54eY=
+X-Google-Smtp-Source: AGHT+IFBscc8IYAxjJLTBWjrXmkHgdjkc3wJmP/EHCRSuAoFvcdmRkkoVZFsL6zQmmMKLOgkxkhFgQ==
+X-Received: by 2002:a05:6e02:12cf:b0:39a:e9ec:9462 with SMTP id e9e14a558f8ab-39e3c976ba5mr195862795ab.5.1724856601103;
+        Wed, 28 Aug 2024 07:50:01 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39f376ff875sm34085ab.42.2024.08.28.07.49.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Aug 2024 07:49:59 -0700 (PDT)
+Message-ID: <bc192dc5-5db3-4cbb-90a7-91b13ea7d0c7@kernel.dk>
+Date: Wed, 28 Aug 2024 08:49:54 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4457; i=brauner@kernel.org; h=from:subject:message-id; bh=m03l2pckmcLxB1u80BXxyIAto7ot9H09XhIkMydHFCs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSdt1hZ/X/7P7dPDV5rj5mb//aXmV9yIa7GUFzGItKDV 2TGqjk7O0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYi+JLhD3ejT5f7g2k3tR2e dCWJ7r/H9/ncl4Ls0n17uj/Ir/i+0Yrhn7qWE6Mrw6YH59pPa23xUb5Wcqi8bmtr8wGjs3mrdjS +ZwIA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/7] block: mtip32xx: Replace deprecated PCI functions
+To: Philipp Stanner <pstanner@redhat.com>, Wu Hao <hao.wu@intel.com>,
+ Tom Rix <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>,
+ Xu Yilun <yilun.xu@intel.com>, Andy Shevchenko <andy@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Alvaro Karsz <alvaro.karsz@solid-run.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Richard Cochran <richardcochran@gmail.com>,
+ Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>,
+ Keith Busch <kbusch@kernel.org>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fpga@vger.kernel.org, linux-gpio@vger.kernel.org,
+ netdev@vger.kernel.org, linux-pci@vger.kernel.org,
+ virtualization@lists.linux.dev
+References: <20240827185616.45094-1-pstanner@redhat.com>
+ <20240827185616.45094-4-pstanner@redhat.com>
+ <c7acca0d-586f-41c0-a542-6b698305f17a@kernel.dk>
+ <189ab84e8af230092ff94cc3f3addb499b1a581d.camel@redhat.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <189ab84e8af230092ff94cc3f3addb499b1a581d.camel@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 26 Aug 2024 13:55:03 +0800, Li Zhijian wrote:
-> It's observed that a crash occurs during hot-remove a memory device,
-> in which user is accessing the hugetlb. See calltrace as following:
+On 8/28/24 1:10 AM, Philipp Stanner wrote:
+> On Tue, 2024-08-27 at 13:05 -0600, Jens Axboe wrote:
+>> On 8/27/24 12:56 PM, Philipp Stanner wrote:
+>>> pcim_iomap_regions() and pcim_iomap_table() have been deprecated by
+>>> the
+>>> PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
+>>> pcim_iomap_table(), pcim_iomap_regions_request_all()").
+>>>
+>>> In mtip32xx, these functions can easily be replaced by their
+>>> respective
+>>> successors, pcim_request_region() and pcim_iomap(). Moreover, the
+>>> driver's calls to pcim_iounmap_regions() in probe()'s error path
+>>> and in
+>>> remove() are not necessary. Cleanup can be performed by PCI devres
+>>> automatically.
+>>>
+>>> Replace pcim_iomap_regions() and pcim_iomap_table().
+>>>
+>>> Remove the calls to pcim_iounmap_regions().
+>>
+>> Looks fine to me - since it depends on other trees, feel free to take
+>> it
+>> through those:
+>>
+>> Reviewed-by: Jens Axboe <axboe@kernel.dk>
 > 
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 14045 at arch/x86/mm/fault.c:1278 do_user_addr_fault+0x2a0/0x790
-> Modules linked in: kmem device_dax cxl_mem cxl_pmem cxl_port cxl_pci dax_hmem dax_pmem nd_pmem cxl_acpi nd_btt cxl_core crc32c_intel nvme virtiofs fuse nvme_core nfit libnvdimm dm_multipath scsi_dh_rdac scsi_dh_emc s
-> mirror dm_region_hash dm_log dm_mod
-> CPU: 1 PID: 14045 Comm: daxctl Not tainted 6.10.0-rc2-lizhijian+ #492
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-> RIP: 0010:do_user_addr_fault+0x2a0/0x790
-> Code: 48 8b 00 a8 04 0f 84 b5 fe ff ff e9 1c ff ff ff 4c 89 e9 4c 89 e2 be 01 00 00 00 bf 02 00 00 00 e8 b5 ef 24 00 e9 42 fe ff ff <0f> 0b 48 83 c4 08 4c 89 ea 48 89 ee 4c 89 e7 5b 5d 41 5c 41 5d 41
-> RSP: 0000:ffffc90000a575f0 EFLAGS: 00010046
-> RAX: ffff88800c303600 RBX: 0000000000000000 RCX: 0000000000000000
-> RDX: 0000000000001000 RSI: ffffffff82504162 RDI: ffffffff824b2c36
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: ffffc90000a57658
-> R13: 0000000000001000 R14: ffff88800bc2e040 R15: 0000000000000000
-> FS:  00007f51cb57d880(0000) GS:ffff88807fd00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000001000 CR3: 00000000072e2004 CR4: 00000000001706f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  ? __warn+0x8d/0x190
->  ? do_user_addr_fault+0x2a0/0x790
->  ? report_bug+0x1c3/0x1d0
->  ? handle_bug+0x3c/0x70
->  ? exc_invalid_op+0x14/0x70
->  ? asm_exc_invalid_op+0x16/0x20
->  ? do_user_addr_fault+0x2a0/0x790
->  ? exc_page_fault+0x31/0x200
->  exc_page_fault+0x68/0x200
-> <...snip...>
-> BUG: unable to handle page fault for address: 0000000000001000
->  #PF: supervisor read access in kernel mode
->  #PF: error_code(0x0000) - not-present page
->  PGD 800000000ad92067 P4D 800000000ad92067 PUD 7677067 PMD 0
->  Oops: Oops: 0000 [#1] PREEMPT SMP PTI
->  ---[ end trace 0000000000000000 ]---
->  BUG: unable to handle page fault for address: 0000000000001000
->  #PF: supervisor read access in kernel mode
->  #PF: error_code(0x0000) - not-present page
->  PGD 800000000ad92067 P4D 800000000ad92067 PUD 7677067 PMD 0
->  Oops: Oops: 0000 [#1] PREEMPT SMP PTI
->  CPU: 1 PID: 14045 Comm: daxctl Kdump: loaded Tainted: G        W          6.10.0-rc2-lizhijian+ #492
->  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
->  RIP: 0010:dentry_name+0x1f4/0x440
-> <...snip...>
-> ? dentry_name+0x2fa/0x440
-> vsnprintf+0x1f3/0x4f0
-> vprintk_store+0x23a/0x540
-> vprintk_emit+0x6d/0x330
-> _printk+0x58/0x80
-> dump_mapping+0x10b/0x1a0
-> ? __pfx_free_object_rcu+0x10/0x10
-> __dump_page+0x26b/0x3e0
-> ? vprintk_emit+0xe0/0x330
-> ? _printk+0x58/0x80
-> ? dump_page+0x17/0x50
-> dump_page+0x17/0x50
-> do_migrate_range+0x2f7/0x7f0
-> ? do_migrate_range+0x42/0x7f0
-> ? offline_pages+0x2f4/0x8c0
-> offline_pages+0x60a/0x8c0
-> memory_subsys_offline+0x9f/0x1c0
-> ? lockdep_hardirqs_on+0x77/0x100
-> ? _raw_spin_unlock_irqrestore+0x38/0x60
-> device_offline+0xe3/0x110
-> state_store+0x6e/0xc0
-> kernfs_fop_write_iter+0x143/0x200
-> vfs_write+0x39f/0x560
-> ksys_write+0x65/0xf0
-> do_syscall_64+0x62/0x130
+> Thank you for the review.
 > 
-> [...]
+> I have to provide a v5 because of an issue in another patch. While I'm
+> at it, I'd modify this patch here so that the comment above
+> pcim_request_region() is descriptive of the actual events:
+> 
+> -	/* Map BAR5 to memory. */
+> +	/* Request BAR5. */
+> 
+> 
+> I'd keep your Reviewed-by if that's OK. It's the only change I'd do.
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+That's fine.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+-- 
+Jens Axboe
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] fs/inode: Prevent dump_mapping() accessing invalid dentry.d_name.name
-      https://git.kernel.org/vfs/vfs/c/e57de7d9e7fc
 
