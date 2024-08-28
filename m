@@ -1,172 +1,183 @@
-Return-Path: <linux-kernel+bounces-304978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B779627AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:48:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E19A9627B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:49:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B73D28526F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:48:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FC271F22CF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:49:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148B717A597;
-	Wed, 28 Aug 2024 12:48:21 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7477F17BB13;
+	Wed, 28 Aug 2024 12:49:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SAtpQv54"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BABBD176259;
-	Wed, 28 Aug 2024 12:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343C5178364
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:49:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724849300; cv=none; b=VTm8SQ6X5Y0b0wk+5Wrhf5HvyuIZKQJM/VZsVcwCbQB/U61//YTbcEjbB8dKIyLzqcFg1mq2y/yUK0HEWt56nbejceEQcDCRCBvML0qbh74iEPQKNiRO5bUPSt0DPDPM8sSgufGJIrEMp81/uw2MPgt28/LbssHzy0DaiL5hlcU=
+	t=1724849379; cv=none; b=tM0Guz0BLGsQyhIJc7IBNpjURmjaTcpBnonINllbjxj7B/pWAE+Ra6z19rjw8F+SAlqWXdtFe+FK085Dv0rn8Wm0TAKIZ/c+2pChjaCTbs/5P/cWWSy498WnGVNDozTJe0s00MyFDFhMbyCmua3xzg1TEGeO92jo8gFHrKrwDWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724849300; c=relaxed/simple;
-	bh=pSIT8jogu9fH+HAd7BSCp8MKhnBphymb1oTOJhpLaJk=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o3lLFv4aS4wfi59DZootwAdcx9waB2Y4J5yz/Dqe8asCORpjHa3WlxSVnv36BIbrhl9ZEEWMGspCUHtOD74Q/zvfMzqL9FCbo6oi0ebDKn3YZ/w3EQB2J/VGC8Txeg0x8chko3P0gCb2E4dOvMn5eACqdOOYmwdXX323QeWd+n0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wv3z01DSdz6H7Wv;
-	Wed, 28 Aug 2024 20:45:00 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 665B814038F;
-	Wed, 28 Aug 2024 20:48:16 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 28 Aug
- 2024 13:48:15 +0100
-Date: Wed, 28 Aug 2024 13:48:14 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-CC: <woojung.huh@microchip.com>, <andrew@lunn.ch>, <f.fainelli@gmail.com>,
-	<olteanv@gmail.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <linus.walleij@linaro.org>,
-	<alsi@bang-olufsen.dk>, <justin.chen@broadcom.com>,
-	<sebastian.hesselbarth@gmail.com>, <alexandre.torgue@foss.st.com>,
-	<joabreu@synopsys.com>, <mcoquelin.stm32@gmail.com>, <wens@csie.org>,
-	<jernej.skrabec@gmail.com>, <samuel@sholland.org>, <hkallweit1@gmail.com>,
-	<linux@armlinux.org.uk>, <ansuelsmth@gmail.com>,
-	<UNGLinuxDriver@microchip.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
-	<linux-stm32@st-md-mailman.stormreply.com>, <krzk@kernel.org>,
-	<jic23@kernel.org>
-Subject: Re: [PATCH net-next v2 08/13] net: mdio: mux-mmioreg: Simplified
- with dev_err_probe()
-Message-ID: <20240828134814.0000569d@Huawei.com>
-In-Reply-To: <20240828032343.1218749-9-ruanjinjie@huawei.com>
-References: <20240828032343.1218749-1-ruanjinjie@huawei.com>
-	<20240828032343.1218749-9-ruanjinjie@huawei.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724849379; c=relaxed/simple;
+	bh=OmG9UKSRalPMPedgGvQtdSaHxT80qp6qKysD1sivNj0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FJ9p0YGzgmHLFEsFzXXAf5TUAeAZS9x4sNg0eVmuynFF4AO2MwxWyB0A84emRL+H+UM4y+b/OOEABcBp3UAceEf70LcOSvrbpQC5ddFCWYlccPmkBojFav5AUiPjiLIwkF71c8PN+ig50nJUE4WA24odL1HO+04dMWAr0AWvAN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SAtpQv54; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724849377;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mG84mpdNAxgJt+MjSaUaK5oPD2+XnDBYY0BR3c+Z6I0=;
+	b=SAtpQv54Q+lZIJqdfBTNTOs0bopDMcZVV0Jt6s9hEJIFyFEbderm0I1UHr9vao9ycuZQwK
+	9vGAC1k9uMagaJU8ThONTDLizH5X0Tp+F+Bdii740QzpMss8NSoqwB5cVvVz73c6p69CBs
+	Z68DlxiGsjIIEMMxO8A0NcNwXu7lvJA=
+Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
+ [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-544-9wfQe-GWNduStVLYgZRNIA-1; Wed, 28 Aug 2024 08:49:35 -0400
+X-MC-Unique: 9wfQe-GWNduStVLYgZRNIA-1
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-6b44f75f886so137211537b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 05:49:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724849375; x=1725454175;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mG84mpdNAxgJt+MjSaUaK5oPD2+XnDBYY0BR3c+Z6I0=;
+        b=k5ruDXszB2hHsbeDvQ6989n9uni1v2aDBcciWaZzCHh0SpNILi07yr+NpwZpTXlhfP
+         2qXHx0rj5ZJ6L5tml1nZr66p/nvD7J9Wg6pxpVAvZHAD4zuvsLukmXgPRqyYMYe9UmRE
+         lK0et2yt1ORjmkLzA+ybftaMFfuB3YMect5QDn4U3dIiVVOZxMX0FNQaEFl28TDzVq/P
+         lpc3dIP6okkqVdhRHlicDC3FiNghsEe3qKIcuALuB9ZgFuFBVy5G0wNl+zXgBIYsWXeZ
+         sZnB9hOCX8xtk/SUmQdz2fan45suDhMtWBbQiXhkyAG40vhi3Yo4caQPPeBUZuoERKRD
+         s5gg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbNO1qIUgRLToAraVuXZ0YgnT4lnN1vYCz7BJ1dxvHJGUryrvdNqw9NETfK9C1ri7OZlol99k2vHRaY6U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/7kKFIeplyO/HfQ7RcRCupAfNYpWqUOPJYmPec2mAEcMVC2dq
+	A/gdz7MAjhum5p3KHMZ3bmTnvmfi7FtxSXSq7ppAICSOZKIu6n5ca4H2VHI/gF4TYYg+ksWA+bE
+	WxbJzrqCA2t6Iz5XHlS/sF2v4v5hlouDkUfHffmM7UFepza0k0D/FRaspvZCwlCAQQYnlsgvImE
+	IVdTA/XeSj6oWEn2hvHqnCqfwTmRe/Oendmyzc
+X-Received: by 2002:a05:690c:2c8f:b0:64a:956b:c063 with SMTP id 00721157ae682-6c629065714mr152681477b3.39.1724849375218;
+        Wed, 28 Aug 2024 05:49:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEd7nnhKwMBHGzXZsGM1fq6Gzr4+LPrJ+cQ8cp3h+LjdAk8VlTS8UTQRv1TB09r6RylwmJ7164mFinpLkrgGxQ=
+X-Received: by 2002:a05:690c:2c8f:b0:64a:956b:c063 with SMTP id
+ 00721157ae682-6c629065714mr152681307b3.39.1724849374930; Wed, 28 Aug 2024
+ 05:49:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+References: <20240816090159.1967650-1-dtatulea@nvidia.com> <20240816090159.1967650-10-dtatulea@nvidia.com>
+In-Reply-To: <20240816090159.1967650-10-dtatulea@nvidia.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Wed, 28 Aug 2024 14:48:59 +0200
+Message-ID: <CAJaqyWcnJwfwyGKqx62OdSXrVH4gA701E-j5soChG0ZfTUsi9Q@mail.gmail.com>
+Subject: Re: [PATCH vhost v2 09/10] vdpa/mlx5: Small improvement for change_num_qps()
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	virtualization@lists.linux-foundation.org, Si-Wei Liu <si-wei.liu@oracle.com>, 
+	Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Gal Pressman <gal@nvidia.com>, 
+	Parav Pandit <parav@nvidia.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Tariq Toukan <tariqt@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 28 Aug 2024 11:23:38 +0800
-Jinjie Ruan <ruanjinjie@huawei.com> wrote:
+On Fri, Aug 16, 2024 at 11:03=E2=80=AFAM Dragos Tatulea <dtatulea@nvidia.co=
+m> wrote:
+>
+> change_num_qps() has a lot of multiplications by 2 to convert
+> the number of VQ pairs to number of VQs. This patch simplifies
+> the code by doing the VQP -> VQ count conversion at the beginning
+> in a variable.
+>
+> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
 
-> Use the dev_err_probe() helper to simplify code.
-> 
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-Ah. I should have read next patch. Sorry!
-
-Might be worth breaking from rule of aligning parameters
-after brackets to keep the longest line lengths down.
-
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
 
 > ---
-> v2:
-> - Split into 2 patches.
-> ---
->  drivers/net/mdio/mdio-mux-mmioreg.c | 45 ++++++++++++-----------------
->  1 file changed, 19 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/net/mdio/mdio-mux-mmioreg.c b/drivers/net/mdio/mdio-mux-mmioreg.c
-> index 4d87e61fec7b..08c484ccdcbe 100644
-> --- a/drivers/net/mdio/mdio-mux-mmioreg.c
-> +++ b/drivers/net/mdio/mdio-mux-mmioreg.c
-> @@ -109,30 +109,26 @@ static int mdio_mux_mmioreg_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  
->  	ret = of_address_to_resource(np, 0, &res);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "could not obtain memory map for node %pOF\n",
-> -			np);
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret,
-> +				     "could not obtain memory map for node %pOF\n", np);
->  	s->phys = res.start;
->  
->  	s->iosize = resource_size(&res);
->  	if (s->iosize != sizeof(uint8_t) &&
->  	    s->iosize != sizeof(uint16_t) &&
->  	    s->iosize != sizeof(uint32_t)) {
-> -		dev_err(&pdev->dev, "only 8/16/32-bit registers are supported\n");
-> -		return -EINVAL;
-> +		return dev_err_probe(&pdev->dev, -EINVAL,
-> +				     "only 8/16/32-bit registers are supported\n");
->  	}
->  
->  	iprop = of_get_property(np, "mux-mask", &len);
-> -	if (!iprop || len != sizeof(uint32_t)) {
-> -		dev_err(&pdev->dev, "missing or invalid mux-mask property\n");
-> -		return -ENODEV;
-> -	}
-> -	if (be32_to_cpup(iprop) >= BIT(s->iosize * 8)) {
-> -		dev_err(&pdev->dev, "only 8/16/32-bit registers are supported\n");
-> -		return -EINVAL;
-> -	}
-> +	if (!iprop || len != sizeof(uint32_t))
-> +		return dev_err_probe(&pdev->dev, -ENODEV,
-> +				     "missing or invalid mux-mask property\n");
-> +	if (be32_to_cpup(iprop) >= BIT(s->iosize * 8))
-> +		return dev_err_probe(&pdev->dev, -EINVAL,
-> +				     "only 8/16/32-bit registers are supported\n");
->  	s->mask = be32_to_cpup(iprop);
->  
->  	/*
-> @@ -142,17 +138,14 @@ static int mdio_mux_mmioreg_probe(struct platform_device *pdev)
->  	for_each_available_child_of_node_scoped(np, np2) {
->  		u64 reg;
->  
-> -		if (of_property_read_reg(np2, 0, &reg, NULL)) {
-> -			dev_err(&pdev->dev, "mdio-mux child node %pOF is "
-> -				"missing a 'reg' property\n", np2);
-> -			return -ENODEV;
-> -		}
-> -		if ((u32)reg & ~s->mask) {
-> -			dev_err(&pdev->dev, "mdio-mux child node %pOF has "
-> -				"a 'reg' value with unmasked bits\n",
-> -				np2);
-> -			return -ENODEV;
-> -		}
-> +		if (of_property_read_reg(np2, 0, &reg, NULL))
-> +			return dev_err_probe(&pdev->dev, -ENODEV,
-> +					     "mdio-mux child node %pOF is missing a 'reg' property\n",
-> +					     np2);
-> +		if ((u32)reg & ~s->mask)
-> +			return dev_err_probe(&pdev->dev, -ENODEV,
-> +					     "mdio-mux child node %pOF has a 'reg' value with unmasked bits\n",
-I'd align these super long ones as. 
-			     "mdio-mux child node %pOF has a 'reg' value with unmasked bits\n",
-It is ugly but then so are > 100 char lines.
-> +					     np2);
->  	}
->  
->  	ret = mdio_mux_init(&pdev->dev, pdev->dev.of_node,
+>  drivers/vdpa/mlx5/net/mlx5_vnet.c | 21 +++++++++++----------
+>  1 file changed, 11 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/ml=
+x5_vnet.c
+> index 65063c507130..d1a01c229110 100644
+> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> @@ -2219,16 +2219,17 @@ static virtio_net_ctrl_ack handle_ctrl_mac(struct=
+ mlx5_vdpa_dev *mvdev, u8 cmd)
+>  static int change_num_qps(struct mlx5_vdpa_dev *mvdev, int newqps)
+>  {
+>         struct mlx5_vdpa_net *ndev =3D to_mlx5_vdpa_ndev(mvdev);
+> -       int cur_qps =3D ndev->cur_num_vqs / 2;
+> +       int cur_vqs =3D ndev->cur_num_vqs;
+> +       int new_vqs =3D newqps * 2;
+>         int err;
+>         int i;
+>
+> -       if (cur_qps > newqps) {
+> -               err =3D modify_rqt(ndev, 2 * newqps);
+> +       if (cur_vqs > new_vqs) {
+> +               err =3D modify_rqt(ndev, new_vqs);
+>                 if (err)
+>                         return err;
+>
+> -               for (i =3D ndev->cur_num_vqs - 1; i >=3D 2 * newqps; i--)=
+ {
+> +               for (i =3D cur_vqs - 1; i >=3D new_vqs; i--) {
+>                         struct mlx5_vdpa_virtqueue *mvq =3D &ndev->vqs[i]=
+;
+>
+>                         if (is_resumable(ndev))
+> @@ -2237,27 +2238,27 @@ static int change_num_qps(struct mlx5_vdpa_dev *m=
+vdev, int newqps)
+>                                 teardown_vq(ndev, mvq);
+>                 }
+>
+> -               ndev->cur_num_vqs =3D 2 * newqps;
+> +               ndev->cur_num_vqs =3D new_vqs;
+>         } else {
+> -               ndev->cur_num_vqs =3D 2 * newqps;
+> -               for (i =3D cur_qps * 2; i < 2 * newqps; i++) {
+> +               ndev->cur_num_vqs =3D new_vqs;
+> +               for (i =3D cur_vqs; i < new_vqs; i++) {
+>                         struct mlx5_vdpa_virtqueue *mvq =3D &ndev->vqs[i]=
+;
+>
+>                         err =3D mvq->initialized ? resume_vq(ndev, mvq) :=
+ setup_vq(ndev, mvq, true);
+>                         if (err)
+>                                 goto clean_added;
+>                 }
+> -               err =3D modify_rqt(ndev, 2 * newqps);
+> +               err =3D modify_rqt(ndev, new_vqs);
+>                 if (err)
+>                         goto clean_added;
+>         }
+>         return 0;
+>
+>  clean_added:
+> -       for (--i; i >=3D 2 * cur_qps; --i)
+> +       for (--i; i >=3D cur_vqs; --i)
+>                 teardown_vq(ndev, &ndev->vqs[i]);
+>
+> -       ndev->cur_num_vqs =3D 2 * cur_qps;
+> +       ndev->cur_num_vqs =3D cur_vqs;
+>
+>         return err;
+>  }
+> --
+> 2.45.1
+>
 
 
