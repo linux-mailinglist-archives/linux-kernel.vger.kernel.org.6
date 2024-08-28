@@ -1,348 +1,248 @@
-Return-Path: <linux-kernel+bounces-304543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 674B5962193
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:43:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6546196219C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA9ECB25393
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:43:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 228D1287760
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFA815AD9E;
-	Wed, 28 Aug 2024 07:41:45 +0000 (UTC)
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2115.outbound.protection.outlook.com [40.107.117.115])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20E115A87B;
-	Wed, 28 Aug 2024 07:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.115
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724830904; cv=fail; b=DM8fqy9DwsgTF1iRP9lO3H8oR6NHKmJcg7VB9q1Ito+cqKgDUdr0xvWa+RK2pNM2+2oeyoTGWlhNdnxBQ3g+E6u5mRiPA6v4jx36XHVIyI88faCERak/2Xo0xtwkFV/DLOA3oQ6h6n3+4gVgs954AitDdlwL97d5qhVmpKF8nc0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724830904; c=relaxed/simple;
-	bh=eaPDKg4EgZjhgoZGjOIrFz/PouRc4pgRKLayAeEjx7s=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=ERVQibT0DyoeD3/v1nBd8XtljWvOQpVuTnKPjWS4OX3OxpK9EZgaTsiV0tHFSriqDgjOOMXL1UCdyPL2JEAdw/xUKpzZ7yPUFL1KPPuiSKE1jv8dDJeN3m6CiyxF6Q6kXLzdiu0LgkZWbx+cdUtupMz2JDt8p5cY+0jgbCuea6k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com; spf=pass smtp.mailfrom=wesion.com; arc=fail smtp.client-ip=40.107.117.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wesion.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=P1DkfV59s19/wgqENKjri/UKVrf61qbNBDpG6fdTe+e792HjhrsG+nklNWxPiGlkJeNz5FadD28XrdU9cdulKKOShXjFyes3EzLZEv98vNV+7zm6+zuScC7KymqEgeBdoQQpjMEfD8eoS6dww7DKH7n7pee6Ni39q3TrEgzzNY0f9GPNgDIlib5yL5Sbv09MFk3wBAWyv9w8rW1FqJbfOIcfzABFCE91zgV0gyfdZDyUR5HGjDIOBHjrBsSyqtQTFl6G8/DObJaeNxi4jVIXR2lxfsePUglku1cyXx8puLDJPrPygA6Rp6KxzDT4eiP3A+ZP3GP3+PKWy/3rdrwXRg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iIa/19ZSdmiXE/+0Ze0XxBHm6vHkH0nd5ZiJsa5DkWA=;
- b=xXVMy44APLieOZZErPljFN5K6bZdBx8xf8hsKZ1sBQjJCBbihfulfYJCSaqc6Z+IuUjXYIWpyDy4ai4OQhKAi/LvNv3I0fELFlWjrXOKYE2xQflCmz1fzUpX7y+n/cdTeq1nNsT3wb3ruTNztFRKW+KXMtWbmlA5g2DQEyDwS5CCa4S+Apyeol2JejyHuDq+OaITjk/QJGd0eHTMWxcfTGPPqzctjcuwefdLGNpZvnAHZmY6eeimijozDT3c8aIaIs4gwe1H7EF6y5KJum9afPrZXpZ3GVsXo131i+QcNuOJJJ/7+r3g7RMmyWClkSPCuZvZ9Ug3n76PHeZZB0NzEw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wesion.com; dmarc=pass action=none header.from=wesion.com;
- dkim=pass header.d=wesion.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wesion.com;
-Received: from TYZPR03MB7001.apcprd03.prod.outlook.com (2603:1096:400:26a::14)
- by KL1PR03MB7765.apcprd03.prod.outlook.com (2603:1096:820:ec::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Wed, 28 Aug
- 2024 07:41:21 +0000
-Received: from TYZPR03MB7001.apcprd03.prod.outlook.com
- ([fe80::78dd:5e68:1a9c:36c0]) by TYZPR03MB7001.apcprd03.prod.outlook.com
- ([fe80::78dd:5e68:1a9c:36c0%4]) with mapi id 15.20.7875.019; Wed, 28 Aug 2024
- 07:41:21 +0000
-From: Jacobe Zang <jacobe.zang@wesion.com>
-Date: Wed, 28 Aug 2024 15:40:52 +0800
-Subject: [PATCH v12 5/5] wifi: brcmfmac: add flag for random seed during
- firmware download
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240828-wireless-mainline-v12-5-9064ac7acf1d@wesion.com>
-References: <20240828-wireless-mainline-v12-0-9064ac7acf1d@wesion.com>
-In-Reply-To: <20240828-wireless-mainline-v12-0-9064ac7acf1d@wesion.com>
-To: Kalle Valo <kvalo@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, van Spriel <arend@broadcom.com>, 
- Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com, 
- Jacobe Zang <jacobe.zang@wesion.com>, Ondrej Jirman <megi@xff.cz>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724830868; l=6614;
- i=jacobe.zang@wesion.com; s=20240828; h=from:subject:message-id;
- bh=eaPDKg4EgZjhgoZGjOIrFz/PouRc4pgRKLayAeEjx7s=;
- b=14FbAN54TnGf0PTz7mST9t7L8IHhkUGrkrZMbAXiInJpzfj78gXEN4LqayO7q91ZlFbhqZtOb
- crq+Mr4tmsTDXKcVAOsx/4dEFAJWJAGDKR/ajx2syfBkfjqvqUP5J59
-X-Developer-Key: i=jacobe.zang@wesion.com; a=ed25519;
- pk=CkP5TjIqHSwHJwZXTGtadoXZucYvakXcO3HjbR6FoeU=
-X-ClientProxiedBy: TYCP286CA0372.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:79::20) To TYZPR03MB7001.apcprd03.prod.outlook.com
- (2603:1096:400:26a::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1CB15ADA1;
+	Wed, 28 Aug 2024 07:43:56 +0000 (UTC)
+Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34B11552EB;
+	Wed, 28 Aug 2024 07:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724831036; cv=none; b=Aaehg/fUWlK5z6oiI3DIrlfeKiRrdLTYn+hU1xg+moo/tPk3I/sNnzRYlSXEPWhxTtPDKFbTNvGMoQN7pOx8U7E7NcWLy4zBfJpxS49iNEb8hF4yKv3KjKE6FGiOXoshn1tWViNZu1EipCrDNbPhz3d/LFdeQVazP9mbpDKtKiM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724831036; c=relaxed/simple;
+	bh=tgZElXEW/k+zqqpn44uzCLqkqVHYMPI9jUULFZjtiBs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QK3+dICWkoR+CNoVkwI/7JhLZWBvJxtVT04k64yHH3ORZshGQmyI70Qj+j3qC6g3XElsACZHVE5XFmvYHf4upI+ueAY/Nvzk7wg1InDzZTSzRIGFdAOeCYiz4EHL98CWIglR9azgTU29T2WpNZ6Gd3Rq0mhvYoOdDpb//GJEGC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=162.243.161.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
+Received: from hust.edu.cn (unknown [172.16.0.52])
+	by app1 (Coremail) with SMTP id HgEQrADHzX0S1c5mWSLrBA--.43518S2;
+	Wed, 28 Aug 2024 15:43:14 +0800 (CST)
+Received: from pride-PowerEdge-R740.. (unknown [222.20.126.129])
+	by gateway (Coremail) with SMTP id _____wDHsE4L1c5mqcHAAA--.58773S2;
+	Wed, 28 Aug 2024 15:43:09 +0800 (CST)
+From: Dongliang Mu <dzm91@hust.edu.cn>
+To: Alex Shi <alexs@kernel.org>,
+	Yanteng Si <siyanteng@loongson.cn>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Dongliang Mu <dzm91@hust.edu.cn>
+Cc: hust-os-kernel-patches@googlegroups.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH] docs/zh_CN: add the translation of kbuild/gcc-plugins.rst
+Date: Wed, 28 Aug 2024 15:42:28 +0800
+Message-ID: <20240828074305.314666-1-dzm91@hust.edu.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR03MB7001:EE_|KL1PR03MB7765:EE_
-X-MS-Office365-Filtering-Correlation-Id: b72da464-45be-4d40-5573-08dcc734cf7e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|366016|1800799024|376014|7416014|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?b25SVUNEcFlIRW1RNkRyZFRtTWpJK0cwWkhldldKRVRnTitSL1dNb3kwNXJz?=
- =?utf-8?B?SXl1ZThRZDF5L00wQWJheGxGdmY4NmN2UWNqVGFtM2cxbmxBZlNnZXlGRnN6?=
- =?utf-8?B?MXpDb1JWY1ltSktrejNZTTk4RHp0Q2w0NlVhNWIrREMxU04xVTV1NVh6ak94?=
- =?utf-8?B?N0R0WHRmazJJNm9DQktJcEpVbjkxT3Z3ZHBXVUJPcUxBeFVpb3FMbEcrVmk4?=
- =?utf-8?B?SS9Bb2VnZUtPd3VYeld4K3Y4NTliTUtIU2c4eGI5N1FPczNlT0NSZzNKQ2dE?=
- =?utf-8?B?SEhmYVRqTDVBRWl0WFBjVmdBV1Z2Tk1DVUtPY1dQYnBnVHJrNWx3WGJiYkdH?=
- =?utf-8?B?YzdyVEFYQXZKUmdCMG52dWt5UFR3ZTdnQkt5QU9lYkZsckpXMkRLQ1U3WXA3?=
- =?utf-8?B?TXJwa29wOW1OMjBaWjZ5a2N4WER5dUlkZlRPbzZ3czY4NEZaVGpwS00yVGp0?=
- =?utf-8?B?N3lzaDNmRXlmU05wZDNIR05yM1Y0b2hnREk4UkVsbVhkVmpUM1AyaVFRaERZ?=
- =?utf-8?B?dFY2R040cjkyUXJJaThmTEM2ZkxzQURuSTZMR3lLcVB6OVA2eWhsVkNsejI0?=
- =?utf-8?B?MlErQnRxT0FSMVNZTnVsbEFHOWVrSnNPR1FYSWVnRHpsMzdOemdhbWZ5S2lX?=
- =?utf-8?B?alZHWkUrcXN1d01IenJ0eVFmQ3lZRFIxUm9icWVFWkNjRHRGQXU3cjlTK2ZR?=
- =?utf-8?B?Qy80MlFuYkFFZHRZRjJ3RGFKWEJGdjhwVktpY1Z1cjk0cDJzMVlXbFV4TE9v?=
- =?utf-8?B?Y2FpbHZ3d1l1OUJGK2Iway9KbVBYckE0aVZuSVdTT09qUit1cHlzTkNuWjg5?=
- =?utf-8?B?NkYyUkRib0JHSTM4ZGpMalBHVEhKKzg1YjJpWVAxWU93U2JaM240Zlg0R3Vv?=
- =?utf-8?B?U3REY2djcGFSMzZJT2UzU1FnQ3FHbWpjWERsVTdqQ3JJVDc5NGFyKzRTZUNK?=
- =?utf-8?B?eGF5dldkcEd4RWpTblA0Z3V5L01FOCtyaHp3dXorcDVaakMwTmRzeHlIN3E3?=
- =?utf-8?B?b0k4MDRHZVZZdTg0M3EyWVFNZ09pY3hXeTNNek9Jb3dHSitSWXJUbW1icHRm?=
- =?utf-8?B?TUhVVklNVlF4bDlRU21iQzdOUDdXR2FkWFJJMXIzVmpNSXdrWlNmUWJmbHRv?=
- =?utf-8?B?TmtSQW5LMEo5UW01UGp3ZTcwVS9EblJOMkZ5QWhscGVKZHprMlhEdG15UWkr?=
- =?utf-8?B?dFEvVHNpVlp0NnJ6QUlJTHpOcTBGMXlMYmJaVlRxeCs5RVZjR1FqeEFPNjNq?=
- =?utf-8?B?RVo3dzhGMmFUbGNoclloajdaeVN2bEhid3pxOHpXZ0xjWnY0NnFJWEpkZ1E0?=
- =?utf-8?B?ZlNpcjFvUEEzbmR4dUkwVFhQSFlHanRIOUtFNHJuSWJVYlVaejdKVmJOSE9B?=
- =?utf-8?B?U2ZJMisrQ0dHMThBT2FtVUp4bjlRUmpNaE85d3U1L09GdGNyOGIwZWRtMjRq?=
- =?utf-8?B?cFFybUx4MHpVdHQ5UWJxRzdnbE40SHRKTnVReHJ3R2NvOUtVOG5hL0lhOWlF?=
- =?utf-8?B?UjVPVE9jbE9OTjhFaG1INW8vYWNWMVg1MjFjckp4Q3JFcVR1SDc4b0pYemQ3?=
- =?utf-8?B?bkk2QmRTdEd2VUYwZUhkTUdCU1FZNDJEa2xubVRpc0Y3VGh3dnZyVklWVURs?=
- =?utf-8?B?MUpsMElpYWx1YmxSaU9tcE9mMWFvMmpaMHJPUUxTbkhHeFZKQTZkMndHZGFQ?=
- =?utf-8?B?U01MUFlGaTkvQ0s0TERKdm1aMko5eCsxNFhUYUJ5amZpcjJ4MlNLYzFlTWlw?=
- =?utf-8?B?bTd1UnNKc3dveS9HUDNEbW56WFcyVkVoWEQzSFYyMms4MjE0U1Yzc3Y1WDhK?=
- =?utf-8?B?NXRqaEloZ21wbEMxVng5dEgyT0RXUmhEN2l0VXlvWUVYSmFCY3ZGQjJhVnNC?=
- =?utf-8?B?R1B5OEJOS2xzSFdDSklSdU1BS2FwUDM0UnEvb1A5SFMxNEh5NTBZTzhINVhQ?=
- =?utf-8?Q?IUd7SdcCmIo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB7001.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(1800799024)(376014)(7416014)(921020)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QjlWTVlKa0hRaTNZVU9IWmwrTVFNS3QwTjJxZVRPaFUzQUdVWXNPZ0VBTDRV?=
- =?utf-8?B?VTlXYjlsc3Q0b2hCVWJzRHpwTzk4Zk9JR0E5Q1BsanNmZ3d5SURCUUxsTy9O?=
- =?utf-8?B?QllycmRzcGIvQ2Q3cmlVOUpNZ3pYME15OVhwM2w1aHFtbHlheEZJc3J3Qmwz?=
- =?utf-8?B?TFBTL0ZKeUVpUmltT0U0SnNtZ3BCRklTK2hkSGV3bFAzNHNwaFBwd29nelNV?=
- =?utf-8?B?QkVkNVJLN3NzclFzUFZJZGpsNlBuK24yTjhycVUxNTdUeUNpN2RDYlJkOUt3?=
- =?utf-8?B?S1B6ZnZRQlZnbDAvL1o5cXhSSWlHMzN4RDYzcUk4NTVKb2hMS0pjSk5hMUhC?=
- =?utf-8?B?d0lMWXVlYVBPdlRvM3BUQTBkaUlacFBLaFZlNnVjM1ZRbXhHM2RpVG82a20z?=
- =?utf-8?B?MGNFcHVHQkNGMWdDdlc5RGloNGZQNTZ4aGtpK2tOQmhCVGxtZ21NNE0zZGpU?=
- =?utf-8?B?UklzYnlkMUg3ckhhQWFYSU10T3lvb1BTeUhmeHRWYUhycGU4SVVaN0kxaUFV?=
- =?utf-8?B?bFg0d21FcEFUTGlFb0NaSDBnZVJERjAzUGtDRFV2WStSNkYxOUErVUR4Zmdj?=
- =?utf-8?B?WFF2YWxGaURsWGd5V2Y3S0RPTVVQSmZqNnh0eStIandycFRmdHpTY2YwMHN4?=
- =?utf-8?B?RFRwTElac2dSQ0xzNzNCcG5mbkdGNU9PUlNQYTVkbGlzVllvd25DZG42cjRt?=
- =?utf-8?B?WEJCbGNuMExYcDFuZGpkL1VKVVMwRDExWEdUWVNxOXcwMllOWVBkRENEbUF1?=
- =?utf-8?B?MjVLbVhaai9hejhJdzc5ZStPaENGN09pUFpwUldWRjdUanR6RGlOcU1PaWVJ?=
- =?utf-8?B?aG55eGZMVnM3TXVzV1VYNnpobUNuZWtLckNQQmIyUnh2ZTYva09xeDFrWHdE?=
- =?utf-8?B?ZkJGdEx6Nmx0NVVkOEFxbHVVaXdiNWxjbG9ZVmpkMTNkOFZSdlRYeFg5LzFy?=
- =?utf-8?B?YkNxZFpSMDhkZWZaUFBNK2p3Ym96aU5McDNxSCtxN2lRYXlrZElDbXYyS1pN?=
- =?utf-8?B?ZG05RHhldmdWelRhSk9qM3ErZlVqKzhMUzl5clN1RVRCa1Jidk1ZN2R1NUxz?=
- =?utf-8?B?SXJSMWdtaksrcVFpUzBDNnltNVJWZmcxNHBmVHJnMjZ3bXIybTM2LzIrN3I0?=
- =?utf-8?B?T3pibklRdnFib2xVbUV3bjVTV2xPcVRpTVNUYWN6ekNjNWR6c1hsWVRwRUNz?=
- =?utf-8?B?M3R0TS84cDVkQjhUeURiaG1KT0dlaHl5cmhrelpEV3dIREc2TTlNazJpWWxH?=
- =?utf-8?B?aHhPamd5bVRLa0hubXJPVWFHZzZId2hySklqZUxYMmkzRjRYYWlQK1dTdTcr?=
- =?utf-8?B?VzNlYmNGTkNuUkYzSEZsdkpvSms4RW10VXBlUVI0cDVPKzlWMlI2cWxWTU5F?=
- =?utf-8?B?blVoMEhJdy9GR0NBNzFjN2pBVXBobXNVTVBqUWdNZnlwTGg3R25LNDlGUGtF?=
- =?utf-8?B?dGthdUh2WG9WUjBGL0hpTDJiWkRqZHoyYmx1UDdQejA1ZkFacU5wUHFHT0Zn?=
- =?utf-8?B?UmYyYmF5cXh3WXIzZGZ0SnErckFxKzVVdDhZUmNYTlBwQ3hsL1ZlNk8rZUVO?=
- =?utf-8?B?SVRYeDd2Sy83UlNURmpsVG5hckZMTE54dGRoQktoQm1sV1N1Q2RKK1ByaXBV?=
- =?utf-8?B?bHVUeDlQcjUyOHQ4THBqeWNMQ1RoTmhMTDVVRTY0V085c2pZTmdGN0Y0ZDVY?=
- =?utf-8?B?aFliM2l6NmtIbDlFNTVmcE15NmZISlREb3VveDB3TldOTXU2YWpSbkFkeGVB?=
- =?utf-8?B?eWpncU5iV2kvaVI5ZGM0Y2JGcG10SlFySGgzVituQXlDSXlJbFc3b0xMaWho?=
- =?utf-8?B?M0I5Y3ZmSnZKZVZBYVZ6QTN3SERIYW00SmtwU3M4cXVCOWY3cHZuTFZZbFlM?=
- =?utf-8?B?aEU3alNVSXZOeXFuZUEwc29hM05XRmh0Q05XNXBGRTQ5Tm9kaXFrUmxXbzBC?=
- =?utf-8?B?ZmUwWmFNbXhTeWo5SUpUTWxSTlZrTGQ2dzZkaWFhMWppb3EvVGdNUjJ6WGZW?=
- =?utf-8?B?L0pGejVPQTIxZng2Rno5dVdTVWg5R0NQM1dEazB4MG5hcm45UFRuMExabklV?=
- =?utf-8?B?ZHpkWUhEeTI3N0k0VnN0SFgyaDJiRTluei9DU3RRaEhmRlAyTDZwRUJaSEtM?=
- =?utf-8?Q?lmCaIbZ7Ekb/N4LSAmWFHtk0p?=
-X-OriginatorOrg: wesion.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b72da464-45be-4d40-5573-08dcc734cf7e
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB7001.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 07:41:21.3747
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 2dc3bd76-7ac2-4780-a5b7-6c6cc6b5af9b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MyFIYzjCXi+SUuIiF3p42etcXmXQJxYiDzninIBErSiR+GWuu/AwJbSx88jH0PXgfMuWJIDToKrfuc5mtBHj+Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB7765
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:HgEQrADHzX0S1c5mWSLrBA--.43518S2
+Authentication-Results: app1; spf=neutral smtp.mail=dzm91@hust.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvJXoWxtryfXF4fur15KFyUur48Zwb_yoWxXr4fpw
+	1qk34SgFWSyFy093yfKr1fuF15JFs3Ww15Ka4kGwn7tF1kJrZ0y39xtry5GFyfWFy8ZrW7
+	XF4YyrW8uw1jva7anT9S1TB71UUUUjJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUQSb7Iv0xC_Zr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
+	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
+	v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
+	6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1ln4kS14v26r
+	126r1DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI
+	12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj64x0Y40En7xvr7AKxV
+	W8Jr0_Cr1UMcIj6x8ErcxFaVAv8VW8uFyUJr1UMcIj6xkF7I0En7xvr7AKxVW8Jr0_Cr1U
+	McvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUtVW8Zw
+	CF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26r4fZr1UJr1l4I8I3I0E4IkC6x0Y
+	z7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
+	7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUVDGYDUUUU
+X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-Providing the random seed to firmware was tied to the fact that the
-device has a valid OTP, which worked for some Apple chips. However,
-it turns out the BCM43752 device also needs the random seed in order
-to get firmware running. Suspect it is simply tied to the firmware
-branch used for the device. Introducing a mechanism to allow setting
-it for a device through the device table.
+Finish the translation of kbuild/gcc-plugins.rst and move gcc-plugins
+from TODO to the main body.
 
-Co-developed-by: Ondrej Jirman <megi@xff.cz>
-Signed-off-by: Ondrej Jirman <megi@xff.cz>
-Co-developed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
+Update to commit 3832d1fd84b6 ("docs/core-api: expand Fedora instructions
+for GCC plugins")
+
+Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
 ---
- .../wireless/broadcom/brcm80211/brcmfmac/pcie.c    | 52 ++++++++++++++++++----
- .../broadcom/brcm80211/include/brcm_hw_ids.h       |  2 +
- 2 files changed, 46 insertions(+), 8 deletions(-)
+ .../translations/zh_CN/kbuild/gcc-plugins.rst | 126 ++++++++++++++++++
+ .../translations/zh_CN/kbuild/index.rst       |   2 +-
+ 2 files changed, 127 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/translations/zh_CN/kbuild/gcc-plugins.rst
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
-index 190e8990618c5..c0fdaa4dceda4 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
-@@ -66,6 +66,7 @@ BRCMF_FW_DEF(4365C, "brcmfmac4365c-pcie");
- BRCMF_FW_DEF(4366B, "brcmfmac4366b-pcie");
- BRCMF_FW_DEF(4366C, "brcmfmac4366c-pcie");
- BRCMF_FW_DEF(4371, "brcmfmac4371-pcie");
-+BRCMF_FW_CLM_DEF(43752, "brcmfmac43752-pcie");
- BRCMF_FW_CLM_DEF(4377B3, "brcmfmac4377b3-pcie");
- BRCMF_FW_CLM_DEF(4378B1, "brcmfmac4378b1-pcie");
- BRCMF_FW_CLM_DEF(4378B3, "brcmfmac4378b3-pcie");
-@@ -104,6 +105,7 @@ static const struct brcmf_firmware_mapping brcmf_pcie_fwnames[] = {
- 	BRCMF_FW_ENTRY(BRCM_CC_43664_CHIP_ID, 0xFFFFFFF0, 4366C),
- 	BRCMF_FW_ENTRY(BRCM_CC_43666_CHIP_ID, 0xFFFFFFF0, 4366C),
- 	BRCMF_FW_ENTRY(BRCM_CC_4371_CHIP_ID, 0xFFFFFFFF, 4371),
-+	BRCMF_FW_ENTRY(BRCM_CC_43752_CHIP_ID, 0xFFFFFFFF, 43752),
- 	BRCMF_FW_ENTRY(BRCM_CC_4377_CHIP_ID, 0xFFFFFFFF, 4377B3), /* revision ID 4 */
- 	BRCMF_FW_ENTRY(BRCM_CC_4378_CHIP_ID, 0x0000000F, 4378B1), /* revision ID 3 */
- 	BRCMF_FW_ENTRY(BRCM_CC_4378_CHIP_ID, 0xFFFFFFE0, 4378B3), /* revision ID 5 */
-@@ -353,6 +355,7 @@ struct brcmf_pciedev_info {
- 			  u16 value);
- 	struct brcmf_mp_device *settings;
- 	struct brcmf_otp_params otp;
-+	bool fwseed;
- #ifdef DEBUG
- 	u32 console_interval;
- 	bool console_active;
-@@ -1715,14 +1718,14 @@ static int brcmf_pcie_download_fw_nvram(struct brcmf_pciedev_info *devinfo,
- 		memcpy_toio(devinfo->tcm + address, nvram, nvram_len);
- 		brcmf_fw_nvram_free(nvram);
- 
--		if (devinfo->otp.valid) {
-+		if (devinfo->fwseed) {
- 			size_t rand_len = BRCMF_RANDOM_SEED_LENGTH;
- 			struct brcmf_random_seed_footer footer = {
- 				.length = cpu_to_le32(rand_len),
- 				.magic = cpu_to_le32(BRCMF_RANDOM_SEED_MAGIC),
- 			};
- 
--			/* Some Apple chips/firmwares expect a buffer of random
-+			/* Some chips/firmwares expect a buffer of random
- 			 * data to be present before NVRAM
- 			 */
- 			brcmf_dbg(PCIE, "Download random seed\n");
-@@ -2394,6 +2397,37 @@ static void brcmf_pcie_debugfs_create(struct device *dev)
- }
- #endif
- 
-+struct brcmf_pcie_drvdata {
-+	enum brcmf_fwvendor vendor;
-+	bool fw_seed;
-+};
+diff --git a/Documentation/translations/zh_CN/kbuild/gcc-plugins.rst b/Documentation/translations/zh_CN/kbuild/gcc-plugins.rst
+new file mode 100644
+index 000000000000..214945a4ecf3
+--- /dev/null
++++ b/Documentation/translations/zh_CN/kbuild/gcc-plugins.rst
+@@ -0,0 +1,126 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
-+enum {
-+	BRCMF_DRVDATA_CYW,
-+	BRCMF_DRVDATA_BCA,
-+	BRCMF_DRVDATA_WCC,
-+	BRCMF_DRVDATA_WCC_SEED,
-+};
++.. include:: ../disclaimer-zh_CN.rst
 +
-+static const struct brcmf_pcie_drvdata drvdata[] = {
-+	[BRCMF_DRVDATA_CYW] = {
-+		.vendor = BRCMF_FWVENDOR_CYW,
-+		.fw_seed = false,
-+	},
-+	[BRCMF_DRVDATA_BCA] = {
-+		.vendor = BRCMF_FWVENDOR_BCA,
-+		.fw_seed = false,
-+	},
-+	[BRCMF_DRVDATA_WCC] = {
-+		.vendor = BRCMF_FWVENDOR_WCC,
-+		.fw_seed = false,
-+	},
-+	[BRCMF_DRVDATA_WCC_SEED] = {
-+		.vendor = BRCMF_FWVENDOR_WCC,
-+		.fw_seed = true,
-+	},
-+};
++:Original: Documentation/kbuild/gcc-plugins.rst
++:Translator: 慕冬亮 Dongliang Mu <dzm91@hust.edu.cn>
 +
- /* Forward declaration for pci_match_id() call */
- static const struct pci_device_id brcmf_pcie_devid_table[];
++================
++GCC 插件基础设施
++================
++
++
++介绍
++============
++
++GCC 插件是为编译器提供额外功能的可加载模块 [1]_。它们对于运行时插装和静态分析非常有用。
++我们可以在编译过程中通过回调 [2]_，GIMPLE [3]_，IPA [4]_ 和 RTL Passes [5]_
++（译者注：Pass 是编译器所采用的一种结构化技术，用于完成编译对象的分析、优化或转换等功能）
++来分析、修改和添加更多的代码。
++
++内核的 GCC 插件基础设施支持构建树外模块、交叉编译和在单独的目录中构建。插件源文件必须由
++C++ 编译器编译。
++
++目前 GCC 插件基础设施只支持一些架构。搜索 "select HAVE_GCC_PLUGINS" 来查找支持
++GCC 插件的架构。
++
++这个基础设施是从 grsecurity [6]_  和 PaX [7]_ 移植过来的。
++
++--
++
++.. [1] https://gcc.gnu.org/onlinedocs/gccint/Plugins.html
++.. [2] https://gcc.gnu.org/onlinedocs/gccint/Plugin-API.html#Plugin-API
++.. [3] https://gcc.gnu.org/onlinedocs/gccint/GIMPLE.html
++.. [4] https://gcc.gnu.org/onlinedocs/gccint/IPA.html
++.. [5] https://gcc.gnu.org/onlinedocs/gccint/RTL.html
++.. [6] https://grsecurity.net/
++.. [7] https://pax.grsecurity.net/
++
++
++目的
++=======
++
++GCC 插件的设计目的是提供一个场所，用于试验 GCC 或 Clang 上游没有的潜在编译器功能。
++一旦它们的实用性得到验证，目标就是将这些功能添加到 GCC（和 Clang）的上游，然后在
++所有支持的 GCC 版本都支持这些功能后，再将它们从内核中移除。
++
++具体来说，新插件应该只实现上游编译器（GCC 和 Clang）不支持的功能。
++
++当 Clang 中存在 GCC 中不存在的某项功能时，应努力将该功能上传到上游 GCC（而不仅仅
++是作为内核专用的 GCC 插件），以使整个生态都能从中受益。
++
++类似的，如果 GCC 插件提供的功能在 Clang 中 **不** 存在，但该功能被证明是有用的，也应
++努力将该功能上传到 GCC（和 Clang）。
++
++在上游 GCC 提供了某项功能后，该插件将无法在相应的 GCC 版本（以及更高版本）下编译。
++一旦所有内核支持的 GCC 版本都提供了该功能，该插件将从内核中移除。
++
++
++文件
++=====
++
++**$(src)/scripts/gcc-plugins**
++
++	这是 GCC 插件的目录。
++
++**$(src)/scripts/gcc-plugins/gcc-common.h**
++
++	这是 GCC 插件的兼容性头文件。
++	应始终包含它，而不是单独的 GCC 头文件。
++
++**$(src)/scripts/gcc-plugins/gcc-generate-gimple-pass.h,
++$(src)/scripts/gcc-plugins/gcc-generate-ipa-pass.h,
++$(src)/scripts/gcc-plugins/gcc-generate-simple_ipa-pass.h,
++$(src)/scripts/gcc-plugins/gcc-generate-rtl-pass.h**
++
++	这些头文件可以自动生成 GIMPLE、SIMPLE_IPA、IPA 和 RTL passes 的注册结构。
++	与手动创建结构相比，它们更受欢迎。
++
++
++用法
++=====
++
++你必须为你的 GCC 版本安装 GCC 插件头文件，以 Ubuntu 上的 gcc-10 为例::
++
++	apt-get install gcc-10-plugin-dev
++
++或者在 Fedora 上::
++
++	dnf install gcc-plugin-devel libmpc-devel
++
++或者在 Fedora 上使用包含插件的交叉编译器时::
++
++	dnf install libmpc-devel
++
++在内核配置中启用 GCC 插件基础设施与一些你想使用的插件::
++
++	CONFIG_GCC_PLUGINS=y
++	CONFIG_GCC_PLUGIN_LATENT_ENTROPY=y
++	...
++
++运行 gcc（本地或交叉编译器），确保能够检测到插件头文件::
++
++	gcc -print-file-name=plugin
++	CROSS_COMPILE=arm-linux-gnu- ${CROSS_COMPILE}gcc -print-file-name=plugin
++
++"plugin" 这个词意味着它们没有被检测到::
++
++	plugin
++
++完整的路径则表示插件已经被检测到::
++
++       /usr/lib/gcc/x86_64-redhat-linux/12/plugin
++
++编译包括插件在内的最小工具集::
++
++	make scripts
++
++或者直接在内核中运行 make，使用循环复杂性 GCC 插件编译整个内核。
++
++
++4. 如何添加新的 GCC 插件
++==============================
++
++GCC 插件位于 scripts/gcc-plugins/。你需要将插件源文件放在 scripts/gcc-plugins/ 目录下。
++子目录创建并不支持，你必须添加在 scripts/gcc-plugins/Makefile、scripts/Makefile.gcc-plugins
++和相关的 Kconfig 文件中。
+diff --git a/Documentation/translations/zh_CN/kbuild/index.rst b/Documentation/translations/zh_CN/kbuild/index.rst
+index d906a4e88d0f..b51655d981f6 100644
+--- a/Documentation/translations/zh_CN/kbuild/index.rst
++++ b/Documentation/translations/zh_CN/kbuild/index.rst
+@@ -13,6 +13,7 @@
+     :maxdepth: 1
  
-@@ -2475,9 +2509,10 @@ brcmf_pcie_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	bus->bus_priv.pcie = pcie_bus_dev;
- 	bus->ops = &brcmf_pcie_bus_ops;
- 	bus->proto_type = BRCMF_PROTO_MSGBUF;
--	bus->fwvid = id->driver_data;
- 	bus->chip = devinfo->coreid;
- 	bus->wowl_supported = pci_pme_capable(pdev, PCI_D3hot);
-+	bus->fwvid = drvdata[id->driver_data].vendor;
-+	devinfo->fwseed = drvdata[id->driver_data].fw_seed;
- 	dev_set_drvdata(&pdev->dev, bus);
+     headers_install
++    gcc-plugins
  
- 	ret = brcmf_alloc(&devinfo->pdev->dev, devinfo->settings);
-@@ -2663,14 +2698,14 @@ static const struct dev_pm_ops brcmf_pciedrvr_pm = {
- 		BRCM_PCIE_VENDOR_ID_BROADCOM, (dev_id), \
- 		PCI_ANY_ID, PCI_ANY_ID, \
- 		PCI_CLASS_NETWORK_OTHER << 8, 0xffff00, \
--		BRCMF_FWVENDOR_ ## fw_vend \
-+		BRCMF_DRVDATA_ ## fw_vend \
- 	}
- #define BRCMF_PCIE_DEVICE_SUB(dev_id, subvend, subdev, fw_vend) \
- 	{ \
- 		BRCM_PCIE_VENDOR_ID_BROADCOM, (dev_id), \
- 		(subvend), (subdev), \
- 		PCI_CLASS_NETWORK_OTHER << 8, 0xffff00, \
--		BRCMF_FWVENDOR_ ## fw_vend \
-+		BRCMF_DRVDATA_ ## fw_vend \
- 	}
+ TODO:
  
- static const struct pci_device_id brcmf_pcie_devid_table[] = {
-@@ -2698,9 +2733,10 @@ static const struct pci_device_id brcmf_pcie_devid_table[] = {
- 	BRCMF_PCIE_DEVICE(BRCM_PCIE_4366_5G_DEVICE_ID, BCA),
- 	BRCMF_PCIE_DEVICE(BRCM_PCIE_4371_DEVICE_ID, WCC),
- 	BRCMF_PCIE_DEVICE(BRCM_PCIE_43596_DEVICE_ID, CYW),
--	BRCMF_PCIE_DEVICE(BRCM_PCIE_4377_DEVICE_ID, WCC),
--	BRCMF_PCIE_DEVICE(BRCM_PCIE_4378_DEVICE_ID, WCC),
--	BRCMF_PCIE_DEVICE(BRCM_PCIE_4387_DEVICE_ID, WCC),
-+	BRCMF_PCIE_DEVICE(BRCM_PCIE_4377_DEVICE_ID, WCC_SEED),
-+	BRCMF_PCIE_DEVICE(BRCM_PCIE_4378_DEVICE_ID, WCC_SEED),
-+	BRCMF_PCIE_DEVICE(BRCM_PCIE_4387_DEVICE_ID, WCC_SEED),
-+	BRCMF_PCIE_DEVICE(BRCM_PCIE_43752_DEVICE_ID, WCC_SEED),
+@@ -24,7 +25,6 @@ TODO:
+ - modules
+ - issues
+ - reproducible-builds
+-- gcc-plugins
+ - llvm
  
- 	{ /* end: all zeroes */ }
- };
-diff --git a/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h b/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h
-index 44684bf1b9acc..c1e22c589d85e 100644
---- a/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h
-+++ b/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h
-@@ -52,6 +52,7 @@
- #define BRCM_CC_43664_CHIP_ID		43664
- #define BRCM_CC_43666_CHIP_ID		43666
- #define BRCM_CC_4371_CHIP_ID		0x4371
-+#define BRCM_CC_43752_CHIP_ID		43752
- #define BRCM_CC_4377_CHIP_ID		0x4377
- #define BRCM_CC_4378_CHIP_ID		0x4378
- #define BRCM_CC_4387_CHIP_ID		0x4387
-@@ -94,6 +95,7 @@
- #define BRCM_PCIE_4366_5G_DEVICE_ID	0x43c5
- #define BRCM_PCIE_4371_DEVICE_ID	0x440d
- #define BRCM_PCIE_43596_DEVICE_ID	0x4415
-+#define BRCM_PCIE_43752_DEVICE_ID	0x449d
- #define BRCM_PCIE_4377_DEVICE_ID	0x4488
- #define BRCM_PCIE_4378_DEVICE_ID	0x4425
- #define BRCM_PCIE_4387_DEVICE_ID	0x4433
-
+ .. only::  subproject and html
 -- 
-2.34.1
+2.43.0
 
 
