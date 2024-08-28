@@ -1,113 +1,115 @@
-Return-Path: <linux-kernel+bounces-305858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D319963552
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 01:20:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A224963556
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 01:24:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59F9D2869CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:20:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E40C8B24663
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F7E1AD9F7;
-	Wed, 28 Aug 2024 23:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22C61AD9D0;
+	Wed, 28 Aug 2024 23:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eq9b9yIG"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VWXwYueT"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D0B146A63
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 23:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6504F157A72
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 23:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724887218; cv=none; b=PA8jhSx8hrloynvjD5U1S43ihe7y/GseKLGR9fTd/gGl2oqQM5uk5IFc7I6+5/el8MSmEV6bS8wUgvHWf1WidSTImt73IR3iBLJvcroyIMv8DGJDh6HmiWj+n0vS8akaKRanrm6HoczJrNe7iYhgSOsnwEcF5gfOLUT8kmyIwPA=
+	t=1724887480; cv=none; b=o50kKUBRwaowMRQuKOm1KvGmb9dPAXEq2VbPJ3HHd1J0mpnQCyuCU+tvCXPcyHi6CiNnQTIjxN+c59+cXglTIGfgMH8YCeEs+18hSE7PQBBGs00bXWKRDUfkL4Kq2Q4kTALi31qRg4BwP9WTWxZ+UpuxgAts4T4Rw7h6hRjJyBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724887218; c=relaxed/simple;
-	bh=fQAGwFbf8GIrxgZqRluaQHGuGG6qqxdEs/csFaLDTJE=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=pz4oZ/clE0kf4Bnd61mgMj7Jzrw2rdmEAjDJtd7YtWRFMlFKTAdvifxPevna4CKyEk2GDFtmSc714He+4Wi9/dUq4lLLxX5bSJIEeuoyNZZOKjZhklAsLyOEkRQ92MMnHYDqNoaQURJhTEirRhkbMJ/WtqeCgwykmn5Xx6ozw84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eq9b9yIG; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-715c530f80eso101209b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 16:20:16 -0700 (PDT)
+	s=arc-20240116; t=1724887480; c=relaxed/simple;
+	bh=YzC3l0SPYNdRs8e0g+Ue6izyHAH2kRRuH/fHgRjaVfo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nIMak+1IrVCyGjMuWNwGdaAix8wS/X269GdvwYDIadIySGun9pEh0Xojqm2n0qRpyDrBwkOEpr1uwcz14zjFY53SvVQTFL7d00SURKAGblyIOGd3qOqnZ2ChkahZbS0uG2iz2viSyZ5I4xaSw4RZwNA0qcEfcd62GxBYob7vhRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VWXwYueT; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7a843bef98so921066b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 16:24:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724887216; x=1725492016; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2cOsN1LiLTt5DLvJpt0F0roXY499wNB8yetU9fpz6NA=;
-        b=eq9b9yIGYc7wKana36OfBZNz6bSVdockGHnfZLJyWOO0EfnldXmH14EtZXvk0okIJv
-         nhIgVlILC5OJhQJgwCNXAOidL4+q6GETFOuVcX4auUW7D5DKEe8IZ1Om1NifVusEq5gD
-         3sZoLDrxA90N8RUaFViI1BanaUZNUHfIb5m/NgwDK8ft/BxJBhclMYHIg5E3VG9/B/sD
-         YFcfgyACa/lW4+YWp+k8X3ZcmPX1cAyXBMLWxYUgBP9Y6mPZNzbmVMpefZT/zOKdXD0R
-         BSFVqlWCai6dH8RdVIDZKEshjojfwgWXKD1KmMGUQsJb0KeiSm8KKfaxdTiLBgFqC01e
-         NITg==
+        d=gmail.com; s=20230601; t=1724887476; x=1725492276; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jS5jvGFQTxnaGcUoGpcSDSrzUL1lx6XO+02fCVzW1TE=;
+        b=VWXwYueTOxjnEaBUUtKS/nCHRRZqoUDwP4IKrkVAqHFZofM/hUM6yY4rMwYnFQY+uo
+         e+ggP7P92Nuo4/TfVknryXpDvBE0xIybXV/7DNSthpLmSnc11DM6ojZO12hqi98IlBvn
+         rUv8KfkM/pvjZQ4M1x7bNUrUwy7qlcoAN7M6DrcE305hCIuBJXatiJojPDrbqvRWWA5b
+         WgyvdRUrWqVB44Ri2Pmr5AlMFmpPFUelxCtSMj8OR9VRIyvW5v9q6WCQEsuCCTa74FlO
+         kYTKF/25MiqEfg2uHjK8yabvJCKDcyVOXLO28DbcwTTCIyPryDl+aazXJh05a8wS+Vr4
+         xSeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724887216; x=1725492016;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2cOsN1LiLTt5DLvJpt0F0roXY499wNB8yetU9fpz6NA=;
-        b=eeuQ9kMZ2QeXG4uWoApm9AUMPcKPoyGML7sVhCJNScEwF/QqOVeC6wBTyNgJUdnvK0
-         XfTkyAAoY6pqGqgwUamKGGG//OTNHEqQwD0AVLshnZXVpWgv0slhIHwvzpTZ34ufsO9t
-         zQ09Dc6SpxZJS/74by8WvwS/JY46ftPgFVXPsYrW68CxU+2Bz8CsAUtWpyTz3Yba7xNd
-         jzwpW2MdvGy8DswjsXuVDsjGik5tz+TKIZkqjf7RFvsaPS6XlrysgT3uxNx6Zapelmbx
-         6uOrvAi5Hka1TevMMI/UaQmFirWziz/FulIhnMZMcnVbuf4ApML1oqWM54zP05KRCvIX
-         cCBA==
-X-Forwarded-Encrypted: i=1; AJvYcCXThMk17JTp1JO6aB2hF4sH3Pv1srONdg6beTHDrnS83Xt4d+gFyFQ5bBzQa+wviErZjPzoGR6bbxKqdWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWfcSYya3LIa9rj+W1ZP56Nfeg+1rvO51+dIrCvpFBsNdf6jBc
-	h2fxEr8CPBUBGaUMS8RBk0hTOExImVWaelY81KsbowgvxAbyNa1IHzBLEZ/s561O0+O6Uz1fvvs
-	UFA==
-X-Google-Smtp-Source: AGHT+IHoRF2b84LxADXVkG+d4knXGgkGC8/VQYGJAFjiaB4k0luYaz5Q4hDiZRNMRwVv7eE4L1+6pEmMVZ0=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:3c71:b0:70d:fba:c52b with SMTP id
- d2e1a72fcca58-715dfc73fcamr2002b3a.3.1724887215947; Wed, 28 Aug 2024 16:20:15
- -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 28 Aug 2024 16:20:13 -0700
+        d=1e100.net; s=20230601; t=1724887476; x=1725492276;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=jS5jvGFQTxnaGcUoGpcSDSrzUL1lx6XO+02fCVzW1TE=;
+        b=aprNYVjaCC8pbvHSmXhOGgaFY+lF2h1DFhClGiyGUbbU8tmfwo4vHYkgf5k+oIXUhJ
+         93wFN74z0e2tNGCEBEW64e+4IOyM6R8Aq77D2DrRIclYQaPmH2FI4ru2FyC6Z5EvkvCc
+         XLU/AUWQ3RZpdgv3MG7kc4D73aUdQa+AlXfJcWwA632wlGMilnpx4/9oeP+qQqkjD2MW
+         I5Ppdfe/fS9AZtxEULkvFwAv/jLETJj5IrPR9CdGTeaV7hxRNs/O6nnOIHyZYZDHng+0
+         AmSw2Su9O05PkxcKicOY/x2ZlIDqFjYUzkETs0Y/RbHzRe2s9biWUqaLiNRqE2PQtPyY
+         sh/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXTPm2HB7d0L32/Qg+fLzqUEMyuGhA7JuHbJuLDY7OLAOS4eSeUP5ULXgkLo8w6kZct0f4XgdoJbzfgXPo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW8+N4Pshxd50wYUUsBPVAap+8oBpUG4MZHYWYT20iUP6rt/Mc
+	1QWQKKR/UjfT6KwEYauwrkpebdSxCY+jA2VstZydxxdyQTJJXVO/90QN0Q==
+X-Google-Smtp-Source: AGHT+IEcoDKrz4+aO75Zu5ZcNu4XcLSvMvJ6Wd+L2gEaNS/sVWTBmX1yKN8yw1rvPSO1nmT9xAB1Uw==
+X-Received: by 2002:a17:907:7f15:b0:a7a:aa35:408a with SMTP id a640c23a62f3a-a897f83b281mr69122466b.25.1724887475930;
+        Wed, 28 Aug 2024 16:24:35 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a898900ebabsm4094666b.56.2024.08.28.16.24.35
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 28 Aug 2024 16:24:35 -0700 (PDT)
+Date: Wed, 28 Aug 2024 23:24:34 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Wei Yang <richard.weiyang@gmail.com>, linux-kernel@vger.kernel.org,
+	maple-tree@lists.infradead.org
+Subject: Re: [PATCH 1/2] maple_tree: arange64 node is not a leaf node
+Message-ID: <20240828232434.4ykzuy5mgpqpyddk@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20240826012422.29935-1-richard.weiyang@gmail.com>
+ <20240827183426.ac84f442e18b66a8ce6bfb90@linux-foundation.org>
+ <wxjq7waqbtsbrdl3vmbpcyngkqgndyskn2av2zmwqr4ggglkgq@n67jco6acbbr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
-Message-ID: <20240828232013.768446-1-seanjc@google.com>
-Subject: [PATCH] KVM: x86: Ensure vcpu->mode is loaded from memory in kvm_vcpu_exit_request()
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <wxjq7waqbtsbrdl3vmbpcyngkqgndyskn2av2zmwqr4ggglkgq@n67jco6acbbr>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-Wrap kvm_vcpu_exit_request()'s load of vcpu->mode with READ_ONCE() to
-ensure the variable is re-loaded from memory, as there is no guarantee the
-caller provides the necessary annotations to ensure KVM sees a fresh value,
-e.g. the VM-Exit fastpath could theoretically reuse the pre-VM-Enter value.
+On Wed, Aug 28, 2024 at 02:57:45PM -0400, Liam R. Howlett wrote:
+>* Andrew Morton <akpm@linux-foundation.org> [240827 21:34]:
+>> On Mon, 26 Aug 2024 01:24:21 +0000 Wei Yang <richard.weiyang@gmail.com> wrote:
+>> 
+>> > mt_dump_arange64() only applies to an entry whose type is
+>> > maple_arange_64, in which mte_is_leaf() must return false.
+>> > 
+>> > Since mte_is_leaf() here is always false, we can remove this condition
+>> > check.
+>> > 
+>> 
+>> These are pretty simple so I'll say lack-of-a-nack-is-an-ack ;)
+>> 
+>
+>Let's make it official then.
+>
+>Reviewed-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
 
-Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/x86.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Thanks
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 70219e406987..d38fdb5f90dd 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -2124,8 +2124,9 @@ EXPORT_SYMBOL_GPL(kvm_emulate_monitor);
- static inline bool kvm_vcpu_exit_request(struct kvm_vcpu *vcpu)
- {
- 	xfer_to_guest_mode_prepare();
--	return vcpu->mode == EXITING_GUEST_MODE || kvm_request_pending(vcpu) ||
--		xfer_to_guest_mode_work_pending();
-+
-+	return READ_ONCE(vcpu->mode) == EXITING_GUEST_MODE ||
-+	       kvm_request_pending(vcpu) || xfer_to_guest_mode_work_pending();
- }
- 
- /*
-
-base-commit: 15e1c3d65975524c5c792fcd59f7d89f00402261
 -- 
-2.46.0.295.g3b9ea8a38a-goog
-
+Wei Yang
+Help you, Help me
 
