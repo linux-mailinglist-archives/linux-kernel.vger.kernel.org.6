@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-304685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F36596238D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:36:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32DCD962390
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE6B91F25A22
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:36:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D23D51F258D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A42B16B752;
-	Wed, 28 Aug 2024 09:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFC516C6A5;
+	Wed, 28 Aug 2024 09:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K3aA7cEz"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f9dcPQ4L"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BB91667C7
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 09:35:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7427F16B3B8
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 09:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724837721; cv=none; b=MBiZyFwWHHGbxPBWGz7b58NPAKOZEE/xEbkf1hQW9iD/0OMO2M1kmxyHKhiQ2ZQWLoas2W5xcyEVFyyGuvWvvcaNm43ZrqrbbOYodBEecsOV9H4x8cbo65q02ZvlNzExKlgIdB0SUwJzp8XDwzXFtwZuZZf7SIfEBH9ryROFlYE=
+	t=1724837725; cv=none; b=IXWK0SaEhO3qI/CjUtDQfYBFutMiTGzGx24hFJcQ5c/EfIB4Ait1Sif79Z8/lHVqXkAd+szhJFS1blB/HPL/0aUvRatAo9NwSHW03+MgxZLEYGFdh9UHIk1xP5fTpTMsIFCmOReUnkBWeeewV2ojE5yUpgYgaEkIdFzuOQ/J74I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724837721; c=relaxed/simple;
-	bh=K3yroI8ejev2DdrGq2bi16BmrcYH0+k9ICg7i86HaWs=;
+	s=arc-20240116; t=1724837725; c=relaxed/simple;
+	bh=z3IdVzEmkKayZcVA4c5Lx8bWa1kn1UvcXwMHQ9hiN50=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uBeovNHD9acFXAW4SI8syZD3XuBJ3ythb1AlV19eagT0JSn7432AZMWA/Z2hgP0yCaEV0T4cz9mu8GjwUUWNVxe6cAPj/mqJBbz+PoF4R63Q6xBUmT3Y5o3yjGtJDqu0Q2nVWMEEp4ykVWY4mhUac/1jqkOgJC+SLgNrZPeYeag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K3aA7cEz; arc=none smtp.client-ip=192.198.163.10
+	 MIME-Version; b=T/tt3rsZpAtf46xf617X2fPHC/DYFGOxI6+wxuDFvumFKyKTqbFVjqd+o0juzGOcGLdqVbP4cWlgSrnsYpMkCeLmFgn+shmwizlluveaMcU8LKjNjvQ7qKgepijM+KTXLz993YUVaLCgGJRb2+uNes6OLrq24+xACiQ24NeRQxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f9dcPQ4L; arc=none smtp.client-ip=192.198.163.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724837718; x=1756373718;
+  t=1724837724; x=1756373724;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=K3yroI8ejev2DdrGq2bi16BmrcYH0+k9ICg7i86HaWs=;
-  b=K3aA7cEzAJVX5ejy3+Kq5GeEw/CrU8QkLD3SS8K6QiQ+fvUdQcEfpDwC
-   MFEuI2wMEIHOtytJBuRJr8u5UfeybE3F4d2m8lF13W5rYq/MKSrLIDqcJ
-   kGLlo7o25s55OEO28XMaGgtqxWcGZZeS9f/mPUIcUXDkFNqEN2YDevsK2
-   NEyv4AnGScCumQTmX+EnTbJoiF2zdOa5RVgLUIBENCwfx0PBuiTuRJXYy
-   ZVhBcC+0qL+Ryy6U+LpGsrf28cyy2VgiPiI2XTFr9RD/JJS7vh0UvZxnn
-   ca0UzIOmILdYWZi0OVLAw1gvvljXcM8ruPlx8Usl7sbSqB1sJ15n1mGAg
-   Q==;
-X-CSE-ConnectionGUID: rG3Hz4tHT/iSFjFE97CCfQ==
-X-CSE-MsgGUID: YP+bMNsqQTCksNMi86JW6w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="34763876"
+  bh=z3IdVzEmkKayZcVA4c5Lx8bWa1kn1UvcXwMHQ9hiN50=;
+  b=f9dcPQ4LnXbkXyPO3CeSn3dtBSc6flUacGydfCtBfFxTsr6O/uxLFTuh
+   7i7zRpa516Gv/T8NMIO6dOTiLTeoW97Pd3OTwY2rfprxWevrcInyOBKda
+   b9d/+BHEFEKP7W7SIMXoQzSpPVJDShn8AHoV7kMe/2vuQHlPSWtcio8j8
+   GP6mlpjN4n57sdSDA679KVTo9UwqOr7IQ1ULGaHy8Trj4XSHLeX3HZf7X
+   5U/wrqwsy/hxmPbjLSBGtumjNzo8I722mwpXoKdOLpWFwbcMlY8UnCtVm
+   kU2Y8UMO5qtbqix8Ftk+8ibxRBR6/22fGj9ySLR9fuItJEE6aVh437cZQ
+   A==;
+X-CSE-ConnectionGUID: AD6WmsCHS0m9XUZqSpB9BA==
+X-CSE-MsgGUID: zTl4uTECTkCyzEj265DYhw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="34763884"
 X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
-   d="scan'208";a="34763876"
+   d="scan'208";a="34763884"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
   by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 02:35:17 -0700
-X-CSE-ConnectionGUID: Bqk7Q+llS7+LZM2jckH8EQ==
-X-CSE-MsgGUID: eEaT/vxHTaq60gtZsRhdxg==
+X-CSE-ConnectionGUID: PdKxBT0kTjeKQaE0G6sGVw==
+X-CSE-MsgGUID: qK/TMayGQfCohrla7Z6y4g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
-   d="scan'208";a="100678975"
+   d="scan'208";a="100678978"
 Received: from jf5300-b11a338t.jf.intel.com ([10.242.51.6])
   by orviesa001.jf.intel.com with ESMTP; 28 Aug 2024 02:35:16 -0700
 From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
@@ -71,9 +71,9 @@ Cc: nanhai.zou@intel.com,
 	wajdi.k.feghali@intel.com,
 	vinodh.gopal@intel.com,
 	kanchana.p.sridhar@intel.com
-Subject: [PATCH v5 2/3] mm: zswap: zswap_store() extended to handle mTHP folios.
-Date: Wed, 28 Aug 2024 02:35:15 -0700
-Message-Id: <20240828093516.30228-3-kanchana.p.sridhar@intel.com>
+Subject: [PATCH v5 3/3] mm: swap: Count successful mTHP ZSWAP stores in sysfs mTHP zswpout stats.
+Date: Wed, 28 Aug 2024 02:35:16 -0700
+Message-Id: <20240828093516.30228-4-kanchana.p.sridhar@intel.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20240828093516.30228-1-kanchana.p.sridhar@intel.com>
 References: <20240828093516.30228-1-kanchana.p.sridhar@intel.com>
@@ -85,347 +85,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-zswap_store() will now process and store mTHP and PMD-size THP folios.
+Add a new MTHP_STAT_ZSWPOUT entry to the sysfs mTHP stats so that
+per-order mTHP folio ZSWAP stores can be accounted.
 
-This change reuses and adapts the functionality in Ryan Roberts' RFC
-patch [1]:
+If zswap_store() successfully swaps out an mTHP, it will be counted under
+the per-order sysfs "zswpout" stats:
 
-  "[RFC,v1] mm: zswap: Store large folios without splitting"
+/sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/zswpout
 
-  [1] https://lore.kernel.org/linux-mm/20231019110543.3284654-1-ryan.roberts@arm.com/T/#u
+Other block dev/fs mTHP swap-out events will be counted under
+the existing sysfs "swpout" stats:
 
-This patch provides a sequential implementation of storing an mTHP in
-zswap_store() by iterating through each page in the folio to compress
-and store it in the zswap zpool.
+/sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/swpout
 
-Towards this goal, zswap_compress() is modified to take a page instead
-of a folio as input.
+Based on changes made in commit 61e751c01466ffef5dc72cb64349454a691c6bfe
+("mm: cleanup count_mthp_stat() definition"), this patch also moves
+the call to count_mthp_stat() in count_swpout_vm_event() to be outside
+the "ifdef CONFIG_TRANSPARENT_HUGEPAGE".
 
-Each page's swap offset is stored as a separate zswap entry.
-
-If an error is encountered during the store of any page in the mTHP,
-all previous pages/entries stored will be invalidated. Thus, an mTHP
-is either entirely stored in ZSWAP, or entirely not stored in ZSWAP.
-
-This forms the basis for building batching of pages during zswap store
-of large folios, by compressing batches of up to say, 8 pages in an
-mTHP in parallel in hardware, with the Intel In-Memory Analytics
-Accelerator (Intel IAA).
-
-Also, addressed some of the RFC comments from the discussion in [1].
-
-Made a minor edit in the comments for "struct zswap_entry" to delete
-the comments related to "value" since same-filled page handling has
-been removed from zswap.
-
-Co-developed-by: Ryan Roberts
-Signed-off-by:
 Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
 ---
- mm/zswap.c | 231 +++++++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 170 insertions(+), 61 deletions(-)
+ include/linux/huge_mm.h | 1 +
+ mm/huge_memory.c        | 3 +++
+ mm/page_io.c            | 3 ++-
+ 3 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/mm/zswap.c b/mm/zswap.c
-index 449914ea9919..d6f012ca67d8 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -190,7 +190,6 @@ static struct shrinker *zswap_shrinker;
-  *              section for context.
-  * pool - the zswap_pool the entry's data is in
-  * handle - zpool allocation handle that stores the compressed page data
-- * value - value of the same-value filled pages which have same content
-  * objcg - the obj_cgroup that the compressed memory is charged to
-  * lru - handle to the pool's lru used to evict pages.
-  */
-@@ -876,7 +875,7 @@ static int zswap_cpu_comp_dead(unsigned int cpu, struct hlist_node *node)
- 	return 0;
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 4902e2f7e896..8b8045d4a351 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -118,6 +118,7 @@ enum mthp_stat_item {
+ 	MTHP_STAT_ANON_FAULT_ALLOC,
+ 	MTHP_STAT_ANON_FAULT_FALLBACK,
+ 	MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
++	MTHP_STAT_ZSWPOUT,
+ 	MTHP_STAT_SWPOUT,
+ 	MTHP_STAT_SWPOUT_FALLBACK,
+ 	MTHP_STAT_SHMEM_ALLOC,
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index a81eab98d6b8..45b26c8b3d8a 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -587,6 +587,7 @@ static struct kobj_attribute _name##_attr = __ATTR_RO(_name)
+ DEFINE_MTHP_STAT_ATTR(anon_fault_alloc, MTHP_STAT_ANON_FAULT_ALLOC);
+ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
+ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
++DEFINE_MTHP_STAT_ATTR(zswpout, MTHP_STAT_ZSWPOUT);
+ DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
+ DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
+ #ifdef CONFIG_SHMEM
+@@ -605,6 +606,7 @@ static struct attribute *anon_stats_attrs[] = {
+ 	&anon_fault_fallback_attr.attr,
+ 	&anon_fault_fallback_charge_attr.attr,
+ #ifndef CONFIG_SHMEM
++	&zswpout_attr.attr,
+ 	&swpout_attr.attr,
+ 	&swpout_fallback_attr.attr,
+ #endif
+@@ -637,6 +639,7 @@ static struct attribute_group file_stats_attr_grp = {
+ 
+ static struct attribute *any_stats_attrs[] = {
+ #ifdef CONFIG_SHMEM
++	&zswpout_attr.attr,
+ 	&swpout_attr.attr,
+ 	&swpout_fallback_attr.attr,
+ #endif
+diff --git a/mm/page_io.c b/mm/page_io.c
+index b6f1519d63b0..26106e745d73 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -289,6 +289,7 @@ int swap_writepage(struct page *page, struct writeback_control *wbc)
+ 		swap_zeromap_folio_clear(folio);
+ 	}
+ 	if (zswap_store(folio)) {
++		count_mthp_stat(folio_order(folio), MTHP_STAT_ZSWPOUT);
+ 		folio_unlock(folio);
+ 		return 0;
+ 	}
+@@ -308,8 +309,8 @@ static inline void count_swpout_vm_event(struct folio *folio)
+ 		count_memcg_folio_events(folio, THP_SWPOUT, 1);
+ 		count_vm_event(THP_SWPOUT);
+ 	}
+-	count_mthp_stat(folio_order(folio), MTHP_STAT_SWPOUT);
+ #endif
++	count_mthp_stat(folio_order(folio), MTHP_STAT_SWPOUT);
+ 	count_vm_events(PSWPOUT, folio_nr_pages(folio));
  }
  
--static bool zswap_compress(struct folio *folio, struct zswap_entry *entry)
-+static bool zswap_compress(struct page *page, struct zswap_entry *entry)
- {
- 	struct crypto_acomp_ctx *acomp_ctx;
- 	struct scatterlist input, output;
-@@ -894,7 +893,7 @@ static bool zswap_compress(struct folio *folio, struct zswap_entry *entry)
- 
- 	dst = acomp_ctx->buffer;
- 	sg_init_table(&input, 1);
--	sg_set_folio(&input, folio, PAGE_SIZE, 0);
-+	sg_set_page(&input, page, PAGE_SIZE, 0);
- 
- 	/*
- 	 * We need PAGE_SIZE * 2 here since there maybe over-compression case,
-@@ -1404,35 +1403,82 @@ static void shrink_worker(struct work_struct *w)
- /*********************************
- * main API
- **********************************/
--bool zswap_store(struct folio *folio)
-+
-+/*
-+ * Returns true if the entry was successfully
-+ * stored in the xarray, and false otherwise.
-+ */
-+static bool zswap_store_entry(struct xarray *tree,
-+			      struct zswap_entry *entry)
- {
--	swp_entry_t swp = folio->swap;
--	pgoff_t offset = swp_offset(swp);
--	struct xarray *tree = swap_zswap_tree(swp);
--	struct zswap_entry *entry, *old;
--	struct obj_cgroup *objcg = NULL;
--	struct mem_cgroup *memcg = NULL;
-+	struct zswap_entry *old;
-+	pgoff_t offset = swp_offset(entry->swpentry);
- 
--	VM_WARN_ON_ONCE(!folio_test_locked(folio));
--	VM_WARN_ON_ONCE(!folio_test_swapcache(folio));
-+	old = xa_store(tree, offset, entry, GFP_KERNEL);
- 
--	/* Large folios aren't supported */
--	if (folio_test_large(folio))
-+	if (xa_is_err(old)) {
-+		int err = xa_err(old);
-+
-+		WARN_ONCE(err != -ENOMEM, "unexpected xarray error: %d\n", err);
-+		zswap_reject_alloc_fail++;
- 		return false;
-+	}
- 
--	if (!zswap_enabled)
--		goto check_old;
-+	/*
-+	 * We may have had an existing entry that became stale when
-+	 * the folio was redirtied and now the new version is being
-+	 * swapped out. Get rid of the old.
-+	 */
-+	if (old)
-+		zswap_entry_free(old);
- 
--	/* Check cgroup limits */
--	objcg = get_obj_cgroup_from_folio(folio);
--	if (objcg && !obj_cgroup_may_zswap(objcg)) {
--		memcg = get_mem_cgroup_from_objcg(objcg);
--		if (shrink_memcg(memcg)) {
--			mem_cgroup_put(memcg);
--			goto reject;
--		}
--		mem_cgroup_put(memcg);
-+	return true;
-+}
-+
-+/*
-+ * If the zswap store fails or zswap is disabled, we must invalidate the
-+ * possibly stale entries which were previously stored at the offsets
-+ * corresponding to each page of the folio. Otherwise, writeback could
-+ * overwrite the new data in the swapfile.
-+ *
-+ * This is called after the store of the i-th offset in a large folio has
-+ * failed. All zswap entries in the folio must be deleted. This helps make
-+ * sure that a swapped-out mTHP is either entirely stored in zswap, or
-+ * entirely not stored in zswap.
-+ *
-+ * This is also called if zswap_store() is invoked, but zswap is not enabled.
-+ * All offsets for the folio are deleted from zswap in this case.
-+ */
-+static void zswap_delete_stored_offsets(struct xarray *tree,
-+					pgoff_t offset,
-+					long nr_pages)
-+{
-+	struct zswap_entry *entry;
-+	long i;
-+
-+	for (i = 0; i < nr_pages; ++i) {
-+		entry = xa_erase(tree, offset + i);
-+		if (entry)
-+			zswap_entry_free(entry);
- 	}
-+}
-+
-+/*
-+ * Stores the page at specified "index" in a folio.
-+ */
-+static bool zswap_store_page(struct folio *folio, long index,
-+			     struct obj_cgroup *objcg,
-+			     struct zswap_pool *pool)
-+{
-+	swp_entry_t swp = folio->swap;
-+	int type = swp_type(swp);
-+	pgoff_t offset = swp_offset(swp) + index;
-+	struct page *page = folio_page(folio, index);
-+	struct xarray *tree = swap_zswap_tree(swp);
-+	struct zswap_entry *entry;
-+
-+	if (objcg)
-+		obj_cgroup_get(objcg);
- 
- 	if (zswap_check_limits())
- 		goto reject;
-@@ -1445,42 +1491,20 @@ bool zswap_store(struct folio *folio)
- 	}
- 
- 	/* if entry is successfully added, it keeps the reference */
--	entry->pool = zswap_pool_current_get();
--	if (!entry->pool)
-+	if (!zswap_pool_get(pool))
- 		goto freepage;
- 
--	if (objcg) {
--		memcg = get_mem_cgroup_from_objcg(objcg);
--		if (memcg_list_lru_alloc(memcg, &zswap_list_lru, GFP_KERNEL)) {
--			mem_cgroup_put(memcg);
--			goto put_pool;
--		}
--		mem_cgroup_put(memcg);
--	}
-+	entry->pool = pool;
- 
--	if (!zswap_compress(folio, entry))
-+	if (!zswap_compress(page, entry))
- 		goto put_pool;
- 
--	entry->swpentry = swp;
-+	entry->swpentry = swp_entry(type, offset);
- 	entry->objcg = objcg;
- 	entry->referenced = true;
- 
--	old = xa_store(tree, offset, entry, GFP_KERNEL);
--	if (xa_is_err(old)) {
--		int err = xa_err(old);
--
--		WARN_ONCE(err != -ENOMEM, "unexpected xarray error: %d\n", err);
--		zswap_reject_alloc_fail++;
-+	if (!zswap_store_entry(tree, entry))
- 		goto store_failed;
--	}
--
--	/*
--	 * We may have had an existing entry that became stale when
--	 * the folio was redirtied and now the new version is being
--	 * swapped out. Get rid of the old.
--	 */
--	if (old)
--		zswap_entry_free(old);
- 
- 	if (objcg) {
- 		obj_cgroup_charge_zswap(objcg, entry->length);
-@@ -1511,23 +1535,108 @@ bool zswap_store(struct folio *folio)
- store_failed:
- 	zpool_free(entry->pool->zpool, entry->handle);
- put_pool:
--	zswap_pool_put(entry->pool);
-+	zswap_pool_put(pool);
- freepage:
- 	zswap_entry_cache_free(entry);
- reject:
- 	obj_cgroup_put(objcg);
- 	if (zswap_pool_reached_full)
- 		queue_work(shrink_wq, &zswap_shrink_work);
--check_old:
-+
-+	return false;
-+}
-+
-+/*
-+ * Modified to store mTHP folios. Each page in the mTHP will be compressed
-+ * and stored sequentially.
-+ */
-+bool zswap_store(struct folio *folio)
-+{
-+	long nr_pages = folio_nr_pages(folio);
-+	swp_entry_t swp = folio->swap;
-+	pgoff_t offset = swp_offset(swp);
-+	struct xarray *tree = swap_zswap_tree(swp);
-+	struct obj_cgroup *objcg = NULL;
-+	struct mem_cgroup *memcg = NULL;
-+	struct zswap_pool *pool;
-+	bool ret = false;
-+	long index;
-+
-+	VM_WARN_ON_ONCE(!folio_test_locked(folio));
-+	VM_WARN_ON_ONCE(!folio_test_swapcache(folio));
-+
-+	if (!zswap_enabled)
-+		goto reject;
-+
- 	/*
--	 * If the zswap store fails or zswap is disabled, we must invalidate the
--	 * possibly stale entry which was previously stored at this offset.
--	 * Otherwise, writeback could overwrite the new data in the swapfile.
-+	 * Check cgroup limits:
-+	 *
-+	 * The cgroup zswap limit check is done once at the beginning of an
-+	 * mTHP store, and not within zswap_store_page() for each page
-+	 * in the mTHP. We do however check the zswap pool limits at the
-+	 * start of zswap_store_page(). What this means is, the cgroup
-+	 * could go over the limits by at most (HPAGE_PMD_NR - 1) pages.
-+	 * However, the per-store-page zswap pool limits check should
-+	 * hopefully trigger the cgroup aware and zswap LRU aware global
-+	 * reclaim implemented in the shrinker. If this assumption holds,
-+	 * the cgroup exceeding the zswap limits could potentially be
-+	 * resolved before the next zswap_store, and if it is not, the next
-+	 * zswap_store would fail the cgroup zswap limit check at the start.
- 	 */
--	entry = xa_erase(tree, offset);
--	if (entry)
--		zswap_entry_free(entry);
--	return false;
-+	objcg = get_obj_cgroup_from_folio(folio);
-+	if (objcg && !obj_cgroup_may_zswap(objcg)) {
-+		memcg = get_mem_cgroup_from_objcg(objcg);
-+		if (shrink_memcg(memcg)) {
-+			mem_cgroup_put(memcg);
-+			goto put_objcg;
-+		}
-+		mem_cgroup_put(memcg);
-+	}
-+
-+	if (zswap_check_limits())
-+		goto put_objcg;
-+
-+	pool = zswap_pool_current_get();
-+	if (!pool)
-+		goto put_objcg;
-+
-+	if (objcg) {
-+		memcg = get_mem_cgroup_from_objcg(objcg);
-+		if (memcg_list_lru_alloc(memcg, &zswap_list_lru, GFP_KERNEL)) {
-+			mem_cgroup_put(memcg);
-+			goto put_pool;
-+		}
-+		mem_cgroup_put(memcg);
-+	}
-+
-+	/*
-+	 * Store each page of the folio as a separate entry. If we fail to store
-+	 * a page, unwind by removing all the previous pages we stored.
-+	 */
-+	for (index = 0; index < nr_pages; ++index) {
-+		if (!zswap_store_page(folio, index, objcg, pool))
-+			goto put_pool;
-+	}
-+
-+	ret = true;
-+
-+put_pool:
-+	zswap_pool_put(pool);
-+put_objcg:
-+	obj_cgroup_put(objcg);
-+	if (zswap_pool_reached_full)
-+		queue_work(shrink_wq, &zswap_shrink_work);
-+reject:
-+	/*
-+	 * If the zswap store fails or zswap is disabled, we must invalidate
-+	 * the possibly stale entries which were previously stored at the
-+	 * offsets corresponding to each page of the folio. Otherwise,
-+	 * writeback could overwrite the new data in the swapfile.
-+	 */
-+	if (!ret)
-+		zswap_delete_stored_offsets(tree, offset, nr_pages);
-+
-+	return ret;
- }
- 
- bool zswap_load(struct folio *folio)
 -- 
 2.27.0
 
