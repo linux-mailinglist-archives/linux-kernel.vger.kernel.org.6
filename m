@@ -1,164 +1,117 @@
-Return-Path: <linux-kernel+bounces-305263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE186962C15
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:23:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C5F7962C1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:24:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E11CA1C22DEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:23:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEFE6285DD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33BD18A6D7;
-	Wed, 28 Aug 2024 15:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8562D13C3D5;
+	Wed, 28 Aug 2024 15:24:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=helen.koike@collabora.com header.b="Dzkh270i"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wa9kQkFG"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B6113C3D5;
-	Wed, 28 Aug 2024 15:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724858595; cv=pass; b=HgV/Cgq/mrUbDB8IYK4pzwYYiyk9QI67ssIcGk4UwoogtAO3z4EMc7cK0qE3KKjQjb9eDAAAgr4ftWjj2fsnPFSQCdVF1nrfOzE5b5W76u+LTCCXymZFZfNGMMbHhM/6Pxq1baq7wS3FhyMcuK49Bpc+1WNNLGL5z7A3z0VWRVc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724858595; c=relaxed/simple;
-	bh=q0Ai9vwAVR2csqHYGXc0xFXCNpIIIBEFXwMrA/u2Zoo=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=PXpGes2xczLAm4MMLhDY5Ja1tD278nf04fJJg+21K4OYczES8p/QO+dRBclnoCNa9kA9TzBulekE7ActlumoVfFceWlYbDgk7aZRthxwM1nKygWO3RQfekI5P7gDbDe9t0gjkUXbbS5OZxWnD4d1mYJGbPzlXzQSyThicbolmzI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=helen.koike@collabora.com header.b=Dzkh270i; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: vignesh.raman@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724858582; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=n/0UeusnXOCvaEaJ1nhapBysPWJg8696ZD22LhKwNOjMIrmhYm6Hh/g1hJ2z3QffkO4VuqYZoxTZXKLyZ/VTyATeBFUvyW/ZTdjjq0xEj/BL5lEofKZ3SyCH2dTGpVenvq19l/KefQXVK3WIUe8zflbpzEzhS3fqEqfVoADkWcY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724858582; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=XCKdPShM2BSsjoKUXd5jLwgut9vQqNvq4fosnc20z7A=; 
-	b=OP92ZjLenjEMMDFT+eHK7WNuPjfEm8fEPF52kLJYyZgF60nuoeQ6TmTaNF/rShu+hbGPRqPXTNzN3OP53bxDne9Uq8QHMJ9MK/q3vMknoCQWTbv1dUAWmiKyoRQ0RKe4AwCrlVwpwPxUnOKdJQQDDrK4d1klaeYMRNqMVbpR76U=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=helen.koike@collabora.com;
-	dmarc=pass header.from=<helen.koike@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724858582;
-	s=zohomail; d=collabora.com; i=helen.koike@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=XCKdPShM2BSsjoKUXd5jLwgut9vQqNvq4fosnc20z7A=;
-	b=Dzkh270iCgK9bLYwALngFlgSPGwMdPTS1B0v6XJC1P80G0jRtoqar0Eds6Zhlh12
-	A6c93FpxNKjl5bogYxOE5VQ9ept63a2EgrUR6Vojrmsbfi6AhNbfmU3XHd//hy/UhZT
-	8qK23+cNsxfQjZuN+ibJPBV//LGXRxKEljTN573A=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 17248585802298.455583977077822; Wed, 28 Aug 2024 08:23:00 -0700 (PDT)
-Date: Wed, 28 Aug 2024 12:23:00 -0300
-From: Helen Mae Koike Fornazier <helen.koike@collabora.com>
-To: "Rob Clark" <robdclark@gmail.com>
-Cc: "Vignesh Raman" <vignesh.raman@collabora.com>,
-	"dri-devel" <dri-devel@lists.freedesktop.org>,
-	"daniels" <daniels@collabora.com>, "airlied" <airlied@gmail.com>,
-	"daniel" <daniel@ffwll.ch>,
-	"guilherme.gallo" <guilherme.gallo@collabora.com>,
-	"sergi.blanch.torne" <sergi.blanch.torne@collabora.com>,
-	"deborah.brouwer" <deborah.brouwer@collabora.com>,
-	"linux-mediatek" <linux-mediatek@lists.infradead.org>,
-	"linux-amlogic" <linux-amlogic@lists.infradead.org>,
-	"linux-rockchip" <linux-rockchip@lists.infradead.org>,
-	"amd-gfx" <amd-gfx@lists.freedesktop.org>,
-	"linux-arm-msm" <linux-arm-msm@vger.kernel.org>,
-	"intel-gfx" <intel-gfx@lists.freedesktop.org>,
-	"virtualization" <virtualization@lists.linux.dev>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>
-Message-ID: <19199953cbf.ded17a68157355.1209172729493560159@collabora.com>
-In-Reply-To: <CAF6AEGu-T4=3jPRcnq3BFBtfb_yhmWE2b8EgxgTm5Q0bqSv04Q@mail.gmail.com>
-References: <20240820070818.1124403-1-vignesh.raman@collabora.com> <CAF6AEGu-T4=3jPRcnq3BFBtfb_yhmWE2b8EgxgTm5Q0bqSv04Q@mail.gmail.com>
-Subject: Re: [PATCH v1] drm/ci: increase timeout for all jobs
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4938B381C2
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724858639; cv=none; b=CzjKn5dIy1YCHpnH0UtnWXphpCKmde86CqsbN1Q4/c4M5dlKEZch75EhYeZknPy8qYwaGItBc8VKoR3GGh0WbNCrs6WFPjhaUOPbX2DS2jfMC7ttQpDJFMV8xXO2W67WS8ZupiWlTzm8tN2NdX0I+P88i4vefMPP7spd7w8nX9M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724858639; c=relaxed/simple;
+	bh=xq5eFf2qa1PgRByiVODCaCeUJJgqbvf9h2fyL1gcrUs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G1QD4HO0fzcX2pGm5JPfKZFtSfdMAYwG10y0sMU9DducfbQwc3FGi5hYHr+T9ZKv3Y3BHRxheSDk4SAa9me9EbE2MW6+ezzTFROhRH9SKCmJccznnEe23H99uXswgpmAQf4DyhAVVreYI/9IuE+isARW/sKP1kDVlpsj6EKXQAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wa9kQkFG; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e179c28f990so5826243276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 08:23:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724858637; x=1725463437; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CG4oTPD0zwywYFWX0Kb6mWWmoLCq85f/1yiRy7yIqc8=;
+        b=wa9kQkFGKTDn/NViaH7ZTwagL2INsQc2P40Kdv/4xggvs/9+zh7a7vEOSGdP7NV+0d
+         i7FrzwDSlSjuX2bALKHVRME4x73TKCiDkXR87fzeMM9wP6M5M4YmXs1/E3ip7jQwKxS0
+         CXtSBErUHLdbodg9f2FOFszBc5xIIFN23HxMY+6il4maPKQtBY6UpzvmkYB8QhXHfPiE
+         RxJn99TgFaBKGKYT9r0a3Fiav4pX4Z7IC+1EGlotmvBx0tdkVfloOgc8SxvVz79cDcUU
+         HenSMj/u+c1o24WAJZDu+6+2qVE2hjBk67K/PQFvc46R5KHQHHqCpoytCGTe7W9IWNd/
+         ymkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724858637; x=1725463437;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CG4oTPD0zwywYFWX0Kb6mWWmoLCq85f/1yiRy7yIqc8=;
+        b=iqa2+SqjqWoEWf6BdtyipwuxzsZ7Xu1RAU+cmWKEHExYVn7D3eyhYPiUDyyVuf7B4p
+         ASNANBzfVySZMLXyklzNC/0FpVPkbP4uqSX8lvjFWXOEYMq3yH/lz/FaYrppVaKryzfh
+         a0C2TolZgunmx4aDg/gAg6HHXJps7WftEvB+43xZA+grlSoYKYefeUBEEHnZZPEKca7p
+         DzKG3y13Wj89dBQrLSYek0M2t+dfOYOA5DDB9QFEXhRA90Hp4j3b5dA+Wp/EI/B5jwVn
+         T/Tu8R1I7yFpKxPr6rtXToelmEBCd8kTg7aHePebof9nGg3jh39aNWMaInvWvEwBM6d3
+         aymQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWcnA7ErUhOzGxsOKTwIvt6+FMvbp/8NNH3T8uwbSGqxiRShStTm+dsRRSAyylhr7LLqQVntcmmCM1+uYs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxecoUwAijw3GNM21Rtmxx8k7+HjTtAJIP78o5DNNe92lZnihoF
+	fOoAX+dMrx+mTexYtDnX4RAkU83MVoKlWIjiXRHGRYW6R0Bvx5yhAxtISkxL2ZqK82argVH+QuE
+	434vlo6gkkAdOd9PsOqUBEQdojYbhCATr4Dt0/A==
+X-Google-Smtp-Source: AGHT+IGrQ8fIZASydEMTPgJtn6QAWdCuqrWbDh+r3EcwsMgb2mqXieOzplvqVupD9INUYmMzBF4NNL8ZwfYeKBgNa8Y=
+X-Received: by 2002:a05:6902:2847:b0:e1a:43fb:12e6 with SMTP id
+ 3f1490d57ef6-e1a43fb14c7mr3278001276.35.1724858637220; Wed, 28 Aug 2024
+ 08:23:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240826124851.379759-1-liaochen4@huawei.com>
+In-Reply-To: <20240826124851.379759-1-liaochen4@huawei.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 28 Aug 2024 17:23:20 +0200
+Message-ID: <CAPDyKFoFH+=Q+h8zuiuopi+f4p63QUoj_qEn83YVBinh8PnKBA@mail.gmail.com>
+Subject: Re: [PATCH -next] mmc: sdhci-of-aspeed: fix module autoloading
+To: Liao Chen <liaochen4@huawei.com>
+Cc: linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
+	linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, andrew@codeconstruct.com.au, 
+	adrian.hunter@intel.com, joel@jms.id.au
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+
+On Mon, 26 Aug 2024 at 14:57, Liao Chen <liaochen4@huawei.com> wrote:
+>
+> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
+> based on the alias from of_device_id table.
+>
+> Signed-off-by: Liao Chen <liaochen4@huawei.com>
+
+Applied for fixes, by adding fixes/stable tag, thanks!
+
+Kind regards
+Uffe
 
 
-
-
-
----- On Tue, 27 Aug 2024 19:04:42 -0300 Rob Clark  wrote ---
-
- > On Tue, Aug 20, 2024 at 12:09=E2=80=AFAM Vignesh Raman=20
- > vignesh.raman@collabora.com> wrote:=20
- > >=20
- > > Set the timeout of all drm-ci jobs to 1h30m since=20
- > > some jobs takes more than 1 hour to complete.=20
- > >=20
- > > Signed-off-by: Vignesh Raman vignesh.raman@collabora.com>=20
- > =20
- > Acked-by: Rob Clark robdclark@gmail.com>=20
-
-Applied to drm-misc-next.
-
-Thanks
-Helen
-
- > =20
- > > ---=20
- > >  drivers/gpu/drm/ci/test.yml | 5 ++++-=20
- > >  1 file changed, 4 insertions(+), 1 deletion(-)=20
- > >=20
- > > diff --git a/drivers/gpu/drm/ci/test.yml b/drivers/gpu/drm/ci/test.yml=
-=20
- > > index b6f428cdaf94..09d8447840e9 100644=20
- > > --- a/drivers/gpu/drm/ci/test.yml=20
- > > +++ b/drivers/gpu/drm/ci/test.yml=20
- > > @@ -10,6 +10,7 @@=20
- > >  .lava-test:=20
- > >    extends:=20
- > >      - .test-rules=20
- > > +  timeout: "1h30m"=20
- > >    script:=20
- > >      # Note: Build dir (and thus install) may be dirty due to GIT_STRA=
-TEGY=20
- > >      - rm -rf install=20
- > > @@ -71,6 +72,7 @@=20
- > >      - .baremetal-test-arm64=20
- > >      - .use-debian/baremetal_arm64_test=20
- > >      - .test-rules=20
- > > +  timeout: "1h30m"=20
- > >    variables:=20
- > >      FDO_CI_CONCURRENT: 10=20
- > >      HWCI_TEST_SCRIPT: "/install/igt_runner.sh"=20
- > > @@ -215,7 +217,6 @@ panfrost:rk3399:=20
- > >    extends:=20
- > >      - .lava-igt:x86_64=20
- > >    stage: i915=20
- > > -  timeout: "1h30m"=20
- > >    variables:=20
- > >      DRIVER_NAME: i915=20
- > >      DTB: ""=20
- > > @@ -414,6 +415,7 @@ panfrost:g12b:=20
- > >=20
- > >  virtio_gpu:none:=20
- > >    stage: software-driver=20
- > > +  timeout: "1h30m"=20
- > >    variables:=20
- > >      CROSVM_GALLIUM_DRIVER: llvmpipe=20
- > >      DRIVER_NAME: virtio_gpu=20
- > > @@ -436,6 +438,7 @@ virtio_gpu:none:=20
- > >=20
- > >  vkms:none:=20
- > >    stage: software-driver=20
- > > +  timeout: "1h30m"=20
- > >    variables:=20
- > >      DRIVER_NAME: vkms=20
- > >      GPU_VERSION: none=20
- > > --=20
- > > 2.43.0=20
- > >=20
- >=20
+> ---
+>  drivers/mmc/host/sdhci-of-aspeed.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/mmc/host/sdhci-of-aspeed.c b/drivers/mmc/host/sdhci-of-aspeed.c
+> index 430c1f90037b..37240895ffaa 100644
+> --- a/drivers/mmc/host/sdhci-of-aspeed.c
+> +++ b/drivers/mmc/host/sdhci-of-aspeed.c
+> @@ -510,6 +510,7 @@ static const struct of_device_id aspeed_sdhci_of_match[] = {
+>         { .compatible = "aspeed,ast2600-sdhci", .data = &ast2600_sdhci_pdata, },
+>         { }
+>  };
+> +MODULE_DEVICE_TABLE(of, aspeed_sdhci_of_match);
+>
+>  static struct platform_driver aspeed_sdhci_driver = {
+>         .driver         = {
+> --
+> 2.34.1
+>
 
