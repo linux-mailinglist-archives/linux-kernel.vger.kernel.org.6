@@ -1,292 +1,210 @@
-Return-Path: <linux-kernel+bounces-304270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FBAC961D04
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 05:30:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 553D9961C20
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:32:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 749F61C23302
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 03:30:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C16ED1F247F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 02:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7331913E03E;
-	Wed, 28 Aug 2024 03:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C64841A8F;
+	Wed, 28 Aug 2024 02:31:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="CsOhvdJ5"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1CB2941C;
-	Wed, 28 Aug 2024 03:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BEQx3nrv"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6008F49
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 02:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724815847; cv=none; b=WCnfJDfjy3Iribrw0rXwSKRAvPTYdyX8Fssm1Lp/VbgN1bi0GcDVdRngzgBL5/MVyqTEFOYQIFV07QxAmj/FVCj0foZa3gPAU3NyPjrsZeYP3WhE88tgy8Tm9eiecBpySw40G4oqYleCLQ7a93MEQr/elgRZvpZD46sut8Wc07o=
+	t=1724812318; cv=none; b=f6eQTJh9RgyEOaP5wa2cSLPZ58NGpPE1QOp/6TyNjEg7OVoK+kD3m3t7lhgbRVzXQ7cr4zp/ZPlEN4ug5hST0KxebPEwISz8c/bqX9EfZFTEqbrtsB99vYGPjnrGNgyAN4zjL2ailBsjnmOxyFOOuRbHQLnTfDhPWcLq0if9Y54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724815847; c=relaxed/simple;
-	bh=w9gKMUwtFMhXtaLOZKT94eoi54UxpaqmxQcBOIz4yLE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A8X7mSqbai4Z+0IonY+DbivQQ4KAfHz8t+JkVIRK3SIaUHPShwjFjbygUeaeHUp+4R27A1U7vns4mAfgeTJBlShmAWBg2Qf/aYRQmnSKxxIvzftep0h+7p3B/fqGlsNoua00ZIZ10LzYhRJNQaFCJqyUm6QNLG8/4LlC0F8fc90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=CsOhvdJ5; arc=none smtp.client-ip=220.197.32.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=BJK05Ul0TQ++UJk0M0jDApdVzd0KxnzQI04Ca6YRhoM=;
-	b=CsOhvdJ5L6c2jKEq4i0gMa1TGrotzOerH0tXvhvLJheihULgT0EvDoEVP4htZW
-	fTIU4mhgdcCOIj578xYMZalJHtjUniDmabMgFLPPy75Vds/zclIRUj04o9jih8wo
-	eJqj0QP/Y/9qjOEFImSd7hp0MOD9THecMDlQUeWIDMv04=
-Received: from dragon (unknown [114.216.210.89])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgDn__5vi85mpd4NAA--.24882S3;
-	Wed, 28 Aug 2024 10:29:05 +0800 (CST)
-Date: Wed, 28 Aug 2024 10:29:03 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Frieder Schrempf <frieder@fris.de>
-Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH 3/4] arm64: dts: imx8mm-kontron: Add support for display
- bridges on BL i.MX8MM
-Message-ID: <Zs6LbyOeGMZsxn2S@dragon>
-References: <20240806133352.440922-1-frieder@fris.de>
- <20240806133352.440922-4-frieder@fris.de>
+	s=arc-20240116; t=1724812318; c=relaxed/simple;
+	bh=5i0vwY1TQmn6Ut7owwX77TQkqXd3Ihep6vwJkWqtLac=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=AvmOYE3EWFvuxsCRCv5x2QGdJPdUCCTovUnoKkCEsFeOebbzNlAo8CiWYyMW2SlxatiN4Z+kNfZnuNytq2hFljoAw5iX8St9sFd6H7/Ig2gNsmZjgOLpJ/PfTXNt0ou/aqkW1f7XBGIvwYSP2jj0g318I5LW+z+795Hv72Wl0NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BEQx3nrv; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2610c095ea1so901356fac.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 19:31:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724812315; x=1725417115; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j1GnzLFrUG1kn/nmXLxF4DvuCqygZXWm2X5g1VCxpbo=;
+        b=BEQx3nrvxP+4U7722rPK+4NhcKbSpgwjahhYmnkB2z6cBMFJfwkkl5xYNRQRhl8pTF
+         G8AiN0ez7IdxjZJVyfMZWaaFIlORve863ijrCTsRY2jz8sUlhriEGpSl8nuJtLrjzqL5
+         f5/+rqfx0TekknJOlCDQ1bSpgJtEH1Lsw+ARbvdFRZGYuKsl2+fBUV2v/pAntCgxWJwj
+         w7F99b3OAJhg/4iuOWwoUR8kNIreSPbM2p8pkAdGip7ATokNOG2veRLkmjwA1Xo/Nz2j
+         kJDy+6Kez7MQsfQ2zxWe2svIJdifbELxVVPwsGQKLSb1DblaA7NT9rmKZ3RC4hlYCB7b
+         aHng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724812315; x=1725417115;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j1GnzLFrUG1kn/nmXLxF4DvuCqygZXWm2X5g1VCxpbo=;
+        b=g9/+yqBJMFhfqG4ta+3gcKT5LjL/m6cgVEjt6l8l7LxvW7Ek+1nnNKwjLqjFalz35m
+         VYoxzUvZ1r13IETuOogAsj9PR7A6wC7/5+Jci5p8iRHgmn4HA6IJKMIlHuDhJAESiG7J
+         ERINZllXK6ow9OQjS+KA8+hpBWCBXDR+NLEkpU8TO4boAks0B/v1yLttmpyOj0/gYZVM
+         5zJtNUcz30QzznQzhJbuCI9gujdAuABypnGs/EEfbMrCjVJ1zYKsbdyYoyOLqn7phvC4
+         jWWBLmhpNz6pQ5eaTHFqAX+HBsexhBU1SJkLg7JaXZDmGMHz4xGa+Amn+861TIwPW0mi
+         13lg==
+X-Gm-Message-State: AOJu0YyhmJtM7UHddpRTmB8d1eacEyBm1XIFrRWckstLHIxEI8LORmin
+	2VZ21wK6Ys/Bs6cANaZUSAZjNHBLq7J1IOk974KjGAEyMzlKK/Tci/Lw72Yl4Hw=
+X-Google-Smtp-Source: AGHT+IHjlwirEOdOCQOdTSpzmaZOMKmTQUa8JaZXOIJC/SddiPnM/OUZ0hyY4uPE+SoanZSlN37Rfg==
+X-Received: by 2002:a05:6870:700e:b0:258:476d:a781 with SMTP id 586e51a60fabf-273e6468d3dmr9172472fac.3.1724812314980;
+        Tue, 27 Aug 2024 19:31:54 -0700 (PDT)
+Received: from localhost.localdomain ([49.0.197.176])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71434340449sm9144713b3a.218.2024.08.27.19.31.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 19:31:54 -0700 (PDT)
+From: sunyiqi <sunyiqixm@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	rafael@kernel.org,
+	sunyiqixm@gmail.com
+Subject: Re: Re: [PATCH] cpu: add CAP_SYSLOG check for reading crash_notes address
+Date: Wed, 28 Aug 2024 10:31:35 +0800
+Message-Id: <20240828023135.944867-1-sunyiqixm@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <2024082701-trailing-poster-6126@gregkh>
+References: <2024082701-trailing-poster-6126@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806133352.440922-4-frieder@fris.de>
-X-CM-TRANSID:M88vCgDn__5vi85mpd4NAA--.24882S3
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXw4DGF18JFW7try7Jr15CFg_yoWrKw4Dpr
-	9xAws3Xr40qF4jya4DZr18Crn3C3ykGw4v9wnF9FyFyrZxu347tF45Krn5Wrs0kFWUZw4F
-	vF4Fvry2grnYq3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j4ZXrUUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiER9JZWbOG9TjXwABs4
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 06, 2024 at 03:33:01PM +0200, Frieder Schrempf wrote:
-> From: Frieder Schrempf <frieder.schrempf@kontron.de>
+On Tue, 27 Aug 2024 11:15:25 +0200, Greg KH wrote:
+> On Tue, Aug 27, 2024 at 04:11:33PM +0800, sunyiqi wrote:
+> > CPU crash_notes value can be obtained through /sys/devices/system/cpu/\
+> > cpu[NUM]/crash_notes for leaking the phys address(introduced in kernel
+> > 5.10-rc1, but some distributions may migrate this feature to 4.x
+> >   kernel).
+> > The relevant function is crash_notes_show() in file drivers/base/cpu.c.
+> >
+> > Though crash_notes file permission is 400 and owner is root:root,
+> > but in container, the root user can also read crash_notes which leads to
+> > information leak as most of kernel pointer value can not by read for
+> > root user in container without CAP_SYSLOG capability.
 > 
-> The Kontron Electronics BL i.MX8MM has oboard disply bridges for
-> DSI->HDMI and DSI->LVDS conversion. The DSI interface is muxed by
-> a GPIO-controlled switch to one of these two bridges.
+> "most", but not all?
+
+Kernel usually use printk for output kernel pointer through /proc and
+/sys, when investigating the /proc and /sys directory, the kernel
+pointer I found is all printed using printk guarded by CAP_SYSLOG
+except crash_notes.
+
+And kernel also has a script to check kernel pointer value leak in
+/proc and /sys (will be mentioned later again).
+
+> > In current linux kernel implementation, kernel pointer value or address
+> > printked by %pK is not directly exposed to root user in container. For
+> > kernel interface which includes those values, like /sys/kallsyms,
+> > /proc/net/packet, etc., address values are guarded by kernel function
+> > restricted_pointer(). Without CAP_SYSLOG capability, value 0 or NULL
+> > will be returned for reading those interfaces in container using root
+> > user.
 > 
-> By default the HDMI bridge is enabled. The LVDS bridge can be
-> selected by loading an additional (panel-specific) overlay.
+> I understand the request here, but why is giving the "real" kernel
+> pointer value somehow bad here?  What can userspace in a container do
+> with it?
 > 
-> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-> ---
->  .../boot/dts/freescale/imx8mm-kontron-bl.dts  | 146 ++++++++++++++++++
->  1 file changed, 146 insertions(+)
+> And why not give root permissions access to it container or not?
+
+Linux Kernel exploits often need kernel address to achieve LPE or 
+container escape just like lots of exploits in repo of kCTF held by
+Google.
+
+When kernel has a memory-based vulnerability, kernel address
+is needed for exploit. Attackers in container can leverage this 
+crash_notes to get kernel physcial address to use. Similar info
+leak issue is still popular in exploit for distributions which
+has not fixed those issue:
+- CVE-2022-4543 kernel: KASLR Prefetch Bypass Breaks KPTI
+- CVE-2023-0597 kernel: x86/mm: Randomize per-cpu entry area
+- CVE-2024-26816 kernel: x86, relocs: Ignore relocations in .notes section
+
+> > In restricted_pointer() and container, address values only returned by
+> > kernel when root user has CAP_SYSLOG capability which is not the default
+> > capabilities for Docker container. CAP_SYSLOG prevents root user in
+> > container to get kernel pointer from lots of interfaces based on printk,
+> > but not for cpu crash_notes.
+> >
+> > Add CAP_SYSLOG permission check in crash_notes_show() for viewing kernel
+> > address.
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-kontron-bl.dts b/arch/arm64/boot/dts/freescale/imx8mm-kontron-bl.dts
-> index aab8e24216501..2b344206dfd16 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mm-kontron-bl.dts
-> +++ b/arch/arm64/boot/dts/freescale/imx8mm-kontron-bl.dts
-> @@ -25,6 +25,17 @@ osc_can: clock-osc-can {
->  		clock-output-names = "osc-can";
->  	};
->  
-> +	hdmi-out {
-> +		compatible = "hdmi-connector";
-> +		type = "a";
-> +
-> +		port {
-> +			hdmi_in_conn: endpoint {
-> +				remote-endpoint = <&bridge_out_conn>;
-> +			};
-> +		};
-> +	};
-> +
->  	leds {
->  		compatible = "gpio-leds";
->  		pinctrl-names = "default";
-> @@ -132,6 +143,90 @@ ethphy: ethernet-phy@0 {
->  	};
->  };
->  
-> +&gpio4 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_gpio4>;
-> +
-> +	dsi_mux_sel_hdmi: dsi-mux-sel-hdmi-hog {
-> +		gpio-hog;
-> +		gpios = <14 GPIO_ACTIVE_HIGH>;
-> +		output-high;
-> +		line-name = "dsi-mux-sel";
-> +	};
-> +
-> +	dsi_mux_sel_lvds: dsi-mux-sel-lvds-hog {
-> +		gpio-hog;
-> +		gpios = <14 GPIO_ACTIVE_HIGH>;
-> +		output-low;
-> +		line-name = "dsi-mux-sel";
-> +		status = "disabled";
-> +	};
-> +
-> +	dsi-mux-oe-hog {
-> +		gpio-hog;
-> +		gpios = <15 GPIO_ACTIVE_LOW>;
-> +		output-high;
-> +		line-name = "dsi-mux-oe";
-> +	};
-> +};
-> +
-> +&i2c3 {
-> +	clock-frequency = <400000>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_i2c3>;
-> +	status = "okay";
-> +
-> +	hdmi: hdmi@39 {
-> +		compatible = "adi,adv7535";
-> +		reg = <0x39>;
-> +
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_adv7535>;
-> +
-> +		interrupt-parent = <&gpio4>;
-> +		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
-> +
-> +		adi,dsi-lanes = <4>;
-> +
+> Is this really the only place where this type of check needs to be
+> added?
 
-Can we drop these newlines in the middle of property list?
+Early this year, when fixing CVE-2024-26816(kernel ELF note leak kernel
+.text address). LWN article say that kernel has a leaking_addresses.pl
+script to scan pointer value that expose to userspace in /sys, /proc,
+but this tool can only identify the pointer value in human-readable string
+type. In CVE-2024-26816 case, it outputs value in binary form, so the
+script missed it. Cook <keescook-AT-chromium.org> fixed the script in
+18 Feb 2024.
 
-> +		a2vdd-supply = <&reg_vdd_1v8>;
-> +		avdd-supply = <&reg_vdd_1v8>;
-> +		dvdd-supply = <&reg_vdd_1v8>;
-> +		pvdd-supply = <&reg_vdd_1v8>;
-> +		v1p2-supply = <&reg_vdd_1v8>;
-> +		v3p3-supply = <&reg_vdd_3v3>;
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-> +
-> +				bridge_in_dsi_hdmi: endpoint {
-> +					remote-endpoint = <&dsi_out_bridge>;
-> +				};
-> +			};
-> +
-> +			port@1 {
-> +				reg = <1>;
-> +
-> +				bridge_out_conn: endpoint {
-> +					remote-endpoint = <&hdmi_in_conn>;
-> +				};
-> +			};
-> +		};
-> +	};
-> +
-> +	lvds: bridge@2c {
+After that, pointer leaking in human-readable and non-hunman-readable
+through /proc and /sys seems to be solved.
 
-Sort I2C devices in unit-address.
+Why this leak is missed by leaking_addresses.pl script?
+The output of crash_note actually is offset to PAGE_OFFSET which is
+0xffff880000000000 in x86_64, it's difficult for scanner to distinguish
+whether it is an address or normal data.
 
-Shawn
-
-> +		compatible = "ti,sn65dsi84";
-> +		reg = <0x2c>;
-> +		enable-gpios = <&gpio4 26 GPIO_ACTIVE_HIGH>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_sn65dsi84>;
-> +		status = "disabled";
-> +	};
-> +};
-> +
->  &i2c4 {
->  	clock-frequency = <100000>;
->  	pinctrl-names = "default";
-> @@ -144,6 +239,30 @@ rx8900: rtc@32 {
->  	};
->  };
->  
-> +&lcdif {
-> +	status = "okay";
-> +};
-> +
-> +&mipi_dsi {
-> +	samsung,esc-clock-frequency = <54000000>;
-> +	/*
-> +	 * Let the driver calculate an appropriate clock rate based on the pixel
-> +	 * clock instead of using the fixed value from imx8mm.dtsi.
-> +	 */
-> +	/delete-property/ samsung,pll-clock-frequency;
-> +	status = "okay";
-> +
-> +	ports {
-> +		port@1 {
-> +			reg = <1>;
-> +
-> +			dsi_out_bridge: endpoint {
-> +				remote-endpoint = <&bridge_in_dsi_hdmi>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
->  &pwm2 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&pinctrl_pwm2>;
-> @@ -207,6 +326,12 @@ &iomuxc {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&pinctrl_gpio>;
->  
-> +	pinctrl_adv7535: adv7535grp {
-> +		fsl,pins = <
-> +			MX8MM_IOMUXC_SAI1_TXD4_GPIO4_IO16		0x19
-> +		>;
-> +	};
-> +
->  	pinctrl_can: cangrp {
->  		fsl,pins = <
->  			MX8MM_IOMUXC_SAI3_RXFS_GPIO4_IO28		0x19
-> @@ -277,6 +402,20 @@ MX8MM_IOMUXC_SAI3_MCLK_GPIO5_IO2		0x19
->  		>;
->  	};
->  
-> +	pinctrl_gpio4: gpio4grp {
-> +		fsl,pins = <
-> +			MX8MM_IOMUXC_SAI1_TXD2_GPIO4_IO14		0x19
-> +			MX8MM_IOMUXC_SAI1_TXD3_GPIO4_IO15		0x19
-> +		>;
-> +	};
-> +
-> +	pinctrl_i2c3: i2c3grp {
-> +		fsl,pins = <
-> +			MX8MM_IOMUXC_I2C3_SCL_I2C3_SCL			0x40000083
-> +			MX8MM_IOMUXC_I2C3_SDA_I2C3_SDA			0x40000083
-> +		>;
-> +	};
-> +
->  	pinctrl_i2c4: i2c4grp {
->  		fsl,pins = <
->  			MX8MM_IOMUXC_I2C4_SCL_I2C4_SCL			0x40000083
-> @@ -290,6 +429,13 @@ MX8MM_IOMUXC_SPDIF_RX_PWM2_OUT			0x19
->  		>;
->  	};
->  
-> +	pinctrl_sn65dsi84: sn65dsi84grp {
-> +		fsl,pins = <
-> +			MX8MM_IOMUXC_SAI2_TXD0_GPIO4_IO26		0x19
-> +			MX8MM_IOMUXC_SD2_WP_GPIO2_IO20			0x19
-> +		>;
-> +	};
-> +
->  	pinctrl_uart1: uart1grp {
->  		fsl,pins = <
->  			MX8MM_IOMUXC_SAI2_RXC_UART1_DCE_RX		0x0
-> -- 
-> 2.45.2
+> > Fixes: aa838896d87a ("drivers core: Use sysfs_emit and sysfs_emit_at for show(device *...) functions")
+> > Signed-off-by: sunyiqi <sunyiqixm@gmail.com>
 > 
+> No cc: stable?
 
+I used get_maintainer.pl script in kernel repo which is a way for finding
+maintainers for specific file maintainers in kernel submitting patches
+docs, only linux-kernel mailing list is listed in script result.
+
+Also in submitting patches docs, "a severe bug in a released kernel"
+should be directed toward the stable maintainers. This crash_notes issue,
+needs high privilege and happens in container scenario, also cannot
+be used for LPE or DoS directly. So I think it's not "a severe bug".
+
+I'm very willing to abide by the rules of the kernel community.
+This time get_maintainer.pl confused me a little if the result of
+get_maintainer.pl script is believeable.
+
+> > ---
+> >  drivers/base/cpu.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
+> > index fdaa24bb641a..a2f27bb0ffe6 100644
+> > --- a/drivers/base/cpu.c
+> > +++ b/drivers/base/cpu.c
+> > @@ -156,6 +156,9 @@ static ssize_t crash_notes_show(struct device *dev,
+> >        unsigned long long addr;
+> >        int cpunum;
+> > 
+> > +     if (!has_capability_noaudit(current, CAP_SYSLOG))
+> > +             return sysfs_emit(buf, "%llx\n", 0ull);
+> 
+> Why not return an error?  Why is 0 ok?
+> 
+> thanks,
+> 
+> greg k-h
+
+This patch refers to restricted_pointer CAP_SYSLOG solution, output 0
+for unauthorized user. Also, I think in this show function, return 0
+value maintains consistency of the result for reading crash_notes. 
+
+Thanks,
+Yiqi Sun
 
