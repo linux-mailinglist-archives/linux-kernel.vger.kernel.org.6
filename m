@@ -1,160 +1,128 @@
-Return-Path: <linux-kernel+bounces-305462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA7D962F1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:58:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08BB6962F21
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:00:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF2C11C21CE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:58:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B22C92828FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563E41A76BB;
-	Wed, 28 Aug 2024 17:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCFA71A7AD2;
+	Wed, 28 Aug 2024 18:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UnDikNKm"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N3s6Q64y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170501A4F38
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 17:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A25B19DF40;
+	Wed, 28 Aug 2024 18:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724867919; cv=none; b=jFad/2SRjH6Y9DCWNEJ60Fb6kLM5KL9tkV3iPTVYCHyhX/b31jGi13E2VeKY7YyLWmVgyH4yfnH8vhM8owo68v+PUqWE9OCiDbRZZ4opEnfQYQqLyTlq+xvFKBnfIWr4+QIwtmFJsi75whxX95s6CGEZKwUAW0a5ySMnYyGS9ww=
+	t=1724868013; cv=none; b=WZQ3lfa1+1sXeRIgvyM4fEIEt/ba8CZxAhcFGzms8ekH0FBtsG/uMcnxf53+C1r2Gd1eP03f7ZUhGPjzsldWDMgxW99JmV/A5GHeBUGmZMyfrxs2Su+xKUN7Qj9vzZojZqAEEQswYYa/sE8m935fjpDDcM6kylLsNcnAYNMUztc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724867919; c=relaxed/simple;
-	bh=5HfJVoZUf09/yyuSOEaoOPwo1/GxAhoJbnY8gPaxN5I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rFO7w13WwVfVFBbJEgUfU+D30J5fdlJJfEdcz4Yx0y0AhgKBCB8fT/Q9wTOREyTsLnTWXwbp6WVRmTkXg1XIQMvlkJhKl3vtgaO4k90EJ6sBMTDn5qayJWh8yi/fG3/Qtg1UIcve+DuJVZGaBrb0lDnv65iv9E0DanudgnFzbCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UnDikNKm; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-45029af1408so22161cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 10:58:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724867917; x=1725472717; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GV5dbJzassVE92Ckkqje6sBzWbYCfklUNPbX30/kMzA=;
-        b=UnDikNKm9FnpJysjhjq1+aiSze3y/qbtK8R/4gurBq2i0hcCXRQTi9bZE0tS4C1NDr
-         ur8cN4xFXl97lo2fPrXEvALQy5/h4fP5Dptr/+dKB5LQleJ3TKApTgDsd4LAEBs0+WmQ
-         i3pKR3dI5akQujm8wFaytZDMRBx4bmtpS2t8ubgy/ktIOHlpX2+1H9kN1J+uQtBy6YzJ
-         su9B7xoEU462O4BY2nFKB3apSFHgjrNDA51FToQICrLfI5aieDUZTILW+SYmg4FqItCx
-         WPxaghP8nESrZ3atXPZ0MujI+1SHJeYqaeIjB5LvhEDHF7recsq3MPYKiOHOvDcsaAfc
-         OfZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724867917; x=1725472717;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GV5dbJzassVE92Ckkqje6sBzWbYCfklUNPbX30/kMzA=;
-        b=qsODXvLdpIdQW9GnihrXydK9cIb15zuqo2BGOYQih3vR+50/mobRzroth0MIsqcQUS
-         rH7fyF3CWne8lJlc4+awnc89qmsT1cmERQf33m/ueHDp+I4tuPi4DVqwCBZ+fc6XNK6r
-         jn4X7SrPjN1GcEWotrHUJg7PqN7YFmDKfKxJIsTbzBhJN9Fjx4qkD/87h7RxtA+s+8XP
-         X5YrubG66TE7Yvp6ljhd8hPI28BgOI1qf/wBcHEH20Y6x0yHG8Y77SwRDfA6lt3KXoEW
-         qPxiFcligXkSVgFm5jg+Zqx5eDQcUaw0SGo936cHOWUQuOgPN2VEf2BVSKnY4yJI8YSi
-         fjSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWQi2xEy03jTiSZ6zL+YRVWXjGprXHcFSYtOMJuPfQ2JB9VJBquL+TQKaqViLku0fHAs553yb1irJk2D5E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFx+u3+jGZcotS0OefyJ1eZ+pINdZgm9kg7J2mPEs2cU/6nGjm
-	9pNqvbegKfqeWlCmQhfn5r5fqlZ24VcA/zpRDgWetMQYlgcBaR+yGF/2ojmHzxd91EN5ntMXBaQ
-	ty7LOoLGp40/5ilSE5l2vsZgTDFPhHih5v3j8
-X-Google-Smtp-Source: AGHT+IGVPYdTHR5UwWuRVhw4md8Wv5OEpWr/gP/bx0HY4TvrXmMLFX6yrNpCmoZP/otzyEYzbYJw4zSUNRD68rtuOrA=
-X-Received: by 2002:ac8:7e47:0:b0:456:7ec0:39a9 with SMTP id
- d75a77b69052e-456801069e8mr39051cf.5.1724867916761; Wed, 28 Aug 2024 10:58:36
- -0700 (PDT)
+	s=arc-20240116; t=1724868013; c=relaxed/simple;
+	bh=7H/E7MSDZxVkPqQwHScaGrL3nzpRLI/Qqo9WirUXiIw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J4QjZPUg6DYxzjksetoU/kv+CjAaQV7yKQY3dStEeYLEdMO6rwppAUDUOI/QpNjWzuliE2e/CWfQvFgqjhKW2QRq+dPWICWfMG+3ZpHYDolFjrnrPD7ZySb2ITkHo6oyu4dkwbrapM7UUeLzQRXrvFNEpcc/eLIWv1Y41nTChfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N3s6Q64y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A404FC4CEC1;
+	Wed, 28 Aug 2024 18:00:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724868012;
+	bh=7H/E7MSDZxVkPqQwHScaGrL3nzpRLI/Qqo9WirUXiIw=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=N3s6Q64yg3+L2ByOW9TijOw2EdzX3BuWiid6c7ce/haA10hMLak1BggFTW1ZrWoRF
+	 7mrSyehShsVwFo4RFkHB0kU+LBMdO9OZDR5L7AYVFtMS/Cxbv1aM64ChcTySOAQ58L
+	 5+AUWY9tDBaHj1lQs7lKIqzfq2PtPiqg89GO5Vr6xVRVQIPiBKwt1quVrqg9i18v5H
+	 xZUZl7jp5XZGCwvcoQLjZjKzOHx+nG3ufciY/a7RzcRSUh2qoDzsK43Y0K+9NZF3XE
+	 S6ZBmmNGZshEXApDyNbsPxDmnnDJKwWEMy3cSNwIMLIQjzzspyf3matxcLdHqwA7ZB
+	 EMULHU7RREyHw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 43F8CCE0FF3; Wed, 28 Aug 2024 11:00:12 -0700 (PDT)
+Date: Wed, 28 Aug 2024 11:00:12 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [PATCH 1/4] rcu/kvfree: Support dynamic rcu_head for single
+ argument objects
+Message-ID: <184844f5-71fd-4b62-bf86-87cdff3aa546@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240828110929.3713-1-urezki@gmail.com>
+ <64bebc29-a007-4ebc-bf86-8c2c0a7e6bf6@suse.cz>
+ <Zs9Xm6VKcpMkWbLE@pc636>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827230753.2073580-1-kinseyho@google.com> <20240827230753.2073580-3-kinseyho@google.com>
-In-Reply-To: <20240827230753.2073580-3-kinseyho@google.com>
-From: "T.J. Mercier" <tjmercier@google.com>
-Date: Wed, 28 Aug 2024 10:58:25 -0700
-Message-ID: <CABdmKX3vOnjrLyZ1BMJ27cMU52+gPKWAYE+OrkeC5JLehS8Zaw@mail.gmail.com>
-Subject: Re: [PATCH mm-unstable v3 2/5] mm: don't hold css->refcnt during traversal
-To: Kinsey Ho <kinseyho@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	Yosry Ahmed <yosryahmed@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, mkoutny@suse.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zs9Xm6VKcpMkWbLE@pc636>
 
-On Tue, Aug 27, 2024 at 4:11=E2=80=AFPM Kinsey Ho <kinseyho@google.com> wro=
-te:
->
-> To obtain the pointer to the next memcg position, mem_cgroup_iter()
-> currently holds css->refcnt during memcg traversal only to put
-> css->refcnt at the end of the routine. This isn't necessary as an
-> rcu_read_lock is already held throughout the function. The use of
-> the RCU read lock with css_next_descendant_pre() guarantees that
-> sibling linkage is safe without holding a ref on the passed-in @css.
->
-> Remove css->refcnt usage during traversal by leveraging RCU.
->
-> Signed-off-by: Kinsey Ho <kinseyho@google.com>
+On Wed, Aug 28, 2024 at 07:00:11PM +0200, Uladzislau Rezki wrote:
+> On Wed, Aug 28, 2024 at 04:58:48PM +0200, Vlastimil Babka wrote:
+> > On 8/28/24 13:09, Uladzislau Rezki (Sony) wrote:
+> > > Add a support of dynamically attaching an rcu_head to an object
+> > > which gets freed via the single argument of kvfree_rcu(). This is
+> > > used in the path, when a page allocation fails due to a high memory
+> > > pressure.
+> > > 
+> > > The basic idea behind of this is to minimize a hit of slow path
+> > > which requires a caller to wait until a grace period is passed.
+> > > 
+> > > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> > 
+> > So IIUC it's a situation where we can't allocate a page, but we hope the
+> > kmalloc-32 slab has still free objects to give us dyn_rcu_head's before it
+> > would have to also make a page allocation?
+> > 
+> Yes, you understood it correctly :)
+> 
+> >
+> > So that may really be possible and there might potentially be many such
+> > objects, but I wonder if there's really a benefit. The system is struggling
+> > for memory and the single-argument caller specifically is _mightsleep so it
+> > could e.g. instead go direct reclaim a page rather than start depleting the
+> > kmalloc-32 slab, no?
+> > 
+> This is a good question about benefit and i need to say that i do not
+> have a strong opinion here. I post this patch to get some opinions about
+> it. This "dynamic attaching" we discussed with RCU folk a few years ago
+> and decided not to go with it. I have not found an information why.
 
-Reviewed-by: T.J. Mercier <tjmercier@google.com>
+If I remember correctly, I asked "How are you testing this?", which
+was then taken as a criticism rather than a question.  ;-)
 
-I found a different place where a more trivial css get/put pair than
-this could be removed, but I couldn't measure a perf difference. Like
-Yosry, I appreciate the simplicity gains here though.
+No one has reported an OOM-related problem with the code in its current
+form, for what little that is worth.
 
-> ---
->  mm/memcontrol.c | 18 +-----------------
->  1 file changed, 1 insertion(+), 17 deletions(-)
->
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 35431035e782..67b1994377b7 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -1013,20 +1013,7 @@ struct mem_cgroup *mem_cgroup_iter(struct mem_cgro=
-up *root,
->                 else if (reclaim->generation !=3D iter->generation)
->                         goto out_unlock;
->
-> -               while (1) {
-> -                       pos =3D READ_ONCE(iter->position);
-> -                       if (!pos || css_tryget(&pos->css))
-> -                               break;
-> -                       /*
-> -                        * css reference reached zero, so iter->position =
-will
-> -                        * be cleared by ->css_released. However, we shou=
-ld not
-> -                        * rely on this happening soon, because ->css_rel=
-eased
-> -                        * is called from a work queue, and by busy-waiti=
-ng we
-> -                        * might block it. So we clear iter->position rig=
-ht
-> -                        * away.
-> -                        */
-> -                       (void)cmpxchg(&iter->position, pos, NULL);
-> -               }
-> +               pos =3D READ_ONCE(iter->position);
->         } else if (prev) {
->                 pos =3D prev;
->         }
-> @@ -1067,9 +1054,6 @@ struct mem_cgroup *mem_cgroup_iter(struct mem_cgrou=
-p *root,
->                  */
->                 (void)cmpxchg(&iter->position, pos, memcg);
->
-> -               if (pos)
-> -                       css_put(&pos->css);
-> -
->                 if (!memcg)
->                         iter->generation++;
->         }
+							Thanx, Paul
+
+> The page request path, which is "normal/fast", can lead to a "light"
+> direct reclaim, if still fails, then we are in a high pressure situation.
+> Depleting a slab is probably not worth it, especially that the patch in
+> this series:
+> 
+> [PATCH 4/4] rcu/kvfree: Switch to expedited version in slow path
+> 
+> switches to more faster synchronize_rcu() version to speedup a reclaim.
+> 
+> + this [PATCH 3/4] rcu/kvfree: Use polled API in a slow path
+> which also improves a slow path in terms of that a GP might be already
+> passed for the object being freed.
+> 
+> I am totally OK to drop this patch. This is fine to me.
+> 
 > --
-> 2.46.0.295.g3b9ea8a38a-goog
->
->
+> Uladzislau Rezki
 
