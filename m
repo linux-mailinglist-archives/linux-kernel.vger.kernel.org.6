@@ -1,55 +1,79 @@
-Return-Path: <linux-kernel+bounces-304340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCB59961E5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:47:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02B00961E5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AFF81F24D95
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 05:47:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4100285922
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 05:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3681514C6;
-	Wed, 28 Aug 2024 05:46:58 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98BE2154420;
+	Wed, 28 Aug 2024 05:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h30Qarqs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E774F224D7
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 05:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280B01509B3
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 05:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724824018; cv=none; b=dMQuc5+A31MRZXbLJkhXC0OABEb4Tf1S/7lawOupiJF2aRjKXpzFGvWNeYKVdIq53d2gaH/xw4pxH/RXJf0fk1JLYb1jm5G/gjr4lT22x7/kwSnR20JyFPPAKqYL4u+2VPTEo/fVPZUWHC0ei4aIxn+WhaUYmETJ8fxozFi7uzM=
+	t=1724824040; cv=none; b=IPJrWQD7wx0ZTAix9WFz9p9MCE7Nc8pH9V/G1s/lYuqlMOTStXpHTAIs7p5BRR9IKuD4qdFDABUM5GOp6xwGglK3ArA0bWdE0BJD0TrbEmGq2JGhUlG5wwt1jkkTH9sYD+Xdy5PEChrvifPbQS7bZeUKGvEuIgjyXarmd0NPel0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724824018; c=relaxed/simple;
-	bh=rojXzNX/jxTJ/4FaSurK1ttoVcOni2MebdzSlxTbJrg=;
+	s=arc-20240116; t=1724824040; c=relaxed/simple;
+	bh=RrLam6mqwyBGcfuSrxWmoW3n5YB6vJkgt4F0ExG4lRU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RXFhNlVjsRCx5TPVur+md27+w+UHllXqqCc8NCWJNBW+c3eEqcLIxc3dyy7AaAM5Xrl1re+hLdDGDozab38wE2XWI8wTQsK8pMX37hbAt2hFmmzwrifbFH8DuUW5AyyEBT6aMBue/wooTWPTxMbbWTX7CCZHF8PjFTRmTVbG/UQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WtthY439fz9sRy;
-	Wed, 28 Aug 2024 07:46:53 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id WURQqgcv68Sw; Wed, 28 Aug 2024 07:46:53 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WtthY2Vnhz9sRs;
-	Wed, 28 Aug 2024 07:46:53 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3EC5A8B77D;
-	Wed, 28 Aug 2024 07:46:53 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id lLmlTUzjpCpN; Wed, 28 Aug 2024 07:46:53 +0200 (CEST)
-Received: from [172.25.230.108] (unknown [172.25.230.108])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 09DBF8B764;
-	Wed, 28 Aug 2024 07:46:53 +0200 (CEST)
-Message-ID: <bd4908d2-cea9-406b-902f-618626e74c88@csgroup.eu>
-Date: Wed, 28 Aug 2024 07:46:52 +0200
+	 In-Reply-To:Content-Type; b=kTNOqzizbiT+4a9vl9T7smRFEVu8fGLzQUUXRGj+wLObUuVzNyB8oMtrFHl+sqzPIuftUUu3dQsVKupho/YC9MYaO/AhNHh9y4qG1sKeui0oJLNmMdfyuT/FdpahbczDWeXsv721Y+Qi8URzpZYRVSpeWqP9E0rjnd9tgaa7Gtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h30Qarqs; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724824038;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ckZJuFCVMRgzqQidtTbaqZnRjLzSgCGjaZ05Ho69de8=;
+	b=h30Qarqst2ffHmG3/zqbb1Ulb6iAHkGbPQl1dHDbWX4Kw0BekbmuvFnvU/7FQju1CkXoIL
+	0daBuH/ZDryL+ffRj5OmEX+Xz+mjwz0krN5Bv2Ue3z8C3ObtGXXHy2lrOyWb4jFJMMX5pi
+	yBeOVPwtPoyGJ8FDjeuirMnCa5REd0c=
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
+ [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-615-TtdCvVdkNK6zjQHRfKPKcA-1; Wed, 28 Aug 2024 01:47:15 -0400
+X-MC-Unique: TtdCvVdkNK6zjQHRfKPKcA-1
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-7cbe272efa6so6012702a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 22:47:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724824035; x=1725428835;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ckZJuFCVMRgzqQidtTbaqZnRjLzSgCGjaZ05Ho69de8=;
+        b=ZyXtjYQ/AlkqWA1OClitJu0uA/E1FnP45Vzh3fsdpZNPBFE5SuOHrJi+mDisagDDM4
+         OfDJM+dwbLfM8nNedd2ooII/5eswU7Hwa+8eILw9KPHsaGQ/c11mvs3/o+r6gEAvhBGE
+         fAjQkyZ+5CkNxOYXRzDR9YNFwERNyXPlUEmuZHN4spw5sGL88J9XtAxZrd6ML2Cxhz8W
+         nCw2BoZb6iqFZXb/1AEZmnnpfoBV2TclwPWdoW/mQuwLeDtebzN6V3vivoswqaLKiTNy
+         WK61Epe75Tsk61ERs3QmVdGkP1C52GxBs0cCxY/CYgG7gwQeMCOCfcbeeEMFoCoYu1D2
+         iRQw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/X/3CvcxR4CGfMP4Q92VCyWSppFuG9Y07DPnuCtY8DdQClUXFWK1vXRrEd6OKsTeW24CSiYUGSsNibjM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyL9nNLcnwPDBDsJ0ovhJ+pkSZYjmpUph8FHRw3CSH/lYT/cqQS
+	PHIKC242HT7PQihZjah6FS3PaK/Zwye6u/ZYrpzL8FFI/lT52xMnLcH7s3i2bxNNH2Y4xfCwzXn
+	jZ7O93hVNXaF6CNImeR7sHdbHB1vh3xe1FC+Uj7s3g2nSVF50dios7t9FfNLzHw==
+X-Received: by 2002:a17:902:d4cc:b0:203:a0c9:6953 with SMTP id d9443c01a7336-203a0c96986mr201053505ad.0.1724824034784;
+        Tue, 27 Aug 2024 22:47:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF+eoKXJOfQW0YjvLqpCE/9ty7ghlsendTsMnu/B13VMaWGHQQyiTP0Mu4p+h0BUfBvtZv58Q==
+X-Received: by 2002:a17:902:d4cc:b0:203:a0c9:6953 with SMTP id d9443c01a7336-203a0c96986mr201053435ad.0.1724824034431;
+        Tue, 27 Aug 2024 22:47:14 -0700 (PDT)
+Received: from [10.72.116.72] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385be0e08sm91516135ad.285.2024.08.27.22.47.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 22:47:14 -0700 (PDT)
+Message-ID: <5d44ae23-4a68-446a-9ae8-f5b809437b32@redhat.com>
+Date: Wed, 28 Aug 2024 13:47:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,212 +81,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] powerpc/debug: hook to user return notifier
- infrastructure
-To: =?UTF-8?B?6Jme6ZmG6ZOt?= <luming.yu@shingroup.cn>
-Cc: "shenghui.qu@shingroup.cn" <shenghui.qu@shingroup.cn>,
- npiggin <npiggin@gmail.com>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
- mpe <mpe@ellerman.id.au>, "luming.yu" <luming.yu@gmail.com>,
- =?UTF-8?B?5p2o5L2z6b6Z?= <jialong.yang@shingroup.cn>,
- linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
- linux-kernel <linux-kernel@vger.kernel.org>
-References: <B375A36C9C4D73FF+20231218031338.2084-1-luming.yu@shingroup.cn>
- <8734vzsw0q.fsf@kernel.org> <8734vyn1ky.fsf@mail.lhotse>
- <2acd6623-952b-4659-bc26-c632e94560a8@csgroup.eu>
- <0638f0a2-782b-411f-9937-c62d99e9562b@csgroup.eu>
- <tencent_4F2B3C0025D5A1722470D582@qq.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <tencent_4F2B3C0025D5A1722470D582@qq.com>
+Subject: Re: [RFC PATCH] ceph: fix out-of-bound array access when doing a file
+ read
+To: Luis Henriques <luis.henriques@linux.dev>
+Cc: Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240822150113.14274-1-luis.henriques@linux.dev>
+ <87mskyxf3l.fsf@linux.dev>
+Content-Language: en-US
+From: Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <87mskyxf3l.fsf@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi,
 
-Le 28/08/2024 à 05:17, 虞陆铭 a écrit :
-> Hi,
-> 
-> it appears the little feature might require a little bit more work to find its value of the patch.
-> 
-> Using the following debug module ,  some debugging shows the TIF_USER_RETURN_NOTIFY
-> bit is propagated in __switch_to among tasks , but USER_RETURN_NOTIFY call back seems to
-> be dropped somewhere on somone who carries the bit return to user space.
-> side notes:
-> there is an issue that the module symbols is not appended to /sys/kernel/debug/tracing/available_filter_functions
-> which should be sovled first to make it easier for further debuggig.
+On 8/27/24 21:36, Luis Henriques wrote:
+> On Thu, Aug 22 2024, Luis Henriques (SUSE) wrote:
+>
+>> If, while doing a read, the inode is updated and the size is set to zero,
+>> __ceph_sync_read() may not be able to handle it.  It is thus easy to hit a
+>> NULL pointer dereferrence by continuously reading a file while, on another
+>> client, we keep truncating and writing new data into it.
+>>
+>> This patch fixes the issue by adding extra checks to avoid integer overflows
+>> for the case of a zero size inode.  This will prevent the loop doing page
+>> copies from running and thus accessing the pages[] array beyond num_pages.
+>>
+>> Link: https://tracker.ceph.com/issues/67524
+>> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+>> ---
+>> Hi!
+>>
+>> Please note that this patch is only lightly tested and, to be honest, I'm
+>> not sure if this is the correct way to fix this bug.  For example, if the
+>> inode size is 0, then maybe ceph_osdc_wait_request() should have returned
+>> 0 and the problem would be solved.  However, it seems to be returning the
+>> size of the reply message and that's not something easy to change.  Or maybe
+>> I'm just reading it wrong.  Anyway, this is just an RFC to see if there's
+>> other ideas.
+>>
+>> Also, the tracker contains a simple testcase for crashing the client.
+> Just for the record, I've done a quick bisect as this bug is easily
+> reproducible.  The issue was introduced in v6.9-rc1, with commit
+> 1065da21e5df ("ceph: stop copying to iter at EOF on sync reads").
+> Reverting it makes the crash go away.
 
-As far as I can see, user return notifier infrastructure was implemented 
-in 2009 for KVM on x86, see 
-https://lore.kernel.org/all/1253105134-8862-1-git-send-email-avi@redhat.com/
+Thanks very much Luis.
 
-Can you explain what is your usage of that infrastructure with your 
-patch ? You are talking about debug, what's the added value, what is it 
-used for ?
+So let's try to find the root cause of it and then improve the patch.
 
 Thanks
-Christophe
 
-> 
-> [root@localhost linux]# cat lib/user-return-test.c
-> #include <linux/module.h>
-> #include <linux/kernel.h>
-> #include <linux/init.h>
-> #include <linux/container_of.h>
-> #include <linux/user-return-notifier.h>
-> #include <linux/delay.h>
-> #include <linux/kthread.h>
-> #include <linux/sched.h>
-> 
-> MODULE_LICENSE("GPL");
-> 
-> 
-> struct test_user_return {
->          struct user_return_notifier urn;
->          bool registered;
->          int urn_value_changed;
->          struct task_struct *worker;
-> };
-> 
-> static struct test_user_return __percpu *user_return_test;
-> 
-> static void test_user_return_cb(struct user_return_notifier *urn)
-> {
->          struct test_user_return *tur =
->                  container_of(urn, struct test_user_return, urn);
->          unsigned long flags;
-> 
->          local_irq_save(flags);
->          tur->urn_value_changed++;
->          local_irq_restore(flags);
->          return;
-> }
-> 
-> static int test_user_return_worker(void *tur)
-> {
->          struct test_user_return *t;
->          t = (struct test_user_return *) tur;
->          preempt_disable();
->          user_return_notifier_register(&t->urn);
->          preempt_enable();
->          t->registered = true;
->          while (!kthread_should_stop()) {
->                  static int err_rate = 0;
-> 
->                  msleep (1000);
->                  if (!test_thread_flag(TIF_USER_RETURN_NOTIFY) && (err_rate == 0)) {
->                          pr_err("TIF_USER_RETURN_NOTIFY is lost");
->                          err_rate++;
->                  }
->          }
->          return 0;
-> }
-> static int init_test_user_return(void)
-> {
->          int r = 0;
-> 
->          user_return_test = alloc_percpu(struct test_user_return);
->          if (!user_return_test) {
->                  pr_err("failed to allocate percpu test_user_return\n");
->                  r = -ENOMEM;
->                  goto exit;
->          }
->          {
->                  unsigned int cpu;
->                  struct task_struct *task;
->                  struct test_user_return *tur;
-> 
->                  for_each_online_cpu(cpu) {
->                          tur = per_cpu_ptr(user_return_test, cpu);
->                          if (!tur->registered) {
->                                  tur->urn.on_user_return = test_user_return_cb;
->                                  task = kthread_create(test_user_return_worker,
->                                          tur, "test_user_return");
->                                  if (IS_ERR(task))
->                                          pr_err("no test_user_return kthread created for cpu %d",cpu);
->                                  else {
->                                          tur->worker = task;
->                                          wake_up_process(task);
->                                  }
->                          }
->                  }
->          }
-> 
-> exit:
->          return r;
-> }
-> static void exit_test_user_return(void)
-> {
->          struct test_user_return *tur;
->          int i,ret=0;
-> 
->          for_each_online_cpu(i) {
->                  tur = per_cpu_ptr(user_return_test, i);
->                  if (tur->registered) {
->                          pr_info("[cpu=%d, %d] ", i, tur->urn_value_changed);
->                          user_return_notifier_unregister(&tur->urn);
->                          tur->registered = false;
->                  }
->                  if (tur->worker) {
->                          ret = kthread_stop(tur->worker);
->                          if (ret)
->                                  pr_err("can't stop test_user_return kthread for cpu %d", i);
->                  }
->          }
->          free_percpu(user_return_test);
->          return;
-> }
-> 
-> module_init(init_test_user_return);
-> module_exit(exit_test_user_return);
-> 
->   
-> ------------------ Original ------------------
-> From:  "Christophe Leroy"<christophe.leroy@csgroup.eu>;
-> Date:  Tue, Feb 20, 2024 05:02 PM
-> To:  "mpe"<mpe@ellerman.id.au>; "Aneesh Kumar K.V"<aneesh.kumar@kernel.org>; "虞陆铭"<luming.yu@shingroup.cn>; "linuxppc-dev"<linuxppc-dev@lists.ozlabs.org>; "linux-kernel"<linux-kernel@vger.kernel.org>; "npiggin"<npiggin@gmail.com>;
-> Cc:  "shenghui.qu@shingroup.cn"<shenghui.qu@shingroup.cn>; "dawei.li@shingroup.cn"<dawei.li@shingroup.cn>; "ke.zhao@shingroup.cn"<ke.zhao@shingroup.cn>; "luming.yu"<luming.yu@gmail.com>;
-> Subject:  Re: [PATCH v1 2/2] powerpc/debug: hook to user return notifier infrastructure
-> 
->   
-> 
-> 
-> 
-> Le 20/02/2024 à 09:51, Christophe Leroy a écrit :
->>
->>
->> Le 19/12/2023 à 07:33, Michael Ellerman a écrit :
->>> Aneesh Kumar K.V <aneesh.kumar@kernel.org> writes:
->>>> Luming Yu <luming.yu@shingroup.cn> writes:
->>>>
->>>>> Before we have powerpc to use the generic entry infrastructure,
->>>>> the call to fire user return notifier is made temporarily in powerpc
->>>>> entry code.
->>>>>
->>>>
->>>> It is still not clear what will be registered as user return notifier.
->>>> Can you summarize that here?
->>>
->>> fire_user_return_notifiers() is defined in kernel/user-return-notifier.c
->>>
->>> That's built when CONFIG_USER_RETURN_NOTIFIER=y.
->>>
->>> That is not user selectable, it's only enabled by:
->>>
->>> arch/x86/kvm/Kconfig:        select USER_RETURN_NOTIFIER
->>>
->>> So it looks to me like (currently) it's always a nop and does nothing.
->>>
->>> Which makes me wonder what the point of wiring this feature up is :)
->>> Maybe it's needed for some other feature I don't know about?
->>>
->>> Arguably we could just enable it because we can, and it currently does
->>> nothing so it's unlikely to break anything. But that also makes it
->>> impossible to test the implementation is correct, and runs the risk that
->>> one day in the future when it does get enabled only then do we discover
->>> it doesn't work.
->>
->> Opened an "issue" for the day we need it:
->> https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2FKSPP%2Flinux%2Fissues%2F348&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7Cd9e9b6315413430cfba108dcc7100633%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638604118862628419%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=iIYQTodb9zrGdfmzvnZrIVZ%2BKh2qZjMjT29ddkUpGIw%3D&reserved=0
-> 
-> Correct one is https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2Flinuxppc%2Fissues%2Fissues%2F477&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7Cd9e9b6315413430cfba108dcc7100633%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638604118862637095%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=aJRVdRWu%2F7NQ13jQ6yFLBynXIIfPPPQ3nS4FxiXGNyw%3D&reserved=0
+- Xiubo
+
+
+> Cheers,
+
 
