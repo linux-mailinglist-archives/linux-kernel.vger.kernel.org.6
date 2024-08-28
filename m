@@ -1,200 +1,193 @@
-Return-Path: <linux-kernel+bounces-305634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B21196317F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:13:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CEAD963182
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:14:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C0E5B23591
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:12:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C157A1C219CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810471AC887;
-	Wed, 28 Aug 2024 20:12:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40931ABECB;
+	Wed, 28 Aug 2024 20:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="p5nR5SxE"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazolkn19011077.outbound.protection.outlook.com [52.103.32.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g2fdSESp"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5E11A7ADD;
-	Wed, 28 Aug 2024 20:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.32.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724875962; cv=fail; b=SCslxgbm+JCr2/FgpXCTziK/Lbw0NRQYplmEucs5R2aWiRdsbxMpl7LEvdW0QVtTL0YMNefGbIbGnxt+cnjjfju4NL30yWd554a8C/Xnu+y+AwU474xSJSMkP7g8maUuW+fakOsyN1H1m/ARP1cogQPacZynw4AGrZDcnmYXaHY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724875962; c=relaxed/simple;
-	bh=5uJRJXrWTA2cc2nuSgiwj9l5rMzI8ZvWe46+Sp8Djjo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=aEoBjASlTlWtnkSiNaNHGUO+r6nh0pYx3AAoY+A1I77a7dpoSQrTo8v0kiqV8LwmD1UiNsZQZboBrJhvV4D3fsi283ciZx4hWf30IKTFWlhbgqfP7rV99XwpCr0lslStlOi9CvuMghd/hdoOo//2b0ULiMcMZBIaF+71lWk9e3k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=p5nR5SxE; arc=fail smtp.client-ip=52.103.32.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uvS2PxrkLP1s0TaLBC+zOxuuOl7GCZBgf/M//FxZABZtkm7QNqALSo1jhy2FfrN4FulDe04LNp75MZoypw51UBdE55Cm4v9CfEjZbwODODZemb+NWuPv5d8ocV8Ck0cXHtTwN3vtqpzx1dXOkVLW2NKIzXvx60cgYwoYw7WQTJDn+CgescD8wUDLHVJZbaxtkiWtF1g0BWXWL5DGMmUM3EUjFJW/sHvAZAOEj7tFTJr2RkANQ7UhocUDRpoiWjotjBmddtywwlMyBMff0Ql7MSWl5O+I655WrYvHU8y6bBRcMMc8ST8ELdFbsEDTIFBf54meiVczod3mQonHVpm9fw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UoF9+wvVTSN+C3/jESYwKa8ba4J4KmB3fEVoUAxXEo0=;
- b=X2OAKdNHCceT+OGtMX2pGBsVDcOUi16O613npkoju55zYTMy4jyTR0e1HNbIXcMVvrTbt4M8dmtA+OzW4rYczqK1cxeNufxyg23R5WWahTsZfyylq+MywUtl9iaUOHhsYDgXz2IYl8mjB+gtITCGeVAgjQ/q9zRnGAuwH4rADltiecy5RgF0H1BKGI9FkxDH42udb1Kv1H8P8pQSzV1Rj0cvm/3byWHZlS/S7is19qARZEFnbF0f6pagsvUtG6npLMEhzz6vxathC0EusuMQkjcvTLX+w+nOJkwcfitqc1H0Lm9PjWhel679JqnwWxWpj5URl92AEoS5gGkTtrbKjw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UoF9+wvVTSN+C3/jESYwKa8ba4J4KmB3fEVoUAxXEo0=;
- b=p5nR5SxEDaqh9df9G05PL6ICRGDfAw3GC35O4Na110j07CHNnsuuPRP/Sf77wjcGLbIE+GUCIkJZ0MyOaqAXx3zgc02pwDsN4Gr75pId5CEM/wBHK3uBi403mHCvr6NDQJ30QL4RmnCon3j6Yx4rX+gTCFxE96s7IvuDD3TYLUtlFXF0/cwNnejoxdO+lQZl41A0qDA8P6LZlVRDss2PqaNLT8c2kdT+sL0vG+PidM1sLA/qrqC7xChi6+cI0bC32b797MgYcLVSjiEY2IK4sv52hz7BB+eunwft8145SGF6oWOglJ+A+M0Le0ZM2KUu38x5+w+LrTzi7AROX/O94g==
-Received: from AM6PR03MB5848.eurprd03.prod.outlook.com (2603:10a6:20b:e4::10)
- by VI0PR03MB10807.eurprd03.prod.outlook.com (2603:10a6:800:26a::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.27; Wed, 28 Aug
- 2024 20:12:36 +0000
-Received: from AM6PR03MB5848.eurprd03.prod.outlook.com
- ([fe80::4b97:bbdb:e0ac:6f7]) by AM6PR03MB5848.eurprd03.prod.outlook.com
- ([fe80::4b97:bbdb:e0ac:6f7%4]) with mapi id 15.20.7897.021; Wed, 28 Aug 2024
- 20:12:36 +0000
-Message-ID:
- <AM6PR03MB5848BEDEF27DB0203C094AF299952@AM6PR03MB5848.eurprd03.prod.outlook.com>
-Date: Wed, 28 Aug 2024 21:12:34 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next 1/2] bpf: Relax KF_ACQUIRE kfuncs strict type
- matching constraint on non-zero offset pointers
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- John Fastabend <john.fastabend@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
- Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
- bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <AM6PR03MB584837A72DB98E45AE595A9799812@AM6PR03MB5848.eurprd03.prod.outlook.com>
- <CAADnVQ+wbFj7-s-VH=bx2MVbWJ5ea_2xdzY-mDKss1m146Ux1A@mail.gmail.com>
-Content-Language: en-US
-From: Juntong Deng <juntong.deng@outlook.com>
-In-Reply-To: <CAADnVQ+wbFj7-s-VH=bx2MVbWJ5ea_2xdzY-mDKss1m146Ux1A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TMN: [asHjklo3uRDS4u1wxW/BcJhA/gL435Lr]
-X-ClientProxiedBy: LO4P123CA0355.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:18d::18) To AM6PR03MB5848.eurprd03.prod.outlook.com
- (2603:10a6:20b:e4::10)
-X-Microsoft-Original-Message-ID:
- <565ff073-bb35-4b36-bd6f-936034e794c1@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76FC013775E
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 20:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724876045; cv=none; b=S7Q0Ylh+1x7wE/3PdPTVyQhCCzX5yPFARLtrs/vM1Hpk2PXzm8fgiucCiiugFcR46rybL+PFILxsruFCdF7e2WSC1J5pd2DlMMGpoFAvjEYdfr3VTPTND3L4xw5wFNJ0tZ2b4K62I+fNfHRD7tYbarGFf4W+Et9KA7At/4hvafw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724876045; c=relaxed/simple;
+	bh=Y06yZnkUUBwT+omJd7ueaRipWdu6BJ1uHApBmv8158g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QY0e+0P6q6NtgXcWF03okYNCrtBTqpJxx5s3W0/jpGmrmKVLOV8jNz83m+V3trQBwDdjAcpMNf0/CX871TjtdiiqJeHInHrCcgXAgxKnPuu5R9yevVZSJcwlSRFAexuKkM0xQ3XwZP+oDgBSb0uL7xZIerlchZp5X6mC91nx3zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g2fdSESp; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37496a92188so745425f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 13:14:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724876042; x=1725480842; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hDhRF3a1TWvDvUzGxnSYhDAvIHT22WKK+VnaRoNWpX8=;
+        b=g2fdSESp48E7n+qo5K/9n1cCmtE93w3KEzFlYr0pEYCy/3oRubhcauDhuXvQLgJBfW
+         V38klCDrkxNED3kEugQj/Mh0QiJ3PBoR+DZt0/DwTFC6AU8Lza9OmuujB1rfuAYyi0s2
+         xLOtjqbuEfqpflTH20DTrL71u3oisHwkd2ilJO3GsiEpBMLb9cw7DIsxJPzkEL5TTMsF
+         jqAnkuV3vGdRQD1cfewmlVmVLddKhLTvcjDMoAgLEGAdjAPXNqpcTUAuGzuBMrWbKst2
+         xk/FkelomhcYcmPFfKRlMSktaNbziRaZCZfX7ZnHNYiISBC5zhPdyissRJ8EvXhXaBf/
+         dH4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724876042; x=1725480842;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hDhRF3a1TWvDvUzGxnSYhDAvIHT22WKK+VnaRoNWpX8=;
+        b=oqm9GzPKVh4IiAA8QWmDqXlRR3OFoXU6e1P3om3uog4KtCqNxSPvvN3Go87CPcmjSe
+         Ga7PFGXEvrbxVJWzsGQsCZArFC9VY5muBqKvUi8kV2sLw3/com3Q04GOtG1cLQ3ZUBda
+         Cli2WBVTKXnGImzi95Nj0uJURC2vMZmnhpOPu9l4u5CtAcCqKO9hEp1iwW/911MhZDhE
+         08IlFU6yV6IsXL2eUQu/ovjWkVFEm9ZD00M4N6+DIyOWAocsVs5D8phzvr91sQZmcbuH
+         nOs69IkQBtmgL609OsqYxIMP0ui6HBYHuMY0Bc7JWx+OUSUSHpG4rCdxGJSlEEq1hDiW
+         3IkA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2QtcD7ZZYyagdp/pz1QBtbtqJ/JWEXzGWZVytnB6JX9Swdj/bey44LqF5YzJ25MpsQrN6UxRVv/kbF6Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwnGU4XUWO/Rcs93N3DVKds2CpRNrncu45MlYAOxY/BYyRKrPo
+	xzmDQSRFwLSn5rl9hX0NFCPCeM9ETPYtbvzJd1dA1rVAUVJRXqoJ9o4Wf6vkN3iWoZJ+9p4sXrr
+	4M2+gStmjZSlxBxCvJiTITX6APEc=
+X-Google-Smtp-Source: AGHT+IG2/4LLqNcmPGBSp3apsRIuJxUkG7hn1rGxzpIJ00o3ezT5tylYduiNcb2XIGOnNfejSpwmPdt+N/acB+CmPWM=
+X-Received: by 2002:a5d:6606:0:b0:371:8ed7:49e9 with SMTP id
+ ffacd0b85a97d-3749b548f9fmr431328f8f.26.1724876041552; Wed, 28 Aug 2024
+ 13:14:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM6PR03MB5848:EE_|VI0PR03MB10807:EE_
-X-MS-Office365-Filtering-Correlation-Id: 154ff8b5-5ebe-4a87-9e34-08dcc79dc207
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|5072599009|6090799003|19110799003|8060799006|461199028|15080799006|3412199025|440099028;
-X-Microsoft-Antispam-Message-Info:
-	UG40mX6L2g8yQceuoVQKCGg9KCDhvRaz3T8qOZuzn466lL+N0MfxWfU9Gdf1hL202lpcXNZf3PgcUv1NOKJEXzBKavCzM3LV9FAf88QpHADKF+rIu3Bs0nZU/Lrdmt1WwBysk3RbTLGh+43HI2nNSTvyJS38Mz8bsQ2z3YLtbfEND0agCcDT0CbPepgWdA8HVnR+qB8tnQLMNIWYkfCyTlSiR8wHWCsBxlvxNNl+mVAoNscUCzPApN3li0MXi8zsRg1vwJcXcGBQxYC+dnGqfLHF2VcPgGNSu1I41kn77VR+BOqFUUy9TDRk0geNPGefXd61Zmipa4NQu+/IUMcG4tVKgD8jAcj959+Cwc0m16hNdGsTKcyFxIC/qz1LqVudzXf8o6nDdvfbKmGvmoYjhQhy/vBDyMvMr8sKIWOJ4Zl/djTZCLfm3IWyPruIKmEBSEm/re5n+k6Gi6kceBNDU889iWUIdTqH3OVnHb3KJJ2GP6DXtZr1Bcx6eLebtfCgXzYiIxEmDWDmeqCQeHHmO6m4EIFC2NIAOZsaH4bBCiPUBGp2UduS/hXJulv5CB801vnCj30TpfodgEauwoZUE6i3q6aPzUUwapV44cylpGwZgwcXvNMrI24W8ucQluQ4iOHcrRb5MuWWoqFpOvyiK2LUZXajswlfYbW0utvSEInhCEJZQgpK4XfIRd/+97eRuHTeGg2L6nm2KnhfCIKw/iaCchonTuT7Mn0+02WFZ2YyKNAsn1CuD5bDQvBJ3ThIybK3rLmwT0bhyS3N8JuGWARxYHvs4GHIdcJPOods5WE=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OHo1K0VRV1lTZnZJa3h4TWdRVHMzbXlXQUFLc05FNDlkWldjOHMzRHhEUDR2?=
- =?utf-8?B?WFVCTDFoMEJiOGRpdjRRMy9DVEVJMC9YWEU2MEhONFkxQTVxL3RYZ1FjQ3Yr?=
- =?utf-8?B?Q2NnV2JubVViOTRyaGpCNUdnZXo3bFVUR3JlUVpGYlk2VEIxTVdGUUE5ZXha?=
- =?utf-8?B?RWgxYktuamJvbnFucHhLOEpLekJkN3BHRk0yR3BOMnFZUGpKczFSWlJhUlE2?=
- =?utf-8?B?WE9RQW5EbmtDVXUyQjVYQUsyVktVamErVEZpdWZGS1NvWXU2TG4raVNZTkpJ?=
- =?utf-8?B?UTFyTlUyRzdDcE0vb29LQ3hqWWtLWlRLaUs2TjdQU0N3dk16eVJuektDKzkx?=
- =?utf-8?B?Ly9XVTBrNmRDL2gzd3BjK0VYb3Z3OFNpV3RJaG9yT3Nsd1BGbTNTMVNkY0lw?=
- =?utf-8?B?Q3NBUDcwWHVJS2RuaVZhWU9Ma1NPcmlDTXhVOEFHTDJtY1F4ZG1QY2VneXpS?=
- =?utf-8?B?TnpZYkd3aUhCQzE0VEU4Slc4U2RESGkzZDBIQWJ6V0NPQVE3SzJSOWpKUHR5?=
- =?utf-8?B?UnBFeWsvL1ZkSllGNDUwN0VYczNWTjl6M1FUSXVFL3h1VEEzTURrMnNWbEo3?=
- =?utf-8?B?Mmk1MWJFaXNndEExbWVZNStxTGNPbFFZZU5XeFZvWnMwNjlIYjYvQjF6UElm?=
- =?utf-8?B?Mi9pT0FZNFpyK3hWZDdKcER3TGZZREVPSGF2WnJvMktCTUNXenRTUVlpekwz?=
- =?utf-8?B?aVk1Z05MQ2UzT2NVaWxCSzR6ejF1YzNtU1ZMR3FkQjYrZVpFWnJwKzQrc2pK?=
- =?utf-8?B?R0c5UEl2L1dFTjRaMFhmK0JnaXZzbWFWTmdLY1JZdHhqcloxR0k4eUxUQkN4?=
- =?utf-8?B?c2xpaGtLZXIyQ2o1NGFuUzFjTVZjcVh0V2JrTUJwZkN3ZHRTMjd6UGlsTlVP?=
- =?utf-8?B?WStBYWFVb2pYOUx2aEJxbGQ1anN5THUvY0hqbDYxV0lsOXBsTnBydjdMT2F1?=
- =?utf-8?B?emFiNU9GTnhRMDNQbFRxZVhCM214dWQxbGJyV3A3eXF1eEZEZHphQWJRejNq?=
- =?utf-8?B?UzRPVUxmS0tJaVo5bnhKY1lXckcrV1o2NFlLaEUrbmRVRHY4aTlQZEhxRXdy?=
- =?utf-8?B?bHg4bTdDSnJTaFQwWkYwZ2dYWE1ZQlB6MEI5NnViV2dTNnorM3FTcHQwL0R1?=
- =?utf-8?B?RlQ2TWg5MVZ0QzJ6RGFEMXE4eTN5OTZBQ1JmWVZXZklqalZpaHF6ZWIwMk9C?=
- =?utf-8?B?VWJ5aHVtRjQwbS9xOFpBUjVYOXAwNk5EV2N2em5mYm9Eam1YczVKdFNkamN0?=
- =?utf-8?B?L1dCZ2hrdU95d0xhcnVScnJzNXNBT3E0YXpKT201ZGhTZVZXbEljVnpPWVdJ?=
- =?utf-8?B?ZkxhcWxORVRwUStMRGloUERaemR4TUl1Q3dWYVI1ZGhOV0EyVm5OWFVRSWdY?=
- =?utf-8?B?M1ZNR3VTKzM5NTVjN3RyNjkrcWxHL3paWnNTUGlBaktEMHR6V2J5blBVcWhK?=
- =?utf-8?B?NDVhcE0vSENTZGZSNTRjRTFJdXFVd2k5MnlLNHROV0ZibTNrMTEzUFB0OFVF?=
- =?utf-8?B?YjNHT1hCREFPc2dtSXdMcDJVc0ovbGlCWENUVlhZcGIrSURXenhZWjBHS0hI?=
- =?utf-8?B?ZzlROWFlTVZoVlZkSkdvd25xanVVN2gvbzNRb21sajl1cUhOa0pGUUxKZGZF?=
- =?utf-8?B?VWNnL1Jka1I1U2twaGwzdU12MmN1R3A2Q2hmZkpzbGdHQ0JoTm9kbWtpTkNa?=
- =?utf-8?Q?/8UAOOH0aVr8/hH4Z4eL?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 154ff8b5-5ebe-4a87-9e34-08dcc79dc207
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5848.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 20:12:36.8144
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR03MB10807
+References: <20240828160704.1425767-1-mjguzik@gmail.com> <20240828124929.db332259c2afad1e9e545b1f@linux-foundation.org>
+In-Reply-To: <20240828124929.db332259c2afad1e9e545b1f@linux-foundation.org>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 28 Aug 2024 22:13:49 +0200
+Message-ID: <CAGudoHE73o5oK77iOFKqH4D4Cz6t9TAu4882+_F9vHH7muNH-A@mail.gmail.com>
+Subject: Re: [PATCH] mm/hugetlb: sort out global lock annotations
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: muchun.song@linux.dev, dave@stgolabs.net, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/21/24 19:02, Alexei Starovoitov wrote:
-> On Fri, Aug 16, 2024 at 6:24 AM Juntong Deng <juntong.deng@outlook.com> wrote:
->>
->> Currently the non-zero offset pointer constraint for KF_TRUSTED_ARGS
->> kfuncs has been relaxed in commit 605c96997d89 ("bpf: relax zero fixed
->> offset constraint on KF_TRUSTED_ARGS/KF_RCU"), which means that non-zero
->> offset does not affect whether a pointer is valid.
->>
->> But currently we still cannot pass non-zero offset pointers to
->> KF_ACQUIRE kfuncs. This is because KF_ACQUIRE kfuncs requires strict
->> type matching, but non-zero offset does not change the type of pointer,
->> which causes the ebpf program to be rejected by the verifier.
->>
->> This can cause some problems, one example is that bpf_skb_peek_tail
->> kfunc [0] cannot be implemented by just passing in non-zero offset
->> pointers.
->>
->> This patch makes KF_ACQUIRE kfuncs not require strict type matching
->> on non-zero offset pointers.
->>
->> [0]: https://lore.kernel.org/bpf/AM6PR03MB5848CA39CB4B7A4397D380B099B12@AM6PR03MB5848.eurprd03.prod.outlook.com/
->>
->> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
->> ---
->>   kernel/bpf/verifier.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
->> index ebec74c28ae3..3a14002d24a0 100644
->> --- a/kernel/bpf/verifier.c
->> +++ b/kernel/bpf/verifier.c
->> @@ -11484,7 +11484,7 @@ static int process_kf_arg_ptr_to_btf_id(struct bpf_verifier_env *env,
->>           * btf_struct_ids_match() to walk the struct at the 0th offset, and
->>           * resolve types.
->>           */
->> -       if (is_kfunc_acquire(meta) ||
->> +       if ((is_kfunc_acquire(meta) && !reg->off) ||
-> 
-> Agree that relaxing is fine and calling acquire kfunc like:
->    bpf_kfunc_nested_acquire_test(&sk->sk_write_queue);
-> 
-> should be allowed,
-> but above check is strange, since
-> if offsetof(&sk_write_queue) == 0
-> it will disallow calling a kfunc.
-> I mean if the field is the first in the outer struct this
-> condition will force strict type match which will fail, right?
-> 
-> So should we remove the above is_kfunc_acquire() check instead?
-> 
-> pw-bot: cr
+On Wed, Aug 28, 2024 at 9:49=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Wed, 28 Aug 2024 18:07:04 +0200 Mateusz Guzik <mjguzik@gmail.com> wrot=
+e:
+>
+> > The mutex array pointer shares a cacheline with the spinlock:
+> > ffffffff84187480 B hugetlb_fault_mutex_table
+> > ffffffff84187488 B hugetlb_lock
+>
+> Fair enough.  My x86_64 defconfig now has
+>
+> num_fault_mutexes:
+>         .zero   4
+>         .globl  hugetlb_lock
+>         .section        .data..cacheline_aligned,"aw"
+>         .align 64
+>         .type   hugetlb_lock, @object
+>         .size   hugetlb_lock, 4
+> hugetlb_lock:
+>         .zero   4
+>         .section        .init.data
+>         .align 32
+>         .type   default_hugepages_in_node, @object
+>         .size   default_hugepages_in_node, 256
+> default_hugepages_in_node:
+>         .zero   256
+>         .type   parsed_default_hugepagesz, @object
+>         .size   parsed_default_hugepagesz, 1
+>
+> which looks good.
+>
+> > --- a/mm/hugetlb.c
+> > +++ b/mm/hugetlb.c
+> > @@ -72,14 +72,14 @@ static unsigned int default_hugepages_in_node[MAX_N=
+UMNODES] __initdata;
+> >   * Protects updates to hugepage_freelists, hugepage_activelist, nr_hug=
+e_pages,
+> >   * free_huge_pages, and surplus_huge_pages.
+> >   */
+> > -DEFINE_SPINLOCK(hugetlb_lock);
+> > +__cacheline_aligned_in_smp DEFINE_SPINLOCK(hugetlb_lock);
+> >
+> >  /*
+> >   * Serializes faults on the same logical page.  This is used to
+> >   * prevent spurious OOMs when the hugepage pool is fully utilized.
+> >   */
+> > -static int num_fault_mutexes;
+> > -struct mutex *hugetlb_fault_mutex_table ____cacheline_aligned_in_smp;
+> > +static __ro_after_init int num_fault_mutexes;
+> > +__ro_after_init struct mutex *hugetlb_fault_mutex_table;
+>
+> It's conventional (within MM, at least) to put the section thing at the
+> end of the definition, so tweak:
+>
+> --- a/mm/hugetlb.c~mm-hugetlb-sort-out-global-lock-annotations-fix
+> +++ a/mm/hugetlb.c
+> @@ -72,14 +72,14 @@ static unsigned int default_hugepages_in
+>   * Protects updates to hugepage_freelists, hugepage_activelist, nr_huge_=
+pages,
+>   * free_huge_pages, and surplus_huge_pages.
+>   */
+> -__cacheline_aligned_in_smp DEFINE_SPINLOCK(hugetlb_lock);
+> +DEFINE_SPINLOCK(hugetlb_lock) __cacheline_aligned_in_smp;
+>
 
-I agree that if strict type matching is not required for both zero
-offset and non-zero pointers, then we can remove the strict type
-matching for KF_ACQUIRE kfuncs.
+I tried things in this order and this does not compile for me:
+In file included from ./arch/x86/include/asm/current.h:10,
+                 from ./arch/x86/include/asm/preempt.h:7,
+                 from ./include/linux/preempt.h:79,
+                 from ./include/linux/spinlock.h:56,
+                 from ./include/linux/mmzone.h:8,
+                 from ./include/linux/gfp.h:7,
+                 from ./include/linux/mm.h:7,
+                 from mm/hugetlb.c:8:
+./include/linux/cache.h:80:3: error: expected =E2=80=98,=E2=80=99 or =E2=80=
+=98;=E2=80=99 before =E2=80=98__attribute__=E2=80=99
+   80 |   __attribute__((__aligned__(SMP_CACHE_BYTES),                  \
+      |   ^~~~~~~~~~~~~
+./include/linux/cache.h:86:36: note: in expansion of macro =E2=80=98__cache=
+line_aligned=E2=80=99
+   86 | #define __cacheline_aligned_in_smp __cacheline_aligned
+      |                                    ^~~~~~~~~~~~~~~~~~~
+mm/hugetlb.c:75:31: note: in expansion of macro =E2=80=98__cacheline_aligne=
+d_in_smp=E2=80=99
+   75 | DEFINE_SPINLOCK(hugetlb_lock) __cacheline_aligned_in_smp;
+      |                               ^~~~~~~~~~~~~~~~~~~~~~~~~~
 
-I sent the version 2 patch set:
-https://lore.kernel.org/bpf/AM6PR03MB5848FD2BD89BF0B6B5AA3B4C99952@AM6PR03MB5848.eurprd03.prod.outlook.com/T/#t
+I'm at next-20240828 with gcc 13.2.0
+
+>  /*
+>   * Serializes faults on the same logical page.  This is used to
+>   * prevent spurious OOMs when the hugepage pool is fully utilized.
+>   */
+> -static __ro_after_init int num_fault_mutexes;
+> -__ro_after_init struct mutex *hugetlb_fault_mutex_table;
+> +static int num_fault_mutexes __ro_after_init;
+> +struct mutex *hugetlb_fault_mutex_table __ro_after_init;
+>
+>  /* Forward declaration */
+>  static int hugetlb_acct_memory(struct hstate *h, long delta);
+> _
+>
+>
+
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
