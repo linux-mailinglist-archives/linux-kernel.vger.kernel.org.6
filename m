@@ -1,108 +1,118 @@
-Return-Path: <linux-kernel+bounces-304216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA4BC961BFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:15:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC390961C06
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 750D91F2477C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 02:15:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 624F71F247F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 02:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5811669D2B;
-	Wed, 28 Aug 2024 02:15:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125E149644;
+	Wed, 28 Aug 2024 02:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qErgpU0R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YEsR8AMW"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571B411CBD;
-	Wed, 28 Aug 2024 02:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0458042065;
+	Wed, 28 Aug 2024 02:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724811323; cv=none; b=dHLsB8/Q4Qy+xtSvbOTrbtn4wRAT/lh6OYoxANo6DyFscgDeyfOXq2ktHCruLam/1VI5fTLYuSAATCKxA3sJBWG8eOzsTUw+JUnLxPVyq36A5PKNkueAJ39di4AzLaUB/NygI34nWZ3JK3cvklx5hEaxgI6h2KC2a0iXequnFQI=
+	t=1724811838; cv=none; b=gg0/jnjPaauX+EnIEdMTYjUNkSlDlfpVZ2QF424AAszrtNcSXFULR61GfHKAwJA57pc2D/jKtLSzJR4LPLvDsFs2NuVoiXz5NwINflWjzMRlhe1uJhSrJtCP6KvXb9XeNwv3QWtT0V1ymnZROw5svayUYAjHLoYqzDvcanNvets=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724811323; c=relaxed/simple;
-	bh=BjF/SI+Clg9VwmD1YDiNY5kSZ6b/7YEV1Coee82xshg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K221If8Tjue/+pKxgZX5jI50OOVysYSM94VdqON/2rGAQ4LUlacB0BxLx5nIJ9UuxHeGrB05ERM65Nz+7WC3bcvWegla/5wcM78Q4pqYNuLo04kWh4E/df4VAxixtYG5CyARpvbCXp0B6nsTZC6KGjMsmYXdwIw7lGsiPklB3y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qErgpU0R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91CF9C4AF60;
-	Wed, 28 Aug 2024 02:15:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724811322;
-	bh=BjF/SI+Clg9VwmD1YDiNY5kSZ6b/7YEV1Coee82xshg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qErgpU0RhYH5WDJJXkws/HENWDPAZrNV4DIAGhLruIvnrdv3ETwsMJaqlJwbsGqBG
-	 sOXE0rshTwA67CfrMAyRLqfniN21SQvvoGipcCdy5EFJuKE8jvV4G2PfqPNFgiS8It
-	 4dPunWamEUGMRhzS5KC8Ts7cFkyW+7TDVf2RUUn9JS/FAj+cUaBIPIwdP72q7mflEV
-	 HS/9jaDHMHisZPyMz7+Cl+J5EU7axirOz22wZxDO+Neit95DQIA2Zn57ERIMVACRxP
-	 VyV6iPqNF2tEA75Czk7faOlTESzI0kcVa7iIp8ySMs9wv6/gdVM6qZQWlKav9fit6N
-	 KOxTNe3Rdac3Q==
-Date: Tue, 27 Aug 2024 19:15:19 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
- <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, Ivan
- Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>,
- Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
- <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, Herbert
- Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, Willem
- de Bruijn <willemdebruijn.kernel@gmail.com>, "=?UTF-8?B?QmrDtnJuIFTDtnBl?=
- =?UTF-8?B?bA==?=" <bjorn@kernel.org>, Magnus Karlsson
- <magnus.karlsson@intel.com>, Maciej Fijalkowski
- <maciej.fijalkowski@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>,
- Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>,
- Sumit Semwal <sumit.semwal@linaro.org>, "Christian =?UTF-8?B?S8O2bmln?="
- <christian.koenig@amd.com>, Pavel Begunkov <asml.silence@gmail.com>, David
- Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin
- <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, Harshitha
- Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
- Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi
- <pkaligineedi@google.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Christoph
- Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>,
- Taehee Yoo <ap420073@gmail.com>, Willem de Bruijn <willemb@google.com>,
- Kaiyuan Zhang <kaiyuanz@google.com>
-Subject: Re: [PATCH net-next v22 04/13] netdev: netdevice devmem allocator
-Message-ID: <20240827191519.5464a0b2@kernel.org>
-In-Reply-To: <20240825041511.324452-5-almasrymina@google.com>
-References: <20240825041511.324452-1-almasrymina@google.com>
-	<20240825041511.324452-5-almasrymina@google.com>
+	s=arc-20240116; t=1724811838; c=relaxed/simple;
+	bh=Zl6yHm2+HHCe7WS/Tp7bzZaMUL85IpypD5ayfuZnQJc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NynA1wlJjNvHLlqFi7HQE2zMizvK91/ILqfnWKyBkhxDJmbo6+8tlMi0eQiNuvrZPft4NbcM53kitZG7dSoTzeysn6L9mqjArF6SzYhrGqpBNHTazSYL2xG/Ec9fnujoUcp5mQ1R43TAvlPxo40SVOZJWuAnk940/4JlEvr7eF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YEsR8AMW; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7cd830e0711so116660a12.0;
+        Tue, 27 Aug 2024 19:23:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724811836; x=1725416636; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=N0ZnxCLrxpzwU3Bgh8etFVn26ZvWIRTemXiSdaUvU20=;
+        b=YEsR8AMWp2QsKvDBRSXaugKWSFVq8oHqmqpIAvVq6dDFrdDl6W8YAYTUC3gKxbSI1r
+         gaYLYQRnPnaUXRFleZkBaCrujwwCkcPiLFajpWuBMwbVMTgEIkqjmRbPc3PmI+Spm+et
+         g0SBplTLPRmVccuuMVepR4Ewj0GB2QHRTFHOHv0mlvfaoSt5oUhKA2Jj4Mc7K4mvRZ00
+         hIaTNNbF2J4gY2ZfRlUVoWR7TZD2rAMNokz7q9DKrI7s37afgesd75uVGbZruZLF83Ck
+         78IHP6gufxC7qLfytSiQ1pfcLj9/OnP00NN+JbKEgvT2+eIqQQW7hYA9ywXrtkuHs1Sr
+         Cetg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724811836; x=1725416636;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N0ZnxCLrxpzwU3Bgh8etFVn26ZvWIRTemXiSdaUvU20=;
+        b=iXtSiRx2pX+X2vGHUQn6yEKqkEzk8MaS1XkyXSMX4CUGavHPFASRbYiHj7JnK8tsFu
+         jhoGnTpcptVjfKW9N5Gigj0Gr8JbPeVdTZjgo3ZjG2R2ymdxRQYhcwYEnMmFtaunRoLF
+         OAsYVH/ROkfqgGt+aZcWtXdLfT/okT7SZa4SBWFWRSSJBXksMStJsNxNlKAtiELqBbWo
+         NDXvUoAMCTkORGfN/WJ+prmjhznaizA03fwiP4bsVx2PRtdB381rVMG7NBzm1aPM/t7G
+         05uwiYL/xLPSKCDeaqU/4L2pFPAOy2ICyjYc4XUkYbN6zaC8N5q2xp9evSV4vkVupA+D
+         1rfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAYh3gLo0qQdejxQp7yamXSlFdHyl62H/PBORx5Ac2tqNH7rpDZPmBQTObSdVo3DsVwb1ZDVApFyHCQMo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwU/xDGJ5SXFJdw9H74nPdZdDmMQv77mq3Tp1bPVdQpZ2/KtYyP
+	oRo/eBHwtiWQ95qLZjguDDxKlP2Mo9545liW9iCv/bb6rgRQApmv
+X-Google-Smtp-Source: AGHT+IHDPe1Xijfq1CRm2/M7KJ+STRjBhAugf5EZShVEfiqn9X6dMBPOtQ6lPpgdVRhcDn7NMCP78Q==
+X-Received: by 2002:a17:90b:d83:b0:2d4:91c:8882 with SMTP id 98e67ed59e1d1-2d843c839efmr1086835a91.11.1724811835922;
+        Tue, 27 Aug 2024 19:23:55 -0700 (PDT)
+Received: from localhost.localdomain ([205.204.117.122])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8445db943sm270469a91.9.2024.08.27.19.23.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 19:23:55 -0700 (PDT)
+From: Wardenjohn <zhangwarden@gmail.com>
+To: jpoimboe@kernel.org,
+	mbenes@suse.cz,
+	jikos@kernel.org,
+	pmladek@suse.com,
+	joe.lawrence@redhat.com
+Cc: live-patching@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/2] livepatch: Add using attribute to klp_func for using function
+Date: Wed, 28 Aug 2024 10:23:48 +0800
+Message-Id: <20240828022350.71456-1-zhangwarden@gmail.com>
+X-Mailer: git-send-email 2.37.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Sun, 25 Aug 2024 04:15:02 +0000 Mina Almasry wrote:
-> +void net_devmem_free_dmabuf(struct net_iov *niov)
-> +{
-> +	struct net_devmem_dmabuf_binding *binding = net_iov_binding(niov);
-> +	unsigned long dma_addr = net_devmem_get_dma_addr(niov);
-> +
-> +	if (gen_pool_has_addr(binding->chunk_pool, dma_addr, PAGE_SIZE))
-> +		gen_pool_free(binding->chunk_pool, dma_addr, PAGE_SIZE);
+This patch introduce one sysfs attribute of "using" to klp_func.
+For example, if there are serval patches  make changes to function
+"meminfo_proc_show", the attribute "enabled" of all the patch is 1.
+With this attribute, we can easily know the version enabling belongs
+to which patch.
 
-Is the check necessary for correctness? Should it perhaps be a WARN
-under DEBUG_NET instead? The rest LGTM:
+Changes v1 => v2:
+1. reset using type from bool to int
+2. the value of "using" contains 3 types, 0(not used),
+ 1(using), -1(unknown). (As suggested by Petr).
+3. add the process of transition state (-1 state). (suggested by Petr and Miroslav)
 
-Reviewed-by: Jakub Kicinski <kuba@kernel.org>
+v1: https://lore.kernel.org/live-patching/1A0E6D0A-4245-4F44-8667-CDD86A925347@gmail.com/T/#t
+
+Changes v2 => v3:
+1. Move klp_ops defintion into linux/livepatch.h
+2. Move klp_ops pointer into klp_func (Suggested by Petr)
+3. Rewrite function of klp_find_ops
+4. Adjust the newer logic of "using" feature
+
+In klp_complete_transition, if patch state is KLP_TRANSITION_PATCHED, we can get the 
+function's next node. If the next node is itself, that means there is only one function.
+If next node is not equal to the current function node, the next node "using" state
+can be changed into "0".
+
+Changes v3 => v4:
+
+Improve the commit log of patch1. Add the reason of klp_find_ops change into commit log.
+(Suggested by Jiri Kosina)
+
+BTW, I remember to use ./script/checkpatch.pl to check my patches..Hah.. :)
 
