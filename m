@@ -1,124 +1,138 @@
-Return-Path: <linux-kernel+bounces-304696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4682D9623A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:39:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E25D1962380
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:34:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79ACE1C23F2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:39:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0A44281FB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D3116848F;
-	Wed, 28 Aug 2024 09:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84486161339;
+	Wed, 28 Aug 2024 09:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="afqhHMk3"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AvGRg+B8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76854165F14;
-	Wed, 28 Aug 2024 09:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B569015A849;
+	Wed, 28 Aug 2024 09:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724837865; cv=none; b=ICiGZacL5Lvvd9oJra+xRnEbd3pw2egho97OEgapCY0+zZ1u2LKCZwwXfiUhTUleVn8iGuYszm8yo8h4bzuDpBWVjxzV8gEG7H12L/p7ttYbEadqUyGXRn8pVDw7ZZvZL/gIxnyUjX82EQan0PSy3pdf/jcVLNj821b+I6pmd6U=
+	t=1724837664; cv=none; b=i53vh3e2VwYYxc7lDmA26iXmYGAhq9G+fOzPPxIGWKNjCN/tluIT3Fpl5LrC9yK+nIsLfPjthuFBwp+OOqveG/emtUR724Dq/fHMWcGUAUfxI74ALOdXHPphbHHqsHgheYVW7cGye0WC6Wo2azVJYA+2wiVI2JQjD9SzWYBF5uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724837865; c=relaxed/simple;
-	bh=F2X5KuZYLbBhGu5uDfZz+kDC7m3l7XMuLL+vVDblwZc=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=nns1dXtw2nmdYiX3tubbeQmPDjttm1lnM8n1KoFMC1tRapzlXdrOQYXwUVCe21/VLoiITVPM0F5AUmqeIC6/MA2LpUZFKAyvg5+9OjUUJAz3P4yWm/3HAmRdNuB8tXikY27isbPHPwKN51EHAj9Qqf/0KjUc2em6p6YXgzddy6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=afqhHMk3; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7142a30e3bdso319597b3a.0;
-        Wed, 28 Aug 2024 02:37:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724837863; x=1725442663; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=k1veELgeAvAn9WVHUaUf89+0IrISdVNLie35DWYESu8=;
-        b=afqhHMk3MrIQWfg/fX86AOSQ6orOZlz47E+Jebp3ad1cC4520/gOhMwX0cNjTvgcJ7
-         6DaqfRtFw4DvzdhsI5muXCQfCab0h4ww6y9dbvrGkqtSAJf39WSjE1vK7BBNQIhboKCD
-         6tUtsHYo5amRqcKwVxxpmxaHo9lLnK00yE3goytqzSmQYUh/WjsyBHpO5X0t900QS48a
-         42EB2fSnDqSkGbetqRPcIMCVQlGFbULUE8vTTJzF8DntUhkT6SXntFqDh87k8+wOvR0V
-         MCRgFl8KJV15YEBjzTxRiHvNWAm/rsx2c293p6gJ5mMVyZtVXs8EnUR8Jna/NOQBlrj2
-         EFHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724837863; x=1725442663;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k1veELgeAvAn9WVHUaUf89+0IrISdVNLie35DWYESu8=;
-        b=Bx3xYoCU6onrVnSRBhbcFJDN8YBWiLGEodFdpOW/4/u6UpEeOlMrDFp9kC7uRFm2xz
-         exHJ8vxwe0ATfhsu9q0UfFiRRDoU+YQnZJMUidIItfN7Bs97R1NkDO/GBZmk+0Q4wlRT
-         kU1Irsf2NwxzjJKcQTus+Obc91D+Qsix+Nv0Ye8DUnyrMBE7IVRpHns3XS7e84RBxH45
-         yNuVGVjhLIH1wQ6yztEr/cmcx+1vHyZX9ZQniZX4LqBYEU3Xp/LuU7f0XL4s+897u/fr
-         SND2ctBCgB7CD5EIS1bYrdv7FkI64vcDdzBj1YTLThSXZMZ2wpLF0Pj8fzTOGalIp2KU
-         b2UA==
-X-Forwarded-Encrypted: i=1; AJvYcCWqE2Yv8VMUAKRE/Kokt4nCJUZHHoLvcxZ57fKerzNswDHZPO3ppUgwxCAQhbHz0S848pCS5GPZ0UES@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKpSk4RIox2qFyH++vzQl7WFcDGYAZAZMgbow+AraZ/wEOwHFw
-	pl9+IG0bDoZ2fVm4Q8lcylW8SHE7+bF0unQoQG7C9XMPohzZKn2KoXHi6w==
-X-Google-Smtp-Source: AGHT+IHCtiXlFwdSXB2FP2vizuSLGSIjecIK8rSdI8gxkYHRYnVIcWKQzVLl3LsSe1puutEtxBmw0A==
-X-Received: by 2002:a17:903:234b:b0:1fd:6033:f94e with SMTP id d9443c01a7336-204f9c4bed6mr25824735ad.27.1724837862573;
-        Wed, 28 Aug 2024 02:37:42 -0700 (PDT)
-Received: from dw-tp ([49.205.218.89])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038557ea28sm95321595ad.96.2024.08.28.02.37.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 02:37:41 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
-Cc: linux-kernel@vger.kernel.org, Kemeng Shi <shikemeng@huaweicloud.com>, syzbot+1ad8bac5af24d01e2cbd@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2 1/2] ext4: Check stripe size compatibility on remount as well
-In-Reply-To: <f9042a87bfe883a3552c8fc561b2aa6f18de4f12.1724145714.git.ojaswin@linux.ibm.com>
-Date: Wed, 28 Aug 2024 15:03:39 +0530
-Message-ID: <87v7zlq9e4.fsf@gmail.com>
-References: <f9042a87bfe883a3552c8fc561b2aa6f18de4f12.1724145714.git.ojaswin@linux.ibm.com>
+	s=arc-20240116; t=1724837664; c=relaxed/simple;
+	bh=8lrQ6GEKAklQCfmfijIxfmS3TXDQPBgAjAOAF09cgKQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ToWRUbPbsf+PgH5YD+n+5inWGC72DmrMDRUyhyfnxUAB+8OOgY7tY9nRbM5oBkdcWRlK2oAIHcsEX5A3n9Gm0+kM5AL4uJFa4+FDMam2ZKss1xHJxxyxEWGO60wS4SV5XT8JTVuTS+pgJi7YgtDwwnRzr35XOifNIUzGaiEeTus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AvGRg+B8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED233C98ECE;
+	Wed, 28 Aug 2024 09:34:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724837664;
+	bh=8lrQ6GEKAklQCfmfijIxfmS3TXDQPBgAjAOAF09cgKQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AvGRg+B8/fz/okAv0Qrd2QCRgPy83/Y3wAs5qyQGEFn8O0BE4/n9UE0sDXjYGmN0q
+	 xqOX7HjAvHl0QzIEn6EAXbrB2ROQhJAmyPAyvpIofNzA5RDdT7QoM7V+WVA3DMliMg
+	 H+MvHpLBadHpunMcOjj2a1stkbF3p5kOCjXK1X4Tbh8PEdcfpymEb+Toeo5yMiJBTg
+	 7ZwRxVrgWeYqwAvukVa2H9kSbTI9xc3pRibsWzvv1rtiURiNhk/KCEIRBEkcXScFzx
+	 3KsVWVHxx/O1D30lw2b0xNjLPtYsCSszSAZrCJ6J1zi8RSvuVaYdUDndYM/jZa95eb
+	 Ja23Bf7iWpfHw==
+Message-ID: <90c98fee-770c-4b83-9e05-6f04866094c2@kernel.org>
+Date: Wed, 28 Aug 2024 11:34:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] arm64: dts: qcom: add base QCS615 RIDE dts
+To: Lijuan Gao <quic_lijuang@quicinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, kernel@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240828-add_initial_support_for_qcs615-v1-0-5599869ea10f@quicinc.com>
+ <20240828-add_initial_support_for_qcs615-v1-6-5599869ea10f@quicinc.com>
+ <22qkvfravm6sxiq3xfavahg2u6b2pwlyzqbqvd55zym5zef3gi@m4bsqkdvggty>
+ <17d0017e-b55d-4b32-9fd3-1a1a84e5ebf9@quicinc.com>
+ <0ec92d59-0648-40ed-a522-307152b5c37d@kernel.org>
+ <148451f2-6b1b-4616-b703-fd52e7afa2be@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <148451f2-6b1b-4616-b703-fd52e7afa2be@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
+On 28/08/2024 11:31, Lijuan Gao wrote:
+>>>>> +/ {
+>>>>> +	model = "Qualcomm Technologies, Inc. QCS615 Ride";
+>>>>> +	compatible = "qcom,qcs615-ride", "qcom,qcs615";
+>>>>> +
+>>>>> +	chosen {
+>>>>> +		bootargs = "console=hvc0";
+>>>>
+>>>> Noooo, last time I agreed on this, you told me later it is different.
+>>>>
+>>> In the early stages, enabling HVC is to more easily verify clock and
+>>> PMIC related functions, as it’s difficult to debug without the console
+>>> log. After the clock and PMIC are ready, we will enable the UART console.
+>>
+>> Working serial is supposed to be part of the early submission.
+>>
+> Okay, I will remove it in the next patch.
 
-> We disable stripe size in __ext4_fill_super if it is not a multiple of
-> the cluster ratio however this check is missed when trying to remount.
-> This can leave us with cases where stripe < cluster_ratio after
-> remount:set making EXT4_B2C(sbi->s_stripe) become 0 that can cause some
-> unforeseen bugs like divide by 0.
->
-> Fix that by adding the check in remount path as well.
->
-> Reported-by: syzbot+1ad8bac5af24d01e2cbd@syzkaller.appspotmail.com
-> Tested-by: syzbot+1ad8bac5af24d01e2cbd@syzkaller.appspotmail.com
-> Reviewed-by: Kemeng Shi <shikemeng@huaweicloud.com>
-> Fixes: c3defd99d58c ("ext4: treat stripe in block unit")
-> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> ---
->  fs/ext4/super.c | 29 ++++++++++++++++++++++-------
->  1 file changed, 22 insertions(+), 7 deletions(-)
+Can you post next version with proper serial device?
 
-Minor nits below, but otherwise looks good to me.
+Best regards,
+Krzysztof
 
-Please feel free to add - 
-Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-
->
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index e72145c4ae5a..9d495d78d262 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -5165,6 +5165,18 @@ static int ext4_block_group_meta_init(struct super_block *sb, int silent)
->  	return 0;
->  }
->  
-> +/*
-> + * It's hard to get stripe aligned blocks if stripe is not aligned with
-> + * cluster, just disable stripe and alert user to simpfy code and avoid
-
-s/simpfy/simplify
-
-> + * stripe aligned allocation which will rarely successes.
-
-s/successes/succeed
-
--ritesh
 
