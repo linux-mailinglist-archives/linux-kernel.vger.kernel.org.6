@@ -1,367 +1,169 @@
-Return-Path: <linux-kernel+bounces-305824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 740789634E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:38:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C18019634E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B747286889
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:38:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 321D2B2587D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669791AC446;
-	Wed, 28 Aug 2024 22:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1B31AD410;
+	Wed, 28 Aug 2024 22:39:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="j/79URID"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nj/KVSpq"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC3C1AD410
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F69167D97;
+	Wed, 28 Aug 2024 22:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724884695; cv=none; b=uxnflJodhu2Pg+eS6RWXNBbus4XkCmjrFQmjyWoxmatCdaZUPNSq3bzUqrE/A4ESEQJkP8YcGY0ySxfS7L67o+LFxHjcjKha9zI5z9vWUkWqVjgzx6gPuV9tXX77gPwaDt0fiPLCLrOihCPSsT5j+tWssAcqukek3W8Uv2uPsOM=
+	t=1724884776; cv=none; b=Xip3U6Jfh92gzQubCUtV18H6MeMORaJqn0q8SgcHSmfYHSA0G/gxqB4oIHJx9zcb/aHWXQPLftMMROsf6Lyh0Z1OQPxuxgMCVvLu38koqAmsZ8fDVM63UVAARuoDYuj+bPkTp+iMocWTrzSCVBZaVmyX5Edx8o1P6W9r46ugcsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724884695; c=relaxed/simple;
-	bh=dpMiiRQPfrCqMrlXD/nyO5Ac0v7IUV6zIcJ4K0+QCrg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=pWjXj+JVkJjqb8qWsMtFqRgZPzR6wwbMV0u6roOnDTBbGiliOrsQHqId8YoaG0BM4V+KMXB49L08aVvq+vW1IXCqn2toHcDXX/0AV2ZDFHhdd9IqAroeVzUeanIJkxBTVoPienlBt7H4YGTIP3q5cKLuncHR2nZTkLuT6boeeEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=j/79URID; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240828223804euoutp026108d8f2903c8cc9583f77f5f557e99b~wBXtuXRBI0536005360euoutp02U
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:38:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240828223804euoutp026108d8f2903c8cc9583f77f5f557e99b~wBXtuXRBI0536005360euoutp02U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1724884685;
-	bh=quZhyF15BS1F6otp4GlFpx8EM4QZszKavPMgXP3exzI=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=j/79URIDm+CcxZw0JZTGqLk72svoNXXWugkzS6U5pNIoJ2aYpRnbWVKeDug/caSUn
-	 ZBgpZ39H8+nmiMIomSSo4rl7qaLLz49cRku6BggWOyQdoXoLngx7tEsgHZN5MqHQSy
-	 dsngufa1ZrLkqwlI+uh4zWGbWo7+irW/PIk7v31E=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240828223804eucas1p21486c9a2ff9e9053fee9e71176ff95b9~wBXs3ZsgY2753527535eucas1p27;
-	Wed, 28 Aug 2024 22:38:04 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id 29.AD.09875.BC6AFC66; Wed, 28
-	Aug 2024 23:38:03 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240828223802eucas1p16755f4531ed0611dc4871649746ea774~wBXrqKC332245922459eucas1p1U;
-	Wed, 28 Aug 2024 22:38:02 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240828223802eusmtrp2b6d5bb1b0682487e7dbd5fd8c1dc028c~wBXrn4PFO0073800738eusmtrp2z;
-	Wed, 28 Aug 2024 22:38:02 +0000 (GMT)
-X-AuditID: cbfec7f4-131ff70000002693-2d-66cfa6cb5960
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 54.A6.08810.AC6AFC66; Wed, 28
-	Aug 2024 23:38:02 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240828223800eusmtip125f2c80c005be46f50e20c585e661be1~wBXpy3Ip61893118931eusmtip1Z;
-	Wed, 28 Aug 2024 22:38:00 +0000 (GMT)
-Message-ID: <5618d029-769a-4690-a581-2df8939f26a9@samsung.com>
-Date: Thu, 29 Aug 2024 00:38:00 +0200
+	s=arc-20240116; t=1724884776; c=relaxed/simple;
+	bh=hL2g5+R0+3D5kT9xlN2Xjv3XOgKXmXgNUB0snbS2Taw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fCck6VdxwXCTQF3zOqVWQ28x6VEwbvWTxkWQaL5bc+T3u7GQIgbuwKXeKZMseI21E85og51o8h8nAkecke4S/w9URg/6GFF1XL52sP5UOH9mdFYvaArNPgisy0BL799uMaSqZAOZ8D5QC/Ep62EIz/3ePeRHQyKMWSKWfmPGkEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nj/KVSpq; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7cd9d408040so5093084a12.0;
+        Wed, 28 Aug 2024 15:39:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724884774; x=1725489574; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=K6o6BkECnkuOK1GQcvdQnquYXfbPomsdFXCEgc7ouEs=;
+        b=Nj/KVSpqvPI7QrFs1NByPNEtHXDVNyPPJ/4wGRoFt33yXiXJmrDzGNWXZ3r+Z00Thb
+         VuDOVT3FymrT34WwVhQOkMl8znTPGyDzdRBW692vHRgdRCxPHXMS8fYdUpKlvZYc3G7D
+         FxAN3PkvhQgYGhppFo9b7wve8QibYuyKmjBSHQhVFabxpwMLz8Jgbrvwg+0xkMD8B6vv
+         /83O4XG6//eB0X3E7RMlZxnJYnRu4PlW93yI1x521I7WJqxHu6eZkQSdmwvYtiARfvnU
+         zhTuA0d5KINLwd8AoiZ1q7TLoD5N53UarFZCc1XN8QcSTO1YRYKEeVdwN2VH4lkw6lua
+         D7Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724884774; x=1725489574;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K6o6BkECnkuOK1GQcvdQnquYXfbPomsdFXCEgc7ouEs=;
+        b=YyFUUENHalkk1ovxDLcy4MdDfkw8EltluCgapyqcH1tobLKUW5wdnDrkjSMtrEzHrs
+         Bn7jZtu73E54o5vqoSB7Qz2J+KUQqXJQL8wFg2MaIXsg5zLgFlVT9w5K2F+sh8XYh1oq
+         bHmEj+EMWeip/HD7t7FCD+VwsSC8C+YGXn4n8VYzFDPI/T4o9WqhwzTeF8f3m07dcfeo
+         6UKXftPie0m/DsfFHGp2qZV+ykpjjGF1CC15E4kAG/yt9Osa1Q4VxpBcryH7H5NvQs0n
+         7u3m4P2U1b16AW2TiMTpXl4pclcJ3I0BsVY777TOA8ye8f8bLW6Utt9HFNSjsll1f2U1
+         rBNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMYEOaiBNRyR09VryzYTgym+O/cji9Cpp/5mU9GbKFPzLxjmd0OIrB7ccOeFY+ED6NnqKzIf21ME17QLs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD6zsQ4kHBfHmiGecrCfgCx7yjxUwu0Ye1pgE4humRyzesZ/sS
+	X94Fets6jmYwtRdVmGNq47PQGbE93VoQ/DprLAlFuPNAoVV8bYiZ5QCvkA==
+X-Google-Smtp-Source: AGHT+IE/t0N3dQ+MYjZL/yaqZfC6inixztvtHv53X2Sz2GBCAcRdjqmOEKXar/5MmRzjFg71LbZQbQ==
+X-Received: by 2002:a17:90a:cf13:b0:2cf:def1:d1eb with SMTP id 98e67ed59e1d1-2d85617babfmr867340a91.8.1724884774092;
+        Wed, 28 Aug 2024 15:39:34 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8445fbf0dsm2538845a91.19.2024.08.28.15.39.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 15:39:33 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux@armlinux.org.uk,
+	linux-kernel@vger.kernel.org,
+	o.rempel@pengutronix.de,
+	p.zabel@pengutronix.de
+Subject: [PATCHv2 net-next] net: ag71xx: update FIFO bits and descriptions
+Date: Wed, 28 Aug 2024 15:38:47 -0700
+Message-ID: <20240828223931.153610-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 17/24] sched/fair: Implement delayed dequeue
-To: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, linux-kernel@vger.kernel.org
-Cc: kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
-	youssefesmat@chromium.org, tglx@linutronix.de, efault@gmx.de
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20240727105030.226163742@infradead.org>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFKsWRmVeSWpSXmKPExsWy7djP87qnl51PM/gxx9Ri+stGFounE7Yy
-	W6x5c4vF4m7/VBaLv52OFpd3zWGzmPzuGaPFpQMLmCyO9x5gstjX8YDJYvOmqcwWHUe+MVts
-	Pfqd3WLzjVY2i8stE5kd+D1aL/1l81gzbw2jx78Ta9g8ZjdcZPH48DHOo2XfLXaPBZtKPTav
-	0PK4c20Pm8e7c+fYPd7vu8rmsfl0tcfnTXIBvFFcNimpOZllqUX6dglcGdMeHmAruGdV0bjv
-	DmMDY79uFyMnh4SAicTqSRvYuhi5OIQEVjBK7NuzlB3C+cIo0X14IguE85lRYv/RHiaYlhfT
-	ZkC1LAeqOvQKquUjo8SMAw9YQKp4BewkDny5BGazCKhKPJvyhBUiLihxcuYTsLiogLzE/Vsz
-	2EFsYQEHiR+fd4ENEhH4zSjx6tcrRpAEs0CJxLJlf9khbHGJW0/mg53BJmAo0fW2C+gMDg5O
-	AVOJ431ZECXyEtvfzmEGmSMhcI5TYtnHFjaIs10kXkxoY4awhSVeHd/CDmHLSPzfCTITpKGd
-	UWLB7/tQzgRGiYbntxghqqwl7pz7BbaNWUBTYv0ufYiwo0T32bssIGEJAT6JG28FIY7gk5i0
-	bTozRJhXoqNNCKJaTWLW8XVwaw9euMQ8gVFpFlKwzELy5Swk78xC2LuAkWUVo3hqaXFuemqx
-	UV5quV5xYm5xaV66XnJ+7iZGYHI8/e/4lx2My1991DvEyMTBeIhRgoNZSYT3xPGzaUK8KYmV
-	ValF+fFFpTmpxYcYpTlYlMR5VVPkU4UE0hNLUrNTUwtSi2CyTBycUg1MqUq92aITjsTpcths
-	3XH7zJvadA6RE02704KqYq4rcs3pU759bdfseRInnurcsOVIusC3b7bv7hcfvxf2qjI7p5wW
-	6jT3kQ/Nv1ksYxV2L3eG5IZQ9eSbDnduGOa4NqcZPXyup9st2yqryeEt9UYwMOTC8o/iH17t
-	ENjJUC+28HDF3uv8/aUV1tVT3Zv1xBy3hconWzPvvmfBUys130z4s+W1w/6SYk0hCg06h99c
-	f6XrwNJrym7OWSyWHNl4RXDFta1MrCq8id2HHzsacNx4d9tty9xULh9m+2/T6qdu9Fhkn6Zz
-	NsI7cOZ/i8xtt5vPv5AM8Lu32l9lNts9u/4XdlWSGw+9vRhn1rttrRJLcUaioRZzUXEiABTl
-	t5n9AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFIsWRmVeSWpSXmKPExsVy+t/xu7qnlp1PM9j4UdZi+stGFounE7Yy
-	W6x5c4vF4m7/VBaLv52OFpd3zWGzmPzuGaPFpQMLmCyO9x5gstjX8YDJYvOmqcwWHUe+MVts
-	Pfqd3WLzjVY2i8stE5kd+D1aL/1l81gzbw2jx78Ta9g8ZjdcZPH48DHOo2XfLXaPBZtKPTav
-	0PK4c20Pm8e7c+fYPd7vu8rmsfl0tcfnTXIBvFF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYm
-	lnqGxuaxVkamSvp2NimpOZllqUX6dgl6GdMeHmAruGdV0bjvDmMDY79uFyMnh4SAicSLaTPY
-	uhi5OIQEljJKfDxxkQkiISNxcloDK4QtLPHnWhcbiC0k8J5RYvFjcRCbV8BO4sCXSywgNouA
-	qsSzKU9YIeKCEidnPgGLiwrIS9y/NYMdxBYWcJD48XkXO8gyEYHfjBKd/w+CLWMWKJG4sfYy
-	I8SCeIm1ayYwQsTFJW49mQ9WwyZgKNH1FuQIDg5OAVOJ431ZECVmEl1bu6DK5SW2v53DPIFR
-	aBaSM2YhmTQLScssJC0LGFlWMYqklhbnpucWG+oVJ+YWl+al6yXn525iBCaCbcd+bt7BOO/V
-	R71DjEwcjIcYJTiYlUR4Txw/mybEm5JYWZValB9fVJqTWnyI0RQYFhOZpUST84GpKK8k3tDM
-	wNTQxMzSwNTSzFhJnNezoCNRSCA9sSQ1OzW1ILUIpo+Jg1OqgclSfvGlvaGu97vmh2dFGZX7
-	CDGdqrkz/3jlxSnbLvzXOOjzcPfaqt7Qk2/vNF5dkihcMLVyu8YEkyC11HNRk3zXez+Vmia0
-	5/aJNWeWKf8tbc3POR599fWefWYBz8zj/6xKVssumlRi2LXrluCaay5/WqZt233pzY4j/bFC
-	75+IBdle5U2TfvirOuTRI+G8S0effZoVVNB+rXLvhUj+PZ6b77+Y9mWTNHOv09NXOX1ehY17
-	DNsMEv4U/lZSPq593r/g6XO3goDbTXwTlvEK/v+bcOvQqSOvVs542He6ImffIxH9rMOL3i9b
-	mLuwwnb3z9xK5fNVloycbuseqq9cf7xs8/8X9xPrj/tVhyjdPX7aQ4mlOCPRUIu5qDgRAL8a
-	T+WNAwAA
-X-CMS-MailID: 20240828223802eucas1p16755f4531ed0611dc4871649746ea774
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20240828223802eucas1p16755f4531ed0611dc4871649746ea774
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240828223802eucas1p16755f4531ed0611dc4871649746ea774
-References: <20240727102732.960974693@infradead.org>
-	<20240727105030.226163742@infradead.org>
-	<CGME20240828223802eucas1p16755f4531ed0611dc4871649746ea774@eucas1p1.samsung.com>
+Content-Transfer-Encoding: 8bit
 
-On 27.07.2024 12:27, Peter Zijlstra wrote:
-> Extend / fix 86bfbb7ce4f6 ("sched/fair: Add lag based placement") by
-> noting that lag is fundamentally a temporal measure. It should not be
-> carried around indefinitely.
->
-> OTOH it should also not be instantly discarded, doing so will allow a
-> task to game the system by purposefully (micro) sleeping at the end of
-> its time quantum.
->
-> Since lag is intimately tied to the virtual time base, a wall-time
-> based decay is also insufficient, notably competition is required for
-> any of this to make sense.
->
-> Instead, delay the dequeue and keep the 'tasks' on the runqueue,
-> competing until they are eligible.
->
-> Strictly speaking, we only care about keeping them until the 0-lag
-> point, but that is a difficult proposition, instead carry them around
-> until they get picked again, and dequeue them at that point.
->
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Taken from QCA SDK. No functional difference as same bits get applied.
 
-This patch landed recently in linux-next as commit 152e11f6df29 
-("sched/fair: Implement delayed dequeue"). In my tests on some of the 
-ARM 32bit boards it causes a regression in rtcwake tool behavior - from 
-time to time this simple call never ends:
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ v2: forgot to send to netdev
+ drivers/net/ethernet/atheros/ag71xx.c | 48 +++++++++++++--------------
+ 1 file changed, 24 insertions(+), 24 deletions(-)
 
-# time rtcwake -s 10 -m on
-
-Reverting this commit (together with its compile dependencies) on top of 
-linux-next fixes this issue. Let me know how can I help debugging this 
-issue.
-
-> ---
->   kernel/sched/deadline.c |    1
->   kernel/sched/fair.c     |   82 ++++++++++++++++++++++++++++++++++++++++++------
->   kernel/sched/features.h |    9 +++++
->   3 files changed, 81 insertions(+), 11 deletions(-)
->
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -2428,7 +2428,6 @@ static struct task_struct *__pick_next_t
->   		else
->   			p = dl_se->server_pick_next(dl_se);
->   		if (!p) {
-> -			WARN_ON_ONCE(1);
->   			dl_se->dl_yielded = 1;
->   			update_curr_dl_se(rq, dl_se, 0);
->   			goto again;
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -5379,20 +5379,44 @@ static void clear_buddies(struct cfs_rq
->   
->   static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq);
->   
-> -static void
-> +static bool
->   dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
->   {
-> -	int action = UPDATE_TG;
-> +	if (flags & DEQUEUE_DELAYED) {
-> +		/*
-> +		 * DEQUEUE_DELAYED is typically called from pick_next_entity()
-> +		 * at which point we've already done update_curr() and do not
-> +		 * want to do so again.
-> +		 */
-> +		SCHED_WARN_ON(!se->sched_delayed);
-> +		se->sched_delayed = 0;
-> +	} else {
-> +		bool sleep = flags & DEQUEUE_SLEEP;
-> +
-> +		/*
-> +		 * DELAY_DEQUEUE relies on spurious wakeups, special task
-> +		 * states must not suffer spurious wakeups, excempt them.
-> +		 */
-> +		if (flags & DEQUEUE_SPECIAL)
-> +			sleep = false;
-> +
-> +		SCHED_WARN_ON(sleep && se->sched_delayed);
-> +		update_curr(cfs_rq);
->   
-> +		if (sched_feat(DELAY_DEQUEUE) && sleep &&
-> +		    !entity_eligible(cfs_rq, se)) {
-> +			if (cfs_rq->next == se)
-> +				cfs_rq->next = NULL;
-> +			se->sched_delayed = 1;
-> +			return false;
-> +		}
-> +	}
-> +
-> +	int action = UPDATE_TG;
->   	if (entity_is_task(se) && task_on_rq_migrating(task_of(se)))
->   		action |= DO_DETACH;
->   
->   	/*
-> -	 * Update run-time statistics of the 'current'.
-> -	 */
-> -	update_curr(cfs_rq);
-> -
-> -	/*
->   	 * When dequeuing a sched_entity, we must:
->   	 *   - Update loads to have both entity and cfs_rq synced with now.
->   	 *   - For group_entity, update its runnable_weight to reflect the new
-> @@ -5430,6 +5454,8 @@ dequeue_entity(struct cfs_rq *cfs_rq, st
->   
->   	if (cfs_rq->nr_running == 0)
->   		update_idle_cfs_rq_clock_pelt(cfs_rq);
-> +
-> +	return true;
->   }
->   
->   static void
-> @@ -5828,11 +5854,21 @@ static bool throttle_cfs_rq(struct cfs_r
->   	idle_task_delta = cfs_rq->idle_h_nr_running;
->   	for_each_sched_entity(se) {
->   		struct cfs_rq *qcfs_rq = cfs_rq_of(se);
-> +		int flags;
-> +
->   		/* throttled entity or throttle-on-deactivate */
->   		if (!se->on_rq)
->   			goto done;
->   
-> -		dequeue_entity(qcfs_rq, se, DEQUEUE_SLEEP);
-> +		/*
-> +		 * Abuse SPECIAL to avoid delayed dequeue in this instance.
-> +		 * This avoids teaching dequeue_entities() about throttled
-> +		 * entities and keeps things relatively simple.
-> +		 */
-> +		flags = DEQUEUE_SLEEP | DEQUEUE_SPECIAL;
-> +		if (se->sched_delayed)
-> +			flags |= DEQUEUE_DELAYED;
-> +		dequeue_entity(qcfs_rq, se, flags);
->   
->   		if (cfs_rq_is_idle(group_cfs_rq(se)))
->   			idle_task_delta = cfs_rq->h_nr_running;
-> @@ -6918,6 +6954,7 @@ static int dequeue_entities(struct rq *r
->   	bool was_sched_idle = sched_idle_rq(rq);
->   	int rq_h_nr_running = rq->cfs.h_nr_running;
->   	bool task_sleep = flags & DEQUEUE_SLEEP;
-> +	bool task_delayed = flags & DEQUEUE_DELAYED;
->   	struct task_struct *p = NULL;
->   	int idle_h_nr_running = 0;
->   	int h_nr_running = 0;
-> @@ -6931,7 +6968,13 @@ static int dequeue_entities(struct rq *r
->   
->   	for_each_sched_entity(se) {
->   		cfs_rq = cfs_rq_of(se);
-> -		dequeue_entity(cfs_rq, se, flags);
-> +
-> +		if (!dequeue_entity(cfs_rq, se, flags)) {
-> +			if (p && &p->se == se)
-> +				return -1;
-> +
-> +			break;
-> +		}
->   
->   		cfs_rq->h_nr_running -= h_nr_running;
->   		cfs_rq->idle_h_nr_running -= idle_h_nr_running;
-> @@ -6956,6 +6999,7 @@ static int dequeue_entities(struct rq *r
->   			break;
->   		}
->   		flags |= DEQUEUE_SLEEP;
-> +		flags &= ~(DEQUEUE_DELAYED | DEQUEUE_SPECIAL);
->   	}
->   
->   	for_each_sched_entity(se) {
-> @@ -6985,6 +7029,17 @@ static int dequeue_entities(struct rq *r
->   	if (unlikely(!was_sched_idle && sched_idle_rq(rq)))
->   		rq->next_balance = jiffies;
->   
-> +	if (p && task_delayed) {
-> +		SCHED_WARN_ON(!task_sleep);
-> +		SCHED_WARN_ON(p->on_rq != 1);
-> +
-> +		/* Fix-up what dequeue_task_fair() skipped */
-> +		hrtick_update(rq);
-> +
-> +		/* Fix-up what block_task() skipped. */
-> +		__block_task(rq, p);
-> +	}
-> +
->   	return 1;
->   }
->   /*
-> @@ -6996,8 +7051,10 @@ static bool dequeue_task_fair(struct rq
->   {
->   	util_est_dequeue(&rq->cfs, p);
->   
-> -	if (dequeue_entities(rq, &p->se, flags) < 0)
-> +	if (dequeue_entities(rq, &p->se, flags) < 0) {
-> +		util_est_update(&rq->cfs, p, DEQUEUE_SLEEP);
->   		return false;
-> +	}
->   
->   	util_est_update(&rq->cfs, p, flags & DEQUEUE_SLEEP);
->   	hrtick_update(rq);
-> @@ -12973,6 +13030,11 @@ static void set_next_task_fair(struct rq
->   		/* ensure bandwidth has been allocated on our new cfs_rq */
->   		account_cfs_rq_runtime(cfs_rq, 0);
->   	}
-> +
-> +	if (!first)
-> +		return;
-> +
-> +	SCHED_WARN_ON(se->sched_delayed);
->   }
->   
->   void init_cfs_rq(struct cfs_rq *cfs_rq)
-> --- a/kernel/sched/features.h
-> +++ b/kernel/sched/features.h
-> @@ -29,6 +29,15 @@ SCHED_FEAT(NEXT_BUDDY, false)
->   SCHED_FEAT(CACHE_HOT_BUDDY, true)
->   
->   /*
-> + * Delay dequeueing tasks until they get selected or woken.
-> + *
-> + * By delaying the dequeue for non-eligible tasks, they remain in the
-> + * competition and can burn off their negative lag. When they get selected
-> + * they'll have positive lag by definition.
-> + */
-> +SCHED_FEAT(DELAY_DEQUEUE, true)
-> +
-> +/*
->    * Allow wakeup-time preemption of the current task:
->    */
->   SCHED_FEAT(WAKEUP_PREEMPTION, true)
->
->
->
-Best regards
+diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
+index db2a8ade6205..692dbded8211 100644
+--- a/drivers/net/ethernet/atheros/ag71xx.c
++++ b/drivers/net/ethernet/atheros/ag71xx.c
+@@ -149,11 +149,11 @@
+ #define FIFO_CFG4_MC		BIT(8)	/* Multicast Packet */
+ #define FIFO_CFG4_BC		BIT(9)	/* Broadcast Packet */
+ #define FIFO_CFG4_DR		BIT(10)	/* Dribble */
+-#define FIFO_CFG4_LE		BIT(11)	/* Long Event */
+-#define FIFO_CFG4_CF		BIT(12)	/* Control Frame */
+-#define FIFO_CFG4_PF		BIT(13)	/* Pause Frame */
+-#define FIFO_CFG4_UO		BIT(14)	/* Unsupported Opcode */
+-#define FIFO_CFG4_VT		BIT(15)	/* VLAN tag detected */
++#define FIFO_CFG4_CF		BIT(11)	/* Control Frame */
++#define FIFO_CFG4_PF		BIT(12)	/* Pause Frame */
++#define FIFO_CFG4_UO		BIT(13)	/* Unsupported Opcode */
++#define FIFO_CFG4_VT		BIT(14)	/* VLAN tag detected */
++#define FIFO_CFG4_LE		BIT(15)	/* Long Event */
+ #define FIFO_CFG4_FT		BIT(16)	/* Frame Truncated */
+ #define FIFO_CFG4_UC		BIT(17)	/* Unicast Packet */
+ #define FIFO_CFG4_INIT	(FIFO_CFG4_DE | FIFO_CFG4_DV | FIFO_CFG4_FC | \
+@@ -168,28 +168,28 @@
+ #define FIFO_CFG5_DV		BIT(1)	/* RX_DV Event */
+ #define FIFO_CFG5_FC		BIT(2)	/* False Carrier */
+ #define FIFO_CFG5_CE		BIT(3)	/* Code Error */
+-#define FIFO_CFG5_LM		BIT(4)	/* Length Mismatch */
+-#define FIFO_CFG5_LO		BIT(5)	/* Length Out of Range */
+-#define FIFO_CFG5_OK		BIT(6)	/* Packet is OK */
+-#define FIFO_CFG5_MC		BIT(7)	/* Multicast Packet */
+-#define FIFO_CFG5_BC		BIT(8)	/* Broadcast Packet */
+-#define FIFO_CFG5_DR		BIT(9)	/* Dribble */
+-#define FIFO_CFG5_CF		BIT(10)	/* Control Frame */
+-#define FIFO_CFG5_PF		BIT(11)	/* Pause Frame */
+-#define FIFO_CFG5_UO		BIT(12)	/* Unsupported Opcode */
+-#define FIFO_CFG5_VT		BIT(13)	/* VLAN tag detected */
+-#define FIFO_CFG5_LE		BIT(14)	/* Long Event */
+-#define FIFO_CFG5_FT		BIT(15)	/* Frame Truncated */
+-#define FIFO_CFG5_16		BIT(16)	/* unknown */
+-#define FIFO_CFG5_17		BIT(17)	/* unknown */
++#define FIFO_CFG5_CR		BIT(4)  /* CRC error */
++#define FIFO_CFG5_LM		BIT(5)	/* Length Mismatch */
++#define FIFO_CFG5_LO		BIT(6)	/* Length Out of Range */
++#define FIFO_CFG5_OK		BIT(7)	/* Packet is OK */
++#define FIFO_CFG5_MC		BIT(8)	/* Multicast Packet */
++#define FIFO_CFG5_BC		BIT(9)	/* Broadcast Packet */
++#define FIFO_CFG5_DR		BIT(10)	/* Dribble */
++#define FIFO_CFG5_CF		BIT(11)	/* Control Frame */
++#define FIFO_CFG5_PF		BIT(12)	/* Pause Frame */
++#define FIFO_CFG5_UO		BIT(13)	/* Unsupported Opcode */
++#define FIFO_CFG5_VT		BIT(14)	/* VLAN tag detected */
++#define FIFO_CFG5_LE		BIT(15)	/* Long Event */
++#define FIFO_CFG5_FT		BIT(16)	/* Frame Truncated */
++#define FIFO_CFG5_UC		BIT(17)	/* Unicast Packet */
+ #define FIFO_CFG5_SF		BIT(18)	/* Short Frame */
+ #define FIFO_CFG5_BM		BIT(19)	/* Byte Mode */
+ #define FIFO_CFG5_INIT	(FIFO_CFG5_DE | FIFO_CFG5_DV | FIFO_CFG5_FC | \
+-			 FIFO_CFG5_CE | FIFO_CFG5_LO | FIFO_CFG5_OK | \
+-			 FIFO_CFG5_MC | FIFO_CFG5_BC | FIFO_CFG5_DR | \
+-			 FIFO_CFG5_CF | FIFO_CFG5_PF | FIFO_CFG5_VT | \
+-			 FIFO_CFG5_LE | FIFO_CFG5_FT | FIFO_CFG5_16 | \
+-			 FIFO_CFG5_17 | FIFO_CFG5_SF)
++			 FIFO_CFG5_CE | FIFO_CFG5_LM | FIFO_CFG5_L0 | \
++			 FIFO_CFG5_OK | FIFO_CFG5_MC | FIFO_CFG5_BC | \
++			 FIFO_CFG5_DR | FIFO_CFG5_CF | FIFO_CFG5_UO | \
++			 FIFO_CFG5_VT | FIFO_CFG5_LE | FIFO_CFG5_FT | \
++			 FIFO_CFG5_UC | FIFO_CFG5_SF)
+ 
+ #define AG71XX_REG_TX_CTRL	0x0180
+ #define TX_CTRL_TXE		BIT(0)	/* Tx Enable */
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.46.0
 
 
