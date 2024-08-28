@@ -1,112 +1,124 @@
-Return-Path: <linux-kernel+bounces-305536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72FA1963030
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:39:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26901963034
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:39:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C7541F21AAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:39:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A96D1B225E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8B81AAE26;
-	Wed, 28 Aug 2024 18:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514D41AB50D;
+	Wed, 28 Aug 2024 18:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FrW3jhbH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cykaUJPo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764911553A2;
-	Wed, 28 Aug 2024 18:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FEAB1AAE10;
+	Wed, 28 Aug 2024 18:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724870342; cv=none; b=hPv2WtP/c1D/mG46I6f186h3BSsyT6diG9wfeXrmTaVic0sv5xvONyPmxws1lvYWUWrB4rvHanZo2glDibmBOvhhchFjgcSzIrBsEPD2URLldL/JOjZenC7V+V3pCTnc17zeIhmdeoO66XouyWVb7xKOfKSgCJkfYU0nbskmarI=
+	t=1724870361; cv=none; b=Yrx83kZVfyHmPASB4zIXOV1yUSXsGXUsik0e0rsJDDcb0gYNCasagt6DC6Eo3rAAFFxWP4QshiCJ2mQaTiO34+1/h0yR8bJSxvltwDrgAJGuZY+TPL0RhDIXDDBtAusfiRC3KfBOQwO4Hn0fVLyKoswbSwol1Rx7RM46UcRMBJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724870342; c=relaxed/simple;
-	bh=x7SdE42KbvXOA6sb0fTZsjwo8QK2NhUXyigglHvanCI=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=UFG4s/jDogcg/hPH+aRW6QrnwdNMTCra9d/5og/YUYzFz9OKZPjb/P9v9amQz1EfiAyr2STpyvluINTKrW7DTY/gx4CribepCxxpijrLDaVjNwfVPEtWAQGVF4DkzBCwikFQ+lNCksc5xEEjzrSIC9lxZbUsabftAteYwwMuoow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FrW3jhbH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E101FC4CEC0;
-	Wed, 28 Aug 2024 18:39:01 +0000 (UTC)
+	s=arc-20240116; t=1724870361; c=relaxed/simple;
+	bh=I17qLbshTPdE4pTOc+Q+tMjBx/axUlTD72kaH/aSabU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RpDdx248gAl990sq7Kkb2PWOU9ECfvjgeXJk4GljgDTeOV1hwOYhsF9k0mGnX2Ln0Qu8Pm+jwzf4oeilcJls4bHfjTQtctP8mJguHoU2glxK6mOmSlWfXfuFAfWo7PdIl0b2/SSpqCOZxbMGJTxRaWdHCHUnlOCqcXfFmGWQOCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cykaUJPo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22915C4CEC0;
+	Wed, 28 Aug 2024 18:39:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724870342;
-	bh=x7SdE42KbvXOA6sb0fTZsjwo8QK2NhUXyigglHvanCI=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=FrW3jhbHUQCUAUiRzCgAzlxjlUBj+MVKlL0O0jPkC45vsQeqC9l0SiJcua4GS+War
-	 SYGxKqrkzUGaNDGYeS8FZL6Xt8EIMOKevkcU/plyP6H6ygJOYMgYx2HO5UGoq5rdLF
-	 FRQeKHcUDmSaYWK690IMPiMXT3b9cnAqbIa/XywXaTQL/tGjYzI3U0Qqwm+E5SS3iy
-	 kNZtdTE5WQ2w0xlGmohrhcXSgwvHVJfOcgIylTFOC2eW+qGSibpMdEigvDwR8+upNz
-	 hc0zzCgKqp2dTn9XNwSqNvcxcKLH8G98Sy9gV+k1d+Ygmb7Erh0RoroZ/23MzM+mm9
-	 E4qntQhj0QQDg==
-Message-ID: <b3f983207d74a3fcf40d9615260912c5.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1724870361;
+	bh=I17qLbshTPdE4pTOc+Q+tMjBx/axUlTD72kaH/aSabU=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=cykaUJPoF8fLxsOJch620PY9HQ3stYi++SVN7Fbi7yE5MWiQy5+obHQv2WH8zUSFo
+	 e/7z+KCL5NxIion0tfKA4Vb4LqqqDI5+YV8kqI/SCaKUedfEqetK0Mx9qMh9v+dhEm
+	 xqI5dX9dqjyMb97I5Ecr7g4TbqszhP8jP2X6DxgItFyTJlAvhfemlGfkZTj5D+7O13
+	 G6WE1K/EXula0i+T+4lh5zDdn2LzpmDd1P5gAOYJ1Y1aJH3SDRh+MDQdXNP67mWCYn
+	 Hgx7LifNpZLdildOOJfMTCNp4whgZbsPrShm5hoOKmwpWKJKIR7ka39rJop4G6HRNv
+	 UrApVT3EZdUUw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id BE4A4CE0FF3; Wed, 28 Aug 2024 11:39:19 -0700 (PDT)
+Date: Wed, 28 Aug 2024 11:39:19 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: Chen Yu <yu.c.chen@intel.com>, Peter Zijlstra <peterz@infradead.org>,
+	linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
+	linux-next@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
+Message-ID: <8094db32-5c81-4537-8809-ddfe92a0ac6c@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <xhsmhikvmnfb3.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <c83028db-55ad-45b3-a27a-842ed665a882@paulmck-laptop>
+ <103b1710-39ca-40d0-947d-fdac32d6e6a0@paulmck-laptop>
+ <xhsmhcyltogin.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <a19308ed-7252-4119-b891-2a61791bb6e5@paulmck-laptop>
+ <xhsmha5gwome6.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <Zs8pqJjIYOFuPDiH@chenyu5-mobl2>
+ <xhsmh7cc0ogza.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <5ea3658b-5aec-4969-92c5-49a2d23171c3@paulmck-laptop>
+ <xhsmh4j74o6l9.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <Zs8iGy8zLG2zs34J@smile.fi.intel.com>
-References: <20240822161452.1780149-1-andriy.shevchenko@linux.intel.com> <20240822161452.1780149-2-andriy.shevchenko@linux.intel.com> <3e782ac88cc28fb5fa7ed71e7573e60f.sboyd@kernel.org> <Zs8iGy8zLG2zs34J@smile.fi.intel.com>
-Subject: Re: [PATCH v1 1/2] clk: x86: lpss-atom: Use predefined constants from units.h
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Date: Wed, 28 Aug 2024 11:38:59 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xhsmh4j74o6l9.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 
-Quoting Andy Shevchenko (2024-08-28 06:11:55)
-> On Tue, Aug 27, 2024 at 05:21:00PM -0700, Stephen Boyd wrote:
-> > Quoting Andy Shevchenko (2024-08-22 09:14:07)
->=20
-> ...
->=20
-> > >  static int lpss_atom_clk_probe(struct platform_device *pdev)
-> > >  {
-> > >         struct lpss_clk_data *drvdata;
-> > >         struct clk *clk;
-> > > +       u32 rate;
-> >=20
-> > Do we need a local variable?
->=20
-> Hmm... The idea was to allow retrieving this via device properties, that'=
-s why
-> a separate variable, but that patch wasn't included here.
->=20
-> Nevertheless, despite above the separate variable makes code a bit better=
- to
-> read as we can see what is this value about.
->=20
-> > >         drvdata =3D devm_kzalloc(&pdev->dev, sizeof(*drvdata), GFP_KE=
-RNEL);
-> > >         if (!drvdata)
-> > >                 return -ENOMEM;
-> > > =20
-> > > +       /* Default frequency is 100MHz */
-> > > +       rate =3D 100 * HZ_PER_MHZ;
-> > > +
-> > >         /* LPSS free running clock */
-> > >         drvdata->name =3D "lpss_clk";
-> > > -       clk =3D clk_register_fixed_rate(&pdev->dev, drvdata->name, NU=
-LL,
-> > > -                                     0, 100000000);
-> > > +       clk =3D clk_register_fixed_rate(&pdev->dev, drvdata->name, NU=
-LL, 0, rate);
-> >=20
-> > This should be a one line patch.
->=20
-> I don't get this. You mean the entire thingy?
+On Wed, Aug 28, 2024 at 08:17:06PM +0200, Valentin Schneider wrote:
+> On 28/08/24 09:35, Paul E. McKenney wrote:
+> > On Wed, Aug 28, 2024 at 04:32:41PM +0200, Valentin Schneider wrote:
+> >> On 28/08/24 21:44, Chen Yu wrote:
+> >> >
+> >> > One question, although there is no DEQUEUE_DELAYED flag, it is possible
+> >> > the delayed task could be dequeued from CFS tree. Because the dequeue in
+> >> > set_schedule() does not have DEQUEUE_SLEEP. And in dequeue_entity():
+> >> >
+> >> >       bool sleep = flags & DEQUEUE_SLEEP;
+> >> >
+> >> >       if (flags & DEQUEUE_DELAYED) {
+> >> >
+> >> >       } else {
+> >> >               bool delay = sleep;
+> >> >               if (sched_feat(DELAY_DEQUEUE) && delay &&  //false
+> >> >                  !entity_eligible(cfs_rq, se) {
+> >> >               //do not dequeue
+> >> >               }
+> >> >       }
+> >> >
+> >> >       //dequeue the task    <---- we should reach here?
+> >> >
+> >>
+> >> You're quite right, so really here the main missing bit would be the final
+> >> __block_task() that a DEQUEUE_DELAYED dequeue_entities() would get us.
+> >
+> > 50*TREE03 passed, yay!  Thank you both!!!
+> 
+> Fantastic, I'll hammer this into a "proper" patch then. Thanks again for
+> all the testing!
+> 
+> > I started a 500*TREE03.
+> >
+> > Yes, the odds all 50 passing given the baseline 52% failure rate is
+> > something like 10^-16, but software bugs are not necessarily constrained
+> > by elementary statistics...
+> 
+> :-)
 
-Yes.
+The 500*TREE03 run had exactly one failure that was the dreaded
+enqueue_dl_entity() failure, followed by RCU CPU stall warnings.
 
->=20
-> It's possible, but as I mentioned above there is a rationale for making i=
-t with
-> a temporary variable.
+But a huge improvement over the prior state!
 
-The rationale looks like future code will want a local variable. When
-that happens the local variable would make sense.
+Plus, this failure is likely unrelated (see earlier discussions with
+Peter).  I just started a 5000*TREE03 run, just in case we can now
+reproduce this thing.
+
+							Thanx, Paul
 
