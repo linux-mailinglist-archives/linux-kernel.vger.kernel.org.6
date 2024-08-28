@@ -1,194 +1,153 @@
-Return-Path: <linux-kernel+bounces-304893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CB09962659
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:51:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A67EB96265B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:51:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E507D1F237C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:51:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 446F81F23A57
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 949CD171E5F;
-	Wed, 28 Aug 2024 11:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941E4170A3A;
+	Wed, 28 Aug 2024 11:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="E7ObMKPb"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YhnuLfcS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E037155352;
-	Wed, 28 Aug 2024 11:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D697515B12F;
+	Wed, 28 Aug 2024 11:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724845852; cv=none; b=Yxe+22KAcKYos4t0GOMXnwC3X6gqeOlKFotJygAP9R1rLncfqMMn3EqfClxG+mpW3IArd88Lx0YTB4exA/j+Q5eRsCw2y+OdYzvVdks8PZBMGeLQH1WyvCQeJKS41SNoYxsBBHp3yXbId3beE5dqwHsfxV9PnY/TxgpesR01KQ4=
+	t=1724845861; cv=none; b=IiJYCFR2K76wlujveshWk5Eu5JmvXLPOSCtZFm1GGxez/KZEk4qA40VYt+pxS1zPrKLKrttNupNC4i540HcPgHB+FgUbYKbvpyHGQOt/8L+c3T3Zf4YT+bkCFc0WjRLr9bTf+HQTBgpq/5ZPlt7RI8SuInYkWmgfcsbwuU8Ix9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724845852; c=relaxed/simple;
-	bh=DAZw4dKbjYxQ/XUR7oulIBEXHxsRe8vk0SMfFTIeMXM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DaIqLxdyjeyZr7Et1ZF+lzi9vOX95SPC+XQQIqQLP2n/IjLTqHsNZrlk6yKRcmEI4hAHCpRqRx/dx4BJbEa5GzLneSN+9+v80BMxOliLfjJf+dwQ0mDPU6cNyPKIZa3F9Xmng/Y6BZcyOP5H9q66s2kW3+/EfrJR4iw726FyBQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=E7ObMKPb; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47SB22UK003146;
-	Wed, 28 Aug 2024 11:50:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=biUpZUVisTjyaUKNnvHNNG/jleI/CKxhuOCjjsOuR/k=; b=E7
-	ObMKPbzzkocgMtCHm7UTeSL/F5uJzzXkeRy9C4d/6xKHNlxIDb5Z/L/RfaAGizlp
-	W1WH6temyEPqZnI4LDva+UhTXUZaF8JFBcxJB3Qe6DuLELooctsSbGLxIleMOVzH
-	+HkdpftHXuP28nJQ4ww1D5kSXeFo0ctzi0xb9m7lQ8zWR3BU6cc1E4fM0MD77cuQ
-	Zwp4jbsukPyjMLDO+LpaO8gc083PN+vVhY1+erm+lFL7/IMAJyAlTF79XhNA1dPw
-	LQBxRYfZpm2eBJ+4bSyBeT2jYuFPYAUvOsDScgOQE9uEBpajN5tNJxLnS4CwpuRm
-	eWcjmIO9X+w3sMoLEVRg==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419puu9mnu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 11:50:48 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47SBoBKr006956
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 11:50:11 GMT
-Received: from hu-mapa-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 28 Aug 2024 04:50:08 -0700
-From: Manish Pandey <quic_mapa@quicinc.com>
-To: Jens Axboe <axboe@kernel.dk>
-CC: <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_nitirawa@quicinc.com>, <quic_bhaskarv@quicinc.com>,
-        <quic_narepall@quicinc.com>, <quic_rampraka@quicinc.com>,
-        <quic_mapa@quicinc.com>, <quic_cang@quicinc.com>,
-        <quic_nguyenb@quicinc.com>
-Subject: [PATCH] blk-mq: Allow complete locally if capacities are different
-Date: Wed, 28 Aug 2024 17:19:58 +0530
-Message-ID: <20240828114958.29422-1-quic_mapa@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1724845861; c=relaxed/simple;
+	bh=W6vl4mDA3+v4crm8Fj7paGy4jlpqrKbUPK8vENUlUuU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f4IdqLkq7fqSU1x9dJkua55BvNpLXGPbpyss9AOUkg5r1+5rgN4Rd8LGEf3v+ffDnClRRgvxMgnsZ6CmY4PA0CstZ1zr3lXU1/FYrxYqC8D229YSYLIU7y4/dKUuAOunQEe5nli3c+Y7pq2MJf4/gH2xD6MNyI2akO/ss7NLr8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YhnuLfcS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 741DEC98ED2;
+	Wed, 28 Aug 2024 11:51:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724845861;
+	bh=W6vl4mDA3+v4crm8Fj7paGy4jlpqrKbUPK8vENUlUuU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=YhnuLfcSBaTHzJDNA6GaszJh0/ai3mou9NcfqRoHm5CqUyrYIxy74lgnbToWwMLNY
+	 NX/EIvnEvqCEsuZ11Fk9t2i5Og6o/7e4GNM5f8/zDMCuHSQDaOPqdjTRQGjaFu8Q2G
+	 tnKvSkg5Oev6G+VZi7xjqNSlodFV/U9fhlQadgUlqu1JQ3b1UOVOMSR+shz+oKo8Qd
+	 g/hgnb+qZRavKubPIQF/REFkHTYPWXDdnlzR/HoqjVvIlGXRvEdMsGsNIIJd7G1zps
+	 c++G8A+6FXqf3Vn1v3HLT1xj2oeIYR0Kx6/Kjn3MxJH4mZjzRRKuXVWzz2WWcy/nKP
+	 l6w5Ec/EuW09Q==
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a86910caf9cso102868666b.1;
+        Wed, 28 Aug 2024 04:51:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV7Kec72mZN0SA7BEE0VLwc/NSJ219WEo9TxEnA87dMBcQqXl6leQraEeqP9MY1ktjGCCoD8xZ68YCf8w==@vger.kernel.org, AJvYcCXeAftv2jyZFPxnU/M1VixrtrDAVvSlO5LKUr/kPo/2AQYHMnNEcnaZU0qepOnYbh1XDJeGRSaI59JfMFIo@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlSNuLUNxwLfGeZ7PAZW5Hq2rUf2NPr15Ha/gLpva9tUgkwLVY
+	1qM2K8cqi8Okwku3GGDWItgxkL14P4M6yiMcBk2fUZiY8gLnRtcygxAkevyuHzfwffYBz4RvarA
+	M5KC0I5hA2lkeWBTgCt8feYk/bLY=
+X-Google-Smtp-Source: AGHT+IGKY+y0ITJs1NlttvaukWau5KEZ6zPElyET/Jg1biFki/zyk2t9V5vK15OAw0luscG5jfwhorYdnfiQxvVj/0A=
+X-Received: by 2002:a17:907:2d8b:b0:a73:9037:fdf5 with SMTP id
+ a640c23a62f3a-a870a92234emr211183166b.6.1724845859960; Wed, 28 Aug 2024
+ 04:50:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: wGgtsDGNzAWWH1F7i4d0G8pe6xA3HUNX
-X-Proofpoint-ORIG-GUID: wGgtsDGNzAWWH1F7i4d0G8pe6xA3HUNX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-28_04,2024-08-27_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 adultscore=0 malwarescore=0 suspectscore=0 bulkscore=0
- clxscore=1015 mlxlogscore=999 mlxscore=0 phishscore=0 lowpriorityscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408280086
+References: <cover.1724844084.git.dsterba@suse.com>
+In-Reply-To: <cover.1724844084.git.dsterba@suse.com>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Wed, 28 Aug 2024 12:50:22 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H5L9ebGLyPkVFOtG7sEfAj7f17e6uzH2g7s5MUc59FAsQ@mail.gmail.com>
+Message-ID: <CAL3q7H5L9ebGLyPkVFOtG7sEfAj7f17e6uzH2g7s5MUc59FAsQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Btrfs fixes for 6.11-rc6
+To: David Sterba <dsterba@suse.com>
+Cc: torvalds@linux-foundation.org, linux-btrfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-'Commit af550e4c9682 ("block/blk-mq: Don't complete locally if
-capacities are different")' enforces to complete the request locally
-only if the submission and completion CPUs have same capacity.
+On Wed, Aug 28, 2024 at 12:23=E2=80=AFPM David Sterba <dsterba@suse.com> wr=
+ote:
+>
+> Hi,
+>
+> a few more misc fixes. Please pull, thanks.
+>
+> - fix use-after-free when submitting bios for read, after an error and
+>   partially submitted bio the original one is freed while it can be still=
+ be
+>   accessed again
+>
+> - fix fstests case btrfs/301, with enabled quotas wait for delayed iputs =
+when
+>   flushing delalloc
+>
+> - fix regression in periodic block group reclaim, an unitialized value ca=
+n be
+>   returned if there are no block groups to reclaim
 
-To have optimal IO load balancing or to avoid contention b/w submission
-path and completion path, user may need to complete IO request of large
-capacity CPU(s) on Small Capacity CPU(s) or vice versa.
+There's some confusion here.
 
-Hence introduce a QUEUE_FLAG_ALLOW_DIFF_CAPACITY blk queue flag to let
-user decide if it wants to complete the request locally or need an IPI
-even if the capacity of the requesting and completion queue is different.
-This gives flexibility to user to choose best CPU for their completion
-to give best performance for their system.
+First, it's not a regression because the uninitialized return value
+has been there since periodic block group reclaim was introduced.
 
-Link: https://lore.kernel.org/all/66912a22-540d-4b9a-bd06-cce55b9ad304@quicinc.com/T/
-Co-developed-by: Can Guo <quic_cang@quicinc.com>
-Co-developed-by: Nitin Rawat <quic_nitirawa@quicinc.com>
-Signed-off-by: Manish Pandey <quic_mapa@quicinc.com>
----
- block/blk-mq-debugfs.c |  1 +
- block/blk-mq.c         |  3 ++-
- block/blk-sysfs.c      | 12 ++++++++++--
- include/linux/blkdev.h |  1 +
- 4 files changed, 14 insertions(+), 3 deletions(-)
+Secondly, and more important, is that it doesn't cause any problem
+because the only caller of the function ignores its return value.
 
-diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
-index 5463697a8442..af048dad9667 100644
---- a/block/blk-mq-debugfs.c
-+++ b/block/blk-mq-debugfs.c
-@@ -93,6 +93,7 @@ static const char *const blk_queue_flag_name[] = {
- 	QUEUE_FLAG_NAME(RQ_ALLOC_TIME),
- 	QUEUE_FLAG_NAME(HCTX_ACTIVE),
- 	QUEUE_FLAG_NAME(SQ_SCHED),
-+	QUEUE_FLAG_NAME(ALLOW_DIFF_CAPACITY),
- };
- #undef QUEUE_FLAG_NAME
- 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index aa28157b1aaf..1584312d870a 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -1164,7 +1164,8 @@ static inline bool blk_mq_complete_need_ipi(struct request *rq)
- 	if (cpu == rq->mq_ctx->cpu ||
- 	    (!test_bit(QUEUE_FLAG_SAME_FORCE, &rq->q->queue_flags) &&
- 	     cpus_share_cache(cpu, rq->mq_ctx->cpu) &&
--	     cpus_equal_capacity(cpu, rq->mq_ctx->cpu)))
-+	     (test_bit(QUEUE_FLAG_ALLOW_DIFF_CAPACITY, &rq->q->queue_flags) ||
-+	      cpus_equal_capacity(cpu, rq->mq_ctx->cpu))))
- 		return false;
- 
- 	/* don't try to IPI to an offline CPU */
-diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
-index 60116d13cb80..37d6ab325180 100644
---- a/block/blk-sysfs.c
-+++ b/block/blk-sysfs.c
-@@ -300,8 +300,9 @@ static ssize_t queue_rq_affinity_show(struct gendisk *disk, char *page)
- {
- 	bool set = test_bit(QUEUE_FLAG_SAME_COMP, &disk->queue->queue_flags);
- 	bool force = test_bit(QUEUE_FLAG_SAME_FORCE, &disk->queue->queue_flags);
-+	bool allow = test_bit(QUEUE_FLAG_ALLOW_DIFF_CAPACITY, &disk->queue->queue_flags);
- 
--	return queue_var_show(set << force, page);
-+	return queue_var_show((set << force) | (allow << set), page);
- }
- 
- static ssize_t
-@@ -316,15 +317,22 @@ queue_rq_affinity_store(struct gendisk *disk, const char *page, size_t count)
- 	if (ret < 0)
- 		return ret;
- 
--	if (val == 2) {
-+	if (val == 3) {
-+		blk_queue_flag_set(QUEUE_FLAG_SAME_COMP, q);
-+		blk_queue_flag_clear(QUEUE_FLAG_SAME_FORCE, q);
-+		blk_queue_flag_set(QUEUE_FLAG_ALLOW_DIFF_CAPACITY, q);
-+	} else if (val == 2) {
- 		blk_queue_flag_set(QUEUE_FLAG_SAME_COMP, q);
- 		blk_queue_flag_set(QUEUE_FLAG_SAME_FORCE, q);
-+		blk_queue_flag_clear(QUEUE_FLAG_ALLOW_DIFF_CAPACITY, q);
- 	} else if (val == 1) {
- 		blk_queue_flag_set(QUEUE_FLAG_SAME_COMP, q);
- 		blk_queue_flag_clear(QUEUE_FLAG_SAME_FORCE, q);
-+		blk_queue_flag_clear(QUEUE_FLAG_ALLOW_DIFF_CAPACITY, q);
- 	} else if (val == 0) {
- 		blk_queue_flag_clear(QUEUE_FLAG_SAME_COMP, q);
- 		blk_queue_flag_clear(QUEUE_FLAG_SAME_FORCE, q);
-+		blk_queue_flag_clear(QUEUE_FLAG_ALLOW_DIFF_CAPACITY, q);
- 	}
- #endif
- 	return ret;
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index b7664d593486..902fb726ebe1 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -602,6 +602,7 @@ enum {
- 	QUEUE_FLAG_RQ_ALLOC_TIME,	/* record rq->alloc_time_ns */
- 	QUEUE_FLAG_HCTX_ACTIVE,		/* at least one blk-mq hctx is active */
- 	QUEUE_FLAG_SQ_SCHED,		/* single queue style io dispatch */
-+	QUEUE_FLAG_ALLOW_DIFF_CAPACITY,	/* complete on different capacity CPU-group */
- 	QUEUE_FLAG_MAX
- };
- 
--- 
-2.17.1
+So this is effectively more of a cleanup than anything else, and could
+have waited for the next merge window.
+I see you also added a Fixes tag to the changelog, which will trigger
+stable backports.
 
+Unless there are compiler versions or static analysis tools that
+complain with warnings, it will be just overhead to backport to stable
+releases.
+
+Thanks.
+
+>
+> - fix build warning (-Wmaybe-uninitialized)
+>
+> ----------------------------------------------------------------
+> The following changes since commit 534f7eff9239c1b0af852fc33f5af2b62c00ed=
+df:
+>
+>   btrfs: only enable extent map shrinker for DEBUG builds (2024-08-16 21:=
+22:39 +0200)
+>
+> are available in the Git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-=
+6.11-rc5-tag
+>
+> for you to fetch changes up to ecb54277cb63c273e8d74272e5b9bfd80c2185d9:
+>
+>   btrfs: fix uninitialized return value from btrfs_reclaim_sweep() (2024-=
+08-27 16:42:09 +0200)
+>
+> ----------------------------------------------------------------
+> David Sterba (1):
+>       btrfs: initialize last_extent_end to fix -Wmaybe-uninitialized warn=
+ing in extent_fiemap()
+>
+> Filipe Manana (1):
+>       btrfs: fix uninitialized return value from btrfs_reclaim_sweep()
+>
+> Josef Bacik (1):
+>       btrfs: run delayed iputs when flushing delalloc
+>
+> Qu Wenruo (1):
+>       btrfs: fix a use-after-free when hitting errors inside btrfs_submit=
+_chunk()
+>
+>  fs/btrfs/bio.c        | 26 ++++++++++++++++++--------
+>  fs/btrfs/fiemap.c     |  2 +-
+>  fs/btrfs/qgroup.c     |  2 ++
+>  fs/btrfs/space-info.c | 17 +++++------------
+>  fs/btrfs/space-info.h |  2 +-
+>  5 files changed, 27 insertions(+), 22 deletions(-)
+>
 
