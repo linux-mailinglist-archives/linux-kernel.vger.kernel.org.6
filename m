@@ -1,67 +1,84 @@
-Return-Path: <linux-kernel+bounces-305135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C159A962A05
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:17:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22E86962A08
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:17:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AD292847E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:17:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7496285433
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A41189F45;
-	Wed, 28 Aug 2024 14:17:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B087189F45;
+	Wed, 28 Aug 2024 14:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="2B6goa/c"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NIRK2sRF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1191E1BC20;
-	Wed, 28 Aug 2024 14:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7898D42A8E;
+	Wed, 28 Aug 2024 14:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724854652; cv=none; b=OKkvDvcOvW8YRIM3o5UJpRZdQhF14VvrTCOX7+F7NLY1tapgxib+U2mwSZMMrXLJsVtneZ9puclGucPMoVoLZFTruF3UfYVPn5pz2l2IxnJL8DYWBxft9wZrO6joqmE3KXvqKPvGxh2p1oUFVIGbHosCvnM+sPjfSLiQAdPcSFo=
+	t=1724854670; cv=none; b=p8PjwWlH6aeGjDm6Ji++E5yV0CeTmZ6YIiU0KvbdILl5K6/xsdaZr3P5C3hC/oW4MOb9rwTiRb1iWnW38BKNAXm30jhQOTArBh0GOeS9BqO+qe6uqdm7we3Z3HtyE+0XpWAIVkaixSh9/tEj9eFGW4CkcDdaQ2kKH6GKybCsLLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724854652; c=relaxed/simple;
-	bh=5SD3vS3hfinL4O4GRh1j4kmE2yjUTv86L39GGCDrJo8=;
+	s=arc-20240116; t=1724854670; c=relaxed/simple;
+	bh=Znii0Gu4u2xaHQfuHkXYV9iRjgMc8rCLjfx7GALBuGQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bv8y9WdhQobdxYiDA2tFRg2xrH/5CljpszM7mLM3bnzgSMAA7Ptppjt/cXJ09uRf0NlS5RtQTsDOFx+NCNPiaBVMwlJuuh9iaXBLY4vwqkWfkItkVvMBBAtuUsydknKiEQsz7W/kv2LDwEkXphPztBtg1EUHvlWcqeqsjaGlRtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=2B6goa/c; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Vfekbi0HchxBjQQ/RvzxtQJeD9GLl2y8IkOsbfDf82s=; b=2B6goa/cDio3lnpvelC5GvCUuA
-	nWt5Lxn9qeayYM7qd7LBItOIe/RcB4Ge/jGfvdwztUetwRv73BK9KNuCLVXUieCPkHTsS34SA7eNu
-	WFJzmlNvBnd9nmhShD+entZRaCx+G6bY0yPSwIyGGMTy/3Z8H/oqA3jeur4iksY9fIxI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sjJTr-005wST-EH; Wed, 28 Aug 2024 16:17:03 +0200
-Date: Wed, 28 Aug 2024 16:17:03 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: woojung.huh@microchip.com, f.fainelli@gmail.com, olteanv@gmail.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, linus.walleij@linaro.org, alsi@bang-olufsen.dk,
-	justin.chen@broadcom.com, sebastian.hesselbarth@gmail.com,
-	alexandre.torgue@foss.st.com, joabreu@synopsys.com,
-	mcoquelin.stm32@gmail.com, wens@csie.org, jernej.skrabec@gmail.com,
-	samuel@sholland.org, hkallweit1@gmail.com, linux@armlinux.org.uk,
-	ansuelsmth@gmail.com, UNGLinuxDriver@microchip.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-stm32@st-md-mailman.stormreply.com, krzk@kernel.org,
-	jic23@kernel.org
-Subject: Re: [PATCH net-next v2 01/13] net: stmmac: dwmac-sun8i: Use
- for_each_child_of_node_scoped()
-Message-ID: <52435305-d134-4cee-8660-f7bf60206ddf@lunn.ch>
-References: <20240828032343.1218749-1-ruanjinjie@huawei.com>
- <20240828032343.1218749-2-ruanjinjie@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aawJ/4xL7b02DuAm5DXPUAKa51hNglHr2V70VbDOcRHWX/HNUt+FcA1ORNdVJzENfXx2pDnhsunIXUaVkeni4FpgUkyWucDTbzdH+tNJZU9d2ud2gK1REGQhZctLcMcw1s4Uk9Dm+6iCRgtyNftG7XWQNn0sJn4C80uOQccnrPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NIRK2sRF; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724854668; x=1756390668;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Znii0Gu4u2xaHQfuHkXYV9iRjgMc8rCLjfx7GALBuGQ=;
+  b=NIRK2sRFvcCluzlTV3OX2grQuQtO9HftQ6hh+6EQY8XuWoDoXzf5egGr
+   4qD3frB6LfTgieCqYcRRa3BfZneQHJfisZUguyk2vIK6MEpyaTk8XaSQw
+   oHlPk7vXdOaLjBCsfR080PEdo0b7SpLM69SfcfJrpmQdnzZ5whi4nlYOx
+   +3QBmDsSGJvQ3874dqO6+nEIHlVq0wuWYiDTo6xzIm7L8F8xfjrw37oWT
+   ZVfLRZrh9mP3Cuh5dBtHuPSslPdZWPU9RtLt5if4Xvp2HoCD2p/PTj9LU
+   Dc0JO3gjGcv3fbvI/+4QxfDUxCGtnWGNOh72aswQm92fZAR/Ab5x6acRC
+   w==;
+X-CSE-ConnectionGUID: GMkIPbLWQjWKFPELUbs2mg==
+X-CSE-MsgGUID: Z5mXoxF0RP+EvzhP6yenNg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="22969071"
+X-IronPort-AV: E=Sophos;i="6.10,183,1719903600"; 
+   d="scan'208";a="22969071"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 07:17:47 -0700
+X-CSE-ConnectionGUID: vB+rwcLTTuKRLSfTJmJU4g==
+X-CSE-MsgGUID: u3KghOOiTSaUxzX4Tll+VQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,183,1719903600"; 
+   d="scan'208";a="100750764"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 07:17:43 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sjJUS-00000002fZd-3JjK;
+	Wed, 28 Aug 2024 17:17:40 +0300
+Date: Wed, 28 Aug 2024 17:17:40 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
+	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 6/7] iio: pressure: bmp280: Add data ready trigger
+ support
+Message-ID: <Zs8xhMaFahBVanwd@smile.fi.intel.com>
+References: <20240823181714.64545-1-vassilisamir@gmail.com>
+ <20240823181714.64545-7-vassilisamir@gmail.com>
+ <ZsjrxLlhmx-TzwXF@smile.fi.intel.com>
+ <20240824120222.GG9644@vamoiridPC>
+ <ZsxXvGy4GNrZWs-D@smile.fi.intel.com>
+ <20240828140119.GB4934@vamoiridPC>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,39 +87,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240828032343.1218749-2-ruanjinjie@huawei.com>
+In-Reply-To: <20240828140119.GB4934@vamoiridPC>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Aug 28, 2024 at 11:23:31AM +0800, Jinjie Ruan wrote:
-> Avoid need to manually handle of_node_put() by using
-> for_each_child_of_node_scoped(), which can simplfy code.
+On Wed, Aug 28, 2024 at 04:01:19PM +0200, Vasileios Amoiridis wrote:
+> On Mon, Aug 26, 2024 at 01:23:56PM +0300, Andy Shevchenko wrote:
+> > On Sat, Aug 24, 2024 at 02:02:22PM +0200, Vasileios Amoiridis wrote:
+> > > On Fri, Aug 23, 2024 at 11:06:28PM +0300, Andy Shevchenko wrote:
+> > > > On Fri, Aug 23, 2024 at 08:17:13PM +0200, Vasileios Amoiridis wrote:
+
+...
+
+> > > > > +	irq = fwnode_irq_get(fwnode, 0);
+> > > > > +	if (!irq)
+> > > > 
+> > > > Are you sure this is correct check?
+> > > > 
+> > > Well, I think yes, because the function return either the Linux IRQ number
+> > > on success or a negative errno on failure.
+> > 
+> > Where is 0 mentioned in this?
+> > 
+> > > https://elixir.bootlin.com/linux/v6.10.6/source/drivers/base/property.c#L987
+> > > 
+> > > > > +		return dev_err_probe(data->dev, -ENODEV,
+> > > > 
+> > > > Shadowed error code.
+> > > 
+> > > I am not sure I understand what you mean here. You mean that there is no
+> > > chance that the first one will pass and this one will fail?
+> > 
+> > -ENODEV is not what fwnode_irq_get() returns on error.
+> > 
+> > > > > +				     "No interrupt found.\n");
+
+...
+
+> > > > > +	desc = irq_get_irq_data(irq);
+> > > > > +	if (!desc)
+> > > > > +		return -EINVAL;
+> > > > 
+> > > > When may this fail?
+> > > 
+> > > I think that this will fail when Linux were not able to actually
+> > > register that interrupt.
+> > 
+> > Wouldn't fwnode_irq_get() fail already?
 > 
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->  drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+> By looking at it again, I didn't reply correct here. This function
+> internally calls the irq_to_desc() which basically returns the
+> irq desctiptor for this irq. This function can return NULL in
+> case the interrupt is not found in the maple tree (CONFIG_SPARSE_IRQ)
+> or in case the interrupt number is bigger than the NR_IRQs which
+> the irq controller can handle (!CONFIG_SPARSE_IRQ).
 > 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-> index cc93f73a380e..8c5b4e0c0976 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-> @@ -774,7 +774,7 @@ static int sun8i_dwmac_reset(struct stmmac_priv *priv)
->  static int get_ephy_nodes(struct stmmac_priv *priv)
->  {
->  	struct sunxi_priv_data *gmac = priv->plat->bsp_priv;
-> -	struct device_node *mdio_mux, *iphynode;
-> +	struct device_node *mdio_mux;
->  	struct device_node *mdio_internal;
->  	int ret;
+> So in my opinion, it makes sense to keep this check.
 
-Networking uses reverse Christmas tree. Variables are sorted, longest
-first, shortest last. So you need to move mdio_mux after
-mdio_internal.
+So, you mean that if fwnode_irq_get() succeeded there is a chance that returned
+Linux IRQ number is invalid?! If it's so, it's something new to me. I would like
+to see the details, please!
 
-The rest looks O.K.
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-    Andrew
-
----
-pw-bot: cr
 
