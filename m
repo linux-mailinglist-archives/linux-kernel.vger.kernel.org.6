@@ -1,95 +1,118 @@
-Return-Path: <linux-kernel+bounces-305107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96655962999
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:02:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1479996299C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DA641F25460
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:02:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7367CB236C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219A417A922;
-	Wed, 28 Aug 2024 14:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CBE31891C3;
+	Wed, 28 Aug 2024 14:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XaPAkuZh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="swj02hBq"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Gm3Zv5lT"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042061DFED
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B953A176ABA;
+	Wed, 28 Aug 2024 14:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724853748; cv=none; b=mWYIBXD4EgljVtLvDZ3o6KBEnSyYMZ79Y45u80WVk4l3hujTsvvma70zs0Cz6XmCmsbKEnlRmjYTcOqoVUj6e7klcpCJpj3ROq7h2NcdqgGYHmGMt3UWEqjUWWUO+SmwZD5qLs5h96mqIqm5xtRa3/PFMk9RinaIdnGAU1wP0JI=
+	t=1724853808; cv=none; b=fRZpV5GSVKPWFOmX4tOP2IfxDEGYmOuzoHMFhadvT9f0fSewteOPeRkmKvCExKGckf1ll+QBpb8mVqMq0SbGZ2lqedlzYBNQkoRo3vYjN18/tIOg57wJbbNuoV1h9CxBo1OjfIHQSSsTNpWPguIChnP8StnFYYXquE9sfznpUeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724853748; c=relaxed/simple;
-	bh=DDVYsNiPGJxKNMDWH2mMOukmpEHAc2FV2iO5+4WvJJw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bns6ow24f8+yLnfbl7MLe3KmzUlge1z8wjUmwDO6pfrn1ZIZWtUO+dPSUN5TEJi/EX0SkC4Di35W1Krpst1Rp3cL/wy24GFwXOVqXqODhd/Gc3vC9aqp955tQfyCaddJ4fhrnCcTNErH3X9UT8493epeeHZbbRGSdAfNbavEqG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XaPAkuZh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=swj02hBq; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 28 Aug 2024 16:02:23 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724853745;
+	s=arc-20240116; t=1724853808; c=relaxed/simple;
+	bh=bCDA2OLhvtT5NvKB3PRKwz9R5Y16PPvE8RlwT39+U3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q6WH3TwTHwsbqbLO6bucpueza4N+zizdgXunwZUyQS+2tTjyKdVNcLcnEdTYuOGisUe88Xwo18rCdrQFSXIdoDNhfD69ardZ45/gH5X6inufXGA1/D8oowsCNYYVPwv+QkUsp4DBk0CbF1A5SqCoNYei4gHhAiumZ5Bf5pV6zpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Gm3Zv5lT; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 82AA21BF209;
+	Wed, 28 Aug 2024 14:03:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724853798;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=O/J3BYmAFM3tQOVWdf9guFVEynCs0mpZgn69dSZCaDE=;
-	b=XaPAkuZhIV7IPmpl0i7rGu0dyODCDRJudm1U/s9D4uudFtZ1tpFPqdaMnOCcFxbOBqzvH0
-	qHTpRQcKD/AGuoyZ4TWHd94PgDOVDqscYXdKpUMIpUnGQIS51kRbmDXr5yRuY64ba0mPkU
-	+3i7zVUCrlH+2P75K/Zm5yT+HgaeN+wdThM+cwatyz4HIKXQ2Od9fcwendRofPwYcnl7Gx
-	C9Ci9tR17RUEbb3Tbk+k3Y4sho+5Q+6bWYK0hFjHicNkfrHEzlkUdJk2cHfWt+Z9M72uTI
-	LplbBoBdNx8y9L/JmxLdXeJYPpv56cHExkucnvUVU3WuVpeotBOBjH8P9yKmKQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724853745;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O/J3BYmAFM3tQOVWdf9guFVEynCs0mpZgn69dSZCaDE=;
-	b=swj02hBq+W/SxH8MuV+6n/GDAXzQHUI4TH3j0iPJ9PpI+fSVVdroulVo5f46GOKyTuk4C7
-	A5QuzyfKAVDMQoCw==
-From: "bigeasy@linutronix.de" <bigeasy@linutronix.de>
-To: "Brandt, Oliver - Lenze" <oliver.brandt@lenze.com>
-Cc: "tglx@linutronix.de" <tglx@linutronix.de>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] irq_work: Avoid unnecessary "IRQ work" interrupts
-Message-ID: <20240828140223.P5vGN54Q@linutronix.de>
-References: <25833c44051f02ea2fd95309652628e2b1607a1e.camel@lenze.com>
- <20240828093719.3KJWbR6Y@linutronix.de>
- <20240828095415.43iwHYdM@linutronix.de>
- <1dc4fa0a48b05e14a1ae2a751441ba021ecee286.camel@lenze.com>
+	bh=X17P1T7VIyC/5Yzbs/EWY2YsIqMeZFR+ix7ybz6ledM=;
+	b=Gm3Zv5lTtOQjTQ9tvnyZ10xQ21ogkqfsan2KZYbAHrJKqz5Tak5V6utCjGcSk7ZBxgI8xs
+	mx4uHixYa7yQkzLf2gm+tQ2V9h06uNfWq5TJc8bVT3CdVgJ2WADS3dKGk/n3jYz/XPuIu3
+	z/6aiNzSflHsSi2UXaqMN9mPhKL4ZLZfrr9dHbiOtGV+SmuJuu597SCIaG6Ee5mly91qr7
+	+B4D+HoZULTxowPEmO13GRxB6OTvGp7i8l9upcaVeqO/HS950C4vdr2DiEIpFNV42t57YX
+	eK1955Q+Rr9uAUqh4jeoFEP1vLgNqTVBH5AI8Gh1Qvt/9jFO5GiW42f99GZa4Q==
+Date: Wed, 28 Aug 2024 16:03:15 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Aleksandr Mishin <amishin@t-argos.ru>
+Cc: Vadym Kochan <vadym.kochan@plvision.eu>, Taras Chornyi
+ <taras.chornyi@plvision.eu>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Oleksandr Mazur <oleksandr.mazur@plvision.eu>,
+ Serhiy Boiko <serhiy.boiko@plvision.eu>, Volodymyr Mytnyk
+ <volodymyr.mytnyk@plvision.eu>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: Re: [PATCH net] net: marvell: prestera: Remove unneeded check in
+ prestera_port_create()
+Message-ID: <20240828160315.077e3428@device-28.home>
+In-Reply-To: <20240828132606.19878-1-amishin@t-argos.ru>
+References: <20240828132606.19878-1-amishin@t-argos.ru>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1dc4fa0a48b05e14a1ae2a751441ba021ecee286.camel@lenze.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On 2024-08-28 13:26:42 [+0000], Brandt, Oliver - Lenze wrote:
+Hello Aleksandr,
+
+On Wed, 28 Aug 2024 16:26:06 +0300
+Aleksandr Mishin <amishin@t-argos.ru> wrote:
+
+> prestera_port_create() calls prestera_rxtx_port_init() and analyze its
+> return code. prestera_rxtx_port_init() always returns 0, so this check is
+> unneeded and should be removed.
 > 
-> Hmm.... I see. What about calling wake_irq_workd() directly; something
-> like
+> Remove unneeded check to clean up the code.
 > 
->         if (rt_lazy_work)
->                 wake_irq_workd();
->         else if (!lazy_work || tick_nohz_tick_stopped())
->                 irq_work_raise(work);
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: 501ef3066c89 ("net: marvell: prestera: Add driver for Prestera family ASIC devices")
+> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+> ---
+>  drivers/net/ethernet/marvell/prestera/prestera_main.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/marvell/prestera/prestera_main.c b/drivers/net/ethernet/marvell/prestera/prestera_main.c
+> index 63ae01954dfc..2d4f6d03b729 100644
+> --- a/drivers/net/ethernet/marvell/prestera/prestera_main.c
+> +++ b/drivers/net/ethernet/marvell/prestera/prestera_main.c
+> @@ -718,9 +718,7 @@ static int prestera_port_create(struct prestera_switch *sw, u32 id)
+>  		}
+>  	}
+>  
+> -	err = prestera_rxtx_port_init(port);
+> -	if (err)
+> -		goto err_port_init;
+> +	prestera_rxtx_port_init(port);
 
-this might work but I'm not too sure about it. This will become a
-problem if irq_work_queue() is invoked from a path where scheduling is
-not possible due to recursion or acquired locks. 
+If this function always return 0, you might as well change it to return
+void. This would avoid future issues if one were to change
+prestera_rxtx_port_init() to acually make it return something. It would
+then become obvious that the caller doesn't check the return, whereas
+with the current patch, we are simply ignoring it.
 
-How much of a problem is it and how much you gain by doing so?
+I also think you can target that patch to net-next, this isn't fixing
+any bug, but rather cleans the code up.
 
-> Regards,
-> Oliver
+Thanks,
 
-Sebastian
+Maxime
 
