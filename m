@@ -1,284 +1,125 @@
-Return-Path: <linux-kernel+bounces-305093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D50E3962966
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:55:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D26A896296D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:56:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0543E1C23BE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:55:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90E47285FA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:56:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D004B188014;
-	Wed, 28 Aug 2024 13:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D6A91898EC;
+	Wed, 28 Aug 2024 13:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="U6z/ZYRl"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="sYMNH8Fj"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA87E175D5A;
-	Wed, 28 Aug 2024 13:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FCE9166F12;
+	Wed, 28 Aug 2024 13:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724853324; cv=none; b=nk0JEj8xNO+h+gwfiYA8prwlD5KUj/tdzoj+QjOfLYVBnrcuyfZTRVkgxspSEcwig59tjgXKei/UaZS8GS20f2omUP4xcQGCtrPMN4CEbdQMf9Klf5f9zFTCCUh5B++Z08MbxyQt0BXVTAakn6HdKVA8+A+k1CMlGpTfHjXPmWI=
+	t=1724853345; cv=none; b=j279QQllSulbOQifc1KV7ISZwnqtmqL+rC57tKd1Rb9XhDVa/cUkdvFtfk+3s416caMfXnJspAQFGvqu70zEgkN8jNauqTpLxPvWVVbnn2Yz0lOaR16Z+PEV9gnqCm5r5ULiXhGgZ84aD0htZWWL+ln9hryA0iJFD2iOFGqv5wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724853324; c=relaxed/simple;
-	bh=eBCPAC8MAN4HImnVWfUHDVT+wQRKbjhirBkQ1s6w08A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=txDNyO6XLap5VA4zoAiO1HRTP5Io3ZIGGv3QakfrNHCi0rXfg8sJMh8Ip7KyYQoz+FGkxDuYuWp5+uAFminEZkEj6Sqffa3DlM0AxXTa96GYPI7Qe3VdrdH9MNewWBFQddrNACC1IMk6zn955cp/TAvaMr9VLj5EvQyrOMEM8cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=U6z/ZYRl; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=NmywIJ2PG1CPZd5ewQ7jLHlE1VCegbqWinVyn5dLAu8=; b=U6z/ZYRlyPqQqGqmoGpOCepykq
-	elNuTl4bmtGU55+ZYHVomWHiov1bKd64JARYpSjblmxu0brE290XrAzHYJ3aWx61Tg8dHTasTxyoV
-	HiUKuMslCsUZUh+Ff1rxClPj2mzXm+vzZZh0EH5kPftuyCr1TLsmRE0CEnhyWpFaeqA+3jV8h15Fs
-	6F6efehYJgJpniES8SI99TXslRAOBWzAR5HBPX0JC4n8LfILUGRzWmkcwWkGvZn0Tsj7ddQOxfmYH
-	CKKbCXp4y/fQSaiR1EdhNM79t8izWCIwgRQebxvfwnb/+rifS2iDSODAId75ddOh8XzKx4+Q044Jy
-	ussCYiDg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:42986)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sjJ8Z-0000Ha-2i;
-	Wed, 28 Aug 2024 14:55:03 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sjJ8T-0004Ww-2u;
-	Wed, 28 Aug 2024 14:54:57 +0100
-Date: Wed, 28 Aug 2024 14:54:57 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, Pantelis Antoniou <pantelis.antoniou@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	Herve Codina <herve.codina@bootlin.com>,
-	linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH net-next 6/6] net: ethernet: fs_enet: phylink conversion
-Message-ID: <Zs8sMUxX7mnWZQnA@shell.armlinux.org.uk>
-References: <20240828095103.132625-1-maxime.chevallier@bootlin.com>
- <20240828095103.132625-7-maxime.chevallier@bootlin.com>
- <Zs7+J5JWpfvSQ8/T@shell.armlinux.org.uk>
- <20240828134413.3da6f336@device-28.home>
+	s=arc-20240116; t=1724853345; c=relaxed/simple;
+	bh=FmCYspisTCQpwHF/NurpB9RXdm79uGq+/21JQtFsC0E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ufmlyp8JOkhvPaMqjw7xw4kb0d/wjl8TqgTIWI6U9XSKE50+wP8H9UH4A1w3vWj61bTNT92AzQ60NZ19uhAVk1ESENY1aQ5uZBL+Y3chIkD3mSNS9g5+K+zv2xtmZHzSUMYbfGyzbcuHPIEswr3nuFK29gVs8vnC+pHYeck/z4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=sYMNH8Fj; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1724853342;
+	bh=FmCYspisTCQpwHF/NurpB9RXdm79uGq+/21JQtFsC0E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sYMNH8FjXRdmYJf8C85acwyKBmhv3U91GbRv9Cvzaf7ypCQ2ccHq1GvNMvm7FWFyw
+	 xerl4zaXhfidrAlIOtWHGdCPltZMyXzZvzB0YCYRbPfIAtIFO08N+bs9a7A0aPu5zq
+	 CvcfmH5uDHzLZqXo2N56IJ4uIaRm28jtfNDxul/eKlpgQl1drU9vBE4zN5qfgF0dVl
+	 37ypjZ9oi/kdXDftXBxSSWm0eZAwYo7q3/18M36+HPxXwRccOg1ErYYeiCXHymnaGT
+	 u7iA97OSzu3vZ1WnpNUL3bg5YAgTgDKRRYWEw80mUpjsoVQC97mnhOb4AN94XncMic
+	 3s8F2cyFjwuHg==
+Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Wv5XZ06TQz1JcM;
+	Wed, 28 Aug 2024 09:55:41 -0400 (EDT)
+Message-ID: <d83bdff2-2665-4dcb-ab1d-c102bde7b46a@efficios.com>
+Date: Wed, 28 Aug 2024 09:55:17 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240828134413.3da6f336@device-28.home>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 6/8] tracing/bpf-trace: Add support for faultable
+ tracepoints
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+ Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
+ Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+ bpf@vger.kernel.org, Joel Fernandes <joel@joelfernandes.org>,
+ Michael Jeanson <mjeanson@efficios.com>
+References: <20240626185941.68420-1-mathieu.desnoyers@efficios.com>
+ <20240626185941.68420-7-mathieu.desnoyers@efficios.com>
+ <20240702090202.bc000b44890fe16d9b757b40@kernel.org>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20240702090202.bc000b44890fe16d9b757b40@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 28, 2024 at 01:44:13PM +0200, Maxime Chevallier wrote:
-> Hi Russell,
+On 2024-07-02 02:02, Masami Hiramatsu (Google) wrote:
+> On Wed, 26 Jun 2024 14:59:39 -0400
+> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 > 
-> On Wed, 28 Aug 2024 11:38:31 +0100
-> "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
+>> @@ -2443,9 +2443,15 @@ static int __bpf_probe_register(struct bpf_raw_event_map *btp, struct bpf_prog *
+>>   	if (prog->aux->max_tp_access > btp->writable_size)
+>>   		return -EINVAL;
+>>   
+>> -	return tracepoint_probe_register_prio_flags(tp, (void *)btp->bpf_func,
+>> -						    prog, TRACEPOINT_DEFAULT_PRIO,
+>> -						    TRACEPOINT_MAY_EXIST);
+>> +	if (tp->flags & TRACEPOINT_MAY_FAULT) {
+>> +		return tracepoint_probe_register_prio_flags(tp, (void *)btp->bpf_func,
+>> +							    prog, TRACEPOINT_DEFAULT_PRIO,
+>> +							    TRACEPOINT_MAY_EXIST | TRACEPOINT_MAY_FAULT);
+>> +	} else {
+>> +		return tracepoint_probe_register_prio_flags(tp, (void *)btp->bpf_func,
+>> +							    prog, TRACEPOINT_DEFAULT_PRIO,
+>> +							    TRACEPOINT_MAY_EXIST);
+>> +	}
 > 
-> > On Wed, Aug 28, 2024 at 11:51:02AM +0200, Maxime Chevallier wrote:
-> > > +static int fs_eth_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
-> > > +{
-> > > +	struct fs_enet_private *fep = netdev_priv(dev);
-> > > +
-> > > +	if (!netif_running(dev))
-> > > +		return -EINVAL;  
-> > 
-> > Why do you need this check?
-> > 
+> nit: you can also just pass the flag directly,
 > 
-> I included it as the original ioctl was phy_do_ioctl_running(), which
-> includes that check.
+> 		return tracepoint_probe_register_prio_flags(tp, (void *)btp->bpf_func,
+> 							    prog, TRACEPOINT_DEFAULT_PRIO,
+> 							    TRACEPOINT_MAY_EXIST | (tp->flags & TRACEPOINT_MAY_FAULT));
 > 
-> Is this check irrelevant with phylink ? I could only find macb and
-> xilinx_axienet that do the same check in their ioctl.
+
+I'll do that for both the ftrace and the bpf patches and eliminate this
+odd duplication. That's a good idea.
+
+I'll add your Reviewed-by to all the "tracing/*" patches.
+
+Thanks,
+
+Mathieu
+
+> But others looks good to me.
 > 
-> I can't tell you why that check is there in the first place in that
-> driver, a quick grep search leads back from a major driver rework in
-> 2011, at which point the check was already there...
-
-int phylink_mii_ioctl(struct phylink *pl, struct ifreq *ifr, int cmd)
-{
-	if (pl->phydev) {
-		... do PHY based access / pass on to phylib ...
-	} else {
-		... for reads:
-		...  return emulated fixed-phy state if in fixed mode
-		...  return emulated inband state if in inband mode
-		... for writes:
-		...  ignore writes in fixed and inband modes
-		... otherwise return -EOPNOTSUPP
-	}
-}
-
-So, if a driver decides to connect the PHY during probe, the PHY will
-always be accessible.
-
-If a driver decides to connect the PHY during .ndo_open, the PHY will
-only be accessible while the netdev is open, otherwise -EOPNOTSUPP
-will be returned.
-
-What do ethernet drivers return when they're not open or not having a
-PHY? The answer is pretty random error codes.
-
-drivers/net/ethernet/renesas/ravb_main.c-       if (!netif_running(ndev))
-drivers/net/ethernet/renesas/ravb_main.c-               return -EINVAL;
-drivers/net/ethernet/renesas/ravb_main.c-
-drivers/net/ethernet/renesas/ravb_main.c-       if (!phydev)
-drivers/net/ethernet/renesas/ravb_main.c-               return -ENODEV;
-...
-drivers/net/ethernet/renesas/ravb_main.c:       return phy_mii_ioctl(phydev, req, cmd);
-
-drivers/net/ethernet/renesas/rswitch.c- if (!netif_running(ndev))
-drivers/net/ethernet/renesas/rswitch.c-         return -EINVAL;
-
-drivers/net/ethernet/8390/ax88796.c-    if (!netif_running(dev))
-drivers/net/ethernet/8390/ax88796.c-            return -EINVAL;
-drivers/net/ethernet/8390/ax88796.c-
-drivers/net/ethernet/8390/ax88796.c-    if (!phy_dev)
-drivers/net/ethernet/8390/ax88796.c-            return -ENODEV;
-
-drivers/net/ethernet/marvell/mv643xx_eth.c-     if (!dev->phydev)
-drivers/net/ethernet/marvell/mv643xx_eth.c-             return -ENOTSUPP;
-
-drivers/net/ethernet/xilinx/xilinx_emaclite.c-  if (!dev->phydev || !netif_running(dev))
-drivers/net/ethernet/xilinx/xilinx_emaclite.c-          return -EINVAL;
-
-drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige_main.c-     if (!(netif_running(netdev)))
-drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige_main.c-             return -EINVAL;
-
-drivers/net/ethernet/actions/owl-emac.c-        if (!netif_running(netdev))
-drivers/net/ethernet/actions/owl-emac.c-                return -EINVAL;
-
-drivers/net/ethernet/engleder/tsnep_main.c-     if (!netif_running(netdev))
-drivers/net/ethernet/engleder/tsnep_main.c-             return -EINVAL;
-
-drivers/net/ethernet/ti/davinci_emac.c- if (!(netif_running(ndev)))
-drivers/net/ethernet/ti/davinci_emac.c-         return -EINVAL;
-drivers/net/ethernet/ti/davinci_emac.c- if (ndev->phydev)
-drivers/net/ethernet/ti/davinci_emac.c:         return phy_mii_ioctl(ndev->phydev, ifrq, cmd);
-drivers/net/ethernet/ti/davinci_emac.c- else
-drivers/net/ethernet/ti/davinci_emac.c-         return -EOPNOTSUPP;
-
-drivers/net/ethernet/ti/netcp_ethss.c-  if (phy)
-drivers/net/ethernet/ti/netcp_ethss.c:          return phy_mii_ioctl(phy, req, cmd);
-drivers/net/ethernet/ti/netcp_ethss.c-
-drivers/net/ethernet/ti/netcp_ethss.c-  return -EOPNOTSUPP;
-
-drivers/net/ethernet/ti/cpsw_priv.c-    if (phy)
-drivers/net/ethernet/ti/cpsw_priv.c:            return phy_mii_ioctl(phy, req, cmd);
-drivers/net/ethernet/ti/cpsw_priv.c-
-drivers/net/ethernet/ti/cpsw_priv.c-    return -EOPNOTSUPP;
-
-drivers/net/ethernet/xscale/ixp4xx_eth.c-       if (!netif_running(dev))
-drivers/net/ethernet/xscale/ixp4xx_eth.c-               return -EINVAL;
-
-drivers/net/ethernet/freescale/gianfar.c-       if (!netif_running(dev))
-drivers/net/ethernet/freescale/gianfar.c-               return -EINVAL;
-...
-drivers/net/ethernet/freescale/gianfar.c-       if (!phydev)
-drivers/net/ethernet/freescale/gianfar.c-               return -ENODEV;
-drivers/net/ethernet/freescale/gianfar.c-
-drivers/net/ethernet/freescale/gianfar.c:       return phy_mii_ioctl(phydev, rq, cmd);
-
-drivers/net/ethernet/freescale/ucc_geth.c-      if (!netif_running(dev))
-drivers/net/ethernet/freescale/ucc_geth.c-              return -EINVAL;
-drivers/net/ethernet/freescale/ucc_geth.c-
-drivers/net/ethernet/freescale/ucc_geth.c-      if (!ugeth->phydev)
-drivers/net/ethernet/freescale/ucc_geth.c-              return -ENODEV;
-
-drivers/net/ethernet/mediatek/mtk_star_emac.c-  if (!netif_running(ndev))
-drivers/net/ethernet/mediatek/mtk_star_emac.c-          return -EINVAL;
-
-drivers/net/ethernet/microchip/lan743x_main.c-  if (!netif_running(netdev))
-drivers/net/ethernet/microchip/lan743x_main.c-          return -EINVAL;
-
-drivers/net/ethernet/ethoc.c-   if (!netif_running(dev))
-drivers/net/ethernet/ethoc.c-           return -EINVAL;
-
-drivers/net/ethernet/broadcom/b44.c-    int err = -EINVAL;
-drivers/net/ethernet/broadcom/b44.c-
-drivers/net/ethernet/broadcom/b44.c-    if (!netif_running(dev))
-drivers/net/ethernet/broadcom/b44.c-            goto out;
-
-drivers/net/ethernet/broadcom/sb1250-mac.c-     if (!netif_running(dev) || !sc->phy_dev)
-drivers/net/ethernet/broadcom/sb1250-mac.c-             return -EINVAL;
-
-drivers/net/usb/smsc95xx.c-     if (!netif_running(netdev))
-drivers/net/usb/smsc95xx.c-             return -EINVAL;
-
-Of 28 drivers that call phy_mii_ioctl():
- - 17 drivers return EINVAL if !netif_running().
- - 11 drivers do not check netif_running().
-and if there's no phydev:
- - 4 drivers return ENODEV
- - 3 drivers return EOPNOTSUPP (plus all drivers converted to phylink)
- - 2 drivers return EINVAL
- - 1 driver returns ENOTSUPP
-
-Phylib itself doesn't want NULL passed to phy_mii_ioctl(), so its up to
-the driver to trap this if its calling phy_mii_ioctl(). However, phylib
-also provides phy_do_ioctl() for hooking directly into .ndo_eth_ioctl,
-which is:
-
-int phy_do_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
-{
-        if (!dev->phydev)
-                return -ENODEV;
-
-        return phy_mii_ioctl(dev->phydev, ifr, cmd);
-}
-
-then there's (as you point out) phy_do_ioctl_running(), which is:
-
-int phy_do_ioctl_running(struct net_device *dev, struct ifreq *ifr, int cmd)
-{
-        if (!netif_running(dev))
-                return -ENODEV;
-
-        return phy_do_ioctl(dev, ifr, cmd);
-}
-
-and this returns ENODEV if the netif isn't running, not EINVAL which
-the majority of net drivers that manually check are doing. Maybe phylib
-has the error code wrong?
-
-In any case, I think it's pretty clear that there's no single "right"
-error code for these cases, everyone just puts up on a piece of paper
-with a donkey the names of various error codes, and while blindfolded
-sticks a pin in to find the "right" error code to use! So, I don't see
-any point in debating what is the "One True Right Error Code" for these
-conditions.
-
-Now, the question is... why do drivers do this netif_running() check?
-Is it because "other drivers do" or is it because there's a valid
-reason. There's no way to know, no one ever documents why the check
-is there - and based on your response, it's "because other drivers do".
-
-Without looking at the history, I wouldn't make any assumption about
-using phy_do_ioctl_running() - that could be the result of a drive-by
-cleanup patch converting code to use that helper.
-
-At this point... this email has eaten up a substantial amount of time,
-and I can't spend anymore time in front of the screen today so that's
-the end of my contributions for today. Sorry.
+> Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+> Thank you,
+> 
 
 -- 
-*** please note that I probably will only be occasionally responsive
-*** for an unknown period of time due to recent eye surgery making
-*** reading quite difficult.
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
