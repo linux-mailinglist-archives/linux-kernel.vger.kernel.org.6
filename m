@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-304579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5038196220E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:12:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18B12962214
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8BC1B22766
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:12:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B8B51F248F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B4C15B57A;
-	Wed, 28 Aug 2024 08:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FF315B0E8;
+	Wed, 28 Aug 2024 08:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E7K1UKCW"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d6kgi0Rt"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CC0B67A;
-	Wed, 28 Aug 2024 08:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1977815B0F8;
+	Wed, 28 Aug 2024 08:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724832712; cv=none; b=ema8YXFYMxDt1pHxbqLADw/+1AGJBwfsOR1QQo8pJtw4Wc+0OJhA5/Aez6UBSdCT5qCNugXyoluM5oQt8/8AYxreeD+hj5nPp6GI/zSV+f0HKLgDlgGcnX/yd1XZk5VRktUZBI1bv2D+Pih0h1fA+e/35M+h6cePO52umSdsSwY=
+	t=1724832830; cv=none; b=XVlnLEcSPMzssXgOXM17401Y2mQPWqAa5sqWAbUddHAmPaZjvI/Y4/GOwn/KckroRpAdgvdqSWa2ptkpK40gqIEAlL9XMjOo8HcB4ZJ82/0B5QYprS+FrmqjO288YkvFacaZuaiMJzhycM14JJpgIydnaEcta11kaMEB+Lb11f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724832712; c=relaxed/simple;
-	bh=rXAlDyfQa6JsiZxIdegNxFqr8f1pLLaMFvHLepT2Hus=;
+	s=arc-20240116; t=1724832830; c=relaxed/simple;
+	bh=2sxTen+hqWD9md4i6/YSDCChiC3x9Q7bIP07H37D5HE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qUapMGY3deerMtxIj7dRXHAMANwXKO+2ffgNtoSfW4vMJpMuEzkUam5CildI2g+sVorMIhrFETNRyKCLPQkO2brIGTyULmc/SdqPqltGhVO8UxuccKDIOV7hCvYq0MBL/FMp1Fi1qxPAtZaRLNckHSAFrvzMMcx8HFx8Hcfl0js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E7K1UKCW; arc=none smtp.client-ip=209.85.128.42
+	 In-Reply-To:Content-Type; b=W7nyk8rmvK6InrvgCM7rj+TIbFw25dP9+zYZAxqL/wdNXxi7U3FgNDVCEGvJI+9TK7ZuvJ/CTPNRA/lBZGcPN1Spuv8084fFgmYVh1zGLKKFF0ZcF8q/lXIU5W8PwpC8iTZU/QxizuZnr8sl7M4SCaRFj1E5CSQmu8bH8ZCIOZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d6kgi0Rt; arc=none smtp.client-ip=209.85.210.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4280b3a7efaso55111495e9.0;
-        Wed, 28 Aug 2024 01:11:50 -0700 (PDT)
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7142a30e3bdso273325b3a.0;
+        Wed, 28 Aug 2024 01:13:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724832709; x=1725437509; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
+        d=gmail.com; s=20230601; t=1724832828; x=1725437628; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=dSk/OEHoPMhRCK/ZaRMyI/zmjD4EdJp4kRX9RWfkNhI=;
-        b=E7K1UKCWsB2Jk9vrvl1gkpJuvm7Qg7FWBnxnhJSUzq/n41+UQOWysJ2wjIYLpZU3zG
-         v6Cs/AHqWmCDGww5Me+A+Z+/h92asiwhsvxuxvy+TpQghsI4uH9s72eYlcHVPBYYb/81
-         s0Au66bTStSr6xcFFbluJ0APbSkOWBs1+uVH04AhwgtM8msBNG1XPk3YoaJmWwinXAZl
-         K77WGc8Ggs7JGFywi0tDAot117yY0ymJQ+qVAnc8W88Bsha3g4ZQbbXLSoN52AU/5xBo
-         Z91R0/WZ9YIVOMNXsIV8PFRTZpVC+XC1VuNXBkVjKMeWo/jvC/Vk7RsnJG/d10Ai+tpU
-         jopg==
+        bh=XEeuJ6OEQj6tArNvQ3MuOMDLK/qII+FALymrAkia2Aw=;
+        b=d6kgi0RtVQ7Ag14fEX0XUvm5V/QRsxoykxAB2DGucMjHBr2QRxqsQzzdlpWrA9KF21
+         VnEAISCI1xYRwUplhRN2VizH8PhXxLHgAv8dWsP1vjopYz9sb1QdpimyqGAhSGi9MjxK
+         wDyCwyaxk/AEYQPwPyNJxBfXGhaKDY1/Et9Xuk6IQWxvvc2po8rE37/oXQ86ohuMaPZ+
+         i1V7CrxIL6KuHnHjpY8O5M6aH/QaS/hpomvYI/o3QSGsi41r9PV9SJ4sv5JFfkIyFQP5
+         5RJfQhAPEQ04HxAIkrvZmOiPtjo6ZtQJlwByeZTaTgXfBzi72XlbwVEWT3vd8l/rHe0c
+         BEtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724832709; x=1725437509;
-        h=content-transfer-encoding:in-reply-to:content-language:from
+        d=1e100.net; s=20230601; t=1724832828; x=1725437628;
+        h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dSk/OEHoPMhRCK/ZaRMyI/zmjD4EdJp4kRX9RWfkNhI=;
-        b=XSaFA93IKmTOs02docrzuJZUiT0+sW8rGyeVO5QWurBMUVq0Hz5Foxu8OriOmCvjfh
-         j5H6+I0pGF3q1V4nsk5e3CTpbljx1bGfKchAbagIaxuWAJfeydpFqI74P3gJktd8o/Y6
-         Gh+++twBXrXekL2KFzbeLYSc48WDrrPDa/xQyipDXif2VwDnIpWNRjG9GS9VISLQXFAL
-         x2LNwFTzMRHCPhJ+wB0tbw1QkQPr2FwRYbXkqgRSjJ5yYbY1RrEp/l56Rj1ttCa8m4/O
-         YwZxE0XR8YuO+uekIwGApeEvTK65DcXPcAk19ZeNUCJMd5Z9FJ3lJIieZylOozb8qjM/
-         0Fww==
-X-Forwarded-Encrypted: i=1; AJvYcCWUSu+4Om5xosMOnRZvsP3/cOc8Rew3UF4r0BH/ty9uBaNX3VPnmRxDxvFdi3cR92rdaCxUOBBrmLQP8xZX@vger.kernel.org, AJvYcCWtOsPjZTj5HOVWDcEU/SJ5dT43niliHJZ/Oza9F6JHxnQFO/XfIoM2qEhY0SlIo6v/laCinsSwdBDJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVWVAaN7+e/ka+FKsxBiiSmWF/RJPtnWVmRkSBv7NOSY0FB0jg
-	GpYN1wnEhNW7oIVmkonebHekjfOA23DNgFv1pfMfq0jA87xBIY3h
-X-Google-Smtp-Source: AGHT+IF8lcvZiFVTHUZ/tpOE7NQ2mVYYVRKLrUmvMJQgvic+d058iumAAiF97qbfy80oik/EDFhJNQ==
-X-Received: by 2002:adf:f08f:0:b0:371:7e19:b9de with SMTP id ffacd0b85a97d-37496821fb1mr774969f8f.32.1724832708968;
-        Wed, 28 Aug 2024 01:11:48 -0700 (PDT)
-Received: from [192.168.0.10] ([178.233.24.52])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba7b4271fsm7517625e9.29.2024.08.28.01.11.47
+        bh=XEeuJ6OEQj6tArNvQ3MuOMDLK/qII+FALymrAkia2Aw=;
+        b=VRZH+OBwraGnx5Oo2mlqK5eZNTwQs/zg11TwIuixo5XgxmENrXxBEufaXMX0ZpCU+c
+         CCJJV0QLqTTR3Y3X2PGPO47InWfhAkfQRfVFxHMCibwTiLLRls0lI+mUYFYJBSmSmg9D
+         6GzH4xvMNTAYQgl03SigJsO8Dw21qZRw0FlOVZYpDwvyUK5WN20leTPBfEivqs3zeFBX
+         ikhKeH0i0nxDzwmxC1yYaDYZf9BsreT2hzCmlUECvv5rgeQBrP7EmRjSr/d3mTKLUxrv
+         qx6pW4E+8fNDEK5r1gerGGjsH+x8zKrWILQNay5HpLvNWYFhcETPBW9BwlQ5kM01Kxa/
+         ZlhA==
+X-Forwarded-Encrypted: i=1; AJvYcCXYo87MOiL6WL1fQ+DOk+Jk62X00Zgl/ExYKe0AhBX7m4RHbStIa2xv98JpN3D0qLWYjgsKkJGu9z07X6U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2V1Rqu6Q5muJJ0deQAp9Mz43ZO/iAQ1azPIHoWUGG2GKVVVSG
+	I3WJalvK/xaK6DnJqNBV67+eC4Q0WcbiriezF9wlFbcCbkw7jfDTFnBKBhz1
+X-Google-Smtp-Source: AGHT+IFzeLbkxJqoDcVup/+Yq5NuZ87lSZ1xmGqjPADirUwgzOQ2oAhBgnGc7o6r9zLTS4dgJIKtAg==
+X-Received: by 2002:a05:6a21:7783:b0:1c3:3d23:c325 with SMTP id adf61e73a8af0-1ccd1b54bdbmr1797433637.24.1724832827990;
+        Wed, 28 Aug 2024 01:13:47 -0700 (PDT)
+Received: from [0.0.0.0] (ec2-54-193-105-225.us-west-1.compute.amazonaws.com. [54.193.105.225])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143422ecf9sm9641427b3a.20.2024.08.28.01.13.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 01:11:48 -0700 (PDT)
-Message-ID: <66432301-d5ad-4703-a08d-833573e733e0@gmail.com>
-Date: Wed, 28 Aug 2024 11:11:46 +0300
+        Wed, 28 Aug 2024 01:13:47 -0700 (PDT)
+Message-ID: <1a689627-851b-4929-aaf8-3dcddb57af6b@gmail.com>
+Date: Wed, 28 Aug 2024 01:14:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,100 +75,262 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: mediatek: mt8186: Fix supported-hw mask for
- GPU OPPs
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-mediatek@lists.infradead.org
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wenst@chromium.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- kernel@collabora.com
-References: <20240725072243.173104-1-angelogioacchino.delregno@collabora.com>
-From: Alper Nebi Yasak <alpernebiyasak@gmail.com>
-Content-Language: en-US, tr, en-GB
-In-Reply-To: <20240725072243.173104-1-angelogioacchino.delregno@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 3/3] clk: sifive: prci: Add release_reset hooks for
+ gemgxlpll/cltxpll
+To: Conor Dooley <conor.dooley@microchip.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, Pragnesh.patel@sifive.com,
+ aou@eecs.berkeley.edu, erik.danie@sifive.com, hes@sifive.com,
+ mturquette@baylibre.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
+ sboyd@kernel.org, schwab@linux-m68k.org, zong.li@sifive.com
+References: <cover.1724827635.git.ganboing@gmail.com>
+ <e47b943c0f685cd028ebd477e97e1706f184a7b6.1724827635.git.ganboing@gmail.com>
+ <20240828-duplex-skillful-752582090412@wendy>
+Content-Language: en-US
+From: Bo Gan <ganboing@gmail.com>
+In-Reply-To: <20240828-duplex-skillful-752582090412@wendy>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi,
+Hi Conor,
 
-On 2024-07-25 10:22 +03:00, AngeloGioacchino Del Regno wrote:
-> The speedbin eFuse reads a value 'x' from 0 to 7 and, in order to
-> make that compatible with opp-supported-hw, it gets post processed
-> as BIT(x).
+Thanks for replying so quickly. See inline.
+
+On 8/28/24 00:58, Conor Dooley wrote:
+> On Tue, Aug 27, 2024 at 11:55:20PM -0700, Bo Gan wrote:
+>> This patch adds the release_reset hook interface to __prci_wrpll_data.
+>> During clock enablement, the function (if present) will be called after PLL
+>> registers are configured. It aligns the logic to the driver in u-boot. When
+>> there's a previous bootloader stage, such as u-boot, it usually enables the
+>> gemgxlpll clock when trying to PXE/network boot. The kernel boots fine, but
+>> we should not depend on it being our previous stage, and the logic within:
+>>
+>>   a. We (linux) can get directly invoked by firmware (OpenSBI).
+>>   b. U-boot doesn't necessarily have to initialize ethernet and enable the
+>>      clock (when not enabled in CONFIG).
+>>
+>> When the kernel is the first to initialize gemgxlpll, it must also release
+>> the corresponding reset. Otherwise the chip will just hang during macb
+>> initialization, and even external JTAG debugger will lose control over the
+>> risc-v debug module. (Observed with my Sifive Unmatched Rev.B board)
+>>
+>> The patch took the dt-bindings and logics directly from u-boot with some
+>> additional modifications:
+>>   - Use __prci_writel after __prci_readl to have barrier semantic. U-boot
+>>     has the strong version of readl/writel, but linux has the relaxed ones.
+>>   - Use pd->reset.rcdev.ops to access the reset regs.
+>>   - Split reset bindings for FU540/FU740 and use them directly, instead of
+>>     looking it up through reset-names.
 > 
-> Change all of the 0x30 supported-hw to 0x20 to avoid getting
-> duplicate OPPs for speedbin 4, and also change all of the 0x8 to
-> 0xcf because speedbins different from 4 and 5 do support 900MHz,
-> 950MHz, 1000MHz with the higher voltage of 850mV, 900mV, 950mV
-> respectively.
+> The macb driver already supports using a reset at boot time (see zynq and
+> mpfs) if hooked up in the devicetree, why doesn't that work for you in
+> this situation?
 > 
-> Fixes: f38ea593ad0d ("arm64: dts: mediatek: mt8186: Wire up GPU voltage/frequency scaling")
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
-
-Tested-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
-
-Appears to work on my magneton, I can see "Mali-G52 r1 (Panfrost)" as
-the OpenGL renderer in various programs after this patch.
-
->  arch/arm64/boot/dts/mediatek/mt8186.dtsi | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+> Thanks,
+> Conor.
 > 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8186.dtsi b/arch/arm64/boot/dts/mediatek/mt8186.dtsi
-> index 4763ed5dc86c..d63a9defe73e 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8186.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8186.dtsi
-> @@ -731,7 +731,7 @@ opp-850000000 {
->  		opp-900000000-3 {
->  			opp-hz = /bits/ 64 <900000000>;
->  			opp-microvolt = <850000>;
-> -			opp-supported-hw = <0x8>;
-> +			opp-supported-hw = <0xcf>;
->  		};
->  
->  		opp-900000000-4 {
-> @@ -743,13 +743,13 @@ opp-900000000-4 {
->  		opp-900000000-5 {
->  			opp-hz = /bits/ 64 <900000000>;
->  			opp-microvolt = <825000>;
-> -			opp-supported-hw = <0x30>;
-> +			opp-supported-hw = <0x20>;
->  		};
->  
->  		opp-950000000-3 {
->  			opp-hz = /bits/ 64 <950000000>;
->  			opp-microvolt = <900000>;
-> -			opp-supported-hw = <0x8>;
-> +			opp-supported-hw = <0xcf>;
->  		};
->  
->  		opp-950000000-4 {
-> @@ -761,13 +761,13 @@ opp-950000000-4 {
->  		opp-950000000-5 {
->  			opp-hz = /bits/ 64 <950000000>;
->  			opp-microvolt = <850000>;
-> -			opp-supported-hw = <0x30>;
-> +			opp-supported-hw = <0x20>;
->  		};
->  
->  		opp-1000000000-3 {
->  			opp-hz = /bits/ 64 <1000000000>;
->  			opp-microvolt = <950000>;
-> -			opp-supported-hw = <0x8>;
-> +			opp-supported-hw = <0xcf>;
->  		};
->  
->  		opp-1000000000-4 {
-> @@ -779,7 +779,7 @@ opp-1000000000-4 {
->  		opp-1000000000-5 {
->  			opp-hz = /bits/ 64 <1000000000>;
->  			opp-microvolt = <875000>;
-> -			opp-supported-hw = <0x30>;
-> +			opp-supported-hw = <0x20>;
->  		};
->  	};
->  
 
+That a good idea. I never tried it. It's probably a cleaner solution, and I'll
+try it some later time. I used the same logic in u-boot partially because the
+way how sifive people coded this up. Specifically, PROCMONCFG is set between
+the releases of 2 resets. I assume there's some dependency between those regs.
+If reset is triggered from the macb driver side, there's really no proper way
+to set PROCMONCFG. Also from the FU740 manual, I can't find any mentioning
+about PROCMONCFG. If it's not needed, surely it's better to just let macb do
+the resetting. Perhaps I should wait for Sifive folks to fill in the gap.
+
+Thanks!
+Bo
+
+<Removed Yash Shah and Pragnesh Patel. Looks like they left Sifive>
+
+>>
+>> Signed-off-by: Bo Gan <ganboing@gmail.com>
+>> ---
+>>   drivers/clk/sifive/fu540-prci.h  | 16 ++++++++++++++++
+>>   drivers/clk/sifive/fu740-prci.h  | 31 +++++++++++++++++++++++++++++++
+>>   drivers/clk/sifive/sifive-prci.c | 23 +++++++++++++++++++++++
+>>   drivers/clk/sifive/sifive-prci.h |  8 ++++++++
+>>   4 files changed, 78 insertions(+)
+>>
+>> diff --git a/drivers/clk/sifive/fu540-prci.h b/drivers/clk/sifive/fu540-prci.h
+>> index e0173324f3c5..9d2ca18f47a4 100644
+>> --- a/drivers/clk/sifive/fu540-prci.h
+>> +++ b/drivers/clk/sifive/fu540-prci.h
+>> @@ -23,9 +23,24 @@
+>>   #include <linux/module.h>
+>>   
+>>   #include <dt-bindings/clock/sifive-fu540-prci.h>
+>> +#include <dt-bindings/reset/sifive-fu540-prci.h>
+>>   
+>>   #include "sifive-prci.h"
+>>   
+>> +/**
+>> + * sifive_fu540_prci_ethernet_release_reset() - Release ethernet reset
+>> + * @pd: struct __prci_data * for the PRCI containing the Ethernet CLK mux reg
+>> + *
+>> + */
+>> +static void sifive_fu540_prci_ethernet_release_reset(struct __prci_data *pd)
+>> +{
+>> +	/* Release GEMGXL reset */
+>> +	pd->reset.rcdev.ops->deassert(&pd->reset.rcdev, FU540_PRCI_RST_GEMGXL_N);
+>> +
+>> +	/* Procmon => core clock */
+>> +	sifive_prci_set_procmoncfg(pd, PRCI_PROCMONCFG_CORE_CLOCK_MASK);
+>> +}
+>> +
+>>   /* PRCI integration data for each WRPLL instance */
+>>   
+>>   static struct __prci_wrpll_data sifive_fu540_prci_corepll_data = {
+>> @@ -43,6 +58,7 @@ static struct __prci_wrpll_data sifive_fu540_prci_ddrpll_data = {
+>>   static struct __prci_wrpll_data sifive_fu540_prci_gemgxlpll_data = {
+>>   	.cfg0_offs = PRCI_GEMGXLPLLCFG0_OFFSET,
+>>   	.cfg1_offs = PRCI_GEMGXLPLLCFG1_OFFSET,
+>> +	.release_reset = sifive_fu540_prci_ethernet_release_reset,
+>>   };
+>>   
+>>   /* Linux clock framework integration */
+>> diff --git a/drivers/clk/sifive/fu740-prci.h b/drivers/clk/sifive/fu740-prci.h
+>> index f31cd30fc395..dd0f54277a99 100644
+>> --- a/drivers/clk/sifive/fu740-prci.h
+>> +++ b/drivers/clk/sifive/fu740-prci.h
+>> @@ -10,9 +10,38 @@
+>>   #include <linux/module.h>
+>>   
+>>   #include <dt-bindings/clock/sifive-fu740-prci.h>
+>> +#include <dt-bindings/reset/sifive-fu740-prci.h>
+>>   
+>>   #include "sifive-prci.h"
+>>   
+>> +/**
+>> + * sifive_fu740_prci_ethernet_release_reset() - Release ethernet reset
+>> + * @pd: struct __prci_data * for the PRCI containing the Ethernet CLK mux reg
+>> + *
+>> + */
+>> +static void sifive_fu740_prci_ethernet_release_reset(struct __prci_data *pd)
+>> +{
+>> +	/* Release GEMGXL reset */
+>> +	pd->reset.rcdev.ops->deassert(&pd->reset.rcdev, FU740_PRCI_RST_GEMGXL_N);
+>> +
+>> +	/* Procmon => core clock */
+>> +	sifive_prci_set_procmoncfg(pd, PRCI_PROCMONCFG_CORE_CLOCK_MASK);
+>> +
+>> +	/* Release Chiplink reset */
+>> +	pd->reset.rcdev.ops->deassert(&pd->reset.rcdev, FU740_PRCI_RST_CLTX_N);
+>> +}
+>> +
+>> +/**
+>> + * sifive_fu740_prci_cltx_release_reset() - Release cltx reset
+>> + * @pd: struct __prci_data * for the PRCI containing the Ethernet CLK mux reg
+>> + *
+>> + */
+>> +static void sifive_fu740_prci_cltx_release_reset(struct __prci_data *pd)
+>> +{
+>> +	/* Release CLTX reset */
+>> +	pd->reset.rcdev.ops->deassert(&pd->reset.rcdev, FU740_PRCI_RST_CLTX_N);
+>> +}
+>> +
+>>   /* PRCI integration data for each WRPLL instance */
+>>   
+>>   static struct __prci_wrpll_data sifive_fu740_prci_corepll_data = {
+>> @@ -30,6 +59,7 @@ static struct __prci_wrpll_data sifive_fu740_prci_ddrpll_data = {
+>>   static struct __prci_wrpll_data sifive_fu740_prci_gemgxlpll_data = {
+>>   	.cfg0_offs = PRCI_GEMGXLPLLCFG0_OFFSET,
+>>   	.cfg1_offs = PRCI_GEMGXLPLLCFG1_OFFSET,
+>> +	.release_reset = sifive_fu740_prci_ethernet_release_reset,
+>>   };
+>>   
+>>   static struct __prci_wrpll_data sifive_fu740_prci_dvfscorepll_data = {
+>> @@ -49,6 +79,7 @@ static struct __prci_wrpll_data sifive_fu740_prci_hfpclkpll_data = {
+>>   static struct __prci_wrpll_data sifive_fu740_prci_cltxpll_data = {
+>>   	.cfg0_offs = PRCI_CLTXPLLCFG0_OFFSET,
+>>   	.cfg1_offs = PRCI_CLTXPLLCFG1_OFFSET,
+>> +	.release_reset = sifive_fu740_prci_cltx_release_reset,
+>>   };
+>>   
+>>   /* Linux clock framework integration */
+>> diff --git a/drivers/clk/sifive/sifive-prci.c b/drivers/clk/sifive/sifive-prci.c
+>> index caba0400f8a2..ae8055a84466 100644
+>> --- a/drivers/clk/sifive/sifive-prci.c
+>> +++ b/drivers/clk/sifive/sifive-prci.c
+>> @@ -249,6 +249,9 @@ int sifive_prci_clock_enable(struct clk_hw *hw)
+>>   	if (pwd->disable_bypass)
+>>   		pwd->disable_bypass(pd);
+>>   
+>> +	if (pwd->release_reset)
+>> +		pwd->release_reset(pd);
+>> +
+>>   	return 0;
+>>   }
+>>   
+>> @@ -448,6 +451,26 @@ void sifive_prci_hfpclkpllsel_use_hfpclkpll(struct __prci_data *pd)
+>>   	r = __prci_readl(pd, PRCI_HFPCLKPLLSEL_OFFSET);	/* barrier */
+>>   }
+>>   
+>> +/*
+>> + * PROCMONCFG
+>> + */
+>> +
+>> +/**
+>> + * sifive_prci_set_procmoncfg() - set PROCMONCFG
+>> + * @pd: struct __prci_data * PRCI context
+>> + * @val: u32 value to write to PROCMONCFG register
+>> + *
+>> + * Set the PROCMONCFG register to @val
+>> + *
+>> + * Context: Any context.  Caller must prevent concurrent changes to the
+>> + *          PROCMONCFG_OFFSET register.
+>> + */
+>> +void sifive_prci_set_procmoncfg(struct __prci_data *pd, u32 val)
+>> +{
+>> +	__prci_writel(val, PRCI_PROCMONCFG_OFFSET, pd);
+>> +	__prci_readl(pd, PRCI_PROCMONCFG_OFFSET);	/* barrier */
+>> +}
+>> +
+>>   /* PCIE AUX clock APIs for enable, disable. */
+>>   int sifive_prci_pcie_aux_clock_is_enabled(struct clk_hw *hw)
+>>   {
+>> diff --git a/drivers/clk/sifive/sifive-prci.h b/drivers/clk/sifive/sifive-prci.h
+>> index 91658a88af4e..825a0aef9fd5 100644
+>> --- a/drivers/clk/sifive/sifive-prci.h
+>> +++ b/drivers/clk/sifive/sifive-prci.h
+>> @@ -210,6 +210,9 @@
+>>   
+>>   /* PROCMONCFG */
+>>   #define PRCI_PROCMONCFG_OFFSET			0xf0
+>> +#define PRCI_PROCMONCFG_CORE_CLOCK_SHIFT	24
+>> +#define PRCI_PROCMONCFG_CORE_CLOCK_MASK					\
+>> +		(0x1 << PRCI_PROCMONCFG_CORE_CLOCK_SHIFT)
+>>   
+>>   /*
+>>    * Private structures
+>> @@ -235,6 +238,7 @@ struct __prci_data {
+>>    * @disable_bypass: fn ptr to code to not bypass the WRPLL (or NULL)
+>>    * @cfg0_offs: WRPLL CFG0 register offset (in bytes) from the PRCI base address
+>>    * @cfg1_offs: WRPLL CFG1 register offset (in bytes) from the PRCI base address
+>> + * @release_reset: fn ptr to code to release clock reset
+>>    *
+>>    * @enable_bypass and @disable_bypass are used for WRPLL instances
+>>    * that contain a separate external glitchless clock mux downstream
+>> @@ -246,6 +250,7 @@ struct __prci_wrpll_data {
+>>   	void (*disable_bypass)(struct __prci_data *pd);
+>>   	u8 cfg0_offs;
+>>   	u8 cfg1_offs;
+>> +	void (*release_reset)(struct __prci_data *pd);
+>>   };
+>>   
+>>   /**
+>> @@ -290,6 +295,9 @@ void sifive_prci_corepllsel_use_corepll(struct __prci_data *pd);
+>>   void sifive_prci_hfpclkpllsel_use_hfclk(struct __prci_data *pd);
+>>   void sifive_prci_hfpclkpllsel_use_hfpclkpll(struct __prci_data *pd);
+>>   
+>> +/* PROCMONCFG */
+>> +void sifive_prci_set_procmoncfg(struct __prci_data *pd, u32 val);
+>> +
+>>   /* Linux clock framework integration */
+>>   long sifive_prci_wrpll_round_rate(struct clk_hw *hw, unsigned long rate,
+>>   				  unsigned long *parent_rate);
+>> -- 
+>> 2.34.1
+>>
 
