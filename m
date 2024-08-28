@@ -1,139 +1,221 @@
-Return-Path: <linux-kernel+bounces-305749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5DC49633C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:24:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B2C39633C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:24:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A46F1F21428
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:24:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 606A5B223A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB581AD3FD;
-	Wed, 28 Aug 2024 21:24:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2341AD5C1;
+	Wed, 28 Aug 2024 21:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZBD3SG4v"
-Received: from mail-oa1-f74.google.com (mail-oa1-f74.google.com [209.85.160.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="EZAj4jgo"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2056.outbound.protection.outlook.com [40.107.93.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3B61AC433
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 21:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724880244; cv=none; b=hZMpQDYFaMu7MfbGxxXmtzshGIdJSfq7Cs+5E+ZBx5KSj/+eYXrUKWSEydRRZ58I9c9ig8KUXyqhdanBxxg+dSF5KJBf0uG7tUosr2w6I2saM5JiMLJnNyuGRs5p2CLqv39HCUCMX2IchkwcCjg2y0/qZfYwMTngbkiFHLMuD9c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724880244; c=relaxed/simple;
-	bh=VOkjTFoLXtGv0TViaHfsU+gppTJDsqZWATy+QAtbgww=;
-	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=P9WdPlxzVv+Yh7lr+PkcD5iW0bQK37zl7fqYHiJtIL9CNg3KW0yGI0rR+094VOY0IGwpDBmasgrsQhMp3vFiHlZ1HdzmZPAvHRiRhFfaeoNIfiwsT1ZCXSb0hDSIsK7j9jkaTLq8DKUlB+lXIOmuUFbKwhnR1X7DdTez72h/gIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZBD3SG4v; arc=none smtp.client-ip=209.85.160.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
-Received: by mail-oa1-f74.google.com with SMTP id 586e51a60fabf-27040466ac4so797762fac.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:24:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724880241; x=1725485041; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qZf5vS6nzeffxNNxcAI3Z4UnlXSlArXBSTkbZeQVRKE=;
-        b=ZBD3SG4vwGor5kTHUJDTK38i5m2Gw1R+hG/K4bLTbBl/0U5YhhNiEtmD4Bhvv00Phc
-         FSprKuFmci6OxbMeEfMOc3F0m+Qn7txlQ47Np6Q6FxFj/k/oxqpL8mNb5JK++wWZ1OMN
-         oDcRfh32mZbD55rHoljMOym8vrrSv4MwIYYvH5SkzgjeGSWOR2W7nCQ+ZLgJUgEaJjYl
-         JK0XQmipFzi6ED3GL0eYdVh7PI5FDHhd6mYrK3emJKSnHaITxsz4PRC+vuYVGY9VZGk0
-         TR6C8e1Rq0lTgZdQVnTYtvd7gtCbIgq1uSdtwCvN5woPqxFNaSrrc/bP0Ytuqnp67M8R
-         ld5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724880241; x=1725485041;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qZf5vS6nzeffxNNxcAI3Z4UnlXSlArXBSTkbZeQVRKE=;
-        b=BRwQpOh/s/2mfnESEQooUfrvSgA52fqiMcJfyzzGtk/koohiubH7Anlm6TZilJMOQz
-         eYl5MpIAXgSD2+FJJMOi9L1WHUDvoKPYXRkpGOaM/KAAqBh4kRD1GMiGDz8erDKggVkZ
-         FkvZzq1LTv+3xq7Xw9wR9SOItvXUZHQbeLwPBvSeJYzi167uLjQBT9IOLNiBPMJ4XFvZ
-         WR1/X/5Pg5TtJFT5Mv6ZFHskV9cUiR5SzN748MmRzddLPT8Xpl4WqJ6+N1j1H++FSQaJ
-         7JBRMHb0NcbBy5ppdOYwYsLWg9TtMXvY+uKD/XOtBELstJYHDoMaTyTeIb1Acr12eS01
-         qmWA==
-X-Forwarded-Encrypted: i=1; AJvYcCWz7/arY4G/9QR2ZUJiKezavzUr1zL78HNKNEeoNk4PTQ2wbdTV6yTV/o0DNlfuZxrjaTFUu2/GkF1IaT0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3+gdHcubxWOVNvm6dBh/FzWOHcH+nwoySB8gz5RSK3R1L9gkb
-	oAlfBSbSr6d6+EPEg6MYR+9MPHSA+ge/H0dPL6dnILtG4dxbWyosoAjJn8eBeMLjVZwkbAWvXTf
-	KVDnQUiS/3XZtcSKj6sLu1w==
-X-Google-Smtp-Source: AGHT+IHJilOsVOjcj476mr7NemZ02Wkts0F0ld7Ilool75wpEvDcZGSEQFGQLGm7UpH7JX3upxceg/2c0Occ46jKZg==
-X-Received: from coltonlewis-kvm.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:14ce])
- (user=coltonlewis job=sendgmr) by 2002:a05:6871:e289:b0:270:1b61:48d9 with
- SMTP id 586e51a60fabf-277934e6bb7mr780fac.4.1724880241218; Wed, 28 Aug 2024
- 14:24:01 -0700 (PDT)
-Date: Wed, 28 Aug 2024 21:24:00 +0000
-In-Reply-To: <ZsYwF5QJ8gqto8Mm@google.com> (message from Mingwei Zhang on Wed,
- 21 Aug 2024 18:21:11 +0000)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCAD1AC433;
+	Wed, 28 Aug 2024 21:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724880250; cv=fail; b=kV5F8VXx8I/+jN+BBSZGscubUhJWx8lk0ZtI0PEAodwQKFejueySJNLnUoBgAKxMW0vQ4ZKezKn/KBsqtVHuox9aIBjduZGSIGLFQJj0OX8vk0yFYAOfk5J44ltsbFPvKx28YD9unXoFfvihwXakZgSEHzlKTO5a/iI14TP5wDU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724880250; c=relaxed/simple;
+	bh=up8oknOEGhshV14c3bxUovIF7dvRXXZ5jzIQNQprN2c=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=DPsEl2wkC1G/vAd6psBz8tVyBwUJVq9Q0FttnlWRxP4VAwbmsjecbALTub1YDhUOb61QA6PfvWfalVgfIqm2SIT3TXnoM7wlonxFtdBkcaMY5qXbKp01d/c6fc6MJm+aErOazxGhTVsD9MCQs1LKrG647xP0x0JIYHnDTLY2oJg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=EZAj4jgo; arc=fail smtp.client-ip=40.107.93.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WeQQUtvcxJinE5nNyrHIqQ4yJKJ9C1u0cmQGGO/kJZ9Q1sicJFqTAaDXOaiY6JBB/PAEZe0z4MedvHvDRkFv2tlaKGEDsI53uk+icdRKy8VQmE74QtdYcGt0Z5CDPfganYWB9aTVwIaZxn7ZUvjyUdVAIDa/a8X1Oh6xVkRdU0cmstlVeeZX7OPwGaLF3aRlyG8Gd4KGsADAGzt5sEFsu3lvn6ReakIbXrEIOG8tb2kBb2sHiPANDlR0gKEl1i/qB1SNgdRq5thU1zSmlYxQj846hZv1O+hN68JVtq2LVwW8H0X3HHexnAdzduLb9n5ybgN9n9rFCvcrzM7p9U5yhg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Bd6kxscnjBayxnIUGGCMHh15JFGpG0cFaAiBfddbbwM=;
+ b=EbQ7fKRJZTKNYTRxwh0WihjqRn5aCgcrlvFwBWix1Sp+41M1IPTxPS48u1HtUmOwD+i0Vx7ShX5pROCiZwPlu00spVTbwPud88pEyfwDeFriGYGOx9l5NYzdeqmhxKTf2PWUeCwkyGMSnkzvkkYUm5gK+38aU6gKGsUYKfPdIBA80a9queo4h6QVwxSMypoStKq/t1ZYv7wPZNKCd6/N2cCfKngYBy2K0RWdO7ImaJRtvlKp9Hvro3ymUbddZrdSpkAgXGGwhJDcORLwywGJetrURiI/W2t1vlSycxF7nDrUHSgHAOfAi+uRtAMniMmOPNaq3zqE98BCD5IuKk226g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Bd6kxscnjBayxnIUGGCMHh15JFGpG0cFaAiBfddbbwM=;
+ b=EZAj4jgobhYaQM8P8eHYnaKEQ3x/hFbwpAlN+Q4WgdZvJsyjjUl+LuaZa1goo7xpiehTBS0TIqEOLxIzR4vPGqSPh5nZW8qMegg1UGrd9y53r5Cpkjwxa8cnEchmKnltq45/Yc0/QnTf1517uk1B6Mm3tjUPIWtrORzAoy0lSzs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB6095.namprd12.prod.outlook.com (2603:10b6:8:9c::19) by
+ MN2PR12MB4469.namprd12.prod.outlook.com (2603:10b6:208:268::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.26; Wed, 28 Aug
+ 2024 21:24:05 +0000
+Received: from DS7PR12MB6095.namprd12.prod.outlook.com
+ ([fe80::c48a:6eaf:96b0:8405]) by DS7PR12MB6095.namprd12.prod.outlook.com
+ ([fe80::c48a:6eaf:96b0:8405%7]) with mapi id 15.20.7849.023; Wed, 28 Aug 2024
+ 21:24:05 +0000
+Message-ID: <30d9589a-8050-421b-a9a5-ad3422feadad@amd.com>
+Date: Wed, 28 Aug 2024 16:24:01 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/3] PCI: Use Configuration RRS to wait for device
+ ready
+To: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org
+Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ "Maciej W . Rozycki" <macro@orcam.me.uk>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Lukas Wunner <lukas@wunner.de>,
+ "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+ Duc Dang <ducdang@google.com>, Alex Williamson <alex.williamson@redhat.com>,
+ linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+ "Li, Gary" <Gary.Li@amd.com>
+References: <20240827234848.4429-1-helgaas@kernel.org>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20240827234848.4429-1-helgaas@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN6PR2101CA0022.namprd21.prod.outlook.com
+ (2603:10b6:805:106::32) To DS7PR12MB6095.namprd12.prod.outlook.com
+ (2603:10b6:8:9c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <gsntmskw9w9b.fsf@coltonlewis-kvm.c.googlers.com>
-Subject: Re: [PATCH 1/6] KVM: x86: selftests: Fix typos in macro variable use
-From: Colton Lewis <coltonlewis@google.com>
-To: Mingwei Zhang <mizhang@google.com>
-Cc: kvm@vger.kernel.org, ljr.kernel@gmail.com, jmattson@google.com, 
-	aaronlewis@google.com, seanjc@google.com, pbonzini@redhat.com, 
-	shuah@kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB6095:EE_|MN2PR12MB4469:EE_
+X-MS-Office365-Filtering-Correlation-Id: cc177a01-bc00-4bb1-b676-08dcc7a7be88
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OVczVnR5WTFuVEtlYWRKL0ZIL2g1b2gyVWNhSFl0bnVPWUJ1eDBITk9zbmY0?=
+ =?utf-8?B?dE51YTBIWVJVN2NEQXVoSTJzR0VSZ2V0NWc1aURWQ0d6cW5pQzdEU0FkVUVE?=
+ =?utf-8?B?WU9qQjk4OUZkQjdXT3NCU2NKMGpuTXhSaU5DWUtwZXdlTFNRRGdFRG5MMVJL?=
+ =?utf-8?B?SkRDaWdUTHQ3cDJDdGxlUFZYV2ltczFnVHdHN2dqbjlBRG9IWWJHNGt3Tmcz?=
+ =?utf-8?B?ZVcrdFZuRGZkVHV0R01Ra1pVOXRMdzcvNFFKK1YvdXJNYmpHL2RrVzRaRmRk?=
+ =?utf-8?B?Zk1YWlBmQlZMenhrSEYxbmFOVHVVbWF6RkREeHRHMGNlcVBXTzh1aDNmY0pX?=
+ =?utf-8?B?VlJxaG81anpocCsvN1lncGlzUEVoOWFkTExaNVk5c0RGcDhab3NGQzV0Nktj?=
+ =?utf-8?B?V3VKbWRXRXZxNll2OWtuQk4zaWwxdy9DbExUSEtXd3BPYzJIc3BqajRKZlN4?=
+ =?utf-8?B?ZmFSTnRvVk1mNHFnTUR3Wlovc0ppN1F4VitlYVNuTlUzVTBFTFRjZmYrbTR2?=
+ =?utf-8?B?OURrRmpWZG41REpSWnNXWnNyb0NQazBFa1E1MkZzbEI0UUxITlJweG85OHRH?=
+ =?utf-8?B?aUdvZDlyQ282VGhMcXB0UWpKaE0wZGg5UjE2ajFEYUV3dFVEQlhlUkVOODZE?=
+ =?utf-8?B?NEZiUlFEclpWT1dxK0FBTUtwNEVic2JsZCtQTW9UYWgyWEZTVXE1VkhDRWlH?=
+ =?utf-8?B?ZTkrRUVDNUxuU1dvQUUzQmRQR2RsVXFuMzNLODhkL0VwdG5sZ0RPVDNzUE5J?=
+ =?utf-8?B?UmJzejhER2NMR2xJaXBoVnVaa2tGYmp4bk9uZ1dpNUdkelNoMDVqeDQ2VmpC?=
+ =?utf-8?B?TEx4OU4wbTFiUGpJSU8wdHpwb29iNXZLUG5EaFNRemNZU0wzem1oM1cyUEpX?=
+ =?utf-8?B?ZHpKZUZDaEFoSnBPYUN2K0k0SzFLTHdFd0xmRWg4QnU3V3B4aVZ6UlM0RTBB?=
+ =?utf-8?B?Q3lyVkRUM0ZZUTczS012TE5YcmpkUkhWQVlXZVlEUnJjZmlVMHVsLzdLK0ta?=
+ =?utf-8?B?U3dQcTNkNVh0eU9qcFAzSTFoWjI0enUxakRpeWZiZjRHeFRWRjR1bDNNdGtP?=
+ =?utf-8?B?Y1gwdlhjUlFPei9VR2FFY3Z1STJpc0ZieCt3Y0tobU9LN0xhVk1ORTVOZXpM?=
+ =?utf-8?B?VDBNRW1VbHBoTHdjNWlNSDZ0Z0J4NEhBdVE1YUVmNGhwYTdHSE45Nk5OOWNu?=
+ =?utf-8?B?ZFVDUkhjM252TldrTU1ndUZVZXZrWDJxVjdRdHFBMkdyWGNVakEreVlRaVhX?=
+ =?utf-8?B?V0Exa0VwMjZlQjZBNkdCSjZNSkUveVhnSXJyMFZFTXBTditVSkdEUEdONE1M?=
+ =?utf-8?B?Q29vTnptODFpdk1wbHA2eXpXZlAwRVViY2FweDRQK2RSMW1EL2Nuc2ZrbTQ0?=
+ =?utf-8?B?QkZLamw4VFFrZHp0TGt0WDhqL1JGbVJEM0dMdnJSM0pNeGxQL0VRSTQydm1i?=
+ =?utf-8?B?SFMwcmI3T0M5VW11Y3AwV0doNHUwOC8xdEpER3FpV3d6UEJ6UDl5RUFRZExN?=
+ =?utf-8?B?V3J5elo3dFRwYWd1Rk5UOHUybk5rSW05OGVPY3N6OTZpcGpnRmhZNXpXN3lB?=
+ =?utf-8?B?NHlqM1pkaVF1RSs1TDM5N0ZZMVBDOEZYTHVGRDRVMkVkNEk1MFNCYUtGK0xL?=
+ =?utf-8?B?UXJST2JuZVBNYXpUZHlKT3JsenZkcFVSVXloUVpVQVQ4VS9ocS9Ubi9GU2Y5?=
+ =?utf-8?B?Z0tGay9laVlGVEJLaDFZVzc1RDJ6UEdldHgyRm1iL3Rtbjg4Q1hHUk8wYkVS?=
+ =?utf-8?B?bENnU0Vkb2MwSDVBczNBV1E2YUQxdnpPWTE5TndBUnF2UVVjQ09LeGtZUUhy?=
+ =?utf-8?B?K1RZVWVDZWt1VlMwOEw2Zz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6095.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?N2RJdVBkaEkreDNGYmR3VUF5ZnBUanJLUzVac3NQYkRwMFp5cEpPU2IzbGd2?=
+ =?utf-8?B?SGRrbEkzMk9GSTlsKzZpOVdhWUJBMnhhdXBQMHB6Q2JMUENwMUwyaU9tMk1B?=
+ =?utf-8?B?b2t6ZWFHLzljRzFydG5qbVdoZWlhL1ZxRzhZNlFiVmNsY1c3UlJwMkJNenZ0?=
+ =?utf-8?B?RG5yL1JuZzQ0a0RVR3B2dUljSUZrdzB5QXhnWG5zNEQycVpxY01DMDZsaDk4?=
+ =?utf-8?B?UjFpeXl6VVpMclhsN3RvUENQWHdNdWtCUUJBMjYrb0dEK3FHKzJtbDNDa1Ra?=
+ =?utf-8?B?RGE5cTJ4SkdLZ1RIR1NYSW91UTFXYzQzMk1oUFZvZHZ4bWErQ3Nsd2VIUkRB?=
+ =?utf-8?B?Mzg3RHRaV3JSOEFydlk2RDR6TGlXeW04VHpGUmhEUmU0bjVYRE1sRjIwMnRB?=
+ =?utf-8?B?TVdSbjVJb2tGN2hQYVREcy84ZVNRUGlvM1c0TEwvZ2tzaU1QUXRMMzRnajIx?=
+ =?utf-8?B?RER2blZyU0pKL29NSzBlM3pFYTUyOEJoQmhHWlFNTVo5QlNNN0VaTGNlNm84?=
+ =?utf-8?B?K2s4bjJKQmhJNUx4WXJTcURvVW8zT2FzSys4MXdyWkRnNjZKeEFYL2RQWHEx?=
+ =?utf-8?B?Vi9aVWkzYS8va0lWQjdPQ0RHWFhvR1dlUEY0U3pjbEp1dHhEMzhiaEJGNFNz?=
+ =?utf-8?B?Q05qMkhGQTdFWUxFR0pPMnVkMU1hL2dNUFZXajNhTFBBZlVrYzAxb1JEbjdP?=
+ =?utf-8?B?VHZEdi9kNFRUTnlLS2YzYUUzM09NTGJzNjFCWEJtR2o3cnZOdVl4cjQyKzVN?=
+ =?utf-8?B?OGJqam02aE1DT2hwVlEyVXJxRStpT0NlQVdJUVp4R0FTTHVWN3I3TFRpTG1L?=
+ =?utf-8?B?NXJEZ3VQT2JpZ3poVTlTaUZOR3IxRnBacWVpQ1Z0UGFQdW5uKzFqMEp1ZzRW?=
+ =?utf-8?B?K1dVT24vVlVpSXo0NU5GeXFVVk1JVTNJbTFTb0luSExJZ1VMZjZ5ZFpFYkMy?=
+ =?utf-8?B?N0EvQVB6MjI4RUdUM1Q4alB5OUQ0SjM5bWZWejJCWXFIKzFFTk9FdWxvU0x2?=
+ =?utf-8?B?NTZGQXNRQ2ZMVEVKaU9DTnhGOVFaZEhqRU1LakZkbjA3MnlBYnlURCt2aTNE?=
+ =?utf-8?B?TzNSOGZDcjlVOXpIYVZsRGFYcnZSN21UeUMvNGk0L08xa210S09ZUTF1dk5O?=
+ =?utf-8?B?Mit0K28wbGtLQnJIMmlWYTUySWdtK1h4WXR1dnlEL2JRdFlJaEFMd2xBWEhu?=
+ =?utf-8?B?bVZ6U09xUmJlQ3NCRlNIeE9HTHFydGthbHh5dEN3L3ZERkNqS3ZOaWhGU0FL?=
+ =?utf-8?B?UGcxMkcwMFpJMjFNNmc0MXpIOFo3TlNQTDI4NWVOa25LTk1oYkNkdzF5dU5F?=
+ =?utf-8?B?NGE3bmMyaFhRTFNRUGkxWlRINFJsVENUYnVpZS9qZnFVQmYweFFtbmhtbHph?=
+ =?utf-8?B?RS94cENJalozTWk3YStxT1oxZDRTZmFWWTdtYzk5VXZaRmdoUUxMNFRKdVdr?=
+ =?utf-8?B?T1BITjlBeVNuZkdxSERJeXU5MG5zNHIxSGNGeTVxZHZTUnJNdGN4aUx3My9s?=
+ =?utf-8?B?ZElHbWJ0NjhUdkRYeWdHV1d0Z1IrMXA1V3UwY3diWE92cis2VEZ6UnZYdUdP?=
+ =?utf-8?B?aFFkTEI0UUNyMXQ5cWVseWM0eEhBN0JKYlVpbktodnA2QVAxdFA3aCtUYTRv?=
+ =?utf-8?B?RUJjQWRVRW9waDhDSlFGeFlLV3drQmJvSzdRdzM4VjZZWENaaEUyeWwyb0NV?=
+ =?utf-8?B?VDZFL1FxdmRGMG5EVDI0N29qMThqQURpRGRncWFyNHYwZm9qQlRBUzliT3pp?=
+ =?utf-8?B?elZienlwd1dadDhDQ2RMc01UczNkUGtiMERZeGJ6RWtUdzJBNm1pRHR5a3dy?=
+ =?utf-8?B?d05DVGZqeFBscUpmcUxJUnF6cWNEbFE5eWRzOFhYQVM4UFgyR053alB0SmVq?=
+ =?utf-8?B?NU5VSXE1WnJpRVBYUmlZRnVqMEw1ajBycW9FZDdrZlRLMnlXb1VacFVmU2Vm?=
+ =?utf-8?B?MUluLzNGQzZlcjg3elRmb1I3UE9IUFdOMHR0eVJyclFtVzM0NlpHYUgvRnlo?=
+ =?utf-8?B?b2FBaFgzNWoxTEsvS1MrVVZtQ0FvNElOTWRWOFRrMkM4WlBVQkNyOGVvRXZz?=
+ =?utf-8?B?TStsOG9XYlJYbTZwV3FRejFuV2ppVVh0Tm54MXVkVnljcXlHc3pLVlJsbDFV?=
+ =?utf-8?Q?861Rf+brOQLlAazLpDpbuo5AJ?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cc177a01-bc00-4bb1-b676-08dcc7a7be88
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6095.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 21:24:05.1125
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WKpyueIznSohDI1/pZNTW5APTygm8ej2aWXmXLUinLR6KDHwcbj31XhYTVBSTYZrJUfuuv2INwJ2IfAxedcE4g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4469
 
-Mingwei Zhang <mizhang@google.com> writes:
+On 8/27/2024 18:48, Bjorn Helgaas wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> After a device reset, pci_dev_wait() waits for a device to become
+> completely ready by polling the PCI_COMMAND register.  The spec envisions
+> that software would instead poll for the device to stop responding to
+> config reads with Completions with Request Retry Status (RRS).
+> 
+> Polling PCI_COMMAND leads to hardware retries that are invisible to
+> software and the backoff between software retries doesn't work correctly.
+> 
+> Root Ports are not required to support the Configuration RRS Software
+> Visibility feature that prevents hardware retries and makes the RRS
+> Completions visible to software, so this series only uses it when available
+> and falls back to PCI_COMMAND polling when it's not.
+> 
+> This is completely untested and posted for comments.
+> 
+> Bjorn Helgaas (3):
+>    PCI: Wait for device readiness with Configuration RRS
+>    PCI: aardvark: Correct Configuration RRS checking
+>    PCI: Rename CRS Completion Status to RRS
+> 
+>   drivers/bcma/driver_pci_host.c             | 10 ++--
+>   drivers/pci/controller/dwc/pcie-tegra194.c | 18 +++---
+>   drivers/pci/controller/pci-aardvark.c      | 64 +++++++++++-----------
+>   drivers/pci/controller/pci-xgene.c         |  6 +-
+>   drivers/pci/controller/pcie-iproc.c        | 18 +++---
+>   drivers/pci/pci-bridge-emul.c              |  4 +-
+>   drivers/pci/pci.c                          | 41 +++++++++-----
+>   drivers/pci/pci.h                          | 11 +++-
+>   drivers/pci/probe.c                        | 33 +++++------
+>   include/linux/bcma/bcma_driver_pci.h       |  2 +-
+>   include/linux/pci.h                        |  1 +
+>   include/uapi/linux/pci_regs.h              |  6 +-
+>   12 files changed, 117 insertions(+), 97 deletions(-)
+> 
 
-> On Tue, Aug 13, 2024, Colton Lewis wrote:
->> Without the leading underscore, these variables are referencing a
->> variable in the calling scope. It only worked before by accident
->> because all calling scopes had a variable with the right name.
+Although this looks like a useful series, I'm sorry to say but this 
+doesn't solve the issue that Gary and I raised.  We double checked today 
+and found that reading the vendor ID works just fine at this time.
 
->> Signed-off-by: Colton Lewis <coltonlewis@google.com>
-
-> This might need a fixes tag, right?
-> Fixes: cd34fd8c758e ("KVM: selftests: Test PMC virtualization with forced  
-> emulation")
-
-> no need to cc stable tree though, since this is very minor.
-
-> Reviewed-by: Mingwei Zhang <mizhang@google.com>
-
-Yes it does. Thanks for the catch.
-
->> ---
->>   tools/testing/selftests/kvm/x86_64/pmu_counters_test.c | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
-
->> diff --git a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c  
->> b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
->> index 698cb36989db..0e305e43a93b 100644
->> --- a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
->> +++ b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
->> @@ -174,7 +174,7 @@ do {										\
-
->>   #define GUEST_TEST_EVENT(_idx, _event, _pmc, _pmc_msr, _ctrl_msr,  
->> _value, FEP)	\
->>   do {										\
->> -	wrmsr(pmc_msr, 0);							\
->> +	wrmsr(_pmc_msr, 0);							\
->>   										\
->>   	if (this_cpu_has(X86_FEATURE_CLFLUSHOPT))				\
->>   		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflushopt .", FEP);	\
->> @@ -331,9 +331,9 @@ __GUEST_ASSERT(expect_gp ? vector ==  
->> GP_VECTOR : !vector,			\
->>   	       expect_gp ? "#GP" : "no fault", msr, vector)			\
-
->>   #define GUEST_ASSERT_PMC_VALUE(insn, msr, val, expected)			\
->> -	__GUEST_ASSERT(val == expected_val,					\
->> +	__GUEST_ASSERT(val == expected,					\
->>   		       "Expected " #insn "(0x%x) to yield 0x%lx, got 0x%lx",	\
->> -		       msr, expected_val, val);
->> +		       msr, expected, val);
-
->>   static void guest_test_rdpmc(uint32_t rdpmc_idx, bool expect_success,
->>   			     uint64_t expected_val)
->> --
->> 2.46.0.76.ge559c4bf1a-goog
-
+I think that we're still better off polling PCI_PM_CTRL to "wait" for D0 
+after the state change from D3cold.
 
