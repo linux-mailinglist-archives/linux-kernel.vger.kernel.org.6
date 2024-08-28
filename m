@@ -1,135 +1,154 @@
-Return-Path: <linux-kernel+bounces-305805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F9249634B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:28:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73C0E9634B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19867283A02
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:28:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96A361C22861
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE2DF1AD9C5;
-	Wed, 28 Aug 2024 22:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 535D01AD9E5;
+	Wed, 28 Aug 2024 22:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qtl0KDNF"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QzSN7URj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1DB1A76B9
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8921E165F16;
+	Wed, 28 Aug 2024 22:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724884085; cv=none; b=NUnJYSwTJT1OdQHULR5cwPojfsVqBnAnhvd4jE9VF9cvg3tpNLmCJ8OgXNoMl5/TirZGlo9pMSx4Mi/WesSI8eHyVl5IWwH9kePvUYq2Jr1dGTMgnL/esshl6ODISOx60N9jhJBDdCZ27dqHopuuzjrWmSQIaNR2POKkzLRzy6o=
+	t=1724884178; cv=none; b=ppo/2QSPrennXAmvcj0QO8NwazIIpY9hODNzNL1I7q59LrkpsuDL5sLaz/476kEGmKzwu0upqFwtonveBKccF+sqRjf2xnSwfpi0jRTMhmA3MBuMSKL9YicLp0pzYcMcEqilBeIwuAvTJOXrruOKHjw0BlprcRwI932WczW7dkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724884085; c=relaxed/simple;
-	bh=X+km3MM8Djv4BAoedxYfYSnV7h3AO6W0/QFMSBR+6tk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I3ChF4p5GXDrizqTOXMFc3eQB4kXeX1LeDd2rahcF+LYPOCkqQjW8LsNWSC/7Vey5IO0o8lNfZ7sSYZFhSPOtm2Woii8v7eu48xqP3VXlHooizLgiBZILr0W04W2C0yVg6vxQJMXs8FWECWmwRJJgLPpXSzDhnFJyWwnDHwUuv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qtl0KDNF; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-202018541afso32725ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:28:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724884083; x=1725488883; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=RyvIuJm8YmYnY8dX3OldQiJE1+zDwIi+PDulR5QhNTU=;
-        b=Qtl0KDNFau6tda4TQsdUKaVUUNaP4IRDY9DgPE6BgrLHCZSy17nFABDMZgCdSRcD8R
-         vXuXRrEbZNl5BRXwr9iuoTmzdf6mSCiJwKittvuZ45g7CGMai9Ix5PUAFWGbDixF1/xd
-         mmKnEl8JQNxQXkquVklYWiCfzFJNFIZ8p+0bfENuGhLi2BNYgO0qAKi5jr5yra1uveK4
-         o7MuhuPjLUXSvLgxyM8NWl1hD++z89Gw+ohOHuufU7PgsJZmKbw1Ih4IEl4D7dAFgoae
-         Ar6JUylJLg7p5CaRVtFp/+5CA1sbraUKp+Wfbb9onVVkdh/i7c5Yo0inppEH1WAt1T3g
-         Q/lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724884083; x=1725488883;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RyvIuJm8YmYnY8dX3OldQiJE1+zDwIi+PDulR5QhNTU=;
-        b=BWADdXBbos+Godwp4q4Su706rcO5BB0FqRJa3JYKDJ5uecbC3vsAILVwWsg8JA0RJo
-         m7cfbDu0TrOFK2WTy5KY17lvbK9wZ3dqXQcev6OQ0FeaIdZ+0CQ4Y+Ey58BRrLHGWDJ5
-         9FONKQYCAhGjQY0OfW+Vi2uti5uexVh8ww+mLr5Xbk9bX1e8vhwjtWdd+Wm9AvS7M+yT
-         QUHAt6CJUlaFoC55UOt9STyGOVr+tdxL0vbhWdyZfMBIIbvZYkHFe3xjOFEvsXHTp6ac
-         WoA5+4fu4xtFiJAbHEXe138gjPfnb94LA0jI874b0wIx6zF7GcqfDQmdi+EUbM30Lw6C
-         geyg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+FSTeSZC/5eQyveqkq4xhO+fQ/3UzxlgJOMpPflf3a7WBKeznI49isQOjM+xi5LspLSNBdIv1ZzI02iw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9qj3mdiH+W55zk34gPDYDzUl4gRBH6J7uTp29xfTxNdLJsKyY
-	6m+xU7f3BoYmNi3CPeVLMIH5HuLkTG7wpocsNbdnwOBaHY54FMpbQvkjcxZWbg==
-X-Google-Smtp-Source: AGHT+IFXWx05e/+XweIL+R6dsRvJNpSo2hQC1mySqaLDGAhfbYvgJChv9vcvthH548sGd8lARL2kdw==
-X-Received: by 2002:a17:903:22c7:b0:1fa:fe30:8fce with SMTP id d9443c01a7336-20510b5500dmr423205ad.23.1724884082803;
-        Wed, 28 Aug 2024 15:28:02 -0700 (PDT)
-Received: from google.com (83.92.168.34.bc.googleusercontent.com. [34.168.92.83])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d844618f6csm2496536a91.27.2024.08.28.15.28.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 15:28:02 -0700 (PDT)
-Date: Wed, 28 Aug 2024 22:27:59 +0000
-From: Sami Tolvanen <samitolvanen@google.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Matthew Maurer <mmaurer@google.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>,
-	Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>,
-	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 06/19] gendwarfksyms: Add a cache for processed DIEs
-Message-ID: <20240828222759.GG2130480@google.com>
-References: <20240815173903.4172139-21-samitolvanen@google.com>
- <20240815173903.4172139-27-samitolvanen@google.com>
- <CAK7LNARQncjxxqbjiMHXdAnakpo8QYo-5kYnN=KaD2xDe0uXPA@mail.gmail.com>
+	s=arc-20240116; t=1724884178; c=relaxed/simple;
+	bh=WusbA/vJjuZ2V8MgDG+Z6u6P7ZSeavWArk0uKL7MAK8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=H+ZC4nDnjDKfGz+26Muu7i1QF1JxxI1YERpUrMRJAa2AHHVDVaDptKkYzW3D+s4bus9DJp8H6u0hr5wzrVMuqkON4ZeVPLcfcOr4RT1q/x3hOT+icr3lVdVjZkIc7n0tiaH/qswQV8OEEpJP0L5ZPfOR9xhcGY2cU8LIZgahSD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QzSN7URj; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724884176; x=1756420176;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=WusbA/vJjuZ2V8MgDG+Z6u6P7ZSeavWArk0uKL7MAK8=;
+  b=QzSN7URjKdd9XWU8q8A4BHA69LT0kXjV1dzKhdTHFfz3Q4Fd2/cTDGNW
+   UeijoiPILzJLLk5LAAuiPLjwOZOT8hjUhdZXTY2o0QfZWOiHefcOyGGu3
+   EqUsGEAwoWQksPvEHGSTy3cQ5WH0b1im2TEx01MBr5UIXAmL/EkImMbs4
+   O18URpmGrlhheQM5K/IpYS2txBYz4H1vm1YG0Tv1nJCThsBFSXY8NZt0e
+   qiESBq6mZ/yy6kujvw9xKAFAueiVsxBl6ERz/PvDCGHBLLVH7ZDqtKOTl
+   CInfr4+GOX+l8oYHQmRy4JgEww2Y0s8xzKM+IUAnFooqIqpj5UIF8xgaX
+   w==;
+X-CSE-ConnectionGUID: zJXihTFBSg+K2aKyT0fl/w==
+X-CSE-MsgGUID: NXnIvK71Tt2GWgHO2+H3Iw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="23406453"
+X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
+   d="scan'208";a="23406453"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 15:29:36 -0700
+X-CSE-ConnectionGUID: +YsCC3qVQQaxaRlDmlLCqg==
+X-CSE-MsgGUID: AwmtA1CfTbKgA39u26rd7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
+   d="scan'208";a="68271789"
+Received: from ehanks-mobl1.amr.corp.intel.com (HELO xpardee-desk.hsd1.or.comcast.net) ([10.124.220.10])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 15:29:36 -0700
+From: Xi Pardee <xi.pardee@linux.intel.com>
+To: xi.pardee@linux.intel.com,
+	irenic.rajneesh@gmail.com,
+	david.e.box@linux.intel.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: [PATCH v2 00/11] Create Intel PMC SSRAM Telemetry driver
+Date: Wed, 28 Aug 2024 15:29:15 -0700
+Message-ID: <20240828222932.1279508-1-xi.pardee@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNARQncjxxqbjiMHXdAnakpo8QYo-5kYnN=KaD2xDe0uXPA@mail.gmail.com>
 
-On Thu, Aug 29, 2024 at 03:15:02AM +0900, Masahiro Yamada wrote:
-> On Fri, Aug 16, 2024 at 2:39 AM Sami Tolvanen <samitolvanen@google.com> wrote:
-> > +static int append_item(struct die *cd, struct die_fragment **res)
-> > +{
-> > +       struct die_fragment *prev;
-> > +       struct die_fragment *df;
-> > +
-> > +       df = malloc(sizeof(struct die_fragment));
-> > +       if (!df) {
-> > +               error("malloc failed");
-> > +               return -1;
-> > +       }
-> > +
-> > +       df->type = EMPTY;
-> > +       df->next = NULL;
-> > +
-> > +       prev = cd->list;
-> > +       while (prev && prev->next)
-> > +               prev = prev->next;
-> 
-> 
-> 
-> So, this entirely traverses the singly-linked list
-> every time a new item is appended to the tail.
-> 
-> 
-> In my analysis, this while loop iterates for thousands
-> of times in total for emitting each export symbol.
-> 
-> 
-> Why isn't this list_add_tail()?
+This patch series removes the SSRAM support from Intel PMC Core driver
+and creates a separate PCI driver for SSRAM device. The new Intel PMC
+SSRAM driver provides the following functionalities:
+ 
+1. Search and store the PMC information in a structure, including PWRMBASE
+address and devid for each available PMC. Then Intel PMC Core driver
+achieves the PMC information using the API provided by the new driver.
+ 
+2. Search and register Intel Platform Monitoring Techology telemetry
+regions so they would by available for read through sysfs and Intel PMT
+API. Intel PMC Core driver can achieve Low Power Mode requirement
+information from a telemetry region registered by the new driver.
 
-Good catch, I'll fix this in the next version. Keeping track of the
-last element should be sufficient, but I agree, using the existing
-list implementation is probably cleaner. Thanks!
+The above functionalities was previously handled by Intel PMC Core
+driver. Intel PMC Core driver returns -EPROBE_DEFER when trying to read
+data from a telem region that is not available yet. This setup may
+result in an infinite loop of .probe() calls as Intel PMC Core driver
+creates child devices. Creating a separate PCI driver avoids the infinite
+loop possibility.
 
-Sami
+Changes in v2:
+- Rearrange and restructure patches completely based on feedback from v1
+- Here are the patches:
+
+Preparation for the new SSRAM Telemetry driver:
+  platform/x86:intel/pmc: Move PMC Core related functions
+  platform/x86:intel/pmc: Rename core_ssram to ssram_telemetry
+  platform/x86:intel/pmc: Move PMC devid to core.h
+
+Minor bug fix:
+  platform/x86:intel/pmc: Convert index variables to be unsigned
+  platform/x86:intel/pmc: Remove unneeded h file inclusion
+  platform/x86:intel/pmc: Remove unneeded io operations
+  platform/x86:intel/pmc: Check return value of ioremap
+
+Create new driver and convert PMC Core to use the API:
+  platform/x86:intel/pmc: Create Intel PMC SSRAM Telemetry driver
+
+Enable Lunar Lake platform:
+  platform/x86:intel/pmc: Add Lunar Lake SSRAM devid
+  platform/x86:intel/pmt: Get PMC from SSRAM for Lunar Lake
+  platform/x86:intel/pmc: Get LPM information for Lunar Lake
+
+Xi Pardee (11):
+  platform/x86:intel/pmc: Move PMC Core related functions
+  platform/x86:intel/pmc: Rename core_ssram to ssram_telemetry
+  platform/x86:intel/pmc: Move PMC devid to core.h
+  platform/x86:intel/pmc: Convert index variables to be unsigned
+  platform/x86:intel/pmc: Remove unneeded h file inclusion
+  platform/x86:intel/pmc: Remove unneeded io operations
+  platform/x86:intel/pmc: Check return value of ioremap
+  platform/x86:intel/pmc: Create Intel PMC SSRAM Telemetry driver
+  platform/x86:intel/pmc: Add Lunar Lake SSRAM devid
+  platform/x86:intel/pmt: Get PMC from SSRAM for Lunar Lake
+  platform/x86:intel/pmc: Get LPM information for Lunar Lake
+
+ drivers/platform/x86/intel/pmc/Kconfig        |  11 +
+ drivers/platform/x86/intel/pmc/Makefile       |   8 +-
+ drivers/platform/x86/intel/pmc/arl.c          |  24 +-
+ drivers/platform/x86/intel/pmc/core.c         | 200 +++++++++++
+ drivers/platform/x86/intel/pmc/core.h         |  23 +-
+ drivers/platform/x86/intel/pmc/core_ssram.c   | 326 ------------------
+ drivers/platform/x86/intel/pmc/lnl.c          |  41 ++-
+ drivers/platform/x86/intel/pmc/mtl.c          |  24 +-
+ .../platform/x86/intel/pmc/ssram_telemetry.c  | 183 ++++++++++
+ .../platform/x86/intel/pmc/ssram_telemetry.h  |  45 +++
+ 10 files changed, 525 insertions(+), 360 deletions(-)
+ delete mode 100644 drivers/platform/x86/intel/pmc/core_ssram.c
+ create mode 100644 drivers/platform/x86/intel/pmc/ssram_telemetry.c
+ create mode 100644 drivers/platform/x86/intel/pmc/ssram_telemetry.h
+
+-- 
+2.43.0
+
 
