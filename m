@@ -1,83 +1,75 @@
-Return-Path: <linux-kernel+bounces-305623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 560CA96315A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:00:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E264963161
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BEB51C22057
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:59:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1C241C21429
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A739B1AC42B;
-	Wed, 28 Aug 2024 19:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9576C1ABEBB;
+	Wed, 28 Aug 2024 20:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="azpt6wv/"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EsjS0otU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071B81ABEAD
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 19:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199673AC2B;
+	Wed, 28 Aug 2024 20:00:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724875193; cv=none; b=LfoXhNQD4hT5jodvku4k8ftY6pdZzqXYSiF1tlmBSWdT1CMh8sV3Ao0aoBdgtI5h8NNduuo4R1WpZdEiLKCZ5ECn0HGW2eXVMWu+3E4W8nSmRnJeBrW8Pk4Q/S6Kv72Cso6jk+8dP3jXPR8oYM4IFh1+xP5Qzu3INhmH1WPQyI0=
+	t=1724875260; cv=none; b=cuzL9c0y5u8YCWwn0qakt9RuKWsV7kleYOuvrGmbH22iq092eAgHORDWHWLgcSFo/aCSdtIHX2p8O+FhD9vltnAOLpdhRLgJBXHzK+7FBi+omKE0iAZZ4MnpX4XDgfDeu5NJIaVU4YusIJDRSVya+8+438/QsI4ti9sKsITMinM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724875193; c=relaxed/simple;
-	bh=EF31OWz0253e9blSGsQ5Q82/ZBUquUx8AsXyW+D8yXQ=;
+	s=arc-20240116; t=1724875260; c=relaxed/simple;
+	bh=+VW7xZep5DJcygKlPPQd7cNrCB46UZbpfqn8U7UTBsk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WtUk1CGi6XCgXNgPlgSyvama+cvvQGsG0LiLUNozv+r9+3QsM7sRbAKHi0rYVEynyoMMO1AEPiBruqSoFB7lOktZeydcnTdtOVIxqJCtjcvzomWaPqH7sQMFj/SfjpOSjo24K/YyRi14a2p6sHM2lKpbsc2bzrpL9sAp5J2cqBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=azpt6wv/; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f401c20b56so9212851fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:59:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724875190; x=1725479990; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=d8zHkfisckPodXDwU4YrlbbeO+jKzfoe0P8xfdKKL2o=;
-        b=azpt6wv/wd3GpH5ITDNjqM9pDjkMlvsw+6Z49nxVFzV2qvxYoqNU1myDurnTs7/0Vr
-         TxwNN2YhTYRPHEij9ki2SZBcIQJHAjwxTABvxh9nYboWRmSe16BKoCdzxfOuTJgzMDYf
-         p3evfHC3KEH+KVJyQtvw5x4okgpBrQrVA0xwsWfiTzeC5Cp7qhw6B5FvvvDe7xp/D/R5
-         4rppboBvH1/1mI2DUbtnAGVTCv8eRPwOjysb9Mpzp50KGwwsHBm5kgyrvEi15xTthJQ9
-         /2bLTkYzWO3TsQbBKODaVPYPmNNs+7F2NBXWHh04R/ix/5DJnPTPCoGkpNAEigDyVsou
-         FLSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724875190; x=1725479990;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d8zHkfisckPodXDwU4YrlbbeO+jKzfoe0P8xfdKKL2o=;
-        b=dxgqN3FiuaMfGGr7TJi8AlcmsDA9sEYSmDr9JXfz45IJgC+UBxmj00ZtuEd6eHDCpV
-         dX8ZJXcLC4axpPAdpcfFb5QurYbwp+s1H9hRYuZ0PUQhvXNhJ93tr4MeCuw3n6SXc8Mm
-         g028wocbZZplBvUcZ6BC1klslDUzqXZKYJ3CUOSujYovHP09hVLzephwSx1tt5wrvzeF
-         eLsf4KPxLYCyfRKJ3O8jXtFyWh/GhfVmMXMwfJKz4cyUSMKJXQQYBlbuLDOox+U6ZcDb
-         82f+5h4efz7kJfT9RAu0aRzvGy4MTLoZHz8w57mubfe6s9o5bG86gsxLFPv8CUV1ztUG
-         4urA==
-X-Forwarded-Encrypted: i=1; AJvYcCWNKncB+3z5SddcZc3B0BYdH+4pcRliAcukpNBF+6FcT16ZgxGZl6SkVW9SUs1SCqcVViGNYSujFHU8h0s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2RhxVepXDfmF0pOpuOifzuGjcg2WOjGpP+Ca1lJoOkFCd9Wiz
-	M8P3c9Jzk2kZbp/+OrI2Tq6guVXxf9f/D+rTAWXKcBLoF/aGxL2qzvxmKY8HY1w=
-X-Google-Smtp-Source: AGHT+IHUPZgRjwjhGXUYisGlSBvBIIptTwT7XL/6mzdnfRbs3tQwYO6A+cS/VdeREgw8PkHAmaFlbA==
-X-Received: by 2002:a2e:a989:0:b0:2ef:2768:619d with SMTP id 38308e7fff4ca-2f61299bce6mr827061fa.5.1724875189428;
-        Wed, 28 Aug 2024 12:59:49 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f40484c6c0sm20011361fa.75.2024.08.28.12.59.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 12:59:49 -0700 (PDT)
-Date: Wed, 28 Aug 2024 22:59:47 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Stephen Boyd <swboyd@chromium.org>, Daniel Vetter <daniel@ffwll.ch>, 
-	David Airlie <airlied@gmail.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, freedreno@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, quic_jesszhan@quicinc.com, dianders@chromium.org, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm: fix the highest_bank_bit for sc7180
-Message-ID: <fbhb7hlpmxxfqv5iwtuhuxz4nx4qifd6kygo5fxvfiqsh2idpu@tzqwxkxaszq6>
-References: <20240808235227.2701479-1-quic_abhinavk@quicinc.com>
- <CAE-0n53qMJVbfb9oXbDexqhOj6qTBq9k5kMj1e6CXadObhBmLg@mail.gmail.com>
- <c2218911-650a-4f43-9119-bd2cfc46f3aa@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bb8u9PLUGb7EBOOmYCa6XQEzoqd67rBFll8dkmliXuu2GkchhaSGviuaoZa4i9728NwpicJEHO5CQv9fUPqPKNjqNjVv9JNXC197tx+Z3s7781AKMAvlZuui/a9kFpqariEmzmvUZNRZwIygp/8nvSUa7i92iCcOEEvoJjZXybs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EsjS0otU; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724875259; x=1756411259;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+VW7xZep5DJcygKlPPQd7cNrCB46UZbpfqn8U7UTBsk=;
+  b=EsjS0otUmV/9Gii2WGJywCoyj5V7wcNSYQnSeY3/ettngi8Ceabo3N8y
+   Ezci8Fg0yQ1S/XddzIYZ3Ou4N1WdidxxhWxUtUk7J7ti8oBQlOS9NG7cD
+   5ONzFJ+r2A2ZEfIA3psl0v66RLGpq4ULT8HR5vxhZ3MNGGWJ7ocbl2sgC
+   2h9bV2n+WGcrcpkIfzxd/5aYC8yh8y+uXQGwMQGy+BF3oKflCGYD2LVT1
+   4Vf5OC7vMmIXHrRjA8lheFmfyk/ye6lRbYPgrRwe8UuxTwWEHWVtfKspm
+   KSD386q+ANDRSQKEYfzHsVE5tBeOQdEeQyJ8FbHyZQVXVSjJr5zQFesvW
+   A==;
+X-CSE-ConnectionGUID: bHoOpHN9SoGrEYMqhw5J5A==
+X-CSE-MsgGUID: mdsDA1OTQuSRYRVCiDVKJA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="34840715"
+X-IronPort-AV: E=Sophos;i="6.10,183,1719903600"; 
+   d="scan'208";a="34840715"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 13:00:58 -0700
+X-CSE-ConnectionGUID: vska6vuMRcKmm/dR8shkIg==
+X-CSE-MsgGUID: stj4xmFwSamnh6LOZ6IJTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,183,1719903600"; 
+   d="scan'208";a="63176830"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 13:00:57 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sjOqc-00000002m9T-2AFw;
+	Wed, 28 Aug 2024 23:00:54 +0300
+Date: Wed, 28 Aug 2024 23:00:54 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 0/5] pinctrl: intel: High impedance impl. and cleanups
+Message-ID: <Zs-B9m4jO9x3wX4d@smile.fi.intel.com>
+References: <20240828184018.3097386-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,52 +78,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c2218911-650a-4f43-9119-bd2cfc46f3aa@quicinc.com>
+In-Reply-To: <20240828184018.3097386-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Aug 12, 2024 at 12:41:40PM GMT, Abhinav Kumar wrote:
-> 
-> 
-> On 8/12/2024 11:40 AM, Stephen Boyd wrote:
-> > Quoting Abhinav Kumar (2024-08-08 16:52:27)
-> > > sc7180 programs the ubwc settings as 0x1e as that would mean a
-> > > highest bank bit of 14 which matches what the GPU sets as well.
-> > > 
-> > > However, the highest_bank_bit field of the msm_mdss_data which is
-> > > being used to program the SSPP's fetch configuration is programmed
-> > > to a highest bank bit of 16 as 0x3 translates to 16 and not 14.
-> > > 
-> > > Fix the highest bank bit field used for the SSPP to match the mdss
-> > > and gpu settings.
-> > > 
-> > > Fixes: 6f410b246209 ("drm/msm/mdss: populate missing data")
-> > > Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> > > ---
-> > >   drivers/gpu/drm/msm/msm_mdss.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/msm/msm_mdss.c b/drivers/gpu/drm/msm/msm_mdss.c
-> > > index d90b9471ba6f..faa88fd6eb4d 100644
-> > > --- a/drivers/gpu/drm/msm/msm_mdss.c
-> > > +++ b/drivers/gpu/drm/msm/msm_mdss.c
-> > > @@ -577,7 +577,7 @@ static const struct msm_mdss_data sc7180_data = {
-> > >          .ubwc_enc_version = UBWC_2_0,
-> > >          .ubwc_dec_version = UBWC_2_0,
-> > >          .ubwc_static = 0x1e,
-> > > -       .highest_bank_bit = 0x3,
-> > > +       .highest_bank_bit = 0x1,
-> > 
-> > Usually when I see hex it's because there's a mask. This isn't a mask
-> > though? Can it just be '1'?
-> 
-> I just retained the same convention that was used earlier. It seems like a
-> mix and match right now. sc7180, sm6115 and qcm2290 were using 0x.
-> 
-> I can post a separate change to change all of them.
++Cc: Heiner
 
-We probably need to do a +13 to all of them to follow the approach of
-the a6xx code.
+On Wed, Aug 28, 2024 at 09:38:33PM +0300, Andy Shevchenko wrote:
+> We would need a high impedance implementation for a quirk, so here it
+> is. While doing this series I also noticed a couple of opportunities
+> to clean up, hence two more patches (1st and 5th).
+
+Sorry it took a while to actually start implementing the quirk for your case.
+Here I'm asking for the following things:
+
+1) what is the marketing name of the device you have problems with?
+(I believe it's available on the free market, correct?);
+
+2) does it have any BIOS updates and, if it has, does it fix the issue?
+
+3) can you apply patches 2,3,4,5 from this series (the first one is buggy and
+not needed for you) and replace the hack I mentioned earlier with
+
+	ret = intel_gpio_set_high_impedance(pctrl, 3);
+	if (ret)
+		return ret;
+
+somewhere at the end of intel_pinctrl_probe()?
+
+Does it still work as expected?
+
 
 -- 
-With best wishes
-Dmitry
+With Best Regards,
+Andy Shevchenko
+
+
 
