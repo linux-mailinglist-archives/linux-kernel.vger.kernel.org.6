@@ -1,90 +1,86 @@
-Return-Path: <linux-kernel+bounces-305125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A5FD9629D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:09:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2F999629D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:10:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 256531F2212C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:09:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81052286AA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E43D18B487;
-	Wed, 28 Aug 2024 14:09:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4DE9189B8B;
+	Wed, 28 Aug 2024 14:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="CUzv/ywR"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XojhfzD7"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BE61993AF
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9415F189513
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724854151; cv=none; b=Q9xmCY09CeMFdjJSicRU40Pzj1QtcgtqvMtyJLZ8xsuul/X44bkpKVu+c4hR38qaqys1DuUptOne9DnZt21DcMlpDpoPdeHx8DktQv30xtkdg5SpAOdAC5zmgBEmM65Yro91MRzrYaPa87Mx7SXSQ0hhhePiXeKfOJ1qcnp0oTo=
+	t=1724854175; cv=none; b=UJ5AzMu7ALy+EIzkDQx9Dt/+kK0hTtoTCddO4dnfRuu8hldULS6lrcBkfdCr2oocmC2+mJjEtYcIQuuQmt/OaBiArHMFcpQBHRj/FOjkfWcnTYaCY9rqWMhYh46w9vqbGUyQ5ERrZtS9geuW2bGv0LT8gbo86ihb+tw9QYn7ij8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724854151; c=relaxed/simple;
-	bh=WOdOnpf7m/iwndrnl7sIbQvn+os3jPlTjOyRoQ4Q6jA=;
+	s=arc-20240116; t=1724854175; c=relaxed/simple;
+	bh=Ks5Bomh9T0NFTpgXt/gOr6En3ulnKIv6Hkpx5JLPDAw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ul32fxG98es8As0NXhyuGAKVGBQp9lRGTa5fPgcs6SlRNVO2ot6fXvabhKkMV97Z5kpjF140saOejel6hIZ8ka2qlfUQv/Ad6ECXBcAx748if+Ezk/60yzTsra87YIDIt5EAheDvfD84vEtQduqgxjIR6A7RwuFqXx1vTUmMmYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=CUzv/ywR; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-44fdde0c8dcso37770551cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:09:09 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q3h+aBDVehv0jAsrr4/XD++sf9KmTUKEJC4o3zV+IIRWSUle1lX9KuEk/h7JyJEeLw7aDBBHD9UhVUR+Zel5g62S0BMICyVt5hSkS6mcz0oIfMvoS3tQzEJUA9Ee6CBPKVO5WfxBwpTHTyUNGNG4bjBNhTi8wnA23xUqU6tvf+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XojhfzD7; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7141d7b270dso5198737b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:09:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1724854149; x=1725458949; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724854174; x=1725458974; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u51CBonYU1HgV7ECF8ZgNqcs2WU2uO/eXvnpaymgIKE=;
-        b=CUzv/ywRVV/Srbj8H3p8BBOMEB1XuBn4/cQAwPcuYgoJrqSY2r3tvPNG73dvJz+aoQ
-         zUobCh2qLBEHDeP3DE8uufWSU6ysSY1qaBnYqTNAAoE1Gtp/AqsPpVrYwmfxlWxC+8Ei
-         easYttNPLc9waD2SaVyFEMgbTVhjSigGVicnndlp3e7wr8obqBXu9ToqQctwSHDF3CHW
-         iyiBcoag195jXKKkdYd3ogJQW2DOMDzu05egs2r008kbt5RGwUn7wcRpYD6mregOl4wd
-         a+Naec3HvscSNgMX44ZD2SMxZl3IEmmS78RLXh4Kns86B569tU5CHEHc2dk0apNRUK9o
-         i+Zw==
+        bh=pu5bwQiUwEdugFDcEXhTI1L6/mqdQCzI8zZqkqlm2tg=;
+        b=XojhfzD7Ic1/7pEMXzv05/VggHdDZ963NUGiyZyvOuudtkH+3S65Yr6Nc+WCgw7PYP
+         8YbdW/OsJJUOg7hVmnF9lLqOwsLmwYXeDJTSnD5yaJkWX3zOc6nV2HQDWgE4wbXT00rb
+         1QRECYRy1SNAvPsfJ4s45zvuJ5lJHp89k/0TrV79BLuGM2nvJgXUauLXg9kQ5S/k9hei
+         qHzkZHJZfjy7Gr/hiILEQ5p4GKZIE8zveAMi/2vYNO/Z8VRfqwtgPbDRC2BnWK9YE1ko
+         pefh29AGLcrmnyRKQTEr2RkvWjdOVmPvxDroWsiSf8rsOGFVnafUnXiWMc/K3IHUWvgg
+         zLCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724854149; x=1725458949;
+        d=1e100.net; s=20230601; t=1724854174; x=1725458974;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=u51CBonYU1HgV7ECF8ZgNqcs2WU2uO/eXvnpaymgIKE=;
-        b=Lu+Si3haz2t1yMhohYt2+Ks64qxrePUzNHLLV0PaycaguD+f7oTOcp4ZjWHAAhAD+w
-         VAF63am09utl19xiUjJb6qejKRo1y9EVso52lAkg4T0qIpnacW0XRsLYVaLXYVRfpnRE
-         JRdVbuRFpiQxkvvWQtF55yU08RfL7JczjpL9QwUPRQIty0hUU3WH5aV3Rew8Wj2nH08G
-         g7HjgR7T5DDdBGlMxUwwgbayh3s2EovsQ6bj5gTc4jbI3COXDasVgXjofPw/TS4x6BPt
-         s7jhS1zj9tWmZl5kBUGtmNxoKiU4yPpX6OMIIc8/nrSklhgun43HBHC51Rs73Y9p8Wo/
-         G84A==
-X-Forwarded-Encrypted: i=1; AJvYcCWsVcAE+1DkX8+7pghPLFBC0MEP2bSlTAS0M8n+FAHYdVK1AA6lIhfKgcnv8dkzXSjyHhRDbsF3gHmo4ho=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8+bcY5QyjeOLFeAIu8hOsuvcgyGSwpvouDuyPU+npd4cy9xw+
-	Zjn9HwPAUlZwsUI9ZKuOp//rR8wzJTbzhEZ2mHt2hk0UVYmtSG59z1tYYnK7gQ==
-X-Google-Smtp-Source: AGHT+IFrGWnak+LjBNGL5be7F92I5fR40nlo/FF00dBfj1K7nJe1j7v7tWbAhF7k+CtaOeNqLzJ2wg==
-X-Received: by 2002:a05:622a:1145:b0:453:5efa:74b8 with SMTP id d75a77b69052e-45509d367famr195767741cf.40.1724854148892;
-        Wed, 28 Aug 2024 07:09:08 -0700 (PDT)
-Received: from rowland.harvard.edu (wrls-249-137-9.wrls-client.fas.harvard.edu. [140.247.12.9])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-454fdfc0475sm62676241cf.8.2024.08.28.07.09.08
+        bh=pu5bwQiUwEdugFDcEXhTI1L6/mqdQCzI8zZqkqlm2tg=;
+        b=bQLYZmauBCdeJmkJIZcgvmhHJc5JOvWn5FF7b1g6BaherzMqewW1wESvtHCLJA77Lp
+         G+rZQmqShYcncFO7tTrs7xRmuf0n9iGl6+f+waXqkTL/ymKnmULecxKHJzXC6Vt3AA0d
+         fr8w+Gv0HMLOlzoUdQnQgQCQMQAt9vX9vINyI1I19xs2+cIj8TuSGUDff6pthSdHKid0
+         NxWY1AGGwaR27zYRrH1E9WqCQkeK9tD4vh57J3CpD03c9e/2HJjJ1Ys0SGX/AOkcCMtp
+         irT+MRn/Hhb8qOPbo37DZkFqEUvaMDTyArTZ+vgueZbb+/xLXoUIBsms/6PPGYWpgr91
+         ub6Q==
+X-Gm-Message-State: AOJu0Ywn/HDdpo48Wnq4v1iorPVrpUUGpMHXIirS/eKt01QjZxstDnXa
+	+GoBqz+25nnS4kqZieKpckrMYRPP356s/4VugK90ruT2Fc8f6v9JvE1R3aMa
+X-Google-Smtp-Source: AGHT+IH1qGlldcsEniTWrrNUljVac/zC3t2lfcKQp5wHh4CIjRUWBehFRF9i4FPYXDFXv0PofLERIA==
+X-Received: by 2002:a05:6a21:58d:b0:1c0:ee57:a9a3 with SMTP id adf61e73a8af0-1cc8b5ddfe6mr16696657637.35.1724854173765;
+        Wed, 28 Aug 2024 07:09:33 -0700 (PDT)
+Received: from localhost ([216.228.127.128])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143422ed7esm10163250b3a.6.2024.08.28.07.09.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 07:09:08 -0700 (PDT)
-Date: Wed, 28 Aug 2024 10:09:05 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc: Peter Chen <peter.chen@kernel.org>,
-	Mario Limonciello <mario.limonciello@amd.com>, superm1@kernel.org,
-	Mathias Nyman <mathias.nyman@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"open list:USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	mika.westerberg@linux.intel.com
-Subject: Re: [PATCH 2/2] xhci: pci: Put XHCI controllers into D3hot at
- shutdown
-Message-ID: <bb7bba27-ddb2-4c64-8a6b-3ce4e635320e@rowland.harvard.edu>
-References: <20240712185418.937087-1-superm1@kernel.org>
- <20240712185418.937087-3-superm1@kernel.org>
- <20240827063206.GA879539@nchen-desktop>
- <4db33660-2720-471d-a017-1fca4c9b7268@amd.com>
- <20240828071303.GA921051@nchen-desktop>
- <bd380d71-4ebe-4889-9ed8-aeefec2b2b0e@linux.intel.com>
+        Wed, 28 Aug 2024 07:09:33 -0700 (PDT)
+Date: Wed, 28 Aug 2024 07:09:30 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Chen Yu <yu.c.chen@intel.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Leonardo Bras <leobras@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: Re: [PATCH v2 0/2] sched/topology: optimize topology_span_sane()
+Message-ID: <Zs8vmpwY2Dt9s0Ei@yury-ThinkPad>
+References: <20240807190522.432388-1-yury.norov@gmail.com>
+ <ZrzcozFadC5xQdUq@yury-ThinkPad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,54 +89,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bd380d71-4ebe-4889-9ed8-aeefec2b2b0e@linux.intel.com>
+In-Reply-To: <ZrzcozFadC5xQdUq@yury-ThinkPad>
 
-On Wed, Aug 28, 2024 at 05:02:10PM +0300, Mathias Nyman wrote:
-> > > > Hi Mario & Mathias,
-> > > > 
-> > > > According to xHCI spec v1.2: A.1.2 Power State Definitions:
-> > > > 
-> > > > 	Software shall place each downstream USB port with power
-> > > > 	enabled into the Suspend or Disabled state before it
-> > > > 	attempts to move the xHC out of the D0 power state.
-> > > > 
-> > > > But I have not found any USB core code does it, do you have any ideas
-> > > > about it?
-> > > > 
-> > > > We have added the similar codes at non-PCI USB platform, but met above
-> > > > concerns. In fact, we met kernel dump that the thread usb-storage try
-> > > > to access the port status when the platform xHCI code has already put
-> > > > the controller to D3.
-> > > > 
-> > > > Best regards,
-> > > > Peter
-> > > > 
-> > > > 
-> > > 
-> > > This is pretty tangential to my patch.  But FWIW in case you missed we're
-> > > going to discard this patch in favor of another approach in PCI core.
-> > > 
-> > > Regarding your point though If I'm not mistaken this should be handled by
-> > > the Linux parent/child device model.  Each of the ports should be children
-> > > of the hub they're connected to and the hub a child of the controller.  So
-> > > when doing any actions that start runtime PM on the host controller the
-> > > children need to first be in runtime PM.
-> > > 
+Ping again?
+
+On Wed, Aug 14, 2024 at 09:35:04AM -0700, Yury Norov wrote:
+> Ping?
+> 
+> On Wed, Aug 07, 2024 at 12:05:19PM -0700, Yury Norov wrote:
+> > The function may call cpumask_equal with tl->mask(cpu) == tl->mask(i),
+> > even when cpu != i. In such case, cpumask_equal() would always return
+> > true, and we can proceed to the next iteration immediately.
 > > 
-> > It seems there is no runtime PM suspend for xhci and USB core at
-> > .shutdown currently. Alan & Mathias, please correct me if I was wrong.
+> > Valentin Schneider shares on it:
 > > 
-> 
-> I think you are right.  At shutdown we only halt the xHC.
-> We don't force ports to suspend or disable state.
-> We only put some selected xHC to D3
-> 
-> USB 2 ports might suspend themselves if there is no activity.
-> 
-> Doesn't seem like usb core hcd code, or hub driver does anything either.
-
-That's right.  Host controller drivers are supposed to handle shutdown 
-operations by themselves.  The USB core doesn't do anything.
-
-Alan Stern
+> >   PKG can potentially hit that condition, and so can any
+> >   sched_domain_mask_f that relies on the node masks...
+> >   
+> >   I'm thinking ideally we should have checks in place to
+> >   ensure all node_to_cpumask_map[] masks are disjoint,
+> >   then we could entirely skip the levels that use these
+> >   masks in topology_span_sane(), but there's unfortunately
+> >   no nice way to flag them... Also there would be cases
+> >   where there's no real difference between PKG and NODE
+> >   other than NODE is still based on a per-cpu cpumask and
+> >   PKG isn't, so I don't see a nicer way to go about this.
+> > 
+> > v1: https://lore.kernel.org/lkml/ZrJk00cmVaUIAr4G@yury-ThinkPad/T/
+> > v2:
+> >  - defer initialization of 'mc' in patch #1 @Chen Yu;
+> >  - more comments from Valentin Schneider.
+> > 
+> > 
+> > Yury Norov (2):
+> >   sched/topology: pre-compute topology_span_sane() loop params
+> >   sched/topology: optimize topology_span_sane()
+> > 
+> >  kernel/sched/topology.c | 20 ++++++++++++++++++--
+> >  1 file changed, 18 insertions(+), 2 deletions(-)
+> > 
+> > -- 
+> > 2.43.0
 
