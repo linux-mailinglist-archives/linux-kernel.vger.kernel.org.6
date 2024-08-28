@@ -1,184 +1,122 @@
-Return-Path: <linux-kernel+bounces-304936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE7A6962707
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:25:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38DDA96270F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75FFD28226D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:25:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D61B21F240F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A3417838D;
-	Wed, 28 Aug 2024 12:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B32176248;
+	Wed, 28 Aug 2024 12:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="dXxDIhaT"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2071.outbound.protection.outlook.com [40.107.215.71])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="pZhFFwvf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03334175D28;
-	Wed, 28 Aug 2024 12:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724847923; cv=fail; b=uaoQRkw9018kl94n29Wv6MyrokC9PBz4Fa2+uB8Vm0Vo6Gok6VZmTvv/zQim0F7aCtFEpJNFuxdsc4/X9MBjhd+nMJAG/eQYavIRATvvQXxciIv7UDwXjRSgp8Otwr+PTdmT/PoOA2XP0lC4VWSLFU49X+Bu9ysbz0cEmPQcgAI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724847923; c=relaxed/simple;
-	bh=o6NdZHjbJ5fXKeUxkEp7C4vpsCSlc+Z3r1Q4TIuQLrg=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ADztXJLnJw57THfVONltiL9hJXG3qIiToj7O9JwbaTHUqkTRM1oyvvLygqjZ13RR+T+xrCK+SH6t1XQL9dL9lnXVGKFlRnJlUIgu3pnwfTjKFP0z/rlz09imEpvpHIeJ1WgupC+Fx7bi20hhoOiTCeW9NUYihbHTqo8FtOUG0VA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=dXxDIhaT; arc=fail smtp.client-ip=40.107.215.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HG3aNLYQrnh9csDHnkaNxWmFQbsK0lVtKmTd1+AmpwWgiHRCqULJC1+BRhANw6PoAuW2iZLIKtoE2PLZAqQ3T0f09Ak7X6zyj011qXpUu3SUY5PVWUM5kW/nDRhQ1iBJqGm2zvlelNz6mrxEzodtD3efGLZGmvJvdWaVV8yJ36ZyDpR3ghXPjoQVxoJnvK2CMMwURq4wdVwIxo5MRK8/wcwi3Vbxc+s81G5xTtOEYswlYH7+KymGRzgzerm8lzcClgM07UsGYLcHt7j+3SAjeDGezYOEgXpM1+QK+UIfP1hzT3BiWmd8Hz5iLii/KUM92XCXpqdXYUUu1sUt9ECq0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ojy4rbHwUy1jJhwVF5dBJZzOpMUBmKIqj2Otzsnr1T4=;
- b=Cx6a5hdOOC/7901rFBvm0RPwVGDPVM22cj40tL+APpMVti7uZ81xOfvbdkGQhprs+8cJDT2pMuZsLA27NNrZhGeDmLL6BfOvtJGCSty92ZqW9j5R7zfDxfqrhYFNBMSj046Wfc7U31ZJiQ8aCft7EoAJnbUIyeIQNULafi8shspWtDFuMV8DamS8ECedqaDiA4gEuvccHpf2sxOVuWjj280NSOGZiPz2C1/UOz4LBD9rPfxxVXFtpJYMyPABjvEmVxl2Dwb4IZQLzVnl5cmSL8AeRvPqvLVoVkEJ79XUdkUoQPA/m3ItmdZ1Ifn0rCAsh8Q6K/91bTXE2uPaEPqFdQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ojy4rbHwUy1jJhwVF5dBJZzOpMUBmKIqj2Otzsnr1T4=;
- b=dXxDIhaTWmVIKNDsyxotwBRzGZ6iOGGrPhS5BBOGJ+WyNWkE2f1NAQy5vjG2/I0BPciKD2mWVGiVAbNMRYvhunzlWxenylMudocd1+I8tLjn/XH7a5kFiSdgUzc2PMAQy6SgHVeGO43LqqWgvLzfAqTpWSZS57EFTdLhRsFrmJibr3eSFZD/1VHoMOPvBkmchKXv4HHwY/s0o8+jzxUI24htxQ7zpgIyhnFT6OP7vCPWxBHFL6KinxeBnITufTO9I3cNe5ZtGr3GjmLHCC6qFoeyHAJY5Nq6w3JutSYjveFNLXgFar+OFBVje+p5xF+yYDV/ssLcsgrrESyCiydZDA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB6263.apcprd06.prod.outlook.com (2603:1096:400:33d::14)
- by TY0PR06MB5625.apcprd06.prod.outlook.com (2603:1096:400:32d::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Wed, 28 Aug
- 2024 12:25:18 +0000
-Received: from TYZPR06MB6263.apcprd06.prod.outlook.com
- ([fe80::bd8:d8ed:8dd5:3268]) by TYZPR06MB6263.apcprd06.prod.outlook.com
- ([fe80::bd8:d8ed:8dd5:3268%6]) with mapi id 15.20.7897.021; Wed, 28 Aug 2024
- 12:25:18 +0000
-From: Yang Ruibin <11162571@vivo.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com,
-	Yang Ruibin <11162571@vivo.com>
-Subject: [PATCH v1] rtc: rtc-asm9260: Switch to use dev_err_probe()
-Date: Wed, 28 Aug 2024 20:25:07 +0800
-Message-Id: <20240828122507.1323928-1-11162571@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SE2P216CA0053.KORP216.PROD.OUTLOOK.COM
- (2603:1096:101:115::6) To TYZPR06MB6263.apcprd06.prod.outlook.com
- (2603:1096:400:33d::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6579B16C859;
+	Wed, 28 Aug 2024 12:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724847987; cv=none; b=OCyd4dLUMQjKwxLuH+oVXZl11wpmbuxew/UFZ3AZGQokradMWQXf+yRamhr+SBlerJxTFp9GapSxvFHrNTb41FON2kG/ZJWAvP2Wt086TTvH4wyukhvShmWeT53HJDkGni5uusjIOYzINULQdIBzvTFJLMUqWvUInPomF6Q+aEI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724847987; c=relaxed/simple;
+	bh=1flW7GCzzsPh16d1yPD4h41cC6zIzhxJDTsj3ZwcKZc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KByFglBWxE1Dm3ub7RQ190kZhRT/LtFd6h7LLEU9xrfwE7RiSes2/vtN2r9WLV4ZaP7HZrAz2NOrBbjr3D3DAnYgRyyS/PSnFVgEYOmdpeOtd/WQyTti48UDApo4Bvx0ufNORZiIklDi6Nrf8PevMyZkBRJ4fri4hP71ZEGqKAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=pZhFFwvf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65BEEC98EDB;
+	Wed, 28 Aug 2024 12:26:26 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="pZhFFwvf"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1724847983;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uEFEGqQJQMz8Ub4wy+aep50eWmgdp8pcSL8AmUjJ5J8=;
+	b=pZhFFwvf2+rUCk0mnu74yzuq8D0OlV5RRX3O/pUcL2EJirk1lWLjJ7T+VmJhAB+Nwuqruo
+	5w43+j7738kAhUtF/Op+T7PkY55MvhYmMEm2AulNbOZOm5YzBQVDPiZl6Xd1e0lo4jpoA9
+	0Tg6/x3YqzwUs/XLZ+j/psnPUsH+3wQ=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id a699d10f (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Wed, 28 Aug 2024 12:26:22 +0000 (UTC)
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-27018df4ff3so4910521fac.1;
+        Wed, 28 Aug 2024 05:26:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCURXtByFUqqUn01GwdQRMnNmmh17KxzSjZwR4CWstb5JeTywOt+zGaxYyE0DuWOZ5jG4vHkRa8rcQlzeWtW@vger.kernel.org, AJvYcCVDToxFmv9r1s9rhL3G4itdOjZHOyydMFVF/hLIEfT5fDAjSHHionQd8uGrKJ1o0Ic49XwFnVeRgBqqYlHpMw==@vger.kernel.org, AJvYcCVREVXiBUsIXTVICUsG2yJCj6eNustd0FOFrXcUB5kp6GboY0v9iaBKmkXwmh/k2WX/iqB3yVdIZe7O@vger.kernel.org, AJvYcCWaPnfSqC0DKCKNHHpQw1UCOKccq/VD0K8UYjc9xcSXzA2wPv12KCJU2PrxdEQEjQV7oJl26T5D32pE8ZT+7jems/3L@vger.kernel.org, AJvYcCXH5tHVJ8knZppEDz5G9ZvQcUfjTq+LMhBQrPYtBYaKvyNJvo8aBxP0NUKnUyJhH/k+C/rfMqbPzGItBL6j0Y6P@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6YOs8LDGHfWIvCp3Suv4io2RBW6nDT337BcXPqteSdwEev7zy
+	pIv/EQb7OSndvq1kPVW0WENeiVgVfU97PNB//aJBtIy+ek6uUOh/PSQjsP35HIVl55kqD5VnSW+
+	p4BwJydemrhP/dkVAwTLn1m7KBmk=
+X-Google-Smtp-Source: AGHT+IHXO1KZEIb1pBgGn7dKx8LC6G7ifrWZYsusE/oKQVZmO1hrOeMVz7hy7j/rnnH9GmqVmjbXApoOhTEeHD761oc=
+X-Received: by 2002:a05:6870:1713:b0:25e:bd9d:b1cb with SMTP id
+ 586e51a60fabf-273e667ed95mr19307401fac.40.1724847980462; Wed, 28 Aug 2024
+ 05:26:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB6263:EE_|TY0PR06MB5625:EE_
-X-MS-Office365-Filtering-Correlation-Id: a89fa828-05c8-48fd-2b99-08dcc75c7a94
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|366016|1800799024|376014|38350700014|81742002;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?wTtbtWi609/ZAH+1ubJWixWW7hUjSWAaYgaCTx1CtEWjGO+nkZXIndMKbUE0?=
- =?us-ascii?Q?5hEl0JF/1v5o3yU1V/TvKIJPq5W0zZFJyj2KHfAtynhx/5onL6RYljdy5EKh?=
- =?us-ascii?Q?H//9KnYGAibdn5UKBbbHipFOWDcOmOgnMZsvp2rXYVprgk6Qb76SiOO3TaD6?=
- =?us-ascii?Q?EwPyP4iJOaMZbDXTXU+q14NbDfIRswqSR7jCv9jX7ZYo37APYoyGwItFB9c9?=
- =?us-ascii?Q?YmT9D2nt1KHfBAPy8Lc82KlrTXa7AFe4WlTfOiTIpbg7QoLbS7suPtnzr2lq?=
- =?us-ascii?Q?pGGS6Sj95eRTbBag0vvUdQTv7FEQDWHOKhkbuOvffkOBH4ockuI+JLghC77h?=
- =?us-ascii?Q?QFRZc5fyXitxzB/DbXU2zRn+2KCCPqXlDISUBofVmyKNn3cg6DloGOJ7mvju?=
- =?us-ascii?Q?F9r2U3aSiUjVn7IPBsfpy5o5Hk409sv73/SppA9B6D2vH+olOd1RoCjMvYIT?=
- =?us-ascii?Q?/rEIsr5rxIl2Ad/XeKfPq6yPYBXYsfNTsIeQS3sDhwoITDevrTjoKOWBLnHa?=
- =?us-ascii?Q?ItchIyVHjDJoPkbcv3f7MQv74LEZHLZ0lqXX6G5DNo9D57qa4qaDF4gFr0fT?=
- =?us-ascii?Q?Tw49xSTqFrJqZuq4Z16gAeN551zmWVXGS0Z5Ie3YWW0WRddLAa8QyKgbxRE3?=
- =?us-ascii?Q?Olo0WOSecBVu07XzC+GNumrFu2iSx67tGpHVbAP6DhND2Epiy3rd2deACl5O?=
- =?us-ascii?Q?L2MOaqh204cexAZmozm/oTWFqg8aEHcwx+8QWkB39P0OlPoMuTli9MQ9s0Xi?=
- =?us-ascii?Q?hwJevhU6ZmblKf1s5aDcB5IfZ87yzN4PmT3B88oQWKjwYkE9EcCA+9FIYKTo?=
- =?us-ascii?Q?mtGiIgZr+1gnoLB0PH7venJCRTTS/gztpAQmS9fcELo+DgfS2AwzHwGgSuua?=
- =?us-ascii?Q?kWxYaqP3ujY3rP+tVI/8UpZ+kuchipwczGj+sQIBDhna0rvPgra8h2q8R2U2?=
- =?us-ascii?Q?Fmcwc0taUgHfbBebv4PtMv0kyVGuNB9xqVZHVdzvH8vfTAam+WoNpWto6AVY?=
- =?us-ascii?Q?6KxS4aDrCYqKx8s4SHhpJkj4P0EBFAc6T9dVQhsxvYUJPW6bikB9gwEP3ZRm?=
- =?us-ascii?Q?47//rEB0yztaLmTuY7JtsCIDMfen+3aTXYCc7Tl4UmFchyabOe0c/tGZNlIH?=
- =?us-ascii?Q?gk7HXEc9E8NkFIb5/gDVuCnnSQ+VwU7ygjRveSiPo1Uoyua78RvjboK+594G?=
- =?us-ascii?Q?+4K1/aAv9jgZEId8B3GtFSc+Mp8Vrrzmd6MBAUT+EnG35yChku5wpA1gzMkO?=
- =?us-ascii?Q?KN655LPhE2jtrfgChskNRb3JmaV9jNMpVqS3iLneH914MIRCRBTk/GJgnYk4?=
- =?us-ascii?Q?pBMphwgmPEXLJQVyFQkUa1h6is01aYBvtu4MWuNV1B3v2NADWLERTT4LbSj6?=
- =?us-ascii?Q?gMY4wFaxcm+QkW8kKM0jD/YVpO2yxffSMZo8b0D8WEJ1j0m5joeZPBNRkzJ6?=
- =?us-ascii?Q?6rQlLaF6mcU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6263.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(1800799024)(376014)(38350700014)(81742002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?TIIyEGxn/5+ADlJFw43xIRXwXymLk9hFeK0vCvOGwztf9LJbRo8LHWA0ru0y?=
- =?us-ascii?Q?RCg6Xq1zPs2tJlVvYFu11hAgsYtlaIF5c/w5V6TdpsZTOZwsp1PBmOGOthBZ?=
- =?us-ascii?Q?OU4lbu7d/i/lwpP7lmM/iBeMbhuz+mzMH/kDI/+j5qXPIZ2ujlsU1kpSdtVW?=
- =?us-ascii?Q?RAJ06jtQ1P9C9XpfpDXJdbhRW322VvDfqFfS/Nu7FtrtEw3WtWvIXLBia9Hf?=
- =?us-ascii?Q?mkMuS3TIflmbIuN4FuBqndFKmt/ahxl4Pdo7O51NvXmmjMXCaZ+FfQhwaCM1?=
- =?us-ascii?Q?Gkpl9KzxYGqy1LG05jncXR1YiL6CovTZS2ASbczxwXd6oFUz3TgllzIUkHr9?=
- =?us-ascii?Q?yotBIBMi9WBTqlG6G8Mh9fpRFuxOTZs12I2uBRKJSyo26qriawgPvQaJg5Id?=
- =?us-ascii?Q?s5rbLlesxckZ4WE1yJ9s+gWes+hyapevAiM5OV/JrhTp85OhmSXlXRhgdcIX?=
- =?us-ascii?Q?gJBUNArEpDU366tK9U6HdC7rvfs3SPFqXeOzTdY8dJpWWC8KQFGbXvx8JJWf?=
- =?us-ascii?Q?/Unw6bS4/OKqaKEe7Dwbdy9ywOE2LXfpwS7x/b48B+YhuXyUxtDa9+2SngUT?=
- =?us-ascii?Q?yugjHtM9EXywcFHDtXMI9slDRv+8kGQ5d6rOAM+0NRcMPzFTezPYjl3BAWWO?=
- =?us-ascii?Q?wW3VjboWS1WvU6p0RmSdfcFlIcNKRlfs/AYyGNYMgglvF09No9UwMNTAolgu?=
- =?us-ascii?Q?x+Xge4n8Ul0Zzh0ooJYOfsMKPuvCx/nAOCBf8GJ9pYmo+OZ92ae8eLjiNB/o?=
- =?us-ascii?Q?KMvmrxHCK8ZrAJHjp/od8c00ilaFJHMHQFrunoIzoyfEfBP+uijujtznI5sy?=
- =?us-ascii?Q?+ax9QMYOAOX578DCK//bpABhS8dv8BCg32F/Lk79sV7GDzdNAcCNjH2DO/3l?=
- =?us-ascii?Q?KSaIGBLBkoMPNMQawF/TwmHZhBKDLsEBV5UzVrp/UmMPVfQBZgb/LN+p2bNY?=
- =?us-ascii?Q?fxjVROZnkS7BI+odzVVaVb5ECfyuE34uk4RfuBdITzX1ZUvBM0w+NGiO+IVq?=
- =?us-ascii?Q?fqyFvjljROPPJN8rmzbtA/RWEHF8CWDVMjcJuhsHg6WSopi/sFaIKgmklcut?=
- =?us-ascii?Q?b96VIlq9wMFa2jYvBFNiaj2tDjLuw827tzCd+JLMV6CW0POieHmUNJxsMOkw?=
- =?us-ascii?Q?wzN3hZgnM9eKnaYLJEx+XZsK941XIcxaWFNrah2kHtswlo9HZdYkLVKrcF8K?=
- =?us-ascii?Q?IE6Nh5u7DKrc26th/0r6fvyaYJe/NPw9bkTWafBr+RJOfLzIloMzMHilQWlq?=
- =?us-ascii?Q?wO956+MImAyHxzezVGWIe2lXXBhlMJCduCZgtVeo5iKf80QOYCVicAmvnFU5?=
- =?us-ascii?Q?JWK8dMRPwYv4XKX9Qj3+so0Kw53LBb3llNCNRMWaUTvwZNmXDe7FBvbxMlVZ?=
- =?us-ascii?Q?c6uSWJBeAWN+cKskvIvoIE/Cx8YZdonpMqT8seOhYoBunIu/H+ZYRq1XDLN6?=
- =?us-ascii?Q?iXYvTh6d4BVKx8Dt8G1evzfBZ1SUCHfb/MlU+RKU/qyTdZIyxPaiGZAABg1t?=
- =?us-ascii?Q?7+IxhhLEejUkhtgUQJgZ19gqNYeVJErp8BMtAL5CNPrpCJvXtZoj4j0NDv1k?=
- =?us-ascii?Q?/mle0mW3R+YkYVl7jOb5ihEw2dqQd9yXA+/MAXzG?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a89fa828-05c8-48fd-2b99-08dcc75c7a94
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6263.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 12:25:18.8949
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /ygZZ3k2A6bbahkWEqtbXH5bZKSIWYNFQmQwof3KINJCd4e7cjCL91Hn1LtgDgwcl5z3AlwyQkBfvexQCymq2w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5625
+References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
+ <5deb67090b214f0e6eae96b7c406546d1a16f89b.1724309198.git.christophe.leroy@csgroup.eu>
+ <20240827180819.GB2049@sol.localdomain> <20240827225330.GC29862@gate.crashing.org>
+ <Zs8HirKLk-SrwTIu@zx2c4.com> <fc19bf63-d519-46e2-be70-80202c85ff92@app.fastmail.com>
+In-Reply-To: <fc19bf63-d519-46e2-be70-80202c85ff92@app.fastmail.com>
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date: Wed, 28 Aug 2024 14:26:08 +0200
+X-Gmail-Original-Message-ID: <CAHmME9rjH4Ek3e8jmBvRp3wy+mrzJAeYxk5=o+OHjoT5sTOQPg@mail.gmail.com>
+Message-ID: <CAHmME9rjH4Ek3e8jmBvRp3wy+mrzJAeYxk5=o+OHjoT5sTOQPg@mail.gmail.com>
+Subject: Re: [PATCH v2 05/17] vdso: Avoid call to memset() by getrandom
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Segher Boessenkool <segher@kernel.crashing.org>, Eric Biggers <ebiggers@kernel.org>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, "Theodore Ts'o" <tytso@mit.edu>, Andrew Morton <akpm@linux-foundation.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, shuah <shuah@kernel.org>, 
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>, 
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-use dev_err_probe() instead of dev_err() to simplify the error path and
-standardize the format of the error code.
+On Wed, Aug 28, 2024 at 2:24=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote=
+:
+>
+> On Wed, Aug 28, 2024, at 11:18, Jason A. Donenfeld wrote:
+> > On Tue, Aug 27, 2024 at 05:53:30PM -0500, Segher Boessenkool wrote:
+> >> On Tue, Aug 27, 2024 at 11:08:19AM -0700, Eric Biggers wrote:
+> >> >
+> >> > Is there a compiler flag that could be used to disable the generatio=
+n of calls
+> >> > to memset?
+> >>
+> >> -fno-tree-loop-distribute-patterns .  But, as always, read up on it, s=
+ee
+> >> what it actually does (and how it avoids your problem, and mostly: lea=
+rn
+> >> what the actual problem *was*!)
+> >
+> > This might help with various loops, but it doesn't help with the matter
+> > that this patch fixes, which is struct initialization. I just tried it
+> > with the arm64 patch to no avail.
+>
+> Maybe -ffreestanding can help here? That should cause the vdso to be buil=
+t
+> with the assumption that there is no libc, so it would neither add nor
+> remove standard library calls. Not sure if that causes other problems,
+> e.g. if the calling conventions are different.
 
-Signed-off-by: Yang Ruibin <11162571@vivo.com>
----
- drivers/rtc/rtc-asm9260.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+From https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D90701:
 
-diff --git a/drivers/rtc/rtc-asm9260.c b/drivers/rtc/rtc-asm9260.c
-index a83b47e0d..2b7058ebb 100644
---- a/drivers/rtc/rtc-asm9260.c
-+++ b/drivers/rtc/rtc-asm9260.c
-@@ -268,10 +268,8 @@ static int asm9260_rtc_probe(struct platform_device *pdev)
- 		return PTR_ERR(priv->clk);
- 
- 	ret = clk_prepare_enable(priv->clk);
--	if (ret) {
--		dev_err(dev, "Failed to enable clk!\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to prepare clk!\n");
- 
- 	ccr = ioread32(priv->iobase + HW_CCR);
- 	/* if dev is not enabled, reset it */
--- 
-2.34.1
-
+| You need -ffreestanding but that is documented to emit memset and
+memcpy still.
 
