@@ -1,169 +1,205 @@
-Return-Path: <linux-kernel+bounces-305437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B9B3962E92
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:31:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0C8D962E88
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C00D71F21DAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:31:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70E06B235CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1802A1AB51F;
-	Wed, 28 Aug 2024 17:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F921A76DD;
+	Wed, 28 Aug 2024 17:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZCFVqCh2"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="TpjlmABV"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3F61AB504;
-	Wed, 28 Aug 2024 17:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0637D1A76B5
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 17:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724866214; cv=none; b=uVaXey2QrNca7mtEfzyt8WFm7WtQ2e0QYL66PietXyeqljopa2rGByrwPYz4XXNaVjCtGKAylAnrXM4ZGC/5iHB/EWq8McZJzvn1wMQoZVjeddBj4wHUhs3njj83eXWrH8um3ueXpwHFbO8MRKRi3FENVK2GxLt7j1viU2eqEeI=
+	t=1724866205; cv=none; b=pldfVxLZgd9aNVBwMN/G2+FT8kfSpcMRL+0jX0xLFfk/7XHXE6rnIro+1SIcNWisTudfKbdF7LyGRT5wQooG2xcllLoOASlsD3zfhYudw9cnzwKjvkHA5z0fN6UVuYtO7IO2WpaxWhq+z1nFTlyFKwyUJjlFD5/ajx+htdtKGY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724866214; c=relaxed/simple;
-	bh=5HdX/PWhEgmmrIeXaH1FjA31AEgRFlZjfsyzkSbkXyM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qan9QUs+3mE+5c5xoH4MAnmIWWPb+5zvmmuVQpFHD/C0crJFtvueDjFF2A7p1AJFipJ/UgZa7npURDrqm5zGKtT+a4N/bpCpfgiZxR3MPmYE98K53Vdq8QBqYQSgcIZklG5ZsMuO7un4GMFqzO2tggX+B/ck/Dcp+RGnVTs9zl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZCFVqCh2; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47SHTwjM072779;
-	Wed, 28 Aug 2024 12:29:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724866198;
-	bh=GZp972pZvt5VAyXcD93nKCiVZ1ATgFPNjK3K4/SasJw=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=ZCFVqCh2xqJKgjSVsN3ChatXx0xM95tProZSJY0Wi1aScLB9LX7QiuQnIDRUIHuQ4
-	 3CjFQL7DYGmfC33E+A/0bf7L+ek1E2bEvlwfAS+VcXkrG41k81TycIsBM4jyUF8v3L
-	 k58kDNA6MfvVm0/q6F45hOTe5ZyM64+pVn88FEIk=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47SHTwdF024251
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 28 Aug 2024 12:29:58 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 28
- Aug 2024 12:29:58 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 28 Aug 2024 12:29:58 -0500
-Received: from lelvsmtp5.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47SHTugB073490;
-	Wed, 28 Aug 2024 12:29:57 -0500
-From: Andrew Davis <afd@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Santhosh Kumar K <s-k6@ti.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>
-Subject: [PATCH v2 2/4] arm64: dts: ti: k3-j721e: Include entire FSS region in ranges
-Date: Wed, 28 Aug 2024 12:29:54 -0500
-Message-ID: <20240828172956.26630-3-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240828172956.26630-1-afd@ti.com>
-References: <20240828172956.26630-1-afd@ti.com>
+	s=arc-20240116; t=1724866205; c=relaxed/simple;
+	bh=OmO27VpmrhU31qsKclIqtL8TYK6eYIyOBD8Nc1b6/sY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gArZmXZ6f2AZp58ZnpNAtIzwSIOksjfcN0IIEB7kLeXLWLRIBAQWC2t8Qb3PTJkA7Ws2Hi7S/ywJf8l58b8dcNDT4QSLd9qRo9r2cKQXqNAd55U7ykF0VIT8esgzM1/83jQbmpGZOJSF+SX0YsIDsR/Sc0//XZ9HM7yHwgtMyaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=TpjlmABV; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7142a30e3bdso690897b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 10:30:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1724866201; x=1725471001; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=izEx2iGerEnX7WB/2Mpvv+y1MVG/tbs1FdX9CKEIcSg=;
+        b=TpjlmABVarE4pTP8IIaQW8r5WIQYE/q3k9AeSj0TQiS4s0FQFCY1jMUcUe0LRUfGFC
+         jPnXTIofU2ZBnLJmLBckW74bTp12Br6sNHp0gkyPrrwI4S61o3Ne15rtg6ZuFYDl2Uk5
+         6k3gPBu8aWLCcsgsVCmn79ZYsuAPuMa2RIRLfnIIV1vh1oWSTQA7Rsz+76jPoT1uIJoq
+         e0+vcl0p569SySs5UL5JHZVcWOX7iYAEc8V+KSYx+FbCIqS/gTcI4W6FleCgt85tNWEu
+         yvvd5LNLTtPOmPM8n8yH9nAENwfZSYvPp3p3mRAZcMK8Ggusd2479ddcaB2HMt330v/p
+         6Xgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724866201; x=1725471001;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=izEx2iGerEnX7WB/2Mpvv+y1MVG/tbs1FdX9CKEIcSg=;
+        b=WLjejIWjUETsaPGIeABtAMrnPb9tGbL/L0LpHSho8+etbD7/FDjKHBWmGxo7vGysYT
+         FikafA0CFxfglXS4E0l5oWhyVyf4mQsBYW00fSiMgNPYgyFA+0AhieqQY5GRtB29zX2H
+         bcmd/Zsi8MjutDdqmrDR6csoJHlPJ5dbeDfxzUK5Mpv29fS6l4slg1WFc0pbHLcIoOHm
+         qE09zsoL5+sfJa04jHmo/t3y42nc82AWwwEKaeLVVHsO48w89Lgj1j1pPCMrWAU+ZFYX
+         RaT/tC1PQnTXFRGgjIUxP7T+zVedQt9KA2N+1Z3QU2IFw68w2OY20XvgSPv61GuUtPFg
+         onmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVArmYG1LtbsG3KvWsNJ3wpcPqgACTIcptSagZj+spm6FDANIHwgyWQP2Gs4fWoUb3c1sctdza0yzyHIqA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxorcR6trtdb4zruEP9CjZu9xfKlKSSiAkqrL+SE4EpVHfMDvXX
+	R2jh4sOOgvO5L3qiJOUwYAzpILu08VobjopL7ybOboJGSsb57NNFkWdEAkZy2pk=
+X-Google-Smtp-Source: AGHT+IHMsuvXLfTW+bLvG1ZAGccaibo4i2N0hBI/JcHNn1qd40DIOjpRRFBts/vAK3nn3l/ntjAfHA==
+X-Received: by 2002:a17:903:1210:b0:1fb:2ebc:d16b with SMTP id d9443c01a7336-204f9bb4194mr38041435ad.7.1724866201061;
+        Wed, 28 Aug 2024 10:30:01 -0700 (PDT)
+Received: from ghost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385581393sm101427625ad.102.2024.08.28.10.29.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 10:30:00 -0700 (PDT)
+Date: Wed, 28 Aug 2024 10:29:55 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Arnd Bergmann <arnd@arndb.de>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Russell King <linux@armlinux.org.uk>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	linux-riscv@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	linux-mm@kvack.org, loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 07/16] powerpc: mm: Support MAP_BELOW_HINT
+Message-ID: <Zs9ek1Cr1SaQzSqg@ghost>
+References: <20240827-patches-below_hint_mmap-v1-0-46ff2eb9022d@rivosinc.com>
+ <20240827-patches-below_hint_mmap-v1-7-46ff2eb9022d@rivosinc.com>
+ <a43c52c6-c1ac-4ef3-b511-08f0459bddad@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <a43c52c6-c1ac-4ef3-b511-08f0459bddad@csgroup.eu>
 
-Add FSS regions at 0x50000000, 0x400000000, and 0x600000000. Although
-not used currently by the Linux FSS driver, these regions belong to
-the FSS and should be included in the ranges mapping.
+On Wed, Aug 28, 2024 at 08:34:49AM +0200, Christophe Leroy wrote:
+> Hi Charlie,
+> 
+> Le 28/08/2024 à 07:49, Charlie Jenkins a écrit :
+> > Add support for MAP_BELOW_HINT to arch_get_mmap_base() and
+> > arch_get_mmap_end().
+> > 
+> > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> > ---
+> >   arch/powerpc/include/asm/task_size_64.h | 36 +++++++++++++++++++++++++++------
+> >   1 file changed, 30 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/arch/powerpc/include/asm/task_size_64.h b/arch/powerpc/include/asm/task_size_64.h
+> > index 239b363841aa..a37a5a81365d 100644
+> > --- a/arch/powerpc/include/asm/task_size_64.h
+> > +++ b/arch/powerpc/include/asm/task_size_64.h
+> > @@ -72,12 +72,36 @@
+> >   #define STACK_TOP_MAX TASK_SIZE_USER64
+> >   #define STACK_TOP (is_32bit_task() ? STACK_TOP_USER32 : STACK_TOP_USER64)
+> > -#define arch_get_mmap_base(addr, len, base, flags) \
+> > -	(((addr) > DEFAULT_MAP_WINDOW) ? (base) + TASK_SIZE - DEFAULT_MAP_WINDOW : (base))
+> > +#define arch_get_mmap_base(addr, len, base, flags)					\
+> 
+> This macro looks quite big for a macro, can it be a static inline function
+> instead ? Same for the other macro below.
+> 
 
-While here, a couple of these numbers had missing zeros which was
-hidden by odd alignments, fix both these issues.
+I had overlooked that possibility, I think that's a great solution, I
+will change that.
 
-Signed-off-by: Andrew Davis <afd@ti.com>
-Reviewed-by: Santhosh Kumar K <s-k6@ti.com>
----
- arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi | 10 +++++-----
- arch/arm64/boot/dts/ti/k3-j721e.dtsi            |  8 +++-----
- 2 files changed, 8 insertions(+), 10 deletions(-)
+> > +({											\
+> > +	unsigned long mmap_base;							\
+> > +	typeof(flags) _flags = (flags);							\
+> > +	typeof(addr) _addr = (addr);							\
+> > +	typeof(base) _base = (base);							\
+> > +	typeof(len) _len = (len);							\
+> > +	unsigned long rnd_gap = DEFAULT_MAP_WINDOW - (_base);				\
+> > +	if (_flags & MAP_BELOW_HINT && _addr != 0 && ((_addr + _len) > BIT(VA_BITS - 1)))\
+> > +		mmap_base = (_addr + _len) - rnd_gap;					\
+> > +	else										\
+> > +		mmap_end = ((_addr > DEFAULT_MAP_WINDOW) ?				\
+> > +				_base + TASK_SIZE - DEFAULT_MAP_WINDOW :		\
+> > +				_base);							\
+> > +	mmap_end;									\
+> 
+> mmap_end doesn't exist, did you mean mmap_base ?
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
-index 6b6ef6a306142..3731ffb4a5c96 100644
---- a/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
-@@ -354,8 +354,8 @@ fss: bus@47000000 {
- 			 <0x0 0x47034000 0x0 0x47034000 0x0 0x100>, /* HBMC Control */
- 			 <0x0 0x47040000 0x0 0x47040000 0x0 0x100>, /* OSPI0 Control */
- 			 <0x0 0x47050000 0x0 0x47050000 0x0 0x100>, /* OSPI1 Control */
--			 <0x5 0x00000000 0x5 0x00000000 0x1 0x0000000>, /* HBMC/OSPI0 Memory */
--			 <0x7 0x00000000 0x7 0x00000000 0x1 0x0000000>; /* OSPI1 Memory */
-+			 <0x0 0x50000000 0x0 0x50000000 0x0 0x10000000>, /* FSS data region 1 */
-+			 <0x4 0x00000000 0x4 0x00000000 0x4 0x00000000>; /* FSS data region 0/3 */
- 
- 		hbmc_mux: mux-controller@47000004 {
- 			compatible = "reg-mux";
-@@ -367,7 +367,7 @@ hbmc_mux: mux-controller@47000004 {
- 		hbmc: hyperbus@47034000 {
- 			compatible = "ti,am654-hbmc";
- 			reg = <0x00 0x47034000 0x00 0x100>,
--				<0x05 0x00000000 0x01 0x0000000>;
-+			      <0x05 0x00000000 0x01 0x00000000>;
- 			power-domains = <&k3_pds 102 TI_SCI_PD_EXCLUSIVE>;
- 			clocks = <&k3_clks 102 0>;
- 			assigned-clocks = <&k3_clks 102 5>;
-@@ -381,7 +381,7 @@ hbmc: hyperbus@47034000 {
- 		ospi0: spi@47040000 {
- 			compatible = "ti,am654-ospi", "cdns,qspi-nor";
- 			reg = <0x0 0x47040000 0x0 0x100>,
--				<0x5 0x00000000 0x1 0x0000000>;
-+			      <0x5 0x00000000 0x1 0x00000000>;
- 			interrupts = <GIC_SPI 840 IRQ_TYPE_LEVEL_HIGH>;
- 			cdns,fifo-depth = <256>;
- 			cdns,fifo-width = <4>;
-@@ -399,7 +399,7 @@ ospi0: spi@47040000 {
- 		ospi1: spi@47050000 {
- 			compatible = "ti,am654-ospi", "cdns,qspi-nor";
- 			reg = <0x0 0x47050000 0x0 0x100>,
--				<0x7 0x00000000 0x1 0x00000000>;
-+			      <0x7 0x00000000 0x1 0x00000000>;
- 			interrupts = <GIC_SPI 841 IRQ_TYPE_LEVEL_HIGH>;
- 			cdns,fifo-depth = <256>;
- 			cdns,fifo-width = <4>;
-diff --git a/arch/arm64/boot/dts/ti/k3-j721e.dtsi b/arch/arm64/boot/dts/ti/k3-j721e.dtsi
-index 5a72c518ceb6b..a7f2f52f42f71 100644
---- a/arch/arm64/boot/dts/ti/k3-j721e.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721e.dtsi
-@@ -145,8 +145,7 @@ cbass_main: bus@100000 {
- 			 <0x00 0x46000000 0x00 0x46000000 0x00 0x00200000>,
- 			 <0x00 0x47000000 0x00 0x47000000 0x00 0x00068400>,
- 			 <0x00 0x50000000 0x00 0x50000000 0x00 0x10000000>,
--			 <0x05 0x00000000 0x05 0x00000000 0x01 0x00000000>,
--			 <0x07 0x00000000 0x07 0x00000000 0x01 0x00000000>;
-+			 <0x04 0x00000000 0x04 0x00000000 0x04 0x00000000>;
- 
- 		cbass_mcu_wakeup: bus@28380000 {
- 			compatible = "simple-bus";
-@@ -162,9 +161,8 @@ cbass_mcu_wakeup: bus@28380000 {
- 				 <0x00 0x45100000 0x00 0x45100000 0x00 0x00c24000>, /* MMRs, remaining NAVSS */
- 				 <0x00 0x46000000 0x00 0x46000000 0x00 0x00200000>, /* CPSW */
- 				 <0x00 0x47000000 0x00 0x47000000 0x00 0x00068400>, /* OSPI register space */
--				 <0x00 0x50000000 0x00 0x50000000 0x00 0x10000000>, /* FSS OSPI0/1 data region 0 */
--				 <0x05 0x00000000 0x05 0x00000000 0x01 0x00000000>, /* FSS OSPI0 data region 3 */
--				 <0x07 0x00000000 0x07 0x00000000 0x01 0x00000000>; /* FSS OSPI1 data region 3*/
-+				 <0x00 0x50000000 0x00 0x50000000 0x00 0x10000000>, /* FSS data region 1 */
-+				 <0x04 0x00000000 0x04 0x00000000 0x04 0x00000000>; /* FSS data region 0/3 */
- 		};
- 	};
- 
--- 
-2.39.2
+Oh whoops, thank you!
 
+- Charlie
+
+> 
+> > +})
+> > -#define arch_get_mmap_end(addr, len, flags) \
+> > -	(((addr) > DEFAULT_MAP_WINDOW) || \
+> > -	 (((flags) & MAP_FIXED) && ((addr) + (len) > DEFAULT_MAP_WINDOW)) ? TASK_SIZE : \
+> > -									    DEFAULT_MAP_WINDOW)
+> > +#define arch_get_mmap_end(addr, len, flags)							\
+> > +({												\
+> > +	unsigned long mmap_end;									\
+> > +	typeof(flags) _flags = (flags);								\
+> > +	typeof(addr) _addr = (addr);								\
+> > +	typeof(len) _len = (len);								\
+> > +	if (_flags & MAP_BELOW_HINT && _addr != 0 && ((_addr + _len) > BIT(VA_BITS - 1)))	\
+> > +		mmap_end = (_addr + _len);							\
+> > +	else											\
+> > +		mmap_end = (((_addr) > DEFAULT_MAP_WINDOW) ||					\
+> > +				(((_flags) & MAP_FIXED) && ((_addr) + (_len) > DEFAULT_MAP_WINDOW))\
+> > +				? TASK_SIZE : DEFAULT_MAP_WINDOW)				\
+> > +	mmap_end;										\
+> > +})
+> >   #endif /* _ASM_POWERPC_TASK_SIZE_64_H */
+> > 
 
