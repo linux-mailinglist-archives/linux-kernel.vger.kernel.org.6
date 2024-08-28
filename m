@@ -1,97 +1,107 @@
-Return-Path: <linux-kernel+bounces-304995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D733E9627E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:54:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A45B49627E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16ED31C23F12
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:54:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AC1D1F25B72
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2EE188CAC;
-	Wed, 28 Aug 2024 12:53:50 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA6717BB13;
+	Wed, 28 Aug 2024 12:55:01 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5AE17C9BA;
-	Wed, 28 Aug 2024 12:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD5617335C;
+	Wed, 28 Aug 2024 12:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724849629; cv=none; b=st98vM4nE0rUdRY9kXxbzK9H/BR28QVwvQ6Vdekvc0HL/luFnipiFJfpiMrAs/L0LEzdNOlgxc/tV1ixOG8M6DYChw6hLlvj4grIWP2dk53KGR7orE3f3OHio4ogC7btMtaxzCJeEZPeiVLKg4G1tn+PiGoJFqnyfK2Z8fWDHvs=
+	t=1724849701; cv=none; b=a2h+FEY1RPwHpNSCrJCzuQ8S03kDUzsVxOBCakwlxvK0Fj5daUxNIosYuCRJ2eyKHRQpqOs80bmc9No+0dEaYFRJCKME3TIiZ19Dkcc9T9G1BRhOVw/GPG2NE0SogKmqsk8SEhgFbDzxvkkkExQHpXBBjXQSbsUEuPrtIkr/zzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724849629; c=relaxed/simple;
-	bh=iJABBce2yqZMbaxDvBMY/LZjkjggxq+k4dcuQAm1i5c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XZWDfH4E24OMXZpK5IJ6mGwT4iD9FiUHQwUxPfQD2VMrn8AtDVHmnqjD9X4Nrn9Xrna9MvOQnL7irz+5LiGjaKLFt8Ul77t0N4eLf2+nN0iFHfC41/ygtTIGi93aYBjIZcmdkF4wnF0ytfoiyvkjoGxvvQE4zkzsSBmuNcza9RE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wv43X2QMSz20n22;
-	Wed, 28 Aug 2024 20:48:56 +0800 (CST)
-Received: from kwepemd500012.china.huawei.com (unknown [7.221.188.25])
-	by mail.maildlp.com (Postfix) with ESMTPS id C46471A016C;
-	Wed, 28 Aug 2024 20:53:45 +0800 (CST)
-Received: from [10.67.111.176] (10.67.111.176) by
- kwepemd500012.china.huawei.com (7.221.188.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Wed, 28 Aug 2024 20:53:45 +0800
-Message-ID: <40421bdb-4573-4768-8d6d-39b0d0df9260@huawei.com>
-Date: Wed, 28 Aug 2024 20:53:44 +0800
+	s=arc-20240116; t=1724849701; c=relaxed/simple;
+	bh=H9xGvRslflWZOOm5Scl/mBKn6XvgSSf5ROmmH8aPjBo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mJ+JNgg896u7ENOy+adRGAljJU3nQ76uJH9nfR/TYmMbCRrm2Upa1OJmExVBOGijcbzqQkn4otuj843WZfsH8RVQ7Htxpnloz/O+O9xpwPdsfMyVWdgOPU0mbvPHXBtRlyRRadRLNXHEy3/ASAn8eTNqUdB81e3qqz2rqi1HyUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from [2601:18c:9101:a8b6:6e0b:84ff:fee2:98bb] (helo=imladris.surriel.com)
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1sjIBr-000000003J8-3ujq;
+	Wed, 28 Aug 2024 08:54:23 -0400
+Message-ID: <8d0a923115746ab77064764e391271403b5b820e.camel@surriel.com>
+Subject: Re: [RFC 0/2] mm: introduce THP deferred setting
+From: Rik van Riel <riel@surriel.com>
+To: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Usama Arif
+ <usamaarif642@gmail.com>,  Nico Pache <npache@redhat.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, David
+ Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, Barry
+ Song <baohua@kernel.org>,  Ryan Roberts <ryan.roberts@arm.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Lance Yang <ioworker0@gmail.com>, Peter Xu
+ <peterx@redhat.com>, Rafael Aquini <aquini@redhat.com>, Andrea Arcangeli
+ <aarcange@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Zi Yan
+ <ziy@nvidia.com>
+Date: Wed, 28 Aug 2024 08:54:23 -0400
+In-Reply-To: <ouerpxb676mei3kndz53j4am4fo2duvygoatfnposo2rkct566@akl7ckd7nrvk>
+References: <20240729222727.64319-1-npache@redhat.com>
+	 <72320F9D-9B6A-4ABA-9B18-E59B8382A262@nvidia.com>
+	 <CAA1CXcCD798gkLoZuz3Cd5-Wf2MRfnAG_EB0U3nbScZeFv09dw@mail.gmail.com>
+	 <CAA1CXcCCOS8-aqcm+w8Aoqe2P5q005wMrgmtx=xjzJgjKFb7mg@mail.gmail.com>
+	 <61411216-d196-42de-aa64-12bd28aef44f@gmail.com>
+	 <CAA1CXcCe8QDir2KiWg=GmN4BErfXSDs_9kmnYfyK=X8H8U8QwA@mail.gmail.com>
+	 <698ea52e-db99-4d21-9984-ad07038d4068@gmail.com>
+	 <20240827110959.GA438928@cmpxchg.org>
+	 <9cf237df1a7bb21bba1a464787938eba8f372658.camel@surriel.com>
+	 <ouerpxb676mei3kndz53j4am4fo2duvygoatfnposo2rkct566@akl7ckd7nrvk>
+Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
+ keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33Aeo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdYdIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gUmllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986ogEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHVWjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE+BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTeg4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/j
+	ddPxKRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/NefO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0MmG1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tPokBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznnekoTE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44NcQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhIomYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0IpQrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkEc4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] btrfs: Fix reversed condition in
- copy_inline_to_page()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba
-	<dsterba@suse.com>, <linux-btrfs@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <3a05145b-6c24-4101-948e-1a457b92ea3e@stanley.mountain>
-From: Li Zetao <lizetao1@huawei.com>
-In-Reply-To: <3a05145b-6c24-4101-948e-1a457b92ea3e@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggpeml500018.china.huawei.com (7.185.36.186) To
- kwepemd500012.china.huawei.com (7.221.188.25)
+Sender: riel@surriel.com
 
-Hi Dan,
+On Wed, 2024-08-28 at 09:17 +0300, Kirill A . Shutemov wrote:
+> On Tue, Aug 27, 2024 at 09:18:58PM -0400, Rik van Riel wrote:
+> >=20
+> > Workload owners are going to have a real problem trying to figure
+> > out what the best value of max_ptes_none should be for their
+> > workloads.
+> >=20
+> > However, giving workload owners the ability to say "this workload
+> > should not waste more than 1GB of memory on zero pages inside
+> > THPs",
+> > or 500MB, or 4GB or whatever, would then allow the kernel to
+> > automatically adjust the max_ptes_none threshold.
+>=20
+> The problem is that we don't have and cannot have the info on zero
+> pages
+> inside THPs readily available. It requires memory scanning which is
+> prohibitively expensive if we want the info to be somewhat up-to-
+> date.
+>=20
+I'm not sure it needs to be super up to date.
 
-在 2024/8/27 18:21, Dan Carpenter 写道:
-> This if statement is reversed leading to locking issues.
-> 
-> Fixes: 8e603cfe05f0 ("btrfs: convert copy_inline_to_page() to use folio")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> This patch is obviously correct but it's from static analysis so additional
-> testing would be good as well.
-> 
->   fs/btrfs/reflink.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/btrfs/reflink.c b/fs/btrfs/reflink.c
-> index 1681d63f03dd..f0824c948cb7 100644
-> --- a/fs/btrfs/reflink.c
-> +++ b/fs/btrfs/reflink.c
-> @@ -146,7 +146,7 @@ static int copy_inline_to_page(struct btrfs_inode *inode,
->   	btrfs_folio_clear_checked(fs_info, folio, file_offset, block_size);
->   	btrfs_folio_set_dirty(fs_info, folio, file_offset, block_size);
->   out_unlock:
-> -	if (IS_ERR(folio)) {
-> +	if (!IS_ERR(folio)) {
-This is a mistake caused by my carelessness,thank you for the patch
->   		folio_unlock(folio);
->   		folio_put(folio);
->   	}
+After all, we only care when there is memory pressure, and
+when there is memory pressure we will be doing some sort of
+scanning, anyway.
 
-Can I merge your patch into my patchset and add you as a co-author?
+With a shrinker in the mix, we do not need totally up to date
+information, but can gradually approximate the target.
 
-Thanks,
-Li Zetao.
+--=20
+All Rights Reversed.
 
