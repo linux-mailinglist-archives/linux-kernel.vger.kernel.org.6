@@ -1,110 +1,118 @@
-Return-Path: <linux-kernel+bounces-304883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C3DE962637
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:40:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A1DD96263C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DABC22821E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:40:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8EA01F23098
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C74A171E49;
-	Wed, 28 Aug 2024 11:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759CD171E55;
+	Wed, 28 Aug 2024 11:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YbinkGXp"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQKfrbpE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842DF3FEC;
-	Wed, 28 Aug 2024 11:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBA816C857;
+	Wed, 28 Aug 2024 11:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724845214; cv=none; b=uWf7Rfmc4G2tFXt7pHa6g2utjh/Xq2Rn8hSFnv2jrKR1k63YeOJNwNCFOZu8PpNeeQ2B3IFC2Ip2biArM9qMh9qF5hoTlWbbs32vXKnfHHhuw2XNMHiAJ/gG2eiue9AAcbqkwCoRS1VblFNVBFKuG90oOnQ+UWHfEg10BOMgoug=
+	t=1724845270; cv=none; b=s5smK6drvU3PWCj+//DSBTtYyuZnU/vxD2uC/DOHifgVhQn65r9ndBnQ02C4k67cVVVRmvfJrBP21xpkjCOs0o+TVRh+0KzF/bdNTFCQoXbt9Rb8LAUPJpcN9W223ZAh5GymxBN1YZ5Ja/u+npzERnEoNYRvq4zgGpPWH63UQDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724845214; c=relaxed/simple;
-	bh=ELemZZZnsZftM63/e6cG2c7KGh59IznG1HU0lk6baMg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kqA1WuvowkSqhlxgYa2SvS+lvJwYEiLop+TxAl3bsaiU4x7kSpNsj1MNla2iulhKUElgOFLt3TnXRnH8LNn292EN/56vd5k2QaT84N9VCCWOU33EliEDt4+Myu0tq6ytfuqZLjrWED+BqFmHffhMpXhUl31ANM47scm/TUuY8+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YbinkGXp; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47SBe6tq114076;
-	Wed, 28 Aug 2024 06:40:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724845206;
-	bh=WHidzx9hkGROCHhuKZARBqdGMwVAMnyTXFGOZlH9G7s=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=YbinkGXp+/+nmsePGQErzntJu+R2quk+x5Y6rR+BevTMw4jyOktgC+aefgsFnBe9r
-	 wsrRx8euiiUq/79aimwv3zHL1LMUFbEqnelfP/EnyP9hguyawhqKjbeVYn9QR9J6yA
-	 Yqljja/3jyM5L4V2OHugTMoKClOqH9KZZGrwDtXI=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47SBe62x062141
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 28 Aug 2024 06:40:06 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 28
- Aug 2024 06:40:06 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 28 Aug 2024 06:40:06 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47SBe6iV025132;
-	Wed, 28 Aug 2024 06:40:06 -0500
-Date: Wed, 28 Aug 2024 06:40:06 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Beleswar Padhi <b-padhi@ti.com>
-CC: <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <u-kumar1@ti.com>,
-        <j-choudhary@ti.com>, <vaishnav.a@ti.com>, <afd@ti.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 1/2] arm64: dts: ti: k3-j722s-main: Add R5F and C7x
- remote processor nodes
-Message-ID: <20240828114006.c6jasbkvdmrgvfrb@uniquely>
-References: <20240828112713.2668526-1-b-padhi@ti.com>
- <20240828112713.2668526-2-b-padhi@ti.com>
+	s=arc-20240116; t=1724845270; c=relaxed/simple;
+	bh=sA09cTgbVMRdDOVHDj1h10nyAt2IBd0xNvrNb7mM+AU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nxYkmNjLTge7G/TIr2MsqpkLXFHSsfpOpvYVZVdnOMz4WjdPpKeqAi97Z26RAd+Piv/xWCQnA3kCGj0wHKpgBPg8O578ShqbKhlPI0j2YaeHrVOTnf/rMLXXn2OQHnwPKOfTb5vfne2i8uSmGGlQXa0LKk1sqU4QOCENz8avLlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQKfrbpE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CB25C4DE18;
+	Wed, 28 Aug 2024 11:41:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724845270;
+	bh=sA09cTgbVMRdDOVHDj1h10nyAt2IBd0xNvrNb7mM+AU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UQKfrbpE7wb/SazkTF+0vVgctMUKZajHmG16dACWPHkoWkzJpiuYUTusrmpV7FBzR
+	 gEA1xCOU9sE3wM8qf2sqSztZL1yMFlsbv+vhJRWuTGnQaifnUNovFUU2bWZn74Txue
+	 K1KI1OFcpE+HkmaFn9iU3SraO5t0VhUGRhmATWAUPHeS+fOLszZHnqDPgEHp2JjT5E
+	 56yzhuqWNFvJLv+K1tPgABZZUfVFh5iMAHKPAQvVuSewil3iJv8RN+3kZvVbd1Ysup
+	 8g4vAUMnocgpm9bpW91dkn+oBzo7q8SVOw/ryHYRUM0O58nTey4zig4nOb4V98KiJX
+	 4kVuMQukvLG2w==
+Date: Wed, 28 Aug 2024 12:41:03 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 6.6 000/341] 6.6.48-rc1 review
+Message-ID: <8bc449eb-c9c4-420c-bf98-d909311b55ff@sirena.org.uk>
+References: <20240827143843.399359062@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="1FFMRptj4rBabd61"
 Content-Disposition: inline
-In-Reply-To: <20240828112713.2668526-2-b-padhi@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
-
-On 16:57-20240828, Beleswar Padhi wrote:
-[...]
-
-> +		main_r5fss0_core0: r5f@78400000 {
-> +			compatible = "ti,am62-r5f";
-> +			reg = <0x78400000 0x00008000>,
-> +			      <0x78500000 0x00008000>;
-> +			reg-names = "atcm", "btcm";
-> +			ti,sci = <&dmsc>;
-> +			ti,sci-dev-id = <262>;
-> +			ti,sci-proc-ids = <0x04 0xff>;
-> +			resets = <&k3_reset 262 1>;
-> +			firmware-name = "j722s-main-r5f0_0-fw";
-> +			ti,atcm-enable = <1>;
-> +			ti,btcm-enable = <1>;
-> +			ti,loczrama = <1>;
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n117
-
-Please keep the dts coding style for vendor prefix and generic
-properties in mind. resets and firmware-name are generic
-properties.
+In-Reply-To: <20240827143843.399359062@linuxfoundation.org>
+X-Cookie: You are number 6!  Who is number one?
 
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+--1FFMRptj4rBabd61
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Aug 27, 2024 at 04:33:51PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.48 release.
+> There are 341 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+As others have reported the ALGIN macro is still broken, it affects the
+KVM selftests on at least arm64 too:
+
+In file included from lib/memstress.c:8:
+/build/stage/linux/tools/testing/selftests/../../../tools/include/linux/bit=
+map.h
+: In function =E2=80=98bitmap_zero=E2=80=99:
+/build/stage/linux/tools/testing/selftests/../../../tools/include/linux/bit=
+map.h:28:34: warning: implicit declaration of function =E2=80=98ALIGN=E2=80=
+=99 [-Wimplicit-function-declaration]
+   28 | #define bitmap_size(nbits)      (ALIGN(nbits, BITS_PER_LONG) / BITS=
+_PER_BYTE)
+      |                                  ^~~~~
+/build/stage/linux/tools/testing/selftests/../../../tools/include/linux/bit=
+map.h:35:32: note: in expansion of macro =E2=80=98bitmap_size=E2=80=99
+   35 |                 memset(dst, 0, bitmap_size(nbits));
+      |                                ^~~~~~~~~~~
+At top level:
+cc1: note: unrecognized command-line option =E2=80=98-Wno-gnu-variable-size=
+d-type-not-at-end=E2=80=99 may have been intended to silence earlier diagno=
+stics
+
+--1FFMRptj4rBabd61
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbPDM8ACgkQJNaLcl1U
+h9DXDQf6ArrOGAkHsi7D8UCgnq7pX2qwA5PfxgVdbe4nwEzFOTvvJ6jSZU2m8Yet
+ppuA3W4SIjzERZb+zJZY9b3I65nXfN2ET0UZyr65kryAUD4U72n+MrxahIwLj1jp
+rZMfB/MY7DBWvEDnmp4VZRGrC+Fy1nfjOhXdDR0KplKvN2iCvtM5GJHdyalwHvMb
+a9HSixDxZ0RVLIp4ZxBp2RCNePwUpU4mxYm2nhmQLEyPUeEnIt77m7Zan2pV0w+n
+exz1qMMRTK1DbzC/f2M/bKvVWyKBlaHRRnv2Fb8wWriHXMmDV0cDJ5vl5B9B8aur
+5A4HuYC3TuFi/B3/1Co0IV7sLJld1A==
+=6mBj
+-----END PGP SIGNATURE-----
+
+--1FFMRptj4rBabd61--
 
