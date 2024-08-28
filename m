@@ -1,272 +1,236 @@
-Return-Path: <linux-kernel+bounces-305056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33D239628B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:33:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BBD09628B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:33:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD82B1F239C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:33:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0433E284D62
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B89D18951E;
-	Wed, 28 Aug 2024 13:33:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761741891A5;
+	Wed, 28 Aug 2024 13:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BknUxCKF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aGOkd8FE";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BknUxCKF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aGOkd8FE"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="N9MRGRdc"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BC0188CC6;
-	Wed, 28 Aug 2024 13:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFF918801C
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 13:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724851979; cv=none; b=nNb2v4xO5JDcPsyVIyKgXHVikQLcQ3NDbSnlfaANXapGN+dcbRlmJliEhX8QK4W3twL67yRp2PxdEjOHu9/uAGzAWoTQb0sxJPqkYYn1n5CG52blUwNx74MfOiYVOLkLhROYx0eViBF23ot40I+l62JS8ERFCaskHkdxRM0hVBc=
+	t=1724851976; cv=none; b=Q3pxXqy/O+t8G44ilomoql8Gxf8dZZW6HS5K9Dwriz2ZllyHCMBS3M9tPSTAA6DqoxR+VG0rA5F3ZcKRcq7Pg15Xmw3y0pFbOGrtLceps/XLRs4eyI21y5V6lTLZr2kChNHI7aGFUxahN6PefnnMoaRf0fessT9s4Ek2D3HeOsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724851979; c=relaxed/simple;
-	bh=96ydddc6Dj30xj7o2gg8H9Sj9/8GQqdwaW3E1WKKOFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=djbZN7sLmGLGixc2pVbjWfHmDSLndcypJ3QJabs0+0hgk00L1t5ic4T4501KRU95a5UlfZ8wKHn9lZYIn2eNKtNvQ85duh3FckFcXZBH3WQ89uOwZ2FKwmQ7X/6EMzIKlenc3YO+4bq2F4Vo0ag515oPWOpwvny0bSNzmxYGa8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BknUxCKF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aGOkd8FE; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BknUxCKF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aGOkd8FE; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 45D2B1FC26;
-	Wed, 28 Aug 2024 13:32:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724851975; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xja6Pjwyvc7R8ZMFEJBK/M/Tdr2wYRTf2pi8k45GY7o=;
-	b=BknUxCKFK5GfoBAsk/Mv9p6pKvaOBP6UWvF5kPIeW2wHdYY2SCx2+QFQoVr+bnaAoOKnB4
-	Odeo9Wrewui9Z+eDl16/dePEU4tdsQI0Nnb7ArqMeoycP0DdlUAoenw6VzO0OY/A3iWkE6
-	hB+xdxFwg/MzC7yaMUqj3jRIjdaTeZk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724851975;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xja6Pjwyvc7R8ZMFEJBK/M/Tdr2wYRTf2pi8k45GY7o=;
-	b=aGOkd8FELcSll2xUCFSBJ+4fuNqX3AYx/sIL5Gh78L6FT3tv7EpXaNNpXOm9gX28Cq38RV
-	ciIUgjR0R84FFyCA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=BknUxCKF;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=aGOkd8FE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724851975; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xja6Pjwyvc7R8ZMFEJBK/M/Tdr2wYRTf2pi8k45GY7o=;
-	b=BknUxCKFK5GfoBAsk/Mv9p6pKvaOBP6UWvF5kPIeW2wHdYY2SCx2+QFQoVr+bnaAoOKnB4
-	Odeo9Wrewui9Z+eDl16/dePEU4tdsQI0Nnb7ArqMeoycP0DdlUAoenw6VzO0OY/A3iWkE6
-	hB+xdxFwg/MzC7yaMUqj3jRIjdaTeZk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724851975;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xja6Pjwyvc7R8ZMFEJBK/M/Tdr2wYRTf2pi8k45GY7o=;
-	b=aGOkd8FELcSll2xUCFSBJ+4fuNqX3AYx/sIL5Gh78L6FT3tv7EpXaNNpXOm9gX28Cq38RV
-	ciIUgjR0R84FFyCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C521A138D2;
-	Wed, 28 Aug 2024 13:32:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BnIaMAYnz2b7KAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 28 Aug 2024 13:32:54 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 84878A0968; Wed, 28 Aug 2024 15:32:42 +0200 (CEST)
-Date: Wed, 28 Aug 2024 15:32:42 +0200
-From: Jan Kara <jack@suse.cz>
-To: Li Zhijian <lizhijian@fujitsu.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/inode: Prevent dump_mapping() accessing invalid
- dentry.d_name.name
-Message-ID: <20240828133242.vizccpxbdhpctfwu@quack3>
-References: <20240826055503.1522320-1-lizhijian@fujitsu.com>
+	s=arc-20240116; t=1724851976; c=relaxed/simple;
+	bh=x8UW8G7yRo1TaVJlKhWZNboAwC3S4JXibdcuvIJsCMo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dVkYZnKJU6te+u3jiJwC0YK3igiDqoAIYd+1vs9HcaDN4/WktzMmQ1dpGw55xHeV48+sRI95bJj335gt+3KtP26Zku80B+VQt4VujAutgB4/t1F/Yv84dg+mm/UZWuNr+n9Upd3lmF+DZ1gY8ga7a+hkp/T9AwO4TRFup2X/VLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=N9MRGRdc; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0F4F22C5;
+	Wed, 28 Aug 2024 15:31:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1724851904;
+	bh=x8UW8G7yRo1TaVJlKhWZNboAwC3S4JXibdcuvIJsCMo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=N9MRGRdcXRunpbK+/aqTZ94Wgc7HibVMqLrEcTuhmnr6wR+5zEQ96lGiaHG2Z9rU1
+	 t2NvbfbCPtd2HUnm0WPgJPfKblFwVuWON1i7tSwUfRk8a/oDJ2ux+J9WtLSnfoFIks
+	 dHOyMT3cqa12VQc9FdzIaXWNVawBAJpiSLeG4kAQ=
+Message-ID: <5bb0459a-ec3a-487f-a9b5-28ee643a1215@ideasonboard.com>
+Date: Wed, 28 Aug 2024 16:32:47 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826055503.1522320-1-lizhijian@fujitsu.com>
-X-Rspamd-Queue-Id: 45D2B1FC26
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email,suse.cz:dkim];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] drm/bridge: tc358767: Fix
+ DRM_BRIDGE_ATTACH_NO_CONNECTOR case
+To: Jan Kiszka <jan.kiszka@siemens.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Aradhya Bhatia <a-bhatia1@ti.com>, dri-devel@lists.freedesktop.org,
+ Marek Vasut <marex@denx.de>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org
+References: <f6af46e0-aadb-450a-9349-eec1337ea870@ti.com>
+ <b221c978-2ce0-4d31-8146-ab43a9f86a1f@ti.com>
+ <st6vgd2k6dxo4vd3pmqmqlc5haofhbym2jeb2eeh2pa2n6zcca@tradpzxrzexl>
+ <2469374.jE0xQCEvom@steina-w>
+ <CAA8EJpraKjBZRLL5U+BVQRf98_EBa5b=nSPxZATU+yvvq9Kfmw@mail.gmail.com>
+ <4133a684-61a1-4d18-bb25-212d5fdc5620@siemens.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <4133a684-61a1-4d18-bb25-212d5fdc5620@siemens.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon 26-08-24 13:55:03, Li Zhijian wrote:
-> It's observed that a crash occurs during hot-remove a memory device,
-> in which user is accessing the hugetlb. See calltrace as following:
+On 26/08/2024 22:35, Jan Kiszka wrote:
+> On 24.06.24 12:17, Dmitry Baryshkov wrote:
+>> On Mon, 24 Jun 2024 at 13:07, Alexander Stein
+>> <alexander.stein@ew.tq-group.com> wrote:
+>>>
+>>> Hi,
+>>>
+>>> Am Montag, 24. Juni 2024, 11:49:04 CEST schrieb Dmitry Baryshkov:
+>>>> On Mon, Jun 24, 2024 at 03:07:10PM GMT, Aradhya Bhatia wrote:
+>>>>>
+>>>>>
+>>>>> On 22/06/24 17:49, Dmitry Baryshkov wrote:
+>>>>>> On Sat, Jun 22, 2024 at 05:16:58PM GMT, Aradhya Bhatia wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> On 17-Jun-24 13:41, Dmitry Baryshkov wrote:
+>>>>>>>> On Mon, Jun 17, 2024 at 07:40:32AM GMT, Jan Kiszka wrote:
+>>>>>>>>> On 16.02.24 15:57, Marek Vasut wrote:
+>>>>>>>>>> On 2/16/24 10:10, Tomi Valkeinen wrote:
+>>>>>>>>>>> Ok. Does anyone have a worry that these patches make the situation
+>>>>>>>>>>> worse for the DSI case than it was before? Afaics, if the DSI lanes
+>>>>>>>>>>> are not set up early enough by the DSI host, the driver would break
+>>>>>>>>>>> with and without these patches.
+>>>>>>>>>>>
+>>>>>>>>>>> These do fix the driver for DRM_BRIDGE_ATTACH_NO_CONNECTOR and DPI, so
+>>>>>>>>>>> I'd like to merge these unless these cause a regression with the DSI
+>>>>>>>>>>> case.
+>>>>>>>>>>
+>>>>>>>>>> 1/2 looks good to me, go ahead and apply .
+>>>>>>>
+>>>>>>> Isn't there any way for the second patch to move forward as well though?
+>>>>>>> The bridge device (under DPI to (e)DP mode) cannot really work without
+>>>>>>> it, and the patches have been pending idle for a long time. =)
+>>>>>>>
+>>>>>>>>>
+>>>>>>>>> My local patches still apply on top of 6.10-rc4, so I don't think this
+>>>>>>>>> ever happened. What's still holding up this long-pending fix (at least
+>>>>>>>>> for our devices)?
+>>>>>>>>
+>>>>>>>> Neither of the patches contains Fixes tags. If the first patch fixes an
+>>>>>>>> issue in previous kernels, please consider following the stable process.
+>>>>>>>>
+>>>>>>>> If we are unsure about the second patch, please send the first patch
+>>>>>>>> separately, adding proper tags.
+>>>>>>>>
+>>>>>>>
+>>>>>>> Thanks Dmitry! I can send the patches again with the required fixes
+>>>>>>> tags (or just patch-1 if we cannot do anything about patch-2).
+>>>>>>
+>>>>>> The problem with the second patch is that it get mixed reviews. I can
+>>>>>> ack the first patch, but for the second one I'd need a confirmation from
+>>>>>> somebody else. I'll go on and apply the first patch later today.
+>>>>>>
+>>>>>
+>>>>> Thanks Dmitry!
+>>>>>
+>>>>> However, would it be okay if I instead add another patch that makes 2
+>>>>> versions of the "tc_edp_bridge_funcs", say "tc_dpi_edp_bridge_funcs" and
+>>>>> "tc_dsi_edp_bridge_funcs", that have all the same function hooks except
+>>>>> for the .edid_read()?
+>>>>>
+>>>>> The dsi edid_read() will remain the same, and Tomi's patch - patch 2/2 -
+>>>>> will only fix the dpi version of the edid_read()?
+>>>>>
+>>>>> The bridge already has the capability to distinguish a DSI input from a
+>>>>> DPI input. This can be leveraged to decide which set of functions need
+>>>>> to be used without any major changes.
+>>>>
+>>>> I'd prefer if somebody with the DSI setup can ack / test the second
+>>>> patch.
+>>>>
+>>>>
+>>>
+>>> Now that my DSI-DP setup works apparently without issue I could test patch 2.
+>>> Since my setup does not use DRM_BRIDGE_ATTACH_NO_CONNECTOR (running on
+>>> drivers/gpu/drm/mxsfb/lcdif_drv.c), I can only say
+>>> there is no regression.
+>>
+>> Let me send a (non-tested) patch, switching to drm_bridge_connector,
+>> then you can probably test both of them
+>>
 > 
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 14045 at arch/x86/mm/fault.c:1278 do_user_addr_fault+0x2a0/0x790
-> Modules linked in: kmem device_dax cxl_mem cxl_pmem cxl_port cxl_pci dax_hmem dax_pmem nd_pmem cxl_acpi nd_btt cxl_core crc32c_intel nvme virtiofs fuse nvme_core nfit libnvdimm dm_multipath scsi_dh_rdac scsi_dh_emc s
-> mirror dm_region_hash dm_log dm_mod
-> CPU: 1 PID: 14045 Comm: daxctl Not tainted 6.10.0-rc2-lizhijian+ #492
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-> RIP: 0010:do_user_addr_fault+0x2a0/0x790
-> Code: 48 8b 00 a8 04 0f 84 b5 fe ff ff e9 1c ff ff ff 4c 89 e9 4c 89 e2 be 01 00 00 00 bf 02 00 00 00 e8 b5 ef 24 00 e9 42 fe ff ff <0f> 0b 48 83 c4 08 4c 89 ea 48 89 ee 4c 89 e7 5b 5d 41 5c 41 5d 41
-> RSP: 0000:ffffc90000a575f0 EFLAGS: 00010046
-> RAX: ffff88800c303600 RBX: 0000000000000000 RCX: 0000000000000000
-> RDX: 0000000000001000 RSI: ffffffff82504162 RDI: ffffffff824b2c36
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: ffffc90000a57658
-> R13: 0000000000001000 R14: ffff88800bc2e040 R15: 0000000000000000
-> FS:  00007f51cb57d880(0000) GS:ffff88807fd00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000001000 CR3: 00000000072e2004 CR4: 00000000001706f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  ? __warn+0x8d/0x190
->  ? do_user_addr_fault+0x2a0/0x790
->  ? report_bug+0x1c3/0x1d0
->  ? handle_bug+0x3c/0x70
->  ? exc_invalid_op+0x14/0x70
->  ? asm_exc_invalid_op+0x16/0x20
->  ? do_user_addr_fault+0x2a0/0x790
->  ? exc_page_fault+0x31/0x200
->  exc_page_fault+0x68/0x200
-> <...snip...>
-> BUG: unable to handle page fault for address: 0000000000001000
->  #PF: supervisor read access in kernel mode
->  #PF: error_code(0x0000) - not-present page
->  PGD 800000000ad92067 P4D 800000000ad92067 PUD 7677067 PMD 0
->  Oops: Oops: 0000 [#1] PREEMPT SMP PTI
->  ---[ end trace 0000000000000000 ]---
->  BUG: unable to handle page fault for address: 0000000000001000
->  #PF: supervisor read access in kernel mode
->  #PF: error_code(0x0000) - not-present page
->  PGD 800000000ad92067 P4D 800000000ad92067 PUD 7677067 PMD 0
->  Oops: Oops: 0000 [#1] PREEMPT SMP PTI
->  CPU: 1 PID: 14045 Comm: daxctl Kdump: loaded Tainted: G        W          6.10.0-rc2-lizhijian+ #492
->  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
->  RIP: 0010:dentry_name+0x1f4/0x440
-> <...snip...>
-> ? dentry_name+0x2fa/0x440
-> vsnprintf+0x1f3/0x4f0
-> vprintk_store+0x23a/0x540
-> vprintk_emit+0x6d/0x330
-> _printk+0x58/0x80
-> dump_mapping+0x10b/0x1a0
-> ? __pfx_free_object_rcu+0x10/0x10
-> __dump_page+0x26b/0x3e0
-> ? vprintk_emit+0xe0/0x330
-> ? _printk+0x58/0x80
-> ? dump_page+0x17/0x50
-> dump_page+0x17/0x50
-> do_migrate_range+0x2f7/0x7f0
-> ? do_migrate_range+0x42/0x7f0
-> ? offline_pages+0x2f4/0x8c0
-> offline_pages+0x60a/0x8c0
-> memory_subsys_offline+0x9f/0x1c0
-> ? lockdep_hardirqs_on+0x77/0x100
-> ? _raw_spin_unlock_irqrestore+0x38/0x60
-> device_offline+0xe3/0x110
-> state_store+0x6e/0xc0
-> kernfs_fop_write_iter+0x143/0x200
-> vfs_write+0x39f/0x560
-> ksys_write+0x65/0xf0
-> do_syscall_64+0x62/0x130
+> I suppose [1] was that follow-up, just not leading to success, right?
 > 
-> Previously, some sanity check have been done in dump_mapping() before
-> the print facility parsing '%pd' though, it's still possible to run into
-> an invalid dentry.d_name.name.
+> Now, what's next? I'd love to see the regression we have for the IOT2050
+> devices finally fixed, even if it now only requires a short downstream
+> patch.
 > 
-> Since dump_mapping() only needs to dump the filename only, retrieve it
-> by itself in a safer way to prevent an unnecessary crash.
+> Jan
 > 
-> Note that either retrieving the filename with '%pd' or
-> strncpy_from_kernel_nofault(), the filename could be unreliable.
-> 
-> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+> [1] https://lore.kernel.org/dri-devel/20240624-mxc-lcdif-bridge-attach-v1-1-37e8c5d5d934@linaro.org/
 
-I guess this is a reliability improvement :). Feel free to add:
+I have to say I don't remember the details for this anymore, but half a 
+year ago I said:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+> Afaics, if the DSI lanes are not set up early enough by the DSI host, the driver would break with and without these patches.
 
-								Honza
+I'm not sure if that is correct or not. But if it is, then, afaiu, this 
+(the second patch):
 
-> ---
->  fs/inode.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index f356fe2ec2b6..d3f9d73d59d0 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -562,6 +562,7 @@ void dump_mapping(const struct address_space *mapping)
->  	struct hlist_node *dentry_first;
->  	struct dentry *dentry_ptr;
->  	struct dentry dentry;
-> +	char fname[64] = {};
->  	unsigned long ino;
->  
->  	/*
-> @@ -598,11 +599,14 @@ void dump_mapping(const struct address_space *mapping)
->  		return;
->  	}
->  
-> +	if (strncpy_from_kernel_nofault(fname, dentry.d_name.name, 63) < 0)
-> +		strscpy(fname, "<invalid>");
->  	/*
-> -	 * if dentry is corrupted, the %pd handler may still crash,
-> -	 * but it's unlikely that we reach here with a corrupt mapping
-> +	 * Even if strncpy_from_kernel_nofault() succeeded,
-> +	 * the fname could be unreliable
->  	 */
-> -	pr_warn("aops:%ps ino:%lx dentry name:\"%pd\"\n", a_ops, ino, &dentry);
-> +	pr_warn("aops:%ps ino:%lx dentry name(?):\"%s\"\n",
-> +		a_ops, ino, fname);
->  }
->  
->  void clear_inode(struct inode *inode)
-> -- 
-> 2.29.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+- Fixes the issue for the DPI-DP use case
+
+- Doesn't cause issues for the DSI-DP use case without 
+DRM_BRIDGE_ATTACH_NO_CONNECTOR (as per Alexander's test)
+
+- Shouldn't cause (new) issues for the DSI-DP use case with 
+DRM_BRIDGE_ATTACH_NO_CONNECTOR (as per my code review and guessing...)
+
+The third point is somewhat concerning, of course, but do we have any 
+setup with DSI-DP and DRM_BRIDGE_ATTACH_NO_CONNECTOR that works now? If 
+not, maybe we can just ignore the possible issues, as this fixes 
+problems on a setup we do have.
+
+  Tomi
+
 
