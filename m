@@ -1,303 +1,160 @@
-Return-Path: <linux-kernel+bounces-305630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5421963174
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:08:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A472A963177
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:09:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D19EB23700
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:08:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05FCC1F23C3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3F41AC439;
-	Wed, 28 Aug 2024 20:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9E11AC433;
+	Wed, 28 Aug 2024 20:09:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="J1fzUmuH"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazolkn19012036.outbound.protection.outlook.com [52.103.32.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FIiHYwsg"
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25121125BA;
-	Wed, 28 Aug 2024 20:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.32.36
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724875681; cv=fail; b=kGG9eNPmTgCQtdkmYw5uo41qGHVc69sko/j8AVrKqNb46EvEg9KlC5ZD1kVcpFFHD56bFUblsTzNep1vNuwvtqZIPQHoS/fKEgVr5O4BqKdauFIhVszH+XH75hKYTNWu0sZCS3kO5mDlmD6ES0JXPthGYg4jfpU+e4nLjfODT0k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724875681; c=relaxed/simple;
-	bh=ynam601Yz10iaM+BbWHDjnUW5RO0j8n2ldSYjJUHi4o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZpcjEDjscgKFYPyUGqRgTpMtKYx7UjNK8AeCLCqU5ckdGsHhdHWGKmnAO5F2AZ+7kgSAlNkB0wzzPwcZr059HTIXSnt+bfjcTKHvUgVMICj7PIfpW8GqXFIAy09rwBuFaFlq5gYP/CuCfykuraKba2viW5dLuJ3Wb3CHkIuHYS0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=J1fzUmuH; arc=fail smtp.client-ip=52.103.32.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ynRQb6RjM0MWgVXnn4uZpnXvdrMukad/MUHXhw2GIkxU+vKJGyITMW3ttCeU2qMpu3iB+tLWT5FDkNBnDl9H/9lRgtuQvBjqyGD6sIEM7gctsxRsQV0Wa7LbZuTTaOIKqXh3uqiNRBPSC81Poux7d2SRco9UfLOLGKRPMMr8yZwdhAkDZrFAa/9nhnQrayo0RhvCw9lhRH8SHdY4vDi/AQaB/KwzXj5zBtGTZVQbnEQfZKE6wo3YeG/BITYIAyFc2PrQpjOgFl9E5kBOdmDnEAPVbscndte9xXUwaWh3WJdYBmT3ze5WK0ZUZbCk0k1YyWh7XBPU2qIx8kaAgW9lDw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Qw99njkeIN1UYtWdHhEZN8LuSyBAna7OqDq1laf0yos=;
- b=fRfCodVdiBoWB42hJ/OamKTfHHnAjRblyVLMoofeZ6ju9XukE5wFaC9gaWRIDOprz0kT0FnKm7Utb8KcI68FpjuKGeZe8Y4Pqm/gLhfObvhrYNOVU3PNRFFvH+n084YM7YeumUlhxqv/JXeu8dDkSrSfYHsbrR190+4Im/q9VBuciIWv9iSpG2gu0zZD38MyTDwobHMtu4O96d37zf30M2d65Ld0Ehffrc/Snmr1iXjbtPv9RpHgqyRwchbqKhfb0/AD1wr8Y0TOkpd3taFFWmsqGhSAX7hOeCs5imy4h5t/5YBIzZm83h/wtZkXqRNRQHW5WX1128efFORIodnmzw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Qw99njkeIN1UYtWdHhEZN8LuSyBAna7OqDq1laf0yos=;
- b=J1fzUmuHWtGN7JU9oEGrvzL5seRW8rlXlJdsCDLQhlotBeqVs7e1iZQ1onHqHyEqBaz3/b0ynkHn2HsYLNYOEGkJBNLCCb5NjBEeboLeH47oY0hMBr0VSvZ62bIAW1/dBA0i9JA/VsdPnlZWF/oRYXgKFeYsPL+57DeLdASaL6Jcn86BOgNV/VV0XnV1D1iPUTy7Y+mHpe+E7JcKMplJ9wb+fDVA7SONu4RU/R1xf7+oAKy7db6ZgfP9wTvWmzddvncDjnjyHnEWnyUxA/pO7sdT7vIZemETiY7dil8uEJVnonplNxbkP1NUoMi+IZGGAxsT/7gOcnTj/tA4xfJ6GQ==
-Received: from AM6PR03MB5848.eurprd03.prod.outlook.com (2603:10a6:20b:e4::10)
- by VI0PR03MB10807.eurprd03.prod.outlook.com (2603:10a6:800:26a::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.27; Wed, 28 Aug
- 2024 20:07:55 +0000
-Received: from AM6PR03MB5848.eurprd03.prod.outlook.com
- ([fe80::4b97:bbdb:e0ac:6f7]) by AM6PR03MB5848.eurprd03.prod.outlook.com
- ([fe80::4b97:bbdb:e0ac:6f7%4]) with mapi id 15.20.7897.021; Wed, 28 Aug 2024
- 20:07:55 +0000
-From: Juntong Deng <juntong.deng@outlook.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	memxor@gmail.com,
-	snorcht@gmail.com
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH bpf-next v2 2/2] selftests/bpf: Add tests for KF_OBTAIN kfunc
-Date: Wed, 28 Aug 2024 21:07:41 +0100
-Message-ID:
- <AM6PR03MB58485695AD7D298A08FEE8C599952@AM6PR03MB5848.eurprd03.prod.outlook.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <AM6PR03MB5848874457E6E3E21635B18999952@AM6PR03MB5848.eurprd03.prod.outlook.com>
-References: <AM6PR03MB5848874457E6E3E21635B18999952@AM6PR03MB5848.eurprd03.prod.outlook.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [r+RzXW0+jhgGMZUs2cCFmcrKbBQmVJZA]
-X-ClientProxiedBy: LO4P123CA0547.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:319::16) To AM6PR03MB5848.eurprd03.prod.outlook.com
- (2603:10a6:20b:e4::10)
-X-Microsoft-Original-Message-ID:
- <20240828200741.53189-1-juntong.deng@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB9D1A7ADD;
+	Wed, 28 Aug 2024 20:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724875785; cv=none; b=hqirOlApSuejR8/Oqg1fgXK0QO3LQYnnit0X/aPvq4YeM6nVBY3EA2wCboUXn8Yt4k1kVylS4KGUEfMd9ITFyWwXp/EQKVMkCtO80ZcdqgLRaj38pKQPilRRAvomuM8cv++wHUNlMlLXFMvasfwCsa4vNkyeACxVbiLXYnqOFaY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724875785; c=relaxed/simple;
+	bh=niLOWr8T5ul3QgxAAyLjthE5PQTlsIzYtckVXI37+Jk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AlpTRE0NGcyjGbbl2Jy8rBPiN3fqxFx+VHNVb81vFvHd5SRlupouYzL/mhRw4cgxpgGWEQVwgY6IwNVjowmFTbKEldf4/uY+KeyvcEXI5o8xK686ZTid/hkM7qZpQFTRovVL7PJT5jTPvLlLl+HLzId0w9wAhoBxHpTj7kUE8Yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FIiHYwsg; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-498d7c37921so2712220137.2;
+        Wed, 28 Aug 2024 13:09:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724875783; x=1725480583; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o1pVcUmgndbgPpPcbtJpRc4TGy9tBS6z6TXDpJAFIAc=;
+        b=FIiHYwsgGgBLiLFmUh3tXmi2/ErIGVp3fxfVOImIfQ3eMMx5694ZC8o85vk/5J1XBc
+         Lhprs2IUL2YDPbbMh0J3HlqF5Ii8TU5WizVsFfOnkXzHz+cJWhCk9YRta2mWKoHuzttL
+         dzIgsHEdY0Q/JpMPmNd1a5xFdupYx7KwGiRKj7Ajv4yMRBQfcfr8ZHX8jUFzdDlCXji1
+         MqNr77im2ly/5jf9PkeqGwKnmZNK3RF/JegyyU6z3+ikre1tOTuaPE2azckWxsurmul5
+         oUVxrmHymXYA3vtXUpO568kRWMaUqyomAIzUK4UmyMWYEFiOQ5SCz9cDNhZIP2/u04Sx
+         dUiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724875783; x=1725480583;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o1pVcUmgndbgPpPcbtJpRc4TGy9tBS6z6TXDpJAFIAc=;
+        b=U1wkwBWFA4b3BXFKRCykTc+waKbwmdqQ2odS+xO0CmyKPTDJ9UckVkb0uuYqx9KjlM
+         GhiKDNT+JlHXvk2V5pUekz+sGBMYnJj8SPL9xDTwLCDVbSbBQqD03FVcIS0kCR4rIl9z
+         G1eyW++IaQoyckloxmh9htM1RsWcoSVzLgswXwRUfFGweAkNTBvdM2R8NNrFozCC+vHU
+         Uh/T/NKZbiULoa602bfvBMHQuwFmKev9duj7kU/7nYoVirBgbl3KkiPo8sneDd9ohOAP
+         5L2RYaXKY9pPS2HuVYRzp/mE6queYzrk8F12rL1WIeEn/6Mvsd3v3ta9dV1OQpOKyTT3
+         oipg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFqMQiK8W2xM4/s8cJWuXc485Xo5a0wnXpsBGo42HlAdQ4AwUL0YB/DEi5FY3PmYy2yEGH55OAEZS4JJQI3aPamuA=@vger.kernel.org, AJvYcCVT/ZaOJlzFdbP5QXiUuAEl08C/nkrtYAvQTrjF0GFuvfsPt8NpimBjFi+lLjA2QFSmowluH8uy1hOkoc8H@vger.kernel.org, AJvYcCWr6r3V0ekQY7o0ip96xe4DqjiQkzqKX6ckVr8NjfFg5Unuk/UwV/FS+rIZhKHzJjN0Rq8lHaAa5OIV@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLxxcjMEaynliT3KMKNibGOli10vGNiK6EPOAj0UFUa8Ju+aj6
+	gP3qXadciBA9A1qvZurNcCclC7IUYwuY8XtAvD/R3ABpBNriggF90PZW5Dyz8Mcxnopw01CeEeD
+	KNb5N7Hptfor/CaOJbcvdhmWBLGc=
+X-Google-Smtp-Source: AGHT+IFDhVml3mhS2bu7DLOKnVVwS+t0D+TQPaszBUekGY9xtmn0bs3r6h2aO1ysvh4Q+YZfZ0KDVHbkavVJu+kTuro=
+X-Received: by 2002:a05:6122:2a51:b0:4ef:5744:483 with SMTP id
+ 71dfb90a1353d-4ffe4b8a567mr645241e0c.6.1724875782608; Wed, 28 Aug 2024
+ 13:09:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM6PR03MB5848:EE_|VI0PR03MB10807:EE_
-X-MS-Office365-Filtering-Correlation-Id: 57a883b3-2c51-40ea-299f-08dcc79d1afb
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|5072599009|19110799003|8060799006|461199028|15080799006|3412199025|440099028;
-X-Microsoft-Antispam-Message-Info:
-	M5lHAJrYIMldcXjrbgJpi+fy8EON13pWXceeXjV4aSQ02dZc9foY3H0BqUSnoPmAB26Mrv9xsOHC2bGHxdSF4IHBXCT2CexEhRU3GVDXxMacWTQ5OiAdtKemiPjtF95G5dmclmjR/1nscbiDT+mCvt6TydalT7hkGZDPDAfMhnHxZHx8c0/qRkD8Jbo7pd8wfOrMnLU3Vc7PdbEcR+FWFGXPc/qgw00+6uTOhQ/0fumg3T3fKQaS5VQbvQE0x6AyD0Hk9TFaZs0frOErgEnf33h4b/ECsY469oVLUpMzVGQgp/EBOrBHifkBi7htXumK2CwL9tJxua/5xiXBA1pye4KAH9LkkbEmnFYV0hyPVciml10HhhfLXd9Tf2I/JnusV+36XsIjcmXEhH2mP4/37tvBPvTWJMtLw/JYuIsplkUwb7EGJ3zNPnPu8w++leEV/lkG46g50aRIVF5AsVYd3ep14uukC0d2MW9T78Omac50OC8oxGNMl6claKgjCPqQuoWjs1TA1fzQWefJm5HDTW59rnN+yrXDuJK/J8uPUI1QoMfUBD23YRQUNdW8reDRpZLihUGCjf/0Gpsh20HZwDO7ZaDaCvFFIXOt3AqRzZxyofl2HjJ+ZCkV371cQ4iz6emNMLC2eQzppREpz7qKK0ZayGs7bjpgMRNt8LWb3iVlgTnV5x8pq+fHvqJoJR8WfZ8NrpkR3Og4or8pvezuPw==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?oJbw4PCp15ShIhoPfPWoiY6NsKCkZwSTfM8HlS//LZaHaPBeYXZ0SOFmcCmY?=
- =?us-ascii?Q?SbKu6TTSNPJ0dWaBwbeyhqDi68HqSRzPJgMgxyrU9AEw7/rBUFCqQWSDL6Nu?=
- =?us-ascii?Q?oLPzWonZ3Tp9HcCQ1SujnmGaPzmwc9byjEbbOR3ha1V1mB0BxuWaoqkeB3Gr?=
- =?us-ascii?Q?JW+uNlKIp7LSNwD3aEVBDoInpUUHyQSHWtEVNmPCXsBvXZpPxo7oD0ohps4L?=
- =?us-ascii?Q?kTIlHFuAoBTzC6YU6fRuh+wp39Kz20PWGWivvpVKy4X3Wvbj2exyN9429eo5?=
- =?us-ascii?Q?8NBHrepnVU1rEdkPg02nM4V1KLtVMvnAzs7aNE8DW5tLU1OB4grFSATJ3D6I?=
- =?us-ascii?Q?DYg5LdURDRe0P8jXBzw+OhrAk79TS7Jfs1vC1e9NrCcVxKRa3vp49Zbeo2oR?=
- =?us-ascii?Q?jlv0WwsIN+58mmfI8i8sdNSaH9f9P6An/TQo3+IqvW8iSyao6CXcodSZJsY0?=
- =?us-ascii?Q?WuFHjTGPX15SWhhGTZeYNxS9e6S674FQqZ2fG3tYy49LuiErIN0KcNkjiwcb?=
- =?us-ascii?Q?cuwGTS2XTHvbpFX6pg4axwqOFmNOcjF5Ngbm4+4mdFNGMJlqGIPBswm6ihi/?=
- =?us-ascii?Q?nX0TJmcsEwenux+BWoHr/RxMEZHf+QBBJFayPDTjtnshROBDRWdJnM9Za1Z5?=
- =?us-ascii?Q?UDLtnnPCaxx4osEerbi3mzWnVgFI8a32QpowZGAA/mFmT6tyTpMsfIMJHyyT?=
- =?us-ascii?Q?X97/ytApGqF0T7bHC1nZ4IS+1GKan1bcyqnDV5IsQdEOc52/cm9wKsX4Q7Hq?=
- =?us-ascii?Q?kdujCWJkZMxovx8cIwhzxdgTSIOlXmw4zTGPZqnk4gstLbGG7NbkWzw6o2ML?=
- =?us-ascii?Q?2IK4JrqjWiBnFOINrXOcPPlTb4LRizskiMePxmXRGUrbbB5Ue148hLXICB8q?=
- =?us-ascii?Q?vqpgD7NRGoxHfn9RTX7sZPkbtzdn9GK92ftCqx175vhZYbGcd4Ow7+QYBM6a?=
- =?us-ascii?Q?r561IA7X7/pQvtLmP1+dT/OKOwcwWnetjde7csNj8rEL3h2qu8fpFf/eiS/G?=
- =?us-ascii?Q?Jv+B8Ntse61X/jujAdc0bkEJhNSq9cLCl3yPac5b1W2ggCoudB9RDo4egSZF?=
- =?us-ascii?Q?2NvRK8zNJzYeFFQ7irJLvHDq7f/veK4gYqfw6caTHFFIx8/uhYMyy5OA+wjK?=
- =?us-ascii?Q?Zi2AP1oe+QX6G0cI39reoIqMYqioHAVJNtgSdoAVODgzIeehQx8SuCtRMnbq?=
- =?us-ascii?Q?Acf8bIMNApfbk/h5kVKLM1CMm/7EaeUR3x/bfTsKOxqdX8UxwqeikA97XfXw?=
- =?us-ascii?Q?Tp681NM7yDIYr+Gl+hxB?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57a883b3-2c51-40ea-299f-08dcc79d1afb
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5848.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 20:07:55.8225
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR03MB10807
+References: <20240828124134.188864-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240828124134.188864-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <28106585-59d1-42c4-af56-89820b15bdfb@kernel.org>
+In-Reply-To: <28106585-59d1-42c4-af56-89820b15bdfb@kernel.org>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 28 Aug 2024 21:09:16 +0100
+Message-ID: <CA+V-a8tGBQTNLEBBKTi0Gy47CsdFpQKQkwP02omSWTt8DveqGA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/9] dt-bindings: soc: renesas: Document RZ/V2H EVK board
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch adds test cases for KF_OBTAIN kfunc. Note that these test
-cases are only used to test KF_OBTAIN and are not related to actual
-usage scenarios.
+Hi Krzysztof,
 
-kfunc_obtain_not_trusted is used to test that KF_OBTAIN kfunc only
-accepts valid pointers.
+On Wed, Aug 28, 2024 at 3:34=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 28/08/2024 14:41, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add "renesas,rzv2h-evk" which targets the Renesas RZ/V2H ("R9A09G057")
+> > EVK board.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> > ---
+> > Hi Rob, I have restored your Ack with the below change, I hope that's O=
+K.
+> >
+> > Cheers, Prabhakar
+> >
+> > v1->v4
+> > - Updated 'renesas,gp-evk # GP-EVK' -> 'renesas,rzv2h-evk # RZ/V2H EVK'
+> > - Updated commit message
+> >
+> > v1: https://patchwork.kernel.org/project/linux-renesas-soc/patch/202407=
+24094707.569596-2-prabhakar.mahadev-lad.rj@bp.renesas.com/
+> > ---
+> >  Documentation/devicetree/bindings/soc/renesas/renesas.yaml | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml=
+ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+> > index d582992aaf0e..b7acb65bdecd 100644
+> > --- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+> > +++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+> > @@ -527,6 +527,8 @@ properties:
+> >
+> >        - description: RZ/V2H(P) (R9A09G057)
+> >          items:
+> > +          - enum:
+> > +              - renesas,rzv2h-evk # RZ/V2H EVK
+> >            - enum:
+>
+> This is unusual pattern for me, but maybe I miss here something. Commit
+> message does not explain why EXISTING boards needs to be changed. What
+> does it mean "rzv2h-evk targets evk board"? How does this work?
+>
+This commit is not changing the existing boards. The entries below the
+addition are the RZ/V2H(P) SoC variants. Here we are just adding the
+board entry which is based on RZ/V2H SoC [0].
+In the board DTS file it will be used as "compatible =3D
+"renesas,rzv2h-evk", "renesas,r9a09g057h44", "renesas,r9a09g057";",
+see [1].
 
-kfunc_obtain_use_after_release is used to test that the returned pointer
-becomes invalid after the pointer passed to KF_OBTAIN kfunc is released.
+               ^^                              ^^
+                 ^^
 
-kfunc_obtain_trusted is the correct usage, valid pointers must be passed
-to KF_OBTAIN kfunc and the returned pointer is only used if the passed
-pointer has not been released.
+              Board variant             SoC  variant
+    Generic RZ/V2H SoC
 
-Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
----
- .../selftests/bpf/bpf_testmod/bpf_testmod.c   | 12 +++
- .../bpf/bpf_testmod/bpf_testmod_kfunc.h       |  3 +
- .../bpf/prog_tests/kfunc_obtain_test.c        | 10 +++
- .../selftests/bpf/progs/kfunc_obtain.c        | 74 +++++++++++++++++++
- 4 files changed, 99 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/kfunc_obtain_test.c
- create mode 100644 tools/testing/selftests/bpf/progs/kfunc_obtain.c
+> You have EVK board and now it is not valid anymore?
+>
+No this is not the case.
 
-diff --git a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-index bbf9442f0722..9e8a54dc88a2 100644
---- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-+++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-@@ -183,6 +183,16 @@ __bpf_kfunc void bpf_kfunc_dynptr_test(struct bpf_dynptr *ptr,
- {
- }
- 
-+struct mm_struct *bpf_kfunc_obtain_test(struct task_struct *task)
-+{
-+	return task->mm;
-+}
-+
-+struct task_struct *bpf_get_untrusted_task_test(struct task_struct *task)
-+{
-+	return task;
-+}
-+
- __bpf_kfunc struct bpf_testmod_ctx *
- bpf_testmod_ctx_create(int *err)
- {
-@@ -541,6 +551,8 @@ BTF_ID_FLAGS(func, bpf_iter_testmod_seq_destroy, KF_ITER_DESTROY)
- BTF_ID_FLAGS(func, bpf_iter_testmod_seq_value)
- BTF_ID_FLAGS(func, bpf_kfunc_common_test)
- BTF_ID_FLAGS(func, bpf_kfunc_dynptr_test)
-+BTF_ID_FLAGS(func, bpf_kfunc_obtain_test, KF_OBTAIN)
-+BTF_ID_FLAGS(func, bpf_get_untrusted_task_test)
- BTF_ID_FLAGS(func, bpf_testmod_ctx_create, KF_ACQUIRE | KF_RET_NULL)
- BTF_ID_FLAGS(func, bpf_testmod_ctx_release, KF_RELEASE)
- BTF_KFUNCS_END(bpf_testmod_common_kfunc_ids)
-diff --git a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod_kfunc.h b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod_kfunc.h
-index e587a79f2239..cb38a211a9f3 100644
---- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod_kfunc.h
-+++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod_kfunc.h
-@@ -144,4 +144,7 @@ void bpf_kfunc_dynptr_test(struct bpf_dynptr *ptr, struct bpf_dynptr *ptr__nulla
- struct bpf_testmod_ctx *bpf_testmod_ctx_create(int *err) __ksym;
- void bpf_testmod_ctx_release(struct bpf_testmod_ctx *ctx) __ksym;
- 
-+struct mm_struct *bpf_kfunc_obtain_test(struct task_struct *task) __ksym;
-+struct task_struct *bpf_get_untrusted_task_test(struct task_struct *task) __ksym;
-+
- #endif /* _BPF_TESTMOD_KFUNC_H */
-diff --git a/tools/testing/selftests/bpf/prog_tests/kfunc_obtain_test.c b/tools/testing/selftests/bpf/prog_tests/kfunc_obtain_test.c
-new file mode 100644
-index 000000000000..debc92fc1acc
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/kfunc_obtain_test.c
-@@ -0,0 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <test_progs.h>
-+#include "kfunc_obtain.skel.h"
-+
-+void test_kfunc_obtain(void)
-+{
-+	if (env.has_testmod)
-+		RUN_TESTS(kfunc_obtain);
-+}
-diff --git a/tools/testing/selftests/bpf/progs/kfunc_obtain.c b/tools/testing/selftests/bpf/progs/kfunc_obtain.c
-new file mode 100644
-index 000000000000..8f0e074928ce
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/kfunc_obtain.c
-@@ -0,0 +1,74 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_helpers.h>
-+#include "bpf_misc.h"
-+#include "../bpf_testmod/bpf_testmod_kfunc.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+struct task_struct *bpf_task_from_pid(s32 pid) __ksym;
-+void bpf_task_release(struct task_struct *p) __ksym;
-+
-+/* The following test cases are only used to test KF_OBTAIN
-+ * and are not related to actual usage scenarios.
-+ */
-+
-+SEC("syscall")
-+__failure __msg("must be referenced or trusted")
-+int BPF_PROG(kfunc_obtain_not_trusted)
-+{
-+	struct task_struct *cur_task, *untrusted_task;
-+
-+	cur_task = bpf_get_current_task_btf();
-+	untrusted_task = bpf_get_untrusted_task_test(cur_task);
-+
-+	bpf_kfunc_obtain_test(untrusted_task);
-+
-+	return 0;
-+}
-+
-+SEC("syscall")
-+__success
-+int BPF_PROG(kfunc_obtain_trusted)
-+{
-+	struct task_struct *cur_task, *trusted_task;
-+	struct mm_struct *mm;
-+	int map_count = 0;
-+
-+	cur_task = bpf_get_current_task_btf();
-+	trusted_task = bpf_task_from_pid(cur_task->pid);
-+	if (trusted_task == NULL)
-+		return 0;
-+
-+	mm = bpf_kfunc_obtain_test(trusted_task);
-+
-+	map_count = mm->map_count;
-+
-+	bpf_task_release(trusted_task);
-+
-+	return map_count;
-+}
-+
-+SEC("syscall")
-+__failure __msg("invalid mem access 'scalar'")
-+int BPF_PROG(kfunc_obtain_use_after_release)
-+{
-+	struct task_struct *cur_task, *trusted_task;
-+	struct mm_struct *mm;
-+	int map_count = 0;
-+
-+	cur_task = bpf_get_current_task_btf();
-+	trusted_task = bpf_task_from_pid(cur_task->pid);
-+	if (trusted_task == NULL)
-+		return 0;
-+
-+	mm = bpf_kfunc_obtain_test(trusted_task);
-+
-+	bpf_task_release(trusted_task);
-+
-+	map_count = mm->map_count;
-+
-+	return map_count;
-+}
--- 
-2.39.2
+[0] https://www.renesas.com/us/en/products/microcontrollers-microprocessors=
+/rz-mpus/rzv2h-evk-rzv2h-quad-core-vision-ai-mpu-evaluation-kit
+[1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/2024082812=
+4134.188864-4-prabhakar.mahadev-lad.rj@bp.renesas.com/
 
+Cheers,
+Prabhakar
 
