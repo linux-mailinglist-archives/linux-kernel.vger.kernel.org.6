@@ -1,93 +1,75 @@
-Return-Path: <linux-kernel+bounces-304604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B01CC962268
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:41:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 624309622A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:49:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E29B61C230C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:41:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 946981C234EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1ED015B99F;
-	Wed, 28 Aug 2024 08:41:03 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4A115749F;
-	Wed, 28 Aug 2024 08:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDBB15CD4A;
+	Wed, 28 Aug 2024 08:49:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704EA15854A;
+	Wed, 28 Aug 2024 08:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724834463; cv=none; b=J+kVjJt7c6G0pQYhHQ+e3Vm187SoTvzB7OyapeFo64ousDd9gl3AwwXtIDQePbMzyQMrezF6xNvByYViysv5hPnn3458Oxd7kioApeGCMdbjr49aGDm4EFp2T5NMD7BfsrWqDzyyJTWwOEfVWRLgUGaLUyNAS7ira73goARUdmQ=
+	t=1724834943; cv=none; b=V9uI1lwf2uZKidaq2oHV8kHqR+UvBAUXYQcWKuWEY26ek35YvkxMIPb+QDGj2bdxghPxuvQjH7SWAZVYU9mCzdZtSFS1xJuW1T72vqmqA7EikXWpeOjMnCvRQLAkES2/uad73n7rOABco0zEMQ726jgwrw9TX0+DqeLXIiwog4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724834463; c=relaxed/simple;
-	bh=HfWTE1Am9nZpyXZKJsfLUjtIgzRg8x76TSy+kRfaV/s=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Xz4no/Po9yzD6WZZx7NIWZU1fAYXmu2Budtm2eWnGx+SmjEA9tJBssu7AObNaRQdhINtONrqOiB9k2JGMoOkmw4iFLy5m+kJ5vm4AGXXYm8kEnTyGSQK4eaLVHk+aeWBr/cpG1PX23m1Y2h6g1/fr0be7ZBwv2VMyaIjQ4cEVEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WtyW73xqjz1xwSZ;
-	Wed, 28 Aug 2024 16:38:59 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 28D1F14013B;
-	Wed, 28 Aug 2024 16:40:57 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 28 Aug
- 2024 16:40:56 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <robdclark@gmail.com>, <quic_abhinavk@quicinc.com>,
-	<dmitry.baryshkov@linaro.org>, <sean@poorly.run>,
-	<marijn.suijten@somainline.org>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-	<freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH -next] drm/msm: Use devm_platform_ioremap_resource_byname()
-Date: Wed, 28 Aug 2024 16:48:49 +0800
-Message-ID: <20240828084849.2527115-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724834943; c=relaxed/simple;
+	bh=KAOwlm9bE+8qI+mlfJz2TOtvmzmouEQwaxj4VMfmz88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JXPGUzgiYUSVLf5lAA13fHtaAtwkFINngVfbOCMgcfJmar2FP0m415tsOP0y/gx0Wle9Q1oElTECSP6q8dV+8wC6795tqkOij3JuLgW71/oiHNeaCyZJDf5BqgQQU09j4reygsr5LwPr5qMZ5UAJ/wmCpgRpTYnnP9Qv3/4k20Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F2CF1DA7;
+	Wed, 28 Aug 2024 01:49:26 -0700 (PDT)
+Received: from bogus (e107155-lin.cambridge.arm.com [10.1.198.42])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DF1AF3F762;
+	Wed, 28 Aug 2024 01:48:59 -0700 (PDT)
+Date: Wed, 28 Aug 2024 09:48:57 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Peng Fan <peng.fan@nxp.com>, Sudeep Holla <sudeep.holla@arm.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the scmi tree
+Message-ID: <Zs7kebuQ363_IHia@bogus>
+References: <20240828101531.38e633d8@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240828101531.38e633d8@canb.auug.org.au>
 
-platform_get_resource_byname() and devm_ioremap_resource() can be
-replaced by devm_platform_ioremap_resource_byname(), which can
-simplify the code logic a bit, No functional change here.
+On Wed, Aug 28, 2024 at 10:15:31AM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the scmi tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> ERROR: modpost: missing MODULE_LICENSE() in drivers/firmware/arm_scmi/vendors/imx/imx-sm-bbm.o
+> ERROR: modpost: missing MODULE_LICENSE() in drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.o
+> 
+> Caused by commit
+> 
+>   00bdb213e944 ("firmware: arm_scmi: add initial support for i.MX MISC protocol")
+> 
+> I have used the scmi tree from next-20240827 for today.
+> 
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- drivers/gpu/drm/msm/msm_io_utils.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+Sorry for that, it will be fixed for tomorrow. Thanks for the report.
 
-diff --git a/drivers/gpu/drm/msm/msm_io_utils.c b/drivers/gpu/drm/msm/msm_io_utils.c
-index afedd61c3e28..6f7933f01ae6 100644
---- a/drivers/gpu/drm/msm/msm_io_utils.c
-+++ b/drivers/gpu/drm/msm/msm_io_utils.c
-@@ -54,13 +54,7 @@ void __iomem *msm_ioremap_mdss(struct platform_device *mdss_pdev,
- 			       struct platform_device *pdev,
- 			       const char *name)
- {
--	struct resource *res;
--
--	res = platform_get_resource_byname(mdss_pdev, IORESOURCE_MEM, name);
--	if (!res)
--		return ERR_PTR(-EINVAL);
--
--	return devm_ioremap_resource(&pdev->dev, res);
-+	return devm_platform_ioremap_resource_byname(mdss_pdev, name);
- }
- 
- static void __iomem *_msm_ioremap(struct platform_device *pdev, const char *name,
 -- 
-2.34.1
-
+Regards,
+Sudeep
 
