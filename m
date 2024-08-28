@@ -1,492 +1,190 @@
-Return-Path: <linux-kernel+bounces-304897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1089962665
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:52:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B700962654
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:50:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04C221C20D3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:52:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 939A71F23C77
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D13174EEB;
-	Wed, 28 Aug 2024 11:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97180171E5F;
+	Wed, 28 Aug 2024 11:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="Me8FfSZb"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rPhL52AF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8873D15B12F;
-	Wed, 28 Aug 2024 11:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA04515B12F;
+	Wed, 28 Aug 2024 11:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724845960; cv=none; b=EAi8bWL/hzUNH6P2JvZxdNKr/7KszvgPhLkU6i7civxbXI44LfHD4dF1chdASalLwnpq+ifDnYWhF1FMDn4ie4DpfzXQt6Z3BAptMmdcVvODs7TWaQC3mi+oJ2nAGCKUTNajG3olx1MPauk5pBPiioVUQJQqklnRIY17vPOBIX4=
+	t=1724845799; cv=none; b=K/RIOdatZ3rSatLBe/aT/5y3iI2QMIaQwP8yTswFV1xJlVQunpdJtzTxfAzmz1AEqTg6osHtMmbD8lEoHAt6Q+aCDIeHqAyC+rwZFEfApQtlbhoD2D+hlyjyGMq3j4Y7v5neQlzBK+3NFpsbpD7uPa9nr2JzOJZUQn3v2InVKlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724845960; c=relaxed/simple;
-	bh=LO6X3UcJMG335lFfyrbJLwyV4Vgh11aOfwUVX//XMzk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UGAhLj7I7RL+hESSgGYGekTjpgSh87gMU9fhSd+mt0qK/EchW3xdG2+FUYBISAIhMlNTrQuoZoWMdTyIK4Ppbi4uAGNinspTZdp6turIgiRABkqe9LxzwhoruNmXSSBoKbMl/V6/AYFCqEh+Q9SZaVdgLV/+oxEv0P2lMMFfxF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=Me8FfSZb reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 79d9f716ba731644; Wed, 28 Aug 2024 13:52:29 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 9E078923483;
-	Wed, 28 Aug 2024 13:52:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1724845949;
-	bh=LO6X3UcJMG335lFfyrbJLwyV4Vgh11aOfwUVX//XMzk=;
-	h=From:Subject:Date;
-	b=Me8FfSZbnVr2odfJ5micFOzN6WRLeSgnNxBjvcCADgsixsyKklCxEYrKMfCvim9Z1
-	 MKgbZ2SUWHBe+zrI22FDW0opQrOglsYr1r/vJjeymIXPIDsXUfmQyxv9rsnn9tSTm2
-	 uvpwoRYDTkex43JVxoGLi3mtn3A570S24cVWJZ1JxBwteQozrCHDVWENQNXhvU64aR
-	 eBANHwZIa9EQ+6vzD4eAyEdQ8j9NeEwLcACiYqHOxEh9gS/qecHlS2F278n1Log8PG
-	 8JbbJyoAhzByuCYrutgwMCRiSbAwJwj44/b7T+HCKvDyT8TfnXEGXgjx2B3Qe7NnWt
-	 cOiWiXlDcRq3w==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: x86 Maintainers <x86@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Ricardo Neri <ricardo.neri@intel.com>, Tim Chen <tim.c.chen@intel.com>
-Subject:
- [PATCH v3 2/2] cpufreq: intel_pstate: Set asymmetric CPU capacity on hybrid
- systems
-Date: Wed, 28 Aug 2024 13:48:10 +0200
-Message-ID: <1979653.PYKUYFuaPT@rjwysocki.net>
-In-Reply-To: <3310447.aeNJFYEL58@rjwysocki.net>
-References: <3310447.aeNJFYEL58@rjwysocki.net>
+	s=arc-20240116; t=1724845799; c=relaxed/simple;
+	bh=Rmg15xcrDSp/rS54nFzfPvGUre02UCMRZ4kZHLoLxMw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=DUowa8UEaGe25P0C3IGmqDE+DIKL7+frIaiV9ZQJkNx8DmsvttJFff2Jf9k15RxxzvyNsLCvOhQ5cN0MkIK51f1Z/Ot1g75ohf8/mLK0kMumC8ktQwq5bxnVE2RTW+/WeRXarImkBINgoqiP63P1L2Hh7+knhd/dMejg6+D97gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rPhL52AF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69ADAC98EC3;
+	Wed, 28 Aug 2024 11:49:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724845799;
+	bh=Rmg15xcrDSp/rS54nFzfPvGUre02UCMRZ4kZHLoLxMw=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=rPhL52AFcFVJ8bqp8jCbLeuNE2JLek2l9kSCxYYmGHoXF96QFoPQNPt4pD4+FkKBk
+	 oiVFk8R2tSxj4GPoMCtpAtMP44II6JMTAHkIMkp1bR8j1Mv0xVisikw+ghA2rDP3w9
+	 bmdwhREEOYuDcJZcGSdrhvwgPiDjclwzv1HlTiFKQRYCSpcfKey9Z5CzJ1hyC335eD
+	 NO+5fd2Rhlrh5tKv/s9DfD1F7n2yZ7FSJn+8GYWnf1P1O2ZAlb+yoaLGkvhwfgl9mp
+	 H3I9sq/fbZcj0DMHUDz15PLuRc9aHOJIs+dliYres+QDfAVSE4KgvtpeySzZf8iiKd
+	 EDVKhpNXKrA/w==
+Message-ID: <fe4c8c72-1f7b-4274-a910-4ad803487951@kernel.org>
+Date: Wed, 28 Aug 2024 13:49:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudefvddggeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohep
- phgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughivghtmhgrrhdrvghgghgvmhgrnhhnsegrrhhmrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=10 Fuz1=10 Fuz2=10
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 25/27] ARM: dts: at91: sam9x7: add device tree for SoC
+To: Varshini.Rajendran@microchip.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, Nicolas.Ferre@microchip.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240729065603.1986074-1-varshini.rajendran@microchip.com>
+ <20240729070934.1991467-1-varshini.rajendran@microchip.com>
+ <7031d811-2bb2-4325-996c-a6de766925db@kernel.org>
+ <bf77fe95-0982-4605-a493-25c889e81639@microchip.com>
+ <5fbc815f-d52e-437d-bdc3-c61f365e9d1c@kernel.org>
+ <a36c4d23-e2fe-4bf5-a262-5eb9828e6e7a@microchip.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <a36c4d23-e2fe-4bf5-a262-5eb9828e6e7a@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 28/08/2024 10:25, Varshini.Rajendran@microchip.com wrote:
+> On 27/08/24 6:18 pm, Krzysztof Kozlowski wrote:
+>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+>>
+>> On 27/08/2024 11:50, Varshini.Rajendran@microchip.com wrote:
+>>> Hi Krzysztof,
+>>>
+>>> Apologies for the delay in response.
+>>>
+>>> On 31/07/24 2:00 pm, Krzysztof Kozlowski wrote:
+>>>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+>>>>
+>>>> On 29/07/2024 09:09, Varshini Rajendran wrote:
+>>>>> Add device tree file for SAM9X7 SoC family.
+>>>>>
+>>>>> Co-developed-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+>>>>> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+>>>>> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+>>>>
+>>>> ...
+>>>>
+>>>>> +
+>>>>> +             can1: can@f8004000 {
+>>>>> +                     compatible = "bosch,m_can";
+>>>>> +                     reg = <0xf8004000 0x100>, <0x300000 0xbc00>;
+>>>>> +                     reg-names = "m_can", "message_ram";
+>>>>> +                     interrupts = <30 IRQ_TYPE_LEVEL_HIGH 0>,
+>>>>> +                                  <69 IRQ_TYPE_LEVEL_HIGH 0>;
+>>>>> +                     interrupt-names = "int0", "int1";
+>>>>> +                     clocks = <&pmc PMC_TYPE_PERIPHERAL 30>, <&pmc PMC_TYPE_GCK 30>;
+>>>>> +                     clock-names = "hclk", "cclk";
+>>>>> +                     assigned-clocks = <&pmc PMC_TYPE_CORE PMC_UTMI>, <&pmc PMC_TYPE_GCK 30>;
+>>>>> +                     assigned-clock-rates = <480000000>, <40000000>;
+>>>>> +                     assigned-clock-parents = <&pmc PMC_TYPE_CORE PMC_UTMI>, <&pmc PMC_TYPE_CORE PMC_UTMI>;
+>>>>> +                     bosch,mram-cfg = <0x7800 0 0 64 0 0 32 32>;
+>>>>> +                     status = "disabled";
+>>>>> +             };
+>>>>> +
+>>>>> +             tcb: timer@f8008000 {
+>>>>> +                     compatible = "microchip,sam9x7-tcb","atmel,sama5d2-tcb", "simple-mfd", "syscon";
+>>>>
+>>>> Why this is simple-mfd without children?
+>>>
+>>> The tcb node will have each TC (Timer Counter) Block as a child when it
+>>> is configured to be used as either one of the following modes Timer or
+>>> Counter / Capture / PWM.
+>>
+>> And where are these children? What does it mean "will have", in context
+>> when? DTS is static, if you do not have here children then this is not a
+>> simple-mfd.
+>>
+> I understand your concern. But the thing is that, each tc block is 
+> configured as a child and it can be configured in 3 different modes with 
+> different compatibles. In the current dts (i.e., sam9x75_curiosity 
+> board) we don't have a use case for the tcb, hence there are no child 
+> nodes defined. But there are instances where it can be defined in the 
+> dts, say for a custom board using sam9x7 SoC. In that case the 
 
-Make intel_pstate use the HWP_HIGHEST_PERF values from
-MSR_HWP_CAPABILITIES to set asymmetric CPU capacity information
-via the previously introduced arch_set_cpu_capacity() on hybrid
-systems without SMT.
+Where are these instances? Can you point me to DTS?
 
-Setting asymmetric CPU capacity is generally necessary to allow the
-scheduler to compute task sizes in a consistent way across all CPUs
-in a system where they differ by capacity.  That, in turn, should help
-to improve scheduling decisions.  It is also necessary for the schedutil
-cpufreq governor to operate as expected on hybrid systems where tasks
-migrate between CPUs of different capacities.
+> simple-mfd usage is justified, if I am not wrong. If this justification 
+> doesn't suffice, then declaring child nodes with one mode as default 
 
-The underlying observation is that intel_pstate already uses
-MSR_HWP_CAPABILITIES to get CPU performance information which is
-exposed by it via sysfs and CPU performance scaling is based on it.
-Thus using this information for setting asymmetric CPU capacity is
-consistent with what the driver has been doing already.  Moreover,
-HWP_HIGHEST_PERF reflects the maximum capacity of a given CPU including
-both the instructions-per-cycle (IPC) factor and the maximum turbo
-frequency and the units in which that value is expressed are the same
-for all CPUs in the system, so the maximum capacity ratio between two
-CPUs can be obtained by computing the ratio of their HWP_HIGHEST_PERF
-values.  Of course, in principle that capacity ratio need not be
-directly applicable at lower frequencies, so using it for providing the
-asymmetric CPU capacity information to the scheduler is a rough
-approximation, but it is as good as it gets.  Also, measurements
-indicate that this approximation is not too bad in practice.
+If I understand correctly: some out of tree, non-upstream project wants
+this. Sorry, but out of tree does not matter. So it is not a correct
+justification.
 
-If the given system is hybrid and non-SMT, the new code disables ITMT
-support in the scheduler (because it may get in the way of asymmetric CPU
-capacity code in the scheduler that automatically gets enabled by setting
-asymmetric CPU capacity) after initializing all online CPUs and finds
-the one with the maximum HWP_HIGHEST_PERF value.  Next, it computes the
-capacity number for each (online) CPU by dividing the product of its
-HWP_HIGHEST_PERF and SCHED_CAPACITY_SCALE by the maximum HWP_HIGHEST_PERF.
+With such argument you could claim that everything needs simple-mfd
+because some broken out-of-tree code adds there children.
 
-When a CPU goes offline, its capacity is reset to SCHED_CAPACITY_SCALE
-and if it is the one with the maximum HWP_HIGHEST_PERF value, the
-capacity numbers for all of the other online CPUs are recomputed.  This
-also takes care of a cleanup during driver operation mode changes.
+> which can be overridden in the dts and kept disabled in the dtsi should 
+> be the other plausible way. Please let me know your suggestions.
 
-Analogously, when a new CPU goes online, its capacity number is updated
-and if its HWP_HIGHEST_PERF value is greater than the current maximum
-one, the capacity numbers for all of the other online CPUs are
-recomputed.
+No clue, please post complete binding and complete DTS so we can review
+these.
 
-The case when the driver is notified of a CPU capacity change, either
-through the HWP interrupt or through an ACPI notification, is handled
-similarly to the CPU online case above, except that if the target CPU
-is the current highest-capacity one and its capacity is reduced, the
-capacity numbers for all of the other online CPUs need to be recomputed
-either.
-
-If the driver's "no_trubo" sysfs attribute is updated, all of the CPU
-capacity information is computed from scratch to reflect the new turbo
-status.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-v2 -> v3:
-   * Do not enable hybrid capacity scaling again on driver mode changes.
-   * Call sched_clear_itmt_support() after __hybrid_init_cpu_scaling()
-     to avoid unnecessary rebuilding of sched domains.
-
-v1 -> v2:
-   * Check hybrid_max_perf_cpu in intel_pstate_update_limits_for_all().
-
----
- drivers/cpufreq/intel_pstate.c |  232 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 228 insertions(+), 4 deletions(-)
-
-Index: linux-pm/drivers/cpufreq/intel_pstate.c
-===================================================================
---- linux-pm.orig/drivers/cpufreq/intel_pstate.c
-+++ linux-pm/drivers/cpufreq/intel_pstate.c
-@@ -16,6 +16,7 @@
- #include <linux/tick.h>
- #include <linux/slab.h>
- #include <linux/sched/cpufreq.h>
-+#include <linux/sched/smt.h>
- #include <linux/list.h>
- #include <linux/cpu.h>
- #include <linux/cpufreq.h>
-@@ -215,6 +216,7 @@ struct global_params {
-  * @hwp_req_cached:	Cached value of the last HWP Request MSR
-  * @hwp_cap_cached:	Cached value of the last HWP Capabilities MSR
-  * @last_io_update:	Last time when IO wake flag was set
-+ * @capacity_perf:	Highest perf used for scale invariance
-  * @sched_flags:	Store scheduler flags for possible cross CPU update
-  * @hwp_boost_min:	Last HWP boosted min performance
-  * @suspended:		Whether or not the driver has been suspended.
-@@ -253,6 +255,7 @@ struct cpudata {
- 	u64 hwp_req_cached;
- 	u64 hwp_cap_cached;
- 	u64 last_io_update;
-+	unsigned int capacity_perf;
- 	unsigned int sched_flags;
- 	u32 hwp_boost_min;
- 	bool suspended;
-@@ -295,6 +298,7 @@ static int hwp_mode_bdw __ro_after_init;
- static bool per_cpu_limits __ro_after_init;
- static bool hwp_forced __ro_after_init;
- static bool hwp_boost __read_mostly;
-+static bool hwp_is_hybrid;
- 
- static struct cpufreq_driver *intel_pstate_driver __read_mostly;
- 
-@@ -934,6 +938,135 @@ static struct freq_attr *hwp_cpufreq_att
- 	NULL,
- };
- 
-+static struct cpudata *hybrid_max_perf_cpu __read_mostly;
-+/*
-+ * Protects hybrid_max_perf_cpu, the capacity_perf fields in struct cpudata,
-+ * and the x86 arch scale-invariance information from concurrent updates.
-+ */
-+static DEFINE_MUTEX(hybrid_capacity_lock);
-+
-+static void hybrid_set_cpu_capacity(struct cpudata *cpu)
-+{
-+	arch_set_cpu_capacity(cpu->cpu, cpu->capacity_perf,
-+			      hybrid_max_perf_cpu->capacity_perf,
-+			      cpu->capacity_perf,
-+			      cpu->pstate.max_pstate_physical);
-+
-+	pr_debug("CPU%d: perf = %u, max. perf = %u, base perf = %d\n", cpu->cpu,
-+		 cpu->capacity_perf, hybrid_max_perf_cpu->capacity_perf,
-+		 cpu->pstate.max_pstate_physical);
-+}
-+
-+static void hybrid_clear_cpu_capacity(unsigned int cpunum)
-+{
-+	arch_set_cpu_capacity(cpunum, 1, 1, 1, 1);
-+}
-+
-+static void hybrid_get_capacity_perf(struct cpudata *cpu)
-+{
-+	if (READ_ONCE(global.no_turbo)) {
-+		cpu->capacity_perf = cpu->pstate.max_pstate_physical;
-+		return;
-+	}
-+
-+	cpu->capacity_perf = HWP_HIGHEST_PERF(READ_ONCE(cpu->hwp_cap_cached));
-+}
-+
-+static void hybrid_set_capacity_of_cpus(void)
-+{
-+	int cpunum;
-+
-+	for_each_online_cpu(cpunum) {
-+		struct cpudata *cpu = all_cpu_data[cpunum];
-+
-+		if (cpu)
-+			hybrid_set_cpu_capacity(cpu);
-+	}
-+}
-+
-+static void hybrid_update_cpu_scaling(void)
-+{
-+	struct cpudata *max_perf_cpu = NULL;
-+	unsigned int max_cap_perf = 0;
-+	int cpunum;
-+
-+	for_each_online_cpu(cpunum) {
-+		struct cpudata *cpu = all_cpu_data[cpunum];
-+
-+		if (!cpu)
-+			continue;
-+
-+		/*
-+		 * During initialization, CPU performance at full capacity needs
-+		 * to be determined.
-+		 */
-+		if (!hybrid_max_perf_cpu)
-+			hybrid_get_capacity_perf(cpu);
-+
-+		/*
-+		 * If hybrid_max_perf_cpu is not NULL at this point, it is
-+		 * being replaced, so don't take it into account when looking
-+		 * for the new one.
-+		 */
-+		if (cpu == hybrid_max_perf_cpu)
-+			continue;
-+
-+		if (cpu->capacity_perf > max_cap_perf) {
-+			max_cap_perf = cpu->capacity_perf;
-+			max_perf_cpu = cpu;
-+		}
-+	}
-+
-+	if (max_perf_cpu) {
-+		hybrid_max_perf_cpu = max_perf_cpu;
-+		hybrid_set_capacity_of_cpus();
-+	} else {
-+		pr_info("Found no CPUs with nonzero maximum performance\n");
-+		/* Revert to the flat CPU capacity structure. */
-+		for_each_online_cpu(cpunum)
-+			hybrid_clear_cpu_capacity(cpunum);
-+	}
-+}
-+
-+static void __hybrid_init_cpu_scaling(void)
-+{
-+	hybrid_max_perf_cpu = NULL;
-+	hybrid_update_cpu_scaling();
-+}
-+
-+static void hybrid_init_cpu_scaling(void)
-+{
-+	bool disable_itmt = false;
-+
-+	mutex_lock(&hybrid_capacity_lock);
-+
-+	/*
-+	 * If hybrid_max_perf_cpu is set at this point, the hybrid CPU capacity
-+	 * scaling has been enabled already and the driver is just changing the
-+	 * operation mode.
-+	 */
-+	if (hybrid_max_perf_cpu) {
-+		__hybrid_init_cpu_scaling();
-+		goto unlock;
-+	}
-+
-+	/*
-+	 * On hybrid systems, use asym capacity instead of ITMT, but because
-+	 * the capacity of SMT threads is not deterministic even approximately,
-+	 * do not do that when SMT is in use.
-+	 */
-+	if (hwp_is_hybrid && !sched_smt_active() && arch_enable_hybrid_capacity_scale()) {
-+		__hybrid_init_cpu_scaling();
-+		disable_itmt = true;
-+	}
-+
-+unlock:
-+	mutex_unlock(&hybrid_capacity_lock);
-+
-+	if (disable_itmt)
-+		sched_clear_itmt_support();
-+}
-+
- static void __intel_pstate_get_hwp_cap(struct cpudata *cpu)
- {
- 	u64 cap;
-@@ -962,6 +1095,43 @@ static void intel_pstate_get_hwp_cap(str
- 	}
- }
- 
-+static void hybrid_update_capacity(struct cpudata *cpu)
-+{
-+	unsigned int max_cap_perf;
-+
-+	mutex_lock(&hybrid_capacity_lock);
-+
-+	if (!hybrid_max_perf_cpu)
-+		goto unlock;
-+
-+	/*
-+	 * The maximum performance of the CPU may have changed, but assume
-+	 * that the performance of the other CPUs has not changed.
-+	 */
-+	max_cap_perf = hybrid_max_perf_cpu->capacity_perf;
-+
-+	intel_pstate_get_hwp_cap(cpu);
-+
-+	hybrid_get_capacity_perf(cpu);
-+	/* Should hybrid_max_perf_cpu be replaced by this CPU? */
-+	if (cpu->capacity_perf > max_cap_perf) {
-+		hybrid_max_perf_cpu = cpu;
-+		hybrid_set_capacity_of_cpus();
-+		goto unlock;
-+	}
-+
-+	/* If this CPU is hybrid_max_perf_cpu, should it be replaced? */
-+	if (cpu == hybrid_max_perf_cpu && cpu->capacity_perf < max_cap_perf) {
-+		hybrid_update_cpu_scaling();
-+		goto unlock;
-+	}
-+
-+	hybrid_set_cpu_capacity(cpu);
-+
-+unlock:
-+	mutex_unlock(&hybrid_capacity_lock);
-+}
-+
- static void intel_pstate_hwp_set(unsigned int cpu)
- {
- 	struct cpudata *cpu_data = all_cpu_data[cpu];
-@@ -1070,6 +1240,22 @@ static void intel_pstate_hwp_offline(str
- 		value |= HWP_ENERGY_PERF_PREFERENCE(HWP_EPP_POWERSAVE);
- 
- 	wrmsrl_on_cpu(cpu->cpu, MSR_HWP_REQUEST, value);
-+
-+	mutex_lock(&hybrid_capacity_lock);
-+
-+	if (!hybrid_max_perf_cpu) {
-+		mutex_unlock(&hybrid_capacity_lock);
-+
-+		return;
-+	}
-+
-+	if (hybrid_max_perf_cpu == cpu)
-+		hybrid_update_cpu_scaling();
-+
-+	mutex_unlock(&hybrid_capacity_lock);
-+
-+	/* Reset the capacity of the CPU going offline to the initial value. */
-+	hybrid_clear_cpu_capacity(cpu->cpu);
- }
- 
- #define POWER_CTL_EE_ENABLE	1
-@@ -1165,21 +1351,46 @@ static void __intel_pstate_update_max_fr
- static void intel_pstate_update_limits(unsigned int cpu)
- {
- 	struct cpufreq_policy *policy = cpufreq_cpu_acquire(cpu);
-+	struct cpudata *cpudata;
- 
- 	if (!policy)
- 		return;
- 
--	__intel_pstate_update_max_freq(all_cpu_data[cpu], policy);
-+	cpudata = all_cpu_data[cpu];
-+
-+	__intel_pstate_update_max_freq(cpudata, policy);
-+
-+	/* Prevent the driver from being unregistered now. */
-+	mutex_lock(&intel_pstate_driver_lock);
- 
- 	cpufreq_cpu_release(policy);
-+
-+	hybrid_update_capacity(cpudata);
-+
-+	mutex_unlock(&intel_pstate_driver_lock);
- }
- 
- static void intel_pstate_update_limits_for_all(void)
- {
- 	int cpu;
- 
--	for_each_possible_cpu(cpu)
--		intel_pstate_update_limits(cpu);
-+	for_each_possible_cpu(cpu) {
-+		struct cpufreq_policy *policy = cpufreq_cpu_acquire(cpu);
-+
-+		if (!policy)
-+			continue;
-+
-+		__intel_pstate_update_max_freq(all_cpu_data[cpu], policy);
-+
-+		cpufreq_cpu_release(policy);
-+	}
-+
-+	mutex_lock(&hybrid_capacity_lock);
-+
-+	if (hybrid_max_perf_cpu)
-+		__hybrid_init_cpu_scaling();
-+
-+	mutex_unlock(&hybrid_capacity_lock);
- }
- 
- /************************** sysfs begin ************************/
-@@ -1618,6 +1829,13 @@ static void intel_pstate_notify_work(str
- 		__intel_pstate_update_max_freq(cpudata, policy);
- 
- 		cpufreq_cpu_release(policy);
-+
-+		/*
-+		 * The driver will not be unregistered while this function is
-+		 * running, so update the capacity without acquiring the driver
-+		 * lock.
-+		 */
-+		hybrid_update_capacity(cpudata);
- 	}
- 
- 	wrmsrl_on_cpu(cpudata->cpu, MSR_HWP_STATUS, 0);
-@@ -2034,8 +2252,10 @@ static void intel_pstate_get_cpu_pstates
- 
- 		if (pstate_funcs.get_cpu_scaling) {
- 			cpu->pstate.scaling = pstate_funcs.get_cpu_scaling(cpu->cpu);
--			if (cpu->pstate.scaling != perf_ctl_scaling)
-+			if (cpu->pstate.scaling != perf_ctl_scaling) {
- 				intel_pstate_hybrid_hwp_adjust(cpu);
-+				hwp_is_hybrid = true;
-+			}
- 		} else {
- 			cpu->pstate.scaling = perf_ctl_scaling;
- 		}
-@@ -2707,6 +2927,8 @@ static int intel_pstate_cpu_online(struc
- 		 */
- 		intel_pstate_hwp_reenable(cpu);
- 		cpu->suspended = false;
-+
-+		hybrid_update_capacity(cpu);
- 	}
- 
- 	return 0;
-@@ -3147,6 +3369,8 @@ static int intel_pstate_register_driver(
- 
- 	global.min_perf_pct = min_perf_pct_min();
- 
-+	hybrid_init_cpu_scaling();
-+
- 	return 0;
- }
- 
-
-
+Best regards,
+Krzysztof
 
 
