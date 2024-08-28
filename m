@@ -1,182 +1,115 @@
-Return-Path: <linux-kernel+bounces-304862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 287909625EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:23:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A36D89625EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CD8D1C2373C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:22:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D61641C22383
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540CF17279C;
-	Wed, 28 Aug 2024 11:22:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F359816D4C4;
+	Wed, 28 Aug 2024 11:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=anirudhrb.com header.i=anirudh@anirudhrb.com header.b="DF7UnX+E"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CnksQoqo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1874F170A3A;
-	Wed, 28 Aug 2024 11:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724844162; cv=pass; b=dVSTrxphI78dRbiRpfrR72vGNFEyH0XZxYIPx4Mf2Y9QLOQ0zL1EK0X0GqDdjcDQtx6UXM5HcBjxEsoejWUFDMzk78bCParTNxer330PqsDC23vhqF6MCPUVeMHyqBBGUC++aP9TVjyN/pKORSNS0N803rcGJO7RSjkdkrs9iFM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724844162; c=relaxed/simple;
-	bh=yVppzYDbQWwfqceHCGmVA/74JSTQdScgm955fmD9D5Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qF5NeQ22/6boZOwQTVVgIRph9j7eapCFrtkVugGW/bQiwgnx0KiynKOOJrPG1HMYHrZczy1dLW74wmcDfuwJOeQu0aUWKBvWwF9djZRNZ1/X5Yv661O+y+GLF/nYF9v4SPvnPszPCDuqlg31G9kaeHh4Eyr+jdzWrwabbm3OTB4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=anirudhrb.com; spf=pass smtp.mailfrom=anirudhrb.com; dkim=fail (0-bit key) header.d=anirudhrb.com header.i=anirudh@anirudhrb.com header.b=DF7UnX+E reason="key not found in DNS"; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=anirudhrb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=anirudhrb.com
-Delivered-To: anirudh@anirudhrb.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724844140; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=WoJBXDDgTgwxU3OBOM3HrvXWVs4UODSmYTZJrQGiBYI+vI9obljtJ4cjNCaM+liaq3BHu24TDtXgHDVW6R4y9L5QVpPIqYkHq/KtXpd+h/2L6shlswkL5W55v/qBpbG4WuXZgCoIAZUHlApsiBWkrbLMI8zNww95iTIGv3lyu2I=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724844140; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=vVW9787axKEB5O5XY7bxU2JHzWR3lad4WOowwBNCaeY=; 
-	b=JcVbS3dx5VQZA4/63gQJNTgsJT29NXy6aVjk4RbPHjefmf9SiX+JrlxRBLoQrOZKpfek5IZ5vlPTy06W2W/Gb3LWXuLoundzPHeOOHs27XwmJjzkfPZMCV1zVl0BEHIlrgYotB21qzu4brTIWVq9aGAF8wythNizrBgz7WxHw+Q=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=anirudhrb.com;
-	spf=pass  smtp.mailfrom=anirudh@anirudhrb.com;
-	dmarc=pass header.from=<anirudh@anirudhrb.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724844140;
-	s=zoho; d=anirudhrb.com; i=anirudh@anirudhrb.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=vVW9787axKEB5O5XY7bxU2JHzWR3lad4WOowwBNCaeY=;
-	b=DF7UnX+EPdDta1GZYnAl1I4K4ylH3SjtC4K9lYsfB6j7Q0uJxR+36ulYvKFW7OoL
-	TMzAq35ecZUcR0RQIYbYy8n6X+dFMYUOMhRKosJuSfLLWp38rX8qI/y9xi8HPB24mYn
-	yuy5NEubZEDbkPD350+HTeTUhSKvOoNgCDgPXpaY=
-Received: by mx.zohomail.com with SMTPS id 1724844137482399.08515585114355;
-	Wed, 28 Aug 2024 04:22:17 -0700 (PDT)
-From: Anirudh Rayabharam <anirudh@anirudhrb.com>
-To: "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Michael Kelley <mikelley@microsoft.com>
-Cc: Anirudh Rayabharam <anirudh@anirudhrb.com>,
-	stable@vger.kernel.org,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] x86/hyperv: fix kexec crash due to VP assist page corruption
-Date: Wed, 28 Aug 2024 16:51:56 +0530
-Message-ID: <20240828112158.3538342-1-anirudh@anirudhrb.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3110116BE1D;
+	Wed, 28 Aug 2024 11:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724844158; cv=none; b=p1SwduFvTru4ebADVG/7XCFwHTTHITc+SEVXACbC5Ma4i7NwiDG9uzqp/tnCUa4TBDKzJ3JUdTRjSQWsS915BLLuC2yBY7zpCjVM2SmqBxvRohbNUzomIBd0Hk8BUfGizB/+5e6dfM2B3tznH1j/GfEXPtxonxb0oy7pQPYU574=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724844158; c=relaxed/simple;
+	bh=Nf3PEb3R2fEBVAcqaU+NbEMYg0L6+wEFWBzFvK14wyk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cN11O8yHHFYADT2qofPPa9cbdrXj7s5HcPrUct4hgzODzOZvQqQ8EWP9sqp4SwVlwqILovIihEPahLWu3cv14g0h5Ra+E0e4+sl+gaYM7ldVtNehrz6jniY++WP1HaHhVu//fntV7RVnyPXGZ/Uf/Io6ucQLu/YCckzhAIK9Us0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CnksQoqo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3164AC98EC1;
+	Wed, 28 Aug 2024 11:22:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724844157;
+	bh=Nf3PEb3R2fEBVAcqaU+NbEMYg0L6+wEFWBzFvK14wyk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=CnksQoqoxVFIKKsZi0byoMoAlvfMilDr9GmU3TSdrR57167Ow0qcTcOBIwCBpiEiF
+	 9A5RVEWTfgtnYs2iehI43J2kFfJtBS/TtIS862NDTN+2JE2R+cM1Kb6yGHuEUh1oIg
+	 jVdhJBw1rO7fc0n8zuqaLsggnHa8JajsE1vzY9du9y3EEnqJ4ZqE0HRbmuvKHFBq+y
+	 OYssINTq1TTl8zzHUx02vK9gWvdvaA0AHrA7gTYIii8fWVZsVdHOrNT5BbndKD5k17
+	 RFVkHMwJiY+n7CFkjc8bok6sb7NmP3E6Mm+49dN8Kx2mTA3z+LtD+76+sFoSMGSG1E
+	 wUrew8yfxFgBg==
+From: Christian Brauner <brauner@kernel.org>
+To: netfs@lists.linux.dev,
+	dhowells@redhat.com,
+	jlayton@kernel.org,
+	libaokun@huaweicloud.com
+Cc: Christian Brauner <brauner@kernel.org>,
+	jefflexu@linux.alibaba.com,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yangerkun@huawei.com,
+	houtao1@huawei.com,
+	yukuai3@huawei.com,
+	wozizhi@huawei.com,
+	Baokun Li <libaokun1@huawei.com>,
+	stable@kernel.org,
+	Gao Xiang <xiang@kernel.org>
+Subject: Re: [PATCH] netfs: Delete subtree of 'fs/netfs' when netfs module exits
+Date: Wed, 28 Aug 2024 13:22:25 +0200
+Message-ID: <20240828-fuhren-platzen-fc6210881103@brauner>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240826113404.3214786-1-libaokun@huaweicloud.com>
+References: <20240826113404.3214786-1-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1707; i=brauner@kernel.org; h=from:subject:message-id; bh=Nf3PEb3R2fEBVAcqaU+NbEMYg0L6+wEFWBzFvK14wyk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSd5yj+XHu7QM5zVi/D7FsC/Qyf+y9GKRm3KrjPrIutv Lme48ftjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgInkiTEyTEn+oXj92MfjrwUr pv1YM5Mn7ZDOv4Lsd/FtT7nFrvDF3WJkeKOWkj2/ae92kcK+YOc572qO/CuuM7y5rFjuQ1LzpMX crAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
 
-From: Anirudh Rayabharam (Microsoft) <anirudh@anirudhrb.com>
+On Mon, 26 Aug 2024 19:34:04 +0800, libaokun@huaweicloud.com wrote:
+> In netfs_init() or fscache_proc_init(), we create dentry under 'fs/netfs',
+> but in netfs_exit(), we only delete the proc entry of 'fs/netfs' without
+> deleting its subtree. This triggers the following WARNING:
+> 
+> ==================================================================
+> remove_proc_entry: removing non-empty directory 'fs/netfs', leaking at least 'requests'
+> WARNING: CPU: 4 PID: 566 at fs/proc/generic.c:717 remove_proc_entry+0x160/0x1c0
+> Modules linked in: netfs(-)
+> CPU: 4 UID: 0 PID: 566 Comm: rmmod Not tainted 6.11.0-rc3 #860
+> RIP: 0010:remove_proc_entry+0x160/0x1c0
+> Call Trace:
+>  <TASK>
+>  netfs_exit+0x12/0x620 [netfs]
+>  __do_sys_delete_module.isra.0+0x14c/0x2e0
+>  do_syscall_64+0x4b/0x110
+>  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> ==================================================================
+> 
+> [...]
 
-commit 9636be85cc5b ("x86/hyperv: Fix hyperv_pcpu_input_arg handling when
-CPUs go online/offline") introduces a new cpuhp state for hyperv
-initialization.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-cpuhp_setup_state() returns the state number if state is
-CPUHP_AP_ONLINE_DYN or CPUHP_BP_PREPARE_DYN and 0 for all other states.
-For the hyperv case, since a new cpuhp state was introduced it would
-return 0. However, in hv_machine_shutdown(), the cpuhp_remove_state() call
-is conditioned upon "hyperv_init_cpuhp > 0". This will never be true and
-so hv_cpu_die() won't be called on all CPUs. This means the VP assist page
-won't be reset. When the kexec kernel tries to setup the VP assist page
-again, the hypervisor corrupts the memory region of the old VP assist page
-causing a panic in case the kexec kernel is using that memory elsewhere.
-This was originally fixed in commit dfe94d4086e4 ("x86/hyperv: Fix kexec
-panic/hang issues").
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Get rid of hyperv_init_cpuhp entirely since we are no longer using a
-dynamic cpuhp state and use CPUHP_AP_HYPERV_ONLINE directly with
-cpuhp_remove_state().
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-Cc: stable@vger.kernel.org
-Fixes: 9636be85cc5b ("x86/hyperv: Fix hyperv_pcpu_input_arg handling when CPUs go online/offline")
-Signed-off-by: Anirudh Rayabharam (Microsoft) <anirudh@anirudhrb.com>
----
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-v1->v2:
-- Remove hyperv_init_cpuhp entirely and use CPUHP_AP_HYPERV_ONLINE directly
-  with cpuhp_remove_state().
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
 
-v1: https://lore.kernel.org/linux-hyperv/87wmk2xt5i.fsf@redhat.com/T/#m54b8ae17e98d65e77a09002e478669d15d9830d0
-
----
- arch/x86/hyperv/hv_init.c       | 5 +----
- arch/x86/include/asm/mshyperv.h | 1 -
- arch/x86/kernel/cpu/mshyperv.c  | 4 ++--
- 3 files changed, 3 insertions(+), 7 deletions(-)
-
-diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-index 17a71e92a343..95eada2994e1 100644
---- a/arch/x86/hyperv/hv_init.c
-+++ b/arch/x86/hyperv/hv_init.c
-@@ -35,7 +35,6 @@
- #include <clocksource/hyperv_timer.h>
- #include <linux/highmem.h>
- 
--int hyperv_init_cpuhp;
- u64 hv_current_partition_id = ~0ull;
- EXPORT_SYMBOL_GPL(hv_current_partition_id);
- 
-@@ -607,8 +606,6 @@ void __init hyperv_init(void)
- 
- 	register_syscore_ops(&hv_syscore_ops);
- 
--	hyperv_init_cpuhp = cpuhp;
--
- 	if (cpuid_ebx(HYPERV_CPUID_FEATURES) & HV_ACCESS_PARTITION_ID)
- 		hv_get_partition_id();
- 
-@@ -637,7 +634,7 @@ void __init hyperv_init(void)
- clean_guest_os_id:
- 	wrmsrl(HV_X64_MSR_GUEST_OS_ID, 0);
- 	hv_ivm_msr_write(HV_X64_MSR_GUEST_OS_ID, 0);
--	cpuhp_remove_state(cpuhp);
-+	cpuhp_remove_state(CPUHP_AP_HYPERV_ONLINE);
- free_ghcb_page:
- 	free_percpu(hv_ghcb_pg);
- free_vp_assist_page:
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index 390c4d13956d..5f0bc6a6d025 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -40,7 +40,6 @@ static inline unsigned char hv_get_nmi_reason(void)
- }
- 
- #if IS_ENABLED(CONFIG_HYPERV)
--extern int hyperv_init_cpuhp;
- extern bool hyperv_paravisor_present;
- 
- extern void *hv_hypercall_pg;
-diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
-index e0fd57a8ba84..e98db51f25ba 100644
---- a/arch/x86/kernel/cpu/mshyperv.c
-+++ b/arch/x86/kernel/cpu/mshyperv.c
-@@ -199,8 +199,8 @@ static void hv_machine_shutdown(void)
- 	 * Call hv_cpu_die() on all the CPUs, otherwise later the hypervisor
- 	 * corrupts the old VP Assist Pages and can crash the kexec kernel.
- 	 */
--	if (kexec_in_progress && hyperv_init_cpuhp > 0)
--		cpuhp_remove_state(hyperv_init_cpuhp);
-+	if (kexec_in_progress)
-+		cpuhp_remove_state(CPUHP_AP_HYPERV_ONLINE);
- 
- 	/* The function calls stop_other_cpus(). */
- 	native_machine_shutdown();
--- 
-2.45.2
-
+[1/1] netfs: Delete subtree of 'fs/netfs' when netfs module exits
+      https://git.kernel.org/vfs/vfs/c/0aef59b3eabb
 
