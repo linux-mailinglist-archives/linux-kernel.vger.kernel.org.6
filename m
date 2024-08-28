@@ -1,83 +1,158 @@
-Return-Path: <linux-kernel+bounces-305530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBC27963005
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:31:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88AAD96301E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:34:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48B9B1F24C03
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:31:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4083C2860B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D660C1AAE27;
-	Wed, 28 Aug 2024 18:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A901A4B82;
+	Wed, 28 Aug 2024 18:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="OvdxtzW1"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012048.outbound.protection.outlook.com [52.101.66.48])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gOkGxwZp";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="CP+KOIUy"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0086B1C69C;
-	Wed, 28 Aug 2024 18:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C711914EC47;
+	Wed, 28 Aug 2024 18:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724869890; cv=fail; b=Mr9I60d/gzRWsPk9hNA3HPqCUiO9I3FVp6Zvthyweo8Z6QRY0xBUOEYBGEFWBKqPOyBj1b2ATN/XshxQ834uBoFcPye5la3zHewKLNa4AOBT6WGIF53e2TEc24ntM1ai+0YnXLOUCagKIZNztmCWepBixnTNqaxDP4nBVha700Y=
+	t=1724870009; cv=fail; b=n3RHqRp9WDtesQQQMDeJw2yruVUMlvrSVwLBiahIyBox4BbSt5pusogKSoMiqzqBhzg8p8meB0fg37ygBGyABsX0GQWlNBwxjVOGCaEPEGu7UGwWwEBOGjpplLMkgus5ZQbcyjBjpXQ0Arox59XWjttUdDnVQMBLfoAzdBNq0sg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724869890; c=relaxed/simple;
-	bh=DAdn7UuxjqDMrXHi4WKb8HqYHN2zXpsxMYurallnF+U=;
+	s=arc-20240116; t=1724870009; c=relaxed/simple;
+	bh=KUb08RxYvW00qwxesRAseLzQFK7qtsHErRC/4TmA5K0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=eLix8KbrCBkg6JhbA1LwykEG/+ZTqZSj0DdqJWHJeWUsYsAyQ0C7IJ601uOBCFwbs1HNRCRSbxKac4E/iwf4P4OacCH9ZqPa09VY2f1UOCxlvPgxjaiz6yrFbOFj2dFAbRxfvuCLOQLqQFz+16jvVLi5/JekNGBCUGALRKuEyqE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=OvdxtzW1; arc=fail smtp.client-ip=52.101.66.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Qh+p9yM6fcseONkTJBR6FsM8KasOpgBOUYGvr1pUouhN33VizN8vBuUqZpPeHOaQ1QzdBJavV3K3dF0M1Z7gOhiSDNqyb/X2G3m2WxeK7k1m0ZRCpKlAdjKCX8MlTPjz9CarWXitI7lMlH4s6afisFxFGxIH2yS5ZJ2VaOGnjJg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=gOkGxwZp; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=CP+KOIUy; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47SHfVp1021897;
+	Wed, 28 Aug 2024 18:31:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=FIVQsn18rlBSkpP
+	nvNuLhvwxpBhdeYGKE4nE6gegqfw=; b=gOkGxwZpxjQErHduKWkVWLQkZxEQdQ6
+	8djzkQ3dCv0uloqDZUTBIia3wqZrxItIpUSPpf6Fj0fWqRMAk08XdW0pqtGUEu4x
+	eHCoWrhPDg61IvqSuVOtiw3xNeMqtWlZteJF3fy6irV49O8liEPLhcH1leanebFX
+	sAn7GFc8W8T0Dss7bfuaNSS+4mFfw8Qdu+zITJhxdfvNHQRc2XqkGABiYKGuAIoQ
+	O6sVM9c98jUnOlTVvilZkFb1F+p81BfUnIYVvXKeHHH4t9Wg7Z78IcEAvacue0PT
+	QZzlyFLmvjuDXrRN/73curVkcAeNwMEafvhhkaM7n7HOm2BFSUjnD8Q==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 419pwv21t9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 28 Aug 2024 18:31:51 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47SHes9J034855;
+	Wed, 28 Aug 2024 18:31:50 GMT
+Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam04lp2041.outbound.protection.outlook.com [104.47.74.41])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4189suwc42-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 28 Aug 2024 18:31:50 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YMM/Ksd59nxou5wUj5ECLq1lpUQyH969Ifrkmo1xaxAd/NmxZwq9T12Hj0w1M0lmFTqaS9DcmT3nae2fHqorzqEJZBvSJBIdfTrx4jrM8Z7aP2Rm13BbLEI/tdjj0Qlm5UyijwG6lyXmx25XBrvnF62DcMgKaG5Gw5VI9AJkF23SoMHffbrRxu7OqTtBcAGTOzkT09HovDrgDiKiqRaf9kssjb4IZvHgTR6Xmwe7kTcwZZRLmXqepbQ/0kO1oGXcnFnO1TZ5pr+i0y4b0BS3SK23aDbeoKBUUfD2VBcY0RWir4HS6z/cBnjrkzCDDn655Gwr3HJmJ3LXWhEGDDfP6w==
+ b=pn/T1G7kU7iSAgbDId0WSCI1Do1OQr4HK0kRX29qSvJbyjucp4SR1ii3YZbmIQupi9eOBy2P3uLNVKn0CwemirmQWxxGTu5Ty9Ya2L5jZ5F36mgTNDo8h3lr6B39UJVZMOawsJjTxHouVgRWoKjmRCuXBAZX/7VeAN0hEe4uKUSK/13lO43PON4EGOCcunuDWNJ/vakL9MLiF/kD43w+QK6qdCLPsE5yMe7aA9/La+qxBIBcukKefPE2tRGl9UynHlaivNCXhQQT+7OVgy+KDRW4bB45nTspOQoapO9KTBaQJQWUYCVhyc09IjTUvm5VTG0OEn2TtxzYvEs4lD5Xdw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Yp7Dt90MBSx/taUC84rBQbgl1JBNb7Ezk/QZoSCFZ0k=;
- b=Qe/R+J/3XOdPVsAnKtsybS3/W2Gpa1hlrCKYm1KVIC+bHikDmlPBP/gBce45or5I5vDLSdMurlK9DmxpCb5bh58eNBRMuCTIuqK9dZ6UVUIAxfapHofTJGebb9/6cACvSvKdwXmI1oa346SzseGcrpKA1cGxCXZvz28YltOZRrcBRZPb3S6EMczb1gzuFdBuTbCMHNrfBxahWxpURfvgfSh0yLl994sP7KgURgTrNnByZg0chNEEvFD9vPhv1ZyR2NS/g4nMaKbpS5hFlmexgwtjK4N3kir9mil30CmxqxGmlMftmKwOmMhU6ckxUDfJMi2dAFCtapptNkVIlH2Quw==
+ bh=FIVQsn18rlBSkpPnvNuLhvwxpBhdeYGKE4nE6gegqfw=;
+ b=IF7qFFnxsgqLhMqwmF9q9SMci2mThAOo48H7n9bwWtMIJCv+k+j0HD0957ZMFxtDwl2Ys7nRmt49cxNXwk/AGIu3grRxd7eetmVmv3LtjHIPpubAHClS1qEkzZtKgCp0x9YttP3Ysc1UN1tD12S+VGGFlgrqKrIfYTp8YtTPvqpTjei+ywYPDg+rHePC1Dd6N2BYAoq7cDhRxCkcB97I2mc5Ndj1XvfPGDjBDd6JGzLZ6gCgiGGjs71WWAC1uVJsHW+pYqJrM1ATxhnoxHIi3pJiAITUBTzcphkSX+8lK0pWSYuu240i+MbXL7PJS4XQfUsRyV6uxtVdsog63JIGHw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Yp7Dt90MBSx/taUC84rBQbgl1JBNb7Ezk/QZoSCFZ0k=;
- b=OvdxtzW1U95u6G2DsqOJJyhY3/AcnEZqU+M64+ZpxQ/92Zfv5Y2TIGAUSuhp52l/J/cU4KwNRMlYkBPQDxtRuJK+y+GDRSDQx7y1FYTYOWRqQgjkZSdl8x7cVO5R/1LhdkLGVuVV/EbHO5hbUETDVyQnarpOs+IVaRucThyfPN68KkQ1poEJMVfHWH5EAXYBU0vgYxPYFAxPLnRfGJf3fX4K9YCBzkCnhhz8jeRTkFf9W7M3qpB2W1V997xQbdOvwouwKgPlfuy3Dm+RSgjFZvP6qyJwJkcK5X50IoXu06xuKda9kwlBdkPzGEfayCdOJVFMsKqOnlCgX8YHlIIapw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AS8PR04MB7957.eurprd04.prod.outlook.com (2603:10a6:20b:2a2::6) with
+ bh=FIVQsn18rlBSkpPnvNuLhvwxpBhdeYGKE4nE6gegqfw=;
+ b=CP+KOIUytsAQ3P1uH5AGkDzHdEs2udVDBvbDGVcWfzO2uhH0esMDtCCKJB7UojqFKFwn1sIqRgCIyz6qFoWEZ9P+IM4xvrkP4i4A1Mpyu0bBC9tB84bV5hAGsU4IKs5Qxdla+uJHob5oS64ffj7zvW+Qau8TsX+2j9VsFRBMv4o=
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
+ by SA1PR10MB5712.namprd10.prod.outlook.com (2603:10b6:806:23f::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Wed, 28 Aug
- 2024 18:31:26 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7897.027; Wed, 28 Aug 2024
- 18:31:26 +0000
-Date: Wed, 28 Aug 2024 14:31:18 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 03/12] dt-bindings: PCI: pci-ep: Update Maintainers
-Message-ID: <Zs9s9qJynqxRRICq@lizhi-Precision-Tower-5810>
-References: <20240828-pci-qcom-hotplug-v4-0-263a385fbbcb@linaro.org>
- <20240828-pci-qcom-hotplug-v4-3-263a385fbbcb@linaro.org>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.14; Wed, 28 Aug
+ 2024 18:31:46 +0000
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490%3]) with mapi id 15.20.7918.012; Wed, 28 Aug 2024
+ 18:31:46 +0000
+Date: Wed, 28 Aug 2024 14:31:42 -0400
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Naveen N Rao <naveen@kernel.org>, Muchun Song <muchun.song@linux.dev>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Huacai Chen <chenhuacai@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>, Russell King <linux@armlinux.org.uk>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andreas Larsson <andreas@gaisler.com>, Shuah Khan <shuah@kernel.org>,
+        Alexandre Ghiti <alexghiti@rivosinc.com>, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>,
+        linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org,
+        loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 00/16] mm: Introduce MAP_BELOW_HINT
+Message-ID: <dbqqojpvqodfxavt4fxugoj3a2ppk5b4b3sp77qsmbg33sc2em@fhjccbxaihrh>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Charlie Jenkins <charlie@rivosinc.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, Muchun Song <muchun.song@linux.dev>, 
+	Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+	Russell King <linux@armlinux.org.uk>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
+	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>, 
+	Andreas Larsson <andreas@gaisler.com>, Shuah Khan <shuah@kernel.org>, 
+	Alexandre Ghiti <alexghiti@rivosinc.com>, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Palmer Dabbelt <palmer@rivosinc.com>, linux-riscv@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, 
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+References: <20240827-patches-below_hint_mmap-v1-0-46ff2eb9022d@rivosinc.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240828-pci-qcom-hotplug-v4-3-263a385fbbcb@linaro.org>
-X-ClientProxiedBy: BY5PR04CA0023.namprd04.prod.outlook.com
- (2603:10b6:a03:1d0::33) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+In-Reply-To: <20240827-patches-below_hint_mmap-v1-0-46ff2eb9022d@rivosinc.com>
+User-Agent: NeoMutt/20240425
+X-ClientProxiedBy: YT4P288CA0032.CANP288.PROD.OUTLOOK.COM
+ (2603:10b6:b01:d3::7) To DS0PR10MB7933.namprd10.prod.outlook.com
+ (2603:10b6:8:1b8::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,110 +160,267 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB7957:EE_
-X-MS-Office365-Filtering-Correlation-Id: 22b194c2-af92-4060-72dd-08dcc78fa057
+X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|SA1PR10MB5712:EE_
+X-MS-Office365-Filtering-Correlation-Id: d3d16676-a6a7-4d4b-2f56-08dcc78fac3b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|7416014|1800799024|366016|38350700014;
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|27256017;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?FkD28foTNEJrBRgNjUkGmrhLVyWzX6ZtsHSOldn9oOxVpHOVgBp3BJ00jgBt?=
- =?us-ascii?Q?t6sCRY0PN4HQuUhhazxf43dzbvMJg74DVH3h4ln4WIpZ6v15r3aY4YN+tfO4?=
- =?us-ascii?Q?sm5C7lmU63zYeWUpl3bwGNa7Z5Epcc65kGWMGeEloyhw9FZhKfxmepYzJphU?=
- =?us-ascii?Q?IBsz63PPANBhWXtYUTkmQ/evx5FpLyzzb8pA4++957HRcBXSqUCCh/JAzq9c?=
- =?us-ascii?Q?5Ahqo7+8IraZlwS/k96+xz4MuDFYbYrzBWE+CH8MP+Sa1tKaIt4yTAzygxn2?=
- =?us-ascii?Q?0Pa4pkLqpR2I/FJl0s1kD7qU9NRxGMmb3A4Z+TD02sL09iTLUJMkGOT+ZVyV?=
- =?us-ascii?Q?fWRFs5MHkmH//lu1Yf1y10m6q+G8UHzBlAYzznMgKsErrTh9GOpcvqtjLHZU?=
- =?us-ascii?Q?Ol/mzeO4HosAsOR4k9nDjdsovqWA8Eag2wnBIrX8LkgqIVOpytaKpdADEhIO?=
- =?us-ascii?Q?En6scEyNn35aHJfTGcoThQ2w5ZyzL4AFyn4/7i293qonyUxbgk8QbQj1VgOs?=
- =?us-ascii?Q?PVCXMtZp/hEtcWStYj/Z3kLIv0QQCI3W3ahzcUeJw5a4T9RfjRUtExVTwVSd?=
- =?us-ascii?Q?8NC2iRvuz2sYUvKxf5EAMPompGVX6atIj2DFeBAIrqpFnzKDcD+0ZKHxKva3?=
- =?us-ascii?Q?g4KOPfwm66vT2pRRlNthz9UzUEeBHvBgstQh0mf3DY74lZIdMrzTTp7iIwNy?=
- =?us-ascii?Q?xdXCvgKbCFu100YeuS041rpN1wan7vBL8NXDLNyeb8VlJwy2z4toL3ZBMB2E?=
- =?us-ascii?Q?kB5omvk2VlIQ25FtDlpgwQ1SJNJqUyIaHmPJNOd/jgH46KlFI+3kEqqZ10wp?=
- =?us-ascii?Q?4nM77zr1JWCVMa8rH1weOh92g0RZ95bgexmQ+yL2FH1GKiiebFZ69F31tIVN?=
- =?us-ascii?Q?LhH1jL0k/J0xmTCb7FFot3SHQ8iEOdzfIu8PohfdMdU11UvTaFlRGzyZ9+wg?=
- =?us-ascii?Q?M6zNTYDW+BEjZJyllfEwilUNNHY5UbG1PpgqHYBn8+tXJHzsxBRv9h75TsYf?=
- =?us-ascii?Q?+akQgpTRmwih97HV5vrT/m6+TpEcE/3RLn1PpvFcnfZM1q52+iAOLCLA6dM6?=
- =?us-ascii?Q?oNeYqA/hQXCv0OuMoOZf0Z3pTRb34GlZZVOMXE5FNYs000i1eRPoeKVuNGEk?=
- =?us-ascii?Q?qjqaQqBMpODnnqinb1use+XSHYAl/W5GQlLOG8R85PjkEez/d+XYWo7BTxfD?=
- =?us-ascii?Q?qK8o62heqOf9BxUg2i6a4xsy4ZAb/UQIMD4hxRcZdsaFo6KqVsS6HFJKWEen?=
- =?us-ascii?Q?acZgGhrfDkU3dBowqxlIMf5s15mhp6zDFzsBlPO5jR289yvtOE6+hS0VR9Q8?=
- =?us-ascii?Q?t/Jd0ItfdMTMhTCaKLRvfRym+Oprez3pxqUw6Bp+jKstOlmrFRQNFWNz6xTP?=
- =?us-ascii?Q?COI5zpBA5xcrK/6+dEI4XrMOGzDppYVJ3CD1nW9GOHsK2TpziA=3D=3D?=
+	=?us-ascii?Q?bUGwSA4ssicU+r4l0kNu2JknupTM+UfocKmHihVtXcoXb9upUVtIVPQ5NJF1?=
+ =?us-ascii?Q?s/xs2VpkoR04szTWRUTWSjU8CZdVwLp2SgLwsRkCakesBPYz1OltfJaPaQUL?=
+ =?us-ascii?Q?kDVdUp2/CqVT/vPwOQpNSzx91p5gqamaNzlEjm9fTg5gBGfKSQjheKnOuFJ2?=
+ =?us-ascii?Q?PRq26+vD5LejvXewEiYEyQG1TwDaoDW7rlqEmgc84QinTw5bHajmcU5QZKAb?=
+ =?us-ascii?Q?xmnmTuj9be5YY0fA2ZeGqoB9uPZqeomwPVEjxLjJL4IxIdb8taEaWs334abz?=
+ =?us-ascii?Q?kwNoj2eYxP2d2SMgLI+8vj7pPmxwyFYfiDNPQPL8sShIvrEv+VFpsG2ouRam?=
+ =?us-ascii?Q?4PrOM1uZvdDRnfOD2Ea1vdi/4kp4+E7YYaazX3o0aUg69E0/TvzXabHZkBdF?=
+ =?us-ascii?Q?Cbv5p1eDVX123xHndWMi3SvbM+KaG2vKs1bu5UFUGzxrtlFCAINCB99XP8GI?=
+ =?us-ascii?Q?Sj5lpQktTE88phxCZO5G8CxVh9WrOsgvp3CBzFPBvuugT2Lrht8iOZREYymS?=
+ =?us-ascii?Q?+83C3KZ9WQ4WZ+vRwtIYGrfygzbdPL8ftyjbE9c1rtzqVmyuxDdui7R7Bwc+?=
+ =?us-ascii?Q?mOQncN4B3sLvAE+id1p/NZa5wA6LEqu7+hZMldaJxgyOG6BqcocExTmQrn+r?=
+ =?us-ascii?Q?ogk4CdKMLhSbmfyDL1+HS0NfZKvmffxGkVn3C/2kYCwwJqlH3PBJsTK8K+mb?=
+ =?us-ascii?Q?XJVUjHM4WsC3FTSr58iS+tY7Kd+0bw9K2P9O1UZZNZLp659L4JRpDxGiM2+w?=
+ =?us-ascii?Q?3kv/8HhqvRupiaOnBScEDFrgDL6h1aVk2eSZevqzYif9VMn+Nla/V5HOWWMf?=
+ =?us-ascii?Q?danapofD//yD35AUMnAdV03go5CUhOtzI1zT+zWq0i/v/pDerUkRDgYfIb78?=
+ =?us-ascii?Q?Hpu9/zoItvXmXscpB1mcxInSsibpeLddsrfmNRXkyIzpkN9/X00HSoASPDRS?=
+ =?us-ascii?Q?4aX9swWdHDr1NQjihYX3xD1iuO/ei62B2rGv+GfIbPImh+Gl4e8x6aYum3F4?=
+ =?us-ascii?Q?rKRx6v3psPH51C3PZJTV91pYYiMvWcuaH1EjxvTWu/WgmLtsDTe+h1anxEh2?=
+ =?us-ascii?Q?SWpVPTAYmkkGeK1wWdIaxJns7FFh9wcLv8dvmo/2vrAi+wl1CJa5u5829EL5?=
+ =?us-ascii?Q?i79j+DpP0+izcDsjJjoeJWoCIpJCEAMDf6DlJtu8BzCmCf0tvUqwWYffcty+?=
+ =?us-ascii?Q?uoB8qXrkH7PK68XohSuumRHnSD1oFw2+oVtAcLRk+ziJpuPEe+dI1xCSptc8?=
+ =?us-ascii?Q?TCOM0hB02Mvsox24J3aMg3NvrJ+0xplMad8RELJtZRVD+jPFzjLI0EwIzzdz?=
+ =?us-ascii?Q?80auvAlRfCtbhSReui+m7kCKCx6mNMzr5fkipg0uyn2PDiGD6c29neeNZC6f?=
+ =?us-ascii?Q?Itak85U=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(7416014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(27256017);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Bja8fjdhD/lj3UA22X8fuWLvALycyPSefKXX3UVQa5/I0MzghRx8Y1hwscYf?=
- =?us-ascii?Q?Z8qAbuvfu3lFSqOE430I3h4cfEJdo/ReffABXVGZsoPW4iu42n1DLKg24uOr?=
- =?us-ascii?Q?F4+EMXp0Ivtn2QXyn4K7mNSTHgaipPwl1HWEh2wZuU3lvw7l/LxpI6JsEn5j?=
- =?us-ascii?Q?EaUAJ9+G+DuhiModUwGHh5eL+RE2XBcFw4nDk6KuibMjhaCt0YcPnhwSYbLg?=
- =?us-ascii?Q?fHcBhrOJZnKl6cCYg9ZtgO2qY5em3kJBLQhT/8RASe8FEdDBF6flntI66aVz?=
- =?us-ascii?Q?yaJnq6C4mC2j89KFezKmnTsJzyElDt1M4o+Zsyq6ogWCQfxGc7LJXOTGz/T/?=
- =?us-ascii?Q?6bKLqtUiFTOfKGvVNQqpAKY6CU5R1fpQmrfZqJ6Tz+ZqZGMuLE1a3qZZq9P5?=
- =?us-ascii?Q?Mo5z+fnaezQaHOuurFASFAnO8I7UGSN9zbSswRsXpgH7OxaxLnZmvSsECwwz?=
- =?us-ascii?Q?wxHT1r462gF0RkPfdsG+OQ2nb2FW/BnG7V3wtdISw6OwPF7Hrj35jhv5xwKV?=
- =?us-ascii?Q?qKKzDkHYVRhkdbyDfF+jdfRZ/2TRxexl79pWiMSHmyCbbuBh167d5K2Us7XI?=
- =?us-ascii?Q?mjlR9ZgD8K2lpp9idJN57YTU9bSVomOeT5Z4Znyb1WbZK27fkID9LkkGBAM1?=
- =?us-ascii?Q?fsSsf0GXvkitd15AOSyHE6vq9cqTQoVrLs9VGJTwVD+1FJTwiPA5AXaMjAId?=
- =?us-ascii?Q?DaqnGoDzAkZb0qYo/eIWhpcIEuW8ouo7xl6bi+xnqAHM9HCtDilhS0Pwz1Ho?=
- =?us-ascii?Q?htWaYdkR1874UPzDFSPBdZKZQOxrtamzePuVFXQC1wQQPSw55Dqaiv9+bAyB?=
- =?us-ascii?Q?kH5oxACBsfAef8IIGvz5waDB+lxsu2rk0HUqyYeaVKru6zi7wWDb7/SJ+wRv?=
- =?us-ascii?Q?v7q1e0tvv5AE8L4rKjURzZlcrb11rh2ziCa+luSZiyWFkPbS5tjhSbHyh5iQ?=
- =?us-ascii?Q?yYRgjt2KdnHBNL2+O+nloCbmG1fc5xMSJRgNS3Iih3pfmjwbOzHP6zMBYu5v?=
- =?us-ascii?Q?fHQmHnl8Dwsf8G2ROzRwrGMeWIYkV/syIDGOMpy0qJQ4oUqaITlmjmu9Vdna?=
- =?us-ascii?Q?9BGB6saIT3Xh4qWCCvP9zlQupswa9Ja0wyF4MnNkQt+WTk0XQiodB2GjzYbD?=
- =?us-ascii?Q?5o9feMBdo8bX9r0+zn3nSvtlnYz9iIwLSZdCg4PnoWeuSdZSvhzFy9GOOU0s?=
- =?us-ascii?Q?vlyEG7uyDFlctfV86NJ1TfHnX3VswMmN2u59VjWsEZye9jam54tIDHlwvzp4?=
- =?us-ascii?Q?ypRkuLAMHJvsmUlF7aqgGaxX5wTzr1LQJBzT53ujGuRyAw4yXBzFIo0BXxHv?=
- =?us-ascii?Q?TcI9pfhY8Bp/p/ba05tlUIfzVKcV8UohUW03zAZDWYUAvtJWzw/l9zjtMtUF?=
- =?us-ascii?Q?i1ET5OgOTDDLYtJNKvzBUq1HhDx4GZ7KyRL9pgMAYnj6V97q4FAnBpcQCOBe?=
- =?us-ascii?Q?rXE7KaR5dDb9lE/QqkLuGh3A9+jrMZc9hXIdnzN7zo4fjqNdJtmIB7a6y9ub?=
- =?us-ascii?Q?38E2UIPuJbx7DGx7NbsrSh1lrBvwVxLPOmGVaNmbKl2YxGMvnsBMlpvB5ME9?=
- =?us-ascii?Q?4MN8xbKyAINk/OC8wmA=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 22b194c2-af92-4060-72dd-08dcc78fa057
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+	=?us-ascii?Q?UMQCY53YCdvl0izYGSLpCniBsW5YNDeYn3TL2wYf1xOQ71LM6SLcwcprdmWk?=
+ =?us-ascii?Q?MW9vqvO/mtNCIGbwZBv4/+iaFEncUtUEqYh0KDQ9/EnISucjBRlTJ5sbVr8p?=
+ =?us-ascii?Q?yWU2Xry/0C3pu4LB9sgTtPgJrDM8UKOU4RTfTs/hcNM7D9iyPdBTM+9u6ptS?=
+ =?us-ascii?Q?0eB0g6BAMWRytSHyR8wU2aVTPF/tqpmlTR/PQFKg1RJVewTVYZMLH2smSsUz?=
+ =?us-ascii?Q?4+sj4pnXKAece/rM/KmwUre5G0F4lv05VwAyc4nO5e221JUaD9mmJnIgIg53?=
+ =?us-ascii?Q?0Uzdzpes+AGuKFXWMzFUTiAvBfrdyfBpjMONlEdkz9wnZ/KxsSeyE+KjKdOu?=
+ =?us-ascii?Q?AyPKmpfcJIbywI+rj9IEFi2PqY/nwvCIcLKaN8S971Hm7L6+8Nn+wIQlM1i/?=
+ =?us-ascii?Q?09Shj0gSPiJfRLFmZJWyilqoPgxP2Ham9JY2ISrar+rzsiCN1l9dWcmbCAzG?=
+ =?us-ascii?Q?g66svDCmgHdvPyqr8iLxzz3qf9Z/NongQVOOi9BZX/z0p/nm3MWHSBY6/x6e?=
+ =?us-ascii?Q?bc6iY6nh6tBiLGu8LDs1EKjrczFhi47Oi7vK7mGuI1cVrS25x/QAOtSpOwVe?=
+ =?us-ascii?Q?eRv09mgouRWo2WzVJVrGeWXql3SYFByaxr7n4jhXEW0v92BJysM5lpsZnsox?=
+ =?us-ascii?Q?sLjhbaXOiWxl6yWsKs5Kd18Wkmo1/jr06q2WqgStQc2ki6DC1j0nxOdzv8Df?=
+ =?us-ascii?Q?D/fePekeAi8BRJ3c42V7MGJwzVRf+O2I3FD3GX8HnI6WczBjLtaIkVKsGN60?=
+ =?us-ascii?Q?fbXeoffQgXwMXRGg6X3Rhur/dWbcmlXnsVWFgqmUQGG+kQNvTPE/c4Nk8Hmj?=
+ =?us-ascii?Q?hQ+gkw1w7XpFCYyubKHiFzYm6uSOHfC/oDFsHJefNeqDiQ34yn7M+LC7toMh?=
+ =?us-ascii?Q?ZHYQ449CVEHvLL2koqmcuIqZqc65pJXXlsdL6odrO9LrOk2CACmAzVNnu1YG?=
+ =?us-ascii?Q?zIwgduKQBq+rYhrMN4v3fLjoFtor5JG4jxsre1PtLQIxmL1ot671ucZSuvbW?=
+ =?us-ascii?Q?ePMRCsWp+k9SZ9PepH5NJOmK+DxHFOc4NpsBFYfovgVnRMFGPRQwxKqYZHcF?=
+ =?us-ascii?Q?9uwVUpx37Ynqed+4SB95aRjrs/L2+Pe/P3Ry7JGENie5d9+RykwDIaAi729+?=
+ =?us-ascii?Q?pTpOVYmpPNItZ3PCv27aU9YXMU527aQdOaeV0Xpa52nBYi9EO966PdI1luCb?=
+ =?us-ascii?Q?NloPHrT+4xar3Uw5QY0Gl5pCwbtyIfEfTtqk7sVb7EA4IGbhy+tKBjOVlwgv?=
+ =?us-ascii?Q?z/Q91c9Jq7//LNfFwf5urSKxkOJzctbnM/6WBL0nPA7aRPPlwOhzVdsFQCI+?=
+ =?us-ascii?Q?QJMXoxx1zNcXDBOTbUw9MOMro5DqaPg1kf5aB/b4aj5ECvyxqavO8Jugy9li?=
+ =?us-ascii?Q?RdOsmSJ63EuO8IRc5TQNYSXotT3QC7emXXVqmB0UKyEQGCOn1LmsxfZicfWV?=
+ =?us-ascii?Q?SWmGHJPl/RdZmo7kU1wPP7fY8GC7VYUiETYNf9+ohjRKGpTq0NkNw7cxAHsb?=
+ =?us-ascii?Q?R3DaUktTK/dD7752uFHuce8Y/ctv/+/wdGkr5an9dbuLckVBpNj2D3ZsVLyv?=
+ =?us-ascii?Q?wpTGM9rWXWspDvQysJvn3uCsK16q5UWLYWPwxUqG?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	nUy1fCco4C+bto26Y4wjpW8tuE422XZLlyxcsIqPpTgBTdOUHvAb49dTxpY7AnKtAqIO8g81Hw24yZ39GECDHeVlwgW0vI89qczj3zPaQ/b4ZdgcR3qAGlh7SPWuTAYvJeBRUNVoeSoeD5cPHoB9/h/9z3NqMnoSxlY9lclF5QfVWwqjFbCnU02cjfez/H0SqJ5/FQxMGKLzt9D8qfAUJbOnXava/4QEXa4gYCKnKi+AADmmksZ89qO1PAqNbRiTKmRWGp9FOXx20xER/vxsdXtbrGkSGdapNs5rYNzu9Rob1qXpzY4tI8Ec7asyqIrcer0AEBBtGAjZdp9/V5uHQ9Y7M3jPYDHIoGtxvfimKNJFVYqZXQ51pOI4bhj7sjUfUiS4/aAJEpGul+K3WnTPZHGoFhUukjS7eLXecJvUPd/y4t4gBVQsK60W5YwhW/4nKttv+7Cy4hn3LiEs1zjoTUTGeIbUvJTHDqCd5xTLyQEl/HlM607KC5f0nt9m19XV8nM+hbcr9hC5qGh+9iDAZLZ95cwEgEJmJMvQKk9KsKOW284cM488uWhku7tS2VS6yk2v92ApKLhDi2a9Z7w6umQDgLLOBecZXxBV1UdDis4=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d3d16676-a6a7-4d4b-2f56-08dcc78fac3b
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 18:31:26.5326
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 18:31:46.5687
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: B3reKJFQfWJ+5PrGX6y2Q7DHvqVu/yxL8Rlp4S1VA/7GcXa6vXep3jKSjXpPer565zsCsGDwNuDBCjjjY1zoPQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7957
+X-MS-Exchange-CrossTenant-UserPrincipalName: MEPo3PNDuOhZNGZmVkgh1jSsosdCW3DdCY/g5mGH6mmxlSEYHmy856wGVF3K928ELWhdzcQeoeh0fWJMy+2M7A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR10MB5712
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-28_08,2024-08-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 suspectscore=0
+ mlxlogscore=999 malwarescore=0 bulkscore=0 phishscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
+ definitions=main-2408280134
+X-Proofpoint-GUID: HA0XqB4aPZdxQHaOYUy_Tr6_5YdCuDfH
+X-Proofpoint-ORIG-GUID: HA0XqB4aPZdxQHaOYUy_Tr6_5YdCuDfH
 
-On Wed, Aug 28, 2024 at 09:16:13PM +0530, Manivannan Sadhasivam wrote:
-> Kishon's TI email ID is not active anymore, so use his korg ID. Also, since
-> I've been maintaining the PCI endpoint framework, I'm willing to maintain
-> the DT binding as well. So add myself as the Co-maintainer.
->
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+* Charlie Jenkins <charlie@rivosinc.com> [240828 01:49]:
+> Some applications rely on placing data in free bits addresses allocated
+> by mmap. Various architectures (eg. x86, arm64, powerpc) restrict the
+> address returned by mmap to be less than the maximum address space,
+> unless the hint address is greater than this value.
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Wait, what arch(s) allows for greater than the max?  The passed hint
+should be where we start searching, but we go to the lower limit then
+start at the hint and search up (or vice-versa on the directions).
 
+I don't understand how unmapping works on a higher address; we would
+fail to free it on termination of the application.
+
+Also, there are archs that map outside of the VMAs, which are freed by
+freeing from the prev->vm_end to next->vm_start, so I don't understand
+what that looks like in this reality as well.
+
+> 
+> On arm64 this barrier is at 52 bits and on x86 it is at 56 bits. This
+> flag allows applications a way to specify exactly how many bits they
+> want to be left unused by mmap. This eliminates the need for
+> applications to know the page table hierarchy of the system to be able
+> to reason which addresses mmap will be allowed to return.
+
+But, why do they need to know today?  We have a limit for this don't we?
+
+Also, these upper limits are how some archs use the upper bits that you
+are trying to use.
+
+> 
 > ---
->  Documentation/devicetree/bindings/pci/pci-ep.yaml | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/pci/pci-ep.yaml b/Documentation/devicetree/bindings/pci/pci-ep.yaml
-> index d1eef4825207..0b5456ee21eb 100644
-> --- a/Documentation/devicetree/bindings/pci/pci-ep.yaml
-> +++ b/Documentation/devicetree/bindings/pci/pci-ep.yaml
-> @@ -10,7 +10,8 @@ description: |
->    Common properties for PCI Endpoint Controller Nodes.
->
->  maintainers:
-> -  - Kishon Vijay Abraham I <kishon@ti.com>
-> +  - Kishon Vijay Abraham I <kishon@kernel.org>
-> +  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
->
->  properties:
->    $nodename:
->
-> --
-> 2.25.1
->
+> riscv made this feature of mmap returning addresses less than the hint
+> address the default behavior. This was in contrast to the implementation
+> of x86/arm64 that have a single boundary at the 5-level page table
+> region. However this restriction proved too great -- the reduced
+> address space when using a hint address was too small.
+
+Yes, the hint is used to group things close together so it would
+literally be random chance on if you have enough room or not (aslr and
+all).
+
+> 
+> A patch for riscv [1] reverts the behavior that broke userspace. This
+> series serves to make this feature available to all architectures.
+
+I don't fully understand this statement, you say it broke userspace so
+now you are porting it to everyone?  This reads as if you are braking
+the userspace on all architectures :)
+
+If you fail to find room below, then your application fails as there is
+no way to get the upper bits you need.  It would be better to fix this
+in userspace - if your application is returned too high an address, then
+free it and exit because it's going to fail anyways.
+
+> 
+> I have only tested on riscv and x86.
+
+This should be an RFC then.
+
+> There is a tremendous amount of
+> duplicated code in mmap so the implementations across architectures I
+> believe should be mostly consistent. I added this feature to all
+> architectures that implement either
+> arch_get_mmap_end()/arch_get_mmap_base() or
+> arch_get_unmapped_area_topdown()/arch_get_unmapped_area(). I also added
+> it to the default behavior for arch_get_mmap_end()/arch_get_mmap_base().
+
+Way too much duplicate code.  We should be figuring out how to make this
+all work with the same code.
+
+This is going to make the cloned code problem worse.
+
+> 
+> Link: https://lore.kernel.org/lkml/20240826-riscv_mmap-v1-2-cd8962afe47f@rivosinc.com/T/ [1]
+> 
+> To: Arnd Bergmann <arnd@arndb.de>
+> To: Paul Walmsley <paul.walmsley@sifive.com>
+> To: Palmer Dabbelt <palmer@dabbelt.com>
+> To: Albert Ou <aou@eecs.berkeley.edu>
+> To: Catalin Marinas <catalin.marinas@arm.com>
+> To: Will Deacon <will@kernel.org>
+> To: Michael Ellerman <mpe@ellerman.id.au>
+> To: Nicholas Piggin <npiggin@gmail.com>
+> To: Christophe Leroy <christophe.leroy@csgroup.eu>
+> To: Naveen N Rao <naveen@kernel.org>
+> To: Muchun Song <muchun.song@linux.dev>
+> To: Andrew Morton <akpm@linux-foundation.org>
+> To: Liam R. Howlett <Liam.Howlett@oracle.com>
+> To: Vlastimil Babka <vbabka@suse.cz>
+> To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> To: Thomas Gleixner <tglx@linutronix.de>
+> To: Ingo Molnar <mingo@redhat.com>
+> To: Borislav Petkov <bp@alien8.de>
+> To: Dave Hansen <dave.hansen@linux.intel.com>
+> To: x86@kernel.org
+> To: H. Peter Anvin <hpa@zytor.com>
+> To: Huacai Chen <chenhuacai@kernel.org>
+> To: WANG Xuerui <kernel@xen0n.name>
+> To: Russell King <linux@armlinux.org.uk>
+> To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+> To: James E.J. Bottomley <James.Bottomley@HansenPartnership.com>
+> To: Helge Deller <deller@gmx.de>
+> To: Alexander Gordeev <agordeev@linux.ibm.com>
+> To: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+> To: Heiko Carstens <hca@linux.ibm.com>
+> To: Vasily Gorbik <gor@linux.ibm.com>
+> To: Christian Borntraeger <borntraeger@linux.ibm.com>
+> To: Sven Schnelle <svens@linux.ibm.com>
+> To: Yoshinori Sato <ysato@users.sourceforge.jp>
+> To: Rich Felker <dalias@libc.org>
+> To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+> To: David S. Miller <davem@davemloft.net>
+> To: Andreas Larsson <andreas@gaisler.com>
+> To: Shuah Khan <shuah@kernel.org>
+> To: Alexandre Ghiti <alexghiti@rivosinc.com>
+> Cc: linux-arch@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: Palmer Dabbelt <palmer@rivosinc.com>
+> Cc: linux-riscv@lists.infradead.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: linux-mm@kvack.org
+> Cc: loongarch@lists.linux.dev
+> Cc: linux-mips@vger.kernel.org
+> Cc: linux-parisc@vger.kernel.org
+> Cc: linux-s390@vger.kernel.org
+> Cc: linux-sh@vger.kernel.org
+> Cc: sparclinux@vger.kernel.org
+> Cc: linux-kselftest@vger.kernel.org
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> 
+> ---
+> Charlie Jenkins (16):
+>       mm: Add MAP_BELOW_HINT
+>       riscv: mm: Do not restrict mmap address based on hint
+>       mm: Add flag and len param to arch_get_mmap_base()
+>       mm: Add generic MAP_BELOW_HINT
+>       riscv: mm: Support MAP_BELOW_HINT
+>       arm64: mm: Support MAP_BELOW_HINT
+>       powerpc: mm: Support MAP_BELOW_HINT
+>       x86: mm: Support MAP_BELOW_HINT
+>       loongarch: mm: Support MAP_BELOW_HINT
+>       arm: mm: Support MAP_BELOW_HINT
+>       mips: mm: Support MAP_BELOW_HINT
+>       parisc: mm: Support MAP_BELOW_HINT
+>       s390: mm: Support MAP_BELOW_HINT
+>       sh: mm: Support MAP_BELOW_HINT
+>       sparc: mm: Support MAP_BELOW_HINT
+>       selftests/mm: Create MAP_BELOW_HINT test
+> 
+>  arch/arm/mm/mmap.c                           | 10 ++++++++
+>  arch/arm64/include/asm/processor.h           | 34 ++++++++++++++++++++++----
+>  arch/loongarch/mm/mmap.c                     | 11 +++++++++
+>  arch/mips/mm/mmap.c                          |  9 +++++++
+>  arch/parisc/include/uapi/asm/mman.h          |  1 +
+>  arch/parisc/kernel/sys_parisc.c              |  9 +++++++
+>  arch/powerpc/include/asm/task_size_64.h      | 36 +++++++++++++++++++++++-----
+>  arch/riscv/include/asm/processor.h           | 32 -------------------------
+>  arch/s390/mm/mmap.c                          | 10 ++++++++
+>  arch/sh/mm/mmap.c                            | 10 ++++++++
+>  arch/sparc/kernel/sys_sparc_64.c             |  8 +++++++
+>  arch/x86/kernel/sys_x86_64.c                 | 25 ++++++++++++++++---
+>  fs/hugetlbfs/inode.c                         |  2 +-
+>  include/linux/sched/mm.h                     | 34 ++++++++++++++++++++++++--
+>  include/uapi/asm-generic/mman-common.h       |  1 +
+>  mm/mmap.c                                    |  2 +-
+>  tools/arch/parisc/include/uapi/asm/mman.h    |  1 +
+>  tools/include/uapi/asm-generic/mman-common.h |  1 +
+>  tools/testing/selftests/mm/Makefile          |  1 +
+>  tools/testing/selftests/mm/map_below_hint.c  | 29 ++++++++++++++++++++++
+>  20 files changed, 216 insertions(+), 50 deletions(-)
+> ---
+> base-commit: 5be63fc19fcaa4c236b307420483578a56986a37
+> change-id: 20240827-patches-below_hint_mmap-b13d79ae1c55
+> -- 
+> - Charlie
+> 
 
