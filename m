@@ -1,112 +1,111 @@
-Return-Path: <linux-kernel+bounces-304402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2366C961F9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:23:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05D7E961FB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:26:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD7501F252CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:23:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFED02869DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CE01581E0;
-	Wed, 28 Aug 2024 06:21:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86749156C76;
+	Wed, 28 Aug 2024 06:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="C5JBcicM"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="H9fF3GHs"
+Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8EF715749A
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 06:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229D914D43D;
+	Wed, 28 Aug 2024 06:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724826059; cv=none; b=dP+pxqnOKyT8fqDIecJFPQCdLzBMRgZxbvPqOd/+rb3Ud0eKSohT+xGo1avI5ec0e4BEKYGJC/hkIemi1RbA+Bup0pRtucgNjWfkiIW3vnajzRwzi/X+uTY1gKIY5SxZJYal93iAiyWWXMYIn0WL8ridGe0TwQFvSDPDBwWQ7DA=
+	t=1724826394; cv=none; b=R/fGls2Vo0/IdFaphQgaZetaQNoKmlKEmf2zsyQcDBI/ItF7tML6XxuvccSeJ9gAUVD8JpCnPTxYR8RDa25xD2eMvQGE8lZSFXnEbD8dfaG6QKbf2VB3L9QmZJ/b0BGVfiw6/L/4US8WJaCdI0FR2puWeMsLmJORy1pRregaK3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724826059; c=relaxed/simple;
-	bh=BKH7OF1gA2x1K6IrgePa4gqJRi2S42CGQlhI+AR8RtU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZAAQBu2xTnWV2NanoKfFMdVVPyYhWyZUhNE/XT6vArYC1QnH3/aXM0F1SjP5+3fUXH7hSpIcJPkF5Fmqf+zj34O+g51CEqhlImLGherp+7vdGg4C8qTISFTr1WJAH9qJG0l+teMhNBrZCIaOJxPq8PjwpNdPHFmnLfHBGi0TC7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=C5JBcicM; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 28 Aug 2024 08:20:50 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724826054;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8q1Gi+Mka1ahs9vBttQhPLSdr4CoV1oo9//xJxqIxK0=;
-	b=C5JBcicMXP+ekim+JfFPPTW5oRRPC2m8lNl20GLSZd2OS+GFTDyVo5yIbhf3J6y4GYx3Q5
-	srSM1FQJybPu7VAp6wRF1o4vGjigRWaPff8zOV7Mck0Xqp6pzFT9tbQTTCHg9pkXKiMDcW
-	11KKoPT24fCV8aMrTtsAa+cQNwVcTlM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Andrea Righi <andrea.righi@linux.dev>
-To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-Cc: Mario Limonciello <mario.limonciello@amd.com>,
-	Mario Limonciello <superm1@kernel.org>,
-	Borislav Petkov <bp@alien8.de>, Perry Yuan <perry.yuan@amd.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
-	"open list:ACPI" <linux-acpi@vger.kernel.org>,
-	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
-	changwoo@igalia.com, David Vernet <void@manifault.com>,
-	Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH 8/8] cpufreq: amd-pstate: Drop some uses of
- cpudata->hw_prefcore
-Message-ID: <Zs7Bwh6T3HCGlR9C@gpd3>
-References: <20240826211358.2694603-1-superm1@kernel.org>
- <20240826211358.2694603-9-superm1@kernel.org>
- <Zs4G084+7MmzdYjU@BLRRASHENOY1.amd.com>
- <61b96549-2969-4b64-a40d-f91f614ec3ab@amd.com>
- <Zs6w3RktAb6fJrJ+@BLRRASHENOY1.amd.com>
+	s=arc-20240116; t=1724826394; c=relaxed/simple;
+	bh=MJRKJbSOVk7d7dB2I76yTOVq5DldaOqtebinMXA5JHc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hFwGk7oP7TXm4XLC5ckXxatcDUYawlKm5L8vdQ3VscV30XFqCVtmexSGUmAQqUD0vuHG/MwF1JaQrOjU6lth4ZM3qBJvkFMoT9OkF1Z+5QW5cdUtn1YP3POcoYt2d8ljPeRpZtvHqUXDVKAa0DBhPLvYfd8m/7Hl+cd0TleOShk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=H9fF3GHs; arc=none smtp.client-ip=94.231.106.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.simply.com (Simply.com) with ESMTP id 4WtvSD4CTtz1FXRy;
+	Wed, 28 Aug 2024 08:21:16 +0200 (CEST)
+Received: from [192.168.0.25] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by smtp.simply.com (Simply.com) with ESMTPSA id 4WtvSC6CZ0z1DPkN;
+	Wed, 28 Aug 2024 08:21:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
+	s=unoeuro; t=1724826076;
+	bh=MZjaRsFFki5Bx5B5FHnglUd9d4H7fBDSxyu2jHiKATQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=H9fF3GHsObx42DQlccYjWkCaI8H7IjrygcJqC6jNaK4z0Z18apld5cXSgQVOUCs01
+	 KKScBf0M+KhxqxD5GBoovtvU90uovoSytFCOkAnhgzKqOSnS+qVrnNytVlHc49wNmn
+	 MMSVwYK7ONDpeF3VHN8cIXWAeIenPfu7ecQ0hXO8=
+Message-ID: <12a0f286-3114-4dac-8b75-3a638d9c8635@gaisler.com>
+Date: Wed, 28 Aug 2024 08:21:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zs6w3RktAb6fJrJ+@BLRRASHENOY1.amd.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] dma-mapping: clearly mark DMA ops as an architecture
+ feature
+To: Christoph Hellwig <hch@lst.de>, iommu@lists.linux.dev
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Bingbu Cao <bingbu.cao@intel.com>, "Michael S . Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-media@vger.kernel.org,
+ virtualization@lists.linux.dev, xen-devel@lists.xenproject.org,
+ Thomas Gleixner <tglx@linutronix.de>
+References: <20240828061104.1925127-1-hch@lst.de>
+ <20240828061104.1925127-3-hch@lst.de>
+Content-Language: en-US
+From: Andreas Larsson <andreas@gaisler.com>
+In-Reply-To: <20240828061104.1925127-3-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 28, 2024 at 10:38:45AM +0530, Gautham R. Shenoy wrote:
-...
-> > I had thought this was a malfunction in the behavior that it reflected the
-> > current status, not the hardware /capability/.
-> > 
-> > Which one makes more sense for userspace?  In my mind the most likely
-> > consumer of this information would be something a sched_ext based userspace
-> > scheduler.  They would need to know whether the scheduler was using
-> > preferred cores; not whether the hardware supported it.
-> 
-> The commandline parameter currently impacts only the fair sched-class
-> tasks since the preference information gets used only during
-> load-balancing.
-> 
-> IMO, the same should continue with sched-ext, i.e. if the user has
-> explicitly disabled prefcore support via commandline, the no sched-ext
-> scheduler should use the preference information to make task placement
-> decisions. However, I would like to see what the sched-ext folks have
-> to say. Adding some of them to the Cc list.
+On 2024-08-28 08:10, Christoph Hellwig wrote:
+> --- a/drivers/xen/Kconfig
+> +++ b/drivers/xen/Kconfig
+> @@ -177,8 +177,8 @@ config XEN_GRANT_DMA_ALLOC
+>  
+>  config SWIOTLB_XEN
+>  	def_bool y
+> +	depends on ARCH_DMA_OPS
 
-IMHO it makes more sense to reflect the real state of prefcore support
-from a "system" perspective, more than a "hardware" perspective, so if
-it's disabled via boot command line it should show disabled.
+Rename to ARCH_HAS_DMA_OPS in v2 is missing here
 
-From a user-space scheduler perspective we should be fine either way, as
-long as the ABI is clearly documented, since we also have access to
-/proc/cmdline and we would be able to figure out if the user has
-disabled it via cmdline (however, the preference is still to report the
-actual system status).
+>  	depends on XEN_PV || ARM || ARM64
+> -	select DMA_OPS
+>  	select SWIOTLB
+>  
+>  config XEN_PCI_STUB
+> @@ -348,10 +348,10 @@ config XEN_GRANT_DMA_IOMMU
+>  
+>  config XEN_GRANT_DMA_OPS
+>  	bool
+> -	select DMA_OPS
+>  
+>  config XEN_VIRTIO
+>  	bool "Xen virtio support"
+> +	depends on ARCH_DMA_OPS
 
-Question: having prefcore enabled affects also the value of
-scaling_max_freq? Like an `lscpu -e`, for example, would show a higher
-max frequency for the specific preferred cores? (this is another useful
-information from a sched_ext scheduler perspective).
+and here.
 
-Thanks,
--Andrea
+Cheers,
+Andreas
+
 
