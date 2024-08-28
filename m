@@ -1,165 +1,169 @@
-Return-Path: <linux-kernel+bounces-305129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D439629DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:10:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BDD49629D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A5741F21D30
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:10:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 318451C23A8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E1E19AD6E;
-	Wed, 28 Aug 2024 14:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04D11891AA;
+	Wed, 28 Aug 2024 14:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cgP+lcep"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cFOvHwHw"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0411898EC
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73940188CAC
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724854194; cv=none; b=q998JTnEIGUX+r8mT1FF8nmVayFXVPKvdy7yq/P/6vx78ALCs0OY77l3RzH3LPzNFjNoKhZu5SDesnowWAxN9bYjGSmsOJYUfJAC+iqowwM49fj0Cbk7PFjDtdQFrbJ+8E/L+XXYfc8M5al8VZOQ2x8GtDPSCoWRXjEB/9ZNQhM=
+	t=1724854094; cv=none; b=kNI051mTRC+WFGI6H6bEnY5K5DOAOG3gEr97gE7kyY86bnHuijODQq3MUuqFF2ARH8Z1GDiYv+eIQ2q6fpdBq0WMMWbuufd9k7uBl0ite8RZsDH8oRYnMEho9qeJvHtM4c/4/CImlLtUaXFiX03llMaPEjYxeXE0QTqfLMOtpNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724854194; c=relaxed/simple;
-	bh=iJebi4RnGEDb/WDnZ9Fx1JV2iX2h8srqqUl2h1UV8Zw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UHJXIHLNguxCqmODGK9zQFbYG452ajkCcZUejeIZ7920m+E5+uTns97p3hiku2tPE5uHKgzh5we+gbm3TMJLPvc/xWRGaXPke4woKPOvDXolj0zMPD7E1mgy3R8MoTVWd448lGO4ooWUsPW5RiCx0ydEgKQdM9hncOL0+RzfCyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cgP+lcep; arc=none smtp.client-ip=209.85.208.53
+	s=arc-20240116; t=1724854094; c=relaxed/simple;
+	bh=6i0DTl1y7zbuvBA51P56G8/7JFUWcfprfnnfq9ZDKXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PTVbfbXI4HqDzWxyL/hb0rx7nQXgwBXQ6vHFFraKvKf72gXMFU/cO10LULY3TTIVKTxA26vdozudYMDKMffgsisBl3sVQJ6IGfu1KaFeSYPqyWCTxlvhypUsSRcDEcteNP736e2cQOFJ01WwgWnx3GP8ODitBPDrtsgxPYCE4ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cFOvHwHw; arc=none smtp.client-ip=209.85.210.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5befd2f35bfso7344289a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:09:52 -0700 (PDT)
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-715cdc7a153so526072b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:08:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724854191; x=1725458991; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Il04epHFd9BrsJtGAU8mELFSezcE7nnWBSPUsdUkN8I=;
-        b=cgP+lceps/CN0jW83sVt4yrHOj7+Id/AijP4zEz9JG23yFc2pVVOBV2fFNJa3oofT9
-         ZZf8WOX6JLJFaz5hxw5TMZ3Q045CT1Fot/WTC7x9KD1HzK5N85KcubZU+AfGwD2/0m6D
-         N+NX9WzugHmXV0U5V831Ngjq6VVaKkLAKL4uhy5QYxRSKkj9d+xLF7jl0AXwRjIpi8X9
-         HQKnJ/AfyQf7pWr7+agxms5ckEZlEWbh9EM8Z6+DDuXBZ1psVQDzjFJTg65qN/NQKXrB
-         uqakSa6477tA5k50j8TGOYu/+ziczdValV1yEpreGKT+PfTox60FKURVfTdUwISAoEJE
-         25aA==
+        d=linaro.org; s=google; t=1724854092; x=1725458892; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5zUmIuVSMTrxDTnFMXgZkNU2N5FNce8+WlLOBteoNVY=;
+        b=cFOvHwHwfljHavta4YLmoKqZtwznKuQ0A6ixSn66OfnP39G8NwkGohfbft8hb0S15c
+         lgDxJmD/y6M7EgQpSTgPJTBghLDG8rlmmo03ZqfQb5d44HqkYSkscwexn8dzu2sFPGOm
+         oxlV7dP3TS3FkA97YFecoYuTD6tFQ+fXunQVVVf5DK6HAFtiQMe2y8VUtzuj+87DKc45
+         I35XgQiXmmRjtHMq30k0Y51QdvKNopel2Du5Vx2AnYPMW6VQuvDSoHiWpmpvkSwXBpPw
+         0iozOZGpQT90YB5vdpAiBirdgCaQuIw3imWCLoDA1QhkJhmYrFjfdg39xDRMQCsWPBQi
+         OOyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724854191; x=1725458991;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Il04epHFd9BrsJtGAU8mELFSezcE7nnWBSPUsdUkN8I=;
-        b=ddMDJT54cZ83ORmzAv5wGg7+WJ9aAimausB92JEvIdn1trVZWwBJr/CvqFxizqO58f
-         aP2ZxrTHHFEosrfsZIg0Gy5uKROY51gp9H3aFyqDmLBfjDyCAnRvYzWaLqUOyNT2hj8r
-         M6KarmNSjuIWAPv6iDKpx5Y8KgzVT846I706saaS+IrAe5u6cP2hGC7xr+LblFWF0ge8
-         5zjwC/t6bbi6Jbbp5SyHTKus2/xd+cZ4yWUmp0BRlNJaM5yv/DNqPc0vmmYTDhxyiMDH
-         UUgqwSvv5dD86smSVGD3SgtJZemBaOO24yk0vK0Ol2G0jXHouB3el5YL2Cr6tVVl775L
-         nAEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWHKWt1DmWRIvWtraBk5TMM8TYGeQJV/nOof0//jUA9bXrhwSubuf+m/G1yTHV6swWDzdQiOzs/YCq9vJk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzExpYj5bjwVt4bqUJgivZGmSE3CLbvithxIinN3uB9D2hElkXb
-	rYvBeXXdc3hX9RKrVOJDZKvKZ2DgQs8UWv4D5TjfJEygy0DII+j2/QumFsC1Kio=
-X-Google-Smtp-Source: AGHT+IGfU9r8eCZ1F54SsYtSTEbWp48pODz+BAIgPEFvEm7Ao+dfQxCs2umNAwFacPms+yzwmqUedg==
-X-Received: by 2002:a17:907:e6a3:b0:a7a:ab8a:38f with SMTP id a640c23a62f3a-a86a52c37c9mr1305055766b.41.1724854190212;
-        Wed, 28 Aug 2024 07:09:50 -0700 (PDT)
-Received: from localhost.localdomain ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e5832855sm251302666b.130.2024.08.28.07.09.48
+        d=1e100.net; s=20230601; t=1724854093; x=1725458893;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5zUmIuVSMTrxDTnFMXgZkNU2N5FNce8+WlLOBteoNVY=;
+        b=MWdcCADsj90Cf9NvR3y46pT3LXUV+CkNDU69mNvL06b9114P4/p/upNBGnVkJ3cnUK
+         AqCvIJbz5N8UIyFYwe28j0mD6I8MVdEHL6W5DAjEr4DPL7gMufyt47SCxb/v+PdjVuR/
+         uji11apbbLyQX/aUSD+Q7yoZBydk7sRp+XfHYPhTuVbqcrAk7atKtJHbQLPm6I/yDJYM
+         yRSipQ8273dLS7TDOAtcCzABCdeMMN82D4QZ3/sR/hsQwSgqu49V4PM6kvIyYpdtekNA
+         tADM2zR30zeT0T87mB/3XJtkMK4k0pmydVOFXk+sjLUjXUplLvdbE2l/8IysB1++TJTd
+         nSQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUctMFL/PoASnbfCcTdByxdaL7Y4S9lG1i9B4snkb6rCCZuMC6EIvRCDqCiGk5g7kubkUigFSINqda12NM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcYjdxpHoEPqGG1LQzt1k/TydCUd68HP8F8qEdLw6S/eWn8N24
+	QMNlPq7MLVhE19AuTMGuocHBZYFKUNlcj5B+82GbD+is+7P/mhWq0NOIq698QQ==
+X-Google-Smtp-Source: AGHT+IHSBNCosOUJ4UP07jnycwgnAwwiOp55OzQxxQNujnZSA4wzt+zHe/mbquDbKqudh7XMBpjfDQ==
+X-Received: by 2002:a05:6a00:23d2:b0:706:aa39:d5c1 with SMTP id d2e1a72fcca58-715d10fdc97mr3135046b3a.8.1724854092494;
+        Wed, 28 Aug 2024 07:08:12 -0700 (PDT)
+Received: from thinkpad ([120.56.198.191])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143425527esm10147003b3a.57.2024.08.28.07.08.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 07:09:49 -0700 (PDT)
-From: James Clark <james.clark@linaro.org>
-To: irogers@google.com,
-	linux-perf-users@vger.kernel.org,
-	kan.liang@linux.intel.com,
-	ak@linux.intel.com
-Cc: James Clark <james.clark@linaro.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Will Deacon <will@kernel.org>,
-	Mike Leach <mike.leach@linaro.org>,
-	Leo Yan <leo.yan@linux.dev>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Yang Jihong <yangjihong@bytedance.com>,
-	Ze Gao <zegao2021@gmail.com>,
-	Sun Haiyong <sunhaiyong@loongson.cn>,
-	Jing Zhang <renyu.zj@linux.alibaba.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 7/7] perf test: Add a test for default perf stat command
-Date: Wed, 28 Aug 2024 15:07:21 +0100
-Message-Id: <20240828140736.156703-8-james.clark@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240828140736.156703-1-james.clark@linaro.org>
-References: <20240828140736.156703-1-james.clark@linaro.org>
+        Wed, 28 Aug 2024 07:08:12 -0700 (PDT)
+Date: Wed, 28 Aug 2024 19:38:05 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Manish Pandey <quic_mapa@quicinc.com>
+Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, quic_nitirawa@quicinc.com,
+	quic_bhaskarv@quicinc.com, quic_narepall@quicinc.com,
+	quic_rampraka@quicinc.com, quic_cang@quicinc.com,
+	quic_nguyenb@quicinc.com
+Subject: Re: [PATCH V2] scsi: ufs: ufs-qcom: add fixup_dev_quirks vops
+Message-ID: <20240828140805.zhvand7q3wbdmfrt@thinkpad>
+References: <20240828134032.10663-1-quic_mapa@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240828134032.10663-1-quic_mapa@quicinc.com>
 
-Test that one cycles event is opened for each core PMU when "perf stat"
-is run without arguments.
+On Wed, Aug 28, 2024 at 07:10:32PM +0530, Manish Pandey wrote:
+> Add fixup_dev_quirk vops in QCOM UFS platforms and provide an initial
+> vendor-specific device quirk table to add UFS device specific quirks
+> which are enabled only for specified UFS devices.
+> 
 
-The event line can either be output as "pmu/cycles/" or just "cycles" if
-there is only one PMU. Include 2 spaces for padding in the one PMU case
-to avoid matching when the word cycles is included in metric
-descriptions.
+Why the quirks are enabled only for Qcom platforms? If these are required by the
+UFS device, then they should be added to ufs_fixups[] in ufshcd.c.
 
-Signed-off-by: James Clark <james.clark@linaro.org>
----
- tools/perf/tests/shell/stat.sh | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+> Micron and Skhynix UFS device needs DELAY_BEFORE_LPM quirk to have a
+> delay before VCC is powered off.
+> 
 
-diff --git a/tools/perf/tests/shell/stat.sh b/tools/perf/tests/shell/stat.sh
-index 525d0c44fdc6..24ace1de71cc 100755
---- a/tools/perf/tests/shell/stat.sh
-+++ b/tools/perf/tests/shell/stat.sh
-@@ -148,6 +148,26 @@ test_cputype() {
-   echo "cputype test [Success]"
- }
- 
-+test_hybrid() {
-+  # Test the default stat command on hybrid devices opens one cycles event for
-+  # each CPU type.
-+  echo "hybrid test"
-+
-+  # Count the number of core PMUs
-+  pmus=$(ls /sys/bus/event_source/devices/*/cpus 2>/dev/null | wc -l)
-+
-+  # Run default Perf stat
-+  cycles_events=$(perf stat -- true 2>&1 | grep -E "/cycles/|  cycles  " | wc -l)
-+
-+  if [ "$pmus" -ne "$cycles_events" ]
-+  then
-+    echo "hybrid test [Found $pmus PMUs but $cycles_events cycles events. Failed]"
-+    err=1
-+    return
-+  fi
-+  echo "hybrid test [Success]"
-+}
-+
- test_default_stat
- test_stat_record_report
- test_stat_record_script
-@@ -155,4 +175,5 @@ test_stat_repeat_weak_groups
- test_topdown_groups
- test_topdown_weak_groups
- test_cputype
-+test_hybrid
- exit $err
+Micron fix is already part of ufs_fixups[].
+
+> Toshiba UFS devices require delay after VCC power rail is turned-off
+> in QCOM platforms. Hence add Toshiba vendor ID and DELAY_AFTER_LPM
+> quirk for Toshiba UFS devices in QCOM platforms.
+> 
+
+This sounds like the issue is specific to Qcom platforms only.
+
+> Signed-off-by: Manish Pandey <quic_mapa@quicinc.com>
+> ---
+
+Where is the changelog?
+
+- Mani
+
+>  drivers/ufs/host/ufs-qcom.c | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> index 810e637047d0..9dbfbe643e5e 100644
+> --- a/drivers/ufs/host/ufs-qcom.c
+> +++ b/drivers/ufs/host/ufs-qcom.c
+> @@ -834,6 +834,25 @@ static int ufs_qcom_apply_dev_quirks(struct ufs_hba *hba)
+>  	return err;
+>  }
+>  
+> +/* UFS device-specific quirks */
+> +static struct ufs_dev_quirk ufs_qcom_dev_fixups[] = {
+> +	{ .wmanufacturerid = UFS_VENDOR_MICRON,
+> +	  .model = UFS_ANY_MODEL,
+> +	  .quirk = UFS_DEVICE_QUIRK_DELAY_BEFORE_LPM },
+> +	{ .wmanufacturerid = UFS_VENDOR_SKHYNIX,
+> +	  .model = UFS_ANY_MODEL,
+> +	  .quirk = UFS_DEVICE_QUIRK_DELAY_BEFORE_LPM },
+> +	{ .wmanufacturerid = UFS_VENDOR_TOSHIBA,
+> +	  .model = UFS_ANY_MODEL,
+> +	  .quirk = UFS_DEVICE_QUIRK_DELAY_AFTER_LPM },
+> +	{}
+> +};
+> +
+> +static void ufs_qcom_fixup_dev_quirks(struct ufs_hba *hba)
+> +{
+> +	ufshcd_fixup_dev_quirks(hba, ufs_qcom_dev_fixups);
+> +}
+> +
+>  static u32 ufs_qcom_get_ufs_hci_version(struct ufs_hba *hba)
+>  {
+>  	return ufshci_version(2, 0);
+> @@ -1798,6 +1817,7 @@ static const struct ufs_hba_variant_ops ufs_hba_qcom_vops = {
+>  	.link_startup_notify    = ufs_qcom_link_startup_notify,
+>  	.pwr_change_notify	= ufs_qcom_pwr_change_notify,
+>  	.apply_dev_quirks	= ufs_qcom_apply_dev_quirks,
+> +	.fixup_dev_quirks       = ufs_qcom_fixup_dev_quirks,
+>  	.suspend		= ufs_qcom_suspend,
+>  	.resume			= ufs_qcom_resume,
+>  	.dbg_register_dump	= ufs_qcom_dump_dbg_regs,
+> -- 
+> 2.17.1
+> 
+
 -- 
-2.34.1
-
+மணிவண்ணன் சதாசிவம்
 
