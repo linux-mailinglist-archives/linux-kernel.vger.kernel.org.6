@@ -1,144 +1,175 @@
-Return-Path: <linux-kernel+bounces-305637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 298A7963187
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:15:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C518963190
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:15:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0B3AB23901
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:15:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 189DE287C91
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E261AC442;
-	Wed, 28 Aug 2024 20:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852511A2554;
+	Wed, 28 Aug 2024 20:15:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iYp3NnJU"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="QexoVRSQ"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD4E15AAD3
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 20:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEAB21ABED1
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 20:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724876122; cv=none; b=lbfPoXE7B6+G/MmHqiW2WbnXW/FaEQklpsC4WK2JaKuyy4HkZChe46KaKlT8SdtVCfXrOjgYqnsiXNmr9XLRLAJL5HwyoXzjRPwxtoNF4L0Sz9XHmGaA7wXKlmF49F3uWnBoJWxlNtW+WFKA5GCK/l1NRX8cRiYuX9NaWCvUesQ=
+	t=1724876137; cv=none; b=jKF1FfvAzOIfOSXh/TnhRGJM7FDv6OVPnZGETHTgOx2TvVZ+DXw9VaJi+uS5uGY/8pIcJbb27k8rwnRGy21BP787FDgI2i/kiYYE2AmPZ1KCxoxE/3PRLL7TUOLDOwzMAMT4RTAKuls+TzWaRPXzQzSp3JJNndsqhDvI4LD/qwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724876122; c=relaxed/simple;
-	bh=qMv8kS2wPT6Fcpvyz9ylAaj6cJnDHn1M2evcby3D154=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=X/YI32ca7ilNDvhHxOlW0BCIQc1MPe96s7AdgRMa5JvVmg5dmGXW1W9F4FSAdbLmrqNdGxF8pSENU/z4U0gLZpYUq0z8/iujxxGEPQY9/BeNFzImlGw6c5AYrgIAddK2CD2v7XisR7n3NfQbzGUekoPYsNVedViKcCPmSBTdOf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=iYp3NnJU; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71433cba1b7so5338928b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 13:15:20 -0700 (PDT)
+	s=arc-20240116; t=1724876137; c=relaxed/simple;
+	bh=bYt3NNBaLSmLKZlvbIxmegVun2i4HAdZ1sNs8730jNM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fo6BK+pr7Nv3PmB1DK0QmnwSyovlkWsHszBg4japA0tMCLz662zsa8GFc3R4nDX+8myFdHYcvynE3DoUSYy8hG2RumNDvcSUWSCXpsYgSvzEYNgN2Z4GC37Kwu0/BJp0Z+7UxVlvI2gGjSxVRFM8Fx48jVs/gXb57Gg0LGh3290=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=QexoVRSQ; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-714302e7285so5766981b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 13:15:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724876120; x=1725480920; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YVCTrbMf1sTGotshIDLMzBV9qNa2qrimN7njbsJ8Bu4=;
-        b=iYp3NnJUdEbggGzcs5CktNlAumANjgyoFfdJkrD6Pf7jA97MhN5Y2Z8w0vN4rgDQpf
-         yyJ/q7wmaE6uJ43mcmUOzQ2MnRHVATTlxka90Z2Kh8aXMgrknz3wkhJf+Q2LBVVVb37c
-         0LL08rFAMWG16jt1wd4OnANxMfKJx1WIi1/tk=
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1724876135; x=1725480935; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DYouNjU8LVMpXKc1rxZ9hcDgJ8HQG0MfeaXtb0VLyGI=;
+        b=QexoVRSQ+Qj1kBx1FyMlS7JWbF7HpN1U2iPzAVYOglWarAkEuOtXBpiIwMac67nzqH
+         rp1HBZBu6/+9xmHswfdeQC5EZmXjIw442shzAg6hCloVi2Rd3Igco0A6VEhi1hcDdFkR
+         iQ1aTv8K7wXaArOdVlpCpNH/TkW2MFEl3riUVSiBBBhpqsHPD+G6zAY5zgw2H3RfnPW4
+         /ipyK8AqIXQBU8TC4E9g8ks0FyU9cGLb81iW8B+v7zZAYXijInaq2guKXM8g9NhZhCkl
+         C59RhhFnsd5uO9ErfvBJXDMUOSV6WTtvJ/d78yDM3OQTdKx4qrcV0JMZAlGu9AZ6vkBF
+         FzZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724876120; x=1725480920;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YVCTrbMf1sTGotshIDLMzBV9qNa2qrimN7njbsJ8Bu4=;
-        b=sFB8TFxC7ZS0xG13w2j7lfheHmqqrRmZgpdvdJnu9Oj0JBW8yT7eRmTXJKXkIXcKzT
-         sP8HiLr/Wioe3ptJY2hpfNn4yiwVdfmGVhoE4562ZfmKCB5yXgkcKFMlD2WxhvZyimKf
-         POGU9nXdbIyelJDEWUAVTIxMRW01rQfcKDY9OJV579njeMBTODMy/ebMiWtlfGJ9Yx+C
-         EEZbWuMcZBPn5HRyEbPYXIWd6T8kW2rt0LMmqvw1v8m3f8iADPFwlWs/ojJnUi6yV6w7
-         btOUgkY1kj3TIhT4DXpnWjB4nT8BkC+DmPPQoBtbLqOT6OI7joFLDO073J2w0frfmLV9
-         cSzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVgScwB7b9Ttao+JKnZAAsNMx8RCJaJ8aF4Vo40BwmVzmHDHAGve58LIRWg+Mzst/2Z1+26SLlBAsqdyXI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgsiRrQIGcqo1rW9joMu6do5/y6BhOa094kgzMC1Sos2cupJWn
-	Tl38/KrccI/8F+j3Upx1Iwsol7Va7sTBLYwD/s4YaIQa9LhUvBvsEYv0/mUnDLL8M0kMOYz99vL
-	s9iEoQY8=
-X-Google-Smtp-Source: AGHT+IEqNESDw8taCPOE3BDUJfZvlbdfYPNLgxGnEs7m34KKf/NxICGBeft9wHZ473VFtIA4WWseUQ==
-X-Received: by 2002:a05:6a21:6e4b:b0:1cc:c202:b289 with SMTP id adf61e73a8af0-1cce0eeb267mr632164637.0.1724876120146;
-        Wed, 28 Aug 2024 13:15:20 -0700 (PDT)
-Received: from htcheong-p620.tpe.corp.google.com ([2401:fa00:1:17:12b:e9e8:cb3:7d66])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71434255548sm10496322b3a.79.2024.08.28.13.15.18
+        d=1e100.net; s=20230601; t=1724876135; x=1725480935;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DYouNjU8LVMpXKc1rxZ9hcDgJ8HQG0MfeaXtb0VLyGI=;
+        b=Wygb0K2N+ZWoBemRWdeTvTYRL+2+6C3T33XOvMUGcx0RVs2rYOx5VZ4G4XfGd/zmvz
+         SYC+WOPZWNxFH+bPIxKqYWcMuF5WBX0lQVM3fmw0VsUfxmVBZV0LA1L+wkT1JCpuzSWE
+         7AMve53J47L2EnI5zr0Swh+VpmL2rtEzg5GcYE9139dmG3dFF9QJ4zDsZ4cR6/8GqbX7
+         Vts/0qSHe9EdXkT+i8uox+2CcV7KfBl11TN4lyFAY5Aq2oJ325v8fMz+Ygsk7ZMivREQ
+         m3dviluoWppBl1KTggWodnbkS0KQKTsEL0ysVDrUkVIu0MFT/TN2A9yd1jCfe8DxXmz1
+         Z1GA==
+X-Forwarded-Encrypted: i=1; AJvYcCUt8yLhcAEakY5WZhC2lWbSHdgl2ofRPXNybUDjQ+gmEWYXmgyIZe89dse4tEFP7GjjL2BX/N8PyWfjbR0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT6CGP5fnVPttWZpm6CxHFHeq/PzYr9P+egm0/0IIkQr5XtHuK
+	WGdLhOPvHzJrIj3OpeUZqtzfNcRULu2zPcvg2OhZAsuwDbqUiD6EhccuLc+0/lo=
+X-Google-Smtp-Source: AGHT+IHnVszzxRV7qQ07aFqnxjDB7ZJDRj+3FpzGhCxnl0U0Ndnw3gA3qfk5sipB0cB/w/7yeJxxIA==
+X-Received: by 2002:aa7:88cf:0:b0:714:15ff:a2a4 with SMTP id d2e1a72fcca58-715dfc042a7mr734410b3a.13.1724876134994;
+        Wed, 28 Aug 2024 13:15:34 -0700 (PDT)
+Received: from ghost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-714343097fasm10850305b3a.173.2024.08.28.13.15.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 13:15:19 -0700 (PDT)
-From: Terry Cheong <htcheong@chromium.org>
-Date: Thu, 29 Aug 2024 04:15:16 +0800
-Subject: [PATCH] ASoC: patch_realtek: add chain for fixups in Lenovo V145
+        Wed, 28 Aug 2024 13:15:34 -0700 (PDT)
+Date: Wed, 28 Aug 2024 13:15:29 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Russell King <linux@armlinux.org.uk>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	linux-riscv@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	linux-mm@kvack.org, loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 00/16] mm: Introduce MAP_BELOW_HINT
+Message-ID: <Zs+FYbII0ewwdisg@ghost>
+References: <20240827-patches-below_hint_mmap-v1-0-46ff2eb9022d@rivosinc.com>
+ <fd1b8016-e73d-4535-9c67-579ab994351f@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240829-lenovo-v145-fixes-v1-1-133d1e6813b3@chromium.org>
-X-B4-Tracking: v=1; b=H4sIAFOFz2YC/x3LQQqAIBBA0avErBtQUciuEi1KpxoIDQUJors3t
- Hx8/gOVClOFsXugUOPKOQl030E4lrQTchSDUcaqwXg8KeWWsWnrcOObKnoVtFpsXIN3IN9V6A+
- yTfP7fhAk3gJjAAAA
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Terry Cheong <htcheong@chromium.org>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fd1b8016-e73d-4535-9c67-579ab994351f@intel.com>
 
-Lenovo V145 is having phase inverted dmic but simply applying inverted
-dmic fixups does not work. Chaining up verb fixes for ALC283 enables
-inverting dmic fixup to work properly.
+On Wed, Aug 28, 2024 at 11:29:56AM -0700, Dave Hansen wrote:
+> On 8/27/24 22:49, Charlie Jenkins wrote:
+> > Some applications rely on placing data in free bits addresses allocated
+> > by mmap. Various architectures (eg. x86, arm64, powerpc) restrict the
+> > address returned by mmap to be less than the maximum address space,
+> > unless the hint address is greater than this value.
+> 
+> Which applications are these, btw?
 
-Signed-off-by: Terry Cheong <htcheong@chromium.org>
----
- sound/pci/hda/patch_realtek.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Java and Go require this feature. These applications store flags that
+represent the type of data a pointer holds in the upper bits of the
+pointer itself.
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 588738ce7380..bbda235ea96c 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -7538,6 +7538,7 @@ enum {
- 	ALC236_FIXUP_HP_GPIO_LED,
- 	ALC236_FIXUP_HP_MUTE_LED,
- 	ALC236_FIXUP_HP_MUTE_LED_MICMUTE_VREF,
-+	ALC236_FIXUP_LENOVO_INV_DMIC,
- 	ALC298_FIXUP_SAMSUNG_AMP,
- 	ALC298_FIXUP_SAMSUNG_AMP2,
- 	ALC298_FIXUP_SAMSUNG_HEADPHONE_VERY_QUIET,
-@@ -9161,6 +9162,12 @@ static const struct hda_fixup alc269_fixups[] = {
- 		.type = HDA_FIXUP_FUNC,
- 		.v.func = alc236_fixup_hp_mute_led_micmute_vref,
- 	},
-+	[ALC236_FIXUP_LENOVO_INV_DMIC] = {
-+		.type = HDA_FIXUP_FUNC,
-+		.v.func = alc_fixup_inv_dmic,
-+		.chained = true,
-+		.chain_id = ALC283_FIXUP_INT_MIC,
-+	},
- 	[ALC298_FIXUP_SAMSUNG_AMP] = {
- 		.type = HDA_FIXUP_FUNC,
- 		.v.func = alc298_fixup_samsung_amp,
-@@ -10707,6 +10714,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x17aa, 0x3855, "Legion 7 16ITHG6", ALC287_FIXUP_LEGION_16ITHG6),
- 	SND_PCI_QUIRK(0x17aa, 0x3865, "Lenovo 13X", ALC287_FIXUP_CS35L41_I2C_2),
- 	SND_PCI_QUIRK(0x17aa, 0x3866, "Lenovo 13X", ALC287_FIXUP_CS35L41_I2C_2),
-+	SND_PCI_QUIRK(0x17aa, 0x3913, "Lenovo 145", ALC236_FIXUP_LENOVO_INV_DMIC),
- 	SND_PCI_QUIRK(0x17aa, 0x3869, "Lenovo Yoga7 14IAL7", ALC287_FIXUP_YOGA9_14IAP7_BASS_SPK_PIN),
- 	SND_PCI_QUIRK(0x17aa, 0x386e, "Legion Y9000X 2022 IAH7 / Yoga Pro 7 14ARP8",  ALC287_FIXUP_LENOVO_14ARP8_LEGION_IAH7),
- 	SND_PCI_QUIRK(0x17aa, 0x386f, "Legion Pro 7/7i", ALC287_FIXUP_LENOVO_LEGION_7),
-@@ -10994,6 +11002,7 @@ static const struct hda_model_fixup alc269_fixup_models[] = {
- 	{.id = ALC623_FIXUP_LENOVO_THINKSTATION_P340, .name = "alc623-lenovo-thinkstation-p340"},
- 	{.id = ALC255_FIXUP_ACER_HEADPHONE_AND_MIC, .name = "alc255-acer-headphone-and-mic"},
- 	{.id = ALC285_FIXUP_HP_GPIO_AMP_INIT, .name = "alc285-hp-amp-init"},
-+	{.id = ALC236_FIXUP_LENOVO_INV_DMIC, .name = "alc236-fixup-lenovo-int-mic"},
- 	{}
- };
- #define ALC225_STANDARD_PINS \
+> 
+> Is this the same crowd as the folks who are using the address tagging
+> features like X86_FEATURE_LAM?
 
----
-base-commit: 86987d84b968b69a610fd00ab9006c13db193b4e
-change-id: 20240829-lenovo-v145-fixes-90c10a4dbc95
+Yes it is. LAM helps to mask the bits out on x86, and this feature could
+be used to ensure that mmap() doesn't return an address with bits that
+would be masked out. I chose not to tie this feature to x86 LAM which
+only has masking boundaries at 57 and 48 bits to allow it to be
+independent of architecture specific address masking.
 
-Best regards,
--- 
-Terry Cheong <htcheong@chromium.org>
+> 
+> Even if they are different, I also wonder if a per-mmap() thing
+> MAP_BELOW_HINT is really what we want.  Or should the applications
+> you're trying to service here use a similar mechanism to how LAM affects
+> the *whole* address space as opposed to an individual mmap().
+
+LAM is required to be enabled for entire address spaces because the
+hardware needs to be configured to mask out the bits. It is not possible
+to influence the granularity of LAM in the current implementation.
+However mmap() does not require any of this hardware configuration so it
+is possible to have finer granularity.
+
+A way to restrict mmap() to return LAM compliant addresses in an entire
+address space also doesn't have to be mutually exclusive with this flag.
+This flag allows for the greatest degree of control from applications.
+I don't believe there is additionally performance saving that could be
+achieved by having this be on a per address space basis.
+
+Link: https://cdrdv2.intel.com/v1/dl/getContent/671368 [1]
+
+- Charlie
 
 
