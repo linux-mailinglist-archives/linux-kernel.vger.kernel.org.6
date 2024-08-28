@@ -1,115 +1,128 @@
-Return-Path: <linux-kernel+bounces-304168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C499961B50
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 03:15:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96C0A961B53
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 03:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECAC61F24966
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 01:15:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B69D71C2306B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 01:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D521CF93;
-	Wed, 28 Aug 2024 01:15:37 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949B2442C;
-	Wed, 28 Aug 2024 01:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522661DFE1;
+	Wed, 28 Aug 2024 01:17:54 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54731BC20;
+	Wed, 28 Aug 2024 01:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724807737; cv=none; b=kkMTdVQ9CyV7z1K72xM3nrkIkKA2EaAOGdDqZGPfHC4XqXo7dvaSi6zJ1ePVqvkLlg40rAvWvTkq6OA43O+1Sr6ve3fAE4GiKrfjkkvQXdJSM8po84bQqn43ZrVwvyQyQCBYZlSItsxvIOChem76r7tA/HDdiR+WOqev5rZyv2U=
+	t=1724807873; cv=none; b=nRDbQl7qJvvzR11zor+LHY+jP+pc3ft/wP0xC1N+sMMmwQWdKGAiEuyphs9gzZ+Hz4a+A+tr1AgjXMeFgqLs9/y82S4BEr3YDoc03bEm+LwwQuIOwGjkqK30F57od2ksZr5AD1nfHbWlHO6eheOR/ei50kdBf8Qjhf6GT30+qW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724807737; c=relaxed/simple;
-	bh=Y+gYAukgE39yoKxYdBAwlvlGNX4WZY3xLc1uhsYJpTc=;
+	s=arc-20240116; t=1724807873; c=relaxed/simple;
+	bh=anBMYk/AkNGIYgIbFQ2vsi883u3+psNqsyojaceT/a4=;
 	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=EM0RCz1u1Cpk8pQ3VUJ3mYLkcdOEqgnhK+f4wxCPEkOQQDFOOQbSj9W2YVs2zF6BfE/SDzLra6+85CaC3N36kS1k3GFv9Ax056gbM4RWBA/9JjbaU8XMyPjbpp6VrY4XWSWWe1qnY+Kxrxn17B0hR6iDiLhATknC6zBvoBUNJmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Wtmg82pjDz4f3jMr;
-	Wed, 28 Aug 2024 09:15:16 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id EC0981A07B6;
-	Wed, 28 Aug 2024 09:15:30 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgCHr4Uxes5mFzKoCw--.23691S3;
-	Wed, 28 Aug 2024 09:15:30 +0800 (CST)
-Subject: Re: [PATCH md-6.12 v2 00/42] md/md-bitmap: introduce
- bitmap_operations and make structure internal
-To: Song Liu <song@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: mariusz.tkaczyk@linux.intel.com, xni@redhat.com,
- linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20240826074452.1490072-1-yukuai1@huaweicloud.com>
- <CAPhsuW6NOW9wuYD3ByJbbem79Nwq5LYcpXDj5RcpSyQ67ZHZAA@mail.gmail.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <5efeec29-cf13-a872-292c-dd7737a02d68@huaweicloud.com>
-Date: Wed, 28 Aug 2024 09:15:28 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	 In-Reply-To:Content-Type; b=BaszrwZbuDmxqo2BnB3OYKH7tNPHLSDknzTa/bdqkI8CWfLIQS0dR3UOJbPtoxqJ0ILT7AQ5dfzX2Pgg9xEl1y3Ngumb83mN+3hN3BNfHmpjmJPItxjavW1n556+Vzw3jBcDEhNTx4d/IyLZgsacCAd6LIe8BCeB169Kx+CK5gQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8Axz5u9es5mST8iAA--.43073S3;
+	Wed, 28 Aug 2024 09:17:49 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowMDxmWa8es5mTwQlAA--.1533S3;
+	Wed, 28 Aug 2024 09:17:48 +0800 (CST)
+Subject: Re: [RFC 0/2] irqchip/loongson-eiointc: Add multiple interrupt pin
+ routing support
+To: Jianmin Lv <lvjianmin@loongson.cn>
+Cc: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+ Thomas Gleixner <tglx@linutronix.de>, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
+References: <20240821101153.2262290-1-maobibo@loongson.cn>
+ <CAAhV-H6tMB9ASYFTdRBEFL0tG1jpjaa-iGRGBuUKUu=sCqxJ2Q@mail.gmail.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <1bca504f-55ec-6072-09de-97ed5bf79120@loongson.cn>
+Date: Wed, 28 Aug 2024 09:17:21 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAPhsuW6NOW9wuYD3ByJbbem79Nwq5LYcpXDj5RcpSyQ67ZHZAA@mail.gmail.com>
+In-Reply-To: <CAAhV-H6tMB9ASYFTdRBEFL0tG1jpjaa-iGRGBuUKUu=sCqxJ2Q@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHr4Uxes5mFzKoCw--.23691S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrZF1kZFy5tw4kCw4Uury5CFg_yoWxKrbEvw
-	1jyrykWw43AF42k3W7XF45ZrZ0y3s3GFnxX395tFW8Z34rZa43CFsYk34ftFn3Ww4Syr9a
-	9rWjy3yrtr15AjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
-	Y487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa
-	73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-CM-TRANSID:qMiowMDxmWa8es5mTwQlAA--.1533S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7ZF43XF1fZr4DGw1kuryUJwc_yoW8Wr18pa
+	yUCan09FWUtFyayF9ayF1Uta4Yyr93J39rZa9rJrWUZF98KF1jqr18KFWYyF1Uu34kJw10
+	vF1rJw1Uu3Z8AagCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
+	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AK
+	xVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzV
+	AYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
+	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIx
+	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAF
+	wI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F
+	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07josjUU
+	UUUU=
 
-Hi,
 
-在 2024/08/28 4:32, Song Liu 写道:
-> On Mon, Aug 26, 2024 at 12:50 AM Yu Kuai <yukuai1@huaweicloud.com> wrote:
+Jianmin,
+
+We know that you are busy, Would you like spend some time to give some 
+feedback?
+
+And I recommend you as maintainer of interrupt controller since you are 
+author the this piece of code. Also I am willing to become new reviewer 
+about eiointc driver since VM will use it always.
+
+The eiointc driver is important, it need evolution rather than post the 
+code and finish job, everything is done.
+
+Regards
+Bibo Mao
+
+On 2024/8/26 下午10:46, Huacai Chen wrote:
+> Hi, Jianmin,
+> 
+> What's your opinion on this series?
+> 
+> Huacai
+> 
+> On Wed, Aug 21, 2024 at 6:11 PM Bibo Mao <maobibo@loongson.cn> wrote:
 >>
-> [...]
+>> There are four times about EIOINTC_REG_ISR register group access in
+>> eiointc irq handler, in order to get all irq status about 256 interrupt
+>> vectors. It causes four times VM-exits since eiointc register are
+>> software emulated, here multiple interrupt pin routing is introduced
+>> and each 64 interrupt vector is routed to one interrupt pin.
 >>
->> And with this we can build bitmap as kernel module, but that's not
->> our concern for now.
+>> With this method, there will be only on one EIOINTC_REG_ISR register
+>> group acces in irq handler, it will reduce VM-exits.
 >>
->> This version was tested with mdadm tests. There are still few failed
->> tests in my VM, howerver, it's the test itself need to be fixed and
->> we're working on it.
-> 
-> Do we have new test failures after this set? If so, which ones?
-
-No, there are new failures.
-
-Thanks,
-Kuai
-
-> 
-> Thanks,
-> Song
-> 
->> Yu Kuai (42):
->>    md/raid1: use md_bitmap_wait_behind_writes() in raid1_read_request()
->>    md/md-bitmap: replace md_bitmap_status() with a new helper
->>      md_bitmap_get_stats()
-> 
-> [...]
-> .
-> 
+>> Bibo Mao (2):
+>>    irqchip/loongson-eiointc: Route interrupt parsed from acpi table
+>>    irqchip/loongson-eiointc: Add multiple interrupt pin routing support
+>>
+>>   arch/loongarch/kernel/irq.c            |  3 +-
+>>   arch/loongarch/kernel/smp.c            |  2 +-
+>>   drivers/irqchip/irq-loongson-eiointc.c | 66 +++++++++++++++++++++++---
+>>   3 files changed, 62 insertions(+), 9 deletions(-)
+>>
+>>
+>> base-commit: 1fb918967b56df3262ee984175816f0acb310501
+>> --
+>> 2.39.3
+>>
+>>
 
 
