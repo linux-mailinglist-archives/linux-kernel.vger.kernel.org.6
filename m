@@ -1,220 +1,253 @@
-Return-Path: <linux-kernel+bounces-305186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6278962AA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:46:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD2939629A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:04:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27D691F22A36
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:46:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EA95282D0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4BA1A01C6;
-	Wed, 28 Aug 2024 14:45:52 +0000 (UTC)
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A665E188CC8;
+	Wed, 28 Aug 2024 14:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ACyMqVz3"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4C4184528
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D67113BAC3
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724856351; cv=none; b=OCpif08ir8+e7M0w2SR0fg4JkrTlNbo4AkyAlKj3uUAL5fKeau2hHdC1cpc+W4Arl7TyTe9nxjJz1wxwpeiGatDWEW1gOUiVrICMobCSSfmhZekJsNnNPP/J3XWmhVbjONqd7yCEdRSm1I4w3s/kTczwEHgy+MX1NrQb37cuG+M=
+	t=1724853852; cv=none; b=T3xp9imOqf/2jBWJ2cO0TLyWTz9bGIrHMGC0jHeDewkexDyGdwpnYYFpLOFTayHPlkKho3ZZObY5L0cWz7vhUxOCLiTFxqOz+dg/VR+l7iT5c5LFynekQblsElMt46gLjAxE8mmZqkC1B4MHgC1sZDmWtZ5mXuXaFH02Vaxga1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724856351; c=relaxed/simple;
-	bh=OohwAWyKF0rEJoxdf2Uc5m1qShP7B4H33VP7hQy0yso=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=hslBfxV5g63t+LmCeX1K+kTfdK4jhmzq4lePB8MVMhLC30YH8hmwZ3ca5/bJnhfTuCiPZw9Up5crm6GA7vadrMBDrffdcFn455w6YgfDceEoQ9KJX2jg5LcZWuLyZudg3Xq5vE8Lm+9pItaKLs8ISj0EcSCo2MI2BGgXJ1j4qfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in01.mta.xmission.com ([166.70.13.51]:35780)
-	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1sjImy-002eM1-Lr; Wed, 28 Aug 2024 07:32:44 -0600
-Received: from ip68-227-165-127.om.om.cox.net ([68.227.165.127]:43674 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1sjImx-007Ewp-HU; Wed, 28 Aug 2024 07:32:44 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Theodore Dubois <tblodt@icloud.com>
-Cc: linux-kernel@vger.kernel.org,  Ryan Houdek <sonicadvance1@gmail.com>,
-  "Guilherme G. Piccoli" <gpiccoli@igalia.com>,  David Hildenbrand
- <david@redhat.com>,  Kees Cook <keescook@chromium.org>
-References: <20240827215930.24703-1-tblodt@icloud.com>
-Date: Wed, 28 Aug 2024 08:32:20 -0500
-In-Reply-To: <20240827215930.24703-1-tblodt@icloud.com> (Theodore Dubois's
-	message of "Tue, 27 Aug 2024 21:59:30 +0000")
-Message-ID: <87ed68wz6j.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1724853852; c=relaxed/simple;
+	bh=625nPABDAsbYpcGVQ/1W/YAg0vPcnflJvc/EZPD8tLY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=goP1xVUhGkZiSM2f3LEqTKzuku4nzH1usJaSYMYNqfFkXovIoCHWjRPuORCOdfuj/hqMz9mg639LEKmv7ZB04VAuNsPU8Kwqq+a9XhPFYAtUYwvAbxoiKMRDYw1B0BoNK3yE7y6IggRtUmjxCN0warubHdqzJeusLma/3ZKfPuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ACyMqVz3; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240828140408epoutp02b5b79a76b60b92f1eb1a3c7f1e69c2dd~v6W_vgMWt1546615466epoutp02X
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:04:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240828140408epoutp02b5b79a76b60b92f1eb1a3c7f1e69c2dd~v6W_vgMWt1546615466epoutp02X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724853848;
+	bh=UBIHwfOH5u/IlQ+B1K3l4RbT3dJKmyIOdW9JVzVTArg=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=ACyMqVz3zjrkd442+0FHj/u2vSCRwEJqL+scso2RxHWKb0gnUeM792cPkhS+Ypqvm
+	 Gh2+ihzGpAThpuSJoAzeTgRTKwRAUZ2F94V96Fvk7JMJV6TEki2hcq2UuSakHO+L+W
+	 KrsDOIJmTjDDiZQEGKRL6NepucfI+GsgVDoT41pY=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240828140407epcas5p2e191364bc7e5cd8fbed9d1103525a6ea~v6W_LrXXO0383003830epcas5p2M;
+	Wed, 28 Aug 2024 14:04:07 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.175]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4Wv5kG15lnz4x9Pr; Wed, 28 Aug
+	2024 14:04:06 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	2D.BE.09743.55E2FC66; Wed, 28 Aug 2024 23:04:06 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240828140055epcas5p1f69e5e9d00db08c1e28f184f4c250fc7~v6UK8acPH1574815748epcas5p1F;
+	Wed, 28 Aug 2024 14:00:55 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240828140055epsmtrp1b918d7d2d3b147b64487b211f5ecf469~v6UK7j_kL0452404524epsmtrp1S;
+	Wed, 28 Aug 2024 14:00:55 +0000 (GMT)
+X-AuditID: b6c32a4a-14fff7000000260f-dc-66cf2e5574d8
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	95.CF.19367.69D2FC66; Wed, 28 Aug 2024 23:00:54 +0900 (KST)
+Received: from [107.122.5.126] (unknown [107.122.5.126]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240828140051epsmtip17d187f7e56113552fe0b036c01e1dfa1~v6UHQkWjw2041720417epsmtip1S;
+	Wed, 28 Aug 2024 14:00:51 +0000 (GMT)
+Message-ID: <4379d7fb-9f80-429b-a81a-12760a527cae@samsung.com>
+Date: Wed, 28 Aug 2024 19:30:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1sjImx-007Ewp-HU;;;mid=<87ed68wz6j.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.165.127;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX19FmAXIn7xhpqXgAi0nUvZr+J5CSYV5c1M=
-X-SA-Exim-Connect-IP: 68.227.165.127
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Level: ****
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.5000]
-	*  0.5 XMGappySubj_01 Very gappy subject
-	*  1.0 XMGappySubj_02 Gappier still
-	*  0.7 XMSubLong Long Subject
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  0.4 FVGT_m_MULTI_ODD Contains multiple odd letter combinations
-	*  1.0 T_XMDrugObfuBody_08 obfuscated drug references
-	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
-	*  1.0 XMSubMetaSx_00 1+ Sexy Words
-	*  0.0 XM_B_AI_SPAM_COMBINATION Email matches multiple AI-related
-	*      patterns
-X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ****;Theodore Dubois <tblodt@icloud.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 552 ms - load_scoreonly_sql: 0.17 (0.0%),
-	signal_user_changed: 14 (2.5%), b_tie_ro: 11 (2.0%), parse: 1.24
-	(0.2%), extract_message_metadata: 26 (4.6%), get_uri_detail_list: 4.0
-	(0.7%), tests_pri_-2000: 38 (6.9%), tests_pri_-1000: 2.6 (0.5%),
-	tests_pri_-950: 1.44 (0.3%), tests_pri_-900: 1.25 (0.2%),
-	tests_pri_-90: 116 (21.1%), check_bayes: 112 (20.3%), b_tokenize: 11
-	(2.1%), b_tok_get_all: 13 (2.4%), b_comp_prob: 6 (1.0%),
-	b_tok_touch_all: 74 (13.4%), b_finish: 1.75 (0.3%), tests_pri_0: 335
-	(60.6%), check_dkim_signature: 0.60 (0.1%), check_dkim_adsp: 3.9
-	(0.7%), poll_dns_idle: 1.65 (0.3%), tests_pri_10: 2.4 (0.4%),
-	tests_pri_500: 11 (2.0%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] prctl: allow prctl_set_mm_exe_file without unmapping
- old exe
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usb: gadget: udc: Add null pointer check for udc in
+ gadget_match_driver
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: stern@rowland.harvard.edu, royluo@google.com, paul@crapouillou.net,
+	elder@kernel.org, yuanlinyu@hihonor.com, quic_kriskura@quicinc.com,
+	crwulff@gmail.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	jh0801.jung@samsung.com, dh10.jung@samsung.com, naushad@samsung.com,
+	akash.m5@samsung.com, rc93.raju@samsung.com, taehyun.cho@samsung.com,
+	hongpooh.kim@samsung.com, eomji.oh@samsung.com, shijie.cai@samsung.com,
+	stable <stable@kernel.org>
+Content-Language: en-US
+From: Selvarasu Ganesan <selvarasu.g@samsung.com>
+In-Reply-To: <2024082801-dissuade-starlight-e5ad@gregkh>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrEJsWRmVeSWpSXmKPExsWy7bCmpm6Y3vk0g6vzGC3eXF3FajH36G42
+	izsLpjFZ3Ds6m83i1PKFTBbNi9ezWUzas5XF4u7DHywWl3fNYbNYtKyV2eLT0f+sFv2LL7FY
+	fH/9kdViVeccFov2hlNsFpe/7wTKnr/AZjHhN5CYdFDU4uunS4wOIh6rL7WzeeycdZfdY8Gm
+	Uo85vyYze2xa1cnmsX/uGnaPiXvqPGbf/cHo0bdlFaPH501yAVxR2TYZqYkpqUUKqXnJ+SmZ
+	eem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QN8pKZQl5pQChQISi4uV9O1sivJL
+	S1IVMvKLS2yVUgtScgpMCvSKE3OLS/PS9fJSS6wMDQyMTIEKE7IzLu3ZyVZwU61i2Ue3BsYT
+	Cl2MnBwSAiYSbxo2M3YxcnEICexmlGje2scG4XxilNjTfpQRpArM6bgWBtPxfl0bC0TRTkaJ
+	S+cnsEI4bxkl/u1cANbBK2An0XdvCjOIzSKgKrG7/R8TRFxQ4uTMJywgtqiAvMT9WzPYQWxh
+	gTiJ3vNTwepFBDQkXh69BbaBWeAis8Tc509YQRLMAuISt57MBxrEwcEmYCjx7IQNSJhTwEJi
+	ze9WNogSeaAXZjOD9EoINHNKfPvzlhHibBeJ9+u3MEPYwhKvjm9hh7ClJF72t0HZ1RKr73xk
+	g2huYZQ4/OQbVMJe4vHRR8wgi5kFNCXW79KHCMtKTD21jgliMZ9E7+8nTBBxXokd82BsVYlT
+	jZfZIGxpiXtLrrFC2B4SV1uvM09gVJyFFC6zkLw5C8k/sxA2L2BkWcUomVpQnJueWmxaYJSX
+	Wg6P8OT83E2M4MSv5bWD8eGDD3qHGJk4GA8xSnAwK4nwnjh+Nk2INyWxsiq1KD++qDQntfgQ
+	oykwgiYyS4km5wNzT15JvKGJpYGJmZmZiaWxmaGSOO/r1rkpQgLpiSWp2ampBalFMH1MHJxS
+	DUx7AwOkVfwOfN13Rsq7YKvieY705zd8cl3P32f+KCYy6fWtr/nPdT2EnqR8UjypFLAqK056
+	/awdvkezb/xz5vb17Fs9S+Pt5bYdjEtil7kdMDnE9m66Z1Z3zZnXTpO3OfHZ8BQtOXBdcitX
+	jeXvg9bRtze4Z8x313ryYUafdEEw9xzJcpvY5BoFtz72xcr1XebFu/y/Rs1S5OFP+bRzQROT
+	tKKUrnrTuXWvqkP6C1Kytdhn8fJd9dd8srj8fdV6pW9Fs2beVItdoVsiydV1I/f/dWnltA3q
+	236djVmulHN4buFFjmbeya+eqj9b/HDu5pTMA4p9/hmTP6r2f3wo6sa5O+ZDq8z7HWGTPghv
+	KFJiKc5INNRiLipOBAB32lP/hQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFIsWRmVeSWpSXmKPExsWy7bCSnO403fNpBo8nWVm8ubqK1WLu0d1s
+	FncWTGOyuHd0NpvFqeULmSyaF69ns5i0ZyuLxd2HP1gsLu+aw2axaFkrs8Wno/9ZLfoXX2Kx
+	+P76I6vFqs45LBbtDafYLC5/3wmUPX+BzWLCbyAx6aCoxddPlxgdRDxWX2pn89g56y67x4JN
+	pR5zfk1m9ti0qpPNY//cNeweE/fUecy++4PRo2/LKkaPz5vkAriiuGxSUnMyy1KL9O0SuDIu
+	7dnJVnBTrWLZR7cGxhMKXYycHBICJhLv17WxdDFycQgJbGeUaFg0kRUiIS3xelYXI4QtLLHy
+	33N2iKLXjBInTreBFfEK2En03ZvCDGKzCKhK7G7/xwQRF5Q4OfMJC4gtKiAvcf/WDHYQW1gg
+	TqL3/FSwehEBDYmXR2+BbWYWuMgsMenZSiaIDXsZJe7svwrWwSwgLnHryXygBAcHm4ChxLMT
+	NiBhTgELiTW/W9kgSswkurZCXMoMtKx562zmCYxCs5DcMQvJpFlIWmYhaVnAyLKKUTS1oDg3
+	PTe5wFCvODG3uDQvXS85P3cTIzi6tYJ2MC5b/1fvECMTB+MhRgkOZiUR3hPHz6YJ8aYkVlal
+	FuXHF5XmpBYfYpTmYFES51XO6UwREkhPLEnNTk0tSC2CyTJxcEo1MElMy9tnKrmAO1ArUtFp
+	2rKUUqWk0N/L7VoP3G+ZzRbSkbSv8XRI+jt+7ssq7dO0uHqz5d4Kr6ot52o94n9np+29K/wP
+	fBT3nll83PPwqWntvXNtn71c8Nb8w7kpgTMVZi5SkvH3/jq9TUnPYtVdc6X8uTKhd09OVN7T
+	cPz8JFXDE6dunHHckRygtjTP3IYxXvTK6jXSWrPMORKtpz/lzkqb+Nq04J9FfZ5Eftz30MyT
+	mzaeFLqYrfv/XGH2RteqrlxDFs5ayVXJDtLHxSavP62vNOmVRM4Kw4iMiXYpGo/vlDxImfhs
+	7boXH4RXCh3+/vZ3eMseEaNNX44z+HorzXqUesIz4HUTm5xCsFbBbiWW4oxEQy3mouJEAAkU
+	O69dAwAA
+X-CMS-MailID: 20240828140055epcas5p1f69e5e9d00db08c1e28f184f4c250fc7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240828070538epcas5p2ce9b001afd4588139070d01f0fb2ac37
+References: <CGME20240828070538epcas5p2ce9b001afd4588139070d01f0fb2ac37@epcas5p2.samsung.com>
+	<20240828070507.2047-1-selvarasu.g@samsung.com>
+	<2024082801-dissuade-starlight-e5ad@gregkh>
 
 
-Theodore Dubois <tblodt@icloud.com> writes:
+On 8/28/2024 3:09 PM, Greg KH wrote:
+> On Wed, Aug 28, 2024 at 12:35:04PM +0530, Selvarasu Ganesan wrote:
+>> This commit adds a null pointer check for udc in gadget_match_driver to
+>> prevent the below potential dangling pointer access. The issue arises
+>> due to continuous USB role switch and simultaneous UDC write operations
+>> performed by init.rc from user space through configfs.  In these
+>> scenarios, there was a possibility of usb_udc_release being done before
+>> gadget_match_driver.
+>>
+>> [27635.233849]  BUG: KASAN: invalid-access in gadget_match_driver+0x40/0x94
+>> [27635.233871]  Read of size 8 at addr d7ffff8837ead080 by task init/1
+>> [27635.233881]  Pointer tag: [d7], memory tag: [fe]
+>> [27635.233888]
+>> [27635.233917]  Call trace:
+>> [27635.233923]   dump_backtrace+0xec/0x10c
+>> [27635.233935]   show_stack+0x18/0x24
+>> [27635.233944]   dump_stack_lvl+0x50/0x6c
+>> [27635.233958]   print_report+0x150/0x6b4
+>> [27635.233977]   kasan_report+0xe8/0x148
+>> [27635.233985]   __hwasan_load8_noabort+0x88/0x98
+>> [27635.233995]   gadget_match_driver+0x40/0x94
+>> [27635.234005]   __driver_attach+0x60/0x304
+>> [27635.234018]   bus_for_each_dev+0x154/0x1b4
+>> [27635.234027]   driver_attach+0x34/0x48
+>> [27635.234036]   bus_add_driver+0x1ec/0x310
+>> [27635.234045]   driver_register+0xc8/0x1b4
+>> [27635.234055]   usb_gadget_register_driver_owner+0x7c/0x140
+>> [27635.234066]   gadget_dev_desc_UDC_store+0x148/0x19c
+>> [27635.234075]   configfs_write_iter+0x180/0x1e0
+>> [27635.234087]   vfs_write+0x298/0x3e4
+>> [27635.234105]   ksys_write+0x88/0x100
+>> [27635.234115]   __arm64_sys_write+0x44/0x5c
+>> [27635.234126]   invoke_syscall+0x6c/0x17c
+>> [27635.234143]   el0_svc_common+0xf8/0x138
+>> [27635.234154]   do_el0_svc+0x30/0x40
+>> [27635.234164]   el0_svc+0x38/0x68
+>> [27635.234174]   el0t_64_sync_handler+0x68/0xbc
+>> [27635.234184]   el0t_64_sync+0x19c/0x1a0
+>>
+>> Fixes: fc274c1e9973 ("USB: gadget: Add a new bus for gadgets")
+>> Cc: stable <stable@kernel.org>
+>> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
+>> ---
+>>   drivers/usb/gadget/udc/core.c | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
+>> index cf6478f97f4a..77dc0f28ff01 100644
+>> --- a/drivers/usb/gadget/udc/core.c
+>> +++ b/drivers/usb/gadget/udc/core.c
+>> @@ -1338,6 +1338,7 @@ static void usb_udc_release(struct device *dev)
+>>   	udc = container_of(dev, struct usb_udc, dev);
+>>   	dev_dbg(dev, "releasing '%s'\n", dev_name(dev));
+>>   	kfree(udc);
+>> +	udc = NULL;
+> That's not ok, as what happens if you race right between freeing it and
+> accessing it elsewhere?
 
-> As far as I can tell, the original purpose of this check was simply as
-> the easiest way to work with a quirk of /proc/self/exe at the time. From
-> the original patch[1]:
+Hi Greg,
+
+Thanks for your comments.
+Agree This race can occur at any time, and we are investigating the 
+possibility of this issue through the following call trace. In our 
+entire test sequence, the only place where we encounter UDC null is in 
+the gadget_match_driver. It seems difficult to use locking to prevent 
+this race, so we believe it would be acceptable to implement a NULL 
+pointer check. We would appreciate any alternative solutions you may 
+suggest.
+
+
+CPU0: (ROLE SWITCH DEVICE -> HOST) CPU1 (echo "<dwc3 device name>" > UDC)
+============================================================================== 
+
+VENDOR usb notify driver()
+VENDOR USB glue driver()              configfs_write_iter()
+    usb_role_switch_set_role() gadget_dev_desc_UDC_store()
+      dwc3_usb_role_switch_set()           driver_register()
+        dwc3_set_mode()                     bus_add_driver()
+         __dwc3_set_mode()                    driver_attach()
+            dwc3_gadget_exit()                  bus_for_each_dev()
+             usb_put_gadget(dwc->gadget); __driver_attach()
+               usb_udc_release()
+gadget_match_driver()
 >
->     Note it allows to change /proc/$pid/exe iif there
->     are no VM_EXECUTABLE vmas present for current process,
->     simply because this feature is a special to C/R
->     and mm::num_exe_file_vmas become meaningless after
->     that.
+>>   }
+>>   
+>>   static const struct attribute_group *usb_udc_attr_groups[];
+>> @@ -1574,7 +1575,7 @@ static int gadget_match_driver(struct device *dev, const struct device_driver *d
+>>   			struct usb_gadget_driver, driver);
+>>   
+>>   	/* If the driver specifies a udc_name, it must match the UDC's name */
+>> -	if (driver->udc_name &&
+>> +	if (driver->udc_name && udc &&
+> I agree this isn't good, but you just made the window smaller, please
+> fix this properly.
 >
-> num_exe_file_vmas was created to preserve a quirk of the original
-> /proc/self/exe implementation: if you unmapped all executable VMAs,
-> /proc/self/exe would disappear (because it worked by scanning the
-> address space for the first executable VMA.) Keeping the quirk after
-> switching to just saving the executable on the mm worked by keeping a
-> count of executable VMAs in num_exe_file_vmas, and zeroing exe_file when
-> it reached zero. You can probably see how it would have been annoying to
-> handle both num_exe_file_vmas and this prctl intending to change
-> exe_file, and it's easier to only allow changing exe_file after
-> num_exe_file_vmas has already gone to 0 and made exe_file null.
+> thanks,
 >
-> However, num_exe_file_vmas no longer exists[2]. This quirk was taken out
-> because it would save a bit in the vma flags, and it seems clear by now
-> that nobody was relying on it. These days you can simply update exe_file
-> with no interference.
+> greg k-h
+
+
+Sorry i did not understand on the above statement. Could you please 
+provide more details on this?. Please correct me if i am wrong, Based on 
+your statement, it seems that the time between the role switch and the 
+write UDC is shorter than what is required, and you believe that we need 
+to fix our glue driver itself where trigger the 
+usb_role_switch_set_role(). Is that correct understanding?
+
+Thanks,
+Selva
 >
-> Recently a use case for this prctl has come up outside of
-> checkpoint/restore, namely binfmt_misc based emulators such as FEX[3].
-> Any program that uses /proc/self/exe will, of course, expect it to point
-> to its own executable. But when executed through binfmt_misc, it will be
-> the emulator, resulting in compatibility issues. Emulators currently
-> have to attempting to intercept syscalls targeting /proc/self/exe to
-> redirect the path, and this is not possible in the general case
-> considering how flexible path resolution is. For more detail on this see
-> [3].
->
-> The above seems to me like a solid case for simply dropping the check.
-> It's also worth noting that it is already possible to achieve the same
-> result by the laborious and complex process of just unmapping all your
-> code and remapping it again after the switch (just remember to put the
-> code that does this in a .so!), so this is not strictly allowing
-> anything that wasn't allowed before. It's just cutting red tape.
-
-One of my original concerns is that allowing changing the /proc/self/exe
-has the potential to make /proc/self/exe unreliable and specifically it
-has the potential for a rouge program to hide itself by setting a false
-/proc/self/exe.
-
-That is part of the reason for the red tape.
-
-Maybe I am wrong but I am concerned that your change may be making it
-too easy to change /proc/self/exe, and would too easily allow setting a
-false /proc/self/exe.
-
-So it may make better sense to have a special case for interpreters,
-so we don't have to worry about people setting a false /proc/self/exe.
-
-Looking at the code I am a bit perplexed at the moment as I don't see
-a check currently to ensure the new exe_file is actually mapped.
-
-...
-
-Beyond that your change reduces replace_mm_exe_file to set_mm_exe_file
-so it would probably make sense to combine the two of them if you
-are going to go this far.
-
-Eric
-
-
-> [1]: https://lore.kernel.org/lkml/20120316210343.925446961@openvz.org/
-> [2]: https://lore.kernel.org/lkml/20120731104230.20515.72416.stgit@zurg/
-> [3]: https://lore.kernel.org/lkml/CABnRqDdzqfB1_ixd-2JnfSocKvXNM+9ivM1hhd1C=ejLQyen8g@mail.gmail.com/
->
-> Signed-off-by: Theodore Dubois <tblodt@icloud.com>
-> Cc: Ryan Houdek <sonicadvance1@gmail.com>
-> Cc: Guilherme G. Piccoli <gpiccoli@igalia.com>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Eric W. Biederman <ebiederm@xmission.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> ---
->  kernel/fork.c | 22 ----------------------
->  1 file changed, 22 deletions(-)
->
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index cc760491f..407e515b9 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1430,30 +1430,8 @@ int set_mm_exe_file(struct mm_struct *mm, struct file *new_exe_file)
->   */
->  int replace_mm_exe_file(struct mm_struct *mm, struct file *new_exe_file)
->  {
-> -	struct vm_area_struct *vma;
-> -	struct file *old_exe_file;
->  	int ret = 0;
->  
-> -	/* Forbid mm->exe_file change if old file still mapped. */
-> -	old_exe_file = get_mm_exe_file(mm);
-> -	if (old_exe_file) {
-> -		VMA_ITERATOR(vmi, mm, 0);
-> -		mmap_read_lock(mm);
-> -		for_each_vma(vmi, vma) {
-> -			if (!vma->vm_file)
-> -				continue;
-> -			if (path_equal(&vma->vm_file->f_path,
-> -				       &old_exe_file->f_path)) {
-> -				ret = -EBUSY;
-> -				break;
-> -			}
-> -		}
-> -		mmap_read_unlock(mm);
-> -		fput(old_exe_file);
-> -		if (ret)
-> -			return ret;
-> -	}
-> -
->  	get_file(new_exe_file);
->  
->  	/* set the new file */
 
