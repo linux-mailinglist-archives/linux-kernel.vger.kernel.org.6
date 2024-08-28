@@ -1,111 +1,130 @@
-Return-Path: <linux-kernel+bounces-305571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 854329630A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:04:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F19EE9630AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:04:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F85228797F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:04:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6523FB20C94
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC7B1ABEA1;
-	Wed, 28 Aug 2024 19:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC681AB532;
+	Wed, 28 Aug 2024 19:04:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="K2ALeeyA"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="P7J1wL1o"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1165E1552FA
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 19:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40231D696;
+	Wed, 28 Aug 2024 19:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724871842; cv=none; b=EjIjawV+UFNe05DKhe39z1KVXx00koFEex4ij7ad4eXFFPe0hTO5FgorMcTh5i5HZV6OVOFmyAiTlv+MZUcLIdAkNsvcbpoUOXrbgv3fLw6nynMwjvDp7/Hp+8N3tKpPVmvm5JhkaUp6oyryMqneJ848VSxM9vH3PffQvTnBF1k=
+	t=1724871882; cv=none; b=BKFsf5FqeslqsHvS24PwkbsyUODMe910xuvvRyLh2870I1JoOHO4CwHyw4FUMabkjRatREaORfBrztW0/sXQKD5tqhDgQjZF1yEHxkaDXvSsSQXfJC+XrXl5uKM9dz9z8487cPtjEtil27aOkkO812dDgV1Cw+Pcju00tt8gEQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724871842; c=relaxed/simple;
-	bh=YRKAlMOxna+bxN7n5yTMSkuaQlQNsXOc/8IG9jDt9/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AHlqemdGbKf1Y4d3Oy7t40GhjQUqTJVVDli2Fc/8inoEHQ4dbhxn+J4RmNHjwo6LKtP7LlGpBdBkrYfO1TwdCjwKK1inO5wX/5bF6sCKyX64O5dUhBhWjQNO8KkA2r7iYdZ+QFna3bsYMTj14GzHKII0oNxX0AeQ0VYu1YLloaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=K2ALeeyA; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 28 Aug 2024 12:03:47 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724871837;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j7vkDyir+DMrxX+HGm5Ta48lUpr2OMfmyuMnb1CIktI=;
-	b=K2ALeeyATuD5JWGchJFR5gsyyuMm7THk7aHTDFHr6e83Ffrdzp/9RjjjjTcyTlbHI4BBrD
-	IzXEqYz3NBwTZ/Qrb0nmDnDELPUQNbI+VqsUl2PRJp1x0AarYG5err9xiLm3VVjdGO54WM
-	U3u/VnwamuC2tX4goM0KqKWdtkQiQN4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Muchun Song <muchun.song@linux.dev>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>, 
-	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	David Rientjes <rientjes@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	Eric Dumazet <edumazet@google.com>, "David S . Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Linux Memory Management List <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org, netdev <netdev@vger.kernel.org>
-Subject: Re: [PATCH v1] memcg: add charging of already allocated slab objects
-Message-ID: <a5rzw7uuf7pgrhhut7keoy66c6u4rgiuxx2qmwywbvl2iktfku@23dzxczejcet>
-References: <20240826232908.4076417-1-shakeel.butt@linux.dev>
- <Zs1CuLa-SE88jRVx@google.com>
- <yiyx4fh6dklqpexfstkzp3gf23hjpbjujci2o6gs7nb4sutzvb@b5korjrjio3m>
- <EA5F7851-B519-4570-B299-8A096A09D6E7@linux.dev>
+	s=arc-20240116; t=1724871882; c=relaxed/simple;
+	bh=2PbMUHDVGW2h2OsCN+ZdmA+kAdqhvNBQiOnzfvvguRY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OAyoBuid1jDJfwA761O4NMXGOBekDfkhPDQrEJ7ZYJK+iIkedIPhIqmErY6198V6WORl65Txiz4kTfrahMjajE81dqkuk8TXSMYZ1D3tTWFBErLRs2i4Ij+hv45cec1+EsyPgJwFgn/3p126lk2cOXfUdociIEQvhzCDD0T2EYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=P7J1wL1o; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47SJ4VZG054856;
+	Wed, 28 Aug 2024 14:04:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724871871;
+	bh=keod4O1+yAxg+zkJuMNaiR40evVQhpWT7LOuKFUl74c=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=P7J1wL1oqbJOatBfVBUpLy9nSghmMvvZAL7OSGvZllt4VzL5L6TX/hCoSSP43DSqv
+	 7GKQN56YhXKu+IxnYcf4wAlDuKh04slpSSb0TY1RM34CzZmtI2RrE8/jgaBGZjt9VW
+	 ZMv7QcBu8Tn5bwHDei3Z6IyeGwfp/ukB8RjX8/Pw=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47SJ4VLo018111
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 28 Aug 2024 14:04:31 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 28
+ Aug 2024 14:04:30 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 28 Aug 2024 14:04:30 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47SJ4UT9066055;
+	Wed, 28 Aug 2024 14:04:30 -0500
+From: Nishanth Menon <nm@ti.com>
+To: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <vigneshr@ti.com>,
+        Devarsh Thakkar
+	<devarsht@ti.com>
+CC: Nishanth Menon <nm@ti.com>, <s-jain1@ti.com>, <r-donadkar@ti.com>,
+        <praneeth@ti.com>
+Subject: Re: [PATCH 0/2] Enable E5010 JPEG encoder
+Date: Wed, 28 Aug 2024 14:04:28 -0500
+Message-ID: <172487179147.3443633.3959874500764738240.b4-ty@ti.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240826162250.380005-1-devarsht@ti.com>
+References: <20240826162250.380005-1-devarsht@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <EA5F7851-B519-4570-B299-8A096A09D6E7@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Muchun,
+Hi Devarsh Thakkar,
 
-On Wed, Aug 28, 2024 at 10:36:06AM GMT, Muchun Song wrote:
+On Mon, 26 Aug 2024 21:52:48 +0530, Devarsh Thakkar wrote:
+> This series adds support for E5010 JPEG encoder device-tree node for TI's
+> AM62A SoC and enables it in defconfig.
 > 
+> Devarsh Thakkar (2):
+>   arm64: dts: ti: k3-am62a : Add E5010 JPEG Encoder
+>   arm64: defconfig: Enable E5010 JPEG Encoder
 > 
-> > On Aug 28, 2024, at 01:23, Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> > 
-[...]
-> >> 
-> >> Does it handle the case of a too-big-to-be-a-slab-object allocation?
-> >> I think it's better to handle it properly. Also, why return false here?
-> >> 
-> > 
-> > Yes I will fix the too-big-to-be-a-slab-object allocations. I presume I
-> > should just follow the kfree() hanlding on !folio_test_slab() i.e. that
-> > the given object is the large or too-big-to-be-a-slab-object.
-> 
-> Hi Shakeel,
-> 
-> If we decide to do this, I suppose you will use memcg_kmem_charge_page
-> to charge big-object. To be consistent, I suggest renaming kmem_cache_charge
-> to memcg_kmem_charge to handle both slab object and big-object. And I saw
-> all the functions related to object charging is moved to memcontrol.c (e.g.
-> __memcg_slab_post_alloc_hook), so maybe we should also do this for
-> memcg_kmem_charge?
-> 
+> [...]
 
-If I understand you correctly, you are suggesting to handle the general
-kmem charging and slab's large kmalloc (size > KMALLOC_MAX_CACHE_SIZE)
-together with memcg_kmem_charge(). However that is not possible due to
-slab path updating NR_SLAB_UNRECLAIMABLE_B stats while no updates for
-this stat in the general kmem charging path (__memcg_kmem_charge_page in
-page allocation code path).
 
-Also this general kmem charging path is used by many other users like
-vmalloc, kernel stack and thus we can not just plainly stuck updates to
-NR_SLAB_UNRECLAIMABLE_B in that path.
+I have applied
 
-Thanks for taking a look.
-Shakeel
+Following to branch ti-k3-dts-next on [1].
+
+[1/2] arm64: dts: ti: k3-am62a : Add E5010 JPEG Encoder
+      commit: 540fcd5fbdb5f3bbd6f6a88d85b9993a9318d474
+
+Following to branch ti-k3-config-next on [1]:
+
+[2/2] arm64: defconfig: Enable E5010 JPEG Encoder
+      commit: e8c643daeaa9040e18f8349993b9bc504e9d2117
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+
 
