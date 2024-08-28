@@ -1,132 +1,200 @@
-Return-Path: <linux-kernel+bounces-304582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7A95962219
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:15:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3258E962226
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECB871C20E48
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:15:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF84D2866A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3777F15C123;
-	Wed, 28 Aug 2024 08:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E290C15B103;
+	Wed, 28 Aug 2024 08:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="hmA4HqvY"
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="4ltcx8IF"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8590415B971
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 08:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2991515B99E;
+	Wed, 28 Aug 2024 08:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724832895; cv=none; b=hsuLBSfMphE07+iBpvEoYgzcQtF3B/S3Rbg2LqEzgovSVWEbZRMhJs4XAnKSMUwb7ufUumjB3QMcidLxszFD/qMqGYNiC0nc9wg0AxBhHNSMqUtU9IS0U1G6pVpESc/bwwe+N+ptclcpQRErRmXeUI7A2WlkfkBF5KHRUalHuq8=
+	t=1724833066; cv=none; b=aR/d5JU+yJg0MXlHkugLC93JnBoTlc/UIYmW2aNAmgx+Knv3r3d1CKRXfjAi4JJJzYzn51WC7EW0rWcQ3+T8KCvYkKu5Uo5hDeF0D+Z3RMpkLXTK5f+gMVMVRHnUC4De/WYho33hwI/BXqWxGbtURJ8OUYdZJoMFqz1lGNaQ2rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724832895; c=relaxed/simple;
-	bh=KPfRCZeCuQF+7q3omkeEXVCU1HukjXEtZLYDBD3nNUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O4lB3FqUkoitxPdHE1f2kE4z+FBNm53LDsrZnuQ5XeVIUh0Tpk4i6NAxfl9Raeqw+evY1l4DV2h/9joFIHRHWtvIlqkdZ5TgyL7bbOFTshpUNkiK6ISkR91xkWSPWSjoGESPHmG1paSAq1PANXDbQiNW3GTkhcKmR9LaWECMrvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=hmA4HqvY; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 297F1148349A;
-	Wed, 28 Aug 2024 10:14:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1724832891; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=Ae8VdjX8mFVpb9WPRFks2pGa/7r509LGvwKGNfqo+B0=;
-	b=hmA4HqvY9T09iAg1FrAd7k2vsYfmYPthRH1VE4iYKlbvbyNFI/C/U3vXqcuCP2RuB9mcNX
-	81C7v5xIyHrIdea59w2Bfa6w3DGGLDTKMar/lszE15UGQTV9ojPpnwmCMVXAnhg4qzHFFa
-	OGmdJAB6YQqIbP8uSqoqs3bVpLUcPhsQNkoIMnBeQw+5Nh1ww4s9/4wbyx/9HBbofaTGha
-	+8luElagJSxLRfWY1/+qQxBlAN+23otUHc6xiv3X9usLY/PYAivP6k7nGYK0O9ZKMpdgKM
-	Qn614qz+oHjgFneD8kPWFP1xAyuB73E0L2s3u+GrnqOMIJpSOKuMxS3vngQVBQ==
-Date: Wed, 28 Aug 2024 10:14:48 +0200
-From: Alexander Dahl <ada@thorsis.com>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: Alexander Dahl <ada@thorsis.com>,
-	Christian Melki <christian.melki@t2data.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	"moderated list:MICROCHIP OTPC DRIVER" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: Re: [PATCH v1 07/12] nvmem: microchip-otpc: Add missing register
- definitions
-Message-ID: <20240828-making-gangrene-786ec368b106@thorsis.com>
-Mail-Followup-To: claudiu beznea <claudiu.beznea@tuxon.dev>,
-	Christian Melki <christian.melki@t2data.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	"moderated list:MICROCHIP OTPC DRIVER" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>
-References: <20240821105943.230281-1-ada@thorsis.com>
- <20240821105943.230281-8-ada@thorsis.com>
- <5228af83-b423-4f51-820a-edfc40017ca8@tuxon.dev>
+	s=arc-20240116; t=1724833066; c=relaxed/simple;
+	bh=aUsYex0y6W1cxIZTyRhUVzw5iSPy6giVddYTLSpD4aU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eidJp+U1oZ6egosWkb+HIakKW2I1zCASD471a73i/lOt0fCPZLMQAmXVbJbUxEfA+EHYvHbAgyndxqcTTDc6/N8kz36ED2E51rcxfjIhdZs9ZtF6CBjxVI/p2y5TjuO4bg18r6VKBaSWUJ0SgRkhFaJv1R4VXvi5yifJOYLSdmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=4ltcx8IF; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47S82eok005368;
+	Wed, 28 Aug 2024 10:17:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	rtTPWUUqmUCKTWA2bIbkcbnHPVzdag4uOv6xbrxbM/Q=; b=4ltcx8IFlq1GmsIH
+	YJqbNeMq6yNy4535SLpzIMWNRzPGq2N/cRqQMgyRZnS8aksWtHisZAQxBNcg2vVc
+	Uow8+yyxRSO0mhrLnXdnW36xQhqsuoj42DwGqi7h/qCzYha5VFA0gctxC3lqFce6
+	8iE2ZItcVPULNaeyk9zXU0rlBeULb9Jg7vYQGMOIb9EAFLc02vRsq/Uq6N8fC22E
+	8Q/Y4PCeY38VAN63cTj36E1ruXlJjBGPT+G5LwI7TQmEbQEWqvAVxp1bbccCr9eA
+	WSydbQob8C50ontxXBsFdvVX8gMrlIum+AMoD2hGql/7T/1bSbSuOzeS0fQr32N0
+	w78Emw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 419wyvgks5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 10:17:20 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8266340044;
+	Wed, 28 Aug 2024 10:17:14 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5BAF324C42E;
+	Wed, 28 Aug 2024 10:16:22 +0200 (CEST)
+Received: from [10.129.178.212] (10.129.178.212) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 28 Aug
+ 2024 10:16:21 +0200
+Message-ID: <90ae7f29-19f8-4046-9b27-31739244e045@foss.st.com>
+Date: Wed, 28 Aug 2024 10:16:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5228af83-b423-4f51-820a-edfc40017ca8@tuxon.dev>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] dt-bindings: phy: Add STM32MP25 COMBOPHY bindings
+To: Krzysztof Kozlowski <krzk@kernel.org>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@foss.st.com>, <p.zabel@pengutronix.de>
+CC: <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <fabrice.gasnier@foss.st.com>
+References: <20240827122459.1102889-1-christian.bruel@foss.st.com>
+ <20240827122459.1102889-2-christian.bruel@foss.st.com>
+ <5f29a065-269d-4e72-81b8-30d247994fbd@kernel.org>
+Content-Language: en-US
+From: Christian Bruel <christian.bruel@foss.st.com>
+In-Reply-To: <5f29a065-269d-4e72-81b8-30d247994fbd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-28_03,2024-08-27_01,2024-05-17_01
 
-Hello Claudiu,
 
-Am Sat, Aug 24, 2024 at 06:54:02PM +0300 schrieb claudiu beznea:
-> 
-> 
-> On 21.08.2024 13:59, Alexander Dahl wrote:
-> > According to datasheets DS60001765B for SAMA7G5 and DS60001579G for
-> > SAM9X60.
-> > 
-> > Signed-off-by: Alexander Dahl <ada@thorsis.com>
-> > ---
-> >  drivers/nvmem/microchip-otpc.c | 15 +++++++++++++++
-> >  1 file changed, 15 insertions(+)
-> > 
-> > diff --git a/drivers/nvmem/microchip-otpc.c b/drivers/nvmem/microchip-otpc.c
-> > index b8ed7412dbca..4630e96243ac 100644
-> > --- a/drivers/nvmem/microchip-otpc.c
-> > +++ b/drivers/nvmem/microchip-otpc.c
-> > @@ -21,9 +21,24 @@
-> >  #define MCHP_OTPC_AR			(0x8)
-> >  #define MCHP_OTPC_SR			(0xc)
-> >  #define MCHP_OTPC_SR_READ		BIT(6)
-> > +#define MCHP_OTPC_IER			(0x10)
-> > +#define MCHP_OTPC_IDR			(0x14)
-> > +#define MCHP_OTPC_IMR			(0x18)
-> > +#define MCHP_OTPC_ISR			(0x1C)
-> > +#define MCHP_OTPC_ISR_COERR		BIT(13)
-> >  #define MCHP_OTPC_HR			(0x20)
-> >  #define MCHP_OTPC_HR_SIZE		GENMASK(15, 8)
-> >  #define MCHP_OTPC_DR			(0x24)
-> > +#define MCHP_OTPC_BAR			(0x30)
-> > +#define MCHP_OTPC_CAR			(0x34)
-> > +#define MCHP_OTPC_UHC0R			(0x50)
-> > +#define MCHP_OTPC_UHC1R			(0x54)
-> > +#define MCHP_OTPC_UID0R			(0x60)
-> > +#define MCHP_OTPC_UID1R			(0x64)
-> > +#define MCHP_OTPC_UID2R			(0x68)
-> > +#define MCHP_OTPC_UID3R			(0x6C)
-> > +#define MCHP_OTPC_WPMR			(0xE4)
-> > +#define MCHP_OTPC_WPSR			(0xE8)
-> 
-> Are all these used in driver?
+On 8/27/24 15:23, Krzysztof Kozlowski wrote:
+> On 27/08/2024 14:24, Christian Bruel wrote:
+>> Document the bindings for STM32 COMBOPHY interface, used to support
+>> the PCIe and USB3 stm32mp25 drivers.
+>> Following entries can be used to tune caracterisation parameters
+>>   - st,output-micro-ohms and st,output-vswing-microvolt bindings entries
+>> to tune the impedance and voltage swing using discrete simulation results
+>>   - st,rx-equalizer register to set the internal rx equalizer filter value.
+>>
+>> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+>> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
+> v1? Or v3?
 
-Not all, but some.  What are you implying?  Only add register
-definitions actually used in the driver?  Why?
 
-Those register offsets won't change, but helped us when debugging.
-Debug code (e.g. register dump) is not part of the patch series.
+sorry, forgot to update Subject: it is v3, will resend a v4 with your 
+further comments
 
-Greets
-Alex
+Regards
 
-> 
-> >  
-> >  #define MCHP_OTPC_NAME			"mchp-otpc"
-> >  #define MCHP_OTPC_SIZE			(11 * 1024)
+Christian
+
+>
+>> ---
+>>   .../bindings/phy/st,stm32-combophy.yaml       | 144 ++++++++++++++++++
+>>   1 file changed, 144 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/phy/st,stm32-combophy.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/st,stm32-combophy.yaml b/Documentation/devicetree/bindings/phy/st,stm32-combophy.yaml
+>> new file mode 100644
+>> index 000000000000..c33a843b83a3
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/phy/st,stm32-combophy.yaml
+> Filename matching compatible.
+
+ok
+
+>
+>> @@ -0,0 +1,144 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/phy/st,stm32-combophy.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: STMicroelectronics STM32MP25 USB3/PCIe COMBOPHY
+>> +
+>> +maintainers:
+>> +  - Christian Bruel <christian.bruel@foss.st.com>
+>> +
+>> +description:
+>> +  Single lane PHY shared (exclusive) between the USB3 and PCIe controllers.
+>> +  Supports 5Gbit/s for USB3 and PCIe gen2 or 2.5Gbit/s for PCIe gen1.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: st,stm32mp25-combophy
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  "#phy-cells":
+>> +    const: 1
+>> +    description: |
+>> +      The cells contain the following arguments.
+>> +
+>> +      - description: The PHY type
+> That's some sort of mess. Is it schema within description or schema? Why
+> two descriptions?
+
+yes, indeed
+
+>> +          enum:
+>> +            - PHY_TYPE_USB3
+>> +            - PHY_TYPE_PCIE
+>> +
+> ...
+>
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - st,syscfg
+>> +  - '#phy-cells'
+>> +  - resets
+>> +  - reset-names
+>> +  - clocks
+>> +  - clock-names
+>> +
+>> +allOf:
+>> +  - if:
+>> +      required:
+>> +        - wakeup-source
+>> +    then:
+>> +      anyOf:
+>> +        - required: [interrupts]
+>> +        - required: [interrupts-extended]
+>> +
+> I do not see any improvements.
+>
+> The tag you received was CONDITIONAL. If you do not apply the comments,
+> you cannot just apply the tag.
+
+my mistake again.
+
+
+> Best regards,
+> Krzysztof
+>
 
