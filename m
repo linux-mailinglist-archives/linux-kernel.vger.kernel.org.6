@@ -1,125 +1,153 @@
-Return-Path: <linux-kernel+bounces-304316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDE06961DC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:51:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 304B5961DC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C59E1C22C2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:51:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6301E1C20ACE
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D981474B5;
-	Wed, 28 Aug 2024 04:51:06 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF7314A4C7;
+	Wed, 28 Aug 2024 04:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IbWDjIsx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15FA3D96A
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 04:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFEE177117;
+	Wed, 28 Aug 2024 04:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724820666; cv=none; b=N2fPqQu/uNlwetpYNJxHWe7v6Fep3U3htYOwB+qCReV6zg6clOxEom2BvIbe9KaElSO48grWVSTH506OFhn8TB5sShaCOhwRfqwRkf37rz/XJ4RHUHGgNBxr3v6FXyQ7edUpk6Q/agtOYGogCW4ebuLNgM4HfoZr3aLKLOY7Wfs=
+	t=1724820822; cv=none; b=ZApHVM5cgfbFggdmvq9/ebg17wafY96EuoSYqwHvAQhMZhTDGlp5Qt09qSHXKoGAlCcqoc2vYDHVlZIsTsHyDWbj3sL7vMFM8X7SZdHxq3/7OZfnPJvRo6yy7djAv9DE412J9XvJAEu5Rd4pJ6Z20580h3QPsjA8VeqYJcP1DVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724820666; c=relaxed/simple;
-	bh=mC9LMTWSpFcuIJEu28ZZ2VhcDn6OzdsBY8UEHYOb20Q=;
+	s=arc-20240116; t=1724820822; c=relaxed/simple;
+	bh=V1yZOu2GId5b6bnaYM6dmXuqDYTml9tYA+NecUp0Zag=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ckHImOCri4ePkcyDvTCW0F2oVQMmtjyMwc6ifOVWDMWpwCMzyaAr3gB9pG+iNp/5HtVVTAzO/n1FFTMedUh665IJm1eAWsqOlPGFK6lQdS3KdZubWA2fofScG0ApOqLRQDZlAojUtvSY8G91fD+iR4UMr/I6luaruAmHrqVHG74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sjAds-0007LE-UW; Wed, 28 Aug 2024 06:50:48 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sjAdq-003akd-KX; Wed, 28 Aug 2024 06:50:46 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sjAdq-00Ahtu-1f;
-	Wed, 28 Aug 2024 06:50:46 +0200
-Date: Wed, 28 Aug 2024 06:50:46 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>, kernel@pengutronix.de,
-	Paolo Abeni <pabeni@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH net-next v3 1/3] phy: open_alliance_helpers: Add defines
- for link quality metrics
-Message-ID: <Zs6spnCAPsTmUfrL@pengutronix.de>
-References: <20240822115939.1387015-1-o.rempel@pengutronix.de>
- <20240822115939.1387015-2-o.rempel@pengutronix.de>
- <20240826093217.3e076b5c@kernel.org>
- <4a1a72f5-44ce-4c54-9bc5-7465294a39fe@lunn.ch>
- <20240826125719.35f0337c@kernel.org>
- <Zs1bT7xIkFWLyul3@pengutronix.de>
- <20240827113300.08aada20@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hmvBBy4nbthomxIxe3HcjMlNmUJky3EnE2JF/P0V5fXSX6jj2onppRkV6ZdZjxBIvZv0adi/D+fA85+Mcqr/pOLEp83vfldRkOqnTz8VOdHjQ5C8oNOrhUQm2EvbxRXmheJ8dRxa2Uq3lf203CvH/Up9UL6bAzydQ3o/TDZkPG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IbWDjIsx; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724820821; x=1756356821;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=V1yZOu2GId5b6bnaYM6dmXuqDYTml9tYA+NecUp0Zag=;
+  b=IbWDjIsxUYeIr/954+4Wc2mDyamqyp/oNCyJhB/+4SIca7tXjCjZ3Las
+   LAOUlnAWQglGZ4tBrGbl09M9clXZq8hq/YkGr475YdCay/TYX5bmoMyas
+   RyIJJhlq6cHnvbyoi6EpS2ZChFba4NFwV0VFtQ0/DVc1oekwLB1+47Yi6
+   BIrKaN0r9oYs2bXHodtfeAzOCxNIoQ1hzYr8IKHCfSvnVFfpISfDvJfFB
+   vP9BWp432kEN/Swgu/IRvMDf9YUG/h6STn6fGBUPpIAjbxcJycPtd+QYP
+   VS3MF3KO0VykkerGxzAZASl/mZsLvIRBS/7FtljX2DO8TGlfG2wer8FWL
+   w==;
+X-CSE-ConnectionGUID: iCSv7/nySzeRJx9p1DRflw==
+X-CSE-MsgGUID: f02qN3y2Sl6vjjJPyVqqQw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="34737015"
+X-IronPort-AV: E=Sophos;i="6.10,181,1719903600"; 
+   d="scan'208";a="34737015"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 21:53:40 -0700
+X-CSE-ConnectionGUID: cQZeiJr2Qa2wN9m847ImQg==
+X-CSE-MsgGUID: Dt1q/+H2RlG43n9QpIA1cA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,181,1719903600"; 
+   d="scan'208";a="93809470"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 27 Aug 2024 21:53:38 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sjAgZ-000KUq-3B;
+	Wed, 28 Aug 2024 04:53:35 +0000
+Date: Wed, 28 Aug 2024 12:52:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH v1 2/2] iio: imu: st_lsm6dsx: Remove useless dev_fwnode()
+ calls
+Message-ID: <202408281240.oT6C3uTj-lkp@intel.com>
+References: <20240826212344.866928-3-andy.shevchenko@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240827113300.08aada20@kernel.org>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20240826212344.866928-3-andy.shevchenko@gmail.com>
 
-On Tue, Aug 27, 2024 at 11:33:00AM -0700, Jakub Kicinski wrote:
-> On Tue, 27 Aug 2024 06:51:27 +0200 Oleksij Rempel wrote:
-> > I completely agree with you, but I currently don't have additional
-> > budget for this project.
-> 
-> Is this a legit reason not to do something relatively simple?
+Hi Andy,
 
-Due to the nature of my work in a consulting company, my time is scheduled
-across multiple customers. For the 10BaseT1 PHY, I had 2 days budgeted left,
-which allowed me to implement some extra diagnostics. This was simple,
-predictable, and within the scope of the original task.
+kernel test robot noticed the following build warnings:
 
-However, now that the budget for this task and customer has been used up, any
-additional work would require a full process:
-- I would need to sell the idea to the customer.
-- The new task would need to be prioritized.
-- It would then be scheduled, which could happen this year, next year, or
-  possibly never.
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on linus/master v6.11-rc5 next-20240827]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-A similar situation occurred with the EEE implementation. I started with a
-simple fix for Atheros PHY's SmartEEE, but it led to reworking the entire EEE
-infrastructure in the kernel. Once the budget was exhausted, I couldn’t
-continue with SmartEEE for Atheros PHYs. These are the risks inherent to
-consulting work. I still see it as not wasted time, because we have a better
-EEE infrastructure now.
+url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/iio-imu-st_lsm6dsx-Use-iio_read_acpi_mount_matrix-helper/20240827-052617
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20240826212344.866928-3-andy.shevchenko%40gmail.com
+patch subject: [PATCH v1 2/2] iio: imu: st_lsm6dsx: Remove useless dev_fwnode() calls
+config: x86_64-randconfig-122-20240828 (https://download.01.org/0day-ci/archive/20240828/202408281240.oT6C3uTj-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240828/202408281240.oT6C3uTj-lkp@intel.com/reproduce)
 
-Considering that you've requested a change to the uAPI, the work has now become
-more predictable. I can plan for it within the task and update the required
-time budget accordingly. However, it's worth noting that while this work is
-manageable, the time spent on this particular task could be seen as somewhat
-wasted from a budget perspective, as it wasn't part of the original scope.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408281240.oT6C3uTj-lkp@intel.com/
 
-> Especially that we're talking about uAPI, once we go down
-> the string path I presume they will stick around forever.
+sparse warnings: (new ones prefixed by >>)
+>> drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c:2137:62: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected unsigned int [usertype] *val @@     got int drdy_pin @@
+   drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c:2137:62: sparse:     expected unsigned int [usertype] *val
+   drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c:2137:62: sparse:     got int drdy_pin
+>> drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c:2137:62: sparse: sparse: non size-preserving integer to pointer cast
 
-Yes, I agree with it. I just needed this feedback as early as possible.
+vim +2137 drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
+
+  2129	
+  2130	static int
+  2131	st_lsm6dsx_get_drdy_reg(struct st_lsm6dsx_hw *hw,
+  2132				const struct st_lsm6dsx_reg **drdy_reg)
+  2133	{
+  2134		struct device *dev = hw->dev;
+  2135		int err = 0, drdy_pin;
+  2136	
+> 2137		if (device_property_read_u32(dev, "st,drdy-int-pin", drdy_pin) < 0) {
+  2138			struct st_sensors_platform_data *pdata;
+  2139	
+  2140			pdata = (struct st_sensors_platform_data *)dev->platform_data;
+  2141			drdy_pin = pdata ? pdata->drdy_int_pin : 1;
+  2142		}
+  2143	
+  2144		switch (drdy_pin) {
+  2145		case 1:
+  2146			hw->irq_routing = &hw->settings->irq_config.irq1_func;
+  2147			*drdy_reg = &hw->settings->irq_config.irq1;
+  2148			break;
+  2149		case 2:
+  2150			hw->irq_routing = &hw->settings->irq_config.irq2_func;
+  2151			*drdy_reg = &hw->settings->irq_config.irq2;
+  2152			break;
+  2153		default:
+  2154			dev_err(hw->dev, "unsupported data ready pin\n");
+  2155			err = -EINVAL;
+  2156			break;
+  2157		}
+  2158	
+  2159		return err;
+  2160	}
+  2161	
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
