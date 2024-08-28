@@ -1,273 +1,124 @@
-Return-Path: <linux-kernel+bounces-305224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B231962B4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:08:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9C1D962B49
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:08:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 422FE2870E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:08:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95EEF286FF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F711A4F04;
-	Wed, 28 Aug 2024 15:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACE31A4B82;
+	Wed, 28 Aug 2024 15:07:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mJKCP7HJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jpuTNP4Z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6201A4B73;
-	Wed, 28 Aug 2024 15:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1421A4B70;
+	Wed, 28 Aug 2024 15:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724857653; cv=none; b=JfGuStIw6x7UWLd50AREy7olsvPgy/rEvMYTDM/ijbBOTGT4Y/BnwlEqXoFPzscpFQl4s1L7IYsrZPqqOCN+0qq8bg9bUuZPGx4SkMiSmGzwMD144yfDocOugY66+UsftykiovtmFodF05WHwfPp1t4E7Wo+Q1UIZ8ELYEoXeKc=
+	t=1724857653; cv=none; b=QocOCDpYqTWkUnNdQbUoLGZN3klWEsRIVyQBydDyTD436f6ECZU10Pi3SxnyQ6Vscf/MTQw82JgLCdmWQNgdEtEfBcEFO2DQrC08712hXh2j87oQwWr+4Ge2bhN3Tyjx8Tuv/hekFQIEKc29qWphvU9mtEg12PXhtHc3He2aBWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724857653; c=relaxed/simple;
-	bh=jILtHjxwjjgjZztGE+ONkoeHJvK1Bqz1u5O/Mgt87zo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=e79/Ut7iuYHakmUaeeYrImBXxff34wOe1n1osahSP3HwhBigvmfDDf4Wn/bJ8HaSFsRQNYMiSBLNNo7K/U/70+WWmUxyi5IDiU63E+ONKW6uCsGZXzNaI9ndF7RL8Y1om9Bqln/GJT8OEKiwC+8lSlKOqlNNCDgoK3CjGohWJQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mJKCP7HJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA4C9C4CEC2;
-	Wed, 28 Aug 2024 15:07:29 +0000 (UTC)
+	bh=DAsIpKGxKORGVuqid/qCfL7Vg/Pa11P5AKYZi+C4fx8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mCd/rs3zWrI13BYwPc7ky7/XUKBfw4iSWVk/A1f3dxr1MtxacicCiWFerOZRhhVKxaaUgASGET42H8Jnf1TWRxS+45juT85FWSiGrZzu2UL6frfDLNBkfGFAXg+cQKdO7cCdEPTzd0qOmdgQWKAYugGb1aVJoD6PDJaXUaYO3Z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jpuTNP4Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A391FC4CEC8;
+	Wed, 28 Aug 2024 15:07:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724857653;
-	bh=jILtHjxwjjgjZztGE+ONkoeHJvK1Bqz1u5O/Mgt87zo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=mJKCP7HJpC7Xt9GPKaQpMw1iu94/AbDzSgkCeySm3xlDqzNaTfvLLLb6grL1S2oV9
-	 at7ECEuYsOUBkRRcoAlUuFIquJZKzJ2CRdU8ZXsJA/CdWqYCPqocQbbVpe8HidYqwd
-	 9X9HvMLQoBjWSoXhGwvyBGNRqpWBZ9lofMNbC6LWSKTTyNQhZ9qCLCwaz9FxN+tCWy
-	 IbFnZDgP5qtUOpVNRhNisC2clbNrm7z0FVuohwxm1FuekIzujrkK3gH4Q+lHvKcy/k
-	 UTt5rn2ekStKnWpPdD77cLE1Ylx4xCcKR5RVe6HCD5SgFVlCKRDSER7oWPC/FdAncn
-	 1LIpeQQ1uhkpw==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Wed, 28 Aug 2024 17:06:59 +0200
-Subject: [PATCH v2 6/6] drm/msm/a6xx: Add A621 support
+	s=k20201202; t=1724857652;
+	bh=DAsIpKGxKORGVuqid/qCfL7Vg/Pa11P5AKYZi+C4fx8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jpuTNP4Ze6qCXLDuHXyPx4BCrogv/xzpYZjZXFAEhsX0F6PfSUaPfCvFNumI0Lydj
+	 /ebsAXvG4wvWbg2kuL07PF/RfZnHZE/JhwruJKJebfb3rLDh5FTML4skv64F9x5bWE
+	 aURYBML2v0B8cvo9JiDRDUxxWCLwoxN9kHNkGwxyOJVtNHV5ctS4NAii6kS4jh5Mo7
+	 5rozwhNNCgWSHddzy4U7gl+Vg5Gtt6lrma3tRT3E76yyeXx63FWI70NmQa3vvh2Ft/
+	 Os5kqb/KBTTzlwM8vvIlzCLQf5/s6OykY4JjS/xucjZRD1zXe1oTvPf9uKMHOf7ukR
+	 1NuDuXoUmGbFA==
+Date: Wed, 28 Aug 2024 16:07:28 +0100
+From: Simon Horman <horms@kernel.org>
+To: Charles Han <hanchunchao@inspur.com>
+Cc: m.grzeschik@pengutronix.de, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, liuyanming@ieisystem.com
+Subject: Re: [PATCH] arcnet: com20020-pci:Check devm_kasprintf() returned
+ value
+Message-ID: <20240828150728.GP1368797@kernel.org>
+References: <20240828061941.8173-1-hanchunchao@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240828-topic-a621-v2-6-1882c6b57432@kernel.org>
-References: <20240828-topic-a621-v2-0-1882c6b57432@kernel.org>
-In-Reply-To: <20240828-topic-a621-v2-0-1882c6b57432@kernel.org>
-To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724857626; l=7367;
- i=konradybcio@kernel.org; s=20230215; h=from:subject:message-id;
- bh=RlDVPf4sSmjRNEQBMyj74j3T0Pz3TGytFQVkPF4yXA4=;
- b=4roaOxw8rygadrRbHoROYIC+eX5VJaNHf1BIzIoCP5mTnmb6/0LNZWwbkwkWElancN/KamruP
- O1872/4yPgKCCfOujsUwoQJBl2u4T/RQPSd2DMZxxq8eD1WWsP2RPJv
-X-Developer-Key: i=konradybcio@kernel.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240828061941.8173-1-hanchunchao@inspur.com>
 
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
+On Wed, Aug 28, 2024 at 02:19:41PM +0800, Charles Han wrote:
+> devm_kasprintf() can return a NULL pointer on failure but this returned
+> value is not checked.
+> 
+> Fix this lack and check the returned value.
+> 
+> Fixes: 8890624a4e8c ("arcnet: com20020-pci: add led trigger support")
+> Signed-off-by: Charles Han <hanchunchao@inspur.com>
 
-A621 is a clear A662 derivative (same lineage as A650), no explosions
-or sick features, other than a NoC bug which can stall the GPU..
+nit: I think there should be a space after each ':' in the subject.
+     Also, IMHO, return value is a bit more natural.
 
-Add support for it.
+Subject: [PATCH] arcnet: com20020-pci: Check devm_kasprintf() return value
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 78 ++++++++++++++++++++++++++++++-
- drivers/gpu/drm/msm/adreno/a6xx_gmu.c     | 18 +++++++
- drivers/gpu/drm/msm/adreno/a6xx_gpu.c     |  6 +++
- drivers/gpu/drm/msm/adreno/adreno_gpu.h   |  5 ++
- 4 files changed, 106 insertions(+), 1 deletion(-)
+> ---
+>  drivers/net/arcnet/com20020-pci.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/net/arcnet/com20020-pci.c b/drivers/net/arcnet/com20020-pci.c
+> index c5e571ec94c9..ca393f9658e9 100644
+> --- a/drivers/net/arcnet/com20020-pci.c
+> +++ b/drivers/net/arcnet/com20020-pci.c
+> @@ -254,6 +254,10 @@ static int com20020pci_probe(struct pci_dev *pdev,
+>  			card->tx_led.name = devm_kasprintf(&pdev->dev, GFP_KERNEL,
+>  							"pci:green:tx:%d-%d",
+>  							dev->dev_id, i);
+> +			if (!card->tx_led.default_trigger || !card->tx_led.name) {
+> +				ret = -ENOMEM;
+> +				goto err_free_arcdev;
+> +			}
 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-index deee0b686962..d9d4a3e821f7 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-@@ -129,6 +129,59 @@ static const struct adreno_reglist a615_hwcg[] = {
- 	{},
- };
- 
-+static const struct adreno_reglist a620_hwcg[] = {
-+	{REG_A6XX_RBBM_CLOCK_CNTL_SP0, 0x02222222},
-+	{REG_A6XX_RBBM_CLOCK_CNTL2_SP0, 0x02222220},
-+	{REG_A6XX_RBBM_CLOCK_DELAY_SP0, 0x00000080},
-+	{REG_A6XX_RBBM_CLOCK_HYST_SP0, 0x0000f3cf},
-+	{REG_A6XX_RBBM_CLOCK_CNTL_TP0, 0x02222222},
-+	{REG_A6XX_RBBM_CLOCK_CNTL2_TP0, 0x22222222},
-+	{REG_A6XX_RBBM_CLOCK_CNTL3_TP0, 0x22222222},
-+	{REG_A6XX_RBBM_CLOCK_CNTL4_TP0, 0x00022222},
-+	{REG_A6XX_RBBM_CLOCK_DELAY_TP0, 0x11111111},
-+	{REG_A6XX_RBBM_CLOCK_DELAY2_TP0, 0x11111111},
-+	{REG_A6XX_RBBM_CLOCK_DELAY3_TP0, 0x11111111},
-+	{REG_A6XX_RBBM_CLOCK_DELAY4_TP0, 0x00011111},
-+	{REG_A6XX_RBBM_CLOCK_HYST_TP0, 0x77777777},
-+	{REG_A6XX_RBBM_CLOCK_HYST2_TP0, 0x77777777},
-+	{REG_A6XX_RBBM_CLOCK_HYST3_TP0, 0x77777777},
-+	{REG_A6XX_RBBM_CLOCK_HYST4_TP0, 0x00077777},
-+	{REG_A6XX_RBBM_CLOCK_CNTL_RB0, 0x22222222},
-+	{REG_A6XX_RBBM_CLOCK_CNTL2_RB0, 0x01002222},
-+	{REG_A6XX_RBBM_CLOCK_CNTL_CCU0, 0x00002220},
-+	{REG_A6XX_RBBM_CLOCK_HYST_RB_CCU0, 0x00040f00},
-+	{REG_A6XX_RBBM_CLOCK_CNTL_RAC, 0x25222022},
-+	{REG_A6XX_RBBM_CLOCK_CNTL2_RAC, 0x00005555},
-+	{REG_A6XX_RBBM_CLOCK_DELAY_RAC, 0x00000011},
-+	{REG_A6XX_RBBM_CLOCK_HYST_RAC, 0x00445044},
-+	{REG_A6XX_RBBM_CLOCK_CNTL_TSE_RAS_RBBM, 0x04222222},
-+	{REG_A6XX_RBBM_CLOCK_MODE_VFD, 0x00002222},
-+	{REG_A6XX_RBBM_CLOCK_MODE_GPC, 0x00222222},
-+	{REG_A6XX_RBBM_CLOCK_DELAY_HLSQ_2, 0x00000002},
-+	{REG_A6XX_RBBM_CLOCK_MODE_HLSQ, 0x00002222},
-+	{REG_A6XX_RBBM_CLOCK_DELAY_TSE_RAS_RBBM, 0x00004000},
-+	{REG_A6XX_RBBM_CLOCK_DELAY_VFD, 0x00002222},
-+	{REG_A6XX_RBBM_CLOCK_DELAY_GPC, 0x00000200},
-+	{REG_A6XX_RBBM_CLOCK_DELAY_HLSQ, 0x00000000},
-+	{REG_A6XX_RBBM_CLOCK_HYST_TSE_RAS_RBBM, 0x00000000},
-+	{REG_A6XX_RBBM_CLOCK_HYST_VFD, 0x00000000},
-+	{REG_A6XX_RBBM_CLOCK_HYST_GPC, 0x04104004},
-+	{REG_A6XX_RBBM_CLOCK_HYST_HLSQ, 0x00000000},
-+	{REG_A6XX_RBBM_CLOCK_CNTL_TEX_FCHE, 0x00000222},
-+	{REG_A6XX_RBBM_CLOCK_DELAY_TEX_FCHE, 0x00000111},
-+	{REG_A6XX_RBBM_CLOCK_HYST_TEX_FCHE, 0x00000777},
-+	{REG_A6XX_RBBM_CLOCK_CNTL_UCHE, 0x22222222},
-+	{REG_A6XX_RBBM_CLOCK_HYST_UCHE, 0x00000004},
-+	{REG_A6XX_RBBM_CLOCK_DELAY_UCHE, 0x00000002},
-+	{REG_A6XX_RBBM_ISDB_CNT, 0x00000182},
-+	{REG_A6XX_RBBM_RAC_THRESHOLD_CNT, 0x00000000},
-+	{REG_A6XX_RBBM_SP_HYST_CNT, 0x00000000},
-+	{REG_A6XX_RBBM_CLOCK_CNTL_GMU_GX, 0x00000222},
-+	{REG_A6XX_RBBM_CLOCK_DELAY_GMU_GX, 0x00000111},
-+	{REG_A6XX_RBBM_CLOCK_HYST_GMU_GX, 0x00000555},
-+	{},
-+};
-+
- static const struct adreno_reglist a630_hwcg[] = {
- 	{REG_A6XX_RBBM_CLOCK_CNTL_SP0, 0x22222222},
- 	{REG_A6XX_RBBM_CLOCK_CNTL_SP1, 0x22222222},
-@@ -490,7 +543,6 @@ static const u32 a630_protect_regs[] = {
- };
- DECLARE_ADRENO_PROTECT(a630_protect, 32);
- 
--/* These are for a620 and a650 */
- static const u32 a650_protect_regs[] = {
- 	A6XX_PROTECT_RDONLY(0x00000, 0x04ff),
- 	A6XX_PROTECT_RDONLY(0x00501, 0x0005),
-@@ -774,6 +826,30 @@ static const struct adreno_info a6xx_gpus[] = {
- 			{ 169, 2 },
- 			{ 180, 1 },
- 		),
-+	}, {
-+		.chip_ids = ADRENO_CHIP_IDS(0x06020100),
-+		.family = ADRENO_6XX_GEN3,
-+		.fw = {
-+			[ADRENO_FW_SQE] = "a650_sqe.fw",
-+			[ADRENO_FW_GMU] = "a621_gmu.bin",
-+		},
-+		.gmem = SZ_512K,
-+		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
-+		.quirks = ADRENO_QUIRK_HAS_CACHED_COHERENT |
-+			  ADRENO_QUIRK_HAS_HW_APRIV,
-+		.init = a6xx_gpu_init,
-+		.zapfw = "a620_zap.mbn",
-+		.a6xx = &(const struct a6xx_info) {
-+			.hwcg = a620_hwcg,
-+			.protect = &a650_protect,
-+			.gmu_cgc_mode = 0x00020200,
-+			.prim_fifo_threshold = 0x00010000,
-+		},
-+		.address_space_size = SZ_16G,
-+		.speedbins = ADRENO_SPEEDBINS(
-+			{ 0, 0 },
-+			{ 137, 1 },
-+		),
- 	}, {
- 		.chip_ids = ADRENO_CHIP_IDS(
- 			0x06030001,
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-index 6f168f1f32d8..37927bdd6fbe 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-@@ -423,6 +423,20 @@ static int a6xx_gmu_gfx_rail_on(struct a6xx_gmu *gmu)
- 	return a6xx_gmu_set_oob(gmu, GMU_OOB_BOOT_SLUMBER);
- }
- 
-+static void a6xx_gemnoc_workaround(struct a6xx_gmu *gmu)
-+{
-+	struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
-+	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
-+
-+	/*
-+	 * GEMNoC can power collapse whilst the GPU is being powered down, resulting
-+	 * in the power down sequence not being fully executed. That in turn can
-+	 * prevent CX_GDSC from collapsing. Assert Qactive to avoid this.
-+	 */
-+	if (adreno_is_a621(adreno_gpu) || adreno_is_7c3(adreno_gpu))
-+		gmu_write(gmu, REG_A6XX_GMU_AO_AHB_FENCE_CTRL, BIT(0));
-+}
-+
- /* Let the GMU know that we are about to go into slumber */
- static int a6xx_gmu_notify_slumber(struct a6xx_gmu *gmu)
- {
-@@ -456,6 +470,8 @@ static int a6xx_gmu_notify_slumber(struct a6xx_gmu *gmu)
- 	}
- 
- out:
-+	a6xx_gemnoc_workaround(gmu);
-+
- 	/* Put fence into allow mode */
- 	gmu_write(gmu, REG_A6XX_GMU_AO_AHB_FENCE_CTRL, 0);
- 	return ret;
-@@ -945,6 +961,8 @@ static void a6xx_gmu_force_off(struct a6xx_gmu *gmu)
- 	/* Force off SPTP in case the GMU is managing it */
- 	a6xx_sptprac_disable(gmu);
- 
-+	a6xx_gemnoc_workaround(gmu);
-+
- 	/* Make sure there are no outstanding RPMh votes */
- 	a6xx_gmu_rpmh_off(gmu);
- 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-index 33a319f7d200..f2eca69613af 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-@@ -523,6 +523,12 @@ static void a6xx_calc_ubwc_config(struct adreno_gpu *gpu)
- 	if (adreno_is_a619_holi(gpu))
- 		gpu->ubwc_config.highest_bank_bit = 13;
- 
-+	if (adreno_is_a621(gpu)) {
-+		gpu->ubwc_config.highest_bank_bit = 13;
-+		gpu->ubwc_config.amsbc = 1;
-+		gpu->ubwc_config.uavflagprd_inv = 2;
-+	}
-+
- 	if (adreno_is_a640_family(gpu))
- 		gpu->ubwc_config.amsbc = 1;
- 
-diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-index 26972b2cc896..ea2c25e007eb 100644
---- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-+++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-@@ -384,6 +384,11 @@ static inline int adreno_is_a619_holi(const struct adreno_gpu *gpu)
- 	return adreno_is_a619(gpu) && adreno_has_gmu_wrapper(gpu);
- }
- 
-+static inline int adreno_is_a621(const struct adreno_gpu *gpu)
-+{
-+	return gpu->info->chip_ids[0] == 0x06020100;
-+}
-+
- static inline int adreno_is_a630(const struct adreno_gpu *gpu)
- {
- 	return adreno_is_revn(gpu, 630);
+I'd prefer if the error values were checked one by one.
 
--- 
-2.46.0
+			card->tx_led.default_trigger = ...
+			if (!card->tx_led.default_trigger) {
+				...
+			}
 
+			card->tx_led.name = ...
+			if (!card->tx_led.default_trigger) {
+				...
+			}
+
+>  
+>  			card->tx_led.dev = &dev->dev;
+>  			card->recon_led.brightness_set = led_recon_set;
+> @@ -263,6 +267,11 @@ static int com20020pci_probe(struct pci_dev *pdev,
+>  			card->recon_led.name = devm_kasprintf(&pdev->dev, GFP_KERNEL,
+>  							"pci:red:recon:%d-%d",
+>  							dev->dev_id, i);
+> +			if (!card->recon_led.default_trigger || !card->recon_led.name) {
+
+Ditto.
+
+> +				ret = -ENOMEM;
+> +				goto err_free_arcdev;
+> +			}
+> +
+>  			card->recon_led.dev = &dev->dev;
+>  
+>  			ret = devm_led_classdev_register(&pdev->dev, &card->tx_led);
 
