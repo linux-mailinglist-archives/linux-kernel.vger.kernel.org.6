@@ -1,194 +1,134 @@
-Return-Path: <linux-kernel+bounces-305243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75085962BCA
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:15:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4683E962BCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32131287201
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:15:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79B941C23D5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAFC1A4B9F;
-	Wed, 28 Aug 2024 15:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CD01A4F1F;
+	Wed, 28 Aug 2024 15:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z5wR9DUa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vg/e+0jO"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8F51A2C17;
-	Wed, 28 Aug 2024 15:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A457C1A2C29;
+	Wed, 28 Aug 2024 15:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724857927; cv=none; b=JPPixrghu6gH/k2CIkZDkKaHM3GLS2+IDTHaz04hZ/LXfHUuPCjlMmWJPZSAhD03PfVK7qCs/VlMNC+zm1VZg8rcIZnd2OKVnhb15WAj2lzOcBJoV9wOhOSZWhFOPGXpoD9+/FlS2mFwDsoD3Oc92pjHnez/njnE0nRO3zd8PvU=
+	t=1724857966; cv=none; b=neHG3nW9qOXToHgPURQBp7m/NZrElbZ0mBf73j7xwRjjhCSAm7JyQfUkeI0J7NE10WaveJ+sMt+AAmiVpTlltjN4Ij7r6gau08Stl2rb93mXrRLgIuq7+/wv+lcMPN/HbWJLMfZmpzcSDAb92W2NIHVCs06OgiFTZ1tVG6K9/Mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724857927; c=relaxed/simple;
-	bh=9GuXAxjPKxPmRMioM0desVcabOX2V79hzACInoh3ahU=;
+	s=arc-20240116; t=1724857966; c=relaxed/simple;
+	bh=/IyRKuOeEvyqdB4QfYijTcKAfdptVOGW+q1DNzAAB5Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tWhzj+IiPtJunr8sEQ5vlxnNzrOv+1qiXkqYhe+72lzuqPGbi2462iEKs9NXkTjG4s8fz0F7RJAc18NIlF5oNMNgW6WjMJVhzhn3tz5wU0mi/ltUq+lS/cWtszLqt/a5Qy/385jPj7g6s+qJA8NrJZW+yk3co+Yo724WRQ7lqVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z5wR9DUa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBC85C4CEC1;
-	Wed, 28 Aug 2024 15:12:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724857927;
-	bh=9GuXAxjPKxPmRMioM0desVcabOX2V79hzACInoh3ahU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z5wR9DUaujBFT4XeskFDnq/unR1mK7T6eJVLJ6YdAP+4nJKvH1Bn+zE/tDmRvwe07
-	 q/ANLYGHJerruJiRG5M1e2eew8M4KozXaXfYkpzvJB9ffU04lJC7uDBHeA7OhT5ybC
-	 /dwjw3Ixv+2eEcBdWnkCfyxbmgyH6b5BixfZHYVkOEDpn3+drA5zECDmYH3rcGhoAw
-	 a7xOWsHEdyshtT5wRUFmtLz2zx2NqjL3wV7S11mJQbOG3xkIqm45rnAVDuUkpDBTxH
-	 +BteBBRDPODTWwLRe+4wEk7ibapa3HeaM69wia0TMC7HzTu30IDQtkcZ8zKeXk0utP
-	 nQ28Nxcj3TxiA==
-Date: Wed, 28 Aug 2024 10:12:05 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jie Gan <quic_jiegan@quicinc.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Jinlong Mao <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Tingwei Zhang <quic_tingweiz@quicinc.com>,
-	Yuanfang Zhang <quic_yuanfang@quicinc.com>,
-	Tao Zhang <quic_taozha@quicinc.com>,
-	Song Chai <quic_songchai@quicinc.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v4 3/5] dt-bindings: arm: Add Coresight TMC Control Unit
- hardware
-Message-ID: <20240828151205.GA3830921-robh@kernel.org>
-References: <20240828012706.543605-1-quic_jiegan@quicinc.com>
- <20240828012706.543605-4-quic_jiegan@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pJaP8C5JFLlZgL8yM5ZJdpAX4tOF+OdtFxWDcoUyFUTOrQnJVYK6Ay3y9PaKCayDy+wPGE4pp46kg2ngXVSE91f5gPzJSdPS3GR5NOSkrk2AQmYEb20JoVCr55NKZeXfER+4YxpK8Eamxg740iEBhq/vMPhtPM2/ENo4qEay29s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vg/e+0jO; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so57788975e9.2;
+        Wed, 28 Aug 2024 08:12:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724857963; x=1725462763; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kbaH3V7Lk+uax03Oqau7bBE1nBYKOYJZ2EVryMzrRy4=;
+        b=Vg/e+0jO4UDhGCehuMjbQuXLnnb+7WsW7TXvkZ9X3hihMUCCxJsvg2SKOEiIs2HhUV
+         rFi+UOY9RJGZVmnEJd2937GPkmsozNqZWn2t4QHgGRJkdpI7bpUHnar2Jz8aSRQ2kiQQ
+         geQhdYyM71iY+3OXurPXut8KNZAIHKN01ggrEpgqpKFhBWHJxrfEey0Tse9HoP3YyAsI
+         bVrsl1bK46tUjXu1JTPLGQerH2r0K2Y8VC24r03fDBn6Am93DcC46QmuRg0Xft0s1AF+
+         LHXqn9IUH4S8aRyEemAWhr/o39DHX3oXq80cLICITJGVefYI4Ju4DnZqzLLp8z9YakkN
+         GvMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724857963; x=1725462763;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kbaH3V7Lk+uax03Oqau7bBE1nBYKOYJZ2EVryMzrRy4=;
+        b=E9TCahAfZlC7bNwUj9kcei3tR/WOoAGpq8Do0oC2UKpFmjqfq7GkqM7myTR7cJLYVr
+         m4VeqgyZPhU8HsHclie9kqT4cQy+4VgPl2pGfjHjpdxSHD+9pTJ1nUmuPThJRRjbSwmb
+         I5yWFieE6nIXECETqHRKowwEJ6/RdX/3cE1Z2RicLbBJ1DEPrbirJ2kibQjUYimDkDVV
+         tQh9YUTQCNLcuFajKcK2gvE+/p3GD2ym+zoplzta8lqqoQMtRMuaFB2LyLunZvfriHo3
+         WZsuYygwjbDE93exKN8gKF0SDTDu630pwPYjo+tEyqDQDBOE9i2naOsoHh5ymaR2VSsg
+         WM2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXVFlQCj8tgTrvEsnZ4zPG09NlqsUMWvle095vKW/A47aBO+P0aXdZ7oEYOZJPVNZ5epscSv4QG5FH/AgU=@vger.kernel.org, AJvYcCXVfluInBh7nNqQQkIVwwcUvTiq6ggq8RRn6WH1zFDjU+/9WJy7JT5MLu3By2s5zsijfl5wriTXUcV7CL8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZBTvdpfvLJbba1g+VkMjTKUZ5gJzyFDskrxELG50nVtMXfWnO
+	WchgtOK7NAnBOaCi1tgId4Sv3Y3lBe7QBFmMxnTtPMLu/axm4FZ2
+X-Google-Smtp-Source: AGHT+IGQW0+v8moibSdO2Q/RDfDjaFv/WD0sbqLqA5iBEEKPuRh2zkLaDWQrYYlWkKTTw2QwiUONiA==
+X-Received: by 2002:a05:600c:310f:b0:426:51ce:bb14 with SMTP id 5b1f17b1804b1-42acd5d79b1mr105634055e9.30.1724857962403;
+        Wed, 28 Aug 2024 08:12:42 -0700 (PDT)
+Received: from orome (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba63965dbsm24684245e9.6.2024.08.28.08.12.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 08:12:42 -0700 (PDT)
+Date: Wed, 28 Aug 2024 17:12:40 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Joerg Roedel <joro@8bytes.org>, 
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, 
+	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH 1/1] gpu: host1x: Use iommu_paging_domain_alloc()
+Message-ID: <5bckndhbbvbvkt2bqxseyeo43qzvy6h2oykqbkhnfrpw7zjwu4@ziztccfxccv6>
+References: <20240812071605.9513-1-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="7mk5vwuaumccccci"
+Content-Disposition: inline
+In-Reply-To: <20240812071605.9513-1-baolu.lu@linux.intel.com>
+
+
+--7mk5vwuaumccccci
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240828012706.543605-4-quic_jiegan@quicinc.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 28, 2024 at 09:27:04AM +0800, Jie Gan wrote:
-> Add binding file to specify how to define a Coresight TMC
-> Control Unit device in device tree.
-> 
-> It is responsible for controlling the data filter function
-> based on the source device's Trace ID for TMC ETR device.
-> The trace data with that Trace id can get into ETR's buffer
-> while other trace data gets ignored.
-> 
-> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+On Mon, Aug 12, 2024 at 03:16:05PM GMT, Lu Baolu wrote:
+> An iommu domain is allocated in host1x_iommu_attach() and is attached to
+> host->dev. Use iommu_paging_domain_alloc() to make it explicit.
+>=20
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Link: https://lore.kernel.org/r/20240610085555.88197-8-baolu.lu@linux.int=
+el.com
 > ---
->  .../bindings/arm/qcom,coresight-ctcu.yaml     | 84 +++++++++++++++++++
->  1 file changed, 84 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml
-> new file mode 100644
-> index 000000000000..669aac646451
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml
-> @@ -0,0 +1,84 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/arm/qcom,coresight-ctcu.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: CoreSight TMC Control Unit
-> +
-> +maintainers:
-> +  - Yuanfang Zhang <quic_yuanfang@quicinc.com>
-> +  - Mao Jinlong <quic_jinlmao@quicinc.com>
-> +  - Jie Gan <quic_jiegan@quicinc.com>
-> +
-> +description:
+>  drivers/gpu/host1x/dev.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 
-You need '>' or '|' if you want to preserve paragraphs.
+Applied, thanks.
 
-> +  The Trace Memory Controller(TMC) is used for Embedded Trace Buffer(ETB),
-> +  Embedded Trace FIFO(ETF) and Embedded Trace Router(ETR) configurations.
-> +  The configuration mode (ETB, ETF, ETR) is discovered at boot time when
-> +  the device is probed.
-> +
-> +  The Coresight TMC Control unit controls various Coresight behaviors.
-> +  It works as a helper device when connected to TMC ETR device.
-> +  It is responsible for controlling the data filter function based on
-> +  the source device's Trace ID for TMC ETR device. The trace data with
-> +  that Trace id can get into ETR's buffer while other trace data gets
-> +  ignored.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,sa8775p-ctcu
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    items:
-> +      - const: apb
-> +
-> +  in-ports:
+Thierry
 
-Just "ports". "in-ports" is for the case when you have "out-ports".
+--7mk5vwuaumccccci
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    patternProperties:
-> +      '^port(@[0-1])?$':
-> +        description: Input connections from CoreSight Trace bus
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - in-ports
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    ctcu@1001000 {
-> +        compatible = "qcom,sa8775p-ctcu";
-> +        reg = <0x1001000 0x1000>;
-> +
-> +        clocks = <&aoss_qmp>;
-> +        clock-names = "apb";
-> +
-> +        in-ports {
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +
-> +            port@0 {
-> +                reg = <0>;
-> +                ctcu_in_port0: endpoint {
-> +                    remote-endpoint = <&etr0_out_port>;
-> +                };
-> +            };
-> +
-> +            port@1 {
-> +                reg = <1>;
-> +                ctcu_in_port1: endpoint {
-> +                    remote-endpoint = <&etr1_out_port>;
-> +                };
-> +            };
-> +        };
-> +    };
-> -- 
-> 2.34.1
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmbPPmgACgkQ3SOs138+
+s6ErLBAArXWV8KB6676S4Mww6EFpvjmqtdeUPZADFF5+D4qAXK+eqPe/rprOAwCd
+6+tCPTAkEGrym0m4qeV44txjQOtxEM4a+YWx6WxQfCYg+oprDa/jtEF+ysICSiwe
+3fJRnrb16N/fFTaEHub+y+gAtr1BlhHmRt+zZKyNv7eCfM3tk5sMd6WcR8UCp/Ey
+zBFXXmcC5ugNsZtxITQWGcHaY6dotmlkqQpRq41NMRr4tSnJgmR3z0PwCVftt23x
+B+agCPY9txwY+vSCIwrQ/zQwP924utFtkf2avxSLhU8E/RabXCJFUtbKhe017SJC
+mNw7Ahz2a5QHaXKTjNCrO/xczR2i9RK9VOsJUgOl85zQEVE66XoFzMlkpKNZZKze
+B5jMd5Lm19Cqpl2wTRgqK5B4oulDKgwkusWOXuPTFZjocpKOzW6SsKzrmy/+/Ie+
+ICZNIv3Op1m6Bc8rK5WWHFYsY7584/3yDqmpI9pb3JeB9+VMU0UCEz7bNBHTZCAK
+kcj4LAOzk9oSvlN2h1oUBQzM+3tqh4v7Y++VVJxPi8ecNbgXekw8V76uKW0iKz9O
+uzq198fgfG0P1TvN15AtUueY3d6J8lGZuVH8FEphvkNagj6+x/dx/dJW9tu//poK
+Y8pQfxFEVSY4oC8gRlgIPwCEgFCSWKRatLXAokmYvhy3IRNc6Dc=
+=cWHB
+-----END PGP SIGNATURE-----
+
+--7mk5vwuaumccccci--
 
