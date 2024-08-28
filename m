@@ -1,144 +1,136 @@
-Return-Path: <linux-kernel+bounces-305549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87D1396304E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:42:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED73696307B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:53:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39DCC1C21BF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:42:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A576C1F21C4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFA801AAE34;
-	Wed, 28 Aug 2024 18:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110801AAE04;
+	Wed, 28 Aug 2024 18:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D1PLinB2"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dlPlM6Oh"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823B81AAE06
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 18:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6688C154C19;
+	Wed, 28 Aug 2024 18:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724870542; cv=none; b=RDyhNMtoUlXSziM6c0fm6Jh+1MbZuGqP+2Dlzebb4RwqcBf4OsPNMVpTMFwDOgBqU1zLZI67eDS8/XJjPdoz5K82yIeM23GZfSyJBewEoryRdoe25C7WacybFDgKRKdW/EtgU5VbN1nJv9H/PaTM/QL98EDuxMXPOkDMP2LSJEA=
+	t=1724871219; cv=none; b=QL9OkQ1Cg+XLzHcnlhjFYXH3zx1jwB9PgrKrV1Sf2/tf9keKzcX3Uf4lZXKRjxyUpNKbMyBUaEvSk87I7RPyoVPcFlui5bQFx1StBCbaajEjphEc50ImX6SgxiXW4U5dUN6H/7Umr1+BAIRdwyy7aHuvx9zoYAZCSnr98lRJXcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724870542; c=relaxed/simple;
-	bh=QEeLNZFZcwxCcWYnW4z2tA2QeHYs3Q65T8g1xBDn/3A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SYpjo9lSMlSubbn9lEuLDFqhxpI1Bo3SMe9i/gT8kPp9qAc5S9qbbp5DzTNcG9z3LTqWKfpKSIhu/gD6dpdP6b/w8hI/9lpqRrOQkP+6Z0lHS8iIZ5yXEVY7QnGpf7hgTJggpXloCeiS4M3PK5i8C7FWfiOYvG0y4zqKdG3E/TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D1PLinB2; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c210e23573so1597453a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 11:42:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724870538; x=1725475338; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LcJUfphvBgi5vqI+dp18oOC2QkxqROcaEYjyHdODKlI=;
-        b=D1PLinB2CgGSoSUEpzxQAZ7+lsPBRowYP2rMHh3ljEwcPv+4XNrW7FLrYmEpdHWCKu
-         0yBxlp+gxgxI3DG+E9m9FlmQaPEfoXQ5jumdTHip4hBI/USGfMy36anBPdno00hhg9L8
-         z66etL2gKYAEV1U49pZP+m9kwcgRYtE3oASH5ON0wfxog/sQ+rQKYBOI4wuHJNNmzyuv
-         OukpdLOZJEa1uzIOo7ocQfua+p67BJ0kJD8C0LQHQ4LuG2v7vJxOwVct2LaviUNSQ3uk
-         Yv/uBOaJOT+MbwwozM5ixrbJvKvz9c321EDC9DUUhggWYVJnAJnyv+4qEImUx2ql3nsN
-         Jsmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724870538; x=1725475338;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LcJUfphvBgi5vqI+dp18oOC2QkxqROcaEYjyHdODKlI=;
-        b=OKNWMRNuLNYLHwa9Mzj5JeyLxoL6Mp1O+qatHN+edGx4Ka/xHqnY/6N9qXsxUwZAEN
-         utMc91us1ucJ+XONcurA4LCuLocqXBJPvJJm4VXL0rd+ulng3JopDgA75qEuUhiQnXqm
-         MXIQdPzVinQhbJPn7eHtDIvLENIdy7tZUL00PRHHdIoe/Ty6oDcq8w4hKAo/1YXkcYST
-         RJTcscijSrLm7kWLPZp4/QT2d+mbi6/9jo6vB86OGHBNlHE8jAD45NzecA27vIUsSk87
-         zprQiJos4YLlKucp95w7JMqZSgkrAwHsiE5e8rOCKEhloe3e0skN5U89pX5D1xLqWIbX
-         fdvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWW7Agj+X2crVPCAGqESlnYIkDWIPpkRypKbtP1adu1MZNYdqpGEhCol+J3xrT2Py2kO/MRINt8bFEie+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzi1yBZ2aWdgz/8XdifzNB2o1RjC2425X9x5aUc2tn6U3XSJrp7
-	mfEfpVFAlKU1b5lOfk8fP55LlommijaovjAEen0P67bEU+kF4eJlUBBPYfoA
-X-Google-Smtp-Source: AGHT+IFSYYUBjtV25MXc6g5dPq8jQvkJmvS3NCJSaw9RZDiIevTdrXKjvwx96J8zHon6guUF042z/Q==
-X-Received: by 2002:a17:907:60c9:b0:a7a:9226:6511 with SMTP id a640c23a62f3a-a897f92005dmr21597566b.31.1724870537317;
-        Wed, 28 Aug 2024 11:42:17 -0700 (PDT)
-Received: from ?IPV6:2003:c7:8f2a:8553:56e9:1165:4741:30be? (p200300c78f2a855356e91165474130be.dip0.t-ipconnect.de. [2003:c7:8f2a:8553:56e9:1165:4741:30be])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e594a000sm273830166b.207.2024.08.28.11.42.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 11:42:16 -0700 (PDT)
-Message-ID: <7a042b36-4e1d-45bf-a9b6-e4e248ade30c@gmail.com>
-Date: Wed, 28 Aug 2024 20:42:16 +0200
+	s=arc-20240116; t=1724871219; c=relaxed/simple;
+	bh=H1XuPPB8v900dqjawnDHbkZVV/UCHi52+icAflQG6Vk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m52aYetdp5K68XTxwDUgSRhdRhz6H6Gdvp/1vUWoKbpifXsWxc1fxdPN8t4GbUOn28bz4Qrx2V1OEQJ5eTIjlgM0694xuWThixDamnNq+/ehIV97qmUF/9cioOqXZkPNWkdBROPbIWdITwWEX1cjnang1VUA6eC07xKi3CnKiaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dlPlM6Oh; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47SIrUpZ051715;
+	Wed, 28 Aug 2024 13:53:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724871210;
+	bh=z9uAqw/+IP1IRKtdfwhh5ngrNSdW4CojfSTM8EbSRWE=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=dlPlM6Oh61oicmZ5Cd63S9nj+GG6ezcUIJ5DEmIZagA2+DA1tcI6TEHev7/2yOx/b
+	 g7L0tb3w/f+8SFHV7pJ2qhlffxe1rK36EBvMmkvBKboUlWB4VHIkic5afAMqa+q/8Y
+	 pdbSQqFG4HQsQeTFDq11NxtJttKPqdjOMkR03Qkk=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47SIrUFh011132
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 28 Aug 2024 13:53:30 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 28
+ Aug 2024 13:53:30 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 28 Aug 2024 13:53:30 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47SIrUBG046548;
+	Wed, 28 Aug 2024 13:53:30 -0500
+From: Nishanth Menon <nm@ti.com>
+To: <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        Beleswar Padhi <b-padhi@ti.com>
+CC: Nishanth Menon <nm@ti.com>, <u-kumar1@ti.com>, <s-anna@ti.com>,
+        <hnagalla@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 0/7] Switch MAIN R5F clusters to Split-mode for TI K3 Platforms
+Date: Wed, 28 Aug 2024 13:43:24 -0500
+Message-ID: <172487055957.3438526.15757529252683657587.b4-ty@ti.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240826093024.1183540-1-b-padhi@ti.com>
+References: <20240826093024.1183540-1-b-padhi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: vt6655: Fix block comment alignment
-To: =?UTF-8?Q?Dominik_Karol_Pi=C4=85tkowski?=
- <dominik.karol.piatkowski@protonmail.com>, gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240828145923.78004-1-dominik.karol.piatkowski@protonmail.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <20240828145923.78004-1-dominik.karol.piatkowski@protonmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 8/28/24 17:00, Dominik Karol Piątkowski wrote:
-> This patch fixes the "Block comments should align the * on each line"
-> warning detected by checkpatch.pl.
+Hi Beleswar Padhi,
+
+On Mon, 26 Aug 2024 15:00:17 +0530, Beleswar Padhi wrote:
+> TI's K3 Platforms (J7200-EVM, J721E-EVM, J721E-SK, J721S2-EVM, AM68-SK,
+> J784S4-EVM, AM69-SK) have multiple R5F clusters in the MAIN domain. All
+> of these clusters are configured for LockStep mode at the moment. Switch
+> all of these R5F clusters to Split mode by default to maximize the
+> number of R5F cores.
 > 
-> Signed-off-by: Dominik Karol Piątkowski <dominik.karol.piatkowski@protonmail.com>
-> ---
->   drivers/staging/vt6655/device.h | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
+> v3: Changelog:
+> * Nishanth
+> 1) Refactored changes to board level DTS files instead of SoC level dtsi files.
 > 
-> diff --git a/drivers/staging/vt6655/device.h b/drivers/staging/vt6655/device.h
-> index 0212240ba23f..32d9cbd55222 100644
-> --- a/drivers/staging/vt6655/device.h
-> +++ b/drivers/staging/vt6655/device.h
-> @@ -189,10 +189,10 @@ struct vnt_private {
->   
->   	u8		byBBType; /* 0:11A, 1:11B, 2:11G */
->   	u8		packet_type; /*
-> -				       * 0:11a,1:11b,2:11gb (only CCK
-> -				       * in BasicRate), 3:11ga (OFDM in
-> -				       * Basic Rate)
-> -				       */
-> +				      * 0:11a,1:11b,2:11gb (only CCK
-> +				      * in BasicRate), 3:11ga (OFDM in
-> +				      * Basic Rate)
-> +				      */
->   	unsigned short wBasicRate;
->   	unsigned char byACKRate;
->   	unsigned char byTopOFDMBasicRate;
+> [...]
 
-Hi Dominik,
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
 
-please make your "Subject" line more unique. Consider that we may end up 
-with having dozen of commits like yours, all of them referring to 
-different removals and all without the necessary information to tell 
-what they differ in (except the driver/subsystem). So it would help if 
-you add the changed file or function to make it more unique.
+[1/7] arm64: dts: ti: k3-j7200-som-p0: Switch MAIN R5F cluster to Split-mode
+      commit: 936fa8b91abac356b8c8afd70959dba8420ddc18
+[2/7] arm64: dts: ti: k3-j721e-som-p0: Switch MAIN R5F clusters to Split-mode
+      commit: 956d1f88a7df31cd7264b07d9ff7fe886aa96ae5
+[3/7] arm64: dts: ti: k3-j721e-sk: Switch MAIN R5F clusters to Split-mode
+      commit: 17613194f8f765c5559c2a1aab56b76ffbc4a2ee
+[4/7] arm64: dts: ti: k3-j721s2-som-p0: Switch MAIN R5F clusters to Split-mode
+      commit: ab630a7f429195a02185faec448603d2ae4b12d5
+[5/7] arm64: dts: ti: k3-am68-sk-som: Switch MAIN R5F clusters to Split-mode
+      commit: e1f2bf759c533fb86380ded089a16fba24222832
+[6/7] arm64: dts: ti: k3-j784s4-evm: Switch MAIN R5F clusters to Split-mode
+      commit: 10ef034f94ef7916c89f40e3b3844bcd066a7a58
+[7/7] arm64: dts: ti: k3-am69-sk: Switch MAIN R5F clusters to Split-mode
+      commit: 34d0e51ad34b0b1f8d6020020bf7e4e8e4f5cbe1
 
-The description can be improved. Please always consider that checkpatch 
-can be wrong. So checkpatch is not a justification.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-I propose:
-Align the * on each line of the block comment to improve readability.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Important is to describe the why this patch makes the code better.
-You can mention the tool which gave you the hint but you do not have to.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-If you send in a second version of this patch please use a change 
-history. Description from Dan under:
-https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-Thanks for your support.
-
-Bye Philipp
-
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
 
