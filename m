@@ -1,140 +1,133 @@
-Return-Path: <linux-kernel+bounces-305131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC77E9629F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:12:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F4A9629F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:12:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAD43281DB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:12:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2712281C63
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F1C18A94D;
-	Wed, 28 Aug 2024 14:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0954C189B91;
+	Wed, 28 Aug 2024 14:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CKPsk5hp"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ARHgpekO"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF07F189512;
-	Wed, 28 Aug 2024 14:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBCC1188CC8
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724854319; cv=none; b=hYEq4EfP1s7+Baeu8T/4PPfUooevorSSe2DQWWw/SYjbtiE4iF/mTDIPotqR74Igh4wqH13Zf2V90SRyrXMkBpNxLvYt/kKdt1bhh9KqoKRm4vY1qYkFsv3slofEAbPaygSXRs8tn84BVi47pKoElDtlVRFDpiL6EPVS2EcAmCU=
+	t=1724854343; cv=none; b=TuJWSrplJwbeUrkFkVrQl+nJW6nVM1eW58LcbYC8He8pu8fq51BITIr+rkGBrd68YTC1y363w22pLygn+cJFf3uiPOAkugih4Y0YVbqjKqJ8ceRci/5uj+Rk+38PukVLYeJlkYD/hmW+CpFLr/HrqeCvzc+AY5tjZp+MFSBmoik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724854319; c=relaxed/simple;
-	bh=JJXWJoMrNO4Gsh8t4+ahvDypothpTM3jC9jnVIAl5lQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Fbkud9uBNbNygJ4h4rtYLDCsnlrXKxgh13lz6krh8vpaWL+ha4w9fhzdmrxENB0+kvZ3sn/8h3OZrjUu6a4k1otGL4JLTBGdISm5Ug5duj3XIDTO0G4wEyjeKwP84TzuP/I0NODtbrOE3lz6Vk/wt8/3PyvRcHkNo/M69lQfEKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CKPsk5hp; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47SAxrNC027129;
-	Wed, 28 Aug 2024 14:11:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/iHlp1ibTvLljzJlqeVILbKdL42Yrm6BLUJ7+iaPpLA=; b=CKPsk5hp45xucro4
-	MUjo9sRzqPhSl8xFi5KXLgAsEc33GM5VjDQcMQlSf/39zKlfR7VfvdMCjHawSGpe
-	PUYmVNEW+feLsQ6RkGbjoWMqc2Bcr7euLGGEN9Ayffa4b88ReqgguexQ2P3WbaBT
-	iXfZm/lPyZZ3q9gxR8teTImGxuJ13kgT86+3gXhZ3Z23Qbkne+pbyb1EwR9dNabi
-	Qx5j3hYlWYfE176gVSFvDXrEs9iTIG5USvKrQFYJCXUTUzO2/aygHVYRnosqiUYP
-	aZqUd9zRgLW5D8q847IDlLphskBQW+t+sqogtfLRFlx4CiAwJ+FnTeQ9O8HbgN2a
-	HCYO9g==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419putj0e8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 14:11:53 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47SEBqmE004256
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 14:11:52 GMT
-Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 28 Aug
- 2024 07:11:46 -0700
-Message-ID: <23a8b53e-ae33-4f93-a1b9-3af2d37a4063@quicinc.com>
-Date: Wed, 28 Aug 2024 22:11:43 +0800
+	s=arc-20240116; t=1724854343; c=relaxed/simple;
+	bh=yeb0hXQ+hAEFUQKfRJad92+EuV7jrYPXxhHm8CrSlm4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XFfJaYV8Z02WOqf4ml024jvLNNt/5gcuaFDmKhvfQ99B26/UNDmo3rbIzSgXRID/hos3jr93kIAuYW0ew1Wef4wNCPwCUReWvkr2GNkp5GvSRJoBJcOtSx/iMz02KoC2SoBEld/E/xSIeSPt1CbBAIliHEk0bnhRMSL5oBjgX+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ARHgpekO; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6bf705959f1so6454836d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:12:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1724854337; x=1725459137; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BuabzWElUzzHdL1Mbm0egMjDIW45P3GOeFaGyaG57xY=;
+        b=ARHgpekOGxjeTNhOPCEdL0KEDAPlaxbs2bgSVh+JUnJ4NS2DjoHGCbyWp1AH+KTWZG
+         0w/9xAYAQP6Jm3927Lbl/ZbqLu5OoPTnovypMpMpsZHcILT/wsiZCm9Ek9dhto8jHstg
+         SnnWOnDeVjm8dQ+36Lv6SN0/TYbr6PN1fkK/A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724854337; x=1725459137;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BuabzWElUzzHdL1Mbm0egMjDIW45P3GOeFaGyaG57xY=;
+        b=MiQc9lFo3EfwnaFeda7U2h2e+qBcLwujwanfzYsf3Ma3QwPvMvvza/SqrttARt03tR
+         dHznA88DyLT02EH4EeIu0eBptdey0laQFgAB3NZWZCwpH8o87NmDGWpcHw/fEPA2OpDT
+         Qgdz0+iTRreVfoBH0AOq063OpNBKLZ1UTLh0MMPeGCcYmOO78IyvdquZ5ElH7kyymEgO
+         PgoNckqJYwlP8umb2tM8+qzeq+82TuXP7m2bXzO9j4WH79x3Xq9iQO/OKdtVpApp/6Dn
+         NDE/i+osiQvzdATV9Da+yfIE9zKWIrRVDp1JcmwQBu0LLeucqyzNXWMay6fJ1nG3kZbN
+         gfcg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAJDxLuyDxhFPxxuiZMtF9mpZmEFW6BnWaBxkhWYJj+8go55Y6hjizZeuSBoOrEHm8RcsALsHRrgmSerA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYAbgwA59DhDo6+7hOJkXxBIMR3EA99vf2mOSsT6E1C6xrvvyf
+	U4OGLuDO1vc0P962jcLPUI25v2UNrg6x9+3g3FC01PWhSD0wxrkOGXKLtoj59p6JPbpqQhpyXAQ
+	=
+X-Google-Smtp-Source: AGHT+IFVBqVtE1F+AJrGvZf5JgTlQs2oYswmVAV6klnd986fMB2cVuUvQU007r+LAfMw+564ao9PBg==
+X-Received: by 2002:a05:6214:5f01:b0:6c3:32d5:e94f with SMTP id 6a1803df08f44-6c335db4a80mr43850596d6.26.1724854336896;
+        Wed, 28 Aug 2024 07:12:16 -0700 (PDT)
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com. [209.85.219.52])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c162dcddadsm65950906d6.121.2024.08.28.07.12.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Aug 2024 07:12:16 -0700 (PDT)
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6bf7707dbb6so5475176d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:12:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXcXab26uSuaLwl/svuia7lkMNyxVxBzgyI17yrMYqDpS9+rj4Kcz96VsUYl+Gqw3w3LeQfyijmW2Ycl4Q=@vger.kernel.org
+X-Received: by 2002:ad4:5147:0:b0:6c1:80d3:8d2b with SMTP id
+ 6a1803df08f44-6c335d62c8bmr34636536d6.18.1724854335299; Wed, 28 Aug 2024
+ 07:12:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/13] media: qcom: camss: csiphy-3ph: Move CSIPHY
- variables to data field inside csiphy struct
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, <rfoss@kernel.org>,
-        <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
-        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-6-quic_depengs@quicinc.com>
- <cc1484d4-7a61-4f5c-b617-a6ad99985bda@linaro.org>
-Content-Language: en-US
-From: Depeng Shao <quic_depengs@quicinc.com>
-In-Reply-To: <cc1484d4-7a61-4f5c-b617-a6ad99985bda@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: TrEyfmn-pGeFmZMd3FdrZmj9MjzrZCXl
-X-Proofpoint-ORIG-GUID: TrEyfmn-pGeFmZMd3FdrZmj9MjzrZCXl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-28_05,2024-08-27_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 phishscore=0 adultscore=0 priorityscore=1501
- impostorscore=0 malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408280101
+References: <20240828-topic-sdm450-upstream-tbx605f-panel-v2-0-0a039d064e13@linaro.org>
+ <20240828-topic-sdm450-upstream-tbx605f-panel-v2-2-0a039d064e13@linaro.org>
+In-Reply-To: <20240828-topic-sdm450-upstream-tbx605f-panel-v2-2-0a039d064e13@linaro.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 28 Aug 2024 07:11:59 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WqmdjrM3jgpGEX=DqrJLYySpgQ9w+zK0mR=os_5wA35g@mail.gmail.com>
+Message-ID: <CAD=FV=WqmdjrM3jgpGEX=DqrJLYySpgQ9w+zK0mR=os_5wA35g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] drm/panel: add BOE tv101wum-ll2 panel driver
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Jessica Zhang <quic_jesszhan@quicinc.com>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Bryan,
+Hi,
 
-On 8/19/2024 8:01 AM, Vladimir Zapolskiy wrote:
-> On 8/12/24 17:41, Depeng Shao wrote:
->> From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>
->> A .data field in the csiphy device structure allows us to extend out the
->> register layout of the three phase capable CSIPHY layer.
->>
->> Move the existing lane configuration structure to an encapsulating
->> structure -> struct csiphy_device_regs which is derived from the .data
->> field populated at PHY init time, as opposed to calculated at lane
->> configuration.
->>
->> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->> Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
->> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
->> ---
->>   .../qcom/camss/camss-csiphy-3ph-1-0.c         | 55 ++++++++++++-------
->>   .../media/platform/qcom/camss/camss-csiphy.h  |  1 +
->>   2 files changed, 36 insertions(+), 20 deletions(-)
+On Wed, Aug 28, 2024 at 2:22=E2=80=AFAM Neil Armstrong
+<neil.armstrong@linaro.org> wrote:
+>
+> +static int boe_tv101wum_ll2_off(struct boe_tv101wum_ll2 *ctx)
+> +{
+> +       struct mipi_dsi_device *dsi =3D ctx->dsi;
+> +       struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D dsi };
+> +
+> +       dsi->mode_flags &=3D ~MIPI_DSI_MODE_LPM;
+> +
+> +       mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
+> +
+> +       mipi_dsi_msleep(&dsi_ctx, 70);
+> +
+> +       mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
+> +
+> +       mipi_dsi_msleep(&dsi_ctx, 20);
+> +
+> +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x04, 0x5a);
+> +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x05, 0x5a);
+> +
+> +       mipi_dsi_msleep(&dsi_ctx, 150);
+> +
+> +       return dsi_ctx.accum_err;
+> +}
 
->> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.h b/ 
->> drivers/media/platform/qcom/camss/camss-csiphy.h
->> index bdf9a9c8bacc..cac1f800b7d8 100644
->> --- a/drivers/media/platform/qcom/camss/camss-csiphy.h
->> +++ b/drivers/media/platform/qcom/camss/camss-csiphy.h
->> @@ -95,6 +95,7 @@ struct csiphy_device {
->>       struct csiphy_config cfg;
->>       struct v4l2_mbus_framefmt fmt[MSM_CSIPHY_PADS_NUM];
->>       const struct csiphy_subdev_resources *res;
->> +    void *data;
-> 
-> I would suggest to make the type/name above explicit:
-> 
+optional nit: now that the single caller of this function isn't
+looking at the error code, you could make boe_tv101wum_ll2_off()
+return "void".
 
-I will follow Vladimir's suggestion to update the type/name, please 
-reply this mail if you have other comment.
+In any case, this looks good.
 
-Thanks,
-Depeng
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
