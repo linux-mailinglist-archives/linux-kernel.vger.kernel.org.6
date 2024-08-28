@@ -1,195 +1,135 @@
-Return-Path: <linux-kernel+bounces-305235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 311E5962B94
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:13:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0252962BC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 518F91C23CDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:13:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DE77285E2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E8A1A76BB;
-	Wed, 28 Aug 2024 15:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954E81AB538;
+	Wed, 28 Aug 2024 15:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GA6TBWRw";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="b6xZ/aVM"
-Received: from a7-44.smtp-out.eu-west-1.amazonses.com (a7-44.smtp-out.eu-west-1.amazonses.com [54.240.7.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="meTAqnNk"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725151A707A;
-	Wed, 28 Aug 2024 15:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4021AB535
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724857869; cv=none; b=Q6Mk3eEsFVwwoffSV5bd6MpG3zvOYIOJtCp7HxGCTMmHtX9HMYJmiYLtHDRN4y/XEJ4eNQqF5CMLXPJWKMStlMxitiGxi5ca8o8ERhxgBVc1OghNKwN+uyw0CWvXxYo600nkug0d+TMwwXS1fkUofoYxtssQqT73ro1JJRLMo0k=
+	t=1724857907; cv=none; b=QVA7wo0BafIuDxrfmwPRRjkDPkmMyLQvRjh15fV1+YzxPyW7HpcaFriC3v/kpv4aU8YTZYbnDsChp0LbIVgAHdbvl/39Vo8/5W/m/wgXNjMC9/0URUOAnFNHuqIxg2vG6iYtWR+3J8grrRqpqhMNIpTvJL7zIXjaHKQYsqIl6Uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724857869; c=relaxed/simple;
-	bh=l4Gpo7LOU8NlLxSl1iKgM/8EeAwhluE9ALPDPnDi79g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NFJNC7pzhMmknV3+MUC9Dl41JKbHExsLQ7QB1nNp/kUEsfFhM6ilCkm37UnP26TiridgmqDTQCRNBN9+6XANV3wr3whLmYVUyJsZlyZYZOw051XkmN0hlgZ+ph9L2XPrXr5AC5j0VX/qx9FZuYKb++9c/jaJ90NlqlxYDSz3Gdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GA6TBWRw; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=b6xZ/aVM; arc=none smtp.client-ip=54.240.7.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1724857865;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=l4Gpo7LOU8NlLxSl1iKgM/8EeAwhluE9ALPDPnDi79g=;
-	b=GA6TBWRw06IFuPhTxtbmqf6iKNkM08X1qtJ27TlMlHP3wgTzYxhKh5XIEAKZOPyU
-	kemH3ebYiJ/Ld8pp+Q2tDs/eWvivAOS23mm6jzdEVE0UqdKNa3Ng3PZ/wU3CzR5wzRp
-	WoTqlcm0KyFAZ6PWzi9VIlsBnCfIIguwuIcQJa4gzTrFdnmlIGSiRDKXnOV33T0eNqP
-	3apGrHnbRWs+V06bQPPCYYBD1ctT9z1mdUW7jSrADAWxiYXPjkMsMbzB0FrAgooUXbY
-	vXKcO9zwUv8Dy1gGKIpTZh11QGunV/cAhsUmVzaVbzSndODjrRuLybPm7e8bRoa1ShO
-	BCGHdYjX8g==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1724857865;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
-	bh=l4Gpo7LOU8NlLxSl1iKgM/8EeAwhluE9ALPDPnDi79g=;
-	b=b6xZ/aVMadwXjO8u3Vvj5b0db70vGdBiQoYfwhld9IazeEAth2NHQPf/Uumuk/wz
-	eKhxlho83fm/aPY/qw5bA5/7JLZq4znus/SEpAAxqezu8WV6HYGlesI0ec27PrUNf/u
-	+Xwz1Gy6pTKs9XjAGybQJHO0QcmsqMH4rFIp06Mc=
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, 
-	Andi Shyti <andi.shyti@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Mark Brown <broonie@kernel.org>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, 
-	Guenter Roeck <linux@roeck-us.net>, 
-	Chris Morgan <macromorgan@hotmail.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>, 
-	Chukun Pan <amadeus@jmu.edu.cn>, 
-	Muhammed Efe Cetin <efectn@protonmail.com>, 
-	Andy Yan <andyshrk@163.com>, Jagan Teki <jagan@edgeble.ai>, 
-	Dragan Simic <dsimic@manjaro.org>, 
-	Detlev Casanova <detlev.casanova@collabora.com>, 
-	Ondrej Jirman <megi@xff.cz>, Jimmy Hon <honyuenkwun@gmail.com>, 
-	Elon Zhang <zhangzj@rock-chips.com>, 
-	Finley Xiao <finley.xiao@rock-chips.com>, 
-	Elaine Zhang <zhangqing@rock-chips.com>, 
-	Liang Chen <cl@rock-chips.com>, 
-	Yifeng Zhao <yifeng.zhao@rock-chips.com>, 
-	Jisheng Zhang <jszhang@kernel.org>, Jamie Iles <jamie@jamieiles.com>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org, 
-	linux-i2c@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, kernel@collabora.com, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3 06/11] dt-bindings: mmc: Add support for rk3576 eMMC
-Date: Wed, 28 Aug 2024 15:11:05 +0000
-Message-ID: <01020191998a55a9-697c3a2c-237e-49bb-b3dd-45762198d74f-000000@eu-west-1.amazonses.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240828151028.41255-1-detlev.casanova@collabora.com>
-References: <20240828151028.41255-1-detlev.casanova@collabora.com>
+	s=arc-20240116; t=1724857907; c=relaxed/simple;
+	bh=QpYhBzV+yaoDBMQ/fcOQAAYHC+gX2LXKD1fp6vi2ZHg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kh6UaMu5PzngoCDbLgjFnTcXcYVbMfk1ANb1EwT2Y/zc0OIIwvHsVXTzr9NRe6IoiX7kP8+q7sWZpX8UX4P9UPfTm5Ytou8Oedj3OUNW6L/72tDsSsJzHBc/TANo6icNCNvhRVrbtSboCPpvgypyppAw+ZcPcvFVjT2gShpAVmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=meTAqnNk; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e116ec43a4aso7704511276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 08:11:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724857905; x=1725462705; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dpwE48l/IMh8SOpKCeyLL7/+QtmITVgAbzW4ivc7bD4=;
+        b=meTAqnNkRGepbBwLFrXocK+AsCzDenOFcmh8Cdie03n5XkbyRiwvjbW++N2zEnE1xO
+         UhnUvIBBC3uzzk6jqdAwFIg/QAYFLNe435SmdOSh9F56/NhUua4QgL/dYzlTpNQFH/TD
+         b3PEpLytTLfSPVrAWkdsMKDmRWHzALrgef6Tyk0EI21QpConft3WRGczAdDd44S5G5UB
+         aoSA7L81+Dzx5riHz3+ZRFmLRPk3bTlyW+LXyZtRghnYAr9z3r4CKNLEBVNLXswhjG9+
+         WEhM+D1ULv2H5in7uXgcMDnk/nh/gJKbZvHGZ5TJBPZiXkb+truPZ06qwJanTFwsYanw
+         Ofqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724857905; x=1725462705;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dpwE48l/IMh8SOpKCeyLL7/+QtmITVgAbzW4ivc7bD4=;
+        b=sqWcjHRn9kqfVevLZHkB3O2xBzwCeHdf98rhWZbGjBLBRtbvwlJNU/w/9ox10es9LK
+         NvudU/+NbNAO/XVNKZnpGQHhiTXo8IOSAgwk/SmOGnw5vp4DfaTkI2WVO1VdUSmX1KPS
+         AtIPf4RSu0t0fAVHAwVD7FzDw/JKBvRg8/ZWGPgRjHtnO86bZbXlFbWAEVu12DWS4FaK
+         CCUqLVi+OfmiB2J1s7I+x5I8tKYQHx13sb8pS9RvjyN1G/kUp56SHkazSP/WGo+xzJWw
+         Pig+HD9ODBrHB6Rol5IIkd1HHdhH4wAYPH3DO7BppPxrOWeaMe0SBmUuTbHGE2h5cg+z
+         64UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWHO/ixb4flEaKkWN7k1NfPE1+r/9VFlxmG+JZgqdSqVMESxLGGbeGdGI8LN30b4Dw0203668Ee7aqQcF8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5KEW+gkdRYJh9UdAozsucYzzeqCHkB6AuJN+4D4ovbmOIblFE
+	dF1t4XmvcZZqfgrjgsk3C/ICiXzZBXOv7Bvw1NMsOkOxQSwzUXPPXbADIsOHWMPeV99SeZOCuxP
+	hYtkmUeCNUNEWWff2Mq7OAHCx+xEmDFzjmWembg==
+X-Google-Smtp-Source: AGHT+IE7CB9ls1GFKOjrUzbw5hOqUHyf+hifGdDexmkraaeqpfoek/di3j2sJAd4cp3CeBhWE+mU/vMmQSms6tlNdzU=
+X-Received: by 2002:a05:6902:1683:b0:e0b:3c9d:12bb with SMTP id
+ 3f1490d57ef6-e17a83bcb51mr19054563276.12.1724857905103; Wed, 28 Aug 2024
+ 08:11:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
-X-SES-Outgoing: 2024.08.28-54.240.7.44
+References: <20240827074857.2671808-1-xirui.zhang@vivo.com>
+In-Reply-To: <20240827074857.2671808-1-xirui.zhang@vivo.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 28 Aug 2024 17:11:08 +0200
+Message-ID: <CAPDyKFrN9L+u_X7Ur+j--i-tewd31EXzwCojOP+Sxuyxpk4Phg@mail.gmail.com>
+Subject: Re: [PATCH 0/9] mmc: convert to devm_clk_get_enabled() API
+To: zhangxirui <xirui.zhang@vivo.com>
+Cc: Robert Richter <rric@kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, 
+	Nicolas Pitre <nico@fluxnic.net>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Taichi Sugaya <sugaya.taichi@socionext.com>, Takao Orito <orito.takao@socionext.com>, 
+	Michal Simek <michal.simek@amd.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bastien Curutchet <bastien.curutchet@bootlin.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-The device is compatible with rk3588, so add an entry for the 2
-compatibles together.
+On Tue, 27 Aug 2024 at 09:34, zhangxirui <xirui.zhang@vivo.com> wrote:
+>
+> This series use devm_clk_get_enabled() to simplify code
+> and avoids the calls to clk_disable_unprepare()
 
-The rk3576 device has a power-domain that needs to be on for the eMMC to
-be used. Add it as a requirement.
+I agree that it simplifies code - but it also changes the behaviour,
+in which order clocks are getting unprepared/disabled during the
+->remove() phase. In other words, this needs to be thoroughly tested
+and not just considered as a trivial cleanup series.
 
-Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../bindings/mmc/snps,dwcmshc-sdhci.yaml      | 38 +++++++++++++------
- 1 file changed, 26 insertions(+), 12 deletions(-)
+For example, if there is a PM domain attached to the mmc host device,
+is it really okay to allow powering-off the PM domain before the
+clocks are being gated? This could potentially happen if we apply the
+$subject series.
 
-diff --git a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-index 4d3031d9965f..aff8106ec361 100644
---- a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-+++ b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-@@ -10,18 +10,19 @@ maintainers:
-   - Ulf Hansson <ulf.hansson@linaro.org>
-   - Jisheng Zhang <Jisheng.Zhang@synaptics.com>
- 
--allOf:
--  - $ref: mmc-controller.yaml#
--
- properties:
-   compatible:
--    enum:
--      - rockchip,rk3568-dwcmshc
--      - rockchip,rk3588-dwcmshc
--      - snps,dwcmshc-sdhci
--      - sophgo,cv1800b-dwcmshc
--      - sophgo,sg2002-dwcmshc
--      - thead,th1520-dwcmshc
-+    oneOf:
-+      - items:
-+          - const: rockchip,rk3576-dwcmshc
-+          - const: rockchip,rk3588-dwcmshc
-+      - enum:
-+          - rockchip,rk3568-dwcmshc
-+          - rockchip,rk3588-dwcmshc
-+          - snps,dwcmshc-sdhci
-+          - sophgo,cv1800b-dwcmshc
-+          - sophgo,sg2002-dwcmshc
-+          - thead,th1520-dwcmshc
- 
-   reg:
-     maxItems: 1
-@@ -38,7 +39,6 @@ properties:
-       - description: block clock for rockchip specified
-       - description: timer clock for rockchip specified
- 
--
-   clock-names:
-     minItems: 1
-     items:
-@@ -48,6 +48,9 @@ properties:
-       - const: block
-       - const: timer
- 
-+  power-domains:
-+    maxItems: 1
-+
-   resets:
-     maxItems: 5
- 
-@@ -63,7 +66,6 @@ properties:
-     description: Specify the number of delay for tx sampling.
-     $ref: /schemas/types.yaml#/definitions/uint8
- 
--
- required:
-   - compatible
-   - reg
-@@ -71,6 +73,18 @@ required:
-   - clocks
-   - clock-names
- 
-+allOf:
-+  - $ref: mmc-controller.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: rockchip,rk3576-dwcmshc
-+    then:
-+      properties:
-+        power-domains:
-+          minItems: 1
-+
- unevaluatedProperties: false
- 
- examples:
--- 
-2.46.0
+Kind regards
+Uffe
 
+>
+> zhangxirui (9):
+>   mmc: cavium-thunderx: Use devm_clk_get_enabled() helpers
+>   mmc: davinci_mmc: Use devm_clk_get_enabled() helpers
+>   mmc: dw_mmc-hi3798cv200: Use devm_clk_get_enabled() helpers
+>   mmc: mvsdio: Use devm_clk_get_enabled() helpers
+>   mmc: mxcmmc: Use devm_clk_get_enabled() helpers
+>   mmc: mxs-mmc: Use devm_clk_get_enabled() helpers
+>   mmc: sdhci: milbeaut: Use devm_clk_get_enabled() helpers
+>   mmc: sdhci-of-arasan: Use devm_clk_get_enabled() helpers
+>   mmc: sdhci_f_sdh30: Use devm_clk_get_enabled() helpers
+>
+>  drivers/mmc/host/cavium-thunderx.c    |  7 +-----
+>  drivers/mmc/host/davinci_mmc.c        |  8 +-----
+>  drivers/mmc/host/dw_mmc-hi3798cv200.c | 28 +++------------------
+>  drivers/mmc/host/mvsdio.c             | 13 +++-------
+>  drivers/mmc/host/mxcmmc.c             | 25 +++----------------
+>  drivers/mmc/host/mxs-mmc.c            | 13 +++-------
+>  drivers/mmc/host/sdhci-milbeaut.c     | 25 +++----------------
+>  drivers/mmc/host/sdhci-of-arasan.c    | 31 ++++-------------------
+>  drivers/mmc/host/sdhci_f_sdh30.c      | 36 ++++++++-------------------
+>  9 files changed, 35 insertions(+), 151 deletions(-)
+>
+> --
+> 2.25.1
+>
 
