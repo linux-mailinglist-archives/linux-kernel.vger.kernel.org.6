@@ -1,141 +1,85 @@
-Return-Path: <linux-kernel+bounces-305185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F5DD962AA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:45:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D1EB962AAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:47:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62B201C235A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:45:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90EC31C20CF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D870A1A08AF;
-	Wed, 28 Aug 2024 14:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A34199FB9;
+	Wed, 28 Aug 2024 14:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OPDRT0w2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="Az+KiR/+"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17BCF184528;
-	Wed, 28 Aug 2024 14:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380C6175D28
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724856344; cv=none; b=OEZPSO+cu4o5r4Jw1ultFo026f4pAPDTm7S0Nt8ogEUHpx4grxPdPuYiISHzXd+g5y+sHSxEK78ku9yoklLGXgAM3zyY708vttR36sGWRcRtU7I4DSGJd3QZnTc471dXB8p7zxz/jFjuaaWtglUSbgo87EJI14ala3Z8L1/R2ac=
+	t=1724856426; cv=none; b=AZYUAX++Drc2DTwt7t+cC75A30Dd8mwBlV01c+I6fsmfMrCwoauNMCIp2u0rtEjFn9S2fJzyjUMl1TBSwcnhVTBGViqFmnFYxpvmejM0D6REWGTq6BSQgH4xtNzPsbOTkjRf5Sud8mXxuRMTlb5O6zhLfUV3kG7l4Uf6bGNa8TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724856344; c=relaxed/simple;
-	bh=uxrboneUlQuYd6wDdFsfhPWo3LhWNH33hOQ1/K3GKaw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G9UtHz3wNHLHbjZOx/SePLdcA9EjCyMzP6vHEehmCvv+uHeM9aGjv846getMTwSBnF43tAQ4kD0gZIvhJhqJ1KH5qLBWFDXb6IhvHkcUKm5MNx5L/XKKlTiVq/bvN7byD+htNq44MPYt+mfK+emcVbIwiow2wdWb6mq/KyFEJ3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OPDRT0w2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97493C4CED4;
-	Wed, 28 Aug 2024 14:45:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724856343;
-	bh=uxrboneUlQuYd6wDdFsfhPWo3LhWNH33hOQ1/K3GKaw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OPDRT0w2ij9NsI7rkj2TBFeLIIw5eWsChHWaICbB3H9Pns+jokeGKxPIweQ7zpKK0
-	 0Ldv6Azgz8jW7zrklXjOFsmSxwrlvXpElFpgINO7Fesq6MBvpc1anf5BZYY1OYTFD1
-	 kL7S0ywMV8hK1Da4Gjv0seep6OdyOP7I1pa2bsMsrIiZaT7JTeDMl+IezQu5vJI+0y
-	 cIikx3MppeE03E+xGL284UOxgirFzI1xG56skAoCpyhvs/bYQi6KiiTvE/liolzR/j
-	 9uqG1b0oDEYjoKoEdC5V0Hk+D2ohjgm3W68pGkhbLVES+BtC84s+wmsyZ6toktrcn1
-	 G1/CECbH7cxjA==
-Message-ID: <71deb322-4b54-4c1c-a665-d9de84ea9baf@kernel.org>
-Date: Wed, 28 Aug 2024 16:45:32 +0200
+	s=arc-20240116; t=1724856426; c=relaxed/simple;
+	bh=eZO/kARPCirTZtVtx+L9XRGl0bLl8QfAxru2P/VZsHE=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=g4mGBHtDZNLsEH9bD19B+k0+FAPo0lqb+rrRVH2iWh6hWslHEub4L0TDkQPSpSKS4odVIBf4BBRXwoeSvpZNauKUHCoM0MfxzMtRl2l3mwy0775TX6eEALEZWNY8Kwp7oLOI/5XYLbkFk0djCVjv+6KCaNb4o2LXHRDfyNPHwf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=Az+KiR/+; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1724856422; x=1725115622;
+	bh=eZO/kARPCirTZtVtx+L9XRGl0bLl8QfAxru2P/VZsHE=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=Az+KiR/+vpQjrGpHc15J0018Dde49koHtW/u6tH2vGdDNho5xjjHjq/EPU+EAO4tw
+	 KGO2Kicv7mgyskULnDZ+OZMu32G0GsUxBQPY1dYt0qUQhAYgn7AqXt8WmoTK0qBFVi
+	 laDFYfbo5QKvLTbSSnoCl8lOWf2c7WzCDEm2f1ApX54cokH+9Q5anx7M//pMPTgkts
+	 4dDXt0Zb27YhPW/41p5dWhfijuzRyVYpxAIt4cRFA4b4Wqaw/oVIRWhMnp9gsSkWNj
+	 NFt7pv0MZAXjVIZaH2QEfNxYYjvDti3G/Ns9d9WlYeCjFqspI2o3w3ym7576O26mYS
+	 AD0oteh/MJgcQ==
+Date: Wed, 28 Aug 2024 14:46:56 +0000
+To: philipp.g.hortmann@gmail.com, gregkh@linuxfoundation.org
+From: =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
+Subject: [PATCH] staging: vt6655: Update maintainer in TODO
+Message-ID: <20240828144545.76022-1-dominik.karol.piatkowski@protonmail.com>
+Feedback-ID: 117888567:user:proton
+X-Pm-Message-ID: 1573afea486796004b2505f0265401162278c3ad
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 00/13] net: Simplified with scoped function
-To: Andrew Lunn <andrew@lunn.ch>, Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: woojung.huh@microchip.com, f.fainelli@gmail.com, olteanv@gmail.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, linus.walleij@linaro.org, alsi@bang-olufsen.dk,
- justin.chen@broadcom.com, sebastian.hesselbarth@gmail.com,
- alexandre.torgue@foss.st.com, joabreu@synopsys.com,
- mcoquelin.stm32@gmail.com, wens@csie.org, jernej.skrabec@gmail.com,
- samuel@sholland.org, hkallweit1@gmail.com, linux@armlinux.org.uk,
- ansuelsmth@gmail.com, UNGLinuxDriver@microchip.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-stm32@st-md-mailman.stormreply.com, jic23@kernel.org
-References: <20240828032343.1218749-1-ruanjinjie@huawei.com>
- <6092e318-ae0c-44f6-89fa-989a384921b7@lunn.ch>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <6092e318-ae0c-44f6-89fa-989a384921b7@lunn.ch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 28/08/2024 16:32, Andrew Lunn wrote:
-> On Wed, Aug 28, 2024 at 11:23:30AM +0800, Jinjie Ruan wrote:
->> Simplify with scoped for each OF child loop and __free(), as well as
->> dev_err_probe().
->>
->> Changes in v2:
->> - Subject prefix: next -> net-next.
->> - Split __free() from scoped for each OF child loop clean.
->> - Fix use of_node_put() instead of __free() for the 5th patch.
-> 
-> I personally think all these __free() are ugly and magical. Can it
+Commit ed394dbf5371b03a5335a7ba1973ba124c0ced3d replaced Forest Bond
+with Philipp Hortmann as vt665X maintainer in MAINTAINERS, but
+drivers/staging/vt6655/TODO was not changed, rendering it stale. This
+patch fixes it.
 
-It is code readability so quite subjective. Jakub also rejected one of
-such __free() changes, so maybe all these cases here should be rejected?
+Signed-off-by: Dominik Karol Pi=C4=85tkowski <dominik.karol.piatkowski@prot=
+onmail.com>
+---
+ drivers/staging/vt6655/TODO | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> somehow be made part of of_get_child_by_name()? Add an
-> of_get_child_by_name_func_ref() which holds a reference to the node
-> for the scope of the function?
+diff --git a/drivers/staging/vt6655/TODO b/drivers/staging/vt6655/TODO
+index 63607ef9c97e..529bc22cd608 100644
+--- a/drivers/staging/vt6655/TODO
++++ b/drivers/staging/vt6655/TODO
+@@ -18,4 +18,4 @@ TODO:
+ - integrate with drivers/net/wireless
+=20
+ Please send any patches to Greg Kroah-Hartman <greg@kroah.com>
+-and Forest Bond <forest@alittletooquiet.net>.
++and Philipp Hortmann <philipp.g.hortmann@gmail.com>.
+--=20
+2.34.1
 
-That's interesting, scoped-wrapper. I am afraid we would need quite a
-lot of them, though, for every of_get_xxx call.
-
-Best regards,
-Krzysztof
 
 
