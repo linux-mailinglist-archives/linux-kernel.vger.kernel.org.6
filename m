@@ -1,168 +1,184 @@
-Return-Path: <linux-kernel+bounces-305007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6037F962810
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:00:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7E1896281A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:00:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D9BB1C24017
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:00:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 091231C24000
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60A8187851;
-	Wed, 28 Aug 2024 12:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5950B188CA8;
+	Wed, 28 Aug 2024 13:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U/7o0RZl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GhtlRJzp"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A58B184101
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2291862B5
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 13:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724849987; cv=none; b=RTsktBesv8JHeF8QSM06fVaW0zdB+3yYWKedgEyzfQllpr6bQ/1vG20Ga0Kqtcv8TmhFHyQQh0D6kJecEN7raDGe82g/jmNuyNTjCMK/kUiczrYQCz6UchLDPNmVmkcBcsg2dbChtQiUsQzUDUTfqEYegificX4pHdMyf4R5kkU=
+	t=1724850006; cv=none; b=o9tx8otiGna/Pd3Umcj5aNMvS5GYoVj+zdO5VjQ4BJKzCUlriEdx3b/yPsojo+POzx1lUNfktYWSZ04ETNzMYIKcKl+XKP48IwGcRIJ04OJJtZB8IKWXtxllEskr/drb4gbl3hZyU55cJjo85+ZMWIHKXyHJWxO9HnuuoxB4ycQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724849987; c=relaxed/simple;
-	bh=ymupMNvwNJBaMEUU8F78IdNvFql9A3Vo9I6iMpInMlw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f/gm9FV6v01dqihtb63wcYo2eSXkrM6yePGrAQvgdqquE/pDheeb4W0qG1aUMfz1KAb3LBO48/YgPAtbA6YCS3F/7h3Y7mEeYZYX2ygL+NVdZQXlL0HOPAEeT8T8An9V/JIsJ3w+6H2TZzdvylExHmN0Zi9imKXziPS9PA8y554=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U/7o0RZl; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724849984;
+	s=arc-20240116; t=1724850006; c=relaxed/simple;
+	bh=Dx2q0/UbvUqQTVZKigs5yd+yhg8MHcUIqZl/sUK63nw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G85nr79eDFcFNMS5qnXl9n+wjorhqel8gcv2G71ekBQ5CHyq3bxZeIZZbzkVqrb/xPo/7xxuVN7Zw8NAUX9qzbmmXLtbuYqltej6jdgu+EgOYqkXIZ2rGlGACdI6VOxz85mCcUQYxWrBVVjW6op3RNFv1IEkMB5AH1emyWOQqug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GhtlRJzp; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724850000;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S3TUrO5dpGA8rfdSv1PfPK5BcATBwgN+tBNwuxtVK/c=;
-	b=U/7o0RZlNJ6ZghNZBWNkEC3eWrbsC6x3vLQLxINgmC/4k8IX/Ls9XtC92F79D7uM6Tncts
-	FEG2wq03/Nk9daGFSlX7eL9d0bD5SsgXa1IBJqmrx4oHlxpJLeK4gyJdXG1N1HcNl5JbOB
-	9FToVPvNbaJL4cYBcwa90IbwjwA5wwE=
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
- [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-304-jYhOkqMNNJOZVPnEg2mLgQ-1; Wed, 28 Aug 2024 08:59:43 -0400
-X-MC-Unique: jYhOkqMNNJOZVPnEg2mLgQ-1
-Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-6643016423fso135382927b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 05:59:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724849983; x=1725454783;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S3TUrO5dpGA8rfdSv1PfPK5BcATBwgN+tBNwuxtVK/c=;
-        b=MbhEms7cRXmzSfEiB0Q2LtqpCiZZNIh9KKymPFs9NLhDJE9XHyqc1+MZGav6teLEh6
-         aCXWewuKKhSXdJp6HEplwjqCBl1ztT9Cwr1bB81y4dXS0M2+vFosQ3rohIRiXVw3NZpe
-         UBT5nB8SaQVN//78FKK3kXgsueFfgsK0zFwE6FusvtIKPACA7cv6QlL3M2FVLzSeYBH3
-         msNsc9ntzUCjOd0YiqDCjdS15+IgbaIl1q6EyFwn63z5u1KPR7XUap9h5aLSjck77ukN
-         7wBpOPZ6yeIbCUZ+N9RFEsfcFuTLXJTRkswyVMw4haamvBXZgqOnEywMKDY1fEPU7TQw
-         +Gqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqN05ngaJZfidlnyC046U94wSYlsUaNE8CBT2cye+Cf501gR8AekIDpGfzHB/0tbpa7hKy/cemgR3TfmA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN/gCk7YKAAbAOUsPIjzox+E4sFweIYepZCoFCWZxL7CxR/EpS
-	Xe3KsueHhTbJblmIjHlvDx/4KCFRI9/0DKGNKlNgMdKu8YkdjF4XsERb1BleVnhDn7SUVm7KIcS
-	cMWlJlPMPZoewhXjPL2QSQbA0MVvE5d+rxMV/1WzImMvbr7qSo2nvUdRp0iqCcYt4WExtHJvjZS
-	97hADLekhwGGm8lxWJx452yrrVo6l6g0kUPCh5
-X-Received: by 2002:a05:690c:f81:b0:6cf:8d6f:2c17 with SMTP id 00721157ae682-6cf8d6f330bmr82004977b3.8.1724849982814;
-        Wed, 28 Aug 2024 05:59:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEgcU387IxWPo4yekqWXqtNg5KIt51AsXE5T6bzQ+TasCLXcyqT2oXqmZTLQUlKNBz+CaTjn6pYNY9IaOgUuYc=
-X-Received: by 2002:a05:690c:f81:b0:6cf:8d6f:2c17 with SMTP id
- 00721157ae682-6cf8d6f330bmr82004837b3.8.1724849982531; Wed, 28 Aug 2024
- 05:59:42 -0700 (PDT)
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=zMx7Wdw/yPzXMEo65Slmqy2MsOlRJjqVB7xlz4kfVnc=;
+	b=GhtlRJzpy7qMLNuXWr7w8z4AyftmeJiA2ZZhpEKnGZ87mCaYz1cEe5Ckabb12qcrIkn6Z4
+	9owbauC1TahrK3dNZZUVyjC7GCp9cGqrI2o4RNrBMAxbxsbqtpkf1KryzSmFd/XWAtihoA
+	IsEMp1lhGeRDB54xqd4kHiE7JgRQod8=
+From: Yajun Deng <yajun.deng@linux.dev>
+To: andrew@lunn.ch,
+	hkallweit1@gmail.com,
+	linux@armlinux.org.uk
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yajun Deng <yajun.deng@linux.dev>
+Subject: [PATCH net-next] net: phy: Modify register address from decimal to hexadecimal
+Date: Wed, 28 Aug 2024 20:59:32 +0800
+Message-Id: <20240828125932.3478-1-yajun.deng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240816090159.1967650-1-dtatulea@nvidia.com> <20240816090159.1967650-11-dtatulea@nvidia.com>
-In-Reply-To: <20240816090159.1967650-11-dtatulea@nvidia.com>
-From: Eugenio Perez Martin <eperezma@redhat.com>
-Date: Wed, 28 Aug 2024 14:59:05 +0200
-Message-ID: <CAJaqyWd0Gwap1253WegSHSADw2ymZ81vvwuTgVMCTSH5-gddbg@mail.gmail.com>
-Subject: Re: [PATCH vhost v2 10/10] vdpa/mlx5: Parallelize VQ suspend/resume
- for CVQ MQ command
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	virtualization@lists.linux-foundation.org, Si-Wei Liu <si-wei.liu@oracle.com>, 
-	Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Gal Pressman <gal@nvidia.com>, 
-	Parav Pandit <parav@nvidia.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Tariq Toukan <tariqt@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Aug 16, 2024 at 11:03=E2=80=AFAM Dragos Tatulea <dtatulea@nvidia.co=
-m> wrote:
->
-> change_num_qps() is still suspending/resuming VQs one by one.
-> This change switches to parallel suspend/resume.
->
-> When increasing the number of queues the flow has changed a bit for
-> simplicity: the setup_vq() function will always be called before
-> resume_vqs(). If the VQ is initialized, setup_vq() will exit early. If
-> the VQ is not initialized, setup_vq() will create it and resume_vqs()
-> will resume it.
->
-> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
-> Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
+Most datasheets will use hexadecimal for register address, modify it
+and make it fit the datasheet better.
 
-Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+Signed-off-by: Yajun Deng <yajun.deng@linux.dev>
+---
+ include/uapi/linux/mdio.h | 98 +++++++++++++++++++--------------------
+ 1 file changed, 49 insertions(+), 49 deletions(-)
 
-> ---
->  drivers/vdpa/mlx5/net/mlx5_vnet.c | 22 ++++++++++++----------
->  1 file changed, 12 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/ml=
-x5_vnet.c
-> index d1a01c229110..822092eccb32 100644
-> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> @@ -2229,25 +2229,27 @@ static int change_num_qps(struct mlx5_vdpa_dev *m=
-vdev, int newqps)
->                 if (err)
->                         return err;
->
-> -               for (i =3D cur_vqs - 1; i >=3D new_vqs; i--) {
-> -                       struct mlx5_vdpa_virtqueue *mvq =3D &ndev->vqs[i]=
-;
-> -
-> -                       if (is_resumable(ndev))
-> -                               suspend_vq(ndev, mvq);
-> -                       else
-> -                               teardown_vq(ndev, mvq);
-> +               if (is_resumable(ndev)) {
-> +                       suspend_vqs(ndev, new_vqs, cur_vqs - new_vqs);
-> +               } else {
-> +                       for (i =3D new_vqs; i < cur_vqs; i++)
-> +                               teardown_vq(ndev, &ndev->vqs[i]);
->                 }
->
->                 ndev->cur_num_vqs =3D new_vqs;
->         } else {
->                 ndev->cur_num_vqs =3D new_vqs;
-> -               for (i =3D cur_vqs; i < new_vqs; i++) {
-> -                       struct mlx5_vdpa_virtqueue *mvq =3D &ndev->vqs[i]=
-;
->
-> -                       err =3D mvq->initialized ? resume_vq(ndev, mvq) :=
- setup_vq(ndev, mvq, true);
-> +               for (i =3D cur_vqs; i < new_vqs; i++) {
-> +                       err =3D setup_vq(ndev, &ndev->vqs[i], false);
->                         if (err)
->                                 goto clean_added;
->                 }
-> +
-> +               err =3D resume_vqs(ndev, cur_vqs, new_vqs - cur_vqs);
-> +               if (err)
-> +                       goto clean_added;
-> +
->                 err =3D modify_rqt(ndev, new_vqs);
->                 if (err)
->                         goto clean_added;
-> --
-> 2.45.1
->
+diff --git a/include/uapi/linux/mdio.h b/include/uapi/linux/mdio.h
+index c0c8ec995b06..2f6022bef535 100644
+--- a/include/uapi/linux/mdio.h
++++ b/include/uapi/linux/mdio.h
+@@ -32,58 +32,58 @@
+ #define MDIO_STAT1		MII_BMSR
+ #define MDIO_DEVID1		MII_PHYSID1
+ #define MDIO_DEVID2		MII_PHYSID2
+-#define MDIO_SPEED		4	/* Speed ability */
+-#define MDIO_DEVS1		5	/* Devices in package */
+-#define MDIO_DEVS2		6
+-#define MDIO_CTRL2		7	/* 10G control 2 */
+-#define MDIO_STAT2		8	/* 10G status 2 */
+-#define MDIO_PMA_TXDIS		9	/* 10G PMA/PMD transmit disable */
+-#define MDIO_PMA_RXDET		10	/* 10G PMA/PMD receive signal detect */
+-#define MDIO_PMA_EXTABLE	11	/* 10G PMA/PMD extended ability */
+-#define MDIO_PKGID1		14	/* Package identifier */
+-#define MDIO_PKGID2		15
+-#define MDIO_AN_ADVERTISE	16	/* AN advertising (base page) */
+-#define MDIO_AN_LPA		19	/* AN LP abilities (base page) */
+-#define MDIO_PCS_EEE_ABLE	20	/* EEE Capability register */
+-#define MDIO_PCS_EEE_ABLE2	21	/* EEE Capability register 2 */
+-#define MDIO_PMA_NG_EXTABLE	21	/* 2.5G/5G PMA/PMD extended ability */
+-#define MDIO_PCS_EEE_WK_ERR	22	/* EEE wake error counter */
+-#define MDIO_PHYXS_LNSTAT	24	/* PHY XGXS lane state */
+-#define MDIO_AN_EEE_ADV		60	/* EEE advertisement */
+-#define MDIO_AN_EEE_LPABLE	61	/* EEE link partner ability */
+-#define MDIO_AN_EEE_ADV2	62	/* EEE advertisement 2 */
+-#define MDIO_AN_EEE_LPABLE2	63	/* EEE link partner ability 2 */
+-#define MDIO_AN_CTRL2		64	/* AN THP bypass request control */
++#define MDIO_SPEED		0x0004	/* Speed ability */
++#define MDIO_DEVS1		0x0005	/* Devices in package */
++#define MDIO_DEVS2		0x0006
++#define MDIO_CTRL2		0x0007	/* 10G control 2 */
++#define MDIO_STAT2		0x0008	/* 10G status 2 */
++#define MDIO_PMA_TXDIS		0x0009	/* 10G PMA/PMD transmit disable */
++#define MDIO_PMA_RXDET		0x000A	/* 10G PMA/PMD receive signal detect */
++#define MDIO_PMA_EXTABLE	0x000B	/* 10G PMA/PMD extended ability */
++#define MDIO_PKGID1		0x000E	/* Package identifier */
++#define MDIO_PKGID2		0x000F
++#define MDIO_AN_ADVERTISE	0x0010	/* AN advertising (base page) */
++#define MDIO_AN_LPA		0x0013	/* AN LP abilities (base page) */
++#define MDIO_PCS_EEE_ABLE	0x0014	/* EEE Capability register */
++#define MDIO_PCS_EEE_ABLE2	0x0015	/* EEE Capability register 2 */
++#define MDIO_PMA_NG_EXTABLE	0x0015	/* 2.5G/5G PMA/PMD extended ability */
++#define MDIO_PCS_EEE_WK_ERR	0x0016	/* EEE wake error counter */
++#define MDIO_PHYXS_LNSTAT	0x0018	/* PHY XGXS lane state */
++#define MDIO_AN_EEE_ADV		0x003C	/* EEE advertisement */
++#define MDIO_AN_EEE_LPABLE	0x003D	/* EEE link partner ability */
++#define MDIO_AN_EEE_ADV2	0x003E	/* EEE advertisement 2 */
++#define MDIO_AN_EEE_LPABLE2	0x003F	/* EEE link partner ability 2 */
++#define MDIO_AN_CTRL2		0x0040	/* AN THP bypass request control */
+ 
+ /* Media-dependent registers. */
+-#define MDIO_PMA_10GBT_SWAPPOL	130	/* 10GBASE-T pair swap & polarity */
+-#define MDIO_PMA_10GBT_TXPWR	131	/* 10GBASE-T TX power control */
+-#define MDIO_PMA_10GBT_SNR	133	/* 10GBASE-T SNR margin, lane A.
++#define MDIO_PMA_10GBT_SWAPPOL	0x0082	/* 10GBASE-T pair swap & polarity */
++#define MDIO_PMA_10GBT_TXPWR	0x0083	/* 10GBASE-T TX power control */
++#define MDIO_PMA_10GBT_SNR	0x0085	/* 10GBASE-T SNR margin, lane A.
+ 					 * Lanes B-D are numbered 134-136. */
+-#define MDIO_PMA_10GBR_FSRT_CSR	147	/* 10GBASE-R fast retrain status and control */
+-#define MDIO_PMA_10GBR_FECABLE	170	/* 10GBASE-R FEC ability */
+-#define MDIO_PCS_10GBX_STAT1	24	/* 10GBASE-X PCS status 1 */
+-#define MDIO_PCS_10GBRT_STAT1	32	/* 10GBASE-R/-T PCS status 1 */
+-#define MDIO_PCS_10GBRT_STAT2	33	/* 10GBASE-R/-T PCS status 2 */
+-#define MDIO_AN_10GBT_CTRL	32	/* 10GBASE-T auto-negotiation control */
+-#define MDIO_AN_10GBT_STAT	33	/* 10GBASE-T auto-negotiation status */
+-#define MDIO_B10L_PMA_CTRL	2294	/* 10BASE-T1L PMA control */
+-#define MDIO_PMA_10T1L_STAT	2295	/* 10BASE-T1L PMA status */
+-#define MDIO_PCS_10T1L_CTRL	2278	/* 10BASE-T1L PCS control */
+-#define MDIO_PMA_PMD_BT1	18	/* BASE-T1 PMA/PMD extended ability */
+-#define MDIO_AN_T1_CTRL		512	/* BASE-T1 AN control */
+-#define MDIO_AN_T1_STAT		513	/* BASE-T1 AN status */
+-#define MDIO_AN_T1_ADV_L	514	/* BASE-T1 AN advertisement register [15:0] */
+-#define MDIO_AN_T1_ADV_M	515	/* BASE-T1 AN advertisement register [31:16] */
+-#define MDIO_AN_T1_ADV_H	516	/* BASE-T1 AN advertisement register [47:32] */
+-#define MDIO_AN_T1_LP_L		517	/* BASE-T1 AN LP Base Page ability register [15:0] */
+-#define MDIO_AN_T1_LP_M		518	/* BASE-T1 AN LP Base Page ability register [31:16] */
+-#define MDIO_AN_T1_LP_H		519	/* BASE-T1 AN LP Base Page ability register [47:32] */
+-#define MDIO_AN_10BT1_AN_CTRL	526	/* 10BASE-T1 AN control register */
+-#define MDIO_AN_10BT1_AN_STAT	527	/* 10BASE-T1 AN status register */
+-#define MDIO_PMA_PMD_BT1_CTRL	2100	/* BASE-T1 PMA/PMD control register */
+-#define MDIO_PCS_1000BT1_CTRL	2304	/* 1000BASE-T1 PCS control register */
+-#define MDIO_PCS_1000BT1_STAT	2305	/* 1000BASE-T1 PCS status register */
++#define MDIO_PMA_10GBR_FSRT_CSR	0x0093	/* 10GBASE-R fast retrain status and control */
++#define MDIO_PMA_10GBR_FECABLE	0x00AA	/* 10GBASE-R FEC ability */
++#define MDIO_PCS_10GBX_STAT1	0x0018	/* 10GBASE-X PCS status 1 */
++#define MDIO_PCS_10GBRT_STAT1	0x0020	/* 10GBASE-R/-T PCS status 1 */
++#define MDIO_PCS_10GBRT_STAT2	0x0021	/* 10GBASE-R/-T PCS status 2 */
++#define MDIO_AN_10GBT_CTRL	0x0020	/* 10GBASE-T auto-negotiation control */
++#define MDIO_AN_10GBT_STAT	0x0021	/* 10GBASE-T auto-negotiation status */
++#define MDIO_B10L_PMA_CTRL	0x08F6	/* 10BASE-T1L PMA control */
++#define MDIO_PMA_10T1L_STAT	0x08F7	/* 10BASE-T1L PMA status */
++#define MDIO_PCS_10T1L_CTRL	0x08E6	/* 10BASE-T1L PCS control */
++#define MDIO_PMA_PMD_BT1	0x0012	/* BASE-T1 PMA/PMD extended ability */
++#define MDIO_AN_T1_CTRL		0x0200	/* BASE-T1 AN control */
++#define MDIO_AN_T1_STAT		0x0201	/* BASE-T1 AN status */
++#define MDIO_AN_T1_ADV_L	0x0202	/* BASE-T1 AN advertisement register [15:0] */
++#define MDIO_AN_T1_ADV_M	0x0203	/* BASE-T1 AN advertisement register [31:16] */
++#define MDIO_AN_T1_ADV_H	0x0204	/* BASE-T1 AN advertisement register [47:32] */
++#define MDIO_AN_T1_LP_L		0x0205	/* BASE-T1 AN LP Base Page ability register [15:0] */
++#define MDIO_AN_T1_LP_M		0x0206	/* BASE-T1 AN LP Base Page ability register [31:16] */
++#define MDIO_AN_T1_LP_H		0x0207	/* BASE-T1 AN LP Base Page ability register [47:32] */
++#define MDIO_AN_10BT1_AN_CTRL	0x020E	/* 10BASE-T1 AN control register */
++#define MDIO_AN_10BT1_AN_STAT	0x020F	/* 10BASE-T1 AN status register */
++#define MDIO_PMA_PMD_BT1_CTRL	0x0834	/* BASE-T1 PMA/PMD control register */
++#define MDIO_PCS_1000BT1_CTRL	0x0900	/* 1000BASE-T1 PCS control register */
++#define MDIO_PCS_1000BT1_STAT	0x0901	/* 1000BASE-T1 PCS status register */
+ 
+ /* LASI (Link Alarm Status Interrupt) registers, defined by XENPAK MSA. */
+ #define MDIO_PMA_LASI_RXCTRL	0x9000	/* RX_ALARM control */
+-- 
+2.25.1
 
 
