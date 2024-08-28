@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-305424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 040FC962E70
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:27:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86F60962E72
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:27:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36322B23782
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:27:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7AC31F241D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:27:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9744C1A7043;
-	Wed, 28 Aug 2024 17:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9871A76D3;
+	Wed, 28 Aug 2024 17:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="nGHL5dke";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="nGHL5dke"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2080.outbound.protection.outlook.com [40.107.22.80])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="B1qg64f5";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="B1qg64f5"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2075.outbound.protection.outlook.com [40.107.21.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A181A7061
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 17:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9051A7072
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 17:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.75
 ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724866020; cv=fail; b=NAbkSyF/tdsOgootXsJHZDnkXL4iAsEtNaQLVO27rrbI2s/Jw7+gZULQNU4/NX4XK/wfFMuuWJZehPc2HYxviPJXYNyd6JXTWR1o2OXdkliiiRwLJw9+T2hKY816llUgc6FfRgJ7TIVqtkUxzP+eb+qUbOU49ZB5eg10Xduqppg=
+	t=1724866022; cv=fail; b=D4uNObsduATpKf0FvVtDCrRcuG5tLc49iiipKpwxUInUdVvGJ81zxMl0Di/+JNu/lAkPiOKRu9pCHxLa8rMW6DDu+IkqWdN6SJqm+uQfYSpani7UlhYWO7h4tsheFQy6Z0K25dunYtUCcmHzjMO+e93+VJSZTbL5SKgIMZHM0Bg=
 ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724866020; c=relaxed/simple;
-	bh=38jnVqXzshy0B5dsYePucUcKl2dOs6osKFwQY7G6zwY=;
+	s=arc-20240116; t=1724866022; c=relaxed/simple;
+	bh=pGUubN2XdFgqwl9F1bYZKR69MuIRDkBPV3fJCwMSaCI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VQFMVVR+vkwfKLYvpQ9ExGAGBN+c+5pji4zChJbrB4LYXWhKHjO3P0TvUsC0uO9EYfWedkD81iAh1cyOIHAfh+irn9HYbUu0NYtZ2NCL9g5q4w0hGGhRp7E/xGt4cFf2c8hIRNpFIwM5NQXeicECXHCENpPQswZSm/C5RmPthDU=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=nGHL5dke; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=nGHL5dke; arc=fail smtp.client-ip=40.107.22.80
+	 Content-Type:MIME-Version; b=qgYDFHtWduDlreFpri6b+r8raUKXwsC6usD5ZlphP4gawWXu67QwltQz9g2zlBGnaSexVVfTm3gahivALb8jK9R/dGSxn/CaEHipqlrRA0sYi5h6uUlPljTsrnfrTWxqeO+EI8RJOBXHXyt80uW+EAGPdhT+JHQcJbogHzgvBXU=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=B1qg64f5; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=B1qg64f5; arc=fail smtp.client-ip=40.107.21.75
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=F7SRjE6r+YLTEZAJgzV5Y/A1D55Xn+SPrHBpYSPJfGLT7Y1km2vrUWAfIYGLMXeO0QNeXhLwKY+uptNkanreIvBJf/4wiwma3n4fgCvITQVccWz8n/pY5I2SKeHacZ3yyJUueXFdczeAfndMQPqUqbkEldSZ7zXJeqmTUHvVDNvx91rbJixZiU6Pi3c69+Q6xFpr3S6vNdpBZerSJHoFly36MB/rTodnzIPsCeqmbRuBnBiQZceMROxaPMW5XTISBjcUHxGlFX9D52kqrEQUI0k07SSljFrFiDtpFzPZzLNBEy32bk/DjTk/YDEsjUHHHUiI+Y2Puq3vWl9P7hAjvQ==
+ b=E0CK2e6zffykVPTanZxFD7uJ/I0Lp+6+UY0dqobvZwH1cywT9TeMtVrVnNZShBtnsms+c9eihl7U4/G+yb/cnBdd+StxJwCi7lc1Qhe9mByILBNi3o1OE1cYHX+6IfDflQ+WLk1Jj73Cd0yJhunAUFa0exooRI0VQchnhkIRhyvOtGBJTCIEUQbnM/y6qDFfA9XpbqSiOGayYk4ZCkyWLLeGaiiuH8EDPuI+5Gz3INBbZqEAOA1OE7/Lr8gZ6qm8TUWAvjHM+OYhi4TDFVjZE7aBg3dEjK4ebSRVoYtDK0i7YpJbD2Y/Nvt3rHBycl/5q+zCyKElN5W9tSsOqNTTOw==
 ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jsyr/X8MHIRhYF+PyOaSjkZn52wXKUqGIKzc+LyjLpw=;
- b=dK5XHKK7HMBHDgKJ4PzENsiXFUf8dvOMJuWziww/GAArMCYET04aZAv2bQ+WV2cBJL3znGaz7qE+y8OU97qJHYflWAZMPSsDlupZO+ChBrxy0BvuCcRU1VB4rXTUuLMIuwrxy9hkwXsqwSllTANMT9Uw1flzlxOrXmH1CzT4+Oukak5lJmdo+LnUggN1ApDnlDmQVTRQKp4ALtrv7mUNhtFO0aeJWZj0m4fdGvUmnEy0xsQEeBEEGAYXZhGgN293VXToB5Y9/X3hVaWtzPhsgEfXhtpPFxtmDG92INDRa781ORx2t5PNptuG5CyHgd13Y4hZFDKtwlU8wqkrJX/fYQ==
+ bh=6orZbKeA+ZAkLam0Ko+xKmcpwenNalfbnojri2vJjus=;
+ b=WQ4YRFtLjajQrxzEkU/xB58o13hXS02mZAfryIiale8Z2A0poij+GD1jWaQqoosVC/LXfRIUwPCgRL0ywzthqZWoVpGWMTUyAw27v/i9fJJM1dNQUdXFJ2CdZov/kSrH8LQas8M4KLEJ8kCldelge9ONZ3NaPjCogszHEf+hNMF4VhrSGVaoSO2M54h09iDl7wSaR25q7mPoxK8B5B4Qcr+XcYf42fr5i2QPsvi+qvvnTgJAiVnLuE0OegG6dvkJ83df3r4Gp28aU5YAW1GBQnpLXvZfrUiqz2B4hbKHOTiAKlzAt78J9hej/a4m4uyMFIgWlRxeKEyGzNW7sgtNKQ==
 ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
  63.35.35.123) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
@@ -46,18 +46,18 @@ ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
  dmarc=[1,1,header.from=arm.com])
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jsyr/X8MHIRhYF+PyOaSjkZn52wXKUqGIKzc+LyjLpw=;
- b=nGHL5dkeJfyQlJbcCC/2iAzM6OCBeRkwc6ojam3wRoGqX9I4oZRadf0TKRWBpIKANnMWeowQ2c6CsKQaoPVlLEUtYErqr3Q6C44848yPy2RKmnw06cOnLtytUvNDbvifYjr3jHjINTAF+VYvugv175pOzbs+8NTTfgyh6JrS1C8=
-Received: from DB6PR0301CA0084.eurprd03.prod.outlook.com (2603:10a6:6:30::31)
- by AM8PR08MB6578.eurprd08.prod.outlook.com (2603:10a6:20b:36a::15) with
+ bh=6orZbKeA+ZAkLam0Ko+xKmcpwenNalfbnojri2vJjus=;
+ b=B1qg64f5fpQAK7QeE+jc/UMWqxIfnULep8MbWkPM8vW6Xi+jgRkrJ5iwaIU4Dmo9+XnobYV7ajOrLea3rYddmZdSgjknzHLZSpk/Nq1YL5FK95vVM7KsT1FL+I4oo56psDplOE2nEPVcf28plhik5YcLPbIg+6ic9oRcgq8cNp4=
+Received: from DB7PR05CA0031.eurprd05.prod.outlook.com (2603:10a6:10:36::44)
+ by DBBPR08MB6058.eurprd08.prod.outlook.com (2603:10a6:10:201::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.17; Wed, 28 Aug
- 2024 17:26:51 +0000
-Received: from DB5PEPF00014B8A.eurprd02.prod.outlook.com
- (2603:10a6:6:30:cafe::33) by DB6PR0301CA0084.outlook.office365.com
- (2603:10a6:6:30::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.27 via Frontend
- Transport; Wed, 28 Aug 2024 17:26:51 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.18; Wed, 28 Aug
+ 2024 17:26:53 +0000
+Received: from DB5PEPF00014B9E.eurprd02.prod.outlook.com
+ (2603:10a6:10:36:cafe::6e) by DB7PR05CA0031.outlook.office365.com
+ (2603:10a6:10:36::44) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.26 via Frontend
+ Transport; Wed, 28 Aug 2024 17:26:53 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
  smtp.mailfrom=arm.com; dkim=pass (signature was verified)
  header.d=arm.com;dmarc=pass action=none header.from=arm.com;
@@ -66,45 +66,45 @@ Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
  client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
  pr=C
 Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- DB5PEPF00014B8A.mail.protection.outlook.com (10.167.8.198) with Microsoft
+ DB5PEPF00014B9E.mail.protection.outlook.com (10.167.8.171) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.7918.13
- via Frontend Transport; Wed, 28 Aug 2024 17:26:50 +0000
-Received: ("Tessian outbound de2677e4ad72:v403"); Wed, 28 Aug 2024 17:26:50 +0000
+ via Frontend Transport; Wed, 28 Aug 2024 17:26:53 +0000
+Received: ("Tessian outbound 8e666bd17457:v403"); Wed, 28 Aug 2024 17:26:53 +0000
 X-CheckRecipientChecked: true
-X-CR-MTA-CID: d05880de0e48030d
+X-CR-MTA-CID: 2b872d9813555bf6
 X-CR-MTA-TID: 64aa7808
-Received: from Lf8210dc8d799.2
-	by 64aa7808-outbound-1.mta.getcheckrecipient.com id CBF86C59-D217-4141-B45D-DF5592FBC08C.1;
-	Wed, 28 Aug 2024 17:26:39 +0000
+Received: from L5ae389042c40.2
+	by 64aa7808-outbound-1.mta.getcheckrecipient.com id 03390737-02AB-42FD-89D8-CAF50D87C549.1;
+	Wed, 28 Aug 2024 17:26:41 +0000
 Received: from EUR02-VI1-obe.outbound.protection.outlook.com
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id Lf8210dc8d799.2
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id L5ae389042c40.2
     (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
-    Wed, 28 Aug 2024 17:26:39 +0000
+    Wed, 28 Aug 2024 17:26:41 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FA/8Nke9zGa91+MxQKVrdWGX0i9kqbZ5V0FGCdxLQXarAAHhNsDFKkux4E3sLcBwG0iEF8Mg9u7GeIrwIdfXPWAvEM/9rOfWmEO6PWluRG2eM0iGEy97rol3X28Bn5oSCk2BxPMxiLxbkBB5NILeuB8yGeZdMbe2S6tCjWbJdaWREMBYbJehFpqmWOLcpfBchoMi9FJ9IpLE2gZHRDsZaaAAWEmw/b0b6M2f6sAKZjK42vewk0N+lnnR5FXdasU/+VqP+RpnjyG1Oj8ucAHB3W92UnmsAdr1PRxzNp28eqjVIc7xM1+ZsbZ8mSNJ1UR9q7GonchMKV/irAheKG+N5g==
+ b=qTj/U41KGxl+XBlTQ2ATU6L6xTDGx1sxNjrIbMQPHRQqDwRCWE7oZRjIRU6imvT94OQcMln2M0EqiTt2T+hvTkTNdQ6cr+4PGueTNJPnpbARYFusytGJv39Gi2PE5IK7QIKl4l4eofGEsS5xws6XZRw+Iw9GWjdhXpwHM0Iu+Vd5rSvzBOStGrSY10AtFt+3IOBmfqgpaDFgW7KRkHvMZYmuNwX/yJ/1c5yUFaHqFBYFCdzClSWqGN87/ljLaUs9aO4udJy3saqNSt/iKvEGSl1yThxB7+fhiKnJUwycLTF84oaqJDX03Q2ddOoET4fGElNeJAxy7rN5Tx85JY8Wzg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jsyr/X8MHIRhYF+PyOaSjkZn52wXKUqGIKzc+LyjLpw=;
- b=GuJ6NSqaEzTJ3M6BnoL4ThD5vv8hWEdB4D7QSOH0UqntZBM7olq3BsaCElXIrHKQSWLA3J2Imy4+Pc5x6L+SBpBFOcHbDo4to7R2S4iguDMAusMx7nKWveMt2lDJb810iyxhYN6v98/3MXa13F0T9sSxSiQqbQW+BVIe7XKPQa7N/NmhQ/55bNRWFbm3Mdnh+kJ86f4qCno1lQcPsX1FStziY54O18mAvvLtXKVAr+aHRzkaBpfnLhNR6ZO4oE19/GJrT7taPekrKWDWpK0ED4zSgvdPVicm7FJOQ0hi+jgjygMiCk2f6lDhh8FKOtEumC0hqSgqME2RLYSB35Pj6Q==
+ bh=6orZbKeA+ZAkLam0Ko+xKmcpwenNalfbnojri2vJjus=;
+ b=x+D61ChCtx23rvxtwuzmSC/atblBrPn6lmZKLYUkrov0sYUHXthpltbSVMOoH+x1pNaPeNIfQ9ykbSgrW2X/VQhWEEoRXJ46kyEY5AlGZ/Tv70ijOl/6S+tI4vX59arxOwF8TbQA0vaFav7BrrU7CqD+8DK46pPzagHgQyT+ZS2hV5aOAbzVv/95nDui2OM30RxoIjmqjQNNaE+wfiMxmrikc6xGT8t2YsI0h8UfsyL917Z4PlaJtl9n7si7lYn0dHgb0Iqred2u1lJQribefWkZvvXIkOa04+kmBd5fHZE5uVBnRg/JAImoE6WQgTAfZTpJbt82BcfUWdER1yubRA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
  header.d=arm.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jsyr/X8MHIRhYF+PyOaSjkZn52wXKUqGIKzc+LyjLpw=;
- b=nGHL5dkeJfyQlJbcCC/2iAzM6OCBeRkwc6ojam3wRoGqX9I4oZRadf0TKRWBpIKANnMWeowQ2c6CsKQaoPVlLEUtYErqr3Q6C44848yPy2RKmnw06cOnLtytUvNDbvifYjr3jHjINTAF+VYvugv175pOzbs+8NTTfgyh6JrS1C8=
+ bh=6orZbKeA+ZAkLam0Ko+xKmcpwenNalfbnojri2vJjus=;
+ b=B1qg64f5fpQAK7QeE+jc/UMWqxIfnULep8MbWkPM8vW6Xi+jgRkrJ5iwaIU4Dmo9+XnobYV7ajOrLea3rYddmZdSgjknzHLZSpk/Nq1YL5FK95vVM7KsT1FL+I4oo56psDplOE2nEPVcf28plhik5YcLPbIg+6ic9oRcgq8cNp4=
 Authentication-Results-Original: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=arm.com;
 Received: from AS8PR08MB6263.eurprd08.prod.outlook.com (2603:10a6:20b:290::9)
  by AS8PR08MB6551.eurprd08.prod.outlook.com (2603:10a6:20b:319::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.18; Wed, 28 Aug
- 2024 17:26:36 +0000
+ 2024 17:26:38 +0000
 Received: from AS8PR08MB6263.eurprd08.prod.outlook.com
  ([fe80::12b5:3f0a:2090:fa7c]) by AS8PR08MB6263.eurprd08.prod.outlook.com
  ([fe80::12b5:3f0a:2090:fa7c%7]) with mapi id 15.20.7918.012; Wed, 28 Aug 2024
- 17:26:36 +0000
+ 17:26:38 +0000
 From: Mihail Atanassov <mihail.atanassov@arm.com>
 To: linux-kernel@vger.kernel.org,
 	Boris Brezillon <boris.brezillon@collabora.com>,
@@ -123,16 +123,16 @@ Cc: dri-devel@lists.freedesktop.org,
 	Ketil Johnsen <ketil.johnsen@arm.com>,
 	Akash Goel <akash.goel@arm.com>,
 	Mihail Atanassov <mihail.atanassov@arm.com>
-Subject: [PATCH 4/8] drm/panthor: Add GROUP_KICK ioctl
-Date: Wed, 28 Aug 2024 18:26:00 +0100
-Message-ID: <20240828172605.19176-5-mihail.atanassov@arm.com>
+Subject: [PATCH 5/8] drm/panthor: Factor out syncobj handling
+Date: Wed, 28 Aug 2024 18:26:01 +0100
+Message-ID: <20240828172605.19176-6-mihail.atanassov@arm.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240828172605.19176-1-mihail.atanassov@arm.com>
 References: <20240828172605.19176-1-mihail.atanassov@arm.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: LO2P265CA0076.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:8::16) To AS8PR08MB6263.eurprd08.prod.outlook.com
+X-ClientProxiedBy: LO4P265CA0070.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2af::10) To AS8PR08MB6263.eurprd08.prod.outlook.com
  (2603:10a6:20b:290::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -141,8 +141,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-TrafficTypeDiagnostic:
-	AS8PR08MB6263:EE_|AS8PR08MB6551:EE_|DB5PEPF00014B8A:EE_|AM8PR08MB6578:EE_
-X-MS-Office365-Filtering-Correlation-Id: c8892a49-6e95-47ee-d67d-08dcc7869a5b
+	AS8PR08MB6263:EE_|AS8PR08MB6551:EE_|DB5PEPF00014B9E:EE_|DBBPR08MB6058:EE_
+X-MS-Office365-Filtering-Correlation-Id: bf423370-5e04-4dbe-058e-08dcc7869bf0
 X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr
 x-checkrecipientrouted: true
 NoDisclaimer: true
@@ -151,29 +151,29 @@ X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam-Untrusted:
  BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info-Original:
- =?us-ascii?Q?xGgHVKwEom//WAyiRqVILzEXylRXdBCZMJ3LN/Cou0l8gsvjp6rUv7+KVno3?=
- =?us-ascii?Q?h22njv/PkQszLL6q791HorrLjLjglLF7/crBbhwsV14BSNh2lZdgablFA3Pw?=
- =?us-ascii?Q?U5qy+oVh/DCDtjIygu6o/bKr87OSNzRAZy01t8OK0keVkjQC90t1rxgA/Arg?=
- =?us-ascii?Q?960BoxeDM0Romcw560CMbc84cf6+K/o2faMX00UM471+7oTeAglJxew33oaL?=
- =?us-ascii?Q?mE+c+8F6pRxD86vK7WdwOGlL4AN477TI+iBhurAIMQ5JhGSgLZH7trqND+02?=
- =?us-ascii?Q?jUUzs2EPdR76Wg1y6yM0Lk8+NCrOiplHoH0T4OZTGQkCY0jFopFxFd7LO9ho?=
- =?us-ascii?Q?Gh6W60sRIJHMxTe7eH43rW/hDrIIXGDCpIpawUJS10oAo6Lf/Z/kaKoIvxxu?=
- =?us-ascii?Q?LZ+WwqD0GWSkBh1vDd+rDxsNHt4eT6ABEXSfRF/gniogodjHsc/6BIOgiXry?=
- =?us-ascii?Q?un+oVgVeGofVLWz2JzeIeihnk8mijAEyqRTCC8TYNzRQ3WEFvQBCIFpalvkI?=
- =?us-ascii?Q?fQczK0CZZtg1Q/YpJFggiH4LLsPVA503GyhCKSGBo/rUI4bg8YqIW2uz7/mW?=
- =?us-ascii?Q?qiebPCfPNEnS4CvTxlB6f47AlkJKJCBempLkg6uk264Y34YYqdZO0cL229sq?=
- =?us-ascii?Q?qV2kx7Dz0/61XTdb4nYgolhxtfWkQ03HnA73U6gZeg9zxObwb4Hda/1DZCuy?=
- =?us-ascii?Q?+v8tAR4VSHgpKBM8inEbcyP/rlP/SrZHJ/kYTKEpgCnjbaSdnxph15faju3J?=
- =?us-ascii?Q?PAS3xF5WP6PpziJHxeZUr4hQ18O3iPh26Qt6H9mITlU5ESOamVAamf+kDlB4?=
- =?us-ascii?Q?UO2xHVmbbOB/Bsm3h+/O3BI/K1l5mdTTdrVVni/HlR4rRO/7onGhwgkEJLzh?=
- =?us-ascii?Q?6oAf69Yhx9i655FJAFSUnv/oYY2+gOWP+aQ0mkQ5QE0V01uGtZruq5RNuFZU?=
- =?us-ascii?Q?jbqv0fwltpWdgxiu6IDF7e6eKxxNQtqLMQmYohnSFvazZ/kfDpAjCYEta2qP?=
- =?us-ascii?Q?RpiE1cghStjKKJgVJxkWaOL+iKATJ6kwr9cdIiELxgBB7ngWMr83IiyubQ3z?=
- =?us-ascii?Q?j3ARxolq0Rv44Xd0v14+q15m/48F/m0lK7/+O9xYqNEF+j2FkmDwfgm75otm?=
- =?us-ascii?Q?X6dUKJLGsYpHPvCqMdUJnpfpZEcgWWgUQnKO4Cj3sf++5C/d2yWmKyxLg+EE?=
- =?us-ascii?Q?z1LV2TrqSg5HoRynoWgBqHWI4EgyFG01x/TkZQSzA1hpkyZ6MyegGHrMowRG?=
- =?us-ascii?Q?aiNnWxX+2uq2tXOO6O0elP1VLmlZPZvaYgr0ucu2JlIl5U0t+plOt9X625Bg?=
- =?us-ascii?Q?WfV/sKwp0VDJ+sPNdmdwcNnTf3H/G60kCvi51Dx3goR97Q=3D=3D?=
+ =?us-ascii?Q?qfUxHBytr7mLBBJKwDvvr4SWTv/JicsftDfdX3Yy6ZL2ORZtK8VP36AyV0KY?=
+ =?us-ascii?Q?gCyk57/nmRLI2kBlM9DgRpPaBoczOQx1nX33F8Y7Lws+ahFiFLMh4XGsFXDk?=
+ =?us-ascii?Q?0YeBsWRO3kEwq4R/wlTTic2xLAL7hubg+Yv+AjBltfZM+czCndeCx1kBXwCP?=
+ =?us-ascii?Q?BBBvA/yPBhCxz/0feuLsDQEq9a4N+yFdFzhQGi4PFokEsTCu0xUGOQOBg/nM?=
+ =?us-ascii?Q?lWl1pATYS5MFsc9pS3C36CXyMsDiG5wed4RWYmWCe9otdsMfILCITqm59lgm?=
+ =?us-ascii?Q?cQt6yhxyq3vWWziXiBAgRtmfo+g7fX0s5q1nc4t+rmy1gDWKAUH4Rr46Yb6L?=
+ =?us-ascii?Q?8M2DHbTlwx8G1GlDdMfadDkrGR1cg8eeFFWpEx3sWIuRcryENyI5FOh194ad?=
+ =?us-ascii?Q?nBt+FFYIPt9jKffzIpUIhx7eAut5PSV4rFwBvHeysPq9c1sA0Rj0CdNAznve?=
+ =?us-ascii?Q?cB/yYKFyIOUkYxZq6f3V/2OuX/oqvcQlinXTIKkJVxRWn5fNm+hzxiC19QFj?=
+ =?us-ascii?Q?ObOz05UnrErxFMha4atJCUFF+AoB9B23pU4PP7I7QY053pWqQOxnVNFG84uZ?=
+ =?us-ascii?Q?LZgY6RJdUCBoicOxgkEeadfH8l9w0QLmE2yIiVlzDZ1gq0xVxDAI55xS8mf9?=
+ =?us-ascii?Q?+V6Jpl1B/Bxc42XjviXzrLEfWx/j34TE7YFrk/6QVyguB0xjE5dXNeerUXY4?=
+ =?us-ascii?Q?Krg7n780sEFPpgvXln8obsLVyqOV4j/oSNxplIs06FptRkAeUh9IfVDQHnTJ?=
+ =?us-ascii?Q?xd30NyEwJeQ/iYwUh9Ef4pcTqb/PX7KVVe/YScHwRRAawL1i1z/5hsohp+XI?=
+ =?us-ascii?Q?ZODzpxA+qI2zINVmMvZc8SL0urOyYH7TTGXq+N6JVvfL3YQ3Nd1JiQ0XIbO2?=
+ =?us-ascii?Q?IksQv1GCIjSY/ZbIgVJZkWFojzNYCpOaVvmkwjoAWSQrk52XA1O67GydOqyk?=
+ =?us-ascii?Q?m++1pxS1YxmVgrbrGxZazfmausdlffVO/3xYleSdWUXODRz3N8lXnjjqIzmH?=
+ =?us-ascii?Q?BLYAi/0AoKumDZ/zuUQy//mLsERB2SZq9rBuRJX2e0m6+t8CPY4up4FtT32o?=
+ =?us-ascii?Q?k85MzHciYmhYfxEg7J/yuvz2FKKhts8bBVksvoRG+aT0FL0+4OUT/qa9dNHw?=
+ =?us-ascii?Q?w7x8JdKojtzivs0pDd4I7RD4+9U3oBAVLu3xkHGVbFhG8vqkEUVd9c6xHoc/?=
+ =?us-ascii?Q?EhPqsM9lSybo1/KnFHLyhRMAbYmBpcQ6WKfNM3wp+yl+4R6BigGxgdSm9A0I?=
+ =?us-ascii?Q?+B4t7Mz0ca3NA4v5Ie5bNPyDMMywN0Wj2SKtX+wAM2c6nukY8IraqEF0QNX8?=
+ =?us-ascii?Q?XsHSfTwmoPY/MKPntZ8YxFAYU7wn6OtFp1cGocDxBw5y8Q=3D=3D?=
 X-Forefront-Antispam-Report-Untrusted:
  CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR08MB6263.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB6551
@@ -183,147 +183,548 @@ X-EOPAttributedMessage: 0
 X-MS-Exchange-SkipListedInternetSender:
  ip=[2603:10a6:20b:290::9];domain=AS8PR08MB6263.eurprd08.prod.outlook.com
 X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DB5PEPF00014B8A.eurprd02.prod.outlook.com
+ DB5PEPF00014B9E.eurprd02.prod.outlook.com
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	a9bb92a3-99fe-420f-05ac-08dcc7869172
+	01395da6-af7b-4ad3-76df-08dcc7869285
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|35042699022|1800799024|376014|82310400026|36860700013;
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014|35042699022;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VMNxux/Z1KJOQovM2Chv6hEOh4beeqSoXIk9bXdbLkEDtHXg9NHMgfTnmyre?=
- =?us-ascii?Q?As/AL0VFWEm57x3LUuqjg1yU1uv8TTANYW9cZV04u7OKVbI81gtnPYw0MfLm?=
- =?us-ascii?Q?jTydqlTKCoxTq5PuPTWHIgMO6i/65cGkeeByh86ip4dyRNEE76Y5Iz7kzFUd?=
- =?us-ascii?Q?Ln4XjFn8gW54g4POMDbBVfXvJZMlq5v8Q5dwy5HtDJSl7ybMNS0ai/WtDNEW?=
- =?us-ascii?Q?B34pvmvM/sdE5uzBuHTTU+P8RYFK4g0VlEFcw6pJIlFec1VVWqW1QgamGLQr?=
- =?us-ascii?Q?SPaGaeTIat3RbuHQH+JF6mA0c/g3pIabX6Rx8yzVc/f8LLhrTJctzy24W2kr?=
- =?us-ascii?Q?7O++zdR+5XE9PMRy6Q2dUwb1gslRN4Pn4BS4cuLO1sNBvC3erUK2adVK/pF7?=
- =?us-ascii?Q?7qhVmrqES1t8cXzEbJKyOm7v0HElRfcUpyrRe9y6oeaHtMZC58du55e1ZYZj?=
- =?us-ascii?Q?K3AeCnHymTY+xR4uTiivZVelOolbOkHj/KZypeUSx9H7upj0FHC7tIi9Cxuw?=
- =?us-ascii?Q?TJURSvoROYFGaTtJfDnNgHogpItIxGiWjl2a0zIJHf2L26q47fyYKUfpBksv?=
- =?us-ascii?Q?H6MzO6xjf0s0VEolQr0CO3HiZOYQoCDfizt7ArZ/OFSDB8JsgpxRv2L+hEgJ?=
- =?us-ascii?Q?jLXCUnbG9qpg+TbdcXuwcbk/YMYJuAageNV9pbE5KMNRZ2V7F2AResup78ZG?=
- =?us-ascii?Q?yCcr+sGjRCdc4SLQzLFsR6dVfCjQE6tot+0ZH3l1TKWlHsQMm3YL95VorwWm?=
- =?us-ascii?Q?EVBD/hLrQIZd61Oi+/0Lwd7ImU+uVL0SN/Qoy8W68SA4UQIukVSitbeIlT1B?=
- =?us-ascii?Q?Y3cUMEc9e9olshZ0a4IRqcfVRlnwYo5L9alLi2bXN6ZYaTMm+7uG7efwXR/a?=
- =?us-ascii?Q?d6LWGJ6c6cClEzXsXEWlchuOwTilKMnBGA9DKrlyevOsEOIwWCQJRT7odPBa?=
- =?us-ascii?Q?uaJtVRNNp8deJCgCLUUYQGk4RF9+uEnrheAxjzb298TQKVGn7g6wIlxHulhT?=
- =?us-ascii?Q?wP3roYrAUUSp7tWjukcaRNLkJnRK6qK68fl/i3sPW3ze0I5avSr87DHttKTj?=
- =?us-ascii?Q?jRvcePc7MvWqBn1RBmL/eWQN2wkAKil/J8MzbhdbgKrZCZVZuihmAFlyduP/?=
- =?us-ascii?Q?kvuUiNWN1DjNeFNjClQcbLgNsXaEPVOMlJtWTesHFMrg15HV/oa1TUG2w9Vc?=
- =?us-ascii?Q?0tALvYrnyB6CaYTfH46+XLfaB+6FLQ41O7gg/X9o+wgKljRjynUp3bD8tk70?=
- =?us-ascii?Q?U97OJRiWzn/+0CANfnZwTHaDQv/P/ILdRB4m0qcOeWxaCO/voz7uurI/IUTz?=
- =?us-ascii?Q?2h14of7xM4r0UvRlZlOMtVR8pR1yqnRLPHzxZSOkehaBwgI+TJdnb/Mugctj?=
- =?us-ascii?Q?oXbF6VNsZBcrTQS93hDM7RFfbWO9As4ScDrwcAiGgL6KykmQLN67zh/9jT85?=
- =?us-ascii?Q?PwAwo/rmFcdiS+uFmJizVy4tyRuISTf9?=
+	=?us-ascii?Q?MTabfG2PkZxOArF9AOqksvga8aI3W9RDyw+YTMknAE4htGGiMWSc37Wl19Y3?=
+ =?us-ascii?Q?rJolDf7sHAwME4v0d6SjjDIG0YBjLteWnV7XpUFGQ40Kp75QfTe6O4Hzu6Gr?=
+ =?us-ascii?Q?/9neZNO3la6qwm4f3+ZCCcvxDTVBusMDq4UwubR+K8N3HMWZdpEWbA1/NIwC?=
+ =?us-ascii?Q?wMSsa3hkY3cq+Lu263VAuE33NG0wLnBLtURrebueOMsFePDcxXLOfMhXDGS+?=
+ =?us-ascii?Q?/ykSHboZbZY0B/Ykxfytb7V48IzxEFydKhCT+c7ueelofgVVI19+KiWK5+oI?=
+ =?us-ascii?Q?7rntQqTeyqKzwcZJmrbF46TL3YqLtmcKLo4L83diuDAA9IVVgrwTrXjQmElm?=
+ =?us-ascii?Q?7/7KiINey7uiZ1b+R0dtRpCy+o2/4ZKnhX22NgpoHCJPaBIFBIh9ppSXiBix?=
+ =?us-ascii?Q?hVTOptRzSe98QvHQnygHuuwQKlDC0D6kmw6tds3311eBxn6klcQ8jUSv217O?=
+ =?us-ascii?Q?qqEsucRmGl1k4L2qEUrrQrwgezvXyOJjUceItpDwPDnrUSBJGlVMJevhLE5P?=
+ =?us-ascii?Q?vMaar/U8OhxaS++uzoSdw59CLfVO9uc7E/sHMYqpyrUxYBnDmaV9GRb+ExFF?=
+ =?us-ascii?Q?FBNl7Z2mZmCPAiIBZAh8S73IssD1yFEy2+xdSHMxGRtUtrJfE2e1XYGnb/8f?=
+ =?us-ascii?Q?dlOHVbL0UDoVSXVUD8qqKeIfVjhUBGgYr5dxNodwJJQm9uXVbvCswFIM7Dfr?=
+ =?us-ascii?Q?JDAf0XuXa4hfN0oLG7YINYICWtBGwBqlDYSa7QKplmdBAqOg8WdckxRB0BmD?=
+ =?us-ascii?Q?P/coR8E3PXIvj4Yz/41J4k8Es2Nz1zJrjiNtQxsEyLbQCjhepy42wCatL5S+?=
+ =?us-ascii?Q?Ho/kATyMtfvQQcMQRgpir2pVkvNwnxoCK0vLY2EkWdLyzJ4eOXfZU/eXNiy8?=
+ =?us-ascii?Q?bpbw+wt9MJWrUaCxfDy1zme9q8zI45oTujkvE4pM1AqECRHYKdYtKZnAlYc6?=
+ =?us-ascii?Q?fJO6ZmohIHsQQx0b8sKHzXwSD5Fo5ONWwzTVtmv5k1kPz3vqsNTQEx8KFfD7?=
+ =?us-ascii?Q?0OPiOLUOZK4moRAD6uckSO2VosW5FJXtKu4Tz+9km8BmcHhR/FduWpKqwYgw?=
+ =?us-ascii?Q?9gvl1JGHGRiU0wseZXqTouHVO6/B7rrlui1gI2lQ7aBxqTbM0Ez4708J0QJ0?=
+ =?us-ascii?Q?byI46IIY61aMK7mnPQCIWno28IcJqLiJGUTesqNqRZo2COwqAlc+xPG2t8qB?=
+ =?us-ascii?Q?GVJQ5Mge1duE5TGD6VeAuzuFoWEAcj4/cAbyGw2Z9+VZshyiqXKMv91cDWv8?=
+ =?us-ascii?Q?zbY2vYaFrQcaquJpVen0ugksUX2o25J7if/oy7E8SuNNeuKCfcoYuxECoitQ?=
+ =?us-ascii?Q?nzbZqtHWS03c/pGbOQWXXX1y5qmAdV+2loEqOpCxNhL8wgUpik2iiKnE7HRH?=
+ =?us-ascii?Q?2it6Xdnbijt2n4QGhQpeTw4zjkQn/NssfhzCwhRcV422yuvdbKVwIhxH9InF?=
+ =?us-ascii?Q?o9m1ajKP0QNJtait94FqU5OSwz6wDA2c?=
 X-Forefront-Antispam-Report:
-	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(13230040)(35042699022)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014)(35042699022);DIR:OUT;SFP:1101;
 X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 17:26:50.8710
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 17:26:53.5042
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c8892a49-6e95-47ee-d67d-08dcc7869a5b
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf423370-5e04-4dbe-058e-08dcc7869bf0
 X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	DB5PEPF00014B8A.eurprd02.prod.outlook.com
+	DB5PEPF00014B9E.eurprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR08MB6578
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR08MB6058
 
 From: Ketil Johnsen <ketil.johnsen@arm.com>
 
-In the kernel submission flow, GROUP_SUBMIT will ensure that the group
-gets assigned to a CSG. Conversely for the user submission flow, work
-gets added to the ring buffer without kernel supervision, so there needs
-to be a mechanism to trigger rescheduling. Use a new GROUP_KICK ioctl,
-to keep it distinct from the existing submit flow.
+The code is needed both for the existing kernel submission path and for
+implementing cross-group sync (XGS) queues which link between
+drm_syncobj and the HW syncobj primitives.
 
 Signed-off-by: Ketil Johnsen <ketil.johnsen@arm.com>
 Signed-off-by: Mihail Atanassov <mihail.atanassov@arm.com>
 ---
- drivers/gpu/drm/panthor/panthor_drv.c   | 12 +++++++++++
- drivers/gpu/drm/panthor/panthor_sched.c | 27 +++++++++++++++++++++++++
- drivers/gpu/drm/panthor/panthor_sched.h |  1 +
- 3 files changed, 40 insertions(+)
+ drivers/gpu/drm/panthor/Makefile          |   3 +-
+ drivers/gpu/drm/panthor/panthor_sched.c   | 154 +++++---------------
+ drivers/gpu/drm/panthor/panthor_syncobj.c | 167 ++++++++++++++++++++++
+ drivers/gpu/drm/panthor/panthor_syncobj.h |  27 ++++
+ 4 files changed, 234 insertions(+), 117 deletions(-)
+ create mode 100644 drivers/gpu/drm/panthor/panthor_syncobj.c
+ create mode 100644 drivers/gpu/drm/panthor/panthor_syncobj.h
 
-diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-index e391ab6aaab2..ce2fdcd3fb42 100644
---- a/drivers/gpu/drm/panthor/panthor_drv.c
-+++ b/drivers/gpu/drm/panthor/panthor_drv.c
-@@ -1305,6 +1305,17 @@ static int panthor_ioctl_vm_get_state(struct drm_device *ddev, void *data,
- 	return 0;
- }
+diff --git a/drivers/gpu/drm/panthor/Makefile b/drivers/gpu/drm/panthor/Makefile
+index 15294719b09c..0af27f33bfe2 100644
+--- a/drivers/gpu/drm/panthor/Makefile
++++ b/drivers/gpu/drm/panthor/Makefile
+@@ -9,6 +9,7 @@ panthor-y := \
+ 	panthor_gpu.o \
+ 	panthor_heap.o \
+ 	panthor_mmu.o \
+-	panthor_sched.o
++	panthor_sched.o \
++	panthor_syncobj.o
  
-+static int panthor_ioctl_group_kick(struct drm_device *ddev, void *data,
-+				    struct drm_file *file)
-+{
-+	struct drm_panthor_group_kick *args = data;
-+	struct panthor_file *pfile = file->driver_priv;
-+
-+	panthor_sched_kick(pfile, args->handle, args->queue_mask);
-+
-+	return 0;
-+}
-+
- static int
- panthor_open(struct drm_device *ddev, struct drm_file *file)
- {
-@@ -1375,6 +1386,7 @@ static const struct drm_ioctl_desc panthor_drm_driver_ioctls[] = {
- 	PANTHOR_IOCTL(TILER_HEAP_CREATE, tiler_heap_create, DRM_RENDER_ALLOW),
- 	PANTHOR_IOCTL(TILER_HEAP_DESTROY, tiler_heap_destroy, DRM_RENDER_ALLOW),
- 	PANTHOR_IOCTL(GROUP_SUBMIT, group_submit, DRM_RENDER_ALLOW),
-+	PANTHOR_IOCTL(GROUP_KICK, group_kick, DRM_RENDER_ALLOW),
- };
- 
- static int panthor_mmap(struct file *filp, struct vm_area_struct *vma)
+ obj-$(CONFIG_DRM_PANTHOR) += panthor.o
 diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-index 471bb8f2b44c..3b56526a4b97 100644
+index 3b56526a4b97..f272aeee8a8f 100644
 --- a/drivers/gpu/drm/panthor/panthor_sched.c
 +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-@@ -2845,6 +2845,33 @@ void panthor_sched_post_reset(struct panthor_device *ptdev, bool reset_failed)
- 	}
- }
+@@ -31,6 +31,7 @@
+ #include "panthor_mmu.h"
+ #include "panthor_regs.h"
+ #include "panthor_sched.h"
++#include "panthor_syncobj.h"
  
-+void panthor_sched_kick(struct panthor_file *pfile, u32 group_handle, u32 queue_mask)
+ /**
+  * DOC: Scheduler
+@@ -318,39 +319,6 @@ struct panthor_scheduler {
+ 	} reset;
+ };
+ 
+-/**
+- * struct panthor_syncobj_32b - 32-bit FW synchronization object
+- */
+-struct panthor_syncobj_32b {
+-	/** @seqno: Sequence number. */
+-	u32 seqno;
+-
+-	/**
+-	 * @status: Status.
+-	 *
+-	 * Not zero on failure.
+-	 */
+-	u32 status;
+-};
+-
+-/**
+- * struct panthor_syncobj_64b - 64-bit FW synchronization object
+- */
+-struct panthor_syncobj_64b {
+-	/** @seqno: Sequence number. */
+-	u64 seqno;
+-
+-	/**
+-	 * @status: Status.
+-	 *
+-	 * Not zero on failure.
+-	 */
+-	u32 status;
+-
+-	/** @pad: MBZ. */
+-	u32 pad;
+-};
+-
+ /**
+  * struct panthor_queue - Execution queue
+  */
+@@ -445,17 +413,8 @@ struct panthor_queue {
+ 		/** @sync64: True if this is a 64-bit sync object. */
+ 		bool sync64;
+ 
+-		/** @bo: Buffer object holding the synchronization object. */
+-		struct drm_gem_object *obj;
+-
+-		/** @offset: Offset of the synchronization object inside @bo. */
+-		u64 offset;
+-
+-		/**
+-		 * @kmap: Kernel mapping of the buffer object holding the
+-		 * synchronization object.
+-		 */
+-		void *kmap;
++		/** @syncobj: Wrapper for the syncobj in memory */
++		struct panthor_syncobj *syncobj;
+ 	} syncwait;
+ 
+ 	/** @fence_ctx: Fence context fields. */
+@@ -794,53 +753,6 @@ struct panthor_job {
+ 	struct dma_fence *done_fence;
+ };
+ 
+-static void
+-panthor_queue_put_syncwait_obj(struct panthor_queue *queue)
+-{
+-	if (queue->syncwait.kmap) {
+-		struct iosys_map map = IOSYS_MAP_INIT_VADDR(queue->syncwait.kmap);
+-
+-		drm_gem_vunmap_unlocked(queue->syncwait.obj, &map);
+-		queue->syncwait.kmap = NULL;
+-	}
+-
+-	drm_gem_object_put(queue->syncwait.obj);
+-	queue->syncwait.obj = NULL;
+-}
+-
+-static void *
+-panthor_queue_get_syncwait_obj(struct panthor_group *group, struct panthor_queue *queue)
+-{
+-	struct panthor_device *ptdev = group->ptdev;
+-	struct panthor_gem_object *bo;
+-	struct iosys_map map;
+-	int ret;
+-
+-	if (queue->syncwait.kmap)
+-		return queue->syncwait.kmap + queue->syncwait.offset;
+-
+-	bo = panthor_vm_get_bo_for_va(group->vm,
+-				      queue->syncwait.gpu_va,
+-				      &queue->syncwait.offset);
+-	if (drm_WARN_ON(&ptdev->base, IS_ERR_OR_NULL(bo)))
+-		goto err_put_syncwait_obj;
+-
+-	queue->syncwait.obj = &bo->base.base;
+-	ret = drm_gem_vmap_unlocked(queue->syncwait.obj, &map);
+-	if (drm_WARN_ON(&ptdev->base, ret))
+-		goto err_put_syncwait_obj;
+-
+-	queue->syncwait.kmap = map.vaddr;
+-	if (drm_WARN_ON(&ptdev->base, !queue->syncwait.kmap))
+-		goto err_put_syncwait_obj;
+-
+-	return queue->syncwait.kmap + queue->syncwait.offset;
+-
+-err_put_syncwait_obj:
+-	panthor_queue_put_syncwait_obj(queue);
+-	return NULL;
+-}
+-
+ static void group_free_queue(struct panthor_group *group, struct panthor_queue *queue)
+ {
+ 	if (IS_ERR_OR_NULL(queue))
+@@ -852,7 +764,7 @@ static void group_free_queue(struct panthor_group *group, struct panthor_queue *
+ 	if (queue->scheduler.ops)
+ 		drm_sched_fini(&queue->scheduler);
+ 
+-	panthor_queue_put_syncwait_obj(queue);
++	panthor_syncobj_release(queue->syncwait.syncobj);
+ 
+ 	if (queue->ringbuf_offset)
+ 		drm_vma_node_revoke(&queue->ringbuf->obj->vma_node, group->pfile->drm_file);
+@@ -2065,7 +1977,6 @@ group_term_post_processing(struct panthor_group *group)
+ 	cookie = dma_fence_begin_signalling();
+ 	for (i = 0; i < group->queue_count; i++) {
+ 		struct panthor_queue *queue = group->queues[i];
+-		struct panthor_syncobj_64b *syncobj;
+ 		int err;
+ 
+ 		if (group->fatal_queues & BIT(i))
+@@ -2086,12 +1997,13 @@ group_term_post_processing(struct panthor_group *group)
+ 		}
+ 		spin_unlock(&queue->fence_ctx.lock);
+ 
+-		if (!group->user_submit) {
++		if (!group->user_submit)
+ 			/* Manually update the syncobj seqno to unblock waiters. */
+-			syncobj = group->syncobjs->kmap + (i * sizeof(*syncobj));
+-			syncobj->status = ~0;
+-			syncobj->seqno = atomic64_read(&queue->fence_ctx.seqno);
+-		}
++			panthor_syncobj_ptr64_signal_with_error(
++				group->syncobjs->kmap + (i * PANTHOR_SYNCOBJ64_SIZE),
++				atomic64_read(&queue->fence_ctx.seqno),
++				~0);
++
+ 		sched_queue_work(group->ptdev->scheduler, sync_upd);
+ 	}
+ 	dma_fence_end_signalling(cookie);
+@@ -2461,28 +2373,32 @@ static void tick_work(struct work_struct *work)
+ static int panthor_queue_eval_syncwait(struct panthor_group *group, u8 queue_idx)
+ {
+ 	struct panthor_queue *queue = group->queues[queue_idx];
+-	union {
+-		struct panthor_syncobj_64b sync64;
+-		struct panthor_syncobj_32b sync32;
+-	} *syncobj;
++	struct panthor_syncobj *syncobj;
+ 	bool result;
+ 	u64 value;
+ 
+-	syncobj = panthor_queue_get_syncwait_obj(group, queue);
+-	if (!syncobj)
+-		return -EINVAL;
++	if (!queue->syncwait.syncobj) {
++		syncobj = panthor_syncobj_create(group->ptdev,
++						 group->vm,
++						 queue->syncwait.gpu_va,
++						 queue->syncwait.sync64);
++		if (IS_ERR_OR_NULL(syncobj))
++			return PTR_ERR(syncobj);
+ 
+-	value = queue->syncwait.sync64 ?
+-		syncobj->sync64.seqno :
+-		syncobj->sync32.seqno;
++		queue->syncwait.syncobj = syncobj;
++	}
++
++	value = panthor_syncobj_get_value(queue->syncwait.syncobj);
+ 
+ 	if (queue->syncwait.gt)
+ 		result = value > queue->syncwait.ref;
+ 	else
+ 		result = value <= queue->syncwait.ref;
+ 
+-	if (result)
+-		panthor_queue_put_syncwait_obj(queue);
++	if (result) {
++		panthor_syncobj_release(queue->syncwait.syncobj);
++		queue->syncwait.syncobj = NULL;
++	}
+ 
+ 	return result;
+ }
+@@ -2887,16 +2803,22 @@ static void group_sync_upd_work(struct work_struct *work)
+ 	cookie = dma_fence_begin_signalling();
+ 	for (queue_idx = 0; queue_idx < group->queue_count; queue_idx++) {
+ 		struct panthor_queue *queue = group->queues[queue_idx];
+-		struct panthor_syncobj_64b *syncobj;
++		void *syncobj;
+ 
+ 		if (!queue)
+ 			continue;
+ 
+-		syncobj = group->syncobjs->kmap + (queue_idx * sizeof(*syncobj));
++		syncobj = group->syncobjs->kmap + (queue_idx * PANTHOR_SYNCOBJ64_SIZE);
+ 
+ 		spin_lock(&queue->fence_ctx.lock);
+ 		list_for_each_entry_safe(job, job_tmp, &queue->fence_ctx.in_flight_jobs, node) {
+-			if (syncobj->seqno < job->done_fence->seqno)
++			u64 value;
++
++			if (!job->call_info.size)
++				continue;
++
++			value = panthor_syncobj_ptr64_get_value(syncobj);
++			if (value < job->done_fence->seqno)
+ 				break;
+ 
+ 			list_move_tail(&job->node, &done_jobs);
+@@ -2928,7 +2850,7 @@ queue_run_job(struct drm_sched_job *sched_job)
+ 		       ptdev->csif_info.unpreserved_cs_reg_count;
+ 	u64 val_reg = addr_reg + 2;
+ 	u64 sync_addr = panthor_kernel_bo_gpuva(group->syncobjs) +
+-			job->queue_idx * sizeof(struct panthor_syncobj_64b);
++			job->queue_idx * PANTHOR_SYNCOBJ64_SIZE;
+ 	u32 waitall_mask = GENMASK(sched->sb_slot_count - 1, 0);
+ 	struct dma_fence *done_fence;
+ 	int ret;
+@@ -3289,7 +3211,7 @@ int panthor_group_create(struct panthor_file *pfile,
+ 	if (!group->user_submit) {
+ 		group->syncobjs = panthor_kernel_bo_create(ptdev, group->vm,
+ 							   group_args->queues.count *
+-							   sizeof(struct panthor_syncobj_64b),
++							   PANTHOR_SYNCOBJ64_SIZE,
+ 							   DRM_PANTHOR_BO_NO_MMAP,
+ 							   DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC |
+ 							   DRM_PANTHOR_VM_BIND_OP_MAP_UNCACHED,
+@@ -3304,7 +3226,7 @@ int panthor_group_create(struct panthor_file *pfile,
+ 			goto err_put_group;
+ 
+ 		memset(group->syncobjs->kmap, 0,
+-		       group_args->queues.count * sizeof(struct panthor_syncobj_64b));
++		       group_args->queues.count * PANTHOR_SYNCOBJ64_SIZE);
+ 	}
+ 
+ 	for (i = 0; i < group_args->queues.count; i++) {
+diff --git a/drivers/gpu/drm/panthor/panthor_syncobj.c b/drivers/gpu/drm/panthor/panthor_syncobj.c
+new file mode 100644
+index 000000000000..337f75bfa648
+--- /dev/null
++++ b/drivers/gpu/drm/panthor/panthor_syncobj.c
+@@ -0,0 +1,167 @@
++// SPDX-License-Identifier: GPL-2.0 or MIT
++/* Copyright 2024 ARM Limited. All rights reserved. */
++
++#include <linux/iosys-map.h>
++
++#include "panthor_device.h"
++#include "panthor_gem.h"
++#include "panthor_mmu.h"
++#include "panthor_syncobj.h"
++
++/**
++ * struct panthor_syncobj_32b - 32-bit FW synchronization object
++ */
++struct panthor_syncobj_32b {
++	/** @value: Value field. */
++	u32 value;
++
++	/**
++	 * @error: Error status.
++	 *
++	 * Not zero on failure.
++	 */
++	u32 error;
++};
++
++/**
++ * struct panthor_syncobj_64b - 64-bit FW synchronization object
++ */
++struct panthor_syncobj_64b {
++	/** @value: Value field. */
++	u64 value;
++
++	/**
++	 * @error: Error status.
++	 *
++	 * Not zero on failure.
++	 */
++	u32 error;
++
++	/** @pad: MBZ. */
++	u32 pad;
++};
++
++struct panthor_syncobj {
++	/** @bo: Buffer object holding the synchronization object. */
++	struct drm_gem_object *bo;
++
++	/** @offset: Offset of the synchronization object inside @bo. */
++	u64 offset;
++
++	/**
++	 * @kmap: Kernel mapping of the buffer object holding the
++	 * synchronization object.
++	 */
++	void *kmap;
++
++	/** @ptr: CPU ptr to synchronization object */
++	union {
++		struct panthor_syncobj_64b sync64;
++		struct panthor_syncobj_32b sync32;
++	} *ptr;
++
++	/** @sync64: true for 64-bit synchronization object, otherwise 32-bit */
++	bool sync64;
++};
++
++
++
++struct panthor_syncobj *panthor_syncobj_create(struct panthor_device *ptdev,
++					       struct panthor_vm *vm, u64 gpu_va,
++					       bool sync64)
 +{
-+	struct panthor_group_pool *gpool = pfile->groups;
-+	struct panthor_scheduler *sched = pfile->ptdev->scheduler;
-+	struct panthor_group *group;
++	struct panthor_gem_object *bo;
++	struct iosys_map map;
++	struct panthor_syncobj *syncobj;
++	int err;
 +
-+	group = group_get(xa_load(&gpool->xa, group_handle));
-+	if (!group)
-+		return;
++	syncobj = kzalloc(sizeof(*syncobj), GFP_KERNEL);
++	if (!syncobj) {
++		err = -ENOMEM;
++		goto err;
++	}
 +
-+	if (!group->queue_count)
-+		goto err_put_group;
++	bo = panthor_vm_get_bo_for_va(vm, gpu_va, &syncobj->offset);
++	if (drm_WARN_ON(&ptdev->base, IS_ERR_OR_NULL(bo))) {
++		err = -EINVAL;
++		goto err_free_syncobj;
++	}
 +
-+	mutex_lock(&sched->lock);
++	syncobj->bo = &bo->base.base;
 +
-+	if (group->csg_id < 0)
-+		group_schedule_locked(group, queue_mask);
-+	else
-+		/* All queues share same doorbell page (for now), so we just need to ding one */
-+		gpu_write(pfile->ptdev, CSF_DOORBELL(group->queues[0]->doorbell_id), 1);
++	err = drm_gem_vmap_unlocked(syncobj->bo, &map);
++	if (drm_WARN_ON(&ptdev->base, err))
++		goto err_put_gem_object;
 +
-+	mutex_unlock(&sched->lock);
++	syncobj->kmap = map.vaddr;
++	syncobj->ptr = syncobj->kmap + syncobj->offset;
++	syncobj->sync64 = sync64;
 +
-+err_put_group:
-+	group_put(group);
++	return syncobj;
++
++err_put_gem_object:
++	drm_gem_object_put(syncobj->bo);
++err_free_syncobj:
++	kfree(syncobj);
++err:
++	return ERR_PTR(err);
 +}
 +
- static void group_sync_upd_work(struct work_struct *work)
- {
- 	struct panthor_group *group =
-diff --git a/drivers/gpu/drm/panthor/panthor_sched.h b/drivers/gpu/drm/panthor/panthor_sched.h
-index 0b3a2ee2a0ad..18fb7ad0952e 100644
---- a/drivers/gpu/drm/panthor/panthor_sched.h
-+++ b/drivers/gpu/drm/panthor/panthor_sched.h
-@@ -48,5 +48,6 @@ void panthor_sched_report_mmu_fault(struct panthor_device *ptdev);
- void panthor_sched_report_fw_events(struct panthor_device *ptdev, u32 events);
- 
- u8 panthor_sched_doorbell_id(struct panthor_file *pfile, u32 group_handle);
-+void panthor_sched_kick(struct panthor_file *pfile, u32 group_handle, u32 queue_mask);
- 
- #endif
++void panthor_syncobj_release(struct panthor_syncobj *syncobj)
++{
++	if (syncobj) {
++		struct iosys_map map = IOSYS_MAP_INIT_VADDR(syncobj->kmap);
++
++		drm_gem_vunmap_unlocked(syncobj->bo, &map);
++		drm_gem_object_put(syncobj->bo);
++		kfree(syncobj);
++	}
++}
++
++u64 panthor_syncobj_get_value(struct panthor_syncobj *syncobj)
++{
++	return syncobj->sync64 ?
++		syncobj->ptr->sync64.value :
++		syncobj->ptr->sync32.value;
++}
++
++u32 panthor_syncobj_get_error(struct panthor_syncobj *syncobj)
++{
++	return syncobj->sync64 ?
++		syncobj->ptr->sync64.error :
++		syncobj->ptr->sync32.error;
++}
++
++void panthor_syncobj_signal(struct panthor_syncobj *syncobj, u64 value)
++{
++	if (syncobj->sync64)
++		syncobj->ptr->sync64.value = value;
++	else
++		syncobj->ptr->sync32.value = (u32)value;
++}
++
++void panthor_syncobj_signal_with_error(struct panthor_syncobj *syncobj, u64 value, u32 error)
++{
++	if (syncobj->sync64) {
++		syncobj->ptr->sync64.value = value;
++		syncobj->ptr->sync64.error = error;
++	} else {
++		syncobj->ptr->sync32.value = (u32)value;
++		syncobj->ptr->sync32.error = error;
++	}
++}
++
++u64 panthor_syncobj_ptr64_get_value(void *syncobj_ptr)
++{
++	struct panthor_syncobj_64b *syncobj = syncobj_ptr;
++
++	return syncobj->value;
++}
++
++void panthor_syncobj_ptr64_signal_with_error(void *syncobj_ptr, u64 value, u32 error)
++{
++	struct panthor_syncobj_64b *syncobj = syncobj_ptr;
++
++	syncobj->value = value;
++	syncobj->error = error;
++}
+diff --git a/drivers/gpu/drm/panthor/panthor_syncobj.h b/drivers/gpu/drm/panthor/panthor_syncobj.h
+new file mode 100644
+index 000000000000..018cfc87cdaa
+--- /dev/null
++++ b/drivers/gpu/drm/panthor/panthor_syncobj.h
+@@ -0,0 +1,27 @@
++/* SPDX-License-Identifier: GPL-2.0 or MIT */
++/* Copyright 2024 ARM Limited. All rights reserved. */
++
++#ifndef __PANTHOR_SYNCOBJ_H__
++#define __PANTHOR_SYNCOBJ_H__
++
++#define PANTHOR_SYNCOBJ32_SIZE 8
++#define PANTHOR_SYNCOBJ64_SIZE 16
++
++struct panthor_syncobj;
++struct panthor_vm;
++
++struct panthor_syncobj *panthor_syncobj_create(struct panthor_device *ptdev,
++					       struct panthor_vm *vm, u64 gpu_va,
++					       bool sync64);
++void panthor_syncobj_release(struct panthor_syncobj *syncobj);
++
++u64 panthor_syncobj_get_value(struct panthor_syncobj *syncobj);
++u32 panthor_syncobj_get_error(struct panthor_syncobj *syncobj);
++
++void panthor_syncobj_signal(struct panthor_syncobj *syncobj, u64 value);
++void panthor_syncobj_signal_with_error(struct panthor_syncobj *syncobj, u64 value, u32 error);
++
++u64 panthor_syncobj_ptr64_get_value(void *syncobj_ptr);
++void panthor_syncobj_ptr64_signal_with_error(void *syncobj_ptr, u64 value, u32 error);
++
++#endif
 -- 
 2.45.0
 
