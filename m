@@ -1,126 +1,139 @@
-Return-Path: <linux-kernel+bounces-305573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCDC59630AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:06:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59D8D9630B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:07:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 120661C22377
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:06:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DAB21C2083C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:07:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1600F1AB53A;
-	Wed, 28 Aug 2024 19:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1268E1ABEA7;
+	Wed, 28 Aug 2024 19:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BGYa2eY5"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cq58Vbp9"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95CB1D696;
-	Wed, 28 Aug 2024 19:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27D11AAE19;
+	Wed, 28 Aug 2024 19:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724871962; cv=none; b=eMBAmcy1k6s83YjL6qWtPwWY0Vne6ThOvLYhYQIRAShtlerhlviv6Kb87L0ImU6WDjL+FZYdiGIiGbc40Kjf0MoBlm4od/bS4H2OmYM+apxIUxPDNDVOS4BwchJkSTJQfBzwFDkz2Ik7PLVE7tUkM3RuFF0nNsx67Zcj2L3xGz8=
+	t=1724872030; cv=none; b=oreCLpnadGpxzW9OHHd6IisaaxX06Q1pBvaH+WNBspmBsk71PsLv62vXOT1qmLt9jOib/dchXrgOo9jSL+eTJa6vfwxW3YkXDvf9NhwTTvfjJD1KNCHVDAPFV32hBv8i+C8kCPdOuEoJG7vAwYbQefdGba7veTdgpg3zHCluN/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724871962; c=relaxed/simple;
-	bh=WIGu1B/KmUqc/AyzVGZa/YXfLgKK8Ua7FeXDD0qUCRE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Yms1I2O9tHNGkf+FsGSbv/zWluJ7ZBEI9l6U9Q2GP/R+sZqcs3FO2uw1Sf+LhEyj8Z24DjNLNnbwWb1yJgC72qUMaCoXBs+PWK8aeqEkzFkBWx1SszA6SdD0J5EBrAo2Uo4ZXJBVi38WI7Jwsj/nJThxeNsR1L9G4nxGcHjTEg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BGYa2eY5; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47SASNPD021184;
-	Wed, 28 Aug 2024 19:05:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sXRSvSMMkwRqcUafuFtdx+oe3Nm8qnjHeghnKWRDz3E=; b=BGYa2eY5lnL9kjVh
-	knuCVCL1Cb6O4cYP6+vpsa2dZIQUL3ftqI4Xyh57pAX02Mfg4GBxVwSGg9cPh8Ro
-	gWnEOdOflo5yYuEgW50bwRpfx38FNjnnt0d0O/xWkugrIRW+d3xkHfqPna4Hni4A
-	Mrn6ruWnfbjsGV5xVnEaSz7up6jyxu24C2lDtu/2F5zsJ8nN+HgY3yK4V2iqsbxx
-	1XGd+T5in0RbZ046jIhvq2urz2RI+a62IIq/0VB/84/zIydbCfzIygyrY1/EgMh7
-	+NZVOxeEFedSosovDssIXQbS7d+jj6RJqiFSMJ3vr7zZB90JtpHRdO/kiVUx/ZJq
-	P8bZmQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419pv0jw2m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 19:05:54 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47SJ5rKt000580
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 19:05:53 GMT
-Received: from [10.71.111.76] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 28 Aug
- 2024 12:05:53 -0700
-Message-ID: <1bb90821-bc6f-4828-b947-d3123a035c60@quicinc.com>
-Date: Wed, 28 Aug 2024 12:05:52 -0700
+	s=arc-20240116; t=1724872030; c=relaxed/simple;
+	bh=HjKq3StBX94hw4M7AOGIX3XHXN2gq4bMwsiXnPva3LY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NL6BCSUtpK24yizO3pfpPWoUt1tvVzzvXNSMucMw73IA+bDjBG7aeVKgtFEoIl/AufDYWEOPOiPLrOPnx0IKgu9J/MyYlGgCCbPukEK5qAss82ZZBsV3rzAqw2WtgyPRzMP/qrqFn0Px7bxsnT6zmeNyYErAGmxFtzV/lKOn+oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cq58Vbp9; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so895472866b.1;
+        Wed, 28 Aug 2024 12:07:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724872027; x=1725476827; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HjKq3StBX94hw4M7AOGIX3XHXN2gq4bMwsiXnPva3LY=;
+        b=Cq58Vbp9cfo4Fd5Ep0X39hCPpdQxCYVY/8vqF9sHzzNGRi2OnIDcYPdE+Jlzt3/OOz
+         URmlwtEOu32Cw0tPgAkaC4N/kMKjpCGykZdZJAz41zfxpid3XKkxd8Haadn0pyCxG4Ig
+         D227chqUj6x+ZJ3QLZv6B6AVK+zLpTeDZWG+lOxdflw9f2u5sb05vXt5thHJYP5L/tjU
+         31FoC4WqRy38yO9Eff2Y7pry3uc8046Xvn7t/ewITaQZ2ptaoiS0GA3+ddKmyFRhZ/79
+         xOgZqQ7SzqgJowgv22/KCaWX2+2Zm8a5xqYmAsS2U28xgR8i/SZdRC7Tc4lKCJkWrJBm
+         8Y1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724872027; x=1725476827;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HjKq3StBX94hw4M7AOGIX3XHXN2gq4bMwsiXnPva3LY=;
+        b=Nk13wU+atQkEALDtxdHiBoiqH20xq0qgzbs5UXiMzLtgXD7Sy++8DjnGtfLtWsyo9f
+         Zh+joY6tjzafvbGKGqGoCm7NrKfULk3LCL58yfZnOMD6jZU3Qg/tQcoAMS4NA9B6g8ta
+         IfDwNyXVaGjnzKZYqMx2E0QaKN7BfEz51cBmEDnxhn0lnaA5k9qmSkvVoZVKN7E0yrSp
+         q/nApQHAcQy7Hu2J53dfWafbnqFDgOgV0TC/fg6/oG6aR2iW0VxRwGwO/FaUUbSOk65K
+         v7+TNdW016s19JLd2QEzveCelsxCRq7DQl9eqSVTmzkGDTvKYiWOaJlASPNaCtA8xg2e
+         2CJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVDLBAyZk160oNi1Q9eshkSh+MlXTZYyJc/MTeAMsPc/jwWp4nNmnRtgYcjCPJbM54vVnJu2yk26Z2@vger.kernel.org, AJvYcCUnyGXP1rmXN5/3d+GbcWDc8/Nd3bfJNpAl3aHJgsWVmGKmrMYEulxounwCOacBjKmbj/JEC5pziCCLgVa6vS/GUjUhYQ==@vger.kernel.org, AJvYcCVtckanUpogLDAxlFSue/yZiCBBKrO/l91cfknfZSX6RKJSndE34h5IVv2c+/5XU3Y7Ybr3ElztFJRgWsr+@vger.kernel.org, AJvYcCW0WOYOPX0DjJT2/YEbd9ssxhYdwkhNLWCh1k1drZl/ULxVn2yY8XUNGjrJu8NVAihNuWcVhLWTV8nerQ==@vger.kernel.org, AJvYcCWXkTBQT1S99/1pxYy3Ut41g7wb8FlcIO+qA0374kgNVcjIQ4J9thxmXgWTDu3hM0sVkYTWAv67FX+gbvBG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6ICaZ6WbfIxK+L/6DQDGaKqBiV5GTMYzxaJvGkwS4bOX6P7hG
+	omAgBWI5X45MvMzxpZFhkCj3lzTORnlYkUHivsbyvvTu7mhx1XsmxHcntRc/7McvNE2MuLLlpzA
+	6lg6IbYYggNWsXY4q9ZA0IhkifovfIDr3
+X-Google-Smtp-Source: AGHT+IGYzYJZG7E9ETnEzC8H10RpiiV3h5C0x38Xf6GmVcfkNytGNvXBHM+pdaWW6SlDFggj27f/kKMygSvqctEhX88=
+X-Received: by 2002:a17:907:980c:b0:a86:7adb:b327 with SMTP id
+ a640c23a62f3a-a897f8d5200mr29640866b.40.1724872026595; Wed, 28 Aug 2024
+ 12:07:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 09/12] drm/msm/dpu: move rot90 checking to
- dpu_plane_atomic_check_pipe()
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Daniel
- Vetter <daniel@ffwll.ch>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20240627-dpu-virtual-wide-v5-0-5efb90cbb8be@linaro.org>
- <20240627-dpu-virtual-wide-v5-9-5efb90cbb8be@linaro.org>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20240627-dpu-virtual-wide-v5-9-5efb90cbb8be@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: VE-p-2ICdAmxAzgtrWPeMF090e-TN2pi
-X-Proofpoint-ORIG-GUID: VE-p-2ICdAmxAzgtrWPeMF090e-TN2pi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-28_08,2024-08-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=997 bulkscore=0 impostorscore=0 phishscore=0 clxscore=1015
- mlxscore=0 spamscore=0 suspectscore=0 malwarescore=0 adultscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408280139
+References: <20240814-topic-sam-v3-0-a84588aad233@quicinc.com>
+ <20240814-topic-sam-v3-3-a84588aad233@quicinc.com> <ZszrjQChQ2aS5YjV@surfacebook.localdomain>
+ <d08d41ad-edcb-48ad-a848-53edc45ab8eb@gmail.com> <CAHp75VcbjR8HQqPASLFEGiyYLfTFQDa6Ri+jFy+7Q1xz7gY39Q@mail.gmail.com>
+ <53a56539-1d95-42ac-ad07-1b689702b2ed@gmail.com>
+In-Reply-To: <53a56539-1d95-42ac-ad07-1b689702b2ed@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 28 Aug 2024 22:06:29 +0300
+Message-ID: <CAHp75VdsksKPrj-CwmR4QLBrm_FfaG4aZys-_jnee_L=3ZnRPQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] platform/surface: Add OF support
+To: Maximilian Luz <luzmaximilian@gmail.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, linux-serial@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <quic_kdybcio@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Aug 28, 2024 at 8:40=E2=80=AFPM Maximilian Luz <luzmaximilian@gmail=
+.com> wrote:
+> On 8/28/24 6:56 PM, Andy Shevchenko wrote:
+> > On Wed, Aug 28, 2024 at 12:10=E2=80=AFPM Maximilian Luz <luzmaximilian@=
+gmail.com> wrote:
 
+...
 
-On 6/26/2024 2:46 PM, Dmitry Baryshkov wrote:
-> Move a call to dpu_plane_check_inline_rotation() to the
-> dpu_plane_atomic_check_pipe() function, so that the rot90 constraints
-> are checked for both pipes. Also move rotation field from struct
-> dpu_plane_state to struct dpu_sw_pipe_cfg.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h |  2 ++
->   drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c   | 55 +++++++++++++++--------------
->   drivers/gpu/drm/msm/disp/dpu1/dpu_plane.h   |  2 --
->   3 files changed, 31 insertions(+), 28 deletions(-)
-> 
+> > Yes, and software nodes for DT are quite strange things! Why can't you
+> > simply fix the DT to begin with?
+>
+> For the ARM/DT variants we could do that. But we still have to deal with
+> the x86/ACPI ones here.
 
-Change LGTM and addresses one of the questions I had in the prev patch.
+So, then fix it there! Currently it's an abuse of software nodes
+inside the Linux kernel.
 
-One question though, till patch 11 which adds support for 2 different 
-SSPPs for the plane this change is not necessary right? Because till 
-that change we assign the same SSPP OR two rectangles of the same SSPP 
-so we dont need a per pipe_cfg check till then because both the 
-pipe_cfgs point to the same SSPP.
+> So for me it makes more sense to have it unified
+> and just deal with everything in this module.
 
-What is your thought on squashing this with patch 11 because from a 
-logical split PoV, this change is meaningful only after that.
+I understand the desire, but DT is DT and ACPI is ACPI, they are
+different despite having some common APIs in the Linux kernel.
+Moreover, DT has a validation tools and everything, making that being
+a software nodes has at least these disadvantages:
+- no official schema that must be supported and users are known of
+- no validation done
+- bloating of the Linux kernel binary and hence memory footprint
+
+> Also, if we consider that at some point we might get ACPI PEP support (I
+> know, far fetched right now): With that, ACPI on ARM might be feasible
+> and then we'd have to manage the same thing in two places...
+
+This (PEP) is something I have no knowledge about. But I think it's
+still orthogonal to the software nodes usage.
+
+> And lastly, the EC subdevices are quite contained and I don't see them
+> interacting with any other components in the DT, so it's more of a
+> stylistic choice where to put them.
+
+They are still part of hardware and DT describes hardware.
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
