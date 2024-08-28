@@ -1,146 +1,167 @@
-Return-Path: <linux-kernel+bounces-305775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38F0C963415
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:43:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E02C963422
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:50:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1A121F22EDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:43:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AF691C241CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4659D1AD40C;
-	Wed, 28 Aug 2024 21:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B67156875;
+	Wed, 28 Aug 2024 21:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="vfWXKgX+"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FenEweSg"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F3215ADB3
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 21:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FFF1ABEA9
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 21:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724881429; cv=none; b=Eg8p6cwbqeJgJUe2uTxEGNqSnV+5t4aUDqJ6BDCxtYygCHHHAy0qLU1CS2KliMC+/FgFn69YirpofpkK7A63mmZWjt333PPH7yDItN+QXQrVro1TcwLozyJzu9kQxPl6V+eSd8UjVPTTazOHgbjYQXipz8+c3BDjLSwTGGUn4XU=
+	t=1724881847; cv=none; b=dNgy8iiyXnPekwLdDHbdbwEEFOm4LuGpHt1oxzNM0pGIMMtHdVZsKS+OwN+XsC9kroLX4jZ7BJoR7Y5XJdTQkuesQi0liHGcIWZwHbY7FRlPRCWWEoXDLH9BUMjugRx5Coc0MSdRwHC1Ru18KY6dbe8W8RUNj1+SzC2l9YEj4wY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724881429; c=relaxed/simple;
-	bh=Ow2Oa4aH4/GHsxj85ciXs/uy/FkW9Ju27sF6MW2bpcI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dA9cWjYnk9WHiQLoDZJTry3Qu93g7GYYJ8io+4+caGK7GXfeLtXUmPyuBEDHU/UfrCJYD7TW4SX6YuBC2OqPSsvis4j51bv+vEU/SPKNByhaz6vDPyFag3k9SagT+/oqT33OJ6vvsfp0niOf74qv9o6+89peCxWAKSxbVxb00AM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=vfWXKgX+; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5bec67709easo1062589a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:43:47 -0700 (PDT)
+	s=arc-20240116; t=1724881847; c=relaxed/simple;
+	bh=GkRq0ivoQpAiOEzaTGohkuRwvXQipTcElCzKrbs2YGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nJfWTyAiq8gqcSfULqn1uNBuu1xeW4KpLVwCEXZNU44UUYa8La/YW27EEITgdkBtLPXyv3UYfQwO9AhchyKJpgIMBvxWH2TC/WRZoRF2rsGPgvICP8tkp9rGHDwSFGraOCt5RdiKCmZgpqKhXDAmNQvi8VrXNa8/F6+dEApV/Eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FenEweSg; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-202018541afso26465ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:50:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1724881425; x=1725486225; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BgIVeN+hwaa3Zj0bf1QjMz6FtGwxuk1uApKAVTuU21M=;
-        b=vfWXKgX+2K5KPbnS608WoYeqWciqY8iHwgd8Xu7QlXUmoIOt0jH294T7jtaxn19/NO
-         x59rv06Pzh6QwE7b5ZvxOqjBiuRRksNMUucoSO4OqkTTrBv5CfHmE8cnJ6MoWUk/4VN3
-         5PXgQxxw30aT8rD1mAi7t4sRmPgElGmjqL5DHe7NE1iBzYikRCxG0NKq4DY+IyaMXlmW
-         68VWITSE/RglbUljesTD3Eo+G8/UMpxGSNjXAhLZdwrKUMc9r6xhVWMhO8GH3kLfbnn/
-         RoaQ5mXXyn3CgucplE5wvRHngmen+AMjH0rw11wbjy5XxUYpTd+/UK7smVh2dWLrYwtF
-         m6PA==
+        d=google.com; s=20230601; t=1724881845; x=1725486645; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=kOlS11zZF40IO+TxYPwBjtED80hWVLwZdESib8W/thQ=;
+        b=FenEweSgrJUH336ILbzBFrhicAIypPvYSt6nhniWn3aGXPE6hXzXxLnkGPn//2jsOl
+         qjP2IeleGamF3+VqN+JHicphP1a+AreKsgI2W6DSlKWqh2OeOqEwLCdHYZitZMqkmJiQ
+         3k0PjzE8LHj41EjTPG8eHCEHfKy1OtH2ZweseeN7K3oVGXXHkNCr10+m6VhD+DIT4aDw
+         Mn1x0Q0H6KfhKpBxTzX6nAdofO6sAbcnDMCnSvZR6QGTFPvFCcuYRTE8thHI0sj4XMpE
+         62AX/nAUpBbKfGODgcTcglYbiyxERiPexO4qJ2+Fe//G/FU3IhtSJLTL9GkvKvSJaNrm
+         oc1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724881425; x=1725486225;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BgIVeN+hwaa3Zj0bf1QjMz6FtGwxuk1uApKAVTuU21M=;
-        b=AZPtTtioWu8LQc3ohWtzWnZGM8A06j9nixZGKVT3yI4NMO0Fs+F0RCalBE1n1Jw7n2
-         WOFkM019qY63E2E1FvRuMtRtHnTmOutsdgT6ohPjQuXd/BYueJ9TgUz0KJ66fFJ1iVJB
-         koZX3+bEQsUavXrBu/ZGSwpj7VT4H9Bv8V8ONNWeEO5mTFz+uI2zDDWT+b/PdZrIU2ZL
-         DonxQy6ALv5vRA8dZ1L/CGf5JbeJLMd1qclDp9+osYi/vRSMyCx/maJx7725eJUmch6v
-         oScsNfI17PrZm6+zEVYCdEot0aWUJq/Zj4Y6dOCdS1SGT2CX14FzaeRMGW7XR8Twnpr6
-         JS0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUh60NB96fXIcupk7rQTGj57XlSC72diaT8gg7eE30L20ViXZjZHCrOct2KHlEyBlSipoIw0MI5gCpKbG0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxnkxTy2nWxoMEhdNCAp23ECxPy9Vcfmk247fK2E7FYytUsDaH
-	dzXO7flPqylY4fc8KIUAM+ZqVTXRLIw7BgE2hjQg4Y5If3/uveY7jT7V+OPLecftICe2/SP2E3E
-	IV3s=
-X-Google-Smtp-Source: AGHT+IGDaFnNlopk9OtBsTjpt60u8SdH1IppPU/d0oIAgCIrSzY8jx0IxHyYFQ2PotXqk9B0nC9M4g==
-X-Received: by 2002:a05:6402:4314:b0:5be:9bc5:f698 with SMTP id 4fb4d7f45d1cf-5c21ec639e9mr406264a12.0.1724881425416;
-        Wed, 28 Aug 2024 14:43:45 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-82-135-80-228.dynamic.mnet-online.de. [82.135.80.228])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb21399bsm2739670a12.50.2024.08.28.14.43.44
+        d=1e100.net; s=20230601; t=1724881845; x=1725486645;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kOlS11zZF40IO+TxYPwBjtED80hWVLwZdESib8W/thQ=;
+        b=ZRsIptXttql24188hHMSWvKxxcmIE+qhGuISZotsOmeM61aU8t3XjGcTAy9ejlNGAc
+         tKVGXTLVRJrx4F2pFdpw6mKSMgzqZA7irWXE7RuqDLRtB3m906N9i7slgiFa4jCPi7UU
+         gFPdt9VauoGAEqU74csaV7kU8LWf41qlswVIswjYP5vNmyRoZPKK37SdYN7jH4GtSWXi
+         eIa6SWK5A4thjRUT7AImvUpTCs/hLmiVJJMEi5xNap9BFg1FWQvpRGrRS6POyhVzJiDv
+         varHvM1QynuzRIWeaCMQtNzGthYtLWrgxWGrpVebI3glduKZ5VTETTQtcxiIR8r62V0p
+         e0XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLqbYx0POnEM3oZXJ/sQokaydgE+MsJNG0Qo2hcze/UnEFuv2sKyiG1iqsCWr/KWiIyM2RGI/19nBgJdM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6QUqu0TFKQ9KIe7TWgqFg15eTPktTEY3ntB+vKeIaROQoV/Oc
+	5XqFSIHNAHmSImJz0VLgwSzNuyQuZFNJrcytQYN6U1kgja4wu2qIoMSytNfAFA==
+X-Google-Smtp-Source: AGHT+IH/W+fSipeqZ/wEzg8zzpJwjeYTFTuLFrl+gU3PBb15jaA3+7EFtkDmAEa/AEzYRe+ZhMBTqQ==
+X-Received: by 2002:a17:903:1d0:b0:201:dc7b:a882 with SMTP id d9443c01a7336-2050d23634emr950865ad.26.1724881845281;
+        Wed, 28 Aug 2024 14:50:45 -0700 (PDT)
+Received: from google.com (226.75.127.34.bc.googleusercontent.com. [34.127.75.226])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d844602748sm2481590a91.16.2024.08.28.14.50.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 14:43:45 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: chuck.lever@oracle.com,
-	jlayton@kernel.org,
-	neilb@suse.de,
-	okorniev@redhat.com,
-	Dai.Ngo@oracle.com,
-	tom@talpey.com,
-	kees@kernel.org,
-	gustavoars@kernel.org
-Cc: linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] NFSD: Annotate struct pnfs_block_deviceaddr with __counted_by()
-Date: Wed, 28 Aug 2024 23:42:55 +0200
-Message-ID: <20240828214254.2407-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.46.0
+        Wed, 28 Aug 2024 14:50:44 -0700 (PDT)
+Date: Wed, 28 Aug 2024 21:50:40 +0000
+From: Sami Tolvanen <samitolvanen@google.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Matthew Maurer <mmaurer@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>,
+	Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>,
+	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 02/19] gendwarfksyms: Add symbol list handling
+Message-ID: <20240828215040.GC2130480@google.com>
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <20240815173903.4172139-23-samitolvanen@google.com>
+ <CAK7LNAS=8uU-FUpVqh-z-=7LOfXxYcDQExKLvB+6qe8Fdq_51Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNAS=8uU-FUpVqh-z-=7LOfXxYcDQExKLvB+6qe8Fdq_51Q@mail.gmail.com>
 
-Add the __counted_by compiler attribute to the flexible array member
-volumes to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-CONFIG_FORTIFY_SOURCE.
+On Thu, Aug 29, 2024 at 03:16:21AM +0900, Masahiro Yamada wrote:
+> On Fri, Aug 16, 2024 at 2:39 AM Sami Tolvanen <samitolvanen@google.com> wrote:
+> > @@ -105,6 +105,8 @@ int main(int argc, const char **argv)
+> >         if (parse_options(argc, argv) < 0)
+> >                 return usage();
+> >
+> > +       check(symbol_read_exports(stdin));
+> 
+> 
+> 
+> symbol_read_exports() is only called from main().
+> 
+> Do you need to make symbol_read_exports() return
+> the error code all the way back to the main()
+> function?
+> 
+> Personally, I'd like to make the program bail out as early as
+> possible if there is no point in continuing running.
 
-Use struct_size() instead of manually calculating the number of bytes to
-allocate for a pnfs_block_deviceaddr with a single volume.
+That's a valid point. The current error handling prints out a short
+trace of exactly where something failed as the error propagates
+through the call stack, but bailing out after printing the first
+error is probably informative enough. I'll look into cleaning this
+up.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- fs/nfsd/blocklayout.c    | 6 ++----
- fs/nfsd/blocklayoutxdr.h | 2 +-
- 2 files changed, 3 insertions(+), 5 deletions(-)
+> See also this patchset.
+> 
+> https://lore.kernel.org/linux-kbuild/20240812124858.2107328-1-masahiroy@kernel.org/T/#m5c0f795b57588a2c313cd2cc6e24ac95169fd225
 
-diff --git a/fs/nfsd/blocklayout.c b/fs/nfsd/blocklayout.c
-index 3c040c81c77d..08a20e5bcf7f 100644
---- a/fs/nfsd/blocklayout.c
-+++ b/fs/nfsd/blocklayout.c
-@@ -147,8 +147,7 @@ nfsd4_block_get_device_info_simple(struct super_block *sb,
- 	struct pnfs_block_deviceaddr *dev;
- 	struct pnfs_block_volume *b;
- 
--	dev = kzalloc(sizeof(struct pnfs_block_deviceaddr) +
--		      sizeof(struct pnfs_block_volume), GFP_KERNEL);
-+	dev = kzalloc(struct_size(dev, volumes, 1), GFP_KERNEL);
- 	if (!dev)
- 		return -ENOMEM;
- 	gdp->gd_device = dev;
-@@ -255,8 +254,7 @@ nfsd4_block_get_device_info_scsi(struct super_block *sb,
- 	const struct pr_ops *ops;
- 	int ret;
- 
--	dev = kzalloc(sizeof(struct pnfs_block_deviceaddr) +
--		      sizeof(struct pnfs_block_volume), GFP_KERNEL);
-+	dev = kzalloc(struct_size(dev, volumes, 1), GFP_KERNEL);
- 	if (!dev)
- 		return -ENOMEM;
- 	gdp->gd_device = dev;
-diff --git a/fs/nfsd/blocklayoutxdr.h b/fs/nfsd/blocklayoutxdr.h
-index b0361e8aa9a7..4e28ac8f1127 100644
---- a/fs/nfsd/blocklayoutxdr.h
-+++ b/fs/nfsd/blocklayoutxdr.h
-@@ -47,7 +47,7 @@ struct pnfs_block_volume {
- 
- struct pnfs_block_deviceaddr {
- 	u32				nr_volumes;
--	struct pnfs_block_volume	volumes[];
-+	struct pnfs_block_volume	volumes[] __counted_by(nr_volumes);
- };
- 
- __be32 nfsd4_block_encode_getdeviceinfo(struct xdr_stream *xdr,
--- 
-2.46.0
+Thanks for the link. In general I prefer to print out an error to
+indicate what went wrong, but I suppose memory allocation errors
+should be rare enough that it's not necessary. I'll switch to these
+in the next version.
 
+> > +int symbol_read_exports(FILE *file)
+> > +{
+> > +       struct symbol *sym;
+> > +       char *line = NULL;
+> > +       char *name = NULL;
+> > +       size_t size = 0;
+> > +       int nsym = 0;
+> > +
+> > +       while (getline(&line, &size, file) > 0) {
+> > +               if (sscanf(line, "%ms\n", &name) != 1) {
+> > +                       error("malformed input line: %s", line);
+> > +                       return -1;
+> > +               }
+> > +
+> > +               free(line);
+> > +               line = NULL;
+> > +
+> > +               if (is_exported(name))
+> > +                       continue; /* Ignore duplicates */
+> > +
+> > +               sym = malloc(sizeof(struct symbol));
+> > +               if (!sym) {
+> > +                       error("malloc failed");
+> > +                       return -1;
+> > +               }
+> > +
+> > +               sym->name = name;
+> > +               name = NULL;
+> 
+> Is this necessary?
+
+Here, no, but in Petr's cleaned up version it is again necessary, so
+you'll see this in v3 still.
+
+Sami
 
