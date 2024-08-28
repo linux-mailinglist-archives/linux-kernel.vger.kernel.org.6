@@ -1,136 +1,164 @@
-Return-Path: <linux-kernel+bounces-305037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC980962879
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:19:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E7F496287D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:19:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD87F1C239F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:19:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBA8D1F217AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29790187857;
-	Wed, 28 Aug 2024 13:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BFD6187862;
+	Wed, 28 Aug 2024 13:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ISeqKly0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uO2hbxXk"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6496B18030;
-	Wed, 28 Aug 2024 13:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B45167D98;
+	Wed, 28 Aug 2024 13:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724851159; cv=none; b=Ax+AUZmDay8cKiUNXGdSytmvrIGkbNEe0R83OqJ7aKcpx0jyM7pP+RxBeKEZxvm72PVYHGQKmidVQX1ynhFNvUQ24OdlceZSJqzf1bVuNLab8Bmte6OoyTNWxM6L+3p9nB2/QZukp1eZzT3XX5WY6556Gx5MeK087/+8KVummmY=
+	t=1724851177; cv=none; b=iHChsD4DOiuopxA8ujlAqPyxnfh1LHgLofRVM3L3g/OaeACDahRk1iXY+yrFp7jBjXPRAxfwBBWxNfw7iSkzKBLL3XY3Dp18OyfXvbxNqlG5Z4Ppys3WfXlBO0mwYygPix/Yxor24Y5ZBoQXSGmLc1iWs6AGxsWUceWz1cqiFf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724851159; c=relaxed/simple;
-	bh=0ZGM9TEfLLrvYWSvk1RD9xfacRxUgkLNXI42n7WFus8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JCrC8BoMos6wT5aVIDTdAQ5CtEKTbfW0AgbaMSjdOTRf1FLyutGtDAPKwnbLjHWW1QPuKGVQE+pYbkoJRleVGwQvUVQPlB1wrwUeqHaucV72CGn1qD7cJUUzM+25lCh+lTNzJ11e5zzzp21Aam8M3vaeyWLSo2g3RnvzbKxWjhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ISeqKly0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5E49C98EEE;
-	Wed, 28 Aug 2024 13:19:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724851158;
-	bh=0ZGM9TEfLLrvYWSvk1RD9xfacRxUgkLNXI42n7WFus8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ISeqKly0Sd1Pkg9cjPRLCmx+P82zaWGq+KBZrBW67fATr8H/H7VNMn2pqI40S4KYL
-	 IZzT9otEmxxwjNcp0p0GBoEitLXR1Us5OYDbdyhD0ESetDju1S5giuU7bfYmEHbttT
-	 PhJonSNqmq3a+k1wTY2/HtMrBg3VcqqjEzSzn7bmaQ4dPNXjuiCopBYFI+gcMs7D1T
-	 JBOtv5vwfCDGhWFUGpqwjXO/TtMjYpahAAunu1xLpE+Dnwnx9HZk11HX97oIajm0Fx
-	 2iyDWv8+0maVW+q+/CzUAgJnwL2fcjB7NYv8lkntmw28foQDj/Lnp7CaGr3fdnCxMl
-	 oaVQcyEjKyeuw==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: linux-can@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] net: can: cc770: Simplify parsing DT properties
-Date: Wed, 28 Aug 2024 08:19:02 -0500
-Message-ID: <20240828131902.3632167-1-robh@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1724851177; c=relaxed/simple;
+	bh=WOQTo/tVkWrdyJHM/THbfe/9fRfnwlow5K3HxKzpS4Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uirWVzsdVfUbafppt+N4Y/tURqiFWicspRMAxpeD9SJwwyibDl5DKMcsW9WVwGzoCgIMGBzhONV+NmpOsth46H4mKq8nPDuYqynaOjRzOwLtvQauEWp4515t2X1J1ZIEdk0YpTgoO4+NWsnrgTS8PLdaRVTDEvNXyGo7LnrlP/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uO2hbxXk; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47SDJGNf013362;
+	Wed, 28 Aug 2024 08:19:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724851156;
+	bh=BIpKAz3kkXbpey+hBxhouNix1B02tMnfBmgxImMjQlQ=;
+	h=From:To:CC:Subject:Date;
+	b=uO2hbxXk5n0gKtl055Dp8bJ44zAGTCWjg89kZnQo+Xn53X7n/zu/PowA3UCfDOWyo
+	 aTDQign79+FmQzjmMJbFdPcXpp14Rx9OF6xYJ1cwaLNJN5Y+O0cBFadTPWpzWXWURV
+	 +DlYbkZ3M5NBiEymfEC0t/2VKCj4161NfU3DjGHE=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47SDJGIR119989
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 28 Aug 2024 08:19:16 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 28
+ Aug 2024 08:19:16 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 28 Aug 2024 08:19:16 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47SDJGLs005762;
+	Wed, 28 Aug 2024 08:19:16 -0500
+From: Nishanth Menon <nm@ti.com>
+To: "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Viresh Kumar
+	<viresh.kumar@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+CC: Kevin Hilman <khilman@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <bb@ti.com>, <d-gole@ti.com>, Nishanth Menon <nm@ti.com>
+Subject: [PATCH] cpufreq: ti-cpufreq: Introduce quirks to handle syscon fails appropriately
+Date: Wed, 28 Aug 2024 08:19:15 -0500
+Message-ID: <20240828131915.3198081-1-nm@ti.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Organization: Texas Instruments, Inc.
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Use of the typed property accessors is preferred over of_get_property().
-The existing code doesn't work on little endian systems either. Replace
-the of_get_property() calls with of_property_read_bool() and
-of_property_read_u32().
+Commit b4bc9f9e27ed ("cpufreq: ti-cpufreq: add support for omap34xx
+and omap36xx") introduced special handling for OMAP3 class devices
+where syscon node may not be present. However, this also creates a bug
+where the syscon node is present, however the offset used to read
+is beyond the syscon defined range.
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Fix this by providing a quirk option that is populated when such
+special handling is required. This allows proper failure for all other
+platforms when the syscon node and efuse offsets are mismatched.
+
+Fixes: b4bc9f9e27ed ("cpufreq: ti-cpufreq: add support for omap34xx and omap36xx")
+Signed-off-by: Nishanth Menon <nm@ti.com>
 ---
- drivers/net/can/cc770/cc770_platform.c | 29 ++++++++------------------
- 1 file changed, 9 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/net/can/cc770/cc770_platform.c b/drivers/net/can/cc770/cc770_platform.c
-index 13bcfba05f18..9993568154f8 100644
---- a/drivers/net/can/cc770/cc770_platform.c
-+++ b/drivers/net/can/cc770/cc770_platform.c
-@@ -71,16 +71,9 @@ static int cc770_get_of_node_data(struct platform_device *pdev,
- 				  struct cc770_priv *priv)
- {
- 	struct device_node *np = pdev->dev.of_node;
--	const u32 *prop;
--	int prop_size;
--	u32 clkext;
--
--	prop = of_get_property(np, "bosch,external-clock-frequency",
--			       &prop_size);
--	if (prop && (prop_size ==  sizeof(u32)))
--		clkext = *prop;
--	else
--		clkext = CC770_PLATFORM_CAN_CLOCK; /* default */
-+	u32 clkext = CC770_PLATFORM_CAN_CLOCK, clkout = 0;
-+
-+	of_property_read_u32(np, "bosch,external-clock-frequency", &clkext);
- 	priv->can.clock.freq = clkext;
+NOTE: this combined with https://lore.kernel.org/r/20240828121008.3066002-1-nm@ti.com
+has created a bunch of un-intended bugs on other TI SoCs such
+as seen in https://lore.kernel.org/all/20240826-opp-v3-1-0934f8309e13@ti.com/
+https://lore.kernel.org/all/20240827131342.6wrielete3yeoinl@bryanbrattlof.com/
+etc.
+
+ drivers/cpufreq/ti-cpufreq.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
+index 220fff7a302e..804329e81eb8 100644
+--- a/drivers/cpufreq/ti-cpufreq.c
++++ b/drivers/cpufreq/ti-cpufreq.c
+@@ -90,6 +90,9 @@ struct ti_cpufreq_soc_data {
+ 	unsigned long efuse_shift;
+ 	unsigned long rev_offset;
+ 	bool multi_regulator;
++/* Backward compatibility hack: Might have missing syscon */
++#define TI_QUIRK_SYSCON_MAY_BE_MISSING	0x1
++	u8 quirks;
+ };
  
- 	/* The system clock may not exceed 10 MHz */
-@@ -98,7 +91,7 @@ static int cc770_get_of_node_data(struct platform_device *pdev,
- 	if (of_property_read_bool(np, "bosch,iso-low-speed-mux"))
- 		priv->cpu_interface |= CPUIF_MUX;
+ struct ti_cpufreq_data {
+@@ -254,6 +257,7 @@ static struct ti_cpufreq_soc_data omap34xx_soc_data = {
+ 	.efuse_mask = BIT(3),
+ 	.rev_offset = OMAP3_CONTROL_IDCODE - OMAP3_SYSCON_BASE,
+ 	.multi_regulator = false,
++	.quirks = TI_QUIRK_SYSCON_MAY_BE_MISSING,
+ };
  
--	if (!of_get_property(np, "bosch,no-comperator-bypass", NULL))
-+	if (!of_property_read_bool(np, "bosch,no-comperator-bypass"))
- 		priv->bus_config |= BUSCFG_CBY;
- 	if (of_property_read_bool(np, "bosch,disconnect-rx0-input"))
- 		priv->bus_config |= BUSCFG_DR0;
-@@ -109,20 +102,16 @@ static int cc770_get_of_node_data(struct platform_device *pdev,
- 	if (of_property_read_bool(np, "bosch,polarity-dominant"))
- 		priv->bus_config |= BUSCFG_POL;
+ /*
+@@ -281,6 +285,7 @@ static struct ti_cpufreq_soc_data omap36xx_soc_data = {
+ 	.efuse_mask = BIT(9),
+ 	.rev_offset = OMAP3_CONTROL_IDCODE - OMAP3_SYSCON_BASE,
+ 	.multi_regulator = true,
++	.quirks = TI_QUIRK_SYSCON_MAY_BE_MISSING,
+ };
  
--	prop = of_get_property(np, "bosch,clock-out-frequency", &prop_size);
--	if (prop && (prop_size == sizeof(u32)) && *prop > 0) {
--		u32 cdv = clkext / *prop;
--		int slew;
-+	of_property_read_u32(np, "bosch,clock-out-frequency", &clkout);
-+	if (clkout > 0) {
-+		u32 cdv = clkext / clkout;
-+		u32 slew;
+ /*
+@@ -295,6 +300,7 @@ static struct ti_cpufreq_soc_data am3517_soc_data = {
+ 	.efuse_mask = 0,
+ 	.rev_offset = OMAP3_CONTROL_IDCODE - OMAP3_SYSCON_BASE,
+ 	.multi_regulator = false,
++	.quirks = TI_QUIRK_SYSCON_MAY_BE_MISSING,
+ };
  
- 		if (cdv > 0 && cdv < 16) {
- 			priv->cpu_interface |= CPUIF_CEN;
- 			priv->clkout |= (cdv - 1) & CLKOUT_CD_MASK;
+ static struct ti_cpufreq_soc_data am625_soc_data = {
+@@ -340,7 +346,7 @@ static int ti_cpufreq_get_efuse(struct ti_cpufreq_data *opp_data,
  
--			prop = of_get_property(np, "bosch,slew-rate",
--					       &prop_size);
--			if (prop && (prop_size == sizeof(u32))) {
--				slew = *prop;
--			} else {
-+			if (of_property_read_u32(np, "bosch,slew-rate", &slew)) {
- 				/* Determine default slew rate */
- 				slew = (CLKOUT_SL_MASK >>
- 					CLKOUT_SL_SHIFT) -
+ 	ret = regmap_read(opp_data->syscon, opp_data->soc_data->efuse_offset,
+ 			  &efuse);
+-	if (ret == -EIO) {
++	if (opp_data->soc_data->quirks & TI_QUIRK_SYSCON_MAY_BE_MISSING && ret == -EIO) {
+ 		/* not a syscon register! */
+ 		void __iomem *regs = ioremap(OMAP3_SYSCON_BASE +
+ 				opp_data->soc_data->efuse_offset, 4);
+@@ -381,7 +387,7 @@ static int ti_cpufreq_get_rev(struct ti_cpufreq_data *opp_data,
+ 
+ 	ret = regmap_read(opp_data->syscon, opp_data->soc_data->rev_offset,
+ 			  &revision);
+-	if (ret == -EIO) {
++	if (opp_data->soc_data->quirks & TI_QUIRK_SYSCON_MAY_BE_MISSING && ret == -EIO) {
+ 		/* not a syscon register! */
+ 		void __iomem *regs = ioremap(OMAP3_SYSCON_BASE +
+ 				opp_data->soc_data->rev_offset, 4);
+
 -- 
-2.45.2
+2.43.0
 
 
