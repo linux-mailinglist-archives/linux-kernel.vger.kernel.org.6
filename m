@@ -1,144 +1,122 @@
-Return-Path: <linux-kernel+bounces-305503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7B07962FAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:18:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60066962FB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:19:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94FF3282AC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:18:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 939E71C23D9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700FA1AAE0D;
-	Wed, 28 Aug 2024 18:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3261156649;
+	Wed, 28 Aug 2024 18:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="blo+EBxD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VvNY9uF6"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0941A76CE
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 18:17:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A3E2747B
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 18:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724869035; cv=none; b=EIvKGnbMc4IzsrDRt/4V1ElrF6qWc9FI03P03yidPMIh4DA+QaPQu9tcc1M+vC/LtLTNpm5eDCXX8ZukFwgLM/fwTPnnuoJlRFk2QBmeOpDbgVobk7ud0w3/f2XOmDhTEjg19nlqfnPLYdn5pZIkWhCxU5C3ocMA6yo3kWkdKZI=
+	t=1724869166; cv=none; b=nJZdOUwwvcp+q1Je9fMTPJFGH8EK6ujHyCXxGRlgP9aCI/G+uZjlBPwuHZnDLwDVo1b1OyNPcRzcys+4mVRg2LCMGmsOqlqX46KNz+0apf/AljhkBv6HaM7Zh7oVjHtIVpYJIksEjU4Mj9vjLxlmlwKBmLwggPCIh4T4D+GP2uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724869035; c=relaxed/simple;
-	bh=FDVcTJV0BXbWzV5YbE4APsTof7/49Ez4Qa7pfi2wvLU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=oj5ejp/pxwmKOATMqJKPmcRIvFrNJEmqU6GI595N+OGUW+7lbzoHyqh62A/2iU9oZpa9+7EScftumODF0n6S7Bu0ldIfWOCfP41NvPBHinafAdulpwz+xuGjkLKYWBAMb8JTyy/1XFHqyZjgbsKZbJExk6MfvpdPz8k3Ig67wA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=blo+EBxD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724869033;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hPcSd8zJJKxBEIyv9qutLiv0SREJjU3bqjzWOoPhTSc=;
-	b=blo+EBxD/BvB4P/F71QOm9SiczPeNw93CyinFIhwbMQ5x+eM0ZflAxNJqQ3v8gxwQKW2Pl
-	O+JhNr73xNJKM+Kw0nhEgznbLzCO4rv/FUbPoTUnwDZxHvn4kt1O1lnGEZnsEycOPlLnMJ
-	SXIQUQ/ukurM0j2oMq7BkXW0Yme20bQ=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-522-R58tulB7PliYRQvO6-OStw-1; Wed, 28 Aug 2024 14:17:11 -0400
-X-MC-Unique: R58tulB7PliYRQvO6-OStw-1
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-454ec6a4b72so84225311cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 11:17:10 -0700 (PDT)
+	s=arc-20240116; t=1724869166; c=relaxed/simple;
+	bh=VYf0FLEIruLhqU+c7pX10cJgxFA9uzvQv4RY7T3laNI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k2b9G2GsyhaZ+8SBiiXyvSN0qo08iUijnA33OkbtQDCxfYrUCTHNlWgO17idXg84L7wzTWRxwiYOm0FD+QJBrmTcBKi2eg/8K/7yAifhPhujJPQ9HtebJf/JLw4OYm7yozs5V5MJ6PGPorFcpCuOOSy610+i/eT6zq53hvjsZzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VvNY9uF6; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a868b739cd9so846961266b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 11:19:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724869163; x=1725473963; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ll9ymQRK3c89EjXOhHQT99dVXSCw3AdvtufLABRmB1w=;
+        b=VvNY9uF6onUFUeDadoyNjdfGtywonHsh6T5hY3fQ52fg6e5GptxUiqYwvQoSkHT/dj
+         aQNtpNTH1GLA2rubDstGd/c0Mvgvh3+WutYXxEd98+yPPPid5F/x5OzjFOaTlYof7WjX
+         FFJ3KeFVq/mM7TYlUzs/atyvx6R7k+fFDGZp/zS6wzFPj41wNgA7Lo4Tu0WZS18Oa7eb
+         syWeWNwvr6UyeEk31e/2tS4k9nbBHdgeyI5q7egNo3Qk3f+MyZvS3mcYU3bii00a+auq
+         AaqNAQ6kabID+LdaM+yu3axagjfUOkPVeI3iAdE3ftgRXxOSPSmHfaGx2mjQPLWXEdeX
+         lBuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724869030; x=1725473830;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hPcSd8zJJKxBEIyv9qutLiv0SREJjU3bqjzWOoPhTSc=;
-        b=a1pr3fjZmokqiDOok2er2HxfVzcXoKfGsvMg89TVWOOYUhZ142kI4U0o54x/Ju0e0I
-         xJ66vO3ceke5hk/nNFxLE2CH5xbzDrKabSnYqyKpSCx9/xo9tDhgyoRqCBJtDrnDvqSW
-         NU7mgCTzvCrRHFBwwdvbxKJL/eMzrK773bKJ6MynzFeK3rFlwKdj19pnGwFdn/pxun3h
-         aEJgAfHq48THrI+mZeLGThEFy2Q2oL7o1Ut4i3PJ4rrHaKKXzZRZIo0EIymwsl0QPvTC
-         q8symB+Vh6Jq6HOYJa5I8AqLrUyWBMQLa4PnYSOB39iZSxBHJYg/kFsTOVvtpMmz6cH6
-         w6NA==
-X-Forwarded-Encrypted: i=1; AJvYcCVgGG/NUw2ohUEHm1eskO5B/7dBnJZdVubj653zr359Bnf4tx+Kc7zGtOBLXZbfyOwITlAGwYwlfkHkWxo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT+uy5WJbaBIicECSTeIzeKQXiv3eYI3faWIt4RpW2MaeRhfRP
-	ROPKYj0gyJoKbNQt5+zXRpckFM8j0odR+xfZd00ehugLwE11+tfBwsP6yBzOxPxvAGJw9MycG6g
-	qLgOVi1Q9QyoHbKfsUN4SKe7pAhfN4OvwJvx0NwJCLjygCyFnTW+FP9pWCtYF9Q==
-X-Received: by 2002:a05:622a:17cf:b0:44f:5eb0:ea76 with SMTP id d75a77b69052e-4567f707fecmr3374151cf.60.1724869030025;
-        Wed, 28 Aug 2024 11:17:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFryRd0ObHFoM12Zfr+CDdLF4P/ACJM0CBkkshMWhr25Iwdqt3C1EdT62DUFAZlRzrEhrpXMg==
-X-Received: by 2002:a05:622a:17cf:b0:44f:5eb0:ea76 with SMTP id d75a77b69052e-4567f707fecmr3373731cf.60.1724869029416;
-        Wed, 28 Aug 2024 11:17:09 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-454fe196bf5sm64122591cf.76.2024.08.28.11.17.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 11:17:08 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: paulmck@kernel.org
-Cc: Chen Yu <yu.c.chen@intel.com>, Peter Zijlstra <peterz@infradead.org>,
- linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
- linux-next@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
-In-Reply-To: <5ea3658b-5aec-4969-92c5-49a2d23171c3@paulmck-laptop>
-References: <b1824f4a-f5cc-4011-876f-8a73cf752067@paulmck-laptop>
- <xhsmhle0inuze.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <xhsmhikvmnfb3.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <c83028db-55ad-45b3-a27a-842ed665a882@paulmck-laptop>
- <103b1710-39ca-40d0-947d-fdac32d6e6a0@paulmck-laptop>
- <xhsmhcyltogin.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <a19308ed-7252-4119-b891-2a61791bb6e5@paulmck-laptop>
- <xhsmha5gwome6.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <Zs8pqJjIYOFuPDiH@chenyu5-mobl2>
- <xhsmh7cc0ogza.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <5ea3658b-5aec-4969-92c5-49a2d23171c3@paulmck-laptop>
-Date: Wed, 28 Aug 2024 20:17:06 +0200
-Message-ID: <xhsmh4j74o6l9.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+        d=1e100.net; s=20230601; t=1724869163; x=1725473963;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ll9ymQRK3c89EjXOhHQT99dVXSCw3AdvtufLABRmB1w=;
+        b=AXFt19V7aG4LlGq1tNpP03ZiUn/jBU4T+M7LXy3Ji2NWvYZ6de9zYhvEX/au6ZeBtw
+         /0DUiH0XvnJCGV34sJc2IztCixmrFvqY8YnSKHTDwq2iYHmP4E7QGlyBkom0VIHtcSGJ
+         8p+B3dXoB3YFrHwbCspB1MsUGo/gv6LmgaonSDxbL3z6ta0wbMcNyI3wqK6m3RT925DT
+         2K3HTAJZySMorraBmXUDs//27bMLd4ZrGUau8HAvt7wMVjlN0zRumqGowtvggnwD4l5r
+         RfGTNXmAytAH9gYQSUKn/qVf0IwCWT53NGXoNpp6M+r14O29+X4cFPh/nm0GbHiNiRH9
+         8gxg==
+X-Forwarded-Encrypted: i=1; AJvYcCWA/BHQPGA+D92sK6rhYbhoD2zHcqqzv5fEzh+cIARHAy6GRAFcgnbyh6DewaxoL78QnrLYto6JNFgOjV0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv6EjVJsmD8pG2bwdmj7dVDf/Ox3Na1GkJ6WeN6Mm5E43KAdWO
+	Qd9gQnsrG+nMjC1f9gDafGW+3hHgafeVQnij9haf4QPBtWqHtmTm
+X-Google-Smtp-Source: AGHT+IFC2Ev0cl1EQk+8n2j5eX7pDfbLUfTbTHVX9l3u/QRBzew8sNGv73RCGUqMWrcarR5Lyc0fyg==
+X-Received: by 2002:a17:907:da5:b0:a86:67e7:c740 with SMTP id a640c23a62f3a-a897f84bbf3mr24063466b.17.1724869162561;
+        Wed, 28 Aug 2024 11:19:22 -0700 (PDT)
+Received: from ?IPV6:2003:c7:8f2a:8553:56e9:1165:4741:30be? (p200300c78f2a855356e91165474130be.dip0.t-ipconnect.de. [2003:c7:8f2a:8553:56e9:1165:4741:30be])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e594e5c3sm269743266b.216.2024.08.28.11.19.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Aug 2024 11:19:22 -0700 (PDT)
+Message-ID: <6d8c9d38-0df2-4aef-975d-6a0eb9594513@gmail.com>
+Date: Wed, 28 Aug 2024 20:19:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] staging: vt6655: Update maintainer in TODO
+To: =?UTF-8?Q?Dominik_Karol_Pi=C4=85tkowski?=
+ <dominik.karol.piatkowski@protonmail.com>, gregkh@linuxfoundation.org
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240828144545.76022-1-dominik.karol.piatkowski@protonmail.com>
+Content-Language: en-US
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <20240828144545.76022-1-dominik.karol.piatkowski@protonmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 28/08/24 09:35, Paul E. McKenney wrote:
-> On Wed, Aug 28, 2024 at 04:32:41PM +0200, Valentin Schneider wrote:
->> On 28/08/24 21:44, Chen Yu wrote:
->> >
->> > One question, although there is no DEQUEUE_DELAYED flag, it is possible
->> > the delayed task could be dequeued from CFS tree. Because the dequeue in
->> > set_schedule() does not have DEQUEUE_SLEEP. And in dequeue_entity():
->> >
->> >       bool sleep = flags & DEQUEUE_SLEEP;
->> >
->> >       if (flags & DEQUEUE_DELAYED) {
->> >
->> >       } else {
->> >               bool delay = sleep;
->> >               if (sched_feat(DELAY_DEQUEUE) && delay &&  //false
->> >                  !entity_eligible(cfs_rq, se) {
->> >               //do not dequeue
->> >               }
->> >       }
->> >
->> >       //dequeue the task    <---- we should reach here?
->> >
->>
->> You're quite right, so really here the main missing bit would be the final
->> __block_task() that a DEQUEUE_DELAYED dequeue_entities() would get us.
->
-> 50*TREE03 passed, yay!  Thank you both!!!
->
+On 8/28/24 16:46, Dominik Karol Piątkowski wrote:
+> Commit ed394dbf5371b03a5335a7ba1973ba124c0ced3d replaced Forest Bond
+> with Philipp Hortmann as vt665X maintainer in MAINTAINERS, but
+> drivers/staging/vt6655/TODO was not changed, rendering it stale. This
+> patch fixes it.
+> 
+> Signed-off-by: Dominik Karol Piątkowski <dominik.karol.piatkowski@protonmail.com>
+> ---
+>   drivers/staging/vt6655/TODO | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/vt6655/TODO b/drivers/staging/vt6655/TODO
+> index 63607ef9c97e..529bc22cd608 100644
+> --- a/drivers/staging/vt6655/TODO
+> +++ b/drivers/staging/vt6655/TODO
+> @@ -18,4 +18,4 @@ TODO:
+>   - integrate with drivers/net/wireless
+>   
+>   Please send any patches to Greg Kroah-Hartman <greg@kroah.com>
+> -and Forest Bond <forest@alittletooquiet.net>.
+> +and Philipp Hortmann <philipp.g.hortmann@gmail.com>.
 
-Fantastic, I'll hammer this into a "proper" patch then. Thanks again for
-all the testing!
 
-> I started a 500*TREE03.
->
-> Yes, the odds all 50 passing given the baseline 52% failure rate is
-> something like 10^-16, but software bugs are not necessarily constrained
-> by elementary statistics...
->
+Hi Dominik,
 
-:-)
+I propose to remove this two redundant lines from TODO as it can be 
+found in MAINTAINERS.
 
->                                                       Thanx, Paul
+If you like you can remove this information from vt6656 as well.
 
+Thanks for your support.
+
+Bye Philipp
 
