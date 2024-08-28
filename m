@@ -1,68 +1,52 @@
-Return-Path: <linux-kernel+bounces-304147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0566C961B0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 02:19:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAD96961B0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 02:21:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B00991F244CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 00:19:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 373CBB21A00
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 00:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE61E11CAF;
-	Wed, 28 Aug 2024 00:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32EA101EE;
+	Wed, 28 Aug 2024 00:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dtdnD7A7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VLV8/KC9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AFBD512;
-	Wed, 28 Aug 2024 00:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B6DD512
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 00:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724804380; cv=none; b=FOSgkK5/UWA9yjlhEvSBg6QiHCfc3C2JTCuj88PxDGmBnbZ12vTGnPufZP8D0i9IYlhL2yvQiv8+koOdBgrNOmxUxlBcPEKKa+yOSlE+mOH/+VlbTRK41JBWTtoJa4+ok0Uwx4h+yv4dj2WXkncIfJigpRtWCvLwrWzIVMq+WtI=
+	t=1724804454; cv=none; b=PPtXs+oCZcrYVuDXln6LrgcsxOn+2Mtafa9ddlbIqwy+7e9wMClc2N0oynEHeAdFwKqjH2ZmQ8ipECbddRgG92rN6h6+wC0ojKQUYb617/YETUW7DwFWu3/70elBkSWcMp/BEu9Tzdx9iYXw5dwLbqgwiF239VLWb0D+khpIuEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724804380; c=relaxed/simple;
-	bh=ZoyDIz63nWYpi7kgSp5N7yU52tLO9esbjOR04pJNKQg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H3iVLHG9MamNsA3FF6WaweRTc2ruHg1rPXOB+cHTU6QCamsVdcmc9RGYSHShOBRgGNX0MLxbIHlwCm3UIMTKGW1G8b6MJsIr6eanhdnj8g5E25yrQiSbKZUSqnSyd+27jgBCUZOwjNKu5ESpl7UyITdxlw5NkVQV6Wb9plPZfKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dtdnD7A7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EECCAC4DDEF;
-	Wed, 28 Aug 2024 00:19:39 +0000 (UTC)
+	s=arc-20240116; t=1724804454; c=relaxed/simple;
+	bh=cr2epjNuymrlcrOKG8uBpd3a7MuHtxq2kTQeIR2lt4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=gMHI9F7H/3HZ6lX7dMv4OktxxXdOV4Ixx3Txtask7w7nOzWR5tAfblYIxLVahvmLrS6lQ/Wj9VL2yTfmP1siL/2a2mcc/hByInF2ZON9qKnn3oGcWTe1SdB9EbcmmrQQn/HCIlYVuznp4QhG0cs/rotDnF2iDwnyhosHOXlLBnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VLV8/KC9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88C5CC4DE1A;
+	Wed, 28 Aug 2024 00:20:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724804380;
-	bh=ZoyDIz63nWYpi7kgSp5N7yU52tLO9esbjOR04pJNKQg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dtdnD7A7NsL4pMbFwtC2SBfC8RVhRJP9WNAQvLy78pWjWCPOVs/B4zGwI0FqY8JRU
-	 bgAbYXiozbSt1NvLkB5p7DCKTvBckJdwZK44PyoAJBjxY7r2wWsLnytSDoglhsHzYt
-	 o8oXbN2PDIJUBkK0/ueRACpFtnpx+W8hWU3KwQA/5FBmm6Vz4NS/d9Xeb2OfcrqkIq
-	 asNLlP3AgZq84n+E8qXDJoIGqqSpBQz0XdxSaXy05Pm/cFmpLXZ4/3jUvWfewWDH9z
-	 LgTm4YfbPiWf6VTbL83e4sQOh1JpyvYLxWaZFZlTjRiZw8H/l9/uPN1abcRhWS3mcZ
-	 edqhHRikuJgVQ==
-Date: Tue, 27 Aug 2024 17:19:39 -0700
-From: Kees Cook <kees@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Jann Horn <jannh@google.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Marco Elver <elver@google.com>, linux-mm@kvack.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v3] slab: Introduce kmalloc_obj() and family
-Message-ID: <202408271709.31D322019@keescook>
-References: <20240822231324.make.666-kees@kernel.org>
- <5c3852e6-4a6a-42d8-85ff-8c1605939454@suse.cz>
+	s=k20201202; t=1724804453;
+	bh=cr2epjNuymrlcrOKG8uBpd3a7MuHtxq2kTQeIR2lt4A=;
+	h=Date:From:To:Cc:Subject:From;
+	b=VLV8/KC9q+sGbTFWd7E5IUs310IkgOVFgdc1gJnEgMMigslMbmJndOgHGW7gFx6vn
+	 M5MAPngA69vCnjDAxq+rJXI1ZwA5JG2IebbE1GF+fmUYOlWSYv+pYtj8EbxXnNGuzO
+	 PnjBWljZfwz8VmJnmJJJshsOZgtGt7JkP5ZkKLpTtJ6Rf5MtrUOEDGrTHafzyKO3q/
+	 rvw/Cg5e2rNIgi5xzv/wL1hth1mkCsT9o4/wa+Q0pByfqb0cso6WnjFHI82eabkCx3
+	 7BMAUwDa6MjlaAjqqROeOJxrHCRD5gf2DyW1ZpwNM1/SL2B25JCyTiHIoZUJ3hyOxC
+	 NeH044gM/0euA==
+Date: Tue, 27 Aug 2024 14:20:52 -1000
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH sched_ext/for-6.12] sched_ext: Add missing cfi stub for
+ ops.tick
+Message-ID: <Zs5tZFZvlwpU_av-@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,100 +55,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5c3852e6-4a6a-42d8-85ff-8c1605939454@suse.cz>
 
-On Tue, Aug 27, 2024 at 11:32:14PM +0200, Vlastimil Babka wrote:
-> +Cc Linus
-> 
-> On 8/23/24 01:13, Kees Cook wrote:
-> > Introduce type-aware kmalloc-family helpers to replace the common
-> > idioms for single, array, and flexible object allocations:
-> > 
-> > 	ptr = kmalloc(sizeof(*ptr), gfp);
-> > 	ptr = kzalloc(sizeof(*ptr), gfp);
-> > 	ptr = kmalloc_array(count, sizeof(*ptr), gfp);
-> > 	ptr = kcalloc(count, sizeof(*ptr), gfp);
-> > 	ptr = kmalloc(struct_size(ptr, flex_member, count), gfp);
-> > 
-> > These become, respectively:
-> > 
-> > 	kmalloc_obj(ptr, gfp);
-> > 	kzalloc_obj(ptr, gfp);
-> > 	kmalloc_objs(ptr, count, gfp);
-> > 	kzalloc_objs(ptr, count, gfp);
-> > 	kmalloc_flex(ptr, flex_member, count, gfp);
-> 
-> This is indeed better than the previous version. The hidden assignment to
-> ptr seems still very counter-intuitive, but if it's the only way to do those
-> validations, the question is then just whether it's worth the getting used
-> to it, or not.
+From bf934bed5e2fd81f767d75c05fb95f0333a1b183 Mon Sep 17 00:00:00 2001
+From: Tejun Heo <tj@kernel.org>
+Date: Tue, 27 Aug 2024 14:17:20 -1000
 
-We could make the syntax require "&ptr"?
+The cfi stub for ops.tick was missing which will fail scheduler loading
+after pending BPF changes. Add it.
 
-As for alternatives, one thing I investigated for a while that made
-several compiler people unhappy was to introduce an builtin named
-something like __builtin_lvalue() which could be used on the RHS of an
-assignment to discover the lvalue in some way. Then we could, for
-example, add alignment discovery like so:
+Signed-off-by: Tejun Heo <tj@kernel.org>
+---
+Applying to sched_ext/for-6.12.
 
-#define kmalloc(_size, _gfp)	\
-	__kmalloc(_size, __alignof(typeof(__builtin_lvalue())), _gfp)
+Thanks.
 
-or do the FAM struct allocations:
+ kernel/sched/ext.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-#define kmalloc_flex(_member, _count, _gfp)	\
-	__kmalloc(sizeof(*typeof(__builtin_lvalue())) +
-		  sizeof(*__builtin_lvalue()->_member) * (_count), gfp)
-
-Compiler folks seems very unhappy with this, though. As I can recognize
-it creates problems for stuff like:
-
-	return kmalloc(...)
-
-Of course the proposed macros still have the above problem, and both to
-use a temporary variable to deal with it.
-
-So, really it's a question of "how best to introspect the lvalue?"
-
-> [...]
-> > by GCC[1] and Clang[2]. The internal use of __flex_count() allows for
-> > automatically setting the counter member of a struct's flexible array
-> 
-> But if it's a to-be-implemented feature, perhaps it would be too early to
-> include it here? Were you able to even test that part right now?
-
-There are RFC patches for both GCC and Clang that I tested against.
-However, yes, it is still pretty early. I just wanted to show that it
-can work, etc. (i.e. not propose a macro with no "real" benefit over the
-existing assignments).
-
-> [...]
-> > Replacing all existing simple code patterns found via Coccinelle[3]
-> > shows what could be replaced immediately (saving roughly 1,500 lines):
-> > 
-> >  7040 files changed, 14128 insertions(+), 15557 deletions(-)
-> 
-> Since that could be feasible to apply only if Linus ran that directly
-> himself, including him now. Because doing it any other way would leave us
-> semi-converted forever and not bring the full benefits?
-
-Right -- I'd want to do a mass conversion and follow it up with any
-remaining ones. There are a lot in the style of "return k*alloc(...)"
-for example.
-
-> [...]
-> > +#define kvmalloc_obj(P, FLAGS)				\
-> > +	__alloc_objs(kvmalloc, P, 1, FLAGS, NULL)
-> 
-> Wonder if there is really a single struct (not array) with no flex array
-> that could need kvmalloc? :)
-
-Ah, yes, Good point. I was going for "full" macro coverage. :P
-
-Thanks for looking at this!
-
--Kees
-
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index b9bf9ee5ed01..57f30b1604db 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -5051,6 +5051,7 @@ static s32 select_cpu_stub(struct task_struct *p, s32 prev_cpu, u64 wake_flags)
+ static void enqueue_stub(struct task_struct *p, u64 enq_flags) {}
+ static void dequeue_stub(struct task_struct *p, u64 enq_flags) {}
+ static void dispatch_stub(s32 prev_cpu, struct task_struct *p) {}
++static void tick_stub(struct task_struct *p) {}
+ static void runnable_stub(struct task_struct *p, u64 enq_flags) {}
+ static void running_stub(struct task_struct *p) {}
+ static void stopping_stub(struct task_struct *p, bool runnable) {}
+@@ -5079,6 +5080,7 @@ static struct sched_ext_ops __bpf_ops_sched_ext_ops = {
+ 	.enqueue = enqueue_stub,
+ 	.dequeue = dequeue_stub,
+ 	.dispatch = dispatch_stub,
++	.tick = tick_stub,
+ 	.runnable = runnable_stub,
+ 	.running = running_stub,
+ 	.stopping = stopping_stub,
 -- 
-Kees Cook
+2.46.0
+
 
