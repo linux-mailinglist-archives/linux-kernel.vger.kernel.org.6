@@ -1,170 +1,147 @@
-Return-Path: <linux-kernel+bounces-304596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE8C196224C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:29:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DCC996224D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60BF9B22F60
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:29:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F8641C235C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA6215B99D;
-	Wed, 28 Aug 2024 08:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF8815B54E;
+	Wed, 28 Aug 2024 08:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="fhQw7N/w"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l3uCzt+Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C24115B55D
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 08:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EBB15B55D;
+	Wed, 28 Aug 2024 08:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724833738; cv=none; b=PU7BxagJ33hFxkQ3lUYZVJNIAKkZwkVWOJH8RPuj8hSu3dRxtKCIIb6mWqPe75GPQbnrDlE4sv4PI+zJyUQUvNQbr4/Fz6HZn43KrWZcymx1mQ0sytwuuGJGiVnEw4FZCL4oPznXxSImAJ/M05B/XSq0Ho4ATNJPgqeaM3jctIo=
+	t=1724833766; cv=none; b=Vj3wJEnXAtr6MFRpscCRCIVlzQ8fbYBXfzcmTUrYCPmbUdvIodJxQLdD4CevmeYU5vfu+J/JHfPf4WMqcmBcGCa3hPbLHHkhUzqLLio2sa5OpYD55VXDhwlBmJ0xaCuL5IuYfNI2GOdF7kof4dJbNAL7Y0pyXJcQasP9kzjUnRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724833738; c=relaxed/simple;
-	bh=vt/PKqQxRCSOhFcPYuvlwld6ugqPfAInUau/Lp3kCH0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lZAjWpQbIXpwxWgdP8udIDaaj3QK/Nqug0gybJ5osbA6F2xJ4mLCZK5S+XGp8cCKFHNb8NnMRe9Nk1rArea3SiAgyU2Xp38Iq3+U/rMpVzhxNKOp98Gg081Fpzu5fTkF+siMm9FLWp0vPcxLmX5PNfqBOaEiqS1+F5Ot9tjaaJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=fhQw7N/w; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1724833733; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=97ju4RMpYK6Qa1Bay+6iKFFpZc4GsCYy2UsOfQ1P8ao=;
-	b=fhQw7N/wP72lmcfsgIVApmrztLKYr0nXZYLTYdY7ahBtoIH3ws2gdc4W2molYzuBWybN2RIOUsskk/94siMCndItDOxhF02KyM5tbS7fkqUnoGgjvsfocjLRFB19JQTI/bUdyKwYdZNPBuCjJkASdgEMarh6iq8m8k/Y9HjWXsk=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WDpB22x_1724833730)
-          by smtp.aliyun-inc.com;
-          Wed, 28 Aug 2024 16:28:51 +0800
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: hughd@google.com
-Cc: 21cnbao@gmail.com,
-	akpm@linux-foundation.org,
-	baolin.wang@linux.alibaba.com,
-	chrisl@kernel.org,
-	da.gomez@samsung.com,
-	david@redhat.com,
-	ioworker0@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	p.raghav@samsung.com,
-	ryan.roberts@arm.com,
-	shy828301@gmail.com,
-	wangkefeng.wang@huawei.com,
-	willy@infradead.org,
-	ying.huang@intel.com,
-	ziy@nvidia.com
-Subject: [PATCH] mm: shmem: support large folio swap out fix 2
-Date: Wed, 28 Aug 2024 16:28:38 +0800
-Message-Id: <1236a002daa301b3b9ba73d6c0fab348427cf295.1724833399.git.baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <aef55f8d-6040-692d-65e3-16150cce4440@google.com>
-References: <aef55f8d-6040-692d-65e3-16150cce4440@google.com>
+	s=arc-20240116; t=1724833766; c=relaxed/simple;
+	bh=2ayyHEqpim6dSZmNkc7u84AxOXt0k/OAEQ+aqlQSSvc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZmqB7Hu1T+VLpgv0QinjZQJ/FlfmBliKzSnh1UVthJRUSvQOmHX4NkuGSreyftxKboxZuD8lh+N6pVLP6920aHNN7mYqiCdJWMyKCrWYdU/miYzK/geI2EuYUtSTTk/1bKa8MD33lgElSPw7GPVGUnNbad2gVP674Vxdmn7+h+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l3uCzt+Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C1CBC4FEFB;
+	Wed, 28 Aug 2024 08:29:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724833764;
+	bh=2ayyHEqpim6dSZmNkc7u84AxOXt0k/OAEQ+aqlQSSvc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=l3uCzt+Zwdh0Jw72xBkF3BGoFPczkR2HeP/8jtT/qTKqlFNUDN9qFAkKsCPTnIl3b
+	 2zB0X8iQXtZYbRKkSoo3kGpqac3s6ckZauSocTOKNEDw4qxCJe7wcTacs6YNUtMxB8
+	 tdpF7VLOcuX6fLu+yVzwwyZNlJuUGPHMt3gg3kFrH3hXxKZr+e9/rZLQ2ySMn9GnM6
+	 wsI6uuVkwBuwCuKHpnBJ/N+QCe14Sp5fJ2l8YnE1BnMXwjrdfWMN1i/kPgBmoZmNyv
+	 yWWwUxVfZu7esYifymY5aQG5sWo3iMSsFxwg2UDiH1NJs8Y6MFznlaAil2WJbqrkg4
+	 /Ek8swAUaRPfg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sjE3O-007UIK-8n;
+	Wed, 28 Aug 2024 09:29:22 +0100
+Date: Wed, 28 Aug 2024 09:29:21 +0100
+Message-ID: <86frqpvyn2.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: D Scott Phillips <scott@os.amperecomputing.com>
+Cc: Alex =?UTF-8?B?QmVubsOpZQ==?= <alex.bennee@linaro.org>,
+	linux-kernel@vger.kernel.org,	kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,	kvmarm@lists.linux.dev,
+	arnd@linaro.org
+Subject: Re: [PATCH 1/3] ampere/arm64: Add a fixup handler for alignment faults in aarch64 code
+In-Reply-To: <86frqpk6d7.fsf@scott-ph-mail.amperecomputing.com>
+References: <20240827130829.43632-1-alex.bennee@linaro.org>
+	<20240827130829.43632-2-alex.bennee@linaro.org>
+	<86frqpk6d7.fsf@scott-ph-mail.amperecomputing.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: scott@os.amperecomputing.com, alex.bennee@linaro.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, arnd@linaro.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-As Hugh said:
-"
-The i915 THP splitting inshmem_writepage() was to avoid mm VM_BUG_ONs and
-crashes when shmem.c did not support huge page swapout: but now you are
-enabling that support, and such VM_BUG_ONs and crashes are gone (so far
-as I can see: and this is written on a laptop using the i915 driver).
+On Tue, 27 Aug 2024 22:23:16 +0100,
+D Scott Phillips <scott@os.amperecomputing.com> wrote:
+>=20
+> Alex Benn=C3=A9e <alex.bennee@linaro.org> writes:
+>=20
+> > From: D Scott Phillips <scott@os.amperecomputing.com>
+> >
+> > A later patch will hand out Device memory in some cases to code
+> > which expects a Normal memory type, as an errata workaround.
+> > Unaligned accesses to Device memory will fault though, so here we
+> > add a fixup handler to emulate faulting accesses, at a performance
+> > penalty.
+> >
+> > Many of the instructions in the Loads and Stores group are supported,
+> > but these groups are not handled here:
+> >
+> >  * Advanced SIMD load/store multiple structures
+> >  * Advanced SIMD load/store multiple structures (post-indexed)
+> >  * Advanced SIMD load/store single structure
+> >  * Advanced SIMD load/store single structure (post-indexed)
+>=20
+> Hi Alex, I'm keeping my version of these patches here:
+>=20
+> https://github.com/AmpereComputing/linux-ampere-altra-erratum-pcie-65
+>=20
+> It looks like the difference to the version you've harvested is that
+> I've since added handling for these load/store types:
+>=20
+> Advanced SIMD load/store multiple structure
+> Advanced SIMD load/store multiple structure (post-indexed)
+> Advanced SIMD load/store single structure
+> Advanced SIMD load/store single structure (post-indexed)
+>=20
+> I've never sent these patches because in my opinion there's too much
+> complexity to maintain upstream for this workaround, though now they're
+> here so we can have that conversation.
+>=20
+> Finally, I think a better approach overall would have been to have
+> device memory mapping in the stage 2 page table, then booting with pkvm
+> would have this workaround for both the host and guests. I don't think
+> that approach changes the fact that there's too much complexity here.
 
-I cannot think of why i915 itself would care how mm implements swapout
-(beyond enjoying faster): I think all the wbc->split_large_folio you
-introduce here should be reverted.
-"
+That's a rather bad idea. You are then asking the hypervisor to proxy
+the accesses that the guest performs. Two issues with that:
 
-So this fixup patch will remove the wbc->split_large_folio as suggested
-by Hugh.
+- the hypervisor now needs to keep a mapping of the device in its own
+  S1, which is pretty fun given that the mapping can change location
+  if BARs get remapped behind the hypervisor's back.
 
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
-This fixup patch is based on 2024-08-28 mm-unstable branch.
-Andrew, please help to squash this fixup patch. Thanks.
----
- drivers/gpu/drm/i915/gem/i915_gem_shmem.c | 1 -
- include/linux/writeback.h                 | 1 -
- mm/shmem.c                                | 9 ++++-----
- mm/vmscan.c                               | 4 +---
- 4 files changed, 5 insertions(+), 10 deletions(-)
+- you are asking the hypervisor to trust the nature of the access. If
+  you get an error response from the device because the access cannot
+  be handled (the size, for example), you are likely to get an SError,
+  which will bring the whole system down.
 
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-index c66cb9c585e1..c5e1c718a6d2 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-@@ -308,7 +308,6 @@ void __shmem_writeback(size_t size, struct address_space *mapping)
- 		.range_start = 0,
- 		.range_end = LLONG_MAX,
- 		.for_reclaim = 1,
--		.split_large_folio = 1,
- 	};
- 	unsigned long i;
- 
-diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-index 10100e22d5c6..51278327b3c6 100644
---- a/include/linux/writeback.h
-+++ b/include/linux/writeback.h
-@@ -63,7 +63,6 @@ struct writeback_control {
- 	unsigned range_cyclic:1;	/* range_start is cyclic */
- 	unsigned for_sync:1;		/* sync(2) WB_SYNC_ALL writeback */
- 	unsigned unpinned_netfs_wb:1;	/* Cleared I_PINNING_NETFS_WB */
--	unsigned split_large_folio:1;	/* Split large folio for shmem writeback */
- 
- 	/*
- 	 * When writeback IOs are bounced through async layers, only the
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 16099340ca1d..2b0209d6ac9c 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1473,19 +1473,18 @@ static int shmem_writepage(struct page *page, struct writeback_control *wbc)
- 		goto redirty;
- 
- 	/*
--	 * If /sys/kernel/mm/transparent_hugepage/shmem_enabled is "always" or
--	 * "force", drivers/gpu/drm/i915/gem/i915_gem_shmem.c gets huge pages,
--	 * and its shmem_writeback() needs them to be split when swapping.
-+	 * If CONFIG_THP_SWAP is not enabled, the large folio should be
-+	 * split when swapping.
- 	 *
- 	 * And shrinkage of pages beyond i_size does not split swap, so
- 	 * swapout of a large folio crossing i_size needs to split too
- 	 * (unless fallocate has been used to preallocate beyond EOF).
- 	 */
- 	if (folio_test_large(folio)) {
--		split = wbc->split_large_folio;
- 		index = shmem_fallocend(inode,
- 			DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE));
--		if (index > folio->index && index < folio_next_index(folio))
-+		if ((index > folio->index && index < folio_next_index(folio)) ||
-+		    !IS_ENABLED(CONFIG_THP_SWAP))
- 			split = true;
- 	}
- 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 283e3f9d652b..f27792e77a0f 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -681,10 +681,8 @@ static pageout_t pageout(struct folio *folio, struct address_space *mapping,
- 		 * not enabled or contiguous swap entries are failed to
- 		 * allocate.
- 		 */
--		if (shmem_mapping(mapping) && folio_test_large(folio)) {
-+		if (shmem_mapping(mapping) && folio_test_large(folio))
- 			wbc.list = folio_list;
--			wbc.split_large_folio = !IS_ENABLED(CONFIG_THP_SWAP);
--		}
- 
- 		folio_set_reclaim(folio);
- 		res = mapping->a_ops->writepage(&folio->page, &wbc);
--- 
-2.39.3
+You can do that to some extent for when you completely control the
+programming model of the devices. KVM does that for GICv2, for
+example. But in general? No.
 
+Furthermore, adding an instruction emulator to KVM is totally out of
+the question. If something has to be emulated, that's for userspace to
+take care of it. Any notion of performance has gone through the window
+anyway, so that doesn't make much of a difference.
+
+Thanks,
+
+	M.
+
+--=20
+Without deviation from the norm, progress is not possible.
 
