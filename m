@@ -1,67 +1,138 @@
-Return-Path: <linux-kernel+bounces-305795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E336D963484
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:18:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA90E963497
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:19:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A18532857AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:18:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD14A1C24229
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8C51AD9F2;
-	Wed, 28 Aug 2024 22:17:43 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FDD167D97;
+	Wed, 28 Aug 2024 22:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pE9egSTs"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA7D1AD411;
-	Wed, 28 Aug 2024 22:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0AD1AD3F4
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:19:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724883463; cv=none; b=ibWd0ekGeSYXPqtKXiNAwG8Z1dh4e5UdzZwKdwHHfrcInZRBI50vPry+mWLqADTSgG7BEnPUSbnV7mY1A9FqmF5SolKJ2gv0KL6ut5HVL8sBcgYHN9PfhS8erAHrc7pgfP6dMQnxVoczuMi7x/FFov5m6wIeEs+MawNSEkst+ug=
+	t=1724883565; cv=none; b=BtWEjHOs39yI6xnRbuTQbu8Le1A6Pz9VqqG6VEPA20C/lkTz9fMCqGnZNyh9u5hcxEmpFdZuR3g/kJu55QYx08uquOmNdhEsE7maWO8LylL9PhzTKC3S/RzQQnkh5x7E+M8qkMJonZ0Ol1GzsF14BaMnmyL5/a3bqTKCPRmkU20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724883463; c=relaxed/simple;
-	bh=58NufC17oHNTIQLxcHe3OwIRzN0rETV+vP2MaMr2KgI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=panGaZU+KwobhZuYHvxAud6PHGsZ0Ha5YpsdzSutantk8tn2h5LvYoYkhnFAyggZrT1BYpgahKYCLoMqMiiHNsRiNDranvZENyVoJMFoxzy4u+sdB82C3U3pa/1vXvZvQyLfzytFsvwkX+QDfJNozZJk2rfD/C7LW4cQJ26iF28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD36AC4CEC9;
-	Wed, 28 Aug 2024 22:17:42 +0000 (UTC)
-Received: by mercury (Postfix, from userid 1000)
-	id 452CE10604BD; Thu, 29 Aug 2024 00:17:40 +0200 (CEST)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: sre@kernel.org, Chen Ni <nichen@iscas.ac.cn>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240710032023.2003742-1-nichen@iscas.ac.cn>
-References: <20240710032023.2003742-1-nichen@iscas.ac.cn>
-Subject: Re: [PATCH] power: supply: cpcap-charger: Convert comma to
- semicolon
-Message-Id: <172488346023.466860.16678342111160245545.b4-ty@collabora.com>
-Date: Thu, 29 Aug 2024 00:17:40 +0200
+	s=arc-20240116; t=1724883565; c=relaxed/simple;
+	bh=G0cbini76O7/ZHNrLwHGmXDcm4O4bH6OGrwCSMUuIWU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NBLkgKiHrOItugRXbmQrqJFbto3hPDfOEIWyhcejMKTqGoQ9adoGziVHkhRWdCjXXlqDj1lasyv27q5C0eqsYDmSeuTWHnbzSs5CQaP2CjqH9uus59TDw+yDYyQ1ilxwRVdL2pmaqL77ns2PmkvaWLxh5mc1FzgHGP4xjcY36fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pE9egSTs; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-202018541afso31445ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:19:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724883563; x=1725488363; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UATx3qyhtRIMlpWJXb2/u6ihrZGsial6qHPPVJHPjTk=;
+        b=pE9egSTsf+/6r2x/pZRZeQ6J6RbfRQoFnqOBX+QHFaWZOAG8fCgKtyu0SoAaXWAnSi
+         aen3XYT/QzctyZo5M/a4CnIR37ilak68si5RNh3BRmhqHRxHJetk0Cpbl5WlbmMMncuL
+         menz3oKokKwsZRJb1u3x0EGnWdj+tN9whjwkP81jY/Pe9kGmFbd4QLcRgHs9cA1EJ08f
+         pi/wEMo20yH4A6gZkKWaDHkEDeYRihYLJH/HyhBs/2evEl6Som7mDYk0C1JHlh8+5GGt
+         dqPmfZwzoSIZXv28AJmQabQ9S5We0nJqQkk+MGxQrdbTKaRGxO6W+ZxIeKMtVoysuqAl
+         kM/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724883563; x=1725488363;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UATx3qyhtRIMlpWJXb2/u6ihrZGsial6qHPPVJHPjTk=;
+        b=X8eOsdy8K7bKUQ1sYT1BvsKtCKIOjaeYGFPGDHbSd1PlkwY03b2w4RVm7ZdI7leusT
+         wq6brblkMTlP6kax6PlBCk64Pniu0R3KdYcFM/tPoJW+Whkm1GxSRE017rwSpzJg38Li
+         EoQj5jNg73cOsNr3Gwwvaq6Ja8KakWWrD+FHXDEzzGqA7eKrD1wV6LFJm2De8J0NndUx
+         xMyP29tjnutIb2FnWno+dfWc3DeGCzq84cJk8m26RFV5JDOCe0wn6uCNXYZGFcGKl/bQ
+         3hbu8HiMcUINEZ06hT1jYe/9y+Uy7dGJJdmnMNsraUiHuagf2m7TTaffYWaHzMAXxWsI
+         ZYBw==
+X-Forwarded-Encrypted: i=1; AJvYcCWjWydSY1ikYmNm8PH4R+XXfnKMwQZhX9DUZRmiMeqj7YgX4Awf91TZdYU8NKwkN3eZ/Ac+n9NC6h7yoI8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCrTKibE8oKf825grnC2fpuiCbkmcpnxt3r2L1iNGzeZhqCbd0
+	WZhIqFTfxGa0Okq/I9hzHeQ++DI25lWS16Sr/xeZGY5heNSG+PIUkH99h2JrzQ==
+X-Google-Smtp-Source: AGHT+IEI/yiKkuTOXDYkfKDkA+6/kHl9UL9XvWD754F+DO7KJmsGY1NptaRQNoNDHY+hiQv7NdJOEg==
+X-Received: by 2002:a17:902:e849:b0:1e0:c571:d652 with SMTP id d9443c01a7336-20510a7f2e1mr425515ad.1.1724883562507;
+        Wed, 28 Aug 2024 15:19:22 -0700 (PDT)
+Received: from google.com (83.92.168.34.bc.googleusercontent.com. [34.168.92.83])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-714342e0a10sm10594254b3a.108.2024.08.28.15.19.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 15:19:21 -0700 (PDT)
+Date: Wed, 28 Aug 2024 22:19:18 +0000
+From: Sami Tolvanen <samitolvanen@google.com>
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Matthew Maurer <mmaurer@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>, Neal Gompa <neal@gompa.dev>,
+	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
+	Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 05/19] gendwarfksyms: Expand base_type
+Message-ID: <20240828221918.GF2130480@google.com>
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <20240815173903.4172139-26-samitolvanen@google.com>
+ <742f7226-9c66-4cfb-ba31-222dfb54fc34@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <742f7226-9c66-4cfb-ba31-222dfb54fc34@suse.com>
 
-
-On Wed, 10 Jul 2024 11:20:23 +0800, Chen Ni wrote:
-> Replace a comma between expression statements by a semicolon.
+On Wed, Aug 28, 2024 at 02:46:03PM +0200, Petr Pavlu wrote:
+> > +static int process_fmt(struct state *state, const char *fmt, ...)
 > 
+> Nit: The state parameter is unused by a number of these process_*()
+> functions, including the leaf process(). I suggest removing it so it
+> doesn't need to be passed around unnecessarily.
+
+Good point, I'll clean this up.
+
+> > +	char buf[MAX_FMT_BUFFER_SIZE];
+> > +	va_list args;
+> > +	int res;
+> > +
+> > +	va_start(args, fmt);
+> > +
+> > +	res = checkp(vsnprintf(buf, sizeof(buf), fmt, args));
+> > +	if (res >= MAX_FMT_BUFFER_SIZE - 1) {
 > 
+> This check looks off by one, though on the safe side:
+> res >= sizeof(buf)
 
-Applied, thanks!
+True, I'll fix this too.
 
-[1/1] power: supply: cpcap-charger: Convert comma to semicolon
-      commit: 50f74b785059453b4f10fe53241c2f612ebf9028
+> > +		if (dwarf_tag(&scopes[i]) == DW_TAG_compile_unit)
+> > +			continue;
+> > +
+> > +		name = get_name(&scopes[i]);
+> > +		name = name ?: "<unnamed>";
+> > +		check(process(state, name));
+> > +		if (i > 0)
+> > +			check(process(state, "::"));
+> 
+> Failed check(process()) calls here return immediately and so would leak
+> scopes. However, I see this is fixed in the following patch
+> "gendwarfksyms: Add a cache for processed DIEs" so it's ok.
 
-Best regards,
--- 
-Sebastian Reichel <sebastian.reichel@collabora.com>
+Yeah, I noticed this as well. I think Masahiro's suggestion to just
+exit immediately on errors cleans up this situation a bit.
 
+Sami
 
