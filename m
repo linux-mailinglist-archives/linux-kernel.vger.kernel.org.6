@@ -1,144 +1,164 @@
-Return-Path: <linux-kernel+bounces-305762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37E789633EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:33:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90944963417
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:46:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EB47B237D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:33:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BBFF1F24A93
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC0A15B137;
-	Wed, 28 Aug 2024 21:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639BA1AD418;
+	Wed, 28 Aug 2024 21:46:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wDRWooRX"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=kutsevol-com.20230601.gappssmtp.com header.i=@kutsevol-com.20230601.gappssmtp.com header.b="E3/tGh+V"
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7371AD3FC
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 21:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327B0156875
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 21:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724880781; cv=none; b=jZOrkF1c63DPLy39E68Otd0isRD/SAmNmo127yW7r/LaZXcNhs5+FCaALYSPTKfkfPoKwPggWlVRGwLr+PqPIEgvI8W/tH36fMAoFlF/U+gKK79f7ATUFwv3qWCW/odpnNzsJXT5rH9z81663t07peafE3SFOW9AqadC+uT5slI=
+	t=1724881571; cv=none; b=qwDIhLD+v+IePBz7T59+lqT+8DcojQx7sEWqT6UszxbF4pFzvXTx728jnX0JLXMyjJDMGxjDDICjSjTITzDnAtXz8OMiSiA4Y8SOIXIBiTD8urFk/KaK1+PDlLCQ2VjqiJ0citlIAu2eCRtZWWuOpzZKSBO9K50JtmqPxKQ1QaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724880781; c=relaxed/simple;
-	bh=cEpCS+awESzibz2fx1rBVxzmh/G9/OK1eGkd1D1LRF4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HVJoDm8Q1ebWoZ0JCfYTG0/TpOQhiOyOe3VBj4mzvhC1e7b1XmRDy6JKd0Fx+0EoySI4wQFNeljFgsm5qMkKDOu15Y3MnbhAq63XMGTdOqd83Ith1TERP01DHFu6z0cBEMc7iE2XgE+ycGbiTEwAx4VTzxsxCvByMtTXfs7PVdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wDRWooRX; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-201fed75b38so24635ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:32:59 -0700 (PDT)
+	s=arc-20240116; t=1724881571; c=relaxed/simple;
+	bh=whwOc+ATiSReyj/y+NpXR+hPpmNCmSxfYuR6aTujTVg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=C2aBsc6PGK7eB89GuMN/aKR9VS+ftuca49PpeLmlv0BK/mGL4/QwIuhsA7grSf+yS8ZjTbwxkNuo5repk8P+AQnXhmWLKjc2kuonTP0AdSBjiURDkjA3VYP9AC9rmCfrRIjRgOlTJpLa8S3/Rr5zvhcYnnupMAU/gezCUzu8w7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kutsevol.com; spf=none smtp.mailfrom=kutsevol.com; dkim=pass (2048-bit key) header.d=kutsevol-com.20230601.gappssmtp.com header.i=@kutsevol-com.20230601.gappssmtp.com header.b=E3/tGh+V; arc=none smtp.client-ip=209.85.167.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kutsevol.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kutsevol.com
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3df04219e31so384640b6e.3
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:46:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724880779; x=1725485579; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6OiNe2YeQCUna2f4UjRdeOC+WErdfdXGa82/r6tUnVw=;
-        b=wDRWooRXfR4puGYCZll52GXUhb38BKO9LpLdLgtDfRlLUaTpg+uHT00gYpMkGnKc0g
-         BMfbF7+kIhUGkJoKFiPfJtX2tzCHP2jAlCBt9Gfrp5/643Ez3Qg9VDZ2B1aoQUpZdCvl
-         AeJMhWKUgeo98hid76CWbpnlckir78xJKXKuI/Y3QsJUDae5kFCHANVnOJEbtA+MoeoZ
-         hgz2eXG6e93P+/bfXDRniuVDXo/mCDv3dOUSDYgICmS9Yu+fr15/Bx2vwiU9TEL1bu2m
-         bsKpqhz53dQ4NwPjSsJRhAZJNKwxCVviacI2eb2F01HPL3BCn2JCztv4VOrWLvYIkHsg
-         hKMw==
+        d=kutsevol-com.20230601.gappssmtp.com; s=20230601; t=1724881569; x=1725486369; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rd4BLxG6UmM52wUvLpi5yoIXtquUaogh6P9yQLLRUt0=;
+        b=E3/tGh+V59rMI8xI+p3ALEtS8ghnfIHlvug2qiadE6h5sKHGWWZTdI4M6bb7r3Wp9B
+         JLzmiLPDIa/WW3wJe+muPQLqRFd7+euYB08vnk5FblAsP+sQcaXHB8QX0Su0l7mwKAM7
+         3KontC9G2gU7F3XH69CIeEUqtWmcz5/Sopqnl8TBJMhR5jbRdsfLiN0BuUIrCGCHmvlF
+         ZPXKyt6x2C+8KN0+ZjV85q3X6H+QVR3RigtRWRlcTYY+11l4HvuUdG0V2/NPWOoO7jkS
+         fwEXYSXJrvWjKIiuaJVCPiI9TZtOhL5sBzG0NgdsmtyFlGAnCn1k+gdLdeYed/i/Ddfy
+         5frQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724880779; x=1725485579;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6OiNe2YeQCUna2f4UjRdeOC+WErdfdXGa82/r6tUnVw=;
-        b=k7mfGi5zzyqoYgubm/gthHmyFkGfcWcMAEUUDGa9aDzUmosJx5dHaHf5MzscTdAmSP
-         H8Vtiq/8G1Bpny2Bpc4743ioQMtZA5tvgMhsLfeDO8SjBc7wJjr2JYpSUu0n3DeYFoVU
-         4fVudBlRQo897MxsajwrBQQoM7TOyGYyVAzurQZuP7s2mNn32WmWEeX5VweiGclGg2o0
-         85/i6nEFr92w83MhN33whN0MbXH9OlWNdwWZyVrErk8TRDg4kKDUlBNSIkaYDznat2K9
-         YluADFx5CHGHe70aKV8dylyZkeLaoteO9hnwVpxOlmIgpC2o3qTA3ujOL97zc1Q29a55
-         ZRmg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3m1SwQP1y/ysiJZdpyuyFy0iN2KQRZDduCQ0OC9tkeDuNc41YKgO7Ctw7J+U4n2fwIEPe1GKEsQemaMg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjiLES1wdgSbM84j5TVGtL7CWfx1YX143ent3FbhhXy8VyfeVK
-	EwmTM3mDzS4XxetGWE03G5K/cgS18NdE+uHe9F36G3duAPU/D1mWW/ucf4rMEg==
-X-Google-Smtp-Source: AGHT+IHHf+VlJrFFBJgPYVRNtck/f/imxXiwO9YAgJOrmaeUNIYbTt/FhYzSs4jbx7giAS/mraakLQ==
-X-Received: by 2002:a17:902:e5ca:b0:200:8e1e:9940 with SMTP id d9443c01a7336-20510d58e83mr210625ad.23.1724880778385;
-        Wed, 28 Aug 2024 14:32:58 -0700 (PDT)
-Received: from google.com (226.75.127.34.bc.googleusercontent.com. [34.127.75.226])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-203855dbf41sm102647885ad.134.2024.08.28.14.32.55
+        d=1e100.net; s=20230601; t=1724881569; x=1725486369;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rd4BLxG6UmM52wUvLpi5yoIXtquUaogh6P9yQLLRUt0=;
+        b=MlJXatRCe8v701vr1nUuZGQgsUwjN2hsYXVwt9EZ+CY/QSZrkp2AruSfTyIXFq9KDZ
+         lQlry5+qXhMhGUvc7T6ESnZBaEVecGo8oUxC1LQCk57q+13F1ktgX0/MbJ0Dy+Z2IFhX
+         QzW0L0z2DokJ0FZaSzPShJPE/Oiw14L0KA+cEa2R149L/AOuKxoxGvL2pHqVker+Ycht
+         xZyqIXs7ZHv4niTIDH2lUaFRd+UuFmOcGdh8gCxjXF0rd+f5eWSFdE2U8BzlQEsPJvbt
+         makqXuNPRvgiV2lgyQ+MNf9Mvfi8dXII3ZFQr4ISYmGUB3qhdD5R0kznDIYoYoArIJHE
+         3GGA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLsjOny7yCeYm32DgCudySYjZ2C5PuMbLwdEYVgDSkCAX4cqewy8Cxc0Dj1CFYLRsix5ZVq5kNQC7e3bo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWPx63IbuJ2a8ThtayZIPhaOgzIa9vyz2zTYyCGZTUfey65ZGE
+	eKbe8eOiQwcAwOmnITKw4qaiGP3skiCumRLMFYE9oyCHqh42XzAK59lLA6SCk9Y=
+X-Google-Smtp-Source: AGHT+IHRihjVOtHNKEpHeB8JyLd2E1QM0kl5N1ojsCNOb2mtZB/oU9NxA3Aez4K4DszmbZNVq/EkoA==
+X-Received: by 2002:a05:6808:144c:b0:3db:1b70:edc5 with SMTP id 5614622812f47-3df05e68727mr988283b6e.48.1724881569112;
+        Wed, 28 Aug 2024 14:46:09 -0700 (PDT)
+Received: from devbig254.ash8.facebook.com (fwdproxy-ash-012.fbsv.net. [2a03:2880:20ff:c::face:b00c])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-454fe196bc6sm65227741cf.62.2024.08.28.14.46.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 14:32:57 -0700 (PDT)
-Date: Wed, 28 Aug 2024 21:32:51 +0000
-From: Sami Tolvanen <samitolvanen@google.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Matthew Maurer <mmaurer@google.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>,
-	Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>,
-	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 01/19] tools: Add gendwarfksyms
-Message-ID: <20240828213251.GB2130480@google.com>
-References: <20240815173903.4172139-21-samitolvanen@google.com>
- <20240815173903.4172139-22-samitolvanen@google.com>
- <CAK7LNATKWnkdmxvPBaBLYThLk0Voh7UVh5V4_eKHs9g-40qUTQ@mail.gmail.com>
+        Wed, 28 Aug 2024 14:46:08 -0700 (PDT)
+From: Maksym Kutsevol <max@kutsevol.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Breno Leitao <leitao@debian.org>,
+	Maksym Kutsevol <max@kutsevol.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] netpoll: Make netpoll_send_udp return status instead of void
+Date: Wed, 28 Aug 2024 14:33:48 -0700
+Message-ID: <20240828214524.1867954-1-max@kutsevol.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20240824215130.2134153-1-max@kutsevol.com>
+References: <20240824215130.2134153-1-max@kutsevol.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNATKWnkdmxvPBaBLYThLk0Voh7UVh5V4_eKHs9g-40qUTQ@mail.gmail.com>
 
-Hi Masahiro,
+netpoll_send_udp can return if send was successful.
+It will allow client code to be aware of the send status.
 
-On Thu, Aug 29, 2024 at 02:45:03AM +0900, Masahiro Yamada wrote:
-> On Fri, Aug 16, 2024 at 2:39 AM Sami Tolvanen <samitolvanen@google.com> wrote:
-> > +static int usage(void)
-> > +{
-> > +       error("usage: gendwarfksyms [options] elf-object-file ...");
-> 
-> 
-> 
-> Description for each option, please.
+Possible return values are the result of __netpoll_send_skb (cast to int)
+and -ENOMEM. This doesn't cover the case when TX was not successful
+instantaneously and was scheduled for later, __netpoll__send_skb returns
+success in that case.
 
-Sure, will add.
+Signed-off-by: Maksym Kutsevol <max@kutsevol.com>
+---
+Used in the next patch to expose send failure stats in netconsole
 
-> > +static int parse_options(int argc, const char **argv)
-> 
-> 
-> 
-> Why not getopt_long()?
+Changelog:
 
-Good point, I'll switch to getopt.
+v2: No changes, resend.
 
-> > +int main(int argc, const char **argv)
-> > +{
-> > +       unsigned int n;
-> > +
-> > +       if (parse_options(argc, argv) < 0)
-> > +               return usage();
-> > +
-> > +       for (n = 0; n < object_count; n++) {
-> 
-> 
-> When does  "object_count >= 2" happen ?
+v1:
+ * https://lore.kernel.org/netdev/20240824215130.2134153-1-max@kutsevol.com/
 
-Right now it doesn't, but if we want to support LTO, we'll need to also
-process the temporary object files we build for stand-alone assembly to
-find types for the symbols exported there.
+ include/linux/netpoll.h | 2 +-
+ net/core/netpoll.c      | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-> > +extern int process_module(Dwfl_Module *mod, Dwarf *dbg, Dwarf_Die *cudie);
-> 
-> 
-> No 'extern' for function declarations.
+diff --git a/include/linux/netpoll.h b/include/linux/netpoll.h
+index bd19c4b91e31..10ceef618e40 100644
+--- a/include/linux/netpoll.h
++++ b/include/linux/netpoll.h
+@@ -56,7 +56,7 @@ static inline void netpoll_poll_disable(struct net_device *dev) { return; }
+ static inline void netpoll_poll_enable(struct net_device *dev) { return; }
+ #endif
+ 
+-void netpoll_send_udp(struct netpoll *np, const char *msg, int len);
++int netpoll_send_udp(struct netpoll *np, const char *msg, int len);
+ void netpoll_print_options(struct netpoll *np);
+ int netpoll_parse_options(struct netpoll *np, char *opt);
+ int __netpoll_setup(struct netpoll *np, struct net_device *ndev);
+diff --git a/net/core/netpoll.c b/net/core/netpoll.c
+index d657b042d5a0..664343e3b688 100644
+--- a/net/core/netpoll.c
++++ b/net/core/netpoll.c
+@@ -395,7 +395,7 @@ netdev_tx_t netpoll_send_skb(struct netpoll *np, struct sk_buff *skb)
+ }
+ EXPORT_SYMBOL(netpoll_send_skb);
+ 
+-void netpoll_send_udp(struct netpoll *np, const char *msg, int len)
++int netpoll_send_udp(struct netpoll *np, const char *msg, int len)
+ {
+ 	int total_len, ip_len, udp_len;
+ 	struct sk_buff *skb;
+@@ -419,7 +419,7 @@ void netpoll_send_udp(struct netpoll *np, const char *msg, int len)
+ 	skb = find_skb(np, total_len + np->dev->needed_tailroom,
+ 		       total_len - len);
+ 	if (!skb)
+-		return;
++		return -ENOMEM;
+ 
+ 	skb_copy_to_linear_data(skb, msg, len);
+ 	skb_put(skb, len);
+@@ -495,7 +495,7 @@ void netpoll_send_udp(struct netpoll *np, const char *msg, int len)
+ 
+ 	skb->dev = np->dev;
+ 
+-	netpoll_send_skb(np, skb);
++	return (int)netpoll_send_skb(np, skb);
+ }
+ EXPORT_SYMBOL(netpoll_send_udp);
+ 
 
-Ack, I'll drop these. Thanks for the review!
+base-commit: 3a0504d54b3b57f0d7bf3d9184a00c9f8887f6d7
+-- 
+2.43.5
 
-Sami
 
