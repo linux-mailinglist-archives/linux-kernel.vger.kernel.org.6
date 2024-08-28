@@ -1,57 +1,61 @@
-Return-Path: <linux-kernel+bounces-305746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 943EE9633BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:19:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBE2E9633C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51DB1284DF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:19:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 273E31C237A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4022B1AD416;
-	Wed, 28 Aug 2024 21:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F461AC45E;
+	Wed, 28 Aug 2024 21:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pVFp21+B"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kE0q9W5S"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE0C1AD3F2;
-	Wed, 28 Aug 2024 21:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C71845C1C;
+	Wed, 28 Aug 2024 21:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724879950; cv=none; b=YOoKS1RbMvmO9PP1j51+m6S2CKyd4boHnFkP8WE22lDmW2MdBOFwWaLjk9ITOkCZBYiTLR9UdJTprjayt+SFaa2eNCMR+fLmpTHoE/hPbIunAif3ekVLamR9vWHP9+272YLsYJ6YIcNxVrsDcLXm29/hIAT/vGfrdx4dQpmt8OA=
+	t=1724880194; cv=none; b=tuU1Y71gW1XGq/Ar8bX3SXTjZFI5qbW2MBL5Cf/eqWSxP5w/QCEB8VMhzBczxiOJ63HMXpglvUb3MZXwtOoPiuq424292oWhjE6nGupxsp4NC4Njk9RwczZ5OwreEhiiZHEY5uBIzZB/N5f4m2Q00objMezEF/WQr1ellbN7wwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724879950; c=relaxed/simple;
-	bh=49PHB8qyunhNwkqPu8maqVRtY1UPnUcFp4zqIf0kXcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=uueqbK8OjbdiMtBr7cjiijbBaieYKm86fK4RL5xs11C+7V8tI14dxrvFZ+ZGNhTosyI4hsLlnODXZu7Vo4XB7cQusiqd8loXRPdJirxgJlu1e4gnkq64HPna4PHGGOd1BThu8qssFznKAO9NK9FayNpiQ3PL95zoRao1sCo4wo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pVFp21+B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9E37C4CEC3;
-	Wed, 28 Aug 2024 21:19:08 +0000 (UTC)
+	s=arc-20240116; t=1724880194; c=relaxed/simple;
+	bh=4Uh2dt5mIcP/LqUTE9Z/MwR79r2opkE/XAZV52ER0UE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C0d44qsiErfmfxIMH78xAQ9Klo9ZQukEcVfFet5mEet5HFP8gOjMK0YaF2pJ2hjkFchQdTkxmlWbRH3I+efIlmO/oF/bdT9tQJe5IgnA8sCJrOW1DelhyY3iHuMHayw1P1g5LiqnYIg08dFrfZIYZN8xN11GYQ7Y+dBzz3se26E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kE0q9W5S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BC69C4CEC0;
+	Wed, 28 Aug 2024 21:23:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724879949;
-	bh=49PHB8qyunhNwkqPu8maqVRtY1UPnUcFp4zqIf0kXcY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=pVFp21+BRU63IIpfRMbslg+8XpR0EjCfJpCQik0ChLei1TqYjx+Huu9B+GgR30ELW
-	 FDqVR2GpORk5bS++6AD4hEBeA14/Br+lrgnv7rfsp2HnPJcxwG+sJmd2mhWEHjFWtd
-	 e8h38p7fw54LCX1XFpK/lzWHBTCTzw1jr46hC21QyuasPUC50Xq2F5jDXbGh1bqnQL
-	 S8/NSn1O2jHXHY0mUd+cD8vX2tauqBnjYQQIVaD0Wv11BQnJ2ygq7UlIj9e+zdI3sw
-	 tWjZB3RwR7tOTO+LYTqQNBDxpUUbCK3FbBguUI/FPvFN3a/RSMMIigUe8Xxq8AaYvT
-	 E76oUpgeyQPoQ==
-Date: Wed, 28 Aug 2024 16:19:06 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, vigneshr@ti.com,
-	kishon@kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, srk@ti.com
-Subject: Re: [PATCH v3 2/2] PCI: j721e: Enable ACSPCIE Refclk if
- "ti,syscon-acspcie-proxy-ctrl" exists
-Message-ID: <20240828211906.GA38267@bhelgaas>
+	s=k20201202; t=1724880194;
+	bh=4Uh2dt5mIcP/LqUTE9Z/MwR79r2opkE/XAZV52ER0UE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kE0q9W5SoHJ5kLXIf+HV7stKQB9wh4iDCzUUDtpRrgwe/1xjtHkZo7bt3GENs+DUX
+	 vJeBkxS7nsvK/V10S3wi+7d+x0vpMpKFLRqCWbjIfEf2lIG4oJ2gjg8rm7TIj4TPp1
+	 99ItcB+D+GqEo9YFnLBAhW0T5IJ/5rXKDjbpbNX5Fm+r0xZQ7auu6XAsQ+QNPRh3R0
+	 WCQL1ufqlyfzmi0oE2sfqm39sX8wVhPN2eacNtlyeofgwSZQ6WzxTT0SH5VpNIoNKH
+	 YZeN2AE7psv9vbr/DMMtKMcj3yHchukydsOMMxkZN9SvGPSZLdGQUqyP/EwPhuwzPV
+	 gK2XWqQtnxXwg==
+Date: Wed, 28 Aug 2024 18:23:11 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Stephane Eranian <eranian@google.com>,
+	Matt Fleming <matt@readmodwrite.com>
+Subject: Re: [PATCH 1/4] perf report: Fix segfault when 'sym' sort key is not
+ used
+Message-ID: <Zs-VP5uWCeIdooB_@x1>
+References: <20240826221045.1202305-1-namhyung@kernel.org>
+ <20240826221045.1202305-2-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,140 +64,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240827055548.901285-3-s-vadapalli@ti.com>
+In-Reply-To: <20240826221045.1202305-2-namhyung@kernel.org>
 
-On Tue, Aug 27, 2024 at 11:25:48AM +0530, Siddharth Vadapalli wrote:
-> The ACSPCIE module is capable of driving the reference clock required by
-> the PCIe Endpoint device. It is an alternative to on-board and external
-> reference clock generators. Enabling the output from the ACSPCIE module's
-> PAD IO Buffers requires clearing the "PAD IO disable" bits of the
-> ACSPCIE_PROXY_CTRL register in the CTRL_MMR register space.
+On Mon, Aug 26, 2024 at 03:10:42PM -0700, Namhyung Kim wrote:
+> The fields in the hist_entry are filled on-demand which means they only
+> have meaningful values when relevant sort keys are used.  So if neither
+> of 'dso' nor 'sym' sort keys are used, the map/symbols in the hist entry
+> can be garbage.  So it shouldn't access it unconditionally.
 > 
-> Add support to enable the ACSPCIE reference clock output using the optional
-> device-tree property "ti,syscon-acspcie-proxy-ctrl".
-> 
-> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> ---
-> 
-> v2:
-> https://lore.kernel.org/r/20240729092855.1945700-3-s-vadapalli@ti.com/
-> Changes since v2:
-> - Rebased patch on next-20240826.
-> 
-> v1:
-> https://lore.kernel.org/r/20240715120936.1150314-4-s-vadapalli@ti.com/
-> Changes since v1:
-> - Addressed Bjorn's feedback at:
->   https://lore.kernel.org/r/20240725211841.GA859405@bhelgaas/
->   with the following changes:
->   1) Updated $subject and commit message to indicate that this patch
->   enables ACSPCIE reference clock output if the DT property is present.
->   2) Updated macro and comments to indicate that the BITS correspond to
->   disabling ACSPCIE output, due to which clearing them enables the
->   reference clock output.
->   3) Replaced "PAD" with "refclk" both in the function name and in the
->   error prints.
->   4) Wrapped lines to be within the 80 character limit to match the rest
->   of the driver.
-> 
->  drivers/pci/controller/cadence/pci-j721e.c | 38 ++++++++++++++++++++++
->  1 file changed, 38 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
-> index 85718246016b..ed42b2229483 100644
-> --- a/drivers/pci/controller/cadence/pci-j721e.c
-> +++ b/drivers/pci/controller/cadence/pci-j721e.c
-> @@ -44,6 +44,7 @@ enum link_status {
->  #define J721E_MODE_RC			BIT(7)
->  #define LANE_COUNT(n)			((n) << 8)
->  
-> +#define ACSPCIE_PAD_DISABLE_MASK	GENMASK(1, 0)
->  #define GENERATION_SEL_MASK		GENMASK(1, 0)
->  
->  struct j721e_pcie {
-> @@ -220,6 +221,34 @@ static int j721e_pcie_set_lane_count(struct j721e_pcie *pcie,
->  	return ret;
->  }
->  
-> +static int j721e_enable_acspcie_refclk(struct j721e_pcie *pcie,
-> +				       struct regmap *syscon)
-> +{
-> +	struct device *dev = pcie->cdns_pcie->dev;
-> +	struct device_node *node = dev->of_node;
-> +	u32 mask = ACSPCIE_PAD_DISABLE_MASK;
-> +	struct of_phandle_args args;
-> +	u32 val;
-> +	int ret;
-> +
-> +	ret = of_parse_phandle_with_fixed_args(node,
-> +					       "ti,syscon-acspcie-proxy-ctrl",
-> +					       1, 0, &args);
-> +	if (!ret) {
-> +		/* Clear PAD IO disable bits to enable refclk output */
-> +		val = ~(args.args[0]);
-> +		ret = regmap_update_bits(syscon, 0, mask, val);
-> +		if (ret)
-> +			dev_err(dev, "failed to enable ACSPCIE refclk: %d\n",
-> +				ret);
-> +	} else {
-> +		dev_err(dev,
-> +			"ti,syscon-acspcie-proxy-ctrl has invalid arguments\n");
-> +	}
+> I got a segfault, when I wanted to see cgroup profiles.
 
-I should have mentioned this the first time, but this would be easier
-to read if structured as:
+Thanks, applied the series to perf-tools-next,
 
-  ret = of_parse_phandle_with_fixed_args(...);
-  if (ret) {
-    dev_err(...);
-    return ret;
-  }
-
-  /* Clear PAD IO disable bits to enable refclk output */
-  val = ~(args.args[0]);
-  ret = regmap_update_bits(syscon, 0, mask, val);
-  if (ret) {
-    dev_err(...);
-    return ret;
-  }
-
-  return 0;
-
-> +	return ret;
-> +}
-> +
->  static int j721e_pcie_ctrl_init(struct j721e_pcie *pcie)
->  {
->  	struct device *dev = pcie->cdns_pcie->dev;
-> @@ -259,6 +288,15 @@ static int j721e_pcie_ctrl_init(struct j721e_pcie *pcie)
->  		return ret;
->  	}
->  
-> +	/* Enable ACSPCIE refclk output if the optional property exists */
-> +	syscon = syscon_regmap_lookup_by_phandle_optional(node,
-> +						"ti,syscon-acspcie-proxy-ctrl");
-> +	if (syscon) {
-> +		ret = j721e_enable_acspcie_refclk(pcie, syscon);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
->  	return 0;
-
-Not as dramatic here, but I think the following would be a little
-simpler since the final "return" isn't used for two purposes
-((1) syscon property absent, (2) syscon present and refclk
-successfully enabled):
-
-  syscon = syscon_regmap_lookup_by_phandle_optional(...);
-  if (!syscon)
-    return 0;
-
-  return j721e_enable_acspcie_refclk(...);
-
->  }
->  
-> -- 
-> 2.40.1
-> 
+- Arnaldo
 
