@@ -1,602 +1,156 @@
-Return-Path: <linux-kernel+bounces-304827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62F22962566
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:01:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82FBA962544
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:50:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE0D11F23F33
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:01:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AF8A28196E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258631741C9;
-	Wed, 28 Aug 2024 10:59:54 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F88916BE37;
+	Wed, 28 Aug 2024 10:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="g6BR9m7D"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321CE16C68C
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 10:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660885A79B
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 10:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724842793; cv=none; b=pKRuxLZvvAsRhoK/42ZE3rUK4fZrzNCin8MMNo4byx2uE5jITMsgb9MMK30oQomdrkj6B+SsZPDoniMNS67w5H/g2u7LaTcYMPOZeeT/QY09JxTL9oG8QfMyZac9e3o85TzuiZ9bh1rLb3q/CKns1XirSmomV3g91zldzD+KkCg=
+	t=1724842246; cv=none; b=MqATHW6qD2JyZahnrvtDfJ5DiyxE3c6kQUqku5mU+pgJnlozSx9qbTCnA5yjAPODinV1gMH63CfzAej4a28U6NqB2lYTJ/c4WWz/mqpSIHjFCEz4FgvgfSWpQc64S5fj4cKAuqlysumf3IN936fnaeyXLfFUMtdqWmDLoQD5rZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724842793; c=relaxed/simple;
-	bh=vUW834CrPt0Obmfnv8TNs1WzqmDzF8IUEu9c+XI8TVo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qfI2Vk1SZNyWGhG/oSsUVZfSyLEq64S3pz9sCYkDTiN6DfNKMADeituJgXO9rjGeE8u5RVwLuvjSVDSdERk1rGVP5Z/f9yUK+7imN6yBSFu04BNptItxr1GeYVedW36bsSVWETjFyPK96d+NuhwuxDEKg8LBx9BtOTIYE9YcR64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Wv1Ym20nvz1HHbV;
-	Wed, 28 Aug 2024 18:56:28 +0800 (CST)
-Received: from kwepemm600004.china.huawei.com (unknown [7.193.23.242])
-	by mail.maildlp.com (Postfix) with ESMTPS id 08BA8180019;
-	Wed, 28 Aug 2024 18:59:48 +0800 (CST)
-Received: from localhost.localdomain (10.28.79.22) by
- kwepemm600004.china.huawei.com (7.193.23.242) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 28 Aug 2024 18:59:47 +0800
-From: Huisong Li <lihuisong@huawei.com>
-To: <xuwei5@hisilicon.com>
-CC: <linux-kernel@vger.kernel.org>, <soc@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <krzk@kernel.org>,
-	<Jonathan.Cameron@Huawei.com>, <wanghuiqiang@huawei.com>,
-	<liuyonglong@huawei.com>, <lihuisong@huawei.com>
-Subject: [PATCH v3 6/6] soc: hisilicon: kunpeng_hccs: Support low power feature for the specified HCCS type
-Date: Wed, 28 Aug 2024 18:49:56 +0800
-Message-ID: <20240828104956.20214-7-lihuisong@huawei.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20240828104956.20214-1-lihuisong@huawei.com>
-References: <20240828104956.20214-1-lihuisong@huawei.com>
+	s=arc-20240116; t=1724842246; c=relaxed/simple;
+	bh=aDGTHtaUj4ri0WThOoC44vFHT9BHmNA/5jo9zb7myZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aKbj4LwbshJgRBmQB13iVPR7NS28nUF4pYwwA7jNHFs96vfZPjSdbfN0GnL0TaaIWard/dMYeNylyg1WjlwnWjhIYq4AJP9QiQTWCrtqaarKDxnW6rUeN+Vw3gmI6sgDYv3Dx7HZv+on8xpQEcda7R3q7BRgZ/X0ZUhdQwqqdU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=g6BR9m7D; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37196229343so4025102f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 03:50:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724842243; x=1725447043; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4MZlWOxs4t4Z8hZxMqFP3tSUD9osypaAs+e9wc0G0ks=;
+        b=g6BR9m7D5MofiPlW7uII7VEHL+yzXNyfVR4DK+38RzUwwGBGxlsezq7TXtOs35MPVE
+         XH/BQAKXz4NYN2AgZ3sXOAaKm9QNCBm3uuo2slDfd2uT34PoXl1usn2c7tCAy0l+q82i
+         j2ofYQyD1id9xZuSH/rITCayssq2iQI8Kdey4eln62X7EYOOrR0QQLZz8FAqtS6D/yFR
+         r5P5Hqvrqtr6k5utzz4REmvOiRpzaxkpzb8Bzujh3PoPvfJpxikPgo9zTG686Gldw14w
+         bmE3ODD/ZLmE7hwyOrWq8oVgzQxmahaGTBiWJJHAcfZNgf8u3XTmCjzZQzTAbQk19Vll
+         jnPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724842243; x=1725447043;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4MZlWOxs4t4Z8hZxMqFP3tSUD9osypaAs+e9wc0G0ks=;
+        b=wYdATVmeEKxA4fT3ISSkx1tAgNhM1GYBDeHpmIUHX7hwVMBbnvYfdqgmaM68eDUp1Q
+         M0huicuUBzZVwTr7RSQrln+i94DaPNHKeZMTSeVK6AU5SqI2j/ATQqvvwGFrdPmivAc5
+         Zra/34qS+iK6QTDZkm87r7R39DnpqlHjObtenTtcnmF7zV6EoN1FwDRHbqaWVMcB1ML3
+         PoVCqBGxLpZ7jxdrKi8tTWocqH4kncIziu2L4+KFW8LkwV4gWBZi/yuRFcwe0N7COVl4
+         oLlF6Ciexbnxg5JkWxx8uwOQYQgoZx3Vsbsr4MnIsmKKFAMgVm0L8T27kAgpslR582hw
+         BArQ==
+X-Gm-Message-State: AOJu0YyUyaMhq5tcjNTQ8UxSNDeVZr+pbXXTeq6kgPFMZCVAEKBgF0eH
+	8QkHqCDz1dOivkwlU6uW+RdjIS1zT/WfsosNH6S/wXMyaTBNDIysjzsP+gwFxL4=
+X-Google-Smtp-Source: AGHT+IF8G4t4TzmGQiC0XVK9SVftT1F7UDU7Ot8DlJdl1AIGiKhqBQIW+kJHNKUGH8+EUorKOtQbGQ==
+X-Received: by 2002:a05:6000:1842:b0:368:3751:de3 with SMTP id ffacd0b85a97d-3731187d275mr11222603f8f.31.1724842242520;
+        Wed, 28 Aug 2024 03:50:42 -0700 (PDT)
+Received: from u94a ([2401:e180:8810:6eb3:b405:49d7:f2bd:52a0])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-714342e0a28sm9873372b3a.116.2024.08.28.03.50.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 03:50:42 -0700 (PDT)
+Date: Wed, 28 Aug 2024 18:50:32 +0800
+From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
+To: cve@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, Eduard Zingerman <eddyz87@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>
+Subject: Re: CVE-2024-43910: bpf: add missing check_func_arg_reg_off() to
+ prevent out-of-bounds memory accesses
+Message-ID: <glynl6edraeb54cnasnykbnxrmkuujd6i6gfe76ps5voginajd@omnyfrjljyou>
+References: <2024082630-CVE-2024-43910-c6ec@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemm600004.china.huawei.com (7.193.23.242)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024082630-CVE-2024-43910-c6ec@gregkh>
 
-Add the low power feature for the specified HCCS type by increasing
-and decreasing the used lane number of these HCCS ports on platform.
+On Mon, Aug 26, 2024 at 12:17:18PM GMT, Greg Kroah-Hartman wrote:
+> Description
+> ===========
+> 
+> In the Linux kernel, the following vulnerability has been resolved:
+> 
+> bpf: add missing check_func_arg_reg_off() to prevent out-of-bounds memory accesses
+> 
+> Currently, it's possible to pass in a modified CONST_PTR_TO_DYNPTR to
+> a global function as an argument. The adverse effects of this is that
+> BPF helpers can continue to make use of this modified
+> CONST_PTR_TO_DYNPTR from within the context of the global function,
+> which can unintentionally result in out-of-bounds memory accesses and
+> therefore compromise overall system stability i.e.
+> 
+> [  244.157771] BUG: KASAN: slab-out-of-bounds in bpf_dynptr_data+0x137/0x140
+> [  244.161345] Read of size 8 at addr ffff88810914be68 by task test_progs/302
+> [  244.167151] CPU: 0 PID: 302 Comm: test_progs Tainted: G O E 6.10.0-rc3-00131-g66b586715063 #533
+> [  244.174318] Call Trace:
+> [  244.175787]  <TASK>
+> [  244.177356]  dump_stack_lvl+0x66/0xa0
+> [  244.179531]  print_report+0xce/0x670
+> [  244.182314]  ? __virt_addr_valid+0x200/0x3e0
+> [  244.184908]  kasan_report+0xd7/0x110
+> [  244.187408]  ? bpf_dynptr_data+0x137/0x140
+> [  244.189714]  ? bpf_dynptr_data+0x137/0x140
+> [  244.192020]  bpf_dynptr_data+0x137/0x140
+> [  244.194264]  bpf_prog_b02a02fdd2bdc5fa_global_call_bpf_dynptr_data+0x22/0x26
+> [  244.198044]  bpf_prog_b0fe7b9d7dc3abde_callback_adjust_bpf_dynptr_reg_off+0x1f/0x23
+> [  244.202136]  bpf_user_ringbuf_drain+0x2c7/0x570
+> [  244.204744]  ? 0xffffffffc0009e58
+> [  244.206593]  ? __pfx_bpf_user_ringbuf_drain+0x10/0x10
+> [  244.209795]  bpf_prog_33ab33f6a804ba2d_user_ringbuf_callback_const_ptr_to_dynptr_reg_off+0x47/0x4b
+> [  244.215922]  bpf_trampoline_6442502480+0x43/0xe3
+> [  244.218691]  __x64_sys_prlimit64+0x9/0xf0
+> [  244.220912]  do_syscall_64+0xc1/0x1d0
+> [  244.223043]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> [  244.226458] RIP: 0033:0x7ffa3eb8f059
+> [  244.228582] Code: 08 89 e8 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 8f 1d 0d 00 f7 d8 64 89 01 48
+> [  244.241307] RSP: 002b:00007ffa3e9c6eb8 EFLAGS: 00000206 ORIG_RAX: 000000000000012e
+> [  244.246474] RAX: ffffffffffffffda RBX: 00007ffa3e9c7cdc RCX: 00007ffa3eb8f059
+> [  244.250478] RDX: 00007ffa3eb162b4 RSI: 0000000000000000 RDI: 00007ffa3e9c7fb0
+> [  244.255396] RBP: 00007ffa3e9c6ed0 R08: 00007ffa3e9c76c0 R09: 0000000000000000
+> [  244.260195] R10: 0000000000000000 R11: 0000000000000206 R12: ffffffffffffff80
+> [  244.264201] R13: 000000000000001c R14: 00007ffc5d6b4260 R15: 00007ffa3e1c7000
+> [  244.268303]  </TASK>
+> 
+> Add a check_func_arg_reg_off() to the path in which the BPF verifier
+> verifies the arguments of global function arguments, specifically
+> those which take an argument of type ARG_PTR_TO_DYNPTR |
+> MEM_RDONLY. Also, process_dynptr_func() doesn't appear to perform any
+> explicit and strict type matching on the supplied register type, so
+> let's also enforce that a register either type PTR_TO_STACK or
+> CONST_PTR_TO_DYNPTR is by the caller.
+> 
+> The Linux kernel CVE team has assigned CVE-2024-43910 to this issue.
+> 
+> 
+> Affected and fixed versions
+> ===========================
+> 
+> 	Fixed in 6.10.5 with commit 13663a7c644b
+> 	Fixed in 6.11-rc1 with commit ec2b9a5e11e5
 
-Signed-off-by: Huisong Li <lihuisong@huawei.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
----
- .../sysfs-devices-platform-kunpeng_hccs       |  37 ++
- drivers/soc/hisilicon/Kconfig                 |   7 +-
- drivers/soc/hisilicon/kunpeng_hccs.c          | 376 +++++++++++++++++-
- drivers/soc/hisilicon/kunpeng_hccs.h          |  14 +
- 4 files changed, 431 insertions(+), 3 deletions(-)
+I believe the issue of being able to pass modified (i.e. non-zero
+offset) dynptr to global function was introduced with commit
+a64bfe618665 ("bpf: add support for passing dynptr pointer to global
+subprog") in 6.8.
 
-diff --git a/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs b/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs
-index d4c355e0e0bb..d1b3a95a5518 100644
---- a/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs
-+++ b/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs
-@@ -87,3 +87,40 @@ Contact:	Huisong Li <lihuisong@huawei.com>
- Description:
- 		This interface is used to show all HCCS types used on the
- 		platform, like, HCCS-v1, HCCS-v2 and so on.
-+
-+What:		/sys/devices/platform/HISI04Bx:00/available_inc_dec_lane_types
-+What:		/sys/devices/platform/HISI04Bx:00/dec_lane_of_type
-+What:		/sys/devices/platform/HISI04Bx:00/inc_lane_of_type
-+Date:		August 2024
-+KernelVersion:	6.12
-+Contact:	Huisong Li <lihuisong@huawei.com>
-+Description:
-+		These interfaces under /sys/devices/platform/HISI04Bx/ are
-+		used to support the low power consumption feature of some
-+		HCCS types by changing the number of lanes used. The interfaces
-+		changing the number of lanes used are 'dec_lane_of_type' and
-+		'inc_lane_of_type' which require root privileges. These
-+		interfaces aren't exposed if no HCCS type on platform support
-+		this feature. Please note that decreasing lane number is only
-+		allowed if all the specified HCCS ports are not busy.
-+
-+		The low power consumption interfaces are as follows:
-+
-+		============================= ==== ================================
-+		available_inc_dec_lane_types: (RO) available HCCS types (string) to
-+						   increase and decrease the number
-+						   of lane used, e.g. HCCS-v2.
-+		dec_lane_of_type:             (WO) input HCCS type supported
-+						   decreasing lane to decrease the
-+						   used lane number of all specified
-+						   HCCS type ports on platform to
-+						   the minimum.
-+						   You can query the 'cur_lane_num'
-+						   to get the minimum lane number
-+						   after executing successfully.
-+		inc_lane_of_type:             (WO) input HCCS type supported
-+						   increasing lane to increase the
-+						   used lane number of all specified
-+						   HCCS type ports on platform to
-+						   the full lane state.
-+		============================= ==== ================================
-diff --git a/drivers/soc/hisilicon/Kconfig b/drivers/soc/hisilicon/Kconfig
-index 4b0a099b28cc..6d7c244d2e78 100644
---- a/drivers/soc/hisilicon/Kconfig
-+++ b/drivers/soc/hisilicon/Kconfig
-@@ -13,9 +13,12 @@ config KUNPENG_HCCS
- 	  interconnection bus protocol.
- 	  The performance of application may be affected if some HCCS
- 	  ports are not in full lane status, have a large number of CRC
--	  errors and so on.
-+	  errors and so on. This may support for reducing system power
-+	  consumption if there are HCCS ports supported low power feature
-+	  on platform.
- 
- 	  Say M here if you want to include support for querying the
--	  health status and port information of HCCS on Kunpeng SoC.
-+	  health status and port information of HCCS, or reducing system
-+	  power consumption on Kunpeng SoC.
- 
- endmenu
-diff --git a/drivers/soc/hisilicon/kunpeng_hccs.c b/drivers/soc/hisilicon/kunpeng_hccs.c
-index 623e7b7ed39a..0a45bbc8cb68 100644
---- a/drivers/soc/hisilicon/kunpeng_hccs.c
-+++ b/drivers/soc/hisilicon/kunpeng_hccs.c
-@@ -23,10 +23,18 @@
-  *    - CRC error count sum
-  *
-  * - Retrieve all HCCS types used on the platform.
-+ *
-+ * - Support low power feature for all specified HCCS type ports, and
-+ *   provide the following interface:
-+ *    - query HCCS types supported increasing and decreasing lane number.
-+ *    - decrease lane number of all specified HCCS type ports on idle state.
-+ *    - increase lane number of all specified HCCS type ports.
-  */
- #include <linux/acpi.h>
-+#include <linux/delay.h>
- #include <linux/iopoll.h>
- #include <linux/platform_device.h>
-+#include <linux/stringify.h>
- #include <linux/sysfs.h>
- #include <linux/types.h>
- 
-@@ -65,6 +73,33 @@ static struct hccs_dev *device_kobj_to_hccs_dev(struct kobject *k)
- 	return platform_get_drvdata(pdev);
- }
- 
-+static char *hccs_port_type_to_name(struct hccs_dev *hdev, u8 type)
-+{
-+	u16 i;
-+
-+	for (i = 0; i < hdev->used_type_num; i++) {
-+		if (hdev->type_name_maps[i].type == type)
-+			return hdev->type_name_maps[i].name;
-+	}
-+
-+	return NULL;
-+}
-+
-+static int hccs_name_to_port_type(struct hccs_dev *hdev,
-+				  const char *name, u8 *type)
-+{
-+	u16 i;
-+
-+	for (i = 0; i < hdev->used_type_num; i++) {
-+		if (strcmp(hdev->type_name_maps[i].name, name) == 0) {
-+			*type = hdev->type_name_maps[i].type;
-+			return 0;
-+		}
-+	}
-+
-+	return -EINVAL;
-+}
-+
- struct hccs_register_ctx {
- 	struct device *dev;
- 	u8 chan_id;
-@@ -1195,6 +1230,306 @@ static const struct kobj_type hccs_chip_type = {
- 	.default_groups = hccs_chip_default_groups,
- };
- 
-+static int hccs_parse_pm_port_type(struct hccs_dev *hdev, const char *buf,
-+				   u8 *port_type)
-+{
-+	char hccs_name[HCCS_NAME_MAX_LEN + 1] = "";
-+	u8 type;
-+	int ret;
-+
-+	ret = sscanf(buf, "%" __stringify(HCCS_NAME_MAX_LEN) "s", hccs_name);
-+	if (ret != 1)
-+		return -EINVAL;
-+
-+	ret = hccs_name_to_port_type(hdev, hccs_name, &type);
-+	if (ret) {
-+		dev_dbg(hdev->dev, "input invalid, please get the available types from 'used_types'.\n");
-+		return ret;
-+	}
-+
-+	if (type == HCCS_V2 && hdev->caps & HCCS_CAPS_HCCS_V2_PM) {
-+		*port_type = type;
-+		return 0;
-+	}
-+
-+	dev_dbg(hdev->dev, "%s doesn't support for increasing and decreasing lane.\n",
-+		hccs_name);
-+
-+	return -EOPNOTSUPP;
-+}
-+
-+static int hccs_query_port_idle_status(struct hccs_dev *hdev,
-+				       struct hccs_port_info *port, u8 *idle)
-+{
-+	const struct hccs_die_info *die = port->die;
-+	const struct hccs_chip_info *chip = die->chip;
-+	struct hccs_port_comm_req_param *req_param;
-+	struct hccs_desc desc;
-+	int ret;
-+
-+	hccs_init_req_desc(&desc);
-+	req_param = (struct hccs_port_comm_req_param *)desc.req.data;
-+	req_param->chip_id = chip->chip_id;
-+	req_param->die_id = die->die_id;
-+	req_param->port_id = port->port_id;
-+	ret = hccs_pcc_cmd_send(hdev, HCCS_GET_PORT_IDLE_STATUS, &desc);
-+	if (ret) {
-+		dev_err(hdev->dev,
-+			"get port idle status failed, ret = %d.\n", ret);
-+		return ret;
-+	}
-+
-+	*idle = *((u8 *)desc.rsp.data);
-+	return 0;
-+}
-+
-+static int hccs_get_all_spec_port_idle_sta(struct hccs_dev *hdev, u8 port_type,
-+					   bool *all_idle)
-+{
-+	struct hccs_chip_info *chip;
-+	struct hccs_port_info *port;
-+	struct hccs_die_info *die;
-+	int ret = 0;
-+	u8 i, j, k;
-+	u8 idle;
-+
-+	*all_idle = false;
-+	for (i = 0; i < hdev->chip_num; i++) {
-+		chip = &hdev->chips[i];
-+		for (j = 0; j < chip->die_num; j++) {
-+			die = &chip->dies[j];
-+			for (k = 0; k < die->port_num; k++) {
-+				port = &die->ports[k];
-+				if (port->port_type != port_type)
-+					continue;
-+				ret = hccs_query_port_idle_status(hdev, port,
-+								  &idle);
-+				if (ret) {
-+					dev_err(hdev->dev,
-+						"hccs%u on chip%u/die%u get idle status failed, ret = %d.\n",
-+						k, i, j, ret);
-+					return ret;
-+				} else if (idle == 0) {
-+					dev_info(hdev->dev, "hccs%u on chip%u/die%u is busy.\n",
-+						k, i, j);
-+					return 0;
-+				}
-+			}
-+		}
-+	}
-+	*all_idle = true;
-+
-+	return 0;
-+}
-+
-+static int hccs_get_all_spec_port_full_lane_sta(struct hccs_dev *hdev,
-+						u8 port_type, bool *full_lane)
-+{
-+	struct hccs_link_status status = {0};
-+	struct hccs_chip_info *chip;
-+	struct hccs_port_info *port;
-+	struct hccs_die_info *die;
-+	u8 i, j, k;
-+	int ret;
-+
-+	*full_lane = false;
-+	for (i = 0; i < hdev->chip_num; i++) {
-+		chip = &hdev->chips[i];
-+		for (j = 0; j < chip->die_num; j++) {
-+			die = &chip->dies[j];
-+			for (k = 0; k < die->port_num; k++) {
-+				port = &die->ports[k];
-+				if (port->port_type != port_type)
-+					continue;
-+				ret = hccs_query_port_link_status(hdev, port,
-+								  &status);
-+				if (ret)
-+					return ret;
-+				if (status.lane_num != port->max_lane_num)
-+					return 0;
-+			}
-+		}
-+	}
-+	*full_lane = true;
-+
-+	return 0;
-+}
-+
-+static int hccs_prepare_inc_lane(struct hccs_dev *hdev, u8 type)
-+{
-+	struct hccs_inc_lane_req_param *req_param;
-+	struct hccs_desc desc;
-+	int ret;
-+
-+	hccs_init_req_desc(&desc);
-+	req_param = (struct hccs_inc_lane_req_param *)desc.req.data;
-+	req_param->port_type = type;
-+	req_param->opt_type = HCCS_PREPARE_INC_LANE;
-+	ret = hccs_pcc_cmd_send(hdev, HCCS_PM_INC_LANE, &desc);
-+	if (ret)
-+		dev_err(hdev->dev, "prepare for increasing lane failed, ret = %d.\n",
-+			ret);
-+
-+	return ret;
-+}
-+
-+static int hccs_wait_serdes_adapt_completed(struct hccs_dev *hdev, u8 type)
-+{
-+#define HCCS_MAX_WAIT_CNT_FOR_ADAPT	10
-+#define HCCS_QUERY_ADAPT_RES_DELAY_MS	100
-+#define HCCS_SERDES_ADAPT_OK		0
-+
-+	struct hccs_inc_lane_req_param *req_param;
-+	u8 wait_cnt = HCCS_MAX_WAIT_CNT_FOR_ADAPT;
-+	struct hccs_desc desc;
-+	u8 adapt_res;
-+	int ret;
-+
-+	do {
-+		hccs_init_req_desc(&desc);
-+		req_param = (struct hccs_inc_lane_req_param *)desc.req.data;
-+		req_param->port_type = type;
-+		req_param->opt_type = HCCS_GET_ADAPT_RES;
-+		ret = hccs_pcc_cmd_send(hdev, HCCS_PM_INC_LANE, &desc);
-+		if (ret) {
-+			dev_err(hdev->dev, "query adapting result failed, ret = %d.\n",
-+				ret);
-+			return ret;
-+		}
-+		adapt_res = *((u8 *)&desc.rsp.data);
-+		if (adapt_res == HCCS_SERDES_ADAPT_OK)
-+			return 0;
-+
-+		msleep(HCCS_QUERY_ADAPT_RES_DELAY_MS);
-+	} while (--wait_cnt);
-+
-+	dev_err(hdev->dev, "wait for adapting completed timeout.\n");
-+
-+	return -ETIMEDOUT;
-+}
-+
-+static int hccs_start_hpcs_retraining(struct hccs_dev *hdev, u8 type)
-+{
-+	struct hccs_inc_lane_req_param *req_param;
-+	struct hccs_desc desc;
-+	int ret;
-+
-+	hccs_init_req_desc(&desc);
-+	req_param = (struct hccs_inc_lane_req_param *)desc.req.data;
-+	req_param->port_type = type;
-+	req_param->opt_type = HCCS_START_RETRAINING;
-+	ret = hccs_pcc_cmd_send(hdev, HCCS_PM_INC_LANE, &desc);
-+	if (ret)
-+		dev_err(hdev->dev, "start hpcs retraining failed, ret = %d.\n",
-+			ret);
-+
-+	return ret;
-+}
-+
-+static int hccs_start_inc_lane(struct hccs_dev *hdev, u8 type)
-+{
-+	int ret;
-+
-+	ret = hccs_prepare_inc_lane(hdev, type);
-+	if (ret)
-+		return ret;
-+
-+	ret = hccs_wait_serdes_adapt_completed(hdev, type);
-+	if (ret)
-+		return ret;
-+
-+	return hccs_start_hpcs_retraining(hdev, type);
-+}
-+
-+static int hccs_start_dec_lane(struct hccs_dev *hdev, u8 type)
-+{
-+	struct hccs_desc desc;
-+	u8 *port_type;
-+	int ret;
-+
-+	hccs_init_req_desc(&desc);
-+	port_type = (u8 *)desc.req.data;
-+	*port_type = type;
-+	ret = hccs_pcc_cmd_send(hdev, HCCS_PM_DEC_LANE, &desc);
-+	if (ret)
-+		dev_err(hdev->dev, "start to decrease lane failed, ret = %d.\n",
-+			ret);
-+
-+	return ret;
-+}
-+
-+static ssize_t dec_lane_of_type_store(struct kobject *kobj, struct kobj_attribute *attr,
-+			      const char *buf, size_t count)
-+{
-+	struct hccs_dev *hdev = device_kobj_to_hccs_dev(kobj);
-+	bool all_in_idle;
-+	u8 port_type;
-+	int ret;
-+
-+	ret = hccs_parse_pm_port_type(hdev, buf, &port_type);
-+	if (ret)
-+		return ret;
-+
-+	mutex_lock(&hdev->lock);
-+	ret = hccs_get_all_spec_port_idle_sta(hdev, port_type, &all_in_idle);
-+	if (ret)
-+		goto out;
-+	if (!all_in_idle) {
-+		ret = -EBUSY;
-+		dev_err(hdev->dev, "please don't decrese lanes on high load with %s, ret = %d.\n",
-+			hccs_port_type_to_name(hdev, port_type), ret);
-+		goto out;
-+	}
-+
-+	ret = hccs_start_dec_lane(hdev, port_type);
-+out:
-+	mutex_unlock(&hdev->lock);
-+
-+	return ret == 0 ? count : ret;
-+}
-+static struct kobj_attribute dec_lane_of_type_attr =
-+		__ATTR(dec_lane_of_type, 0200, NULL, dec_lane_of_type_store);
-+
-+static ssize_t inc_lane_of_type_store(struct kobject *kobj, struct kobj_attribute *attr,
-+			      const char *buf, size_t count)
-+{
-+	struct hccs_dev *hdev = device_kobj_to_hccs_dev(kobj);
-+	bool full_lane;
-+	u8 port_type;
-+	int ret;
-+
-+	ret = hccs_parse_pm_port_type(hdev, buf, &port_type);
-+	if (ret)
-+		return ret;
-+
-+	mutex_lock(&hdev->lock);
-+	ret = hccs_get_all_spec_port_full_lane_sta(hdev, port_type, &full_lane);
-+	if (ret || full_lane)
-+		goto out;
-+
-+	ret = hccs_start_inc_lane(hdev, port_type);
-+out:
-+	mutex_unlock(&hdev->lock);
-+	return ret == 0 ? count : ret;
-+}
-+static struct kobj_attribute inc_lane_of_type_attr =
-+		__ATTR(inc_lane_of_type, 0200, NULL, inc_lane_of_type_store);
-+
-+static ssize_t available_inc_dec_lane_types_show(struct kobject *kobj,
-+						 struct kobj_attribute *attr,
-+						 char *buf)
-+{
-+	struct hccs_dev *hdev = device_kobj_to_hccs_dev(kobj);
-+
-+	if (hdev->caps & HCCS_CAPS_HCCS_V2_PM)
-+		return sysfs_emit(buf, "%s\n",
-+				  hccs_port_type_to_name(hdev, HCCS_V2));
-+
-+	return -EINVAL;
-+}
-+static struct kobj_attribute available_inc_dec_lane_types_attr =
-+		__ATTR(available_inc_dec_lane_types, 0444,
-+		       available_inc_dec_lane_types_show, NULL);
- 
- static ssize_t used_types_show(struct kobject *kobj,
- 			       struct kobj_attribute *attr, char *buf)
-@@ -1215,11 +1550,50 @@ static struct kobj_attribute used_types_attr =
- static void hccs_remove_misc_sysfs(struct hccs_dev *hdev)
- {
- 	sysfs_remove_file(&hdev->dev->kobj, &used_types_attr.attr);
-+
-+	if (!(hdev->caps & HCCS_CAPS_HCCS_V2_PM))
-+		return;
-+
-+	sysfs_remove_file(&hdev->dev->kobj,
-+			  &available_inc_dec_lane_types_attr.attr);
-+	sysfs_remove_file(&hdev->dev->kobj, &dec_lane_of_type_attr.attr);
-+	sysfs_remove_file(&hdev->dev->kobj, &inc_lane_of_type_attr.attr);
- }
- 
- static int hccs_add_misc_sysfs(struct hccs_dev *hdev)
- {
--	return sysfs_create_file(&hdev->dev->kobj, &used_types_attr.attr);
-+	int ret;
-+
-+	ret = sysfs_create_file(&hdev->dev->kobj, &used_types_attr.attr);
-+	if (ret)
-+		return ret;
-+
-+	if (!(hdev->caps & HCCS_CAPS_HCCS_V2_PM))
-+		return 0;
-+
-+	ret = sysfs_create_file(&hdev->dev->kobj,
-+				&available_inc_dec_lane_types_attr.attr);
-+	if (ret)
-+		goto used_types_remove;
-+
-+	ret = sysfs_create_file(&hdev->dev->kobj, &dec_lane_of_type_attr.attr);
-+	if (ret)
-+		goto inc_dec_lane_types_remove;
-+
-+	ret = sysfs_create_file(&hdev->dev->kobj, &inc_lane_of_type_attr.attr);
-+	if (ret)
-+		goto dec_lane_of_type_remove;
-+
-+	return 0;
-+
-+dec_lane_of_type_remove:
-+	sysfs_remove_file(&hdev->dev->kobj, &dec_lane_of_type_attr.attr);
-+inc_dec_lane_types_remove:
-+	sysfs_remove_file(&hdev->dev->kobj,
-+			  &available_inc_dec_lane_types_attr.attr);
-+used_types_remove:
-+	sysfs_remove_file(&hdev->dev->kobj, &used_types_attr.attr);
-+	return ret;
- }
- 
- static void hccs_remove_die_dir(struct hccs_die_info *die)
-diff --git a/drivers/soc/hisilicon/kunpeng_hccs.h b/drivers/soc/hisilicon/kunpeng_hccs.h
-index 401df4694aec..dc267136919b 100644
---- a/drivers/soc/hisilicon/kunpeng_hccs.h
-+++ b/drivers/soc/hisilicon/kunpeng_hccs.h
-@@ -80,10 +80,13 @@ struct hccs_verspecific_data {
- 	bool has_txdone_irq;
- };
- 
-+#define HCCS_CAPS_HCCS_V2_PM	BIT_ULL(0)
-+
- struct hccs_dev {
- 	struct device *dev;
- 	struct acpi_device *acpi_dev;
- 	const struct hccs_verspecific_data *verspec_data;
-+	/* device capabilities from firmware, like HCCS_CAPS_xxx. */
- 	u64 caps;
- 	u8 chip_num;
- 	struct hccs_chip_info *chips;
-@@ -106,6 +109,9 @@ enum hccs_subcmd_type {
- 	HCCS_GET_DIE_PORTS_LANE_STA,
- 	HCCS_GET_DIE_PORTS_LINK_STA,
- 	HCCS_GET_DIE_PORTS_CRC_ERR_CNT,
-+	HCCS_GET_PORT_IDLE_STATUS,
-+	HCCS_PM_DEC_LANE,
-+	HCCS_PM_INC_LANE,
- 	HCCS_SUB_CMD_MAX = 255,
- };
- 
-@@ -149,6 +155,14 @@ struct hccs_port_comm_req_param {
- 	u8 port_id;
- };
- 
-+#define HCCS_PREPARE_INC_LANE	1
-+#define HCCS_GET_ADAPT_RES	2
-+#define HCCS_START_RETRAINING	3
-+struct hccs_inc_lane_req_param {
-+	u8 port_type;
-+	u8 opt_type;
-+};
-+
- #define HCCS_PORT_RESET         1
- #define HCCS_PORT_SETUP         2
- #define HCCS_PORT_CONFIG        3
--- 
-2.22.0
-
+[...]
 
