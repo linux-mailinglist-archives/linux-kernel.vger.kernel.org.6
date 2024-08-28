@@ -1,177 +1,493 @@
-Return-Path: <linux-kernel+bounces-304831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE83696256F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:02:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E7E4962577
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:06:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A64BE284B9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:02:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 471E5285AA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9BC537F5;
-	Wed, 28 Aug 2024 11:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EhVSfTRQ"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD8E16C68D;
+	Wed, 28 Aug 2024 11:06:10 +0000 (UTC)
+Received: from mx.astralinux.ru (mx.astralinux.ru [89.232.161.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B77715A86D
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 11:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D85E1662FD
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 11:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.232.161.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724842966; cv=none; b=qRe81AY7VJA6e1GTvYzAV4VrxEvmTe5j38sIy65QNuEilPMTB0mOiJe6XBOHiUPHCHjLuQQffTDJyQideCt0gmnEEYd6BlfOj9lZWtjD5P40+ugcK0f0ipnYHUEp492lr8gN1LE0tQcU0EDz0GNl1g72Of3PafXOL5hSkt0ArkE=
+	t=1724843170; cv=none; b=bjV0+uVRN8ALVBDRWt16bsn24n4N+OfmGZy+/l9+TQwCXIsQBgo3bi8efKYqRIwMZy/W8PZJDqusqClAa8JCvnl7YneIRIzE6COHSQzHGHpm0oL/G8S7Ki6o5JviQDs3Q8uFEQTw9m9F38oaTRdVErtlyqSBBgVKUWgotkhJnoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724842966; c=relaxed/simple;
-	bh=DQRf8sa+9WldPEN6mF1FnwCn42mPXzl/+1j3nPC5tpg=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=h88CyxL4PbRMaqWBWmcj6Nqurf4J/ZDleSuNaHD+0YGM1lspQyVsUTNkJMG5Hs/8O2qQI6ZNuIo5IXGScXYYdAejZzkjuYj1SRsSj3QWg/qx8yO4U9b14v5Vt9XG5/ag4NfUbsEZXLG0n06HU8nsB688qsQ2YLaTBBNJkhxa57k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=EhVSfTRQ; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240828110242euoutp02a6b7e8857028a85aba4d67eeff3f6ca2~v34kip47Y2959029590euoutp02K
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 11:02:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240828110242euoutp02a6b7e8857028a85aba4d67eeff3f6ca2~v34kip47Y2959029590euoutp02K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1724842962;
-	bh=DQRf8sa+9WldPEN6mF1FnwCn42mPXzl/+1j3nPC5tpg=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=EhVSfTRQ0lEQNPaDGhK8zSNPMLquPkEpecpUlfUoKvgRBsJPtxIyscs4sHvTEErJA
-	 B9YHPIhrYH/CelcttTvZKIkxnwI/aN1wS24IVGJtLv/1kESfGKZ6oUIg1qsKJ6AoEU
-	 6zNKNjUQSNy9LujLJnLwzpZFiXACMPrLo7hCMJ9c=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240828110242eucas1p1e97f35a9323d2353f4ef0665970acfcf~v34kOmYNa1193511935eucas1p1K;
-	Wed, 28 Aug 2024 11:02:42 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id 82.E7.09875.1D30FC66; Wed, 28
-	Aug 2024 12:02:41 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240828110241eucas1p2f237730e7ac898a732309978a4b1d10c~v34jtf40O1271212712eucas1p22;
-	Wed, 28 Aug 2024 11:02:41 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240828110241eusmtrp1b8c7af4cad45e402bbd0bf963005b2e5~v34jsOgXY0653006530eusmtrp1w;
-	Wed, 28 Aug 2024 11:02:41 +0000 (GMT)
-X-AuditID: cbfec7f4-11bff70000002693-7e-66cf03d1d2f0
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id E4.6E.08810.1D30FC66; Wed, 28
-	Aug 2024 12:02:41 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240828110241eusmtip1def6386c765cdbee79315dd7ff10b9de~v34japGLD0491604916eusmtip1q;
-	Wed, 28 Aug 2024 11:02:41 +0000 (GMT)
-Received: from localhost (106.110.32.122) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Wed, 28 Aug 2024 12:02:41 +0100
-Date: Wed, 28 Aug 2024 13:02:39 +0200
-From: "javier.gonz@samsung.com" <javier.gonz@samsung.com>
-To: Saeed Mirzamohammadi <saeed.mirzamohammadi@oracle.com>
-CC: Pankaj Raghav <p.raghav@samsung.com>, Christoph Hellwig <hch@lst.de>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>, Keith Busch
-	<kbusch@kernel.org>, Jens Axboe <axboe@fb.com>, Sagi Grimberg
-	<sagi@grimberg.me>, "linux-nvme@lists.infradead.org"
-	<linux-nvme@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] nvme-pci: add NVME_QUIRK_BOGUS_NID for Samsung
- PM173X
-Message-ID: <20240828110239.hnljbiow2zbaduhu@ArmHalley.local>
+	s=arc-20240116; t=1724843170; c=relaxed/simple;
+	bh=7T6shVW8AzykxpscqQ4sgQ5Ig/sHJei0oWnNOPLtjPk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Cdee+hkNNipqIDwVCswxNM0B7z0+HeI6jz02Prs6XzL29W4omr6fhiZTHVGNf5YByeksKP50llX/jJln0FfCuDMumxdnS2dIthX+Q6Uflzr02+E+hqqW+q6Wmzlv1iyrJ1bVAECiYerYOU7j1iTbkyMrZvx65N90na6FvY7C8qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=89.232.161.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
+Received: from [10.177.185.109] (helo=new-mail.astralinux.ru)
+	by mx.astralinux.ru with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <abelova@astralinux.ru>)
+	id 1sjGTP-008YTL-Lp; Wed, 28 Aug 2024 14:04:23 +0300
+Received: from rbta-msk-lt-106062.astralinux.ru (unknown [10.198.22.34])
+	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4Wv1lz3tTJzkWM5;
+	Wed, 28 Aug 2024 14:05:19 +0300 (MSK)
+From: Anastasia Belova <abelova@astralinux.ru>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Anastasia Belova <abelova@astralinux.ru>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH] drm/meson: switch to a managed drm device
+Date: Wed, 28 Aug 2024 14:04:21 +0300
+Message-Id: <20240828110421.14956-1-abelova@astralinux.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <53369ABE-DB4F-44B0-831C-E4CB232A949A@oracle.com>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDKsWRmVeSWpSXmKPExsWy7djP87oXmc+nGbT1WFj833OMzWLl6qNM
-	FpMOXWO0uLxrDpvF/GVP2S2WLj/GbLHu9XsWiwUbHzE6cHhMbH7H7nH+3kYWj02rOtk8Ni+p
-	99h9s4HN4+PTWywenzfJBbBHcdmkpOZklqUW6dslcGWs+neIuWAVZ8Xm3XOZGxi3sHcxcnJI
-	CJhIrHxxl7GLkYtDSGAFo8TNzlPsEM4XRol73WtYIZzPjBKr/u1kgWk5s/4lVNVyRol33ReY
-	4arOToPp3wLUcnIXWAuLgKrEzH/fWUFsNgFLiR+3LjKD2CICVhLPT9xnA2lgFnjKJHFxwxWw
-	hLBAgMSMW3fBbF4BW4m+V6vZIWxBiZMzn4ANZQZq7vzQBDSUA8iWllj+jwMiLC/RvHU2WCun
-	gJ1Ex50PzBBnK0k8fvGWEcKulTi15RYTyF4JgXZOic49F1ghEi4SW7a/hbKFJV4dhwWTjMTp
-	yT1Q/1dLNJw8AdXcwijR2rEV7AgJAWuJvjM5EKajxOmPPhAmn8SNt4IQp/FJTNo2nRkizCvR
-	0SY0gVFlFpK/ZiH5axbCX7OQ/LWAkWUVo3hqaXFuemqxUV5quV5xYm5xaV66XnJ+7iZGYII6
-	/e/4lx2My1991DvEyMTBeIhRgoNZSYT3xPGzaUK8KYmVValF+fFFpTmpxYcYpTlYlMR5VVPk
-	U4UE0hNLUrNTUwtSi2CyTBycUg1Mk5Y0nm2ZMvGsqdaEj8kyxzmXs0qXWqSobPa0Nm7ZtOdm
-	jtQ+iViztaKPzvhPles99bT7VIAaMxeTueCcvDmFh4VmCRcmBr22l3m8/dmpH4vuM1yq25z0
-	PeLAfrNr95cG/9hmHiTnkaZhctQl/UPwwtlXNOvLBV94Jutn7ZAosOv/YBBbIXb3jv4b2wiO
-	vbPdcur46zrEuZnDpxfNWeZm/vpQU19mQuojpbSpZXqHzzA7WOepWGw/IMf9KKpuj5/kJZ3L
-	89kCby2Y1a3MILVnnaUYB7dn/a+/01L0g16ZJWrsu/PlrN9h/ldHQ1iVL+3n2/Nlwr8HdyeY
-	fco13yPU8GLWBd4Plzx+fVAQePVUiaU4I9FQi7moOBEAEZ1zI78DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOIsWRmVeSWpSXmKPExsVy+t/xu7oXmc+nGTR/E7X4v+cYm8XK1UeZ
-	LCYdusZocXnXHDaL+cueslssXX6M2WLd6/csFgs2PmJ04PCY2PyO3eP8vY0sHptWdbJ5bF5S
-	77H7ZgObx8ent1g8Pm+SC2CP0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXS
-	t7NJSc3JLEst0rdL0MtY9e8Qc8EqzorNu+cyNzBuYe9i5OSQEDCROLP+JZDNxSEksJRRYuXN
-	p8wQCRmJjV+uskLYwhJ/rnWxQRR9ZJTY/auDFcLZwihx5ukqNpAqFgFViZn/voN1sAlYSvy4
-	dRFskoiAlcTzE/fBupkFnjJJXNxwBSwhLOAn0dLTzAhi8wrYSvS9Wg11xwEmiSvPjzBBJAQl
-	Ts58wgJiMwtYSMycfx6ogQPIlpZY/o8DIiwv0bx1NthMTgE7iY47H6BeUJJ4/OItI4RdK/H5
-	7zPGCYwis5BMnYVk6iyEqbOQTF3AyLKKUSS1tDg3PbfYUK84Mbe4NC9dLzk/dxMjMIa3Hfu5
-	eQfjvFcf9Q4xMnEwHmKU4GBWEuE9cfxsmhBvSmJlVWpRfnxRaU5q8SFGU2AYTWSWEk3OByaR
-	vJJ4QzMDU0MTM0sDU0szYyVxXs+CjkQhgfTEktTs1NSC1CKYPiYOTqkGpuKVwiIzpDVUp617
-	bR0QtLq+/PuXtos8q7mK1y9usvr0Sy3pv7ZViUv63I1bmZuOT1n9+e7EJ2/PKkxdfzmYWXTS
-	pLs/fm1n+bA2ct3U1pt6fSveR+6eliGSz3zEOvvKMu+GC9bMvPmJzVbLPinkH7+/4PttN521
-	l7f7uj6ddMUwWqRvyjSpsxP/n89W0lmk6lsY3SfFqVB5v67W2upA8iXLSZtWPTrj0dcnOCl8
-	u2z+dKbInE6X/Unbzn6bfKfykeH1qGUMX6dysXSaSk3mESnsK99yKoyn7JXad8vIg3yKtxw7
-	gvlMqjPyFz++uKBrumKW6EkhP0fhpPgXE81FD5r6zlVSna/n8vzJhJ0P+ZRYijMSDbWYi4oT
-	AcBR011qAwAA
-X-CMS-MailID: 20240828110241eucas1p2f237730e7ac898a732309978a4b1d10c
-X-Msg-Generator: CA
-X-RootMTR: 20230427074641eucas1p185bb564521b6c01366293d20970fdfe2
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230427074641eucas1p185bb564521b6c01366293d20970fdfe2
-References: <20230315223436.2857712-1-saeed.mirzamohammadi@oracle.com>
-	<20230321132604.GA14120@lst.de> <20230414051259.GA11464@lst.de>
-	<CGME20230427074641eucas1p185bb564521b6c01366293d20970fdfe2@eucas1p1.samsung.com>
-	<20230427073752.3e3spo2vgfxdfcv2@localhost>
-	<53369ABE-DB4F-44B0-831C-E4CB232A949A@oracle.com>
+X-DrWeb-SpamScore: 0
+X-DrWeb-SpamState: legit
+X-DrWeb-SpamDetail: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehuddgtddvucetufdoteggodetrfcurfhrohhfihhlvgemucfftfghgfeunecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeetnhgrshhtrghsihgruceuvghlohhvrgcuoegrsggvlhhovhgrsegrshhtrhgrlhhinhhugidrrhhuqeenucggtffrrghtthgvrhhnpeffvddvueehvedvgfeivdeuvdduteeulefgfeehieffgfehtedutdfgveefvdeiheenucffohhmrghinheplhhinhhugihtvghsthhinhhgrdhorhhgnecukfhppedutddrudelkedrvddvrdefgeenucfrrghrrghmpehhvghloheprhgsthgrqdhmshhkqdhlthdquddtiedtiedvrdgrshhtrhgrlhhinhhugidrrhhupdhinhgvthepuddtrdduleekrddvvddrfeegmeegheejvdeipdhmrghilhhfrhhomheprggsvghlohhvrgesrghsthhrrghlihhnuhigrdhruhdpnhgspghrtghpthhtohepudehpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopegrsggvlhhovhgrsegrshhtrhgrlhhinhhugidrrhhupdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+ htiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopegurghnihgvlhesfhhffihllhdrtghhpdhrtghpthhtohepkhhhihhlmhgrnhessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepjhgsrhhunhgvthessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepmhgrrhhtihhnrdgslhhumhgvnhhsthhinhhglhesghhoohhglhgvmhgrihhlrdgtohhmpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehlihhnuhigqdgrmhhlohhgihgtsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhvtgdqphhrohhjvggttheslhhinhhugihtvghsthhinhhgrdhorhhgnecuffhrrdghvggsucetnhhtihhsphgrmhemucenucfvrghgshem
+X-DrWeb-SpamVersion: Dr.Web Antispam 1.0.7.202406240#1724835123#02
+X-AntiVirus: Checked by Dr.Web [MailD: 11.1.19.2307031128, SE: 11.1.12.2210241838, Core engine: 7.00.65.05230, Virus records: 12143195, Updated: 2024-Aug-28 08:59:57 UTC]
 
-On 27.08.2024 19:08, Saeed Mirzamohammadi wrote:
->Hi Pankaj/Samsung team,
->
->Sorry for pulling up an old thread. Has this been fixed in the
->firmware? If not, we could fix this issue with quirk for now until it’s
->resolved on the firmware side.
+Switch to a managed drm device to cleanup some error handling
+and make future work easier.
 
-Saeed,
+Fix dereference of NULL in meson_drv_bind_master by removing
+drm_dev_put(drm) before meson_encoder_*_remove where drm
+dereferenced.
 
-I believe we had concluded that this was a _requested_ feature by
-specific customers. Therefore, we would not work on an upstream quirk.
+Co-developed by Linux Verification Center (linuxtesting.org).
 
-Did I misunderstand?
+Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
+---
+ drivers/gpu/drm/meson/meson_crtc.c         | 10 +--
+ drivers/gpu/drm/meson/meson_drv.c          | 71 ++++++++++------------
+ drivers/gpu/drm/meson/meson_drv.h          |  2 +-
+ drivers/gpu/drm/meson/meson_encoder_cvbs.c |  8 +--
+ drivers/gpu/drm/meson/meson_overlay.c      |  8 +--
+ drivers/gpu/drm/meson/meson_plane.c        | 10 +--
+ 6 files changed, 51 insertions(+), 58 deletions(-)
 
-Thanks,
-Javier
+diff --git a/drivers/gpu/drm/meson/meson_crtc.c b/drivers/gpu/drm/meson/meson_crtc.c
+index d70616da8ce2..e1c0bf3baeea 100644
+--- a/drivers/gpu/drm/meson/meson_crtc.c
++++ b/drivers/gpu/drm/meson/meson_crtc.c
+@@ -662,13 +662,13 @@ void meson_crtc_irq(struct meson_drm *priv)
+ 
+ 	drm_crtc_handle_vblank(priv->crtc);
+ 
+-	spin_lock_irqsave(&priv->drm->event_lock, flags);
++	spin_lock_irqsave(&priv->drm.event_lock, flags);
+ 	if (meson_crtc->event) {
+ 		drm_crtc_send_vblank_event(priv->crtc, meson_crtc->event);
+ 		drm_crtc_vblank_put(priv->crtc);
+ 		meson_crtc->event = NULL;
+ 	}
+-	spin_unlock_irqrestore(&priv->drm->event_lock, flags);
++	spin_unlock_irqrestore(&priv->drm.event_lock, flags);
+ }
+ 
+ int meson_crtc_create(struct meson_drm *priv)
+@@ -677,18 +677,18 @@ int meson_crtc_create(struct meson_drm *priv)
+ 	struct drm_crtc *crtc;
+ 	int ret;
+ 
+-	meson_crtc = devm_kzalloc(priv->drm->dev, sizeof(*meson_crtc),
++	meson_crtc = devm_kzalloc(priv->drm.dev, sizeof(*meson_crtc),
+ 				  GFP_KERNEL);
+ 	if (!meson_crtc)
+ 		return -ENOMEM;
+ 
+ 	meson_crtc->priv = priv;
+ 	crtc = &meson_crtc->base;
+-	ret = drm_crtc_init_with_planes(priv->drm, crtc,
++	ret = drm_crtc_init_with_planes(&priv->drm, crtc,
+ 					priv->primary_plane, NULL,
+ 					&meson_crtc_funcs, "meson_crtc");
+ 	if (ret) {
+-		dev_err(priv->drm->dev, "Failed to init CRTC\n");
++		dev_err(priv->drm.dev, "Failed to init CRTC\n");
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+index 4bd0baa2a4f5..2e7c2e7c7b82 100644
+--- a/drivers/gpu/drm/meson/meson_drv.c
++++ b/drivers/gpu/drm/meson/meson_drv.c
+@@ -182,7 +182,6 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	const struct meson_drm_match_data *match;
+ 	struct meson_drm *priv;
+-	struct drm_device *drm;
+ 	struct resource *res;
+ 	void __iomem *regs;
+ 	int ret, i;
+@@ -197,17 +196,13 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ 	if (!match)
+ 		return -ENODEV;
+ 
+-	drm = drm_dev_alloc(&meson_driver, dev);
+-	if (IS_ERR(drm))
+-		return PTR_ERR(drm);
++	priv = devm_drm_dev_alloc(dev, &meson_driver,
++				 struct meson_drm, drm);
+ 
+-	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+-	if (!priv) {
+-		ret = -ENOMEM;
+-		goto free_drm;
+-	}
+-	drm->dev_private = priv;
+-	priv->drm = drm;
++	if (IS_ERR(priv))
++		return PTR_ERR(priv);
++
++	priv->drm.dev_private = priv;
+ 	priv->dev = dev;
+ 	priv->compat = match->compat;
+ 	priv->afbcd.ops = match->afbcd_ops;
+@@ -215,7 +210,7 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ 	regs = devm_platform_ioremap_resource_byname(pdev, "vpu");
+ 	if (IS_ERR(regs)) {
+ 		ret = PTR_ERR(regs);
+-		goto free_drm;
++		goto remove_encoders;
+ 	}
+ 
+ 	priv->io_base = regs;
+@@ -223,13 +218,13 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "hhi");
+ 	if (!res) {
+ 		ret = -EINVAL;
+-		goto free_drm;
++		goto remove_encoders;
+ 	}
+ 	/* Simply ioremap since it may be a shared register zone */
+ 	regs = devm_ioremap(dev, res->start, resource_size(res));
+ 	if (!regs) {
+ 		ret = -EADDRNOTAVAIL;
+-		goto free_drm;
++		goto remove_encoders;
+ 	}
+ 
+ 	priv->hhi = devm_regmap_init_mmio(dev, regs,
+@@ -237,18 +232,18 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ 	if (IS_ERR(priv->hhi)) {
+ 		dev_err(&pdev->dev, "Couldn't create the HHI regmap\n");
+ 		ret = PTR_ERR(priv->hhi);
+-		goto free_drm;
++		goto remove_encoders;
+ 	}
+ 
+ 	priv->canvas = meson_canvas_get(dev);
+ 	if (IS_ERR(priv->canvas)) {
+ 		ret = PTR_ERR(priv->canvas);
+-		goto free_drm;
++		goto remove_encoders;
+ 	}
+ 
+ 	ret = meson_canvas_alloc(priv->canvas, &priv->canvas_id_osd1);
+ 	if (ret)
+-		goto free_drm;
++		goto remove_encoders;
+ 	ret = meson_canvas_alloc(priv->canvas, &priv->canvas_id_vd1_0);
+ 	if (ret)
+ 		goto free_canvas_osd1;
+@@ -261,7 +256,7 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ 
+ 	priv->vsync_irq = platform_get_irq(pdev, 0);
+ 
+-	ret = drm_vblank_init(drm, 1);
++	ret = drm_vblank_init(&priv->drm, 1);
+ 	if (ret)
+ 		goto free_canvas_vd1_2;
+ 
+@@ -284,10 +279,10 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ 	ret = drmm_mode_config_init(drm);
+ 	if (ret)
+ 		goto free_canvas_vd1_2;
+-	drm->mode_config.max_width = 3840;
+-	drm->mode_config.max_height = 2160;
+-	drm->mode_config.funcs = &meson_mode_config_funcs;
+-	drm->mode_config.helper_private	= &meson_mode_config_helpers;
++	priv->drm.mode_config.max_width = 3840;
++	priv->drm.mode_config.max_height = 2160;
++	priv->drm.mode_config.funcs = &meson_mode_config_funcs;
++	priv->drm.mode_config.helper_private = &meson_mode_config_helpers;
+ 
+ 	/* Hardware Initialization */
+ 
+@@ -308,9 +303,9 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ 		goto exit_afbcd;
+ 
+ 	if (has_components) {
+-		ret = component_bind_all(dev, drm);
++		ret = component_bind_all(dev, &priv->drm);
+ 		if (ret) {
+-			dev_err(drm->dev, "Couldn't bind all components\n");
++			dev_err(priv->drm.dev, "Couldn't bind all components\n");
+ 			/* Do not try to unbind */
+ 			has_components = false;
+ 			goto exit_afbcd;
+@@ -339,26 +334,26 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ 	if (ret)
+ 		goto exit_afbcd;
+ 
+-	ret = request_irq(priv->vsync_irq, meson_irq, 0, drm->driver->name, drm);
++	ret = request_irq(priv->vsync_irq, meson_irq, 0, priv->drm.driver->name, &priv->drm);
+ 	if (ret)
+ 		goto exit_afbcd;
+ 
+-	drm_mode_config_reset(drm);
++	drm_mode_config_reset(&priv->drm);
+ 
+-	drm_kms_helper_poll_init(drm);
++	drm_kms_helper_poll_init(&priv->drm);
+ 
+ 	platform_set_drvdata(pdev, priv);
+ 
+-	ret = drm_dev_register(drm, 0);
++	ret = drm_dev_register(&priv->drm, 0);
+ 	if (ret)
+ 		goto uninstall_irq;
+ 
+-	drm_fbdev_dma_setup(drm, 32);
++	drm_fbdev_dma_setup(&priv->drm, 32);
+ 
+ 	return 0;
+ 
+ uninstall_irq:
+-	free_irq(priv->vsync_irq, drm);
++	free_irq(priv->vsync_irq, &priv->drm);
+ exit_afbcd:
+ 	if (priv->afbcd.ops)
+ 		priv->afbcd.ops->exit(priv);
+@@ -370,15 +365,14 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ 	meson_canvas_free(priv->canvas, priv->canvas_id_vd1_0);
+ free_canvas_osd1:
+ 	meson_canvas_free(priv->canvas, priv->canvas_id_osd1);
+-free_drm:
+-	drm_dev_put(drm);
++remove_encoders:
+ 
+ 	meson_encoder_dsi_remove(priv);
+ 	meson_encoder_hdmi_remove(priv);
+ 	meson_encoder_cvbs_remove(priv);
+ 
+ 	if (has_components)
+-		component_unbind_all(dev, drm);
++		component_unbind_all(dev, &priv->drm);
+ 
+ 	return ret;
+ }
+@@ -391,7 +385,7 @@ static int meson_drv_bind(struct device *dev)
+ static void meson_drv_unbind(struct device *dev)
+ {
+ 	struct meson_drm *priv = dev_get_drvdata(dev);
+-	struct drm_device *drm = priv->drm;
++	struct drm_device *drm = &priv->drm;
+ 
+ 	if (priv->canvas) {
+ 		meson_canvas_free(priv->canvas, priv->canvas_id_osd1);
+@@ -404,7 +398,6 @@ static void meson_drv_unbind(struct device *dev)
+ 	drm_kms_helper_poll_fini(drm);
+ 	drm_atomic_helper_shutdown(drm);
+ 	free_irq(priv->vsync_irq, drm);
+-	drm_dev_put(drm);
+ 
+ 	meson_encoder_dsi_remove(priv);
+ 	meson_encoder_hdmi_remove(priv);
+@@ -428,7 +421,7 @@ static int __maybe_unused meson_drv_pm_suspend(struct device *dev)
+ 	if (!priv)
+ 		return 0;
+ 
+-	return drm_mode_config_helper_suspend(priv->drm);
++	return drm_mode_config_helper_suspend(&priv->drm);
+ }
+ 
+ static int __maybe_unused meson_drv_pm_resume(struct device *dev)
+@@ -445,7 +438,7 @@ static int __maybe_unused meson_drv_pm_resume(struct device *dev)
+ 	if (priv->afbcd.ops)
+ 		priv->afbcd.ops->init(priv);
+ 
+-	return drm_mode_config_helper_resume(priv->drm);
++	return drm_mode_config_helper_resume(&priv->drm);
+ }
+ 
+ static void meson_drv_shutdown(struct platform_device *pdev)
+@@ -455,8 +448,8 @@ static void meson_drv_shutdown(struct platform_device *pdev)
+ 	if (!priv)
+ 		return;
+ 
+-	drm_kms_helper_poll_fini(priv->drm);
+-	drm_atomic_helper_shutdown(priv->drm);
++	drm_kms_helper_poll_fini(&priv->drm);
++	drm_atomic_helper_shutdown(&priv->drm);
+ }
+ 
+ /*
+diff --git a/drivers/gpu/drm/meson/meson_drv.h b/drivers/gpu/drm/meson/meson_drv.h
+index 3f9345c14f31..c4c6c810cb20 100644
+--- a/drivers/gpu/drm/meson/meson_drv.h
++++ b/drivers/gpu/drm/meson/meson_drv.h
+@@ -53,7 +53,7 @@ struct meson_drm {
+ 	u8 canvas_id_vd1_1;
+ 	u8 canvas_id_vd1_2;
+ 
+-	struct drm_device *drm;
++	struct drm_device drm;
+ 	struct drm_crtc *crtc;
+ 	struct drm_plane *primary_plane;
+ 	struct drm_plane *overlay_plane;
+diff --git a/drivers/gpu/drm/meson/meson_encoder_cvbs.c b/drivers/gpu/drm/meson/meson_encoder_cvbs.c
+index d1191de855d9..ddca22c8c1ff 100644
+--- a/drivers/gpu/drm/meson/meson_encoder_cvbs.c
++++ b/drivers/gpu/drm/meson/meson_encoder_cvbs.c
+@@ -104,7 +104,7 @@ static int meson_encoder_cvbs_get_modes(struct drm_bridge *bridge,
+ 	for (i = 0; i < MESON_CVBS_MODES_COUNT; ++i) {
+ 		struct meson_cvbs_mode *meson_mode = &meson_cvbs_modes[i];
+ 
+-		mode = drm_mode_duplicate(priv->drm, &meson_mode->mode);
++		mode = drm_mode_duplicate(&priv->drm, &meson_mode->mode);
+ 		if (!mode) {
+ 			dev_err(priv->dev, "Failed to create a new display mode\n");
+ 			return 0;
+@@ -221,7 +221,7 @@ static const struct drm_bridge_funcs meson_encoder_cvbs_bridge_funcs = {
+ 
+ int meson_encoder_cvbs_probe(struct meson_drm *priv)
+ {
+-	struct drm_device *drm = priv->drm;
++	struct drm_device *drm = &priv->drm;
+ 	struct meson_encoder_cvbs *meson_encoder_cvbs;
+ 	struct drm_connector *connector;
+ 	struct device_node *remote;
+@@ -256,7 +256,7 @@ int meson_encoder_cvbs_probe(struct meson_drm *priv)
+ 	meson_encoder_cvbs->priv = priv;
+ 
+ 	/* Encoder */
+-	ret = drm_simple_encoder_init(priv->drm, &meson_encoder_cvbs->encoder,
++	ret = drm_simple_encoder_init(&priv->drm, &meson_encoder_cvbs->encoder,
+ 				      DRM_MODE_ENCODER_TVDAC);
+ 	if (ret)
+ 		return dev_err_probe(priv->dev, ret,
+@@ -273,7 +273,7 @@ int meson_encoder_cvbs_probe(struct meson_drm *priv)
+ 	}
+ 
+ 	/* Initialize & attach Bridge Connector */
+-	connector = drm_bridge_connector_init(priv->drm, &meson_encoder_cvbs->encoder);
++	connector = drm_bridge_connector_init(&priv->drm, &meson_encoder_cvbs->encoder);
+ 	if (IS_ERR(connector))
+ 		return dev_err_probe(priv->dev, PTR_ERR(connector),
+ 				     "Unable to create CVBS bridge connector\n");
+diff --git a/drivers/gpu/drm/meson/meson_overlay.c b/drivers/gpu/drm/meson/meson_overlay.c
+index 7f98de38842b..60ee7f758723 100644
+--- a/drivers/gpu/drm/meson/meson_overlay.c
++++ b/drivers/gpu/drm/meson/meson_overlay.c
+@@ -484,7 +484,7 @@ static void meson_overlay_atomic_update(struct drm_plane *plane,
+ 
+ 	interlace_mode = new_state->crtc->mode.flags & DRM_MODE_FLAG_INTERLACE;
+ 
+-	spin_lock_irqsave(&priv->drm->event_lock, flags);
++	spin_lock_irqsave(&priv->drm.event_lock, flags);
+ 
+ 	if ((fb->modifier & DRM_FORMAT_MOD_AMLOGIC_FBC(0, 0)) ==
+ 			    DRM_FORMAT_MOD_AMLOGIC_FBC(0, 0)) {
+@@ -717,7 +717,7 @@ static void meson_overlay_atomic_update(struct drm_plane *plane,
+ 
+ 	priv->viu.vd1_enabled = true;
+ 
+-	spin_unlock_irqrestore(&priv->drm->event_lock, flags);
++	spin_unlock_irqrestore(&priv->drm.event_lock, flags);
+ 
+ 	DRM_DEBUG_DRIVER("\n");
+ }
+@@ -838,7 +838,7 @@ int meson_overlay_create(struct meson_drm *priv)
+ 
+ 	DRM_DEBUG_DRIVER("\n");
+ 
+-	meson_overlay = devm_kzalloc(priv->drm->dev, sizeof(*meson_overlay),
++	meson_overlay = devm_kzalloc(priv->drm.dev, sizeof(*meson_overlay),
+ 				   GFP_KERNEL);
+ 	if (!meson_overlay)
+ 		return -ENOMEM;
+@@ -846,7 +846,7 @@ int meson_overlay_create(struct meson_drm *priv)
+ 	meson_overlay->priv = priv;
+ 	plane = &meson_overlay->base;
+ 
+-	drm_universal_plane_init(priv->drm, plane, 0xFF,
++	drm_universal_plane_init(&priv->drm, plane, 0xFF,
+ 				 &meson_overlay_funcs,
+ 				 supported_drm_formats,
+ 				 ARRAY_SIZE(supported_drm_formats),
+diff --git a/drivers/gpu/drm/meson/meson_plane.c b/drivers/gpu/drm/meson/meson_plane.c
+index b43ac61201f3..13be94309bf4 100644
+--- a/drivers/gpu/drm/meson/meson_plane.c
++++ b/drivers/gpu/drm/meson/meson_plane.c
+@@ -157,7 +157,7 @@ static void meson_plane_atomic_update(struct drm_plane *plane,
+ 	 * Update Buffer
+ 	 * Enable Plane
+ 	 */
+-	spin_lock_irqsave(&priv->drm->event_lock, flags);
++	spin_lock_irqsave(&priv->drm.event_lock, flags);
+ 
+ 	/* Check if AFBC decoder is required for this buffer */
+ 	if ((meson_vpu_is_compatible(priv, VPU_COMPATIBLE_GXM) ||
+@@ -393,7 +393,7 @@ static void meson_plane_atomic_update(struct drm_plane *plane,
+ 
+ 	priv->viu.osd1_enabled = true;
+ 
+-	spin_unlock_irqrestore(&priv->drm->event_lock, flags);
++	spin_unlock_irqrestore(&priv->drm.event_lock, flags);
+ }
+ 
+ static void meson_plane_atomic_disable(struct drm_plane *plane,
+@@ -536,7 +536,7 @@ int meson_plane_create(struct meson_drm *priv)
+ 	const uint64_t *format_modifiers = format_modifiers_default;
+ 	int ret;
+ 
+-	meson_plane = devm_kzalloc(priv->drm->dev, sizeof(*meson_plane),
++	meson_plane = devm_kzalloc(priv->drm.dev, sizeof(*meson_plane),
+ 				   GFP_KERNEL);
+ 	if (!meson_plane)
+ 		return -ENOMEM;
+@@ -549,14 +549,14 @@ int meson_plane_create(struct meson_drm *priv)
+ 	else if (meson_vpu_is_compatible(priv, VPU_COMPATIBLE_G12A))
+ 		format_modifiers = format_modifiers_afbc_g12a;
+ 
+-	ret = drm_universal_plane_init(priv->drm, plane, 0xFF,
++	ret = drm_universal_plane_init(&priv->drm, plane, 0xFF,
+ 					&meson_plane_funcs,
+ 					supported_drm_formats,
+ 					ARRAY_SIZE(supported_drm_formats),
+ 					format_modifiers,
+ 					DRM_PLANE_TYPE_PRIMARY, "meson_primary_plane");
+ 	if (ret) {
+-		devm_kfree(priv->drm->dev, meson_plane);
++		devm_kfree(priv->drm.dev, meson_plane);
+ 		return ret;
+ 	}
+ 
+-- 
+2.30.2
 
->
->Thanks,
->Saeed
->
->
->> On Apr 27, 2023, at 12:37 AM, Pankaj Raghav <p.raghav@samsung.com> wrote:
->>
->> Hi Christoph,
->> On Fri, Apr 14, 2023 at 07:12:59AM +0200, Christoph Hellwig wrote:
->>> On Tue, Mar 21, 2023 at 02:26:04PM +0100, Christoph Hellwig wrote:
->>>> Can you send a patch with a new quirk that just disables the EUI64,
->>>> but keeps the NGUID?
->>>
->>> Did this go anywhere?
->> We had a discussion about this internally with our firmware team, and it
->> looks like these firmware were given to specific customers based on
->> mutual agreement. They are already in discussion with our firmware team
->> regarding this.
->>
->> I don't think this should go into as a generic quirk in Linux for these
->> models.
->
 
