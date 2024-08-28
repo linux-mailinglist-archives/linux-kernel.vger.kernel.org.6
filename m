@@ -1,136 +1,202 @@
-Return-Path: <linux-kernel+bounces-304948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0143B962733
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:36:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41B41962735
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:36:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FB061F2458C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:36:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B529A1F24B8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96FF117C9B8;
-	Wed, 28 Aug 2024 12:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E67B178364;
+	Wed, 28 Aug 2024 12:35:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VyER4sID"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RRrSGZib"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A9416C865
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0821B15A86D
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724848534; cv=none; b=RwoBiww9QZ8i6zVb0wkjAd8A9aNMFZCDWJCtFJzXM1H9vK3dXVAHI0U6OtdTTVSutMIsViAQBOiVvn7jdUcltJJ7ZCZvKsSjGRuDnjQCWmEYunNqQM8bsPktk01WmWDnnYvxaW+McD3N2+kvM8tsGw6JcIhcjLeHS8Kx4YuLuxA=
+	t=1724848553; cv=none; b=BeVPBoMS33IXr1CfCehM8XkSSyTAzcSUXadqAcesQkT5X7VtgidIwUjEpkenqThFt4jqFq2ht6aHnDCENI/MncoPgxdchdsZdH2dLXnJJeO6lmXJs3SrqrHInG9uGggwkVGYJD5MhcEpV/nDe4d+wXzoasoPeXP+WTHJMl020io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724848534; c=relaxed/simple;
-	bh=aEKzrBbYi9Ry+ohyfsBeblxLDxy0FJBfs72+PMvk3CI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=szvzGoQIzOnHHCYiR5Fb1tXO+hrqeSstam3aDtDg08mw0Evx+hXr2qPEdNNthIqKn9Z2nIKSLNmAaNY/JjpjWmR8f9tUwmlyntrAJQBfu8wivsC8RBYFeaKJS1Hb/rorBGLHU2U+xH2HOLVrlyaGTnNrHbWmRahRzS2KojRyIiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VyER4sID; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4281d812d3eso73491445e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 05:35:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724848530; x=1725453330; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pUt4fS45inpztmNIGJYo+GUFk/1UM7umsW/0Hcne0yc=;
-        b=VyER4sID8XPVvDMTajQC6Q8MjpdhvmAnngg57GeINNiTY8jixM2Z1ENhwCdMRLhy8E
-         2VPyOFxzF9ouqkYQAO0IjgLgulIx7jd93vVdUOEzm9YuqTrjoHVoNgaxVkRKjLPGFUnF
-         1pPV0cyOU8RVXiSFexmocPQiT1AZd82dt+M88yUY1eGseyeQaTVDfiUSVi38BpJoGqx9
-         48H4AWbs3w5IreBuIa6IvlQE+NXrPG3a3EInA6yKEvtxW4Eq9G7BWoEjdKCvS77sPwZ1
-         9ivY0c6d7I6R/js7DMAYp/QLD64yMfXymA4BopiH3rBKGv0GDdOXkqY13sHFI5GLIQe2
-         HFHg==
+	s=arc-20240116; t=1724848553; c=relaxed/simple;
+	bh=x9qlPosPOT0mc/BTP+9hEBMfeyvgHRt781YK8Wd4aIw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=K1qkobt/eJTm46qFgYJ7K5j8h1ivNOZfOYb/J6ETdtkPnyP6+BliANm7GOelKx+ka3kU/7q5h3UkhcxM+m9VV2xOEulPJSFIHZa1bd1Iyk6Wvk+EoTN5hHar84J5QWnjQqZVsqiIHPdbQpQSPqvTrwydDpfrM/37knGRVN7TgXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RRrSGZib; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724848551;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t4bguXdYSXvrSfLEnFQDtAqoiZ5yFy7g96RVfSc27jY=;
+	b=RRrSGZibSEJp0N+/Scz1j+zp7iEIoc4h7GmOWBhLosgBVKDmn3zyykONzxpE4S8U4MPuaI
+	ceIi+7N4l4VpBOZ+pgHshKa12okpFV9LB1KZYp5gYHVVFPzSztRfoRkvYPaX0X7OIyMNHl
+	e5QbnhezSMBvit3bipa4oztoxRq0O7k=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-86-xV3wLo-CN22QeofePABQbw-1; Wed, 28 Aug 2024 08:35:49 -0400
+X-MC-Unique: xV3wLo-CN22QeofePABQbw-1
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-44fdd97e455so93130991cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 05:35:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724848530; x=1725453330;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pUt4fS45inpztmNIGJYo+GUFk/1UM7umsW/0Hcne0yc=;
-        b=QjrGez4jYXnuc7cbwAbFcbl0Otvx8szRbOzJSYd+h1WEB4Rtt2kGrH4npWwLZQv5dh
-         2BVAwkBK8SX3H+b3d7l9PTvMZBK/ntuxIYnPL6oUCmoEFSPewmPBDdm3KzYP8QmeZSxo
-         v7S0ljhMY5g/4Q8hsG7KXcYNIL3G0KTCtgAD6fVExy6iQ5m9V2NLXlFAeBqgOfSqnHn2
-         tCSzxypAA534nQpjrAu9F22ApFK0tHUremRsFete740gfgB1Y/+VNeeOG0dQvRsGZ0F7
-         FpmrCUcpxS/VnDXjb+y2IEuJNikV2ZeW3PSmycapKIXz2uATqjwU453EFZFe5PTRmrxL
-         XMzg==
-X-Forwarded-Encrypted: i=1; AJvYcCWsYO8cwfbOjh7eqAtNL97ca0YMqcc3Q3N5MQqETW7oaBX0no8ZMT6dMYFMRx6iPaYaXPaJ1ZQ3NCYA5aQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRLxnB/JSlpmOl8XVOwUQ3LDRSjacjFeDGLLAQZnf5r03URswA
-	SwpbzPuf/hjQQ5PeJ+vqJR33oyrwNz22umgYzcnkBOi+D7mYRIWQHdkMuVCOnEs=
-X-Google-Smtp-Source: AGHT+IHtoo2WUu3BieUUp3gLp4qf08YKUh5yOQZnaKr6LG3FzOM6CjSzhHpc5du36ZYPkM90Gk3FgQ==
-X-Received: by 2002:a5d:46cf:0:b0:371:8e85:c58e with SMTP id ffacd0b85a97d-37311863a3cmr13842070f8f.33.1724848530075;
-        Wed, 28 Aug 2024 05:35:30 -0700 (PDT)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e549cc55sm241658566b.64.2024.08.28.05.35.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 05:35:29 -0700 (PDT)
-Message-ID: <95db3178-a2ce-421e-8024-afd7fa3359a3@suse.com>
-Date: Wed, 28 Aug 2024 14:35:29 +0200
+        d=1e100.net; s=20230601; t=1724848549; x=1725453349;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t4bguXdYSXvrSfLEnFQDtAqoiZ5yFy7g96RVfSc27jY=;
+        b=WbUmTXeJ47LL9jTNxY0+x7Rh3rzRYoenq/vTvg/DFTx5wRRx77+C1gbzKNUwAdMnlS
+         ZhH2SegUDSJf1fU2pyMMnBcwCkZxs3vwh+bVe0M5p2Tf/DaYt/1Ef39ycUMpPK0Yovlf
+         NUWqad6W943yHb+Y5X5jOy8zajTAlI58EkQZ5FlRfvLNuTLyBD0auNuS7uWbUOnSnIRb
+         AtgtLvcrXSLLFIP+pSSAn2QWE/i0J3y1jOu5Y9tctnKbmLcV1aezRD7REmwZqsFaXrws
+         q/NhTh9BMHGSUS+Puh4DktZam0b54E4vsGdtsEbufYdVi4T4dpjnrME8/qVKfr7c7n3E
+         0zvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXVxheIMI5LeaxL7WovLMHNjKvJGjqnnJ2CvK9wwVX094LkyZDTlX+nDMJDyTcMYwAosBKySNHKkCoxX60=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY+ylOL7v/cnpdNJP1T8N7FYbNOrXFcWVqW+gqIf4CbL0MEbv0
+	cnoNlCp9UFkYFlpQ+K+N3nTv5nx16Bt35RGtuP/6YlqfaIldN1S19wlBrc0Az6VlnylqRTdt1sA
+	FLVejE8CNlLpKGb5HxMwKhI4h9gcEuMsUupty+xzFSMZENLa8ZKAbCnfwC513KQ==
+X-Received: by 2002:a05:622a:514c:b0:447:eb16:2e54 with SMTP id d75a77b69052e-45509c1be10mr250567901cf.22.1724848549184;
+        Wed, 28 Aug 2024 05:35:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEFMobLLxhfH0ePjl9UDzvnzGqdiHBlSBGLYjEpB8VeUXGrg0oM3EhtsjlS+3YQ9S8qX+m0TA==
+X-Received: by 2002:a05:622a:514c:b0:447:eb16:2e54 with SMTP id d75a77b69052e-45509c1be10mr250567611cf.22.1724848548666;
+        Wed, 28 Aug 2024 05:35:48 -0700 (PDT)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-454fe1968a6sm61087771cf.61.2024.08.28.05.35.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 05:35:47 -0700 (PDT)
+From: Valentin Schneider <vschneid@redhat.com>
+To: paulmck@kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+ sfr@canb.auug.org.au, linux-next@vger.kernel.org, kernel-team@meta.com,
+ Chen Yu <yu.c.chen@intel.com>
+Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
+In-Reply-To: <a19308ed-7252-4119-b891-2a61791bb6e5@paulmck-laptop>
+References: <c28dbc65-7499-41a5-84d0-991843153b1a@paulmck-laptop>
+ <20240823074705.GB12053@noisy.programming.kicks-ass.net>
+ <xhsmho75fo6e4.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <b1824f4a-f5cc-4011-876f-8a73cf752067@paulmck-laptop>
+ <xhsmhle0inuze.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <xhsmhikvmnfb3.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <c83028db-55ad-45b3-a27a-842ed665a882@paulmck-laptop>
+ <103b1710-39ca-40d0-947d-fdac32d6e6a0@paulmck-laptop>
+ <xhsmhcyltogin.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <a19308ed-7252-4119-b891-2a61791bb6e5@paulmck-laptop>
+Date: Wed, 28 Aug 2024 14:35:45 +0200
+Message-ID: <xhsmha5gwome6.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/19] gendwarfksyms: Add symbol list handling
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
- Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>,
- Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
- Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-References: <20240815173903.4172139-21-samitolvanen@google.com>
- <20240815173903.4172139-23-samitolvanen@google.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20240815173903.4172139-23-samitolvanen@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 8/15/24 19:39, Sami Tolvanen wrote:
-> diff --git a/scripts/gendwarfksyms/dwarf.c b/scripts/gendwarfksyms/dwarf.c
-> index 65a29d0bd8f4..71cfab0553da 100644
-> --- a/scripts/gendwarfksyms/dwarf.c
-> +++ b/scripts/gendwarfksyms/dwarf.c
-> @@ -5,6 +5,48 @@
-> [...]
-> +
-> +static bool is_export_symbol(struct state *state, Dwarf_Die *die)
-> +{
-> +	Dwarf_Die *source = die;
-> +	Dwarf_Die origin;
-> +
-> +	state->sym = NULL;
-> +
-> +	/* If the DIE has an abstract origin, use it for type information. */
-> +	if (get_ref_die_attr(die, DW_AT_abstract_origin, &origin))
-> +		source = &origin;
-> +
-> +	state->sym = symbol_get(get_name(die));
-> +
-> +	/* Look up using the origin name if there are no matches. */
-> +	if (!state->sym && source != die)
-> +		state->sym = symbol_get(get_name(source));
-> +
-> +	state->die = *source;
-> +	return !!state->sym;
-> +}
+On 27/08/24 13:36, Paul E. McKenney wrote:
+> On Tue, Aug 27, 2024 at 10:30:24PM +0200, Valentin Schneider wrote:
+>> On 27/08/24 11:35, Paul E. McKenney wrote:
+>> > On Tue, Aug 27, 2024 at 10:33:13AM -0700, Paul E. McKenney wrote:
+>> >> On Tue, Aug 27, 2024 at 05:41:52PM +0200, Valentin Schneider wrote:
+>> >> > I've taken tip/sched/core and shuffled hunks around; I didn't re-or=
+der any
+>> >> > commit. I've also taken out the dequeue from switched_from_fair() a=
+nd put
+>> >> > it at the very top of the branch which should hopefully help bisect=
+ion.
+>> >> >
+>> >> > The final delta between that branch and tip/sched/core is empty, so=
+ it
+>> >> > really is just shuffling inbetween commits.
+>> >> >
+>> >> > Please find the branch at:
+>> >> >
+>> >> > https://gitlab.com/vschneid/linux.git -b mainline/sched/eevdf-compl=
+ete-builderr
+>> >> >
+>> >> > I'll go stare at the BUG itself now.
+>> >>
+>> >> Thank you!
+>> >>
+>> >> I have fired up tests on the "BROKEN?" commit.  If that fails, I will
+>> >> try its predecessor, and if that fails, I wlll bisect from e28b5f8bda=
+01
+>> >> ("sched/fair: Assert {set_next,put_prev}_entity() are properly balanc=
+ed"),
+>> >> which has stood up to heavy hammering in earlier testing.
+>> >
+>> > And of 50 runs of TREE03 on the "BROKEN?" commit resulted in 32 failur=
+es.
+>> > Of these, 29 were the dequeue_rt_stack() failure.  Two more were RCU
+>> > CPU stall warnings, and the last one was an oddball "kernel BUG at
+>> > kernel/sched/rt.c:1714"=C2=A0followed by an equally oddball "Oops: inv=
+alid
+>> > opcode: 0000 [#1] PREEMPT SMP PTI".
+>> >
+>> > Just to be specific, this is commit:
+>> >
+>> > df8fe34bfa36 ("BROKEN? sched/fair: Dequeue sched_delayed tasks when sw=
+itching from fair")
+>> >
+>> > This commit's predecessor is this commit:
+>> >
+>> > 2f888533d073 ("sched/eevdf: Propagate min_slice up the cgroup hierarch=
+y")
+>> >
+>> > This predecessor commit passes 50 runs of TREE03 with no failures.
+>> >
+>> > So that addition of that dequeue_task() call to the switched_from_fair=
+()
+>> > function is looking quite suspicious to me.  ;-)
+>> >
+>> >                                                       Thanx, Paul
+>>
+>> Thanks for the testing!
+>>
+>> The WARN_ON_ONCE(!rt_se->on_list); hit in __dequeue_rt_entity() feels li=
+ke
+>> a put_prev/set_next kind of issue...
+>>
+>> So far I'd assumed a ->sched_delayed task can't be current during
+>> switched_from_fair(), I got confused because it's Mond^CCC Tuesday, but I
+>> think that still holds: we can't get a balance_dl() or balance_rt() to d=
+rop
+>> the RQ lock because prev would be fair, and we can't get a
+>> newidle_balance() with a ->sched_delayed task because we'd have
+>> sched_fair_runnable() :=3D true.
+>>
+>> I'll pick this back up tomorrow, this is a task that requires either
+>> caffeine or booze and it's too late for either.
+>
+> Thank you for chasing this, and get some sleep!  This one is of course
+> annoying, but it is not (yet) an emergency.  I look forward to seeing
+> what you come up with.
+>
+> Also, I would of course be happy to apply debug patches.
+>
+>                                                       Thanx, Paul
 
-Sorry, I don't want to comment much on function names.. but I realized
-the name of is_export_symbol() isn't really great. The "is_" prefix
-strongly indicates that it is only a query function, yet it changes the
-state. It makes its caller process_exported_symbols() hard to understand
-on the first read.
+Chen Yu made me realize [1] that dequeue_task() really isn't enough; the
+dequeue_task() in e.g. __sched_setscheduler() won't have DEQUEUE_DELAYED,
+so stuff will just be left on the CFS tree.
 
--- 
-Thanks
-Petr
+Worse, what we need here is the __block_task() like we have at the end of
+dequeue_entities(), otherwise p stays ->on_rq and that's borked - AFAICT
+that explains the splat you're getting, because affine_move_task() ends up
+doing a move_queued_task() for what really is a dequeued task.
+
+I unfortunately couldn't reproduce the issue locally using your TREE03
+invocation. I've pushed a new patch on top of my branch, would you mind
+giving it a spin? It's a bit sketchy but should at least be going in the
+right direction...
+
+[1]: http://lore.kernel.org/r/Zs2d2aaC/zSyR94v@chenyu5-mobl2
+
 
