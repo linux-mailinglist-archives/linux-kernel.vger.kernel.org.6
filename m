@@ -1,84 +1,113 @@
-Return-Path: <linux-kernel+bounces-304987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01C699627CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:52:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBDBD962804
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C0D228602D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:52:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97F39284D1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2242D186285;
-	Wed, 28 Aug 2024 12:51:51 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26FB4183CC6;
-	Wed, 28 Aug 2024 12:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5546F186294;
+	Wed, 28 Aug 2024 12:58:36 +0000 (UTC)
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE42537F5;
+	Wed, 28 Aug 2024 12:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724849510; cv=none; b=LSBJj5lE/7oxskMnprqE+LZ8pR+AnK+H1fthP4Bm/aK/P55G4nxWNqWg6Lebx2QWlu6+gaIIXHdsTVSDnZf1qNM0mZuYpekq3Atr9Y7vjEGwk0PoaCJHiId33exhLLSWXJvUwpTtWCaGqQZPmBJyWotvKfQtkTzDefC/eVXpn7I=
+	t=1724849915; cv=none; b=WuXiHufp/p1NjI8gFvfN/2SeqxtCHJ8QPjBry9fMVH4U5HEB09CjyiEnt0oId0RHirVhnOh8OXcx2ms3ov1fJBoI0dbtpMpWxLjDi8ejJi2p3SfmUSMHEDExAdaMvaswMYYZFDh9K1CJc/lNEjn4RZrwegKYUiRczFGC7SbA9HM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724849510; c=relaxed/simple;
-	bh=RChMV0YjnMOQ06hoUxR+88NP0TvbgCbQvbdKCPE51AQ=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ufONkV0woDhT+a5Ax02ZNHCtWr3xtJEsCw1RaJtNPQer83e2FVMnBfIPKpcrfqtAgg+hR3EnKBq+kVl6tE2N2XZ0uKN0PR5fAga8IgSg3ZlehsiJiPpJPfzFR+sE1x9wZE+jIi2/bJJ8q0tQOMsSkzvmmIXFGLPesmvvnc+znho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wv42944X3z6K6lm;
-	Wed, 28 Aug 2024 20:47:45 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id EC1F01400D1;
-	Wed, 28 Aug 2024 20:51:46 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 28 Aug
- 2024 13:51:46 +0100
-Date: Wed, 28 Aug 2024 13:51:45 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-CC: <woojung.huh@microchip.com>, <andrew@lunn.ch>, <f.fainelli@gmail.com>,
-	<olteanv@gmail.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <linus.walleij@linaro.org>,
-	<alsi@bang-olufsen.dk>, <justin.chen@broadcom.com>,
-	<sebastian.hesselbarth@gmail.com>, <alexandre.torgue@foss.st.com>,
-	<joabreu@synopsys.com>, <mcoquelin.stm32@gmail.com>, <wens@csie.org>,
-	<jernej.skrabec@gmail.com>, <samuel@sholland.org>, <hkallweit1@gmail.com>,
-	<linux@armlinux.org.uk>, <ansuelsmth@gmail.com>,
-	<UNGLinuxDriver@microchip.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
-	<linux-stm32@st-md-mailman.stormreply.com>, <krzk@kernel.org>,
-	<jic23@kernel.org>
-Subject: Re: [PATCH net-next v2 12/13] net: bcmasp: Simplify with scoped for
- each OF child loop
-Message-ID: <20240828135145.00006138@Huawei.com>
-In-Reply-To: <20240828032343.1218749-13-ruanjinjie@huawei.com>
-References: <20240828032343.1218749-1-ruanjinjie@huawei.com>
-	<20240828032343.1218749-13-ruanjinjie@huawei.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724849915; c=relaxed/simple;
+	bh=Vsy8ov7YycJAvMDRkUjOS6q4lvRBacsBGTW0GdcGV0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MyO+kwK+A+UIiuoUTF3ug6/w+GbdhYLxG5bc0XJjzI23wlPvDhXuHV2LkBMQ+SjhI1N+fzD3XGCt+2KGFmuh31OeOQAuaYrp+H6u/1Si4a9FNaH+yPENLqL6qahJedUtGmF5uqrL1T+5GG80/HzDAO8ewO9a9H8mx8L8Iw0nUa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 47SCptJf031924;
+	Wed, 28 Aug 2024 07:51:55 -0500
+Received: (from segher@localhost)
+	by gate.crashing.org (8.14.1/8.14.1/Submit) id 47SCpru5031923;
+	Wed, 28 Aug 2024 07:51:53 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date: Wed, 28 Aug 2024 07:51:53 -0500
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Eric Biggers <ebiggers@kernel.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, "Theodore Ts'o" <tytso@mit.edu>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        shuah <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Linux-Arch <linux-arch@vger.kernel.org>, linux-mm@kvack.org,
+        linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 05/17] vdso: Avoid call to memset() by getrandom
+Message-ID: <20240828125153.GF29862@gate.crashing.org>
+References: <cover.1724309198.git.christophe.leroy@csgroup.eu> <5deb67090b214f0e6eae96b7c406546d1a16f89b.1724309198.git.christophe.leroy@csgroup.eu> <20240827180819.GB2049@sol.localdomain> <20240827225330.GC29862@gate.crashing.org> <Zs8HirKLk-SrwTIu@zx2c4.com> <fc19bf63-d519-46e2-be70-80202c85ff92@app.fastmail.com> <CAHmME9rjH4Ek3e8jmBvRp3wy+mrzJAeYxk5=o+OHjoT5sTOQPg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHmME9rjH4Ek3e8jmBvRp3wy+mrzJAeYxk5=o+OHjoT5sTOQPg@mail.gmail.com>
+User-Agent: Mutt/1.4.2.3i
 
-On Wed, 28 Aug 2024 11:23:42 +0800
-Jinjie Ruan <ruanjinjie@huawei.com> wrote:
-
-> Use scoped for_each_available_child_of_node_scoped() when
-> iterating over device nodes to make code a bit simpler.
+On Wed, Aug 28, 2024 at 02:26:08PM +0200, Jason A. Donenfeld wrote:
+> On Wed, Aug 28, 2024 at 2:24 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> >
+> > On Wed, Aug 28, 2024, at 11:18, Jason A. Donenfeld wrote:
+> > > On Tue, Aug 27, 2024 at 05:53:30PM -0500, Segher Boessenkool wrote:
+> > >> On Tue, Aug 27, 2024 at 11:08:19AM -0700, Eric Biggers wrote:
+> > >> >
+> > >> > Is there a compiler flag that could be used to disable the generation of calls
+> > >> > to memset?
+> > >>
+> > >> -fno-tree-loop-distribute-patterns .  But, as always, read up on it, see
+> > >> what it actually does (and how it avoids your problem, and mostly: learn
+> > >> what the actual problem *was*!)
+> > >
+> > > This might help with various loops, but it doesn't help with the matter
+> > > that this patch fixes, which is struct initialization. I just tried it
+> > > with the arm64 patch to no avail.
+> >
+> > Maybe -ffreestanding can help here? That should cause the vdso to be built
+> > with the assumption that there is no libc, so it would neither add nor
+> > remove standard library calls. Not sure if that causes other problems,
+> > e.g. if the calling conventions are different.
 > 
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> >From https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90701:
+> 
+> | You need -ffreestanding but that is documented to emit memset and
+> memcpy still.
+
+Yeah.
+
+'-nostdlib'
+     Do not use the standard system startup files or libraries when
+     linking.
+
+This won't help a bit, the compiler will still optimise your
+initialisation loop to a memset() call, it just won't link to libgcc.a
+and crt*.o and its ilk (which is not where mem* are implemented in the
+first place!)
+
+
+Segher
 
