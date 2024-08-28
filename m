@@ -1,53 +1,81 @@
-Return-Path: <linux-kernel+bounces-304436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE8CB962008
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:52:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E276961FFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:49:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFB461C23844
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:52:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69BBCB2366B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F4E158A36;
-	Wed, 28 Aug 2024 06:51:57 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01963157A46;
+	Wed, 28 Aug 2024 06:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vSgOaJQz"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC1E1448E6;
-	Wed, 28 Aug 2024 06:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A8914A4F3
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 06:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724827917; cv=none; b=pF6odG1Y/YRz60EnoWVt9kz5V1jtHHJXtmXoqB6fGzYFRhMq6+2FTcxTCalclyTS6h3e0mvq9MWzRyg+nw2/G40rL0r6oQGm1pXXvje92NnhaPqOkmhTv46dETM/ROIW1Ri3D2znmP9fW7UcjLbqVJYkdvt8ay8zfV4EJXL3lEE=
+	t=1724827766; cv=none; b=q3tvhE5RDznjrxpkD44aWpNep63v2cWXkV6nniUSArnH4o5e8BqfpbQxqtFMps4cvQhuYzG8nEDpOiKnxJkzR/k8UIUzX49W2R/CBvkj7ARhJ2OT62QDG8CPnf5jZr+niPpilt1NersExRP+yPMUenrOK7CN5KeyDSNQAi7Cy48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724827917; c=relaxed/simple;
-	bh=ztvcn8LTc1wNPg6zZTSXEQJytmb853G+7kwMM5CIXXU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rKZ1chXtXHWtbbTdA6yq8Zjkao/rbvaW5jHmdffnCfUBlM1R8u0ViKEBONa/5QmK3z07mKAs3/P959uYB1sQPi4oU3YvOlGCgfzcbL8tcTKdwebUXd3/6VmqdjxJM5sFD2/N6JBL544M3pAp6AQKT7jozEzqhHy/hgdnBiftLIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wtw5X5ZM0zpTrS;
-	Wed, 28 Aug 2024 14:50:08 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id 88B771402CD;
-	Wed, 28 Aug 2024 14:51:50 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 28 Aug 2024 14:51:50 +0800
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-To: <jgg@ziepe.ca>, <leon@kernel.org>
-CC: <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <huangjunxian6@hisilicon.com>
-Subject: [PATCH v3 for-next 2/2] RDMA/hns: Disassociate mmap pages for all uctx when HW is being reset
-Date: Wed, 28 Aug 2024 14:46:05 +0800
-Message-ID: <20240828064605.887519-3-huangjunxian6@hisilicon.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20240828064605.887519-1-huangjunxian6@hisilicon.com>
-References: <20240828064605.887519-1-huangjunxian6@hisilicon.com>
+	s=arc-20240116; t=1724827766; c=relaxed/simple;
+	bh=QEsP0rSyuMHg9BE68yTW9hq3Cybj9mhfJJ3gZMQIOC8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XWdNSQZvWjqZcZGjudiPAZXsX8uNgDNXD0VYDNdESHX6En0yhp1aElxmFo1jwe65FSxmdTele8CxZ7qaHVrYzh31JGg7V6ml6XC0FImtWtAOquSbKd2jXXsfMG2uhm8cxSCqlz9GR/zQ/YWzNhAyGPJWwkIop6KxgIj7cth0nzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vSgOaJQz; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42ba79ae3beso231245e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 23:49:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724827763; x=1725432563; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D+8jinjloKxefb9EXbJz79GDejTp3u0fbJxXQtb+yg0=;
+        b=vSgOaJQzVgTjR94cMxf472hEFpsil+XFHg9YbOBdCzlFkKQhPwZve7ZGLN+WrRT5XE
+         tkAGfjXK9DNo4UfFOMV9+YSMIWSxrQS7Sgm+WIS0buiCpjI9/TZSnxyJ3NY2Expw3AV0
+         mvfo1saZcNkyGgqwqPKJjBjyt6dqouC4c4ftGqYepVNDZqfcwbBpZfZrvtczKh643xCN
+         AdHmydt/9Pi5KDI16i7jLas8qm4/mo8WYkZ4MKRD0dvtAaB5WDSiovMJuLOIxxEMmANi
+         qsVH6+EkooBJmQlDk/jpb3Yxw0pi97zffbuoARTY6hSJnaNca6b3JotAh4I9AaL6whHu
+         CmNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724827763; x=1725432563;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D+8jinjloKxefb9EXbJz79GDejTp3u0fbJxXQtb+yg0=;
+        b=mej7MP+a4ZtUXl4a5qmP6CtVez1b9jcOrZV6CW3deIGrXdIVImUi7QJ5aM6VZBiDOY
+         jQKPt86QTtvIip2TfRWZwd8Sano7kBpTRpQEOvzgPVGARjDpvh2V8EATdjfrpZvgPEQB
+         iaHMDVGEkAtD29mtrf+aNcN18wk31jpUCErGyFcM3tnEFlb5Mk7JAZtLZBsQQVe3oIrE
+         giBqPZKWzXc4ohWpdetieQ80pzbR8l3bD1CVdXnxS0uV7mD/JaC0JNYVzzykSRXJd1fb
+         71re5KUp8HeF/Bo/rB2dv4l01J7DsggL4oC5FBBVZU16hW4i/d5mqXYNuhzFasybwq9X
+         0Q0w==
+X-Forwarded-Encrypted: i=1; AJvYcCXfykI50LsgLtQPROQbXOq2sy60rOSqXUaKnuis0nw2NedClHOU3mIJE9hcvYcoUHE9rvm+ArOginTEjsw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPFtutU1nnYQNBhyUC5IiTTN/+r8QQTmGyK+E5PvfLickvXeol
+	Ek41nkCdYCdimoCZMeI+xpFnaxYIuDCvLAjtbKHluRrDlm0wltlMyKYsKOSUtqo=
+X-Google-Smtp-Source: AGHT+IEZhmUMIABFDGgrT50fIMiUtjQAcEB/LQYOcRwujPcZUBgZMY/40RvXCRX9iBHf2h6OIAYdNA==
+X-Received: by 2002:a05:600c:3c99:b0:426:668f:5ed7 with SMTP id 5b1f17b1804b1-42acc8dd868mr71408435e9.2.1724827762519;
+        Tue, 27 Aug 2024 23:49:22 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.222.82])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba641dbe5sm10685685e9.31.2024.08.27.23.49.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 23:49:21 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] dt-bindings: arm: psci: change labels to lower-case in example
+Date: Wed, 28 Aug 2024 08:49:19 +0200
+Message-ID: <20240828064919.79625-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,53 +83,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemf100018.china.huawei.com (7.202.181.17)
 
-From: Chengchang Tang <tangchengchang@huawei.com>
+DTS coding style expects labels to be lowercase, so adjust the example
+code.  No functional impact.
 
-When HW is being reset, userspace should not ring doorbell otherwise
-it may lead to abnormal consequence such as RAS.
-
-Disassociate mmap pages for all uctx to prevent userspace from ringing
-doorbell to HW.
-
-Fixes: 9a4435375cd1 ("IB/hns: Add driver files for hns RoCE driver")
-Signed-off-by: Chengchang Tang <tangchengchang@huawei.com>
-Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ .../devicetree/bindings/arm/psci.yaml         | 30 +++++++++----------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-index 621b057fb9da..ecf4f1c9f51d 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-@@ -7012,6 +7012,12 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
+diff --git a/Documentation/devicetree/bindings/arm/psci.yaml b/Documentation/devicetree/bindings/arm/psci.yaml
+index cbb012e217ab..7360a2849b5b 100644
+--- a/Documentation/devicetree/bindings/arm/psci.yaml
++++ b/Documentation/devicetree/bindings/arm/psci.yaml
+@@ -191,27 +191,27 @@ examples:
+       #size-cells = <0>;
+       #address-cells = <1>;
  
- 	handle->rinfo.instance_state = HNS_ROCE_STATE_NON_INIT;
- }
-+
-+static void hns_roce_v2_reset_notify_user(struct hns_roce_dev *hr_dev)
-+{
-+	rdma_user_mmap_disassociate(&hr_dev->ib_dev);
-+}
-+
- static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
- {
- 	struct hns_roce_dev *hr_dev;
-@@ -7030,6 +7036,9 @@ static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
+-      CPU0: cpu@0 {
++      cpu@0 {
+         device_type = "cpu";
+         compatible = "arm,cortex-a53";
+         reg = <0x0>;
+         enable-method = "psci";
+-        power-domains = <&CPU_PD0>;
++        power-domains = <&cpu_pd0>;
+         power-domain-names = "psci";
+       };
  
- 	hr_dev->active = false;
- 	hr_dev->dis_db = true;
-+
-+	hns_roce_v2_reset_notify_user(hr_dev);
-+
- 	hr_dev->state = HNS_ROCE_DEVICE_STATE_RST_DOWN;
+-      CPU1: cpu@1 {
++      cpu@1 {
+         device_type = "cpu";
+         compatible = "arm,cortex-a53";
+         reg = <0x100>;
+         enable-method = "psci";
+-        power-domains = <&CPU_PD1>;
++        power-domains = <&cpu_pd1>;
+         power-domain-names = "psci";
+       };
  
- 	return 0;
+       idle-states {
+ 
+-        CPU_PWRDN: cpu-power-down {
++        cpu_pwrdn: cpu-power-down {
+           compatible = "arm,idle-state";
+           arm,psci-suspend-param = <0x0000001>;
+           entry-latency-us = <10>;
+@@ -222,7 +222,7 @@ examples:
+ 
+       domain-idle-states {
+ 
+-        CLUSTER_RET: cluster-retention {
++        cluster_ret: cluster-retention {
+           compatible = "domain-idle-state";
+           arm,psci-suspend-param = <0x1000011>;
+           entry-latency-us = <500>;
+@@ -230,7 +230,7 @@ examples:
+           min-residency-us = <2000>;
+         };
+ 
+-        CLUSTER_PWRDN: cluster-power-down {
++        cluster_pwrdn: cluster-power-down {
+           compatible = "domain-idle-state";
+           arm,psci-suspend-param = <0x1000031>;
+           entry-latency-us = <2000>;
+@@ -244,21 +244,21 @@ examples:
+       compatible = "arm,psci-1.0";
+       method = "smc";
+ 
+-      CPU_PD0: power-domain-cpu0 {
++      cpu_pd0: power-domain-cpu0 {
+         #power-domain-cells = <0>;
+-        domain-idle-states = <&CPU_PWRDN>;
+-        power-domains = <&CLUSTER_PD>;
++        domain-idle-states = <&cpu_pwrdn>;
++        power-domains = <&cluster_pd>;
+       };
+ 
+-      CPU_PD1: power-domain-cpu1 {
++      cpu_pd1: power-domain-cpu1 {
+         #power-domain-cells = <0>;
+-        domain-idle-states =  <&CPU_PWRDN>;
+-        power-domains = <&CLUSTER_PD>;
++        domain-idle-states =  <&cpu_pwrdn>;
++        power-domains = <&cluster_pd>;
+       };
+ 
+-      CLUSTER_PD: power-domain-cluster {
++      cluster_pd: power-domain-cluster {
+         #power-domain-cells = <0>;
+-        domain-idle-states = <&CLUSTER_RET>, <&CLUSTER_PWRDN>;
++        domain-idle-states = <&cluster_ret>, <&cluster_pwrdn>;
+       };
+     };
+ ...
 -- 
-2.33.0
+2.43.0
 
 
