@@ -1,314 +1,253 @@
-Return-Path: <linux-kernel+bounces-305022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C066C962840
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:08:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 355F8962870
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:18:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E528F1C23674
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:08:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E12F42856B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE671850A4;
-	Wed, 28 Aug 2024 13:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F094188016;
+	Wed, 28 Aug 2024 13:17:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="WiTZXmOs"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="MQF+pp4L";
+	dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b="hHKN7uCA"
+Received: from mx08-00376f01.pphosted.com (mx08-00376f01.pphosted.com [91.207.212.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B333167D98
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 13:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724850507; cv=none; b=LilPBOF2GXW2xYxIV0wG2UvoV6tvst77r1FA2I+OVQcouSEkVSc6qlSoOFQabDwHu4vpljC7f/67nuFtW6aeW3XawMHbMWKheqDZeQ3d4diz8P6KD7fe3xlMMFgI6gHWi2ayB+DVhu31+bmzmZ8D4KgD3a+vK3fOpG2aKtluPT0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724850507; c=relaxed/simple;
-	bh=/dlSVks3Y6CeDlB3oBafOlR/ZvFA1HhYvMps5IMyC/k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=rtHlAj+vxpcU3e95dTKUFyKdqkk1Pxc3xXAQnbS4+cXxCttGOQZT7OTXVlUmQLV0jZtmdS1DD4LemK/rXpYkUyW5m7d8LhqwCSaN10fma3rYC1EexhWwQMMjTLcL43QDux+pzibJOY6DDZRrHRrmqcb8In3FIETEd8gx0wHGkUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=WiTZXmOs; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-39d380d4ffcso24966845ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 06:08:25 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A702188000
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 13:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=91.207.212.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724851056; cv=fail; b=fBAfQvRdq92rAhULMebfpDcowpts/FokzTKOdH4THm+KTG/RCXEtpRMQmeYL3YKDcOG6okDbWK69b24gN3lUqrrNyWuB0W2NeJkxl2nxK2To0tgrPWQxaLp5UdXuXS6Z5b2oktCtisKbuZikEYViAHM1ChdOA8AFeRP5ugrWbdA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724851056; c=relaxed/simple;
+	bh=+zvV9byuqDMnVUBdDzwRq4xcdd0a3cR2UBm1oXNHWhQ=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=gNAJTiTQ67nZ+/5NYEMK9PAn0S1qipeCs6p42REPdwuJjjqjDKWtzA1Uc+3Cc8U5JqGHorgUr4DfCRE1YwOAdknZidh7T6sGUOWZTB9yeJR/NDaLMnZJ8VNUt5xU13wVAmDpkVa8ARuKJaWOxPU7DaGHHcqedS1iEKwuSMsBp2o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=MQF+pp4L; dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b=hHKN7uCA; arc=fail smtp.client-ip=91.207.212.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
+Received: from pps.filterd (m0168888.ppops.net [127.0.0.1])
+	by mx08-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47S65SJQ027701;
+	Wed, 28 Aug 2024 14:09:17 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
+	:content-type:date:from:message-id:mime-version:subject:to; s=
+	dk201812; bh=+zvV9byuqDMnVUBdDzwRq4xcdd0a3cR2UBm1oXNHWhQ=; b=MQF
+	+pp4LCQhznYfZ/OTuhxdXCZ5RE54j9+KTXY8J2ShY3gOtsS9UB3aGMjuScg0mlTx
+	SxWlSp5O+lC3SINTWiu2qXqxsbN6K5wvCVVCayUCwsE/yNJ0H+Zz2756fPBzXIbf
+	0cwH6ZyNGL9vVc03CQiNNCA1CK7MvRYVWa5gDoAXupqIUxzmuYnMxybt2f6rt1b1
+	J4D6Ohyhs1E6LJoFuoBQf1TK1qq81drxkxsDxUjm8QxW+KQuFRnNR1SsNx3pNyGK
+	6lQ2ouEMA2+0RGiG1xuRgAGB7eAMfoTPYjUWxYCsAbkbumRpm2K49Q6SvZnFxLmr
+	hdREjUsqAqDRWWc23AA==
+Received: from hhmail04.hh.imgtec.org ([217.156.249.195])
+	by mx08-00376f01.pphosted.com (PPS) with ESMTPS id 4175ss31pm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Wed, 28 Aug 2024 14:09:15 +0100 (BST)
+Received: from HHMAIL05.hh.imgtec.org (10.100.10.120) by
+ HHMAIL04.hh.imgtec.org (10.100.10.119) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.37; Wed, 28 Aug 2024 14:09:14 +0100
+Received: from LO2P265CU024.outbound.protection.outlook.com (40.93.67.27) by
+ email.imgtec.com (10.100.10.121) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37 via Frontend
+ Transport; Wed, 28 Aug 2024 14:09:14 +0100
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=obbQoJ07ntu1hrNCfFlWwo/CaP8aIzQ7SRcM/1UZohEqWFKmHVilcV1j7Sp+a9k+DvNeVfwVaHAb2pqRrBhgg0fn/6Sjs9dtxb/elUWcyHMI+3+LryQo7iIYsZaeyz9vb68wbyGphnLQlV8KherHW6s5Q16W2b+A/mXJbs9kvwcSaWm5MtrBU8obwEeSC9VdTdDhchwjnjnCOLU91zSizLB7II4Oc6pnJE7EQfJdpQSgcfgFAvfJ4ishUyPqZ7QLzOHuYK1t4xoqYhcNI17Cu4KRwBk0L3FONPJOoERi3O+DTX/WyvhCXkSz+Vp+1V2MAJ8alNZR3qhJN4MyK7ScbQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+zvV9byuqDMnVUBdDzwRq4xcdd0a3cR2UBm1oXNHWhQ=;
+ b=dH+d2DuJ4xGEvNnEgSMCdkxsqVhjmmekFXta8FzhSFHQMljUGaZhIld1tae0V7AYc/UlDNE3IGwmwP6kJsFKmhLfAWfpr+Ar5J6Oz4XJ2z7ZdQ7KuUGPmLrrdycROJnqRT4h0P09jg4q46iJ1HcqDKB3Iv6kG6YRurNDlT8L5uB7aSa1Uvawi9Z/fzADgEdDiz4tGLrzyYqthQXL+vhZHwOTz4EB3rSkn/qBHtkAI6/Zvq2s6krO7hSXywnFyjCuN2k815CGE8cFfpvPVFv591zQWmk0ar1GrGUpoCn+70HEvcZjefUPJI7EdLG8Cxnyc4GQh0pYoPcAnxSm+j/+3w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=imgtec.com; dmarc=pass action=none header.from=imgtec.com;
+ dkim=pass header.d=imgtec.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1724850504; x=1725455304; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:cc:content-language:from
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=oRugccQxWcrb++fcdfIGc7HnEfuP1yE5tRkb4v6wa+E=;
-        b=WiTZXmOsHLXopzMLhTrlQkUt6PHmU/l+k/JZKKmp0VQQu6S9kEFaXrepYu3e9s38U4
-         Spr3GHPUSvG+X6G0Ob3hpnTSvaP5O+p2z69t22X4KUxICL7Ff38C6KwX5h7bYuoIt4Iv
-         XZJDLBjwJMRhGHl8smTwYBxmwU/H2rQzUKYHYkExVBWUhLAEgFdzCtsENm4zsrJtQj4N
-         To/klONVNYrC+4NhH9IyfOKxkkir1HWReRjfn0MWhwmtI+jfJMQv933hhXfr3rPUUwvK
-         MExwniNCLXAVm0A1HBF/EVLPSC+stBk1wI4yQo+0gAWC5mX36Vriwx/8xLBCfcqeHPgh
-         uBrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724850504; x=1725455304;
-        h=content-transfer-encoding:in-reply-to:cc:content-language:from
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oRugccQxWcrb++fcdfIGc7HnEfuP1yE5tRkb4v6wa+E=;
-        b=rGS7rjKHp6a8KwflXIApgKuM0muos5BjN0BjhPmcMLvxs+A4kn65eGGFO+t07Nai8/
-         /EKdR9WFm5/QAGMY/dYVPuduNXEKj3PpEyr53j/auyC2kwmCRP9dK8Rsxy/sRy0bKEFB
-         53JSVMlhyuAFcpFPdtAnU9rgeSElJ+k+B26VWoKvVP3JLOvf41119gbZ/VhK4fXih1Gy
-         QRFKatYr0L1gFaOuWNj4wkDINxzRbqth9t0ZcMFbkv3TvKCLhRsKw83l1beLNzN5mfLm
-         X1cqc+WdPwRUvseptpAnjlfrt1MEQiq5JifHC8B7GWDLgsyqpGpPOdcazE9sZO03/bjD
-         bfOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWQfUq9GgYNQfaoi3VA4Cciwrtz4zSMeZ92wN5ayy/yftyiGdR07R45FYdWVpN20GuysOM2Hr1fd1PqJmI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF/hz+PWf+UsKxuGNJGKJebG9hU3GTxCGHhXgoSXwE5nhucpMb
-	oQWGa7xuJN2x4ZTF38NMzZUPSXxq0tHhg1oNZqLkfU7ECnZKB7KISyXgBzmHP+s=
-X-Google-Smtp-Source: AGHT+IFGARinHfv9SVtpM/GUQkr3obp0SvgN0jGDYhUoMl6fvwznsqI3PoQ4/ZyJzR3MAdQHsoFqfQ==
-X-Received: by 2002:a05:6e02:178c:b0:39d:46f6:b936 with SMTP id e9e14a558f8ab-39e3c9c0812mr213073725ab.17.1724850504177;
-        Wed, 28 Aug 2024 06:08:24 -0700 (PDT)
-Received: from [100.64.0.1] ([147.124.94.167])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ce70f81180sm2969647173.73.2024.08.28.06.08.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 06:08:23 -0700 (PDT)
-Message-ID: <869b5faa-82c3-456a-a7b0-6dcc41114280@sifive.com>
-Date: Wed, 28 Aug 2024 08:08:22 -0500
+ d=IMGTecCRM.onmicrosoft.com; s=selector2-IMGTecCRM-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+zvV9byuqDMnVUBdDzwRq4xcdd0a3cR2UBm1oXNHWhQ=;
+ b=hHKN7uCA+89NXoj3WJ5+egIoz0MUb5BPM/ysvMb0DWGD9rjKXsDdps1H1BFqn8Agxa26lAf0wNBCxPXG/eWLiaRoycKRItjiV8oss85fFURKzxsrZG4AqR1xiL4UAg5MYQ+TEX+BspnuSYEturxRUfqrRYUWdLKxUkGu5QjTC14=
+Received: from CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:e7::8) by
+ CWLP265MB2642.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:a0::14) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7897.27; Wed, 28 Aug 2024 13:09:13 +0000
+Received: from CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::8e9d:6b2f:9881:1e15]) by CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::8e9d:6b2f:9881:1e15%5]) with mapi id 15.20.7897.027; Wed, 28 Aug 2024
+ 13:09:12 +0000
+From: Matt Coster <Matt.Coster@imgtec.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: Frank Binns <Frank.Binns@imgtec.com>
+Subject: [PATCH] drm/imagination: Use pvr_vm_context_get()
+Thread-Topic: [PATCH] drm/imagination: Use pvr_vm_context_get()
+Thread-Index: AQHa+Ut63vojNAp1DkeCGFbhPXW9+w==
+Date: Wed, 28 Aug 2024 13:09:12 +0000
+Message-ID: <72fa30a5-ddbf-4957-ad5c-5c941747be5c@imgtec.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CWXP265MB3397:EE_|CWLP265MB2642:EE_
+x-ms-office365-filtering-correlation-id: 04499bb8-5b48-4471-fafc-08dcc7629c9c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?VmNxeHk5RjV4QnlxTkRoV0Rzb3p0NzM5aWFOckppalhWUXN1bDRIU3l5MDFT?=
+ =?utf-8?B?Z2ZBWXJhQThVMkt3d2ZYZE9qcFVxQXVwTEtPbXNyM3p1RWRrWE9OYlJWakdx?=
+ =?utf-8?B?b3Q3dVZDdkdMY2xCTHJnUGsvVUpNd3d1ZzlvenBJcDR3Ym9zMkdlZnhYQWtX?=
+ =?utf-8?B?WmRmRDY4N3J4QXdQb0pKYWlNamhvQVpHVXFYb1VrNDFZVks2Ry9GbEJjYmYz?=
+ =?utf-8?B?L2dPbXgvcXR0TG9md2c1REVEajkxc0JiQ3liUnVYWDVWaGhrT0tWNktza0xV?=
+ =?utf-8?B?S2FkQmp0Y0sxMitzMFNtUHRab0R5elMvKy9lNlRLWnk3dWhOaDdiK2NSV0JG?=
+ =?utf-8?B?YlBRR09DcHRQZWU0RDFzV0F3YU9NS0xRczNEaXhxWjJ6RzU5MWRURk0ySGxo?=
+ =?utf-8?B?TWY0NENta3BRYjVNcFJrdS8rWTZjb29ISkVmY3U2Qkd4UXo3V1pJOWVzb3lz?=
+ =?utf-8?B?OVdzNDBHb3pQa2tKblByeFpMb1VrRks1RVNVb1B6NTNQOGNEL3pYeXFkWWRQ?=
+ =?utf-8?B?NVJwTVZwN0pSN3pVTjFKWkFFeEswNDdmbXFNYmgzMmNRUXduS0Vhclo0eHpG?=
+ =?utf-8?B?bGtpcGxrOVczMGkvRitEOXpNR05ock1mY1lLSlJhRHkyNnUyeGt0OTNBaE05?=
+ =?utf-8?B?K1pLT3ZtSEdxSnhRZ0FlME5GT3RBMjZXNmZnM3ZuUXdtMnlKaGxWdWVUVzVv?=
+ =?utf-8?B?dnFoRjNOTnhLMmpuZ2pua3ZHU0cyc2VtdEhXZ1hXZUdLbG53ZDV3dHdxdG8z?=
+ =?utf-8?B?ZVA4SjFtNWs0Z2Y5bFMwKzdGbDR3ZXh2d3RaalJ6TEd4b2ZaTUJLOStKaFNS?=
+ =?utf-8?B?b25wSEJqeElBdjk2cVorNUoxMi9wSmtxaGNscTJmc3hnUHpsV1ZSM1M0aVpZ?=
+ =?utf-8?B?ODNsMHlEa3lOVVBDSEJ6VDRDRG90dnJWb0dDMEZTU3NkOWZXUEwxUWhPc3Qz?=
+ =?utf-8?B?UmZxMkxCYzg0WmdvMGx3UzkwUnZhaVdlaG9oQmZib21LZGlJRTc2dHBIb3gy?=
+ =?utf-8?B?aUJqV3FuSVlOU1NTNGc2QnovbitTL2dRcHRYbGxVYXN3YUMzUUdPZGF2bm44?=
+ =?utf-8?B?ZWRtK3VQMkFUV1kzVEVEWkFhVDFZV3VFc2R4V3F6bnMxcmU5MS84LzduUVRZ?=
+ =?utf-8?B?ZUZBRUNsS2xWT09tM3RRWmJMMm9Zd2JVZ25NYmlzVENpMzgySUJrTVB0WVZH?=
+ =?utf-8?B?NTF5U3dkZXowZFNxZ2FZVEFjN1I1UWVsTGR5SG5RdnZlUFRWM0NsMjBQcGpi?=
+ =?utf-8?B?S3NtN2t4OXIzQ2R4enNPUVdXeDQzL1J1bGZkZ3NIY0ZSdk9NV2YyYndzT2Fn?=
+ =?utf-8?B?K2Q3SFJyTlNlNkZINVlTRzZTUkJGbS9RN1dPSFBsdEVzL0hRZHFYbENoc1JJ?=
+ =?utf-8?B?ZXEvMVN6UWxENHo3NVA4NTdUa0J3VHN3cnZnanFRcEkwS3FQQndleExCMHA1?=
+ =?utf-8?B?MExEYkZYZUJCK2V6cGp2ZStDdmVGb21Ea1JycFllUGNNa1luQk9FME4yUnJl?=
+ =?utf-8?B?cGE1WG9NTXVwMGwvVXN2TWN6NXJLK3ZURUk4djlEaDBJVzdaQ3ZIakx4TlJM?=
+ =?utf-8?B?ajI0Nmo5YWpEYnlzNW5vbnFJMDRqcU5CT0l1YmRmbnhxSlFsTTVXMHh0MWMv?=
+ =?utf-8?B?aXpEa2FNTlN4dU13cHhxQk1jNUU1OGsxK1pkdFErdTdrQk5GRmNLUWF6ZzFR?=
+ =?utf-8?B?aU9HR2lQcjVuVHphRDAvZEkzY1dwaGVoOE1laUhpWUJ3d2w5MEJmakF2Z24r?=
+ =?utf-8?B?dk5WUUFDRlNBem9PYm8zZ0dtRG44dFIyRVQ4WDZtN2FFc0swa2NpNFk2dlUr?=
+ =?utf-8?B?cWd3c3VZem1KRmtxRlYrdVlNbTNvMDkyVERhb0l3V2ZqNFp4SGNqZHgweWhh?=
+ =?utf-8?B?RDgzZjdsZy9XYWxKNEc4WjdaTUJZRUJBUmVJakpBVUIxWFE9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?d2JOVmg0c2FiSzR1ai85TERXUzlQSG1BVnpJUnZVY3NxMGtQTlI3aU03a1hn?=
+ =?utf-8?B?ZnZPVWRHcXA3THNWSzcxWUphandTaGNJcDFMZGpxZUkrOXZyblRSZDMzWlZl?=
+ =?utf-8?B?aWEza3RCZmJnajhsUlN5cVhsZE50ZTZORTZldkNYR1JCTTVWcm5DVmsvRlR4?=
+ =?utf-8?B?SlhVUU1jV21nTEgwaGlxQ1JFam5yS2dlUFdqSlYrUS83Rko5YkoxcGVjTG5r?=
+ =?utf-8?B?Q3NSVTF2czN0U2M5Mzg0d3F5cTJlZlJmMGh5WCtOOUpnS3VkUUloOVVoa1Ft?=
+ =?utf-8?B?OWp5VEZEVDcwaklrYzRKTUY2VlVkNVVrTFI2S0N3d3BvUWlQRXdUUDRNMlFY?=
+ =?utf-8?B?OTZiRzFPS25zeGdnMWNmYTlvNlkwd1RlMDY1OWd6d3NGckNSK1EwV2RwdXR4?=
+ =?utf-8?B?c05FM2Ntcm5Cd1I3R09GbTBCK0tUNGFYZmdkaTVwbDNEdVdXWGdjSndQdWNo?=
+ =?utf-8?B?ZS94clE1OEtTVjg1SXIxS3ZSQ2xQMXhRM3p5RE9KZFRHVVVENkRkeUlHNjFK?=
+ =?utf-8?B?Nzc0SXlneHlxWjN5andsSlF3eFZRaW5WTlFDV1VoYjArT1BXMldwajJsQjdl?=
+ =?utf-8?B?QlhVRktrS2dwYWJIZEM5R2FrVlgwQ0hqbDVobnJrV1Ftc2ZoZU1KY3dEeFE3?=
+ =?utf-8?B?YnlKWFp6YVV3STFtY2Q4VDc4OXlOVTBCeUVNWGRNU09lb2w5QXhWOHltY0Z1?=
+ =?utf-8?B?ZHB6NkxQWVRkNS82NkhDWkxwRElmeTJMVkE0dlE1b0tKZi8yZE5hMTlXK3Fq?=
+ =?utf-8?B?emEyUW4wVno2T1M3dVNtM2VmdXh2NjJQdGFrOEhiSVZSclZSUjlOZzMyWVYz?=
+ =?utf-8?B?bWNhUFR1d0VHbW1YRTcvZHQ3eWhZWGxFbkJsYiszL0NKb3lMK1NVYVg2QUVH?=
+ =?utf-8?B?SFgwbVZORWN5ZENpM0hYOFBaNGFXMllPcWRvMXhBMTV1V0o3cHZUNlViaGVM?=
+ =?utf-8?B?ZTZYY3FLWXFJRTBJbitIV3A5RE9yQUFSbTlTOXI3NzNaSjZRUEVnNEdETStG?=
+ =?utf-8?B?UTR0STBBT1R1OGxQU2NOeXZYbi9SUDF2NUZMM0t3YjBvRXZXSGxDSU9Sd01z?=
+ =?utf-8?B?OGRmZnlSV1FlNTNNM3VONjFLeUY0VmNnbjNOSHhwOVRhb0xkMFc0dTl4SDE4?=
+ =?utf-8?B?ZDZSQm92WUZqTXVOOEExaytNelYvR3BxZTZJc21xZ1ZsNXF1dnVZRUlQemtl?=
+ =?utf-8?B?WUlEQVhyQUg4OHVFYVRkcldqK3ZnVlJtdlhZSFhnUzdaSllBSEprU1Aza2RO?=
+ =?utf-8?B?ZHlDNHRoZXFpOUh1UStnRFkvODAxY3VkTWFBaWFWR1pJeGVnVVBBc1dVeHpV?=
+ =?utf-8?B?YWhqVFJKUnBLTkJkcGZpQnk3SncvM3ZhT2pyTGZWQkMzRmN5elR3NmdyT0wv?=
+ =?utf-8?B?QkRtejFJQjFhUlgxbzh3U0V3Zk9qZm5KRFNYNlQ2TnF4bzhUY0gxTGJ0VWtw?=
+ =?utf-8?B?SVZXazlBdXh0Sm0wWWdmNTRONzBZcFFicTY3ejJUQ1V4aTlidTRxeGt5Nmp1?=
+ =?utf-8?B?VDhmaTdGOHdvQ3pSd0JCd0o3RzM2eDlYcmFWbENTVUc0aGJDUEVYbzVENWY0?=
+ =?utf-8?B?eFRmUmg3bFJ3TTk2Y3RDcXMvYUo0MTFlMHFIaDg4Y2syaU15WE1vaWs0SkFk?=
+ =?utf-8?B?ZTFaZUhIK0gyVDN4MnZQVC9IZ2JuVWMvT1NhYmgyYUdYSTFRSkFhYWJXOXJR?=
+ =?utf-8?B?N0JUMCtYaHVEMFZvTGJPZUhqRG1ESFovTU1pUWlZTTR6b0swT1l4cjJZb2pO?=
+ =?utf-8?B?OFZFQjJGVmUxalJkUzZrMy8wU3U4bFNJcVpDNnhsREc2VithYU51djAzUFNQ?=
+ =?utf-8?B?RmhFeEZiRys5VThuMXAxbm9rNFQzcnpJeGs1ZVFXb3RnUUhVUG9PSlJDMUJJ?=
+ =?utf-8?B?Y1ZFdFRCYUx5NEEydkNKUTJaU1hUZEFWL0FPMEtwaDhDWnQ1cVB0MGlwdDJR?=
+ =?utf-8?B?ZFlsa3M2RllJNlhxV29wWW84bjlXSEM5cXRpTkNDbWVtV1gwS1Y4VThZSFNr?=
+ =?utf-8?B?OUpEMi9HN3loNklUK2F2aEc3blFFNHBnTndZZWlFb29Cc3pGdzRuS1pOeUs3?=
+ =?utf-8?B?c04yNDMrM1o1T2dxRUdGQUc2dmxJaVlDclYva1hQVG4zSm1UajlJeWRZbXZN?=
+ =?utf-8?B?ZjdsWndvcW15T3pEZXVqdmxDMDduc0tvQVBrWmVxdkVJcmczeVVncUM3eVNs?=
+ =?utf-8?B?cVE9PQ==?=
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------DJTMR0iPx4dhmdUHIsXgUbEG"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -fixes] riscv: Fix RISCV_ALTERNATIVE_EARLY
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-References: <20240826105737.106879-1-alexghiti@rivosinc.com>
-From: Samuel Holland <samuel.holland@sifive.com>
-Content-Language: en-US
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Guo Ren <guoren@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Philipp Tomsich <philipp.tomsich@vrull.eu>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240826105737.106879-1-alexghiti@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 04499bb8-5b48-4471-fafc-08dcc7629c9c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Aug 2024 13:09:12.7956
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d5fd8bb-e8c2-4e0a-8dd5-2c264f7140fe
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: NQQZ0nYOjFxmYLVoNH8D3BYghaR/FV2t49/bOeicXVa79W2mcVy9P4+Yh+eVjtvKSP6VZiAOL4onoySW7Sk7nA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWLP265MB2642
+X-OriginatorOrg: imgtec.com
+X-EXCLAIMER-MD-CONFIG: 15a78312-3e47-46eb-9010-2e54d84a9631
+X-Authority-Analysis: v=2.4 cv=MeE+uI/f c=1 sm=1 tr=0 ts=66cf217c cx=c_pps a=6IdplsTJodF3+aqeaEJcqA==:117 a=6IdplsTJodF3+aqeaEJcqA==:17 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=yoJbH4e0A30A:10 a=WnR_qW7rlZcA:10 a=NgoYpvdbvlAA:10
+ a=r_1tXGB3AAAA:8 a=8YfA8XZME4H0u7Jv9v8A:9 a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10 a=uQsQWgxg_WxSIe_9pxsA:9 a=FfaGCDsud1wA:10 a=t8nPyN_e6usw4ciXM-Pk:22
+X-Proofpoint-GUID: Bx8YLoHigcNRFIqnzoUipl56urXxVaIC
+X-Proofpoint-ORIG-GUID: Bx8YLoHigcNRFIqnzoUipl56urXxVaIC
 
-Hi Alex,
+--------------DJTMR0iPx4dhmdUHIsXgUbEG
+Content-Type: multipart/mixed; boundary="------------IT9AhD0KPeY4p9m0AahBxtQc";
+ protected-headers="v1"
+From: Matt Coster <matt.coster@imgtec.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc: Frank Binns <frank.binns@imgtec.com>
+Message-ID: <72fa30a5-ddbf-4957-ad5c-5c941747be5c@imgtec.com>
+Subject: [PATCH] drm/imagination: Use pvr_vm_context_get()
 
-On 2024-08-26 5:57 AM, Alexandre Ghiti wrote:
-> RISCV_ALTERNATIVE_EARLY will issue sbi_ecall() very early in the boot
-> process, before the first memory mapping is setup so we can't have any
-> instrumentation happening here.
-> 
-> In addition, when the kernel is relocatable, we must also not issue any
-> relocation this early since they would have been patched virtually only.
-> 
-> So, instead of disabling instrumentation for the whole kernel/sbi.c file
-> and compiling it with -fno-pie, simply move __sbi_ecall() and
-> __sbi_base_ecall() into their own file where this is fixed.
+--------------IT9AhD0KPeY4p9m0AahBxtQc
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-Looking at the baseline disassembly from both LLVM 19 and GCC 13.2.0 with
-RISCV_ALTERNATIVE_EARLY + KASAN + TRACEPOINTS, all of the instrumentation in
-__sbi_ecall() itself is out of line and only executed when the tracepoint static
-branches are enabled. However, there is instrumentation in sbi_get_m*id() from
-the switch table inlined from sbi_err_map_linux_errno(), and some of those
-memory accesses are done unconditionally.
+SSBtaXNzZWQgdGhpcyBvcGVuLWNvZGVkIGtyZWZfZ2V0KCkgd2hpbGUgdHJ5aW5nIHRvIGRl
+YnVnIGEgcmVmY291bnQNCmJ1Zywgc28gbGV0J3MgdXNlIHRoZSBoZWxwZXIgZnVuY3Rpb24g
+aGVyZSB0byBhdm9pZCB0aGF0IHdhc3RlIG9mIHRpbWUNCmFnYWluIGluIHRoZSBmdXR1cmUu
+DQoNClNpZ25lZC1vZmYtYnk6IE1hdHQgQ29zdGVyIDxtYXR0LmNvc3RlckBpbWd0ZWMuY29t
+Pg0KRml4ZXM6IGZmNWY2NDNkZTBiZiAoImRybS9pbWFnaW5hdGlvbjogQWRkIEdFTSBhbmQg
+Vk0gcmVsYXRlZCBjb2RlIikNCi0tLQ0KICBkcml2ZXJzL2dwdS9kcm0vaW1hZ2luYXRpb24v
+cHZyX3ZtLmMgfCA0ICstLS0NCiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAz
+IGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2ltYWdpbmF0
+aW9uL3B2cl92bS5jIA0KYi9kcml2ZXJzL2dwdS9kcm0vaW1hZ2luYXRpb24vcHZyX3ZtLmMN
+CmluZGV4IGU1OTUxN2JhMDM5ZS4uZmZkNDY2NTA5ZDBiIDEwMDY0NA0KLS0tIGEvZHJpdmVy
+cy9ncHUvZHJtL2ltYWdpbmF0aW9uL3B2cl92bS5jDQorKysgYi9kcml2ZXJzL2dwdS9kcm0v
+aW1hZ2luYXRpb24vcHZyX3ZtLmMNCkBAIC02MzYsOSArNjM2LDcgQEAgcHZyX3ZtX2NvbnRl
+eHRfbG9va3VwKHN0cnVjdCBwdnJfZmlsZSAqcHZyX2ZpbGUsIHUzMiANCmhhbmRsZSkNCiAg
+IAl4YV9sb2NrKCZwdnJfZmlsZS0+dm1fY3R4X2hhbmRsZXMpOw0KICAJdm1fY3R4ID0geGFf
+bG9hZCgmcHZyX2ZpbGUtPnZtX2N0eF9oYW5kbGVzLCBoYW5kbGUpOw0KLQlpZiAodm1fY3R4
+KQ0KLQkJa3JlZl9nZXQoJnZtX2N0eC0+cmVmX2NvdW50KTsNCi0NCisJcHZyX3ZtX2NvbnRl
+eHRfZ2V0KHZtX2N0eCk7DQogIAl4YV91bmxvY2soJnB2cl9maWxlLT52bV9jdHhfaGFuZGxl
+cyk7DQogICAJcmV0dXJuIHZtX2N0eDsNCi0tIA0KMi40Ni4wDQoNCg0K
 
-This change will force sbi_err_map_linux_errno() to be out of line (unless LTO
-is enabled), so it also forces that particular bit of instrumentation to be
-executed only in the error path. But we could still crash in the error path. So
-I think sbi_err_map_linux_errno() needs to be moved to sbi_ecall.c as well.
+--------------IT9AhD0KPeY4p9m0AahBxtQc--
 
-Alternatively, sbi_get_m*id() do not have any errors defined (and we don't
-really handle that possibility), so we could drop to the call to
-sbi_err_map_linux_errno() from __sbi_base_ecall().
+--------------DJTMR0iPx4dhmdUHIsXgUbEG
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
-Regards,
-Samuel
+-----BEGIN PGP SIGNATURE-----
 
-> Fixes: 1745cfafebdf ("riscv: don't use global static vars to store alternative data")
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> ---
->  arch/riscv/include/asm/sbi.h  |  2 ++
->  arch/riscv/kernel/Makefile    |  6 ++++-
->  arch/riscv/kernel/sbi.c       | 44 --------------------------------
->  arch/riscv/kernel/sbi_ecall.c | 48 +++++++++++++++++++++++++++++++++++
->  4 files changed, 55 insertions(+), 45 deletions(-)
->  create mode 100644 arch/riscv/kernel/sbi_ecall.c
-> 
-> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
-> index 7cffd4ffecd0..5843a10b380e 100644
-> --- a/arch/riscv/include/asm/sbi.h
-> +++ b/arch/riscv/include/asm/sbi.h
-> @@ -9,6 +9,7 @@
->  
->  #include <linux/types.h>
->  #include <linux/cpumask.h>
-> +#include <linux/jump_label.h>
->  
->  #ifdef CONFIG_RISCV_SBI
->  enum sbi_ext_id {
-> @@ -304,6 +305,7 @@ struct sbiret {
->  };
->  
->  void sbi_init(void);
-> +long __sbi_base_ecall(int fid);
->  struct sbiret __sbi_ecall(unsigned long arg0, unsigned long arg1,
->  			  unsigned long arg2, unsigned long arg3,
->  			  unsigned long arg4, unsigned long arg5,
-> diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
-> index 06d407f1b30b..7f88cc4931f5 100644
-> --- a/arch/riscv/kernel/Makefile
-> +++ b/arch/riscv/kernel/Makefile
-> @@ -20,17 +20,21 @@ endif
->  ifdef CONFIG_RISCV_ALTERNATIVE_EARLY
->  CFLAGS_alternative.o := -mcmodel=medany
->  CFLAGS_cpufeature.o := -mcmodel=medany
-> +CFLAGS_sbi_ecall.o := -mcmodel=medany
->  ifdef CONFIG_FTRACE
->  CFLAGS_REMOVE_alternative.o = $(CC_FLAGS_FTRACE)
->  CFLAGS_REMOVE_cpufeature.o = $(CC_FLAGS_FTRACE)
-> +CFLAGS_REMOVE_sbi_ecall.o = $(CC_FLAGS_FTRACE)
->  endif
->  ifdef CONFIG_RELOCATABLE
->  CFLAGS_alternative.o += -fno-pie
->  CFLAGS_cpufeature.o += -fno-pie
-> +CFLAGS_sbi_ecall.o += -fno-pie
->  endif
->  ifdef CONFIG_KASAN
->  KASAN_SANITIZE_alternative.o := n
->  KASAN_SANITIZE_cpufeature.o := n
-> +KASAN_SANITIZE_sbi_ecall.o := n
->  endif
->  endif
->  
-> @@ -88,7 +92,7 @@ obj-$(CONFIG_DYNAMIC_FTRACE)	+= mcount-dyn.o
->  
->  obj-$(CONFIG_PERF_EVENTS)	+= perf_callchain.o
->  obj-$(CONFIG_HAVE_PERF_REGS)	+= perf_regs.o
-> -obj-$(CONFIG_RISCV_SBI)		+= sbi.o
-> +obj-$(CONFIG_RISCV_SBI)		+= sbi.o sbi_ecall.o
->  ifeq ($(CONFIG_RISCV_SBI), y)
->  obj-$(CONFIG_SMP)		+= sbi-ipi.o
->  obj-$(CONFIG_SMP) += cpu_ops_sbi.o
-> diff --git a/arch/riscv/kernel/sbi.c b/arch/riscv/kernel/sbi.c
-> index 837bdab2601b..ace9e2f59c41 100644
-> --- a/arch/riscv/kernel/sbi.c
-> +++ b/arch/riscv/kernel/sbi.c
-> @@ -14,9 +14,6 @@
->  #include <asm/smp.h>
->  #include <asm/tlbflush.h>
->  
-> -#define CREATE_TRACE_POINTS
-> -#include <asm/trace.h>
-> -
->  /* default SBI version is 0.1 */
->  unsigned long sbi_spec_version __ro_after_init = SBI_SPEC_VERSION_DEFAULT;
->  EXPORT_SYMBOL(sbi_spec_version);
-> @@ -27,36 +24,6 @@ static int (*__sbi_rfence)(int fid, const struct cpumask *cpu_mask,
->  			   unsigned long start, unsigned long size,
->  			   unsigned long arg4, unsigned long arg5) __ro_after_init;
->  
-> -struct sbiret __sbi_ecall(unsigned long arg0, unsigned long arg1,
-> -			  unsigned long arg2, unsigned long arg3,
-> -			  unsigned long arg4, unsigned long arg5,
-> -			  int fid, int ext)
-> -{
-> -	struct sbiret ret;
-> -
-> -	trace_sbi_call(ext, fid);
-> -
-> -	register uintptr_t a0 asm ("a0") = (uintptr_t)(arg0);
-> -	register uintptr_t a1 asm ("a1") = (uintptr_t)(arg1);
-> -	register uintptr_t a2 asm ("a2") = (uintptr_t)(arg2);
-> -	register uintptr_t a3 asm ("a3") = (uintptr_t)(arg3);
-> -	register uintptr_t a4 asm ("a4") = (uintptr_t)(arg4);
-> -	register uintptr_t a5 asm ("a5") = (uintptr_t)(arg5);
-> -	register uintptr_t a6 asm ("a6") = (uintptr_t)(fid);
-> -	register uintptr_t a7 asm ("a7") = (uintptr_t)(ext);
-> -	asm volatile ("ecall"
-> -		      : "+r" (a0), "+r" (a1)
-> -		      : "r" (a2), "r" (a3), "r" (a4), "r" (a5), "r" (a6), "r" (a7)
-> -		      : "memory");
-> -	ret.error = a0;
-> -	ret.value = a1;
-> -
-> -	trace_sbi_return(ext, ret.error, ret.value);
-> -
-> -	return ret;
-> -}
-> -EXPORT_SYMBOL(__sbi_ecall);
-> -
->  int sbi_err_map_linux_errno(int err)
->  {
->  	switch (err) {
-> @@ -535,17 +502,6 @@ long sbi_probe_extension(int extid)
->  }
->  EXPORT_SYMBOL(sbi_probe_extension);
->  
-> -static long __sbi_base_ecall(int fid)
-> -{
-> -	struct sbiret ret;
-> -
-> -	ret = sbi_ecall(SBI_EXT_BASE, fid, 0, 0, 0, 0, 0, 0);
-> -	if (!ret.error)
-> -		return ret.value;
-> -	else
-> -		return sbi_err_map_linux_errno(ret.error);
-> -}
-> -
->  static inline long sbi_get_spec_version(void)
->  {
->  	return __sbi_base_ecall(SBI_EXT_BASE_GET_SPEC_VERSION);
-> diff --git a/arch/riscv/kernel/sbi_ecall.c b/arch/riscv/kernel/sbi_ecall.c
-> new file mode 100644
-> index 000000000000..24aabb4fbde3
-> --- /dev/null
-> +++ b/arch/riscv/kernel/sbi_ecall.c
-> @@ -0,0 +1,48 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* Copyright (c) 2024 Rivos Inc. */
-> +
-> +#include <asm/sbi.h>
-> +#define CREATE_TRACE_POINTS
-> +#include <asm/trace.h>
-> +
-> +long __sbi_base_ecall(int fid)
-> +{
-> +	struct sbiret ret;
-> +
-> +	ret = sbi_ecall(SBI_EXT_BASE, fid, 0, 0, 0, 0, 0, 0);
-> +	if (!ret.error)
-> +		return ret.value;
-> +	else
-> +		return sbi_err_map_linux_errno(ret.error);
-> +}
-> +EXPORT_SYMBOL(__sbi_base_ecall);
-> +
-> +struct sbiret __sbi_ecall(unsigned long arg0, unsigned long arg1,
-> +			  unsigned long arg2, unsigned long arg3,
-> +			  unsigned long arg4, unsigned long arg5,
-> +			  int fid, int ext)
-> +{
-> +	struct sbiret ret;
-> +
-> +	trace_sbi_call(ext, fid);
-> +
-> +	register uintptr_t a0 asm ("a0") = (uintptr_t)(arg0);
-> +	register uintptr_t a1 asm ("a1") = (uintptr_t)(arg1);
-> +	register uintptr_t a2 asm ("a2") = (uintptr_t)(arg2);
-> +	register uintptr_t a3 asm ("a3") = (uintptr_t)(arg3);
-> +	register uintptr_t a4 asm ("a4") = (uintptr_t)(arg4);
-> +	register uintptr_t a5 asm ("a5") = (uintptr_t)(arg5);
-> +	register uintptr_t a6 asm ("a6") = (uintptr_t)(fid);
-> +	register uintptr_t a7 asm ("a7") = (uintptr_t)(ext);
-> +	asm volatile ("ecall"
-> +		       : "+r" (a0), "+r" (a1)
-> +		       : "r" (a2), "r" (a3), "r" (a4), "r" (a5), "r" (a6), "r" (a7)
-> +		       : "memory");
-> +	ret.error = a0;
-> +	ret.value = a1;
-> +
-> +	trace_sbi_return(ext, ret.error, ret.value);
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL(__sbi_ecall);
+wnsEABYIACMWIQS4qDmoJvwmKhjY+nN5vBnz2d5qsAUCZs8hdwUDAAAAAAAKCRB5vBnz2d5qsB5v
+AQDVVQtx59oPkNPZc1bHmHxVbrs3fLwrBDVcLmtGSLwY3wEApR8yzboo9/tkf6q4/7ss/XmJ9382
+Gil2B1sOIUkLzQ8=
+=mOk5
+-----END PGP SIGNATURE-----
 
+--------------DJTMR0iPx4dhmdUHIsXgUbEG--
 
