@@ -1,134 +1,132 @@
-Return-Path: <linux-kernel+bounces-304718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32F6C9623EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:50:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A34F39623EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:50:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60D941C23E76
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:50:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5643B1F25293
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC6E166F25;
-	Wed, 28 Aug 2024 09:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7D3166F25;
+	Wed, 28 Aug 2024 09:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jmG1sPeq"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Bm7FCWRZ"
+Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBDE1547F2;
-	Wed, 28 Aug 2024 09:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1968E156F4A;
+	Wed, 28 Aug 2024 09:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724838601; cv=none; b=oACtmsz+QVmpye4RmTL/5a5pMcsxF+AsJZjI1mh977CHPJ1SMeLpAsoj/+w7q6lHdCRcChxyzpiaUpBgGJFfYol/B93iqbhpjGy6ikR63WmGKX36jHicZiK+ISHPnKTIZsjakyVnYa9E58itVb1MtRDpRiuj4AbcaKYH/Ecg0MA=
+	t=1724838619; cv=none; b=HSgrVwqEjDDEH3GynewqJkquC1JWe0uzhFX0CNBoaBde1d6ZoRP6kXCKqNEK8PgTzHzprCBIY9VthfRqQ06fXIW5ltMwZL+aV0gSavqc71Vw2zFgNaNerfJv8nc3bZ42VSbJHpuAD/H1FZl6ab4fsijhwz5jMifLISW2WODI2ZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724838601; c=relaxed/simple;
-	bh=yI8UGtDeDzq0ejW8pdr/qL9ax7t3BWnl+/WBFqgMGcU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OpsSR0O/zEF/6C/on3VP1aMDj7IQNwpRJMfcMjp5LPC0ZSj3vdTANA8q+ak1Jgzt9CR0fHP1ob9p7IEEcUDvD/bBdsor6HyaftVVbX7GGithwoXz2bE6i1uAifmmXIsM/5pgJAHQ7DqeSruGtJWNCrKtxPrRHI88scOyc1aVgk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jmG1sPeq; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3B65D40E0169;
-	Wed, 28 Aug 2024 09:49:55 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id fs9lpMNWbvlK; Wed, 28 Aug 2024 09:49:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1724838590; bh=YvhPqudcoWPR0qgKjwOwmAY5MUaGOhjFnDWRorh3R24=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jmG1sPeqgZEqwW9gdYGJtbbQhlI9DPC2kDHs3DrhwvSdlsVaKfiKQfey1bVMfr78v
-	 TrmTAkuvvVEwqyHs+5u5pZqes1ouDQzQJkKeAzv1tiqqJxoP7m2wwtsu1tS/I7XNZv
-	 cHycddpT6IzEt+lp1QiX6pElAqN8R0wgI3lGM2NElYUQyp8n5GhqnG06y7EYOOAFt4
-	 GTzpCJUM97UfE6bk7K4+R6ALajym6uecwu4dFCVMFyZ8EF3cepc30hWL4PhBofKEVJ
-	 tl8GeNqooxyDv9h/VmMoX5mV1f85OpT8mBLAXFDBxmDiWCrbnhUx7ODtb82OKSDhOj
-	 bO3u+VCxgjKzATTW0o00TBVIEx6PW0ubnCZ5IcGncFBSzlmUkRFYTiFkheA92rz4ig
-	 Dauqo+YPPE2F/D/uSXfQ2AN/tEWUmtR9Vy88aOLWlVT4Uzdljl2QjoibN/RSjhdDwn
-	 RE+mbRZVChM1MB7AvccRnXJDNaqkELVPE2NS7b34N+DfLfPGRqZrNfp3qg6wnUVXte
-	 RtEaT8G2w45U6ytnfCS6Qyjh2yqSxRiFn0RAxhXRHwSQ8/mw3R50Ece0syzM861gQc
-	 rddoWF7Sib9F/xzhsiPVUX5eL4IxARtvEbiQ4rBbPBF0vBminszqY0x13gMQ7Tp0dy
-	 mkSkhlO9+BeJugnSVal3Yq64=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BC9C340E01C5;
-	Wed, 28 Aug 2024 09:49:39 +0000 (UTC)
-Date: Wed, 28 Aug 2024 11:49:33 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Nikunj A. Dadhania" <nikunj@amd.com>
-Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
-	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
-	pbonzini@redhat.com
-Subject: Re: [PATCH v11 06/20] x86/sev: Handle failures from snp_init()
-Message-ID: <20240828094933.GAZs7yrbCHDJUeUWys@fat_crate.local>
-References: <20240731150811.156771-1-nikunj@amd.com>
- <20240731150811.156771-7-nikunj@amd.com>
- <20240827113227.GAZs25S8Ubep1CDYr8@fat_crate.local>
- <5b62f751-668f-714e-24a2-6bbc188c3ce8@amd.com>
+	s=arc-20240116; t=1724838619; c=relaxed/simple;
+	bh=2Q3jsDxS0W1bQLBmum7GleYuOyVX9tirrUuc/kx3/4M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=E4BdYzWsgGOxzWPvyWmE9gCBt+GLvKQN8zLYXGtceSiM48ig2nLX0p1db1228jYeAqMczTryclcFHY7t2zWRDD1umAsvmy4ZdrqxI0tqmwZu80HsuZPyfG90dlQEozyRufwu9hLBx6bj+Ee5pFIfQ7f+tdW0y20bWmtHS2zsP/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Bm7FCWRZ; arc=none smtp.client-ip=52.119.213.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1724838618; x=1756374618;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=2Q3jsDxS0W1bQLBmum7GleYuOyVX9tirrUuc/kx3/4M=;
+  b=Bm7FCWRZ2DQrITUNqNdc8JTOIayzUmA6tUqrJPhn/UHDrkTV0zyEILeE
+   Mq3nxkSs+R37EeUelavFEWzXyS6MTa1C6/QBtz6bJKC3pKtRDPsH/vlee
+   JbZMQjFdXrjBS3Das8nbGr3wksK80oWz58XW2mzPrsHPsgK1O1ZoVuG0d
+   w=;
+X-IronPort-AV: E=Sophos;i="6.10,182,1719878400"; 
+   d="scan'208";a="655304012"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 09:50:15 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.7.35:55612]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.15.160:2525] with esmtp (Farcaster)
+ id ef5615f8-0011-4bb1-a4e7-b7ec4ba4ddd0; Wed, 28 Aug 2024 09:50:13 +0000 (UTC)
+X-Farcaster-Flow-ID: ef5615f8-0011-4bb1-a4e7-b7ec4ba4ddd0
+Received: from EX19D020UWC004.ant.amazon.com (10.13.138.149) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Wed, 28 Aug 2024 09:50:13 +0000
+Received: from [0.0.0.0] (10.253.83.51) by EX19D020UWC004.ant.amazon.com
+ (10.13.138.149) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Wed, 28 Aug 2024
+ 09:50:10 +0000
+Message-ID: <f2d6e44c-585f-460c-9d68-0be4d5fbe9fd@amazon.com>
+Date: Wed, 28 Aug 2024 11:50:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <5b62f751-668f-714e-24a2-6bbc188c3ce8@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 0/3] add support for mm-local memory allocations
+To: Roman Kagan <rkagan@amazon.de>, <linux-kernel@vger.kernel.org>
+CC: Shuah Khan <shuah@kernel.org>, Dragan Cvetic <dragan.cvetic@amd.com>,
+	Fares Mehanna <faresx@amazon.de>, Alexander Graf <graf@amazon.de>, "Derek
+ Kiernan" <derek.kiernan@amd.com>, <linux-kselftest@vger.kernel.org>,
+	<nh-open-source@amazon.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<linux-mm@kvack.org>, David Woodhouse <dwmw@amazon.co.uk>, Andrew Morton
+	<akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>
+References: <20240621201501.1059948-1-rkagan@amazon.de>
+Content-Language: en-US
+From: Alexander Graf <graf@amazon.com>
+In-Reply-To: <20240621201501.1059948-1-rkagan@amazon.de>
+X-ClientProxiedBy: EX19D039UWB001.ant.amazon.com (10.13.138.119) To
+ EX19D020UWC004.ant.amazon.com (10.13.138.149)
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: base64
 
-On Wed, Aug 28, 2024 at 10:17:57AM +0530, Nikunj A. Dadhania wrote:
-> +	if ((snp && !snp_enabled) ||
-> +	    (!snp && snp_enabled))
->  		snp_abort();
+SGV5IFJvbWFuLAoKT24gMjEuMDYuMjQgMjI6MTQsIFJvbWFuIEthZ2FuIHdyb3RlOgo+IEluIGEg
+c2VyaWVzIHBvc3RlZCBhIGZldyB5ZWFycyBhZ28gWzFdLCBhIHByb3Bvc2FsIHdhcyBwdXQgZm9y
+d2FyZCB0byBhbGxvdyB0aGUKPiBrZXJuZWwgdG8gYWxsb2NhdGUgbWVtb3J5IGxvY2FsIHRvIGEg
+bW0gYW5kIHRodXMgcHVzaCBpdCBvdXQgb2YgcmVhY2ggZm9yCj4gY3VycmVudCBhbmQgZnV0dXJl
+IHNwZWN1bGF0aW9uLWJhc2VkIGNyb3NzLXByb2Nlc3MgYXR0YWNrcy4gIFdlIHN0aWxsIGJlbGll
+dmUKPiB0aGlzIGlzIGEgbmljZSB0aGluZyB0byBoYXZlLgo+Cj4gSG93ZXZlciwgaW4gdGhlIHRp
+bWUgcGFzc2VkIHNpbmNlIHRoYXQgcG9zdCBMaW51eCBtbSBoYXMgZ3Jvd24gcXVpdGUgYSBmZXcg
+bmV3Cj4gZ29vZGllcywgc28gd2UnZCBsaWtlIHRvIGV4cGxvcmUgcG9zc2liaWxpdGllcyB0byBp
+bXBsZW1lbnQgdGhpcyBmdW5jdGlvbmFsaXR5Cj4gd2l0aCBsZXNzIGVmZm9ydCBhbmQgY2h1cm4g
+bGV2ZXJhZ2luZyB0aGUgbm93IGF2YWlsYWJsZSBmYWNpbGl0aWVzLgo+Cj4gU3BlY2lmaWNhbGx5
+LCB0aGlzIGlzIGEgcHJvb2Ytb2YtY29uY2VwdCBhdHRlbXB0IHRvIGltcGxlbWVudCBtbS1sb2Nh
+bAo+IGFsbG9jYXRpb25zIHBpZ2d5LWJhY2tpbmcgb24gbWVtZmRfc2VjcmV0KCksIHVzaW5nIHJl
+Z3VsYXIgdXNlciBhZGRyZXNzZXNzIGJ1dAo+IHBpbm5pbmcgdGhlIHBhZ2VzIGFuZCBmbGlwcGlu
+ZyB0aGUgdXNlci9zdXBlcnZpc29yIGZsYWcgb24gdGhlIHJlc3BlY3RpdmUgUFRFcwo+IHRvIG1h
+a2UgdGhlbSBkaXJlY3RseSBhY2Nlc3NpYmxlIGZyb20ga2VybmVsLCBhbmQgc2VhbGluZyB0aGUg
+Vk1BIHRvIHByZXZlbnQKPiB1c2VybGFuZCBmcm9tIHRha2luZyBvdmVyIHRoZSBhZGRyZXNzIHJh
+bmdlLiAgVGhlIGFwcHJvYWNoIGFsbG93ZWQgdG8gZGVsZWdhdGUKPiBhbGwgdGhlIGhlYXZ5IGxp
+ZnRpbmcgLS0gYWRkcmVzcyBtYW5hZ2VtZW50LCBpbnRlcmFjdGlvbnMgd2l0aCB0aGUgZGlyZWN0
+IG1hcCwKPiBjbGVhbnVwIG9uIG1tIHRlYXJkb3duIC0tIHRvIHRoZSBleGlzdGluZyBpbmZyYXN0
+cnVjdHVyZSwgYW5kIHJlcXVpcmVkIHplcm8KPiBhcmNoaXRlY3R1cmUtc3BlY2lmaWMgY29kZS4K
+Pgo+IENvbXBhcmVkIHRvIHRoZSBhcHByb2FjaCB1c2VkIGluIHRoZSBvcmlnbmFsIHNlcmllcywg
+d2hlcmUgYSBkZWRpY2F0ZWQga2VybmVsCj4gYWRkcmVzcyByYW5nZSBhbmQgdGh1cyBhIGRlZGlj
+YXRlZCBQR0Qgd2FzIHVzZWQgZm9yIG1tLWxvY2FsIGFsbG9jYXRpb25zLCB0aGUKPiBvbmUgcHJv
+cG9zZWQgaGVyZSBtYXkgaGF2ZSBjZXJ0YWluIGRyYXdiYWNrcywgaW4gcGFydGljdWxhcgo+Cj4g
+LSB1c2luZyB1c2VyIGFkZHJlc3NlcyBmb3Iga2VybmVsIG1lbW9yeSBtYXkgdmlvbGF0ZSBhc3N1
+bXB0aW9ucyBpbiB2YXJpb3VzCj4gICAgcGFydHMgb2Yga2VybmVsIGNvZGUgd2hpY2ggd2UgbWF5
+IG5vdCBoYXZlIGlkZW50aWZpZWQgd2l0aCBzbW9rZSB0ZXN0cyB3ZSBkaWQKPgo+IC0gdGhlIGFs
+bG9jYXRlZCBhZGRyZXNzZXMgYXJlIGd1ZXNzYWJsZSBieSB0aGUgdXNlcmxhbmQgKEFUTSB0aGV5
+IGFyZSBldmVuCj4gICAgdmlzaWJsZSBpbiAvcHJvYy9QSUQvbWFwcyBidXQgdGhhdCdzIGZpeGFi
+bGUpIHdoaWNoIG1heSB3ZWFrZW4gdGhlIHNlY3VyaXR5Cj4gICAgcG9zdHVyZQo+Cj4gQWxzbyBp
+bmNsdWRlZCBpcyBhIHNpbXBsZSB0ZXN0IGRyaXZlciBhbmQgc2VsZnRlc3QgdG8gc21va2UgdGVz
+dCBhbmQgc2hvd2Nhc2UKPiB0aGUgZmVhdHVyZS4KPgo+IFRoZSBjb2RlIGlzIFBvQyBSRkMgYW5k
+IGxhY2tzIGEgbG90IG9mIGNoZWNrcyBhbmQgc3BlY2lhbCBjYXNlIGhhbmRsaW5nLCBidXQKPiBk
+ZW1vbnN0cmF0ZXMgdGhlIGlkZWEuICBXZSdkIGFwcHJlY2lhdGUgYW55IGZlZWRiYWNrIG9uIHdo
+ZXRoZXIgaXQncyBhIHZpYWJsZQo+IGFwcHJvYWNoIG9yIGl0IHNob3VsZCBiZXR0ZXIgYmUgYWJh
+bmRvbmVkIGluIGZhdm9yIG9mIHRoZSBvbmUgd2l0aCBkZWRpY2F0ZWQKPiBQR0QgLyBrZXJuZWwg
+YWRkcmVzcyByYW5nZSBvciB5ZXQgc29tZXRoaW5nIGVsc2UuCj4KPiBbMV0gaHR0cHM6Ly9sb3Jl
+Lmtlcm5lbC5vcmcvbGttbC8yMDE5MDYxMjE3MDgzNC4xNDg1NS0xLW1oaWxsZW5iQGFtYXpvbi5k
+ZS8KCgpJIGhhdmVuJ3Qgc2VlbiBhbnkgbmVnYXRpdmUgZmVlZGJhY2sgb24gdGhlIFJGQywgc28g
+d2hlbiBjYW4gSSBleHBlY3QgYSAKdjEgb2YgdGhpcyBwYXRjaCBzZXQgdGhhdCBhZGRyZXNzZXMg
+dGhlIG5vbi1wcm9kdWN0aW9uLXJlYWR5bmVzcyBvZiBpdCAKdGhhdCB5b3UgY2FsbCBvdXQgYWJv
+dmU/IDopCgoKQWxleAoKCgoKQW1hem9uIFdlYiBTZXJ2aWNlcyBEZXZlbG9wbWVudCBDZW50ZXIg
+R2VybWFueSBHbWJICktyYXVzZW5zdHIuIDM4CjEwMTE3IEJlcmxpbgpHZXNjaGFlZnRzZnVlaHJ1
+bmc6IENocmlzdGlhbiBTY2hsYWVnZXIsIEpvbmF0aGFuIFdlaXNzCkVpbmdldHJhZ2VuIGFtIEFt
+dHNnZXJpY2h0IENoYXJsb3R0ZW5idXJnIHVudGVyIEhSQiAyNTc3NjQgQgpTaXR6OiBCZXJsaW4K
+VXN0LUlEOiBERSAzNjUgNTM4IDU5Nwo=
 
-And which boolean function is that?
-
-diff --git a/arch/x86/mm/mem_encrypt_identity.c b/arch/x86/mm/mem_encrypt_identity.c
-index e83b363c5e68..706cb59851b0 100644
---- a/arch/x86/mm/mem_encrypt_identity.c
-+++ b/arch/x86/mm/mem_encrypt_identity.c
-@@ -495,10 +495,10 @@ void __head sme_enable(struct boot_params *bp)
- 	unsigned int eax, ebx, ecx, edx;
- 	unsigned long feature_mask;
- 	unsigned long me_mask;
--	bool snp;
-+	bool snp_en;
- 	u64 msr;
- 
--	snp = snp_init(bp);
-+	snp_en = snp_init(bp);
- 
- 	/* Check for the SME/SEV support leaf */
- 	eax = 0x80000000;
-@@ -531,15 +531,11 @@ void __head sme_enable(struct boot_params *bp)
- 	RIP_REL_REF(sev_status) = msr = __rdmsr(MSR_AMD64_SEV);
- 	feature_mask = (msr & MSR_AMD64_SEV_ENABLED) ? AMD_SEV_BIT : AMD_SME_BIT;
- 
--	/* The SEV-SNP CC blob should never be present unless SEV-SNP is enabled. */
--	if (snp && !(msr & MSR_AMD64_SEV_SNP_ENABLED))
--		snp_abort();
--
- 	/*
--	 * The SEV-SNP CC blob should be present and parsing CC blob should
--	 * succeed when SEV-SNP is enabled.
-+	 * Any discrepancies between the presence of a CC blob and SNP
-+	 * enablement abort the guest.
- 	 */
--	if (!snp && (msr & MSR_AMD64_SEV_SNP_ENABLED))
-+	if (snp_en ^ (msr & MSR_AMD64_SEV_SNP_ENABLED))
- 		snp_abort();
- 
- 	/* Check if memory encryption is enabled */
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
