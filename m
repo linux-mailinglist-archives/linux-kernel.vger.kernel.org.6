@@ -1,161 +1,266 @@
-Return-Path: <linux-kernel+bounces-305493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 904A8962F92
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:15:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D693C962F96
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E9DE285D02
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:15:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FF10B22D96
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494BD1AB535;
-	Wed, 28 Aug 2024 18:14:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3DDC1A76A7;
+	Wed, 28 Aug 2024 18:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v1bOuD6n"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EadeC2G5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB59B1AB50E
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 18:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D7A2747B;
+	Wed, 28 Aug 2024 18:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724868896; cv=none; b=EZjbE5nmjo8f9pA+VfZM01zLqUkNXkyqkYiVe4GaHmMcV0c4qJ4hN3o06+kafEzFlN71fozsc20vGTnpVfTzqj+Szff4EIE8D11Lc/pDbBM8d8QDUi/beA+ncLie6qKzVfcPVWoHcE5X16LgeakQGYk9f6aZMSaKRATnDlgiy18=
+	t=1724868940; cv=none; b=EnZJnSlvKTSPwgNrrrItUAqHU86vcCWkgbZ6GuqVxQMj5c3Y5DV24cuv3E4o1KgCBRCBQiWmpj9T74Z0DfLOC3I5IEm3l1Up8Rx1Pp1BvSWFB0vSxMArEFksiGINZAsJS34qypQy4q4WqWSkQELKozeYDbbgwOjqWvR5+rPlwik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724868896; c=relaxed/simple;
-	bh=LnPdXA7Jg8T29YlpMD9bHqpviTaW8w6gYDIQ+3cm8rw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UgErZaQ7fjHKeRDv75fzlZ4ODD5AdXkaVZw7eNrG9+78DW5AgwuqgaA98zJITKqDFcWk19xu3qurw4M7xyxq3fzXruHEvzIEoQvd5JySbHlcuzF8lfJeNcgvp1V/aanMNYcjDUKs/jq5Tc/4bSCK4jcDAyTvBQoTK3R09hlw+po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v1bOuD6n; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e17bb508bb9so9342391276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 11:14:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724868894; x=1725473694; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=g8CEH7SnnSsHaiw39Cx2W/imrlcDKaVqaPZKBSnVoqE=;
-        b=v1bOuD6nVgxW03i0FbFjLL49r3B17a9fURUdaJXVd4md5Bw+9swKXZsdU2stECb2L7
-         2ztjqihgJk7LYGHFat04MenFBnC6qSW0BeTSlQOX9NfpnQPcnyEilVXtX3JHCpsCfg9U
-         5takWcb12GGwsigyQfIMjyMm9tuKY+alReASYkueasAvnc9N7tOdLbj5ukExlKe+Vksz
-         O/J+me4tkjR0ovYSbGLColJs3ZCKRCx7aGploTOTWxJpaX9VLHgm1Fyf9Ue+YAHaKtUV
-         WnOe8zmQgtHE/oA+7lLv3Z8DmB6DZVFut/AVZqKk6fTCyp6YSzu4GFljkkPmsqUuwr72
-         tdGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724868894; x=1725473694;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g8CEH7SnnSsHaiw39Cx2W/imrlcDKaVqaPZKBSnVoqE=;
-        b=SV96QpHxk9to4lEAn6/l8utKo3mxtGwiVkp7vRR0pMxDVohQK0iE6aHotKOraSXysW
-         Tc3cpxK9s1gHS/4NGgWr0IlAdlw1kUBbB5g9uPgTZu8b+UjDqEF6Dnfjvd9FAlOImDaP
-         +LXp4Kv/2fCqg3Lz75Dde+59A8ls27dUxSVLa5Ddai4zqL3tZrud3uanxsZtBhNmKjkM
-         FaIf+LwZzxT/qjf+Ri5gr4KEqbwav4VqPezNaPySP1r8yRi5eJoCuYN1atGjV8lvlGef
-         Ys+k9WU+nH/DUdc6UzJJqpWSa/aAphETpJUeJ3JlDo2uMi0K/yeuANe/h7XyFAA48l/J
-         /oCA==
-X-Forwarded-Encrypted: i=1; AJvYcCXb6L0nJMCoAd+O/OM0mEqLid+0E2pHhUNC7iZNy2ntaj7UrSFI+yyVcLBVCmtAZR7D1Ind2H+gAwCWXig=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNxXPcx3PlqQUhy/uRakZGZvmoVLEY1ulV/Dlb2howqbZ+MZW5
-	LzZ8MuROVDv/gc9Pxq6fsOQUlMjBdW8CZfavPEfdz+AN/++ApBKm4RqzFhce5uAbFQznhppZO5e
-	2jg==
-X-Google-Smtp-Source: AGHT+IHNeuQKAVCun7jGA+4F4NSXhmCTAL6hk/rIp4B1oyD7UZlqqmU2e4hcnFIXLWY3/GKLuflJ7LotGs0=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:e304:0:b0:e11:7112:6b9b with SMTP id
- 3f1490d57ef6-e1a5ab3d138mr6965276.3.1724868893779; Wed, 28 Aug 2024 11:14:53
- -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 28 Aug 2024 11:14:46 -0700
-In-Reply-To: <20240828181446.652474-1-seanjc@google.com>
+	s=arc-20240116; t=1724868940; c=relaxed/simple;
+	bh=FveA6ivn7jNuVVJwt3ZVsWXWe3VU5PK0bqzTdYvMwNE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iqtLzXnczvOTShN1VfLaw5cTbIFKYwTXASiHP/mcCJI1koAxYZ/UdFY/Px2I+OWyG5VLkFQGQUcVMW5/2GYYiNhM/fv4PmBzKeuYs6D5ya54yHc2I5IUEZUpZ6REwy560wBlZTOlqzodCn1W2NC4SQHDygsIdj5hjuh+oRetOLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EadeC2G5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D46E6C4CEC3;
+	Wed, 28 Aug 2024 18:15:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724868939;
+	bh=FveA6ivn7jNuVVJwt3ZVsWXWe3VU5PK0bqzTdYvMwNE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=EadeC2G5/c1OO3GBWW8sYLNVlSbhUacvcdVwKY0jRzfddZi1t7HJ8/fsSzoH+3JRC
+	 J0LKRmnRgedjLZNQ2c9w+ALCX6a0iPCaejEuyG00t/uvjIMDPr+DlRhKaUTdBTtuLh
+	 0IBCUzeLx3lRTHMKtMY9HoKs1WvyILtzA6KRhQO5czQ/a03dvktee4MhrMiCIFikVq
+	 pU3gtAGq6cM/JPlK8mOYQWWSFoKdZv635VvekJOrk2XoogZYhJvYtIxosei722hZ+O
+	 azMuOef5YszfO3fiI96P8hkfbwaJru15Po7JcGvpptO5vfF20LhkuJlfEaLxzW5z/J
+	 i/FK2wb7WOEsQ==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-533488ffaf7so9680588e87.0;
+        Wed, 28 Aug 2024 11:15:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUDVfqqaeYskwunGlOJ7KjFJfvuank/jPvc+9yipR1fbpF2IDd14+vARJJW8NcqKNFZcc48abaqCWIFegCd@vger.kernel.org, AJvYcCUXf3f+RJ5ARwqbxZQtj4qqBykXa3gBifp6c0akLN1PlGjfqBOHRLliIfwPtRQb5a7dDHrhflxlt8U0t6x3+w==@vger.kernel.org, AJvYcCV8XRmTQ6XPkgDAGaetTQIO9BoIzGWvT0aaacEoWv7llR1w1pq3jZ43vnYgtpcY5eZLfkIPiw6XKSrF0mg=@vger.kernel.org, AJvYcCVAIiJR7IIoQh3G8bX3Q6lwJwdUljwbf5XG20yXhv7IeyX19s8IxJzs3biydi0FmriMyrR1yZn3R8BlZ5rWTso=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywf3RvqaPAQr8q3QXMjlMEgyMTzxzBsLA3KmW3z1/2FELuY/SKB
+	IWqegYynNVpUxNLCyXKaL/BPugXpLT22z5tj7NqBtQ3GyqxW8QMXIKg6+2voAVrP5S0mP4FJLG2
+	zX5n2gKFRtzE1inSJG2Jbe5qFzBg=
+X-Google-Smtp-Source: AGHT+IF/63jL53P75A8iee8qUEGbkNUdjDngWZczENu3dFzHOlQ0gMsu6LTAAnvPf8fF3Lg63689rhWEBKtJDKSCfY8=
+X-Received: by 2002:a05:6512:e92:b0:533:97b:e272 with SMTP id
+ 2adb3069b0e04-5353e5aae0emr99002e87.41.1724868938342; Wed, 28 Aug 2024
+ 11:15:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240828181446.652474-1-seanjc@google.com>
-X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
-Message-ID: <20240828181446.652474-3-seanjc@google.com>
-Subject: [PATCH v2 2/2] KVM: Clean up coalesced MMIO ring full check
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: kvm@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Ilias Stamatis <ilstam@amazon.com>, 
-	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Anup Patel <anup@brainfault.org>, Sean Christopherson <seanjc@google.com>, Paul Durrant <paul@xen.org>
+MIME-Version: 1.0
+References: <20240815173903.4172139-21-samitolvanen@google.com> <20240815173903.4172139-27-samitolvanen@google.com>
+In-Reply-To: <20240815173903.4172139-27-samitolvanen@google.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 29 Aug 2024 03:15:02 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARQncjxxqbjiMHXdAnakpo8QYo-5kYnN=KaD2xDe0uXPA@mail.gmail.com>
+Message-ID: <CAK7LNARQncjxxqbjiMHXdAnakpo8QYo-5kYnN=KaD2xDe0uXPA@mail.gmail.com>
+Subject: Re: [PATCH v2 06/19] gendwarfksyms: Add a cache for processed DIEs
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Maurer <mmaurer@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, 
+	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fold coalesced_mmio_has_room() into its sole caller, coalesced_mmio_write(),
-as it's really just a single line of code, has a goofy return value, and
-is unnecessarily brittle.
+On Fri, Aug 16, 2024 at 2:39=E2=80=AFAM Sami Tolvanen <samitolvanen@google.=
+com> wrote:
+>
+> Basic types in DWARF repeat frequently and traversing the DIEs using
+> libdw is relatively slow. Add a simple hashtable based cache for the
+> processed DIEs.
+>
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> ---
+>  scripts/gendwarfksyms/Makefile        |   1 +
+>  scripts/gendwarfksyms/die.c           | 170 +++++++++++++++++++++++
+>  scripts/gendwarfksyms/dwarf.c         | 192 ++++++++++++++++++++------
+>  scripts/gendwarfksyms/gendwarfksyms.c |   6 +
+>  scripts/gendwarfksyms/gendwarfksyms.h |  58 +++++++-
+>  5 files changed, 382 insertions(+), 45 deletions(-)
+>  create mode 100644 scripts/gendwarfksyms/die.c
+>
+> diff --git a/scripts/gendwarfksyms/Makefile b/scripts/gendwarfksyms/Makef=
+ile
+> index 623f8fc975ea..fcbac52ca00a 100644
+> --- a/scripts/gendwarfksyms/Makefile
+> +++ b/scripts/gendwarfksyms/Makefile
+> @@ -1,6 +1,7 @@
+>  hostprogs-always-y +=3D gendwarfksyms
+>
+>  gendwarfksyms-objs +=3D gendwarfksyms.o
+> +gendwarfksyms-objs +=3D die.o
+>  gendwarfksyms-objs +=3D dwarf.o
+>  gendwarfksyms-objs +=3D symbols.o
+>
+> diff --git a/scripts/gendwarfksyms/die.c b/scripts/gendwarfksyms/die.c
+> new file mode 100644
+> index 000000000000..ad6ba435d9dd
+> --- /dev/null
+> +++ b/scripts/gendwarfksyms/die.c
+> @@ -0,0 +1,170 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Copyright (C) 2024 Google LLC
+> + */
+> +
+> +#include <string.h>
+> +#include "gendwarfksyms.h"
+> +
+> +#define DIE_HASH_BITS 20
+> +
+> +/* uintptr_t die->addr -> struct die * */
+> +static DEFINE_HASHTABLE(die_map, DIE_HASH_BITS);
+> +
+> +static unsigned int map_hits;
+> +static unsigned int map_misses;
+> +
+> +static int create_die(Dwarf_Die *die, struct die **res)
+> +{
+> +       struct die *cd;
+> +
+> +       cd =3D malloc(sizeof(struct die));
+> +       if (!cd) {
+> +               error("malloc failed");
+> +               return -1;
+> +       }
+> +
+> +       cd->state =3D INCOMPLETE;
+> +       cd->mapped =3D false;
+> +       cd->fqn =3D NULL;
+> +       cd->tag =3D -1;
+> +       cd->addr =3D (uintptr_t)die->addr;
+> +       cd->list =3D NULL;
+> +
+> +       hash_add(die_map, &cd->hash, addr_hash(cd->addr));
+> +       *res =3D cd;
+> +       return 0;
+> +}
+> +
+> +int __die_map_get(uintptr_t addr, enum die_state state, struct die **res=
+)
+> +{
+> +       struct die *cd;
+> +
+> +       hash_for_each_possible(die_map, cd, hash, addr_hash(addr)) {
+> +               if (cd->addr =3D=3D addr && cd->state =3D=3D state) {
+> +                       *res =3D cd;
+> +                       return 0;
+> +               }
+> +       }
+> +
+> +       return -1;
+> +}
+> +
+> +int die_map_get(Dwarf_Die *die, enum die_state state, struct die **res)
+> +{
+> +       if (__die_map_get((uintptr_t)die->addr, state, res) =3D=3D 0) {
+> +               map_hits++;
+> +               return 0;
+> +       }
+> +
+> +       map_misses++;
+> +       return check(create_die(die, res));
+> +}
+> +
+> +static void reset_die(struct die *cd)
+> +{
+> +       struct die_fragment *tmp;
+> +       struct die_fragment *df =3D cd->list;
+> +
+> +       while (df) {
+> +               if (df->type =3D=3D STRING)
+> +                       free(df->data.str);
+> +
+> +               tmp =3D df->next;
+> +               free(df);
+> +               df =3D tmp;
+> +       }
+> +
+> +       cd->state =3D INCOMPLETE;
+> +       cd->mapped =3D false;
+> +       if (cd->fqn)
+> +               free(cd->fqn);
+> +       cd->fqn =3D NULL;
+> +       cd->tag =3D -1;
+> +       cd->addr =3D 0;
+> +       cd->list =3D NULL;
+> +}
+> +
+> +void die_map_free(void)
+> +{
+> +       struct hlist_node *tmp;
+> +       unsigned int stats[LAST + 1];
+> +       struct die *cd;
+> +       int i;
+> +
+> +       memset(stats, 0, sizeof(stats));
+> +
+> +       hash_for_each_safe(die_map, i, tmp, cd, hash) {
+> +               stats[cd->state]++;
+> +               reset_die(cd);
+> +               free(cd);
+> +       }
+> +       hash_init(die_map);
+> +
+> +       if ((map_hits + map_misses > 0))
+> +               debug("hits %u, misses %u (hit rate %.02f%%)", map_hits,
+> +                     map_misses,
+> +                     (100.0f * map_hits) / (map_hits + map_misses));
+> +
+> +       for (i =3D 0; i <=3D LAST; i++)
+> +               debug("%s: %u entries", die_state_name(i), stats[i]);
+> +}
+> +
+> +static int append_item(struct die *cd, struct die_fragment **res)
+> +{
+> +       struct die_fragment *prev;
+> +       struct die_fragment *df;
+> +
+> +       df =3D malloc(sizeof(struct die_fragment));
+> +       if (!df) {
+> +               error("malloc failed");
+> +               return -1;
+> +       }
+> +
+> +       df->type =3D EMPTY;
+> +       df->next =3D NULL;
+> +
+> +       prev =3D cd->list;
+> +       while (prev && prev->next)
+> +               prev =3D prev->next;
 
-E.g. if coalesced_mmio_has_room() were to check ring->last directly, or
-the caller failed to use READ_ONCE(), KVM would be susceptible to TOCTOU
-attacks from userspace.
 
-Opportunistically add a comment explaining why on earth KVM leaves one
-entry free, which may not be obvious to readers that aren't familiar with
-ring buffers.
 
-No functional change intended.
+So, this entirely traverses the singly-linked list
+every time a new item is appended to the tail.
 
-Reviewed-by: Ilias Stamatis <ilstam@amazon.com>
-Cc: Paul Durrant <paul@xen.org>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- virt/kvm/coalesced_mmio.c | 29 ++++++++---------------------
- 1 file changed, 8 insertions(+), 21 deletions(-)
 
-diff --git a/virt/kvm/coalesced_mmio.c b/virt/kvm/coalesced_mmio.c
-index 184c5c40c9c1..375d6285475e 100644
---- a/virt/kvm/coalesced_mmio.c
-+++ b/virt/kvm/coalesced_mmio.c
-@@ -40,25 +40,6 @@ static int coalesced_mmio_in_range(struct kvm_coalesced_mmio_dev *dev,
- 	return 1;
- }
- 
--static int coalesced_mmio_has_room(struct kvm_coalesced_mmio_dev *dev, u32 last)
--{
--	struct kvm_coalesced_mmio_ring *ring;
--
--	/* Are we able to batch it ? */
--
--	/* last is the first free entry
--	 * check if we don't meet the first used entry
--	 * there is always one unused entry in the buffer
--	 */
--	ring = dev->kvm->coalesced_mmio_ring;
--	if ((last + 1) % KVM_COALESCED_MMIO_MAX == READ_ONCE(ring->first)) {
--		/* full */
--		return 0;
--	}
--
--	return 1;
--}
--
- static int coalesced_mmio_write(struct kvm_vcpu *vcpu,
- 				struct kvm_io_device *this, gpa_t addr,
- 				int len, const void *val)
-@@ -72,9 +53,15 @@ static int coalesced_mmio_write(struct kvm_vcpu *vcpu,
- 
- 	spin_lock(&dev->kvm->ring_lock);
- 
-+	/*
-+	 * last is the index of the entry to fill.  Verify userspace hasn't
-+	 * set last to be out of range, and that there is room in the ring.
-+	 * Leave one entry free in the ring so that userspace can differentiate
-+	 * between an empty ring and a full ring.
-+	 */
- 	insert = READ_ONCE(ring->last);
--	if (!coalesced_mmio_has_room(dev, insert) ||
--	    insert >= KVM_COALESCED_MMIO_MAX) {
-+	if (insert >= KVM_COALESCED_MMIO_MAX ||
-+	    (insert + 1) % KVM_COALESCED_MMIO_MAX == READ_ONCE(ring->first)) {
- 		spin_unlock(&dev->kvm->ring_lock);
- 		return -EOPNOTSUPP;
- 	}
--- 
-2.46.0.295.g3b9ea8a38a-goog
+In my analysis, this while loop iterates for thousands
+of times in total for emitting each export symbol.
 
+
+Why isn't this list_add_tail()?
+
+
+
+
+
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
