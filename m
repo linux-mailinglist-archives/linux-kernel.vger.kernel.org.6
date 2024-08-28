@@ -1,163 +1,158 @@
-Return-Path: <linux-kernel+bounces-305696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 121509632F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:52:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68CE19632F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 788A8B213FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:52:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26E5228626F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:53:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A593A1AD9C1;
-	Wed, 28 Aug 2024 20:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD471AC8AC;
+	Wed, 28 Aug 2024 20:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qg+Kfh29"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DCh9yF8+"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1891AC881
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 20:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159A615C146;
+	Wed, 28 Aug 2024 20:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724878176; cv=none; b=OIHfePhknzKC/a+nTS7d6zXxtP+VJpnhyQkJFAE0D8MWyaPhTKiM2clTyAfsbttU/j3Bik3tHQcIaaLOwRYghUH+VkP+wU7f3Z4gvSVYG9/sPCvXPb4wiKJnzy8qn4XBUdLQFsaPjj1kiG7vOTJYSr6O2mxA1aluSuFEfOAxOno=
+	t=1724878298; cv=none; b=VFA3pwEr4+SYaxenOv5KC9ZuzD5Ol2/0Vk689KWqqI9E351HMKcqDLiXjSixYwXBZIcJPS7PqVWX2P/iauXeZh7C5YFywhhFYgbHkRMgGqhvwuSPMZSJGjUGhs3IFp0FViqDOqRlV5uuSWu8T/KTZy3BzBUEep5IQNXLi/1CSf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724878176; c=relaxed/simple;
-	bh=SI+regcL35D2pgjCxxik/DYpB87OSLp3n3YVroEysHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cyi1XCwKYGNwBgkABZQxPnyUNgMnZ+QjZSJEdX51BCcT0NgAl5vTGLx5lMV+qrcvyIwQpR0g0bSH/E4qmfrLBAz6JS2c+cqUEkPXUcQumQgu4rcHmdTUQwcp4VNumgmJ75+RzLEVSnFwuKs5yEh3eFwFsx9mp0Tk6LJSKw8JRIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qg+Kfh29; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5333b2fbedaso3409351e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 13:49:33 -0700 (PDT)
+	s=arc-20240116; t=1724878298; c=relaxed/simple;
+	bh=Yt4He6JNa79hvnCAPK/BHO3qzmvg3VKIUb0OeXwskaQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EowLO/KxMhdjGyokpMvFcDJ7olr7ytgkPvrdURLMhMFQpoWLurETV1dLyO9sWQF3v3o4EijVunZLTz70MLP3E+StlaxZMXioz2pje6zKYt8eaAyfKz3/s6HE2Anm3MAn/RY5lpM9+RRBFu3XW2xnOrfJeJl1sYbjaWuzcCa/TI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DCh9yF8+; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5bed72ff2f2so8956559a12.2;
+        Wed, 28 Aug 2024 13:51:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724878172; x=1725482972; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=b7iL+wVZPXpJO8ClTV1l/2A644kBdScvCJ/IGN2rpT8=;
-        b=Qg+Kfh29ecFEHpDywXmVQQEHgKVokkO9rkJkIRAyDQiSrHVfnsVbZw8NyiCqKO3JHn
-         M2gAzAH7GdvCvxZoC5Lkw++52KQkP1pWpWsWXMJmk429g6RRydQ6Z2cCJrn0O6eik9A8
-         WPGAA8U+uK9EcIJLSI03H6sSjquGyrfl5eV37x6oSDoAkdhbPXfyzM+91SJoo2KLf1pQ
-         7pj/Azt60V3BLCkLw7Zo+c8nAmgrWle6fB4Wj3Q/KTLVagyU1NXkqanHuhCRk55MCkXo
-         zHmE6h7Xo1btpudXhqVQJzP6yoWaGV0ExceZjR4f0HjUS+vFZhEgnSPkoRrUf04nKqAa
-         wu3Q==
+        d=gmail.com; s=20230601; t=1724878295; x=1725483095; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=j7pH7g9HyU2YWJKOePQTMMkr1OSwcCLkYdR/Pys+Au4=;
+        b=DCh9yF8+L/G/fVu6vs+h9lPre7rmwKwXy3pchUlURkn9ijPJPdAxZFXj+7K6H4JLmb
+         XQgFjwJ6z/6lH4UiyGSYKkuZQYjDiwyuHkvE+3rCP3so36W8EQwKBL2+pFDGJBM+vGBZ
+         YGNmgYOFp6Kum7DWv5F5kEM2cqa28ZAm1JQ7YvG2s0wnylje6cMp8rmaCFhKuIazHTWz
+         fegFyOUQ3TmdZntvYBavL3XnZPwBEeag3HM6Tj4ylCrOyeBv36+bzCBp5Sa59qUEkrDQ
+         BYQMlIQ1z4xhYREXA25tIfoMp+v2JCa/gX+E+78sIh22PO+7pBaU75EjE7fpFMm4S2Pn
+         6xEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724878172; x=1725482972;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b7iL+wVZPXpJO8ClTV1l/2A644kBdScvCJ/IGN2rpT8=;
-        b=vMVZroj5Y7C1nr4LrbqW2e7uDi2h+UNa0itLpLgBBacfPBKAvRKtJfqunqwjaOB8Qy
-         CKbzt2smQFmwI1wPmbfhy3GIobUJ14P2UfWc0WjtZmzTEKER0L7F9GwTqsQgjyAjiklV
-         qf1jR4dNAFEY61DvjMgYHdFNulXzKDj99OI9HxTFqT0abd6qUobQCPSyMBJR0Zb4SWf0
-         M5KDV6hcyj5j8iJG3dEteayOpvs7Jbrb0+dt2tsejPEeJsM625f1ks1PlDNAQ69Z4D/V
-         UOAG4gJeICQvKjQ7ZMhmXOZuRK3+5H4jq+A07cFTj58jGoY2yaRzpOuMFS8/igrxTRJ1
-         HCHA==
-X-Forwarded-Encrypted: i=1; AJvYcCV27AKP1a7m3RFEsQ4HjRPSibpmgLxEPYr4Mwng5PGKsUAIQXs6YuGbuA/7NPbwLYrMXi8xV1gOdNnmE2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKW1KnNcf2YTtq7FIdzoIRwKQ6my9roOsb7i1dPqg3p0QFvHwz
-	EgJgtMmwNL9EpUqtL7+nxL7vozMz1s16kcIW+a1JmuBBPf8kQp9OV7ABPEGeQ+U=
-X-Google-Smtp-Source: AGHT+IGFlooROX7KAAWEZ3u9MgehYtM/1Q4NV0a/4GC6vjfI00yn1fIiQPQwXUf0jAQZYDlL800GWg==
-X-Received: by 2002:a05:6512:ac9:b0:533:4591:fbf1 with SMTP id 2adb3069b0e04-5353e567669mr289888e87.15.1724878171237;
-        Wed, 28 Aug 2024 13:49:31 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea36413sm2299368e87.79.2024.08.28.13.49.30
+        d=1e100.net; s=20230601; t=1724878295; x=1725483095;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j7pH7g9HyU2YWJKOePQTMMkr1OSwcCLkYdR/Pys+Au4=;
+        b=jE65PKmb1KO3OSSYPl81lpmeAS/bznPziNDv7JGp22R/wlgf8mVGOAKPCxoRbLsWLd
+         tTGVFyHuvss2OQrYuWUHkP4XapNJJ0B7sLqPcUxwM125K4abgeP0Mmuhq7TfbEQ9YZf4
+         VIasN3+/TAH5J0uhWs23k0Q+njegBGiujSuUHCaDacFiy3NGADk6WDM+De5PqCTEyQN+
+         hLGq44tsAvxYjXdyq/Kz+AKMQy1ZPa4UTG8D5yZLLJd4uSDIfxrB49Qt1I2emgqDXHCI
+         9z7/J7kQYaXq3GPfKXBaH9iWVu1fEd1eY9/g0WisZkj8eUOQvwc2kb+JO4HTm4BvCTd5
+         51gg==
+X-Forwarded-Encrypted: i=1; AJvYcCUkx0cys83EH+4Wv84K51v8ENaDI08BrlggbjSeD/f7MYyoNcqoq0P1nRo8vTLOoGDVGc54i+VkAlMa@vger.kernel.org, AJvYcCXQUxojH3XKrjq/fW7u2m757UcThimq6Uc7BQswmLs9lkj8jsrElc94mOBGPk3TYDhHWVcOsWbGewE4CMJB@vger.kernel.org, AJvYcCXrigHNamnofelF9nIAQO1XChH/7OnI5sMVtNXZui39/M3kaJZq5UqXjX1untuPL8d/VQzy22/M9M3k@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXTmgQ0RRzFQ6LY5QBA3jrxwn9cqOFJkD6FmNksjYShk09cXQz
+	FkCjUi5HCUikU9/hbKtW9ZCOgUg2t/xkM9g7zzPGGJ2FGmrA/r7o
+X-Google-Smtp-Source: AGHT+IESq9jcS5QJcegpBWnWuFxps21NkjYT0Ee9tHuUbx5KafvSNpYnXOynhKLplml+HG+0HQpHdg==
+X-Received: by 2002:a05:6402:42c3:b0:5c2:126b:8749 with SMTP id 4fb4d7f45d1cf-5c21ed86a38mr626991a12.29.1724878294729;
+        Wed, 28 Aug 2024 13:51:34 -0700 (PDT)
+Received: from localhost.localdomain ([2a04:ee41:82:7577:4c6b:aa66:d4d1:a1d2])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb1c2f53sm2646566a12.19.2024.08.28.13.51.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 13:49:30 -0700 (PDT)
-Date: Wed, 28 Aug 2024 23:49:29 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Marc Gonzalez <mgonzalez@freebox.fr>
-Cc: Rob Clark <robdclark@gmail.com>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, iommu@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Arnaud Vrac <avrac@freebox.fr>, Pierre-Hugues Husson <phhusson@freebox.fr>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Caleb Connolly <caleb.connolly@linaro.org>
-Subject: Re: [PATCH 1/2] iommu/arm-smmu-qcom: hide last LPASS SMMU context
- bank from linux
-Message-ID: <jxxstowusullmfvtee7xvabc7s3ifele5xlc6muem65dnvzxih@e2nm7ln5n2qv>
-References: <20240819-smmu-v1-0-bce6e4738825@freebox.fr>
- <20240819-smmu-v1-1-bce6e4738825@freebox.fr>
+        Wed, 28 Aug 2024 13:51:34 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+To: jic23@kernel.org,
+	lars@metafoo.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	andriy.shevchenko@linux.intel.com
+Cc: vassilisamir@gmail.com,
+	ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org,
+	biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com,
+	semen.protsenko@linaro.org,
+	579lpy@gmail.com,
+	ak@it-klinger.de,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	christophe.jaillet@wanadoo.fr
+Subject: [PATCH v4 0/7] pressure: bmp280: Minor cleanup and interrupt support
+Date: Wed, 28 Aug 2024 22:51:20 +0200
+Message-Id: <20240828205128.92145-1-vassilisamir@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819-smmu-v1-1-bce6e4738825@freebox.fr>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 19, 2024 at 02:59:35PM GMT, Marc Gonzalez wrote:
-> On qcom msm8998, writing to the last context bank of lpass_q6_smmu
-> (base address 0x05100000) produces a system freeze & reboot.
-> 
-> The hardware/hypervisor reports 13 context banks for the LPASS SMMU
-> on msm8998, but only the first 12 are accessible...
-> Override the number of context banks
-> 
-> [    2.546101] arm-smmu 5100000.iommu: probing hardware configuration...
-> [    2.552439] arm-smmu 5100000.iommu: SMMUv2 with:
-> [    2.558945] arm-smmu 5100000.iommu: 	stage 1 translation
-> [    2.563627] arm-smmu 5100000.iommu: 	address translation ops
-> [    2.568923] arm-smmu 5100000.iommu: 	non-coherent table walk
-> [    2.574566] arm-smmu 5100000.iommu: 	(IDR0.CTTW overridden by FW configuration)
-> [    2.580220] arm-smmu 5100000.iommu: 	stream matching with 12 register groups
-> [    2.587263] arm-smmu 5100000.iommu: 	13 context banks (0 stage-2 only)
-> [    2.614447] arm-smmu 5100000.iommu: 	Supported page sizes: 0x63315000
-> [    2.621358] arm-smmu 5100000.iommu: 	Stage-1: 36-bit VA -> 36-bit IPA
-> [    2.627772] arm-smmu 5100000.iommu: 	preserved 0 boot mappings
-> 
-> Specifically, the crashes occur here:
-> 
-> 	qsmmu->bypass_cbndx = smmu->num_context_banks - 1;
-> 	arm_smmu_cb_write(smmu, qsmmu->bypass_cbndx, ARM_SMMU_CB_SCTLR, 0);
-> 
-> and here:
-> 
-> 	arm_smmu_write_context_bank(smmu, i);
-> 	arm_smmu_cb_write(smmu, i, ARM_SMMU_CB_FSR, ARM_SMMU_CB_FSR_FAULT);
-> 
-> It is likely that FW reserves the last context bank for its own use,
-> thus a simple work-around is: DON'T USE IT in Linux.
-> 
-> If we decrease the number of context banks, last one will be "hidden".
-> 
-> Signed-off-by: Marc Gonzalez <mgonzalez@freebox.fr>
-> ---
->  drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> index 7e65189ca7b8c..d08c18edf5732 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> @@ -282,6 +282,11 @@ static int qcom_smmu_cfg_probe(struct arm_smmu_device *smmu)
->  	u32 smr;
->  	int i;
->  
-> +	if (of_device_is_compatible(smmu->dev->of_node, "qcom,msm8998-lpass-smmu")) {
-> +		dev_warn(smmu->dev, "hide last ctx bank from linux");
+Depends on this: https://lore.kernel.org/linux-iio/20240823172017.9028-1-vassilisamir@gmail.com
 
-dev_info() or dev_dbg(). dev_warn should be reserved to the case when
-you need to warn the user that something went wrong. In this case it is
-expected that the last bank is unusable.
+Changes in v4:
 
-> +		--smmu->num_context_banks;
-> +	}
-> +
->  	/*
->  	 * Some platforms support more than the Arm SMMU architected maximum of
->  	 * 128 stream matching groups. For unknown reasons, the additional
-> 
-> -- 
-> 2.34.1
-> 
+[PATCH v4 1/7]:
+	- Use better names and split value assignments for better readability.
 
+[PATCH v4 2/7]:
+	- Move to fsleep() and add comment on top
+	- Use appropriate return error value in bmp280_preinit()
+
+[PATCH v4 3/7]:
+	- Split lines for logical and better readability
+
+[PATCH v4 4/7]:
+	- Change style in static const array assignments
+	- Use BIT() function instead of bit shifting
+	- Change usleep_range() to fsleep() and add comments
+
+[PATCH v4 5/7]:
+	- Add allOf:if in order to allow the interrupt in the device-tree
+	  only in sensors who support it.
+
+[PATCH v4 6/7]:
+	- Change function pointer return type to irq_handler_t
+	- Remove extra check in dev_fwnode()
+	- Fix check in fwnode_irq_get()
+	- Fix shadowed error check
+	- Remove extra check in irq_get_irq_data(irq);
+	- Improve indentation
+	- Fix return values in certain cases
+	- Fix identation and if checks
+
+[PATCH v4 7/7]:
+	- Fix commit message
+
+Vasileios Amoiridis (7):
+  iio: pressure: bmp280: Use bulk read for humidity calibration data
+  iio: pressure: bmp280: Add support for bmp280 soft reset
+  iio: pressure: bmp280: Remove config error check for IIR filter
+    updates
+  iio: pressure: bmp280: Use sleep and forced mode for oneshot captures
+  dt-bindings: iio: pressure: bmp085: Add interrupts for BMP3xx and
+    BMP5xx devices
+  iio: pressure: bmp280: Add data ready trigger support
+  iio: pressure: bmp280: Move bmp085 interrupt to new configuration
+
+ .../bindings/iio/pressure/bmp085.yaml         |  22 +-
+ drivers/iio/pressure/bmp280-core.c            | 692 +++++++++++++++---
+ drivers/iio/pressure/bmp280-i2c.c             |   4 +-
+ drivers/iio/pressure/bmp280-spi.c             |   4 +-
+ drivers/iio/pressure/bmp280.h                 |  52 ++
+ 5 files changed, 684 insertions(+), 90 deletions(-)
+
+
+base-commit: 0f718e10da81446df0909c9939dff2b77e3b4e95
+prerequisite-patch-id: e4f81f31f4fbb2aa872c0c74ed4511893eee0c9a
 -- 
-With best wishes
-Dmitry
+2.25.1
+
 
