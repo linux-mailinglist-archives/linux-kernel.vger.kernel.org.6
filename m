@@ -1,244 +1,86 @@
-Return-Path: <linux-kernel+bounces-305576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0834D9630BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:09:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DFB29630C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CC901C210CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:09:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A56928611F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DA61AB51B;
-	Wed, 28 Aug 2024 19:09:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772181ABEB8;
+	Wed, 28 Aug 2024 19:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="MFZcIZyS"
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="B3LfUWA8"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A741158531
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 19:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2502158531
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 19:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724872162; cv=none; b=IFd6doY3p2FVNpPyMhl0+GEiNw0ZGbfilKcI+Q6tnNjP7OqGhxPCd3BVBH151tCPNQWDxB/E7X4VPoHeTVYFqdUpFntngRv8uKLTo/A4li3aIvRJu19M4AStYpDLI8A3YxEFvjfp4OvzthRqDIxkiBbXloe2jwIfXGlRHsdF8J8=
+	t=1724872286; cv=none; b=bYPPumuVsB12QCVU/UzyLNq6ngAY49BL9cC4uHzPircblIOgaMzSDKbqFk3NS/uf7p/m1+rg3/1KhQ5VDWX/jcOPfEGrBN8g/ELHUlZr7GuO89L/pxBTn+mWKAQXAW1AxBEdWkQXa+yu6W/M7acsv7RWFHhmgPHez/6o3evKsaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724872162; c=relaxed/simple;
-	bh=A6vzOM5xI5N6rZ0gLqgOe/DUHscBvkBIGrJxVHgIz14=;
-	h=From:References:In-Reply-To:MIME-Version:Date:Message-ID:Subject:
-	 To:Content-Type; b=eZTfqjKUU1/vSRX7hPDOUe4klXj9KZtBeW7KaS3n91q93V/plRB2N+QD5rPJNoADOMR6zdQbuDvj8qqsDJGlNRiYNFlG+TanRZJAhIG+j+eXrWpyAw8Vl8zEFOap0bH02TPab2YsxADWcP1UyrvX0Htpx5A7uutsBTF35Hn+5rI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=MFZcIZyS; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3db1d0fca58so1450034b6e.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:09:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1724872160; x=1725476960; darn=vger.kernel.org;
-        h=to:subject:message-id:date:thread-index:mime-version:in-reply-to
-         :references:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gYNzuEa8AJ1/7dUhw2fblJQWqdDSj/uxtIzSH9+56Eo=;
-        b=MFZcIZyS8LG/lAftLOPjOvauvmFkSMNLssB0g84r2BrW+fbNHgjadMKxaCH1xEZJdH
-         V0X3S60TnXxsBlu9+Qrb89BpGhTEWsbUPjoUzdzoigv03Wmhw4uzpZ0/9GUnXp4z1IxS
-         sFyhMkcJuHRf+mUiyPhCbNBT86uD3bjam625c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724872160; x=1725476960;
-        h=to:subject:message-id:date:thread-index:mime-version:in-reply-to
-         :references:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gYNzuEa8AJ1/7dUhw2fblJQWqdDSj/uxtIzSH9+56Eo=;
-        b=lra0ZEzN3k+BJqDd2nLQgH0u9NM5Ey8CTJgxna4J/iMabjCoQiFjLuicIa83xuS6wX
-         zToHCj8gg0pazesyab1yl291qMvgKVYfE+pTWH744WERvTgtX+nNAUPeInfqYEP2Hgg7
-         0oxQY8oYmUCns8XQFlUfKZRfEBUqwbfRer192nCwzzYkCmQhBBbOcvfzU0CiMBzkt1Yb
-         Ct7TNoJuF6EBsTd5OmRtFw7ixuhJt2aeHMba9gfdEXG3euVQocy6RQKKRq77njtcwKG+
-         EzF4adFYeiTFkf1Syc1oF7Jl5qqmZZw37Dhl0VUnnY+DR2xICOBSFLyObPZPD+kPgKo4
-         Yewg==
-X-Forwarded-Encrypted: i=1; AJvYcCXRTgz7gbO7rJwx1KydE1n5dQttqDWycJ61TK+QjGR9YSaDtq/cse/tfYooJpcObYK8zipxGDRcafqX3Sk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1GnQ18oQuXe7GEAVeerhx1GUn5SY7ri4E5wyx18aMliIZ1K4F
-	3BHBTAG78BOgMnHytkDZrby4wlJm3As+235NgCltVVHLiZy+FYQzNDS/kQyALRYIqzmipXvx64X
-	lgtILtA5UXwftcHT5WuZj85NMR++XxGgturVL
-X-Google-Smtp-Source: AGHT+IGjryDz7G1gOMO3Us+XNI736eW6ikdiLTB8ijbfri9hLf6j1+jWDnAQkoBRsW2QG0l8FIDKk4TvoFXdmq38UTo=
-X-Received: by 2002:a05:6808:1809:b0:3da:b3cb:cfc1 with SMTP id
- 5614622812f47-3df05c348dbmr522025b6e.3.1724872160263; Wed, 28 Aug 2024
- 12:09:20 -0700 (PDT)
-From: William Zhang <william.zhang@broadcom.com>
-References: <20240826124903.3429235-1-ruanjinjie@huawei.com> <20240826124903.3429235-3-ruanjinjie@huawei.com>
-In-Reply-To: <20240826124903.3429235-3-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1724872286; c=relaxed/simple;
+	bh=xwUHcngPIMMwNkAT0pu+KDN1EFPtCTrM6SVkoQoFFAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k0n/+7IUBLWVMcv1QTqM7Hgxc6hOtVoEqlBNwZfbCZp9coFKCDZitcXlcvezLn26aq7zlfZQK19IyGCvU59Wb70EkWXy+89GqOuH9h+n+5B3YFsHwLDzjndcg91H7s6+7O3vbeo+J0zv0aFxOA+xi8gSYsoGy07EQBJzRRJ8+zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=B3LfUWA8; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 28 Aug 2024 15:11:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724872283;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5GJ0kQNrYXX9msho8J4AhvERHyhJZ0duOS+e8oU72YE=;
+	b=B3LfUWA8l8mmjSaFE6ClHPtuaOFidM2PzSFwePSZfiEQifAAVqUkYhY10DynXMQw3ODDYY
+	QIIZoSt1z0wfqLJjUt0+eDfyko6JI/8MBw4Ua5La8XdmAHWRV6QgjkssZBcW9o8SG9Ppma
+	KeyI1odcm9BVsEUCU0PgAQIPhHNFed4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>, 
+	Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc
+ allocations
+Message-ID: <gutyvxwembnzaoo43dzvmnpnbmj6pzmypx5kcyor3oeomgzkva@6colowp7crgk>
+References: <20240828140638.3204253-1-kent.overstreet@linux.dev>
+ <Zs9xC3OJPbkMy25C@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKfJvZGueGQZlKs7jz0fDUJQJbT7QLQ7TE+sJ4mHgA=
-Date: Wed, 28 Aug 2024 12:09:18 -0700
-Message-ID: <d398b10f961866616102c7f0e4f21d0d@mail.gmail.com>
-Subject: RE: [PATCH -next 2/2] spi: bcmbca-hsspi: Use devm_spi_alloc_host()
-To: Jinjie Ruan <ruanjinjie@huawei.com>, Kursad Oney <kursad.oney@broadcom.com>, 
-	jonas.gorski@gmail.com, bcm-kernel-feedback-list@broadcom.com, 
-	broonie@kernel.org, Anand Gore <anand.gore@broadcom.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, rafal@milecki.pl, linux-spi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000006baa640620c31869"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zs9xC3OJPbkMy25C@casper.infradead.org>
+X-Migadu-Flow: FLOW_OUT
 
---0000000000006baa640620c31869
-Content-Type: text/plain; charset="UTF-8"
+On Wed, Aug 28, 2024 at 07:48:43PM GMT, Matthew Wilcox wrote:
+> On Wed, Aug 28, 2024 at 10:06:36AM -0400, Kent Overstreet wrote:
+> > vmalloc doesn't correctly respect gfp flags - gfp flags aren't used for
+> > pte allocation, so doing vmalloc/kvmalloc allocations with reclaim
+> > unsafe locks is a potential deadlock.
+> 
+> Kent, the approach you've taken with this was NACKed.  You merged it
+> anyway (!).  Now you're spreading this crap further, presumably in an effort
+> to make it harder to remove.
 
-Hi Jinjie,
+Excuse me? This is fixing a real issue which has been known for years.
 
-> -----Original Message-----
-> From: Jinjie Ruan <ruanjinjie@huawei.com>
-> Sent: Monday, August 26, 2024 5:49 AM
-> To: william.zhang@broadcom.com; kursad.oney@broadcom.com;
-> jonas.gorski@gmail.com; bcm-kernel-feedback-list@broadcom.com;
-> broonie@kernel.org; anand.gore@broadcom.com;
-> florian.fainelli@broadcom.com; rafal@milecki.pl;
-linux-spi@vger.kernel.org;
-> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> Cc: ruanjinjie@huawei.com
-> Subject: [PATCH -next 2/2] spi: bcmbca-hsspi: Use devm_spi_alloc_host()
->
-> Use devm_spi_alloc_host() so that there's no need to call
-> spi_controller_put() in the error path.
->
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->  drivers/spi/spi-bcmbca-hsspi.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/spi/spi-bcmbca-hsspi.c
-b/drivers/spi/spi-bcmbca-hsspi.c
-> index f465daa473d0..d936104a41ec 100644
-> --- a/drivers/spi/spi-bcmbca-hsspi.c
-> +++ b/drivers/spi/spi-bcmbca-hsspi.c
-> @@ -480,7 +480,7 @@ static int bcmbca_hsspi_probe(struct
-> platform_device *pdev)
->  		}
->  	}
->
-> -	host = spi_alloc_host(&pdev->dev, sizeof(*bs));
-> +	host = devm_spi_alloc_host(&pdev->dev, sizeof(*bs));
->  	if (!host) {
->  		ret = -ENOMEM;
->  		goto out_disable_pll_clk;
-> @@ -536,17 +536,17 @@ static int bcmbca_hsspi_probe(struct
-> platform_device *pdev)
->  		ret = devm_request_irq(dev, irq, bcmbca_hsspi_interrupt,
-> IRQF_SHARED,
->  			       pdev->name, bs);
->  		if (ret)
-> -			goto out_put_host;
-> +			goto out_disable_pll_clk;
->  	}
->
->  	ret = devm_pm_runtime_enable(&pdev->dev);
->  	if (ret)
-> -		goto out_put_host;
-> +		goto out_disable_pll_clk;
->
->  	ret = sysfs_create_group(&pdev->dev.kobj, &bcmbca_hsspi_group);
->  	if (ret) {
->  		dev_err(&pdev->dev, "couldn't register sysfs group\n");
-> -		goto out_put_host;
-> +		goto out_disable_pll_clk;
->  	}
->
->  	/* register and we are done */
-> @@ -560,8 +560,6 @@ static int bcmbca_hsspi_probe(struct
-> platform_device *pdev)
->
->  out_sysgroup_disable:
->  	sysfs_remove_group(&pdev->dev.kobj, &bcmbca_hsspi_group);
-> -out_put_host:
-> -	spi_controller_put(host);
->  out_disable_pll_clk:
->  	clk_disable_unprepare(pll_clk);
->  out_disable_clk:
-> --
-> 2.34.1
+It was decided _years_ ago that PF_MEMALLOC flags were how this was
+going to be addressed.
 
-Reviewed-by: William Zhang <william.zhang@broadcom.com>
+> Stop it.  Work with us to come up with an acceptable approach.  I
+> think there is one that will work, but you need to listen to the people
+> who're giving you feedback because Linux is too big of a code-base for
+> you to understand everything.
 
---0000000000006baa640620c31869
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-YDZuuBJwnyCzevMoPtVYPharioL5H3BRnQi8YoTXH7/uRo33dewYFm474yFjwwnt82TFtveVZkVq
-6h4WIQ4wTcwFfET8zMkELnGzS5SHCl8sPD+lNxxJ1JDZYwIDAQABo4IB2zCCAdcwDgYDVR0PAQH/
-BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3VyZS5nbG9i
-YWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEGCCsGAQUF
-BzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAy
-MDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xv
-YmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6hjhodHRw
-Oi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNybDAlBgNV
-HREEHjAcgRp3aWxsaWFtLnpoYW5nQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAf
-BgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUq65GzwZxydFHjjYEU/9h
-xHhPWlwwDQYJKoZIhvcNAQELBQADggEBAA2hGG3JPAdGPH0ZdohGUCIVjKz+U+EFuIDbS6A/5jqX
-VhYAxZlzj7tSjUIM7G7IhyfqPC46GKJ/4x+Amz1Z6YxNGy71L68kYD6hIbBcA5AM42QBUufly6Oa
-/ppSz3WoflVyFFQ5YXniZ+eU+2/cdnYZg4aVUnFjimOF5o3NfMLzOkhQNxbaDjFUfUYD8hKmU6v4
-0vUBj8KZ9Gi1LIagLKUREn8jku0lcLsRbnJ5Ey5ScajC/FESPyYWasOW8j8/1EoJksmhbYGKNS6C
-urb/KlmDGfVrIRYDbL0ckhGQIP5c6L+kSQZ2sHnQK0e0WgIaZYxaPYeY5u0GLCOze+3vyRMxggJt
-MIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYD
-VQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwxuh2XG3FXRL1W
-JOEwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIJJfXcHuH1NMP+Cbki8CYd2oGjvp
-HKwTv4Jxei+OMNnTMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0
-MDgyODE5MDkyMFowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
-CWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFl
-AwQCATANBgkqhkiG9w0BAQEFAASCAQCLV1fxCuY49aAKPMPw1Gkfp+JnZiB/DxYoFE8r+imyR7Ku
-TlwXvU9OFUs7WX6cVInXOy8bLWRm/drKxxgAdJdR7FTUSTp/7DXQCUGUHXIXmeiakWYEwCthCM/3
-lJQ8YlvVP6Gzpl7uVxfmp85W1bX9D7qvuurzezBhw3zG8y3dSdJ2iXg7RbbvwqOSKpomU4uVEZzF
-ISOdVjGlQWAgNO24hNlXOwNH+EUkNfp0kr95JCPrTm+4arcgIuyP82/CaBrPYi13UOZQ9Zz59v7N
-46+QxeA8wiPSC8Plq6g7IqQkaBVPw4SHNmlekvbCLW48EsU+fvrKDEePa24jBGVgBz7A
---0000000000006baa640620c31869--
+No, you guys need to stop pushing broken shit.
 
