@@ -1,120 +1,205 @@
-Return-Path: <linux-kernel+bounces-304839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C06DF96258C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:10:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0233F962598
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:12:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D24EB23E5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:10:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 354AF1C21899
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4487816D337;
-	Wed, 28 Aug 2024 11:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6FC16D4CA;
+	Wed, 28 Aug 2024 11:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gyqblZpj"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kkaC6Eck"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED16416C69E;
-	Wed, 28 Aug 2024 11:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2DF13D53D;
+	Wed, 28 Aug 2024 11:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724843377; cv=none; b=Wbq6IaK8VnZAv47c0npAVxBklj45PqdG2kMYkMnTH6eDFatkXuyTzHS5irPLKgIgX2Bbdo6ZJVZiVBJRqRcp5wtaAw+lLJLjTgQ7jlAJHqsNXYXc+ACuudDSlOVTTvcPgaTmU2mmBbFGp2J+diexHQ48El8Ye74hE/e9F7iJ43M=
+	t=1724843547; cv=none; b=mLsB1WYwgKaki+d60aeiCYChrx+SIIVF7jg+iLVo8qWmpQHl2S17UNUx2iV/Wcv1fNNC8ozsvVivDmYJ1MdlzBOsRqA5FkmuuHyhMevZxS8WctbB8D+z6sVJToIrOufdcARIDTBoBNUfLbmeg0H/OHbSn6BMPtYCwZFcTjetYI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724843377; c=relaxed/simple;
-	bh=9m0pRR8yM71XVwtaS618iW83Vq3roJj72F+akL67EF0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fn+MSabBqXGFOCItKr0KbNopT3vsDRj3G7NGWPunTKtQ/Qts2hUtPYlKZo3AAb6jFXNw6LHX4pVe17Ko04AtKxZef1tR0AmqMOoIzjBr1CTxc8loxOs7dWreXF4X/hWg0DnaeF21lBsK41NtC+G2eg4eOgSsMwD97USDFPsn6Zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gyqblZpj; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-533463f6b16so7676602e87.1;
-        Wed, 28 Aug 2024 04:09:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724843374; x=1725448174; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PS1EedoxC9byua1+UZRVXRdvQLe+JCLGGMnsMTTpxko=;
-        b=gyqblZpjekIkQhSY94RgFmZ03kCjDccC5u5h3ftAQmq7CtPOUvLKQ03snsxKVpJAJv
-         2HTfP5F79OAwZaILoBP/chGO96vzXp4WgmtBg4SkcjiU5j9JGmqO7N37N+gVu7lA2+kB
-         0Fmjvnychl+PVo1Hojmfbgx0kC8jtS3VyagXpg4rtuTX5y7PMCCLeri5WSeBNAG5c49j
-         X0VVvLVjQDjiGyRjnvCr4EDiUWX7z0jkjyvb3EptMyB0HugyJhEGZeSUQg7agRS79GXN
-         TgrwWrfV1STA3XLKttQrDwy3PszBop9Xw4rusVMCEu32/dCPTnx6WZQWHiu0CECDcZ8E
-         sGXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724843374; x=1725448174;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PS1EedoxC9byua1+UZRVXRdvQLe+JCLGGMnsMTTpxko=;
-        b=pAED7dHLMspz6oWbI3/DaEI+5Kc/3qnRKz3Eji5n994xBaKv07kdP7FP0ZKqlKIz9L
-         +78RLa9ewMFVwRaqrpa/9ckAj8G3uKb7yWoPoWJEzTG/ovRgVkaDdsfZuqISfoB5IeKO
-         JvIw7dhal9Q4m2oBnVreZEC12gY3svXAJ9KeFwzNdXUPmf3lF3CMGwY58qQ6Tmf2LkEH
-         R6ihBcGseSh/6hqqeYgG4FEZn1Ycuy6MOLNgAqJsonP7BMqzNSUBFqj4d6B8D9elk6NG
-         y8Gub3UxvV3XQbaaKESNBTQgj6X89nN6dh3qlQPvMhCuTuDD+6GrFXg6X1YqSkm+wpgI
-         1K3g==
-X-Forwarded-Encrypted: i=1; AJvYcCWpIll0Il5/NVVwzPoM5clHd5lU+q15HndsAOOUarBupl82OOfkq0n4a0mocVzUpgME/LmEhqvf85sCOz4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqkBIJ48l6RxVvY3td2P/t8QHlfZNMBqXiT5gTe4PJVgy/idNX
-	s1fcQWOTmv6be/PCZcIsVtwc9QehHbC5E3aL86fFiYy6IWKXm7Br
-X-Google-Smtp-Source: AGHT+IGB1qGeW1U586SJZVS5KzpIMraDAHuHNngoxh0tTmQ7PKVY/n3wxUb5sqAblzNhU2DPsD9NcQ==
-X-Received: by 2002:ac2:4bd1:0:b0:534:543e:1884 with SMTP id 2adb3069b0e04-534543e199amr2278194e87.44.1724843373443;
-        Wed, 28 Aug 2024 04:09:33 -0700 (PDT)
-Received: from pc638.lan (84-217-131-213.customers.ownit.se. [84.217.131.213])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea5d6bdsm2154922e87.208.2024.08.28.04.09.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 04:09:33 -0700 (PDT)
-From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-To: "Paul E . McKenney" <paulmck@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>
-Cc: RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: [PATCH 4/4] rcu/kvfree: Switch to expedited version in slow path
-Date: Wed, 28 Aug 2024 13:09:29 +0200
-Message-Id: <20240828110929.3713-4-urezki@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240828110929.3713-1-urezki@gmail.com>
-References: <20240828110929.3713-1-urezki@gmail.com>
+	s=arc-20240116; t=1724843547; c=relaxed/simple;
+	bh=yI4wdnPN782th9cqbzNUH64Yv9wzqMJ6syLpCPjpHvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZOYByJOR0TCT/nPTy1ApYehGammB5J5AKeDO+JDZb2O4aZMYjG2fLzCDfnKBAP4Ge8AIdgf/TQqYYWuBNnXGzRF7pR8Z9RXpDXQf0WetuWo6fgGaqSLoDb07zqKaZ+HYrDV36B8QTxjtq0AAcikHIMFBiRO4pV0wWdWvsNo9zpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=kkaC6Eck; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 191D22C5;
+	Wed, 28 Aug 2024 13:11:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1724843476;
+	bh=yI4wdnPN782th9cqbzNUH64Yv9wzqMJ6syLpCPjpHvA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kkaC6Eck6JxcGNfsGlpdt8GJj0aKH3HwirHm5fV3DbKLfTqfQV7dwZ1QrwahCmAZb
+	 16ENu++cLc519Fjomc0vNB57DlN0HsqVNyud9UYbYbSgmEoD0VfM7fUQTwXvVyDaHU
+	 8oQJH4Y+Xsh8pyjInuzkraPvBuefhR/cPzQhuJG4=
+Date: Wed, 28 Aug 2024 14:12:19 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Naushir Patuck <naush@raspberrypi.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v2 2/4] dt-bindings: media: Add bindings for
+ raspberrypi,rp1-cfe
+Message-ID: <20240828111153.GL30398@pendragon.ideasonboard.com>
+References: <20240620-rp1-cfe-v2-0-b8b48fdba3b3@ideasonboard.com>
+ <20240620-rp1-cfe-v2-2-b8b48fdba3b3@ideasonboard.com>
+ <Zs8ErwJVTGYkHfJl@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zs8ErwJVTGYkHfJl@kekkonen.localdomain>
 
-For a single argument and its slow path, switch to expedited
-version of synchronize_rcu(). This version is considered to
-be more faster, thus under a high memory pressure a slow path
-becoms more efficient.
+On Wed, Aug 28, 2024 at 11:06:23AM +0000, Sakari Ailus wrote:
+> On Thu, Jun 20, 2024 at 02:07:51PM +0300, Tomi Valkeinen wrote:
+> > Add DT bindings for raspberrypi,rp1-cfe.
+> > 
+> > Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> > ---
+> >  .../bindings/media/raspberrypi,rp1-cfe.yaml        | 98 ++++++++++++++++++++++
+> >  1 file changed, 98 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/media/raspberrypi,rp1-cfe.yaml b/Documentation/devicetree/bindings/media/raspberrypi,rp1-cfe.yaml
+> > new file mode 100644
+> > index 000000000000..851533de2305
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/media/raspberrypi,rp1-cfe.yaml
+> > @@ -0,0 +1,98 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/media/raspberrypi,rp1-cfe.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Raspberry Pi PiSP Camera Front End
+> > +
+> > +maintainers:
+> > +  - Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> > +  - Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
+> > +
+> > +description: |
+> > +  The Raspberry Pi PiSP Camera Front End is a module in Raspberrypi 5's RP1 I/O
+> > +  controller, that contains:
+> > +  - MIPI D-PHY
+> > +  - MIPI CSI-2 receiver
+> > +  - Simple image processor (called PiSP Front End, or FE)
+> > +
+> > +  The FE documentation is available at:
+> > +  https://datasheets.raspberrypi.com/camera/raspberry-pi-image-signal-processor-specification.pdf
+> > +
+> > +  The PHY and CSI-2 receiver part have no public documentation.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - const: raspberrypi,rp1-cfe
+> > +
+> > +  reg:
+> > +    items:
+> > +      - description: CSI-2 registers
+> > +      - description: D-PHY registers
+> > +      - description: MIPI CFG (a simple top-level mux) registers
+> > +      - description: FE registers
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    maxItems: 1
+> > +
+> > +  port:
+> > +    $ref: /schemas/graph.yaml#/$defs/port-base
+> > +    additionalProperties: false
+> > +    description: CSI-2 RX Port
+> > +
+> > +    properties:
+> > +      endpoint:
+> > +        $ref: video-interfaces.yaml#
+> > +        unevaluatedProperties: false
+> > +
+> > +        properties:
+> > +          data-lanes:
+> > +            minItems: 1
+> > +            maxItems: 4
+> > +
+> > +          clock-lanes:
+> > +            maxItems: 1
+> 
+> minItems needs to be 1 as well.
+> 
+> Or... is this actually configurable in hardware?
 
-Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
----
- kernel/rcu/tree.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Looking at the driver, lane reordering is not supported, so we could
+drop this property. If the hardware is found to support it later, it can
+easily be added back without any backward compatibility issue.
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 030a453f36c6..835d90905ec1 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -3922,7 +3922,7 @@ void kvfree_call_rcu(struct rcu_head *head, void *ptr)
- 		debug_rcu_head_unqueue((struct rcu_head *) ptr);
- 
- 		if (!poll_state_synchronize_rcu_full(&old_snap))
--			synchronize_rcu();
-+			synchronize_rcu_expedited();
- 
- 		kvfree(ptr);
- 	}
+> > +
+> > +        required:
+> > +          - clock-lanes
+> > +          - data-lanes
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - interrupts
+> > +  - clocks
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    rp1 {
+> > +      #address-cells = <2>;
+> > +      #size-cells = <2>;
+> > +
+> > +      csi@110000 {
+> > +        compatible = "raspberrypi,rp1-cfe";
+> > +        reg = <0xc0 0x40110000 0x0 0x100>,
+> > +              <0xc0 0x40114000 0x0 0x100>,
+> > +              <0xc0 0x40120000 0x0 0x100>,
+> > +              <0xc0 0x40124000 0x0 0x1000>;
+> > +
+> > +        interrupts = <42>;
+> > +
+> > +        clocks = <&rp1_clocks>;
+> > +
+> > +        port {
+> > +          csi_ep: endpoint {
+> > +            remote-endpoint = <&cam_endpoint>;
+> > +            clock-lanes = <0>;
+> > +            data-lanes = <1 2>;
+> > +          };
+> > +        };
+> > +      };
+> > +    };
+
 -- 
-2.39.2
+Regards,
 
+Laurent Pinchart
 
