@@ -1,169 +1,162 @@
-Return-Path: <linux-kernel+bounces-305189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9D41962AB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:48:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DCCE962AB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:48:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38A7A1F2301D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:48:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCBF12824D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3FF19E83D;
-	Wed, 28 Aug 2024 14:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C483218A6C3;
+	Wed, 28 Aug 2024 14:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="AgWCcvpC"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazolkn19010012.outbound.protection.outlook.com [52.103.11.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GGna2OCE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9168B175D28;
-	Wed, 28 Aug 2024 14:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.11.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724856483; cv=fail; b=HiRv1Nl+DncNseVVObVYM4fYahYxtf8me5NNz9/EldT7Tb/fPwjFc3F7ez2mpq3bZ7IItLwNz/X9xmXDZIrDSX0wdWnlVH3nmfByYeKku0+8WlExKY3Xr8OXZEqaRuFozjmwTL+ZqgjPPmGOA8zPYQvOGgBKPmzF241MrY8/it0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724856483; c=relaxed/simple;
-	bh=iJvliiQjpVGbHdaoZSUayATqJOcJX2LixYyA81+UMDc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Z9hsg1QXW8osk9k7t3TF/NEfqsQzlp4x7smuPU+P5jNvatVqCp7Vk0wz0H1H7y402LVnLyJAZcVEK8rOaw1VxTK/ny6CEPWMBerieYY12n1mJOobed8ZEoBVk0+73yp+P/0/gwHZdNzECseiKqkDMt/ua8UiaW+4dMiU4E15o0Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=AgWCcvpC; arc=fail smtp.client-ip=52.103.11.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XDtxUYFu3TyHrzhQEhPmtdGsISbnuTPZNIq3Nr35+rA+wkOkwI4EdIucMV0LeDu5SdKELbT8c3mXlOSRdAjCl0WaM5tgou2zi6tMPiFtJHUHyELyvWMj0/0pHLrWgavyBsaK48eEu3FByVCT7FHVgZkWgzuS5ly/gwn8vm9P3cFtEcB09EG93eGVsToHr7t5+pBnS+nyHn+WkTIt72dKpXO/VeWaysz4u0+B0djLklVbNQ+G4TUdBiy+U3JTZEjlHTB64jXQSWMohGXEjAsvUXcQTH3fRK08333rcdySZ3G6IZ2nmwKNg80NQRggqiVqJJ2aGK26/XBRCwrmmsuYAA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iJvliiQjpVGbHdaoZSUayATqJOcJX2LixYyA81+UMDc=;
- b=jxXaJGI/O3TOQcqR444Rnqu1OvcY6tOOZeazzD2Kcw4qJJfOfUXjO7dsoO/FABipPq/SGKEJvjG/KYZ/J9wVebwL9sjoSC6Uu4JF7N3KJv121cOnfTtvKo0RGIIc+ENwvuK4WFPHQe8ZruKCH4X99AdBcI0yPjS8rWdv9VtvF0OzTneudfUhFEo4uqKURVf/F4yGc3IYg2GT1iCVagU67IUrpTZj4v3Vi+W7do/hM+CgcBW0OqdIt1XPfn2lenRa3/RTM595Kqn3Vwc03IzsbbDEegVhnfMWJTsUuo525NofX5eXYEzDdf+59aSTdaoA+9b5tFHkyBTxJrMgMVS7zw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iJvliiQjpVGbHdaoZSUayATqJOcJX2LixYyA81+UMDc=;
- b=AgWCcvpCO5pH4/G/Zh6oL2310Gyem0rTSE3Rg5bPGplEEPUQGi6FJdwzGltYPf/6PvU05NQ5DJvFzkrVO1Z7jGSMTYmZKYjEXrJzrsjkNWH57qilu1NPbDAuWmZpMM0fMOVu94o8rbAoSgu9P9bDb6Cb5nBnrUkrmpX7wbFxsfsWyOTQHCSe0LNU9yK62aqinb/OF+eNnCJLm+3I7sGP6OHMoavnuRLGOWG8CdnD6r+cQvBN/L/LPvjh8XWWhvWawG1zPKEgAUvxjxUjn4F69gO42cUUo+Bhko9h9FcAGre341UWhSicDo08+8dpstYrmMDTHpGfiWQGbZgeZ4j6ZA==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by CH0PR02MB8194.namprd02.prod.outlook.com (2603:10b6:610:ff::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.28; Wed, 28 Aug
- 2024 14:47:59 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%6]) with mapi id 15.20.7875.018; Wed, 28 Aug 2024
- 14:47:59 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Anirudh Rayabharam <anirudh@anirudhrb.com>, "K. Y. Srinivasan"
-	<kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
-	<wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org"
-	<x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Vitaly Kuznetsov
-	<vkuznets@redhat.com>, Michael Kelley <mikelley@microsoft.com>
-CC: "stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2] x86/hyperv: fix kexec crash due to VP assist page
- corruption
-Thread-Topic: [PATCH v2] x86/hyperv: fix kexec crash due to VP assist page
- corruption
-Thread-Index: AQHa+TymH146oPCIsEikrG8bTi6q/7I8v5WQ
-Date: Wed, 28 Aug 2024 14:47:59 +0000
-Message-ID:
- <SN6PR02MB4157E80B8050CBFD02E3077ED4952@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20240828112158.3538342-1-anirudh@anirudhrb.com>
-In-Reply-To: <20240828112158.3538342-1-anirudh@anirudhrb.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tmn: [cYQ+jgdNVG6WU9FC/xUVD4PGMhA/sVgo]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|CH0PR02MB8194:EE_
-x-ms-office365-filtering-correlation-id: 9bc08db3-1c28-4aae-69fa-08dcc77068ff
-x-microsoft-antispam:
- BCL:0;ARA:14566002|15080799006|461199028|8060799006|19110799003|440099028|3412199025|102099032;
-x-microsoft-antispam-message-info:
- U9dtjzARcxKqorR3W28/tbvXecvwtiTctHoxLgfVwPG/hdCrUkAOh9NWXltEywpO5l54NoQtVMYXweghs81jtjPqd4AGGxZBRGicJLgAccJMs6+4mhYwoLxAxWy7UTfftNiJoontauj9hHnwBS5PXWmvdTfCLvxn1KKPMtllxZLZWIZAvbj8Rn+hLIlgeuOukrsXEHEiY6BJnioPG4575wfkh0mjv+f8/3UR2Q0TWlbNqmZD4SQX+N6RhxmNfRkTkzGnOm2cWciXUMAF14S7DNfnz7g0I0X/xWiOG+/KpnKswHT3s1Z7YOOYPzATB0W5a0pdknLXNIznQctr0nU0t7SwTbGVlTAmXnubLM0/sFpxOaJxiV9Ai3kc4ypokeMtMIaY1ia8YmiIjful1+LGxlBypb5FzurFVNNanNhschLI63AmL2F1OoeWqhRIIfZaILxzA8SgKXqmYG5wTSHQJNd+E/kq43mkVEmbCWkz3nNbmnLNM5Rne/y/JbOec/ZmnUOZENa34ud4nA4oMbZ4lW4xBx7ghfVElcUPe/U+AIiiIE4vHYuVOF9sNvFOfa65GcIC5COy9A+zbKVjR6CimCiza1D0sIfl9Eya9UOYnLg/8bZYIWqwxll7vg+EVqPlE68uNSX9dsVAKGvwWBmjplKu7FFG5WFp1T9cXHhD4Mo=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?DXP2g5pNIwOjikt0C9c26WuJQtN2nA0P+JoY+nqWRPaRVRm/Vd5LzO7P1X6p?=
- =?us-ascii?Q?sL26F0BGdMNV+WWuNewF3XWQYFMOVV5nAPz33lm9AKK6ewpEOPn6+qMYiZ5Y?=
- =?us-ascii?Q?xPp8uQcMfr6oi5Fq8mBlrwSBx7wZxC9iGT5n/y08fAclY2CSP57GrxF9WXe8?=
- =?us-ascii?Q?Tn3AadWA3FBLalUDcbAGG0fhvK3L6/VXNNiI/7fmE9fsWT6hCPmOu7qln+GE?=
- =?us-ascii?Q?1rKZJpn7LjVkCwvmgdjHqsp5r7nv2F8qj99SzGwx11njGPc42ZM7XzY1w3Ec?=
- =?us-ascii?Q?fzgA/pewgg2k3xomkUt6Vz3nMUSnWnPdRGcMoTDzxWtdlpFfNEs0XAiKyN15?=
- =?us-ascii?Q?SoFSc8m16SKe31Z5pw5mbRpWT/2Omc1Ewquh3VqpmumTeBRlxvlDUp5sWUHh?=
- =?us-ascii?Q?j2TP60mF++D1erClIQ4A8hB+e7V7ZtQ7A+JZeuWfcf+OeTHEGI+rTRE0d8gE?=
- =?us-ascii?Q?rp3kO7AsRQ4SXptt/vw7n790KNkhpvKyLMg1VulxG+52Co6ZNPpL75Zml+sB?=
- =?us-ascii?Q?61I+P6Zrwh4kbr8U8nHqK/bp9F8z62mf5kP1x10D0RzYeJMqhd+UGwl/+EOf?=
- =?us-ascii?Q?cp4H88sA8VSYxsSqkukBAAuDzr7d0V5j9T6mCS7JUZ/Ph+fXBKtD5bs1ylgE?=
- =?us-ascii?Q?pMxyoVvOHiCBk/zMTQEaT198pqspv+3EJC8+eif0hZKZeYo+nB6IJAfFQgDo?=
- =?us-ascii?Q?TKSsasfGS9TwXiKkVN+fWWCn1qv2a4qfIIlQkMhgDv8XzgKob+5tbjtuEzsS?=
- =?us-ascii?Q?+13KoaEzuTEa0Dj2NZ34xctzfXqmPamNtjF+ZMD/IZ+vPfgw6SXkCZ/qnagT?=
- =?us-ascii?Q?+HLXQ3ASFmRRO5uCRJyLUsXUnxUs46R4xc8KSwgjSs870KAzAIAQcPirSFyw?=
- =?us-ascii?Q?vs9P8EZB9f9bksuRGT3QsRKM3YJQc6NTxED/JU/8pACsvA5s9HTQtuci5HjV?=
- =?us-ascii?Q?stS0fKBSX35lml9lU86ED5X1xXrhzpVumr/Htbp07qq/mXv51NgaHcnO12jg?=
- =?us-ascii?Q?1PQmI6lHT8tSgFbSh68Xd5Jsl7KKYlUjaH17BnzSQ0+YBgnmKJE4Zyzo/JK3?=
- =?us-ascii?Q?vPjcaoFnL6SQ1qVB3OAbQcfKnItX8QemC9Jwe0Vc4YHNB3FFLQQF9SgOMWoh?=
- =?us-ascii?Q?2bytmvjAEAwGkOwH6cISsEzHMeIQcekSrkyYCTOjwcKX43lC0ft9lJxNRpN6?=
- =?us-ascii?Q?LZ/hhrkQO/LUKhxh9ryNZI1nLCXd5erxuno2v3+T90Jt85O/TjPdZLtNfGA?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E221C19E83D;
+	Wed, 28 Aug 2024 14:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724856497; cv=none; b=mjDC5DEXJHJPIyvBkkJ3my4R9W64BYwR5jvzXC0IBkyCoGjOyAEssznGc07hu4lnmSfPYaPyMHQYmSPEndB5MV6ah9jqFRsZ/wXChiqcC70NQ3hbBxPLfCTqlp4W1Xo1a0tQNEzZQaFFLA9Z3N/IA91Y+q+3rHz583hfazeBXxk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724856497; c=relaxed/simple;
+	bh=m03l2pckmcLxB1u80BXxyIAto7ot9H09XhIkMydHFCs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TIMIgJUqAGVPzRYSJaRkDlHfMo36W9d+lI8eFzZ4atu+Oqwl0u+ErTPcMwMS+q5LPmBu7rSk94pE/S28jPVFz11F7LCfJlaq1NIvnOp36zdO4Hvt3SXvakW1Ku1iGxmnk47n6vOYoOD523YeRVzJwbx8k/vMaimZuIW7V29KdVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GGna2OCE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6B12C4FE14;
+	Wed, 28 Aug 2024 14:48:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724856496;
+	bh=m03l2pckmcLxB1u80BXxyIAto7ot9H09XhIkMydHFCs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=GGna2OCEOd0yRlCJ/Mi3lmHZ9WToycz/5la6bbGFhBefHrOTJ4SgA3Eu5sTfH16E+
+	 ZRDHQKl//Hr0jSYe+RoBhgi1Y4qgX4S/NT7ymxesaNF4cJ8yBOm2VM/dQk3P/FmRq4
+	 +Kif3jLVLYZUzYUqHvXmbeYe7Ak+/sMmrS08tr+SBCBAwcHk6zbYDu8PvNAWF/V1go
+	 07avT2WOJPWscyQJklczLyWKXWtUm89dP/d5qMK1QYnqS8h7pFMgr0IoQKXEkMAvfO
+	 AmEdW7kfX/Q/ld+TJNfrTlMLARNpqjgHWs4JpwlW7432MXLBo3MAsjvuKj6C85sJ8q
+	 ouorR+R/JX6jQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Li Zhijian <lizhijian@fujitsu.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs/inode: Prevent dump_mapping() accessing invalid dentry.d_name.name
+Date: Wed, 28 Aug 2024 16:48:02 +0200
+Message-ID: <20240828-abgegangen-neuformulierung-6fe9fc2b0b3e@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240826055503.1522320-1-lizhijian@fujitsu.com>
+References: <20240826055503.1522320-1-lizhijian@fujitsu.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9bc08db3-1c28-4aae-69fa-08dcc77068ff
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Aug 2024 14:47:59.1376
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR02MB8194
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4457; i=brauner@kernel.org; h=from:subject:message-id; bh=m03l2pckmcLxB1u80BXxyIAto7ot9H09XhIkMydHFCs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSdt1hZ/X/7P7dPDV5rj5mb//aXmV9yIa7GUFzGItKDV 2TGqjk7O0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYi+JLhD3ejT5f7g2k3tR2e dCWJ7r/H9/ncl4Ls0n17uj/Ir/i+0Yrhn7qWE6Mrw6YH59pPa23xUb5Wcqi8bmtr8wGjs3mrdjS +ZwIA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-From: Anirudh Rayabharam <anirudh@anirudhrb.com> Sent: Wednesday, August 28=
-, 2024 4:22 AM
->=20
-> commit 9636be85cc5b ("x86/hyperv: Fix hyperv_pcpu_input_arg handling when
-> CPUs go online/offline") introduces a new cpuhp state for hyperv
-> initialization.
->=20
-> cpuhp_setup_state() returns the state number if state is
-> CPUHP_AP_ONLINE_DYN or CPUHP_BP_PREPARE_DYN and 0 for all other states.
-> For the hyperv case, since a new cpuhp state was introduced it would
-> return 0. However, in hv_machine_shutdown(), the cpuhp_remove_state() cal=
-l
-> is conditioned upon "hyperv_init_cpuhp > 0". This will never be true and
-> so hv_cpu_die() won't be called on all CPUs. This means the VP assist pag=
-e
-> won't be reset. When the kexec kernel tries to setup the VP assist page
-> again, the hypervisor corrupts the memory region of the old VP assist pag=
-e
-> causing a panic in case the kexec kernel is using that memory elsewhere.
-> This was originally fixed in commit dfe94d4086e4 ("x86/hyperv: Fix kexec
-> panic/hang issues").
->=20
-> Get rid of hyperv_init_cpuhp entirely since we are no longer using a
-> dynamic cpuhp state and use CPUHP_AP_HYPERV_ONLINE directly with
-> cpuhp_remove_state().
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: 9636be85cc5b ("x86/hyperv: Fix hyperv_pcpu_input_arg handling when=
- CPUs go online/offline")
-> Signed-off-by: Anirudh Rayabharam (Microsoft) <anirudh@anirudhrb.com>
+On Mon, 26 Aug 2024 13:55:03 +0800, Li Zhijian wrote:
+> It's observed that a crash occurs during hot-remove a memory device,
+> in which user is accessing the hugetlb. See calltrace as following:
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 1 PID: 14045 at arch/x86/mm/fault.c:1278 do_user_addr_fault+0x2a0/0x790
+> Modules linked in: kmem device_dax cxl_mem cxl_pmem cxl_port cxl_pci dax_hmem dax_pmem nd_pmem cxl_acpi nd_btt cxl_core crc32c_intel nvme virtiofs fuse nvme_core nfit libnvdimm dm_multipath scsi_dh_rdac scsi_dh_emc s
+> mirror dm_region_hash dm_log dm_mod
+> CPU: 1 PID: 14045 Comm: daxctl Not tainted 6.10.0-rc2-lizhijian+ #492
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+> RIP: 0010:do_user_addr_fault+0x2a0/0x790
+> Code: 48 8b 00 a8 04 0f 84 b5 fe ff ff e9 1c ff ff ff 4c 89 e9 4c 89 e2 be 01 00 00 00 bf 02 00 00 00 e8 b5 ef 24 00 e9 42 fe ff ff <0f> 0b 48 83 c4 08 4c 89 ea 48 89 ee 4c 89 e7 5b 5d 41 5c 41 5d 41
+> RSP: 0000:ffffc90000a575f0 EFLAGS: 00010046
+> RAX: ffff88800c303600 RBX: 0000000000000000 RCX: 0000000000000000
+> RDX: 0000000000001000 RSI: ffffffff82504162 RDI: ffffffff824b2c36
+> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: ffffc90000a57658
+> R13: 0000000000001000 R14: ffff88800bc2e040 R15: 0000000000000000
+> FS:  00007f51cb57d880(0000) GS:ffff88807fd00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000001000 CR3: 00000000072e2004 CR4: 00000000001706f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  ? __warn+0x8d/0x190
+>  ? do_user_addr_fault+0x2a0/0x790
+>  ? report_bug+0x1c3/0x1d0
+>  ? handle_bug+0x3c/0x70
+>  ? exc_invalid_op+0x14/0x70
+>  ? asm_exc_invalid_op+0x16/0x20
+>  ? do_user_addr_fault+0x2a0/0x790
+>  ? exc_page_fault+0x31/0x200
+>  exc_page_fault+0x68/0x200
+> <...snip...>
+> BUG: unable to handle page fault for address: 0000000000001000
+>  #PF: supervisor read access in kernel mode
+>  #PF: error_code(0x0000) - not-present page
+>  PGD 800000000ad92067 P4D 800000000ad92067 PUD 7677067 PMD 0
+>  Oops: Oops: 0000 [#1] PREEMPT SMP PTI
+>  ---[ end trace 0000000000000000 ]---
+>  BUG: unable to handle page fault for address: 0000000000001000
+>  #PF: supervisor read access in kernel mode
+>  #PF: error_code(0x0000) - not-present page
+>  PGD 800000000ad92067 P4D 800000000ad92067 PUD 7677067 PMD 0
+>  Oops: Oops: 0000 [#1] PREEMPT SMP PTI
+>  CPU: 1 PID: 14045 Comm: daxctl Kdump: loaded Tainted: G        W          6.10.0-rc2-lizhijian+ #492
+>  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+>  RIP: 0010:dentry_name+0x1f4/0x440
+> <...snip...>
+> ? dentry_name+0x2fa/0x440
+> vsnprintf+0x1f3/0x4f0
+> vprintk_store+0x23a/0x540
+> vprintk_emit+0x6d/0x330
+> _printk+0x58/0x80
+> dump_mapping+0x10b/0x1a0
+> ? __pfx_free_object_rcu+0x10/0x10
+> __dump_page+0x26b/0x3e0
+> ? vprintk_emit+0xe0/0x330
+> ? _printk+0x58/0x80
+> ? dump_page+0x17/0x50
+> dump_page+0x17/0x50
+> do_migrate_range+0x2f7/0x7f0
+> ? do_migrate_range+0x42/0x7f0
+> ? offline_pages+0x2f4/0x8c0
+> offline_pages+0x60a/0x8c0
+> memory_subsys_offline+0x9f/0x1c0
+> ? lockdep_hardirqs_on+0x77/0x100
+> ? _raw_spin_unlock_irqrestore+0x38/0x60
+> device_offline+0xe3/0x110
+> state_store+0x6e/0xc0
+> kernfs_fop_write_iter+0x143/0x200
+> vfs_write+0x39f/0x560
+> ksys_write+0x65/0xf0
+> do_syscall_64+0x62/0x130
+> 
+> [...]
 
-Good find, and thanks for fixing up my mistake. :-(
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] fs/inode: Prevent dump_mapping() accessing invalid dentry.d_name.name
+      https://git.kernel.org/vfs/vfs/c/e57de7d9e7fc
 
