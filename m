@@ -1,90 +1,105 @@
-Return-Path: <linux-kernel+bounces-304819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 114E0962550
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:56:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CA4396255A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:58:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F1CBB21A5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:56:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03196B22A77
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E1116C69B;
-	Wed, 28 Aug 2024 10:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA9816C69E;
+	Wed, 28 Aug 2024 10:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jTthIixx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="OBslnhaY"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C72616BE35;
-	Wed, 28 Aug 2024 10:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E874516B3BA;
+	Wed, 28 Aug 2024 10:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724842556; cv=none; b=uaO+z+BM5YwD/5zQWFFQ9JxelZau8ka2SkdldN8+LQP3ZMYQAy0LKZHMz1b9EUxrYjhpv3WO31Og7ZerM/bUtelPdlmzIjuBtle6Z2jwMrMXk/QSYQVL3WSSV3+UaJH83xAAna2qldYzAuTnFrIKiu+AXq/1m2V3CLpT8co1n1o=
+	t=1724842719; cv=none; b=la1G2hN1ZykLjGo8opgpKFBsiAtESClpubWDz98SCG9HcrVhfWLrRYyZxrBYDcn/NG7kV8GIxwxq6VByVX+3taOz9wVwUP3WVZilzXpOAjIuwAVohV0qngHEbcIoL8fRnDl7cxI5P2eos7mvFXjZWM71WY6lLZ8p42Rbhd7Hwo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724842556; c=relaxed/simple;
-	bh=D3CeHNEWLynYkI+J3LwKNwi1Ref7cqRk4BTH0+gARcE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WD/thPEMKDErRUySmmlgwQlI4CTt/r83iFlOzJ+sC1ZFD9rQJrSzhLNL5OxZTXA21bmTnzO2yGsplsmW0y7oEux+aYrzKpyHuM2hlq4xCcxIjyPQVNjNyC0/f6yWcqTFIZ580qs7C104geBlhHrfKY49nA++Wg0o+xTpWHa/B7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jTthIixx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45372C4AF63;
-	Wed, 28 Aug 2024 10:55:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724842556;
-	bh=D3CeHNEWLynYkI+J3LwKNwi1Ref7cqRk4BTH0+gARcE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jTthIixxYvZz8HGXMq4c7yTSqSETNEU4eD2q5MlcrnXASHrIt6XpMTO7VMZRSkvgQ
-	 +G4/QMZWk52rHSsV2XlQDWEIERhFedklVBrQgHpzapjA/XuQXqFGd0kRSEvE/rd8G8
-	 CWTZ1jNkxZ/XwDeTlKah9KKqNKVhGiBXrJNYKbz9VmkdDyKl6//Jj7Q357ZRmQspN6
-	 qsIgwuBgpc8ft3A/8xRvjMAcVPJklvYNaLiXKYSwAqkkJmHQ89JCRMmJz6znW7kTku
-	 FGcpF/HydwZEdQVZNp6sOm1LiwoUyUte3TmqzSvitPREmXI6bMu4zLd//NzkOGFwHQ
-	 HHw9+wMDz4ufA==
-Message-ID: <5f7735ac-e03c-4399-bdca-3e9550b23e14@kernel.org>
-Date: Wed, 28 Aug 2024 12:55:49 +0200
+	s=arc-20240116; t=1724842719; c=relaxed/simple;
+	bh=faWKWd/jRfhvXNUmojC7SgOHNgJ64P7fWSIx46KxdIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NofHTiFounqUYfdMMVwEJ0PMSdqJEyllKcfZ8BZlhZf/PU9xULL4L/zz/O1WbL2jiHzzygqD9wIILtiK6J9NoxAov6PG9bMBvgyL/NF1ed03DGbqHkPclM2F2IEVMJb2NmM/GEpbeoc/PxLAN34rWVQLBlV/OZ/PaDCWIpA21dA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=OBslnhaY; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 63163220;
+	Wed, 28 Aug 2024 12:57:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1724842647;
+	bh=faWKWd/jRfhvXNUmojC7SgOHNgJ64P7fWSIx46KxdIM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OBslnhaY4XKqvj9xzuTx17N3jrJa8erfptO1Q76buFjYV71UNunWyqm0I7Ft2GJbp
+	 3N3WijcfcaVLnThbpncT8hQFXywZTe6/ranac9Q1lMLsDnA+G8xF5ZVTs8m1uXNOx5
+	 gfPxCecd5M0O+U/E08yyJPDed0cV9MlKobT2he4U=
+Date: Wed, 28 Aug 2024 13:58:30 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: haibo.chen@nxp.com
+Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-gpio@vger.kernel.org,
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH v2] dt-bindings: mfd: adp5585: Add parsing of hogs
+Message-ID: <20240828105830.GK30398@pendragon.ideasonboard.com>
+References: <20240828030405.2851611-1-haibo.chen@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/16] arm64: dts: qcom: change labels to lower-case
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240828-dts-qcom-label-v1-0-b27b72130247@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20240828-dts-qcom-label-v1-0-b27b72130247@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240828030405.2851611-1-haibo.chen@nxp.com>
 
-On 28.08.2024 9:17 AM, Krzysztof Kozlowski wrote:
-> DTS coding style expects labels to be lowercase.  No functional impact.
-> Verified with comparing decompiled DTB (dtx_diff and fdtdump+diff).
+Hi Haibo,
+
+Thank you for the patch.
+
+On Wed, Aug 28, 2024 at 11:04:05AM +0800, haibo.chen@nxp.com wrote:
+> From: Haibo Chen <haibo.chen@nxp.com>
 > 
-> I am splitting the patchset per few patches doing the same, because
-> otherwise diffs would be too big and would bounce from Patchwork/mailing
-> list.
+> Allow parsing GPIO controller children nodes with GPIO hogs.
 > 
-> Best regards,
-> Krzysztof
-> 
+> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
+
+This looks good, sorry for forgetting to add it in the first place.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
 > ---
+>  Documentation/devicetree/bindings/mfd/adi,adp5585.yaml | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml b/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
+> index f9c069f8534b..ee2272f754a3 100644
+> --- a/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
+> @@ -42,6 +42,13 @@ properties:
+>    "#pwm-cells":
+>      const: 3
+>  
+> +patternProperties:
+> +  "-hog(-[0-9]+)?$":
+> +    type: object
+> +
+> +    required:
+> +      - gpio-hog
+> +
+>  required:
+>    - compatible
+>    - reg
 
-I can confirm the changes are a NOP, however:
+-- 
+Regards,
 
-g diff $(git last).. | grep "^+.*&[A-Z]" | wc -l
-232
-
-e.g.
-
-+		domain-idle-states = <&BIG_cpu_sleep_0>;
-
-Konrad
+Laurent Pinchart
 
