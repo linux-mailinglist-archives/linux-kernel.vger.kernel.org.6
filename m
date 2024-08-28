@@ -1,157 +1,100 @@
-Return-Path: <linux-kernel+bounces-304829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DDA896256A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:01:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39D3996256B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:01:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BEFA285BD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:01:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCA431F24B2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FF8537F5;
-	Wed, 28 Aug 2024 11:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB19116C69B;
+	Wed, 28 Aug 2024 11:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="lVNoFK/K"
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WdB7lBpH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64147145323
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 11:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B1415B143;
+	Wed, 28 Aug 2024 11:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724842883; cv=none; b=sP4fs5uhHzIKTYFwuzhzE9LzaLhNv2ABg3a81M1uQjsOKkOTGplxVKXPjRNHZpeJUi9HmCXqHqDPZrXf9dvAYQd1TcFg7rhgIgCCkHz2uWZ9CYB0/WzdSHzLuGdcwWvoNEarblucFoBmgAtTcVwxC/6E2R1r43S/HB41t3gtMxA=
+	t=1724842900; cv=none; b=Wobz2yg7vuJgID9ucQjhxzhBdILD4VREpr6/M3EODScvm6H1FB5vYs867AUEXlUOwq2+aQ2QW3YvhDpYAtPjXfJqczA1NNEgG7yqe8ibX/Q2is0AR+YZ+zmQ9I9jvT3si2F1zKloslFI/4cIDmOzP85ebpZYfuLDd5dUchpT0eI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724842883; c=relaxed/simple;
-	bh=rzmiZVrXQkKZtxVklggiqlr/J1hXj64IidLZJbudYdw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aN+TABNP336inc+F3sAHElMQOsZ/YjiRoinV4gWml3uniYKyvUlW4Gzt5tXFNIAA7DY5NCmDkiDptSTPFUsfb48iNRngxge9yrAyUvikWa8NF/3+VgRcbc/ifqmrumZBwbKO0J9fVotfRW1HZeArMmu7G/6C6fp4U0rekBmLKFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=lVNoFK/K; arc=none smtp.client-ip=54.207.19.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1724842836;
-	bh=rGkv8vXTKQNNDjP5vTcEOnsxxSzEmVf10njH6gZtvbg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=lVNoFK/KCHTP4ynQyOCcOeXrh08UYkTBcMhAivVVdOjFYiJ334pCccGHinCjXNboM
-	 9Pxj6rUeCP2hBgPiJAnp28mD2IZBUVRNqlpqvmXjCprn9t2qqMMWNnvrpVHbVMBFHq
-	 4YaDGGc02OLxeqQ9KdERcBKr7h0ksSuND7epbHXM=
-X-QQ-mid: bizesmtp88t1724842792tz70z34i
-X-QQ-Originating-IP: yURP3s+8jR7D8ND1Wq3RX+2ffkTw4oLhrct7u85Sa4c=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 28 Aug 2024 18:59:49 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 8286794993761644341
-From: WangYuli <wangyuli@uniontech.com>
-To: alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	lijo.lazar@amd.com,
-	mario.limonciello@amd.com,
-	le.ma@amd.com,
-	Jun.Ma2@amd.com,
-	hamza.mahfooz@amd.com,
-	andrealmeid@igalia.com,
-	wenlunpeng@uniontech.com,
-	wangyuli@uniontech.com
-Cc: amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	guanwentao@uniontech.com,
-	zhanjun@uniontech.com
-Subject: [PATCH] amdgpu: disable amdgpu_dpm on THTF-SW831-1W-DS25_MB board
-Date: Wed, 28 Aug 2024 18:59:38 +0800
-Message-ID: <3EA7C2B9E8C4D00A+20240828105938.37674-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.43.4
+	s=arc-20240116; t=1724842900; c=relaxed/simple;
+	bh=aAq7Jo9rst7OO5Q0HmdUuzWR+q5darrY1K5g+/n4DdM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CBTzoxr926s72t1FNkikU27jVMVKccoTXL6GQdL5Ll0hvb9JTOgmqnZT0aXHzEkuMYurnceM0WId6baetztHNj+AE1UI5/mTfWYVCwgOZhd4/T6WnfGMIdU5b7oc/xFxzOOifJz0Pc8w2skMX5YiweAIJQcK2r41BzaVgJateZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WdB7lBpH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E1E2C4FF19;
+	Wed, 28 Aug 2024 11:01:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724842898;
+	bh=aAq7Jo9rst7OO5Q0HmdUuzWR+q5darrY1K5g+/n4DdM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WdB7lBpHb45VmASYdwe6j0fVic8XqRSblqFmqv7IUqCXXetJPtGQWF6ADoERbELCt
+	 Hh7yJjv5iVfhGUcNsD7o5G2iFAuANs6o6cqJMxKw23Xgf9jNDn+BOHo0m1p3qcmOl6
+	 vBKOrBaDTCqc/mN+yDeQR8GEcyzyhv/A6J6Dlq3jZgEuJFSIfXEBY7td9UTsk7Vvli
+	 YHxeqHk0Y+H7F3+faHRUCrO4Pcm0ClJGSf1HflQs2dH7z729r6t9cGdirPCEU9nYUp
+	 C4rWW/dyCBc/Vo666txvLJaZBam+7QM4jkcsj26VmSNDdsO//x7MpUPYMF+0friFCD
+	 0hhyN0igHZXaw==
+Date: Wed, 28 Aug 2024 12:01:33 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Will Deacon <will@kernel.org>
+Cc: Dev Jain <dev.jain@arm.com>, shuah@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, Catalin.Marinas@arm.com,
+	ryan.roberts@arm.com, Anshuman.Khandual@arm.com,
+	aneesh.kumar@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/arm64: Fix build warnings for abi
+Message-ID: <c808efdf-fc78-40c3-90bf-948f65a6d133@sirena.org.uk>
+References: <20240827051851.3738533-1-dev.jain@arm.com>
+ <20240827123347.GC4679@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Lm19OG8IMFqYLhy7"
+Content-Disposition: inline
+In-Reply-To: <20240827123347.GC4679@willie-the-truck>
+X-Cookie: You are number 6!  Who is number one?
 
-From: wenlunpeng <wenlunpeng@uniontech.com>
 
-The quirk is for reboot-stability.
+--Lm19OG8IMFqYLhy7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-A device reboot stress test has been observed to cause
-random system hangs when amdgpu_dpm is enabled.
+On Tue, Aug 27, 2024 at 01:33:47PM +0100, Will Deacon wrote:
+> On Tue, Aug 27, 2024 at 10:48:51AM +0530, Dev Jain wrote:
+> > A "%s" is missing in ksft_exit_fail_msg(); instead, use the newly
+> > introduced ksft_exit_fail_perror(). Also, uint64_t corresponds to
+> > unsigned 64-bit integer, so use %lx instead of %llx.
 
-Disabling amdgpu_dpm can fix this.
+> What's wrong with using %llx for a uint64_t? I think that part of the
+> code is fine as-is.
 
-However, a boot-param can still overwrite it to enable
-amdgpu_dpm.
+IIRC there's some printf format specifiers specific to uint64_t which
+are probably a better choice here.
 
-Serial log when error occurs:
-...
-Console: switching to colour frame buffer device 160x45
-amdgpu 0000:01:00.0: fb0: amdgpudrmfb frame buffer device
-[drm:amdgpu_device_ip_late_init] *ERROR* late_init of IP block <si_dpm> failed -22
-amdgpu 0000:01:00.0: amdgpu_device_ip_late_init failed
-amdgpu 0000:01:00.0: Fatal error during GPU init
-[drm] amdgpu: finishing device.
-Console: switching to colour dummy device 80x25
-...
+--Lm19OG8IMFqYLhy7
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Signed-off-by: wenlunpeng <wenlunpeng@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-index 094498a0964b..81716fcac7cd 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-@@ -32,6 +32,7 @@
- #include <drm/drm_vblank.h>
- 
- #include <linux/cc_platform.h>
-+#include <linux/dmi.h>
- #include <linux/dynamic_debug.h>
- #include <linux/module.h>
- #include <linux/mmu_notifier.h>
-@@ -3023,10 +3024,32 @@ static struct pci_driver amdgpu_kms_pci_driver = {
- 	.dev_groups = amdgpu_sysfs_groups,
- };
- 
-+static int quirk_set_amdgpu_dpm_0(const struct dmi_system_id *dmi)
-+{
-+	amdgpu_dpm = 0;
-+	pr_info("Identified '%s', set amdgpu_dpm to 0.\n", dmi->ident);
-+	return 1;
-+}
-+
-+static const struct dmi_system_id amdgpu_quirklist[] = {
-+	{
-+		.ident = "DS25 Desktop",
-+		.matches = {
-+			DMI_MATCH(DMI_BOARD_NAME, "THTF-SW831-1W-DS25_MB"),
-+		},
-+		.callback = quirk_set_amdgpu_dpm_0,
-+	},
-+	{}
-+};
-+
- static int __init amdgpu_init(void)
- {
- 	int r;
- 
-+	/* quirks for some hardware, applied only when it's untouched */
-+	if (amdgpu_dpm == -1)
-+		dmi_check_system(amdgpu_quirklist);
-+
- 	if (drm_firmware_drivers_only())
- 		return -EINVAL;
- 
--- 
-2.43.4
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbPA4wACgkQJNaLcl1U
+h9Bw6Af9HQqe7pO0pmCJrqDwJ7A8MW1GXX+wMbHBhZzSbN1h0j0DuCd/RrO7Ip05
+g+PUYV/2DdLpfsGTB09apSgnHMle2/M08oVNuRIuRJgkshPTp29SXRXpY+mv4CQI
+ul8fZa35XVIN6aGmmLrXgBZ+nKm8/AwkwkkOLfPDhD6aDB2/6ZtrWQuo7JU+dpwn
+XbYDs/rhczGoKfW38/5E9wQ2VX+xZ7NkMQmox73ZRahU7enMuvKOayA2CLdyp12Q
++RYAJs0J0uDasIP57NCtKBtrw47M6Kk7Gqw7pbNKwRnOO3NoKjfr6tZlC3vg0G8I
+t/iT+u2Rgny5zyzCnOFw+yJTQLiQkg==
+=OoG3
+-----END PGP SIGNATURE-----
 
+--Lm19OG8IMFqYLhy7--
 
