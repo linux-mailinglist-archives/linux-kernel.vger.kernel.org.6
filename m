@@ -1,119 +1,144 @@
-Return-Path: <linux-kernel+bounces-304558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D3F59621C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:51:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D8589621D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:53:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB2D11F21746
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:51:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CFD41F24CAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F31915B109;
-	Wed, 28 Aug 2024 07:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECEC15A851;
+	Wed, 28 Aug 2024 07:53:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TEGld0Zr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fjYI852q"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708C0158A04;
-	Wed, 28 Aug 2024 07:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6D215853A
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724831484; cv=none; b=WUQ4JXYu4CAoA21kDPfkOrZbK0axtiNAlMRsri2/bjC1FS7BcH6GL6kT/7Da/KDML+WUDmB1LZsZAKlBZIio0EQYGApsH+qM3OhlM2yME1/AtmsNWBRRkF/2/4kbTnXP2l23b1/KDSw0jEZ6JRrD4W839ERzK/yN1uPAnL9jNUA=
+	t=1724831598; cv=none; b=FN06n9ExmdEPutHiAl65J59ucTxMybqipR4kFjWVsI0LMdC7kRDhHZC1Z0hm18/IIT7eohXI16rzcRVh4FEuDKqUfwS2/RyiTsrl+c3uMTrlIgII6e32c3YlpRkPrJEgCu1tPIGuaNx7S/crZ4QbFC0BsaOcIgRoJsxYGL2K/pY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724831484; c=relaxed/simple;
-	bh=g6S7cgkwyHTYMqfsr52CVhpQrrl8Vy5/S/YFliyHNKE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qaXKnLJjuH5HzYm+U4Fs63anXSdT9aDyrf5i56xl95lKxOw4whp0lowK8HNAMYun2KiDBTNkItZEbtiji6aRAhMHaxXnEjJ0Oe/WmZc94rrdjMjU1z9Qo/hNmQ/MRmQX+ehX1p+WhxSUXLRCNVQANjFnQ3iTZpRI3WoHmxDAchg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TEGld0Zr; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724831482; x=1756367482;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=g6S7cgkwyHTYMqfsr52CVhpQrrl8Vy5/S/YFliyHNKE=;
-  b=TEGld0ZrtBHs4WRW0gJqK+MgU3l59FRUQ9xQUl9JuNkUeQr3k1wqEeiC
-   sCo4VcFAPC2ijqsqnaq1zMEQ2xwYExwvctYpgEYExcQ1ZHrFGeOgMFNi8
-   NAWhEcmQzTLhtRMqeDoKOGjQHpokRWpXYUrb43hNWLeqeHraLNPoeiU9P
-   yKsfAzOSBpf785eB5kMupns4DDGeCZIlmAOEpJqvhYZ42EPseNCYMaQyo
-   stwDDPY2MK3MsU6jonqVYQiUFhJIfZjmRPJhnjInS5+T01NlOVRTe8b6H
-   mGE7/OFqwlSw2NmhY35g7oK2yenfw8TL1RYW4hplO/7GYtG8Z2aBHWX9U
-   A==;
-X-CSE-ConnectionGUID: K01A2caMQ4a6QfWAHREz6w==
-X-CSE-MsgGUID: TRGJT7F9Qy2rYMu4x1Bg1Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="40849863"
-X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
-   d="scan'208";a="40849863"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 00:51:21 -0700
-X-CSE-ConnectionGUID: mV4/iQEoSU2UdekrGE/mQg==
-X-CSE-MsgGUID: xtm+W/8oToWtEBp4ANQBvg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
-   d="scan'208";a="63133947"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 00:51:18 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 1D86911F95D;
-	Wed, 28 Aug 2024 10:51:16 +0300 (EEST)
-Date: Wed, 28 Aug 2024 07:51:16 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Zhi Mao <zhi.mao@mediatek.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, shengnan.wang@mediatek.com,
-	yaya.chang@mediatek.com, teddy.chen@mediatek.com,
-	yunkec@chromium.org, 10572168@qq.com
-Subject: Re: [PATCH] media: i2c: improve suspend/resume switch performance
- for GT9769 VCM driver
-Message-ID: <Zs7W9PDY2ny5JI8w@kekkonen.localdomain>
-References: <20240817073452.21627-1-zhi.mao@mediatek.com>
+	s=arc-20240116; t=1724831598; c=relaxed/simple;
+	bh=21a/MHKVnT6XBlWWTo2Q1achWYbwUOVFk7jow4EG1/Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PAn0hWE9EIA+A8OX81uAt+93qBlulQ8XrLWRCqzdjPeiMq3D6f7GMB7NH2qsPY1N5a4gng09HEHIuNNH/jGvc5VV0WaaiphJ9qb5L4bQiKllv34OpvBeqROlb9I2SD85Azq8JOOGwfH7APdCQsYFlwytfh3A+/nfNtmTA/i2tMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fjYI852q; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-533463f6b16so7433145e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 00:53:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1724831595; x=1725436395; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LsoLJnR1HavX8ieXrR58m8Zt34PxhdbdX51ID+vKbNE=;
+        b=fjYI852qrMpbaGUgYhK4Wg8armTjpjX45HdXhbq8p4DeCTy+LtjjRN2tEzceVq4eCI
+         eBwodFZczzgvP3qvve8na7BA7V4y0y9G0pFYciFHVkJd2RiSo1jLRof/FTUoXUsO7D2n
+         ykNp+csgIpu/dgqSx4l0+dWDyh7dzaIPurUwg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724831595; x=1725436395;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LsoLJnR1HavX8ieXrR58m8Zt34PxhdbdX51ID+vKbNE=;
+        b=MBhEYtrPK34doP+9ez8iEv8adttvzUNjvm5hLyp1RktqkG6nnYIiGrGpaVqWlgaC4W
+         Ipe97e44T0wLNfk3a9okdzpLOmVEXqg8NuY1JDMpnEaj8icuY4ccSzI/lvCzg/aI+eWn
+         3j3XnWpXm69IaxMSBCpNvwBb2+yS8pmJnmE0bvHZNbAaPU28nis2Sje//eutDuawiPuJ
+         BZH92kYWjw4V1vwcFwEOHCDCUrGvdPsbZRZ9nYJ/B8SSk0s/pFjEHIF8F5Pc8mpeFG6L
+         qiXqjmiFSlHp3YBKQ0rjW1LgBJsQxu/ZT9YXAGhM3HV/YR2pbtSIyRe2bBn7Gj3zYWZV
+         qn9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWz/DeuMbuewr+ORO1vuqZhtwJP5JCgVDx7xG4KTs+sVV5MmRxl/cEB9IYbP6WI3g3KbIM5NG8xR1IxlqM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzf3J9epT/kOHWmcPMbQRlDqqEOuWLRtDSEITaGQ7iRGIkIUfeB
+	JjM0mFvWmUEaowUVslnZUM08ry0PN+rHL/csz+x/9NZAO+MaO7bEMyK1NlMWICfjBagapNYSEmG
+	ntG0baRktwHjrrA7BgzBYbofkyi/GKwQgKwD7
+X-Google-Smtp-Source: AGHT+IGfRHU4N27WpfX66Kn8c7GoY5FHx7iIaM4T3z660sfUYPwkmVBovtba1TaQ1/f9ALuRCW5H+nZ237eSMJnAJJk=
+X-Received: by 2002:a05:6512:3e0d:b0:52c:812b:6e72 with SMTP id
+ 2adb3069b0e04-5343876c25dmr8620718e87.1.1724831595041; Wed, 28 Aug 2024
+ 00:53:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240817073452.21627-1-zhi.mao@mediatek.com>
+References: <20240827095550.675018-1-wenst@chromium.org> <20240827095550.675018-9-wenst@chromium.org>
+ <e341240e-1c1f-49a2-91cd-440888fdbda0@gmail.com>
+In-Reply-To: <e341240e-1c1f-49a2-91cd-440888fdbda0@gmail.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Wed, 28 Aug 2024 15:53:03 +0800
+Message-ID: <CAGXv+5EcHQ7E979fKPEci2qwXBnKPfVHc_aB02amUbdVB3KTxg@mail.gmail.com>
+Subject: Re: [PATCH 8/8] regulator: irq_helpers: Add missing "Return"
+ kerneldoc section
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Zhi,
+On Wed, Aug 28, 2024 at 1:55=E2=80=AFPM Matti Vaittinen
+<mazziesaccount@gmail.com> wrote:
+>
+> On 8/27/24 12:55, Chen-Yu Tsai wrote:
+> > kernel-doc complains about missing "Return" section for the function
+> > regulator_irq_map_event_simple().
+> >
+> > Add a "Return" section for it based on its behavior.
+> >
+> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+>
+> Thank You for improving this! I appreciate it :)
+>
+> > ---
+> >   drivers/regulator/irq_helpers.c | 4 ++++
+> >   1 file changed, 4 insertions(+)
+> >
+> > diff --git a/drivers/regulator/irq_helpers.c b/drivers/regulator/irq_he=
+lpers.c
+> > index 5ab1a0befe12..5803ef016b7d 100644
+> > --- a/drivers/regulator/irq_helpers.c
+> > +++ b/drivers/regulator/irq_helpers.c
+> > @@ -414,6 +414,10 @@ EXPORT_SYMBOL_GPL(regulator_irq_helper_cancel);
+> >    * notification helperk. Exactly one rdev and exactly one error (in
+>
+> I just noticed (an existing) typo "helperk". I wonder if it was Ok to
+> fix it while anyways changing the doc. It's not strictly speaking
+> related to the return values though :)
 
-Thanks for the patch.
+Why not? Only the kerneldoc this function is touched. It looks like the
+'k' belongs to the "callbac" on the previous line.
 
-On Sat, Aug 17, 2024 at 03:34:02PM +0800, Zhi Mao wrote:
-> GT9769 VCM power-on default setting is PD=0,
-> so it is not necessary to set again in dw9768_init function,
-> and it also has no requirement of setting PD=1
-> before power-off in dw9768_release function.
-> For GT9769 VCM, PD mode control will add extra time
-> when switching between suspend and resume.
-> e.g. chrome camera AP can switch between video and photo mode,
-> the behavior corresponding to VCM is suspend and resume,
-> it will cause camera preview is not smooth.
+> >    * "common_errs"-field) can be given at IRQ helper registration for
+> >    * regulator_irq_map_event_simple() to be viable.
+> > + *
+> > + * Return: 0
+> > + *
+> Anyways, I agree with Andy about not needing the blank line here - but
 
-If this is the problem, wouldn't either of these two be a better option:
+I disagree because of the formatting result. See my other reply.
 
-- keep the file handle open in the user space, to avoid powering off the
-  VCM or
-
-- add autosuspend support to the driver.
-
-I also wouldn't differentiate driver behaviour between the chips. If the
-hardware default really is different (is it, this is rare for
-register-compatible parts), then the driver needs to reprogram it (at least
-on the one with a different default).
-
--- 
-Kind regards,
-
-Sakari Ailus
+> other than that:
+>
+> Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>
+> > + * Actual regulator error and notification are passed back through @ri=
+d.
+> >    */
+> >   int regulator_irq_map_event_simple(int irq, struct regulator_irq_data=
+ *rid,
+> >                           unsigned long *dev_mask)
+>
+> --
+> Matti Vaittinen
+> Linux kernel developer at ROHM Semiconductors
+> Oulu Finland
+>
+> ~~ When things go utterly wrong vim users can always type :help! ~~
+>
 
