@@ -1,213 +1,167 @@
-Return-Path: <linux-kernel+bounces-305445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0EBD962EB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:43:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F855962EBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E9681F2329D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:43:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E4F1281F5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0441A7065;
-	Wed, 28 Aug 2024 17:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 468EC1A706C;
+	Wed, 28 Aug 2024 17:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="fdOVy8gn"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q8pk8fXR"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA951A704B;
-	Wed, 28 Aug 2024 17:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3087A36130;
+	Wed, 28 Aug 2024 17:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724866982; cv=none; b=roOV5KOwUdMm6fhhEx2p9FkL4VCvG45Q9JELCCkRLAAeNGnDcPvLIg0WdvrYZMC+rkBW2VUpNKXK4elVdebISBcYmrdIOt1U6cSP6j+wP1neWfhtvNIwUB0c/fYOlJBDTAQMqBJnk5FqR+6AU5+zJwvIfGght/0notkDJY4/5bg=
+	t=1724867050; cv=none; b=VYdA2mlVP90Xt06Pow9Sv0eH5tFu6nTPUbu+rNOVd3LLy6BC+W55KogFemBhq8N+tSfqRZC7+3yj30Dy2kVJK9gXcp0FVL+fALvyDqiDAMnOmMGjpWmEjWNsk4Yiv17GNlpX3iYajAb3oz9BBMc7xJnjygvv5BrpiiSLdQ+W0pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724866982; c=relaxed/simple;
-	bh=BoazdlCRYYs8+urOu7C/WkPJpQjh8mt9k0l8xN6QK+8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bNkema82+4bzmFQNg4lcBklsXK3aXsfPwZp+kN0GKrhwGaPU/twmqplPBXfDDQTyVy3ObQKqLeG7ArEO8OhlxnjMk8896kprR0UbZmxzMKf/38aa+bDhJMM8gbz4C7Jb7S7BcM2H+W2doiGrlLc+rOmZB8H1jCPCHVqQNTGT3Io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=fdOVy8gn; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1724866972; x=1725471772; i=deller@gmx.de;
-	bh=1ItLr5inkzgvnqp9xEYMX6Pc1zaP7HMzAyR3tBSAwOA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=fdOVy8gnt/2Bc3mJiJYUpGuCozt7Q69gOB0GLKFvv2IAEgc0vNk7l1eF2FiL0NZX
-	 T/64ABdL+tI6RRZu1cd2imdKG4xf7wcixs0Kxr3eey42ynwz1Y4OtkgI25Uwd6G5H
-	 hUL17SuL4KWOPcl0qTia3G9FEiSO1rIT0K1VZ6Mpjry1bJzMRaLmmqN6Av8fQa9S9
-	 Pr7YDrazN3dXL5k9ZC5cQWit7CjWgrrtGNk64uzmhPeYN84a1bn9jFPaT8a8lVdKv
-	 LLFm3nawCDNW/6LC42Jw3uC81QPTfHyPhrRZfaoVDIf3fUkBDdpF+90H+H7PfFnvZ
-	 ciV41boMShdsp5tMTw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.55] ([109.250.63.126]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N4z6k-1s0J3o1ENY-010N5a; Wed, 28
- Aug 2024 19:42:52 +0200
-Message-ID: <fef5bc70-3921-4562-b9d4-beccc76440a6@gmx.de>
-Date: Wed, 28 Aug 2024 19:42:51 +0200
+	s=arc-20240116; t=1724867050; c=relaxed/simple;
+	bh=HhYJ1Q+JW2O2E82gUkC4FDEG14SxIpf8BG2OWoLr240=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AFjAN77qudqFFRbD/tfU7t+mIZ6cm1hrhcIkD0s4jdbYy3ecK/FH1cDEUjRUeSZDebkAxtX4Rfg0TsMvLXoxE6fbAPjo7ZaQC81Ogknx+StuQWdMln/g38+n2LX9aGjSFuSofZZHqsNGnV8/8AZXYxy0mR5c5VTEF+CtlLnQFEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q8pk8fXR; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2023dd9b86aso55991695ad.1;
+        Wed, 28 Aug 2024 10:44:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724867048; x=1725471848; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QxJv0j8wKqbtmeIVheEQj51qn9RSR7kYGGnN4GDdIuY=;
+        b=Q8pk8fXR+P+wDZYoKkVgUBb0QeIeZcR1tmR003Rg6qcyVkkbdzW2Yy/BYvyiSnC9u7
+         g6yZ7o+w9g81I/4/15m4gJOMqbiZ7xy1J1BRH+DOVQGiwlfU4DrofrPDVlEa3wKa8wwf
+         b0StIvvY+6KMkcclk4jC0ufd0en0ugkiwOctA+vYM/9QNDX+dfhQOfBgq6tH1JhTCawc
+         lOugc+Fa45OSByS07VFShfWGG5r94L722ETQf2x6y5sCd//8JBZK2MHyoc5cqSfy3olk
+         +XbPWNFvxxLNv/oCf7IJ9cJXeYCQvTSwvfoZedg4W8wm8970ONgdhEqpoU2j4zvso1TU
+         z7yQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724867048; x=1725471848;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QxJv0j8wKqbtmeIVheEQj51qn9RSR7kYGGnN4GDdIuY=;
+        b=EDq6Hcu10I2nVL1wWsrORvuFWiX0Pnw1+5nhpFMmo96CRwexn+4i1dj/ybUrIapI8e
+         q/pbSpmV3nassS+W/yRxMql81Opmo3dsao1sxxpqoDghz0exed9G54XCbaX8E4j1e3Qv
+         fn2BKZqIVojXtixsexSgt4IdmVfVNfR5CvkM1hAg+pwNKh5tp1k+auMJ82kgDlJFAt/O
+         M0OxQMghYSPvV4D19XwGGu2U665BI8EFRPlcdLtmtbUZmAcgQSC7yqZyZYfImuvRDWph
+         bPQbQ0YqRJNyoH/jX8uGG1a+8+/+CPFCckaApNPevZxiTBGtK7klc4uQ0kBv1Vi5m/XV
+         nNEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVCxYisFBNyCCTrz+tJXyMNXdpJYYvQP60k44iy02sYMDyFp8x3fO7OMEmAPtQtiX7j+3d3FoKHcCQsJxU=@vger.kernel.org, AJvYcCWjGAbsOJ5quoEobSoPBWf2Dsj6AE2ZNStX+nmC2CfPvWYxKygjbnHGM3OKZNXVD9Rse0T3ICsy@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBSwck+Nb+R34UMUug5uZA9q3we234hpY7WF6c7oQs3YPu0pt3
+	msXQrghAeiQEmtiU2KlWMgu441fKX928OZztezBEpId+3/0uv1dN
+X-Google-Smtp-Source: AGHT+IGsm+dbJ6cPf1eeSjmrqFdfGokz2YD/9qsUdLpGxvvgIhqs6t70Gmr2X8oxRcFHuogflQxwyQ==
+X-Received: by 2002:a17:903:a88:b0:202:46cc:696c with SMTP id d9443c01a7336-2050c237b48mr2694325ad.18.1724867048062;
+        Wed, 28 Aug 2024 10:44:08 -0700 (PDT)
+Received: from diogo-jahchan-ASUS-TUF-Gaming-A15-FA507RM-FA507RM.. ([200.4.98.43])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-204f1b80cf5sm18259845ad.164.2024.08.28.10.44.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 10:44:07 -0700 (PDT)
+From: Diogo Jahchan Koike <djahchankoike@gmail.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Diogo Jahchan Koike <djahchankoike@gmail.com>,
+	syzbot+ec369e6d58e210135f71@syzkaller.appspotmail.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [patch net-next v4] ethtool: pse-pd: move pse validation into set
+Date: Wed, 28 Aug 2024 14:43:17 -0300
+Message-ID: <20240828174340.593130-2-djahchankoike@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] fbdev/efifb: Use stack memory for screeninfo structs
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Peter Jones <pjones@redhat.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240827-efifb-sysfs-v1-0-c9cc3e052180@weissschuh.net>
- <20240827-efifb-sysfs-v1-1-c9cc3e052180@weissschuh.net>
-Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- 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
-In-Reply-To: <20240827-efifb-sysfs-v1-1-c9cc3e052180@weissschuh.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:8bpszq7udg/1scxknG2i1tu1SIORmO3dPhMni8wIR8vYiXq59yp
- 8iwdLUrwtVDBoHx89i2kCPFWkosu/8toUpCNlEs1OWJ3fhUmifqehWXcE5rt5m88G13eK8i
- fnjSE5Qb5GmkNeF6iFxEnWoYXPgIHBaWC3VUGBa1f8OFTo8QwmMpLLv3EXMaCAkK/FOICxC
- vce0eepT4c25eRA9URkyQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:8DY0cEJPpPk=;c9osfpIcb0/oBjyGLdZsk+kVPYW
- 5gB+gy05wxfSlWkn/LIZGE3odhE+/dRc042UKbm1LhonX2KTMtriA4djV6KGAAICSMb+k2sfi
- j4rQE+pPioU7ZZGxY2qFUkwa5efCsy8+e0syrHy2icxV16Xspu2ZJLOaTgEKwUQz+wczLjr93
- o8cF/hrWPyyZFpPZPWkVFgdLNTUrm+sCs8XBXi67wmdw5WjYWKhCo7NbfYxwuBMuvDTBx4Ba/
- x+fjxeMu9EZqE2amx15U7IpT84VcChhWB2boKeQ2bZghHo++Xk4WtgSyHp8zhUNLZAw1DUtsC
- tA0ZNtAzDhtBvVfrOC+YbY+O+qN91Oo3QJlr1WHj6IRs9dfmInZkyp6AhvQHZE/EG06SFak8N
- A/Z8KtEOkivAREoNYYGE1I7BWl320svxrQaE5UwNLPbdHqeaH8BTtaCT5FJGFID0nP6AByYcY
- bGqSTKn+XXZS8SiUC/SKUUrTGll+OwrAu0Iyo/TJI8s+v3JbcrfdPK7KghCpzKwWvDtG5Ny/r
- edHyvrwWdpxOTsSeAS0nSFDcfyTCIPNGZUxJ8ABYCL5Nrs3tiIRa0tp0j7ETymEDUlHHHOuyX
- /Mgk5IHjQVSeD0mV0ZCrjiMd+tSgyFmHRxL/klX82xFJLiRv9u+ZbiFh7LMNa7++eJ7O8gRB7
- QzOO67OBh7X9UEpIv0YEV4UGIJLoHkkkeoJrAO1Q2W/fFdyoJGu40+MYW8psPHZTHiKS3Aaue
- xIFjIYK+SC2M0jW/7bIbY57x43kPWBnNJn9Ph0P6aAF3G3LpZDmCUAcUUFghBAP9LT38u784d
- ow9SnyfbWNKJ9jgycxg7lT3Q==
+Content-Transfer-Encoding: 8bit
 
-On 8/27/24 17:25, Thomas Wei=C3=9Fschuh wrote:
-> These variables are only used inside efifb_probe().
-> Afterwards they are using memory unnecessarily.
+Move validation into set, removing .set_validate operation as its current
+implementation holds the rtnl lock for acquiring the PHY device, defeating
+the intended purpose of checking before grabbing the lock.
 
-Did you check if this change really saves some memory?
-With your change, the compiler will either create a hidden
-structure which it uses then, or it generates assembly
-instructions to fill the struct at runtime.
-Both options may not actually reduce the memory footprint...
+Reported-by: syzbot+ec369e6d58e210135f71@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=ec369e6d58e210135f71
+Fixes: 31748765bed3 ("net: ethtool: pse-pd: Target the command to the requested PHY")
+Signed-off-by: Diogo Jahchan Koike <djahchankoike@gmail.com>
+---
+v4:
+  - remove .set_validate op, move validation to set
+v3: https://lore.kernel.org/all/20240826173913.7763-1-djahchankoike@gmail.com/
+  - hold rtnl lock while interacting with the PHY device
+  - rollback to v1
+v2: https://lore.kernel.org/all/20240826140628.99849-1-djahchankoike@gmail.com/
+v1: https://lore.kernel.org/all/20240826130712.91391-1-djahchankoike@gmail.com/
+---
+ net/ethtool/pse-pd.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
-Another option might be to mark the static struct __initdata
-if you expect another card to take over before the memory is
-freed at runtime. But I'm not sure if it's worth possible
-implications.
-
-Helge
-
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> ---
->   drivers/video/fbdev/efifb.c | 36 ++++++++++++++++++------------------
->   1 file changed, 18 insertions(+), 18 deletions(-)
->
-> diff --git a/drivers/video/fbdev/efifb.c b/drivers/video/fbdev/efifb.c
-> index 8dd82afb3452..8bfe0ccbc67a 100644
-> --- a/drivers/video/fbdev/efifb.c
-> +++ b/drivers/video/fbdev/efifb.c
-> @@ -52,24 +52,6 @@ struct efifb_par {
->   	resource_size_t size;
->   };
->
-> -static struct fb_var_screeninfo efifb_defined =3D {
-> -	.activate		=3D FB_ACTIVATE_NOW,
-> -	.height			=3D -1,
-> -	.width			=3D -1,
-> -	.right_margin		=3D 32,
-> -	.upper_margin		=3D 16,
-> -	.lower_margin		=3D 4,
-> -	.vsync_len		=3D 4,
-> -	.vmode			=3D FB_VMODE_NONINTERLACED,
-> -};
-> -
-> -static struct fb_fix_screeninfo efifb_fix =3D {
-> -	.id			=3D "EFI VGA",
-> -	.type			=3D FB_TYPE_PACKED_PIXELS,
-> -	.accel			=3D FB_ACCEL_NONE,
-> -	.visual			=3D FB_VISUAL_TRUECOLOR,
-> -};
-> -
->   static int efifb_setcolreg(unsigned regno, unsigned red, unsigned gree=
-n,
->   			   unsigned blue, unsigned transp,
->   			   struct fb_info *info)
-> @@ -357,6 +339,24 @@ static int efifb_probe(struct platform_device *dev)
->   	char *option =3D NULL;
->   	efi_memory_desc_t md;
->
-> +	struct fb_var_screeninfo efifb_defined =3D {
-> +		.activate		=3D FB_ACTIVATE_NOW,
-> +		.height			=3D -1,
-> +		.width			=3D -1,
-> +		.right_margin		=3D 32,
-> +		.upper_margin		=3D 16,
-> +		.lower_margin		=3D 4,
-> +		.vsync_len		=3D 4,
-> +		.vmode			=3D FB_VMODE_NONINTERLACED,
-> +	};
-> +
-> +	struct fb_fix_screeninfo efifb_fix =3D {
-> +		.id			=3D "EFI VGA",
-> +		.type			=3D FB_TYPE_PACKED_PIXELS,
-> +		.accel			=3D FB_ACCEL_NONE,
-> +		.visual			=3D FB_VISUAL_TRUECOLOR,
-> +	};
-> +
->   	/*
->   	 * If we fail probing the device, the kernel might try a different
->   	 * driver. We get a copy of the attached screen_info, so that we can
->
+diff --git a/net/ethtool/pse-pd.c b/net/ethtool/pse-pd.c
+index 507cb21d6bf0..b56b79f41a3a 100644
+--- a/net/ethtool/pse-pd.c
++++ b/net/ethtool/pse-pd.c
+@@ -222,13 +222,10 @@ const struct nla_policy ethnl_pse_set_policy[ETHTOOL_A_PSE_MAX + 1] = {
+ };
+ 
+ static int
+-ethnl_set_pse_validate(struct ethnl_req_info *req_info, struct genl_info *info)
++ethnl_set_pse_validate(struct phy_device *phydev, struct genl_info *info)
+ {
+ 	struct nlattr **tb = info->attrs;
+-	struct phy_device *phydev;
+-
+-	phydev = ethnl_req_get_phydev(req_info, tb[ETHTOOL_A_PSE_HEADER],
+-				      info->extack);
++	
+ 	if (IS_ERR_OR_NULL(phydev)) {
+ 		NL_SET_ERR_MSG(info->extack, "No PHY is attached");
+ 		return -EOPNOTSUPP;
+@@ -254,7 +251,7 @@ ethnl_set_pse_validate(struct ethnl_req_info *req_info, struct genl_info *info)
+ 		return -EOPNOTSUPP;
+ 	}
+ 
+-	return 1;
++	return 0;
+ }
+ 
+ static int
+@@ -262,12 +259,13 @@ ethnl_set_pse(struct ethnl_req_info *req_info, struct genl_info *info)
+ {
+ 	struct nlattr **tb = info->attrs;
+ 	struct phy_device *phydev;
+-	int ret = 0;
++	int ret;
+ 
+ 	phydev = ethnl_req_get_phydev(req_info, tb[ETHTOOL_A_PSE_HEADER],
+ 				      info->extack);
+-	if (IS_ERR_OR_NULL(phydev))
+-		return -ENODEV;
++	ret = ethnl_set_pse_validate(phydev, info);
++	if (ret)
++		return ret;
+ 
+ 	if (tb[ETHTOOL_A_C33_PSE_AVAIL_PW_LIMIT]) {
+ 		unsigned int pw_limit;
+@@ -314,7 +312,6 @@ const struct ethnl_request_ops ethnl_pse_request_ops = {
+ 	.fill_reply		= pse_fill_reply,
+ 	.cleanup_data		= pse_cleanup_data,
+ 
+-	.set_validate		= ethnl_set_pse_validate,
+ 	.set			= ethnl_set_pse,
+ 	/* PSE has no notification */
+ };
+-- 
+2.43.0
 
 
