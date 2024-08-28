@@ -1,207 +1,286 @@
-Return-Path: <linux-kernel+bounces-304314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A89F961DB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:45:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4119961DB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:45:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BAC11F23F46
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:45:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93F7D285290
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B757914B090;
-	Wed, 28 Aug 2024 04:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1031474B5;
+	Wed, 28 Aug 2024 04:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="kjsHOBCx"
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010032.outbound.protection.outlook.com [52.101.128.32])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="qPaBI5dk"
+Received: from smtpbg156.qq.com (smtpbg156.qq.com [15.184.82.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16973145FFF;
-	Wed, 28 Aug 2024 04:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724820315; cv=fail; b=gvMCak9IpWWlwCfl1YOfY1wCrnWlogMl0Eh7IEJg02lY++9M/uiNKdwYZDFo8F8RkWmShZKy6hmpZRR9ggAo9xJdTaFAs5HbWyZg/F27y77gcoGMhOkVTAEl0gZgsWX1sdd2BeVDsDenxeCETe2mMtEPZ3p1MfW7G3emnNUp+Rs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724820315; c=relaxed/simple;
-	bh=sf9e1KBmSef2TpMQ6VifLmXnK7G9NA8CaTWEBcXLSZ8=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=baD1RB8/YtfLKP8InwtWYYqfLDtUNlnFLL1GqXNmqrb9A/iqg2rlzVIF84+0QAjhdnH5IMBa+se2xY/tajMSs2twoH7pWJYmIgqkGzgPlMvhmM5FZlgNQ+uG35SibH7IPwyk0Zl5dq+ulCDOYj0Yk45FO7lOaeoSDiO8ZrQX3V8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=kjsHOBCx; arc=fail smtp.client-ip=52.101.128.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uN+mV5J1VwSZpXy+B7cwN9PnitMENOOeA70iSU8Xv3v2ec1Jl55S4thoazSPg1FUXZpxwzACx2gzy7PlSrvxI+7UtynkiC4X6/dmKYoIhrRwtPMgg0v0Y725PyF+VE+/YU+ftQ6/fw7kx/dVK/aQjBl45cjA5TobMislUtyp9IEGXBG3b5/0ohLO/lUTecLKLg0BLzRUiVzegv4XLnQzQq0LneWKk1tKXxF6+naOyv6NG8R18DU7TCLga/EKmjo7eGutVklZB7CT5vaqXmYNY8X3pS53UeAg3p7cQfULXyxLk70cqJduCMmM5kM4D0015moti2hOvYV1nSFkIKKEAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CdIagn5oAf3va0tLrftcwcZjzHSCSLIThnhnLBS+MOk=;
- b=dNL4rFHAuji/MdWlP6ZT8B22Ui9zUtDUo6b4tQzsq7KuvNadUesj5fbZa7O9nCr42ufvEQhm1NGvw3+HtHmM8Rq5ykjGrkwY+cgk2dk/vnKdAobIUd5OhPAYih/ANLpFGBnjXbgaqjg69HVLV5uPg78FDW4fm+GTI/AX+bQRtVvyDVfImPb0/StEM6umxE8tX6glnzn0Pr+ocJnviUGdLN3+3mbcHTh5d8qR75pc3C34wh1VLs00KguzIY8jM1sWXL5dJaJXB6SaUEjQS8wSg2DPjCxrHT8zkX5V3aSINgQCuOoKosvGbXoe8FYmMJUhKtN8O/nupldcR0/YsI0/BA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CdIagn5oAf3va0tLrftcwcZjzHSCSLIThnhnLBS+MOk=;
- b=kjsHOBCxXxIB5sZEjYe7/5F5Wm/FXZD/eNC+az5ZJqrxB3ZliM4O/CjHTeBKt7dhj2TmpjPEyKuTD+7wzfrVMurGxUtoERGA37Nw68S5gJjsdf7QR0UbgZaCslBzRpNjjmJm2dgsZy4IvuQpc/aVU7XmQsKGfBTvgFNpt5lY69hQuk1l667FFlkx7k27aX5kNPLSe4ltvU0xh+zAlN/D+I6I1F+Bk17rvnFoy7ReCIunHflvWOlmgPQHpPAvu9Yi4ALvSvZMhuSZQnikzXDs69VPQtQxff0qGzTz+LD+0dgO9B5GoPQRrSDn2Nh/4y8tqki3KdEUCYl/GHeZ0w89UA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR0601MB4113.apcprd06.prod.outlook.com (2603:1096:820:31::7)
- by KL1PR06MB6847.apcprd06.prod.outlook.com (2603:1096:820:113::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Wed, 28 Aug
- 2024 04:45:05 +0000
-Received: from KL1PR0601MB4113.apcprd06.prod.outlook.com
- ([fe80::7e85:dad0:3f7:78a1]) by KL1PR0601MB4113.apcprd06.prod.outlook.com
- ([fe80::7e85:dad0:3f7:78a1%4]) with mapi id 15.20.7897.027; Wed, 28 Aug 2024
- 04:45:05 +0000
-From: Yan Zhen <yanzhen@vivo.com>
-To: davem@davemloft.net,
-	chuck.lever@oracle.com,
-	jlayton@kernel.org,
-	trondmy@kernel.org,
-	anna@kernel.org,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: neilb@suse.de,
-	okorniev@redhat.com,
-	Dai.Ngo@oracle.com,
-	tom@talpey.com,
-	linux-nfs@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com,
-	Yan Zhen <yanzhen@vivo.com>
-Subject: [PATCH v3] sunrpc: Fix error checking for d_hash_and_lookup()
-Date: Wed, 28 Aug 2024 12:43:55 +0800
-Message-Id: <20240828044355.590260-1-yanzhen@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0317.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3b7::7) To KL1PR0601MB4113.apcprd06.prod.outlook.com
- (2603:1096:820:31::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A6F145FFF;
+	Wed, 28 Aug 2024 04:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.82.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724820308; cv=none; b=Nii3eKCCcbJmp4MVUQW5Uzf84cI1o8E0+xaWOuX56ZmqmFEtYhGa7ulDEEvb11EVlRBa/O4XXjZZcPJ1W0QXrwDDt5OM8QMjX5l9Z61iSYlqKCgMSyDQ+fKRlSUmsLSZ8ZFgBIvMhy4vTKsI6UFSfkaSf9s6oMVWceVdi7XD+r8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724820308; c=relaxed/simple;
+	bh=5EN/U7WmEttawiw0CzO4Sg2M++/dOYJaQjMmsL3uuHo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=frpqsC4tSgxBWFbPmQMFa5JTSfnHTJec42qNNGCDBvRxH+o/552Ypy3pQfWtyO6i4YjTf+JMqVx4+fKY6UAmLAJ7ZJ9n1LWMKiCTr6OkAVgOp078OrBB5iiqcKbVIQch5Q9qAazcoknkoAmUaPocUfunTpD+F8i+3m3bdsLWgIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=qPaBI5dk; arc=none smtp.client-ip=15.184.82.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1724820296;
+	bh=UEItIcioovAv5Ci1nI+0tCkJjAr8eoE2rmmGVwKzl4g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=qPaBI5dk33cvA6fX0oXgndQSffdlKOY3PI8jhJi4ERqXHKSXdqoyojxND/eC4F/Z3
+	 z/GSz/KkQcGoPN7xZxYpTttXeBQp305Rx0xJ61JzTFhZ2yUEWUye0JC6TJdb9UZEC+
+	 ESxKbHFClUpcFhCzSS1/yfMrvuT9phcHIuqVNS3o=
+X-QQ-mid: bizesmtp80t1724820289tg8p19uc
+X-QQ-Originating-IP: qn/TZvWSOmwD8CP02Kvtub3A0oRA/VUMXkfWHBbXxuY=
+Received: from [10.20.53.89] ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 28 Aug 2024 12:44:47 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 2718462679820382276
+Message-ID: <F7E458B77CD6B30A+554b04f1-7716-4a81-8755-c5a4f138ae71@uniontech.com>
+Date: Wed, 28 Aug 2024 12:44:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR0601MB4113:EE_|KL1PR06MB6847:EE_
-X-MS-Office365-Filtering-Correlation-Id: 20a9a1fc-3ef6-4784-6f16-08dcc71c2fb7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Sv2B4IbZFz7OwVRW1uQA7+/XU/qbAoFyxUYC1m5N9KrukA/R1U89eE5f+Uqx?=
- =?us-ascii?Q?epDvV9u0zb4XqdIlRSBPkqFLd2dNTXX3e+tgcepjdlBXwQX7/ocbWNZoKmMG?=
- =?us-ascii?Q?UZACPyn0Hr4NYG9iGT+APk5MfBzrOaic0mNzx1cv8+Egeh0a18xFmpLsgusI?=
- =?us-ascii?Q?nUHxGsq0ManHYzt6tkr0jNJDHjP5AWBebgYDFM2AZ7zZv1DLyE6MEd0140m8?=
- =?us-ascii?Q?YYRlM77Et8OH5efnwRBNSqkw+K5+NguGVRuByMenrYfakQjRXdOuqAhZpf5r?=
- =?us-ascii?Q?no+iZhE8bX68YQvkOJtYHWbeoM4DYuA7+KJHKs5XqRXyOvj4dwe/Df1ozsJR?=
- =?us-ascii?Q?UddXCRang8ztU9yOTwimch3cu+KZdXygzKOP7mlJWKlLxdM1PWWXtSpvI3ef?=
- =?us-ascii?Q?t0eJ/W8BH2FNRa1mTDJL6QoZ6iwTZgIdfDxX0c75gxj9WNlAYwH866sNP7vh?=
- =?us-ascii?Q?JYHhdWmk0mSC3tCSvzILEQn/sNe/SeVslnZE1EktKj0ECZBMw2qPBJtLCJW0?=
- =?us-ascii?Q?MYnkgK8/GS9tKmuXLdNGI3nYvwqlnIxfFwc7KL70J1kwPI8z05xbGqf8plaA?=
- =?us-ascii?Q?HLP5/NKuR9W/ZVgyLUbU3X69WdxbiFN5Wue+ShM60Bt6kDD1qfKXDMPhZXoF?=
- =?us-ascii?Q?3ZCyld299aDXJebGtfO/M1nnr8byM0RvkizssPCFKv1K5KjNJ/3YQ9OyvsEP?=
- =?us-ascii?Q?bTZ+zyx1uErbRvWkqEUAmwNQr9ub78oLK0vuRZLiT37zagGD89Z1/slRed2Y?=
- =?us-ascii?Q?OB4rAIxZMg5bq2xT1e7CyAEYjiwYgb/5u65Wkdwz98SSDcbaJOvhi6VLYdsv?=
- =?us-ascii?Q?P0djWeVXUM+HzyNQOM4ViHuaQWK10g3TSBzwc8mlueDLJ1JUBR1V+fKJFqFN?=
- =?us-ascii?Q?jJdPfSpZc5nLELEKm3Wu/yIiLzdx1Y+Yzt2xIvbVUVqSHtzn9Sx9R0zX9ztN?=
- =?us-ascii?Q?mGCDAeXc2YS637Kt3EiplkTMlCWLFQ4OUnXljqXJzV7etr3ecbiRX2L5yS3i?=
- =?us-ascii?Q?gcmYiS7jswfakNQTin8RLiTD1ogqxGWJL00RSrhJy2vg4nY1BnoECU+PimQZ?=
- =?us-ascii?Q?NDwXeTMvaU8hwiCPkf/KgTkw8TnkSnOf8uOtmklFdy0ZldS+fQxY0lZMpCy8?=
- =?us-ascii?Q?G7bl6Bho2stmWm+vLwJ5CjiwC9m4vdP8s50fyaX65F/mdEtcEegS3r0IsXQ3?=
- =?us-ascii?Q?3THtILIXQrHHvpBF8IoqTBvpuyTM28nMKgIA4vbT3x+cl8dAyeXLLNadSrQW?=
- =?us-ascii?Q?T2VhoRo0CaqBZ7nW9nQrftpCzpRycf2PIbjuAyc5Ido8Zze0qHfiS930DfBE?=
- =?us-ascii?Q?sBUBtUKjNo0pFhoIQA/pqqmaleQ9zM3gtwmyiovgl1brXGcZ6JehhKjObE3X?=
- =?us-ascii?Q?2opPP93ol+HKKwEOGFBjq4Z1JNOZklUFZjnPWDBLGfBQfFMjIA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR0601MB4113.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(7416014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YJTiu6Hs+EkD2oxwaKdD7RTFU2RU8P6E3vQxfMWu35YQUGXmmc2ZqohtGvtE?=
- =?us-ascii?Q?x/rUW1MbJ3TOsgPB9/p1LvV0yqJ3C1nivXfSBDQWov2AgE6n6yiMDbGWZXeF?=
- =?us-ascii?Q?+mguS+EcokunhlZS+hfT73kLnOtbNZnXWL/kRJ1yqt3GXiA2bHDDThwVZe4I?=
- =?us-ascii?Q?FNTZXZosyaFX8moW7tPzvHsJ2dL5S2//NJXT4l/My6Aia9UffJjGC+VvcmOM?=
- =?us-ascii?Q?vdvKyj/2a+pH6DGcs6TozSTUTfNvwxjXpi/LbUl84Tf/xBndRoCSlxd+fwUE?=
- =?us-ascii?Q?d8R81TRtddEP8YA8xTDqWOffTeLn/7aQ1xI+ZEB+vqlSEa2oZ4ZYlqRjcF+m?=
- =?us-ascii?Q?1+GWOQeKsxTI33G9sFYNk936DqUh9e27k+ELIMRuzNCPkRmJSLJttUNw5QTd?=
- =?us-ascii?Q?Mx1NQnM1azZDdyv9koSw3HwHclt1bE7X/oBbFZp0oJTywe4IY3seRc3k5gkX?=
- =?us-ascii?Q?2Z5jxxjRvj2MT4vcpnp2yVOBri6tQ7aUv/QBMsftaVbY5A2bygxk/zCAUe5N?=
- =?us-ascii?Q?54WLrd5hmDjsNrRAOHesqe5doxPMGIxAYkyBkiDrZW6TiWurY1HswZNTlOm7?=
- =?us-ascii?Q?tGWKMIbA37z6uCz6RF+b/PrLctGXLwhC7wzJWlAiArN9Rq8dJEnIe2Ye1h4L?=
- =?us-ascii?Q?bUMsciIjQqH7zlCiT71czC1Hmi5uE/Xg7AO+lU7PMgnyHcgQikcSKps21v3X?=
- =?us-ascii?Q?brs2Rzj/0RDIXpCGVWiOpF0ZMJ09rSbinSqjgcciyRmvvBYwplBU7FCporFv?=
- =?us-ascii?Q?Wspo+IRcVH9qieDgrr97uaGX1Ulbb6mwyafjpOL8g0VXXctFM0NG1T3JBr4b?=
- =?us-ascii?Q?+saEVWMpW6RQQFvARZ3Zv1myrbxznj6xxJuqB6neOI8xwonaZP/ep6cq546y?=
- =?us-ascii?Q?bPQ/SlBvkrNnZzUVY+e5p/m5wyF+C9P9N9QKvnIg7kEFuwXquvVnj7KLZXO9?=
- =?us-ascii?Q?QwkjEx/mfr1skBPE+pQvyOdFCSmRns39u26MlASxso0J7mLtNZSaDF07IsZ5?=
- =?us-ascii?Q?kD5qwt5L0x7+Tt3UVt6zdZUb+CcawfMAs3eRHP3/t8LLcEHv0m13hJEGd9Ze?=
- =?us-ascii?Q?Z9vlc9bB9gs77LwBwBIKBFtcCdL9tW/2iMgux2J2LK2X5YItOhBV9v4oHuFq?=
- =?us-ascii?Q?oHkfA6kEqm7ZK7u8V0wB6YmHUN3g9LERdEGWNpLuTO2G7qTjWwe1XrAaiTL/?=
- =?us-ascii?Q?TWj8v6NZdiXKakQBmRxoExwf9GrwnSnj1NlPODL2zxRhEkrEslTfEJTRC6f2?=
- =?us-ascii?Q?iT2c5LTHHppxx8Gxaj4DSXljmsgVuSS3Q+tHyS+aliGJwR2nF1V3O/CZO/rb?=
- =?us-ascii?Q?7UHJ3G2Mdf06YVgWmWz8dFIxd0ZLRKuqFe0pLxhOIKuXey5dgpUq7+emirTv?=
- =?us-ascii?Q?OJ381O+u9VJWWDvToeBmH4BORMTCQwb9VVUMheON0X2F1TJk/nhmtugU0xnK?=
- =?us-ascii?Q?XWzMR8Tkh0nZnJZhKnoP3Gsra761DcT7S46JJdyOo8TI+Hu0FXxL+YJnWjpo?=
- =?us-ascii?Q?qFeBf/DvAtiA5mfKsivvHNh46zHVF8XcnZAOIr0bUPC02bEugZC92uF610y1?=
- =?us-ascii?Q?OebgFNa9jAQfDPLIFE9YaRpVecv7cUDlaKuhfizU?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 20a9a1fc-3ef6-4784-6f16-08dcc71c2fb7
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR0601MB4113.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 04:45:05.5305
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dNMrr0b0HzX2NkKGfH14JMYQsRHcs+KSKHhyemLvQ3z1g187IqFr1Gsn187v/jFWFQlK1toPdcKU0WAVTCcDJQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6847
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] Loongarch: KVM: Add KVM hypercalls documentation for
+ LoongArch
+To: maobibo <maobibo@loongson.cn>, Zenghui Yu <zenghui.yu@linux.dev>,
+ Dandan Zhang <zhangdandan@uniontech.com>
+Cc: pbonzini@redhat.com, corbet@lwn.net, zhaotianrui@loongson.cn,
+ chenhuacai@kernel.org, kernel@xen0n.name, kvm@vger.kernel.org,
+ loongarch@lists.linux.dev, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, guanwentao@uniontech.com,
+ baimingcong@uniontech.com, Xianglai Li <lixianglai@loongson.cn>,
+ Mingcong Bai <jeffbai@aosc.io>
+References: <DE6B1B9EAC9BEF4C+20240826054727.24166-1-zhangdandan@uniontech.com>
+ <804a804c-f62d-4814-a174-51d19e3ea094@linux.dev>
+ <29999cfc-6ec1-d881-277a-19f51f5c7b96@loongson.cn>
+From: WangYuli <wangyuli@uniontech.com>
+Autocrypt: addr=wangyuli@uniontech.com; keydata=
+ xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
+ IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
+ qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
+ 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
+ 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
+ VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
+ DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
+ o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
+In-Reply-To: <29999cfc-6ec1-d881-277a-19f51f5c7b96@loongson.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-The d_hash_and_lookup() function returns either an error pointer or NULL.
+Thanks for review.
 
-It might be more appropriate to check error using IS_ERR_OR_NULL().
+We'll get these problems sorted out as soon as possible.
 
-Fixes: 4b9a445e3eeb ("sunrpc: create a new dummy pipe for gssd to hold open")
-Signed-off-by: Yan Zhen <yanzhen@vivo.com>
----
-
-Changes in v3:
-- Rewrite the "fixes".
-- Using ERR_CAST(gssd_dentry) instead of ERR_PTR(-ENOENT).
-
- net/sunrpc/rpc_pipe.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/net/sunrpc/rpc_pipe.c b/net/sunrpc/rpc_pipe.c
-index 910a5d850d04..13e905f34359 100644
---- a/net/sunrpc/rpc_pipe.c
-+++ b/net/sunrpc/rpc_pipe.c
-@@ -1306,8 +1306,8 @@ rpc_gssd_dummy_populate(struct dentry *root, struct rpc_pipe *pipe_data)
- 
- 	/* We should never get this far if "gssd" doesn't exist */
- 	gssd_dentry = d_hash_and_lookup(root, &q);
--	if (!gssd_dentry)
--		return ERR_PTR(-ENOENT);
-+	if (IS_ERR_OR_NULL(gssd_dentry))
-+		return ERR_CAST(gssd_dentry);
- 
- 	ret = rpc_populate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1, NULL);
- 	if (ret) {
-@@ -1318,7 +1318,7 @@ rpc_gssd_dummy_populate(struct dentry *root, struct rpc_pipe *pipe_data)
- 	q.name = gssd_dummy_clnt_dir[0].name;
- 	q.len = strlen(gssd_dummy_clnt_dir[0].name);
- 	clnt_dentry = d_hash_and_lookup(gssd_dentry, &q);
--	if (!clnt_dentry) {
-+	if (IS_ERR_OR_NULL(clnt_dentry)) {
- 		__rpc_depopulate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1);
- 		pipe_dentry = ERR_PTR(-ENOENT);
- 		goto out;
+On 2024/8/28 09:07, maobibo wrote:
+> Zenghui,
+>
+> On 2024/8/27 1:00AM, Zenghui Yu wrote:
+>> [ Trivial comments inline.  You can feel free to ignore them since I
+>>    know almost nothing about loongarch. ]
+> Thanks for reviewing the hypercall document, we all know that you have 
+> strong background knowledge with both kernel and architecture.
+>
+>>
+>> On 2024/8/26 13:47, Dandan Zhang wrote:
+>>> From: Bibo Mao <maobibo@loongson.cn>
+>>>
+>>> Add documentation topic for using pv_virt when running as a guest
+>>> on KVM hypervisor.
+>>>
+>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+>>> Signed-off-by: Xianglai Li <lixianglai@loongson.cn>
+>>> Co-developed-by: Mingcong Bai <jeffbai@aosc.io>
+>>> Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
+>>> Link: 
+>>> https://lore.kernel.org/all/5c338084b1bcccc1d57dce9ddb1e7081@aosc.io/
+>>> Signed-off-by: Dandan Zhang <zhangdandan@uniontech.com>
+>>> ---
+>>>   Documentation/virt/kvm/index.rst              |  1 +
+>>>   .../virt/kvm/loongarch/hypercalls.rst         | 86 
+>>> +++++++++++++++++++
+>>>   Documentation/virt/kvm/loongarch/index.rst    | 10 +++
+>>>   MAINTAINERS                                   |  1 +
+>>>   4 files changed, 98 insertions(+)
+>>>   create mode 100644 Documentation/virt/kvm/loongarch/hypercalls.rst
+>>>   create mode 100644 Documentation/virt/kvm/loongarch/index.rst
+>>>
+>>> diff --git a/Documentation/virt/kvm/index.rst 
+>>> b/Documentation/virt/kvm/index.rst
+>>> index ad13ec55ddfe..9ca5a45c2140 100644
+>>> --- a/Documentation/virt/kvm/index.rst
+>>> +++ b/Documentation/virt/kvm/index.rst
+>>> @@ -14,6 +14,7 @@ KVM
+>>>      s390/index
+>>>      ppc-pv
+>>>      x86/index
+>>> +   loongarch/index
+>>>        locking
+>>>      vcpu-requests
+>>> diff --git a/Documentation/virt/kvm/loongarch/hypercalls.rst 
+>>> b/Documentation/virt/kvm/loongarch/hypercalls.rst
+>>> new file mode 100644
+>>> index 000000000000..58168dc7166c
+>>> --- /dev/null
+>>> +++ b/Documentation/virt/kvm/loongarch/hypercalls.rst
+>>> @@ -0,0 +1,86 @@
+>>> +.. SPDX-License-Identifier: GPL-2.0
+>>> +
+>>> +===================================
+>>> +The LoongArch paravirtual interface
+>>> +===================================
+>>> +
+>>> +KVM hypercalls use the HVCL instruction with code 0x100 and the 
+>>> hypercall
+>>> +number is put in a0. Up to five arguments may be placed in 
+>>> registers a1 - a5.
+>>> +The return value is placed in v0 (an alias of a0).
+>>> +
+>>> +Source code for this interface can be found in arch/loongarch/kvm*.
+>>> +
+>>> +Querying for existence
+>>> +======================
+>>> +
+>>> +To determine if the host is running on KVM, we can utilize the 
+>>> cpucfg()
+>>> +function at index CPUCFG_KVM_BASE (0x40000000).
+>>> +
+>>> +The CPUCPU_KVM_BASE range, spanning from 0x40000000 to 0x400000FF, The
+>>> +CPUCPU_KVM_BASE range between 0x40000000 - 0x400000FF is marked as 
+>>> reserved.
+>>
+>> What is CPUCPU_KVM_BASE? Grepping it in the code shows nothing.
+>>
+>>> +Consequently, all current and future processors will not implement any
+>>> +feature within this range.
+>>> +
+>>> +On a KVM-virtualized Linux system, a read operation on cpucfg() at 
+>>> index
+>>> +CPUCFG_KVM_BASE (0x40000000) returns the magic string 'KVM\0'.
+>>> +
+>>> +Once you have determined that your host is running on a 
+>>> paravirtualization-
+>>> +capable KVM, you may now use hypercalls as described below.
+>>> +
+>>> +KVM hypercall ABI
+>>> +=================
+>>> +
+>>> +The KVM hypercall ABI is simple, with one scratch register a0 (v0) 
+>>> and at most
+>>> +five generic registers (a1 - a5) used as input parameters. The FP 
+>>> (Floating-
+>>> +point) and vector registers are not utilized as input registers and 
+>>> must
+>>> +remain unmodified during a hypercall.
+>>> +
+>>> +Hypercall functions can be inlined as it only uses one scratch 
+>>> register.
+>>> +
+>>> +The parameters are as follows:
+>>> +
+>>> +        ========    ================    ================
+>>> +    Register    IN            OUT
+>>> +        ========    ================    ================
+>>> +    a0        function number        Return code
+>>> +    a1        1st parameter        -
+>>> +    a2        2nd parameter        -
+>>> +    a3        3rd parameter        -
+>>> +    a4        4th parameter        -
+>>> +    a5        5th parameter        -
+>>> +        ========    ================    ================
+>>
+>> Please consistently use tab.
+>>
+>>> +
+>>> +The return codes may be one of the following:
+>>> +
+>>> +    ====        =========================
+>>> +    Code        Meaning
+>>> +    ====        =========================
+>>> +    0        Success
+>>> +    -1        Hypercall not implemented
+>>> +    -2        Bad Hypercall parameter
+>>> +    ====        =========================
+>>> +
+>>> +KVM Hypercalls Documentation
+>>> +============================
+>>> +
+>>> +The template for each hypercall is as follows:
+>>> +
+>>> +1. Hypercall name
+>>> +2. Purpose
+>>> +
+>>> +1. KVM_HCALL_FUNC_PV_IPI
+>>
+>> Is it still a work-in-progress thing? I don't see it in mainline.
+> It should be KVM_HCALL_FUNC_IPI here.
+>
+>>
+>>> +------------------------
+>>> +
+>>> +:Purpose: Send IPIs to multiple vCPUs.
+>>> +
+>>> +- a0: KVM_HCALL_FUNC_PV_IPI
+>>> +- a1: Lower part of the bitmap for destination physical CPUIDs
+>>> +- a2: Higher part of the bitmap for destination physical CPUIDs
+>>> +- a3: The lowest physical CPUID in the bitmap
+>>
+>> - Is it a feature that implements IPI broadcast with a PV method?
+>> - Don't you need to *at least* specify which IPI to send by issuing this
+>>    hypercall?
+> Good question. It should be documented here. PV IPI on LoongArch 
+> includes both PV IPI multicast sending and PV IPI receiving, and SWI 
+> is used for PV IPI inject since there is no VM-exits accessing SWI 
+> registers.
+>
+>>
+>> But again, as I said I know nothing about loongarch.  I might have
+>> missed some obvious points.
+>>
+>>> +
+>>> +The hypercall lets a guest send multiple IPIs (Inter-Process 
+>>> Interrupts) with
+>>> +at most 128 destinations per hypercall.The destinations are 
+>>> represented in a
+>>                                            ^
+>> Add a blank space.
+>>
+>>> +bitmap contained in the first two input registers (a1 and a2).
+>>> +
+>>> +Bit 0 of a1 corresponds to the physical CPUID in the third input 
+>>> register (a3)
+>>> +and bit 1 corresponds to the physical CPUID in a3+1 (a4), and so on.
+>>
+>> This looks really confusing.  "Bit 63 of a1 corresponds to the physical
+>> CPUID in a3+63 (a66)"?
+> The description is problematic, thanks for pointing it out.
+> It should be value of register a3 plus 1, rather than a4, how about 
+> *"the physical CPUID in a3 + 1"*  here?
+>
+> Regards
+> Bibo Mao
+>>
+>> Zenghui
+>>
+>
+>
+Thanks
 -- 
-2.34.1
+WangYuli
 
 
