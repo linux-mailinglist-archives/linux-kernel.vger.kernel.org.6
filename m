@@ -1,98 +1,145 @@
-Return-Path: <linux-kernel+bounces-305327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE07F962CF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:51:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04488962D02
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 588C81F27600
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:51:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 370821C232F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1791A704B;
-	Wed, 28 Aug 2024 15:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF4D1A38D5;
+	Wed, 28 Aug 2024 15:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="PPAYi3+i"
-Received: from mr85p00im-hyfv06011401.me.com (mr85p00im-hyfv06011401.me.com [17.58.23.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D5ieMxB+"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7FBC1A4F32
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D841A2572
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724860122; cv=none; b=RTVIuhrB5GrrcsikbBx/l+eLYhC7PZ+znlfi1ejDU3a7flAQNDJLHldSdaRh67Kjhr6J96fzBQxyOkffBBkzW5c5cNAF7Qa1Mdv9HbZPaQEO4XgJ+ubM+efP648hBPyEh/WuBSDhuM+BF8QTmG/KwK53hIxvnZj5Ey6pCd3nHz8=
+	t=1724860344; cv=none; b=j3SsVzMgRvuimYXM+ocR+ibnLdp6pqlhRzqBK+wxf84+jkOU9vofUAavGznSsPTK8zIL50d5Cdry7qmiN36AxoJueIzp/ENq+8CnW67xkt71VaE7G4Knyhc6D8NR9so28hZ7giKg5K6M6jG14A7yymQwwu8cRMDGYamIG5gSfAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724860122; c=relaxed/simple;
-	bh=+gEZweTiORwEDH7zUhcrgB0RC68urOkyGA5jdfF74Ek=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=GWIaU8vL0Mo77MJrkQEZIbhFeaqwpNnplLDBCqyIIWu7Im/UsMy/X/YTBkNAkJz161hDYIJtf1B+cs83rVvPI5sgkyJ4eDFRnEDlORmB2WdTuEUbk4g1UmUuTT38OUonwqK9P0zJNhBJjRuvt0heqwvDQ3l2UuJqE9cKEZro2YQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=PPAYi3+i; arc=none smtp.client-ip=17.58.23.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1724860121;
-	bh=+gEZweTiORwEDH7zUhcrgB0RC68urOkyGA5jdfF74Ek=;
-	h=Content-Type:Mime-Version:Subject:From:Date:Message-Id:To;
-	b=PPAYi3+i72B2ukDfe0e7IgFDQrjo+HkGQVQn541CZ0T1hBQlrI4X4PyjQdDs/w4x5
-	 E+wcEL+OwI+igTZPkYCeVLsRq4dF0q1gj3gZzgz2Te1zzopz9hjIbQuzV8GWOPHOBd
-	 Ahpox7/sfzTTdhPIu2LYIu1bNcPp+YmQqmmBPxH75fZf0RuNnN3+j+4XtZzuyBV4Cb
-	 D9jTyKRU22ha5OTquD/F95bFmTKNzIFdAJoiUkImLZa88gQUWU91MDtZx1gWCdgdl7
-	 X5gFxblw+S4aX6U2+wiDxxo6CBPmRmU1C6+ufPPEMTookBdL1RE6fVlG4yXA5iSwtm
-	 ViXF6Y9QDM5Bw==
-Received: from smtpclient.apple (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
-	by mr85p00im-hyfv06011401.me.com (Postfix) with ESMTPSA id DD205357AB66;
-	Wed, 28 Aug 2024 15:48:38 +0000 (UTC)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1724860344; c=relaxed/simple;
+	bh=AYwJsPFJTs+BMyQDHjSBUGoJbZSElw/swWIE6XYBz38=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N1L7mZa/w8IwwuUl0xiyIhAsIX12up1RZAred+cq3HNsm7QbcebLVuAwonH6T92xY2IHT7dJgryVLEdo0wrJUV+yw+vjwRQBBvVZ25cC3Uq50ezu5mhi5EkoD47ZhzHdJNRv//p9tUX+UL41kh9uxYQkeY3OJC/qGkryoPtCwok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D5ieMxB+; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-201e52ca0caso49251145ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 08:52:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724860342; x=1725465142; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ftzkSWbFvLJ9948dQ8TVsavC0mFp50UvDV94rVgLQ2k=;
+        b=D5ieMxB+8jlaaVGNpIWduVsHlNFpIqCSgy736Vrmb5V7d4upg4KJNCwjHJnJoGx1Tz
+         Ixx9U82Lf2mZUEr+YV9P/h7SCT43KRcFYN6vEln9Jz34yON15iLtfzOu375s65bUf2c0
+         +9ugFN6tBHQZli7WBsitkgiVLotuPcwAp4NwS4pFCVLL0Ku1o/c0KQr1l1/Pi1T+fxvG
+         /P0IcK8/QChufejp+qVNFfzExS2uKP+S/u4Dn8lXbIegfljt2z49B8WyLI5HYXuke7SE
+         8lJab0D9WR6pKI1G4oY2zr81BbOYJx6btQHaNAZ0a1BcqofzJI741IuIXuFZWj2zm/is
+         /3Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724860342; x=1725465142;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ftzkSWbFvLJ9948dQ8TVsavC0mFp50UvDV94rVgLQ2k=;
+        b=I+osaN8/0QF5VK8ZBCET/eUXsf4zFCV0RyagGRl1Zn+C9IJ+H/Ci726jXkksTIdbF/
+         hkck9V4aU2JC6mt25o9CiQKeinRnO0sCyc+Ew9ves0tlg1MbWP7x8kGEr5bAZNqhKCU+
+         rb21YUUUdBcWYlukpK9/p+wdiuZITwkdHzWFwrJ5AYmvV2MqmJ7unhQ1Y5rEzfKCln9e
+         67xPMxyeBTrZdfD4QHxMUkO/g7RG11EVrloCuC7TxCFUyanCCC5AKYWPlTUdhzzXY9bJ
+         bkoc3jLiOQ1OFWK8H40Vu4oiUw0Vv13ZogSBQQgjQVG6AMj8nEFiMViCeOo8iR9Ua3VU
+         0dPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxlhpQ6opQnPNaq6iLh9CHaszJmyZUOR4llMK98clxpWuIK09fIR5mvWAHhUVmQZcXp3pzV9IVFvIiKqQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7t6/9bcaLJiCNFr20MABIS+v+Dg68T6QEEPiE9cVamItCcDSb
+	CM8IO5gf8gB6G+IrSUp3ewFvdLkIIUjVMCLY7PydpUwToDoNC5g9hNcpmex/Yg==
+X-Google-Smtp-Source: AGHT+IFgo/cUJQwlwSXIoPmB/Y0s5lv+ozTSguIks56E+QNBK2Z1wW4Eku59mqPReTGV1Hr4ehcyCw==
+X-Received: by 2002:a17:903:230b:b0:200:aa31:dc8d with SMTP id d9443c01a7336-2039e52cb0fmr191870685ad.63.1724860342472;
+        Wed, 28 Aug 2024 08:52:22 -0700 (PDT)
+Received: from thinkpad ([120.56.198.191])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385564b6csm100745445ad.27.2024.08.28.08.52.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 08:52:22 -0700 (PDT)
+Date: Wed, 28 Aug 2024 21:22:17 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	lukas@wunner.de, mika.westerberg@linux.intel.com,
+	Hsin-Yi Wang <hsinyi@chromium.org>
+Subject: Re: [PATCH v5 3/4] PCI: Decouple D3Hot and D3Cold handling for
+ bridges
+Message-ID: <20240828155217.jccpmcgvizqomj4x@thinkpad>
+References: <20240802-pci-bridge-d3-v5-3-2426dd9e8e27@linaro.org>
+ <20240821014559.GA236134@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.300.61.1.2\))
-Subject: Re: [PATCH] prctl: allow prctl_set_mm_exe_file without unmapping old
- exe
-From: tblodt@icloud.com
-In-Reply-To: <a22f114b-e86d-4ddf-b13f-4020b53c97c3@redhat.com>
-Date: Wed, 28 Aug 2024 08:48:24 -0700
-Cc: linux-kernel@vger.kernel.org,
- Ryan Houdek <sonicadvance1@gmail.com>,
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
- "Eric W. Biederman" <ebiederm@xmission.com>,
- Kees Cook <keescook@chromium.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <27F75C31-4DCF-42E2-AB91-948F1A5615B2@icloud.com>
-References: <a22f114b-e86d-4ddf-b13f-4020b53c97c3@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-X-Mailer: Apple Mail (2.3774.300.61.1.2)
-X-Proofpoint-GUID: 7atR005Hkp4m_CJRh9HTZSHpA_8_0kwT
-X-Proofpoint-ORIG-GUID: 7atR005Hkp4m_CJRh9HTZSHpA_8_0kwT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-28_06,2024-08-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 mlxlogscore=904
- malwarescore=0 spamscore=0 clxscore=1015 phishscore=0 adultscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2408280114
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240821014559.GA236134@bhelgaas>
 
-> Interestingly, the man page states:
->=20
-> "You can even type /proc/pid/exe to run another copy of the same =
-executable that is being run by process pid."
->=20
-> Is that still true (with that binfmt_misc magic) once we change =
-/proc/self/exe? Or does it with changing /proc/self/exe to point at the =
-non-emulator exe even work as expected regarding this documentation?
+On Tue, Aug 20, 2024 at 08:45:59PM -0500, Bjorn Helgaas wrote:
+> On Fri, Aug 02, 2024 at 11:25:02AM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > 
+> > Currently, there is no proper distinction between D3Hot and D3Cold while
+> > handling the power management for PCI bridges. For instance,
+> > pci_bridge_d3_allowed() API decides whether it is allowed to put the
+> > bridge in D3, but it doesn't explicitly specify whether D3Hot or D3Cold
+> > is allowed in a scenario. This often leads to confusion and may be prone
+> > to errors.
+> > 
+> > So let's split the D3Hot and D3Cold handling where possible. The current
+> > pci_bridge_d3_allowed() API is now split into pci_bridge_d3hot_allowed()
+> > and pci_bridge_d3cold_allowed() APIs and used in relevant places.
+> 
+> s/So let's split/Split/
+> 
+> > Also, pci_bridge_d3_update() API is now renamed to
+> > pci_bridge_d3cold_update() since it was only used to check the possibility
+> > of D3Cold.
+> > 
+> > Note that it is assumed that only D3Hot needs to be checked while
+> > transitioning the bridge during runtime PM and D3Cold in other places. In
+> > the ACPI case, wakeup is now only enabled if both D3Hot and D3Cold are
+> > allowed for the bridge.
+> > 
+> > Still, there are places where just 'd3' is used opaquely, but those are
+> > hard to distinguish, hence left for future cleanups.
+> 
+> The spec does use "D3Hot/D3Cold" (with Hot/Cold capitalized and
+> subscripted), but most Linux doc and comments use "D3hot" and
+> "D3cold", so I think we should stick with the Linux convention (it's
+> not 100%, but it's a pretty big majority).
+> 
+> > -	if (pci_dev->bridge_d3_allowed)
+> > +	if (pci_dev->bridge_d3cold_allowed && pci_dev->bridge_d3hot_allowed)
+> 
+> Much of this patch is renames that could be easily reviewed.  But
+> there are a few things like this that are not simple renames.  Can you
+> split out these non-rename things to their own patch(es) with their
+> own explanations?
+> 
 
-This is actually one of the reasons for an emulator to want to update =
-/proc/self/exe. If it points to the interpreter, running /proc/pid/exe =
-starts a copy of the emulator, but without any idea of what program it =
-was supposed to be running. If it points to the emulated program, =
-running /proc/pid/exe will still start the emulator because it's =
-registered in binfmt_misc, but with the emulated program. The intended =
-result is for references to /proc/self/exe to function the same way they =
-would without the emulator.
+I can, but I do not want these cleanups/refactoring to delay merging the patch
+4. Are you OK if I just send it standalone and work on the refactoring as a
+separate series?
 
-~Theodore=
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
