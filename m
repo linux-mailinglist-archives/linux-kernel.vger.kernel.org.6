@@ -1,55 +1,50 @@
-Return-Path: <linux-kernel+bounces-304787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 217B49624DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:25:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5D7F9624E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:27:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 543861C21223
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:25:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24EEA1C2173E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1BDE16B720;
-	Wed, 28 Aug 2024 10:25:49 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B440416B73E;
+	Wed, 28 Aug 2024 10:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="vc5BhOSg"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0128E86250;
-	Wed, 28 Aug 2024 10:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DAE15B122;
+	Wed, 28 Aug 2024 10:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724840749; cv=none; b=ezVB/zsUHE4yXmxRAEUc+jQfoCc6LSn0RWXU+YtY34AjEMd5ql0d6OKQrqHY/4PHnggK64u+4Ji3iBpfXxZlT1M/oajPUtDsit7/pLjl924K53wHRQtaMt4l+CWvGLXF56J+lyb3yoVUQFLgFeFf/8Ax13x4NCc14keBYTIbYVg=
+	t=1724840866; cv=none; b=L+/hGnkzk27AOzYd1V3YIwToHcBc+K8S0P2MkXm0z/Cc/82Fk3GVP6XKAJdzS/Qh1OYst+NJFiDWuHrfQuyr1wNHveRmMeiENfbx7m7CYHiN2EA1814IkTxcyfeRg2UQrvsK2GSN8GZ6wIMIOsVXL473uB8RFzbouXadnwhYDI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724840749; c=relaxed/simple;
-	bh=JVHznT6bcFHg9YxsqvQTnr/LL9HRHAtz4npSyzepqeQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YPjhtHAAH19hjOS7WvV5tNOq4NlR1ChnoDBZhMTyF2oMpJJNkzH49DwTgY42ajmpbuaG7X+T0fgPsMszm1BAjHCp7PQ8UhYLOS5yUJ1oqiZ0qdfV9jdkVB5EwoywHP35ffbVHZNqz7VlZv7k6ZLnDBXkhr+/Xg/ZvTRiNchgs8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Wv0tL2JWkz9sRy;
-	Wed, 28 Aug 2024 12:25:46 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id m0csFDQsZFCn; Wed, 28 Aug 2024 12:25:46 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wv0tL1PSXz9sRs;
-	Wed, 28 Aug 2024 12:25:46 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 168FC8B78F;
-	Wed, 28 Aug 2024 12:25:46 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id hrt9wAXyhJ1B; Wed, 28 Aug 2024 12:25:46 +0200 (CEST)
-Received: from [172.25.230.108] (unknown [172.25.230.108])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id BB88F8B764;
-	Wed, 28 Aug 2024 12:25:45 +0200 (CEST)
-Message-ID: <cbe686fb-9bcf-4f25-ab26-a5330d10ad99@csgroup.eu>
-Date: Wed, 28 Aug 2024 12:25:45 +0200
+	s=arc-20240116; t=1724840866; c=relaxed/simple;
+	bh=InwyAHiphiLoauN/TOlOZopB6HciWGjJ5V3qgG694Z4=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=X8wpfl7NUukqIlEX0QdST7ykQiJTrCKFD9yFLxU5ZA25nyp0xH7TrM19yFpCemL/V847VUueY/1387UgzW9SM5xYtGcqtIZzYW4aA0apywT3F9GtRdPASu1CFkOcD/DNgARkRl8V20MElp7KODEEtteSRAf30Q/n4gtTpmCKfWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=vc5BhOSg; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:Subject
+	:Reply-To:Cc:To:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To:
+	Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=NhvfR4j9bveSdtIcTWCvoQaitcmCKHIR8EyUnxLaags=; t=1724840864;
+	x=1725272864; b=vc5BhOSgHL1zB/Y4MCSUbq4V5MJVRoqWyBdq8pg026A/qVfgL+8CWa28aOCsf
+	Atpzy3yh3NsIjZ79OT+zPvga25l4XHg4L26ySObgTtIpNXcIwIHbtok1+f/DgdhxUaaVwh/TnwTIi
+	LQq6A07QayGBuFYLcI/S3BWzUX6NdwP7ad/pnwys8RbP99pTb9YAgQfQ4cT/cGR/t34tZoyhOKSjn
+	+z1ODhMsCMArRW67JPpWlNMLVnXu1GyGrnyjhR+Dsdz+CVYeOPV43CKMJOzGSxESfwKOgiShLPNVO
+	tz0vRCPBr1Gq1Qoi7U3NliFTR6/2//ZFkTgo+fi/dq5yIKM6nA==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sjFtk-0005PF-13; Wed, 28 Aug 2024 12:27:32 +0200
+Message-ID: <c844faa0-343a-46f4-a54f-0fd65f4d4679@leemhuis.info>
+Date: Wed, 28 Aug 2024 12:27:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,71 +52,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 4/6] net: ethernet: fs_enet: drop unused phy_info
- and mii_if_info
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net,
- Pantelis Antoniou <pantelis.antoniou@gmail.com>, Andrew Lunn
- <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Russell King <linux@armlinux.org.uk>, Florian Fainelli
- <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Herve Codina <herve.codina@bootlin.com>,
- linuxppc-dev@lists.ozlabs.org
-References: <20240828095103.132625-1-maxime.chevallier@bootlin.com>
- <20240828095103.132625-5-maxime.chevallier@bootlin.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20240828095103.132625-5-maxime.chevallier@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Will Deacon <will@kernel.org>, David Woodhouse <dwmw2@infradead.org>,
+ Joerg Roedel <joro@8bytes.org>, "iommu@lists.linux.dev"
+ <iommu@lists.linux.dev>, LKML <linux-kernel@vger.kernel.org>,
+ Linux kernel regressions list <regressions@lists.linux.dev>,
+ Jacob Pan <jacob.jun.pan@linux.intel.com>,
+ Adam Williamson <awilliam@redhat.com>, Markus Rathgeb <maggu2810@gmail.com>
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Subject: [regression] usb and thunderbould are misbehaving or broken due to
+ iommu/vt-d change
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1724840864;ad37042d;
+X-HE-SMSGID: 1sjFtk-0005PF-13
 
+Hi, Thorsten here, the Linux kernel's regression tracker.
 
+Lu Baolu, I noticed a report about a regression in bugzilla.kernel.org
+that appears to be caused by a change of yours:
 
-Le 28/08/2024 à 11:51, Maxime Chevallier a écrit :
-> There's no user of the struct phy_info, the 'phy' field and the
-> mii_if_info in the fs_enet driver, probably dating back when phylib
-> wasn't as widely used.  Drop these from the driver code.
+2b989ab9bc89b2 ("iommu/vt-d: Add helper to allocate paging domain")
+[v6.11-rc1]
 
-Seems like they haven't been used since commit 5b4b8454344a ("[PATCH] 
-FS_ENET: use PAL for mii management")
+As many (most?) kernel developers don't keep an eye on the bug tracker,
+I decided to forward it with this mail. To quote from
+https://bugzilla.kernel.org/show_bug.cgi?id=219198 :
 
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-
+> USB is working on my Dell WD19TB Thunderbolt Dock with Fedora kernel build 6.10.0-64.fc41.x86_64
 > 
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> ---
->   drivers/net/ethernet/freescale/fs_enet/fs_enet.h | 11 -----------
->   1 file changed, 11 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/freescale/fs_enet/fs_enet.h b/drivers/net/ethernet/freescale/fs_enet/fs_enet.h
-> index abe4dc97e52a..781f506c933c 100644
-> --- a/drivers/net/ethernet/freescale/fs_enet/fs_enet.h
-> +++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet.h
-> @@ -92,14 +92,6 @@ struct fs_ops {
->   	void (*tx_restart)(struct net_device *dev);
->   };
->   
-> -struct phy_info {
-> -	unsigned int id;
-> -	const char *name;
-> -	void (*startup) (struct net_device * dev);
-> -	void (*shutdown) (struct net_device * dev);
-> -	void (*ack_int) (struct net_device * dev);
-> -};
-> -
->   /* The FEC stores dest/src/type, data, and checksum for receive packets.
->    */
->   #define MAX_MTU 1508		/* Allow fullsized pppoe packets over VLAN */
-> @@ -153,10 +145,7 @@ struct fs_enet_private {
->   	cbd_t __iomem *cur_rx;
->   	cbd_t __iomem *cur_tx;
->   	int tx_free;
-> -	const struct phy_info *phy;
->   	u32 msg_enable;
-> -	struct mii_if_info mii_if;
-> -	unsigned int last_mii_status;
->   	int interrupt;
->   
->   	int oldduplex, oldspeed, oldlink;	/* current settings */
+> It does not work with 6.11.0-0.rc4.38.fc41.x86_64 anymore.
+
+The user later bisected the problem with a vanilla kernel to the commit
+of yours. There are various error messages in comments to that ticket.
+Some of them:
+
+> Aug 27 11:51:07 b0v9by3 kernel: DMAR: DRHD: handling fault status reg 2
+> Aug 27 11:51:07 b0v9by3 kernel: DMAR: [DMA Read NO_PASID] Request device [04:00.0] fault addr 0xffffe000 [fault reason 0x0c] non-zero reserved fields in PTE
+and
+
+> Aug 26 10:33:49 foobar kernel: xhci_hcd 0000:04:00.0: Abort failed to stop command ring: -110
+> Aug 26 10:33:49 foobar kernel: xhci_hcd 0000:04:00.0: xHCI host controller not responding, assume dead
+> Aug 26 10:33:49 foobar kernel: xhci_hcd 0000:04:00.0: HC died; cleaning up
+> Aug 26 10:33:49 foobar kernel: xhci_hcd 0000:04:00.0: Error while assigning device slot ID: Command Aborted
+> Aug 26 10:33:49 foobar kernel: xhci_hcd 0000:04:00.0: Max number of devices this xHCI host supports is 64.
+> Aug 26 10:33:49 foobar kernel: usb usb5-port2: couldn't allocate usb_device
+> Aug 26 10:33:49 foobar kernel: usb usb6-port2: couldn't allocate usb_device
+> Aug 26 10:33:57 foobar kernel: usb usb2-port1: unable to enumerate USB device
+
+See the ticket for way more details.
+
+The initial report is from Markus Rathgeb, who is CCed. Adam Williamson
+(also CCed) deal with similar symptoms on another machine. Both are from
+Dell. In both cases Thunderbolt is involved, too.
+
+There is also another report with somewhat similar errors messages, also
+from a Dell machine:
+https://lore.kernel.org/all/3b42a3cc-2f76-4d42-abe2-5f4e8ffe10e4@molgen.mpg.de/
+
+Not sure if that's the the same problem, hence did not CC that reporter.
+Will send a heads-up to that thread and point to this thread and the ticket.
+
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
+
+[1]
+
+P.S.: let me use this mail to also add the report to the list of tracked
+regressions to ensure it's doesn't fall through the cracks:
+
+#regzbot introduced: f90584f4beb84211c
+#regzbot title: iommu/vt-d: usb and thunderbould are misbehaving/broken
+#regzbot from: Markus Rathgeb <maggu2810@gmail.com>
+#regzbot duplicate: https://bugzilla.kernel.org/show_bug.cgi?id=219198
+#regzbot ignore-activity
 
