@@ -1,121 +1,199 @@
-Return-Path: <linux-kernel+bounces-304576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD2F0962206
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:10:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A5BE96220A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:11:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CA791C22AD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:10:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06D7E1F236E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBBE715AD90;
-	Wed, 28 Aug 2024 08:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="YAmMxwrz"
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92BEB15B552;
+	Wed, 28 Aug 2024 08:10:55 +0000 (UTC)
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2136.outbound.protection.outlook.com [40.107.117.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9032BB67A
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 08:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724832598; cv=none; b=hc5jC7l8aGwxez0dqkUwFB8CzVPRwUvAOjICnlW6QaRbMD+/o3H2WDGJZdkg5MrNPH2ImdI1C2G6zvabmodJpUtJfmqyQXAjwZYmXetvV42cKhfKftXfOLqRrdAgu/Z/y69a7Z11GMesTd75Swxyy1ntIU50rgP94foaVJakK6E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724832598; c=relaxed/simple;
-	bh=ATXfuluc20kh0bIFPsBJzv7W0cPh4Z6+eJWI+VK/c88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sTf1v0E5uwnijtzd6lKmZFHaR+21EH6b9v0eJMKbitt/jh8WfuVWchAh/bOiYNEAYpcXMvtVXoKPIjN/bSNrOOEFAe4CO/J+Sg/2yTLSo7HtvKJTbnj0ohEFd3oKSQVLU4m4cYzYICN23B2XWe3BMUlUqoaRW0y6lJAi9ZGNiik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=YAmMxwrz; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7B03A1483480;
-	Wed, 28 Aug 2024 10:09:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1724832593; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=MF2XTM8R20QlpXwyM/fJMmMeJw92/M+79MgDKWPVo+8=;
-	b=YAmMxwrzKT4TBODgiDE8BAxQQGlrqcmFj3RbqrTQpUAiqZno08Ncl6Iw+w+wZp6dPCPtiM
-	yT5KaO/PJ/HVil2J1lmCPTxf1ojudcdOuMzc0EJ8RhAmADptD+qyvQkqyPJkJR2XjKMML+
-	WfcPFS7MssncF/k3+j7JL5KPoJtqtGDF7us7Kh58Zm7fW/hQklne/IXxO2eKWiJ2ALQh9e
-	tA1ddQrE6+AJitFltGmK7EceRy0h9QwvgT3ZxIfNZJt6yvlcbD39JUEYCRKBck3fenOt2a
-	/WxllIt1vigiJRdNhiMhSlo2VnwW1H4hM/d1WXSH4TIhqINzRdViHmfkXtduFg==
-Date: Wed, 28 Aug 2024 10:09:50 +0200
-From: Alexander Dahl <ada@thorsis.com>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: Alexander Dahl <ada@thorsis.com>,
-	Christian Melki <christian.melki@t2data.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	"moderated list:MICROCHIP OTPC DRIVER" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: Re: [PATCH v1 04/12] nvmem: microchip-otpc: Add SAM9X60 support
-Message-ID: <20240828-unworried-borough-b5738c8216f6@thorsis.com>
-Mail-Followup-To: claudiu beznea <claudiu.beznea@tuxon.dev>,
-	Christian Melki <christian.melki@t2data.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	"moderated list:MICROCHIP OTPC DRIVER" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>
-References: <20240821105943.230281-1-ada@thorsis.com>
- <20240821105943.230281-5-ada@thorsis.com>
- <6a234b6b-ac4c-4fa8-8809-df56327f7b9c@tuxon.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACC4B67A;
+	Wed, 28 Aug 2024 08:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.136
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724832654; cv=fail; b=QYTYmNgix+LLWQRccudHzAYeMksMecPS1OrDsxR08YxnS8UzWNTsQ+nLwQZG3vct6ApKWWh8Lojfm/VeXlPwxdHotYcSqr+FwjofIoEOGT9c0ruLfu8MLJd0V1S8UAj+LR8AJrjrGpVrQDs6UdKYJKjadUwmIHAwLwMf7NuzpQ8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724832654; c=relaxed/simple;
+	bh=1PfeMbbLYRrsaymNXBDmQ7mmVW2w8Ik325QLEpYb4+o=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=f9KxPJJnfE8SFOCCRWGG/ipKWyPD5o1q6ZkjSNrHVDdHtPx3NtHbTFemwekIWHw+BLBWwErOE8VPHJV2a6af2YRTU5ZDcKq2OBBiF6ssV9Yqm09RVDy8VYeSV1In0IsANDKxWeU6HsP4C/mppmB1V8XCG0GK9AFx0Feh8S2qq+o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com; spf=pass smtp.mailfrom=wesion.com; arc=fail smtp.client-ip=40.107.117.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wesion.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DljZBUbiKZo7MoiTdjwZ8E+H2N5sa4CeY7qUYR2M4dxBJKvaRSatJyFHsVowStxQ4j/aqd3SwLWWbguheiaiNmTvqY3E/7qK7l3o/ENNIlInHHMYMO8uu0dVZn8QZA1AAqTniW+Q6b1jJf8Kn/KFrHa/baYifjzJYBJtIffG7bDwZTQ9Ugf0IJFLKeR5oXHlzwKI0nxss4ZNFPZcUO459BXOLJC+bwkjYtn4qjPZuS7For2F5Gd4Rot0WfpYzGNAP9fsf8gki+bt18xsDKVZHVr69WjQUX8TGKZ1FmzLzjiLNvLUmBuw6npEnOsjhpiy6Yy808Sw+3j9VfIeLNY4aQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hK+wF/UVXu1htGUTMCfzPw1Y2NicYjYXES/mcTmU7x0=;
+ b=BpFsNV1LxWj+ab9Ns8oCWABDtwdD5CLG/yrHsIcE/nbNd7HDCoQTzQWwUQ3otBuuadQ2HZTxxvueBiNrlFe4Y1bELxQ7dkuNBJ3YyDX5kajhDIHkUq4LDcivDdmfVRxyZd4i9o9tINSqcuwm20CiQuf/EFg3lZF5WsitzEJjCzMMEiobzl2pItsSkd+SYQu8KLArOrHlMdHRydH1uf6RYmj5ZsAI3cPzCFPdyKquQBBpRFZa9+GDDPT/VRMt1Fr5A3F1B4SI/SJQO7VuMs0/mPySOnWUIJkblw6eePgb3rIsmQqETporuTIxnSn/lo/kdSSaaFOKoJe7E11mWLQNxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wesion.com; dmarc=pass action=none header.from=wesion.com;
+ dkim=pass header.d=wesion.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wesion.com;
+Received: from TYZPR03MB7001.apcprd03.prod.outlook.com (2603:1096:400:26a::14)
+ by PUZPR03MB7014.apcprd03.prod.outlook.com (2603:1096:301:f0::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Wed, 28 Aug
+ 2024 08:10:47 +0000
+Received: from TYZPR03MB7001.apcprd03.prod.outlook.com
+ ([fe80::78dd:5e68:1a9c:36c0]) by TYZPR03MB7001.apcprd03.prod.outlook.com
+ ([fe80::78dd:5e68:1a9c:36c0%4]) with mapi id 15.20.7875.019; Wed, 28 Aug 2024
+ 08:10:47 +0000
+Message-ID: <31b6852c-85d9-438e-88ba-46f6e8b528d7@wesion.com>
+Date: Wed, 28 Aug 2024 16:10:40 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 0/5] Add AP6276P wireless support
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kalle Valo <kvalo@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, van Spriel <arend@broadcom.com>,
+ Arend van Spriel <arend.vanspriel@broadcom.com>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Ondrej Jirman <megi@xff.cz>, Sai Krishna <saikrishnag@marvell.com>
+References: <20240828-wireless-mainline-v12-0-9064ac7acf1d@wesion.com>
+ <33d0151d-7708-45da-8414-b161892db937@kernel.org>
+Content-Language: en-US
+From: Jacobe Zang <jacobe.zang@wesion.com>
+In-Reply-To: <33d0151d-7708-45da-8414-b161892db937@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI1PR02CA0032.apcprd02.prod.outlook.com
+ (2603:1096:4:1f6::12) To TYZPR03MB7001.apcprd03.prod.outlook.com
+ (2603:1096:400:26a::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6a234b6b-ac4c-4fa8-8809-df56327f7b9c@tuxon.dev>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-Last-TLS-Session-Version: TLSv1.3
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR03MB7001:EE_|PUZPR03MB7014:EE_
+X-MS-Office365-Filtering-Correlation-Id: 05fa41dc-509b-4387-8b61-08dcc738ec31
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SEh2V0ljQlc1dEFYUVhqZjAzaVZNbUF4RlhqeHYrYSttcUtPTEppZG5nbHNW?=
+ =?utf-8?B?bzZpd0tkZm9UNUhBc0ljWnZuTkNsNXZ0YWE2eVhXcUtITERIMkR4aFFuVmQ2?=
+ =?utf-8?B?RTMzWkJOd250WW1PS2JsV1lwT1pMRy9MQVUrZS9Ba2RnRXpxNlVocHRkK0FR?=
+ =?utf-8?B?bzdJUkMwdEJjL3cwWGxpbFE0M1RydG5XN1kwcXpKRE9remd4cFVHN1NTQ201?=
+ =?utf-8?B?cDJlTVJPUnNydDZxMC9vQ3FoRGQyU3hYVkVBL1hjcGFRenFUQ3VsVVlKckRx?=
+ =?utf-8?B?eS9jMDJ2YlNSVE1uZkVWQjNJUk9CYXIzVExjb044RFExbFdRL0VIR2dkR0ds?=
+ =?utf-8?B?L3A4Q1FudndSV2gxNHNacHJmSVhEZk5tN0k4anAvOVlva3RIZmowWllKRHhq?=
+ =?utf-8?B?b3RqK1l1T0JLYjNJVFFxbzlIdXUrT1E1c2cvRnBjN0oyUTBxUjRGQjIvOUxR?=
+ =?utf-8?B?cFFNWHA4QWpKcElGRHU1ck1rQytKajhMdkQyTytKYnJjemFwWVg2Q0lZTkg5?=
+ =?utf-8?B?VEhqWlFHSkdzcVBQeUZIdXFYQ1VZNWI1MlE5UGluaVFEblYrdktTS0tMQnE1?=
+ =?utf-8?B?NXpEZXNzZzN6QXJJalVpbElFb0d4Q0tJZGFwazJrbEJ0STBiT3NrdlY4Nm9x?=
+ =?utf-8?B?QzhTRzFJOElLWjJaT2VCNlFYWmFLRlAwNkh6REFQL2hxdzZBM29ZK1RrNlJn?=
+ =?utf-8?B?RVZRVVpENEhVSnFyVEhESjlkSzJRdEJLT3lnMUJOS0IyTnFQQUY4Yi9ZK3Y4?=
+ =?utf-8?B?RHVEOC95Q2JURExtY0xvMnFCc0xVcUhwRWJKd0xkSDhuWTNybmFrM1NxM01w?=
+ =?utf-8?B?RENTTkpJWVY4WGVOQkgwYTVKZmpzMFhob0NyRHFCK1hqRnNZUnZSZVNkd05U?=
+ =?utf-8?B?ekFOeDdackxkcnpUNitsUklnOVlobm1WbUduRC8wbVhyWFVVcisxc3JZUk1F?=
+ =?utf-8?B?NFdJeVJSUHBaVzN6dER3T3hvK0dQTldqc1lqWDJTTGxadjlDcXJqUXRRV1Fr?=
+ =?utf-8?B?aVE1NmJsUzRNZHQ3c2RrZmNLb21qMzU5WER1VkdnZGR1TUxyY1piaTB4R0FG?=
+ =?utf-8?B?YWluMnpXRHlFak9BVVhzK3ZtU2xvb3ZHRjJlU2NETGpTb0VxRVd0NzMrKzVM?=
+ =?utf-8?B?M1dPQzIvWTlQWWsxOE4zemdCRWE1N09VNHFXaktqMm82Nm4zVzhGQjdPQjg1?=
+ =?utf-8?B?RHBJMTZQTENQT2VLL21FcjR4WGRmNFVKOHR1NFloSG5pR05meHo2dUxoMWhl?=
+ =?utf-8?B?aVNFZStvYnY1L2NXSnlNVjAxVFY3dWNJSElaN3F0WVF6NDlmcGhDc3NTa2VO?=
+ =?utf-8?B?QW44R1g4cU5VNGhFYThadWRwdWp6aDNqbGRRL3ZsbmMxVElqaHBGdXZtbWIr?=
+ =?utf-8?B?c01mNHQ0akZJOUZiVEI0YjcwdzRleVc5YzI4dVRod295Q1VGOStMSnp4dUd3?=
+ =?utf-8?B?eGhzbWVZeXEzaHgyM0ExMlJzNE9RTnZUWXBVMGVpR1BhbWxyUVl3cnRUa0Rp?=
+ =?utf-8?B?M0RyWFNjQ2JyNDJOVEY4d1lvcGtHMzlMcU84S2dUWEpWOFRnS2g3NGF6dFBU?=
+ =?utf-8?B?QlV5RnJKZjZ5UVpsMHo0azZwa2Q0Vkw1SGZ6MW9hR2F3WjQvcldNc2QyVVlj?=
+ =?utf-8?B?cmhFaEMwYTZrZHNkY1RvS3N1UnNRQnZwdjFOV1lrN2liMEdSWnRZdThKdXBi?=
+ =?utf-8?B?aENXSEE4RmEzUVRTUXhBRXlOZ200d2xDb2NHMy9NbWFjdC81YzBONWgxc1VH?=
+ =?utf-8?B?NC96eE91QVJGdzBmMlhEMFQvWDh4NGY2Q3o4QXplUjVmb1ZERkQ1S1NoaWpG?=
+ =?utf-8?B?TUJpdGphbVh4ZUc4cHdnK2xhbURzQk1LWHZGWDIzWTZVd2NLYU5CY2s1YzZa?=
+ =?utf-8?Q?Jdy5yUEps5ZgX?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB7001.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TUo1b25HV1M3WW44NGkxVG1nUjIwYU5IRzZPMzNrRGZycGNqVGorTXkwTHVi?=
+ =?utf-8?B?RTBLMVFXcG5lVWFFMlJGbU8vT0lTYjV0cUtTd3VHQldzcEpTM3FrSUxnaG9I?=
+ =?utf-8?B?cVBEU2JyN2p4eW9VVW04WmNXWFQyNWhFc2trWWE1Zjc4T3lZYzRVMGRmNHY5?=
+ =?utf-8?B?MWloMlo1dWh4OVo4a3FxWUN6NmVMNEpnMmhKTEh4WTltc3pXd2dGM05ndWMv?=
+ =?utf-8?B?UENGazlOamNQNm1pd3RWbWYyekk3cjU3eU9ZOW9CZDJ6Y2s2cjRxMklxRVVY?=
+ =?utf-8?B?Zm1TeTFlUFU3SXZyOTc5NHh5MG1vV2hzczdFMm9hUkhORitqVTFFWUU0eGRJ?=
+ =?utf-8?B?TitQQmkrdzd6bGhOK3pUSGF3d2hWakFuZllPYlV0TTZQQUNWN3hZazJ5R3pT?=
+ =?utf-8?B?YlE1cVFtcVV1UHB6VGgyVVk4YlVyZm5sak9vNG0yc3k0Mll3Vm9NeDgwUzV5?=
+ =?utf-8?B?eXc5ZjVacmM3alpBRUdINGxJdklFMmdsV1o1Yi81NTl1bWMveldMekE2VjBJ?=
+ =?utf-8?B?RmtWN1BENFc5OFBjV1hRQlF3R0E4OEYyYWFmeWhuU2VpYldjSUJFd0ZaWnZK?=
+ =?utf-8?B?cS9JSVJvYnJpNUs1NWxQUGpOczkzNlFQU0svY1hXOEtDbnRrSW9xdDlvSFgv?=
+ =?utf-8?B?R0NKUzFlRDZTM3hIanpPTTg4NVlWeGhoK2NxREtGQXMzbHZOdG45RE9KQzF0?=
+ =?utf-8?B?QitWOEdhR05iZGMvSkIrV2xmZEliYTAyb0gxMDJLbitYSDRQam14T3QzdE1G?=
+ =?utf-8?B?bjdHYjF3M2FPZTdHS0ZRaDJ1eHBaQ095bkNkOG5XYXdGc3pickVqSmFobE9p?=
+ =?utf-8?B?S2U0UFJMZktWaVljS2c1cVlNcUNxbERTTVE0UkltdDlqSDIzV0U3TkloQU1B?=
+ =?utf-8?B?QnJTK3RZZXc4VGd1OXhvUXBpWGowblZ4N3RIQ3Zvd25UUmR5UXhtQ0UvM0lX?=
+ =?utf-8?B?c01zYkVxUjdDRDZ0MzNyNWQ4N2w5cGt5aHpYZ3JoZUkyOU9VazRxVkcvTk5w?=
+ =?utf-8?B?YTBOaXNudU80VHZyTi80VnBTRGFlQnNOQjVHRExidHJvMHpIWFFVVE1nVyt4?=
+ =?utf-8?B?OUNldllhaG50dGZzK1NvMmsvRnFLcU9rZndjdEd4V1RwbTBTUGg4Zy9kczds?=
+ =?utf-8?B?R0lPZ0RpUU5ZamVYYnlmQjJ0VXppTktJN2YxT2IwU1lKSWVNTWY5YXhBM2V3?=
+ =?utf-8?B?WWgrVkRuQ1ZjclF1TzJKL2FJcytOMlN1MklzOVJYUXo1d3RWNS9vSUFQd3Ru?=
+ =?utf-8?B?RU44QXdHazA5c3d3c1kxd1lMSUZkaC8rZE0vcSswY2NKYTJXV0ZLN2hnZzgy?=
+ =?utf-8?B?Zk5NNEV6L3FMRTVOQ29iSlR6bVJWSnQxUithK3dsQWVwNDE1OC9MVTVEczgv?=
+ =?utf-8?B?K0VQdERPTWVZRVc2bGFQYkl5Q0hjTWp2aSsrT0pnRy9mdmQvbDJZcE45NTFC?=
+ =?utf-8?B?NmtyVklCQW9IdXRlRDhERWpkT1ppbW1NK1diMWtPNzFkSzUyclk2YlhQOSt3?=
+ =?utf-8?B?a2ZldUNXTjhnR2dGdnFUUnpzY29GMitaU29ZWkRjMUZoNmEvby9lSTVlMHY4?=
+ =?utf-8?B?c25UTDNYVHpJYmdZZ3UyaWhkUVl5cXVCVDlqN0dCTGFaWll4N29Tb2xKRysw?=
+ =?utf-8?B?amhiY0NjUjU1NmxCMGRDVGlhMkdWRE9YV2FaVW1MYzVpcEtxUUZmZXUvNjhF?=
+ =?utf-8?B?OUVqNVZ3Q1NsTUdWb1JnaDVPcml5OWFKVlczQ3JQNHVGWmJOZzhteTBYTm1B?=
+ =?utf-8?B?Qmp4RDcraFRTVU00NXlBUG4zREwwMjVMVVllMitMa3FNZEM2ck92dnJQNTNo?=
+ =?utf-8?B?YkpFNElSam1nbjR4Z1IvcTdDdUxEZUswOGlWZ2QxYzNLbnExbHh2SzRDZGor?=
+ =?utf-8?B?bFdvTEZkQnh2NitDbXZFWEMwSUxlU1lsUXRPaURyR1RDd0t3cEZKcnY5bGpM?=
+ =?utf-8?B?UWJUMlN6NFN0bXpjd1BqZ0hkYmF1YVNFSDI2dnFGYkhhbFQ3RXRBUW5kakV6?=
+ =?utf-8?B?RmF4OFg5SnZHSFNhMW1BMEZRc1BQYW1mUU4vU3RBM3lMZmRFR3h5b3JJRU9v?=
+ =?utf-8?B?cUVocFRzZXVXWkkwTG1OMDVvbUZ4ZE8rZWdpajNOV0lUOW9aaEpJZkFzZ295?=
+ =?utf-8?Q?1yL4r2D9tLrX+WAvRfYpV+ojK?=
+X-OriginatorOrg: wesion.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 05fa41dc-509b-4387-8b61-08dcc738ec31
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB7001.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 08:10:47.6267
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 2dc3bd76-7ac2-4780-a5b7-6c6cc6b5af9b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: x7ljc0qsL9alZXJbSMaDxH/HXZlqFb5qLDF7NMXs7svjwKcFw1VwQXXD9hJG07S8jbqzbzA4yGfS3P2Vi1oNUQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR03MB7014
 
-Hello Claudiu,
 
-Am Sat, Aug 24, 2024 at 06:53:53PM +0300 schrieb claudiu beznea:
+
+On 2024/8/28 15:59, Krzysztof Kozlowski wrote:
+> On 28/08/2024 09:40, Jacobe Zang wrote:
+>> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
+>> ---
+>> These add AP6275P wireless support on Khadas Edge2. Enable 32k clock
+>> for Wi-Fi module and extend the hardware IDs table in the brcmfmac
+>> driver for it to attach.
+>>
 > 
+> I saw v12 and responded to it. This is confusing. Also to other people
+> if they start reviewing different copies.
 > 
-> On 21.08.2024 13:59, Alexander Dahl wrote:
-> > Register layout is almost identical to sama7g5 OTPC.
+> Please read carefully submitting. This is v12, so I don't get why such
+> basic submission guidelines are not respected here.
 > 
-> Can you please mention some major differences?
 
-- SAMA7G5 has an additional bit SECURE in the OTPC Header Register
-  (OTPC_HR) not present on SAM9X60.
-- SAMA7G5 has an additional register OTPC Secure Custom Address
-  Register (OTPC_SCAR) not present on SAM9X60.
-- SAMA7G5 has an additional field SECDBG[7:0] in OTPC User Hardware
-  Configuration 0 Register (OTPC_UHC0R) not present on SAM9X60.
-- SAMA7G5 has three additional bits (SCPGDIS, SCLKDIS, SCINVDIS) in
-  the OTPC User Hardware Configuration 1 Register (OTPC_UHC1R) not
-  present on SAM9X60.
+Sorry.. It is my first time using b4 to send patch, so I made the 
+confused versions..
 
-All are currently not used by the driver.
-
-Is adding this information to the commit message sufficient?
-
-Greets
-Alex
-
-> 
-> > 
-> > Signed-off-by: Alexander Dahl <ada@thorsis.com>
-> > ---
-> >  drivers/nvmem/microchip-otpc.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/drivers/nvmem/microchip-otpc.c b/drivers/nvmem/microchip-otpc.c
-> > index bd3383eabdf6..b8ed7412dbca 100644
-> > --- a/drivers/nvmem/microchip-otpc.c
-> > +++ b/drivers/nvmem/microchip-otpc.c
-> > @@ -271,6 +271,7 @@ static int mchp_otpc_probe(struct platform_device *pdev)
-> >  
-> >  static const struct of_device_id __maybe_unused mchp_otpc_ids[] = {
-> >  	{ .compatible = "microchip,sama7g5-otpc", },
-> > +	{ .compatible = "microchip,sam9x60-otpc", },
-> >  	{ },
-> >  };
-> >  MODULE_DEVICE_TABLE(of, mchp_otpc_ids);
+-- 
+Best Regards
+Jacobe
 
