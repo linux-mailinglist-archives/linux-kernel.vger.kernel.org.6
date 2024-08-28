@@ -1,120 +1,115 @@
-Return-Path: <linux-kernel+bounces-305268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2361E962C2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:25:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C26BE962C44
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2DE5287161
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:25:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D7261F253FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA8B18801C;
-	Wed, 28 Aug 2024 15:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329FF1A7AE4;
+	Wed, 28 Aug 2024 15:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="COcuZX99";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="b+W4w6vw"
-Received: from a7-49.smtp-out.eu-west-1.amazonses.com (a7-49.smtp-out.eu-west-1.amazonses.com [54.240.7.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="4QYF/WTy"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FEE16D334;
-	Wed, 28 Aug 2024 15:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825701A76DF;
+	Wed, 28 Aug 2024 15:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724858695; cv=none; b=e3U5VipY/S0IOXYblZjkpgDdGosgwCcRu2SfQWtlaK20upuiTOAZjArhjtSD/5fx20BlCmY/ZqtLCps1KM9XhSZJlfsDrmDyXugwlPku/ZtgQjMCe78vdzixv4uppHq8PpUGnpGdZaXQEhZXiVVzBDPLaQGPi5MCd2NnELDngOI=
+	t=1724858731; cv=none; b=tV40/7esJ9TAwzUYOQC9eCiWbI1Z6slROT2yiwc/FiBsWY0z3lnFSLUbJ2Jyxz4TGhkG1Aj7vtep3RZHs0yaSlY0grKA4KRpTw1LOS6whYCF/IuTQ1BSsc0xGP2AplKsXc/5e+qvSHWHiJP7LJkxnib+Hhx/bbyI+3AMqXnOgOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724858695; c=relaxed/simple;
-	bh=YxFusZ1OLLxvSk44tX+mNzNkWdmB65BrCS5p7PaYt5s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mnG05gt/W0CWS6KIly1bHAym5ZiYDXvIvI3hVxidzD54F2OEjjmMoL2I9Qao+Z24lLLs5I3HHPrnls+NFr1x+uHQj1wx+enE2NN6zk5XCgZLBKorYAu5RettSj3SruXQW6SEfpJEujn0DDX7WzP73YlHE8/DbF4NQUgbqDiJHEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=COcuZX99; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=b+W4w6vw; arc=none smtp.client-ip=54.240.7.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1724858691;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Transfer-Encoding;
-	bh=YxFusZ1OLLxvSk44tX+mNzNkWdmB65BrCS5p7PaYt5s=;
-	b=COcuZX99qSzTc4lHLiO6tRoSuUWnCW1NpsSvZSnzPKPv8DEjHaiblQNdGRkOV/D0
-	zpimbqvlF4YBeLNOnQlsYiTSDUSyaPlJ5HtBXmALh7DizdVmafiexMeutjnS6BdxzIp
-	304walO+s2DAnuq9Anhpy1xHuVdhJLwo7plLevFPju3xGffne3LutLoXNckeXz+Dlj8
-	bAp6EbC04BtpU2Qq+tlHx3iDMJIZna59U3G0DWClfsAxF1iGA3m/Gc1/Bql9Wy06T49
-	vWzzH5KZKqY9U0fa0+e3fur22Iob/+lQkXp8xMPGUYuyN615cIGNV/ETUI3ANc2XtYY
-	+VhaZa55mQ==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1724858691;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
-	bh=YxFusZ1OLLxvSk44tX+mNzNkWdmB65BrCS5p7PaYt5s=;
-	b=b+W4w6vwJi+Dl9pLz8IY8EfvTUfslF+mezD4omzeaas6oaDoa7TpEjUHAre0/kws
-	M4vivSykEVSOLlFHZGEjFny3HOg+z+r2v+ngjGAytxYjp1wOUtky7fCigATUur5BeTr
-	8Oc+xHZeoHft8Nyd/eL3J3FfViNiGl4LUahZmb7M=
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
-	Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, kernel@collabora.com, 
-	Detlev Casanova <detlev.casanova@collabora.com>
-Subject: [PATCH v5 0/3] Add dw_mmc support for rk3576
-Date: Wed, 28 Aug 2024 15:24:51 +0000
-Message-ID: <010201919996ef8a-db8bbe89-3c18-4dc3-bd0c-6498f09d978a-000000@eu-west-1.amazonses.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1724858731; c=relaxed/simple;
+	bh=I1Nby7tDKVVdapSHtGQT7L9Eim8jq/dT28PjMGd+PHE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r3tMRwof3rvufRb5VpW+W52dGonLBakZIwt3oOnoSNRjQvl/Ld/norSE8rb2T13321rOMZ1AbuvfVvo69e/CGg9jf8fGUONHbYZ+pQie8XNAo+YrcOeHK4RpgtQXLPyJoyQBBR04Nqr4NDb0L3yTr7VfoNBrLoqzKMaFhfeOIvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=4QYF/WTy; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=q9URPVBkUtuX1b5vQ91DBWUEAecVTYj3WQtfiiyjLe8=; b=4QYF/WTy90NVcHGEOPZW700puH
+	PsWHZNWpHEEmbUSmKRVNivVlJQkwuHYMKXyODQQdUQ9oRrpIMyHeXgljjtrbAc62/dTBO/DeDzES2
+	ljIryYIG/AOUumjbxUyE+dFDD5Ya7ABiL3AzxT0XW2O9c/AC8edgXY63kxxwLYPrXxP8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sjKXU-005wr6-5U; Wed, 28 Aug 2024 17:24:52 +0200
+Date: Wed, 28 Aug 2024 17:24:52 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Jinjie Ruan <ruanjinjie@huawei.com>, woojung.huh@microchip.com,
+	f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	linus.walleij@linaro.org, alsi@bang-olufsen.dk,
+	justin.chen@broadcom.com, sebastian.hesselbarth@gmail.com,
+	alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+	mcoquelin.stm32@gmail.com, wens@csie.org, jernej.skrabec@gmail.com,
+	samuel@sholland.org, hkallweit1@gmail.com, linux@armlinux.org.uk,
+	ansuelsmth@gmail.com, UNGLinuxDriver@microchip.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com, jic23@kernel.org
+Subject: Re: [PATCH net-next v2 00/13] net: Simplified with scoped function
+Message-ID: <6d88b103-ba8a-4631-bbf5-b9046b9b82cd@lunn.ch>
+References: <20240828032343.1218749-1-ruanjinjie@huawei.com>
+ <6092e318-ae0c-44f6-89fa-989a384921b7@lunn.ch>
+ <71deb322-4b54-4c1c-a665-d9de84ea9baf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
-X-SES-Outgoing: 2024.08.28-54.240.7.49
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <71deb322-4b54-4c1c-a665-d9de84ea9baf@kernel.org>
 
-The SD card controller on the rk3576 SoC stores the phase settings into
-the dw_mmc controller, so the code has to be adapted to implement that.
+On Wed, Aug 28, 2024 at 04:45:32PM +0200, Krzysztof Kozlowski wrote:
+> On 28/08/2024 16:32, Andrew Lunn wrote:
+> > On Wed, Aug 28, 2024 at 11:23:30AM +0800, Jinjie Ruan wrote:
+> >> Simplify with scoped for each OF child loop and __free(), as well as
+> >> dev_err_probe().
+> >>
+> >> Changes in v2:
+> >> - Subject prefix: next -> net-next.
+> >> - Split __free() from scoped for each OF child loop clean.
+> >> - Fix use of_node_put() instead of __free() for the 5th patch.
+> > 
+> > I personally think all these __free() are ugly and magical. Can it
+> 
+> It is code readability so quite subjective.
 
-Although the feature can be detected through the USRID register value, the
-decision to use it is based on the compatible.
+Try.
 
-The compatible for rk3576 is added in its own group of compatible to mark
-that all devices compatible with rk3576 have internal phase settings and
-don't have the ciu-drive and ciu-sample clocks.
+But the __ is also a red flag. Anything starting with _ or __ in
+general should not be used in common code. That prefix is supposed to
+indicate it is internal plumbing which should be hidden away, out of
+sight, not to be used directly. Yet here it is, being scattered
+everywhere.
 
-Changes since v4:
-- Drop commit that ignores phase above 270 degrees
-- Use a bool instead of int for internal_phase field
-- Fix pahse typo
+I also wounder if this is lipstick on a pig. I suspect the reference
+counting on DT object is broken everywhere, because it is almost never
+used. In general, DT blobs exist from boot to shutdown. They don't go
+away, so these reference counts are never used. DT overlays do exist,
+but account for what, 1% of DT objects? And how often does an overlay
+actually get unloaded? Has anybody written a fuzzer to try unloading
+parts of DT blobs? I suspect we would quickly drown in bug reports.
 
-Changes since v3:
-- Remove internal phase auto detection
-- Set compatible in own block, with own dt_parse function
-- Add internal_phase variable
-- Use function to set clock parameters based on internal_phase variable
-  instead of multiple ifs
-- Use different commit for skipping phases higher than 270
+Adding missing of_node_put() seems to be high on the list of bot
+driven patches, which cause a lot of maintainer effort for no real
+gain. And those submitting the patches probably have little
+understanding of what they are doing, other than making the bot happy.
+Do we really want to be adding ugly code, probably with a few
+additional bugs thrown in, just to make a bot happy, but probably no
+real benefit?
 
-Changes since v2:
-- Drop rockchip,v2-tuning and use compatible-based detection
-- Fix coding style
-
-Changes since v1:
-- Renamed use-v2-tuning to v2-tuning
-- Rewrite v2-tuning description as the hardware feature
-
-Detlev.
-
-Detlev Casanova (2):
-  dt-bindings: mmc: Add support for rk3576 dw-mshc
-  mmc: dw_mmc-rockchip: Add support for rk3576 SoCs
-
-Shawn Lin (1):
-  mmc: dw_mmc-rockchip: Add internal phase support
-
- .../bindings/mmc/rockchip-dw-mshc.yaml        |   2 +
- drivers/mmc/host/dw_mmc-rockchip.c            | 217 ++++++++++++++++--
- 2 files changed, 204 insertions(+), 15 deletions(-)
-
--- 
-2.46.0
-
+	Andrew
 
