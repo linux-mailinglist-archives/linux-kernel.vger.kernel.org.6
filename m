@@ -1,132 +1,134 @@
-Return-Path: <linux-kernel+bounces-304719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A34F39623EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:50:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 407AC9623F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:51:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5643B1F25293
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:50:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5BD51F25356
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7D3166F25;
-	Wed, 28 Aug 2024 09:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D49168486;
+	Wed, 28 Aug 2024 09:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Bm7FCWRZ"
-Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UJQUHEN6"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1968E156F4A;
-	Wed, 28 Aug 2024 09:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72785156F4A;
+	Wed, 28 Aug 2024 09:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724838619; cv=none; b=HSgrVwqEjDDEH3GynewqJkquC1JWe0uzhFX0CNBoaBde1d6ZoRP6kXCKqNEK8PgTzHzprCBIY9VthfRqQ06fXIW5ltMwZL+aV0gSavqc71Vw2zFgNaNerfJv8nc3bZ42VSbJHpuAD/H1FZl6ab4fsijhwz5jMifLISW2WODI2ZE=
+	t=1724838672; cv=none; b=EVWCCvLanBAmaEDo4puWKy+TApJG1jgPoTXy+6vkPitM0F6R9pc0/Kl5UTcj/iXxqTJAlhJy3JtEKBCU26PDkHzO66lZT1lTq2Yw+6vvr6UM+9smdtCulZV2sYH5qXQWKWd3Lp3ucbwgIGexWT8BxAbq8yfuytc5B4Q7JATcHB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724838619; c=relaxed/simple;
-	bh=2Q3jsDxS0W1bQLBmum7GleYuOyVX9tirrUuc/kx3/4M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=E4BdYzWsgGOxzWPvyWmE9gCBt+GLvKQN8zLYXGtceSiM48ig2nLX0p1db1228jYeAqMczTryclcFHY7t2zWRDD1umAsvmy4ZdrqxI0tqmwZu80HsuZPyfG90dlQEozyRufwu9hLBx6bj+Ee5pFIfQ7f+tdW0y20bWmtHS2zsP/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Bm7FCWRZ; arc=none smtp.client-ip=52.119.213.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1724838618; x=1756374618;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=2Q3jsDxS0W1bQLBmum7GleYuOyVX9tirrUuc/kx3/4M=;
-  b=Bm7FCWRZ2DQrITUNqNdc8JTOIayzUmA6tUqrJPhn/UHDrkTV0zyEILeE
-   Mq3nxkSs+R37EeUelavFEWzXyS6MTa1C6/QBtz6bJKC3pKtRDPsH/vlee
-   JbZMQjFdXrjBS3Das8nbGr3wksK80oWz58XW2mzPrsHPsgK1O1ZoVuG0d
-   w=;
-X-IronPort-AV: E=Sophos;i="6.10,182,1719878400"; 
-   d="scan'208";a="655304012"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 09:50:15 +0000
-Received: from EX19MTAUWA002.ant.amazon.com [10.0.7.35:55612]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.15.160:2525] with esmtp (Farcaster)
- id ef5615f8-0011-4bb1-a4e7-b7ec4ba4ddd0; Wed, 28 Aug 2024 09:50:13 +0000 (UTC)
-X-Farcaster-Flow-ID: ef5615f8-0011-4bb1-a4e7-b7ec4ba4ddd0
-Received: from EX19D020UWC004.ant.amazon.com (10.13.138.149) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 28 Aug 2024 09:50:13 +0000
-Received: from [0.0.0.0] (10.253.83.51) by EX19D020UWC004.ant.amazon.com
- (10.13.138.149) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Wed, 28 Aug 2024
- 09:50:10 +0000
-Message-ID: <f2d6e44c-585f-460c-9d68-0be4d5fbe9fd@amazon.com>
-Date: Wed, 28 Aug 2024 11:50:08 +0200
+	s=arc-20240116; t=1724838672; c=relaxed/simple;
+	bh=W5dNiwh08spGQWHVtWR9qi5GSQL22gM2rJTVdfKL0sA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p1fKfAUt/+8iecD0yDPPnKis30YUbgVB3qTdZCOmEFKxVz/ZGiw94YQUiyZnA4Qt2xpPttSrtNrmANoaIdPzMM2LiCJokHgakpLYaThcTQZiFtDT0MhwvUzeD17ZUPfS8t6OJE+ded7L7bMhz47gR+Vi1YZE3+C/6XRXmvPhtF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UJQUHEN6; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A93E31C0006;
+	Wed, 28 Aug 2024 09:51:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724838667;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=NMcd5krJpu4QF1dh3WskwIyNsu7j6t8kCT18xYrFnZ8=;
+	b=UJQUHEN6WjzuygPF/gNH6m6xV66KuChGtnbdjHjNy/mO6EoX5nlf3A4CUz4i+QCGya7YsB
+	PR2IICydmOpbTI9fTNk9wx5mM+3e0rMfOyySAan9GzJTPGi4ZziXlhw89MN/ET54A1zwnz
+	YWsVUP27SRojnn1xoeGozJbz5fwgU8CoNX5inPgjGPUPY7ZVgd8VJhOqvQd9pKjqfqfhrF
+	rsfdIuybAHLJXXYxKu+66BdJ39p/6JRnVTvgCbdCNlxoJW1GuJ3EGNJUBL6S08IhzdvnCZ
+	makAnbdtqH0BfWWbA84V3k8oYErKeZpFHA3uaIddZ+PxlChvZXDkfWJlyQd2Iw==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net,
+	Pantelis Antoniou <pantelis.antoniou@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com,
+	Herve Codina <herve.codina@bootlin.com>,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH net-next 0/6] net: ethernet: fs_enet: Cleanup and phylink conversion
+Date: Wed, 28 Aug 2024 11:50:56 +0200
+Message-ID: <20240828095103.132625-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/3] add support for mm-local memory allocations
-To: Roman Kagan <rkagan@amazon.de>, <linux-kernel@vger.kernel.org>
-CC: Shuah Khan <shuah@kernel.org>, Dragan Cvetic <dragan.cvetic@amd.com>,
-	Fares Mehanna <faresx@amazon.de>, Alexander Graf <graf@amazon.de>, "Derek
- Kiernan" <derek.kiernan@amd.com>, <linux-kselftest@vger.kernel.org>,
-	<nh-open-source@amazon.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<linux-mm@kvack.org>, David Woodhouse <dwmw@amazon.co.uk>, Andrew Morton
-	<akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>
-References: <20240621201501.1059948-1-rkagan@amazon.de>
-Content-Language: en-US
-From: Alexander Graf <graf@amazon.com>
-In-Reply-To: <20240621201501.1059948-1-rkagan@amazon.de>
-X-ClientProxiedBy: EX19D039UWB001.ant.amazon.com (10.13.138.119) To
- EX19D020UWC004.ant.amazon.com (10.13.138.149)
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-SGV5IFJvbWFuLAoKT24gMjEuMDYuMjQgMjI6MTQsIFJvbWFuIEthZ2FuIHdyb3RlOgo+IEluIGEg
-c2VyaWVzIHBvc3RlZCBhIGZldyB5ZWFycyBhZ28gWzFdLCBhIHByb3Bvc2FsIHdhcyBwdXQgZm9y
-d2FyZCB0byBhbGxvdyB0aGUKPiBrZXJuZWwgdG8gYWxsb2NhdGUgbWVtb3J5IGxvY2FsIHRvIGEg
-bW0gYW5kIHRodXMgcHVzaCBpdCBvdXQgb2YgcmVhY2ggZm9yCj4gY3VycmVudCBhbmQgZnV0dXJl
-IHNwZWN1bGF0aW9uLWJhc2VkIGNyb3NzLXByb2Nlc3MgYXR0YWNrcy4gIFdlIHN0aWxsIGJlbGll
-dmUKPiB0aGlzIGlzIGEgbmljZSB0aGluZyB0byBoYXZlLgo+Cj4gSG93ZXZlciwgaW4gdGhlIHRp
-bWUgcGFzc2VkIHNpbmNlIHRoYXQgcG9zdCBMaW51eCBtbSBoYXMgZ3Jvd24gcXVpdGUgYSBmZXcg
-bmV3Cj4gZ29vZGllcywgc28gd2UnZCBsaWtlIHRvIGV4cGxvcmUgcG9zc2liaWxpdGllcyB0byBp
-bXBsZW1lbnQgdGhpcyBmdW5jdGlvbmFsaXR5Cj4gd2l0aCBsZXNzIGVmZm9ydCBhbmQgY2h1cm4g
-bGV2ZXJhZ2luZyB0aGUgbm93IGF2YWlsYWJsZSBmYWNpbGl0aWVzLgo+Cj4gU3BlY2lmaWNhbGx5
-LCB0aGlzIGlzIGEgcHJvb2Ytb2YtY29uY2VwdCBhdHRlbXB0IHRvIGltcGxlbWVudCBtbS1sb2Nh
-bAo+IGFsbG9jYXRpb25zIHBpZ2d5LWJhY2tpbmcgb24gbWVtZmRfc2VjcmV0KCksIHVzaW5nIHJl
-Z3VsYXIgdXNlciBhZGRyZXNzZXNzIGJ1dAo+IHBpbm5pbmcgdGhlIHBhZ2VzIGFuZCBmbGlwcGlu
-ZyB0aGUgdXNlci9zdXBlcnZpc29yIGZsYWcgb24gdGhlIHJlc3BlY3RpdmUgUFRFcwo+IHRvIG1h
-a2UgdGhlbSBkaXJlY3RseSBhY2Nlc3NpYmxlIGZyb20ga2VybmVsLCBhbmQgc2VhbGluZyB0aGUg
-Vk1BIHRvIHByZXZlbnQKPiB1c2VybGFuZCBmcm9tIHRha2luZyBvdmVyIHRoZSBhZGRyZXNzIHJh
-bmdlLiAgVGhlIGFwcHJvYWNoIGFsbG93ZWQgdG8gZGVsZWdhdGUKPiBhbGwgdGhlIGhlYXZ5IGxp
-ZnRpbmcgLS0gYWRkcmVzcyBtYW5hZ2VtZW50LCBpbnRlcmFjdGlvbnMgd2l0aCB0aGUgZGlyZWN0
-IG1hcCwKPiBjbGVhbnVwIG9uIG1tIHRlYXJkb3duIC0tIHRvIHRoZSBleGlzdGluZyBpbmZyYXN0
-cnVjdHVyZSwgYW5kIHJlcXVpcmVkIHplcm8KPiBhcmNoaXRlY3R1cmUtc3BlY2lmaWMgY29kZS4K
-Pgo+IENvbXBhcmVkIHRvIHRoZSBhcHByb2FjaCB1c2VkIGluIHRoZSBvcmlnbmFsIHNlcmllcywg
-d2hlcmUgYSBkZWRpY2F0ZWQga2VybmVsCj4gYWRkcmVzcyByYW5nZSBhbmQgdGh1cyBhIGRlZGlj
-YXRlZCBQR0Qgd2FzIHVzZWQgZm9yIG1tLWxvY2FsIGFsbG9jYXRpb25zLCB0aGUKPiBvbmUgcHJv
-cG9zZWQgaGVyZSBtYXkgaGF2ZSBjZXJ0YWluIGRyYXdiYWNrcywgaW4gcGFydGljdWxhcgo+Cj4g
-LSB1c2luZyB1c2VyIGFkZHJlc3NlcyBmb3Iga2VybmVsIG1lbW9yeSBtYXkgdmlvbGF0ZSBhc3N1
-bXB0aW9ucyBpbiB2YXJpb3VzCj4gICAgcGFydHMgb2Yga2VybmVsIGNvZGUgd2hpY2ggd2UgbWF5
-IG5vdCBoYXZlIGlkZW50aWZpZWQgd2l0aCBzbW9rZSB0ZXN0cyB3ZSBkaWQKPgo+IC0gdGhlIGFs
-bG9jYXRlZCBhZGRyZXNzZXMgYXJlIGd1ZXNzYWJsZSBieSB0aGUgdXNlcmxhbmQgKEFUTSB0aGV5
-IGFyZSBldmVuCj4gICAgdmlzaWJsZSBpbiAvcHJvYy9QSUQvbWFwcyBidXQgdGhhdCdzIGZpeGFi
-bGUpIHdoaWNoIG1heSB3ZWFrZW4gdGhlIHNlY3VyaXR5Cj4gICAgcG9zdHVyZQo+Cj4gQWxzbyBp
-bmNsdWRlZCBpcyBhIHNpbXBsZSB0ZXN0IGRyaXZlciBhbmQgc2VsZnRlc3QgdG8gc21va2UgdGVz
-dCBhbmQgc2hvd2Nhc2UKPiB0aGUgZmVhdHVyZS4KPgo+IFRoZSBjb2RlIGlzIFBvQyBSRkMgYW5k
-IGxhY2tzIGEgbG90IG9mIGNoZWNrcyBhbmQgc3BlY2lhbCBjYXNlIGhhbmRsaW5nLCBidXQKPiBk
-ZW1vbnN0cmF0ZXMgdGhlIGlkZWEuICBXZSdkIGFwcHJlY2lhdGUgYW55IGZlZWRiYWNrIG9uIHdo
-ZXRoZXIgaXQncyBhIHZpYWJsZQo+IGFwcHJvYWNoIG9yIGl0IHNob3VsZCBiZXR0ZXIgYmUgYWJh
-bmRvbmVkIGluIGZhdm9yIG9mIHRoZSBvbmUgd2l0aCBkZWRpY2F0ZWQKPiBQR0QgLyBrZXJuZWwg
-YWRkcmVzcyByYW5nZSBvciB5ZXQgc29tZXRoaW5nIGVsc2UuCj4KPiBbMV0gaHR0cHM6Ly9sb3Jl
-Lmtlcm5lbC5vcmcvbGttbC8yMDE5MDYxMjE3MDgzNC4xNDg1NS0xLW1oaWxsZW5iQGFtYXpvbi5k
-ZS8KCgpJIGhhdmVuJ3Qgc2VlbiBhbnkgbmVnYXRpdmUgZmVlZGJhY2sgb24gdGhlIFJGQywgc28g
-d2hlbiBjYW4gSSBleHBlY3QgYSAKdjEgb2YgdGhpcyBwYXRjaCBzZXQgdGhhdCBhZGRyZXNzZXMg
-dGhlIG5vbi1wcm9kdWN0aW9uLXJlYWR5bmVzcyBvZiBpdCAKdGhhdCB5b3UgY2FsbCBvdXQgYWJv
-dmU/IDopCgoKQWxleAoKCgoKQW1hem9uIFdlYiBTZXJ2aWNlcyBEZXZlbG9wbWVudCBDZW50ZXIg
-R2VybWFueSBHbWJICktyYXVzZW5zdHIuIDM4CjEwMTE3IEJlcmxpbgpHZXNjaGFlZnRzZnVlaHJ1
-bmc6IENocmlzdGlhbiBTY2hsYWVnZXIsIEpvbmF0aGFuIFdlaXNzCkVpbmdldHJhZ2VuIGFtIEFt
-dHNnZXJpY2h0IENoYXJsb3R0ZW5idXJnIHVudGVyIEhSQiAyNTc3NjQgQgpTaXR6OiBCZXJsaW4K
-VXN0LUlEOiBERSAzNjUgNTM4IDU5Nwo=
+This series aims at improving the fs_enet code and port it's PHY
+handling from direct phylib access to using phylink instead.
+
+Although this driver is quite old, there are still some users out there,
+running an upstream kernel. The development I'm doing is on an MPC885
+device, which uses fs_enet, as well as a MPC866-based device.
+
+The main motivation for that work is to eventually support ethernet interfaces
+that have more than one PHY attached to the MAC upstream, for which
+phylink might be a pre-requisite. That work isn't submitted yet, and the
+final solution might not even require phylink.
+
+Regardless, I do believe that this series is relevant, as it does some
+cleanup to the driver, and having it use phylink brings some nice
+improvements as it simplifies the DT parsing, fixed-link handling and
+removes code in that driver that predates even phylib itself.
+
+The series is structured in the following way :
+
+- Patches 1 and 2 are cosmetic changes. The former converts the source
+  to SPDX, while the latter has fs_enet-main.c pass checkpatch. Patch 2 is
+  really not mandatory in this series, and I understand that this isn't
+  the easiest or most pleasant patch to review. OTOH, this allows
+  getting a clean checkpatch output for the main part of the driver.
+
+- Patches 3, 4 and 5 drop some leftovers from back when the driver didn't
+  use phylib, and brings the use of phylib macros.
+
+- Patch 6 is the actual phylink port, which also cleans the bits of code
+  that become irrelevant when using phylink.
+
+Testing was done on an MPC866 and MPC885, any test on other platforms
+that use fs_enet are more than welcome.
+
+Thanks,
+
+Maxime
+
+Maxime Chevallier (6):
+  net: ethernet: fs_enet: convert to SPDX
+  net: ethernet: fs_enet: cosmetic cleanups
+  net: ethernet: fs_enet: drop the .adjust_link custom fs_ops
+  net: ethernet: fs_enet: drop unused phy_info and mii_if_info
+  net: ethernet: fs_enet: fcc: use macros for speed and duplex values
+  net: ethernet: fs_enet: phylink conversion
+
+ .../net/ethernet/freescale/fs_enet/Kconfig    |   2 +-
+ .../ethernet/freescale/fs_enet/fs_enet-main.c | 421 ++++++++----------
+ .../net/ethernet/freescale/fs_enet/fs_enet.h  |  24 +-
+ .../net/ethernet/freescale/fs_enet/mac-fcc.c  |  16 +-
+ .../net/ethernet/freescale/fs_enet/mac-fec.c  |  14 +-
+ .../net/ethernet/freescale/fs_enet/mac-scc.c  |  10 +-
+ .../ethernet/freescale/fs_enet/mii-bitbang.c  |   5 +-
+ .../net/ethernet/freescale/fs_enet/mii-fec.c  |   5 +-
+ 8 files changed, 209 insertions(+), 288 deletions(-)
+
+-- 
+2.45.2
 
 
