@@ -1,221 +1,162 @@
-Return-Path: <linux-kernel+bounces-305205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08066962B00
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:02:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DE4B962B05
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C8941C2363D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:02:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC9AB1F25418
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D241119FA94;
-	Wed, 28 Aug 2024 15:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E131A2567;
+	Wed, 28 Aug 2024 15:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VYzLPD28"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=kutsevol-com.20230601.gappssmtp.com header.i=@kutsevol-com.20230601.gappssmtp.com header.b="2Z2velI/"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745C917C9AF;
-	Wed, 28 Aug 2024 15:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFB41A2554
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724857332; cv=none; b=qtkY3k1m3sXYuNjlMaF1QJI1HgXZFi+V9CiwmGcLH74vw2r5s/MR/oX6neVr51bddGM/or9boipNfi+RtqmiBsgVSHwaBaLLfJFogWJ5B7fbkP8Sk24oekdtQ36FFn9+Bsvgyuy8Q6UxzWW1SokgdX5YpTYiBSFlqRoUeNUZh9g=
+	t=1724857404; cv=none; b=jfWDn1+zqELwG+eEJhXdZS0sMONLWN9G+Z/xOQq95ky/08xvsJZ8vnVsVxci1tlYAXvIb51raGseJkOmSVaeqK0vRv3+muEOCo8YvEqNokgVr1dhWJiN4sSLpARZ3i1t7+fbD1L2WS6pcMPRt4IUJFtzuPqZSxKlHLIIEoFTEDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724857332; c=relaxed/simple;
-	bh=+C5Ir0kofCaMx4UpFydW1CbwaTLDRckemtDzjSxoIW0=;
+	s=arc-20240116; t=1724857404; c=relaxed/simple;
+	bh=gZJvAwS84XG2gWnkUBtlpWa9JrbHPHI1F7UydNFtnGE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SkQBn0zhUpe0W9PxLGk+hVsMcZ1lDejZrFxSkY8/v7AP7ZqDDHq6yqX5xckldFPig/Ov0qgvzDDp6exlkvSwZ1bLhjlKnUahUOXOMhaT6WVhpwJvsr+GKF/lXoWzKiRd/MYfuYoOekqABaUPv6818Cjl4L25rlcAvZzk4w++6h0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VYzLPD28; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2d5f5d8cc01so563860a91.0;
-        Wed, 28 Aug 2024 08:02:10 -0700 (PDT)
+	 To:Cc:Content-Type; b=ug5z6+VNX443i+Kn+pcS+htbHyK7eWhCLojr8xZR5TfH+47mpoXaI4MWUy+stySHF3x940pojbrqM2bj2rGLYroPcpx2HNHFxc4gskubHVp2pEHa5w4XT45IqspOPk6aNag1T4E5tIqp93nzLb0J2szeqbrBfZLzXcOr5tsO1Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kutsevol.com; spf=none smtp.mailfrom=kutsevol.com; dkim=pass (2048-bit key) header.d=kutsevol-com.20230601.gappssmtp.com header.i=@kutsevol-com.20230601.gappssmtp.com header.b=2Z2velI/; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kutsevol.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kutsevol.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-451b7e1d157so35842871cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 08:03:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724857330; x=1725462130; darn=vger.kernel.org;
+        d=kutsevol-com.20230601.gappssmtp.com; s=20230601; t=1724857401; x=1725462201; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2T684eJY5uaT2GoNJQao8Ux/8bEW4DFpDBArVLTN0ng=;
-        b=VYzLPD28b98jg3JgtPrrvO7ljh3gaQakBPOgpWfyJyKYZ5oHz2czCW+K1ZwCQL829U
-         93lVaftfKHUnQFmlesdYiKRxYFgemO5DHHYcTpqi23NvJG86W3hYLD9GOV2jXpTx+8R7
-         8vYzRN9OnpeSoGDyt71E3DDDbGZbEhbrAYYXyjLDbLUTxUt436n1RjTjHLvk0TQ2gv8g
-         SDCvZ+GKNHc9Ed6rUmUVQVmGWHAY5IqByBnRkg/x8hdWR+AeBc/phEuZ6bOs6/gPTqkq
-         AXmcg2atsQ+M96Kn+37NNLXEkHuQJpKbsNhVOdTvnx7z9+THXBJyGRhllzPQZUw7Izmv
-         tiew==
+        bh=eirJb6fPtSkbDJD3rUL81XHybmkCT08yqrb3byO7jZo=;
+        b=2Z2velI/nr/n2+3LWssr/eveZxKwkdLFd2P6W1RvkXvVA4G201zWoY8TZeX6ldWIac
+         fs6JcLmNabEgNAjyFZuEFW8VU40zvZcemdCr1ivQ6QHBTYPa+/b3piy7jhk+btH0hn8E
+         f0ovsDvF7IMfXpMwhEkrY1vaoYh5FZ+fzmJ/y7iNmNQWms+ml1drv3DebZqh1d2IGYRd
+         0OWNxIrCBKIlN9RBwboxIYDnKv1P06wZ7UoC1ttfkbvAS+QH8TDUjtHYGbMfrx22Ntmg
+         Vfk5ChCwaPPUkSP0mSGJ6S8OaFQ7jhJqU+LqWuX7ueaZuXCOE2wp3HuTIQhzPMSrAorz
+         S6qA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724857330; x=1725462130;
+        d=1e100.net; s=20230601; t=1724857401; x=1725462201;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2T684eJY5uaT2GoNJQao8Ux/8bEW4DFpDBArVLTN0ng=;
-        b=ETuQGnY6PosSqNL8/rXrqfz8hD2RenxQdvWeJAaB9UornbIjX+vs1/jjsBfYpP9tjj
-         H5amniApPM7eTR5c5+sq4Sq4emIbXkNZn0yEFnYZiVdx3w+ExslZiGmyV5HCk6LwGahC
-         nZQVXW+6GReaX5XVsmwJpsWeFF7lgyTqLB5fmyjacGRGr//n1sD+RnG5HN7JAlJnW4Tw
-         L9GXDXOsGuJnTzZ4MqFkiwOPahcML57oieNFf2uO5JjdkZi2FvcqzPD1Q0e0MmTVT3Ml
-         2UApp+04CAahDuXYzmBKhnhdL4Azqga8xd8sBM7lV7QbXV07F07R4BYj9gvFnhf0OCL7
-         Mv6A==
-X-Forwarded-Encrypted: i=1; AJvYcCXK8kFBrCWCC++cRR4YjtbPMcRv8Txxby3A1UUdLSZghUMvccol+eMu8vawTd4ZT1zb+T7QDIMcpyc9cz4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMs5FL2xN31P+sCzy3oluYn+DrhywE/Jg5xp8vQo3hHytdy3zT
-	hNTrDhdxhtim5B3pAcQPdHVFRXhs7d3bqh7mUQ2+et60FrUePTt1JJVisjAazyMN0Cri0iWkr0y
-	EkquuQ4nO8SM7gWKp92kQeC3M6F4=
-X-Google-Smtp-Source: AGHT+IF7bNTPR1qyKoYtr4W+dmqFvYBuHOT06w+IqX5vqDvi6m7zgZ+Ib4Beyv/qmB8HmkrdfHIOYz2dLy3spp+c14A=
-X-Received: by 2002:a17:90a:644c:b0:2c9:90fa:b9f8 with SMTP id
- 98e67ed59e1d1-2d843d6f66dmr3633644a91.10.1724857329540; Wed, 28 Aug 2024
- 08:02:09 -0700 (PDT)
+        bh=eirJb6fPtSkbDJD3rUL81XHybmkCT08yqrb3byO7jZo=;
+        b=gQSfol2koXXA3hRW7fAgbeKXR/ChmuhbgsTgFTKxNeX/FQZAW8ON+XQKmvuOriE0YK
+         sO0LPhQGF8zMCgoR0ySizeaCZ7k1370OLPH8cq+jwhMzE/WtL/JMJnXVdBxn4fyi2j1u
+         SiiWMoEpL9JWK7FR2lTfyMqmlmn3mtw5ddGTRPc4m+0rd74604OPbf2lB/bQRd04HV5e
+         87hYuBOEGG95gvTxWPZXEpaMmIl7LDTCfUZ701DU+aYn2ESQ72PI3WKUP1XSfC5J2Wqk
+         K5yqzz+svSJuV12VmHi/BkRGS+4GhM8p4CYVrV529N6K06/+e2Y+UX62crf3WjPrtB2o
+         TUww==
+X-Forwarded-Encrypted: i=1; AJvYcCUSGSszXVPPlgfWzxqHr3ZVDH8EVYCkqBWzMju17W1UY+yvmQehXa1kyYkrTm/Ybqij6z5ll1eJ0oKF48A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdQtFUDvHMFLq46pHmt8nDiax2AZeGg+iYuUAE6ZIXHPGfvuxY
+	b5JJPyFBSFM6+0Eovkjc/bpE//LL54OGdZwlw/z/DgpRCPMDzQEfkqxzmJrn8KYAjZ3P4a7fSTd
+	+OClmesoT2QLkpv3qrOoijVLzU4VXp6ebW/6hMA==
+X-Google-Smtp-Source: AGHT+IEBiMD+hxI9m00tkhRtoece2YbpN+qgRSgRalfCt3sYMacWDcmWzugzUHSrxMs1y3oNGI+hqbq4OJVjaY2tpoY=
+X-Received: by 2002:a05:622a:244b:b0:43f:fc16:6b3f with SMTP id
+ d75a77b69052e-4566e62bffdmr24486521cf.34.1724857400716; Wed, 28 Aug 2024
+ 08:03:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240722-a306a-v3-1-cff90857c615@gmail.com>
-In-Reply-To: <20240722-a306a-v3-1-cff90857c615@gmail.com>
-From: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>
-Date: Wed, 28 Aug 2024 17:01:58 +0200
-Message-ID: <CAGsSOWUO=+LE6Xat61yoE9u9TTAdpAEXo9ECvkAw9Cbyw_AZ8A@mail.gmail.com>
-Subject: Re: [PATCH v3] drm/msm/adreno: Add A306A support
-To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	=?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
+References: <20240824215130.2134153-1-max@kutsevol.com> <20240824215130.2134153-2-max@kutsevol.com>
+ <20240826143546.77669b47@kernel.org> <CAO6EAnX0gqnDOxw5OZ7xT=3FMYoh0ELU5CTnsa6JtUxn0jX51Q@mail.gmail.com>
+ <20240827065938.6b6d3767@kernel.org>
+In-Reply-To: <20240827065938.6b6d3767@kernel.org>
+From: Maksym Kutsevol <max@kutsevol.com>
+Date: Wed, 28 Aug 2024 11:03:09 -0400
+Message-ID: <CAO6EAnUPrLZzDzm6KJDaej=S4La_z01RHX2WZa3R1wTjPc09RQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] netcons: Add udp send fail statistics to netconsole
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Breno Leitao <leitao@debian.org>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-I hope it was not forgotten or am I missing something?
+Hey Jakub,
+thanks for looking into this.
 
-On Mon, Jul 22, 2024 at 4:58=E2=80=AFPM Barnab=C3=A1s Cz=C3=A9m=C3=A1n <tra=
-barni@gmail.com> wrote:
+PS. A couple more email send mistakes and I'll go install mutt, sorry
+for the noise :)
+
+On Tue, Aug 27, 2024 at 9:59=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
 >
-> From: Otto Pfl=C3=BCger <otto.pflueger@abscue.de>
+> On Mon, 26 Aug 2024 19:55:36 -0400 Maksym Kutsevol wrote:
+> > > > +static ssize_t stats_show(struct config_item *item, char *buf)
+> > > > +{
+> > > > +     struct netconsole_target *nt =3D to_target(item);
+> > > > +
+> > > > +     return
+> > > > +             nt->stats.xmit_drop_count, nt->stats.enomem_count);
+> > >
+> > > does configfs require value per file like sysfs or this is okay?
+> >
+> > Docs say (Documentation/filesystems/sysfs.txt):
+> >
+> > Attributes should be ASCII text files, preferably with only one value
+> > per file. It is noted that it may not be efficient to contain only one
+> > value per file, so it is socially acceptable to express an array of
+> > values of the same type.
 >
-> Add support for Adreno 306A GPU what is found in MSM8917 SoC.
-> This GPU marketing name is Adreno 308.
+> Right, but this is for sysfs, main question is whether configfs has
+> the same expectations.
+Eh, my bad, thank you :)
+
+Docs on configfs (Documentation/filesystems/configfs.rst) say approximately
+the same, quote:
+* Normal attributes, which similar to sysfs attributes, are small ASCII tex=
+t
+  files, with a maximum size of one page (PAGE_SIZE, 4096 on i386).  Prefer=
+ably
+  only one value per file should be used, and the same caveats from sysfs a=
+pply.
+  Configfs expects write(2) to store the entire buffer at once.  When writi=
+ng to
+  normal configfs attributes, userspace processes should first read the ent=
+ire
+  file, modify the portions they wish to change, and then write the entire
+  buffer back.
+
+so based on sysfs+configfs docs it looks ok to do so. What do you think?
+
+Regarding the overall idea of exposing stats via configfs I found this:
+https://github.com/torvalds/linux/blob/master/drivers/target/iscsi/iscsi_ta=
+rget_stat.c#L82-L87
+as an example of another place doing it, which exposes the number of
+active sessions.
+
+> > Given those are of the same type, I thought it's ok. To make it less
+> > "fancy" maybe move to
+> > just values separated by whitespace + a block in
+> > Documentation/networking/netconsole.rst describing the format?
+> > E.g. sysfs_emit(buf, "%lu %lu\n", .....) ? I really don't want to have
+> > multiple files for it.
+> > What do you think?
 >
-> Signed-off-by: Otto Pfl=C3=BCger <otto.pflueger@abscue.de>
-> [use internal name of the GPU, reword the commit message]
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <trabarni@gmail.com>
-> ---
-> Changes in v3:
-> - Fix issues addressed by reviews.
-> - Rebase on latest next.
-> - Link to v2: https://lore.kernel.org/r/20240620-a306a-v2-1-0d388e1deebf@=
-gmail.com
->
-> Changes in v2:
-> - Rebase on https://patchwork.freedesktop.org/series/127393/
-> - Link to v1: https://lore.kernel.org/r/20240528-a306a-v1-1-03a66dacd8c7@=
-gmail.com
-> ---
->  drivers/gpu/drm/msm/adreno/a3xx_catalog.c | 11 +++++++++++
->  drivers/gpu/drm/msm/adreno/a3xx_gpu.c     | 14 +++++++++++---
->  drivers/gpu/drm/msm/adreno/adreno_gpu.h   |  6 ++++++
->  3 files changed, 28 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/msm/adreno/a3xx_catalog.c b/drivers/gpu/drm/=
-msm/adreno/a3xx_catalog.c
-> index 0de8465b6cf0..2eb6c3e93748 100644
-> --- a/drivers/gpu/drm/msm/adreno/a3xx_catalog.c
-> +++ b/drivers/gpu/drm/msm/adreno/a3xx_catalog.c
-> @@ -41,6 +41,17 @@ static const struct adreno_info a3xx_gpus[] =3D {
->                 .gmem  =3D SZ_128K,
->                 .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
->                 .init  =3D a3xx_gpu_init,
-> +       }, {
-> +               .chip_ids =3D ADRENO_CHIP_IDS(0x03000620),
-> +               .family =3D ADRENO_3XX,
-> +               .revn =3D 308,
-> +               .fw =3D {
-> +                       [ADRENO_FW_PM4] =3D "a300_pm4.fw",
-> +                       [ADRENO_FW_PFP] =3D "a300_pfp.fw",
-> +               },
-> +               .gmem =3D SZ_128K,
-> +               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
-> +               .init =3D a3xx_gpu_init,
->         }, {
->                 .chip_ids =3D ADRENO_CHIP_IDS(
->                         0x03020000,
-> diff --git a/drivers/gpu/drm/msm/adreno/a3xx_gpu.c b/drivers/gpu/drm/msm/=
-adreno/a3xx_gpu.c
-> index 5273dc849838..b46ff49f47cf 100644
-> --- a/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
-> @@ -145,6 +145,10 @@ static int a3xx_hw_init(struct msm_gpu *gpu)
->                 gpu_write(gpu, REG_A3XX_VBIF_ROUND_ROBIN_QOS_ARB, 0x0003)=
-;
->                 gpu_write(gpu, REG_A3XX_VBIF_OUT_RD_LIM_CONF0, 0x0000000a=
-);
->                 gpu_write(gpu, REG_A3XX_VBIF_OUT_WR_LIM_CONF0, 0x0000000a=
-);
-> +       } else if (adreno_is_a306a(adreno_gpu)) {
-> +               gpu_write(gpu, REG_A3XX_VBIF_ROUND_ROBIN_QOS_ARB, 0x0003)=
-;
-> +               gpu_write(gpu, REG_A3XX_VBIF_OUT_RD_LIM_CONF0, 0x00000010=
-);
-> +               gpu_write(gpu, REG_A3XX_VBIF_OUT_WR_LIM_CONF0, 0x00000010=
-);
->         } else if (adreno_is_a320(adreno_gpu)) {
->                 /* Set up 16 deep read/write request queues: */
->                 gpu_write(gpu, REG_A3XX_VBIF_IN_RD_LIM_CONF0, 0x10101010)=
-;
-> @@ -237,7 +241,9 @@ static int a3xx_hw_init(struct msm_gpu *gpu)
->         gpu_write(gpu, REG_A3XX_UCHE_CACHE_MODE_CONTROL_REG, 0x00000001);
->
->         /* Enable Clock gating: */
-> -       if (adreno_is_a305b(adreno_gpu) || adreno_is_a306(adreno_gpu))
-> +       if (adreno_is_a305b(adreno_gpu) ||
-> +           adreno_is_a306(adreno_gpu) ||
-> +           adreno_is_a306a(adreno_gpu))
->                 gpu_write(gpu, REG_A3XX_RBBM_CLOCK_CTL, 0xaaaaaaaa);
->         else if (adreno_is_a320(adreno_gpu))
->                 gpu_write(gpu, REG_A3XX_RBBM_CLOCK_CTL, 0xbfffffff);
-> @@ -334,8 +340,10 @@ static int a3xx_hw_init(struct msm_gpu *gpu)
->                 gpu_write(gpu, REG_A3XX_CP_PFP_UCODE_DATA, ptr[i]);
->
->         /* CP ROQ queue sizes (bytes) - RB:16, ST:16, IB1:32, IB2:64 */
-> -       if (adreno_is_a305(adreno_gpu) || adreno_is_a306(adreno_gpu) ||
-> -                       adreno_is_a320(adreno_gpu)) {
-> +       if (adreno_is_a305(adreno_gpu) ||
-> +           adreno_is_a306(adreno_gpu) ||
-> +           adreno_is_a306a(adreno_gpu) ||
-> +           adreno_is_a320(adreno_gpu)) {
->                 gpu_write(gpu, REG_AXXX_CP_QUEUE_THRESHOLDS,
->                                 AXXX_CP_QUEUE_THRESHOLDS_CSQ_IB1_START(2)=
- |
->                                 AXXX_CP_QUEUE_THRESHOLDS_CSQ_IB2_START(6)=
- |
-> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/ms=
-m/adreno/adreno_gpu.h
-> index 1ab523a163a0..c3b7970c2bfa 100644
-> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> @@ -294,6 +294,12 @@ static inline bool adreno_is_a306(const struct adren=
-o_gpu *gpu)
->         return adreno_is_revn(gpu, 307);
->  }
->
-> +static inline bool adreno_is_a306a(const struct adreno_gpu *gpu)
-> +{
-> +       /* a306a (marketing name is a308) */
-> +       return adreno_is_revn(gpu, 308);
-> +}
-> +
->  static inline bool adreno_is_a320(const struct adreno_gpu *gpu)
->  {
->         return adreno_is_revn(gpu, 320);
->
-> ---
-> base-commit: dee7f101b64219f512bb2f842227bd04c14efe30
-> change-id: 20240528-a306a-48e173724d6c
->
-> Best regards,
-> --
-> Barnab=C3=A1s Cz=C3=A9m=C3=A1n <trabarni@gmail.com>
->
+> Stats as an array are quite hard to read / understand
+I agree with that.
+I couldn't find examples of multiple values exported as stats from
+configfs. Only from sysfs,
+e.g. https://www.kernel.org/doc/Documentation/block/stat.txt, which
+describes a whitespace
+separated file with stats.
+
+I want to lean on the opinion of someone more experienced in kernel
+dev on how to proceed here.
+- as is
+- whitespace separated like blockdev stats
+- multiple files and stop talking about it? :)
 
