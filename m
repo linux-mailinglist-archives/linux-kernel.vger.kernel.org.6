@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-304193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FA5F961BA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 03:58:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D168961BA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 03:59:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8971BB226E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 01:58:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4494F1F2108C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 01:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D7E42A8F;
-	Wed, 28 Aug 2024 01:58:39 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0A84437A;
+	Wed, 28 Aug 2024 01:59:11 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4755E1B5AA;
-	Wed, 28 Aug 2024 01:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25BA381C2;
+	Wed, 28 Aug 2024 01:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724810319; cv=none; b=PxoX2s6/sPi+RFC3yD8Qk4M4HAsUE6ofpaRvaaCRcC8EZ9CXUsYLvzY5rfDfMaIYSHxpckmJy0o7mQMnMfpXTF7xAo+QL91PVaY5dM/grhKkjMOM0uUha5nLmCZOHvKQg9zeobFOgI7YPrSR2vsUtMpLOWoBFC19K6MgGMDtZSU=
+	t=1724810350; cv=none; b=CNtYgA4soOom4YfRsviAoKpUgjkHbD1npTWGWmz368xwJhr4ckWRNnRM2LN36vRVJrzdPibJkzGN5TkHOSdPWB7QafjkXMRA6ZSWiFlfwfK+22gbKHp445JNhJ+YJ1xdUFXNOIgT3DWEBSxdcusQtGA9qD1I6/X5e71pZnppeWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724810319; c=relaxed/simple;
-	bh=+9iG2Bdhc9Wd8PpUBy/yYjGb7Hb4joMYU5NDCiSDL38=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=PDD69C2r7nY1EQvIxtzgfUaztbApygHhACqMygG6xN4Is00LloOp0zwMTkKRc5/6RNCwwRY2jxDM+gKSew5Vd3lYXCdo9k0C+nrFU4bxJXoCVsKQwBcMsWK5NQ3+YZ6B4NQuaZ2yNzXcLrp6meIKwijqQSd81Q9evbeshisXZnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+	s=arc-20240116; t=1724810350; c=relaxed/simple;
+	bh=QyRuj8Nm/mbXT0Sw4sPv6wypvA1tLwBqlNFwNq32mFY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pm3Q5ee0LyQyC6+AvW/m1tf2TPWL5fYS2hiEhCu0jS3JnIHHBB/4eBQdsdeeM7Uk6GiB1S3GxA1Vj65I56kClKfIcRPRfIDlkFSaHQfklCxc4sPoKi5Y158MqMfqYWtImPEPSzhuDxDerRhEL1w1ddI0Qm2oFOuCRNEyZoVQRuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WtnZq5xBbz1xty0;
-	Wed, 28 Aug 2024 09:56:35 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WtnYt3qjFz1HHbh;
+	Wed, 28 Aug 2024 09:55:46 +0800 (CST)
 Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4E261140135;
-	Wed, 28 Aug 2024 09:58:33 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id DA27F1A016C;
+	Wed, 28 Aug 2024 09:59:05 +0800 (CST)
 Received: from [10.67.109.254] (10.67.109.254) by
  kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 28 Aug 2024 09:58:32 +0800
-Message-ID: <97ff8c02-1a97-7974-06fa-edb35437707d@huawei.com>
-Date: Wed, 28 Aug 2024 09:58:13 +0800
+ 15.2.1544.11; Wed, 28 Aug 2024 09:59:04 +0800
+Message-ID: <d17ad357-773f-84de-e408-25d5d3b372ef@huawei.com>
+Date: Wed, 28 Aug 2024 09:59:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,156 +48,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.2.0
-Subject: Re: [PATCH -next 2/8] soc: fsl: cpm1: Simplify with dev_err_probe()
-To: Krzysztof Kozlowski <krzk@kernel.org>, <andrew@lunn.ch>,
-	<sebastian.hesselbarth@gmail.com>, <gregory.clement@bootlin.com>,
-	<herve.codina@bootlin.com>, <qiang.zhao@nxp.com>,
-	<christophe.leroy@csgroup.eu>, <thierry.reding@gmail.com>,
-	<jonathanh@nvidia.com>, <nm@ti.com>, <ssantosh@kernel.org>,
-	<petlozup@nvidia.com>, <pshete@nvidia.com>, <christophe.jaillet@wanadoo.fr>,
-	<ulf.hansson@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-tegra@vger.kernel.org>, <jic23@kernel.org>
-References: <20240827114607.4019972-1-ruanjinjie@huawei.com>
- <20240827114607.4019972-3-ruanjinjie@huawei.com>
- <87abe3f1-3cf2-4331-8dde-a422716dd94a@kernel.org>
+Subject: Re: [PATCH -next 0/7] net: Simplified with scoped function
 Content-Language: en-US
+To: Andrew Lunn <andrew@lunn.ch>
+CC: <woojung.huh@microchip.com>, <f.fainelli@gmail.com>, <olteanv@gmail.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <linus.walleij@linaro.org>, <alsi@bang-olufsen.dk>,
+	<justin.chen@broadcom.com>, <sebastian.hesselbarth@gmail.com>,
+	<alexandre.torgue@foss.st.com>, <joabreu@synopsys.com>,
+	<mcoquelin.stm32@gmail.com>, <wens@csie.org>, <jernej.skrabec@gmail.com>,
+	<samuel@sholland.org>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<ansuelsmth@gmail.com>, <UNGLinuxDriver@microchip.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
+	<linux-stm32@st-md-mailman.stormreply.com>, <krzk@kernel.org>,
+	<jic23@kernel.org>
+References: <20240827075219.3793198-1-ruanjinjie@huawei.com>
+ <a5e18595-ede9-4a02-8aa5-a270d7d7a5d6@lunn.ch>
 From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <87abe3f1-3cf2-4331-8dde-a422716dd94a@kernel.org>
+In-Reply-To: <a5e18595-ede9-4a02-8aa5-a270d7d7a5d6@lunn.ch>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
  kwepemh500013.china.huawei.com (7.202.181.146)
 
 
 
-On 2024/8/27 21:50, Krzysztof Kozlowski wrote:
-> On 27/08/2024 13:46, Jinjie Ruan wrote:
->> Use the dev_err_probe() helper to simplify error handling during probe.
->> This also handle scenario, when EDEFER is returned and useless error
->> is printed.
+On 2024/8/27 20:44, Andrew Lunn wrote:
+> On Tue, Aug 27, 2024 at 03:52:12PM +0800, Jinjie Ruan wrote:
+>> Simplify with scoped for each OF child loop and __free().
 > 
-> ? Sorry, this cannot happen. Please point to below code which can defer.
-> 
+> The Subject: should be [PATCH net-next], not -next. The CI looks at
+> this to decide which tree it belongs to. It issues a warning because
+> what you used does not match anything.
 
-Thank you!
+Thank you! I'll fix it.
 
-This is not referring to a specific one, but rather the benefits it
-offers，simplify code is the main purpose, if necessary, it will be
-removed in next version.
-
->>
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> ---
->>  drivers/soc/fsl/qe/tsa.c | 62 +++++++++++++++-------------------------
->>  1 file changed, 23 insertions(+), 39 deletions(-)
->>
->> diff --git a/drivers/soc/fsl/qe/tsa.c b/drivers/soc/fsl/qe/tsa.c
->> index 7fa399b7a47c..fc37d23b746d 100644
->> --- a/drivers/soc/fsl/qe/tsa.c
->> +++ b/drivers/soc/fsl/qe/tsa.c
->> @@ -453,10 +453,8 @@ static int tsa_of_parse_tdms(struct tsa *tsa, struct device_node *np)
->>  
->>  	for_each_available_child_of_node_scoped(np, tdm_np) {
->>  		ret = of_property_read_u32(tdm_np, "reg", &tdm_id);
->> -		if (ret) {
->> -			dev_err(tsa->dev, "%pOF: failed to read reg\n", tdm_np);
->> -			return ret;
->> -		}
->> +		if (ret)
->> +			return dev_err_probe(tsa->dev, ret, "%pOF: failed to read reg\n", tdm_np);
->>  		switch (tdm_id) {
->>  		case 0:
->>  			tsa->tdms |= BIT(TSA_TDMA);
->> @@ -465,18 +463,15 @@ static int tsa_of_parse_tdms(struct tsa *tsa, struct device_node *np)
->>  			tsa->tdms |= BIT(TSA_TDMB);
->>  			break;
->>  		default:
->> -			dev_err(tsa->dev, "%pOF: Invalid tdm_id (%u)\n", tdm_np,
->> -				tdm_id);
->> -			return -EINVAL;
->> +			return dev_err_probe(tsa->dev, -EINVAL, "%pOF: Invalid tdm_id (%u)\n",
->> +					     tdm_np, tdm_id);
->>  		}
->>  	}
->>  
->>  	for_each_available_child_of_node_scoped(np, tdm_np) {
->>  		ret = of_property_read_u32(tdm_np, "reg", &tdm_id);
->> -		if (ret) {
->> -			dev_err(tsa->dev, "%pOF: failed to read reg\n", tdm_np);
->> -			return ret;
->> -		}
->> +		if (ret)
->> +			return dev_err_probe(tsa->dev, ret, "%pOF: failed to read reg\n", tdm_np);
->>  
->>  		tdm = &tsa->tdm[tdm_id];
->>  		tdm->simode_tdm = TSA_SIMODE_TDM_SDM_NORM;
->> @@ -484,35 +479,26 @@ static int tsa_of_parse_tdms(struct tsa *tsa, struct device_node *np)
->>  		val = 0;
->>  		ret = of_property_read_u32(tdm_np, "fsl,rx-frame-sync-delay-bits",
->>  					   &val);
->> -		if (ret && ret != -EINVAL) {
->> -			dev_err(tsa->dev,
->> -				"%pOF: failed to read fsl,rx-frame-sync-delay-bits\n",
->> -				tdm_np);
->> -			return ret;
->> -		}
->> -		if (val > 3) {
->> -			dev_err(tsa->dev,
->> -				"%pOF: Invalid fsl,rx-frame-sync-delay-bits (%u)\n",
->> -				tdm_np, val);
->> -			return -EINVAL;
->> -		}
->> +		if (ret && ret != -EINVAL)
->> +			return dev_err_probe(tsa->dev, ret,
->> +					     "%pOF: failed to read fsl,rx-frame-sync-delay-bits\n",
->> +					     tdm_np);
->> +		if (val > 3)
->> +			return dev_err_probe(tsa->dev, -EINVAL,
->> +					     "%pOF: Invalid fsl,rx-frame-sync-delay-bits (%u)\n",
->> +					     tdm_np, val);
->>  		tdm->simode_tdm |= TSA_SIMODE_TDM_RFSD(val);
->>  
->>  		val = 0;
->>  		ret = of_property_read_u32(tdm_np, "fsl,tx-frame-sync-delay-bits",
->>  					   &val);
->> -		if (ret && ret != -EINVAL) {
->> -			dev_err(tsa->dev,
->> -				"%pOF: failed to read fsl,tx-frame-sync-delay-bits\n",
->> -				tdm_np);
->> -			return ret;
->> -		}
->> -		if (val > 3) {
->> -			dev_err(tsa->dev,
->> -				"%pOF: Invalid fsl,tx-frame-sync-delay-bits (%u)\n",
->> -				tdm_np, val);
->> -			return -EINVAL;
->> -		}
->> +		if (ret && ret != -EINVAL)
->> +			return dev_err_probe(tsa->dev, ret,
->> +				"%pOF: failed to read fsl,tx-frame-sync-delay-bits\n", tdm_np);
->> +		if (val > 3)
->> +			return dev_err_probe(tsa->dev, -EINVAL,
->> +					     "%pOF: Invalid fsl,tx-frame-sync-delay-bits (%u)\n",
->> +					     tdm_np, val);
->>  		tdm->simode_tdm |= TSA_SIMODE_TDM_TFSD(val);
->>  
->>  		if (of_property_read_bool(tdm_np, "fsl,common-rxtx-pins"))
->> @@ -645,10 +631,8 @@ static int tsa_probe(struct platform_device *pdev)
->>  		return PTR_ERR(tsa->si_regs);
->>  
->>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "si_ram");
->> -	if (!res) {
->> -		dev_err(tsa->dev, "si_ram resource missing\n");
->> -		return -EINVAL;
->> -	}
->> +	if (!res)
->> +		return dev_err_probe(tsa->dev, -EINVAL, "si_ram resource missing\n");
->>  	tsa->si_ram_sz = resource_size(res);
->>  	tsa->si_ram = devm_ioremap_resource(&pdev->dev, res);
->>  	if (IS_ERR(tsa->si_ram))
 > 
-> Best regards,
-> Krzysztof
-> 
+> 	Andrew
 
