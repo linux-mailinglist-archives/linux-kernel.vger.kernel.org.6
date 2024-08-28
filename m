@@ -1,82 +1,114 @@
-Return-Path: <linux-kernel+bounces-304463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A94AD96206D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:14:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66DBA9620E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C5841F2481A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:14:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 904361C233E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41CA5158A04;
-	Wed, 28 Aug 2024 07:14:30 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ADD815AAC6;
+	Wed, 28 Aug 2024 07:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hFhSWA/U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB10328DB
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79225328DB;
+	Wed, 28 Aug 2024 07:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724829269; cv=none; b=SEMRocWzxkf43etbES2dHipIbcH45/7wjExu0NJiNZb1Hlo4I3bfRLU2Kjp0PGBsynktrs89wlzVO0j7QYFdFBKYvVn7iiZV9v8LPpFVgSy4WmLp93KC39Ccv/cc9qt21JDkQ/ZICvoWVYBh/mNaVzyORAFkjdkNEQ2bd62DgEk=
+	t=1724829772; cv=none; b=mUVXBbLmESgac9SaBI4MSknmnlAtn5f7okGcR8I2ho+GKv3hUYaiT/L+WxTXFiu1y2w1A1Y+X9sG7b0YhGV6SVh33xf6QfAXLePr/uPn4g1oyngFChXjnBbTJvB6vaI6Y7R/dcgju9ThJGMnkCTe/KSkZSpkbYMXOCO0ane1gKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724829269; c=relaxed/simple;
-	bh=MLxsYjshGA9NSvX977x358JfgU4Vpz9sQSh1uAlc+3s=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HhkEw5JhcIxjp37ZSBj8gVykSWjBwmN0h1PHLgLXXRJt4ZCZ9Q5NOqPCw+we0JdZYH/tl5KY+9CLk8OcV1i+Qml8R9EDCtJUBD02sOp1/jqDqwMRcvQuE53Izzj+Y/7wTBKs7t4zXRxmTZPtbFsSdAXS/WFu7M6J4VC1D70TShk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WtwbZ0JJfzpTtv
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:12:42 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id CDEA0140202
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:14:23 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 28 Aug
- 2024 15:14:23 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH -next] genirq/msi: Use kmemdup_array() instead of kmemdup() for multiple allocation
-Date: Wed, 28 Aug 2024 15:22:19 +0800
-Message-ID: <20240828072219.1249250-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724829772; c=relaxed/simple;
+	bh=jdMhW5goHxB0zL3hLhs8bUX+/LW25O1qlrnzr7n+pQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ui8MQ5RmmMTtLOizT3FgflFkXwgMsEqu/TJlnfw7xbbmFiu0Ay8kXFH0dUJvdyP45WuioigZUxBe7AeMSlCH8/ComtY4rRiUAWJ393WYEzlGrDQGP72QM0yGRSBDalc6rN7XbFHyiGLqmHoa3a3rntBwBqRQn6+NY4WuRbIsaaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hFhSWA/U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32968C4AF66;
+	Wed, 28 Aug 2024 07:22:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724829772;
+	bh=jdMhW5goHxB0zL3hLhs8bUX+/LW25O1qlrnzr7n+pQY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hFhSWA/U1CiuHaVIHLrorNQf6hX/7m3b1vT45jjjOQzh3KCsxLv3t+jNhPjxXCnSZ
+	 vcckelTAMwFVHRDyumo0nBfzOM/hbloMhOGdvYc34hArJ9V1YyX12wske4lgQG9942
+	 6gY/3wgrNxE3r3aMrHYDweGx2FzVJ8Hi8uvymFxHuFamavndCs7Jd5GNIb/oLRZI3j
+	 53KTBuCVcY5oTtvN0awdu+QVLozL/0GWyv8j4xre7sEJNfQ3RIL3TY4gdhr2Nrr+dQ
+	 BcCtFKY/7Dew8AoCM/mFdl68iNJGUxAlNXEZGXAyh2RedaGo4j6j2pbtVL/7yTL8tt
+	 ITHGqwhUUY3iA==
+Date: Wed, 28 Aug 2024 09:22:48 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Jingyi Wang <quic_jingyw@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, andersson@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	mathieu.poirier@linaro.org, bartosz.golaszewski@linaro.or, quic_tingweiz@quicinc.com, 
+	quic_aiquny@quicinc.com, quic_tengfan@quicinc.com, Xin Liu <quic_liuxin@quicinc.com>
+Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: qcom,sa8775p-pas: Document
+ QCS8300 remoteproc
+Message-ID: <eetb73ycz7kzcgknuzorsnoszhpdljuxepuoflhakobli6dozl@q2sbmj77hedo>
+References: <20240828030511.443605-1-quic_jingyw@quicinc.com>
+ <20240828030511.443605-2-quic_jingyw@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240828030511.443605-2-quic_jingyw@quicinc.com>
 
-Let kmemdup_array() take care about multiplication and possible
-overflows.
+On Wed, Aug 28, 2024 at 11:05:10AM +0800, Jingyi Wang wrote:
+> Document the components used to boot the ADSP, CDSP and GPDSP on the
+> QCS8300 SoC.
+> 
+> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
+> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
+> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+> ---
+>  .../bindings/remoteproc/qcom,sa8775p-pas.yaml | 22 +++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
+> index 7fe401a06805..44b070a17ca0 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
+> @@ -16,6 +16,9 @@ description:
+>  properties:
+>    compatible:
+>      enum:
+> +      - qcom,qcs8300-adsp-pas
+> +      - qcom,qcs8300-cdsp-pas
+> +      - qcom,qcs8300-gpdsp-pas
+>        - qcom,sa8775p-adsp-pas
+>        - qcom,sa8775p-cdsp0-pas
+>        - qcom,sa8775p-cdsp1-pas
+> @@ -64,6 +67,7 @@ allOf:
+>        properties:
+>          compatible:
+>            enum:
+> +            - qcom,qcs8300-adsp-pas
+>              - qcom,sa8775p-adsp-pas
+>      then:
+>        properties:
+> @@ -75,6 +79,23 @@ allOf:
+>            items:
+>              - const: lcx
+>              - const: lmx
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - qcom,qcs8300-cdsp-pas
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- kernel/irq/msi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This looks the same as sa8775p cdsp. Why new entry?
 
-diff --git a/kernel/irq/msi.c b/kernel/irq/msi.c
-index ca6e2ae6d6fc..3a24d6b5f559 100644
---- a/kernel/irq/msi.c
-+++ b/kernel/irq/msi.c
-@@ -82,7 +82,7 @@ static struct msi_desc *msi_alloc_desc(struct device *dev, int nvec,
- 	desc->dev = dev;
- 	desc->nvec_used = nvec;
- 	if (affinity) {
--		desc->affinity = kmemdup(affinity, nvec * sizeof(*desc->affinity), GFP_KERNEL);
-+		desc->affinity = kmemdup_array(affinity, nvec, sizeof(*desc->affinity), GFP_KERNEL);
- 		if (!desc->affinity) {
- 			kfree(desc);
- 			return NULL;
--- 
-2.34.1
+Best regards,
+Krzysztof
 
 
