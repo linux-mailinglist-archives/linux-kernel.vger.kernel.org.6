@@ -1,181 +1,349 @@
-Return-Path: <linux-kernel+bounces-304566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DCF59621E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:58:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94B8B9621F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92A381C23C5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:58:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0556FB24A6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE57415B109;
-	Wed, 28 Aug 2024 07:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982AA14B959;
+	Wed, 28 Aug 2024 08:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YaowCfH4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="jgZgbRJT"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D6515A85A;
-	Wed, 28 Aug 2024 07:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62F415AAC1;
+	Wed, 28 Aug 2024 08:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724831885; cv=none; b=fQgwpV5PARBbMcHDApYuYstWjRlJEkrkBoL7KRnkGQsKCkg52a+XedOw7PrVt0bDQ7kUepbdBeGRWaOHnN2qV9H4oMvJ0kHVzucoHvQCFcnG2mG6lU7/g9kfKKpiN/VESMt60IDXi404GHMYQeR7qCww+rr1oc8sl1fCcf4m9+k=
+	t=1724832013; cv=none; b=UGdMeYPqgaq9YV6We4ery3zFLCmRV+OHlNutpk1IdhHnbbVtZxj5G58YKLC8Kt4xANaQNOsWgSJaymcssul1s+XGPJLNs67B1LTZkui0u3+fYwhYk91pnW4DUPzdrGkb+oI3pr2khPXBNBHLGBxXoYCGaqDmWxstyGjvJOPWvrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724831885; c=relaxed/simple;
-	bh=vvv2FCnY1N7fEiJiUOKwdxV1C/Cj4rSSfhnvwQz5uvY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WaUNS4Afe0VZ8uShG33798qAAOHFutE9axB2nAjgRUB0zv12xaMViUCsA+1O0/p6D0XfVDS2WkzfK1J3DwH943Ts18pS0O2R8ygF4jYqzwxqmFFJjYhncElFtNUhq88CrOAcv7Egvmd5IlXGZr1Zpfx+2MkJ8U/O0wBN75UNVIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YaowCfH4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D58CC5813B;
-	Wed, 28 Aug 2024 07:58:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724831884;
-	bh=vvv2FCnY1N7fEiJiUOKwdxV1C/Cj4rSSfhnvwQz5uvY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YaowCfH4VPEFby947jpJv+S0/3clpZ9Fw9tRygXOxXhF/EQE0+3PONZYAarTqkqfZ
-	 46HJi7BWPONdqjSHr8YQcg2+SpAzZMVVI2m5VgNc4pNmHJKx48KAxrKTnN7ImAv14Y
-	 2m++emhGydMfGAq55Ckj6ZDhihX5wIUxpTcFNOnsqacr4SYj+9R+pmJSQjegFBIasR
-	 O6JKsGW9rStsts5yWHD8Fh9FHBP+YUIgSFBhxhRjcp0I6d/bRombcwbMcWk+sTQ4mj
-	 AJg9eknbcgFTJwWXpwow3Ajd3ugUWxj8kpVrjrJaBK1Leovrm6WeNgZMKvL3nP57/n
-	 BjBjTxYuXup3A==
-Message-ID: <10914199-1e86-4a2e-aec8-2a48cc49ef14@kernel.org>
-Date: Wed, 28 Aug 2024 09:57:57 +0200
+	s=arc-20240116; t=1724832013; c=relaxed/simple;
+	bh=UlG6nchsqBKmiYp8pAVvbHG5hJwd3EJQs1Sv91Wc4dM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bwLHDrdB7cCv27yL93nxi1s+nvHKg7oQjbyRPuoq32W1XG9fdBZCijmKgJaFgwfzBr+ckjoslB41UnY50oZrn3GZMdlQK/2gW8kaP2oN3b/VOg4Y2Csu7EcXcPGx/RjOhvLyAg3PkpcpqyUX97nTzU6EirNUiDygMxjGb5RQOSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=jgZgbRJT; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1724832011; x=1756368011;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UlG6nchsqBKmiYp8pAVvbHG5hJwd3EJQs1Sv91Wc4dM=;
+  b=jgZgbRJTIgKkW6EC0BiR3uwyHppxXZe2pTyt+P8Gxf8+aHJZCqhT5PZd
+   blNbcKHjnK9ahNParu4MvFB0LDRquoQVino7aKUlGHs6p74hyw3L4wzFv
+   6J3Vub+o2ZuIytjoJfTgLSYkthLRGFEW9I8U6Eyc+CM3P7mXm6PjYeBB2
+   PrQT84+/mbus7Gy18ZIHcqAmOdinI0/7eRODYSHzmVOeKh1nDnnCMNzFN
+   EJiJpO9TWilWQqFoQrXrHTIj+keriP6uvEdtL78Q+mPRXOEEpv9MUpg7u
+   Yy2iHd9rcnMQ2yqfBaAvytA8TUdPldg0rQ4/m3NCRt6ov2rimLwRBt++s
+   w==;
+X-CSE-ConnectionGUID: vBLI3Y69RSK7UCFTHu+5EA==
+X-CSE-MsgGUID: JIhNA13dTE6oYGp9Pk08yA==
+X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
+   d="asc'?scan'208";a="31646340"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 Aug 2024 01:00:09 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 28 Aug 2024 00:59:23 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex04.mchp-main.com (10.10.85.152)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Wed, 28 Aug 2024 00:59:14 -0700
+Date: Wed, 28 Aug 2024 08:58:43 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Bo Gan <ganboing@gmail.com>
+CC: <zong.li@sifive.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+	<Pragnesh.patel@sifive.com>, <aou@eecs.berkeley.edu>,
+	<erik.danie@sifive.com>, <hes@sifive.com>, <mturquette@baylibre.com>,
+	<palmer@dabbelt.com>, <palmerdabbelt@google.com>, <paul.walmsley@sifive.com>,
+	<pragnesh.patel@openfive.com>, <sboyd@kernel.org>, <schwab@linux-m68k.org>,
+	<yash.shah@sifive.com>
+Subject: Re: [PATCH 3/3] clk: sifive: prci: Add release_reset hooks for
+ gemgxlpll/cltxpll
+Message-ID: <20240828-duplex-skillful-752582090412@wendy>
+References: <cover.1724827635.git.ganboing@gmail.com>
+ <e47b943c0f685cd028ebd477e97e1706f184a7b6.1724827635.git.ganboing@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] arm64: dts: qcom: add initial support for QCS615 DTSI
-To: Lijuan Gao <quic_lijuang@quicinc.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, kernel@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240828-add_initial_support_for_qcs615-v1-0-5599869ea10f@quicinc.com>
- <20240828-add_initial_support_for_qcs615-v1-5-5599869ea10f@quicinc.com>
- <gtoz6fzmukti7mbdihsw5ycltoozhrxgery536rh6dgpcqoru2@gd27iemigqae>
- <955c0fdc-5b04-42d6-a15d-58966c7145c4@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <955c0fdc-5b04-42d6-a15d-58966c7145c4@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="J+WpBVuQQDWSZqNh"
+Content-Disposition: inline
+In-Reply-To: <e47b943c0f685cd028ebd477e97e1706f184a7b6.1724827635.git.ganboing@gmail.com>
 
-On 28/08/2024 09:42, Lijuan Gao wrote:
-> 
-> 
-> 在 8/28/2024 2:23 PM, Krzysztof Kozlowski 写道:
->> On Wed, Aug 28, 2024 at 10:02:15AM +0800, Lijuan Gao wrote:
->>> Add initial DTSI for QCS615 SoC. It includes base description
->>> of CPUs, interrupt-controller and cpu idle on Qualcomm QCS615
->>> platform.
->>>
->>> Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
->>> ---
->>>   arch/arm64/boot/dts/qcom/qcs615.dtsi | 449 +++++++++++++++++++++++++++++++++++
->>>   1 file changed, 449 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->>> new file mode 100644
->>> index 000000000000..cf7aaa7f6131
->>> --- /dev/null
->>> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->>> @@ -0,0 +1,449 @@
->>> +// SPDX-License-Identifier: BSD-3-Clause
->>> +/*
->>> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
->>> + */
->>> +
->>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->>> +
->>> +/ {
->>> +	interrupt-parent = <&intc>;
->>> +
->>
->> No need for blank line.
-> Well noted. Will update in the next patch.
->>
->>> +	#address-cells = <2>;
->>> +	#size-cells = <2>;
->>> +
->>> +	chosen { };
->>
->> Drop, redundant.
-> Well noted. Will update in the next patch.
->>
->>> +
->>> +	clocks {
->>> +		xo_board: xo-board {
->>
->> xo-clk? xo-board-clk?
->>
->> But if board, this does not sound like part of SoC. See other files how
->> they do it.
->>
-> Other files also added ‘xo_board’. The ‘xo_board’ is the clock that will 
+--J+WpBVuQQDWSZqNh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-No. Don't use 10yo code as example.
+On Tue, Aug 27, 2024 at 11:55:20PM -0700, Bo Gan wrote:
+> This patch adds the release_reset hook interface to __prci_wrpll_data.
+> During clock enablement, the function (if present) will be called after P=
+LL
+> registers are configured. It aligns the logic to the driver in u-boot. Wh=
+en
+> there's a previous bootloader stage, such as u-boot, it usually enables t=
+he
+> gemgxlpll clock when trying to PXE/network boot. The kernel boots fine, b=
+ut
+> we should not depend on it being our previous stage, and the logic within:
+>=20
+>  a. We (linux) can get directly invoked by firmware (OpenSBI).
+>  b. U-boot doesn't necessarily have to initialize ethernet and enable the
+>     clock (when not enabled in CONFIG).
+>=20
+> When the kernel is the first to initialize gemgxlpll, it must also release
+> the corresponding reset. Otherwise the chip will just hang during macb
+> initialization, and even external JTAG debugger will lose control over the
+> risc-v debug module. (Observed with my Sifive Unmatched Rev.B board)
+>=20
+> The patch took the dt-bindings and logics directly from u-boot with some
+> additional modifications:
+>  - Use __prci_writel after __prci_readl to have barrier semantic. U-boot
+>    has the strong version of readl/writel, but linux has the relaxed ones.
+>  - Use pd->reset.rcdev.ops to access the reset regs.
+>  - Split reset bindings for FU540/FU740 and use them directly, instead of
+>    looking it up through reset-names.
 
-> be used by other SoC nodes, such as rpmhcc. Currently, the node can be 
-> deleted as no one is using it.
+The macb driver already supports using a reset at boot time (see zynq and
+mpfs) if hooked up in the devicetree, why doesn't that work for you in
+this situation?
 
-I don't think you understood the problem. This is not the property of
-SoC. We talked about this many times. DTS coding style has even explicit
-guideline for this. Your own go/upstream (which is quite well written
-and complete) probably as well. Did you check it? If there is no such,
-extend it.
+Thanks,
+Conor.
 
+>=20
+> Signed-off-by: Bo Gan <ganboing@gmail.com>
+> ---
+>  drivers/clk/sifive/fu540-prci.h  | 16 ++++++++++++++++
+>  drivers/clk/sifive/fu740-prci.h  | 31 +++++++++++++++++++++++++++++++
+>  drivers/clk/sifive/sifive-prci.c | 23 +++++++++++++++++++++++
+>  drivers/clk/sifive/sifive-prci.h |  8 ++++++++
+>  4 files changed, 78 insertions(+)
+>=20
+> diff --git a/drivers/clk/sifive/fu540-prci.h b/drivers/clk/sifive/fu540-p=
+rci.h
+> index e0173324f3c5..9d2ca18f47a4 100644
+> --- a/drivers/clk/sifive/fu540-prci.h
+> +++ b/drivers/clk/sifive/fu540-prci.h
+> @@ -23,9 +23,24 @@
+>  #include <linux/module.h>
+> =20
+>  #include <dt-bindings/clock/sifive-fu540-prci.h>
+> +#include <dt-bindings/reset/sifive-fu540-prci.h>
+> =20
+>  #include "sifive-prci.h"
+> =20
+> +/**
+> + * sifive_fu540_prci_ethernet_release_reset() - Release ethernet reset
+> + * @pd: struct __prci_data * for the PRCI containing the Ethernet CLK mu=
+x reg
+> + *
+> + */
+> +static void sifive_fu540_prci_ethernet_release_reset(struct __prci_data =
+*pd)
+> +{
+> +	/* Release GEMGXL reset */
+> +	pd->reset.rcdev.ops->deassert(&pd->reset.rcdev, FU540_PRCI_RST_GEMGXL_N=
+);
+> +
+> +	/* Procmon =3D> core clock */
+> +	sifive_prci_set_procmoncfg(pd, PRCI_PROCMONCFG_CORE_CLOCK_MASK);
+> +}
+> +
+>  /* PRCI integration data for each WRPLL instance */
+> =20
+>  static struct __prci_wrpll_data sifive_fu540_prci_corepll_data =3D {
+> @@ -43,6 +58,7 @@ static struct __prci_wrpll_data sifive_fu540_prci_ddrpl=
+l_data =3D {
+>  static struct __prci_wrpll_data sifive_fu540_prci_gemgxlpll_data =3D {
+>  	.cfg0_offs =3D PRCI_GEMGXLPLLCFG0_OFFSET,
+>  	.cfg1_offs =3D PRCI_GEMGXLPLLCFG1_OFFSET,
+> +	.release_reset =3D sifive_fu540_prci_ethernet_release_reset,
+>  };
+> =20
+>  /* Linux clock framework integration */
+> diff --git a/drivers/clk/sifive/fu740-prci.h b/drivers/clk/sifive/fu740-p=
+rci.h
+> index f31cd30fc395..dd0f54277a99 100644
+> --- a/drivers/clk/sifive/fu740-prci.h
+> +++ b/drivers/clk/sifive/fu740-prci.h
+> @@ -10,9 +10,38 @@
+>  #include <linux/module.h>
+> =20
+>  #include <dt-bindings/clock/sifive-fu740-prci.h>
+> +#include <dt-bindings/reset/sifive-fu740-prci.h>
+> =20
+>  #include "sifive-prci.h"
+> =20
+> +/**
+> + * sifive_fu740_prci_ethernet_release_reset() - Release ethernet reset
+> + * @pd: struct __prci_data * for the PRCI containing the Ethernet CLK mu=
+x reg
+> + *
+> + */
+> +static void sifive_fu740_prci_ethernet_release_reset(struct __prci_data =
+*pd)
+> +{
+> +	/* Release GEMGXL reset */
+> +	pd->reset.rcdev.ops->deassert(&pd->reset.rcdev, FU740_PRCI_RST_GEMGXL_N=
+);
+> +
+> +	/* Procmon =3D> core clock */
+> +	sifive_prci_set_procmoncfg(pd, PRCI_PROCMONCFG_CORE_CLOCK_MASK);
+> +
+> +	/* Release Chiplink reset */
+> +	pd->reset.rcdev.ops->deassert(&pd->reset.rcdev, FU740_PRCI_RST_CLTX_N);
+> +}
+> +
+> +/**
+> + * sifive_fu740_prci_cltx_release_reset() - Release cltx reset
+> + * @pd: struct __prci_data * for the PRCI containing the Ethernet CLK mu=
+x reg
+> + *
+> + */
+> +static void sifive_fu740_prci_cltx_release_reset(struct __prci_data *pd)
+> +{
+> +	/* Release CLTX reset */
+> +	pd->reset.rcdev.ops->deassert(&pd->reset.rcdev, FU740_PRCI_RST_CLTX_N);
+> +}
+> +
+>  /* PRCI integration data for each WRPLL instance */
+> =20
+>  static struct __prci_wrpll_data sifive_fu740_prci_corepll_data =3D {
+> @@ -30,6 +59,7 @@ static struct __prci_wrpll_data sifive_fu740_prci_ddrpl=
+l_data =3D {
+>  static struct __prci_wrpll_data sifive_fu740_prci_gemgxlpll_data =3D {
+>  	.cfg0_offs =3D PRCI_GEMGXLPLLCFG0_OFFSET,
+>  	.cfg1_offs =3D PRCI_GEMGXLPLLCFG1_OFFSET,
+> +	.release_reset =3D sifive_fu740_prci_ethernet_release_reset,
+>  };
+> =20
+>  static struct __prci_wrpll_data sifive_fu740_prci_dvfscorepll_data =3D {
+> @@ -49,6 +79,7 @@ static struct __prci_wrpll_data sifive_fu740_prci_hfpcl=
+kpll_data =3D {
+>  static struct __prci_wrpll_data sifive_fu740_prci_cltxpll_data =3D {
+>  	.cfg0_offs =3D PRCI_CLTXPLLCFG0_OFFSET,
+>  	.cfg1_offs =3D PRCI_CLTXPLLCFG1_OFFSET,
+> +	.release_reset =3D sifive_fu740_prci_cltx_release_reset,
+>  };
+> =20
+>  /* Linux clock framework integration */
+> diff --git a/drivers/clk/sifive/sifive-prci.c b/drivers/clk/sifive/sifive=
+-prci.c
+> index caba0400f8a2..ae8055a84466 100644
+> --- a/drivers/clk/sifive/sifive-prci.c
+> +++ b/drivers/clk/sifive/sifive-prci.c
+> @@ -249,6 +249,9 @@ int sifive_prci_clock_enable(struct clk_hw *hw)
+>  	if (pwd->disable_bypass)
+>  		pwd->disable_bypass(pd);
+> =20
+> +	if (pwd->release_reset)
+> +		pwd->release_reset(pd);
+> +
+>  	return 0;
+>  }
+> =20
+> @@ -448,6 +451,26 @@ void sifive_prci_hfpclkpllsel_use_hfpclkpll(struct _=
+_prci_data *pd)
+>  	r =3D __prci_readl(pd, PRCI_HFPCLKPLLSEL_OFFSET);	/* barrier */
+>  }
+> =20
+> +/*
+> + * PROCMONCFG
+> + */
+> +
+> +/**
+> + * sifive_prci_set_procmoncfg() - set PROCMONCFG
+> + * @pd: struct __prci_data * PRCI context
+> + * @val: u32 value to write to PROCMONCFG register
+> + *
+> + * Set the PROCMONCFG register to @val
+> + *
+> + * Context: Any context.  Caller must prevent concurrent changes to the
+> + *          PROCMONCFG_OFFSET register.
+> + */
+> +void sifive_prci_set_procmoncfg(struct __prci_data *pd, u32 val)
+> +{
+> +	__prci_writel(val, PRCI_PROCMONCFG_OFFSET, pd);
+> +	__prci_readl(pd, PRCI_PROCMONCFG_OFFSET);	/* barrier */
+> +}
+> +
+>  /* PCIE AUX clock APIs for enable, disable. */
+>  int sifive_prci_pcie_aux_clock_is_enabled(struct clk_hw *hw)
+>  {
+> diff --git a/drivers/clk/sifive/sifive-prci.h b/drivers/clk/sifive/sifive=
+-prci.h
+> index 91658a88af4e..825a0aef9fd5 100644
+> --- a/drivers/clk/sifive/sifive-prci.h
+> +++ b/drivers/clk/sifive/sifive-prci.h
+> @@ -210,6 +210,9 @@
+> =20
+>  /* PROCMONCFG */
+>  #define PRCI_PROCMONCFG_OFFSET			0xf0
+> +#define PRCI_PROCMONCFG_CORE_CLOCK_SHIFT	24
+> +#define PRCI_PROCMONCFG_CORE_CLOCK_MASK					\
+> +		(0x1 << PRCI_PROCMONCFG_CORE_CLOCK_SHIFT)
+> =20
+>  /*
+>   * Private structures
+> @@ -235,6 +238,7 @@ struct __prci_data {
+>   * @disable_bypass: fn ptr to code to not bypass the WRPLL (or NULL)
+>   * @cfg0_offs: WRPLL CFG0 register offset (in bytes) from the PRCI base =
+address
+>   * @cfg1_offs: WRPLL CFG1 register offset (in bytes) from the PRCI base =
+address
+> + * @release_reset: fn ptr to code to release clock reset
+>   *
+>   * @enable_bypass and @disable_bypass are used for WRPLL instances
+>   * that contain a separate external glitchless clock mux downstream
+> @@ -246,6 +250,7 @@ struct __prci_wrpll_data {
+>  	void (*disable_bypass)(struct __prci_data *pd);
+>  	u8 cfg0_offs;
+>  	u8 cfg1_offs;
+> +	void (*release_reset)(struct __prci_data *pd);
+>  };
+> =20
+>  /**
+> @@ -290,6 +295,9 @@ void sifive_prci_corepllsel_use_corepll(struct __prci=
+_data *pd);
+>  void sifive_prci_hfpclkpllsel_use_hfclk(struct __prci_data *pd);
+>  void sifive_prci_hfpclkpllsel_use_hfpclkpll(struct __prci_data *pd);
+> =20
+> +/* PROCMONCFG */
+> +void sifive_prci_set_procmoncfg(struct __prci_data *pd, u32 val);
+> +
+>  /* Linux clock framework integration */
+>  long sifive_prci_wrpll_round_rate(struct clk_hw *hw, unsigned long rate,
+>  				  unsigned long *parent_rate);
+> --=20
+> 2.34.1
+>=20
 
-Best regards,
-Krzysztof
+--J+WpBVuQQDWSZqNh
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZs7YsAAKCRB4tDGHoIJi
+0luTAQCIgvGMDu52ic/bzKzN5OE+pVDqeHGa26Ys8vhKE2rAQQEA99NdX7lzDF1W
+zK5BU6vMP12OdOmCBJ3GhrEQieARWg0=
+=hBF/
+-----END PGP SIGNATURE-----
+
+--J+WpBVuQQDWSZqNh--
 
