@@ -1,166 +1,194 @@
-Return-Path: <linux-kernel+bounces-305785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C28B0963453
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:03:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B6F796346C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4E121C23D36
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:03:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2EE0B22628
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52AB187862;
-	Wed, 28 Aug 2024 22:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1AF51AC429;
+	Wed, 28 Aug 2024 22:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="jlENTj7g";
-	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="pkeOjn8F"
-Received: from mx-lax3-3.ucr.edu (mx.ucr.edu [169.235.156.38])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mLzV1F6v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625A314A4D4
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=169.235.156.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE05E165F06;
+	Wed, 28 Aug 2024 22:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724882627; cv=none; b=G6jUvEKSr1sf54Q+T9zpJvK1q6VeB+wBWZo5HwwefkVWaGW5sFsekqQaGk0Pg/R8rEhnM/b+eJjuO8HtwMkBa/9fK3OMShvE811wFHHrqBzCzWLqWFKiMiu88SjHz6GRyzWS6EJFzgOkOuTHwLBg5bNN1G5jYfNTKeEO5ZDK69c=
+	t=1724882997; cv=none; b=AaCfgY68hJvbl3XbBBdnGkDu2469UhrvcTXCV6CKOj41dMinIz32jOUGpKqX1fvLfRlD8WNOJTE4nVn4dfXDs2R4LnYTjDDGZKgBVCtJ1wBVogSXHxZHXMaJ3u698HayoGIiz5Hfguj1oWBng/Rw6LuoCoSjhcvNLapk43GxN/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724882627; c=relaxed/simple;
-	bh=yc4opa4jlMvZORaTBxSefG6ckg7Y5G76WIcy9CRAjxQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=TM+iA7krr0j2ljlZntEwBZ6i9ZUiFnQ5qeFfIOxz+gUFGh9JJe20ZZaX/OSeeqd7E4riqLOo9lAEL//ayW6+t8aVGvEPqrcTSK/hMuvg13w2xAlDhPvT6HN5c2qHV6TuBfHQQQAW5GOnsnqfDhtP1ttKosMXPzfF/riz+Szya9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=jlENTj7g; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=pkeOjn8F; arc=none smtp.client-ip=169.235.156.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1724882625; x=1756418625;
-  h=dkim-signature:x-google-dkim-signature:
-   x-forwarded-encrypted:x-gm-message-state:
-   x-google-smtp-source:mime-version:from:date:message-id:
-   subject:to:cc:content-type:x-cse-connectionguid:
-   x-cse-msgguid;
-  bh=yc4opa4jlMvZORaTBxSefG6ckg7Y5G76WIcy9CRAjxQ=;
-  b=jlENTj7gaEb1fDVi6435PSfnKTXSn1X1oeJZCjW70AtOOmVAtg3U50JA
-   XlpTa3NV+jnsYoK6AUDUwGC+gxfWOWk9RSwryjuSUUBdzMfhrYmh9ne7I
-   D489C92Xru018VhElTo954nUus2nTQNG+qQFEWXkxuEp4C9pKXos6JB0W
-   PsFVVWzcfrtLDsH+CFJUO8uY7+TWENLqc0tNhDXYYqTXdnAvGZSOpHouO
-   ZLTd2559aXShSQr37krzw/TxLArpXoLzKHWnBRbCl1uPQx7mq07Kcn4ki
-   GMDs8txM6HdcbkIKNWJZM13Qvv+D6vxvXrCUkJNPfpqzGGxlk4F/GHOGs
-   w==;
-X-CSE-ConnectionGUID: c4Iy2Ep3SyW2PpPdUogMmQ==
-X-CSE-MsgGUID: h2ThQAxuRcafPV0Utrtuig==
-Received: from mail-pj1-f70.google.com ([209.85.216.70])
-  by smtp-lax3-3.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 28 Aug 2024 15:03:45 -0700
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2d3b438c8c9so7650220a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:03:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ucr.edu; s=rmail; t=1724882624; x=1725487424; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JVSZz2hoPiR7sjXazJkCHkQi+Nbcimm2fYpFaxHOTiU=;
-        b=pkeOjn8FF0Mn8QuocbStaAl5FprgxaUM8+mXPICYHWLoxbq8SQxtLzOtC0xlwHgwlv
-         taaImbCGYEl68/z/yQjVecp/hnld3HTUqwXLqM6D6UmDw/Z+6kXwjcFgn1Swgyk3mX0R
-         PzAKUH7LnFVWfMw9I4xyx5+kuAY3qynYRJTVw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724882624; x=1725487424;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JVSZz2hoPiR7sjXazJkCHkQi+Nbcimm2fYpFaxHOTiU=;
-        b=hC+HiFM48DlgJ/vdKS2KTq7D9OJcjMXE9teHPbPfEC1pKb3hFAQAdxhWqI8ZwE08/n
-         KmlV2UoE+VhrodMWcSzpTE4LdR1Eym/Gm1rxpNasz4j0tTDDiVxxrZGZYx7tksGSg7Pj
-         K0xQs8gp18RZ1Tzqajon+ohmUAmkScRUXYOxSWTSBlpiaYAEjHtAnwuiPTEO7uoQEYlR
-         NBPUPb8dkW071K5GaZmT2CXaY4FGT1y/1AIEO7Bg+VB6EMvSTDHhBpH5NcYsut5fXygu
-         PEuTKmQ1M2cSbs6BfBCExV5a6uCFXmf2OHKeA+8zQpgrO85vsk0sY8rpl8eSKNWGDym4
-         jeJg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgNz4mp87MbabvZ7Vnvou46s30OwV3IJFawkz4X3H24o4L3mRiMUC0o7kvxgQGIIkh+BEC1vgS1ASS+H0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6cCH9g2rC7fVeRBAhHFsNXRPj/F5iwq/atm1apz0gFgPQG5hR
-	e5og9eDHCF2DwaC3w6QxemlMm/nBJ+NG2eAv///7oCxZIxnb+VihCLB5DQMA5UcVssH5c6o+Kx4
-	qmyMbe07KHvFn3EHn8proUHlf3gMK1kuuTpAvOV5pjUEbbptHfF28vY/eU86yZeZB6d+vODKp3n
-	1WZNODamJ9FGdOTn1ZVs+rGBt5bp47CPFhzNKCq6bqb25sRwlmylA=
-X-Received: by 2002:a17:90b:2701:b0:2c8:53be:fa21 with SMTP id 98e67ed59e1d1-2d856392159mr777579a91.34.1724882623823;
-        Wed, 28 Aug 2024 15:03:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEjFUbN3dGO47ItBXQkAe4cFvBoqmTYjWMuvWSQuKxS3A6HaZaZ0lgQKl4pFflG/sWBQ6LaBf1ctu0C1ftyAq8=
-X-Received: by 2002:a17:90b:2701:b0:2c8:53be:fa21 with SMTP id
- 98e67ed59e1d1-2d856392159mr777558a91.34.1724882623536; Wed, 28 Aug 2024
- 15:03:43 -0700 (PDT)
+	s=arc-20240116; t=1724882997; c=relaxed/simple;
+	bh=s4NpebkhiZitrRC2NxrzlNWdDrjGVNwlsfvICCZMxi0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=q1nVqlKu5JhdtdZfQbfnUpK8r73QA2GUwk9g4LMj/NUOZr0zSzdB9LuK9fev/LGos0h4J3V7jrlB3qBAEkfu9vuCwSzxC2BZ8bxMZi7Q8plihiZ4iIkvTV5/jXFHOs0Np/iTIANrY+9bz+4P9hu3OxtQiZsJOsNoQypoW27Um9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mLzV1F6v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64860C4CEC0;
+	Wed, 28 Aug 2024 22:09:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724882997;
+	bh=s4NpebkhiZitrRC2NxrzlNWdDrjGVNwlsfvICCZMxi0=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=mLzV1F6vhG6qrIowvYQUkXdubmEq8iYgs4wvRxiSB+4liUVXB3Wd9nktx7VzBpPvK
+	 bWWRIkYHkKMMkcCOi36dolXv4gzvp/iIjmer7Ec9WTaYp7SB6bY1XON6JnvMWM4OvP
+	 R27WvhaDAsk47fTEiILDT9Pko085yZYxjDfQtOTWpTlj85wQ4WHLmVePfLzLCdwR3L
+	 cpvDIOEEvVSMRXmufgrxJAN0o1wO71KeRpa5PhPGXSR5Zdk5yd2mP4obBWOen4RpeH
+	 gDg7HGmhQif5kHWvxlhbVkr7ywD4dOzZRcIoey2cf9uSJWM0kos6ckjWG8uhv9ynKv
+	 KhMH6oG3KG6GQ==
+Message-ID: <998d25a6ac673063fe1b0def62af90792379c4fe.camel@kernel.org>
+Subject: Re: [PATCH] NFSD: Annotate struct pnfs_block_deviceaddr with
+ __counted_by()
+From: Jeff Layton <jlayton@kernel.org>
+To: Thorsten Blum <thorsten.blum@toblux.com>, chuck.lever@oracle.com, 
+	neilb@suse.de, okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, 
+	kees@kernel.org, gustavoars@kernel.org
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Date: Wed, 28 Aug 2024 18:09:54 -0400
+In-Reply-To: <20240828214254.2407-2-thorsten.blum@toblux.com>
+References: <20240828214254.2407-2-thorsten.blum@toblux.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40app2) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Xingyu Li <xli399@ucr.edu>
-Date: Wed, 28 Aug 2024 15:03:33 -0700
-Message-ID: <CALAgD-5uYCK+Y5N431CwLXeN0ahJtUde+CovAYexVZyNqDBSqw@mail.gmail.com>
-Subject: BUG: WARNING in __kernfs_remove
-To: Greg KH <gregkh@linuxfoundation.org>, tj@kernel.org, linux-kernel@vger.kernel.org
-Cc: Yu Hao <yhao016@ucr.edu>
-Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+On Wed, 2024-08-28 at 23:42 +0200, Thorsten Blum wrote:
+> Add the __counted_by compiler attribute to the flexible array member
+> volumes to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+> CONFIG_FORTIFY_SOURCE.
+>=20
+> Use struct_size() instead of manually calculating the number of bytes to
+> allocate for a pnfs_block_deviceaddr with a single volume.
+>=20
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> ---
+>  fs/nfsd/blocklayout.c    | 6 ++----
+>  fs/nfsd/blocklayoutxdr.h | 2 +-
+>  2 files changed, 3 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/fs/nfsd/blocklayout.c b/fs/nfsd/blocklayout.c
+> index 3c040c81c77d..08a20e5bcf7f 100644
+> --- a/fs/nfsd/blocklayout.c
+> +++ b/fs/nfsd/blocklayout.c
+> @@ -147,8 +147,7 @@ nfsd4_block_get_device_info_simple(struct super_block=
+ *sb,
+>  	struct pnfs_block_deviceaddr *dev;
+>  	struct pnfs_block_volume *b;
+> =20
+> -	dev =3D kzalloc(sizeof(struct pnfs_block_deviceaddr) +
+> -		      sizeof(struct pnfs_block_volume), GFP_KERNEL);
+> +	dev =3D kzalloc(struct_size(dev, volumes, 1), GFP_KERNEL);
+>  	if (!dev)
+>  		return -ENOMEM;
+>  	gdp->gd_device =3D dev;
+> @@ -255,8 +254,7 @@ nfsd4_block_get_device_info_scsi(struct super_block *=
+sb,
+>  	const struct pr_ops *ops;
+>  	int ret;
+> =20
+> -	dev =3D kzalloc(sizeof(struct pnfs_block_deviceaddr) +
+> -		      sizeof(struct pnfs_block_volume), GFP_KERNEL);
+> +	dev =3D kzalloc(struct_size(dev, volumes, 1), GFP_KERNEL);
+>  	if (!dev)
+>  		return -ENOMEM;
+>  	gdp->gd_device =3D dev;
+> diff --git a/fs/nfsd/blocklayoutxdr.h b/fs/nfsd/blocklayoutxdr.h
+> index b0361e8aa9a7..4e28ac8f1127 100644
+> --- a/fs/nfsd/blocklayoutxdr.h
+> +++ b/fs/nfsd/blocklayoutxdr.h
+> @@ -47,7 +47,7 @@ struct pnfs_block_volume {
+> =20
+>  struct pnfs_block_deviceaddr {
+>  	u32				nr_volumes;
+> -	struct pnfs_block_volume	volumes[];
+> +	struct pnfs_block_volume	volumes[] __counted_by(nr_volumes);
+>  };
+> =20
+>  __be32 nfsd4_block_encode_getdeviceinfo(struct xdr_stream *xdr,
 
-We found a bug in Linux 6.10 using syzkaller. It is possibly a logic bug.
-The bug report is as follows, but unfortunately there is no generated
-syzkaller reproducer.
-
-Bug report:
-
-team0 (unregistering): Port device team_slave_0 removed
-netdevsim netdevsim0 netdevsim3 (unregistering): unset [1, 0] type 2
-family 0 port 6081 - 0
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 1090 at fs/kernfs/dir.c:41
-__kernfs_remove+0x2a6/0x830 fs/kernfs/dir.c:1470
-Modules linked in:
-CPU: 0 PID: 1090 Comm: kworker/u4:8 Not tainted 6.10.0 #13
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-Workqueue: netns cleanup_net
-RIP: 0010:kernfs_active fs/kernfs/dir.c:41 [inline]
-RIP: 0010:__kernfs_remove+0x2a6/0x830 fs/kernfs/dir.c:1470
-Code: 80 eb 05 e8 4c 09 62 ff 4c 89 ff 4c 89 ee e8 b1 ec ff ff 48 85
-c0 74 78 49 89 c7 e8 34 09 62 ff e9 be fe ff ff e8 2a 09 62 ff <0f> 0b
-e9 75 ff ff ff 89 e9 80 e1 07 fe c1 38 c1 0f 8c c4 fe ff ff
-RSP: 0000:ffffc9000481f2b0 EFLAGS: 00010293
-RAX: ffffffff822f4836 RBX: dffffc0000000000 RCX: ffff88801d2d9e00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff822f479e R09: 1ffff11003d63dc2
-R10: dffffc0000000000 R11: ffffed1003d63dc3 R12: 0000000000000148
-R13: ffff888028e864b0 R14: 1ffffffff1e4922d R15: ffff888026446c30
-FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ff7b38efb90 CR3: 000000001eb3e000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- kernfs_remove+0x76/0x90 fs/kernfs/dir.c:1528
- sysfs_remove_group+0x233/0x2c0 fs/sysfs/group.c:321
- sysfs_remove_groups+0x50/0xa0 fs/sysfs/group.c:343
- device_remove_groups drivers/base/core.c:2833 [inline]
- device_remove_attrs+0x1d8/0x290 drivers/base/core.c:2963
- device_del+0x512/0x940 drivers/base/core.c:3867
- unregister_netdevice_many_notify+0x11a3/0x16d0 net/core/dev.c:11249
- unregister_netdevice_many net/core/dev.c:11277 [inline]
- unregister_netdevice_queue+0x2ff/0x370 net/core/dev.c:11156
- unregister_netdevice include/linux/netdevice.h:3119 [inline]
- nsim_destroy+0x17c/0x5b0 drivers/net/netdevsim/netdev.c:778
- __nsim_dev_port_del+0x14a/0x1b0 drivers/net/netdevsim/dev.c:1425
- nsim_dev_port_del_all drivers/net/netdevsim/dev.c:1437 [inline]
- nsim_dev_reload_destroy+0x282/0x480 drivers/net/netdevsim/dev.c:1658
- nsim_dev_reload_down+0x93/0xc0 drivers/net/netdevsim/dev.c:965
- devlink_reload+0x188/0x840 net/devlink/dev.c:461
- devlink_pernet_pre_exit+0x1ee/0x440 net/devlink/core.c:509
- ops_pre_exit_list net/core/net_namespace.c:163 [inline]
- cleanup_net+0x61e/0xcd0 net/core/net_namespace.c:620
- process_one_work kernel/workqueue.c:3248 [inline]
- process_scheduled_works+0x977/0x1410 kernel/workqueue.c:3329
- worker_thread+0xaa0/0x1020 kernel/workqueue.c:3409
- kthread+0x2eb/0x380 kernel/kthread.c:389
- ret_from_fork+0x49/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
--- 
-Yours sincerely,
-Xingyu
+Acked-by: Jeff Layton <jlayton@kernel.org>
 
