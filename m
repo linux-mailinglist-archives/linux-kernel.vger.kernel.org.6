@@ -1,329 +1,355 @@
-Return-Path: <linux-kernel+bounces-305441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 358DA962EA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:38:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2459962EA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C9ADB21107
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:38:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C0211F2110A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A251A4F15;
-	Wed, 28 Aug 2024 17:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B431A1A706C;
+	Wed, 28 Aug 2024 17:38:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="OW5mUQyO";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="OW5mUQyO"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2067.outbound.protection.outlook.com [40.107.20.67])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GBsxYONW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8828F36130
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 17:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.67
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724866679; cv=fail; b=L/YM+WUQpncxP2GcLbwuPdv45mzDXiuP9llVQIRH/MWoHaLHr/xbrlgEOz1GE8T8jtT3FbkQi2o0U5MJRONrCxQ35Pdh7O5jZtIRoTPwBMDfVzvzS4MvLORPGFPH3OOWub2YA1csNICmPMCAvMqnek1G6dlGQIf2U+N9smRnAZ4=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724866679; c=relaxed/simple;
-	bh=vqZJZFqqq0Crm5yy6ysvqp3dVwJwr3aeBF9JmmqrUZY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=hK4Q+1qYm+DDbugj/NUTnXgNgwIQJjgG9b44IX4ifWsQDNk27x0PsQbQIohXsInyJf8uVkaCN8Bkyw0LnY27Qb17ItPr6jQ9bNysoaiRVxN3lP5s5rb8wucT3+ffraPLwjDTz53vblltHs26Igb1pbLWkagD0E+q56/7lNtntJU=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=OW5mUQyO; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=OW5mUQyO; arc=fail smtp.client-ip=40.107.20.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=nJA3XmwGqZRGiZDL9YppIYmk4/mHfNEBdv34CRDyToWBPiOUS0ERFpfA4EQa8TU3wXKgPZLkttHydNYDSaPJHtjHkKoKMV9NSfZ0rFpIucJraSOOmWtt9vQR2PKx7dMF5AYGBUQwXm4wOEKrgALDhuX0zAU7efpmKtx5p3B4OTlxKcNmMjS1dQzeTimSvYSiVUc64Fsb5iq/tH2JWktf4w1rbCi9oikGJwsjucDo0tZORqKID9OW/9Yv+9EA00WTm/1qy30usrDO3gFQiHD2OL/NMuSLIcl6Ge4YFxP6sE+XljgU3qhPdxSfXSNDpUO4LOHnXOGdseFBeDhC3lnbWA==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FP25UcaMDvmXnLlz7Q9wsswVXlOxVbdRDeQn/Ui1khM=;
- b=WHFcRqycNzao/nkwmvZx/n6InUJ473TabNrh02g8uODer331Xo5V9KyyEtNIaRGX6jiVwUvuvuEkBqH1MDjYzwAf/x+mXi4iuDhUxjGHJpn+NaUyIEMYhUFleaU4QGjhEWxZs05KEsdDEKAFlmmVA1nnBTxt2eEeOseX4LRVc1cye22Og/6blhIbQnMAB66qbxtgrTEky3V0dOGMsVJTEoE+92E07l1GAofijDhJyutjjjAeMMCc995sQQkHGy9mXwxkHYn9/GQQvTOFCimSKeeXtL8g9wYqRUh/4So75HXuiqPkn2+PhfWPGa/5oqE/vMS97odHrkNLmYwJuPA/3g==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 63.35.35.123) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FP25UcaMDvmXnLlz7Q9wsswVXlOxVbdRDeQn/Ui1khM=;
- b=OW5mUQyOOLo1F/+kxp2RuU7OBMU7JNOBsJtfMahRuUb8m3p3aXv2/l9Lgg1jlW+4978RH432K90aowNq6GOVLTzWXgn8LpPIRzS3WwCnnGPWj7/MVwAC3fh/5aefhc1NECIrUSP9QX8g4Sy3cL3NFVlcUUtPgBXFJuUcJT4wNmA=
-Received: from AM0PR02CA0148.eurprd02.prod.outlook.com (2603:10a6:20b:28d::15)
- by DB9PR08MB7471.eurprd08.prod.outlook.com (2603:10a6:10:36d::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.14; Wed, 28 Aug
- 2024 17:37:51 +0000
-Received: from AM3PEPF00009B9B.eurprd04.prod.outlook.com
- (2603:10a6:20b:28d:cafe::fb) by AM0PR02CA0148.outlook.office365.com
- (2603:10a6:20b:28d::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25 via Frontend
- Transport; Wed, 28 Aug 2024 17:37:51 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
- client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
- pr=C
-Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- AM3PEPF00009B9B.mail.protection.outlook.com (10.167.16.20) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.7918.13
- via Frontend Transport; Wed, 28 Aug 2024 17:37:50 +0000
-Received: ("Tessian outbound de2677e4ad72:v403"); Wed, 28 Aug 2024 17:37:50 +0000
-X-CheckRecipientChecked: true
-X-CR-MTA-CID: 995ce8e2f973de11
-X-CR-MTA-TID: 64aa7808
-Received: from L3f941fdc1fa3.1
-	by 64aa7808-outbound-1.mta.getcheckrecipient.com id 49AC219A-5B3C-4E6D-B6F5-D97FEE331624.1;
-	Wed, 28 Aug 2024 17:37:43 +0000
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id L3f941fdc1fa3.1
-    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
-    Wed, 28 Aug 2024 17:37:43 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XTFit6+6h5rJqUc3+vAGvMe333QR8nptmpNNHGE38EnYCK8PbMi/rYEgChgvTO06JUHg6oaeRw+NJFHKF/zvaza0/ypHgz7Uacs25QjRAr7GzXv74PT2VGsbDsolnJ85DsRyXSvU1It6CQXNXt8BF7DqJMv/Y1fme2mkAiLa9ZC17K6aJ5atLTaaPlV+H5UTheqhf2rW76TJE20BF0uzYBZtRw2zkDiNg56nw0noXaDVCzd9BpKWUcm+xZcGGbZYUzir7Dj8zDH0vbfo+A5ReFJLpicWczUfRdM+h5cpDoFAsFTb/BBKb71YJbtsaQI3HgerP18gSwrfUU0q1YN9BA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FP25UcaMDvmXnLlz7Q9wsswVXlOxVbdRDeQn/Ui1khM=;
- b=pJcvwsgA1P1ceqBSobadoKdbazKSUBs9sIdP2dmX2WfnJibEZ3GHKk+P7F0NaGSNUfivTbfR2Ezu0PuM9o9ePKxbp40ox/UiBr04B/8JY3d0PHWWcPOiDvpbIp2/wTW949SM7rP+kAnGO5Tt4m5XM/BKz45egw09CYTQUQWi2Jj9+bx2Ia8uOWaBlc22FU2rt6GqESFISBQjngDIG1i6pIEKQ4Xu3Ciox9XgeHt6X6623/XPu1tpipPIk+gqOoDXKlbM5MV+L9Luui96qoSekUXPq7nbOoprQRxkEme3LNK82gA3j6mqKO+x0/PPMp6T8knODE4IG7eOG5uzQuhruw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FP25UcaMDvmXnLlz7Q9wsswVXlOxVbdRDeQn/Ui1khM=;
- b=OW5mUQyOOLo1F/+kxp2RuU7OBMU7JNOBsJtfMahRuUb8m3p3aXv2/l9Lgg1jlW+4978RH432K90aowNq6GOVLTzWXgn8LpPIRzS3WwCnnGPWj7/MVwAC3fh/5aefhc1NECIrUSP9QX8g4Sy3cL3NFVlcUUtPgBXFJuUcJT4wNmA=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from AS8PR08MB6263.eurprd08.prod.outlook.com (2603:10a6:20b:290::9)
- by AS4PR08MB7577.eurprd08.prod.outlook.com (2603:10a6:20b:4fc::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.18; Wed, 28 Aug
- 2024 17:37:41 +0000
-Received: from AS8PR08MB6263.eurprd08.prod.outlook.com
- ([fe80::12b5:3f0a:2090:fa7c]) by AS8PR08MB6263.eurprd08.prod.outlook.com
- ([fe80::12b5:3f0a:2090:fa7c%7]) with mapi id 15.20.7918.012; Wed, 28 Aug 2024
- 17:37:41 +0000
-Message-ID: <da61aa7c-0cee-4d44-a0f3-4b7eed3a8b58@arm.com>
-Date: Wed, 28 Aug 2024 18:37:41 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panthor: Add DEV_QUERY_TIMESTAMP_INFO dev query
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Mary Guillemard <mary.guillemard@collabora.com>,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- kernel@collabora.com, Christopher Healy <healych@amazon.com>,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, nd@arm.com
-References: <20240807153553.142325-2-mary.guillemard@collabora.com>
- <327a3440-8d01-4787-83be-a00fbbe0b593@arm.com>
- <20240828140929.5c602436@collabora.com>
- <c38324e4-055f-44b5-beb4-6b3e6b860e69@arm.com>
- <20240828180703.4510a4e2@collabora.com>
- <010201919a07868c-a8b90e57-0e61-4a05-8271-f4f4f86ca4cf-000000@eu-west-1.amazonses.com>
-Content-Language: en-US
-From: Mihail Atanassov <mihail.atanassov@arm.com>
-In-Reply-To: <010201919a07868c-a8b90e57-0e61-4a05-8271-f4f4f86ca4cf-000000@eu-west-1.amazonses.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0164.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:18a::7) To AS8PR08MB6263.eurprd08.prod.outlook.com
- (2603:10a6:20b:290::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE701A3BAA;
+	Wed, 28 Aug 2024 17:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724866714; cv=none; b=sLjnCBorno8h+ajL2b4wYMRnTg2h20aXmW0COeg650dWRBqenerxigZUj/DyYeAd5H0KXwM1xDV47FZn0FID4wIeZ4ofqea8TKYzWaWifd3x2vIsQ2TRWe/oi1y4WSnxq71tmlJm7B70c6ljmgLb36WDaF4tAwTlO/ve+YV7NKM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724866714; c=relaxed/simple;
+	bh=OOOwYyXztEJvfAk9NZ/gGALIUTmg/ggLAJsY8ejOKvs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lzD9HChEhRdo2uxmsV4uBLp7w4hAA54g42zd5iYdCqsx37dpXOWMYKvy6A/RFdTLNekx4/3lvN3HgJwY7Ej/lfseqYyRUOl3nIP0s3PZGSY8zbAmQNOPGZbPPcYWhmtnf2wJ8JuhYU3EW4EKQ/3/WOrINebfFBjMtnDphL29IXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GBsxYONW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28FC9C4CEC2;
+	Wed, 28 Aug 2024 17:38:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724866714;
+	bh=OOOwYyXztEJvfAk9NZ/gGALIUTmg/ggLAJsY8ejOKvs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GBsxYONWLzQDJtDnWl5DiWShZUeY/q2/WNLpY07cQ+lyCAts4dj0qaDNm0JjnpQd1
+	 NOCLtfnCmbyU9WUGBL1KkOEuPayurkumOjJb/ejvAf41J4MuLO62tqE2Dr0vvSu3gb
+	 WhVovi8sR+GcEnPV57MEg7GMSEZv2iviGOHrP22M4ghlID430TbTIOwcCVQV5Y9oft
+	 SJD8rC+AhII3TI/WqfI3vLFNbHN6ji2ASHIgvFwnW5JC+e8FGaHxm40aYZ0hA+GDmu
+	 52EIu3gyGljVRKkyU1COVG52g5E90E1zLJaakdW0SIyrtwmERJd2sgjzInbsRDxYmL
+	 fcnF5OPmuEjOg==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-533de5a88f8so6569259e87.3;
+        Wed, 28 Aug 2024 10:38:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUQAU6GL3ahOJnXEBLSWz4Dbneg9pK4R5UCSN8ipVbBt7GEZXZlAh1NzzFrUwltbismdqRsxC9UU7BPbPxeJ6s=@vger.kernel.org, AJvYcCWdoBbdYASv06Boy7BZBfnA2vr+pVilQeZZSW8c2sRFJCnKETSXJ5YGNEh4YHcXMY5x5MMuGNXm99lWv/w=@vger.kernel.org, AJvYcCXHkHqTUIv2cX8BkD5yHwWD6ViiimlbC9Aujbbew9LsmtWJz1S90eXEx0hIMxwm/8+wMayvKEeMRaxVoCYU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1aMxb12jGvOE3+ImJrSKr8BdrPW4zWrljeQSzPjlmIdFmuDu0
+	AtAsIFSFf7/CSzXYX+X1Ewv7uzdkvkhyDIMbp5oshSPSIIm5IRnmLKujDUT916xRwSGPCC/7zH7
+	gxCX4JkXXRXXD9UD/uZY9GUSYcsM=
+X-Google-Smtp-Source: AGHT+IHAVGPi6q8uJE+1kN/NUmiGTD51hr7CK0dL16xh2mxDpNMfUGdYD+AhZP9SM2JiO/W4nWgxh8SUi+GMSifF6bc=
+X-Received: by 2002:a05:6512:2211:b0:530:ab86:3 with SMTP id
+ 2adb3069b0e04-5353e54640emr29659e87.1.1724866712397; Wed, 28 Aug 2024
+ 10:38:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	AS8PR08MB6263:EE_|AS4PR08MB7577:EE_|AM3PEPF00009B9B:EE_|DB9PR08MB7471:EE_
-X-MS-Office365-Filtering-Correlation-Id: d666aabb-f816-44ca-1643-08dcc78823da
-X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?aU5JT1RubEx1dzZaQnozOXpaZnRFNzlpVC9SL2J3K2NuM0VqL1ltZ3BjMUYw?=
- =?utf-8?B?VlVSdUVuMnFOTlArNmJ3U2NqKy9wc3BsWmVPMERUaTNPTkxXL0RqelJYZkNp?=
- =?utf-8?B?R2xkaVk2WVRpaHdYbmFwQmZCaFpwVmxUeGlMZnhvQm81UTBPSmNZaGRGcHFU?=
- =?utf-8?B?QmNneWVoWEhJM21nR1Q1Z1FyUGpzYjhlZVhIYzJud0g0d2VmREJXTHpUakh5?=
- =?utf-8?B?Ny9WWmZ6ejJOb1dtTGt3Skw2ak1EcjlFM3dXMmlybXdLMnBkUEhvOThjQTJQ?=
- =?utf-8?B?dm1FdFZRcGh4UVhYak5rWkV3WXpva2NxM0NmWUc0MHA0eTVHNUNkY1YxaWVy?=
- =?utf-8?B?ZThXamRVcE1PQVpXdmxmQ0lCeUtCcE1ONmRnT0RWaWgzMldKS3lzZXo4bEtl?=
- =?utf-8?B?MUZZT3FxUjNFZE1hakxhNHR0L1F4cEJOMWY0Z2ljeGNVWTBIMzFRRWVob1lk?=
- =?utf-8?B?VFNIQmx5QTdHSVAxeHByZjZlR2ZlVisrWlpoZHRLUVFNRVllcGIrT3BBSytR?=
- =?utf-8?B?d21rTGR4YzI3MjBCSjdueFdJalptT1lCSXBubUZqeTFHcnU4WkF5RS9TTkM3?=
- =?utf-8?B?a28vNFJmSVpPN2JOSWxZdDB6eExxTEFlMm45dzhjUEYwWWd5bmdjSGJJbU5P?=
- =?utf-8?B?RlE3UUNuUWtnSnZEdnFVbXJMYzNCRjdETE52Z3lMMXJzR2FwNzJrVFNqWEZW?=
- =?utf-8?B?S24vSHd3bVV0MlVTVFlEMGozbDVqZ0RkOExvb2czZWhpd0FqUlcraFhLeFNQ?=
- =?utf-8?B?cmpMaEpCa2pza0hoUGFLNXROeHlOQW5OSldtWjdPb2NDd3UxOVBVZXF2Z1Ns?=
- =?utf-8?B?ajlCclB4NUFCdm5pWnJRN2pWRmdyYnBuUHhRNUlxMVNuMjdIaHBzV0doamt6?=
- =?utf-8?B?SkUyRlFzSW9MM29MVFVlelcyVjgxWEFuWXNzMllHb1NlbGxRTC9UeVY3VXc3?=
- =?utf-8?B?Z0FVZTdiMytDMVVNR3lNb1VGTWw2WDlrRUV2T1ZyTmg4YkEycE9uUGM2MkUw?=
- =?utf-8?B?a2dMLzdhQUp0bHh2cEMzeDlhNDh0b3piN0xiVmZnK2h1NTRzZFJZc28zTTVF?=
- =?utf-8?B?cmRHYTg3YTc3SWJZeDJtTXVCdWdWR1ZvMEUyYWJhNlFDUkc2K3ZZdHBEZnMy?=
- =?utf-8?B?d0hvdHdnbXJjMExCRnB0UnJnbVF2bktoTkgySll6RzBnb3NjaGNjUWVwWUFv?=
- =?utf-8?B?dGszeUZmbk5TQzk2UzZwclRWTVEzemhnYmF6M0tiMTh1MGdCTFdjV3lPMVFN?=
- =?utf-8?B?bzFpQ01tdnZVWjBvNGdKVkpOK2YrdW1mM3VBWnBWTDVhTXcwdEs0OEtHL3Z1?=
- =?utf-8?B?UFl0M1dIckN4aHQxYWV0T2pienpVTEN5ZjQ3eGwzVWYvRjZTL3dON3ZTTmJW?=
- =?utf-8?B?eUdJRHZvdFdxRHFjMzMrWjNtUEhncXdIK1A1SHNHbHlZYVdJRlMyLzV5SWhU?=
- =?utf-8?B?ZDhPQkV4dDRaV1BSTDNkUFhnOW9LTjltbDR4MlVHVCtZNXZRVmlaQ3R0b1Z0?=
- =?utf-8?B?OGNRcWk1WmtGT1hkU20vaWlUMlpvOXVwY3BmSDhOYkQ3ZEdZL1NxcjIwOG5F?=
- =?utf-8?B?VnJZelhBdnJMYmlzeEVpdEJvNHdjbUNuRFZRZUkvSmVzRXV2NTZZbUpVU1RF?=
- =?utf-8?B?ajU4eEJGSUpzaGZYSUg1eVVsNk1EMmJFTlc1QTBTK0JFeHJ6UnJjbHYyOFVt?=
- =?utf-8?B?NXlBVS9Bc0FLUGFqNVVIZGU0d1A5UUVRWGNwbnBpV04zMzZNLzBha09wMlRr?=
- =?utf-8?Q?FIBQ6CiuucPcFMD5T4=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR08MB6263.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR08MB7577
-Original-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-X-EOPAttributedMessage: 0
-X-MS-Exchange-SkipListedInternetSender:
- ip=[2603:10a6:20b:290::9];domain=AS8PR08MB6263.eurprd08.prod.outlook.com
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AM3PEPF00009B9B.eurprd04.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	9b36eff8-125c-4055-dcd9-08dcc7881e46
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|35042699022|1800799024|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bVNzSmpnVGtIMW1GQXRXSFJPc1ZaQkNtb2F6VTZsVkZKMmdPTWlKSERYdTdJ?=
- =?utf-8?B?UWZ1cERIOUVseHNKbUIrQ2pwblNFK2ZsNGpWb0RFcUQzOFkxQWtrR0Z2cUxh?=
- =?utf-8?B?S0JDUUV6c251MjlQKzhkMUhyODBZYTI3VzU0MEQzUUVOV3BiY08xdUtxU1Q4?=
- =?utf-8?B?MkdjL1IwZ3FvdFJYVHBraGtwSldqRllCRk9PbDdhRmtPOCtJZWxaalU1UVpm?=
- =?utf-8?B?Qlo5dkVPbnhnOGFQQisvaDgrOHhhemt5MWVEc1RBYkx6cFV6VFlFbkt1RUpE?=
- =?utf-8?B?cVREQ0NWZ1JpNzJOeGQ5Slkxd2U2cVFoQmV0bWdmTEhTK1poRTluejM0VHhE?=
- =?utf-8?B?MVhiNVFrNlZHOG01Q05hbHcrSUtVaDVVWVAzazU5UXR6NzBkMkhNeE11YS94?=
- =?utf-8?B?SEZORDQzOHo5SzhaTzdJK2x3WFBOY1pIV2krVVlUU3NWNTNMcUhjMzF2aVZi?=
- =?utf-8?B?MEVhVi9UU0lkK2t4VFV2emVpcWx6NzdqMzBuVVZwSlZaQ2FnOCtmYVo5emRm?=
- =?utf-8?B?Mk9OaExLUEhWbklYZmlIbTJCWkcraDg1bTNBSXBQcHBDeW90RHhsOFZXeG81?=
- =?utf-8?B?RWo0ZmxSdDlKVE1USkFoZUlxNEhnU01rSGxaYzhXc1ZJb2pSM2VqUjVabUpE?=
- =?utf-8?B?ZEN5TlpuMG9pUk51cXJ6OXBlN2lDemFOMUJiSGZ1Q2lBTmtvbjAvUlo3QnMx?=
- =?utf-8?B?NDFkYVR3NTZCeWQ2Y0lkSkdVdm5UTVBEL3BsaWpCcFVhZjJLcE9FaWNmVk1Y?=
- =?utf-8?B?UXhCSFQrQTE5MTlIUjA1U21aZ3BiVGRpdnBpTktJaElnOVI0WGVyU0Uyc1NF?=
- =?utf-8?B?bVRtZFlZNTdZWU5Bd1ZrbWUvRjA1M1drVzFLcUkvcWdsS3BoRXEwbk4wWU10?=
- =?utf-8?B?SWRTd05meHByVk9ab0pCUTJJR2txRUtlZU9uMWQ1UVBXZFpmTEFKRGE2N3pi?=
- =?utf-8?B?d29qS2dzTUVTdlgyeVl1TFVCNE9hMVM3K3FtUWwzakRyUkpBeDV1UjNWc013?=
- =?utf-8?B?M3hhRFp3bXAzL3FLMXNhZitDR0JLT0JsNXpwTDlQY285ZThxM2NhVXZuQXpF?=
- =?utf-8?B?NG1USG5zRTN1bVQ2VlFwZnk5WWlLUmw1STM3QWU2djZ4ME9Eckw3SmtkTXpn?=
- =?utf-8?B?bEJCY000SFhGdVBhaFFZOFJncHFoVnEyQXNnV3FVNnMxN3pVQ1RwdjZHajc4?=
- =?utf-8?B?YTFhRnE5RHk0OG9rZS96eFNBSDFwOHlrMTliRnV6b1R0YmxaM1dwWUdOdHQ0?=
- =?utf-8?B?dFVtNUdLTE1QK2pnbEYvYVBhd09nZmp0WUhpazhmTGFmeGs4VWRYUG4vMEZv?=
- =?utf-8?B?MVVQbUs0M1pOM0lYS2wxU09vZ1FNampJODU5N2JLQkcxaDR6d0djUU1hNnVQ?=
- =?utf-8?B?S3ZkTGpsSE1pNGhTUVV6L3Iwd0xHd2lJOHZ1S2F2bHlTTy9zbWNEQUhTOTdM?=
- =?utf-8?B?YVh4R1QvT2dXUG84eENTNG5hU09XR3k3blQ5VDQrT0lKemxmdWl0bmFDcUYv?=
- =?utf-8?B?SFBVZ00wQmViTEpYeHBGc1lYZ3I4T1NQVXB5NHFqazNRVGZBaDdxSU8zSDgw?=
- =?utf-8?B?LytlVnVDQXVSVWwzaDdEanF3d0Q0aERWM3N2MXJyWTBvMjZ3Qjdoc3JVeW03?=
- =?utf-8?B?RndvaUpYOFhSZEkwVVFsak5HbXhHTS8xbDJFVXEweFJ6SHB0VFVrU2hyR0pH?=
- =?utf-8?B?YlNDVUdIdlJRUXd4UElJSm53OG9ybldDcC9jOHEyRCsrTG45aC9MdStrak15?=
- =?utf-8?B?dTN5RTN6TklIbzhJRit1ZStSQ1k3aEVRVVhHUkN1VnJDMHh3K2llSElDbU1W?=
- =?utf-8?B?UDRqT0d4S2ZKUVhYNSsvZm1PVlpjZXlXMUtBKzM1L2Z4SE9PYjQ5dkJDMmU1?=
- =?utf-8?B?N1NMNmRxbEtYcWt2V1lQaVd0VmI1MUs4dnVKcWMvRTlFT2c9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(13230040)(82310400026)(35042699022)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 17:37:50.9961
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d666aabb-f816-44ca-1643-08dcc78823da
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM3PEPF00009B9B.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR08MB7471
+References: <20240826-shadow-call-stack-v6-1-495a7e3eb0ef@google.com>
+ <CAMj1kXGtH+yna6CLncxTYi+ie2WF5-nSA3q0Re9L1VJt1EoQ9A@mail.gmail.com> <CAH5fLgiE9TsCSj2JWny+d_StTPcw3iVu7zNQf0TSUVu2H8Dr5A@mail.gmail.com>
+In-Reply-To: <CAH5fLgiE9TsCSj2JWny+d_StTPcw3iVu7zNQf0TSUVu2H8Dr5A@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Wed, 28 Aug 2024 19:38:20 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXFFaXW5WBUW=U+SZBOkCYSRwVJkQ1rD1wGKRsoxDBY8aw@mail.gmail.com>
+Message-ID: <CAMj1kXFFaXW5WBUW=U+SZBOkCYSRwVJkQ1rD1wGKRsoxDBY8aw@mail.gmail.com>
+Subject: Re: [PATCH v6] rust: support for shadow call stack sanitizer
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Jamie Cunliffe <Jamie.Cunliffe@arm.com>, Sami Tolvanen <samitolvanen@google.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Conor Dooley <conor@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Marc Zyngier <maz@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Valentin Obst <kernel@valentinobst.de>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, 28 Aug 2024 at 16:42, Alice Ryhl <aliceryhl@google.com> wrote:
+>
+> On Wed, Aug 28, 2024 at 3:48=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> =
+wrote:
+> >
+> > On Mon, 26 Aug 2024 at 16:23, Alice Ryhl <aliceryhl@google.com> wrote:
+> > >
+> > > This patch adds all of the flags that are needed to support the shado=
+w
+> > > call stack (SCS) sanitizer with Rust, and updates Kconfig to allow on=
+ly
+> > > configurations that work.
+> > >
+> > > The -Zfixed-x18 flag is required to use SCS on arm64, and requires ru=
+stc
+> > > version 1.80.0 or greater. This restriction is reflected in Kconfig.
+> > >
+> > > When CONFIG_DYNAMIC_SCS is enabled, the build will be configured to
+> > > include unwind tables in the build artifacts. Dynamic SCS uses the
+> > > unwind tables at boot to find all places that need to be patched. The
+> > > -Cforce-unwind-tables=3Dy flag ensures that unwind tables are availab=
+le
+> > > for Rust code.
+> > >
+> > > In non-dynamic mode, the -Zsanitizer=3Dshadow-call-stack flag is what
+> > > enables the SCS sanitizer. Using this flag requires rustc version 1.8=
+2.0
+> > > or greater on the targets used by Rust in the kernel. This restrictio=
+n
+> > > is reflected in Kconfig.
+> > >
+> > > It is possible to avoid the requirement of rustc 1.80.0 by using
+> > > -Ctarget-feature=3D+reserve-x18 instead of -Zfixed-x18. However, this=
+ flag
+> > > emits a warning during the build, so this patch does not add support =
+for
+> > > using it and instead requires 1.80.0 or greater.
+> > >
+> > > The dependency is placed on `select HAVE_RUST` to avoid a situation
+> > > where enabling Rust silently turns off the sanitizer. Instead, turnin=
+g
+> > > on the sanitizer results in Rust being disabled. We generally do not
+> > > want changes to CONFIG_RUST to result in any mitigations being change=
+d
+> > > or turned off.
+> > >
+> > > At the time of writing, rustc 1.82.0 only exists via the nightly rele=
+ase
+> > > channel. There is a chance that the -Zsanitizer=3Dshadow-call-stack f=
+lag
+> > > will end up needing 1.83.0 instead, but I think it is small.
+> > >
+> > > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > > ---
+> > > Link: https://lore.kernel.org/rust-for-linux/20240808221138.873750-1-=
+ojeda@kernel.org/ [1]
+> > > ---
+> > > Changes in v6:
+> > > - Move Kconfig requirements into arch/*/Kconfig.
+> > > - List non-dynamic SCS as supported on 1.82. This reflects newly adde=
+d
+> > >   things in rustc.
+> > > - Link to v5: https://lore.kernel.org/r/20240806-shadow-call-stack-v5=
+-1-26dccb829154@google.com
+> > >
+> > > Changes in v5:
+> > > - Rebase series on v6.11-rc2.
+> > > - The first patch is no longer included as it was merged in v6.11-rc2=
+.
+> > > - The commit message is rewritten from scratch.
+> > > - Link to v4: https://lore.kernel.org/r/20240729-shadow-call-stack-v4=
+-0-2a664b082ea4@google.com
+> > >
+> > > Changes in v4:
+> > > - Move `depends on` to CONFIG_RUST.
+> > > - Rewrite commit messages to include more context.
+> > > - Link to v3: https://lore.kernel.org/r/20240704-shadow-call-stack-v3=
+-0-d11c7a6ebe30@google.com
+> > >
+> > > Changes in v3:
+> > > - Use -Zfixed-x18.
+> > > - Add logic to reject unsupported rustc versions.
+> > > - Also include a fix to be backported.
+> > > - Link to v2: https://lore.kernel.org/rust-for-linux/20240305-shadow-=
+call-stack-v2-1-c7b4a3f4d616@google.com/
+> > >
+> > > Changes in v2:
+> > > - Add -Cforce-unwind-tables flag.
+> > > - Link to v1: https://lore.kernel.org/rust-for-linux/20240304-shadow-=
+call-stack-v1-1-f055eaf40a2c@google.com/
+> > > ---
+> > >  Makefile            | 1 +
+> > >  arch/arm64/Kconfig  | 7 ++++++-
+> > >  arch/arm64/Makefile | 3 +++
+> > >  arch/riscv/Kconfig  | 7 ++++++-
+> > >  init/Kconfig        | 1 -
+> > >  5 files changed, 16 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/Makefile b/Makefile
+> > > index 44c02a6f60a1..eb01a26d8354 100644
+> > > --- a/Makefile
+> > > +++ b/Makefile
+> > > @@ -927,6 +927,7 @@ ifdef CONFIG_SHADOW_CALL_STACK
+> > >  ifndef CONFIG_DYNAMIC_SCS
+> > >  CC_FLAGS_SCS   :=3D -fsanitize=3Dshadow-call-stack
+> > >  KBUILD_CFLAGS  +=3D $(CC_FLAGS_SCS)
+> > > +KBUILD_RUSTFLAGS +=3D -Zsanitizer=3Dshadow-call-stack
+> > >  endif
+> > >  export CC_FLAGS_SCS
+> > >  endif
+> > > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> > > index a2f8ff354ca6..28c4a3035331 100644
+> > > --- a/arch/arm64/Kconfig
+> > > +++ b/arch/arm64/Kconfig
+> > > @@ -231,7 +231,7 @@ config ARM64
+> > >         select HAVE_FUNCTION_ARG_ACCESS_API
+> > >         select MMU_GATHER_RCU_TABLE_FREE
+> > >         select HAVE_RSEQ
+> > > -       select HAVE_RUST if CPU_LITTLE_ENDIAN
+> > > +       select HAVE_RUST if RUSTC_SUPPORTS_ARM64
+> > >         select HAVE_STACKPROTECTOR
+> > >         select HAVE_SYSCALL_TRACEPOINTS
+> > >         select HAVE_KPROBES
+> > > @@ -265,6 +265,11 @@ config ARM64
+> > >         help
+> > >           ARM 64-bit (AArch64) Linux support.
+> > >
+> > > +config RUSTC_SUPPORTS_ARM64
+> >
+> > Nit: could we choose a better name here? ARCH_HAVE_RUST perhaps?
+>
+> This is the name suggested by Will Deacon in the previous version. I'm
+> happy to change it if you prefer, but I'm wondering if that name is
+> too close to HAVE_RUST? Perhaps ARCH_SUPPORTS_RUST? Ultimately I think
+> that the current name is okay.
+>
 
+Fair enough. Let's leave it as-is.
 
-On 28/08/2024 18:27, Boris Brezillon wrote:
-> On Wed, 28 Aug 2024 18:07:03 +0200
-> Boris Brezillon <boris.brezillon@collabora.com> wrote:
-> 
->> On Wed, 28 Aug 2024 14:22:51 +0100
->> Mihail Atanassov <mihail.atanassov@arm.com> wrote:
->>
->>> Hi Boris,
->>>
->>> On 28/08/2024 13:09, Boris Brezillon wrote:
->>>> Hi Mihail,
->>>>
->>>> On Thu, 8 Aug 2024 12:41:05 +0300
->>>> Mihail Atanassov <mihail.atanassov@arm.com> wrote:
->>>>      
->>>>>>
->>>>>> +/** + * struct drm_panthor_timestamp_info - Timestamp information +
->>>>>> * + * Structure grouping all queryable information relating to the
->>>>>> GPU timestamp. + */ +struct drm_panthor_timestamp_info { +	/**
->>>>>> @timestamp_frequency: The frequency of the timestamp timer. */ +
->>>>>> __u64 timestamp_frequency; + +	/** @current_timestamp: The current
->>>>>> timestamp. */ +	__u64 current_timestamp;
->>>>>
->>>>> As it stands, this query has nothing to do with the actual GPU so
->>>>> doesn't really belong here.
->>>>>
->>>>> It'd be more valuable, and can maybe give better calibration results
->>>>> than querying the system timestamp separately in userspace, if you
->>>>> reported all of:
->>>>>     * the system timer value
->>>>>     * the system timer frequency
->>>>>     * the GPU timer value
->>>>>     * the GPU timer frequency (because it _could_ be different in some
->>>>> systems)
->>>>
->>>> Duh, I wish this wasn't the case and all SoC vendors went for the
->>>> arch-timer which guarantees the consistency of the timestamp on the GPU
->>>> and CPU. But let's say this is a case we need to support, wouldn't it
->>>> be more useful to do the CPU/GPU calibration kernel side (basically at
->>>> init/resume time) and then expose the formula describing the
->>>> relationship between those 2 things:
->>>>
->>>> CPU_time = GPU_time * GPU_to_CPU_mul / GPU_to_CPU_div +
->>>> 	   GPU_to_CPU_offset;
->>>>      
->>>
->>> TIMESTAMP_OFFSET should indeed be set by the kernel (on resume). But I
->>> don't think we need to post M/D+offset to userspace. The 2 Frequencies +
->>> the scalar offset are the raw sources, and userspace can work back from
->>> there.
->>
->> Sure. No matter how you express the relationship, my point was, if the
->> calibration is supposed to happen in the kernel at resume time,
->> returning both the CPU/GPU time in DEV_QUERY_TIMESTAMP to make sure the
->> sampling is close enough that they actually represent the same
->> timestamp might not be needed, because you can easily convert from one
->> domain to the other.
-> 
-> I think it makes more sense after reading [1] :-). This being said, the
-> maxDeviation is here to account for any latency that might exists
-> between each domain sampling, so I'd be tempted to read the CPU
-> monotonic time through the regular syscalls rather than add it to the
-> DEV_QUERY_TIMESTAMP ioctl.
-> 
+> > > +       def_bool y
+> > > +       depends on CPU_LITTLE_ENDIAN
+> > > +       depends on !SHADOW_CALL_STACK || RUSTC_VERSION >=3D 108200 ||=
+ RUSTC_VERSION >=3D 108000 && UNWIND_PATCH_PAC_INTO_SCS
+> > > +
+> >
+> > This is a bit opaque, so I'd prefer to have a comment here, explaining
+> > that rustc 1.82 supports emitting the instrumentation statically, but
+> > 1.80 is needed to get the X18 reservation, which the DWARF based
+> > patching logic relies on.
+>
+> Hmm. I tried a few different wordings and ended on this:
+>
+> config RUSTC_SUPPORTS_ARM64
+>        def_bool y
+>        depends on CPU_LITTLE_ENDIAN
+>        # Shadow call stack is only supported on some versions of rustc.
+>        #
+>        # When using the UNWIND_PATCH_PAC_INTO_SCS option, rustc version 1=
+.80+ is
+>        # required due to use of the -Zfixed-x18 flag.
+>        #
+>        # Otherwise, rustc version 1.82+ is required due to use of the
+>        # -Zsanitizer=3Dshadow-call-stack flag.
+>        depends on !SHADOW_CALL_STACK || RUSTC_VERSION >=3D 108200 ||
+> RUSTC_VERSION >=3D 108000 && UNWIND_PATCH_PAC_INTO_SCS
+>
+> This wording avoids getting into the weeds of how SCS works. Do you
+> prefer something that gets into more detail than this?
+>
 
-Wouldn't that defeat the point of getting low-latency consecutive reads 
-of both time domains? If you leave it to a separate syscall, you're at 
-the mercy of a lot of things, so it's not just a scalar time delta, 
-you'll get much higher measurement variance. Doing it in-kernel with no 
-sleeps in the middle gets you better confidence in your samples being 
-consistently correlated in time. If you have that in-kernel low latency 
-correlation pairwise for all time domains you're interested in (in this 
-case CPU & GPU timestamps, but you could get CPU & display IP 
-timestamps, etc), you can then correlate all of the clocks in userspace.
+This looks fine to me.
 
-Fundamentally, though, if you don't report CPU timestamps in v1 of the 
-ioctl, you can extend later if it becomes clear that the maxDeviation is 
-not low enough with the samples being across a syscall.
+> > >  config CLANG_SUPPORTS_DYNAMIC_FTRACE_WITH_ARGS
+> > >         def_bool CC_IS_CLANG
+> > >         # https://github.com/ClangBuiltLinux/linux/issues/1507
+> > > diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+> > > index f6bc3da1ef11..b058c4803efb 100644
+> > > --- a/arch/arm64/Makefile
+> > > +++ b/arch/arm64/Makefile
+> > > @@ -57,9 +57,11 @@ KBUILD_AFLAGS        +=3D $(call cc-option,-mabi=
+=3Dlp64)
+> > >  ifneq ($(CONFIG_UNWIND_TABLES),y)
+> > >  KBUILD_CFLAGS  +=3D -fno-asynchronous-unwind-tables -fno-unwind-tabl=
+es
+> > >  KBUILD_AFLAGS  +=3D -fno-asynchronous-unwind-tables -fno-unwind-tabl=
+es
+> > > +KBUILD_RUSTFLAGS +=3D -Cforce-unwind-tables=3Dn
+> > >  else
+> > >  KBUILD_CFLAGS  +=3D -fasynchronous-unwind-tables
+> > >  KBUILD_AFLAGS  +=3D -fasynchronous-unwind-tables
+> > > +KBUILD_RUSTFLAGS +=3D -Cforce-unwind-tables=3Dy -Zuse-sync-unwind=3D=
+n
+> > >  endif
+> > >
+> > >  ifeq ($(CONFIG_STACKPROTECTOR_PER_TASK),y)
+> > > @@ -114,6 +116,7 @@ endif
+> > >
+> > >  ifeq ($(CONFIG_SHADOW_CALL_STACK), y)
+> > >  KBUILD_CFLAGS  +=3D -ffixed-x18
+> > > +KBUILD_RUSTFLAGS +=3D -Zfixed-x18
+> > >  endif
+> > >
+> > >  ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
+> > > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> > > index 0f3cd7c3a436..476e38ed9c00 100644
+> > > --- a/arch/riscv/Kconfig
+> > > +++ b/arch/riscv/Kconfig
+> > > @@ -172,7 +172,7 @@ config RISCV
+> > >         select HAVE_REGS_AND_STACK_ACCESS_API
+> > >         select HAVE_RETHOOK if !XIP_KERNEL
+> > >         select HAVE_RSEQ
+> > > -       select HAVE_RUST if 64BIT
+> > > +       select HAVE_RUST if RUSTC_SUPPORTS_RISCV
+> > >         select HAVE_SAMPLE_FTRACE_DIRECT
+> > >         select HAVE_SAMPLE_FTRACE_DIRECT_MULTI
+> > >         select HAVE_STACKPROTECTOR
+> > > @@ -202,6 +202,11 @@ config RISCV
+> > >         select UACCESS_MEMCPY if !MMU
+> > >         select ZONE_DMA32 if 64BIT
+> > >
+> > > +config RUSTC_SUPPORTS_RISCV
+> > > +       def_bool y
+> > > +       depends on 64BIT
+> > > +       depends on !SHADOW_CALL_STACK || RUSTC_VERSION >=3D 108200
+> > > +
+> >
+> > Same nit as above. Also, if this enables shadow call stack on RISC-V
+> > too, please mention it in the commit log more clearly, as it only
+> > mentions arm64 by name.
+>
+> Same question as above. I came up with:
+>
+> config RUSTC_SUPPORTS_RISCV
+>        def_bool y
+>        depends on 64BIT
+>        # Shadow call stack requires rustc version 1.82+ due to use of the
+>        # -Zsanitizer=3Dshadow-call-stack flag.
+>        depends on !SHADOW_CALL_STACK || RUSTC_VERSION >=3D 108200
+>
 
-> [1]https://docs.vulkan.org/features/latest/features/proposals/VK_EXT_calibrated_timestamps.html
+Fine too.
 
--- 
-Mihail Atanassov <mihail.atanassov@arm.com>
-
+> > >  config CLANG_SUPPORTS_DYNAMIC_FTRACE
+> > >         def_bool CC_IS_CLANG
+> > >         # https://github.com/ClangBuiltLinux/linux/issues/1817
+> > > diff --git a/init/Kconfig b/init/Kconfig
+> > > index fe76c5d0a72e..e095e94eb9db 100644
+> > > --- a/init/Kconfig
+> > > +++ b/init/Kconfig
+> > > @@ -1909,7 +1909,6 @@ config RUST
+> > >         depends on !MODVERSIONS
+> > >         depends on !GCC_PLUGINS
+> > >         depends on !RANDSTRUCT
+> > > -       depends on !SHADOW_CALL_STACK
+> > >         depends on !DEBUG_INFO_BTF || PAHOLE_HAS_LANG_EXCLUDE
+> > >         help
+> > >           Enables Rust support in the kernel.
+> > >
+> > > ---
+> > > base-commit: 5953fd808fca8116a91678ee5fac00fc198ad93d
+> > > change-id: 20240304-shadow-call-stack-9c197a4361d9
+> > >
+> >
+> > With the comments addressed (or refuted)
+> >
+> > Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+>
+> Thanks for the review!
+>
+> Alice
+>
 
