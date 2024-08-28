@@ -1,136 +1,127 @@
-Return-Path: <linux-kernel+bounces-305560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED73696307B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:53:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E31B96305B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:43:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A576C1F21C4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:53:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FE8D1C23DB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110801AAE04;
-	Wed, 28 Aug 2024 18:53:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DDC31AB538;
+	Wed, 28 Aug 2024 18:43:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dlPlM6Oh"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ROtLpkCE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6688C154C19;
-	Wed, 28 Aug 2024 18:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D54D1D696;
+	Wed, 28 Aug 2024 18:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724871219; cv=none; b=QL9OkQ1Cg+XLzHcnlhjFYXH3zx1jwB9PgrKrV1Sf2/tf9keKzcX3Uf4lZXKRjxyUpNKbMyBUaEvSk87I7RPyoVPcFlui5bQFx1StBCbaajEjphEc50ImX6SgxiXW4U5dUN6H/7Umr1+BAIRdwyy7aHuvx9zoYAZCSnr98lRJXcU=
+	t=1724870616; cv=none; b=uJZwamkrjh5oRjpH6SBD4rh3eC2qJJ6li8bOxd5aUabP5asyfwAiyQQA7r8VU6YltEMBEq+S6n9QP8Dlx4h+rbIj5vevFLwfXMyBxp6V75zSS4V8oRmmBnAY/TOGSN9fiuLocENf5HO10aJBI6GJisdLzQ84IBuSHLgi6aEDWZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724871219; c=relaxed/simple;
-	bh=H1XuPPB8v900dqjawnDHbkZVV/UCHi52+icAflQG6Vk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m52aYetdp5K68XTxwDUgSRhdRhz6H6Gdvp/1vUWoKbpifXsWxc1fxdPN8t4GbUOn28bz4Qrx2V1OEQJ5eTIjlgM0694xuWThixDamnNq+/ehIV97qmUF/9cioOqXZkPNWkdBROPbIWdITwWEX1cjnang1VUA6eC07xKi3CnKiaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dlPlM6Oh; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47SIrUpZ051715;
-	Wed, 28 Aug 2024 13:53:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724871210;
-	bh=z9uAqw/+IP1IRKtdfwhh5ngrNSdW4CojfSTM8EbSRWE=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=dlPlM6Oh61oicmZ5Cd63S9nj+GG6ezcUIJ5DEmIZagA2+DA1tcI6TEHev7/2yOx/b
-	 g7L0tb3w/f+8SFHV7pJ2qhlffxe1rK36EBvMmkvBKboUlWB4VHIkic5afAMqa+q/8Y
-	 pdbSQqFG4HQsQeTFDq11NxtJttKPqdjOMkR03Qkk=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47SIrUFh011132
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 28 Aug 2024 13:53:30 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 28
- Aug 2024 13:53:30 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 28 Aug 2024 13:53:30 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47SIrUBG046548;
-	Wed, 28 Aug 2024 13:53:30 -0500
-From: Nishanth Menon <nm@ti.com>
-To: <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        Beleswar Padhi <b-padhi@ti.com>
-CC: Nishanth Menon <nm@ti.com>, <u-kumar1@ti.com>, <s-anna@ti.com>,
-        <hnagalla@ti.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 0/7] Switch MAIN R5F clusters to Split-mode for TI K3 Platforms
-Date: Wed, 28 Aug 2024 13:43:24 -0500
-Message-ID: <172487055957.3438526.15757529252683657587.b4-ty@ti.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240826093024.1183540-1-b-padhi@ti.com>
-References: <20240826093024.1183540-1-b-padhi@ti.com>
+	s=arc-20240116; t=1724870616; c=relaxed/simple;
+	bh=bWjjtD9ux0QAGG3fGYObh74lsPxgFpjHa3YWm0m0vIU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Tg8NLAiN1pUYg/CZyuIe3v/9AOKfJ3kdjm5n9ZUcJWOqRE17Iih5BlNWvRTbUydOrtYLKo/GvtwNdO9eC4UuAeS2ybdlpWXDVR7yAc0xB1IA6dKqW3Bccz1evVcTEc5V2SZTYQ6YzZwJWwYLE+78WGN6UYT7cyU0DtjrZPKn/ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ROtLpkCE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72659C4CEC0;
+	Wed, 28 Aug 2024 18:43:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724870616;
+	bh=bWjjtD9ux0QAGG3fGYObh74lsPxgFpjHa3YWm0m0vIU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ROtLpkCEGD8Ucdbs7a1iRfvuc32G3qJBY6quO3vEkfgfTtRxHiuhmUPG4800e2RsG
+	 /Lm2aGh9ZM5echC/qr/x2EXrVQ45i6g+DGFDj3b4IL1+1nBBMKPOO7F2EVPH21SXWt
+	 D3wyLlY3wzUG+pAwc9PiOyoANcpRLYBPjrk80WBsoM0sK/mk/Y/+Np3wR59Dnj9tMd
+	 zCiuTrI/cV8v34a6M0pTb4HTETCCVIQdFJzGlV39b2ciDrjitNDYPxuwRZojB40abg
+	 4ctkvmZU35i1iPs5RMsbgdrXOvldO8psyPOoy6iI6yqUNNrEivtWT76jv46HwMkF1o
+	 46/gB0lOrWDFQ==
+Date: Wed, 28 Aug 2024 11:43:33 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
+ <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, Ivan
+ Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
+ <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>,
+ Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
+ <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, Herbert
+ Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, Willem
+ de Bruijn <willemdebruijn.kernel@gmail.com>, =?UTF-8?B?QmrDtnJuIFTDtnBl?=
+ =?UTF-8?B?bA==?= <bjorn@kernel.org>, Magnus Karlsson
+ <magnus.karlsson@intel.com>, Maciej Fijalkowski
+ <maciej.fijalkowski@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
+ <christian.koenig@amd.com>, Pavel Begunkov <asml.silence@gmail.com>, David
+ Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin
+ <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, Harshitha
+ Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi
+ <pkaligineedi@google.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Christoph
+ Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>,
+ Taehee Yoo <ap420073@gmail.com>, Willem de Bruijn <willemb@google.com>,
+ Kaiyuan Zhang <kaiyuanz@google.com>
+Subject: Re: [PATCH net-next v22 04/13] netdev: netdevice devmem allocator
+Message-ID: <20240828114333.560895f0@kernel.org>
+In-Reply-To: <CAHS8izP8T5Xj97M7efecBmCrG9z8E0PYTxWCYZ0ym0hv13-DKg@mail.gmail.com>
+References: <20240825041511.324452-1-almasrymina@google.com>
+	<20240825041511.324452-5-almasrymina@google.com>
+	<20240827191519.5464a0b2@kernel.org>
+	<CAHS8izP8T5Xj97M7efecBmCrG9z8E0PYTxWCYZ0ym0hv13-DKg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Beleswar Padhi,
-
-On Mon, 26 Aug 2024 15:00:17 +0530, Beleswar Padhi wrote:
-> TI's K3 Platforms (J7200-EVM, J721E-EVM, J721E-SK, J721S2-EVM, AM68-SK,
-> J784S4-EVM, AM69-SK) have multiple R5F clusters in the MAIN domain. All
-> of these clusters are configured for LockStep mode at the moment. Switch
-> all of these R5F clusters to Split mode by default to maximize the
-> number of R5F cores.
+On Wed, 28 Aug 2024 00:20:23 -0700 Mina Almasry wrote:
+> > On Sun, 25 Aug 2024 04:15:02 +0000 Mina Almasry wrote:  
+> > > +void net_devmem_free_dmabuf(struct net_iov *niov)
+> > > +{
+> > > +     struct net_devmem_dmabuf_binding *binding = net_iov_binding(niov);
+> > > +     unsigned long dma_addr = net_devmem_get_dma_addr(niov);
+> > > +
+> > > +     if (gen_pool_has_addr(binding->chunk_pool, dma_addr, PAGE_SIZE))
+> > > +             gen_pool_free(binding->chunk_pool, dma_addr, PAGE_SIZE);  
+> >
+> > Is the check necessary for correctness? Should it perhaps be a WARN
+> > under DEBUG_NET instead? The rest LGTM:
+> >  
 > 
-> v3: Changelog:
-> * Nishanth
-> 1) Refactored changes to board level DTS files instead of SoC level dtsi files.
+> Not really necessary for correctness per se, but if we try to free a
+> dma_addr that is not in a gen_pool (due to some other bug in the
+> code), then gen_pool_free ends up BUG_ON, crashing the kernel.
 > 
-> [...]
+> Arguably gen_pool_free should not BUG_ON, but I think that's an old
+> API, and existing call sites have worked around the BUG_ON by doing a
+> gen_pool_has_addr check like I do here, for example kernel/dma/pool.c.
+> So I did not seek to change this established behavior.
+> 
+> I think WARN seems fine to me, but maybe not under DEBUG_NET. I don't
+> want production code crashing due to this error, if it's OK with you.
+> 
+> Unless I hear otherwise I'll add a WARN without debug here.
 
-I have applied the following to branch ti-k3-dts-next on [1].
-Thank you!
-
-[1/7] arm64: dts: ti: k3-j7200-som-p0: Switch MAIN R5F cluster to Split-mode
-      commit: 936fa8b91abac356b8c8afd70959dba8420ddc18
-[2/7] arm64: dts: ti: k3-j721e-som-p0: Switch MAIN R5F clusters to Split-mode
-      commit: 956d1f88a7df31cd7264b07d9ff7fe886aa96ae5
-[3/7] arm64: dts: ti: k3-j721e-sk: Switch MAIN R5F clusters to Split-mode
-      commit: 17613194f8f765c5559c2a1aab56b76ffbc4a2ee
-[4/7] arm64: dts: ti: k3-j721s2-som-p0: Switch MAIN R5F clusters to Split-mode
-      commit: ab630a7f429195a02185faec448603d2ae4b12d5
-[5/7] arm64: dts: ti: k3-am68-sk-som: Switch MAIN R5F clusters to Split-mode
-      commit: e1f2bf759c533fb86380ded089a16fba24222832
-[6/7] arm64: dts: ti: k3-j784s4-evm: Switch MAIN R5F clusters to Split-mode
-      commit: 10ef034f94ef7916c89f40e3b3844bcd066a7a58
-[7/7] arm64: dts: ti: k3-am69-sk: Switch MAIN R5F clusters to Split-mode
-      commit: 34d0e51ad34b0b1f8d6020020bf7e4e8e4f5cbe1
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-
+WARN makes sense, I didn't know about the BUG_ON() hiding inside
+gen_pool :(
 
