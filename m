@@ -1,287 +1,194 @@
-Return-Path: <linux-kernel+bounces-305529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CF2C963001
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:31:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBC27963005
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:31:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA0571C24BAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:31:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48B9B1F24C03
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ACE41AB504;
-	Wed, 28 Aug 2024 18:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D660C1AAE27;
+	Wed, 28 Aug 2024 18:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MvG5hgj0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="OvdxtzW1"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012048.outbound.protection.outlook.com [52.101.66.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DAAC189520;
-	Wed, 28 Aug 2024 18:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724869854; cv=none; b=j2JvFtOrEmomkcgfhYTG/ClPfjCzf+S06YDSURtMdUqOVA4Yxn57QDuYLtTq5RWSYcIzAcW1oYtIdHv0FTjHOYy++iTCxZAFgjGpsUCZdcMPqR7wHvDXWSDwMu1SUgQPszWsNwrlbJd1rPMdP8PraTRk8pESRO6/5TH6Ho7U/RM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724869854; c=relaxed/simple;
-	bh=gm5wNgQPq8zaVU7WuCxl/FdzOHpdZQaZpErO5w9GDQM=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=lDDfuqh0F7HTyhV66QVFWU3vHCbPbeUV2d8sH+ZexI13tcyobNk6TtyMRrUIBLfE2yFIOTrYTKwI8DY/0RNgN4oFoIWI8n+d4MBSXJdgyYhBa1o8usX7Tn8w0EsJeUI4t377htpHJPVWKvEOz5JFSdHjxGOlB1ozfOzbXt/0Inw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MvG5hgj0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5CFEC4CEC0;
-	Wed, 28 Aug 2024 18:30:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724869854;
-	bh=gm5wNgQPq8zaVU7WuCxl/FdzOHpdZQaZpErO5w9GDQM=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=MvG5hgj0NmlYgc1Sij1LzfvqO6t7R1LgrCmV86zeZytuUxASd4oabSkCHo2Egn8om
-	 QxH23Drc+3JEHYkKGGMhkydBAop5+DydNF37PdRcBkexev+IX0Fj7hxdpv0WuNAgaw
-	 krV40gE6FWVNh0bDpMPqUWOmtHfHRY/7U0lF7CZQhOlRSSTyI1kepawtXtXXslHV5T
-	 amINvbq/7aOOBah1N0RSYeoKBk8EWPArYZh7H2929jWbUJspuk+V+cIUJSMWR+W1yS
-	 2wPWce9I/FX8fhDXbi0z7QudtnqvSAQ0kxFCbvv4bmdrNi3E/rh5SzgHPn0r4Urzql
-	 0C7hUMRYpMZUA==
-Message-ID: <9b92b5f03632e8793253ba75fc00f6e3.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0086B1C69C;
+	Wed, 28 Aug 2024 18:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724869890; cv=fail; b=Mr9I60d/gzRWsPk9hNA3HPqCUiO9I3FVp6Zvthyweo8Z6QRY0xBUOEYBGEFWBKqPOyBj1b2ATN/XshxQ834uBoFcPye5la3zHewKLNa4AOBT6WGIF53e2TEc24ntM1ai+0YnXLOUCagKIZNztmCWepBixnTNqaxDP4nBVha700Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724869890; c=relaxed/simple;
+	bh=DAdn7UuxjqDMrXHi4WKb8HqYHN2zXpsxMYurallnF+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=eLix8KbrCBkg6JhbA1LwykEG/+ZTqZSj0DdqJWHJeWUsYsAyQ0C7IJ601uOBCFwbs1HNRCRSbxKac4E/iwf4P4OacCH9ZqPa09VY2f1UOCxlvPgxjaiz6yrFbOFj2dFAbRxfvuCLOQLqQFz+16jvVLi5/JekNGBCUGALRKuEyqE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=OvdxtzW1; arc=fail smtp.client-ip=52.101.66.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YMM/Ksd59nxou5wUj5ECLq1lpUQyH969Ifrkmo1xaxAd/NmxZwq9T12Hj0w1M0lmFTqaS9DcmT3nae2fHqorzqEJZBvSJBIdfTrx4jrM8Z7aP2Rm13BbLEI/tdjj0Qlm5UyijwG6lyXmx25XBrvnF62DcMgKaG5Gw5VI9AJkF23SoMHffbrRxu7OqTtBcAGTOzkT09HovDrgDiKiqRaf9kssjb4IZvHgTR6Xmwe7kTcwZZRLmXqepbQ/0kO1oGXcnFnO1TZ5pr+i0y4b0BS3SK23aDbeoKBUUfD2VBcY0RWir4HS6z/cBnjrkzCDDn655Gwr3HJmJ3LXWhEGDDfP6w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Yp7Dt90MBSx/taUC84rBQbgl1JBNb7Ezk/QZoSCFZ0k=;
+ b=Qe/R+J/3XOdPVsAnKtsybS3/W2Gpa1hlrCKYm1KVIC+bHikDmlPBP/gBce45or5I5vDLSdMurlK9DmxpCb5bh58eNBRMuCTIuqK9dZ6UVUIAxfapHofTJGebb9/6cACvSvKdwXmI1oa346SzseGcrpKA1cGxCXZvz28YltOZRrcBRZPb3S6EMczb1gzuFdBuTbCMHNrfBxahWxpURfvgfSh0yLl994sP7KgURgTrNnByZg0chNEEvFD9vPhv1ZyR2NS/g4nMaKbpS5hFlmexgwtjK4N3kir9mil30CmxqxGmlMftmKwOmMhU6ckxUDfJMi2dAFCtapptNkVIlH2Quw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Yp7Dt90MBSx/taUC84rBQbgl1JBNb7Ezk/QZoSCFZ0k=;
+ b=OvdxtzW1U95u6G2DsqOJJyhY3/AcnEZqU+M64+ZpxQ/92Zfv5Y2TIGAUSuhp52l/J/cU4KwNRMlYkBPQDxtRuJK+y+GDRSDQx7y1FYTYOWRqQgjkZSdl8x7cVO5R/1LhdkLGVuVV/EbHO5hbUETDVyQnarpOs+IVaRucThyfPN68KkQ1poEJMVfHWH5EAXYBU0vgYxPYFAxPLnRfGJf3fX4K9YCBzkCnhhz8jeRTkFf9W7M3qpB2W1V997xQbdOvwouwKgPlfuy3Dm+RSgjFZvP6qyJwJkcK5X50IoXu06xuKda9kwlBdkPzGEfayCdOJVFMsKqOnlCgX8YHlIIapw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS8PR04MB7957.eurprd04.prod.outlook.com (2603:10a6:20b:2a2::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Wed, 28 Aug
+ 2024 18:31:26 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7897.027; Wed, 28 Aug 2024
+ 18:31:26 +0000
+Date: Wed, 28 Aug 2024 14:31:18 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 03/12] dt-bindings: PCI: pci-ep: Update Maintainers
+Message-ID: <Zs9s9qJynqxRRICq@lizhi-Precision-Tower-5810>
+References: <20240828-pci-qcom-hotplug-v4-0-263a385fbbcb@linaro.org>
+ <20240828-pci-qcom-hotplug-v4-3-263a385fbbcb@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240828-pci-qcom-hotplug-v4-3-263a385fbbcb@linaro.org>
+X-ClientProxiedBy: BY5PR04CA0023.namprd04.prod.outlook.com
+ (2603:10b6:a03:1d0::33) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240828101503.1478491-5-heiko@sntech.de>
-References: <20240828101503.1478491-1-heiko@sntech.de> <20240828101503.1478491-5-heiko@sntech.de>
-Subject: Re: [PATCH v3 4/5] clk: clk-gpio: add driver for gated-fixed-clocks
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org, heiko@sntech.de, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
-Date: Wed, 28 Aug 2024 11:30:51 -0700
-User-Agent: alot/0.10
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB7957:EE_
+X-MS-Office365-Filtering-Correlation-Id: 22b194c2-af92-4060-72dd-08dcc78fa057
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|7416014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?FkD28foTNEJrBRgNjUkGmrhLVyWzX6ZtsHSOldn9oOxVpHOVgBp3BJ00jgBt?=
+ =?us-ascii?Q?t6sCRY0PN4HQuUhhazxf43dzbvMJg74DVH3h4ln4WIpZ6v15r3aY4YN+tfO4?=
+ =?us-ascii?Q?sm5C7lmU63zYeWUpl3bwGNa7Z5Epcc65kGWMGeEloyhw9FZhKfxmepYzJphU?=
+ =?us-ascii?Q?IBsz63PPANBhWXtYUTkmQ/evx5FpLyzzb8pA4++957HRcBXSqUCCh/JAzq9c?=
+ =?us-ascii?Q?5Ahqo7+8IraZlwS/k96+xz4MuDFYbYrzBWE+CH8MP+Sa1tKaIt4yTAzygxn2?=
+ =?us-ascii?Q?0Pa4pkLqpR2I/FJl0s1kD7qU9NRxGMmb3A4Z+TD02sL09iTLUJMkGOT+ZVyV?=
+ =?us-ascii?Q?fWRFs5MHkmH//lu1Yf1y10m6q+G8UHzBlAYzznMgKsErrTh9GOpcvqtjLHZU?=
+ =?us-ascii?Q?Ol/mzeO4HosAsOR4k9nDjdsovqWA8Eag2wnBIrX8LkgqIVOpytaKpdADEhIO?=
+ =?us-ascii?Q?En6scEyNn35aHJfTGcoThQ2w5ZyzL4AFyn4/7i293qonyUxbgk8QbQj1VgOs?=
+ =?us-ascii?Q?PVCXMtZp/hEtcWStYj/Z3kLIv0QQCI3W3ahzcUeJw5a4T9RfjRUtExVTwVSd?=
+ =?us-ascii?Q?8NC2iRvuz2sYUvKxf5EAMPompGVX6atIj2DFeBAIrqpFnzKDcD+0ZKHxKva3?=
+ =?us-ascii?Q?g4KOPfwm66vT2pRRlNthz9UzUEeBHvBgstQh0mf3DY74lZIdMrzTTp7iIwNy?=
+ =?us-ascii?Q?xdXCvgKbCFu100YeuS041rpN1wan7vBL8NXDLNyeb8VlJwy2z4toL3ZBMB2E?=
+ =?us-ascii?Q?kB5omvk2VlIQ25FtDlpgwQ1SJNJqUyIaHmPJNOd/jgH46KlFI+3kEqqZ10wp?=
+ =?us-ascii?Q?4nM77zr1JWCVMa8rH1weOh92g0RZ95bgexmQ+yL2FH1GKiiebFZ69F31tIVN?=
+ =?us-ascii?Q?LhH1jL0k/J0xmTCb7FFot3SHQ8iEOdzfIu8PohfdMdU11UvTaFlRGzyZ9+wg?=
+ =?us-ascii?Q?M6zNTYDW+BEjZJyllfEwilUNNHY5UbG1PpgqHYBn8+tXJHzsxBRv9h75TsYf?=
+ =?us-ascii?Q?+akQgpTRmwih97HV5vrT/m6+TpEcE/3RLn1PpvFcnfZM1q52+iAOLCLA6dM6?=
+ =?us-ascii?Q?oNeYqA/hQXCv0OuMoOZf0Z3pTRb34GlZZVOMXE5FNYs000i1eRPoeKVuNGEk?=
+ =?us-ascii?Q?qjqaQqBMpODnnqinb1use+XSHYAl/W5GQlLOG8R85PjkEez/d+XYWo7BTxfD?=
+ =?us-ascii?Q?qK8o62heqOf9BxUg2i6a4xsy4ZAb/UQIMD4hxRcZdsaFo6KqVsS6HFJKWEen?=
+ =?us-ascii?Q?acZgGhrfDkU3dBowqxlIMf5s15mhp6zDFzsBlPO5jR289yvtOE6+hS0VR9Q8?=
+ =?us-ascii?Q?t/Jd0ItfdMTMhTCaKLRvfRym+Oprez3pxqUw6Bp+jKstOlmrFRQNFWNz6xTP?=
+ =?us-ascii?Q?COI5zpBA5xcrK/6+dEI4XrMOGzDppYVJ3CD1nW9GOHsK2TpziA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(7416014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Bja8fjdhD/lj3UA22X8fuWLvALycyPSefKXX3UVQa5/I0MzghRx8Y1hwscYf?=
+ =?us-ascii?Q?Z8qAbuvfu3lFSqOE430I3h4cfEJdo/ReffABXVGZsoPW4iu42n1DLKg24uOr?=
+ =?us-ascii?Q?F4+EMXp0Ivtn2QXyn4K7mNSTHgaipPwl1HWEh2wZuU3lvw7l/LxpI6JsEn5j?=
+ =?us-ascii?Q?EaUAJ9+G+DuhiModUwGHh5eL+RE2XBcFw4nDk6KuibMjhaCt0YcPnhwSYbLg?=
+ =?us-ascii?Q?fHcBhrOJZnKl6cCYg9ZtgO2qY5em3kJBLQhT/8RASe8FEdDBF6flntI66aVz?=
+ =?us-ascii?Q?yaJnq6C4mC2j89KFezKmnTsJzyElDt1M4o+Zsyq6ogWCQfxGc7LJXOTGz/T/?=
+ =?us-ascii?Q?6bKLqtUiFTOfKGvVNQqpAKY6CU5R1fpQmrfZqJ6Tz+ZqZGMuLE1a3qZZq9P5?=
+ =?us-ascii?Q?Mo5z+fnaezQaHOuurFASFAnO8I7UGSN9zbSswRsXpgH7OxaxLnZmvSsECwwz?=
+ =?us-ascii?Q?wxHT1r462gF0RkPfdsG+OQ2nb2FW/BnG7V3wtdISw6OwPF7Hrj35jhv5xwKV?=
+ =?us-ascii?Q?qKKzDkHYVRhkdbyDfF+jdfRZ/2TRxexl79pWiMSHmyCbbuBh167d5K2Us7XI?=
+ =?us-ascii?Q?mjlR9ZgD8K2lpp9idJN57YTU9bSVomOeT5Z4Znyb1WbZK27fkID9LkkGBAM1?=
+ =?us-ascii?Q?fsSsf0GXvkitd15AOSyHE6vq9cqTQoVrLs9VGJTwVD+1FJTwiPA5AXaMjAId?=
+ =?us-ascii?Q?DaqnGoDzAkZb0qYo/eIWhpcIEuW8ouo7xl6bi+xnqAHM9HCtDilhS0Pwz1Ho?=
+ =?us-ascii?Q?htWaYdkR1874UPzDFSPBdZKZQOxrtamzePuVFXQC1wQQPSw55Dqaiv9+bAyB?=
+ =?us-ascii?Q?kH5oxACBsfAef8IIGvz5waDB+lxsu2rk0HUqyYeaVKru6zi7wWDb7/SJ+wRv?=
+ =?us-ascii?Q?v7q1e0tvv5AE8L4rKjURzZlcrb11rh2ziCa+luSZiyWFkPbS5tjhSbHyh5iQ?=
+ =?us-ascii?Q?yYRgjt2KdnHBNL2+O+nloCbmG1fc5xMSJRgNS3Iih3pfmjwbOzHP6zMBYu5v?=
+ =?us-ascii?Q?fHQmHnl8Dwsf8G2ROzRwrGMeWIYkV/syIDGOMpy0qJQ4oUqaITlmjmu9Vdna?=
+ =?us-ascii?Q?9BGB6saIT3Xh4qWCCvP9zlQupswa9Ja0wyF4MnNkQt+WTk0XQiodB2GjzYbD?=
+ =?us-ascii?Q?5o9feMBdo8bX9r0+zn3nSvtlnYz9iIwLSZdCg4PnoWeuSdZSvhzFy9GOOU0s?=
+ =?us-ascii?Q?vlyEG7uyDFlctfV86NJ1TfHnX3VswMmN2u59VjWsEZye9jam54tIDHlwvzp4?=
+ =?us-ascii?Q?ypRkuLAMHJvsmUlF7aqgGaxX5wTzr1LQJBzT53ujGuRyAw4yXBzFIo0BXxHv?=
+ =?us-ascii?Q?TcI9pfhY8Bp/p/ba05tlUIfzVKcV8UohUW03zAZDWYUAvtJWzw/l9zjtMtUF?=
+ =?us-ascii?Q?i1ET5OgOTDDLYtJNKvzBUq1HhDx4GZ7KyRL9pgMAYnj6V97q4FAnBpcQCOBe?=
+ =?us-ascii?Q?rXE7KaR5dDb9lE/QqkLuGh3A9+jrMZc9hXIdnzN7zo4fjqNdJtmIB7a6y9ub?=
+ =?us-ascii?Q?38E2UIPuJbx7DGx7NbsrSh1lrBvwVxLPOmGVaNmbKl2YxGMvnsBMlpvB5ME9?=
+ =?us-ascii?Q?4MN8xbKyAINk/OC8wmA=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 22b194c2-af92-4060-72dd-08dcc78fa057
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 18:31:26.5326
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: B3reKJFQfWJ+5PrGX6y2Q7DHvqVu/yxL8Rlp4S1VA/7GcXa6vXep3jKSjXpPer565zsCsGDwNuDBCjjjY1zoPQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7957
 
-Quoting Heiko Stuebner (2024-08-28 03:15:02)
-> diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-> index cda362a2eca0..8bcdef340b4c 100644
-> --- a/drivers/clk/clk-gpio.c
-> +++ b/drivers/clk/clk-gpio.c
-> @@ -239,3 +240,184 @@ static struct platform_driver gpio_clk_driver =3D {
->         },
->  };
->  builtin_platform_driver(gpio_clk_driver);
-> +
-> +/**
-> + * DOC: gated fixed clock, controlled with a gpio output and a regulator
-> + * Traits of this clock:
-> + * prepare - clk_prepare and clk_unprepare are function & control regula=
-tor
-> + *           optionally a gpio that can sleep
-> + * enable - clk_enable and clk_disable are functional & control gpio
-> + * rate - rate is fixed and set on clock generation
+On Wed, Aug 28, 2024 at 09:16:13PM +0530, Manivannan Sadhasivam wrote:
+> Kishon's TI email ID is not active anymore, so use his korg ID. Also, since
+> I've been maintaining the PCI endpoint framework, I'm willing to maintain
+> the DT binding as well. So add myself as the Co-maintainer.
+>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Maybe 'clock registration'
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-> + * parent - fixed clock is a root clock and has no parent.
-
-Not sure why this one gets the period while other lines above don't.
-
-> + */
-> +
-> +/**
-> + * struct clk_gate_fixed - gated-fixed-clock
-> + *
-> + * clk_gpio:   instance of clk_gpio for gate-gpio
-> + * supply:     supply regulator
-> + * rate:       fixed rate
-> + */
-> +struct clk_gated_fixed {
-> +       struct clk_gpio clk_gpio;
-> +       struct regulator *supply;
-> +       u32 rate;
-
-unsigned long rate to match the CCF type please.
-
-> +};
-> +
-> +#define to_clk_gated_fixed(_clk_gpio) container_of(_clk_gpio, struct clk=
-_gated_fixed, clk_gpio)
-> +
-> +static unsigned long clk_gated_fixed_recalc_rate(struct clk_hw *hw,
-> +                                                unsigned long parent_rat=
-e)
-> +{
-> +       return to_clk_gated_fixed(to_clk_gpio(hw))->rate;
-> +}
-> +
-> +static int clk_gated_fixed_prepare(struct clk_hw *hw)
-> +{
-> +       struct clk_gated_fixed *clk =3D to_clk_gated_fixed(to_clk_gpio(hw=
-));
-> +
-> +       if (!clk->supply)
-> +               return 0;
-> +
-> +       return regulator_enable(clk->supply);
-> +}
-> +
-> +static void clk_gated_fixed_unprepare(struct clk_hw *hw)
-> +{
-> +       struct clk_gated_fixed *clk =3D to_clk_gated_fixed(to_clk_gpio(hw=
-));
-> +
-> +       if (!clk->supply)
-> +               return;
-> +
-> +       regulator_disable(clk->supply);
-> +}
-> +
-> +static int clk_gated_fixed_is_prepared(struct clk_hw *hw)
-> +{
-> +       struct clk_gated_fixed *clk =3D to_clk_gated_fixed(to_clk_gpio(hw=
-));
-> +
-> +       if (!clk->supply)
-> +               return true;
-> +
-> +       return regulator_is_enabled(clk->supply);
-> +}
-> +
-> +/*
-> + * Fixed gated clock with non-sleeping gpio.
-> + *
-> + * Prepare operation turns on the supply regulator
-> + * and the enable operation switches the enable-gpio.
-> + */
-> +const struct clk_ops clk_gated_fixed_ops =3D {
-
-static
-
-> +       .prepare =3D clk_gated_fixed_prepare,
-> +       .unprepare =3D clk_gated_fixed_unprepare,
-> +       .is_prepared =3D clk_gated_fixed_is_prepared,
-> +       .enable =3D clk_gpio_gate_enable,
-> +       .disable =3D clk_gpio_gate_disable,
-> +       .is_enabled =3D clk_gpio_gate_is_enabled,
-> +       .recalc_rate =3D clk_gated_fixed_recalc_rate,
-> +};
-> +
-> +static int clk_sleeping_gated_fixed_prepare(struct clk_hw *hw)
-> +{
-> +       int ret;
-> +
-> +       ret =3D clk_gated_fixed_prepare(hw);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret =3D clk_sleeping_gpio_gate_prepare(hw);
-> +       if (ret)
-> +               clk_gated_fixed_unprepare(hw);
-> +
-> +       return ret;
-> +}
-> +
-> +static void clk_sleeping_gated_fixed_unprepare(struct clk_hw *hw)
-> +{
-> +       clk_gated_fixed_unprepare(hw);
-> +       clk_sleeping_gpio_gate_unprepare(hw);
-> +}
-> +
-> +/*
-> + * Fixed gated clock with non-sleeping gpio.
-> + *
-> + * Enabling the supply regulator and switching the enable-gpio happens
-> + * both in the prepare step.
-> + * is_prepared only needs to check the gpio state, as toggling the
-> + * gpio is the last step when preparing.
-> + */
-> +const struct clk_ops clk_sleeping_gated_fixed_ops =3D {
-
-static
-
-> +       .prepare =3D clk_sleeping_gated_fixed_prepare,
-> +       .unprepare =3D clk_sleeping_gated_fixed_unprepare,
-> +       .is_prepared =3D clk_sleeping_gpio_gate_is_prepared,
-> +       .recalc_rate =3D clk_gated_fixed_recalc_rate,
-> +};
-> +
-> +static int clk_gated_fixed_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev =3D &pdev->dev;
-> +       struct clk_gated_fixed *clk;
-> +       const struct clk_ops *ops;
-> +       const char *clk_name;
-> +       int ret;
-> +
-> +       clk =3D devm_kzalloc(dev, sizeof(*clk), GFP_KERNEL);
-> +       if (!clk)
-> +               return -ENOMEM;
-> +
-> +       if (device_property_read_u32(dev, "clock-frequency", &clk->rate))
-
-Why not return the error code?
-
-> +               return dev_err_probe(dev, -EIO, "failed to get clock-freq=
-uency");
-
-Missing newline on printk.
-
-> +
-> +       ret =3D device_property_read_string(dev, "clock-output-names", &c=
-lk_name);
-> +       if (ret)
-> +               clk_name =3D fwnode_get_name(dev->fwnode);
-> +
-> +       clk->supply =3D devm_regulator_get_optional(dev, "vdd");
-> +       if (IS_ERR(clk->supply)) {
-> +               if (PTR_ERR(clk->supply) !=3D -ENODEV)
-> +                       return dev_err_probe(dev, PTR_ERR(clk->supply),
-> +                                            "failed to get regulator\n");
-> +               clk->supply =3D NULL;
-> +       }
-> +
-> +       clk->clk_gpio.gpiod =3D devm_gpiod_get_optional(dev, "enable",
-> +                                                     GPIOD_OUT_LOW);
-> +       if (IS_ERR(clk->clk_gpio.gpiod))
-> +               return dev_err_probe(dev, PTR_ERR(clk->clk_gpio.gpiod),
-> +                                    "failed to get gpio\n");
-> +
-> +       if (gpiod_cansleep(clk->clk_gpio.gpiod))
-> +               ops =3D &clk_sleeping_gated_fixed_ops;
-> +       else
-> +               ops =3D &clk_gated_fixed_ops;
-> +
-> +       clk->clk_gpio.hw.init =3D CLK_HW_INIT_NO_PARENT(clk_name, ops, 0);
-> +
-> +       /* register the clock */
-> +       ret =3D devm_clk_hw_register(dev, &clk->clk_gpio.hw);
-> +       if (ret)
-> +               return dev_err_probe(dev, ret,
-> +                                    "failed to register clock\n");
-> +
-> +       ret =3D devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
-> +                                         &clk->clk_gpio.hw);
-> +       if (ret)
-> +               return dev_err_probe(dev, ret,
-> +                                    "failed to register clock provider\n=
-");
-> +
-> +       return 0;
-> +}
-> +
-> +static const struct of_device_id gated_fixed_clk_match_table[] =3D {
-> +       { .compatible =3D "gated-fixed-clock" },
-
-Add a sentinel.
-
-> +};
-> +
-> +static struct platform_driver gated_fixed_clk_driver =3D {
-> +       .probe          =3D clk_gated_fixed_probe,
-> +       .driver         =3D {
-> +               .name   =3D "gated-fixed-clk",
-> +               .of_match_table =3D gated_fixed_clk_match_table,
-> +       },
-> +};
-> +builtin_platform_driver(gated_fixed_clk_driver);
-
-The comment above builtin_platform_driver says "Each driver may only use
-this macro once". Seems that we need to expand the macro.
+> ---
+>  Documentation/devicetree/bindings/pci/pci-ep.yaml | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/pci/pci-ep.yaml b/Documentation/devicetree/bindings/pci/pci-ep.yaml
+> index d1eef4825207..0b5456ee21eb 100644
+> --- a/Documentation/devicetree/bindings/pci/pci-ep.yaml
+> +++ b/Documentation/devicetree/bindings/pci/pci-ep.yaml
+> @@ -10,7 +10,8 @@ description: |
+>    Common properties for PCI Endpoint Controller Nodes.
+>
+>  maintainers:
+> -  - Kishon Vijay Abraham I <kishon@ti.com>
+> +  - Kishon Vijay Abraham I <kishon@kernel.org>
+> +  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>
+>  properties:
+>    $nodename:
+>
+> --
+> 2.25.1
+>
 
