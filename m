@@ -1,78 +1,111 @@
-Return-Path: <linux-kernel+bounces-305587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F1C9630DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:18:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 238CD9630E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:21:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 215D91C22140
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:18:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 578421C21B7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C731ABECA;
-	Wed, 28 Aug 2024 19:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6338E1AB523;
+	Wed, 28 Aug 2024 19:21:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AeaZVAeK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cCq+RNIi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30881ABEB8;
-	Wed, 28 Aug 2024 19:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217922868B;
+	Wed, 28 Aug 2024 19:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724872710; cv=none; b=vALLtTDXu2L9qHcGpSnP75WRJdc5BKHHK/lMGVORELEqQGUbn7GpUPcrfQevbMdTKKDTO5BgRAVIQWTBA20edSck2oFGXLKiScrmXojQFe2E8x7Be6lPU8W3FGwFiIRD3CJoDk2wRNU0tB0YJVRnrPGtPaz3Cj03WOkESUpsnRM=
+	t=1724872880; cv=none; b=jeQ+B293Nk2a3pbAauYptK6TD05NmFiETJvsx9jeaRBfrW4IDj8jgFHn3YNitJSJBUlddMYA6i67wTlgYo36x7d6XxoIK/5a+YrXCTR9imtON+G2CqRGTZV6bf8o6MZZukqetiYH23rVeeJ0AR4cUfBQrTdiIZiRVOehSX+1BAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724872710; c=relaxed/simple;
-	bh=5h5lm2o4Eb2NXlZiHly17Bc8UpiFwXASo7sZJzQib9c=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=em52EczKbghgxX1DcTfzyFYAf73kom7EzIOXeP3wY54EfNX7DgSjhMwxz7NTBeeZq0xpnachPDA8E3ZVBs4goA4Mes1166k22HHMEJFreevDpoUYPbru1YImFLpI+tYI3grNIDaWvu/eCNotFxKqir1qoYhK9Gmi9rBs8SU7TCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AeaZVAeK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9DB9C4CEC1;
-	Wed, 28 Aug 2024 19:18:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724872709;
-	bh=5h5lm2o4Eb2NXlZiHly17Bc8UpiFwXASo7sZJzQib9c=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=AeaZVAeKUk+Adp3dai5SAsOJaydmKWQvyfAvPzN4KPVBeNazWjL6eTx/TG/75WkYf
-	 N2jVZI95A8KralMG4TAP+0Kp4ymVRp4ty0VVJwgmG0t2s2zF7qIqWjTWMmV9ayf6lK
-	 fZlfCeyHq685JAxFO4rfvbKETMUKY7FaqA0jiSGOrdB+u3Py+050kqpiQQ44Wyf4O2
-	 QRDW4rgaOrUjJojV4jdJOK4Xze7RQo6Yq2v6K878Wqo/BDs5ZeySdaTrHKlVP1fYSS
-	 SEt9+FYN4fBnOkNfCZJSXwVBeyiS1Jju7YiHZ2JaC2LbtRbgXUKCe+jI0YggwVPJyC
-	 /PUqGNZPF6r3w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E293809A80;
-	Wed, 28 Aug 2024 19:18:31 +0000 (UTC)
-Subject: Re: [GIT PULL] platform-drivers-x86 for v6.11-5
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <pdx86-pr-20240828125237-2776213950@linux.intel.com>
-References: <pdx86-pr-20240828125237-2776213950@linux.intel.com>
-X-PR-Tracked-List-Id: <platform-driver-x86.vger.kernel.org>
-X-PR-Tracked-Message-Id: <pdx86-pr-20240828125237-2776213950@linux.intel.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.11-5
-X-PR-Tracked-Commit-Id: a3379eca24a7da5118a7d090da6f8eb8611acac8
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f9a59dd09749c6303821e5d6cdff1affdb5917dd
-Message-Id: <172487270986.1401757.2012532953917323184.pr-tracker-bot@kernel.org>
-Date: Wed, 28 Aug 2024 19:18:29 +0000
-To: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, PDx86 <platform-driver-x86@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>
+	s=arc-20240116; t=1724872880; c=relaxed/simple;
+	bh=rQNHLGP80loKvgFLR7dACFXe+uYxwCiPBrgPZKvC0hY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CJIWIvCUes/t08waMUYYTvRXa4ayOj0qivdZ49XqNBXfLl70r2NMvos1Fobut6Y+2At5CC2jkcpZB7d2KS1YR4qkBx/sVYItsqIiGPH4md87Vf/rCRhkR1BP/1hzd+MIHiPbSLDYmmVNyt0J6kF7SIv5ZtrRDNvF4CxVhAzUoLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cCq+RNIi; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724872879; x=1756408879;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rQNHLGP80loKvgFLR7dACFXe+uYxwCiPBrgPZKvC0hY=;
+  b=cCq+RNIiSzC/21RW9AvTUjDu83Lhs6Um11ET8RLYy+Z1udq00NVpRYnv
+   ywoMhB1LgjcJg3pWqzotRttm6j7BtcFcbIJ+DLaTY62sRef4avZYeBxq8
+   cEI+0EShYyPEfyZDBoWZjTXVOrmkjeKaHCC4e4+82vkYoCjRNOqo3K3J8
+   9PQdN5YDAdb9BT7fNKIFwVseQ8j7gGtagACRfLFWPXbAWjlJqm3OgFGD5
+   9p/W6cuPQLWyUzLmglTxqPLwoWddtTguB5CWylTt9klK6DwMjh64jvUpA
+   kN3rAMv+gwyeFvN7mtuGldaGRmTjFpXM7JuAbJDG9ND4SMHbZaVZX/fw4
+   g==;
+X-CSE-ConnectionGUID: D/rjD00LT5+8vxPLlNuO7A==
+X-CSE-MsgGUID: PpVB+tAFQfyIJri4JkvQgQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="48812095"
+X-IronPort-AV: E=Sophos;i="6.10,183,1719903600"; 
+   d="scan'208";a="48812095"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 12:21:18 -0700
+X-CSE-ConnectionGUID: EMbAMVIWQ2KI24pCoCUg4Q==
+X-CSE-MsgGUID: Vps4oXyRRW2GpIBs+JzKHQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,183,1719903600"; 
+   d="scan'208";a="68225169"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 12:21:18 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sjOEE-00000002lWW-3sjd;
+	Wed, 28 Aug 2024 22:21:14 +0300
+Date: Wed, 28 Aug 2024 22:21:14 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 1/5] pinctrl: intel: Move debounce validation out of
+ the lock
+Message-ID: <Zs94qgBBXtF2csH8@smile.fi.intel.com>
+References: <20240828184018.3097386-1-andriy.shevchenko@linux.intel.com>
+ <20240828184018.3097386-2-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240828184018.3097386-2-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-The pull request you sent on Wed, 28 Aug 2024 12:52:37 +0300:
+On Wed, Aug 28, 2024 at 09:38:34PM +0300, Andy Shevchenko wrote:
+> There is no need to validate debounce value under the lock.
+> Move it outside.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.11-5
+...
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f9a59dd09749c6303821e5d6cdff1affdb5917dd
+> +	if (v) {
+>  		/* Enable glitch filter and debouncer */
+>  		value0 |= PADCFG0_PREGFRXSEL;
+>  		value2 |= v << PADCFG2_DEBOUNCE_SHIFT;
+>  		value2 |= PADCFG2_DEBEN;
 
-Thank you!
+This has a bug, I fix it locally for now and will wait for the comments for
+the rest of the series.
+
+> +	} else {
+> +		/* Disable glitch filter and debouncer */
+> +		value0 &= ~PADCFG0_PREGFRXSEL;
+> +		value2 &= ~(PADCFG2_DEBEN | PADCFG2_DEBOUNCE_MASK);
+>  	}
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+With Best Regards,
+Andy Shevchenko
+
+
 
