@@ -1,244 +1,146 @@
-Return-Path: <linux-kernel+bounces-304904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 663A796267F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:03:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70324962680
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:04:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A3E81C21646
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:03:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A02781C215A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689CF1741F8;
-	Wed, 28 Aug 2024 12:02:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D4916CD2A;
-	Wed, 28 Aug 2024 12:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F3F172BA8;
+	Wed, 28 Aug 2024 12:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i62L/Kzi"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FEDA166F37
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724846574; cv=none; b=eOb0LJd7vY7M5U0lHR0Y8SecfNvfoG7XJ6QBSpRb6SSjzOWv+sJNXaoh3LxISL5+Prx5OdttZqHY4tcWZizLcl66fVf1ioB9lOyKYFas6TWCTbVGSosRJiaSjYKrpzMVC+Sa3iC19VhnRUekl5u+7+QRkXfDsP5TjLt3lsDzkww=
+	t=1724846645; cv=none; b=axA7JCyY8zr0O47jHA8U3Wrq7Q4zVQjSai/eqdtCbTpLkwj4SopuSBA2RPYXeTCWMvk5hwd+Fn6dqpH1GmkVXgDADcIlh8PQz7y9lPvuyZFTORuxm16ewqcYVgAePH8sWzj6HIYiUruMYjE9np17K5RPSMvhmhC6lzVDgU01ZBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724846574; c=relaxed/simple;
-	bh=GV+R85tycGY3Ozigrbe3J1zpTJoK33VMYMatOrJvs0E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rGFwALrCQulbHcevgfiBlV1rabQfsC8CViDMgKXi4dKHp99CUQEcuoG5dicUn1iTZzhaN85qNA4Q+SjRaNK/mGoGnBe+0ww3VWyfsqnoos5ia+1GIauD6ujIIU1G0OldK8zvaw3yeKu72RQB49AQbzGluZt8RVv3TDsdD9nn0pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B67AFDA7;
-	Wed, 28 Aug 2024 05:03:16 -0700 (PDT)
-Received: from [10.57.15.188] (unknown [10.57.15.188])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AD0133F762;
-	Wed, 28 Aug 2024 05:02:43 -0700 (PDT)
-Message-ID: <efc1eafc-dba4-4991-9f9a-58ceca1d9a35@arm.com>
-Date: Wed, 28 Aug 2024 13:02:31 +0100
+	s=arc-20240116; t=1724846645; c=relaxed/simple;
+	bh=ipqJ60XxY2Y88OgHO3NKkVnWMl8i2LM+m2jKY6Xjv6g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O+qH2uPIJXWVZlHnormJdti+VVClVU0A5si2f9MxfuAw0iko4/0NTEDRZ2WzJuhFATyVApsP4pchOlYlyL1G5m4fz7hHI5yK2eeLvRmUOB9q2l8Y5pZnifMOuYfTLsw9jpejBk6680ueXqzhzTs7wgpaz+OC5kZHYnkv6skpweg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i62L/Kzi; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2d439572aeaso403081a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 05:04:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724846643; x=1725451443; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UdcnjVgF8yb/N7ua+ROvl3/+kpGiPAKNxPZFFKZQDrk=;
+        b=i62L/KziYfbBBIRpUR7FaVPF0Tl0L7H8LYkUIsdKIrZNf+RdZbxSLyvwqdUHDrjDdJ
+         +CDbaTLZnzM+hXd3BWyr6/AhCqOq3D4fPMQ2gRuJeP7e9AgqwX5s6OVYzPzgMJxrYRi2
+         OZc0UdhDiWzySjdMGxE1mdQqWBCWNPckG3Q6yLwODZ4tKxKqvG3lGQT1Aqs0R+aQf8ZK
+         vMbbkgZdeXADg4iQJL8+5cUBiyC7WIblqPyxyUrXTrb+UmvthlT9/HkS10BigwWQ1bYG
+         7nOBlnqTHm89H22ZJzySB4kZdiF3nS55Kn0ARi/fAhWiooJevzA0LQBihapCAgpgD7Jg
+         zHZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724846643; x=1725451443;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UdcnjVgF8yb/N7ua+ROvl3/+kpGiPAKNxPZFFKZQDrk=;
+        b=oqcgg6VP4FNLy1oaaLsYZFHIjHxSCQTJYgUE0hW2urMXW7PHeOu8wfiGPGhMElGWEY
+         sGXrzJ2Nqz1RTrJVemcQSLWuw5mNmwCg3gX3mu4rvcmepup3D0rx1TgcpjBvrQeny9lX
+         exjsKKyewShKuPuHD59ab0lQmgTRox3Oq+bRVDN1gUwx4nWLhSDS5UGvPAp+VGA1H8zQ
+         2NfhmqsnVWFTaq4uhHMEDyr007Lvfq+aashRE3EtFM8fjLh1Is+lRxr7h7KCPBrDxlml
+         /UO89wqdrnfAJfqQV1KbQ5OP54gDgH/nYqrjhMgJiQiDVoCy5wKf7HjIVDVy6oKcVVIV
+         nzHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWYrGL8VJXPaon5fFHS+zd09i5R8l3jIfuBdlhvZN6jG6flKCO+OQxbhTUGY7vi2T95hKgpGA+7iELbrlM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwY8dMerGF6QZgWda7RcZ6qHG5i97jRZdgEa3aGbkF3mQI4+r8V
+	le/PfY7rVmSD6uk0tonMOKBP3cLN20XjgUX3i8JeLshjvYJ3/Lu5IlxEHRK3POIfZAnSLwk8yWP
+	jerIOM59NKscN8N6yA9Glw5v+DPDyEAAA
+X-Google-Smtp-Source: AGHT+IHcumZEfE9db9FF97yVvyhpVT1EUbVle6yVWXa1JPCNXd1id/6gneCtY+FPC9fmcjcA/VWiAhUDGr9urxwFoEM=
+X-Received: by 2002:a17:90a:a004:b0:2c9:35a6:e185 with SMTP id
+ 98e67ed59e1d1-2d8439f8059mr3005493a91.0.1724846643092; Wed, 28 Aug 2024
+ 05:04:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 0/7] Introduce swiotlb throttling
-To: mhklinux@outlook.com, kbusch@kernel.org, axboe@kernel.dk,
- sagi@grimberg.me, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com, kys@microsoft.com, haiyangz@microsoft.com,
- wei.liu@kernel.org, decui@microsoft.com, hch@lst.de,
- m.szyprowski@samsung.com, petr@tesarici.cz, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
- linux-scsi@vger.kernel.org, linux-hyperv@vger.kernel.org,
- linux-coco@lists.linux.dev
-References: <20240822183718.1234-1-mhklinux@outlook.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240822183718.1234-1-mhklinux@outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240827095550.675018-1-wenst@chromium.org> <20240827095550.675018-9-wenst@chromium.org>
+ <e341240e-1c1f-49a2-91cd-440888fdbda0@gmail.com> <CAGXv+5EcHQ7E979fKPEci2qwXBnKPfVHc_aB02amUbdVB3KTxg@mail.gmail.com>
+In-Reply-To: <CAGXv+5EcHQ7E979fKPEci2qwXBnKPfVHc_aB02amUbdVB3KTxg@mail.gmail.com>
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+Date: Wed, 28 Aug 2024 15:03:51 +0300
+Message-ID: <CANhJrGPiPUfq-3W_oLypEncreX3KTKyEkxouWDG6pZ47a_veAQ@mail.gmail.com>
+Subject: Re: [PATCH 8/8] regulator: irq_helpers: Add missing "Return"
+ kerneldoc section
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-08-22 7:37 pm, mhkelley58@gmail.com wrote:
-> From: Michael Kelley <mhklinux@outlook.com>
-> 
-> Background
-> ==========
-> Linux device drivers may make DMA map/unmap calls in contexts that
-> cannot block, such as in an interrupt handler. Consequently, when a
-> DMA map call must use a bounce buffer, the allocation of swiotlb
-> memory must always succeed immediately. If swiotlb memory is
-> exhausted, the DMA map call cannot wait for memory to be released. The
-> call fails, which usually results in an I/O error.
-> 
-> Bounce buffers are usually used infrequently for a few corner cases,
-> so the default swiotlb memory allocation of 64 MiB is more than
-> sufficient to avoid running out and causing errors. However, recently
-> introduced Confidential Computing (CoCo) VMs must use bounce buffers
-> for all DMA I/O because the VM's memory is encrypted. In CoCo VMs
-> a new heuristic allocates ~6% of the VM's memory, up to 1 GiB, for
-> swiotlb memory. This large allocation reduces the likelihood of a
-> spike in usage causing DMA map failures. Unfortunately for most
-> workloads, this insurance against spikes comes at the cost of
-> potentially "wasting" hundreds of MiB's of the VM's memory, as swiotlb
-> memory can't be used for other purposes.
-> 
-> Approach
-> ========
-> The goal is to significantly reduce the amount of memory reserved as
-> swiotlb memory in CoCo VMs, while not unduly increasing the risk of
-> DMA map failures due to memory exhaustion.
+ke 28. elok. 2024 klo 10.53 Chen-Yu Tsai (wenst@chromium.org) kirjoitti:
+>
+> On Wed, Aug 28, 2024 at 1:55=E2=80=AFPM Matti Vaittinen
+> <mazziesaccount@gmail.com> wrote:
+> >
+> > On 8/27/24 12:55, Chen-Yu Tsai wrote:
+> > > kernel-doc complains about missing "Return" section for the function
+> > > regulator_irq_map_event_simple().
+> > >
+> > > Add a "Return" section for it based on its behavior.
+> > >
+> > > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> >
+> > Thank You for improving this! I appreciate it :)
+> >
+> > > ---
+> > >   drivers/regulator/irq_helpers.c | 4 ++++
+> > >   1 file changed, 4 insertions(+)
+> > >
+> > > diff --git a/drivers/regulator/irq_helpers.c b/drivers/regulator/irq_=
+helpers.c
+> > > index 5ab1a0befe12..5803ef016b7d 100644
+> > > --- a/drivers/regulator/irq_helpers.c
+> > > +++ b/drivers/regulator/irq_helpers.c
+> > > @@ -414,6 +414,10 @@ EXPORT_SYMBOL_GPL(regulator_irq_helper_cancel);
+> > >    * notification helperk. Exactly one rdev and exactly one error (in
+> >
+> > I just noticed (an existing) typo "helperk". I wonder if it was Ok to
+> > fix it while anyways changing the doc. It's not strictly speaking
+> > related to the return values though :)
+>
+> Why not? Only the kerneldoc this function is touched. It looks like the
+> 'k' belongs to the "callbac" on the previous line.
 
-Isn't that fundamentally the same thing that SWIOTLB_DYNAMIC was already 
-meant to address? Of course the implementation of that is still young 
-and has plenty of scope to be made more effective, and some of the ideas 
-here could very much help with that, but I'm struggling a little to see 
-what's really beneficial about having a completely disjoint mechanism 
-for sitting around doing nothing in the precise circumstances where it 
-would seem most possible to allocate a transient buffer and get on with it.
+Right. It'd be nice if you fixed the typo as well if you for some
+reason re-spin this.
 
-Thanks,
-Robin.
+> > >    * "common_errs"-field) can be given at IRQ helper registration for
+> > >    * regulator_irq_map_event_simple() to be viable.
+> > > + *
+> > > + * Return: 0
+> > > + *
+> > Anyways, I agree with Andy about not needing the blank line here - but
+>
+> I disagree because of the formatting result. See my other reply.
 
-> To reach this goal, this patch set introduces the concept of swiotlb
-> throttling, which can delay swiotlb allocation requests when swiotlb
-> memory usage is high. This approach depends on the fact that some
-> DMA map requests are made from contexts where it's OK to block.
-> Throttling such requests is acceptable to spread out a spike in usage.
-> 
-> Because it's not possible to detect at runtime whether a DMA map call
-> is made in a context that can block, the calls in key device drivers
-> must be updated with a MAY_BLOCK attribute, if appropriate. When this
-> attribute is set and swiotlb memory usage is above a threshold, the
-> swiotlb allocation code can serialize swiotlb memory usage to help
-> ensure that it is not exhausted.
-> 
-> In general, storage device drivers can take advantage of the MAY_BLOCK
-> option, while network device drivers cannot. The Linux block layer
-> already allows storage requests to block when the BLK_MQ_F_BLOCKING
-> flag is present on the request queue. In a CoCo VM environment,
-> relatively few device types are used for storage devices, and updating
-> these drivers is feasible. This patch set updates the NVMe driver and
-> the Hyper-V storvsc synthetic storage driver. A few other drivers
-> might also need to be updated to handle the key CoCo VM storage
-> devices.
-> 
-> Because network drivers generally cannot use swiotlb throttling, it is
-> still possible for swiotlb memory to become exhausted. But blunting
-> the maximum swiotlb memory used by storage devices can significantly
-> reduce the peak usage, and a smaller amount of swiotlb memory can be
-> allocated in a CoCo VM. Also, usage by storage drivers is likely to
-> overall be larger than for network drivers, especially when large
-> numbers of disk devices are in use, each with many I/O requests in-
-> flight.
-> 
-> swiotlb throttling does not affect the context requirements of DMA
-> unmap calls. These always complete without blocking, even if the
-> corresponding DMA map call was throttled.
-> 
-> Patches
-> =======
-> Patches 1 and 2 implement the core of swiotlb throttling. They define
-> DMA attribute flag DMA_ATTR_MAY_BLOCK that device drivers use to
-> indicate that a DMA map call is allowed to block, and therefore can be
-> throttled. They update swiotlb_tbl_map_single() to detect this flag and
-> implement the throttling. Similarly, swiotlb_tbl_unmap_single() is
-> updated to handle a previously throttled request that has now freed
-> its swiotlb memory.
-> 
-> Patch 3 adds the dma_recommend_may_block() call that device drivers
-> can use to know if there's benefit in using the MAY_BLOCK option on
-> DMA map calls. If not in a CoCo VM, this call returns "false" because
-> swiotlb is not being used for all DMA I/O. This allows the driver to
-> set the BLK_MQ_F_BLOCKING flag on blk-mq request queues only when
-> there is benefit.
-> 
-> Patch 4 updates the SCSI-specific DMA map calls to add a "_attrs"
-> variant to allow passing the MAY_BLOCK attribute.
-> 
-> Patch 5 adds the MAY_BLOCK option to the Hyper-V storvsc driver, which
-> is used for storage in CoCo VMs in the Azure public cloud.
-> 
-> Patches 6 and 7 add the MAY_BLOCK option to the NVMe PCI host driver.
-> 
-> Discussion
-> ==========
-> * Since swiotlb isn't visible to device drivers, I've specifically
-> named the DMA attribute as MAY_BLOCK instead of MAY_THROTTLE or
-> something swiotlb specific. While this patch set consumes MAY_BLOCK
-> only on the DMA direct path to do throttling in the swiotlb code,
-> there might be other uses in the future outside of CoCo VMs, or
-> perhaps on the IOMMU path.
-> 
-> * The swiotlb throttling code in this patch set throttles by
-> serializing the use of swiotlb memory when usage is above a designated
-> threshold: i.e., only one new swiotlb request is allowed to proceed at
-> a time. When the corresponding unmap is done to release its swiotlb
-> memory, the next request is allowed to proceed. This serialization is
-> global and without knowledge of swiotlb areas. From a storage I/O
-> performance standpoint, the serialization is a bit restrictive, but
-> the code isn't trying to optimize for being above the threshold. If a
-> workload regularly runs above the threshold, the size of the swiotlb
-> memory should be increased.
-> 
-> * Except for knowing how much swiotlb memory is currently allocated,
-> throttle accounting is done without locking or atomic operations. For
-> example, multiple requests could proceed in parallel when usage is
-> just under the threshold, putting usage above the threshold by the
-> aggregate size of the parallel requests. The threshold must already be
-> set relatively conservatively because of drivers that can't enable
-> throttling, so this slop in the accounting shouldn't be a problem.
-> It's better than the potential bottleneck of a globally synchronized
-> reservation mechanism.
-> 
-> * In a CoCo VM, mapping a scatter/gather list makes an independent
-> swiotlb request for each entry. Throttling each independent request
-> wouldn't really work, so the code throttles only the first SGL entry.
-> Once that entry passes any throttle, subsequent entries in the SGL
-> proceed without throttling. When the SGL is unmapped, entries 1 thru
-> N-1 are unmapped first, then entry 0 is unmapped, allowing the next
-> serialized request to proceed.
-> 
-> Open Topics
-> ===========
-> 1. swiotlb allocations from Xen and the IOMMU code don't make use of
-> throttling. This could be added if beneficial.
-> 
-> 2. The throttling values are currently exposed and adjustable in
-> /sys/kernel/debug/swiotlb. Should any of this be moved so it is
-> visible even without CONFIG_DEBUG_FS?
-> 
-> 3. I have not changed the current heuristic for the swiotlb memory
-> size in CoCo VMs. It's not clear to me how to link this to whether the
-> key storage drivers have been updated to allow throttling. For now,
-> the benefit of reduced swiotlb memory size must be realized using the
-> swiotlb= kernel boot line option.
-> 
-> 4. I need to update the swiotlb documentation to describe throttling.
-> 
-> This patch set is built against linux-next-20240816.
-> 
-> Michael Kelley (7):
->    swiotlb: Introduce swiotlb throttling
->    dma: Handle swiotlb throttling for SGLs
->    dma: Add function for drivers to know if allowing blocking is useful
->    scsi_lib_dma: Add _attrs variant of scsi_dma_map()
->    scsi: storvsc: Enable swiotlb throttling
->    nvme: Move BLK_MQ_F_BLOCKING indicator to struct nvme_ctrl
->    nvme: Enable swiotlb throttling for NVMe PCI devices
-> 
->   drivers/nvme/host/core.c    |   4 +-
->   drivers/nvme/host/nvme.h    |   2 +-
->   drivers/nvme/host/pci.c     |  18 ++++--
->   drivers/nvme/host/tcp.c     |   3 +-
->   drivers/scsi/scsi_lib_dma.c |  13 ++--
->   drivers/scsi/storvsc_drv.c  |   9 ++-
->   include/linux/dma-mapping.h |  13 ++++
->   include/linux/swiotlb.h     |  15 ++++-
->   include/scsi/scsi_cmnd.h    |   7 ++-
->   kernel/dma/Kconfig          |  13 ++++
->   kernel/dma/direct.c         |  41 +++++++++++--
->   kernel/dma/direct.h         |   1 +
->   kernel/dma/mapping.c        |  10 ++++
->   kernel/dma/swiotlb.c        | 114 ++++++++++++++++++++++++++++++++----
->   14 files changed, 227 insertions(+), 36 deletions(-)
-> 
+Fair enough. The "errors" or "notifications" indeed don't tell if this
+specific function has failed.
+So, if you feel the @rid is not documented well enough, maybe add a note in=
+ the
+respective parameter documentation instead of leaving it alone at the
+bottom of the doc?
+
+Well, I don't have a strong opinion on this so you can keep the RB tag
+also with the blank line.
+
+Yours,
+  -- Matti
 
