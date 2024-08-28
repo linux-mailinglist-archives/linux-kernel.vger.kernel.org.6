@@ -1,259 +1,377 @@
-Return-Path: <linux-kernel+bounces-305728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 149CB963389
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:06:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D9296338D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 378271C2409C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:06:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18EE2283A56
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F06E1ACDE6;
-	Wed, 28 Aug 2024 21:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6246A1AD9DE;
+	Wed, 28 Aug 2024 21:05:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u3Yp/MFN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="Ic1IS0ah";
+	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="e018JNPq"
+Received: from mx-lax3-3.ucr.edu (mx.ucr.edu [169.235.156.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5501AC43B;
-	Wed, 28 Aug 2024 21:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C481AD41B
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 21:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=169.235.156.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724879102; cv=none; b=TuiWT2RAujXkuTQfYcPbkd2bY8DHN2qiA67Ulpj0Tf2cUdNVe7V+yoglCMaNxDo9CJgXHXsTHLFaxNPxzb6yjtiXUPZiy8wyAV7Y1MFPuuErP2Afkq4MnYDCVLKni1vxUlB4H0pMLmhszZsYNDWByrBPUlJmTb1l8x1D0TTd+6o=
+	t=1724879127; cv=none; b=Ob74vYRfWi0r70tCYqBsMcc+hx0wAAf/NpPbyh4dUMnXBQhem7D+p/z+GVbD09/OJBkV3iLrqoZa+hEsMM21a2v1s6PKMgs8v1P6wPAA10c2r6xK2yQfGr25VlRT9WY3AbV2ke2Xc6GR3xhitzvu8Lo1/WRm+CUB/nLUt5gB06I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724879102; c=relaxed/simple;
-	bh=0M5faLQUvzi2dMqRmWIXyv4aqaeiB+j4DOHlfGlwVn0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MMtv7/dFGzqY/Jp5otYd9ECSrp15iXdmUo7g88TYjjOOX2m4PRvxGutA3Nv435wrZshN2CnaoONpNw0C0KSRgdT7pYX1QA2N+a9L4Mslv4umn7YzfJvxii90bxYtUEl/5AqUXpERgB1T05KEZSMwTEsl9znNXd1pkTWYzshdUpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u3Yp/MFN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72150C4CEC1;
-	Wed, 28 Aug 2024 21:05:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724879102;
-	bh=0M5faLQUvzi2dMqRmWIXyv4aqaeiB+j4DOHlfGlwVn0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u3Yp/MFN7nx3LvrC8HzlDayYJJOigLNwkBTH+4ijXce9nDmY51ckAC/ysysgHcJ9U
-	 aJVO77tJaTgtDqL3M333QIGopGchkShR5ouHdvWazn+qtNUms8T0NClYePpWQ7X6pT
-	 ek/ygX4Cms0kqtIGnjjkcICDh4agFJ7r7zKzIotLy/17EKKaO7Z8WQ6+Ibo7lrwnJY
-	 22+Isc0qEeF5F0teROs2+27hmXPKJk6pvXTB/wdhrfsfk1WN3vY2dRZ1uS1Syd0OTw
-	 lQxGUOLtyLKi7RR0+mkp5ypUeANs/445ZeCueYVz0Tbin43ptVaAxTY/RHOcpFLbf1
-	 mbqHaKBX1Iuow==
-Date: Wed, 28 Aug 2024 18:04:57 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org,
-	kan.liang@linux.intel.com, namhyung@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH v3 4/8] perf trace: Pretty print struct data
-Message-ID: <Zs-Q-ZyZKd_NzsIv@x1>
-References: <20240824163322.60796-1-howardchu95@gmail.com>
- <20240824163322.60796-5-howardchu95@gmail.com>
+	s=arc-20240116; t=1724879127; c=relaxed/simple;
+	bh=dbz611zd7+ppfjBYune117kdUuZZARe2W8JAeeEg+oM=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=DHVC3oHrdFi7aovCdmBy1qzfTDQtqy8zfMWsk2GvT52BouiM5O30hc8G5Vo5GKIvnDtcXXvnSJvgHTemLK5fc9GpMshQ0vn1QmkPlFJ0c36p1HvUZnReT6DQM5N6ECQT/mzTNjBjcqmfuTFBeFEIuifcx6CLJeByMcSaxrPLlLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=Ic1IS0ah; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=e018JNPq; arc=none smtp.client-ip=169.235.156.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
+  t=1724879125; x=1756415125;
+  h=dkim-signature:x-google-dkim-signature:
+   x-forwarded-encrypted:x-gm-message-state:
+   x-google-smtp-source:mime-version:from:date:message-id:
+   subject:to:cc:content-type:x-cse-connectionguid:
+   x-cse-msgguid;
+  bh=dbz611zd7+ppfjBYune117kdUuZZARe2W8JAeeEg+oM=;
+  b=Ic1IS0ahOR0Wrym0Dr/vabRtds5ds2uxMdt07dDSrHm0NXFELSrwOl5y
+   gChnOH7ytHYZJBeRgEdeyRJ538GL+zg5l9230einTgQIK9Bi7ZiKxbFjp
+   B4NBN8e9J4RqgfQCsCvIlHw8cjPo9sZ22jQPiedXKP+OOghzWP6M4G01z
+   PStq7cuT8onYtEko9CNBR7A8I+WEg2uMLjMbOMsB8aRanNvFZjdx16Dci
+   Nyp8azMhmPyYq7HVsDQafoYTUIwh4pHbh3dvpD22sMRXYHN8adloNO5oU
+   icCWF8Ypw9KxMAEL1UkjlktjMk41S9+FK0a1zcYQpGfi/sKD0Nj6GPhlg
+   A==;
+X-CSE-ConnectionGUID: EvVjtnRWS0SeS+jPLi7Zhw==
+X-CSE-MsgGUID: kRYqRJ3oSF2+B7OsCQQ6eg==
+Received: from mail-pg1-f198.google.com ([209.85.215.198])
+  by smtp-lax3-3.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 28 Aug 2024 14:05:24 -0700
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-7cd8c27fa53so877209a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:05:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ucr.edu; s=rmail; t=1724879124; x=1725483924; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=NS4PHoy2XxVwSyIO+Te9GZzymSycF+o1Mj8eMrvIk8Q=;
+        b=e018JNPqnaaPmKU3/PU2DIOCnulxanhaAB4q206Lu/SuFa35EvoEiL0g08ajDIwJE8
+         Ym2illtuXKzGmVUjv5V9ewtikvGD5+U4zaUhGZcQqFdsPfIFQynq5C8OSpA1Y5qU7h+B
+         bDERmA4BuF1427NUR4W+c0zr5uxTTHXSd26No=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724879124; x=1725483924;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NS4PHoy2XxVwSyIO+Te9GZzymSycF+o1Mj8eMrvIk8Q=;
+        b=sh8DvraI73av0xHNjksld32XJsrZQyaJsE1XOAHiHmDUyPncIsVsUXPmwWVkZh+jAZ
+         iq9tckw4RsHVLdlInVKf7hrylNUwiZI8QoFrIqo6c7kzIrjXhkFTyPp4IatFflVLM36r
+         AHWJoGfcGt3FGZXWIFJMvFTLopt8K812ljD3E6OuPUD3C8H/DsSthjmZ5MyMAEtSfbJM
+         N1BHzbwh6pdRHnY9tINYW/SJiApKCuIn0BZ8oMVIpnv2NtWZMoFTAGhDgijTi7GXTEFp
+         HZkcOws/i8DyoFKCXkQmZ3OnPHtFixlD9BOB2F7YnkHvhtK5K50gv4+ALPfxHQNeTkxl
+         7U7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCURjgEkf8E3x94Ao/NhQvpfX96DP1AB9YAVrIqjl23gxHEiwRMLXjPYlLql5O0Np4Sabu67yNbPBKTalA0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRuiJSKw5/Xbm3IrTbBZ6PFS3392ik6guaxVU8YEVWQT5McUhk
+	oFZPW6n8nZfmz8hXFAk5LBmJu2RUvrVj0khBy4V9Lryqka4DNJgiW2Du8ghoazPI+pp7GubMcVB
+	+iBd+GyBSMCZfbfhGAkld72N3bAv83u22fA1q9sv2N0s3rH9ib95zq9R3OMHpfLnTKaUYC3jFit
+	EvTN2u8jP+4NyKf9ym+kdQ7W1L9+7tN+7FtmNtEg==
+X-Received: by 2002:a17:90a:9201:b0:2d3:acbd:307b with SMTP id 98e67ed59e1d1-2d856a62894mr630404a91.10.1724879123265;
+        Wed, 28 Aug 2024 14:05:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEVcoppRtvSw4i8OTRRNvI74/5q67YyLV8vCnzgLa8/RhIrq0Ar0nKLfK4AuRSSDFAKCUApvFOQK1tqIyEVivs=
+X-Received: by 2002:a17:90a:9201:b0:2d3:acbd:307b with SMTP id
+ 98e67ed59e1d1-2d856a62894mr630366a91.10.1724879122724; Wed, 28 Aug 2024
+ 14:05:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240824163322.60796-5-howardchu95@gmail.com>
+From: Xingyu Li <xli399@ucr.edu>
+Date: Wed, 28 Aug 2024 14:05:12 -0700
+Message-ID: <CALAgD-6MJC+D0DzxLOpVvCbYzHE-r1YzNORtpOh-f+hgEkMjzg@mail.gmail.com>
+Subject: BUG: WARNING: ODEBUG bug in schedule_timeout
+To: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
+	linux-kernel@vger.kernel.org
+Cc: Yu Hao <yhao016@ucr.edu>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Aug 25, 2024 at 12:33:18AM +0800, Howard Chu wrote:
-> Change the arg->augmented.args to arg->augmented.args->value to skip the
-> header for customized pretty printers, since we collect data in BPF
-> using the general augment_sys_enter(), which always adds the header.
-> 
-> Use btf_dump API to pretty print augmented struct pointer.
-> 
-> Prefer existed pretty-printer than btf general pretty-printer.
-> 
-> set compact = true and skip_names = true, so that no newline character
-> and argument name are printed.
-> 
-> Committer notes:
-> 
-> Simplified the btf_dump_snprintf callback to avoid using multiple
-> buffers, as discussed in the thread accessible via the Link tag below.
-> 
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Ian Rogers <irogers@google.com>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Kan Liang <kan.liang@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Link: https://lore.kernel.org/r/20240815013626.935097-7-howardchu95@gmail.com
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> ---
->  tools/perf/builtin-trace.c                | 65 +++++++++++++++++++++--
->  tools/perf/trace/beauty/perf_event_open.c |  2 +-
->  tools/perf/trace/beauty/sockaddr.c        |  2 +-
->  tools/perf/trace/beauty/timespec.c        |  2 +-
->  4 files changed, 63 insertions(+), 8 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> index 43b1f63415b4..048bcb92624c 100644
-> --- a/tools/perf/builtin-trace.c
-> +++ b/tools/perf/builtin-trace.c
-> @@ -990,6 +990,54 @@ static size_t btf_enum_scnprintf(const struct btf_type *type, struct btf *btf, c
->  	return 0;
->  }
->  
-> +struct trace_btf_dump_snprintf_ctx {
-> +	char   *bf;
-> +	size_t printed, size;
-> +};
-> +
-> +static void trace__btf_dump_snprintf(void *vctx, const char *fmt, va_list args)
-> +{
-> +	struct trace_btf_dump_snprintf_ctx *ctx = vctx;
-> +
-> +	ctx->printed += vscnprintf(ctx->bf + ctx->printed, ctx->size - ctx->printed, fmt, args);
-> +}
-> +
-> +static size_t btf_struct_scnprintf(const struct btf_type *type, struct btf *btf, char *bf, size_t size, struct syscall_arg *arg)
-> +{
-> +	struct trace_btf_dump_snprintf_ctx ctx = {
-> +		.bf   = bf,
-> +		.size = size,
-> +	};
-> +	struct augmented_arg *augmented_arg = arg->augmented.args;
-> +	int type_id = arg->fmt->type_id, consumed;
-> +	struct btf_dump *btf_dump;
-> +
-> +	LIBBPF_OPTS(btf_dump_opts, dump_opts);
-> +	LIBBPF_OPTS(btf_dump_type_data_opts, dump_data_opts);
-> +
-> +	if (arg == NULL || arg->augmented.args == NULL)
-> +		return 0;
-> +
-> +	dump_data_opts.compact     = true;
-> +	dump_data_opts.skip_names  = true;
-> +
-> +	btf_dump = btf_dump__new(btf, trace__btf_dump_snprintf, &ctx, &dump_opts);
-> +	if (btf_dump == NULL)
-> +		return 0;
-> +
-> +	/* pretty print the struct data here */
-> +	if (btf_dump__dump_type_data(btf_dump, type_id, arg->augmented.args->value, type->size, &dump_data_opts) == 0)
-> +		return 0;
-> +
-> +	consumed = sizeof(*augmented_arg) + augmented_arg->size;
-> +	arg->augmented.args = ((void *)arg->augmented.args) + consumed;
-> +	arg->augmented.size -= consumed;
-> +
-> +	btf_dump__free(btf_dump);
-> +
-> +	return ctx.printed;
-> +}
-> +
->  static size_t trace__btf_scnprintf(struct trace *trace, struct syscall_arg *arg, char *bf,
->  				   size_t size, int val, char *type)
->  {
-> @@ -1009,6 +1057,8 @@ static size_t trace__btf_scnprintf(struct trace *trace, struct syscall_arg *arg,
->  
->  	if (btf_is_enum(arg_fmt->type))
->  		return btf_enum_scnprintf(arg_fmt->type, trace->btf, bf, size, val);
-> +	else if (btf_is_struct(arg_fmt->type))
-> +		return btf_struct_scnprintf(arg_fmt->type, trace->btf, bf, size, arg);
->  
->  	return 0;
->  }
-> @@ -2222,6 +2272,7 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
->  		.show_string_prefix = trace->show_string_prefix,
->  	};
->  	struct thread_trace *ttrace = thread__priv(thread);
-> +	void *default_scnprintf;
->  
->  	/*
->  	 * Things like fcntl will set this in its 'cmd' formatter to pick the
-> @@ -2263,11 +2314,15 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
->  			if (trace->show_arg_names)
->  				printed += scnprintf(bf + printed, size - printed, "%s: ", field->name);
->  
-> -			btf_printed = trace__btf_scnprintf(trace, &arg, bf + printed,
-> -							   size - printed, val, field->type);
-> -			if (btf_printed) {
-> -				printed += btf_printed;
-> -				continue;
-> +			default_scnprintf = sc->arg_fmt[arg.idx].scnprintf;
-> +
-> +			if (default_scnprintf == NULL || default_scnprintf == SCA_PTR) {
-> +				btf_printed = trace__btf_scnprintf(trace, &arg, bf + printed,
-> +								   size - printed, val, field->type);
-> +				if (btf_printed) {
-> +					printed += btf_printed;
-> +					continue;
-> +				}
+Hi,
 
-Ok, we agreed on this one, and you noted that that in this cset comment,
-good.
+We found a bug in Linux 6.10. It is possibly a use-before-initialization  bug.
+The bug report and the reproducer are as follows:
 
-Next time make a note after the cset commit log message and before the
-actual patch, something like:
+Bug report:
 
-vN: prefer pre-existing userspace scnprintf if explicitely specified,
-only fallbacking to the generic BTF one when none is specified.
+ODEBUG: assert_init not available (active state 0) object:
+ffffc9000a9cf540 object type: timer_list hint:
+process_timeout+0x0/0x40
+WARNING: CPU: 0 PID: 8051 at lib/debugobjects.c:517
+debug_print_object+0x176/0x1e0 lib/debugobjects.c:514
+Modules linked in:
+CPU: 0 PID: 8051 Comm: syz-executor163 Not tainted 6.10.0 #13
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+RIP: 0010:debug_print_object+0x176/0x1e0 lib/debugobjects.c:514
+Code: df e8 6e e9 95 fd 4c 8b 0b 48 c7 c7 a0 61 a9 8b 48 8b 74 24 08
+48 89 ea 44 89 e1 4d 89 f8 ff 34 24 e8 de 2c f7 fc 48 83 c4 08 <0f> 0b
+ff 05 42 1e c6 0a 48 83 c4 10 5b 41 5c 41 5d 41 5e 41 5f 5d
+RSP: 0018:ffffc9000a9cf298 EFLAGS: 00010282
+RAX: 23ee1da135379d00 RBX: ffffffff8b4ee740 RCX: ffff88801a0c9e00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffffff8ba96360 R08: ffffffff8155a25a R09: 1ffff1100c74519a
+R10: dffffc0000000000 R11: ffffed100c74519b R12: 0000000000000000
+R13: ffffffff8ba96248 R14: dffffc0000000000 R15: ffffc9000a9cf540
+FS:  000055558a14e3c0(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f79c90aaa60 CR3: 000000001f8be000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ debug_object_assert_init+0x35f/0x420 lib/debugobjects.c:910
+ debug_timer_assert_init kernel/time/timer.c:846 [inline]
+ debug_assert_init kernel/time/timer.c:891 [inline]
+ __try_to_del_timer_sync kernel/time/timer.c:1504 [inline]
+ __timer_delete_sync+0x2ba/0x410 kernel/time/timer.c:1665
+ timer_delete_sync kernel/time/timer.c:1720 [inline]
+ del_timer_sync include/linux/timer.h:185 [inline]
+ schedule_timeout+0x1c3/0x300 kernel/time/timer.c:2582
+ io_schedule_timeout+0x96/0x120 kernel/sched/core.c:9034
+ do_wait_for_common kernel/sched/completion.c:95 [inline]
+ __wait_for_common kernel/sched/completion.c:116 [inline]
+ wait_for_common_io+0x31c/0x620 kernel/sched/completion.c:133
+ blk_wait_io block/blk.h:82 [inline]
+ blk_execute_rq+0x369/0x4a0 block/blk-mq.c:1408
+ sg_scsi_ioctl drivers/scsi/scsi_ioctl.c:593 [inline]
+ scsi_ioctl+0x20fc/0x2c70 drivers/scsi/scsi_ioctl.c:901
+ sg_ioctl_common drivers/scsi/sg.c:1109 [inline]
+ sg_ioctl+0x16c3/0x2d50 drivers/scsi/sg.c:1163
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfe/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x7e/0x150 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x67/0x6f
+RIP: 0033:0x7f6a2ca8418d
+Code: c3 e8 a7 1f 00 00 0f 1f 80 00 00 00 00 f3 0f 1e fa 48 89 f8 48
+89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
+01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe3f6398f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 000000000002fba0 RCX: 00007f6a2ca8418d
+RDX: 0000000020000080 RSI: 0000000000000001 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 002367732f766564 R09: 0000000000000000
+R10: 000000000000000f R11: 0000000000000246 R12: 00007ffe3f63990c
+R13: 431bde82d7b634db R14: 00007f6a2cb014f0 R15: 0000000000000001
+ </TASK>
 
->  			}
->  
->  			printed += syscall_arg_fmt__scnprintf_val(&sc->arg_fmt[arg.idx],
-> diff --git a/tools/perf/trace/beauty/perf_event_open.c b/tools/perf/trace/beauty/perf_event_open.c
-> index 01ee15fe9d0c..632237128640 100644
-> --- a/tools/perf/trace/beauty/perf_event_open.c
-> +++ b/tools/perf/trace/beauty/perf_event_open.c
-> @@ -76,7 +76,7 @@ static size_t perf_event_attr___scnprintf(struct perf_event_attr *attr, char *bf
+C reproducer:
+// autogenerated by syzkaller (https://github.com/google/syzkaller)
 
-But this part will work if we use the old collectors in the BPF skel?
+#define _GNU_SOURCE
 
-I.e. isn't this a change in the protocol of the BPF colector with the
-userpace augmented snprintf routines?
+#include <dirent.h>
+#include <endian.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <signal.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/prctl.h>
+#include <sys/stat.h>
+#include <sys/syscall.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <time.h>
+#include <unistd.h>
 
-If I remember we discussed that first you make this change in the
-protocol, test it with the pre-existing BPF collector, it works. Ok, now
-we have a new protocol and we then use it in the generic BTF-based BPF
-collector. This way that option of using the BTF-based collector or the
-preexisting BPF collector works.
+static void sleep_ms(uint64_t ms)
+{
+  usleep(ms * 1000);
+}
 
-I'll try to do this.
+static uint64_t current_time_ms(void)
+{
+  struct timespec ts;
+  if (clock_gettime(CLOCK_MONOTONIC, &ts))
+    exit(1);
+  return (uint64_t)ts.tv_sec * 1000 + (uint64_t)ts.tv_nsec / 1000000;
+}
 
-- Arnaldo
-  
->  static size_t syscall_arg__scnprintf_augmented_perf_event_attr(struct syscall_arg *arg, char *bf, size_t size)
->  {
-> -	return perf_event_attr___scnprintf((void *)arg->augmented.args, bf, size, arg->trace->show_zeros);
-> +	return perf_event_attr___scnprintf((void *)arg->augmented.args->value, bf, size, arg->trace->show_zeros);
->  }
->  
->  static size_t syscall_arg__scnprintf_perf_event_attr(char *bf, size_t size, struct syscall_arg *arg)
-> diff --git a/tools/perf/trace/beauty/sockaddr.c b/tools/perf/trace/beauty/sockaddr.c
-> index 2e0e867c0c1b..6ecebf776899 100644
-> --- a/tools/perf/trace/beauty/sockaddr.c
-> +++ b/tools/perf/trace/beauty/sockaddr.c
-> @@ -47,7 +47,7 @@ static size_t (*af_scnprintfs[])(struct sockaddr *sa, char *bf, size_t size) = {
->  
->  static size_t syscall_arg__scnprintf_augmented_sockaddr(struct syscall_arg *arg, char *bf, size_t size)
->  {
-> -	struct sockaddr *sa = (struct sockaddr *)arg->augmented.args;
-> +	struct sockaddr *sa = (struct sockaddr *)arg->augmented.args->value;
->  	char family[32];
->  	size_t printed;
->  
-> diff --git a/tools/perf/trace/beauty/timespec.c b/tools/perf/trace/beauty/timespec.c
-> index e1a61f092aad..b14ab72a2738 100644
-> --- a/tools/perf/trace/beauty/timespec.c
-> +++ b/tools/perf/trace/beauty/timespec.c
-> @@ -7,7 +7,7 @@
->  
->  static size_t syscall_arg__scnprintf_augmented_timespec(struct syscall_arg *arg, char *bf, size_t size)
->  {
-> -	struct timespec *ts = (struct timespec *)arg->augmented.args;
-> +	struct timespec *ts = (struct timespec *)arg->augmented.args->value;
->  
->  	return scnprintf(bf, size, "{ .tv_sec: %" PRIu64 ", .tv_nsec: %" PRIu64 " }", ts->tv_sec, ts->tv_nsec);
->  }
-> -- 
-> 2.45.2
+static bool write_file(const char* file, const char* what, ...)
+{
+  char buf[1024];
+  va_list args;
+  va_start(args, what);
+  vsnprintf(buf, sizeof(buf), what, args);
+  va_end(args);
+  buf[sizeof(buf) - 1] = 0;
+  int len = strlen(buf);
+  int fd = open(file, O_WRONLY | O_CLOEXEC);
+  if (fd == -1)
+    return false;
+  if (write(fd, buf, len) != len) {
+    int err = errno;
+    close(fd);
+    errno = err;
+    return false;
+  }
+  close(fd);
+  return true;
+}
+
+static long syz_open_dev(volatile long a0, volatile long a1, volatile long a2)
+{
+  if (a0 == 0xc || a0 == 0xb) {
+    char buf[128];
+    sprintf(buf, "/dev/%s/%d:%d", a0 == 0xc ? "char" : "block", (uint8_t)a1,
+            (uint8_t)a2);
+    return open(buf, O_RDWR, 0);
+  } else {
+    char buf[1024];
+    char* hash;
+    strncpy(buf, (char*)a0, sizeof(buf) - 1);
+    buf[sizeof(buf) - 1] = 0;
+    while ((hash = strchr(buf, '#'))) {
+      *hash = '0' + (char)(a1 % 10);
+      a1 /= 10;
+    }
+    return open(buf, a2, 0);
+  }
+}
+
+static void kill_and_wait(int pid, int* status)
+{
+  kill(-pid, SIGKILL);
+  kill(pid, SIGKILL);
+  for (int i = 0; i < 100; i++) {
+    if (waitpid(-1, status, WNOHANG | __WALL) == pid)
+      return;
+    usleep(1000);
+  }
+  DIR* dir = opendir("/sys/fs/fuse/connections");
+  if (dir) {
+    for (;;) {
+      struct dirent* ent = readdir(dir);
+      if (!ent)
+        break;
+      if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)
+        continue;
+      char abort[300];
+      snprintf(abort, sizeof(abort), "/sys/fs/fuse/connections/%s/abort",
+               ent->d_name);
+      int fd = open(abort, O_WRONLY);
+      if (fd == -1) {
+        continue;
+      }
+      if (write(fd, abort, 1) < 0) {
+      }
+      close(fd);
+    }
+    closedir(dir);
+  } else {
+  }
+  while (waitpid(-1, status, __WALL) != pid) {
+  }
+}
+
+static void setup_test()
+{
+  prctl(PR_SET_PDEATHSIG, SIGKILL, 0, 0, 0);
+  setpgrp();
+  write_file("/proc/self/oom_score_adj", "1000");
+}
+
+static void execute_one(void);
+
+#define WAIT_FLAGS __WALL
+
+static void loop(void)
+{
+  int iter = 0;
+  for (;; iter++) {
+    int pid = fork();
+    if (pid < 0)
+      exit(1);
+    if (pid == 0) {
+      setup_test();
+      execute_one();
+      exit(0);
+    }
+    int status = 0;
+    uint64_t start = current_time_ms();
+    for (;;) {
+      sleep_ms(10);
+      if (waitpid(-1, &status, WNOHANG | WAIT_FLAGS) == pid)
+        break;
+      if (current_time_ms() - start < 5000)
+        continue;
+      kill_and_wait(pid, &status);
+      break;
+    }
+  }
+}
+
+uint64_t r[1] = {0xffffffffffffffff};
+
+void execute_one(void)
+{
+  intptr_t res = 0;
+  if (write(1, "executing program\n", sizeof("executing program\n") - 1)) {
+  }
+  memcpy((void*)0x20000000,
+         "\x2b\x95\x24\x80\xc7\xca\x55\x09\x7d\x17\x07\x93\x5b\xa6\x4b\x20\xf3"
+         "\x02\x6c\x03\xd6\x58\x02\x6b\x81\xbf\x26\x43\x40\x51\x2b\x3c\xb4\xe0"
+         "\x1a\xfd\xa2\xde\x75\x42\x99\xea\x7a\x11\x33\x43\xab\x7b\x9b\xda\x2f"
+         "\xc0\xa2\xe2\xcd\xbf\xec\xbc\xa0\x23\x3a\x07\x72\xb1\x2e\xbd\xe5\xd9"
+         "\x8a\x12\x03\xcb\x87\x16\x72\xdf\xf7\xe4\xc8\x6e\xc1\xdc\xce\xf0\xa7"
+         "\x63\x12\xfb\xe8\xd4\x5d\xc2\xbd\x0f\x8f\xc2\xeb\xeb\x2a\x6b\xe6\xa3"
+         "\x00\x91\x6c\x52\x81\xda\x2c\x1e\xf6\x4d\x66\x26\x70\x91\xb8\x24\x29"
+         "\x97\x6c\x01\x9d\xa3\x64\x55\x57\xed\x1d\x43\x9c\x5a\x63\x7f\x6b\xf5"
+         "\x8c\x53\xbc\x41\x45\x39\xdd\x87\xc6\x90\x98\xd6\x71\x40\x25\x86\xb6"
+         "\x31\xf9\xac\x5c\x2f\xe9\xce\xdc\x28\x1a\x6f\x00\x5b\x5c\x4d\x1d\xd5"
+         "\xed\x9b\xe4\x00\x00\x00\x00\x00\x00\x00",
+         180);
+  syscall(__NR_write, /*fd=*/-1, /*arg0=*/0x20000000ul, /*len=*/0xb4ul);
+  memcpy((void*)0x20000080, "/dev/sg#\000", 9);
+  res = -1;
+  res = syz_open_dev(/*dev=*/0x20000080, /*id=*/0,
+                     /*flags=O_CREAT|FASYNC|O_RDWR*/ 0x2042);
+  if (res != -1)
+    r[0] = res;
+  *(uint32_t*)0x20000080 = 0;
+  *(uint32_t*)0x20000084 = 2;
+  *(uint8_t*)0x20000088 = 0x85;
+  *(uint8_t*)0x20000089 = 8;
+  *(uint8_t*)0x2000008a = 2;
+  *(uint8_t*)0x2000008b = 0xd;
+  syscall(__NR_ioctl, /*fd=*/r[0], /*arg0=*/1, /*arg1=*/0x20000080ul);
+}
+int main(void)
+{
+  syscall(__NR_mmap, /*addr=*/0x1ffff000ul, /*len=*/0x1000ul, /*prot=*/0ul,
+          /*flags=MAP_FIXED|MAP_ANONYMOUS|MAP_PRIVATE*/ 0x32ul, /*fd=*/-1,
+          /*offset=*/0ul);
+  syscall(__NR_mmap, /*addr=*/0x20000000ul, /*len=*/0x1000000ul,
+          /*prot=PROT_WRITE|PROT_READ|PROT_EXEC*/ 7ul,
+          /*flags=MAP_FIXED|MAP_ANONYMOUS|MAP_PRIVATE*/ 0x32ul, /*fd=*/-1,
+          /*offset=*/0ul);
+  syscall(__NR_mmap, /*addr=*/0x21000000ul, /*len=*/0x1000ul, /*prot=*/0ul,
+          /*flags=MAP_FIXED|MAP_ANONYMOUS|MAP_PRIVATE*/ 0x32ul, /*fd=*/-1,
+          /*offset=*/0ul);
+  const char* reason;
+  (void)reason;
+  loop();
+  return 0;
+}
+
+-- 
+Yours sincerely,
+Xingyu
 
