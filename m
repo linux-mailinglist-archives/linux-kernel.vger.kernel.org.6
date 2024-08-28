@@ -1,310 +1,155 @@
-Return-Path: <linux-kernel+bounces-304868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DE8C962608
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:28:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E19B196260C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:28:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F16F1F269DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:28:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96EAD1F26A1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD6017279C;
-	Wed, 28 Aug 2024 11:27:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26B7170A14;
+	Wed, 28 Aug 2024 11:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kO1XjNvz"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="l4+w46JQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="agMZTpqI";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="l4+w46JQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="agMZTpqI"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5DA160783;
-	Wed, 28 Aug 2024 11:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42297160783;
+	Wed, 28 Aug 2024 11:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724844467; cv=none; b=MdnFaZ4af1kRrd6BLKFMA0OhBEeST2qZu6XVB2WJARG66GAZQefUEVe/bytgGS1FXZ/Lkz8PpwmddOzJaOddBb5BCK8d+1Z15tgr1qnQ0EXG43TFDTUYpGisSEjMQg1fle5hL0ZCup3y3AyVXPCQs5qgubLMxzrcJE2DZV9lhjg=
+	t=1724844478; cv=none; b=ZZiiWedsH2BUOsBhmVaOlKw9GHqB1nCp/g3WDTPUvzngtGEDixzETryMeYRpas55Y7ucgLHajFOuvrgSwHD82dDcB5ShOHbPrreSn+vn+W3aGGALwqMwFtPkPckLZjPABGtXiJjyaPYxqa9KAO+EXiFIQ9FjeoYTvNJ//ykkjF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724844467; c=relaxed/simple;
-	bh=gMsrsQaIId2hSqgQakmhXn8l36w+JcTYkIwMqV+mIbo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sWWATgpzy6Xwt4Qp/TP0YYewqmuyTf6+6dAOlzd2spqW3uos5lxNnDBWqo5Ugk0u1zaAeLU30/Z7oTCJyNSX0B8vxIT2aISx1EvuNnJ9P81LtOT4/WHb7RJMh0fzGAusb55CU1wHTECsw1UaJ/4RtAT8qqw9ivGY/wu0bRAzZyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kO1XjNvz; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47SBRQpr063798;
-	Wed, 28 Aug 2024 06:27:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724844446;
-	bh=E0iz9Fz8p4vbSomkVxOCwVjsOcjrKjmhAC3VsVZlG18=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=kO1XjNvzDemQxcJyXpjPMoGwu+sWG83R62UB3IYx7aksJeiUJAkETb+f86giNTQEz
-	 o1ZIBkRdWuPTHSmx1X8PjtRWg8lyKmJw/D8ushRTLPgPAy9rmaLcRcqkbcN4VWcZs2
-	 YLeVay6M88yMiJxFGGPwxx47f3nbqL8vJIFsqalY=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47SBRQAc007268
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 28 Aug 2024 06:27:26 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 28
- Aug 2024 06:27:26 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 28 Aug 2024 06:27:26 -0500
-Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47SBRE6H008364;
-	Wed, 28 Aug 2024 06:27:22 -0500
-From: Beleswar Padhi <b-padhi@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <u-kumar1@ti.com>, <j-choudhary@ti.com>, <vaishnav.a@ti.com>, <afd@ti.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v3 2/2] arm64: dts: ti: k3-j722s-evm: Enable Inter-Processor Communication
-Date: Wed, 28 Aug 2024 16:57:13 +0530
-Message-ID: <20240828112713.2668526-3-b-padhi@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240828112713.2668526-1-b-padhi@ti.com>
-References: <20240828112713.2668526-1-b-padhi@ti.com>
+	s=arc-20240116; t=1724844478; c=relaxed/simple;
+	bh=VWQG8+aRF2xvyXnQGwSljKWlaVinX4srb3SLVvJYP48=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lkZeIvrxiw8gF+SGvagQNpk8LiZW0dLRzs1dUvl3HDrx/KxK2kQHfSPAAta9TGCwoU65b0hq1VKZwZLr+PMV5qLVP4MgyY6wAbl/pEowVDts/aq4IwsjlbmdXY/9egLG56Q497FhzDKMzRzpHM7HwwLsmX3BvjDU/KDE86GE/ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=l4+w46JQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=agMZTpqI; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=l4+w46JQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=agMZTpqI; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2F86221B53;
+	Wed, 28 Aug 2024 11:27:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1724844474;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YG+DtzoYRs5hBGE8LTx8nF0noHi0zTg4zdMtH36T8gE=;
+	b=l4+w46JQYBGAGwm96WJs/TLVw1ZMy9SgnX0jYXCtRqEZsKBxVNTqrPSZuZWRHndKCffwCQ
+	EwFBY4pMeBZbYz9fCvR5nm5R01t2exNvB56OxMwcGaHlo15g+eEX5+AvHCzkk7c6YRMq9i
+	a8MRoVJ/U5Cs2YeigpQGtNwi0vcWp0s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1724844474;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YG+DtzoYRs5hBGE8LTx8nF0noHi0zTg4zdMtH36T8gE=;
+	b=agMZTpqIoNvPP4xQpUfo4DK9ppBNRc1jiJPtlRw6pFERDoCdlXrCxZiCniyoMLOYVrmovR
+	fitEv6TRvX46MvAg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=l4+w46JQ;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=agMZTpqI
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1724844474;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YG+DtzoYRs5hBGE8LTx8nF0noHi0zTg4zdMtH36T8gE=;
+	b=l4+w46JQYBGAGwm96WJs/TLVw1ZMy9SgnX0jYXCtRqEZsKBxVNTqrPSZuZWRHndKCffwCQ
+	EwFBY4pMeBZbYz9fCvR5nm5R01t2exNvB56OxMwcGaHlo15g+eEX5+AvHCzkk7c6YRMq9i
+	a8MRoVJ/U5Cs2YeigpQGtNwi0vcWp0s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1724844474;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YG+DtzoYRs5hBGE8LTx8nF0noHi0zTg4zdMtH36T8gE=;
+	b=agMZTpqIoNvPP4xQpUfo4DK9ppBNRc1jiJPtlRw6pFERDoCdlXrCxZiCniyoMLOYVrmovR
+	fitEv6TRvX46MvAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0B820138D2;
+	Wed, 28 Aug 2024 11:27:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ODMoAroJz2aNfQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Wed, 28 Aug 2024 11:27:54 +0000
+Date: Wed, 28 Aug 2024 13:27:44 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: dsterba@suse.com, gustavoars@kernel.org, kees@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] affs: Replace one-element array with flexible-array
+ member
+Message-ID: <20240828112744.GF25962@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <20240827124839.81288-2-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240827124839.81288-2-thorsten.blum@toblux.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Queue-Id: 2F86221B53
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.21
+X-Spam-Flag: NO
 
-From: Apurva Nandan <a-nandan@ti.com>
+On Tue, Aug 27, 2024 at 02:48:40PM +0200, Thorsten Blum wrote:
+> Replace the deprecated one-element array with a modern flexible-array
+> member in the struct affs_root_head.
+> 
+> Add a comment that most struct members are not used, but kept as
+> documentation.
+> 
+> Link: https://github.com/KSPP/linux/issues/79
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 
-The K3 J722S-EVM platform is based on the J722S SoC which has one
-single-core Arm Cortex-R5F processor in each of the WAKEUP, MCU and MAIN
-voltage domain, and two C71x DSP subsystems in MAIN voltage domain.
-
-The Inter-Processor communication between the A72 cores and these R5F
-and DSP remote cores is achieved through shared memory and Mailboxes.
-Thus, add the memory carveouts and enable the mailbox clusters required
-for communication.
-
-Also, The remoteproc firmware like of R5F and DSPs in the MAIN voltage
-domain use timers. Therefore, change the status of the timer nodes to
-"reserved" to avoid any clash during booting of remotecores. Usage is
-described as below:
-
-	+===================+=============+
-	|  Remoteproc Node  | Timer Node  |
-	+===================+=============+
-	| main_r5fss0_core0 | main_timer0 |
-	+-------------------+-------------+
-	| c7x_0             | main_timer1 |
-	+-------------------+-------------+
-	| c7x_1             | main_timer2 |
-	+-------------------+-------------+
-
-Signed-off-by: Apurva Nandan <a-nandan@ti.com>
-[ Enabled mailbox instances and Reserved timer nodes ]
-Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
----
-v3: Changelog:
-1) Reserved conflicting timer nodes with remoteproc firmware (reflected the same
-in commit message).
-2) Simplified $subject to clarify that this patch enables IPC and transferred
-the details into commit message.
-
-Link to v2:
-https://lore.kernel.org/all/20240612112259.1131653-3-b-padhi@ti.com/
-
-v2: Changelog:
-1) Squashed Patch 2 and 3 from V1 into Patch 2 in V2 as they were doing
-the same logical thing.
-
-Links to v1:
-https://lore.kernel.org/all/20240607090433.488454-3-b-padhi@ti.com/
-https://lore.kernel.org/all/20240607090433.488454-4-b-padhi@ti.com/
-
- arch/arm64/boot/dts/ti/k3-j722s-evm.dts | 153 ++++++++++++++++++++++++
- 1 file changed, 153 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-index dd3b5f7039d7..cda6725cd254 100644
---- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-@@ -51,12 +51,71 @@ secure_ddr: optee@9e800000 {
- 			no-map;
- 		};
- 
-+		wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@a0000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa0000000 0x00 0x100000>;
-+			no-map;
-+		};
-+
- 		wkup_r5fss0_core0_memory_region: r5f-memory@a0100000 {
- 			compatible = "shared-dma-pool";
- 			reg = <0x00 0xa0100000 0x00 0xf00000>;
- 			no-map;
- 		};
- 
-+		mcu_r5fss0_core0_dma_memory_region: mcu-r5fss-dma-memory-region@a1000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa1000000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		mcu_r5fss0_core0_memory_region: mcu-r5fss-memory-region@a1100000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa1100000 0x00 0xf00000>;
-+			no-map;
-+		};
-+
-+		main_r5fss0_core0_dma_memory_region: main-r5fss-dma-memory-region@a2000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa2000000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		main_r5fss0_core0_memory_region: main-r5fss-memory-region@a2100000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa2100000 0x00 0xf00000>;
-+			no-map;
-+		};
-+
-+		c7x_0_dma_memory_region: c7x-dma-memory@a3000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa3000000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		c7x_0_memory_region: c7x-memory@a3100000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa3100000 0x00 0xf00000>;
-+			no-map;
-+		};
-+
-+		c7x_1_dma_memory_region: c7x-dma-memory@a4000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa4000000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		c7x_1_memory_region: c7x-memory@a4100000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa4100000 0x00 0xf00000>;
-+			no-map;
-+		};
-+
-+		rtos_ipc_memory_region: ipc-memories@a5000000 {
-+			reg = <0x00 0xa5000000 0x00 0x1c00000>;
-+			alignment = <0x1000>;
-+			no-map;
-+		};
- 	};
- 
- 	vmain_pd: regulator-0 {
-@@ -494,6 +553,100 @@ &sdhci1 {
- 	bootph-all;
- };
- 
-+&mailbox0_cluster0 {
-+	status = "okay";
-+	mbox_r5_0: mbox-r5-0 {
-+		ti,mbox-rx = <0 0 0>;
-+		ti,mbox-tx = <1 0 0>;
-+	};
-+};
-+
-+&mailbox0_cluster1 {
-+	status = "okay";
-+	mbox_mcu_r5_0: mbox-mcu-r5-0 {
-+		ti,mbox-rx = <0 0 0>;
-+		ti,mbox-tx = <1 0 0>;
-+	};
-+};
-+
-+&mailbox0_cluster2 {
-+	status = "okay";
-+	mbox_c7x_0: mbox-c7x-0 {
-+		ti,mbox-rx = <0 0 0>;
-+		ti,mbox-tx = <1 0 0>;
-+	};
-+};
-+
-+&mailbox0_cluster3 {
-+	status = "okay";
-+	mbox_main_r5_0: mbox-main-r5-0 {
-+		ti,mbox-rx = <0 0 0>;
-+		ti,mbox-tx = <1 0 0>;
-+	};
-+
-+	mbox_c7x_1: mbox-c7x-1 {
-+		ti,mbox-rx = <2 0 0>;
-+		ti,mbox-tx = <3 0 0>;
-+	};
-+};
-+
-+/* Timers are used by Remoteproc firmware */
-+&main_timer0 {
-+	status = "reserved";
-+};
-+
-+&main_timer1 {
-+	status = "reserved";
-+};
-+
-+&main_timer2 {
-+	status = "reserved";
-+};
-+
-+&wkup_r5fss0 {
-+	status = "okay";
-+};
-+
-+&wkup_r5fss0_core0 {
-+	mboxes = <&mailbox0_cluster0 &mbox_r5_0>;
-+	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
-+			<&wkup_r5fss0_core0_memory_region>;
-+};
-+
-+&mcu_r5fss0 {
-+	status = "okay";
-+};
-+
-+&mcu_r5fss0_core0 {
-+	mboxes = <&mailbox0_cluster1 &mbox_mcu_r5_0>;
-+	memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
-+			<&mcu_r5fss0_core0_memory_region>;
-+};
-+
-+&main_r5fss0 {
-+	status = "okay";
-+};
-+
-+&main_r5fss0_core0 {
-+	mboxes = <&mailbox0_cluster3 &mbox_main_r5_0>;
-+	memory-region = <&main_r5fss0_core0_dma_memory_region>,
-+			<&main_r5fss0_core0_memory_region>;
-+};
-+
-+&c7x_0 {
-+	status = "okay";
-+	mboxes = <&mailbox0_cluster2 &mbox_c7x_0>;
-+	memory-region = <&c7x_0_dma_memory_region>,
-+			<&c7x_0_memory_region>;
-+};
-+
-+&c7x_1 {
-+	status = "okay";
-+	mboxes = <&mailbox0_cluster3 &mbox_c7x_1>;
-+	memory-region = <&c7x_1_dma_memory_region>,
-+			<&c7x_1_memory_region>;
-+};
-+
- &serdes_ln_ctrl {
- 	idle-states = <J722S_SERDES0_LANE0_USB>,
- 		      <J722S_SERDES1_LANE0_PCIE0_LANE0>;
--- 
-2.34.1
-
+Added to affs queue, thanks.
 
