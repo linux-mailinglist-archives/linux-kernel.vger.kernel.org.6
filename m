@@ -1,161 +1,128 @@
-Return-Path: <linux-kernel+bounces-305439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82207962E9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:33:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D64D2962E9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:33:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3758B1F24551
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:33:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62E9E1F238A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21AA1A76AD;
-	Wed, 28 Aug 2024 17:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2B91A4F3F;
+	Wed, 28 Aug 2024 17:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O/xcOhor"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZoeIGvUv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pR+zgidQ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CB11A3BCE;
-	Wed, 28 Aug 2024 17:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6673D166F2B
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 17:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724866378; cv=none; b=sKTXaddVtPQ/6nZUN7s08Euw37DGGj7NOAavF3H7JGv796Bh4rEqjXxucLLBao6U4+e48fe1jT6iL5gd7l12ctyjyujh0/NkotrowsMIXzhyTzklUCvaaUKnOvz/8KmnidPTVKSR4qv/LfYBCyxCE3yuF0efntuRqp3vDSsYPl0=
+	t=1724866407; cv=none; b=RI8Nwons7O6y2FjjMYs4wKm6KVz93olkxu9EgmniEcbpCsfPnKWqMLMk0GhlrOTn2o28ckdeXdf1VslL8zUy/g0qsuo/nbhzOXksUh2ricEmbDzeKjw2cUJHQUSmD/xP+or8+ff26Hzd+HfRck4djvlpuscH25hZZ/86QrNjuMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724866378; c=relaxed/simple;
-	bh=4MDDdzSEhRjEbEa2n9fIYxr42mIY+eyZfSj6+j+Bu0s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PEaL/Pf4PgHqJjzwWdqKFjIiFEJJBqGUuOpOLicxoUU5Ol9afleYtlZSluN88oNHOc4ryVuQSfSWbhfJTdXkaYxIWMtcuwJHhCH8cY1uyH8MTCloy8Lx0cCFdJKCs3pB2AwaAFl7KLN+GRX+qpOh8S5gn/eOJLacWLMSjK5Dk/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O/xcOhor; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71927C4CEC0;
-	Wed, 28 Aug 2024 17:32:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724866378;
-	bh=4MDDdzSEhRjEbEa2n9fIYxr42mIY+eyZfSj6+j+Bu0s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O/xcOhorFRSv2vHmRagMWmGxh+ScNnb9p5YrzG9/pAmQfUsEg399/CaTU0Z06a3Kd
-	 25gBR9x3tRKON/9TVqn3X9yWKKyvoaXPglSuRX8H/AEzCQfOfamSFXFrUflPvWSiAU
-	 m2RTlwhEQm6GYG4Uu3jWFaCtKcYLtQjATOV2MkQy03IMy9y2Bez9OmpxvhprGtMcQG
-	 PjRlInV3Bc/JK1THjQVmMuPnn6fu1rOqZ3+sGnnl2KRptQU5L4iIPf6dlZynx0jL9x
-	 730E1RPdEdJUvwP5kiHq7t30Mte5uQ7x3NQJjn8eIqgssRzUyqSg0jXamQWsy9Pz/C
-	 BWKufAwkMrGMg==
-Date: Wed, 28 Aug 2024 18:32:48 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	Yury Khrustalev <yury.khrustalev@arm.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v11 25/39] arm64/signal: Expose GCS state in signal frames
-Message-ID: <4de41478-3bc8-4cb4-a557-3e9402afe858@sirena.org.uk>
-References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
- <20240822-arm64-gcs-v11-25-41b81947ecb5@kernel.org>
- <ZshYTyNbveD7WMyJ@arm.com>
- <ZshjmuYcejbhaSBg@finisterre.sirena.org.uk>
- <Zsixz6Y9xWxqaQaV@arm.com>
- <ZskGqU8BSvR01W30@finisterre.sirena.org.uk>
- <ZsxSKVAOHQq12YfB@arm.com>
+	s=arc-20240116; t=1724866407; c=relaxed/simple;
+	bh=3H5J3L2xof8F9mgHp70NUvd3NFYibPFG40CB+iEOrbQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=XPSdL6k/lgcHldZymMTp5SEjXJ6m5hAfk0o8L6oveVpvhCTEADbBzA4vI0KzBkJS+so13LDht2X3n4o3NlxytxJpJRQDfZU8YkuVRJfZooYit/AKbxhEG7k5OcbSMtaF2yctpJ8aa4C+PmN8oEdla79EwSTzQIEaCFI5NOXYIwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZoeIGvUv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pR+zgidQ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724866403;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VlzVH2I0xjZsHsbx2kSBiip49ZnONc151wXAOnUGLqM=;
+	b=ZoeIGvUvrmq/wzPFp7vF9TT3WUnHYOyCZFWV/fTjT3t91up30+ro7jRC/8J3olXsDhyukc
+	SABNAWQuXG2OnMo3/2qzRT8cConkCmC1c3xUWLid6u7WZJkIe0ihOpE0We/2wY1N1xGQRh
+	2WzlbUqDLYQW9J7L+jbwfiuTE0XzHxz2WPl6/AluiyQsT6vYD3Wp4p6C5hGY5zq1M+d2nY
+	ukku99R2+n7oYMeiUoUaGRb/+2Lq9hxD6n3Y/U06sT0hr10YkfeiYl2XMYm1PxWM1qrVk8
+	ascI3KrZqRq2a6GNIX/JLkPlLl/TMd3NJUcK+fOA7MKkjVBZpMRKS1vkTRjxLw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724866403;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VlzVH2I0xjZsHsbx2kSBiip49ZnONc151wXAOnUGLqM=;
+	b=pR+zgidQ6RzouqkICdZE89CEEOx8g8VsadqDotDDL5oBkMoV9zyoS/ntLlidtMQUXw0w6z
+	Jn9QZxAiVpqTWNAg==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
+ linux-kernel@vger.kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH printk v4 06/17] printk: nbcon: Introduce printer kthreads
+In-Reply-To: <Zs3nRK4ikgzMx7JU@pathway.suse.cz>
+References: <20240827044333.88596-1-john.ogness@linutronix.de>
+ <20240827044333.88596-7-john.ogness@linutronix.de>
+ <Zs3nRK4ikgzMx7JU@pathway.suse.cz>
+Date: Wed, 28 Aug 2024 19:39:22 +0206
+Message-ID: <87r0a8wo0t.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qwAebp9So100JWhv"
-Content-Disposition: inline
-In-Reply-To: <ZsxSKVAOHQq12YfB@arm.com>
-X-Cookie: You are number 6!  Who is number one?
+Content-Type: text/plain
 
+On 2024-08-27, Petr Mladek <pmladek@suse.com> wrote:
+>> +/**
+>> + * nbcon_kthread_create - Create a console printer thread
+>> + * @con:	Console to operate on
+>> + *
+>> + * Return:	True if the kthread was started or already exists.
+>> + *		Otherwise false and @con must not be registered.
+>> + *
+>> + * If @con was already registered, it must be unregistered before
+>> + * the global state variable @printk_kthreads_running can be set.
+>
+> This paragraph is quite confusing without more context.
 
---qwAebp9So100JWhv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Agreed.
 
-On Mon, Aug 26, 2024 at 01:00:09PM +0300, Catalin Marinas wrote:
-> On Fri, Aug 23, 2024 at 11:01:13PM +0100, Mark Brown wrote:
-> > On Fri, Aug 23, 2024 at 04:59:11PM +0100, Catalin Marinas wrote:
+> I would either remove it completely or write something like:
+>
+> <proposal>
+>  * This function is called when nbcon consoles are supposed to be flushed
+>  * using the kthread. The messages printed with NBCON_PRIO_NORMAL are not
+>  * longer flushed by the legacy loop. This is why the failure is considered
+>  * fatal leading to the console unregistration.
+> </proposal>
 
-> gcs_preserve_current_state() only a context switch thing. Would it work
-> if we don't touch the thread structure at all in the signal code? We
-> wouldn't deliver a signal in the middle of the switch_to() code. So any
-> value we write in thread struct would be overridden at the next switch.
+For v5 I am keeping both, slightly modified:
 
-I think so, yes.
+ * This function is called when it will be expected that nbcon consoles are
+ * flushed using the kthread. The messages printed with NBCON_PRIO_NORMAL
+ * will be no longer flushed by the legacy loop. This is why failure must
+ * be fatal for console registration.
+ *
+ * If @con was already registered and this function fails, @con must be
+ * unregistered before the global state variable @printk_kthreads_running
+ * can be set.
 
-> If GCS is disabled for a guest, we save the GCSPR_EL0 with the cap size
+>> @@ -1419,6 +1644,13 @@ bool nbcon_alloc(struct console *con)
+>>  			con_printk(KERN_ERR, con, "failed to allocate printing buffer\n");
+>>  			return false;
+>>  		}
+>> +
+>> +		if (printk_kthreads_running) {
+>> +			if (!nbcon_kthread_create(con)) {
+>> +				kfree(con->pbufs);
+>
+> It probably is not much important but I would rather do here:
+>
+> 				con->pbufs = NULL;
 
-s/guest/task/ I guess?
+Sure.
 
-> subtracted but there's no cap written. In restore_gcs_context() it
-> doesn't look like we add the cap size back when writing GCSPR_EL0. If
-> GCS is enabled, we do consume the cap and add 8 but otherwise it looks
-> that we keep decreasing GCSPR_EL0. I think we should always subtract the
-> cap size if GCS is enabled. This could could do with some refactoring as
-> I find it hard to follow (not sure exactly how, maybe just comments will
-> do).
+I'll leave off your Reviewed-by since the comment changes are a bit
+different than you suggested.
 
-I've changed this so we instead only add the frame for the token if GCS
-is enabled and updated the comment, that way we don't modify GCSPR_EL0
-in cases where GCS is not enabled.
-
-> I'd also keep a single write to GCSPR_EL0 on the return path but I'm ok
-> with two if we need to cope with GCS being disabled but the GCSPR_EL0
-> still being saved/restored.
-
-I think the handling for the various options in the second case mean
-that it's clearer and simpler to write once when we restore the frame
-and once when we consume the token.
-
-> Another aspect for gcs_restore_signal(), I think it makes more sense for
-> the cap to be consumed _after_ restoring the sigcontext since this has
-> the actual gcspr_el0 where we stored the cap and represents the original
-> stack. If we'll get an alternative shadow stack, current GCSPR_EL0 on
-> sigreturn points to that alternative shadow stack rather than the
-> original one. That's what confused me when reviewing the patch and I
-> thought the cap goes to the top of the signal stack.
-
-I've moved gcs_restore_signal() before the altstack restore which I
-think is what you're looking for here?
-
---qwAebp9So100JWhv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbPXz8ACgkQJNaLcl1U
-h9AINwgAghxTu8PB4VcQHkYwz1H/qDleYcPMAHplNpZgcLpx59wTJgBZ5QfIwDnV
-v12mJKsZJ3gfnHdZipZjp7EKhKGELQUTGRLICZqBr9S/8SfK3cXC3z6gQEXLxu3W
-Z122sDonqb/vfykIYhrtWeP12Rgm1n7KRplfJrXGx+xfZD2pQRdydES4L5RWtbZU
-coJqFBLlGHRFqsnIUQni4PFl1UCQRVitFHHS4nL+Fs/lGj+rkjM69mkCQjmAHR1d
-/Wivj6fyHPPQj8UCXiCXkk+/KcM64IZqgoTzIdYH+khbjTKKaBC0s06fnqJqU2n1
-d06XGwawJkM0HfQlIcf0XRaB8a7aew==
-=V6Zo
------END PGP SIGNATURE-----
-
---qwAebp9So100JWhv--
+John
 
