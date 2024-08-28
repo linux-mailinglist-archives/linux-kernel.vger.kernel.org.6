@@ -1,97 +1,66 @@
-Return-Path: <linux-kernel+bounces-305097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5EA2962971
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:56:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06FE4962974
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:56:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EFBE1F24FFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:56:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B723A286276
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F763188CDF;
-	Wed, 28 Aug 2024 13:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABB9189510;
+	Wed, 28 Aug 2024 13:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XQbBxOiZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="CD6Oy163"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD4118801A;
-	Wed, 28 Aug 2024 13:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD4418787E;
+	Wed, 28 Aug 2024 13:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724853362; cv=none; b=dKkG+xkwnAUmpZB13Ro2QvjQHX3gGkAmCctjJ/Fgk2UbdQ7HjmKmUSHY7bCHkGyvkrf/7FZ221tUwtbgvSLHWwzj67zyrgDAt5IDTNmQ+AIreua+HwUmkv+G5xm8DHhJQxXowQMgqVdiRmLDgWnR21VsONCzJKZxUP/RskxTV9M=
+	t=1724853376; cv=none; b=K6qXr6FhNYROgLuX3E46JotERUdzbBohHELkTde0vDZH66Zqz71Ga7GiZemZ+xq3JgA0r8q1oAeHXeXDiXoIi1/rMYxix4Lf0Lg6Xh+xL6PDDuYdQTWmTaJKaWQ8t5ViELUIaqteVXyoKqJyV+OMmQNBLTAswYhbrYm76qD5Xpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724853362; c=relaxed/simple;
-	bh=0VzRvvBmgVfm22p7yRHWjS2uaHYDwDvXSohq3OgN8+4=;
+	s=arc-20240116; t=1724853376; c=relaxed/simple;
+	bh=AdhQ7SgKhTvlr8i5tAe50JFCckr2oPnQs1VS47LHhYs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JnIrno/DlnOx3FCYqRgSc/dptnFakZgXmSczp3m8TkClcteSODF5lrOEkfYgNgQuASCSx52HR4aQX4Ipkd+dEhgnnTFfWl9YciMc9TrC3+DxQP8U/jrd4CXSBf5DUIZluae+rMh41IVPhhPKufDa76HMD8btDVA6PEGh6A4gbsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XQbBxOiZ; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724853360; x=1756389360;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0VzRvvBmgVfm22p7yRHWjS2uaHYDwDvXSohq3OgN8+4=;
-  b=XQbBxOiZgOL8vL0v/SZlGlwACUvSzMQNl2a1d2shS2iSxVonOM9KTtDJ
-   brx27Ps7/sZs1vvBKeU6pUqGTKwNhle8a7wMcRIpKL9ULtzhSAgFjnQwJ
-   LlqTe7t+gblokED5qSoevd5CvwH8d0+olFGBwbj5sOJel2rcz4UUl9zsP
-   tBVdX9GbXtE0aANSA0KVd0tdgC8K8IGsuoZiuQcuANXI8++Xt26pJRiY9
-   4D+fpKPbjT8Rq/AQ+DFbwIXS7swM8zrbYRXIr23nc61Ecdw+bHPR7yZck
-   l7HC7qX6ZRYpGppCP2b0u8jBJtKaDgdwjy1a9WCnWzXyJRS1aZDsaiaAc
-   Q==;
-X-CSE-ConnectionGUID: kRi//x+NTLqzukKs2MZ6qA==
-X-CSE-MsgGUID: IhSDKmTMQb6uCsByBLxQ3A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="34043155"
-X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
-   d="scan'208";a="34043155"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 06:55:59 -0700
-X-CSE-ConnectionGUID: 7KbLavxjTum9E1alb/+xbQ==
-X-CSE-MsgGUID: JxeN9lHhRK+ocKrrC6ERxA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
-   d="scan'208";a="67899095"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 06:55:55 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sjJ9M-00000002fDD-1iIN;
-	Wed, 28 Aug 2024 16:55:52 +0300
-Date: Wed, 28 Aug 2024 16:55:52 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ryan Chen <ryan_chen@aspeedtech.com>
-Cc: "brendan.higgins@linux.dev" <brendan.higgins@linux.dev>,
-	"benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-	"joel@jms.id.au" <joel@jms.id.au>,
-	"andi.shyti@kernel.org" <andi.shyti@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v13 2/3] i2c: aspeed: support AST2600 i2c new register
- mode driver
-Message-ID: <Zs8saJYtCp6bO-3k@smile.fi.intel.com>
-References: <ZsNT7LPZ7-szrgBJ@smile.fi.intel.com>
- <OS8PR06MB7541EE5BA5B400445FE0295EF28E2@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <ZsXVU2qy0GIANFrc@smile.fi.intel.com>
- <OS8PR06MB7541945591A62B956DA28AD9F28F2@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <Zsc9_UddBybdnM1Z@smile.fi.intel.com>
- <OS8PR06MB75419F3E3A222AE941DE3007F2882@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <ZsiWp5ENQ0BeBjMn@smile.fi.intel.com>
- <OS8PR06MB7541A23130F469357B7FE5F4F28B2@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <ZsxbDK25mJ0sjcQy@smile.fi.intel.com>
- <OS8PR06MB75416ED990B2A32F98266A1DF2952@OS8PR06MB7541.apcprd06.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=vEggMDsCuAIX9YFFPX40wIfIiyAoDGLyOxWQ+wYsKfJLqNrYXogkWX4RC6A06QpJ+Gqv+YgEAZUBzflD8ATYtwZvqfUJtcpD2AI+7zlqbIm+7HuLo4DhgakRa0OyLmmURDKbGEvYpxVlYnjKAzZ4Na+AjFjzGCzES4BkvVkNaZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=CD6Oy163; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=B6ieUZorE9O6QFwQiwk92WlzBjLaL+zCdotCOmej4bw=; b=CD6Oy163ghgeZG5UebH/hdWvDg
+	nsA8w13ffm26CN5IVt5D9heXgx3KKG5zaQG/ScY01fwiXCDBGnv4y5LRIsyA9nNiNvo4+0QtIjtkR
+	Bjj+wN/E1zRdEPwwXe1huxuzMr7q7nId/YQL8ivOzV7C51OOd6LrBCOj1vN3bYrpOOq32ToO1qBUy
+	opRgDx8ovBikdv+mN8AeTa8OaINrJ/VFdYvCcH8YFAEQNW0E87J1U0OPge1uYYuDyDu97kb8icPfn
+	qWPhziyRWyR+x2EHmMbXZ2uQxP+c6iwU3Qnazz5roDQaVni10G6bZzmZtVEW6teptZFx1YTvVmCuP
+	/9Ov4wFA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:42654)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sjJ9g-0000Hz-02;
+	Wed, 28 Aug 2024 14:56:11 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sjJ9e-0004X5-19;
+	Wed, 28 Aug 2024 14:56:10 +0100
+Date: Wed, 28 Aug 2024 14:56:10 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Yajun Deng <yajun.deng@linux.dev>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: Modify register address from decimal
+ to hexadecimal
+Message-ID: <Zs8sehaL5HS5RSVf@shell.armlinux.org.uk>
+References: <20240828125932.3478-1-yajun.deng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,84 +69,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <OS8PR06MB75416ED990B2A32F98266A1DF2952@OS8PR06MB7541.apcprd06.prod.outlook.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240828125932.3478-1-yajun.deng@linux.dev>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Wed, Aug 28, 2024 at 02:34:43AM +0000, Ryan Chen wrote:
-> > On Mon, Aug 26, 2024 at 07:50:24AM +0000, Ryan Chen wrote:
-> > > > On Fri, Aug 23, 2024 at 06:23:54AM +0000, Ryan Chen wrote:
-> > > > > > On Thu, Aug 22, 2024 at 02:24:26AM +0000, Ryan Chen wrote:
-> > > > > > > > On Wed, Aug 21, 2024 at 06:43:01AM +0000, Ryan Chen wrote:
-> > > > > > > > > > On Mon, Aug 19, 2024 at 05:28:49PM +0800, Ryan Chen wrote:
+On Wed, Aug 28, 2024 at 08:59:32PM +0800, Yajun Deng wrote:
+> Most datasheets will use hexadecimal for register address, modify it
+> and make it fit the datasheet better.
 
-...
-
-> > > > > > > > > > > +	if (i2c_bus->mode == BUFF_MODE) {
-> > > > > > > > > > > +		i2c_bus->buf_base =
-> > > > > > > > > > devm_platform_get_and_ioremap_resource(pdev, 1, &res);
-> > > > > > > > > > > +		if (!IS_ERR_OR_NULL(i2c_bus->buf_base))
-> > > > > > > > > > > +			i2c_bus->buf_size = resource_size(res) / 2;
-> > > > > > > > > > > +		else
-> > > > > > > > > > > +			i2c_bus->mode = BYTE_MODE;
-> > > > > > > > > >
-> > > > > > > > > > What's wrong with positive conditional? And is it even
-> > > > > > > > > > possible to have NULL here?
-> > > > > > > > > >
-> > > > > > > > > Yes, if dtsi fill not following yaml example have reg 1,
-> > > > > > > > > that will failure at buffer
-> > > > > > > > mode.
-> > > > > > > > > And I can swith to byte mode.
-> > > > > > > > >
-> > > > > > > > > reg = <0x80 0x80>, <0xc00 0x20>;
-> > > > > > > >
-> > > > > > > > I was asking about if (!IS_ERR_OR_NULL(...)) line:
-> > > > > > > > 1) Why 'if (!foo) {} else {}' instead of 'if (foo) {} else {}'?
-> > > > > > > I will update to following.
-> > > > > > > 		if (IS_ERR(i2c_bus->buf_base))
-> > > > > > > 			i2c_bus->mode = BYTE_MODE;
-> > > > > > > 		else
-> > > > > > > 			i2c_bus->buf_size = resource_size(res) / 2;
-> > > > > > >
-> > > > > > > > 2) Why _NULL?
-> > > > > > > 	If dtsi file is claim only 1 reg offset. reg = <0x80 0x80>;
-> > > > > > > that will goto byte
-> > > > > > mode.
-> > > > > > > 	reg = <0x80 0x80>, <0xc00 0x20>; can support buffer mode.
-> > > > > > > 	due to 2nd is buffer register offset.
-> > > > > >
-> > > > > > I have asked why IS_ERR_OR_NULL() and not IS_ERR().
-> > > > > >
-> > > > > OH, I will doing by this.
-> > > > > 		if (IS_ERR_OR_NULL(i2c_bus->buf_base))
-> > > >
-> > > > The question about _NULL remains unanswered...
-> > > Sorry, I may not catch your point.
-> > > So, Do you mean I should passive coding by following?
-> > 
-> > No. I already mentioned that in one of the previous mails.
-> > Why do you use IS_ERR_OR_NULL() and not IS_ERR()?
-> > 
-> > You should understand your code better than me :-)
-> Understood, I will change to 
-
-OK!
-
-> 	if (IS_ERR(i2c_bus->buf_base))
-> 		i2c_bus->mode = BYTE_MODE;
-> 	else
-> 		i2c_bus->buf_size = resource_size(res) / 2;
-> 
-> > > If (i2c_bus->buf_base > 0)
-> > > 	i2c_bus->buf_size = resource_size(res) / 2; else
-> > >     i2c_bus->mode = BYTE_MODE;
-> > >
-> > > > > 			i2c_bus->mode = BYTE_MODE;
-> > > > > 		else
-> > > > > 			i2c_bus->buf_size = resource_size(res) / 2;
+NAK. IEEE 802.3 uses decimal.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+*** please note that I probably will only be occasionally responsive
+*** for an unknown period of time due to recent eye surgery making
+*** reading quite difficult.
 
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
