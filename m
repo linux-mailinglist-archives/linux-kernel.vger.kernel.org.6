@@ -1,202 +1,91 @@
-Return-Path: <linux-kernel+bounces-304654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D06D7962341
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:21:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E05B6962331
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 883982847FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:21:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EA7A28417C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B864015E5BA;
-	Wed, 28 Aug 2024 09:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF2A16087B;
+	Wed, 28 Aug 2024 09:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="juVFMJAH"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="ITdjLa4x"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EECF15F3FF;
-	Wed, 28 Aug 2024 09:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F200615C15D;
+	Wed, 28 Aug 2024 09:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724836782; cv=none; b=cmSVs81+xT3jJtBwxYH0UCUbJce/xfHg+La6M2R1jehs96OaOqDnMDJvDVmJ5PrJP6OGxrXOWT+CIfzJH7m0nD1ePTOwIZfIQ6jEkbmu5HJWsOfHvcFZUGCG7cyS4WzMOuuua0/S4/fH/sSVknXVmf8F4tW0xUz6JazhBTRT+C8=
+	t=1724836758; cv=none; b=VRozO2COEFMQerdrMBR3WSiQIADLiCnhYCLPdw6BQaTzV2dmOG0YgYlS6jrogH0Oc9NgAxdIUBR/TNo5WIcP4MZp/uWK86faNiM+u02gkQC+3/JxBRl6u1poPkE5tdIuVUR48dNL0Rlc05Q98RNQvMnWirlXP1DQuHDiO7npuEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724836782; c=relaxed/simple;
-	bh=/tOEMxVEgJKdh754e3csoAnjrR9XyA1c8erixLUNyl4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e91bjnU0/Zf5DDHKpKUdzaMr6bLIED9KtgjM7uXy3Ajw79iXl7I5K23rhJWdrsNuixgcl7ym5PIntuYsXOm413WiCqnzZj+ii036qoU8Vf5lGWALKtwzmyGTi20x9kuZ6wsvYv8/4aDZy4GbxxKWB7S8AWoPnGoGtD3FvW+EZb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=juVFMJAH; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47S9JGBg031048;
-	Wed, 28 Aug 2024 04:19:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724836756;
-	bh=FziPQMgOT1f5KMk8a+N1ZrZVM3/nfyRUxNQ0qygEBZ0=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=juVFMJAHYKb5Qb3fNE0e4zpMS8YngFHexVFVXhpf7kbishN8wnZRzmk6mPDa/K1r4
-	 FZReUfq9lwwCKYX3HbFq6oa0KA3JWGe1i5hkrL4xuC6lE96KRfkAJYe0nEksmPbEha
-	 wCjPC6hzAH5Hz/YFDkMt9DSrD+sMKCJqgPFXym04=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47S9JG6B068106
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 28 Aug 2024 04:19:16 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 28
- Aug 2024 04:19:16 -0500
-Received: from fllvsmtp7.itg.ti.com (10.64.40.31) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 28 Aug 2024 04:19:16 -0500
-Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
-	by fllvsmtp7.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47S9JGFa054803;
-	Wed, 28 Aug 2024 04:19:16 -0500
-Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 47S9JFUw007492;
-	Wed, 28 Aug 2024 04:19:15 -0500
-From: MD Danish Anwar <danishanwar@ti.com>
-To: Andrew Lunn <andrew@lunn.ch>, Dan Carpenter <dan.carpenter@linaro.org>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Javier Carrasco
-	<javier.carrasco.cruz@gmail.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Diogo Ivo <diogo.ivo@siemens.com>, Simon Horman <horms@kernel.org>,
-        Richard
- Cochran <richardcochran@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>, Jakub
- Kicinski <kuba@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S.
- Miller" <davem@davemloft.net>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
-Subject: [PATCH net-next v3 6/6] net: ti: icssg-prueth: Enable HSR Tx Tag and Rx Tag offload
-Date: Wed, 28 Aug 2024 14:49:01 +0530
-Message-ID: <20240828091901.3120935-7-danishanwar@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240828091901.3120935-1-danishanwar@ti.com>
-References: <20240828091901.3120935-1-danishanwar@ti.com>
+	s=arc-20240116; t=1724836758; c=relaxed/simple;
+	bh=LaabBlvLLT6KZ0B8OmZkexPLopnIvERBQLhZph96BS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ivKSDvTS+SbAHujxjoXszWQne/LqoQt9E8EC1i7KN7ztSkhI3Sa3dcKlxQHM9p1+V51aJDCUGpMRQl1MpIquMdoL1BP/KgurFuGHOyk7yVezdKXYnb42BT2T8NV1r4L+LlAhtiDiALnrthp6Y18SXR0WQl9id/yRlYj6IVfJDA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=ITdjLa4x; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from fpc (unknown [5.228.116.177])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 056534078528;
+	Wed, 28 Aug 2024 09:19:09 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 056534078528
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1724836749;
+	bh=qmUPEynYpCptgfwjFeNKYBoz8dnFB6kmq008E/pXxSQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ITdjLa4x9zjpYYRGApibdm05NiZD4NO+jOr8V1K6eO1i2myRsh3uiRaLRt9utK63B
+	 JAjsnMW430nhigk7J9MNxe4VmHCoybS2sgcnBvs6UG7rfBD5O0JTVyhrCQqbEfxMAM
+	 xlwGl0u4Fd7aLZVq6P7/7+Gc9haZ25UYPX9nthH0=
+Date: Wed, 28 Aug 2024 12:19:03 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: David Sterba <dsterba@suse.cz>
+Cc: David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, Boris Burkov <boris@bur.io>,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	syzbot+81670362c283f3dd889c@syzkaller.appspotmail.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] btrfs: qgroup: add missing extent changeset release
+Message-ID: <20240828-f1dd7dd01c3f515d78bb9dfd-pchelkin@ispras.ru>
+References: <20240827151243.63493-1-pchelkin@ispras.ru>
+ <20240827160341.GZ25962@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240827160341.GZ25962@suse.cz>
 
-From: Ravi Gunasekaran <r-gunasekaran@ti.com>
+On Tue, 27. Aug 18:03, David Sterba wrote:
+> On Tue, Aug 27, 2024 at 06:12:43PM +0300, Fedor Pchelkin wrote:
+> > The extent changeset may have some additional memory dynamically allocated
+> > for ulist in result of clear_record_extent_bits() execution.
+> 
+> This can happen, as clear_record_extent_bits adds more data to the
+> changeset in some cases. What I don't see yet how it happens. An extent
+> range must be split so that a new entry is added with different bits
+> set. This is usual thing, but why does this happen with the quotas
+> disabled.
 
-Add support to offload HSR Tx Tag Insertion and Rx Tag Removal
-and duplicate discard.
+In the reproducer case, qgroup_reserve_data() which sets the bits happens
+just before disabling the quotas via ioctl.
 
-Duplicate discard is done as part of RX tag removal and it is
-done by the firmware. When driver sends the r30 command
-ICSSG_EMAC_HSR_RX_OFFLOAD_ENABLE, firmware does RX tag removal as well as
-duplicate discard.
+Commit af0e2aab3b70 ("btrfs: qgroup: flush reservations during quota disable")
+added a call to clear_record_extent_bits() inside __btrfs_qgroup_release_data().
+The changeset being passed is freshly initialized and empty. So the first call
+to clear_state_bit() there will definitely create a new entry and add it to
+the ulist.
 
-Signed-off-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
-Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
----
- drivers/net/ethernet/ti/icssg/icssg_common.c |  3 +++
- drivers/net/ethernet/ti/icssg/icssg_config.c |  4 +++-
- drivers/net/ethernet/ti/icssg/icssg_config.h |  2 ++
- drivers/net/ethernet/ti/icssg/icssg_prueth.c | 11 ++++++++++-
- drivers/net/ethernet/ti/icssg/icssg_prueth.h |  1 +
- 5 files changed, 19 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_common.c b/drivers/net/ethernet/ti/icssg/icssg_common.c
-index 2d6d8648f5a9..4eae4f9250c0 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_common.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_common.c
-@@ -721,6 +721,9 @@ enum netdev_tx icssg_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev
- 	if (prueth->is_hsr_offload_mode && (ndev->features & NETIF_F_HW_HSR_DUP))
- 		dst_tag_id = PRUETH_UNDIRECTED_PKT_DST_TAG;
- 
-+	if (prueth->is_hsr_offload_mode && (ndev->features & NETIF_F_HW_HSR_TAG_INS))
-+		epib[1] |= PRUETH_UNDIRECTED_PKT_TAG_INS;
-+
- 	cppi5_desc_set_tags_ids(&first_desc->hdr, 0, dst_tag_id);
- 	k3_udma_glue_tx_dma_to_cppi5_addr(tx_chn->tx_chn, &buf_dma);
- 	cppi5_hdesc_attach_buf(first_desc, buf_dma, pkt_len, buf_dma, pkt_len);
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
-index 7b2e6c192ff3..72ace151d8e9 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_config.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
-@@ -531,7 +531,9 @@ static const struct icssg_r30_cmd emac_r32_bitmask[] = {
- 	{{EMAC_NONE,  0xffff4000, EMAC_NONE, EMAC_NONE}},	/* Preemption on Tx ENABLE*/
- 	{{EMAC_NONE,  0xbfff0000, EMAC_NONE, EMAC_NONE}},	/* Preemption on Tx DISABLE*/
- 	{{0xffff0010,  EMAC_NONE, 0xffff0010, EMAC_NONE}},	/* VLAN AWARE*/
--	{{0xffef0000,  EMAC_NONE, 0xffef0000, EMAC_NONE}}	/* VLAN UNWARE*/
-+	{{0xffef0000,  EMAC_NONE, 0xffef0000, EMAC_NONE}},	/* VLAN UNWARE*/
-+	{{0xffff2000, EMAC_NONE, EMAC_NONE, EMAC_NONE}},	/* HSR_RX_OFFLOAD_ENABLE */
-+	{{0xdfff0000, EMAC_NONE, EMAC_NONE, EMAC_NONE}}		/* HSR_RX_OFFLOAD_DISABLE */
- };
- 
- int icssg_set_port_state(struct prueth_emac *emac,
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.h b/drivers/net/ethernet/ti/icssg/icssg_config.h
-index 1ac60283923b..92c2deaa3068 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_config.h
-+++ b/drivers/net/ethernet/ti/icssg/icssg_config.h
-@@ -80,6 +80,8 @@ enum icssg_port_state_cmd {
- 	ICSSG_EMAC_PORT_PREMPT_TX_DISABLE,
- 	ICSSG_EMAC_PORT_VLAN_AWARE_ENABLE,
- 	ICSSG_EMAC_PORT_VLAN_AWARE_DISABLE,
-+	ICSSG_EMAC_HSR_RX_OFFLOAD_ENABLE,
-+	ICSSG_EMAC_HSR_RX_OFFLOAD_DISABLE,
- 	ICSSG_EMAC_PORT_MAX_COMMANDS
- };
- 
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-index ecc342bcc1b5..c671cf9813f0 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-@@ -42,7 +42,9 @@
- #define DEFAULT_UNTAG_MASK	1
- 
- #define NETIF_PRUETH_HSR_OFFLOAD_FEATURES	(NETIF_F_HW_HSR_FWD | \
--						 NETIF_F_HW_HSR_DUP)
-+						 NETIF_F_HW_HSR_DUP | \
-+						 NETIF_F_HW_HSR_TAG_INS | \
-+						 NETIF_F_HW_HSR_TAG_RM)
- 
- /* CTRLMMR_ICSSG_RGMII_CTRL register bits */
- #define ICSSG_CTRL_RGMII_ID_MODE                BIT(24)
-@@ -1034,6 +1036,13 @@ static void icssg_change_mode(struct prueth *prueth)
- 
- 	for (mac = PRUETH_MAC0; mac < PRUETH_NUM_MACS; mac++) {
- 		emac = prueth->emac[mac];
-+		if (prueth->is_hsr_offload_mode) {
-+			if (emac->ndev->features & NETIF_F_HW_HSR_TAG_RM)
-+				icssg_set_port_state(emac, ICSSG_EMAC_HSR_RX_OFFLOAD_ENABLE);
-+			else
-+				icssg_set_port_state(emac, ICSSG_EMAC_HSR_RX_OFFLOAD_DISABLE);
-+		}
-+
- 		if (netif_running(emac->ndev)) {
- 			icssg_fdb_add_del(emac, eth_stp_addr, prueth->default_vlan,
- 					  ICSSG_FDB_ENTRY_P0_MEMBERSHIP |
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-index e110a5f92684..bba6da2e6bd8 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-@@ -60,6 +60,7 @@
- #define IEP_DEFAULT_CYCLE_TIME_NS	1000000	/* 1 ms */
- 
- #define PRUETH_UNDIRECTED_PKT_DST_TAG	0
-+#define PRUETH_UNDIRECTED_PKT_TAG_INS	BIT(30)
- 
- /* Firmware status codes */
- #define ICSS_HS_FW_READY 0x55555555
--- 
-2.34.1
-
+If for some reason clear_state_bit() shouldn't be eventually called then,
+to be honest, I don't quite understand why a call to clear_record_extent_bits()
+was added in the first place without expecting it to do the real work with
+clear_state_bit().
 
