@@ -1,123 +1,169 @@
-Return-Path: <linux-kernel+bounces-304929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E59C89626D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:21:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B0F99626D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:21:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5535FB22A7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:21:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 809781C2036F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3062517A591;
-	Wed, 28 Aug 2024 12:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976CD175D2C;
+	Wed, 28 Aug 2024 12:21:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="p7wOr0XO";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="WjjPNJ5w"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bprus1cX"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56E917A597;
-	Wed, 28 Aug 2024 12:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40937175D2F
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724847632; cv=none; b=LklTsTWOkJDVRGk0FpJVAwysuuMy2jN0lO2xL9CjhJncjKsEG2mhV5c1xzHwaMcKH76sG+LfaZ1tpbJmN11N0YhehFbzHqSGTaImsPtgrDJqTqRQdRQ7dSSUkb036ePj3YxZsiO4uoq8OKPxok2q+xeRFF7RUy1NM5CMycgXrFQ=
+	t=1724847669; cv=none; b=OqilELABJ2y0b5/VE/0Z/UFE9lFYcjRNEcZ8n7UTdmuvPksY+lbpwHEiUkpOc9dCjVpUaR8OJ8FxMakwLnWb5b/8Id/HfZyvFmnbJFH0AscTFpaRLJ79jM7tbBsvWeOv6DhNAaa1F7Ro/1gj0LOdKKsWYS+5t5XhX6m76LajS50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724847632; c=relaxed/simple;
-	bh=PgH4QSGEcbjNGDYQZ7pZrhtA7Hdc6PM65Qd//PcMKPM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=q9mF05FM1XwoEa/+/d4wjRVueBU10tJtNtuWv7ZSb1VbdEFbYJRnEuhL/vjpSZwZu1ZZC8/CJVBMJdSGXLHMbuHX1ucmfwzdtIGeB+ExSotoWKOM8TFzwhgfasl1GJsyaXRClpeaLLL0SNtzkOh6aDCAjsjNC+3kjybpCjD8/ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=p7wOr0XO; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=WjjPNJ5w reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1724847669; c=relaxed/simple;
+	bh=u/GGavIYEqX7mrGveiWklk5oJ5JVVxYHnZ/LQ8zYQfk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=u4jykAtVeyLzh84rjvZ6H3Nl7ria8yIIw7JQQhNvcysEcNtEXqR78QNRupU7FUgw2kcOVlm/2REyOZyjYiiGiBbN8V2ozSGRnr7NR5U5bWt3jscKG5Id1OMpC/zXbd7IrrsDOzRVkvckGErAcBVDdnry944cICUyHtsXwlvOHlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bprus1cX; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-202508cb8ebso44966055ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 05:21:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1724847630; x=1756383630;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=5WESFWrSviHfbnmK6a8En190ZANAeT3QpIbcgtxHX+M=;
-  b=p7wOr0XO1v8flVfbBhrL2wBujXQhxihvVH1IgxShb/jNxMy6FZCkybJr
-   uW4NGscCei45GKRLwdMlmFPphYWB32LO/cn0Sil+A8mhVcRBhDisb8UE9
-   MwQuTheYy7SyU1bONMp3O24EmHG7FDNRHT7ipFXsLQ7P88CLt4nT4hByo
-   C2LQxwHw6C1p0Z3Zzd2ZrzTP/4ijYaYCIwvsIw47P2dHJKyqlul1eyqGm
-   36dcRLCpLtIBDbsdJWdq/pa+cDL/mu0S1lWNtHfWCkeZ4Jk+QJWz6bSpw
-   Tc1+jkyOrOuFM8Eex+IBSM9PooRXulBwb3JZXcoRNIm1libAYAw5b7NxU
-   w==;
-X-CSE-ConnectionGUID: 2Y+KRClEQye4uB8Tfqj2LQ==
-X-CSE-MsgGUID: SBHI/VqZR3WFg/qRg3tq6w==
-X-IronPort-AV: E=Sophos;i="6.10,182,1719871200"; 
-   d="scan'208";a="38635579"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 28 Aug 2024 14:20:29 +0200
-X-CheckPoint: {66CF160C-13-E520F13A-D17B83D9}
-X-MAIL-CPID: 1D5CBC9955EDF77C39400D3A69EDF928_2
-X-Control-Analysis: str=0001.0A782F21.66CF160C.00F2,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C5F511613C5;
-	Wed, 28 Aug 2024 14:20:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1724847624; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=5WESFWrSviHfbnmK6a8En190ZANAeT3QpIbcgtxHX+M=;
-	b=WjjPNJ5wuWnNQeR0ooX0PxBrHTx8rXtYvL5jeNC02IGX1unkKkJMm9+3ZVc0DshY1gQjB0
-	ND3EAamTqd6voJ+oJ4u/qMhGmOLJ7b/tGotbQ86sclyPn42MYx0Mw+Y85+6SLYm9CRr+Wc
-	Vks/7KPTrN675vJ/O6gHkYccINPK51oMgvG3M+Y6sk3dUbqogpiaUGw2NowuLH2Bal4VLq
-	O1llhAIPN4xY16eEUxjOqbNqJ/9lifNsJ3zp88fqP2dzzHCLVG67IsjM2do3rrH1Yw5qRW
-	PYJ+70qHYlvBsfX2mm6SLOw46vGAJVeOboU3ohie/rjzFqrOq2JbgCKUsXjQdg==
-From: Markus Niebel <Markus.Niebel@ew.tq-group.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Markus Niebel <Markus.Niebel@ew.tq-group.com>
-Subject: [PATCH 4/4] ARM: dts: imx6qdl-mba6b: remove doubled entry for I2C1 pinmux
-Date: Wed, 28 Aug 2024 14:19:59 +0200
-Message-Id: <20240828121959.1268463-5-Markus.Niebel@ew.tq-group.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240828121959.1268463-1-Markus.Niebel@ew.tq-group.com>
-References: <20240828121959.1268463-1-Markus.Niebel@ew.tq-group.com>
+        d=gmail.com; s=20230601; t=1724847667; x=1725452467; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fGi93qralUPl1hkuQ7DwE7sDUcYkj0+qWkjztC3U/qM=;
+        b=Bprus1cXQEirRvl3xVpPCZGs29SQr8nRPHOerWSxhk60jJP1pGHu2WPhZMUno9p58+
+         hqaJEGIA2FxFMJ93p1WxM+BgfcQh0MqHEcyGXi92SjSqU7u9AIoBeFi7R65fvRtOMdq0
+         c8DT3JX6eEZlpMnxsJSmtA22kXRzb8Au6/6Ehr+8F1zEz5vBoRqEBJ2Bjmnxk5p+ZGoQ
+         FETGxvGhU5r+3hDmppk0VzO2w+CA20XTFk1HslMdC1aBgMHZ30HMqKW845Ah6WR++k86
+         qWA/Kn6kN+x/GmT/5Gr8cy3w56LtAQwPD8mXwyG4bj/c6U6hsLxA/+0yordrSJPh50RN
+         JzRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724847667; x=1725452467;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fGi93qralUPl1hkuQ7DwE7sDUcYkj0+qWkjztC3U/qM=;
+        b=f0pN5V+OjWOoQH5GbLm6EnbLPzE6HR8+c+qplW7bc9ZIW3f3mM1SCM3WBISsGqnxbJ
+         uTB6II819h3V4S6rupzS2oQiB+L98VbUNYBgvInxbhQW2rtJzsQ2xHrpYWSLEI7P9nJ+
+         qHzVWcOAcmRV8p6Gm5cyG79laamr0YCp0RJoxyljUp2hjA2vscTxVJ3iLCc3NbSEX7cU
+         0KdrYpLTkRoXPwkV1PHfsenojGWdz5FEwpSBR1brLcetRy099nh+EBTlpGM0iv0JcoH8
+         +gk06hPgSPHjhCSBw8XiO0oA4zWxEBqVAQkU+QPFFzI+QGFHCypQ5hKOoXVUjSn8Ywg0
+         QGEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYn4pL0zhXwhWF9CMOmPuBUfNnXy9bG0j8Od7zTppyPTuz7f4nkHbaid5PW44hqeagRzNY+X4sGpyTlSM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoqZA4A247xklhjU3496ObxaAdefpQqjEmDqLeuLcSmnAtwdt/
+	OegFxpoMg4hjynFECQ8AVZU4ahreg8rmmDOPputYTM262uR115toDXtcJg==
+X-Google-Smtp-Source: AGHT+IGzzCQT12/LB8yEvY34gIYfqYYDIzA0cF/Udk5kGAnad3O95MKPiZ7yjzOwKM3DINqiwyyRQg==
+X-Received: by 2002:a17:902:e804:b0:202:3e32:5d3e with SMTP id d9443c01a7336-204f9bd27c9mr19838765ad.36.1724847667319;
+        Wed, 28 Aug 2024 05:21:07 -0700 (PDT)
+Received: from victor-IdeaPad-Gaming-3-16IAH7 ([116.68.77.85])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038560975csm97405865ad.194.2024.08.28.05.21.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 05:21:07 -0700 (PDT)
+Date: Wed, 28 Aug 2024 17:51:02 +0530
+From: vivek t s <vivek6429.ts@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: dan.carpenter@linaro.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] Staging: rtl8723bs: Rename function SelectChannel()
+Message-ID: <Zs8WLkzoZe3Z0DYF@victor-IdeaPad-Gaming-3-16IAH7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Since the muxing is described already in imx6qdl-tqma6 can be reused
-by this variant. No functional change.
+Rename SelectChannel() to r8723bs_select_channel() to avoid CamelCase
+warning from checkpatch.
 
-Signed-off-by: Markus Niebel <Markus.Niebel@ew.tq-group.com>
+Signed-off-by: vivek t s <vivek6429.ts@gmail.com>
 ---
- arch/arm/boot/dts/nxp/imx/imx6qdl-mba6b.dtsi | 9 ---------
- 1 file changed, 9 deletions(-)
+compile tested.
 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-mba6b.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-mba6b.dtsi
-index eacd230b97d5d..c7bbd6195fef1 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-mba6b.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-mba6b.dtsi
-@@ -50,12 +50,3 @@ rtc0: rtc@68 {
- 		reg = <0x68>;
- 	};
- };
--
--&iomuxc {
--	pinctrl_i2c1: i2c1grp {
--		fsl,pins = <
--			MX6QDL_PAD_CSI0_DAT8__I2C1_SDA 0x4001b899
--			MX6QDL_PAD_CSI0_DAT9__I2C1_SCL 0x4001b899
--		>;
--	};
--};
+V2: Prefix added for function as suggested by Greg Kroah-Hartman
+    <gregkh@linuxfoundation.org>.
+    Commit message corrections as suggested by Dan Carpenter
+    <dan.carpenter@linaro.org>.
+
+ drivers/staging/rtl8723bs/core/rtw_ap.c          | 4 ++--
+ drivers/staging/rtl8723bs/core/rtw_mlme_ext.c    | 4 ++--
+ drivers/staging/rtl8723bs/core/rtw_wlan_util.c   | 2 +-
+ drivers/staging/rtl8723bs/include/rtw_mlme_ext.h | 2 +-
+ 4 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/staging/rtl8723bs/core/rtw_ap.c b/drivers/staging/rtl8723bs/core/rtw_ap.c
+index e4063713fecc..23268ec502a7 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_ap.c
++++ b/drivers/staging/rtl8723bs/core/rtw_ap.c
+@@ -277,7 +277,7 @@ void expire_timeout_chk(struct adapter *padapter)
+ 		/* switch to correct channel of current network  before issue keep-alive frames */
+ 		if (rtw_get_oper_ch(padapter) != pmlmeext->cur_channel) {
+ 			backup_oper_channel = rtw_get_oper_ch(padapter);
+-			SelectChannel(padapter, pmlmeext->cur_channel);
++			r8723bs_select_channel(padapter, pmlmeext->cur_channel);
+ 		}
+ 
+ 		/* issue null data to check sta alive*/
+@@ -315,7 +315,7 @@ void expire_timeout_chk(struct adapter *padapter)
+ 		}
+ 
+ 		if (backup_oper_channel > 0) /* back to the original operation channel */
+-			SelectChannel(padapter, backup_oper_channel);
++			r8723bs_select_channel(padapter, backup_oper_channel);
+ 	}
+ 
+ 	associated_clients_update(padapter, updated);
+diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
+index 9ebf25a0ef9b..60861a480b3b 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
++++ b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
+@@ -3831,10 +3831,10 @@ void site_survey(struct adapter *padapter)
+ 		} else {
+ #ifdef DBG_FIXED_CHAN
+ 			if (pmlmeext->fixed_chan != 0xff)
+-				SelectChannel(padapter, pmlmeext->fixed_chan);
++				r8723bs_select_channel(padapter, pmlmeext->fixed_chan);
+ 			else
+ #endif
+-				SelectChannel(padapter, survey_channel);
++				r8723bs_select_channel(padapter, survey_channel);
+ 		}
+ 
+ 		if (ScanType == SCAN_ACTIVE) { /* obey the channel plan setting... */
+diff --git a/drivers/staging/rtl8723bs/core/rtw_wlan_util.c b/drivers/staging/rtl8723bs/core/rtw_wlan_util.c
+index 7fac9ca3e9a0..87ce4a9b3aad 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_wlan_util.c
++++ b/drivers/staging/rtl8723bs/core/rtw_wlan_util.c
+@@ -333,7 +333,7 @@ inline unsigned long rtw_get_on_cur_ch_time(struct adapter *adapter)
+ 		return 0;
+ }
+ 
+-void SelectChannel(struct adapter *padapter, unsigned char channel)
++void r8723bs_select_channel(struct adapter *padapter, unsigned char channel)
+ {
+ 	if (mutex_lock_interruptible(&(adapter_to_dvobj(padapter)->setch_mutex)))
+ 		return;
+diff --git a/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h b/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h
+index 720aeeb002b0..8315399b64fd 100644
+--- a/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h
++++ b/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h
+@@ -455,7 +455,7 @@ u8 rtw_get_center_ch(u8 channel, u8 chnl_bw, u8 chnl_offset);
+ unsigned long rtw_get_on_cur_ch_time(struct adapter *adapter);
+ 
+ void set_channel_bwmode(struct adapter *padapter, unsigned char channel, unsigned char channel_offset, unsigned short bwmode);
+-void SelectChannel(struct adapter *padapter, unsigned char channel);
++void r8723bs_select_channel(struct adapter *padapter, unsigned char channel);
+ 
+ unsigned int decide_wait_for_beacon_timeout(unsigned int bcn_interval);
+ 
 -- 
-2.34.1
+2.43.0
 
 
