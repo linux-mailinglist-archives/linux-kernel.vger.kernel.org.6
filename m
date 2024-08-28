@@ -1,249 +1,237 @@
-Return-Path: <linux-kernel+bounces-305819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A39969634DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:32:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D23D39634DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:35:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21C0D1F266F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:32:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 036381C24621
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7750F1AD9DB;
-	Wed, 28 Aug 2024 22:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FC91AD40E;
+	Wed, 28 Aug 2024 22:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZpmymK3y"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tT3TewUW"
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68FE71AC446;
-	Wed, 28 Aug 2024 22:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724884276; cv=fail; b=tkZ0SBmzDKgX9UJhtUoIlF/dObtnhimyj3i0wSLq/ymZwGOZjidTDEzT948bxCIxy8PIJREMcu6iCTa/k7eiXLEOD0zEUqVVIyqT8rXN6sH1PfvLIhbETlAL21yvekx09J1DT9sDLp1Etf9arhZfSWL0NEYf/SbLRv4bt8MnCyo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724884276; c=relaxed/simple;
-	bh=SxxjKczKeYv6t3/GrQkP4ngNAREZ3Ba+xDJaRjtuHxc=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=qDrhwJ2vv2nxvISQl41PaCJvxfzq/94lXUBCYJP5VQ42lqr5Y0Xphm6bmtaDTghF5+tIu2evlZnT//2ZCreGbmCtMUUFNR3Ai4YFadaBVkbxblTI18Y4HB0rVpwn6KH8C6dkq/wcNJmXb6tMAFoXXf/cSpUlmvcLvywYovAo2Uk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZpmymK3y; arc=fail smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724884274; x=1756420274;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=SxxjKczKeYv6t3/GrQkP4ngNAREZ3Ba+xDJaRjtuHxc=;
-  b=ZpmymK3ye5dtEjvuTAaQ2X26+sPEn+6ttQehQvp1CtcpgHshBM+bt5wM
-   c9X4CbNBsIAIIiYiHI1iFFqWsMvSwvySEMb7ZnR5AfqceXCspPZHIyzIA
-   KumWmYVW+FjTR6BIpgjyCaUHW3UOO7srCP1HIGue6jgqCs626So9/OwN2
-   fcB/iWiZjoWMxFNMhe+X/xYK2PxbRE/Ddy5AdjYtkzYusuxagxT5CfXHy
-   yaRhoOpwDPpxAeSjGw1WP+siyrDFtvLOaeotV0qd05jWyOijRloetZfJS
-   BLRleCoiDWPhwNPGUr1Jg8s9B+HctEiw8oAVFECY5sNLeVxvRzpQoisT6
-   Q==;
-X-CSE-ConnectionGUID: WnK+GajtQr2VOXik+sFmdg==
-X-CSE-MsgGUID: P3W0wocDQKuT6twwTu7PIw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="23334085"
-X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
-   d="scan'208";a="23334085"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 15:31:13 -0700
-X-CSE-ConnectionGUID: pLSyAOatRlyMAX2wHAU5ew==
-X-CSE-MsgGUID: TjgbJpLNQAOm0vybDB0E1A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
-   d="scan'208";a="63055878"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 28 Aug 2024 15:31:13 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 28 Aug 2024 15:31:13 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 28 Aug 2024 15:31:12 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 28 Aug 2024 15:31:12 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.169)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 28 Aug 2024 15:31:12 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PcWZ8m/nuYx/AZ4K9kOlU25TUQWbdrb8qOENGpjt+H+tVV3n3STXlVwRmZESmtI6fGuQfuhHT97H+3/+5Z5VmOMbcdj0NDVU1QjTthPLvHvmflFPA1Mr4sRiN71Gh3w7GRNAqmZmE80jo8INklwSDNVK/z4XK0R0NBNc1W48954yZNvO0dqeO8XUQPWYj7jECqoG8shcdlqsLnizkBPFxhODywCRlm2W1k8cSsuNQ/lIw8NBWHEASZQaoz1fZAjU2YA9pEI7sklyDx0PrgcM1kkULAsqtnSTsg+l9oJnd6OdlO5XuNttrEl2g+nfC5/irhRHzN18ky4xOMHv0I9amw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4+2U2JVAMmlWQptjhe+AJZLpsx/kz5dbb1aBwHFBkqU=;
- b=HetQTNvzPDl6UHtez3PhKYSNuPp0uF6XMTN1ecpw2ZSMkEeDWITdyFdsn9ZH0RDIeI5ZPBNGkVCGNAZhpStZ4TfiN1770uXsTxwqFkynipMwpV+68UeMLZVbQe3wifKeVFBZsn32CP4J7ct0Ij1XbolelRd4RdSJRW0jBpr/yfVq8QoKLDlHrVBpIIcSq3zvbp/QAKcB37dePVTtpJETAffzcoLtJXo+8b7wxS0XQ5FIsLD/R13lNlKMBkJk+Ch8pe+lDWCprh/EolH/WROrIDEpPSyZNq1coWVKpljKsqHNytq2gv/yWGvTshcsGr5ht2K9cmZW9UIeNQOdts8ITQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
- by MN0PR11MB6088.namprd11.prod.outlook.com (2603:10b6:208:3cc::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.28; Wed, 28 Aug
- 2024 22:31:10 +0000
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::7de8:e1b1:a3b:b8a8]) by CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::7de8:e1b1:a3b:b8a8%2]) with mapi id 15.20.7897.021; Wed, 28 Aug 2024
- 22:31:10 +0000
-Message-ID: <63d45a76-6ead-4d62-bbca-5b1e3d542f1c@intel.com>
-Date: Wed, 28 Aug 2024 15:31:08 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] sfc: Convert to use ERR_CAST()
-To: Edward Cree <ecree.xilinx@gmail.com>, Shen Lichuan <shenlichuan@vivo.com>,
-	<habetsm.xilinx@gmail.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-net-drivers@amd.com>,
-	<linux-kernel@vger.kernel.org>, <opensource.kernel@vivo.com>
-References: <20240828100044.53870-1-shenlichuan@vivo.com>
- <6e57f3c0-84bb-ce5d-bbca-b1a823729262@gmail.com>
-Content-Language: en-US
-From: Jacob Keller <jacob.e.keller@intel.com>
-In-Reply-To: <6e57f3c0-84bb-ce5d-bbca-b1a823729262@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0348.namprd04.prod.outlook.com
- (2603:10b6:303:8a::23) To CO1PR11MB5089.namprd11.prod.outlook.com
- (2603:10b6:303:9b::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4182A1ACE10
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724884495; cv=none; b=uM2/LA/NiPrCnX5HmjhTpt2UnbspvpPAszb41G6z8wGIYTBsT49mLzD/MdcPZ9XwkkO1Nvq18oAFcSQ5H6GHbIG5PeI0JN4WcTJRsiMyPLUUZMUuKVyGGn63Gy+0SB5MzvXb0+x+NijWxu9+Nz05kfdoMb8vlZ9C8jqUELX3128=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724884495; c=relaxed/simple;
+	bh=z0DhTX8fYIHReskFFZabxzM3sVV6eDYOVk1eCVzfB9c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BD72UfUAE0bNShZieisg+KMbTQUqzyqcb35hIhQX/1NO+l6hCYbtc6B0mOGyDS7+X/uQBV+oZsM4dY3bEQx6foIhjVKJJBYelynCLZ9ZGcXRyhxkBTm3+cCpMzgjsD7rrDZ/osXdhmLeAXsHRTkfHStyvaJ5VKfX9ixuRMiBpq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tT3TewUW; arc=none smtp.client-ip=209.85.222.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-842fdb1afb1so21433241.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:34:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724884493; x=1725489293; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=41f5gi45pknPv02YTSCRYyHEn7QAxd1eKb1xj0lbARc=;
+        b=tT3TewUWc0k7xOtBiwIkslFN6ZvIv8jCOCTd87bvEL8xMoo9kNUSt4ILHA8h9byd5u
+         g8o3f/Wfi0FmZZS+E9JZupEjxHTLFHM/kDsD721VAqEfAMFnLuA2EDAZBnS4BHUHm7Q3
+         /8k5Af1jTHOYkqugTTd8VSPcaZo7I9wTsYCq/S/ziDMDpllkWNYx8UG8+FmEPaFIWy+P
+         qw7Zocaio7Uf3b5eG8pZ2cJJ10W/z+kqdGTw8oClSkLLyGVFOvsPRDNZqzdyu3Sc3omd
+         5IEN4l+PyueeKVmf7n54TqvrAACW/C7K6CdhkJ7KRGphXF/JUXW6MRlTR55i5qb+bUEl
+         K3PQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724884493; x=1725489293;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=41f5gi45pknPv02YTSCRYyHEn7QAxd1eKb1xj0lbARc=;
+        b=F3rr/1uLr5XjWZs+xBbvjR/gdEQyY+cxypNmXA/Xu1jUQu4kJALUc9xnEwGHwH3qIr
+         xk6ySMUJ5o/uPbUrQKYosS3vFIuqNzGOnB4D1n93FTb5NPLoejuyyxo2p69GAy/92Ojc
+         3TnycrV0UBA/d/BEizTV6p1++GFFdlNoJOF/lL4Fp1t2G9tBgwRQYE6qpYTNps38YmU9
+         aOrR2sQesPu4ULsMqxM7aYdJKt0Z63FsALmBuduubxoSwQqJ3OWaDn0bU1Shg0kD5/+M
+         Na1Cgb/jyDpykjfEdeBH4ojjrmDxIg5Hr+jen3IMAQGEhm5F+s8Nha+zOUM48hfVE61s
+         zzAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvc5kl9gDxdYdnGQPOYpu+erRL1Dw2lgSw43EfU91vdQZQj0rPNVZt2OJoAMjM2e0K834BLoDcX94B06A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfL5XSH0cUUSN4ki9EP+M4jkpPQIAtrfX0hhbaNI4IPYwKtYot
+	Cz8ds44kIbPNPL8nz4Hc9379sFCB/wEjgKBT683+0jiBqMhNqGTSpAK3M2Rt2T5IPcm6ezuJTLC
+	3b2iR3hPZUgWGDQRWiyTygF+VL3G3PS4OGRP4
+X-Google-Smtp-Source: AGHT+IFvmewkWoVr6K28frknzrUzXljJbINQuPS+H2qE0+ZfxUiThxc1/+OfgJyyVnpewvG3hqOFR86H2Buei3/+eGg=
+X-Received: by 2002:a05:6102:dcb:b0:49a:4992:e1d8 with SMTP id
+ ada2fe7eead31-49a5afa1f6fmr1330145137.31.1724884492830; Wed, 28 Aug 2024
+ 15:34:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|MN0PR11MB6088:EE_
-X-MS-Office365-Filtering-Correlation-Id: 100c64fd-c88a-4435-1b62-08dcc7b11d92
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?a0xaMVdnVW9ueHdPaE9CeWcrTEpuWURubVZ1VTdjTm5UYW5QdEYydFArY0dN?=
- =?utf-8?B?Y0hXRWo2NVN2UldkSUZwcHFXbVYwc0xMcElQYkI0Z1c2bnU0Qkk5bU5mLytS?=
- =?utf-8?B?Mnk3ZEVHR1V6STN3aERvVFVUYmpEeGZ5T1ZTYVVDTDc0Q1pTcGxrNStXU3Ny?=
- =?utf-8?B?bFpHTi9haEwwclZBS2RMSjVPWFgycWxEM2padGxrMXhaTzcyV2ZXTkhEOFdX?=
- =?utf-8?B?MzNlRFZoMXhCZGM5SmJQYzFyN2FoNitUSHorQmU5Rkc0eGc1a21zNWpwZmJ0?=
- =?utf-8?B?Tk9hM0dTeUUwNnBNa0YvSVVIb2padkN1U2wrYjRZQ2ptTDltNGkvRGpaMHRC?=
- =?utf-8?B?T2ZKV1F4WTRsRFFQV2RSNGsxdEtKR0pLUHlvaWxWRTBXYVB3OXRsdnU5OFZs?=
- =?utf-8?B?Y0xRbGNwZkNBVFdTcUJyUGp3Ti85OU81YldoUm10TDVsdWFlWGRRRXdyUUFa?=
- =?utf-8?B?RFI3Z2FnZDE3d0UvZ1hEbzFoQU9Gc0VQQ05jZWQwVGxNMnMyR084dU9WL1RT?=
- =?utf-8?B?SlFmMjR3dHFaSksxY0J6cnpsYWFrZTRMZVB4SjdnWnFaWlQwc0kxUXE4Q3Jv?=
- =?utf-8?B?VjROeGpQL0h4d1VldDBZRVBPVzBLKzdwMUxlcUJZZVRGcXFOWXdSeWpRNHBJ?=
- =?utf-8?B?VnBIaXI2aWJHeHhwa2tlT29VMFN0dUw1U29iNjlsb040ZjY5SzdUeFpMSXBi?=
- =?utf-8?B?LzZhZUpkY3Z2V3NqeWZpY04wQm8zK25iL3BxNjdZbWd0TlhsZ2pGcE4vZ3RO?=
- =?utf-8?B?NnQ3TW9veFo3SlpYTzFNT29LUEFUZ0ZlZmVFa2pvVnpLcXlNRnhSYk5vM3F3?=
- =?utf-8?B?eDFZMkgrYUU0OWJtdUF4ZEFTRjd4emZYSVpHellCMTBLRTBGUnNSUmM0TjVB?=
- =?utf-8?B?ZEJLOWpWdElCblcrREpsQmp1b2J1cERaVkQ3SVE5UEE2dmxEcmdmNE8zcTdt?=
- =?utf-8?B?ZmNqWDVlaTVOWVBBbVh3c2V0V1VGeDdweitMQmdCNnBvYi9YNzFaNE5na0lz?=
- =?utf-8?B?RDNZUi96SXIzK1NvbWpGQkRVeWxZOHFoMnBhOFJ2Z1pEcVhYdXF3cUJleTdT?=
- =?utf-8?B?MGoxaXhBRUE2dW1uQ1grdmEzNFpEQ0Q1ZEdPMzdxK1huNnpmeklKVHZuMW9H?=
- =?utf-8?B?WVpFR0l3VUk0NFpwK1NqbUV3YnlPekZuSE5kVmxGVys5N0dRQmcxRC92dllD?=
- =?utf-8?B?UWk3SmpreEhHRmlGbVdOaDlIZjU5cEtFMCtGQWNMRVVqZDV0SG5uQkZoQmtu?=
- =?utf-8?B?UUwrQ0hBbjYwMk9BbUFkZFV0emxrWlRNTHUvbUxnL2RiSHJraGRsdDBnZnJr?=
- =?utf-8?B?R1FuOENuVjVVTDU1VndzNE9SeFZUMW5xcGNCYjlxRmkyb3lvd3ZvVDBtNUlW?=
- =?utf-8?B?b3I0cThCb1gyNkI2YWd4N1hMNzFFem1CdUlJV2VhRjE5bU5JQndtVlNnd2Ft?=
- =?utf-8?B?NDRGRitzMUZtL1dudG84a3RnYVJadnk2RGQyZDN6SjNzQTZ3VHJTY3hKb1Qz?=
- =?utf-8?B?QWduTjFmTm9ycEZYSkYwM3NEZlVhL2hGMU12Sk90ZEZ1RFJ1bE81Wk0yS3lD?=
- =?utf-8?B?QmZOUWNNSXoxUjlmM1NLaVJhdE9uYkFmS05XeUsyL3FoNXJTNjRtTjk5dit3?=
- =?utf-8?B?VERPUGd1YVE3aWJ5RURIZUhDWmRVQllMQ01SYSs5eWhXWE5BMUIzUlNrdDhR?=
- =?utf-8?B?Z01IVkdaeUZubEl0NUNHdkwwQXBEaiszQ1ZUcUVtNnV3d3hkbUN1L0FMTVEx?=
- =?utf-8?B?VXJRR2RnL0RLRmtiRXpOd1QwRDBQNWhieHp2Y1JhNzk4OXJpUHdmSTBvVExl?=
- =?utf-8?B?Zy9JbkhLZlltV1dTbVdLdz09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SmtGSEZqQmhDa3lFOG1ZV2hnL0hDVTRNYlFnMWQ5QUNZKzlrWmpQQXZCN0R3?=
- =?utf-8?B?OFR5SVZUMHdhQ3p5L0k2SlhlT2JWdXlZcStsVkhYdmlZa1RpRCs3ZW5Cc1V6?=
- =?utf-8?B?SEo0bzJjdG1ZQWRTaS81VTArQ2RldjBNWXU4Rnd2bU83c0VoQkpQb2R5WHdV?=
- =?utf-8?B?aGZmOW1nSFdRMmVOMHVhL1FDaGpSczFpSUV2NWFjTjBRcHlTRTVzdWdjbDMz?=
- =?utf-8?B?dkVKT0hUcmY2RVBrT2xUb2cxUkw3aTUzNk1BaHMwSnVlZFlGSUV2bFIyc1BT?=
- =?utf-8?B?eldYVE16YlR6SzYzN01RdlNJeGJyU01Pc25aRzRUYXZtNk5IajhhV2Noem91?=
- =?utf-8?B?T0kralh1UXlpVXFwZ3d2amhYdU9XaFJodG14Q2JOR0ZnUDZHL2ViRUtuRlZD?=
- =?utf-8?B?ejF6N0p6clpYbjBtUTM5a0R4SkM2Nnp4ZUVDOHcrV3lKWVh4em5NbTdVZFFE?=
- =?utf-8?B?dFh2bmN3L1JOdzQvSjdyQXVERHR4ait3SWU5U09KOTdpMVljd3NYOEZsTGt3?=
- =?utf-8?B?dTJDSUViN3JTbTUzd0tkNVZORGZRczJxeS9DZVRFSlpXd2VtbWY5cEJLZ1c3?=
- =?utf-8?B?VGNPMTdOTlVxUjlydmpLVCtSWmpxQ0UyWStsL2E3SWR5MmREdTRTWGJid01i?=
- =?utf-8?B?bXdUNG9XcnpMZHFFbHJwclptMGNCcXZUSmVqWWlPdmRLelNWRmlHRzJ0TVNl?=
- =?utf-8?B?UXQvOUJEa0E1L1oxQmRHVytLUFhaQ1JZdEYvUGc3V3UwNnp4S21ZeUpTWENQ?=
- =?utf-8?B?c0lXckZ2dzlpdzJZNm1mS3RERWdCTHFNL2wrZ2xDdFVKaThlWGJ0NVNlZDdB?=
- =?utf-8?B?ZHMxZ0U4bEhGTDBDTm01NlQzWjlEYTViQy9lak5Rc3o5cnl5b0VMazlwamVn?=
- =?utf-8?B?eldqR2c0YXFSc1FrbTRFOW1qbGtGTDkrVSs3QjVPVDRHVmtzSXpJVTV1T1cv?=
- =?utf-8?B?SGN3dDFTbCtMTHA5b1lDWE5NVmUzdmVqdDFBQnBSWGE1enNpc3haUjVxUDJ5?=
- =?utf-8?B?UjVHWEhFZGorL2Zvai81dzJCWW1LWXQ0eEEwQ2I0bHhpa1laRzczbDRGS094?=
- =?utf-8?B?eFJyL3hZWkJRVkhNUThrWHpyN1paMlpzOGViRlo5ZjNTSVVUM2JXMmd0d2Fn?=
- =?utf-8?B?bkVYYWIydjlNNlY5WDFpQW5yRzh2cnloT05KTysxTGRyQ21oRG5mQlBYVFRt?=
- =?utf-8?B?UnczenZGTWVYdEkxUlMvU1I0eGFtcFl2SVhsbjVQR3FRVzV6MzR0V2tHZTRK?=
- =?utf-8?B?eEtYTjhWV1Q2NGNINXJEZ0I2MnN0Mko3bHoyWFIycDBOdVFQbkRBdDhsalRN?=
- =?utf-8?B?am5xMldHSWdDV0M4RktDUDhZdHhISDgyZ3RYcGc5SUsrRzF1M2FmcjJ5aEdo?=
- =?utf-8?B?aHIrTDRXYmJCeFhTOE8xTGZPZ0hvY0tzRzBsbTVHa3NCRThrSWkrYzY1VUhN?=
- =?utf-8?B?dGdlb2FnS1BpVThQWTkxTHRmc05vK3Q1Z3VQazZuMnBlSzh1Sm5ycThaS2pr?=
- =?utf-8?B?NWhkYU9IL3NCK0FwL0dBTTNPR2ZyTUVYSE4rTTN6bzVlVUJTdXFJVHZjcjF0?=
- =?utf-8?B?SkNvT0JUMlRNZkxUTXlOQmZtL1hneTZVd3l3QVFWMFNjcXZUT2JEeHpVRXRh?=
- =?utf-8?B?ZG13R3phQmV1RjVuOTRKV1d5YldWV0FueTYva05JWFA5YjNyWS83VFgySVp1?=
- =?utf-8?B?UVhIcSt4dTEyck1LZXpJMk1LMTdXWHZPYnNhZjFlaVNiY25nc0hab0RMbkd3?=
- =?utf-8?B?QkhjaXlncTRwTTZVOGhuZUpVTktveDVMdFFZN2Q2ZGtrdVJCcy9iVkQxTEl5?=
- =?utf-8?B?eFMydkVicGxtYmhmR2ZUNW9EQjlSbDQ0VHUwTVVoZlBhM3RnMzVNbFpISGhK?=
- =?utf-8?B?T2haYmJmekI4NDJodm4yaVVVZlh6VDIrNG1kQlRDL0JwdU9QRFpDazFzeEtl?=
- =?utf-8?B?M0E4ZmF6Y0xtWWx4QUhQbEg1ZGhaSndJU3UzVUE3M0xndlI0MTJ0UTdiUFlu?=
- =?utf-8?B?b293d0hYeWdib1lBZkpLTHBFb0RGczZqVlpBeFVYOTFuVCtYTHFaL1p1MmVT?=
- =?utf-8?B?QXZGSWYxcUsyNFlMbGN5RG1qdUovK0MzRzlKcHF0SzhtODdkamtMaUtueTBl?=
- =?utf-8?B?cWtZWE5vUngxMDV2d0ptREg2cWo4blEvVU9oZFRsVFcwQlRTUytoaWJaZXl3?=
- =?utf-8?B?RGc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 100c64fd-c88a-4435-1b62-08dcc7b11d92
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 22:31:10.0183
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4Oojyje8dMOBzFRQTBIbwT6xy8NM6jlgUM/acgBFx6qQzA3tB0vhpp+5SkR7ZjchA3BxzLh+9qun/BT8ta+H95Ic5aYKlt8KF0E0MFCfo6U=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR11MB6088
-X-OriginatorOrg: intel.com
+References: <20240819021621.29125-1-kanchana.p.sridhar@intel.com>
+ <CAKEwX=OO6frFa+S3xjtoabB2dY1Y5RN5qjMsVUsgKDK_QuOFzg@mail.gmail.com>
+ <SJ0PR11MB5678288EE890E8CB882839CDC98E2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <SJ0PR11MB567801EE747E2810EF183C73C9892@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <CAKEwX=PYv4Cn_a7WSnbUyhwSBO61xoDPSexXxS0uwwxu5P6XLw@mail.gmail.com>
+ <SJ0PR11MB5678E44062CADBE8BAB546F3C9942@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <CAKEwX=ORuJabxQSehU5E0QNG=Gx6QkyTCb1vek3AOcQuvF54Xg@mail.gmail.com>
+ <DM8PR11MB5671D72CED6850CDBB62B95FC9942@DM8PR11MB5671.namprd11.prod.outlook.com>
+ <SJ0PR11MB567807116A760D785F9822EBC9952@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <CAJD7tkb0Lnq+mrFtpba80ck76BF2Hnc9Rn8OVs_7dqmE2Hww2w@mail.gmail.com> <SJ0PR11MB56788C517A01B83174591A45C9952@SJ0PR11MB5678.namprd11.prod.outlook.com>
+In-Reply-To: <SJ0PR11MB56788C517A01B83174591A45C9952@SJ0PR11MB5678.namprd11.prod.outlook.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Wed, 28 Aug 2024 15:34:13 -0700
+Message-ID: <CAJD7tkakML3vrZzG_tnxU9SuA3DFGiZY4pQDn4Yruv9y9vhVNg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/4] mm: ZSWAP swap-out of mTHP folios
+To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+Cc: Nhat Pham <nphamcs@gmail.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, "21cnbao@gmail.com" <21cnbao@gmail.com>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "Zou, Nanhai" <nanhai.zou@intel.com>, 
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Aug 28, 2024 at 11:50=E2=80=AFAM Sridhar, Kanchana P
+<kanchana.p.sridhar@intel.com> wrote:
+>
+> Hi Yosry,
+>
+> > -----Original Message-----
+> > From: Yosry Ahmed <yosryahmed@google.com>
+> > Sent: Wednesday, August 28, 2024 12:44 AM
+> > To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
+> > Cc: Nhat Pham <nphamcs@gmail.com>; linux-kernel@vger.kernel.org; linux-
+> > mm@kvack.org; hannes@cmpxchg.org; ryan.roberts@arm.com; Huang, Ying
+> > <ying.huang@intel.com>; 21cnbao@gmail.com; akpm@linux-foundation.org;
+> > Zou, Nanhai <nanhai.zou@intel.com>; Feghali, Wajdi K
+> > <wajdi.k.feghali@intel.com>; Gopal, Vinodh <vinodh.gopal@intel.com>
+> > Subject: Re: [PATCH v4 0/4] mm: ZSWAP swap-out of mTHP folios
+> >
+> > [..]
+> > >
+> > > This shows that in all cases, reclaim_high() is called only from the =
+return
+> > > path to user mode after handling a page-fault.
+> >
+> > I am sorry I haven't been keeping up with this thread, I don't have a
+> > lot of capacity right now.
+> >
+> > If my understanding is correct, the summary of the problem we are
+> > observing here is that with high concurrency (70 processes), we
+> > observe worse system time, worse throughput, and higher memory_high
+> > events with zswap than SSD swap. This is true (with varying degrees)
+> > for 4K or mTHP, and with or without charging zswap compressed memory.
+> >
+> > Did I get that right?
+>
+> Thanks for your review and comments! Yes, this is correct.
+>
+> >
+> > I saw you also mentioned that reclaim latency is directly correlated
+> > to higher memory_high events.
+>
+> That was my observation based on the swap-constrained experiments with 4G=
+ SSD.
+> With a faster compressor, we allow allocations to proceed quickly, and if=
+ the pages
+> are not being faulted in, we need more swap slots. This increases the pro=
+bability of
+> running out of swap slots with the 4G SSD backing device, which, as the d=
+ata in v4
+> shows, causes memcg_swap_fail events, that drive folios to be resident in=
+ memory
+> (triggering memcg_high breaches as allocations proceed even without zswap=
+ cgroup
+> charging).
+>
+> Things change when the experiments are run in a situation where there is =
+abundant
+> swap space and when the default behavior of zswap compressed data being c=
+harged
+> to the cgroup is enabled, as in the data with 176GiB ZRAM as ZSWAP's back=
+ing
+> swapfile posted in v5. Now, the critical path to workload performance cha=
+nges to
+> concurrent reclaims in response to memcg_high events due to allocation an=
+d zswap
+> usage. We see a lesser increase in swapout activity (as compared to the s=
+wap-constrained
+> experiments in v4), and compress latency seems to become the bottleneck. =
+Each
+> individual process's throughput/sys time degrades mainly as a function of=
+ compress
+> latency. Anyway, these were some of my learnings from these experiments. =
+Please
+> do let me know if there are other insights/analysis I could be missing.
+>
+> >
+> > Is it possible that with SSD swap, because we wait for IO during
+> > reclaim, this gives a chance for other processes to allocate and free
+> > the memory they need. While with zswap because everything is
+> > synchronous, all processes are trying to allocate their memory at the
+> > same time resulting in higher reclaim rates?
+> >
+> > IOW, maybe with zswap all the processes try to allocate their memory
+> > at the same time, so the total amount of memory needed at any given
+> > instance is much higher than memory.high, so we keep producing
+> > memory_high events and reclaiming. If 70 processes all require 1G at
+> > the same time, then we need 70G of memory at once, we will keep
+> > thrashing pages in/out of zswap.
+> >
+> > While with SSD swap, due to the waits imposed by IO, the allocations
+> > are more spread out and more serialized, and the amount of memory
+> > needed at any given instance is lower; resulting in less reclaim
+> > activity and ultimately faster overall execution?
+>
+> This is a very interesting hypothesis, that is along the lines of the
+> "slower compressor" essentially causing allocation stalls (and buffering =
+us from
+> the swap slots unavailability effect) observation I gathered from the 4G =
+SSD
+> experiments. I think this is a possibility.
+>
+> >
+> > Could you please describe what the processes are doing? Are they
+> > allocating memory and holding on to it, or immediately freeing it?
+>
+> I have been using the vm-scalability usemem workload for these experiment=
+s.
+> Thanks Ying for suggesting I use this workload!
+>
+> I am running usemem with these config options: usemem --init-time -w -O -=
+n 70 1g.
+> This forks 70 processes, each of which does the following:
+>
+> 1) Allocates 1G mmap virtual memory with MAP_ANONYMOUS, read/write permis=
+sions.
+> 2) Steps through and accesses each 8 bytes chunk of memory in the mmap-ed=
+ region, and:
+>     2.a) Writes the index of that chunk to the (unsigned long *) memory a=
+t that index.
+> 3) Generates statistics on throughput.
+>
+> There is an "munmap()" after step (2.a) that I have commented out because=
+ I wanted to
+> see how much cold memory resides in the zswap zpool after the workload ex=
+its. Interestingly,
+> this was 0 for 64K mTHP, but of the order of several hundreds of MB for 2=
+M THP.
 
+Does the process exit immediately after step (3)? The memory will be
+unmapped and freed once the process exits anyway, so removing an unmap
+that immediately precedes the process exiting should have no effect.
 
-On 8/28/2024 6:23 AM, Edward Cree wrote:
-> On 28/08/2024 11:00, Shen Lichuan wrote:
->> As opposed to open-code, using the ERR_CAST macro clearly indicates that 
->> this is a pointer to an error value and a type conversion was performed.
->>
->> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
->> ---
->>  drivers/net/ethernet/sfc/tc_counters.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/ethernet/sfc/tc_counters.c b/drivers/net/ethernet/sfc/tc_counters.c
->> index c44088424323..76d32641202b 100644
->> --- a/drivers/net/ethernet/sfc/tc_counters.c
->> +++ b/drivers/net/ethernet/sfc/tc_counters.c
->> @@ -249,7 +249,7 @@ struct efx_tc_counter_index *efx_tc_flower_get_counter_index(
->>  					       &ctr->linkage,
->>  					       efx_tc_counter_id_ht_params);
->>  			kfree(ctr);
+I wonder how this changes if the processes sleep and keep the memory
+mapped for a while, to force the situation where all the memory is
+needed at the same time on SSD as well as zswap. This could make the
+playing field more even and force the same thrashing to happen on SSD
+for a more fair comparison.
 
-I was confused because I was wondering why you would kfree the error
-value.. until I realized that this function has both "ctr" and "ctn".
-
->> -			return (void *)cnt; /* it's an ERR_PTR */
->> +			return ERR_CAST(cnt); /* it's an ERR_PTR */
-> 
-> May as well remove the now superfluous comment.
-> Other than that this lgtm.
-> 
-
-Somewhat unrelated but you could cleanup some of the confusion by using
-__free(kfree) annotation from <linux/cleanup.h> to avoid needing to
-manually free ctr in error paths, and just use return_ptr() return the
-value at the end.
-
-Anyways, with the removal of the comment suggested by Edward,
-
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+It's not a fix, if very fast reclaim with zswap ends up causing more
+problems perhaps we need to tweak the throttling of memory.high or
+something.
 
