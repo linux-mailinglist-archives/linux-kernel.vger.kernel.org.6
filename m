@@ -1,274 +1,187 @@
-Return-Path: <linux-kernel+bounces-304315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7597961DBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:48:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DAFB961DB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:39:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC2AC1C22850
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:48:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35AE51F23A1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD4B14A4C1;
-	Wed, 28 Aug 2024 04:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fkP9Y82C"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2048.outbound.protection.outlook.com [40.107.92.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36A51474B5;
+	Wed, 28 Aug 2024 04:39:43 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B808B2F41;
-	Wed, 28 Aug 2024 04:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724820494; cv=fail; b=PXIqSnOQDVv4LWFbsAgxcTcdqAy+PIPD1dxTOf7NXwHFaF2pddmiGTksapDotwQFd2xk/bn/Aa0AjkTXl5ejxRhpH+72d2UEZf+aTKPgPf1PsfzBzyN8TyyGzQYZXuQYJytT+kIE/CikXonfOOM9tHbTA3dscDUeujKQUANW1dY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724820494; c=relaxed/simple;
-	bh=/IGKssr3YFrl+HkraMMlNz3OKynZscMdH5F8Wg2dTsE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=hawQMw20r6QrTSMNMs7cjR8s2WJ5S6bGVkq+ZQJkvr/l4Az2LbwFnQ5uE5acmLuZiuZYRVekPQfGnwzvq1uiquCF+79k1bpFfw9oi7pyB62leBZpGicxtoMY5EV9cTZ6c2OjGUAdLxBP1AQUsG7LrGjL/eu4l35L72hVUT0DEKE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fkP9Y82C; arc=fail smtp.client-ip=40.107.92.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qrpdgdrE3NksoV+JmW/G0hIj2aB2P8ppZyBKAfYNNs0+hs83/ZeHbIgwbpGfwts5c9htc8vxdZaGSjbj3awMBqchqEzJIu0biVxmaJ/YqY9svCToI0J/wsuPmk9GwNCz9lge9m4XZXx7zxMr3TVrWsYWtA0tYAhq9tIMJnd2HnzKTGR14QGLWUezjTaia4v28xYE07Uia8k9/dgTPpvk5Phe6ZsO5EN/sQfypvKekT2nJhlqTSqZzGYDOMR2CfRqMlqIyl9l3s5sIFHfLpdOXHtp844ot9NXPby3xh/GGfaOGgkbMqGhJgWojgPSH+LP5TBjw0Ebze3J2Zij3eG1Xw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eaGQP+WG2NZecywiXCc7Rk7lPFuFOtzlroVYvhM+4Pg=;
- b=Rh1LT5K+GykSkKiz6bvAqHd1gHhsgO11PzFj7JpTUbRZgXTAAmnwtohInQ9GN5bqgEqR7k/I5C9kteD7ofonNcv/BHLuoVLdoUfzzRPEuW8X2FbqgH/nLBI0lEE6RRnuHpWbwFrOD3kS9hAfgMzpBCfqDcQivfmL0gXG3lxSsbnVHO3XctWd1O18hR5xGqdh8AJZAb0z9tczUOQDB1710c3ihcy4m1j839x++Msg31NfUdw8USwDg7EIvwf/V/Q2/hf1HYQ+dY2xBFDp3LDAQoFxGP1WLygfZNwSwECFl8cf+IfzIX1QWIlUHDiAf/iRPSV7F2rtr1NscrTixF8W/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eaGQP+WG2NZecywiXCc7Rk7lPFuFOtzlroVYvhM+4Pg=;
- b=fkP9Y82CdnjLGjz0orYQekikJCFC4aaIvG4TC91+VljuILnQYXjrgTA4VOyIQi8eGUOuRqjIgpGXrwsEUK03ZTcI4yU9AKYKOmocHbf9dfv41bb/HcfEw0p071UNnTugXU3hKXs8RuqipMOgtaY2DQ5/LIpUgeI2wdbVOXNHq3Y=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7SPRMB0010.namprd12.prod.outlook.com (2603:10b6:8:87::8) by
- SJ0PR12MB6830.namprd12.prod.outlook.com (2603:10b6:a03:47c::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.20; Wed, 28 Aug
- 2024 04:48:07 +0000
-Received: from DS7SPRMB0010.namprd12.prod.outlook.com
- ([fe80::b021:a6a0:9c65:221e]) by DS7SPRMB0010.namprd12.prod.outlook.com
- ([fe80::b021:a6a0:9c65:221e%6]) with mapi id 15.20.7897.021; Wed, 28 Aug 2024
- 04:48:06 +0000
-Message-ID: <5b62f751-668f-714e-24a2-6bbc188c3ce8@amd.com>
-Date: Wed, 28 Aug 2024 10:17:57 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH v11 06/20] x86/sev: Handle failures from snp_init()
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
- kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
- dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
- pbonzini@redhat.com
-References: <20240731150811.156771-1-nikunj@amd.com>
- <20240731150811.156771-7-nikunj@amd.com>
- <20240827113227.GAZs25S8Ubep1CDYr8@fat_crate.local>
-From: "Nikunj A. Dadhania" <nikunj@amd.com>
-In-Reply-To: <20240827113227.GAZs25S8Ubep1CDYr8@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN3PR01CA0194.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:be::21) To DS7SPRMB0010.namprd12.prod.outlook.com
- (2603:10b6:8:87::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4833D3FEC;
+	Wed, 28 Aug 2024 04:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724819983; cv=none; b=iSorRewZeUidT55sjCq+l827mITdNfOf+to0D1Y40LWNyTWcfu3Eg7aih66wZW8ZZldwyBwawfD1JoFDES5SM/toRP9nwdnl6f2vzxowvrfMMFP/neVLcIaPNURq65tAyzXLalmTq66D3NBQpshOHRBoSBKW2jk0oV8BH1r6nMI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724819983; c=relaxed/simple;
+	bh=QL+vkdUrV+Ftwi8uU4igcFSpZTkbk4UJx18o/zScLdw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r9bHSBbcOxnzRW2STmK6B0MWWFZbNVGNJAGZDHKb/VnRCwCNX4V/EBkUcF4fP7B9ULuxqZvvLt5wRxgXkAT3MLwzSvPkIMBHCadyyO9L/8H8iGFIGfype7oJ6+KKMQYpsSBMBhZ1IbXs6glR7ChV0YDSZoby+CGVTPUWwj6Q3AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4WtsBj2qzXz1S8wW;
+	Wed, 28 Aug 2024 12:39:25 +0800 (CST)
+Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
+	by mail.maildlp.com (Postfix) with ESMTPS id EF2461401F1;
+	Wed, 28 Aug 2024 12:39:36 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by kwepemg500017.china.huawei.com
+ (7.202.181.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 28 Aug
+ 2024 12:39:35 +0800
+From: Li Lingfeng <lilingfeng3@huawei.com>
+To: <trondmy@kernel.org>, <anna@kernel.org>
+CC: <jlayton@kernel.org>, <linux-nfs@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <yukuai1@huaweicloud.com>,
+	<houtao1@huawei.com>, <yi.zhang@huawei.com>, <yangerkun@huawei.com>,
+	<lilingfeng@huaweicloud.com>, <lilingfeng3@huawei.com>
+Subject: [PATCH] nfs: protect nfs41_impl_id by rcu
+Date: Wed, 28 Aug 2024 12:49:33 +0800
+Message-ID: <20240828044933.676898-1-lilingfeng3@huawei.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7SPRMB0010:EE_|SJ0PR12MB6830:EE_
-X-MS-Office365-Filtering-Correlation-Id: ca329d7d-f27f-4bd5-abb0-08dcc71c9b61
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UXgzYklQaFRNQ1dzTlZhSmFLdEN0SE5USGtWQnd4Wmp6UEZObFErbVpmQVFZ?=
- =?utf-8?B?NERJSm1NNFpCd3FJakFJQVdvSWYxcnExZlpHeDZrTTRjSVJrUHYvNkp6U05k?=
- =?utf-8?B?SHplRDlOMmprd3RRZ1M3K2lSRDNDYmJhNTVKRUF4Y055QmxQR2NMK0VxZVVz?=
- =?utf-8?B?cmlRcWdTa3pVNm9mYkVyTkZ3NEZNSkR1aWZSdEY0bXpLakxMa0djd1pIVTI3?=
- =?utf-8?B?UzdIWG1CZ0lYbHhCQnRHUDZOeXFrMElISUJ4enN0UEZJR0N6cHB6ZEt1UGdP?=
- =?utf-8?B?eDZiMG90dkN2a0lhZjlHYlRVSlIxZEJPRXNidG8xUm9GSHdmTTVCb1FPeG9V?=
- =?utf-8?B?RGlxT2prSE42NjUwS1czME5VTS9lOVpwNzZNYkRDRXZUczVZd2IzSllydXJI?=
- =?utf-8?B?ZjJKTXRoZ0tFekhTYmxCQXNwazZ1TUg2R2VQVVZ0VmxMamd0Ym9xK09Ca3hE?=
- =?utf-8?B?b2NjaTJCUGloeUpEMFEweUZPM25mdUU0NEV5Nm9NQ2VvWXYxOThIM0dOWmY1?=
- =?utf-8?B?WDlCRTlwdHVYbUJubFRtaDFDWVcySVBNRUUvem9DRkw3U0phY3gvZGtPVGxx?=
- =?utf-8?B?MmVLQVh0WnhZYnE3aitrVXdCTE9FWkE5aUtKQVY0STg0TWROOFB2VGczWGsv?=
- =?utf-8?B?eElHNzRpcjl5U3VhK1V5TC9aaGJFWTVWR0tKN2Y5dGdkdzViQ0xyUFVqMFdP?=
- =?utf-8?B?NncrOEpZR1hwTFRSR2tDMEloM3JCS2FpYTJWL2FFdkNoUFlLWjZHQk5CWjdi?=
- =?utf-8?B?dCtzc2JuUW9ESnNnaEhZUkxmYWlXZ05nWnRNN2E2c3owdGlvTTNaT0kxaWNC?=
- =?utf-8?B?UWxIZmhsNHZPZzQrUFBwZEcrdUEyZnNMZ3BCalc1QzFrUFI0SEZ6WldzcjlR?=
- =?utf-8?B?OFNDMXdBMDd3TXpXSTlGTnhPY0ZRTGtVWGlSTHhqQS9UYlZWWHJzMnZOQzlx?=
- =?utf-8?B?VHV1c2k4RXBpU2lUYlRoVkozSHZONFVwd2xYazlHVkJGUzlILy9vMXRxN0oz?=
- =?utf-8?B?dmhiUVVVQ1RJR2ltM042OVFRVVFVcUxZQnNCN2U3bWlWNHFML0drbU53RFJx?=
- =?utf-8?B?dmNhWVFJRDlwVUhuUTNFWU44WGcxNStaZUlIZVYxQzFUWHNjNGxPZnhoUzd0?=
- =?utf-8?B?dGxyRHhxV25XaFNILzg0eU5IVFpyL3ZOaWh4YytOSlY1NTVFaXNWWHhxUVBm?=
- =?utf-8?B?TnFZaUR2cjRHYW1INmdtaWQ1bk9NQnJGMit0elRuYUR5MW00SUw2Q0VRcXpU?=
- =?utf-8?B?MjZhQXVWV3pCN1F0cnZaSG9CSy9JOWZhS3VSL1p3WFlIbmZ4bExOZU11MENH?=
- =?utf-8?B?OHRHTi9RamYvV2tMbFEzUW1KbTB2Z0pRMi9zSXpQaEpjeWszaytJSERxTjRC?=
- =?utf-8?B?MGJWU2c5R3drdmpJRHJFbm1HdkVxaElLclN2MHV3anpHaEFZM1ltN0RjSkZJ?=
- =?utf-8?B?dnMzS3lSaEcvNjVxc2hLNVlwNEl0Y1BVQjBtOW4wamMzd3B3bTBERDBuUllK?=
- =?utf-8?B?SHhyVlJEclZ0NnlURGVaOERubWtCUE96bSt5Rnc3ZnpVbUx1UEtKd0xDZTZr?=
- =?utf-8?B?Wm51RVR3a2s4UGRNd3A1c3VqbU02c09SMFZLZTF2OU5IT3hMYjdVb21CNm1C?=
- =?utf-8?B?bDVqT0RnMm5nN2Vjd3dlK2FiazhmUC8vM0Uvc044OWF1UGhjbEpXQXJHV1VT?=
- =?utf-8?B?aDlkQllIaDdsbkdlVExPVWF3RTRTYy96NUMvK0piNVcyaWhRcjJkZ2l6WDR2?=
- =?utf-8?B?VkxDUWNBcXk2eDFGdkZ0ZGREZWc0OW1hb0t2SG5ja293VXRFVWcyb1BRM1JZ?=
- =?utf-8?Q?65mSnFnW5DQvjzRCUM9KjMh/aj0KpJoj1KEw8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7SPRMB0010.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aWk3T096ZjI4WjErV0l5V1k2R2MwemxvT2FMakkvKzFyU1d0RElQK0Q0V1N5?=
- =?utf-8?B?N0xzd2wraWczVTNYWDlrekMveEY0Tm5FbVQ5eWc1aHBUMWlYVGkweXpidGZG?=
- =?utf-8?B?ZUtRRityNkFnU0lIb3I2NXdkMEtMRGduNkxHVlVOb0FSbEY1SDBVTjNFV0ZM?=
- =?utf-8?B?Y1ZibEtUWjVmNWtSS2lLZFhkSFV5RGFMV0ZmYlpRNzhIN3dUUFEreDBJVjE2?=
- =?utf-8?B?WTNONTBjdktYT3BlMXZSSUdiYTMyN1hTcjMxbUNNeEZYejZ0WFMyRVFHbjZw?=
- =?utf-8?B?elk4cTNJaUFaVG5CZG42OFBIN1pDK2puajZQWkJwOWlGRnpsWlFUS0FZbURt?=
- =?utf-8?B?QlZwUjFlQUt0cThGK3VnRStCZ3RDa3AxTmhpRUlzVkJrTW9NWDVseHpEbWx3?=
- =?utf-8?B?SUVTd3ZuNEJ6QXNBNmRWbXJ4U2VDN3ZLU2VFaWl4bVRPR2FZclRSOTBFMVgz?=
- =?utf-8?B?VUVQVnRhcWRTSC80dGFoSXN0cUhuZzVkVHduQjYrRW1qdjBOWGRjRzNsUHZJ?=
- =?utf-8?B?N3hHUmlYc2p4Kzg3MEdJcjUyUlBPalYwOS9LMTIrOXpzUHkySldzMFlGbXBl?=
- =?utf-8?B?MWp3OU9oeU81cktMNnlibG94bzhaQXRLQ3lhVHhTVHdCZ08rRWkzRnRGRk1m?=
- =?utf-8?B?RzJ5akJ5NHkwVTNTd2pwdFlZbG1vMUNpUGVzY3dDRTU2OXg0TTR4QkNzRmY5?=
- =?utf-8?B?TGtmK0F1c0tSLytBU1VpclZVcnRQWVM0UDVLNnVGUEdlRUh2UjRLK254Y1ZS?=
- =?utf-8?B?TUZUUVdSK3pmeVNaRlhzM0FmVUlCVlpVOWhUeEREc1Uwa1RGSUJleG9DTXQ1?=
- =?utf-8?B?RWxLM281dzlkU0JyOUtNSnFWeitYRlM0NVRaUysyb1U1em1zTHNTdjRqQ0RF?=
- =?utf-8?B?S2lGVTZobzZQT2cyZUI2bmpza054MGxuTUFyb0VQKzN0RE5leFlnNWNsaUJ3?=
- =?utf-8?B?SEpSdkdKSCs3M1pZc3lTM2F3ZE10S1ZHcFA3aDRMSW82VWNMU2R1RzZDOEJQ?=
- =?utf-8?B?cWdLdkwvenR5azh3QWluWno0ZWxlMUM5ZmFPQVM5NTFGT3Rld2NFczhvSG41?=
- =?utf-8?B?VitUNEVTb2ZlRm9uQjl2SWJsMUFpRTJnYU5Zb3ZvL2VlS0VURlNIOHhCSHk2?=
- =?utf-8?B?WkNiQUh3dUVFL090eTgzS0lzTnlRVEQrVmJLcnUvMkNkTmFXMUVqQ3ZkSXkr?=
- =?utf-8?B?aHhBSGppSTRYeDNtQnFwM0Ruc1N4UHdVOW1nMk1HUFZjSjlnV0dna0VjMDl0?=
- =?utf-8?B?dE12QUN3VWVDaWpLa2lJbnhxSHNPSDhmTE1wM05NK3VLWVNRUWhlcHA3ZVhC?=
- =?utf-8?B?QnRjV2xXVkh4OVZPbDdmb2d5NE1BbFR0MzhwamtSMXJJRk5haTQvdkF0WmtT?=
- =?utf-8?B?N2QxYnRKWk5NNVJFV1NHMmVEZG50ejhkZW5xbGs4amJaKy9KWWlVeDUzUm82?=
- =?utf-8?B?d1JNMW9jRVJiRU9tMGNIenNBY25IMTNLTHo2Q2kwQWVvaHhKeDlTTEFITjBQ?=
- =?utf-8?B?cEZ5dEtIbVZjUnN6NTZOQ3NJODM0TVRLM1pCem5rU05ORUFmSlk2QWtMbGV6?=
- =?utf-8?B?VXo0TXk3WE5LVkxUZFlrYnZib1U0K2Nhd3NIVnB6MGtJekluNWhGSzd4UzVj?=
- =?utf-8?B?SWJGelpmaFhENTNGSHVCN2dxUVVMZlNnazBQTDlGaXd6OCtrL2lTeURLRnI4?=
- =?utf-8?B?Z3ZhWmtJVlpObmJPUTZidVVpaGFGWkttdFZUVXlYNTM3RkQ3WnRQdTA5ODgz?=
- =?utf-8?B?azdhLzQ5QStTc2tsM1pJRmlKNVl3R1lJRU9IZnd3NzVtVmxNK2RMNVFIVElG?=
- =?utf-8?B?YXAyZTJKaGZ0dldtYUpYYlRkdCtHYU43bmpKeG1EMndzTkcxRHArOVNMSmMv?=
- =?utf-8?B?cHZmdmROQWRtUTZyd2lqRm1DcFFuQnpsSU9tTDNiSTFLUkVLaWx5c3ZBSkpU?=
- =?utf-8?B?VFN1TXBieEwzdHRzcVFjWmRXUUVrT09vYWhyS0lwTlZ0ZEVwRGlJTmhMT2Z6?=
- =?utf-8?B?NFRRLzJrYUtLY1NpM2J6MFBmcTI1REVBTjFwU2N3VkY5TnBHTmNaQjkwTmpP?=
- =?utf-8?B?U3p1ckxtNDhQa0l1U3l2UklDdHRjc3ZPN3RXQ2NGaWhhYTEydThacVNHYzQw?=
- =?utf-8?Q?fjXv2lzAfrI8LfG+7cgwWdQIi?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ca329d7d-f27f-4bd5-abb0-08dcc71c9b61
-X-MS-Exchange-CrossTenant-AuthSource: DS7SPRMB0010.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 04:48:06.2620
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: U2OPLC93iIbQD4SOm9LWw2kuGykMKndGrNwc4zaS3FOjTNaWl0zM1hBbhKtauAQrBqtSnfYI25NkBixnzCWjrA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6830
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemg500017.china.huawei.com (7.202.181.81)
 
-Hi Boris,
+When performing exchange id call, a new nfs41_impl_id will be allocated to
+store some information from server. The pointers to the old and new
+nfs41_impl_ids are swapped, and the old one will be freed.
 
-On 8/27/2024 5:02 PM, Borislav Petkov wrote:
-> On Wed, Jul 31, 2024 at 08:37:57PM +0530, Nikunj A Dadhania wrote:
->> Address the ignored failures from snp_init() in sme_enable(). Add error
->> handling for scenarios where snp_init() fails to retrieve the SEV-SNP CC
->> blob or encounters issues while parsing the CC blob.
-> 
-> Is this a real issue you've encountered or?
+However, UAF may be triggered as follows:
 
-As per you comment [1], you had suggested to error out early in snp_init()
-instead of waiting till snp_init_platform_device(). As snp_init() was
-ignoring the failure case, I have added this patch. Following patch adds
-secrets page parsing from CC blob. When the parsing fails, snp_init() will
-return failure.
+After T2 has got a pointer to the nfs41_impl_id, the nfs41_impl_id is
+freed by T1 before it is used.
+         T1                                           T2
+nfs4_proc_exchange_id
+ _nfs4_proc_exchange_id
+  nfs4_run_exchange_id
+   kzalloc // alloc nfs41_impl_id-B
+   rpc_run_task
+                                nfs_show_stats
+                                 show_implementation_id
+                                  impl_id = nfss->nfs_client->cl_implid
+                                  // get alloc nfs41_impl_id-A
+  swap(clp->cl_implid, resp->impl_id)
+  rpc_put_task
+   ...
+    nfs4_exchange_id_release
+     kfree // free nfs41_impl_id-A
+                                  impl_id->name // UAF
 
-> 
->> This change ensures
-> 
-> Avoid having "This patch" or "This commit" or "This <whatever>" in the commit
-> message. It is tautologically useless.
+Fix this issue by using rcu to protect the nfs41_impl_id.
 
-Sure, will do.
- 
->> diff --git a/arch/x86/mm/mem_encrypt_identity.c b/arch/x86/mm/mem_encrypt_identity.c
->> index ac33b2263a43..e83b363c5e68 100644
->> --- a/arch/x86/mm/mem_encrypt_identity.c
->> +++ b/arch/x86/mm/mem_encrypt_identity.c
->> @@ -535,6 +535,13 @@ void __head sme_enable(struct boot_params *bp)
->>  	if (snp && !(msr & MSR_AMD64_SEV_SNP_ENABLED))
->>  		snp_abort();
->>  
->> +	/*
->> +	 * The SEV-SNP CC blob should be present and parsing CC blob should
->> +	 * succeed when SEV-SNP is enabled.
->> +	 */
->> +	if (!snp && (msr & MSR_AMD64_SEV_SNP_ENABLED))
->> +		snp_abort();
-> 
-> Any chance you could combine the above and this test?
-> 
-> Perhaps look around at the code before adding your check - there might be some
-> opportunity for aggregation and improvement...
-
-Sure, how about the below patch ?
-
-From: Nikunj A Dadhania <nikunj@amd.com>
-Date: Wed, 22 May 2024 12:43:42 +0530
-Subject: [PATCH] x86/sev: Handle failures from snp_init()
-
-Address the ignored failures from snp_init() in sme_enable(). Add error
-handling for scenarios where snp_init() fails to retrieve the SEV-SNP CC
-blob or encounters issues while parsing the CC blob. Ensure that SNP guests
-will error out early, preventing delayed error reporting or undefined
-behavior.
-
-Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
+Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
 ---
- arch/x86/mm/mem_encrypt_identity.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ fs/nfs/nfs4proc.c         | 12 ++++++++++--
+ fs/nfs/super.c            | 12 +++++++++---
+ include/linux/nfs_fs_sb.h |  2 +-
+ include/linux/nfs_xdr.h   |  1 +
+ 4 files changed, 21 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/mm/mem_encrypt_identity.c b/arch/x86/mm/mem_encrypt_identity.c
-index ac33b2263a43..a0124a479972 100644
---- a/arch/x86/mm/mem_encrypt_identity.c
-+++ b/arch/x86/mm/mem_encrypt_identity.c
-@@ -495,7 +495,7 @@ void __head sme_enable(struct boot_params *bp)
- 	unsigned int eax, ebx, ecx, edx;
- 	unsigned long feature_mask;
- 	unsigned long me_mask;
--	bool snp;
-+	bool snp, snp_enabled;
- 	u64 msr;
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index b8ffbe52ba15..6bb820bd205e 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -8866,13 +8866,21 @@ struct nfs41_exchange_id_data {
+ 	struct nfs41_exchange_id_args args;
+ };
  
- 	snp = snp_init(bp);
-@@ -529,10 +529,17 @@ void __head sme_enable(struct boot_params *bp)
++static void nfs4_free_impl_id_rcu(struct rcu_head *head)
++{
++	struct nfs41_impl_id *impl_id = container_of(head, struct nfs41_impl_id, __rcu_head);
++
++	kfree(impl_id);
++}
++
+ static void nfs4_exchange_id_release(void *data)
+ {
+ 	struct nfs41_exchange_id_data *cdata =
+ 					(struct nfs41_exchange_id_data *)data;
  
- 	/* Check the SEV MSR whether SEV or SME is enabled */
- 	RIP_REL_REF(sev_status) = msr = __rdmsr(MSR_AMD64_SEV);
--	feature_mask = (msr & MSR_AMD64_SEV_ENABLED) ? AMD_SEV_BIT : AMD_SME_BIT;
-+	snp_enabled = msr & MSR_AMD64_SEV_SNP_ENABLED;
-+	feature_mask = snp_enabled ? AMD_SEV_BIT : AMD_SME_BIT;
+ 	nfs_put_client(cdata->args.client);
+-	kfree(cdata->res.impl_id);
++	if (cdata->res.impl_id)
++		call_rcu(&cdata->res.impl_id->__rcu_head, nfs4_free_impl_id_rcu);
+ 	kfree(cdata->res.server_scope);
+ 	kfree(cdata->res.server_owner);
+ 	kfree(cdata);
+@@ -9034,7 +9042,7 @@ static int _nfs4_proc_exchange_id(struct nfs_client *clp, const struct cred *cre
  
--	/* The SEV-SNP CC blob should never be present unless SEV-SNP is enabled. */
--	if (snp && !(msr & MSR_AMD64_SEV_SNP_ENABLED))
-+	/*
-+	 * The SEV-SNP CC blob should never be present unless SEV-SNP is enabled.
-+	 *
-+	 * The SEV-SNP CC blob should be present and parsing CC blob should
-+	 * succeed when SEV-SNP is enabled.
-+	 */
-+	if ((snp && !snp_enabled) ||
-+	    (!snp && snp_enabled))
- 		snp_abort();
+ 	swap(clp->cl_serverowner, resp->server_owner);
+ 	swap(clp->cl_serverscope, resp->server_scope);
+-	swap(clp->cl_implid, resp->impl_id);
++	resp->impl_id = rcu_replace_pointer(clp->cl_implid, resp->impl_id, 1);
  
- 	/* Check if memory encryption is enabled */
+ 	/* Save the EXCHANGE_ID verifier session trunk tests */
+ 	memcpy(clp->cl_confirm.data, argp->verifier.data,
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index 97b386032b71..6097dbe8e334 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -612,13 +612,19 @@ static void show_pnfs(struct seq_file *m, struct nfs_server *server)
+ 
+ static void show_implementation_id(struct seq_file *m, struct nfs_server *nfss)
+ {
+-	if (nfss->nfs_client && nfss->nfs_client->cl_implid) {
+-		struct nfs41_impl_id *impl_id = nfss->nfs_client->cl_implid;
++	struct nfs_client *clp = nfss->nfs_client;
++	struct nfs41_impl_id *impl_id;
++
++	if (!clp)
++		return;
++	rcu_read_lock();
++	impl_id = rcu_dereference(clp->cl_implid);
++	if (impl_id)
+ 		seq_printf(m, "\n\timpl_id:\tname='%s',domain='%s',"
+ 			   "date='%llu,%u'",
+ 			   impl_id->name, impl_id->domain,
+ 			   impl_id->date.seconds, impl_id->date.nseconds);
+-	}
++	rcu_read_unlock();
+ }
+ #else
+ #if IS_ENABLED(CONFIG_NFS_V4)
+diff --git a/include/linux/nfs_fs_sb.h b/include/linux/nfs_fs_sb.h
+index 1df86ab98c77..29c98c9df42f 100644
+--- a/include/linux/nfs_fs_sb.h
++++ b/include/linux/nfs_fs_sb.h
+@@ -102,7 +102,7 @@ struct nfs_client {
+ 	bool			cl_preserve_clid;
+ 	struct nfs41_server_owner *cl_serverowner;
+ 	struct nfs41_server_scope *cl_serverscope;
+-	struct nfs41_impl_id	*cl_implid;
++	struct nfs41_impl_id __rcu *cl_implid;
+ 	/* nfs 4.1+ state protection modes: */
+ 	unsigned long		cl_sp4_flags;
+ #define NFS_SP4_MACH_CRED_MINIMAL  1	/* Minimal sp4_mach_cred - state ops
+diff --git a/include/linux/nfs_xdr.h b/include/linux/nfs_xdr.h
+index 45623af3e7b8..b3c96ea2a64b 100644
+--- a/include/linux/nfs_xdr.h
++++ b/include/linux/nfs_xdr.h
+@@ -1374,6 +1374,7 @@ struct nfs41_impl_id {
+ 	char				domain[NFS4_OPAQUE_LIMIT + 1];
+ 	char				name[NFS4_OPAQUE_LIMIT + 1];
+ 	struct nfstime4			date;
++	struct rcu_head			__rcu_head;
+ };
+ 
+ #define MAX_BIND_CONN_TO_SESSION_RETRIES 3
 -- 
-2.34.1
+2.31.1
 
-
-1. https://lore.kernel.org/lkml/20240416144542.GFZh6PFjPNT9Zt3iUl@fat_crate.local/
 
