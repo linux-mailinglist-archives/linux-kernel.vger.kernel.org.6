@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-304509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 096DC96211B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:30:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DDC596211F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:30:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAA6128195C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:30:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5595B25A26
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:30:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 566931591E8;
-	Wed, 28 Aug 2024 07:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07FAC159209;
+	Wed, 28 Aug 2024 07:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pV9w0aQI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XJx+zllx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A056158D8B;
-	Wed, 28 Aug 2024 07:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B09F14D439;
+	Wed, 28 Aug 2024 07:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724830217; cv=none; b=fNjh/2zXQv2Bsxld3x+qzLhXKIxVkL9/3kdZy16/fYbwrkNYxkqdPsRrwlZ24DBAYqAr0Ks04eF/Vw3464af/Wlcp2l+FvjeveYpnli1jEKLK6hEP6G66RPJsYeoFyQ+QczPoaLfjthwCDf1hBiPKJTwWUNvI4rCVmWibfvUv6Y=
+	t=1724830236; cv=none; b=I/BzwdhY1jU/fWvzhxkK9ruZZL0gTTjCV2TgzTGJnx+3JrgoeVWR5oEQ2LSfHCIUT6Yl219fLWAqOL0zrOrZsnVjptFfbyHsx1Hwr590CNZSXzb3epQnWcXQSkTGOsvuw5kkdPLiqhsnRJcaWetmzjThKHzX43wLnsp/rSHT8Wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724830217; c=relaxed/simple;
-	bh=/z3VeXTgWiZKkv3eEQiZwXSeodSe/h48hfFiTK/eoYU=;
+	s=arc-20240116; t=1724830236; c=relaxed/simple;
+	bh=mj9I9fBzX6s8jrWfQm4upFCq8fdJWKzdo86ChRZDBn8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rceYuwfwBi1rpA+f54chonJh1+IVb2bZAr+cevu1wVG5MxYnVgeiDg/rk5bqQ4Rvye7zpwdI08OW8Ol9wYcdq/Fsw8OYLplHEu74w+ykyjwE/nBQ3jF9sTjBLCSbSAHq6Mygr6w4L9SelSZSM4qZ9NVUjaMeFH4RFgmT7XHH9ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pV9w0aQI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FAD5C32782;
-	Wed, 28 Aug 2024 07:30:11 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=HzsHWLdeHCGj3ylNG34ci/dZUkBrB8YyFPG7RD4XywFXDpFOPFmo8i8XMIXBWjf8sFhl+uscYi6JL3h0LnBJ3VayY8O66Z7wgG55DO8IZzVEmP+HjjdRB6ZKhIwdV1xQNTP86ZEozoVhlqyURgCsR4paWIFtV9noqND/RmrjCcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XJx+zllx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A57B7C32782;
+	Wed, 28 Aug 2024 07:30:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724830217;
-	bh=/z3VeXTgWiZKkv3eEQiZwXSeodSe/h48hfFiTK/eoYU=;
+	s=k20201202; t=1724830235;
+	bh=mj9I9fBzX6s8jrWfQm4upFCq8fdJWKzdo86ChRZDBn8=;
 	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=pV9w0aQInucNXCTKxgfAkY3x64ZGK4/2MXbZeT1asQcyxDtA+jb9RkkM4B/bTWYpx
-	 WbXzzcx5augDreovWmvFFHZlXYsbs5zdJd1k169ZsjtwqQjdImWjDlj6g8T0q3SZ6S
-	 T2/O94uQgi9wyuCwqaYeLNO0u09GkQ97Nxpy2ODuKX/0Jx53v2zITk2k1WBNW9QpMt
-	 1+vhyNdBmpIRJjPaOLEMOC/QpAcqvLMkrl23ko19VlDexXqLknvvaDUS03H7+Qrmi+
-	 wBVpeFewgN3522doY84fwAf6mCOgFKDpJwlotIyEzq1PlS4kIcLWuqquLLK5E4z/ll
-	 uX9AEzDVAdTKg==
-Message-ID: <231a159e-7596-46d2-a44f-bd61b2908f38@kernel.org>
-Date: Wed, 28 Aug 2024 09:30:08 +0200
+	b=XJx+zllxRtbIFcPw10+GB9U3KW5jZfJQkJy7Isv0on6gfCA69klLJDFtiNxJsmGm+
+	 D0rZzbbJ8RoJmK+Et2hE4W9g9HtfS+OX6mL1Po95rDWXG3yQ4zc1CP7HM5XYQHpTLr
+	 HiwlqVhx0M7K+pydVmJ8dendJ0h9kPw0hS3dchqTBEjvx17b9kdl/FgL9DwCbbiXcY
+	 wl1vyQxy6m6064jFersWuWUo3tpiHE6y3W6147hoRIYFzoKM1Mq8s2sNefi7JeAzyx
+	 oO15gH4SOF+qa5o28T/hrNblCJBDRe+a85SqWpQhH0Wy3H7ArRd8geF/FF6lKz5DSo
+	 sDUmeblQs0yqA==
+Message-ID: <12486d33-e70f-49df-b16e-85c99b5027ca@kernel.org>
+Date: Wed, 28 Aug 2024 09:30:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] clk: aspeed: add AST2700 clk driver
+Subject: Re: [PATCH v2 0/3] Add support for AST2700 clk driver
 To: Ryan Chen <ryan_chen@aspeedtech.com>, mturquette@baylibre.com,
  sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
  joel@jms.id.au, andrew@codeconstruct.com.au, p.zabel@pengutronix.de,
@@ -57,7 +57,6 @@ To: Ryan Chen <ryan_chen@aspeedtech.com>, mturquette@baylibre.com,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-aspeed@lists.ozlabs.org
 References: <20240828062740.1614744-1-ryan_chen@aspeedtech.com>
- <20240828062740.1614744-4-ryan_chen@aspeedtech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,39 +102,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240828062740.1614744-4-ryan_chen@aspeedtech.com>
+In-Reply-To: <20240828062740.1614744-1-ryan_chen@aspeedtech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 28/08/2024 08:27, Ryan Chen wrote:
-> Add AST2700 clock controller driver. This driver also selects MFD_SYSCON,
-> which provides access to system controller registers, and register the
-> reset controller.
+> This patch series is add clk driver for AST2700.
 > 
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> AST2700 is the 8th generation of Integrated Remote Management Processor
+> introduced by ASPEED Technology Inc. Which is Board Management controller
+> (BMC) SoC family. AST2700 have two SoC connected, one is SoC0, another
+> is SoC1, it has it's own scu, this driver inlcude SCU0 and SCU1 driver.
+> 
+> v2:
+> -yaml: drop 64bits address example.
+> -yaml: add discription about soc0 and soc1
 
+Where?
 
-> +	clks[SCU0_CLK_GATE_EMMCCLK] =
-> +		ast2700_clk_hw_register_gate(NULL, "emmcclk-gate", "emmcclk",
-> +					     0, clk_base + SCU0_CLK_STOP,
-> +					     27, 0, &ast2700_clk_lock);
-> +
-> +	clks[SCU0_CLK_GATE_RVAS1CLK] =
-> +		ast2700_clk_hw_register_gate(NULL, "rvas2clk", NULL,
-> +					     0, clk_base + SCU0_CLK_STOP,
-> +					     28, 0, &ast2700_clk_lock);
-> +
-> +	of_clk_add_hw_provider(soc0_node, of_clk_hw_onecell_get, clk_data);
-> +
-> +	return 0;
-> +};
-> +
-> +CLK_OF_DECLARE_DRIVER(ast2700_soc0, "aspeed,ast2700-scu0", ast2700_soc0_clk_init);
-> +CLK_OF_DECLARE_DRIVER(ast2700_soc1, "aspeed,ast2700-scu1", ast2700_soc1_clk_init);
-
-Nope, this is not documented.
-
-You cannot add new compatibles without bindings.
+Proof read your patches before sending.
 
 Best regards,
 Krzysztof
