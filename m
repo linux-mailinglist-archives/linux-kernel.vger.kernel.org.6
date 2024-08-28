@@ -1,481 +1,243 @@
-Return-Path: <linux-kernel+bounces-305525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2740B962FEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:27:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B847962FE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:25:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A736B22173
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:26:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C65E7288248
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039421A76C1;
-	Wed, 28 Aug 2024 18:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CA31AB504;
+	Wed, 28 Aug 2024 18:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dh4d3PZD"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n0DA1P7s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ECF0154C19
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 18:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2AC1AB517;
+	Wed, 28 Aug 2024 18:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724869611; cv=none; b=KJLiS00Id83ubN+XVgZKtWTwwZf4IbhDjv7hGBzjfXQoc8NTgoz15T19CnXNR1Jrs0FSeVI6pGRvPfYe2lSg4CdbpPhGo2pCSTxe0ierU3LzVB4oNTcGrL4BQiIuQt+TLUFs9y/FuCrM9EASXdMOZBN2wDrDG1yQMzZQVaJbMS0=
+	t=1724869384; cv=none; b=TBVky7kVJE94047FkI5Bn/74sNZ42f435IowKhfD/oCGqB05gSglqKru5eXqSbLRgX+nKIUkq2PQBkBBpQ8dZDBq+HCtBF+25n0y4jLbZrPFhnOh7Byh5ghNdvaYgvf2hUbQnQxPQnsNN+XreurWeb+ofOSsSfF33/ZcIZhnz/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724869611; c=relaxed/simple;
-	bh=WNmFxmkbhmouO7S4e9WUW/QOLGBiModPn2gBnqr0L/0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C6/uPDs9/YUcPzc+GheRlI080pJybzUn66cft6ZYlA6CC7R1a9fK2sE8k1pt7ebGmtzJl5PeTEqHuIzl28NYemS3bGX5KfRqfbi7T26elDXIBWXhvO5U8ZXg7kxJJe80jAapkA2Vvd95xGKe+AdhycWLx1TDyvLz6NX8m6/NeyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dh4d3PZD; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7cd967d8234so4294488a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 11:26:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724869609; x=1725474409; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kGSEynY/tSTPK3DW4OerxLnNLuQyWG4hJwz9J7iPcWQ=;
-        b=dh4d3PZDcX6KLxKa6n9r2jL3HWGGcPEdc5/hUOTf6OSokV4uxJWZuHnFRDq4nGoBkO
-         smxZKJvhYtmBb64SxyIfj58FFxaMFAMV/MWrrWZB5pJ+IxJGiPnMnvR5vh/6c3JM1vcB
-         LaSywpx6cUfPG7XqxvBbMlQ36xajBp1t5fwZzYaLizLwg3nBRi0o7tE/3Sk/1u8VHkf9
-         EBVU+S/XFNwqEtykkQFwry7JTMgNN+POq84sdCZvufX6RPXQ0PJIvpI0l5cx3ZjG6ZRG
-         ryxSTndSYeBPNntnizEjSsHMhigxx5A2PETt0ReA5jVAlD5sQyllw6sfq0xDpJh4+czG
-         uifA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724869609; x=1725474409;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kGSEynY/tSTPK3DW4OerxLnNLuQyWG4hJwz9J7iPcWQ=;
-        b=kdN06LWv330K0FTBAPQqsSEIfsCIMICij0mk0dsp3YwVuoqkwMNKqksJL1ibnkksNG
-         tXgaJ2nyh2pNAHAVTqKc5ZzFEcK99dfNb1DS9Re3sR9u3jo0VwfqGogySnNlDnxhHiNR
-         guabfNMf16tEVA8gMLn5xVGH0sKuE2dQ6Aqxt7GyKvedD0QGR5GeKf5IpzwYIeKvohfb
-         S1mBHNvyXjt2G4nVd4+xWm5uT/b9kNDBbz2gy+StSYbQX1tXO9tvTiF4KXjtUZMQ4vvX
-         u0ktHSkvcjvQBouFes5ANfAyxz7qezoLwvmgA6y7y7v5+qzohgA5ReFONOTY+/b9TqlV
-         RvXw==
-X-Forwarded-Encrypted: i=1; AJvYcCXEQTuWZdn48Rc15Var2/rXF8sLe0qzfBICBdftM/FP5ZhhzjEmyHECppGxERhogrGZj/FogE63AZWaGu8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4IK7BIIrqjVW7aVxJm1q9K0Yady0fkfYuvIMb6aB61g/9z234
-	V2QqFK87tghys7hRKdSSU3hQ/W/gsYc/zPCwxlNm28lD+viQUxtO
-X-Google-Smtp-Source: AGHT+IEGvbnuPPwVLsqdo82Q5zCnJQ7MDvQGxHqiZZlUXQCu4WYy7vm+ubSpfUrTHl5/YB7u3xGnpw==
-X-Received: by 2002:a05:6a21:38b:b0:1c2:9095:7382 with SMTP id adf61e73a8af0-1cce10ff577mr188460637.52.1724869608960;
-        Wed, 28 Aug 2024 11:26:48 -0700 (PDT)
-Received: from distilledx.srmu.edu.in ([103.4.220.252])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71434335e77sm10350929b3a.202.2024.08.28.11.26.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 11:26:48 -0700 (PDT)
-From: Tejas Vipin <tejasvipin76@gmail.com>
-To: neil.armstrong@linaro.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch
-Cc: quic_jesszhan@quicinc.com,
-	dianders@chromium.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Tejas Vipin <tejasvipin76@gmail.com>
-Subject: [PATCH v2] drm/panel: novatek-nt35950: transition to mipi_dsi wrapped functions
-Date: Wed, 28 Aug 2024 23:52:10 +0530
-Message-ID: <20240828182210.565861-1-tejasvipin76@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1724869384; c=relaxed/simple;
+	bh=ZPEqj12unuqmbPhzrpB4Ppp8Gj6/0C6oJfxOrcdRY0I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jg1/YfDHGF9Hb4ThTLNmktCZF055CFdvaWkxBpxanQ092Qu8GibYq1QkHF2gL01TbYiIB25kCKU72k31Uk1GvnOsjhZpIRKj17nONm22z0/rizc5O8whuoipxfgYAymlevxFaz2/6tHLQfqtEUN9NL9p31TE9RoL2BEnFixznSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n0DA1P7s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DB78C4CEC3;
+	Wed, 28 Aug 2024 18:23:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724869383;
+	bh=ZPEqj12unuqmbPhzrpB4Ppp8Gj6/0C6oJfxOrcdRY0I=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=n0DA1P7s0d0BPkuK3LGk5IbracbSzFfGUzBDgYdFmSISF4MC+kGhamJ15wVkr9oR/
+	 OGp2B46q0v75xMBXwgbRkuTEEGaNRs/SdkVmTYi7D5Jw/mBHgRnVKBs9aLoXX8RJ/v
+	 aQpNEBudFC2uLwyhomWruCwHwZ6SM+coUvFhyV9JmgUj7mCyvxRuI4UqKM1Pln7hUw
+	 k/omBsyOKEF0xDcATy/CsaCk7hzH1npu4b6AHWP6tbLUZ6oRR6ygh//1y7MQOGzcxp
+	 Xfwzircjr2bmkPsekkMd13OODhQfwYlJAC7SZbPJrwEvGbCGQWyQBL8KASWX0Hp1VK
+	 ULtYS6NomzywA==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f401b2347dso9493791fa.1;
+        Wed, 28 Aug 2024 11:23:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU3FurQofjYcnz8hzspqRWI0fuzqQwGh5nE4vViqaQ+fLDCIVCWAe4K+/BSvIY9aa7wwJKveR0Fl4zvpKdwCQk=@vger.kernel.org, AJvYcCVsp84wZejNGVpE7693m83+2k3o+1b8t+XEcH2r7hk8VlJf9uJnZ4AOLSzh9u2PMbftwtQf73acal4MWdydRw==@vger.kernel.org, AJvYcCWjIeGsobA35P8rWXhEVglWrEpP3FI0kLIk1JPFDB4DY5yjDtvzo/5a86nErMRGXu6C6rNiHB3DGLKq6oY=@vger.kernel.org, AJvYcCXdVFbf4vbBvWlWDgvwv1ZXjBPtHjS4Weo2HtI1F0JMEDfXVE08CNe21RsI/J9A1Dr+3qvTzLgeSYtfvb7V@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQqYRx4X4YoVxTFM5rRI2/F3jWT5k/mGZP3tczLK/hmNy4jl8v
+	QLgQo5yFNbMKlR7A9TCrUj65/MgAC8yAsFgI4f8cXTZ/kW2oueb6yQ+9k3HZ/W0p+DkIdJsOW1Z
+	Q64NuxDhVmkT9xTFJ7Vr0KLuQ5lk=
+X-Google-Smtp-Source: AGHT+IFg/5nvahms9IA0cUD2Xy1KvSzEcJhA3j5EkczAEmqOQM4lkIGJmdCODQo4ptJgRj5W19BUN7qyBinuvwGprpM=
+X-Received: by 2002:a2e:b8d6:0:b0:2f3:f1cf:5314 with SMTP id
+ 38308e7fff4ca-2f6129ba3d2mr175401fa.10.1724869382232; Wed, 28 Aug 2024
+ 11:23:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240815173903.4172139-21-samitolvanen@google.com> <20240815173903.4172139-24-samitolvanen@google.com>
+In-Reply-To: <20240815173903.4172139-24-samitolvanen@google.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 29 Aug 2024 03:22:25 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASAzsgmkWGOU7WWuBMmzG4vPRDQLjyW4sW+q46QZT=vnQ@mail.gmail.com>
+Message-ID: <CAK7LNASAzsgmkWGOU7WWuBMmzG4vPRDQLjyW4sW+q46QZT=vnQ@mail.gmail.com>
+Subject: Re: [PATCH v2 03/19] gendwarfksyms: Add address matching
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Maurer <mmaurer@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, 
+	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Changes the novatek-nt35950 panel to use multi style functions for
-improved error handling.
+On Fri, Aug 16, 2024 at 2:39=E2=80=AFAM Sami Tolvanen <samitolvanen@google.=
+com> wrote:
+>
+> The compiler may choose not to emit type information in DWARF for all
+> aliases, but it's possible for each alias to be exported separately.
+> To ensure we find type information for the aliases as well, read
+> {section, address} tuples from the symbol table and match symbols also
+> by address.
+>
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> ---
+>  scripts/gendwarfksyms/gendwarfksyms.c |   2 +
+>  scripts/gendwarfksyms/gendwarfksyms.h |   7 ++
+>  scripts/gendwarfksyms/symbols.c       | 161 +++++++++++++++++++++++++-
+>  3 files changed, 165 insertions(+), 5 deletions(-)
+>
+> diff --git a/scripts/gendwarfksyms/gendwarfksyms.c b/scripts/gendwarfksym=
+s/gendwarfksyms.c
+> index d209b237766b..e2f8ee5a4bf3 100644
+> --- a/scripts/gendwarfksyms/gendwarfksyms.c
+> +++ b/scripts/gendwarfksyms/gendwarfksyms.c
+> @@ -118,6 +118,8 @@ int main(int argc, const char **argv)
+>                         return -1;
+>                 }
+>
+> +               check(symbol_read_symtab(fd));
+> +
+>                 dwfl =3D dwfl_begin(&callbacks);
+>                 if (!dwfl) {
+>                         error("dwfl_begin failed for '%s': %s", object_fi=
+les[n],
+> diff --git a/scripts/gendwarfksyms/gendwarfksyms.h b/scripts/gendwarfksym=
+s/gendwarfksyms.h
+> index 03f3e408a839..cb9106dfddb9 100644
+> --- a/scripts/gendwarfksyms/gendwarfksyms.h
+> +++ b/scripts/gendwarfksyms/gendwarfksyms.h
+> @@ -61,6 +61,10 @@ extern bool debug;
+>  /*
+>   * symbols.c
+>   */
+> +struct symbol_addr {
+> +       uint32_t section;
+> +       Elf64_Addr address;
+> +};
+>
+>  static inline u32 name_hash(const char *name)
+>  {
+> @@ -69,10 +73,13 @@ static inline u32 name_hash(const char *name)
+>
+>  struct symbol {
+>         const char *name;
+> +       struct symbol_addr addr;
+> +       struct hlist_node addr_hash;
+>         struct hlist_node name_hash;
+>  };
+>
+>  extern int symbol_read_exports(FILE *file);
+> +extern int symbol_read_symtab(int fd);
+>  extern struct symbol *symbol_get(const char *name);
+>
+>  /*
+> diff --git a/scripts/gendwarfksyms/symbols.c b/scripts/gendwarfksyms/symb=
+ols.c
+> index 673ad9cf9e77..f96acb941196 100644
+> --- a/scripts/gendwarfksyms/symbols.c
+> +++ b/scripts/gendwarfksyms/symbols.c
+> @@ -6,11 +6,43 @@
+>  #include "gendwarfksyms.h"
+>
+>  #define SYMBOL_HASH_BITS 15
+> +
+> +/* struct symbol_addr -> struct symbol */
+> +static DEFINE_HASHTABLE(symbol_addrs, SYMBOL_HASH_BITS);
+> +/* name -> struct symbol */
+>  static DEFINE_HASHTABLE(symbol_names, SYMBOL_HASH_BITS);
+>
+> +static inline u32 symbol_addr_hash(const struct symbol_addr *addr)
+> +{
+> +       return jhash(addr, sizeof(struct symbol_addr), 0);
+> +}
+> +
+>  typedef int (*symbol_callback_t)(struct symbol *, void *arg);
+>
+> -static int for_each(const char *name, symbol_callback_t func, void *data=
+)
+> +static int __for_each_addr(struct symbol *sym, symbol_callback_t func,
+> +                          void *data)
+> +{
+> +       struct hlist_node *tmp;
+> +       struct symbol *match =3D NULL;
+> +       int processed =3D 0;
+> +
+> +       hash_for_each_possible_safe(symbol_addrs, match, tmp, addr_hash,
+> +                                   symbol_addr_hash(&sym->addr)) {
+> +               if (match =3D=3D sym)
+> +                       continue; /* Already processed */
+> +
+> +               if (match->addr.section =3D=3D sym->addr.section &&
+> +                   match->addr.address =3D=3D sym->addr.address) {
+> +                       check(func(match, data));
+> +                       ++processed;
+> +               }
+> +       }
+> +
+> +       return processed;
+> +}
+> +
+> +static int for_each(const char *name, bool name_only, symbol_callback_t =
+func,
+> +                   void *data)
+>  {
+>         struct hlist_node *tmp;
+>         struct symbol *match;
+> @@ -23,9 +55,13 @@ static int for_each(const char *name, symbol_callback_=
+t func, void *data)
+>                 if (strcmp(match->name, name))
+>                         continue;
+>
+> +               /* Call func for the match, and all address matches */
+>                 if (func)
+>                         check(func(match, data));
+>
+> +               if (!name_only && match->addr.section !=3D SHN_UNDEF)
+> +                       return checkp(__for_each_addr(match, func, data))=
+ + 1;
+> +
+>                 return 1;
+>         }
+>
+> @@ -34,7 +70,7 @@ static int for_each(const char *name, symbol_callback_t=
+ func, void *data)
+>
+>  static bool is_exported(const char *name)
+>  {
+> -       return checkp(for_each(name, NULL, NULL)) > 0;
+> +       return checkp(for_each(name, true, NULL, NULL)) > 0;
+>  }
+>
+>  int symbol_read_exports(FILE *file)
+> @@ -57,13 +93,14 @@ int symbol_read_exports(FILE *file)
+>                 if (is_exported(name))
+>                         continue; /* Ignore duplicates */
+>
+> -               sym =3D malloc(sizeof(struct symbol));
+> +               sym =3D calloc(1, sizeof(struct symbol));
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
----
-Changes in v2:
-    - Style changes
-    - Fixed changes in logic
 
-v1: https://lore.kernel.org/all/20240824084422.202946-1-tejasvipin76@gmail.com/
----
- drivers/gpu/drm/panel/panel-novatek-nt35950.c | 211 ++++++------------
- 1 file changed, 66 insertions(+), 145 deletions(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-novatek-nt35950.c b/drivers/gpu/drm/panel/panel-novatek-nt35950.c
-index 028fdac293f7..b036208f9356 100644
---- a/drivers/gpu/drm/panel/panel-novatek-nt35950.c
-+++ b/drivers/gpu/drm/panel/panel-novatek-nt35950.c
-@@ -100,106 +100,87 @@ static void nt35950_reset(struct nt35950 *nt)
- 
- /*
-  * nt35950_set_cmd2_page - Select manufacturer control (CMD2) page
-+ * @dsi_ctx: context for mipi_dsi functions
-  * @nt:   Main driver structure
-  * @page: Page number (0-7)
-- *
-- * Return: Number of transferred bytes or negative number on error
-  */
--static int nt35950_set_cmd2_page(struct nt35950 *nt, u8 page)
-+static void nt35950_set_cmd2_page(struct mipi_dsi_multi_context *dsi_ctx,
-+				  struct nt35950 *nt, u8 page)
- {
- 	const u8 mauc_cmd2_page[] = { MCS_CMD_MAUCCTR, 0x55, 0xaa, 0x52,
- 				      0x08, page };
--	int ret;
- 
--	ret = mipi_dsi_dcs_write_buffer(nt->dsi[0], mauc_cmd2_page,
-+	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, mauc_cmd2_page,
- 					ARRAY_SIZE(mauc_cmd2_page));
--	if (ret < 0)
--		return ret;
--
--	nt->last_page = page;
--	return 0;
-+	if (!dsi_ctx->accum_err)
-+		nt->last_page = page;
- }
- 
- /*
-  * nt35950_set_data_compression - Set data compression mode
-+ * @dsi_ctx: context for mipi_dsi functions
-  * @nt:        Main driver structure
-  * @comp_mode: Compression mode
-- *
-- * Return: Number of transferred bytes or negative number on error
-  */
--static int nt35950_set_data_compression(struct nt35950 *nt, u8 comp_mode)
-+static void nt35950_set_data_compression(struct mipi_dsi_multi_context *dsi_ctx,
-+					 struct nt35950 *nt, u8 comp_mode)
- {
- 	u8 cmd_data_compression[] = { MCS_PARAM_DATA_COMPRESSION, comp_mode };
- 	u8 cmd_vesa_dsc_on[] = { MCS_PARAM_VESA_DSC_ON, !!comp_mode };
- 	u8 cmd_vesa_dsc_setting[] = { MCS_PARAM_VESA_DSC_SETTING, 0x03 };
- 	u8 last_page = nt->last_page;
--	int ret;
- 
- 	/* Set CMD2 Page 0 if we're not there yet */
--	if (last_page != 0) {
--		ret = nt35950_set_cmd2_page(nt, 0);
--		if (ret < 0)
--			return ret;
--	}
-+	if (last_page != 0)
-+		nt35950_set_cmd2_page(dsi_ctx, nt, 0);
- 
--	ret = mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_data_compression,
-+	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_data_compression,
- 					ARRAY_SIZE(cmd_data_compression));
--	if (ret < 0)
--		return ret;
--
--	ret = mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_vesa_dsc_on,
-+	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_vesa_dsc_on,
- 					ARRAY_SIZE(cmd_vesa_dsc_on));
--	if (ret < 0)
--		return ret;
- 
- 	/* Set the vesa dsc setting on Page 4 */
--	ret = nt35950_set_cmd2_page(nt, 4);
--	if (ret < 0)
--		return ret;
-+	nt35950_set_cmd2_page(dsi_ctx, nt, 4);
- 
- 	/* Display Stream Compression setting, always 0x03 */
--	ret = mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_vesa_dsc_setting,
-+	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_vesa_dsc_setting,
- 					ARRAY_SIZE(cmd_vesa_dsc_setting));
--	if (ret < 0)
--		return ret;
- 
- 	/* Get back to the previously set page */
--	return nt35950_set_cmd2_page(nt, last_page);
-+	nt35950_set_cmd2_page(dsi_ctx, nt, last_page);
- }
- 
- /*
-  * nt35950_set_scaler - Enable/disable resolution upscaling
-- * @nt:        Main driver structure
-+ * @dsi_ctx: context for mipi_dsi functions
-  * @scale_up:  Scale up function control
-- *
-- * Return: Number of transferred bytes or negative number on error
-  */
--static int nt35950_set_scaler(struct nt35950 *nt, u8 scale_up)
-+static void nt35950_set_scaler(struct mipi_dsi_multi_context *dsi_ctx,
-+			       u8 scale_up)
- {
- 	u8 cmd_scaler[] = { MCS_PARAM_SCALER_FUNCTION, scale_up };
- 
--	return mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_scaler,
--					 ARRAY_SIZE(cmd_scaler));
-+	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_scaler,
-+					ARRAY_SIZE(cmd_scaler));
- }
- 
- /*
-  * nt35950_set_scale_mode - Resolution upscaling mode
-- * @nt:   Main driver structure
-+ * @dsi_ctx: context for mipi_dsi functions
-  * @mode: Scaler mode (MCS_DATA_COMPRESSION_*)
-- *
-- * Return: Number of transferred bytes or negative number on error
-  */
--static int nt35950_set_scale_mode(struct nt35950 *nt, u8 mode)
-+static void nt35950_set_scale_mode(struct mipi_dsi_multi_context *dsi_ctx,
-+				   u8 mode)
- {
- 	u8 cmd_scaler[] = { MCS_PARAM_SCALEUP_MODE, mode };
- 
--	return mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_scaler,
--					 ARRAY_SIZE(cmd_scaler));
-+	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_scaler,
-+					ARRAY_SIZE(cmd_scaler));
- }
- 
- /*
-  * nt35950_inject_black_image - Display a completely black image
-- * @nt:   Main driver structure
-+ * @dsi_ctx: context for mipi_dsi functions
-  *
-  * After IC setup, the attached panel may show random data
-  * due to driveric behavior changes (resolution, compression,
-@@ -208,43 +189,34 @@ static int nt35950_set_scale_mode(struct nt35950 *nt, u8 mode)
-  * the display.
-  * It makes sense to push a black image before sending the sleep-out
-  * and display-on commands.
-- *
-- * Return: Number of transferred bytes or negative number on error
-  */
--static int nt35950_inject_black_image(struct nt35950 *nt)
-+static void nt35950_inject_black_image(struct mipi_dsi_multi_context *dsi_ctx)
- {
- 	const u8 cmd0_black_img[] = { 0x6f, 0x01 };
- 	const u8 cmd1_black_img[] = { 0xf3, 0x10 };
- 	u8 cmd_test[] = { 0xff, 0xaa, 0x55, 0xa5, 0x80 };
--	int ret;
- 
- 	/* Enable test command */
--	ret = mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_test, ARRAY_SIZE(cmd_test));
--	if (ret < 0)
--		return ret;
-+	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_test, ARRAY_SIZE(cmd_test));
- 
- 	/* Send a black image */
--	ret = mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd0_black_img,
-+	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd0_black_img,
- 					ARRAY_SIZE(cmd0_black_img));
--	if (ret < 0)
--		return ret;
--	ret = mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd1_black_img,
-+	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd1_black_img,
- 					ARRAY_SIZE(cmd1_black_img));
--	if (ret < 0)
--		return ret;
- 
- 	/* Disable test command */
- 	cmd_test[ARRAY_SIZE(cmd_test) - 1] = 0x00;
--	return mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_test, ARRAY_SIZE(cmd_test));
-+	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_test, ARRAY_SIZE(cmd_test));
- }
- 
- /*
-  * nt35950_set_dispout - Set Display Output register parameters
-  * @nt:    Main driver structure
-- *
-- * Return: Number of transferred bytes or negative number on error
-+ * @dsi_ctx: context for mipi_dsi functions
-  */
--static int nt35950_set_dispout(struct nt35950 *nt)
-+static void nt35950_set_dispout(struct mipi_dsi_multi_context *dsi_ctx,
-+				struct nt35950 *nt)
- {
- 	u8 cmd_dispout[] = { MCS_PARAM_DISP_OUTPUT_CTRL, 0x00 };
- 	const struct nt35950_panel_mode *mode_data = nt->desc->mode_data;
-@@ -254,8 +226,8 @@ static int nt35950_set_dispout(struct nt35950 *nt)
- 	if (mode_data[nt->cur_mode].enable_sram)
- 		cmd_dispout[1] |= MCS_DISP_OUT_SRAM_EN;
- 
--	return mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_dispout,
--					 ARRAY_SIZE(cmd_dispout));
-+	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_dispout,
-+					ARRAY_SIZE(cmd_dispout));
- }
- 
- static int nt35950_get_current_mode(struct nt35950 *nt)
-@@ -284,78 +256,47 @@ static int nt35950_on(struct nt35950 *nt)
- {
- 	const struct nt35950_panel_mode *mode_data = nt->desc->mode_data;
- 	struct mipi_dsi_device *dsi = nt->dsi[0];
--	struct device *dev = &dsi->dev;
--	int ret;
-+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
- 
- 	nt->cur_mode = nt35950_get_current_mode(nt);
- 	nt->dsi[0]->mode_flags |= MIPI_DSI_MODE_LPM;
- 	nt->dsi[1]->mode_flags |= MIPI_DSI_MODE_LPM;
- 
--	ret = nt35950_set_cmd2_page(nt, 0);
--	if (ret < 0)
--		return ret;
-+	nt35950_set_cmd2_page(&dsi_ctx, nt, 0);
-+	nt35950_set_data_compression(&dsi_ctx, nt, mode_data[nt->cur_mode].compression);
-+	nt35950_set_scale_mode(&dsi_ctx, mode_data[nt->cur_mode].scaler_mode);
-+	nt35950_set_scaler(&dsi_ctx, mode_data[nt->cur_mode].scaler_on);
-+	nt35950_set_dispout(&dsi_ctx, nt);
- 
--	ret = nt35950_set_data_compression(nt, mode_data[nt->cur_mode].compression);
--	if (ret < 0)
--		return ret;
--
--	ret = nt35950_set_scale_mode(nt, mode_data[nt->cur_mode].scaler_mode);
--	if (ret < 0)
--		return ret;
--
--	ret = nt35950_set_scaler(nt, mode_data[nt->cur_mode].scaler_on);
--	if (ret < 0)
--		return ret;
--
--	ret = nt35950_set_dispout(nt);
--	if (ret < 0)
--		return ret;
--
--	ret = mipi_dsi_dcs_set_tear_on(dsi, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
--	if (ret < 0) {
--		dev_err(dev, "Failed to set tear on: %d\n", ret);
--		return ret;
--	}
--
--	ret = mipi_dsi_dcs_set_tear_scanline(dsi, 0);
--	if (ret < 0) {
--		dev_err(dev, "Failed to set tear scanline: %d\n", ret);
--		return ret;
--	}
-+	mipi_dsi_dcs_set_tear_on_multi(&dsi_ctx, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
-+	mipi_dsi_dcs_set_tear_scanline_multi(&dsi_ctx, 0);
- 
- 	/* CMD2 Page 1 */
--	ret = nt35950_set_cmd2_page(nt, 1);
--	if (ret < 0)
--		return ret;
-+	nt35950_set_cmd2_page(&dsi_ctx, nt, 1);
- 
- 	/* Unknown command */
--	mipi_dsi_dcs_write_seq(dsi, 0xd4, 0x88, 0x88);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xd4, 0x88, 0x88);
- 
- 	/* CMD2 Page 7 */
--	ret = nt35950_set_cmd2_page(nt, 7);
--	if (ret < 0)
--		return ret;
-+	nt35950_set_cmd2_page(&dsi_ctx, nt, 7);
- 
- 	/* Enable SubPixel Rendering */
--	mipi_dsi_dcs_write_seq(dsi, MCS_PARAM_SPR_EN, 0x01);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MCS_PARAM_SPR_EN, 0x01);
- 
- 	/* SPR Mode: YYG Rainbow-RGB */
--	mipi_dsi_dcs_write_seq(dsi, MCS_PARAM_SPR_MODE, MCS_SPR_MODE_YYG_RAINBOW_RGB);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MCS_PARAM_SPR_MODE,
-+				     MCS_SPR_MODE_YYG_RAINBOW_RGB);
- 
- 	/* CMD3 */
--	ret = nt35950_inject_black_image(nt);
--	if (ret < 0)
--		return ret;
-+	nt35950_inject_black_image(&dsi_ctx);
-+	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-+	mipi_dsi_msleep(&dsi_ctx, 120);
- 
--	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
--	if (ret < 0)
--		return ret;
--	msleep(120);
-+	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
-+	mipi_dsi_msleep(&dsi_ctx, 120);
- 
--	ret = mipi_dsi_dcs_set_display_on(dsi);
--	if (ret < 0)
--		return ret;
--	msleep(120);
-+	if (dsi_ctx.accum_err)
-+		return dsi_ctx.accum_err;
- 
- 	nt->dsi[0]->mode_flags &= ~MIPI_DSI_MODE_LPM;
- 	nt->dsi[1]->mode_flags &= ~MIPI_DSI_MODE_LPM;
-@@ -363,30 +304,19 @@ static int nt35950_on(struct nt35950 *nt)
- 	return 0;
- }
- 
--static int nt35950_off(struct nt35950 *nt)
-+static void nt35950_off(struct nt35950 *nt)
- {
--	struct device *dev = &nt->dsi[0]->dev;
--	int ret;
-+	struct mipi_dsi_device *dsi = nt->dsi[0];
-+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
- 
--	ret = mipi_dsi_dcs_set_display_off(nt->dsi[0]);
--	if (ret < 0) {
--		dev_err(dev, "Failed to set display off: %d\n", ret);
--		goto set_lpm;
--	}
--	usleep_range(10000, 11000);
-+	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
-+	mipi_dsi_usleep_range(&dsi_ctx, 10000, 11000);
- 
--	ret = mipi_dsi_dcs_enter_sleep_mode(nt->dsi[0]);
--	if (ret < 0) {
--		dev_err(dev, "Failed to enter sleep mode: %d\n", ret);
--		goto set_lpm;
--	}
--	msleep(150);
-+	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
-+	mipi_dsi_msleep(&dsi_ctx, 150);
- 
--set_lpm:
- 	nt->dsi[0]->mode_flags |= MIPI_DSI_MODE_LPM;
- 	nt->dsi[1]->mode_flags |= MIPI_DSI_MODE_LPM;
--
--	return 0;
- }
- 
- static int nt35950_sharp_init_vregs(struct nt35950 *nt, struct device *dev)
-@@ -427,7 +357,6 @@ static int nt35950_sharp_init_vregs(struct nt35950 *nt, struct device *dev)
- static int nt35950_prepare(struct drm_panel *panel)
- {
- 	struct nt35950 *nt = to_nt35950(panel);
--	struct device *dev = &nt->dsi[0]->dev;
- 	int ret;
- 
- 	ret = regulator_enable(nt->vregs[0].consumer);
-@@ -452,10 +381,6 @@ static int nt35950_prepare(struct drm_panel *panel)
- 	nt35950_reset(nt);
- 
- 	ret = nt35950_on(nt);
--	if (ret < 0) {
--		dev_err(dev, "Failed to initialize panel: %d\n", ret);
--		goto end;
--	}
- 
- end:
- 	if (ret < 0) {
-@@ -469,12 +394,8 @@ static int nt35950_prepare(struct drm_panel *panel)
- static int nt35950_unprepare(struct drm_panel *panel)
- {
- 	struct nt35950 *nt = to_nt35950(panel);
--	struct device *dev = &nt->dsi[0]->dev;
--	int ret;
- 
--	ret = nt35950_off(nt);
--	if (ret < 0)
--		dev_err(dev, "Failed to deinitialize panel: %d\n", ret);
-+	nt35950_off(nt);
- 
- 	gpiod_set_value_cansleep(nt->reset_gpio, 0);
- 	regulator_bulk_disable(ARRAY_SIZE(nt->vregs), nt->vregs);
--- 
-2.46.0
+I am tired of noise changes when reviewing this patch set.
 
+
+2/19 added malloc(), which is immediately replaced with calloc() by 3/19.
+
+
+
+
+
+
+
+
+
+
+--
+Best Regards
+
+Masahiro Yamada
 
