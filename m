@@ -1,679 +1,202 @@
-Return-Path: <linux-kernel+bounces-304765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1A8D962493
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:17:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30770962495
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:17:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EAA6B23CE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:17:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF497B20E99
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A6016C69E;
-	Wed, 28 Aug 2024 10:16:08 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0627A16C874;
+	Wed, 28 Aug 2024 10:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2DMIzrQX"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2042.outbound.protection.outlook.com [40.107.220.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB34116A924;
-	Wed, 28 Aug 2024 10:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724840167; cv=none; b=cKY2YmKxZWncCV5LMySTG+WblLBGm0ADJfxWR+Y+MgbOuponSglKou64z2BNPRBqF/44Fwj2yIvCY2NVnZHEC9F2zBgzEKjg1ZkvzE7pKZLzbf+ByeUKy28/S4GDTdw0Lo/SPoL97M4bW04lszZk5yqyKKXfh9JaWG54lmlGm7k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724840167; c=relaxed/simple;
-	bh=6fTCTvHzDGJG3av16ILB08CFPQEw36dc+7Fxgo1kL54=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZOc2EX2HvweauNFdfFl3dD8uWPYlTtHWjFOqFGwgrUKzXvErzkS3ucxQsQiA/gIzf/0U61Cx4skAsf46qJTCjlybuSdpq9Z56m0nQltr9LJitAUyvSeZgNhQWZdlx46OLzEfZeX4Zila5wjZ4ZM4Rq4L91uB75/tSTXOcuO7uAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Wv0g710RNz9sRy;
-	Wed, 28 Aug 2024 12:16:03 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 4ZUUlAldVm72; Wed, 28 Aug 2024 12:16:03 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wv0g66nm8z9sRs;
-	Wed, 28 Aug 2024 12:16:02 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id D75978B78F;
-	Wed, 28 Aug 2024 12:16:02 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id o2hwGq96byoD; Wed, 28 Aug 2024 12:16:02 +0200 (CEST)
-Received: from [172.25.230.108] (unknown [172.25.230.108])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 924688B764;
-	Wed, 28 Aug 2024 12:16:02 +0200 (CEST)
-Message-ID: <a675fb67-57bb-4fb3-9c34-3cee141b9539@csgroup.eu>
-Date: Wed, 28 Aug 2024 12:16:02 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8490116C438;
+	Wed, 28 Aug 2024 10:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724840196; cv=fail; b=AU72pHi4VgHf6/GBfMV7lEZp608FDmVkj1BZjcl/jLYJX2bWXpPrYHuBRR3QwTKoFPtxVs0FntzWVTBTq9qZrYBTdAtyJotRqYxdANLcbxy5V13Dfg8AaGaMGE9iXY8GDig7AU0vCvoGg86GwI9miwV6Bgn3r/SPZ3mp8SSnRbg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724840196; c=relaxed/simple;
+	bh=lM3SbVFW1Ba9ayIu8VJ/OFJ2JtKVhXEif5utptXc3ms=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=INXOdNwpTWsAtQVrUE8OeNRwijxTNZsKHJoZsx7HVkyM+ly6fD5GPxQNPAzevoUJ1qUKsy4Pf5GqkxNpQnxLSW6W+Ugqu8fY3vA0x8h9bU/1B5coSd9TPsnvPI05Pvm7QZe2DbMQ5+V6rYZsVj8y5szEmkxB/NwnlDn2zXTRr9M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2DMIzrQX; arc=fail smtp.client-ip=40.107.220.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fEY6E8PQggtyaNrP/AJGpH6/2aurzA8xLnXgI5OY9pbTuiKJvsPg2G9l/bs21zrXqwPkW7c/E19yU3PYxSjapV06NLl8Pab0Q60EufqkOcjVnIcyysWX/z8tXag+vmbtcGaVkRYeHvG5Y7+BplD9rHPdu9gP8Wc7cbOw2+dYjoOTD48ezFtkkODfqISwNJP0Nl6esbAhJrSbOjsfO7H1tmxNsupHDtP2qMCutkX3marvuO75WcPmI8Q+teIrqNYPWUQoOFsAouI30b/HG5mcX0cvpk/Dt2IjiH5vK4gXaF4/nMP6HbSqt4yjz+MSKU3S6pN/w314BOaJ7lK0hRx7PQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GxMMvnuNvmjrBJ/+tokqev3ZrMpNptpr09U85QiopxU=;
+ b=AIxnet0uQiYbk7gB+P83W26q32a/+JWixthQNHQ4edq4VJIwmw4T5RvVjwcCqW79Zk+lZQ4X8Nt0Zu5AdVWOGYzRtU5nVN4R2qQYLLoIb0YHCEzISSG1cpGsYh+fvje2DEZJg5lWXbLdXO14YSgueID2fra4SegVrsAfkYDcYT/1FBf8uZoqp3N5r6zkVbm012UcTA6RIGOFz/3Nd2ScyFx3S+d+JsZFemUqaISNh6m2V8fOzsxuZXz048P8nvffYazkX7E7tUZPju/VDvEoAihsqmixadd/QgC7g0upfhElV40UIjIgH+8tSo2hR8KgPwB5kzNeVHGQPjKtoMu8og==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GxMMvnuNvmjrBJ/+tokqev3ZrMpNptpr09U85QiopxU=;
+ b=2DMIzrQXhrBWSPIHiIgvEGiXFNEzUDcV0yrMUuKNSnuXe2wYHCzoaZJnd9vUkEhqKUr/74dEVDBz3XcekbfWqSFD3Ptl4Qyi7MtQZtLNHjN3KXApVdC9v4me8+zLCEDCiRs5cIEUyvBDDaYB2vRriU6j8x5KE9nS7HQ4TcASnGo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7SPRMB0010.namprd12.prod.outlook.com (2603:10b6:8:87::8) by
+ CH2PR12MB4262.namprd12.prod.outlook.com (2603:10b6:610:af::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7897.27; Wed, 28 Aug 2024 10:16:32 +0000
+Received: from DS7SPRMB0010.namprd12.prod.outlook.com
+ ([fe80::b021:a6a0:9c65:221e]) by DS7SPRMB0010.namprd12.prod.outlook.com
+ ([fe80::b021:a6a0:9c65:221e%6]) with mapi id 15.20.7897.021; Wed, 28 Aug 2024
+ 10:16:31 +0000
+Message-ID: <94899c78-97e3-230a-a7eb-d4d448d9fa75@amd.com>
+Date: Wed, 28 Aug 2024 15:46:23 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH v11 06/20] x86/sev: Handle failures from snp_init()
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
+ kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+ dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
+ pbonzini@redhat.com
+References: <20240731150811.156771-1-nikunj@amd.com>
+ <20240731150811.156771-7-nikunj@amd.com>
+ <20240827113227.GAZs25S8Ubep1CDYr8@fat_crate.local>
+ <5b62f751-668f-714e-24a2-6bbc188c3ce8@amd.com>
+ <20240828094933.GAZs7yrbCHDJUeUWys@fat_crate.local>
+From: "Nikunj A. Dadhania" <nikunj@amd.com>
+In-Reply-To: <20240828094933.GAZs7yrbCHDJUeUWys@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN3PR01CA0097.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:9b::16) To DS7SPRMB0010.namprd12.prod.outlook.com
+ (2603:10b6:8:87::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 2/6] net: ethernet: fs_enet: cosmetic cleanups
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net,
- Pantelis Antoniou <pantelis.antoniou@gmail.com>, Andrew Lunn
- <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Russell King <linux@armlinux.org.uk>, Florian Fainelli
- <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Herve Codina <herve.codina@bootlin.com>,
- linuxppc-dev@lists.ozlabs.org
-References: <20240828095103.132625-1-maxime.chevallier@bootlin.com>
- <20240828095103.132625-3-maxime.chevallier@bootlin.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20240828095103.132625-3-maxime.chevallier@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7SPRMB0010:EE_|CH2PR12MB4262:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5cecbe33-0ee6-4b70-5e64-08dcc74a7cd3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?a0NBYmFVNXRtY09Pc05LRDQ1UlhPdEh2azZlTWthNWZkTFo5Zm9XajJ5dmNo?=
+ =?utf-8?B?bHg5Wk52NDdFeG9mMzg5QnQ5a3RIdlVLNHo0dnQ5N0x6aGFRU29lR2RwTlps?=
+ =?utf-8?B?VjVsTGVGUm1Rb0svSEwxOHFsUmg2VDZJWEFGNnZoYXBQbE10bmtzWXhteVI5?=
+ =?utf-8?B?N29ybU9teVpXYkRKSEhYMUJLYWw4QzNLNUpjeDFwQ0czc3dXb2V1LzNXOGFm?=
+ =?utf-8?B?WTIwVFlsMWNUUU42MmlZTmFBSGVneXArRGlQV2FmclczQjVmY3g3eHY3RlJI?=
+ =?utf-8?B?YWdmWURxUFBXRHdaaUpkUnRzK0tTbDVMM1Y1QTNOSkFXdjZaTDY2TU1JWHE0?=
+ =?utf-8?B?ZXlkc3daYUJDMHBuVEJaVG96MjlIOGJaOE9sVWVxTzBpY055OXFiam90RXA3?=
+ =?utf-8?B?dDRuSTNhUldjVFJ2UEk2M0xsNGhLVlE0aGpnZlJxOWU1bWw3L2l1dDBzRllQ?=
+ =?utf-8?B?cEtvL1B2YXJYUFR3OFhMZVFROUF2RnY3ZjF2OWkyMUM1MmY5MkZpWGM5QWhJ?=
+ =?utf-8?B?MXJEcUlEYjg3ZDA2VHJEbkxLWFhPQVpuSXdzd21uY1ZROHcvcnlKYytvQlNh?=
+ =?utf-8?B?clc1bXZTTG5Ib3hTb2xzYXZDMndKa1ZWeVlESk5vN25RZFRLQ083eHVhekVI?=
+ =?utf-8?B?MnZ1U3gxclNnNlNKRysxYnRDMUdoVjhPM2ljVENVd3lPUHppMm9RT3JzVE1t?=
+ =?utf-8?B?UlN6Nk9tYk5JNHdyTjJzcGdoZUdSbHJOeHVEa1lHSkVkT2gzL2ZiU3lvQUVG?=
+ =?utf-8?B?djZHV0hOTEd2OFNRS3lJdGtRcVYrTkZTMXRjWTd0NS9tbkJvTk5zKytIUlRn?=
+ =?utf-8?B?UHFmcUtFUGp1VkVZWTBRVi9GUFRONHFjbm1NRDR0Lzg3dnE4ZWZ5YzhNTkMx?=
+ =?utf-8?B?NjdycGlDbWNnUGJEeXUzNHF1K2YzYTFLc3g3Z3NRRFZ4d3JLaU5EaDlUYkFE?=
+ =?utf-8?B?dFF2RFhGRnJzV3FCWHovMUlXWWdVa0N5NytaeVhBVVVxMEhGK1JhbTgvd2E5?=
+ =?utf-8?B?U0ZSRS8yTzJxaGFOTzZJSzR3b214TzVaemtWdkE1c2JHRTkraENYaE9hVTZy?=
+ =?utf-8?B?U1BFTFJsVi9DRTQ0V3VWZ0VDK3VTRVd3SldyL1h5UUd6ckQ3N3hkeUhrQnR0?=
+ =?utf-8?B?ZlJrcVZZT2pVTDg4aVgwUGZod2FSVUxQUlgvMkJBS2l4V0h3TGxtR2d2d3Jn?=
+ =?utf-8?B?MXZnVzBwbkdua29CNWp3NDdoMStZWDZ2eCtLbHp5V3N3cVdBZmpzWUJGdTUx?=
+ =?utf-8?B?MFRyeE9TV05kVFY1c2l4ZVVNRStJK3Rick1Wb3QyZGQ5ZzlZeDBWMzJiWUhI?=
+ =?utf-8?B?STdJQURXdE02b2xJaXFqMG92M3pSOXdlRVZMeitqeDVFYUJFL1BvTVMvNVhJ?=
+ =?utf-8?B?KzBaSmVmZUtCbTJGaGN2aXAyWEF4SjZPWVZHeG9YdVV2L1dPZmVnOFF3RE56?=
+ =?utf-8?B?U3pxMndsQXJ6RkQzVVJaZklqSjJycENVQmF1a1BUQnF1cEFtL0tBcjhjeS9O?=
+ =?utf-8?B?K3FGOGlydHNHQVJXS0k5Y3FlMHJhdW5jSGdadkJ0cU83TkF0b0VwNDZLdWdu?=
+ =?utf-8?B?OE5lQmZxTlJmTU5tUVU5WUpKL0ExbEdTOHpmc2hBTm1ZZkdORC9OSllNdGlG?=
+ =?utf-8?B?Sm1vaXRtaWZldGJHMGhJT0N4WjNVTzRVN3JpV0pld3ZEZW1UQU5aOTFDRUNz?=
+ =?utf-8?B?eTJrc2pUUkNDSW8wTjJFKy9oblo1YXgzVGxMdG1qVUhyaTZ2OEo4MHg2RDI4?=
+ =?utf-8?B?eVo3M29oN0RCVW9GY2NQR09TZFp4ajlSaTMwNUZtaHBYVVA3eHU2UzV3RjZ4?=
+ =?utf-8?B?TEFydGZWYWZQS3IzMXpJQT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7SPRMB0010.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?N1YyWnBHemMzNUlVTGhKTGg5cFFqNGVUS0hrZXF0R2FMSG0yUERmR1FVRWYx?=
+ =?utf-8?B?OFVNVVV6NDdSVGhuUHRVVWVSZVMrRGtscFNyaVlwaDVUbm9EamVnWXhocWtO?=
+ =?utf-8?B?aGlZS1R6K3hlMWNsM01zRHFDNzFaSHJsODVOYjU2TUd5cE45VkpCc09nbXdj?=
+ =?utf-8?B?dmhhUDVuYTBieXgvWkFmczJZUDNmK2Mwd1E5VHFiaGxNejJIL3N4Q0tINGQy?=
+ =?utf-8?B?cTc3MW00VDVhSGE1OHc4TnBoOXhzR0YzbFZCZHg2aEs1UkZPWnpaaEphRTRa?=
+ =?utf-8?B?SDRibWZxMW9GdW0rYmJiYTZzWWJQQWFPa3RYdkRMZnZ5N0dHdGsrMks2bWNF?=
+ =?utf-8?B?SUZVRkgwRjlScEFhTm9sM0JuWFdmdTU3anUrelNKWVJCaStMS3F2bHVqYWhy?=
+ =?utf-8?B?Sno0THhqcGV4aGZYK1ZZWlhTS0JtSk14cGF1TFQraVVFZWpDMkZiSjY2citE?=
+ =?utf-8?B?ZXFRRHpjUklWZFZXeXorenNFZEhibFJXSXVmek5kbzVWbDRpT0czcE5vVU1E?=
+ =?utf-8?B?MGF0QnZtckJLcE4yU0w2NjVMS0ZyUHRaaEFPS3YwSFhJY0R4S1lUQ1dteHpo?=
+ =?utf-8?B?RFJzTVZIZGpaSEJWeU43QzBVNDFSVVdBM203K3hLU1d4WnVRSG1Oc2VuUTdv?=
+ =?utf-8?B?ZkQ3MkxFQmZ5a0JkN014eXk4SGhoNlBXZkg3VndicHRKZ3ozZnhYWW1VdUFi?=
+ =?utf-8?B?U3JwT2FENmg1eWx6OEpyUVRublphWTV0TU1JN0RGcnRWQ05ESFBMRk9ZZ051?=
+ =?utf-8?B?ZEZhcnNDRS96T0UzV3VqMVI5ZUxEUElNTFEvUmNiZHBPcFM4STRPalBPckxK?=
+ =?utf-8?B?N1YycUF2NTZuUlo4UmszNWNoeWxDbzF5Q3RVbExhQTV3dHZNa2orNHpZTTF5?=
+ =?utf-8?B?c3ozcXJYdFM1UURyTERnejdSSkdUQTZTR0thQURsWit1VjRuZkFuVStMM3JY?=
+ =?utf-8?B?Qk0yUytwUHVLRmxmTFhSOTFaaUtLWmhjdGkwVU5WS0ovaHd4bmhpa1VDcU13?=
+ =?utf-8?B?SHArZVBwSHdPRDFjbVZCYWFEa1l1MnZla3VPUllmUk9ZMDlya1p1MGlDT2dK?=
+ =?utf-8?B?VEpTNUNvRW0renY3clNXZWZLWko5QkJic2g4dTJTZncwZ1R2N1ZWZ25VTEZO?=
+ =?utf-8?B?b1dBMHFENmJBNk1iRGhiTXlhRTBOU0NiTGNhYzBSVXF6Sm1xLzV3MU9TWktV?=
+ =?utf-8?B?VDNBYkNGRlJ6VzFZK2tvQVlSOHV4OXJJYWRZMHErMGQ4WG5VQzZEdk9ESHha?=
+ =?utf-8?B?TGFLdjR2VzFPaGt4YWthMG50Y1FocVNyVmxPTkJNbXVkeE0veENVNVZkRUky?=
+ =?utf-8?B?U0N1RWp0a3RjZzBEbmw2ZUtNMUk3ZXB6Qi9lSzd5MUFkcmdmbkZxa01XRUJJ?=
+ =?utf-8?B?QVFPNGdrc2pLSlpFZWN3T0JTVGcxZU4wangxT0NPWkt3VmtCOUo5QnB5aWxv?=
+ =?utf-8?B?NDhWSkJPbFpFbWNDQ0dxbThkT045cGlMS2Y3SENjNklLelMyazVGbUFjMm4w?=
+ =?utf-8?B?YjBSd0Y2aklMSEUreWpWVk1XcGZ5Y1hPcGFrS09RSnNaaVRIWVg0T0FPQXhV?=
+ =?utf-8?B?VUlYelhRNXp3TGFxdFpiUzhlMzR0dEdrV2NmM0YzakowS0FPTFgzSHZ5dllD?=
+ =?utf-8?B?WGgwdkszZ0xjSmlQZDBEYmtpMkxxTTVrd2FONEhVREg5OU9CQjhXWm9PM3Fi?=
+ =?utf-8?B?NERYdUlSTXdyMTh3T2dsNXdBa25GUWpqbTFPMXhPZEZwZHRRVnRHS3lUK1Z6?=
+ =?utf-8?B?TC9PQksrYnRxOWE2b1F5N1RTcU5vcUh3R1pob3p2M1BnTnAyeloraVJIdGZN?=
+ =?utf-8?B?VTR5aSsvbUhpNWpMUTJSUGlvVzUrZTNhTEJqWndIcEpQSDZwY1F2NXBPNjFQ?=
+ =?utf-8?B?UVdpYlFhUzRZSFZIaWdIS3ZHVTJST3c1NGFBL3BBZmhzaHJpMmVqdFd1TjVE?=
+ =?utf-8?B?WlJ2bElZb081NUlZOUsreGxrZFhWbGpOcEdqcFFSRWxxS0pRVW9MbUpYdkdX?=
+ =?utf-8?B?eTNodHdGOFozekFzT3pNSXp0RWFrdkFiSFN5V2NsclIxTHNCZ1djUm9YUUVz?=
+ =?utf-8?B?cUFKbkhKekV0dW1IUVVDbEU2dGc4NlQ0M09rWUUwTzhmREpBMUpuMGcwSUVX?=
+ =?utf-8?Q?0h4XkHZes2GwrwrhWstLfOtXz?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5cecbe33-0ee6-4b70-5e64-08dcc74a7cd3
+X-MS-Exchange-CrossTenant-AuthSource: DS7SPRMB0010.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 10:16:31.8757
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9Y6BIXOQgzZ9KWFptq+ubVrFDK8v30k5sm4fq3ao7kt5LV+wpVKiuPzKr39pxwRD2hXPP3ugjXCNPEKr9+TQmw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4262
 
-
-
-Le 28/08/2024 à 11:50, Maxime Chevallier a écrit :
-> Due to the age of the driver and the slow recent activity on it, the code
-> has taken some layers of dust. Clean the main driver file up so that it
-> passes checkpatch and also conforms with the net coding style.
+On 8/28/2024 3:19 PM, Borislav Petkov wrote:
+> On Wed, Aug 28, 2024 at 10:17:57AM +0530, Nikunj A. Dadhania wrote:
+>> +	if ((snp && !snp_enabled) ||
+>> +	    (!snp && snp_enabled))
+>>  		snp_abort();
 > 
-> Changes include :
->   - Re-ordering of the variable declarations for RCT
->   - Fixing the comment styles to either one-line comments, or net-style
->     comments
->   - Adding braces around single-statement 'else' clauses
->   - Aligning function/macro parameters on the opening parenthesis
->   - Simplifying checks for NULL pointers
->   - Splitting cascaded assignments into individual assignments
->   - Fixing some typos
->   - Fixing whitespace issues
-> 
-> This is a cosmetic change and doesn't introduce any change in behaviour.
-> 
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> And which boolean function is that?
 
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Ah.. missed that.
 
-> ---
->   .../ethernet/freescale/fs_enet/fs_enet-main.c | 220 +++++++-----------
->   1 file changed, 89 insertions(+), 131 deletions(-)
+>  	/*
+> -	 * The SEV-SNP CC blob should be present and parsing CC blob should
+> -	 * succeed when SEV-SNP is enabled.
+> +	 * Any discrepancies between the presence of a CC blob and SNP
+> +	 * enablement abort the guest.
+>  	 */
+> -	if (!snp && (msr & MSR_AMD64_SEV_SNP_ENABLED))
+> +	if (snp_en ^ (msr & MSR_AMD64_SEV_SNP_ENABLED))
+>  		snp_abort();
+>  
+>  	/* Check if memory encryption is enabled */
 > 
-> diff --git a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-> index 5bfdd43ffdeb..2b48a2a5e32d 100644
-> --- a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-> +++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-> @@ -81,15 +81,14 @@ static void skb_align(struct sk_buff *skb, int align)
->   static int fs_enet_napi(struct napi_struct *napi, int budget)
->   {
->   	struct fs_enet_private *fep = container_of(napi, struct fs_enet_private, napi);
-> -	struct net_device *dev = fep->ndev;
->   	const struct fs_platform_info *fpi = fep->fpi;
-> -	cbd_t __iomem *bdp;
-> +	struct net_device *dev = fep->ndev;
-> +	int curidx, dirtyidx, received = 0;
-> +	int do_wake = 0, do_restart = 0;
-> +	int tx_left = TX_RING_SIZE;
->   	struct sk_buff *skb, *skbn;
-> -	int received = 0;
-> +	cbd_t __iomem *bdp;
->   	u16 pkt_len, sc;
-> -	int curidx;
-> -	int dirtyidx, do_wake, do_restart;
-> -	int tx_left = TX_RING_SIZE;
->   
->   	spin_lock(&fep->tx_lock);
->   	bdp = fep->dirty_tx;
-> @@ -97,7 +96,6 @@ static int fs_enet_napi(struct napi_struct *napi, int budget)
->   	/* clear status bits for napi*/
->   	(*fep->ops->napi_clear_event)(dev);
->   
-> -	do_wake = do_restart = 0;
->   	while (((sc = CBDR_SC(bdp)) & BD_ENET_TX_READY) == 0 && tx_left) {
->   		dirtyidx = bdp - fep->tx_bd_base;
->   
-> @@ -106,12 +104,9 @@ static int fs_enet_napi(struct napi_struct *napi, int budget)
->   
->   		skb = fep->tx_skbuff[dirtyidx];
->   
-> -		/*
-> -		 * Check for errors.
-> -		 */
-> +		 /* Check for errors. */
->   		if (sc & (BD_ENET_TX_HB | BD_ENET_TX_LC |
->   			  BD_ENET_TX_RL | BD_ENET_TX_UN | BD_ENET_TX_CSL)) {
-> -
->   			if (sc & BD_ENET_TX_HB)	/* No heartbeat */
->   				dev->stats.tx_heartbeat_errors++;
->   			if (sc & BD_ENET_TX_LC)	/* Late collision */
-> @@ -127,16 +122,16 @@ static int fs_enet_napi(struct napi_struct *napi, int budget)
->   				dev->stats.tx_errors++;
->   				do_restart = 1;
->   			}
-> -		} else
-> +		} else {
->   			dev->stats.tx_packets++;
-> +		}
->   
->   		if (sc & BD_ENET_TX_READY) {
->   			dev_warn(fep->dev,
->   				 "HEY! Enet xmit interrupt and TX_READY.\n");
->   		}
->   
-> -		/*
-> -		 * Deferred means some collisions occurred during transmit,
-> +		/* Deferred means some collisions occurred during transmit,
->   		 * but we eventually sent the packet OK.
->   		 */
->   		if (sc & BD_ENET_TX_DEF)
-> @@ -150,25 +145,20 @@ static int fs_enet_napi(struct napi_struct *napi, int budget)
->   			dma_unmap_single(fep->dev, CBDR_BUFADDR(bdp),
->   					 CBDR_DATLEN(bdp), DMA_TO_DEVICE);
->   
-> -		/*
-> -		 * Free the sk buffer associated with this last transmit.
-> -		 */
-> +		/* Free the sk buffer associated with this last transmit. */
->   		if (skb) {
->   			dev_kfree_skb(skb);
->   			fep->tx_skbuff[dirtyidx] = NULL;
->   		}
->   
-> -		/*
-> -		 * Update pointer to next buffer descriptor to be transmitted.
-> +		/* Update pointer to next buffer descriptor to be transmitted.
->   		 */
->   		if ((sc & BD_ENET_TX_WRAP) == 0)
->   			bdp++;
->   		else
->   			bdp = fep->tx_bd_base;
->   
-> -		/*
-> -		 * Since we have freed up a buffer, the ring is no longer
-> -		 * full.
-> +		/* Since we have freed up a buffer, the ring is no longer full.
->   		 */
->   		if (++fep->tx_free == MAX_SKB_FRAGS)
->   			do_wake = 1;
-> @@ -185,8 +175,7 @@ static int fs_enet_napi(struct napi_struct *napi, int budget)
->   	if (do_wake)
->   		netif_wake_queue(dev);
->   
-> -	/*
-> -	 * First, grab all of the stats for the incoming packet.
-> +	/* First, grab all of the stats for the incoming packet.
->   	 * These get messed up if we get called due to a busy condition.
->   	 */
->   	bdp = fep->cur_rx;
-> @@ -195,16 +184,13 @@ static int fs_enet_napi(struct napi_struct *napi, int budget)
->   	       received < budget) {
->   		curidx = bdp - fep->rx_bd_base;
->   
-> -		/*
-> -		 * Since we have allocated space to hold a complete frame,
-> +		/* Since we have allocated space to hold a complete frame,
->   		 * the last indicator should be set.
->   		 */
->   		if ((sc & BD_ENET_RX_LAST) == 0)
->   			dev_warn(fep->dev, "rcv is not +last\n");
->   
-> -		/*
-> -		 * Check for errors.
-> -		 */
-> +		/* Check for errors. */
->   		if (sc & (BD_ENET_RX_LG | BD_ENET_RX_SH | BD_ENET_RX_CL |
->   			  BD_ENET_RX_NO | BD_ENET_RX_CR | BD_ENET_RX_OV)) {
->   			dev->stats.rx_errors++;
-> @@ -225,9 +211,7 @@ static int fs_enet_napi(struct napi_struct *napi, int budget)
->   		} else {
->   			skb = fep->rx_skbuff[curidx];
->   
-> -			/*
-> -			 * Process the incoming frame.
-> -			 */
-> +			/* Process the incoming frame */
->   			dev->stats.rx_packets++;
->   			pkt_len = CBDR_DATLEN(bdp) - 4;	/* remove CRC */
->   			dev->stats.rx_bytes += pkt_len + 4;
-> @@ -235,15 +219,15 @@ static int fs_enet_napi(struct napi_struct *napi, int budget)
->   			if (pkt_len <= fpi->rx_copybreak) {
->   				/* +2 to make IP header L1 cache aligned */
->   				skbn = netdev_alloc_skb(dev, pkt_len + 2);
-> -				if (skbn != NULL) {
-> +				if (skbn) {
->   					skb_reserve(skbn, 2);	/* align IP header */
-> -					skb_copy_from_linear_data(skb,
-> -						      skbn->data, pkt_len);
-> +					skb_copy_from_linear_data(skb, skbn->data,
-> +								  pkt_len);
->   					swap(skb, skbn);
->   					dma_sync_single_for_cpu(fep->dev,
-> -						CBDR_BUFADDR(bdp),
-> -						L1_CACHE_ALIGN(pkt_len),
-> -						DMA_FROM_DEVICE);
-> +								CBDR_BUFADDR(bdp),
-> +								L1_CACHE_ALIGN(pkt_len),
-> +								DMA_FROM_DEVICE);
->   				}
->   			} else {
->   				skbn = netdev_alloc_skb(dev, ENET_RX_FRSIZE);
-> @@ -253,20 +237,18 @@ static int fs_enet_napi(struct napi_struct *napi, int budget)
->   
->   					skb_align(skbn, ENET_RX_ALIGN);
->   
-> -					dma_unmap_single(fep->dev,
-> -						CBDR_BUFADDR(bdp),
-> -						L1_CACHE_ALIGN(PKT_MAXBUF_SIZE),
-> -						DMA_FROM_DEVICE);
-> +					dma_unmap_single(fep->dev, CBDR_BUFADDR(bdp),
-> +							 L1_CACHE_ALIGN(PKT_MAXBUF_SIZE),
-> +							 DMA_FROM_DEVICE);
->   
-> -					dma = dma_map_single(fep->dev,
-> -						skbn->data,
-> -						L1_CACHE_ALIGN(PKT_MAXBUF_SIZE),
-> -						DMA_FROM_DEVICE);
-> +					dma = dma_map_single(fep->dev, skbn->data,
-> +							     L1_CACHE_ALIGN(PKT_MAXBUF_SIZE),
-> +							     DMA_FROM_DEVICE);
->   					CBDW_BUFADDR(bdp, dma);
->   				}
->   			}
->   
-> -			if (skbn != NULL) {
-> +			if (skbn) {
->   				skb_put(skb, pkt_len);	/* Make room */
->   				skb->protocol = eth_type_trans(skb, dev);
->   				received++;
-> @@ -281,9 +263,7 @@ static int fs_enet_napi(struct napi_struct *napi, int budget)
->   		CBDW_DATLEN(bdp, 0);
->   		CBDW_SC(bdp, (sc & ~BD_ENET_RX_STATS) | BD_ENET_RX_EMPTY);
->   
-> -		/*
-> -		 * Update BD pointer to next entry.
-> -		 */
-> +		/* Update BD pointer to next entry */
->   		if ((sc & BD_ENET_RX_WRAP) == 0)
->   			bdp++;
->   		else
-> @@ -305,19 +285,16 @@ static int fs_enet_napi(struct napi_struct *napi, int budget)
->   	return budget;
->   }
->   
-> -/*
-> - * The interrupt handler.
-> +/* The interrupt handler.
->    * This is called from the MPC core interrupt.
->    */
->   static irqreturn_t
->   fs_enet_interrupt(int irq, void *dev_id)
->   {
->   	struct net_device *dev = dev_id;
-> +	u32 int_events, int_clr_events;
->   	struct fs_enet_private *fep;
-> -	u32 int_events;
-> -	u32 int_clr_events;
-> -	int nr, napi_ok;
-> -	int handled;
-> +	int nr, napi_ok, handled;
->   
->   	fep = netdev_priv(dev);
->   
-> @@ -339,12 +316,12 @@ fs_enet_interrupt(int irq, void *dev_id)
->   			(*fep->ops->napi_disable)(dev);
->   			(*fep->ops->clear_int_events)(dev, fep->ev_napi);
->   
-> -			/* NOTE: it is possible for FCCs in NAPI mode    */
-> -			/* to submit a spurious interrupt while in poll  */
-> +			/* NOTE: it is possible for FCCs in NAPI mode
-> +			 * to submit a spurious interrupt while in poll
-> +			 */
->   			if (napi_ok)
->   				__napi_schedule(&fep->napi);
->   		}
-> -
->   	}
->   
->   	handled = nr > 0;
-> @@ -354,45 +331,40 @@ fs_enet_interrupt(int irq, void *dev_id)
->   void fs_init_bds(struct net_device *dev)
->   {
->   	struct fs_enet_private *fep = netdev_priv(dev);
-> -	cbd_t __iomem *bdp;
->   	struct sk_buff *skb;
-> +	cbd_t __iomem *bdp;
->   	int i;
->   
->   	fs_cleanup_bds(dev);
->   
-> -	fep->dirty_tx = fep->cur_tx = fep->tx_bd_base;
-> +	fep->dirty_tx = fep->tx_bd_base;
-> +	fep->cur_tx = fep->tx_bd_base;
->   	fep->tx_free = fep->tx_ring;
->   	fep->cur_rx = fep->rx_bd_base;
->   
-> -	/*
-> -	 * Initialize the receive buffer descriptors.
-> -	 */
-> +	/* Initialize the receive buffer descriptors */
->   	for (i = 0, bdp = fep->rx_bd_base; i < fep->rx_ring; i++, bdp++) {
->   		skb = netdev_alloc_skb(dev, ENET_RX_FRSIZE);
-> -		if (skb == NULL)
-> +		if (!skb)
->   			break;
->   
->   		skb_align(skb, ENET_RX_ALIGN);
->   		fep->rx_skbuff[i] = skb;
-> -		CBDW_BUFADDR(bdp,
-> -			dma_map_single(fep->dev, skb->data,
-> -				L1_CACHE_ALIGN(PKT_MAXBUF_SIZE),
-> -				DMA_FROM_DEVICE));
-> +		CBDW_BUFADDR(bdp, dma_map_single(fep->dev, skb->data,
-> +						 L1_CACHE_ALIGN(PKT_MAXBUF_SIZE),
-> +						 DMA_FROM_DEVICE));
->   		CBDW_DATLEN(bdp, 0);	/* zero */
->   		CBDW_SC(bdp, BD_ENET_RX_EMPTY |
->   			((i < fep->rx_ring - 1) ? 0 : BD_SC_WRAP));
->   	}
-> -	/*
-> -	 * if we failed, fillup remainder
-> -	 */
-> +
-> +	/* if we failed, fillup remainder */
->   	for (; i < fep->rx_ring; i++, bdp++) {
->   		fep->rx_skbuff[i] = NULL;
->   		CBDW_SC(bdp, (i < fep->rx_ring - 1) ? 0 : BD_SC_WRAP);
->   	}
->   
-> -	/*
-> -	 * ...and the same for transmit.
-> -	 */
-> +	/* ...and the same for transmit. */
->   	for (i = 0, bdp = fep->tx_bd_base; i < fep->tx_ring; i++, bdp++) {
->   		fep->tx_skbuff[i] = NULL;
->   		CBDW_BUFADDR(bdp, 0);
-> @@ -408,32 +380,30 @@ void fs_cleanup_bds(struct net_device *dev)
->   	cbd_t __iomem *bdp;
->   	int i;
->   
-> -	/*
-> -	 * Reset SKB transmit buffers.
-> -	 */
-> +	/* Reset SKB transmit buffers. */
->   	for (i = 0, bdp = fep->tx_bd_base; i < fep->tx_ring; i++, bdp++) {
-> -		if ((skb = fep->tx_skbuff[i]) == NULL)
-> +		skb = fep->tx_skbuff[i];
-> +		if (!skb)
->   			continue;
->   
->   		/* unmap */
->   		dma_unmap_single(fep->dev, CBDR_BUFADDR(bdp),
-> -				skb->len, DMA_TO_DEVICE);
-> +				 skb->len, DMA_TO_DEVICE);
->   
->   		fep->tx_skbuff[i] = NULL;
->   		dev_kfree_skb(skb);
->   	}
->   
-> -	/*
-> -	 * Reset SKB receive buffers
-> -	 */
-> +	/* Reset SKB receive buffers */
->   	for (i = 0, bdp = fep->rx_bd_base; i < fep->rx_ring; i++, bdp++) {
-> -		if ((skb = fep->rx_skbuff[i]) == NULL)
-> +		skb = fep->rx_skbuff[i];
-> +		if (!skb)
->   			continue;
->   
->   		/* unmap */
->   		dma_unmap_single(fep->dev, CBDR_BUFADDR(bdp),
-> -			L1_CACHE_ALIGN(PKT_MAXBUF_SIZE),
-> -			DMA_FROM_DEVICE);
-> +				 L1_CACHE_ALIGN(PKT_MAXBUF_SIZE),
-> +				 DMA_FROM_DEVICE);
->   
->   		fep->rx_skbuff[i] = NULL;
->   
-> @@ -441,12 +411,8 @@ void fs_cleanup_bds(struct net_device *dev)
->   	}
->   }
->   
-> -/**********************************************************************************/
-> -
->   #ifdef CONFIG_FS_ENET_MPC5121_FEC
-> -/*
-> - * MPC5121 FEC requeries 4-byte alignment for TX data buffer!
-> - */
-> +/* MPC5121 FEC requires 4-byte alignment for TX data buffer! */
->   static struct sk_buff *tx_skb_align_workaround(struct net_device *dev,
->   					       struct sk_buff *skb)
->   {
-> @@ -478,15 +444,12 @@ static netdev_tx_t
->   fs_enet_start_xmit(struct sk_buff *skb, struct net_device *dev)
->   {
->   	struct fs_enet_private *fep = netdev_priv(dev);
-> +	int curidx, nr_frags, len;
->   	cbd_t __iomem *bdp;
-> -	int curidx;
-> -	u16 sc;
-> -	int nr_frags;
->   	skb_frag_t *frag;
-> -	int len;
-> +	u16 sc;
->   #ifdef CONFIG_FS_ENET_MPC5121_FEC
-> -	int is_aligned = 1;
-> -	int i;
-> +	int i, is_aligned = 1;
->   
->   	if (!IS_ALIGNED((unsigned long)skb->data, 4)) {
->   		is_aligned = 0;
-> @@ -504,8 +467,7 @@ fs_enet_start_xmit(struct sk_buff *skb, struct net_device *dev)
->   	if (!is_aligned) {
->   		skb = tx_skb_align_workaround(dev, skb);
->   		if (!skb) {
-> -			/*
-> -			 * We have lost packet due to memory allocation error
-> +			/* We have lost packet due to memory allocation error
->   			 * in tx_skb_align_workaround(). Hopefully original
->   			 * skb is still valid, so try transmit it later.
->   			 */
-> @@ -516,9 +478,7 @@ fs_enet_start_xmit(struct sk_buff *skb, struct net_device *dev)
->   
->   	spin_lock(&fep->tx_lock);
->   
-> -	/*
-> -	 * Fill in a Tx ring entry
-> -	 */
-> +	/* Fill in a Tx ring entry */
->   	bdp = fep->cur_tx;
->   
->   	nr_frags = skb_shinfo(skb)->nr_frags;
-> @@ -526,8 +486,7 @@ fs_enet_start_xmit(struct sk_buff *skb, struct net_device *dev)
->   		netif_stop_queue(dev);
->   		spin_unlock(&fep->tx_lock);
->   
-> -		/*
-> -		 * Ooops.  All transmit buffers are full.  Bail out.
-> +		/* Ooops.  All transmit buffers are full.  Bail out.
->   		 * This should not happen, since the tx queue should be stopped.
->   		 */
->   		dev_warn(fep->dev, "tx queue full!.\n");
-> @@ -540,12 +499,12 @@ fs_enet_start_xmit(struct sk_buff *skb, struct net_device *dev)
->   	dev->stats.tx_bytes += len;
->   	if (nr_frags)
->   		len -= skb->data_len;
-> +
->   	fep->tx_free -= nr_frags + 1;
-> -	/*
-> -	 * Push the data cache so the CPM does not get stale memory data.
-> +	/* Push the data cache so the CPM does not get stale memory data.
->   	 */
->   	CBDW_BUFADDR(bdp, dma_map_single(fep->dev,
-> -				skb->data, len, DMA_TO_DEVICE));
-> +					 skb->data, len, DMA_TO_DEVICE));
->   	CBDW_DATLEN(bdp, len);
->   
->   	fep->mapped_as_page[curidx] = 0;
-> @@ -582,9 +541,11 @@ fs_enet_start_xmit(struct sk_buff *skb, struct net_device *dev)
->   
->   	/* note that while FEC does not have this bit
->   	 * it marks it as available for software use
-> -	 * yay for hw reuse :) */
-> +	 * yay for hw reuse :)
-> +	 */
->   	if (skb->len <= 60)
->   		sc |= BD_ENET_TX_PAD;
-> +
->   	CBDC_SC(bdp, BD_ENET_TX_STATS);
->   	CBDS_SC(bdp, sc);
->   
-> @@ -596,6 +557,7 @@ fs_enet_start_xmit(struct sk_buff *skb, struct net_device *dev)
->   		bdp++;
->   	else
->   		bdp = fep->tx_bd_base;
-> +
->   	fep->cur_tx = bdp;
->   
->   	if (fep->tx_free < MAX_SKB_FRAGS)
-> @@ -644,9 +606,7 @@ static void fs_timeout(struct net_device *dev, unsigned int txqueue)
->   	schedule_work(&fep->timeout_work);
->   }
->   
-> -/*-----------------------------------------------------------------------------
-> - *  generic link-change handler - should be sufficient for most cases
-> - *-----------------------------------------------------------------------------*/
-> +/* generic link-change handler - should be sufficient for most cases */
->   static void generic_adjust_link(struct  net_device *dev)
->   {
->   	struct fs_enet_private *fep = netdev_priv(dev);
-> @@ -683,7 +643,6 @@ static void generic_adjust_link(struct  net_device *dev)
->   		phy_print_status(phydev);
->   }
->   
-> -
->   static void fs_adjust_link(struct net_device *dev)
->   {
->   	struct fs_enet_private *fep = netdev_priv(dev);
-> @@ -691,7 +650,7 @@ static void fs_adjust_link(struct net_device *dev)
->   
->   	spin_lock_irqsave(&fep->lock, flags);
->   
-> -	if(fep->ops->adjust_link)
-> +	if (fep->ops->adjust_link)
->   		fep->ops->adjust_link(dev);
->   	else
->   		generic_adjust_link(dev);
-> @@ -728,8 +687,9 @@ static int fs_enet_open(struct net_device *dev)
->   	int r;
->   	int err;
->   
-> -	/* to initialize the fep->cur_rx,... */
-> -	/* not doing this, will cause a crash in fs_enet_napi */
-> +	/* to initialize the fep->cur_rx,...
-> +	 * not doing this, will cause a crash in fs_enet_napi
-> +	 */
->   	fs_init_bds(fep->ndev);
->   
->   	napi_enable(&fep->napi);
-> @@ -780,10 +740,8 @@ static int fs_enet_close(struct net_device *dev)
->   	return 0;
->   }
->   
-> -/*************************************************************************/
-> -
->   static void fs_get_drvinfo(struct net_device *dev,
-> -			    struct ethtool_drvinfo *info)
-> +			   struct ethtool_drvinfo *info)
->   {
->   	strscpy(info->driver, DRV_MODULE_NAME, sizeof(info->driver));
->   }
-> @@ -796,7 +754,7 @@ static int fs_get_regs_len(struct net_device *dev)
->   }
->   
->   static void fs_get_regs(struct net_device *dev, struct ethtool_regs *regs,
-> -			 void *p)
-> +			void *p)
->   {
->   	struct fs_enet_private *fep = netdev_priv(dev);
->   	unsigned long flags;
-> @@ -815,12 +773,14 @@ static void fs_get_regs(struct net_device *dev, struct ethtool_regs *regs,
->   static u32 fs_get_msglevel(struct net_device *dev)
->   {
->   	struct fs_enet_private *fep = netdev_priv(dev);
-> +
->   	return fep->msg_enable;
->   }
->   
->   static void fs_set_msglevel(struct net_device *dev, u32 value)
->   {
->   	struct fs_enet_private *fep = netdev_priv(dev);
-> +
->   	fep->msg_enable = value;
->   }
->   
-> @@ -877,8 +837,6 @@ static const struct ethtool_ops fs_ethtool_ops = {
->   	.set_tunable = fs_set_tunable,
->   };
->   
-> -/**************************************************************************************/
-> -
->   #ifdef CONFIG_FS_ENET_HAS_FEC
->   #define IS_FEC(ops) ((ops) == &fs_fec_ops)
->   #else
-> @@ -901,15 +859,14 @@ static const struct net_device_ops fs_enet_netdev_ops = {
->   
->   static int fs_enet_probe(struct platform_device *ofdev)
->   {
-> +	int err, privsize, len, ret = -ENODEV;
-> +	const char *phy_connection_type;
-> +	struct fs_platform_info *fpi;
-> +	struct fs_enet_private *fep;
->   	const struct fs_ops *ops;
->   	struct net_device *ndev;
-> -	struct fs_enet_private *fep;
-> -	struct fs_platform_info *fpi;
->   	const u32 *data;
->   	struct clk *clk;
-> -	int err;
-> -	const char *phy_connection_type;
-> -	int privsize, len, ret = -ENODEV;
->   
->   	ops = device_get_match_data(&ofdev->dev);
->   	if (!ops)
-> @@ -945,7 +902,8 @@ static int fs_enet_probe(struct platform_device *ofdev)
->   
->   	if (of_device_is_compatible(ofdev->dev.of_node, "fsl,mpc5125-fec")) {
->   		phy_connection_type = of_get_property(ofdev->dev.of_node,
-> -						"phy-connection-type", NULL);
-> +						      "phy-connection-type",
-> +						      NULL);
->   		if (phy_connection_type && !strcmp("rmii", phy_connection_type))
->   			fpi->use_rmii = 1;
->   	}
-> @@ -964,7 +922,7 @@ static int fs_enet_probe(struct platform_device *ofdev)
->   	}
->   
->   	privsize = sizeof(*fep) +
-> -	           sizeof(struct sk_buff **) *
-> +		   sizeof(struct sk_buff **) *
->   		     (fpi->rx_ring + fpi->tx_ring) +
->   		   sizeof(char) * fpi->tx_ring;
->   
-> @@ -1111,9 +1069,9 @@ static struct platform_driver fs_enet_driver = {
->   #ifdef CONFIG_NET_POLL_CONTROLLER
->   static void fs_enet_netpoll(struct net_device *dev)
->   {
-> -       disable_irq(dev->irq);
-> -       fs_enet_interrupt(dev->irq, dev);
-> -       enable_irq(dev->irq);
-> +	disable_irq(dev->irq);
-> +	fs_enet_interrupt(dev->irq, dev);
-> +	enable_irq(dev->irq);
->   }
->   #endif
->   
+
+Do you want me to send the patch again with above change?
+
+Regards
+Nikunj
 
