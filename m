@@ -1,108 +1,166 @@
-Return-Path: <linux-kernel+bounces-304844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3EC39625AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:14:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7ADC9625B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85D081F21791
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:14:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD6101C225CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B77171E40;
-	Wed, 28 Aug 2024 11:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A122A16C875;
+	Wed, 28 Aug 2024 11:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mAy9xtd4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B667KoO9"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F62B16A935;
-	Wed, 28 Aug 2024 11:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2605816C874
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 11:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724843612; cv=none; b=KRVSLC9WT8S03tXSxxxjQ5fX/N/zb+5wAZ1l/1T/xivacq03b11OAZSMxsK2n+XQ2QdGnh2bVHUqO28gRXH4LxIY5kTvXas0OlY5SbjhIo19nzvh40Cw33IWJNR9iKW3MBCthSKgVizbGf5cazIud4y/LldsUHAPRe/+1a60rPE=
+	t=1724843632; cv=none; b=TlT0W6SYuqzw71ubIlu4vvx/qoFG50mcoGcpoMHVfcWh7aKmqsVkFALAdBX4aEjhFXqxWU/FzIZ4s574sZgAFQeIuuzkIXIaUW9rA7enXYiEweSnHa3WOeCO3tSIEt4mM8h5KDpwPfrdXhCGlW9LfYqxBdvgs8mZJqrgWmT/Zjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724843612; c=relaxed/simple;
-	bh=deDpS1aspw9+N200elRaeUv7cFSqpIfI++0lWoCD/ls=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iXp3XrF83NOnmky//6GJ5ti3P2qxoYATugAyNvIDlFQ7fpmmOCKXDnjvsg4MuDlIhRhJxXjsbGI5FlkZYvFEf14bjhY4JlScg2JHFDKrmRmqwoUl6CkwsKuOHRHpCmz66TzLDE44nnPufLyqWm1UWSu0oGojy+9TAmME6QSd0i8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mAy9xtd4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D16DC98EC6;
-	Wed, 28 Aug 2024 11:13:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724843610;
-	bh=deDpS1aspw9+N200elRaeUv7cFSqpIfI++0lWoCD/ls=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mAy9xtd44qgrEX0I1Icqvv2wT3D+O2qPSLDxehKxsREd8/LeD5x4I8K8GJsmuIuFt
-	 /sHYr3flLotbCiri9t1bjDC0LEI8BfUG8JOenCtG13ZOSvJGf+buNQZ1uuN+3fgo7P
-	 krr7qDGAz2GK/racreQaFmW8gIz3QPx3OUBZBy5wFuD0E6t981PKvaB4ptcjar2+Su
-	 bsSDhnBMBDV8FkW/pjeKhhTKS+oKmrC6/aj/Hu/QZkA8BhdmSegb5oBy56Tgnr0i1/
-	 vNoo57KVy+eredz8ly8x60bqrlb8Brd9LyTlI3IXeSgIdjRNT53kcPN4sUTX3EO6QX
-	 0ms62ckz8sfTA==
-Date: Wed, 28 Aug 2024 12:13:25 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: dsa: microchip: Use standard regmap locking
-Message-ID: <f0021a00-bc3b-4278-b4b7-29ead8e39f6a@sirena.org.uk>
-References: <20240822-net-dsa-microchip-regmap-locking-v1-1-d557073b883c@kernel.org>
- <36f312eb-150e-4497-84f0-6bfbaab16d9b@redhat.com>
+	s=arc-20240116; t=1724843632; c=relaxed/simple;
+	bh=jUnILKAo5ATrsd6lz5mB3iOFWIQc7AkfPEQ9LPD0iHU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I6yKBXWWyhAZ/0Gy4riiMlNezx3u7li+FSM1eM0s//CyJr7UEtFZ3c6rVeVo++78Ucayn6p8ZpxwMy2v77w4F7SmcaDZHQkbyo1cQRRN5hMOrZGy9ydoY3ze7ZwJZs9vpaelKuWaCXbRpbRjM7awzzuUgTo0D4O4yax38lkT65Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B667KoO9; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5bec50de77fso912430a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 04:13:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724843629; x=1725448429; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=zcghzgIG2bNBAb6yUzFmlFHQDpsaEhKndi+DVgkFQkk=;
+        b=B667KoO9Aku+3lrUmsgHInNoavkANZmKUGGDXzmdW5eCl5pFY8fu7xw1MEvDQLuJQa
+         PXdIxkU992SAtAZwOcyWG1tQ9ML6KcmYTelu2p1tIbhs3gGzhGGiLo6Da7jl4wN78Sze
+         LjkljLJUF1lnjSytwmxSJMg4pc3TLP9UE2f3IYiRQjTU789FUq8cA4KJkFE58HxaT4DK
+         Cc02FV+Mn+L2d/zrI2YY/nYYYdRGzD+Xw/L+8tP2JP9IFPq1Z94U9dkhLZXe7nPFcjfQ
+         kKdJAswV6xshC9NyW00mzY+dJCCtJ3M7+bJJrMZAgwIWewCf/JxRMb8MT7Y12lWw0Puy
+         l6/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724843629; x=1725448429;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zcghzgIG2bNBAb6yUzFmlFHQDpsaEhKndi+DVgkFQkk=;
+        b=GRQo8Iz8hfI44oDWsfdtyrMGOMeIA4rLQBp7pZ5lDCRSrBnBf8JV3QhAjMBclN2zbg
+         jEETMFmGKBKNgVGqmwcXsfRPrJjcE7Ns4G1ENzzjjEQL3ZWooiwf7zNdwOptEFR1U3AA
+         ssh5ns2hRhgne3mRRDO6wI19OQRiuWrTkhxBLDvEkn+zd0dcuxBXi1X2vJoAtoiT3TZH
+         dIWVkbdhyAVNe5dwMnrYzKpptZjngBQvhk+og6DsvSUDWKkBRhlWTGKz0m4RcCE7gEjq
+         sIHT7Q73R6n49Lqb8stddK7CQ0TIb3OYBxauQcFyTXaJr1l7/8+/9187nNYSDEiVHhlu
+         NKVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmigkUMzUZEQVbQB6htenFb9PDolr04oy/qKh8pg+7TiiY4wzeko+ZONEeXw2mLucct4x51+IyyClktuw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoW7R+Ca4S9NbhASBnwQEl9O7kxAjPPZqi8l7dPxtGCfTyyR5R
+	wRpXtuAnujoYSifA6CcIUDaQNHhH3hGJHwuL3yvgg8YanFVk2aOElyGgut0ZXfo=
+X-Google-Smtp-Source: AGHT+IH1JpO9SbHismOTO20+L7uRSRuh4mNvVVKRlxfyREMOZrSaYHDZouLRC/uPD7wWEwJu+Nv8PA==
+X-Received: by 2002:a05:6402:3489:b0:5bf:e43:895b with SMTP id 4fb4d7f45d1cf-5c08915adc2mr6787041a12.1.1724843629187;
+        Wed, 28 Aug 2024 04:13:49 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.222.82])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb4722b0sm2107487a12.69.2024.08.28.04.13.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Aug 2024 04:13:48 -0700 (PDT)
+Message-ID: <47c4f8c8-6ca2-45a0-9e8b-813e5c5884d5@linaro.org>
+Date: Wed, 28 Aug 2024 13:13:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ZoE1yP+8aFZckdOY"
-Content-Disposition: inline
-In-Reply-To: <36f312eb-150e-4497-84f0-6bfbaab16d9b@redhat.com>
-X-Cookie: You are number 6!  Who is number one?
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/16] arm64: dts: qcom: change labels to lower-case
+To: Konrad Dybcio <konradybcio@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240828-dts-qcom-label-v1-0-b27b72130247@linaro.org>
+ <5f7735ac-e03c-4399-bdca-3e9550b23e14@kernel.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <5f7735ac-e03c-4399-bdca-3e9550b23e14@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 28/08/2024 12:55, Konrad Dybcio wrote:
+> On 28.08.2024 9:17 AM, Krzysztof Kozlowski wrote:
+>> DTS coding style expects labels to be lowercase.  No functional impact.
+>> Verified with comparing decompiled DTB (dtx_diff and fdtdump+diff).
+>>
+>> I am splitting the patchset per few patches doing the same, because
+>> otherwise diffs would be too big and would bounce from Patchwork/mailing
+>> list.
+>>
+>> Best regards,
+>> Krzysztof
+>>
+>> ---
+> 
+> I can confirm the changes are a NOP, however:
+> 
+> g diff $(git last).. | grep "^+.*&[A-Z]" | wc -l
+> 232
+> 
+> e.g.
+> 
+> +		domain-idle-states = <&BIG_cpu_sleep_0>;
 
---ZoE1yP+8aFZckdOY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Same as in patch 3. I'll re-check and send a v2 tomorrow.
 
-On Tue, Aug 27, 2024 at 02:54:52PM +0200, Paolo Abeni wrote:
-> On 8/22/24 21:53, Mark Brown wrote:
-> > For unclear reasons the ksz drivers use custom regmap locking which is
-> > simply a wrapper around a standard mutex.
->=20
-> According to the commit introducing such lock,
-> 013572a236ef53cbd1e315e0acf2ee632cc816d4
-> the ksz driver family one regmap per register width (8/16/32), accessing =
-the
-> same set of registers.
->=20
-> The locking implemented with the code removed here allows serializing
-> operations using different register widths.
+Best regards,
+Krzysztof
 
-This really could use a comment somewhere.
-
---ZoE1yP+8aFZckdOY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbPBlUACgkQJNaLcl1U
-h9B4AQf/QULpPvWgsB2LPLQvLjIY0N4dZ3gVg0VvX1wYaor4BiSOdwEOfBGeH37r
-jfXy9N2hAm3WYxjRDUpSe3EHUEzRMT10pZFA39L69+etsLVc/Ycqjp2OeSax00Fg
-4OvVgMUFNlvllhk6Rc6vBEmGVHKfReedcDBymh3bIYjQBTynAwQN4NlRVJ2gAJdy
-PwA8TGH+sYOvNzK4KWkB+UvDQTBPlHk1GMPYdu264fJlTprkcTVqvHH2PHcILMux
-U9Ajn/Klkt2ZlK+BWrfO24t7KtrbyVQqDk2IHGF+BifVX2vIA20iUKUfUI3RL9Ps
-ncjRqoEokOVOGlSSVyuuiHqYeYRP7Q==
-=xUWu
------END PGP SIGNATURE-----
-
---ZoE1yP+8aFZckdOY--
 
