@@ -1,102 +1,123 @@
-Return-Path: <linux-kernel+bounces-305691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 870609632E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:51:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 245899632E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5671286D58
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:51:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24FDE1C227BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452F41B1516;
-	Wed, 28 Aug 2024 20:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE751B29AD;
+	Wed, 28 Aug 2024 20:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="OKQgy4ys"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e/DVfUhX"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0FF15ADB8;
-	Wed, 28 Aug 2024 20:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE981B2539
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 20:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724877941; cv=none; b=iRJTH9F3Xys0nEDKS2mJubE01/kHptX2vMPRCKs+/1XTdkIAKzR/xVEf4jUaa11+QtI5dxGN++I3TxUF4Gljd8X/bK5iNEjo0lFee7zDTIw6sNPBcNznyv2OqKV+t6NGUNcwyeXz1fq/TB/6Z3Yrww5ypjLrdVSkDS1dPR6B2vs=
+	t=1724877988; cv=none; b=hNIOeN51SBJmGkl6SW2s/EW7MSZw2Gc8GVGgU61MczecU7JMgQ7ZztNLxwi2XV+tOjvinoB26+LO3mDOMZZvmKVHUmZyqV6JX2pnL7PhwVDgOPoFLG/w0nS6IPyY3Scz537AGOH5GPJj+7SuPM269ZtXVJw6bcEGWHpzdV+uCwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724877941; c=relaxed/simple;
-	bh=SgkVzbZ14XDCKU36J6WIIsAV8YesujpxnFyHSFaz29I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hlJIQKs/eri4jxiOjUG/ZS8dapx6GZxt67q0SIPZWFmSZj1v1coPNPefngH1UafusQcRJu0+recOF9bmmRkDEYS37zX04FpIMimbBB0pp7ounfBtUXtjuTG3eGEGm7L+u6+3Up3eTB9BQS6s0Pso0mfAK0nAMxOTxzqm5Yf8DF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=OKQgy4ys; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=26bQlRFk72rfSBekGYpkyGTtRJqwYyFZxRzNApkdSOw=; b=OKQgy4ysRnacVUQNcvrpOFp0SO
-	LP6MhA9Y051p7GyB8Tp6/9SoSV1bVKBHABXj65p6vM8XvjsX6MG4hLS/hnOQ9RWujM28wSrjNmPrC
-	sVXVOx1upE+wWFfv4ZXyIWsmMZwKIOrhflCWBr8H/eywcwgvt8qNeD98pXr5fTpMi8TY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sjPXo-005yGF-EH; Wed, 28 Aug 2024 22:45:32 +0200
-Date: Wed, 28 Aug 2024 22:45:32 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, netdev@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>, kernel@pengutronix.de,
-	Paolo Abeni <pabeni@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH net-next v3 1/3] phy: open_alliance_helpers: Add defines
- for link quality metrics
-Message-ID: <ac794205-ec9a-4e92-aa74-7c0f9ee67823@lunn.ch>
-References: <20240822115939.1387015-1-o.rempel@pengutronix.de>
- <20240822115939.1387015-2-o.rempel@pengutronix.de>
- <20240826093217.3e076b5c@kernel.org>
- <4a1a72f5-44ce-4c54-9bc5-7465294a39fe@lunn.ch>
- <20240826125719.35f0337c@kernel.org>
- <Zs1bT7xIkFWLyul3@pengutronix.de>
- <20240827113300.08aada20@kernel.org>
- <Zs6spnCAPsTmUfrL@pengutronix.de>
- <20240828133428.4988b44f@kernel.org>
+	s=arc-20240116; t=1724877988; c=relaxed/simple;
+	bh=t7MF9q9qQ1/BFft9PGBV+aPNqpvkHl+vf3Eq8jnJlio=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lq7SBVyZWR8SLW2e/xNl5aqDs4iYe9JOph/SEat1a+JyBjMJmWVspxnXmRkLZYZ9ZeG9mf6dZP5JaHZ0LPNGGOlyiOrkiGjietVxR92Q1WurUR6TrDf4xka244EcHxjQZMxE7/Ve5Sa5qZ4dN11L+jbrSi6SuJ02E0WnDFgYWuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e/DVfUhX; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2021537a8e6so65564185ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 13:46:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724877986; x=1725482786; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=j2NP7ED9yQeOL2K0nW20zcco+YfFdB0bQPpahpoJ62g=;
+        b=e/DVfUhXbqbb+QQsrJl6QhNlXh/lnauek8w+cSwxYhi1Q9089cE+U+BA+zK4G6Oa3D
+         bqPK2uo7TzVFGyIjz64L49AvtESg3kc4M+GJ/tUh5XQOo4ru/AjOKqFKHJ5nOtZH7jXb
+         R4h3aEyWdAGgYutJHvX3AG7QxhXSJTKp25hKzvJn4SCVLF6bHt0Zm2kjQ5PTVk5DexdZ
+         6LyzCcIRhWIISZQk1uRPdI8yKhn1NROeBHKFFFTsiuN3m3E1DvDVow4bn0YFltwpSLs8
+         TxNB95HjLvTb6Viqfqf9IRqQpgX+CITiWqQJ+kMfHyhrT/LFiTCbv/q3pMGzgfQMHZEi
+         UZPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724877986; x=1725482786;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j2NP7ED9yQeOL2K0nW20zcco+YfFdB0bQPpahpoJ62g=;
+        b=xP61og0dgEmWK+cyNC57jsE9R9+mjOM1zw/3/diS57y9rw2hQS4zY5gILsXP4eowLs
+         SUfIBJfA5TKYACH4GBFYuwxyhArIp5Yc/aaiTBHgUN6ba2VeR9QxsKN+FXgqP+qxqydW
+         OCqtas71UL8WTVjHP0fIt6cpZyQno5QzZH/67ELnTRnuWalxXAtQ9MrMoziV76BRA1Up
+         0fgoMPazSMrz0yLWxjG/6Jy5cKR5KbKsEbb64WwM5u59rgYnKI8rVFF8UxYR2pLZJcJe
+         XBGw0Xr7te8O1gx+uml5TNfbsxctW8/U7B83vNnpMycps64otzjmbTgadItbwwGyyD4p
+         I/Iw==
+X-Forwarded-Encrypted: i=1; AJvYcCWcxIUhNHM2xjLBZ7fuXm3Pwcd2nZ3kZB/dsdX7bcQgJEhn0nJ+c1ZjLMN2TXCwK8117T/1t5skJfgWBio=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXMNfC2CdEHLCRzEXTjL7FJ4OShRPKPE+t6jNwa2ZUrp29LvAT
+	HZvLQqycdGjmD2YN80+GkTKtYjO/5Fl4S5lbykd/yY0p68bysZtE
+X-Google-Smtp-Source: AGHT+IF1PJ9A+TITiNmvfXWDWKmuCksVnECrUQ69s8nJM+FRJbDAx090f53Kxf0EIeY4e03kSaWIXQ==
+X-Received: by 2002:a17:903:41cc:b0:202:1547:66b2 with SMTP id d9443c01a7336-2050c3ab754mr6212665ad.28.1724877986299;
+        Wed, 28 Aug 2024 13:46:26 -0700 (PDT)
+Received: from masingh-thinkpad.. ([49.207.54.176])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038556667bsm103351525ad.7.2024.08.28.13.46.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 13:46:26 -0700 (PDT)
+From: Manisha Singh <masingh.linux@gmail.com>
+To: florian.c.schilhabel@googlemail.com,
+	gregkh@linuxfoundation.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: philipp.g.hortmann@gmail.com,
+	Manisha Singh <masingh.linux@gmail.com>
+Subject: [PATCH v2 1/2] staging: rtl8712: Fix style issues in rtl871x_io.c
+Date: Thu, 29 Aug 2024 02:15:52 +0530
+Message-ID: <20240828204552.26790-2-masingh.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240828133428.4988b44f@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 28, 2024 at 01:34:28PM -0700, Jakub Kicinski wrote:
-> On Wed, 28 Aug 2024 06:50:46 +0200 Oleksij Rempel wrote:
-> > Considering that you've requested a change to the uAPI, the work has now become
-> > more predictable. I can plan for it within the task and update the required
-> > time budget accordingly. However, it's worth noting that while this work is
-> > manageable, the time spent on this particular task could be seen as somewhat
-> > wasted from a budget perspective, as it wasn't part of the original scope.
-> 
-> I can probably take a stab at the kernel side, since I know the code
-> already shouldn't take me more more than an hour. Would that help?
-> You'd still need to retest, fix bugs. And go thru review.. so all
-> the not-so-fun parts
-> 
-> > > Especially that we're talking about uAPI, once we go down
-> > > the string path I presume they will stick around forever.  
-> > 
-> > Yes, I agree with it. I just needed this feedback as early as possible.
-> 
-> Andrew? Do you want to decide? :)
+Remove multiple assignments from a line
 
-I agree about avoiding free test strings. Something more structures
-would be good.
+CHECK: multiple assignments should be avoided
++	pintf_priv = pintf_hdl->pintfpriv = kmalloc(sizeof(struct intf_priv),
 
-I can definitely help out with review, but i don't have any time at
-the moment for writing code.
+Refactor the _init_intf_hdl() function to avoid multiple
+assignments in a single statement. This change improves code readability
+and adheres to kernel coding style guidelines.
 
-	Andrew
+Signed-off-by: Manisha Singh <masingh.linux@gmail.com>
+---
+Changes Since V1:
+	Broke the patch into 2 different fixes
+
+ drivers/staging/rtl8712/rtl871x_io.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/rtl8712/rtl871x_io.c b/drivers/staging/rtl8712/rtl871x_io.c
+index 6789a4c98564..6311ac15c581 100644
+--- a/drivers/staging/rtl8712/rtl871x_io.c
++++ b/drivers/staging/rtl8712/rtl871x_io.c
+@@ -48,10 +48,10 @@ static uint _init_intf_hdl(struct _adapter *padapter,
+ 	set_intf_funs = &(r8712_usb_set_intf_funs);
+ 	set_intf_ops = &r8712_usb_set_intf_ops;
+ 	init_intf_priv = &r8712_usb_init_intf_priv;
+-	pintf_priv = pintf_hdl->pintfpriv = kmalloc(sizeof(struct intf_priv),
+-						    GFP_ATOMIC);
++	pintf_priv = kmalloc(sizeof(struct intf_priv), GFP_ATOMIC);
+ 	if (!pintf_priv)
+ 		goto _init_intf_hdl_fail;
++	pintf_hdl->pintfpriv = pintf_priv;
+ 	pintf_hdl->adapter = (u8 *)padapter;
+ 	set_intf_option(&pintf_hdl->intf_option);
+ 	set_intf_funs(pintf_hdl);
+-- 
+2.43.0
+
 
