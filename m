@@ -1,49 +1,53 @@
-Return-Path: <linux-kernel+bounces-305035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49654962874
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:18:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8900A962876
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:19:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CB6D1C23713
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:18:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4597F28208D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E962186285;
-	Wed, 28 Aug 2024 13:18:41 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA63187858;
+	Wed, 28 Aug 2024 13:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tho+4tKJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6418E18030;
-	Wed, 28 Aug 2024 13:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED6B18030
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 13:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724851121; cv=none; b=frxELWcq+1V8n0uSYPEESvvr0/nDOrSzkc0ZUI3C8+/L2XJGfq5ZSzXYvjmr4uTCo16pgKltYCz1btqQ+G8kbulQW/p3Fsr+Wcux4/pOmNLg4PpY/lw43SVNvoqcvr/jALvai8yAFmYtNGmpy6Gcc/goJwfrqYK7++xHcnxKn2M=
+	t=1724851140; cv=none; b=Le5aypHuQU/Rh/X0g6idEiR7ssMRz/+MPLjhwQqQxr9Y8+XNvcyxNd8b2tr7u+wF40RPEy1ea/wFal1PhDE3XxI/6z8jPvHVx/f/J3cPDxv0Bc8N53fBbBpT1Doksjlwf7Q1rq7ipoMRq1P8sHbUpwDlo4vZYc2G7fe3EU9IYBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724851121; c=relaxed/simple;
-	bh=/vzNSx2ypxi3xgAYKn8rIq9lq8XfB2VFLuEfQJjzb9Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tiqPcByTlBGNJzwY5Dho7dN6HGC1fHSCJcpE0eytRu3P+/AlkZLy29bhF5K3TTeqUc1DX5TbEA1+388qIbW6lxsEV6z6HR9/SNwe4/DxKuymNW4jMH4wuI4CoLMU5le918NhyBB1gqkWNf2EGqMOxWIcDlWOpIHH3VW4WnCBSP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-03 (Coremail) with SMTP id rQCowABHbQCYI89m+zgZCw--.44732S2;
-	Wed, 28 Aug 2024 21:18:24 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: giometti@enneenne.com,
-	christophe.jaillet@wanadoo.fr,
-	linux@treblig.org,
-	akpm@linux-foundation.org,
-	make24@iscas.ac.cn,
-	sudipm.mukherjee@gmail.com,
-	gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v3 RESEND] pps: add an error check in parport_attach
-Date: Wed, 28 Aug 2024 21:18:14 +0800
-Message-Id: <20240828131814.3034338-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1724851140; c=relaxed/simple;
+	bh=QDj25RmywIqrl5HDD5BjvREStBkTY8/Lk7ojibhewn8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LfwZQO8edv2jQLJTvZomPsE1/p8AbghjrnpZ0GCwimdvi+NshbH0KI1+CjbwAUVcAQhzIYTZBO1wEkfJgJXsUFuYxqyHR8gng+dBCItf9r18FetDRTmv013NbQlPmzahJLOuL+kXI9IfOskGT8RvAQE5fHP3aMGZLEVCQKJAKiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tho+4tKJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2B93C98EED;
+	Wed, 28 Aug 2024 13:18:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724851140;
+	bh=QDj25RmywIqrl5HDD5BjvREStBkTY8/Lk7ojibhewn8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=tho+4tKJsO1Dme9HAP23Vp7Kc/tgh3hcfkY0KOqOZVXvUnxWm7dL1p2h7QP5H4rCB
+	 XtHpP64FC84ctjLNNqge4wlpneKDT93/70u9HefWfy0ovl/KABKcSTBosWoSUYfBPJ
+	 nB9aM7zFblOC2sKneceElip00rAGD+JUsrh+8BghqJ2G+UekYmt2LLdIQWwRblfJOw
+	 rXqGbz3oHKPqRf3tHYEb9KQZj2zYyNfDPkN9xGvDMBdWR2fgLTezjKPE2GMea8JSXM
+	 BoFFl4MJEZ2aOD35NJo9P5ePR2LytiiLRmL/KX0GParNincqigXuR6kv+YO72iJvxF
+	 hebl25goSiQXA==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Eric Piel <eric.piel@tremplin-utc.net>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] misc: lis3lv02d: Fix incorrect of_get_property() usage
+Date: Wed, 28 Aug 2024 08:18:51 -0500
+Message-ID: <20240828131851.3631855-1-robh@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,80 +55,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowABHbQCYI89m+zgZCw--.44732S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zw1fZw4xArykCr47Kr4rXwb_yoW8Aryxpa
-	ykuFyjgrWrXa9Fka1xZ3W5WF1rGa1xtay8uFWUK34aka43KryFyFy2k340kF18Jr4DAa4r
-	CFnxKay0yF1UAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
-	6r4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
-	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUQvtAUUUUU=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-In parport_attach, the return value of ida_alloc is unchecked, witch leads
-to the use of an invalid index value.
+The usage of of_get_property() is wrong. What's returned in "val" is
+the property's length, not the value. Fix this by using the preferred
+typed of_property_read_u32() function instead.
 
-To address this issue, index should be checked. When the index value is
-abnormal, the device should be freed.
-
-Found by code review, compile tested only.
-
-Cc: stable@vger.kernel.org
-Fixes: fb56d97df70e ("pps: client: use new parport device model")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
-Changes in v3:
-- modified Fixes tag as suggestions.
-Changes in v2:
-- removed error output as suggestions.
----
- drivers/pps/clients/pps_parport.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/misc/lis3lv02d/lis3lv02d.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pps/clients/pps_parport.c b/drivers/pps/clients/pps_parport.c
-index 63d03a0df5cc..abaffb4e1c1c 100644
---- a/drivers/pps/clients/pps_parport.c
-+++ b/drivers/pps/clients/pps_parport.c
-@@ -149,6 +149,9 @@ static void parport_attach(struct parport *port)
- 	}
+diff --git a/drivers/misc/lis3lv02d/lis3lv02d.c b/drivers/misc/lis3lv02d/lis3lv02d.c
+index 49868a45c0ad..1fc635a27568 100644
+--- a/drivers/misc/lis3lv02d/lis3lv02d.c
++++ b/drivers/misc/lis3lv02d/lis3lv02d.c
+@@ -1038,7 +1038,7 @@ int lis3lv02d_init_dt(struct lis3lv02d *lis3)
+ 		pdata->wakeup_flags |= LIS3_WAKEUP_Z_LO;
+ 	if (of_property_read_bool(np, "st,wakeup-z-hi"))
+ 		pdata->wakeup_flags |= LIS3_WAKEUP_Z_HI;
+-	if (of_get_property(np, "st,wakeup-threshold", &val))
++	if (!of_property_read_u32(np, "st,wakeup-threshold", &val))
+ 		pdata->wakeup_thresh = val;
  
- 	index = ida_alloc(&pps_client_index, GFP_KERNEL);
-+	if (index < 0)
-+		goto err_free_device;
-+
- 	memset(&pps_client_cb, 0, sizeof(pps_client_cb));
- 	pps_client_cb.private = device;
- 	pps_client_cb.irq_func = parport_irq;
-@@ -159,7 +162,7 @@ static void parport_attach(struct parport *port)
- 						    index);
- 	if (!device->pardev) {
- 		pr_err("couldn't register with %s\n", port->name);
--		goto err_free;
-+		goto err_free_ida;
- 	}
+ 	if (of_property_read_bool(np, "st,wakeup2-x-lo"))
+@@ -1053,7 +1053,7 @@ int lis3lv02d_init_dt(struct lis3lv02d *lis3)
+ 		pdata->wakeup_flags2 |= LIS3_WAKEUP_Z_LO;
+ 	if (of_property_read_bool(np, "st,wakeup2-z-hi"))
+ 		pdata->wakeup_flags2 |= LIS3_WAKEUP_Z_HI;
+-	if (of_get_property(np, "st,wakeup2-threshold", &val))
++	if (!of_property_read_u32(np, "st,wakeup2-threshold", &val))
+ 		pdata->wakeup_thresh2 = val;
  
- 	if (parport_claim_or_block(device->pardev) < 0) {
-@@ -187,8 +190,9 @@ static void parport_attach(struct parport *port)
- 	parport_release(device->pardev);
- err_unregister_dev:
- 	parport_unregister_device(device->pardev);
--err_free:
-+err_free_ida:
- 	ida_free(&pps_client_index, index);
-+err_free_device:
- 	kfree(device);
- }
- 
+ 	if (!of_property_read_u32(np, "st,highpass-cutoff-hz", &val)) {
 -- 
-2.25.1
+2.45.2
 
 
