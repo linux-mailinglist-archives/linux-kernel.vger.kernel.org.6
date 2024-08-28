@@ -1,115 +1,106 @@
-Return-Path: <linux-kernel+bounces-305260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F78D962C06
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:20:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF1C0962C0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2CD81F218B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:20:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 967D72876CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C3913C3D5;
-	Wed, 28 Aug 2024 15:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3261A2C36;
+	Wed, 28 Aug 2024 15:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JtPlOvWw"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oOAKgVcx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD6283A18
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40AB71A2556;
+	Wed, 28 Aug 2024 15:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724858395; cv=none; b=VSFcEVRfaYDtV4JRl21nvIx2UPnH2jkedx+MR043k6BHTeANP1oY4Uj5ueuUo7SmlUJC+AwhHFsF6DFtEc+P0NdJ0XqHgl5tzI9MR8cyWGuKQVgGo/HcwmxuMjRQCEMw9Vsx4lBTBDg/DDyzK3lPauLR093gY1K9x9XEFAq1Ohk=
+	t=1724858426; cv=none; b=VBPIkrK072x/Iime9diBdqbXWYmAlNDZabSVvZupE7jWiqD1dl0ZvfuaVSjDFAOrlqYqSJsw84wxSfxeHzXjJH2fkAcdXfrhqa0IIbNAHJgTjFPnWPZk+ysePFP9AZqsy3LHuVTELoPLL8BfgC/HPuHJx9qNOZ1R7h1ijY/XRMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724858395; c=relaxed/simple;
-	bh=7aD+AzCSeMsuiftPJ5aRODAeiInYCsCGaJyDmBjqgEI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=KdppSRbVUZWlDyxKXV69Nog+avybt1dhUSwVfRgUyHxV8BqF62Z4XcSbvpwNhmki3IDOWlVBECgN9kFAmlw9odT/lv/n/Wh0ddctSTW0xcjI0XovYmlz7RkapwYrYdmhN20/TiO1pucG/l6/nNe2b3iE6LCNHe/E2mWjb+kLAkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JtPlOvWw; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so57862175e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 08:19:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724858392; x=1725463192; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CpCSPrvHbvgoQAYP88DpEJGLj5yIDmGzU0Kjzww6IQQ=;
-        b=JtPlOvWwoph2yJcyWkgGw05FhcEecRvvFjvHCExnZIDA1IDVGagOOGE6XqKSs8AQWq
-         aKfuzY2WRNwAA3QfOVaCRjm6Jpx62WmSOmm7VlSNuZKBjSrTHXv091Pwbx4XBz7sDOBY
-         OITmRCuWB+JzCkBvviYHpcU/ffR047AOee1uwx8fF6f6H68dVf2xZ9Rlsg2iSqAXz7hJ
-         QCNuemwtttr7lR7gutWRyNrNKFcL46NXS7GtKQV1F6mKBekX9w3FIDBlOgIyB4/3e16t
-         07rnkrDw7DztzkGzBFYTOBxiX+5DFvq2KtRdDodak8ARiQRc9p0MNvH3Jq74s2cLIlLd
-         1FKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724858392; x=1725463192;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CpCSPrvHbvgoQAYP88DpEJGLj5yIDmGzU0Kjzww6IQQ=;
-        b=EaeYUJMrrJpRnREZlcKgfV/tRUFfo4hUNg9cphp3MwvatiTYeGEtgI00wopqlLREAu
-         ywoEpcmofWOAouUR4SXXyiHHdtRXHUZCXC/CkFUEsE/vyMTx0LAvacaV/gS6RZcNZMmg
-         T+QvbKkwMVnp7il72n815N2B6NCOy6xLdqMttnZYg6YktP7v/MQ3jjbGqNykj/skUk1g
-         q9F7JeN3uSvE1oCdWy+y1tKdYp/z/KmZg5DbE0ycC2bbV/8eF31ELjwVl9bnVVhrZObZ
-         NwIwu/tuWGxslXXZ6BTG5vKZCX+2Qy/K6vCZ1GticyiK0WyIQScha1YSuz4jlNQ72epf
-         avmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW09GihqffDxITa0zVBcCqVStkXJhQteU5brH2xkl1Hl/IsoVHdCMlLwrl81p2zum0vLn3+JQGfTCbFOpM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4tCu8VBJCS2Z1/FpDTBEIQXLFPP4Z5LGKjONVhp4jaHXRSLM+
-	lFyamgEETl7VerdJoo/X+ZJ+OIZn5lnUPAuEVMMULxBT93jzgoP6an0zTMjL530=
-X-Google-Smtp-Source: AGHT+IEGSU/UwPVBHorEXHqFGG8jxUW916b7N6C+V6g9017AC5VrtKCvylicZ/00xhSSsodhFPWXdg==
-X-Received: by 2002:a05:600c:4f47:b0:426:629f:1556 with SMTP id 5b1f17b1804b1-42acd5e2150mr117558075e9.31.1724858391632;
-        Wed, 28 Aug 2024 08:19:51 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba6425a77sm24631045e9.45.2024.08.28.08.19.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 08:19:51 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Doug Anderson <dianders@chromium.org>, David Airlie <airlied@gmail.com>, 
- Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
-In-Reply-To: <20240828-topic-sdm450-upstream-tbx605f-panel-v3-0-b792f93e1d6b@linaro.org>
-References: <20240828-topic-sdm450-upstream-tbx605f-panel-v3-0-b792f93e1d6b@linaro.org>
-Subject: Re: [PATCH v3 0/2] drm/panel: add support for the BOE TV101WUM-LL2
- DSI Display Panel
-Message-Id: <172485839079.3445878.15332347279646667687.b4-ty@linaro.org>
-Date: Wed, 28 Aug 2024 17:19:50 +0200
+	s=arc-20240116; t=1724858426; c=relaxed/simple;
+	bh=I3VT8DEW+KJDkGC5ecXmG1EoqgveTqR4k+rkP2CqGcI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Slt1+uodnt6cDh7Sztzi6jtfs/s/al3za2YJaXTBxOH+iN2Fv++M/4Iw2g8vHEvNOELwA6F4WxqnD/UhB95Semv/2uEqz7+A+A6Evo8fRITIY3p/0vp9PVQfdxxnN74TKZEmWtGeyJpxz9Y10Vcj5anX5PdxM7sUF9FzuxzEwjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oOAKgVcx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D04AC4CEC2;
+	Wed, 28 Aug 2024 15:20:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724858425;
+	bh=I3VT8DEW+KJDkGC5ecXmG1EoqgveTqR4k+rkP2CqGcI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oOAKgVcxNb+B4wgj2Iqdi0xCrLVUk5C9Aa92UCKr3/v4QeBmLNdbz8PqK308NovuJ
+	 g+zm9ovfPI9/yR/d4UV447BKSrF1OhIm0qY/GodN4WNCCFpQ0j5fY79rbEQDGsyeno
+	 1RUSbxju2le2V9SNGbUFxs0xxlyPap8N4Qf11kQOE5ag8nFuWTVDOS7quoFOwQCILt
+	 4yeBQomdq7BEDNjzfxDTq1TGWtUrkELBKxOuOhEOdAsqWXTZn++0H8Mh253o7PKgY/
+	 RHRUb+eY9hvrDk0FX8Y+jev/4gZ66XgSC3M9Nrzc6QxF4ZBXxli8k6QEMVORFo1Qji
+	 RiK6+NtKFzdkA==
+Date: Wed, 28 Aug 2024 16:20:19 +0100
+From: Simon Horman <horms@kernel.org>
+To: Jacobe Zang <jacobe.zang@wesion.com>
+Cc: Kalle Valo <kvalo@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, van Spriel <arend@broadcom.com>,
+	Arend van Spriel <arend.vanspriel@broadcom.com>,
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
+	Ondrej Jirman <megi@xff.cz>, Sai Krishna <saikrishnag@marvell.com>
+Subject: Re: [PATCH v13 4/5] wifi: brcmfmac: Add optional lpo clock enable
+ support
+Message-ID: <20240828152019.GQ1368797@kernel.org>
+References: <20240828-wireless-mainline-v13-0-9998b19cfe7e@wesion.com>
+ <20240828-wireless-mainline-v13-4-9998b19cfe7e@wesion.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240828-wireless-mainline-v13-4-9998b19cfe7e@wesion.com>
 
-Hi,
-
-On Wed, 28 Aug 2024 17:04:18 +0200, Neil Armstrong wrote:
-> Document and add support for the 1200x1920 BOE TV101WUM-LL2 DSI
-> Display Panel found in the Lenovo Smart Tab M10 tablet.
-> The controller powering the panel is unknown.
+On Wed, Aug 28, 2024 at 04:49:25PM +0800, Jacobe Zang wrote:
+> WiFi modules often require 32kHz clock to function. Add support to
+> enable the clock to PCIe driver and move "brcm,bcm4329-fmac" check
+> to the top of brcmf_of_probe. Change function prototypes from void
+> to int and add appropriate errno's for return values that will be
+> send to bus when error occurred.
 > 
-> 
+> Co-developed-by: Ondrej Jirman <megi@xff.cz>
+> Signed-off-by: Ondrej Jirman <megi@xff.cz>
+> Co-developed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+> Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+> Reviewed-by: Sai Krishna <saikrishnag@marvell.com>
+> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
 
-Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
+...
 
-[1/2] dt-bindings: display: panel: document BOE TV101WUM-LL2 DSI Display Panel
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/1da04eac69197032813940426b73fff6f0a84c64
-[2/2] drm/panel: add BOE tv101wum-ll2 panel driver
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/aec8485f226c36eb4eea1d489772cd6f2c40144d
+> @@ -4452,7 +4454,9 @@ struct brcmf_sdio *brcmf_sdio_probe(struct brcmf_sdio_dev *sdiodev)
+>  	/* Allocate private bus interface state */
+>  	bus = kzalloc(sizeof(*bus), GFP_ATOMIC);
+>  	if (!bus)
+> +		ret = -ENOMEM;
+>  		goto fail;
+> +	}
+>  
+
+Perhaps a local change didn't make it into git, or something like that.
+But this does not compile. As was also the case in v12.
+Please take time to test your patches, not just the local tree.
+
+>  	bus->sdiodev = sdiodev;
+>  	sdiodev->bus = bus;
 
 -- 
-Neil
-
+pw-bot: cr
 
