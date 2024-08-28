@@ -1,245 +1,162 @@
-Return-Path: <linux-kernel+bounces-304628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60BAA9622E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:03:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FC459622E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:02:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E022D1F21917
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:03:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E9011F258FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC20158A04;
-	Wed, 28 Aug 2024 09:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF5C15C14F;
+	Wed, 28 Aug 2024 09:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KaFOZSr9"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OTSTNJCd"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D895B67A
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 09:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A746B156F4A
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 09:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724835826; cv=none; b=U5DT9TuQ0qednESKjTRBwomeA40xfRBAL/uC1e3aeGA2AWZMdFKK4iFKQBU+vPR2l7l+Z2IkAhOrQ8zNvfMGUDdR1w4t4IL/Wp6kjWkx1wbW+J2FF/IoGwI/lkdtnjfPgAOfYjh9UOr4y7C7NHW8a11Y2K/OJ/KdEL9i0mJw0Gs=
+	t=1724835731; cv=none; b=RaBNkKzpCvDJcvmbSWjse2IwvokRWSHvYz5/s4GKyPx5X31vM7+0a7qTH9rsW766A+LUIk2mXlWCeKlup3/uhyshhnylsZY/MmdJhbPBgOJOf7shD7PBbrZDIakWTT5V5E1N8YuAaY25HDCt9r+FKcxy7I3HHNyURdI5Gm/guAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724835826; c=relaxed/simple;
-	bh=Fh21zN38awdSiHMUzeHXCSVSPwBzRBSn8K5g8Tf3qQg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pr0AJ3gBEXlnHX6wNrVVkL7xYoME4iT9dnjohbJyLnyST7mSkyVtRQHh11ih08YN1Nd0D7cD8yv+sk1gNGDo+LlNk4iCmh/tXI36t/MjYizV9n82HXLbrDXRUoIKf/tOLFTWzhxzyhxtGz/jhgiCC5quvyOYMcMGE79L4pBHPKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KaFOZSr9; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2d3d662631aso4998211a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 02:03:45 -0700 (PDT)
+	s=arc-20240116; t=1724835731; c=relaxed/simple;
+	bh=Y9T9mdlQSTcnkP1tn21JG7vgCJSK/X8TTylmvdd+n8c=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=twocOfHreus7zkgqoRm6W1EnFOqhXQlqN3xBSDMsjxrUH7e5q6Ql694KNSqkwZk4/JV0inQmZr+q5Pq1Z/ccrMt5t3UJlXmj0e2U5kfbOilmnq6VjAZ1+i5TGkslYEvg44KSnJbjyb8pYAIaoPlYdRAJ7M56XSI+015wHw04g2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OTSTNJCd; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-371941bbfb0so3748395f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 02:02:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724835824; x=1725440624; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i94WsKk6MedQ8JayPsW/OLsnb+/nfJjq4thy0b3EO/E=;
-        b=KaFOZSr98HtpifpzCtUEmtbkmYXt5fPUVfowTc1qtB8TA3TaVTSGTYsCGA0QdujdvR
-         cf1gym9eQRC/zys6M12Bg5SUEaw/cDOV0jpflYkas2Duw4rSIFV2LnmC87vfPwXOCvi+
-         PYEdkxiI74QsRfhlVbRo83QxBPnJShOsJpz8OwquoSrDBEfkBa/gAVaB+dI3eRLD7LDy
-         wKyYkFO3a6DbkMS0Xwrz6zqh2k/pc5Wsok/qulDjJdqKQ7SzQYl/PDyZARtEqxv0bukq
-         dbHwW04NyWwlkoovnMMntpk6se5aSXhGSYjRVnObik4e2LBygTIQGrQjydmLYxC2YLYw
-         SNEQ==
+        d=linaro.org; s=google; t=1724835728; x=1725440528; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:reply-to:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5Z4NxETDH0rFSk+745J6bpRFGLfHusheDiIWrN8jBhk=;
+        b=OTSTNJCdanrz/vf/RJKuOxP75zAI3smwk5iRg1js8z6e9Ax9bq/DXQPooLV9RbXfIy
+         beuIpOAJ13vj0cVn1Ey08E4+gjYNLjwZsW6Qzj4mNKvHC43GuR79/ggmqDVfply1kAXz
+         W91ir0TtFnoN+H0ujNEek6cBNsvwh3nWGv7stBAmjkyHzjdDZ4yOQjdrAxTVdUCmBho3
+         9w+ayzC6q7EwsZYpQIJPEav+GE5hyIeqy0QXrmXmYZX9asxj9QMBryRL0PqKMgzJ63Tp
+         8NsRmMM/HueOb7Gu5O2BmGQMjFpm85QCnQkYMWUNxap3cAqRnHlQzSaR2aQho2WvGT+W
+         fsWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724835824; x=1725440624;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i94WsKk6MedQ8JayPsW/OLsnb+/nfJjq4thy0b3EO/E=;
-        b=H0kppWZCFLZ7d6qHiLlX0IINh0Pv03IxK6fiG4kVFLknnreEyetapwNHgt4rcc9VHP
-         tZ67CeVaak+5zfefGCkHzKbbCDyFIKvIVNJNiJdCl+A/FRE6ytmmv7LGoMJeze0+Js2i
-         rx4tcrdTuK/JoVlGfwfpi23UrAo79U97MWhryNC5XpGbnblCcz86BnAmEVnKrWGxNnCA
-         Yegf4g41iTltWDG1CxIb2qcQrB8LJOLO6EoIjo1Dgn3Lc7e0JiyLu48JMqaFinORJe/w
-         Aqp6sxx9vmDQMufA6UKB5cNmuv4Vj80kj0QxjGMoZ39EQe51we8m09faVFeuoCohxyCN
-         h1kA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNKrOVRBVfDXEE7dRw01C4E3CbeLSfjR9iutkyT7tZobVoPf4MQYx5R/NMemDVymxfoEvGKQF75VWLZB4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/w7iq3Z3UJ7VdRqhY6M0VBHKaHNjK2wmGI2U3bV7MxgCtbl4S
-	RUqupMLejGAgAwAHSIO0QOn6G6NaHbDsxjxCEIzZdwV+lvPs3ielNkd3ev5wQrBXyWAOR14P8J1
-	Mm+7R76RaDDd1BQzN3L+bbXzwP50Yo3s7
-X-Google-Smtp-Source: AGHT+IG8iEu6p8uDrVQT0s7Hud8PluofYnn0fsVVn49eDz7N1cecDbzVmTiH8gkamvBhZlH41DmEqh+wfO3QLKofAtM=
-X-Received: by 2002:a17:90a:c696:b0:2d3:9137:2375 with SMTP id
- 98e67ed59e1d1-2d646bcd374mr16789705a91.4.1724835824188; Wed, 28 Aug 2024
- 02:03:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724835728; x=1725440528;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:reply-to:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5Z4NxETDH0rFSk+745J6bpRFGLfHusheDiIWrN8jBhk=;
+        b=XYjBBdmu3kqjj2B/xZiQJbILziDAYLMKGsKuWCm530KTCmT1OQ6jQArCwEgm6dp38e
+         HlqtHi6ZZSU6s/PMRJMgf1vZa2oCRRoi0Da0IumTU1LAXq1tI5Mv3vBC/WRHK5Q/pWV/
+         u0d3jdOfQPFhCjAo0zYYHeowP96Zcnx0VM18JT5EaITAH4BKDg/xfDeEbthoIE/TczFE
+         QIFefHsGTSnJrXoKcU+ju9CoLfQD2p8rH2E7uUefJQDZWQRzIT+z4cwxzroD2sCnlObn
+         4+7LNoBjj/eBAuCT0iu+MzQhuM7x6iienHUcUppSZq2qY32qFg/phenXRdeX1lI4ttPU
+         PzwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXcStJ2KEkbPtRwJaovBafjFzBqlIFay6DM7Xnv+lzkQaDICBsSDgmTHHfyBIO7ZBrSx4EpvtTQT+EYHqk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrbtMxbSP1SSUfBQ8raWDl5nhIjFb5o3v9aK3kUycqwITVHJcD
+	aoqV9fxZIFP8GaL39MzXQvAlWffgN4XyLx5F8Mw9QGpj6he9b5d+rEweahYr5DA=
+X-Google-Smtp-Source: AGHT+IFmdAK9+lZzMofTlrPBow7WEkGGYo1oX9YCwv64L8aM54t+v71mKdHMhcNTUKhnMvxpvZFm0g==
+X-Received: by 2002:a5d:6041:0:b0:367:4383:d9b4 with SMTP id ffacd0b85a97d-37496859743mr787025f8f.56.1724835727419;
+        Wed, 28 Aug 2024 02:02:07 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:765d:64ff:5f38:550? ([2a01:e0a:982:cbb0:765d:64ff:5f38:550])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730815b420sm15057475f8f.50.2024.08.28.02.02.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Aug 2024 02:02:07 -0700 (PDT)
+Message-ID: <e3dee615-1df5-400c-82a3-3baff08c66bf@linaro.org>
+Date: Wed, 28 Aug 2024 11:02:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828062131.1491580-1-linchengming884@gmail.com>
- <20240828062131.1491580-2-linchengming884@gmail.com> <20240828094728.583dc7c5@xps-13>
-In-Reply-To: <20240828094728.583dc7c5@xps-13>
-From: Cheng Ming Lin <linchengming884@gmail.com>
-Date: Wed, 28 Aug 2024 17:01:41 +0800
-Message-ID: <CAAyq3SbLATwXbDN6icx44cm8-PX+DrUvq2xiYor7bLn4wmfVrw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] mtd: spinand: Add flags for the Plane Select bit
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: vigneshr@ti.com, linux-mtd@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, richard@nod.at, alvinzhou@mxic.com.tw, 
-	leoyu@mxic.com.tw, Cheng Ming Lin <chengminglin@mxic.com.tw>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 2/2] drm/panel: add BOE tv101wum-ll2 panel driver
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Jessica Zhang <quic_jesszhan@quicinc.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240709-topic-sdm450-upstream-tbx605f-panel-v1-0-af473397835d@linaro.org>
+ <20240709-topic-sdm450-upstream-tbx605f-panel-v1-2-af473397835d@linaro.org>
+ <CAD=FV=VL1Wxd0veW7N+0Hy=LdKMzNbBang9_EZ9Zo_d-wZOBfw@mail.gmail.com>
+ <dfb29dca-7110-4c11-b86e-9063f71a8ada@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <dfb29dca-7110-4c11-b86e-9063f71a8ada@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Miquel,
+On 24/07/2024 09:50, Neil Armstrong wrote:
+> On 23/07/2024 21:17, Doug Anderson wrote:
+>> Hi,
+>>
+>> On Tue, Jul 9, 2024 at 6:06 AM Neil Armstrong <neil.armstrong@linaro.org> wrote:
+>>>
 
-Miquel Raynal <miquel.raynal@bootlin.com> =E6=96=BC 2024=E5=B9=B48=E6=9C=88=
-28=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=883:47=E5=AF=AB=E9=81=93=EF=
-=BC=9A
->
-> Hi Cheng,
->
-> linchengming884@gmail.com wrote on Wed, 28 Aug 2024 14:21:31 +0800:
->
-> > From: Cheng Ming Lin <chengminglin@mxic.com.tw>
-> >
-> > Add support for Macronix serial NAND flash with a two-plane structure.
-> >
-> > Add the SPINAND_HAS_PP_PLANE_SELECT_BIT flag for serial NAND flash
-> > that require inserting the Plane Select bit into the column address
-> > during the write_to_cache operation.
-> >
-> > Add the SPINAND_HAS_READ_PLANE_SELECT_BIT flag for serial NAND flash
-> > that require inserting the Plane Select bit into the column address
-> > during the read_from_cache operation.
-> >
-> > Macronix serial NAND flash with a two-plane structure requires insertio=
-n
-> > of the Plane Select bit into the column address during the write_to_cac=
-he
-> > operation.
-> >
-> > Additionally, for MX35{U,F}2G14AC and MX35LF2GE4AB, insertion of the
-> > Plane Select bit into the column address is required during the
-> > read_from_cache operation.
-> >
-> > Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
-> > ---
-> >  drivers/mtd/nand/spi/core.c     |  6 ++++++
-> >  drivers/mtd/nand/spi/macronix.c | 17 ++++++++++-------
-> >  include/linux/mtd/spinand.h     |  2 ++
-> >  3 files changed, 18 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
-> > index e0b6715e5dfe..49f2d66c3a9c 100644
-> > --- a/drivers/mtd/nand/spi/core.c
-> > +++ b/drivers/mtd/nand/spi/core.c
-> > @@ -386,6 +386,9 @@ static int spinand_read_from_cache_op(struct spinan=
-d_device *spinand,
-> >       else
-> >               rdesc =3D spinand->dirmaps[req->pos.plane].rdesc_ecc;
-> >
-> > +     if (spinand->flags & SPINAND_HAS_READ_PLANE_SELECT_BIT)
-> > +             column |=3D req->pos.plane << fls(nanddev_page_size(nand)=
-);
-> > +
-> >       while (nbytes) {
-> >               ret =3D spi_mem_dirmap_read(rdesc, column, nbytes, buf);
-> >               if (ret < 0)
-> > @@ -460,6 +463,9 @@ static int spinand_write_to_cache_op(struct spinand=
-_device *spinand,
-> >       else
-> >               wdesc =3D spinand->dirmaps[req->pos.plane].wdesc_ecc;
-> >
-> > +     if (spinand->flags & SPINAND_HAS_PP_PLANE_SELECT_BIT)
-> > +             column |=3D req->pos.plane << fls(nanddev_page_size(nand)=
-);
->
-> Please separate the core changes and the macronix changes.
-> 1. Add support for the flag in the core (and the include)
-> 2. Use the flag in Macronix driver.
->
+<snip>
 
-Sure, I will separate them in the next version.
+>>
+>>> +static int boe_tv101wum_ll2_get_modes(struct drm_panel *panel,
+>>> +                                     struct drm_connector *connector)
+>>> +{
+>>> +       return drm_connector_helper_get_modes_fixed(connector, &boe_tv101wum_ll2_mode);
+>>
+>> Random question for you: on panels that don't use the
+>> drm_connector_helper the "bpc" gets set here. Is there a reason why
+>> some panel drivers (like this one) don't set bpc?
+> 
+> Good question, I'll check
 
-> > +
-> >       while (nbytes) {
-> >               ret =3D spi_mem_dirmap_write(wdesc, column, nbytes, buf);
-> >               if (ret < 0)
-> > diff --git a/drivers/mtd/nand/spi/macronix.c b/drivers/mtd/nand/spi/mac=
-ronix.c
-> > index 3f9e9c572854..a531cc8121ff 100644
-> > --- a/drivers/mtd/nand/spi/macronix.c
-> > +++ b/drivers/mtd/nand/spi/macronix.c
-> > @@ -118,7 +118,8 @@ static const struct spinand_info macronix_spinand_t=
-able[] =3D {
-> >                    SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-> >                                             &write_cache_variants,
-> >                                             &update_cache_variants),
-> > -                  SPINAND_HAS_QE_BIT,
-> > +                  SPINAND_HAS_QE_BIT | SPINAND_HAS_PP_PLANE_SELECT_BIT=
- |
-> > +                      SPINAND_HAS_READ_PLANE_SELECT_BIT,
->
-> Alignment:           ^
->
+Ok so the documentation says :
+https://elixir.bootlin.com/linux/v6.11-rc5/source/include/drm/drm_connector.h#L698
+	 * @bpc: Maximum bits per color channel. Used by HDMI and DP outputs.
 
-Thanks for pointing that out; I'll take care of it.
+and looking at the code, all drivers considers bpc=8 when unset.
 
->
->
-> ...
->
-> > @@ -263,7 +266,7 @@ static const struct spinand_info macronix_spinand_t=
-able[] =3D {
-> >                    SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-> >                                             &write_cache_variants,
-> >                                             &update_cache_variants),
-> > -                  SPINAND_HAS_QE_BIT,
-> > +                  SPINAND_HAS_QE_BIT | SPINAND_HAS_PP_PLANE_SELECT_BIT=
-,
-> >                    SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
-> >                                    mx35lf1ge4ab_ecc_get_status)),
-> >       SPINAND_INFO("MX35UF2G24AD-Z4I8",
-> > diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
-> > index 5c19ead60499..cec451e7c71c 100644
-> > --- a/include/linux/mtd/spinand.h
-> > +++ b/include/linux/mtd/spinand.h
-> > @@ -312,6 +312,8 @@ struct spinand_ecc_info {
-> >
-> >  #define SPINAND_HAS_QE_BIT           BIT(0)
-> >  #define SPINAND_HAS_CR_FEAT_BIT              BIT(1)
-> > +#define SPINAND_HAS_PP_PLANE_SELECT_BIT              BIT(2)
-> > +#define SPINAND_HAS_READ_PLANE_SELECT_BIT            BIT(3)
->
-> Do you think we can have the PP plane select bit without the read plane
-> select bit? I'd use a single flag for now.
+but yeah ultimately drm_connector_helper_get_modes_fixed should have a variant to set the bpc
+when != 8.
 
-Macronix serial NAND flash with a two-plane structure always requires
-the insertion of the Plane Select bit in the write_to_cache function. Howev=
-er,
-only the MX35{U,F}2G14AC and MX35LF2GE4AB require the insertion of the
-Plane Select bit in the read_from_cache function.
+In this case it's useless.
 
-However, I have observed that for flash requiring the insertion of the
-Plane Select
-bit during the read_from_cache operation, the ECC strength is 4.
+Neil
 
-Can we use the ECC strength in conjunction with the
-SPINAND_HAS_PP_PLANE_SELECT_BIT flag to determine
-whether the Plane Select bit needs to be inserted during the
-read_from_cache operation?
 
-This method cannot guarantee that a new flash witha two-plane
-structure requiring the insertion of the Plane Select bit will have
-an ECC strength of 4.
+<snip>
 
-Based on the above points, I think we need to use two separate flags
-to handle these requirements effectively.
-
->
-> >
-> >  /**
-> >   * struct spinand_ondie_ecc_conf - private SPI-NAND on-die ECC engine =
-structure
->
->
-> Thanks,
-> Miqu=C3=A8l
-
-Thanks,
-Cheng Ming Lin
 
