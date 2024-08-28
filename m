@@ -1,98 +1,92 @@
-Return-Path: <linux-kernel+bounces-305398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CA54962E1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:03:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64D4F962E22
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:04:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F3DD1C21993
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:03:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1030F1F22D9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84CF31A4F27;
-	Wed, 28 Aug 2024 17:03:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45ED91A4F26;
+	Wed, 28 Aug 2024 17:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="n/3I1wkM"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="XRUBu5Xh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6059E15F3E6
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 17:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 807B315F3E6;
+	Wed, 28 Aug 2024 17:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724864623; cv=none; b=J2Jm2ex8OiEPcWI4Uh1DOzhl7Y04tKwjHdMbQmIHoFpkA+0WYhnaCrftAIp9+dwUxRVx1RAvJAoZFVbj39GH4Hszkib1iyFZlMNqWL4+j2wLwv2dUmb1uHnVhx0FLxFmOvum2VwTGLXkr83F6DB9CqDyPr4cVv7AiB0/4QujhMU=
+	t=1724864636; cv=none; b=Grh1JUoUM9R8suMLqbA0jZ/qOYqJQOm85HVS901WGcf3BT4eSwAguwlu/MlobopN9cUSSw4SXs5XlVxD30MaYy1xwu+pnaEL/8y/Or/8VJVjYI8yhAJBbd1uO64mo5MUuX5gfWgZaUHA3uI19wh40HT8We1V7tkZ9nKYkG6bu2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724864623; c=relaxed/simple;
-	bh=QasJiYQ1cDw/pStQicO3S8JcebgaLLR56R+OjX3L02Q=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XTrRKY8quIm4sJMArdnTHIMlAyiUFTDLq9ffdQTR03UbEOKRvZitF5WPmLkx1sWi1wch84aFfR0EpRwBCGFrGiTcg/robHnbhR9+46k6PMm6iWfMUsNmPWtdf5fcJyB5DVwcocFP2Jvs11QmK1KtIexnccPf5ySch62qiACFn6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=n/3I1wkM; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7a7f86026a0so51961785a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 10:03:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724864621; x=1725469421; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QasJiYQ1cDw/pStQicO3S8JcebgaLLR56R+OjX3L02Q=;
-        b=n/3I1wkMOKH+bGMxL+yQlzYfp6qROm3K4v+wypIb2F2NGydGx7NvkwnFFoECDVTYPm
-         vDoA97XRSHkf9PaWXySsakpKfQbooUxWJHeNLg/veERRbwVvR0Bs3REW/8wglLdHHV5d
-         b38bqXOLIpis1bpZC9cMiuA/maV5T3pWaE4Eo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724864621; x=1725469421;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QasJiYQ1cDw/pStQicO3S8JcebgaLLR56R+OjX3L02Q=;
-        b=Mgvm056Z+dtSuq4D+RarR9R712gE8dkZ/HO1Aoat69zS/OzZJ5Eb4WMhfsCOLLZx/r
-         j3QcPLxz3JLqm1gL97t095jrIxglcc/mlA16JL1PnRqmr9fW0Bf+MAnBHIY7zTVk3NKH
-         Ry9NZZMHWoqazHp4zn5X22lfyxDjffMaeitFqv++pH9UVSaDF4JuYtvOGCg0sZZAjBYN
-         eW7AxT9D8t1SD0GHPLrMQMhcrhUlBtirPiKrAT4QZFpEgAL80XzIr7zx905Q7BBAErm/
-         /B2YdZ8w0wAB+Y71FB8TdKu3KioogYstr3PfwaYf47icoICgu8Q8620tsEC/W5q7dQBh
-         VK9Q==
-X-Gm-Message-State: AOJu0Yxeoo3avhN++4TI16jYOP3YqV5gIGlXg0/TBXfeIEKwtVvX85En
-	QoBH2ig8/OJeau9syms3i2j1nP+OLvfdxX+PdK6zSxRE3aUzUWT7uzfQVWQycGxkmVa3/coSGpv
-	E3NNOxzCB0v19cEHspxfUNzUkwRqQ8rSfGKlU
-X-Google-Smtp-Source: AGHT+IEVO9KZmNWSFybfc7A1nURst7111SB2+UOWqLJ8aG+gb/58BS72acni8VLoQAEGgDW7MBt6MwGtixuxjlVQbiw=
-X-Received: by 2002:a05:620a:2496:b0:7a4:f480:c315 with SMTP id
- af79cd13be357-7a804182b1fmr3651685a.3.1724864621186; Wed, 28 Aug 2024
- 10:03:41 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 28 Aug 2024 13:03:40 -0400
+	s=arc-20240116; t=1724864636; c=relaxed/simple;
+	bh=n819NHCxtnhnw1i53ckId8OAwuQolpEzr4GYYZZH2sE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HgqU1WC928HvVU8AJ7U/YZL3SgLivOdHVlmfTe3Xgh8HTJ7ujK+16WdvNFoYC065N++Pzkg9rEH+YJqoaNR+DG11gL7g/IHpM2rpIDFDuQ/2Otsk3SYKi6P5XpHm8E0V+Izm1rE2+vwbrmyuCTKgHnvI9XXrHxmW98l0bbVSKQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=XRUBu5Xh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 969FDC4CEC0;
+	Wed, 28 Aug 2024 17:03:55 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="XRUBu5Xh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1724864634;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fnlf4Nn0q79QyDN//xTaS0uYdOMz1VYesQkx3XoquQo=;
+	b=XRUBu5Xhs4SJzVjQpxnUgwxRhcHayZNlUeTN6nw+++fxV3sDUWZ7NaQYh1vensiP/6l+hP
+	np888uoOXxZLON2r2XomwGeD4LE2+qzSpliX6NGGqayEpD5ZSRl9mXHMjNHzchvbq4Bu5Z
+	1OIpl2+iUTFD+B0CNjFhqtQ9WGOqLhM=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 9dce1b26 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Wed, 28 Aug 2024 17:03:53 +0000 (UTC)
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	christophe.leroy@csgroup.eu
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Subject: [PATCH] random: vDSO: assume key is 32-bit aligned on x86_64
+Date: Wed, 28 Aug 2024 19:03:50 +0200
+Message-ID: <20240828170350.3422587-1-Jason@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <8597375d-6c15-4d20-96fd-2598805c09d5@linaro.org>
-References: <20240827231237.1014813-1-swboyd@chromium.org> <20240827231237.1014813-2-swboyd@chromium.org>
- <8597375d-6c15-4d20-96fd-2598805c09d5@linaro.org>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date: Wed, 28 Aug 2024 13:03:40 -0400
-Message-ID: <CAE-0n50_+ci9H4M74FC1xVF5szE7kULFifEEnE+-DxaivGG-Bw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] clk: qcom: dispcc-sc7180: Only park display clks
- at init
-To: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	patches@lists.linux.dev, linux-clk@vger.kernel.org, 
-	Taniya Das <quic_tdas@quicinc.com>, Amit Pundir <amit.pundir@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Quoting Neil Armstrong (2024-08-28 05:22:25)
-> On 28/08/2024 01:12, Stephen Boyd wrote:
-> > Amit Pundir reports that audio and USB-C host mode stops working on
-> > sm8550 if the gcc_usb30_prim_master_clk_src clk is registered and
-> > clk_rcg2_shared_init() parks it on XO.
->
-> Why does it change the dispcc-sc7180 in this case ?
->
+The prototype of this function ensures a u32* type for the key, and all
+uses of it are using state->key, which is a u32 array. When userspace
+slices up a memory region into an array of states, it does so using a
+state size that also ensures the alignment. So it's safe to assume that
+the key is always 32-bit aligned. That in turn means it's possible to
+use movaps instead of movups for loading the key.
 
-The patch that broke it affected all RCGs. Let me add that detail and
-resend.
+Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+---
+ arch/x86/entry/vdso/vgetrandom-chacha.S | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/entry/vdso/vgetrandom-chacha.S b/arch/x86/entry/vdso/vgetrandom-chacha.S
+index bcba5639b8ee..07ae91dcdbda 100644
+--- a/arch/x86/entry/vdso/vgetrandom-chacha.S
++++ b/arch/x86/entry/vdso/vgetrandom-chacha.S
+@@ -43,8 +43,8 @@ SYM_FUNC_START(__arch_chacha20_blocks_nostack)
+ 	/* copy0 = "expand 32-byte k" */
+ 	movaps		CONSTANTS(%rip),copy0
+ 	/* copy1,copy2 = key */
+-	movups		0x00(key),copy1
+-	movups		0x10(key),copy2
++	movaps		0x00(key),copy1
++	movaps		0x10(key),copy2
+ 	/* copy3 = counter || zero nonce */
+ 	movq		0x00(counter),copy3
+ 	/* one = 1 || 0 */
+-- 
+2.46.0
+
 
