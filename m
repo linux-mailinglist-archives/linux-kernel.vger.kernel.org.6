@@ -1,43 +1,46 @@
-Return-Path: <linux-kernel+bounces-305793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 001AE963482
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:17:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20715963483
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:18:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 343101C2400D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:17:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89676B232E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7796D1AD9D7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E5A1AD9E7;
 	Wed, 28 Aug 2024 22:17:43 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FF31A76B9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24FBE1AC8A9;
 	Wed, 28 Aug 2024 22:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724883463; cv=none; b=tu+U/k5DYYnZXLX86foMMMKLvW7+YlJj7y/N6MO3/TE2MyTYu22aHPyQ3cYnmQ/XrsOItmfHWXI5mEd7BrsoFhjb1+4doZd00prxVBhM3h2PYO6AjnSrVjakiX36cgW2p+Sj21MLSgy68+IFiXZDsUBGa+8RjzmJUSS2/Lbm8Uw=
+	t=1724883463; cv=none; b=D1aZTKgyZ5xUKd5/E8jDHC/GKAZeLGHu32bV9NBfhxml+HrWGQFUyavyWuarknLCW0ANLh2j357l+OyxS1jxZIog/fCD/+/UQW+foTc2YVbaB8HJTCZQGb+CZOQecqhT4PFDHTr9fp1BkWgQPJC9+O885pMPR31BtgFDNkbrTzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724883463; c=relaxed/simple;
-	bh=EkEtp55oPiKBwq3dSyhIslmVS08+3zItAPPERYHr2Ro=;
+	bh=lpJbHZspsQiMJ6ieepbT9T5dQRIu+DZnhhP+O9BlYsg=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=B3idYiSGaRoEHXySIfOPm2ame5yh9uhLcr0fdQj2KlItW52FPiC8/ofCkeTFWw5neJI580D4aZgWQt1Kdwtud9w92WHwoNtg6X3oQ745oInjI9uBvev26hWGVr5XK5IhxGF1x2IF7X7t7F3KvMgP/8HCIZSYT8c8aSwAl6kDPmA=
+	 MIME-Version:Content-Type; b=qp1ASjSovSd4DxN72G5HkrfP7SULNZzg1YM4jrEFU5AuR+Sm6Lt/NeSt+lScT/aGOJ8p5mKxPewAorQzGe89mim1miUD/OPKYWwVP45C7F4VnpIsrlDNveVPxTdsQXiBsmvGX4gsG55vS+FkebNG3KdHj93IkrMjyzEfrnkaQR0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0209C4CECA;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A71F0C4CEC0;
 	Wed, 28 Aug 2024 22:17:42 +0000 (UTC)
 Received: by mercury (Postfix, from userid 1000)
-	id 4ECF6106053B; Thu, 29 Aug 2024 00:17:40 +0200 (CEST)
+	id 4C1CA1060535; Thu, 29 Aug 2024 00:17:40 +0200 (CEST)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
 To: Sebastian Reichel <sre@kernel.org>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240828-power-supply-const-psy_tzd_ops-v1-1-dc27176fda5b@weissschuh.net>
-References: <20240828-power-supply-const-psy_tzd_ops-v1-1-dc27176fda5b@weissschuh.net>
-Subject: Re: [PATCH] power: supply: core: constify psy_tzd_ops
-Message-Id: <172488346031.466860.6298644704120446291.b4-ty@collabora.com>
+ Florian Fainelli <florian.fainelli@broadcom.com>, Andrew Davis <afd@ti.com>
+Cc: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240610142836.168603-1-afd@ti.com>
+References: <20240610142836.168603-1-afd@ti.com>
+Subject: Re: [PATCH 1/5] power: reset: brcmstb: Use normal driver register
+ function
+Message-Id: <172488346030.466860.4956050651307556387.b4-ty@collabora.com>
 Date: Thu, 29 Aug 2024 00:17:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -46,19 +49,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.1
 
 
-On Wed, 28 Aug 2024 20:04:29 +0200, Thomas Weißschuh wrote:
-> This struct is never modified, so mark it const.
+On Mon, 10 Jun 2024 09:28:32 -0500, Andrew Davis wrote:
+> The platform_driver_probe() helper is useful when the probe function
+> is in the _init section, that is not the case here. Use the normal
+> platform_driver_register() function.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] power: supply: core: constify psy_tzd_ops
-      commit: 9dad0127ad732f756d056ea152e0b084f321c765
+[1/5] power: reset: brcmstb: Use normal driver register function
+      commit: 0174d12f9b7ebc83f1f2b6c25f05304104de5a91
+[2/5] power: reset: brcmstb: Use device_get_match_data() for matching
+      commit: cf37f16a60f332fad21fe0a45893ac4c6a825d9d
+[3/5] power: reset: brcmstb: Use syscon_regmap_lookup_by_phandle_args() helper
+      commit: a4ceaab660cabdc9ac2d2514a809174443209b3b
+[4/5] power: reset: brcmstb: Use devm_register_sys_off_handler()
+      commit: ad87aee5cba821066be99c76efd818368ff5bb4a
+[5/5] power: reset: brcmstb: Do not go into infinite loop if reset fails
+      commit: cf8c39b00e982fa506b16f9d76657838c09150cb
 
 Best regards,
 -- 
