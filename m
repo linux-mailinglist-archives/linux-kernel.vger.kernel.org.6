@@ -1,149 +1,93 @@
-Return-Path: <linux-kernel+bounces-304207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C12E961BD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:08:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB57C961BD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43D171F23EFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 02:08:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19CA91C23134
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 02:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0F3481B3;
-	Wed, 28 Aug 2024 02:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IFYDvnZl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2633D47F5F;
+	Wed, 28 Aug 2024 02:09:06 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC7F3CF74;
-	Wed, 28 Aug 2024 02:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B29541A8F
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 02:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724810925; cv=none; b=dLeHGNpR/P2lAneZKvmcVdJmjfQp0ORIaTvi7FrU4GMUPXNhWICMYCnbENTy3pU1KfZ2N6Rhl/2WAoB8djYvnRpc9kB6viK9vdDWyJ6V6nh3ZuRKwzrf/jr4jva6rnixIm3/ZOhlm6azM1u2EBLUCY1GE0i+/+9209Vg5zcNXzo=
+	t=1724810945; cv=none; b=agc3Z+u0p591JJlLVE0B6LHbCtEsOEPTTlS55rUNGB9Dmuq4XM2DtcLCD+L6wrODqGkwA97JnTURb/24SHKhoeL5ENED2Sqwl1hpXu3hzEor5a9118t33EIj2XPnY8EFxKOl/X/Fo+dVGVDPC/1LKePt4KClaSXpqY43TPGqi0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724810925; c=relaxed/simple;
-	bh=PyXAgK3hCiX7g/AOrmr8UOJ62EPFkWTDqV8Km9Rnf+o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NgDo7+WgOlbt+11LCBDcyN1ja8zvrQkAa9HVQ3znJZzfLbTEPN2KI7CGmcbHaWqpFzUjvzpgCS1/h8qgQMGPq0B4vIPfFyyahchC22uFxhoD3hn0/ekvMHsH0X2GBvBLP/CkRIekNlY8yJ4t4UzZI4mLWBSbFj15v5dq2bnnF0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IFYDvnZl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A53DBC32786;
-	Wed, 28 Aug 2024 02:08:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724810924;
-	bh=PyXAgK3hCiX7g/AOrmr8UOJ62EPFkWTDqV8Km9Rnf+o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=IFYDvnZl8QfL0eYewOPH9pAFZg928JTAGdsKSLjzsAi017dZgL4t+JBn/VmLFJrvu
-	 Lgm0rCjVQj1Lfy3chePtDNPsSK9SVlCCHfgvEeQ5yimynRaQdgPY4uVRUtSr0QDDMu
-	 Kl+YDOicjyAGC9RebteQwf3ruHa/drLwEl4bZ301oNvrkM/05SQyGdTMSmzInOvacr
-	 wj14ZCr9JQRQy2x/1IPtXA2v0djX9T4eBov6MBJGwOCJhiPZtfvnn/5Qo5BFA02kx4
-	 /juiP5Mv7Rwi95lYDzRRvOyAhUcNvddBU4ZE/reBai7fa53Jbfb4+oMXPNnvIYWRiG
-	 uGv/otRB6z+2g==
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5bec4e00978so5932515a12.0;
-        Tue, 27 Aug 2024 19:08:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWguaJ3nkFhoiR3wMdBuKokUY3W2fd6ct6PN2oPvLvZQtkd9pDyx7V3UzVeLI7QUYvISUhhH9faUUi1StHZ@vger.kernel.org, AJvYcCX5oimhbs/z2amajsTdmhOuzhFXRJU2alYIJmw2YLKuEDBFvamNLIGMoFeD7z7QxPEhKAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw66+cS3EgHHNDuVjrWwASPCHPlH5OAzweaWyCEJL8ulm+8J8V1
-	2wcW8sCgUAv6hrzzkdy2SR7FCqz1cNhQ+wF9GzY8dZCpWRVO5+3k56nJXwevoLJcH6ZjEzAS0xN
-	NO82U8CBoaLUcI+MzZE4Oe4i+w1g=
-X-Google-Smtp-Source: AGHT+IH7Jrq69vMjEx8udMHOd9V1G865e3s2FI6Xp4dfpGdJMTTiwR4c6hfXXHPr/VEf5xug5BLkyMppDjkJPlSn4ew=
-X-Received: by 2002:a05:6402:d06:b0:5bf:2577:32b8 with SMTP id
- 4fb4d7f45d1cf-5c089163827mr10647025a12.9.1724810923248; Tue, 27 Aug 2024
- 19:08:43 -0700 (PDT)
+	s=arc-20240116; t=1724810945; c=relaxed/simple;
+	bh=JTAgtH1FK4QFJ+PT2KPuTpjXRpXLH/Dr4z5LJGN/NTg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=MJR3CvuxYmQFg2bvTMpq1JmF7ZSGPqDEOtvCU1tKRscNcFijmm4psNPQ2JwEIUtJ+fe0byYr5prRhXGnBrOv94IzsonstHEEz5j3YWmsC5xKtJX2hqmTVt8VbjSoP2IpnNhCwAxL7FRhmX6cJCZhvlvufp7K5j1WOlwA8OaWM4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81f99189f5fso683260639f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 19:09:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724810943; x=1725415743;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oElMfIFCafP5iISSwnztMt9g5uHWynMraVT0HFC/h38=;
+        b=uU08q4l4QlcEL/MYiGR/8ZJJh0bvzOTFBqLsVHd0nrFX7z/MEd1IG4Wzo8TkynHxcG
+         abIr0bRdiEpo7G27muGFcm52EpXlrFLUs0XFP2THLN5VIRE04JQJdx2ogVKPyzbx1HrP
+         sVRPjtZYvC6dVC8P4cs5Pml3/sxvpOCVxeCjkbDSvPcsfqDXSsu6+jwv8Lrq0Fsve2Pf
+         lXaPfjyVUMiV12CXc83phPakqC2UGrzhbMC+wv8jQKF7vEvdDHssH8ZIjB6f8g8rlO8N
+         HjewQDkNDZ8EIGc466Am0KuBJMCFNde6X/4x8wUWu1EBS/DIwmyrQS+1q6vpY+3KUy2B
+         5QRw==
+X-Forwarded-Encrypted: i=1; AJvYcCUvjCGknGxzdBJUhN12fijJtc+1IoxkO5E5vdsB9tbr5N1pc8su7r+x6uob3QUAgR23RSSunrqFBUiKJ+4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEOa9YZelhNMJ+ZyS75/9u5C75QQ4xHZCmJ/9xFKW6miXjHfAD
+	qfmISGyg7SWhjzMeCZbyPrEyLkWzehuWafzEWxlb4n3yWCIlP+7eXL09cPG9ygzwxdV2OGUK7nq
+	EKV15USfm99yfuQ5IiLIPBGj2hHY68R7/+s9tgLscrcmYYe6Lcku2FvM=
+X-Google-Smtp-Source: AGHT+IGQugPbogG3CqxiNvn+4mImP5pvpk0ROFp/+Mh6vXyrgJ6SdaerED6fc8HvIQnEcELCfWB2ZLL5As+idjymTkAYIwzGDoYs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730075744.1215856-1-maobibo@loongson.cn>
-In-Reply-To: <20240730075744.1215856-1-maobibo@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Wed, 28 Aug 2024 10:08:30 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6dFBJ+dQE7qzK8aiTjx8NFJtzPWzEGpJ8dm7v4ExD8Ow@mail.gmail.com>
-Message-ID: <CAAhV-H6dFBJ+dQE7qzK8aiTjx8NFJtzPWzEGpJ8dm7v4ExD8Ow@mail.gmail.com>
-Subject: Re: [PATCH v6 0/3] LoongArch: KVM: Add Binary Translation extension support
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>
+X-Received: by 2002:a05:6638:14ce:b0:4c0:a8a5:81df with SMTP id
+ 8926c6da1cb9f-4cec4f93cddmr18478173.4.1724810943180; Tue, 27 Aug 2024
+ 19:09:03 -0700 (PDT)
+Date: Tue, 27 Aug 2024 19:09:03 -0700
+In-Reply-To: <tencent_85866689832EDE6ED8CC92A7DD46FD12E406@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000092bfa90620b4d71d@google.com>
+Subject: Re: [syzbot] [net?] general protection fault in phy_start_cable_test_tdr
+From: syzbot <syzbot+5cf270e2069645b6bd2c@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi, Bibo,
+Hello,
 
-I have consulted with Jiaxun offline, and he has tried his best to
-propose a "scratch vcpu" solution. But unfortunately that solution is
-too difficult to implement and he has nearly given up.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING: lock held when returning to user space in ethnl_act_cable_test_tdr
 
-So the solution in this series seems the best one, and I will queue it
-for loongarch-kvm now.
+================================================
+WARNING: lock held when returning to user space!
+6.11.0-rc4-syzkaller-00681-ge5899b60f52a-dirty #0 Not tainted
+------------------------------------------------
+syz.0.15/6073 is leaving the kernel with locks still held!
+1 lock held by syz.0.15/6073:
+ #0: ffffffff8fc84c08 (rtnl_mutex){+.+.}-{3:3}, at: ethnl_act_cable_test_tdr+0x3d2/0x10c0 net/ethtool/cabletest.c:341
 
-Huacai
 
-On Tue, Jul 30, 2024 at 3:57=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrot=
-e:
->
-> Loongson Binary Translation (LBT) is used to accelerate binary
-> translation, which contains 4 scratch registers (scr0 to scr3), x86/ARM
-> eflags (eflags) and x87 fpu stack pointer (ftop).
->
-> Like FPU extension, here lately enabling method is used for LBT. LBT
-> context is saved/restored during vcpu context switch path.
->
-> Also this patch set LBT capability detection, and LBT register get and se=
-t
-> interface for userspace vmm, so that vm supports migration with BT
-> extension.
->
-> ---
-> v5 ... v6:
->   1. Solve compiling issue with function kvm_get_one_reg() and
->      kvm_set_one_reg().
->
-> v4 ... v5:
->   1. Add feature detection for LSX/LASX from vm side, previously
->      LSX/LASX feature is detected from vcpu ioctl command, now both
->      methods are supported.
->
-> v3 ... v4:
->   1. Merge LBT feature detection for VM and VCPU into one patch.
->   2. Move function declaration such as kvm_lose_lbt()/kvm_check_fcsr()/
->      kvm_enable_lbt_fpu() from header file to c file, since it is only
->      used in one c file.
->
-> v2 ... v3:
->   1. Split KVM_LOONGARCH_VM_FEAT_LBT capability checking into three
->      sub-features, KVM_LOONGARCH_VM_FEAT_X86BT/KVM_LOONGARCH_VM_FEAT_ARMB=
-T
->      and KVM_LOONGARCH_VM_FEAT_MIPSBT. Return success only if host
->      supports the sub-feature.
->
-> v1 ... v2:
->   1. With LBT register read or write interface to userpace, replace
->      device attr method with KVM_GET_ONE_REG method, since lbt register i=
-s
->      vcpu register and can be added in kvm_reg_list in future.
->   2. Add vm device attr ctrl marcro KVM_LOONGARCH_VM_FEAT_CTRL, it is
->      used to get supported LBT feature before vm or vcpu is created.
-> ---
-> Bibo Mao (3):
->   LoongArch: KVM: Add HW Binary Translation extension support
->   LoongArch: KVM: Add LBT feature detection function
->   LoongArch: KVM: Add vm migration support for LBT registers
->
->  arch/loongarch/include/asm/kvm_host.h |   8 ++
->  arch/loongarch/include/asm/kvm_vcpu.h |   6 ++
->  arch/loongarch/include/uapi/asm/kvm.h |  17 ++++
->  arch/loongarch/kvm/exit.c             |   9 ++
->  arch/loongarch/kvm/vcpu.c             | 128 +++++++++++++++++++++++++-
->  arch/loongarch/kvm/vm.c               |  52 ++++++++++-
->  6 files changed, 218 insertions(+), 2 deletions(-)
->
->
-> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
-> --
-> 2.39.3
->
->
+Tested on:
+
+commit:         e5899b60 Merge branch '100GbE' of git://git.kernel.org..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17c0c7a7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=df2f0ed7e30a639d
+dashboard link: https://syzkaller.appspot.com/bug?extid=5cf270e2069645b6bd2c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16325a43980000
+
 
