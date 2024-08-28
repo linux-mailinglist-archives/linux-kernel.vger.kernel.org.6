@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-305146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E638962A3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:28:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC0A8962A3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 601981C24032
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:28:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92B881F21C4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBDE18C91A;
-	Wed, 28 Aug 2024 14:28:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809F718C322;
+	Wed, 28 Aug 2024 14:28:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Mn+PEqI7"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0GFFVgo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E53188CC8
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4F6188CC8;
+	Wed, 28 Aug 2024 14:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724855305; cv=none; b=HfbDCzwdlsgKEXfuuhOFvnAMlvDruZ/Nq+C2YeCdXbZHhAyxgtSpqAyY0i75dm+2IEk5OUAhc1NbGUenkigNKhIq1Ol/NuYacxgEMM98ajyQOH+R91rjGQiWtlE/ald0xP8KhOTMTtFVjUXMXTfWo1FsQornlsyKphpI44x/f6o=
+	t=1724855323; cv=none; b=UKtMJIaiTwfWmbrE6tEBm2ya1mwBAndUKUjR/2Jf4rbk9L//woTIg237uL58vFmsrxSqmSmEEPW606a+2o9axpolBd6oR2JV9H30GBuhgGNHqJ8EVBAGQw8vlj40BXARbwcGW22yRWlbSuil+cm6b6LQXwskknEUvpfLVcbirZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724855305; c=relaxed/simple;
-	bh=IqCHzZOe2MefKqf1QB3jOGgwTrRJJ43Amw8xlR1fSCk=;
+	s=arc-20240116; t=1724855323; c=relaxed/simple;
+	bh=DGSuZ/bqxzkTTPMrGypMuEZndk6U6ePb9UX8AbuIeMY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BLL6k4AZ0tJEiGi4tvXSlgEsd/1rWS+p3cyiXB/AbvkHW31YqjojwoISx3TlhTtXCVujS947MrGBfAuM/CIMzsUiIpiHqUFJM6xJ6w+kkd8LjWFvN1tE5qugFKR+Cg50KaK7W37tNgmOREDLioCtqw1ctdKAtmluM2NyOWTE+mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Mn+PEqI7; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-371b098e699so5562238f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:28:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724855301; x=1725460101; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Wi8HafCTKyKeL7eno3kK3ziDMFF0EjcyEtRLeesAbgc=;
-        b=Mn+PEqI74NFjE3cJJi4GoQkDPZBDiNeQFNIV/Usp4ycbZEi7YUQrZwYSyOWKJkYQtE
-         5X2RSQAfHMyFUGq47iy8GpFEUsszlKF4LwRIbtLFsvTb7s5Fkgva+CcxcVinKy08qATZ
-         ZBin8IAdWWmLB083NOkDBrgRyICsX65LYcQTWM9tCDHihKNMDxNJB773MrXYfUhnttN4
-         Nz3wxXHBD4QjBgi2A4/lNaNA44e9boonawSxyI5WqQe/5qL53BTOG9UpWdsOZa9t+XFR
-         2BXSZxrkTZ7u3n76ImiNSp6J8JtJwgCVLtUbZGY8VFesFCo7D3mqoxa7FtRl97awy/oI
-         kfqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724855301; x=1725460101;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wi8HafCTKyKeL7eno3kK3ziDMFF0EjcyEtRLeesAbgc=;
-        b=K20bAk+2tqbcHhr8vAyC9XMKKndv3dsVJT4hnBGdMa9jyoQHeUWPwAHxB1cnMakX/k
-         dJ//6vkVGpwrxOed3ymQEYAxa0Vau1eJ+O/WVWOARt7fIh+ivoPReGfwnYAWqG9NWanZ
-         EfZXkfwxyGS4VVGxQc1qbu29P0DFb8GSuZiDJzgWpYQfm0OeJIEDw8MiRoD5LahQMzA1
-         U8mq4tNJYRdyiOsnyC8T7jJ3yTrocgxluOTmzkUGRqzW65ofwlSSZh1AB3WAHPLgepqr
-         zhRJDzomZCNfcguxf1VRI34hWusTilBxz4WZbE9qkmDkE1MoBvGSGFUppOLuPlckhgID
-         k7aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVS7dmQidIsuC0i7jhYbOyzb4NgNeb6+UYXK10/wF9XSJWl7sC/Xw6sRtharx+Awcc2ualM6u+N+FpYCcE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp2KIP2ck+ShXU6VugIarOAa7r1uMpMS2ZB3qYXdOYgysOavea
-	sVTkQPU0q3HbxW6LnECLbNHfAsSZvBFIEgVYbY72DP+/dVp2ZhQft64DInurgCw=
-X-Google-Smtp-Source: AGHT+IEu7+LqB/pIxxiTDjSXFhGZ5Uc89Xd+FMOCVfwIMBD9B6VLwoTWWqYC4EhfY9FURWCBWOpHMw==
-X-Received: by 2002:adf:f001:0:b0:371:7c68:7cd7 with SMTP id ffacd0b85a97d-373118e33d2mr12898139f8f.56.1724855300934;
-        Wed, 28 Aug 2024 07:28:20 -0700 (PDT)
-Received: from [10.20.4.146] (212-5-158-46.ip.btc-net.bg. [212.5.158.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e548624asm250836966b.42.2024.08.28.07.28.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 07:28:20 -0700 (PDT)
-Message-ID: <015695ef-d05e-4efc-8bba-03d4251db80c@suse.com>
-Date: Wed, 28 Aug 2024 17:28:18 +0300
+	 In-Reply-To:Content-Type; b=IW8po+CfcfkKEYMvb0kc00Nx2umjwlSURtlyB4xc1Vy2oxPE2I4C6Bm8+QLCMKTxdJNs7BJKGxr8g4nmx6j7ZHPjIpLtcZnX34RP2RxbKn9Uec0JU76LpzStqbgW790zfWyFYuGZ0rcKJhtn63hujLYdZEhD3r978fmO9DcLios=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0GFFVgo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A1D5C4CEE8;
+	Wed, 28 Aug 2024 14:28:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724855323;
+	bh=DGSuZ/bqxzkTTPMrGypMuEZndk6U6ePb9UX8AbuIeMY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=i0GFFVgoNwKWx2eUNGm0ZlYiY5E5fj60GtW6Ra2IlMsCBktVCzTuzvliOUm/d+bfk
+	 SkECt/EzgytWYW3r8Au+Wlz6kFJyGzfT56cnRihEdS8OGa9ZUk9JjkHz2Yd+SpGkO8
+	 aAvUcmQokuAQ1tWPW+sZ+ynRb6VGEde1XqgJMJELd/1M/7FTmcVyN9bN3ldbCBzGt8
+	 hBRML2Z4W6LBIA6aJ2ZzXahrCmxkdV/leQ4TTjvbw5G+ZzkadRgxFifZwV0TmA6St2
+	 OKb7VU9sWmJdsmJ5tbdRU0/T3O7MJwIpzE0YYxrzO4bYas5u3B4OTY9tdAdj60qzLM
+	 BDCMlDj8IUIJw==
+Message-ID: <1fd84ffc-60e2-45ce-8b0a-1081360fae30@kernel.org>
+Date: Wed, 28 Aug 2024 16:28:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,45 +49,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv6 1/4] x86/tdx: Introduce wrappers to read and write TD
- metadata
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
- Kai Huang <kai.huang@intel.com>,
- Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
- stable@vger.kernel.org
-References: <20240828093505.2359947-1-kirill.shutemov@linux.intel.com>
- <20240828093505.2359947-2-kirill.shutemov@linux.intel.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
+Subject: Re: [PATCH v3] ASoC: dt-bindings: Convert mxs-saif.txt to
+ fsl,saif.yaml (imx28 saif)
+To: Lukasz Majewski <lukma@denx.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: Fabio Estevam <festevam@gmail.com>, Conor Dooley <conor+dt@kernel.org>,
+ devicetree@vger.kernel.org, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240828092709.2626359-1-lukma@denx.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-In-Reply-To: <20240828093505.2359947-2-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240828092709.2626359-1-lukma@denx.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 28/08/2024 11:27, Lukasz Majewski wrote:
+> The 'fsl,imx28-saif' compatible has already the mxs-saif.txt description.
+> This patch converts (and removes it) this file to fsl,saif.yaml (to follow
+> current fsl convention).
+> 
+> Changes for the mxs-saif.txt:
+> - Adds 'clocks', '#clock-cells' and '#sound-dai-cells' properties
+> - Provide device description
+> 
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-On 28.08.24 г. 12:35 ч., Kirill A. Shutemov wrote:
-> The TDG_VM_WR TDCALL is used to ask the TDX module to change some
-> TD-specific VM configuration. There is currently only one user in the
-> kernel of this TDCALL leaf.  More will be added shortly.
-> 
-> Refactor to make way for more users of TDG_VM_WR who will need to modify
-> other TD configuration values.
-> 
-> Add a wrapper for the TDG_VM_RD TDCALL that requests TD-specific
-> metadata from the TDX module. There are currently no users for
-> TDG_VM_RD. Mark it as __maybe_unused until the first user appears.
-> 
-> This is preparation for enumeration and enabling optional TD features.
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Reviewed-by: Kai Huang <kai.huang@intel.com>
-> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> Cc: stable@vger.kernel.org
+Best regards,
+Krzysztof
 
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
 
