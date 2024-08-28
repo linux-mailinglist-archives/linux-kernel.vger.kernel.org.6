@@ -1,239 +1,194 @@
-Return-Path: <linux-kernel+bounces-304774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94A5C9624AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:21:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 463D49624AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:21:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9FAA1C24437
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:21:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC7F5286586
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5FC516C865;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C66516C842;
 	Wed, 28 Aug 2024 10:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="srfh1/j2"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HwLXp1X1"
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0B616B3B6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2DA16B3BD;
 	Wed, 28 Aug 2024 10:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724840436; cv=none; b=pn134X3FiRoNeA9rHy2A7koDQLO/M3hWUx16QNU+suZ3THqFpklj2+/Tk0sf7dT14diw/tAIlnd6Xv5q5s6xufw8MCc7kp/TSNC1Djjb/TkUAe247wSJoYydi/9/IwfYdk9c44ODtDJGlVa4E/M+66GHnv9io/7FgOpcEVi/ibc=
+	t=1724840435; cv=none; b=KrjmaRacNavCMzLJpJuk/Moq2fzmWo3D/2294pfeAzOcFx5N2Dykmcsa2U5F5VZPyvgcUi8Gu6fyCZuHD8ef4LNNXAjw/Gzk8yOrBPOCPoWHLspKuahA0gxuhE6spX8yPMN1kTaZbgwp26sDUMDFd5vykt6Ff4rr8W1eCLEVPL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724840436; c=relaxed/simple;
-	bh=V7tyZo42KRzhJMOB9sBnRwanzsU4h7z0p4i43WPkloc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tCJDcWDYJUT+9YF2fdF3x3S/EWEtq9rY6jVVAOJYnJD9hpiy1qp2XWMdF7VUnsT2LI7U1MDp9E/v5F+BP+YhZZ1zMaX8rkuaHXjRS02zwpkqyoaK/nb9ynPPf07qon+wQD9IBMnfMZTOsTJxKtiXVswbhAYlJybiYzCCvV4pLH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=srfh1/j2; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Wv0m82GSxz9sxG;
-	Wed, 28 Aug 2024 12:20:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1724840424;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l/etGWng+vYhHUDTPmtySIMqzp4DMXHgo5r9nN5CsXw=;
-	b=srfh1/j2rt2BdkqLXBO2XOA6AqLofSnEL0E2ArCAsQFJE8k4c24J368PKSfoQAKkUef7L3
-	leH/BJF+8nOankXab0tHP3BX0m2mDoxkgRY/ABfCYP15bCpvHXWWosZyMD2RihqytvKL0+
-	mNX2fbq88sSOwH076p3xtiUakCQbBMfp5nbCncJLkfCH2y59xQyytGzrRRlh7ZNfWnHjRA
-	gc4vmMTr2lfi2fR/4HVS8zYHa+nTCXbpTrcCVEVknTgB7jYzh9tBDOJvU7mw+bGYxDZtXc
-	sxtOb5L2iW2qamiAwOf4rOYAyRT48IGxfpqnjZ2gQ47Xx8ZcF4h+nbcJ6Wm7Aw==
-From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Wed, 28 Aug 2024 20:19:43 +1000
-Subject: [PATCH RESEND v3 2/2] fhandle: expose u64 mount id to
- name_to_handle_at(2)
+	s=arc-20240116; t=1724840435; c=relaxed/simple;
+	bh=eBWk4bTEFR59nYLgwX1f9jQJEeZOcJqHZ7RxVpSw3fQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ooVNyQmG3C7nuycIo19VxqhV4GBQe7t32dcLz9PVwpAr9eH0IH2hNyI3T9+mk2BLf29xf/4zPXBqz7b4Yoexg8IhPLVEfoej7Ldo4vPAWHyNw69WbuGAC4juyodu5RsTFxmKPrWHo6+AaLzoLSJlHhysGDc/wn5Xpkg4R6r+5Xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HwLXp1X1; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-4fd136aac40so1809984e0c.0;
+        Wed, 28 Aug 2024 03:20:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724840433; x=1725445233; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EwyHPuKp7P7VCa2X/2i7T//rTfmMw+0gajyxrdfm6hw=;
+        b=HwLXp1X1m6MTdsS/8HjmGBSqlXs7eLhxuLDgdx7XTzMMOYUqozkwZR+LVuMwRzFuAz
+         S1yD/hmkB6iDhv52arugB5Tcu3fzr8beOjDXRD6HB7H7yJhJdis+7WqgPHWcq7tbL9wp
+         Ou8A/lXlhos/Lq1DBf1UqLxrgbDnnkMMRUy5Tk6CyRDEINyRQr753sND2O6ILKQjOkRK
+         LUwNDdwLAu2tqmT6Xv4FA2eD/VQl+rzv0/JLOztf06RU05q791eLryz7Z2uWRfklKVmq
+         rqRO7dmgNl9rMkcYH2UhmNNdMqFFNXcGvuw2xwgtPHnSSDvkrCyLQViHVLTFZ3J9JDld
+         LuYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724840433; x=1725445233;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EwyHPuKp7P7VCa2X/2i7T//rTfmMw+0gajyxrdfm6hw=;
+        b=TiFhVF6CmbFvMQsf2YY6iC8Hwtvs6/qeUtb88nxqkUDOFrcn7z4thyZl30js3+Fa1P
+         SQRIdFT1KNCZLWnZmjHLe4NwNc6NJvS/CHL/OIn2FfsJuO5MIgM9zFOxsaH9gkvvzl9X
+         jW5aewblufLO4P4ytNi+NUyKxfFb3bHslPZbR307oQ9GfdnEuXfXttSgnubz5QlLgMV3
+         RboW//cFY/UHshvu1QLonvhDctFTDBeqQyuB+9vrh9Cq2O+EmuhAOGMY4WSB9AZ8Ah0C
+         OMU3pb3uq2i5spxsbJI78Mj8j2iPOLN6TwrO3rby5gnzt9Ibs4vFgeGUVvtlRdZmxzQs
+         s2PQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWF3DWgI6X69cnstLeaz/ggTtpvnrB7SnJAr9Hipcyr+hD94xrgmx26rqIEqIsXXSoDqIlM9zof0A2ln1bW@vger.kernel.org, AJvYcCWx3Qjp8v3g1Z+3MAOKUF1xnqVn00mr8DlhsSYWDw8yfwqzbVun4TEUue0fN4nlxpx1QcSp03SRrtKFtj1sWQrssa8=@vger.kernel.org, AJvYcCXYLhiIdqjMwVpVfKvnRKibJQ9P19lCKHjbQ+QO4vwZXrrrkqu4k/9VRdqIMPFZWTHgp+LwNiDx9/k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8enUQnAZUFvIRdvWK49d/lHnaJwc/tTK6i2O6FonsEjwXJphe
+	3y1GChsQcq+xKyRtwGxwkH8DoBQyLh4t1lqmG2WZP0guc8JZ9fRRqb4NK923yjQKyQxqBm4wDDI
+	xzaErZMOiCSjYD5CMLmysIWbRcb4=
+X-Google-Smtp-Source: AGHT+IFzkoaOKnxUzFeg76w+DuEjB2HxsB8JOcqn6QG8Qe1VSJtBDQNdu6Nxjy+nSL/PbX/oRRgVBCM7owSZ7ERsEe4=
+X-Received: by 2002:a05:6122:209f:b0:4f6:b094:80b1 with SMTP id
+ 71dfb90a1353d-4fef1190cd6mr1370097e0c.11.1724840432732; Wed, 28 Aug 2024
+ 03:20:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240828-exportfs-u64-mount-id-v3-2-10c2c4c16708@cyphar.com>
-References: <20240828-exportfs-u64-mount-id-v3-0-10c2c4c16708@cyphar.com>
-In-Reply-To: <20240828-exportfs-u64-mount-id-v3-0-10c2c4c16708@cyphar.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
- Amir Goldstein <amir73il@gmail.com>, Alexander Aring <alex.aring@gmail.com>, 
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
- Adrian Hunter <adrian.hunter@intel.com>
-Cc: Christoph Hellwig <hch@infradead.org>, 
- Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
- linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-api@vger.kernel.org, linux-perf-users@vger.kernel.org, 
- Aleksa Sarai <cyphar@cyphar.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5961; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=V7tyZo42KRzhJMOB9sBnRwanzsU4h7z0p4i43WPkloc=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMaSd+3lc8UbM4Smfko719Z+be32esdrpqgsxomJ56zX4u
- a0vNJ6z6ChlYRDjYpAVU2TZ5ucZumn+4ivJn1aywcxhZQIZwsDFKQATie5g+MMta2kWnMcYxJxY
- 5xlTWG4gPH2iwGIr0fSHosYTa1xY1RkZjnjv23b9Tt1jjfLqQhmeE7dlF1mtD/T3M5tc+La4huE
- nOwA=
-X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
- fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
+References: <20240828093822.162855-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240828093822.162855-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <TY3PR01MB11346345B7FF1DBD4DA60273286952@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <CA+V-a8vPisCVCX0jLYJGrozabRWpBV+xmU5ufu4Ke9Rziis1XQ@mail.gmail.com> <TY3PR01MB113460F2ABA56C89E8E9CF09D86952@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY3PR01MB113460F2ABA56C89E8E9CF09D86952@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 28 Aug 2024 11:20:05 +0100
+Message-ID: <CA+V-a8tW0wmpu807Vxi_e49JraoNry1Anb_Ys7rM=CpODkpKeA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] clk: renesas: r9a09g057-cpg: Add clock and reset
+ entries for GTM/RIIC/SDHI/WDT
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now that we provide a unique 64-bit mount ID interface in statx(2), we
-can now provide a race-free way for name_to_handle_at(2) to provide a
-file handle and corresponding mount without needing to worry about
-racing with /proc/mountinfo parsing or having to open a file just to do
-statx(2).
+On Wed, Aug 28, 2024 at 11:10=E2=80=AFAM Biju Das <biju.das.jz@bp.renesas.c=
+om> wrote:
+>
+>
+>
+> > -----Original Message-----
+> > From: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+> > Sent: Wednesday, August 28, 2024 11:00 AM
+> > Subject: Re: [PATCH v3 2/2] clk: renesas: r9a09g057-cpg: Add clock and =
+reset entries for
+> > GTM/RIIC/SDHI/WDT
+> >
+> > Hi Biju,
+> >
+> > On Wed, Aug 28, 2024 at 10:53=E2=80=AFAM Biju Das <biju.das.jz@bp.renes=
+as.com> wrote:
+> > >
+> > > Hi Prabhakar,
+> > >
+> > > Thanks for the patch.
+> > >
+> > > > -----Original Message-----
+> > > > From: Prabhakar <prabhakar.csengg@gmail.com>
+> > > > Sent: Wednesday, August 28, 2024 10:38 AM
+> > > > Subject: [PATCH v3 2/2] clk: renesas: r9a09g057-cpg: Add clock and =
+reset entries for
+> > GTM/RIIC/SDHI/WDT
+> > > >
+> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > >
+> > > > Add clock and reset entries for GTM, RIIC, SDHI and WDT IP blocks.
+> > > >
+> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
+om>
+> > > > ---
+> > > > v2->v3
+> > > > - Moved DDIV_PACK() macro to patch #1
+> > > >
+> > > > v1->v2
+> > > > - Updated DDIV_PACK macro to accommodate width
+> > > > ---
+> > > >  drivers/clk/renesas/r9a09g057-cpg.c | 84 +++++++++++++++++++++++++=
+++++
+> > > >  drivers/clk/renesas/rzv2h-cpg.h     |  4 ++
+> > > >  2 files changed, 88 insertions(+)
+> > > >
+> > > > diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/rene=
+sas/r9a09g057-cpg.c
+> > > > index 9722b810e027..3ee32db5c0af 100644
+> > > > --- a/drivers/clk/renesas/r9a09g057-cpg.c
+> > > > +++ b/drivers/clk/renesas/r9a09g057-cpg.c
+> > > > @@ -25,16 +25,31 @@ enum clk_ids {
+> > > >
+> > > >       /* PLL Clocks */
+> > > >       CLK_PLLCM33,
+> > > > +     CLK_PLLCLN,
+> > > >       CLK_PLLDTY,
+> > > >       CLK_PLLCA55,
+> > > >
+> > > >       /* Internal Core Clocks */
+> > > >       CLK_PLLCM33_DIV16,
+> > > > +     CLK_PLLCLN_DIV2,
+> > > > +     CLK_PLLCLN_DIV8,
+> > > > +     CLK_PLLCLN_DIV16,
+> > > > +     CLK_PLLDTY_ACPU,
+> > > > +     CLK_PLLDTY_ACPU_DIV4,
+> > > >
+> > > >       /* Module Clocks */
+> > > >       MOD_CLK_BASE,
+> > > >  };
+> > > >
+> > > > +static const struct clk_div_table dtable_2_64[] =3D {
+> > > > +     {0, 2},
+> > > > +     {1, 4},
+> > > > +     {2, 8},
+> > > > +     {3, 16},
+> > > > +     {4, 64},
+> > > > +     {0, 0},
+> > >
+> > > Is it ok to have {0, 2} first entry and {0, 0} last entry on the same=
+ table?
+> > >
+> > You mean is it prohibited to add (I haven't seen issues)?
+>
+> 2 different divider values{2, 0) for the value 0 in the table. You maybe =
+correct.
+>
+AFAIK we add sentinel entry at the end of clk_div_table[], see below
 
-While this is not necessary if you are using AT_EMPTY_PATH and don't
-care about an extra statx(2) call, users that pass full paths into
-name_to_handle_at(2) need to know which mount the file handle comes from
-(to make sure they don't try to open_by_handle_at a file handle from a
-different filesystem) and switching to AT_EMPTY_PATH would require
-allocating a file for every name_to_handle_at(2) call, turning
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/dr=
+ivers/clk/renesas/rcar-gen4-cpg.c?h=3Dnext-20240828#n415
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/dr=
+ivers/clk/renesas/r9a07g044-cpg.c?h=3Dnext-20240828#n80
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/dr=
+ivers/clk/renesas/rcar-gen2-cpg.c?h=3Dnext-20240828#n202
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/dr=
+ivers/clk/renesas/rcar-gen3-cpg.c?h=3Dnext-20240828#n327
 
-  err = name_to_handle_at(-EBADF, "/foo/bar/baz", &handle, &mntid,
-                          AT_HANDLE_MNT_ID_UNIQUE);
-
-into
-
-  int fd = openat(-EBADF, "/foo/bar/baz", O_PATH | O_CLOEXEC);
-  err1 = name_to_handle_at(fd, "", &handle, &unused_mntid, AT_EMPTY_PATH);
-  err2 = statx(fd, "", AT_EMPTY_PATH, STATX_MNT_ID_UNIQUE, &statxbuf);
-  mntid = statxbuf.stx_mnt_id;
-  close(fd);
-
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
----
- fs/fhandle.c                                       | 29 ++++++++++++++++------
- include/linux/syscalls.h                           |  2 +-
- include/uapi/linux/fcntl.h                         |  1 +
- tools/perf/trace/beauty/include/uapi/linux/fcntl.h |  1 +
- 4 files changed, 25 insertions(+), 8 deletions(-)
-
-diff --git a/fs/fhandle.c b/fs/fhandle.c
-index 6e8cea16790e..8cb665629f4a 100644
---- a/fs/fhandle.c
-+++ b/fs/fhandle.c
-@@ -16,7 +16,8 @@
- 
- static long do_sys_name_to_handle(const struct path *path,
- 				  struct file_handle __user *ufh,
--				  int __user *mnt_id, int fh_flags)
-+				  void __user *mnt_id, bool unique_mntid,
-+				  int fh_flags)
- {
- 	long retval;
- 	struct file_handle f_handle;
-@@ -69,9 +70,19 @@ static long do_sys_name_to_handle(const struct path *path,
- 	} else
- 		retval = 0;
- 	/* copy the mount id */
--	if (put_user(real_mount(path->mnt)->mnt_id, mnt_id) ||
--	    copy_to_user(ufh, handle,
--			 struct_size(handle, f_handle, handle_bytes)))
-+	if (unique_mntid) {
-+		if (put_user(real_mount(path->mnt)->mnt_id_unique,
-+			     (u64 __user *) mnt_id))
-+			retval = -EFAULT;
-+	} else {
-+		if (put_user(real_mount(path->mnt)->mnt_id,
-+			     (int __user *) mnt_id))
-+			retval = -EFAULT;
-+	}
-+	/* copy the handle */
-+	if (retval != -EFAULT &&
-+		copy_to_user(ufh, handle,
-+			     struct_size(handle, f_handle, handle_bytes)))
- 		retval = -EFAULT;
- 	kfree(handle);
- 	return retval;
-@@ -83,6 +94,7 @@ static long do_sys_name_to_handle(const struct path *path,
-  * @name: name that should be converted to handle.
-  * @handle: resulting file handle
-  * @mnt_id: mount id of the file system containing the file
-+ *          (u64 if AT_HANDLE_MNT_ID_UNIQUE, otherwise int)
-  * @flag: flag value to indicate whether to follow symlink or not
-  *        and whether a decodable file handle is required.
-  *
-@@ -92,7 +104,7 @@ static long do_sys_name_to_handle(const struct path *path,
-  * value required.
-  */
- SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
--		struct file_handle __user *, handle, int __user *, mnt_id,
-+		struct file_handle __user *, handle, void __user *, mnt_id,
- 		int, flag)
- {
- 	struct path path;
-@@ -100,7 +112,8 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
- 	int fh_flags;
- 	int err;
- 
--	if (flag & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH | AT_HANDLE_FID))
-+	if (flag & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH | AT_HANDLE_FID |
-+		     AT_HANDLE_MNT_ID_UNIQUE))
- 		return -EINVAL;
- 
- 	lookup_flags = (flag & AT_SYMLINK_FOLLOW) ? LOOKUP_FOLLOW : 0;
-@@ -109,7 +122,9 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
- 		lookup_flags |= LOOKUP_EMPTY;
- 	err = user_path_at(dfd, name, lookup_flags, &path);
- 	if (!err) {
--		err = do_sys_name_to_handle(&path, handle, mnt_id, fh_flags);
-+		err = do_sys_name_to_handle(&path, handle, mnt_id,
-+					    flag & AT_HANDLE_MNT_ID_UNIQUE,
-+					    fh_flags);
- 		path_put(&path);
- 	}
- 	return err;
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 4bcf6754738d..5758104921e6 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -870,7 +870,7 @@ asmlinkage long sys_fanotify_mark(int fanotify_fd, unsigned int flags,
- #endif
- asmlinkage long sys_name_to_handle_at(int dfd, const char __user *name,
- 				      struct file_handle __user *handle,
--				      int __user *mnt_id, int flag);
-+				      void __user *mnt_id, int flag);
- asmlinkage long sys_open_by_handle_at(int mountdirfd,
- 				      struct file_handle __user *handle,
- 				      int flags);
-diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-index 38a6d66d9e88..87e2dec79fea 100644
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-@@ -152,6 +152,7 @@
- #define AT_HANDLE_FID		0x200	/* File handle is needed to compare
- 					   object identity and may not be
- 					   usable with open_by_handle_at(2). */
-+#define AT_HANDLE_MNT_ID_UNIQUE	0x001	/* Return the u64 unique mount ID. */
- 
- #if defined(__KERNEL__)
- #define AT_GETATTR_NOSEC	0x80000000
-diff --git a/tools/perf/trace/beauty/include/uapi/linux/fcntl.h b/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
-index 38a6d66d9e88..87e2dec79fea 100644
---- a/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
-+++ b/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
-@@ -152,6 +152,7 @@
- #define AT_HANDLE_FID		0x200	/* File handle is needed to compare
- 					   object identity and may not be
- 					   usable with open_by_handle_at(2). */
-+#define AT_HANDLE_MNT_ID_UNIQUE	0x001	/* Return the u64 unique mount ID. */
- 
- #if defined(__KERNEL__)
- #define AT_GETATTR_NOSEC	0x80000000
-
--- 
-2.46.0
-
+Cheers,
+Prabhakar
 
