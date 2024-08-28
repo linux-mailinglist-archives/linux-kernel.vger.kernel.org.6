@@ -1,262 +1,137 @@
-Return-Path: <linux-kernel+bounces-304546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4568696219E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:44:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A57969621DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A3EF1C23FF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:44:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B39C1F2163E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8AB915AD83;
-	Wed, 28 Aug 2024 07:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD6015B99E;
+	Wed, 28 Aug 2024 07:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XiyFJivJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="YvrfdGUq"
+Received: from mail.fris.de (mail.fris.de [116.203.77.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECA81552EB
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37EB2157A67;
+	Wed, 28 Aug 2024 07:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.77.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724831053; cv=none; b=mJY+5Dts7O6t4ID4yee+DIkm23CB3Iup8Uaagg7n6FQWYnrXb8B+FxZgzNrIXrTvOPCYbcTJ3EU69tAl2860zPvevuMznjuotc4ndeAu8vES/XlfIoiCkVDITEd5S40/cigmZbJbC6J8ZMi6oIR9E67zhKq7cbCTHNCBYzi4Ayo=
+	t=1724831817; cv=none; b=FkGsyXJhtBe/6j0KiLMbH244MbmUKd90bBMTBz0etgYAeW1S3QwvFiyaEyqNUSxteaMqdkJp8mLCIs3mhPDVV+QsVv0C9/ND8ueJ4b4h3nuflvfAJapnD47N8HmE3Cf2QGWSLvr2FPt/gmKcOjaXdicz71B0yc+/UN0hCJ2y2Rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724831053; c=relaxed/simple;
-	bh=pBLtJq4s73xh2cjpN4kC6RLgw89TDOXstgUBrcX9m40=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L2q4Pr5OIWBhK68dX2eLWm8LuduGIk2x6co9KiZtS5TyJEvDj7xjtJWZqp9m/yCMwwQO3KYuMQz++Gc0ntrUbVnORzdRN2Q+ZZVi6UQI5iEAeiYscVkPtH16PGNQ7iDoBTfUAx24Md1mMKWoZ/+gdHzppftkcuF5hw2iY9Hue6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XiyFJivJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724831050;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7N/N7EySHgMZNfOn7Q8wISSQCYSIyWuumjkgTJGfaus=;
-	b=XiyFJivJnXnWHZblDjR1V6haVO9us8nEvcM0s7nT51YjAqfrdTHwJpSqOlPD7h7nMI4MxH
-	kqfAeEf2eTrq2BsVrglO77eZ6XoazVIqMPTNoUogrPb9vwDOv+5zWjfbFkzmR7bR1u3Fgh
-	tlPzVRFwQUlhQ8Aec6AOv3a4FBs+vYM=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-33-d6GuPko_MDOZoGFRbD8NzQ-1; Wed, 28 Aug 2024 03:44:08 -0400
-X-MC-Unique: d6GuPko_MDOZoGFRbD8NzQ-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42b8a5b7fd9so41046575e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 00:44:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724831047; x=1725435847;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7N/N7EySHgMZNfOn7Q8wISSQCYSIyWuumjkgTJGfaus=;
-        b=wbBCvglwD2zmSbK8ZvZ1JEvdU5g8TXvjEPNPHJ5IllLUiNnoWMs3RmOyHHLud4FDoM
-         nFiziF37enFWTZ+Aplw7b3RY2qIlDU07lM+34XZDpIDc/LvNd9MdzXEFAMjg/u5LdVqk
-         KVVnyNKX0Jy8H3AhLZzz33jcqRkr97SjHGe7VUyJ7KuutcIyifzZ6/03p9+M4oDCj+Rq
-         oTCI6k9cy4ywKVZQ5ZJBuDoB4VwbTVIvx6Vi6sN6u/MuuAyZy0j/En8VK8WpH+kLCr/l
-         eyxOgv3wLb63800Rnb8kmCnInfQ4mNWJXfpCnK7pv8UkkgLisprfyg54/pe4pVEctB5b
-         CmCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfy3YEM9MNFITwim5BE5t14g4BHsGtp+TpmennCjhHMcBO2Qg+vnv5DTw9wb1NCkDaaDJpNCHPpvf2/QQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ3M1p2TFjLJmFSjItwpMyJONgkbLRi+A6ubrVRowQoPypXiPn
-	4ce7jItytIdlneAGtHuRPF99fdxTEwbchOwAz3bCCue63eS2DBClITjK53yURua++MTM7Bi0NUV
-	Npi2ZQh9MPl9+ucRRfIFBv0XLHbLMnawjysf0i9+VByOCOAq1+jY7R0AH0JYu+w==
-X-Received: by 2002:a05:600c:1c84:b0:428:ea8e:b48a with SMTP id 5b1f17b1804b1-42ba668f868mr7870965e9.8.1724831047508;
-        Wed, 28 Aug 2024 00:44:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEGNfE/x5JNboZ3wOdvgwPEyQhfNJxFysCUo6sWqqNsWoDvs7V4uxx3adC2CETnntwi3H68mg==
-X-Received: by 2002:a05:600c:1c84:b0:428:ea8e:b48a with SMTP id 5b1f17b1804b1-42ba668f868mr7870465e9.8.1724831046443;
-        Wed, 28 Aug 2024 00:44:06 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c706:1700:6b81:27cb:c9e2:a09a? (p200300cbc70617006b8127cbc9e2a09a.dip0.t-ipconnect.de. [2003:cb:c706:1700:6b81:27cb:c9e2:a09a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730814602asm14910248f8f.44.2024.08.28.00.44.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 00:44:05 -0700 (PDT)
-Message-ID: <9f9d7e96-b135-4830-b528-37418ae7bbfd@redhat.com>
-Date: Wed, 28 Aug 2024 09:44:04 +0200
+	s=arc-20240116; t=1724831817; c=relaxed/simple;
+	bh=o1/M+3PhzxTC2Qyi5wfEU2L4YbYB8ba3gjqhV8GQ+II=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U925wh4HJe1SmkvkJenFBeORfnw8s8OfRNL8XuwNlD0rscTUwHeoAPHHxaYWL4xUReVAcCKR9Tu5GZbWo/NGVed01URHORRCs/XmJnRqeLJJUEchyxhvH2Zu3JMd3j0kPQjjRkiUwStkvg7xd+2uFO1jsX4pUUAEQ5ZTA+LA8So=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=fail smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=YvrfdGUq; arc=none smtp.client-ip=116.203.77.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fris.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 39EFDBFB0B;
+	Wed, 28 Aug 2024 09:48:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fris.de; s=dkim;
+	t=1724831308; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=Sk/iSLcWW34am2lJOyTQ6p5QG/I58ELhkbjR/9vSduk=;
+	b=YvrfdGUqoG4TzSdQg8ZLh0JBKEYm6E1giJ2JsfZgxSqv8fABfEYoiZLjhW/+uMUXz3S+N+
+	1v5O13rt7wvMMYaq9ozDvngd1pXSruN2C1UhHAZG37az6rYZHqapTwKF1wPPRm/6VrEqyd
+	IpCPdfcE1GNXDew711fXv7ZN0JQjvzC5yI5BKkTp+YR/Jy5RjapErNFPuPipV9QlzcTPY+
+	YRJGbDtv9nLhSzFSYM5mHYfWxOtYAN0xhVto4hTuscSsznenOYOKF9/vNLjjUSmYv9ToZq
+	zNlfYy6QedCo0Z+8mXqeM7BZIMZ3n3WJkpG0+o7C9hRBuf4Jr9+9vOKnO8HoeQ==
+From: Frieder Schrempf <frieder@fris.de>
+To: Conor Dooley <conor+dt@kernel.org>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@gmail.com>,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	imx@lists.linux.dev,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Parthiban Nallathambi <parthiban@linumiz.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+Subject: [PATCH v2 0/4] arm64: dts: imx8mm-kontron: Add HDMI and LVDS display support
+Date: Wed, 28 Aug 2024 09:46:52 +0200
+Message-ID: <20240828074753.25401-1-frieder@fris.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/19] mm/pagewalk: Check pfnmap for folio_walk_start()
-To: Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Cc: Gavin Shan <gshan@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>,
- x86@kernel.org, Ingo Molnar <mingo@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Paolo Bonzini <pbonzini@redhat.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Alistair Popple <apopple@nvidia.com>,
- kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Sean Christopherson <seanjc@google.com>, Oscar Salvador <osalvador@suse.de>,
- Jason Gunthorpe <jgg@nvidia.com>, Borislav Petkov <bp@alien8.de>,
- Zi Yan <ziy@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>,
- Yan Zhao <yan.y.zhao@intel.com>, Will Deacon <will@kernel.org>,
- Kefeng Wang <wangkefeng.wang@huawei.com>,
- Alex Williamson <alex.williamson@redhat.com>
-References: <20240826204353.2228736-1-peterx@redhat.com>
- <20240826204353.2228736-7-peterx@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240826204353.2228736-7-peterx@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 26.08.24 22:43, Peter Xu wrote:
-> Teach folio_walk_start() to recognize special pmd/pud mappings, and fail
-> them properly as it means there's no folio backing them.
-> 
-> Cc: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Peter Xu <peterx@redhat.com>
-> ---
->   mm/pagewalk.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/pagewalk.c b/mm/pagewalk.c
-> index cd79fb3b89e5..12be5222d70e 100644
-> --- a/mm/pagewalk.c
-> +++ b/mm/pagewalk.c
-> @@ -753,7 +753,7 @@ struct folio *folio_walk_start(struct folio_walk *fw,
->   		fw->pudp = pudp;
->   		fw->pud = pud;
->   
-> -		if (!pud_present(pud) || pud_devmap(pud)) {
-> +		if (!pud_present(pud) || pud_devmap(pud) || pud_special(pud)) {
->   			spin_unlock(ptl);
->   			goto not_found;
->   		} else if (!pud_leaf(pud)) {
-> @@ -783,7 +783,7 @@ struct folio *folio_walk_start(struct folio_walk *fw,
->   		fw->pmdp = pmdp;
->   		fw->pmd = pmd;
->   
-> -		if (pmd_none(pmd)) {
-> +		if (pmd_none(pmd) || pmd_special(pmd)) {
->   			spin_unlock(ptl);
->   			goto not_found;
->   		} else if (!pmd_leaf(pmd)) {
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-As raised, this is not the right way to to it. You should follow what
-CONFIG_ARCH_HAS_PTE_SPECIAL and vm_normal_page() does.
+This add support for the display bridges (DSI->LVDS and DSI->HDMI)
+on the BL i.MX8MM and the 7" LVDS panel in a separate overlay.
 
-It's even spelled out in vm_normal_page_pmd() that at the time it was
-introduced there was no pmd_special(), so there was no way to handle that.
+Only one of the interfaces (HDMI or LVDS) is supported at the same
+time. Enabling the LVDS overlay will disable the HDMI interface.
 
+* Patch 1 and 2: Add the necessary binding changes
+* Patch 3: Extend the BL devicetree
+* Patch 4: Add the LVDS panel overlay
 
+Changes for v2:
+* Patch 1: Add link to commit message
+* Patch 2: Add Conors A-b tag
+* Patch 3: Remove blank lines from hdmi node
+* Patch 3: Fix order of lvds and hdmi nodes within i2c
+* Patch 3: Remove the unneeded deletion of samsung,pll-clock-frequency
+* Patch 3: Use the existing MIPI DSI output port from imx8mm.dtsi
+* Patch 4: Update copyright year
+* Patch 4: Use exisitng MIPI DSI output port from imx8mm.dtsi
+* Patch 4: Fix pinctrl for GPIO hogs
+* Patch 4: Fix property order in i2c2 node
+* Patch 4: Use generic node name for touchscreen
 
-diff --git a/mm/memory.c b/mm/memory.c
-index f0cf5d02b4740..272445e9db147 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -672,15 +672,29 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
-  {
-         unsigned long pfn = pmd_pfn(pmd);
-  
--       /*
--        * There is no pmd_special() but there may be special pmds, e.g.
--        * in a direct-access (dax) mapping, so let's just replicate the
--        * !CONFIG_ARCH_HAS_PTE_SPECIAL case from vm_normal_page() here.
--        */
-+       if (IS_ENABLED(CONFIG_ARCH_HAS_PMD_SPECIAL)) {
-+               if (likely(!pmd_special(pmd)))
-+                       goto check_pfn;
-+               if (vma->vm_ops && vma->vm_ops->find_special_page)
-+                       return vma->vm_ops->find_special_page(vma, addr);
-+               if (vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP))
-+                       return NULL;
-+               if (is_huge_zero_pmd(pmd))
-+                       return NULL;
-+               if (pmd_devmap(pmd))
-+                       /* See vm_normal_page() */
-+                       return NULL;
-+               return NULL;
-+       }
-+
-+       /* !CONFIG_ARCH_HAS_PMD_SPECIAL case follows: */
-+
-         if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
-                 if (vma->vm_flags & VM_MIXEDMAP) {
-                         if (!pfn_valid(pfn))
-                                 return NULL;
-+                       if (is_huge_zero_pmd(pmd))
-+                               return NULL;
-                         goto out;
-                 } else {
-                         unsigned long off;
-@@ -692,6 +706,11 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
-                 }
-         }
-  
-+       /*
-+        * For historical reasons, these might not have pmd_special() set,
-+        * so we'll check them manually, in contrast to vm_normal_page().
-+        */
-+check_pfn:
-         if (pmd_devmap(pmd))
-                 return NULL;
-         if (is_huge_zero_pmd(pmd))
+Frieder Schrempf (4):
+  dt-bindings: vendor-prefixes: Add Jenson Display
+  dt-bindings: display: panel-lvds: Add compatible for Jenson
+    BL-JT60050-01A
+  arm64: dts: imx8mm-kontron: Add support for display bridges on BL
+    i.MX8MM
+  arm64: dts: imx8mm-kontron: Add DL (Display-Line) overlay with LVDS
+    support
 
-
-
-We should then look into mapping huge zeropages also with pmd_special.
-pmd_devmap we'll leave alone until removed. But that's indeoendent of your series.
-
-I wonder if CONFIG_ARCH_HAS_PTE_SPECIAL is sufficient and we don't need additional
-CONFIG_ARCH_HAS_PMD_SPECIAL.
-
-As I said, if you need someone to add vm_normal_page_pud(), I can handle that.
+ .../bindings/display/panel/panel-lvds.yaml    |   2 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ arch/arm64/boot/dts/freescale/Makefile        |   4 +
+ .../boot/dts/freescale/imx8mm-kontron-bl.dts  | 131 ++++++++++++
+ .../boot/dts/freescale/imx8mm-kontron-dl.dtso | 189 ++++++++++++++++++
+ 5 files changed, 328 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-kontron-dl.dtso
 
 -- 
-Cheers,
-
-David / dhildenb
+2.46.0
 
 
