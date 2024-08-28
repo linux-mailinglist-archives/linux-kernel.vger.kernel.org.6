@@ -1,167 +1,116 @@
-Return-Path: <linux-kernel+bounces-304670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F14A962371
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:32:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D690962376
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 741D71C22F1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:32:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7A561F22247
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE570165EF5;
-	Wed, 28 Aug 2024 09:32:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD859165EF5;
+	Wed, 28 Aug 2024 09:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="d7l8LJNt"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DiHvfsjS"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92EA0A48;
-	Wed, 28 Aug 2024 09:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B986154C14;
+	Wed, 28 Aug 2024 09:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724837522; cv=none; b=luw7T7PLpxpX3XAbW7SQ5D4j5Pwxs4r87f/nysDn8o3O5kYuvp9HqyGRrtXA+ai++6i1fWK7gXTIUFJLakUDdM40x/CpHt0reHXaGSE7IrQEuMJCqcZONVFr/ycfo+zYYaO8TjQvjKX9CzSS7o95UFufjkgYqeVAzHSyGILuwmM=
+	t=1724837574; cv=none; b=QW2tBD8Cul3Qd/2S6WYfzLchkinElC0aPSfW4EWw4w0qYv2VTOd6F/+kLkd0/ElOrYHGOZlQ9AzQyUXJgueDF7dFvhF0ZG5uLSxMDZayYfTI1whWJNaeZEAzxnu9wDoonXFXYQ8kq2rT0lZqwzCk4pwur4rsORyysdPCMdrZb74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724837522; c=relaxed/simple;
-	bh=Fz+MJlm9XmkSxkthWC0yUWERzBavDw/sEz8nWlDKjQY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Kh5aEKRYaSGZRy2nOOPSKBYVM1FKugIGCXn5MqiHL1z7eLKutgppin7regQCyk8RHuoal64bAo1lkcRTh7hIW3CJQbyajj/rzre7XSFEUDRzHAcvGjT4Ot2Q/6Xsy69I+cSyQYbMhDgOBx8BZ6SW9tg+CH9mS+nZiVsa1I3w7FA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=d7l8LJNt; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47RLaQqc003164;
-	Wed, 28 Aug 2024 09:31:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wihi571xK+UGgb+RM0S/82Qcm+ipI7Jb7T+cJjKRB+A=; b=d7l8LJNtDgSr7J5A
-	N7pTRE5LdaL+n8/sOFqqsV66fep0hUzc/q75Tw1xq1c8W4bCepJ0JA9+FV5f61nS
-	aW/sT5OPyVy0zAAOuWjJMUuiWDz18Z1ao73fQ2gRBV/h0LIEycpIQ/4DZl8LbrLg
-	b1qA/yTOkJBoqIqtS4yiz5jauzJDIXk1IheISOEP4LhoS/4AkhOfMV+ktvskmDvB
-	rYBDJEPH4MFUJyjl6XFkN0OujOiXP20GFVK/Zjc0F4EeWFGoVJiZHamX+vAGmOn0
-	9761gMg1cS0KlEvCWQfwJj7zAaC3wiHYZCxdVImE51ZQ6r6+/fN7Q97mnp4blVr3
-	Kz88qg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419puu9aj7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 09:31:55 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47S9Vsdv027169
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 09:31:54 GMT
-Received: from [10.239.132.205] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 28 Aug
- 2024 02:31:49 -0700
-Message-ID: <148451f2-6b1b-4616-b703-fd52e7afa2be@quicinc.com>
-Date: Wed, 28 Aug 2024 17:31:46 +0800
+	s=arc-20240116; t=1724837574; c=relaxed/simple;
+	bh=C7CJ6sxhVfA6wEi+9qrcBIbF+BVzBOVHgkgIM2/lF8o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=oSam7eGg7C/P8N7/pf+qRWbT6SNFqZxu9OM5IvVfYlR688qKtBmQcQHbRIfL9qBbRnfkb+gLfxAG/AkFMjoJGlWuufbqBEG5lqOHhiYriNWonn6H0h4KOV0Gkvvw1VwDkaG/0TLYwKo74jvQWnixHHDrMg9cPbpf80I+/tsm79o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DiHvfsjS; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a86910caf9cso79097466b.1;
+        Wed, 28 Aug 2024 02:32:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724837571; x=1725442371; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ljlQm4Z756d2n9EnFl4azi2/3XalhuzYi2PKJHl8biM=;
+        b=DiHvfsjSWCUQYGrs4vkhqzDA88FH2/z3LAgb4fzyB032BliRdPZpdutG060M+r7510
+         YBhBNoJMBwYftI9txCkNm6tmvFr4QQY2zae8cS+DuecHsphz16w4EC8Qtj7I2hSbzBsZ
+         ikTENf6BOuDyYYJ06Mpu62XDOm360SryEOvSoZu+xpNAShxYSGghEQlUFfke96zYntdu
+         SRz0R1nqAJRfbwy71+CipVkPfG5EgJzYVwckuTLeBozpe+rTykjn+N7mOrSuociLgjpH
+         wlgufFqxGLI1e+rSU4QFQac41BFLVmDAUiEGHx2f7PGZckpKVE3+FGzpxE8Fymki8R56
+         YR0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724837571; x=1725442371;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ljlQm4Z756d2n9EnFl4azi2/3XalhuzYi2PKJHl8biM=;
+        b=OqBFQnEkQZrfwWV9KJnTgWN3JqHLNMFRH+Nqw8iYAHeCYCTPLeBkEs7JcQHbkUrKyE
+         5gbKwTU5tzIF5cCuHPNUQrY48ht+mbjZ94BenCzTq7WC2vuAiSpGeZ/jr1MZlq26xA8A
+         kcnyx7VAS3P37OFN5B02JSdKkUmTw8BWpBTdsXgEcLJ5kQoWgPdf1gx1ZC/i1ofwxd7A
+         jvb2AHymhJV29IBqZmk01lDo6nLqzZ9MymJpLEUMNSuCu8UOOe3O1UhRV+gc2s1Id+i3
+         RhMurC8O88J7TAdRusTTcGZ2xM6O3kyMxaMahVkI6Sl8OXHy2BZGlWYd+3O+PrScq7AN
+         AewQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVv4gPckn0vIZb4Y6JCuxEnbpPpNqdzsA4D5gSSMf7e4nSzoF1WuZkdLzqi1Ofl7/Hw+MIhL8wZrV8UNGg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA0yaI3vApsSvbQ9E+ROdOrO8F7iql8uitE1YVnt6QtoqaFbeo
+	jjDWccgnns8Oqn21PMVP8xvl+8pAXXiVZlpB2g+TPx9L/FOATuqU
+X-Google-Smtp-Source: AGHT+IFZqJB6vFvBK0EcgsYJ7T2OksI6qWVL0bPPi01r8q10EQ7avC39obDkdaWm65VsU3qbjrEM7A==
+X-Received: by 2002:a17:907:7da0:b0:a86:a6ee:7d92 with SMTP id a640c23a62f3a-a870a9ba661mr180942766b.18.1724837571236;
+        Wed, 28 Aug 2024 02:32:51 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e5487810sm219558766b.6.2024.08.28.02.32.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 02:32:50 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Harry Wentland <harry.wentland@amd.com>,
+	Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/amd/display: Fix spelling mistake "recompte" -> "recompute"
+Date: Wed, 28 Aug 2024 10:32:50 +0100
+Message-Id: <20240828093250.271358-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] arm64: dts: qcom: add base QCS615 RIDE dts
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, <kernel@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20240828-add_initial_support_for_qcs615-v1-0-5599869ea10f@quicinc.com>
- <20240828-add_initial_support_for_qcs615-v1-6-5599869ea10f@quicinc.com>
- <22qkvfravm6sxiq3xfavahg2u6b2pwlyzqbqvd55zym5zef3gi@m4bsqkdvggty>
- <17d0017e-b55d-4b32-9fd3-1a1a84e5ebf9@quicinc.com>
- <0ec92d59-0648-40ed-a522-307152b5c37d@kernel.org>
-From: Lijuan Gao <quic_lijuang@quicinc.com>
-In-Reply-To: <0ec92d59-0648-40ed-a522-307152b5c37d@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: umurXFGdi-WOQN79eSibZz3mTJOXInt0
-X-Proofpoint-ORIG-GUID: umurXFGdi-WOQN79eSibZz3mTJOXInt0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-28_03,2024-08-27_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 adultscore=0 malwarescore=0 suspectscore=0 bulkscore=0
- clxscore=1015 mlxlogscore=999 mlxscore=0 phishscore=0 lowpriorityscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408280068
 
+There is a spelling mistake in a DRM_DEBUG_DRIVER message. Fix it.
 
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-在 8/28/2024 5:11 PM, Krzysztof Kozlowski 写道:
-> On 28/08/2024 09:54, Lijuan Gao wrote:
->>
->>
->> 在 8/28/2024 2:25 PM, Krzysztof Kozlowski 写道:
->>> On Wed, Aug 28, 2024 at 10:02:16AM +0800, Lijuan Gao wrote:
->>>> Add initial support for Qualcomm QCS615 RIDE board and enable
->>>> the QCS615 RIDE board to shell with dcc console.
->>>>
->>>> Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
->>>> ---
->>>>    arch/arm64/boot/dts/qcom/Makefile        |  1 +
->>>>    arch/arm64/boot/dts/qcom/qcs615-ride.dts | 15 +++++++++++++++
->>>>    2 files changed, 16 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
->>>> index 197ab325c0b9..c5503f189847 100644
->>>> --- a/arch/arm64/boot/dts/qcom/Makefile
->>>> +++ b/arch/arm64/boot/dts/qcom/Makefile
->>>> @@ -110,6 +110,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcm6490-idp.dtb
->>>>    dtb-$(CONFIG_ARCH_QCOM)	+= qcm6490-shift-otter.dtb
->>>>    dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-1000.dtb
->>>>    dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
->>>> +dtb-$(CONFIG_ARCH_QCOM)	+= qcs615-ride.dtb
->>>>    dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2.dtb
->>>>    dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
->>>>    dtb-$(CONFIG_ARCH_QCOM)	+= qdu1000-idp.dtb
->>>> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
->>>> new file mode 100644
->>>> index 000000000000..31d32ad951b5
->>>> --- /dev/null
->>>> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
->>>> @@ -0,0 +1,15 @@
->>>> +// SPDX-License-Identifier: BSD-3-Clause
->>>> +/*
->>>> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
->>>> + */
->>>> +/dts-v1/;
->>>> +
->>>> +#include "qcs615.dtsi"
->>>> +/ {
->>>> +	model = "Qualcomm Technologies, Inc. QCS615 Ride";
->>>> +	compatible = "qcom,qcs615-ride", "qcom,qcs615";
->>>> +
->>>> +	chosen {
->>>> +		bootargs = "console=hvc0";
->>>
->>> Noooo, last time I agreed on this, you told me later it is different.
->>>
->> In the early stages, enabling HVC is to more easily verify clock and
->> PMIC related functions, as it’s difficult to debug without the console
->> log. After the clock and PMIC are ready, we will enable the UART console.
-> 
-> Working serial is supposed to be part of the early submission.
-> 
-Okay, I will remove it in the next patch.
-> Best regards,
-> Krzysztof
-> 
-> 
-
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+index 0859a7173a06..669fd8fb6c24 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+@@ -1325,7 +1325,7 @@ static bool is_dsc_need_re_compute(
+ 		if (new_crtc_state->enable && new_crtc_state->active) {
+ 			if (new_crtc_state->mode_changed || new_crtc_state->active_changed ||
+ 					new_crtc_state->connectors_changed) {
+-				DRM_DEBUG_DRIVER("%s:%d MST_DSC dsc recompte required."
++				DRM_DEBUG_DRIVER("%s:%d MST_DSC dsc recompute required."
+ 						 "stream 0x%p in new dc_state\n",
+ 						 __func__, __LINE__, stream);
+ 				is_dsc_need_re_compute = true;
 -- 
-Thx and BRs
-Lijuan Gao
+2.39.2
+
 
