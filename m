@@ -1,127 +1,178 @@
-Return-Path: <linux-kernel+bounces-305047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A437E96289E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:28:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D9489628A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:29:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5C2C1C209F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:28:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 241B028266B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DDA2186E4C;
-	Wed, 28 Aug 2024 13:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D254187862;
+	Wed, 28 Aug 2024 13:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DuDgMfT0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sa4EIlir"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03E416BE1B;
-	Wed, 28 Aug 2024 13:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB16C156F4A;
+	Wed, 28 Aug 2024 13:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724851694; cv=none; b=aW/qhcMwlWi59MvzZzyg7B7Yc43zGJGqj1EVNibUPOEr6OAnjqhvg54tXaj13LCQt+MlTD0SYi2sDp1mdBAoiokOAOUbm8sPUU3TWIEI+4sI/RGltmW015F5nwWHDHHgezDEht3RBDTtSKh0WxhT34WzpEnqTNUUXC1krrJHAEQ=
+	t=1724851748; cv=none; b=nM7SJ6Aw1QcOnWHXBZwzwzxftrwis5edmrKnSLBXPXFcZyrGgFpRsrOF5j5E/1zkJ8/qWWFfDe3aJk0kRbdm4nGRxKM+p1lYg+aVincMJMaR1X7O2yEpF32xWFvfy+CUnpuiTLfaKFINxaLrJnObDBADQWIxWo0kdUOehOwzGvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724851694; c=relaxed/simple;
-	bh=KW5R7PwTkwJ7eH25MlLERl4o7RhFtKAZw+Vph435i7k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pNS2yThr75gblHTYNFEhSuaNSAlZTUGUCp3Z3oQghF9WJT7kemM6HJDCenTh6jtIDkDBJAdRyr0X0pIhsw7Pjbppb3Pxehv5hmA1PL4jVCRNm2zMhJOBu+IMgUbqO/9RUVt9wP38uW9+kRoqlUNyyUOQj0uAuC1CsvEfiUurpCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DuDgMfT0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B8CEC4FEA9;
-	Wed, 28 Aug 2024 13:28:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724851694;
-	bh=KW5R7PwTkwJ7eH25MlLERl4o7RhFtKAZw+Vph435i7k=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DuDgMfT0kvoDLyx95ArYFHwsNqDzm6c4x7/q1V3hvhbqF/TzT9iKEZmBTYQmJP3RM
-	 HPuxl935jLmeaVpD3uiIJOk/F8xg+tsHUClxjXJXn5DHGKz6essCDjGPBHQZc+GpUY
-	 mIkNt3AKSXkJhltbBvo1fMG67b2lHr/w2H2n3iRLLH6IW1TzWvm9nEEisO6wXskNAn
-	 R7RxpO1/C9HmRd4/LRTUovmmqAyWIj3sh78gT+FLw0n9vTAHvN14l5Ks1oPvNu77QS
-	 Y/0HqKcmC+hf0rpS7iU+3oEH98sl5rVrjvSRivMAOw/ROX+P2B3CM7b1BHV6kNI1lL
-	 uHbuvLz2oDC4w==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f50966c448so43596911fa.2;
-        Wed, 28 Aug 2024 06:28:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWtQJehQr30aKfiZoUCO6Arvt9YJdUyMtKVXtVzPLb6gz4Id9CL93SlI/NMkFg5PdqPBZx27StHl/VQC4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVkD0qwtRBlvphPZebR2aOSUTfHLdZXQjvHWPw6UoBfZgN0sDZ
-	jKNLy88yl+1+gLBqXFGDT3FJKXsUGUhrMPFXBcmDaGSq/X5MgTNib7qiwsRwR2C6NRLgx87ZpM3
-	sL19F27g6IsU8dSqvfny6pg301BU=
-X-Google-Smtp-Source: AGHT+IFPpXqgB2ZHxGcUOd4HwSoKV4p7KRCTOVZffH5Q1PrkpitY1msj3d+3/H33hv0TesEGqrq38ufbKq5w17FoLjM=
-X-Received: by 2002:a2e:a54e:0:b0:2f3:e2f0:af15 with SMTP id
- 38308e7fff4ca-2f5617dca81mr13124511fa.30.1724851692671; Wed, 28 Aug 2024
- 06:28:12 -0700 (PDT)
+	s=arc-20240116; t=1724851748; c=relaxed/simple;
+	bh=/r0MT3aB8uX7pI7/PuwSmyCqrVzxDBWEBTArzIlqKtg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NxyDYagNGC904/vg0QisqXQQqRHTkuczmQNppe6a+c8hmwxo9swPSSJtH3xhVlTtBzBVH/zrO072VAFd8xEGhWzL5yb4dAyToOxMMozxmzRX1QWDiq5x5vZd91q9zG4ShXvUmRjnS/tvY4jb6Q1lmSlyDEN+I8Oac0qvI7Zl0oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=sa4EIlir; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 09B9E2C5;
+	Wed, 28 Aug 2024 15:27:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1724851677;
+	bh=/r0MT3aB8uX7pI7/PuwSmyCqrVzxDBWEBTArzIlqKtg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sa4EIlirLCtNbuz27sn3LDUZK5582Sc6xwe+z8OuwabPWIL6vnsUPtXVqO3dxfzb7
+	 Ly4DHj0m/ypq8aIpGKghHUiC2p8yb9vzxDXrJA6SCXbiS0EsWrECRRbOfsjRDmZo2K
+	 q01D8QzhpQ7nzVx8srIqHS7J3KOECh2gGiaUsfhs=
+Date: Wed, 28 Aug 2024 16:29:00 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: display: renesas,du: narrow interrupts
+ and resets per variants
+Message-ID: <20240828132900.GB27131@pendragon.ideasonboard.com>
+References: <20240818173003.122025-1-krzysztof.kozlowski@linaro.org>
+ <20240818174137.GC29465@pendragon.ideasonboard.com>
+ <4615f52b-4e4c-4fe4-bfef-a66e196410d7@linaro.org>
+ <20240818175118.GF29465@pendragon.ideasonboard.com>
+ <526b6f56-7807-4bb6-9365-077b1cc490b2@linaro.org>
+ <20240828124517.GA23978@pendragon.ideasonboard.com>
+ <3aa885c1-d653-4d73-98ab-3d4d3d214235@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819145417.23367-1-piliu@redhat.com> <20240819145417.23367-2-piliu@redhat.com>
-In-Reply-To: <20240819145417.23367-2-piliu@redhat.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 28 Aug 2024 15:28:01 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXG_TynaQni6mzXYg6sCybSMba7cuwnyb4qi5LNZ=53pKQ@mail.gmail.com>
-Message-ID: <CAMj1kXG_TynaQni6mzXYg6sCybSMba7cuwnyb4qi5LNZ=53pKQ@mail.gmail.com>
-Subject: Re: [RFCv2 1/9] efi/libstub: Ask efi_random_alloc() to skip unusable memory
-To: Pingfan Liu <piliu@redhat.com>
-Cc: linux-efi@vger.kernel.org, Jan Hendrik Farr <kernel@jfarr.cc>, 
-	Philipp Rudo <prudo@redhat.com>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, Eric Biederman <ebiederm@xmission.com>, Baoquan He <bhe@redhat.com>, 
-	Dave Young <dyoung@redhat.com>, Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, kexec@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <3aa885c1-d653-4d73-98ab-3d4d3d214235@linaro.org>
 
-On Mon, 19 Aug 2024 at 16:55, Pingfan Liu <piliu@redhat.com> wrote:
->
-> efi_random_alloc() demands EFI_ALLOCATE_ADDRESS when allocate_pages(),
-> but the current implement can not ensure the selected target locates
-> inside free area, that is to exclude EFI_BOOT_SERVICES_*,
-> EFI_RUNTIME_SERVICES_* etc.
->
-> Fix the issue by checking md->type.
->
-> Signed-off-by: Pingfan Liu <piliu@redhat.com>
-> Cc: Ard Biesheuvel <ardb@kernel.org>
-> To: linux-efi@vger.kernel.org
-> ---
->  drivers/firmware/efi/libstub/randomalloc.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/drivers/firmware/efi/libstub/randomalloc.c b/drivers/firmware/efi/libstub/randomalloc.c
-> index c41e7b2091cdd..7304e767688f2 100644
-> --- a/drivers/firmware/efi/libstub/randomalloc.c
-> +++ b/drivers/firmware/efi/libstub/randomalloc.c
-> @@ -79,6 +79,8 @@ efi_status_t efi_random_alloc(unsigned long size,
->                 efi_memory_desc_t *md = (void *)map->map + map_offset;
->                 unsigned long slots;
->
-> +               if (!(md->type & (EFI_CONVENTIONAL_MEMORY || EFI_PERSISTENT_MEMORY)))
-> +                       continue;
+On Wed, Aug 28, 2024 at 02:52:25PM +0200, Krzysztof Kozlowski wrote:
+> On 28/08/2024 14:45, Laurent Pinchart wrote:
+> > On Sun, Aug 18, 2024 at 08:48:54PM +0200, Krzysztof Kozlowski wrote:
+> >> On 18/08/2024 19:51, Laurent Pinchart wrote:
+> >>> On Sun, Aug 18, 2024 at 07:44:22PM +0200, Krzysztof Kozlowski wrote:
+> >>>> On 18/08/2024 19:41, Laurent Pinchart wrote:
+> >>>>> On Sun, Aug 18, 2024 at 07:30:02PM +0200, Krzysztof Kozlowski wrote:
+> >>>>>> Each variable-length property like interrupts or resets must have fixed
+> >>>>>> constraints on number of items for given variant in binding.  The
+> >>>>>> clauses in "if:then:" block should define both limits: upper and lower.
+> >>>>>
+> >>>>> I thought that, when only one of minItems or maxItems was specified, the
+> >>>>> other automatically defaulted to the same value. I'm pretty sure I
+> >>>>> recall Rob asking me to drop one of the two in some bindings. Has the
+> >>>>> rule changes ? Is it documented somewhere ?
+> >>>>
+> >>>> New dtschema changed it and, even if previous behavior is restored, the
+> >>>> size in if:then: always had to be constrained. You could have skipped
+> >>>> one side of limit if it was equal to outer/top-level limit, e.g:
+> >>>>
+> >>>> properties:
+> >>>>   clocks:
+> >>>>     minItems: 1
+> >>>>     maxItems: 2
+> >>>>
+> >>>>
+> >>>> if:then:properties:
+> >>>>   clocks:
+> >>>>     minItems: 2
+> >>>
+> >>> Where can I find a description of the behaviour of the new dtschema
+> >>> (hopefully with some documentation) ?
+> >>
+> >> No clue, but I feel there is some core concept missing. Your earlier
+> >> statement:
+> >> "I thought that, when only one of minItems or maxItems was specified, the"
+> >>
+> >> was never logically correct for the "if:then", except for the case I
+> >> mentioned above. That's why all schema used as examples had it explicit:
+> >>
+> >> My talk from 2022, page 30:
+> >> https://static.sched.com/hosted_files/osseu2022/bd/How%20to%20Get%20Your%20DT%20Schema%20Bindings%20Accepted%20in%20Less%20than%2010%20Iterations%20-%20Krzysztof%20Kozlowski%2C%20Linaro.pdf?_gl=1*kmzqmt*_gcl_au*MTU2MzQ1MjY0Mi4xNzIxNzE0NDc1
+> >> all constraints defined,.
+> >>
+> >> My talk from 2023, page 34:
+> >> https://static.sched.com/hosted_files/eoss2023/a8/How%20to%20Get%20Your%20DT%20Schema%20Bindings%20Accepted%20in%20Less%20than%2010%20Iterations%20-%20Krzysztof%20Kozlowski%2C%20Linaro%20-%20ELCE%202023.pdf?_gl=1*1jgx6d3*_gcl_au*MTU2MzQ1MjY0Mi4xNzIxNzE0NDc1
+> >>
+> >> Recently, I started using other example as "useful reference":
+> >> https://elixir.bootlin.com/linux/v6.8/source/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml#L132
+> >>
+> >> That's nothing. All three above reference examples I keep giving are
+> >> already there and repeated in emails all the time.
+> >>
+> >> So aren't you confusing the entire "skip one limit" for top-level
+> >> properties? This patch is not about it all and dtschema did not change.
+> > 
+> > There must have been a misunderstanding indeed, I interpreted "New
+> > dtschema changed it" as meaning there were now new rules. Is that
+> > incorrect ?
+> 
+> For the binding with a property defined only in top-level properties: no
+> changes, no new rules.
+> 
+> For the binding with top-level and if:then:else: dtschema since few
+> months changed interpretation.
 
-This is wrong in 3 different ways:
-- md->type is not a bitmask
-- || is not bitwise but boolean
-- get_entry_num_slots() ignores all memory types except
-EFI_CONVENTIONAL_MEMORY anyway.
+OK, that's what I didn't understand correctly.
 
-So what exactly are you trying to fix here?
+> > If you don't mind clarifying, what is the current recommendation to
+> > indicate that a property has a fixed number of items ? Which of the
+> > following three options is preferred ?
+> 
+> Answer below assumes we have clocks defined in top-level properties and
+> there is no if:then:else customizing it.
+> 
+> > properties:
+> >   clocks:
+> >     minItems: 2
+> 
+> That's wrong, because items are unconstrained.
+> 
+> > properties:
+> >   clocks:
+> >     maxItems: 2
+> 
+> This one is preferred.
+> 
+> > properties:
+> >   clocks:
+> >     minItems: 2
+> >     maxItems: 2
+> 
+> This one is correct, but less preferred.
 
+Thank you, that is clear now.
 
->                 slots = get_entry_num_slots(md, size, ilog2(align), alloc_min,
->                                             alloc_max);
->                 MD_NUM_SLOTS(md) = slots;
-> @@ -111,6 +113,9 @@ efi_status_t efi_random_alloc(unsigned long size,
->                 efi_physical_addr_t target;
->                 unsigned long pages;
->
-> +               if (!(md->type & (EFI_CONVENTIONAL_MEMORY || EFI_PERSISTENT_MEMORY)))
-> +                       continue;
-> +
->                 if (total_mirrored_slots > 0 &&
->                     !(md->attribute & EFI_MEMORY_MORE_RELIABLE))
->                         continue;
-> --
-> 2.41.0
->
+-- 
+Regards,
+
+Laurent Pinchart
 
