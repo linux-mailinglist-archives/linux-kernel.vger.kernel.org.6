@@ -1,73 +1,55 @@
-Return-Path: <linux-kernel+bounces-304770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7757096249F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:19:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81D0096249C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:19:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 207301F26AA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:19:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8520B23A2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDFBB16C683;
-	Wed, 28 Aug 2024 10:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZTgxcQBq"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9418616B3B5;
+	Wed, 28 Aug 2024 10:18:55 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D085F16BE3A;
-	Wed, 28 Aug 2024 10:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F58168489;
+	Wed, 28 Aug 2024 10:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724840338; cv=none; b=cFh2h5gHnQ1xWpp68aI0EBB4XEF5++XdmAWnv2nGKENbTSfCUPLvrTNCo1W1XeaZKUL3HUk8KXUQUXp8ExB7CV+dy1nmR4RG9GlQn7WFBzpIxncAgaUQWSxDvM8r+x3Agt5L4aQDmdQPWbQjGXCq8BGbBBy3m4aHc+U+xA8MRvQ=
+	t=1724840335; cv=none; b=MZyme0z+MoeAz4dZ/mc/yqN48ghAj+t/DOdsrxxgHbg8hyNrZFZ8xTLLZVBgqTj0IG/bHuNV0VHkFjsHh7ZNPBRgd8skJT+Yy7b8SXDw024iO7GCFs2vNLpdh34ZYh5GbOk/h0Fwep6aFRiAEJCy9bgBzmf80SISEjDb33GgRGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724840338; c=relaxed/simple;
-	bh=UoN/UyiYug66uLlCk0UnTmfexCWdDKkn94NFkBOoF0I=;
+	s=arc-20240116; t=1724840335; c=relaxed/simple;
+	bh=76yP45lTQsYzgwmytYtHMj0baj7C0seddbIc1mDNeEQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LYshj+gfWpX6HCadkfUiwIOoqto1+AZvq0NdTX9S1eeTA5jXlVwt0zIDynxkQb4EMALu8lDZWDYM4KP8tnJU0B69wUd0n68AxPFsM5xGzkopPnHO2Vj3NReCPZzkCIGQis7e45C0ikrhvV0RbOkVkiCB8/M+jGvhcAqe8nVBkbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZTgxcQBq; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2020ac89cabso60782845ad.1;
-        Wed, 28 Aug 2024 03:18:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724840336; x=1725445136; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=L4W3IP20CGimPLVV7RyZx6e0WZ7znTW6N+Ub+VJ1Yfo=;
-        b=ZTgxcQBqtA96ny8+blNpXx9k4F+XpslMx6I3NS6YJkAFVIsVTRPYmHf0QXwuQBZ79j
-         sKN0lmZwguOOK9oQ7wOngFYQ9vU4d1KyYMMRAa5mVd6ywkXh+DgHcF6pzUUysu5rMj1/
-         icH6LK8awxlvkCNrNGqAsKtexk6SxINTkgolJCy33KifbBCciXS50f2KjLPpfp7w/L8Q
-         +SMJMd7+2HlIdwnfAhbz+FRxCDs/fkSBjz8Op3GNDgQKvQDZQgpgsXf7Ec5c0WIQ726G
-         mSe23ztxBFplf8M1Bpc9lZwrazRDpkTPl4NuhrLTJJ7UscUuG+jq7mLQdZibRI5gSfUE
-         O/SA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724840336; x=1725445136;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L4W3IP20CGimPLVV7RyZx6e0WZ7znTW6N+Ub+VJ1Yfo=;
-        b=sMB0B5OPkHlOSxNZWQyQfrZhSpt+Wem3uuidoyvBTHGycFlWamL1QYpZ5o7gFQvWKC
-         +TABEhIZq+Yd/3YwwGZsUmeMNS3SKyBYVCEY/x7qD8QN7HepMDMPCnKmK4EUoUQ7mq4r
-         B+WZnukVkvNhxKzrXOo1BJ/Q/KL9dvdnPrtSJMTHP2TK6Oo6j/tfoAo/6KDbr+tgWpVN
-         zQa6+Osi7h+1UurNZls5YWmxH6aTaPutgNHUNJPr4nqO4GhYkx1cSHmmUV96M+vIjRry
-         GWor/OXZOKQ+XnHk9TFblUpFSWfHMIleqGAuquVPgMCULSy0V36NTux6OffYWQQhj0gF
-         fxYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWS1ithLKPUWu4wzs4lf7LNcR8R2HVsxYBPtisql2X/7b/Po9jr6PgzzWhqiPHbBqW79AXpJZUAJZCrtAU=@vger.kernel.org, AJvYcCWmUSbHto0RKrMQvITSPX76TGw0HmaE8LZ8dgdAPJyb+aGhDbJoj2gVSzYVEhtPflUtcwGlli1WZ6pxw/Pw@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpHLn4MPDOb+3+wPycTHsG56R8akEHIk5oMqzD/tnoWTXTqF8l
-	IUVrXiZ5NP9sh1LbXQmdSMofcjfx942v6dq79xnvTIgOPhhoZwze
-X-Google-Smtp-Source: AGHT+IFn3LHCdIMyLvynP/kjAYe5D7ghddtHqXvyS9zOiS1PDErtG8cCYDtyf8zK+7xHvOaKspLqmw==
-X-Received: by 2002:a17:903:2352:b0:201:f065:2b2c with SMTP id d9443c01a7336-2039e4fbbe2mr160778575ad.55.1724840335822;
-        Wed, 28 Aug 2024 03:18:55 -0700 (PDT)
-Received: from [192.168.1.240] ([223.185.130.193])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385fcff06sm96439215ad.308.2024.08.28.03.18.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 03:18:55 -0700 (PDT)
-Message-ID: <d95656fd-cd64-4386-a22f-689a70d8327c@gmail.com>
-Date: Wed, 28 Aug 2024 15:48:50 +0530
+	 In-Reply-To:Content-Type; b=nfd03wyFqnSM8YFpEat9yQXDEK0S0aiuWelhomfB2xNydDV7bzirDdaNZoUfnO2FPj/qRiDCoKFAtXsiO690QpDcbQWh0qbrWsp3wBfClVTOUqs30AMuf/ThkLZN1V6El11fWTmVjucsTwq9BEz4ZyEgJ7VSEFR5Tu+T8AHMNY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4Wv0kM5zJMz9sRy;
+	Wed, 28 Aug 2024 12:18:51 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id wconnBVW9-Lt; Wed, 28 Aug 2024 12:18:51 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wv0kM5B9Sz9sRs;
+	Wed, 28 Aug 2024 12:18:51 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id A05508B78F;
+	Wed, 28 Aug 2024 12:18:51 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id E3dYZevYEYVw; Wed, 28 Aug 2024 12:18:51 +0200 (CEST)
+Received: from [172.25.230.108] (unknown [172.25.230.108])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 2CE418B764;
+	Wed, 28 Aug 2024 12:18:51 +0200 (CEST)
+Message-ID: <cdea1768-b44c-4bf5-931b-10f9357ed4cb@csgroup.eu>
+Date: Wed, 28 Aug 2024 12:18:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,44 +57,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools/hv: Add memory allocation check in hv_fcopy_start
-To: Zhu Jun <zhujun2@cmss.chinamobile.com>, kys@microsoft.com
-Cc: haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240828100031.3833-1-zhujun2@cmss.chinamobile.com>
-Content-Language: en-US
-From: Praveen Kumar <kpraveen.lkml@gmail.com>
-In-Reply-To: <20240828100031.3833-1-zhujun2@cmss.chinamobile.com>
+Subject: Re: [PATCH net-next 3/6] net: ethernet: fs_enet: drop the
+ .adjust_link custom fs_ops
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net,
+ Pantelis Antoniou <pantelis.antoniou@gmail.com>, Andrew Lunn
+ <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Russell King <linux@armlinux.org.uk>, Florian Fainelli
+ <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Herve Codina <herve.codina@bootlin.com>,
+ linuxppc-dev@lists.ozlabs.org
+References: <20240828095103.132625-1-maxime.chevallier@bootlin.com>
+ <20240828095103.132625-4-maxime.chevallier@bootlin.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20240828095103.132625-4-maxime.chevallier@bootlin.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 28/08/24 15:30, Zhu Jun wrote:
-> Added checks for `file_name` and `path_name` memory allocation failures,
-> with error logging and process exit on failure.
+
+
+Le 28/08/2024 à 11:50, Maxime Chevallier a écrit :
+> There's no in-tree user for the fs_ops .adjust_link() function, so we
+> can always use the generic one in fe_enet-main.
 > 
-> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+
 > ---
->   tools/hv/hv_fcopy_uio_daemon.c | 4 ++++
->   1 file changed, 4 insertions(+)
+>   drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c | 7 +------
+>   drivers/net/ethernet/freescale/fs_enet/fs_enet.h      | 1 -
+>   2 files changed, 1 insertion(+), 7 deletions(-)
 > 
-> diff --git a/tools/hv/hv_fcopy_uio_daemon.c b/tools/hv/hv_fcopy_uio_daemon.c
-> index 3ce316cc9f97..2efdf8d28e9c 100644
-> --- a/tools/hv/hv_fcopy_uio_daemon.c
-> +++ b/tools/hv/hv_fcopy_uio_daemon.c
-> @@ -295,6 +295,10 @@ static int hv_fcopy_start(struct hv_start_fcopy *smsg_in)
+> diff --git a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
+> index 2b48a2a5e32d..caca81b3ccb6 100644
+> --- a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
+> +++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
+> @@ -649,12 +649,7 @@ static void fs_adjust_link(struct net_device *dev)
+>   	unsigned long flags;
 >   
->   	file_name = (char *)malloc(file_size * sizeof(char));
->   	path_name = (char *)malloc(path_size * sizeof(char));
-> +	if (!file_name || !path_name) {
-> +		syslog(LOG_ERR, "Can't allocate memory!");
-
-Probably, you may want to cleanup memory here in case either of one is 
-successful allocation.
-
-> +		exit(EXIT_FAILURE);
-> +	}
+>   	spin_lock_irqsave(&fep->lock, flags);
+> -
+> -	if (fep->ops->adjust_link)
+> -		fep->ops->adjust_link(dev);
+> -	else
+> -		generic_adjust_link(dev);
+> -
+> +	generic_adjust_link(dev);
+>   	spin_unlock_irqrestore(&fep->lock, flags);
+>   }
 >   
->   	wcstoutf8(file_name, (__u16 *)in_file_name, file_size);
->   	wcstoutf8(path_name, (__u16 *)in_path_name, path_size);
-
+> diff --git a/drivers/net/ethernet/freescale/fs_enet/fs_enet.h b/drivers/net/ethernet/freescale/fs_enet/fs_enet.h
+> index 21c07ac05225..abe4dc97e52a 100644
+> --- a/drivers/net/ethernet/freescale/fs_enet/fs_enet.h
+> +++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet.h
+> @@ -77,7 +77,6 @@ struct fs_ops {
+>   	void (*free_bd)(struct net_device *dev);
+>   	void (*cleanup_data)(struct net_device *dev);
+>   	void (*set_multicast_list)(struct net_device *dev);
+> -	void (*adjust_link)(struct net_device *dev);
+>   	void (*restart)(struct net_device *dev);
+>   	void (*stop)(struct net_device *dev);
+>   	void (*napi_clear_event)(struct net_device *dev);
 
