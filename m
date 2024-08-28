@@ -1,460 +1,291 @@
-Return-Path: <linux-kernel+bounces-305116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD0B09629C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:07:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B4179629C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:07:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEEF11C22464
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:07:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 805FA1C222D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D3E1891D1;
-	Wed, 28 Aug 2024 14:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24E9189F45;
+	Wed, 28 Aug 2024 14:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="Rh/pjDuJ"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lUPrPAEb"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8333118030
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6EDD189B8B
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724854001; cv=none; b=AnZGiocpQDD/ArChpZnoaWLgMlzAdovbrUPiCCfub5GOGPj8+uNEh6JuF5kYeMDzH2eAjZlhlAopXK9WL7XtBW/5BoVrFQa4qJxTURu/Xv8+9WkO4Ym7auhJU8LZk+cAlpoTCpllg0uufjfGaoFu8oyfpmC+5ymhn6S4R888jjY=
+	t=1724854012; cv=none; b=L1kXW1TMB1eZQGCzXXoWHrlvi2Y3s+/DF4NFH2Rr0q5Z4JaOaGMLOc+mGOviA5P8BCktpzYxRXyi9SzGPGUAZlWolSvAlPsszJxRG9ii+pt9g5VYOthbU4guoECGCWfSrKHRGDhENf8SgjG+24VXOMeYIfntPUIt5QRQ8WUjAJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724854001; c=relaxed/simple;
-	bh=otedDKXWRlErpy6D3v6S5UyI+6IgGWr+5u1rG34vxcQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ZAYb2WvlmP66lmb5dVMQkh/HscY8UVfekPnEp3Ynw3LD6KQSQl7BaMFaLP8V7aXhtzokx9ZsJ19rwVTbPzrxGYzAwc0VU93kXqzreEkeKg9YIEihY2JwzIIcDD7w4r/p7QDPMOxBoXcOfbn+lAtlLKTq+M8/g/vaizK5Dc9TdyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=Rh/pjDuJ; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1724853991; x=1725113191;
-	bh=vPvncXPECDixTc76akVoXBodonoMLQRoRoMAD+A7dKQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=Rh/pjDuJ9ib44eTecS/a14DMJLhWFnHamHzpPhlUQJKGwvoFITe+B+vXrlaGeNnYl
-	 ziLpJTLshwFo1sH8m59lH4Dfz5VrVi/ySpmZ65Z40Ra2zgcTO9JcmI70zZSy1w/qJ5
-	 ruXkq80VTQI7DLo7izkHqP4IS4C+vBEzpNZ8R3Lux3F3a0ZZrn4M86OFErm1SMiq3L
-	 jIsHB75tEQ9OigsZ2ZnH92cTLI/hpdd7g7fj9X6uhtoXPaUh42w/wzQsv8KK21H7Ja
-	 hhJxAHndPdjKvUNWGK7SmUGHJqvdTBwoQnoQKhzzNkneVFdHeIFivR892G7PAHkfV2
-	 dG7nKmHL4gYWQ==
-Date: Wed, 28 Aug 2024 14:06:25 +0000
-To: perex@perex.cz, tiwai@suse.com
-From: =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
-Subject: [PATCH] sound: core: Fix issues detected by checkpatch
-Message-ID: <20240828140555.68565-1-dominik.karol.piatkowski@protonmail.com>
-Feedback-ID: 117888567:user:proton
-X-Pm-Message-ID: 11801dcb88d86c23edff23e64d7df05fecee8e70
+	s=arc-20240116; t=1724854012; c=relaxed/simple;
+	bh=zzK14fWrPUuudbxqi6ng+t4f17P5uwJ8zh/WvUmUxtA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DPBJqypI9WxXEEgNVBTTBscAtqniPiuHAem0uXJMhZhfCc4Xf7TlrCugZsIYv4H/0YJg3s40se5l34hRL/eIkjFJ3V68OUWIGgxpKFefgnfG97dvuNSUXITxGmt7RucGih3K3zxzzbyOQYJYsmJ+E90YYNvGuc/0r8Zkfu0EDXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lUPrPAEb; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724854007;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=VJbp8fr1GlW6ECEDnV4RCK1aKov0prOyDv8ht3obM7k=;
+	b=lUPrPAEbk1pnf69ukK55YVxXYzYSeFvObJ68IrWkasWn8ycrQLHu/FMQiB3eoZG3/YrUw/
+	C1RPji6tJPOs7xCJhn+J27nWK9OhIRMv/1I3NF80+i5jMDpLTq8FCiZ9eThYdQe94WbqDn
+	lQBsQ/cH2XFoc7v7kCR1G568Zq7RGJ8=
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: 
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Michal Hocko <mhocko@suse.com>,
+	Dave Chinner <dchinner@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc allocations
+Date: Wed, 28 Aug 2024 10:06:36 -0400
+Message-ID: <20240828140638.3204253-1-kent.overstreet@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Running checkpatch.pl on sound_core.c resulted in:
-total: 75 errors, 37 warnings, 617 lines checked
+vmalloc doesn't correctly respect gfp flags - gfp flags aren't used for
+pte allocation, so doing vmalloc/kvmalloc allocations with reclaim
+unsafe locks is a potential deadlock.
 
-This patch fixes most of them, leaving two warnings:
-WARNING: Prefer [subsystem eg: netdev]_err([subsystem]dev, ... then dev_err=
-(dev, ... then pr_err(...  to printk(KERN_ERR ...
-+=09printk(KERN_ERR "Sound device %d went missing!\n", unit);
+Note that we also want to use PF_MEMALLOC_NORECLAIM, not
+PF_MEMALLOC_NOFS, because when we're doing allocations with btree locks
+held we have a fallback available - drop locks and do a normal
+GFP_KERNEL allocation. We don't want to be invoking reclaim with btree
+locks held at all, since these are big shared locks and overalll system
+performance is sensitive to hold times.
 
-WARNING: Prefer [subsystem eg: netdev]_err([subsystem]dev, ... then dev_err=
-(dev, ... then pr_err(...  to printk(KERN_ERR ...
-+=09=09printk(KERN_ERR "soundcore: sound device already in use.\n");
-
-Signed-off-by: Dominik Karol Pi=C4=85tkowski <dominik.karol.piatkowski@prot=
-onmail.com>
+Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
 ---
- sound/sound_core.c | 157 +++++++++++++++++++++------------------------
- 1 file changed, 72 insertions(+), 85 deletions(-)
+ fs/bcachefs/acl.c             |  5 ++--
+ fs/bcachefs/btree_cache.c     |  3 ++-
+ fs/bcachefs/btree_iter.h      | 46 +++++++++++++++++++----------------
+ fs/bcachefs/btree_key_cache.c | 10 ++++----
+ fs/bcachefs/ec.c              | 12 ++++-----
+ fs/bcachefs/fs.c              |  8 ------
+ 6 files changed, 41 insertions(+), 43 deletions(-)
 
-diff --git a/sound/sound_core.c b/sound/sound_core.c
-index d81fed1c1226..875ab0257904 100644
---- a/sound/sound_core.c
-+++ b/sound/sound_core.c
-@@ -70,15 +70,15 @@ module_exit(cleanup_soundcore);
- #ifdef CONFIG_SOUND_OSS_CORE
+diff --git a/fs/bcachefs/acl.c b/fs/bcachefs/acl.c
+index 87f1be9d4db4..1def61875a6f 100644
+--- a/fs/bcachefs/acl.c
++++ b/fs/bcachefs/acl.c
+@@ -137,7 +137,7 @@ static struct posix_acl *bch2_acl_from_disk(struct btree_trans *trans,
+ 		return NULL;
+ 
+ 	acl = allocate_dropping_locks(trans, ret,
+-			posix_acl_alloc(count, _gfp));
++			posix_acl_alloc(count, GFP_KERNEL));
+ 	if (!acl)
+ 		return ERR_PTR(-ENOMEM);
+ 	if (ret) {
+@@ -427,7 +427,8 @@ int bch2_acl_chmod(struct btree_trans *trans, subvol_inum inum,
+ 	if (ret)
+ 		goto err;
+ 
+-	ret = allocate_dropping_locks_errcode(trans, __posix_acl_chmod(&acl, _gfp, mode));
++	ret = allocate_dropping_locks_errcode(trans,
++					 __posix_acl_chmod(&acl, GFP_KERNEL, mode));
+ 	if (ret)
+ 		goto err;
+ 
+diff --git a/fs/bcachefs/btree_cache.c b/fs/bcachefs/btree_cache.c
+index 9f096fdcaf9a..e0090fa551d7 100644
+--- a/fs/bcachefs/btree_cache.c
++++ b/fs/bcachefs/btree_cache.c
+@@ -729,7 +729,8 @@ struct btree *bch2_btree_node_mem_alloc(struct btree_trans *trans, bool pcpu_rea
+ 
+ 	mutex_unlock(&bc->lock);
+ 
+-	if (btree_node_data_alloc(c, b, GFP_NOWAIT|__GFP_NOWARN)) {
++	if (memalloc_flags_do(PF_MEMALLOC_NORECLAIM,
++			      btree_node_data_alloc(c, b, GFP_KERNEL|__GFP_NOWARN))) {
+ 		bch2_trans_unlock(trans);
+ 		if (btree_node_data_alloc(c, b, GFP_KERNEL|__GFP_NOWARN))
+ 			goto err;
+diff --git a/fs/bcachefs/btree_iter.h b/fs/bcachefs/btree_iter.h
+index 6d87e57745da..0ea21a5f6d86 100644
+--- a/fs/bcachefs/btree_iter.h
++++ b/fs/bcachefs/btree_iter.h
+@@ -865,29 +865,33 @@ struct bkey_s_c bch2_btree_iter_peek_and_restart_outlined(struct btree_iter *);
+ 	(_do) ?: bch2_trans_relock(_trans);				\
+ })
+ 
+-#define allocate_dropping_locks_errcode(_trans, _do)			\
+-({									\
+-	gfp_t _gfp = GFP_NOWAIT|__GFP_NOWARN;				\
+-	int _ret = _do;							\
+-									\
+-	if (bch2_err_matches(_ret, ENOMEM)) {				\
+-		_gfp = GFP_KERNEL;					\
+-		_ret = drop_locks_do(_trans, _do);			\
+-	}								\
+-	_ret;								\
++#define memalloc_flags_do(_flags, _do)						\
++({										\
++	unsigned _saved_flags = memalloc_flags_save(_flags);			\
++	typeof(_do) _ret = _do;							\
++	memalloc_noreclaim_restore(_saved_flags);				\
++	_ret;									\
+ })
+ 
+-#define allocate_dropping_locks(_trans, _ret, _do)			\
+-({									\
+-	gfp_t _gfp = GFP_NOWAIT|__GFP_NOWARN;				\
+-	typeof(_do) _p = _do;						\
+-									\
+-	_ret = 0;							\
+-	if (unlikely(!_p)) {						\
+-		_gfp = GFP_KERNEL;					\
+-		_ret = drop_locks_do(_trans, ((_p = _do), 0));		\
+-	}								\
+-	_p;								\
++#define allocate_dropping_locks_errcode(_trans, _do)				\
++({										\
++	int _ret = memalloc_flags_do(PF_MEMALLOC_NORECLAIM|PF_MEMALLOC_NOWARN, _do);\
++										\
++	if (bch2_err_matches(_ret, ENOMEM)) {					\
++		_ret = drop_locks_do(_trans, _do);				\
++	}									\
++	_ret;									\
++})
++
++#define allocate_dropping_locks(_trans, _ret, _do)				\
++({										\
++	typeof(_do) _p = memalloc_flags_do(PF_MEMALLOC_NORECLAIM|PF_MEMALLOC_NOWARN, _do);\
++										\
++	_ret = 0;								\
++	if (unlikely(!_p)) {							\
++		_ret = drop_locks_do(_trans, ((_p = _do), 0));			\
++	}									\
++	_p;									\
+ })
+ 
+ #define bch2_trans_run(_c, _do)						\
+diff --git a/fs/bcachefs/btree_key_cache.c b/fs/bcachefs/btree_key_cache.c
+index af84516fb607..feea58778d44 100644
+--- a/fs/bcachefs/btree_key_cache.c
++++ b/fs/bcachefs/btree_key_cache.c
+@@ -117,12 +117,12 @@ static void bkey_cached_free(struct btree_key_cache *bc,
+ 	this_cpu_inc(*bc->nr_pending);
+ }
+ 
+-static struct bkey_cached *__bkey_cached_alloc(unsigned key_u64s, gfp_t gfp)
++static struct bkey_cached *__bkey_cached_alloc(unsigned key_u64s)
+ {
+-	struct bkey_cached *ck = kmem_cache_zalloc(bch2_key_cache, gfp);
++	struct bkey_cached *ck = kmem_cache_zalloc(bch2_key_cache, GFP_KERNEL);
+ 	if (unlikely(!ck))
+ 		return NULL;
+-	ck->k = kmalloc(key_u64s * sizeof(u64), gfp);
++	ck->k = kmalloc(key_u64s * sizeof(u64), GFP_KERNEL);
+ 	if (unlikely(!ck->k)) {
+ 		kmem_cache_free(bch2_key_cache, ck);
+ 		return NULL;
+@@ -146,7 +146,7 @@ bkey_cached_alloc(struct btree_trans *trans, struct btree_path *path, unsigned k
+ 		goto lock;
+ 
+ 	ck = allocate_dropping_locks(trans, ret,
+-				     __bkey_cached_alloc(key_u64s, _gfp));
++				     __bkey_cached_alloc(key_u64s));
+ 	if (ret) {
+ 		if (ck)
+ 			kfree(ck->k);
+@@ -240,7 +240,7 @@ static int btree_key_cache_create(struct btree_trans *trans, struct btree_path *
+ 		mark_btree_node_locked_noreset(path, 0, BTREE_NODE_UNLOCKED);
+ 
+ 		struct bkey_i *new_k = allocate_dropping_locks(trans, ret,
+-				kmalloc(key_u64s * sizeof(u64), _gfp));
++						kmalloc(key_u64s * sizeof(u64), GFP_KERNEL));
+ 		if (unlikely(!new_k)) {
+ 			bch_err(trans->c, "error allocating memory for key cache key, btree %s u64s %u",
+ 				bch2_btree_id_str(ck->key.btree_id), key_u64s);
+diff --git a/fs/bcachefs/ec.c b/fs/bcachefs/ec.c
+index 141a4c63142f..e2163cbf63a9 100644
+--- a/fs/bcachefs/ec.c
++++ b/fs/bcachefs/ec.c
+@@ -890,12 +890,12 @@ int bch2_ec_read_extent(struct btree_trans *trans, struct bch_read_bio *rbio)
+ 
+ /* stripe bucket accounting: */
+ 
+-static int __ec_stripe_mem_alloc(struct bch_fs *c, size_t idx, gfp_t gfp)
++static int __ec_stripe_mem_alloc(struct bch_fs *c, size_t idx)
+ {
+ 	ec_stripes_heap n, *h = &c->ec_stripes_heap;
+ 
+ 	if (idx >= h->size) {
+-		if (!init_heap(&n, max(1024UL, roundup_pow_of_two(idx + 1)), gfp))
++		if (!init_heap(&n, max(1024UL, roundup_pow_of_two(idx + 1)), GFP_KERNEL))
+ 			return -BCH_ERR_ENOMEM_ec_stripe_mem_alloc;
+ 
+ 		mutex_lock(&c->ec_stripes_heap_lock);
+@@ -909,11 +909,11 @@ static int __ec_stripe_mem_alloc(struct bch_fs *c, size_t idx, gfp_t gfp)
+ 		free_heap(&n);
+ 	}
+ 
+-	if (!genradix_ptr_alloc(&c->stripes, idx, gfp))
++	if (!genradix_ptr_alloc(&c->stripes, idx, GFP_KERNEL))
+ 		return -BCH_ERR_ENOMEM_ec_stripe_mem_alloc;
+ 
+ 	if (c->gc_pos.phase != GC_PHASE_not_running &&
+-	    !genradix_ptr_alloc(&c->gc_stripes, idx, gfp))
++	    !genradix_ptr_alloc(&c->gc_stripes, idx, GFP_KERNEL))
+ 		return -BCH_ERR_ENOMEM_ec_stripe_mem_alloc;
+ 
+ 	return 0;
+@@ -923,7 +923,7 @@ static int ec_stripe_mem_alloc(struct btree_trans *trans,
+ 			       struct btree_iter *iter)
+ {
+ 	return allocate_dropping_locks_errcode(trans,
+-			__ec_stripe_mem_alloc(trans->c, iter->pos.offset, _gfp));
++			__ec_stripe_mem_alloc(trans->c, iter->pos.offset));
+ }
+ 
  /*
-  *=09OSS sound core handling. Breaks out sound functions to submodules
-- *=09
-+ *
-  *=09Author:=09=09Alan Cox <alan@lxorguk.ukuu.org.uk>
-  *
-  *=09Fixes:
-  *
-  *                         --------------------
-- *=20
-+ *
-  *=09Top level handler for the sound subsystem. Various devices can
-- *=09plug into this. The fact they don't all go via OSS doesn't mean=20
-+ *=09plug into this. The fact they don't all go via OSS doesn't mean
-  *=09they don't have to implement the OSS API. There is a lot of logic
-  *=09to keeping much of the OSS weight out of the code in a compatibility
-  *=09module, but it's up to the driver to rember to load it...
-@@ -107,8 +107,7 @@ module_exit(cleanup_soundcore);
-=20
- #define SOUND_STEP 16
-=20
--struct sound_unit
--{
-+struct sound_unit {
- =09int unit_minor;
- =09const struct file_operations *unit_fops;
- =09struct sound_unit *next;
-@@ -143,8 +142,7 @@ module_param(preclaim_oss, int, 0444);
-=20
- static int soundcore_open(struct inode *, struct file *);
-=20
--static const struct file_operations soundcore_fops =3D
--{
-+static const struct file_operations soundcore_fops =3D {
- =09/* We must have an owner or the module locking fails */
- =09.owner=09=3D THIS_MODULE,
- =09.open=09=3D soundcore_open,
-@@ -156,70 +154,68 @@ static const struct file_operations soundcore_fops =
-=3D
-  *=09join into it. Called with the lock asserted
-  */
-=20
--static int __sound_insert_unit(struct sound_unit * s, struct sound_unit **=
-list, const struct file_operations *fops, int index, int low, int top)
-+static int __sound_insert_unit(struct sound_unit *s, struct sound_unit **l=
-ist, const struct file_operations *fops, int index, int low, int top)
- {
--=09int n=3Dlow;
-+=09int n =3D low;
-=20
- =09if (index < 0) {=09/* first free */
-=20
--=09=09while (*list && (*list)->unit_minor<n)
--=09=09=09list=3D&((*list)->next);
-+=09=09while (*list && (*list)->unit_minor < n)
-+=09=09=09list =3D &((*list)->next);
-=20
--=09=09while(n<top)
--=09=09{
-+=09=09while (n < top) {
- =09=09=09/* Found a hole ? */
--=09=09=09if(*list=3D=3DNULL || (*list)->unit_minor>n)
-+=09=09=09if (*list =3D=3D NULL || (*list)->unit_minor > n)
- =09=09=09=09break;
--=09=09=09list=3D&((*list)->next);
--=09=09=09n+=3DSOUND_STEP;
-+=09=09=09list =3D &((*list)->next);
-+=09=09=09n +=3D SOUND_STEP;
- =09=09}
-=20
--=09=09if(n>=3Dtop)
-+=09=09if (n >=3D top)
- =09=09=09return -ENOENT;
- =09} else {
- =09=09n =3D low+(index*16);
- =09=09while (*list) {
--=09=09=09if ((*list)->unit_minor=3D=3Dn)
-+=09=09=09if ((*list)->unit_minor =3D=3D n)
- =09=09=09=09return -EBUSY;
--=09=09=09if ((*list)->unit_minor>n)
-+=09=09=09if ((*list)->unit_minor > n)
- =09=09=09=09break;
--=09=09=09list=3D&((*list)->next);
-+=09=09=09list =3D &((*list)->next);
- =09=09}
--=09}=09
--=09=09
-+=09}
-+
- =09/*
- =09 *=09Fill it in
- =09 */
--=09=20
--=09s->unit_minor=3Dn;
--=09s->unit_fops=3Dfops;
--=09
-+
-+=09s->unit_minor =3D n;
-+=09s->unit_fops =3D fops;
-+
- =09/*
- =09 *=09Link it
- =09 */
--=09=20
--=09s->next=3D*list;
--=09*list=3Ds;
--=09
--=09
-+
-+=09s->next =3D *list;
-+=09*list =3D s;
-+
-+
- =09return n;
+@@ -2193,7 +2193,7 @@ int bch2_stripes_read(struct bch_fs *c)
+ 			if (k.k->type != KEY_TYPE_stripe)
+ 				continue;
+ 
+-			ret = __ec_stripe_mem_alloc(c, k.k->p.offset, GFP_KERNEL);
++			ret = __ec_stripe_mem_alloc(c, k.k->p.offset);
+ 			if (ret)
+ 				break;
+ 
+diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
+index bc8dd89ec15c..153ec4e5c0f4 100644
+--- a/fs/bcachefs/fs.c
++++ b/fs/bcachefs/fs.c
+@@ -273,14 +273,6 @@ static struct bch_inode_info *bch2_inode_hash_insert(struct bch_fs *c,
+ 	}
  }
-=20
- /*
-  *=09Remove a node from the chain. Called with the lock asserted
-  */
--=20
-+
- static struct sound_unit *__sound_remove_unit(struct sound_unit **list, in=
-t unit)
- {
--=09while(*list)
--=09{
--=09=09struct sound_unit *p=3D*list;
--=09=09if(p->unit_minor=3D=3Dunit)
--=09=09{
--=09=09=09*list=3Dp->next;
-+=09while (*list) {
-+=09=09struct sound_unit *p =3D *list;
-+
-+=09=09if (p->unit_minor =3D=3D unit) {
-+=09=09=09*list =3D p->next;
- =09=09=09return p;
- =09=09}
--=09=09list=3D&(p->next);
-+=09=09list =3D &(p->next);
- =09}
- =09printk(KERN_ERR "Sound device %d went missing!\n", unit);
- =09return NULL;
-@@ -248,7 +244,7 @@ static int sound_insert_unit(struct sound_unit **list, =
-const struct file_operati
- retry:
- =09r =3D __sound_insert_unit(s, list, fops, index, low, top);
- =09spin_unlock(&sound_loader_lock);
--=09
-+
- =09if (r < 0)
- =09=09goto fail;
- =09else if (r < SOUND_STEP)
-@@ -291,7 +287,7 @@ static int sound_insert_unit(struct sound_unit **list, =
-const struct file_operati
-  *=09completed the removal before their file operations become
-  *=09invalid.
-  */
-- =09
-+
- static void sound_remove_unit(struct sound_unit **list, int unit)
- {
- =09struct sound_unit *p;
-@@ -335,7 +331,7 @@ static struct sound_unit *chains[SOUND_STEP];
-  *=09register_sound_special_device - register a special sound node
-  *=09@fops: File operations for the driver
-  *=09@unit: Unit number to allocate
-- *      @dev: device pointer
-+ *=09@dev: device pointer
-  *
-  *=09Allocate a special sound device by minor number from the sound
-  *=09subsystem.
-@@ -343,7 +339,7 @@ static struct sound_unit *chains[SOUND_STEP];
-  *=09Return: The allocated number is returned on success. On failure,
-  *=09a negative error code is returned.
-  */
--=20
-+
- int register_sound_special_device(const struct file_operations *fops, int =
-unit,
- =09=09=09=09  struct device *dev)
- {
-@@ -353,69 +349,66 @@ int register_sound_special_device(const struct file_o=
-perations *fops, int unit,
- =09char _name[16];
-=20
- =09switch (chain) {
--=09    case 0:
-+=09case 0:
- =09=09name =3D "mixer";
- =09=09break;
--=09    case 1:
-+=09case 1:
- =09=09name =3D "sequencer";
- =09=09if (unit >=3D SOUND_STEP)
- =09=09=09goto __unknown;
- =09=09max_unit =3D unit + 1;
- =09=09break;
--=09    case 2:
-+=09case 2:
- =09=09name =3D "midi";
- =09=09break;
--=09    case 3:
-+=09case 3:
- =09=09name =3D "dsp";
- =09=09break;
--=09    case 4:
-+=09case 4:
- =09=09name =3D "audio";
- =09=09break;
--=09    case 5:
-+=09case 5:
- =09=09name =3D "dspW";
- =09=09break;
--=09    case 8:
-+=09case 8:
- =09=09name =3D "sequencer2";
- =09=09if (unit >=3D SOUND_STEP)
- =09=09=09goto __unknown;
- =09=09max_unit =3D unit + 1;
- =09=09break;
--=09    case 9:
-+=09case 9:
- =09=09name =3D "dmmidi";
- =09=09break;
--=09    case 10:
-+=09case 10:
- =09=09name =3D "dmfm";
- =09=09break;
--=09    case 12:
-+=09case 12:
- =09=09name =3D "adsp";
- =09=09break;
--=09    case 13:
-+=09case 13:
- =09=09name =3D "amidi";
- =09=09break;
--=09    case 14:
-+=09case 14:
- =09=09name =3D "admmidi";
- =09=09break;
--=09    default:
--=09    =09{
--=09=09    __unknown:
-+=09default: {
-+__unknown:
- =09=09=09sprintf(_name, "unknown%d", chain);
--=09=09    =09if (unit >=3D SOUND_STEP)
--=09=09    =09=09strcat(_name, "-");
--=09=09    =09name =3D _name;
-+=09=09=09if (unit >=3D SOUND_STEP)
-+=09=09=09=09strcat(_name, "-");
-+=09=09=09name =3D _name;
- =09=09}
- =09=09break;
- =09}
- =09return sound_insert_unit(&chains[chain], fops, -1, unit, max_unit,
- =09=09=09=09 name, 0600, dev);
- }
--=20
- EXPORT_SYMBOL(register_sound_special_device);
-=20
- int register_sound_special(const struct file_operations *fops, int unit)
- {
- =09return register_sound_special_device(fops, unit, NULL);
- }
+ 
+-#define memalloc_flags_do(_flags, _do)						\
+-({										\
+-	unsigned _saved_flags = memalloc_flags_save(_flags);			\
+-	typeof(_do) _ret = _do;							\
+-	memalloc_noreclaim_restore(_saved_flags);				\
+-	_ret;									\
+-})
 -
- EXPORT_SYMBOL(register_sound_special);
-=20
- /**
-@@ -435,14 +428,13 @@ int register_sound_mixer(const struct file_operations=
- *fops, int dev)
- =09return sound_insert_unit(&chains[0], fops, dev, 0, 128,
- =09=09=09=09 "mixer", 0600, NULL);
- }
--
- EXPORT_SYMBOL(register_sound_mixer);
-=20
- /*
-  *=09DSP's are registered as a triple. Register only one and cheat
-  *=09in open - see below.
-  */
--=20
-+
- /**
-  *=09register_sound_dsp - register a DSP device
-  *=09@fops: File operations for the driver
-@@ -463,7 +455,6 @@ int register_sound_dsp(const struct file_operations *fo=
-ps, int dev)
- =09return sound_insert_unit(&chains[3], fops, dev, 3, 131,
- =09=09=09=09 "dsp", 0600, NULL);
- }
--
- EXPORT_SYMBOL(register_sound_dsp);
-=20
- /**
-@@ -480,7 +471,6 @@ void unregister_sound_special(int unit)
+ static struct inode *bch2_alloc_inode(struct super_block *sb)
  {
- =09sound_remove_unit(&chains[unit % SOUND_STEP], unit);
- }
--=20
- EXPORT_SYMBOL(unregister_sound_special);
-=20
- /**
-@@ -495,7 +485,6 @@ void unregister_sound_mixer(int unit)
- {
- =09sound_remove_unit(&chains[0], unit);
- }
--
- EXPORT_SYMBOL(unregister_sound_mixer);
-=20
- /**
-@@ -512,20 +501,17 @@ void unregister_sound_dsp(int unit)
- {
- =09sound_remove_unit(&chains[3], unit);
- }
--
--
- EXPORT_SYMBOL(unregister_sound_dsp);
-=20
- static struct sound_unit *__look_for_unit(int chain, int unit)
- {
- =09struct sound_unit *s;
--=09
--=09s=3Dchains[chain];
--=09while(s && s->unit_minor <=3D unit)
--=09{
--=09=09if(s->unit_minor=3D=3Dunit)
-+
-+=09s =3D chains[chain];
-+=09while (s && s->unit_minor <=3D unit) {
-+=09=09if (s->unit_minor =3D=3D unit)
- =09=09=09return s;
--=09=09s=3Ds->next;
-+=09=09s =3D s->next;
- =09}
- =09return NULL;
- }
-@@ -537,14 +523,13 @@ static int soundcore_open(struct inode *inode, struct=
- file *file)
- =09struct sound_unit *s;
- =09const struct file_operations *new_fops =3D NULL;
-=20
--=09chain=3Dunit&0x0F;
--=09if(chain=3D=3D4 || chain=3D=3D5)=09/* dsp/audio/dsp16 */
--=09{
--=09=09unit&=3D0xF0;
--=09=09unit|=3D3;
--=09=09chain=3D3;
-+=09chain =3D unit&0x0F;
-+=09if (chain =3D=3D 4 || chain =3D=3D 5) {=09/* dsp/audio/dsp16 */
-+=09=09unit &=3D 0xF0;
-+=09=09unit |=3D 3;
-+=09=09chain =3D 3;
- =09}
--=09
-+
- =09spin_lock(&sound_loader_lock);
- =09s =3D __look_for_unit(chain, unit);
- =09if (s)
-@@ -598,8 +583,10 @@ MODULE_ALIAS_CHARDEV_MAJOR(SOUND_MAJOR);
-=20
- static void cleanup_oss_soundcore(void)
- {
--=09/* We have nothing to really do here - we know the lists must be
--=09   empty */
-+=09/*
-+=09 * We have nothing to really do here - we know the lists must be
-+=09 * empty
-+=09 */
- =09unregister_chrdev(SOUND_MAJOR, "sound");
- }
-=20
---=20
-2.34.1
-
+ 	BUG();
+-- 
+2.45.2
 
 
