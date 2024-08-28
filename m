@@ -1,152 +1,129 @@
-Return-Path: <linux-kernel+bounces-304882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43F9F962632
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:38:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 758FC962639
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:40:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01DD2285A51
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:38:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 339EE282D41
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F5C170A39;
-	Wed, 28 Aug 2024 11:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB71F1741E0;
+	Wed, 28 Aug 2024 11:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="mJLhydL7"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="M6FcObym";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="rSh/iM2z"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B04B16D9BA;
-	Wed, 28 Aug 2024 11:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9009D170A3A;
+	Wed, 28 Aug 2024 11:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724845095; cv=none; b=tFGD7awYtbvMvlrquhvJPVXJUuuxXPfZM02s79P6BR63UXn9gHrs7HW/NsDHZwsTP27J0UiVn6XhK49JQ/EmMs28i8eCLhJW3BiEzjnFIScfG+4ODhe5IrohhYhD9kGjV/RUCNiQZ51veVafpDGOWddSyxf87oKBp9iK4v6Z0/I=
+	t=1724845217; cv=none; b=QbiZr5zfWgEby8vUSJBMfn/SkhjK9RREnbkTXAScoE2LTeclBc2Rap1ISXR+3Vmv1qRrvLFiW4nmUNhLEOEwvrLaJ7BrVkF64Htm4P4yJM2YJcJ1umYYd3WAc6N3diWZAAh+PNYGnvah8VIZdWCPQOvTPi1LbASr5G72e8jxO/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724845095; c=relaxed/simple;
-	bh=E31P5Kg44PX5FddtsdpCqwEt5trkfZRkPjofUJ7lGjU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RwNQtunbkDsJSQct7g2iHqBIsWT87v+OhsVWRYQQGvXeI2BBybqsMSb4F+HFaMxQHKMNEN2ZIy5Vli8cZqwKOjbGMdMntrXGSi1p1jgHPPpSVtqe02eLV7SLiCgTsRY2GkzreIVZn7OylwnRpGPtjb2NQZvqi2gvcuyb2iNn7yY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=mJLhydL7; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Wv2Tr0lJSz9smc;
-	Wed, 28 Aug 2024 13:38:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1724845088;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M9H3cmWIhxcYHesHqGjL9yLjjaE0Sjuz4VP0wEL0R1w=;
-	b=mJLhydL76GrRuW737D6RbtsIACkQniYpae63FPhyPs9Pee+QHLNrfzj/Dn6gSl2+qVcAck
-	MVhc292Hk0qoYqRGPD9zpnjIJaX8d5O1yrEGSsYMHhB1+EF4LynKehX/Qv4NwsOAORThkP
-	k5bWZcHdv0PyZBZcaqlBvqgtANUpntIsXofOCzDNTvyXHhr67zhJgWGQGo5atd0XckJdjA
-	rR8WlNWo6KNpCx03tSIETgCaJaWlHH6X25OSelFFa9ulW6U63lsK1ZpkkPI1xPEYndn84+
-	YFzGD2FOYgW6xaGMmQg8fuRa8gQKRsMbN/YCojlBlhbfJL6rkfQG9gO0UIpgVg==
-Date: Wed, 28 Aug 2024 11:38:02 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>,
-	Steve French <sfrench@samba.org>,
-	Pankaj Raghav <p.raghav@samsung.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Marc Dionne <marc.dionne@auristor.com>
-Subject: Re: [PATCH 1/9] mm: Fix missing folio invalidation calls during
- truncation
-Message-ID: <20240828113802.xw5wzlq2hxrquclb@quentin>
-References: <20240823200819.532106-1-dhowells@redhat.com>
- <20240823200819.532106-2-dhowells@redhat.com>
+	s=arc-20240116; t=1724845217; c=relaxed/simple;
+	bh=0jmzasQo49T8JkS5/bC+1aJ8RmASfYg9cfa6C3QFc10=;
+	h=Subject:Message-ID:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pU8NdThIdvAGiEk/9iB3M8T7N90gs4o8xfbSO2fD8quJmGBVMEEXoPlMEGElzQrxugwGy3LGn36TX6eMLqYhPyPmygimTriIxvTHSPJahZlD6g58SwI2u9XAq+Bj4kSH63bjf74vs61ofGQOQTXlOVFFCx6sVGBkRd8+ExYf3nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=M6FcObym; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=rSh/iM2z reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1724845215; x=1756381215;
+  h=message-id:from:reply-to:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version:subject;
+  bh=ffvjZeGZJmRKF1zvX61+fIWrJOwF0Wh/xImpPka5JUk=;
+  b=M6FcObymxvK6ZttqNi5nOdye2z0Y35Tn5+QdMHPDk2c0/rItIIScs2+J
+   aO+C1HwDYUuFVCMZpYyJ3DeIYAUxsn+Q0gR3YEK22OoS8bkarigTxZao5
+   Sk6VEnUN/qxCOvwvEkHxb+5JSSjgCkjeMyzZvLsNuMLz32BP4O4JoJ1Mv
+   MhAwS2HL92Q5BRWsKuoBFz7C/UPH62nEKXzVDJy/tdOSpXfx3Mmi4KuV7
+   3rpQaqmgUlUGHo46u+4cbWXIdMoY4FIn47Y3fEEt7lGe8gn94d2skpMBp
+   pZ/FWmRLmXAJkfXE94BCmvPZw1KaLTVyvDd4756RigiMZk16fUOdLFo91
+   Q==;
+X-CSE-ConnectionGUID: yY4hhAa1T3y70yq7jwMCGA==
+X-CSE-MsgGUID: PS9BkWz8Sw6Q+BXY98Dnsw==
+X-IronPort-AV: E=Sophos;i="6.10,182,1719871200"; 
+   d="scan'208";a="38634586"
+Subject: Re: Re: [PATCH 0/5] TQMa6x / MBa6x DT improvements
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 28 Aug 2024 13:40:12 +0200
+X-CheckPoint: {66CF0C9C-1B-5FF8EC80-F6CEE9F8}
+X-MAIL-CPID: 6B768D1F620E28EAB96671C719A6CEDD_0
+X-Control-Analysis: str=0001.0A782F24.66CF0C9C.00F5,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0CA0716126B;
+	Wed, 28 Aug 2024 13:40:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1724845208;
+	h=from:reply-to:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=ffvjZeGZJmRKF1zvX61+fIWrJOwF0Wh/xImpPka5JUk=;
+	b=rSh/iM2zmUXu6QxTAewrjO8si2lXpjXMnhrfPPwxdzgoTxKnZsVe0wL4SUjYyNHd2sUcnM
+	ayS1Dc9cp96iNod2d1hIeU8qluVHDvxiV8K7rd4MWSein6i181xZ7v+UCTKSj2aqZ9sEH3
+	nLWFN2KvSFbegb9zAO3Hf9B0LJBbBKm37ZtaOJ/dXKx19zcuRQuTPXVvQT7vak5onqeDuT
+	XeSmve7cjndzX5jFSn459qnyXwpcBvJddUpx33BVD/ctT4SdN7lq5C3wcYRzasSm2gyZC3
+	4DDoUMIZc+Dxh7uFdo7X6MLaEI2p3p1/6UPRhW5ShzENDPVZIuxoCk4fQk/g0A==
+Message-ID: <e132095c10096c9ad7acfa89989a8f91888c6437.camel@ew.tq-group.com>
+From: "Niebel, Markus" <Markus.Niebel@ew.tq-group.com>
+Reply-To: Markus.Niebel@ew.tq-group.com
+To: Shawn Guo <shawnguo2@yeah.net>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,  Fabio Estevam <festevam@gmail.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ devicetree@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux@ew.tq-group.com
+Date: Wed, 28 Aug 2024 13:40:05 +0200
+In-Reply-To: <Zs6Y6XoqU4DBLvbL@dragon>
+References: <20240812143431.98323-1-Markus.Niebel@ew.tq-group.com>
+	 <Zs6Y6XoqU4DBLvbL@dragon>
+Organization: TQ-Systems GmbH
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240823200819.532106-2-dhowells@redhat.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, Aug 23, 2024 at 09:08:09PM +0100, David Howells wrote:
-> When AS_RELEASE_ALWAYS is set on a mapping, the ->release_folio() and
-> ->invalidate_folio() calls should be invoked even if PG_private and
-> PG_private_2 aren't set.  This is used by netfslib to keep track of the
-Should we update the comment in pagemap? 
+> On Mon, Aug 12, 2024 at 04:34:26PM +0200, Markus Niebel wrote:
+> > This series brings following improvements:
+> > * use a more specific compatible for the LM75 temperature sensors
+> >   on SoM and mainboard
+> > * move I2C pinmux entries to variants that use them and prevent
+> >   doubled declaration
+> > * rename node name for onboard USB hub
+> >=20
+> > Alexander Stein (1):
+> >   ARM: dts: imx6qdl: Rename USB hub node name
+> >=20
+> > Markus Niebel (4):
+> >   arm: dts: imx6qdl-tqma6: move i2c3 pinmux to imx6qdl-tqma6b
+> >   arm: dts: imx6qdl-tqma6: improve compatible for LM75 temp sensor
+> >   arm: dts: imx6qdl-mba6: improve compatible for LM75 temp sensor
+> >   arm: dts: imx6qdl-mba6b: remove doubled entry for I2C1 pinmux
+>=20
+> "ARM: dts: ..." please.
+>=20
+>=20
+> Thank you for the hint, will resend.
+> Shawn
+>=20
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 55b254d951da..18dd6174e6cc 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -204,7 +204,8 @@ enum mapping_flags {
-        AS_EXITING      = 4,    /* final truncate in progress */
-        /* writeback related tags are not used */
-        AS_NO_WRITEBACK_TAGS = 5,
--       AS_RELEASE_ALWAYS = 6,  /* Call ->release_folio(), even if no private data */
-+       AS_RELEASE_ALWAYS = 6,  /* Call ->release_folio() and ->invalidate_folio,
-+                                  even if no private data */
-        AS_STABLE_WRITES = 7,   /* must wait for writeback before modifying
-                                   folio contents */
-        AS_INACCESSIBLE = 8,    /* Do not attempt direct R/W access to the mapping */
+Markus
 
-> point above which reads can be skipped in favour of just zeroing pagecache
-> locally.
-> 
-> There are a couple of places in truncation in which invalidation is only
-> called when folio_has_private() is true.  Fix these to check
-> folio_needs_release() instead.
-> 
-> Without this, the generic/075 and generic/112 xfstests (both fsx-based
-> tests) fail with minimum folio size patches applied[1].
-> 
-> Fixes: b4fa966f03b7 ("mm, netfs, fscache: stop read optimisation when folio removed from pagecache")
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-> cc: Pankaj Raghav <p.raghav@samsung.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: Marc Dionne <marc.dionne@auristor.com>
-> cc: linux-afs@lists.infradead.org
-> cc: netfs@lists.linux.dev
-> cc: linux-mm@kvack.org
-> cc: linux-fsdevel@vger.kernel.org
-> Link: https://lore.kernel.org/r/20240815090849.972355-1-kernel@pankajraghav.com/ [1]
-> ---
->  mm/truncate.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/truncate.c b/mm/truncate.c
-> index 4d61fbdd4b2f..0668cd340a46 100644
-> --- a/mm/truncate.c
-> +++ b/mm/truncate.c
-> @@ -157,7 +157,7 @@ static void truncate_cleanup_folio(struct folio *folio)
->  	if (folio_mapped(folio))
->  		unmap_mapping_folio(folio);
->  
-> -	if (folio_has_private(folio))
-> +	if (folio_needs_release(folio))
->  		folio_invalidate(folio, 0, folio_size(folio));
->  
->  	/*
-> @@ -219,7 +219,7 @@ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
->  	if (!mapping_inaccessible(folio->mapping))
->  		folio_zero_range(folio, offset, length);
->  
-> -	if (folio_has_private(folio))
-> +	if (folio_needs_release(folio))
->  		folio_invalidate(folio, offset, length);
->  	if (!folio_test_large(folio))
->  		return true;
-> 
-
--- 
-Pankaj Raghav
+--=C2=A0
+TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
+any
+Amtsgericht M=C3=BCnchen, HRB 105018
+Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
+neider
+http://www.tq-group.com/
 
