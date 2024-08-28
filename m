@@ -1,183 +1,98 @@
-Return-Path: <linux-kernel+bounces-304944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F61D962723
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:31:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60EC096275A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9CD4285829
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:31:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 893991C23A06
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D33C176ABA;
-	Wed, 28 Aug 2024 12:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ceZTy2QL"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF491E4A9
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72AD31779B8;
+	Wed, 28 Aug 2024 12:40:13 +0000 (UTC)
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D4B15A86D;
+	Wed, 28 Aug 2024 12:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724848270; cv=none; b=ep45GsFqXa63XNTkZ+ISKwZpd82/MNx0yXTl/5mEDnu7ranT4ZZp2TNEoN3hKsiErJikEPSrDp1Ke/t3OgTQ2CXuLES3kffdCjBxAUGAjtdBCJDAE3mRjSRImqhMHO3fXx+2uNaTH4Lb0NJcwsNoBDsFGURFctTPJDFPk/x2Y6Q=
+	t=1724848813; cv=none; b=dQ3JHxGdHZJCmiUr1hgtK8NfFGLfXrLyI3k00njw31iOdEe+UEu+CIXLoyBAq+ThVQbW5rNenVyT4wSFk4yerkoDPSecMR/Su1XQcZpZO/gk9lHJHmP0vvbBho7x2kCgd20dD/95op/09FVXr7URw+zauQOD1GlmzmT69xLTVGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724848270; c=relaxed/simple;
-	bh=yT8yqaGNeNQPTO7kAIHMQlRQrwRp5/fHqh9u6p0Uu1g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B6oaPu3YzSTIGZXqISvw8EK1yF7f8oPdd1TLZfc/3i1zp4UHgg/qzqdoPxi6ehK5LJBK9VkTXc8g+4H2ZFDEGdIb5+R6jkNUV+1Fr6yDb6GXVWB4DRxZLxfw3Gsq6nVs5Z88wjpMKGKEt2DfnoMrUosyzY3zncxE6WwPqcAMhnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ceZTy2QL; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-371941bbfb0so3887124f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 05:31:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724848267; x=1725453067; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=97RTF+dpgpGQaMhBvDsJzwR8A1uS6k4qKn0LeXHonpE=;
-        b=ceZTy2QLPsqRTXV3YqR4INy848I0t481vsJuFtHxiANuYvcPYsL6n4jqRsIJTTPEnq
-         dufP97lydWARxEAKkuTxKo58osZ1/B4ruBQ/6hS0ClV4nvBa3hg06aUZw/ZJgi9sOfwo
-         pZkXuHh3stTrBA4m6kPE4TLodTR/j+VFEnRiQKI1UPFdQAyFwJsaeD6bTwXzzwz4VsRY
-         oZj8tlnGBw6gXXKdqNeTQUEyyP9q+OWSzDFpnIV01GPYC09UAtLPE3InYU92wJfEcGJb
-         razJ4W7my+2v3RXe5l/djWxC/oApQKvJTCY4nDb5zDgjAF0C1TW85uf0+727UMQLxNua
-         Qbew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724848267; x=1725453067;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=97RTF+dpgpGQaMhBvDsJzwR8A1uS6k4qKn0LeXHonpE=;
-        b=QJg9JR42lHP+A8HKkDYllNlS2gfUZThDWshleXwmQaEw4ntWnSzeaMm9yVUR5VN72f
-         H9NY98Zno0Zb+Wsoogxt5DjDFJIp9gRnGr6V3GBsdOwzijnRdqoHjPNmQ9kThHpV++lu
-         wYmwvAB1hwa61PIW7mFQMIvU2i7cpMnRv2AJqFgb5Kdz2EzPo7k7z13a2Z+vHrFrtHck
-         yjvazfcRCQ96d27aDVb5xHAZverKV+TUVmY7/rGaFszu+o7zaVQVoNiIxmDiKWEDgqUr
-         vcAFHu+Qkxt1hcTAyV7zv8MpnN3/t6ZNehgJi+r8McuGYoP68BNHQUvrAMjLkR4JJUGu
-         qk2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWUqzezkvIfDgNzUmZgqekhWgEJHrAAmKIM0J9ASDqWtMavX1S1EjWUDsRh4O6oelmOr0EimccZBW7J9Cg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDmXuNS5xMBntIKGbPzAdu0Q4nOATN1nrou3peHPUlVnOHk884
-	5PrvPatNpiCFmcPO68Q9HluUrkExcw4jUMA7VlC2kh4re785pblA2qGiNJo4Ch4=
-X-Google-Smtp-Source: AGHT+IH4TigGxV8OPvwVxfj+AOpE9w26Vd8fbU/5v7j2ANhiwVGyf+VOZbm9gN7oSeAmM8WyvvtELQ==
-X-Received: by 2002:a5d:6d8b:0:b0:367:9c12:3e64 with SMTP id ffacd0b85a97d-3749684c1admr1667714f8f.46.1724848266623;
-        Wed, 28 Aug 2024 05:31:06 -0700 (PDT)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e582d878sm240255266b.119.2024.08.28.05.31.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 05:31:06 -0700 (PDT)
-Message-ID: <80e7994d-f82e-4f2a-b233-d4f9d6900698@suse.com>
-Date: Wed, 28 Aug 2024 14:31:05 +0200
+	s=arc-20240116; t=1724848813; c=relaxed/simple;
+	bh=/bBNY0jv3D7Deqpb/q8fLTkX1nKaz6wX3cf774wtMYQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KPU+7p314uvYseFBjzsNI3jvhl7icmVi3rsbJvx1i/kOf2lxN+csPGbF/Qb4JVTIjajmUFZnP0t7KHEO6jOuJzC/eqUvVXpUVLjNae8C5F9oFLvDPNc+B3nypp8WyL88pZGiV3PM1moPYpQzssuZeq0zs80nJF737YDIgGzhivw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 47SCXFAC030999;
+	Wed, 28 Aug 2024 07:33:15 -0500
+Received: (from segher@localhost)
+	by gate.crashing.org (8.14.1/8.14.1/Submit) id 47SCXDte030998;
+	Wed, 28 Aug 2024 07:33:13 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date: Wed, 28 Aug 2024 07:33:13 -0500
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Eric Biggers <ebiggers@kernel.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, "Theodore Ts'o" <tytso@mit.edu>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Shuah Khan <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 05/17] vdso: Avoid call to memset() by getrandom
+Message-ID: <20240828123313.GD29862@gate.crashing.org>
+References: <cover.1724309198.git.christophe.leroy@csgroup.eu> <5deb67090b214f0e6eae96b7c406546d1a16f89b.1724309198.git.christophe.leroy@csgroup.eu> <20240827180819.GB2049@sol.localdomain> <20240827225330.GC29862@gate.crashing.org> <Zs8HirKLk-SrwTIu@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/19] tools: Add gendwarfksyms
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
- Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>,
- Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-References: <20240815173903.4172139-21-samitolvanen@google.com>
- <20240815173903.4172139-22-samitolvanen@google.com>
- <71505c05-b651-4740-b14a-a53084a16a61@suse.com>
- <CABCJKufveknkc_ribOBamC_MXRGounFkYBeRkKhppPSHijxtZg@mail.gmail.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <CABCJKufveknkc_ribOBamC_MXRGounFkYBeRkKhppPSHijxtZg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zs8HirKLk-SrwTIu@zx2c4.com>
+User-Agent: Mutt/1.4.2.3i
 
-On 8/26/24 20:47, Sami Tolvanen wrote:
-> On Mon, Aug 26, 2024 at 10:42 AM Petr Pavlu <petr.pavlu@suse.com> wrote:
->> On 8/15/24 19:39, Sami Tolvanen wrote:
->>> [...]
->>> +int main(int argc, const char **argv)
->>> +{
->>> +     unsigned int n;
->>> +
->>> +     if (parse_options(argc, argv) < 0)
->>> +             return usage();
->>> +
->>> +     for (n = 0; n < object_count; n++) {
->>> +             Dwfl *dwfl;
->>> +             int fd;
->>> +
->>> +             fd = open(object_files[n], O_RDONLY);
->>> +             if (fd == -1) {
->>> +                     error("open failed for '%s': %s", object_files[n],
->>> +                           strerror(errno));
->>> +                     return -1;
->>> +             }
->>> +
->>> +             dwfl = dwfl_begin(&callbacks);
->>> +             if (!dwfl) {
->>> +                     error("dwfl_begin failed for '%s': %s", object_files[n],
->>> +                           dwarf_errmsg(-1));
->>> +                     return -1;
->>> +             }
->>> +
->>> +             if (!dwfl_report_offline(dwfl, object_files[n], object_files[n],
->>> +                                      fd)) {
->>> +                     error("dwfl_report_offline failed for '%s': %s",
->>> +                           object_files[n], dwarf_errmsg(-1));
->>> +                     return -1;
->>> +             }
->>> +
->>> +             dwfl_report_end(dwfl, NULL, NULL);
->>> +
->>> +             if (dwfl_getmodules(dwfl, &process_modules, NULL, 0)) {
->>> +                     error("dwfl_getmodules failed for '%s'",
->>> +                           object_files[n]);
->>> +                     return -1;
->>> +             }
->>
->> I see that libdwfl has also directly function dwfl_nextcu(). Would it
->> make sense to use it to simplify the code?
+On Wed, Aug 28, 2024 at 01:18:34PM +0200, Jason A. Donenfeld wrote:
+> On Tue, Aug 27, 2024 at 05:53:30PM -0500, Segher Boessenkool wrote:
+> > On Tue, Aug 27, 2024 at 11:08:19AM -0700, Eric Biggers wrote:
+> > > > +		for (i = 0; i < ARRAY_SIZE(params->reserved); i++)
+> > > > +			params->reserved[i] = 0;
+
+This is a loop.  With -ftree-loop-distribute-patterns, the default at
+-O2, this is optimised to
+
+    memset(params->reserved, 0, ...);
+
+(which is perfectly fine, since memset is required to be there even
+for freestanding environments, this is documented!)
+
+> > -fno-tree-loop-distribute-patterns .  But, as always, read up on it, see
+> > what it actually does (and how it avoids your problem, and mostly: learn
+> > what the actual problem *was*!)
 > 
-> How do you propose using the function? This loop goes through multiple
-> input files, should we need them, and we iterate through all the CUs
-> in process_modules.
+> This might help with various loops, but it doesn't help with the matter
+> that this patch fixes, which is struct initialization. I just tried it
+> with the arm64 patch to no avail.
 
-I was thinking it could be possible to replace the code to traverse
-modules and their their CUs, that is functions process_modules() and
-process_module(), with dwfl_nextcu(). However, I now notice that more
-work is added in subsequent patches to process_modules() so this
-wouldn't quite work.
+It very much *does* help.  Try harder?  Maybe you typoed?
 
-I would then only suggest to change some function names in the current
-code. Function process_modules() is a callback to process a single
-module and so it would be better to name it process_module(). The
-present function process_module() actually processes a compilation unit
-DIE so I would rename it to something like process_cu().
 
-On 8/15/24 19:39, Sami Tolvanen wrote:
-> +int process_module(Dwfl_Module *mod, Dwarf *dbg, Dwarf_Die *cudie)
-> +{
-> +	struct state state = { .mod = mod, .dbg = dbg };
-> +
-> +	return check(process_die_container(
-> +		&state, cudie, process_exported_symbols, match_all));
-> +}
-
-Mostly a minor suggestion too.. Looking at the entire series, state.mod
-ends up unused and state.dbg is only used in process_cached() where it
-could be possibly replaced by doing dwarf_cu_getdwarf(die->cu)?
-
-Removing these two members from the state struct would then allow to
-instantiate a new state in process_exported_symbols() for each processed
-symbol. That looks cleaner than changing state.sym and resetting some
-parts of the state as the function walks over the exported symbols.
-
--- 
-Thanks,
-Petr
+Segher
 
