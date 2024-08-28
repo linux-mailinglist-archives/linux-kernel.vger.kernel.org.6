@@ -1,420 +1,255 @@
-Return-Path: <linux-kernel+bounces-305612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98A16963127
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:46:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B022196312C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDC481C220F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:46:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDED51C2324A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16E91ABED2;
-	Wed, 28 Aug 2024 19:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0431ABED0;
+	Wed, 28 Aug 2024 19:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a4GU+fCZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C3y2pvSN"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2831A4F16
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 19:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17AC4125BA;
+	Wed, 28 Aug 2024 19:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724874359; cv=none; b=FAwd5O5zRuEXadJx5SOZlA1xHZelQlZQs2d41/YSJvxpvtAnMxJJFf+gKMqayZ2K2pFNrlw6LVebKABDuImvESACOpO7ror/fsDDkDkv18i20fY4782o4WVBG5F8Ln3mKyhAnxrVQIaodBh+qzQmroG1+BFhGRGN89V0Een/beM=
+	t=1724874417; cv=none; b=MyxUKgwBLMjJu1L0sFF+lrp1ZkAoumwVIwucdehacQVv798MtvASnHwFMuZ3dvJr0DVQo1Zu9e61ZGHuwYKiNMcDqB6jRB72axvIJPyL40/V/nzODOr/vrs/40OZFLkTkYy/E2QBj657KA2WV9BQY6IBYxUk1hD49NkG3J8dps4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724874359; c=relaxed/simple;
-	bh=+tj7zQKnHjSX8eAJuKX2LgOnWpTn6P4v/qosfomGgtY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pU4qFlJJqwicbQPPWflBm5ocZnNFcHvfaKeOwqS1M9wuJ3OLi9F688ahozB8IQzjeNErKffcWiCIvJdVuHWm85a0e0CwyQlEuUG9GksxIZoMV8gGg+wNL/3kJLYWRQbdY2JC7t5zKoPkVkIr48UMd3aSMIjNibBeAuED64CnPCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a4GU+fCZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724874356;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L734DZ5S8LoTHmIma5i8qfoMND7Q4A1Bv0JRoAj5Nks=;
-	b=a4GU+fCZXrQH23/55ZVNYkdlFPcYGr6E4iVCRyl/HIwWnWOuUgwSZScgt61m2VpPFJ8H0F
-	r5kgdstVV6jbbUnN7PHu1kkSAaYmxZnd89gyoHQaUrLrzzdcaI+EGjzRX6Mm6XM7M4MzVQ
-	c9op2Rnmk6JB678N6CAhX0U4kntxuNQ=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-593-4AGHdDVNOMSfGVCOo5Q2PQ-1; Wed, 28 Aug 2024 15:45:55 -0400
-X-MC-Unique: 4AGHdDVNOMSfGVCOo5Q2PQ-1
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7a7fa083271so88796285a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:45:55 -0700 (PDT)
+	s=arc-20240116; t=1724874417; c=relaxed/simple;
+	bh=MOuW31EsvQOWJZyg5MyZCG8nO4WB9tjSRCJjROx29y4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uoS+pSLgdJFz/W2q9Q6zE5mgJ33WUcuEbMciQPXvGTPx6rCYIvpZJGfAKAaTjP9qSVPvtLAyUIZyUnyxOtfmCX0ojO9IB+oaoRrL3YyQrct2LjSm+uOod7xAQKk1uGLa+98GSiLb/bhVmz0Nux3cFr5oOY58IavgUY2CFXoza84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C3y2pvSN; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a86933829dcso812626666b.3;
+        Wed, 28 Aug 2024 12:46:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724874414; x=1725479214; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cD7nXVNIH/PHGLLjSIJQT2JX0QXEmSqhiG+NCi9Wrzk=;
+        b=C3y2pvSNlgUIDYpgtPYio+p5jNFfGI+8jQ9Io1G81Gh+hsXQWRaP0+qranMiLDRNPJ
+         80ya7Ssizl4JpDmxLbFq7gsXGzj+59OeKInN/TQ6SClC9TeROFVIwxG0OQgmwhgEl+1y
+         10fzp/PUFexQ3gvJMjy+cJ9wdXQYIjjIbTOtfdEUxKP8pYJDvxTT9MBJ7m7AE3SLbot4
+         DkIMdTQkKIlbJFgoRCODK/2o2X+jW4uFCJQG2hBs2h39pbNwvePWk0KYoNB/PsEPAOk8
+         ONiZ6B6AAFCq3oVsvZaKVo3Tp//rBYNYoqXNbo0NcM90aQ05EUYJ61tjwmnGxCGBJdqy
+         FXtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724874354; x=1725479154;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L734DZ5S8LoTHmIma5i8qfoMND7Q4A1Bv0JRoAj5Nks=;
-        b=GJCpvciw7uCBOO1ubJUqQW5HpyyfSVf+WKWXmXSR1MFwMmn92mHpA0pJP4uut18QbF
-         D64MQVioTJ0wr+mwBKfDlhFCXjov6bKJxnE8UJpH2LKc9iGOJXkiwNO5bR523QcxmxQ8
-         K8fyl+MkxdQXiYCWgXj3jyFRIIbB9TMV8M3LxpBKANqiCDgm2Kw+bZb53abTeRzWWT8I
-         bZO3XTHnAOvNZlrroUwgUMfd7dQ2509kglQNVNn4mUW4UH3D9Dk5BKImeg0HfhljXArn
-         /BD2y+1hqWGPdaWzJzNr2pyE8ZpxYKTNrwDIiRwMrDX6sndjzNIEMNcJzKx8khua1omH
-         zSPA==
-X-Gm-Message-State: AOJu0YxdXVHedG24Ibkfguly3BShptsnJdD+qmqjO5HQSEk3nWk/niMe
-	GBXIkbvBPGu6zXwDEOu589CpberAzRVMmelPLN8bHSp4V9fT4TNRX83vS6qQ1U8L6tNaqx9Vlr2
-	ZODpXd8/DXualOhK05LjnSQNLFnBy33v7OqXeV1wbFeZ4VIetwoyjVlyy5mueYiavN6rHky4T
-X-Received: by 2002:a05:620a:254e:b0:79f:e9a:5ae5 with SMTP id af79cd13be357-7a804266bb7mr54281385a.60.1724874353628;
-        Wed, 28 Aug 2024 12:45:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGsRkbfxaQ2v8zv5NUTlC+wRgbNKKbywOOWW7bb22SixhenOa1GYiY2jzuWWLtCsKrTEebjFg==
-X-Received: by 2002:a05:620a:254e:b0:79f:e9a:5ae5 with SMTP id af79cd13be357-7a804266bb7mr54276185a.60.1724874352847;
-        Wed, 28 Aug 2024 12:45:52 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a7ff07fee3sm39710985a.91.2024.08.28.12.45.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 12:45:52 -0700 (PDT)
-Date: Wed, 28 Aug 2024 15:45:49 -0400
-From: Peter Xu <peterx@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Gavin Shan <gshan@redhat.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alistair Popple <apopple@nvidia.com>, kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Sean Christopherson <seanjc@google.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Jason Gunthorpe <jgg@nvidia.com>, Borislav Petkov <bp@alien8.de>,
-	Zi Yan <ziy@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>,
-	Yan Zhao <yan.y.zhao@intel.com>, Will Deacon <will@kernel.org>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH v2 06/19] mm/pagewalk: Check pfnmap for folio_walk_start()
-Message-ID: <Zs9-beA-eTuXTfN6@x1n>
-References: <20240826204353.2228736-1-peterx@redhat.com>
- <20240826204353.2228736-7-peterx@redhat.com>
- <9f9d7e96-b135-4830-b528-37418ae7bbfd@redhat.com>
- <Zs8zBT1aDh1v9Eje@x1n>
- <c1d8220c-e292-48af-bbab-21f4bb9c7dc5@redhat.com>
+        d=1e100.net; s=20230601; t=1724874414; x=1725479214;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cD7nXVNIH/PHGLLjSIJQT2JX0QXEmSqhiG+NCi9Wrzk=;
+        b=ZJTzKsRJG/JkIyx7xTQuSBYEFru2sQoRggRR6W7SzHF27S1pKckFPLjyz/togY1mUk
+         +nFlqSA4qifGWgBEMkcrB6d3OvhpjuIKnO0p7ZSyRu3uZAptuihppEjNjh3zt7ET6yTP
+         enASex8hA7FddK3eKxqimS58yd17m/fctntid/BuGleVH4p/MT7DMu+x1dbS5uYIxXTY
+         gZTznA6C6XQE8c3F+F7FheVmfATIDzgmi/D2zulIIVxzqfZuUnc+Wz9K3X6KioONm3C8
+         cQ8AhPCe7jR9MZeCR8LMT8gevliws7okUTNFLaJNmxR9p6J2i9wipAYJrMReSq3TxcYp
+         5U/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVhUc/MK8kpMEE7RKloATF0hVh8HjpcWHWAQ64oNC74T4mDFmdyOaZrk9BVj10dPAGjEYldbr7vbvPTNWBt@vger.kernel.org, AJvYcCXYfm40Vg46tEfCFPd71z4mZmj2g5n01pFJ3D2JEOwqomzxePfODnkHVGfDmYeRpbZckCEQ9DoeinKSsxjd@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXmL36KdVugxccJuNkpCmoO6ssfMf3PRN9KZ9JvjtoJWP7ycwY
+	8HnMEP93eGwuJSHddZtIYB1pUdFNIpHaC6ukYiZEKDBQQkRgcISN
+X-Google-Smtp-Source: AGHT+IFHqUTDbsiy0KKd7d50tdZ3WO6P/LGDWj5MgTIjOlHaI3NCNO00uKJ0HUnPf8rmCkAsB1rt1g==
+X-Received: by 2002:a17:907:9482:b0:a86:700f:93c1 with SMTP id a640c23a62f3a-a897face4cfmr38236766b.60.1724874413867;
+        Wed, 28 Aug 2024 12:46:53 -0700 (PDT)
+Received: from [192.168.1.14] (host-95-249-206-143.retail.telecomitalia.it. [95.249.206.143])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e582ded7sm277734266b.120.2024.08.28.12.46.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Aug 2024 12:46:53 -0700 (PDT)
+Message-ID: <f3bc0b3f-d35b-4cf8-ace8-2f4a6e387e13@gmail.com>
+Date: Wed, 28 Aug 2024 21:46:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c1d8220c-e292-48af-bbab-21f4bb9c7dc5@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/7] drm/msm/A6xx: Implement preemption for A7XX targets
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>, Rob Clark <robdclark@gmail.com>
+Cc: Connor Abbott <cwabbott0@gmail.com>, Sean Paul <sean@poorly.run>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Sharat Masetty <smasetty@codeaurora.org>
+References: <CACu1E7E7FPJP-Ry64m257A7WrL3Q9jy8xMS9XpSBRNimBWzYUQ@mail.gmail.com>
+ <20240822200534.fgugb3zmcp7hjyck@hu-akhilpo-hyd.qualcomm.com>
+ <CACu1E7F068sAMFgn=D7qBGM81qvYP4iW1+hXpfXVKtQGWeyTKQ@mail.gmail.com>
+ <CACu1E7EueMnte9e+yLEtRE9WmG0J5bVMj59VbPfkDeB7OHbsAw@mail.gmail.com>
+ <20240827194828.jxwelq4xr2wsdxos@hu-akhilpo-hyd.qualcomm.com>
+ <d95ef763-7237-4080-b323-838ca337734a@gmail.com>
+ <CAF6AEGuASw0YO8b0X24-iq1pqTnBEpr0Tm3Scmt4-T+HeCMY_A@mail.gmail.com>
+ <57064da3-190c-4554-b085-d56daf979933@gmail.com>
+ <CAF6AEGtYh6jnYcFLcUnEobjQqKmqxuX29wO1qqnGYFQJ+EUBxw@mail.gmail.com>
+ <CAF6AEGuBMiQft4SCrf=xTQ76q8=+-OS3SEKMmw7TGT5rb=Sygw@mail.gmail.com>
+ <20240828192304.dojqyvbnqzhy63na@hu-akhilpo-hyd.qualcomm.com>
+Content-Language: en-US
+From: Antonino Maniscalco <antomani103@gmail.com>
+In-Reply-To: <20240828192304.dojqyvbnqzhy63na@hu-akhilpo-hyd.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 28, 2024 at 05:30:43PM +0200, David Hildenbrand wrote:
-> > This one is correct; I overlooked this comment which can be obsolete.  I
-> > can either refine this patch or add one patch on top to refine the comment
-> > at least.
+On 8/28/24 9:23 PM, Akhil P Oommen wrote:
+> On Wed, Aug 28, 2024 at 06:46:37AM -0700, Rob Clark wrote:
+>> On Wed, Aug 28, 2024 at 6:42 AM Rob Clark <robdclark@gmail.com> wrote:
+>>>
+>>> On Tue, Aug 27, 2024 at 3:56 PM Antonino Maniscalco
+>>> <antomani103@gmail.com> wrote:
+>>>>
+>>>> On 8/27/24 11:07 PM, Rob Clark wrote:
+>>>>> On Tue, Aug 27, 2024 at 1:25 PM Antonino Maniscalco
+>>>>> <antomani103@gmail.com> wrote:
+>>>>>>
+>>>>>> On 8/27/24 9:48 PM, Akhil P Oommen wrote:
+>>>>>>> On Fri, Aug 23, 2024 at 10:23:48AM +0100, Connor Abbott wrote:
+>>>>>>>> On Fri, Aug 23, 2024 at 10:21 AM Connor Abbott <cwabbott0@gmail.com> wrote:
+>>>>>>>>>
+>>>>>>>>> On Thu, Aug 22, 2024 at 9:06 PM Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
+>>>>>>>>>>
+>>>>>>>>>> On Wed, Aug 21, 2024 at 05:02:56PM +0100, Connor Abbott wrote:
+>>>>>>>>>>> On Mon, Aug 19, 2024 at 9:09 PM Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
+>>>>>>>>>>>>
+>>>>>>>>>>>> On Thu, Aug 15, 2024 at 08:26:14PM +0200, Antonino Maniscalco wrote:
+>>>>>>>>>>>>> This patch implements preemption feature for A6xx targets, this allows
+>>>>>>>>>>>>> the GPU to switch to a higher priority ringbuffer if one is ready. A6XX
+>>>>>>>>>>>>> hardware as such supports multiple levels of preemption granularities,
+>>>>>>>>>>>>> ranging from coarse grained(ringbuffer level) to a more fine grained
+>>>>>>>>>>>>> such as draw-call level or a bin boundary level preemption. This patch
+>>>>>>>>>>>>> enables the basic preemption level, with more fine grained preemption
+>>>>>>>>>>>>> support to follow.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
+>>>>>>>>>>>>> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
+>>>>>>>>>>>>> ---
+>>>>>>>>>>>>
+>>>>>>>>>>>> No postamble packets which resets perfcounters? It is necessary. Also, I
+>>>>>>>>>>>> think we should disable preemption during profiling like we disable slumber.
+>>>>>>>>>>>>
+>>>>>>>>>>>> -Akhil.
+>>>>>>>>>>>
+>>>>>>>>>>> I don't see anything in kgsl which disables preemption during
+>>>>>>>>>>> profiling. It disables resetting perfcounters when doing system-wide
+>>>>>>>>>>> profiling, like freedreno, and in that case I assume preempting is
+>>>>>>>>>>> fine because the system profiler has a complete view of everything and
+>>>>>>>>>>> should "see" preemptions through the traces. For something like
+>>>>>>>>>>> VK_KHR_performance_query I suppose we'd want to disable preemption
+>>>>>>>>>>> because we disable saving/restoring perf counters, but that has to
+>>>>>>>>>>> happen in userspace because the kernel doesn't know what userspace
+>>>>>>>>>>> does.
+>>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> KGSL does some sort of arbitration of perfcounter configurations and
+>>>>>>>>>> adds the select/enablement reg configuration as part of dynamic
+>>>>>>>>>> power up register list which we are not doing here. Is this something
+>>>>>>>>>> you are taking care of from userspace via preamble?
+>>>>>>>>>>
+>>>>>>>>>> -Akhil
+>>>>>>>>>
+>>>>>>>>> I don't think we have to take care of that in userspace, because Mesa
+>>>>>>>>> will always configure the counter registers before reading them in the
+>>>>>>>>> same submission, and if it gets preempted in the meantime then we're
+>>>>>>>>> toast anyways (due to not saving/restoring perf counters). kgsl sets
+>>>>>>>>> them from userspace, which is why it has to do something to set them
+>>>>>>>>
+>>>>>>>> Sorry, should be "kgsl sets them from the kernel".
+>>>>>>>>
+>>>>>>>>> after IFPC slumber or a context switch when the HW state is gone.
+>>>>>>>>> Also, because the upstream approach doesn't play nicely with system
+>>>>>>>>> profilers like perfetto, VK_KHR_performance_query is hidden by default
+>>>>>>>>> behind a debug flag in turnip. So there's already an element of "this
+>>>>>>>>> is unsupported, you have to know what you're doing to use it."
+>>>>>>>
+>>>>>>> But when you have composition on GPU enabled, there will be very frequent
+>>>>>>> preemption. And I don't know how usable profiling tools will be in that
+>>>>>>> case unless you disable preemption with a Mesa debug flag. But for that
+>>>>>>> to work, all existing submitqueues should be destroyed and recreated.
+>>>>>>>
+>>>>>>> So I was thinking that we can use the sysprof propertry to force L0
+>>>>>>> preemption from kernel.
+>>>>>>>
+>>>>>>> -Akhil.
+>>>>>>>
+>>>>>>
+>>>>>> Right but when using a system profiler I imagined the expectation would
+>>>>>> be to be able to understand how applications and compositor interact. An
+>>>>>> use case could be measuring latency and understanding what contributes
+>>>>>> to it. That is actually the main reason I added traces for preemption.
+>>>>>> Disabling preemption would make it less useful for this type of
+>>>>>> analysis. Did you have an use case in mind for a system profiler that
+>>>>>> would benefit from disabling preemption and that is not covered by
+>>>>>> VK_KHR_performance_query (or equivalent GL ext)?
 > 
-> Probably best if you use what you consider reasonable in your patch.
+> Please consider this as a friendly suggestion based on Conner's clarification.
+> Not a blocker. TBH, I don't have clairty on the profiling story in Mesa!
 > 
-> > 
-> > > +       if (IS_ENABLED(CONFIG_ARCH_HAS_PMD_SPECIAL)) {
-> > 
-> > We don't yet have CONFIG_ARCH_HAS_PMD_SPECIAL, but I get your point.
-> > 
-> > > +               if (likely(!pmd_special(pmd)))
-> > > +                       goto check_pfn;
-> > > +               if (vma->vm_ops && vma->vm_ops->find_special_page)
-> > > +                       return vma->vm_ops->find_special_page(vma, addr);
-> > 
-> > Why do we ever need this?  This is so far destined to be totally a waste of
-> > cycles.  I think it's better we leave that until either xen/gntdev.c or any
-> > new driver start to use it, rather than keeping dead code around.
-> 
-> I just copy-pasted what we had in vm_normal_page() to showcase. If not
-> required, good, we can add a comment we this is not required.
-> 
-> > 
-> > > +               if (vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP))
-> > > +                       return NULL;
-> > > +               if (is_huge_zero_pmd(pmd))
-> > > +                       return NULL;
-> > 
-> > This is meaningless too until we make huge zero pmd apply special bit
-> > first, which does sound like to be outside the scope of this series.
-> 
-> Again, copy-paste, but ...
-> 
-> > 
-> > > +               if (pmd_devmap(pmd))
-> > > +                       /* See vm_normal_page() */
-> > > +                       return NULL;
-> > 
-> > When will it be pmd_devmap() if it's already pmd_special()?
-> > 
-> > > +               return NULL;
-> > 
-> > And see this one.. it's after:
-> > 
-> >    if (xxx)
-> >        return NULL;
-> >    if (yyy)
-> >        return NULL;
-> >    if (zzz)
-> >        return NULL;
-> >    return NULL;
-> > 
-> > Hmm??  If so, what's the difference if we simply check pmd_special and
-> > return NULL..
-> 
-> Yes, they all return NULL. The compiler likely optimizes it all out. Maybe
-> we have it like that for pure documentation purposes. But yeah, we should
-> simply return NULL and think about cleaning up vm_normal_page() as well, it
-> does look strange.
-> 
-> > 
-> > > +       }
-> > > +
-> > > +       /* !CONFIG_ARCH_HAS_PMD_SPECIAL case follows: */
-> > > +
-> > >          if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
-> > >                  if (vma->vm_flags & VM_MIXEDMAP) {
-> > >                          if (!pfn_valid(pfn))
-> > >                                  return NULL;
-> > > +                       if (is_huge_zero_pmd(pmd))
-> > > +                               return NULL;
-> > 
-> > I'd rather not touch here as this series doesn't change anything for
-> > MIXEDMAP yet..
-> 
-> Yes, that can be a separate change.
-> 
-> > 
-> > >                          goto out;
-> > >                  } else {
-> > >                          unsigned long off;
-> > > @@ -692,6 +706,11 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
-> > >                  }
-> > >          }
-> > > +       /*
-> > > +        * For historical reasons, these might not have pmd_special() set,
-> > > +        * so we'll check them manually, in contrast to vm_normal_page().
-> > > +        */
-> > > +check_pfn:
-> > >          if (pmd_devmap(pmd))
-> > >                  return NULL;
-> > >          if (is_huge_zero_pmd(pmd))
-> > > 
-> > > 
-> > > 
-> > > We should then look into mapping huge zeropages also with pmd_special.
-> > > pmd_devmap we'll leave alone until removed. But that's indeoendent of your series.
-> > 
-> > This does look reasonable to match what we do with pte zeropage.  Could you
-> > remind me what might be the benefit when we switch to using special bit for
-> > pmd zero pages?
-> 
-> See below. It's the way to tell the VM that a page is special, so you can
-> avoid a separate check at relevant places, like GUP-fast or in vm_normal_*.
-> 
-> > 
-> > > 
-> > > I wonder if CONFIG_ARCH_HAS_PTE_SPECIAL is sufficient and we don't need additional
-> > > CONFIG_ARCH_HAS_PMD_SPECIAL.
-> > 
-> > The hope is we can always reuse the bit in the pte to work the same for
-> > pmd/pud.
-> > 
-> > Now we require arch to select ARCH_SUPPORTS_HUGE_PFNMAP to say "pmd/pud has
-> > the same special bit defined".
-> 
-> Note that pte_special() is the way to signalize to the VM that a PTE does
-> not reference a refcounted page, or is similarly special and shall mostly be
-> ignored. It doesn't imply that it is a PFNAMP pte, not at all.
 
-Right, it's just that this patch started with having pmd/pud special bit
-sololy used for pfnmaps only so far.  I'd agree, again, that I think it
-makes sense to keep it consistent with pte's in a longer run, but that'll
-need to be done step by step, and tested properly on each of the goals
-(e.g. when extend that to zeropage pmd).
+Thanks, your input was appreciated :) I just wanted to make sure we 
+where on the same page. So considering this, I will be able to send v2 soon.
 
+>>>>>
+>>>>> I would think that we want to generate an event, with GPU timestamp
+>>>>> (ie. RB_DONE) and which ring we are switching to, so that perfetto/etc
+>>>>> could display multiple GPU timelines and where the switch from one to
+>>>>> the other happens.
+>>>>>
+>>>>> I'm a bit curious how this is handled on android, with AGI/etc.. I
+>>>>> don't see any support in perfetto for this.
+>>>>>
+>>>>> BR,
+>>>>> -R
+>>>>>
+>>>>>> Best regards,
+>>>>>> --
+>>>>>> Antonino Maniscalco <antomani103@gmail.com>
+>>>>>>
+>>>>
+>>>> Looking at KGSL they seem to use ftrace and I don't see it doing
+>>>> anything to get a timestamp from some GPU timer, really not sure how
+>>>> that would be put in a gpu timeline.
 > 
-> The shared zeropage is usually not refcounted (except during GUP FOLL_GET
-> ... but not FOLL_PIN) and the huge zeropage is usually also not refcounted
-> (but FOLL_PIN still does it). Both are special.
+> Yeah, we usually rely on ftraces which is good enough to measure preemption
+> latency.
 > 
+> -Akhil.
 > 
-> If you take a look at the history pte_special(), it was introduced for
-> VM_MIXEDMAP handling on s390x, because pfn_valid() to identify "special"
-> pages did not work:
-> 
-> commit 7e675137a8e1a4d45822746456dd389b65745bf6
-> Author: Nicholas Piggin <npiggin@gmail.com>
-> Date:   Mon Apr 28 02:13:00 2008 -0700
-> 
->     mm: introduce pte_special pte bit
-> 
-> 
-> In the meantime, it's required for architectures that wants to support
-> GUP-fast I think, to make GUP-fast bail out and fallback to the slow path
-> where we do a vm_normal_page() -- or fail right at the VMA check for now
-> (VM_PFNMAP).
 
-I wonder whether pfn_valid() would work for the archs that do not support
-pte_special but to enable gup-fast.
+Thanks for confirming! The traces I added are pretty similar to KGSL's 
+so it should be suitable for serving the same purpose.
 
-Meanwhile I'm actually not 100% sure pte_special is only needed in
-gup-fast.  See vm_normal_page() and for VM_PFNMAP when pte_special bit is
-not defined:
+>>>
+>>> I suspect it would require some work on perfetto trace-processor.  It
+>>> can ingest ftrace events (but those would end up being something
+>>> driver specific).  Maybe with u_trace and some tracepoints in the
+>>> 'ambles something could be done that would be more driver agnostic
+>>> (but idk if that would work for gpu's where preemption happens more
+>>> autonomously in the fw)
+>>
+>> btw how to handle tracing preemption probably shouldn't hold up
+>> sending the next iteration of this series.  There isn't that much more
+>> time to get this in v6.12, and I think better visualization of
+>> preemption is going to take some work outside of the kernel.
+>>
+>> BR,
+>> -R
 
-		} else {
-			unsigned long off;
-			off = (addr - vma->vm_start) >> PAGE_SHIFT;
-			if (pfn == vma->vm_pgoff + off) <------------------ [1]
-				return NULL;
-			if (!is_cow_mapping(vma->vm_flags))
-				return NULL;
-		}
-
-I suspect things can go wrong when there's assumption on vm_pgoff [1].  At
-least vfio-pci isn't storing vm_pgoff for the base PFN, so this check will
-go wrong when pte_special is not supported on any arch but when vfio-pci is
-present.  I suspect more drivers can break it.
-
-So I wonder if it's really the case in real life that only gup-fast would
-need the special bit.  It could be that we thought it like that, but nobody
-really seriously tried run it without special bit yet to see things broke.
-
-This series so far limit huge pfnmap with special bits; that make me feel
-safer to do as a start point.
-
-> 
-> An architecture that doesn't implement pte_special() can support pfnmaps but
-> not GUP-fast. Similarly, an architecture that doesn't implement
-> pmd_special() can support huge pfnmaps, but not GUP-fast.
-> 
-> If you take a closer look, really the only two code paths that look at
-> pte_special() are GUP-fast and vm_normal_page().
-> 
-> If we use pmd_special/pud_special in other code than that, we are diverging
-> from the pte_special() model, and are likely doing something wrong.
-> 
-> I see how you arrived at the current approach, focusing exclusively on x86.
-> But I think this just adds inconsistency.
-
-Hmm, that's definitely not what I wanted to express..
-
-IMHO it's about our current code base has very limited use of larger
-mappings, especialy pud, so even if I try to create the so-called
-vm_normal_page_pud() to match pte, it'll mostly only contain the pud
-special bit test.
-
-We could add some pfn_valid() checks (even if I know no arch that I can
-support !special but rely on pfn_valid.. nowhere I can test at all),
-process vm_ops->find_special_page() even if I know nobody is using it, and
-so on (obviously pud zeropage is missing so nothing to copy over
-there).. just trying to match vm_normal_page().
-
-But so far they're all redundant, and I prefer not adding redundant or dead
-codes; as simple as that..  It makes more sense to me sticking with what we
-know that will work, and then go from there, then we can add things by
-justifying them properly step by step later.
-
-We indeed already have vm_normal_page_pmd(), please see below.
-
-> 
-> So my point is that we use the same model, where we limit
-> 
-> * pmd_special() to GUP-fast and vm_normal_page_pmd()
-> * pud_special() to GUP-fast and vm_normal_page_pud()
-> 
-> And simply do the exact same thing as we do for pte_special().
-> 
-> If an arch supports pmd_special() and pud_special() we can support both
-> types of hugepfn mappings. If not, an architecture *might* support it,
-> depending on support for GUP-fast and maybe depending on MIXEDMAP support
-> (again, just like pte_special()). Not your task to worry about, you will
-> only "unlock" x86.
-
-And arm64 2M.  Yes I think I'd better leave the rest to others if I have
-totally no idea how to even test them..  Even with the current Alex was
-helping or I don't really have hardwares on hand.
-
-> 
-> So maybe we do want CONFIG_ARCH_HAS_PMD_SPECIAL as well, maybe it can be
-> glued to CONFIG_ARCH_HAS_PTE_SPECIAL (but I'm afraid it can't unless all
-> archs support both). I'll leave that up to you.
-> 
-> > 
-> > > 
-> > > As I said, if you need someone to add vm_normal_page_pud(), I can handle that.
-> > 
-> > I'm pretty confused why we need that for this series alone.
-> 
-> See above.
-> 
-> > 
-> > If you prefer vm_normal_page_pud() to be defined and check pud_special()
-> > there, I can do that.  But again, I don't yet see how that can make a
-> > functional difference considering the so far very limited usage of the
-> > special bit, and wonder whether we can do that on top when it became
-> > necessary (and when we start to have functional requirement of such).
-> 
-> I hope my explanation why pte_special() even exists and how it is used makes
-> it clearer.
-> 
-> It's not that much code to handle it like pte_special(), really. I don't
-> expect you to teach GUP-slow about vm_normal_page() etc.
-
-One thing I can do here is I move the pmd_special() check into the existing
-vm_normal_page_pmd(), then it'll be a fixup on top of this patch:
-
-===8<===
-diff --git a/mm/memory.c b/mm/memory.c
-index 288f81a8698e..42674c0748cb 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -672,11 +672,10 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
- {
- 	unsigned long pfn = pmd_pfn(pmd);
- 
--	/*
--	 * There is no pmd_special() but there may be special pmds, e.g.
--	 * in a direct-access (dax) mapping, so let's just replicate the
--	 * !CONFIG_ARCH_HAS_PTE_SPECIAL case from vm_normal_page() here.
--	 */
-+	/* Currently it's only used for huge pfnmaps */
-+	if (unlikely(pmd_special(pmd)))
-+		return NULL;
-+
- 	if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
- 		if (vma->vm_flags & VM_MIXEDMAP) {
- 			if (!pfn_valid(pfn))
-diff --git a/mm/pagewalk.c b/mm/pagewalk.c
-index 12be5222d70e..461ea3bbd8d9 100644
---- a/mm/pagewalk.c
-+++ b/mm/pagewalk.c
-@@ -783,7 +783,7 @@ struct folio *folio_walk_start(struct folio_walk *fw,
- 		fw->pmdp = pmdp;
- 		fw->pmd = pmd;
- 
--		if (pmd_none(pmd) || pmd_special(pmd)) {
-+		if (pmd_none(pmd)) {
- 			spin_unlock(ptl);
- 			goto not_found;
- 		} else if (!pmd_leaf(pmd)) {
+Best regards,
 -- 
-2.45.0
-===8<===
-
-Would that look better to you?
-
-> 
-> If you want me to just takeover some stuff, let me know.
-
-Do you mean sending something on top of this?  I suppose any of us is free
-to do so, so please go ahead if it's the case.
-
-Thanks,
-
--- 
-Peter Xu
+Antonino Maniscalco <antomani103@gmail.com>
 
 
