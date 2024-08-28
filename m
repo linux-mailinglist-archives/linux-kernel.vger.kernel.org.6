@@ -1,121 +1,133 @@
-Return-Path: <linux-kernel+bounces-305706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F27ED963312
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:55:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E35A96331E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:56:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8B261F25007
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:55:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 618871C21E4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4353F1A7050;
-	Wed, 28 Aug 2024 20:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D63B1AE05E;
+	Wed, 28 Aug 2024 20:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="bzF8eE9K"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pMpVJ1m1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5120A224D7;
-	Wed, 28 Aug 2024 20:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5330C1AE040;
+	Wed, 28 Aug 2024 20:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724878397; cv=none; b=WS9SH8bJ+uIqg0+s1fw9+mtERdTzedr7BEPATRTmuK5tlrdc7wIvz1AKmCxduUy/gPJ4rX6xFp8kZD9fzuvVO8k1jtQn+2gDSIungFZV2+y/yJV6bmu+wMnx0ZhCM/BWWnJ4S5+BD7Ty26wj8SnDlxFMb9s2CiYNjZ5X1mF3+zM=
+	t=1724878487; cv=none; b=DFcWLHgzb49driz1TCP5DZ9epSNxTN3OqSaYJAT9fAtumVop3+CDukp2q7d/5T/rNVuVePU50A2C9wIYcMblkgw5DKfM4aq0bUGEBzMHnZOAFX8mpAX69FrkEvWKn/Gmrsusl1c/acDs4i3PsJTUOzM3rgy+yir20Q2VVvcD5vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724878397; c=relaxed/simple;
-	bh=CCI33Y/2VwAbG4/HMIVzpBvjF4PhNjBcdf8LFRfer3o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t5ikEykyx2EsEcqaEygTq0X4ZUjiQtWPH9XcGhFLiF7UBK0kEsFV4F8BqiU112stcr9YSxnRT5ywQ527kt0eY/ND0cihmx3vZLOj7RWaqMxztVsLqaXJV2CKDV/FP2NpPRA6TKxLVLvoEkK5GaqF5H0yHdSlLtAQrQ8nAmMpAHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=bzF8eE9K; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=W3xTxHAVy8T5VJ7Gg1s6MiPfQ5UiQz/WzG7TYzz8skM=; b=bzF8eE9KcDKbWremHjI+p9vENo
-	kOIg26PodC1g7xxbORtbpeQWua22oLyy4EqQdMupKpPdm45NkbFR6TZqGa7THFKRpSypmVGGrnUMR
-	xNNR2qsiFU5ilXpcsC9Y0Mnnsl5xYmy00k8CQ5UDwL+hVdxNj/eiIloiwHdzA0SNjHGP6be0YfI9O
-	VYrzn0CIPvxCFPWrjI0/3uDbJncw7K0vgTvq7/iVMgIok/2ydV/8ykuc+/rLTeP75pfylc+q3QDWh
-	PAshHSQvyOuVHdr+5AV7YtdgVuYEPG7o3KbOE0Thle7C+ewbX6iZCHG9e6W5yEPr/5tzI2SqEtbES
-	OdWcY/XA==;
-Received: from i5e8616cd.versanet.de ([94.134.22.205] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sjPf7-0007tF-O1; Wed, 28 Aug 2024 22:53:05 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Johan Jonker <jbx6244@gmail.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	mturquette@baylibre.com,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	conor+dt@kernel.org,
-	robh@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	krzk+dt@kernel.org,
-	sboyd@kernel.org
-Subject: Re: [PATCH v1 0/9] clk: rockchip: Drop CLK_NR_CLKS CLKPMU_NR_CLKS usage
-Date: Wed, 28 Aug 2024 22:53:03 +0200
-Message-ID: <172487836642.1577158.12196598647797813806.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <416cdaf2-fef2-471d-a03a-837775d6e7dc@gmail.com>
-References: <416cdaf2-fef2-471d-a03a-837775d6e7dc@gmail.com>
+	s=arc-20240116; t=1724878487; c=relaxed/simple;
+	bh=SnlJ2b10GpeB/eeD0bQeMJKYa+5VGMkiM/OyO0qSSv4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EotSu6VdoaVQevUqkVPV3/zJPKTXtxtgLOSVcS/KN2B9pVz7d7wmT9MkPF2ZNGJ+9r79RgRMXuY64mV9+WEggvH9+7gablwZE3vJkC4jwsvoBxTxiktnecPnrc6VWMro+GY8Ft02D1IXsJE/HCL+zJ0hVNngTsso10w+Y0+5NKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pMpVJ1m1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE28CC4CEC0;
+	Wed, 28 Aug 2024 20:54:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724878487;
+	bh=SnlJ2b10GpeB/eeD0bQeMJKYa+5VGMkiM/OyO0qSSv4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pMpVJ1m1B1D1s/JjTA+nJSk93kCWrD5UISQvcX+6IgL4pB8MwfXMvY+ghZPj/yyPI
+	 5acAgLfeJxn0RPNL2vmYhFr1KtV8MCUuJ767926DzNWaRtJjbyKTnasJ1TVnCMsZqe
+	 T9XmM/Sw/nvn/25O0z1sQ7Vvbp2RpPDdaDfTwU8B3K83hK9/fNQwtEVDedSy2g8d8Z
+	 T2fCXbEiPKhBi/cZTfRnLzFfQEgYoSBu95IQXGIogeSiPh747Kc7y0HSkWLoVGrAh/
+	 80uJP4Nz3NpE5v2o2AjZf+JMpdWrKbsr6D0amCN/yLryNLtwUOWh7w7Glzg61R597e
+	 rtbmCiM68M1CA==
+Date: Wed, 28 Aug 2024 17:53:04 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] perf report: Name events in stats for pipe mode
+Message-ID: <Zs-OMNr74getypNN@x1>
+References: <20240827212757.1469340-1-irogers@google.com>
+ <CAM9d7cgoRUzRkwf37BisHV8vKWFD2AY+GJKH+eOqH4HmGBY2Wg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAM9d7cgoRUzRkwf37BisHV8vKWFD2AY+GJKH+eOqH4HmGBY2Wg@mail.gmail.com>
 
-On Mon, 26 Aug 2024 18:36:40 +0200, Johan Jonker wrote:
-> In order to get rid of CLK_NR_CLKS and CLKPMU_NR_CLKS
-> and be able to drop it from the bindings, use
-> rockchip_clk_find_max_clk_id helper to find the
-> highest clock id.
+On Wed, Aug 28, 2024 at 10:06:37AM -0700, Namhyung Kim wrote:
+> Hi Ian,
 > 
-> Johan Jonker (9):
->   clk: rockchip: px30: Drop CLK_NR_CLKS CLKPMU_NR_CLKS usage
->   clk: rockchip: rk3036: Drop CLK_NR_CLKS usage
->   clk: rockchip: rk3228: Drop CLK_NR_CLKS usage
->   clk: rockchip: rk3288: Drop CLK_NR_CLKS usage
->   clk: rockchip: rk3308: Drop CLK_NR_CLKS usage
->   clk: rockchip: rk3328: Drop CLK_NR_CLKS usage
->   clk: rockchip: rk3368: Drop CLK_NR_CLKS usage
->   clk: rockchip: rk3399: Drop CLK_NR_CLKS CLKPMU_NR_CLKS usage
->   dt-bindings: clock: rockchip: remove CLK_NR_CLKS and CLKPMU_NR_CLKS
+> On Tue, Aug 27, 2024 at 2:37 PM Ian Rogers <irogers@google.com> wrote:
+> >
+> > In stats mode PERF_RECORD_EVENT_UPDATE isn't being handled meaning the
+> > evsels aren't named when handling pipe mode output.
+> >
+> > Before:
+> > ```
+> > $ perf record -e inst_retired.any -a -o - sleep 0.1|perf report --stats -i -
+> > ...
+> > Aggregated stats:
+> >            TOTAL events:      23358
+> >             COMM events:       2608  (11.2%)
+> >             EXIT events:          1  ( 0.0%)
+> >             FORK events:       2607  (11.2%)
+> >           SAMPLE events:        174  ( 0.7%)
+> >            MMAP2 events:      17936  (76.8%)
+> >             ATTR events:          2  ( 0.0%)
+> >   FINISHED_ROUND events:          2  ( 0.0%)
+> >         ID_INDEX events:          1  ( 0.0%)
+> >       THREAD_MAP events:          1  ( 0.0%)
+> >          CPU_MAP events:          1  ( 0.0%)
+> >     EVENT_UPDATE events:          3  ( 0.0%)
+> >        TIME_CONV events:          1  ( 0.0%)
+> >          FEATURE events:         20  ( 0.1%)
+> >    FINISHED_INIT events:          1  ( 0.0%)
+> > raw 0xc0 stats:
+> >           SAMPLE events:        174
+> > ```
+> >
+> > After:
+> > ```
+> > $ perf record -e inst_retired.any -a -o - sleep 0.1|perf report --stats -i -
+> > ...
+> > Aggregated stats:
+> >            TOTAL events:      23742
+> >             COMM events:       2620  (11.0%)
+> >             EXIT events:          2  ( 0.0%)
+> >             FORK events:       2619  (11.0%)
+> >           SAMPLE events:        165  ( 0.7%)
+> >            MMAP2 events:      18304  (77.1%)
+> >             ATTR events:          2  ( 0.0%)
+> >   FINISHED_ROUND events:          2  ( 0.0%)
+> >         ID_INDEX events:          1  ( 0.0%)
+> >       THREAD_MAP events:          1  ( 0.0%)
+> >          CPU_MAP events:          1  ( 0.0%)
+> >     EVENT_UPDATE events:          3  ( 0.0%)
+> >        TIME_CONV events:          1  ( 0.0%)
+> >          FEATURE events:         20  ( 0.1%)
+> >    FINISHED_INIT events:          1  ( 0.0%)
+> > inst_retired.any stats:
+> >           SAMPLE events:        165
+> > ```
+> >
+> > This makes the pipe output match the regular output.
+> >
+> > Signed-off-by: Ian Rogers <irogers@google.com>
 > 
-> [...]
+> Acked-by: Namhyung Kim <namhyung@kernel.org>
 
-Applied, thanks!
+Thanks, applied to perf-tools-next,
 
-[1/9] clk: rockchip: px30: Drop CLK_NR_CLKS CLKPMU_NR_CLKS usage
-      commit: 2496910c84a4bd1aa2c10fe57cf4ae1cbcab17f4
-[2/9] clk: rockchip: rk3036: Drop CLK_NR_CLKS usage
-      commit: ec4f4261c315d9bc30bb1bb8c3bb17cbaebe7741
-[3/9] clk: rockchip: rk3228: Drop CLK_NR_CLKS usage
-      commit: 819b2e19a9f7dc9e84a00e2f6da2b2f15a01cee6
-[4/9] clk: rockchip: rk3288: Drop CLK_NR_CLKS usage
-      commit: 545b1313c5a24eed0e4d34554c715b46686251ff
-[5/9] clk: rockchip: rk3308: Drop CLK_NR_CLKS usage
-      commit: 31fe14956883bc09846ce239993e215330218a6f
-[6/9] clk: rockchip: rk3328: Drop CLK_NR_CLKS usage
-      commit: 0758fe99bc969294c2391de145b67c1223c7b104
-[7/9] clk: rockchip: rk3368: Drop CLK_NR_CLKS usage
-      commit: 41563197e7f2a0b449476bbbe931cb2806e84966
-[8/9] clk: rockchip: rk3399: Drop CLK_NR_CLKS CLKPMU_NR_CLKS usage
-      commit: 1a229868852ffe1d59f6bdad1e473d9d5f9e14bb
-[9/9] dt-bindings: clock: rockchip: remove CLK_NR_CLKS and CLKPMU_NR_CLKS
-      commit: fb234516c5a0728d7dbd718667c33c1523b55fe8
-
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+- Arnaldo
 
