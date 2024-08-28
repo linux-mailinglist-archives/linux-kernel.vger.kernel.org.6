@@ -1,306 +1,142 @@
-Return-Path: <linux-kernel+bounces-304180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B6D3961B7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 03:29:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9EB4961B84
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 03:32:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A040C1C23143
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 01:29:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E3F21F24887
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 01:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973FC84A51;
-	Wed, 28 Aug 2024 01:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D7A3AC2B;
+	Wed, 28 Aug 2024 01:32:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BriS5Bqn"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BnZ8AztX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19849288D1;
-	Wed, 28 Aug 2024 01:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38F6BA41
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 01:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724808501; cv=none; b=Nc/IhDzG7SVXyI2wc+6R6xrBxbWzY7n7GlWtxD7BNlSRVQGnVQjgsOeWUN9s1sHP8irXDJEMrBztBg2LqVOFNQMHSg2NAvQVWjb7u7KqI85DpxKzljuwJuYBO4iLB/6tSc4F1VTZ7/rd7cUacG4F8Vd8OIgAsv2FVh9+8U75Mj0=
+	t=1724808733; cv=none; b=RU12Oh6fuqXXvo54tA5u+dHL2TXm/CF/CRRJy0qsEsg3fqOX4WyotCIo3uhPUpSe8CAGFmDD87wpRCNX4bkZbxsgq3su8S3ND4i1wQ77olYxBIiDUNAPuPrbO0IC1z/rLi7plRghm9bfx04ssLbLDuWuGeTZgqfzP2WQL3Tk+rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724808501; c=relaxed/simple;
-	bh=+4lnVmz1HkbC5gG9G3ZPV4NnrsBsSmQNOr/IMQ2D4sY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SntxyWv0oVN5srVZy/k2aVv2Qe34Ks7FrNZx9k4gvTTHVPudN69LspykuNvL/51bf+KNCV2tfX5zBAEXCPxNACYr3sLfFv+n5wefXUVo3cZLTkUOlqzVVwbuJDnzh8NwUoRzKV/JDQAFGPQm66RNJSl5x1tJOr/a3vct/EyE9Vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BriS5Bqn; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47RLaFaC003176;
-	Wed, 28 Aug 2024 01:28:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	osMgB0mb3XqW8YTk8xRMOzQT5xdZ8ZkzCS7pK5HdoYo=; b=BriS5Bqn8oZDov8x
-	TLQwCEnnX1kEAiHz0cc2D64G60jVd1ZFbaIpfWIoxbCVmDXtD+C7QryXIw7JGLPX
-	Rm3SdrR3n1nYiVUKln3vdSCd8csLFmywtgoAYmmEvwIRQ7cdyB+mJbKC7dor1Xb9
-	f2O6VQUc/Gn1J7RW365Q2oF0sUcm4gLoWzQmtwlvgrhY4YeuH5xlMc56LX0XNtvF
-	fmmDrd6yN4iv59mS4MuyciR07GxVr2CXqgG3U6+BI8/9TzAf5EJtz2XRn1g3SBxb
-	Re1rAN1QL7thtB0ESneeMMTdfUXUkTXvQfBXwH7qJyE2EzvrAz5a+CwE45ZyC6dA
-	oKwEgA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419pv2gb38-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 01:28:01 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47S1Rxod000623
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 01:27:59 GMT
-Received: from jiegan-gv.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 27 Aug 2024 18:27:54 -0700
-From: Jie Gan <quic_jiegan@quicinc.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>,
-        "Alexander
- Shishkin" <alexander.shishkin@linux.intel.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-CC: Jinlong Mao <quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        Tingwei Zhang <quic_tingweiz@quicinc.com>,
-        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
-        Tao Zhang
-	<quic_taozha@quicinc.com>,
-        Song Chai <quic_songchai@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-Subject: [PATCH v4 5/5] arm64: dts: qcom: Add CTCU and ETR nodes for SA8775p
-Date: Wed, 28 Aug 2024 09:27:06 +0800
-Message-ID: <20240828012706.543605-6-quic_jiegan@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240828012706.543605-1-quic_jiegan@quicinc.com>
-References: <20240828012706.543605-1-quic_jiegan@quicinc.com>
+	s=arc-20240116; t=1724808733; c=relaxed/simple;
+	bh=4q4wPHNgcWarct+BgJwMmUgsPcTHD8HpihPMy/2tmFQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H7LkJglxMdTpHxllyG9U9Ha3mj2AN1gPXI1ecpsboNHxmbczONXHyewNjiMYkXjSOJyA/SQ4O0zG/qMlQZ/d/Ff+bTIv3XEHetWoxMrFwzDq2NyBsIk9yKhwHPeIZnOvBLuCPraPIURU02tHQjuBw6PPOXyGNdw8Z+H9/W4NdNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BnZ8AztX; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724808731;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eks8IjaD4ScDQe0q+7kEErXd6fLDVnTENBhfmNLrOac=;
+	b=BnZ8AztXZ7wS2F97RuHJKvyWfuAAotUnBvawQ7FtQIF4ql1FG/pta9p4VtJqOICSubA+dy
+	mij9IdhhJ8g34MZ4DtS7esARwph24XN4tXfoqIDepEQDcsgLpRhsWt/3Dg6d428bkQjPsw
+	cUOlZoiUBAGxMFzuBQdj/Ht9KoQ1pVk=
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-620-VufdYdYjM8mJ81il7Sc-yg-1; Tue, 27 Aug 2024 21:32:09 -0400
+X-MC-Unique: VufdYdYjM8mJ81il7Sc-yg-1
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-715cdf0a53bso391192b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 18:32:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724808728; x=1725413528;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eks8IjaD4ScDQe0q+7kEErXd6fLDVnTENBhfmNLrOac=;
+        b=TUM0rKVL8YNwdPrFs2rQ2jA38gQHaLnGUVTKy8akdENUOvUADguw3Lsyik64ABQmir
+         ExxU69AbgKxfhyTFsfDdbMbu9PL5xjWmTktjbrtwtqy6sea2oysosmQF2Il6R2jiO7mJ
+         NF0gyrkhaKacK3IKnqr7lkuq2A06G1KTjFEikEEUyCZwH6I1BrRtU+tGGFtNW2FFGTEl
+         6q9Vc4uVi8qcpQyi29lNpR8lUmQR7tm1ICsMjWQ4hUm/GkyJvhLYgSggeStzuzZjqIer
+         3dIJm5bBKlH2HjG716Lwcnj0SaT4bZhSYmvuzsNaKm8KyxL4Ky9bxXPn39AagyL453wB
+         3WYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7vnx2gyZPJBrz/jqSuPU+WBEMOClbvibzcu0F7v8DRrM61Vvtg413jYc7Kd9YMHNm61X4Bc1k7szOT9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8XhvLFAtGVDcB4WFzXTvpqOlaT/XF4cpSKCbDedHoEkj0mMC6
+	fEYeUbwuSfuHesVokUClSKVbjA15Wy14B7IefoPBmlTxmlMRL7J1tXQqZG9HadjYShYsUybrk0w
+	51AAxefyPh0O9lfSAWDfGEcoN9Qc8twrWvZp9+9KVeguXOTQuxdrsEauYh/z+ZKwkG2p6/5HoWp
+	3+VRbSanE36P4kHqrZKYWr+l6mANaLRfVa5Ti/
+X-Received: by 2002:a05:6a21:680d:b0:1c4:d540:46c with SMTP id adf61e73a8af0-1ccd28e8e88mr353002637.47.1724808728478;
+        Tue, 27 Aug 2024 18:32:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH/+RNaL4SYm1MCvP/OC2E6KqG/eCVWCm4/PId7l0YdOCrduuHAlXyb1dKzaCh0nQKYdjA11tjDkUTIJ0YItvc=
+X-Received: by 2002:a05:6a21:680d:b0:1c4:d540:46c with SMTP id
+ adf61e73a8af0-1ccd28e8e88mr352973637.47.1724808727964; Tue, 27 Aug 2024
+ 18:32:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: wvkFJcObNojM4t5cNbOesGUop5X3HbJ0
-X-Proofpoint-ORIG-GUID: wvkFJcObNojM4t5cNbOesGUop5X3HbJ0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-27_12,2024-08-27_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 malwarescore=0 adultscore=0 phishscore=0
- impostorscore=0 bulkscore=0 spamscore=0 suspectscore=0 mlxscore=0
- mlxlogscore=999 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408280008
+References: <20240826074452.1490072-1-yukuai1@huaweicloud.com>
+ <CAPhsuW6NOW9wuYD3ByJbbem79Nwq5LYcpXDj5RcpSyQ67ZHZAA@mail.gmail.com> <5efeec29-cf13-a872-292c-dd7737a02d68@huaweicloud.com>
+In-Reply-To: <5efeec29-cf13-a872-292c-dd7737a02d68@huaweicloud.com>
+From: Xiao Ni <xni@redhat.com>
+Date: Wed, 28 Aug 2024 09:31:53 +0800
+Message-ID: <CALTww2-Z7fp3O2ZELT=HQsxVqfFs1KZGMgQ6TJ4VKgBbeV1dhw@mail.gmail.com>
+Subject: Re: [PATCH md-6.12 v2 00/42] md/md-bitmap: introduce
+ bitmap_operations and make structure internal
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Song Liu <song@kernel.org>, mariusz.tkaczyk@linux.intel.com, 
+	linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, yi.zhang@huawei.com, 
+	yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add CTCU and ETR nodes in DT to enable related functions.
+On Wed, Aug 28, 2024 at 9:15=E2=80=AFAM Yu Kuai <yukuai1@huaweicloud.com> w=
+rote:
+>
+> Hi,
+>
+> =E5=9C=A8 2024/08/28 4:32, Song Liu =E5=86=99=E9=81=93:
+> > On Mon, Aug 26, 2024 at 12:50=E2=80=AFAM Yu Kuai <yukuai1@huaweicloud.c=
+om> wrote:
+> >>
+> > [...]
+> >>
+> >> And with this we can build bitmap as kernel module, but that's not
+> >> our concern for now.
+> >>
+> >> This version was tested with mdadm tests. There are still few failed
+> >> tests in my VM, howerver, it's the test itself need to be fixed and
+> >> we're working on it.
+> >
+> > Do we have new test failures after this set? If so, which ones?
+>
+> No, there are new failures.
 
-Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 160 ++++++++++++++++++++++++++
- 1 file changed, 160 insertions(+)
+Hi all
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 23f1b2e5e624..a8b509495440 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -1664,6 +1664,35 @@ ice: crypto@1d88000 {
- 			clocks = <&gcc GCC_UFS_PHY_ICE_CORE_CLK>;
- 		};
- 
-+		ctcu@4001000 {
-+			compatible = "qcom,sa8775p-ctcu";
-+			reg = <0x0 0x4001000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb";
-+
-+			in-ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					ctcu_in0: endpoint {
-+						remote-endpoint =
-+						<&etr0_out>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					ctcu_in1: endpoint {
-+						remote-endpoint =
-+						<&etr1_out>;
-+					};
-+				};
-+			};
-+		};
-+
- 		stm: stm@4002000 {
- 			compatible = "arm,coresight-stm", "arm,primecell";
- 			reg = <0x0 0x4002000 0x0 0x1000>,
-@@ -1867,6 +1896,129 @@ qdss_funnel_in1: endpoint {
- 			};
- 		};
- 
-+		replicator@4046000 {
-+			compatible = "arm,coresight-dynamic-replicator", "arm,primecell";
-+			reg = <0x0 0x4046000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+
-+			out-ports {
-+				port {
-+					qdss_rep_out0: endpoint {
-+						remote-endpoint =
-+						<&etr_rep_in>;
-+					};
-+				};
-+			};
-+
-+			in-ports {
-+				port {
-+					qdss_rep_in: endpoint {
-+						remote-endpoint =
-+						<&swao_rep_out0>;
-+					};
-+				};
-+			};
-+		};
-+
-+		tmc_etr: tmc@4048000 {
-+			compatible = "arm,coresight-tmc", "arm,primecell";
-+			reg = <0x0 0x4048000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+			iommus = <&apps_smmu 0x04c0 0x00>;
-+
-+			arm,scatter-gather;
-+
-+			out-ports {
-+				port {
-+					etr0_out: endpoint {
-+						remote-endpoint =
-+						<&ctcu_in0>;
-+					};
-+				};
-+			};
-+
-+			in-ports {
-+				port {
-+					etr0_in: endpoint {
-+						remote-endpoint =
-+						<&etr_rep_out0>;
-+					};
-+				};
-+			};
-+		};
-+
-+		replicator@404e000 {
-+			compatible = "arm,coresight-dynamic-replicator", "arm,primecell";
-+			reg = <0x0 0x404e000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+
-+			out-ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					etr_rep_out0: endpoint {
-+						remote-endpoint =
-+						<&etr0_in>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					etr_rep_out1: endpoint {
-+						remote-endpoint =
-+						<&etr1_in>;
-+					};
-+				};
-+			};
-+
-+			in-ports {
-+				port {
-+					etr_rep_in: endpoint {
-+						remote-endpoint =
-+						<&qdss_rep_out0>;
-+					};
-+				};
-+			};
-+		};
-+
-+		tmc_etr1: tmc@404f000 {
-+			compatible = "arm,coresight-tmc", "arm,primecell";
-+			reg = <0x0 0x404f000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+			iommus = <&apps_smmu 0x04a0 0x40>;
-+
-+			arm,scatter-gather;
-+			arm,buffer-size = <0x400000>;
-+
-+			out-ports {
-+				port {
-+					etr1_out: endpoint {
-+						remote-endpoint =
-+						<&ctcu_in1>;
-+					};
-+				};
-+			};
-+
-+			in-ports {
-+				port {
-+					etr1_in: endpoint {
-+						remote-endpoint =
-+						<&etr_rep_out1>;
-+					};
-+				};
-+			};
-+		};
-+
- 		funnel@4b04000 {
- 			compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
- 			reg = <0x0 0x4b04000 0x0 0x1000>;
-@@ -1942,6 +2094,14 @@ out-ports {
- 				#address-cells = <1>;
- 				#size-cells = <0>;
- 
-+				port@0 {
-+					reg = <0>;
-+					swao_rep_out0: endpoint {
-+						remote-endpoint =
-+						<&qdss_rep_in>;
-+					};
-+				};
-+
- 				port@1 {
- 					reg = <1>;
- 					swao_rep_out1: endpoint {
--- 
-2.34.1
+I suggest running lvm2 regression tests too. I can't run it myself now
+because I can't get a stable network connection all the time.
+
+Best Regards
+Xiao
+>
+> Thanks,
+> Kuai
+>
+> >
+> > Thanks,
+> > Song
+> >
+> >> Yu Kuai (42):
+> >>    md/raid1: use md_bitmap_wait_behind_writes() in raid1_read_request(=
+)
+> >>    md/md-bitmap: replace md_bitmap_status() with a new helper
+> >>      md_bitmap_get_stats()
+> >
+> > [...]
+> > .
+> >
+>
 
 
