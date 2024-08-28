@@ -1,131 +1,152 @@
-Return-Path: <linux-kernel+bounces-304706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA2AF9623C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:41:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 286729623CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 556EC1F23BB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:41:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB3C228353A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53006166319;
-	Wed, 28 Aug 2024 09:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE9E16B386;
+	Wed, 28 Aug 2024 09:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ORjQ0chN"
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Vv/16hMq"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FBE915E5C0
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 09:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4088615ECD7;
+	Wed, 28 Aug 2024 09:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724838103; cv=none; b=LHFSf+AyBrxWO8DnX922N9pMdPiGac92NAi7egmqVT2Nfy8kfK8cbqlwpJSsMYjQ9Z9uV7uMYBgHmXEty0ofa10LS4F3xySMYoNHQZz44qn6IgMFR96C1VuI9YxbxNDkFEefM6/0wsMIThx8EhKBKMbEheYcecREo4ZPYUQb//8=
+	t=1724838115; cv=none; b=BAsZzaHRm2m6uDUnlpn1eQ316q3eRSVrlmh+NMMfRVPfN+UJcUCgoSGfU5dkIuDAcCe9nnqaMkfnh7u3GEbh4kGRp2xwM96darJZLPTYvsVHO7YVaM5I+o6fTVbxetwf8CaTkbvUx0gHoKkpEeRaW+XfdIOGSpmS9/3l/6Ekc7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724838103; c=relaxed/simple;
-	bh=MDXXPoP3Ql2ed4Kq1NPFVHjXHxrCWpZsHv/VA9HbH3U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F1uFuFq8lkuV/OgDTHgmVpcr79cs7RAfagkDPRvq+YE+2cpxg6bFhuWDGE/JqNCRnlBGkoTWunbzLExol345GFvIMW8B87Yef1gV0FgEOz7h6A5fbMgki/Yl/dUn6BSkIPiMPrud0qjoE3V6PvvtPyyrtRAJr80McT/oJIp9nF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ORjQ0chN; arc=none smtp.client-ip=209.85.217.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-498eb25d247so1883482137.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 02:41:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724838100; x=1725442900; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MDXXPoP3Ql2ed4Kq1NPFVHjXHxrCWpZsHv/VA9HbH3U=;
-        b=ORjQ0chNvOawVRZrM+477x4orZ1IZ00Hmoe8gp6OLBsdyjjnj5PGUVT3Vq4qqlIhB8
-         7iuhpVbogbMHVAy3vphRE73YbfX2zHvN55l7WvkWNMjgUg0uErIGhLXrMU3OOqh5t4WM
-         5QJfsNP1zLp4xZMzh/I23sii6RdDLp0M378DE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724838100; x=1725442900;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MDXXPoP3Ql2ed4Kq1NPFVHjXHxrCWpZsHv/VA9HbH3U=;
-        b=v6nCArLjC4YXmmOVyEDVuSeGdodg9LxEn3NZElEqAsEFKLPKbn5vG1HNBafovMShIc
-         R/X5R/8ldRF75cYV9TIy3k4Dx/NISj16vyzr+eFddB/xUJmxTBMpC2a06FebpkAdFuu3
-         HvgVQ59yIaz2zGkEipoLhUVhpGcxs/0hkKJxmuUN0v143a6tIsX7QCATunsz5SittYSh
-         ZhZ9FaEc4ni4uyWivTa5mrI4uc9MOU/VGES+gSq1N30WEb9bh5qCAPnzIvw6VMwHe4aK
-         B6VS0awdeQcUwZirrRjBHCRG2crWKiMAoJaQMY1iSJEIkg7DcVxbFJ6N+nULdNsCQfcP
-         QTGA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5KTW0EQA3I6NCzS+8JnsZ52Bmt8BCVP83m+NaerNU1u6Vk0T3bUGEbIUpvqO7R8zWOASVGXopFZzn8UI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywva+rA1ASnKfcKKJ4nEXnQxE/Tpy9m/2I4x+MHQrXmOvjBR54m
-	P8n4EJ0CP2yNF0T3fFR59MUerWX9dqm2Quk7A1ZgCfckJT+cWkX99TJ5hJXt0eHgauhH/uc+s/E
-	=
-X-Google-Smtp-Source: AGHT+IFb1XFBVV/bwkUfiNCTzVq086+PtTqr9ywK2zqmW83Ok0+FatIppeB08iYEYGRjX65EpXKF5w==
-X-Received: by 2002:a05:6102:c08:b0:492:9960:682a with SMTP id ada2fe7eead31-498f4680ec9mr14918011137.17.1724838099506;
-        Wed, 28 Aug 2024 02:41:39 -0700 (PDT)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-844ce4eaaf1sm1528343241.11.2024.08.28.02.41.38
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 02:41:38 -0700 (PDT)
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-498d587c13bso2036413137.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 02:41:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVyKSeDtupfyCvDgBUk7XMP6EJLZ7iTv/3ZZ4FFiafNJGN6fEkZ46QSdDhWdOhV5ftg9XaYYgaHEsRatQs=@vger.kernel.org
-X-Received: by 2002:a05:6102:50a9:b0:493:c81c:3148 with SMTP id
- ada2fe7eead31-498f41cdb2fmr15317053137.0.1724838098095; Wed, 28 Aug 2024
- 02:41:38 -0700 (PDT)
+	s=arc-20240116; t=1724838115; c=relaxed/simple;
+	bh=MV74E9nZBynQxBR8dg/mjqqGm0n/3VH7sTdu3wSjF40=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Ks/okCQiskzqWAuWEj2oliOEphCFdKjD1pcDUk4jcYcmwe1OIZQxVOBuziVp5+3AYl0KjP+GmIwKr0ixov7t9SiEZYWj4XmLZl2LL18u1rdEqrpaaOCFTqdmwJyhYFLBkJFUqIyGzwzeFdv/yfhvwVxC5PRkfhH+181PA8rvAPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Vv/16hMq; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47RLowAi021973;
+	Wed, 28 Aug 2024 09:41:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	G2M9Wgad7757x4Y7yhdMnzDx2L4gjT0MN/6gHvFUW08=; b=Vv/16hMq0h+orYIo
+	RbV95w19NWMMOJesYH8BhQL86VCh+sGhjG2/j78sbr2tj7zUJhc2YjXa+WpVWsh6
+	wdNb25YNkkebrmtkwwhZLHp0rPt7/8LUab8ZC1nC77QWSUPJkrMPGKx8NSQUwEPA
+	7uZpwt25ftzcVZl0HPRUnUXf2pRGBit4QYIbGtfVWwgGftryyz6bWodQ0OcdiFZs
+	UqjV6FXiv8V0IPaWcRFZXz7mAnJJuVKe3cOaCPvStd1SO444kCzPTVRPRoVn64Fr
+	SSvPgnsiNmLgPyg4dUwSqM/M6wY+vledi/r/CwFds2WcdRL1V9ajZn9rpleySJVS
+	CzBxVg==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419q2xsbaa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 09:41:43 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47S9fgGA014181
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 09:41:42 GMT
+Received: from [10.239.29.179] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 28 Aug
+ 2024 02:41:36 -0700
+Message-ID: <79a294b3-90a7-4900-bac1-281d321c9a55@quicinc.com>
+Date: Wed, 28 Aug 2024 17:41:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827-drm-fixup-0819-v3-0-4761005211ec@mediatek.com> <20240827-drm-fixup-0819-v3-2-4761005211ec@mediatek.com>
-In-Reply-To: <20240827-drm-fixup-0819-v3-2-4761005211ec@mediatek.com>
-From: Fei Shao <fshao@chromium.org>
-Date: Wed, 28 Aug 2024 17:41:00 +0800
-X-Gmail-Original-Message-ID: <CAC=S1ngpXtsLUF=A-MxVnmWY7YgwvxHKSe0NuN_n=G+7-kpG7Q@mail.gmail.com>
-Message-ID: <CAC=S1ngpXtsLUF=A-MxVnmWY7YgwvxHKSe0NuN_n=G+7-kpG7Q@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] drm/mediatek: change config_lock from spin_lock to spin_lock_irqsave
-To: jason-jh.lin@mediatek.com, Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Singo Chang <singo.chang@mediatek.com>, 
-	Nancy Lin <nancy.lin@mediatek.com>, Project_Global_Chrome_Upstream_Group@mediatek.com, 
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/8] phy: qcom-qmp: pcs-pcie: Add v6.30 register offsets
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <manivannan.sadhasivam@linaro.org>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <robh@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <abel.vesa@linaro.org>,
+        <quic_msarkar@quicinc.com>, <quic_devipriy@quicinc.com>,
+        <dmitry.baryshkov@linaro.org>, <kw@linux.com>, <lpieralisi@kernel.org>,
+        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+References: <20240827063631.3932971-1-quic_qianyu@quicinc.com>
+ <20240827063631.3932971-2-quic_qianyu@quicinc.com>
+ <2ojutgxk4kplxwrxxcq5zorejuohbow7dr6lhl4cwndkwzvxf6@lxg4um6krdnh>
+Content-Language: en-US
+From: Qiang Yu <quic_qianyu@quicinc.com>
+In-Reply-To: <2ojutgxk4kplxwrxxcq5zorejuohbow7dr6lhl4cwndkwzvxf6@lxg4um6krdnh>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: qcWtSUmrOLNrIVb0U78pxP9xNMLSlD5q
+X-Proofpoint-GUID: qcWtSUmrOLNrIVb0U78pxP9xNMLSlD5q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-28_03,2024-08-27_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
+ clxscore=1011 priorityscore=1501 lowpriorityscore=0 spamscore=0
+ impostorscore=0 mlxlogscore=999 phishscore=0 adultscore=0 bulkscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408280069
 
-Hi Jason,
 
-On Tue, Aug 27, 2024 at 10:58=E2=80=AFPM Jason-JH.Lin via B4 Relay
-<devnull+jason-jh.lin.mediatek.com@kernel.org> wrote:
+On 8/27/2024 7:37 PM, Krzysztof Kozlowski wrote:
+> On Mon, Aug 26, 2024 at 11:36:24PM -0700, Qiang Yu wrote:
+>> x1e80100 SoC uses QMP phy with version v6.30 for PCIe Gen4 x8. Add the new
+>> PCS PCIE specific offsets in a dedicated header file.
+>>
+>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+>> ---
+>>   .../qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h    | 25 +++++++++++++++++++
+>>   1 file changed, 25 insertions(+)
+>>   create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h
+>>
+>> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h b/drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h
+>> new file mode 100644
+>> index 000000000000..5a58ff197e6e
+>> --- /dev/null
+>> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h
+>> @@ -0,0 +1,25 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Copyright (c) 2024 Qualcomm Innovation Center. All rights reserved.
+>> + */
+>> +
+>> +#ifndef QCOM_PHY_QMP_PCS_PCIE_V6_30_H_
+>> +#define QCOM_PHY_QMP_PCS_PCIE_V6_30_H_
+>> +
+>> +/* Only for QMP V6_30 PHY - PCIE have different offsets than V6 */
+>> +#define QPHY_PCIE_V6_30_PCS_POWER_STATE_CONFIG2		0x014
+>> +#define QPHY_PCIE_V6_30_PCS_TX_RX_CONFIG		0x020
+>> +#define QPHY_PCIE_V6_30_PCS_ENDPOINT_REFCLK_DRIVE	0x024
+>> +#define QPHY_PCIE_V6_30_PCS_OSC_DTCT_ACTIONS		0x098
+>> +#define QPHY_PCIE_V6_30_PCS_EQ_CONFIG1			0x0a8
+>> +#define QPHY_PCIE_V6_30_PCS_G3_RXEQEVAL_TIME		0x0f8
+>> +#define QPHY_PCIE_V6_30_PCS_G4_RXEQEVAL_TIME		0x0fc
+>> +#define QPHY_PCIE_V6_30_PCS_G4_EQ_CONFIG5		0x110
+>> +#define QPHY_PCIE_V6_30_PCS_G4_PRE_GAIN			0x164
+>> +#define QPHY_PCIE_V6_30_PCS_RX_MARGINING_CONFIG1	0x184
+>> +#define QPHY_PCIE_V6_30_PCS_RX_MARGINING_CONFIG3	0x18c
+>> +#define QPHY_PCIE_V6_30_PCS_RX_MARGINING_CONFIG5	0x194
+>> +#define QPHY_PCIE_V6_30_PCS_G3_FOM_EQ_CONFIG5		0x1b4
+>> +#define QPHY_PCIE_V6_30_PCS_G4_FOM_EQ_CONFIG5		0x1c8
+> There is no user of these. Squash it with the user, because there is
+> little point in adding dead code.
 >
-> From: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>
->
-> Operations within spin_locks are limited to fast memory access and
-> confirmation of minimum lock duration.
->
-> Although using spin_lock with config_lock seems to ensure shorter hold
-> times, it is safer to use spin_lock_irqsave due to potential deadlocks
-> and nested interrupt scenarios in interrupt contexts.
->
-> So change config_lock from spin_lock to spin_lock_irqsave.
->
-> Fixes: 7f82d9c43879 ("drm/mediatek: Clear pending flag when cmdq packet i=
-s done")
+> Best regards,
+> Krzysztof
+OK, will squash this three patches related to phy setting into one patch.
 
-The appropriate fix tag should be:
-Fixes: 1bbb2be61bbb ("drm/mediatek: Fix missing configuration flags in
-mtk_crtc_ddp_config()")
-
-I don't know if it's worth resending though.
-I guess it's up to CK if he's willing to replace it when picking up the pat=
-ch.
-
-But the change itself is valid, so after fixing that:
-Reviewed-by: Fei Shao <fshao@chromium.org>
-
-Regards,
-Fei
-
-> Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
+Thanks,
+Qiang
 
