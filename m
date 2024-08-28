@@ -1,101 +1,117 @@
-Return-Path: <linux-kernel+bounces-305356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5532962D6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:15:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B3C2962D73
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BEEA1F25F66
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:15:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13AB7B230F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7951A3BD7;
-	Wed, 28 Aug 2024 16:14:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC321A3BA1;
+	Wed, 28 Aug 2024 16:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SDXUt5VL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gTtZ7da2"
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49F51A38E0
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 16:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406B91A4F1E
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 16:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724861699; cv=none; b=roySc6HHqOqSkfhenQLmMGr5+7gRzZEHPdqODuIvgY6qYpJ31EAIGLANhG+SJ+McxA+PZ1VRu+Xyomg5Rx2z0y6s0aj957PtN/gVMk9aY3bYec0zlo91+WaRNSetIwzhfaboEuUQ2D0BTtKItKfDgVJ+cNDolG2qL9XBdT2kUgQ=
+	t=1724861709; cv=none; b=fBt6rMjYUH1o/v8eXL6U7R+SXs+vjAHRZtlYKSjvrWP3M3gtMKOQ/klIGOwtKWv7zbUIRnGrR8eGig0v8pcxA8vKWRXLM9rdn++mCnAXy7740pe08zqANrjZpSkWP17ydjBBrAa5K83LESF+MdXkDKyONtcfJScUT5Pn5zOwUEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724861699; c=relaxed/simple;
-	bh=7FGxU1+SHbAVv8pRNHhBLmltkerfyg2mQ/Ca/+AJ+l0=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=YlgOgZ9K6upUBu3qLSMMtACK9BkhyjG+FpgcaEg8OhgJu/fG6LazzPE018dID9ljfKyrU8tLSSaAazFuBx0u+Clx9n2bjJbAsVOn/Vd9h/NI9T0ZpcAVbOAmyyfQjEbtySJiKIi7IeQBZqqmjtqCz9aT0244LeRMXYWTsymjKbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SDXUt5VL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724861696;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7FGxU1+SHbAVv8pRNHhBLmltkerfyg2mQ/Ca/+AJ+l0=;
-	b=SDXUt5VLTfZMuQ9cGWWCqY3MYRW025jE4Gu8fgEkHPfSZ/z0SJ7MuVwRj6MBvpDoPgRv11
-	rSwt0DY5S3/nwK1+m4yXzfWUSN0XuY662/6TgNeuTsbNlOrMuZhKu5EPH56ErHc6XWnB5e
-	ES61DVeKS8+HN7s0/yhDVJmTcWMXA3Q=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-132-4Po9ynhuPUCy3Q3CwKL4bw-1; Wed,
- 28 Aug 2024 12:14:47 -0400
-X-MC-Unique: 4Po9ynhuPUCy3Q3CwKL4bw-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7DEB11955BF9;
-	Wed, 28 Aug 2024 16:14:43 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5C37519560A3;
-	Wed, 28 Aug 2024 16:14:37 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <11c591fd-221b-4eeb-a0bd-e9e303d391a6@huaweicloud.com>
-References: <11c591fd-221b-4eeb-a0bd-e9e303d391a6@huaweicloud.com> <5b7455f8-4637-4ec0-a016-233827131fb2@huaweicloud.com> <20240826040018.2990763-1-libaokun@huaweicloud.com> <467d9b9b-34b4-4a94-95c1-1d41f0a91e05@web.de> <988772.1724850113@warthog.procyon.org.uk>
-To: Baokun Li <libaokun@huaweicloud.com>
-Cc: dhowells@redhat.com, Markus Elfring <Markus.Elfring@web.de>,
-    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-erofs@lists.ozlabs.org, Jeff Layton <jlayton@kernel.org>,
-    stable@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-    Christian Brauner <brauner@kernel.org>,
-    Gao Xiang <hsiangkao@linux.alibaba.com>,
-    Hou Tao <houtao1@huawei.com>, Jingbo Xu <jefflexu@linux.alibaba.com>,
-    Yang Erkun <yangerkun@huawei.com>, Yu Kuai <yukuai3@huawei.com>,
-    Zizhi Wo <wozizhi@huawei.com>, Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH] cachefiles: fix dentry leak in cachefiles_open_file()
+	s=arc-20240116; t=1724861709; c=relaxed/simple;
+	bh=Okmgsan3LUVkkzZFXpwqucFWbJOTa7oheGqbn5qPhbI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HNcl+0sugFAolRMDPl/mMJJNVMlc55hE3iZRWKtvXntxdr1BFwCzMAqY/THkVIuFsfVwyq4g3QKuHl4FbSgw+gwZdpBAJqrCtMBVUoLy970yn/hCuplB4kzzq9jSpfX2IpLv8/BTE5Y8DhT3CgKSlu/i8s501H+hxZa9u+BdYOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gTtZ7da2; arc=none smtp.client-ip=209.85.167.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3db10d8830aso128790b6e.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 09:15:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724861707; x=1725466507; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CuEwGIpDkqfIpxW0bgF/RVPt4IxIPFyBx9pLhSVN2JI=;
+        b=gTtZ7da2HWgtPhxpewC7T3BDMHih4kiyC2GhbsisGD+eLJxEuuk+y+NwO2hN+xx3Ub
+         SeuorL9ApgDhaYfOKv70rR0/auefljv6uBgj2bEDiO74N1OE+0VuwW1ZNaqUS7FEfTcw
+         OPl/zl0MrqTwuENhC8H+q2Mwj2OxrFj7vhIvGQJ6hwWf0HQZoNsFrOc6sfFx8Z8fGrJx
+         UXb59etx5vgSuDADoxzdWUIq5Cs5bawkcxABZ0Yd8GgGdLZS+ODwby8vXdzcKlwTfFCw
+         bMqX5hqDGkQcPUb1DAF4WjccGvjY4xFbS2w62V/0iR8cMQBUYMfL3t9/bBjt5O5Nm+zg
+         QIiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724861707; x=1725466507;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CuEwGIpDkqfIpxW0bgF/RVPt4IxIPFyBx9pLhSVN2JI=;
+        b=CAzjQIREx0zFiKyvJ+NBLPDv4bDHn3Ixmnfhwx7fXOfKxnQj7i+7TqR8wmNPahhbch
+         I48Qh0C9VWR7p0bgCY7OPYYwjEbmejDTCjScfD3d86EBluJ3UI4+mHSIPtm/ckIQAlow
+         SCQihP7fURg/H6U0ix+PqI8hQMN9t6cL71QoKCsptT2zHrQgHVv/epE4PWnIYLFw/4pk
+         eZCzUXYmSTeC2L7TJ+mmmvgF5A+0fu/+tTpKv45RifwGu+Ne/PTUJVhTSNuIwMzp7zW1
+         i17pn+paIgkjqV0LKWqMWWKEizpv2ryq5dO0C0RNGWPMctLvLp7Jf3t/k2ou3dZRDF4i
+         QpDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXNFPniCUVAyF20BXhWmMLr/rY2FQxAUSayJxpzMq0iqsDdRcmZZgT/cW4Itlb6H/QLfhDW8H3t7U/sWT8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJE86IncgGdo23AqOnDjAJ22gCUJisz4GRW1QdZiDs7ZuKMGx2
+	ri6zSgeA67msaxj0caeijddEcm6pCKVVAcY35MFxzVIuECGo4/3QDBgIQH+SZae41XCI4r/Fdpn
+	IClNBy2JcFIRi+ElKg/dFkvq20wk=
+X-Google-Smtp-Source: AGHT+IEKPm0X049OLCCWte/lKWA1onDQZDte91zJigx88Na7YtcnnIcK4NXUHhl/qlfnTtpRZbsgkb9gE5ObhgepknQ=
+X-Received: by 2002:a54:4405:0:b0:3db:291e:2467 with SMTP id
+ 5614622812f47-3de2a8a90a3mr8754550b6e.7.1724861706964; Wed, 28 Aug 2024
+ 09:15:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1043617.1724861676.1@warthog.procyon.org.uk>
+References: <3EA7C2B9E8C4D00A+20240828105938.37674-1-wangyuli@uniontech.com>
+ <CADnq5_P42A81D_VufAdSkwVwC08ZRiT=6XAS3oHmSH325ygbow@mail.gmail.com> <D25D5E6FB683DA94+808c82a3-546f-4289-b531-fa24d7278879@uniontech.com>
+In-Reply-To: <D25D5E6FB683DA94+808c82a3-546f-4289-b531-fa24d7278879@uniontech.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 28 Aug 2024 12:14:55 -0400
+Message-ID: <CADnq5_MJTTX0koP7am-D0RoZro=0_e38ic5BoJuKhbyM6y-99g@mail.gmail.com>
+Subject: Re: [PATCH] amdgpu: disable amdgpu_dpm on THTF-SW831-1W-DS25_MB board
+To: WangYuli <wangyuli@uniontech.com>
+Cc: alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, 
+	airlied@gmail.com, daniel@ffwll.ch, lijo.lazar@amd.com, 
+	mario.limonciello@amd.com, le.ma@amd.com, Jun.Ma2@amd.com, 
+	hamza.mahfooz@amd.com, andrealmeid@igalia.com, wenlunpeng@uniontech.com, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, guanwentao@uniontech.com, zhanjun@uniontech.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 28 Aug 2024 17:14:36 +0100
-Message-ID: <1043618.1724861676@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Baokun Li <libaokun@huaweicloud.com> wrote:
+On Wed, Aug 28, 2024 at 11:47=E2=80=AFAM WangYuli <wangyuli@uniontech.com> =
+wrote:
+>
+>
+> On 2024/8/28 23:30, Alex Deucher wrote:
+> > On Wed, Aug 28, 2024 at 7:28=E2=80=AFAM WangYuli <wangyuli@uniontech.co=
+m> wrote:
+> >
+> > This will disable dpm on all devices that you might install on this
+> > platform.  If this is specific to a particular platform and board
+> > combination, it might be better to check the platform in the
+> > dpm_init() code for the specific chip that is problematic.
+> > Additionally, disabling dpm will result in boot clocks which means
+> > performance will be very low.
+> >
+> > Alex
+>
+> This motherboard model doesn't have combinations with different
+> platforms or chipsets now.Their model numbers are unique,so it seems
+> unnecessary to add extra judgment.
 
-> > You couldn't do that anyway, since kernel_file_open() steals the calle=
-r's ref
-> > if successful.
-> Ignoring kernel_file_open(), we now put a reference count of the dentry
-> whether cachefiles_open_file() returns true or false.
+The error message looks to be from an SI board which is a dGPU.  Is
+that dGPU integrated into the motherboard?  Does the motherboard have
+PCIe slots?  If there are PCIe slots you could presumably put any GPU
+into it and if you did, dpm would be disabled by default.
 
-Actually, I'm wrong kernel_file_open() doesn't steal a ref.
-
-David
-
+Alex
 
