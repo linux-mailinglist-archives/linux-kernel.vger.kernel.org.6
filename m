@@ -1,119 +1,177 @@
-Return-Path: <linux-kernel+bounces-305206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A4D962B03
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:03:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D15F6962B09
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C8C71C23450
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:03:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD2AB1C237A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CEC19FA94;
-	Wed, 28 Aug 2024 15:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88BCE1A08CB;
+	Wed, 28 Aug 2024 15:03:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q6tBH1FF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="geNhUTf6";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OB5SN3gs"
+Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4FA186619;
-	Wed, 28 Aug 2024 15:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D1E1891AC;
+	Wed, 28 Aug 2024 15:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724857398; cv=none; b=T4mPwepyr/3yab0YqKRxfDcoeLFURpOBugNl1vPnwXfULxe9OdvUhaZFQT2bS/1+aMtPcHv4IZGgmzV7zDkKsrS732p/DRp0aXIMSdHZ7NeglNa6w7Tq2T2XVL8wnIXdwaXxr/hX8JnhbLR+CGvQQ95YIaJbzshyx/yUn598QM8=
+	t=1724857425; cv=none; b=nZJ/hb793/sa1dObSQWnVFrZKHNe+105T2uKCCw/KOs2ABMWhJ4hBVcdiwNt5RMsduyudUeTXfKZb0jmbvVLlkhTLev49z/xbrodbjyOnoWHLs0VlH+F4tttN95HzXWJZucYfgmywSqHLSIefhj4udn3ECovHQY7rAWctJmaWcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724857398; c=relaxed/simple;
-	bh=Q/FWYBfhq0EfW/PW3pTyaVMwo1NEzGyWM8q4CMuLmmE=;
+	s=arc-20240116; t=1724857425; c=relaxed/simple;
+	bh=yEUS2+We6pYU5E5aUU6qY7JHegaAWPxXgJVKjsaaybw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WdRJimn94cfDr5770DBEOhdy9kPQQwa3Dsdb6Qcyl7a+33GQG6hYa5oAiJ4TUEKoFJMeSo3+wpi3gmO4nmd2DKYLy5Psts2cliW1VQYKsm7pOw7q3L54iNzk6qtZmZikV32zHPCyp+ditJNXZ2Ikbhu0IYCtGNHO7/NuZInzG7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q6tBH1FF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7C16C4CEC2;
-	Wed, 28 Aug 2024 15:03:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724857397;
-	bh=Q/FWYBfhq0EfW/PW3pTyaVMwo1NEzGyWM8q4CMuLmmE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q6tBH1FFTxkGbyppAXiq3i3jb1A3bP52++rMmbcUB3aCvNcgdndawIqNWY2QAVDLf
-	 gs21BbcbPtkPUsphg1ZK4FoZOeueWhmZMJ4Gf3MgNfj8rIQYM6p8BZGR5SPjyn4ZLh
-	 n+rWR2BYesFeHSrqo1bewKrLLkKlse67VDaFJuRRzwGQnkvXH4ioG2ttb3TBgBV4lw
-	 CLd3ogYNZCI7SYOnjmBOrIzeZhC1H2giUZVN9rPSVq4K95SyOGSrfKFXut+9mgz9aM
-	 FliJmZ3gzTZwlXty8Z7v4w26porBNOo/CwCxDCYZ5aJSdNYQ/FcbxAV3P87amqofM/
-	 vTIHuWPDTElmw==
-Date: Wed, 28 Aug 2024 16:03:12 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH v2 0/3] ASoC: dt-bindings: amlogic-sound-cards: document
- clocks property
-Message-ID: <20240828-brittle-swapping-8b04379725c8@spud>
-References: <20240828-topic-amlogic-upstream-bindings-fixes-audio-snd-card-v2-0-58159abf0779@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TRD3qGaVRzBeqV/7llbPB8ZsSRp+pjXyqE/JowRdwCnyHpdJ+y6k6Uv3nORbb6Q6nOieMRiWWiZkmNI7vsrv0IPI/txDNxxdN5Wl56aHJ/+Gft/77B3yD4ERB/dqkw/FbBSd1QDam1/JaTqKrtRKs5W3jPdgvovbPMnZlpcwiqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=geNhUTf6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OB5SN3gs; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from phl-compute-02.internal (phl-compute-02.nyi.internal [10.202.2.42])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 08F6C1151B49;
+	Wed, 28 Aug 2024 11:03:42 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Wed, 28 Aug 2024 11:03:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1724857421;
+	 x=1724943821; bh=RYAedfyLuVntN+kLSt9YJMUi7beiuO1xRvYSBZFsvXM=; b=
+	geNhUTf6vyHVdZck3OF+RSzjQNIWfNXpFDRRITTuC+K7Tj9j5Lqh8YB9VCHgQem4
+	/QTGXlxJCkU4rcVrISAIStO1oUgvrQrhgnEqX/kNCQEHvRJN4fRQMmsD7Xn8QgNu
+	kBtkSSs1m0G7i7Pj+6ChpGodhHcATr+hmx0te81UiUxXdEZHYsPjckmDuOF8pV15
+	tWIJHf+Ge33XabGeg67lSgIUiH2i6bgebe0L9+KvC2hP1IdIOoj9JdNBBbr2cYyL
+	F8HeySqKFH5v5sKuCt1VR+GG0Q4KxmJsVJkYU7HrIqyok5yFz7gKHYjVKDwIfOhB
+	tMZsBbwbw8HW/uNzbtDxRQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724857421; x=
+	1724943821; bh=RYAedfyLuVntN+kLSt9YJMUi7beiuO1xRvYSBZFsvXM=; b=O
+	B5SN3gsPcaVFxiRH0Dvh0noSPMW8CqJd84ThysM+JgmGJng1mXqe+8L+lflD0pyP
+	8GJdo9arSmgwRvNw/E0oLpcke7/qX5Qs/9TxKGJHGlMZ+5bTlC2NibNnzBxBk2T9
+	8JP4zMYjxP/eyg+aVKiT5K0P3tVVG9KrbhsJXM36srrScy4ehFZvL9dp4Eddh5hd
+	foBLgGtCffKsL8iw8rVAttNLe74DCmt4sfsxcXSdsa73FryC1kEuCDnzyRDBZ7XQ
+	VWhQbw6scUr0C1z9ytY6BhayZR2XO4rh79yb29qtoP5loiKInv18ailaOoM4yQeo
+	NPGUqOtIf/PL6hgqNviqg==
+X-ME-Sender: <xms:TDzPZhGBaB3uh8vwe2vr3vSCti0f-UyCYY_lIO2ifrhJNm2b_Apvqg>
+    <xme:TDzPZmVWFmuSlRE5GG39TL825SXCOtR2eeOtC_aabX6hzN40Sd1yGTHBjp6zy42SW
+    oywnthVG-WxwG8UDUM>
+X-ME-Received: <xmr:TDzPZjLfndxBlea6C5s-dV3taf-OFjdydTE-5Xe7WmoVGsSEhg029zWRTAZA0L9Gq7Q2bD2ajz0XMRB0yEYIkoluCe9URskiXw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudefvddgkedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdej
+    necuhfhrohhmpefpihhklhgrshcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhoug
+    gvrhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrshgvqeenucggtffrrght
+    thgvrhhnpeefhfellefhffejgfefudfggeejlefhveehieekhfeulefgtdefueehffdtvd
+    elieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehn
+    ihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrsh
+    gvpdhnsggprhgtphhtthhopeduhedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
+    phgruhhlrdgsrghrkhgvrhdrtghtsegsphdrrhgvnhgvshgrshdrtghomhdprhgtphhtth
+    hopehsrdhshhhthihlhihovhesohhmphdrrhhupdhrtghpthhtohepuggrvhgvmhesuggr
+    vhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrd
+    gtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehp
+    rggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnh
+    drtghhpdhrtghpthhtohepsghijhhurdgurghsrdhjiiessghprdhrvghnvghsrghsrdgt
+    ohhmpdhrtghpthhtoheptghlrghuughiuhdrsggviihnvggrrdhujhessghprdhrvghnvg
+    hsrghsrdgtohhm
+X-ME-Proxy: <xmx:TDzPZnFguihRVYpr9m4yCUze_O1GyGrzvOM7uSJ0zZKaRs7-TaelNg>
+    <xmx:TDzPZnVacOxINjom0KDrDkn8GBMUvDhfmzjDMCtx3wriv_DVWksOXg>
+    <xmx:TDzPZiM-3vckoPVg23pKE6l8WHrXkvHo-PCGYcfI3s_LsZKPgjLJJw>
+    <xmx:TDzPZm14VUr3C7w0sFlH8_wFQViRI55aKzEwfQMvexQ4sdxe9FBajw>
+    <xmx:TTzPZgWL2gAl33M_n1wdxhySEdjXuDSiJFhGyhdmj-Foqo6EZP5uKrYs>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 28 Aug 2024 11:03:39 -0400 (EDT)
+Date: Wed, 28 Aug 2024 17:03:37 +0200
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Paul Barker <paul.barker.ct@bp.renesas.com>
+Cc: Sergey Shtylyov <s.shtylyov@omp.ru>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew@lunn.ch>, Biju Das <biju.das.jz@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Mitsuhiro Kimura <mitsuhiro.kimura.kc@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [net PATCH v2 2/2] net: ravb: Fix R-Car RX frame size limit
+Message-ID: <20240828150337.GA3306821@ragnatech.se>
+References: <20240828102226.223-1-paul.barker.ct@bp.renesas.com>
+ <20240828102226.223-3-paul.barker.ct@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="m2irlymd8u+CRXoQ"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240828-topic-amlogic-upstream-bindings-fixes-audio-snd-card-v2-0-58159abf0779@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240828102226.223-3-paul.barker.ct@bp.renesas.com>
 
+Hi Paul,
 
---m2irlymd8u+CRXoQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for your work.
 
-On Wed, Aug 28, 2024 at 03:53:53PM +0200, Neil Armstrong wrote:
-> Following an off-list discution with Jerome about fixing the following
-> DTBs check errors:
->     sound: Unevaluated properties are not allowed ('assigned-clock-parent=
-s', 'assigned-clock-rates', 'assigned-clocks' were unexpected)
->         from schema $id: http://devicetree.org/schemas/sound/amlogic,axg-=
-sound-card.yaml#
->     sound: Unevaluated properties are not allowed ('assigned-clock-parent=
-s', 'assigned-clock-rates', 'assigned-clocks' were unexpected)
->         from schema $id: http://devicetree.org/schemas/sound/amlogic,gx-s=
-ound-card.yaml#
->     sound: 'anyOf' conditional failed, one must be fixed:
->         'clocks' is a required property
->         '#clock-cells' is a required property
->         from schema $id: http://devicetree.org/schemas/clock/clock.yaml#
->=20
-> It has been agreed documenting the clock in the sound card is a better so=
-lution
-> than moving them to a random clock controller or consumer node which is n=
-ot
-> related to the actual meaning of those root frequencies.
->=20
-> The patchset adds the clocks proprty to the bindings and finally adds the
-> properties to the DT files.
->=20
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+On 2024-08-28 11:22:26 +0100, Paul Barker wrote:
+> The RX frame size limit should not be based on the current MTU setting.
+> Instead it should be based on the hardware capabilities.
+> 
+> Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
+> Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
---m2irlymd8u+CRXoQ
-Content-Type: application/pgp-signature; name="signature.asc"
+> ---
+>  drivers/net/ethernet/renesas/ravb_main.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> index 471a68b0146e..b103632de4d4 100644
+> --- a/drivers/net/ethernet/renesas/ravb_main.c
+> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+> @@ -555,8 +555,10 @@ static void ravb_emac_init_gbeth(struct net_device *ndev)
+>  
+>  static void ravb_emac_init_rcar(struct net_device *ndev)
+>  {
+> +	struct ravb_private *priv = netdev_priv(ndev);
+> +
+>  	/* Receive frame limit set register */
 
------BEGIN PGP SIGNATURE-----
+I wonder if we also should expand this comment to explain the addition 
+of ETH_FCS_LEN, I have to look this up every time :-) How would you feel 
+about adding something like?
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZs88MAAKCRB4tDGHoIJi
-0mjhAQDnSlMChubzH0189CmvK9fFj4PZMmpTw44594t+DOABhQD/RjBwMvnhYOXP
-VRtcQF5BBGyx6BDxa1eaamYHy44Vewo=
-=lI7+
------END PGP SIGNATURE-----
+    /* Set receive frame length
+     *
+     * The length set here described the frame from the destination 
+     * address up to and including the CRC data. However only the frame 
+     * data, exuding the CRC, are transferred to memory. To allow for 
+     * the largest frames add the CRC length to the maximum Rx 
+     * descriptor size.
+     */
 
---m2irlymd8u+CRXoQ--
+> -	ravb_write(ndev, ndev->mtu + ETH_HLEN + VLAN_HLEN + ETH_FCS_LEN, RFLR);
+> +	ravb_write(ndev, priv->info->rx_max_frame_size + ETH_FCS_LEN, RFLR);
+>  
+>  	/* EMAC Mode: PAUSE prohibition; Duplex; RX Checksum; TX; RX */
+>  	ravb_write(ndev, ECMR_ZPF | ECMR_DM |
+> -- 
+> 2.43.0
+> 
+
+-- 
+Kind Regards,
+Niklas Söderlund
 
