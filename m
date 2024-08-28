@@ -1,314 +1,119 @@
-Return-Path: <linux-kernel+bounces-304219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3908961C0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:24:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DC4D961C15
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:25:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B8AB284C71
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 02:24:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ACD3284DB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 02:25:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E19912EBE9;
-	Wed, 28 Aug 2024 02:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A6612C52E;
+	Wed, 28 Aug 2024 02:24:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DuJ/6eA4"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b9Bmt1JR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30B883A18;
-	Wed, 28 Aug 2024 02:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF74481B3;
+	Wed, 28 Aug 2024 02:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724811845; cv=none; b=drSUJqJylCYwFrDU55MnsWe9uqew/TmMigwVNGd1nhE//RLRKZsIvV87E3F0ELBp71WS+5RLRoh9jdP/2KweEaPvYM33IuJ6Nq4373xyYXNDmB/ug/fRSctJTIfrtQaO9vB0bhhKjAESG9vldVbViCrU3x2DA2f76YrniROWxTU=
+	t=1724811875; cv=none; b=U8N+6m44nYBDymuCksiX2gGrS/veRxwo+sIsFI+w34CAr7NoOm6HGtwJQMLnx85/n4lEMykJy4081/jTgez4R5FQuyYfij+YlSNg3bWMszRzMFN3m9Ovqbwr7Eje9LK6ndEzkn9GbW4dkRItM7tqcfMfCUqR79Amn1C15KJeEo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724811845; c=relaxed/simple;
-	bh=bZWLFjys3NIGBzgcT2U9dkvDvvCcmWI1KgUXIFSEGGg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=f7ggyuv3KVEH/vXd0LKrEp/HEohSj3czLvIofj2W6LBlm+H685MnhG1scDtkBl+wMtlAUB+wHY5bqltJBbQTTxODYkGZgPWKdLlZPACIItEd5C5oU6YJJYI3+xOkadpIQV5tMTQCFW2HdiGtg+Ed06ocdSuTcaVNlVt1mydp/Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DuJ/6eA4; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2d3b36f5366so4418038a91.0;
-        Tue, 27 Aug 2024 19:24:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724811843; x=1725416643; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Apcvyw1xq4hJ3a5464uCDyi79f8hZvk4+hLSTzZliGg=;
-        b=DuJ/6eA4keR7kCTYzIkN3DUq/q2Od0KgGTo6jxDhU79xrJk9PqfPOEnaR5WmDbS6Sj
-         suTmRZCTP2liufvdqL3v97mk1v6Wf1aWvHb520ZoCsV7jlOaFGFSn3+LWUNeDDN+IZcw
-         d1clo9c6Y+/DDhIlzSf10TVSmwx1sq62LX7ybK3Q1HchTE4UB9n/f1zDpYuQ0UuSAKPe
-         +ZyQe7PxgNN2c3ddwhR5TOhadGMojA7C7ArA8l76hwoQqjuMdynJ+Rz3cEEDgYYMvCP+
-         VI7zgPwhjqjjiIffaEL1dVBvcMlSxYZ+hc93wpFe7YXh0E000bAyrSDm3q6ID+3VsFkE
-         XXRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724811843; x=1725416643;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Apcvyw1xq4hJ3a5464uCDyi79f8hZvk4+hLSTzZliGg=;
-        b=hrsnBLlRxKejx7cJu6SykQUO32yHaYH/+gn0YhEcja8vDv0vTGkz0MOp5IsUB5F/LO
-         NimSywTStj9DbS1sxkBok0BksPKJFoz6q0ZXyc8Ig9rIFtTRK/eSI5qkaW78iF6lBou7
-         Upp2KvgftEmX92cWakB26mzA+gSSKT3ocelDaRq6SIIRUGFB40/qy8S2Q709+vCn1bSA
-         DS6dyzr7pFmJAk62nCsx5b7UD/FB5LkKSKwRR5yKZvIyzUFF41wQlg2c7AeozjYS91XB
-         hTEnhad09HXplHkDJy8d+G5UF6bpY2PkLCQRl5JwyAHt7yNOytB5LW7ubEIu69+Jp+ZY
-         jDsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ0G8jvyHA73fqqSq0A33TEV+GFQoMUPo7oPrw6v2qCrNESZpK3VYVmqQThWT3JwPb8ptxRe77Cf7wMpE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPFEixv9OFQqyafYPcDl3s0RZoj4WfoL1EFJE6jcMF5cvHmIGj
-	Wu98FjDZRCs7riF7Kt9qNwjZHhGmVQIT9LgiCXga1p2q78zoEiCV
-X-Google-Smtp-Source: AGHT+IEgLe/H8gVjxowQ17a3WJxHaMd6VDZzYcc2jhxPLwTa+4yBu4mDNVV0J+9RTZI0T0knV9QGIw==
-X-Received: by 2002:a17:90b:180f:b0:2d3:d414:4511 with SMTP id 98e67ed59e1d1-2d8440eb8bdmr786382a91.24.1724811843173;
-        Tue, 27 Aug 2024 19:24:03 -0700 (PDT)
-Received: from localhost.localdomain ([205.204.117.122])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8445db943sm270469a91.9.2024.08.27.19.24.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 19:24:02 -0700 (PDT)
-From: Wardenjohn <zhangwarden@gmail.com>
-To: jpoimboe@kernel.org,
-	mbenes@suse.cz,
-	jikos@kernel.org,
-	pmladek@suse.com,
-	joe.lawrence@redhat.com
-Cc: live-patching@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wardenjohn <zhangwarden@gmail.com>
-Subject: [PATCH v4 2/2] livepatch: Add using attribute to klp_func for using function show
-Date: Wed, 28 Aug 2024 10:23:50 +0800
-Message-Id: <20240828022350.71456-3-zhangwarden@gmail.com>
-X-Mailer: git-send-email 2.37.3
-In-Reply-To: <20240828022350.71456-1-zhangwarden@gmail.com>
-References: <20240828022350.71456-1-zhangwarden@gmail.com>
+	s=arc-20240116; t=1724811875; c=relaxed/simple;
+	bh=tbhzQ1da3mBVV060Og29QANn1s4vz5Vd4ovZ/NNJcUg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=u5aEUoWvDmUqMs0c9BmJSCKrEw+/wJAr7ybcv8sT+gvqIQKl9lsaDWM9uv5QiqmW0ZIm/DuwNNPw3IBHY+5s4uggJx4wNcUdkHrCVgIa2ITWA7PiQ6E5lg+bpWScRzmL2nWCUogKSgh2eZKnjnnKRlXxYc+CcIfyphh1JrstlV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9Bmt1JR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E784C4FEE9;
+	Wed, 28 Aug 2024 02:24:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724811874;
+	bh=tbhzQ1da3mBVV060Og29QANn1s4vz5Vd4ovZ/NNJcUg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=b9Bmt1JRKFBCrnIFqkRTsrtV2UxALLlwq9vjsa8mb6ADifsmdWpQkF6hV/RYp8vQA
+	 KnlrsUZWHHrZTtadELynyygYzNgxIL5XjiYXqvsDF4WjDbVNdoVWcjeJP/CMV5jE+5
+	 zHY1WzE7dhEgfg1nYdKdE+Kss/9anIAQAvEtqTsmXn5d1UFI9SFv6kPJc99SCMRNQM
+	 e5zmbEEJvj2B7cIjhKHtljG3nSZ00UtlbSdrVtBkmpzbQotM4l2h2mL+SWEBBmpQt7
+	 JSmguwlN4ydS894ghDp569iFgNhfAjPbkNp3FHOMAwrnt4gmuwMvVn9FUd04rX88Ko
+	 f0IMC8yARB4lw==
+Date: Tue, 27 Aug 2024 19:24:31 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
+ <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, Ivan
+ Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
+ <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>,
+ Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
+ <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, Herbert
+ Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, Willem
+ de Bruijn <willemdebruijn.kernel@gmail.com>, "=?UTF-8?B?QmrDtnJuIFTDtnBl?=
+ =?UTF-8?B?bA==?=" <bjorn@kernel.org>, Magnus Karlsson
+ <magnus.karlsson@intel.com>, Maciej Fijalkowski
+ <maciej.fijalkowski@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>, "Christian =?UTF-8?B?S8O2bmln?="
+ <christian.koenig@amd.com>, Pavel Begunkov <asml.silence@gmail.com>, David
+ Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin
+ <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, Harshitha
+ Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi
+ <pkaligineedi@google.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Christoph
+ Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>,
+ Taehee Yoo <ap420073@gmail.com>, linux-mm@kvack.org, Matthew Wilcox
+ <willy@infradead.org>
+Subject: Re: [PATCH net-next v22 05/13] page_pool: devmem support
+Message-ID: <20240827192431.7145b06e@kernel.org>
+In-Reply-To: <20240825041511.324452-6-almasrymina@google.com>
+References: <20240825041511.324452-1-almasrymina@google.com>
+	<20240825041511.324452-6-almasrymina@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-One system may contains more than one livepatch module. We can see
-which patch is enabled. If some patches applied to one system
-modifing the same function, livepatch will use the function enabled
-on top of the function stack. However, we can not excatly know
-which function of which patch is now enabling.
+On Sun, 25 Aug 2024 04:15:03 +0000 Mina Almasry wrote:
+> +	/* Assume net_iov are on the preferred node without actually
+> +	 * checking...
+> +	 *
+> +	 * This check is only used to check for recycling memory in the page
+> +	 * pool's fast paths. Currently the only implementation of net_iov
+> +	 * is dmabuf device memory. It's a deliberate decision by the user to
+> +	 * bind a certain dmabuf to a certain netdev, and the netdev rx queue
+> +	 * would not be able to reallocate memory from another dmabuf that
+> +	 * exists on the preferred node, so, this check doesn't make much sense
+> +	 * in this case. Assume all net_iovs can be recycled for now.
+> +	 */
 
-This patch introduce one sysfs attribute of "using" to klp_func.
-For example, if there are serval patches  make changes to function
-"meminfo_proc_show", the attribute "enabled" of all the patch is 1.
-With this attribute, we can easily know the version enabling belongs
-to which patch.
+This is probably a bit too verbose, and we shouldn't talk about dmabuf
+specifically:
 
-The "using" is set as three state. 0 is disabled, it means that this
-version of function is not used. 1 is running, it means that this
-version of function is now running. -1 is unknown, it means that
-this version of function is under transition, some task is still
-chaning their running version of this function.
+	/* NUMA node preference only makes sense if we're allocating
+	 * system memory. Memory providers (which give us net_iovs)
+	 * choose for us.
+	 */
 
-cat /sys/kernel/livepatch/<patch1>/<object1>/<function1,sympos>/using -> 0
-means that the function1 of patch1 is disabled.
+Some of the code moves could be a separate patch, but either way:
 
-cat /sys/kernel/livepatch/<patchN>/<object1>/<function1,sympos>/using -> 1
-means that the function1 of patchN is enabled.
-
-cat /sys/kernel/livepatch/<patchN>/<object1>/<function1,sympos>/using -> -1
-means that the function1 of patchN is under transition and unknown.
-
-Signed-off-by: Wardenjohn <zhangwarden@gmail.com>
-
-diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
-index d874aecc817b..5a6bacebd66f 100644
---- a/include/linux/livepatch.h
-+++ b/include/linux/livepatch.h
-@@ -57,6 +57,7 @@ struct klp_ops {
-  * @nop:        temporary patch to use the original code again; dyn. allocated
-  * @patched:	the func has been added to the klp_ops list
-  * @transition:	the func is currently being applied or reverted
-+ * @using:      the func is on top of the function stack that is using
-  *
-  * The patched and transition variables define the func's patching state.  When
-  * patching, a func is always in one of the following states:
-@@ -72,6 +73,12 @@ struct klp_ops {
-  *   patched=1 transition=1: patched, may be visible to some tasks
-  *   patched=0 transition=1: unpatched, temporary ending state
-  *   patched=0 transition=0: unpatched
-+ *
-+ * 'using' flag is used to show if this function is now using
-+ *
-+ *   using=-1 (unknown): the function is now under transition
-+ *   using=1  (using):   the function is now running
-+ *   using=0  (not used): the function is not used
-  */
- struct klp_func {
- 	/* external */
-@@ -96,6 +103,7 @@ struct klp_func {
- 	bool nop;
- 	bool patched;
- 	bool transition;
-+	int using;
- };
- 
- struct klp_object;
-diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index e4572bf34316..bc1b2085e3c5 100644
---- a/kernel/livepatch/core.c
-+++ b/kernel/livepatch/core.c
-@@ -349,6 +349,7 @@ int klp_apply_section_relocs(struct module *pmod, Elf_Shdr *sechdrs,
-  * /sys/kernel/livepatch/<patch>/<object>
-  * /sys/kernel/livepatch/<patch>/<object>/patched
-  * /sys/kernel/livepatch/<patch>/<object>/<function,sympos>
-+ * /sys/kernel/livepatch/<patch>/<object>/<function,sympos>/using
-  */
- static int __klp_disable_patch(struct klp_patch *patch);
- 
-@@ -470,6 +471,22 @@ static struct attribute *klp_object_attrs[] = {
- };
- ATTRIBUTE_GROUPS(klp_object);
- 
-+static ssize_t using_show(struct kobject *kobj,
-+				struct kobj_attribute *attr, char *buf)
-+{
-+	struct klp_func *func;
-+
-+	func = container_of(kobj, struct klp_func, kobj);
-+	return sysfs_emit(buf, "%d\n", func->using);
-+}
-+
-+static struct kobj_attribute using_kobj_attr = __ATTR_RO(using);
-+static struct attribute *klp_func_attrs[] = {
-+	&using_kobj_attr.attr,
-+	NULL,
-+};
-+ATTRIBUTE_GROUPS(klp_func);
-+
- static void klp_free_object_dynamic(struct klp_object *obj)
- {
- 	kfree(obj->name);
-@@ -631,6 +648,7 @@ static void klp_kobj_release_func(struct kobject *kobj)
- static const struct kobj_type klp_ktype_func = {
- 	.release = klp_kobj_release_func,
- 	.sysfs_ops = &kobj_sysfs_ops,
-+	.default_groups = klp_func_groups,
- };
- 
- static void __klp_free_funcs(struct klp_object *obj, bool nops_only)
-@@ -775,6 +793,7 @@ static int klp_init_func(struct klp_object *obj, struct klp_func *func)
- 	INIT_LIST_HEAD(&func->stack_node);
- 	func->patched = false;
- 	func->transition = false;
-+	func->using = 0;
- 
- 	/* The format for the sysfs directory is <function,sympos> where sympos
- 	 * is the nth occurrence of this symbol in kallsyms for the patched
-diff --git a/kernel/livepatch/patch.c b/kernel/livepatch/patch.c
-index 8ab9c35570f4..5138cedfcfaa 100644
---- a/kernel/livepatch/patch.c
-+++ b/kernel/livepatch/patch.c
-@@ -134,6 +134,7 @@ static void notrace klp_ftrace_handler(unsigned long ip,
- static void klp_unpatch_func(struct klp_func *func)
- {
- 	struct klp_ops *ops;
-+	struct klp_func *stack_top_func;
- 
- 	if (WARN_ON(!func->patched))
- 		return;
-@@ -160,6 +161,10 @@ static void klp_unpatch_func(struct klp_func *func)
- 		kfree(ops);
- 	} else {
- 		list_del_rcu(&func->stack_node);
-+		// the previous function is deleted, the stack top is under transition
-+		stack_top_func = list_first_entry(&ops->func_stack, struct klp_func,
-+							stack_node);
-+		stack_top_func->using = -1;
- 	}
- 
- 	func->patched = false;
-@@ -168,6 +173,7 @@ static void klp_unpatch_func(struct klp_func *func)
- static int klp_patch_func(struct klp_func *func)
- {
- 	struct klp_ops *ops;
-+	struct klp_func *stack_top_func;
- 	int ret;
- 
- 	if (WARN_ON(!func->old_func))
-@@ -219,10 +225,16 @@ static int klp_patch_func(struct klp_func *func)
- 
- 		func->ops = ops;
- 	} else {
-+		// stack_top_func is going to be in transition
-+		stack_top_func = list_first_entry(&ops->func_stack, struct klp_func,
-+							stack_node);
-+		stack_top_func->using = -1;
-+		// The new patched function is the one enabling
- 		list_add_rcu(&func->stack_node, &ops->func_stack);
- 	}
- 
- 	func->patched = true;
-+	func->using = -1;
- 
- 	return 0;
- 
-diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
-index d9a3f9c7a93b..365dac635efe 100644
---- a/kernel/livepatch/transition.c
-+++ b/kernel/livepatch/transition.c
-@@ -90,8 +90,9 @@ static void klp_synchronize_transition(void)
- static void klp_complete_transition(void)
- {
- 	struct klp_object *obj;
--	struct klp_func *func;
-+	struct klp_func *func, *next_func, *stack_top_func;
- 	struct task_struct *g, *task;
-+	struct klp_ops *ops;
- 	unsigned int cpu;
- 
- 	pr_debug("'%s': completing %s transition\n",
-@@ -119,9 +120,39 @@ static void klp_complete_transition(void)
- 		klp_synchronize_transition();
- 	}
- 
--	klp_for_each_object(klp_transition_patch, obj)
--		klp_for_each_func(obj, func)
--			func->transition = false;
-+	/*
-+	 * The transition patch is finished. The stack top function is now truly
-+	 * running. The previous function should be set as 0 as none task is
-+	 * using this function anymore.
-+	 *
-+	 * If this is a patching patch, all function is using.
-+	 * if this patch is unpatching, all function of the func stack top is using
-+	 */
-+	if (klp_target_state == KLP_TRANSITION_PATCHED) {
-+		klp_for_each_object(klp_transition_patch, obj) {
-+			klp_for_each_func(obj, func) {
-+				func->using = 1;
-+				func->transition = false;
-+				next_func = list_entry_rcu(func->stack_node.next,
-+								struct klp_func, stack_node);
-+				if (&func->stack_node != &func->ops->func_stack)
-+					next_func->using = 0;
-+			}
-+		}
-+	} else {
-+		// for the unpatch func, if ops exist, the top of this func is using
-+		klp_for_each_object(klp_transition_patch, obj) {
-+			klp_for_each_func(obj, func) {
-+				func->transition = false;
-+				ops = func->ops;
-+				if (ops) {
-+					stack_top_func = list_first_entry(&ops->func_stack,
-+							struct klp_func, stack_node);
-+					stack_top_func->using = 1;
-+				}
-+			}
-+		}
-+	}
- 
- 	/* Prevent klp_ftrace_handler() from seeing KLP_TRANSITION_IDLE state */
- 	if (klp_target_state == KLP_TRANSITION_PATCHED)
--- 
-2.18.2
-
+Acked-by: Jakub Kicinski <kuba@kernel.org>
 
