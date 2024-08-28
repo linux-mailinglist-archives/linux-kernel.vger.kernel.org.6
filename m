@@ -1,261 +1,246 @@
-Return-Path: <linux-kernel+bounces-304234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86F7F961C5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:48:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF2F0961C62
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABA191C22858
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 02:48:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EECC284E57
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 02:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6555E482EB;
-	Wed, 28 Aug 2024 02:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008EF12CD8B;
+	Wed, 28 Aug 2024 02:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K7gkumkt"
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=digi.com header.i=@digi.com header.b="TgLtbNGN"
+Received: from outbound-ip8b.ess.barracuda.com (outbound-ip8b.ess.barracuda.com [209.222.82.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0867D12EBE9
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 02:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724813309; cv=none; b=upVFRKwPNSlyR0hvIsYXVSPHP7Lxi4UMDpt+Mvi/i6oIAUI8r1nO642f6H+2DrNxiH2BEcuDoXHVjuSKNYJvmH6X5K0TZGzCE2sKYPrBxkqD3oiZOm3jb+iPrcCXv2HLxcM8bIilEpUMiRtuXTMtYM5WJ+exTOxGivk1FQJIS3U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724813309; c=relaxed/simple;
-	bh=6bSPtozHQsMj/kYua0d0HBoiB8CfOYKpp3goJ+lSCCw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MYri8xHrKhv6DvczWmDFIf4mz39cz0Co5Jr1CxgfUnQRa6nXtt3Qw6RPsLNR/Q/wA7YX2/BxpTsZmjQTLMPiaDcHvo9IstKuU1mXwLXGvOibqWP+trEB95utuqs00+lQMDHACmmkbbT6liG9rCtB0VgIPWdXygdpiWVgRXQoqbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K7gkumkt; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-81f96ea9ff7so311088739f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 19:48:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724813307; x=1725418107; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=slZK3kwPJTk1YegpkiC0OGClCbpXUDIaO/7ScMP6y88=;
-        b=K7gkumktTzuavjttU2rX6S6w/hlW91G6BNwaoEz+0ChbWAgmIrskTiE7Kl6/JFyq07
-         ZI86TDdhNki2aswRL0Gnly+UMmHPONGODh6jPj8+8qTzlUDM4X5443nfPL3xRrG7HqEh
-         r+LDkSHgmA3jo3wZW5PNF+v3EGG8uUCKdy+CmxYbUC3v9zTtIoPjv0Bv2wQ8hD81n5sn
-         JIPCY5c0l4k2hhkvDLte5SOhFkUOrt3MlFDoIsW9WZnBW+ho1fcLVc9FeTbhWQg62YtZ
-         FTWD2GnWg1/ZZ96YNLrgRmipkaX21KLyZglNb7RbmyF6fuc460kST19LWD0fazPFWuUY
-         XJcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724813307; x=1725418107;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=slZK3kwPJTk1YegpkiC0OGClCbpXUDIaO/7ScMP6y88=;
-        b=m39RFQqMF2vDTQ2Z+g2yq9dYLLX1UeCEby7iw/vkDfqROPY8zgtb5SAGJokeFr4Mz4
-         vp5c86hwBW1UXGDX08/oSJP05AzI0rboooyq6makiS/Pl90mcFNlnfNtixqZqU2ucesU
-         eULHLsp0oz9s4vmwmAbCkgloUIoMUg1+adBx6chUBcY4KcF0mqbr6yIVcUJrXsgG1vNX
-         HS81BaqwOVvaRb5gNZbWAaufZVO44miN2LeeZkuEKq1/4rXCP4Nh7ZZFA3T+4YLit8zi
-         3ny+Z/qUPyI6lzi0Ro1kBsSMQ/m6yg/C/z4gS/oAafJewbkLUn3DYaoMryOK87OnPKPH
-         JCZA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGaBUGn6b/541d/BZP4JUNwiUrQnzvtcVqQx615Zbtr2yhX7CoVJbcjyyGwaYQnMdLBuPkOf1K7zoac0o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAQoZlVOfXzYIUrXC7NGf+ctGFDAdDJNQGQAYmdWXdvDMvb3st
-	RbSfxD6UuWMmnGJiX1B2HvnA+J6p3QXDkRbbnEEAfkQJFJn4G2zA
-X-Google-Smtp-Source: AGHT+IF4pbSmUMk0Q+rA+srN18cecFIGjTH7XlYmBzXh6ZUSfJGZQ92XHgexHHd1SW+m/bBnQIg/Aw==
-X-Received: by 2002:a05:6602:13c8:b0:824:d752:986 with SMTP id ca18e2360f4ac-82787387f9amr2059918539f.16.1724813306993;
-        Tue, 27 Aug 2024 19:48:26 -0700 (PDT)
-Received: from aford-System-Version.lan (c-75-72-166-104.hsd1.mn.comcast.net. [75.72.166.104])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ce71140ee6sm2838530173.170.2024.08.27.19.48.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 19:48:26 -0700 (PDT)
-From: Adam Ford <aford173@gmail.com>
-To: linux-phy@lists.infradead.org
-Cc: dominique.martinet@atmark-techno.com,
-	linux-imx@nxp.com,
-	festevam@gmail.com,
-	frieder.schrempf@kontron.de,
-	aford@beaconembedded.com,
-	Adam Ford <aford173@gmail.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	linux-kernel@vger.kernel.org
-Subject: [RFC 2/2] phy: freescale: fsl-samsung-hdmi: Support dynamic integer divider
-Date: Tue, 27 Aug 2024 21:48:02 -0500
-Message-ID: <20240828024813.1353572-2-aford173@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240828024813.1353572-1-aford173@gmail.com>
-References: <20240828024813.1353572-1-aford173@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1C0482EB;
+	Wed, 28 Aug 2024 02:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.190
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724813534; cv=fail; b=Nh7I1qB4LZZ5rElnGhzmJ5syzMXPnD1Epdnz3MvlQlRU06st9wshteIq4IaHHreDVeJr4THynXnDWW1ceNNS81H66cIIsamBrLgqnRM78pd3ruDjjYR/al4KGZpmFzry5bM5K/fJMPcFDdAu/aeDmCMfR3QIT7gN13DilQZKXHU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724813534; c=relaxed/simple;
+	bh=1JmGrimHF6dzu3D/YzZ/a69LgSBQ2PMzkb4ByI4nBqg=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 Content-Type:MIME-Version; b=YFFIQGZhbLUtAMEqi00/jF7xFsKhakskiBJDJy8goKQZlsI+1I9Ea+MQbMGNl1alHzlGXdUdJ4P0o33VDqVjuf5fnf7cGc/sO/5I3RtOMrykvfIE7YEzUj8ZnoRoIsPRZtB7af7fPOMwY2T58pflOIzF+5KYsebpdBbvwSDYkMs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digi.com; spf=pass smtp.mailfrom=digi.com; dkim=pass (2048-bit key) header.d=digi.com header.i=@digi.com header.b=TgLtbNGN; arc=fail smtp.client-ip=209.222.82.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digi.com
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2041.outbound.protection.outlook.com [104.47.57.41]) by mx-outbound17-239.us-east-2b.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Wed, 28 Aug 2024 02:51:42 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QUrFv0QSsk+6EJztW97pTBr/xO/pzvfaP2pC+7ePnb0Mvehy0JKmJkirmLpmlNBgQgDUgFh04navO0aj5ia+ajGhtcKNRGa69402mj7DbCVCxV6I7kcQ+vj7F6v+NJUfIYhYXssG4Bbfav+D8spEcjo55d2ybOjuvcb/KzJXyOHWku8GM6XBLqzE5JDrugCCukAwEQlZmTDx9qcphOqQjEZCuFTe4Gsn5MwDd1cawQUPz0OpfHlvz3BkYP8wTvP9kvdwtFyFlzgQ3KUTrEPtr7Ls3fdfAGI8A555S0YDdZfMNQzu/+w+hBoLmblPuF/Pal6NC8dE870AODutNIl7Ag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=q0Sa4Pg8E8QRxSnVNpNp/+bEUK3YZaGJYw4Uexnw3kM=;
+ b=XG87NK9/PMxSOvCtnjzw9hVtMB3+YmhPeJI1a6lZURFMNAQhIDQk43I0pi5rTjcjeF+U360VazvHq2U2kDL4JYwmBs01NPoZIjKI8hS+exARO61jmcNaH0VS26Zh1rRL6oUJU+17c9blEMpGNzB4acvPowVMqtAR9uRzU4Aj6IeQyOceSmXZtdOSAMPEAxCPkfDkc+QgdhezCkBNCYP8O9NOeR1aBueHzZtlWyNBu+Q5nf0mtNuQVTp2dscokaT1V6ZB3mQbC0HucFywugoFfj+3mLgwJDFCAHEb3ylIgeTYayxcGSOJ66G/QvJxKZG81lVSaq9ClD0rcqarAI2iwQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=digi.com; dmarc=pass action=none header.from=digi.com;
+ dkim=pass header.d=digi.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digi.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=q0Sa4Pg8E8QRxSnVNpNp/+bEUK3YZaGJYw4Uexnw3kM=;
+ b=TgLtbNGNL9pPfnRyHYbJGBc7mtRMp09lOjPK+H9fJ6cceXvgGuSmi3L6QiGBQw/DZ2v0/EnxlSB8ECEkqvIWEVxtaaciRKUOkM7THLkQP8JM5wX+pPVyrGphBVxRvbXqL/hvdXGliWdtLh87ayqUuVusZEpVyRzdlxB1sMgyKfXox9rXQDNs3Ux6DBhZaZF8CA9P9HzlExAZ5Pu/Sz37gKNsVDGD0eO5ovqaSW8E2sWK32SoqX7O0PUKNFpYV1uXUXmBHOzrRH3cI+jvv1CficMwSnUMxrTOiFdbU8xMnrFe8YSSzJVZJRswc5v1727KmD4nLzSdBmNKLpuZnQZmFA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=digi.com;
+Received: from DS0PR10MB6918.namprd10.prod.outlook.com (2603:10b6:8:136::8) by
+ DS0PR10MB7128.namprd10.prod.outlook.com (2603:10b6:8:dd::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7918.14; Wed, 28 Aug 2024 02:51:39 +0000
+Received: from DS0PR10MB6918.namprd10.prod.outlook.com
+ ([fe80::3697:c0ef:caee:24ae]) by DS0PR10MB6918.namprd10.prod.outlook.com
+ ([fe80::3697:c0ef:caee:24ae%5]) with mapi id 15.20.7918.017; Wed, 28 Aug 2024
+ 02:51:38 +0000
+Date: Wed, 28 Aug 2024 12:51:24 +1000 (AEST)
+From: David Leonard <David.Leonard@digi.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+cc: linux-arm-kernel@lists.infradead.org, Dong Aisheng <aisheng.dong@nxp.com>, 
+    Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, 
+    Jacky Bai <ping.bai@nxp.com>, 
+    Pengutronix Kernel Team <kernel@pengutronix.de>, 
+    Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+    Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+    Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
+    devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] dt-bindings: pinctrl: Add fsl,ls1012a-pinctrl yaml
+ file
+In-Reply-To: <6ddcd97d-7d60-8e4f-fede-42bf7f99e2b0@digi.com>
+Message-ID: <557150a3-aef5-40e7-d656-73ca6bba5857@digi.com>
+References: <a5c1eef7-372d-082b-066e-ecd5e001d1cf@digi.com> <pywfy4ypttq7y2llfkdgkwgpjfvnzk3lcgd67efp2v6qu6f2it@fdgiw5pac7uz> <f682476b-f7af-0d66-7105-1d064f5f1739@digi.com> <db12d221-d3b1-4df5-91e4-d31fb0acdb8b@kernel.org>
+ <6ddcd97d-7d60-8e4f-fede-42bf7f99e2b0@digi.com>
+Organization: Opengear Digi
+Content-Type: text/plain; charset=US-ASCII; format=flowed
+X-ClientProxiedBy: SY5P282CA0103.AUSP282.PROD.OUTLOOK.COM
+ (2603:10c6:10:204::9) To DS0PR10MB6918.namprd10.prod.outlook.com
+ (2603:10b6:8:136::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR10MB6918:EE_|DS0PR10MB7128:EE_
+X-MS-Office365-Filtering-Correlation-Id: 07222197-3b4c-43a9-3f07-08dcc70c5698
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?GDBjq0NO5axn8TsIVe1iuO0sBieQEj0yrA0w2h0K8yVZktov5hoHAb2T20rF?=
+ =?us-ascii?Q?WcNOjMri2gN2VTh7o0SUIBXfqE7gP1lpjbIRCofAIMowfHkkhRP5DPDv2CFi?=
+ =?us-ascii?Q?/miQeIZ/gBNIWV2det4P+Z3Hf9YqU3ovrRmD6LZLjcB7lxFWdDDc72187Ur2?=
+ =?us-ascii?Q?CxpgVyiHehcXAAtkRotriGP257ZVvV8sa3yS+0IM/GJ4fYLHhUaG9/f5t1Ov?=
+ =?us-ascii?Q?u/5YbHw+/6S4mmjKuToyzk5hPY+jfuNOkiNEvogRjy6u0K9fCG6cSMwVE2YN?=
+ =?us-ascii?Q?wjnA0V7O/iJ4rAD+Xie/q4hNOaFiKBQ8UMdV0k5LwkPnCJ1eNDp03/VhEll8?=
+ =?us-ascii?Q?UgubhNdErSknmBNnwpycyx2HpKXLihD9ecMhdaUCOd/8jVbzivUDM4MqA9UK?=
+ =?us-ascii?Q?6DAu87TYCBz7E7J4YgbgdtL2oNORNj/xAg5l2myRMVGWotAF+naCLdAoJYOb?=
+ =?us-ascii?Q?y/xadsWjCgBuFBZxLDZxiFGgoDVyQw+fxZ4UtDgIxXribBiRXYkd/CyRrmFM?=
+ =?us-ascii?Q?dKU4BxO+Np4pzLE48NgJ1DSVw+FzG2PqysuJsKiXEgk1/Bhfp85yqSZ9Fx80?=
+ =?us-ascii?Q?RkpNBHpEgJF3VQ9WneqvE8jIH38z7a8fIb1HvDDdRk9HhKXv8Ay/mpQhWXzY?=
+ =?us-ascii?Q?i1bRq8id/xx9cjuOD3dYlB4gMUlFg8TtYq3r23CN8eE8zQHceETJC1MyJIYW?=
+ =?us-ascii?Q?HC6DpZGUwzkPR5EQcvjaX2Tz81d9xjB2UeeMXI9enu8GeR/ApMhDFqGBMZ/r?=
+ =?us-ascii?Q?5fvB8w4BdJGF6WdTWUWJTBo1DVXyLjPdmlw3hRQe00f1OllQx6sTbGed/HJs?=
+ =?us-ascii?Q?gs0zcNmaliUVuzFr7InR+EhWlG+WunA/1BV59P+u6YsecguNwFHgK1WlHWkd?=
+ =?us-ascii?Q?M4B617HXnSpTbbVlhOi6H1aO/sKtzjN9PjJKBnswuCfr0rrALesdao+iuE+P?=
+ =?us-ascii?Q?cy/bqM8fltvElnrELwmWNyJuWzLFUk4YpdSWnYimB/FgqyG1WEMq6ofYGzxn?=
+ =?us-ascii?Q?GM6LezjIOPhdtl5DD0ppwHrvOMsP2aHeMEruzKQho3rOztW7Lr3azuDV/wuL?=
+ =?us-ascii?Q?VsXviCnmpcqVUO3WSKaHHpjFHWNmbUXMsQxjh2SipBEK8nPBMOVG9H7+hbLR?=
+ =?us-ascii?Q?IELD9dEUqC3PqY9hUEBMRbbXWqQBNwH8rIITMSo/UHSSmb5VIbzw/xDFeJjV?=
+ =?us-ascii?Q?cIp6KKPQMlfiyi9wY5t4lFkVQyuYeB+NZML3mb5RuZ3jyysnqvn9lC5Sg26R?=
+ =?us-ascii?Q?wP/C8WsMwZF1urnzwckXjrQETbde2t+YuR6xz8PZoxDvnBfQS8jFGb52P8Iu?=
+ =?us-ascii?Q?KTY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB6918.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?e6lQH9x7uOktCgeVOq9xscM2cauihOZMhsAVPxK6tgbr3cXuMkeyogfLlEmR?=
+ =?us-ascii?Q?VS931BtgPoJS6KttMNjmuvBRy66UcrUcEqXaNfC2WrgduiQKgNU/TkOZrWwR?=
+ =?us-ascii?Q?f6PwgO0qDi1/o8nydXRCGkxjm7FMzfuWarHiHZ8AU67nVREHHnAOqLBIlL/c?=
+ =?us-ascii?Q?nQa9K8V14NubwGQBzLVucoiUxfGITsdcCkt7gcGRLbPIZ3RiSzbzuf6SNOy9?=
+ =?us-ascii?Q?p0U2aSeKv7gX1ywqEyMQnEZnplsSgt75fWvUH0rGa2OQI63qy85mEL7FuwGf?=
+ =?us-ascii?Q?lUuN3Rf9ZWJAtGHNOyBVTBtQ/5b8kxjhbefe5RVAwt5Y8JMs6tAdipVmBFhM?=
+ =?us-ascii?Q?RM3Zwa7msKtDZ18wtLcXfKeEdAtwSSs/9u1XPhXl2qbw/rX2de/4OUJmfGpA?=
+ =?us-ascii?Q?56Ik4MxlKs2z6Y0Wg12R6sbbS1DPdS6KWZXbtVa8qZlNlfotzCvOr/4ZWV/N?=
+ =?us-ascii?Q?FBPEY1tnkCxp5+XssgkqrtW8rtIdfmpbXIx7JbrmNEilWujgza5zQbi+syg1?=
+ =?us-ascii?Q?jT9siT4cnXMNxCAAVLA0tk7y/zsX5gQ6rQO1uEv9BoVTCns+vIFJT6OYn4zD?=
+ =?us-ascii?Q?5zRksivYmkdmkwjzuoR/AXBl3wm5tffGiWzVr0YZ/e2P9pGJhlrr+BXvfk9y?=
+ =?us-ascii?Q?gXC/f0ya65C9lmdks1S/zB6GsKqcf4rWQpwHJFbjzWkl8953Tu8l8kFN6Xhr?=
+ =?us-ascii?Q?dJtxjOnmERPUI7KghOAj604oL8T0KW+GsPywD7a0wtNRwNJMM2kgL5LkdQql?=
+ =?us-ascii?Q?g44td20EniNRRKRr3baCJhPgtZCG/D34QLQu0UrgTHDUCxvbx216RKNBMCYR?=
+ =?us-ascii?Q?nsNhLzWA2ne/W2Ht32jcv64F34bfBA0s/MHwtOaepHRbxTzPvJFLXO5mkQkm?=
+ =?us-ascii?Q?O3ijQ26WA0UjidkEAbJwPmKBaSzLtPC/VZcMpcoy9xfcxPn4DUnJDQDq+YIe?=
+ =?us-ascii?Q?Fr4V1FyV7lYM8vOa0H9Om6DFpAmzY3StpZQ4CPJulmUBzcrXzlDb4NEMeymP?=
+ =?us-ascii?Q?2QjKjIGjEgGhgaDVTB16aMh25rMwTb62e1ps2QAmsXdaqxIgQBmMs11COMg8?=
+ =?us-ascii?Q?rjU87XKOW00kxsdUb6bbAt7Z0qhh/2AJvguOF9VQEKJb2C506MHkomXd6MMJ?=
+ =?us-ascii?Q?VlOtH+VlefdAcnqTbpS0VNrV3zM6ijwM2hVJt9A18cRvp8AnVkQo8fQvNhoA?=
+ =?us-ascii?Q?tqapgiRoikHNWdjRIHx1ItH5BPV6kzH1vVJLvPQpvtrCPB/rAQTWCKcq44xS?=
+ =?us-ascii?Q?eNXFsbR3M4uZXLK37jNtiyNw0cxnGhMj/foNLkE4cq5adDp7yVZRqcyNi+Lx?=
+ =?us-ascii?Q?FPkiMF/+Ak26981wMUCMBNhnutWDUFO971cGPnP3Hv6oVb/e4+uPHAE2xs96?=
+ =?us-ascii?Q?MwRO7HZWuXxd02GvYP3UE1AfbNgg5alemwwzcK7H6rBSxFyWGrj9LxzMVP6g?=
+ =?us-ascii?Q?MnsIytJBf2FtABW6SeGmBykCFuRRSTfDCkSP0Z+Mp/QGuPThCrANfhAHJueO?=
+ =?us-ascii?Q?3KPTyWWhySV55XAIaGhUDcKA/D68l0GSeFLYXQkFUthRIBJVykkcPG95oc9S?=
+ =?us-ascii?Q?QVOCDbF4Y+Y/s3KsZQ5dhe/Spe1M67aGVkjcHfAW1jlLjw2gnQKmfQGlAhb7?=
+ =?us-ascii?Q?wGMWG7yW6ou3rjt/UrHr9aID6pZTVVugXq4CW2oUk7tm?=
+X-OriginatorOrg: digi.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07222197-3b4c-43a9-3f07-08dcc70c5698
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB6918.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 02:51:38.7585
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: abb4cdb7-1b7e-483e-a143-7ebfd1184b9e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: iIv3vvKBHjT6FEuj/mMCLuvRhgKQuwdOmOL1lHWGE+ONuXXJYHkKu0LtL2PG5k9WwHeIYaf4bMi41mWqN2Y5ag==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7128
+X-BESS-ID: 1724813502-104591-14060-28549-1
+X-BESS-VER: 2019.1_20240827.1824
+X-BESS-Apparent-Source-IP: 104.47.57.41
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkYWRkZAVgZQ0CTVwtAoLdXMND
+	nNIsXMwMDI3NIiMdkwxSLFyCIt2cJYqTYWAHCIYt1BAAAA
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.258644 [from 
+	cloudscan12-18.us-east-2a.ess.aws.cudaops.com]
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------
+	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS112744 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status:1
 
-There is currently a look-up table for a variety of resolutions.
-Since the phy has the ability to dynamically calculate the values
-necessary to use the intger divider which should allow more
-resolutions without having to update the look-up-table.  If the
-integer calculator cannot get an exact frequency, it falls back
-to the look-up-table.  Because the LUT algorithm does some
-rounding, I did not remove integer entries from the LUT.
+On Wed, 28 Aug 2024, David Leonard wrote:
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
+>> OK, but I still wonder why is it here. Without it the hardware will work
+>> in little-endian?
+>
+> Well, it's here firstly because I was trying to follow a perceived convention 
+> in
+> dts/freescale/fsl,ls1012a.dtsi. That DT uses big-endian in child
+> nodes of /soc that match up with memory map tables from the datasheet.
+> (Not only do different and adjacent parts of the register map have
+> opposing endianess, some register layouts also seem to be reversed
+> bitwise, others bytewise.)
+>
+> The second reason is practical/dodgy. The pinctrl driver should logically
+> be a child of the scfg node, but the syscon driver doesn't populate its
+> child nodes. To get the pinctrl driver to work meant making it a sibling
+> node with an unsatisfactory overlap with the scfg's address region
+> 0x1570000+0x10000. (No driver binds to "fsl,ls1012a-scfg".)
 
-diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-index bc5d3625ece6..03b598f734e7 100644
---- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-+++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-@@ -16,6 +16,8 @@
- 
- #define PHY_REG(reg)		(reg * 4)
- 
-+#define REG01_PMS_P_MASK	GENMASK(3, 0)
-+#define REG03_PMS_S_MASK	GENMASK(7, 4)
- #define REG12_CK_DIV_MASK	GENMASK(5, 4)
- #define REG13_TG_CODE_LOW_MASK	GENMASK(7, 0)
- #define REG14_TOL_MASK		GENMASK(7, 4)
-@@ -31,6 +33,10 @@
- 
- #define PHY_PLL_DIV_REGS_NUM 6
- 
-+#ifndef MHZ
-+#define MHZ	(1000UL * 1000UL)
-+#endif
-+
- struct phy_config {
- 	u32	pixclk;
- 	u8	pll_div_regs[PHY_PLL_DIV_REGS_NUM];
-@@ -440,10 +446,83 @@ fsl_samsung_hdmi_phy_configure_pll_lock_det(struct fsl_samsung_hdmi_phy *phy,
- 	       phy->regs + PHY_REG(14));
- }
- 
-+static unsigned long fsl_samsung_hdmi_phy_find_pms(unsigned long fout, u8 *p, u16 *m, u8 *s)
-+{
-+	unsigned long best_freq = 0;
-+	u32 min_delta = 0xffffffff;
-+	u8 _p, best_p;
-+	u16 _m, best_m;
-+	u8 _s, best_s;
-+
-+	for (_p = 1; _p <= 11; ++_p) {
-+		for (_s = 1; _s <= 16; ++_s) {
-+			u64 tmp;
-+			u32 delta;
-+
-+			/* s must be even */
-+			if (_s > 1 && (_s & 0x01) == 1)
-+				_s++;
-+
-+			/* _s cannot be 14 per the TRM */
-+			if (_s == 14)
-+				continue;
-+
-+			/*
-+			 * TODO: Ref Manual doesn't state the range of _m
-+			 * so this should be further refined if possible.
-+			 * This range was set based on the original values
-+			 * in the look-up table
-+			 */
-+			tmp = (u64)fout * (_p * _s);
-+			do_div(tmp, 24 * MHZ);
-+			_m = tmp;
-+			if (_m < 0x30 || _m > 0x7b)
-+				continue;
-+
-+			/*
-+			 * Rev 2 of the Ref Manual states the
-+			 * VCO can range between 750MHz and
-+			 * 3GHz.  The VCO is assumed to be _m x
-+			 * the reference frequency of 24MHz divided
-+			 * by the prescaler, _p
-+			 */
-+			tmp = (u64)_m * 24 * MHZ;
-+			do_div(tmp, _p);
-+			if (tmp < 750 * MHZ ||
-+			    tmp > 3000 * MHZ)
-+				continue;
-+
-+			tmp = (u64)_m * 24 * MHZ;
-+			do_div(tmp, _p * _s);
-+
-+			delta = abs(fout - tmp);
-+			if (delta < min_delta) {
-+				best_p = _p;
-+				best_s = _s;
-+				best_m = _m;
-+				min_delta = delta;
-+				best_freq = tmp;
-+			}
-+		}
-+	}
-+
-+	if (best_freq) {
-+		*p = best_p;
-+		*m = best_m;
-+		*s = best_s;
-+	}
-+
-+	return best_freq;
-+}
-+
- static int fsl_samsung_hdmi_phy_configure(struct fsl_samsung_hdmi_phy *phy,
- 					  const struct phy_config *cfg)
- {
-+	u32 desired_clock = cfg->pixclk * 5;
-+	u32 close_freq;
- 	int i, ret;
-+	u16 m;
-+	u8 p, s;
- 	u8 val;
- 
- 	/* HDMI PHY init */
-@@ -453,11 +532,38 @@ static int fsl_samsung_hdmi_phy_configure(struct fsl_samsung_hdmi_phy *phy,
- 	for (i = 0; i < ARRAY_SIZE(common_phy_cfg); i++)
- 		writeb(common_phy_cfg[i].val, phy->regs + common_phy_cfg[i].reg);
- 
--	/* set individual PLL registers PHY_REG2 ... PHY_REG7 */
--	for (i = 0; i < PHY_PLL_DIV_REGS_NUM; i++)
--		writeb(cfg->pll_div_regs[i], phy->regs + PHY_REG(2) + i * 4);
-+	/* Using the PMS calculator alone, determine if can use integer divider */
-+	close_freq = fsl_samsung_hdmi_phy_find_pms(desired_clock, &p, &m, &s);
-+
-+	/* If the clock cannot be configured with integer divder, use the fractional divider */
-+	if (close_freq != desired_clock) {
-+		dev_dbg(phy->dev, "fsl_samsung_hdmi_phy: use fractional divider\n");
-+		/* set individual PLL registers PHY_REG2 ... PHY_REG7 */
-+		for (i = 0; i < PHY_PLL_DIV_REGS_NUM; i++)
-+			writeb(cfg->pll_div_regs[i], phy->regs + PHY_REG(2) + i * 4);
-+		fsl_samsung_hdmi_phy_configure_pixclk(phy, cfg);
-+	} else {
-+		dev_dbg(phy->dev, "fsl_samsung_hdmi_phy: use integer divider\n");
-+		dev_dbg(phy->dev, "fsl_samsung_hdmi_phy: P = %d\n", p);
-+		dev_dbg(phy->dev, "fsl_samsung_hdmi_phy: M = %d\n", m);
-+		dev_dbg(phy->dev, "fsl_samsung_hdmi_phy: S = %d\n", s);
-+		dev_dbg(phy->dev, "fsl_samsung_hdmi_phy: frequency = %u\n", close_freq);
-+
-+		/* Write integer divder values for PMS */
-+		writeb(FIELD_PREP(REG01_PMS_P_MASK, p), phy->regs + PHY_REG(1));
-+		writeb(m, phy->regs + PHY_REG(2));
-+		writeb(FIELD_PREP(REG03_PMS_S_MASK, s-1), phy->regs + PHY_REG(3));
-+
-+		/* Configure PHY to disable fractional divider */
-+		writeb(0x00, phy->regs + PHY_REG(4));
-+		writeb(0x00, phy->regs + PHY_REG(5));
-+		writeb(0x80, phy->regs + PHY_REG(6));
-+		writeb(0x00, phy->regs + PHY_REG(7));
-+
-+		writeb(REG21_SEL_TX_CK_INV | FIELD_PREP(REG21_PMS_S_MASK, s-1),
-+		       phy->regs + PHY_REG(21));
-+	}
- 
--	fsl_samsung_hdmi_phy_configure_pixclk(phy, cfg);
- 	fsl_samsung_hdmi_phy_configure_pll_lock_det(phy, cfg);
- 
- 	writeb(REG33_FIX_DA | REG33_MODE_SET_DONE, phy->regs + PHY_REG(33));
--- 
-2.43.0
+Sorry, my examples had mixed up some ls1046a with ls1012a, which
+must be confusing. Corrections follow, should the meaning have been lost:
 
+         soc {
+                 compatible = "simple-bus";
+                 #address-cells = <2>;
+                 #size-cells = <2>;
+                 ...
+
+                 scfg: scfg@1570000 {
+                         compatible = "fsl,ls1012a-scfg", "syscon";
+                         reg = <0x0 0x1570000 0x0 0x10000>;
+                         big-endian;
+                 };
+
+                 pinctrl: pinctrl@1570430 {
+                         compatible = "fsl,ls1012a-pinctrl";
+                         reg = <0x0 0x1570430 0x0 0x4>; /* SCFG PMUXCR0 */
+                         big-endian;
+                         fsl,dcfg-regmap = <&dcfg>;
+                         ...
+                 };
+         };
+
+> The better device tree would be:
+
+         soc {
+                 compatible = "simple-bus";
+                 #address-cells = <2>;
+                 #size-cells = <2>;
+                 ...
+
+                 scfg: scfg@1570000 {
+                         compatible = "fsl,ls1012a-scfg", "syscon";
+                         reg = <0x0 0x1570000 0x0 0x10000>;
+                         big-endian;
+                         #address-cells = <1>;
+                         #size-cells = <1>;
+                         ...
+
+                         pinctrl: pinctrl@430 {
+                                 compatible = "fsl,ls1012a-pinctrl";
+                                 reg = <0x430 0x4>; /* SCFG PMUXCR0 */
+                                 fsl,dcfg-regmap = <&dcfg (416/8)>;
+                                 ...
+                         };
+                 };
+         };
+
+> And this would resolve the big-endian property issue.
+>
+> There was a discussion of syscon populating its child nodes at
+> https://lore.kernel.org/lkml/1403513950.4136.34.camel@paszta.hi.pengutronix.de/T/
 
