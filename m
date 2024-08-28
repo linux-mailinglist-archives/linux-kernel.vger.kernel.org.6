@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-304565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6158B9621E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:57:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DCF59621E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:58:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2C9A1F26311
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:57:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92A381C23C5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BD215B10E;
-	Wed, 28 Aug 2024 07:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE57415B109;
+	Wed, 28 Aug 2024 07:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aeVygJH+"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YaowCfH4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27EE157481;
-	Wed, 28 Aug 2024 07:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D6515A85A;
+	Wed, 28 Aug 2024 07:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724831859; cv=none; b=SL6fBOZ0Tl8W7RocXx5emEIsP7AO4ACttZwArHnMlGi3GI+BzgxM+3XpHpxbzvb3VmtUtmDx85tAP6HjgAAkERk2qKTYqqy3eziMpuTdzN8rpn5ElblkaaI+Wqc0ffTYOty6r0cqCxV3TwhirN3SoU2lMOe9DGluZAHcXrphIf8=
+	t=1724831885; cv=none; b=fQgwpV5PARBbMcHDApYuYstWjRlJEkrkBoL7KRnkGQsKCkg52a+XedOw7PrVt0bDQ7kUepbdBeGRWaOHnN2qV9H4oMvJ0kHVzucoHvQCFcnG2mG6lU7/g9kfKKpiN/VESMt60IDXi404GHMYQeR7qCww+rr1oc8sl1fCcf4m9+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724831859; c=relaxed/simple;
-	bh=K05FAUrcORe/ubjhrV0cVi3teIVNufzeXBPHAZQoR8M=;
+	s=arc-20240116; t=1724831885; c=relaxed/simple;
+	bh=vvv2FCnY1N7fEiJiUOKwdxV1C/Cj4rSSfhnvwQz5uvY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HFScB3Gbovlr2r0GUm9kA51eUFfUtvvP9wuRfKsH3rE8AkSZYXv6lobfyuRd8bA60sgDfY+vWZGF7Zd5yOfVQzlIvTqyFJOtYtcorpWDFH+QKzxQcHoKKBPUkToKTaanX2j6Le8UnXVWMozhG7IAA0G+H/b6aULdCbP58EmxqVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aeVygJH+; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2d3dacaccfaso4316733a91.0;
-        Wed, 28 Aug 2024 00:57:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724831857; x=1725436657; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GfqHwI8DhzI+oBVoPKsWjmnloLfBOCfpckFVyP5GIik=;
-        b=aeVygJH+Fj9VOSSGpY6cVL1004ZD2yu6hl2B72riU+DkPFmZGxtfj2Ptx4Je4YcORO
-         fyRhv2xiN7YpAQrQ5Jl2yIN2BvmX/PdW/OLYCdY8dHPXLg14zg7rKtWkCcGdcCG5jljt
-         pGVz9jlbCzMsKYIS92/PErODlg+f0Mmac08iYYI6gDeUpfzYWCGiZb3qdHt3awEa9fK1
-         X3V6cQ4aosqOjotNlkCNL9kOvi/Z4HTGbxueFmBQN5o8A+IViyZagx88wShGYjLn/gli
-         NYcWvvd5Q5VqwVXEXlSs5U/IjIHMN3teM/IO/lqd6V6TWvZKrhKtRLo22b2J1PTh4XIB
-         CTzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724831857; x=1725436657;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GfqHwI8DhzI+oBVoPKsWjmnloLfBOCfpckFVyP5GIik=;
-        b=NGH4SvVl23/N41LmYPWtzim4gcmHT2PV1X7B5aMtWkBhXVXvi7c2VUSnSGMAnsyfEV
-         FtiLXgDBVTpyFH2ubzrr19SPbuPo1fgmvKiTa+fBiaX7scxxCQfUd/A+nuPGIEgkmudh
-         oVBT5H+rdUDduqDtaF24j/UOYMmIuQHYJ/901eCjc6uN0HzPcBk70BIDmTFkjPnbSAaL
-         6tdGezVDGH4E8HQZYYHt6IoA5txngSDtuZZexZl6E2j3SuByCm5HT/16uSTSAw4PLaSm
-         UZ/BozBviSyrCssXCiulF8aM6/UWq52RAvTLQm6pFfQ+zP1P6ptRjyLP0fMJ9T/K/WHg
-         ff+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUPYS1Fqx0CxFwfTpQySauaxqEPaApjIafEK+HXm0bM/IeXr1LX6QBFXR+cFACyispXEsKncGnVA6BO@vger.kernel.org, AJvYcCUc9JSJA8iS/kfs7Axz0eP7JrZPSEXAyrvQDJWuMHlcDB3kL4QKqnrhgpRu7VFmhWrK75+uagp0NmMrRzo=@vger.kernel.org, AJvYcCUh00Ln4C52Q1p+1cv1EegzeYWNNDez0meyEPyZCqb4JCxu4gmDt8NCZWj4tXsA9LK2knPUTzSDB/dx+YNf@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHXxqt4cCVNlv0WTK+fKWVhtQ47Qd070t6pPvZj0+2MH+OMgHs
-	dUrOmCaUB0g1l1iLM8V+x/OgE5NmYnpWNovgbn/ihSwC9415gS5N
-X-Google-Smtp-Source: AGHT+IFVTQ3LfaXYubmmh//jrLLb1bQzxGTiF8xttq0VDGjJnNc/pBZNhv6nCpqY0o/0dZ2GXjw0+w==
-X-Received: by 2002:a17:90a:600c:b0:2c8:da73:af82 with SMTP id 98e67ed59e1d1-2d646bb1094mr15667628a91.10.1724831856982;
-        Wed, 28 Aug 2024 00:57:36 -0700 (PDT)
-Received: from [172.19.1.53] (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d844641416sm992321a91.44.2024.08.28.00.57.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 00:57:36 -0700 (PDT)
-Message-ID: <1d2d2637-b897-4fb5-ab4e-c419c154a744@gmail.com>
-Date: Wed, 28 Aug 2024 15:57:32 +0800
+	 In-Reply-To:Content-Type; b=WaUNS4Afe0VZ8uShG33798qAAOHFutE9axB2nAjgRUB0zv12xaMViUCsA+1O0/p6D0XfVDS2WkzfK1J3DwH943Ts18pS0O2R8ygF4jYqzwxqmFFJjYhncElFtNUhq88CrOAcv7Egvmd5IlXGZr1Zpfx+2MkJ8U/O0wBN75UNVIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YaowCfH4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D58CC5813B;
+	Wed, 28 Aug 2024 07:58:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724831884;
+	bh=vvv2FCnY1N7fEiJiUOKwdxV1C/Cj4rSSfhnvwQz5uvY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YaowCfH4VPEFby947jpJv+S0/3clpZ9Fw9tRygXOxXhF/EQE0+3PONZYAarTqkqfZ
+	 46HJi7BWPONdqjSHr8YQcg2+SpAzZMVVI2m5VgNc4pNmHJKx48KAxrKTnN7ImAv14Y
+	 2m++emhGydMfGAq55Ckj6ZDhihX5wIUxpTcFNOnsqacr4SYj+9R+pmJSQjegFBIasR
+	 O6JKsGW9rStsts5yWHD8Fh9FHBP+YUIgSFBhxhRjcp0I6d/bRombcwbMcWk+sTQ4mj
+	 AJg9eknbcgFTJwWXpwow3Ajd3ugUWxj8kpVrjrJaBK1Leovrm6WeNgZMKvL3nP57/n
+	 BjBjTxYuXup3A==
+Message-ID: <10914199-1e86-4a2e-aec8-2a48cc49ef14@kernel.org>
+Date: Wed, 28 Aug 2024 09:57:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,106 +49,133 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: mtd: nuvoton,ma35d1-nand: add new
- bindings
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: richard@nod.at, vigneshr@ti.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, sumit.semwal@linaro.org, christian.koenig@amd.com,
- esben@geanix.com, linux-arm-kernel@lists.infradead.org,
- linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20240821071132.281018-1-hpchen0nvt@gmail.com>
- <20240821071132.281018-2-hpchen0nvt@gmail.com>
- <20240823182616.5a85e1ae@xps-13>
- <fd0d73cf-6bce-4f7b-9513-5f434ab9ae00@gmail.com>
- <20240828094846.166c7de6@xps-13>
+Subject: Re: [PATCH 5/6] arm64: dts: qcom: add initial support for QCS615 DTSI
+To: Lijuan Gao <quic_lijuang@quicinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, kernel@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240828-add_initial_support_for_qcs615-v1-0-5599869ea10f@quicinc.com>
+ <20240828-add_initial_support_for_qcs615-v1-5-5599869ea10f@quicinc.com>
+ <gtoz6fzmukti7mbdihsw5ycltoozhrxgery536rh6dgpcqoru2@gd27iemigqae>
+ <955c0fdc-5b04-42d6-a15d-58966c7145c4@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Hui-Ping Chen <hpchen0nvt@gmail.com>
-In-Reply-To: <20240828094846.166c7de6@xps-13>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <955c0fdc-5b04-42d6-a15d-58966c7145c4@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Dear Miquel,
-
-Thank you for your reply.
-
-
-
-On 2024/8/28 下午 03:48, Miquel Raynal wrote:
-> Hi Hui-Ping,
->
-> hpchen0nvt@gmail.com wrote on Wed, 28 Aug 2024 10:47:17 +0800:
->
->> Dear Miquèl,
->>
->> Thank you for your reply.
->>
->>
->>
->> On 2024/8/24 上午 12:26, Miquel Raynal wrote:
->>> Hi,
+On 28/08/2024 09:42, Lijuan Gao wrote:
+> 
+> 
+> 在 8/28/2024 2:23 PM, Krzysztof Kozlowski 写道:
+>> On Wed, Aug 28, 2024 at 10:02:15AM +0800, Lijuan Gao wrote:
+>>> Add initial DTSI for QCS615 SoC. It includes base description
+>>> of CPUs, interrupt-controller and cpu idle on Qualcomm QCS615
+>>> platform.
 >>>
->>> hpchen0nvt@gmail.com wrote on Wed, 21 Aug 2024 07:11:31 +0000:
->>>   
->>>> Add dt-bindings for the Nuvoton MA35 SoC NAND Controller.
->>>>
->>>> Signed-off-by: Hui-Ping Chen <hpchen0nvt@gmail.com>
->>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>> ---
->>>>    .../bindings/mtd/nuvoton,ma35d1-nand.yaml     | 93 +++++++++++++++++++
->>>>    1 file changed, 93 insertions(+)
->>>>    create mode 100644 Documentation/devicetree/bindings/mtd/nuvoton,ma35d1-nand.yaml
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/mtd/nuvoton,ma35d1-nand.yaml b/Documentation/devicetree/bindings/mtd/nuvoton,ma35d1-nand.yaml
->>>> new file mode 100644
->>>> index 000000000000..152784e73263
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/mtd/nuvoton,ma35d1-nand.yaml
->>>> @@ -0,0 +1,93 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://devicetree.org/schemas/mtd/nuvoton,ma35d1-nand.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: Nuvoton MA35D1 NAND Flash Interface (NFI) Controller
->>>> +
->>>> +maintainers:
->>>> +  - Hui-Ping Chen <hpchen0nvt@gmail.com>
->>>> +
->>>> +allOf:
->>>> +  - $ref: nand-controller.yaml#
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    enum:
->>>> +      - nuvoton,ma35d1-nand
->>> Can we please use the -nand-controller suffix. A NAND is a the common
->>> name for a chip with storage inside. You are describing a host
->>> controller that can be connected to in order to talk to a NAND.
+>>> Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
+>>> ---
+>>>   arch/arm64/boot/dts/qcom/qcs615.dtsi | 449 +++++++++++++++++++++++++++++++++++
+>>>   1 file changed, 449 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>>> new file mode 100644
+>>> index 000000000000..cf7aaa7f6131
+>>> --- /dev/null
+>>> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>>> @@ -0,0 +1,449 @@
+>>> +// SPDX-License-Identifier: BSD-3-Clause
+>>> +/*
+>>> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+>>> + */
+>>> +
+>>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+>>> +
+>>> +/ {
+>>> +	interrupt-parent = <&intc>;
+>>> +
 >>
->> Okay, I will change it to nuvoton,ma35d1-nfi.
+>> No need for blank line.
+> Well noted. Will update in the next patch.
 >>
->> Because in our platform, it is the NAND Flash Interface.
-> nfi is not an acronym that is understandable by everyone. Please use
-> -nand-controller. Don't be worried by the size of the string.
->
-> You can use the acronym as prefix for your NAND controller functions
-> though.
+>>> +	#address-cells = <2>;
+>>> +	#size-cells = <2>;
+>>> +
+>>> +	chosen { };
+>>
+>> Drop, redundant.
+> Well noted. Will update in the next patch.
+>>
+>>> +
+>>> +	clocks {
+>>> +		xo_board: xo-board {
+>>
+>> xo-clk? xo-board-clk?
+>>
+>> But if board, this does not sound like part of SoC. See other files how
+>> they do it.
+>>
+> Other files also added ‘xo_board’. The ‘xo_board’ is the clock that will 
 
-Okay, I will change it to nuvoton,ma35d1-nand-controller.
+No. Don't use 10yo code as example.
 
+> be used by other SoC nodes, such as rpmhcc. Currently, the node can be 
+> deleted as no one is using it.
 
-
-> Thanks,
-> Miquèl
+I don't think you understood the problem. This is not the property of
+SoC. We talked about this many times. DTS coding style has even explicit
+guideline for this. Your own go/upstream (which is quite well written
+and complete) probably as well. Did you check it? If there is no such,
+extend it.
 
 
 Best regards,
-
-Hui-Ping Chen
-
+Krzysztof
 
 
