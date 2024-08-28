@@ -1,132 +1,141 @@
-Return-Path: <linux-kernel+bounces-304852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 681469625CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:17:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 747DC9625D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:18:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04D9AB21D74
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:17:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A77B41C2203B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3152616DC04;
-	Wed, 28 Aug 2024 11:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD50916D4F3;
+	Wed, 28 Aug 2024 11:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dh+Kei9l"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ie1ZgaJb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7455F4D108;
-	Wed, 28 Aug 2024 11:16:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C024D108;
+	Wed, 28 Aug 2024 11:18:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724843803; cv=none; b=dzDsOJWQ1cuZeC0pp9dVgaXmDPwT9g4JIRUhlejW2MxgbILeW6HCSbPaU3MqbHyV6ljk7JEd/utmcYWhD2vq2pNkxRQXzEnxUoqi8d5+GQtUUWF687NGCkQJLNrp/ktXqHNiX9H4IU3NJhLU8yfkVcaqXGOu4EE/J7hqJDeI+8w=
+	t=1724843921; cv=none; b=Oqgj5/ACQ7Fvv6r7pu3kkW66XXUBu1rjYJJpougXBsixisMN9Tee01pdzgJHwqDV0llaqr4TcBjh+X1nugzuAHbZQddLHJqBSgZciYjW3WAzCrUkMHIJtjRosLTDEqhgf5fr0WTPnCkK29ufnkFSkMnsHLaUQff1hMOTC6zjtP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724843803; c=relaxed/simple;
-	bh=WaqToENXOPqb2z6sLJVOLE/E0rhIdPZwlwNAG/Pv/xo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NR1DcZeh+rdVJoVVwQSorX9L/vTkUr5gzRiQilF/mAPKnBCrJj8SOXFqxgDqg8YkxwRZWqhZmW3/dLj3cxpSGOnuGRWf4h7Mv7Qed6DwO8pEJBrvrtPReYI44WhPokctHwyQkWRTkI9mGgyDerLWn6hR+VNZHSllQntPcBa6IYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dh+Kei9l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A81AC98EC6;
-	Wed, 28 Aug 2024 11:16:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724843803;
-	bh=WaqToENXOPqb2z6sLJVOLE/E0rhIdPZwlwNAG/Pv/xo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dh+Kei9l669eirm87ad4gnsLiva4otm7C44LdJdRAcBaW99pECuC4yN6K1TvbqCUO
-	 dhmBNy6ytoMY+E06TCfrD9kFbeNtDkihlbG3mKFBdm/JRCD1OXsuP7PyzPNXWpmRir
-	 fSKvePui931OOHyIwJ2Pw1UOU7+upIo2fwsLBoCVvBPb5AsBkr/1KlL0uD1BugNufy
-	 yT2h3IIYlUXAw71Vj60NGLRn99BlDDG7jEx23P5UHs4PZsd/vOoxNprzMVVyaz3UKg
-	 c4fwdgJItMGrU7Rk33KBdfAQPcoUzWhopVjbhzMuVVqheBnvE/7NEsIY1r/iKGJq6u
-	 Dym/p8aMORQUA==
-Message-ID: <3ead166f-8108-4503-ae81-7605585c816b@kernel.org>
-Date: Wed, 28 Aug 2024 13:16:35 +0200
+	s=arc-20240116; t=1724843921; c=relaxed/simple;
+	bh=K4ffkU1d24Lo6Vpr60xC27K+SzTzNldohctsI0B5LAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NvqefsuWo035y194PtUONVMgnmYQJAH3ApfPJuBS5KIXz14Q5YZsoz6upH3K6vGG76QAvoit8P4dmU+R/O/3qu94ODB+6KMJUrG0uO6FVhkVadeIN3IGEknS6btoUUPNZkM2Wo3v2vMX63WD6hR0g+K5AqyYvv9BsFvT5CUSL+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=ie1ZgaJb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0F77C98EC1;
+	Wed, 28 Aug 2024 11:18:37 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ie1ZgaJb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1724843916;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TaIlxacxM0cvax8nGT0Wo3sn3OzyvoPLEHrLd84XeNU=;
+	b=ie1ZgaJbmdO0NFZiWnbQxMHvES+WVoJwzMG9ptpU3Emt2rn3BokeH+49oxcj4dV6dn2A7R
+	OZIoYXalY4Ws4iv74BUjZGRKqr/jYLeyEjR6fhELEgh04xz8/D5eJuiLFmdCA7UTqCRd8K
+	hMYFoVGZZlHMLnB3FsT4kBzzeg3/4HU=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 8e8b7172 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Wed, 28 Aug 2024 11:18:35 +0000 (UTC)
+Date: Wed, 28 Aug 2024 13:18:34 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Segher Boessenkool <segher@kernel.crashing.org>
+Cc: Eric Biggers <ebiggers@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Shuah Khan <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 05/17] vdso: Avoid call to memset() by getrandom
+Message-ID: <Zs8HirKLk-SrwTIu@zx2c4.com>
+References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
+ <5deb67090b214f0e6eae96b7c406546d1a16f89b.1724309198.git.christophe.leroy@csgroup.eu>
+ <20240827180819.GB2049@sol.localdomain>
+ <20240827225330.GC29862@gate.crashing.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] drm/msm/a6xx: Store gmu_cgc_mode in struct a6xx_info
-To: Rob Clark <robdclark@gmail.com>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: Sean Paul <sean@poorly.run>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Konrad Dybcio <konrad.dybcio@linaro.org>
-References: <20240719-topic-a621-v1-0-850ae5307cf4@linaro.org>
- <20240719-topic-a621-v1-3-850ae5307cf4@linaro.org>
- <CAF6AEGs23d5OqKst+ik-kMMXPCS_0=-a8ndskv3j4NduOVR1Vw@mail.gmail.com>
- <CAF6AEGuB5oB6RZLk+PfYMTV8ybboJymcvzJVu9ByHdu=KyvV+w@mail.gmail.com>
- <CAF6AEGtkikykNKHz0905HZ4FOJYieO5R3jr6-OO8QLYqok25BA@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <CAF6AEGtkikykNKHz0905HZ4FOJYieO5R3jr6-OO8QLYqok25BA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240827225330.GC29862@gate.crashing.org>
 
-On 27.08.2024 10:12 PM, Rob Clark wrote:
-> resending with updated Konrad email addr
+On Tue, Aug 27, 2024 at 05:53:30PM -0500, Segher Boessenkool wrote:
+> On Tue, Aug 27, 2024 at 11:08:19AM -0700, Eric Biggers wrote:
+> > On Thu, Aug 22, 2024 at 09:13:13AM +0200, Christophe Leroy wrote:
+> > > With the current implementation, __cvdso_getrandom_data() calls
+> > > memset(), which is unexpected in the VDSO.
+> > > 
+> > > Rewrite opaque data initialisation to avoid memset().
+> > > 
+> > > Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> > > ---
+> > >  lib/vdso/getrandom.c | 15 ++++++++++-----
+> > >  1 file changed, 10 insertions(+), 5 deletions(-)
+> > > 
+> > > diff --git a/lib/vdso/getrandom.c b/lib/vdso/getrandom.c
+> > > index cab153c5f9be..4a56f45141b4 100644
+> > > --- a/lib/vdso/getrandom.c
+> > > +++ b/lib/vdso/getrandom.c
+> > > @@ -4,6 +4,7 @@
+> > >   */
+> > >  
+> > >  #include <linux/minmax.h>
+> > > +#include <linux/array_size.h>
+> > >  #include <vdso/datapage.h>
+> > >  #include <vdso/getrandom.h>
+> > >  #include <vdso/unaligned.h>
+> > > @@ -74,11 +75,15 @@ __cvdso_getrandom_data(const struct vdso_rng_data *rng_info, void *buffer, size_
+> > >  	u32 counter[2] = { 0 };
+> > >  
+> > >  	if (unlikely(opaque_len == ~0UL && !buffer && !len && !flags)) {
+> > > -		*(struct vgetrandom_opaque_params *)opaque_state = (struct vgetrandom_opaque_params) {
+> > > -			.size_of_opaque_state = sizeof(*state),
+> > > -			.mmap_prot = PROT_READ | PROT_WRITE,
+> > > -			.mmap_flags = MAP_DROPPABLE | MAP_ANONYMOUS
+> > > -		};
+> > > +		struct vgetrandom_opaque_params *params = opaque_state;
+> > > +		int i;
+> > > +
+> > > +		params->size_of_opaque_state = sizeof(*state);
+> > > +		params->mmap_prot = PROT_READ | PROT_WRITE;
+> > > +		params->mmap_flags = MAP_DROPPABLE | MAP_ANONYMOUS;
+> > > +		for (i = 0; i < ARRAY_SIZE(params->reserved); i++)
+> > > +			params->reserved[i] = 0;
+> > > +
+> > >  		return 0;
+> > >  	}
+> > 
+> > Is there a compiler flag that could be used to disable the generation of calls
+> > to memset?
 > 
-> On Mon, Aug 26, 2024 at 2:09 PM Rob Clark <robdclark@gmail.com> wrote:
->>
->> On Mon, Aug 26, 2024 at 2:07 PM Rob Clark <robdclark@gmail.com> wrote:
->>>
->>> On Fri, Jul 19, 2024 at 3:03 AM Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->>>>
->>>> This was apparently almost never set on a6xx.. move the existing values
->>>> and fill out the remaining ones within the catalog.
->>>>
->>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->>>> ---
+> -fno-tree-loop-distribute-patterns .  But, as always, read up on it, see
+> what it actually does (and how it avoids your problem, and mostly: learn
+> what the actual problem *was*!)
 
-[...]
-
->>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->>>> @@ -402,7 +402,7 @@ static void a6xx_set_hwcg(struct msm_gpu *gpu, bool state)
->>>>         struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
->>>>         const struct adreno_reglist *reg;
->>>>         unsigned int i;
->>>> -       u32 val, clock_cntl_on, cgc_mode;
->>>> +       u32 val, clock_cntl_on;
->>>>
->>>>         if (!(adreno_gpu->info->a6xx->hwcg || adreno_is_a7xx(adreno_gpu)))
->>>>                 return;
->>>> @@ -417,10 +417,8 @@ static void a6xx_set_hwcg(struct msm_gpu *gpu, bool state)
->>>>                 clock_cntl_on = 0x8aa8aa82;
->>>>
->>>>         if (adreno_is_a7xx(adreno_gpu)) {
->>>> -               cgc_mode = adreno_is_a740_family(adreno_gpu) ? 0x20222 : 0x20000;
->>>> -
->>>
->>> This does appear to change the gmu_cgc_mode in nearly all cases.. was
->>> this intended?
->>
->> Hmm, and this will only get written for a7xx, so we're dropping the
->> reg write for a690..
-
-Right, this patch is a lot to chew through.. It:
-
-- adds the proper magic value per gpu gen
-- removes the sneaky a690 write
-- uses the new struct entry
-
-but also
-
-- fails to remove the if (a7xx) check
-
-so I suppose for v2 I can split it into:
-
-1. add the magic values
-2. fix the if (a7xx) check
-3. use the struct value and drop the a690 one
-
-does that sound good?
-
-Konrad
+This might help with various loops, but it doesn't help with the matter
+that this patch fixes, which is struct initialization. I just tried it
+with the arm64 patch to no avail.
 
