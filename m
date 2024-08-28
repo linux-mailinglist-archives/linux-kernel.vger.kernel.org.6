@@ -1,173 +1,136 @@
-Return-Path: <linux-kernel+bounces-305409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A8F962E42
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:14:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8D65962E43
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:14:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 316E11C215BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:14:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D4291F226F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3481A4F39;
-	Wed, 28 Aug 2024 17:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB80C1A7051;
+	Wed, 28 Aug 2024 17:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="NMZ1+rI/"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VBLCCn7E"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5B61A38E0
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 17:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0261A38E0
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 17:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724865240; cv=none; b=dwlPZI0QOOhzHokGIiRafLdOkf79cvc2UMUd8l2Oj8nG7fACGhRP7Tr4JZfCbSLPLEu6xuVAb8B96zdNT/GkvF2p/VAlt/3AsPQv0QE5QyFFXVVzUo9o6St6Os6Xu57fRsVRLYPPHzAJ1Qg/2QWZX7HHeWc3pcuOxFN+kjwVMaM=
+	t=1724865256; cv=none; b=ISy6nPBnGQBj28wUmkyYemoYoZwyndgfWF/wZL+23D/zwgBrrNU6oAo4/ARqS1230N9N2cyo1qlHuNuNShFbNsFeYZylHg/pbaH0zKlMdlcObJGNAomGd4l+FFTsNOEEezuhafgqE/ak/9x/5RirHdjUn+qSH1fhL0Hzz9T2VDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724865240; c=relaxed/simple;
-	bh=hd5vKsVeROxJPpd02kgwusoFIbYzWTmwOPB4TPBya2A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GSB6k2N8jx08Vkj9f9oY9pfqAnheMCtBuyxJxUTZlOQIPFDQADgq4PE09do/tLyZLcB41J5IVG1HpbS3jg0OPduWwdUFb4BGAV0HvqW6AkNs8roK+ZwIfc7gwVWrei8y2j13HfyedgCOnsdTYVug2RIQwCaf/UD2GxvUbyhtP6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=NMZ1+rI/; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-714186ce2f2so5516506b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 10:13:58 -0700 (PDT)
+	s=arc-20240116; t=1724865256; c=relaxed/simple;
+	bh=XuU6lfnAXc7wBWZXO3LoSeJokR3ZvXf1xIXUsa6plnw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZD/uCKbJ4gfTUd0V8Vlo/lDA8h5msP4n/SqMXGK/5OwywnTLfn/50m5LhOCwlaT91/ntAM2HoWHeXluZbDifhvMOj0+16wV7RKRA7cVfnDnHQTR/CKxLrgl1nABY1ofA+cycAHONdBqa09jZ9c4Hu/a8WTazZSGs3YsL2OaTp/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VBLCCn7E; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20260346ca1so13565ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 10:14:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1724865237; x=1725470037; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZcWjsx2GFVbGR3sFLDnaT6Mg3/3VJFqnuVHgVecU75g=;
-        b=NMZ1+rI/NzsiVKftfl2w6cLg0xjB7E3V2ejhcIcqlTVq+b4Lk7el07hG559y33x1ou
-         ykZjgP5Jg9QG2jq1SheBnnqkS6p+2XwJfybATc7givAgF4g9HBDCrGuBSgut28uWSpR8
-         kdxUqiSMMN1m2QHR3hGMGfvi4DU8fetuA0lecjiBGb4wycjGjMdKngVvGohdfIgstkUz
-         pqE19LjHpAW+nSkIakpBb+PYEx+8r0m5YRJWmHKAKZNRdE/FpS9c1dp35bjErX09xlP1
-         30QzcmNKJPNzwAEyIt1zc38b9OaTeoKqW6pwMocvAUlL+TUA0X+cHy3jTLyltVTln6IB
-         EkFg==
+        d=google.com; s=20230601; t=1724865254; x=1725470054; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sgsg9KYlOPgnINZ9GfyD+BBUo6PvUfKigYVEMj5LYlU=;
+        b=VBLCCn7Ezc56gL7vPp1OxXFkJWx8jAiTv0mUjPaAAvyu9Q54RSTGZk5WYPf5/Cuney
+         HmVvgHK1gmRL+MqRrQ1UFyzR8ClsYgByXUcVolKD+HheNu8dhHOY4rn9WbWn94O7dDXd
+         CMHvJkiiH5oTL+0juR0ZVOdwbAN5pY/1owU+grTKXK/THk+hntu6WO+94/ASNyoVIKsW
+         MBGqoEqkH4baLsuvXhV2oeLX/2R82hUckXEge9H/w0X1RCQUnwBDu2USW6ivrxgch3M4
+         RjZyzr23IxbzV3RzmBbCxgVStk7lWg6xGOWF3XM96LeNfZvk4cxAMVhSu5Hul1V5h2zx
+         wpuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724865237; x=1725470037;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZcWjsx2GFVbGR3sFLDnaT6Mg3/3VJFqnuVHgVecU75g=;
-        b=dQJHG5GdYW5bYVuYLdKMNayemRmY6RRW+AFOjVd5p/vT74LZQCrTHdda6L2hhZh+oo
-         DdfhiTZPsj75wfzH3w5Zm624DqkaznE7RLE+dMGqZDlwYYY/Z7i0+7xM05SBwdO1ELM3
-         ugufGsr+eGPLMtNKfun3lj2KggGUss73OwGeqlayZCU4TH+XjUqBsqrc5iEwsTmSc0aE
-         GFHheAkBGMJ3Fcfe/9bG7hJ55jrGD8cvTidgqKZ9zzoEq6uznChSYl1Ol1qciZ/GCcZB
-         nfPWo2rdrvjB2ngAzchTrrYMgIVbCEubk61iLUgGfAov1GNjD6IoFPErWHhBL5VaD07V
-         YAFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWM9Q0dajLhISCL5rC4M8Dc8j2RWTcVIuHJrfnpStUuRqYqdypx7eSpWvXyJepUAJUJQku3mYI0z+z3FME=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnIKzmqu8JmXhScoJReGYI42XvZB9ErNaAuOPLNFUJvGgSlmSa
-	4pM0/iFcoJD8PT2EVNNZlxAJ5G2VpPJnpQvv2wgmssurEcXgQDdBy9v4TVw5jRE=
-X-Google-Smtp-Source: AGHT+IG95WpJ3Jo/yJiFE1+k5pgv7fknE0kbuwHFJ+rJt/S10BTiSVq+7xHMaRQYqpPuPYgiaBY1xg==
-X-Received: by 2002:aa7:88c5:0:b0:70d:3777:da8b with SMTP id d2e1a72fcca58-715dfc43e15mr166538b3a.25.1724865237485;
-        Wed, 28 Aug 2024 10:13:57 -0700 (PDT)
-Received: from [192.168.1.74] (c-73-42-218-101.hsd1.wa.comcast.net. [73.42.218.101])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-714342e2c83sm10342909b3a.133.2024.08.28.10.13.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 10:13:57 -0700 (PDT)
-Message-ID: <526b1130-afec-4c75-8d86-74c5b7e272fe@rivosinc.com>
-Date: Wed, 28 Aug 2024 10:13:54 -0700
+        d=1e100.net; s=20230601; t=1724865254; x=1725470054;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sgsg9KYlOPgnINZ9GfyD+BBUo6PvUfKigYVEMj5LYlU=;
+        b=U/O07yLJWgviDtlMZsNJqfs+zTqANK12fSdXs2EbiS0aZxgfaN/A1YCtO3boROT3VS
+         TJVC1bn0v7Mh+SEh7d+Mqb0dFG2lboK/w4HDGI841KR8tKH9/8xo8Oecd20b96aq2Tpl
+         izsgtmyjjj9mvE7VwIooA9Ry3eq3p1goFU5svMQ0+tj7cPXncqokMmouMZPzu+ZIdzda
+         yK6FAIPsNMeVh7EtVrBX8PGQc/efgbZgBXhOQ7+Cskg6IJdPxC8ADpG2C6hJ7/uo61Z8
+         6H7lSFrw5q6/N0qbozlvEvrUbIUJ3MJMRxHkqilIslxSu+Z1zm+1Aem9oxrJBNDR6snP
+         +jow==
+X-Forwarded-Encrypted: i=1; AJvYcCUx25ZwhbPTB1+H/00ol3NTquskLCFvNq1Yewg+gO6t+nE1aes1T1o/qrsO1D4YRAESPSgo7L0FgLHoHlg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzClcoRYzI6Zt+c0/8REZ7TjSUS8QN9I1TR9xsGEjpo/GJNfdvC
+	qpe0GndEDGlxj8FuAno4cRsmtbtCbTPmOUoaX4C6iZpMQg5RDv9x41pGR1hB4miLnlXOUweoBMD
+	lmZi0Mkrd22ZeASwIhcbejFCf+pCU0mEoYcR/
+X-Google-Smtp-Source: AGHT+IEclezY9FbFmYOMIJpk7h1+XOP+3gwZEglT1ovqH0RFwg8+37NHUTVC2VrWG5GzhCh5VftM3Q+HdyA8/UzsKJM=
+X-Received: by 2002:a17:902:d512:b0:201:e2db:7be3 with SMTP id
+ d9443c01a7336-204f960ea01mr3339395ad.21.1724865253338; Wed, 28 Aug 2024
+ 10:14:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -fixes] drivers: perf: Fix smp_processor_id() use in
- preemptible code
-To: Alexandre Ghiti <alexghiti@rivosinc.com>, Will Deacon <will@kernel.org>
-Cc: Atish Patra <atishp@atishpatra.org>, Anup Patel <anup@brainfault.org>,
- Mark Rutland <mark.rutland@arm.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Nam Cao <namcao@linutronix.de>
-References: <20240826165210.124696-1-alexghiti@rivosinc.com>
- <20240827125335.GD4772@willie-the-truck>
- <CAHVXubiwHe+5nD0kftRwnNdqAhP1ofSoaUzk4vhDKPrYXVz88g@mail.gmail.com>
-Content-Language: en-US
-From: Atish Patra <atishp@rivosinc.com>
-In-Reply-To: <CAHVXubiwHe+5nD0kftRwnNdqAhP1ofSoaUzk4vhDKPrYXVz88g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240828140736.156703-1-james.clark@linaro.org> <Zs9YGP4d0_QanpoA@tassilo>
+In-Reply-To: <Zs9YGP4d0_QanpoA@tassilo>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 28 Aug 2024 10:14:01 -0700
+Message-ID: <CAP-5=fW=eYuKQtnd=1gM3wh7MubZ+P56ZCHn9dwvkhUn_NQZMQ@mail.gmail.com>
+Subject: Re: [PATCH v5 0/7] Event parsing fixes
+To: Andi Kleen <ak@linux.intel.com>
+Cc: James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org, 
+	kan.liang@linux.intel.com, John Garry <john.g.garry@oracle.com>, 
+	Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Weilin Wang <weilin.wang@intel.com>, 
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Dominique Martinet <asmadeus@codewreck.org>, 
+	Yang Jihong <yangjihong@bytedance.com>, Colin Ian King <colin.i.king@gmail.com>, 
+	Ze Gao <zegao2021@gmail.com>, Yunseong Kim <yskelg@gmail.com>, 
+	Sun Haiyong <sunhaiyong@loongson.cn>, Jing Zhang <renyu.zj@linux.alibaba.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/28/24 5:36 AM, Alexandre Ghiti wrote:
-> Hi Will,
-> 
-> On Tue, Aug 27, 2024 at 2:53 PM Will Deacon <will@kernel.org> wrote:
->>
->> On Mon, Aug 26, 2024 at 06:52:10PM +0200, Alexandre Ghiti wrote:
->>> As reported in [1], the use of smp_processor_id() in
->>> pmu_sbi_device_probe() must be protected by disabling the preemption, so
->>> simple use get_cpu()/put_cpu() instead.
->>>
->>> Reported-by: Nam Cao <namcao@linutronix.de>
->>> Closes: https://lore.kernel.org/linux-riscv/20240820074925.ReMKUPP3@linutronix.de/ [1]
->>> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
->>> ---
->>>   drivers/perf/riscv_pmu_sbi.c | 7 ++++++-
->>>   1 file changed, 6 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.c
->>> index 31a17a56eb3b..25b1b699b3e2 100644
->>> --- a/drivers/perf/riscv_pmu_sbi.c
->>> +++ b/drivers/perf/riscv_pmu_sbi.c
->>> @@ -1373,11 +1373,15 @@ static int pmu_sbi_device_probe(struct platform_device *pdev)
->>>
->>>        /* SBI PMU Snapsphot is only available in SBI v2.0 */
->>>        if (sbi_v2_available) {
->>> +             int cpu;
->>> +
->>>                ret = pmu_sbi_snapshot_alloc(pmu);
->>>                if (ret)
->>>                        goto out_unregister;
->>>
->>> -             ret = pmu_sbi_snapshot_setup(pmu, smp_processor_id());
->>> +             cpu = get_cpu();
->>> +
->>> +             ret = pmu_sbi_snapshot_setup(pmu, cpu);
->>>                if (ret) {
->>>                        /* Snapshot is an optional feature. Continue if not available */
->>>                        pmu_sbi_snapshot_free(pmu);
->>> @@ -1391,6 +1395,7 @@ static int pmu_sbi_device_probe(struct platform_device *pdev)
->>>                         */
->>>                        static_branch_enable(&sbi_pmu_snapshot_available);
->>>                }
->>> +             put_cpu();
->>
->> Are you sure it's safe to enable the static key with preemption disabled?
->> I thought that could block on a mutex.
-> 
+On Wed, Aug 28, 2024 at 10:02=E2=80=AFAM Andi Kleen <ak@linux.intel.com> wr=
+ote:
+>
+> On Wed, Aug 28, 2024 at 03:07:14PM +0100, James Clark wrote:
+> > I rebased this one and made some other fixes so that I could test it,
+> > so I thought I'd repost it here in case it's helpful. I also added a
+> > new test.
+> >
+> > But for the testing it all looks ok.
+> >
+> > There is one small difference where it now hides _all_ <not supported>
+> > events, when previously it would only hide some selected subset of
+> > events like "stalled-cycles-frontend". I think this is now more
+> > consistent across platforms because, for example, Apple M only has
+> > cycles and instructions, and the rest of the default events would
+> > always show as <not supported> there.
+>
+> I'm not a big fan of hiding all of <unsupported>, when they are explicitl=
+y
+> specified on the command line they should be absolutely shown.
+>
+> I do have tools that specify events on the command line and expect
+> the same order/events in the output. This might well cause breakage.
 
-Thanks Will for pointing that out.
+The patch series doesn't do this, it just doesn't display unsupported
+events that came from the set of default events - default evsels have
+a "skippable" flag set. In patch 3 James has added to
+should_skip_zero_counter in stat-display.c:
 
-> Yep, it seems you're right, thanks for jumping in.
-> 
-> I'm discussing with Atish how to fix that differently, I'll be back
-> with another version very soon.
-> 
++       /*
++        * Skip unsupported default events when not verbose. (default event=
+s
++        * are all marked 'skippable').
++        */
++       if (verbose =3D=3D 0 && counter->skippable && !counter->supported)
++               return true;
 
-Looking at the driver core framework code, I am wondering if a probe 
-function can be preempted to run on a different cpu. If it can only be 
-preempted by higher priority kernel threads or interrupts but is 
-guaranteed to run on the same cpu again, we can just use the 
-raw_smp_processor_id.
-
-However, if there is no guarantee then we can just invoke 
-get_cpu/put_cpu around pmu_sbi_snapshot_setup.
-
-> Thanks again,
-> 
-> Alex
-> 
->>
->> Will
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
-
+Thanks,
+Ian
 
