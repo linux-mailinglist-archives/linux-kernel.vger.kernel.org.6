@@ -1,169 +1,146 @@
-Return-Path: <linux-kernel+bounces-305120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BDD49629D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:08:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A5FD9629D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:09:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 318451C23A8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:08:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 256531F2212C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04D11891AA;
-	Wed, 28 Aug 2024 14:08:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E43D18B487;
+	Wed, 28 Aug 2024 14:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cFOvHwHw"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="CUzv/ywR"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73940188CAC
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BE61993AF
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724854094; cv=none; b=kNI051mTRC+WFGI6H6bEnY5K5DOAOG3gEr97gE7kyY86bnHuijODQq3MUuqFF2ARH8Z1GDiYv+eIQ2q6fpdBq0WMMWbuufd9k7uBl0ite8RZsDH8oRYnMEho9qeJvHtM4c/4/CImlLtUaXFiX03llMaPEjYxeXE0QTqfLMOtpNQ=
+	t=1724854151; cv=none; b=Q9xmCY09CeMFdjJSicRU40Pzj1QtcgtqvMtyJLZ8xsuul/X44bkpKVu+c4hR38qaqys1DuUptOne9DnZt21DcMlpDpoPdeHx8DktQv30xtkdg5SpAOdAC5zmgBEmM65Yro91MRzrYaPa87Mx7SXSQ0hhhePiXeKfOJ1qcnp0oTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724854094; c=relaxed/simple;
-	bh=6i0DTl1y7zbuvBA51P56G8/7JFUWcfprfnnfq9ZDKXk=;
+	s=arc-20240116; t=1724854151; c=relaxed/simple;
+	bh=WOdOnpf7m/iwndrnl7sIbQvn+os3jPlTjOyRoQ4Q6jA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PTVbfbXI4HqDzWxyL/hb0rx7nQXgwBXQ6vHFFraKvKf72gXMFU/cO10LULY3TTIVKTxA26vdozudYMDKMffgsisBl3sVQJ6IGfu1KaFeSYPqyWCTxlvhypUsSRcDEcteNP736e2cQOFJ01WwgWnx3GP8ODitBPDrtsgxPYCE4ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cFOvHwHw; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-715cdc7a153so526072b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:08:13 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ul32fxG98es8As0NXhyuGAKVGBQp9lRGTa5fPgcs6SlRNVO2ot6fXvabhKkMV97Z5kpjF140saOejel6hIZ8ka2qlfUQv/Ad6ECXBcAx748if+Ezk/60yzTsra87YIDIt5EAheDvfD84vEtQduqgxjIR6A7RwuFqXx1vTUmMmYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=CUzv/ywR; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-44fdde0c8dcso37770551cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:09:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724854092; x=1725458892; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5zUmIuVSMTrxDTnFMXgZkNU2N5FNce8+WlLOBteoNVY=;
-        b=cFOvHwHwfljHavta4YLmoKqZtwznKuQ0A6ixSn66OfnP39G8NwkGohfbft8hb0S15c
-         lgDxJmD/y6M7EgQpSTgPJTBghLDG8rlmmo03ZqfQb5d44HqkYSkscwexn8dzu2sFPGOm
-         oxlV7dP3TS3FkA97YFecoYuTD6tFQ+fXunQVVVf5DK6HAFtiQMe2y8VUtzuj+87DKc45
-         I35XgQiXmmRjtHMq30k0Y51QdvKNopel2Du5Vx2AnYPMW6VQuvDSoHiWpmpvkSwXBpPw
-         0iozOZGpQT90YB5vdpAiBirdgCaQuIw3imWCLoDA1QhkJhmYrFjfdg39xDRMQCsWPBQi
-         OOyA==
+        d=rowland.harvard.edu; s=google; t=1724854149; x=1725458949; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=u51CBonYU1HgV7ECF8ZgNqcs2WU2uO/eXvnpaymgIKE=;
+        b=CUzv/ywRVV/Srbj8H3p8BBOMEB1XuBn4/cQAwPcuYgoJrqSY2r3tvPNG73dvJz+aoQ
+         zUobCh2qLBEHDeP3DE8uufWSU6ysSY1qaBnYqTNAAoE1Gtp/AqsPpVrYwmfxlWxC+8Ei
+         easYttNPLc9waD2SaVyFEMgbTVhjSigGVicnndlp3e7wr8obqBXu9ToqQctwSHDF3CHW
+         iyiBcoag195jXKKkdYd3ogJQW2DOMDzu05egs2r008kbt5RGwUn7wcRpYD6mregOl4wd
+         a+Naec3HvscSNgMX44ZD2SMxZl3IEmmS78RLXh4Kns86B569tU5CHEHc2dk0apNRUK9o
+         i+Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724854093; x=1725458893;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5zUmIuVSMTrxDTnFMXgZkNU2N5FNce8+WlLOBteoNVY=;
-        b=MWdcCADsj90Cf9NvR3y46pT3LXUV+CkNDU69mNvL06b9114P4/p/upNBGnVkJ3cnUK
-         AqCvIJbz5N8UIyFYwe28j0mD6I8MVdEHL6W5DAjEr4DPL7gMufyt47SCxb/v+PdjVuR/
-         uji11apbbLyQX/aUSD+Q7yoZBydk7sRp+XfHYPhTuVbqcrAk7atKtJHbQLPm6I/yDJYM
-         yRSipQ8273dLS7TDOAtcCzABCdeMMN82D4QZ3/sR/hsQwSgqu49V4PM6kvIyYpdtekNA
-         tADM2zR30zeT0T87mB/3XJtkMK4k0pmydVOFXk+sjLUjXUplLvdbE2l/8IysB1++TJTd
-         nSQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUctMFL/PoASnbfCcTdByxdaL7Y4S9lG1i9B4snkb6rCCZuMC6EIvRCDqCiGk5g7kubkUigFSINqda12NM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcYjdxpHoEPqGG1LQzt1k/TydCUd68HP8F8qEdLw6S/eWn8N24
-	QMNlPq7MLVhE19AuTMGuocHBZYFKUNlcj5B+82GbD+is+7P/mhWq0NOIq698QQ==
-X-Google-Smtp-Source: AGHT+IHSBNCosOUJ4UP07jnycwgnAwwiOp55OzQxxQNujnZSA4wzt+zHe/mbquDbKqudh7XMBpjfDQ==
-X-Received: by 2002:a05:6a00:23d2:b0:706:aa39:d5c1 with SMTP id d2e1a72fcca58-715d10fdc97mr3135046b3a.8.1724854092494;
-        Wed, 28 Aug 2024 07:08:12 -0700 (PDT)
-Received: from thinkpad ([120.56.198.191])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143425527esm10147003b3a.57.2024.08.28.07.08.07
+        d=1e100.net; s=20230601; t=1724854149; x=1725458949;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u51CBonYU1HgV7ECF8ZgNqcs2WU2uO/eXvnpaymgIKE=;
+        b=Lu+Si3haz2t1yMhohYt2+Ks64qxrePUzNHLLV0PaycaguD+f7oTOcp4ZjWHAAhAD+w
+         VAF63am09utl19xiUjJb6qejKRo1y9EVso52lAkg4T0qIpnacW0XRsLYVaLXYVRfpnRE
+         JRdVbuRFpiQxkvvWQtF55yU08RfL7JczjpL9QwUPRQIty0hUU3WH5aV3Rew8Wj2nH08G
+         g7HjgR7T5DDdBGlMxUwwgbayh3s2EovsQ6bj5gTc4jbI3COXDasVgXjofPw/TS4x6BPt
+         s7jhS1zj9tWmZl5kBUGtmNxoKiU4yPpX6OMIIc8/nrSklhgun43HBHC51Rs73Y9p8Wo/
+         G84A==
+X-Forwarded-Encrypted: i=1; AJvYcCWsVcAE+1DkX8+7pghPLFBC0MEP2bSlTAS0M8n+FAHYdVK1AA6lIhfKgcnv8dkzXSjyHhRDbsF3gHmo4ho=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8+bcY5QyjeOLFeAIu8hOsuvcgyGSwpvouDuyPU+npd4cy9xw+
+	Zjn9HwPAUlZwsUI9ZKuOp//rR8wzJTbzhEZ2mHt2hk0UVYmtSG59z1tYYnK7gQ==
+X-Google-Smtp-Source: AGHT+IFrGWnak+LjBNGL5be7F92I5fR40nlo/FF00dBfj1K7nJe1j7v7tWbAhF7k+CtaOeNqLzJ2wg==
+X-Received: by 2002:a05:622a:1145:b0:453:5efa:74b8 with SMTP id d75a77b69052e-45509d367famr195767741cf.40.1724854148892;
+        Wed, 28 Aug 2024 07:09:08 -0700 (PDT)
+Received: from rowland.harvard.edu (wrls-249-137-9.wrls-client.fas.harvard.edu. [140.247.12.9])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-454fdfc0475sm62676241cf.8.2024.08.28.07.09.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 07:08:12 -0700 (PDT)
-Date: Wed, 28 Aug 2024 19:38:05 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Manish Pandey <quic_mapa@quicinc.com>
-Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, quic_nitirawa@quicinc.com,
-	quic_bhaskarv@quicinc.com, quic_narepall@quicinc.com,
-	quic_rampraka@quicinc.com, quic_cang@quicinc.com,
-	quic_nguyenb@quicinc.com
-Subject: Re: [PATCH V2] scsi: ufs: ufs-qcom: add fixup_dev_quirks vops
-Message-ID: <20240828140805.zhvand7q3wbdmfrt@thinkpad>
-References: <20240828134032.10663-1-quic_mapa@quicinc.com>
+        Wed, 28 Aug 2024 07:09:08 -0700 (PDT)
+Date: Wed, 28 Aug 2024 10:09:05 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: Peter Chen <peter.chen@kernel.org>,
+	Mario Limonciello <mario.limonciello@amd.com>, superm1@kernel.org,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"open list:USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	mika.westerberg@linux.intel.com
+Subject: Re: [PATCH 2/2] xhci: pci: Put XHCI controllers into D3hot at
+ shutdown
+Message-ID: <bb7bba27-ddb2-4c64-8a6b-3ce4e635320e@rowland.harvard.edu>
+References: <20240712185418.937087-1-superm1@kernel.org>
+ <20240712185418.937087-3-superm1@kernel.org>
+ <20240827063206.GA879539@nchen-desktop>
+ <4db33660-2720-471d-a017-1fca4c9b7268@amd.com>
+ <20240828071303.GA921051@nchen-desktop>
+ <bd380d71-4ebe-4889-9ed8-aeefec2b2b0e@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240828134032.10663-1-quic_mapa@quicinc.com>
+In-Reply-To: <bd380d71-4ebe-4889-9ed8-aeefec2b2b0e@linux.intel.com>
 
-On Wed, Aug 28, 2024 at 07:10:32PM +0530, Manish Pandey wrote:
-> Add fixup_dev_quirk vops in QCOM UFS platforms and provide an initial
-> vendor-specific device quirk table to add UFS device specific quirks
-> which are enabled only for specified UFS devices.
+On Wed, Aug 28, 2024 at 05:02:10PM +0300, Mathias Nyman wrote:
+> > > > Hi Mario & Mathias,
+> > > > 
+> > > > According to xHCI spec v1.2: A.1.2 Power State Definitions:
+> > > > 
+> > > > 	Software shall place each downstream USB port with power
+> > > > 	enabled into the Suspend or Disabled state before it
+> > > > 	attempts to move the xHC out of the D0 power state.
+> > > > 
+> > > > But I have not found any USB core code does it, do you have any ideas
+> > > > about it?
+> > > > 
+> > > > We have added the similar codes at non-PCI USB platform, but met above
+> > > > concerns. In fact, we met kernel dump that the thread usb-storage try
+> > > > to access the port status when the platform xHCI code has already put
+> > > > the controller to D3.
+> > > > 
+> > > > Best regards,
+> > > > Peter
+> > > > 
+> > > > 
+> > > 
+> > > This is pretty tangential to my patch.  But FWIW in case you missed we're
+> > > going to discard this patch in favor of another approach in PCI core.
+> > > 
+> > > Regarding your point though If I'm not mistaken this should be handled by
+> > > the Linux parent/child device model.  Each of the ports should be children
+> > > of the hub they're connected to and the hub a child of the controller.  So
+> > > when doing any actions that start runtime PM on the host controller the
+> > > children need to first be in runtime PM.
+> > > 
+> > 
+> > It seems there is no runtime PM suspend for xhci and USB core at
+> > .shutdown currently. Alan & Mathias, please correct me if I was wrong.
+> > 
 > 
-
-Why the quirks are enabled only for Qcom platforms? If these are required by the
-UFS device, then they should be added to ufs_fixups[] in ufshcd.c.
-
-> Micron and Skhynix UFS device needs DELAY_BEFORE_LPM quirk to have a
-> delay before VCC is powered off.
+> I think you are right.  At shutdown we only halt the xHC.
+> We don't force ports to suspend or disable state.
+> We only put some selected xHC to D3
 > 
-
-Micron fix is already part of ufs_fixups[].
-
-> Toshiba UFS devices require delay after VCC power rail is turned-off
-> in QCOM platforms. Hence add Toshiba vendor ID and DELAY_AFTER_LPM
-> quirk for Toshiba UFS devices in QCOM platforms.
+> USB 2 ports might suspend themselves if there is no activity.
 > 
+> Doesn't seem like usb core hcd code, or hub driver does anything either.
 
-This sounds like the issue is specific to Qcom platforms only.
+That's right.  Host controller drivers are supposed to handle shutdown 
+operations by themselves.  The USB core doesn't do anything.
 
-> Signed-off-by: Manish Pandey <quic_mapa@quicinc.com>
-> ---
-
-Where is the changelog?
-
-- Mani
-
->  drivers/ufs/host/ufs-qcom.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-> index 810e637047d0..9dbfbe643e5e 100644
-> --- a/drivers/ufs/host/ufs-qcom.c
-> +++ b/drivers/ufs/host/ufs-qcom.c
-> @@ -834,6 +834,25 @@ static int ufs_qcom_apply_dev_quirks(struct ufs_hba *hba)
->  	return err;
->  }
->  
-> +/* UFS device-specific quirks */
-> +static struct ufs_dev_quirk ufs_qcom_dev_fixups[] = {
-> +	{ .wmanufacturerid = UFS_VENDOR_MICRON,
-> +	  .model = UFS_ANY_MODEL,
-> +	  .quirk = UFS_DEVICE_QUIRK_DELAY_BEFORE_LPM },
-> +	{ .wmanufacturerid = UFS_VENDOR_SKHYNIX,
-> +	  .model = UFS_ANY_MODEL,
-> +	  .quirk = UFS_DEVICE_QUIRK_DELAY_BEFORE_LPM },
-> +	{ .wmanufacturerid = UFS_VENDOR_TOSHIBA,
-> +	  .model = UFS_ANY_MODEL,
-> +	  .quirk = UFS_DEVICE_QUIRK_DELAY_AFTER_LPM },
-> +	{}
-> +};
-> +
-> +static void ufs_qcom_fixup_dev_quirks(struct ufs_hba *hba)
-> +{
-> +	ufshcd_fixup_dev_quirks(hba, ufs_qcom_dev_fixups);
-> +}
-> +
->  static u32 ufs_qcom_get_ufs_hci_version(struct ufs_hba *hba)
->  {
->  	return ufshci_version(2, 0);
-> @@ -1798,6 +1817,7 @@ static const struct ufs_hba_variant_ops ufs_hba_qcom_vops = {
->  	.link_startup_notify    = ufs_qcom_link_startup_notify,
->  	.pwr_change_notify	= ufs_qcom_pwr_change_notify,
->  	.apply_dev_quirks	= ufs_qcom_apply_dev_quirks,
-> +	.fixup_dev_quirks       = ufs_qcom_fixup_dev_quirks,
->  	.suspend		= ufs_qcom_suspend,
->  	.resume			= ufs_qcom_resume,
->  	.dbg_register_dump	= ufs_qcom_dump_dbg_regs,
-> -- 
-> 2.17.1
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+Alan Stern
 
