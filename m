@@ -1,146 +1,116 @@
-Return-Path: <linux-kernel+bounces-304905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70324962680
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:04:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1061E962688
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:05:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A02781C215A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:04:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEC7E282247
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F3F172BA8;
-	Wed, 28 Aug 2024 12:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA63217554A;
+	Wed, 28 Aug 2024 12:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i62L/Kzi"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hCKjF6c6"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FEDA166F37
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1D91741D9;
+	Wed, 28 Aug 2024 12:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724846645; cv=none; b=axA7JCyY8zr0O47jHA8U3Wrq7Q4zVQjSai/eqdtCbTpLkwj4SopuSBA2RPYXeTCWMvk5hwd+Fn6dqpH1GmkVXgDADcIlh8PQz7y9lPvuyZFTORuxm16ewqcYVgAePH8sWzj6HIYiUruMYjE9np17K5RPSMvhmhC6lzVDgU01ZBM=
+	t=1724846731; cv=none; b=bN/d+/MhHNlkwMt7wry2mXRNiE7lpg256KV9eOb8bbT1CE2SbA0u2cAAS0zw/5UPYcKLryin+peG+y9CdGK2hHINgk0DCdvm4G+D7qXEzCxqAZuVNo8eewFjgLr0xLKlDg3zHEStFgK47x428N9EW3TiiBhAEb1C6lfIaUNFqaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724846645; c=relaxed/simple;
-	bh=ipqJ60XxY2Y88OgHO3NKkVnWMl8i2LM+m2jKY6Xjv6g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O+qH2uPIJXWVZlHnormJdti+VVClVU0A5si2f9MxfuAw0iko4/0NTEDRZ2WzJuhFATyVApsP4pchOlYlyL1G5m4fz7hHI5yK2eeLvRmUOB9q2l8Y5pZnifMOuYfTLsw9jpejBk6680ueXqzhzTs7wgpaz+OC5kZHYnkv6skpweg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i62L/Kzi; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2d439572aeaso403081a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 05:04:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724846643; x=1725451443; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UdcnjVgF8yb/N7ua+ROvl3/+kpGiPAKNxPZFFKZQDrk=;
-        b=i62L/KziYfbBBIRpUR7FaVPF0Tl0L7H8LYkUIsdKIrZNf+RdZbxSLyvwqdUHDrjDdJ
-         +CDbaTLZnzM+hXd3BWyr6/AhCqOq3D4fPMQ2gRuJeP7e9AgqwX5s6OVYzPzgMJxrYRi2
-         OZc0UdhDiWzySjdMGxE1mdQqWBCWNPckG3Q6yLwODZ4tKxKqvG3lGQT1Aqs0R+aQf8ZK
-         vMbbkgZdeXADg4iQJL8+5cUBiyC7WIblqPyxyUrXTrb+UmvthlT9/HkS10BigwWQ1bYG
-         7nOBlnqTHm89H22ZJzySB4kZdiF3nS55Kn0ARi/fAhWiooJevzA0LQBihapCAgpgD7Jg
-         zHZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724846643; x=1725451443;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UdcnjVgF8yb/N7ua+ROvl3/+kpGiPAKNxPZFFKZQDrk=;
-        b=oqcgg6VP4FNLy1oaaLsYZFHIjHxSCQTJYgUE0hW2urMXW7PHeOu8wfiGPGhMElGWEY
-         sGXrzJ2Nqz1RTrJVemcQSLWuw5mNmwCg3gX3mu4rvcmepup3D0rx1TgcpjBvrQeny9lX
-         exjsKKyewShKuPuHD59ab0lQmgTRox3Oq+bRVDN1gUwx4nWLhSDS5UGvPAp+VGA1H8zQ
-         2NfhmqsnVWFTaq4uhHMEDyr007Lvfq+aashRE3EtFM8fjLh1Is+lRxr7h7KCPBrDxlml
-         /UO89wqdrnfAJfqQV1KbQ5OP54gDgH/nYqrjhMgJiQiDVoCy5wKf7HjIVDVy6oKcVVIV
-         nzHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYrGL8VJXPaon5fFHS+zd09i5R8l3jIfuBdlhvZN6jG6flKCO+OQxbhTUGY7vi2T95hKgpGA+7iELbrlM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwY8dMerGF6QZgWda7RcZ6qHG5i97jRZdgEa3aGbkF3mQI4+r8V
-	le/PfY7rVmSD6uk0tonMOKBP3cLN20XjgUX3i8JeLshjvYJ3/Lu5IlxEHRK3POIfZAnSLwk8yWP
-	jerIOM59NKscN8N6yA9Glw5v+DPDyEAAA
-X-Google-Smtp-Source: AGHT+IHcumZEfE9db9FF97yVvyhpVT1EUbVle6yVWXa1JPCNXd1id/6gneCtY+FPC9fmcjcA/VWiAhUDGr9urxwFoEM=
-X-Received: by 2002:a17:90a:a004:b0:2c9:35a6:e185 with SMTP id
- 98e67ed59e1d1-2d8439f8059mr3005493a91.0.1724846643092; Wed, 28 Aug 2024
- 05:04:03 -0700 (PDT)
+	s=arc-20240116; t=1724846731; c=relaxed/simple;
+	bh=BaT3iaSJXXASWEl08SLZbXFraf8I366PIMZsfsZHgwA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ObjyGduFkjB3a3f1jxlwaYgasWluVpl8KeYhaxsSd8bfIsqUFl+oo3WUw8qGSJedySCsTygpkkMjjfJ5ZeCPgAPKG3jcsom6oWQXuEzPAaVUvhzcB5Xv+5PX8il4EyeYmRl5BqdpVQMGfCN0OUkYrmTXlssuhfB4Ieb9sesAIeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hCKjF6c6; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47SAiQGH027071;
+	Wed, 28 Aug 2024 12:05:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=lXv+dcwcMOIeN6Jc0UwzU99Y91QFlu80cTPJu+UmDgA=; b=hC
+	KjF6c6Cnyozw7thc9cymnNvrXQK9f/dLy8eDr3WKcJd5FFY9c73jCcMzFDkmbyxk
+	encdP12FSeQmqU/bQOuSuKHWlpPHv548KO8BjjHCHaogibLwYhhPTD0iOGjSvhcR
+	M6cXqBQPDut75C9Mmsf44tvRBYJ+U/7PXP+4eYDeNui9Bcp9Oia1rEShuYmWGNkp
+	STizNgktEe7dy5wZoYectJ57f6L0EhRCqoWFUqUuwn1y/SLu/qA/+zdJ9/9PlIJ0
+	izN9dTeKxCekB/Acq7biPtuSeP0vbTGRSkK4PLSWlP1hsZn2yaLJRcjyhdwlXPRY
+	m8xGhK2+lzZMMWXXP/Lw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419puthpmv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 12:05:26 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47SC5Gft003919
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 12:05:16 GMT
+Received: from hu-mapa-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 28 Aug 2024 05:05:12 -0700
+From: Manish Pandey <quic_mapa@quicinc.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        "James E.J.
+ Bottomley" <James.Bottomley@HansenPartnership.com>,
+        "Martin K. Petersen"
+	<martin.petersen@oracle.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_nitirawa@quicinc.com>,
+        <quic_bhaskarv@quicinc.com>, <quic_narepall@quicinc.com>,
+        <quic_rampraka@quicinc.com>, <quic_mapa@quicinc.com>,
+        <quic_cang@quicinc.com>, <quic_nguyenb@quicinc.com>
+Subject: [PATCH] scsi: ufs: qcom: update MODE_MAX cfg_bw value
+Date: Wed, 28 Aug 2024 17:35:02 +0530
+Message-ID: <20240828120502.1439-1-quic_mapa@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827095550.675018-1-wenst@chromium.org> <20240827095550.675018-9-wenst@chromium.org>
- <e341240e-1c1f-49a2-91cd-440888fdbda0@gmail.com> <CAGXv+5EcHQ7E979fKPEci2qwXBnKPfVHc_aB02amUbdVB3KTxg@mail.gmail.com>
-In-Reply-To: <CAGXv+5EcHQ7E979fKPEci2qwXBnKPfVHc_aB02amUbdVB3KTxg@mail.gmail.com>
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-Date: Wed, 28 Aug 2024 15:03:51 +0300
-Message-ID: <CANhJrGPiPUfq-3W_oLypEncreX3KTKyEkxouWDG6pZ47a_veAQ@mail.gmail.com>
-Subject: Re: [PATCH 8/8] regulator: irq_helpers: Add missing "Return"
- kerneldoc section
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 5R3F6uT6_KGIps1aEc2erzESIMPKDAe_
+X-Proofpoint-ORIG-GUID: 5R3F6uT6_KGIps1aEc2erzESIMPKDAe_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-28_04,2024-08-27_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 phishscore=0 adultscore=0 priorityscore=1501
+ impostorscore=0 malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0
+ mlxlogscore=923 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408280088
 
-ke 28. elok. 2024 klo 10.53 Chen-Yu Tsai (wenst@chromium.org) kirjoitti:
->
-> On Wed, Aug 28, 2024 at 1:55=E2=80=AFPM Matti Vaittinen
-> <mazziesaccount@gmail.com> wrote:
-> >
-> > On 8/27/24 12:55, Chen-Yu Tsai wrote:
-> > > kernel-doc complains about missing "Return" section for the function
-> > > regulator_irq_map_event_simple().
-> > >
-> > > Add a "Return" section for it based on its behavior.
-> > >
-> > > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> >
-> > Thank You for improving this! I appreciate it :)
-> >
-> > > ---
-> > >   drivers/regulator/irq_helpers.c | 4 ++++
-> > >   1 file changed, 4 insertions(+)
-> > >
-> > > diff --git a/drivers/regulator/irq_helpers.c b/drivers/regulator/irq_=
-helpers.c
-> > > index 5ab1a0befe12..5803ef016b7d 100644
-> > > --- a/drivers/regulator/irq_helpers.c
-> > > +++ b/drivers/regulator/irq_helpers.c
-> > > @@ -414,6 +414,10 @@ EXPORT_SYMBOL_GPL(regulator_irq_helper_cancel);
-> > >    * notification helperk. Exactly one rdev and exactly one error (in
-> >
-> > I just noticed (an existing) typo "helperk". I wonder if it was Ok to
-> > fix it while anyways changing the doc. It's not strictly speaking
-> > related to the return values though :)
->
-> Why not? Only the kerneldoc this function is touched. It looks like the
-> 'k' belongs to the "callbac" on the previous line.
+update cfg_bw value for MODE_MAX for Qualcomm SoC.
 
-Right. It'd be nice if you fixed the typo as well if you for some
-reason re-spin this.
+Signed-off-by: Manish Pandey <quic_mapa@quicinc.com>
+---
+ drivers/ufs/host/ufs-qcom.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > >    * "common_errs"-field) can be given at IRQ helper registration for
-> > >    * regulator_irq_map_event_simple() to be viable.
-> > > + *
-> > > + * Return: 0
-> > > + *
-> > Anyways, I agree with Andy about not needing the blank line here - but
->
-> I disagree because of the formatting result. See my other reply.
+diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+index c87fdc849c62..ecdfff2456e3 100644
+--- a/drivers/ufs/host/ufs-qcom.c
++++ b/drivers/ufs/host/ufs-qcom.c
+@@ -93,7 +93,7 @@ static const struct __ufs_qcom_bw_table {
+ 	[MODE_HS_RB][UFS_HS_G3][UFS_LANE_2] = { 1492582,	204800 },
+ 	[MODE_HS_RB][UFS_HS_G4][UFS_LANE_2] = { 2915200,	409600 },
+ 	[MODE_HS_RB][UFS_HS_G5][UFS_LANE_2] = { 5836800,	819200 },
+-	[MODE_MAX][0][0]		    = { 7643136,	307200 },
++	[MODE_MAX][0][0]		    = { 7643136,	819200 },
+ };
+ 
+ static void ufs_qcom_get_default_testbus_cfg(struct ufs_qcom_host *host);
+-- 
+2.17.1
 
-Fair enough. The "errors" or "notifications" indeed don't tell if this
-specific function has failed.
-So, if you feel the @rid is not documented well enough, maybe add a note in=
- the
-respective parameter documentation instead of leaving it alone at the
-bottom of the doc?
-
-Well, I don't have a strong opinion on this so you can keep the RB tag
-also with the blank line.
-
-Yours,
-  -- Matti
 
