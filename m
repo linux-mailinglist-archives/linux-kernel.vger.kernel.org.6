@@ -1,85 +1,131 @@
-Return-Path: <linux-kernel+bounces-305085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20AC5962949
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:52:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16ECF96294C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:53:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBD111F24EE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:52:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C99A32857D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DBB176AAA;
-	Wed, 28 Aug 2024 13:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2312B187FE7;
+	Wed, 28 Aug 2024 13:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="eECe/2Q5"
-Received: from out0-219.mail.aliyun.com (out0-219.mail.aliyun.com [140.205.0.219])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="aCaCq6OP"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05821EB3D
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 13:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2AE16CD06;
+	Wed, 28 Aug 2024 13:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724853119; cv=none; b=ehiCyjena7r/37Im20bw6gGpZ4q12vmPx3OVnPYTG2zNuvEF98Lzi+pb4VYUDeVUlbWt5KD9amTrtY/01RAqyE2vJgSjFPj+MP0dGA8smqjjvl6zAFXendwFQJC/LpJ73u5WMfN6gT11eNKPBLgwibtK3LXZp9BbhqN9aS7yhYA=
+	t=1724853205; cv=none; b=F0xtjxysP0lJ1xTWQqWrWQ07/cFbNGiuIkaUS5RVsZHsQw15DzzNAzfOsVJ4LEmI6WfBfkQcaicDoGpNAlnGBRptyPq72YJsa58vfCqPCCeti+0mAU6s+jk+1Bc+D03iVJp+YyQqVIAy0GPQ3OQ6Sdlf37JxDIXOXicEjU6jcqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724853119; c=relaxed/simple;
-	bh=B4Cy+OatU8p90iXKkDcsVHvtzFnr5rbdY+gINjLuZzY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pvhBmYTnTIeCijlhrCVJL12drnR2hvGccoIeSIo3RToumwut6aTCJgE2koN2jz0y6slE+MqdWeiqUq4GTFQSnRnrbbQEjI4MzEqD/5lcF5Mn9JP9HVeoW27CWIl1LZSLheC35YJ3Bw+sIxh5R2/VPnM84mkFDqpqgh0LZlxoP4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=eECe/2Q5; arc=none smtp.client-ip=140.205.0.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1724853106; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=9u5p5kx6uh3e0Bb5YhuSL84dXaiVoWyd0IYSs5o/yK4=;
-	b=eECe/2Q55poMjMk/iHx15sLcWts73AVp4ZJYmE/54eX33GPzvzo5QwXrXuoaguUoTlmvWUmiQe/VbkRHejux3ZF6XUl9JdEAkDew2SpgdXoEZ/yxtqEajtV1ZKMF1W05R/Rp518+Vie7lrJjmI3ldYk4ez+slt3myFRw0r35wZQ=
-Received: from ubuntu..(mailfrom:tiwei.btw@antgroup.com fp:SMTPD_---.Z4l3S4N_1724853101)
-          by smtp.aliyun-inc.com;
-          Wed, 28 Aug 2024 21:51:45 +0800
-From: "Tiwei Bie" <tiwei.btw@antgroup.com>
-To: richard@nod.at,
-	anton.ivanov@cambridgegreys.com,
-	johannes@sipsolutions.net
-Cc:  <linux-um@lists.infradead.org>,
-   <linux-kernel@vger.kernel.org>,
-  "Tiwei Bie" <tiwei.btw@antgroup.com>
-Subject: [PATCH] um: Fix the return value of elf_core_copy_task_fpregs
-Date: Wed, 28 Aug 2024 21:51:40 +0800
-Message-Id: <20240828135140.1015940-1-tiwei.btw@antgroup.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724853205; c=relaxed/simple;
+	bh=hqxyw8l9U76d0ugy8OuKsZ3mvhcpdqvX8AWYEPYW1fM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dQwIi6myCTe9XNN9jNYK6UwB4kD6w+T+w3lfhXfUZUE5aUMlpEYHZYuRV6mM0gbwa9lyBuSCpSP39eJ2BDbrQeDgS1jkQOxxymZd9TvYJOx/ArXdRUtHraDQQ8OUBzu8HXMLOLg/9YVemKbxgd8bI/CrtN13krzbobIM/KWIO/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=aCaCq6OP; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1724853195;
+	bh=hqxyw8l9U76d0ugy8OuKsZ3mvhcpdqvX8AWYEPYW1fM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aCaCq6OPdUQb+cCM6A7UyjdXA4Cu/nAgwMPe/lNm8t+PkWZM7d0on20GTW+3ClW44
+	 w/VrjN8ibNg/dANdJVJKkWWRnb24f7mxHdp9+3u27qFl4aGnruxHdRB4WnuTbL3LQ9
+	 JigZyOhICriFFbkW/0BPsX7ayEfWkP61iFrvxT5me31q107fNoHrln58+sOfawKlNz
+	 dsdUiIEioXdy6SXBntWXOCXhrockeZ46IKcWuPLnXogvy3kGNKHVsay1S7ZjvX/6mD
+	 LebtwphowF5fC+2yKigT+Z6xQ9qzrfrGnHZwRTb29hEjsvfZENzx5l6Ro8+ggTJoDE
+	 LF6rL8daL8Zsg==
+Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Wv5Tk5Fyvz1JGb;
+	Wed, 28 Aug 2024 09:53:14 -0400 (EDT)
+Message-ID: <16d0d924-f39b-4e0a-a488-74513f1214a6@efficios.com>
+Date: Wed, 28 Aug 2024 09:52:49 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/8] Faultable Tracepoints
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
+ Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
+ Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+ bpf@vger.kernel.org, Joel Fernandes <joel@joelfernandes.org>
+References: <20240626185941.68420-1-mathieu.desnoyers@efficios.com>
+ <20240626212543.7565162d@gandalf.local.home>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20240626212543.7565162d@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This function is expected to return a boolean value, which should be
-true on success and false on failure.
+On 2024-06-27 03:25, Steven Rostedt wrote:
+> On Wed, 26 Jun 2024 14:59:33 -0400
+> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+> 
+>> Wire up the system call tracepoints with Tasks Trace RCU to allow
+>> the ftrace, perf, and eBPF tracers to handle page faults.
+>>
+>> This series does the initial wire-up allowing tracers to handle page
+>> faults, but leaves out the actual handling of said page faults as future
+>> work.
+>>
+>> I have tested this against a feature branch of lttng-modules which
+>> implements handling of page faults for the filename argument of the
+>> openat(2) system call.
+>>
+>> This v5 addresses comments from the previous round of review [1].
+> 
+> Hi Mathieu,
+> 
+> Can you resend this and Cc linux-trace-kernel@vger.kernel.org?
 
-Fixes: d1254b12c93e ("uml: fix x86_64 core dump crash")
-Signed-off-by: Tiwei Bie <tiwei.btw@antgroup.com>
----
- arch/um/kernel/process.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Sure, will do for v6. Thanks!
 
-diff --git a/arch/um/kernel/process.c b/arch/um/kernel/process.c
-index be2856af6d4c..3cc2b663aa78 100644
---- a/arch/um/kernel/process.c
-+++ b/arch/um/kernel/process.c
-@@ -291,7 +291,8 @@ unsigned long __get_wchan(struct task_struct *p)
- int elf_core_copy_task_fpregs(struct task_struct *t, elf_fpregset_t *fpu)
- {
- 	int cpu = current_thread_info()->cpu;
-+	int pid = userspace_pid[cpu];
- 
--	return save_i387_registers(userspace_pid[cpu], (unsigned long *) fpu);
-+	return save_i387_registers(pid, (unsigned long *) fpu) == 0;
- }
- 
+Mathieu
+
+> 
+> That would put it into our patchwork and makes it work with our workflow.
+> 
+>   https://patchwork.kernel.org/project/linux-trace-kernel/list/
+> 
+> Thanks,
+> 
+> -- Steve
+> 
+> 
+>>
+>> Steven Rostedt suggested separating tracepoints into two separate
+>> sections. It is unclear how that approach would prove to be an
+>> improvement over the currently proposed approach, so those changes were
+>> not incorporated. See [2] for my detailed reply.
+>>
+>> In the previous round, Peter Zijlstra suggested use of SRCU rather than
+>> Tasks Trace RCU. See my reply about the distinction between SRCU and
+>> Tasks Trace RCU [3] and this explanation from Paul E. McKenney about the
+>> purpose of Tasks Trace RCU [4].
+>>
+>> The macros DEFINE_INACTIVE_GUARD and activate_guard are added to
+>> cleanup.h for use in the __DO_TRACE() macro. Those appear to be more
+>> flexible than the guard_if() proposed by Peter Zijlstra in the previous
+>> round of review [5].
+>>
+>> This series is based on kernel v6.9.6.
+
 -- 
-2.34.1
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
 
