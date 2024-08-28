@@ -1,116 +1,151 @@
-Return-Path: <linux-kernel+bounces-305624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E264963161
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:01:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F2BA963162
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:02:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1C241C21429
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:01:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72F731C21400
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9576C1ABEBB;
-	Wed, 28 Aug 2024 20:01:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C381ABEBB;
+	Wed, 28 Aug 2024 20:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EsjS0otU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="L5CkIwdX";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eTaZv7iJ"
+Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199673AC2B;
-	Wed, 28 Aug 2024 20:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8773AC2B;
+	Wed, 28 Aug 2024 20:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724875260; cv=none; b=cuzL9c0y5u8YCWwn0qakt9RuKWsV7kleYOuvrGmbH22iq092eAgHORDWHWLgcSFo/aCSdtIHX2p8O+FhD9vltnAOLpdhRLgJBXHzK+7FBi+omKE0iAZZ4MnpX4XDgfDeu5NJIaVU4YusIJDRSVya+8+438/QsI4ti9sKsITMinM=
+	t=1724875313; cv=none; b=nr3dIZVxqBNiI++n1R0YA6j6OkXpdqtQ1n/yAi+J7wYfB1Jp/xUm5kSkDBaiq+ybCh8PfGgSQL34Bxs2mfKe5kuewXTD+vLEJR/ZaxpZ4P6ak5bayZdM8q7BAfM81wOFzffSxFxE8MB0veNPyyzmq0DzWp/3Z+JaqvGwZBz406A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724875260; c=relaxed/simple;
-	bh=+VW7xZep5DJcygKlPPQd7cNrCB46UZbpfqn8U7UTBsk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bb8u9PLUGb7EBOOmYCa6XQEzoqd67rBFll8dkmliXuu2GkchhaSGviuaoZa4i9728NwpicJEHO5CQv9fUPqPKNjqNjVv9JNXC197tx+Z3s7781AKMAvlZuui/a9kFpqariEmzmvUZNRZwIygp/8nvSUa7i92iCcOEEvoJjZXybs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EsjS0otU; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724875259; x=1756411259;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+VW7xZep5DJcygKlPPQd7cNrCB46UZbpfqn8U7UTBsk=;
-  b=EsjS0otUmV/9Gii2WGJywCoyj5V7wcNSYQnSeY3/ettngi8Ceabo3N8y
-   Ezci8Fg0yQ1S/XddzIYZ3Ou4N1WdidxxhWxUtUk7J7ti8oBQlOS9NG7cD
-   5ONzFJ+r2A2ZEfIA3psl0v66RLGpq4ULT8HR5vxhZ3MNGGWJ7ocbl2sgC
-   2h9bV2n+WGcrcpkIfzxd/5aYC8yh8y+uXQGwMQGy+BF3oKflCGYD2LVT1
-   4Vf5OC7vMmIXHrRjA8lheFmfyk/ye6lRbYPgrRwe8UuxTwWEHWVtfKspm
-   KSD386q+ANDRSQKEYfzHsVE5tBeOQdEeQyJ8FbHyZQVXVSjJr5zQFesvW
-   A==;
-X-CSE-ConnectionGUID: bHoOpHN9SoGrEYMqhw5J5A==
-X-CSE-MsgGUID: mdsDA1OTQuSRYRVCiDVKJA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="34840715"
-X-IronPort-AV: E=Sophos;i="6.10,183,1719903600"; 
-   d="scan'208";a="34840715"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 13:00:58 -0700
-X-CSE-ConnectionGUID: vska6vuMRcKmm/dR8shkIg==
-X-CSE-MsgGUID: stj4xmFwSamnh6LOZ6IJTw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,183,1719903600"; 
-   d="scan'208";a="63176830"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 13:00:57 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sjOqc-00000002m9T-2AFw;
-	Wed, 28 Aug 2024 23:00:54 +0300
-Date: Wed, 28 Aug 2024 23:00:54 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 0/5] pinctrl: intel: High impedance impl. and cleanups
-Message-ID: <Zs-B9m4jO9x3wX4d@smile.fi.intel.com>
-References: <20240828184018.3097386-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1724875313; c=relaxed/simple;
+	bh=F/DqEhIax/SEgiB7bpr7KLFZzIj/Zgv1gdYBSaDykp4=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=FzUywbckp/klF+EugUZSORNmsD6qMKpgjdwHgYjyslHB/yTwnuojJgqS8qodTHQmWvwA2NXlukdBsDiH5tC/+HOEwsRZhwdUyqkQSWpwkoUAMakxQqUFCkA2H4FYqTaDBnslCHHt3dl1EN/5eD3f9rH1allhNS3CbAsA9WNVISw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=L5CkIwdX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eTaZv7iJ; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id A6F811140557;
+	Wed, 28 Aug 2024 16:01:49 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-04.internal (MEProxy); Wed, 28 Aug 2024 16:01:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1724875309;
+	 x=1724961709; bh=ed7LujsTpZKV3Khr/dqL+Zy9OCqu4p5alag84yh45KA=; b=
+	L5CkIwdXM0+wNYsjcmZIdZY/xOxo8EIBpJwkJ8DT5RKcsdZV67qbDGGyjbHXWf4Q
+	CZgXm+d54btaVAJ4MC1z+0IURoR0dJV07KloBg2oVbKyTM6ko6TtFv96nVjFPtqx
+	MFt20zKTk2Ep4+AO380q0w37JdYL34uVBqDsB7j4pn3d4G081eiq2APq6M6RLkIs
+	A+hTdFq/UX2teguAKUB6Dl9iTGEPzqcARuUvsueWwFG+GrNKaNgjtR10UEZc+eh6
+	nFsQyLt2XqLfOQ0C+vEwfEzlzMTJhBgaGnyH1JNkmwHAmrfxDpCkpy+9Ywc2dH4I
+	cc65GtwAP9YZRtQcgiTV2A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724875309; x=
+	1724961709; bh=ed7LujsTpZKV3Khr/dqL+Zy9OCqu4p5alag84yh45KA=; b=e
+	TaZv7iJt8kh54ngKSp9jc8NGjd2GWsOydeF1Xs3LyBtOd02kaYHLzm6JZPlyaLri
+	/4EwO+sM+vfunP7qxhY5TZEQuHbHxOZiljtUpLAf54Zkm94uGLl1irD3UzsTvpdM
+	Yo/8hzq6eG7qphDTp8lnhCxMwV6x0mcE82C2v4MiqnL/1PsER4zk9cU9W9szAtX0
+	2Khhc8j7ZhLlqrQwooaRUKsxvbJbjDw1Ph3IlabaRNcZslOUKquu+rC1U1pg5C86
+	qnWmyRvxi5O2UN/kN/nvPiicPGwCdpWKPLs8ioH5otv+/vn6ywbG6a9gXuzH7vUG
+	KN4fJZ1jqLnGL3wrVE3iw==
+X-ME-Sender: <xms:LYLPZuz0PdbqzpOrAvhRoPJVM2vgNj8Z8zUGXUeNBoK0yaPPoagWbg>
+    <xme:LYLPZqRs85tFtWW_duYTuUYi9npPNFFfkwY7jpWAQZAivG_aJJHniF3REOTVarWaq
+    9EHG9YQOJ6YH4uLcFY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudefvddgudegvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeef
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehprghulhhmtghksehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehlihhnuhigqdgrrhgthhesvhhgvghrrdhkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlh
+    drohhrgh
+X-ME-Proxy: <xmx:LYLPZgXy0HBp5HSdX7RSDmd5gqV3y-Hb1XXEwHJue6MZutegI4abjg>
+    <xmx:LYLPZkj25nkPEJHy9BqCer-qgAiBa7PnTBWlOUMh3Y2pPHh-jJgLVQ>
+    <xmx:LYLPZgBRPx_mw603Wf78RU6yq9uIuis4DuOx1dNXczN_SFr_gQQBPA>
+    <xmx:LYLPZlIZol0pyadOzs03CaAsRvVXAYonVBiLhnt-jDeelJjU1Vc98A>
+    <xmx:LYLPZjN-Q8y_0fcnhmUb2Gx2_eePe20swxasINj0z2UtLU7dV9R5pzr->
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 5D7B52220071; Wed, 28 Aug 2024 16:01:49 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240828184018.3097386-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Date: Wed, 28 Aug 2024 22:01:06 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>
+Message-Id: <9242c5c2-2011-45bf-8679-3f918323788e@app.fastmail.com>
+In-Reply-To: <289c7e10-06df-435b-a30d-c2a5bc4eea29@paulmck-laptop>
+References: <3ca4590a-8256-42d1-89ca-f337ae6f755c@paulmck-laptop>
+ <b3512703-bab3-4999-ac20-b1b874fcfcc3@app.fastmail.com>
+ <289c7e10-06df-435b-a30d-c2a5bc4eea29@paulmck-laptop>
+Subject: Re: 16-bit store instructions &c?
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-+Cc: Heiner
+On Wed, Aug 28, 2024, at 14:22, Paul E. McKenney wrote:
+> On Wed, Aug 28, 2024 at 01:48:41PM +0000, Arnd Bergmann wrote:
+>
+>> There is a related problem with ARM RiscPC, which
+>> uses a kernel built with -march=armv3, and that
+>> disallows 16-bit load/store instructions entirely,
+>> similar to how alpha ev5 and earlier lacked both
+>> byte and word access.
+>
+> And one left to go.  Progress, anyway.  ;-)
 
-On Wed, Aug 28, 2024 at 09:38:33PM +0300, Andy Shevchenko wrote:
-> We would need a high impedance implementation for a quirk, so here it
-> is. While doing this series I also noticed a couple of opportunities
-> to clean up, hence two more patches (1st and 5th).
+What I meant to say about this one is also that we can probably
+ignore it as well, since it's on the way out already, at the latest
+when gcc-9 becomes the minimum compiler, as gcc-8 was the last
+to support -march=armv3. We can also ask Russell if he's ok with
+dropping it earlier, as he is almost certainly the only user.
 
-Sorry it took a while to actually start implementing the quirk for your case.
-Here I'm asking for the following things:
+>> Everything else that I see has native load/store
+>> on 16-bit words and either has 16-bit atomics or
+>> can emulate them using the 32-bit ones.
+>> 
+>> However, the one thing that people usually
+>> want 16-bit xchg() for is qspinlock, and that
+>> one not only depends on it being atomic but also
+>> on strict forward-progress guarantees, which
+>> I think the emulated version can't provide
+>> in general.
+>> 
+>> This does not prevent architectures from doing
+>> it anyway.
+>
+> Given that the simpler spinlock does not provide forward-progress
+> guarantees, I don't see any reason that these guarantees cannot be voided
+> for architectures without native 16-bit stores and atomics.
+>
+> After all, even without those guarantees, qspinlock provides very real
+> benefits over simple spinlocks.
 
-1) what is the marketing name of the device you have problems with?
-(I believe it's available on the free market, correct?);
+My understanding of this problem is that with a trivial bit spinlock,
+the worst case is that one task never gets the lock while others
+also want it, but a qspinlock based on a flawed xchg() implementation
+may end with none of the CPUs ever getting the lock. It may not
+matter in practice, but it does feel worse.
 
-2) does it have any BIOS updates and, if it has, does it fix the issue?
-
-3) can you apply patches 2,3,4,5 from this series (the first one is buggy and
-not needed for you) and replace the hack I mentioned earlier with
-
-	ret = intel_gpio_set_high_impedance(pctrl, 3);
-	if (ret)
-		return ret;
-
-somewhere at the end of intel_pinctrl_probe()?
-
-Does it still work as expected?
-
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+      Arnd
 
