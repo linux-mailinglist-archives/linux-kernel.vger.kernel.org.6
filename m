@@ -1,278 +1,143 @@
-Return-Path: <linux-kernel+bounces-305080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65A6E962936
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:48:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0144696293E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:49:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C258284916
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:48:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 344131C22449
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F121185B77;
-	Wed, 28 Aug 2024 13:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569BF186E2C;
+	Wed, 28 Aug 2024 13:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tqg/WrCk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="VthyfXne";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="em5bzErH"
+Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F7D1DFE3;
-	Wed, 28 Aug 2024 13:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664F01EB3D;
+	Wed, 28 Aug 2024 13:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724852895; cv=none; b=mdE6odk9dGhCv84rvj25HPZbVqrFeqqJl0MQY+aIogJ3xhNR9gHIcU2n3eL69M5xbEbvqVZn3hEg8/NtNSUZ1R6mQPnMllLyzuItuBgFt+gQ74nW3qjGddLeSxyswAyPttC5x8ZZiZuF8Q+Lu6ujk9rHpTCBpLL7W2ahxVdhNYk=
+	t=1724852945; cv=none; b=LWCFfEEGZb19+aiNWKFQCyTnmbkHn4tuHWaGqJgVQsZwSxx6UiQs1mZvrspQ5m26v06x5A08P/cuGfQTy3xbhxlSJRQSV08/FU2Jj8wIu6xXYk4wXzfcUGJecBp5kG2gZZjcs/EFbXzy+2tivVQZYSCEy+2rCmXlLRaYPyDg/gA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724852895; c=relaxed/simple;
-	bh=vHCxnHLM7B79W/rgmZykoOgP/HNJv5GnpgTCvP/Ur24=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I2zutdlBzye1yMRfBqhM7WuvFDkojYcYq4ng45+X8mFjiA2Xc57j+wSsBdpxNX5LQSeUb9aCfsBO9q2EHnrgqIUYaVwMZzlU5tgE9piDueR5CMXFEI/Qo6+q0kypq7Kc5SzOGU8uOM7hxhNQAXO41fNTU9f94vxIAJ2EqwNmLFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tqg/WrCk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0204CC5E88C;
-	Wed, 28 Aug 2024 13:48:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724852895;
-	bh=vHCxnHLM7B79W/rgmZykoOgP/HNJv5GnpgTCvP/Ur24=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Tqg/WrCk9j5LppdS0Qik+p9lgpluTCZ7MBXbWfYy32xKnLgj+hGS7dmulUC+XKOHN
-	 /7L/5iYbJEHodyc3521Z6+NcliBGqsCLSDc7wUnVZFKtdAqIg6BHURxNdbm1fC3tRI
-	 hcWtsLvZyA7VsczMO/gO94mrI9sgo/KGu3lR/O6U6M2YhINeu4awDWKM1BnNjMv+W/
-	 OSczhJ0x0Gnr0zPiyrh3QJAz9le0fkZLakoz37S9Fh1Gtq2XtUVAsWBVbKlTIv9P4k
-	 tieXKlBNncfB+vyW3ycH2EWMIMYDmEIUg4lfRS8aalFVWMRTmymhP2clm6jp37vHDW
-	 qKQZlPmHT6MNA==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5334b0e1a8eso8846454e87.0;
-        Wed, 28 Aug 2024 06:48:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVsgAYdSXka3D25Ys68LK4tLWkU/XWjadHUSHgqcm/8457+IOIwBbat+yV0uDd6ThJ3SPuVbmqdRgvewIA=@vger.kernel.org, AJvYcCX28lkYApcClrgbCRPZ+Vf7I9h9TRc6GJBffrXSre6ZLCwAVRkJZawNe3wzE0xy0C6bSLGXAcHQGkBDBsJAGGw=@vger.kernel.org, AJvYcCXXUltXB4nCVR5DzYpYfyzYN0l5DlHTJnZ56xvy+hQDB2CTeCO3FSZ8UA9mrtuUrfsPDDM/DVTy5WQ7aVoS@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUyKWQe/4G8akKqg7bu06ZRB+D06OhuNxHQkKw1y5/FbrlUsFR
-	URJuOGt/ZOQayY/H6UFa9bLV7lh1xOWDn79fCOid055qCuoD7C+wAl54a2tHBJMdFc6vQTGPmAg
-	DFGsckH/kL6hje6Y35bZQ2UCrvck=
-X-Google-Smtp-Source: AGHT+IFAy0fk5KS1tTiiP87NuO0Q/oqObzktBq/uhSptt/agQiBkAIexx42a+MIM2J93D76DYhPdj4+z1KwWaOfH4x0=
-X-Received: by 2002:a05:6512:39cb:b0:52e:9b92:4990 with SMTP id
- 2adb3069b0e04-534387850c1mr11723335e87.32.1724852893131; Wed, 28 Aug 2024
- 06:48:13 -0700 (PDT)
+	s=arc-20240116; t=1724852945; c=relaxed/simple;
+	bh=OYorvbavpIzB4tCMgAp76XG3IeqGaSzUi1L2iqOdkwg=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=MqUWHqh5aHdIBL/VPNKtuLNS1uDYv/93+2q5snIEkO5ml6Z9EF1QT3DtETFGUlJgasvkjp7OmW+tuuCrWgTisiBeP70vFCmzE+u64rIJHdNE7/QkimvM4epNO8ALdcTOoNFuG8lJk5TehK0h01iti4YukGts0+5tLEcNOA+wCF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=VthyfXne; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=em5bzErH; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 6BEE1138FF21;
+	Wed, 28 Aug 2024 09:49:02 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-04.internal (MEProxy); Wed, 28 Aug 2024 09:49:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1724852942;
+	 x=1724939342; bh=spkJIQn60uBLOli5zEVF98cUm3cSDPA78s7enFv/a5E=; b=
+	VthyfXneUZjp4Jut7qKbS8VOKRMzNfCK4LOwOvE4JAJi+L8OaEbk2gvieiSOwMkp
+	WS+Dhbvl4nS8wRCEGLZr1mr26iNNtK9gODEu69OjsV22HAL4IXcFPUFhKYGzief9
+	+wUPUCTYUUiQW6Yu8wNC2xly95oVUVC81yXOyDRtKDbeM2gn//vI4nzDNu1x0HS1
+	rS3WszDryZ6r3E8ykIWq5p4ATDEMzpEoTaue41CdGNYIlMgPL9CfR6YaFw53BxZf
+	EQOpeoONTC8s/h7kzbm+BHleBi6+iBGQXB+BpTsbDhb9umLZKnHWI7WNeisIh7Hr
+	+ZI1zaIMSCpUhH+pt3sscA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724852942; x=
+	1724939342; bh=spkJIQn60uBLOli5zEVF98cUm3cSDPA78s7enFv/a5E=; b=e
+	m5bzErHTBiONcITuhN9bZFXO/SA8p47sWbapwWsUeyoBWlIXz9BWFz2K+gGXwLTU
+	i/qqxxBbkZG4wFowwtm3SyT3EJF5y9AAK1abUx/G0YpOkYrqZbfTFvUrZKNdCz0n
+	yUWWpt/cD8tkWQ6ko0+3YeFiukoVUKw6lDxec+EOdFBkHBueN59zX/EcfOLMbujp
+	CiegSmGnrog1XyheBRZK5IZt3bFC49umAufBmD2KZgShU76EWx/PL4MKMl0wYa1i
+	Qm4jlZwP+iowwWeRzJhpzzKO8y0maNeQUzKDXpywY2zbh8vJTxMa0oHQhztlX+EO
+	CuQOdMVl25bVPByq7tHNg==
+X-ME-Sender: <xms:zirPZu7GVn63jThrCfqjeNjyvbRN3BWTpdk4zmShMUg_4jR-0c_fuQ>
+    <xme:zirPZn6jCtHI5xrGy6J3j79Qyqxwj5lj_8Q9PnPIWW_fhCoDAf-HZ79DsIhWkVM8b
+    dCnrfSYi1BOSzoya0U>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudefvddgieejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepfedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepphgruhhlmhgtkheskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtoheplhhinhhugidqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrd
+    horhhg
+X-ME-Proxy: <xmx:zirPZtco84MM-73O1enCE0iJxW2psQ4bcWzgzqbdqWSWXxbfyNZG_g>
+    <xmx:zirPZrL5UALh175XxtZri7NU_QNjX2Ox5niInwr8BvGgGs2FNQ6iIw>
+    <xmx:zirPZiIBLIUj66USMnRjltFybb9o6d-JrWHJy4WlS0Hvye94TX779w>
+    <xmx:zirPZsyj_0RmNXri9zDg0EMDByDEfkVot7EGyP3TbBqMCJwkCKvQpA>
+    <xmx:zirPZpVQFYRAAGBR_9TtfLzsy7IKVV0wv49f1jS0QgsPj5HzlH5e1Tyl>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 3A358222006F; Wed, 28 Aug 2024 09:49:02 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240826-shadow-call-stack-v6-1-495a7e3eb0ef@google.com>
-In-Reply-To: <20240826-shadow-call-stack-v6-1-495a7e3eb0ef@google.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 28 Aug 2024 15:48:01 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXGtH+yna6CLncxTYi+ie2WF5-nSA3q0Re9L1VJt1EoQ9A@mail.gmail.com>
-Message-ID: <CAMj1kXGtH+yna6CLncxTYi+ie2WF5-nSA3q0Re9L1VJt1EoQ9A@mail.gmail.com>
-Subject: Re: [PATCH v6] rust: support for shadow call stack sanitizer
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Jamie Cunliffe <Jamie.Cunliffe@arm.com>, Sami Tolvanen <samitolvanen@google.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Conor Dooley <conor@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Marc Zyngier <maz@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Valentin Obst <kernel@valentinobst.de>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Date: Wed, 28 Aug 2024 13:48:41 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>
+Message-Id: <b3512703-bab3-4999-ac20-b1b874fcfcc3@app.fastmail.com>
+In-Reply-To: <3ca4590a-8256-42d1-89ca-f337ae6f755c@paulmck-laptop>
+References: <3ca4590a-8256-42d1-89ca-f337ae6f755c@paulmck-laptop>
+Subject: Re: 16-bit store instructions &c?
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Mon, 26 Aug 2024 at 16:23, Alice Ryhl <aliceryhl@google.com> wrote:
+On Wed, Aug 28, 2024, at 13:11, Paul E. McKenney wrote:
+> Hello, Arnd,
 >
-> This patch adds all of the flags that are needed to support the shadow
-> call stack (SCS) sanitizer with Rust, and updates Kconfig to allow only
-> configurations that work.
+> You know how it goes, give them an inch...
 >
-> The -Zfixed-x18 flag is required to use SCS on arm64, and requires rustc
-> version 1.80.0 or greater. This restriction is reflected in Kconfig.
+> I did get a request for 16-bit xchg(), but last I checked, Linux still
+> supports some systems that do not have 16-bit store instructions.
 >
-> When CONFIG_DYNAMIC_SCS is enabled, the build will be configured to
-> include unwind tables in the build artifacts. Dynamic SCS uses the
-> unwind tables at boot to find all places that need to be patched. The
-> -Cforce-unwind-tables=y flag ensures that unwind tables are available
-> for Rust code.
->
-> In non-dynamic mode, the -Zsanitizer=shadow-call-stack flag is what
-> enables the SCS sanitizer. Using this flag requires rustc version 1.82.0
-> or greater on the targets used by Rust in the kernel. This restriction
-> is reflected in Kconfig.
->
-> It is possible to avoid the requirement of rustc 1.80.0 by using
-> -Ctarget-feature=+reserve-x18 instead of -Zfixed-x18. However, this flag
-> emits a warning during the build, so this patch does not add support for
-> using it and instead requires 1.80.0 or greater.
->
-> The dependency is placed on `select HAVE_RUST` to avoid a situation
-> where enabling Rust silently turns off the sanitizer. Instead, turning
-> on the sanitizer results in Rust being disabled. We generally do not
-> want changes to CONFIG_RUST to result in any mitigations being changed
-> or turned off.
->
-> At the time of writing, rustc 1.82.0 only exists via the nightly release
-> channel. There is a chance that the -Zsanitizer=shadow-call-stack flag
-> will end up needing 1.83.0 instead, but I think it is small.
->
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
-> Link: https://lore.kernel.org/rust-for-linux/20240808221138.873750-1-ojeda@kernel.org/ [1]
-> ---
-> Changes in v6:
-> - Move Kconfig requirements into arch/*/Kconfig.
-> - List non-dynamic SCS as supported on 1.82. This reflects newly added
->   things in rustc.
-> - Link to v5: https://lore.kernel.org/r/20240806-shadow-call-stack-v5-1-26dccb829154@google.com
->
-> Changes in v5:
-> - Rebase series on v6.11-rc2.
-> - The first patch is no longer included as it was merged in v6.11-rc2.
-> - The commit message is rewritten from scratch.
-> - Link to v4: https://lore.kernel.org/r/20240729-shadow-call-stack-v4-0-2a664b082ea4@google.com
->
-> Changes in v4:
-> - Move `depends on` to CONFIG_RUST.
-> - Rewrite commit messages to include more context.
-> - Link to v3: https://lore.kernel.org/r/20240704-shadow-call-stack-v3-0-d11c7a6ebe30@google.com
->
-> Changes in v3:
-> - Use -Zfixed-x18.
-> - Add logic to reject unsupported rustc versions.
-> - Also include a fix to be backported.
-> - Link to v2: https://lore.kernel.org/rust-for-linux/20240305-shadow-call-stack-v2-1-c7b4a3f4d616@google.com/
->
-> Changes in v2:
-> - Add -Cforce-unwind-tables flag.
-> - Link to v1: https://lore.kernel.org/rust-for-linux/20240304-shadow-call-stack-v1-1-f055eaf40a2c@google.com/
-> ---
->  Makefile            | 1 +
->  arch/arm64/Kconfig  | 7 ++++++-
->  arch/arm64/Makefile | 3 +++
->  arch/riscv/Kconfig  | 7 ++++++-
->  init/Kconfig        | 1 -
->  5 files changed, 16 insertions(+), 3 deletions(-)
->
-> diff --git a/Makefile b/Makefile
-> index 44c02a6f60a1..eb01a26d8354 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -927,6 +927,7 @@ ifdef CONFIG_SHADOW_CALL_STACK
->  ifndef CONFIG_DYNAMIC_SCS
->  CC_FLAGS_SCS   := -fsanitize=shadow-call-stack
->  KBUILD_CFLAGS  += $(CC_FLAGS_SCS)
-> +KBUILD_RUSTFLAGS += -Zsanitizer=shadow-call-stack
->  endif
->  export CC_FLAGS_SCS
->  endif
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index a2f8ff354ca6..28c4a3035331 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -231,7 +231,7 @@ config ARM64
->         select HAVE_FUNCTION_ARG_ACCESS_API
->         select MMU_GATHER_RCU_TABLE_FREE
->         select HAVE_RSEQ
-> -       select HAVE_RUST if CPU_LITTLE_ENDIAN
-> +       select HAVE_RUST if RUSTC_SUPPORTS_ARM64
->         select HAVE_STACKPROTECTOR
->         select HAVE_SYSCALL_TRACEPOINTS
->         select HAVE_KPROBES
-> @@ -265,6 +265,11 @@ config ARM64
->         help
->           ARM 64-bit (AArch64) Linux support.
->
-> +config RUSTC_SUPPORTS_ARM64
+> Could you please let me know whether this is still the case?
 
-Nit: could we choose a better name here? ARCH_HAVE_RUST perhaps?
+Hi Paul,
 
-> +       def_bool y
-> +       depends on CPU_LITTLE_ENDIAN
-> +       depends on !SHADOW_CALL_STACK || RUSTC_VERSION >= 108200 || RUSTC_VERSION >= 108000 && UNWIND_PATCH_PAC_INTO_SCS
-> +
+The only one I'm aware of that can't do it easily
+is a configuration on 32-bit ARM that enables both 
+CONFIG_CPU_V6 and CONFIG_SMP, but I already wrote
+a patch that forbids that configuration for other
+reasons. I just need to send that patch.
 
-This is a bit opaque, so I'd prefer to have a comment here, explaining
-that rustc 1.82 supports emitting the instrumentation statically, but
-1.80 is needed to get the X18 reservation, which the DWARF based
-patching logic relies on.
+There is a related problem with ARM RiscPC, which
+uses a kernel built with -march=armv3, and that
+disallows 16-bit load/store instructions entirely,
+similar to how alpha ev5 and earlier lacked both
+byte and word access.
 
->  config CLANG_SUPPORTS_DYNAMIC_FTRACE_WITH_ARGS
->         def_bool CC_IS_CLANG
->         # https://github.com/ClangBuiltLinux/linux/issues/1507
-> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-> index f6bc3da1ef11..b058c4803efb 100644
-> --- a/arch/arm64/Makefile
-> +++ b/arch/arm64/Makefile
-> @@ -57,9 +57,11 @@ KBUILD_AFLAGS        += $(call cc-option,-mabi=lp64)
->  ifneq ($(CONFIG_UNWIND_TABLES),y)
->  KBUILD_CFLAGS  += -fno-asynchronous-unwind-tables -fno-unwind-tables
->  KBUILD_AFLAGS  += -fno-asynchronous-unwind-tables -fno-unwind-tables
-> +KBUILD_RUSTFLAGS += -Cforce-unwind-tables=n
->  else
->  KBUILD_CFLAGS  += -fasynchronous-unwind-tables
->  KBUILD_AFLAGS  += -fasynchronous-unwind-tables
-> +KBUILD_RUSTFLAGS += -Cforce-unwind-tables=y -Zuse-sync-unwind=n
->  endif
->
->  ifeq ($(CONFIG_STACKPROTECTOR_PER_TASK),y)
-> @@ -114,6 +116,7 @@ endif
->
->  ifeq ($(CONFIG_SHADOW_CALL_STACK), y)
->  KBUILD_CFLAGS  += -ffixed-x18
-> +KBUILD_RUSTFLAGS += -Zfixed-x18
->  endif
->
->  ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 0f3cd7c3a436..476e38ed9c00 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -172,7 +172,7 @@ config RISCV
->         select HAVE_REGS_AND_STACK_ACCESS_API
->         select HAVE_RETHOOK if !XIP_KERNEL
->         select HAVE_RSEQ
-> -       select HAVE_RUST if 64BIT
-> +       select HAVE_RUST if RUSTC_SUPPORTS_RISCV
->         select HAVE_SAMPLE_FTRACE_DIRECT
->         select HAVE_SAMPLE_FTRACE_DIRECT_MULTI
->         select HAVE_STACKPROTECTOR
-> @@ -202,6 +202,11 @@ config RISCV
->         select UACCESS_MEMCPY if !MMU
->         select ZONE_DMA32 if 64BIT
->
-> +config RUSTC_SUPPORTS_RISCV
-> +       def_bool y
-> +       depends on 64BIT
-> +       depends on !SHADOW_CALL_STACK || RUSTC_VERSION >= 108200
-> +
+Everything else that I see has native load/store
+on 16-bit words and either has 16-bit atomics or
+can emulate them using the 32-bit ones.
 
-Same nit as above. Also, if this enables shadow call stack on RISC-V
-too, please mention it in the commit log more clearly, as it only
-mentions arm64 by name.
+However, the one thing that people usually
+want 16-bit xchg() for is qspinlock, and that
+one not only depends on it being atomic but also
+on strict forward-progress guarantees, which
+I think the emulated version can't provide
+in general.
 
->  config CLANG_SUPPORTS_DYNAMIC_FTRACE
->         def_bool CC_IS_CLANG
->         # https://github.com/ClangBuiltLinux/linux/issues/1817
-> diff --git a/init/Kconfig b/init/Kconfig
-> index fe76c5d0a72e..e095e94eb9db 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -1909,7 +1909,6 @@ config RUST
->         depends on !MODVERSIONS
->         depends on !GCC_PLUGINS
->         depends on !RANDSTRUCT
-> -       depends on !SHADOW_CALL_STACK
->         depends on !DEBUG_INFO_BTF || PAHOLE_HAS_LANG_EXCLUDE
->         help
->           Enables Rust support in the kernel.
->
-> ---
-> base-commit: 5953fd808fca8116a91678ee5fac00fc198ad93d
-> change-id: 20240304-shadow-call-stack-9c197a4361d9
->
+This does not prevent architectures from doing
+it anyway.
 
-With the comments addressed (or refuted)
-
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-
-Thanks,
+      Arnd
 
