@@ -1,188 +1,142 @@
-Return-Path: <linux-kernel+bounces-304554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B43569621C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:49:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 645A89621C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:49:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CF802870EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:49:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D525287628
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4411515B968;
-	Wed, 28 Aug 2024 07:49:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B90D15AAC1;
+	Wed, 28 Aug 2024 07:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gv5gcnZX"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="BDKwDsyF";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="MkpGsK4/"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD0615B0EC;
-	Wed, 28 Aug 2024 07:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD53A159596;
+	Wed, 28 Aug 2024 07:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724831352; cv=none; b=q5cdcN+V90t1YdtwsgNifsFyJ511g+EjdAR9SnnvrzrXEmVsi92rFMgzRJqOLajXXGlf+e9nClyvcTRAkJyH8DwxMcOkoPBO44Sz8/iuDHyjw8MOCDpHStkZYYClPDsp/p5CM8u7GmwC1/IEivVoHg5AbdjBXD5kXdDYPErZ/Zk=
+	t=1724831393; cv=none; b=fEwnYk34+zKFpnRbiKSDWDUR6jmcTUY/Tj9en1q7rpknPnE6NeZvdmZHJ49SD3jy73gXy6tdJjleJjfII91wFImh2B9u4af9Y53vJsWQfoGQjkLH0gVg+IJfAv7jKGFWOkFOqaNsIg4iuq+bJMjkE+joyag5md44D9UaaoQbL+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724831352; c=relaxed/simple;
-	bh=j98JU6msUA9RiXyy+HLEVipZYjwEgjFBaDFTabRQW0M=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EQRTihrLJ6Rr4ITWlN2xDXncRr/tlT7xUWG4a9TIrVf1qmih87lAnUv22HS+2rKcBhnZUScxoj0ed6LHVBtwfsJYa8EkobHI7Zl/mQQkV9hNQcvpn7ozsy6F8Rle7S4zzle0ZCPvUwPmmzEHpzvU7pDBXkXkCzeF5bXhvyfcbTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gv5gcnZX; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a86a37208b2so591285866b.0;
-        Wed, 28 Aug 2024 00:49:10 -0700 (PDT)
+	s=arc-20240116; t=1724831393; c=relaxed/simple;
+	bh=Rv3qTmRUBeZwN6rhOjdvXGQsaHueyAzsFZN+jNQkhK0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Tt8AATP5NRa/jjEDBtDnblibc70ZpMoqTr+8a5GxmTMn5XuMMddJmeLolkvipVMMw/RPCJR6HAqmzmgmDR4l03CV6y6dwVTnYRyDDk6WUxSGx5cFlsKx7qtx7O++lWYuO0enTb9o2u1mxvHpG4l2I5xB8X/XQzRhue1H214GIJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=BDKwDsyF; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=MkpGsK4/ reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724831349; x=1725436149; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=kyk+TyrQH1DKA5w0zkkLevHO981a94JN35a6IcZF/5Y=;
-        b=Gv5gcnZXjebwpKyLNR73Fu4D3BjOHbmnEHBmfj1wSGsC6OtWV2sDKsXAIeDrA0X0H6
-         o3B/lA9h8ARWp3kNM/5JlfhyiUzJEbCEvlUWB0AE+2Ca3RPA9JGiJfNT+6SpxOx4KpN8
-         XA+8Nvl/QAv+rlUTjgoQjBIUEO6pjJtIl+vfnnmx4GxoKsFnbaXt5R457lW/IG3n2zDZ
-         ecunnSuk6rZx8siIHL/Bx9xdluFAR9uQTSYG0H6uLYDl/qu5d8vh+U1VKf/ViX8uZc0S
-         F+Xw/rbD/3Q9dlUoLy0QS1PD7TlsreB0RzeBUAo5cSiU4FFLTIPhTzBSIGikTPLokK9H
-         mvkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724831349; x=1725436149;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kyk+TyrQH1DKA5w0zkkLevHO981a94JN35a6IcZF/5Y=;
-        b=M+60aOOevqLMVQ+SOTrLcLdKl0hKlKsMem9N8j+y7j+NzGFbESkjmU6XKsYH3MSPrm
-         fGNKZjlBle/r00veM423fySOHN70mx8/aZh/9hIskA4PruuuZrblEo9D2rU75Hzx84EJ
-         s/+Xl8f2xQ1E2is8WjdvGLkzh+j9zGejQgBhEdksq+qUMbVwh22/Dd2Ypr/+j7iZFwLp
-         tnRvZfGfrcJjCNudXZ/gvhoFZelsUAe9DL3h/uoP/5qLpVaVMUIR+UL8sujG5jpCDz85
-         9AeiQQq14tKTMGhcYw2DegT0N0nSXRc4bhpS99B3ZnctALPFlTEnQP+l3SSpn/9BFlDj
-         y5aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0ojtBugpkXew7IO/xVD/XVg2RZtFDLF7UoLcID9VHwweTWAKkY2ZKjr96jz6B/aD/Rd5wjfKOzbDW@vger.kernel.org, AJvYcCUOQTBk3XHxe74xhOxDWD4RkDg9EdWQkr0ERaVXH5CZh9O9fIiLpZeiUG8GWKVGrABv0WyaiegB3VJGrcXD@vger.kernel.org, AJvYcCX8PAtS6p75Acp3jW2cGPMQ62xHZXZfTgRku8XrClpHijNC7x2Jw9u6hvYWXCqtRu8NGhZ3pN1kYVXq@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsbhQR7tQsUPKqBCR67ClU0MXjaPM7DlbF91dZFqJbcy3j/Yl0
-	jQKQdNgBQSohuwfH9rklJk3CS4ep1iRz3i1VtUsGpDCuSGXU11/o
-X-Google-Smtp-Source: AGHT+IEOsF+zuGVCsYi/lsU6w2stf2bHD6c2D71wpigWLrjiJac4VZ5CtpTo7Ha3dlzRP271Kro77g==
-X-Received: by 2002:a17:907:f199:b0:a7d:3de1:4abd with SMTP id a640c23a62f3a-a86a52de6a1mr1105344766b.39.1724831348139;
-        Wed, 28 Aug 2024 00:49:08 -0700 (PDT)
-Received: from vamoiridPC ([2a04:ee41:82:7577:4c6b:aa66:d4d1:a1d2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e549cd80sm206576266b.71.2024.08.28.00.49.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 00:49:07 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
-Date: Wed, 28 Aug 2024 09:49:05 +0200
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: vassilisamir@gmail.com, 579lpy@gmail.com, ak@it-klinger.de,
-	andriy.shevchenko@linux.intel.com, ang.iglesiasg@gmail.com,
-	biju.das.jz@bp.renesas.com, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, javier.carrasco.cruz@gmail.com,
-	jic23@kernel.org, krzk+dt@kernel.org, lars@metafoo.de,
-	linus.walleij@linaro.org, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, robh@kernel.org,
-	semen.protsenko@linaro.org
-Subject: Re: [PATCH v3 2/7] iio: pressure: bmp280: Add support for bmp280
- soft reset
-Message-ID: <20240828074905.GA4934@vamoiridPC>
-References: <20240823181714.64545-1-vassilisamir@gmail.com>
- <20240823181714.64545-3-vassilisamir@gmail.com>
- <b898ad42-1559-4f43-8994-d9692e54f930@wanadoo.fr>
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1724831390; x=1756367390;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=o/dgLyC7mY4Z5ZSkBhiWo3QczPmuWbYX1lDKIXDvn6s=;
+  b=BDKwDsyF86XfrvCdQgHpT1q4DnvmudxmaLbiMIIf2AsF0IVviPthOb5F
+   QBQkSjlx2s7lSBQ7Q0T8VvjD9mny92N3iBVclvAiFaxTYQvXXaphT2i5l
+   FgOOrCujtdRVpFrXZEMvTZvU/if4HZfc69FfhiU8rHddEwdwC+s34YPj1
+   OPJoyfG2RaM3GK7XyjCimz3Qzc+DA1a819XTBjQ5NZkvA95zdwh3e3pbk
+   EmF5rAsfvM9kH5359ov+YZ68SDyCol6FpNAxI6fZcZG47U76u6FB7M7Tu
+   rc1eU+/ML6adBwqfaCbMY0gdPeRFzL7g/zx3/llhdJMGur4MkyICg2/br
+   A==;
+X-CSE-ConnectionGUID: zcQljSgiTC+xTllxrQPQSA==
+X-CSE-MsgGUID: XI7VxYhET8OWizceL+T+/A==
+X-IronPort-AV: E=Sophos;i="6.10,182,1719871200"; 
+   d="scan'208";a="38627529"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 28 Aug 2024 09:49:42 +0200
+X-CheckPoint: {66CED695-2A-22BB8E18-F5F6D0B4}
+X-MAIL-CPID: D2B6D901E25C8B78085EF8CCF03AB4BC_5
+X-Control-Analysis: str=0001.0A782F1E.66CED696.0072,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B9FBD169E7B;
+	Wed, 28 Aug 2024 09:49:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1724831377;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=o/dgLyC7mY4Z5ZSkBhiWo3QczPmuWbYX1lDKIXDvn6s=;
+	b=MkpGsK4/qgFIErJorzcI/O8lEPRTQVC3e6Ue7BmxnYHfPebKZb+yaofpHJbL7fAHBb4dyq
+	kSNdEBq9H2t3vC7pht715ON3uDnkFFUbB9O/hoPJW4k+Jw5YVBHQurjVTBMlLBznpOcSTV
+	pAVk9sN9+GTOIuaOf6NZv3lum82HI0BpfUu7MzgIDLd6zWfKh29t/4orUWynbZrUYhbC0M
+	rRt7F5MnSX7rQi1NhcK77cdVilHdJbv+u1uZbsRMuYjt3GA/tQF6vJhqvMpoJgWDPwf/DB
+	9euwkZVjWzzbIlr59LVopmH4aUGzh84i8wp0cVv3MtFKZS/USAb3KkiWr9oJbA==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
+Cc: linux@ew.tq-group.com, devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] ARM: dts: imx6qdl: Add reserved memory area for CMA memory
+Date: Wed, 28 Aug 2024 09:49:36 +0200
+Message-ID: <10526262.nUPlyArG6x@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20240827142458.265558-1-alexander.stein@ew.tq-group.com>
+References: <20240827142458.265558-1-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b898ad42-1559-4f43-8994-d9692e54f930@wanadoo.fr>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Sun, Aug 25, 2024 at 09:04:16AM +0200, Christophe JAILLET wrote:
-> Le 23/08/2024 à 20:17, Vasileios Amoiridis a écrit :
-> > The BM(P/E)28x devices have an option for soft reset which is also
-> > recommended by the Bosch Sensortech BME2 Sensor API to be used before the
-> > initial configuration of the device.
-> > 
-> > Link: https://github.com/boschsensortec/BME280_SensorAPI/blob/bme280_v3.5.1/bme280.c#L429
-> > Signed-off-by: Vasileios Amoiridis <vassilisamir-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > ---
-> >   drivers/iio/pressure/bmp280-core.c | 26 ++++++++++++++++++++++++++
-> >   drivers/iio/pressure/bmp280.h      |  3 +++
-> >   2 files changed, 29 insertions(+)
-> > 
-> > diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
-> > index c23515048081..e01c9369bd67 100644
-> > --- a/drivers/iio/pressure/bmp280-core.c
-> > +++ b/drivers/iio/pressure/bmp280-core.c
-> > @@ -965,6 +965,30 @@ static const unsigned long bme280_avail_scan_masks[] = {
-> >   	0
-> >   };
-> > +static int bmp280_preinit(struct bmp280_data *data)
-> > +{
-> > +	unsigned int reg;
-> > +	int ret;
-> > +
-> > +	ret = regmap_write(data->regmap, BMP280_REG_RESET, BMP280_RST_SOFT_CMD);
-> > +	if (ret)
-> > +		return dev_err_probe(data->dev, ret,
-> > +				     "Failed to reset device.\n");
-> > +
-> > +	usleep_range(data->start_up_time, data->start_up_time + 500);
-> > +
-> > +	ret = regmap_read(data->regmap, BMP280_REG_STATUS, &reg);
-> > +	if (ret)
-> > +		return dev_err_probe(data->dev, ret,
-> > +				     "Failed to read status register.\n");
-> > +
-> > +	if (reg & BMP280_REG_STATUS_IM_UPDATE)
-> > +		return dev_err_probe(data->dev, ret,
-> > +				     "Failed to copy NVM contents.\n");
-> 
-> ret is 0 at this point.
-> Should a -E<something> be used instead?
-> 
-> CJ
-> 
+Am Dienstag, 27. August 2024, 16:24:58 CEST schrieb Alexander Stein:
+> Default CMA size is too small for HDMI output and VPU usage. Increase the
+> default size by providing a CMA memory area.
+>=20
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> ---
+> Smallest RAM variant has 512MiB.
+>=20
+>  arch/arm/boot/dts/nxp/imx/imx6qdl-mba6.dtsi | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+>=20
+> diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-mba6.dtsi b/arch/arm/boot/=
+dts/nxp/imx/imx6qdl-mba6.dtsi
+> index d03f7065ddfd7..8ba3ec27bee07 100644
+> --- a/arch/arm/boot/dts/nxp/imx/imx6qdl-mba6.dtsi
+> +++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-mba6.dtsi
+> @@ -106,6 +106,20 @@ reg_vcc3v3_audio: regulator-vcc3v3-audio {
+>  		vin-supply =3D <&reg_mba6_3p3v>;
+>  	};
+> =20
+> +	reserved-memory {
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <1>;
+> +		ranges;
+> +
+> +		linux,cma {
+> +			compatible =3D "shared-dma-pool";
+> +			reusable;
+> +			size =3D <0x14000000>;
+> +			alloc-ranges =3D <0x10000000 0x20000000>;
+> +			linux,cma-default;
+> +		};
+> +	};
+> +
 
-Hi Cristophe,
+Please do not merge yet.
+I just noticed that this breaks mmap'ed fbdev usage. It only works when CMA
+area is in HighMem.
 
-Yes, actually this could be an I/O error since we were not able to
-copy the values back from the NVM device to the sensor.
+Best regards,
+Alexander
 
-Cheers,
-Vasilis
+>  	sound {
+>  		compatible =3D "fsl,imx-audio-tlv320aic32x4";
+>  		pinctrl-names =3D "default";
+>=20
 
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >   static int bmp280_chip_config(struct bmp280_data *data)
-> >   {
-> >   	u8 osrs = FIELD_PREP(BMP280_OSRS_TEMP_MASK, data->oversampling_temp + 1) |
-> > @@ -1082,6 +1106,7 @@ const struct bmp280_chip_info bmp280_chip_info = {
-> >   	.read_temp = bmp280_read_temp,
-> >   	.read_press = bmp280_read_press,
-> >   	.read_calib = bmp280_read_calib,
-> > +	.preinit = bmp280_preinit,
-> >   	.trigger_handler = bmp280_trigger_handler,
-> >   };
-> > @@ -1202,6 +1227,7 @@ const struct bmp280_chip_info bme280_chip_info = {
-> >   	.read_press = bmp280_read_press,
-> >   	.read_humid = bme280_read_humid,
-> >   	.read_calib = bme280_read_calib,
-> > +	.preinit = bmp280_preinit,
-> >   	.trigger_handler = bme280_trigger_handler,
-> >   };
-> > diff --git a/drivers/iio/pressure/bmp280.h b/drivers/iio/pressure/bmp280.h
-> > index 4e675401d61b..73516878d020 100644
-> > --- a/drivers/iio/pressure/bmp280.h
-> > +++ b/drivers/iio/pressure/bmp280.h
-> > @@ -205,6 +205,9 @@
-> >   #define BMP280_REG_CONFIG		0xF5
-> >   #define BMP280_REG_CTRL_MEAS		0xF4
-> >   #define BMP280_REG_STATUS		0xF3
-> > +#define BMP280_REG_STATUS_IM_UPDATE	BIT(0)
-> > +#define BMP280_REG_RESET		0xE0
-> > +#define BMP280_RST_SOFT_CMD		0xB6
-> >   #define BMP280_REG_COMP_TEMP_START	0x88
-> >   #define BMP280_COMP_TEMP_REG_COUNT	6
-> 
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
+
 
