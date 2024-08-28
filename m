@@ -1,108 +1,190 @@
-Return-Path: <linux-kernel+bounces-305610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3277963122
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:44:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FE77963125
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:45:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D292286804
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:44:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D31A2867C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292171ABED0;
-	Wed, 28 Aug 2024 19:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A92E1ABED7;
+	Wed, 28 Aug 2024 19:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pLeGeDkZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Nk+licV5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hrEIAYDc"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EA31AAE29;
-	Wed, 28 Aug 2024 19:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF301A2554;
+	Wed, 28 Aug 2024 19:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724874281; cv=none; b=jCzarwUKybeK5R+he63XnUjFCjsJFQZdYEqfWcgeBe8Pcx3UoD2qBctBNULoCigosZ6DedPgRa1iS20dEF2jV+FbWo0nNkUPMTgdeJ7pDCvMebn2olTy/qBhhGu62BFD1vI384raHTaBGnugzKbWhaLRLw+D8EkLPkDQ5a/fxPo=
+	t=1724874296; cv=none; b=Ibyj010R8I6zOugMiZqeap7F8V1gCLiDsGRCIgxb/KVw2rYMI5NM6LDXNDrlPspS0HZvpxCKWswXF9DhdumHcdxeFSwk48l6/edQipSBYN9+UKbGljYNsQ59FmURGpejswp6YxxDBW5swJIyPdF/ccu2vZqk9nYllEbLrUQFBis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724874281; c=relaxed/simple;
-	bh=z+DN7pQDTPTfVhhxP/6pUWvaEtfsBhIDxLbuBJvw8VY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HfLTrwgV6x9M2Fu2bwhPRO6M8Bg6HCVqDMt9iSn+/uWXYBVtWNMIF39gCV8jbUWrdSj2nUSXDPpalF7L33VLlcW0I4ARif6oXi2zL1uBlSLaDYA8E7bXVHl7/EUeaxlC1SO1ExGWzFRJkqU7mydsTCgOXI4bLd/B7reE38K66es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pLeGeDkZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D9DEC4CEC0;
-	Wed, 28 Aug 2024 19:44:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724874281;
-	bh=z+DN7pQDTPTfVhhxP/6pUWvaEtfsBhIDxLbuBJvw8VY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pLeGeDkZuR89DglWmSXQWT13UbzmiskpP0ALuIO7PMVFcIfhosqBN2QS/d5ZBUFIb
-	 IdTBo/fG1Mw6Uq05oORGuwmqLnASSCvyHceY0Hzj7tGOmCzvMGp1HneD08E0BQVdJ4
-	 xmds8YyVur5Agnpbk6vnoQFWj9VMR2hqR+5aYN5/VaOrAEyEX8HSzd2spSl1mdkIsD
-	 EGKfo3fMur3U1fUefHsTM+QjYm5oa/ARGYuRhjIl/beCif/DoQSOPEND0QtiCmdvUz
-	 9vQrdmlbRiP5hJS1+6u4LQUSeTzYIeXRWtS0VqbeT+To/WJe09GlNCRNn6lSNc3ugS
-	 5ehuboREuAgpA==
-Message-ID: <87752439-1b41-4f4b-9e94-5c2a43fab4f4@kernel.org>
-Date: Wed, 28 Aug 2024 22:44:34 +0300
+	s=arc-20240116; t=1724874296; c=relaxed/simple;
+	bh=b99Tvs/v4P+dXz/m/AfU2tdlp+L2gIsgBcvon+m0iBk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=bJdke+JiD6zmYTeTVhJbLuyi7fNYAFf5/GJ3jWKqzUr/rixoZhl4UH/dECsk0YA54eo5muTNBbJ2S2u/gPqkO545fwhBZw9SIkBUPpswaEL8KcCRofx1TjM1aconb2kVtLJLpIejtqZIYHmvEZnMYhsDeAa9JM38bD0+3XxMq6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Nk+licV5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hrEIAYDc; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Anna-Maria Behnsen <anna-maria@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724874292;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NRxEhuyGDKNQE6r0QOp02t0+mI9ODKRljFUVuVm4U80=;
+	b=Nk+licV5nKLzeEC3E3SSCwADDUhrt/PpWv0cXQSzTSH2viNkx+FQlS5O/Z+p5jl+Jl1sg/
+	PuSnpuPoazz1Nk0/f0enoFI86ym8cyIO+Db602jBVYZPxQiJmSHVIquD+/MZNRRs5I2Bc/
+	ljGht5inEBgLdKCG+r5Ngc/zopt8vOVqwpIWP6bXKBDFVO/CZeSMZsM9LSmydQgPQBAPeO
+	DGJvxQhxhrWp6btM9yP6u0virgl8H3r5t/zGhwSdixKdYW41Xd3XsB8duYLkIhTbqZRsA9
+	Yh8UzO3Jrq2WK+YJ7sAC+KR2X3AhDKjJNCvOTrpqRIJJRwI9MZvUnXQ4oBK6GQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724874292;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NRxEhuyGDKNQE6r0QOp02t0+mI9ODKRljFUVuVm4U80=;
+	b=hrEIAYDc0cLw7h//qLxLims3JtLz4PwY6LQbGDeQ82xHyc/nsYcYGwMxkUFKvSBFzXjQkz
+	osj4gHa12jar3kCA==
+To: Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-acpi@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic
+ Weisbecker <frederic@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Jonathan Corbet <corbet@lwn.net>, Andrew Morton
+ <akpm@linux-foundation.org>
+Subject: Re: [PATCH] ACPI: Remove msleep() bloat from acpi_os_sleep()
+In-Reply-To: <CAJvTdKmpfs_nh4J0R8T=1P9WaAJ-nJ+mKj=rT3tqMpmvpUTisA@mail.gmail.com>
+References: <2803b89021f991662b000f50e45dbaebdcca438a.1724729626.git.len.brown@intel.com>
+ <CAJZ5v0jcOUoN6gDDFkufu8xWF-BHXaSKnXqraHsTkq8JanJXuQ@mail.gmail.com>
+ <CAJvTdKkucaRVDZm6EVeUxwyrQexyuYd7ECUBSkpP0nC9PwzspA@mail.gmail.com>
+ <CAJZ5v0jvYitb7DLyLkqTRv0TT=6yBHDvEvb8tJLzAOVKa3hqnQ@mail.gmail.com>
+ <CAJZ5v0gxVqrASiuJq=UX9jyZsG=XvriFn2=7CPmG6-1sKbmPEQ@mail.gmail.com>
+ <CAJvTdK=-ETniiwzwLYH14+TeU0kA49gvTnqyRxH7-Hc6tzTBUw@mail.gmail.com>
+ <CAJvTdKmpfs_nh4J0R8T=1P9WaAJ-nJ+mKj=rT3tqMpmvpUTisA@mail.gmail.com>
+Date: Wed, 28 Aug 2024 21:44:51 +0200
+Message-ID: <87frqoig98.fsf@somnus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] arm64: dts: ti: Add k3-am67a-beagley-ai
-To: Robert Nelson <robertcnelson@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
- Nishanth Menon <nm@ti.com>, Andrew Davis <afd@ti.com>,
- Jai Luthra <j-luthra@ti.com>, Siddharth Vadapalli <s-vadapalli@ti.com>,
- Jared McArthur <j-mcarthur@ti.com>, Jason Kridner
- <jkridner@beagleboard.org>, Deepak Khatri <lorforlinux@beagleboard.org>,
- Drew Fustini <drew@beagleboard.org>
-References: <20240822170440.265055-1-robertcnelson@gmail.com>
- <20240822170440.265055-2-robertcnelson@gmail.com>
- <2774e7e5-8c03-4f38-90c3-b414bc6af255@kernel.org>
- <CAOCHtYhK36QyKOmQhY+Q31rB23ASoxUXTX+0R1tzK-ZhvvWSLA@mail.gmail.com>
- <CAOCHtYiPdxpxz9oPO-deLMMgMZtjCjtEMqPARAPtqMKg8JxOhQ@mail.gmail.com>
-Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <CAOCHtYiPdxpxz9oPO-deLMMgMZtjCjtEMqPARAPtqMKg8JxOhQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+
+Hi,
+
+I try to give some input from the timer perspective and maybe it helps
+to clarify which should be the proper way to go for acpi_os_sleep(). It
+also identifies some problems with the current documentation and
+implementation of msleep/fsleep.
+
+Len Brown <lenb@kernel.org> writes:
+
+> Attempting to grab all the loose ends from this discussion
+> and put them into a list of 4 things:
+>
+> 1. Is it time to re-visit Jon's proposal to fix msleep, especially for
+> small sleep values?
+
+Lets have a deeper look to msleep() internals: msleep() uses timer list
+timers. Because of the design of the timer wheel (granularity of buckets
+increases with the levels) and because of the granularity of jiffies the
+sleep values will be longer as specified. Let's assume we are executing
+a msleep(1) on a HZ=250 system:
+
+First msecs are mapped on jiffies, so this results in a 4ms timeout
+value, as there is nothing shorter than 1 jiffie. Then the jiffie value
+is handed over to timer code and msleep() adds another jiffie to the
+timeout. The timeout is then 2 jiffies or 8ms. With this timeout a timer
+list timer is queued. To make sure that timers will not fire early or
+race with a concurrent incrementation of jiffie, timers are queued
+always into the next bucket. As the timer will end up in the first level
+of the timer wheel the granularity of the buckets is 1 jiffies. This
+means that the timeout would be 3 jiffies in worst case.
+
+The additional jiffie in msleep() is the historical prevention that the
+sleep time is at least the specified time. This is handled by timer
+wheel core code itself, so this extra jiffie could be removed. I will
+provide a patch for it.
+
+But even with this change, the worst case sleep length will be 8ms
+instead of 1ms.
+
+For comparison, see here a table with the values for all the steps
+explained above taking some different msleep values. I already dropped
+the addition of the extra jiffie. The granularity of the timer wheel
+levels can be found at the first long comment in kernel/time/timer.c.
+
+This is still a HZ=250 system:
+
+msleep()   | msecs_to_jiffies() | worst case delay after | timer wheel
+           |                    | enqueue (next bucket)  | level
+--------------------------------------------------------------------------
+1 ms       | 1 jiffie           | 2 jiffies, 8 ms        | 0
+256 ms     | 64 jiffies         | 72 jiffies, 288 ms     | 1
+257 ms     | 65 jiffies         | 72 jiffies, 288 ms     | 1
+2048 ms    | 513 jiffies        | 576 jiffies, 2304 ms   | 2
+2300 ms    | 575 jiffies        | 576 jiffies, 2304 ms   | 2
+4096 ms    | 1024 jiffies       | 1088 jiffies, 4352 ms  | 2
+
+The same values on a HZ=1000 system:
+
+msleep()   | msecs_to_jiffies() | worst case delay after | timer wheel
+           |                    | enqueue (next bucket)  | level
+--------------------------------------------------------------------------
+1 ms       | 1 jiffie           | 2 jiffies, 2 ms        | 0
+256 ms     | 256 jiffies        | 264 jiffies, 264 ms    | 1
+257 ms     | 257 jiffies        | 264 jiffies, 264 ms    | 1
+2048 ms    | 2048 jiffies       | 2112 jiffies, 2112 ms  | 2
+2300 ms    | 2300 jiffies       | 2304 jiffies, 2304 ms  | 2
+4096 ms    | 4096 jiffies       | 4608 jiffies, 4608 ms  | 3
 
 
+The documentation states, that msleep is not valid for short sleep
+values. But as demonstrated with the two tables, this is not enirely
+true. So the descision whether msleep() is suitable for the usecase is
+not as simple as documented. It depends on the HZ configuration in
+combination with the timeout value, and on the request how precise the
+timeout has to be. And another important point is: hrtimers are more
+expensive then timer list timers...
 
-On 28/08/2024 17:33, Robert Nelson wrote:
-> On Fri, Aug 23, 2024 at 10:33 AM Robert Nelson <robertcnelson@gmail.com> wrote:
->>
->>>> +
->>>> +&cpsw3g {
->>>> +     pinctrl-names = "default";
->>>> +     pinctrl-0 = <&rgmii1_pins_default>, <&gbe_pmx_obsclk>;
->>>
->>> Why do you need OBSCLK for Ethernet MAC?
->>> The OBSCLK is connected to the Ethernet PHY via C406 which is not even populated.
->>> It seems that the PHY is clocked by a crystal oscillator X5 so doesn't really
->>> need OBSCLK in the stock configuration?
->>
->> Ah crap, I'll take a look at this... I bet it's left over from the
->> first pcb, (all my first rev pcb's are now locked up so i don't use
->> them anymore)..  Seeed/BeagleBoard was playing it safe and designing
->> in both options.. Once the internal clocks were verified newer
->> revisions removed the external clock.
->>
->> Yeah, I'm pretty sure final production boards removed every external
->> clock option.
-> 
-> Yeap, external clock is the default for all production boards, i
-> removed this internal clock configuration.
+The documentation was originally written back in 2010 where the non
+cascading timer wheel wasn't in place yet. So is has to be updated.
 
-Did you mean internal clock is the default?
-Earlier you mentioned
-"after verification newer versions removed the external clock"
+> 2. We agree that usleep_range() is appropriate for short acpi_os_sleep()
+> due to ASL loops with small Sleep() values.
+> But if we do something different for large and small values,
+> where is the line between small and large?
 
--- 
-cheers,
--roger
+As pointed out above - this depends on HZ and what the requirements of
+the callsite are.
+
+> fsleep anointed 20ms, but didn't document why.
+> (and it made both short sleeps *and* long sleeps too slow to be useful
+> here, IMO)
+
+fsleep() just implements what the outdated documentation states. And it
+adds a magic max value for usleep_range(). It seems to me, that fsleep()
+somehow accidentially found the way into the kernel in 2020. As it is
+now there this needs to be fixed and should take the above things into
+account in some generic way.
+
+> 3. Is usleep_range(min, max) with min= max bad?
+> If it is good, why is virtually nobody else using min=max?
+
+It's not bad to use it. It depends on your use case. If you really need
+the precise sleep length, then it should be valid to use min = max.
+
+I hope the timer information will help to find the proper solution for
+acpi_os_sleep().
+
+Thanks,
+
+	Anna-Maria
+
 
