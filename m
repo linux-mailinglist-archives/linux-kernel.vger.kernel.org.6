@@ -1,185 +1,255 @@
-Return-Path: <linux-kernel+bounces-305266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F37EA962C21
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:24:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B591962C28
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:24:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24B4D1C235B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:24:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 711091C23AAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD081A2C2D;
-	Wed, 28 Aug 2024 15:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D58B19E838;
+	Wed, 28 Aug 2024 15:24:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gccSKr4s"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BRNmXv8y"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C371A2C2B
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C56B188014
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724858646; cv=none; b=fFrzwuA/5PCP9FQ/3kjBmestBvdhgDAFZWYe25we9fh3Qvstnr4SCoT5LeR05S2suj/wx2iqz0NeFLb7vM0kGo66WbvoDfTTm4MPmJS6WzlgYaF8FqU9VydyaYI9durS6rMOg/nCEiinwX2yZy3Qj14fRtst6cGWd3OKc+ytTcI=
+	t=1724858677; cv=none; b=jbrt7d/GtqwdX4Z3c9EUzcWMOLqpMKvqMDufShg8ZyIXTcLCvVVsRReSOtuL+vdPu4Pvai+bxbzg+cfIPbJKdoZ+zy3kBcQtNAhQ0blPjsXxZw6PZiIH8wqE/+l2M/S6d4CavwiYPr7k8iJIOF+rkA8CUrzVJJscvgwCn6CEe4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724858646; c=relaxed/simple;
-	bh=6lTLmMep23Gq5QDy6ixw4lnYp4CtXa4Ieur1dYyWCo8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fihika9uGDJ3/2r+JvY5M+eJSeDra0htDVuqM4IKt6OrN5g2QIfusR6mGzRD8gL5oPFvWrRunMCvjOFT8H0mv8yv8e5XkfwkchHdW4Jx0u92x6WjqvMyJ2EtBG2HrgDv3wgnaKGG8aOdwzHAy5KSOHRrUmvLYfdh6niLvfqHgn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gccSKr4s; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e1a2264e907so3072640276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 08:24:04 -0700 (PDT)
+	s=arc-20240116; t=1724858677; c=relaxed/simple;
+	bh=sECdKZWmQ58VFDoOPO3d4pP0VUHs2KL2y5lS6y1lA/o=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=clQZo13XMCJtiJaNQaMSRTCF8bDBgwPY+S8IFWFnUkIlEG4xmNlijj7ghu+w1cdaG4BoKIi4fvMm25wW7BaP63AmT/sk1ZW2mmGInIfhYdRSbURtFucDfNdQU9UVrhOBanQx2rU3IBFP96E5pHcBBeS88uY6ZMYcJKyw3UTl18Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BRNmXv8y; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8695cc91c8so722999166b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 08:24:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724858644; x=1725463444; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=72MBiybvQQGr50cURl2SciPMebMKvOrZROMVK8UusrA=;
-        b=gccSKr4s21mz2NQe+Qdn99WAo3HasqNLC9SPNDguR6GDG+tPDS96WqyKwqsDBnZWfm
-         6xcSQ8W6Z/JjEru3IOmB2CUr/VyIJuccopJ9oTNVY6oBaFsCbOzRjkgteN4WhASlx2W0
-         hYn2OLbRS/CnNNQdN469FR2NHjWW3wArMuxTSinCpNWci05PbbZ4ryoBJEZiPuc1m3K4
-         4jwYV5MqHk8EV9h1xOPkmULR5xVc8un2ENPUb2dnQ+hdx95QeE/ys8+HEUzoq7162GeD
-         +vdH5xBIbEJOkVuOq65OgMqrTZzxev/ltENwFe+frU+ieQdbo3eAoIu1BANHNG2SHMDE
-         MMUw==
+        d=suse.com; s=google; t=1724858673; x=1725463473; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RccO/6aYSzsD64ZgEXVUnoiwa51kK0FzwBqBJe1629o=;
+        b=BRNmXv8yjiovcJXbjKFM8khnJr8M2n/lU+gyfFIF2F1cYXcaDIYgkKMneAp4GU3mCI
+         hfc+ugTygrpALphhIZsu7jejr3nKDTdXhLHf3xqgkSVZi8fG6nuyqeAKSBGF6iXF467Y
+         DFGrNpKyHlpMOWLmY+lLcsxDztm42qJtVQSDZ2fd/ppHeL+qrFdrq330slxPIGz6R5Ch
+         131dWnTV1L5GYI7aRMit8Z0z+qhvoKLhm7U6E4XuAS58pJ/KURoI7hOZn1kpor3eUZ3G
+         5CVVTwcyoWRONBdTwbzJuIZZCumB0qA9HkG0ONnMzlnQwtHaOUqhfc2NSs+z+8P4CSSj
+         knUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724858644; x=1725463444;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1724858673; x=1725463473;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=72MBiybvQQGr50cURl2SciPMebMKvOrZROMVK8UusrA=;
-        b=mnBgj78LfuIMNUgtwj8SrFTjZiZ73ilu8L321fTwvVu5YJf6qc74ILBXHjD6ZwhQZ7
-         /TMx4LVUo7rSbzRD4WaD4LhyoLt9i623SCnaLvibVKB078v4SxXMSt62jDfUHw70rtzI
-         GM6lSKn3rxnYRnA6JVV2sRvgKYu+Lc7dD3bShR9H74EsqrtLI59eVcWOmIu6hkZXhQ3L
-         fLS43gZxclhzkI7ZClePiipkEDrcytbHPmYrxd4iRrEYu8R0udGVhraGhEePYGBTArej
-         qbM+BjfP49vJ2QuEKno48ruaWumkl4yi9fZUgn1j2kZfB1t4489A4umIio7fdqDXEMSd
-         bDLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWIbEz3jVQnNI1hv9CUkXxExTSvISXRCDkTNeaKbufvk/99DvE3CEzfWpc/13zeS73iQ99G2JJ5gZqC6CA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPZZ4DU1Eab+yG/o6YX7+XaCVhsKAIZTxRjcSR20ULPiBKHq5j
-	Q3S6Y/RtLTwRde7Fi7h+I+DdOmin8RWoBwzI4Ony/tdonUeNoId4qWtZ3jjWhh019Y+SNkqBf1B
-	gLJ+5XtJZ7TQ+u9rPxWAKerW6R3t/Pr2wMnbXtA==
-X-Google-Smtp-Source: AGHT+IEw1gwe9loKd33j5BnDay0Z4DWKG87t3uM+kiZ9PMG5kVY3N6xYGb1nm3Gus4eDR9IPgRMJdqjCoZ65T21zh3o=
-X-Received: by 2002:a05:6902:1791:b0:e08:7607:bbf3 with SMTP id
- 3f1490d57ef6-e17a8b0fccemr17946173276.34.1724858644032; Wed, 28 Aug 2024
- 08:24:04 -0700 (PDT)
+        bh=RccO/6aYSzsD64ZgEXVUnoiwa51kK0FzwBqBJe1629o=;
+        b=NjD+rcX9FuruNmEkqk40UijE6KsADL3J3PlbkP7pmT3lmsd63cH0wNtNlARQ/DGlyG
+         cCrP3Uq00nwLLlJSkrV/uoAWBde2xgjYfm7OtbK9ZShwkRyKo26DHakHDsBxp8YBTmoB
+         TcKLXoFPb0NevBse/mHndEBnK+Ixv6TfRfK97So4jDcAAZi2QNAIaA02jZQjhY0Iwddc
+         h8ylvHYt8cExcMl6x9TFjYiVgnjk4FBagrALOCNFSarEueUdRgkl0euvdv3iU9oaahFL
+         UMs+apf31X7UzcoFRdZirTVICaJv5rO5rhiGCw53ic4U9HVfX0X5RJ4qqcMAt1+CWAtr
+         A6iA==
+X-Forwarded-Encrypted: i=1; AJvYcCVr8AJnsX+Db/OHw5EhVi8vKaIHSCeMqF0X15T63V6t40usfuXsL3/EjJBcxj0NrMU4VA6rm2rOcAIigig=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiucqstgYe5IIX8+Z8akPdc/lr9K4g68oM72HzEFRgY+deLJLh
+	W4YS3SLMOSqUsBEgvvgmCE5WxWbt7I4xRzK7AgRKf56OKlwfaLkjqB3RW5r7IT4=
+X-Google-Smtp-Source: AGHT+IEGTIMf9HDmr3RD/PvAk+4C11JysnBRyFuK/mQqbOsClKq28ul4IglJqfFC2hAOgC6a2khVvQ==
+X-Received: by 2002:a17:906:6a29:b0:a7a:a7b8:adae with SMTP id a640c23a62f3a-a870a94fe14mr219949166b.4.1724858673188;
+        Wed, 28 Aug 2024 08:24:33 -0700 (PDT)
+Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e594a599sm255662266b.201.2024.08.28.08.24.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 08:24:32 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Wed, 28 Aug 2024 17:24:39 +0200
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 07/11] pinctrl: rp1: Implement RaspberryPi RP1 gpio
+ support
+Message-ID: <Zs9BN_w4Ueq-VkJr@apocalypse>
+Mail-Followup-To: Linus Walleij <linus.walleij@linaro.org>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <eb39a5f3cefff2a1240a18a255dac090af16f223.1724159867.git.andrea.porta@suse.com>
+ <CACRpkdbdXNeL6B43uV-2evCfr6iv8fUsSVtAND+2U0H5mSL2rw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240306232052.21317-1-semen.protsenko@linaro.org>
-In-Reply-To: <20240306232052.21317-1-semen.protsenko@linaro.org>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 28 Aug 2024 17:23:28 +0200
-Message-ID: <CAPDyKFrviGd6ECV-8LOENgepUZZ1OV2j+d+H5NPCjnHYfrijWQ@mail.gmail.com>
-Subject: Re: [PATCH] mmc: dw_mmc: Fix IDMAC operation with pages bigger than 4K
-To: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Christoph Hellwig <hch@lst.de>, Chris Ball <cjb@laptop.org>, Will Newton <will.newton@gmail.com>, 
-	Matt Fleming <matt@console-pimps.org>, Christian Brauner <brauner@kernel.org>, 
-	Jens Axboe <axboe@kernel.dk>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
-	Naresh Kamboju <naresh.kamboju@linaro.org>, linux-mmc@vger.kernel.org, 
-	linux-block <linux-block@vger.kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdbdXNeL6B43uV-2evCfr6iv8fUsSVtAND+2U0H5mSL2rw@mail.gmail.com>
 
-On Thu, 7 Mar 2024 at 00:20, Sam Protsenko <semen.protsenko@linaro.org> wrote:
->
-> Commit 616f87661792 ("mmc: pass queue_limits to blk_mq_alloc_disk") [1]
-> revealed the long living issue in dw_mmc.c driver, existing since the
-> time when it was first introduced in commit f95f3850f7a9 ("mmc: dw_mmc:
-> Add Synopsys DesignWare mmc host driver."), also making kernel boot
-> broken on platforms using dw_mmc driver with 16K or 64K pages enabled,
-> with this message in dmesg:
->
->     mmcblk: probe of mmc0:0001 failed with error -22
->
-> That's happening because mmc_blk_probe() fails when it calls
-> blk_validate_limits() consequently, which returns the error due to
-> failed max_segment_size check in this code:
->
->     /*
->      * The maximum segment size has an odd historic 64k default that
->      * drivers probably should override.  Just like the I/O size we
->      * require drivers to at least handle a full page per segment.
->      */
->     ...
->     if (WARN_ON_ONCE(lim->max_segment_size < PAGE_SIZE))
->         return -EINVAL;
->
-> In case when IDMAC (Internal DMA Controller) is used, dw_mmc.c always
-> sets .max_seg_size to 4 KiB:
->
->     mmc->max_seg_size = 0x1000;
->
-> The comment in the code above explains why it's incorrect. Arnd
-> suggested setting .max_seg_size to .max_req_size to fix it, which is
-> also what some other drivers are doing:
->
->    $ grep -rl 'max_seg_size.*=.*max_req_size' drivers/mmc/host/ | \
->      wc -l
->    18
->
-> This change is not only fixing the boot with 16K/64K pages, but also
-> leads to a better MMC performance. The linear write performance was
-> tested on E850-96 board (eMMC only), before commit [1] (where it's
-> possible to boot with 16K/64K pages without this fix, to be able to do
-> a comparison). It was tested with this command:
->
->     # dd if=/dev/zero of=somefile bs=1M count=500 oflag=sync
->
-> Test results are as follows:
->
->   - 4K pages,  .max_seg_size = 4 KiB:                   94.2 MB/s
->   - 4K pages,  .max_seg_size = .max_req_size = 512 KiB: 96.9 MB/s
->   - 16K pages, .max_seg_size = 4 KiB:                   126 MB/s
->   - 16K pages, .max_seg_size = .max_req_size = 2 MiB:   128 MB/s
->   - 64K pages, .max_seg_size = 4 KiB:                   138 MB/s
->   - 64K pages, .max_seg_size = .max_req_size = 8 MiB:   138 MB/s
->
-> Unfortunately, SD card controller is not enabled in E850-96 yet, so it
-> wasn't possible for me to run the test on some cheap SD cards to check
-> this patch's impact on those. But it's possible that this change might
-> also reduce the writes count, thus improving SD/eMMC longevity.
->
-> All credit for the analysis and the suggested solution goes to Arnd.
->
-> [1] https://lore.kernel.org/all/20240215070300.2200308-18-hch@lst.de/
->
-> Fixes: f95f3850f7a9 ("mmc: dw_mmc: Add Synopsys DesignWare mmc host driver.")
-> Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> Closes: https://lore.kernel.org/all/CA+G9fYtddf2Fd3be+YShHP6CmSDNcn0ptW8qg+stUKW+Cn0rjQ@mail.gmail.com/
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+Hi Linus,
 
-Applied for fixes and by adding a stable-tag, thanks!
+On 10:59 Mon 26 Aug     , Linus Walleij wrote:
+> Hi Andrea,
+> 
+> thanks for your patch!
 
-Kind regards
-Uffe
+Thanks for your review!
 
+> 
+> On Tue, Aug 20, 2024 at 4:36 PM Andrea della Porta
+> <andrea.porta@suse.com> wrote:
+> 
+> > The RP1 is an MFD supporting a gpio controller and /pinmux/pinctrl.
+> > Add minimum support for the gpio only portion. The driver is in
+> > pinctrl folder since upcoming patches will add the pinmux/pinctrl
+> > support where the gpio part can be seen as an addition.
+> >
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> (...)
+> 
+> > +#include <linux/bitmap.h>
+> > +#include <linux/bitops.h>
+> (...)
+> 
+> > +static void rp1_pad_update(struct rp1_pin_info *pin, u32 clr, u32 set)
+> > +{
+> > +       u32 padctrl = readl(pin->pad);
+> > +
+> > +       padctrl &= ~clr;
+> > +       padctrl |= set;
+> > +
+> > +       writel(padctrl, pin->pad);
+> > +}
+> 
+> Looks a bit like a reimplementation of regmap-mmio? If you want to do
+> this why not use regmap-mmio?
 
-> ---
->  drivers/mmc/host/dw_mmc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index 8e2d676b9239..cccd5633ff40 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -2951,8 +2951,8 @@ static int dw_mci_init_slot(struct dw_mci *host)
->         if (host->use_dma == TRANS_MODE_IDMAC) {
->                 mmc->max_segs = host->ring_size;
->                 mmc->max_blk_size = 65535;
-> -               mmc->max_seg_size = 0x1000;
-> -               mmc->max_req_size = mmc->max_seg_size * host->ring_size;
-> +               mmc->max_req_size = DW_MCI_DESC_DATA_LENGTH * host->ring_size;
-> +               mmc->max_seg_size = mmc->max_req_size;
->                 mmc->max_blk_count = mmc->max_req_size / 512;
->         } else if (host->use_dma == TRANS_MODE_EDMAC) {
->                 mmc->max_segs = 64;
-> --
-> 2.39.2
->
+Agreed. I can leverage regmail_field to get rid of the reimplemented code
+for the pin->pad register region. Do you think it could be worth using
+regmap-mmio also on pin->gpio, pin->inte, pin->ints and pin->rio even
+though they are not doing any special field manipulation as the pin->pad
+case? 
+
+> 
+> > +static void rp1_set_dir(struct rp1_pin_info *pin, bool is_input)
+> > +{
+> > +       int offset = is_input ? RP1_CLR_OFFSET : RP1_SET_OFFSET;
+> > +
+> > +       writel(1 << pin->offset, pin->rio + RP1_RIO_OE + offset);
+> 
+> If you include bitops.h what about:
+> 
+> writel(BIT(pin->offset), pin->rio + RP1_RIO_OE + offset);
+
+Ack.
+
+> 
+> > +static int rp1_get_value(struct rp1_pin_info *pin)
+> > +{
+> > +       return !!(readl(pin->rio + RP1_RIO_IN) & (1 << pin->offset));
+> > +}
+> 
+> Also here
+
+Ack.
+
+> 
+> > +
+> > +static void rp1_set_value(struct rp1_pin_info *pin, int value)
+> > +{
+> > +       /* Assume the pin is already an output */
+> > +       writel(1 << pin->offset,
+> > +              pin->rio + RP1_RIO_OUT + (value ? RP1_SET_OFFSET : RP1_CLR_OFFSET));
+> > +}
+> 
+> And here
+
+Ack.
+
+> 
+> > +static int rp1_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
+> > +                              unsigned long config)
+> > +{
+> > +       struct rp1_pin_info *pin = rp1_get_pin(chip, offset);
+> > +       unsigned long configs[] = { config };
+> > +
+> > +       return rp1_pinconf_set(pin, offset, configs,
+> > +                              ARRAY_SIZE(configs));
+> > +}
+> 
+> Nice that you implement this!
+
+Thanks :)
+
+> 
+> > +static void rp1_gpio_irq_config(struct rp1_pin_info *pin, bool enable)
+> > +{
+> > +       writel(1 << pin->offset,
+> > +              pin->inte + (enable ? RP1_SET_OFFSET : RP1_CLR_OFFSET));
+> 
+> BIT()
+
+Ack.
+
+Many thanks,
+Andrea
+
+> 
+> Yours,
+> Linus Walleij
 
