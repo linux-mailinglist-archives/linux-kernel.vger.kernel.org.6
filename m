@@ -1,183 +1,199 @@
-Return-Path: <linux-kernel+bounces-304835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE38962583
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:07:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DFCA96258A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D50AF1C23832
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:07:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD6F3B23363
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6C116C869;
-	Wed, 28 Aug 2024 11:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E2416C865;
+	Wed, 28 Aug 2024 11:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="NSDzLuwW"
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010047.outbound.protection.outlook.com [52.101.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ju0TJd4C"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3AF416BE29;
-	Wed, 28 Aug 2024 11:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724843234; cv=fail; b=hxUV3FDGTm67qZN5iTNU6rNfoxUe4Y2B91JfN4x1AuPUrjX+Lh8f3vqfYuFK0UGsXepDNiPheZlWuEeIvuIZmnt1vwFopb2I+c1v7QX8UtutcT9RKK2ZXsDEAiqH+T5DUYk4KYcvBEFKMuvogmQUUs6j43SUNxm0B6r3FG+nj1s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724843234; c=relaxed/simple;
-	bh=Gzw8yUu5KhYCCCR7kxL6kMowU6tyVh70ByYXGMvcmfA=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=CHrgMMaXyPCvvhFvY9pvbi1QjPx5/qPM3z6wDkEC4VqxJ5ZZ9LfP9mlEd9q4Yh3zxaXkofMaJMsU8YCZcxJOV3pWpCC3iX+Hlz3R7+htlPJOphdA1TzYhLZKwUFAiNra6MFetPY9/2CS6eENKCkeoSO7/7d8roFh3TP3V1XBhDw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=NSDzLuwW; arc=fail smtp.client-ip=52.101.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NVFLGVegCrwbPkX7T0MlqzZSjadtc2jX5w+DJXW2kFpffHC6ZRi2z18oY8SGVYmBnCSHnO05pqK8uRFxBEZeqMKCiycZTcxyAVpgMCaQQoomJPevaTU9AvsndHr1Sy5+RleBL3olZK8L+r2dyWD/lFJR2FtQY5OlliZqF/eWILZGvScoC7LuTd+N429sULUl7S3hV5CfX//G6TYRpzk/WqJvFRahFb/uSckI3XnLqByD/zJyDSOWqI/7trIThSQH5PRCmqiN6TSwRe9D93NndcbF44cUqB+z8p5lIhKXYG28kTLoCMFTPErVf2ZK8xXXSsQH0MHMNvimelink9Vupg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n49bgZEkPQ9PBXh10xUtzvtiuIXZCFXL1EYrWBB9zZ0=;
- b=nUuQ5DLaMTgbIqIp2fUqKNeF8cWI5w+pWBF2J/PVz3QHd0/7LnqOjdxSrbHGul0f3+rdK+X1tzHP0r/9d+7Y0CfmlKlsWKVzo5UMXTKkZm/bqPXZyNcJqmNOuOKAm/P8chncA7EG78Et2fzIV28OL+ZasYyfqEhiTgrgn31dsyHnq1F8v8marumKub5qrqsU0nAN92Klyt8xb/7+4wzK1juiISCJajtU7R2WlWpAe5l0q1FCal7CJDbgQvIcM0900cQ/wGJ6h95A48Hdlz9wfYemmnZTi/GXttt2ZahkvoyHUivGO0fgCoA6detPtVBpfjJ4CUvGUhiijFvzRFB7Iw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n49bgZEkPQ9PBXh10xUtzvtiuIXZCFXL1EYrWBB9zZ0=;
- b=NSDzLuwWHgFfchOLvNv99st20F1rxFTyepiciFCYinBFD5mMamQL8liu0XBHevJS2lNea91VVDUj8tla+xOG5npbctbMcpchMc2fNWq8M80xfVHS5Dwlumggvq7ff1Qdob0yhcOTfbeLW2oeufh6nF6CRSmvwfmL7W3D+0JhOOmcygGjotbbSTLyGV2dyakSkhYjBrGyJeJgCHq8jfhDC5kBNOatVD7YOKYlJrCdv8Dgj44r6gIL9hMOSv0dgNrVduGEIxFKv1QB4/VU3eYjBnlM7BLU01Oplcw0Dr7p9SLL2m8FmuzOGeeRzVYrgBZ+aI3SRGRmtUnC5tJKesKBSQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5899.apcprd06.prod.outlook.com (2603:1096:101:e3::16)
- by KL1PR06MB6258.apcprd06.prod.outlook.com (2603:1096:820:d8::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Wed, 28 Aug
- 2024 11:07:09 +0000
-Received: from SEZPR06MB5899.apcprd06.prod.outlook.com
- ([fe80::8bfc:f1ee:8923:77ce]) by SEZPR06MB5899.apcprd06.prod.outlook.com
- ([fe80::8bfc:f1ee:8923:77ce%3]) with mapi id 15.20.7897.027; Wed, 28 Aug 2024
- 11:07:08 +0000
-From: Shen Lichuan <shenlichuan@vivo.com>
-To: pablo@netfilter.org,
-	kadlec@netfilter.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com,
-	Shen Lichuan <shenlichuan@vivo.com>
-Subject: [PATCH v1] netfilter: conntrack: Convert to use ERR_CAST()
-Date: Wed, 28 Aug 2024 19:06:51 +0800
-Message-Id: <20240828110651.56431-1-shenlichuan@vivo.com>
-X-Mailer: git-send-email 2.17.1
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR06CA0013.apcprd06.prod.outlook.com
- (2603:1096:4:186::18) To SEZPR06MB5899.apcprd06.prod.outlook.com
- (2603:1096:101:e3::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD8815530C;
+	Wed, 28 Aug 2024 11:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724843375; cv=none; b=fUme3eENBjilKBkzt/IzKTC59zns73QAXzaPRzRiD3UsY30ap2MZKXBsv27fkKZXXOt7iLPLuH+yxNnjl3MJxy4Ro+tmGVSc76FdsV+tjHVIVvOJx+ZBg1pktUBDY4eXLH4/hPt3z6biromdIVAgXyYBYIqGAtTxfFlOD0ChcVE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724843375; c=relaxed/simple;
+	bh=tH5AVuZaz/SBuoF41LI0/mhbZ9VYmt+O9y2koTLDQwg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qXxnQ31KdZ94p0NFBdqOcc9Nxotf9GWCaeJYxyUlDniGHzavG1xoTkQD5sTHOg29I+mCOX94SRkRbQuZ2yvXptyDxnldOyymk8XfRYm79dciXO2N6gcYHy3KRr8+6i/Wxj53Vbt46HgSjYVy7UJqPV1yy1lP5l2W45rapCvlSJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ju0TJd4C; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-533462b9428so11132504e87.3;
+        Wed, 28 Aug 2024 04:09:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724843372; x=1725448172; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=APgBV8G9YmayHbdpoOGlYHq23hZ8pxfAdj4J5HwI9Jg=;
+        b=ju0TJd4C3K/XPl/8aUKdXG///gYcJH0hrfmgKmvlSLLfVTWCa8TAeGCenxvnPDNfh5
+         hwEpgFggJ4pi5kfiu7KYcOFZOy9KQad6I64OS06E3UsH7ilqF96VDYd1DnQMBwa0LOXJ
+         s9yXuuTR+1h6GZ+CQzizoDy0CJMo33C0VKhbh7TGGHMb/sOBaQ1xejUvk3UR4gIFTVSk
+         jtVKqQsim6lx6ZW4+l/B8L8f0KpXVJoRESL7ZNuRTXXpr7KROWsiNmX25T526wm8Vlju
+         eGDaKoc+IDbxIDbmAL1AfK5nDuBgWWluF12ilP06/MyiMyCnnI2ORky2uWoCR2pGHJd+
+         X1zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724843372; x=1725448172;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=APgBV8G9YmayHbdpoOGlYHq23hZ8pxfAdj4J5HwI9Jg=;
+        b=q+7lHZvTTmaeni60HiOVdqfvi48YPxfr+QD7HGMjugX2ZQFWGwBZ5zZPrIzHYxZcqq
+         ajT6W2GNr+Or00gtQe+FVxYb0z0woVS93eTJN1P/kzKo67Q12rTBs8dPDJdFfGQBnX1c
+         KV7w3XUCRSHtNXzp4+RXBv65PaR7acytvbJLWaJsr2ibFgMSn6u5DKQtkViqRexye3um
+         glOGhdQ5G3yZZkj4ax5+0/sYSxr0W+UT+Ym8F9Ed0pSG2fsoF5URtySLi6r/B7nxIEuZ
+         qPJxAU1TefBrZ72z0PAF7b7Y01TrlSlY3dvDmzpmYgfECwRRlUJvzEkOn/hRNT4DSvsa
+         ZfPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMfPiOSk8ysJmh9vzVigv6KLd6jCqfJXY7zsprBBwgoep1avYnXmZCYwZDVjbxWNPNAaNXbT2y8SWvfw4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyExB0tXarjg3zvhVx49nP4UoBUrNGDr6y7c5uJ3RQrmySeFpJr
+	5b/qLmM1k6PFnsBMvYPFtpwoJv9xgVYap/LYbPVaAoJLh+MRAIYS
+X-Google-Smtp-Source: AGHT+IEwrZjfzGPiUUcd0oy9ve5M3+k155o6iB3Qt18BMKOUcB5vJW9DYhSPs+vbkqgWQiJIYGZe9w==
+X-Received: by 2002:a05:6512:3d20:b0:52e:73f5:b7c4 with SMTP id 2adb3069b0e04-5343887e063mr12923255e87.37.1724843371157;
+        Wed, 28 Aug 2024 04:09:31 -0700 (PDT)
+Received: from pc638.lan (84-217-131-213.customers.ownit.se. [84.217.131.213])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea5d6bdsm2154922e87.208.2024.08.28.04.09.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 04:09:30 -0700 (PDT)
+From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+To: "Paul E . McKenney" <paulmck@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>
+Cc: RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: [PATCH 1/4] rcu/kvfree: Support dynamic rcu_head for single argument objects
+Date: Wed, 28 Aug 2024 13:09:26 +0200
+Message-Id: <20240828110929.3713-1-urezki@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5899:EE_|KL1PR06MB6258:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4177cd84-5609-4239-dce2-08dcc7518e91
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BLmhhPVhjTChL0P2QYFsvoP3RNuMEHH8GeQDYcGKqv0AIX0pvxV/tEURfHMf?=
- =?us-ascii?Q?dQdOWh/1YT28tffTQV9C9sY4Bso+GbvMmXlDQOeD472VlTcKEqw0TAwyfDD9?=
- =?us-ascii?Q?WNxlcu51kCfaGiqQQt+ng35x19jIqvaC6Za8c+XMisgCUSXGWqaiDh95McI3?=
- =?us-ascii?Q?FZEN/JAYCqud5Rh9JsmWyA97ggSoYn06xsKEG3XhMr2CneVNaucaWBRyXya5?=
- =?us-ascii?Q?3Za5hsKhCJzEE7dyO83dvA5I5voN5CtM9aBjgi2/OrR/UsmZx5nrwDWaSiTo?=
- =?us-ascii?Q?bp8+4q0I+nLNH8v+56CPe8VyYKN6fdk+Gwb3LwsucoxEzvwYKCdIe+rYYbUL?=
- =?us-ascii?Q?SDSzWGPnPhFzCz2TafpVB1y335zTjAIaU+lU4Uh3DXTjwYF5LDomkXfM0lre?=
- =?us-ascii?Q?8K9IiHxcNclBd2Gd9fgtYJp7Ovl1CwtbYEuMXU1O1MnQE34WTgxwWVG0BlQ6?=
- =?us-ascii?Q?bxvCI+S/CysrwUg7QQybirn+DY05wmCrKuB98D9Kal+vZYU3xhendRzwELD2?=
- =?us-ascii?Q?I0/dcDrRovBnP/VpxiOUI/dN4wgB2PNbXugl5hFYEO/xnjW7LOs6PFrFtI2d?=
- =?us-ascii?Q?eaywGvsrYmgQw2XQ5H/RNdn11qHt6TcJO8xRKaEs5nOY0BzwYCg8sEIiNeJM?=
- =?us-ascii?Q?06b2EK6Bb+o66Hz+viNoflOZZlJIZMW4maEytd8VZkM/JtUqb8x5z+k9bkaQ?=
- =?us-ascii?Q?JJKzp12UV9Y0PtVPKTOn+H8b9JgdtyzALHy5pBVlOugh+rCcw0O7PkSZWzOT?=
- =?us-ascii?Q?lgcxnRw1Ymz5GQsPWZkcAeNyUhjVmeCr65tI001qU2beegjvXr6xi7Eyiy6h?=
- =?us-ascii?Q?GxXIO3ASLaG/TcV6vItInULAm7K4ISQSz0KLi4IULgweBpNyIp+1iFEunoiD?=
- =?us-ascii?Q?NClt+HvgxR95pC2oUbUzZUa7V5OHHny23OPWqM7mRxFTsUNrXxNeAj7WPHkq?=
- =?us-ascii?Q?Qg3NIuy6HiQY5U2+uEo1Nm6qH6pP3cp3mePzd+y3FhMqK0LeVTkS/tly4thc?=
- =?us-ascii?Q?g291ldhy1oWL4VT9VNxaCJRzHzEl2AmXKAi/KdE+T1JfeeqXlHecvLvuW7PQ?=
- =?us-ascii?Q?+G3XnfcTPht+40RaHFepBUNV/W+EbrnCIHnOidXjLFzyJAbmgXSye1Towe8H?=
- =?us-ascii?Q?byyU3ykgrCEglXSFI3hhYWQq2jFlPJr1fFONn/sYdMnpx4qL6UP0lzqrm8/4?=
- =?us-ascii?Q?5mImWcskbks6149YUguQsSrYAefMdgmBXVOGPw2kRbo24NlHlnzm8O+tGI/V?=
- =?us-ascii?Q?Wv75Fx020hocHFTFYJ5CF3mVeMmCSh7lWNgpic7EbJ8S36C8xi/3zksNBEs5?=
- =?us-ascii?Q?JXp+i/DmwknQSKN8HSv2DB6rCBt8XgncJDZ/ApJUFPXTg7ZUWfeE5+iYvsUu?=
- =?us-ascii?Q?r0wcwZSUkH3NQ74XMywgrFM4tfskNohbjg/0zQDXa5d2l0TZWw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5899.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?GXpyqXpaRGuMq4TmqembH02JSZwxujPnPBkOX+539zYv7LYHwRXVCr2TqTP0?=
- =?us-ascii?Q?kwrmRElTOMHaVV+8QFjBi7L38SbUMETYfrUeYwgRe43twxBxKg4dfparuQPS?=
- =?us-ascii?Q?qPhs+xSnARA0ZjIf676cI/fGzmBW3CFKyo1oNLN+nFy44RnjPztj3PPVIC9g?=
- =?us-ascii?Q?9+DXUFQks/2loljBydHaMrSKhAlWABfLW1nYnHkbjUf96u8Sf60l2Yru2xv2?=
- =?us-ascii?Q?yQDVcXz7F5Qpu0doN5n8RXm6+FZe6UXmX58u0VsDgP9qPNaVX0qM+YKmJzBu?=
- =?us-ascii?Q?zjdMqZQk+pj59NX7uTmD4r37G0oJpYJI9xYMHOsklMrBYrKzhmBwUpsf8aFP?=
- =?us-ascii?Q?C+wJ2P5/tpUaRDwUiJ8GQwm5VEJqOt8m4PkKLafg4hPWz7iTsC5aYJgWLJCs?=
- =?us-ascii?Q?dlLxvxKsolCv1+7RO56NYjQCGf46vtxbAeQlasxWff4jrFsM9qNQlElYSFxy?=
- =?us-ascii?Q?J+ZRDoEH2OKhZeipBl9NW7byRyIHHANO3LPu7YuNf2+h4yjbFvzBLePOdac5?=
- =?us-ascii?Q?vZ0xgMrjGOt0ahIZL9wNoZBEL1Pj5pYvXVvesWf9MoThBA0mV81y0D6YZhBy?=
- =?us-ascii?Q?qd+12/upXpYcyu5TsMqr8JSlvYl2ALeLUFeiyMbVTA6lbGJBrpPbbz4GIYYe?=
- =?us-ascii?Q?WVabS4j6l7tV7+pEq6+StRNMATil3VQN9zeS/vYuwdsjrjdTm1ElQRzaAvFX?=
- =?us-ascii?Q?Xpt5X7UEEWijZp1cTH0O7Cwr9zGz9/OiY6NAF/pOoX8EglHHrWdyVruo07zv?=
- =?us-ascii?Q?8gA0RugzyR7ofDJUssKQ4oO6YjNhkwuz0Q4GTthSmX1H45okdWD6YmGa2XIt?=
- =?us-ascii?Q?tywx7pFxZVYwl66nXpvkbKz8Ie8EWhDCc5v9nR4IyMN4ph6meaOfONI7ymhM?=
- =?us-ascii?Q?ZmOuNZCBygOSM38NIHeYeZ/EGdOk7oFckGev0D/JKkalLrVSanrchyzY5mW1?=
- =?us-ascii?Q?aAtNmnj5k6egQnxocjnicLpLArGVzDZI+YIpaYc/do+q+U5Oq6vXZi4wOWoQ?=
- =?us-ascii?Q?STCmEMkeUhDBmV6QSldBvedO0LWiijR4WjoB7yLiuU62XNWh0/nlDRHTxx8D?=
- =?us-ascii?Q?tQbHdMr/i6f91wX5/bHO2iMzCrmwTWeS3F6eVt5bMdVZ1RFt3viQAsMOUtir?=
- =?us-ascii?Q?hTm3VtWfzfF4Ndv0/Hb4PALV76I21KsrzImBBu62bSy0A51wr57RzcGhdkxR?=
- =?us-ascii?Q?+kCGjsukLd2lZrue6fBUEQq0GaaTZzd6ut1Yb3Y94iMmXIjxy0pUOdcVjwNM?=
- =?us-ascii?Q?g5nAKcg58e/iaAiCKfea72C9F255gTQEAkJD1aiDwh6QYb8Skg0TpUdfuqP4?=
- =?us-ascii?Q?Ll77Fwafo12dfaFrZXB3+B0aDtwnwEJ/9CrM/DWPGejhX5ea8fFaVltqtXz2?=
- =?us-ascii?Q?Gn24MiuwozPdllynoZp4HbVObMJcbh16nnKLomSW5/FV95PKcFtp+eAh5Dup?=
- =?us-ascii?Q?r7+YIQBoJYDZGZp46QjDgj3P0I2++UgMzOgf/7wYEmtcc3phLKIrEYOYmTIQ?=
- =?us-ascii?Q?zsROaxLIn7tE7+V4VbuYSEML+neymoVEH0xkN/R2pmlznHb/hdY/7TDjbEOT?=
- =?us-ascii?Q?e0upmhpoYMWbGYTUreQ+Wxc2E4c7/Y+mRoPJzvaX?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4177cd84-5609-4239-dce2-08dcc7518e91
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5899.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 11:07:08.1254
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2b9jM4pVRzxLx3pkfEKeDejO8UsvVdP6su55o14zssS26iEol3FtK+1XMKK9nDphk8/VpjLG+OLEH3vUNNIwZg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6258
+Content-Transfer-Encoding: 8bit
 
-Use the ERR_CAST macro to clearly indicate that this is a pointer 
-to an error value and that a type conversion was performed.
+Add a support of dynamically attaching an rcu_head to an object
+which gets freed via the single argument of kvfree_rcu(). This is
+used in the path, when a page allocation fails due to a high memory
+pressure.
 
-Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+The basic idea behind of this is to minimize a hit of slow path
+which requires a caller to wait until a grace period is passed.
+
+Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 ---
- net/netfilter/nf_conntrack_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/rcu/tree.c | 53 +++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 49 insertions(+), 4 deletions(-)
 
-diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
-index 9384426ddc06..d3cb53b008f5 100644
---- a/net/netfilter/nf_conntrack_core.c
-+++ b/net/netfilter/nf_conntrack_core.c
-@@ -1722,7 +1722,7 @@ init_conntrack(struct net *net, struct nf_conn *tmpl,
- 	ct = __nf_conntrack_alloc(net, zone, tuple, &repl_tuple, GFP_ATOMIC,
- 				  hash);
- 	if (IS_ERR(ct))
--		return (struct nf_conntrack_tuple_hash *)ct;
-+		return ERR_CAST(ct);
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index be00aac5f4e7..0124411fecfb 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -3425,6 +3425,11 @@ kvfree_rcu_bulk(struct kfree_rcu_cpu *krcp,
+ 	cond_resched_tasks_rcu_qs();
+ }
  
- 	if (!nf_ct_add_synproxy(ct, tmpl)) {
- 		nf_conntrack_free(ct);
++struct dyn_rcu_head {
++	unsigned long *ptr;
++	struct rcu_head rh;
++};
++
+ static void
+ kvfree_rcu_list(struct rcu_head *head)
+ {
+@@ -3433,15 +3438,32 @@ kvfree_rcu_list(struct rcu_head *head)
+ 	for (; head; head = next) {
+ 		void *ptr = (void *) head->func;
+ 		unsigned long offset = (void *) head - ptr;
++		struct dyn_rcu_head *drhp = NULL;
++
++		/*
++		 * For dynamically attached rcu_head, a ->func field
++		 * points to _offset_, i.e. not to a pointer which has
++		 * to be freed. For such objects, adjust an offset and
++		 * pointer.
++		 */
++		if (__is_kvfree_rcu_offset((unsigned long) ptr)) {
++			drhp = container_of(head, struct dyn_rcu_head, rh);
++			offset = (unsigned long) drhp->rh.func;
++			ptr = drhp->ptr;
++		}
+ 
+ 		next = head->next;
+ 		debug_rcu_head_unqueue((struct rcu_head *)ptr);
+ 		rcu_lock_acquire(&rcu_callback_map);
+ 		trace_rcu_invoke_kvfree_callback(rcu_state.name, head, offset);
+ 
+-		if (!WARN_ON_ONCE(!__is_kvfree_rcu_offset(offset)))
++		if (!WARN_ON_ONCE(!__is_kvfree_rcu_offset(offset))) {
+ 			kvfree(ptr);
+ 
++			if (drhp)
++				kvfree(drhp);
++		}
++
+ 		rcu_lock_release(&rcu_callback_map);
+ 		cond_resched_tasks_rcu_qs();
+ 	}
+@@ -3787,6 +3809,21 @@ add_ptr_to_bulk_krc_lock(struct kfree_rcu_cpu **krcp,
+ 	return true;
+ }
+ 
++static struct rcu_head *
++attach_rcu_head_to_object(void *obj)
++{
++	struct dyn_rcu_head *rhp;
++
++	rhp = kmalloc(sizeof(struct dyn_rcu_head), GFP_KERNEL |
++		__GFP_NORETRY | __GFP_NOMEMALLOC | __GFP_NOWARN);
++
++	if (!rhp)
++		return NULL;
++
++	rhp->ptr = obj;
++	return &rhp->rh;
++}
++
+ /*
+  * Queue a request for lazy invocation of the appropriate free routine
+  * after a grace period.  Please note that three paths are maintained,
+@@ -3830,9 +3867,17 @@ void kvfree_call_rcu(struct rcu_head *head, void *ptr)
+ 	if (!success) {
+ 		run_page_cache_worker(krcp);
+ 
+-		if (head == NULL)
+-			// Inline if kvfree_rcu(one_arg) call.
+-			goto unlock_return;
++		if (!head) {
++			krc_this_cpu_unlock(krcp, flags);
++			head = attach_rcu_head_to_object(ptr);
++			krcp = krc_this_cpu_lock(&flags);
++
++			if (!head)
++				// Inline if kvfree_rcu(one_arg) call.
++				goto unlock_return;
++
++			ptr = (rcu_callback_t) offsetof(struct dyn_rcu_head, rh);
++		}
+ 
+ 		head->func = ptr;
+ 		head->next = krcp->head;
 -- 
-2.17.1
+2.39.2
 
 
