@@ -1,167 +1,216 @@
-Return-Path: <linux-kernel+bounces-305770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9BF39633FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:37:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 835109633FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 776E91F24B46
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:37:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A81421C23124
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2041AD400;
-	Wed, 28 Aug 2024 21:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63DF11AD40F;
+	Wed, 28 Aug 2024 21:37:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="aP5QZB4O";
-	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="SvtfCZxt"
-Received: from mx2.ucr.edu (mx2.ucr.edu [138.23.62.3])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ihzwF2fB"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2066.outbound.protection.outlook.com [40.107.100.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0AED1AB531
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 21:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=138.23.62.3
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724881044; cv=none; b=HsUfs7LUJOu7BaPdfnt8NmgDfJ2s64NPwFhszdx2yxeit2UaD1bVcM7gzhM/54Y8BPgMfHXeMhyuNeL36F2H78HnK8V4uzD8Wer16PXChCb2n2ERADxC6L9P80MnOsy0GH9LFiiOkY0qGPF8bF5zkMcHwjIGPAx48mVk2in+x1A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724881044; c=relaxed/simple;
-	bh=0haksBrdfYlCNq5hQizhK6BxPSsBBu/Anbu24tJfB+A=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=mqzSObh8aJZy9R7k78rnpHwBQ8+FBvO070ytPbvEjv2Kj9W6Y/gSpWWTg5hPOnoPjA0vg+MFmLq6QEe4kplorbJoN6t7G21y5fkfpIp3qlWlZDW+00BlT3fduVhtfxQx+Xd9+y8cayv6NJIQrg+jmUHMKvVAC2KYBRGlDmede8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=aP5QZB4O; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=SvtfCZxt; arc=none smtp.client-ip=138.23.62.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1724881043; x=1756417043;
-  h=dkim-signature:x-google-dkim-signature:
-   x-forwarded-encrypted:x-gm-message-state:
-   x-google-smtp-source:mime-version:from:date:message-id:
-   subject:to:cc:content-type:x-cse-connectionguid:
-   x-cse-msgguid;
-  bh=0haksBrdfYlCNq5hQizhK6BxPSsBBu/Anbu24tJfB+A=;
-  b=aP5QZB4OhdaxFKJ+BGttnwKGgK/Ht6o7q+gj5/ZN/enN1b6iMYIX+sQA
-   NSFNfsm+4ald2Luk/2z4kdleRxPqsxznP0baB01qu+p9thTOQOhBsTEb0
-   hCMc3JedDkUzyOzbFTJgnPdxjCE6z+VM+RMGFg32GMRdQsKU+fcSJoHC9
-   hoHFRdRF/9n4v8s9/NnQXkVdYZZoQVhAHHI3rS7dkF/75aaf1YdZnXFxD
-   hmhw9psZPyzmUAEuhK7uYts9hBup/oD8lOYnewYj3irkFy8QzNQf3bgIe
-   Y8/T+Jdk4aPkvY9QVpRV4Ooesjx/z3Uq+yoFM53Sr6ye+8Os8bw9kTfVF
-   g==;
-X-CSE-ConnectionGUID: Poirwb6rStaDpY4TNpvrOg==
-X-CSE-MsgGUID: OaYiz+6GQ1eWA66BPuGKVA==
-Received: from mail-pj1-f71.google.com ([209.85.216.71])
-  by smtp2.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 28 Aug 2024 14:37:16 -0700
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2d699beb78dso5100450a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:37:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ucr.edu; s=rmail; t=1724881035; x=1725485835; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=QU8B1TkKudrXi3t6vU2mLRqC95KcE+EPN+9AF0WMWOU=;
-        b=SvtfCZxtGcfA6sxhfc7KvvhN8u2/b3bv7Fg/fPra9iLNptFeCGtd5LhnTjh/qZZqGx
-         nfRRSZKEk33lIY5tFeFLfMtxae5ixvm08Xme3hbeF45T0uDT9XA3JkO4+ce7Ojigabho
-         3nTvDsZg0mcjuEXUy3yN8KdVFWNU4QYaInoaM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724881035; x=1725485835;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QU8B1TkKudrXi3t6vU2mLRqC95KcE+EPN+9AF0WMWOU=;
-        b=N5ZZRdvojchn3M6ZGEQEMFxCvkkhZBoSTV6CT5TJ3Fvd5YkkLZHowo7uU31WhFVZrA
-         t0juKJushhbx8eCPQU3zgCttIpzpB8PAFlaIx6Vb3KJBenwE7Kgwzm7KgY2/ugfWLWnW
-         jt1UMqKX8OfAoJIF+RCjh6bIqW3gEAtb8HQZk1LQzrez5RRlyhJvXEa0Io0klj8/ricp
-         eELoq6q/aiXNJzG06yt9lyE4Sv2L2IKQCmy3+7BdxWySSDzIJUaZ/mQqXRANvyNP31op
-         3F8RypQqYkUu3c698/WXuL0Sd26Pb+IxBRktceRhgHhcm7qGcJ3oSk6jrmJxsdfPKCXK
-         3LKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWK+GFRM6U0vN806r5rCSm+GNy9/CchICMgcY+uAHetcLVRhC3sk35LEkaMCHNPvJE8wG7DxlzxBL0DOsY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPB4Ngr69DZxwcS5D4x2Ipcwtn8SJjRGBGKX7embF3whnzWH03
-	hJmwQ53oSVUQzk8iULXctEfgO2ZWGgobCfSTSu8e49riEV3Ydn5kIj0ImugHdY8vonOaoV5bDrs
-	m/9yvu/OdeYHvTAlQbKHtel86+8EeqFst5AiqCsOvA5+p/J7DyBBzmq7sz1yUO2gLKEc9gL4lK5
-	Y0SxKdHaQs55TTlkiOgLLiu7SmfaRNh2UC+BbEaJ86HxScGE6vnSc=
-X-Received: by 2002:a17:90b:204:b0:2c4:aa78:b48b with SMTP id 98e67ed59e1d1-2d8564ad2e8mr717421a91.38.1724881034964;
-        Wed, 28 Aug 2024 14:37:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHhmH98AhDlCMsobVBa8AbjzqM3ZS37VCwF14SOZHioc0I5Lh1Ow0KhTADaXXlDeEYLA0Zv9EhmZ2wPQa+/NoI=
-X-Received: by 2002:a17:90b:204:b0:2c4:aa78:b48b with SMTP id
- 98e67ed59e1d1-2d8564ad2e8mr717406a91.38.1724881034589; Wed, 28 Aug 2024
- 14:37:14 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808F81ABEC3;
+	Wed, 28 Aug 2024 21:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724881032; cv=fail; b=RiAK5k4JrGfXuaXfr7hY4V0pvY8qg+XJ2m3sNv9OdIkDg7ccCaFKSnm5dcezCn1VTaX3F71KEI6BGn2W/BijKxE41X6rZxD2T1HWVWyTg6oPRpA61/H5jyEWNKG0ncGzgIVC1Vpt1sKs/bOWafhtm4xZlBVJQVpgzsDK9KIkR24=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724881032; c=relaxed/simple;
+	bh=XPLhh3KKGa2skdRwdJ5CjP6jnfDaiPLptpOYRerRtpI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=urEK1DivouLyyi6FJ6GMp5W8bt1pemKnQz25s5kE7FQm2Tm1vSmvNnG/E/VjYXlKYEBHjWfjIUIRQ8Ud6M13q66aNYS/VxBD5LNC5ePwmrwTAaiLVNj9VXQHMZZvP3RMDlEv2UmwcTJs6k6PW6rAVDRBd7EMWOxmr/7E5pIi/bw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ihzwF2fB; arc=fail smtp.client-ip=40.107.100.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TqsApEDuP+XdxsKoxhgpsiZUOBH9OLXCxl2doFmEtiC9xsxFZtfqopyA4Khb39hY+ZNfzmpORxAbhUi0JNiNDp7tNXZJO6uHr2Bg1FWScAUe6r+/MoBnyU7RhntnJFlEG3jEHnUoPnbgE+hD0ET5rDWuDALFk4tuDlzVXay9l9B5P/BVj5QqhouzkbRyQrUoXzWG45ajwH/0eCj59BMQQoW3PWpIjRuxY07qN4pUVN96hauX7Ltj1ZQVXuxj2s3AcCGUsPmHv2M+m2VE/mI7DG7M9kFc5imI7kc5U94KH6gD+BKqMvUIL6C8kq+7+ApBG07n10p/9YwEJGJNMcTfRQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aMBFFB0cm5yJdxH0J7kQ/90g8MznbxtJcYZPte9VmHc=;
+ b=lXLHVsKJaylEUdEEAyMuoon+LjCSneCppErDvuhyVYNDtchr32WdeZJgXsJ98E5Q4g5sRnBj5zdVQxpxzu/ue0rvrzeIftEUkcOjdW+Xrdyd68NDqR4YarvqLtkU3aoR0B2ZzYGZdsC1ZJlK9jT4cgREUNZokrA2gVUEcsY0dOAIYboav22Z8OnmEN3erI74dFw/WQ9fEK7guJWYEFeU7JllsZKiRdgFTvC622Umb77E4P9mb5yzQg6hs2wTc8BqJBhHVRyUhtoqbclGR1rz1Y3PwOa9lOibZLig5YfdUHQL5fJp2063aDvPfCZHIVvAnOsUHynToHQPodQsIHvCqw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aMBFFB0cm5yJdxH0J7kQ/90g8MznbxtJcYZPte9VmHc=;
+ b=ihzwF2fBiWl4Jda5Ftt1DUglKVZHY/HwT5emNA+2YULAxMuAmFKvWo8P8QZgm8hUlEUB9tgHAea5U8nRDM5IrkX9p+hUpi+ecC9Onk2bdOlCgUzRr2CgLo2gXwzpg4/Oeeaf1jhqb0zK1TpD0IWerfxvIw73+vqlFCtIvJEkCDo/3nqZtJCfWRqbCY+YlqUFnw4wWGzV0f0gi4p8urYYLnUfc7RCqCZABucNYHPjSKrtCwo+GR9M6xw7GF61d6GooossFu1A+jeL2jrztEMgK1Jytl2uv3GINiJA7GL23F77PR5BactyPIgHn8BPEBe2chbZmVOggOcr6w1wxIJ1Rg==
+Received: from CY5PR12MB6646.namprd12.prod.outlook.com (2603:10b6:930:41::14)
+ by CY8PR12MB8363.namprd12.prod.outlook.com (2603:10b6:930:7a::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.26; Wed, 28 Aug
+ 2024 21:37:06 +0000
+Received: from CY5PR12MB6646.namprd12.prod.outlook.com
+ ([fe80::8880:c187:3bc8:e17a]) by CY5PR12MB6646.namprd12.prod.outlook.com
+ ([fe80::8880:c187:3bc8:e17a%5]) with mapi id 15.20.7897.021; Wed, 28 Aug 2024
+ 21:37:06 +0000
+From: David Thompson <davthompson@nvidia.com>
+To: Jakub Kicinski <kuba@kernel.org>
+CC: Benjamin Poirier <benjamin.poirier@gmail.com>, "davem@davemloft.net"
+	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, "andriy.shevchenko@linux.intel.com"
+	<andriy.shevchenko@linux.intel.com>, "u.kleine-koenig@pengutronix.de"
+	<u.kleine-koenig@pengutronix.de>, Asmaa Mnebhi <asmaa@nvidia.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net v1] mlxbf_gige: disable port during stop()
+Thread-Topic: [PATCH net v1] mlxbf_gige: disable port during stop()
+Thread-Index: AQHa8B2nDucgjCgWq0yT6j8AEPFHB7Iu8mgAgABiZQCADe0/oA==
+Date: Wed, 28 Aug 2024 21:37:06 +0000
+Message-ID:
+ <CY5PR12MB6646FAC499454E380A87D829C7952@CY5PR12MB6646.namprd12.prod.outlook.com>
+References: <20240816204808.30359-1-davthompson@nvidia.com>
+	<ZsOVEMvzAXfaRiEY@f4> <20240819174722.7701fa3c@kernel.org>
+In-Reply-To: <20240819174722.7701fa3c@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY5PR12MB6646:EE_|CY8PR12MB8363:EE_
+x-ms-office365-filtering-correlation-id: 161e695b-6854-472c-96f2-08dcc7a99048
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?FRQmxeiVMZZ+jHJ+PTMVdkbq9M9m70qJLFBfCmROQMI4SLF2IdqvNR8rwNWw?=
+ =?us-ascii?Q?5w8RZI+Eyry8MCmTQRd4J/CfbWHvjg1dB3Pn9u6ozVvhkTqFFMjMhznwDrIf?=
+ =?us-ascii?Q?CtGfVEbqL8jKqIl1pMI/e58Wv2nt5nw5EBAhjFkyo6IEaC8XOHF7VHKHzTES?=
+ =?us-ascii?Q?CObbBBJ8Mgtj8JX1f88eFGwtci90AiG3oTh06WNVSo4C4seUyEB61nhB25W/?=
+ =?us-ascii?Q?a7qXJCg8sZM+tMmgL/zRTMR+i/5gaIKDlnzGhUjSWa+8UOoXEmiJgl74mlZx?=
+ =?us-ascii?Q?n12+WAKGceIBCCrh/mUUipct/TMtSywdLjZ4GIQpkT1BxfzkRHiCjTyT8ZWX?=
+ =?us-ascii?Q?LpdlmPTpxnhhco9iv2OqBRnE70IUlASnFfi2BHCBgQoZDJmFjDW6GiZDrLSS?=
+ =?us-ascii?Q?QWNQQELNA/+DSgBH5S77jXCE7HFnRklF+ufRhGUqvdMM2bxZS4Luo9D6Z9XG?=
+ =?us-ascii?Q?jbQ+P54ZFlYyfth3nUe+1a4ta3RhH9AOLNvvIv7MXoduoqgBwSYvi9CcecnU?=
+ =?us-ascii?Q?5T8h+gh7XqeeWsvNtgfTfLru+iyNH9f27/DFmYxfbzW00OC/zEry4OBxsbFj?=
+ =?us-ascii?Q?PHswJ0y3unHxfBo57pNlYS+ZCbWF8GEiyF5Lqro2z0GV3A1qRFqZkNzrdqb7?=
+ =?us-ascii?Q?k6adktD9cMAclV05rOP0kp7NdTTOXD2H5FYTN4ZeARTkNe+Nikijap67wjtR?=
+ =?us-ascii?Q?OSm+05VMlzBo5uMFXCeE6lypct/FVBFj21hpcXhN8fSlsmxCTq5zTfo3n6NU?=
+ =?us-ascii?Q?lB4/S3pk/Es70UnfEcvtOdjNxgOxbdy6TSLblky6/aOe6l+oFjisDz+9VP4r?=
+ =?us-ascii?Q?xfVcSzTmDhYF4IJVcr7yFXS8LKgHzFwLMkmnCx9NkiM3Oj0CnkKLhTnLN1Q7?=
+ =?us-ascii?Q?YcGDA/Ideq3mLGkW0yEkQirCY5m8YvyLNiuWoiTL3Nucr/9pJsjafucCPKO0?=
+ =?us-ascii?Q?/tKE/9W+vZ5uyGrB73Ost16RbKTgJdjUUuaoDFw0bRfaNryQE231mUFwaG7n?=
+ =?us-ascii?Q?ME7uZKmgILUfkIgF/pjG4LHhMFk4utOfQcC9h7G3+BwpkCZIwh7KEp7W86X8?=
+ =?us-ascii?Q?dOQNPe6Y0nIBP0/AzCWRq+QkoyimNjrDKV5ipex+xzeg4/5xHrPB9HDxD/Io?=
+ =?us-ascii?Q?5W0EUis1mmjsjo9pfiRuk5YN3h5k4ZlwyOLjd0EyCkhmi9J2Ynl141bRACcP?=
+ =?us-ascii?Q?CMFCaHzLMh4Av99+TOQ015+CwJEWlOu0hyS4owQ6pcyiROCUcbckt1Pi7oPt?=
+ =?us-ascii?Q?UuWpGxqGrwcquBrYjNDoD/OjbrtHC7nNOQtNprV7pipdxELSyZ9293FI1DTM?=
+ =?us-ascii?Q?wS60+AcSB6rxv0wO/oK5wYtunzHKeyensNWMNxkSNmJzIdrU/H4T2drc8KQq?=
+ =?us-ascii?Q?O9PWu6xRnWwJlZmpevymjMhSXDMqqAQ8OwgLM8rA/kt0bpuoZg=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6646.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?monAY20UkGxYKYFWPUlq66ggsMgDiIiivZJbpTjLjJ8s4jEtzbmHSbfci7Ut?=
+ =?us-ascii?Q?rY6QXgLMETlPaNHwv0mJsuJt4yBzt+4An8bx/6LMoNGI69kb8ZNtTWRj32Hn?=
+ =?us-ascii?Q?Brd7RUrP2sNV0T7gqbD05itCCZemsUTud7VRLDsP3dXyKf29v6j66BCMBr8I?=
+ =?us-ascii?Q?h5ypqDpaAuVtMjlX8ETZ+3R2WO2XfDJTAR+BdPsIwxq5CGPHgKuXbUZWdXHN?=
+ =?us-ascii?Q?sCRhSEG5VrHprhwNPbqweaWt3AqaerxwjvwTVqbDrgznnLHZXoU8yoBOGNlz?=
+ =?us-ascii?Q?NBvgeFAcmI2dmGb3lCJVw56l/3oPNMvasuxQ3m1Z2drlagdzN/KbBmGmq7DZ?=
+ =?us-ascii?Q?LLsmo33v0mc8I+qGCfIGWe/GtknyJ7a0BxmSUhSi6tySAwtA0S+5FPMrAAn7?=
+ =?us-ascii?Q?ptxs2jcMm/FQdrqZlyhc+To44wriUGKxw8HUAn+F5AxYcPAAr6Tkj+Vjljqo?=
+ =?us-ascii?Q?iOTltgcmMV+CAfwLXJ36s+sRkQBTVI9HiZouhZFYWqQrnaDxEuQaRaPssSe2?=
+ =?us-ascii?Q?h+XfSNMbGWsYolVfl6Rs6qeLHyn4HfW2RPk7c3hMAmt52kgm0ZH5Wu2eQclb?=
+ =?us-ascii?Q?/iKRUpmJekYWDqnalRETo4d1n31tgsN3rMsH2IKTRTSF9uGAsZfgYHsJmRwx?=
+ =?us-ascii?Q?RABk7YEDEIHeW1f5rSXEpRjCdY8akPMmcKz8PzenZEDw0VlE5GT1zm/O5onJ?=
+ =?us-ascii?Q?1/U7k+llYWSAAczmMllZv1qYfhWW+9LWIGrx8nUS3H1GHg4UuIpyiQmxNg6A?=
+ =?us-ascii?Q?jUMMuAG1RMUE5F4UV+9SXkRnHK96yIjDmTb77IpXTIYhFjzdY+JZkALDwtuE?=
+ =?us-ascii?Q?2cAP4WSCM6nGuU5jXGDhClbq4sn0ks14rS1gXF83ljBnkqQ1ZAUZ7+BEcDen?=
+ =?us-ascii?Q?dSrfv7jm9a+sjfQlG6+9fSYJVB2TViiBxA1MCdNGhARZ2xahU1iQt2BFqWqt?=
+ =?us-ascii?Q?/mMpUOivYBFpzad3QXACg799ueNzf8N12/+W1UQf3j+D9ardFhs6O0oyaUdu?=
+ =?us-ascii?Q?9ZcCsHTFf4gHv7bDpJWdiyT0vEjMl5swmHHULa+O3uDeXGbxG5dDv1+T19Oi?=
+ =?us-ascii?Q?ZC8sBhesE0ErPTV/2JXxKKtaV1A+vRYmJwMkwam34Y9V2RdwUJjYnaytaR9o?=
+ =?us-ascii?Q?w+LrNMbcwg2B96X0SuyJ72T9psZGhL3SIjLQPTTmm1hXsAuVm+4VQNO4mukx?=
+ =?us-ascii?Q?FhQhsBjeGazlWKW7PcOUwWAsqsA7fMLZTe5NwBbfqJ8x7IkqCq6o0h72JNMJ?=
+ =?us-ascii?Q?DpPtSSdsjfaxD6+VoiHjm1EX0wSZpeSqRhHhUPdVDskv/GDI35+xMHC1Q7Ws?=
+ =?us-ascii?Q?VioEAhMqu16anXscxGbyHaveEBeCpkdgce7OynUMMZ1euGvBP8f0BalCMAwC?=
+ =?us-ascii?Q?U1cYYOCpGhQGapMbkzQa4Pv1roHQ0XUdOKc5Ecav3I+Mg5ye4DlMLezKAYPm?=
+ =?us-ascii?Q?oi5j3Wdh0h9yY7ghFgnRjg6VPXOXIr0KXrE5UzHmgCdR3PmTxCW0+1rMGB08?=
+ =?us-ascii?Q?g5WWUzm51GlR/Bjoukd7s+wY5MinIaGqYuYDSf/BzUq3No/bAyz3/D8918P7?=
+ =?us-ascii?Q?Vlg3xA8nkKZ2uBmry1RFVMSmLYcbHNKJykQ0hFBE?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Xingyu Li <xli399@ucr.edu>
-Date: Wed, 28 Aug 2024 14:37:04 -0700
-Message-ID: <CALAgD-5kt+F6S1aAwRhKMKb0KwFGzfJCWyHguotEvJGBBBvFkA@mail.gmail.com>
-Subject: BUG: WARNING in free_pgtables
-To: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Cc: Yu Hao <yhao016@ucr.edu>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6646.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 161e695b-6854-472c-96f2-08dcc7a99048
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Aug 2024 21:37:06.3662
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Uq3Sh8MadBx6/ZhyXMzJKuysT3dMNV+ix22M444nZcHolqiPdZkE9Wy04eh7YV9D3gf73/d5SY2ALiijGPJd8g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8363
 
-Hi,
+> -----Original Message-----
+> From: Jakub Kicinski <kuba@kernel.org>
+> Sent: Monday, August 19, 2024 8:47 PM
+> To: David Thompson <davthompson@nvidia.com>
+> Cc: Benjamin Poirier <benjamin.poirier@gmail.com>; davem@davemloft.net;
+> edumazet@google.com; pabeni@redhat.com;
+> andriy.shevchenko@linux.intel.com; u.kleine-koenig@pengutronix.de; Asmaa
+> Mnebhi <asmaa@nvidia.com>; netdev@vger.kernel.org; linux-
+> kernel@vger.kernel.org
+> Subject: Re: [PATCH net v1] mlxbf_gige: disable port during stop()
+>=20
+> On Mon, 19 Aug 2024 14:55:12 -0400 Benjamin Poirier wrote:
+> > Is this memory barrier paired with another one?
+>=20
+> +1
+> You probably want synchronize_irq() here?
+> You should explain in the cover letter, the mb() seems to not be mentione=
+d.
+> --
+> pw-bot: cr
 
-We found a bug in Linux 6.10 using syzkaller. It is possibly a  logic bug.
-The reprodcuer is
-https://gist.github.com/freexxxyyy/5f0c95e95e1bc0fb681e504114b61de8
+Hello Jakub and Benjamin, thanks for your input.
 
-The bug report is:
+I will post a v2 adding information about the "mb()" call.
 
-WARNING: CPU: 0 PID: 8053 at include/linux/rwsem.h:203
-mmap_assert_write_locked include/linux/mmap_lock.h:70 [inline]
-WARNING: CPU: 0 PID: 8053 at include/linux/rwsem.h:203
-__is_vma_write_locked include/linux/mm.h:714 [inline]
-WARNING: CPU: 0 PID: 8053 at include/linux/rwsem.h:203 vma_start_write
-include/linux/mm.h:733 [inline]
-WARNING: CPU: 0 PID: 8053 at include/linux/rwsem.h:203
-free_pgtables+0x4df/0xbb0 mm/memory.c:403
-Modules linked in:
-CPU: 0 PID: 8053 Comm: syz-executor107 Not tainted 6.10.0 #13
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-RIP: 0010:rwsem_assert_held_write include/linux/rwsem.h:203 [inline]
-RIP: 0010:mmap_assert_write_locked include/linux/mmap_lock.h:70 [inline]
-RIP: 0010:__is_vma_write_locked include/linux/mm.h:714 [inline]
-RIP: 0010:vma_start_write include/linux/mm.h:733 [inline]
-RIP: 0010:free_pgtables+0x4df/0xbb0 mm/memory.c:403
-Code: 04 00 4d 85 e4 0f 84 86 03 00 00 e8 3b 46 b6 ff 4d 89 ee 4d 89
-e5 49 bc 00 00 00 00 00 fc ff df e9 86 fd ff ff e8 21 46 b6 ff <0f> 0b
-e9 b8 fe ff ff 48 c7 c1 6c 91 24 8f 80 e1 07 80 c1 03 38 c1
-RSP: 0018:ffffc9000ac7f748 EFLAGS: 00010293
-RAX: ffffffff81db0b3f RBX: ffff88801d8cbe98 RCX: ffff888021fa1e00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff81db09ea R09: ffffffff8aed5df0
-R10: 0000000000000004 R11: ffff888021fa1e00 R12: ffff88802ce66ba0
-R13: ffff88801d8cbe88 R14: ffff88802ce66aa8 R15: 1ffff11003b197d1
-FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ff0448ce6b0 CR3: 00000000244bc000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- exit_mmap+0x435/0xa20 mm/mmap.c:3352
- __mmput+0x114/0x3b0 kernel/fork.c:1346
- exit_mm+0x207/0x2e0 kernel/exit.c:567
- do_exit+0x996/0x2560 kernel/exit.c:863
- do_group_exit+0x1fd/0x2b0 kernel/exit.c:1025
- get_signal+0x1697/0x1730 kernel/signal.c:2909
- arch_do_signal_or_restart+0x92/0x7f0 arch/x86/kernel/signal.c:310
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x95/0x280 kernel/entry/common.c:218
- do_syscall_64+0x8a/0x150 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x67/0x6f
-RIP: 0033:0x7fb06353406d
-Code: Unable to access opcode bytes at 0x7fb063534043.
-RSP: 002b:00007fb0634d10c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: 0000000000000002 RBX: 00007fb0635c92e8 RCX: 00007fb06353406d
-RDX: 0000000020000080 RSI: 0000000000000001 RDI: 0000000000000004
-RBP: 00007fb0635c92e0 R08: 00007fb0634d1640 R09: 0000000000000000
-R10: 00007fb0634d1640 R11: 0000000000000246 R12: 00007fb0635c92ec
-R13: 0000000000000000 R14: 00007fb0634f67c0 R15: 00007fb0634b1000
- </TASK>
+Regarding the "synchronize_irq()" call, I did some research and noticed tha=
+t
+some already merged driver patches (see list below for a sample) state that=
+=20
+"synchronize_irq()" is unnecessary before "free_irq()":
 
+3e0fcb782a9f i40e: Remove unnecessary synchronize_irq() before free_irq()
+845517ed04ae RDMA/qedr: Remove unnecessary synchronize_irq() before free_ir=
+q()
+d1e7f009bfff net: qede: Remove unnecessary synchronize_irq() before free_ir=
+q()
+bd81bfb5a1d1 net: vxge: Remove unnecessary synchronize_irq() before free_ir=
+q()
+29fd3ca1779f qed: Remove unnecessary synchronize_irq() before free_irq()
+411dccf9d271 dmaengine: idxd: Remove unnecessary synchronize_irq() before f=
+ree_irq()
+d887ae3247e0 octeontx2-pf: Remove unnecessary synchronize_irq() before free=
+_irq()
 
--- 
-Yours sincerely,
-Xingyu
+Given the above information, does my mlxbf_gige driver patch still need to
+invoke "synchronize_irq()" in the stop() method?  The "mlxbf_gige_free_irq(=
+)"
+call within the stop() method invokes "free_irq()" for each of the driver's=
+ IRQs, so
+sounds like this "synchronize_irq()" is implicitly being invoked?
+
+Regards, Dave
+
 
