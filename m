@@ -1,127 +1,168 @@
-Return-Path: <linux-kernel+bounces-304425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67716961FE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:39:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F982961FE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:35:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23BDC286112
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:39:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94D071C23A25
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B24157493;
-	Wed, 28 Aug 2024 06:39:26 +0000 (UTC)
-Received: from cae.in-ulm.de (cae.in-ulm.de [217.10.14.231])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82D3374F1;
-	Wed, 28 Aug 2024 06:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.10.14.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C3C157481;
+	Wed, 28 Aug 2024 06:34:59 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B9D13210D;
+	Wed, 28 Aug 2024 06:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724827165; cv=none; b=jcRtZkLvheTADkh1PHuBhLmUiewHmGF3dLzXDnvIA1hMwM0i878fB7FWIZdUO5pmCYWceK/pkRj/IVTFiZj1kfKadsBuaZVfT/y7Iqaz9FstgAOE4LAZ0KlaZlGc0FC0Jk82Ich2tT2DqNTehEQB6EirIV3f4pLLGhvFKw+fcAM=
+	t=1724826899; cv=none; b=GxShJE0DlYwNLtwmFodxP4HSxE+3RTibgg2l2NtlFaHuNI7TX76LRk1OLQsxeOuyEQQ/Tq+NBXa7yNzOJQEOe14QXeXrZBkPKxnxHYlnvGS91IS/aL2w/29A7629Lq0zx2G+NWWPiu3vqgzBZntz2azuY8c8FoiFc4rn7swH08E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724827165; c=relaxed/simple;
-	bh=5v+VbaGlCErZl9BBZ85FCldssbuliKuV9zDO0Ube/Mk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QbDbW/21jg/OUiKdz1qXW57mm1ImsAiKRvX6sdGht8KYyldNDEACKAU+I1eMW5g5LZUtJUWyV/4vdsfCPj189ydFxIoHUOxX0L0758KRE1Hgimsbv+0bBT8ikdZNSmy19zzGAIhiVs2C7zRwkH9K2/Wp0EJJu2hxXXNuBnfabRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c--e.de; spf=pass smtp.mailfrom=c--e.de; arc=none smtp.client-ip=217.10.14.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c--e.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=c--e.de
-Received: by cae.in-ulm.de (Postfix, from userid 1000)
-	id EA7F71403C1; Wed, 28 Aug 2024 08:33:47 +0200 (CEST)
-From: "Christian A. Ehrhardt" <lk@c--e.de>
-To: linux-usb@vger.kernel.org (open list:USB TYPEC CLASS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: "Christian A. Ehrhardt" <lk@c--e.de>,
-	Anurag Bijea <icaliberdev@gmail.com>,
-	Christian Heusel <christian@heusel.eu>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Jameson Thies <jthies@google.com>,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Subject: [PATCH] usb: typec: ucsi: Fix busy loop on ASUS VivoBooks
-Date: Wed, 28 Aug 2024 08:33:13 +0200
-Message-Id: <20240828063314.552278-1-lk@c--e.de>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1724826899; c=relaxed/simple;
+	bh=aWGAxpMZHWrJ/BUyhvBfXZeExfTSMuVVk0d9vk2wP/M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ADFHgNZFK9yvNiLr7CqHjh65k0u00I7bX5+0MLQ3kgYXkjGu8CNr86RXS3B69R+ECbcEf9yoAn79JzJhvExL70RjRIZbqF6BEnLvBLdKQ5pcpQ+2wNbvGpXUe57S+YDz5Q7fR3bI1Bf5x1Zzyt8FQ+N/2JByum13B1D86c+UCt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4Wtvlv5gSRz9sRs;
+	Wed, 28 Aug 2024 08:34:51 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 6jPb3ZkzpTtP; Wed, 28 Aug 2024 08:34:51 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wtvlt44Xsz9sRy;
+	Wed, 28 Aug 2024 08:34:50 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 72A688B77E;
+	Wed, 28 Aug 2024 08:34:50 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id vzIG7P3XR8ze; Wed, 28 Aug 2024 08:34:50 +0200 (CEST)
+Received: from [172.25.230.108] (unknown [172.25.230.108])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id C02CD8B764;
+	Wed, 28 Aug 2024 08:34:49 +0200 (CEST)
+Message-ID: <a43c52c6-c1ac-4ef3-b511-08f0459bddad@csgroup.eu>
+Date: Wed, 28 Aug 2024 08:34:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/16] powerpc: mm: Support MAP_BELOW_HINT
+To: Charlie Jenkins <charlie@rivosinc.com>, Arnd Bergmann <arnd@arndb.de>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Muchun Song <muchun.song@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+ Russell King <linux@armlinux.org.uk>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ Helge Deller <deller@gmx.de>, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ "David S. Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>, Shuah Khan <shuah@kernel.org>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Palmer Dabbelt <palmer@rivosinc.com>, linux-riscv@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ linux-mm@kvack.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org,
+ linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20240827-patches-below_hint_mmap-v1-0-46ff2eb9022d@rivosinc.com>
+ <20240827-patches-below_hint_mmap-v1-7-46ff2eb9022d@rivosinc.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20240827-patches-below_hint_mmap-v1-7-46ff2eb9022d@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-If the busy indicator is set, all other fields in CCI should be
-clear according to the spec. However, some UCSI implementations do
-not follow this rule and report bogus data in CCI along with the
-busy indicator. Ignore the contents of CCI if the busy indicator is
-set.
+Hi Charlie,
 
-If a command timeout is hit it is possible that the EVENT_PENDING
-bit is cleared while connector work is still scheduled which can
-cause the EVENT_PENDING bit to go out of sync with scheduled connector
-work. Check and set the EVENT_PENDING bit on entry to
-ucsi_handle_connector_change() to fix this.
+Le 28/08/2024 à 07:49, Charlie Jenkins a écrit :
+> Add support for MAP_BELOW_HINT to arch_get_mmap_base() and
+> arch_get_mmap_end().
+> 
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> ---
+>   arch/powerpc/include/asm/task_size_64.h | 36 +++++++++++++++++++++++++++------
+>   1 file changed, 30 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/powerpc/include/asm/task_size_64.h b/arch/powerpc/include/asm/task_size_64.h
+> index 239b363841aa..a37a5a81365d 100644
+> --- a/arch/powerpc/include/asm/task_size_64.h
+> +++ b/arch/powerpc/include/asm/task_size_64.h
+> @@ -72,12 +72,36 @@
+>   #define STACK_TOP_MAX TASK_SIZE_USER64
+>   #define STACK_TOP (is_32bit_task() ? STACK_TOP_USER32 : STACK_TOP_USER64)
+>   
+> -#define arch_get_mmap_base(addr, len, base, flags) \
+> -	(((addr) > DEFAULT_MAP_WINDOW) ? (base) + TASK_SIZE - DEFAULT_MAP_WINDOW : (base))
+> +#define arch_get_mmap_base(addr, len, base, flags)					\
 
-Finally, the quirk for some ASUS zenbook models is required for
-ASUS VivoBooks as well. Apply the quirk to these as well.
+This macro looks quite big for a macro, can it be a static inline 
+function instead ? Same for the other macro below.
 
-Reported-by: Anurag Bijea <icaliberdev@gmail.com>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219108
-Bisected-by: Christian Heusel <christian@heusel.eu>
-Tested-by: Anurag Bijea <icaliberdev@gmail.com>
-Fixes: de52aca4d9d5 ("usb: typec: ucsi: Never send a lone connector change ack")
-Cc: stable@vger.kernel.org
-Signed-off-by: Christian A. Ehrhardt <lk@c--e.de>
----
- drivers/usb/typec/ucsi/ucsi.c      | 8 ++++++++
- drivers/usb/typec/ucsi/ucsi_acpi.c | 7 +++++++
- 2 files changed, 15 insertions(+)
+> +({											\
+> +	unsigned long mmap_base;							\
+> +	typeof(flags) _flags = (flags);							\
+> +	typeof(addr) _addr = (addr);							\
+> +	typeof(base) _base = (base);							\
+> +	typeof(len) _len = (len);							\
+> +	unsigned long rnd_gap = DEFAULT_MAP_WINDOW - (_base);				\
+> +	if (_flags & MAP_BELOW_HINT && _addr != 0 && ((_addr + _len) > BIT(VA_BITS - 1)))\
+> +		mmap_base = (_addr + _len) - rnd_gap;					\
+> +	else										\
+> +		mmap_end = ((_addr > DEFAULT_MAP_WINDOW) ?				\
+> +				_base + TASK_SIZE - DEFAULT_MAP_WINDOW :		\
+> +				_base);							\
+> +	mmap_end;									\
 
-diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-index 4039851551c1..540cb1d2822c 100644
---- a/drivers/usb/typec/ucsi/ucsi.c
-+++ b/drivers/usb/typec/ucsi/ucsi.c
-@@ -38,6 +38,10 @@
- 
- void ucsi_notify_common(struct ucsi *ucsi, u32 cci)
- {
-+	/* Ignore bogus data in CCI if busy indicator is set. */
-+	if (cci & UCSI_CCI_BUSY)
-+		return;
-+
- 	if (UCSI_CCI_CONNECTOR(cci))
- 		ucsi_connector_change(ucsi, UCSI_CCI_CONNECTOR(cci));
- 
-@@ -1249,6 +1253,10 @@ static void ucsi_handle_connector_change(struct work_struct *work)
- 
- 	mutex_lock(&con->lock);
- 
-+	if (!test_and_set_bit(EVENT_PENDING, &ucsi->flags))
-+		dev_err_once(ucsi->dev, "%s entered without EVENT_PENDING\n",
-+			     __func__);
-+
- 	command = UCSI_GET_CONNECTOR_STATUS | UCSI_CONNECTOR_NUMBER(con->num);
- 
- 	ret = ucsi_send_command_common(ucsi, command, &con->status,
-diff --git a/drivers/usb/typec/ucsi/ucsi_acpi.c b/drivers/usb/typec/ucsi/ucsi_acpi.c
-index 7a5dff8d9cc6..aa586525ab4c 100644
---- a/drivers/usb/typec/ucsi/ucsi_acpi.c
-+++ b/drivers/usb/typec/ucsi/ucsi_acpi.c
-@@ -197,6 +197,13 @@ static const struct dmi_system_id ucsi_acpi_quirks[] = {
- 		},
- 		.driver_data = (void *)&ucsi_zenbook_ops,
- 	},
-+	{
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "VivoBook_ASUSLaptop"),
-+		},
-+		.driver_data = (void *)&ucsi_zenbook_ops,
-+	},
- 	{
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "LG Electronics"),
--- 
-2.43.0
+mmap_end doesn't exist, did you mean mmap_base ?
 
+> +})
+>   
+> -#define arch_get_mmap_end(addr, len, flags) \
+> -	(((addr) > DEFAULT_MAP_WINDOW) || \
+> -	 (((flags) & MAP_FIXED) && ((addr) + (len) > DEFAULT_MAP_WINDOW)) ? TASK_SIZE : \
+> -									    DEFAULT_MAP_WINDOW)
+> +#define arch_get_mmap_end(addr, len, flags)							\
+> +({												\
+> +	unsigned long mmap_end;									\
+> +	typeof(flags) _flags = (flags);								\
+> +	typeof(addr) _addr = (addr);								\
+> +	typeof(len) _len = (len);								\
+> +	if (_flags & MAP_BELOW_HINT && _addr != 0 && ((_addr + _len) > BIT(VA_BITS - 1)))	\
+> +		mmap_end = (_addr + _len);							\
+> +	else											\
+> +		mmap_end = (((_addr) > DEFAULT_MAP_WINDOW) ||					\
+> +				(((_flags) & MAP_FIXED) && ((_addr) + (_len) > DEFAULT_MAP_WINDOW))\
+> +				? TASK_SIZE : DEFAULT_MAP_WINDOW)				\
+> +	mmap_end;										\
+> +})
+>   
+>   #endif /* _ASM_POWERPC_TASK_SIZE_64_H */
+> 
 
