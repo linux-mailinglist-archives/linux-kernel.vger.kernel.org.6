@@ -1,155 +1,132 @@
-Return-Path: <linux-kernel+bounces-304708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7C2F9623C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:42:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F40E9623D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:45:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 460ED1F22229
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:42:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49C991F258BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F5F166311;
-	Wed, 28 Aug 2024 09:41:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32EBB166F20;
+	Wed, 28 Aug 2024 09:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ERtxB95T"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b="VhIuDHbu"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD51D15ECD7
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 09:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724838110; cv=none; b=gBNDNvcLYTF1oxkip8xagMHRgq3k0F62EIjSWLwSfzZbkadIv1JaRCfFNRYVy2PzQb/7Uksl2qkqM+hCblYNbII4YG8MV2bnAcwc8cMLnZMgI/Zca6AxvRAwngrZX4Z1BFVNnBELRJ6cCU8harnWP4JuP49HJP9c15fRD0hqKqs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724838110; c=relaxed/simple;
-	bh=ijW9HK0AX+zSVQ05woUWipxVFsvGYGmBgdCJ3SpVx8U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gdDzoi442URF0aUgiHx5qYDnGcVb46hu94QUsVSCYwKLVSD6S4YGHNLg/ezHkMgU+T8Y+UDFnpUxxpXtYCziseel45pJbdA/zHBWGs6uXj/V7qvNYTyKwaWhA9MLAqAQrFzzOBmqvcfZkBkCpY9xq6GK5dC/M7ymnEIFXVbqXVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ERtxB95T; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724838107;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xBYc7EE/zONAzLlymWb0hmVq6yfD+J/1DdujpaQCA4s=;
-	b=ERtxB95TKxsQUZ247WKqmi4cZ9O49R7GMYvevhWjJmChkBpjlvqUvGLYzHACMxeFOcBnXO
-	H85p/HMB5alXi4Bv3tvc9VLr3pgYxRn0MaMqzSClFFNGoQnR3eXvqRqAL3aYF5tSx3tQGH
-	fqHbH0Fm8GzVDGbx8TR/dnOeq3rzOT4=
-Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
- [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-657-ak6nz5vCNkmwH2WCj1e79w-1; Wed, 28 Aug 2024 05:41:46 -0400
-X-MC-Unique: ak6nz5vCNkmwH2WCj1e79w-1
-Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-6b41e02c255so138238447b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 02:41:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724838106; x=1725442906;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xBYc7EE/zONAzLlymWb0hmVq6yfD+J/1DdujpaQCA4s=;
-        b=e/4waVvwtShpkeafEVIGIO6RuAn2E1Kq0G3B6yipuk3qzyKUf1TLKw5qTCQjtDCOOz
-         KwyyPyAVH2/8BRMJ0Avc/7R/MUlp9IXElPaa0OjZ6UWGuVrDW/qDtbZmrW4SLUyue/S5
-         nR/XyG47ZYGGcKXoMaMRp6WQBHe7wWd+UGL2CflXhMIRqNnMi/31fIq78hGutiN20kIF
-         p0yJdrFxVGRdOVPwqrzfyU5F70ZW/cAQHel9WD3XB1/G+pQLWoYKV03znM7LMF/IbYJb
-         VQwAkZstZWjK5tihHiiPHwLGUhQyGwi0Y95UsLL5+HK8aNpIaS4eYt2nYvS7xxcuNcfs
-         DeEw==
-X-Forwarded-Encrypted: i=1; AJvYcCXKR0QL2x8SdKzUg5htsbXqvGE99AHtIzTWk/nYT+JZZPC+rgJN7qlLxQGi60zvtvz2WXaJ/mO1YILoW/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlUE9Q9qhCR14Oa5GkR0kOvvq28kfar4CNwztfxH0FodmoT77g
-	OM1j+87eSUtSRmbYCM5A3Jlw7On88Mqfk6yCgSuLCly0LZ+7Rbc1BpICdhUG4YyKQmf/z/Gzli6
-	qP0+/oHKthmJv2S33nMVyHI1txrazTLwEQgGnAPVpDJhSbxrixCxGtadr/rleig==
-X-Received: by 2002:a05:6902:18cd:b0:e0b:d622:7586 with SMTP id 3f1490d57ef6-e17a8c1f785mr20922791276.40.1724838105960;
-        Wed, 28 Aug 2024 02:41:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGUtII/J0HGM1CH1sN1ODHa9rrXP87mYcjb70QmCWucp301KDKoN1ciQoJLegsU5I774A88iA==
-X-Received: by 2002:a05:6902:18cd:b0:e0b:d622:7586 with SMTP id 3f1490d57ef6-e17a8c1f785mr20922764276.40.1724838105582;
-        Wed, 28 Aug 2024 02:41:45 -0700 (PDT)
-Received: from eisenberg.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c162d6548csm63220746d6.68.2024.08.28.02.41.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 02:41:45 -0700 (PDT)
-From: Philipp Stanner <pstanner@redhat.com>
-To: Luben Tuikov <ltuikov89@gmail.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Danilo Krummrich <dakr@redhat.com>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Philipp Stanner <pstanner@redhat.com>
-Subject: [PATCH v2 2/2] drm/sched: warn about drm_sched_job_init()'s partial init
-Date: Wed, 28 Aug 2024 11:41:35 +0200
-Message-ID: <20240828094133.17402-4-pstanner@redhat.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240828094133.17402-2-pstanner@redhat.com>
-References: <20240828094133.17402-2-pstanner@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BE115852F;
+	Wed, 28 Aug 2024 09:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724838331; cv=pass; b=IjurVvn9ThOVIqcMc98SMBaA82DSgr2yRmpTmQv+kkmRu0zlUD8NoiTy4NIQwt4u3kHmsCe1g5VxAYPOp8k80ZvymZaJ2+EGrKLktZe27qhKPoAH6F/n0LJqCe6Wt21M/qp8ccQkxFpFhnbKkziYLJ/K+ByAm8S5YhmiN5aKLRI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724838331; c=relaxed/simple;
+	bh=xxHWjXbGYDdv1SsBXuLwy1+mW782cDB+n1vw4d4Zg4E=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hmG9nzWJ4LWaTZ4qT5od1glSem7vaQ9RPulzNMIVs4cmlZn0KzdbFciRShNWzhUGzQM/s/K09nCc29y4I3kozoCCI9yWlrJkB2wZ2pNDp4p5hFiuWwbXn3lZjByy8znx0eG5y0WlNLdBPxSxZiEohHkIgIPIRJ8yO9wKuO5/Ncs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b=VhIuDHbu; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1724838325; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=DT4b9oVB7qEss+11or95LFMXePqwEVvfQl62TT6YhWcOK/jx5jzZQbGCAzx1FFUoNGcUmSiw93cUKhmOhZK/lReOaibabu+z2q0RZgvXzvMGNmCqE+XWk9Hmj06ga6aGhNnjXbE92rSvT4IiA0kB7bQ9LyzbXzdHu4MB2BrhwTI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724838325; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=5SYZhpIwAJcr2xrpIC+OIjn/gOIRzSfwVo2MQq25g2Y=; 
+	b=ja2UJbYPHrnJqiKoiKyZ+5jFpJ7BrsLAYZ9kCn8kaJEc6X3vgY5HXIo1jBFDhiz0p8EUlIblCckBKvHczCSK8EYIDaDfbnJrMHEmomnWomNoiOOV5QZV1/5VM3yOl4hxrwgwgl7IHdpVsZS6OCfLNPfoK9dJtyirqhG3syfMbZ8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=martyn.welch@collabora.com;
+	dmarc=pass header.from=<martyn.welch@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724838325;
+	s=zohomail; d=collabora.com; i=martyn.welch@collabora.com;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=5SYZhpIwAJcr2xrpIC+OIjn/gOIRzSfwVo2MQq25g2Y=;
+	b=VhIuDHbu5XAJZkYq29cOtMCffL8ImX5xnQ3I0ccIWs3KkwxbyX/bFZn0TDtRtawS
+	h6MBo92Eq4sqGTbexuxOG0JaMaaD5jCQzcjdu87QcZpgghxRQYmsFaaB5BVty51DPl9
+	/zAclJCCY4Jgqc7kRdYZLYb1HWsfJlSxDHwcO2Z0=
+Received: by mx.zohomail.com with SMTPS id 1724838324132287.374471093676;
+	Wed, 28 Aug 2024 02:45:24 -0700 (PDT)
+Message-ID: <57440a796530c153cd0ee3e7b11c2fbab9887fbf.camel@collabora.com>
+Subject: Re: linux-next: build warning after merge of the rpmsg tree
+From: Martyn Welch <martyn.welch@collabora.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Bjorn Andersson	
+ <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, Jassi
+ Brar <jassisinghbrar@gmail.com>
+Cc: Andrew Davis <afd@ti.com>, Hari Nagalla <hnagalla@ti.com>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Date: Wed, 28 Aug 2024 10:45:20 +0100
+In-Reply-To: <20240828150900.7ffd7588@canb.auug.org.au>
+References: <20240822142603.3608a26d@canb.auug.org.au>
+	 <20240828150900.7ffd7588@canb.auug.org.au>
+Organization: Collabora Ltd.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.53.2-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-drm_sched_job_init()'s name suggests that after the function succeeded,
-parameter "job" will be fully initialized. This is not the case; some
-members are only later set, notably "job->sched" by drm_sched_job_arm().
+On Wed, 2024-08-28 at 15:09 +1000, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> On Thu, 22 Aug 2024 14:26:03 +1000 Stephen Rothwell
+> <sfr@canb.auug.org.au> wrote:
+> >=20
+> > After merging the rpmsg tree, today's linux-next build (x86_64
+> > allmodconfig) produced this warning:
+> >=20
+> > WARNING: unmet direct dependencies detected for OMAP2PLUS_MBOX
+> > =C2=A0 Depends on [n]: MAILBOX [=3Dy] && (ARCH_OMAP2PLUS || ARCH_K3)
+> > =C2=A0 Selected by [m]:
+> > =C2=A0 - TI_K3_M4_REMOTEPROC [=3Dm] && REMOTEPROC [=3Dy] && (ARCH_K3 ||
+> > COMPILE_TEST [=3Dy])
+> >=20
+> > Probably introduced by commit
+> >=20
+> > =C2=A0 ebcf9008a895 ("remoteproc: k3-m4: Add a remoteproc driver for M4=
+F
+> > subsystem")
+>=20
+> I am still seeing this warning.
+>=20
 
-Document that drm_sched_job_init() does not set all struct members.
+OK, just taken a look into this. I think the issue is the result of the
+inclusion of `COMPILE_TEST` in the Kconfig entry:
 
-Document that job->sched in particular is uninitialized before
-drm_sched_job_arm().
+  config TI_K3_M4_REMOTEPROC
+         tristate "TI K3 M4 remoteproc support"
+         depends on ARCH_K3 || COMPILE_TEST
+         select MAILBOX
+         select OMAP2PLUS_MBOX
+  ...
 
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
----
-Changes in v2:
-  - Change grammar in the new comments a bit.
----
- drivers/gpu/drm/scheduler/sched_main.c | 4 ++++
- include/drm/gpu_scheduler.h            | 7 +++++++
- 2 files changed, 11 insertions(+)
+Looking at the entry for `OMAP2PLUS_MBOX`, that doesn't have
+`COMPILE_TEST` listed under it's dependencies:
 
-diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-index b0c8ad10b419..721373938c1e 100644
---- a/drivers/gpu/drm/scheduler/sched_main.c
-+++ b/drivers/gpu/drm/scheduler/sched_main.c
-@@ -781,6 +781,10 @@ EXPORT_SYMBOL(drm_sched_resubmit_jobs);
-  * Drivers must make sure drm_sched_job_cleanup() if this function returns
-  * successfully, even when @job is aborted before drm_sched_job_arm() is called.
-  *
-+ * Note that this function does not assign a valid value to each struct member
-+ * of struct drm_sched_job. Take a look at that struct's documentation to see
-+ * who sets which struct member with what lifetime.
-+ *
-  * WARNING: amdgpu abuses &drm_sched.ready to signal when the hardware
-  * has died, which can mean that there's no valid runqueue for a @entity.
-  * This function returns -ENOENT in this case (which probably should be -EIO as
-diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
-index 5acc64954a88..04a268cd22f1 100644
---- a/include/drm/gpu_scheduler.h
-+++ b/include/drm/gpu_scheduler.h
-@@ -337,6 +337,13 @@ struct drm_sched_fence *to_drm_sched_fence(struct dma_fence *f);
- struct drm_sched_job {
- 	struct spsc_node		queue_node;
- 	struct list_head		list;
-+
-+	/*
-+	 * The scheduler this job is or will be scheduled on.
-+	 *
-+	 * Gets set by drm_sched_arm(). Valid until the scheduler's backend_ops
-+	 * callback "free_job()" has been called.
-+	 */
- 	struct drm_gpu_scheduler	*sched;
- 	struct drm_sched_fence		*s_fence;
- 
--- 
-2.46.0
+  config OMAP2PLUS_MBOX
+          tristate "OMAP2+ Mailbox framework support"
+          depends on ARCH_OMAP2PLUS || ARCH_K3
+  ...
 
+If I understand right, either the `COMPILE_TEST` needs to be removed
+from `TI_K3_M4_REMOTEPROC` or added to `OMAP2PLUS_MBOX`.
+
+It appears that the OMAP2+ Mailbox support can at least be compiled on
+x86_64. so I assume the correct thing to do here is to enable that
+right?
+
+Jassi, I assume there's not specific reason for the OMAP2+ Mailbox
+framework support not having `COMPILE_TEST`, other than potentially
+being added just before it was a thing?
+
+Martyn
 
