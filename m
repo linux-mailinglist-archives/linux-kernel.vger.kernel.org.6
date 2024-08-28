@@ -1,154 +1,253 @@
-Return-Path: <linux-kernel+bounces-304647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 764AF962326
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:13:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2D8D96233B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26D591F238A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:13:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12E161C212F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F91815ECDF;
-	Wed, 28 Aug 2024 09:13:41 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B85C166F33;
+	Wed, 28 Aug 2024 09:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Qh4MZv+5"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD0115E5B5;
-	Wed, 28 Aug 2024 09:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5452D15E5C8;
+	Wed, 28 Aug 2024 09:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724836421; cv=none; b=ZfyMR2l0SVjRXPAlOp32caC3tEP5xQGJj9/7O6MmuJGXNR/nreNxZSKv8LzO49zuIur8x0mVugNbENcd+6uXPrTSMf8VrPy3gwVZls4kPH8CHhEJMqq8/mm2g+QgHXhwynMyRTVgZn2cP4FJSs1KBW0RzkakyHio3SF98C7VYVk=
+	t=1724836772; cv=none; b=apbeb5KpZ7KQ8a+8PbXeWgHf7RuV6aB56eR3VPQEW8mt+Zjr9eVMtNbW192MhtC+g9KWWavvLVSkk5dqzaDpIfAJvhDaZXjVKbI59SB1fTANb4ggdhTg6q4nR6QRiY1rlCmlqM5D/kE79b3JpdqA8/+jub7vVprpFcQ61ojwcKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724836421; c=relaxed/simple;
-	bh=my1j5FvugVUV25xBnj5k5mZl9KjOhaywMZwYI1x9wwg=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=JFSzJAmgkAaQNC9XF17R11UNiU2lSkdieuW6GyCadz6TKpTc76OI1gAk8pZLD3bKGAdaOocJtrkA843bM14HJXiCkSxE3qcoGNPNwnxHQ1L2mkxOeoVtBFfp+ov6eeavYayUT86TcO1sZrNazdUNNaq6r7kHfCymQnQIE4LdsOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WtzGn0QHMz4f3jMP;
-	Wed, 28 Aug 2024 17:13:21 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 9EEAC1A0359;
-	Wed, 28 Aug 2024 17:13:35 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgB3n4U96s5mS5THCw--.35306S3;
-	Wed, 28 Aug 2024 17:13:35 +0800 (CST)
-Subject: Re: [PATCH md-6.12 v2 00/42] md/md-bitmap: introduce
- bitmap_operations and make structure internal
-To: Xiao Ni <xni@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Song Liu <song@kernel.org>, mariusz.tkaczyk@linux.intel.com,
- linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20240826074452.1490072-1-yukuai1@huaweicloud.com>
- <CAPhsuW6NOW9wuYD3ByJbbem79Nwq5LYcpXDj5RcpSyQ67ZHZAA@mail.gmail.com>
- <5efeec29-cf13-a872-292c-dd7737a02d68@huaweicloud.com>
- <CALTww2-Z7fp3O2ZELT=HQsxVqfFs1KZGMgQ6TJ4VKgBbeV1dhw@mail.gmail.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <d8447fb3-f71e-c202-a301-39132ea3562c@huaweicloud.com>
-Date: Wed, 28 Aug 2024 17:13:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1724836772; c=relaxed/simple;
+	bh=75Ac1ux3wSiLTmmKs6fVjtGD6q9N5h4FJizhOL2dAck=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fg8rTHmTK5bF6n+qmnTox29BVsU/tZWhQV0oM4VfasU7kGeHFKYw+Mxi3Gsr3z85rPoDCKuSmI9nSZkZb6pPow4c+ouVgQo1jHmxYWp2vJyK59Nr+AsPXYHnaEkJ6jcqbePJZmU3vVpmXf9TplssiKaHMLErB2LzixZNGFDI9hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Qh4MZv+5; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47S9J4aQ084245;
+	Wed, 28 Aug 2024 04:19:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724836744;
+	bh=ekYOuLexyebNgthzikEPIns81VKOgVjs/KtwLoaOR8g=;
+	h=From:To:CC:Subject:Date;
+	b=Qh4MZv+5OEg6xtPR6vseseUiVDdHTJUTW19UREVSF6KOPabqvRFvGj83Frh6UAGqi
+	 w7UeB5Fm+NE1Qs7co71isMuzy/+G/oKONvJApudECg1MxeXPUvdW13+n/adAKyxPNu
+	 hlo6lVxSd7JdtjpgEN7iSucLQJfjSP0NCNOSj0Rs=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47S9J4vs127084
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 28 Aug 2024 04:19:04 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 28
+ Aug 2024 04:19:04 -0500
+Received: from fllvsmtp8.itg.ti.com (10.64.41.158) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 28 Aug 2024 04:19:04 -0500
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+	by fllvsmtp8.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47S9J4Re009430;
+	Wed, 28 Aug 2024 04:19:04 -0500
+Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 47S9J3cS007457;
+	Wed, 28 Aug 2024 04:19:03 -0500
+From: MD Danish Anwar <danishanwar@ti.com>
+To: Andrew Lunn <andrew@lunn.ch>, Dan Carpenter <dan.carpenter@linaro.org>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Javier Carrasco
+	<javier.carrasco.cruz@gmail.com>,
+        Jacob Keller <jacob.e.keller@intel.com>,
+        Diogo Ivo <diogo.ivo@siemens.com>, Simon Horman <horms@kernel.org>,
+        Richard
+ Cochran <richardcochran@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>, Jakub
+ Kicinski <kuba@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S.
+ Miller" <davem@davemloft.net>
+CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
+Subject: [PATCH net-next v3 0/6] Introduce HSR offload support for ICSSG
+Date: Wed, 28 Aug 2024 14:48:55 +0530
+Message-ID: <20240828091901.3120935-1-danishanwar@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CALTww2-Z7fp3O2ZELT=HQsxVqfFs1KZGMgQ6TJ4VKgBbeV1dhw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3n4U96s5mS5THCw--.35306S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7tr4fJFy7tw43XrWkGr1kGrg_yoW8WryfpF
-	9xJ3WUt3ykC3WrtFnFqr10qFyrtFn7Zr429w1rGr17Gr98KF9xZrs7Krs8uFnIyFykZa1Y
-	9ay8Xa4fWr4UXFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
-	IcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi,
+Hi All,
+This series introduces HSR offload support for ICSSG driver. To support HSR
+offload to hardware, ICSSG HSR firmware is used.
 
-在 2024/08/28 9:31, Xiao Ni 写道:
-> On Wed, Aug 28, 2024 at 9:15 AM Yu Kuai <yukuai1@huaweicloud.com> wrote:
->>
->> Hi,
->>
->> 在 2024/08/28 4:32, Song Liu 写道:
->>> On Mon, Aug 26, 2024 at 12:50 AM Yu Kuai <yukuai1@huaweicloud.com> wrote:
->>>>
->>> [...]
->>>>
->>>> And with this we can build bitmap as kernel module, but that's not
->>>> our concern for now.
->>>>
->>>> This version was tested with mdadm tests. There are still few failed
->>>> tests in my VM, howerver, it's the test itself need to be fixed and
->>>> we're working on it.
->>>
->>> Do we have new test failures after this set? If so, which ones?
->>
->> No, there are new failures.
-> 
-> Hi all
-> 
-> I suggest running lvm2 regression tests too. I can't run it myself now
-> because I can't get a stable network connection all the time.
-> 
+This series introduces,
+1. HSR frame offload support for ICSSG driver.
+2. HSR Tx Packet duplication offload
+3. HSR Tx Tag and Rx Tag offload
+4. Multicast filtering support in HSR offload mode.
+5. Dependencies related to IEP.
 
-Today, I run one round of the lvm2 tests with following script in my VM:
-for t in `ls test/shell`; do
-         if cat test/shell/$t | grep raid &> /dev/null; then
-                 make check T=shell/$t
-         fi
-done
+HSR Test Setup:
+--------------
 
-And the failed tests are:
-[root@fedora lvm2]# cat log1 | grep "###   " | grep failed
-###       failed: [ndev-vanilla] shell/lvconvert-raid-reshape-size.sh
-###       failed: [ndev-vanilla] shell/lvconvert-repair-raid.sh
+     ___________           ___________           ___________
+    |           | Link AB |           | Link BC |           |
+  __|   AM64*   |_________|   AM64    |_________|   AM64*   |___
+ |  | Station A |         | Station B |         | Station C |   |
+ |  |___________|         |___________|         |___________|   |
+ |                                                              |
+ |______________________________________________________________|
+                            Link CA
+ *Could be any device that supports two ethernet interfaces.
 
-Then, I revert this set and test above tests again, they still fail. So
-I didn't dig into these tests. :)
+Steps to switch to HSR frame forward offload mode:
+-------------------------------------------------
+Example assuming eth1, eth2 ports of ICSSG1 on AM64-EVM
 
-Thanks,
-Kuai
+  1) Enable HSR offload for both interfaces
+      ethtool -K eth1 hsr-fwd-offload on
+      ethtool -K eth1 hsr-dup-offload on
+      ethtool -K eth1 hsr-tag-ins-offload on
+      ethtool -K eth1 hsr-tag-rm-offload on
 
-> Best Regards
-> Xiao
->>
->> Thanks,
->> Kuai
->>
->>>
->>> Thanks,
->>> Song
->>>
->>>> Yu Kuai (42):
->>>>     md/raid1: use md_bitmap_wait_behind_writes() in raid1_read_request()
->>>>     md/md-bitmap: replace md_bitmap_status() with a new helper
->>>>       md_bitmap_get_stats()
->>>
->>> [...]
->>> .
->>>
->>
-> 
-> 
-> .
-> 
+      ethtool -K eth2 hsr-fwd-offload on
+      ethtool -K eth2 hsr-dup-offload on
+      ethtool -K eth2 hsr-tag-ins-offload on
+      ethtool -K eth2 hsr-tag-rm-offload on
+
+  2) Create HSR interface and add slave interfaces to it
+      ip link add name hsr0 type hsr slave1 eth1 slave2 eth2 \
+    supervision 45 version 1
+
+  3) Add IP address to the HSR interface
+      ip addr add <IP_ADDR>/24 dev hsr0
+
+  4) Bring up the HSR interface
+      ip link set hsr0 up
+
+Switching back to Dual EMAC mode:
+--------------------------------
+  1) Delete HSR interface
+      ip link delete hsr0
+
+  2) Disable HSR port-to-port offloading mode, packet duplication
+      ethtool -K eth1 hsr-fwd-offload off
+      ethtool -K eth1 hsr-dup-offload off
+      ethtool -K eth1 hsr-tag-ins-offload off
+      ethtool -K eth1 hsr-tag-rm-offload off
+
+      ethtool -K eth2 hsr-fwd-offload off
+      ethtool -K eth2 hsr-dup-offload off
+      ethtool -K eth2 hsr-tag-ins-offload off
+      ethtool -K eth2 hsr-tag-rm-offload off
+
+Testing the port-to-port frame forward offload feature:
+-----------------------------------------------------
+  1) Connect the LAN cables as shown in the test setup.
+  2) Configure Station A and Station C in HSR non-offload mode.
+  3) Configure Station B is HSR offload mode.
+  4) Since HSR is a redundancy protocol, disconnect cable "Link CA",
+     to ensure frames from Station A reach Station C only through
+     Station B.
+  5) Run iperf3 Server on Station C and client on station A.
+  7) Check the CPU usage on Station B.
+
+CPU usage report on Station B using mpstat when running UDP iperf3:
+-------------------------------------------------------------------
+
+  1) Non-Offload case
+  -------------------
+  CPU  %usr  %nice  %sys %iowait  %irq  %soft  %steal  %guest   %idle
+  all  0.00   0.00  0.50    0.00  3.52  29.15    0.00    0.00   66.83
+    0  0.00   0.00  0.00    0.00  7.00  58.00    0.00    0.00   35.00
+    1  0.00   0.00  0.99    0.00  0.99   0.00    0.00    0.00   98.02
+
+  2) Offload case
+  ---------------
+  CPU  %usr  %nice  %sys %iowait  %irq  %soft  %steal  %guest   %idle
+  all  0.00   0.00  0.00    0.00  0.50   0.00    0.00    0.00   99.50
+    0  0.00   0.00  0.99    0.00  0.00   0.00    0.00    0.00   99.01
+    1  0.00   0.00  0.00    0.00  0.00   0.00    0.00    0.00  100.00
+
+Note:
+1) At the very least, hsr-fwd-offload must be enabled.
+   Without offloading the port-to-port offload, other
+   HSR offloads cannot be enabled.
+
+2) Inorder to enable hsr-tag-ins-offload, hsr-dup-offload
+   must also be enabled as these are tightly coupled in
+   the firmware implementation.
+
+Changes from v2 to v3:
+*) Renamed APIs common to switch and hsr modes with suffix _fw_offload.
+*) Returning EOPNOTSUPP in prueth_hsr_port_link() as suggested by
+   Andrew Lunn <andrew@lunn.ch>
+*) Dropped unneccassary dev_err prints and changed dev_err to dev_dbg
+   where applicable.
+*) Renamed NETIF_PRUETH_HSR_OFFLOAD to NETIF_PRUETH_HSR_OFFLOAD_FEATURES
+   to make it clear it is a collection of features, not an alias for one
+   feature.
+*) Added Kernel doc entries for @hsr_members and @is_hsr_offload_mode as
+   suggested by Simon Horman <horms@kernel.org>
+*) Dropped patch [1] as it is no longer needed in this series. It is
+   already merged to net/main by commit [2].
+*) Collected Reviewed-by tag from Roger Quadros <rogerq@kernel.org> for
+   PATCH 1/6 and PATCH 2/6.
+*) Added if check for current mode before calling __dev_mc_unsync as
+   suggested by Roger Quadros <rogerq@kernel.org>
+*) Updated commit message of PATCH 6/6 to describe handling of duplicate
+   discard in the driver.
+
+Changes from v1 to v2:
+*) Modified patch 2/7 to only contain code movement as suggested by
+   Dan Carpenter <dan.carpenter@linaro.org>
+*) Added patch 3/7 by splitting it from 2/6 as the patch is not part of
+   code movement done in patch 2/7.
+*) Rebased on latest net-next/main.
+
+v1: https://lore.kernel.org/all/20240808110800.1281716-1-danishanwar@ti.com/
+v2: https://lore.kernel.org/all/20240813074233.2473876-1-danishanwar@ti.com
+
+[1] https://lore.kernel.org/all/20240813074233.2473876-2-danishanwar@ti.com/
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git/commit/?id=e846be0fba85  
+
+MD Danish Anwar (4):
+  net: ti: icss-iep: Move icss_iep structure
+  net: ti: icssg-prueth: Stop hardcoding def_inc
+  net: ti: icssg-prueth: Add support for HSR frame forward offload
+  net: ti: icssg-prueth: Add multicast filtering support in HSR mode
+
+Ravi Gunasekaran (2):
+  net: ti: icssg-prueth: Enable HSR Tx Packet duplication offload
+  net: ti: icssg-prueth: Enable HSR Tx Tag and Rx Tag offload
+
+ drivers/net/ethernet/ti/icssg/icss_iep.c      |  72 --------
+ drivers/net/ethernet/ti/icssg/icss_iep.h      |  73 +++++++-
+ .../net/ethernet/ti/icssg/icssg_classifier.c  |   1 +
+ drivers/net/ethernet/ti/icssg/icssg_common.c  |  16 +-
+ drivers/net/ethernet/ti/icssg/icssg_config.c  |  22 ++-
+ drivers/net/ethernet/ti/icssg/icssg_config.h  |   2 +
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c  | 172 +++++++++++++++++-
+ drivers/net/ethernet/ti/icssg/icssg_prueth.h  |   9 +
+ 8 files changed, 275 insertions(+), 92 deletions(-)
+
+
+base-commit: e5899b60f52a7591cfc2a2dec3e83710975117d7
+-- 
+2.34.1
 
 
