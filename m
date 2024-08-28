@@ -1,153 +1,125 @@
-Return-Path: <linux-kernel+bounces-304317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 304B5961DC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:53:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD405961DCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:01:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6301E1C20ACE
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:53:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 231D12849DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 05:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF7314A4C7;
-	Wed, 28 Aug 2024 04:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C353814A604;
+	Wed, 28 Aug 2024 05:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IbWDjIsx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cmjeAq0n"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFEE177117;
-	Wed, 28 Aug 2024 04:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5F712E1D9;
+	Wed, 28 Aug 2024 05:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724820822; cv=none; b=ZApHVM5cgfbFggdmvq9/ebg17wafY96EuoSYqwHvAQhMZhTDGlp5Qt09qSHXKoGAlCcqoc2vYDHVlZIsTsHyDWbj3sL7vMFM8X7SZdHxq3/7OZfnPJvRo6yy7djAv9DE412J9XvJAEu5Rd4pJ6Z20580h3QPsjA8VeqYJcP1DVk=
+	t=1724821295; cv=none; b=efvBHiHhpjgiztxmwpyXyP8mPmhsoQ2Kaa5ikaipF9JKQOcf6eq6WEC2Cwjt9IGIT2YZNfNtHnCghm2nlrQ5GC49YEhivxLmKzIwBBLUq9rBq1MciMuBRQVkXNhJpVdjy8nOd5P3fBP/LL6GQc0H7CSwbZYsHyJm/UwP3exgVrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724820822; c=relaxed/simple;
-	bh=V1yZOu2GId5b6bnaYM6dmXuqDYTml9tYA+NecUp0Zag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hmvBBy4nbthomxIxe3HcjMlNmUJky3EnE2JF/P0V5fXSX6jj2onppRkV6ZdZjxBIvZv0adi/D+fA85+Mcqr/pOLEp83vfldRkOqnTz8VOdHjQ5C8oNOrhUQm2EvbxRXmheJ8dRxa2Uq3lf203CvH/Up9UL6bAzydQ3o/TDZkPG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IbWDjIsx; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724820821; x=1756356821;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=V1yZOu2GId5b6bnaYM6dmXuqDYTml9tYA+NecUp0Zag=;
-  b=IbWDjIsxUYeIr/954+4Wc2mDyamqyp/oNCyJhB/+4SIca7tXjCjZ3Las
-   LAOUlnAWQglGZ4tBrGbl09M9clXZq8hq/YkGr475YdCay/TYX5bmoMyas
-   RyIJJhlq6cHnvbyoi6EpS2ZChFba4NFwV0VFtQ0/DVc1oekwLB1+47Yi6
-   BIrKaN0r9oYs2bXHodtfeAzOCxNIoQ1hzYr8IKHCfSvnVFfpISfDvJfFB
-   vP9BWp432kEN/Swgu/IRvMDf9YUG/h6STn6fGBUPpIAjbxcJycPtd+QYP
-   VS3MF3KO0VykkerGxzAZASl/mZsLvIRBS/7FtljX2DO8TGlfG2wer8FWL
-   w==;
-X-CSE-ConnectionGUID: iCSv7/nySzeRJx9p1DRflw==
-X-CSE-MsgGUID: f02qN3y2Sl6vjjJPyVqqQw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="34737015"
-X-IronPort-AV: E=Sophos;i="6.10,181,1719903600"; 
-   d="scan'208";a="34737015"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 21:53:40 -0700
-X-CSE-ConnectionGUID: cQZeiJr2Qa2wN9m847ImQg==
-X-CSE-MsgGUID: Dt1q/+H2RlG43n9QpIA1cA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,181,1719903600"; 
-   d="scan'208";a="93809470"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 27 Aug 2024 21:53:38 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sjAgZ-000KUq-3B;
-	Wed, 28 Aug 2024 04:53:35 +0000
-Date: Wed, 28 Aug 2024 12:52:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH v1 2/2] iio: imu: st_lsm6dsx: Remove useless dev_fwnode()
- calls
-Message-ID: <202408281240.oT6C3uTj-lkp@intel.com>
-References: <20240826212344.866928-3-andy.shevchenko@gmail.com>
+	s=arc-20240116; t=1724821295; c=relaxed/simple;
+	bh=PdiqneyM8iE8PXtWCYkdMmfe3vycXqgv6iFjUSeis2E=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=UPNVYUnpCW/yq3bjGZ5AHZpE68dZKuvD7a5P2VRYjL5qqZhEAYEwNoN1iB+e02HaTDJxVCEb9jBORqRre5irbHqXj+MjAjG95Ez6KgmmC+W7olyZZ3kl6Xbf3LqqeUbZT1PYDvU15wKNBeIlnyuNbOiGmNJg+eCd7JGjF+Iu0Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cmjeAq0n; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7106cf5771bso5284076b3a.2;
+        Tue, 27 Aug 2024 22:01:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724821292; x=1725426092; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=d1PBFufZFXO8pjeAWoGsRYBpwPpPunHh/3BSVN2umgc=;
+        b=cmjeAq0nBTSZ5PX6x7km2Hb3b5SQbIy+sXqbXAoNjqlMIiL6tKDCjrXotkLuZ8knbo
+         LwqJ9+Ixohw2D9H10PX3ZltCnNRoobpcTHloCdRQaL6cG2Dy10KTYM9t35gPmdiP88UQ
+         TT/ifz6XLdbcxFMI4br9zWuZUfQ+hTMO1IBE0qBH3EbXi7ISFt91AXu1eqwi4FqJQU15
+         EL7J7CuzkN0SYZuKgaspMMAaZGWOP50o6OojeRl4iP5RjGptrGW0uYtDEARs2U/gLKSy
+         9LzfuskTFSGQCFO0Yd91QRKrflWEiHfvgEfszyJfKG6gkGDlzDFdfox6QmUw3xSe1G4N
+         r09g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724821292; x=1725426092;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d1PBFufZFXO8pjeAWoGsRYBpwPpPunHh/3BSVN2umgc=;
+        b=gyPnnhWgZW52SXVdZ20RqG/EBE9stLG+g32pt4Fm9NDxElUjDO+ka180qKmmlGmF4s
+         stpybI7RtreGCMHuBvAhDXVaJA8qo+VO7vq3jqF4jb7jzgbvEgAlaOSz/cLv9aplbUhN
+         Vt0sYIkd2fOwQOfaKc5zNlkHEwAJbYw7BfVV5gigt1a2CNpMSzR2eCbND2qtKgnOEqsc
+         Mxo39om3edKZ2hplYsYAjjD1FhED59u165/TH09aNaiWOKg3RzlGGH+V8OboTLnj25mm
+         GsYjLnMWWH78jKp5J1G8IkQeo+u3hiNQcpgNJBUrGJWQZESrTzuujKYTlpx1eIGl0581
+         GjNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgLe6Nr/zoqP6xji/WmmADpRez1YMcVHHQ+iyGUwdcMrh9nuyar+3mmmbCEtvEHEu/emdZnGsR8aov@vger.kernel.org, AJvYcCUsB7a4PnOQYPLaA8KFMexXyAZK7d7diRPqhbtK1kwFnuzdD51EfOiGZlRXX/Y21U+wFsRGp5vN@vger.kernel.org, AJvYcCX7fx7unPN8oi1EBgckfhGoa5+4kSyFZ1FpXU9lxGMDHLm0EoPU2zUBsNkK4HMC997xDU/T3PFDiIW/GEE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx783kCHopIaK9RQ/62pk15Suat6x/lRwyoZZ0Lfikhfp1nDWa5
+	4ExinbYoIYpiewk7SCzwWGwcKfPGGjqX7cahtXs4gXwbjGJB/Q049wLe7g==
+X-Google-Smtp-Source: AGHT+IF2KgaD0NeJKmnO4N/sw/3XO0DoFTEUk+46Y7as5ee+90XLeTe1s1OjxM5p+jIzCRQphjCLNQ==
+X-Received: by 2002:a05:6a20:9c93:b0:1c8:fdc7:8813 with SMTP id adf61e73a8af0-1cc89dbac1bmr16921128637.23.1724821291577;
+        Tue, 27 Aug 2024 22:01:31 -0700 (PDT)
+Received: from dw-tp ([49.205.218.89])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d84461411asm536131a91.24.2024.08.27.22.01.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 22:01:30 -0700 (PDT)
+From: Ritesh Harjani <ritesh.list@gmail.com>
+To: Seunghwan Baek <sh8267.baek@samsung.com>, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, ulf.hansson@linaro.org, quic_asutoshd@quicinc.com, adrian.hunter@intel.com
+Cc: grant.jung@samsung.com, jt77.jang@samsung.com, junwoo80.lee@samsung.com, dh0421.hwang@samsung.com, jangsub.yi@samsung.com, sh043.lee@samsung.com, cw9316.lee@samsung.com, sh8267.baek@samsung.com, wkon.kim@samsung.com, stable@vger.kernel.org
+Subject: Re: [PATCH] mmc : fix for check cqe halt.
+In-Reply-To: <20240828042647.18983-1-sh8267.baek@samsung.com>
+Date: Wed, 28 Aug 2024 10:27:07 +0530
+Message-ID: <874j75s0rg.fsf@gmail.com>
+References: <CGME20240828042653epcas1p1952b6cee9484b53d86727dd0e041a0b5@epcas1p1.samsung.com> <20240828042647.18983-1-sh8267.baek@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826212344.866928-3-andy.shevchenko@gmail.com>
 
-Hi Andy,
+Seunghwan Baek <sh8267.baek@samsung.com> writes:
 
-kernel test robot noticed the following build warnings:
+> To check if mmc cqe is in halt state, need to check set/clear of CQHCI_HALT
+> bit. At this time, we need to check with &, not &&.
+>
+> Fixes: 0653300224a6 ("mmc: cqhci: rename cqhci.c to cqhci-core.c")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Seunghwan Baek <sh8267.baek@samsung.com>
+> ---
+>  drivers/mmc/host/cqhci-core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-[auto build test WARNING on jic23-iio/togreg]
-[also build test WARNING on linus/master v6.11-rc5 next-20240827]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thanks for fixing it!
+Small suggestion below. But this still looks good to me, so either ways- 
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/iio-imu-st_lsm6dsx-Use-iio_read_acpi_mount_matrix-helper/20240827-052617
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/20240826212344.866928-3-andy.shevchenko%40gmail.com
-patch subject: [PATCH v1 2/2] iio: imu: st_lsm6dsx: Remove useless dev_fwnode() calls
-config: x86_64-randconfig-122-20240828 (https://download.01.org/0day-ci/archive/20240828/202408281240.oT6C3uTj-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240828/202408281240.oT6C3uTj-lkp@intel.com/reproduce)
+Reviewed-by: Ritesh Harjani <ritesh.list@gmail.com>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408281240.oT6C3uTj-lkp@intel.com/
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c:2137:62: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected unsigned int [usertype] *val @@     got int drdy_pin @@
-   drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c:2137:62: sparse:     expected unsigned int [usertype] *val
-   drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c:2137:62: sparse:     got int drdy_pin
->> drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c:2137:62: sparse: sparse: non size-preserving integer to pointer cast
+>
+> diff --git a/drivers/mmc/host/cqhci-core.c b/drivers/mmc/host/cqhci-core.c
+> index c14d7251d0bb..a02da26a1efd 100644
+> --- a/drivers/mmc/host/cqhci-core.c
+> +++ b/drivers/mmc/host/cqhci-core.c
+> @@ -617,7 +617,7 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>  		cqhci_writel(cq_host, 0, CQHCI_CTL);
+>  		mmc->cqe_on = true;
+>  		pr_debug("%s: cqhci: CQE on\n", mmc_hostname(mmc));
+> -		if (cqhci_readl(cq_host, CQHCI_CTL) && CQHCI_HALT) {
+> +		if (cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT) {
 
-vim +2137 drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
+There is already a helper cqhci_halted(). Maybe we could use that.
 
-  2129	
-  2130	static int
-  2131	st_lsm6dsx_get_drdy_reg(struct st_lsm6dsx_hw *hw,
-  2132				const struct st_lsm6dsx_reg **drdy_reg)
-  2133	{
-  2134		struct device *dev = hw->dev;
-  2135		int err = 0, drdy_pin;
-  2136	
-> 2137		if (device_property_read_u32(dev, "st,drdy-int-pin", drdy_pin) < 0) {
-  2138			struct st_sensors_platform_data *pdata;
-  2139	
-  2140			pdata = (struct st_sensors_platform_data *)dev->platform_data;
-  2141			drdy_pin = pdata ? pdata->drdy_int_pin : 1;
-  2142		}
-  2143	
-  2144		switch (drdy_pin) {
-  2145		case 1:
-  2146			hw->irq_routing = &hw->settings->irq_config.irq1_func;
-  2147			*drdy_reg = &hw->settings->irq_config.irq1;
-  2148			break;
-  2149		case 2:
-  2150			hw->irq_routing = &hw->settings->irq_config.irq2_func;
-  2151			*drdy_reg = &hw->settings->irq_config.irq2;
-  2152			break;
-  2153		default:
-  2154			dev_err(hw->dev, "unsupported data ready pin\n");
-  2155			err = -EINVAL;
-  2156			break;
-  2157		}
-  2158	
-  2159		return err;
-  2160	}
-  2161	
+static bool cqhci_halted(struct cqhci_host *cq_host)
+{
+	return cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT;
+}
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+>  			pr_err("%s: cqhci: CQE failed to exit halt state\n",
+>  			       mmc_hostname(mmc));
+>  		}
+> -- 
+> 2.17.1
+
+-ritesh
 
