@@ -1,132 +1,99 @@
-Return-Path: <linux-kernel+bounces-305018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1991D962833
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:05:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE446962839
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:06:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B97701F217D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:05:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D4181C218E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C83F184535;
-	Wed, 28 Aug 2024 13:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8251C184118;
+	Wed, 28 Aug 2024 13:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/m9B7NL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rqhDxg7O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BED1E4A9;
-	Wed, 28 Aug 2024 13:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6690175D47;
+	Wed, 28 Aug 2024 13:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724850298; cv=none; b=hSJ0Gz3iTxJiLao2TRoDeENmzF8gn/2mjs7OUA8UGMai6BeEkj83rrgwH0DnBl4K7OYNRaXAMgh4AOvPoKCzRrCiEe8Nk0E4Th+G8Fp7vur/SAPBRxHk5bb+6aL+TnE434FM3ksqr69WR1/CFZRkOZMTbCEBURX/uYCgJBO/kuQ=
+	t=1724850377; cv=none; b=SXfFtcrpL4UH2N0QuePxlMUsmlMJa2SA1ENGXaBS72EyQ/j5gnPeggdxRY5gHDEQXipGY8tFw6NP5RUAaF8eb5baU+y5u19djaDcOm6TH5mVM1CMqGgsJYW/Ao1CoRKTN8GZVsnpuYJyRxLYFcN0ppnhj5pVbqviny8dKUYfJZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724850298; c=relaxed/simple;
-	bh=vqzAAKT65KiTHdDl33pDcTW9/5ZaQ2C7vb2Bbckf838=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EYK5YAT6DbONaIP8yjOUghA+URLJQRXAFaCWA2iES9FuUHqiqmK2m7cWogOO/uhw4IbKkSyIh3fraNZ8TWtoG82ex3l+XFvJm8NCO3hvexSEOCZV0a8R3xdiRHSthX0asEPfdc7st/8UpC/DxycAcXrbKpH02LrPvHKcNOdbefY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/m9B7NL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3B06C4FF70;
-	Wed, 28 Aug 2024 13:04:53 +0000 (UTC)
+	s=arc-20240116; t=1724850377; c=relaxed/simple;
+	bh=EAdjClXapxDjpgnzaErsxac7Ms6f3DmQPAtiSikh0mc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pz4J9v95tB6zZS9QVko4K3wDnK2o8BAcavSs0JADiCfnoatKWBAsQvqvOIPKNUz/wcTqvQK7v1EM60WrKztudJwPBlORvEV4pDmDU4h6T4Z/hAvZWydaD4mFX4Qe7iMKZp8/9cEdzSlbJ6ZNXBERemSY1EouVPU/ibwaZjLfQsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rqhDxg7O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B061C515AF;
+	Wed, 28 Aug 2024 13:06:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724850298;
-	bh=vqzAAKT65KiTHdDl33pDcTW9/5ZaQ2C7vb2Bbckf838=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=J/m9B7NLZlLMhZIIvd2owf9u5C3iNvfyfZNpeiinNWjauWGnovwHbzEU/ssHIN5D6
-	 A07uZaMXhGngJMa/k3DmX84A1GPLIKdCanOeTQ+lNim9atAoofIFAgUTyDc36RF9rt
-	 qLdGTwk5TIXaVCH8v4DruKqsx+sKu/6dFKASjuJ/CSv+3eJXtzfSdxPASWbSpuO/cH
-	 26YyJPk++REu9lQ340jVYc1vvrj5DKWRrLMMl6uky7pDiYI+PGRwmsPGeWjFQPbwQ1
-	 eL67gGYxMfR5qJCXXDt1lKxWgvefzpmOGrLiKcX+nypeH41pdaKDLhk3JWjeOW3Zxh
-	 tLQOcDCupOmqA==
-Message-ID: <ed670624-2b97-41e0-a243-26b8c5cda70b@kernel.org>
-Date: Wed, 28 Aug 2024 15:04:51 +0200
+	s=k20201202; t=1724850377;
+	bh=EAdjClXapxDjpgnzaErsxac7Ms6f3DmQPAtiSikh0mc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rqhDxg7OLfyXhZJg0/6GI7L1rn3nyBCEOpEGcoT2jrkx0uP1NuGUz2vUSz7/2ibPR
+	 Ptl++7k3/8sp8CaT4JREMDaXXKGht7roD/tgfXKeETkGjblPM2dcrOOVdRqJXVLgki
+	 RaLDMoyhCFMe6v36FH+576lIHTDV9XWY52FjTFNgKfz28UZwRR4OCM3CzmNZWXqWPc
+	 MKFWpnoLOwxrkY6r5F/mn58yKtBkpxQKI96rssqDvKMxobXI3jssuYuberTXok3vlr
+	 6JF2JjO8zp+qkmx+h6VcdIU9yri0fg/P39bBAONkKLFfZ0AMSRHtC3r7dHnCyXCgXj
+	 mFY/AjrUg421A==
+Date: Wed, 28 Aug 2024 18:36:13 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Amit Vadhavana <av2082000@gmail.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ricardo@marliere.net,
+	linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org,
+	olivierdautricourt@gmail.com, sr@denx.de,
+	ludovic.desroches@microchip.com, florian.fainelli@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com, rjui@broadcom.com,
+	sbranden@broadcom.com, wangzhou1@hisilicon.com, haijie1@huawei.com,
+	fenghua.yu@intel.com, dave.jiang@intel.com, zhoubinbin@loongson.cn,
+	sean.wang@mediatek.com, matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com, afaerber@suse.de,
+	manivannan.sadhasivam@linaro.org, Basavaraj.Natikar@amd.com,
+	linus.walleij@linaro.org, ldewangan@nvidia.com,
+	jonathanh@nvidia.com, thierry.reding@gmail.com,
+	laurent.pinchart@ideasonboard.com, michal.simek@amd.com,
+	Frank.Li@nxp.com, n.shubin@yadro.com, yajun.deng@linux.dev,
+	quic_jjohnson@quicinc.com, lizetao1@huawei.com, pliem@maxlinear.com,
+	konrad.dybcio@linaro.org, kees@kernel.org, gustavoars@kernel.org,
+	bryan.odonoghue@linaro.org, linux@treblig.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-actions@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH V2] dmaengine: Fix spelling mistakes
+Message-ID: <Zs8gxcOa8/ja5wDW@vaman>
+References: <20240817080408.8010-1-av2082000@gmail.com>
+ <b155a6e9-9fe1-4990-8ba7-e1ff24cca041@stanley.mountain>
+ <CAPMW_rLPN1uLNR=j+A7U03AHX5m_LSpd1EnQoCpXixX+0e4ApQ@mail.gmail.com>
+ <070cc3e2-d0db-4d50-9a64-6a16d88b30df@stanley.mountain>
+ <CAPMW_rJi46_2Ho6KNS9NK0kbfc3ujrx-EJ3586wf0u7vq2kUog@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 3/5] dt-bindings: net: wireless: brcm4329-fmac: change
- properties enum structure
-To: Jacobe Zang <jacobe.zang@wesion.com>, Kalle Valo <kvalo@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, van Spriel <arend@broadcom.com>,
- Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com
-References: <20240828-wireless-mainline-v13-0-9998b19cfe7e@wesion.com>
- <20240828-wireless-mainline-v13-3-9998b19cfe7e@wesion.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240828-wireless-mainline-v13-3-9998b19cfe7e@wesion.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPMW_rJi46_2Ho6KNS9NK0kbfc3ujrx-EJ3586wf0u7vq2kUog@mail.gmail.com>
 
-On 28/08/2024 10:49, Jacobe Zang wrote:
-> Add "brcm,bcm4329-fmac" as fallback compatible for wireless devices that
-> used PCI ID based compatible. So that can pass the compatible check in
-> driver.
+On 27-08-24, 21:47, Amit Vadhavana wrote:
 
-Driver? Why this has to pass compatible check?
+> Hi All,
+> 
+> I wanted to follow up on the DMA patch that I submitted on 17 Aug.
+> Kees Cook has already reviewed it. Have you all had a chance to review
+> it as well?
+> Please let me know if any additional changes or updates are needed.
 
-I think I asked to provide proper rationale based on hardware... if not,
-then let me ask here: Please provide proper rationale explaining how
-this hardware is compatible, especially considering these are entirely
-different buses (SDIO and PCI!).
+Oddly enough, I dont see that in my list, can you please repost
 
-It feels you patch up bindings and DTS, because of buggy driver. Sorry
-no, fix the driver.
-
-Best regards,
-Krzysztof
-
+-- 
+~Vinod
 
