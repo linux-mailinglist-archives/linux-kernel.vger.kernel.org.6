@@ -1,124 +1,111 @@
-Return-Path: <linux-kernel+bounces-305570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A97F39630A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:02:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 854329630A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:04:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6798F287528
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:02:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F85228797F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B721AB535;
-	Wed, 28 Aug 2024 19:02:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC7B1ABEA1;
+	Wed, 28 Aug 2024 19:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pwinlqxM"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="K2ALeeyA"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4D21993AF;
-	Wed, 28 Aug 2024 19:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1165E1552FA
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 19:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724871729; cv=none; b=K888Ij/LHw50wl9s6/DwW8jcsZ7/7VXLwYniFUnjcg42fhzu1+CyE7xy9NS//ltqtOFK3bMdC2b0pg69RI6YEVkT5isFS5swy3W750uBPxthQJJpXvnQkjqh7idjI7hcLcIBxUx56AvolM911sfw+WYBU81VvcFQSrF3SbJoRzY=
+	t=1724871842; cv=none; b=EjIjawV+UFNe05DKhe39z1KVXx00koFEex4ij7ad4eXFFPe0hTO5FgorMcTh5i5HZV6OVOFmyAiTlv+MZUcLIdAkNsvcbpoUOXrbgv3fLw6nynMwjvDp7/Hp+8N3tKpPVmvm5JhkaUp6oyryMqneJ848VSxM9vH3PffQvTnBF1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724871729; c=relaxed/simple;
-	bh=s1iL0EKjIjaAXnnu8eTYshpWZ+dr32MPHL1rufb7uNk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f7Lv6RJdb3H/Lqtb9cLvnTpvq18A5ghZ5bHQAj3dKGaDba/ncWWVUYObuNlZZ8El92vTTePnVB9GKnAwRz5Is/8qWHRnx4NA5fLeIrPpkJkN7O0fVkkcuBJKYpO/r48wq47gpzPSWue+risAhHjNV1eKejwnQgjmsXUcU+WvgIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=pwinlqxM; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47SJ22KI094030;
-	Wed, 28 Aug 2024 14:02:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724871722;
-	bh=2L2++9j+E+6H5IMkyDUrsG0SB8UEcgLzgOpNN3UaNw8=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=pwinlqxMyviRq8EdgadwGH/51Q5lpZFGGPxSPZ05CdJJf1XIabRGZO7u8nbbk5Nt6
-	 y2JHUyUUtZAQ3Ho6wvRiqVybWBeLTfUQHJ0CdDe/NerTkNa0HrT9hC4mMvSYXMaxu3
-	 W/CSF1G1Ydb8wM7wjcVIMr3xMCWJkNBpi93PByts=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47SJ22IU021825
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 28 Aug 2024 14:02:02 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 28
- Aug 2024 14:02:02 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 28 Aug 2024 14:02:02 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47SJ22PL057668;
-	Wed, 28 Aug 2024 14:02:02 -0500
-From: Nishanth Menon <nm@ti.com>
-To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Bhavya
- Kapoor <b-kapoor@ti.com>
-CC: Nishanth Menon <nm@ti.com>, <linux-arm-kernel@lists.infradead.org>,
-        <conor+dt@kernel.org>, <krzk+dt@kernel.org>, <robh@kernel.org>,
-        <kristo@kernel.org>, <jm@ti.com>, <vigneshr@ti.com>
-Subject: Re: [PATCH v2 0/2] Add support for multiple can instances as well as describe main_uart5
-Date: Wed, 28 Aug 2024 14:02:00 -0500
-Message-ID: <172487168711.3443156.17556165846774517423.b4-ty@ti.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240827105644.575862-1-b-kapoor@ti.com>
-References: <20240827105644.575862-1-b-kapoor@ti.com>
+	s=arc-20240116; t=1724871842; c=relaxed/simple;
+	bh=YRKAlMOxna+bxN7n5yTMSkuaQlQNsXOc/8IG9jDt9/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AHlqemdGbKf1Y4d3Oy7t40GhjQUqTJVVDli2Fc/8inoEHQ4dbhxn+J4RmNHjwo6LKtP7LlGpBdBkrYfO1TwdCjwKK1inO5wX/5bF6sCKyX64O5dUhBhWjQNO8KkA2r7iYdZ+QFna3bsYMTj14GzHKII0oNxX0AeQ0VYu1YLloaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=K2ALeeyA; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 28 Aug 2024 12:03:47 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724871837;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j7vkDyir+DMrxX+HGm5Ta48lUpr2OMfmyuMnb1CIktI=;
+	b=K2ALeeyATuD5JWGchJFR5gsyyuMm7THk7aHTDFHr6e83Ffrdzp/9RjjjjTcyTlbHI4BBrD
+	IzXEqYz3NBwTZ/Qrb0nmDnDELPUQNbI+VqsUl2PRJp1x0AarYG5err9xiLm3VVjdGO54WM
+	U3u/VnwamuC2tX4goM0KqKWdtkQiQN4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Muchun Song <muchun.song@linux.dev>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>, 
+	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	David Rientjes <rientjes@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	Eric Dumazet <edumazet@google.com>, "David S . Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Linux Memory Management List <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org, netdev <netdev@vger.kernel.org>
+Subject: Re: [PATCH v1] memcg: add charging of already allocated slab objects
+Message-ID: <a5rzw7uuf7pgrhhut7keoy66c6u4rgiuxx2qmwywbvl2iktfku@23dzxczejcet>
+References: <20240826232908.4076417-1-shakeel.butt@linux.dev>
+ <Zs1CuLa-SE88jRVx@google.com>
+ <yiyx4fh6dklqpexfstkzp3gf23hjpbjujci2o6gs7nb4sutzvb@b5korjrjio3m>
+ <EA5F7851-B519-4570-B299-8A096A09D6E7@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <EA5F7851-B519-4570-B299-8A096A09D6E7@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Bhavya Kapoor,
+Hi Muchun,
 
-On Tue, 27 Aug 2024 16:26:42 +0530, Bhavya Kapoor wrote:
-> This series adds support for multiple can instances present on J722S
-> EVM as well as describe the main_uart5 for J722S EVM.
+On Wed, Aug 28, 2024 at 10:36:06AM GMT, Muchun Song wrote:
 > 
-> CAN instances 0 and 1 in the mcu domain and 0 in the main domain are
-> brought on the evm through headers J5, J8 and J10 respectively. Thus,
-> add their respective transceiver's 0, 1 and 2 dt nodes as well as
-> add the required pinmux to add support for these CAN instances.
 > 
-> [...]
+> > On Aug 28, 2024, at 01:23, Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> > 
+[...]
+> >> 
+> >> Does it handle the case of a too-big-to-be-a-slab-object allocation?
+> >> I think it's better to handle it properly. Also, why return false here?
+> >> 
+> > 
+> > Yes I will fix the too-big-to-be-a-slab-object allocations. I presume I
+> > should just follow the kfree() hanlding on !folio_test_slab() i.e. that
+> > the given object is the large or too-big-to-be-a-slab-object.
+> 
+> Hi Shakeel,
+> 
+> If we decide to do this, I suppose you will use memcg_kmem_charge_page
+> to charge big-object. To be consistent, I suggest renaming kmem_cache_charge
+> to memcg_kmem_charge to handle both slab object and big-object. And I saw
+> all the functions related to object charging is moved to memcontrol.c (e.g.
+> __memcg_slab_post_alloc_hook), so maybe we should also do this for
+> memcg_kmem_charge?
+> 
 
-I have applied the following to branch ti-k3-dts-next on [1].
-Thank you!
+If I understand you correctly, you are suggesting to handle the general
+kmem charging and slab's large kmalloc (size > KMALLOC_MAX_CACHE_SIZE)
+together with memcg_kmem_charge(). However that is not possible due to
+slab path updating NR_SLAB_UNRECLAIMABLE_B stats while no updates for
+this stat in the general kmem charging path (__memcg_kmem_charge_page in
+page allocation code path).
 
-[1/2] arm64: dts: ti: k3-j722s-evm: Add support for multiple CAN instances
-      commit: 46ca5c7207703b36025228a6b7a29198a1539d10
-[2/2] arm64: dts: ti: k3-j722s-evm: Describe main_uart5
-      commit: 010b035ab4d7a1c4fd13936f42eef857ddbeede7
+Also this general kmem charging path is used by many other users like
+vmalloc, kernel stack and thus we can not just plainly stuck updates to
+NR_SLAB_UNRECLAIMABLE_B in that path.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-
+Thanks for taking a look.
+Shakeel
 
