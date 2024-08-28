@@ -1,241 +1,155 @@
-Return-Path: <linux-kernel+bounces-305149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01029962A43
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:30:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0495F962A47
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:32:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 708C91F21C46
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:30:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E4971C238B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78231199FB9;
-	Wed, 28 Aug 2024 14:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51891990C9;
+	Wed, 28 Aug 2024 14:31:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yB6+vmJo"
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RLLj6mIJ"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142DB18787E
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FD645C1C;
+	Wed, 28 Aug 2024 14:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724855429; cv=none; b=MT3+5pSvYPfUYVOYJq7FDPxIfeFN78VSD3n2bDths6Ut/WrO+PrzUIGQXHDEpwFOlZY4+4dB/P0jxTHj2hRzMZW2kj+adFR2CaoiqlXgPsTtrSNnASKs0+T8miJFep4ceRVxD9KL91F+AW3/43jYrI9LeGZ8CTuVCZKM45+Fbzk=
+	t=1724855519; cv=none; b=IfGfci518blAkDYK/HaJks88gjQ7LVvIXi7o/zxTHgU5JI7xEqvW/qrHUAB5x2Mkb5zVSm+J5T6JG29sn61yYzi18gFrmIhJxG9uNbuAv44diKAgEQyyGJCgpXl+ifCeh1555SuUlYr/4Lv8Ep+U2BNrDNrqIP9hAgKIVLZCm/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724855429; c=relaxed/simple;
-	bh=YZh53+tm1jWK7RaDz+8FbQa5r3/A3gn5m4gTaghhwns=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aTFYljQkdOf+4sBMJc/QS7fWzx4D5ZThlpah1gF7QHWOHne4k/vMkUtYGh1k08vQjdNaIa45MyoS0yJalgnyj2XZHNvWVdpHndohm5+kZvegyHy1jYhFXauzEW3a4huFlf4RMVE/vdesPw+feXCEmcBGfK/r89SW18PK/f80cf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yB6+vmJo; arc=none smtp.client-ip=209.85.221.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-4fce2c0707bso2021245e0c.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:30:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724855427; x=1725460227; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=g+I6APAOIwIU9c/5xt2FS2nc4O0yLz2kmSRGO5CNPtk=;
-        b=yB6+vmJorUr2gf2xBR32LbZep28qtxqcuP9M5wSlM0VVqJH+IvtSnpfPXTcqEjowXK
-         cPWj/gSycX3Uu3KFST7W3yz/JENUnsIKfDTnvs90E7TWXXBBWtXulHmv4dKC7C816R0M
-         oIR/ugTxiRn7U/nlSX3qwhXMtNZTGC1S/CZ9ZzTsw7JOA6Zh4LH58PhJXNfOa38hGSDv
-         ylHheJHeXuaehHmYYQcpwT2UIw0O7QV8FNhPOcMEPBgy34j4TKeO6arkElbRUOK16la2
-         GqkJ+/ZZAvrAapuOhpNITOSyso+CRXCu+CznF2HBhYJkGczK9Gigexn+asNORAZuyVw3
-         zQNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724855427; x=1725460227;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g+I6APAOIwIU9c/5xt2FS2nc4O0yLz2kmSRGO5CNPtk=;
-        b=xAJoZ7ZznSkLDZilsXcfPXr9X2PQ1qoFQ37xv8IdGvuAiGzk5+RJjbvpN0r0mpqidk
-         fieXPdzZbw3gRvY4Gd0sWCOLiRJCKuLYKGuZqKdQQ9UXUQpMNADKdq6HN8ztWu5F89xI
-         IcEO6olChc0TjmOZjPL7QpQamaBoT2OOzpd1EjXoFb5KkcYsWAhyYhQjlUgCzxhTbCKU
-         QNGbbv0bbWRVqU8FsNq32iPxdozNxT1MwwDc7B3FXi5dGN4M5Nfe+UKk6GaaThYnHHAZ
-         8jHfutrgEqDI+4lz8Hz2v9xlUVVF1BAEML8xICrxLwEFJ9b5Gz4JZbnncrTKv+S9LO+M
-         KjtA==
-X-Forwarded-Encrypted: i=1; AJvYcCUg04muZy79MeMqw44DlWAoubSNKgYIsrkRTi5rHtwPNVzsCq24b8jYtpHyEdq41n4Q4+4MGAzDPwo/qUo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUTkt7pMiySZVl8YqENuwPdE+5dxJq/pVEQuy4YwYcooM5OuWS
-	KiFc/Okq3wJcPTNJoaRNG1YWLyk8IV+Q8MX0xgN2t6DH27v57qUUwhmmcuNuPjO2ENISTAJj5mR
-	9qUEwFVNb+6fh51jbwo8yEOni2BbOJ/6eAthVdw==
-X-Google-Smtp-Source: AGHT+IGq7uay+0jqf5B2CAnMl3F5wBbWN0BxkzuTMdNG0bGx2V9dHO4JII1MKnjNtLCn/K2AS1G95HydPOUg3Irwgu8=
-X-Received: by 2002:a05:6122:180d:b0:4f5:1c87:ce75 with SMTP id
- 71dfb90a1353d-4fd1acd6b8dmr20138723e0c.11.1724855426409; Wed, 28 Aug 2024
- 07:30:26 -0700 (PDT)
+	s=arc-20240116; t=1724855519; c=relaxed/simple;
+	bh=InPDwIJmiujrgfQpi96LUvkRVAzQqx0fcm7jAgfQpEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iQApV5CZAcv2Thh9DHFe0yUJw7BuqwnNSrbnABoA2j2xlerdCQTzUzlwECwissN8PVtddNT1FGMkkYON+IQjcT0fd6qnikl/yubFkOBejBDPsVILnonj/579x2ZcN7K+Xf6D9z3YOnpwqasdYDDUw88ZMWwceneXZ5DYN8yqzC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RLLj6mIJ; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D26BE40003;
+	Wed, 28 Aug 2024 14:31:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724855514;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zBp11t92VbRmerW/yNZLIw8ZxxUVRQYze0GfI/bV7yg=;
+	b=RLLj6mIJwOxD4F4Ih3EczWnuu0JhM2qh58gi/MD1Sa3Lta75YgjMDUJ8+uO4MQSDz4FYY6
+	m8q3NAJDXBcl6KQ3rey/8CZFJRZkJwZRvIyJXJFN6zOPmzKGitwfvLSAenmXterpgvmyoc
+	+WKxz/AXSepM4tFICNISb9sq6b7YdrfNa90wu9NgaXtxY/RAW9ygw77MjHquEFC2q4JoOS
+	fXuh1jHZy+dp/9swBngkuOou+yOZDndmZbb494c5+1QUkUYMxcLb+c/DChDr61ycP/sV9L
+	VJneaxmD6ees3e5lFbVyaLPED7bcNJ8JPsGdfeeQJWHxgKoc+aJvQrW+LWP5YQ==
+Date: Wed, 28 Aug 2024 16:31:51 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: davem@davemloft.net, Pantelis Antoniou <pantelis.antoniou@gmail.com>,
+ Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, Florian Fainelli
+ <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Herve Codina <herve.codina@bootlin.com>,
+ linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH net-next 6/6] net: ethernet: fs_enet: phylink conversion
+Message-ID: <20240828163151.485b2907@device-28.home>
+In-Reply-To: <Zs8sMUxX7mnWZQnA@shell.armlinux.org.uk>
+References: <20240828095103.132625-1-maxime.chevallier@bootlin.com>
+	<20240828095103.132625-7-maxime.chevallier@bootlin.com>
+	<Zs7+J5JWpfvSQ8/T@shell.armlinux.org.uk>
+	<20240828134413.3da6f336@device-28.home>
+	<Zs8sMUxX7mnWZQnA@shell.armlinux.org.uk>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827143843.399359062@linuxfoundation.org>
-In-Reply-To: <20240827143843.399359062@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 28 Aug 2024 20:00:14 +0530
-Message-ID: <CA+G9fYuVcn734B-qqxYPKH++PtynJurhrhtBGLJhzhXoWo0sWQ@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/341] 6.6.48-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Tue, 27 Aug 2024 at 20:12, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.48 release.
-> There are 341 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 29 Aug 2024 14:37:36 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.48-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hello Russell,
 
-The tinyconfig builds failed for all architectures on 6.6.48-rc1.
+On Wed, 28 Aug 2024 14:54:57 +0100
+"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
 
-Builds
-  - clang-18-tinyconfig
-  - clang-nightly-tinyconfig
-  - gcc-13-tinyconfig
-  - gcc-8-tinyconfig
+> On Wed, Aug 28, 2024 at 01:44:13PM +0200, Maxime Chevallier wrote:
+> > Hi Russell,
+> > 
+> > On Wed, 28 Aug 2024 11:38:31 +0100
+> > "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
+> >   
+> > > On Wed, Aug 28, 2024 at 11:51:02AM +0200, Maxime Chevallier wrote:  
+> > > > +static int fs_eth_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
+> > > > +{
+> > > > +	struct fs_enet_private *fep = netdev_priv(dev);
+> > > > +
+> > > > +	if (!netif_running(dev))
+> > > > +		return -EINVAL;    
+> > > 
+> > > Why do you need this check?
+> > >   
+> > 
+> > I included it as the original ioctl was phy_do_ioctl_running(), which
+> > includes that check.
+> > 
+> > Is this check irrelevant with phylink ? I could only find macb and
+> > xilinx_axienet that do the same check in their ioctl.
+> > 
+> > I can't tell you why that check is there in the first place in that
+> > driver, a quick grep search leads back from a major driver rework in
+> > 2011, at which point the check was already there...  
+> 
+> int phylink_mii_ioctl(struct phylink *pl, struct ifreq *ifr, int cmd)
+> {
+> 	if (pl->phydev) {
+> 		... do PHY based access / pass on to phylib ...
+> 	} else {
+> 		... for reads:
+> 		...  return emulated fixed-phy state if in fixed mode
+> 		...  return emulated inband state if in inband mode
+> 		... for writes:
+> 		...  ignore writes in fixed and inband modes
+> 		... otherwise return -EOPNOTSUPP
+> 	}
+> }
+> 
+> So, if a driver decides to connect the PHY during probe, the PHY will
+> always be accessible.
+> 
+> If a driver decides to connect the PHY during .ndo_open, the PHY will
+> only be accessible while the netdev is open, otherwise -EOPNOTSUPP
+> will be returned.
 
-lore links:
- - https://lore.kernel.org/stable/CA+G9fYuibSowhidTVByMzSRdqudz1Eg_aYBs9rVS3bYEBesiUA@mail.gmail.com/
+That makes sense, so there's no point keeping that check then.
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+I'll update the patch, thanks for this clarification.
 
-## Build
-* kernel: 6.6.48-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-* git commit: 0ec2cf1e20adc2c8dcc5f58f3ebd40111c280944
-* git describe: v6.6.47-342-g0ec2cf1e20ad
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.47-342-g0ec2cf1e20ad
+[...]
 
-## Test Regressions (compared to v6.6.46-68-gf44ed2948b39)
-* arm64, build
-* arm, build
-* i386, build
-* x86_64, build
-  - clang-18-tinyconfig
-  - clang-nightly-tinyconfig
-  - gcc-13-tinyconfig
-  - gcc-8-tinyconfig
+> At this point... this email has eaten up a substantial amount of time,
+> and I can't spend anymore time in front of the screen today so that's
+> the end of my contributions for today. Sorry.
 
-## Metric Regressions (compared to v6.6.46-68-gf44ed2948b39)
+I've been in the same rabbit-hole today debating in my head whether or
+not to add this check, I'm sorry that I dragged you in there... With
+what you stressed-out, I have a good enough justification to drop the
+check in the current patch.
 
-## Test Fixes (compared to v6.6.46-68-gf44ed2948b39)
+As for the current situation with the ioctl return codes, there indeed
+room for lots of improvements. For drivers that simply forward the
+ioctl to phylib/phylink, I think we could pretty easily add some
+consistency on the return code, provided we agree on the proper one to
+return.
 
-## Metric Fixes (compared to v6.6.46-68-gf44ed2948b39)
+Thanks for your time,
 
-## Test result summary
-total: 175487, pass: 153815, fail: 1637, skip: 19813, xfail: 222
-
-## Build Summary
-* arc: 5 total, 4 passed, 1 failed
-* arm: 129 total, 125 passed, 4 failed
-* arm64: 41 total, 37 passed, 4 failed
-* i386: 28 total, 23 passed, 5 failed
-* mips: 26 total, 21 passed, 5 failed
-* parisc: 4 total, 3 passed, 1 failed
-* powerpc: 36 total, 31 passed, 5 failed
-* riscv: 19 total, 16 passed, 3 failed
-* s390: 14 total, 4 passed, 10 failed
-* sh: 10 total, 8 passed, 2 failed
-* sparc: 7 total, 5 passed, 2 failed
-* x86_64: 33 total, 29 passed, 4 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+Maxime 
 
