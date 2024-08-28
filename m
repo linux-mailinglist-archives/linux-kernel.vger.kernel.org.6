@@ -1,174 +1,164 @@
-Return-Path: <linux-kernel+bounces-305835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5349196350C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:52:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 287EE96350F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:53:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 867231C21BCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:52:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D577D28422A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7031AE04D;
-	Wed, 28 Aug 2024 22:52:20 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A32C1AD9E9;
+	Wed, 28 Aug 2024 22:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d2O4GfF7"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCC515A858;
-	Wed, 28 Aug 2024 22:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D2D1A7AD8
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724885540; cv=none; b=lPa9L1GHGoFDHiPPqmEOKQumP1ZbrGkgD/AbXrTWnscqQH76GgMvQ7R0G5OTFJyemGAmBt/PkK+QSVWrxWDMVLVz05+MAKpwOxq0SAvARazXu8/TLUpPofn+XDMSf6GUSYDzRDJCQYZ7a0EvB94+VIKYXvlAfv/c1rXVRPhNemI=
+	t=1724885590; cv=none; b=bcy1pNfSGx+slyyjKuGMbBFvYkDGpAn8EaUyPZVVdLGND2t0pudL3SJ2SERQepA4T2bcCAuU4fANw29GA2pj0+Gosr/G+nkgivwCvKy/dYT479ztt6Y7C2Bwl6jd2xW+Ak2jK04qggT5VJhvhkzVDCe0tJQ33PzEpBC+M7yW91E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724885540; c=relaxed/simple;
-	bh=4l/+74vOGyqtNgvEECRUDnLwQprClbg6AXJ6IFo5N7A=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bpyelMEGxdyCi2UbTdBgrGn9TDgvW3OW3iLkLVkNwfVi4v7dq7SNi0AL23hVB8TGt1lPvY6Wr0Y0+/GPWTqCCtbN6T2ZI0Ygdrf/G3lmJTDwMlffyON3ec80M2Ag/MDRj+ufIgX2i29YrCAhXZ536+j2I9xTVPFgnDd8PV/QThw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sjRWO-000000000NG-3ZNT;
-	Wed, 28 Aug 2024 22:52:12 +0000
-Date: Wed, 28 Aug 2024 23:52:09 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Robert Marko <robimarko@gmail.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Russell King <rmk+kernel@armlinux.org.uk>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2 2/2] net: phy: aquantia: allow forcing order of
- MDI pairs
-Message-ID: <e56a9065f50cd90d33da7fe50bf01989adc65d26.1724885333.git.daniel@makrotopia.org>
-References: <1cdfd174d3ac541f3968dfe9bd14d5b6b28e4ac6.1724885333.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1724885590; c=relaxed/simple;
+	bh=vBcDKzqZD0IGH+kMo+OOysCrPxyHMCAFpcXSn+OPSOk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gGeQ8evrJHd9e5lbvOx0AduZLrY3qfRtvbc3W/Q7xwchFMP2TbYyZ0ImwYY3L8MtBL1PCE6q/jZt1pknpV7ngdO5eSihG8gJ9zDb9HFoX6RV5aMqmkZm8JuwIasGpcyPyk38ghN/CMCc0oGAT1jVuLq0HgmiPzhOmjFb0TY2HYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=d2O4GfF7; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-202018541afso35775ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:53:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724885588; x=1725490388; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=nAbDwChQbWZl01mr4KnwFnysig2L5blgWIiA7h1UA+g=;
+        b=d2O4GfF7WopxCnqOqwsLLniMZHCWPaQPvt3QIdMi9YZJEaqqeR649XtcrztBfCf9pU
+         kAtum6pMD/WYzjSXmPMS6gfRJfqy3ugo074qqigzq7jsj7zZr0XcuT1mhg+tr7OV9elY
+         a9Q6d+jrqmjd6d3sdJV0xWFfcLDw8mmqCujW/lyEbrB5AJ4AEqlM7dzsznVNcJ43Qbab
+         OQwFuJyfQWDk3cuo+TzqsTN0uhtrH7eBpqtvebW3yXpKQHlG88snSzU8TD+sK8iz3Ehr
+         twQOQBMJxEz+np6I3dLHVZBcyMyOCApLKo77SIlJNJPjSd0V3m6+TMHMK/Fp9tMYi+Sj
+         mvYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724885588; x=1725490388;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nAbDwChQbWZl01mr4KnwFnysig2L5blgWIiA7h1UA+g=;
+        b=Yh2hqnDbr8sz3nLIENQKZ9tNx2iMi/Tq54EsMAWXoTzNFNQ9LTjwjhJmc64ytj2jn+
+         9eePKAfq65KTvIKoG/zVnW+CXyyXsF8eFBxzJicPIlU105TdVC+Qhjy5o/Bh2ObWZuOQ
+         FSbkrGxdqXY409qvLgOreliGK+/NicPghFclAy5OV29NNY3j3+MBollPCxyPKilOMfso
+         +ZN+kN5hO/Sfyvk58BtXrHrbSix+iq6hBr8yL6F6JbVfSbb9M4MQvO/sG8dw7ZtD0rvc
+         K83xxZlKZhnIwPzcqwOlEZzYkQ13ovmN+L2vJwb94UUOGBB/yfgkVxMSeBVJMRx+Rnv6
+         ea0w==
+X-Forwarded-Encrypted: i=1; AJvYcCW1x7QKJRym1GAvX9MAAO3UZYx/Ko1WHG7iKQAGVOdw9rxWSmqG+JTKYzvGqQCQomQBAoTou27TtZ29fRM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWypwGnA2b2xlN7sfIyqnU0+O+D2M4ObXlQy4Mtaab9dxs8H8j
+	1+51yPrbkDzQPGWXaW4r5bAEZUbuuak2HdDGHkaBOeu7bcIe9Ud9dNzHCf6CiVpvgdPngNvCQbP
+	ySw==
+X-Google-Smtp-Source: AGHT+IEQaTc+wud0mzSYI+hEe/4PWmz2+rLLZ8+Mx8YVlCteMCgZHZsbCbUbqJpRqiB0krS+Bxb7ZQ==
+X-Received: by 2002:a17:902:e849:b0:1e0:c571:d652 with SMTP id d9443c01a7336-20510a7f2e1mr522765ad.1.1724885587784;
+        Wed, 28 Aug 2024 15:53:07 -0700 (PDT)
+Received: from google.com (83.92.168.34.bc.googleusercontent.com. [34.168.92.83])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038557eec1sm104064935ad.91.2024.08.28.15.53.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 15:53:07 -0700 (PDT)
+Date: Wed, 28 Aug 2024 22:53:02 +0000
+From: Sami Tolvanen <samitolvanen@google.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Matthew Maurer <mmaurer@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>,
+	Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>,
+	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 00/19] Implement DWARF modversions
+Message-ID: <20240828225302.GH2130480@google.com>
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <CAK7LNAQ0dHq3eALkvGDSCyVKOvhBqwCEG3BTQ0h52Xq_1YNu2A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1cdfd174d3ac541f3968dfe9bd14d5b6b28e4ac6.1724885333.git.daniel@makrotopia.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNAQ0dHq3eALkvGDSCyVKOvhBqwCEG3BTQ0h52Xq_1YNu2A@mail.gmail.com>
 
-Despite supporting Auto MDI-X, it looks like Aquantia only supports
-swapping pair (1,2) with pair (3,6) like it used to be for MDI-X on
-100MBit/s networks.
+Hi Masahiro,
 
-When all 4 pairs are in use (for 1000MBit/s or faster) the link does not
-come up with pair order is not configured correctly, either using
-MDI_CFG pin or using the "PMA Receive Reserved Vendor Provisioning 1"
-register.
+On Wed, Aug 28, 2024 at 04:04:09PM +0900, Masahiro Yamada wrote:
+> On Fri, Aug 16, 2024 at 2:39 AM Sami Tolvanen <samitolvanen@google.com> wrote:
+> >
+> > The first 16 patches of this series add a small tool for computing
+> 
+> 
+> Splitting a new tool into small chunks makes line-by-line review difficult.
 
-Normally, the order of MDI pairs being either ABCD or DCBA is configured
-by pulling the MDI_CFG pin.
+I split this into smaller pieces to make it less of a chore to
+review, but I'm also happy to squash these into larger patches if you
+prefer. How would you like to see this split instead?
 
-However, some hardware designs require overriding the value configured
-by that bootstrap pin. The PHY allows doing that by setting a bit in
-"PMA Receive Reserved Vendor Provisioning 1" register which allows
-ignoring the state of the MDI_CFG pin and another bit configuring
-whether the order of MDI pairs should be normal (ABCD) or reverse
-(DCBA). Pair polarity is not affected and remains identical in both
-settings.
+> For example, 02/19 adds malloc().
+> 
+> 03/19 immediately replaces it with calloc().
+> 
+> Then, I wonder why you did not add calloc() in the first place.
 
-Introduce two mutually exclusive boolean properties which allow forcing
-either normal or reverse order of the MDI pairs from DT.
+Yes, that wasn't ideal, but like I said in my other response, I tried
+to keep the churn minimal. Please let me know if you spot any other
+annoyances.
 
-If none of the two new properties is present, the behavior is unchanged
-and MDI pair order configuration is untouched (ie. either the result of
-MDI_CFG pin pull-up/pull-down, or pair order override already configured
-by the bootloader before Linux is started).
+> And, I do not think it is so "small".
+> It is bigger than the current genksyms.
 
-Forcing normal pair order is required on the Adtran SDG-8733A Wi-Fi 7
-residential gateway.
+In my defense, the first version was smaller, but sure, I'll drop the
+false advertising from the cover letter now that it has more features.
 
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
----
-v2: add missing 'static' keyword, improve commit description
+> > symbol versions from DWARF, called gendwarfksyms. When passed a
+> > list of exported symbols and an object file,
+> 
+> 
+> Why is "a list of exported symbols" passed separately?
+> 
+> All necessary information is available in the object file.
+> (The export symbols are listed in the .export_symbol section.
 
- drivers/net/phy/aquantia/aquantia_main.c | 35 ++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+Unfortunately this is not the case for Rust object files where exports
+are handled separately. Passing the list of symbols as input feels
+more flexible to me, and also is rather convenient for debugging.
 
-diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
-index e982e9ce44a59..32fdd203fcf05 100644
---- a/drivers/net/phy/aquantia/aquantia_main.c
-+++ b/drivers/net/phy/aquantia/aquantia_main.c
-@@ -11,6 +11,7 @@
- #include <linux/module.h>
- #include <linux/delay.h>
- #include <linux/bitfield.h>
-+#include <linux/of.h>
- #include <linux/phy.h>
- 
- #include "aquantia.h"
-@@ -71,6 +72,11 @@
- #define MDIO_AN_TX_VEND_INT_MASK2		0xd401
- #define MDIO_AN_TX_VEND_INT_MASK2_LINK		BIT(0)
- 
-+#define PMAPMD_RSVD_VEND_PROV			0xe400
-+#define PMAPMD_RSVD_VEND_PROV_MDI_CONF		GENMASK(1, 0)
-+#define PMAPMD_RSVD_VEND_PROV_MDI_REVERSE	BIT(0)
-+#define PMAPMD_RSVD_VEND_PROV_MDI_FORCE		BIT(1)
-+
- #define MDIO_AN_RX_LP_STAT1			0xe820
- #define MDIO_AN_RX_LP_STAT1_1000BASET_FULL	BIT(15)
- #define MDIO_AN_RX_LP_STAT1_1000BASET_HALF	BIT(14)
-@@ -474,6 +480,31 @@ static void aqr107_chip_info(struct phy_device *phydev)
- 		   fw_major, fw_minor, build_id, prov_id);
- }
- 
-+static int aqr107_config_mdi(struct phy_device *phydev)
-+{
-+	struct device_node *np = phydev->mdio.dev.of_node;
-+	bool force_normal, force_reverse;
-+
-+	force_normal = of_property_read_bool(np, "marvell,force-mdi-order-normal");
-+	force_reverse = of_property_read_bool(np, "marvell,force-mdi-order-reverse");
-+
-+	if (force_normal && force_reverse)
-+		return -EINVAL;
-+
-+	if (force_normal)
-+		return phy_modify_mmd(phydev, MDIO_MMD_PMAPMD, PMAPMD_RSVD_VEND_PROV,
-+				      PMAPMD_RSVD_VEND_PROV_MDI_CONF,
-+				      PMAPMD_RSVD_VEND_PROV_MDI_FORCE);
-+
-+	if (force_reverse)
-+		return phy_modify_mmd(phydev, MDIO_MMD_PMAPMD, PMAPMD_RSVD_VEND_PROV,
-+				      PMAPMD_RSVD_VEND_PROV_MDI_CONF,
-+				      PMAPMD_RSVD_VEND_PROV_MDI_REVERSE |
-+				      PMAPMD_RSVD_VEND_PROV_MDI_FORCE);
-+
-+	return 0;
-+}
-+
- static int aqr107_config_init(struct phy_device *phydev)
- {
- 	struct aqr107_priv *priv = phydev->priv;
-@@ -503,6 +534,10 @@ static int aqr107_config_init(struct phy_device *phydev)
- 	if (ret)
- 		return ret;
- 
-+	ret = aqr107_config_mdi(phydev);
-+	if (ret)
-+		return ret;
-+
- 	/* Restore LED polarity state after reset */
- 	for_each_set_bit(led_active_low, &priv->leds_active_low, AQR_MAX_LEDS) {
- 		ret = aqr_phy_led_active_low_set(phydev, index, led_active_low);
--- 
-2.46.0
+> > - Added a --symtypes flag for generating a genksyms-style
+> >   symtypes output based on Petr's feedback, and refactored
+> >   symbol version calculations to be based on symtypes instead
+> >   of raw --dump-dies output.
+> 
+> 
+> 
+> I do not know if this is worthwhile.
+
+Greg, Petr, do you want to comment on the usefulness of the symtypes
+output? I was under the impression it was a useful tool for figuring
+out exactly what caused the versions to change?
+
+> And, it is obviously a build error.
+> 
+> gendwarfksyms cannot create %.symtypes from %.c.
+
+Ah, this obviously needs to depends on the .o files instead. I'll sort
+this out in v3.
+
+Thanks for taking a look!
+
+Sami
 
