@@ -1,175 +1,91 @@
-Return-Path: <linux-kernel+bounces-304394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5048B961F86
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:21:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10C4B961F5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:17:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 068611F2507E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:21:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C085B287DE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCF416BE21;
-	Wed, 28 Aug 2024 06:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1057315B12F;
+	Wed, 28 Aug 2024 06:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g4XmCGIA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="N8gvnHEA"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FE41553B3;
-	Wed, 28 Aug 2024 06:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94D315B0E0
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 06:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724825726; cv=none; b=GbmceofggP81zLgazkWGtUiwXP+QtqszWxLekEBg2UeiLqQYFD+7wa4PuWvYTysPPq1z9W17zDNIZ16wutZfDy1rKe/zJzjzIYBp6aeWGebWHfW1xylkOKJ83WDl61S2zuCzNW1zESM6JYkad0x5R7kY4awO8lX/hEdntOoHeUE=
+	t=1724825696; cv=none; b=mNzrPfzkr3+EQ9E3PgWQPjS3GKaC9eS1XUYbrbWlOiNi0GzGBEdcW6/mU12kpKK7KdG7szcKZ92H1LgG4WwHshTswMtak35bxuBuljpHYqOKe3scd5rRst6VH7wzi9grCwp8nWYNkZZa6aZPnNhgHGzspiPsRuqSDtyQiTebfqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724825726; c=relaxed/simple;
-	bh=xdzWHXYy5hg4851VghxZtTa4uJdKioKLDBgA8yThRTc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bnQrFlTxidsX7Me3gtQxOYBSUOOwG+blwClU3+VVVgtZWxmF6dTL7XPwt8IllsxLvpUqk7KvVtZ/6Tf6NkPpN4EmESeomCsyCOzw5L7jtxdU9BbODD9FGBuFa+9Aty6dsGBWr902hgmSIiz04Qzjqq9UI+QCCBXzDSWRF2XGV1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g4XmCGIA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5670CC4DDE7;
-	Wed, 28 Aug 2024 06:15:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724825726;
-	bh=xdzWHXYy5hg4851VghxZtTa4uJdKioKLDBgA8yThRTc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=g4XmCGIA8JRCWo2DCUYF3dAOF57sHTLh3PKdvU0uaMbXqQE4clkxNDAvZYnUXRBSC
-	 aHedtX18rLY16Roclo8r1/iflLswXeayKKGGRQ1j9DKvp+b4iPZFxCStUOEQ935jvi
-	 eB3DGYx9EL3EAY7tOFlG3ZH6ckxRNdRvTetM3UeKCYmd33B3LRAeBDqCmFlQjDUkEk
-	 otl1Ttgll38XuZy1j80GfsSbR7sFYq915Bl2jXOZxVK8ElNiNH7cODKkFhq4Tpwvme
-	 TlCRw/xsEpqALHWzLAsZTbR9MQJixW+4gwVEO+cc09rIVNwBDmb0OwnHVsr9AC6ugD
-	 221WWGRddZAIw==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Wed, 28 Aug 2024 08:14:38 +0200
-Subject: [PATCH net v2 15/15] selftests: mptcp: join: check re-re-adding ID
- 0 signal
+	s=arc-20240116; t=1724825696; c=relaxed/simple;
+	bh=wwum+Pz7A0L67/p5Ev+IhuufqKTT6fUF+lud3e8SimE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SaFtr8G5bcsUjNTj4ufHgSXzNyl5yrok4AJjg7TG6VV9NqfUvFcGolK27kNhm6iZdIR9lDzuiTlTyxG2Y03Aiul2s+JoJ7/7UsVTseK3is8eSPDb/ff7yeHNGYu8TcV8hP2VLpzk4p2+kAlUnAt78zevZqJxsGGDbwnnRlih3ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=N8gvnHEA; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=37w4rrYrJGLfYqbySuDG1B15FhXEgejhie1Mdev3TKs=; b=N8gvnHEAWR6eeMVfox8JlAV37z
+	2AjIqzWrXBI1ffSxfqhQ+o/B8fBO/s4hFH/z+RcIkBFhcfa3GWCqbQFHhQsQGbi74Z52yhejgTlpe
+	vDx6xshhnxPgsP3MrG+fgg6iSiEg2Ro5dXTFGfQBas94hQyVOsfa8V517kx+x1nrDM0g27PJ3/jcG
+	vzObWMOSV7OJ7gxWwlMbxefV5QpfjreV31bIlK8oQWV80VzRkFPtlsa/vlVEgDQmUI68/msvoICM4
+	58JYnQY4bLpKq8KREvdBWQ6Ho6BuG6gVD9tyaF7CPKVAuP3ru4n1Iri/9uKdEM0TWCui75xA/gxVF
+	VSLhPnCg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sjBx7-0000000E2i6-3CPE;
+	Wed, 28 Aug 2024 06:14:45 +0000
+Date: Tue, 27 Aug 2024 23:14:45 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Isaku Yamahata <isaku.yamahata@intel.com>,
+	Kevin Loughlin <kevinloughlin@google.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/EISA: Use memremap() to probe for the EISA BIOS
+ signature
+Message-ID: <Zs7AVTEiW2R_vB-f@infradead.org>
+References: <alpine.DEB.2.21.2408242025210.30766@angie.orcam.me.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240828-net-mptcp-more-pm-fix-v2-15-7f11b283fff7@kernel.org>
-References: <20240828-net-mptcp-more-pm-fix-v2-0-7f11b283fff7@kernel.org>
-In-Reply-To: <20240828-net-mptcp-more-pm-fix-v2-0-7f11b283fff7@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
- Florian Westphal <fw@strlen.de>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, stable@vger.kernel.org
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3437; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=xdzWHXYy5hg4851VghxZtTa4uJdKioKLDBgA8yThRTc=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBmzsBI9ajw0YtF3NaFy0RSMeA+bxN34HGKoIdcx
- tY/ONk2nC+JAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZs7ASAAKCRD2t4JPQmmg
- c/GkEACZ/z1eBGLnvR+vJJgv11yemk4KXWMWMssCkCIB9qwJqbW/dM+X2ffJYAP4ha1OvRlQr3e
- fib3Auiyw7F6Y1Zih31FR6DOQWL+wYl0twVDdEVHJYqwPrn7z3UOzsLwDWWnexl+ygqtBbd8k8X
- TaCPR5N5+udS9w6LfZ5SnmEVGbtUDq7ZoUKPrchSzQPPqoEaaAJA/4u3vPlXvNF0U136By+Tj7Z
- 8vBmZxq0fNn2DwB5x0Ckt4Zz7QLi/NzZQa4Jfdu7vez6NCOMuYXmyeV6cAvtx2/UCGvkqXJAaw2
- D8zZiGtyj71AY4Xfw4zdWVuQ/zHQO70Rj69a9mEoVAR65saNZCD4OVJDDEBT5MNsj2596ka/67M
- 2y5TyRcPzeAE30pA1rPxtbrVa1oBlkILsg0r/efXuQtC/QyxqdDhVcaYLDZnD7E6alqWZBhPxey
- kqbBNAcnkdF1YtuRzk6l1CZRfSf4jTSZ5B99EqEkyPyPLHYG+U+ObB1Ug0xbK7usAhttLMl+gYO
- vAjYbrhX9pyeymmffl1tVzZ4olGfN47IEnH3Bx/BcQn38yXCmKi4eKHGcG9MQkeuk84WbaGbWU/
- TNHWfDQf0mhFHYfDUgpPrrnDD4IKugbN/ZrHHVt26Y8yKfGWlojBayrdN66x7P+/ByO38WbWHBT
- Ai7BpuvWy6fDnjw==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.2408242025210.30766@angie.orcam.me.uk>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-This test extends "delete re-add signal" to validate the previous
-commit: when the 'signal' endpoint linked to the initial subflow (ID 0)
-is re-added multiple times, it will re-send the ADD_ADDR with id 0. The
-client should still be able to re-create this subflow, even if the
-add_addr_accepted limit has been reached as this special address is not
-considered as a new address.
+On Sat, Aug 24, 2024 at 11:17:10PM +0100, Maciej W. Rozycki wrote:
+> -	void __iomem *p;
+> +	void *p;
+>  
+>  	if ((xen_pv_domain() && !xen_initial_domain()) || cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
+>  		return 0;
+>  
+> -	p = ioremap(0x0FFFD9, 4);
+> +	p = memremap(0x0FFFD9, 4, MEMREMAP_WB);
+>  	if (p && readl(p) == 'E' + ('I' << 8) + ('S' << 16) + ('A' << 24))
+>  		EISA_bus = 1;
 
-The 'Fixes' tag here below is the same as the one from the previous
-commit: this patch here is not fixing anything wrong in the selftests,
-but it validates the previous fix for an issue introduced by this commit
-ID.
+readl requires and __iomem pointer.  If this is just a memory region you
+can and should directly dereference the address instead.
 
-Fixes: d0876b2284cf ("mptcp: add the incoming RM_ADDR support")
-Cc: stable@vger.kernel.org
-Reviewed-by: Mat Martineau <martineau@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
-v2:
-  - Make the connection longer, to have time to finish all the endpoints
-    manipulations when executed in slow environments. At the end of the
-    operations, the connection is killed, so it doesn't make the test
-    longer. (Jakub)
----
- tools/testing/selftests/net/mptcp/mptcp_join.sh | 32 ++++++++++++++++---------
- 1 file changed, 21 insertions(+), 11 deletions(-)
-
-diff --git a/tools/testing/selftests/net/mptcp/mptcp_join.sh b/tools/testing/selftests/net/mptcp/mptcp_join.sh
-index a8ea0fe200fb..a4762c49a878 100755
---- a/tools/testing/selftests/net/mptcp/mptcp_join.sh
-+++ b/tools/testing/selftests/net/mptcp/mptcp_join.sh
-@@ -3688,7 +3688,7 @@ endpoint_tests()
- 		# broadcast IP: no packet for this address will be received on ns1
- 		pm_nl_add_endpoint $ns1 224.0.0.1 id 2 flags signal
- 		pm_nl_add_endpoint $ns1 10.0.1.1 id 42 flags signal
--		test_linkfail=4 speed=20 \
-+		test_linkfail=4 speed=5 \
- 			run_tests $ns1 $ns2 10.0.1.1 &
- 		local tests_pid=$!
- 
-@@ -3717,7 +3717,17 @@ endpoint_tests()
- 
- 		pm_nl_add_endpoint $ns1 10.0.1.1 id 99 flags signal
- 		wait_mpj $ns2
--		chk_subflow_nr "after re-add" 3
-+		chk_subflow_nr "after re-add ID 0" 3
-+		chk_mptcp_info subflows 3 subflows 3
-+
-+		pm_nl_del_endpoint $ns1 99 10.0.1.1
-+		sleep 0.5
-+		chk_subflow_nr "after re-delete ID 0" 2
-+		chk_mptcp_info subflows 2 subflows 2
-+
-+		pm_nl_add_endpoint $ns1 10.0.1.1 id 88 flags signal
-+		wait_mpj $ns2
-+		chk_subflow_nr "after re-re-add ID 0" 3
- 		chk_mptcp_info subflows 3 subflows 3
- 		mptcp_lib_kill_wait $tests_pid
- 
-@@ -3727,19 +3737,19 @@ endpoint_tests()
- 		chk_evt_nr ns1 MPTCP_LIB_EVENT_ESTABLISHED 1
- 		chk_evt_nr ns1 MPTCP_LIB_EVENT_ANNOUNCED 0
- 		chk_evt_nr ns1 MPTCP_LIB_EVENT_REMOVED 0
--		chk_evt_nr ns1 MPTCP_LIB_EVENT_SUB_ESTABLISHED 4
--		chk_evt_nr ns1 MPTCP_LIB_EVENT_SUB_CLOSED 2
-+		chk_evt_nr ns1 MPTCP_LIB_EVENT_SUB_ESTABLISHED 5
-+		chk_evt_nr ns1 MPTCP_LIB_EVENT_SUB_CLOSED 3
- 
- 		chk_evt_nr ns2 MPTCP_LIB_EVENT_CREATED 1
- 		chk_evt_nr ns2 MPTCP_LIB_EVENT_ESTABLISHED 1
--		chk_evt_nr ns2 MPTCP_LIB_EVENT_ANNOUNCED 5
--		chk_evt_nr ns2 MPTCP_LIB_EVENT_REMOVED 3
--		chk_evt_nr ns2 MPTCP_LIB_EVENT_SUB_ESTABLISHED 4
--		chk_evt_nr ns2 MPTCP_LIB_EVENT_SUB_CLOSED 2
-+		chk_evt_nr ns2 MPTCP_LIB_EVENT_ANNOUNCED 6
-+		chk_evt_nr ns2 MPTCP_LIB_EVENT_REMOVED 4
-+		chk_evt_nr ns2 MPTCP_LIB_EVENT_SUB_ESTABLISHED 5
-+		chk_evt_nr ns2 MPTCP_LIB_EVENT_SUB_CLOSED 3
- 
--		chk_join_nr 4 4 4
--		chk_add_nr 5 5
--		chk_rm_nr 3 2 invert
-+		chk_join_nr 5 5 5
-+		chk_add_nr 6 6
-+		chk_rm_nr 4 3 invert
- 	fi
- 
- 	# flush and re-add
-
--- 
-2.45.2
+Note that sparse will complain about the above as well.
 
 
