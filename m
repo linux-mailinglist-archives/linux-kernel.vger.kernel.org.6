@@ -1,136 +1,262 @@
-Return-Path: <linux-kernel+bounces-304547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF1A9621A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:44:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4568696219E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FFE51C23FA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:44:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A3EF1C23FF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6011915AAB1;
-	Wed, 28 Aug 2024 07:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8AB915AD83;
+	Wed, 28 Aug 2024 07:44:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2zz3nOna"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XiyFJivJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7AD1552EB
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECA81552EB
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724831066; cv=none; b=shdkpjfeSJwZITEeBMcqroAmPe94nMTaEk+k2s6ecZ5HaDi1am6+ynfo2JHrAR0NyupEead7kcqw5unI3txThfnYAvu8zMjhjALtryXrRduuBquuCVWUHq51o8zLBuU/KRdEBu0IV6F31P57rSrw89kJwGe0tKkSSWsi3s9hVUI=
+	t=1724831053; cv=none; b=mJY+5Dts7O6t4ID4yee+DIkm23CB3Iup8Uaagg7n6FQWYnrXb8B+FxZgzNrIXrTvOPCYbcTJ3EU69tAl2860zPvevuMznjuotc4ndeAu8vES/XlfIoiCkVDITEd5S40/cigmZbJbC6J8ZMi6oIR9E67zhKq7cbCTHNCBYzi4Ayo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724831066; c=relaxed/simple;
-	bh=P1SGtxe3LJWnrEFmfRwmJX3rq26Smm/57691EhDFOtw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s3zNd9TVdZVC7PKkIYTquJA9N3u2BghV5sNQWIkiOivYYAm5vcWt6TVm6Sg4hWWoRHjRSe51ozmi1pn/W52HJLFxTS75T30PmMxHIy/osdoTnVD5Zy+HCowPQdQ8XBeK46qMs9jb574AZmfxKSe6xiT+jJ1LFuSdcwstqt32FPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2zz3nOna; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5bed0a2ae0fso7963990a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 00:44:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724831063; x=1725435863; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=P1SGtxe3LJWnrEFmfRwmJX3rq26Smm/57691EhDFOtw=;
-        b=2zz3nOna0Ky89ti6sxKBzYby4taYXB4tFdOUbBqRDO55IW6izSGfIJQ642VZTHNHZT
-         h3Pd/XcCW/JU79+LbwOSEq0rhQ3ihOelF0eLCSqcRCNuh38Ifj2cxIYYRrXaYOTnfp3o
-         28ZOmdQ5iETkBMSX2wV6OitsffyOAvfcjEeLSg7wxP77H6wjNCW/Emxv5AQBnjx1bWmE
-         bGobRH6bG6BDGdVhqEnAgzfHqpo6jJX3mkNwZBYMNE/ZLSQn5oF8GDFOi7O6LDXXK2q5
-         x/0qtPZ7hP1KAHKWFXXwmwZkwdTscoYtFmdmFlhHAjBQl0dxvpijsTil+RD59JVRFvXR
-         oCqg==
+	s=arc-20240116; t=1724831053; c=relaxed/simple;
+	bh=pBLtJq4s73xh2cjpN4kC6RLgw89TDOXstgUBrcX9m40=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L2q4Pr5OIWBhK68dX2eLWm8LuduGIk2x6co9KiZtS5TyJEvDj7xjtJWZqp9m/yCMwwQO3KYuMQz++Gc0ntrUbVnORzdRN2Q+ZZVi6UQI5iEAeiYscVkPtH16PGNQ7iDoBTfUAx24Md1mMKWoZ/+gdHzppftkcuF5hw2iY9Hue6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XiyFJivJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724831050;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7N/N7EySHgMZNfOn7Q8wISSQCYSIyWuumjkgTJGfaus=;
+	b=XiyFJivJnXnWHZblDjR1V6haVO9us8nEvcM0s7nT51YjAqfrdTHwJpSqOlPD7h7nMI4MxH
+	kqfAeEf2eTrq2BsVrglO77eZ6XoazVIqMPTNoUogrPb9vwDOv+5zWjfbFkzmR7bR1u3Fgh
+	tlPzVRFwQUlhQ8Aec6AOv3a4FBs+vYM=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-33-d6GuPko_MDOZoGFRbD8NzQ-1; Wed, 28 Aug 2024 03:44:08 -0400
+X-MC-Unique: d6GuPko_MDOZoGFRbD8NzQ-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42b8a5b7fd9so41046575e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 00:44:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724831063; x=1725435863;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=P1SGtxe3LJWnrEFmfRwmJX3rq26Smm/57691EhDFOtw=;
-        b=tnWUPflfMKC0fs4fyFY/DAjPwhFmZVbYdIlFb1eLOxZlB96URFVDtZQAtR+wnHJJuO
-         ruyssd2tGx3jTIqkbQ5l32dVNzCvnTXG/rGFfk3OZ6CNxnTcOhiYGg/oiemg7OrLmg6z
-         U4BESo7331yEAn196oBxYTSBlIncl7rhxew3delRpxYHR4r28wACE4vTiJ+pmeSH639R
-         LpugviHHaWmSWv5cNrcNkbnawPXWL8SNNXaUohGjFFs0LSQ0ApGtGUl8DNrNM5GaQyXw
-         SFsLN/hRm9RJaeGc6s/CXgScUxh7c3uO0QX2D4ym5Jw2JMriN3Y+WgTgwZuVnkSrIu5h
-         mQ4w==
-X-Forwarded-Encrypted: i=1; AJvYcCW3lz526pIV1PMYk9y6AgqwwQElQV6XHfAOz9twI+c4iEJk88gcouPvtwMibO2sjbisgY3n9+1aPe+/qQw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww20gPYXrhTZxF1xsM+nXNP+60N1Jkzl0BZVipRsLjzcPTyF8y
-	FMXyr1PKOk5KO1JfdxLo2tlzHNamU/GVRObl0RU/rlhWwyjcTuq3/qoE62qvednCit9/1w4z2G0
-	H/yRvofzZiGroBwE+gvabb/ArS8wtJdq5QzF5/hGnWGm4VIQoBw==
-X-Google-Smtp-Source: AGHT+IEt3auLBz+8ctUX4K+GsmZnMbeCZLriBqlM/+qFiYssZzYH6PGYYK8mpK4GN058/6bgrZuqGw3a8/d3MyhfMCA=
-X-Received: by 2002:a17:907:86a4:b0:a86:9fc2:8395 with SMTP id
- a640c23a62f3a-a86a518b2ebmr1217425466b.11.1724831062592; Wed, 28 Aug 2024
- 00:44:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724831047; x=1725435847;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7N/N7EySHgMZNfOn7Q8wISSQCYSIyWuumjkgTJGfaus=;
+        b=wbBCvglwD2zmSbK8ZvZ1JEvdU5g8TXvjEPNPHJ5IllLUiNnoWMs3RmOyHHLud4FDoM
+         nFiziF37enFWTZ+Aplw7b3RY2qIlDU07lM+34XZDpIDc/LvNd9MdzXEFAMjg/u5LdVqk
+         KVVnyNKX0Jy8H3AhLZzz33jcqRkr97SjHGe7VUyJ7KuutcIyifzZ6/03p9+M4oDCj+Rq
+         oTCI6k9cy4ywKVZQ5ZJBuDoB4VwbTVIvx6Vi6sN6u/MuuAyZy0j/En8VK8WpH+kLCr/l
+         eyxOgv3wLb63800Rnb8kmCnInfQ4mNWJXfpCnK7pv8UkkgLisprfyg54/pe4pVEctB5b
+         CmCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfy3YEM9MNFITwim5BE5t14g4BHsGtp+TpmennCjhHMcBO2Qg+vnv5DTw9wb1NCkDaaDJpNCHPpvf2/QQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ3M1p2TFjLJmFSjItwpMyJONgkbLRi+A6ubrVRowQoPypXiPn
+	4ce7jItytIdlneAGtHuRPF99fdxTEwbchOwAz3bCCue63eS2DBClITjK53yURua++MTM7Bi0NUV
+	Npi2ZQh9MPl9+ucRRfIFBv0XLHbLMnawjysf0i9+VByOCOAq1+jY7R0AH0JYu+w==
+X-Received: by 2002:a05:600c:1c84:b0:428:ea8e:b48a with SMTP id 5b1f17b1804b1-42ba668f868mr7870965e9.8.1724831047508;
+        Wed, 28 Aug 2024 00:44:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEGNfE/x5JNboZ3wOdvgwPEyQhfNJxFysCUo6sWqqNsWoDvs7V4uxx3adC2CETnntwi3H68mg==
+X-Received: by 2002:a05:600c:1c84:b0:428:ea8e:b48a with SMTP id 5b1f17b1804b1-42ba668f868mr7870465e9.8.1724831046443;
+        Wed, 28 Aug 2024 00:44:06 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c706:1700:6b81:27cb:c9e2:a09a? (p200300cbc70617006b8127cbc9e2a09a.dip0.t-ipconnect.de. [2003:cb:c706:1700:6b81:27cb:c9e2:a09a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730814602asm14910248f8f.44.2024.08.28.00.44.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Aug 2024 00:44:05 -0700 (PDT)
+Message-ID: <9f9d7e96-b135-4830-b528-37418ae7bbfd@redhat.com>
+Date: Wed, 28 Aug 2024 09:44:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819021621.29125-1-kanchana.p.sridhar@intel.com>
- <CAKEwX=OO6frFa+S3xjtoabB2dY1Y5RN5qjMsVUsgKDK_QuOFzg@mail.gmail.com>
- <SJ0PR11MB5678288EE890E8CB882839CDC98E2@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <SJ0PR11MB567801EE747E2810EF183C73C9892@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <CAKEwX=PYv4Cn_a7WSnbUyhwSBO61xoDPSexXxS0uwwxu5P6XLw@mail.gmail.com>
- <SJ0PR11MB5678E44062CADBE8BAB546F3C9942@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <CAKEwX=ORuJabxQSehU5E0QNG=Gx6QkyTCb1vek3AOcQuvF54Xg@mail.gmail.com>
- <DM8PR11MB5671D72CED6850CDBB62B95FC9942@DM8PR11MB5671.namprd11.prod.outlook.com>
- <SJ0PR11MB567807116A760D785F9822EBC9952@SJ0PR11MB5678.namprd11.prod.outlook.com>
-In-Reply-To: <SJ0PR11MB567807116A760D785F9822EBC9952@SJ0PR11MB5678.namprd11.prod.outlook.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Wed, 28 Aug 2024 00:43:45 -0700
-Message-ID: <CAJD7tkb0Lnq+mrFtpba80ck76BF2Hnc9Rn8OVs_7dqmE2Hww2w@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] mm: ZSWAP swap-out of mTHP folios
-To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Cc: Nhat Pham <nphamcs@gmail.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
-	"Huang, Ying" <ying.huang@intel.com>, "21cnbao@gmail.com" <21cnbao@gmail.com>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "Zou, Nanhai" <nanhai.zou@intel.com>, 
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/19] mm/pagewalk: Check pfnmap for folio_walk_start()
+To: Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+Cc: Gavin Shan <gshan@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ x86@kernel.org, Ingo Molnar <mingo@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Paolo Bonzini <pbonzini@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Alistair Popple <apopple@nvidia.com>,
+ kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Sean Christopherson <seanjc@google.com>, Oscar Salvador <osalvador@suse.de>,
+ Jason Gunthorpe <jgg@nvidia.com>, Borislav Petkov <bp@alien8.de>,
+ Zi Yan <ziy@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>,
+ Yan Zhao <yan.y.zhao@intel.com>, Will Deacon <will@kernel.org>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>,
+ Alex Williamson <alex.williamson@redhat.com>
+References: <20240826204353.2228736-1-peterx@redhat.com>
+ <20240826204353.2228736-7-peterx@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240826204353.2228736-7-peterx@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-[..]
->
-> This shows that in all cases, reclaim_high() is called only from the return
-> path to user mode after handling a page-fault.
+On 26.08.24 22:43, Peter Xu wrote:
+> Teach folio_walk_start() to recognize special pmd/pud mappings, and fail
+> them properly as it means there's no folio backing them.
+> 
+> Cc: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Peter Xu <peterx@redhat.com>
+> ---
+>   mm/pagewalk.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/pagewalk.c b/mm/pagewalk.c
+> index cd79fb3b89e5..12be5222d70e 100644
+> --- a/mm/pagewalk.c
+> +++ b/mm/pagewalk.c
+> @@ -753,7 +753,7 @@ struct folio *folio_walk_start(struct folio_walk *fw,
+>   		fw->pudp = pudp;
+>   		fw->pud = pud;
+>   
+> -		if (!pud_present(pud) || pud_devmap(pud)) {
+> +		if (!pud_present(pud) || pud_devmap(pud) || pud_special(pud)) {
+>   			spin_unlock(ptl);
+>   			goto not_found;
+>   		} else if (!pud_leaf(pud)) {
+> @@ -783,7 +783,7 @@ struct folio *folio_walk_start(struct folio_walk *fw,
+>   		fw->pmdp = pmdp;
+>   		fw->pmd = pmd;
+>   
+> -		if (pmd_none(pmd)) {
+> +		if (pmd_none(pmd) || pmd_special(pmd)) {
+>   			spin_unlock(ptl);
+>   			goto not_found;
+>   		} else if (!pmd_leaf(pmd)) {
 
-I am sorry I haven't been keeping up with this thread, I don't have a
-lot of capacity right now.
+As raised, this is not the right way to to it. You should follow what
+CONFIG_ARCH_HAS_PTE_SPECIAL and vm_normal_page() does.
 
-If my understanding is correct, the summary of the problem we are
-observing here is that with high concurrency (70 processes), we
-observe worse system time, worse throughput, and higher memory_high
-events with zswap than SSD swap. This is true (with varying degrees)
-for 4K or mTHP, and with or without charging zswap compressed memory.
+It's even spelled out in vm_normal_page_pmd() that at the time it was
+introduced there was no pmd_special(), so there was no way to handle that.
 
-Did I get that right?
 
-I saw you also mentioned that reclaim latency is directly correlated
-to higher memory_high events.
 
-Is it possible that with SSD swap, because we wait for IO during
-reclaim, this gives a chance for other processes to allocate and free
-the memory they need. While with zswap because everything is
-synchronous, all processes are trying to allocate their memory at the
-same time resulting in higher reclaim rates?
+diff --git a/mm/memory.c b/mm/memory.c
+index f0cf5d02b4740..272445e9db147 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -672,15 +672,29 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
+  {
+         unsigned long pfn = pmd_pfn(pmd);
+  
+-       /*
+-        * There is no pmd_special() but there may be special pmds, e.g.
+-        * in a direct-access (dax) mapping, so let's just replicate the
+-        * !CONFIG_ARCH_HAS_PTE_SPECIAL case from vm_normal_page() here.
+-        */
++       if (IS_ENABLED(CONFIG_ARCH_HAS_PMD_SPECIAL)) {
++               if (likely(!pmd_special(pmd)))
++                       goto check_pfn;
++               if (vma->vm_ops && vma->vm_ops->find_special_page)
++                       return vma->vm_ops->find_special_page(vma, addr);
++               if (vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP))
++                       return NULL;
++               if (is_huge_zero_pmd(pmd))
++                       return NULL;
++               if (pmd_devmap(pmd))
++                       /* See vm_normal_page() */
++                       return NULL;
++               return NULL;
++       }
++
++       /* !CONFIG_ARCH_HAS_PMD_SPECIAL case follows: */
++
+         if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
+                 if (vma->vm_flags & VM_MIXEDMAP) {
+                         if (!pfn_valid(pfn))
+                                 return NULL;
++                       if (is_huge_zero_pmd(pmd))
++                               return NULL;
+                         goto out;
+                 } else {
+                         unsigned long off;
+@@ -692,6 +706,11 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
+                 }
+         }
+  
++       /*
++        * For historical reasons, these might not have pmd_special() set,
++        * so we'll check them manually, in contrast to vm_normal_page().
++        */
++check_pfn:
+         if (pmd_devmap(pmd))
+                 return NULL;
+         if (is_huge_zero_pmd(pmd))
 
-IOW, maybe with zswap all the processes try to allocate their memory
-at the same time, so the total amount of memory needed at any given
-instance is much higher than memory.high, so we keep producing
-memory_high events and reclaiming. If 70 processes all require 1G at
-the same time, then we need 70G of memory at once, we will keep
-thrashing pages in/out of zswap.
 
-While with SSD swap, due to the waits imposed by IO, the allocations
-are more spread out and more serialized, and the amount of memory
-needed at any given instance is lower; resulting in less reclaim
-activity and ultimately faster overall execution?
 
-Could you please describe what the processes are doing? Are they
-allocating memory and holding on to it, or immediately freeing it?
+We should then look into mapping huge zeropages also with pmd_special.
+pmd_devmap we'll leave alone until removed. But that's indeoendent of your series.
 
-Do you have visibility into when each process allocates and frees memory?
+I wonder if CONFIG_ARCH_HAS_PTE_SPECIAL is sufficient and we don't need additional
+CONFIG_ARCH_HAS_PMD_SPECIAL.
+
+As I said, if you need someone to add vm_normal_page_pud(), I can handle that.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
