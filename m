@@ -1,118 +1,170 @@
-Return-Path: <linux-kernel+bounces-304146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C0B961B09
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 02:19:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0566C961B0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 02:19:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35325B21C01
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 00:19:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B00991F244CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 00:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB32F4E2;
-	Wed, 28 Aug 2024 00:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE61E11CAF;
+	Wed, 28 Aug 2024 00:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gzZu3v8a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dtdnD7A7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F080C8CE;
-	Wed, 28 Aug 2024 00:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AFBD512;
+	Wed, 28 Aug 2024 00:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724804346; cv=none; b=fazKrCcfSDZeZFqLnhcqdLnZKxoi1n+8iE0qqF2TK2Gv/nom8LKX1aBOA4E5+dQexA4fHnocLCue4pG2tAilx7a4Fl/qhzwSRMFeAQiIjIu0/ADR40M1XjmupT4DADoP2hpB4K7x4NTZZOalqqS4Vw97fEfCgg4Df3X437r17TU=
+	t=1724804380; cv=none; b=FOSgkK5/UWA9yjlhEvSBg6QiHCfc3C2JTCuj88PxDGmBnbZ12vTGnPufZP8D0i9IYlhL2yvQiv8+koOdBgrNOmxUxlBcPEKKa+yOSlE+mOH/+VlbTRK41JBWTtoJa4+ok0Uwx4h+yv4dj2WXkncIfJigpRtWCvLwrWzIVMq+WtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724804346; c=relaxed/simple;
-	bh=ySyC1GdbfZa4s5iTuJ+poeRdgMEqx1eenRFNVvlu1OM=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=a76ibfzK0xSNHL7H+HgKmpnc4koKLdu/XlMRCerlQm02TpZBFwZvkpjogMr8MkcdXmEMwhLn8DF6B+4vhut1Wt0gpZU1pLuzxshJ3P+VK9nMRERCokagtv15Q2hCWQrf+ZeHNse35W0PzVpuhLmdQTncothrrFuWS9IDoMXymmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gzZu3v8a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2480CC4AF12;
-	Wed, 28 Aug 2024 00:19:06 +0000 (UTC)
+	s=arc-20240116; t=1724804380; c=relaxed/simple;
+	bh=ZoyDIz63nWYpi7kgSp5N7yU52tLO9esbjOR04pJNKQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H3iVLHG9MamNsA3FF6WaweRTc2ruHg1rPXOB+cHTU6QCamsVdcmc9RGYSHShOBRgGNX0MLxbIHlwCm3UIMTKGW1G8b6MJsIr6eanhdnj8g5E25yrQiSbKZUSqnSyd+27jgBCUZOwjNKu5ESpl7UyITdxlw5NkVQV6Wb9plPZfKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dtdnD7A7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EECCAC4DDEF;
+	Wed, 28 Aug 2024 00:19:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724804346;
-	bh=ySyC1GdbfZa4s5iTuJ+poeRdgMEqx1eenRFNVvlu1OM=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=gzZu3v8aCgoXrQFAo25JFycwmpwrkfPIk0v+Eh2nfSgEK1h1BEalC9D7ECAuS8gl3
-	 6j9Lci3+PcOi+hApFqEiY6hkNOAHL2XILuDRw2bFpK3UUuGBS8pcNc7Ar0w1hgpGea
-	 efUDgub7T3On5jH4DZ1supxGZB/VpvMplZzs9aOgYQVLm+V6VZVBdyEH5Yb43GRThV
-	 eew//PEp/sEz53uzSsReJALohOW3SZuDKQ6ZFxuaQCFORB0J33i9xs3FSyTpxohTi7
-	 uG7BGrOCC90/Ct/r5QLfIiNPTWkZ7d4C2afW2EuuTbbdb9qWb342c9Yy1at0O86UCF
-	 EHM8ieIrtEKoQ==
-Message-ID: <9e16ddb1c1a697464ce1f5438ab9ca31.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1724804380;
+	bh=ZoyDIz63nWYpi7kgSp5N7yU52tLO9esbjOR04pJNKQg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dtdnD7A7NsL4pMbFwtC2SBfC8RVhRJP9WNAQvLy78pWjWCPOVs/B4zGwI0FqY8JRU
+	 bgAbYXiozbSt1NvLkB5p7DCKTvBckJdwZK44PyoAJBjxY7r2wWsLnytSDoglhsHzYt
+	 o8oXbN2PDIJUBkK0/ueRACpFtnpx+W8hWU3KwQA/5FBmm6Vz4NS/d9Xeb2OfcrqkIq
+	 asNLlP3AgZq84n+E8qXDJoIGqqSpBQz0XdxSaXy05Pm/cFmpLXZ4/3jUvWfewWDH9z
+	 LgTm4YfbPiWf6VTbL83e4sQOh1JpyvYLxWaZFZlTjRiZw8H/l9/uPN1abcRhWS3mcZ
+	 edqhHRikuJgVQ==
+Date: Tue, 27 Aug 2024 17:19:39 -0700
+From: Kees Cook <kees@kernel.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, Jann Horn <jannh@google.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Marco Elver <elver@google.com>, linux-mm@kvack.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v3] slab: Introduce kmalloc_obj() and family
+Message-ID: <202408271709.31D322019@keescook>
+References: <20240822231324.make.666-kees@kernel.org>
+ <5c3852e6-4a6a-42d8-85ff-8c1605939454@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240822155822.1771677-1-andriy.shevchenko@linux.intel.com>
-References: <20240822155822.1771677-1-andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 1/1] clk: devres: Simplify devres handling functions
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 27 Aug 2024 17:19:04 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5c3852e6-4a6a-42d8-85ff-8c1605939454@suse.cz>
 
-Quoting Andy Shevchenko (2024-08-22 08:58:22)
-> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-> index 90e6078fb6e1..f03d60706a85 100644
-> --- a/drivers/clk/clk-devres.c
-> +++ b/drivers/clk/clk-devres.c
-> @@ -28,15 +30,13 @@ static struct clk *__devm_clk_get(struct device *dev,=
- const char *id,
->         struct clk *clk;
->         int ret;
-> =20
-> -       state =3D devres_alloc(devm_clk_release, sizeof(*state), GFP_KERN=
-EL);
-> +       state =3D devm_kmalloc(dev, sizeof(*state), GFP_KERNEL);
+On Tue, Aug 27, 2024 at 11:32:14PM +0200, Vlastimil Babka wrote:
+> +Cc Linus
+> 
+> On 8/23/24 01:13, Kees Cook wrote:
+> > Introduce type-aware kmalloc-family helpers to replace the common
+> > idioms for single, array, and flexible object allocations:
+> > 
+> > 	ptr = kmalloc(sizeof(*ptr), gfp);
+> > 	ptr = kzalloc(sizeof(*ptr), gfp);
+> > 	ptr = kmalloc_array(count, sizeof(*ptr), gfp);
+> > 	ptr = kcalloc(count, sizeof(*ptr), gfp);
+> > 	ptr = kmalloc(struct_size(ptr, flex_member, count), gfp);
+> > 
+> > These become, respectively:
+> > 
+> > 	kmalloc_obj(ptr, gfp);
+> > 	kzalloc_obj(ptr, gfp);
+> > 	kmalloc_objs(ptr, count, gfp);
+> > 	kzalloc_objs(ptr, count, gfp);
+> > 	kmalloc_flex(ptr, flex_member, count, gfp);
+> 
+> This is indeed better than the previous version. The hidden assignment to
+> ptr seems still very counter-intuitive, but if it's the only way to do those
+> validations, the question is then just whether it's worth the getting used
+> to it, or not.
 
-When is this allocation freed if the get() fails? When the calling
-device driver detaches?
+We could make the syntax require "&ptr"?
 
->         if (!state)
->                 return ERR_PTR(-ENOMEM);
-> =20
->         clk =3D get(dev, id);
-> -       if (IS_ERR(clk)) {
-> -               ret =3D PTR_ERR(clk);
-> -               goto err_clk_get;
-> -       }
-> +       if (IS_ERR(clk))
-> +               return clk;
-> =20
->         if (init) {
->                 ret =3D init(clk);
-> @@ -47,16 +47,14 @@ static struct clk *__devm_clk_get(struct device *dev,=
- const char *id,
->         state->clk =3D clk;
->         state->exit =3D exit;
-> =20
-> -       devres_add(dev, state);
-> +       ret =3D devm_add_action_or_reset(dev, devm_clk_release, state);
-> +       if (ret)
-> +               goto err_clk_init;
+As for alternatives, one thing I investigated for a while that made
+several compiler people unhappy was to introduce an builtin named
+something like __builtin_lvalue() which could be used on the RHS of an
+assignment to discover the lvalue in some way. Then we could, for
+example, add alignment discovery like so:
 
-Shouldn't we return an error here? Otherwise we call clk_put() twice?
+#define kmalloc(_size, _gfp)	\
+	__kmalloc(_size, __alignof(typeof(__builtin_lvalue())), _gfp)
 
-> =20
->         return clk;
-> =20
->  err_clk_init:
-> -
->         clk_put(clk);
-> -err_clk_get:
-> -
-> -       devres_free(state);
->         return ERR_PTR(ret);
->  }
-> =20
+or do the FAM struct allocations:
 
-I stopped reading, sorry! If you want to do this, please add a bunch of
-KUnit tests.
+#define kmalloc_flex(_member, _count, _gfp)	\
+	__kmalloc(sizeof(*typeof(__builtin_lvalue())) +
+		  sizeof(*__builtin_lvalue()->_member) * (_count), gfp)
+
+Compiler folks seems very unhappy with this, though. As I can recognize
+it creates problems for stuff like:
+
+	return kmalloc(...)
+
+Of course the proposed macros still have the above problem, and both to
+use a temporary variable to deal with it.
+
+So, really it's a question of "how best to introspect the lvalue?"
+
+> [...]
+> > by GCC[1] and Clang[2]. The internal use of __flex_count() allows for
+> > automatically setting the counter member of a struct's flexible array
+> 
+> But if it's a to-be-implemented feature, perhaps it would be too early to
+> include it here? Were you able to even test that part right now?
+
+There are RFC patches for both GCC and Clang that I tested against.
+However, yes, it is still pretty early. I just wanted to show that it
+can work, etc. (i.e. not propose a macro with no "real" benefit over the
+existing assignments).
+
+> [...]
+> > Replacing all existing simple code patterns found via Coccinelle[3]
+> > shows what could be replaced immediately (saving roughly 1,500 lines):
+> > 
+> >  7040 files changed, 14128 insertions(+), 15557 deletions(-)
+> 
+> Since that could be feasible to apply only if Linus ran that directly
+> himself, including him now. Because doing it any other way would leave us
+> semi-converted forever and not bring the full benefits?
+
+Right -- I'd want to do a mass conversion and follow it up with any
+remaining ones. There are a lot in the style of "return k*alloc(...)"
+for example.
+
+> [...]
+> > +#define kvmalloc_obj(P, FLAGS)				\
+> > +	__alloc_objs(kvmalloc, P, 1, FLAGS, NULL)
+> 
+> Wonder if there is really a single struct (not array) with no flex array
+> that could need kvmalloc? :)
+
+Ah, yes, Good point. I was going for "full" macro coverage. :P
+
+Thanks for looking at this!
+
+-Kees
+
+-- 
+Kees Cook
 
