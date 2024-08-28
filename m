@@ -1,96 +1,137 @@
-Return-Path: <linux-kernel+bounces-304607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 310CA962271
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:42:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB7B6962274
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:45:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48E2B1C21375
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:42:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7421E1F25E68
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6D915CD7A;
-	Wed, 28 Aug 2024 08:42:21 +0000 (UTC)
-Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A934315C145;
+	Wed, 28 Aug 2024 08:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TM74TetN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58F0158557;
-	Wed, 28 Aug 2024 08:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6AD18030;
+	Wed, 28 Aug 2024 08:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724834540; cv=none; b=nbek24mHsQvFD+mqFs30DrAQWyL6WjRzImz1gAkSDrrO0RPVjOPsfL4SvFToX8ppYDOoYDQ6eoeF8NFaZvFQJ6Cgi0FpN3S4+IT4osJoySC1k46PmJY4GusqKq2nJscRAP3zK/yVL4aeaJzAOadQcrwEIZKQ46DpRJE2bECUwzc=
+	t=1724834739; cv=none; b=c9afoJTiLcSRMZJD1F8fVLDlveZnYPks/nGANs7zmyeO76gHgY4lE5+JFniuDZQIkfeBrrHvSrFOjOd2rtrXvpPrSrozu2WSe33Eq69sqEga2UtwVa97pDSt8u4sP3kDhZLGFqvI/DyqTRBwx7/6zVm+fUZosXItvgPWQ+5H9u8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724834540; c=relaxed/simple;
-	bh=Jqji/OU5zPaYLK49qv5dPpFnqUYmnoNDuMYCKoFeFi8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AJyqEyN0QPI+DJTPqgDhlurg1rxurBppTC1PmaS39O3Jynx2JgNbWlieclMnRLvbinyvnYAfUoPQ1zWCuLdrnxDHI+t8TaszrSAJEEQNyiaXF28IoRhJyTpJwTdkywz82ZJ7eIQxW52GWUD8u0GPjHt31R0B4HmpSY5I3gkYuTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
-Received: from [78.30.37.63] (port=38628 helo=gnumonks.org)
-	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <pablo@gnumonks.org>)
-	id 1sjEFm-001ERJ-IS; Wed, 28 Aug 2024 10:42:12 +0200
-Date: Wed, 28 Aug 2024 10:42:08 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: kadlec@netfilter.org, roopa@nvidia.com, razor@blackwall.org,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, dsahern@kernel.org, krzk@kernel.org,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	bridge@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next 4/5] netfilter: iptables: Use kmemdup_array()
- instead of kmemdup() for multiple allocation
-Message-ID: <Zs7i4PSQQEI0tHN6@calendula>
-References: <20240828071004.1245213-1-ruanjinjie@huawei.com>
- <20240828071004.1245213-5-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1724834739; c=relaxed/simple;
+	bh=tIwiCot+hNofIgTARIg1wqYbhY2VvIyGbcRSCRL2c9E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r1ntj4PWmnnDwxrcMH8zcvzgoPBAXrLGf7S70/Ovvh2ICC8ETZMt6mEWC7HGC6F6BaCvAvH3APFmzZpeGdyts+7GXl+32R/Pn3ZIiDPCTKAJ8SA0UYL2b+DsT/NVieIPl5/7EYgktiA7e063uFMiVxWCuhYu8z7qpEkVVR47tgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TM74TetN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BC5CC4FEFA;
+	Wed, 28 Aug 2024 08:45:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724834738;
+	bh=tIwiCot+hNofIgTARIg1wqYbhY2VvIyGbcRSCRL2c9E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TM74TetNTPgKURGd5uyExzUfl7PjGSvoTipj8S41BjJYmTdWuIf/EcBjSFfRUbXPL
+	 ERf9yW+mUh/JcjCp87W1OePDivwDx5QUgKLkZpPguo2RaF1Io54Rx09wJ96dbTn0+0
+	 YyR+bto/SNi88R/BX3C4OLyCZpwyydfpiVNgnQEtHknQarZq3x/mRCHsEI1P96hHzu
+	 BbBq1rh4oub+Yrp6oUqu4Tpe9uNiOWXoW3Pybmge74jAjbmPw7qPQYbfNr5duc6ggT
+	 AAomtiRropi6b43C5jWTzjkavM2KE7Vhj7GUICIRWulnZDKmbM4JjJVZSkdWNbOB3J
+	 YbmvBxeXLnsuQ==
+Message-ID: <a5609ba3-cc35-41c5-98f1-52063f8a6eec@kernel.org>
+Date: Wed, 28 Aug 2024 17:45:36 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240828071004.1245213-5-ruanjinjie@huawei.com>
-X-Spam-Score: -1.9 (-)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] block: Fix validation of ioprio level
+To: Ajay Kaher <ajay.kaher@broadcom.com>, axboe@kernel.dk,
+ niklas.cassel@wdc.com, hare@suse.de, martin.petersen@oracle.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ alexey.makhalov@broadcom.com, vasavi.sirnapalli@broadcom.com,
+ vamsi-krishna.brahmajosyula@broadcom.com
+References: <1724833695-22194-1-git-send-email-ajay.kaher@broadcom.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <1724833695-22194-1-git-send-email-ajay.kaher@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 28, 2024 at 03:10:03PM +0800, Jinjie Ruan wrote:
-> Let the kmemdup_array() take care about multiplication and possible
-> overflows.
-
-No patch for net/ipv6/netfilter/ip6_tables.c?
-
-We have yet another code copy & paste there.
-
-BTW, could you collapse all these patches for netfilter in one single
-patch?
-
-Thanks.
-
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+On 8/28/24 17:28, Ajay Kaher wrote:
+> The commit eca2040972b4 introduced a backward compatibility issue in
+> the function ioprio_check_cap.
+> 
+> Before the change, if ioprio contains a level greater than 0x7, it was
+> treated as -EINVAL:
+> 
+>     data = ioprio & 0x1FFF
+>     if data >= 0x7, return -EINVAL 
+> 
+> Since the change, if ioprio contains a level greater than 0x7 say 0x8
+> it is calculated as 0x0:
+> 
+>     level = ioprio & 0x7
+> 
+> To maintain backward compatibility the kernel should return -EINVAL in
+> the above case as well.
+> 
+> Fixes: eca2040972b4 ("scsi: block: ioprio: Clean up interface definition")
+> Signed-off-by: Ajay Kaher <ajay.kaher@broadcom.com>
 > ---
->  net/ipv4/netfilter/ip_tables.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  block/ioprio.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
 > 
-> diff --git a/net/ipv4/netfilter/ip_tables.c b/net/ipv4/netfilter/ip_tables.c
-> index fe89a056eb06..096bfef472b1 100644
-> --- a/net/ipv4/netfilter/ip_tables.c
-> +++ b/net/ipv4/netfilter/ip_tables.c
-> @@ -1767,7 +1767,7 @@ int ipt_register_table(struct net *net, const struct xt_table *table,
->  		goto out_free;
->  	}
+> diff --git a/block/ioprio.c b/block/ioprio.c
+> index 73301a2..f08e76b 100644
+> --- a/block/ioprio.c
+> +++ b/block/ioprio.c
+> @@ -30,6 +30,15 @@
+>  #include <linux/security.h>
+>  #include <linux/pid_namespace.h>
 >  
-> -	ops = kmemdup(template_ops, sizeof(*ops) * num_ops, GFP_KERNEL);
-> +	ops = kmemdup_array(template_ops, num_ops, sizeof(*ops), GFP_KERNEL);
->  	if (!ops) {
->  		ret = -ENOMEM;
->  		goto out_free;
-> -- 
-> 2.34.1
-> 
-> 
+> +static inline int ioprio_check_level(int ioprio, int max_level)
+> +{
+> +	int data = IOPRIO_PRIO_DATA(ioprio);
+> +
+> +	if (IOPRIO_BAD_VALUE(data, max_level))
+> +		return -EINVAL;
+
+No, this cannot possibly work correctly because the prio level part of the prio
+data is only 3 bits, so 0 to 7. The remaining 10 bits of the prio data are used
+for priority hints (IOPRIO_HINT_XXX).
+
+Your change will thus return an error for cases where the prio data has a level
+AND also a hint (e.g. for command duration limits). This change would break
+command duration limits. So NACK.
+
+The userspace header file has the ioprio_value() that a user should use to
+construct an ioprio. Bad values are checked in that function and errors will be
+returned if an invalid level is passed.
+
+> +	return 0;
+> +}
+> +
+>  int ioprio_check_cap(int ioprio)
+>  {
+>  	int class = IOPRIO_PRIO_CLASS(ioprio);
+> @@ -49,7 +58,7 @@ int ioprio_check_cap(int ioprio)
+>  			fallthrough;
+>  			/* rt has prio field too */
+>  		case IOPRIO_CLASS_BE:
+> -			if (level >= IOPRIO_NR_LEVELS)
+> +			if (ioprio_check_level(ioprio, IOPRIO_NR_LEVELS))
+>  				return -EINVAL;
+>  			break;
+>  		case IOPRIO_CLASS_IDLE:
+
+-- 
+Damien Le Moal
+Western Digital Research
+
 
