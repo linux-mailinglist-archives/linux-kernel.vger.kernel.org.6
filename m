@@ -1,221 +1,217 @@
-Return-Path: <linux-kernel+bounces-305345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D25962D41
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:06:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F36A2962D45
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:06:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4478CB21AEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:06:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6AFC28619C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F651A3BD1;
-	Wed, 28 Aug 2024 16:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA23A13BC1E;
+	Wed, 28 Aug 2024 16:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YIEO1E3N"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cornelisnetworks.com header.i=@cornelisnetworks.com header.b="Sj3FQf/3"
+Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11021121.outbound.protection.outlook.com [52.101.57.121])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A3E07E574;
-	Wed, 28 Aug 2024 16:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724861178; cv=none; b=A2f2SiqtcpXoroE7r/ZG1LymLYlgyISsnIDdJvB3LP554v/niyOlW7xtRAJchw4RxEz6lUJN5wbDwXgv2Ff+eC52U6PMWGtXVUqh3l5E27Q6qdfuXQX3AGxbkVUe9F+wtfFiYX0myQ01u9d7BL1J3ltWezj6OznlBg0PDToosvY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724861178; c=relaxed/simple;
-	bh=Pcc2ywD3Ph5edpvvemDwE9pwJ5atBlosbGQO/CDOgmc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=K4/GKsNSGcjimob0UD7acTXvFj8M7WR/h+B0gn6O1Xr4IwL/spyPixlpDLdrjwzds81/Jsz83lpqmic9tfAAFZ0vrYM8pLnOXh5/r5QKG/6qBiPrK0ykvBF4qaEqZcdCLo2z6PkE5C2JF6B+dVstE5CkDdI4YN4XiWJ8pqP9HFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YIEO1E3N; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-201f7fb09f6so60055655ad.2;
-        Wed, 28 Aug 2024 09:06:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724861176; x=1725465976; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Pcc2ywD3Ph5edpvvemDwE9pwJ5atBlosbGQO/CDOgmc=;
-        b=YIEO1E3NT/26mFb37fAVQUJZ433Iw3QBh6MrtdzrCGoCBy3gkgtUW+MSxcFjo453Xr
-         unNl1syArulBAK28qzYl9vYVASkpq93+0mbb6+0onOZ0kYce0wkSaGiG58oZw2TifBVd
-         OYirOeYRhFq1ZvcPCD6NJIrnV/TPuOsH2Lw4ibRDvUWl5MxlAnL6hkHpgzdnozFxurnX
-         ODWHtlFshQWjw6TXgzEVhRfLb6TSj5TCbtDpLRHdjCi1WoJtrLUL7xGtFBrIMSDRHZN6
-         Eh2D5tN4O92t4+qRPQugYUH9tWRPYaFgRRgaRVFggms8dR7i+WPJs2tc/exemdPgdiyu
-         Cx+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724861176; x=1725465976;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Pcc2ywD3Ph5edpvvemDwE9pwJ5atBlosbGQO/CDOgmc=;
-        b=ferDg55ZOWgGGttF4Q+TaLf9C+SHRqM+NVXJQzYAZRMm3pWai8hki8HRrkc+TQY20h
-         h0G8koqAfWvTI9pLRFh8X2EE+jtuSD8S+nsA7lJdJholu9LcAQ7aCGiTRQaA3GDykCgi
-         71ONbOLrRC8QT1fZZkqRbqvAN5MkZE5TI5KzbsFVk+fDCa03XtZbP1WUVni+2A5W83gJ
-         FpV7jEYLxObWoOtEqlsHc1iyx8tkZ8K1XebhIt5FL42K28j2Dobxx0yxUFzA9PGl7U4C
-         g3GZ83/wwqlpaW1T8wkCaU6M6V2VHEf9s4iAx8nrH6XSTlVn+YbPItA/s+K9+goR2yO7
-         CJew==
-X-Forwarded-Encrypted: i=1; AJvYcCVQCJqrhg4f6aB4lckLokFxm7zFG+WPgDh/yoXlsS6f/mQ+wkreY2PNaA9j7sym9UTM5u6ikosFwG3OXPM=@vger.kernel.org, AJvYcCVq2iuXqvqdOqVkoKMO9/9G+p1GEuHr/DCZGwu7oCMqBv0UJHJAAhMnpTFlx5vMH0ZlVdDY1AHQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9n8bTDMRNkwC6ag81wtrm5h6Ste9FWmwBQIpLyyiS1p4w0JAN
-	M2yZtxiP8T6lFOZiSD+Pr0CWpkN4LSmRUoC/kUber8pmAcLZygz4
-X-Google-Smtp-Source: AGHT+IEJgTitc5j5MuB4aK+ZM8bcNpkkHTQk7StOQd6wdrMwd5G3xO/DVk+x+wtaNoY1TfJChdqveg==
-X-Received: by 2002:a17:903:41ca:b0:1fd:672f:2b34 with SMTP id d9443c01a7336-2039e4b77eamr141094535ad.33.1724861175477;
-        Wed, 28 Aug 2024 09:06:15 -0700 (PDT)
-Received: from [127.0.0.1] ([174.139.202.50])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385580810sm100329295ad.105.2024.08.28.09.06.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 09:06:14 -0700 (PDT)
-Message-ID: <e09856753d986a810601e2e84261e783f30b0d04.camel@gmail.com>
-Subject: Re: [PATCH] f2fs: Do not check the FI_DIRTY_INODE flag when
- umounting a ro fs.
-From: Julian Sun <sunjunchao2870@gmail.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: syzbot+ebea2790904673d7c618@syzkaller.appspotmail.com, chao@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, stable@vger.kernel.org
-Date: Thu, 29 Aug 2024 00:06:09 +0800
-In-Reply-To: <Zs9BsP1UdFn4FoK5@google.com>
-References: <000000000000b0231406204772a1@google.com>
-	 <20240827034324.339129-1-sunjunchao2870@gmail.com>
-	 <Zs9BsP1UdFn4FoK5@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0267E574;
+	Wed, 28 Aug 2024 16:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.121
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724861186; cv=fail; b=mU6sK6hEDOlcRpDbE6+r5HWPDvQGCuXIKfILS2qb5vsuEYWkQ1BM7KqwUbfefrYrrZz1+oLy4DByS9rZNkbdeTakeKzARMD1ORhh9p7WvWmt5jAQ2kzLuGhxLbuRs28GHFNACvvOWId0kc6VjtEkGudOYokvAK/jQ6zCZLqH+Jk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724861186; c=relaxed/simple;
+	bh=Xmwg1YyY/6eY8SHzmfuAnB1hGjZp7f2qGj5MERoGbPA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=PrH7ofplWkDAsaqcA9E4WWJU23KfPsf94cK+TSvORAMTyEoU62C/IsRyp6rJftZj1YCp6h5gc3+KIYoYpn390ffvzxvGBOdYgu5pexoEI7ijAXtYClag0b349+ooYpat7wdmV23nPh1S/jzyY8EOaNLgcd5iPGZl6P2Dt5hGfKc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cornelisnetworks.com; spf=pass smtp.mailfrom=cornelisnetworks.com; dkim=pass (2048-bit key) header.d=cornelisnetworks.com header.i=@cornelisnetworks.com header.b=Sj3FQf/3; arc=fail smtp.client-ip=52.101.57.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cornelisnetworks.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cornelisnetworks.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=L4L4rE0pjg1N20EjfF9Ef4Gm3eRfcBgt7fgTimDgnSYZqa+cTJ892LUax/PqlZfvIIsUuX4HZjws3MG4KZODHF1esiaXSdwaX220OKfr/0uXER9+guzgNpJ4NbnTsWH0bJE99sxKSqfLx2waq2jthhk53/7SmiLC20c3yPYngccD9xhca/s7s/nFnKlWGSzMqcd2Zk6t3svq7A+jMp82IDUrgeDjnmDQ0u8qKnhLB/XfRIRLgeBdmOGnfScwzy+skNt1XK821fjdcDqBKP2qK+0FccD++4t91JerHP2gWUPy1xAWNeM3qP+iLrq5ibbozRls+4F9Wmik2WNsuZkmZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZXpLGG22OfVJJNnj5zVYSdDeTefm+AQykDAao7/30TU=;
+ b=MPaoWuWQIAimq176FITMbHk1vl95v6UwvhIDO+QCMTvvMDEUKa30NyvgyvoFCSwm3rrMMgZ1chwwJIZfvYq61qulww5XBP1s3+0P+BXnG9x4ikt6uCqr3Yxg4TTesFlv75PVLDgn1kDIUp6JLSVYXtz2V+FW0Mkj5r90X3BO4xTAyGMUIaGyZlmizz65+y6lUNfrx77EPcC37Q1uJAnUoUrnDmscYMmDjgTB8yNlW6tZ07QFb8zRUtLbM0kLV6cpoXPxp3Me6XCkweYj/ShzdxRBC+SVxrig6AbvKGpbQQe30Z9MMB25cbPvhGKwYUKEC/2EN4okkOcLgkRqdsYCzw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cornelisnetworks.com; dmarc=pass action=none
+ header.from=cornelisnetworks.com; dkim=pass header.d=cornelisnetworks.com;
+ arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cornelisnetworks.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZXpLGG22OfVJJNnj5zVYSdDeTefm+AQykDAao7/30TU=;
+ b=Sj3FQf/3lwpym77Jbmt3FZX9izp2QYE/ymeqPWVNF6TMb9C626Fv2G7bDoYbd9LNhdm+EcUdAwlWQ0ZljojPx5/E6GnFOnu6CV7rIG+c9IN9yB311ymVxdFMUIYAHJFwqGJif729PhPpcle3rlYP3zqasfmhe7xQui2BZQuZ8NiP6DQo2so0DGCikSeN4gEspagJ6JBRI4N06wpoHyiq+KURoOtUEgzr00Huv7BbUTo1TjzdfTIidRNUldvDzSsm4zWOMrp2JeCgQ/Evm8z1Qu+J3Esx10P9xyvGAKWfClFl149XaBYN2O9FmbPwqwClnqhakYic+fFvxbyDBN1Ndg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cornelisnetworks.com;
+Received: from SJ0PR01MB6158.prod.exchangelabs.com (2603:10b6:a03:2a0::15) by
+ SA1PR01MB6655.prod.exchangelabs.com (2603:10b6:806:1a3::13) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7897.27; Wed, 28 Aug 2024 16:06:21 +0000
+Received: from SJ0PR01MB6158.prod.exchangelabs.com
+ ([fe80::d4a8:cb9c:7a0:eb5b]) by SJ0PR01MB6158.prod.exchangelabs.com
+ ([fe80::d4a8:cb9c:7a0:eb5b%4]) with mapi id 15.20.7897.021; Wed, 28 Aug 2024
+ 16:06:21 +0000
+Message-ID: <e8cb7488-aea2-4829-9942-dd55b127c25e@cornelisnetworks.com>
+Date: Wed, 28 Aug 2024 12:06:17 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] RDMA/sw/rdmavt/mr: Convert to use ERR_CAST()
+To: Shen Lichuan <shenlichuan@vivo.com>, jgg@ziepe.ca, leon@kernel.org
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ opensource.kernel@vivo.com
+References: <20240828082720.33231-1-shenlichuan@vivo.com>
+Content-Language: en-US
+From: Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>
+In-Reply-To: <20240828082720.33231-1-shenlichuan@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BN7PR02CA0013.namprd02.prod.outlook.com
+ (2603:10b6:408:20::26) To SJ0PR01MB6158.prod.exchangelabs.com
+ (2603:10b6:a03:2a0::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR01MB6158:EE_|SA1PR01MB6655:EE_
+X-MS-Office365-Filtering-Correlation-Id: e1f729b3-06fa-40ec-edf2-08dcc77b5b77
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dkhsQ3EwWm1MR0ZPVDg0OE1zNllZYTc5TThha3paWWh3OWlQaGtMWXNLZEto?=
+ =?utf-8?B?VHRwYXY2dWhDaWpSUnRRMTNoOG85anQ3YVMwek5WK3pFWk15aS83d0hmcCsv?=
+ =?utf-8?B?clY0U0ZqOEVDa0RxWGNwUW5RTHE2U1Q3UXNBQitrMDFiTmxUbElqL2ZMTEpN?=
+ =?utf-8?B?anZwbWZYWFVESUFTSWNEV2ZRUlpvNjhsNnEzMEZjcjFRenlmWlZ6Ni9UQXho?=
+ =?utf-8?B?WU01dW1Rbm1NZncxdzVDN21zWnFhWXN4bXBFSDFEemhjZ2xBMGR2TXg2Mjl2?=
+ =?utf-8?B?Wk9JaXlJYS9rWlRqeXVVMzVZeEF2UDlaQit3WkRlekVDUTkvODgyelM2SjJD?=
+ =?utf-8?B?eHd3QzU5bExORk1mZzZaZDZQMVhoQ0FoajFmRi9kaHZJNXQ1SmpGUHBiYytN?=
+ =?utf-8?B?UkRIeHdrbngzaDAzandyTFpla1daeTI3bmdLVFEzeDJGWkdmMHVvRDdscUVq?=
+ =?utf-8?B?dXF4NENFYzZFMGJrWVpnWVdTa1dRZWthYUhtcWNJL1FzZHpvOEdVcE5JNUp2?=
+ =?utf-8?B?QjY4NUVvZis3QXpqM010WkFsVUdQZ1BDK2cxS0UxNkZWTkdWdWpQZVdMTHFa?=
+ =?utf-8?B?SkNmVzI4S2FPbVJ0QUlOYkt2QVdURjMxN0czZ0hxTDlwdys2QUlPVERCUU1D?=
+ =?utf-8?B?akRTNExkSlIwSDIwZStNRU9RMDd5S2dORGhWTjQrRSsvL1hvMWhrL05FTTBH?=
+ =?utf-8?B?cjNjWjFWYTBMWGJzQVFGc2pjSFBmQklhQWpyTkN5c2pab1pORGVzQytzYUdh?=
+ =?utf-8?B?RW9TNzVQanRDeVlxS2dwWTg2UVJwNnArRzhWcVdGZ3hLcEdUeEx0ZWhQaDB4?=
+ =?utf-8?B?SXNZek1MbnVzTzBxSy9mQ2FwcTRkSjRMOEZFOW92RDA5WmhuNTA0V1gyWWJi?=
+ =?utf-8?B?TG5RVUNZaVZQUFlIWlJ4Z25tOVFITHpIL0xkcVlzUHB0QXc5bkhDTVpEekF5?=
+ =?utf-8?B?WGs1bjZzRlpOZkZnWW8waS9yYkdMQjNDS2hsNkVyc0VRL04wQ01qSUVvZThI?=
+ =?utf-8?B?Z0liSmJSS2NaMytmcE1iYm5SS2lVeHRZY1FMMkUzeU9SWExDSXZhYWVmVXJp?=
+ =?utf-8?B?UUlFQXZGWVJ0N0pKeTF0S0N0cGJYY2Zla29NSlVkL1lyeFNxQ2xiMVJTSmRK?=
+ =?utf-8?B?Uk43cXlpWCtjZHd0MFNJU0J5b2xEb1F1UDMwQ1F3WlJ4aGlxVFRnbzBVQzI0?=
+ =?utf-8?B?OXRmbUpsbVN1KzI4S09JdzZheDFlL1ZON2w3NWQ2R3l1OENma0cwMHI5SS9q?=
+ =?utf-8?B?cElRbDJtMW9RSm9kM2xCSTRmbGJ5Mm15YTNrYWJ0Wjc2MXhpWUIvNXdHUUNq?=
+ =?utf-8?B?elUyRmJEMXcxRURxY1ZybHV6Ulo1LzlFclN6U1FCVXRaK0xzcWc4NWJGdEl1?=
+ =?utf-8?B?U1RMNkVqNUluNVNVRWtod1grdjJ4cWtYZmM3eTkrZzBRcUJQbDAwbzA1bUk2?=
+ =?utf-8?B?aGJWamhJVUtOM3VnZ2I0bVBSYVBmc2hKMmRDK0NKRytQdjYvdjg2YzJZTWJ1?=
+ =?utf-8?B?bkFKUm5vWXgwZEIvTlRmdW9CVnJERnQ1SXk3RnZrd1hmOTVpblkyVHZnQlNp?=
+ =?utf-8?B?ZW1QZEo3WExKTmJGem5qODFFcXNCN3lQR3lReGRkQ0hJaFFnRmMwbVdlMUZC?=
+ =?utf-8?B?Tnl5UGxjSFpIRG52d2RqSmVFK1c4VlJZbzh3TnQ5OXlVTDlkdFNYM3pET0pG?=
+ =?utf-8?B?dTlUUGM0N2IxNHM1ayszVlFkTGNXUFh4TDVseC9XdUgxUm1VUjVRWFRHSTZD?=
+ =?utf-8?B?NWhqMDRTSGJOeGNLcEtaRzdNZzhhVVNIOFRSWkI5Yzd5c3FmTXNOMEcreXB5?=
+ =?utf-8?B?WmVlUER5WmM0cTZ6dlBCUT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR01MB6158.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?K0R0KzhnU3Z4YnFoVXpyaU5UNjVHRXF0ZDgzNXkwS0lwdmdweU12dmxBdHMx?=
+ =?utf-8?B?Z0ZtQ1JDeUU2amFaV0tWWnNneWR1enRwcE9wZE1hQUZ3YmZvSThlSXFackVK?=
+ =?utf-8?B?RUVTeVluYnFqL2xLOTdvSU1OY2lYQ1h5OHlkZFFaTkV3ZnNyNkluNVZwWnBm?=
+ =?utf-8?B?Q3lmaURJTzR0UE1wU1BGK0hZYjkwMmczRkNacDR4eXN0dTZFdDdsOStCUkx4?=
+ =?utf-8?B?ejQ0dGt1MXg1TFNMNU9QVnMrSTBPbWNlRmNGeUVLOEtLK3UzT28xR2FqT1JL?=
+ =?utf-8?B?cm9Ca1ljdStSdjVINXZBUWE1Q3lOQkZtS1grWm91K2g1ZEJScnVKODY3SzNs?=
+ =?utf-8?B?TG1jVmljTlZTZVpVTHdmYy85Y1Fqb0pmWUUrTWpud0FER0tmTkJna1hqMjVk?=
+ =?utf-8?B?L3JCdjI5b1h2cUpQM3p6Um91MnhEM0RJSi91c0UvQjN0dDc1VysrUjY4bmxs?=
+ =?utf-8?B?Rm1KL010ejEyMkRkaGZ0ZDZjQkxUY3JYUXRndUJ6QmV3V3d5TGtSbE9FTTI2?=
+ =?utf-8?B?R2xCT0pBWWlLODRrTEdibUJlWkp0azlNc2F0R3RDc3E1dHB5TU1XM0pSYnQz?=
+ =?utf-8?B?NmVuOXM0ZmJZbTRSVjhFSXpkd0pBS2U1N2tQSXFNU2ZWcVk4dW93L2VhNy9x?=
+ =?utf-8?B?ejZLQzlqWVI2N0xqWlVMMVJpMDZLTWdDQk0vanpjY0xjb2szTklBZGNDODRX?=
+ =?utf-8?B?N244a2QzSlowVkk3dHp1aitpeWZzbDJTa2FLekdkMElGZXNCU3pLOGpVeHZD?=
+ =?utf-8?B?R01Xa1hucGV4UlpSVWNPakNrQnpud1BZVlQrTk5RT2J1UXRGQWJuZ1c5UlpJ?=
+ =?utf-8?B?NTEwSFZYc1ppaW96RDFkWVZiZ2lDOUxqbU9vaFRlL2dyM3dxTDgwaUdLbzFl?=
+ =?utf-8?B?WkdKYXM4SzZWSzYyTXZScEhKanFVNTcxU1R4dzlQWlp5Ujltc3Y2SThqby9R?=
+ =?utf-8?B?UGR6UW9ZRndGQzBRZDRaODY2WmpOelVYcDhVSWVyY2sybTZvc0ZucVpuM21a?=
+ =?utf-8?B?TWtsUzAzaFJZRWxjdDkzL0tEdGNUWmRmMmFvVmJuUEJpYjE1dCtxclRFeHJN?=
+ =?utf-8?B?cVZwbVA0VnBlWHJ3L0tqb1N6cTdrQkpTaVN2V09DMXI2L05OKzNOd0p2WHJV?=
+ =?utf-8?B?Vyt2eExFbmJHUlRFcGZHMHA3MHJWM2poSFFBa2tpbzdSZEwwTml2cDlaRWVk?=
+ =?utf-8?B?Vm51SnpIa2dGSEE5UEZsU2Q4cHNvcXdBSlNuSXZNZ3V0NVFnYmVWZWtEcFVm?=
+ =?utf-8?B?L0JrZUM0ZlM0bk0vMkxRWDBndHhIOHZaSlZJcWxIL0FxTUxJd3diQW9rMlcr?=
+ =?utf-8?B?SWxQR1kzRG9uMWZVL3JuR2xVZDlMUnJOVWpKMUVZQTZQZmFFbUNZRlYvNC9R?=
+ =?utf-8?B?WmRIcnExOGRaWVdTcTVla3hVdCtkbzNFZ014eE5oSTlGbzNtRjlaamxDVmlz?=
+ =?utf-8?B?NTlsRW13cWZ1bElmdFVvbEFtVXFQejd5RXlyVDA3ZEo5N3psLysvYmlZTmIy?=
+ =?utf-8?B?UVNDQ1BCYndsaEozdE1VMkdpSC9Cd2JsUktPNkFteVBUdnRLK2RET21vNFA0?=
+ =?utf-8?B?YnUxbDFIL2lJVmZFMU1GV1NXbERXVXZFVllTZndLUFlIQndyWlAzemxyNWVy?=
+ =?utf-8?B?Qm95QTJ0SXZ3dXVYUmMvbzdEbFdhZXJXN0NyK3kzb2JGOStSYTd1NjBqRTFM?=
+ =?utf-8?B?bmMyb25HK0FDeGRqNzBvU3hFNUk5cTVPL2FIK1E0dkVyaFdsQ1BQMXRyK0o3?=
+ =?utf-8?B?UlJwWHZKRXo5d09ISGVFT2dyUzRSZ3pVSGVwK3VXVnhhZFVGWlY5TE1MNVFR?=
+ =?utf-8?B?REJlS1VXMHMvTjd4Zi9sSXRZOStZZ0lBVW1yTEpDUDEwNlBPSTZMdjVmWmp2?=
+ =?utf-8?B?MWRLREJjSDNVSTJ5T2JTYk1sWjdkbU9jWC9hWGszdFBpRVZ3QjJnVWMvS1RI?=
+ =?utf-8?B?OFpSVm4rc0tRdXBTV2o1ZklSQ0VXZ0pHWU1vOXpvQVc2TjJFcTlXYzVFZDEz?=
+ =?utf-8?B?Wjk3SXNPTGJ2N2NZdXBSUkpKMmhKR0JqYUVDTmlTS2lHakc5ZW82ZytCNEN5?=
+ =?utf-8?B?Vy9BUzFQdE4xbUltZFZlbXY5WGwrSUJadlFrSWs4U1pPdUx6ZXFVS1dnOTlp?=
+ =?utf-8?B?L3NxZDV0VEEzTlYyQXdEMFBOMitsTW95MndVUWYweGN5enBHbkxxem5uanUr?=
+ =?utf-8?Q?zRlErB5vt/t0Rz9oydTipAA=3D?=
+X-OriginatorOrg: cornelisnetworks.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e1f729b3-06fa-40ec-edf2-08dcc77b5b77
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR01MB6158.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 16:06:21.1390
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4dbdb7da-74ee-4b45-8747-ef5ce5ebe68a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fBPg5IEFTR09l/+Xyh3Jr9C9ThlKTcxDfApbkBVyEZBg1N172+OaiyNoKG1Kbw1a6I6fQLfQWRTeok1wjHJ1siI0fhHMQHlw9B24fEW6PKxBnVhJNi1mNLC81qZn4vNt
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR01MB6655
 
-On Wed, 2024-08-28 at 15:26 +0000, Jaegeuk Kim wrote:
-> On 08/27, Julian Sun wrote:
-> > Hi, all.
-> >=20
-> > Recently syzbot reported a bug as following:
-> >=20
-> > kernel BUG at fs/f2fs/inode.c:896!
-> > CPU: 1 UID: 0 PID: 5217 Comm: syz-executor605 Not tainted 6.11.0-
-> > rc4-syzkaller-00033-g872cf28b8df9 #0
-> > RIP: 0010:f2fs_evict_inode+0x1598/0x15c0 fs/f2fs/inode.c:896
-> > Call Trace:
-> > =C2=A0<TASK>
-> > =C2=A0evict+0x532/0x950 fs/inode.c:704
-> > =C2=A0dispose_list fs/inode.c:747 [inline]
-> > =C2=A0evict_inodes+0x5f9/0x690 fs/inode.c:797
-> > =C2=A0generic_shutdown_super+0x9d/0x2d0 fs/super.c:627
-> > =C2=A0kill_block_super+0x44/0x90 fs/super.c:1696
-> > =C2=A0kill_f2fs_super+0x344/0x690 fs/f2fs/super.c:4898
-> > =C2=A0deactivate_locked_super+0xc4/0x130 fs/super.c:473
-> > =C2=A0cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1373
-> > =C2=A0task_work_run+0x24f/0x310 kernel/task_work.c:228
-> > =C2=A0ptrace_notify+0x2d2/0x380 kernel/signal.c:2402
-> > =C2=A0ptrace_report_syscall include/linux/ptrace.h:415 [inline]
-> > =C2=A0ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
-> > =C2=A0syscall_exit_work+0xc6/0x190 kernel/entry/common.c:173
-> > =C2=A0syscall_exit_to_user_mode_prepare kernel/entry/common.c:200
-> > [inline]
-> > =C2=A0__syscall_exit_to_user_mode_work kernel/entry/common.c:205
-> > [inline]
-> > =C2=A0syscall_exit_to_user_mode+0x279/0x370 kernel/entry/common.c:218
-> > =C2=A0do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
-> > =C2=A0entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >=20
-> > The syzbot constructed the following scenario: concurrently
-> > creating directories and setting the file system to read-only.
-> > In this case, while f2fs was making dir, the filesystem switched to
-> > readonly, and when it tried to clear the dirty flag, it triggered
-> > this
-> > code path: f2fs_mkdir()-> f2fs_sync_fs()->f2fs_write_checkpoint()
-> > ->f2fs_readonly(). This resulted FI_DIRTY_INODE flag not being
-> > cleared,
-> > which eventually led to a bug being triggered during the
-> > FI_DIRTY_INODE
-> > check in f2fs_evict_inode().
-> >=20
-> > In this case, we cannot do anything further, so if filesystem is
-> > readonly,
-> > do not trigger the BUG. Instead, clean up resources to the best of
-> > our
-> > ability to prevent triggering subsequent resource leak checks.
-> >=20
-> > If there is anything important I'm missing, please let me know,
-> > thanks.
-> >=20
-> > Reported-by: syzbot+ebea2790904673d7c618@syzkaller.appspotmail.com
-> > Closes:
-> > https://syzkaller.appspot.com/bug?extid=3Debea2790904673d7c618
-> > Fixes: ca7d802a7d8e ("f2fs: detect dirty inode in evict_inode")
-> > CC: stable@vger.kernel.org
-> > Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
-> > ---
-> > =C2=A0fs/f2fs/inode.c | 8 ++++++--
-> > =C2=A01 file changed, 6 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> > index aef57172014f..52d273383ec2 100644
-> > --- a/fs/f2fs/inode.c
-> > +++ b/fs/f2fs/inode.c
-> > @@ -892,8 +892,12 @@ void f2fs_evict_inode(struct inode *inode)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-atomic_read(&fi->i_compr_blocks));
-> > =C2=A0
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (likely(!f2fs_cp_err=
-or(sbi) &&
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0!is_sbi_flag_set(sbi,
-> > SBI_CP_DISABLED)))
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0f2fs_bug_on(sbi, is_inode_flag_set(inode,
-> > FI_DIRTY_INODE));
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0!is_sbi_flag_set(sbi,
-> > SBI_CP_DISABLED))) {
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0if (!f2fs_readonly(sbi->sb))
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0f2fs_b=
-ug_on(sbi, is_inode_flag_set(inode,
-> > FI_DIRTY_INODE));
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0else
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0f2fs_i=
-node_synced(inode);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0else
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0f2fs_inode_synced(inode);
->=20
-> What about:
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (likely(!f2fs_cp_error=
-(sbi) &&
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 !is_sbi_flag_set(sbi, SBI_CP_DISABLED)=
-) &&
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 !f2fs_readonly(sbi->sb)))
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0f2fs_bug_on(sbi, is_inode_flag_set(inode,
-> FI_DIRTY_INODE));
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0else
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0f2fs_inode_synced(inode);
+On 8/28/24 4:27 AM, Shen Lichuan wrote:
+> As opposed to open-code, using the ERR_CAST macro clearly indicates that 
+> this is a pointer to an error value and a type conversion was performed.
+> 
+> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+> ---
+>  drivers/infiniband/sw/rdmavt/mr.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/infiniband/sw/rdmavt/mr.c b/drivers/infiniband/sw/rdmavt/mr.c
+> index 7a9afd5231d5..5ed5cfc2b280 100644
+> --- a/drivers/infiniband/sw/rdmavt/mr.c
+> +++ b/drivers/infiniband/sw/rdmavt/mr.c
+> @@ -348,13 +348,13 @@ struct ib_mr *rvt_reg_user_mr(struct ib_pd *pd, u64 start, u64 length,
+>  
+>  	umem = ib_umem_get(pd->device, start, length, mr_access_flags);
+>  	if (IS_ERR(umem))
+> -		return (void *)umem;
+> +		return ERR_CAST(umem);
+>  
+>  	n = ib_umem_num_pages(umem);
+>  
+>  	mr = __rvt_alloc_mr(n, pd);
+>  	if (IS_ERR(mr)) {
+> -		ret = (struct ib_mr *)mr;
+> +		ret = ERR_CAST(mr);
+>  		goto bail_umem;
+>  	}
+>  
+> @@ -542,7 +542,7 @@ struct ib_mr *rvt_alloc_mr(struct ib_pd *pd, enum ib_mr_type mr_type,
+>  
+>  	mr = __rvt_alloc_mr(max_num_sg, pd);
+>  	if (IS_ERR(mr))
+> -		return (struct ib_mr *)mr;
+> +		return ERR_CAST(mr);
+>  
+>  	return &mr->ibmr;
+>  }
 
-Hi, Jaegeuk, thanks for your review.
+I don't think this is really necessary. You are not making the code more
+readable. It doesn't simplify things. So I'm not going to Ack it, but I won't
+Nak either.
 
-Yeah, it is semantically identical, and the code is clearer.
-I will fix it in patch v2.
->=20
-> >=20
->=20
-> > =C2=A0
-> > --=20
-> > 2.39.2
-
+-Denny
 
