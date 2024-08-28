@@ -1,46 +1,47 @@
-Return-Path: <linux-kernel+bounces-305465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33EDF962F30
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:02:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 180D5962F41
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:03:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A4C71C215D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:02:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C696C284A10
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:03:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5511AB503;
-	Wed, 28 Aug 2024 18:01:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7561AC44F;
+	Wed, 28 Aug 2024 18:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b="O1oskRcJ"
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b="LkzBHY2W"
+Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9477E1A4F0F
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 18:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.227
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926201AB533
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 18:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724868088; cv=none; b=Zt9B3+LmoGDMlIz4Pv41mYWeV8ZXQJumqnhg8vLBA8iRN9SYGqSu3MYpunKbIdPRqA+B8IaghYBRyYtEiZ7XGxZBQn/KGA4/GTq6m49VzirLvMvasNb3Mk2ycp/2BLCK41dFjQPzhKY4JnFhYXOSugJd9pEr4Hh5KJ1ID3ER46w=
+	t=1724868092; cv=none; b=pq4mhXub2XRxR66xsTIRmAwxaeigjzC3TJZ52u1kZFCblssSrHYkZ8HaOt9cJga02g7xwpyW8OcAymxzhRDbqNwYTXkS5ujq0+0phWSvdoWe+fB+VnboeSh+Bx/AtB3WpkHfat0840fijYJMs/jvGbpBag7TLqc7HAm5CuqEv2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724868088; c=relaxed/simple;
-	bh=ePkc2PsbkgF0p1uGvpY8HCwe6DiqE7bSa7rKWqI5PcY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UUIbA6Oh0oO5JOxJXXmMIuNDLu3qY89k0oFvyx0TkCGZ/REpFBJYzzXAShq2qE5pgIfvRGfikVZ+ki+1ikgkZprgXV8l+hYuKvCgg6UvcgyfsSBThivYeRhrJvTYQ0GI9we8r36lAWzw5UHFxTRDUiiRN6RWC0UrcQdRIQm/pFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b=O1oskRcJ; arc=none smtp.client-ip=185.136.64.227
+	s=arc-20240116; t=1724868092; c=relaxed/simple;
+	bh=TMvHQXMuHR+Dm38Xan8FX/o/wdiiupL2lSsmmQyc2qU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=KJ56vvWnghHhQS+RZ/ooRy+TPrhTqVCkTlMV9a8/2TCLyTFWYxXOYIEc4XGNvV3YbEeW9DrFEUZENDeZnn8ZSgtO1zs90qA+DNUzkxz1DL21mkbp63xm6Ce620lwZPH1tVOWECNV6X+DIzoDzbu2CvU+bNd8hForBxq5jO6I+Ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b=LkzBHY2W; arc=none smtp.client-ip=185.136.64.225
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 202408281801223e9d68ad472bc3cbd7
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 20240828180122141d68be721d926487
         for <linux-kernel@vger.kernel.org>;
         Wed, 28 Aug 2024 20:01:22 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=jan.kiszka@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=FPzWbEIJ2nzFNeOyuBWSWLU3hoxSsNE9Y1WR/uYxWQo=;
- b=O1oskRcJT46ZMZ1ijK7G4RcPfpXzNwmAnQYCLRPMyFNrlsXaxlEdUJk8POvcCqkdBFu9He
- FYrlrqMZb+rqdLTIpgmOSpxac5YH2ComztAkpx4XHzPYzsN3IxnEOYKZz1/JF8GlgzRT3lP2
- UwscJMcyBChlCtUgO5TZnOT1AQba5J3REeHx2pKJ4dfBzoI3h1adPYPHxCPFA8ZI5Np3F5Fa
- r2pqyxivzQcBZ75Gn/d3a0KYLzSNlkHV5nDIDweHz3c+ybmSS/ea3wMxjtL4+VxgETR/agU0
- bJHtdC2Z/ggxG1jF15HnKeUykcr3p/eBn/ZbSpjwQLCy3ZASXDkz0KVw==;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=1DQ6+e1yNgx7fPFXiME9GGedSD4AIhzkiP5atR2A8jg=;
+ b=LkzBHY2WZptHIBguBm28xT56FIz0X2QId2s+vE+EL1hr1OWWTyNA8TNkCK1kM9aWLMbEDN
+ UvjLCw9ZdMjYZyFD6grtHcFNlA+A1TpvX27lW09OoMzZDKVBsjdmPlcf1tpTNggBo3vMWc7r
+ zDhefWT4Vr6kFxlYlPJ0x5XUkjvcVDrnjJVxi/osimU5fgmTVLlBksQPALBvFC8PSt5OYh7C
+ api2OsIJxPDq7bMf4dmWvasUhBg5IzoUCU6tfZFna3GazBWHW+l5yj/rDPyc0BDuefrVy9/t
+ QPckoy6bPrK/GCxf0cAhFvt0At6yisU4lzVVo/HJhbyNSkRM3Qrvifsg==;
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: Nishanth Menon <nm@ti.com>,
 	Santosh Shilimkar <ssantosh@kernel.org>,
@@ -56,96 +57,91 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	Siddharth Vadapalli <s-vadapalli@ti.com>,
 	Bao Cheng Su <baocheng.su@siemens.com>,
 	Hua Qian Li <huaqian.li@siemens.com>,
-	Diogo Ivo <diogo.ivo@siemens.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>
-Subject: [PATCH v3 0/7] soc: ti: Add and use PVU on K3-AM65 for DMA isolation
-Date: Wed, 28 Aug 2024 20:01:13 +0200
-Message-ID: <cover.1724868080.git.jan.kiszka@siemens.com>
+	Diogo Ivo <diogo.ivo@siemens.com>
+Subject: [PATCH v3 1/7] dt-bindings: soc: ti: Add AM65 peripheral virtualization unit
+Date: Wed, 28 Aug 2024 20:01:14 +0200
+Message-ID: <ccbbc49b00b64e857c35a24466ca237d9a0c7da3.1724868080.git.jan.kiszka@siemens.com>
+In-Reply-To: <cover.1724868080.git.jan.kiszka@siemens.com>
+References: <cover.1724868080.git.jan.kiszka@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
 Feedback-ID: 519:519-294854:519-21489:flowmailer
 
-Changes in v3:
- - fix ti,am654-pvu.yaml according to review comments
- - address review comments on ti,am65-pci-host.yaml
- - differentiate between different compatibles in ti,am65-pci-host.yaml
- - move pvu nodes to k3-am65-main.dtsi
- - reorder patch series, pulling bindings and generic DT bits to the front
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Changes in v2:
- - fix dt_bindings_check issues (patch 1)
- - address first review comments (patch 2)
- - extend ti,am65-pci-host bindings for PVU (new patch 3)
+The PVU allows to define a limited set of mappings for incoming DMA
+requests to the system memory. It is not a real IOMMU, thus hooked up
+under the TI SoC bindings.
 
-Only few of the K3 SoCs have an IOMMU and, thus, can isolate the system
-against DMA-based attacks of external PCI devices. The AM65 is without
-an IOMMU, but it comes with something close to it: the Peripheral
-Virtualization Unit (PVU).
-
-The PVU was originally designed to establish static compartments via a
-hypervisor, isolate those DMA-wise against each other and the host and
-even allow remapping of guest-physical addresses. But it only provides
-a static translation region, not page-granular mappings. Thus, it cannot
-be handled transparently like an IOMMU.
-
-Now, to use the PVU for the purpose of isolated PCI devices from the
-Linux host, this series takes a different approach. It defines a
-restricted-dma-pool for the PCI host, using swiotlb to map all DMA
-buffers from a static memory carve-out. And to enforce that the devices
-actually follow this, a special PVU soc driver is introduced. The driver
-permits access to the GIC ITS and otherwise waits for other drivers that
-detect devices with constrained DMA to register pools with the PVU.
-
-For the AM65, the first (and possibly only) driver where this is
-introduced is the pci-keystone host controller. Finally, this series
-configures the IOT2050 devices (all have MiniPCIe or M.2 extension
-slots) to make use of this protection scheme.
-
-Due to the cross-cutting nature of these changes, multiple subsystems
-are affected. However, I wanted to present the whole thing in one series
-to allow everyone to review with the complete picture in hands. If
-preferred, I can also split the series up, of course.
-
-Jan
-
-CC: Bjorn Helgaas <bhelgaas@google.com>
-CC: "Krzysztof Wilczyński" <kw@linux.com>
-CC: linux-pci@vger.kernel.org
-CC: Lorenzo Pieralisi <lpieralisi@kernel.org>
-
-Jan Kiszka (7):
-  dt-bindings: soc: ti: Add AM65 peripheral virtualization unit
-  dt-bindings: PCI: ti,am65: Extend for use with PVU
-  arm64: dts: ti: k3-am65-main: Add PVU nodes
-  arm64: dts: ti: k3-am65-main: Add VMAP registers to PCI root complexes
-  soc: ti: Add IOMPU-like PVU driver
-  PCI: keystone: Add supported for PVU-based DMA isolation on AM654
-  arm64: dts: ti: iot2050: Enforce DMA isolation for devices behind PCI
-    RC
-
- .../bindings/pci/ti,am65-pci-host.yaml        |  52 +-
- .../bindings/soc/ti/ti,am654-pvu.yaml         |  51 ++
- .../boot/dts/ti/k3-am65-iot2050-common.dtsi   |  15 +
- arch/arm64/boot/dts/ti/k3-am65-main.dtsi      |  38 +-
- drivers/pci/controller/dwc/pci-keystone.c     | 101 ++++
- drivers/soc/ti/Kconfig                        |   4 +
- drivers/soc/ti/Makefile                       |   1 +
- drivers/soc/ti/ti-pvu.c                       | 487 ++++++++++++++++++
- include/linux/ti-pvu.h                        |  16 +
- 9 files changed, 749 insertions(+), 16 deletions(-)
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ .../bindings/soc/ti/ti,am654-pvu.yaml         | 51 +++++++++++++++++++
+ 1 file changed, 51 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/soc/ti/ti,am654-pvu.yaml
- create mode 100644 drivers/soc/ti/ti-pvu.c
- create mode 100644 include/linux/ti-pvu.h
 
+diff --git a/Documentation/devicetree/bindings/soc/ti/ti,am654-pvu.yaml b/Documentation/devicetree/bindings/soc/ti/ti,am654-pvu.yaml
+new file mode 100644
+index 000000000000..e4a5fc47d674
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/ti/ti,am654-pvu.yaml
+@@ -0,0 +1,51 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++# Copyright (c) Siemens AG, 2024
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/soc/ti/ti,am654-pvu.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: TI AM654 Peripheral Virtualization Unit
++
++maintainers:
++  - Jan Kiszka <jan.kiszka@siemens.com>
++
++properties:
++  compatible:
++    enum:
++      - ti,am654-pvu
++
++  reg:
++    maxItems: 2
++
++  reg-names:
++    items:
++      - const: cfg
++      - const: tlbif
++
++  interrupts:
++    items:
++      - description: fault interrupt
++
++  interrupt-names:
++    items:
++      - const: pvu
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-names
++
++additionalProperties: false
++
++examples:
++  - |
++    iommu@30f80000 {
++        compatible = "ti,am654-pvu";
++        reg = <0x30f80000 0x1000>,
++              <0x36000000 0x100000>;
++        reg-names = "cfg", "tlbif";
++        interrupts-extended = <&intr_main_navss 390>;
++        interrupt-names = "pvu";
++    };
 -- 
 2.43.0
 
