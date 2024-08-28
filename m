@@ -1,97 +1,98 @@
-Return-Path: <linux-kernel+bounces-304880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D8696262B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:37:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 477D9962628
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1DA1285D68
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:37:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5E501F24DE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FF516D9BF;
-	Wed, 28 Aug 2024 11:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB03170A3A;
+	Wed, 28 Aug 2024 11:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="E5Nr5HWw"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HgnmkV8n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FFA171E5F;
-	Wed, 28 Aug 2024 11:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6917315957D;
+	Wed, 28 Aug 2024 11:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724845056; cv=none; b=mpjf4dgBMCmm3sGw+61b3kwBkqYo3KNSvyFREO/AAUTR1eZBc3V+v6uwZIU83mMHqgqCXegXRivdYCgAh25a8BiSDuUGdT/sdz+BOedBpR3Mc2Buy5nDLzz4Sm7jB15itini80R5h85oQDBLlCAvCT0ewzSLIg67w61HQx3PFA4=
+	t=1724845052; cv=none; b=WicbN0zeGoSgfH1FzdytVh9MyT+nOXlfJnsI5BPhszeeWpxeMsobns1onmTn+BcvCQ2Jfr6MlEkEIY+TileeOCwMiqZK16EM5cK6pyp+HmYaYVHilgL9FZXAVB9abE7tbDCkWinXea4e+iFKnssHTpz5o+1oxb2oLKL6zYBxTls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724845056; c=relaxed/simple;
-	bh=Rt23x+Z3I8iukH4ZIcW8lmeAjhdTehSaRhcHPHwj+BA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=VaQkNHRNd+NDrmT8uwyWQDLpXlIab5oD8UghL4TQ/Iz2mpD7ygQ8QDpOMBfJY7c6VpbBipUYK+eg80oKshRJX0aIPdHBjygS1Qf6PhjqiRsP6wHLk0C8F+xfEAsr3v4DOBZQvHbaoJrVPPczYe8Z+mJ3EOyKLxBqvNHtq4MvVGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=E5Nr5HWw; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1724845052; c=relaxed/simple;
+	bh=39VJUr0HdNzahyme9JRpniljA6+xvqRUMsneXMlbVIE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YL5ijuRiyJnKFcBd45yI349BSqnSH75EkJarFfd/DLUeHxS6gZzpxGJutn9ORj3UtRbfLRhGCRBruQNyeKPqc6xBxBnglVTHT2NBY+TXxu1LeVqb9CHQS7EEnWz809rRqDBOStyeA8jxDHfOFrhHlw5XnnAcio/DBk15vsDYtkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HgnmkV8n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 595DAC98ED3;
+	Wed, 28 Aug 2024 11:37:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724845051;
+	bh=39VJUr0HdNzahyme9JRpniljA6+xvqRUMsneXMlbVIE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HgnmkV8nCEmPXc1hHRRQUNeH6+U+ATEJ0mvCKsx7NoTJD57kEzBgfjQwe7nAGgbkT
+	 T4MgVjtI3KgGWRgvqkpvEhwDh2UxdgG1/6GavhI9B95aM4mpQn7jniN6S0SpJdUKBX
+	 X7ybK0i2PKxE9HfOZb2/euP/1VQJjHLz4FW8b3v3BhbNyMQEZBj4HVodaLpZW+Tf+p
+	 tGFkUlEUGUkVn8de6wh2Q8rJFLbhgLXa3IL1EohNPVRFRStJwrbYYjMkwVBI9Tktxd
+	 fC1rFs8BuaYua/QWAbJhee9yT1q+oIKpsNJsJ7+xpneeI2pRvDYrszxD64z65vOKI8
+	 IdK+wCT6Y/7Lg==
+Date: Wed, 28 Aug 2024 12:37:25 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 6.1 000/321] 6.1.107-rc1 review
+Message-ID: <a800e655-1828-42b1-bb5c-678c03d00a6f@sirena.org.uk>
+References: <20240827143838.192435816@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1724845051;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rt23x+Z3I8iukH4ZIcW8lmeAjhdTehSaRhcHPHwj+BA=;
-	b=E5Nr5HWwMY8ydf5lboDmLryWqYnrHUY4fv7b3Hxv4L3UE584qjhFefqNT62Zpxx0mnEGZk
-	q5Yo4RVp4ohCMKA+lNu7EC9my5lkbPhOXRxVXcMAt/oAEKz3n4zA+3VarwvsgjdvHHAaRY
-	Il35luGF4np0tKyHBBRVKzKExcA1Sm7dOKGY2BOZAG/lSWLoKUbGE2M95RTbC1a9QZch9m
-	8jzWo56nXQBt3mt2pkdwJb8jY1Lp+RobBBfyKugM6TKzvRvDfkvt3XtwZ8iVNwJYLoue9K
-	PEEMN2e432Mh856s55h2N5Kj4Y/vzXWP3lrdDu3+dzbWxQKpS6gsTmuxM/JHTA==
-Content-Type: multipart/signed;
- boundary=8176c0910110b2751c496c935bb6f58df2d108ac65f75328a6bb1174599f;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Wed, 28 Aug 2024 13:37:22 +0200
-Message-Id: <D3RIJDLW8QYE.1HYYTUUBD1H5M@cknow.org>
-Cc: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
- <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-rockchip@lists.infradead.org>
-Subject: Re: [PATCH v3 2/5] clk: clk-gpio: update documentation for
- gpio-gate clock
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Heiko Stuebner" <heiko@sntech.de>, <mturquette@baylibre.com>,
- <sboyd@kernel.org>
-References: <20240828101503.1478491-1-heiko@sntech.de>
- <20240828101503.1478491-3-heiko@sntech.de>
-In-Reply-To: <20240828101503.1478491-3-heiko@sntech.de>
-X-Migadu-Flow: FLOW_OUT
-
---8176c0910110b2751c496c935bb6f58df2d108ac65f75328a6bb1174599f
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-
-On Wed Aug 28, 2024 at 12:15 PM CEST, Heiko Stuebner wrote:
-> The main documentation block seems to be from a time before the driver
-> handled sleeping and non-sleeping gpios and which that change it seems
-
-s/which/with/ ?
-
-> updating the doc was overlooked. So do that now.
->
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="HRHE0Op/czxIxbCc"
+Content-Disposition: inline
+In-Reply-To: <20240827143838.192435816@linuxfoundation.org>
+X-Cookie: You are number 6!  Who is number one?
 
 
---8176c0910110b2751c496c935bb6f58df2d108ac65f75328a6bb1174599f
+--HRHE0Op/czxIxbCc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Aug 27, 2024 at 04:35:08PM +0200, Greg Kroah-Hartman wrote:
+
+> This is the start of the stable review cycle for the 6.1.107 release.
+> There are 321 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+Tested-by: Mark Brown <broonie@kernel.org>
+
+--HRHE0Op/czxIxbCc
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZs8L9AAKCRDXblvOeH7b
-bv4UAP9DMhUi5AxRybS8zex8A36FmbWrDyUmxWT81dQ5DLnq3wD/XM+7U9lbgS2g
-Ai6Vjn85KETcvxvY+0MI3D/hSyLylg8=
-=vX1l
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbPC/QACgkQJNaLcl1U
+h9AVywgAhLUhDh5X3Ku38Sd+vqXlyClWi16JKVHxytp/YYdK1KRnLeWTfDEi6wDe
+aTaVmD5RLaPoXTcIfeR3lEkeH0lvqkago62y8pgkSNi4W9gX6+sVFuu/NnonPBJp
+OD2wXvSCXYpWIV0ifHyQEakFw1/c0kJIzggtpsEEMqnNocI6V2FG/7uYbD6EZABY
+gdvT5adnWrBpTx9uE+3FwMDxBwvexGGvSPe0xxx0uFS+pq47BF9yeHRCkrvM1oxt
+FjT9vVyZE668QYpvyQVm9Bx1xHi6PEprj/1K8r6q7RdGmlK3ii2vWZn7rakA4cT8
+RKfduE+dFIkmGyPn8peLOm8ozGJTAQ==
+=9cB6
 -----END PGP SIGNATURE-----
 
---8176c0910110b2751c496c935bb6f58df2d108ac65f75328a6bb1174599f--
+--HRHE0Op/czxIxbCc--
 
