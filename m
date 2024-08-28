@@ -1,191 +1,118 @@
-Return-Path: <linux-kernel+bounces-304768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FEAE962499
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:18:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7757096249F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:19:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD30A286083
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:18:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 207301F26AA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8F416B3B6;
-	Wed, 28 Aug 2024 10:18:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDFBB16C683;
+	Wed, 28 Aug 2024 10:18:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JwUTGJbR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZTgxcQBq"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E25E15535B;
-	Wed, 28 Aug 2024 10:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D085F16BE3A;
+	Wed, 28 Aug 2024 10:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724840317; cv=none; b=pZxi7gHG4wrx0t+816m6rK2ep4LN6f1xwSpTzsl6BVaDcbKpnKQRY2iPANIBUCa9LMJnoAOCNpol6fAamJFuVCIYQXrtW9zldHHUh2hwvz3/aclB0MAqHoWluLov+/saNJmUN5RrHq/vtEGJPB/sdZk9BdKbC8fUnGXXNS5d0lA=
+	t=1724840338; cv=none; b=cFh2h5gHnQ1xWpp68aI0EBB4XEF5++XdmAWnv2nGKENbTSfCUPLvrTNCo1W1XeaZKUL3HUk8KXUQUXp8ExB7CV+dy1nmR4RG9GlQn7WFBzpIxncAgaUQWSxDvM8r+x3Agt5L4aQDmdQPWbQjGXCq8BGbBBy3m4aHc+U+xA8MRvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724840317; c=relaxed/simple;
-	bh=C6ILMftBG9rM0uvRKgmhJFx03iisUC7Ps8y9h+pykn4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Oeft0h9ky1y1xFfNzjb4Q8Xj/C1xjrRSumMDfw2AuRlp9ks5jMduD5TpLrbj2ZRBOy66Wgk23jweOzEe8OwqmgTDsZ3m0H1lHW9tefMZ0bOHpYjg+3xcAxM+ms5iDFa7Z4PlKbigbtjrnpBi97ia+DZNx6oRwKbeI1wxCt/J7j4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JwUTGJbR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8104C98EC0;
-	Wed, 28 Aug 2024 10:18:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724840317;
-	bh=C6ILMftBG9rM0uvRKgmhJFx03iisUC7Ps8y9h+pykn4=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=JwUTGJbRROqxf02xWDz5XD0PbQUDvi2d8vZWlvxDC/FeXaMdz/xk2P1F2xBgaX4ux
-	 RMC4klQHrgx8h2yaeqTkOj8sOlpXi0Z/4ftXNaKfogvt0rJC1gBkd+UA9NGAFWal8h
-	 5TyYKlx0UUSGdwSgffTT4Rqzff14tfSguM4A432hHdJAIWWhkm5+jdn7hxvchS+Thp
-	 +hNloB+CcDTfb7JRuOxXEVsmH4FX1eayZnZQQcHu3mDylUZCwe+j9twoCUMCyvsE02
-	 3iIdG64LHOL+DDKhXibWXrJEUnrtv79h2rjfpNHctSOJYrzvgAI+9DOUOaGy6/6Jt3
-	 2tu/cH5EwvM9A==
-Message-ID: <4392ddb203b2ad27096ab6d9b3bf114fecf4e88c.camel@kernel.org>
-Subject: Re: [PATCH v3] sunrpc: Fix error checking for d_hash_and_lookup()
-From: Jeff Layton <jlayton@kernel.org>
-To: Yan Zhen <yanzhen@vivo.com>, davem@davemloft.net,
- chuck.lever@oracle.com,  trondmy@kernel.org, anna@kernel.org,
- edumazet@google.com, kuba@kernel.org,  pabeni@redhat.com
-Cc: neilb@suse.de, okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, 
- linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org,  opensource.kernel@vivo.com
-Date: Wed, 28 Aug 2024 06:18:34 -0400
-In-Reply-To: <20240828044355.590260-1-yanzhen@vivo.com>
-References: <20240828044355.590260-1-yanzhen@vivo.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40app2) 
+	s=arc-20240116; t=1724840338; c=relaxed/simple;
+	bh=UoN/UyiYug66uLlCk0UnTmfexCWdDKkn94NFkBOoF0I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LYshj+gfWpX6HCadkfUiwIOoqto1+AZvq0NdTX9S1eeTA5jXlVwt0zIDynxkQb4EMALu8lDZWDYM4KP8tnJU0B69wUd0n68AxPFsM5xGzkopPnHO2Vj3NReCPZzkCIGQis7e45C0ikrhvV0RbOkVkiCB8/M+jGvhcAqe8nVBkbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZTgxcQBq; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2020ac89cabso60782845ad.1;
+        Wed, 28 Aug 2024 03:18:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724840336; x=1725445136; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=L4W3IP20CGimPLVV7RyZx6e0WZ7znTW6N+Ub+VJ1Yfo=;
+        b=ZTgxcQBqtA96ny8+blNpXx9k4F+XpslMx6I3NS6YJkAFVIsVTRPYmHf0QXwuQBZ79j
+         sKN0lmZwguOOK9oQ7wOngFYQ9vU4d1KyYMMRAa5mVd6ywkXh+DgHcF6pzUUysu5rMj1/
+         icH6LK8awxlvkCNrNGqAsKtexk6SxINTkgolJCy33KifbBCciXS50f2KjLPpfp7w/L8Q
+         +SMJMd7+2HlIdwnfAhbz+FRxCDs/fkSBjz8Op3GNDgQKvQDZQgpgsXf7Ec5c0WIQ726G
+         mSe23ztxBFplf8M1Bpc9lZwrazRDpkTPl4NuhrLTJJ7UscUuG+jq7mLQdZibRI5gSfUE
+         O/SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724840336; x=1725445136;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L4W3IP20CGimPLVV7RyZx6e0WZ7znTW6N+Ub+VJ1Yfo=;
+        b=sMB0B5OPkHlOSxNZWQyQfrZhSpt+Wem3uuidoyvBTHGycFlWamL1QYpZ5o7gFQvWKC
+         +TABEhIZq+Yd/3YwwGZsUmeMNS3SKyBYVCEY/x7qD8QN7HepMDMPCnKmK4EUoUQ7mq4r
+         B+WZnukVkvNhxKzrXOo1BJ/Q/KL9dvdnPrtSJMTHP2TK6Oo6j/tfoAo/6KDbr+tgWpVN
+         zQa6+Osi7h+1UurNZls5YWmxH6aTaPutgNHUNJPr4nqO4GhYkx1cSHmmUV96M+vIjRry
+         GWor/OXZOKQ+XnHk9TFblUpFSWfHMIleqGAuquVPgMCULSy0V36NTux6OffYWQQhj0gF
+         fxYw==
+X-Forwarded-Encrypted: i=1; AJvYcCWS1ithLKPUWu4wzs4lf7LNcR8R2HVsxYBPtisql2X/7b/Po9jr6PgzzWhqiPHbBqW79AXpJZUAJZCrtAU=@vger.kernel.org, AJvYcCWmUSbHto0RKrMQvITSPX76TGw0HmaE8LZ8dgdAPJyb+aGhDbJoj2gVSzYVEhtPflUtcwGlli1WZ6pxw/Pw@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpHLn4MPDOb+3+wPycTHsG56R8akEHIk5oMqzD/tnoWTXTqF8l
+	IUVrXiZ5NP9sh1LbXQmdSMofcjfx942v6dq79xnvTIgOPhhoZwze
+X-Google-Smtp-Source: AGHT+IFn3LHCdIMyLvynP/kjAYe5D7ghddtHqXvyS9zOiS1PDErtG8cCYDtyf8zK+7xHvOaKspLqmw==
+X-Received: by 2002:a17:903:2352:b0:201:f065:2b2c with SMTP id d9443c01a7336-2039e4fbbe2mr160778575ad.55.1724840335822;
+        Wed, 28 Aug 2024 03:18:55 -0700 (PDT)
+Received: from [192.168.1.240] ([223.185.130.193])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385fcff06sm96439215ad.308.2024.08.28.03.18.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Aug 2024 03:18:55 -0700 (PDT)
+Message-ID: <d95656fd-cd64-4386-a22f-689a70d8327c@gmail.com>
+Date: Wed, 28 Aug 2024 15:48:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tools/hv: Add memory allocation check in hv_fcopy_start
+To: Zhu Jun <zhujun2@cmss.chinamobile.com>, kys@microsoft.com
+Cc: haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+ linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240828100031.3833-1-zhujun2@cmss.chinamobile.com>
+Content-Language: en-US
+From: Praveen Kumar <kpraveen.lkml@gmail.com>
+In-Reply-To: <20240828100031.3833-1-zhujun2@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2024-08-28 at 12:43 +0800, Yan Zhen wrote:
-> The d_hash_and_lookup() function returns either an error pointer or NULL.
->=20
-> It might be more appropriate to check error using IS_ERR_OR_NULL().
->=20
-> Fixes: 4b9a445e3eeb ("sunrpc: create a new dummy pipe for gssd to hold op=
-en")
-> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+On 28/08/24 15:30, Zhu Jun wrote:
+> Added checks for `file_name` and `path_name` memory allocation failures,
+> with error logging and process exit on failure.
+> 
+> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
 > ---
->=20
-> Changes in v3:
-> - Rewrite the "fixes".
-> - Using ERR_CAST(gssd_dentry) instead of ERR_PTR(-ENOENT).
->=20
->  net/sunrpc/rpc_pipe.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/net/sunrpc/rpc_pipe.c b/net/sunrpc/rpc_pipe.c
-> index 910a5d850d04..13e905f34359 100644
-> --- a/net/sunrpc/rpc_pipe.c
-> +++ b/net/sunrpc/rpc_pipe.c
-> @@ -1306,8 +1306,8 @@ rpc_gssd_dummy_populate(struct dentry *root, struct=
- rpc_pipe *pipe_data)
-> =20
->  	/* We should never get this far if "gssd" doesn't exist */
->  	gssd_dentry =3D d_hash_and_lookup(root, &q);
-> -	if (!gssd_dentry)
-> -		return ERR_PTR(-ENOENT);
-> +	if (IS_ERR_OR_NULL(gssd_dentry))
-> +		return ERR_CAST(gssd_dentry);
+>   tools/hv/hv_fcopy_uio_daemon.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/tools/hv/hv_fcopy_uio_daemon.c b/tools/hv/hv_fcopy_uio_daemon.c
+> index 3ce316cc9f97..2efdf8d28e9c 100644
+> --- a/tools/hv/hv_fcopy_uio_daemon.c
+> +++ b/tools/hv/hv_fcopy_uio_daemon.c
+> @@ -295,6 +295,10 @@ static int hv_fcopy_start(struct hv_start_fcopy *smsg_in)
+>   
+>   	file_name = (char *)malloc(file_size * sizeof(char));
+>   	path_name = (char *)malloc(path_size * sizeof(char));
+> +	if (!file_name || !path_name) {
+> +		syslog(LOG_ERR, "Can't allocate memory!");
 
-If you get back a NULL, then ERR_CAST will just make this return a NULL
-pointer.
+Probably, you may want to cleanup memory here in case either of one is 
+successful allocation.
 
-> =20
->  	ret =3D rpc_populate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1, NULL);
->  	if (ret) {
-> @@ -1318,7 +1318,7 @@ rpc_gssd_dummy_populate(struct dentry *root, struct=
- rpc_pipe *pipe_data)
->  	q.name =3D gssd_dummy_clnt_dir[0].name;
->  	q.len =3D strlen(gssd_dummy_clnt_dir[0].name);
->  	clnt_dentry =3D d_hash_and_lookup(gssd_dentry, &q);
-> -	if (!clnt_dentry) {
-> +	if (IS_ERR_OR_NULL(clnt_dentry)) {
->  		__rpc_depopulate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1);
->  		pipe_dentry =3D ERR_PTR(-ENOENT);
->  		goto out;
+> +		exit(EXIT_FAILURE);
+> +	}
+>   
+>   	wcstoutf8(file_name, (__u16 *)in_file_name, file_size);
+>   	wcstoutf8(path_name, (__u16 *)in_path_name, path_size);
 
-...you probably also want to make this return the error from
-d_hash_and_lookup as well when there is one.
---=20
-Jeff Layton <jlayton@kernel.org>
 
