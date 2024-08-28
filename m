@@ -1,81 +1,82 @@
-Return-Path: <linux-kernel+bounces-305053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 585EE9628B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:33:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED6419628B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:33:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A4AAB2288D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:33:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 979261F232A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0434187876;
-	Wed, 28 Aug 2024 13:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01B7188CC2;
+	Wed, 28 Aug 2024 13:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m+rIer1B"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fR57m6Jv"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F31184535;
-	Wed, 28 Aug 2024 13:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89164187FE5;
+	Wed, 28 Aug 2024 13:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724851968; cv=none; b=H6WLux0x/xVG8n+QE0Hf+069jHKqNkvA0IXLAoa2BQNwzPNmu6XUPROsrP2onmKdMdnU+aA+MdhjEXBb5E+vKZ98xX3eW+Q5DeukPOETgZyD7sO5RKV9Z7xBVf/g+Jd+H/ShlKaW9FaTByJDUBRignrXwVD6VhLFWjfdlFStvpQ=
+	t=1724851971; cv=none; b=f4RJ9n6DxH/UY3aljbvIMCaunM1RKKm1xFh+ifILiQDQeuL7VfP9L2FJcxrIgqKLA3JSLJjEmhPjOojKAwlQEF04trQ7IlfBMR5sWPJU14eghred2aPynbGJ8WZN47i8rRQ33cElVQzGJxn/i3GlkFbUynMJ0w5dDNmJYS9IoQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724851968; c=relaxed/simple;
-	bh=7SR67HpUr73cEL63aEKrkw71w+3MGtEelfBCivUJxrU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TehsTYwsC/zJUSEI8lTfnTm7iSmTPJ0hEzl58RlngFUBc0vMeiPJRcVe/9EZ76yPao+IwtdwGKf+eMjGRmeh28AeI8cwAgZTiG/YuJm5FgnqI6cpABPYzRBzznK6Z4f3y66UfGEoO4gVGYrHbngl3A42Tas0Hf2dPLv5423QX/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m+rIer1B; arc=none smtp.client-ip=209.85.210.178
+	s=arc-20240116; t=1724851971; c=relaxed/simple;
+	bh=2XSRcAhsIgxmGMC+Jhj0eYGlLwatsGrfTxmjiiVbw28=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K1gKKuAoN/dgj7NYWsDIyvQYXxilXRhaQbiaH9ssrXRiPNtPOefoOV0U8DmMN0m5KNCnFsjyH+7+391bMaul41TAJEdl05xqMc9BLUJOFqc1hsNs4/ZbOIdTJithKNujP7wHO5jTQVqEj1FPOzTaobI5172i9WRI1959Q/NmnYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fR57m6Jv; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-715cdc7a153so494374b3a.0;
-        Wed, 28 Aug 2024 06:32:46 -0700 (PDT)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42bac9469e8so2570995e9.3;
+        Wed, 28 Aug 2024 06:32:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724851966; x=1725456766; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724851968; x=1725456768; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IV9ruV4IKGNQsVpd2T2vGSBXmMJz+AZMZ8d3CyCPB14=;
-        b=m+rIer1B15jZreWBzilsiZj5bSAQGo3NP+HL+U6Oyxp4OWePdUpvHTJwLwRLEBXAkQ
-         VkSc4dCcMzWbmj/b+6n//z9Oqst6YUvxcFqtvX7MPcMWaXCcHwGVc8IlX7pS548J3ROy
-         X3FocgOlgWDdGMI7jCN+Hi7rELoEYARK095ziS+wGWNJJoUY4KvDWiSt3e79girIn9W/
-         Z/5xiAEmmEkSVzcwGRNB10OIOsadUg95rcor9McrPLod4AARWrTRGmiLxkt1fleM33GT
-         zNf4Cc5BZl9EEq+rfaGCFFZYkP9QVq8AcI9fZpndUK8ZGV2baqzHQ8BazF4T1o+skdIn
-         5uiA==
+        bh=vX5OXPOSkMPqbGMZAISswtCFwqTn+jp7AakChDRSONg=;
+        b=fR57m6JvT3D7cGOlaypD1/xhAV17/vVYhGVQHfpds3lEkFDlXZYsD6lQvCr4FokLtY
+         ZDrO3RACe6doDPkfJFnla2akv5iTA2GimLxgorfNeRA/vOihcYn/ljl73vkTnzBhTDSd
+         1FU8GE8Vb4AuGdsEaR5690+j6E3eRBlgouwR7fErEV1z8QCBRqHzPWJ37eCXG6Ut6w0Q
+         U6CkDG7ipmzHWKuo2PksJiBcm4+/4PELU+T+hOr6qVRFXpQGkEQFiwR8kQuRVBOJ7q7f
+         6nSQceXJfo6QQm4hWObfZJQQkeZvb06usgRyivgpwSk+Rqz+oYqZit3BTnkoSJmvWurd
+         6FbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724851966; x=1725456766;
+        d=1e100.net; s=20230601; t=1724851968; x=1725456768;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=IV9ruV4IKGNQsVpd2T2vGSBXmMJz+AZMZ8d3CyCPB14=;
-        b=XyLlz1mHYIg4ysj0exRe2y5OE9K97n+x0zhWkBarSEp6hloYAOb01EyXpDGE5wPRyK
-         554FoutAhX3ahmWTmC+NQMtZ3EpvUE4QQi2fDQAdPgSYIt84JnBd1pdDq7RsbOA1YvgQ
-         +ivwM+0OlX21oj2BJkq+GpY0sxymHOcVkhfVgNYr7Wv/rcnQuHqhauI8PXpJL1HFyLc4
-         yJxm8pCVsrMjYpIT4GfduplcK2/cVUEplTgR3QCyhoF2sveToFP8pzWoqkvYa7l9pnVk
-         4Rib6AXJX62nG9pGNzcn5oF8VZRcr4dbwxD8Ksn/QpWoYSJ63A9a0eMgpSlIMSEs+F3t
-         jhGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXW1uUJ2BrzTPvL/Jc94r6UG1cnygKrD/PrcqNqDWyR+etZe3Yvi4T9UNQ/5FXV/kgofhj6IKUNF3/v+X0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyefpy6dNk4Jt24c2eHNoWH/6PlEOynMQ2VdYSSyxOA/TLXvhgE
-	zzlvf5tFDVwNHTLBnA8PB4a36FOkOAe1LQ/j5Ma6aF+JVcr1W9KY
-X-Google-Smtp-Source: AGHT+IEWHbHsY9i95mKT7j9Ru9/r62XAXeWnvYGK9s8kwMU9vJh1dKZkgVgeNA4n0rMM5Q8Ge+087Q==
-X-Received: by 2002:a05:6a00:3ccc:b0:70d:36ad:3f67 with SMTP id d2e1a72fcca58-715d1120f38mr3360446b3a.11.1724851965649;
-        Wed, 28 Aug 2024 06:32:45 -0700 (PDT)
-Received: from fedora.. ([106.219.166.11])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9acdca5dsm11009955a12.49.2024.08.28.06.32.42
+        bh=vX5OXPOSkMPqbGMZAISswtCFwqTn+jp7AakChDRSONg=;
+        b=ICdmAqY6qy+cuHT/JkrTQUu/a3x2pEcMVSp28pPrvw3c4nDExxW3Zl07I5p4/EmFBy
+         ek3o9vFpkYYrRoZzLh2b8hUDd3vySfNjLw4MozOUfm/Y2TnE3eTfuczczxS8Ub8TkOh8
+         ZFEIaRTs77GO9NA2E7qyqt/RuHrjvzC3Ycagb3KgngvaZXQuTXnGF8TSC0YXAqu+BlhK
+         mFdQiRdbZdKyd4+zyHxl88HJ9XeHcydHHmHkAwTJCca1zoc17gC5HwTaRYWEx0t1dBWo
+         qK4X04Zq/M4cUOcfQr1rog9cB2/yu/D3yvtN3v5dl3VUI5RaRllRxHH7HfvRaYIt7Bjs
+         b3qg==
+X-Forwarded-Encrypted: i=1; AJvYcCViDAn7QtN1bMuUo08Zg4jauH79mykQ3frSGcRITdd7vliOyW3DcUXPik3bd9BDp9mkFZL6tXYQIEui@vger.kernel.org, AJvYcCVlA3259CWiojWgi/qqSiUQ/11LZZ8bBgohyk5WwYHS0Ofo8oCY3Z9N7VSD3L5sd4TI+TwIKGMK@vger.kernel.org, AJvYcCWObZguviD/n8Uo3dPonyTCdrXC1V/Cs59qb3gTaRh9EKUrywf5U3GEY/91qd/2FrQ4jezMwhWJplvws97t@vger.kernel.org
+X-Gm-Message-State: AOJu0YyejwKi15EZhngU2+2JKDpRE2IFP2AraA2l6/32FhuO9/5r13V9
+	zypDGXG+iIrKZFmvd3vdHgOdL5j1jWGxEQay4wnclg8h+NMJ0JbXbQRZvS6n
+X-Google-Smtp-Source: AGHT+IGFX29cXbltT3lcGmPWqanqujpX/4qjLupXabLKah0CJhhZP+MvW7aCG8Zkc714ofxFD8gg/Q==
+X-Received: by 2002:a05:600c:3ba9:b0:429:991:dd71 with SMTP id 5b1f17b1804b1-42acc8d4bd5mr107123905e9.11.1724851967480;
+        Wed, 28 Aug 2024 06:32:47 -0700 (PDT)
+Received: from partp-nb.corp.toradex.com (31-10-206-125.static.upc.ch. [31.10.206.125])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba6396662sm22136845e9.3.2024.08.28.06.32.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 06:32:45 -0700 (PDT)
-From: Riyan Dhiman <riyandhiman14@gmail.com>
-To: lpieralisi@kernel.org,
-	guohanjun@huawei.com,
-	sudeep.holla@arm.com
-Cc: linux-acpi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+        Wed, 28 Aug 2024 06:32:46 -0700 (PDT)
+From: Parth Pancholi <parth105105@gmail.com>
+To: Keerthy <j-keerthy@ti.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Riyan Dhiman <riyandhiman14@gmail.com>
-Subject: [PATCH] ACPI: arm64: Fix checkpatch warning - Alignment should match open parenthesis
-Date: Wed, 28 Aug 2024 19:02:05 +0530
-Message-ID: <20240828133205.17368-1-riyandhiman14@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	Parth Pancholi <parth.pancholi@toradex.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] gpio: davinci: fix lazy disable
+Date: Wed, 28 Aug 2024 15:32:07 +0200
+Message-Id: <20240828133207.493961-1-parth105105@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,152 +85,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Adhere to Linux kernel coding style.
+From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
 
-Reported by checkpatch:
-- CHECK: Alignment should match open parenthesis
+On a few platforms such as TI's AM69 device, disable_irq()
+fails to keep track of the interrupts that happen between
+disable_irq() and enable_irq() and those interrupts are missed.
+Use the ->irq_unmask() and ->irq_mask() methods instead
+of ->irq_enable() and ->irq_disable() to correctly keep track of
+edges when disable_irq is called.
+This solves the issue of disable_irq() not working as expected
+on such platforms.
 
-Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
+Fixes: 23265442b02b ("ARM: davinci: irq_data conversion.")
+Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
+Cc: stable@vger.kernel.org
 ---
- drivers/acpi/arm64/amba.c |  5 ++---
- drivers/acpi/arm64/apmt.c |  4 ++--
- drivers/acpi/arm64/iort.c | 22 +++++++++++-----------
- 3 files changed, 15 insertions(+), 16 deletions(-)
+ drivers/gpio/gpio-davinci.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/acpi/arm64/amba.c b/drivers/acpi/arm64/amba.c
-index 1350083bce5f..8d27d86ee052 100644
---- a/drivers/acpi/arm64/amba.c
-+++ b/drivers/acpi/arm64/amba.c
-@@ -33,8 +33,7 @@ static void amba_register_dummy_clk(void)
- 	clk_register_clkdev(amba_dummy_clk, "apb_pclk", NULL);
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index 1d0175d6350b..0ecfa7de5ce2 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -289,7 +289,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+  * serve as EDMA event triggers.
+  */
+ 
+-static void gpio_irq_disable(struct irq_data *d)
++static void gpio_irq_mask(struct irq_data *d)
+ {
+ 	struct davinci_gpio_regs __iomem *g = irq2regs(d);
+ 	uintptr_t mask = (uintptr_t)irq_data_get_irq_handler_data(d);
+@@ -298,7 +298,7 @@ static void gpio_irq_disable(struct irq_data *d)
+ 	writel_relaxed(mask, &g->clr_rising);
  }
  
--static int amba_handler_attach(struct acpi_device *adev,
--				const struct acpi_device_id *id)
-+static int amba_handler_attach(struct acpi_device *adev, const struct acpi_device_id *id)
+-static void gpio_irq_enable(struct irq_data *d)
++static void gpio_irq_unmask(struct irq_data *d)
  {
- 	struct acpi_device *parent = acpi_dev_parent(adev);
- 	struct amba_device *dev;
-@@ -94,7 +93,7 @@ static int amba_handler_attach(struct acpi_device *adev,
- 	ret = amba_device_add(dev, &iomem_resource);
- 	if (ret) {
- 		dev_err(&adev->dev, "%s(): amba_device_add() failed (%d)\n",
--		       __func__, ret);
-+			__func__, ret);
- 		goto err_free;
- 	}
+ 	struct davinci_gpio_regs __iomem *g = irq2regs(d);
+ 	uintptr_t mask = (uintptr_t)irq_data_get_irq_handler_data(d);
+@@ -324,8 +324,8 @@ static int gpio_irq_type(struct irq_data *d, unsigned trigger)
  
-diff --git a/drivers/acpi/arm64/apmt.c b/drivers/acpi/arm64/apmt.c
-index bb010f6164e5..74e8dc33241b 100644
---- a/drivers/acpi/arm64/apmt.c
-+++ b/drivers/acpi/arm64/apmt.c
-@@ -48,7 +48,7 @@ static int __init apmt_init_resources(struct resource *res,
- 		trigger = (trigger == ACPI_APMT_OVFLW_IRQ_FLAGS_MODE_LEVEL) ?
- 			ACPI_LEVEL_SENSITIVE : ACPI_EDGE_SENSITIVE;
- 		irq = acpi_register_gsi(NULL, node->ovflw_irq, trigger,
--						ACPI_ACTIVE_HIGH);
-+					ACPI_ACTIVE_HIGH);
- 
- 		if (irq <= 0) {
- 			pr_warn("APMT could not register gsi hwirq %d\n", irq);
-@@ -132,7 +132,7 @@ static int __init apmt_init_platform_devices(void)
- 
- 	while (offset < end) {
- 		apmt_node = ACPI_ADD_PTR(struct acpi_apmt_node, apmt,
--				 offset);
-+					 offset);
- 
- 		fwnode = acpi_alloc_fwnode_static();
- 		if (!fwnode)
-diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-index 1b39e9ae7ac1..369a3b506711 100644
---- a/drivers/acpi/arm64/iort.c
-+++ b/drivers/acpi/arm64/iort.c
-@@ -374,7 +374,7 @@ static struct acpi_iort_node *iort_node_get_id(struct acpi_iort_node *node,
- 	struct acpi_iort_id_mapping *map;
- 
- 	if (!node->mapping_offset || !node->mapping_count ||
--				     index >= node->mapping_count)
-+	    index >= node->mapping_count)
- 		return NULL;
- 
- 	map = ACPI_ADD_PTR(struct acpi_iort_id_mapping, node,
-@@ -388,7 +388,7 @@ static struct acpi_iort_node *iort_node_get_id(struct acpi_iort_node *node,
- 	}
- 
- 	parent = ACPI_ADD_PTR(struct acpi_iort_node, iort_table,
--			       map->output_reference);
-+			      map->output_reference);
- 
- 	if (map->flags & ACPI_IORT_ID_SINGLE_MAPPING) {
- 		if (node->type == ACPI_IORT_NODE_NAMED_COMPONENT ||
-@@ -1128,8 +1128,8 @@ static void iort_iommu_msi_get_resv_regions(struct device *dev,
- 
- 	for (i = 0; i < fwspec->num_ids; i++) {
- 		its_node = iort_node_map_id(iommu_node,
--					fwspec->ids[i],
--					NULL, IORT_MSI_TYPE);
-+					    fwspec->ids[i],
-+					    NULL, IORT_MSI_TYPE);
- 		if (its_node)
- 			break;
- 	}
-@@ -1429,7 +1429,7 @@ static void __init acpi_iort_register_irq(int hwirq, const char *name,
- 
- 	if (irq <= 0) {
- 		pr_err("could not register gsi hwirq %d name [%s]\n", hwirq,
--								      name);
-+		       name);
- 		return;
- 	}
- 
-@@ -1561,7 +1561,7 @@ static void __init arm_smmu_v3_dma_configure(struct device *dev,
-  * set numa proximity domain for smmuv3 device
-  */
- static int  __init arm_smmu_v3_set_proximity(struct device *dev,
--					      struct acpi_iort_node *node)
-+					     struct acpi_iort_node *node)
- {
- 	struct acpi_iort_smmu_v3 *smmu;
- 
-@@ -1622,7 +1622,7 @@ static void __init arm_smmu_init_resources(struct resource *res,
- 	trigger = IORT_IRQ_TRIGGER_MASK(glb_irq[0]);
- 
- 	acpi_iort_register_irq(hw_irq, "arm-smmu-global", trigger,
--				     &res[num_res++]);
-+			       &res[num_res++]);
- 
- 	/* Context IRQs */
- 	ctx_irq = ACPI_ADD_PTR(u64, node, smmu->context_interrupt_offset);
-@@ -1727,9 +1727,9 @@ struct iort_dev_config {
- 				  struct acpi_iort_node *node);
- 	int (*dev_count_resources)(struct acpi_iort_node *node);
- 	void (*dev_init_resources)(struct resource *res,
--				     struct acpi_iort_node *node);
-+				   struct acpi_iort_node *node);
- 	int (*dev_set_proximity)(struct device *dev,
--				    struct acpi_iort_node *node);
-+				 struct acpi_iort_node *node);
- 	int (*dev_add_platdata)(struct platform_device *pdev);
+ static struct irq_chip gpio_irqchip = {
+ 	.name		= "GPIO",
+-	.irq_enable	= gpio_irq_enable,
+-	.irq_disable	= gpio_irq_disable,
++	.irq_unmask	= gpio_irq_unmask,
++	.irq_mask	= gpio_irq_mask,
+ 	.irq_set_type	= gpio_irq_type,
+ 	.flags		= IRQCHIP_SET_TYPE_MASKED | IRQCHIP_SKIP_SET_WAKE,
  };
- 
-@@ -1878,13 +1878,13 @@ static void __init iort_enable_acs(struct acpi_iort_node *iort_node)
- 				continue;
- 
- 			parent = ACPI_ADD_PTR(struct acpi_iort_node,
--					iort_table,  map->output_reference);
-+					      iort_table,  map->output_reference);
- 			/*
- 			 * If we detect a RC->SMMU mapping, make sure
- 			 * we enable ACS on the system.
- 			 */
- 			if ((parent->type == ACPI_IORT_NODE_SMMU) ||
--				(parent->type == ACPI_IORT_NODE_SMMU_V3)) {
-+			    (parent->type == ACPI_IORT_NODE_SMMU_V3)) {
- 				pci_request_acs();
- 				acs_enabled = true;
- 				return;
 -- 
-2.46.0
+2.34.1
 
 
