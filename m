@@ -1,186 +1,158 @@
-Return-Path: <linux-kernel+bounces-305343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B59E9962D39
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:04:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19BC6962D3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DBC3285734
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:04:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5AB72858A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02EB41A4F0E;
-	Wed, 28 Aug 2024 16:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F24C1A2C24;
+	Wed, 28 Aug 2024 16:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="amfwAyI+"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DxyJ57EZ"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD7C1A3BD1
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 16:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD047E574;
+	Wed, 28 Aug 2024 16:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724861034; cv=none; b=glIUEqSoK1XnFfQIg2Pv0ETdypfdjfwqSpcHeIRJ75WjPddtdujGOeGq7lDq16BaMhT6geE5/K6o1dr7DxuOXn6DXrGZuY9HyWRa8bwe68p20Sm2lyJ/DYouefony+2VGbYAgRvSnI0lqMGp+xgGQCX17J8jN5f4fjtrqi2JlRk=
+	t=1724861128; cv=none; b=dRyveFn7wkHPg66GiZjhqx0zXd+6wQP5uxVsZmAPeohrNxvPgquU1o39ktf0mCPnPC8nBe57ssBr4NTykDPEm2Xsyusblwpfv0nQVv9WAtpzm2TuK6tzwx4k8ykDLMLWNXWuOIYor4B6bMxMDm6JwSIKdgiSF9UCl6phQd7vRyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724861034; c=relaxed/simple;
-	bh=6lc/0TowARllWPS3Y80o0s8enD0/CNCX2NvstCPsOjQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FqxmzRErUjYN30GT1ELZIVwU6FFokT1xBZmO8TcqHuyvleJGisAV5iurQxMFEw3e8iQSwg8jhw3dESRtpmrnEI0I8OrtrZg2Gjy7ScAhbe/crmWDWpej8G+BSte/sfvYrbnlTIgQZEBacXBQZtAQ2G7bA50tgZ41xskJJTmao6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=amfwAyI+; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-371a13c7c80so544514f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 09:03:52 -0700 (PDT)
+	s=arc-20240116; t=1724861128; c=relaxed/simple;
+	bh=Co+ZoX9nlmvVIKGutVNONku1/Na4NsMBksYnyHdgsIY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=qgIPPCciINlFsrHldVvAtHYvSCSb6iHERfchvF4CaIibaGUM0NS7CLB4fGms3t1V1pnnNlSdbW4cygsA1hqZ533MgT9EP9Wt+J280exCh8ujOjbQf9z1oX4zPH4P4fsv3iQps0nY8kZf0bvuamD40eHUbaKRIN7wEv1FdnVyrfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DxyJ57EZ; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53345604960so7499720e87.3;
+        Wed, 28 Aug 2024 09:05:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724861031; x=1725465831; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=o2C0Ata5DnGBKpgrOPOJ9Qpj52V9oZzJPEy8talc8NA=;
-        b=amfwAyI+H8asYCpTpbxBvz0x0TKxeywD6eZCjJWgmBct5gmm99vfSJq9tkRxgdHjzl
-         sVdX0cQ1QyPbZHjq8oP6yEJxwBCGhPBJ0zG2Z/w/XBcFRCbV0h5rEJb9eltPeiG0Jf8B
-         ptnkinZVTrBfUZJK/gFwdbVbBCKP2YaQaptPxzHp4u++QpZd5hvtHbjtXQfitQ7vUGVb
-         YOGZr0+YGAoGrqlR03bdBObPIoEwc2HHrYk/Mp8W54GVEzwpuxCm1scKjGNnZ/8riwxD
-         97CPcv6jYuvrpPQLtG4MpPuDOqMN8MRFJERXeq/vqSbTcR79jmH6by9XFpXsOYKgnKwt
-         uRrA==
+        d=gmail.com; s=20230601; t=1724861125; x=1725465925; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kosFjdk6GkyQVi+AThfAIGP1FTIA4D/dob1Vut4HNXM=;
+        b=DxyJ57EZ5bUSF+dbUjpXk4TyJxgjVXI3AtWYiyaLfFd++ny+laFzhIxpbSvR3ucXUc
+         pee/y3XRB/0vTjbWSgkEX8BaI2g3irzb5H6zwRNXdgEjD3qF7eOu6gyWjSfULHVQIefn
+         x/AdXLxYqltI9cw5XaVd/mwLZXs/wjmtNDL1tWwZlukRkYcXRHAlqsPdKkSYZLXQlXm1
+         05LslcLjCM30zb6+heRHn3BOJcavRtpGvaHK7s4oPa3b4GR6q9ImTIWIDm8jmIDumLd/
+         aa3osbl4x/JgtBsJao4sBWAcTBYqV5EJf3VMjPJpgT/Kmr4m+iDZ8nBUmxY28xf46+3P
+         RrBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724861031; x=1725465831;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1724861125; x=1725465925;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=o2C0Ata5DnGBKpgrOPOJ9Qpj52V9oZzJPEy8talc8NA=;
-        b=ek82BjQgfkkqno5nSVq9bbTli1960IF/Ko1CSogX1lFPvZAWPXG8KOv3Dquyw0gYwT
-         /l1iZVATtfOXCc/kFuWFrAFBZgw/7uuFh8wwHWDU0uX8Uy60aCJRUp+wFAQSmQO9U6sE
-         8Lz24a2ie4ulPEVRwQklpuzAK7QQ0M4xkF9elDEH6iVMA36kwYhzCkHDteCuPxs91BXt
-         GjF5ZIELZZ1S67YPZAiPTeoQu3w5c5tXP21e77z5e+mQWjtJ5WhY6nnUgQB3C7QFXP1O
-         G9QYAzrIGMi3t5/MJioRYQEtNmcEBr9olpiAwLQOcIBYKUTwRIIiVXvIuXHiE1m8Ly/J
-         uENQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVM+iRTKi9X5VAlF6AKLUzpLlZ5+e4qpSbd42890idMgeSR7sREEOkiqFJdI7UJNb3U42B7fnXAhTrLjL8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCHMfoULMRApWS9SgQ8mhaySl4+joRrIZT0EkMoHNIBzI/kG7g
-	j2YNdH9mBQVCvhBVQWwUnv9GQdhsJX/pdoWi5utifBqhgjd7ZKL95iAeQCywlz8=
-X-Google-Smtp-Source: AGHT+IHvuPcJW8cEF/aAGTjwURVAhubJtGabQ01KMZXeK1b8TtkqlbqetIk/BSaMtAYnDBF6QArDOw==
-X-Received: by 2002:adf:9b8f:0:b0:363:ac4d:c44f with SMTP id ffacd0b85a97d-3749b54b1f8mr42849f8f.17.1724861029903;
-        Wed, 28 Aug 2024 09:03:49 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749b22da51sm153232f8f.15.2024.08.28.09.03.48
+        bh=kosFjdk6GkyQVi+AThfAIGP1FTIA4D/dob1Vut4HNXM=;
+        b=OyPX0fF2a2CXFA5PMs00cgO/mDQVYh28JBZsAosjsIuH7jIBQ9kiWqS85+4pfZ1Jjm
+         84blFZ1r+06+z6xejXAazxFXJ8tAKD8wQ2aRfCrBefIQjojBH+4AKwyFszRdk7imcjkN
+         YQuQkyESbZ6Ivs/F1xIeN+a/PRsCtf+4gBN2/3Q2yzM/FnBaHz73HIB+8r95bFxenCRP
+         CKBdh/5YVCiTJeBaKpd78Y67YmBKpniA5LuOJTxov6hO0cM9mDU9RI//FrEgq5wJ8Orx
+         3E1Qu4flk8eFyf6AHZjS+oYcNmY7UWaNQ7ca4aWcYad6Z944AyjVVmeVixXh2Px96+wB
+         kH0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVsaI5I7XkXC7h/SqCIip97gm04893zOIZ5h4M4Ci+fm0kaDXV/gcJ2MClnyFg7vVhCdSZ/wEHsPst1ccgG@vger.kernel.org, AJvYcCXypxWCsQPu8RCBr5nwEg2laKyz2BXBl0MLIAVXswqyizTvuqrIaDaFRlMOEo7T5udgyZ8WnqEVWl/aSA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy04jzHDNi0q3s+qa98CElQWYc1mTztunCAQ+5V4DeZGA5Z4nuF
+	tTQjBkLWEB5SRjAz/5lHxom/luENtv8gbeQZOTy7bQ3c1dyh1inq
+X-Google-Smtp-Source: AGHT+IF8cqYWal0brvhOLe0qRqU3sh07nqJ466gkpWctJCE4jZ4ugYsFvlQqJ1bO6yO2kpbpLZkyXA==
+X-Received: by 2002:a05:6512:1111:b0:52c:8abe:51fb with SMTP id 2adb3069b0e04-5343875582emr11230031e87.10.1724861124497;
+        Wed, 28 Aug 2024 09:05:24 -0700 (PDT)
+Received: from localhost.localdomain ([78.209.220.215])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba6397de5sm26691585e9.8.2024.08.28.09.05.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 09:03:49 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Wed, 28 Aug 2024 18:03:40 +0200
-Subject: [PATCH 2/2] drm/panel: visionox-vtdr6130: switch to
- devm_regulator_bulk_get_const
+        Wed, 28 Aug 2024 09:05:24 -0700 (PDT)
+From: Antoni Pokusinski <apokusinski01@gmail.com>
+To: linux@roeck-us.net
+Cc: apokusinski01@gmail.com,
+	jdelvare@suse.com,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: Re: [PATCH v3] hwmon: (sht4x): add heater support
+Date: Wed, 28 Aug 2024 18:05:11 +0200
+Message-Id: <20240828160511.307768-1-apokusinski01@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <790f67c3-84f4-441b-bd80-0c11f002af5b@roeck-us.net>
+References: <790f67c3-84f4-441b-bd80-0c11f002af5b@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240828-topic-sm8x50-upstream-vtdr6130-multi-v1-2-0cae20d4c55d@linaro.org>
-References: <20240828-topic-sm8x50-upstream-vtdr6130-multi-v1-0-0cae20d4c55d@linaro.org>
-In-Reply-To: <20240828-topic-sm8x50-upstream-vtdr6130-multi-v1-0-0cae20d4c55d@linaro.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Doug Anderson <dianders@chromium.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2689;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=6lc/0TowARllWPS3Y80o0s8enD0/CNCX2NvstCPsOjQ=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBmz0piSlPdFi79yS2eRARm4Yw4O94DArWL02Xvc4e0
- 5xAIc+CJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZs9KYgAKCRB33NvayMhJ0f4mD/
- 9T/TEyl6b35MYJ4t7Sup6k2/8ibDWGQTqsL1VG8DAV62i98cFQASpEL8UXyOe9BGdEfFbExFYqpbJ6
- TWg9p+FjpbgVEAqg+ZSb7srDuMVXLpu1Z9bJcWKEQcm68ee4mrWAdsyKrxsdyiqytLtIOq5Sy8wHcI
- RobGyJzY4ECVSkjRDeHO9T9jQbmUeqEseZ1HI0BV7r3TND6iQkASdF8YsGwQqmf9dx7keJez1dp7gj
- RKWBqzqJWjvHC8/aMC2siasLSyp/pWBLHJxlm6tl++ven7uebVJg1mgQnLdynFH5kUVdT4LKLaUusY
- wdF35FlL95y85vZ74QLiCGoOauhSanIF+pi2Qj9QQqO1C/rSNUP1OqIkAQ2FMOESupeXrxV572hpYi
- GII/A9IirtLJVFaQPWnWwlDYD1aX+rznfj7CNj2ZVYdw7YUfFKWViSeg3LCzPJKXVBE18cBAjSCiKV
- kXB83hXH8+1yEunIm1B6gKp8NoNpTWYQvLC3y+/RouvIB4vFqhsgOR6c7LxEHp5irbhMrjMg3TYrRD
- S2T/Jr8CAR/NY400y3xcO9+YrUJ9QtvRL+GUJ6Ub5BEY38d7BUO6FcoHmuvE/4O8w3EElK+BYfuxr7
- mSUPGYWitcjntN+xegNK9NttmAvFDRciE1+1jDE1rHjAU7V+VTkHHNcpEnGA==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+Content-Transfer-Encoding: 8bit
 
-Switch to devm_regulator_bulk_get_const() to stop setting the supplies
-list in probe(), and move the regulator_bulk_data struct in static const.
+Hello,
 
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- drivers/gpu/drm/panel/panel-visionox-vtdr6130.c | 26 +++++++++++++++----------
- 1 file changed, 16 insertions(+), 10 deletions(-)
+I've been thinking on how to approach the problem of NACKs received
+from the sensor while the heater is on but I haven't found
+a perfectly satisfying solution either. This is due to the fact that
+the device does not provide any way to check if the heater is on/off.
 
-diff --git a/drivers/gpu/drm/panel/panel-visionox-vtdr6130.c b/drivers/gpu/drm/panel/panel-visionox-vtdr6130.c
-index ebe92871dbb6..17b8defe79c1 100644
---- a/drivers/gpu/drm/panel/panel-visionox-vtdr6130.c
-+++ b/drivers/gpu/drm/panel/panel-visionox-vtdr6130.c
-@@ -19,7 +19,13 @@ struct visionox_vtdr6130 {
- 	struct drm_panel panel;
- 	struct mipi_dsi_device *dsi;
- 	struct gpio_desc *reset_gpio;
--	struct regulator_bulk_data supplies[3];
-+	struct regulator_bulk_data *supplies;
-+};
-+
-+static const struct regulator_bulk_data visionox_vtdr6130_supplies[] = {
-+	{ .supply = "vddio" },
-+	{ .supply = "vci" },
-+	{ .supply = "vdd" },
- };
- 
- static inline struct visionox_vtdr6130 *to_visionox_vtdr6130(struct drm_panel *panel)
-@@ -139,7 +145,7 @@ static int visionox_vtdr6130_prepare(struct drm_panel *panel)
- 	struct visionox_vtdr6130 *ctx = to_visionox_vtdr6130(panel);
- 	int ret;
- 
--	ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies),
-+	ret = regulator_bulk_enable(ARRAY_SIZE(visionox_vtdr6130_supplies),
- 				    ctx->supplies);
- 	if (ret < 0)
- 		return ret;
-@@ -149,7 +155,8 @@ static int visionox_vtdr6130_prepare(struct drm_panel *panel)
- 	ret = visionox_vtdr6130_on(ctx);
- 	if (ret < 0) {
- 		gpiod_set_value_cansleep(ctx->reset_gpio, 1);
--		regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
-+		regulator_bulk_disable(ARRAY_SIZE(visionox_vtdr6130_supplies),
-+				       ctx->supplies);
- 		return ret;
- 	}
- 
-@@ -164,7 +171,8 @@ static int visionox_vtdr6130_unprepare(struct drm_panel *panel)
- 
- 	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
- 
--	regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
-+	regulator_bulk_disable(ARRAY_SIZE(visionox_vtdr6130_supplies),
-+			       ctx->supplies);
- 
- 	return 0;
- }
-@@ -244,12 +252,10 @@ static int visionox_vtdr6130_probe(struct mipi_dsi_device *dsi)
- 	if (!ctx)
- 		return -ENOMEM;
- 
--	ctx->supplies[0].supply = "vddio";
--	ctx->supplies[1].supply = "vci";
--	ctx->supplies[2].supply = "vdd";
--
--	ret = devm_regulator_bulk_get(&dsi->dev, ARRAY_SIZE(ctx->supplies),
--				      ctx->supplies);
-+	ret = devm_regulator_bulk_get_const(&dsi->dev,
-+					    ARRAY_SIZE(visionox_vtdr6130_supplies),
-+					    visionox_vtdr6130_supplies,
-+					    &ctx->supplies);
- 	if (ret < 0)
- 		return ret;
- 
+1. I guess that the simplest possible approach would involve sleeping
+in `heater_enable_store()`:
+  
+  ssize_t heater_enable_store() {
+    ...
+    mutex_lock(data->lock);
+    ret = i2c_master_send(data->client, &cmd, SHT4X_CMD_LEN);
+    msleep(...) /* for >100 or >1000 ms */
+    mutex_unlock(data->lock);
+    ...
+  }
 
--- 
-2.34.1
+This way, the user would have to wait for the heating to complete in
+order to read RH or temperature measurement. However, I find this
+solution unacceptable since it's completely unnecessary for the user
+to wait for the heating to complete.
 
+2. A better solution could be possibly to use a wait queue in order
+to defer the job of enabling the heater:
+
+  struct sht4x_data {
+    ...
+    struct work_struct* heater_work; /* This would be initialized
+                                        with the handler described
+                                        below */
+  }
+
+The task of sending the "heater_enable" command and sleeping would be
+performed by the worker function:
+
+  static void heater_enable_handler(struct work_struct *work) {
+    ...
+    mutex_lock(data->lock);
+    ret = i2c_master_send(data->client, &cmd, SHT4X_CMD_LEN);
+    msleep(...) /* for >100 or >1000 ms */
+    mutex_unlock(data->lock);
+    ...
+  }
+
+And that above mentioned work would be scheduled
+in `heater_enable_store()`:
+
+  ssize_t heater_enable_store() {
+    ...
+    schedule_work(data->heater_work);
+    ...
+  }
+
+I think that this approach with work queue is better since the user
+doesn't have to wait for the heating to complete and the RH or
+temperature measurements can also be retrieved without the NACK error
+(even though the user still may have to wait for the heater to be
+off), since the `data->lock` mutex is used to guard both measurement
+reads from the sensor and the heating in `heater_enable_handler`.
+
+I'm worried though about the situation where the user writes 1 to
+"heater_enable" while it's already enabled. Since the `work_struct`
+is already on the queue, the `heater_enable_store` would return an
+error and I see no easy solution to this for now.
+
+Regards,
+Antoni Pokusinski
 
