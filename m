@@ -1,114 +1,117 @@
-Return-Path: <linux-kernel+bounces-305043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D26F196288E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:25:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4669962892
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:26:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 102FF1C214A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:25:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58C77281B24
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855C6187862;
-	Wed, 28 Aug 2024 13:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F051018786F;
+	Wed, 28 Aug 2024 13:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gxPkfVqX"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CDi5kxjx"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C1216BE1B;
-	Wed, 28 Aug 2024 13:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A177E16BE1B;
+	Wed, 28 Aug 2024 13:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724851511; cv=none; b=AG6THhgkqUYNLW3DdPRpdy5saU8ATtMtwjdVzda1HlJoRzgcDQacOLPlf4C6srJQJRyccRyxU2Hj1Y+rL6fmEpbXJqOJBqIW3MuIC1dNZRu0MeAdAnEA9AzU7u/eDUnoh8NCUAOq/UBpEguWC5UX3iQiu0RJrun37nN2NUntY5g=
+	t=1724851555; cv=none; b=l3hsDVFQk64IE8J+lBmGuGjrKrF++ywzbxgV039we1sRrET0m68yrho/P3jkMput2wtWX0rM7LotIYNdI+T6zDbBL4wAdBRoPFlCIsZ0nQ8nOqsMJ7/ytZVoBgkjGXrSblOy1BtcXEXZzEd5Y96B4wPcrXffYTlTQlt6VejorpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724851511; c=relaxed/simple;
-	bh=IgiiWmkaONZMDrv95lSjLISp29W4kqOAF1MsY3+Ck9Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E/AC1gMLVYc80KHu75c/2LNc5roNJVhixy38LZKE/LHO1TfF7Idngxi0M5XdQL4r6CjtnyJmEVkfdOupViQuGSxYvf7Qy4jwqqWWUm5deI2qMec3g3JH8mq13GfXjkjc97R70JA55H9iwiraw8E3llyrkx6VivQRggpLHNA07Ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gxPkfVqX; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f3f68dd44bso76454461fa.3;
-        Wed, 28 Aug 2024 06:25:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724851508; x=1725456308; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IgiiWmkaONZMDrv95lSjLISp29W4kqOAF1MsY3+Ck9Q=;
-        b=gxPkfVqXMLh3JUjmTbT8oxMaKG32Hv4uHOG9HRwC95JpDTTne6ZvjILAIEWpnDYubE
-         IGBaeLw/oN2GTgTc+xMm8nFnToBOWnzY53+pDt4QM7m+F/1N0K04SNycH8FYxbRA0UYT
-         M/F+WV80OpF6dEHvSWD7x5Re3pqxBzZJlUvVM5tUBlQOiOxQ/O+4/K/vtMhtrbj9HkJ5
-         9hhDuUyleT83pvmqNgdr6vHd1BD+xIhuo6wB0UkxLLzKNqecd5K9MgMppD7XT1jbNr/p
-         ZwG+ajHV4GUR/9kDNR/XKiJ1n9fUQyQGC5KK+XPX98UhVi3IT4QYEpBjViUhUOMCP4qM
-         IxrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724851508; x=1725456308;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IgiiWmkaONZMDrv95lSjLISp29W4kqOAF1MsY3+Ck9Q=;
-        b=hqreNPK14qXCYytVWF9TLtExlZ4qYXVe5XdAQ39kgFpO6dhMwq23f4ZGVuFu13dZPe
-         2vPNYFqcJIh1yt58eeNGjjm2lsur5OXg0bq8xo/0R2XFdmPMn/l/UAmsZof3Qku1McKg
-         GEcheCetRu9YLM5WyDLm1I0RZVUwhFywu7MfI0Styc1DFCyPycoNxP631Yr3Q0zuk4T6
-         F7+ceGz85Kvb/8XdYnj63poO+pVopun/LR3ia2HeQVKVo2eXkCDoTaBMMKjb8CwZiE/0
-         dLUDURU5HG9k5lYXm583O6or/rvu6+BmAaaorDVeTVN68ykweJ0uAyNkwgnenI7FXkr5
-         PWSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNPu6CiSJzEFc2z8T0Re6El+H8yLEtASWIxclcm+ld6kvr2hXYu5WfkVfZpncVzpWTkeYl/frhun3E@vger.kernel.org, AJvYcCXKIYZknQUUawyE0rw2d+A0jD2CuekxDK17ThpkVpV5ccxi/d4c6gKcuE33l34c4aylV1eJmr6OmHDf+qGy@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyg4eIexSpVawDKcudv86eLjes5PvY014F/D5DguzMRZ5Br7sJf
-	5dQ0PiSCquc7GW1KHsUSBZ9c/AxFZ4GDoucHx7UE6hvL4S04xEA7vFyesNX6kDsTuy06e+d/GJv
-	wtnOvW7ulKb1p41o8DST2wXeaGXM=
-X-Google-Smtp-Source: AGHT+IGUdU+h+hht4AnIJHIpk5GDpGgevmNBw32u6Cg0ojQjMizUfieIlJnFQWDOIjZW9gSubMvP7BelF8hDq6Rw/2I=
-X-Received: by 2002:a2e:80a:0:b0:2f3:e7cb:ee37 with SMTP id
- 38308e7fff4ca-2f55b64108cmr13324471fa.8.1724851507882; Wed, 28 Aug 2024
- 06:25:07 -0700 (PDT)
+	s=arc-20240116; t=1724851555; c=relaxed/simple;
+	bh=7vmjyYPgajUTxOHRDLU3EIyAUmIO9fgSOVbuTpFdPeQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cRhmaRkE8fvgx+T1yIEGFMfhyydUnH87Lsm4qLNgA7RwbzZAIY2TDHxpYLmJKfrWAWC0GGzjEDcFVXtsgwGrvcIs9yfxx/xdH7x2393u4lFjqvQPPl26D3PBoBxm9WW4M7iQbTHjHYGQqCc9+hziCJRXpysjqNwNvf1kvrPYRAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CDi5kxjx; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47SBWsdS021420;
+	Wed, 28 Aug 2024 13:25:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=jMopFolIudXZ46Gxtl89SWaz5SwBHrWJ8yg4XIQFGw4=; b=CD
+	i5kxjxJ51yfn7rsX+/HCgyTbsCHELcVk8zcqV6zRcd2nn5/r8pN20oiqI45rYVzm
+	zPmABzrMPdbEcQTNO7eBaicp1df5ruJpO1Z78THO0xhZ7iW+lMGC8WPF4JMX0ZRR
+	4gDWlVgq3TdejF1Y53W3IewkKiUYnhByUv37jXHRLvtTRKiINGDiGmkShAUGDL63
+	xs8oGMB5Lvo3jrFl2x9Y4PdGCccmVxIHq+oWhysGnll57226QYUdIqia5bbu6ONV
+	5MW7jlVATW4b2iQ8fGVmJv7nfz4f/oa23nWiK25wiNfkXfsAOono2q/vvgRzMT0x
+	KKYPcy0yTb00M4Nu3cmQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419pv09uxj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 13:25:48 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47SDPlWu017546
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 13:25:47 GMT
+Received: from hu-mapa-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 28 Aug 2024 06:25:43 -0700
+From: Manish Pandey <quic_mapa@quicinc.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        "James E.J.
+ Bottomley" <James.Bottomley@HansenPartnership.com>,
+        "Martin K. Petersen"
+	<martin.petersen@oracle.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_nitirawa@quicinc.com>,
+        <quic_bhaskarv@quicinc.com>, <quic_narepall@quicinc.com>,
+        <quic_rampraka@quicinc.com>, <quic_mapa@quicinc.com>,
+        <quic_cang@quicinc.com>, <quic_nguyenb@quicinc.com>
+Subject: [PATCH V2] scsi: ufs: qcom: update MODE_MAX cfg_bw value
+Date: Wed, 28 Aug 2024 18:55:26 +0530
+Message-ID: <20240828132526.25719-1-quic_mapa@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828074755.1320692-1-net147@gmail.com> <2502361.uoxibFcf9D@diego>
-In-Reply-To: <2502361.uoxibFcf9D@diego>
-From: Jonathan Liu <net147@gmail.com>
-Date: Wed, 28 Aug 2024 23:24:56 +1000
-Message-ID: <CANwerB0NUFyJ1egYNEAnhdqSyBTq41cSKKC0bAbKudZAPx8UfA@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: rockchip: Enable RK809 audio codec for
- Radxa ROCK 4C+
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, FUKAUMI Naoki <naoki@radxa.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: veOwIliHAef5CjC675GRziJMnIDs_Olh
+X-Proofpoint-ORIG-GUID: veOwIliHAef5CjC675GRziJMnIDs_Olh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-28_05,2024-08-27_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ priorityscore=1501 impostorscore=0 suspectscore=0 lowpriorityscore=0
+ malwarescore=0 spamscore=0 mlxlogscore=967 mlxscore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408280096
 
-Hi Heiko,
+The cfg_bw value for max mode was incorrect for the Qualcomm SoC.
+Update it to the correct value for cfg_bw max mode.
 
-On Wed, 28 Aug 2024 at 22:59, Heiko St=C3=BCbner <heiko@sntech.de> wrote:
-> Am Mittwoch, 28. August 2024, 09:47:53 CEST schrieb Jonathan Liu:
-> > This adds the necessary device tree changes to enable analog audio
-> > output for the 3.5 mm TRS headphone jack on the Radxa ROCK 4C+ with
-> > its RK809 audio codec.
-> >
-> > Signed-off-by: Jonathan Liu <net147@gmail.com>
->
-> as it looks like you have one of those boards, could I possibly as you
-> to take a look at the vdd_cpu_b and vdd_gpu nodes?
->
-> I see (and devicetree check reports it too) a pinctrl-0 for the vsel-gpio
-> without accompanying pinctrl-names.
->
-> Could you check if things fail if you either add pinctrl-names or remove
-> the pinctrl-0 entry?
+Signed-off-by: Manish Pandey <quic_mapa@quicinc.com>
+---
+ drivers/ufs/host/ufs-qcom.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I tried both but neither resulted in any change to the warnings in dtbs_che=
-ck.
-Reverting my change also results in the same warnings so I don't think
-it is related to my change.
+diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+index c87fdc849c62..ecdfff2456e3 100644
+--- a/drivers/ufs/host/ufs-qcom.c
++++ b/drivers/ufs/host/ufs-qcom.c
+@@ -93,7 +93,7 @@ static const struct __ufs_qcom_bw_table {
+ 	[MODE_HS_RB][UFS_HS_G3][UFS_LANE_2] = { 1492582,	204800 },
+ 	[MODE_HS_RB][UFS_HS_G4][UFS_LANE_2] = { 2915200,	409600 },
+ 	[MODE_HS_RB][UFS_HS_G5][UFS_LANE_2] = { 5836800,	819200 },
+-	[MODE_MAX][0][0]		    = { 7643136,	307200 },
++	[MODE_MAX][0][0]		    = { 7643136,	819200 },
+ };
+ 
+ static void ufs_qcom_get_default_testbus_cfg(struct ufs_qcom_host *host);
+-- 
+2.17.1
 
-Regards,
-Jonathan
 
