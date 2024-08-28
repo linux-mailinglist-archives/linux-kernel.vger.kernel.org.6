@@ -1,109 +1,151 @@
-Return-Path: <linux-kernel+bounces-304405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21D2C961FA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:24:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F4A2961FA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8978FB230D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:24:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD8131F258EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819A1158214;
-	Wed, 28 Aug 2024 06:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E77F158555;
+	Wed, 28 Aug 2024 06:23:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CAQCxK0i"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kOcBjUMs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1B5157A5A;
-	Wed, 28 Aug 2024 06:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3541553BB;
+	Wed, 28 Aug 2024 06:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724826198; cv=none; b=rlcX/fZECp6cijlAt/OGYTfXfXg34TFyNw48xxkw6qjCIVFvXz35A4APLgyqD1TltraPIFya0hBW7N0Pg7rtUqnVmezIjCtihdAHPP15Z5E+ld7VymmbOYlYObwr3l7qWPIQMNvm2NwA+rPZZlNXHuhOD2xdaPkTFCkiiluOMqI=
+	t=1724826213; cv=none; b=mRAT34B+HWEp4oCLpBJtv63L5zWiE+dZZOOM4ksut9/I0zzo2ringOqxPNLLzRwjDmMJu1qxuU3ZaXc+ojtnB8IARC0zr2J84raFmS9UnyVZ9tmAeuViKjDWbFnTKXzolDi1eS8d8t1VI30MjwJIG11IHiXkfF3X+bQgJ0z/ftg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724826198; c=relaxed/simple;
-	bh=M4LgZVz4mIn1ZY30fwcbWgsAQnw5a1yuTqVz7xcVGsM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JKtKq4bQUQ64G2WXpsNTj+Kd5xZ/fhypzK/q8aQQV3sTqi5PuzOInKyM9BWgx2npfwuSAGPspHLm3+0tI5FjnYMLak8b3BhiGXMBLpIttr9C5R62Ta+E7PrPHuADMzAy9huiTfdgUWbMX8AMpkc3EBrmeoCYZP7eB7pB9LUKFns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CAQCxK0i; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 714C020009;
-	Wed, 28 Aug 2024 06:23:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724826194;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MrtVMCBcACVqTWE8JfEJ5Lda89wQNtdQvQ4uwQLo7dg=;
-	b=CAQCxK0ig6dlqLuoDPZHh8BeZD3ypyah2ndaFMoNS4Wa5H8SgnUMFrC9+m5M6NEJFt06eC
-	tsqn6dD3320TEsuG4EzRxlmix2Xexv1ClIPE3I0BHtrYPAwubHaXmtqEItEdlvxXn7+aAS
-	oH24cLr6JnNC9Qgnwi40nVWhlJMNphgr8mhbdZM/0jQaf7QY6cffnxUyVTzilmh9tI+I76
-	zm43sKYq+86JEsTyG0rqptnw2ICN0Ss7qmYCfeUqd+wt/kb9NbLjvOqie3kpyN+tSCPOlE
-	ZW0ITuYwgMA54rNobWU0kS/akzdOW00sSDB/fAni3SAY3MU5n+OGNkdKIJ66Ng==
-Date: Wed, 28 Aug 2024 08:23:11 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: syzbot <syzbot+5cf270e2069645b6bd2c@syzkaller.appspotmail.com>
-Cc: andrew@lunn.ch, christophe.leroy@csgroup.eu, davem@davemloft.net,
- edumazet@google.com, hkallweit1@gmail.com, kuba@kernel.org,
- linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
- netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] general protection fault in
- phy_start_cable_test_tdr
-Message-ID: <20240828082311.406c9ebb@device-28.home>
-In-Reply-To: <00000000000094740b0620b32b4e@google.com>
-References: <00000000000094740b0620b32b4e@google.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1724826213; c=relaxed/simple;
+	bh=byXfuoq79N/V0IYSGU9kcsAei/E3VUj3YPsQQ/jkVqY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ptLej6s9+A28Zgz+W/hqaw+xy9GVrpfHMA8GFSs54tEeEQXNecc/LGyaCcOc4OjAI8anmLTVP4MZU9UZiJ9H96Q8FYV4vWvLMV1RdAO5Kh8wH44cEgNs4EGafums+YOI6fgPKNqvDXG9bm63Eghie5CCGTpQvs8M1Y/SbqIO4iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kOcBjUMs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09700C568C9;
+	Wed, 28 Aug 2024 06:23:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724826211;
+	bh=byXfuoq79N/V0IYSGU9kcsAei/E3VUj3YPsQQ/jkVqY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kOcBjUMsYtwZQUNV/tcS8ud5boakq+K7s8SolJkdSqbJbhHwnNTEsTAkAYXwvsneE
+	 rGHr4MtdCjcegKyR38ooP6AFwdZHAH7RiSRqSiqeF/NoKI3+6rlTI7jE1kiD5jo9C7
+	 ojzC98j18q+5xO4hg/rpLoN0HsRQ4uSEfQf/Zpms641mcGk5H041WyH7JZROshwrUP
+	 GJAfBc3n6EHycVtohJ7+zlfXxd4eZs7y5gBfLVfLGiTO6FiL0OwCFgn/4RWfx+JEi4
+	 PgwHplXxz0Gt0I6VEiWNqgqryv57HwQgWXfb2IVcCW7fAVrsY41Lv6udIQz/HdqP3z
+	 oUW7QyngHezyA==
+Date: Wed, 28 Aug 2024 08:23:27 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Lijuan Gao <quic_lijuang@quicinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, kernel@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 5/6] arm64: dts: qcom: add initial support for QCS615 DTSI
+Message-ID: <gtoz6fzmukti7mbdihsw5ycltoozhrxgery536rh6dgpcqoru2@gd27iemigqae>
+References: <20240828-add_initial_support_for_qcs615-v1-0-5599869ea10f@quicinc.com>
+ <20240828-add_initial_support_for_qcs615-v1-5-5599869ea10f@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240828-add_initial_support_for_qcs615-v1-5-5599869ea10f@quicinc.com>
 
-Hi,
-
-On Tue, 27 Aug 2024 17:09:22 -0700
-syzbot <syzbot+5cf270e2069645b6bd2c@syzkaller.appspotmail.com> wrote:
-
-> Hello,
+On Wed, Aug 28, 2024 at 10:02:15AM +0800, Lijuan Gao wrote:
+> Add initial DTSI for QCS615 SoC. It includes base description
+> of CPUs, interrupt-controller and cpu idle on Qualcomm QCS615
+> platform.
 > 
-> syzbot found the following issue on:
+> Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs615.dtsi | 449 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 449 insertions(+)
 > 
-> HEAD commit:    f9db28bb09f4 Merge branch 'net-redundant-judgments'
-> git tree:       net-next
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=1656cc7b980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=df2f0ed7e30a639d
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5cf270e2069645b6bd2c
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1582047b980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=100af825980000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/585e02f7fe7b/disk-f9db28bb.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/b9faf5d24900/vmlinux-f9db28bb.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/f9df5868ea4f/bzImage-f9db28bb.xz
-> 
-> The issue was bisected to:
-> 
-> commit 3688ff3077d3f334cee1d4b61d8bfb6a9508c2d2
-> Author: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> Date:   Wed Aug 21 15:10:05 2024 +0000
-> 
->     net: ethtool: cable-test: Target the command to the requested PHY
+> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> new file mode 100644
+> index 000000000000..cf7aaa7f6131
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> @@ -0,0 +1,449 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +/ {
+> +	interrupt-parent = <&intc>;
+> +
 
-A fix for this has been sent already :
+No need for blank line.
 
-https://lore.kernel.org/netdev/20240827092314.2500284-1-maxime.chevallier@bootlin.com/
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+> +
+> +	chosen { };
 
-Thanks,
+Drop, redundant.
 
-Maxime
+> +
+> +	clocks {
+> +		xo_board: xo-board {
+
+xo-clk? xo-board-clk?
+
+But if board, this does not sound like part of SoC. See other files how
+they do it.
+
+
+> +			compatible = "fixed-clock";
+> +			clock-frequency = <38400000>;
+> +			#clock-cells = <0>;
+> +		};
+> +
+> +		sleep_clk: sleep-clk {
+> +			compatible = "fixed-clock";
+> +			clock-frequency = <32000>;
+> +			#clock-cells = <0>;
+> +		};
+> +	};
+> +
+> +	cpus {
+> +		#address-cells = <2>;
+> +		#size-cells = <0>;
+> +
+> +		CPU0: cpu@0 {
+
+labels are lowercase.
+
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a55";
+> +			reg = <0x0 0x0>;
+> +			enable-method = "psci";
+> +			power-domains = <&CPU_PD0>;
+> +			power-domain-names = "psci";
+> +			next-level-cache = <&L2_0>;
+> +			#cooling-cells = <2>;
+> +
+> +			L2_0: l2-cache {
+
+lowercase
+
+> +			      compatible = "cache";
+> +			      cache-level = <2>;
+> +			      cache-unified;
+> +			      next-level-cache = <&L3_0>;
+
+Best regards,
+Krzysztof
+
 
