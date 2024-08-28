@@ -1,195 +1,102 @@
-Return-Path: <linux-kernel+bounces-305820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92DE99634DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:34:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA6AF9634DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:36:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2247C1F240CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:34:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7BEE1C242FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD661AD401;
-	Wed, 28 Aug 2024 22:34:23 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BF21AC8AE;
+	Wed, 28 Aug 2024 22:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mCY5kqq5"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB121553A2
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2794F1553A2
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724884462; cv=none; b=doV2lbq6ZHowXJc9Ayqo+Bii131jQpLuQ97weMjmJmJf3MJ7K/5csgBO0rpoycWG4EatSqVIiIwi4xjlBzzMtWl9MlX2DZvRpCSpRqGnR4EhtHKu/hQRdaCItTMdBfbdphmIsApBv8Glm5orVlEXT+CnxOpbRQPTaZOtL6qyKr4=
+	t=1724884609; cv=none; b=c6RPyxjYitLXT4YwwbwjqR+SuTq4B2NH2Wj6Lycsyrkw5IWedh8MuzKoUzaZByfORsvz1eBV2YyKvEUm7Q3Jo1hT07nu14AKFQfPELHiaM9fkqLmuZJietMK+PUWi4hL5FGs8yddQvCKAKEDqcQ8B/lRifv0xBUhgCuMB8TGfEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724884462; c=relaxed/simple;
-	bh=sOQz8kkEi5Ubq+Mjv10jlf6DH/Uax0Bh8eUjBH/cOUo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=eWyvajsDqMSpiuiwjda9G9OReou9V+wuiPtaj6qcMnOitJkOqSutHz1bqnkBdEKWvB4ifTwCmpjC//wF+ZnDeHDUA9zk8kBZG+P49UzHjIqIzXDDPPMXCxaiXtQGqZdcLgqiHpz22HwC+Ofm7rezwmQvZfXWWaBVCKsxNQxCfGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82a13b28f1dso5012239f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:34:20 -0700 (PDT)
+	s=arc-20240116; t=1724884609; c=relaxed/simple;
+	bh=4zmJBcg3QjuPUeks1/CkV+B2YJEj6cuYa6Hc64ClXvI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h1DXkmdEQuxwyjY5QN5dKN0aU1LD5Ahv/4w+lrs9Bd4QGe68LDeNbLNJUFeIs+qGT8w3tA2smFRRQptJOaoniugokcCiiL3lksQQdSZDp7MKQmA/Y92TxysMf8u95ocR1P+qz/oTqearlc1RCRbZw0xKHqNas6vqBuXCjx0Oh3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mCY5kqq5; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6c0e22218d0so942377b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:36:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724884607; x=1725489407; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4zmJBcg3QjuPUeks1/CkV+B2YJEj6cuYa6Hc64ClXvI=;
+        b=mCY5kqq5fKpIAFhGsHBqo48qCtf/GaoOnV+fU2T3squsVS6aYMfVfYzLb/fl81oQB/
+         QovJfHzXCdWy63435agSDpET1Jo/I+ta51C3TDucHoOBeSb6WQcCOwClgPRvDhYoi7EY
+         JRf+X+BZ69/8KpgMMzkEXG0iIX/c+hKNuiAYX1DUeEOLQ4BFZhACXocbPA4G/GY0pmvu
+         KppEMP7ci8eIjf8adDcBZ/NGwGpgWxJmpZ35Tpfo14RgDd32V1C6cwre3aoqESVc8ahb
+         OI7hX7nGlL15lKcXRtJR6uIWfRWugucel4kENTLeBUx/p4Gsqmtjoy4iAEBmliED3Y1o
+         MipA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724884460; x=1725489260;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+IjJ2MY54Emt8uSjZEqDveAzp1Pv35o4h28WCyiZ0Io=;
-        b=Xb6HfoyvmR21r93D6/egfVc+rvsWvGb6HsewGVXFJkeCEOnh1K9qrYCMk9Kz8Slg3Y
-         LktEdtNwcmmOe5wi+HW4f8fK96BmUuT5b9VaKkRbDKsj1QY50b8oijtqdO0imLTClLS0
-         FdshSLeX0XULaJfA1qraDYg3Lyvwv/Oq7nV28HRJ/5qnDkhCpRafPBTBtuseQ0wgMozR
-         MkKAAOdw9wXKlIg/fEMX0q+4HTzJkPYTqKXU7IG5fvQa4HZv61KI8dUvI3J9zxZw2LSX
-         GV+LhNbxR1YUve7hA29lVC3TqAbzZSeDu7HAzOTD/iECFQG4zTwGKsOBVzlMk3MXZlSM
-         NesQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUw2mmlq35zHUY2wVXNCYrL6treyUjjtrlMbcE4WTU9EHeCpKjQnyiCQXvBOx3+5qauEOIIPAeCBZM3Xlw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDX5qI7PTMfvmzc0WsNweO//Z9j3gToR4lSkw8A0yZqnxecn6Z
-	e1JDq9JNTGLbYJsLucwrr7xknBqQElZ6KXswKmAZ2bT+NOYmMDgmzQeIXFin5kduE1Ec4c59+1r
-	XaGAd7BxRZF9cMMDZdfc3SxzaKqk5w6tp6HRFRGuwUJLLvdlNmiu17PA=
-X-Google-Smtp-Source: AGHT+IHDOjRuYWKOInHY9wiI2ox0PvQiiErxuZ+PFgdIYthTmkhgpFsxVcxTm/LxXjxBoM7PrBdFjVzluYZ6hO9nrQdtye/m82hN
+        d=1e100.net; s=20230601; t=1724884607; x=1725489407;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4zmJBcg3QjuPUeks1/CkV+B2YJEj6cuYa6Hc64ClXvI=;
+        b=WIsd4mJ7H5v6q/w6KvuMJChqW0tdZr3HIMMd/52n4xCVEd7NFsNXgi+GFSD325gxjc
+         ydu52R09Vv3V8R4SjVpI/8ioeDvEYxZe3rqVFIDSQ8qxdMcWrTaTHgvsKRLw1IXXbvD/
+         YNgPmNMcxvUsMJLZdw6sjzoHGT4dwTiOTkrFoBeU+jYnST6d9mnlyJHyzh54xB14x9Ra
+         nskNcyGg8ipdgvEyXV1oC+yLVUDETL3r2vfPyBat8svVsq1PGvcVqA6h7mht0Eyh2bVw
+         fztpz9Zez6J5g+GC0HHHIzZBnVWdhGmZd1aQirA26k2KWl5ABnVlUEmmnalAHrT0E3I6
+         XBTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpNKxbOxgjK3bdzUn6dwUbc7ehkE7IkfCiqB4046Qlw67ugjNzeElH21EpHMnZMxp1RCjJUiMGuPymzlg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAkEgekWBKWJwUKfH+NTPzrOi8ECq9A8bIhIqfCorsGblQra3o
+	EB78OlBQCpK3v71ICWof2ayWK7Viy1eXQW1IUv1Z56CKJt/uagqSNNtv4UPuUboNp+0sDCAUiDn
+	XrK7zmsdo+OmpPK9IcF0mo0+swXk=
+X-Google-Smtp-Source: AGHT+IGMPgVRkcE5bmtYUK7c43kRp/lslqYyO2BiFRn0kwgmpLLIxaQlPGlxX68dG/i4pIgHtyKSmHriPMBrGE9NvMg=
+X-Received: by 2002:a05:690c:ec5:b0:6b2:28c3:b6fe with SMTP id
+ 00721157ae682-6d275f27ab5mr8820247b3.2.1724884606869; Wed, 28 Aug 2024
+ 15:36:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:370d:b0:4c0:971d:36b1 with SMTP id
- 8926c6da1cb9f-4ced08b2b8dmr15059173.3.1724884460255; Wed, 28 Aug 2024
- 15:34:20 -0700 (PDT)
-Date: Wed, 28 Aug 2024 15:34:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008851fe0620c5f51c@google.com>
-Subject: [syzbot] [btrfs?] kernel BUG in __extent_writepage_io (2)
-From: syzbot <syzbot+ba3c0273042a898c230e@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, hch@lst.de, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240828204251.6642-1-rosenp@gmail.com> <20240828152927.6370bed2@kernel.org>
+In-Reply-To: <20240828152927.6370bed2@kernel.org>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Wed, 28 Aug 2024 15:36:36 -0700
+Message-ID: <CAKxU2N9us=0+b2xRJs_Y1SKx8rF=d6XmwTom9oQvBucH5=cYUA@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: ag71xx: update FIFO bits and descriptions
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
+	linux@armlinux.org.uk, linux-kernel@vger.kernel.org, o.rempel@pengutronix.de, 
+	p.zabel@pengutronix.de
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Aug 28, 2024 at 3:29=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
+>
+> On Wed, 28 Aug 2024 13:42:49 -0700 Rosen Penev wrote:
+> > Taken from QCA SDK. No functional difference as same bits get applied.
+>
+> Are these used? Would be nice to heave your best guess on the impact
+> this change will have in the commit message, for posterity scanning
+> git logs a few months/years from now.
+No impact. It's effectively a documentation fix.
 
-syzbot found the following issue on:
-
-HEAD commit:    d2bafcf224f3 Merge tag 'cgroup-for-6.11-rc4-fixes' of git:..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12d5fa7b980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4fc2afd52fd008bb
-dashboard link: https://syzkaller.appspot.com/bug?extid=ba3c0273042a898c230e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=137c040b980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16ddb015980000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/7569f02310fb/disk-d2bafcf2.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e30fee7b6c1d/vmlinux-d2bafcf2.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2ffddebac153/bzImage-d2bafcf2.xz
-mounted in repro #1: https://storage.googleapis.com/syzbot-assets/cd08557ae343/mount_0.gz
-mounted in repro #2: https://storage.googleapis.com/syzbot-assets/90ff8392fe84/mount_2.gz
-mounted in repro #3: https://storage.googleapis.com/syzbot-assets/9c5b91850930/mount_7.gz
-
-The issue was bisected to:
-
-commit f22b5dcbd71edea087946511554956591557de9a
-Author: Christoph Hellwig <hch@lst.de>
-Date:   Wed May 31 06:04:59 2023 +0000
-
-    btrfs: remove non-standard extent handling in __extent_writepage_io
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10974043980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=12974043980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=14974043980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ba3c0273042a898c230e@syzkaller.appspotmail.com
-Fixes: f22b5dcbd71e ("btrfs: remove non-standard extent handling in __extent_writepage_io")
-
-assertion failed: block_start != EXTENT_MAP_HOLE, in fs/btrfs/extent_io.c:1488
-------------[ cut here ]------------
-kernel BUG at fs/btrfs/extent_io.c:1488!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 1 UID: 0 PID: 5722 Comm: syz-executor399 Not tainted 6.11.0-rc4-syzkaller-00255-gd2bafcf224f3 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:__extent_writepage_io+0x1224/0x1400 fs/btrfs/extent_io.c:1488
-Code: f7 07 90 0f 0b e8 dc 68 df fd 48 c7 c7 e0 92 2c 8c 48 c7 c6 c0 a0 2c 8c 48 c7 c2 80 92 2c 8c b9 d0 05 00 00 e8 9d 15 f7 07 90 <0f> 0b e8 b5 68 df fd 48 8b 3c 24 e8 bc 9d ff ff 48 89 c7 48 c7 c6
-RSP: 0018:ffffc900097d6ee8 EFLAGS: 00010246
-RAX: 000000000000004e RBX: 0000000000000000 RCX: 2f9fd79be1350f00
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: dffffc0000000000 R08: ffffffff817402ac R09: 1ffff920012fad7c
-R10: dffffc0000000000 R11: fffff520012fad7d R12: ffffea0001ccbdc8
-R13: 1ffffd40003997b9 R14: fffffffffffffffd R15: 000000000007b000
-FS:  00007f11a84976c0(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f11a0fff000 CR3: 0000000020e4c000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __extent_writepage fs/btrfs/extent_io.c:1578 [inline]
- extent_write_cache_pages fs/btrfs/extent_io.c:2251 [inline]
- btrfs_writepages+0x12a2/0x2760 fs/btrfs/extent_io.c:2373
- do_writepages+0x35d/0x870 mm/page-writeback.c:2683
- filemap_fdatawrite_wbc+0x125/0x180 mm/filemap.c:397
- __filemap_fdatawrite_range mm/filemap.c:430 [inline]
- filemap_fdatawrite_range+0x120/0x180 mm/filemap.c:448
- btrfs_fdatawrite_range+0x53/0xe0 fs/btrfs/file.c:3794
- btrfs_direct_write+0x558/0xb40 fs/btrfs/direct-io.c:952
- btrfs_do_write_iter+0x2a1/0x760 fs/btrfs/file.c:1505
- do_iter_readv_writev+0x60a/0x890
- vfs_writev+0x37c/0xbb0 fs/read_write.c:971
- do_pwritev fs/read_write.c:1072 [inline]
- __do_sys_pwritev2 fs/read_write.c:1131 [inline]
- __se_sys_pwritev2+0x1ca/0x2d0 fs/read_write.c:1122
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f11a850bd79
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 41 1d 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f11a8497158 EFLAGS: 00000212 ORIG_RAX: 0000000000000148
-RAX: ffffffffffffffda RBX: 00007f11a85916d8 RCX: 00007f11a850bd79
-RDX: 0000000000000001 RSI: 0000000020000240 RDI: 0000000000000004
-RBP: 00007f11a85916d0 R08: 0000000000000000 R09: 0000000000000003
-R10: 0000000000002000 R11: 0000000000000212 R12: 00007f11a85916dc
-R13: 000000000000006e R14: 00007ffd9dcad860 R15: 00007ffd9dcad948
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__extent_writepage_io+0x1224/0x1400 fs/btrfs/extent_io.c:1488
-Code: f7 07 90 0f 0b e8 dc 68 df fd 48 c7 c7 e0 92 2c 8c 48 c7 c6 c0 a0 2c 8c 48 c7 c2 80 92 2c 8c b9 d0 05 00 00 e8 9d 15 f7 07 90 <0f> 0b e8 b5 68 df fd 48 8b 3c 24 e8 bc 9d ff ff 48 89 c7 48 c7 c6
-RSP: 0018:ffffc900097d6ee8 EFLAGS: 00010246
-RAX: 000000000000004e RBX: 0000000000000000 RCX: 2f9fd79be1350f00
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: dffffc0000000000 R08: ffffffff817402ac R09: 1ffff920012fad7c
-R10: dffffc0000000000 R11: fffff520012fad7d R12: ffffea0001ccbdc8
-R13: 1ffffd40003997b9 R14: fffffffffffffffd R15: 000000000007b000
-FS:  00007f11a84976c0(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005654e2821068 CR3: 0000000020e4c000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+I see ag71xx_wr(ag, AG71XX_REG_FIFO_CFG5, FIFO_CFG5_INIT); so yes, they're =
+used.
+>
+> BTW missing CC netdev, feel free to resend without 24h wait.
+That's embarrassing. Will do.
 
