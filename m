@@ -1,255 +1,120 @@
-Return-Path: <linux-kernel+bounces-305267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B591962C28
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:24:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2361E962C2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:25:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 711091C23AAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:24:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2DE5287161
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D58B19E838;
-	Wed, 28 Aug 2024 15:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA8B18801C;
+	Wed, 28 Aug 2024 15:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BRNmXv8y"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="COcuZX99";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="b+W4w6vw"
+Received: from a7-49.smtp-out.eu-west-1.amazonses.com (a7-49.smtp-out.eu-west-1.amazonses.com [54.240.7.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C56B188014
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FEE16D334;
+	Wed, 28 Aug 2024 15:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724858677; cv=none; b=jbrt7d/GtqwdX4Z3c9EUzcWMOLqpMKvqMDufShg8ZyIXTcLCvVVsRReSOtuL+vdPu4Pvai+bxbzg+cfIPbJKdoZ+zy3kBcQtNAhQ0blPjsXxZw6PZiIH8wqE/+l2M/S6d4CavwiYPr7k8iJIOF+rkA8CUrzVJJscvgwCn6CEe4k=
+	t=1724858695; cv=none; b=e3U5VipY/S0IOXYblZjkpgDdGosgwCcRu2SfQWtlaK20upuiTOAZjArhjtSD/5fx20BlCmY/ZqtLCps1KM9XhSZJlfsDrmDyXugwlPku/ZtgQjMCe78vdzixv4uppHq8PpUGnpGdZaXQEhZXiVVzBDPLaQGPi5MCd2NnELDngOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724858677; c=relaxed/simple;
-	bh=sECdKZWmQ58VFDoOPO3d4pP0VUHs2KL2y5lS6y1lA/o=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=clQZo13XMCJtiJaNQaMSRTCF8bDBgwPY+S8IFWFnUkIlEG4xmNlijj7ghu+w1cdaG4BoKIi4fvMm25wW7BaP63AmT/sk1ZW2mmGInIfhYdRSbURtFucDfNdQU9UVrhOBanQx2rU3IBFP96E5pHcBBeS88uY6ZMYcJKyw3UTl18Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BRNmXv8y; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8695cc91c8so722999166b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 08:24:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724858673; x=1725463473; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RccO/6aYSzsD64ZgEXVUnoiwa51kK0FzwBqBJe1629o=;
-        b=BRNmXv8yjiovcJXbjKFM8khnJr8M2n/lU+gyfFIF2F1cYXcaDIYgkKMneAp4GU3mCI
-         hfc+ugTygrpALphhIZsu7jejr3nKDTdXhLHf3xqgkSVZi8fG6nuyqeAKSBGF6iXF467Y
-         DFGrNpKyHlpMOWLmY+lLcsxDztm42qJtVQSDZ2fd/ppHeL+qrFdrq330slxPIGz6R5Ch
-         131dWnTV1L5GYI7aRMit8Z0z+qhvoKLhm7U6E4XuAS58pJ/KURoI7hOZn1kpor3eUZ3G
-         5CVVTwcyoWRONBdTwbzJuIZZCumB0qA9HkG0ONnMzlnQwtHaOUqhfc2NSs+z+8P4CSSj
-         knUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724858673; x=1725463473;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RccO/6aYSzsD64ZgEXVUnoiwa51kK0FzwBqBJe1629o=;
-        b=NjD+rcX9FuruNmEkqk40UijE6KsADL3J3PlbkP7pmT3lmsd63cH0wNtNlARQ/DGlyG
-         cCrP3Uq00nwLLlJSkrV/uoAWBde2xgjYfm7OtbK9ZShwkRyKo26DHakHDsBxp8YBTmoB
-         TcKLXoFPb0NevBse/mHndEBnK+Ixv6TfRfK97So4jDcAAZi2QNAIaA02jZQjhY0Iwddc
-         h8ylvHYt8cExcMl6x9TFjYiVgnjk4FBagrALOCNFSarEueUdRgkl0euvdv3iU9oaahFL
-         UMs+apf31X7UzcoFRdZirTVICaJv5rO5rhiGCw53ic4U9HVfX0X5RJ4qqcMAt1+CWAtr
-         A6iA==
-X-Forwarded-Encrypted: i=1; AJvYcCVr8AJnsX+Db/OHw5EhVi8vKaIHSCeMqF0X15T63V6t40usfuXsL3/EjJBcxj0NrMU4VA6rm2rOcAIigig=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiucqstgYe5IIX8+Z8akPdc/lr9K4g68oM72HzEFRgY+deLJLh
-	W4YS3SLMOSqUsBEgvvgmCE5WxWbt7I4xRzK7AgRKf56OKlwfaLkjqB3RW5r7IT4=
-X-Google-Smtp-Source: AGHT+IEGTIMf9HDmr3RD/PvAk+4C11JysnBRyFuK/mQqbOsClKq28ul4IglJqfFC2hAOgC6a2khVvQ==
-X-Received: by 2002:a17:906:6a29:b0:a7a:a7b8:adae with SMTP id a640c23a62f3a-a870a94fe14mr219949166b.4.1724858673188;
-        Wed, 28 Aug 2024 08:24:33 -0700 (PDT)
-Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e594a599sm255662266b.201.2024.08.28.08.24.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 08:24:32 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Wed, 28 Aug 2024 17:24:39 +0200
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 07/11] pinctrl: rp1: Implement RaspberryPi RP1 gpio
- support
-Message-ID: <Zs9BN_w4Ueq-VkJr@apocalypse>
-Mail-Followup-To: Linus Walleij <linus.walleij@linaro.org>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <eb39a5f3cefff2a1240a18a255dac090af16f223.1724159867.git.andrea.porta@suse.com>
- <CACRpkdbdXNeL6B43uV-2evCfr6iv8fUsSVtAND+2U0H5mSL2rw@mail.gmail.com>
+	s=arc-20240116; t=1724858695; c=relaxed/simple;
+	bh=YxFusZ1OLLxvSk44tX+mNzNkWdmB65BrCS5p7PaYt5s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mnG05gt/W0CWS6KIly1bHAym5ZiYDXvIvI3hVxidzD54F2OEjjmMoL2I9Qao+Z24lLLs5I3HHPrnls+NFr1x+uHQj1wx+enE2NN6zk5XCgZLBKorYAu5RettSj3SruXQW6SEfpJEujn0DDX7WzP73YlHE8/DbF4NQUgbqDiJHEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=COcuZX99; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=b+W4w6vw; arc=none smtp.client-ip=54.240.7.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1724858691;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Transfer-Encoding;
+	bh=YxFusZ1OLLxvSk44tX+mNzNkWdmB65BrCS5p7PaYt5s=;
+	b=COcuZX99qSzTc4lHLiO6tRoSuUWnCW1NpsSvZSnzPKPv8DEjHaiblQNdGRkOV/D0
+	zpimbqvlF4YBeLNOnQlsYiTSDUSyaPlJ5HtBXmALh7DizdVmafiexMeutjnS6BdxzIp
+	304walO+s2DAnuq9Anhpy1xHuVdhJLwo7plLevFPju3xGffne3LutLoXNckeXz+Dlj8
+	bAp6EbC04BtpU2Qq+tlHx3iDMJIZna59U3G0DWClfsAxF1iGA3m/Gc1/Bql9Wy06T49
+	vWzzH5KZKqY9U0fa0+e3fur22Iob/+lQkXp8xMPGUYuyN615cIGNV/ETUI3ANc2XtYY
+	+VhaZa55mQ==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1724858691;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
+	bh=YxFusZ1OLLxvSk44tX+mNzNkWdmB65BrCS5p7PaYt5s=;
+	b=b+W4w6vwJi+Dl9pLz8IY8EfvTUfslF+mezD4omzeaas6oaDoa7TpEjUHAre0/kws
+	M4vivSykEVSOLlFHZGEjFny3HOg+z+r2v+ngjGAytxYjp1wOUtky7fCigATUur5BeTr
+	8Oc+xHZeoHft8Nyd/eL3J3FfViNiGl4LUahZmb7M=
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+	Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, kernel@collabora.com, 
+	Detlev Casanova <detlev.casanova@collabora.com>
+Subject: [PATCH v5 0/3] Add dw_mmc support for rk3576
+Date: Wed, 28 Aug 2024 15:24:51 +0000
+Message-ID: <010201919996ef8a-db8bbe89-3c18-4dc3-bd0c-6498f09d978a-000000@eu-west-1.amazonses.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdbdXNeL6B43uV-2evCfr6iv8fUsSVtAND+2U0H5mSL2rw@mail.gmail.com>
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.08.28-54.240.7.49
 
-Hi Linus,
+The SD card controller on the rk3576 SoC stores the phase settings into
+the dw_mmc controller, so the code has to be adapted to implement that.
 
-On 10:59 Mon 26 Aug     , Linus Walleij wrote:
-> Hi Andrea,
-> 
-> thanks for your patch!
+Although the feature can be detected through the USRID register value, the
+decision to use it is based on the compatible.
 
-Thanks for your review!
+The compatible for rk3576 is added in its own group of compatible to mark
+that all devices compatible with rk3576 have internal phase settings and
+don't have the ciu-drive and ciu-sample clocks.
 
-> 
-> On Tue, Aug 20, 2024 at 4:36 PM Andrea della Porta
-> <andrea.porta@suse.com> wrote:
-> 
-> > The RP1 is an MFD supporting a gpio controller and /pinmux/pinctrl.
-> > Add minimum support for the gpio only portion. The driver is in
-> > pinctrl folder since upcoming patches will add the pinmux/pinctrl
-> > support where the gpio part can be seen as an addition.
-> >
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> (...)
-> 
-> > +#include <linux/bitmap.h>
-> > +#include <linux/bitops.h>
-> (...)
-> 
-> > +static void rp1_pad_update(struct rp1_pin_info *pin, u32 clr, u32 set)
-> > +{
-> > +       u32 padctrl = readl(pin->pad);
-> > +
-> > +       padctrl &= ~clr;
-> > +       padctrl |= set;
-> > +
-> > +       writel(padctrl, pin->pad);
-> > +}
-> 
-> Looks a bit like a reimplementation of regmap-mmio? If you want to do
-> this why not use regmap-mmio?
+Changes since v4:
+- Drop commit that ignores phase above 270 degrees
+- Use a bool instead of int for internal_phase field
+- Fix pahse typo
 
-Agreed. I can leverage regmail_field to get rid of the reimplemented code
-for the pin->pad register region. Do you think it could be worth using
-regmap-mmio also on pin->gpio, pin->inte, pin->ints and pin->rio even
-though they are not doing any special field manipulation as the pin->pad
-case? 
+Changes since v3:
+- Remove internal phase auto detection
+- Set compatible in own block, with own dt_parse function
+- Add internal_phase variable
+- Use function to set clock parameters based on internal_phase variable
+  instead of multiple ifs
+- Use different commit for skipping phases higher than 270
 
-> 
-> > +static void rp1_set_dir(struct rp1_pin_info *pin, bool is_input)
-> > +{
-> > +       int offset = is_input ? RP1_CLR_OFFSET : RP1_SET_OFFSET;
-> > +
-> > +       writel(1 << pin->offset, pin->rio + RP1_RIO_OE + offset);
-> 
-> If you include bitops.h what about:
-> 
-> writel(BIT(pin->offset), pin->rio + RP1_RIO_OE + offset);
+Changes since v2:
+- Drop rockchip,v2-tuning and use compatible-based detection
+- Fix coding style
 
-Ack.
+Changes since v1:
+- Renamed use-v2-tuning to v2-tuning
+- Rewrite v2-tuning description as the hardware feature
 
-> 
-> > +static int rp1_get_value(struct rp1_pin_info *pin)
-> > +{
-> > +       return !!(readl(pin->rio + RP1_RIO_IN) & (1 << pin->offset));
-> > +}
-> 
-> Also here
+Detlev.
 
-Ack.
+Detlev Casanova (2):
+  dt-bindings: mmc: Add support for rk3576 dw-mshc
+  mmc: dw_mmc-rockchip: Add support for rk3576 SoCs
 
-> 
-> > +
-> > +static void rp1_set_value(struct rp1_pin_info *pin, int value)
-> > +{
-> > +       /* Assume the pin is already an output */
-> > +       writel(1 << pin->offset,
-> > +              pin->rio + RP1_RIO_OUT + (value ? RP1_SET_OFFSET : RP1_CLR_OFFSET));
-> > +}
-> 
-> And here
+Shawn Lin (1):
+  mmc: dw_mmc-rockchip: Add internal phase support
 
-Ack.
+ .../bindings/mmc/rockchip-dw-mshc.yaml        |   2 +
+ drivers/mmc/host/dw_mmc-rockchip.c            | 217 ++++++++++++++++--
+ 2 files changed, 204 insertions(+), 15 deletions(-)
 
-> 
-> > +static int rp1_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
-> > +                              unsigned long config)
-> > +{
-> > +       struct rp1_pin_info *pin = rp1_get_pin(chip, offset);
-> > +       unsigned long configs[] = { config };
-> > +
-> > +       return rp1_pinconf_set(pin, offset, configs,
-> > +                              ARRAY_SIZE(configs));
-> > +}
-> 
-> Nice that you implement this!
+-- 
+2.46.0
 
-Thanks :)
-
-> 
-> > +static void rp1_gpio_irq_config(struct rp1_pin_info *pin, bool enable)
-> > +{
-> > +       writel(1 << pin->offset,
-> > +              pin->inte + (enable ? RP1_SET_OFFSET : RP1_CLR_OFFSET));
-> 
-> BIT()
-
-Ack.
-
-Many thanks,
-Andrea
-
-> 
-> Yours,
-> Linus Walleij
 
