@@ -1,164 +1,227 @@
-Return-Path: <linux-kernel+bounces-305836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 287EE96350F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:53:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFBA2963515
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D577D28422A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:53:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 006751C22636
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A32C1AD9E9;
-	Wed, 28 Aug 2024 22:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d2O4GfF7"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851C51AD9F4;
+	Wed, 28 Aug 2024 22:55:26 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D2D1A7AD8
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:53:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6481AC8B8
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724885590; cv=none; b=bcy1pNfSGx+slyyjKuGMbBFvYkDGpAn8EaUyPZVVdLGND2t0pudL3SJ2SERQepA4T2bcCAuU4fANw29GA2pj0+Gosr/G+nkgivwCvKy/dYT479ztt6Y7C2Bwl6jd2xW+Ak2jK04qggT5VJhvhkzVDCe0tJQ33PzEpBC+M7yW91E=
+	t=1724885725; cv=none; b=s90Eb3P3IJhThxU8ZU+E3Hp9RnC1VozIgaUg2beFvnDtaGbT4V07THoti+M0gkS/ygtLzV7YFTjEoG9zP8d418xjGIAVIGBdRFSNatplutDkBp9F/6DneBcYKi0ruJ4D3DgOLW+7IqfLxqQVuRST6PG09Eg39xxBE0h5D42lTu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724885590; c=relaxed/simple;
-	bh=vBcDKzqZD0IGH+kMo+OOysCrPxyHMCAFpcXSn+OPSOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gGeQ8evrJHd9e5lbvOx0AduZLrY3qfRtvbc3W/Q7xwchFMP2TbYyZ0ImwYY3L8MtBL1PCE6q/jZt1pknpV7ngdO5eSihG8gJ9zDb9HFoX6RV5aMqmkZm8JuwIasGpcyPyk38ghN/CMCc0oGAT1jVuLq0HgmiPzhOmjFb0TY2HYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=d2O4GfF7; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-202018541afso35775ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:53:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724885588; x=1725490388; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=nAbDwChQbWZl01mr4KnwFnysig2L5blgWIiA7h1UA+g=;
-        b=d2O4GfF7WopxCnqOqwsLLniMZHCWPaQPvt3QIdMi9YZJEaqqeR649XtcrztBfCf9pU
-         kAtum6pMD/WYzjSXmPMS6gfRJfqy3ugo074qqigzq7jsj7zZr0XcuT1mhg+tr7OV9elY
-         a9Q6d+jrqmjd6d3sdJV0xWFfcLDw8mmqCujW/lyEbrB5AJ4AEqlM7dzsznVNcJ43Qbab
-         OQwFuJyfQWDk3cuo+TzqsTN0uhtrH7eBpqtvebW3yXpKQHlG88snSzU8TD+sK8iz3Ehr
-         twQOQBMJxEz+np6I3dLHVZBcyMyOCApLKo77SIlJNJPjSd0V3m6+TMHMK/Fp9tMYi+Sj
-         mvYw==
+	s=arc-20240116; t=1724885725; c=relaxed/simple;
+	bh=R9JXWiIiyGK3Phni+fRUuMd6wD8dDnQ6XIGzMe7vtjY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nz/mTFO6Z1cYFMwFRTRuhRgOmU7cFMvdFXA279zZRtp9xCtv2eRDGU40Cjq2r8a5X/H+r8ZXxbORai/HSITN3Hp2aVARG/xX9mRBKAkT+bbtGUeiRQ8vyP7MIHY7DrnBEECLtKnOwUMm2w8bgKpIryyB0f9jk/Ka2l9KS3ys6tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39d49576404so77755945ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:55:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724885588; x=1725490388;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nAbDwChQbWZl01mr4KnwFnysig2L5blgWIiA7h1UA+g=;
-        b=Yh2hqnDbr8sz3nLIENQKZ9tNx2iMi/Tq54EsMAWXoTzNFNQ9LTjwjhJmc64ytj2jn+
-         9eePKAfq65KTvIKoG/zVnW+CXyyXsF8eFBxzJicPIlU105TdVC+Qhjy5o/Bh2ObWZuOQ
-         FSbkrGxdqXY409qvLgOreliGK+/NicPghFclAy5OV29NNY3j3+MBollPCxyPKilOMfso
-         +ZN+kN5hO/Sfyvk58BtXrHrbSix+iq6hBr8yL6F6JbVfSbb9M4MQvO/sG8dw7ZtD0rvc
-         K83xxZlKZhnIwPzcqwOlEZzYkQ13ovmN+L2vJwb94UUOGBB/yfgkVxMSeBVJMRx+Rnv6
-         ea0w==
-X-Forwarded-Encrypted: i=1; AJvYcCW1x7QKJRym1GAvX9MAAO3UZYx/Ko1WHG7iKQAGVOdw9rxWSmqG+JTKYzvGqQCQomQBAoTou27TtZ29fRM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWypwGnA2b2xlN7sfIyqnU0+O+D2M4ObXlQy4Mtaab9dxs8H8j
-	1+51yPrbkDzQPGWXaW4r5bAEZUbuuak2HdDGHkaBOeu7bcIe9Ud9dNzHCf6CiVpvgdPngNvCQbP
-	ySw==
-X-Google-Smtp-Source: AGHT+IEQaTc+wud0mzSYI+hEe/4PWmz2+rLLZ8+Mx8YVlCteMCgZHZsbCbUbqJpRqiB0krS+Bxb7ZQ==
-X-Received: by 2002:a17:902:e849:b0:1e0:c571:d652 with SMTP id d9443c01a7336-20510a7f2e1mr522765ad.1.1724885587784;
-        Wed, 28 Aug 2024 15:53:07 -0700 (PDT)
-Received: from google.com (83.92.168.34.bc.googleusercontent.com. [34.168.92.83])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038557eec1sm104064935ad.91.2024.08.28.15.53.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 15:53:07 -0700 (PDT)
-Date: Wed, 28 Aug 2024 22:53:02 +0000
-From: Sami Tolvanen <samitolvanen@google.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Matthew Maurer <mmaurer@google.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>,
-	Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>,
-	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 00/19] Implement DWARF modversions
-Message-ID: <20240828225302.GH2130480@google.com>
-References: <20240815173903.4172139-21-samitolvanen@google.com>
- <CAK7LNAQ0dHq3eALkvGDSCyVKOvhBqwCEG3BTQ0h52Xq_1YNu2A@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1724885723; x=1725490523;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+mRoEGntO1okv8sBZu8N5HLaZV2qiVXBA0Xd8Txm6AM=;
+        b=nrYjRhoSCsuEP6NNBY+MM8kAETewvcBghnEPwTjP0ohKDQI9iqPJq/vEtP6JmK2XlP
+         1baTE96a7B1/p+4mBan879HEI+WM+HYmgKjQMbxjW5LfRr3UUacncHUCQcaiwnyY/x1I
+         FABShNa72SIGbG/yIf5RS6IsOdYnMFlHT0Esmhab9+ksRYEsAbrtN9xzcDQ1nstg+iJ1
+         ntLVHPt4Wyfm9UyDNl0Aps01+xxGK4QSOk4KStx2yIjG2jCaBH72aj/EWFTer0jMtDMy
+         TOrhfKFEGcXkU3CJkfYSrt5DkNMxTLHT7YLguupWAqCNhq8OThLbZ4CbIvx9Rlo28MsW
+         kGJg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/PJaNPR5nvRNqfA3dJe1zekO5cZ5Lc+cYQAWKjoHEVLVGsFz6R+Rp/dOlKT+XetGHxKXvzPM7auS04sQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz08+BfVICFfmy0Vj1YOaKdK0sT+8vVEdBJNkYKb56E6l49fhu+
+	2THwzhhvZxke+Pma48Ifqb3SI1vIMa7BrZmxkdEoP+zJ+TyVbEzmecE9Pkj24qEj+5nDg87nbSy
+	W/aCEy3x7r04Q/T8mFI4SFjAJkMvpO8yEz/VhbmsOjTN2AoOPOTr1Vvk=
+X-Google-Smtp-Source: AGHT+IGEAJ61HZ2G3S91Z1M146hV5zPpircsJ/ILw9pQB9WmQRc5rlHzyksR/f9Spy9dkFUDwOs+2ob9kKr0B+dYbglFhwIO1tXz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNAQ0dHq3eALkvGDSCyVKOvhBqwCEG3BTQ0h52Xq_1YNu2A@mail.gmail.com>
+X-Received: by 2002:a05:6e02:152a:b0:381:c14:70cf with SMTP id
+ e9e14a558f8ab-39f3787b858mr942485ab.1.1724885723324; Wed, 28 Aug 2024
+ 15:55:23 -0700 (PDT)
+Date: Wed, 28 Aug 2024 15:55:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d133670620c640fe@google.com>
+Subject: [syzbot] [ext4?] KASAN: use-after-free Read in ext4_inlinedir_to_tree
+From: syzbot <syzbot+46b0888255f68622d309@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, asml.silence@gmail.com, axboe@kernel.dk, 
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Masahiro,
+Hello,
 
-On Wed, Aug 28, 2024 at 04:04:09PM +0900, Masahiro Yamada wrote:
-> On Fri, Aug 16, 2024 at 2:39 AM Sami Tolvanen <samitolvanen@google.com> wrote:
-> >
-> > The first 16 patches of this series add a small tool for computing
-> 
-> 
-> Splitting a new tool into small chunks makes line-by-line review difficult.
+syzbot found the following issue on:
 
-I split this into smaller pieces to make it less of a chore to
-review, but I'm also happy to squash these into larger patches if you
-prefer. How would you like to see this split instead?
+HEAD commit:    d2bafcf224f3 Merge tag 'cgroup-for-6.11-rc4-fixes' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1660edd5980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4fc2afd52fd008bb
+dashboard link: https://syzkaller.appspot.com/bug?extid=46b0888255f68622d309
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15d4ae09980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=158d6609980000
 
-> For example, 02/19 adds malloc().
-> 
-> 03/19 immediately replaces it with calloc().
-> 
-> Then, I wonder why you did not add calloc() in the first place.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/7569f02310fb/disk-d2bafcf2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e30fee7b6c1d/vmlinux-d2bafcf2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/2ffddebac153/bzImage-d2bafcf2.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/e4fb4afad539/mount_0.gz
 
-Yes, that wasn't ideal, but like I said in my other response, I tried
-to keep the churn minimal. Please let me know if you spot any other
-annoyances.
+The issue was bisected to:
 
-> And, I do not think it is so "small".
-> It is bigger than the current genksyms.
+commit e5598d6ae62626d261b046a2f19347c38681ff51
+Author: Pavel Begunkov <asml.silence@gmail.com>
+Date:   Thu Aug 24 22:53:31 2023 +0000
 
-In my defense, the first version was smaller, but sure, I'll drop the
-false advertising from the cover letter now that it has more features.
+    io_uring: compact SQ/CQ heads/tails
 
-> > symbol versions from DWARF, called gendwarfksyms. When passed a
-> > list of exported symbols and an object file,
-> 
-> 
-> Why is "a list of exported symbols" passed separately?
-> 
-> All necessary information is available in the object file.
-> (The export symbols are listed in the .export_symbol section.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13308233980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10b08233980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17308233980000
 
-Unfortunately this is not the case for Rust object files where exports
-are handled separately. Passing the list of symbols as input feels
-more flexible to me, and also is rather convenient for debugging.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+46b0888255f68622d309@syzkaller.appspotmail.com
+Fixes: e5598d6ae626 ("io_uring: compact SQ/CQ heads/tails")
 
-> > - Added a --symtypes flag for generating a genksyms-style
-> >   symtypes output based on Petr's feedback, and refactored
-> >   symbol version calculations to be based on symtypes instead
-> >   of raw --dump-dies output.
-> 
-> 
-> 
-> I do not know if this is worthwhile.
+EXT4-fs error (device loop0): htree_dirblock_to_tree:1112: inode #2: block 21: comm syz-executor129: bad entry in directory: directory entry overrun - offset=1004, inode=0, rec_len=1000, size=1024 fake=0
+==================================================================
+BUG: KASAN: use-after-free in ext4_read_inline_data fs/ext4/inline.c:209 [inline]
+BUG: KASAN: use-after-free in ext4_inlinedir_to_tree+0x57a/0x11d0 fs/ext4/inline.c:1365
+Read of size 324 at addr ffff8880717c5c05 by task syz-executor129/5213
 
-Greg, Petr, do you want to comment on the usefulness of the symtypes
-output? I was under the impression it was a useful tool for figuring
-out exactly what caused the versions to change?
+CPU: 0 UID: 0 PID: 5213 Comm: syz-executor129 Not tainted 6.11.0-rc4-syzkaller-00255-gd2bafcf224f3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ __asan_memcpy+0x29/0x70 mm/kasan/shadow.c:105
+ ext4_read_inline_data fs/ext4/inline.c:209 [inline]
+ ext4_inlinedir_to_tree+0x57a/0x11d0 fs/ext4/inline.c:1365
+ ext4_htree_fill_tree+0x5d8/0x1400 fs/ext4/namei.c:1211
+ ext4_dx_readdir fs/ext4/dir.c:597 [inline]
+ ext4_readdir+0x2b1c/0x3500 fs/ext4/dir.c:142
+ iterate_dir+0x57a/0x810 fs/readdir.c:108
+ __do_sys_getdents64 fs/readdir.c:407 [inline]
+ __se_sys_getdents64+0x20d/0x4f0 fs/readdir.c:392
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fcb146ca613
+Code: c1 66 0f 1f 44 00 00 48 83 c4 08 48 89 ef 5b 5d e9 42 23 fb ff 66 90 b8 ff ff ff 7f 48 39 c2 48 0f 47 d0 b8 d9 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 05 c3 0f 1f 40 00 48 c7 c2 b8 ff ff ff f7 d8
+RSP: 002b:00007fffaa54eac8 EFLAGS: 00000293 ORIG_RAX: 00000000000000d9
+RAX: ffffffffffffffda RBX: 0000555567e83770 RCX: 00007fcb146ca613
+RDX: 0000000000008000 RSI: 0000555567e83770 RDI: 0000000000000005
+RBP: 0000555567e83744 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000001000 R11: 0000000000000293 R12: ffffffffffffffb8
+R13: 0000000000000016 R14: 0000555567e83740 R15: 00007fffaa551e30
+ </TASK>
 
-> And, it is obviously a build error.
-> 
-> gendwarfksyms cannot create %.symtypes from %.c.
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x5615451c4 pfn:0x717c5
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000000000 dead000000000100 dead000000000122 0000000000000000
+raw: 00000005615451c4 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as freed
+page last allocated via order 0, migratetype Movable, gfp_mask 0x140dca(GFP_HIGHUSER_MOVABLE|__GFP_COMP|__GFP_ZERO), pid 5174, tgid 5174 (sftp-server), ts 48575534501, free_ts 49882330156
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1493
+ prep_new_page mm/page_alloc.c:1501 [inline]
+ get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3439
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4695
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2263
+ folio_alloc_mpol_noprof mm/mempolicy.c:2281 [inline]
+ vma_alloc_folio_noprof+0x12e/0x230 mm/mempolicy.c:2312
+ folio_prealloc+0x31/0x170
+ alloc_anon_folio mm/memory.c:4498 [inline]
+ do_anonymous_page mm/memory.c:4555 [inline]
+ do_pte_missing mm/memory.c:3945 [inline]
+ handle_pte_fault+0x255e/0x6fc0 mm/memory.c:5521
+ __handle_mm_fault mm/memory.c:5664 [inline]
+ handle_mm_fault+0xf70/0x1880 mm/memory.c:5832
+ do_user_addr_fault arch/x86/mm/fault.c:1338 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+ exc_page_fault+0x459/0x8c0 arch/x86/mm/fault.c:1539
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+page last free pid 5174 tgid 5174 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1094 [inline]
+ free_unref_folios+0x100f/0x1ac0 mm/page_alloc.c:2660
+ folios_put_refs+0x76e/0x860 mm/swap.c:1039
+ free_pages_and_swap_cache+0x2ea/0x690 mm/swap_state.c:332
+ __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
+ tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
+ tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
+ tlb_flush_mmu+0x3a3/0x680 mm/mmu_gather.c:373
+ tlb_finish_mmu+0xd4/0x200 mm/mmu_gather.c:465
+ exit_mmap+0x44f/0xc80 mm/mmap.c:3425
+ __mmput+0x115/0x380 kernel/fork.c:1345
+ exit_mm+0x220/0x310 kernel/exit.c:571
+ do_exit+0x9b2/0x27f0 kernel/exit.c:869
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1031
+ __do_sys_exit_group kernel/exit.c:1042 [inline]
+ __se_sys_exit_group kernel/exit.c:1040 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1040
+ x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Ah, this obviously needs to depends on the .o files instead. I'll sort
-this out in v3.
+Memory state around the buggy address:
+ ffff8880717c5b00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff8880717c5b80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+>ffff8880717c5c00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                   ^
+ ffff8880717c5c80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff8880717c5d00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+==================================================================
 
-Thanks for taking a look!
 
-Sami
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
