@@ -1,78 +1,94 @@
-Return-Path: <linux-kernel+bounces-304462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BDC496206C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:14:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0036496206F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:15:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3092528176A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:14:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFA26282AB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE281586F6;
-	Wed, 28 Aug 2024 07:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53A7158851;
+	Wed, 28 Aug 2024 07:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g0JjGoM4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="SskXlKU0"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7CDB328DB
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3244914C583
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724829253; cv=none; b=BMcgeNAAgtGtZrQIxVQ4Bn+BiHX5RPk4k6jKE9VJDojoRsG6C6JBsWjgamNnUsmYBm0TQVGpstInweDw1ppDizZkZ64FCnKxw7SBfoDsS5i1lX+OJrQo3UzOAaTuy89bGB5R2YS68i5BDxTgdfczHsZnEEyF4+/7PxsnK+0QbE0=
+	t=1724829298; cv=none; b=oPoR6hxH2n/skFHtxtgVhSz3t5JX3uYKs46jgvyiflYhDKf+czoLYy6stKS4L9dCsYRvWwc/6WA+hyJaLI9fYBLWKnyHO/G0Xod97zVZobTGS7VuqvFTRqfD8Hl42AK5pwM6CtaaHlEhxwHkGe3HsuWTCwers2/XJJniH63pFSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724829253; c=relaxed/simple;
-	bh=nN9u0FuWZJTZMX77+VruQ3lEfJqEuLjyfL2+b/3TX3s=;
+	s=arc-20240116; t=1724829298; c=relaxed/simple;
+	bh=WDCMytwnAp8pMu54YN3rA1pD3RkmB/XK2BssZPaZ/kU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PD1UCVAhyA3e8n0Ox/to2kO7oTbw9UzbhxJc0DnnOnzgsgVuuKpO+EVrm5EohMywrRhUdyswMv2RaotbjvIKFIy6bkdXpR+rUv4nalXHLbQR9Va8AQUk3BPZ/3YcOggHYa9DlCa5B0u8RZforWerJf5dVLyWukqFeqGMqw5hY/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g0JjGoM4; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724829251; x=1756365251;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=nN9u0FuWZJTZMX77+VruQ3lEfJqEuLjyfL2+b/3TX3s=;
-  b=g0JjGoM46z2rYT2QhJuvjslDolPWDk+DZLwGBFXaUplXaJllHGiD0rWX
-   Van+3EXHJCugt02DaUp2aWTHGfVYF2nmjMpieHCc5tSUUxfj6OoKcVAvF
-   U9AQ6EoATYx5EBkej9WgGNaY41BNXYioo+bzAfYPwQR2iJdJK1mnO0DZR
-   STRnmXDTuEtHGYvjXvPBPu+8po+loiTp2IhhBYfAM4rkcs741TVLUpnJM
-   eO6LTRC48766oxdbooOuB9dPFWWrRzh+1yu4H7g0mCvIia49wR/5BPtq0
-   1DQ9BxwIPX6aJimdGJ2zMTvAbN+XigfFKRaMs7DAXgM0ySErvG8tVIls2
-   w==;
-X-CSE-ConnectionGUID: WZkC19tjRnaShTCeRuYLfQ==
-X-CSE-MsgGUID: b4dTBk4mTKuygumDQDux/Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="23467696"
-X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
-   d="scan'208";a="23467696"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 00:14:11 -0700
-X-CSE-ConnectionGUID: ow2sH+BgSsC5LbB76ahTUQ==
-X-CSE-MsgGUID: l40XmDk0QhqoxHSkK6Czzg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
-   d="scan'208";a="63090059"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa009.jf.intel.com with ESMTP; 28 Aug 2024 00:13:37 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id D0F24142; Wed, 28 Aug 2024 10:13:34 +0300 (EEST)
-Date: Wed, 28 Aug 2024 10:13:34 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, Kevin Loughlin <kevinloughlin@google.com>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/EISA: Use memremap() to probe for the EISA BIOS
- signature
-Message-ID: <pmskepgrtwhs5owjr4ok3i32655jyrkbmja7mew357occwlumx@hpd2mqndpkey>
-References: <alpine.DEB.2.21.2408242025210.30766@angie.orcam.me.uk>
- <Zs7AVTEiW2R_vB-f@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=i3y3D1y7ugpYuc38J2cpsQr6CQp5fl2FERulNafh1lCWYSM9vddkBVUIMRbxJnSFWrsNRyDcxQje3rANjUQ5/yQWA5fvfTb4j31/aI1LvGEyuAkh5jDF+wWy5+d3TljVgirox6tssQq3wXcK3kfkZvMO16tyGMRPprm2obhdsTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=SskXlKU0; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a869332c2c2so51987766b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 00:14:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724829294; x=1725434094; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PG+Y+iPEJrhNPEqaAwHaY0bOaMvK21xV21Vun1ew9Is=;
+        b=SskXlKU0aL9W5s87F2CWILvbceP5TcVMIwJeBX69+dh3crl72FlC4UrSxLt/AtqzmJ
+         yyz1yAEUjF33ndOANJQARIXgYGIvLcG9EH5WWZ5y+y7im0NWPxad0PRbVLrmhuzCkt89
+         UJkdpTg/8E+eAxTkQCtjM5P9SgFXjjnyJqeqont4xd2x3eIczrwBNzblqxqHwGgj4vFM
+         F0i0xAlgskqz2MhCtQC9Yj8fkKtlil808gqqkskTuzpp48Zo9bnZnFTeljMcjxv1pX+P
+         LbQfzDPPonLop4IY7FPufYAl01srIhwt8Roi8PaoQi/UTLW6+rkzIEAw1W6caN/7NJcm
+         XU3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724829294; x=1725434094;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PG+Y+iPEJrhNPEqaAwHaY0bOaMvK21xV21Vun1ew9Is=;
+        b=fktwIFA4HhURY7pt0abXISSz28MmEyNDWqvwrdr4weSzfJe3dzhVVtOBfu4POOp8GK
+         hqH59mH2/xJduZgZmo9MDnYvRz5x7/bP1kNagOzuXPRW2PuNldAHsZWkc5ELQ2pjwb8y
+         G3PSY9hPM6KW06jpYYg4o30CEeJqKmeOrYE9eEFSASRXE3WfE+MG5Gzetw/b6crR0P3Z
+         9YX457lTt3mzfFqmWqt89PNomBOK+26a5qiUuDR94w4gToGG3TD74/FFPRMyewwv3nqD
+         gzlFZjmL90rsdXDRyQQN66xYB9WQ5v8TZI+h3dobYWYIMUTGRByESc/Pd/H8/VuPp8me
+         j5/A==
+X-Forwarded-Encrypted: i=1; AJvYcCW8QX/wOr/plFKtuQWdWi/G6/XV9rE9dXjeiku/A0h/bWGLdMQH4lV+PBem9yjsk9HD55h816wJ4d7pYJc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxALHETmP+T8ac5bY4VjafUgPXSUdMTYNnKyNDU7aar1622w95r
+	QjcXbuzTQIMR3ZpwpkbaQOzLxMPFCGgRU9/2T3KAMK05IgOfGRl/LCGjK+kQrvw=
+X-Google-Smtp-Source: AGHT+IHFQn+2dk85m69kJ8Wp6sfOI9yrSVVvMx2xqX2Nlpk3qlQRXfnHV1pIvevTbCDASqx1v9/IJQ==
+X-Received: by 2002:a17:907:1b1d:b0:a86:b5ac:e22a with SMTP id a640c23a62f3a-a870ab0c6f6mr143124766b.34.1724829294499;
+        Wed, 28 Aug 2024 00:14:54 -0700 (PDT)
+Received: from localhost (109-81-92-122.rct.o2.cz. [109.81.92.122])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e549ca7bsm203208866b.52.2024.08.28.00.14.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 00:14:54 -0700 (PDT)
+Date: Wed, 28 Aug 2024 09:14:53 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: Hailong Liu <hailong.liu@oppo.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Barry Song <21cnbao@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Tangquan Zheng <zhengtangquan@oppo.com>, stable@vger.kernel.org,
+	Baoquan He <bhe@redhat.com>, Matthew Wilcox <willy@infradead.org>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH v1] mm/vmalloc: fix page mapping if
+ vm_area_alloc_pages() with high order fallback to order 0
+Message-ID: <Zs7ObXBgULkuvaXK@tiehlicka>
+References: <Zr8mQbc3ETdeOMIK@pc636>
+ <20240816114626.jmhqh5ducbk7qeur@oppo.com>
+ <Zr9G-d6bMU4_QodJ@tiehlicka>
+ <Zsi8Byjo4ayJORgS@pc638.lan>
+ <Zsw0Sv9alVUb1DV2@tiehlicka>
+ <Zsx3ULRaVu5Lh46Q@pc636>
+ <Zs12_8AZ0k_WRWUE@tiehlicka>
+ <Zs3K4h5ulL1zlj6L@pc636>
+ <Zs3WouJpDk3AWV4D@tiehlicka>
+ <Zs3w3k7-bzCYa3KC@pc636>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,31 +97,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zs7AVTEiW2R_vB-f@infradead.org>
+In-Reply-To: <Zs3w3k7-bzCYa3KC@pc636>
 
-On Tue, Aug 27, 2024 at 11:14:45PM -0700, Christoph Hellwig wrote:
-> On Sat, Aug 24, 2024 at 11:17:10PM +0100, Maciej W. Rozycki wrote:
-> > -	void __iomem *p;
-> > +	void *p;
-> >  
-> >  	if ((xen_pv_domain() && !xen_initial_domain()) || cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
-> >  		return 0;
-> >  
-> > -	p = ioremap(0x0FFFD9, 4);
-> > +	p = memremap(0x0FFFD9, 4, MEMREMAP_WB);
-> >  	if (p && readl(p) == 'E' + ('I' << 8) + ('S' << 16) + ('A' << 24))
-> >  		EISA_bus = 1;
-> 
-> readl requires and __iomem pointer.  If this is just a memory region you
-> can and should directly dereference the address instead.
-> 
-> Note that sparse will complain about the above as well.
- 
-See v2:
+On Tue 27-08-24 17:29:34, Uladzislau Rezki wrote:
+> On Tue, Aug 27, 2024 at 03:37:38PM +0200, Michal Hocko wrote:
+> > On Tue 27-08-24 14:47:30, Uladzislau Rezki wrote:
+> > > On Tue, Aug 26, 2024 at 08:49:35AM +0200, Michal Hocko wrote:
+> > [...]
+> > > > > 2. High-order allocations. Do you think we should not care much about
+> > > > > it when __GFP_NOFAIL is set? Same here, there is a fallback for order-0
+> > > > > if "high" fails, it is more likely NO_FAIL succeed for order-0. Thus
+> > > > > keeping NOFAIL for high-order sounds like not a good approach to me.
+> > > > 
+> > > > We should avoid high order allocations with GFP_NOFAIL at all cost.
+> > > > 
+> > > What do you propose here? Fail such request?
+> > 
+> > We shouldn't have any hard requirements for higher order allocations in the vmalloc
+> > right? In other words we can always fallback to base pages.
+> >
+> We always drop NOFAIL for high-order, if it fails we fall-back to
+> order-0. I got the feeling that you wanted just bail-out fully if
+> high-order and NOFAIL.
 
-https://lore.kernel.org/all/alpine.DEB.2.21.2408261015270.30766@angie.orcam.me.uk
-
+Nope. We should always fall back to order 0 for both NOFAIL and regular
+vmalloc allocations.
 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Michal Hocko
+SUSE Labs
 
