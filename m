@@ -1,142 +1,349 @@
-Return-Path: <linux-kernel+bounces-305565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A572963087
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:59:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0F5396308B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:59:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC791B213F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:59:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2BBDB23910
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1951AB513;
-	Wed, 28 Aug 2024 18:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD9B1AB51B;
+	Wed, 28 Aug 2024 18:59:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sFjfGOGD"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gf/7+6b7"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48E4328DB;
-	Wed, 28 Aug 2024 18:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6681AAE0F
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 18:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724871534; cv=none; b=VEQg6dcCTrsMiUJYPeRPob7S8ha2c5nzKDQ7u1M5cVbD3YHk4m6YTg0Gl7Jxr91o2jEub0ERNELw+ktwnvA2muSfCOUdPtO3irp0/+LKIsBH44b34XpuXO91ZJa7BK9VDXEUQEE9lG8lw8ePI/JbhtjIIKrWVVid2yUlq7GrJ28=
+	t=1724871558; cv=none; b=pNN70tKTwBPK4JSXwM+NZN/x8rbECX6+8jci8P8/jkaiyk776f9WCeOxofbNvPkr/KYj6jcmVaIkTfpH4OAMta0hwyeTtCUvT1nigvpTYMUB1fX8mUQD996uiEgLCQnuv0qrgjiqYJrekJLu2YnrmpQ5irXZ6xuFSVYDC5zncDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724871534; c=relaxed/simple;
-	bh=zoB+5dltGl4SeMjFiwf4Bz8rfttU134J1Ael6y0wd+s=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sYuFXo/Q0ELd0HZe92680CkB7kHwRcLKGVdXXh0ADEatklVvH6uMpT0MrbiYx0ze3qs/fgvZFiFHPqAt9Pg3fmGF17qbLy/G64Bn804R8hJQNF+he0+qRJUfEo5YlFesW7PO/umR/nZ/pjMp/dcktu9N7zZOED7ZeVqAnzGGl9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=sFjfGOGD; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47SIwhGT100627;
-	Wed, 28 Aug 2024 13:58:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724871523;
-	bh=oKu6Epfr3/VrPNrtu3gQBk1GOWEbuQRg5gkYsXVsHds=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=sFjfGOGDuJw1AhGY/hzJ/R5ymg8T11L2RU10Ilz+eiHo4j4e8xJLuIeThOONMm+OI
-	 OBDup36KHzy3YK9pzhxTYLR1UedHqGcNLiystvgUkHQkRuYeZeepDPR/0BNhz2NUiC
-	 bIMAsiAIbGg0WL8U58Ig4LmULLqGMS/ZjcbHTdAM=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47SIwhwp061887
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 28 Aug 2024 13:58:43 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 28
- Aug 2024 13:58:42 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 28 Aug 2024 13:58:42 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47SIwgtv051528;
-	Wed, 28 Aug 2024 13:58:42 -0500
-From: Nishanth Menon <nm@ti.com>
-To: <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        Beleswar Padhi <b-padhi@ti.com>
-CC: Nishanth Menon <nm@ti.com>, <u-kumar1@ti.com>, <tony@atomide.com>,
-        <bb@ti.com>, <d-gole@ti.com>, <afd@ti.com>, <hnagalla@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 0/7] Reserve Timer Nodes to avoid clash with Remoteproc firmware
-Date: Wed, 28 Aug 2024 13:58:39 -0500
-Message-ID: <172487140504.3441749.10326233588807171364.b4-ty@ti.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240826104821.1516344-1-b-padhi@ti.com>
-References: <20240826104821.1516344-1-b-padhi@ti.com>
+	s=arc-20240116; t=1724871558; c=relaxed/simple;
+	bh=Cf0aYlesUgj3BWLZP21osLxTDgoSZ+lMvxK4f8SDoSw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gjrAhy0Hv0jo4dbWRtMuYQ08ZevfD/z3COUFTr5HgskYdexbf0mDTqf4EGGKSX1xDGUfc8G78/UhYanrlfVnJLbYHVdn3Q2bhlI0e8474Th/gW9jmX06CB7TJmsG6eKXL5WdB220oC0pWlRklzIv/ym4DlcU5javJjyMwq75vAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gf/7+6b7; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-690ad83d4d7so64430017b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 11:59:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724871556; x=1725476356; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qmcz+7+UGxQfEMaPBC8TElShVt8OVL3UlwAoYiyx/aU=;
+        b=gf/7+6b7EtVt5MU1eHCB7XGHke0s+kK7gOAvyTi45q1aPThwX6E1aG98hdEtnVCWNr
+         IljatqeJnk8EP2rjHuWpQ0E6On2FR/JB4yTmExYXOCLI1d+IzSgrLjMUlUHzYcAKdzzT
+         BeBqsRfjSSFAzSuWIyrZhSaZJ/x0YhQdWzIT8W/CjvrT9wA89/CWS8XgNF05vWMotI58
+         Zz/qWES0VOTx1JWmcaNCtG9Es4FCoScrmIfA3F+elqADA6lIvsk7F5sLf0WT9wRz0ksr
+         VJyYUYzf3aVbZWnxYLzCvR8Ilt7KLkDZMebGdin0aaRDXXIyfnE0JtsrhfqM0lAL/gPz
+         +UZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724871556; x=1725476356;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qmcz+7+UGxQfEMaPBC8TElShVt8OVL3UlwAoYiyx/aU=;
+        b=CyrDMn7PCv1eYAovPuoodYevjqfdt6hWHzm0IMUlYEaJ6Xf+m4YChrT1PwEa/mB6YD
+         ZzCwkr7FRDW8gPJLxUlqda25mw2IoTRw1t3sAhxD4Qq8dTy6GFUmTL8jB53G0x5Jx4Zr
+         L+3uPP9il87H6axfZuZO890gVoUDY3cecx42GsCwETV5ZePzwqqDJ2KPdQvURAl9En3d
+         br4BVcxEUatplLidwrLe0Zga/o4Lm/AdmiPkj+RX8SknQVsuzHip/MQc/VgMfF11EpKJ
+         AXCidWnj7KmBySy1zjDvsiA0rMuva3O5h84s+iLow1PllozT9qAiPKGUck2fnnICBAMa
+         L2zw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgGo8mQiznBy0yRmNL1kLhG0d1MoCgCqHSnErO5a0HiEuLloFxY0a4ZADdhbleqPOVneOKOx0qq9hqjlY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxsBqYI1erqLaIvKWyeQ1cI9LmRDm2qT7VKSEA5vaCeEOwYezf
+	OAFtYBodzfoLKgdycsvc83XdWeD0aa7Fv2KMSCGqmYgqUID2ApygHN4CeW4AeGKbaES150h9CMK
+	wgXaLuseEPbw+sKe31XffULCyJD2Nu0XG8bNft3RLsfEzfD18
+X-Google-Smtp-Source: AGHT+IFUq92P2cDjPZ43R3Ejt1MApPBYLwyypx+rFCUZNhBlIjXtfAWoSXy+tv9q3lvlh7GVDWFBRpIvNEAiNvguYZ4=
+X-Received: by 2002:a05:690c:10d:b0:6ad:bf4f:1bc3 with SMTP id
+ 00721157ae682-6d277c6ec56mr2918277b3.32.1724871555468; Wed, 28 Aug 2024
+ 11:59:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240627-dpu-virtual-wide-v5-0-5efb90cbb8be@linaro.org>
+ <20240627-dpu-virtual-wide-v5-8-5efb90cbb8be@linaro.org> <1facdd7c-b15d-4d91-b96a-5b3b72dbad66@quicinc.com>
+In-Reply-To: <1facdd7c-b15d-4d91-b96a-5b3b72dbad66@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Wed, 28 Aug 2024 21:59:04 +0300
+Message-ID: <CAA8EJpr_wCAO5fw+ZbbuPUtnJFms+Q-X02ekWEGCnvuxcHKbqQ@mail.gmail.com>
+Subject: Re: [PATCH v5 08/12] drm/msm/dpu: split dpu_plane_atomic_check()
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Beleswar Padhi,
+On Wed, 28 Aug 2024 at 21:27, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>
+>
+>
+> On 6/26/2024 2:46 PM, Dmitry Baryshkov wrote:
+> > Split dpu_plane_atomic_check() function into two pieces:
+> >
+> > dpu_plane_atomic_check_nopipe() performing generic checks on the pstate,
+> > without touching the associated pipe,
+> >
+> > and
+> >
+> > dpu_plane_atomic_check_pipes(), which takes into account used pipes.
+> >
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >   drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 178 +++++++++++++++++++-----------
+> >   1 file changed, 112 insertions(+), 66 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> > index 115c1bd77bdd..9b9fe28052ad 100644
+> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> > @@ -788,49 +788,22 @@ static int dpu_plane_atomic_check_pipe(struct dpu_plane *pdpu,
+> >   #define MAX_UPSCALE_RATIO   20
+> >   #define MAX_DOWNSCALE_RATIO 4
+> >
+> > -static int dpu_plane_atomic_check(struct drm_plane *plane,
+> > -                               struct drm_atomic_state *state)
+> > +static int dpu_plane_atomic_check_nopipe(struct drm_plane *plane,
+> > +                                      struct drm_plane_state *new_plane_state,
+> > +                                      const struct drm_crtc_state *crtc_state)
+> >   {
+> > -     struct drm_plane_state *new_plane_state = drm_atomic_get_new_plane_state(state,
+> > -                                                                              plane);
+> >       int ret = 0, min_scale, max_scale;
+> >       struct dpu_plane *pdpu = to_dpu_plane(plane);
+> >       struct dpu_kms *kms = _dpu_plane_get_kms(&pdpu->base);
+> >       u64 max_mdp_clk_rate = kms->perf.max_core_clk_rate;
+> >       struct dpu_plane_state *pstate = to_dpu_plane_state(new_plane_state);
+> > -     struct dpu_sw_pipe *pipe = &pstate->pipe;
+> > -     struct dpu_sw_pipe *r_pipe = &pstate->r_pipe;
+> > -     const struct drm_crtc_state *crtc_state = NULL;
+> > -     const struct msm_format *fmt;
+> >       struct dpu_sw_pipe_cfg *pipe_cfg = &pstate->pipe_cfg;
+> >       struct dpu_sw_pipe_cfg *r_pipe_cfg = &pstate->r_pipe_cfg;
+> >       struct drm_rect fb_rect = { 0 };
+> >       uint32_t max_linewidth;
+> > -     unsigned int rotation;
+> > -     uint32_t supported_rotations;
+> > -     const struct dpu_sspp_cfg *pipe_hw_caps;
+> > -     const struct dpu_sspp_sub_blks *sblk;
+> > -
+> > -     if (new_plane_state->crtc)
+> > -             crtc_state = drm_atomic_get_new_crtc_state(state,
+> > -                                                        new_plane_state->crtc);
+> > -
+> > -     pipe->sspp = dpu_rm_get_sspp(&kms->rm, pdpu->pipe);
+> > -     r_pipe->sspp = NULL;
+> >
+> > -     if (!pipe->sspp)
+> > -             return -EINVAL;
+> > -
+> > -     pipe_hw_caps = pipe->sspp->cap;
+> > -     sblk = pipe->sspp->cap->sblk;
+> > -
+> > -     if (sblk->scaler_blk.len) {
+> > -             min_scale = FRAC_16_16(1, MAX_UPSCALE_RATIO);
+> > -             max_scale = MAX_DOWNSCALE_RATIO << 16;
+> > -     } else {
+> > -             min_scale = DRM_PLANE_NO_SCALING;
+> > -             max_scale = DRM_PLANE_NO_SCALING;
+> > -     }
+> > +     min_scale = FRAC_16_16(1, MAX_UPSCALE_RATIO);
+> > +     max_scale = MAX_DOWNSCALE_RATIO << 16;
+> >
+> >       ret = drm_atomic_helper_check_plane_state(new_plane_state, crtc_state,
+> >                                                 min_scale,
+> > @@ -843,11 +816,6 @@ static int dpu_plane_atomic_check(struct drm_plane *plane,
+> >       if (!new_plane_state->visible)
+> >               return 0;
+> >
+> > -     pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+> > -     pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+> > -     r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+> > -     r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+> > -
+> >       pstate->stage = DPU_STAGE_0 + pstate->base.normalized_zpos;
+> >       if (pstate->stage >= pdpu->catalog->caps->max_mixer_blendstages) {
+> >               DPU_ERROR("> %d plane stages assigned\n",
+> > @@ -871,8 +839,6 @@ static int dpu_plane_atomic_check(struct drm_plane *plane,
+> >               return -E2BIG;
+> >       }
+> >
+> > -     fmt = msm_framebuffer_format(new_plane_state->fb);
+> > -
+> >       max_linewidth = pdpu->catalog->caps->max_linewidth;
+> >
+> >       drm_rect_rotate(&pipe_cfg->src_rect,
+> > @@ -881,6 +847,78 @@ static int dpu_plane_atomic_check(struct drm_plane *plane,
+> >
+> >       if ((drm_rect_width(&pipe_cfg->src_rect) > max_linewidth) ||
+> >            _dpu_plane_calc_clk(&crtc_state->adjusted_mode, pipe_cfg) > max_mdp_clk_rate) {
+> > +             if (drm_rect_width(&pipe_cfg->src_rect) > 2 * max_linewidth) {
+> > +                     DPU_DEBUG_PLANE(pdpu, "invalid src " DRM_RECT_FMT " line:%u\n",
+> > +                                     DRM_RECT_ARG(&pipe_cfg->src_rect), max_linewidth);
+> > +                     return -E2BIG;
+> > +             }
+> > +
+> > +             *r_pipe_cfg = *pipe_cfg;
+> > +             pipe_cfg->src_rect.x2 = (pipe_cfg->src_rect.x1 + pipe_cfg->src_rect.x2) >> 1;
+> > +             pipe_cfg->dst_rect.x2 = (pipe_cfg->dst_rect.x1 + pipe_cfg->dst_rect.x2) >> 1;
+> > +             r_pipe_cfg->src_rect.x1 = pipe_cfg->src_rect.x2;
+> > +             r_pipe_cfg->dst_rect.x1 = pipe_cfg->dst_rect.x2;
+> > +     } else {
+> > +             memset(r_pipe_cfg, 0, sizeof(*r_pipe_cfg));
+> > +     }
+> > +
+>
+> This is the part I am not able to fully understand. Assignment of
+> r_pipe_cfg is also pipe related so why should that move to
+> dpu_plane_atomic_check_nopipe(). It should be part of
+> dpu_plane_atomic_check_pipe().
 
-On Mon, 26 Aug 2024 16:18:13 +0530, Beleswar Padhi wrote:
-> The remoteproc firmware like of R5F and DSPs in the MAIN voltage domain
-> use timers. At the same time, if Linux probes the timers, some
-> instability is observed while booting remote cores. Therefore, change
-> the status of the timer nodes to "reserved" to avoid any clash.
-> 
-> NOTE: This series has been rebased on top of a sibling series[0] as both of them
-> introduce changes in the same files. Thus, please apply [0] before applying this
-> series.
-> 
-> [...]
+Because it happens before possible pipe / rectangle allocation. These
+values are further used to assign resources.
 
-I have applied the following to branch ti-k3-dts-next on [1].
-Thank you!
+>
+> > +     drm_rect_rotate_inv(&pipe_cfg->src_rect,
+> > +                         new_plane_state->fb->width, new_plane_state->fb->height,
+> > +                         new_plane_state->rotation);
+> > +     if (r_pipe_cfg->src_rect.x1 != 0)
+> > +             drm_rect_rotate_inv(&r_pipe_cfg->src_rect,
+> > +                                 new_plane_state->fb->width, new_plane_state->fb->height,
+> > +                                 new_plane_state->rotation);
+> > +
+> > +     pstate->needs_qos_remap = drm_atomic_crtc_needs_modeset(crtc_state);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int dpu_plane_atomic_check_pipes(struct drm_plane *plane,
+> > +                                     struct drm_atomic_state *state,
+> > +                                     const struct drm_crtc_state *crtc_state)
+> > +{
+> > +     struct drm_plane_state *new_plane_state =
+> > +             drm_atomic_get_new_plane_state(state, plane);
+> > +     struct dpu_plane *pdpu = to_dpu_plane(plane);
+> > +     struct dpu_plane_state *pstate = to_dpu_plane_state(new_plane_state);
+> > +     struct dpu_sw_pipe *pipe = &pstate->pipe;
+> > +     struct dpu_sw_pipe *r_pipe = &pstate->r_pipe;
+> > +     const struct msm_format *fmt;
+> > +     struct dpu_sw_pipe_cfg *pipe_cfg = &pstate->pipe_cfg;
+> > +     struct dpu_sw_pipe_cfg *r_pipe_cfg = &pstate->r_pipe_cfg;
+> > +     uint32_t max_linewidth;
+> > +     unsigned int rotation;
+> > +     uint32_t supported_rotations;
+> > +     const struct dpu_sspp_cfg *pipe_hw_caps;
+> > +     const struct dpu_sspp_sub_blks *sblk;
+> > +     int ret = 0;
+> > +
+> > +     pipe_hw_caps = pipe->sspp->cap;
+> > +     sblk = pipe->sspp->cap->sblk;
+> > +
+> > +     /*
+> > +      * We already have verified scaling against platform limitations.
+> > +      * Now check if the SSPP supports scaling at all.
+> > +      */
+> > +     if (!sblk->scaler_blk.len &&
+> > +         ((drm_rect_width(&new_plane_state->src) >> 16 !=
+> > +           drm_rect_width(&new_plane_state->dst)) ||
+> > +          (drm_rect_height(&new_plane_state->src) >> 16 !=
+> > +           drm_rect_height(&new_plane_state->dst))))
+> > +             return -ERANGE;
+> > +
+>
+> Should this part be retained under dpu_plane_atomic_check_nopipe()?
+>
+> This is also not pipe dependent.
 
-[1/7] arm64: dts: ti: k3-j7200-som-p0: Change timer nodes status to reserved
-      commit: f7d6dacb233e1fe7e99e766abddd2a0247957d80
-[2/7] arm64: dts: ti: k3-j721e-som-p0: Change timer nodes status to reserved
-      commit: 96b2d17bfe407faae341053e1f376c7429c03c22
-[3/7] arm64: dts: ti: k3-j721e-sk: Change timer nodes status to reserved
-      commit: a8d1241bd6e57add2807c3127f987f8929bb45a1
-[4/7] arm64: dts: ti: k3-j721s2-som-p0: Change timer nodes status to reserved
-      commit: 1cf3a036f91a2e5a6187f7cea8f9bfab1d9b504f
-[5/7] arm64: dts: ti: k3-am68-sk-som: Change timer nodes status to reserved
-      commit: ce25e4c7dff5c9a392ad5a5c38c4fc7031305cd2
-[6/7] arm64: dts: ti: k3-j784s4-evm: Change timer nodes status to reserved
-      commit: d8087ca36a29fa81cc80dd0a9b347b2877cc9b3d
-[7/7] arm64: dts: ti: k3-am69-sk: Change timer nodes status to reserved
-      commit: bdebd509e43e508386488ba7a35cf714dffa0088
+No, it uses sblk->scaler_blk, so it depends on the actual SSPP being
+used for this pipe.
 
-I dropped the fixes tag while applying: the behavior you are
-considering here is firmware specific. While I understand it is
-important for the board, the reported "fixes" tag has nothing to do
-with the board, it is a SoC timer introduction which is not where the
-bug is.
+>
+> > +     fmt = msm_framebuffer_format(new_plane_state->fb);
+> > +
+> > +     max_linewidth = pdpu->catalog->caps->max_linewidth;
+> > +
+> > +     ret = dpu_plane_atomic_check_pipe(pdpu, pipe, pipe_cfg, fmt,
+> > +                                       &crtc_state->adjusted_mode);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     if (drm_rect_width(&r_pipe_cfg->src_rect) != 0) {
+> >               /*
+> >                * In parallel multirect case only the half of the usual width
+> >                * is supported for tiled formats. If we are here, we know that
+> > @@ -894,12 +932,6 @@ static int dpu_plane_atomic_check(struct drm_plane *plane,
+> >                       return -E2BIG;
+> >               }
+> >
+> > -             if (drm_rect_width(&pipe_cfg->src_rect) > 2 * max_linewidth) {
+> > -                     DPU_DEBUG_PLANE(pdpu, "invalid src " DRM_RECT_FMT " line:%u\n",
+> > -                                     DRM_RECT_ARG(&pipe_cfg->src_rect), max_linewidth);
+> > -                     return -E2BIG;
+> > -             }
+> > -
+> >               if (drm_rect_width(&pipe_cfg->src_rect) != drm_rect_width(&pipe_cfg->dst_rect) ||
+> >                   drm_rect_height(&pipe_cfg->src_rect) != drm_rect_height(&pipe_cfg->dst_rect) ||
+> >                   (!test_bit(DPU_SSPP_SMART_DMA_V1, &pipe->sspp->cap->features) &&
+> > @@ -921,26 +953,6 @@ static int dpu_plane_atomic_check(struct drm_plane *plane,
+> >               r_pipe->multirect_index = DPU_SSPP_RECT_1;
+> >               r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_PARALLEL;
+> >
+> > -             *r_pipe_cfg = *pipe_cfg;
+> > -             pipe_cfg->src_rect.x2 = (pipe_cfg->src_rect.x1 + pipe_cfg->src_rect.x2) >> 1;
+> > -             pipe_cfg->dst_rect.x2 = (pipe_cfg->dst_rect.x1 + pipe_cfg->dst_rect.x2) >> 1;
+> > -             r_pipe_cfg->src_rect.x1 = pipe_cfg->src_rect.x2;
+> > -             r_pipe_cfg->dst_rect.x1 = pipe_cfg->dst_rect.x2;
+> > -     }
+> > -
+> > -     drm_rect_rotate_inv(&pipe_cfg->src_rect,
+> > -                         new_plane_state->fb->width, new_plane_state->fb->height,
+> > -                         new_plane_state->rotation);
+> > -     if (r_pipe->sspp)
+> > -             drm_rect_rotate_inv(&r_pipe_cfg->src_rect,
+> > -                                 new_plane_state->fb->width, new_plane_state->fb->height,
+> > -                                 new_plane_state->rotation);
+> > -
+> > -     ret = dpu_plane_atomic_check_pipe(pdpu, pipe, pipe_cfg, fmt, &crtc_state->adjusted_mode);
+> > -     if (ret)
+> > -             return ret;
+> > -
+> > -     if (r_pipe->sspp) {
+> >               ret = dpu_plane_atomic_check_pipe(pdpu, r_pipe, r_pipe_cfg, fmt,
+> >                                                 &crtc_state->adjusted_mode);
+> >               if (ret)
+> > @@ -963,11 +975,45 @@ static int dpu_plane_atomic_check(struct drm_plane *plane,
+> >       }
+> >
+> >       pstate->rotation = rotation;
+>
+> The dpu_plane_check_inline_rotation() is also pipe independent. So even
+> that goes to dpu_plane_atomic_check_nopipe()?
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+It also depends on the sblk if I remember correctly. Also note that
+the next patch moves it to check_pipe().
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+>
+> > -     pstate->needs_qos_remap = drm_atomic_crtc_needs_modeset(crtc_state);
+> >
+> >       return 0;
+> >   }
+> >
+>
+> <snip>
+>
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
 -- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-
+With best wishes
+Dmitry
 
