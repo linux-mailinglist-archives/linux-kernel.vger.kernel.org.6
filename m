@@ -1,107 +1,88 @@
-Return-Path: <linux-kernel+bounces-305653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A71B49631B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:26:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91BD49631C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:26:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4383DB23EE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:26:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 169FAB2408F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486BB1AC445;
-	Wed, 28 Aug 2024 20:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EEBE1AC440;
+	Wed, 28 Aug 2024 20:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nawq7yKP"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XsHode9S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C591ABEA7
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 20:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81DA1AAE3F;
+	Wed, 28 Aug 2024 20:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724876761; cv=none; b=V0ZAoCxO8nt8BgnV8eCUTZEZ6YKwm41zjB4k40Q8tnZOKnJwiNN8IpTF+pplRi4MCoB1D75YSehQLc/htcSqNWRaBUwCNGEf6eqRWzRUsA3C8pgAkDbK5kZzpM7Oz/RwBRpih4NVLRU2PTnWVevdWl5rpkPPgivwbgYbMgoMYbI=
+	t=1724876803; cv=none; b=WlI+ruk9I0+nJMDHOTnpUGUGeLEvZQhT9eEJKbwoEFNs6Y5hQd26Y9DyyIyvt8m8XkhPXvjuesNcRB1OMqvLRmwQt7P/q9Z6/IIcbmcaCM6j/j9ebBLeY959FpfMV9SUtuhMUjX9SAX70EZDqKGCe3X+Yg2de9KiEzdevhB9HNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724876761; c=relaxed/simple;
-	bh=D/sIXVXJLrF23RcnRezBLL+pH08yqfp+rpSoFKjbYc0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lxfFycpVHuR3uxNS8YtXW4Dpp5mnYXFcFziEkyso5S94ibJ1bn9LxhAGaWi4rIMykqA68FRfM0wzjZHUfrMIp6L3HeN5VBlj4L6twIP2C6lKaZhuRTvzJ3D7bmxI7LrNZCVpv2upeA2RWn6owlbAD4ZJcfCEn0evvfAQd1ahR5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nawq7yKP; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a867a564911so850094466b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 13:25:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724876758; x=1725481558; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uSQ66ksgYS2uRo5g5Q03xMDNlqv/GGqsh0pkWtnsyz8=;
-        b=Nawq7yKP9B2eHbYMJQ73KrNrO8BMQOkqY4p/gAq4qQQ1gwCpTAcIUgm+9gNp7BlhWI
-         51l8n9hs2GB6RTUe8iLOkrajL31XVbkQWsIbtVoI6MQucPy0KSGwuWe3jRURSyg6NZrH
-         oUmiKXzMpMi7ye6801dxLK1Gmdps+7MYwhjUJ/LNU48IKq4C9HZluASKdwikS+mmlNsD
-         KZ12HG2iwagLXZVrr8LR6zWo0J4QXRAwFQqXGb8pzj6kvZkUNY1iIsbcIskXaq39gBt6
-         HMtRHGQxeKuT8+91/YYDjlrT+pOdgbBW5mHGA8/0Ugs92V0S0dpzrgPrXpDxfE3HGn+G
-         OV6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724876758; x=1725481558;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uSQ66ksgYS2uRo5g5Q03xMDNlqv/GGqsh0pkWtnsyz8=;
-        b=Q8kw7akjsycSbtk68nnmusDYyCg1IMd2MUgW4w2oXhKnl0VziLvJsA1hTqZl3+u4V2
-         pt+iXrf4HSDBI5sHdvCSbd/KQE81RwmJsHmmUlgUx8Mcl4lqYEYTLzPdLqBkfl4eXH6R
-         5PuNU9ftfqbsaY5N8SjLQhSlp979JGST0pQ/KPMEGJM2IHrzqo4mb59LLJSTSeoLdmJj
-         5Z1iNrbTvZs8AvGcU5BE1Meku37I5kF8xyXAOcpwFHXflrDWUVpON++KmeRPYzSE2KGD
-         PiKGhBGoVd2cybxFYzHxPPUGHz9Pfn7Hvyb+rKTqghFlJsnxBrgSDTwcW17EKRe5f+qN
-         uMrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjYO3rp4PqMmbr4pZf10LfTXudkIQzwhkgkpoWO+iStTjUSMvzlBmkpQCUaAeRS9c3rcjnYfedYDpkzgc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywflqy1j4kudCABFUBkr8KUshIHUV0u/qEGEB4Y0oyTSS1/O+sP
-	fbCROibmgPMMBea8Sy+8zNuOmhY2HwQScgD6xALouAPwtjhGQDDU
-X-Google-Smtp-Source: AGHT+IG82KUcnRAXxO3dzLxKZyRHIC0IlpxkcChajNb3SBoIywPe9/Y4h3xjTPCg159NIQbxpHHPVw==
-X-Received: by 2002:a17:907:31c4:b0:a86:80ef:4fe5 with SMTP id a640c23a62f3a-a897fa7444amr43780666b.47.1724876758121;
-        Wed, 28 Aug 2024 13:25:58 -0700 (PDT)
-Received: from ?IPV6:2003:c7:8f2a:8553:4dd4:7649:c4c2:f4e3? (p200300c78f2a85534dd47649c4c2f4e3.dip0.t-ipconnect.de. [2003:c7:8f2a:8553:4dd4:7649:c4c2:f4e3])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e5878562sm282869966b.156.2024.08.28.13.25.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 13:25:57 -0700 (PDT)
-Message-ID: <5cbf98cf-9b1a-455e-afcd-b0cdfcf1aaec@gmail.com>
-Date: Wed, 28 Aug 2024 22:25:56 +0200
+	s=arc-20240116; t=1724876803; c=relaxed/simple;
+	bh=Q43f6wvdjESKwx8IvcasE2ZU9/ZVOWLiHoqUlY336h8=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=tR8avp1LE9Vds5VfPsZjeJuSKO/rmkogQtPiLLXKF3ocWGrAtPbWOIidCCSUvhLRL7BBGdjdgk3GUqrDrTlxfr72/MkwgOrvdm1dJNdx0jDvgg/hk1zSyakpUOp4rkx4WMjGdbWeAy1a4+1KTNAFOtbbuqQ6EMdGokdvMABeisQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XsHode9S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F305C4CEC0;
+	Wed, 28 Aug 2024 20:26:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724876803;
+	bh=Q43f6wvdjESKwx8IvcasE2ZU9/ZVOWLiHoqUlY336h8=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=XsHode9StjzQOqIks0AuhzaX0uRGdwiGE+bqxZ/ubG8x2cBleYghV/87EdMDRNI1b
+	 V9NC1lfNQH1Oxya7CkcpIt+/G3JXCX3fS5EeDMiQE9coiexyC3l2eO/FHZAKen01fM
+	 7P/GgewSAX8A0bfUk1V1YNy9JcZCl/Z549nTtz7P6Di715gTDmE/WNwUcBXh5bWJ/n
+	 uLp+EE/BCEEFhgk6zF96/N7udHnv1Xq8RkIk2KvZ38asBceg3/5Iy0+c6WAZw86X5V
+	 5JhZjzasOS3YawvLzXfS+luT8YBRi7EQ5X8l+Ns6gh0KCgxY6HOFOHOjZ5Ue5iPUXQ
+	 QtJeSdK1ItETA==
+Message-ID: <3ea62df4ff2d6615d0033322426f5f67.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] Staging: rtl8723bs: Rename function SelectChannel()
-To: vivek t s <vivek6429.ts@gmail.com>, gregkh@linuxfoundation.org
-Cc: dan.carpenter@linaro.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <Zs8WLkzoZe3Z0DYF@victor-IdeaPad-Gaming-3-16IAH7>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <Zs8WLkzoZe3Z0DYF@victor-IdeaPad-Gaming-3-16IAH7>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240820055705.3922754-6-quic_varada@quicinc.com>
+References: <20240820055705.3922754-1-quic_varada@quicinc.com> <20240820055705.3922754-6-quic_varada@quicinc.com>
+Subject: Re: [PATCH v7 5/7] clk: qcom: gcc-ipq9574: Add CPR clock definition
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Varadarajan Narayanan <quic_varada@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>, andersson@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, ilia.lin@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, mturquette@baylibre.com, rafael@kernel.org, robh@kernel.org, ulf.hansson@linaro.org, viresh.kumar@linaro.org
+Date: Wed, 28 Aug 2024 13:26:41 -0700
+User-Agent: alot/0.10
 
-On 8/28/24 14:21, vivek t s wrote:
-> Rename SelectChannel() to r8723bs_select_channel() to avoid CamelCase
-> warning from checkpatch.
-> 
-> Signed-off-by: vivek t s<vivek6429.ts@gmail.com>
+Quoting Varadarajan Narayanan (2024-08-19 22:57:03)
+> diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq957=
+4.c
+> index 80fc94d705a0..058cde71b202 100644
+> --- a/drivers/clk/qcom/gcc-ipq9574.c
+> +++ b/drivers/clk/qcom/gcc-ipq9574.c
+> @@ -3997,6 +3997,43 @@ static struct clk_branch gcc_xo_div4_clk =3D {
+>         },
+>  };
+> =20
+> +static const struct freq_tbl ftbl_hmss_rbcpr_clk_src[] =3D {
+> +       F(24000000, P_XO, 1, 0, 0),
+> +       { }
+> +};
+> +
+> +static struct clk_rcg2 rbcpr_clk_src =3D {
+> +       .cmd_rcgr =3D 0x48044,
+> +       .mnd_width =3D 0,
+> +       .hid_width =3D 5,
+> +       .parent_map =3D gcc_xo_map,
+> +       .freq_tbl =3D ftbl_gp1_clk_src,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
 
-Hi Vivek,
+Please mark these clk_init_data structures as const.=20
 
-the description can be improved. Please always consider that checkpatch 
-can be wrong. So checkpatch is not a justification.
-
-I propose (feel free to improve):
-Rename function SelectChannel() to r8723bs_select_channel() to avoid
-CamelCase and to improve cleanliness of the global namespace.
-
-Thanks for your support.
-
-Bye Philipp
+> +               .name =3D "rbcpr_clk_src",
+> +               .parent_data =3D gcc_xo_gpll0_gpll4,
 
