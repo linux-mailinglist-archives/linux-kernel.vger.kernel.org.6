@@ -1,143 +1,154 @@
-Return-Path: <linux-kernel+bounces-304645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32D1C962323
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:13:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 764AF962326
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E346E285337
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:13:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26D591F238A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0412C166F18;
-	Wed, 28 Aug 2024 09:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="S/zg1nBj"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F91815ECDF;
+	Wed, 28 Aug 2024 09:13:41 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B2A15B55D;
-	Wed, 28 Aug 2024 09:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD0115E5B5;
+	Wed, 28 Aug 2024 09:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724836343; cv=none; b=Il/U2iNbZMDpkRE9iv1qVH1K1Q0lq77fbqF716BWIvyWDX93KTXJK1TpUCOygBzRBF46Esy3FvQzJNJyE2+Q37k7gI1P2l0t7Q+tSqdhjwsYrm4QjPLLpBtHc3P4GBsmgzEd7bT7EtZBUv+oetTLYGzChiIPj/erDVI6ldszed0=
+	t=1724836421; cv=none; b=ZfyMR2l0SVjRXPAlOp32caC3tEP5xQGJj9/7O6MmuJGXNR/nreNxZSKv8LzO49zuIur8x0mVugNbENcd+6uXPrTSMf8VrPy3gwVZls4kPH8CHhEJMqq8/mm2g+QgHXhwynMyRTVgZn2cP4FJSs1KBW0RzkakyHio3SF98C7VYVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724836343; c=relaxed/simple;
-	bh=ZalckBvMTWaoy3jVYilCdgkf09reBQXkb7xO0PA0YzM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JFVXfYL9IxXiP7Uz8NXHST1figRc1Qd3nzEANdcb/Fg+mareafrvzYwnzO9oxX4HFb+DsBVXuoM6OH0j3NjQWlRdw6pkdTSMTxKg1hUfB2Z1x0QhDQ6W+NORev+ZvE8kPkcctJdQq0W8h/074RIdLP2/HON5LtyYrgioKmQ7Mvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=S/zg1nBj; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47RLfR8V009547;
-	Wed, 28 Aug 2024 09:12:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	M1y+4aFupFg5jHnRUIBKBj7VIHbsyj/E677pestYgEE=; b=S/zg1nBjFMsq+H71
-	g5WO1R4ol1GRe8y5TsDtzuWD+tskw3gnVu87sulq45f6g4Qmdz8TALZEjaYqOynB
-	qZG0tUd8Z5Uv13fFKP0NAmUiXIWwzdx6gFVaYLKlgonjwvmwC6lMUVuvvFeNBm8J
-	LPEbltn5YOrzRd7f5xa4Ijrj9NZ7Ro1hBAU/KclLaEPpqfcw8dQoYB1BEs4OYjKm
-	oGuIAtZFz6NgxQk4nHbQG/OspsVt18RCv5h5D1rdC7esxtK+TYNyq4TeD7vGPYpE
-	zcqG9gQV3N7ykR7Keiim8YMRPEpmgx6c3oMPhYGg+jrNEGaUa2M+G1LEgNtZMtlt
-	h+AgiQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419px5h90b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 09:12:17 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47S9CGPd003488
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 09:12:16 GMT
-Received: from [10.239.132.150] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 28 Aug
- 2024 02:12:13 -0700
-Message-ID: <4340f1d1-b049-4368-8227-b6400ae0cbce@quicinc.com>
-Date: Wed, 28 Aug 2024 17:12:11 +0800
+	s=arc-20240116; t=1724836421; c=relaxed/simple;
+	bh=my1j5FvugVUV25xBnj5k5mZl9KjOhaywMZwYI1x9wwg=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=JFSzJAmgkAaQNC9XF17R11UNiU2lSkdieuW6GyCadz6TKpTc76OI1gAk8pZLD3bKGAdaOocJtrkA843bM14HJXiCkSxE3qcoGNPNwnxHQ1L2mkxOeoVtBFfp+ov6eeavYayUT86TcO1sZrNazdUNNaq6r7kHfCymQnQIE4LdsOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WtzGn0QHMz4f3jMP;
+	Wed, 28 Aug 2024 17:13:21 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 9EEAC1A0359;
+	Wed, 28 Aug 2024 17:13:35 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgB3n4U96s5mS5THCw--.35306S3;
+	Wed, 28 Aug 2024 17:13:35 +0800 (CST)
+Subject: Re: [PATCH md-6.12 v2 00/42] md/md-bitmap: introduce
+ bitmap_operations and make structure internal
+To: Xiao Ni <xni@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Song Liu <song@kernel.org>, mariusz.tkaczyk@linux.intel.com,
+ linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20240826074452.1490072-1-yukuai1@huaweicloud.com>
+ <CAPhsuW6NOW9wuYD3ByJbbem79Nwq5LYcpXDj5RcpSyQ67ZHZAA@mail.gmail.com>
+ <5efeec29-cf13-a872-292c-dd7737a02d68@huaweicloud.com>
+ <CALTww2-Z7fp3O2ZELT=HQsxVqfFs1KZGMgQ6TJ4VKgBbeV1dhw@mail.gmail.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <d8447fb3-f71e-c202-a301-39132ea3562c@huaweicloud.com>
+Date: Wed, 28 Aug 2024 17:13:33 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] remoteproc: qcom: pas: Add QCS8300 remoteproc support
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Jingyi Wang
-	<quic_jingyw@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <andersson@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <mathieu.poirier@linaro.org>,
-        <bartosz.golaszewski@linaro.or>, <quic_tingweiz@quicinc.com>,
-        <quic_tengfan@quicinc.com>, Xin Liu <quic_liuxin@quicinc.com>
-References: <20240828030511.443605-1-quic_jingyw@quicinc.com>
- <20240828030511.443605-3-quic_jingyw@quicinc.com>
- <udhf32bgdfw6kfqltd7qo7tvzv7fev4nvrwxwg3tnjnfjtb3md@oy6kd5jnsu3t>
-From: "Aiqun Yu (Maria)" <quic_aiquny@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <udhf32bgdfw6kfqltd7qo7tvzv7fev4nvrwxwg3tnjnfjtb3md@oy6kd5jnsu3t>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: rMvDLlYLY_5qOde5thlgtLze6Sl53RM4
-X-Proofpoint-GUID: rMvDLlYLY_5qOde5thlgtLze6Sl53RM4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-28_03,2024-08-27_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
- adultscore=0 suspectscore=0 lowpriorityscore=0 mlxlogscore=999 spamscore=0
- priorityscore=1501 bulkscore=0 mlxscore=0 malwarescore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408280065
+In-Reply-To: <CALTww2-Z7fp3O2ZELT=HQsxVqfFs1KZGMgQ6TJ4VKgBbeV1dhw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgB3n4U96s5mS5THCw--.35306S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7tr4fJFy7tw43XrWkGr1kGrg_yoW8WryfpF
+	9xJ3WUt3ykC3WrtFnFqr10qFyrtFn7Zr429w1rGr17Gr98KF9xZrs7Krs8uFnIyFykZa1Y
+	9ay8Xa4fWr4UXFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
+	IcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
+	VjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
+Hi,
 
-
-On 8/28/2024 3:24 PM, Krzysztof Kozlowski wrote:
-> On Wed, Aug 28, 2024 at 11:05:11AM +0800, Jingyi Wang wrote:
->> Add support for PIL loading on ADSP, CDSP and GPDSP on QCS8300
->> platform.
+在 2024/08/28 9:31, Xiao Ni 写道:
+> On Wed, Aug 28, 2024 at 9:15 AM Yu Kuai <yukuai1@huaweicloud.com> wrote:
 >>
->> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
->> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
->> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
->> ---
->>  drivers/remoteproc/qcom_q6v5_pas.c | 55 ++++++++++++++++++++++++++++++
->>  1 file changed, 55 insertions(+)
+>> Hi,
 >>
->> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
->> index ef82835e98a4..368aa9cc0051 100644
->> --- a/drivers/remoteproc/qcom_q6v5_pas.c
->> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
->> @@ -857,6 +857,58 @@ static const struct adsp_data sdm845_adsp_resource_init = {
->>  	.ssctl_id = 0x14,
->>  };
->>  
->> +static const struct adsp_data qcs8300_adsp_resource = {
->> +	.crash_reason_smem = 423,
+>> 在 2024/08/28 4:32, Song Liu 写道:
+>>> On Mon, Aug 26, 2024 at 12:50 AM Yu Kuai <yukuai1@huaweicloud.com> wrote:
+>>>>
+>>> [...]
+>>>>
+>>>> And with this we can build bitmap as kernel module, but that's not
+>>>> our concern for now.
+>>>>
+>>>> This version was tested with mdadm tests. There are still few failed
+>>>> tests in my VM, howerver, it's the test itself need to be fixed and
+>>>> we're working on it.
+>>>
+>>> Do we have new test failures after this set? If so, which ones?
+>>
+>> No, there are new failures.
 > 
-> You just duplicate stuff. This is EXACTLY the same as SA8775p.
-
-Agreed with you. Offline checked with Jingyi, she will remove the
-creation and use sa8775p_adsp_resource directly.
-
-Will it be ok to put the second patchset here along with the qcs8300
-base dt changes together?
+> Hi all
 > 
-> NAK.
-> 
-> Best regards,
-> Krzysztof
+> I suggest running lvm2 regression tests too. I can't run it myself now
+> because I can't get a stable network connection all the time.
 > 
 
--- 
-Thx and BRs,
-Aiqun(Maria) Yu
+Today, I run one round of the lvm2 tests with following script in my VM:
+for t in `ls test/shell`; do
+         if cat test/shell/$t | grep raid &> /dev/null; then
+                 make check T=shell/$t
+         fi
+done
+
+And the failed tests are:
+[root@fedora lvm2]# cat log1 | grep "###   " | grep failed
+###       failed: [ndev-vanilla] shell/lvconvert-raid-reshape-size.sh
+###       failed: [ndev-vanilla] shell/lvconvert-repair-raid.sh
+
+Then, I revert this set and test above tests again, they still fail. So
+I didn't dig into these tests. :)
+
+Thanks,
+Kuai
+
+> Best Regards
+> Xiao
+>>
+>> Thanks,
+>> Kuai
+>>
+>>>
+>>> Thanks,
+>>> Song
+>>>
+>>>> Yu Kuai (42):
+>>>>     md/raid1: use md_bitmap_wait_behind_writes() in raid1_read_request()
+>>>>     md/md-bitmap: replace md_bitmap_status() with a new helper
+>>>>       md_bitmap_get_stats()
+>>>
+>>> [...]
+>>> .
+>>>
+>>
+> 
+> 
+> .
+> 
 
 
