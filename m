@@ -1,86 +1,107 @@
-Return-Path: <linux-kernel+bounces-304420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D5B2961FCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:29:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9B28961FD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:31:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A102E1C239E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:29:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27C8B1C238F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1BC4156967;
-	Wed, 28 Aug 2024 06:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CCB15667E;
+	Wed, 28 Aug 2024 06:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bHopuoSo"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gWlLXTww"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC9514B956;
-	Wed, 28 Aug 2024 06:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F075912CD8B;
+	Wed, 28 Aug 2024 06:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724826532; cv=none; b=dBqfdnPZwM6JoKph7EAERRr/ydayA2wY8hH945oOZyjnT0lygBwixpDVH8nobYRxZtkKPX5ddFUUBf1F4acM+VAhe44+PTFUJ80vpADgayzZoeKHXIgiRY2yKuV2FjusmuWLugZFywMl+JXi40AXgOnLV7e+denukkKl0i4ust8=
+	t=1724826703; cv=none; b=Wgfx9NCOCqsJES7ih0YozpXpxoQwGxQ50JDzI8MEEyeoJIDBPR9AYsu2CwvPZkU1FsHw5k8h1S1iRf9W4GW/YKpWwzaevfNCZtxMeYA/YwhYYxUB2xQV9WxdQMHCBArBW2JgEfn4svDHjJiHUzRiUIW1kISeRni1bWtt/jCMHGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724826532; c=relaxed/simple;
-	bh=EL38cIFA/ASX/u7eiGfnPA4xEMfqknQlRNuO0s4T6eo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DbiagvMB7d8a+IfZIk0FUJ2hXOjZIoW/lqnA+qlGK/fKrLHvCSNGZjLdVssLrvlocWL18AVtm2JlI61rdz15hrqIWA1LgHPyWGS1pueNa34WXA7ogi5tkV+fAcypuNP3x1fMhHUQtq9BfyNfqhHnGdz+RoSaTlECaVFIXEhB8Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bHopuoSo; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=XoviFBJy2bDohvpMLxa9vAmlCgQALpkBgjrnLzy2Sc0=; b=bHopuoSodVUOAM87DKr5XeZF9j
-	FLclZ3/hEdawwYlmvMvqk8IwE8wcUJ1mjh5Y2GKq4onqEwAiDr7FknHeD0xlUBSk+o7qCKxO1LPmI
-	bHEdACXDFPLXISGdkVyxtipe3TjWLVXob1D/KIso+DCvlAWlOi/EK/Pr4aVd/W+gnvvyy5kyOwleQ
-	uIcJTP2O0/JX4FLlMgMzuhf4ANdnkk5Ddb1UshhrVIZeJG+aQt1FVEdyHfHNzneo4uyaNPEL9m4mE
-	8zazoKlzARmmfbnlfOkx8jSdrSJYCONPZublL8BQzGzypY3drry3xR1TgxvzUg7H/YZtV1LfnH58f
-	l4De8JLQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sjCAi-0000000E67y-0wIJ;
-	Wed, 28 Aug 2024 06:28:48 +0000
-Date: Tue, 27 Aug 2024 23:28:48 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/5] xfs: move the tagged perag lookup helpers to
- xfs_icache.c
-Message-ID: <Zs7DoMzcyh7QbfUb@infradead.org>
-References: <20240821063901.650776-1-hch@lst.de>
- <20240821063901.650776-3-hch@lst.de>
- <20240821163407.GH865349@frogsfrogsfrogs>
+	s=arc-20240116; t=1724826703; c=relaxed/simple;
+	bh=706jf2NBauU+HYna34mCoZMrCu2OyinSMb5+pw/nikM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nOdaNdWue3dbmztmsMOFoGWdhJUV0RrNoQ2J9XQSH/9QLuFzskkVOMuzva/CAwwWZTg1bjTDj9iZ6Jat1vUTrxrqZQn6dRTxTbBV23MSIHe2l6L8mSMkJWhWb3wmskfULEFcF1liDNoJKaF/ATCOTGv2Kws1U7BBM+LSPSWUlN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gWlLXTww; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPA id 36BD640003;
+	Wed, 28 Aug 2024 06:31:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724826693;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=kDGEpNIBtaj4Rf31gNnJB1VhzNmuEVn8ETptfVZFZU0=;
+	b=gWlLXTwwWjWWfvnthSlYOKfAoUjSlANxazUeNAlT325Or72QP69rEDSeKCyFS1hiP38fWN
+	Qt2x69M+yNSekB8M6i9JQYQBO4cJnXeIdH+DFoWKtX1aAcF8nXi4oK+YXnlcLaXui6udTL
+	Wmx4w1Ec3FgMbgdtwZUCS0pq1QlCtYsq3eIbQn2UTHGRa6suejR073XrNNtl8SmxmhSCpR
+	0bKn8luyjpiWzA3oablpdBiIaNLui3/erPN0+rHcPYXJ9wVddPr5IqK/bkkM0JnxjCpiAg
+	WKdJ5/jKwRzSCVCdiq1ouC8IHXuqiQ0DrtW/2QD1asA1R5mxuG4ydDNh2STR8A==
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Christopher Cordahi <christophercordahi@nanometrics.ca>,
+	Bastien Curutchet <bastien.curutchet@bootlin.com>
+Subject: [PATCH] spi: davinci: Adapt transfer's timeout to transfer's length
+Date: Wed, 28 Aug 2024 08:31:31 +0200
+Message-ID: <20240828063131.10507-1-bastien.curutchet@bootlin.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240821163407.GH865349@frogsfrogsfrogs>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
-On Wed, Aug 21, 2024 at 09:34:07AM -0700, Darrick J. Wong wrote:
-> I don't particularly like moving these functions to another file, but I
-> suppose the icache is the only user of these tags.  How hard is it to
-> make userspace stubs that assert if anyone ever tries to use it?
+The timeout used when waiting for transfer's completion is always set to
+HZ. This isn't enough if a transfer is too large or if the bus speed is
+too low.
 
-I looked into not moving them, but the annoying thing is that we then
-need to make the ici_tag_to_mark helper added later and the marks
-global.  Unless this is a blocker for you I'd much prefer to just
-keep all the tag/mark logic contained in icache.c for now.  Things
-might change a bit if/when we do the generic xfs_group and also use
-tags for garbage collection of zoned rtgs, but I'd rather build the
-right abstraction when we get to that.  That will probably also
-include sorting out the current mess with the ICI vs IWALK flags.
+Use the bus speed and the transfer length to calculate an appropriate
+timeout
+
+Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
+---
+ drivers/spi/spi-davinci.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi-davinci.c b/drivers/spi/spi-davinci.c
+index f7e8b5efa50e..ad26c8409733 100644
+--- a/drivers/spi/spi-davinci.c
++++ b/drivers/spi/spi-davinci.c
+@@ -570,6 +570,7 @@ static int davinci_spi_bufs(struct spi_device *spi, struct spi_transfer *t)
+ 	u32 errors = 0;
+ 	struct davinci_spi_config *spicfg;
+ 	struct davinci_spi_platform_data *pdata;
++	unsigned long timeout;
+ 
+ 	dspi = spi_controller_get_devdata(spi->controller);
+ 	pdata = &dspi->pdata;
+@@ -661,7 +662,12 @@ static int davinci_spi_bufs(struct spi_device *spi, struct spi_transfer *t)
+ 
+ 	/* Wait for the transfer to complete */
+ 	if (spicfg->io_type != SPI_IO_TYPE_POLL) {
+-		if (wait_for_completion_timeout(&dspi->done, HZ) == 0)
++		timeout = DIV_ROUND_UP(t->speed_hz, MSEC_PER_SEC);
++		timeout = DIV_ROUND_UP(t->len * 8, timeout);
++		/* Assume we are at most 2x slower than the nominal bus speed */
++		timeout = 2 * msecs_to_jiffies(timeout);
++
++		if (wait_for_completion_timeout(&dspi->done, timeout) == 0)
+ 			errors = SPIFLG_TIMEOUT_MASK;
+ 	} else {
+ 		while (dspi->rcount > 0 || dspi->wcount > 0) {
+-- 
+2.45.0
 
 
