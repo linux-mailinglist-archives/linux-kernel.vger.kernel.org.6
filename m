@@ -1,198 +1,230 @@
-Return-Path: <linux-kernel+bounces-305029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E281A962860
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:16:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AB3A962862
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:16:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35238B20EB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:16:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E4551C21544
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE0F183CC6;
-	Wed, 28 Aug 2024 13:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0783542AB3;
+	Wed, 28 Aug 2024 13:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="M4ADynBe"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FEG8DemB"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC90242AB3
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 13:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF74A187879;
+	Wed, 28 Aug 2024 13:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724850969; cv=none; b=fdcAltHjxyHon2qLCSeri3+nUJoebe8z+1c2MQipK/Dxsy+tj4ZfnTmDFfv8Isqp5nX5ReFWirH+6PoZ88tKhCHh7oOje/As1f+5OCtrw/cpkFLYSAwRXcejoMYH54BSDxB4yK2HWVLt/cBMqDggn9GneNI5REJvilxYBoHtzoM=
+	t=1724850975; cv=none; b=NN3GvYyECu9VNnLNGplI8gp4a5LHZruPJRO10+ZzLvO3sN1smN8PdInnA1/ceUcEE1wPkSyq8DmRMB/wZqeDhtMkcyu9CdPCWMNioBYaTb9DCH5g/0s95nsChqGz0NF6iHAfAgfxWLkNQe224YetEflLv/PFqQI/3RXNWjoaHAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724850969; c=relaxed/simple;
-	bh=13n8wvfwgw4WzmNh3YiRnaPdFHWC2d8jSAq3Dzjd8yg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hiUcdt7xxMewE2aqY6Cy2akwT9cDYNabAM0+9yCdDWiuTUWInuILq4bkHZJj1ew9D3YyKhyT9bVk4bbWuWe8ZzEtFVSde6R8bvepeN3+s21lmp1/DJ9fS/TZHWZ2u9IBnZV9pYLrNeu3Kq3jLGXqVVrRT6PpcJIv3qZ5ptrj6IM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=M4ADynBe; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5befe420fc2so8282093a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 06:16:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724850964; x=1725455764; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6xEfuOHBth+tI57VpPJ0AWA/OJxnz2o5qbCySLyaKbU=;
-        b=M4ADynBeQaRFnOTxI5fQTL39dftG7JP/kIJUruebW4N93OS4EcB6j1r5GygAMZUuGP
-         kAhEVmCjoksVFrF0ikJLbIhJP6+Q+w5KRRP9guud9feTAPtOxXYIlZzpwC1z3iFLCDmo
-         GzQFJXRoIJHl9N0wI08muqr7MrVWXYxpeoAqSgfnhYMxMZlk5fpEls50gYkDFCj2PieF
-         qS5f0nE6CMxRpy+Icrh4nKZG/qXZ8A5OtGKi8Lz2k+spycKQvmWX/vxZoAqPtWx+McgI
-         UQvTd20w5m0Jam8e+TMSQS1SCGOt2MjGbyu+dQc3yhRHmnIQoFoKpWUv8arakP4TaY2x
-         YegA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724850964; x=1725455764;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6xEfuOHBth+tI57VpPJ0AWA/OJxnz2o5qbCySLyaKbU=;
-        b=HviMrnQYiHM+cv2LNldsOdbZXNEp1E/wL3KIEORX5MJC7coTRKfdSqckTaRluwgzCo
-         ANwkJLIjP7Nr5Xe7FjNO1MXg7BVrvXoOHedBX9iKOcXbdS6V4MAuBsGq9GGXkJgf4QJg
-         B3J8LTXSEDx3kuUSCX6zEioyA8sRfyFbHiOHS/gdv9PQquogk6zCeQYM8wnvTn5rkoOJ
-         qGhm870eNQyplXmsPrHX5hdg2GJx/4x98oxMuj7b5sCss+OJv2lEM06IgxDzIxgRp7Tw
-         J9sVJgVr94aYtA+zGAKWZNHeHUfj0oH30kg3Fivsh7WzpZcMOQO9XLyBEfwnt9brH8I0
-         Lmqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWiALzYHwUK0BxcJJ/HoctTjwY8/otsaA70PkjpzJDmqJL/DdHxHXKXGJhGxbadKmLKYnVILaG/8btO5Zg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww2zGvQDUGYdX0bBDTsUJwKileLQmOaa0EySHMSxEP6B+d6/YQ
-	AE+gp65/4TmqrOn3IMZyi6fON73xA81AmYioseXl2+Q25yiI6/jS05m1mdCVl9M=
-X-Google-Smtp-Source: AGHT+IE5BUYKTG9gsKwbU0VFLLV4P4FQ2LNHwR9u+1yhdyQpzmQCNC/29xlc3hFtTQ2z80ZlRg8VzA==
-X-Received: by 2002:a17:907:f79e:b0:a86:80a8:cee7 with SMTP id a640c23a62f3a-a86a52bb629mr1235706466b.27.1724850963651;
-        Wed, 28 Aug 2024 06:16:03 -0700 (PDT)
-Received: from [10.20.4.146] (212-5-158-46.ip.btc-net.bg. [212.5.158.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e5878562sm243184966b.156.2024.08.28.06.16.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 06:16:03 -0700 (PDT)
-Message-ID: <c613d2d5-cb7b-40fe-b322-45ddb43c6382@suse.com>
-Date: Wed, 28 Aug 2024 16:16:00 +0300
+	s=arc-20240116; t=1724850975; c=relaxed/simple;
+	bh=CWMRrg0fpXSHKvZd6iQ8hN4f+VD4Vq1DmXea/9FSv28=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DTwAhwrLqEd4ZnqIu0SiXs/0X68l75PVNOFOp+1sv54/rbcZN0Uycb3+0/V3yXvook87B3gg0Ttelg5S0pC8+kIKSBfau+08seQccSqkZSIAflx3GIkMI1RoJ3vXo0GKNZwzgv5r7ahPWqsNpyF+uzYquRK96+iHp6mEnuYR9yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FEG8DemB; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47SDG15g012939;
+	Wed, 28 Aug 2024 08:16:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724850961;
+	bh=Hlxr3I00Om3Pz366GTjoP2TIgKieVNsjhGzKw3SeBuM=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=FEG8DemBzjHLo4dKVJ8U3LZn8eJgh83F6N4v9h6L3EYajos+k0eqCcizxNOtBCu3/
+	 sJPpBPr79asrwPYQpybv5i5fypBs3W8nmEhLqBuXScadB+nHJhHDt1Kl94XaWYLbp4
+	 BcRraFMHmkLuKOLX3w5VTbnxPVAnyhZalTIOvQww=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47SDG1tj128781
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 28 Aug 2024 08:16:01 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 28
+ Aug 2024 08:16:01 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 28 Aug 2024 08:16:01 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47SDG1a2002345;
+	Wed, 28 Aug 2024 08:16:01 -0500
+Date: Wed, 28 Aug 2024 08:16:01 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Bryan Brattlof <bb@ti.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/4] arm64: dts: ti: k3-am62a: add opp frequencies
+Message-ID: <20240828131601.6sxvnwpcsb36tz4m@eloquent>
+References: <20240826-opp-v3-0-0934f8309e13@ti.com>
+ <20240826-opp-v3-1-0934f8309e13@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/4] cacheinfo: Allocate memory for memory if not done
- from the primary CPU
-To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, x86@kernel.org
-Cc: Andreas Herrmann <aherrmann@suse.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Chen Yu <yu.c.chen@intel.com>,
- Len Brown <len.brown@intel.com>, Radu Rendec <rrendec@redhat.com>,
- Pierre Gondois <Pierre.Gondois@arm.com>, Pu Wen <puwen@hygon.cn>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Sudeep Holla <sudeep.holla@arm.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Will Deacon <will@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Huang Ying <ying.huang@intel.com>, Ricardo Neri <ricardo.neri@intel.com>,
- linux-kernel@vger.kernel.org
-References: <20240827051635.9114-1-ricardo.neri-calderon@linux.intel.com>
- <20240827051635.9114-3-ricardo.neri-calderon@linux.intel.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-In-Reply-To: <20240827051635.9114-3-ricardo.neri-calderon@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240826-opp-v3-1-0934f8309e13@ti.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-
-
-On 27.08.24 г. 8:16 ч., Ricardo Neri wrote:
-> Commit 5944ce092b97 ("arch_topology: Build cacheinfo from primary CPU")
-> adds functionality that architectures can use to optionally allocate and
-> build cacheinfo early during boot. Commit 6539cffa9495 ("cacheinfo: Add
-> arch specific early level initializer") lets secondary CPUs correct (and
-> reallocate memory) cacheinfo data if needed.
+On 12:22-20240826, Bryan Brattlof wrote:
+> One power management technique available to the Cortex-A53s is their
+> ability to dynamically scale their frequency across the device's
+> Operating Performance Points (OPP)
 > 
-> If the early build functionality is not used and cacheinfo does not need
-> correction, memory for cacheinfo is never allocated. x86 does not use the
-> early build functionality. Consequently, during the cacheinfo CPU hotplug
-> callback, last_level_cache_is_valid() attempts to dereference a NULL
-> pointer:
+> The OPPs available for the Cortex-A53s on the AM62Ax can vary based on
+> the silicon variant used. The SoC variant is encoded into the
+> WKUP_MMR0_WKUP0_CTRL_MMR0_JTAG_USER_ID register which is used to limit
+> to only OPP entries the variant supports. A table of all these variants
+> can be found in it's data sheet[0] for the AM62Ax family.
 > 
->       BUG: kernel NULL pointer dereference, address: 0000000000000100
->       #PF: supervisor read access in kernel mode
->       #PF: error_code(0x0000) - not present page
->       PGD 0 P4D 0
->       Oops: 0000 [#1] PREEPMT SMP NOPTI
->       CPU: 0 PID 19 Comm: cpuhp/0 Not tainted 6.4.0-rc2 #1
->       RIP: 0010: last_level_cache_is_valid+0x95/0xe0a
+> Add the OPP table into the SoC's fdti file along with the syscon node to
+> describe the WKUP_MMR0_WKUP0_CTRL_MMR0_JTAG_USER_ID register to detect
+> the SoC variant.
 > 
-> Allocate memory for cacheinfo during the cacheinfo CPU hotplug callback if
-> not done earlier.
-
-I assume instead of duplicating "memory" in the subject you meant 
-"cacheinfo" ?
-
-Otherwise LGTM:
-
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
-
+> [0] https://www.ti.com/lit/ds/symlink/am62a3.pdf
 > 
-> Reviewed-by: Radu Rendec <rrendec@redhat.com>
-> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> Fixes: 6539cffa9495 ("cacheinfo: Add arch specific early level initializer")
-> Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+> Signed-off-by: Bryan Brattlof <bb@ti.com>
 > ---
-> Cc: Andreas Herrmann <aherrmann@suse.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Chen Yu <yu.c.chen@intel.com>
-> Cc: Huang Ying <ying.huang@intel.com>
-> Cc: Len Brown <len.brown@intel.com>
-> Cc: Nikolay Borisov <nik.borisov@suse.com>
-> Cc: Radu Rendec <rrendec@redhat.com>
-> Cc: Pierre Gondois <Pierre.Gondois@arm.com>
-> Cc: Pu Wen <puwen@hygon.cn>
-> Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-> Cc: Sudeep Holla <sudeep.holla@arm.com>
-> Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Zhang Rui <rui.zhang@intel.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: stable@vger.kernel.org # 6.3+
-> ---
-> The motivation for commit 5944ce092b97 was to prevent a BUG splat in
-> PREEMPT_RT kernels during memory allocation. This splat is not observed on
-> x86 because the memory allocation for cacheinfo happens in
-> detect_cache_attributes() from the cacheinfo CPU hotplug callback.
+>  arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi |  5 +++
+>  arch/arm64/boot/dts/ti/k3-am62a7.dtsi       | 51 +++++++++++++++++++++++++++++
+>  2 files changed, 56 insertions(+)
 > 
-> The dereference of a NULL pointer is not observed today because
-> cache_leaves(cpu) is zero until after init_cache_level() is called (also
-> during the CPU hotplug callback). A subsequent changeset will set the
-> number of cache leaves earlier and the NULL-pointer dereference will be
-> observed.
-> ---
-> Changes since v4:
->   * None
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
+> index f5ac101a04dfa..0b1dd5390cd3f 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
+> @@ -17,6 +17,11 @@ chipid: chipid@14 {
+>  			reg = <0x14 0x4>;
+>  		};
+>  
+> +		opp_efuse_table: syscon@18 {
+> +			compatible = "ti,am62-opp-efuse-table", "syscon";
+> +			reg = <0x18 0x4>;
+
+Does this really work??
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/cpufreq/ti-cpufreq.c#n309
+	efuse_offset is 0x0 -> OK.. BUT,
+	.rev_offset = 0x0014 from a syscon which is one register wide???
+
+Seems like you have been sidetracked by:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/cpufreq/ti-cpufreq.c#n384
+bug to read some omap register offset?
+
+This is probably not getting exposed due to the syscon bug that I just
+fixed: https://lore.kernel.org/r/20240828121008.3066002-1-nm@ti.com
+
+I just have to NAK this series while you folks figure out how to do this
+properly.
+
+> +		};
+> +
+>  		cpsw_mac_syscon: ethernet-mac-syscon@200 {
+>  			compatible = "ti,am62p-cpsw-mac-efuse", "syscon";
+>  			reg = <0x200 0x8>;
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62a7.dtsi b/arch/arm64/boot/dts/ti/k3-am62a7.dtsi
+> index f86a23404e6dd..6c99221beb6bd 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62a7.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62a7.dtsi
+> @@ -48,6 +48,8 @@ cpu0: cpu@0 {
+>  			d-cache-line-size = <64>;
+>  			d-cache-sets = <128>;
+>  			next-level-cache = <&L2_0>;
+> +			operating-points-v2 = <&a53_opp_table>;
+> +			clocks = <&k3_clks 135 0>;
+>  		};
+>  
+>  		cpu1: cpu@1 {
+> @@ -62,6 +64,8 @@ cpu1: cpu@1 {
+>  			d-cache-line-size = <64>;
+>  			d-cache-sets = <128>;
+>  			next-level-cache = <&L2_0>;
+> +			operating-points-v2 = <&a53_opp_table>;
+> +			clocks = <&k3_clks 136 0>;
+>  		};
+>  
+>  		cpu2: cpu@2 {
+> @@ -76,6 +80,8 @@ cpu2: cpu@2 {
+>  			d-cache-line-size = <64>;
+>  			d-cache-sets = <128>;
+>  			next-level-cache = <&L2_0>;
+> +			operating-points-v2 = <&a53_opp_table>;
+> +			clocks = <&k3_clks 137 0>;
+>  		};
+>  
+>  		cpu3: cpu@3 {
+> @@ -90,6 +96,51 @@ cpu3: cpu@3 {
+>  			d-cache-line-size = <64>;
+>  			d-cache-sets = <128>;
+>  			next-level-cache = <&L2_0>;
+> +			operating-points-v2 = <&a53_opp_table>;
+> +			clocks = <&k3_clks 138 0>;
+> +		};
+> +	};
+> +
+> +	a53_opp_table: opp-table {
+> +		compatible = "operating-points-v2-ti-cpu";
+> +		opp-shared;
+> +		syscon = <&opp_efuse_table>;
+> +
+> +		opp-200000000 {
+> +			opp-hz = /bits/ 64 <200000000>;
+> +			opp-supported-hw = <0x01 0x0007>;
+> +			clock-latency-ns = <6000000>;
+> +		};
+> +
+> +		opp-400000000 {
+> +			opp-hz = /bits/ 64 <400000000>;
+> +			opp-supported-hw = <0x01 0x0007>;
+> +			clock-latency-ns = <6000000>;
+> +		};
+> +
+> +		opp-600000000 {
+> +			opp-hz = /bits/ 64 <600000000>;
+> +			opp-supported-hw = <0x01 0x0007>;
+> +			clock-latency-ns = <6000000>;
+> +		};
+> +
+> +		opp-800000000 {
+> +			opp-hz = /bits/ 64 <800000000>;
+> +			opp-supported-hw = <0x01 0x0007>;
+> +			clock-latency-ns = <6000000>;
+> +		};
+> +
+> +		opp-1000000000 {
+> +			opp-hz = /bits/ 64 <1000000000>;
+> +			opp-supported-hw = <0x01 0x0006>;
+> +			clock-latency-ns = <6000000>;
+> +		};
+> +
+> +		opp-1250000000 {
+> +			opp-hz = /bits/ 64 <1250000000>;
+> +			opp-supported-hw = <0x01 0x0004>;
+> +			clock-latency-ns = <6000000>;
+> +			opp-suspend;
+>  		};
+>  	};
+>  
 > 
-> Changes since v3:
->   * Added Reviewed-by tag from Radu and Sudeep. Thanks!
+> -- 
+> 2.46.0
 > 
-> Changes since v2:
->   * Introduced this patch.
-> 
-> Changes since v1:
->   * N/A
-> ---
->   drivers/base/cacheinfo.c | 6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
-> index 77f2e0f91589..0332148691f9 100644
-> --- a/drivers/base/cacheinfo.c
-> +++ b/drivers/base/cacheinfo.c
-> @@ -554,7 +554,11 @@ static inline int init_level_allocate_ci(unsigned int cpu)
->   	 */
->   	ci_cacheinfo(cpu)->early_ci_levels = false;
->   
-> -	if (cache_leaves(cpu) <= early_leaves)
-> +	/*
-> +	 * Some architectures (e.g., x86) do not use early initialization.
-> +	 * Allocate memory now in such case.
-> +	 */
-> +	if (cache_leaves(cpu) <= early_leaves && per_cpu_cacheinfo(cpu))
->   		return 0;
->   
->   	kfree(per_cpu_cacheinfo(cpu));
+
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
