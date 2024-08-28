@@ -1,126 +1,136 @@
-Return-Path: <linux-kernel+bounces-305231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5063D962B7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:11:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 158EB962B85
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:12:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C6BD28291F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:11:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 442A91C21458
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221071A4B76;
-	Wed, 28 Aug 2024 15:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D4F1A4F30;
+	Wed, 28 Aug 2024 15:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RrG7b4s1";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="a62Q2ozU"
-Received: from a7-51.smtp-out.eu-west-1.amazonses.com (a7-51.smtp-out.eu-west-1.amazonses.com [54.240.7.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Npan8ghf"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20531A257C;
-	Wed, 28 Aug 2024 15:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F87A1A4F0A;
+	Wed, 28 Aug 2024 15:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724857855; cv=none; b=sSVIGW7HNe+jKmQ5+Uh4wJ/YYJjMiC+UGKHYVqBtjFbvOGezfr2EK/8KWe3zOcFmMFMuNTfsVlr9mOdkQtYaqM30Ngcq3cJpUixxhOEEr3+TSV1m4pDgAbyiGgvhSOV7xIXCIPVOzSyQWUdWioKl8E4JUAQL5KlYnzrVZtO8jW0=
+	t=1724857860; cv=none; b=f3TWC7veeWHx8TYQVVJYDt/IMdcx4pZbSWsCG5Zmg388j6qDTKHU2MMfkaSzIqNxA2sj+Vvq9lhXoKc3O8jv9d2QrJjDX9bE0qk1Dzc+YiHmupHVp/ThYLQtzlqUK+jS0AW82DUfXDFDWBKiszPG0nRvLWVqRTgqNhjjPIEXC/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724857855; c=relaxed/simple;
-	bh=q91nNqe25vY4zdGQ0jID+lBhXgdVdrS3Q9cXE35aK60=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GkoR4CEfQM/0Mf/EfLUOE1zwHAJtuEHJRHUGPXxeLeyKzQGZrKXTeL5ln2JZq48bhZj5NPdu4YL5CALmvfyZ20K2dHqspLvF/WReeBDVCcY9dRRSnhBawi5qY7gRQjNj0qpNVQQh5ZIz5xKH4S+aNjxf22pMOEkwkT9CQ2nj3/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RrG7b4s1; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=a62Q2ozU; arc=none smtp.client-ip=54.240.7.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1724857851;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=q91nNqe25vY4zdGQ0jID+lBhXgdVdrS3Q9cXE35aK60=;
-	b=RrG7b4s16zLja2ag7Y8K/z4JQWr+pmLBMS4W2478rKFBehqW89ZruBzHY5qoFqGE
-	eGHwxuJbR59Uc7nf4/py5DNkE938h29VtYQ/XMQ54aDK7Aq/Uljrao8xH+eayL3BRv4
-	ltQu5auvYeUabPq7prqLHub1OmRn3Mqs4Pw4sQMGheRazaPTWEpeAU4hp7pHp8NvPdy
-	FCCpue2RcEqQcTq3/z/qpV9xRhcica2J0uVMAto5HmQR8M8djQ+JsxTi/pxxW+mzYqi
-	VFupFFCsXRpmkblFcWf4WAd6AqPOp9faKe0J0mfoxDWKbAQeISLZbsPI3AfJaVsbCyE
-	EX4GMv0hDQ==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1724857851;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
-	bh=q91nNqe25vY4zdGQ0jID+lBhXgdVdrS3Q9cXE35aK60=;
-	b=a62Q2ozUn9zNB8cW0ZfO7YTbWP002yT8ZD7DPFWDmRvWqB5Gv6Ifs9LP7rNiYgSZ
-	0VPqpEW734zo7Ru7ej/VMBsq6aI09TiDf6xUYjmnTj1yjsMLWiidEH5A0UwQoWm6T9n
-	0rXUnyEIV49YIQzfKTUU76Vp+KqZX38WHs8FpmpA=
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, 
-	Andi Shyti <andi.shyti@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Mark Brown <broonie@kernel.org>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, 
-	Guenter Roeck <linux@roeck-us.net>, 
-	Chris Morgan <macromorgan@hotmail.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>, 
-	Chukun Pan <amadeus@jmu.edu.cn>, 
-	Muhammed Efe Cetin <efectn@protonmail.com>, 
-	Andy Yan <andyshrk@163.com>, Jagan Teki <jagan@edgeble.ai>, 
-	Dragan Simic <dsimic@manjaro.org>, 
-	Detlev Casanova <detlev.casanova@collabora.com>, 
-	Ondrej Jirman <megi@xff.cz>, Jimmy Hon <honyuenkwun@gmail.com>, 
-	Elon Zhang <zhangzj@rock-chips.com>, 
-	Finley Xiao <finley.xiao@rock-chips.com>, 
-	Elaine Zhang <zhangqing@rock-chips.com>, 
-	Liang Chen <cl@rock-chips.com>, 
-	Yifeng Zhao <yifeng.zhao@rock-chips.com>, 
-	Jisheng Zhang <jszhang@kernel.org>, Jamie Iles <jamie@jamieiles.com>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org, 
-	linux-i2c@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, kernel@collabora.com, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3 03/11] dt-bindings: i2c: i2c-rk3x: Add rk3576 compatible
-Date: Wed, 28 Aug 2024 15:10:51 +0000
-Message-ID: <01020191998a1d21-c491afc1-ee3a-4920-989f-53c5d9bcfe38-000000@eu-west-1.amazonses.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240828151028.41255-1-detlev.casanova@collabora.com>
-References: <20240828151028.41255-1-detlev.casanova@collabora.com>
+	s=arc-20240116; t=1724857860; c=relaxed/simple;
+	bh=GcaH7q63yKV8Jf1ACDAwyehcMWJCw79Jz4JUkDOV9oo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mkZqseCfqKD5/Eoc93euzX48WBxySR8zPTnzbTNWpklq96UVfi5E9UkUpGZ7x3vNC0Ph4FvKu36iPDlvTgMziofII+uKiyQZDqeRqCRYotdLERSY2xmuv0tBLx1jGOnCg627ndk2uhfb55KadqhyHNB9zNNFzm224pbfp227Kjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Npan8ghf; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42ba9b47f4eso3321185e9.1;
+        Wed, 28 Aug 2024 08:10:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724857857; x=1725462657; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UQ/4ajvZzaDOMDTKRC7CbsivFxEl/NxmaV5flB3XzkI=;
+        b=Npan8ghfsrCLCTiywBPvbK36vCbA3sFbIRbzoSXh0mJYjc49UnIRtpHbJ+wwErl2cu
+         O3xNLON8h62d53rtnp8kDCv5gqIRO5riacLCi5G1RqAVivW3U3VeAeeUbBtw432iz6uL
+         JcHWb6A50V50iMe58hp1z/Hn1pPn39qFGG5IYoDb/KP0RDXcvNbQTeoA/UeOsQoiXSFw
+         VDnulrXSuqehUnvJ4AgZmJA9VsNN5WKs6hfvStsR5nQl5XPW0zkSD6c6zEpVbyp63y3D
+         6HmSxZv1lG2jGC1Ui/z9BPJ2X3EcSyqsA5qcHAGa9BcatUhiA33Cz47gR7zZr7ySoBKS
+         KgPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724857857; x=1725462657;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UQ/4ajvZzaDOMDTKRC7CbsivFxEl/NxmaV5flB3XzkI=;
+        b=DJgpXEZeMNEHSc9d1iS8Q33LWfPRv2Z9HFXyMl7gQAgtYHUuxp8DzQkXUtQQj3A8+p
+         jwT9eluktvw3ELgvsx9eQCrg5q8eE7H1ejS4FMZTywFgXsV92hKGQyroWtRohjSdaVf1
+         X+4iYOniltCQJApqHhARfoTkeEaq3qcU2/p4FiL0rUROqcXtU0ZbZ8YILV2LstHWVZ7P
+         EqOJVA4fBsxOP+9ivD5VlVPJ+fCfDvXv/e9+7XMbUwhEk9QOgKczU53F/UdW60xjHej0
+         o/tjkKTYF6avXSiyaZIG1stovHNS3vH8x9dTRoikDTiPO2dwsGhUIeM1pnlUqxtr7F0s
+         9oog==
+X-Forwarded-Encrypted: i=1; AJvYcCUDrGnv1RdQ0HBGsHw85MvyJ1MrtxjkxY2alQ/h6QAVEU4HxCabXTzMt6SpQGpD4Gm18s6n0uaESvvFtQg=@vger.kernel.org, AJvYcCUxBO37w70IFqT75wVD+0C2gul0MtcYjU+eHyJiw04xCMKMXb2jzEnBnR7r/5FMCwqKlilMjTJQrBWYZVg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzKzZUeVltK2yAOkADDjzqLiOYCIRs5J+G0m3Zvc70SCyM2ow4
+	+mAmPsxqJw8FXsfztbBS2kEW9U4UvLWHrcB2+DXp26VEGdo7UZi1
+X-Google-Smtp-Source: AGHT+IERe5eLdpwONj/vwyA+QSmJxF++N7sdszwss1qO4IhBV+DuW4oYJY8dtC/iq1N1kJGp7tf/lQ==
+X-Received: by 2002:a05:600c:4fc8:b0:427:abfd:4432 with SMTP id 5b1f17b1804b1-42ba5708dd6mr15087395e9.12.1724857856974;
+        Wed, 28 Aug 2024 08:10:56 -0700 (PDT)
+Received: from orome (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749b36a732sm36538f8f.113.2024.08.28.08.10.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 08:10:56 -0700 (PDT)
+Date: Wed, 28 Aug 2024 17:10:55 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: mperttunen@nvidia.com, airlied@gmail.com, daniel@ffwll.ch, 
+	jonathanh@nvidia.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/tegra: hub: Use fn parameter directly to fix
+ Coccinelle warning
+Message-ID: <ddh6votnreuhbylvk5wsiclep5e6qkcrdf66h3fvhsgsampwqk@w4a3p6n325jn>
+References: <20240710210034.796032-2-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
-X-SES-Outgoing: 2024.08.28-54.240.7.51
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="pgr6eujdr52sieij"
+Content-Disposition: inline
+In-Reply-To: <20240710210034.796032-2-thorsten.blum@toblux.com>
 
-Just like RK356x and RK3588, RK3576 is compatible to the existing
-rk3399 binding.
 
-Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Acked-by: Heiko Stuebner <heiko@sntech.de>
----
- Documentation/devicetree/bindings/i2c/i2c-rk3x.yaml | 1 +
- 1 file changed, 1 insertion(+)
+--pgr6eujdr52sieij
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-rk3x.yaml b/Documentation/devicetree/bindings/i2c/i2c-rk3x.yaml
-index 82b9d6682297..a9dae5b52f28 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-rk3x.yaml
-+++ b/Documentation/devicetree/bindings/i2c/i2c-rk3x.yaml
-@@ -38,6 +38,7 @@ properties:
-               - rockchip,rk3308-i2c
-               - rockchip,rk3328-i2c
-               - rockchip,rk3568-i2c
-+              - rockchip,rk3576-i2c
-               - rockchip,rk3588-i2c
-               - rockchip,rv1126-i2c
-           - const: rockchip,rk3399-i2c
--- 
-2.46.0
+On Wed, Jul 10, 2024 at 11:00:35PM GMT, Thorsten Blum wrote:
+> The function parameter out can be used directly instead of assigning it
+> to a temporary u64 variable first.
+>=20
+> Remove the local variable tmp2 and use the parameter out directly as the
+> divisor in do_div() to remove the following Coccinelle/coccicheck
+> warning reported by do_div.cocci:
+>=20
+>   WARNING: do_div() does a 64-by-32 division, please consider using div64=
+_u64 instead
+>=20
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> ---
+>  drivers/gpu/drm/tegra/hub.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
 
+Applied, thanks.
+
+Thierry
+
+--pgr6eujdr52sieij
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmbPPf8ACgkQ3SOs138+
+s6HgvA//eOkCBC1C25PldBUYerxsYMFxP6AxLd7fnvfyMD8k5v8A3NQfIC+v8sTu
+k6YZU6S9UCnbQyAEpsyKu+t1VtRx2O+5oTW8NbF+l6z528RUIPRqVgNTMlRgg0PW
+nroHFg1myWGSdOkjOy5R8HaZGbXPx0Nbzlztg/l2gwRqqwvOfvg505o+M7X8X4SV
+x2+Ahv5HuoqtRMG1euwXIjX1LMclQP2j7QH5as7GMqA+Bb0Ax8ji2ydR+ShBwc5D
+IUdA2SjHulB8HIxWf6itG7Ex+fO0iemuhIzyCcTKeWz3+38GrhuSM/e1BkHWc3gM
+T1lC10aagiNrGS7vsZ0JRfWclfuHVqbXsqJLMkaCtazW3/coWX4TQnpNF9AtFMgI
+BtGVRsBSt04kDxJpQ0CZ0wQ7wSlGBpK2ew03GHqFXnOTHraA9uxApjh+wYbdsf1z
+9Dvudn5tiaL3nmhzzPjEWdjs+QT6omlYOJfKZyfCmIGhAFoEgHb/LiJL+5M0mMOL
+z37sDn3zGYUEFNEjXLs7BCpcuar6YumRcg4S/ffYJ3tfmRAwVn0ajNOw1wMtDXMG
+aMeOj93BVKflap7gM0YdsN0LG7bRE97YvuGW3aN04JjhZw0onogIZ62Ic+xyCIeF
+Rs3gAVVUnSVzWWHb5VfRJiju05fOMzQmEXzFAVWLUiDEqfjSzKo=
+=0GlK
+-----END PGP SIGNATURE-----
+
+--pgr6eujdr52sieij--
 
