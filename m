@@ -1,149 +1,277 @@
-Return-Path: <linux-kernel+bounces-305141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED16962A20
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:26:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 095AB962A13
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C85FB236A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:26:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CA181C23A91
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74F01991B5;
-	Wed, 28 Aug 2024 14:26:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90489189512;
+	Wed, 28 Aug 2024 14:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T7pI/03D"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cu5tW/Hn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27F5176259;
-	Wed, 28 Aug 2024 14:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF3A2D600
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724855163; cv=none; b=ZeOPJu+z4WsCE292mgOBqCkg9b6xrKmB9hjlYaYXk7HwKgsEvh14DaEtmhQHpQsTqS+tWIYLsOjtPYzT+xWLJ4zPkxkinrQoJBH4J7HI4jEhk2XR6IebolmiXAAW2pb43dabA8AuidHRZjfe1lJGCf5lJ0HBVI82J81DcVw9bt4=
+	t=1724855056; cv=none; b=TEjEhB8hYPQiNuFt/ci/aJNOdE2le6qgR4pPrchFjLtwOo8MlP7lmlFXkBC7TNY0jG81ocVKJJbGE0b2rAEjTpAjLy1VyWG7D+UaWaLpfwOhxxtpYE0Dtoa0Aqy8SmksdcidpS3sqHehh9z1ZHEQyvEbtGq2wADSez+JhqQnbhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724855163; c=relaxed/simple;
-	bh=b+YH70YKIG5Ozic9cP8h4si5TZhR2H4rU94oHvsAHFQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uAZGycpRlajQr0J3P3s7FbymGUTgQ8rwNyKCfzv7cY+j3xa6GUi5d79rjtlVSxPCctF6Q8LEPsWiDb02bPQ5gYPgp7482HHO6ZDu0DL4EcZYWjhxpqsaKPO17Nzn5GPakYnWxAC+amvxyO8DqAb+5FFrpFXbo5WgbB3NzXSMvug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T7pI/03D; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724855161; x=1756391161;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=b+YH70YKIG5Ozic9cP8h4si5TZhR2H4rU94oHvsAHFQ=;
-  b=T7pI/03D8yZ2s1ABL8ALj4BEhoGoTqXxDo7+iWG0QuCiCqgVyGgmxx7z
-   Uh3sig4ekDc/tVDIxnB08n20TBo2pAqjwCQ7oF1F8ap/i2K53RQ4aBgZ3
-   ZgKSXKYIOzfseRj2jN7b9QKadV+yLTeFSaWoI+N8ZGA8jQEc1L1QaNOGe
-   Vp0VEsj1HCONEgf1PBudfGusqiJyQVsr3dWURnl7S8gnKodbvw7+MSX/p
-   ohWag7VmVbMyXqp7lhoNUxhnRWmopNhpjYn8W1QYxifmXmAgR/uyP3bD2
-   +EMLhRNcPnjn4U4fV9I45tRvBR97ioBm99cuK+KM8Ov6v8oRWLsqs08KI
-   g==;
-X-CSE-ConnectionGUID: aYfDlCx8Q2WE3y3jIpyZ9w==
-X-CSE-MsgGUID: Ild6WIUMTRWvBKLMzNFbvQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="23274783"
-X-IronPort-AV: E=Sophos;i="6.10,183,1719903600"; 
-   d="scan'208";a="23274783"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 07:26:00 -0700
-X-CSE-ConnectionGUID: +tK0UVQLSImmEQhoKK8oDA==
-X-CSE-MsgGUID: FVejs9rTQjmtlnD+HrsDwQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,183,1719903600"; 
-   d="scan'208";a="68086592"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa005.jf.intel.com with ESMTP; 28 Aug 2024 07:25:57 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 16A6A2E6; Wed, 28 Aug 2024 17:25:56 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	s=arc-20240116; t=1724855056; c=relaxed/simple;
+	bh=ioXy8of+N3MrucytfolPiEEAsJj9nz3fGmpkxDrHO1U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OyyN8sCN10uy9dE/Gl7XmnF74mkU23pS1Qr2o/jbX0aUuSz0sZf8GyzPfqsDYMu6JrJ0VskPrZyeO7tBc8YZgCGlAI/WUdfPo3wyBk48J6MS3I32GPXL72CMEcmjQwX9VDN5Sd4nBR1na9S83DP//dQXL+iPFpIjNCvVnBAcaWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cu5tW/Hn; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724855053;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=355PW4sSqsC1A4aL38kel0SH9CqCQG/5oU1R6gXP9T0=;
+	b=Cu5tW/HndwrFYh7LFMBb+eOH9v+vM+iBCT6SmwKIQ+K4UlP8B++z8ynuo7O7sTBUZ2hDO/
+	9yo67zgiADFZCqSr551KaAI99flnh3jDIdURY8zGiWvcEQgDCVPX5Wg2dJuXIm82Lnpv0u
+	oS05/BpuG3TA9Rr9lmN8jlV+jDFz/7M=
+Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com
+ [209.85.161.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-17-5thRe0m3Oo-OuCW-9f7h9w-1; Wed, 28 Aug 2024 10:24:12 -0400
+X-MC-Unique: 5thRe0m3Oo-OuCW-9f7h9w-1
+Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-5d5c7bfd8aaso8767961eaf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:24:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724855051; x=1725459851;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=355PW4sSqsC1A4aL38kel0SH9CqCQG/5oU1R6gXP9T0=;
+        b=QgDwh1q25nEzLNxgpoBs1R5YntT2cDDMIvADRq+p0ifLJ/eH28INZ2Rj5YDjn4906l
+         36qQO5AKCZACZNKSjb+vHDIV61K5/WEDNzmkf0txyqa0GIhdbD7aaw7OApvx6Msi9nAd
+         DQUt3d8Hakc286MN1DGpJjya2D/YzlcGtxY7VaeRFxWduEPvC534Bsfknt/2R2tJExQ3
+         jzdCEiO+pyBvqfH2jsHra/nsA7v75iDT3IINutaY/nU9TK6fXjMEDgEDg7mwkEHivRl7
+         k3La1gNDOC6iRWZIuFSr6CdPVluCX8LW1FTqQSIvIaHweATiAhzBdmnJrJBDTNI5WNiJ
+         SFyw==
+X-Gm-Message-State: AOJu0YzqIRbOo9S9Rmc077B6Rble8ScmghY/oqZrNQ/fBTx3focri5qW
+	5ELl1ulXudPnX0EB2s51L2kHLSLy3bmOusahbFA6gCgapAQObToP4nILAseAP62sX9daqJ52XX+
+	n7732WhKmUeIMFAxaM6O/F8dfXvN3prsMId4RXeCF7ul5/RiwMPFonvSioTY+/g==
+X-Received: by 2002:a05:6820:22a9:b0:5d8:6769:9d85 with SMTP id 006d021491bc7-5dcc6259314mr17483949eaf.6.1724855051609;
+        Wed, 28 Aug 2024 07:24:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHrf66e2cWOHb1ey05OprbItKe0gmFxS5nGBvoISWxV5VBk1weYo4yvuE0vLG+8egFr0ZhZGA==
+X-Received: by 2002:a05:6820:22a9:b0:5d8:6769:9d85 with SMTP id 006d021491bc7-5dcc6259314mr17483914eaf.6.1724855051201;
+        Wed, 28 Aug 2024 07:24:11 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5dcb5e9451bsm3044256eaf.42.2024.08.28.07.24.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 07:24:10 -0700 (PDT)
+Date: Wed, 28 Aug 2024 10:24:05 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Gavin Shan <gshan@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alistair Popple <apopple@nvidia.com>, kvm@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Cc: Hartley Sweeten <hsweeten@visionengravers.com>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v1 2/2] gpiolib: legacy: Kill GPIOF_DIR_* definitions
-Date: Wed, 28 Aug 2024 17:23:58 +0300
-Message-ID: <20240828142554.2424189-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20240828142554.2424189-1-andriy.shevchenko@linux.intel.com>
-References: <20240828142554.2424189-1-andriy.shevchenko@linux.intel.com>
+	Sean Christopherson <seanjc@google.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Jason Gunthorpe <jgg@nvidia.com>, Borislav Petkov <bp@alien8.de>,
+	Zi Yan <ziy@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>,
+	Yan Zhao <yan.y.zhao@intel.com>, Will Deacon <will@kernel.org>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: [PATCH v2 06/19] mm/pagewalk: Check pfnmap for folio_walk_start()
+Message-ID: <Zs8zBT1aDh1v9Eje@x1n>
+References: <20240826204353.2228736-1-peterx@redhat.com>
+ <20240826204353.2228736-7-peterx@redhat.com>
+ <9f9d7e96-b135-4830-b528-37418ae7bbfd@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <9f9d7e96-b135-4830-b528-37418ae7bbfd@redhat.com>
 
-Besides the fact that (old) drivers use wrong definitions, e.g.,
-GPIOF_DIR_IN instead of GPIOF_IN, shrink the legacy definitions
-by killing those GPIOF_DIR_* completely.
+On Wed, Aug 28, 2024 at 09:44:04AM +0200, David Hildenbrand wrote:
+> On 26.08.24 22:43, Peter Xu wrote:
+> > Teach folio_walk_start() to recognize special pmd/pud mappings, and fail
+> > them properly as it means there's no folio backing them.
+> > 
+> > Cc: David Hildenbrand <david@redhat.com>
+> > Signed-off-by: Peter Xu <peterx@redhat.com>
+> > ---
+> >   mm/pagewalk.c | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/mm/pagewalk.c b/mm/pagewalk.c
+> > index cd79fb3b89e5..12be5222d70e 100644
+> > --- a/mm/pagewalk.c
+> > +++ b/mm/pagewalk.c
+> > @@ -753,7 +753,7 @@ struct folio *folio_walk_start(struct folio_walk *fw,
+> >   		fw->pudp = pudp;
+> >   		fw->pud = pud;
+> > -		if (!pud_present(pud) || pud_devmap(pud)) {
+> > +		if (!pud_present(pud) || pud_devmap(pud) || pud_special(pud)) {
+> >   			spin_unlock(ptl);
+> >   			goto not_found;
+> >   		} else if (!pud_leaf(pud)) {
+> > @@ -783,7 +783,7 @@ struct folio *folio_walk_start(struct folio_walk *fw,
+> >   		fw->pmdp = pmdp;
+> >   		fw->pmd = pmd;
+> > -		if (pmd_none(pmd)) {
+> > +		if (pmd_none(pmd) || pmd_special(pmd)) {
+> >   			spin_unlock(ptl);
+> >   			goto not_found;
+> >   		} else if (!pmd_leaf(pmd)) {
+> 
+> As raised, this is not the right way to to it. You should follow what
+> CONFIG_ARCH_HAS_PTE_SPECIAL and vm_normal_page() does.
+> 
+> It's even spelled out in vm_normal_page_pmd() that at the time it was
+> introduced there was no pmd_special(), so there was no way to handle that.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- arch/arm/mach-ep93xx/vision_ep9307.c | 3 +--
- drivers/gpio/gpiolib-legacy.c        | 2 +-
- include/linux/gpio.h                 | 9 +++------
- 3 files changed, 5 insertions(+), 9 deletions(-)
+I can try to do something like that, but even so it'll be mostly cosmetic
+changes, and AFAICT there's no real functional difference.
 
-diff --git a/arch/arm/mach-ep93xx/vision_ep9307.c b/arch/arm/mach-ep93xx/vision_ep9307.c
-index 02c5a4724192..85f0dd7255a9 100644
---- a/arch/arm/mach-ep93xx/vision_ep9307.c
-+++ b/arch/arm/mach-ep93xx/vision_ep9307.c
-@@ -292,8 +292,7 @@ static void __init vision_init_machine(void)
- 	 * Request the gpio expander's interrupt gpio line now to prevent
- 	 * the kernel from doing a WARN in gpiolib:gpio_ensure_requested().
- 	 */
--	if (gpio_request_one(EP93XX_GPIO_LINE_F(7), GPIOF_DIR_IN,
--				"pca9539:74"))
-+	if (gpio_request_one(EP93XX_GPIO_LINE_F(7), GPIOF_IN, "pca9539:74"))
- 		pr_warn("cannot request interrupt gpio for pca9539:74\n");
- 
- 	vision_i2c_info[1].irq = gpio_to_irq(EP93XX_GPIO_LINE_F(7));
-diff --git a/drivers/gpio/gpiolib-legacy.c b/drivers/gpio/gpiolib-legacy.c
-index 51d5fe203111..087fe3227e35 100644
---- a/drivers/gpio/gpiolib-legacy.c
-+++ b/drivers/gpio/gpiolib-legacy.c
-@@ -43,7 +43,7 @@ int gpio_request_one(unsigned gpio, unsigned long flags, const char *label)
- 	if (flags & GPIOF_ACTIVE_LOW)
- 		set_bit(FLAG_ACTIVE_LOW, &desc->flags);
- 
--	if (flags & GPIOF_DIR_IN)
-+	if (flags & GPIOF_IN)
- 		err = gpiod_direction_input(desc);
- 	else
- 		err = gpiod_direction_output_raw(desc, !!(flags & GPIOF_OUT_INIT_HIGH));
-diff --git a/include/linux/gpio.h b/include/linux/gpio.h
-index 4af8ad114557..2d105be7bbc3 100644
---- a/include/linux/gpio.h
-+++ b/include/linux/gpio.h
-@@ -17,12 +17,9 @@
- struct device;
- 
- /* make these flag values available regardless of GPIO kconfig options */
--#define GPIOF_DIR_OUT	(0 << 0)
--#define GPIOF_DIR_IN	(1 << 0)
--
--#define GPIOF_IN		(GPIOF_DIR_IN)
--#define GPIOF_OUT_INIT_LOW	(GPIOF_DIR_OUT | (0 << 1))
--#define GPIOF_OUT_INIT_HIGH	(GPIOF_DIR_OUT | (1 << 1))
-+#define GPIOF_IN		((1 << 0))
-+#define GPIOF_OUT_INIT_LOW	((0 << 0) | (0 << 1))
-+#define GPIOF_OUT_INIT_HIGH	((0 << 0) | (1 << 1))
- 
- /* Gpio pin is active-low */
- #define GPIOF_ACTIVE_LOW        (1 << 2)
+Meanwhile, see below comment.
+
+> 
+> 
+> 
+> diff --git a/mm/memory.c b/mm/memory.c
+> index f0cf5d02b4740..272445e9db147 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -672,15 +672,29 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
+>  {
+>         unsigned long pfn = pmd_pfn(pmd);
+> -       /*
+> -        * There is no pmd_special() but there may be special pmds, e.g.
+> -        * in a direct-access (dax) mapping, so let's just replicate the
+> -        * !CONFIG_ARCH_HAS_PTE_SPECIAL case from vm_normal_page() here.
+> -        */
+
+This one is correct; I overlooked this comment which can be obsolete.  I
+can either refine this patch or add one patch on top to refine the comment
+at least.
+
+> +       if (IS_ENABLED(CONFIG_ARCH_HAS_PMD_SPECIAL)) {
+
+We don't yet have CONFIG_ARCH_HAS_PMD_SPECIAL, but I get your point.
+
+> +               if (likely(!pmd_special(pmd)))
+> +                       goto check_pfn;
+> +               if (vma->vm_ops && vma->vm_ops->find_special_page)
+> +                       return vma->vm_ops->find_special_page(vma, addr);
+
+Why do we ever need this?  This is so far destined to be totally a waste of
+cycles.  I think it's better we leave that until either xen/gntdev.c or any
+new driver start to use it, rather than keeping dead code around.
+
+> +               if (vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP))
+> +                       return NULL;
+> +               if (is_huge_zero_pmd(pmd))
+> +                       return NULL;
+
+This is meaningless too until we make huge zero pmd apply special bit
+first, which does sound like to be outside the scope of this series.
+
+> +               if (pmd_devmap(pmd))
+> +                       /* See vm_normal_page() */
+> +                       return NULL;
+
+When will it be pmd_devmap() if it's already pmd_special()?
+
+> +               return NULL;
+
+And see this one.. it's after:
+
+  if (xxx)
+      return NULL;
+  if (yyy)
+      return NULL;
+  if (zzz)
+      return NULL;
+  return NULL;
+
+Hmm??  If so, what's the difference if we simply check pmd_special and
+return NULL..
+
+> +       }
+> +
+> +       /* !CONFIG_ARCH_HAS_PMD_SPECIAL case follows: */
+> +
+>         if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
+>                 if (vma->vm_flags & VM_MIXEDMAP) {
+>                         if (!pfn_valid(pfn))
+>                                 return NULL;
+> +                       if (is_huge_zero_pmd(pmd))
+> +                               return NULL;
+
+I'd rather not touch here as this series doesn't change anything for
+MIXEDMAP yet..
+
+>                         goto out;
+>                 } else {
+>                         unsigned long off;
+> @@ -692,6 +706,11 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
+>                 }
+>         }
+> +       /*
+> +        * For historical reasons, these might not have pmd_special() set,
+> +        * so we'll check them manually, in contrast to vm_normal_page().
+> +        */
+> +check_pfn:
+>         if (pmd_devmap(pmd))
+>                 return NULL;
+>         if (is_huge_zero_pmd(pmd))
+> 
+> 
+> 
+> We should then look into mapping huge zeropages also with pmd_special.
+> pmd_devmap we'll leave alone until removed. But that's indeoendent of your series.
+
+This does look reasonable to match what we do with pte zeropage.  Could you
+remind me what might be the benefit when we switch to using special bit for
+pmd zero pages?
+
+> 
+> I wonder if CONFIG_ARCH_HAS_PTE_SPECIAL is sufficient and we don't need additional
+> CONFIG_ARCH_HAS_PMD_SPECIAL.
+
+The hope is we can always reuse the bit in the pte to work the same for
+pmd/pud.
+
+Now we require arch to select ARCH_SUPPORTS_HUGE_PFNMAP to say "pmd/pud has
+the same special bit defined".
+
+> 
+> As I said, if you need someone to add vm_normal_page_pud(), I can handle that.
+
+I'm pretty confused why we need that for this series alone.
+
+If you prefer vm_normal_page_pud() to be defined and check pud_special()
+there, I can do that.  But again, I don't yet see how that can make a
+functional difference considering the so far very limited usage of the
+special bit, and wonder whether we can do that on top when it became
+necessary (and when we start to have functional requirement of such).
+
+Thanks,
+
 -- 
-2.43.0.rc1.1336.g36b5255a03ac
+Peter Xu
 
 
