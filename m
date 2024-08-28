@@ -1,123 +1,133 @@
-Return-Path: <linux-kernel+bounces-305592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 912539630EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:26:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C34ED9630EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD527285F84
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:26:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EA08B22599
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1EAD1ABEA9;
-	Wed, 28 Aug 2024 19:26:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED591ABED5;
+	Wed, 28 Aug 2024 19:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PzKj1wDd"
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="SOek8DVw"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936211AAE02
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 19:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD341547DD
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 19:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724873210; cv=none; b=lB35cBbDgHVuVI75xCxOSa7t0sLGxD1SqR8Pm5FT7cD365vn29uCRHSiewePmisDmagbBj7LUr5jNG9BJzse0AApTAwDfwheq3KkGmyF78jF9e5T4Q6TZK5tc8EwwuJU80e0+M67Aqfx6nYY09D+HfpnX4ZHF6O0ad2mDK5sy7w=
+	t=1724873212; cv=none; b=c3wKrJCIYAVeuI9S7KKt0Bzm6DmbIGhUGErQf1a2j6tSYQex88/njvJechh+bee1xgV1HfwbKNbFn3aDsqX1RQsjmEtUSjpr4HL8rGRI2ZXINc63V+QqplgOZ7axPwhp2I+w72tpCFvKr+p/uk3QwYyVSRGXyp7WA2AKsI+ww/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724873210; c=relaxed/simple;
-	bh=JsrETUs86iMn+eky+26yKzZ0SBtpZ9u06T27ryFFZR4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k0H3I7aCbUSHiaFg68gzRQ92Fvvza/RCdV+Rd6gl7MEYtiuRNJYMHddsPwH0VkP1ckFqniDdgsVJyRLiypysRuZfq7Skm4mmuhyCHTqgs3ij+yiQu2gfcPCJaKQvS+ziSio7M9HIoNiGFEaH8u9Kkk7SklqbSFLP9B2eR8TyQwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PzKj1wDd; arc=none smtp.client-ip=209.85.222.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-842f1dd60deso2264203241.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:26:48 -0700 (PDT)
+	s=arc-20240116; t=1724873212; c=relaxed/simple;
+	bh=7xf1I7u+DLd4YcPjBzGWhhwMtUyUjBReXr2LDbueJZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D3NMFUyfzL0TB6ObpS35W/hvt5CRovG9XydXhMBJfGyqxYBE2jDeT5YqKqc5PNWSOJFhddhQkLTOmIKx4r1eoHfsEcLbHsC/JzwS6P8uyBhzEzneGNkFWyjrIlI8A2aCLwoYBbcGZFeCW4zsnPV6kMJtMyoMBVXjQ8iYNL3ZnEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=SOek8DVw; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-371941bbfb0so4207878f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:26:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724873205; x=1725478005; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C9b3TLjbnTz825v2LNHY3zO60OAKAYUhKNLWtiBOuhI=;
-        b=PzKj1wDdol3QGj55xCl9/LxH8FtIqBHavYUxoIrabnDppOI4qU0GF/EgqJPq9lXm+3
-         hL0JDxdaa6/Bu7dFR9a+IqvSLIvWsdf8jjlYu2csJtU/q0KvFiXRvtZYzzAFAcW7cf50
-         D7vYsjGxPAzIcD5lDUQMO8K/AEAo0k4/SJHFQ=
+        d=suse.com; s=google; t=1724873206; x=1725478006; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3BWPnH/8lZG8VOT7Muu9Q8tFJ7+yTh7np+tLLr9rmZU=;
+        b=SOek8DVwiQ9WHUS2cO8aZxyjRclaYaYSCftDCTcnP4cI/W21ntvqAdGaF0D3KKHgGY
+         zpfSz0YdOyplsc9ZYoGxWubpAl7ZtlsD/NkowB2fEbPkXeqmSvaJ0oGO3ZI2RE2OVsoR
+         87WwTZAtcbRLgHQB6ACgyFhRirWpeb5SD1iLDTQ4sE2DsXcoFip26KUEx5kZt/3Xsy7N
+         pc7ogaBotWPSNFfsjz4DDezZtLYlbGIIIfk6Ibnc0xtHOLDx1r0QNHUC63vdQLMDYZn6
+         zIMkOrEKkzOeSJaSu6w27PgosM/ClaFJSBMjDbu6xF1bHBShLCSrbCJxvJ05msoDKfoR
+         X/cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724873205; x=1725478005;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C9b3TLjbnTz825v2LNHY3zO60OAKAYUhKNLWtiBOuhI=;
-        b=bZ9/9OPVRXseYkL2xLq0TBta4WkvoXaGAuKPKXsV0vXJ7jkuXCmZLQUKNC85YtOkWD
-         c+XinIwNOb69sXW6ani5BPkvKSBryv5ekWh0SqVJNnT3uMBkemyTHxzdjmCTE8rB4dkc
-         rAvtd4K88BVeKgp36D7wD5jZaGXcgWDn3Lg9mXymH8OWa30kqKAMxBUdfAqArv3nX5He
-         TP0fpNnPSkuNyih7jodlJ/hCR5/YsAHJkvLu2mYtWSAbC+ocqPTG7QGFlMFNZYRrRESu
-         v/PgFSyY/L+Jz1WAHoe2JKiTn/R4S7k/h0cMBsUALXdSWHCpalDES4incCGH4lPOJIWW
-         mMCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKfK6HW5FJMB1bcdZeIzsEPYSMtVjjtqCAljEOzbZTG1czr4/vjz65he/SfILokRxjSyjU4vynYX42K/w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7fx/Lram5dyUa8WWHaYMkmJGmUPimrjk2YdPf0P7Tq60Q45ds
-	z3sJ1er1R9uVG7P9R3pPyn+5Yr3gopaAUTt40NdSHpJobDLrOamigpJUFrdyn9klS3F3u1PDsKk
-	=
-X-Google-Smtp-Source: AGHT+IG5xAbCjiGDVxvb76RSYlNGqHcsyXdA9NP9UdXrXoKNWsJFLVw3MgfFvsQCj0yNZ6Q9pBYVwg==
-X-Received: by 2002:a05:6102:41ac:b0:498:e406:b25e with SMTP id ada2fe7eead31-49a5af327d8mr944001137.22.1724873205411;
+        d=1e100.net; s=20230601; t=1724873206; x=1725478006;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3BWPnH/8lZG8VOT7Muu9Q8tFJ7+yTh7np+tLLr9rmZU=;
+        b=UKI4llg4GkMGA1gV7y1Wk2L5rRBp1onbwnd/J++/22cURFj+q0pgUWqFWgnjp2BOeq
+         O1hCA4P9olMvmeIunl+yDq0quGhTz45hsCRpnER69V7q76MQ52uVeSWCZWsjfnG74NkH
+         y+zfxCzPWCyeEWYzk6G2FbGQcW1jbblpig3IiO2xpM2qZHUVCPnTV9xkDdqGkiPLHSGy
+         jaSFrCIBwS6qcEWdQ9Hgs062Q5Qe3khrw9bGUrBmFBTVeY8tpSv+vd6XcAjz7LPjQHEb
+         SdAwlhzs/aaho2KJgNUFEDicXfVrToHdAV3Z+WfdrJXjy3EeSODqNj+RhG/LAMcD76Cc
+         sjgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVm+OJnZ+NzlhDdfI5zTFIjziZaLVncWpGQPyfvQEUUap6UxPNe5cnEluf8LnVUdNzD8fAgz116JyCsSA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwY/a0Apqyl3ZY/ODdVZxFwKqVx712R08rqCJS/VybSyqoXS7Ct
+	EZyeiCrr4WRv7wlyGAU+kVDA79KbXzAjW56imoaUw3LMpn2M85esNjLZ3wwFnRI=
+X-Google-Smtp-Source: AGHT+IGSdX36+aZ+9SeTj1XTGLTshw7rKy42yJjltzlpBmSmdNx5/FIzbRURRgjLzDSYixg0ss1fwA==
+X-Received: by 2002:a5d:6652:0:b0:367:4383:d9b4 with SMTP id ffacd0b85a97d-3749b58f28emr314412f8f.56.1724873205639;
         Wed, 28 Aug 2024 12:26:45 -0700 (PDT)
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com. [209.85.221.174])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-844d60be0c9sm1486853241.28.2024.08.28.12.26.44
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 12:26:44 -0700 (PDT)
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-4fe97b060e2so1767492e0c.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:26:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVYbOzLOW5pa+3bo7YieTQgC66E8ty6Y6TsltbcOFSM7dPWF3lAHpsfuIb8Yvx639lINn0ncGQOeoGhcr8=@vger.kernel.org
-X-Received: by 2002:a05:6122:319a:b0:4ef:65b6:f3b5 with SMTP id
- 71dfb90a1353d-4fff17072b6mr448863e0c.10.1724873203775; Wed, 28 Aug 2024
- 12:26:43 -0700 (PDT)
+Received: from localhost (109-81-92-122.rct.o2.cz. [109.81.92.122])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e549cf50sm278878966b.79.2024.08.28.12.26.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 12:26:45 -0700 (PDT)
+Date: Wed, 28 Aug 2024 21:26:44 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc
+ allocations
+Message-ID: <Zs959Pa5H5WeY5_i@tiehlicka>
+References: <20240828140638.3204253-1-kent.overstreet@linux.dev>
+ <Zs9xC3OJPbkMy25C@casper.infradead.org>
+ <gutyvxwembnzaoo43dzvmnpnbmj6pzmypx5kcyor3oeomgzkva@6colowp7crgk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828182210.565861-1-tejasvipin76@gmail.com>
-In-Reply-To: <20240828182210.565861-1-tejasvipin76@gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 28 Aug 2024 12:26:29 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=V71VzJk81YALO4ufohL0a4EQuqZVXavbpM=bqHgsf0sw@mail.gmail.com>
-Message-ID: <CAD=FV=V71VzJk81YALO4ufohL0a4EQuqZVXavbpM=bqHgsf0sw@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/panel: novatek-nt35950: transition to mipi_dsi
- wrapped functions
-To: Tejas Vipin <tejasvipin76@gmail.com>
-Cc: neil.armstrong@linaro.org, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
-	quic_jesszhan@quicinc.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <gutyvxwembnzaoo43dzvmnpnbmj6pzmypx5kcyor3oeomgzkva@6colowp7crgk>
 
-Hi,
+On Wed 28-08-24 15:11:19, Kent Overstreet wrote:
+> On Wed, Aug 28, 2024 at 07:48:43PM GMT, Matthew Wilcox wrote:
+> > On Wed, Aug 28, 2024 at 10:06:36AM -0400, Kent Overstreet wrote:
+> > > vmalloc doesn't correctly respect gfp flags - gfp flags aren't used for
+> > > pte allocation, so doing vmalloc/kvmalloc allocations with reclaim
+> > > unsafe locks is a potential deadlock.
+> > 
+> > Kent, the approach you've taken with this was NACKed.  You merged it
+> > anyway (!).  Now you're spreading this crap further, presumably in an effort
+> > to make it harder to remove.
+> 
+> Excuse me? This is fixing a real issue which has been known for years.
 
-On Wed, Aug 28, 2024 at 11:26=E2=80=AFAM Tejas Vipin <tejasvipin76@gmail.co=
-m> wrote:
->
-> Changes the novatek-nt35950 panel to use multi style functions for
-> improved error handling.
->
-> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
-> ---
-> Changes in v2:
->     - Style changes
->     - Fixed changes in logic
->
-> v1: https://lore.kernel.org/all/20240824084422.202946-1-tejasvipin76@gmai=
-l.com/
-> ---
->  drivers/gpu/drm/panel/panel-novatek-nt35950.c | 211 ++++++------------
->  1 file changed, 66 insertions(+), 145 deletions(-)
+If you mean a lack of GFP_NOWAIT support in vmalloc then this is not a
+bug but a lack of feature. vmalloc has never promissed to support this
+allocation mode and a scoped gfp flag will not magically make it work
+because there is a sleeping lock involved in an allocation path in some
+cases.
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+If you really need this feature to be added then you should clearly
+describe your usecase and listen to people who are familiar with the
+vmalloc internals rather than heavily pushing your direction which
+doesn't work anyway.
 
-Neil: Let me know if you want to land this or you want me to land it. Thank=
-s!
+> It was decided _years_ ago that PF_MEMALLOC flags were how this was
+> going to be addressed.
 
--Doug
+Nope! It has been decided that _some_ gfp flags are acceptable to be used
+by scoped APIs. Most notably NOFS and NOIO are compatible with reclaim
+modifiers and other flags so these are indeed safe to be used that way.
+
+> > Stop it.  Work with us to come up with an acceptable approach.  I
+> > think there is one that will work, but you need to listen to the people
+> > who're giving you feedback because Linux is too big of a code-base for
+> > you to understand everything.
+> 
+> No, you guys need to stop pushing broken shit.
+
+This is not the way to work with other people. Seriously!
+
+-- 
+Michal Hocko
+SUSE Labs
 
