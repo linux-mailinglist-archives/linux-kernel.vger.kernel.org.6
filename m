@@ -1,131 +1,171 @@
-Return-Path: <linux-kernel+bounces-305582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D28949630D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:15:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A6819630D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 894022868CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:15:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AC0AB24955
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF6B1A7AF6;
-	Wed, 28 Aug 2024 19:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A011A76C4;
+	Wed, 28 Aug 2024 19:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gX79BgzM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UNTKgJE2"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA471ABEB8
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 19:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30691A2560
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 19:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724872506; cv=none; b=CPxZnKKirBeuouMwlFBCveoXsQ5WkML0jeEMGUY3JOag/Z7ycVzQuiRj7zZadmgedsMEO2wDmU2k+F5oUfdtLGvEeV/yEeEOcCOpJjnQHg5SnTSx7w1pgY0uX40+UAsRB3bsjvQ1x9pFVkQRzJZjPJHBjfvkJkXZUF4mIOC6pUo=
+	t=1724872530; cv=none; b=gkobQbNVe+64IB6PzDHFRZ9ib5egzWy5k98TZn/RN5oOxZFCgF3Z279vQkWU+j98YmczGiiPPX7Q8AfKgNtt5NgdOcFK7gJRLo6N2Cy42ESlvtLnBWCYtK5BZRcmuOLnv2I6CpEw7UAct75r/f0YjrO1J2xY/KeoM813aQx/8CI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724872506; c=relaxed/simple;
-	bh=LbQZQ/vVDRJDmBbeVufxWeOTUlxLOSsNWpUr0EkBfCg=;
+	s=arc-20240116; t=1724872530; c=relaxed/simple;
+	bh=OFFjWCAkZTfhHUbPhbd2XLr3Ackff1nTe8wOCR3ZCOo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ow7YSblPE7AkXubbkTXVdNca+WDwE9Ufitk7P5bcLWTXbE83KfxB96fQAQeS2tFg50isnMU73eyonygeeuJULgUM8Gd0u/+W3I3hNOedu+/D6fsEWXnQksD6OgYRY5uTtnGjFsjJaBmC5mDSGcg1Jw92PZoPMzQSqi+izseY4Uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gX79BgzM; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724872504;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u1UnXvwzw9mLNwzHOV1gSoNN+qWpQMXD0QiKEQ3cstw=;
-	b=gX79BgzMk/cq0INVfDasChWlSm1Zkvjp9jRSdUOc5thR2UUB5DIL/AvAcMVe3at9eAw2P0
-	l/6ruBdM+RQOSRI42wB3vOp1rnzO8NnCmXvnwvhMAywq0GMOlT/BrHAuXU7PtALiXzPWg7
-	zsXq8GsuuiveLYs1GttkOAyU1ZGgi7k=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-358-XThQpjJ8PEibi0dnCnwzZg-1; Wed,
- 28 Aug 2024 15:14:59 -0400
-X-MC-Unique: XThQpjJ8PEibi0dnCnwzZg-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 59D6A1955D58;
-	Wed, 28 Aug 2024 19:14:57 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.93])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 449AE1955BF1;
-	Wed, 28 Aug 2024 19:14:53 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 28 Aug 2024 21:14:49 +0200 (CEST)
-Date: Wed, 28 Aug 2024 21:14:45 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Alexey Gladkov <legion@kernel.org>
-Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: [PATCH v3] bpf: Remove custom build rule
-Message-ID: <20240828191444.GA3806@redhat.com>
-References: <CAK7LNATb8dbhvdSgiNEMkdsgg93q4ZUGUxReZYNjOV3fDPnfyQ@mail.gmail.com>
- <20240828181028.4166334-1-legion@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GUve2bIHvl4WMJ4lw9mQl2X+gSB2zWMn+td3P1rV++fD5rzhQK5gi130qarZd1fiAR0AxziBVXxVbjHkyG1wf4wv70yuGhl/WQWVex61YWg/YNZYSnMrJ4tnjqmFKqAtvMAqzvLR4XikpYEg+wwVzGydojlBqlbR19kzRvUMMNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UNTKgJE2; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70cec4aa1e4so4867776b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:15:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724872528; x=1725477328; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=sP9CnC+tXRoohEWKh7FkX7Mgvs6Et+x7eDaOQdpvFNg=;
+        b=UNTKgJE2ELluRyU6Igyve7LV9Xnyl9/LpX3GCiMbpPlWqI/lhy3IQionWEc5qod2jv
+         HS37PcY0KQrUtANm4t6d1bEAdF4w7XT9QYdBiug7tRQ0P/12UJzcSkLQO02yn7/FxGWv
+         4K7FIz4b7F1QeIsFNhcgGwCJvFMApyZaueUSHJcZ/GWzEVy14EMZAov2I//6T2Igc7Aw
+         5hxuVCUwrfsaShNT1t+GWug0il4bp0CsXxjKqhxotWhnicOZECIRJQvcrRBPGogCyL88
+         egw6l7SXD2v8BIZFCmTsFEGDZYBcKy8dCOf8DHp68NDexqEBAYj9YlCrZsIwkHw+62CJ
+         AvEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724872528; x=1725477328;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sP9CnC+tXRoohEWKh7FkX7Mgvs6Et+x7eDaOQdpvFNg=;
+        b=i0E06aRrdZUrp2cy2o2EYTudlaEObObzMXDS4yJ2K7L4qW8aGF7I/BkLwqweoWaS0g
+         skP96kbsAey/N/xX4aJ1BPIU8QBQhfHvXwLE1Czo/dBQ65FjVv8TqEQeWaBkfE6Sp4nI
+         ASrBSkWkqSCZkMHiEX/qRlOX+GkT3sLGEBnDOvg/nmzEjD0t1fNHmJ3KAWdK+xIfNZro
+         ewoiHo8N7+J8zLVxbIEPkAmodwMfP81WbtAkdbv1SWq+yGw64Opbx+F6ceRspTefIQ9F
+         dhv0CkdhyOFdjznejWbPcLxRa08Eva+iNKisa0teZAWKkE94nQiZ8eRslIc/dk6vvWOP
+         iUMw==
+X-Gm-Message-State: AOJu0Yx8yvZ8TUCjF3AbqToLF8D1Fz72sQkjt2MiGEYwxu6D1GwvaWEM
+	jeMk5tJO4Q+eeaBrjg+jY9DoLwrkyzHMTKDztyJlnpz5ebLa07D9JCYlHQ==
+X-Google-Smtp-Source: AGHT+IEHo9OCeVVv7yEFNiDTUTzYgLedtXJLbHjUeFUHAIDa4qfowMHQb7iYxFYWZYBiKYWeM3dzZQ==
+X-Received: by 2002:a05:6a20:ce49:b0:1bd:27b9:b63f with SMTP id adf61e73a8af0-1cce10add5bmr330079637.37.1724872527664;
+        Wed, 28 Aug 2024 12:15:27 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:3eb8:762:d1b6:97f9])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8445db5f5sm2286216a91.10.2024.08.28.12.15.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 12:15:27 -0700 (PDT)
+Date: Wed, 28 Aug 2024 12:15:24 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Woody Suwalski <terraluna977@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mouse_cypress_ps2: Fix 6.11 regression on xps15z
+Message-ID: <Zs93TGkl_ZMjHHAd@google.com>
+References: <a8252e0f-dab4-ef5e-2aa1-407a6f4c7204@gmail.com>
+ <Zs55AWhUEts-uJ5B@google.com>
+ <11bb84ed-4902-b993-57b0-26ad233942e4@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240828181028.4166334-1-legion@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <11bb84ed-4902-b993-57b0-26ad233942e4@gmail.com>
 
-I know nothing about Kbuild, I can only confirm that this patch fixes the
-problem I encountered in practice.
+On Tue, Aug 27, 2024 at 10:46:11PM -0400, Woody Suwalski wrote:
+> Dmitry Torokhov wrote:
+> > Hi Woody,
+> > 
+> > On Tue, Aug 27, 2024 at 07:44:12PM -0400, Woody Suwalski wrote:
+> > > Kernel 6.11 rcN on Dell XPS 15Z:  touch pad has stopped working after the
+> > > patch
+> > > 
+> > > commit 8bccf667f62a2351fd0b2a2fe5ba90806702c048
+> > > Author: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > > Date:   Fri Jun 28 15:47:25 2024 -0700
+> > > 
+> > >      Input: cypress_ps2 - report timeouts when reading command status
+> > > 
+> > > It seems that the first communication is with an invalid packet of 3 NULLs,
+> > > and that
+> > > status failure used to be ignored. With the above patch it is now returning
+> > > an error and
+> > > that results in a dead touch pad.
+> > > 
+> > > The fix is to stop flagging an error for 3-byte null packets, just keep
+> > > ignoring them as before.
+> > > [    2.338016] [    T591] err: Command 0x00 response data (0x): 00 00 00
+> > > [    2.338032] [    T591] ok: Command 0x00 response data (0x): 33 cc a2
+> > > ...
+> > > [    2.770029] [    T591] ok: Command 0x00 response data (0x): 33 cc a2
+> > > [    2.998030] [    T591] ok: Command 0x11 response data (0x): 01 00 64
+> > Could you please send me logs with i8042.debug=1 kernel command line
+> > option please?  I wonder if we need to wake up the controller...
+> > 
+> > Thanks.
+> > 
+> Sure, the dmesg log is attached (for the failing scenario)
 
-On 08/28, Alexey Gladkov wrote:
->
-> $ touch kernel/bpf/core.c
-> $ make C=2 CHECK=true kernel/bpf/core.o
->
-> Outputs:
->
->   CHECK   scripts/mod/empty.c
->   CALL    scripts/checksyscalls.sh
->   DESCEND objtool
->   INSTALL libsubcmd_headers
->   CC      kernel/bpf/core.o
->
-> As can be seen the compilation is done, but CHECK is not executed.
+Thank you.
 
-And after that
+> [    0.000000] [      T0] Linux version 6.9.0-pingu+ (root@DellXPS15Z) (gcc (Debian 14.2.0-1) 14.2.0, GNU ld (GNU Binutils for Debian) 2.43.1) #24 SMP PREEMPT_DYNAMIC Tue Aug 27 22:33:33 EDT 2024
 
-	$ make C=2 CHECK=true kernel/bpf/core.o
-	  CHECK   scripts/mod/empty.c
-	  CALL    scripts/checksyscalls.sh
-	  DESCEND objtool
-	  INSTALL libsubcmd_headers
+This is not 6.11, did you patch 6.9 with cypress patches from 6.11?
 
-CHECK is also not executed.
+Anyway, the patch you posted does not make sense. You are doing the
+following check:
 
-compare with, for example,
++        if (!(pktsize == 3 && param[0] == 0 && param[1] == 0 )) {
++            rc = -ETIMEDOUT;
++            goto out;
++        }
 
-	$ touch kernel/trace/trace.c
-	$ make C=2 CHECK=true kernel/trace/trace.o
-	  CHECK   scripts/mod/empty.c
-	  CALL    scripts/checksyscalls.sh
-	  DESCEND objtool
-	  INSTALL libsubcmd_headers
-	  CC      kernel/trace/trace.o
-	  CHECK   kernel/trace/trace.c
-	$ make C=2 CHECK=true kernel/trace/trace.o
-	  CHECK   scripts/mod/empty.c
-	  CALL    scripts/checksyscalls.sh
-	  DESCEND objtool
-	  INSTALL libsubcmd_headers
-	  CHECK   kernel/trace/trace.c
+trying to ignore "all zeroes" response from the device, however at this
+point param array does not contain data from the device, it always
+contains all zeroes because of memset() a few lines above. So in effect
+you always skipping reporting timeout.
 
-Tested-by: Oleg Nesterov <oleg@redhat.com>
+However I think cypress is busted in general as it looks like it times
+out all the commands, because it tries to issue them outside of libp2s,
+and so noone is actually wakes it up when we get enough response from
+the device. To prove this could you please try applying this:
 
+diff --git a/drivers/input/mouse/cypress_ps2.c b/drivers/input/mouse/cypress_ps2.c
+index b3c34ebcc4ef..8c0c7100aa4d 100644
+--- a/drivers/input/mouse/cypress_ps2.c
++++ b/drivers/input/mouse/cypress_ps2.c
+@@ -115,8 +115,9 @@ static int cypress_ps2_read_cmd_status(struct psmouse *psmouse,
+ 	if (!wait_event_timeout(ps2dev->wait,
+ 				psmouse->pktcnt >= pktsize,
+ 				msecs_to_jiffies(CYTP_CMD_TIMEOUT))) {
+-		rc = -ETIMEDOUT;
+-		goto out;
++//		rc = -ETIMEDOUT;
++//		goto out;
++		pr_err("XXX looks like timeout\n");
+ 	}
+ 
+ 	memcpy(param, psmouse->packet, pktsize);
+
+and let me know if you see "XXX looks like timeout" multiple times
+during initialization (essentially for each extended command issued by
+the cypress driver)?
+
+Thanks!
+
+-- 
+Dmitry
 
