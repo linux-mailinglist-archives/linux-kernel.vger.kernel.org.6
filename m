@@ -1,287 +1,85 @@
-Return-Path: <linux-kernel+bounces-304976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0388996279E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:46:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B40CA9627A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:46:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE171285491
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:46:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4ED01C215CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C33184528;
-	Wed, 28 Aug 2024 12:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bqPT0FgF"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0684818784C;
+	Wed, 28 Aug 2024 12:46:11 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B9717C9AF
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D8117BEBD;
+	Wed, 28 Aug 2024 12:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724849169; cv=none; b=BWFAN3djFuk3mG9K1vU4svoTSgA6ZSO6LwctAWDTdxN8JYJsIydH2d1OlqMQf7igiTurtdY2L79fmrdNBHcYPoofxHKk5lSNvKGWAwrMatyG25mFR3VbTDFQn5nFVdMkUdsBdqJy4UJVjDNzeiLhNO2BgbZURjiVVWHScckFPKA=
+	t=1724849170; cv=none; b=V2QT8B9JXhndxDs78ow+42EW0/O0nV3UdIs6nrBczq2D1nR3cjzt6lUOx64JaOHzNXhdNUeBhMFPcnEwwE+ihYqcCcDvA9EMA8Lqm/kCmSCkPu90lHcFXdUARV5JLfnxw2SgBAnHHcTlRxd4Rd86KFFEUghidfsABj0lE2CaSc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724849169; c=relaxed/simple;
-	bh=/cT4Xi/eOAEvpHXHWvsJjX7/kGH9RbuoUARrWLTszIo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gXGCLIYfzOGB/4N6pcVGk2y641e81PwCQoJkhBr5pQ6rD6JN/yhqUPKkpgmU4+ODutkPmc9jj9yhoUHpOqhQNFcGJp08QBaiW1eO5w0fncL+onSQFe93gKeto/Y708fFQKucebrzDkE1GsaxsbazJPGIhAqiXkyqP+4bne0/7WA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bqPT0FgF; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-533488ffb03so8183610e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 05:46:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724849165; x=1725453965; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tF6sUHkqO4SD68+xzQN28GcD5wP4XnQ+wDIp9/AK6/w=;
-        b=bqPT0FgFHsyU0G3EFTYeVAYqEjyEG4TGKN4uLTLEU2g7/QNSE3uAml5tp/91l5uEHK
-         43vxcwPJnCdw4mIolZkt34dIH7lIsAjt2Q9T8L/DB6Gk7sqGLtmogH9ynFenbEtZKN2S
-         DEBCWOzLnqEdrG9kMlrpZrymTXS7sasbUiaCkxpaG5xVgk1/JGYhHg5BxSRXpnzNgSj+
-         71HBMdsWuVKUQhrVnaUDYNhJ5C0NlLxmj0Y7/MABKhhswVjXVtSg+IerRAY0DuzShfq6
-         hPIE6KXI6KgKluPvNqXReXLxQgsuIxgZG4qh96k8s3keQpoUIHM8/8SgWgr5K+Q8foht
-         g4cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724849165; x=1725453965;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tF6sUHkqO4SD68+xzQN28GcD5wP4XnQ+wDIp9/AK6/w=;
-        b=BcNFVC/T1/oTjz1RCCDEN0lotDAp50mVvXxA9WMpl/UJMDU7QXcckdnfUyIGpA9RYQ
-         Cp4wF/Vl60T1CP8AWIUJ6wtVkRdlgjVww6Okm16Qhc+o1r6rv5hZUiTdd/1SDNB/04St
-         toqZUszAY+6qqBbbumWVBuFpmqEtnAHzerSkVJTofwzm/VvgH5FxsSzih3jqGTRFaqBz
-         UG/WNVKA+pTrro4hzcQSjMO0LRO4A6CaEQAt/y6vhHo+8JzQO21ih6/Gq/UxzmdJbvIh
-         DkIULvUsSgLRz/EUiunGMu6DfDFsg7+0hgRJufL8iYmUmy41Q0ShbIMs2vQeBuEuU1Yj
-         HShQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWRbS15ZU/f7GeAVM3G1bXAbgoxllPeB+fk3zAAWHL9iRywMPk8kstp+/oNtKB3BzBfC/UYwmjnY9wmBR4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZsYaxzlsRwICd/IWCwbiUZL3Klh8uiHkQYuhMUYWoxV/RvDL6
-	KbqeHxz6HZ2saG5MysecRxG74AFS8b5tdSul5tTzeuZ8umqm40go5rmWNbWIyRk=
-X-Google-Smtp-Source: AGHT+IHro9qeKaCY792yMnKxlwgxFiEDVsOC5d/A0lnJdSBAxKmmf92zy4Bd/E6/xRJrnEvtOOeR/Q==
-X-Received: by 2002:a05:6512:ac7:b0:533:6f3:9857 with SMTP id 2adb3069b0e04-5343882e19bmr11853046e87.5.1724849164718;
-        Wed, 28 Aug 2024 05:46:04 -0700 (PDT)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e582d896sm243412366b.131.2024.08.28.05.46.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 05:46:04 -0700 (PDT)
-Message-ID: <742f7226-9c66-4cfb-ba31-222dfb54fc34@suse.com>
-Date: Wed, 28 Aug 2024 14:46:03 +0200
+	s=arc-20240116; t=1724849170; c=relaxed/simple;
+	bh=oPRETZ/eOqh0lUEXpvzBxlA/tnATbRnzHbuB+l9VgQY=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oslvhDmuedcWKKdTieGNQRlwIBuqWApNRKkrTKeb4QHKMBQVMFkadmZF1E0nek5YHwzgX3ggxWKiRVFcEv1xU/Yu6lmZp38OI0ELIkibMsL3pu69z23+CM1Pe5c+pxaFskP2jOh6LKTRWsX6OrC9OlnIpXvfrIeGsp+Ro5U3ZQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wv3vd4st5z6K6HL;
+	Wed, 28 Aug 2024 20:42:05 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 106911400D1;
+	Wed, 28 Aug 2024 20:46:07 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 28 Aug
+ 2024 13:46:06 +0100
+Date: Wed, 28 Aug 2024 13:46:05 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+CC: <woojung.huh@microchip.com>, <andrew@lunn.ch>, <f.fainelli@gmail.com>,
+	<olteanv@gmail.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <linus.walleij@linaro.org>,
+	<alsi@bang-olufsen.dk>, <justin.chen@broadcom.com>,
+	<sebastian.hesselbarth@gmail.com>, <alexandre.torgue@foss.st.com>,
+	<joabreu@synopsys.com>, <mcoquelin.stm32@gmail.com>, <wens@csie.org>,
+	<jernej.skrabec@gmail.com>, <samuel@sholland.org>, <hkallweit1@gmail.com>,
+	<linux@armlinux.org.uk>, <ansuelsmth@gmail.com>,
+	<UNGLinuxDriver@microchip.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
+	<linux-stm32@st-md-mailman.stormreply.com>, <krzk@kernel.org>,
+	<jic23@kernel.org>
+Subject: Re: [PATCH net-next v2 07/13] net: mdio: mux-mmioreg: Simplified
+ with scoped function
+Message-ID: <20240828134605.00000d23@Huawei.com>
+In-Reply-To: <20240828032343.1218749-8-ruanjinjie@huawei.com>
+References: <20240828032343.1218749-1-ruanjinjie@huawei.com>
+	<20240828032343.1218749-8-ruanjinjie@huawei.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/19] gendwarfksyms: Expand base_type
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
- Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>,
- Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
- Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-References: <20240815173903.4172139-21-samitolvanen@google.com>
- <20240815173903.4172139-26-samitolvanen@google.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20240815173903.4172139-26-samitolvanen@google.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On 8/15/24 19:39, Sami Tolvanen wrote:
-> Start making gendwarfksyms more useful by adding support for
-> expanding DW_TAG_base_type types and basic DWARF attributes.
+On Wed, 28 Aug 2024 11:23:37 +0800
+Jinjie Ruan <ruanjinjie@huawei.com> wrote:
+
+> Avoids the need for manual cleanup of_node_put() in early exits
+> from the loop by using for_each_available_child_of_node_scoped().
 > 
-> Example:
-> 
->   $ echo loops_per_jiffy | \
->       scripts/gendwarfksyms/gendwarfksyms --debug vmlinux.o
->   ...
->   gendwarfksyms: process_exported_symbols: loops_per_jiffy
->   variable base_type unsigned long byte_size(8) encoding(7);
->   ...
-> 
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> ---
->  scripts/gendwarfksyms/dwarf.c | 121 +++++++++++++++++++++++++++++++++-
->  1 file changed, 120 insertions(+), 1 deletion(-)
-> 
-> diff --git a/scripts/gendwarfksyms/dwarf.c b/scripts/gendwarfksyms/dwarf.c
-> index 956b30224316..a37c9049d18e 100644
-> --- a/scripts/gendwarfksyms/dwarf.c
-> +++ b/scripts/gendwarfksyms/dwarf.c
-> @@ -5,6 +5,17 @@
->  
->  #include "gendwarfksyms.h"
->  
-> +#define DEFINE_GET_ATTR(attr, type)                                    \
-> +	static bool get_##attr##_attr(Dwarf_Die *die, unsigned int id, \
-> +				      type *value)                     \
-> +	{                                                              \
-> +		Dwarf_Attribute da;                                    \
-> +		return dwarf_attr(die, id, &da) &&                     \
-> +		       !dwarf_form##attr(&da, value);                  \
-> +	}
-> +
-> +DEFINE_GET_ATTR(udata, Dwarf_Word)
-> +
->  static bool get_ref_die_attr(Dwarf_Die *die, unsigned int id, Dwarf_Die *value)
->  {
->  	Dwarf_Attribute da;
-> @@ -60,6 +71,74 @@ static int process(struct state *state, const char *s)
->  	return 0;
->  }
->  
-> +#define MAX_FMT_BUFFER_SIZE 128
-> +
-> +static int process_fmt(struct state *state, const char *fmt, ...)
-
-Nit: The state parameter is unused by a number of these process_*()
-functions, including the leaf process(). I suggest removing it so it
-doesn't need to be passed around unnecessarily.
-
-> +{
-> +	char buf[MAX_FMT_BUFFER_SIZE];
-> +	va_list args;
-> +	int res;
-> +
-> +	va_start(args, fmt);
-> +
-> +	res = checkp(vsnprintf(buf, sizeof(buf), fmt, args));
-> +	if (res >= MAX_FMT_BUFFER_SIZE - 1) {
-
-This check looks off by one, though on the safe side:
-res >= sizeof(buf)
-
-> +		error("vsnprintf overflow: increase MAX_FMT_BUFFER_SIZE");
-> +		res = -1;
-> +	} else {
-> +		res = check(process(state, buf));
-> +	}
-> +
-> +	va_end(args);
-> +	return res;
-> +}
-> +
-> +/* Process a fully qualified name from DWARF scopes */
-> +static int process_fqn(struct state *state, Dwarf_Die *die)
-> +{
-> +	Dwarf_Die *scopes = NULL;
-> +	const char *name;
-> +	int res;
-> +	int i;
-> +
-> +	res = checkp(dwarf_getscopes_die(die, &scopes));
-> +	if (!res) {
-> +		name = get_name(die);
-> +		name = name ?: "<unnamed>";
-> +		return check(process(state, name));
-> +	}
-> +
-> +	for (i = res - 1; i >= 0; i--) {
-> +		if (dwarf_tag(&scopes[i]) == DW_TAG_compile_unit)
-> +			continue;
-> +
-> +		name = get_name(&scopes[i]);
-> +		name = name ?: "<unnamed>";
-> +		check(process(state, name));
-> +		if (i > 0)
-> +			check(process(state, "::"));
-
-Failed check(process()) calls here return immediately and so would leak
-scopes. However, I see this is fixed in the following patch
-"gendwarfksyms: Add a cache for processed DIEs" so it's ok.
-
-> +	}
-> +
-> +	free(scopes);
-> +	return 0;
-> +}
-> +
-> +#define DEFINE_PROCESS_UDATA_ATTRIBUTE(attribute)                         \
-> +	static int process_##attribute##_attr(struct state *state,        \
-> +					      Dwarf_Die *die)             \
-> +	{                                                                 \
-> +		Dwarf_Word value;                                         \
-> +		if (get_udata_attr(die, DW_AT_##attribute, &value))       \
-> +			check(process_fmt(state,                          \
-> +					  " " #attribute "(%" PRIu64 ")", \
-> +					  value));                        \
-> +		return 0;                                                 \
-> +	}
-> +
-> +DEFINE_PROCESS_UDATA_ATTRIBUTE(alignment)
-> +DEFINE_PROCESS_UDATA_ATTRIBUTE(byte_size)
-> +DEFINE_PROCESS_UDATA_ATTRIBUTE(encoding)
-> +
->  bool match_all(Dwarf_Die *die)
->  {
->  	return true;
-> @@ -81,6 +160,44 @@ int process_die_container(struct state *state, Dwarf_Die *die,
->  	return 0;
->  }
->  
-> +static int process_type(struct state *state, Dwarf_Die *die);
-> +
-> +static int process_type_attr(struct state *state, Dwarf_Die *die)
-> +{
-> +	Dwarf_Die type;
-> +
-> +	if (get_ref_die_attr(die, DW_AT_type, &type))
-> +		return check(process_type(state, &type));
-> +
-> +	/* Compilers can omit DW_AT_type -- print out 'void' to clarify */
-> +	return check(process(state, "base_type void"));
-> +}
-> +
-> +static int process_base_type(struct state *state, Dwarf_Die *die)
-> +{
-> +	check(process(state, "base_type "));
-> +	check(process_fqn(state, die));
-> +	check(process_byte_size_attr(state, die));
-> +	check(process_encoding_attr(state, die));
-> +	return check(process_alignment_attr(state, die));
-> +}
-> +
-> +static int process_type(struct state *state, Dwarf_Die *die)
-> +{
-> +	int tag = dwarf_tag(die);
-> +
-> +	switch (tag) {
-> +	case DW_TAG_base_type:
-> +		check(process_base_type(state, die));
-> +		break;
-> +	default:
-> +		debug("unimplemented type: %x", tag);
-> +		break;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  /*
->   * Exported symbol processing
->   */
-> @@ -91,7 +208,9 @@ static int process_subprogram(struct state *state, Dwarf_Die *die)
->  
->  static int process_variable(struct state *state, Dwarf_Die *die)
->  {
-> -	return check(process(state, "variable;\n"));
-> +	check(process(state, "variable "));
-> +	check(process_type_attr(state, die));
-> +	return check(process(state, ";\n"));
->  }
->  
->  static int process_symbol_ptr(struct state *state, Dwarf_Die *die)
-
--- 
-Thanks,
-Petr
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Looks fine, though maybe driver would also benefit from dev_err_probe()
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
