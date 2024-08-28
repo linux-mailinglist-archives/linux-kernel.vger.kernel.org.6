@@ -1,154 +1,140 @@
-Return-Path: <linux-kernel+bounces-304951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2595096273F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:37:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6CBE962742
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:37:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 899EAB233AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:37:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA0DD1C21BA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA0616BE11;
-	Wed, 28 Aug 2024 12:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E52175D20;
+	Wed, 28 Aug 2024 12:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="XN4kpI2l"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wb4v/lcO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8597B16C865
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA24915A86D;
+	Wed, 28 Aug 2024 12:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724848622; cv=none; b=hI+em33Dkj1/yRJmnBRj/7SmgWaCYMKEMWP5DqVr5sXzJ4IVjsO/eRIzxYlebaZylkCuES/mEY1iRftjPXc8UbOuUqPq+MZGvDq4FPv2Y7EuBxdC4S9nK6j96Qu+GBD7DXaRQ74AGCfT2sQuuf611PozqmcOAMFXWQf1NW3+Txk=
+	t=1724848655; cv=none; b=Z9BU4ycMOtO22lFcyLtDza+xRgLgPa9qPlDOiAF80djRVAPfl5fly39suxkTGHsSa5sZJWYfS/AprQBLZC85cZn27XdHoH0+gJ6++UfTKA4TVd1mE9csVK+/+L4AaYUDJwXqe8eGKRyovqfy4a8x+DFxybh6zSPfU3wgj0MxI3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724848622; c=relaxed/simple;
-	bh=ICMSOAVwMAVKex/XavRco8vPwAxVobbZqAKviKrCmic=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WwJnH4Yt1ck9IlE32/xdhT+mzavnJl7l5gBd7YTgIyTk9zwbCsCenwrGtVELrPnhAFZ1eAeZm6BOEpCQIlkZ1/O4XGKMjxyZ2WMDn4RvvPakUZhQ6MhlWPsHWqRLBRzrrrNExCC/5FUzvnsR1gWjLSk8ExkpZn7YPtYDpDuoun8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=XN4kpI2l; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-533462b9428so11287498e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 05:36:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1724848618; x=1725453418; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LU8gBC7gh9KYhQpTD3UR8Co3PXakCVXINF1/hXa3PLE=;
-        b=XN4kpI2lUPgARX1mjJ1a2gRFDz7etStKCmLF4r1llzMp9L+rqbRle8M6VzqfwK5DQ/
-         qSX8+j7qUoHlre2FokpuwpeNG/Rtu7lRh4Yp/EITT9aDjmrhwv41cR8MH3LLykHWgWps
-         MSPDeDAx6cXmw2mrokv3hVyNMl29K3KIP1rh3IGBBzElgTbmHmFj19eRdT80Y/G609Qc
-         84L7cANVsRnaj+KYau91YbAhxUtGeZ8f0Q3p48MrjhTpX+52ZQ8Q73JT/WiJyjDx6CyZ
-         bf8U4PB97hL3zCa7BHqBkVayQHqNP0YTJZCvMZsjH3vDmFlGCLf/noJO9DjXbGdDuUPr
-         h8Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724848618; x=1725453418;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LU8gBC7gh9KYhQpTD3UR8Co3PXakCVXINF1/hXa3PLE=;
-        b=v1a8HGTG8r7kiln8DoCYigC7JZf2zheuTyAeUeYCrklXeI9BYJUXWD68QK7KWnKNNG
-         ao6HaW4cAshYHCZvmC1AAUZTAmHo7gVr8PM4Yu7AGKQT4O3Eq6QkgjWpq5sVl3amysLz
-         sG4pcfNsRHVjgrjt7JXnRf5Cbyc7svS5uE/NxBgWgioPI195K/DYgFB736VmgjgDujJY
-         tzoU2nclb3tC7CqDTSlTlEAz0jqtuHNlUrm0+JiTtm5VP0GHznG3I21ehZJ86YGDfCQ3
-         viMR+IiirKjzDZM9wXmezQKZPmovilGQtD5PlizLGa+/j27OAz6YiGQJBHpzmKQrv3CJ
-         WukQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/JQQY92I5ZydiUxutxlz1AbrtTIkTdyf54yfj5YGdgMyZtZKEhIoIrGAgMVcSLxqOuxUXQFiQBAYsnak=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzqj+ucQfQTIkAJ5q0i43cxKESyxGmFBtl7+hbSVwzP6tj+WjMB
-	3gJcy6UeJzyHjVvUjSm3IQslnSnVuvWEI3ZklHLRVH8gbnoMoJecdnSL67tr9Uf8T1mAEK1hTkE
-	KR18RS5wb/rZxqQv7mo5N5bePevD5DJFsI6GntMavHDgmjlx4
-X-Google-Smtp-Source: AGHT+IHpFO6yuQVGJZrGD/WbDSfSLGOtjuiyomFUN7Es+C+tU0dva1fGE6E/R+1C2A5roG4H821o08EF26dNGZYQhvI=
-X-Received: by 2002:a05:6512:23a3:b0:52e:d0f8:2d43 with SMTP id
- 2adb3069b0e04-53438846f57mr13164571e87.17.1724848617111; Wed, 28 Aug 2024
- 05:36:57 -0700 (PDT)
+	s=arc-20240116; t=1724848655; c=relaxed/simple;
+	bh=AHEmeQC4ZvX4X3hXr//lgesKQkQaYFYQXhLjAS9nCiM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RvDe8NhbIX36ucow+2icHsofBS4vZzgn6YYXL9CqxZar1Xy8XQEkagOYG/3MwLpIL/ATCFg0SQOPUm0q0gfk9mTsQfK3eLN7vtf7jWHUJaWEaoTDclOg/UmXY2wqCcoKGxXzHBERNceSoDysxPUrE7DnUvst2feFpwZM+jeJwdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wb4v/lcO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EB69C98EC0;
+	Wed, 28 Aug 2024 12:37:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724848655;
+	bh=AHEmeQC4ZvX4X3hXr//lgesKQkQaYFYQXhLjAS9nCiM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Wb4v/lcOniOa9RLkuqPWZEf5E3uQBjmhBxfcY0e1UolYQsOVxXBAmK1lCSphDN6jX
+	 Jb0fAMfAKSr5xWqzPiCkH1DBEPgg6jAofp6xeRaVxOi+1/q8A32XqBzX4Pwmmwo+lI
+	 z5yFYb+aH8cWOT0p0tkRCbwEDa7WvyMOhmr3qhnIQSc3/mWVeMdaeQPkjg2KguysZw
+	 mZqWLEuSTXE2uWpUGpzbLxXOwwsFKaz3DlqwLQz0yyM4um1keXCCQKLk4xCbieVA1p
+	 Awdy5Twnw0/vJsWqiP69/zXv52ZQiGMRG5Cssu3mVyPM+VaSulhczRgxVjSAq0CHpm
+	 lcNB4gBE8TeyA==
+Message-ID: <5e8d8441-ea4f-4da7-b55c-156da7fb0331@kernel.org>
+Date: Wed, 28 Aug 2024 14:37:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240826165210.124696-1-alexghiti@rivosinc.com> <20240827125335.GD4772@willie-the-truck>
-In-Reply-To: <20240827125335.GD4772@willie-the-truck>
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Wed, 28 Aug 2024 14:36:46 +0200
-Message-ID: <CAHVXubiwHe+5nD0kftRwnNdqAhP1ofSoaUzk4vhDKPrYXVz88g@mail.gmail.com>
-Subject: Re: [PATCH -fixes] drivers: perf: Fix smp_processor_id() use in
- preemptible code
-To: Will Deacon <will@kernel.org>
-Cc: Atish Patra <atishp@atishpatra.org>, Anup Patel <anup@brainfault.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Nam Cao <namcao@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] rtc: rtc-asm9260: Switch to use dev_err_probe()
+To: Yang Ruibin <11162571@vivo.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com
+References: <20240828122507.1323928-1-11162571@vivo.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240828122507.1323928-1-11162571@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Will,
+On 28/08/2024 14:25, Yang Ruibin wrote:
+> use dev_err_probe() instead of dev_err() to simplify the error path and
+> standardize the format of the error code.
+> 
+> Signed-off-by: Yang Ruibin <11162571@vivo.com>
+> ---
+>  drivers/rtc/rtc-asm9260.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/rtc/rtc-asm9260.c b/drivers/rtc/rtc-asm9260.c
+> index a83b47e0d..2b7058ebb 100644
+> --- a/drivers/rtc/rtc-asm9260.c
+> +++ b/drivers/rtc/rtc-asm9260.c
+> @@ -268,10 +268,8 @@ static int asm9260_rtc_probe(struct platform_device *pdev)
+>  		return PTR_ERR(priv->clk);
+>  
+>  	ret = clk_prepare_enable(priv->clk);
+> -	if (ret) {
+> -		dev_err(dev, "Failed to enable clk!\n");
+> -		return ret;
+> -	}
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to prepare clk!\n");
+>  
 
-On Tue, Aug 27, 2024 at 2:53=E2=80=AFPM Will Deacon <will@kernel.org> wrote=
-:
->
-> On Mon, Aug 26, 2024 at 06:52:10PM +0200, Alexandre Ghiti wrote:
-> > As reported in [1], the use of smp_processor_id() in
-> > pmu_sbi_device_probe() must be protected by disabling the preemption, s=
-o
-> > simple use get_cpu()/put_cpu() instead.
-> >
-> > Reported-by: Nam Cao <namcao@linutronix.de>
-> > Closes: https://lore.kernel.org/linux-riscv/20240820074925.ReMKUPP3@lin=
-utronix.de/ [1]
-> > Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> > ---
-> >  drivers/perf/riscv_pmu_sbi.c | 7 ++++++-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.=
-c
-> > index 31a17a56eb3b..25b1b699b3e2 100644
-> > --- a/drivers/perf/riscv_pmu_sbi.c
-> > +++ b/drivers/perf/riscv_pmu_sbi.c
-> > @@ -1373,11 +1373,15 @@ static int pmu_sbi_device_probe(struct platform=
-_device *pdev)
-> >
-> >       /* SBI PMU Snapsphot is only available in SBI v2.0 */
-> >       if (sbi_v2_available) {
-> > +             int cpu;
-> > +
-> >               ret =3D pmu_sbi_snapshot_alloc(pmu);
-> >               if (ret)
-> >                       goto out_unregister;
-> >
-> > -             ret =3D pmu_sbi_snapshot_setup(pmu, smp_processor_id());
-> > +             cpu =3D get_cpu();
-> > +
-> > +             ret =3D pmu_sbi_snapshot_setup(pmu, cpu);
-> >               if (ret) {
-> >                       /* Snapshot is an optional feature. Continue if n=
-ot available */
-> >                       pmu_sbi_snapshot_free(pmu);
-> > @@ -1391,6 +1395,7 @@ static int pmu_sbi_device_probe(struct platform_d=
-evice *pdev)
-> >                        */
-> >                       static_branch_enable(&sbi_pmu_snapshot_available)=
-;
-> >               }
-> > +             put_cpu();
->
-> Are you sure it's safe to enable the static key with preemption disabled?
-> I thought that could block on a mutex.
+There is little simplification here, plus this cannot really defer. I
+think it would be fine as part of other cleanups but as standalone
+single patch I see no benefits of this.
 
-Yep, it seems you're right, thanks for jumping in.
+Best regards,
+Krzysztof
 
-I'm discussing with Atish how to fix that differently, I'll be back
-with another version very soon.
-
-Thanks again,
-
-Alex
-
->
-> Will
 
