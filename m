@@ -1,162 +1,117 @@
-Return-Path: <linux-kernel+bounces-305387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F18F4962DEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:57:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 271AB962DF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:58:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8150D1F2518B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:57:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A938328740A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F6A1A4B82;
-	Wed, 28 Aug 2024 16:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBF21A4F1F;
+	Wed, 28 Aug 2024 16:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bur.io header.i=@bur.io header.b="qjXUEo8y";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KJwMlf7f"
-Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CGy9QFle"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4F11A3BD1;
-	Wed, 28 Aug 2024 16:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B651481B3;
+	Wed, 28 Aug 2024 16:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724864235; cv=none; b=uoWve8wTYbsNEGI6mzhK+hASukzb96lIOguWsZqA8WeW0spHcg8DBocC6v8iGchYhXubLr3NqiiVw9Z6bLBFMK9zTxE2YJoLEHUajZILjeIjbCQgzHT505pkWQo/nUexh0/Ptff1kqAMlB0XJy1gFdXxMU6BurRzvdgtgz/f53g=
+	t=1724864310; cv=none; b=PUEDz8Q5QlKAvgnbIiWe3lFG5iOTBBCWttviKw1O5uBIn2H9dceQ70NY45YTLiWgVSrGt4Nd1PQTwvGwgqNhI99RMuwODC43kz7OSktYWeCmMANeIyL4w9GDKHvwWw1IZMB/FuKtyO3YG/LHVwBRBYzG58Q/Y5NB7p7F7yNgQ8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724864235; c=relaxed/simple;
-	bh=qSQZaic1piiRaVwBistKi7MzxIz1c4l5xA0Yz7ujkV0=;
+	s=arc-20240116; t=1724864310; c=relaxed/simple;
+	bh=WICbGCEGxKFHDucqOiaVRx0SdTB8zP8nY6yJaexlPgY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gbLaSMFPLxnwFaVpdz/Axh//fm0MM4VNw+5kJIxzmJtbLgQLxgnxV9p8Y94CWuruxYJWA/43b8b9ofTj57NWTnh7NU+8S144A9ZDvPkfgJ0IedpwsQ/qC2dpvnwHqvovGYh3p/pmidwfFWmJdb+++H1B4GiZ8gaqL0s49Ru34dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bur.io; spf=pass smtp.mailfrom=bur.io; dkim=pass (2048-bit key) header.d=bur.io header.i=@bur.io header.b=qjXUEo8y; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KJwMlf7f; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bur.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bur.io
-Received: from phl-compute-03.internal (phl-compute-03.nyi.internal [10.202.2.43])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id B33021150DE1;
-	Wed, 28 Aug 2024 12:57:11 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Wed, 28 Aug 2024 12:57:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bur.io; h=cc:cc
-	:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1724864231; x=1724950631; bh=yZDFJ+uBkJ
-	NN6I5DAKEUENScf20U9fLYyspVCQoBezg=; b=qjXUEo8y0CJNW4ycmbwMxJSKA0
-	IIxzcgKwTNW2gse0g7STqGQhi95Cn1ahjhuOaeBbNaSrS7+8kSoTMwuqhP+X06sp
-	U7OdBDyL1MjS6RMlvHtkgf/4IrLCBvqHoVcByVibRw1VDoNdymVuwXtCLihfgjEK
-	QSHmyqV4QQlU8vNfyqOFkXODMPnEHzoWcxeOOEUs8XvpEMs3xMzcoJ3uOy4Fcf3P
-	rgGyJTDtp/amWoCQmPWRCfR5ujVTbA5I3vq1Zc4iMgc1JNaR1/JINMgK0hvV5SIV
-	ckc+ikkh1/tNV4SkOCXcg7u3GFETNYSWh3Tx06GSGpAdl/V2+GRuIt+Ae1Wg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1724864231; x=1724950631; bh=yZDFJ+uBkJNN6I5DAKEUENScf20U
-	9fLYyspVCQoBezg=; b=KJwMlf7fI+IJ0KyEG70caoGJTZxGgqCEMbuSPkPq1ts2
-	whb1v4W5CoUEz5Nqu0ObL1W4Iy/l88Q9QzCIXk45StwLrQ3aqNdDYTKOvLUxvRUL
-	cD08cZVyQb+NWYfq/0xBzMHZ7XX7wLYd3PuayDgiCzxA/f+2wBNzJH5ep+UhQNJ3
-	SGutwDOvPAS4wRioXoc0uyynDPOflDxOzJv3qChJqhyrXYUatw2IySrb/y1vajsP
-	z6Yc9Q6/SirCZ8JX7Y2oNBIQGPB0PteP+wFAMkM4uc/Cr9mKdfLobhXe2t7ulsHd
-	uy2iUi6prMdPz0+gnB/t8P+uzayDVZjDMSeoKCr8FA==
-X-ME-Sender: <xms:51bPZhlrSfa93G5JhiCXBTmwrignRq5Dn8MNbAcHLI-XY71oXGf0SQ>
-    <xme:51bPZs0rfYRwsHIP_SKKDU1N_5f6WWGXxOZJLVOA0PCKX_VqCZpZ0R2PLYWt2dKO8
-    01oVsJ80sIrNrj5zF8>
-X-ME-Received: <xmr:51bPZnosAv3ao6mjzp6Juof3r0bP4hlsoNMIgC91HhRVtVEr8AXCfNQy-VlLSQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudefvddguddthecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhrihhsuceuuhhrkhhovhcuoegsohhrihhssegsuhhrrdhioheqne
-    cuggftrfgrthhtvghrnhepffekgeffueegffeitdeviedvvdeliefgkedvtdejieffffdu
-    ffduhffgjeelvedunecuffhomhgrihhnpehlihhnuhigthgvshhtihhnghdrohhrghdpkh
-    gvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
-    lhhfrhhomhepsghorhhishessghurhdrihhopdhnsggprhgtphhtthhopedutddpmhhoug
-    gvpehsmhhtphhouhhtpdhrtghpthhtohepphgthhgvlhhkihhnsehishhprhgrshdrrhhu
-    pdhrtghpthhtohepqhhufigvnhhruhhordgsthhrfhhssehgmhigrdgtohhmpdhrtghpth
-    htohepughsthgvrhgsrgesshhushgvrdgtohhmpdhrtghpthhtoheptghlmhesfhgsrdgt
-    ohhmpdhrtghpthhtohepjhhoshgvfhesthhogihitghprghnuggrrdgtohhmpdhrtghpth
-    htoheplhhinhhugidqsghtrhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehlvhgtqdhprhhojhgvtghtsehlihhnuhigthgvshhtihhnghdrohhrghdprhgt
-    phhtthhopehshiiisghothdokeduieejtdefiedvtgdvkeeffhefuggukeeklegtsehshi
-    iikhgrlhhlvghrrdgrphhpshhpohhtmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:51bPZhn4Pb9cATyffAApZvHsXUfy_Dz7Sw5Wo8Uv7oxTLxxLfYBonw>
-    <xmx:51bPZv3cmLswj7tdXprordllUjzex-qkUz6aQA3ftJ7d5rAJp91pDw>
-    <xmx:51bPZgsCxNajM1J9wWZHLga3ZgPaykxjxsfVvueWxQcWs55C6BvfTg>
-    <xmx:51bPZjVSDGqAD8GuTBeCWVYGJzVtj0uWdtHdHxTYwawM_lnfzT285A>
-    <xmx:51bPZouolGbTmzj-nSG2hWMEdZ8iKhJcEJXdcMWxyRMHXPpmjQh7PLgm>
-Feedback-ID: i083147f8:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 28 Aug 2024 12:57:10 -0400 (EDT)
-Date: Wed, 28 Aug 2024 09:57:05 -0700
-From: Boris Burkov <boris@bur.io>
-To: Fedor Pchelkin <pchelkin@ispras.ru>
-Cc: Qu Wenruo <quwenruo.btrfs@gmx.com>, David Sterba <dsterba@suse.com>,
-	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	syzbot+81670362c283f3dd889c@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] btrfs: qgroup: don't use extent changeset when not
- needed
-Message-ID: <Zs9W4dIlckbUt5JM@devvm12410.ftw0.facebook.com>
-References: <8d26b493-6bc4-488c-b0a7-f2d129d94089@gmx.com>
- <20240828161411.534042-1-pchelkin@ispras.ru>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nFqr3ru56OPup4Hj6gjZ//n09gs7xTE394P7tVaLZYPnH01ZHbM7m2YlI0AYxzYfpgLR/6kSMxcjNixbNMDOzyW6gGKyKnfutqnZr/nbG8WQpcnO3ss0WBeQp/jeu0wYJIX17Eaw7/lJkLy3BD3mXeo/ZREXcT2tyEhPI0nHK1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CGy9QFle; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724864308; x=1756400308;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=WICbGCEGxKFHDucqOiaVRx0SdTB8zP8nY6yJaexlPgY=;
+  b=CGy9QFlewjAd+eyQBa1FcoGLykl4n4NlzdDC6BF85nIuxKbQuX2B5ffc
+   yM83ZfJ7+rW6yywd5nsaA0krOJhz7/NejohosALRzxiHxnjkuaCW9qqwK
+   j6S0JuHa67wGVUFSpGu8b2CJO6VJ0b5pm2l1S4HrK2sluuzbM5MLETlVo
+   bZRdX/FwoDfGZcvNVRxwi6s/+xebWGznyt2CMKE2OG+Lji0JdF7kn4/hI
+   hkL7IsITg8kt7Lr6UD9ODU5hsVq3PSOCZqg2+CoLKaYAJD+xMSfoZYg+e
+   2oML5nVciNYBNpLYowtRzp2vjSfienw+Bd8Pvldk7LwrvUlGWLT4OzUzw
+   Q==;
+X-CSE-ConnectionGUID: yc2ISsiCSNi0ezKW6gmSmQ==
+X-CSE-MsgGUID: M4Yslr23S7KYotqNFpMT8g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="40912215"
+X-IronPort-AV: E=Sophos;i="6.10,183,1719903600"; 
+   d="scan'208";a="40912215"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 09:58:28 -0700
+X-CSE-ConnectionGUID: acWaujrgTLKnGn8xfjGT7w==
+X-CSE-MsgGUID: 13/3drV3Rzi/E0zXYFs1rQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,183,1719903600"; 
+   d="scan'208";a="94090533"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 09:58:26 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sjLzz-00000002ilO-2Gu8;
+	Wed, 28 Aug 2024 19:58:23 +0300
+Date: Wed, 28 Aug 2024 19:58:23 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>
+Subject: Re: [PATCH v2 1/4] driver core: Ignore 0 in dev_err_probe()
+Message-ID: <Zs9XL1SwyroU8qE0@smile.fi.intel.com>
+References: <20240822130722.1261891-1-andriy.shevchenko@linux.intel.com>
+ <20240822130722.1261891-2-andriy.shevchenko@linux.intel.com>
+ <2024082443-mulch-junkie-1f9a@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240828161411.534042-1-pchelkin@ispras.ru>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2024082443-mulch-junkie-1f9a@gregkh>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Aug 28, 2024 at 07:14:11PM +0300, Fedor Pchelkin wrote:
-> The local extent changeset is passed to clear_record_extent_bits() where
-> it may have some additional memory dynamically allocated for ulist. When
-> qgroup is disabled, the memory is leaked because in this case the
-> changeset is not released upon __btrfs_qgroup_release_data() return.
+On Sat, Aug 24, 2024 at 11:08:53AM +0800, Greg Kroah-Hartman wrote:
+> On Thu, Aug 22, 2024 at 04:05:38PM +0300, Andy Shevchenko wrote:
+> > In the similar way, ignore 0 error code (AKA "success") in
+> > dev_err_probe(). This helps to simplify a code such as
+> > 
+> >   if (ret < 0)
+> >     return dev_err_probe(int3472->dev, ret, err_msg);
+> > 
+> >   return ret;
+> > 
+> > to
+> > 
+> >   return dev_err_probe(int3472->dev, ret, err_msg);
+> > 
+> > Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > 
-> Since the recorded contents of the changeset are not used thereafter, just
-> don't pass it.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
-> 
-> Reported-by: syzbot+81670362c283f3dd889c@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/lkml/000000000000aa8c0c060ade165e@google.com
-> Fixes: af0e2aab3b70 ("btrfs: qgroup: flush reservations during quota disable")
-> Cc: stable@vger.kernel.org # 6.10+
-> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-This version looks even better, to me. Thanks for the catch and fix!
+Thank you!
 
-Reviewed-by: Boris Burkov <boris@bur.io>
+Hans, I think we all set to proceed with this. Do you have any comments?
 
-> ---
-> v2: rework the fix as Qu Wenruo suggested - just don't pass unneeded
->     changeset. Update the commit title and description accordingly.
-> 
->  fs/btrfs/qgroup.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
-> index 5d57a285d59b..f6118c5f3c9f 100644
-> --- a/fs/btrfs/qgroup.c
-> +++ b/fs/btrfs/qgroup.c
-> @@ -4344,10 +4344,9 @@ static int __btrfs_qgroup_release_data(struct btrfs_inode *inode,
->  	int ret;
->  
->  	if (btrfs_qgroup_mode(inode->root->fs_info) == BTRFS_QGROUP_MODE_DISABLED) {
-> -		extent_changeset_init(&changeset);
->  		return clear_record_extent_bits(&inode->io_tree, start,
->  						start + len - 1,
-> -						EXTENT_QGROUP_RESERVED, &changeset);
-> +						EXTENT_QGROUP_RESERVED, NULL);
->  	}
->  
->  	/* In release case, we shouldn't have @reserved */
-> -- 
-> 2.39.2
-> 
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
