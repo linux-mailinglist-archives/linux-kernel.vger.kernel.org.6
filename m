@@ -1,140 +1,259 @@
-Return-Path: <linux-kernel+bounces-304341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02B00961E5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:47:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A41E3961E67
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4100285922
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 05:47:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FE4C1F24DF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 05:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98BE2154420;
-	Wed, 28 Aug 2024 05:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38571552FA;
+	Wed, 28 Aug 2024 05:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h30Qarqs"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="vF3w+o6O"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280B01509B3
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 05:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A172A1534E9
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 05:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724824040; cv=none; b=IPJrWQD7wx0ZTAix9WFz9p9MCE7Nc8pH9V/G1s/lYuqlMOTStXpHTAIs7p5BRR9IKuD4qdFDABUM5GOp6xwGglK3ArA0bWdE0BJD0TrbEmGq2JGhUlG5wwt1jkkTH9sYD+Xdy5PEChrvifPbQS7bZeUKGvEuIgjyXarmd0NPel0=
+	t=1724824169; cv=none; b=jns7EUkIwJhxA+NTVJJ4fjCLifmR12yPtEIBJ3YtdfQmfe0WFMxRO/v26Jj+0vAT60zCFSaO8SUjYo9LExEKxHlJY7z2xOsX53UfKUkmImmEOiSXRhSy1dlJrcrelLub7DQZ5faiRuvhIUqAewIDoms7W5g/c2MoGq+nOs5ecr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724824040; c=relaxed/simple;
-	bh=RrLam6mqwyBGcfuSrxWmoW3n5YB6vJkgt4F0ExG4lRU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kTNOqzizbiT+4a9vl9T7smRFEVu8fGLzQUUXRGj+wLObUuVzNyB8oMtrFHl+sqzPIuftUUu3dQsVKupho/YC9MYaO/AhNHh9y4qG1sKeui0oJLNmMdfyuT/FdpahbczDWeXsv721Y+Qi8URzpZYRVSpeWqP9E0rjnd9tgaa7Gtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h30Qarqs; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724824038;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ckZJuFCVMRgzqQidtTbaqZnRjLzSgCGjaZ05Ho69de8=;
-	b=h30Qarqst2ffHmG3/zqbb1Ulb6iAHkGbPQl1dHDbWX4Kw0BekbmuvFnvU/7FQju1CkXoIL
-	0daBuH/ZDryL+ffRj5OmEX+Xz+mjwz0krN5Bv2Ue3z8C3ObtGXXHy2lrOyWb4jFJMMX5pi
-	yBeOVPwtPoyGJ8FDjeuirMnCa5REd0c=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-615-TtdCvVdkNK6zjQHRfKPKcA-1; Wed, 28 Aug 2024 01:47:15 -0400
-X-MC-Unique: TtdCvVdkNK6zjQHRfKPKcA-1
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-7cbe272efa6so6012702a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 22:47:15 -0700 (PDT)
+	s=arc-20240116; t=1724824169; c=relaxed/simple;
+	bh=rybnxgXRfasNksP5lSU1TnJeqx+66siNWRNOd7Jshtg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NFGiAb8t+0o6lS5AMQnnwde5adN1EYcPYSZCSU+tXXRmatXeFxyan5FlHJ681EUFLJ+zMzgq/GzMHe82nuelwSFcGG+97Txg93Ycd+zpt8Vd7X/147Wwo0xR+WmhNM125DZ0gd+4vJLZKU40F1eh9/VRQbxUPxvkdc9S77icrUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=vF3w+o6O; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7141feed424so5193053b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 22:49:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1724824166; x=1725428966; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IUFbDMgjzsoT48Z/N2yqe2kry93QHxmitnGNSfp0h7M=;
+        b=vF3w+o6Odu3T14/pBPR1SeJWm47kCx1KEAjnK21qoyKZWR5oMc72jg2zoWzghc6Xez
+         bLXe6vMQfcipJcWmB9Zm4UyQxDN6/wcuSv0Wy2yhEf50gqOzJ37hbQ0mApG1ffNoF3SL
+         +IyV22aNFlOHUSpGx/JWaWTXVpXvVhzZ87kWFYEDfUSKcxkPvsGXXufwtNsoP+D+9dcn
+         fZ6IsLy+dtelTu3Ok9eQy2yalUvwZ1kX92iwdULEpnK3qvCUoIWw68UUOcCp3mAg2iEX
+         cfiqSSfThXuKutVUiTH1PQ3c9vAzcoIQ2EeKAuM2cNPg8q68H1w4ol+Nmrd+kb47hQkh
+         gw6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724824035; x=1725428835;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ckZJuFCVMRgzqQidtTbaqZnRjLzSgCGjaZ05Ho69de8=;
-        b=ZyXtjYQ/AlkqWA1OClitJu0uA/E1FnP45Vzh3fsdpZNPBFE5SuOHrJi+mDisagDDM4
-         OfDJM+dwbLfM8nNedd2ooII/5eswU7Hwa+8eILw9KPHsaGQ/c11mvs3/o+r6gEAvhBGE
-         fAjQkyZ+5CkNxOYXRzDR9YNFwERNyXPlUEmuZHN4spw5sGL88J9XtAxZrd6ML2Cxhz8W
-         nCw2BoZb6iqFZXb/1AEZmnnpfoBV2TclwPWdoW/mQuwLeDtebzN6V3vivoswqaLKiTNy
-         WK61Epe75Tsk61ERs3QmVdGkP1C52GxBs0cCxY/CYgG7gwQeMCOCfcbeeEMFoCoYu1D2
-         iRQw==
-X-Forwarded-Encrypted: i=1; AJvYcCX/X/3CvcxR4CGfMP4Q92VCyWSppFuG9Y07DPnuCtY8DdQClUXFWK1vXRrEd6OKsTeW24CSiYUGSsNibjM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL9nNLcnwPDBDsJ0ovhJ+pkSZYjmpUph8FHRw3CSH/lYT/cqQS
-	PHIKC242HT7PQihZjah6FS3PaK/Zwye6u/ZYrpzL8FFI/lT52xMnLcH7s3i2bxNNH2Y4xfCwzXn
-	jZ7O93hVNXaF6CNImeR7sHdbHB1vh3xe1FC+Uj7s3g2nSVF50dios7t9FfNLzHw==
-X-Received: by 2002:a17:902:d4cc:b0:203:a0c9:6953 with SMTP id d9443c01a7336-203a0c96986mr201053505ad.0.1724824034784;
-        Tue, 27 Aug 2024 22:47:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF+eoKXJOfQW0YjvLqpCE/9ty7ghlsendTsMnu/B13VMaWGHQQyiTP0Mu4p+h0BUfBvtZv58Q==
-X-Received: by 2002:a17:902:d4cc:b0:203:a0c9:6953 with SMTP id d9443c01a7336-203a0c96986mr201053435ad.0.1724824034431;
-        Tue, 27 Aug 2024 22:47:14 -0700 (PDT)
-Received: from [10.72.116.72] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385be0e08sm91516135ad.285.2024.08.27.22.47.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 22:47:14 -0700 (PDT)
-Message-ID: <5d44ae23-4a68-446a-9ae8-f5b809437b32@redhat.com>
-Date: Wed, 28 Aug 2024 13:47:10 +0800
+        d=1e100.net; s=20230601; t=1724824166; x=1725428966;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IUFbDMgjzsoT48Z/N2yqe2kry93QHxmitnGNSfp0h7M=;
+        b=JoXQ83QcoKhgDdOlz+WnIvRbKUPMHM+6ozT6kDan11HGpgRh/v0ZxIEf7j3YxAwFzu
+         0u45SrlafJbXSKUDabOiFz4SfCo2maeGqJMKUXqUtvbgQrW1kn6MGMFt3jtI2WiHcQ+j
+         S1etSwdeOZwoW7iN8Z++4dTxZcsLm7Ohr9iL5jaz8k+Jfbn53FWKKnuJodx3GiTqIBzg
+         Srx9SG2nCJ5HQ790t8ebIomWONfAGqFbW1ILFaWZhTPbf8DDNDXMGFJ+KAPohBgcmSuA
+         Pu6eNuHfYFKeopU+/LceBuutSGxkt/+1kMvO0K95o0ysZ2y5MU5YfqTknvpGqKaToyT5
+         nlbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0Of81VCpjaBU4Fyvku5z5flElU6cGW6iZ6zxp/ivlPGQGR6qAgJhsOzLpDuFmiBjHH2d1m3vaY+hPEWo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp8TdTB3IfI+y8BlqjahiUSABlgSwhMDiaqnmkgUmFuxo3xfW1
+	MXuqB57hWqE+GsNClO8s7izzRwf3aNNjQzx03ch1rEhqIVJJHNfrjR+Of8c9E0Y=
+X-Google-Smtp-Source: AGHT+IF6T5IRS6PI9ffePkiTGEXwg74qwFWRmO3+h509ZqjZl31p2gGXC6rr0MOwZENhtWiyWe3S3w==
+X-Received: by 2002:a05:6a21:78e:b0:1c0:eba5:e192 with SMTP id adf61e73a8af0-1cc8b49d8abmr14865175637.27.1724824165540;
+        Tue, 27 Aug 2024 22:49:25 -0700 (PDT)
+Received: from charlie.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-203855df0c4sm92092495ad.157.2024.08.27.22.49.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 22:49:24 -0700 (PDT)
+From: Charlie Jenkins <charlie@rivosinc.com>
+Subject: [PATCH 00/16] mm: Introduce MAP_BELOW_HINT
+Date: Tue, 27 Aug 2024 22:49:06 -0700
+Message-Id: <20240827-patches-below_hint_mmap-v1-0-46ff2eb9022d@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] ceph: fix out-of-bound array access when doing a file
- read
-To: Luis Henriques <luis.henriques@linux.dev>
-Cc: Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240822150113.14274-1-luis.henriques@linux.dev>
- <87mskyxf3l.fsf@linux.dev>
-Content-Language: en-US
-From: Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <87mskyxf3l.fsf@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFK6zmYC/x3MTQqAIBBA4avErBPSkn6uEhFmUw6UiUYF4d2Tl
+ t/ivRcCesIAXfaCx4sCHTaB5xloo+yKjOZkEIWoikbUzKlTGwxswu24R0P2HPddOTbxcq5bhVx
+ LCal2Hhd6/nM/xPgBQKT3MGkAAAA=
+To: Arnd Bergmann <arnd@arndb.de>, Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ Naveen N Rao <naveen@kernel.org>, Muchun Song <muchun.song@linux.dev>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Vlastimil Babka <vbabka@suse.cz>, 
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+ Russell King <linux@armlinux.org.uk>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ Helge Deller <deller@gmx.de>, Alexander Gordeev <agordeev@linux.ibm.com>, 
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+ Christian Borntraeger <borntraeger@linux.ibm.com>, 
+ Sven Schnelle <svens@linux.ibm.com>, 
+ Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Andreas Larsson <andreas@gaisler.com>, Shuah Khan <shuah@kernel.org>, 
+ Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Palmer Dabbelt <palmer@rivosinc.com>, linux-riscv@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
+ linux-mm@kvack.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
+ linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org, 
+ linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, Charlie Jenkins <charlie@rivosinc.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6044; i=charlie@rivosinc.com;
+ h=from:subject:message-id; bh=rybnxgXRfasNksP5lSU1TnJeqx+66siNWRNOd7Jshtg=;
+ b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ9q5XSH3lM7XXzj5QFjW4OtX+60nZ+rMb1N2D9F5e2t+8
+ tuSp8uiOkpZGMQ4GGTFFFl4rjUwt97RLzsqWjYBZg4rE8gQBi5OAZjIkUMMf8WSWp0unDgcOEl5
+ 8kUJVXP5KYyTLI0KMiNvKmnOTI5taWBk2Cj+dkXn/qc3T0v2+U/SXhD+ZpOA/e/6H56BP2LNukr
+ 5GQE=
+X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
+ fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
 
+Some applications rely on placing data in free bits addresses allocated
+by mmap. Various architectures (eg. x86, arm64, powerpc) restrict the
+address returned by mmap to be less than the maximum address space,
+unless the hint address is greater than this value.
 
-On 8/27/24 21:36, Luis Henriques wrote:
-> On Thu, Aug 22 2024, Luis Henriques (SUSE) wrote:
->
->> If, while doing a read, the inode is updated and the size is set to zero,
->> __ceph_sync_read() may not be able to handle it.  It is thus easy to hit a
->> NULL pointer dereferrence by continuously reading a file while, on another
->> client, we keep truncating and writing new data into it.
->>
->> This patch fixes the issue by adding extra checks to avoid integer overflows
->> for the case of a zero size inode.  This will prevent the loop doing page
->> copies from running and thus accessing the pages[] array beyond num_pages.
->>
->> Link: https://tracker.ceph.com/issues/67524
->> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
->> ---
->> Hi!
->>
->> Please note that this patch is only lightly tested and, to be honest, I'm
->> not sure if this is the correct way to fix this bug.  For example, if the
->> inode size is 0, then maybe ceph_osdc_wait_request() should have returned
->> 0 and the problem would be solved.  However, it seems to be returning the
->> size of the reply message and that's not something easy to change.  Or maybe
->> I'm just reading it wrong.  Anyway, this is just an RFC to see if there's
->> other ideas.
->>
->> Also, the tracker contains a simple testcase for crashing the client.
-> Just for the record, I've done a quick bisect as this bug is easily
-> reproducible.  The issue was introduced in v6.9-rc1, with commit
-> 1065da21e5df ("ceph: stop copying to iter at EOF on sync reads").
-> Reverting it makes the crash go away.
+On arm64 this barrier is at 52 bits and on x86 it is at 56 bits. This
+flag allows applications a way to specify exactly how many bits they
+want to be left unused by mmap. This eliminates the need for
+applications to know the page table hierarchy of the system to be able
+to reason which addresses mmap will be allowed to return.
 
-Thanks very much Luis.
+---
+riscv made this feature of mmap returning addresses less than the hint
+address the default behavior. This was in contrast to the implementation
+of x86/arm64 that have a single boundary at the 5-level page table
+region. However this restriction proved too great -- the reduced
+address space when using a hint address was too small.
 
-So let's try to find the root cause of it and then improve the patch.
+A patch for riscv [1] reverts the behavior that broke userspace. This
+series serves to make this feature available to all architectures.
 
-Thanks
+I have only tested on riscv and x86. There is a tremendous amount of
+duplicated code in mmap so the implementations across architectures I
+believe should be mostly consistent. I added this feature to all
+architectures that implement either
+arch_get_mmap_end()/arch_get_mmap_base() or
+arch_get_unmapped_area_topdown()/arch_get_unmapped_area(). I also added
+it to the default behavior for arch_get_mmap_end()/arch_get_mmap_base().
 
-- Xiubo
+Link: https://lore.kernel.org/lkml/20240826-riscv_mmap-v1-2-cd8962afe47f@rivosinc.com/T/ [1]
 
+To: Arnd Bergmann <arnd@arndb.de>
+To: Paul Walmsley <paul.walmsley@sifive.com>
+To: Palmer Dabbelt <palmer@dabbelt.com>
+To: Albert Ou <aou@eecs.berkeley.edu>
+To: Catalin Marinas <catalin.marinas@arm.com>
+To: Will Deacon <will@kernel.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+To: Nicholas Piggin <npiggin@gmail.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Naveen N Rao <naveen@kernel.org>
+To: Muchun Song <muchun.song@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+To: Liam R. Howlett <Liam.Howlett@oracle.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+To: Ingo Molnar <mingo@redhat.com>
+To: Borislav Petkov <bp@alien8.de>
+To: Dave Hansen <dave.hansen@linux.intel.com>
+To: x86@kernel.org
+To: H. Peter Anvin <hpa@zytor.com>
+To: Huacai Chen <chenhuacai@kernel.org>
+To: WANG Xuerui <kernel@xen0n.name>
+To: Russell King <linux@armlinux.org.uk>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: James E.J. Bottomley <James.Bottomley@HansenPartnership.com>
+To: Helge Deller <deller@gmx.de>
+To: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+To: Heiko Carstens <hca@linux.ibm.com>
+To: Vasily Gorbik <gor@linux.ibm.com>
+To: Christian Borntraeger <borntraeger@linux.ibm.com>
+To: Sven Schnelle <svens@linux.ibm.com>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+To: Rich Felker <dalias@libc.org>
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: David S. Miller <davem@davemloft.net>
+To: Andreas Larsson <andreas@gaisler.com>
+To: Shuah Khan <shuah@kernel.org>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: linux-arch@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Palmer Dabbelt <palmer@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-mm@kvack.org
+Cc: loongarch@lists.linux.dev
+Cc: linux-mips@vger.kernel.org
+Cc: linux-parisc@vger.kernel.org
+Cc: linux-s390@vger.kernel.org
+Cc: linux-sh@vger.kernel.org
+Cc: sparclinux@vger.kernel.org
+Cc: linux-kselftest@vger.kernel.org
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
 
-> Cheers,
+---
+Charlie Jenkins (16):
+      mm: Add MAP_BELOW_HINT
+      riscv: mm: Do not restrict mmap address based on hint
+      mm: Add flag and len param to arch_get_mmap_base()
+      mm: Add generic MAP_BELOW_HINT
+      riscv: mm: Support MAP_BELOW_HINT
+      arm64: mm: Support MAP_BELOW_HINT
+      powerpc: mm: Support MAP_BELOW_HINT
+      x86: mm: Support MAP_BELOW_HINT
+      loongarch: mm: Support MAP_BELOW_HINT
+      arm: mm: Support MAP_BELOW_HINT
+      mips: mm: Support MAP_BELOW_HINT
+      parisc: mm: Support MAP_BELOW_HINT
+      s390: mm: Support MAP_BELOW_HINT
+      sh: mm: Support MAP_BELOW_HINT
+      sparc: mm: Support MAP_BELOW_HINT
+      selftests/mm: Create MAP_BELOW_HINT test
+
+ arch/arm/mm/mmap.c                           | 10 ++++++++
+ arch/arm64/include/asm/processor.h           | 34 ++++++++++++++++++++++----
+ arch/loongarch/mm/mmap.c                     | 11 +++++++++
+ arch/mips/mm/mmap.c                          |  9 +++++++
+ arch/parisc/include/uapi/asm/mman.h          |  1 +
+ arch/parisc/kernel/sys_parisc.c              |  9 +++++++
+ arch/powerpc/include/asm/task_size_64.h      | 36 +++++++++++++++++++++++-----
+ arch/riscv/include/asm/processor.h           | 32 -------------------------
+ arch/s390/mm/mmap.c                          | 10 ++++++++
+ arch/sh/mm/mmap.c                            | 10 ++++++++
+ arch/sparc/kernel/sys_sparc_64.c             |  8 +++++++
+ arch/x86/kernel/sys_x86_64.c                 | 25 ++++++++++++++++---
+ fs/hugetlbfs/inode.c                         |  2 +-
+ include/linux/sched/mm.h                     | 34 ++++++++++++++++++++++++--
+ include/uapi/asm-generic/mman-common.h       |  1 +
+ mm/mmap.c                                    |  2 +-
+ tools/arch/parisc/include/uapi/asm/mman.h    |  1 +
+ tools/include/uapi/asm-generic/mman-common.h |  1 +
+ tools/testing/selftests/mm/Makefile          |  1 +
+ tools/testing/selftests/mm/map_below_hint.c  | 29 ++++++++++++++++++++++
+ 20 files changed, 216 insertions(+), 50 deletions(-)
+---
+base-commit: 5be63fc19fcaa4c236b307420483578a56986a37
+change-id: 20240827-patches-below_hint_mmap-b13d79ae1c55
+-- 
+- Charlie
 
 
