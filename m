@@ -1,193 +1,307 @@
-Return-Path: <linux-kernel+bounces-305863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82CEF963563
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 01:27:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CFA59635D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 01:36:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F26BA1F240E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:27:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 320E21C23FBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7BE1AD9F7;
-	Wed, 28 Aug 2024 23:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6AE51B582C;
+	Wed, 28 Aug 2024 23:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="hrBf+PgM";
-	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="e03wN4kC"
-Received: from mx2.ucr.edu (mx.ucr.edu [138.23.62.3])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mP13yPt9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3B6158DCD
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 23:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=138.23.62.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5EC1AE024;
+	Wed, 28 Aug 2024 23:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724887671; cv=none; b=rXe8oLI+8MABrmhKI2XeS+xiFR5pgLB3dPF1yY6PcC0fksKEN6v+9AQfZ9xQEz4wvu+kbca0CVXebLtVVcCaLVT6Tv+2i5c4O0f1YrhvymiMYgHBIjZkX/WqlEea581OoEDAN/JfilQIEZueGA5lRtOFzaY4zZAPEwvyV6zwCwk=
+	t=1724887867; cv=none; b=OYF/YtPpzzdSkgkvzHDIiaqsjZbOTl9m7dRHi+e8qnvV5pn/pTO7MY9RZf9IQBWHEEEgTegfJ0Yjnp0VUgxZ1vR42+Q2mwlWei1jRJPbrTc0VyK1ugQJz7Vv5Fr12xwI8sYkZWZk3zLpl51zfA1EO1oP2/Iw1a9HIdzZjpWtHmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724887671; c=relaxed/simple;
-	bh=PPl2nxNPc1g3RQcdJyM/0AzfD4AlEJKnhfobSQc/SV4=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=pVrpsykcEGilte17opwu9qxWn7yAGqGx/SAymuE/ubIGvn2XzSlsyQwH9s5JER3PkEp3Gpp9JN8FCeVWogqm4efKYicrBliEamH3pGYQ5097H/z5teDmy6JjHYjYq7knnAoGHWl5lnoeEQ2B7+jaROVGuE4OexvWKulY+XadlCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=hrBf+PgM; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=e03wN4kC; arc=none smtp.client-ip=138.23.62.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1724887667; x=1756423667;
-  h=dkim-signature:x-google-dkim-signature:
-   x-forwarded-encrypted:x-gm-message-state:
-   x-google-smtp-source:mime-version:from:date:message-id:
-   subject:to:cc:content-type:x-cse-connectionguid:
-   x-cse-msgguid;
-  bh=PPl2nxNPc1g3RQcdJyM/0AzfD4AlEJKnhfobSQc/SV4=;
-  b=hrBf+PgMhvz0gs1+wG5fHvklOZMg+dX8ZM3hIMgCjxKTFG1xY+JABWBr
-   QD70QzJ4OCU6uz7ptiq29G36JpTZ1lpBHCofagMtutp1LTCd/9evh9PoY
-   hV9bQdjGZn+qCZujO8C2gwOBoHHA8kO3Yg1mREridIyJScaNFBhWFKu4b
-   L7E0F37addLeOt+SE84IP4QS7eIeqUdP9Fz+YQl0jFT21JF2agbOhbsor
-   WcIqq0Kl5Zvob5/CYHhI4wylLcLaaMonohPc/ROiL5i0NVQLTKxYIQL9t
-   pK8V5/xSdXOG/TiOfGI7MZTqTgTFjmAwFnFNlX9dn0XJXVmKfVW8mTmqU
-   A==;
-X-CSE-ConnectionGUID: txKrBrRCSQ2AV1mfoAuY7Q==
-X-CSE-MsgGUID: ZXD9h+10RLCFW1aR36TWwA==
-Received: from mail-il1-f198.google.com ([209.85.166.198])
-  by smtp2.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 28 Aug 2024 16:27:46 -0700
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39d32a4f301so10139485ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 16:27:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ucr.edu; s=rmail; t=1724887667; x=1725492467; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fyik/MSBYY6QT7eyssywU0zOFgYOEIoQrlYEvt6Bvsw=;
-        b=e03wN4kCKE6JeFzBElbIV9bBsygWkJPZN3MLnC5vYhp9wqpBwwhstFnW/wgtDYLcBl
-         fpfhBn1FmUyABHJfzchcQwN1UXzWD/qIGqNwo79gBnTUyWcKwu1jGskmtys4fPruougA
-         SfYO4wHzOYwnlQA/4WU0VIDfsc5za4mrx+6VE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724887667; x=1725492467;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fyik/MSBYY6QT7eyssywU0zOFgYOEIoQrlYEvt6Bvsw=;
-        b=vKMWjUEsPp4AQv3/jSLZDThJgE9j8708k3sNmIaKDgfrh502P+nEk9Ac7/bwaiCkwK
-         Uc0cHsLIgSkRQdJp+PzzrpwOxweTI1J+W5BYyuI/kRjzO0bGYr+ZXJUciDFJ1PEH5bUV
-         /ctIcaq+qyjE83zmu8Nvwij0QFBIzmw6t/xUm4HnOsNLKgfHuWPa6ipK9/MRRjnXKJqM
-         ie/a/LRlCyywdAVDWCv/l2ajZ4ql32uvqvtKmMfIeW5uc6a/DKadympfpwAHSepw3eFe
-         5BxKFSrpPa+KpJ1/5FaVujEgOkhZnntHeXiO6JrrOx+tdP3yP01ZL5VDMUhrKukhQzVC
-         oBrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXyijfSD9uh8ywbfgX7owydaWv7kbe1A3llTZW6BNd3B5EjiDeZbDa3ycfOCTUD9i6+J5gQGNY14eoUzps=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp9z7Jqop6a6aI4ZRDTjquT4OJOGViwYSfXJ7nj/TQBpCvxBlb
-	SAp6DOaTLnRX0Xt52xuXjuAhDTcwWezr6HQfQB5wdoy8w0O2A7808NNL/FUSE3avL3bWEG8oaVS
-	n/PEITDB6h+Wt7LIOjXvqFH4YUl2R4xzTUGibPBUngnchlhtuQ1/x7AaJH4ZuoLrOT8yJ/6Atp5
-	um7RZV6jiY/59GwlX+t/IuwUd/7jSraKU4xkZxrCHm7ODCHKKNH6w=
-X-Received: by 2002:a05:6e02:1b01:b0:39b:36d6:2150 with SMTP id e9e14a558f8ab-39f38afa478mr6043895ab.6.1724887667488;
-        Wed, 28 Aug 2024 16:27:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHIUw6lFniPA+9PhahQD/BiJk5boI5RISKBjQvwk6GfJq1O//7MSQtpXdPMVzIIymAl8nLntzA5cXWWPoLc990=
-X-Received: by 2002:a05:6e02:1b01:b0:39b:36d6:2150 with SMTP id
- e9e14a558f8ab-39f38afa478mr6043815ab.6.1724887667084; Wed, 28 Aug 2024
- 16:27:47 -0700 (PDT)
+	s=arc-20240116; t=1724887867; c=relaxed/simple;
+	bh=r1EPj2HNqmDTMAGJCm8ZuYXl6ItJtVM0L7jZMyZ+dfk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=fsqgQxU/DQfwZX/aRW2NO9/2nbmNAjMpH7GJdbJh+k6Qu1mV+z8AQL9xNyk4xOuvXIsavRlbj+LVG8DlfrMUABazoG220orxIw0mmFz8RndeeMmd/OS+TyeikjkNHOmGvoxnPlASM+SOKNqB9rpiY045SovxdluAWudpudVzr/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mP13yPt9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55C61C4CEC9;
+	Wed, 28 Aug 2024 23:30:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724887866;
+	bh=r1EPj2HNqmDTMAGJCm8ZuYXl6ItJtVM0L7jZMyZ+dfk=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=mP13yPt96U0NJ8JNGBGVVgP2AVcIQPF58gZXM8j0Qy0kQa8jYYDC5VYSzfyDFEl5g
+	 61Veao72PGikqGnoud+HUsiYZTclcPIDUbZo+UCKp3elNPD+z1QjmxY4p5I3v7VFkY
+	 T1EOk1nJd5zpitaaSNM+Xw7iszKf/gxjxoc9ZwZx7DSjRCZAPxRNgMQgXn2um572RJ
+	 8PeCXYX3WCB10UyDizQx5bBu3cjCPmKJ1/RWippRiQMyBX5kQfT2hqVKmqiYeQVF2o
+	 OxA17g1emtKnHYIekmQp1NlcayCS7Sk13SsgrYqwCd5ERaDnDwJYwG3gno0nfT4zVt
+	 oZBqTUqd2wVew==
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 29 Aug 2024 00:27:37 +0100
+Subject: [PATCH v12 21/39] arm64/gcs: Ensure that new threads have a GCS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Xingyu Li <xli399@ucr.edu>
-Date: Wed, 28 Aug 2024 16:27:36 -0700
-Message-ID: <CALAgD-7TsMdA7rjxfpheXc=MNqikEXY9TZNxJt4z9vm6Yfs5qQ@mail.gmail.com>
-Subject: BUG: general protection fault in __free_object
-To: tglx@linutronix.de, akpm@linux-foundation.org, 
-	linux-kernel@vger.kernel.org
-Cc: Yu Hao <yhao016@ucr.edu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240829-arm64-gcs-v12-21-42fec947436a@kernel.org>
+References: <20240829-arm64-gcs-v12-0-42fec947436a@kernel.org>
+In-Reply-To: <20240829-arm64-gcs-v12-0-42fec947436a@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+ Andrew Morton <akpm@linux-foundation.org>, Marc Zyngier <maz@kernel.org>, 
+ Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
+ Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, 
+ Shuah Khan <shuah@kernel.org>, 
+ "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>, 
+ Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>, 
+ Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>
+Cc: "H.J. Lu" <hjl.tools@gmail.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Florian Weimer <fweimer@redhat.com>, Christian Brauner <brauner@kernel.org>, 
+ Thiago Jung Bauermann <thiago.bauermann@linaro.org>, 
+ Ross Burton <ross.burton@arm.com>, 
+ Yury Khrustalev <yury.khrustalev@arm.com>, 
+ Wilco Dijkstra <wilco.dijkstra@arm.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+ kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+ linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-37811
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6471; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=r1EPj2HNqmDTMAGJCm8ZuYXl6ItJtVM0L7jZMyZ+dfk=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmz7KI/5/EZA8otPXJTG4eAk+IZZZZk3RvvbHfAmvN
+ zK4Jf5iJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZs+yiAAKCRAk1otyXVSH0PymB/
+ 4klnjT1lRlENsooIrfLx8Z6FCqQScC0UWLZeDIMhUJOIuVgoKoHlu6qSUErmQ/0oVXkQQ+742PWItM
+ 5rXuixBT7PpQtlBRhFbhu1vh5dh1xlFFr9WAhxGBo5AS9Pc+K9ban4ZPFw1tXViKYBaG/QWHXqS9ZK
+ OohbPPA12F58N+WsDHitR9kMB+hBKQzgTwBVWVFHLLaVCXYfFvXqDY4C/+sRMp7Ht+Qzvcv+NzgPn7
+ oMpHxAwV9HJXFzJ7k8VtlUhmVf2cDWq8mEY/yrMcMA4kE6HC40emJJm0H+L/1osaoRJvmoAEb6ajCi
+ BQB9EXlV4kZhXUZqH/RlyGEXCfMSP5
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Hi,
+When a new thread is created by a thread with GCS enabled the GCS needs
+to be specified along with the regular stack.
 
-We found a bug in Linux 6.10 using syzkaller. It is possibly a null
-pointer dereference  bug.
-The reproducer is
-https://gist.github.com/freexxxyyy/5aefd53c6567415e9fe8c76cc2ad390c
+Unfortunately plain clone() is not extensible and existing clone3()
+users will not specify a stack so all existing code would be broken if
+we mandated specifying the stack explicitly.  For compatibility with
+these cases and also x86 (which did not initially implement clone3()
+support for shadow stacks) if no GCS is specified we will allocate one
+so when a thread is created which has GCS enabled allocate one for it.
+We follow the extensively discussed x86 implementation and allocate
+min(RLIMIT_STACK, 2G).  Since the GCS only stores the call stack and not
+any variables this should be more than sufficient for most applications.
 
-The bug report is:
+GCSs allocated via this mechanism will be freed when the thread exits.
 
-Syzkaller hit 'general protection fault in __free_object' bug.
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ arch/arm64/include/asm/gcs.h |  9 ++++++
+ arch/arm64/kernel/process.c  | 26 ++++++++++++++++
+ arch/arm64/mm/gcs.c          | 70 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 105 insertions(+)
 
-Oops: general protection fault, probably for non-canonical address
-0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 0 PID: 8 Comm: kworker/0:0 Not tainted 6.10.0 #13
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-Workqueue: events kfree_rcu_work
-RIP: 0010:hlist_add_head include/linux/list.h:1032 [inline]
-RIP: 0010:__free_object+0x903/0xaa0 lib/debugobjects.c:396
-Code: 24 18 48 8b 7c 24 38 74 05 e8 89 bf 95 fd 48 8b 44 24 28 49 89
-45 08 eb 03 45 31 ed 48 8b 1d 34 95 61 0e 4c 89 e8 48 c1 e8 03 <42> 80
-3c 30 00 74 08 4c 89 ef e8 5e bf 95 fd 49 89 5d 00 48 85 db
-RSP: 0018:ffffc900000af740 EFLAGS: 00010046
-RAX: 0000000000000000 RBX: ffff888028f56cb0 RCX: 0000000000000001
-RDX: dffffc0000000000 RSI: 0000000000000004 RDI: ffff888028f56cb8
-RBP: ffffc900000af920 R08: 0000000000000003 R09: fffff52000015ed8
-R10: dffffc0000000000 R11: fffff52000015ed8 R12: ffffffff92c03280
-R13: 0000000000000000 R14: dffffc0000000000 R15: 0000000000000003
-FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005555787e6868 CR3: 000000000d932000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __debug_check_no_obj_freed lib/debugobjects.c:994 [inline]
- debug_check_no_obj_freed+0x135/0x530 lib/debugobjects.c:1019
- slab_free_hook mm/slub.c:2163 [inline]
- slab_free_freelist_hook mm/slub.c:2225 [inline]
- slab_free_bulk mm/slub.c:4462 [inline]
- kmem_cache_free_bulk+0x1bf/0x360 mm/slub.c:4676
- kfree_bulk include/linux/slab.h:568 [inline]
- kvfree_rcu_bulk+0x249/0x4d0 kernel/rcu/tree.c:3371
- kfree_rcu_work+0x443/0x500 kernel/rcu/tree.c:3450
- process_one_work kernel/workqueue.c:3248 [inline]
- process_scheduled_works+0x977/0x1410 kernel/workqueue.c:3329
- worker_thread+0xaa0/0x1020 kernel/workqueue.c:3409
- kthread+0x2eb/0x380 kernel/kthread.c:389
- ret_from_fork+0x49/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:hlist_add_head include/linux/list.h:1032 [inline]
-RIP: 0010:__free_object+0x903/0xaa0 lib/debugobjects.c:396
-Code: 24 18 48 8b 7c 24 38 74 05 e8 89 bf 95 fd 48 8b 44 24 28 49 89
-45 08 eb 03 45 31 ed 48 8b 1d 34 95 61 0e 4c 89 e8 48 c1 e8 03 <42> 80
-3c 30 00 74 08 4c 89 ef e8 5e bf 95 fd 49 89 5d 00 48 85 db
-RSP: 0018:ffffc900000af740 EFLAGS: 00010046
-RAX: 0000000000000000 RBX: ffff888028f56cb0 RCX: 0000000000000001
-RDX: dffffc0000000000 RSI: 0000000000000004 RDI: ffff888028f56cb8
-RBP: ffffc900000af920 R08: 0000000000000003 R09: fffff52000015ed8
-R10: dffffc0000000000 R11: fffff52000015ed8 R12: ffffffff92c03280
-R13: 0000000000000000 R14: dffffc0000000000 R15: 0000000000000003
-FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005555787e6868 CR3: 000000000d932000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0: 24 18                 and    $0x18,%al
-   2: 48 8b 7c 24 38       mov    0x38(%rsp),%rdi
-   7: 74 05                 je     0xe
-   9: e8 89 bf 95 fd       call   0xfd95bf97
-   e: 48 8b 44 24 28       mov    0x28(%rsp),%rax
-  13: 49 89 45 08           mov    %rax,0x8(%r13)
-  17: eb 03                 jmp    0x1c
-  19: 45 31 ed             xor    %r13d,%r13d
-  1c: 48 8b 1d 34 95 61 0e mov    0xe619534(%rip),%rbx        # 0xe619557
-  23: 4c 89 e8             mov    %r13,%rax
-  26: 48 c1 e8 03           shr    $0x3,%rax
-* 2a: 42 80 3c 30 00       cmpb   $0x0,(%rax,%r14,1) <-- trapping instruction
-  2f: 74 08                 je     0x39
-  31: 4c 89 ef             mov    %r13,%rdi
-  34: e8 5e bf 95 fd       call   0xfd95bf97
-  39: 49 89 5d 00           mov    %rbx,0x0(%r13)
-  3d: 48 85 db             test   %rbx,%rbx
-
+diff --git a/arch/arm64/include/asm/gcs.h b/arch/arm64/include/asm/gcs.h
+index 04594ef59dad..c1f274fdb9c0 100644
+--- a/arch/arm64/include/asm/gcs.h
++++ b/arch/arm64/include/asm/gcs.h
+@@ -8,6 +8,8 @@
+ #include <asm/types.h>
+ #include <asm/uaccess.h>
+ 
++struct kernel_clone_args;
++
+ static inline void gcsb_dsync(void)
+ {
+ 	asm volatile(".inst 0xd503227f" : : : "memory");
+@@ -58,6 +60,8 @@ static inline bool task_gcs_el0_enabled(struct task_struct *task)
+ void gcs_set_el0_mode(struct task_struct *task);
+ void gcs_free(struct task_struct *task);
+ void gcs_preserve_current_state(void);
++unsigned long gcs_alloc_thread_stack(struct task_struct *tsk,
++				     const struct kernel_clone_args *args);
+ 
+ #else
+ 
+@@ -69,6 +73,11 @@ static inline bool task_gcs_el0_enabled(struct task_struct *task)
+ static inline void gcs_set_el0_mode(struct task_struct *task) { }
+ static inline void gcs_free(struct task_struct *task) { }
+ static inline void gcs_preserve_current_state(void) { }
++static inline unsigned long gcs_alloc_thread_stack(struct task_struct *tsk,
++						   const struct kernel_clone_args *args)
++{
++	return -ENOTSUPP;
++}
+ 
+ #endif
+ 
+diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+index 3622956b6515..de59aa16919c 100644
+--- a/arch/arm64/kernel/process.c
++++ b/arch/arm64/kernel/process.c
+@@ -285,9 +285,29 @@ static void flush_gcs(void)
+ 	write_sysreg_s(0, SYS_GCSPR_EL0);
+ }
+ 
++static int copy_thread_gcs(struct task_struct *p,
++			   const struct kernel_clone_args *args)
++{
++	unsigned long gcs;
++
++	gcs = gcs_alloc_thread_stack(p, args);
++	if (IS_ERR_VALUE(gcs))
++		return PTR_ERR((void *)gcs);
++
++	p->thread.gcs_el0_mode = current->thread.gcs_el0_mode;
++	p->thread.gcs_el0_locked = current->thread.gcs_el0_locked;
++
++	return 0;
++}
++
+ #else
+ 
+ static void flush_gcs(void) { }
++static int copy_thread_gcs(struct task_struct *p,
++			   const struct kernel_clone_args *args)
++{
++	return 0;
++}
+ 
+ #endif
+ 
+@@ -303,6 +323,7 @@ void flush_thread(void)
+ void arch_release_task_struct(struct task_struct *tsk)
+ {
+ 	fpsimd_release_task(tsk);
++	gcs_free(tsk);
+ }
+ 
+ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
+@@ -366,6 +387,7 @@ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
+ 	unsigned long stack_start = args->stack;
+ 	unsigned long tls = args->tls;
+ 	struct pt_regs *childregs = task_pt_regs(p);
++	int ret;
+ 
+ 	memset(&p->thread.cpu_context, 0, sizeof(struct cpu_context));
+ 
+@@ -407,6 +429,10 @@ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
+ 			p->thread.uw.tp_value = tls;
+ 			p->thread.tpidr2_el0 = 0;
+ 		}
++
++		ret = copy_thread_gcs(p, args);
++		if (ret != 0)
++			return ret;
+ 	} else {
+ 		/*
+ 		 * A kthread has no context to ERET to, so ensure any buggy
+diff --git a/arch/arm64/mm/gcs.c b/arch/arm64/mm/gcs.c
+index b0a67efc522b..6e8a5e14fff1 100644
+--- a/arch/arm64/mm/gcs.c
++++ b/arch/arm64/mm/gcs.c
+@@ -5,9 +5,69 @@
+ #include <linux/syscalls.h>
+ #include <linux/types.h>
+ 
++#include <asm/cmpxchg.h>
+ #include <asm/cpufeature.h>
++#include <asm/gcs.h>
+ #include <asm/page.h>
+ 
++static unsigned long alloc_gcs(unsigned long addr, unsigned long size)
++{
++	int flags = MAP_ANONYMOUS | MAP_PRIVATE;
++	struct mm_struct *mm = current->mm;
++	unsigned long mapped_addr, unused;
++
++	if (addr)
++		flags |= MAP_FIXED_NOREPLACE;
++
++	mmap_write_lock(mm);
++	mapped_addr = do_mmap(NULL, addr, size, PROT_READ, flags,
++			      VM_SHADOW_STACK | VM_WRITE, 0, &unused, NULL);
++	mmap_write_unlock(mm);
++
++	return mapped_addr;
++}
++
++static unsigned long gcs_size(unsigned long size)
++{
++	if (size)
++		return PAGE_ALIGN(size);
++
++	/* Allocate RLIMIT_STACK/2 with limits of PAGE_SIZE..2G */
++	size = PAGE_ALIGN(min_t(unsigned long long,
++				rlimit(RLIMIT_STACK) / 2, SZ_2G));
++	return max(PAGE_SIZE, size);
++}
++
++unsigned long gcs_alloc_thread_stack(struct task_struct *tsk,
++				     const struct kernel_clone_args *args)
++{
++	unsigned long addr, size;
++
++	if (!system_supports_gcs())
++		return 0;
++
++	if (!task_gcs_el0_enabled(tsk))
++		return 0;
++
++	if ((args->flags & (CLONE_VFORK | CLONE_VM)) != CLONE_VM) {
++		tsk->thread.gcspr_el0 = read_sysreg_s(SYS_GCSPR_EL0);
++		return 0;
++	}
++
++	size = args->stack_size;
++
++	size = gcs_size(size);
++	addr = alloc_gcs(0, size);
++	if (IS_ERR_VALUE(addr))
++		return addr;
++
++	tsk->thread.gcs_base = addr;
++	tsk->thread.gcs_size = size;
++	tsk->thread.gcspr_el0 = addr + size - sizeof(u64);
++
++	return addr;
++}
++
+ /*
+  * Apply the GCS mode configured for the specified task to the
+  * hardware.
+@@ -30,6 +90,16 @@ void gcs_set_el0_mode(struct task_struct *task)
+ 
+ void gcs_free(struct task_struct *task)
+ {
++
++	/*
++	 * When fork() with CLONE_VM fails, the child (tsk) already
++	 * has a GCS allocated, and exit_thread() calls this function
++	 * to free it.  In this case the parent (current) and the
++	 * child share the same mm struct.
++	 */
++	if (!task->mm || task->mm != current->mm)
++		return;
++
+ 	if (task->thread.gcs_base)
+ 		vm_munmap(task->thread.gcs_base, task->thread.gcs_size);
+ 
 
 -- 
-Yours sincerely,
-Xingyu
+2.39.2
+
 
