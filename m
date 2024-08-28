@@ -1,332 +1,193 @@
-Return-Path: <linux-kernel+bounces-305885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C79B09635D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 01:35:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82CEF963563
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 01:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECCC91C23BE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:35:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F26BA1F240E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED8F1B5811;
-	Wed, 28 Aug 2024 23:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7BE1AD9F7;
+	Wed, 28 Aug 2024 23:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="otQuTQdp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="hrBf+PgM";
+	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="e03wN4kC"
+Received: from mx2.ucr.edu (mx.ucr.edu [138.23.62.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D52F1AE867;
-	Wed, 28 Aug 2024 23:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3B6158DCD
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 23:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=138.23.62.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724887859; cv=none; b=Igr2Mob6RsSn3WgCyByce98aQGlpm9+aNQwNj1+BGBSwj7BLWdGHmgoCoOlCigcXtCgkChqRlTbZAVK0Posn7jcrY/elItp1qUowAGyPeQcgEEI+FbX3zXMKwxE9tSAFKfw8o3uooN2XrdgmqZ7Mgrua9WBxB692/Yc0WRKxhU8=
+	t=1724887671; cv=none; b=rXe8oLI+8MABrmhKI2XeS+xiFR5pgLB3dPF1yY6PcC0fksKEN6v+9AQfZ9xQEz4wvu+kbca0CVXebLtVVcCaLVT6Tv+2i5c4O0f1YrhvymiMYgHBIjZkX/WqlEea581OoEDAN/JfilQIEZueGA5lRtOFzaY4zZAPEwvyV6zwCwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724887859; c=relaxed/simple;
-	bh=sydLriD9HWAooq5yd+cFzuUdkx2R+cx9auWZHUCA7fY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nbancr+ShbLxbjqdLL6ngkZD2VtOD71vaHrH8XMlN3K+QoWG4BG+KCRikhAhm3yPUtFrYtIhdHu5ksRTzzyCq+eMHVdK+XYS11Z5vVcefXpN/qthd7g0dEUN8mrtAcTof/IcoDyHfLm2l5+O2i1CPBkqxoLFrKS/XA7ik7io27k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=otQuTQdp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33925C4CEC5;
-	Wed, 28 Aug 2024 23:30:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724887858;
-	bh=sydLriD9HWAooq5yd+cFzuUdkx2R+cx9auWZHUCA7fY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=otQuTQdp3wk4hcDOpjNnIrsQg9KwhgaBu5nx/u8HDL40Y7pR+jwHY9XxR7ZEWI1NU
-	 NRRvw9nWhLQGps7I7wTBCL9a4JyiewgCme094HrHD/rbMJ9nUSr2fBWGMwSgMwJgPA
-	 z4HXz91hU69poRSngzfP+0sDDBbh6yG3aLEVdY+LoYb/5zZPUpm4OY0Lu0HZ31ZC3W
-	 vv2AQd1cOVqNYUN/GO+VPnymTlwZXqzN70XnQzAVhseCYLdPW5EqiguurR2SqhPTGu
-	 44udrqET8WA/QduW7M/ojCL8+5xJpTZtWNaLehopKUxmyXauNsX48h4RCD1uH7QFA5
-	 1QcvwBWd7x28Q==
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 29 Aug 2024 00:27:36 +0100
-Subject: [PATCH v12 20/39] arm64/gcs: Context switch GCS state for EL0
+	s=arc-20240116; t=1724887671; c=relaxed/simple;
+	bh=PPl2nxNPc1g3RQcdJyM/0AzfD4AlEJKnhfobSQc/SV4=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=pVrpsykcEGilte17opwu9qxWn7yAGqGx/SAymuE/ubIGvn2XzSlsyQwH9s5JER3PkEp3Gpp9JN8FCeVWogqm4efKYicrBliEamH3pGYQ5097H/z5teDmy6JjHYjYq7knnAoGHWl5lnoeEQ2B7+jaROVGuE4OexvWKulY+XadlCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=hrBf+PgM; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=e03wN4kC; arc=none smtp.client-ip=138.23.62.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
+  t=1724887667; x=1756423667;
+  h=dkim-signature:x-google-dkim-signature:
+   x-forwarded-encrypted:x-gm-message-state:
+   x-google-smtp-source:mime-version:from:date:message-id:
+   subject:to:cc:content-type:x-cse-connectionguid:
+   x-cse-msgguid;
+  bh=PPl2nxNPc1g3RQcdJyM/0AzfD4AlEJKnhfobSQc/SV4=;
+  b=hrBf+PgMhvz0gs1+wG5fHvklOZMg+dX8ZM3hIMgCjxKTFG1xY+JABWBr
+   QD70QzJ4OCU6uz7ptiq29G36JpTZ1lpBHCofagMtutp1LTCd/9evh9PoY
+   hV9bQdjGZn+qCZujO8C2gwOBoHHA8kO3Yg1mREridIyJScaNFBhWFKu4b
+   L7E0F37addLeOt+SE84IP4QS7eIeqUdP9Fz+YQl0jFT21JF2agbOhbsor
+   WcIqq0Kl5Zvob5/CYHhI4wylLcLaaMonohPc/ROiL5i0NVQLTKxYIQL9t
+   pK8V5/xSdXOG/TiOfGI7MZTqTgTFjmAwFnFNlX9dn0XJXVmKfVW8mTmqU
+   A==;
+X-CSE-ConnectionGUID: txKrBrRCSQ2AV1mfoAuY7Q==
+X-CSE-MsgGUID: ZXD9h+10RLCFW1aR36TWwA==
+Received: from mail-il1-f198.google.com ([209.85.166.198])
+  by smtp2.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 28 Aug 2024 16:27:46 -0700
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39d32a4f301so10139485ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 16:27:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ucr.edu; s=rmail; t=1724887667; x=1725492467; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fyik/MSBYY6QT7eyssywU0zOFgYOEIoQrlYEvt6Bvsw=;
+        b=e03wN4kCKE6JeFzBElbIV9bBsygWkJPZN3MLnC5vYhp9wqpBwwhstFnW/wgtDYLcBl
+         fpfhBn1FmUyABHJfzchcQwN1UXzWD/qIGqNwo79gBnTUyWcKwu1jGskmtys4fPruougA
+         SfYO4wHzOYwnlQA/4WU0VIDfsc5za4mrx+6VE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724887667; x=1725492467;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fyik/MSBYY6QT7eyssywU0zOFgYOEIoQrlYEvt6Bvsw=;
+        b=vKMWjUEsPp4AQv3/jSLZDThJgE9j8708k3sNmIaKDgfrh502P+nEk9Ac7/bwaiCkwK
+         Uc0cHsLIgSkRQdJp+PzzrpwOxweTI1J+W5BYyuI/kRjzO0bGYr+ZXJUciDFJ1PEH5bUV
+         /ctIcaq+qyjE83zmu8Nvwij0QFBIzmw6t/xUm4HnOsNLKgfHuWPa6ipK9/MRRjnXKJqM
+         ie/a/LRlCyywdAVDWCv/l2ajZ4ql32uvqvtKmMfIeW5uc6a/DKadympfpwAHSepw3eFe
+         5BxKFSrpPa+KpJ1/5FaVujEgOkhZnntHeXiO6JrrOx+tdP3yP01ZL5VDMUhrKukhQzVC
+         oBrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXyijfSD9uh8ywbfgX7owydaWv7kbe1A3llTZW6BNd3B5EjiDeZbDa3ycfOCTUD9i6+J5gQGNY14eoUzps=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywp9z7Jqop6a6aI4ZRDTjquT4OJOGViwYSfXJ7nj/TQBpCvxBlb
+	SAp6DOaTLnRX0Xt52xuXjuAhDTcwWezr6HQfQB5wdoy8w0O2A7808NNL/FUSE3avL3bWEG8oaVS
+	n/PEITDB6h+Wt7LIOjXvqFH4YUl2R4xzTUGibPBUngnchlhtuQ1/x7AaJH4ZuoLrOT8yJ/6Atp5
+	um7RZV6jiY/59GwlX+t/IuwUd/7jSraKU4xkZxrCHm7ODCHKKNH6w=
+X-Received: by 2002:a05:6e02:1b01:b0:39b:36d6:2150 with SMTP id e9e14a558f8ab-39f38afa478mr6043895ab.6.1724887667488;
+        Wed, 28 Aug 2024 16:27:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHIUw6lFniPA+9PhahQD/BiJk5boI5RISKBjQvwk6GfJq1O//7MSQtpXdPMVzIIymAl8nLntzA5cXWWPoLc990=
+X-Received: by 2002:a05:6e02:1b01:b0:39b:36d6:2150 with SMTP id
+ e9e14a558f8ab-39f38afa478mr6043815ab.6.1724887667084; Wed, 28 Aug 2024
+ 16:27:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240829-arm64-gcs-v12-20-42fec947436a@kernel.org>
-References: <20240829-arm64-gcs-v12-0-42fec947436a@kernel.org>
-In-Reply-To: <20240829-arm64-gcs-v12-0-42fec947436a@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
- Andrew Morton <akpm@linux-foundation.org>, Marc Zyngier <maz@kernel.org>, 
- Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
- Suzuki K Poulose <suzuki.poulose@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
- Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, 
- Shuah Khan <shuah@kernel.org>, 
- "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>, 
- Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>, 
- Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>
-Cc: "H.J. Lu" <hjl.tools@gmail.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Florian Weimer <fweimer@redhat.com>, Christian Brauner <brauner@kernel.org>, 
- Thiago Jung Bauermann <thiago.bauermann@linaro.org>, 
- Ross Burton <ross.burton@arm.com>, 
- Yury Khrustalev <yury.khrustalev@arm.com>, 
- Wilco Dijkstra <wilco.dijkstra@arm.com>, 
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
- kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
- linux-arch@vger.kernel.org, linux-mm@kvack.org, 
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7225; i=broonie@kernel.org;
- h=from:subject:message-id; bh=sydLriD9HWAooq5yd+cFzuUdkx2R+cx9auWZHUCA7fY=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmz7KIKy2R7h93FkcxSJ/JfAGC1aobAQmoB1N96ecE
- blTmFraJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZs+yiAAKCRAk1otyXVSH0GSaB/
- 9gxycINt4jGEeumEzdfCbt1p9bcOTP7yN85Ty0JiwmkCl9PI+CjA8zGVZph/94PzIc5flRKldAYMqf
- hCBFkL0f+/lxgMmZ5gUQS7U+FGEwCAHAcw9L+4mtP0sqt6SGcbriQEHK8FpJkBwE41vHrjO+LEEoug
- jJEGciaeFVePAaCgtS4Ngbi325zdvvfp3ADSjEtispU3e+oWL0ZF8yxPXlBlm9xSy/doD5IoP4tfET
- XGytk6FbkXpLtqCteSaV9DSybym1c4aqlEsaWmwlYo3GoEjHwHnF+z7Ej1h0fCtEyw1Z6UnFEtVL66
- AvC2vr7F6fs0bTjLe+ljshUsfu+8oq
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+From: Xingyu Li <xli399@ucr.edu>
+Date: Wed, 28 Aug 2024 16:27:36 -0700
+Message-ID: <CALAgD-7TsMdA7rjxfpheXc=MNqikEXY9TZNxJt4z9vm6Yfs5qQ@mail.gmail.com>
+Subject: BUG: general protection fault in __free_object
+To: tglx@linutronix.de, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org
+Cc: Yu Hao <yhao016@ucr.edu>
+Content-Type: text/plain; charset="UTF-8"
 
-There are two registers controlling the GCS state of EL0, GCSPR_EL0 which
-is the current GCS pointer and GCSCRE0_EL1 which has enable bits for the
-specific GCS functionality enabled for EL0. Manage these on context switch
-and process lifetime events, GCS is reset on exec().  Also ensure that
-any changes to the GCS memory are visible to other PEs and that changes
-from other PEs are visible on this one by issuing a GCSB DSYNC when
-moving to or from a thread with GCS.
+Hi,
 
-Since the current GCS configuration of a thread will be visible to
-userspace we store the configuration in the format used with userspace
-and provide a helper which configures the system register as needed.
+We found a bug in Linux 6.10 using syzkaller. It is possibly a null
+pointer dereference  bug.
+The reproducer is
+https://gist.github.com/freexxxyyy/5aefd53c6567415e9fe8c76cc2ad390c
 
-On systems that support GCS we always allow access to GCSPR_EL0, this
-facilitates reporting of GCS faults if userspace implements disabling of
-GCS on error - the GCS can still be discovered and examined even if GCS
-has been disabled.
+The bug report is:
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- arch/arm64/include/asm/gcs.h       | 24 +++++++++++++++
- arch/arm64/include/asm/processor.h |  6 ++++
- arch/arm64/kernel/process.c        | 62 ++++++++++++++++++++++++++++++++++++++
- arch/arm64/mm/Makefile             |  1 +
- arch/arm64/mm/gcs.c                | 39 ++++++++++++++++++++++++
- 5 files changed, 132 insertions(+)
+Syzkaller hit 'general protection fault in __free_object' bug.
 
-diff --git a/arch/arm64/include/asm/gcs.h b/arch/arm64/include/asm/gcs.h
-index 7c5e95218db6..04594ef59dad 100644
---- a/arch/arm64/include/asm/gcs.h
-+++ b/arch/arm64/include/asm/gcs.h
-@@ -48,4 +48,28 @@ static inline u64 gcsss2(void)
- 	return Xt;
- }
- 
-+#ifdef CONFIG_ARM64_GCS
-+
-+static inline bool task_gcs_el0_enabled(struct task_struct *task)
-+{
-+	return current->thread.gcs_el0_mode & PR_SHADOW_STACK_ENABLE;
-+}
-+
-+void gcs_set_el0_mode(struct task_struct *task);
-+void gcs_free(struct task_struct *task);
-+void gcs_preserve_current_state(void);
-+
-+#else
-+
-+static inline bool task_gcs_el0_enabled(struct task_struct *task)
-+{
-+	return false;
-+}
-+
-+static inline void gcs_set_el0_mode(struct task_struct *task) { }
-+static inline void gcs_free(struct task_struct *task) { }
-+static inline void gcs_preserve_current_state(void) { }
-+
-+#endif
-+
- #endif
-diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
-index f77371232d8c..c55e3600604a 100644
---- a/arch/arm64/include/asm/processor.h
-+++ b/arch/arm64/include/asm/processor.h
-@@ -184,6 +184,12 @@ struct thread_struct {
- 	u64			sctlr_user;
- 	u64			svcr;
- 	u64			tpidr2_el0;
-+#ifdef CONFIG_ARM64_GCS
-+	unsigned int		gcs_el0_mode;
-+	u64			gcspr_el0;
-+	u64			gcs_base;
-+	u64			gcs_size;
-+#endif
- };
- 
- static inline unsigned int thread_get_vl(struct thread_struct *thread,
-diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-index 4ae31b7af6c3..3622956b6515 100644
---- a/arch/arm64/kernel/process.c
-+++ b/arch/arm64/kernel/process.c
-@@ -48,6 +48,7 @@
- #include <asm/cacheflush.h>
- #include <asm/exec.h>
- #include <asm/fpsimd.h>
-+#include <asm/gcs.h>
- #include <asm/mmu_context.h>
- #include <asm/mte.h>
- #include <asm/processor.h>
-@@ -271,12 +272,32 @@ static void flush_tagged_addr_state(void)
- 		clear_thread_flag(TIF_TAGGED_ADDR);
- }
- 
-+#ifdef CONFIG_ARM64_GCS
-+
-+static void flush_gcs(void)
-+{
-+	if (!system_supports_gcs())
-+		return;
-+
-+	gcs_free(current);
-+	current->thread.gcs_el0_mode = 0;
-+	write_sysreg_s(0, SYS_GCSCRE0_EL1);
-+	write_sysreg_s(0, SYS_GCSPR_EL0);
-+}
-+
-+#else
-+
-+static void flush_gcs(void) { }
-+
-+#endif
-+
- void flush_thread(void)
- {
- 	fpsimd_flush_thread();
- 	tls_thread_flush();
- 	flush_ptrace_hw_breakpoint(current);
- 	flush_tagged_addr_state();
-+	flush_gcs();
- }
- 
- void arch_release_task_struct(struct task_struct *tsk)
-@@ -471,6 +492,46 @@ static void entry_task_switch(struct task_struct *next)
- 	__this_cpu_write(__entry_task, next);
- }
- 
-+#ifdef CONFIG_ARM64_GCS
-+
-+void gcs_preserve_current_state(void)
-+{
-+	current->thread.gcspr_el0 = read_sysreg_s(SYS_GCSPR_EL0);
-+}
-+
-+static void gcs_thread_switch(struct task_struct *next)
-+{
-+	if (!system_supports_gcs())
-+		return;
-+
-+	/* GCSPR_EL0 is always readable */
-+	gcs_preserve_current_state();
-+	write_sysreg_s(next->thread.gcspr_el0, SYS_GCSPR_EL0);
-+
-+	if (current->thread.gcs_el0_mode != next->thread.gcs_el0_mode)
-+		gcs_set_el0_mode(next);
-+
-+	/*
-+	 * Ensure that GCS memory effects of the 'prev' thread are
-+	 * ordered before other memory accesses with release semantics
-+	 * (or preceded by a DMB) on the current PE. In addition, any
-+	 * memory accesses with acquire semantics (or succeeded by a
-+	 * DMB) are ordered before GCS memory effects of the 'next'
-+	 * thread. This will ensure that the GCS memory effects are
-+	 * visible to other PEs in case of migration.
-+	 */
-+	if (task_gcs_el0_enabled(current) || task_gcs_el0_enabled(next))
-+		gcsb_dsync();
-+}
-+
-+#else
-+
-+static void gcs_thread_switch(struct task_struct *next)
-+{
-+}
-+
-+#endif
-+
- /*
-  * ARM erratum 1418040 handling, affecting the 32bit view of CNTVCT.
-  * Ensure access is disabled when switching to a 32bit task, ensure
-@@ -530,6 +591,7 @@ struct task_struct *__switch_to(struct task_struct *prev,
- 	ssbs_thread_switch(next);
- 	erratum_1418040_thread_switch(next);
- 	ptrauth_thread_switch_user(next);
-+	gcs_thread_switch(next);
- 
- 	/*
- 	 * Complete any pending TLB or cache maintenance on this CPU in case
-diff --git a/arch/arm64/mm/Makefile b/arch/arm64/mm/Makefile
-index 60454256945b..1a7b3a2f21e6 100644
---- a/arch/arm64/mm/Makefile
-+++ b/arch/arm64/mm/Makefile
-@@ -11,6 +11,7 @@ obj-$(CONFIG_TRANS_TABLE)	+= trans_pgd.o
- obj-$(CONFIG_TRANS_TABLE)	+= trans_pgd-asm.o
- obj-$(CONFIG_DEBUG_VIRTUAL)	+= physaddr.o
- obj-$(CONFIG_ARM64_MTE)		+= mteswap.o
-+obj-$(CONFIG_ARM64_GCS)		+= gcs.o
- KASAN_SANITIZE_physaddr.o	+= n
- 
- obj-$(CONFIG_KASAN)		+= kasan_init.o
-diff --git a/arch/arm64/mm/gcs.c b/arch/arm64/mm/gcs.c
-new file mode 100644
-index 000000000000..b0a67efc522b
---- /dev/null
-+++ b/arch/arm64/mm/gcs.c
-@@ -0,0 +1,39 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include <linux/mm.h>
-+#include <linux/mman.h>
-+#include <linux/syscalls.h>
-+#include <linux/types.h>
-+
-+#include <asm/cpufeature.h>
-+#include <asm/page.h>
-+
-+/*
-+ * Apply the GCS mode configured for the specified task to the
-+ * hardware.
-+ */
-+void gcs_set_el0_mode(struct task_struct *task)
-+{
-+	u64 gcscre0_el1 = GCSCRE0_EL1_nTR;
-+
-+	if (task->thread.gcs_el0_mode & PR_SHADOW_STACK_ENABLE)
-+		gcscre0_el1 |= GCSCRE0_EL1_RVCHKEN | GCSCRE0_EL1_PCRSEL;
-+
-+	if (task->thread.gcs_el0_mode & PR_SHADOW_STACK_WRITE)
-+		gcscre0_el1 |= GCSCRE0_EL1_STREn;
-+
-+	if (task->thread.gcs_el0_mode & PR_SHADOW_STACK_PUSH)
-+		gcscre0_el1 |= GCSCRE0_EL1_PUSHMEn;
-+
-+	write_sysreg_s(gcscre0_el1, SYS_GCSCRE0_EL1);
-+}
-+
-+void gcs_free(struct task_struct *task)
-+{
-+	if (task->thread.gcs_base)
-+		vm_munmap(task->thread.gcs_base, task->thread.gcs_size);
-+
-+	task->thread.gcspr_el0 = 0;
-+	task->thread.gcs_base = 0;
-+	task->thread.gcs_size = 0;
-+}
+Oops: general protection fault, probably for non-canonical address
+0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 0 PID: 8 Comm: kworker/0:0 Not tainted 6.10.0 #13
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: events kfree_rcu_work
+RIP: 0010:hlist_add_head include/linux/list.h:1032 [inline]
+RIP: 0010:__free_object+0x903/0xaa0 lib/debugobjects.c:396
+Code: 24 18 48 8b 7c 24 38 74 05 e8 89 bf 95 fd 48 8b 44 24 28 49 89
+45 08 eb 03 45 31 ed 48 8b 1d 34 95 61 0e 4c 89 e8 48 c1 e8 03 <42> 80
+3c 30 00 74 08 4c 89 ef e8 5e bf 95 fd 49 89 5d 00 48 85 db
+RSP: 0018:ffffc900000af740 EFLAGS: 00010046
+RAX: 0000000000000000 RBX: ffff888028f56cb0 RCX: 0000000000000001
+RDX: dffffc0000000000 RSI: 0000000000000004 RDI: ffff888028f56cb8
+RBP: ffffc900000af920 R08: 0000000000000003 R09: fffff52000015ed8
+R10: dffffc0000000000 R11: fffff52000015ed8 R12: ffffffff92c03280
+R13: 0000000000000000 R14: dffffc0000000000 R15: 0000000000000003
+FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005555787e6868 CR3: 000000000d932000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __debug_check_no_obj_freed lib/debugobjects.c:994 [inline]
+ debug_check_no_obj_freed+0x135/0x530 lib/debugobjects.c:1019
+ slab_free_hook mm/slub.c:2163 [inline]
+ slab_free_freelist_hook mm/slub.c:2225 [inline]
+ slab_free_bulk mm/slub.c:4462 [inline]
+ kmem_cache_free_bulk+0x1bf/0x360 mm/slub.c:4676
+ kfree_bulk include/linux/slab.h:568 [inline]
+ kvfree_rcu_bulk+0x249/0x4d0 kernel/rcu/tree.c:3371
+ kfree_rcu_work+0x443/0x500 kernel/rcu/tree.c:3450
+ process_one_work kernel/workqueue.c:3248 [inline]
+ process_scheduled_works+0x977/0x1410 kernel/workqueue.c:3329
+ worker_thread+0xaa0/0x1020 kernel/workqueue.c:3409
+ kthread+0x2eb/0x380 kernel/kthread.c:389
+ ret_from_fork+0x49/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:hlist_add_head include/linux/list.h:1032 [inline]
+RIP: 0010:__free_object+0x903/0xaa0 lib/debugobjects.c:396
+Code: 24 18 48 8b 7c 24 38 74 05 e8 89 bf 95 fd 48 8b 44 24 28 49 89
+45 08 eb 03 45 31 ed 48 8b 1d 34 95 61 0e 4c 89 e8 48 c1 e8 03 <42> 80
+3c 30 00 74 08 4c 89 ef e8 5e bf 95 fd 49 89 5d 00 48 85 db
+RSP: 0018:ffffc900000af740 EFLAGS: 00010046
+RAX: 0000000000000000 RBX: ffff888028f56cb0 RCX: 0000000000000001
+RDX: dffffc0000000000 RSI: 0000000000000004 RDI: ffff888028f56cb8
+RBP: ffffc900000af920 R08: 0000000000000003 R09: fffff52000015ed8
+R10: dffffc0000000000 R11: fffff52000015ed8 R12: ffffffff92c03280
+R13: 0000000000000000 R14: dffffc0000000000 R15: 0000000000000003
+FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005555787e6868 CR3: 000000000d932000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0: 24 18                 and    $0x18,%al
+   2: 48 8b 7c 24 38       mov    0x38(%rsp),%rdi
+   7: 74 05                 je     0xe
+   9: e8 89 bf 95 fd       call   0xfd95bf97
+   e: 48 8b 44 24 28       mov    0x28(%rsp),%rax
+  13: 49 89 45 08           mov    %rax,0x8(%r13)
+  17: eb 03                 jmp    0x1c
+  19: 45 31 ed             xor    %r13d,%r13d
+  1c: 48 8b 1d 34 95 61 0e mov    0xe619534(%rip),%rbx        # 0xe619557
+  23: 4c 89 e8             mov    %r13,%rax
+  26: 48 c1 e8 03           shr    $0x3,%rax
+* 2a: 42 80 3c 30 00       cmpb   $0x0,(%rax,%r14,1) <-- trapping instruction
+  2f: 74 08                 je     0x39
+  31: 4c 89 ef             mov    %r13,%rdi
+  34: e8 5e bf 95 fd       call   0xfd95bf97
+  39: 49 89 5d 00           mov    %rbx,0x0(%r13)
+  3d: 48 85 db             test   %rbx,%rbx
+
 
 -- 
-2.39.2
-
+Yours sincerely,
+Xingyu
 
