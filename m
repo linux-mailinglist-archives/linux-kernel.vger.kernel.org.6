@@ -1,162 +1,292 @@
-Return-Path: <linux-kernel+bounces-304224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2B52961C1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:29:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FBAC961D04
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 05:30:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A477B228ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 02:29:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 749F61C23302
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 03:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23106F06A;
-	Wed, 28 Aug 2024 02:28:55 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D010211CBD;
-	Wed, 28 Aug 2024 02:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7331913E03E;
+	Wed, 28 Aug 2024 03:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="CsOhvdJ5"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1CB2941C;
+	Wed, 28 Aug 2024 03:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724812135; cv=none; b=i8mbzguPRTvQ45P/RCPUpoCW3CuxcOfiXwN+cgVvmKQPE0NevVfOkbi7za+XcfqkBE1LwlXb0bQ5VqbPrLsO0sjDYdWWxuriNZ06MzBSC2kgetmrgg8Zfr28fSppTPo41VMAKJRhz52X4iHjgOZA4QqQT9gT4XPX48R2Fgnns8w=
+	t=1724815847; cv=none; b=WCnfJDfjy3Iribrw0rXwSKRAvPTYdyX8Fssm1Lp/VbgN1bi0GcDVdRngzgBL5/MVyqTEFOYQIFV07QxAmj/FVCj0foZa3gPAU3NyPjrsZeYP3WhE88tgy8Tm9eiecBpySw40G4oqYleCLQ7a93MEQr/elgRZvpZD46sut8Wc07o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724812135; c=relaxed/simple;
-	bh=GJGug1cbipJCGXYCINJRJWPR2jdTKUmsQFbGCnb6MhQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=axm03KWviuX+JV0NsCVeBBnjdxD00Fk1K8fXGILDdt3ZwczuBnC1OrYO+CkOh7PAfi9SK29OAz9zvYdUz6rA6XuTivDyW+Z/peqOG79cq9BZIrdKkS4I92ikpDe6Ojn1RF2c/aVvvHXyD5QC5b8oV11x9Ec1kUQYdiMEXzIJXK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8BxqOlhi85mw1EiAA--.2349S3;
-	Wed, 28 Aug 2024 10:28:49 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowMDxkeFei85m9RwlAA--.26737S3;
-	Wed, 28 Aug 2024 10:28:48 +0800 (CST)
-Subject: Re: [PATCH v6 0/3] LoongArch: KVM: Add Binary Translation extension
- support
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>,
- kvm@vger.kernel.org, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
-References: <20240730075744.1215856-1-maobibo@loongson.cn>
- <CAAhV-H6dFBJ+dQE7qzK8aiTjx8NFJtzPWzEGpJ8dm7v4ExD8Ow@mail.gmail.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <e898b732-71d5-c16f-93a5-de630820f06d@loongson.cn>
-Date: Wed, 28 Aug 2024 10:28:19 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1724815847; c=relaxed/simple;
+	bh=w9gKMUwtFMhXtaLOZKT94eoi54UxpaqmxQcBOIz4yLE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A8X7mSqbai4Z+0IonY+DbivQQ4KAfHz8t+JkVIRK3SIaUHPShwjFjbygUeaeHUp+4R27A1U7vns4mAfgeTJBlShmAWBg2Qf/aYRQmnSKxxIvzftep0h+7p3B/fqGlsNoua00ZIZ10LzYhRJNQaFCJqyUm6QNLG8/4LlC0F8fc90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=CsOhvdJ5; arc=none smtp.client-ip=220.197.32.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=BJK05Ul0TQ++UJk0M0jDApdVzd0KxnzQI04Ca6YRhoM=;
+	b=CsOhvdJ5L6c2jKEq4i0gMa1TGrotzOerH0tXvhvLJheihULgT0EvDoEVP4htZW
+	fTIU4mhgdcCOIj578xYMZalJHtjUniDmabMgFLPPy75Vds/zclIRUj04o9jih8wo
+	eJqj0QP/Y/9qjOEFImSd7hp0MOD9THecMDlQUeWIDMv04=
+Received: from dragon (unknown [114.216.210.89])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgDn__5vi85mpd4NAA--.24882S3;
+	Wed, 28 Aug 2024 10:29:05 +0800 (CST)
+Date: Wed, 28 Aug 2024 10:29:03 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Frieder Schrempf <frieder@fris.de>
+Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: Re: [PATCH 3/4] arm64: dts: imx8mm-kontron: Add support for display
+ bridges on BL i.MX8MM
+Message-ID: <Zs6LbyOeGMZsxn2S@dragon>
+References: <20240806133352.440922-1-frieder@fris.de>
+ <20240806133352.440922-4-frieder@fris.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H6dFBJ+dQE7qzK8aiTjx8NFJtzPWzEGpJ8dm7v4ExD8Ow@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMDxkeFei85m9RwlAA--.26737S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxXF4Uur45Kry7KFW8KryUArc_yoW5CF4kp3
-	y5C3Z3CFWkGr1fAw4agw4jgF1YqrWxKF4xWF9xG345trZrWryUKr48KFZ5uFyDZw4rAry0
-	vayvy395u3WDAFXCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE
-	14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
-	AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
-	rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtw
-	CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
-	67AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr
-	0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8vA
-	pUUUUUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806133352.440922-4-frieder@fris.de>
+X-CM-TRANSID:M88vCgDn__5vi85mpd4NAA--.24882S3
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXw4DGF18JFW7try7Jr15CFg_yoWrKw4Dpr
+	9xAws3Xr40qF4jya4DZr18Crn3C3ykGw4v9wnF9FyFyrZxu347tF45Krn5Wrs0kFWUZw4F
+	vF4Fvry2grnYq3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j4ZXrUUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiER9JZWbOG9TjXwABs4
 
+On Tue, Aug 06, 2024 at 03:33:01PM +0200, Frieder Schrempf wrote:
+> From: Frieder Schrempf <frieder.schrempf@kontron.de>
+> 
+> The Kontron Electronics BL i.MX8MM has oboard disply bridges for
+> DSI->HDMI and DSI->LVDS conversion. The DSI interface is muxed by
+> a GPIO-controlled switch to one of these two bridges.
+> 
+> By default the HDMI bridge is enabled. The LVDS bridge can be
+> selected by loading an additional (panel-specific) overlay.
+> 
+> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+> ---
+>  .../boot/dts/freescale/imx8mm-kontron-bl.dts  | 146 ++++++++++++++++++
+>  1 file changed, 146 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-kontron-bl.dts b/arch/arm64/boot/dts/freescale/imx8mm-kontron-bl.dts
+> index aab8e24216501..2b344206dfd16 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mm-kontron-bl.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8mm-kontron-bl.dts
+> @@ -25,6 +25,17 @@ osc_can: clock-osc-can {
+>  		clock-output-names = "osc-can";
+>  	};
+>  
+> +	hdmi-out {
+> +		compatible = "hdmi-connector";
+> +		type = "a";
+> +
+> +		port {
+> +			hdmi_in_conn: endpoint {
+> +				remote-endpoint = <&bridge_out_conn>;
+> +			};
+> +		};
+> +	};
+> +
+>  	leds {
+>  		compatible = "gpio-leds";
+>  		pinctrl-names = "default";
+> @@ -132,6 +143,90 @@ ethphy: ethernet-phy@0 {
+>  	};
+>  };
+>  
+> +&gpio4 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_gpio4>;
+> +
+> +	dsi_mux_sel_hdmi: dsi-mux-sel-hdmi-hog {
+> +		gpio-hog;
+> +		gpios = <14 GPIO_ACTIVE_HIGH>;
+> +		output-high;
+> +		line-name = "dsi-mux-sel";
+> +	};
+> +
+> +	dsi_mux_sel_lvds: dsi-mux-sel-lvds-hog {
+> +		gpio-hog;
+> +		gpios = <14 GPIO_ACTIVE_HIGH>;
+> +		output-low;
+> +		line-name = "dsi-mux-sel";
+> +		status = "disabled";
+> +	};
+> +
+> +	dsi-mux-oe-hog {
+> +		gpio-hog;
+> +		gpios = <15 GPIO_ACTIVE_LOW>;
+> +		output-high;
+> +		line-name = "dsi-mux-oe";
+> +	};
+> +};
+> +
+> +&i2c3 {
+> +	clock-frequency = <400000>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_i2c3>;
+> +	status = "okay";
+> +
+> +	hdmi: hdmi@39 {
+> +		compatible = "adi,adv7535";
+> +		reg = <0x39>;
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_adv7535>;
+> +
+> +		interrupt-parent = <&gpio4>;
+> +		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
+> +
+> +		adi,dsi-lanes = <4>;
+> +
 
+Can we drop these newlines in the middle of property list?
 
-On 2024/8/28 上午10:08, Huacai Chen wrote:
-> Hi, Bibo,
-> 
-> I have consulted with Jiaxun offline, and he has tried his best to
-> propose a "scratch vcpu" solution. But unfortunately that solution is
-> too difficult to implement and he has nearly given up.
-> 
-> So the solution in this series seems the best one, and I will queue it
-> for loongarch-kvm now.
-Thanks. There may be requirement such as there is different capability 
-for different vCPUs, only that it is a little far from now. We can 
-discuss and add that if there is such requirement. Because of limitation 
-of human resource and ability, the implementation is not perfect however 
-it can be used.
+> +		a2vdd-supply = <&reg_vdd_1v8>;
+> +		avdd-supply = <&reg_vdd_1v8>;
+> +		dvdd-supply = <&reg_vdd_1v8>;
+> +		pvdd-supply = <&reg_vdd_1v8>;
+> +		v1p2-supply = <&reg_vdd_1v8>;
+> +		v3p3-supply = <&reg_vdd_3v3>;
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +
+> +				bridge_in_dsi_hdmi: endpoint {
+> +					remote-endpoint = <&dsi_out_bridge>;
+> +				};
+> +			};
+> +
+> +			port@1 {
+> +				reg = <1>;
+> +
+> +				bridge_out_conn: endpoint {
+> +					remote-endpoint = <&hdmi_in_conn>;
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+> +	lvds: bridge@2c {
 
-Regards
-Bibo Mao
+Sort I2C devices in unit-address.
+
+Shawn
+
+> +		compatible = "ti,sn65dsi84";
+> +		reg = <0x2c>;
+> +		enable-gpios = <&gpio4 26 GPIO_ACTIVE_HIGH>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_sn65dsi84>;
+> +		status = "disabled";
+> +	};
+> +};
+> +
+>  &i2c4 {
+>  	clock-frequency = <100000>;
+>  	pinctrl-names = "default";
+> @@ -144,6 +239,30 @@ rx8900: rtc@32 {
+>  	};
+>  };
+>  
+> +&lcdif {
+> +	status = "okay";
+> +};
+> +
+> +&mipi_dsi {
+> +	samsung,esc-clock-frequency = <54000000>;
+> +	/*
+> +	 * Let the driver calculate an appropriate clock rate based on the pixel
+> +	 * clock instead of using the fixed value from imx8mm.dtsi.
+> +	 */
+> +	/delete-property/ samsung,pll-clock-frequency;
+> +	status = "okay";
+> +
+> +	ports {
+> +		port@1 {
+> +			reg = <1>;
+> +
+> +			dsi_out_bridge: endpoint {
+> +				remote-endpoint = <&bridge_in_dsi_hdmi>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+>  &pwm2 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&pinctrl_pwm2>;
+> @@ -207,6 +326,12 @@ &iomuxc {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&pinctrl_gpio>;
+>  
+> +	pinctrl_adv7535: adv7535grp {
+> +		fsl,pins = <
+> +			MX8MM_IOMUXC_SAI1_TXD4_GPIO4_IO16		0x19
+> +		>;
+> +	};
+> +
+>  	pinctrl_can: cangrp {
+>  		fsl,pins = <
+>  			MX8MM_IOMUXC_SAI3_RXFS_GPIO4_IO28		0x19
+> @@ -277,6 +402,20 @@ MX8MM_IOMUXC_SAI3_MCLK_GPIO5_IO2		0x19
+>  		>;
+>  	};
+>  
+> +	pinctrl_gpio4: gpio4grp {
+> +		fsl,pins = <
+> +			MX8MM_IOMUXC_SAI1_TXD2_GPIO4_IO14		0x19
+> +			MX8MM_IOMUXC_SAI1_TXD3_GPIO4_IO15		0x19
+> +		>;
+> +	};
+> +
+> +	pinctrl_i2c3: i2c3grp {
+> +		fsl,pins = <
+> +			MX8MM_IOMUXC_I2C3_SCL_I2C3_SCL			0x40000083
+> +			MX8MM_IOMUXC_I2C3_SDA_I2C3_SDA			0x40000083
+> +		>;
+> +	};
+> +
+>  	pinctrl_i2c4: i2c4grp {
+>  		fsl,pins = <
+>  			MX8MM_IOMUXC_I2C4_SCL_I2C4_SCL			0x40000083
+> @@ -290,6 +429,13 @@ MX8MM_IOMUXC_SPDIF_RX_PWM2_OUT			0x19
+>  		>;
+>  	};
+>  
+> +	pinctrl_sn65dsi84: sn65dsi84grp {
+> +		fsl,pins = <
+> +			MX8MM_IOMUXC_SAI2_TXD0_GPIO4_IO26		0x19
+> +			MX8MM_IOMUXC_SD2_WP_GPIO2_IO20			0x19
+> +		>;
+> +	};
+> +
+>  	pinctrl_uart1: uart1grp {
+>  		fsl,pins = <
+>  			MX8MM_IOMUXC_SAI2_RXC_UART1_DCE_RX		0x0
+> -- 
+> 2.45.2
 > 
-> Huacai
-> 
-> On Tue, Jul 30, 2024 at 3:57 PM Bibo Mao <maobibo@loongson.cn> wrote:
->>
->> Loongson Binary Translation (LBT) is used to accelerate binary
->> translation, which contains 4 scratch registers (scr0 to scr3), x86/ARM
->> eflags (eflags) and x87 fpu stack pointer (ftop).
->>
->> Like FPU extension, here lately enabling method is used for LBT. LBT
->> context is saved/restored during vcpu context switch path.
->>
->> Also this patch set LBT capability detection, and LBT register get and set
->> interface for userspace vmm, so that vm supports migration with BT
->> extension.
->>
->> ---
->> v5 ... v6:
->>    1. Solve compiling issue with function kvm_get_one_reg() and
->>       kvm_set_one_reg().
->>
->> v4 ... v5:
->>    1. Add feature detection for LSX/LASX from vm side, previously
->>       LSX/LASX feature is detected from vcpu ioctl command, now both
->>       methods are supported.
->>
->> v3 ... v4:
->>    1. Merge LBT feature detection for VM and VCPU into one patch.
->>    2. Move function declaration such as kvm_lose_lbt()/kvm_check_fcsr()/
->>       kvm_enable_lbt_fpu() from header file to c file, since it is only
->>       used in one c file.
->>
->> v2 ... v3:
->>    1. Split KVM_LOONGARCH_VM_FEAT_LBT capability checking into three
->>       sub-features, KVM_LOONGARCH_VM_FEAT_X86BT/KVM_LOONGARCH_VM_FEAT_ARMBT
->>       and KVM_LOONGARCH_VM_FEAT_MIPSBT. Return success only if host
->>       supports the sub-feature.
->>
->> v1 ... v2:
->>    1. With LBT register read or write interface to userpace, replace
->>       device attr method with KVM_GET_ONE_REG method, since lbt register is
->>       vcpu register and can be added in kvm_reg_list in future.
->>    2. Add vm device attr ctrl marcro KVM_LOONGARCH_VM_FEAT_CTRL, it is
->>       used to get supported LBT feature before vm or vcpu is created.
->> ---
->> Bibo Mao (3):
->>    LoongArch: KVM: Add HW Binary Translation extension support
->>    LoongArch: KVM: Add LBT feature detection function
->>    LoongArch: KVM: Add vm migration support for LBT registers
->>
->>   arch/loongarch/include/asm/kvm_host.h |   8 ++
->>   arch/loongarch/include/asm/kvm_vcpu.h |   6 ++
->>   arch/loongarch/include/uapi/asm/kvm.h |  17 ++++
->>   arch/loongarch/kvm/exit.c             |   9 ++
->>   arch/loongarch/kvm/vcpu.c             | 128 +++++++++++++++++++++++++-
->>   arch/loongarch/kvm/vm.c               |  52 ++++++++++-
->>   6 files changed, 218 insertions(+), 2 deletions(-)
->>
->>
->> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
->> --
->> 2.39.3
->>
->>
 
 
