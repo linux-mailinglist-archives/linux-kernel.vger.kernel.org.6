@@ -1,131 +1,181 @@
-Return-Path: <linux-kernel+bounces-304395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9CCD961F89
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:21:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 759C3961F8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:21:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0853F1C2355E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:21:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E99451F258EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC90156872;
-	Wed, 28 Aug 2024 06:17:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38394158557;
+	Wed, 28 Aug 2024 06:18:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FvAZNVyP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bk3TKGhL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E01B14D452;
-	Wed, 28 Aug 2024 06:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B2C49641;
+	Wed, 28 Aug 2024 06:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724825859; cv=none; b=P7eBHCDOFVpkr4gMHwKUSPYqU/D4bunoUHgtW+4Df9fXF1hvAGEGwHz9O4wdfxfAaDTxGxh8JG3zwWio7T+6Vk5Fg/q2lkCR4w4n68zb5yBYFV/xZRE+Hi/WmZSh7e7/YtQzgAmxy1/PjGceL34u17JXXiwOWtwe+89u9pWnvbI=
+	t=1724825895; cv=none; b=KHxp/oeU8cR7akWoTt3YQ8aOxvqcVgNZLzfVnEgp9OXCq1MDuCEF3rko8YNqWBeGV41nbAie/1OO2d6gfBVFz5qW1aLkWLgD7lmDFsCwQcyk9HJqR6eQv0Iq93T6mYTSwzrzBfF1wOdzEtddvZyNfRHN7lFACNRAqIxEba50PoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724825859; c=relaxed/simple;
-	bh=N7D0w95cp/r1m6Xu8l24R+M33YOTjjUOZNZE60X/7Dg=;
+	s=arc-20240116; t=1724825895; c=relaxed/simple;
+	bh=meA8IZtU4hNTJg9VW1FHygfSFUokgpJo2faCYtQ/YtQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZFk4CLIZRQDcTcx8LHcR5DuwfIFIw5bnsw8HI8Yvggna7M7vRejoXbUtRNc1ooZAimBO1w9L5jfM9a+iHpf53HbpayHYMERycXbImyARynMi9yGsbl6Mf7soaDqBCoyWo6cBrsC4+VlkcN4ShrsRNCX7vzI2rM7Zu926YdumIrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FvAZNVyP; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724825858; x=1756361858;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=N7D0w95cp/r1m6Xu8l24R+M33YOTjjUOZNZE60X/7Dg=;
-  b=FvAZNVyPtDnT1Ztr59K4j0DkWn1AbM/YSqfJLu5HwwYt0JxrFOQSNL6o
-   x1qCY/9AFk+IAzrD7Zpa1qVQimPTGe/4wHYOtLR7gQ7OrOSvP87rPmmAl
-   ZsH5XKkMyaSky4mfxQqLsoGu2oltfSltoioSAQRRq5q80R94hNsehBQly
-   zmmS+iQKxggOc11hUHFTrmCZUisKBAdI/WauTIVWdf0sjECMjMs3J24mq
-   wjB9MLxOagPHai0IB1LsD5YTZ9PhBS4kDZc2XZvjlM3WC27lT1Kh+qdm/
-   C7vEq+A0gT1Sq93WqkUP+D3ruWsUpIsmJM9lDo8WpS1XtsDxcP8aroZ1W
-   Q==;
-X-CSE-ConnectionGUID: QJyqN7/cTQyfePyYqssA6A==
-X-CSE-MsgGUID: u8vtmIL0QbGnXi7E2cyX0Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="40809975"
-X-IronPort-AV: E=Sophos;i="6.10,181,1719903600"; 
-   d="scan'208";a="40809975"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 23:17:37 -0700
-X-CSE-ConnectionGUID: 1mKfn2JpSu2KtJ8a7fNUCA==
-X-CSE-MsgGUID: HuWHYxoBTY6lcwh4GJ9twg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,181,1719903600"; 
-   d="scan'208";a="93827911"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa002.jf.intel.com with ESMTP; 27 Aug 2024 23:17:32 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id D8699142; Wed, 28 Aug 2024 09:17:30 +0300 (EEST)
-Date: Wed, 28 Aug 2024 09:17:30 +0300
-From: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-To: Rik van Riel <riel@surriel.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, 
-	Usama Arif <usamaarif642@gmail.com>, Nico Pache <npache@redhat.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Matthew Wilcox <willy@infradead.org>, Barry Song <baohua@kernel.org>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Lance Yang <ioworker0@gmail.com>, Peter Xu <peterx@redhat.com>, Rafael Aquini <aquini@redhat.com>, 
-	Andrea Arcangeli <aarcange@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Zi Yan <ziy@nvidia.com>
-Subject: Re: [RFC 0/2] mm: introduce THP deferred setting
-Message-ID: <ouerpxb676mei3kndz53j4am4fo2duvygoatfnposo2rkct566@akl7ckd7nrvk>
-References: <20240729222727.64319-1-npache@redhat.com>
- <72320F9D-9B6A-4ABA-9B18-E59B8382A262@nvidia.com>
- <CAA1CXcCD798gkLoZuz3Cd5-Wf2MRfnAG_EB0U3nbScZeFv09dw@mail.gmail.com>
- <CAA1CXcCCOS8-aqcm+w8Aoqe2P5q005wMrgmtx=xjzJgjKFb7mg@mail.gmail.com>
- <61411216-d196-42de-aa64-12bd28aef44f@gmail.com>
- <CAA1CXcCe8QDir2KiWg=GmN4BErfXSDs_9kmnYfyK=X8H8U8QwA@mail.gmail.com>
- <698ea52e-db99-4d21-9984-ad07038d4068@gmail.com>
- <20240827110959.GA438928@cmpxchg.org>
- <9cf237df1a7bb21bba1a464787938eba8f372658.camel@surriel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mMTr0WeVGarhh2AXzF1TMlmj+riQ4cNbySpZ7fwgx8IlSsmX4AEtL6Boe2ZwGD8Hbw91rAugHLx6x0pJWOfLHDbCuDzbij34LzqORsl3UNzQ9ByR7s7ls71O3CoYaOGY4qxWr4cowsmZqKNs5dhUEBz7ap60Il2UsP4iBQ7ThWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bk3TKGhL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04BC5C4AF1B;
+	Wed, 28 Aug 2024 06:18:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724825895;
+	bh=meA8IZtU4hNTJg9VW1FHygfSFUokgpJo2faCYtQ/YtQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bk3TKGhLxGj4tvurT3JaxJzwDncf8PFPAgZjnjRLr3Uww4fm94D5ONW9ltdeSfOGZ
+	 9od8Qbdv4ALeHATy6Sx2Tqvk9AyaUCNfMOaFCNkc1HkoCe5sXiW0cFFm5TkRExQ1iR
+	 zDZrIjquVTMd79J9cGT0STMUQWavO6edliliADDdv87SbqV2By9VP1+6SpgVAuwEjo
+	 VTOqV7EEkU2Ei1FHUPIJlKXV0mKd9wd0R5pcxQhvUXJ3mkd/NGe/5ZyoJuN7RkRx7c
+	 yfkv4x9eZygDVhKuA6A5/mTO2HaPVCkXkUc7hsm2Bxg6bVxwPnW/1/OEW1NopomKHz
+	 VFuttEyTJ+K5Q==
+Date: Wed, 28 Aug 2024 08:18:10 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: dt-bindings: Add dt bindings definition file for
+ imx28 saif
+Message-ID: <mzlrm7zkzuue4xsxehz32ffiesigy2dzbos2osirzfoi525q6q@7klbgtmht74a>
+References: <20240827180528.2315563-1-lukma@denx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <9cf237df1a7bb21bba1a464787938eba8f372658.camel@surriel.com>
+In-Reply-To: <20240827180528.2315563-1-lukma@denx.de>
 
-On Tue, Aug 27, 2024 at 09:18:58PM -0400, Rik van Riel wrote:
-> On Tue, 2024-08-27 at 13:09 +0200, Johannes Weiner wrote:
-> > 
-> > I agree with this. The defer mode is an improvement over the upstream
-> > status quo, no doubt. However, both defer mode and the shrinker solve
-> > the issue of memory waste under pressure, while the shrinker permits
-> > more desirable behavior when memory is abundant.
-> > 
-> > So my take is that the shrinker is the way to go, and I don't see a
-> > bonafide usecase for defer mode that the shrinker couldn't cover.
-> > 
-> > 
-> I would like to take one step back, and think about what some real
-> world workloads might want as a tunable for THP.
+On Tue, Aug 27, 2024 at 08:05:28PM +0200, Lukasz Majewski wrote:
+> This file allows correct check of DTS node for imx287 based
+> "fsl,imx28-saif" compatible device.
 > 
-> Workload owners are going to have a real problem trying to figure
-> out what the best value of max_ptes_none should be for their
-> workloads.
+> It corresponds to Documentation/devicetree/bindings/fsl,imx28-saif
 > 
-> However, giving workload owners the ability to say "this workload
-> should not waste more than 1GB of memory on zero pages inside THPs",
-> or 500MB, or 4GB or whatever, would then allow the kernel to
-> automatically adjust the max_ptes_none threshold.
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> ---
+>  .../devicetree/bindings/sound/fsl,saif.yaml   | 79 +++++++++++++++++++
+>  1 file changed, 79 insertions(+)
 
-The problem is that we don't have and cannot have the info on zero pages
-inside THPs readily available. It requires memory scanning which is
-prohibitively expensive if we want the info to be somewhat up-to-date.
+There is a binding. Please perform conversion from TXT to DT schema,
+mentioning in commit msg any changes from pure conversion (e.g. new
+properties to match DTS).
 
-We don't have enough input from HW on the access pattern. It would be nice
-to decouple A/D bit (or maybe just A) from page table structure and get
-higher resolution on the access pattern for THPs.
+Few more comments below.
 
-I tried to talk to HW folk, but it went nowhere. Maybe if there would be a
-customer demand... Just saying...
+>  create mode 100644 Documentation/devicetree/bindings/sound/fsl,saif.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/fsl,saif.yaml b/Documentation/devicetree/bindings/sound/fsl,saif.yaml
+> new file mode 100644
+> index 000000000000..747faa411a50
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/fsl,saif.yaml
+> @@ -0,0 +1,79 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/fsl,saif.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Freescale MXS Serial Audio Interface (SAIF)
+> +
+> +maintainers:
+> +  - Lukasz Majewski <lukma@denx.de>
+> +
+> +description: |
 
--- 
-Kiryl Shutsemau / Kirill A. Shutemov
+Do not need '|' unless you need to preserve formatting.
+
+> +  The SAIF is based on I2S module that is used to communicate with audio codecs,
+> +  but only with half-duplex manner (i.e. it can either transmit or receive PCM
+> +  audio).
+> +
+> +properties:
+> +  compatible:
+> +    const: fsl,imx28-saif
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#sound-dai-cells":
+> +    const: 0
+> +
+> +  assigned-clock-parents: true
+> +  assigned-clock-rates: true
+> +  assigned-clocks: true
+
+These three should be dropped, redundant.
+
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  dmas:
+> +    maxItems: 1
+> +
+> +  dma-names:
+> +    const: rx-tx
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  fsl,saif-master:
+> +    description: Indicate that saif is a slave and its phandle points to master
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - dmas
+> +  - dma-names
+> +  - "#sound-dai-cells"
+
+Keep the same order as in "properties:" block.
+
+and here allOf: with $ref to dai-common.yaml
+
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    saif0: saif@80042000 {
+> +        #sound-dai-cells = <0>;
+> +        compatible = "fsl,imx28-saif";
+> +        reg = <0x80042000 2000>;
+> +        interrupts = <59>;
+> +        clocks = <&clks 53>;
+> +        dmas = <&dma_apbx 4>;
+> +        dma-names = "rx-tx";
+> +    };
+> +  - |
+> +    saif1: saif@80046000 {
+
+Just one example, could be this one as more complete.
+
+> +        #sound-dai-cells = <0>;
+
+Keep it after "reg" (compatible and reg are always first).
+
+Best regards,
+Krzysztof
+
 
