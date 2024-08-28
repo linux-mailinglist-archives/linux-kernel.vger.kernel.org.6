@@ -1,154 +1,141 @@
-Return-Path: <linux-kernel+bounces-304887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2534962641
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:44:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2323962666
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:52:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CEA51F240B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:44:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DA351F2438F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4993171E49;
-	Wed, 28 Aug 2024 11:44:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DEE16EBF4;
+	Wed, 28 Aug 2024 11:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zWy9BImj"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="fiM5LoIE"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA9716C869
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 11:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA0416D334;
+	Wed, 28 Aug 2024 11:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724845471; cv=none; b=s2ZzryYtzH68g685no8aipkMExAmA0bMakyPLwqFzXSTcvGb8UmPqGTh9m0Lx8N9gs7eN2/YxpXG8YeASCKLRpWPpVK9Rodyoh1gvCdVZ8MBKkr2PPvWgqYIDPSBUPfB4BRNFjVwjCs/YwVrg/jTxTRaw1ewpOXXkTu3QfHN/GY=
+	t=1724845961; cv=none; b=qd72EB0F0h2c3Po2ugCk/HHYFBeMX8YAOhM3vh2uNshqdh3KfUjB+C2Qc1IJXLXHx+x2J/M9JFh428gq3IFzZqPUw267oTyDNpWv+SWBPgA3LcpVCMo3F8OoGA4xT+cZZ57yuzmb+aoqFnTnW1bYx57i746L2qbqOgbnqjTRE5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724845471; c=relaxed/simple;
-	bh=44gDqQ2E8n/TW26MW4bkkz/k/+zJph/18XcrJ1325gc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XfbxFa3UAFpzDgs1vtMA4x+l7R1rJ5jzOaHYGJKjwuQcCCokr/71Imrf+XX7hztaF6cwm4XzoMA9vxl51IvGhU8jD48AjxhVS+HCDsAz0xxRU6q7W6knNOUKxttvDIlONPoR7qpd60mxIDbSQ3u0g1DnQn+p2D97BpGTFmNZ5pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zWy9BImj; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4280921baa2so7431815e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 04:44:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724845467; x=1725450267; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=tGJNg89+GeDnU9OZxd2eBC6SBJttq6rdnwi8sEDPts0=;
-        b=zWy9BImjV041X7vJr47a/ZjcadXWn2nJOb5BoUzIusx3JDyaqYp+gYUIC9p+yhtJlN
-         J+RcMUT64DqEOceZnU2VShGvkeBQjRDUQ918ntUQAQPyYqHpBDmJJ8dyiEg5S1eUU8M1
-         vYeIK7k1GntYx/OKyoVY8p32KeQ3QCE72k/RieYdYfS6sCmTX5f1AeYaSR8tX/Oi5E0Y
-         xx+SM7UWB6zTDWy9Ak6Fo/nRaTB/8TrdvJ2YU7xTjFI2G46fGaPI4I0p8GdaWmMn6l/D
-         gEdv3FIIVOt5cBQqPHe5l/oEzdTPGLiIydA9KPd6mpXw32d11FkZaVBh8JS+eyYcReA/
-         xXgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724845467; x=1725450267;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tGJNg89+GeDnU9OZxd2eBC6SBJttq6rdnwi8sEDPts0=;
-        b=TpJ04/A+pIhMDAB1KlcOU3Ow04/awIyAoKjqke3QFm8fTPpe9PXuugEDTosmTtK+A6
-         LjucIfhlteyW/AblMH9nJXXlHBylSxqcnglOKnaIVSP6A+yHqifa5FqS5tUqQ7Rwbi83
-         GX/s5FR/PBlac7w8o7uPLEC1na6MXqil6DLlExej8WlwaIqBQWX/So3TNyufSHpO+bBE
-         PqqdEeBddMCcqCQ4IwCvkBn4H4zCxo29G1aL0dS78pyf6rywuZeD83a+QI6a1/Cn+GWM
-         MRh2fuk4Z/hp04w1SEJjZOcwFmvjgTmLuHzOpCVmuZHU1Z32PYdjr2KYfjQ/Nk8XHZ7F
-         Eimw==
-X-Forwarded-Encrypted: i=1; AJvYcCWYl0JIExloJ4wEmP9j4NDNbBuVHM7xMKoUuXFZpXcuIeDjcV/gNp1Pwgm9J767h1p1qZn2vgyOhtsWRWE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYy3v5nOxQUDc2plim5VY4ESmuIE7Gri1XLhCEAe0CHVEBTyqV
-	6W/I55SX6hg9M6Qkk/Tf528E7d8H6hjQ7fV5AtN+O1042IM6TguhpkooGY0Ay8M=
-X-Google-Smtp-Source: AGHT+IFd6/HF+VTBX/iidmlpsRcbLRR8w82zAA82b9NDV5H1DbxyytZSbgJCjDhi8g7UMUijTVRkOg==
-X-Received: by 2002:a05:600c:5105:b0:428:18d9:4654 with SMTP id 5b1f17b1804b1-42acca311f8mr71928085e9.6.1724845467404;
-        Wed, 28 Aug 2024 04:44:27 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba6425811sm19160125e9.40.2024.08.28.04.44.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 04:44:26 -0700 (PDT)
-Message-ID: <95b83ee3-5462-4e7d-aba9-21fffa16c17b@linaro.org>
-Date: Wed, 28 Aug 2024 13:44:25 +0200
+	s=arc-20240116; t=1724845961; c=relaxed/simple;
+	bh=RJOnJ5A4TdkFnKq4gpjtqlbLO38nenDCNd9HYf73RnI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oCAG4BpFxTcVYU+V5URmJUyvPe4+8TCd+BO85o6i2ZBoHSnVBI7O8qiS1aKzb7+mHspsVYld4I0kkGzMJ6pmKI1TIrxb8G5OGtb7u+f5u02Rkfbt5eeuCcCmQKgxGjqZKpvwrB9e9G9M7fc8+80WmXfaiXoTsSMgsDVUZLYjXp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=fiM5LoIE reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id bb71734bd8613a60; Wed, 28 Aug 2024 13:52:31 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 8620E923483;
+	Wed, 28 Aug 2024 13:52:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1724845951;
+	bh=RJOnJ5A4TdkFnKq4gpjtqlbLO38nenDCNd9HYf73RnI=;
+	h=From:Subject:Date;
+	b=fiM5LoIEjfQ7zAqXf3IMwvACNHuuzSgwEm7Wh/lJ1d2TJmYZSbKquk1xlVzVMp3R4
+	 kA31g3ugPLyVXk++LYdLpVcjHfpnv6cbOQE1Rba83T+VD4k00pSV1txlTuTMq78aQI
+	 PMn7RWoi6cVpReLbsYoTAPi7k/tZ1+NFj2S3yRAI1sima8Xp/3fnTU1JiuoUtbbeuS
+	 qHGgfK/DY7ezjcrjsZhjJeGShOKTA3yN9IctG54Imrxx07ScXHprydk0hI518lv71k
+	 Ez2wMV8OGlDv8oABJ6p7MTafhD9l1faiaZ+klP4/ikTXktwHtvkK4RqEYWduAGWMbU
+	 MZ4ZlIZUCpirw==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: x86 Maintainers <x86@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Ricardo Neri <ricardo.neri@intel.com>, Tim Chen <tim.c.chen@intel.com>
+Subject:
+ [PATCH v3 0/2] x86 / intel_pstate: Set asymmetric CPU capacity on hybrid
+ systems
+Date: Wed, 28 Aug 2024 13:45:00 +0200
+Message-ID: <3310447.aeNJFYEL58@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: vendor-prefixes: Add Jenson Display
-To: Frieder Schrempf <frieder@fris.de>, Conor Dooley <conor+dt@kernel.org>,
- devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
-Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
- Chris Morgan <macromorgan@hotmail.com>,
- Conor Dooley <conor.dooley@microchip.com>,
- Heiko Stuebner <heiko.stuebner@cherry.de>,
- Linus Walleij <linus.walleij@linaro.org>,
- Neil Armstrong <neil.armstrong@linaro.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
- <rafal@milecki.pl>
-References: <20240828074753.25401-1-frieder@fris.de>
- <20240828074753.25401-2-frieder@fris.de>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
- m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
- HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
- XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
- mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
- v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
- cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
- rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
- qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
- aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
- gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
- dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
- oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
- 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
- Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
- qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
- /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
- qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
- EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
- KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
- fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240828074753.25401-2-frieder@fris.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudefvddggeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepgeffhfdujeelhfdtgeffkeetudfhtefhhfeiteethfekvefgvdfgfeeikeeigfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucfuphgrmhfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopedutddprhgtphhtthhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehtghhlgieslhhinhhu
+ thhrohhnihigrdguvgdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeguihgvthhmrghrrdgvghhgvghmrghnnhesrghrmhdrtghomh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=10 Fuz1=10 Fuz2=10
 
-On 28/08/2024 09:46, Frieder Schrempf wrote:
-> From: Frieder Schrempf <frieder.schrempf@kontron.de>
-> 
-> Add vendor prefix for manufacturer Jenson Display (http://jensondisplay.com).
-> 
-> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+Hi Everyone,
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This is an update of
 
-Best regards,
-Krzysztof
+https://lore.kernel.org/linux-pm/4941491.31r3eYUQgx@rjwysocki.net/
+
+which was an update of
+
+https://lore.kernel.org/linux-pm/4908113.GXAFRqVoOG@rjwysocki.net/
+
+It addresses Ricardo's review comments and fixes an issue with intel_pstate
+operation mode changes that would cause it to attempt to enable hybrid CPU
+capacity scaling after it has been already enabled during initialization.
+
+The most visible difference with respect to the previous version is that
+patch [1/3] has been dropped because it is not needed any more after using
+the observation that sched_clear_itmt_support() would cause sched domains
+to be rebuilt.
+
+Other than this, there are cosmetic differences in patch [1/2] (previously [2/3])
+and the new code in intel_pstate_register_driver() in patch [2/2] (previously [3/3])
+has been squashed into hybrid_init_cpu_scaling() which now checks whether or
+not to enable hybrid CPU capacity scaling (as it may have been enabled already).
+
+This series is available from the following git branch:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/log/?h=intel_pstate-testing
+
+(with an extra debug commit on top).
+
+The original cover letter quoted below still applies:
+
+The purpose of this series is to provide the scheduler with asymmetric CPU
+capacity information on x86 hybrid systems based on Intel hardware.
+
+The asymmetric CPU capacity information is important on hybrid systems as it
+allows utilization to be computed for tasks in a consistent way across all
+CPUs in the system, regardless of their capacity.  This, in turn, allows
+the schedutil cpufreq governor to set CPU performance levels consistently
+in the cases when tasks migrate between CPUs of different capacities.  It
+should also help to improve task placement and load balancing decisions on
+hybrid systems and it is key for anything along the lines of EAS.
+
+The information in question comes from the MSR_HWP_CAPABILITIES register and
+is provided to the scheduler by the intel_pstate driver, as per the changelog
+of patch [3/3].  Patch [2/3] introduces the arch infrastructure needed for
+that (in the form of a per-CPU capacity variable) and patch [1/3] is a
+preliminary code adjustment.
+
+This is based on an RFC posted previously
+
+https://lore.kernel.org/linux-pm/7663799.EvYhyI6sBW@kreacher/
+
+but differs from it quite a bit (except for the first patch).  The most
+significant difference is based on the observation that frequency-
+invariance needs to adjusted to the capacity scaling on hybrid systems
+for the complete scale-invariance to work as expected.
+
+Thank you!
+
+
 
 
