@@ -1,153 +1,198 @@
-Return-Path: <linux-kernel+bounces-304469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30ED0962085
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:17:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48771962091
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:18:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D05E91F24C6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:17:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D3681C235D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F772158216;
-	Wed, 28 Aug 2024 07:17:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC422158D63;
+	Wed, 28 Aug 2024 07:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="SHdiDK6h"
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gEaGQrNF"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6518157494;
-	Wed, 28 Aug 2024 07:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04FCF1581F2
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:17:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724829428; cv=none; b=ms2PFa/ownBCDEdTADqHf2+YAl9GQUKfnfCHV7rRuAVASXLIehrBDguxhD7sInv0abKslcpT9mxOkRWKEFp0KTtozqEBt4eypquhDityWGBpgStMxI9QOalHm03Ov0/zMYCPpUu7LsYuyHBtPNUX0t/4gA/Uv8gudBVNO3jz/wM=
+	t=1724829477; cv=none; b=G5ew8A0zzW58oSfGkJr6DDkYG+XdRwsVKuXm7xNPH/uirAsFMouxJh/iUMPmyidm5hnlJTmf5hfA0SSvpdKDmy4M765OFgLYubA4DKxKpG5gxYqXkVPPw7riTLr3JNg40ax2/oaQN438Xn8tYV76FHiI8UFT+4bgiUMW2K9SMEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724829428; c=relaxed/simple;
-	bh=AnDRz3s+Akh9nNjep8PwRt6YI/1ulIb+StcovUeB1LY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mRJOAKF8qQn+TTNhRAhMD9WlwYLxFnfEKLtR92t5Ha5hrhOC0a2JrJBeW86w1Kkm02ZJ1vEZC/lgEVtT0Fs7uT0FUnc3ghi9+n0fFvj85dQx3FrnL4Qf9f51QxmyrqXFHEk0apGQcQCmASrpG3lHX2yG2wy/O7QN7X8/G1hxrc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=SHdiDK6h; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CC19C148347E;
-	Wed, 28 Aug 2024 09:17:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1724829423; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=nNhkCfzyHMzEYGofIn7Ckl5mjzv4eT/hmvRvBJmLKpU=;
-	b=SHdiDK6hfYorFd3WSLqsMqX2OtkNxhlvW3EXUAvp4qFlU21QrVkwdM3HiWoK8wo+ILeGF+
-	Z80g05TDcVVaSN7tIxwnM+ebGEP3k98+Zrf5IWToYEV+3/CIaeUz9NkkRWOUKsvOb8yO35
-	JLkp5fFOVEWFaILGuXLg818un9n0P1/iG+YVr7HszvEUKZ/oWb6h2LBK1CZVM/+Y4+ESTA
-	lpCa0WHP+SjtmRKrmL4UTepkYdyBu3RvOlDCIdx/6mb2NH3RZJzY0m7jqFmwDfua6fiadK
-	sPsbX/mKuEC1n4HNifaJVWcOSfJN9vblrnpv9eSs2otLK4Io3WJVlOZEsUMXcw==
-Date: Wed, 28 Aug 2024 09:17:01 +0200
-From: Alexander Dahl <ada@thorsis.com>
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	mturquette@baylibre.com, sboyd@kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/3] clk: at91: sckc: Use SCKC_{TD, MD}_SLCK IDs for
- clk32k clocks
-Message-ID: <20240828-unawake-unstamped-946e2840d0a1@thorsis.com>
-Mail-Followup-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	mturquette@baylibre.com, sboyd@kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20240826173116.3628337-1-claudiu.beznea@tuxon.dev>
- <20240826173116.3628337-3-claudiu.beznea@tuxon.dev>
+	s=arc-20240116; t=1724829477; c=relaxed/simple;
+	bh=/WfP7kNRzbVaCtwGYNYqsRhOm/D5rdo3FxEdbRMha5Y=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YNBDEhMWb8NNMWlmpNj2r/C8mADbwx2ILNEtuR+y6TCTBdCYhSvWqSg13Lnrvs6ynSGP93TvOe1Wb1BPpLZMoKrhvR+adEuJe9QE1HYTS6rqWREUPVZG0mi1drMsrzCi9E3SB4zNK3xBGfetjQ4RsGA38emtBWsdesHQPW2R+js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gEaGQrNF; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-371b8d402c9so277384f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 00:17:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724829474; x=1725434274; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oJFsf2Kz2odTq3MNvYvN0o61H5lw7b2bcpixEQyhhaY=;
+        b=gEaGQrNFd05OPeySHMdnTjjxGC1RT4Fj2gEggpaZZ+LlIi7no9nmioF11+8h8eUL5x
+         F9kPVQXS8LijjsMTwDkjdjnGl6f7BsHWy6SAN9+M7SoJFmfhRR+augBTKFxU/s50qYh/
+         DGIFuyebAMPx0mLYDX9Xc4DdPoiZhh6ZKhJTraixjb6eqHUeAsJdTnVZkyThflL5/Frx
+         azQWMjeWxHb8oUvX3/fZwSE37mdaP6qg9W5mb8/cgBvaz/Tvt8RTRCMva1Y31DDVlD1C
+         PBr7WOuVr9YBdOfAB3d52DpwoL7SSpj8DkZmXYXgjbb0NakUmJtPm7BE02Z+W2FDtHKw
+         ySJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724829474; x=1725434274;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oJFsf2Kz2odTq3MNvYvN0o61H5lw7b2bcpixEQyhhaY=;
+        b=rB3YWq3/KRIv0CQ7beptLOzpKkHHKUnhZsJ1p5xfeGjT7F1Ls/NQAgwkJkUum3oBOz
+         U7altP2tgWu8HGTHyNcMxPGOyBBuzfcb2JJaUI9PkAJWYvkU9tvfELvwL4lTVF1Uafvk
+         Ds/3PwBNJiaJ2R6rQCjEUHbrHCxUsc7wgUumdGgy33/LlbLATmteCF3nMK+D5gldbHJc
+         OA+DevmpePbUkUfTX9Ug1YmZKHPoqWOX8x+O9Sou0xA1jQhm0YKK8xZ2jCGcmftdrdlL
+         PWUx2uHjZcG+9zn5VQqOeceCS6+sZoccKvTyWndj9UsHYotLcgUNKxbIbMBBCOM2O8ad
+         arfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5Si+/NH433cIVj6e3vHp2T2nD460X41mpnQ/tWasA8IrM9yDqt9flperplW7lFJDhYXwHUM7KRoFHu8s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3AJnxX0g9lVAtNBAP7k6bmNP5PuL58A4jsAlEdYaa+uazQ9yG
+	uKgPhhapAZL31TVUtNstNsi+pgDtuThD/Bs2hTVRIJTGBGHmB4lHInj2QzRMD40=
+X-Google-Smtp-Source: AGHT+IFgfLCRU7/MjkSs5g45hWmEO9iCMt8Xjb2dX2iD1ZC9k8PC3G+zmAqpGbs3uBT1EiOGzW0uSQ==
+X-Received: by 2002:a05:600c:3b90:b0:426:5dd5:f245 with SMTP id 5b1f17b1804b1-42acc8dedbfmr68233145e9.2.1724829474181;
+        Wed, 28 Aug 2024 00:17:54 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.222.82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37308200404sm14843476f8f.81.2024.08.28.00.17.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 00:17:53 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 00/16] arm64: dts: qcom: change labels to lower-case
+Date: Wed, 28 Aug 2024 09:17:30 +0200
+Message-Id: <20240828-dts-qcom-label-v1-0-b27b72130247@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826173116.3628337-3-claudiu.beznea@tuxon.dev>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAvPzmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDCyML3ZSSYt3C5Pxc3ZzEpNQcXQtDSwvLtCRziySLZCWgpoKi1LTMCrC
+ B0bG1tQDCBZZvYAAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5000;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=/WfP7kNRzbVaCtwGYNYqsRhOm/D5rdo3FxEdbRMha5Y=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmzs8OR1E9v5Z2SUe+kyny01wZFZdBJPQs1gmmA
+ HBdk9WBtu6JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZs7PDgAKCRDBN2bmhouD
+ 18wlD/9zjctBMpxJU7rTHLBOdo4Wi3eIk7igLnJ+uKDw1qj6jwwEOxewPv9EY8+BKwC80da2qSC
+ /q45kIWv3mCT9b6IPZUzMwZLJRHVenX7lOzn7zCib+kiiIOJC9Su92/PxuRLFkY0Iyx8Bb1I42v
+ +lt78DLnJ0rnxlA5wZMTX0n+0/kMaz+1LwJVXzbu46z9lcPhUKxQWqcCZEx4GVABQ0//WLHWNsT
+ aLe6ukvEn0YJBaOb8Jwx1o/fIWBqlNRhjjlKw/Mde82YdaoBBtaHRD3IlHIeAfmAGCBW7NF9pXf
+ etndx779PdVe6BjNtWetpuTYOKZvinkSqs4NW2i3jnanyk/7HWGRUqTaYiyc7NP7jVQvfbuPqKk
+ xzos9OmMcoVCp93E+U5RLmuK2u5IB6s0rMvorrADIlxNk3I2ROhoNREVT0xsfidgXd/xiJA9l0h
+ 9EM16+YmKhX4XPZbuAokmfor6LiW37DXPkhqGSxndzmIq8cL/BjssAgB9jiz7wJHiQLkBACU3UI
+ A3wHDzxWpufAsY8KiAJTVmsRKegwkjiv3tid7IIyqxpXuve7/6gHFzmmLYNrapLEkM61rPLgR7f
+ 3mjSsbdsVeMo/zQ56ECll3BPwnZgJRjy4PrGKQlhmGYO/0tESgUDBe6LO0+9x+3wgOaF5JXZ8kA
+ Iy7OCz3g5N1/WiA==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Hello Claudiu,
+DTS coding style expects labels to be lowercase.  No functional impact.
+Verified with comparing decompiled DTB (dtx_diff and fdtdump+diff).
 
-Am Mon, Aug 26, 2024 at 08:31:15PM +0300 schrieb Claudiu Beznea:
-> Use the newly introduced macros instead of raw numbers. With this the code
-> is a bit easier to understand.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> ---
->  drivers/clk/at91/sckc.c | 24 +++++++++++++-----------
->  1 file changed, 13 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
-> index 7741d8f3dbee..021d1b412af4 100644
-> --- a/drivers/clk/at91/sckc.c
-> +++ b/drivers/clk/at91/sckc.c
-> @@ -12,6 +12,8 @@
->  #include <linux/of_address.h>
->  #include <linux/io.h>
->  
-> +#include <dt-bindings/clock/at91.h>
-> +
->  #define SLOW_CLOCK_FREQ		32768
->  #define SLOWCK_SW_CYCLES	5
->  #define SLOWCK_SW_TIME_USEC	((SLOWCK_SW_CYCLES * USEC_PER_SEC) / \
-> @@ -470,7 +472,7 @@ static void __init of_sam9x60_sckc_setup(struct device_node *np)
->  {
->  	void __iomem *regbase = of_iomap(np, 0);
->  	struct clk_hw_onecell_data *clk_data;
-> -	struct clk_hw *slow_rc, *slow_osc;
-> +	struct clk_hw *slow_rc, *slow_osc, *hw;
->  	const char *xtal_name;
->  	const struct clk_hw *parent_hws[2];
->  	static struct clk_parent_data parent_data = {
-> @@ -506,19 +508,19 @@ static void __init of_sam9x60_sckc_setup(struct device_node *np)
->  
->  	/* MD_SLCK and TD_SLCK. */
->  	clk_data->num = 2;
-> -	clk_data->hws[0] = clk_hw_register_fixed_rate_parent_hw(NULL, "md_slck",
-> -								slow_rc,
-> -								0, 32768);
-> -	if (IS_ERR(clk_data->hws[0]))
-> +	hw = clk_hw_register_fixed_rate_parent_hw(NULL, "md_slck", slow_rc,
-> +						  0, 32768);
-> +	if (IS_ERR(hw))
->  		goto clk_data_free;
-> +	clk_data->hws[SCKC_MD_SLCK] = hw;
->  
->  	parent_hws[0] = slow_rc;
->  	parent_hws[1] = slow_osc;
-> -	clk_data->hws[1] = at91_clk_register_sam9x5_slow(regbase, "td_slck",
-> -							 parent_hws, 2,
-> -							 &at91sam9x60_bits);
-> -	if (IS_ERR(clk_data->hws[1]))
-> +	hw = at91_clk_register_sam9x5_slow(regbase, "td_slck", parent_hws,
-> +					   2, &at91sam9x60_bits);
-> +	if (IS_ERR(hw))
->  		goto unregister_md_slck;
-> +	clk_data->hws[SCKC_TD_SLCK] = hw;
->  
->  	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
->  	if (WARN_ON(ret))
-> @@ -527,9 +529,9 @@ static void __init of_sam9x60_sckc_setup(struct device_node *np)
->  	return;
->  
->  unregister_td_slck:
-> -	at91_clk_unregister_sam9x5_slow(clk_data->hws[1]);
-> +	at91_clk_unregister_sam9x5_slow(clk_data->hws[SCKC_TD_SLCK]);
->  unregister_md_slck:
-> -	clk_hw_unregister(clk_data->hws[0]);
-> +	clk_hw_unregister(clk_data->hws[SCKC_MD_SLCK]);
->  clk_data_free:
->  	kfree(clk_data);
->  unregister_slow_osc:
+I am splitting the patchset per few patches doing the same, because
+otherwise diffs would be too big and would bounce from Patchwork/mailing
+list.
 
-Reviewed-by: Alexander Dahl <ada@thorsis.com>
+Best regards,
+Krzysztof
 
-Thanks and Greets
-Alex
+---
+Krzysztof Kozlowski (16):
+      arm64: dts: qcom: ipq: change labels to lower-case
+      arm64: dts: qcom: msm: change labels to lower-case
+      arm64: dts: qcom: sc7180: change labels to lower-case
+      arm64: dts: qcom: sc8280xp: change labels to lower-case
+      arm64: dts: qcom: sc: change labels to lower-case
+      arm64: dts: qcom: sm6115: change labels to lower-case
+      arm64: dts: qcom: sm6350: change labels to lower-case
+      arm64: dts: qcom: sm8150: change labels to lower-case
+      arm64: dts: qcom: sm8350: change labels to lower-case
+      arm64: dts: qcom: sm8250: change labels to lower-case
+      arm64: dts: qcom: sm8450: change labels to lower-case
+      arm64: dts: qcom: sm8550: change labels to lower-case
+      arm64: dts: qcom: sm8650: change labels to lower-case
+      arm64: dts: qcom: sm: change labels to lower-case
+      arm64: dts: qcom: sdm: change labels to lower-case
+      arm64: dts: qcom: change labels to lower-case
+
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi              |  10 +-
+ arch/arm64/boot/dts/qcom/ipq5332.dtsi              |  18 +-
+ arch/arm64/boot/dts/qcom/ipq6018.dtsi              |  26 +-
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi              |  18 +-
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi              |  50 +--
+ arch/arm64/boot/dts/qcom/msm8916.dtsi              | 100 +++---
+ arch/arm64/boot/dts/qcom/msm8939.dtsi              | 110 +++----
+ arch/arm64/boot/dts/qcom/msm8953.dtsi              |  68 ++--
+ arch/arm64/boot/dts/qcom/msm8976.dtsi              |  32 +-
+ arch/arm64/boot/dts/qcom/msm8992-lg-h815.dts       |  12 +-
+ arch/arm64/boot/dts/qcom/msm8992.dtsi              |   4 +-
+ arch/arm64/boot/dts/qcom/msm8994.dtsi              |  52 +--
+ arch/arm64/boot/dts/qcom/msm8996.dtsi              |  54 ++--
+ arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi    |  32 +-
+ arch/arm64/boot/dts/qcom/msm8998.dtsi              |  92 +++---
+ arch/arm64/boot/dts/qcom/qcm2290.dtsi              |  68 ++--
+ arch/arm64/boot/dts/qcom/qcs404.dtsi               |  68 ++--
+ arch/arm64/boot/dts/qcom/qdu1000.dtsi              |  76 ++---
+ arch/arm64/boot/dts/qcom/qrb2210-rb1.dts           |  10 +-
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi              | 168 +++++-----
+ arch/arm64/boot/dts/qcom/sc7180-firmware-tfa.dtsi  |  84 ++---
+ .../arm64/boot/dts/qcom/sc7180-trogdor-coachz.dtsi |   8 +-
+ .../boot/dts/qcom/sc7180-trogdor-homestar.dtsi     |   8 +-
+ .../boot/dts/qcom/sc7180-trogdor-wormdingler.dtsi  |   8 +-
+ arch/arm64/boot/dts/qcom/sc7180.dtsi               | 344 ++++++++++----------
+ arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi |   6 +-
+ arch/arm64/boot/dts/qcom/sc7280.dtsi               | 356 ++++++++++-----------
+ arch/arm64/boot/dts/qcom/sc8180x.dtsi              | 146 ++++-----
+ .../dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts     |  16 +-
+ arch/arm64/boot/dts/qcom/sc8280xp.dtsi             | 140 ++++----
+ arch/arm64/boot/dts/qcom/sdm630.dtsi               | 152 ++++-----
+ arch/arm64/boot/dts/qcom/sdm632.dtsi               |  26 +-
+ arch/arm64/boot/dts/qcom/sdm660.dtsi               |  16 +-
+ arch/arm64/boot/dts/qcom/sdm670.dtsi               | 140 ++++----
+ arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi         |  74 ++---
+ arch/arm64/boot/dts/qcom/sdm845.dtsi               | 160 ++++-----
+ arch/arm64/boot/dts/qcom/sdx75.dtsi                |  80 ++---
+ arch/arm64/boot/dts/qcom/sm4250.dtsi               |  16 +-
+ arch/arm64/boot/dts/qcom/sm4450.dtsi               | 142 ++++----
+ arch/arm64/boot/dts/qcom/sm6115.dtsi               | 152 ++++-----
+ arch/arm64/boot/dts/qcom/sm6125.dtsi               |  52 +--
+ arch/arm64/boot/dts/qcom/sm6350.dtsi               | 172 +++++-----
+ arch/arm64/boot/dts/qcom/sm6375.dtsi               | 142 ++++----
+ arch/arm64/boot/dts/qcom/sm7125.dtsi               |  16 +-
+ arch/arm64/boot/dts/qcom/sm7225.dtsi               |  16 +-
+ arch/arm64/boot/dts/qcom/sm8150.dtsi               | 352 ++++++++++----------
+ arch/arm64/boot/dts/qcom/sm8250.dtsi               | 348 ++++++++++----------
+ arch/arm64/boot/dts/qcom/sm8350.dtsi               | 334 +++++++++----------
+ arch/arm64/boot/dts/qcom/sm8450.dtsi               | 142 ++++----
+ arch/arm64/boot/dts/qcom/sm8550.dtsi               | 144 ++++-----
+ arch/arm64/boot/dts/qcom/sm8650.dtsi               | 142 ++++----
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi             | 192 +++++------
+ 52 files changed, 2597 insertions(+), 2597 deletions(-)
+---
+base-commit: c9795221fa7998bbe2298f904a4c80e0851bbb1d
+change-id: 20240828-dts-qcom-label-81989fb78b8c
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
