@@ -1,218 +1,310 @@
-Return-Path: <linux-kernel+bounces-305199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D0FD962AEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:58:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23A3B962AED
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5566B2223D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:58:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D949828318B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F1119FA9D;
-	Wed, 28 Aug 2024 14:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9669116B386;
+	Wed, 28 Aug 2024 14:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Nh2vnKTH"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2063.outbound.protection.outlook.com [40.107.243.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BvivgHcn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6owY7GFC";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BvivgHcn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6owY7GFC"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04352868B;
-	Wed, 28 Aug 2024 14:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724857081; cv=fail; b=Ksm6clBGD+wkWOlYKtML7sso8UjTD/Z1Ov2GaBHKmMbunRG3k1dCiCObfgwCc9bDLmGfYhKpWGQOj3Jo8C21dWE577mPOACP+d9Tahr1Gro5/kPSOYP7mG/drRyLNaM+A037nA4Cdm0BiSNK91SuElDMtJXHsjf4bAUzO0c3YVk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724857081; c=relaxed/simple;
-	bh=NV/Bcr/Rq3XerId6L3q0NeMOa7qOMwIJvI1R4CtpSvc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=nYCXR/u4YgR6oNVIe79MnBodIGg1IUYFdXsWQLKJZ96WGSbubakxlKudA8FD08UBk9JfKS9XwvKg1DNk9zRQt20YVelCd9KMofLrRX1mNL/b8Pn4GiL1lXlDFJcUpO2oRW24fuL+Nb78ZT3BuuIZj13QxPe1rK4j6c/s02Peuis=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Nh2vnKTH; arc=fail smtp.client-ip=40.107.243.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gS5ZkCyICV2KgC+xiHqmRC+X9+1MC8/LslJjnm+EBWuhGc2uBEgvXOyzH8vow7kD1GUbktuQ82OgY6wSDOzTjvzsjhUUKkHwvrb35sC1ea5lkQWRlJBpM6byWVtpAjOC/26i+XVG/cJ2w46qYLH35+Espw1xomLjpNUQ3IReVOLogtUOvm9BExX3TzA70gOY7pnfM44TPZjk8HftZuwy48mNTX6EOgxKm6+X2cRMFnqVZcAozsILAQWRt75sUC0dtjBX5FFtQITdZX+GoDfffpUW+WMMlGgc8TTHbFYaNVahGxNH6qKDuv/bncHRpP4ABDI5/j7ebBf833tRpYU4rw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mzSGQBG9E/canutsc6ozDYDgw1eV8Fw70IEU9fZ+w2Q=;
- b=RK+VegrzWpyZBxcKR/d/tIgIrRONHRNfYIpR5xgnDHLDq14m2rWW3DTvYl/T1NFJBMtUHQnCr8ngU58PyMe8wyOoLCstb9e2Sjlo7oDDMkkcXrH/4Owo/zpPNw9/WhOSNl7h1fM3P95vPRex4sFWpcLoA3Otu8xNwLJxIyMJL3oKizMS28zqyA6MbwgaVftlV0e4/g7ojAiWc4aPIwFyRXlBsmQCZBjKRpfYFLrf6f16rzO6RU2qz4Amwx8liqd+LIqR/X7NbwUyeNSaXBbrbH0IoAfJoY+R5WL8pGpctgyRbpH8l1q4eO4dLFD9ZzcrW5X/ER9HcXhJNUIYFankUA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mzSGQBG9E/canutsc6ozDYDgw1eV8Fw70IEU9fZ+w2Q=;
- b=Nh2vnKTHi5PZSLMduaJcs2aUE1cWwPdbT1xZRl3V2yFrnNScfuV1Pe6YnW59P6feCKvuRK6xv0O+1U41fyBIc2bFEmjEUgIIxdekGuu1qmpno1OqX1tLN71TOgqzD1zByE0awwo2wzTv1s8sQMxrrcZ/CCoD5vJZzgr/h/834NU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
- LV3PR12MB9188.namprd12.prod.outlook.com (2603:10b6:408:19b::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.28; Wed, 28 Aug
- 2024 14:57:56 +0000
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7%4]) with mapi id 15.20.7897.027; Wed, 28 Aug 2024
- 14:57:56 +0000
-Date: Wed, 28 Aug 2024 20:27:44 +0530
-From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-To: Andrea Righi <andrea.righi@linux.dev>
-Cc: Mario Limonciello <mario.limonciello@amd.com>,
-	Mario Limonciello <superm1@kernel.org>,
-	Borislav Petkov <bp@alien8.de>, Perry Yuan <perry.yuan@amd.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
-	"open list:ACPI" <linux-acpi@vger.kernel.org>,
-	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
-	changwoo@igalia.com, David Vernet <void@manifault.com>,
-	Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH 8/8] cpufreq: amd-pstate: Drop some uses of
- cpudata->hw_prefcore
-Message-ID: <Zs866Myvbs0ByoAK@BLRRASHENOY1.amd.com>
-References: <20240826211358.2694603-1-superm1@kernel.org>
- <20240826211358.2694603-9-superm1@kernel.org>
- <Zs4G084+7MmzdYjU@BLRRASHENOY1.amd.com>
- <61b96549-2969-4b64-a40d-f91f614ec3ab@amd.com>
- <Zs6w3RktAb6fJrJ+@BLRRASHENOY1.amd.com>
- <Zs7Bwh6T3HCGlR9C@gpd3>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zs7Bwh6T3HCGlR9C@gpd3>
-X-ClientProxiedBy: MA0PR01CA0065.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:ad::9) To DS7PR12MB8252.namprd12.prod.outlook.com
- (2603:10b6:8:ee::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A559A17C9AF;
+	Wed, 28 Aug 2024 14:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724857138; cv=none; b=l2X6iql3FZxWTgl4S1neWpwahZIAQP30fkxCrSOQtjVdj5wTDACBtcVT3DRRozfy7sxRHR3tBSWy0HBF+GP8s2gVvGWgiTlAVf3ZEATDMaRrkoXNDDKIEy6auVTHpBJnIvIfEP01MqlZcvRhCNkqlthdLIbW//0M6GuBdsixUv4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724857138; c=relaxed/simple;
+	bh=LbsxPayLMWfK73/R5i5q74VLRliZidX0XUgV0P9d/QQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=djf3tP9jn5p3k3ZddzNEA7gMLM00TXTJr/lXmwpkxJ5+WaRrC8ws3X50LyPF7bmAiKJI+Fco5MPv3QH1AkEvPAjhwGC4rAX54QRFNz/GhmAv0Ay/F2VdpFwnL9l1uHN9oRmCh6nQN5bMCefkNZdE7utttEkp98b4rDUZbRwU5uM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BvivgHcn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6owY7GFC; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BvivgHcn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6owY7GFC; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 04C4021203;
+	Wed, 28 Aug 2024 14:58:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1724857129; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NYPKuh69LXMoS1namcX71BKt74Sjexuqhp2RNEdwEFk=;
+	b=BvivgHcntzcrxUfiP+dVCYU4ZAgnXizXNE04F/nlRW6BpHju7WLzSO7QxigJmbl/yGjh+E
+	ZuL69PuJeTKskaLmYEvJ8gjfQelUnOP30XY72p49dcsWL36uNkybq2HzyxLQa0HGEmWIla
+	dJYyJl1kYPu2Rab6dgaiw6TMfcBM5PA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1724857129;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NYPKuh69LXMoS1namcX71BKt74Sjexuqhp2RNEdwEFk=;
+	b=6owY7GFCW/Cb6ae7xnJVR+0JrROJg1kjBmRpAYvbmR0u8u6YYNrUdCsEgLtLhdOhj/LDHL
+	blTs3L+t/rKNwiAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=BvivgHcn;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=6owY7GFC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1724857129; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NYPKuh69LXMoS1namcX71BKt74Sjexuqhp2RNEdwEFk=;
+	b=BvivgHcntzcrxUfiP+dVCYU4ZAgnXizXNE04F/nlRW6BpHju7WLzSO7QxigJmbl/yGjh+E
+	ZuL69PuJeTKskaLmYEvJ8gjfQelUnOP30XY72p49dcsWL36uNkybq2HzyxLQa0HGEmWIla
+	dJYyJl1kYPu2Rab6dgaiw6TMfcBM5PA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1724857129;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NYPKuh69LXMoS1namcX71BKt74Sjexuqhp2RNEdwEFk=;
+	b=6owY7GFCW/Cb6ae7xnJVR+0JrROJg1kjBmRpAYvbmR0u8u6YYNrUdCsEgLtLhdOhj/LDHL
+	blTs3L+t/rKNwiAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E2A58138D2;
+	Wed, 28 Aug 2024 14:58:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id OV35Nig7z2bbRgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 28 Aug 2024 14:58:48 +0000
+Message-ID: <64bebc29-a007-4ebc-bf86-8c2c0a7e6bf6@suse.cz>
+Date: Wed, 28 Aug 2024 16:58:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|LV3PR12MB9188:EE_
-X-MS-Office365-Filtering-Correlation-Id: c80d3466-4ad5-4f29-e433-08dcc771ccf2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?IVoPo6L4LESt2a8AQMT7MjfZSfxdiy0uCKB1df7tjvO9ROAdSdTxyfpNQrLJ?=
- =?us-ascii?Q?ZVtrXytdAtU2ZXlLZkfLtXTjeakAP+UDsndMRaVZLaq5Np7PAU1BPq6lm9zS?=
- =?us-ascii?Q?mBnjpsqDZbjAKz8hiPVHQBIl9suNq/Wc3xZuu/aEw7rsws2wHJp0gjzvuPqT?=
- =?us-ascii?Q?xRfRxUdhgNM7JX3QpSl3/isoTmcMqMl+lEsym4vHiDxq6m77fi93kwlbZlFJ?=
- =?us-ascii?Q?rA6hdERG58uf3ZpmuDwKY+AXc1nBagOTMI5ArjqN2wGU1NU/eVbndNuTYzq6?=
- =?us-ascii?Q?RKYyoe32o3Yocc8WhGvQNPrLWqcEyQQ1bgDEUoTUSR/S8hXa1LyBnxs1Tcus?=
- =?us-ascii?Q?bwdR9DAwGFtOX95ETEu4VVJiOSUhTGDAoQwNAljkTAxDxOYVeeSdH2gkxazz?=
- =?us-ascii?Q?9SiHAYHecA8AAeC3Y7cauMBmFKi18N8kTuV/g52NpSN/fBSA7ItB1SEaeVgt?=
- =?us-ascii?Q?8n2vt9lda+RkayMa1bPrTN0dbkinVnSyu7k51FaPZO977J0ppir2sngytI1t?=
- =?us-ascii?Q?szshX4lZnujhvxZYZuqnXTx/kzOPebsaqrpV6aBKaSFXp26ID8Yq3j17gCre?=
- =?us-ascii?Q?kO1LyixmEnDCZlKV9oY7g0hEvgpOaMs9OUZGL2d7l3MYxrxC7JfbpO6iAOhb?=
- =?us-ascii?Q?MRMzWbXEij2gN8y8tMv4wxJw6ZsHsLjotFTpb4V6Xqjl2Vb01Ozs2f+/p61z?=
- =?us-ascii?Q?QwxYlL1mQ8gHIKDwxQlSesoVh0n9j4SE5ELL0HmlR3zJvmIvLTVyfUfSGODW?=
- =?us-ascii?Q?QLBxkoJGGmIz1/fsbixH5qS9d173nPQipdJRyhqS2tKUPF1u5MdBguOH8JmE?=
- =?us-ascii?Q?UCY7iSk6XAdCQdj8QLf8N0Q7SmXxT7AkHVKdyu/MrxMw7lintztmRFegim+T?=
- =?us-ascii?Q?SJjzGI8tk2IcyH5Eu7/q7APwnPaykVz4FPWmr3qZj4iXtuz0/pOrPuEIo33e?=
- =?us-ascii?Q?7SVr3KYCwl4LbMg2c5AY8jap/fBkwrejmnxmwwHmzLXtxj3B/q5DsKrUjecZ?=
- =?us-ascii?Q?iyaLM9nQVOev8GFg5ODO5E0EgfGO06JmzItDoTDte1r725x6vtdE86azyZcE?=
- =?us-ascii?Q?sQOOvZ9ZBa99dW2bIOzJ12w0GRSSWxxdfZFb8levXPrrYh7VzyPCWrGbIXsq?=
- =?us-ascii?Q?XS3Gxs3fdiKwQzYAl3mAZZscpnbltYpykAeLArLzjU5VB0eBzQcQJ3I1l5bH?=
- =?us-ascii?Q?uZuCVun+5YlNkDGrB9gsSaYTHQdnRsMFko3S4jIOA9ArSNj689tX0oUCQHXs?=
- =?us-ascii?Q?NshnI5/wcJmYdNCztIpLfR7+zDsNDUnLnGlOWlYPHVoUMzMXhZSGlFMPANIy?=
- =?us-ascii?Q?NTh61wzsj0obyMLEs0kZfwCjZboNIdLctJLfvYf7FspVNg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?I9KKnYnoMXg+x2wTs3fk8wyIs4o9Vbyrm3l+RC0a/K66YcXHPSaiXtzj/aut?=
- =?us-ascii?Q?I9j2qd7ZDL/h0ndkXWMPvaPQ1z0+WGYQoKUUo03U099jolsSpUq/FkWlqP1C?=
- =?us-ascii?Q?su8Hb1bzlSFGYt2WqgCYALrLggjKwe7tW2QtXGiPJ2Qo6eonFZrs1HuehvYD?=
- =?us-ascii?Q?zk+abQqwIF/ZtPqZKELU0Ur7nlQUxmpZ7IJWVyydLfyGcM4eYTb4uPeq8dTK?=
- =?us-ascii?Q?BpO5jMnx184vZN0rGWFp2Swo7uI4PCGEKCSTyW2hwZNKbHlqKQlr66fwzIj0?=
- =?us-ascii?Q?am1xnm+uC3R1m56UxCXN7dolLgWzLG2jeRkjQDc7sE+9MXd+NF1WiLc4ZZv+?=
- =?us-ascii?Q?TkhkFtwOJHqF2Bd9cs4QoMzMbus3zS3WVu1Zblw9ZZXa32yB7rreEYO5ORUO?=
- =?us-ascii?Q?c89erBt5ptb64yltLyhFJwVY8Uj/i+DxIBdyk487sXxU2IJyTSYkft+zfydp?=
- =?us-ascii?Q?wYKMMLU2Qi3Ao2AxoctRe8BvSkQg7ri9+ejzTCVAZIokRobEMqGVJ5BIXLS6?=
- =?us-ascii?Q?WYVRmA9L7D7rCIGJbq1Qj5szVAVv8qwzfJfxtU/fVY3dRVn5LIX0m8odohAH?=
- =?us-ascii?Q?MUBjq7buzQpD1Luc89q/jyEBzRQ+h0tNWjZnk0R6xhIhsGPkG520CvVxFVJI?=
- =?us-ascii?Q?McXQNKzKob21TchTl5gW8LE1jjTc5IYaV6q5j5kJBRYyW/Pv2wRvqwiDd0PB?=
- =?us-ascii?Q?0ovDQcB7VSSg6ZnUNXaoV2spRBgWKBamvNIdvyGrdjMtC55zWTONXrB70uSE?=
- =?us-ascii?Q?bhHQCILy8b+HZB0vfb15sYbkhUC+217UJkZOd0jk5gL+AgMLFalLK8FsN5eE?=
- =?us-ascii?Q?yzJUffisKprf2k1iyh1k9to5VrhsGPW88To5MUjZK/nd80yhqW3FuQE6+k8c?=
- =?us-ascii?Q?eK3B6LrFiHRQKXYb6iU4tx5dtje9cxsDLJP4l3WQJANDW0YLsQs8ncHv1AW1?=
- =?us-ascii?Q?cOXtax5Z3kYZ7MT7n3AEddt0beyC3akZ0DZqnM5Ni4AVHOqBxjzJpafXTXew?=
- =?us-ascii?Q?Kmsfj+BGBNKYRPn7z1bhqfSBQ+EXSsFOBFmmUNVgPBzic+wmj+bwNJW19TS6?=
- =?us-ascii?Q?Wp6JsUX9WwZlxCoEZEn2SKMisdBudXCToWKKUls0kUIDi2XKLqLS450jr5iJ?=
- =?us-ascii?Q?Fgbhw0VWHSZau570fW9y9ZY82kumP9iKMKIabtNBuZ/YeCNTDzQ4ftroeJXD?=
- =?us-ascii?Q?VhM4SWus4ZfAL56ZzgKqx5Q0uepHbGWSbpBIZkfaBloF+nQpnUhhJHGwTppc?=
- =?us-ascii?Q?FnggNCw/J5sTWMCZBQnd0DZncPwnyoNYx56PiXO8f6o5BwqA42ZOK+aldJB8?=
- =?us-ascii?Q?ow+TPrqpzK6kX9W/ChcXigKWOfycKCk6+td5/ETC/J2//WfUoiPwaXjsHFH+?=
- =?us-ascii?Q?fEq8+BnmGBXI5ZXGDrF5uogQb6x4yspESh4NWjhkdVaZgLYIYgE6iAq46OoV?=
- =?us-ascii?Q?5PIQh/xqfuoZDbM41+CXXtkCkS9QmnWue0BPfJDMD5nPg43VVV5Xu3kDhZLN?=
- =?us-ascii?Q?cJWyseZjkg3a9tPauFR9kdz7YqwnJDMrH/2/zvytHaqYeruZpXkhFzqU/lsd?=
- =?us-ascii?Q?MaXSSArySaRd81lw7oWoAJK3qBWEaYVuSIGUDQVB?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c80d3466-4ad5-4f29-e433-08dcc771ccf2
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 14:57:56.7011
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: a9kIoE3fyy4Mb/BWq9k36FT/ejGfQQG+nKdlhKpoQrHKmXZL0KDF3JEYZ/D+DrST0tTANxDF/jtNsKX9Rttaew==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9188
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] rcu/kvfree: Support dynamic rcu_head for single
+ argument objects
+Content-Language: en-US
+To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+ "Paul E . McKenney" <paulmck@kernel.org>
+Cc: RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ Neeraj upadhyay <Neeraj.Upadhyay@amd.com>, Boqun Feng
+ <boqun.feng@gmail.com>, Joel Fernandes <joel@joelfernandes.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+References: <20240828110929.3713-1-urezki@gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20240828110929.3713-1-urezki@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 04C4021203
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_DN_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_TO(0.00)[gmail.com,kernel.org];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_CC(0.00)[vger.kernel.org,amd.com,gmail.com,joelfernandes.org,kernel.org,sony.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
+X-Spam-Flag: NO
 
-Hello Andrea,
-
-On Wed, Aug 28, 2024 at 08:20:50AM +0200, Andrea Righi wrote:
-> On Wed, Aug 28, 2024 at 10:38:45AM +0530, Gautham R. Shenoy wrote:
-> ...
-> > > I had thought this was a malfunction in the behavior that it reflected the
-> > > current status, not the hardware /capability/.
-> > > 
-> > > Which one makes more sense for userspace?  In my mind the most likely
-> > > consumer of this information would be something a sched_ext based userspace
-> > > scheduler.  They would need to know whether the scheduler was using
-> > > preferred cores; not whether the hardware supported it.
-> > 
-> > The commandline parameter currently impacts only the fair sched-class
-> > tasks since the preference information gets used only during
-> > load-balancing.
-> > 
-> > IMO, the same should continue with sched-ext, i.e. if the user has
-> > explicitly disabled prefcore support via commandline, the no sched-ext
-> > scheduler should use the preference information to make task placement
-> > decisions. However, I would like to see what the sched-ext folks have
-> > to say. Adding some of them to the Cc list.
+On 8/28/24 13:09, Uladzislau Rezki (Sony) wrote:
+> Add a support of dynamically attaching an rcu_head to an object
+> which gets freed via the single argument of kvfree_rcu(). This is
+> used in the path, when a page allocation fails due to a high memory
+> pressure.
 > 
-> IMHO it makes more sense to reflect the real state of prefcore support
-> from a "system" perspective, more than a "hardware" perspective, so if
-> it's disabled via boot command line it should show disabled.
+> The basic idea behind of this is to minimize a hit of slow path
+> which requires a caller to wait until a grace period is passed.
 > 
-> From a user-space scheduler perspective we should be fine either way, as
-> long as the ABI is clearly documented, since we also have access to
-> /proc/cmdline and we would be able to figure out if the user has
-> disabled it via cmdline (however, the preference is still to report the
-> actual system status).
+> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 
-Thank you for confirming this.
+So IIUC it's a situation where we can't allocate a page, but we hope the
+kmalloc-32 slab has still free objects to give us dyn_rcu_head's before it
+would have to also make a page allocation?
 
+So that may really be possible and there might potentially be many such
+objects, but I wonder if there's really a benefit. The system is struggling
+for memory and the single-argument caller specifically is _mightsleep so it
+could e.g. instead go direct reclaim a page rather than start depleting the
+kmalloc-32 slab, no?
+
+> ---
+>  kernel/rcu/tree.c | 53 +++++++++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 49 insertions(+), 4 deletions(-)
 > 
-> Question: having prefcore enabled affects also the value of
-> scaling_max_freq? Like an `lscpu -e`, for example, would show a higher
-> max frequency for the specific preferred cores? (this is another useful
-> information from a sched_ext scheduler perspective).
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index be00aac5f4e7..0124411fecfb 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -3425,6 +3425,11 @@ kvfree_rcu_bulk(struct kfree_rcu_cpu *krcp,
+>  	cond_resched_tasks_rcu_qs();
+>  }
+>  
+> +struct dyn_rcu_head {
+> +	unsigned long *ptr;
+> +	struct rcu_head rh;
+> +};
+> +
+>  static void
+>  kvfree_rcu_list(struct rcu_head *head)
+>  {
+> @@ -3433,15 +3438,32 @@ kvfree_rcu_list(struct rcu_head *head)
+>  	for (; head; head = next) {
+>  		void *ptr = (void *) head->func;
+>  		unsigned long offset = (void *) head - ptr;
+> +		struct dyn_rcu_head *drhp = NULL;
+> +
+> +		/*
+> +		 * For dynamically attached rcu_head, a ->func field
+> +		 * points to _offset_, i.e. not to a pointer which has
+> +		 * to be freed. For such objects, adjust an offset and
+> +		 * pointer.
+> +		 */
+> +		if (__is_kvfree_rcu_offset((unsigned long) ptr)) {
+> +			drhp = container_of(head, struct dyn_rcu_head, rh);
+> +			offset = (unsigned long) drhp->rh.func;
+> +			ptr = drhp->ptr;
+> +		}
+>  
+>  		next = head->next;
+>  		debug_rcu_head_unqueue((struct rcu_head *)ptr);
+>  		rcu_lock_acquire(&rcu_callback_map);
+>  		trace_rcu_invoke_kvfree_callback(rcu_state.name, head, offset);
+>  
+> -		if (!WARN_ON_ONCE(!__is_kvfree_rcu_offset(offset)))
+> +		if (!WARN_ON_ONCE(!__is_kvfree_rcu_offset(offset))) {
+>  			kvfree(ptr);
+>  
+> +			if (drhp)
+> +				kvfree(drhp);
+> +		}
+> +
+>  		rcu_lock_release(&rcu_callback_map);
+>  		cond_resched_tasks_rcu_qs();
+>  	}
+> @@ -3787,6 +3809,21 @@ add_ptr_to_bulk_krc_lock(struct kfree_rcu_cpu **krcp,
+>  	return true;
+>  }
+>  
+> +static struct rcu_head *
+> +attach_rcu_head_to_object(void *obj)
+> +{
+> +	struct dyn_rcu_head *rhp;
+> +
+> +	rhp = kmalloc(sizeof(struct dyn_rcu_head), GFP_KERNEL |
+> +		__GFP_NORETRY | __GFP_NOMEMALLOC | __GFP_NOWARN);
+> +
+> +	if (!rhp)
+> +		return NULL;
+> +
+> +	rhp->ptr = obj;
+> +	return &rhp->rh;
+> +}
+> +
+>  /*
+>   * Queue a request for lazy invocation of the appropriate free routine
+>   * after a grace period.  Please note that three paths are maintained,
+> @@ -3830,9 +3867,17 @@ void kvfree_call_rcu(struct rcu_head *head, void *ptr)
+>  	if (!success) {
+>  		run_page_cache_worker(krcp);
+>  
+> -		if (head == NULL)
+> -			// Inline if kvfree_rcu(one_arg) call.
+> -			goto unlock_return;
+> +		if (!head) {
+> +			krc_this_cpu_unlock(krcp, flags);
+> +			head = attach_rcu_head_to_object(ptr);
+> +			krcp = krc_this_cpu_lock(&flags);
+> +
+> +			if (!head)
+> +				// Inline if kvfree_rcu(one_arg) call.
+> +				goto unlock_return;
+> +
+> +			ptr = (rcu_callback_t) offsetof(struct dyn_rcu_head, rh);
+> +		}
+>  
+>  		head->func = ptr;
+>  		head->next = krcp->head;
 
-Since the scaling_max_freq is computed based on the boost-numerator,
-at least from this patchset, the numerator would be the same across
-all kinds of cores, and thus the scaling_max_freq reported will be the
-same across all the cores.
-
-> 
-> Thanks,
-> -Andrea
-
---
-Thanks and Regards
-gautham.
 
