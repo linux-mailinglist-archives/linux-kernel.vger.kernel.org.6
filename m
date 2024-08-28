@@ -1,260 +1,266 @@
-Return-Path: <linux-kernel+bounces-304228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D06961C2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:37:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D85B6961C35
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:39:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E9C41C22CE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 02:36:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08B191C23070
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 02:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311DE76034;
-	Wed, 28 Aug 2024 02:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4DA129E93;
+	Wed, 28 Aug 2024 02:39:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YKjwqr+M"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UD21eSBo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746B521A1C
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 02:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E1C200CD;
+	Wed, 28 Aug 2024 02:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724812610; cv=none; b=LHra1PawFHynzznmLRmBqyhVx16ICn1lP7yxixMNkc1MJ+LGEE2icfzxRHxTA+0dBOR7krdr+hlbo8EtITq+SQSgadD+q70S8o78SpixA4QPG5BITU64iSB26+CiRDY66qyxZQ0VaIdXDjrr9UZvMIRYh5mzgE21Y1wpdFYE+EU=
+	t=1724812776; cv=none; b=eRxx2vzZoDZUZVlsIjAd/W8dTSVBnBwJmXUw9FoMkageS5jaoqt7V+0VR3+MFPdDeeofs0qWCsvyvahPa0RSHpYGn+N2maF4ACA7sgoR3mCMOffTTSDKWg+f7wJe66em39yXeuAf9ZhHBqBaByKWpn8Zw6axnKIOMtAKgit8SG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724812610; c=relaxed/simple;
-	bh=9KVtrDIkQrqhoaYoDfW1bZqVYvk8MaW3jm5v/WUJYY8=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=nGUiO0vaPGO2lUc08vFerVzd3gdffBztwDhuM8TX5kJd+nvDwnI78kEwXpwnDcHU4XVzN6iSypRWDalI90TBwQvlaT1SzGrLuactWv7larGKt6pXopmXe2YvewHbNnKiGiVqMByi7lSzuvWaFjhJPM2FRbjj6f2k4ukPdx6Xafw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YKjwqr+M; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724812606;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d8P34oY8EX3iB+WHKFWcxCiPxWsH5mZsU2qtXZYBDx8=;
-	b=YKjwqr+Ms2AzytPHOJSEy7hIUuE3z3kiC2SNH71agCNDB0qczG2rbXsaOUosiWH2XcN8gS
-	I9g2bFPumA0+f+icndZTriMglTW6AY6PWXaBG/9DaxualYBzxxEeSC72Nhi74bDX5wvc93
-	FaxJlji4d14otrl1zaw7d0LWgP6Sl+8=
+	s=arc-20240116; t=1724812776; c=relaxed/simple;
+	bh=2ZXtBTUi5Kw/5EWXmiCqP0tVkkTkI9dk6zjA1j9gRKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qde8UwytD/KzsULMO9o3Bfou9ajqGDyNgjhXHWCKVYqEh827lYn9hSou/dHp1fvNlJ/90YouRDL/2hFsz9h1ESEo6Gc8KSaYHibP7e4B+E6Ew0cSw5ljhXuz9j282DyT1D2uDSWBETJTqIGOqslC7EZJ/1B4TLoBzxkUyPLGVFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UD21eSBo; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724812775; x=1756348775;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2ZXtBTUi5Kw/5EWXmiCqP0tVkkTkI9dk6zjA1j9gRKg=;
+  b=UD21eSBogC9JYZTYQZdhPTenI+ZgtiRVC6qgPfVI3BX1clV37m5/1c2s
+   DiY3mCTIY2/e0S5obf7HlD+nQw8Ku58lmjGat8HLkfwTITdEGWJDwp5VE
+   rzkCHCpPrpYm3v6nZCFIvR50DvyBUBnubtm4IyC/u6E7a2vVy9ZQCe0Cw
+   rCI7zKmoFlxgk92XrojrKQ82Un8+VDu5qf5o9wyHLqMAcvsQloW1qBOgY
+   3uBLerCbNTMzgqZxHHECtwk+l7t8MvhQAFfYSBMWbS2+F2pgEhqclo+u3
+   D1izABvv2D3P29RhGficmqa+fmc4bc4ccqaRwqN2T9jNMnOPTJRYaUYYY
+   A==;
+X-CSE-ConnectionGUID: fUlfQiOgR6+zj+S+TPbDNw==
+X-CSE-MsgGUID: WyQ8a/jzQKStLAO/F0UA/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="34696140"
+X-IronPort-AV: E=Sophos;i="6.10,181,1719903600"; 
+   d="scan'208";a="34696140"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 19:39:35 -0700
+X-CSE-ConnectionGUID: YUfKDBDLQnyG7HqzOxSihA==
+X-CSE-MsgGUID: ZTHQgopVQwuL/xcntPkIxQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,181,1719903600"; 
+   d="scan'208";a="67433426"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 27 Aug 2024 19:39:30 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sj8am-000KMQ-0g;
+	Wed, 28 Aug 2024 02:39:28 +0000
+Date: Wed, 28 Aug 2024 10:38:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dikshita Agarwal via B4 Relay <devnull+quic_dikshita.quicinc.com@kernel.org>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dikshita Agarwal <quic_dikshita@quicinc.com>
+Subject: Re: [PATCH v3 06/29] media: iris: introduce iris core state
+ management with shared queues
+Message-ID: <202408281019.97M0qU7D-lkp@intel.com>
+References: <20240827-iris_v3-v3-6-c5fdbbe65e70@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH v1] memcg: add charging of already allocated slab objects
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <yiyx4fh6dklqpexfstkzp3gf23hjpbjujci2o6gs7nb4sutzvb@b5korjrjio3m>
-Date: Wed, 28 Aug 2024 10:36:06 +0800
-Cc: Roman Gushchin <roman.gushchin@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>,
- Michal Hocko <mhocko@kernel.org>,
- Vlastimil Babka <vbabka@suse.cz>,
- David Rientjes <rientjes@google.com>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- Eric Dumazet <edumazet@google.com>,
- "David S . Miller" <davem@davemloft.net>,
- Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Linux Memory Management List <linux-mm@kvack.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Meta kernel team <kernel-team@meta.com>,
- cgroups@vger.kernel.org,
- netdev <netdev@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <EA5F7851-B519-4570-B299-8A096A09D6E7@linux.dev>
-References: <20240826232908.4076417-1-shakeel.butt@linux.dev>
- <Zs1CuLa-SE88jRVx@google.com>
- <yiyx4fh6dklqpexfstkzp3gf23hjpbjujci2o6gs7nb4sutzvb@b5korjrjio3m>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240827-iris_v3-v3-6-c5fdbbe65e70@quicinc.com>
+
+Hi Dikshita,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on 31aaa7d95e09892c81df0d7c49ae85640fa4e202]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Dikshita-Agarwal-via-B4-Relay/dt-bindings-media-Add-sm8550-dt-schema/20240827-181059
+base:   31aaa7d95e09892c81df0d7c49ae85640fa4e202
+patch link:    https://lore.kernel.org/r/20240827-iris_v3-v3-6-c5fdbbe65e70%40quicinc.com
+patch subject: [PATCH v3 06/29] media: iris: introduce iris core state management with shared queues
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20240828/202408281019.97M0qU7D-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 08e5a1de8227512d4774a534b91cb2353cef6284)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240828/202408281019.97M0qU7D-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408281019.97M0qU7D-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/media/platform/qcom/iris/iris_probe.c:8:
+   In file included from drivers/media/platform/qcom/iris/iris_core.h:10:
+   In file included from include/media/v4l2-device.h:12:
+   In file included from include/media/media-device.h:16:
+   In file included from include/linux/pci.h:38:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/media/platform/qcom/iris/iris_probe.c:8:
+   In file included from drivers/media/platform/qcom/iris/iris_core.h:10:
+   In file included from include/media/v4l2-device.h:12:
+   In file included from include/media/media-device.h:16:
+   In file included from include/linux/pci.h:38:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/media/platform/qcom/iris/iris_probe.c:8:
+   In file included from drivers/media/platform/qcom/iris/iris_core.h:10:
+   In file included from include/media/v4l2-device.h:12:
+   In file included from include/media/media-device.h:16:
+   In file included from include/linux/pci.h:38:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   In file included from drivers/media/platform/qcom/iris/iris_probe.c:8:
+   In file included from drivers/media/platform/qcom/iris/iris_core.h:10:
+   In file included from include/media/v4l2-device.h:12:
+   In file included from include/media/media-device.h:16:
+   In file included from include/linux/pci.h:2669:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:8:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/media/platform/qcom/iris/iris_probe.c:114:35: warning: implicit conversion from 'unsigned long long' to 'unsigned long' changes value from 18446744073709551615 to 4294967295 [-Wconstant-conversion]
+     114 |         dma_set_seg_boundary(&pdev->dev, DMA_BIT_MASK(64));
+         |         ~~~~~~~~~~~~~~~~~~~~             ^~~~~~~~~~~~~~~~
+   include/linux/dma-mapping.h:77:40: note: expanded from macro 'DMA_BIT_MASK'
+      77 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
+         |                                        ^~~~~
+   8 warnings generated.
 
 
+vim +114 drivers/media/platform/qcom/iris/iris_probe.c
 
-> On Aug 28, 2024, at 01:23, Shakeel Butt <shakeel.butt@linux.dev> =
-wrote:
->=20
-> On Tue, Aug 27, 2024 at 03:06:32AM GMT, Roman Gushchin wrote:
->> On Mon, Aug 26, 2024 at 04:29:08PM -0700, Shakeel Butt wrote:
->>> At the moment, the slab objects are charged to the memcg at the
->>> allocation time. However there are cases where slab objects are
->>> allocated at the time where the right target memcg to charge it to =
-is
->>> not known. One such case is the network sockets for the incoming
->>> connection which are allocated in the softirq context.
->>>=20
->>> Couple hundred thousand connections are very normal on large loaded
->>> server and almost all of those sockets underlying those connections =
-get
->>> allocated in the softirq context and thus not charged to any memcg.
->>> However later at the accept() time we know the right target memcg to
->>> charge. Let's add new API to charge already allocated objects, so we =
-can
->>> have better accounting of the memory usage.
->>>=20
->>> To measure the performance impact of this change, tcp_crr is used =
-from
->>> the neper [1] performance suite. Basically it is a network ping pong
->>> test with new connection for each ping pong.
->>>=20
->>> The server and the client are run inside 3 level of cgroup hierarchy
->>> using the following commands:
->>>=20
->>> Server:
->>> $ tcp_crr -6
->>>=20
->>> Client:
->>> $ tcp_crr -6 -c -H ${server_ip}
->>>=20
->>> If the client and server run on different machines with 50 GBPS NIC,
->>> there is no visible impact of the change.
->>>=20
->>> For the same machine experiment with v6.11-rc5 as base.
->>>=20
->>>         base (throughput)     with-patch
->>> tcp_crr   14545 (+- 80)         14463 (+- 56)
->>>=20
->>> It seems like the performance impact is within the noise.
->>>=20
->>> Link: https://github.com/google/neper [1]
->>> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
->>=20
->> Hi Shakeel,
->>=20
->> I like the idea and performance numbers look good. However some =
-comments on
->> the implementation:
->>=20
->=20
-> Thanks for taking a look.
->=20
->>> ---
->>>=20
->>> Changes since the RFC:
->>> - Added check for already charged slab objects.
->>> - Added performance results from neper's tcp_crr
->>>=20
->>> include/linux/slab.h            |  1 +
->>> mm/slub.c                       | 54 =
-+++++++++++++++++++++++++++++++++
->>> net/ipv4/inet_connection_sock.c |  5 +--
->>> 3 files changed, 58 insertions(+), 2 deletions(-)
->>>=20
->>> diff --git a/include/linux/slab.h b/include/linux/slab.h
->>> index eb2bf4629157..05cfab107c72 100644
->>> --- a/include/linux/slab.h
->>> +++ b/include/linux/slab.h
->>> @@ -547,6 +547,7 @@ void *kmem_cache_alloc_lru_noprof(struct =
-kmem_cache *s, struct list_lru *lru,
->>>    gfp_t gfpflags) __assume_slab_alignment __malloc;
->>> #define kmem_cache_alloc_lru(...) =
-alloc_hooks(kmem_cache_alloc_lru_noprof(__VA_ARGS__))
->>>=20
->>> +bool kmem_cache_charge(void *objp, gfp_t gfpflags);
->>> void kmem_cache_free(struct kmem_cache *s, void *objp);
->>>=20
->>> kmem_buckets *kmem_buckets_create(const char *name, slab_flags_t =
-flags,
->>> diff --git a/mm/slub.c b/mm/slub.c
->>> index c9d8a2497fd6..580683597b5c 100644
->>> --- a/mm/slub.c
->>> +++ b/mm/slub.c
->>> @@ -2185,6 +2185,16 @@ void memcg_slab_free_hook(struct kmem_cache =
-*s, struct slab *slab, void **p,
->>>=20
->>> __memcg_slab_free_hook(s, slab, p, objects, obj_exts);
->>> }
->>> +
->>> +static __fastpath_inline
->>> +bool memcg_slab_post_charge(struct kmem_cache *s, void *p, gfp_t =
-flags)
->>> +{
->>> + if (likely(!memcg_kmem_online()))
->>> + return true;
->>=20
->> We do have this check in kmem_cache_charge(), why do we need to check =
-it again?
->>=20
->=20
-> I missed to remove this one. I am going to rearrange the code bit more
-> in these functions to avoid the build errors in non MEMCG builds.
->=20
->>> +
->>> + return __memcg_slab_post_alloc_hook(s, NULL, flags, 1, &p);
->>> +}
->>> +
->>> #else /* CONFIG_MEMCG */
->>> static inline bool memcg_slab_post_alloc_hook(struct kmem_cache *s,
->>>      struct list_lru *lru,
->>> @@ -2198,6 +2208,13 @@ static inline void =
-memcg_slab_free_hook(struct kmem_cache *s, struct slab *slab,
->>> void **p, int objects)
->>> {
->>> }
->>> +
->>> +static inline bool memcg_slab_post_charge(struct kmem_cache *s,
->>> +   void *p,
->>> +   gfp_t flags)
->>> +{
->>> + return true;
->>> +}
->>> #endif /* CONFIG_MEMCG */
->>>=20
->>> /*
->>> @@ -4062,6 +4079,43 @@ void *kmem_cache_alloc_lru_noprof(struct =
-kmem_cache *s, struct list_lru *lru,
->>> }
->>> EXPORT_SYMBOL(kmem_cache_alloc_lru_noprof);
->>>=20
->>> +#define KMALLOC_TYPE (SLAB_KMALLOC | SLAB_CACHE_DMA | \
->>> +       SLAB_ACCOUNT | SLAB_RECLAIM_ACCOUNT)
->>> +
->>> +bool kmem_cache_charge(void *objp, gfp_t gfpflags)
->>> +{
->>> + struct slabobj_ext *slab_exts;
->>> + struct kmem_cache *s;
->>> + struct folio *folio;
->>> + struct slab *slab;
->>> + unsigned long off;
->>> +
->>> + if (!memcg_kmem_online())
->>> + return true;
->>> +
->>> + folio =3D virt_to_folio(objp);
->>> + if (unlikely(!folio_test_slab(folio)))
->>> + return false;
->>=20
->> Does it handle the case of a too-big-to-be-a-slab-object allocation?
->> I think it's better to handle it properly. Also, why return false =
-here?
->>=20
->=20
-> Yes I will fix the too-big-to-be-a-slab-object allocations. I presume =
-I
-> should just follow the kfree() hanlding on !folio_test_slab() i.e. =
-that
-> the given object is the large or too-big-to-be-a-slab-object.
+    59	
+    60	static int iris_probe(struct platform_device *pdev)
+    61	{
+    62		struct device *dev = &pdev->dev;
+    63		struct iris_core *core;
+    64		u64 dma_mask;
+    65		int ret;
+    66	
+    67		core = devm_kzalloc(&pdev->dev, sizeof(*core), GFP_KERNEL);
+    68		if (!core)
+    69			return -ENOMEM;
+    70		core->dev = dev;
+    71	
+    72		core->state = IRIS_CORE_DEINIT;
+    73		mutex_init(&core->lock);
+    74	
+    75		core->reg_base = devm_platform_ioremap_resource(pdev, 0);
+    76		if (IS_ERR(core->reg_base))
+    77			return PTR_ERR(core->reg_base);
+    78	
+    79		core->irq = platform_get_irq(pdev, 0);
+    80		if (core->irq < 0)
+    81			return core->irq;
+    82	
+    83		core->iris_platform_data = of_device_get_match_data(core->dev);
+    84		if (!core->iris_platform_data) {
+    85			ret = -ENODEV;
+    86			dev_err_probe(core->dev, ret, "init platform failed\n");
+    87			return ret;
+    88		}
+    89	
+    90		iris_init_ops(core);
+    91		ret = iris_init_resources(core);
+    92		if (ret) {
+    93			dev_err_probe(core->dev, ret, "init resource failed\n");
+    94			return ret;
+    95		}
+    96	
+    97		ret = v4l2_device_register(dev, &core->v4l2_dev);
+    98		if (ret)
+    99			return ret;
+   100	
+   101		ret = iris_register_video_device(core);
+   102		if (ret)
+   103			goto err_v4l2_unreg;
+   104	
+   105		platform_set_drvdata(pdev, core);
+   106	
+   107		dma_mask = core->iris_platform_data->dma_mask;
+   108	
+   109		ret = dma_set_mask_and_coherent(dev, dma_mask);
+   110		if (ret)
+   111			goto err_vdev_unreg;
+   112	
+   113		dma_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
+ > 114		dma_set_seg_boundary(&pdev->dev, DMA_BIT_MASK(64));
+   115	
+   116		return 0;
+   117	
+   118	err_vdev_unreg:
+   119		video_unregister_device(core->vdev_dec);
+   120	err_v4l2_unreg:
+   121		v4l2_device_unregister(&core->v4l2_dev);
+   122	
+   123		return ret;
+   124	}
+   125	
 
-Hi Shakeel,
-
-If we decide to do this, I suppose you will use memcg_kmem_charge_page
-to charge big-object. To be consistent, I suggest renaming =
-kmem_cache_charge
-to memcg_kmem_charge to handle both slab object and big-object. And I =
-saw
-all the functions related to object charging is moved to memcontrol.c =
-(e.g.
-__memcg_slab_post_alloc_hook), so maybe we should also do this for
-memcg_kmem_charge?
-
-Muhcun,
-Thanks.=
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
