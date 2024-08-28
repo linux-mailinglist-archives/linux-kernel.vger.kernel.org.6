@@ -1,54 +1,80 @@
-Return-Path: <linux-kernel+bounces-304856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 737AF9625DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:20:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 716A39625E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:22:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0124E1F23108
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:20:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24E281F25096
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C3A172BDC;
-	Wed, 28 Aug 2024 11:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFFB172BD3;
+	Wed, 28 Aug 2024 11:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="wstjfw6T"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Znq4QM4A"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A90D16CD2A
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 11:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288F417085C;
+	Wed, 28 Aug 2024 11:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724844013; cv=none; b=mY+XMlK4MmSJZ++yQxymq0BXtelxbA4I8CELncQotKEHmDHCVc8wrOkX90AGBQ/QPyGTMb/JgF5OA36qZxl77T32y4B8IBIIoqZtoduuBYLRBoGzZZQR0vL/pHfsXGcBMr1sETUFvW05ZaYgzxbHpLJE6x+vylMDmR25gryMTLA=
+	t=1724844103; cv=none; b=YQ7y2Ov83KsJMhLkkSg7JZqYyLIvlf2GgMjDvjec0YwLFLgU4FJq4HC0zqIY5uxiezvE5hZE9xhMIN4CrmThPjm5PNnCa36x5oBAqFkF0OFpM9C4bw9fv/iG7z0aDHurkv3MHb9AHeFTPYaVZgvGbL/Qukk1OuDYILi0FwZbujc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724844013; c=relaxed/simple;
-	bh=Ezy4HNFGJSTKEsf5HkYKSrv3EXBYHx9iLfOg4sPe8PY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qIcpKGGLDsALyaZid6bh0b+xa7a4kbrt8iZlLizwL9M7zKb6a8Qdjg4bP3ExAqYVf8z81v7mC8OXaSCm+6R+gXCS3avAomwWtMkDCDRqEpeO2FWIUm/5RoRu+y/m/1T1LQC/D4181+AuC3CQ0ztxVy+7dv4o6dAF2stfDhdbYyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=wstjfw6T; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1724844006; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=9t26X20wOk6RC/v/5buWxmWBy5+YEGCpdhBhX53OLoo=;
-	b=wstjfw6TvPHsYeX1Uz69gPMf1pSogUsRkCsYRb/xJ7UzKleuG/srJJCAmsmfKoSLDpJVdiHVRfJKSZ2daVX6W8dDuTF4cya+cD6pRFFrsSQPInR62Z7rhwopjjTs5JToFuaNriaWQUpZP1M644zeBY02vVasZ7WZmFcM/ONzL3o=
-Received: from localhost(mailfrom:hongzhen@linux.alibaba.com fp:SMTPD_---0WDpbUPx_1724844004)
-          by smtp.aliyun-inc.com;
-          Wed, 28 Aug 2024 19:20:05 +0800
-From: Hongzhen Luo <hongzhen@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org,
-	lihongbo22@huawei.com
-Cc: linux-kernel@vger.kernel.org,
-	Hongzhen Luo <hongzhen@linux.alibaba.com>
-Subject: [PATCH RFC v3 3/3] erofs: apply the page cache share feature
-Date: Wed, 28 Aug 2024 19:19:59 +0800
-Message-ID: <20240828111959.3677011-4-hongzhen@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20240828111959.3677011-1-hongzhen@linux.alibaba.com>
-References: <20240828111959.3677011-1-hongzhen@linux.alibaba.com>
+	s=arc-20240116; t=1724844103; c=relaxed/simple;
+	bh=56M3DMja+r+95VlN3FKRf3LWJiO8WGCUMdFbsdy/NB0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K/GFAggrb9oZwyVEC+hHb9Zj1bpPcZZj9lkKv99d1q7DnAyE5hJD1NBXKjF7S+dbKszo7xRl/tu1aaAWfJ+CuW7QdKqjCyJErilw1CEuLirtl4U7cY+X0IOod0kE6dSHANI1LqBkulap1E6rSGvrRowQHo5/gFVEiHiz8ojLlt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Znq4QM4A; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5bf006f37daso935354a12.1;
+        Wed, 28 Aug 2024 04:21:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724844099; x=1725448899; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tp88SF2BiHdIWhq5PmvKpT0xpcn3RokNnwTnJLgZEHw=;
+        b=Znq4QM4A2AurpMVkLTskmqhMm/zHdEnh6w3NYeWUuT7unGgfAyySDVlHU2sONI2Ceu
+         xSPBeh53drn7T+DC6GOEH3kX+famhAf3yuJRJDHkrWNuWRFVVf1BRC8SzyM99P86bGM5
+         M3DVckUNSj5b/JCOrTxrO/+bsFRm1JZBVBFmNU27QwRlQIvmZ2whEIb0F9soSZcC0GUg
+         AjwFkamf8aAE880pfJiho0t9YDdwlOWnl2VO45GqmDbhe4m0bcQV0lOALQQ3Gfh6qah2
+         KvjNozgE6oUDjE04+ZtHUfVhduGrHswvR5w1LMOmLfvF+N3yj9rsQUplAJo0tvKSndlJ
+         O1UQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724844099; x=1725448899;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Tp88SF2BiHdIWhq5PmvKpT0xpcn3RokNnwTnJLgZEHw=;
+        b=AO03+8p2HKzCZw0pSg/jQ0oyBIY5nTJ8VFT0NDrkPkYKYJ87ATHuh4SMwzQpbzU0jb
+         rQZt7LTShltt1+ebE61KB7zDC9k/i6jQApx31rBO6c6Hmwly3gj0thw3WP/z0hh6h2ZD
+         xEXDDhxBdugNCYhsEiHxnISNGVZ5xwZYg7aqoG5oK3WPrR18S51m7591YDwPDUX3LwzO
+         FCFGphSjRPOgnuuy8gsI/fFkIQss/AMnR3k2ZrOVVHgOPoEbDpBmsFii375swtuRMwSl
+         fOBJcfooOnH7GlgeQhgJwVk29pzG+eJztLikT5wZkCcB3FBW4HWfTnb9OrS3fJewwqBx
+         kzMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX8qc/oxoePnjNds/aZyPKyh+qxTw7XMxURpc0CeBlLgbnEC9sQYhRq7ZXpYtuMB3VYHy/EOXHXzcXy@vger.kernel.org, AJvYcCXfuQ/wAwjr5qh4xD5oMZcu730VWCk6b1GEHqOgwAWsEWZ+YS6fIAIOmpmFSrwIY/d7ua13WNVJ9loWvqQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywp7K5nwTOHblF99lXG7TfEcSQu/bGOuTLR4SRn9bRt3kbF9KnV
+	OHJn1EbnyczW3k56I7Lcqi2c+Qyat7kfIV1ph8Eg505e9uKXbAhBw7NUdcbp
+X-Google-Smtp-Source: AGHT+IFX3hmclvvWJ0qPWAUqHkRLdyPZKETkDs++n062wZW2Bu7IBjbw8lasut0tXfIIzaS6NS9mfg==
+X-Received: by 2002:a05:6402:1ed5:b0:5c0:ad65:ebf8 with SMTP id 4fb4d7f45d1cf-5c212a4f477mr1887301a12.7.1724844098971;
+        Wed, 28 Aug 2024 04:21:38 -0700 (PDT)
+Received: from partp-nb.corp.toradex.com (31-10-206-125.static.upc.ch. [31.10.206.125])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb1c29b9sm2136348a12.18.2024.08.28.04.21.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 04:21:38 -0700 (PDT)
+From: Parth Pancholi <parth105105@gmail.com>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Parth Pancholi <parth.pancholi@toradex.com>
+Subject: [PATCH] usb: typec: tcpci: support edge irq
+Date: Wed, 28 Aug 2024 13:20:58 +0200
+Message-Id: <20240828112058.479753-1-parth105105@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,238 +83,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This modifies relevant functions to apply the page cache
-share feature.
+From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
 
-Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
----
-v3: Reimplement and add support for compressed files.
-v2: https://lore.kernel.org/all/20240731080704.678259-3-hongzhen@linux.alibaba.com/
-v1: https://lore.kernel.org/all/20240722065355.1396365-5-hongzhen@linux.alibaba.com/
----
- fs/erofs/data.c  | 34 +++++++++++++++++++++++++++++++++-
- fs/erofs/inode.c | 12 ++++++++++++
- fs/erofs/super.c | 29 +++++++++++++++++++++++++++++
- fs/erofs/zdata.c | 32 ++++++++++++++++++++++++++++++++
- 4 files changed, 106 insertions(+), 1 deletion(-)
+TCPCI USB PHY - PTN5110 could be used with SOCs that only support
+the edge-triggered GPIO interrupts such as TI's K3 device AM69.
+Move the interrupt configuration to the firmware which would
+allow to accommodate edge triggered interrupts for such SOCs.
+In order to support the edge interrupts, register irq line in advance
+and keep track of occurrence during port registering.
 
-diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-index 1b7eba38ba1e..ef27b934115f 100644
---- a/fs/erofs/data.c
-+++ b/fs/erofs/data.c
-@@ -347,12 +347,44 @@ int erofs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-  */
- static int erofs_read_folio(struct file *file, struct folio *folio)
+When the edge interrupts are used, it is observed that some of the
+interrupts are missed when tcpci_irq() is serving the current
+interrupt. Therefore, check the status register at the end of
+tcpci_irq() and re-run the function if the status is not clear
+i.e. pending interrupt.
+
+Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
+---
+ drivers/usb/typec/tcpm/tcpci.c | 32 +++++++++++++++++++++++---------
+ 1 file changed, 23 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/usb/typec/tcpm/tcpci.c b/drivers/usb/typec/tcpm/tcpci.c
+index a2651a2a7f2e..4537c1d97e8f 100644
+--- a/drivers/usb/typec/tcpm/tcpci.c
++++ b/drivers/usb/typec/tcpm/tcpci.c
+@@ -707,10 +707,13 @@ irqreturn_t tcpci_irq(struct tcpci *tcpci)
  {
-+#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-+	struct erofs_inode *vi = NULL;
-+	int ret;
+ 	u16 status;
+ 	int ret;
++	int irq_ret;
+ 	unsigned int raw;
+ 
+ 	tcpci_read16(tcpci, TCPC_ALERT, &status);
++	irq_ret = status & tcpci->alert_mask;
+ 
++process_status:
+ 	/*
+ 	 * Clear alert status for everything except RX_STATUS, which shouldn't
+ 	 * be cleared until we have successfully retrieved message.
+@@ -783,7 +786,12 @@ irqreturn_t tcpci_irq(struct tcpci *tcpci)
+ 	else if (status & TCPC_ALERT_TX_FAILED)
+ 		tcpm_pd_transmit_complete(tcpci->port, TCPC_TX_FAILED);
+ 
+-	return IRQ_RETVAL(status & tcpci->alert_mask);
++	tcpci_read16(tcpci, TCPC_ALERT, &status);
 +
-+	if (file && file->private_data) {
-+		vi = file->private_data;
-+		if (vi->ano_inode == file_inode(file))
-+			folio->mapping->host = &vi->vfs_inode;
-+		else
-+			vi = NULL;
-+	}
-+	ret = iomap_read_folio(folio, &erofs_iomap_ops);
-+	if (vi)
-+		folio->mapping->host = file_inode(file);
-+	return ret;
-+#else
- 	return iomap_read_folio(folio, &erofs_iomap_ops);
-+#endif
++	if (status & tcpci->alert_mask)
++		goto process_status;
++
++	return IRQ_RETVAL(irq_ret);
  }
+ EXPORT_SYMBOL_GPL(tcpci_irq);
+ 
+@@ -915,18 +923,24 @@ static int tcpci_probe(struct i2c_client *client)
+ 
+ 	chip->data.set_orientation = err;
+ 
+-	chip->tcpci = tcpci_register_port(&client->dev, &chip->data);
+-	if (IS_ERR(chip->tcpci))
+-		return PTR_ERR(chip->tcpci);
 -
- static void erofs_readahead(struct readahead_control *rac)
- {
-+#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-+	struct erofs_inode *vi = NULL;
-+	struct file *file = rac->file;
-+
-+	if (file && file->private_data) {
-+		vi = file->private_data;
-+		if (vi->ano_inode == file_inode(file))
-+			rac->mapping->host = &vi->vfs_inode;
-+		else
-+			vi = NULL;
-+	}
-+	iomap_readahead(rac, &erofs_iomap_ops);
-+	if (vi)
-+		rac->mapping->host = file_inode(file);
-+#else
- 	return iomap_readahead(rac, &erofs_iomap_ops);
-+#endif
- }
- 
- static sector_t erofs_bmap(struct address_space *mapping, sector_t block)
-diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-index 43c09aae2afc..1811f73478b4 100644
---- a/fs/erofs/inode.c
-+++ b/fs/erofs/inode.c
-@@ -5,6 +5,7 @@
-  * Copyright (C) 2021, Alibaba Cloud
-  */
- #include "xattr.h"
-+#include "pagecache_share.h"
- 
- #include <trace/events/erofs.h>
- 
-@@ -229,10 +230,21 @@ static int erofs_fill_inode(struct inode *inode)
- 	switch (inode->i_mode & S_IFMT) {
- 	case S_IFREG:
- 		inode->i_op = &erofs_generic_iops;
-+#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-+		erofs_pcs_fill_inode(inode);
-+		if (vi->ano_inode)
-+			inode->i_fop = &erofs_pcs_file_fops;
-+		else if (erofs_inode_is_data_compressed(vi->datalayout))
-+			inode->i_fop = &generic_ro_fops;
-+		else
-+			inode->i_fop = &erofs_file_fops;
-+#else
- 		if (erofs_inode_is_data_compressed(vi->datalayout))
- 			inode->i_fop = &generic_ro_fops;
- 		else
- 			inode->i_fop = &erofs_file_fops;
-+#endif
-+
- 		break;
- 	case S_IFDIR:
- 		inode->i_op = &erofs_dir_iops;
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 36291feaa5f6..c61779fe2e3a 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -12,6 +12,7 @@
- #include <linux/exportfs.h>
- #include <linux/pseudo_fs.h>
- #include "xattr.h"
-+#include "pagecache_share.h"
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/erofs.h>
-@@ -103,6 +104,12 @@ static void erofs_free_inode(struct inode *inode)
- {
- 	struct erofs_inode *vi = EROFS_I(inode);
- 
-+#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-+	if (S_ISREG(inode->i_mode) &&  vi->ano_inode) {
-+		iput(vi->ano_inode);
-+		vi->ano_inode = NULL;
-+	}
-+#endif
- 	if (inode->i_op == &erofs_fast_symlink_iops)
- 		kfree(inode->i_link);
- 	kfree(vi->xattr_shared_xattrs);
-@@ -701,6 +708,12 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
- 	if (err)
+ 	err = devm_request_threaded_irq(&client->dev, client->irq, NULL,
+ 					_tcpci_irq,
+-					IRQF_SHARED | IRQF_ONESHOT | IRQF_TRIGGER_LOW,
++					IRQF_SHARED | IRQF_ONESHOT,
+ 					dev_name(&client->dev), chip);
+-	if (err < 0) {
+-		tcpci_unregister_port(chip->tcpci);
++	if (err < 0)
  		return err;
- 
-+#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-+	err = erofs_pcs_init_mnt();
-+	if (err)
-+		return err;
-+#endif
+-	}
 +
- 	erofs_info(sb, "mounted with root inode @ nid %llu.", sbi->root_nid);
++	/*
++	 * Disable irq while registering port. If irq is configured as an edge
++	 * irq this allow to keep track and process the irq as soon as it is enabled.
++	 */
++	disable_irq(client->irq);
++
++	chip->tcpci = tcpci_register_port(&client->dev, &chip->data);
++	if (IS_ERR(chip->tcpci))
++		return PTR_ERR(chip->tcpci);
++
++	enable_irq(client->irq);
+ 
  	return 0;
  }
-@@ -811,6 +824,9 @@ static void erofs_kill_sb(struct super_block *sb)
- 	else
- 		kill_block_super(sb);
- 
-+#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-+	erofs_pcs_free_mnt();
-+#endif
- 	erofs_free_dev_context(sbi->devs);
- 	fs_put_dax(sbi->dax_dev, NULL);
- 	erofs_fscache_unregister_fs(sb);
-@@ -849,8 +865,21 @@ static struct file_system_type erofs_fs_type = {
- };
- MODULE_ALIAS_FS("erofs");
- 
-+#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-+static void erofs_free_anon_inode(struct inode *inode)
-+{
-+	if (inode->i_private) {
-+		kfree(inode->i_private);
-+		inode->i_private = NULL;
-+	}
-+}
-+#endif
-+
- static const struct super_operations erofs_anon_sops = {
- 	.statfs	= simple_statfs,
-+#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-+	.free_inode = erofs_free_anon_inode,
-+#endif
- };
- 
- static int erofs_anon_init_fs_context(struct fs_context *fc)
-diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-index 424f656cd765..cd3cabfef462 100644
---- a/fs/erofs/zdata.c
-+++ b/fs/erofs/zdata.c
-@@ -1802,6 +1802,17 @@ static void z_erofs_pcluster_readmore(struct z_erofs_decompress_frontend *f,
- 
- static int z_erofs_read_folio(struct file *file, struct folio *folio)
- {
-+#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-+	struct erofs_inode *vi = NULL;
-+
-+	if (file && file->private_data) {
-+		vi = file->private_data;
-+		if (vi->ano_inode == file_inode(file))
-+			folio->mapping->host = &vi->vfs_inode;
-+		else
-+			vi = NULL;
-+	}
-+#endif
- 	struct inode *const inode = folio->mapping->host;
- 	struct erofs_sb_info *const sbi = EROFS_I_SB(inode);
- 	struct z_erofs_decompress_frontend f = DECOMPRESS_FRONTEND_INIT(inode);
-@@ -1824,11 +1835,27 @@ static int z_erofs_read_folio(struct file *file, struct folio *folio)
- 
- 	erofs_put_metabuf(&f.map.buf);
- 	erofs_release_pages(&f.pagepool);
-+
-+#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-+	if (vi)
-+		folio->mapping->host = file_inode(file);
-+#endif
- 	return err;
- }
- 
- static void z_erofs_readahead(struct readahead_control *rac)
- {
-+#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-+	struct erofs_inode *vi = NULL;
-+
-+	if (rac->file && rac->file->private_data) {
-+		vi = rac->file->private_data;
-+		if (vi->ano_inode == file_inode(rac->file))
-+			rac->mapping->host = &vi->vfs_inode;
-+		else
-+			vi = NULL;
-+	}
-+#endif
- 	struct inode *const inode = rac->mapping->host;
- 	struct erofs_sb_info *const sbi = EROFS_I_SB(inode);
- 	struct z_erofs_decompress_frontend f = DECOMPRESS_FRONTEND_INIT(inode);
-@@ -1863,6 +1890,11 @@ static void z_erofs_readahead(struct readahead_control *rac)
- 	z_erofs_runqueue(&f, z_erofs_is_sync_decompress(sbi, nr_folios), true);
- 	erofs_put_metabuf(&f.map.buf);
- 	erofs_release_pages(&f.pagepool);
-+
-+#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-+	if (vi)
-+		rac->mapping->host = file_inode(rac->file);
-+#endif
- }
- 
- const struct address_space_operations z_erofs_aops = {
 -- 
-2.43.5
+2.34.1
 
 
