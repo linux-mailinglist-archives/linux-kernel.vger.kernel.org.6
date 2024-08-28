@@ -1,120 +1,193 @@
-Return-Path: <linux-kernel+bounces-305852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE376963540
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 01:14:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 921FB963542
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 01:14:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 834D11F24763
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:14:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47CA0286301
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD5D1AD9FA;
-	Wed, 28 Aug 2024 23:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF1A1AD9E2;
+	Wed, 28 Aug 2024 23:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Igkl3X+Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="LLw60UXm";
+	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="TcQAIn8d"
+Received: from mx-lax3-2.ucr.edu (mx-lax3-2.ucr.edu [169.235.156.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C000161914;
-	Wed, 28 Aug 2024 23:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9821AD3F9
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 23:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=169.235.156.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724886832; cv=none; b=HiiMJTWdFAmtaYL3wIt4QuN563m+6ZFD45TNdHe3xFe3Hz+Da+cjTH2cqCRwTOW+jnlzJv+USSD+InRkbhyyITPToH6D+/hh4bQuXb3DtG28zMkQrd5GRBsozag4BiyTcQdGzKY98t9ypT0rY0mO22XsDn5W7sOdYjEf6k61n0I=
+	t=1724886860; cv=none; b=oBPTexwmcCO+TdkbdDKXEG5wDQ/PvFZ51N62yEe4gzZzYxo2H2GpNeJhmSFW46trDB2LFQaRS8LbidYukLlm9d9JVROrfxPDwABc4c3cbzhMoHu62VUKxNrrH7sxnZQjdhSzlmwyZzeBXNHexk8r5OW3dNvzbGBoRbns+4Pdchs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724886832; c=relaxed/simple;
-	bh=QISJ42Va0eYxqFWZBmZo3tT+XOt9YziD/pQSoZRbBg0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gurYLTzf0WrdidDXhR8LkD/MvzAH7mXyfA7ajNbQbfyiGf++QZJyjB8132t9c+SJymq930WtwmsheeEtaH+lrtxptwzGTfNB5U+3o+zdqH9CC/O/VjJUaubHvyQH4NJqvXe1xevIlJMvnjBnM86OdqfP3MmEVdOqB2b3gJ2dd+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Igkl3X+Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E93BC4CEC0;
-	Wed, 28 Aug 2024 23:13:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724886832;
-	bh=QISJ42Va0eYxqFWZBmZo3tT+XOt9YziD/pQSoZRbBg0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Igkl3X+YtPWt9lCblaUZzraFSdFxa54F4n2l+ehwjXqByzx1N8EEiLXby+Z8CfzZ8
-	 7kzVqzb8dj1SXhUoZnGtY8B83J9xdiCwbXKuUdpBcevOBu7zDAdlF4il1Q5fte9o71
-	 nmxNhsqDLPd36IPd35D5ImzYQ31N8WkReq8dF8zlJnD6n22lEPcHNNR/bxWxOYjj1Z
-	 aFUyNy3WDAmPeW76D+8frUPREHFpIB07PDD9tNSXHzZMg6/+XpabrzvlGz742UtqW1
-	 lM7HQIRrpnau/LYc6CLvEiTOSvR5JXx5Y5SdAfIwROoUCfXVwWxwhqEPETSQsl/I1G
-	 qxqrLyHNPkFGA==
-Date: Wed, 28 Aug 2024 23:13:50 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: ross.philipson@oracle.com
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
-	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
-	dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
-	ardb@kernel.org, mjg59@srcf.ucam.org,
-	James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
-	jarkko@kernel.org, jgg@ziepe.ca, luto@amacapital.net,
-	nivedita@alum.mit.edu, herbert@gondor.apana.org.au,
-	davem@davemloft.net, corbet@lwn.net, ebiederm@xmission.com,
-	dwmw2@infradead.org, baolu.lu@linux.intel.com,
-	kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com,
-	trenchboot-devel@googlegroups.com
-Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
- early measurements
-Message-ID: <20240828231350.GA558903@google.com>
-References: <20240531010331.134441-1-ross.philipson@oracle.com>
- <20240531010331.134441-7-ross.philipson@oracle.com>
- <20240531021656.GA1502@sol.localdomain>
- <20240827181426.GC2049@sol.localdomain>
- <601646a2-46ac-47a0-a8b7-1d45a09172ab@oracle.com>
+	s=arc-20240116; t=1724886860; c=relaxed/simple;
+	bh=TAfbCxquRif/qdYzukrgJEOR05LH1QDxbKWWKJZy4SM=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=cUyrDpBruiVwI28/FJBbGi1yfKimvCpWxuuZ9OmWY0BS1m0OcNfmcMIcJUCYVnOMaeUyy76c1dQSAe+OP1+x3Tz25UvFmuXC5w5+5Bp4BabDAzY5JCoh8j6vFpq96+NUTlXFdoJD/pkAAKnwDzkRd+e8DyQo16WYN2iFVOBP5PA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=LLw60UXm; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=TcQAIn8d; arc=none smtp.client-ip=169.235.156.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
+  t=1724886859; x=1756422859;
+  h=dkim-signature:x-google-dkim-signature:
+   x-forwarded-encrypted:x-gm-message-state:
+   x-google-smtp-source:mime-version:from:date:message-id:
+   subject:to:cc:content-type:x-cse-connectionguid:
+   x-cse-msgguid;
+  bh=TAfbCxquRif/qdYzukrgJEOR05LH1QDxbKWWKJZy4SM=;
+  b=LLw60UXmak9sgiSQEiOZWeKhbTK8T2nGyW7iKjShNJcGbhYKiuotAaSd
+   wVLW6KyNB3ArwGJ4syTBi5ll6dozdTwKzVv6kryAb65evGtYJ6vte+rSE
+   3CG9lFEc3Z4tQNtoKzV/4k5VYEYOBnI5jd1JwNLMQA2LSNdpETQQNQeyt
+   3sXUdubsc6Rtt7tFVhRVy5ytZVdlLuMeAZ4fwsQYWXYRhCDNSnSkxfuya
+   gjTFJ16m/R7Y+hgbmijzW3T8RPdfvBshpZ+rvIINVZj5dWGtIRklsSXsR
+   0ggeej7WyYSNjJrvUYyqhuULOe4yYrbXmINvJuPxqpd/5rjLU07qYva3X
+   A==;
+X-CSE-ConnectionGUID: Vo4PR36XT0SQOCSxjGDwxg==
+X-CSE-MsgGUID: K+cyrW9rQ9KgI6EePYic2A==
+Received: from mail-pj1-f72.google.com ([209.85.216.72])
+  by smtp-lax3-2.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 28 Aug 2024 16:14:17 -0700
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2d5dafe951eso34869a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 16:14:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ucr.edu; s=rmail; t=1724886856; x=1725491656; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ubakShXwxYDXEyQ5e6SBH3Tmky3hd4bNnHQvhjFLc+0=;
+        b=TcQAIn8dhswgAjHAnOWy6/nuMK7J/C0MA3xFclfWHRFid05fkcBo2vHpuGd9BS/N2O
+         gz4XO2FKKyHwtF3izWAHTYm/Ov/iQk0h7b90ZZlyfMXC95mpi2HY/5pG4YbaSB1jGD0H
+         KmfGMhFM1sFK3H9m+eAVljSPjBi/iPKadBBbw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724886856; x=1725491656;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ubakShXwxYDXEyQ5e6SBH3Tmky3hd4bNnHQvhjFLc+0=;
+        b=lL+di8qY6KjbMXE8vvwfFXjPnfqBG+6mvDQ1T02qqA/435rfJO/FHN7sQWqRDqoc3h
+         hzgjqkG3t3Ia5wLFAOm7Eoqpq5SB9kow+w57SR0zyCFVGKkGkTs5QJjsL8mBWzkDsfSe
+         /5OVFcoNPQyilRq6XAfOL7ORRpIobugYSfGpZUMnYhBjGrDN4uU31dkRjDfYE81UXVqa
+         k2MHCaYDc4nhWxC4KW8iiWbUBeipiN9hxjPUTAUIp9zEPIb6ZKzuajCUyxc3zU1wDpE2
+         3GyJD24lYO22oMp01ZvDRcRDBnmxMCjIKe6F2W11MCay0W6EANPydrGWy7XhTIKwluO4
+         dpTw==
+X-Forwarded-Encrypted: i=1; AJvYcCXphnExMXQWO4bIwnvwKYTE+0NKSpbxb1lfy3HA3fosE/OUW4vvC0ietWrRz5a0Hdd1aTz6S9bk25rfWEg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxwi9PiRADQ9iPlj6A7y4Cxcy6X9VPhtFJcGQSo7DL51cXy3Auc
+	4CBCCw9PqLhldB2JzlZbv6uzQJKo2SWFiJT+zYeAWAUMUOGeIIS3w/nOBOnCuUlhziLX1x6vwh7
+	AKkvm47ojxs+xC5EyXgDNZwJLsn2GvtYX8Oa/SxaAisOikZ73woRBXejTJBvGu8dM2kZZAD30Oy
+	DJKm7Fh3+quzk7qibErYCqYf6qBOuXwbPWA4TQ8HENqzEco4Zj8Po=
+X-Received: by 2002:a17:90a:7186:b0:2d3:cc3e:4d6d with SMTP id 98e67ed59e1d1-2d85618aa28mr866417a91.9.1724886855956;
+        Wed, 28 Aug 2024 16:14:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IELZUwDCC0XSsHLt2ynmKXe4TqsNr5t7zRZYRT3R66MQC6OI2xc2a2ro5R9vBhjSnNKvtK6QmdvVw7UVGytTXc=
+X-Received: by 2002:a17:90a:7186:b0:2d3:cc3e:4d6d with SMTP id
+ 98e67ed59e1d1-2d85618aa28mr866401a91.9.1724886855476; Wed, 28 Aug 2024
+ 16:14:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <601646a2-46ac-47a0-a8b7-1d45a09172ab@oracle.com>
+From: Xingyu Li <xli399@ucr.edu>
+Date: Wed, 28 Aug 2024 16:14:05 -0700
+Message-ID: <CALAgD-6miPB6F2=89m90HzEGT4dmCX_ws1r26w7Vr8rtD8Z96Q@mail.gmail.com>
+Subject: BUG: general protection fault in blk_mq_put_tag
+To: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Yu Hao <yhao016@ucr.edu>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Aug 28, 2024 at 01:14:45PM -0700, ross.philipson@oracle.com wrote:
-> On 8/27/24 11:14 AM, 'Eric Biggers' via trenchboot-devel wrote:
-> > On Thu, May 30, 2024 at 07:16:56PM -0700, Eric Biggers wrote:
-> > > On Thu, May 30, 2024 at 06:03:18PM -0700, Ross Philipson wrote:
-> > > > From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
-> > > > 
-> > > > For better or worse, Secure Launch needs SHA-1 and SHA-256. The
-> > > > choice of hashes used lie with the platform firmware, not with
-> > > > software, and is often outside of the users control.
-> > > > 
-> > > > Even if we'd prefer to use SHA-256-only, if firmware elected to start us
-> > > > with the SHA-1 and SHA-256 backs active, we still need SHA-1 to parse
-> > > > the TPM event log thus far, and deliberately cap the SHA-1 PCRs in order
-> > > > to safely use SHA-256 for everything else.
-> > > > 
-> > > > The SHA-1 code here has its origins in the code from the main kernel:
-> > > > 
-> > > > commit c4d5b9ffa31f ("crypto: sha1 - implement base layer for SHA-1")
-> > > > 
-> > > > A modified version of this code was introduced to the lib/crypto/sha1.c
-> > > > to bring it in line with the SHA-256 code and allow it to be pulled into the
-> > > > setup kernel in the same manner as SHA-256 is.
-> > > > 
-> > > > Signed-off-by: Daniel P. Smith <dpsmith@apertussolutions.com>
-> > > > Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
-> > > 
-> > > Thanks.  This explanation doesn't seem to have made it into the actual code or
-> > > documentation.  Can you please get it into a more permanent location?
-> > 
-> > I see that a new version of the patchset was sent out but this suggestion was
-> > not taken.  Are you planning to address it?
-> 
-> Sorry we sort of overlooked that part of the request. We will take the
-> latest commit message, clean it up a little and put it in
-> boot/compressed/sha1.c file as a comment. I believe that is what you would
-> like us to do.
-> 
+Hi,
 
-Do users of this feature need to make a decision about SHA-1?  If so there needs
-to be guidance in Documentation/.  A comment in a .c file is not user facing.
+We found a bug in Linux 6.10 using syzkaller. It is possibly a  null
+pointer dereference bug.
+The reprodcuer is
+https://gist.github.com/freexxxyyy/6f85bd6f69381fa00d04745376261c75
 
-- Eric
+The bug report is:
+
+Syzkaller hit 'general protection fault in blk_mq_put_tag' bug.
+
+Oops: general protection fault, probably for non-canonical address
+0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 0 PID: 8453 Comm: kworker/0:5 Not tainted 6.10.0 #13
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: events_freezable_pwr_efficient disk_events_workfn
+RIP: 0010:blk_mq_tag_is_reserved block/blk-mq.h:214 [inline]
+RIP: 0010:blk_mq_put_tag+0x2b/0x130 block/blk-mq-tag.c:228
+Code: 41 57 41 56 41 54 53 41 89 d7 49 89 f6 48 89 fb 49 bc 00 00 00
+00 00 fc ff df e8 70 de 54 fd 48 8d 6b 04 48 89 e8 48 c1 e8 03 <42> 8a
+04 20 84 c0 0f 85 9a 00 00 00 8b 6d 00 89 ef 44 89 fe e8 ec
+RSP: 0018:ffffc9000b0cf6b0 EFLAGS: 00010247
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff888018601e00
+RDX: 0000000000000000 RSI: ffffe8ffffc0e9c0 RDI: 0000000000000000
+RBP: 0000000000000004 R08: ffffffff843a3f0b R09: 1ffff11003a14613
+R10: dffffc0000000000 R11: ffffffff8133c740 R12: dffffc0000000000
+R13: ffff88801d195000 R14: ffffe8ffffc0e9c0 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555587d9e7a8 CR3: 000000000d932000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __blk_mq_free_request+0x311/0x440 block/blk-mq.c:720
+ scsi_execute_cmd+0xf07/0x1090 drivers/scsi/scsi_lib.c:351
+ sr_get_events drivers/scsi/sr.c:177 [inline]
+ sr_check_events+0x220/0xd30 drivers/scsi/sr.c:218
+ cdrom_update_events drivers/cdrom/cdrom.c:1468 [inline]
+ cdrom_check_events+0x66/0x100 drivers/cdrom/cdrom.c:1478
+ disk_check_events+0x10f/0x5e0 block/disk-events.c:193
+ process_one_work kernel/workqueue.c:3248 [inline]
+ process_scheduled_works+0x977/0x1410 kernel/workqueue.c:3329
+ worker_thread+0xaa0/0x1020 kernel/workqueue.c:3409
+ kthread+0x2eb/0x380 kernel/kthread.c:389
+ ret_from_fork+0x49/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:blk_mq_tag_is_reserved block/blk-mq.h:214 [inline]
+RIP: 0010:blk_mq_put_tag+0x2b/0x130 block/blk-mq-tag.c:228
+Code: 41 57 41 56 41 54 53 41 89 d7 49 89 f6 48 89 fb 49 bc 00 00 00
+00 00 fc ff df e8 70 de 54 fd 48 8d 6b 04 48 89 e8 48 c1 e8 03 <42> 8a
+04 20 84 c0 0f 85 9a 00 00 00 8b 6d 00 89 ef 44 89 fe e8 ec
+RSP: 0018:ffffc9000b0cf6b0 EFLAGS: 00010247
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff888018601e00
+RDX: 0000000000000000 RSI: ffffe8ffffc0e9c0 RDI: 0000000000000000
+RBP: 0000000000000004 R08: ffffffff843a3f0b R09: 1ffff11003a14613
+R10: dffffc0000000000 R11: ffffffff8133c740 R12: dffffc0000000000
+R13: ffff88801d195000 R14: ffffe8ffffc0e9c0 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fd730046078 CR3: 000000001921e000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0: 41 57                 push   %r15
+   2: 41 56                 push   %r14
+   4: 41 54                 push   %r12
+   6: 53                   push   %rbx
+   7: 41 89 d7             mov    %edx,%r15d
+   a: 49 89 f6             mov    %rsi,%r14
+   d: 48 89 fb             mov    %rdi,%rbx
+  10: 49 bc 00 00 00 00 00 movabs $0xdffffc0000000000,%r12
+  17: fc ff df
+  1a: e8 70 de 54 fd       call   0xfd54de8f
+  1f: 48 8d 6b 04           lea    0x4(%rbx),%rbp
+  23: 48 89 e8             mov    %rbp,%rax
+  26: 48 c1 e8 03           shr    $0x3,%rax
+* 2a: 42 8a 04 20           mov    (%rax,%r12,1),%al <-- trapping instruction
+  2e: 84 c0                 test   %al,%al
+  30: 0f 85 9a 00 00 00     jne    0xd0
+  36: 8b 6d 00             mov    0x0(%rbp),%ebp
+  39: 89 ef                 mov    %ebp,%edi
+  3b: 44 89 fe             mov    %r15d,%esi
+  3e: e8                   .byte 0xe8
+  3f: ec                   in     (%dx),%al
+
+-- 
+Yours sincerely,
+Xingyu
 
