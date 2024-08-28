@@ -1,113 +1,114 @@
-Return-Path: <linux-kernel+bounces-305003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B04E9627F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:57:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ADCF962805
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E369C2867FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:57:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC63328579F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B2917BEBD;
-	Wed, 28 Aug 2024 12:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6138E17C98D;
+	Wed, 28 Aug 2024 12:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="psZDIVWU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="k2eWTLxn"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA31117BB13
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B8F178CF2
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724849866; cv=none; b=WRdSmMbDNhCunljjbPpRK22/eJ2E+E7p9uiWrQVNYM6EBY1hvxApxtMLXNWpk1Boz/uF5FBpibqO95XpUogpSEu0mjrwlaV9xKJs/s1H49VGt4viEGIr5WqGlWvE5kYxN3YiCMA4ckTPyBONZgd6ra4iwsmzic646o/0QzdQEY0=
+	t=1724849928; cv=none; b=TckCpbUIWkdfIuLMhiBzT+yaotMAn3G7ezJ1fCdTPkMN0xUZTfH43pHomGJONE9yRwJM4LUFNFXj20U/cwrtbvjWWx7i69qbvDW9bznjtVHahwZfc/B6/8R61SJlNcQNfX53wYvTBVTjxMkXz7s2wJxndIhAQCC/CXInbyIGL6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724849866; c=relaxed/simple;
-	bh=/0HnAn5TqEASLLSd0qy3OtH1wUH2rhGXgjlS/1FhzOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=inPudW8F2z2YNuiIJWxGVUF37lcvbMlJaYE7K4cbYmBii7whMC10howx10ZdOyNerYIAlmPFXQockp+Si+unBEF3zuKoFlRgBdyAijZJD8owbyfbSWwHihwTk71sI8+VmfZd586FcqmGRNMfVHn4ibbSbGz9AL6tUPqKFZ7vQJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=psZDIVWU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D750C98ED2;
-	Wed, 28 Aug 2024 12:57:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724849866;
-	bh=/0HnAn5TqEASLLSd0qy3OtH1wUH2rhGXgjlS/1FhzOk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=psZDIVWUG59qivS+sIeGHgjCQiPZGNBgf/oTqePXIKq5MsMoYcRawIwxvOAJUKv+v
-	 V6Lou55AfXcDRzy8jkSQ9gFXXOYkbBbWmgM0AM4yhbzGCrEd+SZZE+TEx7UhQec0dQ
-	 bfhCfwqcR0kGyei0Pb0OdJLe9umq39lkdk9Tt3/tw4HETRe0W+dP5h4cIcVzrikB9q
-	 GN3qfDkQlBQ98jlIc7sCoAcBBQkAgnV5FLR4+y8snlhLYB7OiIvaZpIACfaPvI8Hj3
-	 XHGqUTps9vepOgci6Jokd3HO37pN1P7eFGkCUh3P7v/y5/XAqxvrz/VF+D5oDo4Qha
-	 kEcvGX+YYJRSA==
-Date: Wed, 28 Aug 2024 13:57:41 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Nishanth Menon <nm@ti.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Lee Jones <lee@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	afd@ti.com, bb@ti.com, d-gole@ti.com,
-	Jan Dakinevich <jan.dakinevich@salutedevices.com>
-Subject: Re: [PATCH] mfd: syscon: Set max_register_is_0 when syscon points to
- a single register
-Message-ID: <f72500a5-4514-4920-a7f0-3fc8e6874615@sirena.org.uk>
-References: <20240828121008.3066002-1-nm@ti.com>
+	s=arc-20240116; t=1724849928; c=relaxed/simple;
+	bh=LPHvYEfai0dgHG9lmYYyaID3Fz0cr/0CjGy81AbspjI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tEoxnjk6HY7/sUcTRDsdWi8kJmeYXDfzJqZAwtidrCosZD0bPS8UUJknVyjgiyBxvhS0TiFfE2E+FrBxZYHUGCqoSFMzTuMt8sXCQ3ePmyCst5kA0kqCMy55gI0mqEF2eP/maMMdkfQr1aPdrSh2MntXSAncyO1Rb94De27GurY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=k2eWTLxn; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=KWjiXUmmEV93LF5mPfA43uk7dNEjWIw+zBwu8kWYnKU=;
+	t=1724849927; x=1726059527; b=k2eWTLxnwZ3QO/jKyC+rzVscnC0fY6/VbYKh0cyzRJ7Yo7o
+	waVj4iQTp/07770TSUeMUe19vdhBXCyywcZeWgOsm4paUye2tpgC/T548u13s7xEYuFp5g/jgSSGy
+	MTrTh0Z49nmFdY+KpUdcjIleEM5Y50g+LBZpqgEdSmIgmfEpom3FEuMCrTIg7rxV6Q8Qffg2Yqz/B
+	ec4vlNC0QSE2MV2krbJQqwcwa9/nqUkUXBFbTM/U0dZ5JimUrcEIX/M9EbMs4zskUoCaleb0ATYHz
+	bXkj2aHuCthsjzdxesm43V301w0wbpnq5Br4QMbKXunUn2cOTUSvxiSOM64YiSFQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1sjIG4-000000079YR-05cK;
+	Wed, 28 Aug 2024 14:58:44 +0200
+Message-ID: <d66103380179771d0655288a4d0d95e990876132.camel@sipsolutions.net>
+Subject: Re: [PATCH] um: make personality(PER_LINUX32) work on x86_64
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Maciej =?UTF-8?Q?=C5=BBenczykowski?= <maze@google.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Richard
+ Weinberger <richard@nod.at>, Anton Ivanov
+ <anton.ivanov@cambridgegreys.com>,  linux-um@lists.infradead.org,
+ x86@kernel.org
+Date: Wed, 28 Aug 2024 14:58:43 +0200
+In-Reply-To: <CANP3RGdxrKHsERYG+yW5fpRUrahkBJbHCKD24v182ZNKuJgfwg@mail.gmail.com>
+References: <20240813234755.3615697-1-maze@google.com>
+	 <efbb6394805f11de27cace9817418744d8e69506.camel@sipsolutions.net>
+	 <CANP3RGdxrKHsERYG+yW5fpRUrahkBJbHCKD24v182ZNKuJgfwg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="iTRQaRjc86NpHeE5"
-Content-Disposition: inline
-In-Reply-To: <20240828121008.3066002-1-nm@ti.com>
-X-Cookie: You are number 6!  Who is number one?
+X-malware-bazaar: not-scanned
 
+On Mon, 2024-08-19 at 11:46 -0700, Maciej =C5=BBenczykowski wrote:
+> On Mon, Aug 19, 2024 at 5:23=E2=80=AFAM Johannes Berg <johannes@sipsoluti=
+ons.net> wrote:
+> >=20
+> > On Tue, 2024-08-13 at 16:47 -0700, Maciej =C5=BBenczykowski wrote:
+> > > Without this patch:
+> > >   #!/usr/bin/python3
+> > >   import ctypes
+> > >   import os
+> > >   personality =3D ctypes.CDLL(None).personality
+> > >   personality.restype =3D ctypes.c_int
+> > >   personality.argtypes =3D [ctypes.c_ulong]
+> > >   PER_LINUX32=3D8
+> > >   personality(PER_LINUX32)
+> > >   print(os.uname().machine)
+> > > returns:
+> > >   x86_64
+> > > instead of the desired:
+> > >   i686
+> > >=20
+> >=20
+> > But ... why should it work? UML has no 32-bit compat support anyway.
+>=20
+> Well, that's certainly a fair point.
+> On 'native' x86_64 this works even for 64-bit processes though.
+> I wonder if that, in itself, is a feature or a bug...
+>=20
+> In my case I was writing some debug code (to print the environment
+> some test code is running in, since I think it was failing due to
+> running 32-bit code in PER_LINUX32 on 64-bit arm) and testing (the
+> test code) on x86_64 UML.  I was surprised to discover the difference
+> in UML vs my host desktop.
+>=20
 
---iTRQaRjc86NpHeE5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Alright, I have no idea. This doesn't really seem to do anything else,
+so I'm not sure what the point is... It _was_ introduced for compat
+though, but obviously the binary doesn't suddenly change to a 32-bit
+binary when you do this :)
 
-On Wed, Aug 28, 2024 at 07:10:08AM -0500, Nishanth Menon wrote:
+Maybe the x86 maintainers have any other comments?
 
-> Commit 0ec74ad3c157 ("regmap: rework ->max_register handling")
-> introduced explicit handling in regmap framework for register maps
-> that is exactly 1 register wide. As a result, a syscon pointing
-> to a single register would cause regmap checks to skip checks
-> (or in the case of regmap_get_max_register, return -EINVAL) as
-> max_register_is_set will not be true.
-
-In what sense is the behaviour changed for a map that doesn't specify a
-maximum register?
-
-> Fixes: 0ec74ad3c157 ("regmap: rework ->max_register handling")
-
-In what sense is this a fix?
-
-> +	if (!syscon_config.max_register)
-> +		syscon_config.max_register_is_0 = true;
-
-This will cause any syscon which does not explicitly specify a maximum
-register to be converted to having only one register at number 0.  That
-really does not seem like a good idea - unless you've done an audit of
-every single syscon to make sure they do explicitly specify a maximum
-register, and confirmed that this can't be specified via DT, then it's
-going to break things.
-
---iTRQaRjc86NpHeE5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbPHsQACgkQJNaLcl1U
-h9BE6gf/RHhq79Tq0fiYtY3Cl/2E3MvVUh5pU3mY9FTezhPN+eiBwkVpSCQ2kbLJ
-8WSEjxw2EgWB+yJvcbYt4R4ARyBQ6rsUZOrecg2pT+NDRtck9OYFnPEwziluX3Xr
-/+oxxTfGifxZA+DjZa+Cb0Iwoicg6USgARRETmR0+DSqpQXx7i8b0TxaMQm+5Pqx
-sZuO4PS/PoS0+fUb2AZVpu4/kGMrI0OtS2ksljb0JzaMfhLw/HzA7HIl0RPkNT7Y
-bXjaR+qE3Rbl65YqbB0zB1FZgN9J/Av0ZUkZ2yFFqNT1mWEinGj4bS72K6F7x8x0
-ua6zT6/4x7zVzpdqqyChY1Q7L3Jr2A==
-=s01d
------END PGP SIGNATURE-----
-
---iTRQaRjc86NpHeE5--
+johannes
 
