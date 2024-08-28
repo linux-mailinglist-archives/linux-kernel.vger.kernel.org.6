@@ -1,166 +1,144 @@
-Return-Path: <linux-kernel+bounces-304845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7ADC9625B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:14:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF6069625B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:15:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD6101C225CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:14:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87B45282CD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A122A16C875;
-	Wed, 28 Aug 2024 11:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C30A16D4C4;
+	Wed, 28 Aug 2024 11:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B667KoO9"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cc9KOnAU"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2605816C874
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 11:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A3216C6A5;
+	Wed, 28 Aug 2024 11:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724843632; cv=none; b=TlT0W6SYuqzw71ubIlu4vvx/qoFG50mcoGcpoMHVfcWh7aKmqsVkFALAdBX4aEjhFXqxWU/FzIZ4s574sZgAFQeIuuzkIXIaUW9rA7enXYiEweSnHa3WOeCO3tSIEt4mM8h5KDpwPfrdXhCGlW9LfYqxBdvgs8mZJqrgWmT/Zjk=
+	t=1724843716; cv=none; b=TavY85IoHKZXJ+lPqHIE2Wx7V/Xv/Gk448hokG8UCpuhZKQ/tMdoDJkGuEy9MlpGvtDEwWhgxni3daXrXaemQPTgYyflhYRLLWzxLOwjKbmM6oWYYNhNrZDH7zmtcDmIp9gFpKRlkDctpbv5sg4T/jcO3jz6N6wOdZoM53fj2Ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724843632; c=relaxed/simple;
-	bh=jUnILKAo5ATrsd6lz5mB3iOFWIQc7AkfPEQ9LPD0iHU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I6yKBXWWyhAZ/0Gy4riiMlNezx3u7li+FSM1eM0s//CyJr7UEtFZ3c6rVeVo++78Ucayn6p8ZpxwMy2v77w4F7SmcaDZHQkbyo1cQRRN5hMOrZGy9ydoY3ze7ZwJZs9vpaelKuWaCXbRpbRjM7awzzuUgTo0D4O4yax38lkT65Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B667KoO9; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5bec50de77fso912430a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 04:13:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724843629; x=1725448429; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=zcghzgIG2bNBAb6yUzFmlFHQDpsaEhKndi+DVgkFQkk=;
-        b=B667KoO9Aku+3lrUmsgHInNoavkANZmKUGGDXzmdW5eCl5pFY8fu7xw1MEvDQLuJQa
-         PXdIxkU992SAtAZwOcyWG1tQ9ML6KcmYTelu2p1tIbhs3gGzhGGiLo6Da7jl4wN78Sze
-         LjkljLJUF1lnjSytwmxSJMg4pc3TLP9UE2f3IYiRQjTU789FUq8cA4KJkFE58HxaT4DK
-         Cc02FV+Mn+L2d/zrI2YY/nYYYdRGzD+Xw/L+8tP2JP9IFPq1Z94U9dkhLZXe7nPFcjfQ
-         kKdJAswV6xshC9NyW00mzY+dJCCtJ3M7+bJJrMZAgwIWewCf/JxRMb8MT7Y12lWw0Puy
-         l6/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724843629; x=1725448429;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zcghzgIG2bNBAb6yUzFmlFHQDpsaEhKndi+DVgkFQkk=;
-        b=GRQo8Iz8hfI44oDWsfdtyrMGOMeIA4rLQBp7pZ5lDCRSrBnBf8JV3QhAjMBclN2zbg
-         jEETMFmGKBKNgVGqmwcXsfRPrJjcE7Ns4G1ENzzjjEQL3ZWooiwf7zNdwOptEFR1U3AA
-         ssh5ns2hRhgne3mRRDO6wI19OQRiuWrTkhxBLDvEkn+zd0dcuxBXi1X2vJoAtoiT3TZH
-         dIWVkbdhyAVNe5dwMnrYzKpptZjngBQvhk+og6DsvSUDWKkBRhlWTGKz0m4RcCE7gEjq
-         sIHT7Q73R6n49Lqb8stddK7CQ0TIb3OYBxauQcFyTXaJr1l7/8+/9187nNYSDEiVHhlu
-         NKVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmigkUMzUZEQVbQB6htenFb9PDolr04oy/qKh8pg+7TiiY4wzeko+ZONEeXw2mLucct4x51+IyyClktuw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoW7R+Ca4S9NbhASBnwQEl9O7kxAjPPZqi8l7dPxtGCfTyyR5R
-	wRpXtuAnujoYSifA6CcIUDaQNHhH3hGJHwuL3yvgg8YanFVk2aOElyGgut0ZXfo=
-X-Google-Smtp-Source: AGHT+IH1JpO9SbHismOTO20+L7uRSRuh4mNvVVKRlxfyREMOZrSaYHDZouLRC/uPD7wWEwJu+Nv8PA==
-X-Received: by 2002:a05:6402:3489:b0:5bf:e43:895b with SMTP id 4fb4d7f45d1cf-5c08915adc2mr6787041a12.1.1724843629187;
-        Wed, 28 Aug 2024 04:13:49 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb4722b0sm2107487a12.69.2024.08.28.04.13.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 04:13:48 -0700 (PDT)
-Message-ID: <47c4f8c8-6ca2-45a0-9e8b-813e5c5884d5@linaro.org>
-Date: Wed, 28 Aug 2024 13:13:47 +0200
+	s=arc-20240116; t=1724843716; c=relaxed/simple;
+	bh=ZbhS9vqMXDQr3e/dxFe0PuE+Ui9Wl7na/zvQAar0ygw=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=L4FBb3jDsY4LRb8P9S2SSFdPiReXuJrPr9smRUAiasFGIWcN9qMo5Q/WGI3mhV1KIU5LO/OvgFnH9TS+G0bfdy8RDmVp4mbXIya5NILCZmgEwsIDFNGkwk2lrEKfdL6M1fFbiVAc2iJq737dXRpeYglBVEPcSeOeU9WZtio1nw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cc9KOnAU; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47SBF6JL016129;
+	Wed, 28 Aug 2024 06:15:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724843706;
+	bh=XhAruzoi2xhi5IWI0Rc6Sv77a+ExcYS8y5pSo7RoYWo=;
+	h=From:Subject:Date:To:CC;
+	b=cc9KOnAUxZX9ztFFNpUpErjLK1zaim4o9bgvANg0SjVW//Gez1NTXJbkwB7KXkKh3
+	 tyt97jRg3F28h4yBqksYvelwXicA3+NB8rme/Dm8p52Z+RAXcArstIQxEQXKaJ3lym
+	 QX4s1pQdfNlCiUDZ1LEL8cwUZdy0K3pR2CTYsg4s=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47SBF6um000695
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 28 Aug 2024 06:15:06 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 28
+ Aug 2024 06:15:05 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 28 Aug 2024 06:15:05 -0500
+Received: from [127.0.1.1] (uda0497581.dhcp.ti.com [10.24.68.185])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47SBF107122618;
+	Wed, 28 Aug 2024 06:15:01 -0500
+From: Manorit Chawdhry <m-chawdhry@ti.com>
+Subject: [PATCH v5 0/5] Introduce J742S2 SoC and EVM
+Date: Wed, 28 Aug 2024 16:44:58 +0530
+Message-ID: <20240828-b4-upstream-j742s2-v5-0-9aaa02a0faee@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/16] arm64: dts: qcom: change labels to lower-case
-To: Konrad Dybcio <konradybcio@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240828-dts-qcom-label-v1-0-b27b72130247@linaro.org>
- <5f7735ac-e03c-4399-bdca-3e9550b23e14@kernel.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <5f7735ac-e03c-4399-bdca-3e9550b23e14@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALIGz2YC/23OTWrDMBAF4KsErTtBM9ZvVrlH6UK2R40KiYPki
+ Jbgu1dJIU3AyzfwvTdXUTgnLmK3uYrMNZU0nVrQbxsxHMLpkyGNLQuSpKQhCb2Cy7nMmcMRvqy
+ iQmD7YDRJj1pL0eA5c0zf99L3j5YPqcxT/rlvVLxd/+os4lpdRUBwvWeFA7rocT+n7TAdxa2r0
+ pPvVt+pBBJM4DE6T6jN8OK7Z7++3zU/Bhu5C8Gzly9e/XuHftWr5iORU9FEa3F8+GVZfgGnNK/
+ 6cQEAAA==
+To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Udit Kumar <u-kumar1@ti.com>,
+        Neha Malcom
+ Francis <n-francis@ti.com>,
+        Aniket Limaye <a-limaye@ti.com>, Beleswar Padhi
+	<b-padhi@ti.com>,
+        Manorit Chawdhry <m-chawdhry@ti.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724843701; l=2049;
+ i=m-chawdhry@ti.com; s=20231127; h=from:subject:message-id;
+ bh=ZbhS9vqMXDQr3e/dxFe0PuE+Ui9Wl7na/zvQAar0ygw=;
+ b=fLFeZS+jnGO3f/wZu4/+77wPeLCXB60hpuF6ypLkqV4KM/WHHe7C0Jmh5lmabrWJFrIzmh72B
+ HIyCh97jAZDDGU38eKdIjtt3CWbidEyzP5ZwTW08reCRNF5ja6ygnkX
+X-Developer-Key: i=m-chawdhry@ti.com; a=ed25519;
+ pk=fsr6Tm39TvsTgfyfFQLk+nnqIz2sBA1PthfqqfiiYSs=
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 28/08/2024 12:55, Konrad Dybcio wrote:
-> On 28.08.2024 9:17 AM, Krzysztof Kozlowski wrote:
->> DTS coding style expects labels to be lowercase.  No functional impact.
->> Verified with comparing decompiled DTB (dtx_diff and fdtdump+diff).
->>
->> I am splitting the patchset per few patches doing the same, because
->> otherwise diffs would be too big and would bounce from Patchwork/mailing
->> list.
->>
->> Best regards,
->> Krzysztof
->>
->> ---
-> 
-> I can confirm the changes are a NOP, however:
-> 
-> g diff $(git last).. | grep "^+.*&[A-Z]" | wc -l
-> 232
-> 
-> e.g.
-> 
-> +		domain-idle-states = <&BIG_cpu_sleep_0>;
+The series adds support for J742S2 family of SoCs. Also adds J742S2 EVM
+Support and re-uses most of the stuff from the superset device J784s4.
 
-Same as in patch 3. I'll re-check and send a v2 tomorrow.
+It initially cleans up the J784s4 SoC files so that they can be
+re-usable for j742s2 by introducing -common files. Next it cleans up the
+EVM files for j784s4 in a similar way and then goes about adding the
+support for j742s2.
+
+Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
+---
+Changes in v5:
+- Rebased on upstream-next
+- Align j742s2 and j784s4 comments (Siddharth)
+- Link to v4: https://lore.kernel.org/r/20240819-b4-upstream-j742s2-v4-0-f2284f6f771d@ti.com
+
+---
+Manorit Chawdhry (5):
+      arm64: dts: ti: Refactor J784s4 SoC files to a common file
+      arm64: dts: ti: Refactor J784s4-evm to a common file
+      dt-bindings: arm: ti: Add bindings for J742S2 SoCs and Boards
+      arm64: dts: ti: Introduce J742S2 SoC family
+      arm64: dts: ti: Add support for J742S2 EVM board
+
+ Documentation/devicetree/bindings/arm/ti/k3.yaml   |    6 +
+ arch/arm64/boot/dts/ti/Makefile                    |    4 +
+ arch/arm64/boot/dts/ti/k3-j742s2-evm.dts           |   26 +
+ arch/arm64/boot/dts/ti/k3-j742s2-main.dtsi         |   45 +
+ arch/arm64/boot/dts/ti/k3-j742s2.dtsi              |   98 +
+ arch/arm64/boot/dts/ti/k3-j784s4-evm.dts           | 1427 +---------
+ .../arm64/boot/dts/ti/k3-j784s4-j742s2-common.dtsi |  150 ++
+ .../boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi   | 1437 ++++++++++
+ .../boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi  | 2667 ++++++++++++++++++
+ ...tsi => k3-j784s4-j742s2-mcu-wakeup-common.dtsi} |    2 +-
+ ...l.dtsi => k3-j784s4-j742s2-thermal-common.dtsi} |    0
+ arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi         | 2847 +-------------------
+ arch/arm64/boot/dts/ti/k3-j784s4.dtsi              |  135 +-
+ 13 files changed, 4533 insertions(+), 4311 deletions(-)
+---
+base-commit: 195a402a75791e6e0d96d9da27ca77671bc656a8
+change-id: 20240620-b4-upstream-j742s2-7ba652091550
 
 Best regards,
-Krzysztof
+-- 
+Manorit Chawdhry <m-chawdhry@ti.com>
 
 
