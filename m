@@ -1,171 +1,131 @@
-Return-Path: <linux-kernel+bounces-304705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF04B9623C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:41:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA2AF9623C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:41:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E26751C21271
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:41:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 556EC1F23BB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EEE9166F0E;
-	Wed, 28 Aug 2024 09:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53006166319;
+	Wed, 28 Aug 2024 09:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nKToqbHT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ORjQ0chN"
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22469165EEF;
-	Wed, 28 Aug 2024 09:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FBE915E5C0
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 09:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724838076; cv=none; b=QWSZJyJbu8MgVGUq8XMktm2hOT++SZPr0wlOl5HVNf3qsqdofIAQnPHt2Lt4mCUTJBWJsvX+UAYE/bdcyHMsENMi2gE9x1WK22EkuJ+AVT3vOgQHCY6BdBP3uGOmD/sl0+xd6tVqBBvQ7DAZJw0PTruooQWNbhFaBEN03rOnXw8=
+	t=1724838103; cv=none; b=LHFSf+AyBrxWO8DnX922N9pMdPiGac92NAi7egmqVT2Nfy8kfK8cbqlwpJSsMYjQ9Z9uV7uMYBgHmXEty0ofa10LS4F3xySMYoNHQZz44qn6IgMFR96C1VuI9YxbxNDkFEefM6/0wsMIThx8EhKBKMbEheYcecREo4ZPYUQb//8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724838076; c=relaxed/simple;
-	bh=KmLvLZCvXN+ISC2aNUSSVE3qHQPfDdF+tdNTgeSVTWw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HrI3a83SwINRyZ0iiamOIgFJgsbsZsG5599Ahx0Mj3G7lcLpD2qpgxevYnVgV6x0HgO5o87HNx+zttRvvu9rEpgSYnG0kC4SfJjMSYDVmG9lkPWKJKELFvsJuHICWEpyXQU/bBXDvX5Vqz++7ClnB4MPBMq6tcs18OzWdpsrIhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nKToqbHT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47RLqiP6027416;
-	Wed, 28 Aug 2024 09:41:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Glnt4wfb8lmUVsOzwL5WYgQj8annLWuBVIaCfgWkSTk=; b=nKToqbHT0gmxAona
-	PhABQ19pUEQOO6S2/XiViehtHBc0kr+rXqomks2oymgGZt+6UIQNPAlSltyUNHwN
-	mB1QSgkLDflZ8uEhdm3r+IAjcGmk33pvjFH4sOSTT8eiogpN+Ie7q9oWYqVoouCk
-	BQBfD0Cf9Odq8RlL7aJ/KmUolOgFP4GD1dALyIRQI4d0UC/kDfiKiTYLvSZirBQj
-	PEjkzBixqzTc5zEXbFsR5UQoezF7u8w2Ev/XGruI1sdJKqcro1zNOGg1K1a0r1ad
-	LAGYR7XQKBUX1N++kWD2Hb/2de0LHUhKUJimTKTMGL+U07JcnhkY+fJe7RgDkN5f
-	KiUUWQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419q2xsb8q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 09:41:08 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47S9f74C001893
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 09:41:07 GMT
-Received: from [10.216.7.68] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 28 Aug
- 2024 02:41:01 -0700
-Message-ID: <818a4f89-d64b-4657-8845-d01caec0a750@quicinc.com>
-Date: Wed, 28 Aug 2024 15:10:57 +0530
+	s=arc-20240116; t=1724838103; c=relaxed/simple;
+	bh=MDXXPoP3Ql2ed4Kq1NPFVHjXHxrCWpZsHv/VA9HbH3U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F1uFuFq8lkuV/OgDTHgmVpcr79cs7RAfagkDPRvq+YE+2cpxg6bFhuWDGE/JqNCRnlBGkoTWunbzLExol345GFvIMW8B87Yef1gV0FgEOz7h6A5fbMgki/Yl/dUn6BSkIPiMPrud0qjoE3V6PvvtPyyrtRAJr80McT/oJIp9nF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ORjQ0chN; arc=none smtp.client-ip=209.85.217.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-498eb25d247so1883482137.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 02:41:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1724838100; x=1725442900; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MDXXPoP3Ql2ed4Kq1NPFVHjXHxrCWpZsHv/VA9HbH3U=;
+        b=ORjQ0chNvOawVRZrM+477x4orZ1IZ00Hmoe8gp6OLBsdyjjnj5PGUVT3Vq4qqlIhB8
+         7iuhpVbogbMHVAy3vphRE73YbfX2zHvN55l7WvkWNMjgUg0uErIGhLXrMU3OOqh5t4WM
+         5QJfsNP1zLp4xZMzh/I23sii6RdDLp0M378DE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724838100; x=1725442900;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MDXXPoP3Ql2ed4Kq1NPFVHjXHxrCWpZsHv/VA9HbH3U=;
+        b=v6nCArLjC4YXmmOVyEDVuSeGdodg9LxEn3NZElEqAsEFKLPKbn5vG1HNBafovMShIc
+         R/X5R/8ldRF75cYV9TIy3k4Dx/NISj16vyzr+eFddB/xUJmxTBMpC2a06FebpkAdFuu3
+         HvgVQ59yIaz2zGkEipoLhUVhpGcxs/0hkKJxmuUN0v143a6tIsX7QCATunsz5SittYSh
+         ZhZ9FaEc4ni4uyWivTa5mrI4uc9MOU/VGES+gSq1N30WEb9bh5qCAPnzIvw6VMwHe4aK
+         B6VS0awdeQcUwZirrRjBHCRG2crWKiMAoJaQMY1iSJEIkg7DcVxbFJ6N+nULdNsCQfcP
+         QTGA==
+X-Forwarded-Encrypted: i=1; AJvYcCX5KTW0EQA3I6NCzS+8JnsZ52Bmt8BCVP83m+NaerNU1u6Vk0T3bUGEbIUpvqO7R8zWOASVGXopFZzn8UI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywva+rA1ASnKfcKKJ4nEXnQxE/Tpy9m/2I4x+MHQrXmOvjBR54m
+	P8n4EJ0CP2yNF0T3fFR59MUerWX9dqm2Quk7A1ZgCfckJT+cWkX99TJ5hJXt0eHgauhH/uc+s/E
+	=
+X-Google-Smtp-Source: AGHT+IFb1XFBVV/bwkUfiNCTzVq086+PtTqr9ywK2zqmW83Ok0+FatIppeB08iYEYGRjX65EpXKF5w==
+X-Received: by 2002:a05:6102:c08:b0:492:9960:682a with SMTP id ada2fe7eead31-498f4680ec9mr14918011137.17.1724838099506;
+        Wed, 28 Aug 2024 02:41:39 -0700 (PDT)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-844ce4eaaf1sm1528343241.11.2024.08.28.02.41.38
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Aug 2024 02:41:38 -0700 (PDT)
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-498d587c13bso2036413137.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 02:41:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVyKSeDtupfyCvDgBUk7XMP6EJLZ7iTv/3ZZ4FFiafNJGN6fEkZ46QSdDhWdOhV5ftg9XaYYgaHEsRatQs=@vger.kernel.org
+X-Received: by 2002:a05:6102:50a9:b0:493:c81c:3148 with SMTP id
+ ada2fe7eead31-498f41cdb2fmr15317053137.0.1724838098095; Wed, 28 Aug 2024
+ 02:41:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] clk: qcom: Add support for Global Clock Controller
- on QCS8300
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        "Ajit
- Pandey" <quic_ajipan@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>
-References: <20240822-qcs8300-gcc-v2-0-b310dfa70ad8@quicinc.com>
- <20240822-qcs8300-gcc-v2-2-b310dfa70ad8@quicinc.com>
- <bf5b7607-a8fc-49e3-8cf7-8ef4b30ba542@lunn.ch>
- <01c5178e-58fe-4c45-a82e-d0b6b6789645@quicinc.com>
- <049ee7d3-9379-4c8f-88ed-7aec03ad3367@lunn.ch>
-Content-Language: en-US
-From: Imran Shaik <quic_imrashai@quicinc.com>
-In-Reply-To: <049ee7d3-9379-4c8f-88ed-7aec03ad3367@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 35tbvDru6ZV_oimTL3j0FtbCPK_ORpex
-X-Proofpoint-GUID: 35tbvDru6ZV_oimTL3j0FtbCPK_ORpex
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-28_03,2024-08-27_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
- clxscore=1015 priorityscore=1501 lowpriorityscore=0 spamscore=0
- impostorscore=0 mlxlogscore=999 phishscore=0 adultscore=0 bulkscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408280069
+References: <20240827-drm-fixup-0819-v3-0-4761005211ec@mediatek.com> <20240827-drm-fixup-0819-v3-2-4761005211ec@mediatek.com>
+In-Reply-To: <20240827-drm-fixup-0819-v3-2-4761005211ec@mediatek.com>
+From: Fei Shao <fshao@chromium.org>
+Date: Wed, 28 Aug 2024 17:41:00 +0800
+X-Gmail-Original-Message-ID: <CAC=S1ngpXtsLUF=A-MxVnmWY7YgwvxHKSe0NuN_n=G+7-kpG7Q@mail.gmail.com>
+Message-ID: <CAC=S1ngpXtsLUF=A-MxVnmWY7YgwvxHKSe0NuN_n=G+7-kpG7Q@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] drm/mediatek: change config_lock from spin_lock to spin_lock_irqsave
+To: jason-jh.lin@mediatek.com, Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Singo Chang <singo.chang@mediatek.com>, 
+	Nancy Lin <nancy.lin@mediatek.com>, Project_Global_Chrome_Upstream_Group@mediatek.com, 
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Jason,
 
+On Tue, Aug 27, 2024 at 10:58=E2=80=AFPM Jason-JH.Lin via B4 Relay
+<devnull+jason-jh.lin.mediatek.com@kernel.org> wrote:
+>
+> From: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>
+>
+> Operations within spin_locks are limited to fast memory access and
+> confirmation of minimum lock duration.
+>
+> Although using spin_lock with config_lock seems to ensure shorter hold
+> times, it is safer to use spin_lock_irqsave due to potential deadlocks
+> and nested interrupt scenarios in interrupt contexts.
+>
+> So change config_lock from spin_lock to spin_lock_irqsave.
+>
+> Fixes: 7f82d9c43879 ("drm/mediatek: Clear pending flag when cmdq packet i=
+s done")
 
-On 8/26/2024 6:24 PM, Andrew Lunn wrote:
-> On Mon, Aug 26, 2024 at 04:25:39PM +0530, Imran Shaik wrote:
->>
->>
->> On 8/23/2024 1:29 AM, Andrew Lunn wrote:
->>>> +static int gcc_qcs8300_probe(struct platform_device *pdev)
->>>> +{
->>>> +	struct regmap *regmap;
->>>> +	int ret;
->>>> +
->>>> +	regmap = qcom_cc_map(pdev, &gcc_qcs8300_desc);
->>>> +	if (IS_ERR(regmap))
->>>> +		return PTR_ERR(regmap);
->>>> +
->>>> +	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
->>>> +				       ARRAY_SIZE(gcc_dfs_clocks));
->>>> +	if (ret)
->>>> +		return ret;
->>>> +
->>>> +	/* Keep some clocks always enabled */
->>>
->>> Sorry, but you need to explain why. Why cannot the camera driver
->>> enable these clocks when it loads? Why cannot the display driver
->>> enable these clocks when it loads.
->>>
->>
->> These clocks are recommended to be kept always ON as per the HW design and
->> also exposing clock structures and marking them critical in the kernel would
->> lead to redundant code. Based on previous discussions with clock
->> maintainers, it is recommended to keep such clocks enabled at probe and not
->> model them. This approach is consistently followed for all other targets as
->> well.
-> 
-> I don't see why it would add redundant code. It is a few lines of code
-> in the driver, which every driver using clocks has. If you really
-> don't want the clock turned off because it is unused, you can use
-> CLK_IGNORE_UNUSED, along with a comment explaining why.
-> 
-> What i was actually guessing is that you don't actually have open
-> drivers for these hardware blocks, just a blob running in user
-> space. As such, it cannot turn the clocks on. If that is the case, i
-> would much prefer you are honest about this, and document it.
-> 
+The appropriate fix tag should be:
+Fixes: 1bbb2be61bbb ("drm/mediatek: Fix missing configuration flags in
+mtk_crtc_ddp_config()")
 
-We have recently discussed enabling the clocks at probe with the 
-maintainers in the below threads as well.
+I don't know if it's worth resending though.
+I guess it's up to CK if he's willing to replace it when picking up the pat=
+ch.
 
-https://lore.kernel.org/all/664cca91-8615-d3f6-7525-15b9b6725cce@quicinc.com/
+But the change itself is valid, so after fixing that:
+Reviewed-by: Fei Shao <fshao@chromium.org>
 
-It was concluded that keeping them enabled at probe is acceptable. We 
-are now following this approach across all targets.
+Regards,
+Fei
 
-Thanks,
-Imran
-
-> 	Andrew
+> Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
 
