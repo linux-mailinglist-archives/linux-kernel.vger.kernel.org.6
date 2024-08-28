@@ -1,145 +1,215 @@
-Return-Path: <linux-kernel+bounces-305926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D03796367F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 01:55:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A148F963681
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 01:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EFA92843BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:55:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B63E1F22D2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3AC31AC446;
-	Wed, 28 Aug 2024 23:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AF4F1AD401;
+	Wed, 28 Aug 2024 23:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AGCOb9bH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="K6pDFoXy";
+	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="m0s0p071"
+Received: from mx-lax3-2.ucr.edu (mx-lax3-2.ucr.edu [169.235.156.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74E216C690
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 23:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE821165F14
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 23:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=169.235.156.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724889301; cv=none; b=gk89bzfW3yT6CD7o2qDS4Q8DYg7bWiVn5umoyt0vjw8GtnYraJ82bXzAQCOu+x+Z+UO0A5HKbz5sTEmRsflNijF6fUW+xD2ovR5Q3Jr362EUzjJwHIubG1b6aTWw8Sv78n46lSMru9a2Nch4IKZ/TPC1puqKsdI8bFmEVOio1PY=
+	t=1724889340; cv=none; b=pY/hYyfztb0WNxUu/OBM/Q1JFwjnu15SW8/VJmGFNGxelZafI/y4d94zVwo6WIKjnnthtw6PEDZp6RuPC6mj9OVpzsnKWnGRTFWUxtXjQqJthd9sa93lIsik+8a2azqsKUd5RerR4K0Dh3o9MBcXLKQ4EDAadMknbfDqqAYM/3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724889301; c=relaxed/simple;
-	bh=nM2LXBFV6EwWO1dSIhVYc/evt0dajMVEPmkTOngM9Ts=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cp91eaLXUpvnEymxd1sYFDhL9FOGDvUHLlUSGzmwOfv3jNAVELLA1+E6uSSpSi9WFBIDm0mrXbruiREaS8A3KXTLqG2Pv+jw1w4wiKrCR0aevCOulq8qy91r2HyurgGe26+9EPffcQb7k94Cjh8fdr3NwlOPd91FY8zGm4NAy0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AGCOb9bH; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724889299; x=1756425299;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=nM2LXBFV6EwWO1dSIhVYc/evt0dajMVEPmkTOngM9Ts=;
-  b=AGCOb9bHhKFZEqH/vNqd/DhlbJjqOMXJGBVEYhu6MtMcFaw+JhxIcpgl
-   Jvq0mMNIWDySqds0wLhXnLZ6+aSXEegpFULRgLt5fEXeOj/ZCPvR+dDyp
-   +flq9WIKlb23bleVrWWWHR98fcgyBKDK0vKSbU7XHOGbJT9aftdvOo0wM
-   ZgjR+HZJqLfumruF6TXCyTN19i/zd+i7rfkjbJxWb0mfCu9TARssdBWJX
-   B5h7t2bTmwnpy1S+W63QknGs0f3OUh4twoCZtgzJeRPSxkwMrMq98AHhp
-   D/4NAr/IqOSb+4plLoEHYe8umymr7N7EOS17igSMvI8UPzn0ViXa18U05
-   Q==;
-X-CSE-ConnectionGUID: JmYnIAs7QrGqNF1Jr6ql8g==
-X-CSE-MsgGUID: eRSK4MCASdmv5w2PCYMSYQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="23259088"
-X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
-   d="scan'208";a="23259088"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 16:54:58 -0700
-X-CSE-ConnectionGUID: 32cGV5BfT4y2QZksOzatTg==
-X-CSE-MsgGUID: vMeS/oHsSzGC3b/nfrtRaQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
-   d="scan'208";a="67537404"
-Received: from sramkris-mobl1.amr.corp.intel.com (HELO [10.124.223.210]) ([10.124.223.210])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 16:54:57 -0700
-Message-ID: <4ff867b7-e5b1-4b91-87cf-127b2e908025@intel.com>
-Date: Wed, 28 Aug 2024 16:54:43 -0700
+	s=arc-20240116; t=1724889340; c=relaxed/simple;
+	bh=UN4Qx6bxXEa1mxT7lWlnOOLWGyS6uLKelzQ3MQZLVac=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=bKUTKOAvnBvPLtA60zMNlH9U3+HOvK2eS4CVtW1wHyM3dwKU3xllhnQggnDsurVjPNZ1waGW6aHos3N+jsF/8FFM5ZpTiDP2ghnmLy0TsU9roK4Q9k37HogjF7lBIKZsOqRwuPAnb7HhIEhKgwQNlroCVxs9mRYCX+K0DmBF4io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=K6pDFoXy; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=m0s0p071; arc=none smtp.client-ip=169.235.156.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
+  t=1724889339; x=1756425339;
+  h=dkim-signature:x-google-dkim-signature:
+   x-forwarded-encrypted:x-gm-message-state:
+   x-google-smtp-source:mime-version:from:date:message-id:
+   subject:to:cc:content-type:x-cse-connectionguid:
+   x-cse-msgguid;
+  bh=UN4Qx6bxXEa1mxT7lWlnOOLWGyS6uLKelzQ3MQZLVac=;
+  b=K6pDFoXymbA+DM4vCTvT0SDNiz1O9E+3jfMThFjRrOkSW8vF41Uz16NQ
+   VgNmtSxw3X9idOieCnUrNf+aQPGUeq4lIy4HtqwRF8N5RgZInuXDAvwyG
+   mmH4U+c2Dd+HGZhPaokshGsiqI8ZdW53q28BY4Og+UcGQgb9jxowH/WZV
+   69KbHcf6PfMFMS24XNZrquen0K0xHLIdEiudg21UD0DZss5lLcfOZiTSz
+   OpORuD0eywJLz07RJLNaa+YWmnickI20AoobnLL8ekaeLRFedRLGSCm1o
+   F2fcde8peITz0FesnKeQ3Df2NI9GgoIY4Xovevk0kL5n63VqgHDJuzZxJ
+   w==;
+X-CSE-ConnectionGUID: +HJWoo6vR1+1ix8CUMFYWQ==
+X-CSE-MsgGUID: rbsBhDxqSWWKjt5Gh9uygg==
+Received: from mail-il1-f200.google.com ([209.85.166.200])
+  by smtp-lax3-2.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 28 Aug 2024 16:55:38 -0700
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d2ceca837so93115ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 16:55:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ucr.edu; s=rmail; t=1724889337; x=1725494137; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=oTpy7Rkm6RTtGoFPUAb+dcZxlUVlvvaat+wa/fxzNaY=;
+        b=m0s0p071QArHm1enTQpZLKdu4uVjjMF0xsJPbkFG517kBHPRgDQO+lYmvfk5UKgsmj
+         cRwEpje1omfS7m4IzbCxhD5pp00CFfFYckuJOwcF7+pqpIjkat1qkKKak1rRB3FsL9k9
+         5aMs2/vNNZi1GSn8Kg2+30Nq7NkLOZUXp9VlQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724889337; x=1725494137;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oTpy7Rkm6RTtGoFPUAb+dcZxlUVlvvaat+wa/fxzNaY=;
+        b=InXPfgTOUWrQhtrHBq9G2fw7LccX0JXsRd8x5oTQGSkaDAD5KESwksqLa41ptYpV94
+         N9JPqBOR2svCDG7U1Mx+gAD4q9iL6kFXkf2q3+PnLZ4YK8d0GbhuHS0whMliKQkdqBko
+         0n+FQHwX/4P6UN305jsszV60IMLrz3m0S+SjaZFTw7omW3bF5CzBVGiYdxo8sKRPw7VV
+         7EepM8tvAlQxCew6RmhwCOWWcOBnwisn2tvROaFMTrcVtpcgaLd8vETzrq35dKHNY8IL
+         5spRTPvU6Y8AhLpCRqaS5znskoAbbVefK5Jp6Se3wVjjh6oi7+8v+VjAkpYCSb21294t
+         Akmg==
+X-Forwarded-Encrypted: i=1; AJvYcCXdtNh6h03XzoVZ4vIFvkoghPoeiWoTy88IKOTmGn0qgy1V9rGBHoU2ZgV/DhkkC5gnKEEiNr8WyMiwH3E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5OJE6e/Yt3vAopEoudJJy4iUqe05CB2gylcIpSf+kNTy151sn
+	VmJkta9898CW3Swc53EyuHZ9tYPQIU1yjUV4qXNhdZR5+dwlqc15+dMC+GRYiNunopjDCrm9Jcm
+	W5gKliQpWrlYd7PeX0jgiCjhCzUOJyqrWCH+BgOUeF2FfjEROIpLnnpPWMRr+7YdRRVqsQD48d9
+	eA3ZTdyLtJKscWkadwAm0eiipHgkTU8O45WsoSzQ==
+X-Received: by 2002:a92:cd88:0:b0:39b:3894:9298 with SMTP id e9e14a558f8ab-39f37712626mr18463515ab.0.1724889337157;
+        Wed, 28 Aug 2024 16:55:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGChgmIn4sdx36CE10rCA9pVfgqTZ5UmTTlFxDnqtCcfNNgVfHSBolho2o+2PAPX/IVlPE76trnVyzaK2YQGsA=
+X-Received: by 2002:a92:cd88:0:b0:39b:3894:9298 with SMTP id
+ e9e14a558f8ab-39f37712626mr18463265ab.0.1724889336767; Wed, 28 Aug 2024
+ 16:55:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/bugs: Add missing NO_SSB flag
-To: Daniel Sneddon <daniel.sneddon@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>
-Cc: pawan.kumar.gupta@linux.intel.com, "H. Peter Anvin" <hpa@zytor.com>,
- "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>
-References: <20240828224011.4043872-1-daniel.sneddon@linux.intel.com>
- <9e510f2e-4b11-4001-b6c0-7a3766b8abb4@intel.com>
- <dc28f36b-87fa-4aac-8578-6468ae311b16@linux.intel.com>
-Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <dc28f36b-87fa-4aac-8578-6468ae311b16@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Xingyu Li <xli399@ucr.edu>
+Date: Wed, 28 Aug 2024 16:55:26 -0700
+Message-ID: <CALAgD-5Vx9-9VSqO1YVg9CS=uWzpYoSpV5zWaV+LZUWtqnw5Wg@mail.gmail.com>
+Subject: BUG: unable to handle kernel paging request in rht_lock
+To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, dsahern@kernel.org, kuniyu@amazon.com, 
+	shaozhengchao@huawei.com, juntong.deng@outlook.com, ryasuoka@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Yu Hao <yhao016@ucr.edu>
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/28/24 16:50, Daniel Sneddon wrote:
-> On 8/28/24 16:36, Dave Hansen wrote:
->> On 8/28/24 15:40, Daniel Sneddon wrote:
->>> The Moorefield and Lightning Mountain Atom processors are
->>> missing the NO_SSB flag in the vulnerabilities whitelist.
->>> This will cause unaffected parts to incorrectly be reported
->>> as vulnerable. Add the missing flag.
->> It'd be really cool to add two things to these changelogs: First, who
->> figured this out and how?  Basically, who cares and why?  Second, what
->> public Intel documentation supports this change?
-> The first thing I can do no problem. The second..... 🙁
+Hi,
 
-Heh, I went looking just after I asked.  These CPUs are ghosts as far as
-the docs are concerned.  I assume because they are end-of-life'd (or
-whatever the proper name is).  But even saying _that_ in the changelog
-would be helpful.
+We found a bug in Linux 6.10 using syzkaller. It is possibly a page fault  bug.
+The bug report is as follows, but unfortunately there is no generated
+syzkaller reproducer.
+
+Bug report:
+veth1_vlan: left promiscuous mode
+veth0_vlan: left promiscuous mode
+team0 (unregistering): Port device team_slave_1 removed
+team0 (unregistering): Port device team_slave_0 removed
+BUG: unable to handle page fault for address: ffffed1056223056
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD 13ffee067 P4D 13ffee067 PUD 0
+Oops: Oops: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 0 PID: 89058 Comm: kworker/u4:20 Not tainted 6.10.0 #13
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: netns cleanup_net
+RIP: 0010:bytes_is_nonzero mm/kasan/generic.c:87 [inline]
+RIP: 0010:memory_is_nonzero mm/kasan/generic.c:104 [inline]
+RIP: 0010:memory_is_poisoned_n mm/kasan/generic.c:129 [inline]
+RIP: 0010:memory_is_poisoned mm/kasan/generic.c:161 [inline]
+RIP: 0010:check_region_inline mm/kasan/generic.c:180 [inline]
+RIP: 0010:kasan_check_range+0x81/0x2a0 mm/kasan/generic.c:189
+Code: 00 00 fc ff df 4d 8d 34 19 4c 89 f5 4c 29 dd 48 83 fd 10 7f 2c
+48 85 ed 0f 84 58 01 00 00 49 01 de 4c 89 dd 4c 29 f5 48 01 dd <41> 80
+3b 00 0f 85 dd 01 00 00 49 ff c3 48 ff c5 75 ee e9 35 01 00
+RSP: 0018:ffffc9000a4bf830 EFLAGS: 00010086
+RAX: 1ffff11007734201 RBX: dffffc0000000001 RCX: ffffffff89131dcd
+RDX: 0000000000000001 RSI: 0000000000000008 RDI: ffff8882b11182b0
+RBP: ffffffffffffffff R08: ffff8882b11182b7 R09: 1ffff11056223056
+R10: dffffc0000000000 R11: ffffed1056223056 R12: 1ffff11056223056
+R13: 0000000000000246 R14: dfffe91056223058 R15: ffff8882b11182b0
+FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffed1056223056 CR3: 000000000d932000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+ test_and_set_bit_lock
+include/asm-generic/bitops/instrumented-lock.h:57 [inline]
+ bit_spin_lock include/linux/bit_spinlock.h:27 [inline]
+ rht_lock+0xfd/0x230 include/linux/rhashtable.h:332
+ __rhashtable_remove_fast_one include/linux/rhashtable.h:1012 [inline]
+ __rhashtable_remove_fast include/linux/rhashtable.h:1093 [inline]
+ rhashtable_remove_fast include/linux/rhashtable.h:1122 [inline]
+ netlink_remove net/netlink/af_netlink.c:616 [inline]
+ netlink_release+0x400/0x1b00 net/netlink/af_netlink.c:755
+ __sock_release net/socket.c:659 [inline]
+ sock_release+0x80/0x140 net/socket.c:687
+ crypto_netlink_exit+0x3c/0x60 crypto/crypto_user.c:498
+ ops_exit_list net/core/net_namespace.c:173 [inline]
+ cleanup_net+0x810/0xcd0 net/core/net_namespace.c:640
+ process_one_work kernel/workqueue.c:3248 [inline]
+ process_scheduled_works+0x977/0x1410 kernel/workqueue.c:3329
+ worker_thread+0xaa0/0x1020 kernel/workqueue.c:3409
+ kthread+0x2eb/0x380 kernel/kthread.c:389
+ ret_from_fork+0x49/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+CR2: ffffed1056223056
+---[ end trace 0000000000000000 ]---
+RIP: 0010:bytes_is_nonzero mm/kasan/generic.c:87 [inline]
+RIP: 0010:memory_is_nonzero mm/kasan/generic.c:104 [inline]
+RIP: 0010:memory_is_poisoned_n mm/kasan/generic.c:129 [inline]
+RIP: 0010:memory_is_poisoned mm/kasan/generic.c:161 [inline]
+RIP: 0010:check_region_inline mm/kasan/generic.c:180 [inline]
+RIP: 0010:kasan_check_range+0x81/0x2a0 mm/kasan/generic.c:189
+Code: 00 00 fc ff df 4d 8d 34 19 4c 89 f5 4c 29 dd 48 83 fd 10 7f 2c
+48 85 ed 0f 84 58 01 00 00 49 01 de 4c 89 dd 4c 29 f5 48 01 dd <41> 80
+3b 00 0f 85 dd 01 00 00 49 ff c3 48 ff c5 75 ee e9 35 01 00
+RSP: 0018:ffffc9000a4bf830 EFLAGS: 00010086
+RAX: 1ffff11007734201 RBX: dffffc0000000001 RCX: ffffffff89131dcd
+RDX: 0000000000000001 RSI: 0000000000000008 RDI: ffff8882b11182b0
+RBP: ffffffffffffffff R08: ffff8882b11182b7 R09: 1ffff11056223056
+R10: dffffc0000000000 R11: ffffed1056223056 R12: 1ffff11056223056
+R13: 0000000000000246 R14: dfffe91056223058 R15: ffff8882b11182b0
+FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffed1056223056 CR3: 000000000d932000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess), 4 bytes skipped:
+   0: df 4d 8d             fisttps -0x73(%rbp)
+   3: 34 19                 xor    $0x19,%al
+   5: 4c 89 f5             mov    %r14,%rbp
+   8: 4c 29 dd             sub    %r11,%rbp
+   b: 48 83 fd 10           cmp    $0x10,%rbp
+   f: 7f 2c                 jg     0x3d
+  11: 48 85 ed             test   %rbp,%rbp
+  14: 0f 84 58 01 00 00     je     0x172
+  1a: 49 01 de             add    %rbx,%r14
+  1d: 4c 89 dd             mov    %r11,%rbp
+  20: 4c 29 f5             sub    %r14,%rbp
+  23: 48 01 dd             add    %rbx,%rbp
+* 26: 41 80 3b 00           cmpb   $0x0,(%r11) <-- trapping instruction
+  2a: 0f 85 dd 01 00 00     jne    0x20d
+  30: 49 ff c3             inc    %r11
+  33: 48 ff c5             inc    %rbp
+  36: 75 ee                 jne    0x26
+  38: e9                   .byte 0xe9
+  39: 35                   .byte 0x35
+  3a: 01 00                 add    %eax,(%rax)
+
+
+-- 
+Yours sincerely,
+Xingyu
 
