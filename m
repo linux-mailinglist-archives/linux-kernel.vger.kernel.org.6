@@ -1,111 +1,202 @@
-Return-Path: <linux-kernel+bounces-305797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F43963498
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:20:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54AF296349C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:21:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6325E1F2469B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:20:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A37028462F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146C31AD3F2;
-	Wed, 28 Aug 2024 22:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97621AD9D5;
+	Wed, 28 Aug 2024 22:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4PMJAqN"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="G4RT/IXG";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+JCpk0d8";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="G4RT/IXG";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+JCpk0d8"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE7314A4D4;
-	Wed, 28 Aug 2024 22:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0B7167D97;
+	Wed, 28 Aug 2024 22:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724883630; cv=none; b=eL2E0LV29SYrvPjvYetn2moVVSIy26TKFWFKk4Q5dvrPM2Ti8xRd9M0amISdUqs2j7psQQfFC2Z+K4dc9mAjhLGFIzeFuHU7g44xNUcoYdzja08j2/hJ3MaRkEMQY28ucloTMoBI4zxxEtjTJBd+CW1L5/s07fx+PKKff0vn7dw=
+	t=1724883668; cv=none; b=K/JON+NmW2MLe1Dd9xOoEW22fn9+oYBlXCOUriiVg17Y2cTQCRO+eDnYMFqDUfO02NfqdvDB7BCtAiD6tR58MrgTW+QmeOdNa1NHJE0xykZMzkr7E6THBkX1SonHbC9JP+erR+mcbLPBfOvHczCr6Y/j650/CRkLgFavpZEodgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724883630; c=relaxed/simple;
-	bh=hc0fEZy6JascCqwgE3EK7KMdL8zSFxX6pTGSIkmjZn0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qzqsN1Kgy2UotD0eeZ/q1CEljvDNBeU1GO6ZiwebJ4PGbGu9dCp0DmPV7TA1oj+qrPbuCsdOzqUqdHFuYRxxIMTbSIzAXJZ4vaujgnBVsEHeltbF4gRXQrermJkOXfNxVekmbvilAhQa3o+MKaKO2IsaEFwUkllUh/s4D4I3lA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H4PMJAqN; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2d3ba497224so265a91.0;
-        Wed, 28 Aug 2024 15:20:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724883628; x=1725488428; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hc0fEZy6JascCqwgE3EK7KMdL8zSFxX6pTGSIkmjZn0=;
-        b=H4PMJAqNfwgGqbI+ADSmETrCduZDjPFjrqKtNCgofgToCV7s8vGtwdMUgRht7O2dXW
-         Xt21obYEqkiaYA1Ju/st5FlsL5sSo0DGc0u+ECXdLhylGHv+gp6RG8/KEHszZlwFXcAB
-         q/J4Us+OwnsFBPDhkmO667ffDB8hPZCOGltnlDiDm2Wg8qcbKQO1QbTIQAUSujL9ahmA
-         pEbGqrqzLTlXDjBMZAb3Q82ppuEYf9b73K7i6RqpDSc0+F9+K3dzC40lP1J3aTJ5T7mF
-         zPfx1Y12EXfvU5JJGP6SjOvKrCh3Cm2SOWuLtcLzftcrNxV4hUpxU9qXdZhdtoygwRQO
-         aJfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724883628; x=1725488428;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hc0fEZy6JascCqwgE3EK7KMdL8zSFxX6pTGSIkmjZn0=;
-        b=HC+pys/Qx1gId2NmLxYcrVP2xIOhEi8L/+66Q/qu5bnmuP/CPYSDsuKHUnN9aaEw5T
-         mxi1W8FHRdrx9wGCAdqoZZy2RdbOEXwoctfSaUc1gSM4fqKGtcZhZ4qjBwP2Dn9w5TNh
-         Xn6xy1DtaxgDwv/jvUFasfSl3CeIb9dl/XWI4z53My1t2DteC2/jVhRCoqy8j/uVVpxc
-         q/zp3dxCjG+bamOiH37VwbndPfqeWUMj5aMuq5liXbDXWVom43WrfyIygv4q31x9991H
-         VzneA7aLmFToHp4bTNF1Wcq16XqIvAg32vhKdCO8rDKNKIlQn9flcPSlsq7Qj4+zT2Eu
-         5+2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUY+x/XpKRz3z7mq27KYMdxQ1RNZaltBuMl1mMUtWAWk4EdwjhjUXGGTfm8oINoQqzaaK8K85AVsAVJ02Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmAFXb1I8smkLRZCWKfjj7LOEc9z6/kygJstq8BpX+juRSvcJR
-	Pm4T8i9OJNQEQ7K1GUKje+ef0WJx5qYDsgCJoXLL5slFVOF27SUhn/LCNBCvF9ar+0ZSsiXLckC
-	GcUi0rhCP8jUSXmhg3xQMQkvzFqEZRVQN5NA=
-X-Google-Smtp-Source: AGHT+IH+w6Gl9YBuWfr82PCzjdNpeQM94Z5vcJer/l+TZADkuLQ3PrjIyFOfJAnF6yQrau7gFFVmnlqsUaDoFKWyXFI=
-X-Received: by 2002:a17:90b:1202:b0:2cb:4382:99eb with SMTP id
- 98e67ed59e1d1-2d85654b5bamr442235a91.6.1724883628066; Wed, 28 Aug 2024
- 15:20:28 -0700 (PDT)
+	s=arc-20240116; t=1724883668; c=relaxed/simple;
+	bh=m4ARNFxQSN/1e9G0iC3AkVHXLvE3+Ti2uCNcKQIpLhY=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=jMYLQAHI/m+3xEt1Il7sRfe9/s8lszMLq/xRjBh8HnEHqXYCHCAo4aZZzPyccKZXE3cuIGOflr7z/J7cdxrTfsGwiy48pTVJp0LLj2YYoiZLXnw3Re+xjgjUw63I5CJCPREq1ZakOqdYRz+G/LysFk5/xxmFpfD1jzitqJmua3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=G4RT/IXG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+JCpk0d8; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=G4RT/IXG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+JCpk0d8; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C070F1FC30;
+	Wed, 28 Aug 2024 22:21:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724883663; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JhenqZ39wz2bkxdtEJRdVMUpo6TweEtURQV6wq0UsjU=;
+	b=G4RT/IXGvGmESGNWpxgBVf+vEO3EYPbWY17crlNoEgv6GCt4SSM5GkPYIDdwI0tDDu0unJ
+	hBj1qLnSQC1cGcsDF8p6BoRt4X/O70Ki9pMIMzh7wwmjzntYgh8jYTnELsBP0ZJp32o5sq
+	WUhu3aVXj5gt54va8WMeyck8z7R4MHs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724883663;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JhenqZ39wz2bkxdtEJRdVMUpo6TweEtURQV6wq0UsjU=;
+	b=+JCpk0d8km19o3+Ws0rxA/1AzlZWqwNSA3gpjzW8ssbJaEZZVlo2nqMzBo6xQ3x0ofZ7fs
+	4Ah2SC2zridoOUCA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724883663; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JhenqZ39wz2bkxdtEJRdVMUpo6TweEtURQV6wq0UsjU=;
+	b=G4RT/IXGvGmESGNWpxgBVf+vEO3EYPbWY17crlNoEgv6GCt4SSM5GkPYIDdwI0tDDu0unJ
+	hBj1qLnSQC1cGcsDF8p6BoRt4X/O70Ki9pMIMzh7wwmjzntYgh8jYTnELsBP0ZJp32o5sq
+	WUhu3aVXj5gt54va8WMeyck8z7R4MHs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724883663;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JhenqZ39wz2bkxdtEJRdVMUpo6TweEtURQV6wq0UsjU=;
+	b=+JCpk0d8km19o3+Ws0rxA/1AzlZWqwNSA3gpjzW8ssbJaEZZVlo2nqMzBo6xQ3x0ofZ7fs
+	4Ah2SC2zridoOUCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B24851398F;
+	Wed, 28 Aug 2024 22:20:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id WlDxGcqiz2ayRAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Wed, 28 Aug 2024 22:20:58 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828211117.9422-1-wedsonaf@gmail.com>
-In-Reply-To: <20240828211117.9422-1-wedsonaf@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 29 Aug 2024 00:20:15 +0200
-Message-ID: <CANiq72mzNyZkJbPJU1i1PLC81g8CPqfTZ-oO+mAMGeo-r28xKw@mail.gmail.com>
-Subject: Re: [PATCH 0/1] Retiring from the Rust for Linux project
-To: Wedson Almeida Filho <wedsonaf@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "NeilBrown" <neilb@suse.de>
+To: "Jeff Layton" <jlayton@kernel.org>
+Cc: "Yan Zhen" <yanzhen@vivo.com>, davem@davemloft.net, chuck.lever@oracle.com,
+ trondmy@kernel.org, anna@kernel.org, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com,
+ linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+Subject: Re: [PATCH v3] sunrpc: Fix error checking for d_hash_and_lookup()
+In-reply-to: <4392ddb203b2ad27096ab6d9b3bf114fecf4e88c.camel@kernel.org>
+References: <20240828044355.590260-1-yanzhen@vivo.com>,
+ <4392ddb203b2ad27096ab6d9b3bf114fecf4e88c.camel@kernel.org>
+Date: Thu, 29 Aug 2024 08:20:55 +1000
+Message-id: <172488365549.4433.203600496331198489@noble.neil.brown.name>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On Wed, Aug 28, 2024 at 11:11=E2=80=AFPM Wedson Almeida Filho
-<wedsonaf@gmail.com> wrote:
->
-> To the Rust for Linux team: thank you, you are great. It was a pleasure w=
-orking
-> with you all; the times we spent discussing technical issues, finding way=
-s to
-> address soundness holes, etc. were something I always enjoyed and looked
-> forward to. I count myself lucky to have collaborated with such a talende=
-d and
-> friendly group.
->
-> I wish all the success to the project.
+On Wed, 28 Aug 2024, Jeff Layton wrote:
+> On Wed, 2024-08-28 at 12:43 +0800, Yan Zhen wrote:
+> > The d_hash_and_lookup() function returns either an error pointer or NULL.
+> >=20
+> > It might be more appropriate to check error using IS_ERR_OR_NULL().
+> >=20
+> > Fixes: 4b9a445e3eeb ("sunrpc: create a new dummy pipe for gssd to hold op=
+en")
+> > Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+> > ---
+> >=20
+> > Changes in v3:
+> > - Rewrite the "fixes".
+> > - Using ERR_CAST(gssd_dentry) instead of ERR_PTR(-ENOENT).
+> >=20
+> >  net/sunrpc/rpc_pipe.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> >=20
+> > diff --git a/net/sunrpc/rpc_pipe.c b/net/sunrpc/rpc_pipe.c
+> > index 910a5d850d04..13e905f34359 100644
+> > --- a/net/sunrpc/rpc_pipe.c
+> > +++ b/net/sunrpc/rpc_pipe.c
+> > @@ -1306,8 +1306,8 @@ rpc_gssd_dummy_populate(struct dentry *root, struct=
+ rpc_pipe *pipe_data)
+> > =20
+> >  	/* We should never get this far if "gssd" doesn't exist */
+> >  	gssd_dentry =3D d_hash_and_lookup(root, &q);
+> > -	if (!gssd_dentry)
+> > -		return ERR_PTR(-ENOENT);
+> > +	if (IS_ERR_OR_NULL(gssd_dentry))
+> > +		return ERR_CAST(gssd_dentry);
+>=20
+> If you get back a NULL, then ERR_CAST will just make this return a NULL
+> pointer.
+>=20
+> > =20
+> >  	ret =3D rpc_populate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1, NULL);
+> >  	if (ret) {
+> > @@ -1318,7 +1318,7 @@ rpc_gssd_dummy_populate(struct dentry *root, struct=
+ rpc_pipe *pipe_data)
+> >  	q.name =3D gssd_dummy_clnt_dir[0].name;
+> >  	q.len =3D strlen(gssd_dummy_clnt_dir[0].name);
+> >  	clnt_dentry =3D d_hash_and_lookup(gssd_dentry, &q);
+> > -	if (!clnt_dentry) {
+> > +	if (IS_ERR_OR_NULL(clnt_dentry)) {
+> >  		__rpc_depopulate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1);
+> >  		pipe_dentry =3D ERR_PTR(-ENOENT);
+> >  		goto out;
+>=20
+> ...you probably also want to make this return the error from
+> d_hash_and_lookup as well when there is one.
 
-Thanks Wedson, it has been a pleasure -- I think I speak for everyone
-in the team when I say we will all miss you.
+I'd like to just throw in here that in this circumstance,
+d_hash_and_lookup() will never return an error.
+It only ever returns an error that it gets from ->d_hash, and ->d_hash is
+specific to the filesystem, and the filesystem here is the rpc_pipe
+virtual filesystem which doesn't define a ->d_hash.
 
-Rust for Linux got where it is this quickly thanks in big part to all
-your efforts and quite a few people inherited code you started.
+So errors are impossible.
 
-I wish you the best of luck in whatever you decide to do.
+While I'm generally in favour of making code more robust and don't
+object to the IS_ERR_OR_NULL conversion, I think we should be *very*
+cautious not to introduce a bug where no bug currently exists.
 
-P.S. I will miss our long calls! :)
+I would rather the return values were no changed.
 
-Cheers,
-Miguel
+NeilBrown
 
